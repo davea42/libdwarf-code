@@ -1,3 +1,24 @@
+2020-03-14: David Anderson
+    * dwarf_alloc.c: Now adds an optional DEBUG
+      macro that libdwarf developers may find useful.
+      Revised the dwarf_dealloc code to not require de_alloc_tree.
+    * dwarf_line.c: Now dwarf_srcfiles() and dwarf_filename()
+      always allocate DW_DLA_STRINGS. Whereas earlier some
+      of the strings were actually in a .debug section,
+      not allocated. 
+    * libdwarf2.1.mm: Now dwarf_diename()  and
+      dwarf_die_text are documented
+      as returning static strings that are not be be
+      freed or dwarf_dealloc'd.  This was always true
+      but the documentation said dwarf_dealloc() was
+      required. Don't use dwarf_dealloc on these returned
+      strings.
+    * libdwarf2.1.pdf: Regenerated, version 2.88
+    * dwarf_loc.c: Was incorrectly passing NULL instead
+      of dbg to _dwarf_get_alloc in a few places.
+    * dwarf_util.c, dwarf_global.c: Now checks more for incomplete setup
+      of an internal structure to avoid calling dwarf_dealloc
+      with NULL as the space to be freed.
 2020-03-13: David Anderson
     * dwarf_abbrev.c: Remove erroneous dwarf_dealloc
       introduced yesterday. Caused a coredump

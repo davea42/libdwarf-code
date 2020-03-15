@@ -1072,10 +1072,15 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
         /*  Not fully set up yet. There is nothing to do. */
         return;
     }
+    if (!hash_table->tb_entries) {
+        /*  Not fully set up yet. There is nothing to do. */
+        return;
+    }
     for (; hashnum < hash_table->tb_table_entry_count; ++hashnum) {
         struct Dwarf_Abbrev_List_s *abbrev = 0;
         struct Dwarf_Abbrev_List_s *nextabbrev = 0;
-        struct  Dwarf_Hash_Table_Entry_s *tb =  &hash_table->tb_entries[hashnum];
+        struct  Dwarf_Hash_Table_Entry_s *tb =
+           &hash_table->tb_entries[hashnum];
 
         abbrev = tb->at_head;
         for (; abbrev; abbrev = nextabbrev) {

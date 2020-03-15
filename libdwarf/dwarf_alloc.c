@@ -502,8 +502,10 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         global_allocation_count++;
         global_allocation_total += size;
 
-        if (global_de_alloc_tree_on ||
-            alloc_type == DW_DLA_STRING ) {
+        /*  FIXME: as of March 14, 2020 it's
+            not necessary to test for alloc type, but instead
+            only call tsearch if de_alloc_tree_on. */
+        if (global_de_alloc_tree_on) {
             global_de_alloc_tree_total += size;
             global_de_alloc_tree_count++;
             result = dwarf_tsearch((void *)key,
@@ -517,6 +519,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     }
 }
 
+/*  FIXME: This should no longer be needed as of March 14, 2020. */
 /*  This was once a long list of tests using dss_data
     and dss_size to see if 'space' was inside a debug section.
     This tfind approach removes that maintenance headache. */
@@ -582,25 +585,83 @@ dwarf_dealloc(Dwarf_Debug dbg,
     struct reserve_data_s * r = 0;
 
     if (!space) {
+#ifdef DEBUG
+        fprintf(stderr,
+            "Dealloc does nothing, space NULL line %d %s\n",
+            __LINE__,__FILE__);
+#endif /* DEBUG*/
         return;
     }
     if (dbg) {
-        /*  If it's a string in debug_info etc doing
-            (char *)space - DW_RESERVE is totally bogus. */
-        if (alloc_type == DW_DLA_STRING &&
-            string_is_in_debug_section(dbg,space)) {
-            /*  A string pointer may point into .debug_info or
-                .debug_string etc.
-                So must not be freed.  And strings have
-                no need of a specialdestructor().
-                Mostly a historical mistake here. */
-            return;
+        if (dbg->de_alloc_tree) {
+            /*  If it's a string in debug_info etc doing
+                (char *)space - DW_RESERVE is totally bogus. */
+            if (alloc_type == DW_DLA_STRING &&
+                string_is_in_debug_section(dbg,space)) {
+                /*  A string pointer may point into .debug_info or
+                    .debug_string etc.
+                    So must not be freed.  And strings have
+                    no need of a specialdestructor().
+                    Mostly a historical mistake here.
+                    Corrected in libdwarf March 14,2020. */
+                return;
+            }
         }
         /*  Otherwise it might be allocated string so it is ok
             do the (char *)space - DW_RESERVE  */
     } else {
         /*  App error, or an app that failed to succeed in a
             dwarf_init() call. */
+#ifdef DEBUG
+        fprintf(stderr,
+            "Dealloc does nothing, dbg NULL line %d %s\n",
+            __LINE__,__FILE__);
+#endif /* DEBUG*/
+        return;
+    }
+    if (alloc_type == DW_DLA_STRING && 
+        (((unsigned long)space) % DW_RESERVE) ) {
+        /*  This was not a dwarf_get_alloc string! 
+            This not a perfect test, but it does ensure
+            that 'space' is not in the first bytes
+            of a .debug_str section, for example. */
+#ifdef DEBUG
+        fprintf(stderr,
+            "Dealloc does nothing, STRING mod: %lu  line %d %s\n",
+           (unsigned long)((unsigned long)space % DW_RESERVE),
+            __LINE__,__FILE__);
+#endif /* DEBUG*/
+        return;
+    }
+    /*  If it's a DW_DLA_STRING case and erroneous
+        the following pointer operations might
+        result in a coredump if the pointer
+        is to the beginning of a string section.
+        If not DW_DLA_STRING
+        no correctly written caller could coredump
+        here.  */
+    malloc_addr = (char *)space - DW_RESERVE;
+    r =(struct reserve_data_s *)malloc_addr;
+    if(dbg != r->rd_dbg) {
+        /*  Something is mixed up. */
+#ifdef DEBUG
+        fprintf(stderr,
+            "Dealloc does nothing, dbg 0x%lx rd_dbg 0x%lx line %d %s\n",
+            (unsigned long)dbg,
+            (unsigned long)r->rd_dbg,
+            __LINE__,__FILE__);
+#endif /* DEBUG*/
+        return;
+    }
+    if(alloc_type != r->rd_type) {
+        /*  Something is mixed up. */
+#ifdef DEBUG
+        fprintf(stderr,
+            "Dealloc does nothing, type 0x%lx rd_type 0x%lx line %d %s\n",
+            (unsigned long)alloc_type,
+            (unsigned long)r->rd_type,
+            __LINE__,__FILE__);
+#endif /* DEBUG*/
         return;
     }
     if (alloc_type == DW_DLA_ERROR) {
@@ -617,6 +678,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
                 Not dealing with destructor here. */
             _dwarf_failsafe_error.er_errval =
                 DW_DLE_FAILSAFE_ERRVAL;
+#ifdef DEBUG
+            fprintf(stderr,
+                "Dealloc does nothing, DE_STATIC line %d %s\n",
+                __LINE__,__FILE__);
+#endif /* DEBUG*/
             return;
         }
         if (ep->er_static_alloc == DE_MALLOC) {
@@ -630,15 +696,21 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /* DW_DLA_ERROR has a specialdestructor */
     }
     type = alloc_type;
-    malloc_addr = (char *)space - DW_RESERVE;
-    r =(struct reserve_data_s *)malloc_addr;
+#if 0
     if(dbg != r->rd_dbg) {
         /*  Something is badly wrong. Better to leak than
             to crash. */
         return;
     }
+#endif
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* internal or user app error */
+#ifdef DEBUG
+        fprintf(stderr,
+            "Dealloc does nothing, type too big %lu line %d %s\n",
+            (unsigned long)type,
+            __LINE__,__FILE__);
+#endif /* DEBUG*/
         return;
     }
     global_de_alloc_tree_early_dealloc_count++;
@@ -664,9 +736,12 @@ dwarf_dealloc(Dwarf_Debug dbg,
 
             In any case, we simply don't worry about it.
             Not Supposed To Happen. */
-        free(malloc_addr);
-        return;
     }
+    r->rd_dbg  = (void *)0xfeadbeef;
+    r->rd_length = 0;
+    r->rd_type = 0;
+    free(malloc_addr);
+    return;
 }
 
 /*

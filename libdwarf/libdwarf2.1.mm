@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.87, 16 February 2020
+.ds vE Rev 2.88, 14 March 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -205,6 +205,23 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Added a new function dwarf_set_de_alloc_flag()
+which allows turning-off of libdwarf-internal
+allocation tracking to improve libdwarf
+performance a few percent (which only
+really matters with giant DWARF sections).
+The downside of turning off the flag is
+consumer code must do all the dwarf_dealloc()
+calls itself to avoid memory leaks.
+(March 14, 2020)
+.P
+Corrected the documentation of dwarf_diename:
+It was never appropriate to use dwarf_dealloc
+on the string pointer returned but
+Up till now this document said such
+a call was required.
+(March 14, 2020)
 .P
 Now we document here
 that if one uses dwarf_init() or
@@ -508,6 +525,12 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "March 2020"
+Added dwarf_set_de_alloc_flag()
+so consumers get a little better
+performance from libdwarf.
+At a price. See the description
+a bit later here.
 .LI "January 2019"
 Added support for reading DWARF in PE object files.
 .LI "October 2018"
@@ -1575,13 +1598,26 @@ Several of the functions that comprise \fIlibdwarf\fP
 return pointers (opaque descriptors) to structures
 that have been dynamically allocated by the
 library.  To manage dynamic memory the function
-\f(CWdwarf_dealloc()\fP is provided to free storage
+\f(CWdwarf_dealloc()\fP
+is provided to free storage
 allocated as a result of a call to a \fIlibdwarf\fP
 function.  Some additional functions (described
 later) are provided to free storage in particular
 circumstances.  This section describes the general
 strategy that should be taken by a client program
 in managing dynamic storage.
+.P
+By default 
+\f(CWlibdwarf\fP
+tracks its allocations and
+\f(CWdwarf_finish()\fP
+cleans up alloctions
+where 
+\f(CWdwarf_dealloc()\fP
+was not called.
+See 
+\f(CWdwarf_set_de_alloc_flag()\fP
+below.
 
 .H 2 "Read-only Properties"
 All pointers (opaque descriptors) returned by or as a result of a
@@ -1977,6 +2013,70 @@ or
 \f(CWdwarf_init_path()\fP
 to
 open an object file.
+
+.H 3 "dwarf_set_de_alloc_flag()"
+.DS
+\f(CWint dwarf_set_de_alloc_flag(
+    int v)\fP
+.DE
+\f(CWdwarf_set_de_alloc_flag()\fP
+sets and returns a flag value
+applying to the current running instance
+of
+\f(CWlibdwarf\fP.
+It's action sets an internal value,
+and that value should be set/changed
+(if you wish to do that) before any
+other
+\f(CWlibdwarf\fP
+calls.
+.P
+By default
+\f(CWlibdwarf\fP keeps track of all its
+internal allocations.
+So if the documentation here says you should
+do 
+\f(CWdwarf_dealloc()\fP
+calls and you omit
+some or all of them then
+calling
+\f(CWdwarf_finish()\fP
+will clean up all those allocations
+left undone.
+.P
+If you call
+\f(CWdwarf_set_de_alloc_flag(0)\fP
+then libdwarf will not keep track
+of allocations so your code must do
+all
+\f(CWdwarf_dealloc()\fP calls
+as defined below.
+.P
+If you call
+\f(CWdwarf_set_de_alloc_flag(1)\fP
+that sets/restores the setting to
+its default value so from that point
+all internal allocations will be
+tracked and
+\f(CWdwarf_finish()\fP
+can clean them up.
+.P
+The return value of
+\f(CWdwarf_set_de_alloc_flag()\fP
+is the previous value of the internal flag:
+One (1) is the default, meaning record allocations..
+Zero (0) is the other possible value, meaning
+do not record 
+\f(CWlibdwarf\fP
+allocations.
+.P
+It is best to ignore this call unless you
+have gigantic DWARF sections and you need
+whatever percent speed improvement
+from
+\f(CWlibdwarf\fP
+that you can get.
+
 
 .H 3 "Dwarf_Handler function"
 This is an example of a valid error handler function.
@@ -3822,15 +3922,26 @@ of
 \f(CWdie\fP.
 .P
 The storage pointed to by a successful return of
-\f(CWdwarf_diename()\fP should be freed using the allocation type
-\f(CWDW_DLA_STRING\fP when no longer of interest (see
-\f(CWdwarf_dealloc()\fP).
+\f(CWdwarf_diename()\fP
+should not be freed
+as the text is 
+a string in static memory (for some error cases)
+or a string residing in a DWARF data section.
+.P
+Up to March 2020 this document said that dwarf_dealloc
+with DW_DLA_STRING 
+should be applied to the string returned through the
+pointer.
+That was always incorrect.
+However, doing the dwarf_dealloc(dbg,xxx,DW_DLA_STRING)
+that was previously called for does not result
+in any error (dwarf_dealloc avoids freeing strings
+like this).
 .P
 It returns \f(CWDW_DLV_NO_ENTRY\fP if
 \f(CWdie\fP does not have a name attribute.
 It returns \f(CWDW_DLV_ERROR\fP if
 an error occurred.
-
 
 .H 3 "dwarf_die_text()"
 .DS
@@ -3859,9 +3970,15 @@ attribute
 is present.
 .P
 The storage pointed to by a successful return of
-\f(CWdwarf_die_text()\fP should be freed using the allocation type
-\f(CWDW_DLA_STRING\fP when no longer of interest (see
-\f(CWdwarf_dealloc()\fP).
+\f(CWdwarf_die_text()\fP must never be freed,
+the string is in the DWARF data and is
+not dynamically allocated.
+.P
+As of March 2020 the description here has been corrected.
+\f(CWdwarf_dealloc()\fP
+should never have been applied to
+a string returned by 
+\f(CWdwarf_die_text()\fP.
 .P
 It returns
 \f(CWDW_DLV_NO_ENTRY\fP
@@ -4717,6 +4834,7 @@ represented by the descriptor \f(CWattr\fP if the form of the
 attribute belongs to the \f(CWSTRING\fP class.
 It is an error
 for the form to not belong to this class.
+.P`
 The storage pointed
 to by a successful return of \f(CWdwarf_formstring()\fP
 should not be freed.  The pointer points into
@@ -6624,13 +6742,17 @@ of pointers to null-terminated strings that name the source
 files.
 .P
 On a successful return from  \f(CWdwarf_srcfiles()\fP each of the
-strings returned should be individually freed using \f(CWdwarf_dealloc()\fP
-with the allocation type \f(CWDW_DLA_STRING\fP when no longer of
+strings returned should be individually freed using 
+\f(CWdwarf_dealloc()\fP
+with the allocation type 
+\f(CWDW_DLA_STRING\fP when no longer of
 interest.
 This should be followed by free-ing the list using
 \f(CWdwarf_dealloc()\fP with the allocation type \f(CWDW_DLA_LIST\fP.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It returns \f(CWDW_DLV_NO_ENTRY\fP
+It returns 
+\f(CWDW_DLV_ERROR\fP on error.
+It returns 
+\f(CWDW_DLV_NO_ENTRY\fP
 if there is no
 corresponding statement program (i.e., 
 if there is no line information).
@@ -6857,9 +6979,9 @@ by most language standards.
 .H 3 "dwarf_linesrc()"
 .DS
 \f(CWint dwarf_linesrc(
-        Dwarf_Line line,
+    Dwarf_Line line,
 	char  **   return_linesrc,
-        Dwarf_Error *error)\fP
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_linesrc()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_linesrc\fP to
@@ -6879,8 +7001,10 @@ file name in the line table Statement Program Prolog
 to make a full path.
 .P
 The storage pointed to by a successful return of
-\f(CWdwarf_linesrc()\fP should be freed using \f(CWdwarf_dealloc()\fP with
-the allocation type \f(CWDW_DLA_STRING\fP when no longer of interest.
+\f(CWdwarf_linesrc()\fP should be freed using 
+\f(CWdwarf_dealloc()\fP with
+the allocation type 
+\f(CWDW_DLA_STRING\fP when no longer of interest.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .H 3 "dwarf_lineblock()"

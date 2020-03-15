@@ -124,12 +124,16 @@ _dwarf_internal_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
     struct Dwarf_Global_Context_s *gcp = 0;
     struct Dwarf_Global_Context_s *lastgcp = 0;
 
+    if(!dwgl) {
+        return;
+    }
     for (i = 0; i < count; i++) {
         Dwarf_Global dgb = dwgl[i];
-
+        if (!dgb) {
+            continue;
+        }
         gcp = dgb->gl_context;
-
-        if (lastgcp != gcp) {
+        if (gcp && lastgcp != gcp) {
             lastgcp = gcp;
             dwarf_dealloc(dbg, gcp, context_code);
         }
@@ -554,7 +558,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
     /* Cannot refer to debug_types */
     if (dbg->de_debug_info.dss_size &&
         ((cuhdr_off + MIN_CU_HDR_SIZE) >= dbg->de_debug_info.dss_size)) {
-        _dwarf_error(NULL, error, DW_DLE_OFFSET_BAD);
+        _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
 #undef MIN_CU_HDR_SIZE
@@ -588,7 +592,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             but no CU header is that small so it is safe. */
         /* Globals cannot refer to debug_types */
         if ((cuhdr_off + 10) >= dbg->de_debug_info.dss_size) {
-            _dwarf_error(NULL, error, DW_DLE_OFFSET_BAD);
+            _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }
         cres = _dwarf_length_of_cu_header(dbg, cuhdr_off,true,

@@ -980,12 +980,12 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
             error,loc_section_end);
         /* exprblock_size can be zero, means no expression */
         if ( exprblock_size >= dbg->de_debug_loc.dss_size) {
-            _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
             return DW_DLV_ERROR;
         }
         if ((sec_offset +exprblock_off + exprblock_size) >
             dbg->de_debug_loc.dss_size) {
-            _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
             return DW_DLV_ERROR;
         }
     }
@@ -996,7 +996,8 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
     return_block->bl_from_loclist = 1;
     return_block->bl_data = beg + exprblock_off;
     return_block->bl_section_offset =
-        ((Dwarf_Small *) return_block->bl_data) - dbg->de_debug_loc.dss_data;
+        ((Dwarf_Small *) return_block->bl_data) -
+        dbg->de_debug_loc.dss_data;
     return DW_DLV_OK;
 }
 
@@ -1043,7 +1044,7 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
     Dwarf_Half form = 0;
     int blkres = DW_DLV_ERROR;
 
-    if (attr == NULL) {
+    if (!attr) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
         return (DW_DLV_ERROR);
     }

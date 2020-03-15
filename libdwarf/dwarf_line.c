@@ -145,11 +145,17 @@ special_cat(char *dst,char *src,
     is calculated identically for
     dwarf_srcfiles() and dwarf_filename()
 
-    We sometimes return a string pointer  that points inside a dwarfsection,
+    We sometimes return a string pointer 
+    that points inside a dwarfsection,
     yet sometimes we return a _dwarf_get_alloc allocated string.
     This is safe because dwarf_dealloc (which users should
     call eventually)will not actually deallocate
     a string unless _dwarf_get_alloc allocated the pointed-to area.
+
+    As of March 14 2020 this is converted to *always*
+    do an allocation for the string. dwarf_dealloc
+    is crucial to do no matter what.
+    So we have consistency.
 
     dwarf_finish() will do the dealloc if nothing else does.
 */
@@ -172,26 +178,18 @@ create_fullest_file_path(Dwarf_Debug dbg,
     }
 
     if (_dwarf_file_name_is_full_path((Dwarf_Small *)file_name)) {
-#ifdef HAVE_WINDOWS_PATH
         {   unsigned len = strlen(file_name);
             char *tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
                 len+1);
             if(tmp) {
                 tmp[0] = 0;
                 special_cat(tmp,file_name,len);
-                if (strcmp(tmp,file_name)) {
-                    /* We transformed the name. Use the new name. */
-                    *name_ptr_out = tmp;
-                    return DW_DLV_OK;
-                } else {
-                    dwarf_dealloc(dbg,tmp,DW_DLA_STRING);
-                    /* Just fall through. file_name ok. */
-                }
-            }   /* else out of memory, just fall through to keep going. */
-        }
-#endif
-        *name_ptr_out = file_name;
-        return DW_DLV_OK;
+                *name_ptr_out = tmp;
+                return DW_DLV_OK;
+            }
+            _dwarf_error(dbg,error,DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
+        }   
     } else {
         char *comp_dir_name = "";
         char *inc_dir_name = "";
@@ -242,7 +240,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
         if (incdirnamelen > 0 &&
             _dwarf_file_name_is_full_path((Dwarf_Small*)inc_dir_name) ) {
             /*  Just use inc dir. */
-                special_cat(full_name,inc_dir_name,incdirnamelen);
+            special_cat(full_name,inc_dir_name,incdirnamelen);
             strcat(full_name,"/");
             special_cat(full_name,file_name,filenamelen);
             *name_ptr_out = full_name;
@@ -1836,20 +1834,24 @@ dwarf_srclines_dealloc_b(Dwarf_Line_Context line_context)
         return;
     }
     linestable = line_context->lc_linebuf_logicals;
-    linescount = line_context->lc_linecount_logicals;
-    for (i = 0; i < linescount ; ++i) {
-        dwarf_dealloc(dbg, linestable[i], DW_DLA_LINE);
+    if (linestable) {
+        linescount = line_context->lc_linecount_logicals;
+        for (i = 0; i < linescount ; ++i) {
+            dwarf_dealloc(dbg, linestable[i], DW_DLA_LINE);
+        }
+        dwarf_dealloc(dbg, linestable, DW_DLA_LIST);
     }
-    dwarf_dealloc(dbg, linestable, DW_DLA_LIST);
     line_context->lc_linebuf_logicals = 0;
     line_context->lc_linecount_logicals = 0;
 
     linestable = line_context->lc_linebuf_actuals;
-    linescount = line_context->lc_linecount_actuals;
-    for (i = 0; i <linescount ; ++i) {
-        dwarf_dealloc(dbg, linestable[i], DW_DLA_LINE);
+    if (linestable) {
+        linescount = line_context->lc_linecount_actuals;
+        for (i = 0; i <linescount ; ++i) {
+            dwarf_dealloc(dbg, linestable[i], DW_DLA_LINE);
+        }
+        dwarf_dealloc(dbg, linestable, DW_DLA_LIST);
     }
-    dwarf_dealloc(dbg, linestable, DW_DLA_LIST);
     line_context->lc_linebuf_actuals = 0;
     line_context->lc_linecount_actuals = 0;
     delete_line_context_itself(line_context);
