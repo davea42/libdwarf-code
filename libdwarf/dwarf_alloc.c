@@ -758,7 +758,7 @@ _dwarf_get_debug(void)
     /* Leaving initialization on so we can track
         DW_DLA_STRING even when global_de_alloc_tree_on
         is zero. */
-    if (dbg->de_alloc_tree) {
+    if (global_de_alloc_tree_on) {
         dwarf_initialize_search_hash(&dbg->de_alloc_tree,
             simple_value_hashfunc,0);
     }

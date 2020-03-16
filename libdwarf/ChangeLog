@@ -1,3 +1,9 @@
+2020-03-16: David Anderson
+    * dwarf_alloc.c: A recent change had the wrong
+      test during initial Dwarf_Debug
+      struct setup meaning dwarf_finish() was not cleaning
+      up allocations. This made the runtimes better
+      than they should be. Important correction here.
 2020-03-15: David Anderson
     * dwarf_frame2.c: On an internal error (bad dwarf)
       the necessary cleanup function was not being called
