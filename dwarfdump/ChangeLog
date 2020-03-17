@@ -1,3 +1,5 @@
+2020-03-16:   David Anderson
+    * print_ranges.c: Added a dealloc of rangeset,DW_DLA_RANGES.
 2020-03-15:   David Anderson
     * glflags.c: Now defaults to not printing the global
       alloc sums. Use --print-alloc-sums option to dwarfdump

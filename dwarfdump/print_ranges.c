@@ -341,10 +341,10 @@ check_range_array_info(Dwarf_Debug dbg)
             if (res == DW_DLV_OK) {
                 check_ranges_list(dbg,die_off,cu_die,original_off,
                     rangeset,rangecount,bytecount);
+                dwarf_dealloc(dbg,rangeset,DW_DLA_RANGES);
             }
             dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
         };
-
         reset_range_array_info();
 
         /*  Point back to the end of the PU */
