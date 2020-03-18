@@ -1213,6 +1213,7 @@ print_error(Dwarf_Debug dbg,
     Dwarf_Error lerr)
 {
     print_error_maybe_continue(dbg,msg,dwarf_ret_val,lerr,FALSE);
+    glflags.gf_count_major_errors++;
     if (dbg) {
         Dwarf_Error ignored_err = 0;
         /*  If dbg was never initialized dwarf_finish

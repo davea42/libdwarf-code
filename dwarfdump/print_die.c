@@ -404,6 +404,7 @@ print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
             char * errmsg = dwarf_errmsg(pi_err);
             Dwarf_Unsigned myerr = dwarf_errno(pi_err);
 
+            glflags.gf_count_major_errors++;
             fprintf(stderr, "%s ERROR:  %s:  %s (%lu)\n",
                 glflags.program_name, "attempting to print .debug_info",
                 errmsg, (unsigned long) myerr);
@@ -419,6 +420,7 @@ print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
         char * errmsg = dwarf_errmsg(pi_err);
         Dwarf_Unsigned myerr = dwarf_errno(pi_err);
 
+        glflags.gf_count_major_errors++;
         fprintf(stderr, "%s ERROR:  %s:  %s (%lu)\n",
             glflags.program_name, "attempting to print .debug_types",
             errmsg, (unsigned long) myerr);
@@ -520,6 +522,7 @@ print_cu_hdr_std(Dwarf_Unsigned cu_header_length,
 
     res = dwarf_get_UT_name(cu_type,&utname);
     if (res != DW_DLV_OK) {
+        glflags.gf_count_major_errors++;
         utname = "ERROR";
     }
     if (glflags.dense) {
@@ -1192,9 +1195,12 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 then the compiler has made a mistake, and
                 the DIE tree is corrupt.  */
             Dwarf_Off child_overall_offset = 0;
-            int cores = dwarf_dieoffset(child, &child_overall_offset, &dacerr);
+            int cores = dwarf_dieoffset(child, 
+                &child_overall_offset, &dacerr);
+
             if (cores == DW_DLV_OK) {
                 Dwarf_Off parent_sib_val = get_die_stack_sibling();
+
                 if (parent_sib_val &&
                     (parent_sib_val <= child_overall_offset )) {
                     char small_buf[180];

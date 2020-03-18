@@ -1,3 +1,10 @@
+2020-03-17:   David Anderson
+    * dwarfdump.c: Report the number of major errors
+      more accurately.
+    * print_die.c: Report the number of major errors
+      more accurately.
+    * print_pubnames.c: Revise certain if/then/else
+      to make the flow clearer.
 2020-03-16:   David Anderson
     * print_ranges.c: Added a dealloc of rangeset,DW_DLA_RANGES.
 2020-03-15:   David Anderson

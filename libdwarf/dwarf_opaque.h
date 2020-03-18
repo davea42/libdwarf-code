@@ -384,16 +384,13 @@ struct Dwarf_Debug_InfoTypes_s {
         dwarf_next_cu_header. **Updated by dwarf_next_cu_header in
         dwarf_die_deliv.c */
     Dwarf_CU_Context de_cu_context;
-    /*  Points to linked list of CU Contexts for the CU's already read.
-        These are only CU's read by dwarf_next_cu_header(). */
+    /*  Points to linked list of CU Contexts for the 
+        CU's already read.  These are only CU's read
+        by dwarf_next_cu_header(). */
     Dwarf_CU_Context de_cu_context_list;
     /*  Points to the last CU Context added to the list by
         dwarf_next_cu_header(). */
     Dwarf_CU_Context de_cu_context_list_end;
-    /*  This is the list of CU contexts read for dwarf_offdie().  These
-        may read ahead of dwarf_next_cu_header(). */
-    Dwarf_CU_Context de_offdie_cu_context;
-    Dwarf_CU_Context de_offdie_cu_context_end;
 
     /*  Offset of last byte of last CU read.
         Actually one-past that last byte.  So

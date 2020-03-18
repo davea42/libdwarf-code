@@ -381,6 +381,7 @@ empty_local_attrlist(Dwarf_Debug dbg,
 /*  If the input is improper (see DW_DLV_ERROR)
     this may leak memory. Such badly formed input
     should be very very rare.
+
 */
 int
 dwarf_attrlist(Dwarf_Die die,
@@ -448,6 +449,7 @@ dwarf_attrlist(Dwarf_Die die,
             return res;
         }
         if (attr > DW_AT_hi_user) {
+            dwarf_dealloc(dbg,abbrev_list,DW_DLA_ABBREV_LIST);
             empty_local_attrlist(dbg,head_attr);
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;

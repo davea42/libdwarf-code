@@ -1899,10 +1899,10 @@ _dwarf_load_section(Dwarf_Debug dbg,
         return res;
     }
     /*apply relocations */
-    res = o->methods->relocate_a_section( o->object, section->dss_index,
-        dbg, &err);
+    res = o->methods->relocate_a_section( o->object, 
+        section->dss_index, dbg, &err);
     if (res == DW_DLV_ERROR) {
-        DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
+        DWARF_DBG_ERROR(dbg, err, res);
     }
     return res;
 }

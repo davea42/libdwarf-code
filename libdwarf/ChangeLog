@@ -4,6 +4,17 @@
       struct setup meaning dwarf_finish() was not cleaning
       up allocations. This made the runtimes better
       than they should be. Important correction here.
+    * dwarf_die_deliv.c: Drop use of the dwarf_dieoff()
+      context list, that was never appropriate. Now
+      again with one list.
+    * dwarf_opaque.h: Removed a list of Dwarf_CU_Contexts,
+      that was never correct to have dwarf_offdie maintain
+      a list separate from iterating through CUs.
+    * dwarf_query.c (dwarf_attrlist): Add a 
+      dwarf_dealloc on abbrev_list
+      in an error case.
+    * dwarf_util.c: Make the lines look a tiny bit
+      better avoiding too-long lines.
 2020-03-15: David Anderson
     * dwarf_frame2.c: On an internal error (bad dwarf)
       the necessary cleanup function was not being called

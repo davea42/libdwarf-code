@@ -614,7 +614,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     Dwarf_Error *error)
 {
     Dwarf_Debug dbg = cu_context->cc_dbg;
-    Dwarf_Hash_Table hash_table_base = cu_context->cc_abbrev_hash_table;
+    Dwarf_Hash_Table hash_table_base = 
+        cu_context->cc_abbrev_hash_table;
     Dwarf_Hash_Table_Entry entry_base = 0;
     Dwarf_Hash_Table_Entry entry_cur = 0;
     Dwarf_Unsigned hash_num = 0;
@@ -638,17 +639,18 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         if (!hash_table_base->tb_entries) {
             return DW_DLV_NO_ENTRY;
         }
-
     } else if (hash_table_base->tb_total_abbrev_count >
-        ( hash_table_base->tb_table_entry_count * HT_MULTIPLE) ) {
+        (hash_table_base->tb_table_entry_count * HT_MULTIPLE)) {
         struct Dwarf_Hash_Table_s newht;
+
+        memset(&newht,0,sizeof(newht));
         /* Effectively multiplies by >= HT_MULTIPLE */
-        newht.tb_table_entry_count =  hash_table_base->tb_total_abbrev_count;
+        newht.tb_table_entry_count =  
+            hash_table_base->tb_total_abbrev_count;
         newht.tb_total_abbrev_count = 0;
         newht.tb_entries =
             (struct  Dwarf_Hash_Table_Entry_s *)
-            _dwarf_get_alloc(dbg,
-            DW_DLA_HASH_TABLE_ENTRY,
+            _dwarf_get_alloc(dbg, DW_DLA_HASH_TABLE_ENTRY,
             newht.tb_table_entry_count);
         if (!newht.tb_entries) {
             return DW_DLV_NO_ENTRY;
@@ -658,7 +660,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         copy_abbrev_table_to_new_table(hash_table_base, &newht);
         /*  Dealloc only the entries hash table array, not the lists
             of things pointed to by a hash table entry array. */
-        dwarf_dealloc(dbg, hash_table_base->tb_entries,DW_DLA_HASH_TABLE_ENTRY);
+        dwarf_dealloc(dbg, hash_table_base->tb_entries,
+            DW_DLA_HASH_TABLE_ENTRY);
         hash_table_base->tb_entries = 0;
         /*  Now overwrite the existing table descriptor with
             the new, newly valid, contents. */

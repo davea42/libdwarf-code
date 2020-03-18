@@ -417,22 +417,23 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                     esb_append(&msgb,"Printing ");
                     esb_append(&msgb,section_true_name);
                     esb_append(&msgb," dwarf_offdie a ");
+                    /* print_error() Does not return */
                     print_error(dbg, esb_get_string(&msgb),
                         dres,*err);
                     esb_destructor(&msgb);
-                }
-
-                {
+                } else {
                     /*  Get producer name for this CU
                         and update compiler list */
                     struct esb_s producername;
                     esb_constructor(&producername);
-                    get_producer_name(dbg,die,cu_die_off,&producername);
-                    update_compiler_target(esb_get_string(&producername));
+                    get_producer_name(dbg,die,cu_die_off,
+                        &producername);
+                    update_compiler_target(esb_get_string(
+                        &producername));
                     esb_destructor(&producername);
+                    dwarf_dealloc(dbg, die, DW_DLA_DIE);
+                    die = 0;
                 }
-
-                dwarf_dealloc(dbg, die, DW_DLA_DIE);
             }
 
             /* get die at die_off */
@@ -444,33 +445,39 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 esb_append(&msgc,"Printing ");
                 esb_append(&msgc,section_true_name);
                 esb_append(&msgc," dwarf_offdie b");
+                /* print_error() Does not return */
                 print_error(dbg, esb_get_string(&msgc), dres, *err);
                 esb_destructor(&msgc);
-            }
-            ares =
-                dwarf_hasattr(die, DW_AT_external, &has_attr, err);
-            if (ares == DW_DLV_ERROR) {
-                struct esb_s msgd;
-
-                esb_constructor(&msgd);
-                esb_append(&msgd,"hassattr on DW_AT_external from ");
-                esb_append(&msgd,section_true_name);
-                print_error(dbg, esb_get_string(&msgd), ares,
-                    *err);
-                esb_destructor(&msgd);
-            }
-
-                /*  Check for specific compiler */
-            if (checking_this_compiler()) {
-                DWARF_CHECK_COUNT(pubname_attr_result,1);
-                if (ares == DW_DLV_OK && has_attr) {
-                    /* Should the value of flag be examined? */
-                } else {
-                    DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                        "pubname does not have DW_AT_external");
+            } else {
+                ares =
+                    dwarf_hasattr(die, DW_AT_external, 
+                    &has_attr, err);
+                if (ares == DW_DLV_ERROR) {
+                    struct esb_s msgd;
+    
+                    esb_constructor(&msgd);
+                    esb_append(&msgd,
+                        "hassattr on DW_AT_external from ");
+                    esb_append(&msgd,section_true_name);
+                    dwarf_dealloc(dbg, die, DW_DLA_DIE);
+                    /* print_error does not return */
+                    print_error(dbg, esb_get_string(&msgd), ares,
+                        *err);
+                    esb_destructor(&msgd);
                 }
+                /*  Check for specific compiler */
+                if (checking_this_compiler()) {
+                    DWARF_CHECK_COUNT(pubname_attr_result,1);
+                    if (ares == DW_DLV_OK && has_attr) {
+                        /* Should the value of flag be examined? */
+                    } else {
+                        DWARF_CHECK_ERROR2(pubname_attr_result,name,
+                            "pubname does not have DW_AT_external");
+                    }
+                }
+                dwarf_dealloc(dbg, die, DW_DLA_DIE);
+                die = 0;
             }
-            dwarf_dealloc(dbg, die, DW_DLA_DIE);
         }
 
         /* Now print name, after the test */
