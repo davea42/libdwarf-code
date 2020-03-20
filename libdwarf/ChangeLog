@@ -1,3 +1,24 @@
+2020-03-19: David Anderson
+    * dwarf_abbrev.c: Generates a more useful and specific
+      message in case a TAG is corrupt.
+    * dwarf_line.c: After dealloc assign 0 to the pointer.
+    * dwarf_die_deliv.c: Improved insert_into_context_list()
+      for clarity and correctness. 
+    * dwarf_error.c: Removed a couple "!= NULL" in if
+      conditions.
+    * dwarf_query.c: Uses local variable now to
+      satisfy the usual libdwarf convention that in case
+      of DW_DLV_NO_ENTRY or DW_DLV_ERROR only the
+      Dwarf_Error argument is altered, not other
+      pointer args.
+    * dwarf_util.h: Declaration for _dwarf_format_TAG_err_msg()
+    * dwarf_util.c: Generates a more useful and specific
+      message in in _dwarf_format_TAG_err_msg()
+      in case a TAG is corrupt.
+2020-03-18: David Anderson
+    * dwarf_die_deliv.c: Rewrote the function that
+      keeps the cu_context list in the proper order.
+      For clarity and correctness.
 2020-03-16: David Anderson
     * dwarf_alloc.c: A recent change had the wrong
       test during initial Dwarf_Debug

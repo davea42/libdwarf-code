@@ -203,12 +203,22 @@ dwarf_die_offsets(Dwarf_Die die,
     Dwarf_Error *error)
 {
     int res = 0;
+    Dwarf_Off lcuoff = 0;
+    Dwarf_Off loff = 0;
 
-    *off = 0;
-    *cu_off = 0;
-    res = dwarf_dieoffset(die,off,error);
+    res = dwarf_dieoffset(die,&loff,error);
     if (res == DW_DLV_OK) {
-        res = dwarf_die_CU_offset(die,cu_off,error);
+        res = dwarf_die_CU_offset(die,&lcuoff,error);
+    }
+    if (res == DW_DLV_OK) {
+        /*  Waiting till both succeed before
+            returning any value at all to retain
+            normal libdwarf call semantics. */
+        *off = loff;
+        *cu_off = lcuoff;
+    } else {
+        *off = 0;
+        *cu_off = 0;
     }
     return res;
 }
@@ -1744,7 +1754,9 @@ dwarf_die_abbrev_code(Dwarf_Die die)
 }
 
 /*  Returns a flag through ablhas_child. Non-zero if
-    the DIE has children, zero if it does not.   */
+    the DIE has children, zero if it does not.   
+    It has no Dwarf_Error arg!
+*/
 int
 dwarf_die_abbrev_children_flag(Dwarf_Die die,Dwarf_Half *ab_has_child)
 {

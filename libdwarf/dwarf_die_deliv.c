@@ -1353,13 +1353,22 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
+/*
+     CU_Contexts do not overlap.
+     cu_context we see here is not in the list we
+     are updating. See _dwarf_find_CU_Context()
 
+     Invariant: cc_debug_offset in strictly
+        ascending order in the list.
+*/
 static void
-insert_into_context_list(Dwarf_Debug_InfoTypes dis,
-    Dwarf_CU_Context cu_context)
+insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
+    Dwarf_CU_Context icu_context)
 {
-    Dwarf_Unsigned coffset = cu_context->cc_debug_offset;
+    Dwarf_Unsigned ioffset = icu_context->cc_debug_offset;
     Dwarf_Unsigned eoffset = 0;
+    Dwarf_Unsigned hoffset = 0;
+    Dwarf_Unsigned coffset = 0;
     Dwarf_CU_Context next = 0;
     Dwarf_CU_Context past = 0;
     Dwarf_CU_Context cur = 0;
@@ -1367,37 +1376,49 @@ insert_into_context_list(Dwarf_Debug_InfoTypes dis,
     /*  Add the context into the section context list.
         This is the one and only place where it is
         saved for re-use and eventual dealloc. */
-    if (dis->de_cu_context_list == NULL) {
-        dis->de_cu_context_list = cu_context;
-        dis->de_cu_context_list_end = cu_context;
+    if (!dis->de_cu_context_list) {
+        /*  First cu encountered. */
+        dis->de_cu_context_list = icu_context;
+        dis->de_cu_context_list_end = icu_context;
         return;
     } 
     eoffset = dis->de_cu_context_list_end->cc_debug_offset;
-    if (eoffset < coffset) {
-        /* Normal case */
-        dis->de_cu_context_list_end->cc_next = cu_context;
-        dis->de_cu_context_list_end = cu_context;
+    if (eoffset < ioffset) {
+        /* Normal case, add at end. */
+        dis->de_cu_context_list_end->cc_next = icu_context;
+        dis->de_cu_context_list_end = icu_context;
         return;
     }
-    /*  Due to dwarf_offdie() and the like CUs might
-        jump around. Lets keep the CU list sorted by
-        section offset of the CU die */
-#if 0
-    if (eoffset == coffset) {
-        /* Something is badly wrong.  A find failed */
+    hoffset = dis->de_cu_context_list->cc_debug_offset;
+    if (hoffset > ioffset) {
+        /* insert as new head. Unusual. */
+        next =  dis->de_cu_context_list;
+        dis->de_cu_context_list = icu_context;
+        dis->de_cu_context_list->cc_next = next;
+        /*  No need to touch de_cu_context_list_end */
+        return;
     }
-#endif
-    for ( cur = 0; cur ; past = cur, cur = next){
+    cur = dis->de_cu_context_list;
+    past = 0;
+    /*  Insert in middle somewhere. Neither at
+        start nor end. 
+        ASSERT: cur non-null
+        ASSERT: past non-null */
+    past = cur;
+    cur = cur->cc_next;
+    for ( ; cur ; cur = next) {
         next = cur->cc_next;
-        eoffset = cur->cc_debug_offset;
-        if (eoffset  > coffset) {
-            past->cc_next = cu_context;
-            cu_context->cc_next = cur;
+        coffset = cur->cc_debug_offset;
+        if (coffset  >  ioffset) {
+            /*  Insert before cur, using past.
+                ASSERT: past non-null  */
+            past->cc_next = icu_context;
+            icu_context->cc_next = cur;
             return;
         }
+        past = cur;
     }
-    /*  Impossible, for end, eoffset < coffset, see
-        this function entry */ 
+    /*  Impossible, for end, coffset (ie, eoffset) > ioffset  */
     /* NOTREACHED */
     return;
 }
@@ -1478,6 +1499,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                     /*  Fall thru to use the newly loaded section.
                         even though it might not be adequately
                         relocated. */
+                    if (resd == DW_DLV_ERROR) {
+                        dwarf_dealloc(dbg,err2,DW_DLA_ERROR);
+                        err2 = 0;
+                    }
                 } else {
                     if (error) {
                         *error = err2;
@@ -1540,7 +1565,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         }
 
         dis->de_cu_context = cu_context;
-        insert_into_context_list(dis,cu_context);
+        insert_into_cu_context_list(dis,cu_context);
     } else {
         dis->de_cu_context = cu_context;
     }
@@ -2513,7 +2538,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
                 return res;
             }
             /*  Add the new cu_context to a list of contexts */
-            insert_into_context_list(dis,cu_context);
+            insert_into_cu_context_list(dis,cu_context);
             new_cu_offset = new_cu_offset + cu_context->cc_length +
                 cu_context->cc_length_size +
                 cu_context->cc_extension_size;

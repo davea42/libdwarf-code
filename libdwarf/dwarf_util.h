@@ -366,6 +366,11 @@ int _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Unsigned * leb128_length,
     Dwarf_Unsigned *outval,Dwarf_Byte_Ptr endptr);
 
+int _dwarf_format_TAG_err_msg(Dwarf_Debug dbg,
+    Dwarf_Unsigned tag,const char *m,
+    Dwarf_Error *error);
+
+
 int _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Unsigned * leb128_length,
     Dwarf_Signed *outval, Dwarf_Byte_Ptr endptr);

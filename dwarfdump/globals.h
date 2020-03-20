@@ -83,10 +83,10 @@ extern "C" {
 #include "glflags.h"
 
 /* Used to try to avoid leakage when we hide errors. */
-#define DROP_ERROR_INSTANCE(d,r,e)       \
-    if (r == DW_DLV_ERROR) {             \
-        dwarf_dealloc(d,e,DW_DLA_ERROR); \
-        e = 0;                           \
+#define DROP_ERROR_INSTANCE(d,r,e)           \
+    if ((r) == DW_DLV_ERROR && (e)) {        \
+        dwarf_dealloc((d),(e),DW_DLA_ERROR); \
+        (e) = 0;                             \
     }
 
 /* Version 5 returns DW_AT_decl_file differently than earlier versions */

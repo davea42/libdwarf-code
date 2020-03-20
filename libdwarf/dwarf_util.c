@@ -50,6 +50,7 @@
 #include "dwarf_abbrev.h"
 #include "memcpy_swap.h"
 #include "dwarf_die_deliv.h"
+#include "dwarfstring.h"
 #include "pro_encode_nm.h"
 
 #ifndef O_BINARY
@@ -580,6 +581,26 @@ _dwarf_valid_form_we_know(Dwarf_Unsigned at_form,
     return FALSE;
 }
 
+int
+_dwarf_format_TAG_err_msg(Dwarf_Debug dbg,
+    Dwarf_Unsigned tag,
+    const char *m,
+    Dwarf_Error *errp)
+{
+    dwarfstring v;
+
+    dwarfstring_constructor(&v);
+    dwarfstring_append(&v,(char *)m);
+    dwarfstring_append(&v," The value ");
+    dwarfstring_append_printf_u(&v,"0x%" DW_PR_DUx
+        " is outside the valid TAG range.",tag);
+    dwarfstring_append(&v," Corrupt DWARF.");
+    _dwarf_error_string(dbg, errp,DW_DLE_TAG_CORRUPT,
+        dwarfstring_string(&v));
+    dwarfstring_destructor(&v);
+    return DW_DLV_ERROR;
+} 
+
 /*  This function returns a pointer to a Dwarf_Abbrev_List_s
     struct for the abbrev with the given code.  It puts the
     struct on the appropriate hash table.  It also adds all
@@ -744,17 +765,17 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_tag,
             dbg,error,end_abbrev_ptr);
         if (abbrev_tag > DW_TAG_hi_user) {
-            _dwarf_error(dbg, error,DW_DLE_TAG_CORRUPT);
-            return DW_DLV_ERROR;
+            return _dwarf_format_TAG_err_msg(dbg,
+                abbrev_tag,"DW_DLE_TAG_CORRUPT",
+                error);
         }
-
         if (abbrev_ptr >= end_abbrev_ptr) {
             _dwarf_error(dbg, error, DW_DLE_ABBREV_OFF_END);
             return DW_DLV_ERROR;
         }
-
         inner_list_entry = (Dwarf_Abbrev_List)
-            _dwarf_get_alloc(cu_context->cc_dbg, DW_DLA_ABBREV_LIST, 1);
+            _dwarf_get_alloc(cu_context->cc_dbg, 
+                DW_DLA_ABBREV_LIST, 1);
         if (inner_list_entry == NULL) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;

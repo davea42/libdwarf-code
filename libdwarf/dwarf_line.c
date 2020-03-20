@@ -396,6 +396,7 @@ dwarf_srcfiles(Dwarf_Die die,
         }
     }
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
+    stmt_list_attr = 0;
 
     resattr = _dwarf_internal_get_die_comp_dir(die, &const_comp_dir,
         &const_comp_name,error);
@@ -876,7 +877,7 @@ dwarf_get_line_section_name_from_die(Dwarf_Die die,
     struct Dwarf_Section_s *sec = 0;
 
     /*  ***** BEGIN CODE ***** */
-    if (error != NULL) {
+    if (error) {
         *error = NULL;
     }
 

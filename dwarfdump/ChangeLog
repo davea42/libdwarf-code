@@ -1,3 +1,13 @@
+2020-03-19  David Anderson
+    * globals.h: Using parens in the DROP_ERROR_INSTANCE
+      macro to avoid accidental side effects.
+    * print_die.c: Now uses more localized pointers
+      where possible to make understanding the code simpler.
+      Much more careful to dwarf_dealloc things in
+      the face of errors in the DWARF and early
+      termination of dwarfdump.
+    * print_lines.c: Much more careful to dwarf_dealloc
+      things in case of error.
 2020-03-17:   David Anderson
     * dwarfdump.c: Report the number of major errors
       more accurately.

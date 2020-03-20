@@ -719,6 +719,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_line";
     }
+    DROP_ERROR_INSTANCE(dbg,lres,err);
 
     /* The offsets will be zero if it fails. Let it pass. */
     atres = dwarf_die_offsets(cu_die,&dieprint_cu_goffset,
@@ -754,6 +755,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
     if (glflags.verbose > 1) {
         int errcount = 0;
+        int lresv = 0;
         print_source_intro(dbg,cu_die);
         print_one_die(dbg, cu_die,
             dieprint_cu_goffset,
@@ -762,14 +764,14 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             /* srcfiles= */ 0, /* cnt= */ 0,
             /* ignore_die_stack= */TRUE);
         DWARF_CHECK_COUNT(lines_result,1);
-        lres = dwarf_print_lines(cu_die, &err,&errcount);
+        lresv = dwarf_print_lines(cu_die, &err,&errcount);
         if (errcount > 0) {
             DWARF_ERROR_COUNT(lines_result,errcount);
             DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
-        if (lres == DW_DLV_ERROR) {
+        if (lresv == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-                "dwarf_srclines details", lres, err);
+                "dwarf_srclines details", lresv, err);
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
             err = 0;
         }
@@ -842,11 +844,12 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             DWARF_CHECK_ERROR2(decl_file_result,"dwarf_srclines",
                 dwarf_errmsg(err));
             glflags.gf_record_dwarf_error = FALSE;  /* Clear error condition */
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
         } else {
             print_error_and_continue(dbg,
                 "dwarf_srclines", lres, err);
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
         }
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */

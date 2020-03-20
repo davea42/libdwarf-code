@@ -31,6 +31,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "dwarfstring.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -210,11 +211,10 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         return res;
     }
     if (utmp > DW_TAG_hi_user) {
-        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
-        _dwarf_error(dbg, error,DW_DLE_TAG_CORRUPT);
-        return DW_DLV_ERROR;
+        return _dwarf_format_TAG_err_msg(dbg,
+            utmp,"DW_DLE_TAG_CORRUPT",
+            error);
     }
-
     ret_abbrev->dab_tag = utmp;
     if (abbrev_ptr >= abbrev_section_end) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
