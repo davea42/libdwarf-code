@@ -305,7 +305,8 @@ translate_to_uri(const char * filename, struct esb_s *out)
             v[1] = 0;
             esb_append(out,v);
         } else {
-            esb_append_printf(out, "%%%02x",c);
+            esb_append(out,"%");
+            esb_append_printf_u(out, "%02x",c&0xff);
         }
     }
 }

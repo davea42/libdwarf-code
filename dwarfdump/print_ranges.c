@@ -174,7 +174,7 @@ check_ranges_list(Dwarf_Debug dbg,
 
                     bError = TRUE;
                     esb_constructor(&errbuf);
-                    esb_append_printf(&errbuf,
+                    esb_append_printf_s(&errbuf,
                         "%s: Address outside a "
                         "valid .text range",sanitized(sec_name));
                     DWARF_CHECK_ERROR(ranges_result,

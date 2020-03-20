@@ -192,12 +192,12 @@ get_cu_index_string(struct esb_s *out,
 {
     Dwarf_Unsigned type_index = 0;
     if (index < culist_len) {
-        esb_append_printf(out,"%4" DW_PR_DUu,index);
+        esb_append_printf_u(out,"%4" DW_PR_DUu,index);
         return;
     }
     type_index = index-culist_len;
-    esb_append_printf(out, "%4" DW_PR_DUu "(T%4" DW_PR_DUu ")",
-        index,type_index);
+    esb_append_printf_u(out, "%4" DW_PR_DUu ,index);
+    esb_append_printf_u(out, "(T%4" DW_PR_DUu ")",type_index);
     return;
 }
 

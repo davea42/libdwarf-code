@@ -112,7 +112,8 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
 
         if (c == '%') {
             /* %xx for this too. Simple and unambiguous */
-            esb_append_printf(mesb, "%%%02x",c & 0xff);
+            esb_append(mesb, "%");
+            esb_append_printf_u(mesb, "%02x",c & 0xff);
             continue;
         }
         if (c >= 0x20 && c <=0x7e) {
@@ -127,12 +128,14 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
         }
 #endif /* _WIN32 */
         if (c < 0x20) {
-            esb_append_printf(mesb, "%%%02x",c & 0xff);
+            esb_append(mesb, "%");
+            esb_append_printf_u(mesb, "%02x",c & 0xff);
             continue;
         }
         /* ASSERT:  (c >= 0x7f)  */
         /* ISO-8859 or UTF-8. Not handled well yet. */
-        esb_append_printf(mesb, "%%%02x",c & 0xff);
+        esb_append(mesb, "%");
+        esb_append_printf_u(mesb, "%02x",c & 0xff);
     }
 }
 

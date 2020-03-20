@@ -378,9 +378,11 @@ main(int argc, char **argv)
                 unsigned bit = num % BITS_PER_WORD;
 
                 if (idx >= table_columns) {
-                    esb_append_printf(&msg_buf,
+                    esb_append_printf_i(&msg_buf,
                         "too many attributes a: table incomplete "
-                        "index %d cols %d.",idx,table_columns);
+                        "index %d cols",idx);
+                    esb_append_printf_i(&msg_buf,
+                        " %d.",table_columns);
                     bad_line_input(esb_get_string(&msg_buf));
                 }
                 validate_row_col("Setting attr bit",tag,idx,
@@ -388,9 +390,11 @@ main(int argc, char **argv)
                 tag_attr_combination_table[tag][idx] |= (((unsigned)1) << bit);
             } else {
                 if (curcol >= table_columns) {
-                    esb_append_printf(&msg_buf,
+                    esb_append_printf_i(&msg_buf,
                         "too many attributes b: table incomplete "
-                        "index %d cols %d.",curcol,table_columns);
+                        "index %d ",curcol);
+                    esb_append_printf_i(&msg_buf,
+                        "cols %d.",table_columns);
                     bad_line_input(esb_get_string(&msg_buf));
                 }
                 validate_row_col("Setting attr col",current_row,curcol,
@@ -406,9 +410,11 @@ main(int argc, char **argv)
                 /* Add attribute to current tag */
                 if (cur_attr >= DW_AT_last) {
                     esb_empty_string(&msg_buf);
-                    esb_append_printf(&msg_buf,
+                    esb_append_printf_i(&msg_buf,
                         "too many attributes c: table incomplete "
-                        "index %d cols %d.",cur_attr,DW_AT_last);
+                        "index %d ",cur_attr);
+                    esb_append_printf_i(&msg_buf,
+                        "cols %d.",DW_AT_last);
                     bad_line_input(esb_get_string(&msg_buf));
                 }
                 /* Check for duplicated entries */

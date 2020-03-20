@@ -118,7 +118,7 @@ print_one_macro_entry(long i,
 
             esb_constructor(&typeb);
             counts->mc_unknown++;
-            esb_append_printf(&typeb,
+            esb_append_printf_u(&typeb,
                 "DW_MACINFO_0x%x", mdp->dmd_type);
             print_one_macro_entry_detail(i,
                 esb_get_string(&typeb), mdp);

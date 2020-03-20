@@ -832,15 +832,16 @@ print_one_fde(Dwarf_Debug dbg,
                 esb_constructor_fixed(&msg,
                     local_buf,sizeof(local_buf));
                 if (esb_string_len(&temps) > 0) {
-                    esb_append_printf(&msg,
+                    esb_append_printf_u(&msg,
                         "An fde low pc of 0x%"
                         DW_PR_DUx
-                        " is not the first fde with that pc. "
+                        " is not the first fde with that pc. ",
+                        low_pc);
+                    esb_append_printf_s(&msg,
                         "The first is named \"%s\"",
-                        (Dwarf_Unsigned)low_pc,
                         esb_get_string(&temps));
                 } else {
-                    esb_append_printf(&msg,
+                    esb_append_printf_u(&msg,
                         "An fde low pc of 0x%"
                         DW_PR_DUx
                         " is not the first fde with that pc. "

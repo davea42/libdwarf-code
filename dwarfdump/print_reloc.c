@@ -122,11 +122,11 @@ get_reloc_type_names(int index,struct esb_s* outbuf)
     if (index < 0 || index >= number_of_reloc_type_names) {
         if (number_of_reloc_type_names == 0) {
             /* No table provided. */
-            esb_append_printf(outbuf,
+            esb_append_printf_i(outbuf,
                 "reloc type %d", (int) index);
         } else {
             /* Table incomplete? */
-            esb_append_printf(outbuf,
+            esb_append_printf_i(outbuf,
                 "reloc type %d unknown", (int) index);
         }
         return;

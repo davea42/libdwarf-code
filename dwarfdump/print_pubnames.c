@@ -127,7 +127,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         esb_append(&details,line_title);
         esb_append(&details," dwarf_offdie : "
             "die offset does not reference valid DIE.  ");
-        esb_append_printf(&details,"0x%"  DW_PR_DUx, die_off);
+        esb_append_printf_u(&details,"0x%"  DW_PR_DUx, die_off);
         esb_append(&details,".");
         print_error(dbg, esb_get_string(&details), dres, err);
         esb_destructor(&details);
@@ -155,7 +155,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             esb_append(&details,line_title);
             esb_append(&details," dwarf_offdie: "
                 "cu die offset  does not reference valid CU DIE.  ");
-            esb_append_printf(&details,"0x%"  DW_PR_DUx, cu_die_off);
+            esb_append_printf_u(&details,"0x%"  DW_PR_DUx, cu_die_off);
             esb_append(&details,".");
             print_error(dbg, esb_get_string(&details), dres, err);
             esb_destructor(&details);

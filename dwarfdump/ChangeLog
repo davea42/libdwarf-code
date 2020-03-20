@@ -1,3 +1,10 @@
+2020-03-20  David Anderson
+    * print_frames.c,print_dgbindex.c,print_macros.c,
+      print_pubnames.c,print_ranges.c,print_reloc.c,
+      sanitized.c,tag_attr.c,testesb.c,
+      uri.c: Remove use of esb_append_printf()
+      and use esb_append_printf_i etc instead.
+      Then null device will never be set up.
 2020-03-19  David Anderson
     * globals.h: Using parens in the DROP_ERROR_INSTANCE
       macro to avoid accidental side effects.

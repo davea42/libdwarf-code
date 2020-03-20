@@ -81,62 +81,62 @@ int main()
 
         /* After static alloc we add len, ie, 11 */
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %d bbb",(int)i);
+        esb_append_printf_i(&d5,"aaa %d bbb",(int)i);
         validate_esb(201,&d5,11,15,"aaa -33 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %6d bbb",(int)i);
+        esb_append_printf_i(&d5,"aaa %6d bbb",(int)i);
         validate_esb(202,&d5,14,18,"aaa    -33 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %6d bbb",6);
+        esb_append_printf_i(&d5,"aaa %6d bbb",6);
         validate_esb(203,&d5,14,18,"aaa      6 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %06d bbb",6);
+        esb_append_printf_i(&d5,"aaa %06d bbb",6);
         validate_esb(204,&d5,14,18,"aaa 000006 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %06u bbb",6);
+        esb_append_printf_u(&d5,"aaa %06u bbb",6);
         validate_esb(205,&d5,14,18,"aaa 000006 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %6u bbb",6);
+        esb_append_printf_u(&d5,"aaa %6u bbb",6);
         validate_esb(206,&d5,14,18,"aaa      6 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %u bbb",12);
+        esb_append_printf_u(&d5,"aaa %u bbb",12);
         validate_esb(207,&d5,10,14,"aaa 12 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %06x bbb",12);
+        esb_append_printf_u(&d5,"aaa %06x bbb",12);
         validate_esb(208,&d5,14,18,"aaa 00000c bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %6x bbb",12);
+        esb_append_printf_u(&d5,"aaa %6x bbb",12);
         validate_esb(209,&d5,14,18,"aaa      c bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %+d bbb",12);
+        esb_append_printf_i(&d5,"aaa %+d bbb",12);
         validate_esb(210,&d5,11,15,"aaa +12 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %+6d bbb",12);
+        esb_append_printf_i(&d5,"aaa %+6d bbb",12);
         validate_esb(211,&d5,14,18,"aaa    +12 bbb",__LINE__);
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %6d bbb",(int)i);
+        esb_append_printf_i(&d5,"aaa %6d bbb",(int)i);
         validate_esb(212,&d5,14,18,"aaa    -33 bbb",__LINE__);
         esb_destructor(&d5);
 
@@ -204,7 +204,7 @@ int main()
         esb_constructor(&d5);
         esb_force_allocation(&d5,50);
         esb_append(&d5,"aaa ");
-        esb_append_printf(&d5,s,1);
+        esb_append_printf_i(&d5,s,1);
         esb_append(&d5,"zzz");
         validate_esb(14,&d5,18,50,"aaa insert me 1zzz",__LINE__);
         esb_destructor(&d5);
