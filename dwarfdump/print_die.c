@@ -4,30 +4,33 @@
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
   Portions Copyright 2007-2019 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 */
 
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
-    Boston, MA 02110-1301, USA.
-    SGI has moved from the Crittenden Lane address.  */
+    Free Software Foundation, Inc., 51 Franklin St, Fifth
+    Floor, Boston, MA 02110-1301, USA.  SGI has moved from
+    the Crittenden Lane address.  */
 
 
 #include "globals.h"
@@ -293,6 +296,19 @@ get_die_stack_sibling()
     }
     return 0;
 }
+static void
+dealloc_die_stack(Dwarf_Debug dbg)
+{
+    while (die_stack_indent_level >= 0) {
+        Dwarf_Die u = die_stack[die_stack_indent_level].die_;
+        if (u) {
+            dwarf_dealloc(dbg,u,DW_DLA_DIE);
+        }
+        /* counts down one too many times... */
+        die_stack_indent_level--;
+    }
+}
+
 
 /*  Higher stack level numbers must have a smaller sibling
     offset than lower or else the sibling offsets are wrong.
@@ -764,7 +780,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             /* Does not return. */
             print_error(dbg, "siblingof cu header", sres, *pod_err);
         }
-        /*  Get the CU offset  (when we can) 
+        /*  Get the CU offset  (when we can)
             for easy error reporting */
         offres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
             &glflags.DIE_offset,&offerror);
@@ -845,7 +861,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         glflags.CU_low_address = 0;
 
         /*  Release the 'cu_die' created by the call
-            to 'dwarf_next_cu_header_d' at the 
+            to 'dwarf_next_cu_header_d' at the
             top of the main loop. */
         dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
         cu_die = 0; /* For debugging, stale die should be NULL. */
@@ -905,8 +921,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     there is no dW_AT_stmt_list attribute.
                     and we do not want to print anything
                     about statements in that case */
-                } 
-                {   /* Do regardless if dwarf_srcfiles 
+                }
+                {
+                    /*  Do regardless if dwarf_srcfiles
                         was successful to print die
                         and children as best we can
                         even with errors . */
@@ -919,7 +936,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         &glflags.DIE_overall_offset,
                         &glflags.DIE_offset,&lperr);
                     DROP_ERROR_INSTANCE(dbg,podres2,lperr);
-                    glflags.DIE_CU_overall_offset = 
+                    glflags.DIE_CU_overall_offset =
                         glflags.DIE_overall_offset;
                     glflags.DIE_CU_offset = glflags.DIE_offset;
                     dieprint_cu_goffset = glflags.DIE_overall_offset;
@@ -927,7 +944,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         dieprint_cu_goffset,is_info, srcfiles, cnt);
                     if (srcfiles) {
                         for (si = 0; si < cnt; ++si) {
-                            dwarf_dealloc(dbg, srcfiles[si], 
+                            dwarf_dealloc(dbg, srcfiles[si],
                                 DW_DLA_STRING);
                         }
                         dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
@@ -1050,6 +1067,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
     Dwarf_Error dacerr = 0;
     int cdres = 0;
     Dwarf_Die in_die = in_die_in;
+
     for (;;) {
         int offres = 0;
 
@@ -1168,7 +1186,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     }
                 }
                 if (glflags.gf_display_children_tree) {
-                    glflags.gf_stop_indent_level = 
+                    glflags.gf_stop_indent_level =
                         die_stack_indent_level;
                     glflags.gf_info_flag = TRUE;
                     glflags.gf_types_flag = TRUE;
@@ -1184,7 +1202,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             Dwarf_Bool bError = FALSE;
             Dwarf_Half tag = 0;
             int abtres = 0;
-            
+
             /* This does not return a Dwarf_Error value! */
             abtres = dwarf_die_abbrev_children_flag(in_die,
                 &ab_has_child);
@@ -1211,7 +1229,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     case DW_TAG_inlined_subroutine:
                         break;
                     default:
-                        bError = 
+                        bError =
                             (cdres == DW_DLV_OK && !ab_has_child)
                             ||
                             (cdres == DW_DLV_NO_ENTRY && ab_has_child);
@@ -1234,7 +1252,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 then the compiler has made a mistake, and
                 the DIE tree is corrupt.  */
             Dwarf_Off child_overall_offset = 0;
-            int cores = dwarf_dieoffset(child, 
+            int cores = dwarf_dieoffset(child,
                 &child_overall_offset, &dacerr);
 
             if (cores == DW_DLV_OK) {
@@ -1288,14 +1306,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             sibling = 0;
             /*  The die stack zero entry is not used, so pointless
                 to reset. */
-            while (die_stack_indent_level >= 0) {
-                Dwarf_Die u = die_stack[die_stack_indent_level].die_;
-                if (u) {
-                    dwarf_dealloc(dbg,u,DW_DLA_DIE);
-                }
-                /* counts down one too many times... */
-                die_stack_indent_level--;
-            }
+            dealloc_die_stack(dbg);
             /* The default value is zero, not -1. So fix it. */
             die_stack_indent_level = 0;
             print_error(dbg, "dwarf_child", cdres, dacerr);
@@ -1317,13 +1328,15 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 recursing. Recursing is horribly wasteful of stack
                 space. */
         } else if (cdres == DW_DLV_ERROR) {
+            dealloc_die_stack(dbg);
+            /* does not return */
             print_error(dbg, "dwarf_siblingof", cdres, dacerr);
         }
 
         /*  If we have a sibling, verify that its offset
             is next to the last processed DIE;
             An incorrect sibling chain is a nasty bug.  */
-        if (cdres == DW_DLV_OK && sibling && 
+        if (cdres == DW_DLV_OK && sibling &&
             glflags.gf_check_di_gaps &&
             checking_this_compiler()) {
 

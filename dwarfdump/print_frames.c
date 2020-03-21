@@ -2466,6 +2466,9 @@ print_frames(Dwarf_Debug dbg,
 
         /* Do not print any frame info if in check mode */
         if (glflags.gf_check_frames) {
+            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                cie_element_count,
+                fde_data, fde_element_count);
             addr_map_destroy(lowpcSet);
             lowpcSet = 0;
             continue;
@@ -2525,11 +2528,13 @@ print_frames(Dwarf_Debug dbg,
                     break;
                 }
             }
-            dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_element_count,
+            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                cie_element_count,
                 fde_data, fde_element_count);
         }
         addr_map_destroy(lowpcSet);
         lowpcSet = 0;
+
     }
     if (current_cu_die_for_print_frames) {
         dwarf_dealloc(dbg, current_cu_die_for_print_frames, DW_DLA_DIE);

@@ -100,22 +100,6 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 }
 #endif
 
-static int
-leb128_uword_wrapper(Dwarf_Debug dbg,
-    Dwarf_Small ** startptr,
-    Dwarf_Small * endptr,
-    Dwarf_Unsigned *out_value,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned utmp2 = 0;
-    Dwarf_Small * start = *startptr;
-    DECODE_LEB128_UWORD_CK(start, utmp2,
-        dbg,error,endptr);
-    *out_value = utmp2;
-    *startptr = start;
-    return DW_DLV_OK;
-}
-
 /*
     For a given Dwarf_Debug dbg, this function checks
     if a CU that includes the given offset has been read
@@ -151,7 +135,7 @@ _dwarf_find_CU_Context(Dwarf_Debug dbg, Dwarf_Off offset,Dwarf_Bool is_info)
         dis->de_cu_context->cc_debug_offset <= offset) {
 
         for (cu_context = dis->de_cu_context;
-            cu_context != NULL; 
+            cu_context != NULL;
             cu_context = cu_context->cc_next) {
 
             if (offset >= cu_context->cc_debug_offset &&
@@ -165,7 +149,7 @@ _dwarf_find_CU_Context(Dwarf_Debug dbg, Dwarf_Off offset,Dwarf_Bool is_info)
     }
 
     for (cu_context = dis->de_cu_context_list;
-        cu_context != NULL; 
+        cu_context != NULL;
         cu_context = cu_context->cc_next) {
 
         if (offset >= cu_context->cc_debug_offset &&
@@ -1354,11 +1338,11 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 /*
-     CU_Contexts do not overlap.
-     cu_context we see here is not in the list we
-     are updating. See _dwarf_find_CU_Context()
+    CU_Contexts do not overlap.
+    cu_context we see here is not in the list we
+    are updating. See _dwarf_find_CU_Context()
 
-     Invariant: cc_debug_offset in strictly
+    Invariant: cc_debug_offset in strictly
         ascending order in the list.
 */
 static void
@@ -1381,7 +1365,7 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
         dis->de_cu_context_list = icu_context;
         dis->de_cu_context_list_end = icu_context;
         return;
-    } 
+    }
     eoffset = dis->de_cu_context_list_end->cc_debug_offset;
     if (eoffset < ioffset) {
         /* Normal case, add at end. */
@@ -1401,7 +1385,7 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
     cur = dis->de_cu_context_list;
     past = 0;
     /*  Insert in middle somewhere. Neither at
-        start nor end. 
+        start nor end.
         ASSERT: cur non-null
         ASSERT: past non-null */
     past = cur;
@@ -2298,7 +2282,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
 #if 0
     DECODE_LEB128_UWORD_CK(die_info_ptr, utmp,dbg,error,die_info_end);
 #endif
-    dieres = leb128_uword_wrapper(dbg,
+    dieres = _dwarf_leb128_uword_wrapper(dbg,
         &die_info_ptr,die_info_end,&utmp,error);
     if (dieres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);

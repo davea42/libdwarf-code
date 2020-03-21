@@ -459,4 +459,21 @@ int _dwarf_what_section_are_we(Dwarf_Debug dbg,
     Dwarf_Small    **sec_end_ptr_out,
     Dwarf_Error *error);
 
+/*  wrappers return either DW_DLV_OK or DW_DLV_ERROR.
+    Never DW_DLV_NO_ENTRY. */
+int
+_dwarf_leb128_uword_wrapper(Dwarf_Debug dbg,
+    Dwarf_Small ** startptr,
+    Dwarf_Small * endptr,
+    Dwarf_Unsigned *out_value,
+    Dwarf_Error * error);
+int
+_dwarf_leb128_sword_wrapper(Dwarf_Debug dbg,
+    Dwarf_Small ** startptr,
+    Dwarf_Small * endptr,
+    Dwarf_Signed *out_value,
+    Dwarf_Error * error);
+
+
+
 #endif /* DWARF_UTIL_H */

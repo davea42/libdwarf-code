@@ -1,4 +1,23 @@
-2020-03-2o: David Anderson
+2020-03-21: David Anderson
+    * dwarf_abbrev.c Move leb wrapper functions to dwarf_util.[ch]:
+      and rename as _dwarf.....
+      Make certain error conditions more explicit (better
+      text in the error string).
+    * dwarf_die_deliv.c: Move leb wrapper functions to dwarf_util.[ch]
+      and rename as _dwarf.....
+    * dwarf_frame2.c: Add {} for the few 'if' missing same.
+    * dwarf_line.c: In case of form error make the error
+      text more useful.
+    * dwarf_query.c: Move leb wrapper functions to dwarf_util.[ch]
+      and rename as _dwarf.....
+    * dwarf_util.c, dwarf_util.h: Add the renamed
+      _dwarf_leb128_uword_wrapper() and
+      _dwarf_leb128_sword_wrapper() for general use
+      where better error messages are advisable.
+    * dwarf_init_finish.c: Removed a single trailing blank.
+    * libdwarf.h.in: Removed trailing spaces.
+    * generated_libdwarf.h.in: Regenerated.
+2020-03-20: David Anderson
     * dwarf_arange.c: In case of error, was failing
       to clean up all allocations.
     * dwarf_macro5.c: Was preventing some dwarf_dealloc().

@@ -664,6 +664,7 @@ main(int argc, char *argv[])
             (ftype == DW_FTYPE_ARCHIVE)? TRUE:FALSE);
         if (excode) {
             global_destructors();
+            flag_data_post_cleanup();
             exit(excode);
         }
 #else /* !DWARF_WITH_LIBELF */
@@ -705,6 +706,7 @@ main(int argc, char *argv[])
         we never get here, we exit(1)
         in print_error() */
     check_for_major_errors();
+    flag_data_post_cleanup();
     global_destructors();
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
@@ -1193,7 +1195,7 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
                 glflags.program_name, msg, errmsg);
         }
     } else if (dwarf_ret_val == DW_DLV_NO_ENTRY) {
-        printf("%s NO ENTRY:  %s: \n", 
+        printf("%s NO ENTRY:  %s: \n",
             glflags.program_name, msg);
     } else if (dwarf_ret_val == DW_DLV_OK) {
         printf("%s:  %s \n", glflags.program_name, msg);
@@ -1226,6 +1228,7 @@ print_error(Dwarf_Debug dbg,
         check_for_major_errors();
     }
     global_destructors();
+    flag_data_post_cleanup();
     exit(FAILED);
 }
 /* ARGSUSED */

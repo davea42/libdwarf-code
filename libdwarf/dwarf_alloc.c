@@ -609,23 +609,24 @@ dwarf_dealloc(Dwarf_Debug dbg,
             __LINE__,__FILE__);
 #endif /* DEBUG*/
         return;
-     }
-     if (dbg->de_alloc_tree) {
-         /*  If it's a string in debug_info etc doing
-             (char *)space - DW_RESERVE is totally bogus. */
-         if (alloc_type == DW_DLA_STRING &&
-             string_is_in_debug_section(dbg,space)) {
-             /*  A string pointer may point into .debug_info or
-                 .debug_string etc.
-                 So must not be freed.  And strings have
-                 no need of a specialdestructor().
-                 Mostly a historical mistake here.
-                 Corrected in libdwarf March 14,2020. */
-             return;
-         }
-     }
-        /*  Otherwise it might be allocated string so it is ok
-            do the (char *)space - DW_RESERVE  */
+    }
+    if (dbg->de_alloc_tree) {
+        /*  If it's a string in debug_info etc doing
+            (char *)space - DW_RESERVE is totally bogus. */
+        if (alloc_type == DW_DLA_STRING &&
+            string_is_in_debug_section(dbg,space)) {
+            /*  A string pointer may point into .debug_info or
+                .debug_string etc.
+                So must not be freed.  And strings have
+                no need of a specialdestructor().
+                Mostly a historical mistake here.
+                Corrected in libdwarf March 14,2020. */
+            return;
+        }
+    }
+    /*  Otherwise it might be allocated string so it is ok
+        do the (char *)space - DW_RESERVE  */
+
     /*  If it's a DW_DLA_STRING case and erroneous
         the following pointer operations might
         result in a coredump if the pointer

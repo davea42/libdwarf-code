@@ -76,44 +76,6 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 }
 #endif
 
-
-/*  We need to increment startptr for the caller
-    in these wrappers so the caller passes in ** */
-static int
-leb128_uword_wrapper(Dwarf_Debug dbg,
-    Dwarf_Small ** startptr,
-    Dwarf_Small * endptr,
-    Dwarf_Unsigned *out_value,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned utmp2 = 0;
-    Dwarf_Small * start = *startptr;
-    DECODE_LEB128_UWORD_CK(start, utmp2,
-        dbg,error,endptr);
-    *out_value = utmp2;
-    *startptr = start;
-    return DW_DLV_OK;
-}
-static int
-leb128_sword_wrapper(Dwarf_Debug dbg,
-    Dwarf_Small ** startptr,
-    Dwarf_Small * endptr,
-    Dwarf_Signed *out_value,
-    Dwarf_Error * error)
-{
-    Dwarf_Small * start = *startptr;
-    Dwarf_Signed stmp2 = 0;
-    DECODE_LEB128_SWORD_CK(start, stmp2,
-        dbg,error,endptr);
-    *out_value = stmp2;
-    *startptr = start;
-    return DW_DLV_OK;
-}
-
-
-
-
-
 /* This is normally reliable.
 But not always.
 If different compilation
@@ -452,7 +414,7 @@ dwarf_attrlist(Dwarf_Die die,
             catch errors before return. */
         /*DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,
             dbg,error,abbrev_end); */
-        res = leb128_uword_wrapper(dbg,
+        res = _dwarf_leb128_uword_wrapper(dbg,
             &abbrev_ptr,abbrev_end,&attr,error);
         if (res == DW_DLV_ERROR) {
             empty_local_attrlist(dbg,head_attr);
@@ -466,7 +428,7 @@ dwarf_attrlist(Dwarf_Die die,
         }
         /*DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,
             dbg,error,abbrev_end); */
-        res = leb128_uword_wrapper(dbg,
+        res = _dwarf_leb128_uword_wrapper(dbg,
             &abbrev_ptr,abbrev_end,&attr_form,error);
         if (res == DW_DLV_ERROR) {
             empty_local_attrlist(dbg,head_attr);
@@ -479,7 +441,7 @@ dwarf_attrlist(Dwarf_Die die,
         }
         if (attr_form == DW_FORM_implicit_const) {
             /* The value is here, not in a DIE. */
-            res = leb128_sword_wrapper(dbg,&abbrev_ptr,
+            res = _dwarf_leb128_sword_wrapper(dbg,&abbrev_ptr,
                 abbrev_end, &implicit_const, error);
             if (res == DW_DLV_ERROR) {
                 empty_local_attrlist(dbg,head_attr);
@@ -1754,7 +1716,7 @@ dwarf_die_abbrev_code(Dwarf_Die die)
 }
 
 /*  Returns a flag through ablhas_child. Non-zero if
-    the DIE has children, zero if it does not.   
+    the DIE has children, zero if it does not.
     It has no Dwarf_Error arg!
 */
 int

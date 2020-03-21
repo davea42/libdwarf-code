@@ -450,11 +450,11 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 esb_destructor(&msgc);
             } else {
                 ares =
-                    dwarf_hasattr(die, DW_AT_external, 
+                    dwarf_hasattr(die, DW_AT_external,
                     &has_attr, err);
                 if (ares == DW_DLV_ERROR) {
                     struct esb_s msgd;
-    
+
                     esb_constructor(&msgd);
                     esb_append(&msgd,
                         "hassattr on DW_AT_external from ");

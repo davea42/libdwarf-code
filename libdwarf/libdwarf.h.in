@@ -869,19 +869,19 @@ struct Dwarf_Obj_Access_Interface_s {
     Newer names below.
 */
 /* 64-bit address-size target */
-#define DW_DLC_SIZE_64              0x40000000 
+#define DW_DLC_SIZE_64              0x40000000
 
 /* 32-bit address-size target */
 #define DW_DLC_SIZE_32              0x20000000
 
 /* 64-bit offset-size DWARF offsets (else 32bit) */
-#define DW_DLC_OFFSET_SIZE_64       0x10000000 
+#define DW_DLC_OFFSET_SIZE_64       0x10000000
 
 /* 32-bit offset-size ELF object (ELFCLASS32) */
-#define DW_DLC_ELF_OFFSET_SIZE_32   0x00400000 
+#define DW_DLC_ELF_OFFSET_SIZE_32   0x00400000
 
 /* 64-bit offset-size ELF object (ELFCLASS64)  */
-#define DW_DLC_ELF_OFFSET_SIZE_64   0x00020000 
+#define DW_DLC_ELF_OFFSET_SIZE_64   0x00020000
 
 /* dwarf_producer_init* access flag modifiers
    Some new April 2014.
@@ -895,20 +895,20 @@ struct Dwarf_Obj_Access_Interface_s {
 /* use 32-bit  sec  offsets */
 #define DW_DLC_OFFSET32             0x00010000
 
-/* The following 3 are new sensible names. 
+/* The following 3 are new sensible names.
 Old names above with same values. */
 /* use 64-bit sec offsets in ELF */
-#define DW_DLC_OFFSET64             0x10000000 
+#define DW_DLC_OFFSET64             0x10000000
 
 /* use 4 for address_size */
-#define DW_DLC_POINTER32            0x20000000 
+#define DW_DLC_POINTER32            0x20000000
 
 /* use 8 for address_size */
-#define DW_DLC_POINTER64            0x40000000 
+#define DW_DLC_POINTER64            0x40000000
 
 /* Special for IRIX only */
 /* use Elf 64bit offset headers and non-std IRIX 64bitoffset headers */
-#define DW_DLC_IRIX_OFFSET64        0x00200000 
+#define DW_DLC_IRIX_OFFSET64        0x00200000
 
 /*  Usable with assembly output because it is up to the producer to
     deal with locations in whatever manner the calling producer
@@ -1560,7 +1560,7 @@ int dwarf_elf_init(dwarf_elf_handle /*elf*/,
 
 /*  New September 2019.
     When using dwarf_elf_init[_b]() we still want the file path
-    in the record. So we add it after the init phase. 
+    in the record. So we add it after the init phase.
     Path is needed for buildid and debuglink to fully work.
 */
 int  dwarf_add_file_path(Dwarf_Debug /*dbg*/,
@@ -2549,7 +2549,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
     If no .note.gnu.build-id then  buildid_length_returned,
     and buildid_returned will be set 0 through the pointers.
     See libdwarf2.1.mm for additional important details.
-    see dwarf_add_file_path() 
+    see dwarf_add_file_path()
     and dwarf_add_debuglink_global_path().
 */
 
@@ -4731,8 +4731,8 @@ Dwarf_Half dwarf_set_frame_rule_inital_value(Dwarf_Debug /*dbg*/,
     frame operation references into simpler forms and to
     reflect ABI specific data.  Of course altering libdwarf.h
     and dwarf.h allow the same capabilities, but header changes
-    in the distribution would require you re-integrate your 
-    libdwarf.h changes into the distributed libdwarf.h ... 
+    in the distribution would require you re-integrate your
+    libdwarf.h changes into the distributed libdwarf.h ...
     so use the following functions instead.*/
 Dwarf_Half dwarf_set_frame_rule_initial_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);

@@ -608,14 +608,8 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
 {
     Dwarf_Unsigned offset = offset_in;
     if (glflags.gf_check_abbreviations) {
-        Dwarf_Abbrev ab = 0;
         Dwarf_Unsigned length = 0;
-        Dwarf_Unsigned abbrev_entry_count = 0;
-        Dwarf_Unsigned abbrev_code;
-        int abres = DW_DLV_OK;
-        Dwarf_Error aberr = 0;
         Dwarf_Unsigned last_abbrev_code = 0;
-
         Dwarf_Bool bMore = TRUE;
         Dwarf_Unsigned CU_abbrev_count = 0;
 
@@ -630,9 +624,29 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                 (abbrev_array_size) * sizeof(Dwarf_Unsigned));
         }
 
-        while (bMore && (abres = dwarf_get_abbrev(dbg, offset, &ab,
-            &length, &abbrev_entry_count,
-            &aberr)) == DW_DLV_OK) {
+        while (bMore) {
+            Dwarf_Abbrev ab = 0;
+            int abres = DW_DLV_OK;
+            Dwarf_Unsigned abbrev_entry_count = 0;
+            Dwarf_Unsigned abbrev_code;
+            Dwarf_Error aberr = 0;
+
+            abres = dwarf_get_abbrev(dbg, offset, &ab,
+                &length, &abbrev_entry_count, &aberr);
+            if (abres == DW_DLV_ERROR) {
+                destruct_abbrev_array();
+                print_error_and_continue(dbg,
+                    "Error reading abbreviations", abres, aberr);
+                dwarf_dealloc(dbg,aberr,DW_DLA_ERROR);
+                bMore = FALSE;
+                break;
+            }
+            if (abres == DW_DLV_NO_ENTRY) {
+                destruct_abbrev_array();
+                bMore = FALSE;
+                break;
+            }
+            /*  Will not error unless ab is NULL! */
             dwarf_get_abbrev_code(ab,&abbrev_code,&aberr);
             if (abbrev_code == 0) {
                 /* End of abbreviation table for this CU */
@@ -640,57 +654,51 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                 bMore = FALSE;
             } else {
                 /* Valid abbreviation code. We hope. */
-                if (abbrev_code > 0) {
-                    Dwarf_Unsigned abhigh = check_abbrev_num_sequence(
-                        abbrev_code,
-                        last_abbrev_code,
-                        abbrev_array_size,abbrev_entry_count,
-                        CU_abbrev_count);
-                    if (abhigh >= abbrev_array_size) {
-                        /*  It is a new high, but is not outrageous. */
-                        while (abbrev_code >= abbrev_array_size) {
-                            Dwarf_Unsigned old_size = abbrev_array_size;
-                            size_t addl_size_bytes = old_size *
-                                sizeof(Dwarf_Unsigned);
+                Dwarf_Unsigned abhigh = check_abbrev_num_sequence(
+                    abbrev_code,
+                    last_abbrev_code,
+                    abbrev_array_size,abbrev_entry_count,
+                    CU_abbrev_count);
+                if (abhigh >= abbrev_array_size) {
+                    /*  It is a new high, but is not outrageous. */
+                    while (abbrev_code >= abbrev_array_size) {
+                        Dwarf_Unsigned old_size = abbrev_array_size;
+                        size_t addl_size_bytes = old_size *
+                            sizeof(Dwarf_Unsigned);
 
-                            /*  Resize abbreviation array.
-                                Only a bogus abbreviation number
-                                will iterate
-                                more than once. The abhigh check.
-                                prevents a runaway. */
-                            abbrev_array_size *= 2;
-                            abbrev_array = (Dwarf_Unsigned *)
-                                realloc(abbrev_array,
-                                abbrev_array_size * sizeof(Dwarf_Unsigned));
-                            /* Zero out the new bytes. */
-                            memset(abbrev_array + old_size,0,
-                                addl_size_bytes);
-                        }
+                        /*  Resize abbreviation array.
+                            Only a bogus abbreviation number
+                            will iterate
+                            more than once. The abhigh check.
+                            prevents a runaway. */
+                        abbrev_array_size *= 2;
+                        abbrev_array = (Dwarf_Unsigned *)
+                            realloc(abbrev_array,
+                            abbrev_array_size * sizeof(Dwarf_Unsigned));
+                        /* Zero out the new bytes. */
+                        memset(abbrev_array + old_size,0,
+                            addl_size_bytes);
+                    }
+                    last_abbrev_code = abbrev_code;
+                    check_reused_code(abbrev_code,
+                        abbrev_entry_count);
+                    abbrev_array[abbrev_code] = abbrev_entry_count;
+                } else {
+                    /* Zero is the case of 'too high' abbrev_code. */
+                    if (abhigh > 0) {
+                        /*  More or less normal abbrev_code. */
                         last_abbrev_code = abbrev_code;
                         check_reused_code(abbrev_code,
                             abbrev_entry_count);
-                        abbrev_array[abbrev_code] = abbrev_entry_count;
-                    } else {
-                        /* Zero is the case of 'too high' abbev_code. */
-                        if (abhigh > 0) {
-                            /*  More or less normal abbrev_code. */
-                            last_abbrev_code = abbrev_code;
-                            check_reused_code(abbrev_code,
-                                abbrev_entry_count);
-                            abbrev_array[abbrev_code] =
-                                abbrev_entry_count;
-                        }
+                        abbrev_array[abbrev_code] =
+                            abbrev_entry_count;
                     }
-                    ++CU_abbrev_count;
-                    offset += length;
-                } else {
-                    /* Invalid abbreviation code */
-                    print_error(dbg, "get_abbrev_array_info",
-                        abres, aberr);
-                    last_abbrev_code = abbrev_code;
                 }
+                ++CU_abbrev_count;
+                offset += length;
             }
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+            ab = 0;
         }
     }
 }

@@ -384,7 +384,7 @@ struct Dwarf_Debug_InfoTypes_s {
         dwarf_next_cu_header. **Updated by dwarf_next_cu_header in
         dwarf_die_deliv.c */
     Dwarf_CU_Context de_cu_context;
-    /*  Points to linked list of CU Contexts for the 
+    /*  Points to linked list of CU Contexts for the
         CU's already read.  These are only CU's read
         by dwarf_next_cu_header(). */
     Dwarf_CU_Context de_cu_context_list;

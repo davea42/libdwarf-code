@@ -599,7 +599,7 @@ _dwarf_format_TAG_err_msg(Dwarf_Debug dbg,
         dwarfstring_string(&v));
     dwarfstring_destructor(&v);
     return DW_DLV_ERROR;
-} 
+}
 
 /*  This function returns a pointer to a Dwarf_Abbrev_List_s
     struct for the abbrev with the given code.  It puts the
@@ -635,7 +635,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     Dwarf_Error *error)
 {
     Dwarf_Debug dbg = cu_context->cc_dbg;
-    Dwarf_Hash_Table hash_table_base = 
+    Dwarf_Hash_Table hash_table_base =
         cu_context->cc_abbrev_hash_table;
     Dwarf_Hash_Table_Entry entry_base = 0;
     Dwarf_Hash_Table_Entry entry_cur = 0;
@@ -666,7 +666,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
 
         memset(&newht,0,sizeof(newht));
         /* Effectively multiplies by >= HT_MULTIPLE */
-        newht.tb_table_entry_count =  
+        newht.tb_table_entry_count =
             hash_table_base->tb_total_abbrev_count;
         newht.tb_total_abbrev_count = 0;
         newht.tb_entries =
@@ -774,7 +774,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
             return DW_DLV_ERROR;
         }
         inner_list_entry = (Dwarf_Abbrev_List)
-            _dwarf_get_alloc(cu_context->cc_dbg, 
+            _dwarf_get_alloc(cu_context->cc_dbg,
                 DW_DLA_ABBREV_LIST, 1);
         if (inner_list_entry == NULL) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -1104,7 +1104,7 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
         struct Dwarf_Abbrev_List_s *abbrev = 0;
         struct Dwarf_Abbrev_List_s *nextabbrev = 0;
         struct  Dwarf_Hash_Table_Entry_s *tb =
-           &hash_table->tb_entries[hashnum];
+            &hash_table->tb_entries[hashnum];
 
         abbrev = tb->at_head;
         for (; abbrev; abbrev = nextabbrev) {
@@ -1356,5 +1356,41 @@ int  dwarf_add_file_path(
     if (!dbg->de_path) {
         dbg->de_path = strdup(file_name);
     }
+    return DW_DLV_OK;
+}
+
+/*  New March 2020 */
+/*  We need to increment startptr for the caller
+    in these wrappers so the caller passes in
+    wrappers return either DW_DLV_OK or DW_DLV_ERROR.
+    Never DW_DLV_NO_ENTRY. */
+int
+_dwarf_leb128_uword_wrapper(Dwarf_Debug dbg,
+    Dwarf_Small ** startptr,
+    Dwarf_Small * endptr,
+    Dwarf_Unsigned *out_value,
+    Dwarf_Error * error)
+{
+    Dwarf_Unsigned utmp2 = 0;
+    Dwarf_Small * start = *startptr;
+    DECODE_LEB128_UWORD_CK(start, utmp2,
+        dbg,error,endptr);
+    *out_value = utmp2;
+    *startptr = start;
+    return DW_DLV_OK;
+}
+int
+_dwarf_leb128_sword_wrapper(Dwarf_Debug dbg,
+    Dwarf_Small ** startptr,
+    Dwarf_Small * endptr,
+    Dwarf_Signed *out_value,
+    Dwarf_Error * error)
+{
+    Dwarf_Small * start = *startptr;
+    Dwarf_Signed stmp2 = 0;
+    DECODE_LEB128_SWORD_CK(start, stmp2,
+        dbg,error,endptr);
+    *out_value = stmp2;
+    *startptr = start;
     return DW_DLV_OK;
 }

@@ -1,3 +1,15 @@
+2020-03-21  David Anderson
+    * dwarfdump.c:Add flag_data_post_cleanup() in a few
+      more places early termination situations.
+    * print_abbrevs.c: Move some variables to the most
+      local scope. Revise the while loop so we can
+      ensure local alloc cleaned up in case of error.
+      Remove pointless duplicate tests for zero abbrev_code.
+    * print_die_stack: Refactor, adding dealloc_die_stack()
+      and calling it where needed to free up local malloc
+      data.
+    * print_frames.c: Add more dwarf_fde_cie_list_dealloc()
+      where appropriate.
 2020-03-20  David Anderson
     * print_aranges.c: In case of error was not cleaning
       up allocations immediately in all cases.

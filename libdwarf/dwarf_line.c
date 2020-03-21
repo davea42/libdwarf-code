@@ -145,7 +145,7 @@ special_cat(char *dst,char *src,
     is calculated identically for
     dwarf_srcfiles() and dwarf_filename()
 
-    We sometimes return a string pointer 
+    We sometimes return a string pointer
     that points inside a dwarfsection,
     yet sometimes we return a _dwarf_get_alloc allocated string.
     This is safe because dwarf_dealloc (which users should
@@ -189,7 +189,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
             }
             _dwarf_error(dbg,error,DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
-        }   
+        }
     } else {
         char *comp_dir_name = "";
         char *inc_dir_name = "";
@@ -363,8 +363,28 @@ dwarf_srcfiles(Dwarf_Die die,
     if (attrform != DW_FORM_data4 && attrform != DW_FORM_data8 &&
         attrform != DW_FORM_sec_offset  &&
         attrform != DW_FORM_GNU_ref_alt) {
+        dwarfstring m;
+        dwarfstring f;
+        const char *formname = 0;
+
+        dwarfstring_constructor(&f);
+        dwarf_get_FORM_name(attrform,&formname);
+        if (!formname) {
+            dwarfstring_append_printf_u(&f,"Invalid Form Code "
+                " 0x" DW_PR_DUx,attrform);
+        } else {
+            dwarfstring_append(&f,(char *)formname);
+        }
         dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-        _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_WRONG_FORM);
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_s(&m,
+            "DW_DLE_LINE_OFFSET_WRONG_FORM: form %s "
+            "instead of an allowed section offset form.",
+            dwarfstring_string(&f));
+        _dwarf_error_string(dbg, error, DW_DLE_LINE_OFFSET_WRONG_FORM,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        dwarfstring_destructor(&f);
         return (DW_DLV_ERROR);
     }
     lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);

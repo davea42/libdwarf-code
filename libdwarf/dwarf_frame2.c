@@ -1718,7 +1718,8 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
     /*  FIXME: This could run  too far. */
     /* for (; *suffix; ++suffix) if we think we can do something  */
     if (*suffix) {
-        /*  We have no idea what this is as yet. Some extensions beyond
+        /*  We have no idea what this is as yet.
+            Some extensions beyond
             dwarf exist which we do not yet handle. */
         _dwarf_error(dbg, error, DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
         return DW_DLV_ERROR;
@@ -1748,15 +1749,18 @@ dwarf_fde_cie_list_dealloc(Dwarf_Debug dbg,
     for (i = 0; i < cie_element_count; ++i) {
         Dwarf_Frame frame = cie_data[i]->ci_initial_table;
 
-        if (frame)
+        if (frame) {
             dwarf_dealloc(dbg, frame, DW_DLA_FRAME);
+        }
         dwarf_dealloc(dbg, cie_data[i], DW_DLA_CIE);
     }
     for (i = 0; i < fde_element_count; ++i) {
         dwarf_dealloc(dbg, fde_data[i], DW_DLA_FDE);
     }
-    if (cie_data)
+    if (cie_data) {
         dwarf_dealloc(dbg, cie_data, DW_DLA_LIST);
-    if (fde_data)
+    }
+    if (fde_data) {
         dwarf_dealloc(dbg, fde_data, DW_DLA_LIST);
+    }
 }

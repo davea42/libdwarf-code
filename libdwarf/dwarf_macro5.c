@@ -1083,9 +1083,9 @@ drop_srcfiles(Dwarf_Debug dbg,char ** srcfiles,
 {
     Dwarf_Signed i = 0;
     for (i = 0; i < srcfiles_count; ++i) {
-            if(srcfiles[i]) {
-                dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
-            }
+        if(srcfiles[i]) {
+            dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+        }
     }
     dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
 }

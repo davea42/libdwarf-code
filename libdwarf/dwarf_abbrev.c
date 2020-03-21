@@ -36,22 +36,6 @@
 #define TRUE 1
 #define FALSE 0
 
-static int
-leb128_uword_wrapper(Dwarf_Debug dbg,
-    Dwarf_Small ** startptr,
-    Dwarf_Small * endptr,
-    Dwarf_Unsigned *out_value,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned utmp2 = 0;
-    Dwarf_Small * start = *startptr;
-    DECODE_LEB128_UWORD_CK(start, utmp2,
-        dbg,error,endptr);
-    *out_value = utmp2;
-    *startptr = start;
-    return DW_DLV_OK;
-}
-
 /*  This is used to print a .debug_abbrev section without
     knowing about the DIEs that use the abbrevs.
 
@@ -109,8 +93,19 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
             dbg,error,abbrev_section_end);
         if (!_dwarf_valid_form_we_know(attr_form,attr_name)) {
-            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
-            return (DW_DLV_ERROR);
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_UNKNOWN_FORM: Abbrev invalid form 0x%"
+                DW_PR_DUx,attr_form);
+            dwarfstring_append_printf_u(&m,
+                " with attribute 0x%" DW_PR_DUx,attr_name);
+            dwarfstring_append(&m," so abbreviations unusable. ");
+            _dwarf_error_string(dbg, error, DW_DLE_UNKNOWN_FORM,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
         }
         if (attr_form ==  DW_FORM_implicit_const) {
             /* The value is here, not in a DIE. */
@@ -184,7 +179,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
         dbg,error,abbrev_section_end);
 #endif
-    res = leb128_uword_wrapper(dbg,&abbrev_ptr,
+    res = _dwarf_leb128_uword_wrapper(dbg,&abbrev_ptr,
         abbrev_section_end,&utmp,error);
     if (res == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
@@ -204,7 +199,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
         dbg,error,abbrev_section_end);
 #endif
-    res = leb128_uword_wrapper(dbg,&abbrev_ptr,
+    res = _dwarf_leb128_uword_wrapper(dbg,&abbrev_ptr,
         abbrev_section_end,&utmp,error);
     if (res == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
@@ -225,7 +220,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_abbrev_ptr = abbrev_ptr;
     ret_abbrev->dab_next_ptr = abbrev_ptr;
     ret_abbrev->dab_next_index = 0;
-
     res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
         abbrev_section_end,&labbr_count,&abbrev_ptr_out,error);
     if (res == DW_DLV_ERROR) {
@@ -257,11 +251,11 @@ dwarf_get_abbrev_code(Dwarf_Abbrev abbrev,
 {
     if (abbrev == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_ABBREV_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *returned_code = abbrev->dab_code;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  DWARF defines DW_TAG_hi_user as 0xffff so no tag should be
