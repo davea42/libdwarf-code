@@ -1,4 +1,7 @@
 2020-03-20  David Anderson
+    * print_aranges.c: In case of error was not cleaning
+      up allocations immediately in all cases.
+2020-03-20  David Anderson
     * print_frames.c,print_dgbindex.c,print_macros.c,
       print_pubnames.c,print_ranges.c,print_reloc.c,
       sanitized.c,tag_attr.c,testesb.c,

@@ -145,7 +145,6 @@ print_aranges(Dwarf_Debug dbg)
     glflags.need_CU_name = TRUE;
     glflags.need_CU_base_address = TRUE;
     glflags.need_CU_high_address = TRUE;
-
     glflags.current_section_id = DEBUG_ARANGES;
     ares = dwarf_get_aranges(dbg, &arange_buf, &count, &ga_error);
     if (glflags.gf_do_print_dwarf) {

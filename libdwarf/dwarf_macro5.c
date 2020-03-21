@@ -1072,11 +1072,24 @@ translate_srcfiles_to_srcfiles2(char **srcfiles,
             return DW_DLV_ERROR;
         }
         strcpy(newstr,ostr);
-        srcfiles[i] = 0;
         srcfiles2[i] = newstr;
     }
     return DW_DLV_OK;
 }
+
+static void
+drop_srcfiles(Dwarf_Debug dbg,char ** srcfiles,
+    Dwarf_Signed srcfiles_count)
+{
+    Dwarf_Signed i = 0;
+    for (i = 0; i < srcfiles_count; ++i) {
+            if(srcfiles[i]) {
+                dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+            }
+    }
+    dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+}
+
 
 static int
 _dwarf_internal_macro_context(Dwarf_Die die,
@@ -1099,6 +1112,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     Dwarf_Unsigned macro_offset = 0;
     Dwarf_Attribute macro_attr = 0;
     Dwarf_Signed srcfiles_count = 0;
+    Dwarf_Signed srcfiles2_count = 0;
     char ** srcfiles = 0;
 
     /*  srcfiles uses dwarf_get_alloc for strings
@@ -1158,14 +1172,10 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     lres = _dwarf_internal_get_die_comp_dir(die, &comp_dir,
         &comp_name,error);
     if (lres == DW_DLV_ERROR) {
-        Dwarf_Signed i = 0;
-        for (i = 0; i < srcfiles_count; ++i) {
-            if(srcfiles[i]) {
-                dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
-            }
-        }
+        drop_srcfiles(dbg,srcfiles,srcfiles_count);
+        srcfiles = 0;
+        srcfiles_count = 0;
         dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
-        dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
         srcfiles = 0;
         return lres;
     }
@@ -1179,30 +1189,27 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     if (srcfiles_count > 0) {
         srcfiles2 = (char **) calloc(srcfiles_count, sizeof(char *));
         if (!srcfiles2) {
+            dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
+            drop_srcfiles(dbg,srcfiles,srcfiles_count);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
         }
         lres  = translate_srcfiles_to_srcfiles2(srcfiles,
             srcfiles_count,srcfiles2);
-        {
-            Dwarf_Signed i = 0;
-            for (i = 0; i < srcfiles_count; ++i) {
-                if(srcfiles[i]) {
-                    dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
-                    srcfiles[i] = 0;
-                }
-            }
-            dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
-            srcfiles = 0;
-        }
-        if (lres == DW_DLV_OK) {
-            srcfiles = 0;
-        } else {
+        drop_srcfiles(dbg,srcfiles,srcfiles_count);
+        srcfiles2_count = srcfiles_count;
+        srcfiles = 0;
+        srcfiles_count = 0;
+        if (lres != DW_DLV_OK) {
             dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
-            dealloc_macro_srcfiles(srcfiles2, srcfiles_count);
+            dealloc_macro_srcfiles(srcfiles2, srcfiles2_count);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return lres;
         }
+    } else {
+        drop_srcfiles(dbg,srcfiles,srcfiles_count);
+        srcfiles = 0;
+        srcfiles_count = 0;
     }
 
     dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
@@ -1212,7 +1219,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
         macro_offset,version_out,macro_context_out,
         macro_ops_count_out,
         macro_ops_data_length,
-        srcfiles2,srcfiles_count,
+        srcfiles2,srcfiles2_count,
         comp_dir,
         comp_name,
         cu_context,

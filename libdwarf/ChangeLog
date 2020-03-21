@@ -1,3 +1,8 @@
+2020-03-2o: David Anderson
+    * dwarf_arange.c: In case of error, was failing
+      to clean up all allocations.
+    * dwarf_macro5.c: Was preventing some dwarf_dealloc().
+      Fixed.
 2020-03-19: David Anderson
     * dwarf_abbrev.c: Generates a more useful and specific
       message in case a TAG is corrupt.
