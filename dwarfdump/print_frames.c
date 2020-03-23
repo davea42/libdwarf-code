@@ -2475,8 +2475,12 @@ print_frames(Dwarf_Debug dbg,
         }
 
         if (fres == DW_DLV_ERROR) {
+            const char *loc = "dwarf_get_fde_list";    
+            if (is_eh) {
+              loc = "dwarf_get_fde_list_eh";    
+            }
             printf("\n%s\n", frame_section_name);
-            print_error(dbg, "dwarf_get_fde_list", fres, err);
+            print_error(dbg, loc, fres, err);
         } else if (fres == DW_DLV_NO_ENTRY) {
             if (!silent_if_missing) {
                 printf("\n%s\n", frame_section_name);
@@ -2543,7 +2547,6 @@ print_frames(Dwarf_Debug dbg,
     addr_map_destroy(map_lowpc_to_name);
     map_lowpc_to_name = 0;
 }
-
 
 /*  This attempts to provide some data for error messages when
     reading frame/eh-frame data.

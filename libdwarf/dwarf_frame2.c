@@ -142,6 +142,25 @@ qsort_compare(const void *elem1, const void *elem2)
     return 0;
 }
 
+static void
+_dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
+    Dwarf_Error *error,
+    Dwarf_Unsigned addrsize,
+    int errcode,const char *errname)
+{
+    dwarfstring m;
+
+    dwarfstring_constructor(&m);
+
+    dwarfstring_append(&m,(char *)errname);
+    dwarfstring_append_printf_u(&m,
+        ": Address size of %u is not supported."
+        " Corrupt DWARF.",
+        addrsize);
+    _dwarf_error_string(dbg,error,errcode,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
 
 
 /*  Adds 'newone' to the end of the list starting at 'head'
@@ -708,8 +727,11 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             if (address_size  > sizeof(Dwarf_Addr)) {
-                _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
-                return (DW_DLV_ERROR);
+                _dwarf_create_address_size_dwarf_error(dbg,
+                    error,address_size, 
+                    DW_DLE_ADDRESS_SIZE_ERROR,
+                    "DW_DLE_ADDRESS_SIZE_ERROR");
+                return DW_DLV_ERROR;
             }
             if ((frame_ptr+2)  >= section_ptr_end) {
                 _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
@@ -1171,7 +1193,19 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     Dwarf_Small *section_end = section_ptr_in + section_length_in;
 
     if(section_end < (frame_ptr +4)) {
-        _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        dwarfstring m;
+        unsigned u = (unsigned long)(frame_ptr+4) - 
+            (unsigned long)section_end;
+ 
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "
+            "Reading the cie/fde prefix would "
+            "put us %u bytes past the end of the "
+            "frame section.  Corrupt Dwarf.",u);
+        _dwarf_error_string(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     /* READ_AREA_LENGTH updates frame_ptr for consumed bytes */

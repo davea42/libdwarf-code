@@ -1,3 +1,9 @@
+2020-03-23  David Anderson
+    * print_die.c: More cases trying to continue after error.
+      And ensuring no dwarf leakages.
+    * print_frames.c: More accurate error report (one place).
+    * print_pubnames.c: Fixing leaks and making some error
+      message more precise (showing values).
 2020-03-21  David Anderson
     * dwarfdump.c:Add flag_data_post_cleanup() in a few
       more places early termination situations.

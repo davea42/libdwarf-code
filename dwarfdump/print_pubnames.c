@@ -68,25 +68,30 @@ deal_with_name_offset_err(Dwarf_Debug dbg,
     int nres,
     Dwarf_Error aerr)
 {
-    if (nres == DW_DLV_ERROR) {
-        Dwarf_Unsigned myerr = dwarf_errno(aerr);
-        struct esb_s fullmsg;
-
-        if (myerr == DW_DLE_OFFSET_BAD) {
-            printf("Error: bad offset %s %s: %" DW_PR_DUu
-                " (0x%08" DW_PR_DUx ")\n",
-                err_loc,
-                name,
-                die_off,
-                die_off);
-        }
-        esb_constructor(&fullmsg);
-        esb_append(&fullmsg,err_loc);
-        esb_append(&fullmsg,name);
-        print_error(dbg, esb_get_string(&fullmsg),
-            nres, aerr);
-        esb_destructor(&fullmsg);
+    Dwarf_Unsigned myerr = dwarf_errno(aerr);
+    struct esb_s fullmsg;
+    struct esb_s details;
+ 
+    esb_constructor(&details);
+    esb_constructor(&fullmsg);
+    if (myerr == DW_DLE_OFFSET_BAD) {
+        esb_append(&details," bad offset "); 
+        esb_append(&details,err_loc);
+        esb_append(&details," ");
+        esb_append(&details,"name");
+        esb_append_printf_u(&details,
+            ": %" DW_PR_DUu ,die_off);
+        esb_append_printf_u(&details,
+            " (0x%08" DW_PR_DUx ")",
+            die_off);
     }
+    esb_append(&fullmsg,err_loc);
+    esb_append(&fullmsg,esb_get_string(&details));
+    esb_append(&fullmsg,name);
+    print_error_and_continue(dbg, esb_get_string(&fullmsg),
+    nres, aerr);
+    esb_destructor(&fullmsg);
+    esb_destructor(&details);
 }
 
 
@@ -126,11 +131,12 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         esb_constructor(&details);
         esb_append(&details,line_title);
         esb_append(&details," dwarf_offdie : "
-            "die offset does not reference valid DIE.  ");
-        esb_append_printf_u(&details,"0x%"  DW_PR_DUx, die_off);
+            "die offset does not reference valid DIE ");
+        esb_append_printf_u(&details,"at offset 0x%"  DW_PR_DUx, die_off);
         esb_append(&details,".");
-        print_error(dbg, esb_get_string(&details), dres, err);
+        print_error_and_continue(dbg, esb_get_string(&details), dres, err);
         esb_destructor(&details);
+        return dres;
     }
 
     /* get offset of die from its cu-header */
@@ -249,9 +255,9 @@ print_pubnames(Dwarf_Debug dbg)
     /* Offset to previous CU */
     Dwarf_Error err = 0;
     int res = 0;
-    struct esb_s truename;
     Dwarf_Addr elf_max_address = 0;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
+    struct esb_s truename;
     struct esb_s sanitname;
 
     glflags.current_section_id = DEBUG_PUBNAMES;
@@ -268,13 +274,11 @@ print_pubnames(Dwarf_Debug dbg)
             return;
         }
     }
-    {
-        esb_constructor(&sanitname);
-        /*  Sanitized cannot be safely reused,there is a static buffer,
-            so we make a safe copy. */
-        esb_append(&sanitname,sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
-    }
+    esb_constructor(&sanitname);
+    /*  Sanitized cannot be safely reused,there is a static buffer,
+        so we make a safe copy. */
+    esb_append(&sanitname,sanitized(esb_get_string(&truename)));
+    esb_destructor(&truename);
     res = dwarf_get_globals(dbg, &globbuf, &count, &err);
     if (glflags.gf_do_print_dwarf && count > 0) {
         printf("\n%s\n",esb_get_string(&sanitname));
@@ -283,16 +287,21 @@ print_pubnames(Dwarf_Debug dbg)
         print_error_and_continue(dbg, "dwarf_get_globals", res, err);
         dwarf_dealloc(dbg,err,DW_DLA_ERROR);
         err = 0;
+        /* fall through to end*/
     } else if (res == DW_DLV_NO_ENTRY) {
-        esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,&err);
-        return;
+        /* fall through to end*/
     } else {
-        print_all_pubnames_style_records(dbg,
+        res = print_all_pubnames_style_records(dbg,
             "global",
             esb_get_string(&sanitname),
             globbuf,count,&err);
         dwarf_globals_dealloc(dbg,globbuf,count);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg, "printing pubnames style",
+                res, err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
     esb_destructor(&sanitname);
     dwarf_return_empty_pubnames(dbg,0,&err);
@@ -328,10 +337,13 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
         nres = dwarf_global_name_offsets(globbuf[i],
             &name, &die_off, &cu_die_off,
             err);
-        deal_with_name_offset_err(dbg,
-            "dwarf_global_name_offsets in ",
-            section_true_name,
-            die_off, nres, *err);
+        if (nres == DW_DLV_ERROR) {
+            deal_with_name_offset_err(dbg,
+                "dwarf_global_name_offsets in ",
+                section_true_name,
+                die_off, nres, *err);
+            return nres;
+        }
         if(glflags.verbose) {
             /*  We know no die_off can be zero
                 (except for the fake global created when

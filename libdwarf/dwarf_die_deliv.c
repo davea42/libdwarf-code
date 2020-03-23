@@ -35,6 +35,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "dwarfstring.h"
 #include "dwarf_die_deliv.h"
 
 #define FALSE 0
@@ -276,7 +277,24 @@ section_name_ends_with_dwo(const char *name)
     return TRUE;
 }
 
+static void
+_dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
+    Dwarf_Error *error,
+    Dwarf_Unsigned addrsize,
+    int errcode,const char *errname)
+{
+    dwarfstring m;
 
+    dwarfstring_constructor(&m);
+    dwarfstring_append(&m,(char *)errname);
+    dwarfstring_append_printf_u(&m,
+        ": Address size of %u is not supported."
+        " Corrupt DWARF.",
+        addrsize); 
+    _dwarf_error_string(dbg,error,errcode,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
 
 /*  New January 2017 */
 static int
@@ -355,11 +373,15 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
     }
     if (addrsize < MINIMUM_ADDRESS_SIZE ||
         addrsize > MAXIMUM_ADDRESS_SIZE ) {
-        _dwarf_error(dbg,error,DW_DLE_ADDRESS_SIZE_ERROR);
+        _dwarf_create_address_size_dwarf_error(dbg,error,addrsize,
+            DW_DLE_ADDRESS_SIZE_ERROR,
+            "DW_DLE_ADDRESS_SIZE_ERROR");
         return DW_DLV_ERROR;
     }
     if (addrsize  > sizeof(Dwarf_Addr)) {
-        _dwarf_error(dbg, error, DW_DLE_CU_ADDRESS_SIZE_BAD);
+        _dwarf_create_address_size_dwarf_error(dbg,error,addrsize,
+            DW_DLE_ADDRESS_SIZE_ERROR,
+            "DW_DLE_ADDRESS_SIZE_ERROR");
         return DW_DLV_ERROR;
     }
 
@@ -2310,8 +2332,15 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
+        dwarfstring m;
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
-        _dwarf_error(dbg, error, DW_DLE_DIE_ABBREV_LIST_NULL);
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "There is no abbrev present for code 0x%x .",
+            abbrev_code);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_DIE_ABBREV_LIST_NULL,dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     if (die == NULL && !is_cu_tag(ret_die->di_abbrev_list->abl_tag)) {
@@ -2560,8 +2589,16 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
-        dwarf_dealloc(dbg, die, DW_DLA_DIE);
-        _dwarf_error(dbg, error, DW_DLE_DIE_ABBREV_LIST_NULL);
+        dwarfstring m;
+
+        dwarf_dealloc(dbg,die, DW_DLA_DIE);
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "There is no abbrev present for code 0x%x .",
+            abbrev_code);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_DIE_ABBREV_LIST_NULL,dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     *new_die = die;

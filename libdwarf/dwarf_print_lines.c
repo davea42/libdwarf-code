@@ -531,26 +531,28 @@ _dwarf_internal_printlines(Dwarf_Die die,
     if (resattr != DW_DLV_OK) {
         return resattr;
     }
-
-
     /*  The list of relevant FORMs is small.
         DW_FORM_data4, DW_FORM_data8, DW_FORM_sec_offset
     */
     lres = dwarf_whatform(stmt_list_attr,&attrform,error);
     if (lres != DW_DLV_OK) {
+        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
         return lres;
     }
     if (attrform != DW_FORM_data4 && attrform != DW_FORM_data8 &&
         attrform != DW_FORM_sec_offset ) {
+        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
     lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);
     if (lres != DW_DLV_OK) {
+        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
         return lres;
     }
 
     if (line_offset >= dbg->de_debug_line.dss_size) {
+        dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
@@ -560,6 +562,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
         int resfis = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
         if(resfis != DW_DLV_OK) {
+            dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
             return resfis;
         }
     }
@@ -938,9 +941,22 @@ _dwarf_print_lines(Dwarf_Die die, Dwarf_Error * error)
 void
 dwarf_check_lineheader(Dwarf_Die die, int *err_count_out)
 {
-    Dwarf_Error err;
+    Dwarf_Error err = 0;
+    int res = 0;
 
     int only_line_header = 1;
-    _dwarf_internal_printlines(die, &err,err_count_out,
+    res = _dwarf_internal_printlines(die, &err,err_count_out,
         only_line_header);
+    if (res == DW_DLV_ERROR) {
+        Dwarf_CU_Context c = 0;
+        Dwarf_Debug dbg = 0;
+
+        c = die->di_cu_context;
+        if (!c) {
+            return;
+        }
+        dbg = c->cc_dbg;
+        dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+        err = 0;
+    }
 }

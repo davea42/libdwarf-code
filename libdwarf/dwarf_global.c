@@ -31,6 +31,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "dwarfstring.h"
 #include "dwarf_global.h"
 
 
@@ -84,8 +85,7 @@ dwarf_get_globals(Dwarf_Debug dbg,
         return (DW_DLV_NO_ENTRY);
     }
 
-
-    return _dwarf_internal_get_pubnames_like_data(dbg,
+    res = _dwarf_internal_get_pubnames_like_data(dbg,
         dbg->de_debug_pubnames.dss_data,
         dbg->de_debug_pubnames.dss_size,
         globals,
@@ -95,6 +95,7 @@ dwarf_get_globals(Dwarf_Debug dbg,
         DW_DLA_GLOBAL,
         DW_DLE_PUBNAMES_LENGTH_BAD,
         DW_DLE_PUBNAMES_VERSION_ERROR);
+    return res;
 
 }
 
@@ -121,20 +122,22 @@ _dwarf_internal_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
     int global_code, int list_code)
 {
     Dwarf_Signed i;
-    struct Dwarf_Global_Context_s *gcp = 0;
+#if 0
     struct Dwarf_Global_Context_s *lastgcp = 0;
+#endif
 
     if(!dwgl) {
         return;
     }
     for (i = 0; i < count; i++) {
+        struct Dwarf_Global_Context_s *gcp = 0;
         Dwarf_Global dgb = dwgl[i];
+
         if (!dgb) {
             continue;
         }
         gcp = dgb->gl_context;
-        if (gcp && lastgcp != gcp) {
-            lastgcp = gcp;
+        if (gcp) {
             dwarf_dealloc(dbg, gcp, context_code);
         }
         dwarf_dealloc(dbg, dgb, global_code);
@@ -325,12 +328,18 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 prev_chain = curr_chain;
             }
             /* There is no next entry, we are at it already */
-        }
-        while (die_offset_in_cu != 0) {
-            int res;
+        } else if (!die_offset_in_cu) {
+            /*  The section is empty. 
+                Nowhere to record pubnames_context); */
+            dwarf_dealloc(dbg,pubnames_context,context_code);
+            pubnames_context = 0;
+            break;
+        } 
+        while (die_offset_in_cu) {
+            int res = 0;
 
-            /*  Already read offset, pubnames_like_ptr now points to the
-                string. */
+            /*  Already read offset, pubnames_like_ptr
+                now points to the string. */
             global =
                 (Dwarf_Global) _dwarf_get_alloc(dbg, global_code, 1);
             if (global == NULL) {
@@ -338,13 +347,9 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             global_count++;
-
             global->gl_context = pubnames_context;
-
             global->gl_named_die_offset_within_cu = die_offset_in_cu;
-
             global->gl_name = pubnames_like_ptr;
-
             res = _dwarf_check_string_valid(dbg,section_data_ptr,
                 pubnames_like_ptr,section_end_ptr,
                 DW_DLE_STRING_OFF_END_PUBNAMES_LIKE,error);
@@ -507,6 +512,27 @@ dwarf_global_cu_offset(Dwarf_Global global,
     return DW_DLV_OK;
 }
 
+static void
+build_off_end_msg(Dwarf_Unsigned offval,
+   Dwarf_Unsigned withincr,
+   Dwarf_Unsigned secsize,
+   dwarfstring *m)
+{
+    const char *msg = "past";
+    if (offval < secsize){
+        msg = "too near";
+    }
+    dwarfstring_append_printf_u(m,"DW_DLE_OFFSET_BAD: "
+        "The CU header offset of %u in a pubnames-like entry ",
+        withincr);
+    dwarfstring_append_printf_s(m,
+        "would put us %s the end of .debug_info. "
+        "No room for a DIE there... "
+        "Corrupt Dwarf.",(char *)msg);
+    return;
+}
+
+
 /*
   Give back the pubnames entry (or any other like section)
   name, symbol DIE offset, and the cu-DIE offset.
@@ -558,7 +584,13 @@ dwarf_global_name_offsets(Dwarf_Global global,
     /* Cannot refer to debug_types */
     if (dbg->de_debug_info.dss_size &&
         ((cuhdr_off + MIN_CU_HDR_SIZE) >= dbg->de_debug_info.dss_size)) {
-        _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        build_off_end_msg(cuhdr_off,cuhdr_off+MIN_CU_HDR_SIZE,
+            dbg->de_debug_info.dss_size,&m);
+        _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
+          dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return (DW_DLV_ERROR);
     }
 #undef MIN_CU_HDR_SIZE
@@ -574,9 +606,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             *die_offset = 0;
         }
     }
-
     *ret_name = (char *) global->gl_name;
-
     if (cu_die_offset) {
         /* Globals cannot refer to debug_types */
         int cres = 0;
@@ -586,13 +616,21 @@ dwarf_global_name_offsets(Dwarf_Global global,
         if (res != DW_DLV_OK) {
             return res;
         }
-        /*  The offset had better not be too close to the end. If it is,
+        /*  The offset had better not be too close to the end.
+            If it is,
             _dwarf_length_of_cu_header() will step off the end and
             therefore must not be used. 10 is a meaningless heuristic,
             but no CU header is that small so it is safe. */
         /* Globals cannot refer to debug_types */
         if ((cuhdr_off + 10) >= dbg->de_debug_info.dss_size) {
-            _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
+            dwarfstring m;
+    
+            dwarfstring_constructor(&m);
+            build_off_end_msg(cuhdr_off,cuhdr_off+10,
+                dbg->de_debug_info.dss_size,&m);
+            _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
+              dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return (DW_DLV_ERROR);
         }
         cres = _dwarf_length_of_cu_header(dbg, cuhdr_off,true,

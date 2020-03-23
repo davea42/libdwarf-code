@@ -1780,8 +1780,13 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     /* first get compressed block data */
     fres = dwarf_formblock (attrib,&tempb, &fblkerr);
     if (fres != DW_DLV_OK) {
-        print_error(dbg,"DW_FORM_blockn cannot get block\n",
+        print_error_and_continue(dbg,
+            "DW_FORM_blockn cannot get block\n",
             fres,fblkerr);
+        if (fres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,fblkerr,DW_DLA_ERROR);
+            fblkerr = 0;
+        }
         return;
     }
 
@@ -1794,11 +1799,20 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
         compression is minor unless the values
         are close to zero.  */
     if (fres != DW_DLV_OK) {
-        print_error(dbg,"DW_AT_SUN_func_offsets cannot uncompress data\n",0,fblkerr);
+        dwarf_dealloc(dbg,tempb,DW_DLA_BLOCK);
+        print_error_and_continue(dbg,
+            "DW_AT_SUN_func_offsets cannot uncompress data\n",
+            0,fblkerr);
+        if (fres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,fblkerr,DW_DLA_ERROR);
+            fblkerr = 0;
+        }
         return;
     }
     if (array_len == 0) {
-        print_error(dbg,"DW_AT_SUN_func_offsets has no data\n",0,fblkerr);
+        dwarf_dealloc(dbg,tempb,DW_DLA_BLOCK);
+        print_error(dbg,
+            "DW_AT_SUN_func_offsets has no data\n",0,fblkerr);
         return;
     }
 
@@ -1820,9 +1834,9 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
                 "(0x%"  DW_PR_XZEROS DW_PR_DUx ")",vu);
         }
     }
+    dwarf_dealloc(dbg,tempb,DW_DLA_BLOCK);
     /* free array buffer */
     dwarf_dealloc_uncompressed_block(dbg, array);
-
 }
 
 static const char *

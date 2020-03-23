@@ -1,3 +1,10 @@
+2020-03-23: David Anderson
+    * dwarf_die_deliv.c,dwarf_frame2.c: Some error messages
+      are now far more precise (showing values).
+    * dwarf_global.c: Correcting leakage and making
+      some error messages more precise.
+    * dwarf_print_lines.c: Correcting leakages.
+    * dwarf_pubtypes.c: Minor readability change.
 2020-03-21: David Anderson
     * dwarf_abbrev.c Move leb wrapper functions to dwarf_util.[ch]:
       and rename as _dwarf.....
