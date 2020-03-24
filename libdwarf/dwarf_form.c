@@ -792,7 +792,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
         return (DW_DLV_ERROR);
     default:
         _dwarf_error(dbg, error, DW_DLE_BAD_REF_FORM);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     /*  We do not know what section the offset refers to, so

@@ -2425,6 +2425,7 @@ dwarf_child(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
+/* printf("dadebug ALLOC ret_die 0x%lx line %d %s\n",(unsigned long)ret_die,__LINE__,__FILE__); */
     ret_die->di_debug_ptr = die_info_ptr;
     ret_die->di_cu_context = die->di_cu_context;
     ret_die->di_is_info = die->di_is_info;
@@ -2444,10 +2445,12 @@ dwarf_child(Dwarf_Die die,
             ++dis->de_last_di_ptr;
         }
 
-        /*  We have arrived at a null DIE, at the end of a CU or the end
+        /*  We have arrived at a null DIE, 
+            at the end of a CU or the end
             of a list of siblings. */
         *caller_ret_die = 0;
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        ret_die = 0;
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
@@ -2455,14 +2458,17 @@ dwarf_child(Dwarf_Die die,
         &ret_die->di_abbrev_list,error);
     if (lres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        ret_die = 0;
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        ret_die = 0;
         _dwarf_error(dbg, error, DW_DLE_ABBREV_MISSING);
         return DW_DLV_ERROR;
     }
 
+/* printf("dadebug ALLOC dwarf_child returns 0x%lx line %d %s\n",(unsigned long)ret_die,__LINE__,__FILE__); */
     *caller_ret_die = ret_die;
     return (DW_DLV_OK);
 }

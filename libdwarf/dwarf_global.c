@@ -122,23 +122,26 @@ _dwarf_internal_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
     int global_code, int list_code)
 {
     Dwarf_Signed i;
-#if 0
-    struct Dwarf_Global_Context_s *lastgcp = 0;
-#endif
+    struct Dwarf_Global_Context_s *glcp = 0;
+    struct Dwarf_Global_Context_s *lastglcp = 0;
 
     if(!dwgl) {
         return;
     }
     for (i = 0; i < count; i++) {
-        struct Dwarf_Global_Context_s *gcp = 0;
         Dwarf_Global dgb = dwgl[i];
 
         if (!dgb) {
             continue;
         }
-        gcp = dgb->gl_context;
-        if (gcp) {
-            dwarf_dealloc(dbg, gcp, context_code);
+        /*  Avoids duplicate frees of repeated
+            use of contexts (while assuming that
+            all uses of a particular gl_context
+            will appear next to each other. */
+        glcp = dgb->gl_context;
+        if (lastglcp != glcp) {
+            lastglcp = glcp;
+            dwarf_dealloc(dbg, glcp, context_code);
         }
         dwarf_dealloc(dbg, dgb, global_code);
     }
@@ -329,12 +332,12 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             }
             /* There is no next entry, we are at it already */
         } else if (!die_offset_in_cu) {
-            /*  The section is empty. 
+            /*  The section is empty.
                 Nowhere to record pubnames_context); */
             dwarf_dealloc(dbg,pubnames_context,context_code);
             pubnames_context = 0;
             break;
-        } 
+        }
         while (die_offset_in_cu) {
             int res = 0;
 
@@ -589,7 +592,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
         build_off_end_msg(cuhdr_off,cuhdr_off+MIN_CU_HDR_SIZE,
             dbg->de_debug_info.dss_size,&m);
         _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
-          dwarfstring_string(&m));
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return (DW_DLV_ERROR);
     }
@@ -624,12 +627,12 @@ dwarf_global_name_offsets(Dwarf_Global global,
         /* Globals cannot refer to debug_types */
         if ((cuhdr_off + 10) >= dbg->de_debug_info.dss_size) {
             dwarfstring m;
-    
+
             dwarfstring_constructor(&m);
             build_off_end_msg(cuhdr_off,cuhdr_off+10,
                 dbg->de_debug_info.dss_size,&m);
             _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
-              dwarfstring_string(&m));
+                dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return (DW_DLV_ERROR);
         }

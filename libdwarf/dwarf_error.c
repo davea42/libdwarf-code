@@ -102,6 +102,9 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
         if (msg) {
             dwarfstring *em = 0;
 
+#if 0
+printf("dadebug creating error string %s\n",msg);
+#endif
             em = (dwarfstring *)calloc(1,sizeof(dwarfstring));
             if (em) {
                 dwarfstring_constructor(em);

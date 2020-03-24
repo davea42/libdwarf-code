@@ -1,3 +1,15 @@
+2020-03-24: David Anderson
+    * dwarf_alloc.c: Now with #ifdef DEBUG of debug messages in
+      various places as thise get needed over and over.
+    * dwarf_die_deliv.c: Working toward complete dealloc
+      of resources to eliminate the  dependence on de_alloc_tree.
+    * dwarf_error.c: #if 0 a debug message.
+    * dwarf_form.c: Remove superflous ().
+    * dwarf_global.c(_dwarf_internal_globals_dealloc):
+      Recreated and documented critical dealloc code
+      so Dwarf_Global_Context gets dealloc-c.
+    * dwarf_line.c: Add a return DW_DLV_ERROR after
+      an error Dwarf_Error is created..
 2020-03-23: David Anderson
     * dwarf_die_deliv.c,dwarf_frame2.c: Some error messages
       are now far more precise (showing values).

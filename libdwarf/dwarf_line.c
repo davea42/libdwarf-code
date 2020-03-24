@@ -678,6 +678,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
     if ((line_offset + fission_offset) > dbg->de_debug_line.dss_size) {
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
     }
     if (line_ptr > section_end) {
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);

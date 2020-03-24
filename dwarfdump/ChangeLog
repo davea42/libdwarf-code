@@ -1,3 +1,8 @@
+2020-03-24  David Anderson
+    * print_die.c: Ensuring that when an error is
+      created it gets dealloc-d.
+    * print_gdbindex.c(print_gdb_index): It was failing to dealloc
+      the data it requested from libdwarf.
 2020-03-23  David Anderson
     * print_die.c: More cases trying to continue after error.
       And ensuring no dwarf leakages.

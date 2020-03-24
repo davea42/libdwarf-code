@@ -26,7 +26,7 @@
 
 */
 
-#undef  DEBUG
+#undef  DEBUG 
 
 #include "config.h"
 #include <sys/types.h>
@@ -174,6 +174,9 @@ _dwarf_error_destructor(void *m)
     if (! erm) {
         return;
     }
+#if DEBUG
+printf("dadebug Now destruct error string %s\n",dwarfstring_string(erm));
+#endif
     dwarfstring_destructor(erm);
     free(erm);
     er->er_msg = 0;
@@ -523,6 +526,12 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
                     pretend all is well. */
             }
         }
+#if DEBUG
+if (alloc_type == DW_DLA_ERROR || alloc_type == DW_DLA_DIE) {
+int z = 1;
+printf("dadebug ALLOC ret 0x%lx size %lu line %d %s %d\n",(unsigned long)ret_mem,(unsigned long)size,__LINE__,__FILE__,z);
+}
+#endif
         return (ret_mem);
     }
 }
@@ -583,6 +592,12 @@ string_is_in_debug_section(Dwarf_Debug dbg,void * space)
     obtain the space.
 
     This function does not return anything.
+    The _dwarf_error_destructor() will be called
+    to free the er_msg string
+    (if this is a Dwarf_Error) just before the
+    Dwarf_Error is freed here. See...specialdestructor()
+    below.
+
 */
 void
 dwarf_dealloc(Dwarf_Debug dbg,
@@ -595,7 +610,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     if (!space) {
 #ifdef DEBUG
         fprintf(stderr,
-            "Dealloc does nothing, space NULL line %d %s\n",
+            "DEALLOC does nothing, space NULL line %d %s\n",
             __LINE__,__FILE__);
 #endif /* DEBUG*/
         return;
@@ -605,7 +620,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
             dwarf_init() call. */
 #ifdef DEBUG
         fprintf(stderr,
-            "Dealloc does nothing, dbg NULL line %d %s\n",
+            "DEALLOC does nothing, dbg NULL line %d %s\n",
             __LINE__,__FILE__);
 #endif /* DEBUG*/
         return;
@@ -640,7 +655,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /*  Something is mixed up. */
 #ifdef DEBUG
         fprintf(stderr,
-            "Dealloc does nothing, dbg 0x%lx rd_dbg 0x%lx line %d %s\n",
+            "DEALLOC does nothing, dbg 0x%lx rd_dbg 0x%lx line %d %s\n",
             (unsigned long)dbg,
             (unsigned long)r->rd_dbg,
             __LINE__,__FILE__);
@@ -651,7 +666,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /*  Something is mixed up. */
 #ifdef DEBUG
         fprintf(stderr,
-            "Dealloc does nothing, type 0x%lx rd_type 0x%lx line %d %s\n",
+            "DEALLOC does nothing, type 0x%lx rd_type 0x%lx line %d %s\n",
             (unsigned long)alloc_type,
             (unsigned long)r->rd_type,
             __LINE__,__FILE__);
@@ -674,7 +689,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
                 DW_DLE_FAILSAFE_ERRVAL;
 #ifdef DEBUG
             fprintf(stderr,
-                "Dealloc does nothing, DE_STATIC line %d %s\n",
+                "DEALLOC does nothing, DE_STATIC line %d %s\n",
                 __LINE__,__FILE__);
 #endif /* DEBUG*/
             return;
@@ -690,18 +705,22 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /* DW_DLA_ERROR has a specialdestructor */
     }
     type = alloc_type;
-#if 0
+#if DEBUG
     if(dbg != r->rd_dbg) {
         /*  Something is badly wrong. Better to leak than
             to crash. */
         return;
     }
 #endif
+#if 0
+if (alloc_type == DW_DLA_ERROR || alloc_type == DW_DLA_DIE)
+printf("dadebug DEALLOC ret 0x%lx size %lu line %d %s\n",(unsigned long)space,(unsigned long)r->rd_length,__LINE__,__FILE__);
+#endif
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* internal or user app error */
 #ifdef DEBUG
         fprintf(stderr,
-            "Dealloc does nothing, type too big %lu line %d %s\n",
+            "DEALLOC does nothing, type too big %lu line %d %s\n",
             (unsigned long)type,
             __LINE__,__FILE__);
 #endif /* DEBUG*/

@@ -381,9 +381,12 @@ print_gdb_index(Dwarf_Debug dbg)
     const char *section_name = 0; /* unused */
     Dwarf_Error error = 0;
     Dwarf_Unsigned culist_len = 0;
-
     int res = 0;
+
     glflags.current_section_id = DEBUG_GDB_INDEX;
+    if (!glflags.gf_do_print_dwarf) {
+        return;
+    }
     res = dwarf_gdbindex_header(dbg, &gdbindex,
         &version,
         &cu_list_offset,
@@ -395,10 +398,6 @@ print_gdb_index(Dwarf_Debug dbg)
         &unused,
         &section_name,
         &error);
-
-    if (!glflags.gf_do_print_dwarf) {
-        return;
-    }
     if(res == DW_DLV_NO_ENTRY) {
         /*  Silently! The section is rare so lets
             say nothing. */
@@ -406,6 +405,8 @@ print_gdb_index(Dwarf_Debug dbg)
     }
     if(res == DW_DLV_ERROR) {
         printf("\n%s\n",".gdb_index not readable, error.");
+        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+        error = 0;
         return;
     }
     {
@@ -445,6 +446,8 @@ print_gdb_index(Dwarf_Debug dbg)
             dwarf_dealloc(dbg,error, DW_DLA_ERROR);
             error = 0;
         }
+        dwarf_gdbindex_free(gdbindex);
+        gdbindex = 0;
         return;
     }
     res = print_types_culist_array(dbg,gdbindex,&error);
@@ -453,6 +456,8 @@ print_gdb_index(Dwarf_Debug dbg)
             dwarf_dealloc(dbg,error, DW_DLA_ERROR);
             error = 0;
         }
+        dwarf_gdbindex_free(gdbindex);
+        gdbindex = 0;
         return;
     }
     res = print_addressarea(dbg,gdbindex,&error);
@@ -461,6 +466,8 @@ print_gdb_index(Dwarf_Debug dbg)
             dwarf_dealloc(dbg,error, DW_DLA_ERROR);
             error = 0;
         }
+        dwarf_gdbindex_free(gdbindex);
+        gdbindex = 0;
         return;
     }
     res = print_symboltable(dbg,gdbindex,culist_len,&error);
@@ -469,6 +476,10 @@ print_gdb_index(Dwarf_Debug dbg)
             dwarf_dealloc(dbg,error, DW_DLA_ERROR);
             error = 0;
         }
+        dwarf_gdbindex_free(gdbindex);
+        gdbindex = 0;
         return;
     }
+    dwarf_gdbindex_free(gdbindex);
+    gdbindex = 0;
 }
