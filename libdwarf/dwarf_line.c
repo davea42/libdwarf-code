@@ -1696,7 +1696,6 @@ dwarf_line_subprog(Dwarf_Line line,
     if (res != DW_DLV_OK) {
         *decl_filename = NULL;
     }
-
     return DW_DLV_OK;
 }
 

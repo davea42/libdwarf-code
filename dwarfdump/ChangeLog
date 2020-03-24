@@ -1,4 +1,7 @@
 2020-03-24  David Anderson
+    * print_lines.c: Added a dwarf_dealloc DW DLA STRING
+      that had been overlooked.
+2020-03-24  David Anderson
     * print_die.c: Ensuring that when an error is
       created it gets dealloc-d.
     * print_gdbindex.c(print_gdb_index): It was failing to dealloc

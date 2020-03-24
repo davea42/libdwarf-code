@@ -469,10 +469,13 @@ process_line_table(Dwarf_Debug dbg,
                     printf(" CC=%" DW_PR_DUu, call_context);
                 }
                 subprog_name = 0;
-                disres = dwarf_line_subprog(line, &subprog_name,
-                    &subprog_filename, &subprog_line, &lt_err);
+                disres = dwarf_line_subprog(line, 
+                    &subprog_name,
+                    &subprog_filename, 
+                    &subprog_line, &lt_err);
                 if (disres == DW_DLV_ERROR) {
-                    print_error(dbg, "dwarf_line_subprog() failed",
+                    print_error(dbg, 
+                        "dwarf_line_subprog() failed",
                         disres, lt_err);
                 }
                 if (subprog_name && strlen(subprog_name)) {
@@ -480,6 +483,7 @@ process_line_table(Dwarf_Debug dbg,
                         Clutters things up. */
                     printf(" SB=\"%s\"", sanitized(subprog_name));
                 }
+                dwarf_dealloc(dbg,subprog_filename, DW_DLA_STRING);
             }
         }
 
@@ -879,7 +883,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             } else {
                 Dwarf_Bool is_logicals = TRUE;
                 Dwarf_Bool is_actuals = FALSE;
-                process_line_table(dbg,sec_name, linebuf, linecount,
+                process_line_table(dbg,sec_name,
+                    linebuf, linecount,
                     is_logicals, is_actuals);
                 process_line_table(dbg,sec_name, linebuf_actuals,
                     linecount_actuals,

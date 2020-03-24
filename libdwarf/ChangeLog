@@ -1,4 +1,6 @@
 2020-03-24: David Anderson
+    * dwarf_line.c: Deleted useless blank line.
+2020-03-24: David Anderson
     * dwarf_alloc.c: Now with #ifdef DEBUG of debug messages in
       various places as thise get needed over and over.
     * dwarf_die_deliv.c: Working toward complete dealloc
