@@ -71,11 +71,11 @@ deal_with_name_offset_err(Dwarf_Debug dbg,
     Dwarf_Unsigned myerr = dwarf_errno(aerr);
     struct esb_s fullmsg;
     struct esb_s details;
- 
+
     esb_constructor(&details);
     esb_constructor(&fullmsg);
     if (myerr == DW_DLE_OFFSET_BAD) {
-        esb_append(&details," bad offset "); 
+        esb_append(&details," bad offset ");
         esb_append(&details,err_loc);
         esb_append(&details," ");
         esb_append(&details,"name");

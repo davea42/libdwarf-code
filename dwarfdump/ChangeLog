@@ -1,3 +1,6 @@
+2020-03-25  David Anderson 
+    * print_die.c,print_frames.c,print_lines.c,print_pubnames.c:
+      Fix indents and remove trailing whitespace.
 2020-03-24  David Anderson 
     * print_lines.c: Added a dwarf_dealloc DW DLA STRING
       that had been overlooked.

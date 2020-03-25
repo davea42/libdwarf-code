@@ -2456,9 +2456,17 @@ print_frames(Dwarf_Debug dbg,
                 !strlen(frame_section_name)) {
                 frame_section_name = ".eh_frame";
             }
+            if (fres == DW_DLV_ERROR) {
+                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+                err = 0;
+            }
             fres = dwarf_get_fde_list_eh(dbg, &cie_data,
                 &cie_element_count, &fde_data,
                 &fde_element_count, &err);
+            if (fres == DW_DLV_ERROR) {
+                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+                err = 0;
+            }
             if (glflags.gf_check_harmless) {
                 print_any_harmless_errors(dbg);
             }
@@ -2475,9 +2483,9 @@ print_frames(Dwarf_Debug dbg,
         }
 
         if (fres == DW_DLV_ERROR) {
-            const char *loc = "dwarf_get_fde_list";    
+            const char *loc = "dwarf_get_fde_list";
             if (is_eh) {
-              loc = "dwarf_get_fde_list_eh";    
+                loc = "dwarf_get_fde_list_eh";
             }
             printf("\n%s\n", frame_section_name);
             print_error(dbg, loc, fres, err);

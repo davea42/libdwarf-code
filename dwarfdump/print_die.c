@@ -2050,7 +2050,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 err = 0;
                 break;
             } else {
-                print_error(dbg, 
+                print_error(dbg,
                     "dwarf_dieoffset fails in traversal", res, err);
             }
         }
@@ -2690,10 +2690,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             get_LANG_name, &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"Cannot get DW_AT_language",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"Cannot get DW_AT_language",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_accessibility:
@@ -2703,10 +2703,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"Cannot get DW_AT_accessibility",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"Cannot get DW_AT_accessibility",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_visibility:
@@ -2716,10 +2716,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"Cannot get DW_AT_visibility",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"Cannot get DW_AT_visibility",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_virtuality:
@@ -2729,10 +2729,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             get_VIRTUALITY_name, &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"Cannot get DW_AT_virtuality",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"Cannot get DW_AT_virtuality",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_identifier_case:
@@ -2742,10 +2742,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"Cannot get DW_AT_identifier_case",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"Cannot get DW_AT_identifier_case",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_inline:
@@ -2754,10 +2754,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             get_INL_name, &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"Cannot get DW_AT_inline",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"Cannot get DW_AT_inline",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_encoding:
@@ -2766,10 +2766,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             get_ATE_name, &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"ERROR:Cannot get DW_AT_encoding",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"ERROR:Cannot get DW_AT_encoding",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_ordering:
@@ -2778,10 +2778,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             get_ORD_name, &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"ERROR:Cannot get DW_AT_ordering",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,"ERROR:Cannot get DW_AT_ordering",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_calling_convention:
@@ -2791,10 +2791,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &paerr,
             glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
-           print_error_and_continue(dbg,"ERROR:Cannot get DW_AT_calling_convention",
-              res,paerr);
-           dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-           paerr = 0;
+            print_error_and_continue(dbg,
+                "ERROR:Cannot get DW_AT_calling_convention",
+                res,paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
         }
         break;
     case DW_AT_discr_list: {      /* DWARF2 */
@@ -2812,7 +2813,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         get_form_values(dbg,attrib,&theform,&directform);
         wres = dwarf_get_version_of_die(die,&version,&offset_size);
         if (wres != DW_DLV_OK) {
-            print_error_and_continue(dbg,"ERROR: Cannot get DIE context version number",
+            print_error_and_continue(dbg,
+                "ERROR: Cannot get DIE context version number",
                 DW_DLV_OK,0);
             break;
         }
@@ -3194,7 +3196,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         }
                     }
                 } else  if (cres == DW_DLV_ERROR) {
-                        DROP_ERROR_INSTANCE(dbg,cres,paerr);
+                    DROP_ERROR_INSTANCE(dbg,cres,paerr);
                 }
 
                 /* We have now both low_pc and high_pc values */
@@ -4549,8 +4551,8 @@ check_for_type_unsigned(Dwarf_Debug dbg,
 
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
-           dwarf_dealloc(dbg,error,DW_DLA_ERROR);
-           error = 0;
+            dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+            error = 0;
         }
         /*bracket_hex( "<helper small encoding FAIL",diegoffset,">",esbp);*/
         dwarf_dealloc(dbg,typedie,DW_DLA_DIE);

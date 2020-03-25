@@ -469,12 +469,12 @@ process_line_table(Dwarf_Debug dbg,
                     printf(" CC=%" DW_PR_DUu, call_context);
                 }
                 subprog_name = 0;
-                disres = dwarf_line_subprog(line, 
+                disres = dwarf_line_subprog(line,
                     &subprog_name,
-                    &subprog_filename, 
+                    &subprog_filename,
                     &subprog_line, &lt_err);
                 if (disres == DW_DLV_ERROR) {
-                    print_error(dbg, 
+                    print_error(dbg,
                         "dwarf_line_subprog() failed",
                         disres, lt_err);
                 }
