@@ -290,7 +290,7 @@ _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
     dwarfstring_append_printf_u(&m,
         ": Address size of %u is not supported."
         " Corrupt DWARF.",
-        addrsize); 
+        addrsize);
     _dwarf_error_string(dbg,error,errcode,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
@@ -2338,7 +2338,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         dwarfstring_append_printf_u(&m,
             "There is no abbrev present for code 0x%x .",
             abbrev_code);
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_DIE_ABBREV_LIST_NULL,dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
@@ -2445,7 +2445,7 @@ dwarf_child(Dwarf_Die die,
             ++dis->de_last_di_ptr;
         }
 
-        /*  We have arrived at a null DIE, 
+        /*  We have arrived at a null DIE,
             at the end of a CU or the end
             of a list of siblings. */
         *caller_ret_die = 0;
@@ -2602,7 +2602,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         dwarfstring_append_printf_u(&m,
             "There is no abbrev present for code 0x%x .",
             abbrev_code);
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_DIE_ABBREV_LIST_NULL,dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;

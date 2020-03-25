@@ -728,7 +728,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             }
             if (address_size  > sizeof(Dwarf_Addr)) {
                 _dwarf_create_address_size_dwarf_error(dbg,
-                    error,address_size, 
+                    error,address_size,
                     DW_DLE_ADDRESS_SIZE_ERROR,
                     "DW_DLE_ADDRESS_SIZE_ERROR");
                 return DW_DLV_ERROR;
@@ -1194,9 +1194,9 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
 
     if(section_end < (frame_ptr +4)) {
         dwarfstring m;
-        unsigned u = (unsigned long)(frame_ptr+4) - 
+        unsigned u = (unsigned long)(frame_ptr+4) -
             (unsigned long)section_end;
- 
+
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "

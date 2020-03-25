@@ -1,3 +1,6 @@
+2020-03-25: David Anderson
+    * dwarf_die_deliv.c: Fix trailing whitespace.
+    * dwarf_frame2.c:    Fix trailing whitespace.
 2020-03-24: David Anderson
     * dwarf_line.c: Deleted useless blank line.
 2020-03-24: David Anderson
