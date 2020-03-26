@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.88, 14 March 2020
+.ds vE Rev 2.89, 26 March 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2037,7 +2037,9 @@ internal allocations.
 So if the documentation here says you should
 do 
 \f(CWdwarf_dealloc()\fP
-calls and you omit
+calls 
+(or other calls documented here
+for specific functions) and you omit
 some or all of them then
 calling
 \f(CWdwarf_finish()\fP
@@ -2056,10 +2058,10 @@ If you call
 \f(CWdwarf_set_de_alloc_flag(1)\fP
 that sets/restores the setting to
 its default value so from that point
-all internal allocations will be
+all new internal allocations will be
 tracked and
 \f(CWdwarf_finish()\fP
-can clean them up.
+can clean the new ones up.
 .P
 The return value of
 \f(CWdwarf_set_de_alloc_flag()\fP
@@ -2076,7 +2078,17 @@ whatever percent speed improvement
 from
 \f(CWlibdwarf\fP
 that you can get.
-
+If you do use it
+then by all means use tools such as cc --fsanitize...
+or valgrind to ensure there are no leaks in your
+application (at least given your test cases).
+.P
+The function name echos the spelling of a 
+\f(CWlibdwarf\fP-internal
+field in 
+\f(CWstruct Dwarf_Debug_s\fP
+named 
+\f(CWde_alloc_tree\fP.
 
 .H 3 "Dwarf_Handler function"
 This is an example of a valid error handler function.
@@ -13852,7 +13864,153 @@ int dwarf_encode_signed_leb128(Dwarf_Signed val,
 
 The function \f(CWdwarf_encode_signed_leb128\fP
 is the same as \f(CWdwarf_encode_leb128\fP except that
-the argument  \f(CWval\fP is signed.
+the argument  
+\f(CWval\fP 
+is signed.
+
+.H 2 "Finding Memory Leaks"
+\f(CW
+\fP 
+If you are using
+\f(CWdwarf_set_de_alloc_flag(0)\fP 
+to turn off the garbage collection
+\f(CWdwarfinish()\fP 
+does and you find memory leaks there
+are a couple specific tools provided
+that may ease the process of tracking down
+the errors you have made.
+.P
+This chapter is new as of 26 March 2020.
+.H 3 "Compiling libdwarf -DDEBUG=1"
+.P
+The first tool is to build libdwarf with
+options
+\f(CW-g -O0 -DDEBUG=1\fP.
+The -O0 is simply to help a debugger,
+valgrind or other too identify source lines accurately.
+The
+\f(CW-DDEBUG=1\fP
+Turns on printf statements in 
+dwarf_alloc.c
+and
+dwarf_error.c
+that emit lines like
+.DS
+libdwarfdetector ALLOC ret 0x... size 
+libdwarfdetector DEALLOC ret 0x... size  
+libdwarfdetector ALLOC creating error string
+libdwarfdetector DEALLOC Now destruct error string 
+.DE
+at each point of particular interest.
+.P
+The first two relate to actually malloc/free.
+The ret 0x...  will be a hex address of
+the pointer yuur code is presented for allocations
+inside libdwarf.
+.P
+The second two relate to allocation/free
+of a string in Dwarf_Error record 
+when an error record with variable 
+descriptive error information is being built/freed.
+.P
+.H 3 "Making use of the output of -DDEBUG=1
+A small Python 3 program (alloctrack.py) in the libdwarf
+regressiontests on SourceForge.net
+will read through a file with libdwarfdetector
+lines and report on mismatches in the alloc/dealloc
+counts for each memory-blob libdwarf created.
+All other lines are skipped.
+.P
+This has been found very useful.
+.P
+Since the regression tests are large
+and you won't otherwise need them
+a copy of alloctrack.py follows so
+you need not clone the test code.
+.DS
+#!/usr/bin/env python3
+# Copyright 2020 David Anderson
+# This Python code is hereby placed into the public domain
+# for use by anyone for any purpose.
+
+# Useful for finding the needle of
+# a single leaking allocation
+# in the haystack of all the libdwarfdetector
+# lines libdwarf can emit if compiled -DDEBUG=1
+import sys
+import os
+
+def trackallocs(fi,valdict):
+  line = 0
+  while True:
+    line = int(line)+1
+    try:
+      recf = fi.readline()
+    except EOFError:
+      break
+    if len(recf) < 1:
+      # eof
+      break
+    rec = recf.strip()
+    if rec.find("ALLOC") != -1:
+    if rec.find("libdwarfdetector ALLOC ret 0x") != -1:
+      wds = rec.split()
+      off = wds[3]
+      if off in valdict:
+         (allo,deallo) = valdict[off]
+         if int(allo) == 0:
+            r = (1,deallo)
+            valdict[off] = r
+         else:
+            print("Duplicate use of ",off,"line",line)
+            r =(int(allo)+1,deallo)
+            valdict[off] = r
+      else:
+         allo = 1
+         deallo = 0
+         r=(allo,deallo)
+         valdict[off] = r
+      continue
+
+    if rec.find("libdwarfdetector DEALLOC ret 0x") != -1:
+      wds = rec.split()
+      off = wds[3]
+      if off in valdict:
+         (allo,deallo) = valdict[off]
+         if int(deallo) == 0:
+            r = (allo,1)
+            valdict[off] = r
+         else:
+            print("Duplicate use of ",off,"line",line)
+            r = (allo,int(deallo)+1)
+            valdict[off] =  r
+      else:
+         allo = 0
+         deallo = 1
+         r=(allo,deallo)
+         valdict[off] = r
+      continue 
+
+if __name__ == '__main__':
+  if len(sys.argv) > 1:
+    fname = sys.argv[1]
+    try:
+      file = open(fname,"r")
+    except IOError as message:
+      print("File could not be opened: ", fname, " ", message)
+      sys.exit(1)
+  else:
+    file = sys.stdin
+
+  vals = {}
+  trackallocs(file,vals)
+  for s in vals:
+    (allo,deallo) = vals[s]
+    if int(allo) != int(deallo):
+       print("Mismatch on ",s," a vs d: ",allo,deallo)
+    if int(allo) >  1:
+       print("Reuse of ",s," a vs d: ",allo,deallo)
+.DE
 
 .SK
 .S

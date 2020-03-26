@@ -104,7 +104,7 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
             dwarfstring *em = 0;
 
 #ifdef DEBUG
-printf("dadebug ALLOC creating error string %s errval %ld errptr 0x%lx \n",msg,(long)errval,(unsigned long)errptr);
+printf("libdwarfdetector ALLOC creating error string %s errval %ld errptr 0x%lx \n",msg,(long)errval,(unsigned long)errptr);
 #endif
             em = (dwarfstring *)calloc(1,sizeof(dwarfstring));
             if (em) {

@@ -173,7 +173,7 @@ _dwarf_error_destructor(void *m)
         return;
     }
 #if DEBUG
-    printf("dadebug Now destruct error string %s\n",dwarfstring_string(erm));
+    printf("libdwarfdetector DEALLOC Now destruct error string %s\n",dwarfstring_string(erm));
 #endif
     dwarfstring_destructor(erm);
     free(erm);
@@ -525,7 +525,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             }
         }
 #if DEBUG
-    printf("dadebug ALLOC ret 0x%lx size %lu line %d %s\n",(unsigned long)ret_mem,(unsigned long)size,__LINE__,__FILE__);
+    printf("libdwarfdetector ALLOC ret 0x%lx size %lu line %d %s\n",(unsigned long)ret_mem,(unsigned long)size,__LINE__,__FILE__);
 #endif
         return (ret_mem);
     }
@@ -703,7 +703,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
 #endif
 #if DEBUG
-    printf("dadebug DEALLOC ret 0x%lx size %lu line %d %s\n",(unsigned long)space,(unsigned long)r->rd_length,__LINE__,__FILE__);
+    printf("libdwarfdetector DEALLOC ret 0x%lx size %lu line %d %s\n",(unsigned long)space,(unsigned long)r->rd_length,__LINE__,__FILE__);
 #endif
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* internal or user app error */
