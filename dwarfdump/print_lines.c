@@ -204,12 +204,16 @@ process_line_table(Dwarf_Debug dbg,
 
         filename = "<unknown>";
         if (!is_actuals_table) {
-            sres = dwarf_linesrc(line, &filename, &lt_err);
+            Dwarf_Error aterr = 0;
+
+            sres = dwarf_linesrc(line, &filename, &aterr);
             if (sres == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_linesrc()";
-                record_line_error(where,lt_err);
+                record_line_error(where,aterr);
                 found_line_error = TRUE;
+                dwarf_dealloc(dbg,aterr,DW_DLA_ERROR);
+                aterr = 0;
             }
         }
 
@@ -222,6 +226,8 @@ process_line_table(Dwarf_Debug dbg,
             record_line_error(where,lt_err);
             found_line_error = TRUE;
             pc = 0;
+            dwarf_dealloc(dbg,lt_err,DW_DLA_ERROR);
+            lt_err = 0;
         }
         if (ares == DW_DLV_NO_ENTRY) {
             pc = 0;
@@ -234,6 +240,8 @@ process_line_table(Dwarf_Debug dbg,
                 where = "dwarf_linelogical()";
                 record_line_error(where,lt_err);
                 found_line_error = TRUE;
+                dwarf_dealloc(dbg,lt_err,DW_DLA_ERROR);
+                lt_err = 0;
             }
             if (lires == DW_DLV_NO_ENTRY) {
                 logicalno = 0;
@@ -246,6 +254,8 @@ process_line_table(Dwarf_Debug dbg,
                 where = "dwarf_lineno()";
                 record_line_error(where,lt_err);
                 found_line_error = TRUE;
+                dwarf_dealloc(dbg,lt_err,DW_DLA_ERROR);
+                lt_err = 0;
             }
             if (lires == DW_DLV_NO_ENTRY) {
                 lineno = 0;

@@ -99,6 +99,8 @@ void init_mips_conf_file_data(struct dwconf_s *config_file_data);
 void print_reg_from_config_data(Dwarf_Unsigned reg,
     struct dwconf_s *config_data);
 
+void free_all_dwconf(struct dwconf_s *config_data);
+
 
 void init_generic_config_1200_regs(struct dwconf_s *conf);
 

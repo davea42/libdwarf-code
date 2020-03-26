@@ -161,6 +161,7 @@ global_destructors(void)
     esb_destructor(glflags.newprogname);
     esb_destructor(&global_file_name);
     esb_destructor(&global_tied_file_name);
+    free_all_dwconf(glflags.config_file_data);
     sanitized_string_destructor();
     ranges_esb_string_destructor();
     /*  Global flags initialization and esb-buffers destruction. */
@@ -1266,10 +1267,15 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     dares = dwarf_attr(cu_die, DW_AT_name, &attrib,
         &lerr);
     if (dares != DW_DLV_OK) {
-        print_error(dbg, "dwarf_attr arange"
-            " derived die has no name",
+        /* does not return */
+        print_error_and_continue(dbg, "should skip this cu? "
+            " cu die has no DW_AT_name attribute!",
             dares, lerr);
+        if (dares == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
         }
+        return FALSE;
+    }
     fres = dwarf_whatform(attrib, &theform, &lerr);
     if (fres == DW_DLV_OK) {
         if (theform == DW_FORM_string
@@ -1292,22 +1298,26 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 #if _WIN32
                 if (stricmp(lcun, p)) {
                     /* skip this cu. */
+                    dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
                     return TRUE;
                 }
 #else
                 if (strcmp(lcun, p)) {
                     /* skip this cu. */
+                    dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
                     return TRUE;
                 }
 #endif /* _WIN32 */
 
             } else {
+                dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
                 print_error(dbg,
                     "arange: string missing",
                     sres, lerr);
             }
         }
     } else {
+        dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
         print_error(dbg,
             "dwarf_whatform unexpected value.",
             fres, lerr);

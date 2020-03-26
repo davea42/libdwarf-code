@@ -136,6 +136,10 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         esb_append(&details,".");
         print_error_and_continue(dbg, esb_get_string(&details), dres, err);
         esb_destructor(&details);
+        if (dres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
         return dres;
     }
 
@@ -149,6 +153,8 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         print_error(dbg, esb_get_string(&details), dres, err);
         esb_destructor(&details);
         die_CU_off = 0;
+        dwarf_dealloc(dbg,err,DW_DLA_DIE);
+        return ddres;
     }
 
     /* Get die at offset cu_die_off to check its existence. */
@@ -163,6 +169,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
                 "cu die offset  does not reference valid CU DIE.  ");
             esb_append_printf_u(&details,"0x%"  DW_PR_DUx, cu_die_off);
             esb_append(&details,".");
+            /* does not return */
             print_error(dbg, esb_get_string(&details), dres, err);
             esb_destructor(&details);
         } else {
@@ -186,8 +193,11 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     }
 
     if ((die_off - die_CU_off) != global_cu_offset) {
-        printf(" error: real cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx,
+        dwarf_dealloc(dbg, die, DW_DLA_DIE);
+        printf(" ERROR: real cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx,
             global_cu_offset);
+        printf(" Exit. Something is corrupted\n");
+        /*  FIXME: This is really bad to just exit. */
         exit(1);
     }
 
@@ -291,17 +301,19 @@ print_pubnames(Dwarf_Debug dbg)
     } else if (res == DW_DLV_NO_ENTRY) {
         /* fall through to end*/
     } else {
-        res = print_all_pubnames_style_records(dbg,
+        Dwarf_Error pserr = 0;
+        int psres = 0;
+        psres = print_all_pubnames_style_records(dbg,
             "global",
             esb_get_string(&sanitname),
-            globbuf,count,&err);
-        dwarf_globals_dealloc(dbg,globbuf,count);
-        if (res == DW_DLV_ERROR) {
+            globbuf,count,&pserr);
+        if (psres == DW_DLV_ERROR) {
             print_error_and_continue(dbg, "printing pubnames style",
-                res, err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+                DW_DLV_OK, pserr);
+            dwarf_dealloc(dbg,pserr,DW_DLA_ERROR);
+            pserr = 0;
         }
+        dwarf_globals_dealloc(dbg,globbuf,count);
     }
     esb_destructor(&sanitname);
     dwarf_return_empty_pubnames(dbg,0,&err);
@@ -503,7 +515,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 name, die_off, cu_die_off,
                 global_cu_off, maxoff);
             if (res != DW_DLV_OK) {
-                return res;
+                return DW_DLV_OK;
             }
             glflags.gf_record_dwarf_error = FALSE;
         }

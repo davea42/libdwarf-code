@@ -1,6 +1,27 @@
+2020-03-26  David Anderson 
+    * dwarfdump.c: Now calls the new free_all_dwconf()
+      to avoid leaking memory. should_skip_this_cu()
+      ensures it does not leak.
+    * dwconf.c: Use struct esb to build a string, avoid
+      leaving a static string pointer around.
+      Add free_all_dwconf() so the dwconf malloc
+      space can be cleaned up at end of run.
+    * dwconf.h: Declare free_all_dwconf().
+    * print_frames.c(get_proc_name): Add loopok variable so the loop
+      on cu contexts can stop early when a serious
+      error is encountered. The procedure name is not
+      very critical, just nice to have.
+      Ensured no leaks in dwarfdump here.
+    * print_lines.c: When an error but we wish to continue
+      ensure the Dwarf_Error is dealloc-d.
+    * print_pubnames.c: Ensure no leaks on error from libdwarf.
 2020-03-25  David Anderson 
-    * print_die.c,print_frames.c,print_lines.c,print_pubnames.c:
+    * print_die.c,print_lines.c,print_pubnames.c:
       Fix indents and remove trailing whitespace.
+    * print_frames.c : Fix whitespace and ensure
+      a return of DW_DLV_ERROR (which will
+      basically be ignored anyway) gets a dwarf_dealloc
+      applied to the Dwarf_Error argument.
 2020-03-24  David Anderson 
     * print_lines.c: Added a dwarf_dealloc DW DLA STRING
       that had been overlooked.

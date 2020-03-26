@@ -284,10 +284,11 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     Dwarf_Attribute *atlist = NULL;
     Dwarf_Addr low_pc_die = 0;
     int atres = 0;
-    int funcres = 1;
     int funcpcfound = 0;
+    int funcres = 1;
     int funcnamefound = 0;
     Dwarf_Error proc_name_err = 0;
+    int loop_ok = true;
 
     proc_name_buf[0] = 0;       /* always set to something */
     if (pcMap) {
@@ -316,6 +317,9 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
         int sres = 0;
         int dres = 0;
 
+        if (!loop_ok) {
+            break;
+        }
         if (funcnamefound == 1 && funcpcfound == 1) {
             /* stop as soon as both found */
             break;
@@ -369,6 +373,7 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                 break;
             case DW_AT_low_pc:
                 dres = dwarf_formaddr(atlist[i], &low_pc_die, &proc_name_err);
+                funcpcfound = 1;
                 if (dres == DW_DLV_ERROR) {
                     load_CU_error_data(dbg, current_cu_die_for_print_frames);
                     if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
@@ -383,17 +388,20 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                         print_error(dbg, "formaddr in get_proc_name failed",
                             dres, proc_name_err);
                     }
+                    funcpcfound = 0;
                     low_pc_die = ~low_pc;
+                    loop_ok = false;
                     /* ensure no match */
+                } else if (dres == DW_DLV_NO_ENTRY) {
+                    funcpcfound = 0;
+                    loop_ok = false;
                 }
-                funcpcfound = 1;
-
                 break;
             default:
                 break;
-            }
-        }
-    }
+            } /* end switch */
+        } /* end DW_DLV_OK */
+    } /* end for loop on atcnt */
     for (i = 0; i < atcnt; i++) {
         dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
     }
@@ -598,6 +606,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             &address_size, &next_cu_offset,
             &pnerr);
         if (cures == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
             /*  If there is a serious error in DIE information
                 we just skip looking for a procedure name.
                 Perhaps we should report something? */
@@ -611,6 +620,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 &current_cu_die_for_print_frames,
                 &pnerr);
             if (dres == DW_DLV_ERROR) {
+                dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
                 /*  If there is a serious error in DIE information
                     we just skip looking for a procedure name.
                     Perhaps we should report something? */
@@ -625,8 +635,8 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             /*  no information. Possibly a stripped file */
             return NULL;
         }
-        chres =
-            dwarf_child(current_cu_die_for_print_frames, &child, &pnerr);
+        chres = dwarf_child(current_cu_die_for_print_frames,
+            &child, &pnerr);
         if (chres == DW_DLV_ERROR) {
             print_error(dbg, "dwarf_cu_header on child read ", chres,
                 pnerr);
@@ -651,6 +661,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             &address_size, &next_cu_offset,
             &pnerr);
         if (cures != DW_DLV_OK) {
+            if (cures == DW_DLV_ERROR) {
+                dwarf_dealloc(dbg, pnerr, DW_DLA_DIE);
+            }
             *all_cus_seen = 1;
             break;
         }
@@ -2415,6 +2428,10 @@ print_frames(Dwarf_Debug dbg,
             if (fres != DW_DLV_OK || !frame_section_name ||
                 !strlen(frame_section_name)) {
                 frame_section_name = ".debug_frame";
+                if (fres == DW_DLV_ERROR) {
+                    dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+                    err = 0;
+                }
             }
 
             /*  Big question here is how to print all the info?
@@ -2455,18 +2472,14 @@ print_frames(Dwarf_Debug dbg,
             if (fres != DW_DLV_OK || !frame_section_name ||
                 !strlen(frame_section_name)) {
                 frame_section_name = ".eh_frame";
-            }
-            if (fres == DW_DLV_ERROR) {
-                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-                err = 0;
+                if (fres == DW_DLV_ERROR){
+                    dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+                    err = 0;
+                }
             }
             fres = dwarf_get_fde_list_eh(dbg, &cie_data,
                 &cie_element_count, &fde_data,
                 &fde_element_count, &err);
-            if (fres == DW_DLV_ERROR) {
-                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-                err = 0;
-            }
             if (glflags.gf_check_harmless) {
                 print_any_harmless_errors(dbg);
             }
@@ -2479,6 +2492,13 @@ print_frames(Dwarf_Debug dbg,
                 fde_data, fde_element_count);
             addr_map_destroy(lowpcSet);
             lowpcSet = 0;
+            if (fres == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "Unable to get fde list ",
+                    fres,err);
+                dwarf_dealloc(dbg,err, DW_DLA_ERROR);
+                err = 0;
+            }
             continue;
         }
 
@@ -2488,7 +2508,9 @@ print_frames(Dwarf_Debug dbg,
                 loc = "dwarf_get_fde_list_eh";
             }
             printf("\n%s\n", frame_section_name);
-            print_error(dbg, loc, fres, err);
+            print_error_and_continue(dbg, loc, fres, err);
+            dwarf_dealloc(dbg,err, DW_DLA_ERROR);
+            err = 0;
         } else if (fres == DW_DLV_NO_ENTRY) {
             if (!silent_if_missing) {
                 printf("\n%s\n", frame_section_name);
@@ -2549,7 +2571,8 @@ print_frames(Dwarf_Debug dbg,
 
     }
     if (current_cu_die_for_print_frames) {
-        dwarf_dealloc(dbg, current_cu_die_for_print_frames, DW_DLA_DIE);
+        dwarf_dealloc(dbg, current_cu_die_for_print_frames,
+            DW_DLA_DIE);
         current_cu_die_for_print_frames = 0;
     }
     addr_map_destroy(map_lowpc_to_name);

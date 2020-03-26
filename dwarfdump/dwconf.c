@@ -25,6 +25,7 @@
 
 /* Windows specific */
 #include "config.h"
+#include "esb.h"
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -213,7 +214,8 @@ find_conf_file_and_read_config_inner(const char *named_file,
             offset, name_used);
         return errcount;
     }
-    parse_abi(conf_stream, name_used, named_abi, conf_internal, lineno,
+    parse_abi(conf_stream, name_used, named_abi,
+        conf_internal, lineno,
         nest_level);
     fclose(conf_stream);
     return errcount;
@@ -527,10 +529,7 @@ find_abi_start(FILE * stream, const char *abi_name,
     return FALSE;
 }
 
-static char *tempstr = 0;
-static unsigned tempstr_len = 0;
-
-/*  Use a global buffer (tempstr) to turn a non-delimited
+/*  Turn a non-delimited
     input char array into a NUL-terminated C string
     (with the help of makename() to get a permanent
     address for the result ing string).
@@ -538,13 +537,15 @@ static unsigned tempstr_len = 0;
 static char *
 build_string(unsigned tlen, char *cp)
 {
-    if (tlen >= tempstr_len) {
-        free(tempstr);
-        tempstr = malloc(tlen + 100);
-    }
-    strncpy(tempstr, cp, tlen);
-    tempstr[tlen] = 0;
-    return makename(tempstr);
+    struct esb_s x;
+    char buffer[32];
+    char *ret = 0;
+
+    esb_constructor_fixed(&x,buffer,sizeof(buffer));
+    esb_appendn(&x,cp,tlen);
+    ret = makename(esb_get_string(&x));
+    esb_destructor(&x);
+    return ret;
 }
 
 /*  The tokenizer for our simple parser.
@@ -1428,4 +1429,15 @@ print_reg_from_config_data(Dwarf_Unsigned reg,
     }
     fputs(name,stdout);
     return;
+}
+
+void
+free_all_dwconf(struct dwconf_s *conf)
+{
+    if (conf->cf_regs_malloced) {
+        free(conf->cf_regs);
+    }
+    conf->cf_regs = 0;
+    conf->cf_named_regs_table_size =0;
+    conf->cf_regs_malloced = 0;
 }
