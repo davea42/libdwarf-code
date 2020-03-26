@@ -79,10 +79,10 @@ dwarf_get_globals(Dwarf_Debug dbg,
 {
     int res = _dwarf_load_section(dbg, &dbg->de_debug_pubnames,error);
     if (res != DW_DLV_OK) {
-        return res = 0;
+        return res;
     }
     if (!dbg->de_debug_pubnames.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     res = _dwarf_internal_get_pubnames_like_data(dbg,

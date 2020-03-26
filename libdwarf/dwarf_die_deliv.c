@@ -375,13 +375,13 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
         addrsize > MAXIMUM_ADDRESS_SIZE ) {
         _dwarf_create_address_size_dwarf_error(dbg,error,addrsize,
             DW_DLE_ADDRESS_SIZE_ERROR,
-            "DW_DLE_ADDRESS_SIZE_ERROR");
+            "DW_DLE_ADDRESS_SIZE_ERROR::");
         return DW_DLV_ERROR;
     }
     if (addrsize  > sizeof(Dwarf_Addr)) {
         _dwarf_create_address_size_dwarf_error(dbg,error,addrsize,
             DW_DLE_ADDRESS_SIZE_ERROR,
-            "DW_DLE_ADDRESS_SIZE_ERROR");
+            "DW_DLE_ADDRESS_SIZE_ERROR:");
         return DW_DLV_ERROR;
     }
 

@@ -88,7 +88,8 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
                 errptr->er_static_alloc = DE_STANDARD;
             }
         } else {
-            /*  We have no dbg to work with. dwarf_init failed. We hack
+            /*  We have no dbg to work with. dwarf_init
+                failed. We hack
                 up a special area. */
             errptr = _dwarf_special_no_dbg_error_malloc();
             if (!errptr) {
@@ -102,8 +103,8 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
         if (msg) {
             dwarfstring *em = 0;
 
-#if 0
-printf("dadebug creating error string %s\n",msg);
+#ifdef DEBUG
+printf("dadebug ALLOC creating error string %s errval %ld errptr 0x%lx \n",msg,(long)errval,(unsigned long)errptr);
 #endif
             em = (dwarfstring *)calloc(1,sizeof(dwarfstring));
             if (em) {
@@ -111,6 +112,10 @@ printf("dadebug creating error string %s\n",msg);
                 dwarfstring_append(em,msg);
                 errptr->er_msg = (void*)em;
             }
+        } else {
+#ifdef DEBUG
+printf("dadebug ALLOC creating error no string, errval %ld errptr 0x%lx \n",(long)errval,(unsigned long)errptr);
+#endif
         }
         *error = errptr;
         return;

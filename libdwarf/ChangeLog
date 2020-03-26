@@ -1,3 +1,19 @@
+2020-03-26: David Anderson
+    * dwarf_alloc.c,dwarf_error.c:  Now DEBUG can be turned on via
+      CFLAGS at configure time. Or left off by default.
+      Changed all the fprintf here (debug stuff) to
+      do printf instead.
+    * dwarf_die_deliv.c,dwarf_frame2.c: Altered the 
+      DW_DLE_ADDRESS_SIZE_ERROR
+      strings so the 3 cases can be distinquished easily
+      (just a convenience for debugging).
+    * dwarf_globals.c: Removed one superfluous ().
+    * dwarf_query.c: Reforatted lgpl text for shorter
+      lines (no change in the content).
+      Removed one superfluous ().
+2020-03-25: David Anderson
+    * dwarf_alloc.c, dwarf_error.c: Revised the debug
+      output created if DEBUG is defined.
 2020-03-25: David Anderson
     * dwarf_die_deliv.c: Fix trailing whitespace.
     * dwarf_frame2.c:    Fix trailing whitespace.

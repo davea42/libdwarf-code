@@ -730,7 +730,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                 _dwarf_create_address_size_dwarf_error(dbg,
                     error,address_size,
                     DW_DLE_ADDRESS_SIZE_ERROR,
-                    "DW_DLE_ADDRESS_SIZE_ERROR");
+                    "DW_DLE_ADDRESS_SIZE_ERROR..:");
                 return DW_DLV_ERROR;
             }
             if ((frame_ptr+2)  >= section_ptr_end) {
