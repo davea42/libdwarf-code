@@ -1,4 +1,10 @@
 2020-03-26  David Anderson 
+    * print_ranges.c: For a particular serious error/corruption
+      print a detailed error message,
+      dwarf_dealloc() the Dwarf_Error instance
+      and skip to the next
+      section to continue. 
+2020-03-26  David Anderson 
     * dwarfdump.c: Now calls the new free_all_dwconf()
       to avoid leaking memory. should_skip_this_cu()
       ensures it does not leak.

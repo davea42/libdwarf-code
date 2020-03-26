@@ -102,7 +102,17 @@ print_ranges(Dwarf_Debug dbg)
             /*  ERROR, which does not quite mean a real error,
                 as we might just be misaligned reading things without
                 a DW_AT_ranges offset.*/
-            printf("End of %s..\n",sanitized(esb_get_string(&truename)));
+            struct esb_s m;
+
+            esb_constructor(&m);
+
+            esb_append_printf_u(&m,"Error at offset 0x%lx in ",off);
+            esb_append_printf_s(&m,"section %s. Stopping ranges"
+                " output.",sanitized(esb_get_string(&truename)));
+            print_error_and_continue(dbg,esb_get_string(&m),
+                rres,pr_err);
+            dwarf_dealloc(dbg,pr_err,DW_DLA_ERROR);
+            esb_destructor(&m);
             break;
         }
         off += bytecount;
