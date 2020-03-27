@@ -1393,15 +1393,15 @@ dwarf_formblock(Dwarf_Attribute attr,
             when length actually added in
             it would not be caught.
             Test could be just >, but >= ok here too.*/
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_FORM_BLOCK_LENGTH_ERROR,
             "DW_DLE_FORM_BLOCK_LENGTH_ERROR: "
-            "The length of the block is greater " 
+            "The length of the block is greater "
             "than the section length! Corrupt Dwarf.");
         return (DW_DLV_ERROR);
     }
     if ((attr->ar_debug_ptr + length) > section_end) {
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_FORM_BLOCK_LENGTH_ERROR,
             "DW_DLE_FORM_BLOCK_LENGTH_ERROR: "
             "The block length means the block "
@@ -1410,7 +1410,7 @@ dwarf_formblock(Dwarf_Attribute attr,
         return (DW_DLV_ERROR);
     }
     if (data > section_end) {
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_FORM_BLOCK_LENGTH_ERROR,
             "DW_DLE_FORM_BLOCK_LENGTH_ERROR: "
             "The block content is "
@@ -1420,7 +1420,7 @@ dwarf_formblock(Dwarf_Attribute attr,
         return (DW_DLV_ERROR);
     }
     if ((data + length) > section_end) {
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_FORM_BLOCK_LENGTH_ERROR,
             "DW_DLE_FORM_BLOCK_LENGTH_ERROR: "
             "The end of the block content is "

@@ -1,4 +1,7 @@
 2020-03-27: David Anderson
+    * dwarf_alloc.c, dwarf_form.c: Removed
+      trailing whitespace.
+2020-03-27: David Anderson
     * dwarf_alloc.c: The (static) list of DW_DLA 
       initializers was very messy and hard to read.
       Cleaned up its appearance.`

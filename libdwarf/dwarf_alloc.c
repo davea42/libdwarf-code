@@ -27,7 +27,7 @@
 */
 /*  To see the full set of DW_DLA types and nothing
     else  try:
-    grep DW_DLA dwarf_alloc.c | grep 0x 
+    grep DW_DLA dwarf_alloc.c | grep 0x
 */
 
 #include "config.h"
@@ -204,7 +204,7 @@ struct reserve_data_s {
 static const
 struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0  none */
-    { 1,MULTIPLY_NO, 0, 0}, 
+    { 1,MULTIPLY_NO, 0, 0},
 
     /* 0x1 x1 DW_DLA_STRING */
     { 1,MULTIPLY_CT, 0, 0},
@@ -237,11 +237,11 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0xa  10 DW_DLA_ATTR */
     {sizeof(struct Dwarf_Attribute_s),MULTIPLY_NO,  0, 0},
 
-    /* 0xb DW_DLA_TYPE *//* not used */ 
-    {1,MULTIPLY_NO,  0, 0}, 
+    /* 0xb DW_DLA_TYPE *//* not used */
+    {1,MULTIPLY_NO,  0, 0},
 
-    /* 0xc DW_DLA_SUBSCR *//* not used */ 
-    {1,MULTIPLY_NO,  0, 0}, 
+    /* 0xc DW_DLA_SUBSCR *//* not used */
+    {1,MULTIPLY_NO,  0, 0},
 
     /* 0xd 13 DW_DLA_GLOBAL */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
@@ -251,10 +251,10 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
         _dwarf_error_destructor},
 
     /* 0xf DW_DLA_LIST */
-    {sizeof(Dwarf_Ptr),MULTIPLY_CT, 0, 0},  
+    {sizeof(Dwarf_Ptr),MULTIPLY_CT, 0, 0},
 
     /* 0x10 DW_DLA_LINEBUF */ /* not used */
-    {1,MULTIPLY_NO, 0, 0},    
+    {1,MULTIPLY_NO, 0, 0},
 
     /* 0x11 17 DW_DLA_ARANGE */
     {sizeof(struct Dwarf_Arange_s),MULTIPLY_NO,  0, 0},
@@ -273,10 +273,10 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
         _dwarf_fde_destructor},
 
     /* 0x16 DW_DLA_LOC_BLOCK */
-    {sizeof(Dwarf_Loc),MULTIPLY_CT, 0, 0}, 
+    {sizeof(Dwarf_Loc),MULTIPLY_CT, 0, 0},
 
     /* 0x17 DW_DLA_FRAME_BLOCK */
-    {sizeof(Dwarf_Frame_Op),MULTIPLY_CT, 0, 0}, 
+    {sizeof(Dwarf_Frame_Op),MULTIPLY_CT, 0, 0},
 
     /* 0x18 DW_DLA_FUNC UNUSED */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
@@ -291,10 +291,10 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
     /* 0x1c DW_DLA_ADDR */
-    {1,MULTIPLY_SP, 0, 0},                    
+    {1,MULTIPLY_SP, 0, 0},
 
     /* 0x1d DW_DLA_RANGES */
-    {sizeof(Dwarf_Ranges),MULTIPLY_CT, 0,0 }, 
+    {sizeof(Dwarf_Ranges),MULTIPLY_CT, 0,0 },
 
     /*  The following DW_DLA data types
         are known only inside libdwarf.  */
@@ -366,7 +366,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
 
     /* 0x30 reserved for future internal use */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, 
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x31 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
