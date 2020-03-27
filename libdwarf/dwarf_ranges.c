@@ -246,7 +246,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         dwarfstring_append_printf_u(&m,
             " and section size is 0x%lx.",
             localdbg->de_debug_ranges.dss_size);
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_DEBUG_RANGES_OFFSET_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
@@ -262,7 +262,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         dwarfstring_append_printf_u(&m,
             " and section size is 0x%lx.",
             localdbg->de_debug_ranges.dss_size);
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_DEBUG_RANGES_OFFSET_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
