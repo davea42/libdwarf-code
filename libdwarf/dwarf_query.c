@@ -521,6 +521,7 @@ dwarf_attrlist(Dwarf_Die die,
                     die_info_end,
                     error);
                 if(vres!= DW_DLV_OK) {
+                    dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
                     empty_local_attrlist(dbg,head_attr);
                     return vres;
                 }

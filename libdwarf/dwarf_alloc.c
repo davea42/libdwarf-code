@@ -25,6 +25,10 @@
   Floor, Boston MA 02110-1301, USA.
 
 */
+/*  To see the full set of DW_DLA types and nothing
+    else  try:
+    grep DW_DLA dwarf_alloc.c | grep 0x 
+*/
 
 #include "config.h"
 #include <sys/types.h>
@@ -199,99 +203,131 @@ struct reserve_data_s {
 
 static const
 struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
-    { 1,MULTIPLY_NO, 0, 0},            /* 0  none */
-    { 1,MULTIPLY_CT, 0, 0},            /* 1 DW_DLA_STRING */
-    { sizeof(Dwarf_Loc),MULTIPLY_NO, 0, 0} ,/* 2 DW_DLA_LOC */
-    { sizeof(Dwarf_Locdesc),MULTIPLY_NO, 0, 0} , /* 3 DW_DLA_LOCDESC */
-    { 1,MULTIPLY_NO, 0, 0} , /* not used *//* 4 DW_DLA_ELLIST */
-    { 1,MULTIPLY_NO, 0, 0} , /* not used *//* 5 DW_DLA_BOUNDS */
-    { sizeof(Dwarf_Block),MULTIPLY_NO,  0, 0} , /* 6 DW_DLA_BLOCK */
+    /* 0  none */
+    { 1,MULTIPLY_NO, 0, 0}, 
 
-    /* the actual dwarf_debug structure */ /* 7 DW_DLA_DEBUG */
+    /* 0x1 x1 DW_DLA_STRING */
+    { 1,MULTIPLY_CT, 0, 0},
+
+    /* 0x2 DW_DLA_LOC */
+    { sizeof(Dwarf_Loc),MULTIPLY_NO, 0, 0} ,
+
+    /* x3 DW_DLA_LOCDESC */
+    { sizeof(Dwarf_Locdesc),MULTIPLY_NO, 0, 0},
+
+    /* 0x4 DW_DLA_ELLIST */ /* not used */
+    { 1,MULTIPLY_NO, 0, 0},
+
+    /* 0x5 DW_DLA_BOUNDS */ /* not used */
+    { 1,MULTIPLY_NO, 0, 0},
+
+    /* 0x6 DW_DLA_BLOCK */
+    { sizeof(Dwarf_Block),MULTIPLY_NO,  0, 0},
+
+    /* x7 DW_DLA_DEBUG */
+    /* the actual dwarf_debug structure */
     { 1,MULTIPLY_NO, 0, 0} ,
 
-    {sizeof(struct Dwarf_Die_s),MULTIPLY_NO, 0, 0},/* 8 DW_DLA_DIE */
-    {sizeof(struct Dwarf_Line_s),MULTIPLY_NO, 0, 0},/* 9 DW_DLA_LINE */
+    /* x8 DW_DLA_DIE */
+    {sizeof(struct Dwarf_Die_s),MULTIPLY_NO, 0, 0},
 
-    /* 10 DW_DLA_ATTR */
+    /* x9 DW_DLA_LINE */
+    {sizeof(struct Dwarf_Line_s),MULTIPLY_NO, 0, 0},
+
+    /* 0xa  10 DW_DLA_ATTR */
     {sizeof(struct Dwarf_Attribute_s),MULTIPLY_NO,  0, 0},
 
-    {1,MULTIPLY_NO,  0, 0}, /* not used */ /* 11 DW_DLA_TYPE */
-    {1,MULTIPLY_NO,  0, 0}, /* not used */ /* 12 DW_DLA_SUBSCR */
+    /* 0xb DW_DLA_TYPE *//* not used */ 
+    {1,MULTIPLY_NO,  0, 0}, 
 
-    /* 13 DW_DLA_GLOBAL */
+    /* 0xc DW_DLA_SUBSCR *//* not used */ 
+    {1,MULTIPLY_NO,  0, 0}, 
+
+    /* 0xd 13 DW_DLA_GLOBAL */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
-    /* 14 DW_DLA_ERROR */
+    /* 0xe 14 DW_DLA_ERROR */
     {sizeof(struct Dwarf_Error_s),MULTIPLY_NO,  0,
         _dwarf_error_destructor},
 
-    {sizeof(Dwarf_Ptr),MULTIPLY_CT, 0, 0},  /* 15 DW_DLA_LIST */
-    {1,MULTIPLY_NO, 0, 0},    /* not used *//* 16 DW_DLA_LINEBUF */
+    /* 0xf DW_DLA_LIST */
+    {sizeof(Dwarf_Ptr),MULTIPLY_CT, 0, 0},  
 
-    /* 17 DW_DLA_ARANGE */
+    /* 0x10 DW_DLA_LINEBUF */ /* not used */
+    {1,MULTIPLY_NO, 0, 0},    
+
+    /* 0x11 17 DW_DLA_ARANGE */
     {sizeof(struct Dwarf_Arange_s),MULTIPLY_NO,  0, 0},
 
-    /* 18 DW_DLA_ABBREV */
+    /* 0x12 18 DW_DLA_ABBREV */
     {sizeof(struct Dwarf_Abbrev_s),MULTIPLY_NO,  0, 0},
 
-    /* 19 DW_DLA_FRAME_OP */
+    /* 0x13 19 DW_DLA_FRAME_OP */
     {sizeof(Dwarf_Frame_Op),MULTIPLY_NO,  0, 0} ,
 
-    /* 20 DW_DLA_CIE */
+    /* 0x14  20 DW_DLA_CIE */
     {sizeof(struct Dwarf_Cie_s),MULTIPLY_NO,  0, 0},
 
+    /* 0x15 DW_DLA_FDE */
     {sizeof(struct Dwarf_Fde_s),MULTIPLY_NO,  0,
-        _dwarf_fde_destructor},/* 21 DW_DLA_FDE */
-    {sizeof(Dwarf_Loc),MULTIPLY_CT, 0, 0},          /* 22 DW_DLA_LOC_BLOCK */
-    {sizeof(Dwarf_Frame_Op),MULTIPLY_CT, 0, 0},     /* 23 DW_DLA_FRAME_BLOCK */
+        _dwarf_fde_destructor},
 
-    /* 24 DW_DLA_FUNC UNUSED */
+    /* 0x16 DW_DLA_LOC_BLOCK */
+    {sizeof(Dwarf_Loc),MULTIPLY_CT, 0, 0}, 
+
+    /* 0x17 DW_DLA_FRAME_BLOCK */
+    {sizeof(Dwarf_Frame_Op),MULTIPLY_CT, 0, 0}, 
+
+    /* 0x18 DW_DLA_FUNC UNUSED */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
-    /* 25 DW_DLA_TYPENAME UNUSED */
+    /* 0x19 DW_DLA_TYPENAME UNUSED */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
-    /* 26 DW_DLA_VAR UNUSED */
+    /* 0x1a DW_DLA_VAR UNUSED  */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
-    /* 27 DW_DLA_WEAK UNUSED */
+    /* 0x1b DW_DLA_WEAK UNUSED */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
-    {1,MULTIPLY_SP, 0, 0},                    /* 28 DW_DLA_ADDR */
-    {sizeof(Dwarf_Ranges),MULTIPLY_CT, 0,0 }, /* 29 DW_DLA_RANGES */
+    /* 0x1c DW_DLA_ADDR */
+    {1,MULTIPLY_SP, 0, 0},                    
+
+    /* 0x1d DW_DLA_RANGES */
+    {sizeof(Dwarf_Ranges),MULTIPLY_CT, 0,0 }, 
 
     /*  The following DW_DLA data types
         are known only inside libdwarf.  */
 
-    /* 30 DW_DLA_ABBREV_LIST */
+    /* 0x1e DW_DLA_ABBREV_LIST */
     { sizeof(struct Dwarf_Abbrev_List_s),MULTIPLY_NO, 0, 0},
 
-    /* 31 DW_DLA_CHAIN */
+    /* 0x1f DW_DLA_CHAIN */
     {sizeof(struct Dwarf_Chain_s),MULTIPLY_NO, 0, 0},
 
-    /* 32 DW_DLA_CU_CONTEXT */
+    /* 0x20 DW_DLA_CU_CONTEXT */
     {sizeof(struct Dwarf_CU_Context_s),MULTIPLY_NO,  0, 0},
 
+    /* 0x21 DW_DLA_FRAME */
     {sizeof(struct Dwarf_Frame_s),MULTIPLY_NO,
         _dwarf_frame_constructor,
-        _dwarf_frame_destructor},  /* 33 DW_DLA_FRAME */
+        _dwarf_frame_destructor},
 
-    /* 34 DW_DLA_GLOBAL_CONTEXT */
+    /* 0x22 DW_DLA_GLOBAL_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 35 DW_DLA_FILE_ENTRY */
+    /* 0x23 DW_DLA_FILE_ENTRY */
     {sizeof(struct Dwarf_File_Entry_s),MULTIPLY_NO,  0, 0},
 
-    /* 36 DW_DLA_LINE_CONTEXT */
+    /* 0x24 DW_DLA_LINE_CONTEXT */
     {sizeof(struct Dwarf_Line_Context_s),MULTIPLY_NO,
         _dwarf_line_context_constructor,
         _dwarf_line_context_destructor},
 
-    /* 37 DW_DLA_LOC_CHAIN */
+    /* 0x25 DW_DLA_LOC_CHAIN */
     {sizeof(struct Dwarf_Loc_Chain_s),MULTIPLY_NO,  0, 0},
 
-    /* 38 0x26 DW_DLA_HASH_TABLE */
+    /* 0x26 0x26 DW_DLA_HASH_TABLE */
     {sizeof(struct Dwarf_Hash_Table_s),MULTIPLY_NO, 0, 0},
 
     /*  The following really use Global struct: used to be unique struct
@@ -300,72 +336,93 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     DW_DLA_FUNC, DW_DLA_TYPENAME, DW_DLA_VAR, DW_DLA_WEAK also use
     the global types.  */
 
-    /* 39 0x27 DW_DLA_FUNC_CONTEXT */
+    /* 0x27 DW_DLA_FUNC_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 40 0x28 DW_DLA_TYPENAME_CONTEXT */
+    /* 0x28 40 DW_DLA_TYPENAME_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 41 0x29 DW_DLA_VAR_CONTEXT */
+    /* 0x29 41 DW_DLA_VAR_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 42 0x2a DW_DLA_WEAK_CONTEXT */
+    /* 0x2a 42 DW_DLA_WEAK_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 43 0x2b DW_DLA_PUBTYPES_CONTEXT DWARF3 */
+    /* 0x2b 43 DW_DLA_PUBTYPES_CONTEXT DWARF3 */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 44 0x2c DW_DLA_HASH_TABLE_ENTRY */
+    /* 0x2c 44 DW_DLA_HASH_TABLE_ENTRY */
     {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 },
 
-    /* 45 0x2d  reserved for future use  */
+    /* 0x2d 45  reserved for future use  */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 46 0x2e  reserved for future use  */
+    /* 0x2e-0x36 reserved for future internal use. */
+
+    /* 0x2e 46 reserved for future use  */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
 
-    /* 47 0x2f  reserved for future use  */
+    /* 0x2f 47  reserved for future use  */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
 
-    /* 0x30-0x36 reserved for future internal use. */
+    /* 0x30 reserved for future internal use */
+    {sizeof(int),MULTIPLY_NO,  0, 0}, 
+
+    /* 0x31 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
+    /* 0x32 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
+    /* 0x33 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
+    /* 0x34 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
+    /* 0x35 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
+    /* 0x36 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
 
     /*  now,  we have types that are public. */
     /* 0x37 55.  New in June 2014. Gdb. */
     {sizeof(struct Dwarf_Gdbindex_s),MULTIPLY_NO,  0, 0},
 
-    /* 0x38 56.  New in July 2014. DWARF5 DebugFission dwp file sections
+    /* 0x38 56.  New in July 2014. */
+    /* DWARF5 DebugFission dwp file sections
         .debug_cu_index and .debug_tu_index . */
     {sizeof(struct Dwarf_Xu_Index_Header_s),MULTIPLY_NO,  0, 0},
 
     /*  These required by new features in DWARF5. Also usable
         for DWARF2,3,4. */
-    /* 57 DW_DLA_LOC_BLOCK_C */
+    /* 0x39 57 DW_DLA_LOC_BLOCK_C DWARF5 */
     {sizeof(struct Dwarf_Loc_c_s),MULTIPLY_CT, 0, 0},
-    /* 58 DW_DLA_LOCDESC_C */
+
+    /* 0x3a 58  DW_DLA_LOCDESC_C */
     {sizeof(struct Dwarf_Locdesc_c_s),MULTIPLY_CT, 0, 0},
-    /* 59 DW_DLA_LOC_HEAD_C */
+
+    /* 0x3b 59 DW_DLA_LOC_HEAD_C */
     {sizeof(struct Dwarf_Loc_Head_c_s),MULTIPLY_NO, 0, 0},
-    /* 60 DW_DLA_MACRO_CONTEXT */
+
+    /* 0x3c 60 DW_DLA_MACRO_CONTEXT */
     {sizeof(struct Dwarf_Macro_Context_s),MULTIPLY_NO,
         _dwarf_macro_constructor,
         _dwarf_macro_destructor},
 
-    /* 61 DW_DLA_CHAIN_2 */
+    /* 0x3d 61 DW_DLA_CHAIN_2 */
     {sizeof(struct Dwarf_Chain_o),MULTIPLY_NO, 0, 0},
-    /* 62 DW_DLA_DSC_HEAD 0x3e */
+
+    /* 0x3e 62 DW_DLA_DSC_HEAD */
     {sizeof(struct Dwarf_Dsc_Head_s),MULTIPLY_NO, 0,
         _dwarf_dsc_destructor},
-    /* 63 DW_DLA_DNAMES_HEAD 0x3f */
+
+    /* 0x3f 63 DW_DLA_DNAMES_HEAD */
     {sizeof(struct Dwarf_Dnames_Head_s),MULTIPLY_NO, 0,
         _dwarf_debugnames_destructor},
-    /* 64 DW_DLA_STR_OFFSETS 0x40 */
+
+    /* 0x40 64 DW_DLA_STR_OFFSETS */
     {sizeof(struct Dwarf_Str_Offsets_Table_s),MULTIPLY_NO, 0,0},
 };
 
@@ -525,7 +582,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             }
         }
 #if DEBUG
-    printf("libdwarfdetector ALLOC ret 0x%lx size %lu line %d %s\n",(unsigned long)ret_mem,(unsigned long)size,__LINE__,__FILE__);
+    printf("libdwarfdetector ALLOC ret 0x%lx type 0x%x size %lu line %d %s\n",(unsigned long)ret_mem,(unsigned)alloc_type,(unsigned long)size,__LINE__,__FILE__);
 #endif
         return (ret_mem);
     }
@@ -703,7 +760,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
 #endif
 #if DEBUG
-    printf("libdwarfdetector DEALLOC ret 0x%lx size %lu line %d %s\n",(unsigned long)space,(unsigned long)r->rd_length,__LINE__,__FILE__);
+    printf("libdwarfdetector DEALLOC ret 0x%lx type 0x%x size %lu line %d %s\n",(unsigned long)space,(unsigned)type,(unsigned long)r->rd_length,__LINE__,__FILE__);
 #endif
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* internal or user app error */

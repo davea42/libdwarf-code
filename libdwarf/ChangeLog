@@ -1,3 +1,12 @@
+2020-03-27: David Anderson
+    * dwarf_alloc.c: The (static) list of DW_DLA 
+      initializers was very messy and hard to read.
+      Cleaned up its appearance.`
+      Added the 'type' to the fields that -DDEBUG
+      prints.
+    * dwarf_form.c,dwarf_util.c: The DW_DLE_FORM_BLOCK_LENGTH_ERROR
+      error messages now have a longer and more
+      complete error string.
 2020-03-26: David Anderson
     * dwarf_alloc.c,dwarf_error.c: Changed spelling of the
       -DDEBUG prefixes to "libdwarfdetector"
@@ -134,7 +143,8 @@
     * libdwarf2.1.pdf: Regenerated, version 2.88
     * dwarf_loc.c: Was incorrectly passing NULL instead
       of dbg to _dwarf_get_alloc in a few places.
-    * dwarf_util.c, dwarf_global.c: Now checks more for incomplete setup
+    * dwarf_util.c, dwarf_global.c: Now checks more for
+      incomplete setup
       of an internal structure to avoid calling dwarf_dealloc
       with NULL as the space to be freed.
 2020-03-13: David Anderson

@@ -274,14 +274,22 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         ptrdiff_t sizeasptrdiff = 0;
 
         if (val_ptr >= section_end_ptr) {
-            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_FORM_BLOCK_LENGTH_ERROR,
+                "DW_DLE_FORM_BLOCK_LENGTH_ERROR: DW_FORM_block1"
+                " itself is off the end of the section."
+                " Corrupt Dwarf.");
             return DW_DLV_ERROR;
         }
         ret_value =  *(Dwarf_Small *) val_ptr;
         sizeasptrdiff = (ptrdiff_t)ret_value;
         if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
             sizeasptrdiff < 0) {
-            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_FORM_BLOCK_LENGTH_ERROR,
+                "DW_DLE_FORM_BLOCK_LENGTH_ERROR: DW_FORM_block1"
+                " runs off the end of the section."
+                " Corrupt Dwarf.");
             return DW_DLV_ERROR;
         }
         *size_out = ret_value +1;
@@ -296,7 +304,11 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         sizeasptrdiff = (ptrdiff_t)ret_value;
         if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
             sizeasptrdiff < 0) {
-            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_FORM_BLOCK_LENGTH_ERROR,
+                "DW_DLE_FORM_BLOCK_LENGTH_ERROR: DW_FORM_block2"
+                " runs off the end of the section."
+                " Corrupt Dwarf.");
             return DW_DLV_ERROR;
         }
         *size_out = ret_value + DWARF_HALF_SIZE;
@@ -312,7 +324,11 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         sizeasptrdiff = (ptrdiff_t)ret_value;
         if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
             sizeasptrdiff < 0) {
-            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_FORM_BLOCK_LENGTH_ERROR,
+                "DW_DLE_FORM_BLOCK_LENGTH_ERROR: DW_FORM_block4"
+                " runs off the end of the section."
+                " Corrupt Dwarf.");
             return DW_DLV_ERROR;
         }
         *size_out = ret_value + DWARF_32BIT_SIZE;
