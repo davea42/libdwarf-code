@@ -327,7 +327,7 @@ dealloc_all_srcfiles(Dwarf_Debug dbg,
         return;
     }
     for ( ; i < cnt; ++i) {
-         dwarf_dealloc(dbg,srcfiles[i],DW_DLA_STRING);
+        dwarf_dealloc(dbg,srcfiles[i],DW_DLA_STRING);
     }
     dwarf_dealloc(dbg,srcfiles, DW_DLA_LIST);
 }
@@ -1622,7 +1622,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     atres = dwarf_attrlist(die, &atlist, &atcnt, &podie_err);
     if (atres == DW_DLV_ERROR) {
         dealloc_all_die_stack(dbg,die);
-        dealloc_all_srcfiles(dbg,srcfiles,cnt); 
+        dealloc_all_srcfiles(dbg,srcfiles,cnt);
         print_error(dbg,
             "A call to dwarf_attrlist failed. Cannot continue",
             atres, podie_err);
@@ -2082,7 +2082,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 break;
             } else {
                 dealloc_all_die_stack(dbg,die);
-                print_error(dbg, 
+                print_error(dbg,
                     "dwarf_global_formref fails in traversal",
                     res, err);
             }
