@@ -297,16 +297,39 @@ get_die_stack_sibling()
     return 0;
 }
 static void
-dealloc_die_stack(Dwarf_Debug dbg)
+dealloc_all_die_stack(Dwarf_Debug dbg,Dwarf_Die altdie)
 {
     while (die_stack_indent_level >= 0) {
         Dwarf_Die u = die_stack[die_stack_indent_level].die_;
         if (u) {
+            if (u == altdie) {
+                altdie = 0;
+            }
             dwarf_dealloc(dbg,u,DW_DLA_DIE);
         }
         /* counts down one too many times... */
         die_stack_indent_level--;
     }
+    if(altdie) {
+        /*  This die is not in the stack and we are about
+            to error off. Lets dealloc. */
+        dwarf_dealloc(dbg,altdie,DW_DLA_DIE);
+    }
+}
+static void
+dealloc_all_srcfiles(Dwarf_Debug dbg,
+  char **srcfiles,
+  Dwarf_Signed cnt)
+{
+    Dwarf_Signed i = 0;
+
+    if(!srcfiles) {
+        return;
+    }
+    for ( ; i < cnt; ++i) {
+         dwarf_dealloc(dbg,srcfiles[i],DW_DLA_STRING);
+    }
+    dwarf_dealloc(dbg,srcfiles, DW_DLA_LIST);
 }
 
 
@@ -927,7 +950,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         was successful to print die
                         and children as best we can
                         even with errors . */
-                    int si = 0;
                     int podres2 = 0;
                     Dwarf_Error lperr = 0;
 
@@ -943,11 +965,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     print_die_and_children(dbg, cu_die2,
                         dieprint_cu_goffset,is_info, srcfiles, cnt);
                     if (srcfiles) {
-                        for (si = 0; si < cnt; ++si) {
-                            dwarf_dealloc(dbg, srcfiles[si],
-                                DW_DLA_STRING);
-                        }
-                        dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+                        dealloc_all_srcfiles(dbg,srcfiles,cnt);
+                        srcfiles = 0;
+                        cnt = 0;
                     }
                 }
             }
@@ -1278,6 +1298,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         " so the die tree is corrupt "
                         "(showing section, not CU, offsets). ",
                         child_overall_offset);
+                    dealloc_all_die_stack(dbg,child);
+                    dealloc_all_srcfiles(dbg,srcfiles,cnt);
                     print_error(dbg,esb_get_string(&pm),
                         DW_DLV_OK,dacerr);
                     esb_destructor(&pm);
@@ -1287,6 +1309,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             die_stack_indent_level++;
             SET_DIE_STACK_ENTRY(die_stack_indent_level,0,dieprint_cu_goffset);
             if (die_stack_indent_level >= DIE_STACK_SIZE ) {
+                dealloc_all_srcfiles(dbg,srcfiles,cnt);
+                dealloc_all_die_stack(dbg,child);
                 print_error(dbg,
                     "ERROR: compiled in DIE_STACK_SIZE limit exceeded",
                     DW_DLV_OK,dacerr);
@@ -1304,7 +1328,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         } else if (cdres == DW_DLV_ERROR) {
             child = 0;
             sibling = 0;
-            dealloc_die_stack(dbg);
+            dealloc_all_die_stack(dbg,in_die_in);
+            dealloc_all_srcfiles(dbg,srcfiles,cnt);
             /* The default value is zero, not -1. So fix it. */
             die_stack_indent_level = 0;
             print_error(dbg, "dwarf_child", cdres, dacerr);
@@ -1326,7 +1351,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 recursing. Recursing is horribly wasteful of stack
                 space. */
         } else if (cdres == DW_DLV_ERROR) {
-            dealloc_die_stack(dbg);
+            dealloc_all_die_stack(dbg,in_die_in);
+            dealloc_all_srcfiles(dbg,srcfiles,cnt);
             /* does not return */
             print_error(dbg, "dwarf_siblingof", cdres, dacerr);
         }
@@ -1441,6 +1467,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
 
     tres = dwarf_tag(die, &tag, &podie_err);
     if (tres != DW_DLV_OK) {
+        dealloc_all_die_stack(dbg,die);
+        dealloc_all_srcfiles(dbg,srcfiles,cnt);
         print_error(dbg, "accessing tag of die!", tres, podie_err);
     }
     tagname = get_TAG_name(tag,pd_dwarf_names_print_on_error);
@@ -1455,10 +1483,14 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     tag_specific_checks_setup(tag,die_indent_level);
     ores = dwarf_dieoffset(die, &overall_offset, &podie_err);
     if (ores != DW_DLV_OK) {
+        dealloc_all_die_stack(dbg,die);
+        dealloc_all_srcfiles(dbg,srcfiles,cnt);
         print_error(dbg, "dwarf_dieoffset", ores, podie_err);
     }
     ores = dwarf_die_CU_offset(die, &offset, &podie_err);
     if (ores != DW_DLV_OK) {
+        dealloc_all_die_stack(dbg,die);
+        dealloc_all_srcfiles(dbg,srcfiles,cnt);
         print_error(dbg, "dwarf_die_CU_offset", ores, podie_err);
     }
 
@@ -1525,9 +1557,11 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                         agres = dwarf_die_abbrev_global_offset(die,
                             &agoff, &acount,&podie_err);
                         if(agres == DW_DLV_ERROR) {
+                            dealloc_all_die_stack(dbg,die);
                             print_error(dbg, "dwarf_die_abbrev_global_offset",
                                 agres, podie_err);
                         } else if (agres == DW_DLV_NO_ENTRY) {
+                            dealloc_all_die_stack(dbg,die);
                             print_error(dbg,
                                 "dwarf_die_abbrev_global_offset no entry?",
                                 agres, podie_err);
@@ -1563,9 +1597,12 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                         agres = dwarf_die_abbrev_global_offset(die,
                             &agoff, &acount,&podie_err);
                         if(agres == DW_DLV_ERROR) {
+                            dealloc_all_die_stack(dbg,die);
                             print_error(dbg, "dwarf_die_abbrev_global_offset",
                                 agres, podie_err);
                         } else if (agres == DW_DLV_NO_ENTRY) {
+                            dealloc_all_die_stack(dbg,die);
+                            dealloc_all_srcfiles(dbg,srcfiles,cnt);
                             print_error(dbg,
                                 "dwarf_die_abbrev_global_offset no entry?",
                                 agres, podie_err);
@@ -1584,7 +1621,11 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
 
     atres = dwarf_attrlist(die, &atlist, &atcnt, &podie_err);
     if (atres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_attrlist", atres, podie_err);
+        dealloc_all_die_stack(dbg,die);
+        dealloc_all_srcfiles(dbg,srcfiles,cnt); 
+        print_error(dbg,
+            "A call to dwarf_attrlist failed. Cannot continue",
+            atres, podie_err);
     } else if (atres == DW_DLV_NO_ENTRY) {
         /* indicates there are no attrs.  It is not an error. */
         atcnt = 0;
@@ -1622,6 +1663,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                                 get_AT_name(attr,pd_dwarf_names_print_on_error));
                         }
                     } else {
+                        dealloc_all_die_stack(dbg,die);
+                        dealloc_all_srcfiles(dbg,srcfiles,cnt);
                         print_error(dbg, "dwarf_whatattr entry missing",
                             ares, podie_err);
                     }
@@ -1649,6 +1692,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 glflags.gf_record_dwarf_error = FALSE;
             }
         } else {
+            dealloc_all_die_stack(dbg,die);
+            dealloc_all_srcfiles(dbg,srcfiles,cnt);
             print_error(dbg, "dwarf_whatattr entry missing", ares, podie_err);
         }
     }
@@ -1809,6 +1854,7 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     }
     if (array_len == 0) {
         dwarf_dealloc(dbg,tempb,DW_DLA_BLOCK);
+        dealloc_all_die_stack(dbg,0);
         print_error(dbg,
             "DW_AT_SUN_func_offsets has no data\n",0,fblkerr);
         return;
@@ -2035,7 +2081,9 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     the current section. */
                 break;
             } else {
-                print_error(dbg, "dwarf_global_formref fails in traversal",
+                dealloc_all_die_stack(dbg,die);
+                print_error(dbg, 
+                    "dwarf_global_formref fails in traversal",
                     res, err);
             }
         }
