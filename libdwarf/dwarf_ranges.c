@@ -31,6 +31,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "dwarfstring.h"
 
 struct ranges_entry {
    struct ranges_entry *next;
@@ -232,18 +233,58 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
 
     /*  Be safe in case adding rangesoffset and rangebase
         overflows. */
-    if (rangesoffset  >= localdbg->de_debug_ranges.dss_size) {
-        _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+    if (rangesoffset  == localdbg->de_debug_ranges.dss_size) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (rangesoffset  > localdbg->de_debug_ranges.dss_size) {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_DEBUG_RANGES_OFFSET_BAD: "
+            " rangesoffset is 0x%lx ",rangesoffset);
+        dwarfstring_append_printf_u(&m,
+            " and section size is 0x%lx.",
+            localdbg->de_debug_ranges.dss_size);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_DEBUG_RANGES_OFFSET_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
     }
     if (ranges_base >= localdbg->de_debug_ranges.dss_size) {
-        _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_DEBUG_RANGES_OFFSET_BAD: "
+            " ranges base is 0x%lx ",ranges_base);
+        dwarfstring_append_printf_u(&m,
+            " and section size is 0x%lx.",
+            localdbg->de_debug_ranges.dss_size);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_DEBUG_RANGES_OFFSET_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
     }
     if ((rangesoffset +ranges_base) >=
         localdbg->de_debug_ranges.dss_size) {
-        _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_DEBUG_RANGES_OFFSET_BAD: "
+            " ranges base+offset  is 0x%lx ",
+            ranges_base+rangesoffset);
+        dwarfstring_append_printf_u(&m,
+            " and section size is 0x%lx.",
+            localdbg->de_debug_ranges.dss_size);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_DEBUG_RANGES_OFFSET_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
     }
 
     /*  tied address_size must match the dwo address_size */
@@ -260,22 +301,36 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
             break;
         }
         if (rangeptr  > section_end) {
+            dwarfstring m;
+
             free_allocated_ranges(base);
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
-            return (DW_DLV_ERROR);
-            break;
+            dwarfstring_constructor(&m);
+            dwarfstring_append(&m,
+                "DW_DLE_DEBUG_RANGES_OFFSET_BAD: "
+                " ranges pointer ran off the end "
+                "of the  section");
+            _dwarf_error_string(dbg, error,
+                DW_DLE_DEBUG_RANGES_OFFSET_BAD,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
         }
         re = calloc(sizeof(struct ranges_entry),1);
         if (!re) {
             free_allocated_ranges(base);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OUT_OF_MEM);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         if ((rangeptr + (2*address_size)) > section_end) {
             free(re);
             free_allocated_ranges(base);
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
-            return (DW_DLV_ERROR);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_DEBUG_RANGES_OFFSET_BAD,
+                "DW_DLE_DEBUG_RANGES_OFFSET_BAD: "
+                " Not at the end of the ranges section "
+                " but there is not enough room in the section "
+                " for the next ranges entry");
+            return  DW_DLV_ERROR;
         }
         entry_count++;
         res = read_unaligned_addr_check(localdbg,&re->cur.dwr_addr1,
