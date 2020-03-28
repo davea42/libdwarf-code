@@ -1068,26 +1068,69 @@ process_one_file(int fd, int tiedfd,
             glflags.gf_eh_frame_flag, l_config_file_data);
     }
     if (glflags.gf_static_func_flag) {
+        int sres = 0;
+        Dwarf_Error err = 0;
+
         reset_overall_CU_error_data();
-        print_static_funcs(dbg);
+        sres = print_static_funcs(dbg,&err);
+        if (sres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing SGI static funcs had a problem.",sres,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
+
     }
     if (glflags.gf_static_var_flag) {
+        int sres = 0;
+        Dwarf_Error err = 0;
+
         reset_overall_CU_error_data();
-        print_static_vars(dbg);
+        sres = print_static_vars(dbg,&err);
+        if (sres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing SGI static vars had a problem.",sres,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
     /*  DWARF_PUBTYPES is the standard typenames dwarf section.
         SGI_TYPENAME is the same concept but is SGI specific ( it was
         defined 10 years before dwarf pubtypes). */
 
     if (glflags.gf_pubtypes_flag) {
+        Dwarf_Error err = 0;
+        int tres = 0;
+
         reset_overall_CU_error_data();
-        print_types(dbg, DWARF_PUBTYPES);
+        tres = print_types(dbg, DWARF_PUBTYPES,&err);
+        if (tres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+               "printing pubtypes had a problem.",tres,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
         reset_overall_CU_error_data();
-        print_types(dbg, SGI_TYPENAME);
+        tres = print_types(dbg, SGI_TYPENAME,&err);
+        if (tres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+               "printing SGI typenames had a problem.",tres,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
     if (glflags.gf_weakname_flag) {
+        Dwarf_Error err = 0;
+        int res3 = 0;
+
         reset_overall_CU_error_data();
-        print_weaknames(dbg);
+        res3 = print_weaknames(dbg, &err);
+        if (res3 == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+               "printing weaknames had a problem.",res3,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
     if (glflags.gf_reloc_flag && elf) {
         reset_overall_CU_error_data();

@@ -1,3 +1,9 @@
+2020-03-28: David Anderson
+    * dwarf_global.c: dwarf_return_empty_pubnames() revised
+      so it cannot fail.
+    * libdwarf.h.in: Revised comments attached to
+      dwarf_return_empty_pubnames() function prototype.
+    * generated_libdwarf.h.in: Regenerated.
 2020-03-27: David Anderson
     * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
       dwarf_names_new.h, libdwarf_version.h: 

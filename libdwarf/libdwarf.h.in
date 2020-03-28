@@ -2584,7 +2584,9 @@ int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
     The pubnames and similar sections are rarely used. Few compilers
     emit them. They are DWARF 2,3,4 only., not DWARF 5.  */
 
-/*  New March 2019. Mostly special for dwarfdump. */
+/*  New March 2019. Special for dwarfdump.
+    Sets a flag in the dbg. Always returns DW_DLV_OK
+    and (as of March 2020) never touches error */
 int dwarf_return_empty_pubnames(Dwarf_Debug /*dbg*/,
     int /* flag */,
     Dwarf_Error* /*error*/);

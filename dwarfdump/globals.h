@@ -122,11 +122,12 @@ extern void print_locs (Dwarf_Debug dbg);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);
 extern void print_aranges (Dwarf_Debug dbg);
-extern void print_static_funcs(Dwarf_Debug dbg);
-extern void print_static_vars(Dwarf_Debug dbg);
+extern int print_static_funcs(Dwarf_Debug dbg,Dwarf_Error *);
+extern int print_static_vars(Dwarf_Debug dbg,Dwarf_Error *);
 enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;
-extern void print_types(Dwarf_Debug dbg,enum type_type_e type_type);
-extern void print_weaknames(Dwarf_Debug dbg);
+extern int print_types(Dwarf_Debug dbg,enum type_type_e type_type,
+    Dwarf_Error *);
+extern int print_weaknames(Dwarf_Debug dbg, Dwarf_Error *);
 extern void print_exception_tables(Dwarf_Debug dbg);
 extern void print_debug_names(Dwarf_Debug dbg);
 int print_all_pubnames_style_records(Dwarf_Debug dbg,

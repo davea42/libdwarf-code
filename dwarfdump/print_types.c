@@ -34,14 +34,14 @@
 #include "sanitized.h"
 
 /* Get all the data in .debug_typenames or debug_pubtypes. */
-extern void
-print_types(Dwarf_Debug dbg, enum type_type_e type_type)
+int
+print_types(Dwarf_Debug dbg, enum type_type_e type_type,
+    Dwarf_Error *err)
 {
     Dwarf_Type *globbuf = 0;
     Dwarf_Signed count = 0;
     char *name = 0;
     int gtres = 0;
-    Dwarf_Error err = 0;
     struct esb_s truename;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
     struct esb_s sanitname;
@@ -77,35 +77,42 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     }
     esb_destructor(&truename);
     if (glflags.verbose) {
-        /* For best testing! */
-        int res = 0;
-
-        res = dwarf_return_empty_pubnames(dbg,1,&err);
-        if (res != DW_DLV_OK) {
-            printf("FAIL: Erroneous libdwarf call "
-                "of dwarf_return_empty_pubnames: Fix dwarfdump");
-            return;
-        }
+        dwarf_return_empty_pubnames(dbg,1,err);
     }
-    gtres = get_types(dbg, &globbuf, &count, &err);
+    gtres = get_types(dbg, &globbuf, &count, err);
     if (gtres == DW_DLV_ERROR) {
-        print_error(dbg, sanitized(esb_get_string(&truename)), gtres, err);
+        printf("\n%s\n",esb_get_string(&sanitname));
+        esb_destructor(&sanitname);
+        return gtres;
     } else if (gtres == DW_DLV_NO_ENTRY) {
         /* no types */
         esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,&err);
-        return;
+        dwarf_return_empty_pubnames(dbg,0,err);
+        return gtres;
     } else {
+        int wkres = 0;
+        int printed = FALSE;
+
         if (glflags.gf_do_print_dwarf && count > 0) {
             printf("\n%s\n",esb_get_string(&sanitname));
+            printed = TRUE;
         }
-        print_all_pubnames_style_records(dbg,
+        wkres = print_all_pubnames_style_records(dbg,
             linetitle,
             esb_get_string(&sanitname),
             (Dwarf_Global *)globbuf, count,
-            &err);
+            err);
         dealloctype(dbg, globbuf, count);
+        if (wkres == DW_DLV_ERROR) {
+            if (!printed) {
+                printf("\n%s\n",esb_get_string(&sanitname));
+            }
+            dwarf_return_empty_pubnames(dbg,0,err);
+            esb_destructor(&sanitname);
+            return wkres;
+        }
     }
     esb_destructor(&sanitname);
-    dwarf_return_empty_pubnames(dbg,0,&err);
+    dwarf_return_empty_pubnames(dbg,0,err);
+    return DW_DLV_OK;
 }   /* print_types() */

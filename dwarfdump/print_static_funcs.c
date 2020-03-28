@@ -39,13 +39,12 @@
    (For a long time, erroneously called .debug_static_funcs here).
    On error, this allows some dwarf memory leaks.
 */
-extern void
-print_static_funcs(Dwarf_Debug dbg)
+extern int
+print_static_funcs(Dwarf_Debug dbg,Dwarf_Error*err)
 {
     Dwarf_Func *globbuf = NULL;
     Dwarf_Signed count = 0;
     int gfres = 0;
-    Dwarf_Error err = 0;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
     struct esb_s truename;
     struct esb_s sanitname;
@@ -63,35 +62,41 @@ print_static_funcs(Dwarf_Debug dbg)
     esb_destructor(&truename);
     if (glflags.verbose) {
         /* For best testing! */
-        int res = 0;
-
-        res = dwarf_return_empty_pubnames(dbg,1,&err);
-        if (res != DW_DLV_OK) {
-            printf("FAIL: Erroneous libdwarf call "
-                "of dwarf_return_empty_pubnames: Fix dwarfdump");
-            return;
-        }
+        dwarf_return_empty_pubnames(dbg,1,err);
     }
-
-    gfres = dwarf_get_funcs(dbg, &globbuf, &count, &err);
+    gfres = dwarf_get_funcs(dbg, &globbuf, &count, err);
     if (gfres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_funcs", gfres, err);
+        printf("\n%s\n",esb_get_string(&sanitname));
+        return gfres;
     } else if (gfres == DW_DLV_NO_ENTRY) {
-        dwarf_return_empty_pubnames(dbg,0,&err);
+        dwarf_return_empty_pubnames(dbg,0,err);
         esb_destructor(&sanitname);
-        return;
+        return gfres;
     } else {
+        int pres = 0;
+        int printed = FALSE;
+
         if (glflags.gf_do_print_dwarf && count > 0) {
             /* SGI specific so only mention if present. */
             printf("\n%s\n",esb_get_string(&sanitname));
+            printed= TRUE; 
         }
-        print_all_pubnames_style_records(dbg,
+        pres = print_all_pubnames_style_records(dbg,
             "static-func",
             esb_get_string(&sanitname),
             (Dwarf_Global *)globbuf, count,
-            &err);
+            err);
         dwarf_funcs_dealloc(dbg,globbuf,count);
+        if (pres == DW_DLV_ERROR) {
+            if(!printed) {
+                printf("\n%s\n",esb_get_string(&sanitname));
+            }
+            dwarf_return_empty_pubnames(dbg,0,err);
+            esb_destructor(&sanitname);
+            return pres;
+        }
     }
-    dwarf_return_empty_pubnames(dbg,0,&err);
+    dwarf_return_empty_pubnames(dbg,0,err);
     esb_destructor(&sanitname);
+    return DW_DLV_OK;
 }   /* print_static_funcs() */

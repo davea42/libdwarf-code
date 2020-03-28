@@ -1,3 +1,16 @@
+2020-03-28  David Anderson 
+    * dwarfdump.c(process_one_file): Beginning a
+      project to pass libdwarf status all the way back
+      to dwarfdump.c. Enables more flexibility in
+      printing and better ability to dealloc memory.
+    * globals.h: print_static_funcs(), print_static_vars(),
+      print_types(), and print_weaknames() now return int
+      and pass in a Dwarf_Error.
+    * print_static_funcs.c,print_static_vars.c,
+      print_types.c, print_weaknames.c: Implement
+      passing back (to dwarfdump.c) of 
+      libdwarf status and Dwarf_Error by returning
+      as required when DW_DLV_ERROR encountered.
 2020-03-27  David Anderson 
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

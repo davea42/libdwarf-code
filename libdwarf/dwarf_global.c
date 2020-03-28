@@ -149,7 +149,6 @@ _dwarf_internal_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
     return;
 }
 
-
 /* Sweeps the complete  section.  */
 int
 _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
@@ -790,17 +789,16 @@ dwarf_CU_dieoffset_given_die(Dwarf_Die die,
     return DW_DLV_OK;
 }
 
+/*  We do not want to screw up error in case
+    it has something important.  So not touching it now. */
 int dwarf_return_empty_pubnames(Dwarf_Debug dbg,
-    int          flag ,
-    Dwarf_Error* error)
+    int flag, UNUSEDARG Dwarf_Error *err )
 {
     if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
+        return DW_DLV_OK;
     }
     if (flag && flag != 1) {
-        _dwarf_error(NULL, error,DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR);
-        return DW_DLV_ERROR;
+        return DW_DLV_OK;
     }
     dbg->de_return_empty_pubnames = (unsigned char)flag;
     return DW_DLV_OK;

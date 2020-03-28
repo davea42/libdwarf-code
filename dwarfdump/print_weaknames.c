@@ -34,13 +34,12 @@
 #include "print_sections.h"
 
 /* Get all the data in .debug_weaknames */
-extern void
-print_weaknames(Dwarf_Debug dbg)
+extern int
+print_weaknames(Dwarf_Debug dbg,Dwarf_Error *err)
 {
     Dwarf_Weak *globbuf = NULL;
     Dwarf_Signed count = 0;
     int wkres = 0;
-    Dwarf_Error err = 0;
     struct esb_s sanitname;
     struct esb_s truename;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
@@ -58,35 +57,45 @@ print_weaknames(Dwarf_Debug dbg)
     esb_destructor(&truename);
     if (glflags.verbose) {
         /* For best testing! */
-        int res = 0;
-
-        res = dwarf_return_empty_pubnames(dbg,1,&err);
-        if (res != DW_DLV_OK) {
-            printf("FAIL: Erroneous libdwarf call "
-                "of dwarf_return_empty_pubnames: Fix dwarfdump");
-            return;
-        }
+        dwarf_return_empty_pubnames(dbg,1,err);
     }
-    wkres = dwarf_get_weaks(dbg, &globbuf, &count, &err);
+    wkres = dwarf_get_weaks(dbg, &globbuf, &count, err);
     if (wkres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_weaks", wkres, err);
-    } else if (wkres == DW_DLV_NO_ENTRY) {
+        printf("\n%s\n",esb_get_string(&sanitname));
         esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,&err);
+        return wkres;
+    } else if (wkres == DW_DLV_NO_ENTRY) {
+        Dwarf_Error berr = 0;
+
+        esb_destructor(&sanitname);
+        dwarf_return_empty_pubnames(dbg,0,&berr);
         /* no weaknames */
-        return;
+        return wkres;
     } else {
+        int printed = 0;
         if (glflags.gf_do_print_dwarf && count > 0) {
             /* SGI specific so only mention if present. */
             printf("\n%s\n",esb_get_string(&sanitname));
+            printed = 1;
         }
-        print_all_pubnames_style_records(dbg,
+        wkres = print_all_pubnames_style_records(dbg,
             "weakname",
             esb_get_string(&sanitname),
             (Dwarf_Global *)globbuf, count,
-            &err);
+            err);
+        esb_destructor(&sanitname);
+        /*  globbuf should be zero, count 0
+            in case of DW_DLV_ERROR. That's ok */
         dwarf_weaks_dealloc(dbg, globbuf, count);
+        dwarf_return_empty_pubnames(dbg,0,err);
+        if (wkres == DW_DLV_ERROR) {
+            if (!printed) {
+                printf("\n%s\n",esb_get_string(&sanitname));
+            }
+            return wkres;
+        }
     }
     esb_destructor(&sanitname);
-    dwarf_return_empty_pubnames(dbg,0,&err);
+    dwarf_return_empty_pubnames(dbg,0,err);
+    return DW_DLV_OK;
 }
