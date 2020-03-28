@@ -1,4 +1,9 @@
 2020-03-27  David Anderson 
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: regenerated with latest
+      version date string.
+2020-03-27  David Anderson 
     * print_die.c: Cleaned trailing whitespace and an
       indent error.
 2020-03-27  David Anderson 

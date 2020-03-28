@@ -1,4 +1,8 @@
 2020-03-27: David Anderson
+    * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
+      dwarf_names_new.h, libdwarf_version.h: 
+      updated version string.
+2020-03-27: David Anderson
     * dwarf_form.c,dwarf_query.c,dwarf_ranges.c: Improve various
       error messages with specific information about the
       error.
@@ -240,7 +244,8 @@
     * dwarf_print_lines.c: Removed space character just before newline
       as it  has no useful prupose. 3 places.
 2020-02-25: David Anderson
-    * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,dwarf_names_new.h:
+    * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
+      dwarf_names_new.h:
       libdwarf_version.h: updated version string.
 2020-02-25: David Anderson
     * dwarf_line_table_reader_common.h: Now with dwarfstring
