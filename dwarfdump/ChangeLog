@@ -1,4 +1,11 @@
 2020-03-28  David Anderson 
+    * dwarfdump.c: print debuglink and print str_offsets
+      now getting dwarf status and Dwarf_Error back.
+    * dwarf_globals.h: Revised prototype for 
+      print_str_offsets_section().
+    * print_str_offsets.c: Now returns libdwarf status
+      and lets dwarfdump print the error if there is one.
+2020-03-28  David Anderson 
     * dwarfdump.c(process_one_file): Beginning a
       project to pass libdwarf status all the way back
       to dwarfdump.c. Enables more flexibility in

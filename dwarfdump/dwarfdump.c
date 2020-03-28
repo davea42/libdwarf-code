@@ -121,7 +121,7 @@ static int process_one_file(int fd, int tiedfd,
 #endif
     struct dwconf_s *conf);
 
-static void print_gnu_debuglink(Dwarf_Debug dbg);
+static int print_gnu_debuglink(Dwarf_Debug dbg,Dwarf_Error *err);
 
 static int
 open_a_file(const char * name)
@@ -1170,28 +1170,54 @@ process_one_file(int fd, int tiedfd,
 
     if (glflags.gf_print_str_offsets) {
         /*  print the .debug_str_offsets section, if any. */
-        print_str_offsets_section(dbg);
+        int lres = 0;
+        Dwarf_Error err = 0;
+
+        lres = print_str_offsets_section(dbg,&err);
+        if (lres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "print .debug_str_offsets failed", lres, err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
 
     /*  prints nothing unless section .gnu_debuglink is present.
         Lets print for a few critical sections.  */
     if( glflags.gf_gnu_debuglink_flag) {
-        print_gnu_debuglink(dbg);
+        int lres = 0;
+        Dwarf_Error err = 0;
+        
+        lres = print_gnu_debuglink(dbg,&err);
+        if (lres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "print gnu_debuglink data failed", lres, err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+
+        }
     }
 
     /*  Could finish dbg first. Either order ok. */
     if (dbgtied) {
         dres = dwarf_finish(dbgtied,&onef_err);
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "dwarf_finish on dbgtied", dres, onef_err);
+            print_error_and_continue(dbg,
+                "dwarf_finish failed on tied dbg", dres, onef_err);
+            dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
+            onef_err = 0;
         }
         dbgtied = 0;
     }
     groups_restore_subsidiary_flags();
     dres = dwarf_finish(dbg, &onef_err);
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_finish", dres, onef_err);
+        print_error_and_continue(dbg, 
+            "dwarf_finish failed", dres, onef_err);
+        dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
+            dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
         dbg = 0;
+        onef_err = 0;
     }
     printf("\n");
 #ifdef DWARF_WITH_LIBELF
@@ -1472,8 +1498,8 @@ print_secname(Dwarf_Debug dbg,const char *secname)
 
 /*  We'll check for errors when checking.
     print only if printing (as opposed to checking). */
-static void
-print_gnu_debuglink(Dwarf_Debug dbg)
+static int
+print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
 {
     int         res = 0;
     char *      name = 0;
@@ -1486,7 +1512,6 @@ print_gnu_debuglink(Dwarf_Debug dbg)
     unsigned    buildidlength = 0;
     char      **paths_array = 0;
     unsigned    paths_array_length = 0;
-    Dwarf_Error linkerror = 0;
 
     res = dwarf_gnu_debuglink(dbg,
         &name,
@@ -1498,13 +1523,12 @@ print_gnu_debuglink(Dwarf_Debug dbg)
         &buildidbyteptr, &buildidlength,
         &paths_array,  /* free this */
         &paths_array_length,
-        &linkerror);
+        err);
     if (res == DW_DLV_NO_ENTRY) {
-        return;
+        return res;
     } else if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Error accessing debuglink or note section",
-            res,linkerror);
+        print_secname(dbg,".gnu_debuglink");
+        return res;
     }
     if (crcbytes) {
         print_secname(dbg,".gnu_debuglink");
@@ -1563,6 +1587,7 @@ print_gnu_debuglink(Dwarf_Debug dbg)
     }
     free(link_path);
     free(paths_array);
+    return DW_DLV_OK;
 }
 
 /* GCC linkonce names */
