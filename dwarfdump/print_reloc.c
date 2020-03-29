@@ -36,6 +36,7 @@
 #include "print_reloc_decls.h"
 #include "section_bitmaps.h"
 #include "esb.h"
+#include "globals.h"
 #include "sanitized.h"
 
 static void print_reloc_information_64(int section_no,
@@ -55,8 +56,8 @@ static SYM *readsyms(Elf32_Sym * data, size_t num, Elf * elf,
 static SYM64 *read_64_syms(Elf64_Sym * data, size_t num, Elf * elf,
     Elf64_Word link);
 static void *get_scndata(Elf_Scn * fd_scn, size_t * scn_size);
-static void print_relocinfo_64(Dwarf_Debug dbg, Elf * elf);
-static void print_relocinfo_32(Dwarf_Debug dbg, Elf * elf);
+static int print_relocinfo_64(Elf * elf );
+static int print_relocinfo_32(Elf * elf);
 
 
 /* Set the relocation names based on the machine type */
@@ -135,9 +136,8 @@ get_reloc_type_names(int index,struct esb_s* outbuf)
 }
 
 
-static void
-get_reloc_section(Dwarf_Debug dbg,
-    Elf_Scn *scn,
+static int
+get_reloc_section(Elf_Scn *scn,
     char *scn_name,
     Elf64_Word sh_type,
     struct sect_data_s * printable_sect,
@@ -149,31 +149,30 @@ get_reloc_section(Dwarf_Debug dbg,
     for (index = 1; index < DW_SECTION_REL_ARRAY_SIZE; ++index) {
         const char *n = rel_info[index].name_rel;
         const char *na = rel_info[index].name_rela;
-        Dwarf_Error err = 0;
 
         if (strcmp(scn_name, n) == 0) {
             SECT_DATA_SET(rel_info[index].index,sh_type,n,
                 printable_sect,sectnum)
-            return;
+            return DW_DLV_OK;
         }
         if (strcmp(scn_name, na) == 0) {
             SECT_DATA_SET(rel_info[index].index,sh_type,na,
                 printable_sect,sectnum)
-            return;
+            return DW_DLV_OK;
         }
     }
-    return;
+    return DW_DLV_OK;
 }
 
-void
-print_relocinfo(Dwarf_Debug dbg)
+int
+print_relocinfo(UNUSEDARG Dwarf_Debug dbg,
+    Dwarf_Error *err)
 {
     Elf *elf = 0;
     char *endr_ident = 0;
     int is_64bit = 0;
     int res = 0;
     int i = 0;
-    Dwarf_Error err = 0;
 
     for (i = 1; i < DW_SECTION_REL_ARRAY_SIZE; i++) {
         sect_data[i].display = reloc_map_enabled(i);
@@ -181,27 +180,31 @@ print_relocinfo(Dwarf_Debug dbg)
         sect_data[i].size = 0;
         sect_data[i].type = SHT_NULL;
     }
-    res = dwarf_get_elf(dbg, &elf, &err);
+    res = dwarf_get_elf(dbg, &elf, err);
     if (res == DW_DLV_NO_ENTRY) {
-        printf(" No Elf, so no elf relocations to print.\n");
-        return;
+        printf("No Elf, so no elf relocations to print.\n");
+        return res;
     } else if (res == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_elf error", res, err);
+        return res;
     }
     endr_ident = elf_getident(elf, NULL);
     if (!endr_ident) {
-        print_error(dbg, "DW_ELF_GETIDENT_ERROR", res, err);
+        glflags.gf_count_major_errors++;
+        printf("ERROR: elf_getident() failed\n");
+        glflags.gf_count_major_errors++;
+        return DW_DLV_NO_ENTRY;
     }
     is_64bit = (endr_ident[EI_CLASS] == ELFCLASS64);
     if (is_64bit) {
-        print_relocinfo_64(dbg, elf);
+        res = print_relocinfo_64(elf);
     } else {
-        print_relocinfo_32(dbg, elf);
+        res = print_relocinfo_32(elf);
     }
+    return res;
 }
 
-static void
-print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
+static int
+print_relocinfo_64(Elf * elf)
 {
 #ifdef HAVE_ELF64_GETEHDR
     Elf_Scn *scn = NULL;
@@ -215,11 +218,13 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
     struct sect_data_s *printable_sects = 0;
 
     int scn_names_cnt = 0;
-    Dwarf_Error err = 0;
 
     ehdr64 = elf64_getehdr(elf);
     if (ehdr64 == NULL) {
-        print_error(dbg, "DW_ELF_GETEHDR_ERROR", DW_DLV_OK, err);
+        glflags.gf_count_major_errors++;
+        printf("ERROR: elf64_getehdr() failed\n");
+        glflags.gf_count_major_errors++;
+        return DW_DLV_NO_ENTRY;
     }
 
     /*  Make the section name array big enough
@@ -227,15 +232,25 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
     scn_names_cnt = ehdr64->e_shnum + 1;
     scn_names = (char **)calloc(scn_names_cnt, sizeof(char *));
     if (!scn_names) {
-        print_error(dbg, "Out of malloc space in relocation print names",
-            DW_DLV_OK, err);
+        unsigned long space = scn_names_cnt* sizeof(char *);
+        glflags.gf_count_major_errors++;
+        printf("ERROR: out of malloc space for section names"
+            " allocating %lu bytes"
+            " for relocations Elf64\n",
+            space);
+        return DW_DLV_NO_ENTRY;
     }
     printable_sects = (struct sect_data_s *)calloc(scn_names_cnt,
         sizeof(struct sect_data_s));
     if (!printable_sects) {
+        unsigned long space =
+            scn_names_cnt* sizeof(struct sect_data_s);
+        glflags.gf_count_major_errors++;
+        printf("ERROR: out of malloc space allocating %lu bytes"
+            " for sections Elf6\n",
+            space);
         free(scn_names);
-        print_error(dbg, "Out of malloc space in relocation print sects",
-            DW_DLV_OK, err);
+        return DW_DLV_NO_ENTRY;
     }
 
     /*  First nextscn returns section 1 */
@@ -245,11 +260,16 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
         if (shdr64 == NULL) {
             free(scn_names);
             free(printable_sects);
-            print_error(dbg, "DW_ELF_GETSHDR_ERROR", DW_DLV_OK, err);
+            glflags.gf_count_major_errors++;
+            printf("ERROR: elf64_getshsr() failed\n");
+            return DW_DLV_NO_ENTRY;
         }
-        scn_name = elf_strptr(elf, ehdr64->e_shstrndx, shdr64->sh_name);
+        scn_name = elf_strptr(elf, ehdr64->e_shstrndx,
+            shdr64->sh_name);
         if (scn_name  == NULL) {
-            print_error(dbg, "DW_ELF_STRPTR_ERROR", DW_DLV_OK, err);
+            glflags.gf_count_major_errors++;
+            printf("ERROR: elf_strptr (elf64) failed\n");
+            return DW_DLV_NO_ENTRY;
         }
             /* elf_nextscn() skips section with index '0' */
         scn_names[sect_number] = scn_name;
@@ -261,29 +281,42 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
             if (sym_64 == NULL) {
                 free(scn_names);
                 free(printable_sects);
-                print_error(dbg, "no Elf64 symbol table data", DW_DLV_OK,
-                    err);
+                glflags.gf_count_major_errors++;
+                printf("ERROR: elf_getdata() (Elf64) failed to get symbol table\n");
+                return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf64_Sym);
             if(sym_size%sizeof(Elf64_Sym)) {
-                print_error(dbg, "Elf64 problem reading .symtab data",
-                    DW_DLV_OK, err);
+                glflags.gf_count_major_errors++;
+                printf("ERROR: symbols size %lu "
+                    "not a proper multiple of size of Elf64_sym\n",
+                    (unsigned long)sym_size*
+                    (unsigned long)(sizeof(Elf64_Sym)));
+                return DW_DLV_NO_ENTRY;
             }
             sym_64++;
             count--;
             free(sym_data_64);
             sym_data_64 = 0;
-            sym_data_64 = read_64_syms(sym_64, count, elf, shdr64->sh_link);
+            sym_data_64 = read_64_syms(sym_64, count, elf,
+                shdr64->sh_link);
             sym_data_64_entry_count = count;
             if (sym_data_64  == NULL) {
                 free(scn_names);
                 free(printable_sects);
-                print_error(dbg, "problem reading Elf64 symbol table data",
-                    DW_DLV_OK, err);
+                glflags.gf_count_major_errors++;
+                printf("ERROR: malloc of %lu Elf64 symbols "
+                    "failed\n",(unsigned long)count);
+                return DW_DLV_NO_ENTRY;
             }
         } else  {
-            get_reloc_section(dbg,scn,scn_name,shdr64->sh_type,
+            int res = 0;
+
+            res = get_reloc_section(scn,scn_name,shdr64->sh_type,
                 printable_sects,sect_number);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
         }
     }
 
@@ -304,10 +337,11 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
     free(printable_sects);
     free(scn_names);
 #endif
+    return DW_DLV_OK;
 }
 
-static void
-print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
+static int 
+print_relocinfo_32(Elf * elf)
 {
     Elf_Scn *scn = NULL;
     Elf32_Ehdr *ehdr32 = 0;
@@ -318,12 +352,13 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     Elf32_Sym  *sym = 0;
     char **scn_names = 0;
     int scn_names_cnt = 0;
-    Dwarf_Error err = 0;
     struct sect_data_s *printable_sects = 0;
 
     ehdr32 = elf32_getehdr(elf);
     if (ehdr32 == NULL) {
-        print_error(dbg, "DW_ELF_GETEHDR_ERROR", DW_DLV_OK, err);
+        glflags.gf_count_major_errors++;
+        printf("ERROR: elf32_getehdr() failed\n");
+        return DW_DLV_NO_ENTRY;
     }
 
     /*  Make the section name array big enough
@@ -331,15 +366,24 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     scn_names_cnt = ehdr32->e_shnum + 1;
     scn_names = (char **)calloc(scn_names_cnt, sizeof(char *));
     if (!scn_names) {
-        print_error(dbg, "Out of malloc space in relocation print names",
-            DW_DLV_OK, err);
+        unsigned long space = scn_names_cnt* sizeof(char *);
+        glflags.gf_count_major_errors++;
+        printf("ERROR Out of malloc space "
+            "in relocation section names names "
+            "elf 32 requesting %lu bytes",
+            space);
+        return DW_DLV_NO_ENTRY;    
     }
     printable_sects = (struct sect_data_s *)calloc(scn_names_cnt,
         sizeof(struct sect_data_s));
     if (!printable_sects) {
+        unsigned long space = 
+            scn_names_cnt* sizeof(struct sect_data_s);
         free(scn_names);
-        print_error(dbg, "Out of malloc space in relocation print sects",
-            DW_DLV_OK, err);
+        glflags.gf_count_major_errors++;
+        printf("ERROR Out of malloc space in "
+            "in relocation sects elf 32 requesting %lu bytes",
+            space);
     }
 
     while ((scn = elf_nextscn(elf, scn)) != NULL) {
@@ -348,13 +392,17 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
         if (shdr32 == NULL) {
             free(printable_sects);
             free(scn_names);
-            print_error(dbg, "DW_ELF_GETSHDR_ERROR", DW_DLV_OK, err);
+            glflags.gf_count_major_errors++;
+            printf("ERROR: elf_nextscn returns null \n");
+            return DW_DLV_NO_ENTRY;
         }
         scn_name = elf_strptr(elf, ehdr32->e_shstrndx, shdr32->sh_name);
         if (scn_name == NULL) {
             free(printable_sects);
             free(scn_names);
-            print_error(dbg, "DW_ELF_STRPTR_ERROR", DW_DLV_OK, err);
+            glflags.gf_count_major_errors++;
+            printf("ERROR: elf_stgrptr returns null \n");
+                return DW_DLV_NO_ENTRY;
         }
 
         scn_names[sect_number] = scn_name;
@@ -366,13 +414,18 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
             if (sym == NULL) {
                 free(printable_sects);
                 free(scn_names);
-                print_error(dbg, "No Elf32 symbol table data", DW_DLV_OK,
-                    err);
+                glflags.gf_count_major_errors++;
+                printf("ERROR: elf_getdata() (Elf32) failed to get symbol table\n");
+                return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf32_Sym);
             if(sym_size%sizeof(Elf32_Sym)) {
-                print_error(dbg, "Elf32 problem reading .symtab data",
-                    DW_DLV_OK, err);
+                glflags.gf_count_major_errors++;
+                printf("ERROR: size of Elf32 %lu sym not"
+                    " a multiple of symbols size %lu.\n",
+                    (unsigned long)sym_size,
+                    (unsigned long)sizeof(Elf32_Sym));
+                return DW_DLV_NO_ENTRY;
             }
             sym++;
             count--;
@@ -383,12 +436,18 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
             if (sym_data  == NULL) {
                 free(printable_sects);
                 free(scn_names);
-                print_error(dbg, "problem reading Elf32 symbol table data",
-                    DW_DLV_OK, err);
+                glflags.gf_count_major_errors++;
+                printf("ERROR: Cannot read symbo table\n");
+                return DW_DLV_NO_ENTRY;
             }
         } else {
-            get_reloc_section(dbg,scn,scn_name,shdr32->sh_type,
+            int res = 0;
+
+            res = get_reloc_section(scn,scn_name,shdr32->sh_type,
                 printable_sects,sect_number);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
         }
     }  /* End while. */
 
@@ -407,6 +466,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     }
     free(printable_sects);
     free(scn_names);
+    return DW_DLV_OK;
 }
 
 #if HAVE_ELF64_R_INFO
@@ -664,20 +724,19 @@ clean_up_syms_malloc_data()
 
 
 
-void
-print_object_header(Dwarf_Debug dbg)
+int
+print_object_header(Dwarf_Debug dbg,Dwarf_Error *err)
 {
     Elf *elf = 0;
     int res = 0;
-    Dwarf_Error err = 0;
 
     /* Check if header information is required */
-    res = dwarf_get_elf(dbg, &elf, &err);
+    res = dwarf_get_elf(dbg, &elf, err);
     if (res == DW_DLV_NO_ENTRY) {
         printf(" No Elf, so no elf headers to print.\n");
-        return;
+        return res;
     } else if (res == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_elf error", res, err);
+        return res;
     }
 
     if (section_map_enabled(DW_HDR_HEADER)) {
@@ -817,5 +876,6 @@ print_object_header(Dwarf_Debug dbg)
         printf("*** Summary: %" DW_PR_DUu " bytes for %d section(s) ***\n",
             total_bytes, printed_sections);
     }
+    return DW_DLV_OK;
 }
 #endif /* DWARF_WITH_LIBELF */

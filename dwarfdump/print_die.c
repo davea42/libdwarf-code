@@ -4900,8 +4900,8 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
 }
 
 /* Print a detailed encoding usage per attribute */
-void
-print_attributes_encoding(Dwarf_Debug dbg)
+int
+print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error* attr_error)
 {
     if (attributes_encoding_table) {
         boolean print_header = TRUE;
@@ -4914,7 +4914,6 @@ print_attributes_encoding(Dwarf_Debug dbg)
         int index;
         int count = 0;
         float saved_rate = 0.0;
-        Dwarf_Error attr_error = 0;
 
         for (index = 0; index < DW_AT_lo_user; ++index) {
             if (attributes_encoding_table[index].leb128) {
@@ -4962,16 +4961,21 @@ print_attributes_encoding(Dwarf_Debug dbg)
                 total_bytes_formx,
                 total_bytes_leb128,
                 saved_rate);
-            /* Get .debug_info size (Very unlikely to have an error here). */
-            infoerr = dwarf_get_section_info_by_name(dbg,".debug_info",&lower,
-                &size,&attr_error);
+            /*  Get .debug_info size (Very unlikely to have 
+                an error here). */
+            infoerr = dwarf_get_section_info_by_name(dbg,
+                ".debug_info",&lower,
+                &size,attr_error);
             if (infoerr == DW_DLV_ERROR) {
-                print_error(dbg, "get_section_info_by_name",
-                    infoerr,attr_error);
+                free(attributes_encoding_table);
+                attributes_encoding_table = 0;
+                attributes_encoding_do_init = TRUE;
+                return infoerr;
             }
             saved_rate = (total_bytes_formx - total_bytes_leb128) * 100 / size;
             if (saved_rate > 0) {
-                printf("\n** .debug_info size can be reduced by %.0f%% **\n",
+                printf("\n** .debug_info size can be reduced "
+                    "by %.0f%% **\n",
                     saved_rate);
             }
         }
@@ -4979,6 +4983,7 @@ print_attributes_encoding(Dwarf_Debug dbg)
         attributes_encoding_table = 0;
         attributes_encoding_do_init = TRUE;
     }
+    return DW_DLV_OK;
 }
 
 static void
@@ -6077,8 +6082,9 @@ legal_tag_tree_combination(Dwarf_Half tag_parent, Dwarf_Half tag_child)
 }
 
 /* Print a detailed tag and attributes usage */
-void
-print_tag_attributes_usage(UNUSEDARG Dwarf_Debug dbg)
+int
+print_tag_attributes_usage(UNUSEDARG Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Error *err)
 {
 #ifdef HAVE_USAGE_TAG_ATTR
     /*  Traverse the tag-tree table to print its usage and then use the
@@ -6202,4 +6208,5 @@ print_tag_attributes_usage(UNUSEDARG Dwarf_Debug dbg)
         total_legal_atrs,total_found_atrs,rate_2);
 
 #endif /* HAVE_USAGE_TAG_ATTR */
+    return DW_DLV_OK;
 }

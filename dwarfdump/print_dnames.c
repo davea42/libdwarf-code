@@ -31,33 +31,28 @@
 #include "esb.h"
 #include "esb_using_functions.h"
 
-extern void
-print_debug_names(Dwarf_Debug dbg)
+int
+print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Dnames_Head dnhead = 0;
     Dwarf_Unsigned dn_count = 0;
     Dwarf_Unsigned dnindex = 0;
-    Dwarf_Error error = 0;
     int res = 0;
 
     if(!dbg) {
-        printf("Cannot print .debug_names, no Dwarf_Debug passed in");
-        printf("dwarfdump giving up. exit.\n");
-        exit(1);
+        printf("ERROR: Cannot print .debug_names, no Dwarf_Debug passed in");
+        return DW_DLV_NO_ENTRY;
     }
     glflags.current_section_id = DEBUG_NAMES;
 
-
     /*  Only print anything if we know it has debug names
         present. And for now there is none. FIXME. */
-    res = dwarf_debugnames_header(dbg,&dnhead,&dn_count,&error);
+    res = dwarf_debugnames_header(dbg,&dnhead,&dn_count,error);
     if (res == DW_DLV_NO_ENTRY) {
-        return;
+        return res;
     }
     if (res == DW_DLV_ERROR) {
-        const char *msg = "Section .debug_names is not openable";
-        print_error(dbg,msg, res, error);
-        return;
+        return res;
     }
     /* Do nothing if not printing. */
     if (glflags.gf_do_print_dwarf) {
@@ -80,5 +75,5 @@ print_debug_names(Dwarf_Debug dbg)
         }
     }
     dwarf_dealloc(dbg,dnhead,DW_DLA_DNAMES_HEAD);
-    return;
+    return DW_DLV_OK;
 }

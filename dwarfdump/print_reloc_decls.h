@@ -99,8 +99,8 @@ static SYM *readsyms(Elf32_Sym * data, size_t num, Elf * elf,
 static SYM64 *read_64_syms(Elf64_Sym * data, size_t num, Elf * elf,
     Elf64_Word link);
 static void *get_scndata(Elf_Scn * fd_scn, size_t * scn_size);
-static void print_relocinfo_64(Dwarf_Debug dbg, Elf * elf);
-static void print_relocinfo_32(Dwarf_Debug dbg, Elf * elf);
+static int print_relocinfo_64(Elf * elf);
+static int print_relocinfo_32(Elf * elf);
 
 static SYM   *sym_data;
 static SYM64 *sym_data_64;
@@ -109,23 +109,30 @@ static unsigned long   sym_data_64_entry_count;
 
 /*  Include Section type, to be able to deal with all the
     Elf32_Rel, Elf32_Rela, Elf64_Rel, Elf64_Rela relocation types
-    print_error does not return, so the following esb_destructor()
-    call is unnecessary but reads well  :-) */
-#define SECT_DATA_SET(x,t,n,sout,r2) {                        \
-    data = elf_getdata(scn, 0);                               \
-    if (!data || !data->d_size) {                             \
-        struct esb_s data_disaster;                           \
-        esb_constructor(&data_disaster);                      \
-        esb_append(&data_disaster,(n));                       \
-        esb_append(&data_disaster," null");                   \
-        print_error(dbg,esb_get_string(&data_disaster),DW_DLV_OK, err); \
-        esb_destructor(&data_disaster);                       \
-    }                                                         \
-    sout[(r2)]      = sect_data[(x)];                         \
-    sout[(r2)].buf  = data->d_buf;                            \
-    sout[(r2)].size = data->d_size;                           \
-    sout[(r2)].type = (t);                                    \
-    sout[(r2)].name = (n);                                    \
+     */
+#define SECT_DATA_SET(x,t,n,sout,r2) {            \
+    data = elf_getdata(scn, 0);                   \
+    if (!data || !data->d_size) {                 \
+        struct esb_s m;                           \
+        const char * version = "null";            \
+        if (data) {                               \
+            version = "d_size of 0";              \
+        }                                         \
+        esb_constructor(&m);                      \
+        esb_append(&m,(n));                       \
+        esb_append_printf_s(&m,                   \
+            " elf_getdata fails:"                 \
+            "  elf_getdata returns %s",version);  \
+        glflags.gf_count_major_errors++;          \
+        printf("ERROR: %s\n",esb_get_string(&m)); \
+        esb_destructor(&m);                       \
+        return DW_DLV_NO_ENTRY;                   \
+    }                                             \
+    sout[(r2)]      = sect_data[(x)];             \
+    sout[(r2)].buf  = data->d_buf;                \
+    sout[(r2)].size = data->d_size;               \
+    sout[(r2)].type = (t);                        \
+    sout[(r2)].name = (n);                        \
     }
 /* Record the relocation table name information */
 static const char **reloc_type_names = NULL;

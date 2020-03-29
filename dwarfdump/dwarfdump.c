@@ -985,7 +985,17 @@ process_one_file(int fd, int tiedfd,
 
     if (glflags.gf_header_flag && elf) {
 #ifdef DWARF_WITH_LIBELF
-        print_object_header(dbg);
+        int res = 0;
+        Dwarf_Error err = 0;
+
+        res = print_object_header(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing Elf object Header  had a problem.",
+                res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
 #endif /* DWARF_WITH_LIBELF */
     }
 
@@ -1133,39 +1143,79 @@ process_one_file(int fd, int tiedfd,
         }
     }
     if (glflags.gf_reloc_flag && elf) {
-        reset_overall_CU_error_data();
 #ifdef DWARF_WITH_LIBELF
-        print_relocinfo(dbg);
+        int res = 0;
+        Dwarf_Error err = 0;
+        reset_overall_CU_error_data();
+        res = print_relocinfo(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+               "printing relocinfo had a problem.",res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
+#else
+        reset_overall_CU_error_data();
 #endif /* DWARF_WITH_LIBELF */
     }
     if (glflags.gf_debug_names_flag) {
+        int nres = 0;
+        Dwarf_Error err = 0;
+
         reset_overall_CU_error_data();
-        print_debug_names(dbg);
+        nres = print_debug_names(dbg,&err);
+        if (nres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "print .debug_names section failed", nres, err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
 
     /* Print search results */
     if (glflags.gf_search_print_results && glflags.gf_search_is_on) {
+        /* No dwarf errors possible in this function. */
         print_search_results();
     }
 
     /* The right time to do this is unclear. But we need to do it. */
     if (glflags.gf_check_harmless) {
+        /* No dwarf errors possible in this function. */
         print_any_harmless_errors(dbg);
     }
 
-    /* Print error report only if errors have been detected */
-    /* Print error report if the -kd option */
+    /* Print error report only if errors have been detected
+       Print error report if the -kd option. 
+       No errors possible in this function. */
     print_checks_results();
 
     /*  Print the detailed attribute usage space
         and free the attributes_encoding data allocated. */
     if (glflags.gf_check_attr_encoding) {
-        print_attributes_encoding(dbg);
+        int ares = 0;
+        Dwarf_Error aerr = 0;
+
+        ares = print_attributes_encoding(dbg,&aerr);
+        if (ares == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "print attributes encoding failed", ares, aerr);
+            dwarf_dealloc(dbg,aerr,DW_DLA_ERROR);
+            aerr = 0;
+        }
     }
 
     /* Print the tags and attribute usage */
     if (glflags.gf_print_usage_tag_attr) {
-        print_tag_attributes_usage(dbg);
+        int tres = 0;
+        Dwarf_Error err = 0;
+
+        tres = print_tag_attributes_usage(dbg,&err);
+        if (tres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "print tag attributes usage failed", tres, err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
 
     if (glflags.gf_print_str_offsets) {

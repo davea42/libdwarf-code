@@ -3,24 +3,27 @@
   Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012-2018 SN Systems Ltd. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 */
 
 #ifndef globals_INCLUDED
@@ -129,7 +132,7 @@ extern int print_types(Dwarf_Debug dbg,enum type_type_e type_type,
     Dwarf_Error *);
 extern int print_weaknames(Dwarf_Debug dbg, Dwarf_Error *);
 extern void print_exception_tables(Dwarf_Debug dbg);
-extern void print_debug_names(Dwarf_Debug dbg);
+extern int print_debug_names(Dwarf_Debug dbg,Dwarf_Error *);
 int print_all_pubnames_style_records(Dwarf_Debug dbg,
     const char * linetitle,
     const char * section_true_name,
@@ -138,8 +141,8 @@ int print_all_pubnames_style_records(Dwarf_Debug dbg,
     Dwarf_Error *err);
 
 /*  These three ELF only */
-extern void print_object_header(Dwarf_Debug dbg);
-extern void print_relocinfo (Dwarf_Debug dbg);
+extern int print_object_header(Dwarf_Debug dbg,Dwarf_Error *);
+extern int print_relocinfo (Dwarf_Debug dbg, Dwarf_Error*);
 void clean_up_syms_malloc_data(void);
 
 /*  Space used to record range information */
@@ -228,10 +231,10 @@ void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Bool in_import_list, Dwarf_Unsigned offset);
 
 /* Detailed attributes encoding space */
-void print_attributes_encoding(Dwarf_Debug dbg);
+int print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error *);
 
 /* Detailed tag and attributes usage */
-void print_tag_attributes_usage(Dwarf_Debug dbg);
+int print_tag_attributes_usage(Dwarf_Debug dbg, Dwarf_Error *);
 
 void print_section_groups_data(Dwarf_Debug dbg);
 void update_section_flags_per_groups(Dwarf_Debug dbg);

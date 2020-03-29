@@ -1,3 +1,17 @@
+2020-03-29  David Anderson 
+    * dwarfdump.c: Change several section reports to the
+      new approach of errors propagating back to dwarfdump
+      process_one_file().
+    * globals.h: print_debug_names(), print_object_header()
+      print_relocinfo(),print_tag_attributes_usage()
+      print_attributes_encoding() all now return status
+      DW_DLV_OK etc as appropriate.
+    * print_die.c(print_attributes_encoding,
+      print_tag_attributes_usage): Implement passing status back
+      to process_one_file().
+    * print_dnames.c,print_reloc.c,print_reloc_decls.h: 
+      Implement passing status back
+      to process_one_file().
 2020-03-28  David Anderson 
     * dwarfdump.c: print debuglink and print str_offsets
       now getting dwarf status and Dwarf_Error back.
