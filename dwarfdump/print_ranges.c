@@ -41,29 +41,24 @@ ranges_esb_string_destructor(void)
    object being printed has different address sizes
    in different compilation units this will not work
    properly: anything could happen. */
-extern void
-print_ranges(Dwarf_Debug dbg)
+extern int
+print_ranges(Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Error *err)
 {
     Dwarf_Unsigned off = 0;
     int group_number = 0;
     int wasdense = 0;
-    Dwarf_Error pr_err = 0;
     struct esb_s truename;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
     unsigned loopct = 0;
 
     glflags.current_section_id = DEBUG_RANGES;
     if (!glflags.gf_do_print_dwarf) {
-        return;
+        return DW_DLV_OK;
     }
-#if 0
-    {
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,".debug_ranges",
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-    }
-#endif
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,".debug_ranges",
+        &truename,TRUE);
 
     /*  Turn off dense, we do not want  print_ranges_list_to_extra
         to use dense form here. */
@@ -73,15 +68,13 @@ print_ranges(Dwarf_Debug dbg)
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
+        Dwarf_Error pr_err;
 
         /*  We do not know what DIE is involved, we use
             the older call here. */
         int rres = dwarf_get_ranges(dbg,off,&rangeset,
             &rangecount,&bytecount,&pr_err);
         if (!loopct) {
-            esb_constructor_fixed(&truename,buf,sizeof(buf));
-            get_true_section_name(dbg,".debug_ranges",
-                &truename,TRUE);
             printf("\n%s\n",sanitized(esb_get_string(&truename)));
         }
         if (rres == DW_DLV_OK) {
@@ -105,13 +98,14 @@ print_ranges(Dwarf_Debug dbg)
             struct esb_s m;
 
             esb_constructor(&m);
-
-            esb_append_printf_u(&m,"Error at offset 0x%lx in ",off);
+            glflags.gf_count_major_errors++;
+            esb_append_printf_u(&m,"ERROR: at offset 0x%lx in ",off);
             esb_append_printf_s(&m,"section %s. Stopping ranges"
                 " output.",sanitized(esb_get_string(&truename)));
             print_error_and_continue(dbg,esb_get_string(&m),
                 rres,pr_err);
             dwarf_dealloc(dbg,pr_err,DW_DLA_ERROR);
+            pr_err = 0;
             esb_destructor(&m);
             break;
         }
@@ -119,6 +113,7 @@ print_ranges(Dwarf_Debug dbg)
     }
     glflags.dense = wasdense;
     esb_destructor(&truename);
+    return DW_DLV_OK;
 }
 
 /*  Extracted this from print_range_attribute() to isolate the check of

@@ -1074,8 +1074,20 @@ process_one_file(int fd, int tiedfd,
         print_aranges(dbg);
     }
     if (glflags.gf_ranges_flag) {
+        int res = 0;
+        Dwarf_Error err = 0;
+
         reset_overall_CU_error_data();
-        print_ranges(dbg);
+        res = print_ranges(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the ranges section"
+                " had a problem.",res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
+
+        
     }
     if (glflags.gf_frame_flag || glflags.gf_eh_frame_flag) {
         int sres = 0;

@@ -120,7 +120,7 @@ extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
 extern int print_frames (Dwarf_Debug dbg,int want_eh,
     struct dwconf_s *,Dwarf_Error *);
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
-extern void print_ranges (Dwarf_Debug dbg);
+extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
 extern void print_pubnames (Dwarf_Debug dbg);
 extern void print_macinfo (Dwarf_Debug dbg);
 extern void print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info);
