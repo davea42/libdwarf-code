@@ -1052,8 +1052,14 @@ process_one_file(int fd, int tiedfd,
         print_pubnames(dbg);
     }
     if (glflags.gf_loc_flag) {
+        int locres = 0;
+        Dwarf_Error locerr = 0;
         reset_overall_CU_error_data();
-        print_locs(dbg);
+        locres = print_locs(dbg,&locerr);
+        if (locres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing location data had a problem ",locres,locerr);
+        }
     }
     if (glflags.gf_abbrev_flag) {
         reset_overall_CU_error_data();
@@ -1072,10 +1078,35 @@ process_one_file(int fd, int tiedfd,
         print_ranges(dbg);
     }
     if (glflags.gf_frame_flag || glflags.gf_eh_frame_flag) {
+        int sres = 0;
+        Dwarf_Error err = 0;
+        int want_eh = 0;
+
         reset_overall_CU_error_data();
         current_cu_die_for_print_frames = 0;
-        print_frames(dbg, glflags.gf_frame_flag,
-            glflags.gf_eh_frame_flag, l_config_file_data);
+        if (glflags.gf_frame_flag) {
+            sres = print_frames(dbg,want_eh,
+               l_config_file_data,&err);
+            if (sres == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "printing standard frame data had a problem.",sres,err);
+                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+                err = 0;
+            }
+        }
+        current_cu_die_for_print_frames = 0;
+        if (glflags.gf_eh_frame_flag) {
+            want_eh = 1;
+            sres = print_frames(dbg, want_eh, 
+               l_config_file_data,&err);
+            if (sres == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "printing eh frame data had a problem.",sres,err);
+                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+                err = 0;
+            }
+        }
+        current_cu_die_for_print_frames = 0;
     }
     if (glflags.gf_static_func_flag) {
         int sres = 0;
@@ -1287,6 +1318,42 @@ process_one_file(int fd, int tiedfd,
 #define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
 #define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
 
+/*  ==============START of dwarfdump error print functions. */
+int 
+simple_dbl_return_msg_either(int res,const char *msg)
+{
+    /*const char *msg = "\nERROR: dwarf_get_address_size() fails.";*/
+    const char *etype = "No-entry";
+    if (res == DW_DLV_ERROR) {
+        etype="Major error";
+    }
+    glflags.gf_count_major_errors++;
+    printf("%s fails. %s\n",msg,etype);
+    return res;
+}
+int 
+simple_err_return_action(int res,const char *msg)
+{
+    if (res == DW_DLV_ERROR) {
+        const char *etype = "Major error";
+        glflags.gf_count_major_errors++;
+        printf("%s %s\n",msg, etype);
+    }
+    return res;
+}   
+
+int 
+simple_err_only_return_action(int res,const char *msg)
+{
+    const char *etype="Major error";
+    /*const char *msg = "\nERROR: dwarf_get_address_size() fails."; */
+
+    glflags.gf_count_major_errors++;
+    printf("%s %s\n",msg,etype);
+    return res;
+}
+
+
 /* ARGSUSED */
 static void
 print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
@@ -1362,6 +1429,7 @@ print_error_and_continue(Dwarf_Debug dbg,
     print_error_maybe_continue(dbg,
         msg,dwarf_ret_val,lerr,TRUE);
 }
+/*  ==============END of dwarfdump error print functions. */
 
 /*  Predicate function. Returns 'true' if the CU should
     be skipped as the DW_AT_name of the CU

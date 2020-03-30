@@ -109,19 +109,22 @@ extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
    if appropriate. */
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
+extern int simple_dbl_return_msg_either(int res,const char *msg);
+extern int simple_err_return_action(int res,const char *msg);
+extern int simple_err_only_return_action(int res,const char *msg);
 extern void print_error_and_continue (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 extern void print_error (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 
 extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
 
-extern void print_frames (Dwarf_Debug dbg, int print_debug_frame,
-    int print_eh_frame,struct dwconf_s *);
+extern int print_frames (Dwarf_Debug dbg,int want_eh,
+    struct dwconf_s *,Dwarf_Error *);
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern void print_ranges (Dwarf_Debug dbg);
 extern void print_pubnames (Dwarf_Debug dbg);
 extern void print_macinfo (Dwarf_Debug dbg);
 extern void print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info);
-extern void print_locs (Dwarf_Debug dbg);
+extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);
 extern void print_aranges (Dwarf_Debug dbg);
@@ -217,7 +220,7 @@ extern Dwarf_Die current_cu_die_for_print_frames; /* This is
 
 
 int get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
-    char *proc_name_buf, int proc_name_buf_len, void **pcMap);
+    struct esb_s *proc_name, void **pcMap);
 
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 

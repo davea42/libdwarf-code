@@ -3632,14 +3632,17 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if (tag == DW_TAG_subprogram) {
                 /* This gets the DW_AT_name if this DIE has one. */
                 Dwarf_Addr low_pc =  0;
-                static char proc_name[BUFSIZ];
-
-                proc_name[0] = 0;
-                get_proc_name(dbg,die,low_pc,proc_name,BUFSIZ,/*pcMap=*/0);
-                if (proc_name[0]) {
+                struct esb_s pn;
+                int found = 0;
+      
+                esb_constructor(&pn);
+                found =get_proc_name(dbg,die,low_pc,&pn,/*pcMap=*/0);
+                if (found) { 
                     safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
-                        proc_name,strlen(proc_name));
+                        esb_get_string(&pn),
+                        esb_string_len(&pn));
                 }
+                esb_destructor(&pn);
             }
         }
         }
@@ -4790,8 +4793,18 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
             print_error(dbg,"Cannot Get die address size for exprloc",
                 ares,ecerr);
         } else {
-            get_string_from_locs(dbg,x,tempud,address_size,
-                offset_size,version, esbp);
+            int sres = 0;
+
+            sres =  get_string_from_locs(dbg,x,tempud,address_size,
+                offset_size,version, esbp,&ecerr);
+            if (sres == DW_DLV_NO_ENTRY) {
+                printf("dadebug FIXME NO ENTRY from get_string_from_locs\n");
+            } else if (wres == DW_DLV_ERROR) {
+                printf("dadebug FIXME ERROR from get_string_from_locs\n");
+            } else {
+                printf("dadebug FIXME ERROR success get_string_from_locs\n");
+
+            }
         }
     }
 }

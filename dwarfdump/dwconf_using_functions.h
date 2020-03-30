@@ -29,9 +29,8 @@
 extern "C" {
 #endif
 
-
-void print_frames (Dwarf_Debug dbg, int print_debug_frame,
-    int print_eh_frame,struct dwconf_s *);
+int print_frames (Dwarf_Debug dbg,int want_eh,
+    struct dwconf_s *,Dwarf_Error *);
 void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 
 #ifdef __cplusplus

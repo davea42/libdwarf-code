@@ -1,3 +1,9 @@
+2020-03-30  David Anderson 
+    * dwarfdump.c,dwconf_using_functions.h,
+      globals.h,print_die.c,print_frames.c,print_frames.h,
+      print_locs.c: Applyingthe new error-return scheme
+      to print_locs.c involves a number of changes
+      beyond print_locs.c itself.
 2020-03-29  David Anderson 
     * dwarfdump.c: Change several section reports to the
       new approach of errors propagating back to dwarfdump

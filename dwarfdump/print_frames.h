@@ -32,15 +32,16 @@ extern "C" {
 int print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     Dwarf_Unsigned cie_index,
     Dwarf_Half address_size,
-    struct dwconf_s * config_data);
-
-void get_string_from_locs(Dwarf_Debug dbg,
+    struct dwconf_s *config_data,
+    Dwarf_Error *err);
+int get_string_from_locs(Dwarf_Debug dbg,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
     Dwarf_Half offset_size,
     Dwarf_Half version,
-    struct esb_s *out_string);
+    struct esb_s *out_string,
+    Dwarf_Error *err);
 
 #ifdef __cplusplus
 }
