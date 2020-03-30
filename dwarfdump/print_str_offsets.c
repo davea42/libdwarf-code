@@ -141,7 +141,7 @@ print_str_offsets_section(Dwarf_Debug dbg,Dwarf_Error *err)
         }
         if (res == DW_DLV_ERROR) {
             res = dwarf_close_str_offsets_table_access(sot,err);
-           return res;
+            return res;
         }
     }
     if (wasted_byte_count) {

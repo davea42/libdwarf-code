@@ -109,7 +109,7 @@ extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
    if appropriate. */
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
-extern int simple_dbl_return_msg_either(int res,const char *msg);
+extern int simple_err_return_msg_either_action(int res,const char *msg);
 extern int simple_err_return_action(int res,const char *msg);
 extern int simple_err_only_return_action(int res,const char *msg);
 extern void print_error_and_continue (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);

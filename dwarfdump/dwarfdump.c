@@ -1320,7 +1320,7 @@ process_one_file(int fd, int tiedfd,
 
 /*  ==============START of dwarfdump error print functions. */
 int 
-simple_dbl_return_msg_either(int res,const char *msg)
+simple_err_return_msg_either_action(int res,const char *msg)
 {
     /*const char *msg = "\nERROR: dwarf_get_address_size() fails.";*/
     const char *etype = "No-entry";

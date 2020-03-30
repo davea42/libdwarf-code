@@ -79,13 +79,13 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
     fres = dwarf_get_address_size(dbg, &address_size, err);
     if (fres != DW_DLV_OK) {
         esb_destructor(&exprstring);
-        return simple_dbl_return_msg_either(fres,
+        return simple_err_return_msg_either_action(fres,
             "\nERROR: dwarf_get_address_size() fails.");
     }
     fres = dwarf_get_offset_size(dbg, &offset_size, err);
     if (fres != DW_DLV_OK) {
         esb_destructor(&exprstring);
-        return simple_dbl_return_msg_either(fres,
+        return simple_err_return_msg_either_action(fres,
             "\nERROR: dwarf_get_offset_size() fails.");
     }
     {
