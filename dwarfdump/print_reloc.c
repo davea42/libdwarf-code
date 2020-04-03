@@ -268,6 +268,8 @@ print_relocinfo_64(Elf * elf)
             shdr64->sh_name);
         if (scn_name  == NULL) {
             glflags.gf_count_major_errors++;
+            free(scn_name);
+            free(printable_sects);
             printf("ERROR: elf_strptr (elf64) failed\n");
             return DW_DLV_NO_ENTRY;
         }
@@ -282,12 +284,15 @@ print_relocinfo_64(Elf * elf)
                 free(scn_names);
                 free(printable_sects);
                 glflags.gf_count_major_errors++;
-                printf("ERROR: elf_getdata() (Elf64) failed to get symbol table\n");
+                printf("ERROR: elf_getdata() (Elf64) failed to get symbol table "
+                     "`elf_getdata returned NULL.\n");
                 return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf64_Sym);
             if(sym_size%sizeof(Elf64_Sym)) {
                 glflags.gf_count_major_errors++;
+                free(scn_names);
+                free(printable_sects);
                 printf("ERROR: symbols size %lu "
                     "not a proper multiple of size of Elf64_sym\n",
                     (unsigned long)sym_size*
@@ -315,6 +320,8 @@ print_relocinfo_64(Elf * elf)
             res = get_reloc_section(scn,scn_name,shdr64->sh_type,
                 printable_sects,sect_number);
             if (res != DW_DLV_OK) {
+                free(scn_names);
+                free(printable_sects);
                 return res;
             }
         }
@@ -402,7 +409,7 @@ print_relocinfo_32(Elf * elf)
             free(scn_names);
             glflags.gf_count_major_errors++;
             printf("ERROR: elf_stgrptr returns null \n");
-                return DW_DLV_NO_ENTRY;
+            return DW_DLV_NO_ENTRY;
         }
 
         scn_names[sect_number] = scn_name;
@@ -415,12 +422,15 @@ print_relocinfo_32(Elf * elf)
                 free(printable_sects);
                 free(scn_names);
                 glflags.gf_count_major_errors++;
-                printf("ERROR: elf_getdata() (Elf32) failed to get symbol table\n");
+                printf("ERROR: elf_getdata() (Elf32) failed to get symbol table"
+                 " elf_getdata returned null\n");
                 return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf32_Sym);
             if(sym_size%sizeof(Elf32_Sym)) {
                 glflags.gf_count_major_errors++;
+                free(printable_sects);
+                free(scn_names);
                 printf("ERROR: size of Elf32 %lu sym not"
                     " a multiple of symbols size %lu.\n",
                     (unsigned long)sym_size,
@@ -446,6 +456,8 @@ print_relocinfo_32(Elf * elf)
             res = get_reloc_section(scn,scn_name,shdr32->sh_type,
                 printable_sects,sect_number);
             if (res != DW_DLV_OK) {
+                free(printable_sects);
+                free(scn_names);
                 return res;
             }
         }

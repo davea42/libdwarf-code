@@ -41,10 +41,6 @@
 
 int dwarf_names_print_on_error = 1;
 
-/* referred in dwarfdump.c */
-Dwarf_Die current_cu_die_for_print_frames;
-
-
 /* The April 2005 dwarf_get_section_max_offsets()
    in libdwarf returns all max-offsets, but we only
    want one of those offsets. This function returns

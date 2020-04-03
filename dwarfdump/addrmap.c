@@ -122,5 +122,7 @@ void
 addr_map_destroy(void *map)
 {
     /* tdestroy is not part of Posix, it is a GNU libc function. */
-    dwarf_tdestroy(map,addr_map_free_func);
+    if (map) {
+        dwarf_tdestroy(map,addr_map_free_func);
+    }
 }

@@ -57,9 +57,6 @@ print_ranges(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     esb_constructor_fixed(&truename,buf,sizeof(buf));
-    get_true_section_name(dbg,".debug_ranges",
-        &truename,TRUE);
-
     /*  Turn off dense, we do not want  print_ranges_list_to_extra
         to use dense form here. */
     wasdense = glflags.dense;
@@ -75,6 +72,8 @@ print_ranges(Dwarf_Debug dbg,
         int rres = dwarf_get_ranges(dbg,off,&rangeset,
             &rangecount,&bytecount,&pr_err);
         if (!loopct) {
+            get_true_section_name(dbg,".debug_ranges",
+                &truename,TRUE);
             printf("\n%s\n",sanitized(esb_get_string(&truename)));
         }
         if (rres == DW_DLV_OK) {

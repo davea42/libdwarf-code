@@ -3636,9 +3636,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 int found = 0;
       
                 esb_constructor(&pn);
-                found =get_proc_name(dbg,die,low_pc,&pn,/*pcMap=*/0);
-                if (found) { 
-                    safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
+                /* Only looks in this one DIE's attributes */
+                found =get_proc_name_by_die(dbg,die,
+                    low_pc,&pn,/*pcMap=*/0);
+                if (found == DW_DLV_OK) { 
+                    safe_strcpy(glflags.PU_name,
+                        sizeof(glflags.PU_name),
                         esb_get_string(&pn),
                         esb_string_len(&pn));
                 }
@@ -4755,10 +4758,10 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     int showhextoo, struct esb_s *esbp)
 {
     Dwarf_Ptr x = 0;
-    Dwarf_Unsigned tempud = 0;
+    Dwarf_Unsigned exprlength = 0;
     Dwarf_Error ecerr = 0;
     int wres = 0;
-    wres = dwarf_formexprloc(attrib,&tempud,&x,&ecerr);
+    wres = dwarf_formexprloc(attrib,&exprlength,&x,&ecerr);
     if (wres == DW_DLV_NO_ENTRY) {
         /* Show nothing?  Impossible. */
     } else if (wres == DW_DLV_ERROR) {
@@ -4771,9 +4774,9 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
         unsigned u = 0;
 
         esb_append_printf_u(esbp,
-            "len 0x%04" DW_PR_DUx ": ",tempud);
+            "len 0x%04" DW_PR_DUx ": ",exprlength);
         if (showhextoo) {
-            for (u = 0; u < tempud; u++) {
+            for (u = 0; u < exprlength; u++) {
                 esb_append_printf_u(esbp,
                     "%02x", *(u + (unsigned char *) x));
             }
@@ -4795,15 +4798,13 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
         } else {
             int sres = 0;
 
-            sres =  get_string_from_locs(dbg,x,tempud,address_size,
+            sres =  get_string_from_locs(dbg,x,exprlength,address_size,
                 offset_size,version, esbp,&ecerr);
-            if (sres == DW_DLV_NO_ENTRY) {
-                printf("dadebug FIXME NO ENTRY from get_string_from_locs\n");
-            } else if (wres == DW_DLV_ERROR) {
-                printf("dadebug FIXME ERROR from get_string_from_locs\n");
-            } else {
-                printf("dadebug FIXME ERROR success get_string_from_locs\n");
-
+            if (sres == DW_DLV_ERROR) {
+                glflags.gf_count_major_errors++;
+                printf("\nERROR: Unable to expresssion location"
+                   " with length 0x%" DW_PR_DUu  ".\n",exprlength); 
+                dwarf_dealloc(dbg,ecerr,DW_DLA_ERROR);
             }
         }
     }
@@ -5001,7 +5002,7 @@ print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error* attr_error)
 
 static void
 check_decl_file_only(char **srcfiles,
-    Dwarf_Unsigned tempud,Dwarf_Signed cnt,int attr)
+    Dwarf_Unsigned fileindex,Dwarf_Signed cnt,int attr)
 {
     /*  Zero is always a legal index for
         DWARF2,3,4,5, it means
@@ -5009,15 +5010,15 @@ check_decl_file_only(char **srcfiles,
 
     DWARF_CHECK_COUNT(decl_file_result,1);
     /* zero means no file applicable */
-    if (tempud  &&
-        tempud > ((Dwarf_Unsigned)cnt)) {
+    if (fileindex  &&
+        fileindex > ((Dwarf_Unsigned)cnt)) {
         struct esb_s msgb;
 
         esb_constructor(&msgb);
         if (!srcfiles) {
             esb_append(&msgb,
                 "There is a file number=");
-            esb_append_printf_u(&msgb,"%" DW_PR_DUu,tempud);
+            esb_append_printf_u(&msgb,"%" DW_PR_DUu,fileindex);
             esb_append(&msgb," but no source files");
             /*  Extra space char here to avoid pointless
                 regression test issues with older versions. */
@@ -5025,7 +5026,7 @@ check_decl_file_only(char **srcfiles,
         } else {
             esb_append(&msgb,"Does not index to valid file name ");
             esb_append(&msgb,"filenum=");
-            esb_append_printf_u(&msgb,"%" DW_PR_DUu,tempud);
+            esb_append_printf_u(&msgb,"%" DW_PR_DUu,fileindex);
             esb_append(&msgb," arraysize=");
             esb_append_printf_i(&msgb,"%" DW_PR_DSd,cnt);
             esb_append(&msgb,".");
@@ -5124,7 +5125,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 int res = 0;
 
                 dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-                err = 0;
+                glflags.gf_debug_addr_missing_search_by_address = 1;
                 res = dwarf_get_debug_addr_index(attrib,&index,&err);
                 if(res != DW_DLV_OK) {
                     struct esb_s lstr;
@@ -5136,11 +5137,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         res, err);
                     esb_destructor(&lstr);
                 }
-
                 addr = 0;
                 bracket_hex("(addr_index: ",index,
                     ")<no .debug_addr section>",esbp);
-                /*  This is normal in a .dwo file. The .debug_addr
+                /*  This is normal in a .dwo/DWP file. The .debug_addr
                     is in a .o and in the final executable. */
             } else {
                 struct esb_s lstr;
@@ -5150,6 +5150,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 print_error(dbg, esb_get_string(&lstr),
                     bres, err);
                 esb_destructor(&lstr);
+                if(!glflags.gf_error_code_in_name_search_by_address) {
+                    glflags.gf_error_code_in_name_search_by_address = 
+                        dwarf_errno(err);
+                } 
             }
         } else {
             struct esb_s lstr;

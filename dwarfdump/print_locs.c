@@ -76,6 +76,7 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
     }
 
     esb_constructor(&exprstring);
+    esb_constructor(&secname);
     fres = dwarf_get_address_size(dbg, &address_size, err);
     if (fres != DW_DLV_OK) {
         esb_destructor(&exprstring);

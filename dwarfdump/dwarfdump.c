@@ -56,8 +56,8 @@
 #include "esb_using_functions.h"
 #include "sanitized.h"
 #include "tag_common.h"
+#include "addrmap.h"
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
-
 #include "command_options.h"
 #include "compiler_info.h"
 
@@ -1093,12 +1093,21 @@ process_one_file(int fd, int tiedfd,
         int sres = 0;
         Dwarf_Error err = 0;
         int want_eh = 0;
+        /*  These three shared .eh_frame and .debug_frame
+            as they are about the DIEs, not about frames. */
+        Dwarf_Die cu_die_for_print_frames = 0;
+        void *map_lowpc_to_name = 0;
+        void *lowpcSet = 0;
 
         reset_overall_CU_error_data();
-        current_cu_die_for_print_frames = 0;
         if (glflags.gf_frame_flag) {
+            want_eh = 0;
             sres = print_frames(dbg,want_eh,
-               l_config_file_data,&err);
+               l_config_file_data,
+               &cu_die_for_print_frames,
+               &map_lowpc_to_name,
+               &lowpcSet,
+               &err);
             if (sres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "printing standard frame data had a problem.",sres,err);
@@ -1106,11 +1115,14 @@ process_one_file(int fd, int tiedfd,
                 err = 0;
             }
         }
-        current_cu_die_for_print_frames = 0;
         if (glflags.gf_eh_frame_flag) {
             want_eh = 1;
             sres = print_frames(dbg, want_eh, 
-               l_config_file_data,&err);
+               l_config_file_data,
+               &cu_die_for_print_frames,
+               &map_lowpc_to_name,
+               &lowpcSet,
+               &err);
             if (sres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "printing eh frame data had a problem.",sres,err);
@@ -1118,7 +1130,9 @@ process_one_file(int fd, int tiedfd,
                 err = 0;
             }
         }
-        current_cu_die_for_print_frames = 0;
+        addr_map_destroy(lowpcSet);
+        addr_map_destroy(map_lowpc_to_name);
+        dwarf_dealloc(dbg,cu_die_for_print_frames, DW_DLA_DIE);
     }
     if (glflags.gf_static_func_flag) {
         int sres = 0;
@@ -1289,6 +1303,21 @@ process_one_file(int fd, int tiedfd,
             err = 0;
 
         }
+    }
+    if (glflags.gf_debug_addr_missing_search_by_address) {
+        printf("\nERROR: At some point "
+            "the .debug_addr section was needed but missing, "
+            "meaning some frame information was missing "
+            "relevant function names. See the dwarfdump "
+            " option --file-tied=</path/to/executable> .");
+    }
+    if (glflags.gf_error_code_in_name_search_by_address) {
+        printf("\nERROR: At some point "
+            "There was some data corruption in frame data "
+            "so at least the following error occurred: "
+            "%s .\n", 
+            dwarf_errmsg_by_number(
+            glflags.gf_error_code_in_name_search_by_address));
     }
 
     /*  Could finish dbg first. Either order ok. */

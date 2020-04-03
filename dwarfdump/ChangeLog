@@ -1,3 +1,40 @@
+2020-04-02  David Anderson 
+    * addrmap.c: Ensure it wn't try to use a null input to addr_map_destroy().
+    * dwarfdump.1: Add documentation on running dwarfdump on split-dwarf
+      objects (See DWARF5 standard, section 6.3).
+    * dwarfdump.c (process_one_file):Applyingthe new error-return scheme
+      to dwarf_frames.c required serious revisions and refactoring.
+    * dwconf_using_functions.h: The declaration of print_frames()
+      changed.
+    * glflags.h: gf_debug_addr_missing_search_by_address,
+      gf_error_code_in_name_search_by_address, and
+      gf_all_cus_seen_search_by_address are here now instead of
+      being hard to reason about global/local data.
+    * glflags.c: Initializes the three fields.
+    * globals.h: Revised declaration of print_frames() and
+      get_proc_name.
+      Removed the declaration of current_cu_die_for_print_frames.
+    * print_die.c(print_attribute): Properly use the return value
+      of dwarfdump function get_proc_name_by_die().
+      Also renamed a small number of local variables in
+      print_exprloc_content() to make the code more
+      readable( tempud -> exprlength, tempud->fileindex);
+    * print frames.c: Major revisions to clarify
+      data lifetimes and to return DW_DLV_ERROR 
+      to let higher levels clean up for themselves.
+      Stop returning true/false and return DW_DLV_OK
+      or DW_DLV_NO_ENTRY with respect to finding
+      procedure names from code addresses`.
+    * print_locs.c: Added an accidentally-omitted
+      esb_constructor for secname.`
+    * print_ranges.c: Move acquiring section name down
+      after the first call of dwarf_get_ranges() so
+      we get the true name with any compression involed
+      reported.
+    * print_sections.c: Removed Dwarf_Die current_cu_die_for_print_frames,
+      it is no longer needed.
+    * print_reloc.c: Was failing to free locally allocated
+      space in some places in print_relocinfo_32().
 2020-03-30  David Anderson 
     * dwarfdump.c,dwconf_using_functions.h,
       globals.h,print_die.c,print_frames.c,print_frames.h,

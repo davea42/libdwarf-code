@@ -12,10 +12,14 @@ With no options (but with the required \f2objectfilename\fP
 ) all sections print (but some sections cannot be printed
 independently safely, so those are only printed at offsets
 where the .debug_info section refers to those sections).
+.PP
+For split-dwarf (DWARF5) object files see
+Split Object Files, DWARF5 section 7.3.
 
 .PP
-All options are available in the traditional (single-letter)
+Nearly all options are available in the traditional (single-letter)
 form and in a long-options form with meaningful names.
+New options are only in the long-options form.
 
 .PP
 With no options 
@@ -482,9 +486,14 @@ are also shown.
 
 .TP
 .BR \--format-suppress-lookup\ (\-n) 
-When printing frames, this turns off the search for function names.
-In a really large object the search can take more time than
-one wants to wait, so this avoids the search.
+When printing frames, this turns off the search for function names
+in inner scopes.
+Unless the language used to build the object file
+supports function definitions in inner scopes
+there is no point in looking for function names in inner scopes.
+And a really large object the search can take more time than
+one wants to wait.
+This option suppresses the inner scope search.
 
 .TP
 .BR \--file-output=<path>\ (\-O file=<path>)
@@ -678,9 +687,14 @@ in the non-dwo sections.
 .TP
 .BR \--file-tied=/t/i/depath
 Used when opening a main object that is a .dwo or .dwp file.
+For example if /path/to/myapp.dwp is the split-dwarf
+object and /path/to/myapp is the executable, do
+"dwarfdump --file-tied=/path/to/myapp /path/to/myapp.dwp"  . 
 The tied file path names the executable which has
 the .debug_addr section that may be referred to from
-the main object. See Split Objects (aka Debug Fission).
+the main object. See Split Objects (aka Debug Fission)
+in the DWARF5 standard.
+
 .TP
 .BR \-x\ line5=s2l
 .TP
@@ -739,6 +753,21 @@ Likely something no one needs to do.
 .TP
 .B \--help
 Show this man page.
+.SH SPLIT DWARF
+With Split Dwarf (DWARF5) the main body
+of the DWARF is in a separate file, often
+having the name suffix .dwp or .dwo .
+.PP
+For example if /path/to/myapp.dwp is the split-dwarf
+object and /path/to/myapp is the executable, do
+"dwarfdump --file-tied=/path/to/myapp /path/to/myapp.dwp"  .
+The tied file path names the executable which has
+the .debug_addr section and other sections
+that may be referred to from
+the .dwo/.dwp object.
+.PP
+See Split Object Files (sometimes called Debug Fission)
+in the DWARF5 standard, section 7.3.
 
 .SH FILES
 dwarfdump

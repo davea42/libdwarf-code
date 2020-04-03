@@ -118,7 +118,9 @@ extern void print_error (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error 
 extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
 
 extern int print_frames (Dwarf_Debug dbg,int want_eh,
-    struct dwconf_s *,Dwarf_Error *);
+    struct dwconf_s *,
+    Dwarf_Die * cu_die_for_current_frame_cu,
+    void **, void **,Dwarf_Error *);
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
 extern void print_pubnames (Dwarf_Debug dbg);
@@ -212,14 +214,8 @@ extern void print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset);
 void ranges_esb_string_destructor(void);
 void destruct_abbrev_array(void);
 
-extern Dwarf_Die current_cu_die_for_print_frames; /* This is
-    an awful hack, making current_cu_die_for_print_frames public.
-    But it enables cleaning up (doing all dealloc needed). */
-/* defined in print_sections.c, die for the current compile unit,
-   used in get_fde_proc_name() */
-
-
-int get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
+int get_proc_name_by_die(Dwarf_Debug dbg, 
+    Dwarf_Die die, Dwarf_Addr low_pc,
     struct esb_s *proc_name, void **pcMap);
 
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
