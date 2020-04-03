@@ -277,20 +277,26 @@ section_name_ends_with_dwo(const char *name)
     return TRUE;
 }
 
-static void
+void
 _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
     Dwarf_Error *error,
     Dwarf_Unsigned addrsize,
     int errcode,const char *errname)
 {
     dwarfstring m;
+    const char *bites = "bytes";
+    if (addrsize == 1) {
+        bites = "byte";
+    }
 
     dwarfstring_constructor(&m);
     dwarfstring_append(&m,(char *)errname);
     dwarfstring_append_printf_u(&m,
-        ": Address size of %u is not supported."
-        " Corrupt DWARF.",
+        ": Address size of %u ",
         addrsize);
+    dwarfstring_append_printf_s(&m,
+        "%s is not supported. Corrupt DWARF.",
+        (char *)bites);
     _dwarf_error_string(dbg,error,errcode,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
@@ -2222,7 +2228,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
             die_info_ptr = die_info_ptr2;
 
             /*  die_info_end is one past end. Do not read it!
-                A test for ``!= die_info_end''  would work as well,
+                A test for '!= die_info_end'  would work as well,
                 but perhaps < reads more like the meaning. */
             if (die_info_ptr < die_info_end) {
                 if ((*die_info_ptr) == 0 && has_child) {

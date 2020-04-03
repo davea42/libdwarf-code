@@ -1,3 +1,14 @@
+2020-04-02: David Anderson
+    * dwarf_die_deliv.c: Better text printed for an address size error
+      including reporting the actual addrss-size found by libdwarf.
+    * dwarf_frame2.c: Deleted a static version of
+      _dwarf_create_address_size_dwarf_error() and use
+      the global one. Revised some error messages to
+      have specific details. Each instance of
+      DW_DLE_DEBUG_FRAME_LENGTH_BAD now reports something
+      specific about each case.
+    * dwarf_opaque.h: Added a declaration of
+      _dwarf_create_address_size_dwarf_error().
 2020-03-28: David Anderson
     * dwarf_global.c: dwarf_return_empty_pubnames() revised
       so it cannot fail.

@@ -934,6 +934,12 @@ extern int _dwarf_pe_setup(int fd,
     Dwarf_Debug *dbg,Dwarf_Error *error);
 void _dwarf_destruct_pe_access(struct Dwarf_Obj_Access_Interface_s *aip);
 
+void _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
+    Dwarf_Error *error,
+    Dwarf_Unsigned addrsize,
+    int errcode,const char *errname);
+
+
 extern Dwarf_Bool _dwarf_allow_formudata(unsigned form);
 extern int _dwarf_formudata_internal(Dwarf_Debug dbg,
     unsigned form,

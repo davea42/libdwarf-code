@@ -142,27 +142,6 @@ qsort_compare(const void *elem1, const void *elem2)
     return 0;
 }
 
-static void
-_dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
-    Dwarf_Error *error,
-    Dwarf_Unsigned addrsize,
-    int errcode,const char *errname)
-{
-    dwarfstring m;
-
-    dwarfstring_constructor(&m);
-
-    dwarfstring_append(&m,(char *)errname);
-    dwarfstring_append_printf_u(&m,
-        ": Address size of %u is not supported."
-        " Corrupt DWARF.",
-        addrsize);
-    _dwarf_error_string(dbg,error,errcode,
-        dwarfstring_string(&m));
-    dwarfstring_destructor(&m);
-}
-
-
 /*  Adds 'newone' to the end of the list starting at 'head'
     and makes the new one 'cur'rent. */
 static void
@@ -404,8 +383,9 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
             return res;
         }
-        if (res == DW_DLV_NO_ENTRY)
+        if (res == DW_DLV_NO_ENTRY) {
             break;
+        }
         frame_ptr = prefix.cf_addr_after_prefix;
         if (frame_ptr >= section_ptr_end) {
             dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
@@ -693,7 +673,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     }
     frame_ptr = frame_ptr + strlen((char *) frame_ptr) + 1;
     if (frame_ptr  >= section_ptr_end) {
-        _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: following any "
+            "augmentation field we have run off the end of the section "
+            "with the CIE incomplete.  Corrupt Dwarf");
         return DW_DLV_ERROR;
     }
     augt = _dwarf_get_augmentation_type(dbg,
@@ -703,7 +686,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         UNUSEDARG Dwarf_Unsigned exception_table_addr;
 
         if ((frame_ptr+local_length_size)  >= section_ptr_end) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: following "
+                "type field we have run off the end of the section "
+                "with the CIE incomplete.  Corrupt Dwarf");
             return DW_DLV_ERROR;
         }
         /* this is per egcs-1.1.2 as on RH 6.0 */
@@ -718,12 +704,17 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
         if (version == DW_CIE_VERSION4) {
             if ((frame_ptr+2)  >= section_ptr_end) {
-                _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+                _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                    "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "
+                    "We would run off the end of the section "
+                    "in a DWARF4 cie header.  Corrupt Dwarf");
                 return DW_DLV_ERROR;
             }
             address_size = *((unsigned char *)frame_ptr);
             if (address_size  <  1) {
-                _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ZERO);
+                _dwarf_error_string(dbg, error, DW_DLE_ADDRESS_SIZE_ZERO,
+                    "DW_DLE_ADDRESS_SIZE_ZERO: bad addres size "
+                    "for a DWARF4 cie header");
                 return (DW_DLV_ERROR);
             }
             if (address_size  > sizeof(Dwarf_Addr)) {
@@ -734,7 +725,9 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                 return DW_DLV_ERROR;
             }
             if ((frame_ptr+2)  >= section_ptr_end) {
-                _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+                _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                    "DW_DLE_DEBUG_FRAME_LENGTH_BAD: Running off the end "
+                    " of a CIE header. Corrupt DWARF4");
                 return DW_DLV_ERROR;
             }
             ++frame_ptr;
@@ -748,7 +741,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
         /* Not a great test. But the DECODE* do checking so ok.  */
         if ((frame_ptr+2)  >= section_ptr_end) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: Running off the end "
+                " of a CIE header before the code alignment value "
+                "read. Corrupt DWARF");
             return DW_DLV_ERROR;
         }
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,dbg,error,section_ptr_end);
@@ -761,7 +757,11 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         frame_ptr = frame_ptr + leb128_length;
         /* Not a great test. FIXME */
         if ((frame_ptr+1)  >= section_ptr_end) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: Running off the end "
+                "of a CIE header before the return address register "
+                "number read. Corrupt DWARF");
+
             return DW_DLV_ERROR;
         }
         res = _dwarf_get_return_address_reg(frame_ptr, version,
@@ -775,7 +775,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         }
         frame_ptr += size;
         if ((frame_ptr)  > section_ptr_end) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: Past the end "
+                "of a CIE header before reading the augmentation string."
+                " Corrupt DWARF");
             return DW_DLV_ERROR;
         }
     }
@@ -825,7 +828,11 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
         /* Not a great test. FIXME */
         if ((frame_ptr+1)  > section_ptr_end) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_AUG_DATA_LENGTH_BAD: The "
+                "gcc .eh_frame augmentation data "
+                "cannot be read. Out of room in the section."
+                " Corrupt DWARF.");
             return DW_DLV_ERROR;
         }
         DECODE_LEB128_UWORD_CK(frame_ptr, adlen,
@@ -836,8 +843,18 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             Dwarf_Small *cie_aug_data_end = cie_aug_data+adlen;
             if (cie_aug_data_end < cie_aug_data ||
                 cie_aug_data_end > section_ptr_end) {
-                /* Bad adlen */
-                _dwarf_error(dbg, error, DW_DLE_AUG_DATA_LENGTH_BAD);
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_AUG_DATA_LENGTH_BAD: The "
+                    "gcc .eh_frame augmentation data "
+                    "length of %" DW_PR_DUu " is too long to"
+                    " fit in the section.",adlen);
+                _dwarf_error_string(dbg, error, 
+                    DW_DLE_AUG_DATA_LENGTH_BAD,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
                 return DW_DLV_ERROR;
             }
         }
@@ -874,7 +891,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             previous version and I am leaving them the same way. */
         }
         if ((frame_ptr)  > section_ptr_end) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: "
+                "Reading an unknown type of augmentation string "
+                "run off the end of the section. Corrupt DWARF.");
             return DW_DLV_ERROR;
         }
         break;
@@ -1028,8 +1048,18 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             if (adlen) {
                 if (frame_ptr < fde_aug_data ||
                     frame_ptr >= section_ptr_end ) {
-                    /* Bad adlen */
-                    _dwarf_error(dbg, error, DW_DLE_AUG_DATA_LENGTH_BAD);
+                    dwarfstring m;
+
+                    dwarfstring_constructor(&m);
+                    dwarfstring_append_printf_u(&m,
+                        "DW_DLE_AUG_DATA_LENGTH_BAD: The "
+                        "gcc .eh_frame augmentation data "
+                        "length of %" DW_PR_DUu " is too long to"
+                        " fit in the section.",adlen);
+                    _dwarf_error_string(dbg, error, 
+                        DW_DLE_AUG_DATA_LENGTH_BAD,
+                        dwarfstring_string(&m));
+                    dwarfstring_destructor(&m);
                     return DW_DLV_ERROR;
                 }
             }
