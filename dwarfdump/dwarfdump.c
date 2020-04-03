@@ -899,7 +899,7 @@ process_one_file(int fd, int tiedfd,
         } else {
             printf("No DWARF information present in %s\n",file_name);
         }
-        return 0;
+        return dres;
     }
     if (dres != DW_DLV_OK) {
         print_error(dbg, title, dres, onef_err);
@@ -924,14 +924,15 @@ process_one_file(int fd, int tiedfd,
         if (dres == DW_DLV_NO_ENTRY) {
             printf("No DWARF information present in tied file: %s\n",
                 tied_file_name);
-            return 0;
+            return dres;
         }
         if (dres != DW_DLV_OK) {
             print_error(dbg, "dwarf_elf_init on tied_file", dres, onef_err);
         }
         dres = dwarf_add_file_path(dbgtied,tied_file_name,&onef_err);
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "Unable to add tied file name to tied file", dres, onef_err);
+            print_error(dbg, "Unable to add tied file name to tied file",
+                dres, onef_err);
         }
     }
 
@@ -1086,8 +1087,6 @@ process_one_file(int fd, int tiedfd,
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
             err = 0;
         }
-
-        
     }
     if (glflags.gf_frame_flag || glflags.gf_eh_frame_flag) {
         int sres = 0;
@@ -1103,11 +1102,11 @@ process_one_file(int fd, int tiedfd,
         if (glflags.gf_frame_flag) {
             want_eh = 0;
             sres = print_frames(dbg,want_eh,
-               l_config_file_data,
-               &cu_die_for_print_frames,
-               &map_lowpc_to_name,
-               &lowpcSet,
-               &err);
+                l_config_file_data,
+                &cu_die_for_print_frames,
+                &map_lowpc_to_name,
+                &lowpcSet,
+                &err);
             if (sres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "printing standard frame data had a problem.",sres,err);
@@ -1117,12 +1116,12 @@ process_one_file(int fd, int tiedfd,
         }
         if (glflags.gf_eh_frame_flag) {
             want_eh = 1;
-            sres = print_frames(dbg, want_eh, 
-               l_config_file_data,
-               &cu_die_for_print_frames,
-               &map_lowpc_to_name,
-               &lowpcSet,
-               &err);
+            sres = print_frames(dbg, want_eh,
+                l_config_file_data,
+                &cu_die_for_print_frames,
+                &map_lowpc_to_name,
+                &lowpcSet,
+                &err);
             if (sres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "printing eh frame data had a problem.",sres,err);
@@ -1173,7 +1172,7 @@ process_one_file(int fd, int tiedfd,
         tres = print_types(dbg, DWARF_PUBTYPES,&err);
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-               "printing pubtypes had a problem.",tres,err);
+                "printing pubtypes had a problem.",tres,err);
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
             err = 0;
         }
@@ -1181,7 +1180,7 @@ process_one_file(int fd, int tiedfd,
         tres = print_types(dbg, SGI_TYPENAME,&err);
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-               "printing SGI typenames had a problem.",tres,err);
+                "printing SGI typenames had a problem.",tres,err);
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
             err = 0;
         }
@@ -1194,7 +1193,7 @@ process_one_file(int fd, int tiedfd,
         res3 = print_weaknames(dbg, &err);
         if (res3 == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-               "printing weaknames had a problem.",res3,err);
+                "printing weaknames had a problem.",res3,err);
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
             err = 0;
         }
@@ -1207,7 +1206,7 @@ process_one_file(int fd, int tiedfd,
         res = print_relocinfo(dbg,&err);
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-               "printing relocinfo had a problem.",res,err);
+                "printing relocinfo had a problem.",res,err);
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
             err = 0;
         }
@@ -1229,21 +1228,21 @@ process_one_file(int fd, int tiedfd,
         }
     }
 
-    /* Print search results */
+    /*  Print search results */
     if (glflags.gf_search_print_results && glflags.gf_search_is_on) {
         /* No dwarf errors possible in this function. */
         print_search_results();
     }
 
-    /* The right time to do this is unclear. But we need to do it. */
+    /*  The right time to do this is unclear. But we need to do it. */
     if (glflags.gf_check_harmless) {
         /* No dwarf errors possible in this function. */
         print_any_harmless_errors(dbg);
     }
 
-    /* Print error report only if errors have been detected
-       Print error report if the -kd option. 
-       No errors possible in this function. */
+    /*  Print error report only if errors have been detected
+        Print error report if the -kd option.
+        No errors possible in this function. */
     print_checks_results();
 
     /*  Print the detailed attribute usage space
@@ -1261,7 +1260,7 @@ process_one_file(int fd, int tiedfd,
         }
     }
 
-    /* Print the tags and attribute usage */
+    /*  Print the tags and attribute usage */
     if (glflags.gf_print_usage_tag_attr) {
         int tres = 0;
         Dwarf_Error err = 0;
@@ -1294,7 +1293,7 @@ process_one_file(int fd, int tiedfd,
     if( glflags.gf_gnu_debuglink_flag) {
         int lres = 0;
         Dwarf_Error err = 0;
-        
+
         lres = print_gnu_debuglink(dbg,&err);
         if (lres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
@@ -1315,7 +1314,7 @@ process_one_file(int fd, int tiedfd,
         printf("\nERROR: At some point "
             "There was some data corruption in frame data "
             "so at least the following error occurred: "
-            "%s .\n", 
+            "%s .\n",
             dwarf_errmsg_by_number(
             glflags.gf_error_code_in_name_search_by_address));
     }
@@ -1334,7 +1333,7 @@ process_one_file(int fd, int tiedfd,
     groups_restore_subsidiary_flags();
     dres = dwarf_finish(dbg, &onef_err);
     if (dres != DW_DLV_OK) {
-        print_error_and_continue(dbg, 
+        print_error_and_continue(dbg,
             "dwarf_finish failed", dres, onef_err);
         dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
             dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
@@ -1360,7 +1359,7 @@ process_one_file(int fd, int tiedfd,
 #define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
 
 /*  ==============START of dwarfdump error print functions. */
-int 
+int
 simple_err_return_msg_either_action(int res,const char *msg)
 {
     /*const char *msg = "\nERROR: dwarf_get_address_size() fails.";*/
@@ -1372,7 +1371,7 @@ simple_err_return_msg_either_action(int res,const char *msg)
     printf("%s fails. %s\n",msg,etype);
     return res;
 }
-int 
+int
 simple_err_return_action(int res,const char *msg)
 {
     if (res == DW_DLV_ERROR) {
@@ -1381,9 +1380,9 @@ simple_err_return_action(int res,const char *msg)
         printf("%s %s\n",msg, etype);
     }
     return res;
-}   
+}
 
-int 
+int
 simple_err_only_return_action(int res,const char *msg)
 {
     const char *etype="Major error";

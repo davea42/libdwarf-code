@@ -3634,12 +3634,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 Dwarf_Addr low_pc =  0;
                 struct esb_s pn;
                 int found = 0;
-      
+
                 esb_constructor(&pn);
                 /* Only looks in this one DIE's attributes */
                 found =get_proc_name_by_die(dbg,die,
                     low_pc,&pn,/*pcMap=*/0);
-                if (found == DW_DLV_OK) { 
+                if (found == DW_DLV_OK) {
                     safe_strcpy(glflags.PU_name,
                         sizeof(glflags.PU_name),
                         esb_get_string(&pn),
@@ -4803,7 +4803,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
             if (sres == DW_DLV_ERROR) {
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: Unable to expresssion location"
-                   " with length 0x%" DW_PR_DUu  ".\n",exprlength); 
+                    " with length 0x%" DW_PR_DUu  ".\n",exprlength);
                 dwarf_dealloc(dbg,ecerr,DW_DLA_ERROR);
             }
         }
@@ -4975,7 +4975,7 @@ print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error* attr_error)
                 total_bytes_formx,
                 total_bytes_leb128,
                 saved_rate);
-            /*  Get .debug_info size (Very unlikely to have 
+            /*  Get .debug_info size (Very unlikely to have
                 an error here). */
             infoerr = dwarf_get_section_info_by_name(dbg,
                 ".debug_info",&lower,
@@ -5151,9 +5151,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     bres, err);
                 esb_destructor(&lstr);
                 if(!glflags.gf_error_code_in_name_search_by_address) {
-                    glflags.gf_error_code_in_name_search_by_address = 
+                    glflags.gf_error_code_in_name_search_by_address =
                         dwarf_errno(err);
-                } 
+                }
             }
         } else {
             struct esb_s lstr;

@@ -154,7 +154,7 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
     esb_destructor(&secname);
     if (lres == DW_DLV_ERROR) {
         int rval = 0;
-        
+
         struct esb_s m;
         esb_constructor(&m);
         esb_append(&m,

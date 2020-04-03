@@ -79,7 +79,7 @@ print_static_funcs(Dwarf_Debug dbg,Dwarf_Error*err)
         if (glflags.gf_do_print_dwarf && count > 0) {
             /* SGI specific so only mention if present. */
             printf("\n%s\n",esb_get_string(&sanitname));
-            printed= TRUE; 
+            printed= TRUE;
         }
         pres = print_all_pubnames_style_records(dbg,
             "static-func",

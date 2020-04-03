@@ -108,8 +108,7 @@ static unsigned long   sym_data_entry_count;
 static unsigned long   sym_data_64_entry_count;
 
 /*  Include Section type, to be able to deal with all the
-    Elf32_Rel, Elf32_Rela, Elf64_Rel, Elf64_Rela relocation types
-     */
+    Elf32_Rel, Elf32_Rela, Elf64_Rel, Elf64_Rela relocation types */
 #define SECT_DATA_SET(x,t,n,sout,r2) {            \
     data = elf_getdata(scn, 0);                   \
     if (!data || !data->d_size) {                 \

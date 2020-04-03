@@ -285,7 +285,7 @@ print_relocinfo_64(Elf * elf)
                 free(printable_sects);
                 glflags.gf_count_major_errors++;
                 printf("ERROR: elf_getdata() (Elf64) failed to get symbol table "
-                     "`elf_getdata returned NULL.\n");
+                    "`elf_getdata returned NULL.\n");
                 return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf64_Sym);
@@ -347,7 +347,7 @@ print_relocinfo_64(Elf * elf)
     return DW_DLV_OK;
 }
 
-static int 
+static int
 print_relocinfo_32(Elf * elf)
 {
     Elf_Scn *scn = NULL;
@@ -379,12 +379,12 @@ print_relocinfo_32(Elf * elf)
             "in relocation section names names "
             "elf 32 requesting %lu bytes",
             space);
-        return DW_DLV_NO_ENTRY;    
+        return DW_DLV_NO_ENTRY;
     }
     printable_sects = (struct sect_data_s *)calloc(scn_names_cnt,
         sizeof(struct sect_data_s));
     if (!printable_sects) {
-        unsigned long space = 
+        unsigned long space =
             scn_names_cnt* sizeof(struct sect_data_s);
         free(scn_names);
         glflags.gf_count_major_errors++;
@@ -423,7 +423,7 @@ print_relocinfo_32(Elf * elf)
                 free(scn_names);
                 glflags.gf_count_major_errors++;
                 printf("ERROR: elf_getdata() (Elf32) failed to get symbol table"
-                 " elf_getdata returned null\n");
+                    " elf_getdata returned null\n");
                 return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf32_Sym);
