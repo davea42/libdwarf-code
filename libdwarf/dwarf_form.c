@@ -1834,7 +1834,7 @@ dwarf_formexprloc(Dwarf_Attribute attr,
                 "The expression length is %u,",exprlen);
             dwarfstring_append_printf_u(&m,
                 " but the section length is just %u. "
-                "Corrupt Dwarf.",section_len); 
+                "Corrupt Dwarf.",section_len);
             _dwarf_error_string(dbg, error,
                 DW_DLE_ATTR_OUTSIDE_SECTION,
                 dwarfstring_string(&m));
@@ -1880,7 +1880,7 @@ dwarf_formexprloc(Dwarf_Attribute attr,
 
         dwarf_get_FORM_name (mform,&name);
         dwarfstring_append_printf_u(&m,
-            "DW_DLE_ATTR_EXPRLOC_FORM_BAD: "  
+            "DW_DLE_ATTR_EXPRLOC_FORM_BAD: "
             "The form is 0x%x ", mform);
         dwarfstring_append_printf_s(&m,
             "(%s) but should be DW_FORM_exprloc. "

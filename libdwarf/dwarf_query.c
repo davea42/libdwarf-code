@@ -482,7 +482,7 @@ dwarf_attrlist(Dwarf_Die die,
                         "DW_DLE_ATTR_OUTSIDE_SECTION: "
                         " Reading Attriutes: "
                         "For DW_FORM_indirect there is"
-                        " no room for the form. Corrupt Dwarf"); 
+                        " no room for the form. Corrupt Dwarf");
                     return DW_DLV_ERROR;
                 }
 
@@ -503,11 +503,11 @@ dwarf_attrlist(Dwarf_Die die,
                 dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
                 empty_local_attrlist(dbg,head_attr);
                 _dwarf_error_string(dbg, error,
-                   DW_DLE_ATTR_OUTSIDE_SECTION,
-                   "DW_DLE_ATTR_OUTSIDE_SECTION: "
-                   " Reading Attriutes: "
-                   "We have run off the end of the section. "
-                   "Corrupt Dwarf"); 
+                    DW_DLE_ATTR_OUTSIDE_SECTION,
+                    "DW_DLE_ATTR_OUTSIDE_SECTION: "
+                    " Reading Attriutes: "
+                    "We have run off the end of the section. "
+                    "Corrupt Dwarf");
                 return DW_DLV_ERROR;
             }
             new_attr->ar_cu_context = die->di_cu_context;

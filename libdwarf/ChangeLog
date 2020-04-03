@@ -1,3 +1,6 @@
+2020-04-03: David Anderson
+    *  dwarf_form.c,dwarf_frame2.c,dwarf_query.c: Fix indents and
+       remove trailing whitespace.
 2020-04-02: David Anderson
     * dwarf_die_deliv.c: Better text printed for an address size error
       including reporting the actual addrss-size found by libdwarf.

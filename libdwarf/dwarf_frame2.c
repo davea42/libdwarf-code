@@ -851,7 +851,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                     "gcc .eh_frame augmentation data "
                     "length of %" DW_PR_DUu " is too long to"
                     " fit in the section.",adlen);
-                _dwarf_error_string(dbg, error, 
+                _dwarf_error_string(dbg, error,
                     DW_DLE_AUG_DATA_LENGTH_BAD,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);
@@ -1056,7 +1056,7 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
                         "gcc .eh_frame augmentation data "
                         "length of %" DW_PR_DUu " is too long to"
                         " fit in the section.",adlen);
-                    _dwarf_error_string(dbg, error, 
+                    _dwarf_error_string(dbg, error,
                         DW_DLE_AUG_DATA_LENGTH_BAD,
                         dwarfstring_string(&m));
                     dwarfstring_destructor(&m);
