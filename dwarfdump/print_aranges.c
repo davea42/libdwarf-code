@@ -184,13 +184,13 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
 
                 esb_constructor(&m);
                 esb_append_printf_i(&m,
-                   "\nERROR: attempt to read arange %d",
-                   i); 
+                    "\nERROR: attempt to read arange %d",
+                    i);
                 esb_append_printf_i(&m,
-                   " of  %d aranges failed.",
-                   count); 
+                    " of  %d aranges failed.",
+                    count);
                 simple_err_return_msg_either_action(aires,
-                   esb_get_string(&m));
+                    esb_get_string(&m));
                 aranges_dealloc_now(dbg,count,arange_buf);
                 esb_destructor(&m);
                 return aires;
@@ -208,17 +208,16 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     if (dres == DW_DLV_ERROR) {
                         failtype = "error";
                     }
-    
                     esb_constructor(&m);
                     esb_append_printf_s(&m,
                         "\nERROR: dwarf_offdie() gets a return of %s ",
                         failtype);
                     esb_append_printf_i(&m," finding the "
-                       "compilation-unit DIE for "
-                       "arange number %d and that shoud never happen.",
-                       i);
+                        "compilation-unit DIE for "
+                        "arange number %d and that shoud never happen.",
+                        i);
                     simple_err_return_msg_either_action(dres,
-                           esb_get_string(&m));
+                        esb_get_string(&m));
                     esb_destructor(&producer_name);
                     esb_destructor(&m);
                     aranges_dealloc_now(dbg,count,arange_buf);
@@ -262,18 +261,17 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                         if (dres == DW_DLV_ERROR) {
                             failtype = "error";
                         }
-    
                         esb_constructor(&m);
                         esb_append_printf_s(&m,
                             "\nERROR: dwarf_get_arange_cu_header_offset() "
                             "gets a return of %s ",
                             failtype);
                         esb_append_printf_i(&m,"finding the "
-                           "compilation-unit DIE offset for "
-                           "arange number %d and that shoud never happen.",
-                           i);
+                            "compilation-unit DIE offset for "
+                            "arange number %d and that shoud never happen.",
+                            i);
                         simple_err_return_msg_either_action(cures3,
-                               esb_get_string(&m));
+                            esb_get_string(&m));
                         esb_destructor(&m);
                         dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
                         aranges_dealloc_now(dbg,count,arange_buf);
