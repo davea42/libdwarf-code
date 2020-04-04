@@ -697,7 +697,7 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
 {
     if (arange == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ARANGE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (segment != NULL) {

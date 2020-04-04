@@ -1,4 +1,7 @@
 2020-04-03: David Anderson
+    * dwarf_arange.c: Deleted a useless blank line.
+      Removed useless () around a return value.
+2020-04-03: David Anderson
     *  dwarf_form.c,dwarf_frame2.c,dwarf_query.c: Fix indents and
        remove trailing whitespace.
 2020-04-02: David Anderson
