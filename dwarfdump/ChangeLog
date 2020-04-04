@@ -1,4 +1,15 @@
 2020-04-03  David Anderson 
+    * dwarfdump.c: Now print_strings() and print_macro_statistics()
+      take Dwarf_Error * as argument and return a DW_DLV* value.
+    * globals.h: prototype of print_strings altered.
+    * macrocheck.c(print_macro_statistics): Using esb_s to 
+      more detailed messages and returning a DW_DLV* value..
+    * macrocheck.h: Updated prototype for print_macro_statistics().
+    * print_frames.c: Deleted many #if 0/#endif and their
+      debug printf-s.
+    * print_strings.c: Now uses get_true_section_name() so
+      we report on any compression used.
+2020-04-03  David Anderson 
     * runtests.sh: Added esb to the build of selfmc as macro check
       now uses esb.c. Made the dwarfdump tests mention of update 'mv'
       commands be conditional on having actually found a difference

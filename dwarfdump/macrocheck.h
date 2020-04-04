@@ -45,7 +45,7 @@ void add_macro_area_len(void **base, Dwarf_Unsigned offset,
 int get_next_unprinted_macro_offset(void **base, Dwarf_Unsigned * off);
 void mark_macro_offset_printed(void **base, Dwarf_Unsigned offset);
 
-void print_macro_statistics(const char *name,void **basep,
-    Dwarf_Unsigned section_size);
+int print_macro_statistics(const char *name,void **basep,
+    Dwarf_Unsigned section_size,Dwarf_Error *err);
 void clear_macro_statistics(void **basep);
 #endif /* MACROCHECK_H */

@@ -1016,7 +1016,8 @@ process_one_file(int fd, int tiedfd,
         glflags.gf_macro_flag ||
         glflags.gf_cu_name_flag || glflags.gf_search_is_on ||
         glflags.gf_producer_children_flag) {
-
+        Dwarf_Error err = 0;
+        reset_overall_CU_error_data();
         print_infos(dbg,TRUE);
         reset_overall_CU_error_data();
         print_infos(dbg,FALSE);
@@ -1027,14 +1028,16 @@ process_one_file(int fd, int tiedfd,
                 /* Length of the fake item is zero. */
                 print_macro_statistics("DWARF5 .debug_macro",
                     &macro_check_tree,
-                    glflags.section_high_offsets_global->debug_macro_size);
+                    glflags.section_high_offsets_global->debug_macro_size,
+                    &err);
             }
             if(macinfo_check_tree) {
                 /* Fake item representing end of section. */
                 /* Length of the fake item is zero. */
                 print_macro_statistics("DWARF2 .debug_macinfo",
                     &macinfo_check_tree,
-                    glflags.section_high_offsets_global->debug_macinfo_size);
+                    glflags.section_high_offsets_global->debug_macinfo_size,
+                    &err);
             }
         }
         clear_macro_statistics(&macro_check_tree);
@@ -1068,8 +1071,18 @@ process_one_file(int fd, int tiedfd,
         print_abbrevs(dbg);
     }
     if (glflags.gf_string_flag) {
+        Dwarf_Error err = 0;
+        int res = 0;
+
         reset_overall_CU_error_data();
-        print_strings(dbg);
+        res = print_strings(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the .debug_str section"
+                " had a problem.",res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
     if (glflags.gf_aranges_flag) {
         Dwarf_Error err = 0;

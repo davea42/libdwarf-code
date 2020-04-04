@@ -305,19 +305,12 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     Dwarf_Error proc_name_err = 0;
     int loop_ok = true;
 
-#if  0
-if (low_pc == 0x21600) printf("dadebug entry get_proc_name_by die x21600 pcMap 0x%lx line %d\n",(unsigned long)pcMap,__LINE__);
-#endif
     if (pcMap) {
         struct Addr_Map_Entry *ame = 0;
         ame = addr_map_find(low_pc,pcMap);
         if (ame && ame->mp_name) {
             /* mp_name is NULL only if we ran out of heap space. */
             esb_append(proc_name,ame->mp_name);
-
-#if  0
-if (low_pc == 0x21600) printf("dadebug now attrlist get_proc_name_by die x21600 line %d\n",__LINE__);
-#endif
             return DW_DLV_OK;
         }
     }
@@ -327,9 +320,6 @@ if (low_pc == 0x21600) printf("dadebug now attrlist get_proc_name_by die x21600 
     if (glflags.gf_debug_addr_missing_search_by_address) {
         return DW_DLV_NO_ENTRY;
     }
-#if  0
-if (low_pc == 0x21600) printf("dadebug now attrlist get_proc_name_by die x21600 line %d\n",__LINE__);
-#endif
     atres = dwarf_attrlist(die, &atlist, &atcnt, &proc_name_err);
     if (atres == DW_DLV_ERROR) {
         simple_err_only_return_action(atres,
@@ -438,9 +428,6 @@ if (low_pc == 0x21600) printf("dadebug now attrlist get_proc_name_by die x21600 
         dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
     }
     dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
-#if  0
-if (low_pc == 0x21600) printf("dadebug check if insert get_proc_name_by die x21600 line fname %d fpc %d pcmap 0x%lx %d\n",funcnamefound,funcpcfound,(unsigned long)pcMap,__LINE__);
-#endif
     if (funcnamefound && funcpcfound && pcMap ) {
         /*  Insert the name to map even if not
             the low_pc we are looking for.
@@ -448,18 +435,12 @@ if (low_pc == 0x21600) printf("dadebug check if insert get_proc_name_by die x216
             early symbols in a CU will be inserted
             multiple times (the extra times have no
             effect). */
-#if  0
-if (low_pc_for_die == 0x21600) printf("dadebug insert 0x21600 in pcMap %s line %d\n",esb_get_string(proc_name),__LINE__);
-#endif
         addr_map_insert(low_pc_for_die,esb_get_string(proc_name),pcMap);
     }
     if (funcnamefound == 0 || funcpcfound == 0 ||
         low_pc != low_pc_for_die) {
         funcres = DW_DLV_NO_ENTRY;
     }
-#if  0
-if (low_pc_for_die == 0x21600) printf("dadebug funcres %d line %d\n",funcres,__LINE__);
-#endif
     return funcres;
 }
 
@@ -488,9 +469,6 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     int chres = DW_DLV_OK;
     struct esb_s nestname;
 
-#if  0
-if (low_pc == 0x21600) printf("dadebug load_nested 0x21600 line %d \n",__LINE__);
-#endif
     esb_constructor(&nestname);
     while (chres == DW_DLV_OK) {
         int tres = 0;
@@ -503,9 +481,6 @@ if (low_pc == 0x21600) printf("dadebug load_nested 0x21600 line %d \n",__LINE__)
 
             if (tag == DW_TAG_subprogram) {
                 int gotit = 0;
-#if  0
-if (low_pc == 0x21600) printf("dadebug call get by die die x21600 line %d\n",__LINE__);
-#endif
                 gotit = get_proc_name_by_die(dbg, curdie, low_pc,
                     &nestname, pcMap);
                 if (gotit == DW_DLV_OK) {
@@ -514,9 +489,6 @@ if (low_pc == 0x21600) printf("dadebug call get by die die x21600 line %d\n",__L
                             not want to dealloc here! */
                         dwarf_dealloc(dbg, curdie, DW_DLA_DIE);
                     }
-#if  0
-if (low_pc == 0x21600) printf("dadebug got name 0x21600 %s line %d\n",esb_get_string(&nestname),__LINE__);
-#endif
                     esb_append(ret_name,esb_get_string(&nestname));
                     esb_destructor(&nestname);
                     return DW_DLV_OK;
@@ -530,9 +502,6 @@ if (low_pc == 0x21600) printf("dadebug got name 0x21600 %s line %d\n",esb_get_st
                 if (lchres == DW_DLV_OK) {
                     int newprog = 0;
                     /* look for inner subprogram */
-#if  0
-if (low_pc== 0x21600) printf("dadebug call load_nested_proc_name 0x21600 %s line %d\n",esb_get_string(&nestname),__LINE__);
-#endif
                     newprog =
                         load_nested_proc_name(dbg, newchild, low_pc,
                             &nestname,
@@ -548,9 +517,6 @@ if (low_pc== 0x21600) printf("dadebug call load_nested_proc_name 0x21600 %s line
                                 do not want to dealloc here! */
                             dwarf_dealloc(dbg, curdie, DW_DLA_DIE);
                         }
-#if  0
-if (low_pc== 0x21600) printf("dadebug got name 0x21600 %s line %d\n",esb_get_string(&nestname),__LINE__);
-#endif
                         esb_append(ret_name,esb_get_string(&nestname));
                         esb_destructor(&nestname);
                         return DW_DLV_NO_ENTRY;
@@ -671,31 +637,16 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     int chres = DW_DLV_OK;
     Dwarf_Error pnerr = 0;
     struct Addr_Map_Entry *ame = 0;
-#if  0
 
-if (low_pc == 0x21600) printf("dadebug get_fde_proc_name 0x21600  pcmap 0x%lx line %d\n",(unsigned long)pcMap,__LINE__);
-#endif
     ame = addr_map_find(low_pc,pcMap);
     if (ame && ame->mp_name) {
         esb_append(name,ame->mp_name);
-#if  0
-if (low_pc== 0x21600) printf("dadebug found in map 0x21600  line %d\n",__LINE__);
-#endif
         return DW_DLV_OK;
     }
-#if  0
-if (low_pc== 0x21600) printf("dadebug NOT found in map 0x21600  line %d\n",__LINE__);
-#endif
     if (glflags.gf_all_cus_seen_search_by_address) {
-#if  0
-if (low_pc == 0x21600) printf("dadebug  no search  0x21600  line %d\n",__LINE__);
-#endif
         return DW_DLV_NO_ENTRY;
     }
     if (glflags.gf_debug_addr_missing_search_by_address) {
-#if  0
-if (low_pc == 0x21600) printf("dadebug  no search  0x21600  line %d\n",__LINE__);
-#endif
         return DW_DLV_NO_ENTRY;
     }
     if (*cu_die_for_print_frames == NULL) {
@@ -829,22 +780,13 @@ if (low_pc == 0x21600) printf("dadebug  no search  0x21600  line %d\n",__LINE__)
                 /* DW_DLV_OK) */
                 int gotname = 0;
 
-#if  0
-if (low_pc== 0x21600) printf("dadebug call load nested proc 0x21600  line %d\n",__LINE__);
-#endif
                 gotname = load_nested_proc_name(dbg, child,
                     low_pc, name,
                     pcMap);
                 dwarf_dealloc(dbg, child, DW_DLA_DIE);
                 if (gotname == DW_DLV_OK) {
-#if  0
-if (low_pc== 0x21600) printf("dadebug  load nested proc worked  0x21600  line %d\n",__LINE__);
-#endif
                     return DW_DLV_OK;
                 }
-#if  0
-if (low_pc== 0x21600) printf("dadebug  load nested proc failed  0x21600  line %d\n",__LINE__);
-#endif
             }
         }
         reset_overall_CU_error_data();
@@ -912,9 +854,6 @@ print_one_fde(Dwarf_Debug dbg,
     int printed_intro_addr = 0;
     char local_buf[100];
     char temps_buf[200];
-#if  0
-printf("dadebug print_one_fde entry pcMap 0x%lx lowpcSet %lx line %d\n",(unsigned long)pcMap,(unsigned long)lowpcSet,__LINE__);
-#endif
     fres = dwarf_get_fde_range(fde,
         &low_pc, &func_length,
         &fde_bytes,
@@ -953,18 +892,12 @@ printf("dadebug print_one_fde entry pcMap 0x%lx lowpcSet %lx line %d\n",(unsigne
     } else {
         struct Addr_Map_Entry *mp = 0;
 
-#if  0
-printf("dadebug now addr_map_find pcMap 0x%lx lowpcSet %lx line %d\n",(unsigned long)pcMap,(unsigned long)lowpcSet,__LINE__);
-#endif
         esb_empty_string(&temps);
         mp = addr_map_find(low_pc,lowpcSet);
         if (glflags.gf_check_frames ||
             glflags.gf_check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
         }
-#if  0
-if (low_pc == 0x21600) printf("dadebug call fde_proc_name x21600 pcMap %lx line %d\n",(unsigned long)pcMap,__LINE__);
-#endif
         get_fde_proc_name_by_address(dbg, low_pc,
             frame_section_name,
             &temps,
@@ -2685,9 +2618,6 @@ print_frames(Dwarf_Debug dbg,
         glflags.gf_count_major_errors++;
         printf("ERROR: Unable to print frame section as "
             " we cannot get the address size\n");
-#if  0
-printf("dadebug destroy map_lowpc_to_name %d\n",__LINE__);
-#endif
         return fres;
     }
     {
@@ -2772,9 +2702,6 @@ printf("dadebug destroy map_lowpc_to_name %d\n",__LINE__);
             dwarf_fde_cie_list_dealloc(dbg, cie_data,
                 cie_element_count,
                 fde_data, fde_element_count);
-#if  0
-printf("dadebug destroy map_lowpc_to_name %d\n",__LINE__);
-#endif
             return DW_DLV_OK;
         }
 
@@ -2786,9 +2713,6 @@ printf("dadebug destroy map_lowpc_to_name %d\n",__LINE__);
             glflags.gf_count_major_errors++;
             printf("\nERROR: %s not loadable. %s\n",
                 sanitized(frame_section_name),loc);
-#if  0
-printf("dadebug destroy map_lowpc_to_name %d\n",__LINE__);
-#endif
             return fres;
         } else if (fres == DW_DLV_NO_ENTRY) {
             if (!silent_if_missing) {
@@ -2796,9 +2720,6 @@ printf("dadebug destroy map_lowpc_to_name %d\n",__LINE__);
                     sanitized(frame_section_name));
             }
             /* no frame information */
-#if  0
-printf("dadebug destroy map_lowpc_to_name %d\n",__LINE__);
-#endif
             return fres;
         } else {                /* DW_DLV_OK */
             /* Do not print if in check mode */

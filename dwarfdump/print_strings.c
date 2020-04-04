@@ -33,38 +33,37 @@
 
 #include "print_sections.h"
 
+static void
+print_sec_name(Dwarf_Debug dbg)
+{
+    struct esb_s truename;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
+
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,".debug_str",
+        &truename,TRUE);
+    printf("\n%s\n",sanitized(esb_get_string(&truename)));
+    esb_destructor(&truename);
+}
+
 /* print data in .debug_str */
-extern void
-print_strings(Dwarf_Debug dbg)
+int
+print_strings(Dwarf_Debug dbg,Dwarf_Error *err)
 {
     Dwarf_Signed length = 0;
     char* name = 0;
     Dwarf_Off offset = 0;
     int sres = 0;
-    Dwarf_Error err = 0;
     unsigned loopct = 0;
 
     glflags.current_section_id = DEBUG_STR;
-#if 0
-    {
-        struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
-
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,".debug_str",
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
-    }
-#endif
     for (loopct = 0;
-        (sres = dwarf_get_str(dbg, offset, &name, &length, &err))
+        (sres = dwarf_get_str(dbg, offset, &name, &length, err))
             == DW_DLV_OK;
         ++loopct) {
         if (!loopct) {
-            print_secname(dbg,".debug_str");
+            print_sec_name(dbg);
         }
-
         if (glflags.gf_display_offsets) {
             printf("name at offset 0x%" DW_PR_XZEROS DW_PR_DUx
                 ", length %4" DW_PR_DSd " is '%s'\n",
@@ -76,12 +75,22 @@ print_strings(Dwarf_Debug dbg)
         offset += length + 1;
     }
     if (!loopct) {
-        print_secname(dbg,".debug_str");
+        print_sec_name(dbg);
     }
     /*  An inability to find the section is not necessarily
         a real error, so do not report error unless we've
         seen a real record. */
-    if (sres == DW_DLV_ERROR && offset != 0) {
-        print_error(dbg, "dwarf_get_str failure", sres, err);
+    if (sres == DW_DLV_ERROR) {
+        struct esb_s m;
+
+        esb_constructor(&m);
+        esb_append_printf_u(&m,
+            "\nERROR: Getting a .debug_str section string failed "
+            " at string number %u",loopct);
+        esb_append_printf_u(&m,",section offset 0x%." DW_PR_DUx
+            ".",offset);
+        simple_err_only_return_action(sres,esb_get_string(&m));
+        esb_destructor(&m);
     }
+    return sres;
 }
