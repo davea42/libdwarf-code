@@ -114,7 +114,7 @@ chkres $? "running selfhelpertree "
 rm -f selfhelpertree selfhelpertree.exe
 
 echo "start selfmc"
-$CC -DSELFTEST $CFLAGS -g $srcdir/macrocheck.c  dwarf_tsearchbal.o -o selfmc
+$CC -DSELFTEST $CFLAGS -g $srcdir/macrocheck.c  $srcdir/esb.c dwarf_tsearchbal.o -o selfmc
 chkres $? "compiling macrocheck.c selfmc"
 ./selfmc
 chkres $? "running selfmc "
@@ -178,14 +178,18 @@ then
   echo "drop two lines"
   droptwoifwin $t
 fi
-echo "if update required, mv $top_blddir/dwarfdump/$t $b"
 which dos2unix
 if [ $? -eq 0 ]
 then
   dos2unix $t
 fi
 diff  $b $t > $t.diffjunk.testsmallpe.diff
-chkres $? "diff of $b $t"
+r=$?
+chkres $r "FAIL diff of $b $t"
+if [ $r -ne 0 ]
+then
+  echo "to update , mv $top_blddir/dwarfdump/$t $b"
+fi
 
 f=$srcdir/testuriLE64ELf.obj
 b=$srcdir/testuriLE64ELf.base
@@ -205,7 +209,12 @@ then
   dos2unix $t
 fi
 diff $b $t > $t.diff
-chkres $? "diff of $b $t"
+r=$?
+chkres $r "FAIL diff of $b $t"
+if [ $r -ne 0 ]
+then
+  echo "to update , mv  $top_blddir/dwarfdump/$t $b"
+fi
 
 f=$srcdir/test-mach-o-32.dSYM
 b=$srcdir/test-mach-o-32.base
@@ -226,7 +235,12 @@ then
   dos2unix $t
 fi
 diff $b $t > $t.diff
-chkres $? "dwarfdump/runtests.sh diff of $b $t"
+r=$?
+chkres $r "FAIL dwarfdump/runtests.sh diff of $b $t"
+if [ $r -ne 0 ]
+then
+  echo "to update , mv  $top_blddir/dwarfdump/$t $b"
+fi
 if [ $failcount -ne 0 ]
 then
    echo "FAIL $failcount dwarfdump/runtests.sh"

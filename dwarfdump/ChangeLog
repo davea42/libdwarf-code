@@ -1,4 +1,9 @@
 2020-04-03  David Anderson 
+    * runtests.sh: Added esb to the build of selfmc as macro check
+      now uses esb.c. Made the dwarfdump tests mention of update 'mv'
+      commands be conditional on having actually found a difference
+      (having them show when no difference was pointlessly confusing). 
+2020-04-03  David Anderson 
     * dwarfdump.c: print_aranges() now uses the new form and returns
       a DW_DLV_* value.
     * globals.h: print_aranges returns a value and has a Dwarf_Error*
