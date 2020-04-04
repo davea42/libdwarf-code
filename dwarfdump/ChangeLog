@@ -1,4 +1,11 @@
 2020-04-03  David Anderson 
+    * dwarfdump.c: print_aranges() now uses the new form and returns
+      a DW_DLV_* value.
+    * globals.h: print_aranges returns a value and has a Dwarf_Error*
+      second argument now.
+    * print_aranges.c: No longer calls print_error() but instead
+      returns a DW_DLV to dwarfdump.c. 
+2020-04-03  David Anderson 
     * dwarfdump.c,glflags.h,globals.h,print_die.c,print_frames.c,
       print_locs.c,print_reloc.c,print_reloc_decls.h,print_static_funcs.c:
       Fix indent errors and remove trailing whitespace.

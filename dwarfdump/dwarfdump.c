@@ -1055,6 +1055,7 @@ process_one_file(int fd, int tiedfd,
     if (glflags.gf_loc_flag) {
         int locres = 0;
         Dwarf_Error locerr = 0;
+
         reset_overall_CU_error_data();
         locres = print_locs(dbg,&locerr);
         if (locres == DW_DLV_ERROR) {
@@ -1071,8 +1072,18 @@ process_one_file(int fd, int tiedfd,
         print_strings(dbg);
     }
     if (glflags.gf_aranges_flag) {
+        Dwarf_Error err = 0;
+        int res = 0;
+
         reset_overall_CU_error_data();
-        print_aranges(dbg);
+        res = print_aranges(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the aranges section"
+                " had a problem.",res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
     if (glflags.gf_ranges_flag) {
         int res = 0;

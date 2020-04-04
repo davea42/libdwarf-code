@@ -129,7 +129,7 @@ extern void print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info);
 extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);
-extern void print_aranges (Dwarf_Debug dbg);
+extern int print_aranges (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_static_funcs(Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_static_vars(Dwarf_Debug dbg,Dwarf_Error *);
 enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;

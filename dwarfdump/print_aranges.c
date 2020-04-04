@@ -127,8 +127,8 @@ aranges_dealloc_now(Dwarf_Debug dbg,
 }
 
 /* get all the data in .debug_aranges */
-extern void
-print_aranges(Dwarf_Debug dbg)
+int
+print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
 {
     Dwarf_Signed count = 0;
     Dwarf_Signed i = 0;
@@ -138,7 +138,6 @@ print_aranges(Dwarf_Debug dbg)
     Dwarf_Off prev_off = 0; /* Holds previous CU offset */
     Dwarf_Bool first_cu = TRUE;
     Dwarf_Off cu_die_offset_prev = 0;
-    Dwarf_Error ga_error = 0;
 
     /* Reset the global state, so we can traverse the debug_info */
     glflags.seen_CU = FALSE;
@@ -146,8 +145,10 @@ print_aranges(Dwarf_Debug dbg)
     glflags.need_CU_base_address = TRUE;
     glflags.need_CU_high_address = TRUE;
     glflags.current_section_id = DEBUG_ARANGES;
-    ares = dwarf_get_aranges(dbg, &arange_buf, &count, &ga_error);
+    ares = dwarf_get_aranges(dbg, &arange_buf, &count, ga_err);
     if (glflags.gf_do_print_dwarf) {
+        /*  Now we know the section is loaded (if any) so
+            lets get the true name with any compression info. */
         struct esb_s truename;
         char buf[DWARF_SECNAME_BUFFER_SIZE];
 
@@ -158,12 +159,13 @@ print_aranges(Dwarf_Debug dbg)
         esb_destructor(&truename);
     }
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_aranges", ares, ga_error);
+        print_error_and_continue(dbg,
+            "Unable to load the .debug_aranges section.",
+            ares,*ga_err);
+        return ares;
     } else if (ares == DW_DLV_NO_ENTRY) {
-        /* no arange is included */
+        return ares;
     } else {
-        Dwarf_Error pa_error = 0;
-
         for (i = 0; i < count; i++) {
             Dwarf_Unsigned segment = 0;
             Dwarf_Unsigned segment_entry_size = 0;
@@ -176,10 +178,22 @@ print_aranges(Dwarf_Debug dbg)
                 &segment,
                 &segment_entry_size,
                 &start, &length,
-                &cu_die_offset, &pa_error);
+                &cu_die_offset, ga_err);
             if (aires != DW_DLV_OK) {
-                print_error(dbg, "dwarf_get_arange_info_b error",
-                    aires, pa_error);
+                struct esb_s m;
+
+                esb_constructor(&m);
+                esb_append_printf_i(&m,
+                   "\nERROR: attempt to read arange %d",
+                   i); 
+                esb_append_printf_i(&m,
+                   " of  %d aranges failed.",
+                   count); 
+                simple_err_return_msg_either_action(aires,
+                   esb_get_string(&m));
+                aranges_dealloc_now(dbg,count,arange_buf);
+                esb_destructor(&m);
+                return aires;
             } else {
                 int dres;
                 struct esb_s producer_name;
@@ -187,16 +201,34 @@ print_aranges(Dwarf_Debug dbg)
                 esb_constructor(&producer_name);
                 /*  Get basic locations for error reporting */
                 dres = dwarf_offdie(dbg, cu_die_offset,
-                    &cu_die, &pa_error);
+                    &cu_die, ga_err);
                 if (dres != DW_DLV_OK) {
+                    struct esb_s m;
+                    const char *failtype = "no-entry";
                     if (dres == DW_DLV_ERROR) {
-                        aranges_dealloc_now(dbg,count,arange_buf);
-                        arange_buf = 0;
+                        failtype = "error";
                     }
-                    print_error(dbg, "dwarf_offdie", dres, pa_error);
+    
+                    esb_constructor(&m);
+                    esb_append_printf_s(&m,
+                        "\nERROR: dwarf_offdie() gets a return of %s ",
+                        failtype);
+                    esb_append_printf_i(&m," finding the "
+                       "compilation-unit DIE for "
+                       "arange number %d and that shoud never happen.",
+                       i);
+                    simple_err_return_msg_either_action(dres,
+                           esb_get_string(&m));
+                    esb_destructor(&producer_name);
+                    esb_destructor(&m);
+                    aranges_dealloc_now(dbg,count,arange_buf);
+                    arange_buf = 0;
+                    return dres;
                 }
                 if (glflags.gf_cu_name_flag) {
                     if (should_skip_this_cu(dbg,cu_die)) {
+                        esb_destructor(&producer_name);
+                        aranges_dealloc_now(dbg,count,arange_buf);
                         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                         continue;
                     }
@@ -223,20 +255,29 @@ print_aranges(Dwarf_Debug dbg)
                 if (start || length) {
                     Dwarf_Off off = 0;
                     int cures3 = dwarf_get_arange_cu_header_offset(
-                        arange_buf[i], &off, &pa_error);
+                        arange_buf[i], &off, ga_err);
                     if (cures3 != DW_DLV_OK) {
-                        dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
-                        cu_die = 0;
-                        if (cures3 == DW_DLV_ERROR) {
-                            aranges_dealloc_now(dbg,count,arange_buf);
-                            arange_buf = 0;
-                            dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
-                            cu_die = 0;
+                        struct esb_s m;
+                        const char *failtype = "no-entry";
+                        if (dres == DW_DLV_ERROR) {
+                            failtype = "error";
                         }
-                        dwarf_dealloc(dbg,ga_error,DW_DLA_ERROR);
-                        ga_error = 0;
-                        print_error(dbg, "dwarf_get_cu_hdr_offset",
-                            cures3, pa_error);
+    
+                        esb_constructor(&m);
+                        esb_append_printf_s(&m,
+                            "\nERROR: dwarf_get_arange_cu_header_offset() "
+                            "gets a return of %s ",
+                            failtype);
+                        esb_append_printf_i(&m,"finding the "
+                           "compilation-unit DIE offset for "
+                           "arange number %d and that shoud never happen.",
+                           i);
+                        simple_err_return_msg_either_action(cures3,
+                               esb_get_string(&m));
+                        esb_destructor(&m);
+                        dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+                        aranges_dealloc_now(dbg,count,arange_buf);
+                        return cures3;
                     }
 
                     /* Print the CU information if different.  */
@@ -311,12 +352,9 @@ print_aranges(Dwarf_Debug dbg)
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             cu_die = 0;
             /* print associated die too? */
-        }
+        } /* end loop on arange_buf  */
         aranges_dealloc_now(dbg,count,arange_buf);
         arange_buf = 0;
-        if (pa_error) {
-            dwarf_dealloc(dbg,pa_error,DW_DLA_ERROR);
-            pa_error = 0;
-        }
-    }
+    } /* end DW_DLV_OK */
+    return DW_DLV_OK;
 }
