@@ -1,3 +1,10 @@
+2020-04-07: David Anderson
+    * dwarf_alloc.c: Deleted useless comment and added
+      a blank line to separate declarations from code.
+    * dwarf_frame2.c:  Fixed a too-long line.
+    * dwarf_query.c: Now DW_DLE_ALLOC_FAIL has a meaningful
+      error string attached.
+    * dwarf_util.c: Added comment before CHECK_DIE macro.
 2020-04-03: David Anderson
     * dwarf_arange.c: Deleted a useless blank line.
       Removed useless () around a return value.

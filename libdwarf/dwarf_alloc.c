@@ -1,15 +1,16 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2019  David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
   GNU Lesser General Public License as published by the Free
   Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
   Further, this software is distributed without any warranty
   that it is free of the rightful claim of any third person
@@ -981,9 +982,9 @@ struct Dwarf_Error_s *
 _dwarf_special_no_dbg_error_malloc(void)
 {
     Dwarf_Error e = 0;
-    /* The union unused things are to guarantee proper alignment */
     Dwarf_Unsigned len = sizeof(struct Dwarf_Error_s);
     char *mem = (char *)malloc(len);
+
     if (mem == 0) {
         return 0;
     }

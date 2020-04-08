@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it
@@ -786,7 +786,9 @@ dwarf_attr(Dwarf_Die die,
 
     attrib = (Dwarf_Attribute) _dwarf_get_alloc(dbg, DW_DLA_ATTR, 1);
     if (!attrib) {
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL allocating a single Dwarf_Attribute"
+            " in function dwarf_attr().");
         return DW_DLV_ERROR;
     }
 
