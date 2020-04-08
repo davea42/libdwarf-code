@@ -2,26 +2,29 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2019 David Anderson. All rights reserved.
+  Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 
 */
 
@@ -196,9 +199,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 return aires;
             } else {
                 int dres;
-                struct esb_s producer_name;
 
-                esb_constructor(&producer_name);
                 /*  Get basic locations for error reporting */
                 dres = dwarf_offdie(dbg, cu_die_offset,
                     &cu_die, ga_err);
@@ -218,7 +219,6 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                         i);
                     simple_err_return_msg_either_action(dres,
                         esb_get_string(&m));
-                    esb_destructor(&producer_name);
                     esb_destructor(&m);
                     aranges_dealloc_now(dbg,count,arange_buf);
                     arange_buf = 0;
@@ -226,7 +226,6 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 }
                 if (glflags.gf_cu_name_flag) {
                     if (should_skip_this_cu(dbg,cu_die)) {
-                        esb_destructor(&producer_name);
                         aranges_dealloc_now(dbg,count,arange_buf);
                         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                         continue;
@@ -234,10 +233,16 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 }
                 /*  Get producer name for this CU and update
                     compiler list */
-                get_producer_name(dbg,cu_die,cu_die_offset,
-                    &producer_name);
-                update_compiler_target(esb_get_string(&producer_name));
-                esb_destructor(&producer_name);
+                {
+                    struct esb_s producer_name;
+
+                    esb_constructor(&producer_name);
+                    get_producer_name(dbg,cu_die,cu_die_offset,
+                        &producer_name);
+                    update_compiler_target(
+                        esb_get_string(&producer_name));
+                    esb_destructor(&producer_name);
+                }
                 if (!checking_this_compiler()) {
                     dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                     cu_die = 0;

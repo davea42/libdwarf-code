@@ -1,24 +1,27 @@
 /*
-  Copyright 2010-2018 David Anderson. All rights reserved.
+  Copyright 2010-2020 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 */
 
 #include "globals.h"
@@ -194,10 +197,15 @@ reset_compiler_entry(Compiler *compiler)
 
 /*  Record which compiler was used (or notice we saw
     it before) and set a couple variables as
-    a side effect (which are used all over):
-        current_cu_is_checked_compiler (used in checking_this_compiler() )
+    a side effect (which are used all over
+    in this one source file):
+
+        current_cu_is_checked_compiler
+        (used in checking_this_compiler() )
+
         current_compiler
-    The compiler name is from DW_AT_producer.
+
+    The compiler/producer name is from DW_AT_producer.
 */
 void
 update_compiler_target(const char *producer_name)
@@ -205,7 +213,8 @@ update_compiler_target(const char *producer_name)
     boolean cFound = FALSE;
     int index = 0;
 
-    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),producer_name,
+    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
+        producer_name,
         strlen(producer_name));
     current_cu_is_checked_compiler = FALSE;
 

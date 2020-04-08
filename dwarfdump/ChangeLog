@@ -1,5 +1,27 @@
+2020-04-07  David Anderson 
+    * compiler_info.c: Clarified a comment and
+      split a too-long line.
+    * dwarfdump.c: Now handles a print_pubnames that
+      returns a DW_DLV* and deals with it. Made
+      a dwarf_dealloc conditional on  a non-null 
+      cu_die_for_print_frames. get_producer_name()
+      now always returns and avoids leaks.
+      We add DEBUG_PUBNAMES  to the list wh print CU data
+      on error (It knows the CU-DIE)
+    * gflags.c: Reformatted to avoid a too-long line.
+    * globals.h: Revised prototype for print_pubnames().
+    * print_aranges.c: Removed too early destructor
+      on producer_name.
+    * print_die.c: Fixed a too-long-comment-line.
+    * print_frames.c: Moved a check for DW_DLV_ERROR up
+      a few lines so we don't check gf_check_frames()
+      when not needed.
+    * print_pubnames.c: Removed deal_with_name_offset_err()
+      as not the right thing to do. Now print_pubnames
+      accepts a Dwarf_Error * argument and always
+      returns a DW_DLV* result.
 2020-04-03  David Anderson 
-    print_aranges.c: Fixed trailing whitespace and indents.
+    * print_aranges.c: Fixed trailing whitespace and indents.
 2020-04-03  David Anderson 
     * dwarfdump.c: Now print_strings() and print_macro_statistics()
       take Dwarf_Error * as argument and return a DW_DLV* value.

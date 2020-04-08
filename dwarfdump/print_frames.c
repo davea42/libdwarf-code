@@ -1,26 +1,29 @@
 /*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2011-2018 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 */
 
 /*  From 199x through 2010 print_frames relied on
@@ -2696,15 +2699,6 @@ print_frames(Dwarf_Debug dbg,
                 print_any_harmless_errors(dbg);
             }
         }
-
-        /* Do not print any frame info if in check mode */
-        if (glflags.gf_check_frames) {
-            dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                cie_element_count,
-                fde_data, fde_element_count);
-            return DW_DLV_OK;
-        }
-
         if (fres == DW_DLV_ERROR) {
             const char *loc = "dwarf_get_fde_list";
             if (is_eh) {
@@ -2714,7 +2708,17 @@ print_frames(Dwarf_Debug dbg,
             printf("\nERROR: %s not loadable. %s\n",
                 sanitized(frame_section_name),loc);
             return fres;
-        } else if (fres == DW_DLV_NO_ENTRY) {
+        }
+
+        /* Do not print any frame info if in check mode */
+        if (glflags.gf_check_frames) {
+            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                cie_element_count,
+                fde_data, fde_element_count);
+            return DW_DLV_OK;
+        }
+
+        if (fres == DW_DLV_NO_ENTRY) {
             if (!silent_if_missing) {
                 printf("\n%s is not present\n",
                     sanitized(frame_section_name));

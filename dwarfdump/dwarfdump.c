@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -783,7 +783,7 @@ printf_callback_for_libdwarf(UNUSEDARG void *userdata,
 
 
 /*  Does not return on error. */
-void
+int
 get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Half * size,
    Dwarf_Addr * max,
@@ -794,7 +794,7 @@ get_address_size_and_max(Dwarf_Debug dbg,
     /* Get address size and largest representable address */
     dres = dwarf_get_address_size(dbg,&lsize,aerr);
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "get_address_size()", dres, *aerr);
+        return dres;
     }
     if(max) {
         *max = (lsize == 8 ) ? 0xffffffffffffffffULL : 0xffffffff;
@@ -802,6 +802,7 @@ get_address_size_and_max(Dwarf_Debug dbg,
     if(size) {
         *size = lsize;
     }
+    return dres;
 }
 
 
@@ -1052,8 +1053,15 @@ process_one_file(int fd, int tiedfd,
         print_debugfission_index(dbg,"tu");
     }
     if (glflags.gf_pubnames_flag) {
+        int res = 0;
+        Dwarf_Error err = 0;
+
         reset_overall_CU_error_data();
-        print_pubnames(dbg);
+        res = print_pubnames(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing pubnames data had a problem ",res,err);
+        }
     }
     if (glflags.gf_loc_flag) {
         int locres = 0;
@@ -1133,7 +1141,8 @@ process_one_file(int fd, int tiedfd,
                 &err);
             if (sres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
-                    "printing standard frame data had a problem.",sres,err);
+                    "printing standard frame data had a problem.",
+                    sres,err);
                 dwarf_dealloc(dbg,err,DW_DLA_ERROR);
                 err = 0;
             }
@@ -1148,14 +1157,17 @@ process_one_file(int fd, int tiedfd,
                 &err);
             if (sres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
-                    "printing eh frame data had a problem.",sres,err);
+                    "printing eh frame data had a problem.",sres,
+                    err);
                 dwarf_dealloc(dbg,err,DW_DLA_ERROR);
                 err = 0;
             }
         }
         addr_map_destroy(lowpcSet);
         addr_map_destroy(map_lowpc_to_name);
-        dwarf_dealloc(dbg,cu_die_for_print_frames, DW_DLA_DIE);
+        if (cu_die_for_print_frames) {
+            dwarf_dealloc(dbg,cu_die_for_print_frames, DW_DLA_DIE);
+        }
     }
     if (glflags.gf_static_func_flag) {
         int sres = 0;
@@ -1629,7 +1641,8 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
 /*  Returns the producer of the CU
     Caller must ensure producernameout is
     a valid, constructed, empty esb_s instance before calling.
-    Never returns DW_DLV_ERROR.  */
+    There is no Dwarf_Error returned, caller must be aware.
+    */
 int
 get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Off dieprint_cu_offset,
@@ -1637,11 +1650,20 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
 {
     Dwarf_Attribute producer_attr = 0;
     Dwarf_Error pnerr = 0;
+    int ares = 0;
 
-    int ares = dwarf_attr(cu_die, DW_AT_producer,
+    if (!cu_die) {
+        esb_append(producernameout,
+            "\"<CU-missing-DW_AT_producer (null cu_die)>\"");
+        return DW_DLV_NO_ENTRY;
+    }
+    ares = dwarf_attr(cu_die, DW_AT_producer,
         &producer_attr, &pnerr);
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "hassattr on DW_AT_producer", ares, pnerr);
+        esb_append(producernameout,
+            "\"<CU-missing-DW_AT_producer.>\"");
+        dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
+        return DW_DLV_NO_ENTRY;
     }
     if (ares == DW_DLV_NO_ENTRY) {
         /*  We add extra quotes so it looks more like
@@ -1927,6 +1949,7 @@ void PRINT_CU_INFO(void)
         glflags.current_section_id == DEBUG_FRAME_EH_GNU ||
         glflags.current_section_id == DEBUG_ARANGES ||
         glflags.current_section_id == DEBUG_MACRO ||
+        glflags.current_section_id == DEBUG_PUBNAMES ||
         glflags.current_section_id == DEBUG_MACINFO ) {
         /*  These sections involve the CU die, so
             use the CU offsets.
@@ -2134,7 +2157,8 @@ print_dwarf_check_error(const char *s1,const char *s2, const char *s3)
         printf("%s",error_text);
     }
 
-    /* To indicate if the current error message have been found or not */
+    /*  To indicate if the current error message has
+        been found or not */
     glflags.gf_found_error_message = found;
 }
 

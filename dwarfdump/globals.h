@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012-2018 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or
@@ -123,7 +123,7 @@ extern int print_frames (Dwarf_Debug dbg,int want_eh,
     void **, void **,Dwarf_Error *);
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
-extern void print_pubnames (Dwarf_Debug dbg);
+extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
 extern void print_macinfo (Dwarf_Debug dbg);
 extern void print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info);
 extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);
@@ -159,7 +159,7 @@ extern void check_range_array_info(Dwarf_Debug dbg);
 
 boolean should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die);
 
-void get_address_size_and_max(Dwarf_Debug dbg,
+int get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Half * size,
    Dwarf_Addr * max,
    Dwarf_Error *err);

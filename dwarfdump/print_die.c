@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2007-2019 David Anderson. All rights reserved.
+  Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of version 2 of the GNU General
@@ -3455,8 +3455,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_destructor(&lesb);
         /* If we are in checking mode, identify the compiler */
         if ( glflags.gf_do_check_dwarf ||  glflags.gf_search_is_on) {
-            /*  Do not use show-form here! We just want the producer name, not
-                the form name. */
+            /*  Do not use show-form here! We just want
+                the producer name, not the form name. */
             int show_form_local = FALSE;
             int local_verbose = 0;
             struct esb_s local_e;
