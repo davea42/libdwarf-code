@@ -346,7 +346,7 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
                 unit_type);
             dwarfstring_append(&m,"would be DW_UT_compile"
                 ", for example");
-            _dwarf_error_string(dbg, error, 
+            _dwarf_error_string(dbg, error,
                 DW_DLE_CU_UT_TYPE_ERROR,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);

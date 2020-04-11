@@ -581,7 +581,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         xuhdr->gx_section_length;
     Dwarf_Unsigned row_index = irow_index-1;
 
-    if(!irow_index) { 
+    if(!irow_index) {
         dwarfstring s;
 
         dwarfstring_constructor(&s);

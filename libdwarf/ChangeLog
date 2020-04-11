@@ -1,4 +1,7 @@
 2020-04-11: David Anderson
+    * dwarf_die_deliv.c,dwarf_xu_index.c: Each had
+      a single trailing space. Removed. 
+2020-04-11: David Anderson
     * dwarf_global.c: Changed break to continue
       so we don't stop the loop too early, yet
       still avoid leaking a useless.
