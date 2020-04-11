@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.89, 26 March 2020
+.ds vE Rev 2.90, 10 April 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -141,68 +141,91 @@ the recommendations in the chapter titled "Candy Machine Interfaces"
 of "Writing Solid Code", a book by
 Steve Maguire (published by Microsoft Press).
 .H 2 "Definitions"
-DWARF debugging information entries (DIEs) are the segments of information
-placed in the \f(CW.debug_*\fP sections by compilers, assemblers, and
-linkage editors that, in conjunction with line number entries, are
+DWARF debugging information entries (DIEs)
+are the segments of information
+placed in the \f(CW.debug_*\fP sections
+by compilers, assemblers, and
+linkage editors that, in conjunction
+with line number entries, are
 necessary for symbolic source-level debugging.
 Refer to the latest
-"\fIDWARF Debugging Information Format\fP" from www.dwarfstd.org for a more
+"\fIDWARF Debugging Information Format\fP"
+from www.dwarfstd.org for a more
 complete description of these entries.
 
 .P
-This document adopts all the terms and definitions in "\fIDWARF Debugging
+This document adopts all the terms and
+definitions in "\fIDWARF Debugging
 Information Format\fP" versions 2,3,4, and 5.
 It originally focused on the implementation at
 Silicon Graphics, Inc., but now
 attempts to be more generally useful.
 
 .H 2 "Overview"
-The remaining sections of this document describe the proposed interface
-to \f(CWlibdwarf\fP, first by describing the purpose of additional types
-defined by the interface, followed by descriptions of the available
-operations.  This document assumes you are thoroughly familiar with the
-information contained in the \fIDWARF Debugging Information Format\fP
+The remaining sections of this document
+ describe the proposed interface
+to \f(CWlibdwarf\fP, first by describing
+ the purpose of additional types
+defined by the interface, followed
+ by descriptions of the available
+operations.  
+This document assumes you are thoroughly familiar with the
+information contained in the
+\fIDWARF Debugging Information Format\fP
 document.
 .P
-We separate the functions into several categories to emphasize that not
-all consumers want to use all the functions.  We call the categories
-Debugger, Internal-level, High-level, and Miscellaneous not because one is more
-important than another but as a way of making the rather large set of
+We separate the functions into several
+categories to emphasize that not
+all consumers want to use all the functions.
+We call the categories
+Debugger, Internal-level, High-level, and 
+Miscellaneous not because one is more
+important than another but as a way of
+making the rather large set of
 function calls easier to understand.
 .P
-Unless otherwise specified, all functions and structures should be
+Unless otherwise specified,
+all functions and structures should be
 taken as being designed for Debugger consumers.
 .P
-The Debugger Interface of this library is intended to be used by debuggers.
-The interface is low-level (close to dwarf) but suppresses irrelevant detail.
-A debugger will want to absorb all of some sections at startup and will
-want to see little or nothing of some sections except at need.  And even
-then will probably want to absorb only the information in a single compilation
+The Debugger Interface of this library
+is intended to be used by debuggers.
+The interface is low-level (close to dwarf)
+but suppresses irrelevant detail.
+A debugger will want to absorb all of
+some sections at startup and will
+want to see little or nothing of some sections
+except at need.  
+And even
+then will probably want to absorb only the
+information in a single compilation
 unit at a time.  A debugger does not care about
 implementation details of the library.
 .P
-The Internal-level Interface is for a DWARF prettyprinter and checker.
-A
-thorough prettyprinter will want to know all kinds of internal things
-(like actual FORM numbers and actual offsets) so it can check for
-appropriate structure in the DWARF data and print (on request) all
-that internal information for human users and libdwarf authors and
-compiler-writers.
-Calls in this interface provide data a debugger
-does not normally care about.
+The Internal-level Interface is for a DWARF
+prettyprinter and checker.
+A thorough prettyprinter will want to know all kinds of
+internal things (like actual FORM numbers and actual offsets)
+so it can check for appropriate structure in the DWARF data
+and print (on request) all that internal information for human
+users and libdwarf authors and compiler-writers.  Calls in this
+interface provide data a debugger does not normally care about.
+
 .P
-The High-level Interface is for higher level access
-(it is not really a high level interface!).
-Programs such as
-disassemblers will want to be able to display relevant information
-about functions and line numbers without having to invest too much
-effort in looking at DWARF.
+The High-level Interface is for higher level access (it
+is not really a high level interface!).  Programs such
+as disassemblers will want to be able to display relevant
+information about functions and line numbers without having
+to invest too much effort in looking at DWARF.
+
 .P
-The miscellaneous interface is just what is left over: the error handler
-functions.
+The miscellaneous interface is just what is left over: the
+error handler functions.
+
 .P
-The following is a brief mention of the changes in this libdwarf from
-the libdwarf draft for DWARF Version 1 and recent changes.
+The following is a brief mention of the changes in this
+libdwarf from the libdwarf draft for DWARF Version 1 and
+recent changes.
 
 .H 2 "Items Changed"
 .P
@@ -215,6 +238,7 @@ The downside of turning off the flag is
 consumer code must do all the dwarf_dealloc()
 calls itself to avoid memory leaks.
 (March 14, 2020)
+
 .P
 Corrected the documentation of dwarf_diename:
 It was never appropriate to use dwarf_dealloc
@@ -13181,7 +13205,9 @@ void examplez( Dwarf_Xu_Index_Header xuhdr,
             continue;
         }
         /*  Here, hashval and index (a row index into
-            offsets and lengths) are valid. */
+            offsets and lengths) are valid. 
+            But the row to be passed into
+            various functions here is index-1. */
     }
 }
 \fP
@@ -13238,10 +13264,21 @@ takes as input a valid \f(CWDwarf_Xu_Index_Header\fP
 and a  \f(CWrow_index\fP
 (see \f(CWdwarf_get_xu_hash_entry()\fP above)
 and a  \f(CWcolumn_index\fP.
-Valid row_index values are one (1) through
-\f(CWunits_count\fP (N) but one uses
-\f(CWdwarf_get_xu_hash_entry()\fP (above) to get
-row index.
+.P
+Valid row_index values are zero (0) through
+\f(CWunits_count-1\fP (N) but one uses
+\f(CWdwarf_get_xu_hash_entry()\fP
+(above) to get
+row index and it returns a 1-origin index as 
+that is what the DWARF5 standard specifies.
+Since a zero index from
+\f(CWdwarf_get_xu_hash_entry()\fP
+means this is not an actual entry such must be skipped.
+.P
+Hence it makes (some) sense to subtract one
+making a zero-origin as that is the sense of
+all but the first row of the offsets table.
+.P
 Valid column_index values are zero (0) through
 \f(CWoffsets_count -1\fP (L-1).
 .P
@@ -13295,7 +13332,7 @@ void exampleza(Dwarf_Xu_Index_Header xuhdr,
             break;
         }
         res = dwarf_get_xu_section_offset(xuhdr,
-            index,col,&off,&len,&err);
+            index-1,col,&off,&len,&err);
         if (res != DW_DLV_OK) {
             break;
         }

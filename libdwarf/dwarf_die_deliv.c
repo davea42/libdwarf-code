@@ -336,7 +336,20 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
         /* We do not need is_info flag in DWARF5 */
         if (is_unknown_UT_value(unit_type)) {
             /*  DWARF5 object file is corrupt. Invalid value */
-            _dwarf_error(dbg, error, DW_DLE_CU_UT_TYPE_ERROR);
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_CU_UT_TYPE_ERROR: we do not know "
+                " the CU header unit_type 0x%x",unit_type);
+            dwarfstring_append_printf_u(&m," (%u) so cannot"
+                "process this compilation_unit. A valid type ",
+                unit_type);
+            dwarfstring_append(&m,"would be DW_UT_compile"
+                ", for example");
+            _dwarf_error_string(dbg, error, 
+                DW_DLE_CU_UT_TYPE_ERROR,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg, addrsize, unsigned char,

@@ -44,6 +44,7 @@
 #include "dwarf_util.h"
 #include "memcpy_swap.h"
 #include "dwarf_harmless.h"
+#include "dwarfstring.h"
 
 /* For consistency, use the HAVE_LIBELF_H symbol */
 #ifdef HAVE_LIBELF_H
@@ -1606,6 +1607,9 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
     if (setup_result != DW_DLV_OK) {
         int freeresult = 0;
         int myerr = 0;
+        dwarfstring msg;
+
+        dwarfstring_constructor(&msg);
         /* We cannot use any _dwarf_setup()
             error here as
             we are freeing dbg, making that error (setup
@@ -1614,10 +1618,11 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
             But error might be NULL and the init call
             error-handler function might be set.
         */
-        if ( (setup_result == DW_DLV_ERROR) && error ) {
+        if ( (setup_result == DW_DLV_ERROR) && *error ) {
             /*  Preserve our _dwarf_setup error number, but
                 this does not apply if error NULL. */
             myerr = dwarf_errno(*error);
+            dwarfstring_append(&msg,dwarf_errmsg(*error));
             /*  deallocate the soon-stale error pointer. */
             dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
             *error = 0;
@@ -1634,7 +1639,9 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
                 a message on stderr and abort(), as without
                 dbg there is no error-handler function.
                 */
-            _dwarf_error(NULL,error,DW_DLE_DBG_ALLOC);
+            _dwarf_error_string(dbg,error,DW_DLE_DBG_ALLOC,
+                dwarfstring_string(&msg));
+            dwarfstring_destructor(&msg);
             return DW_DLV_ERROR;
         }
         if (setup_result == DW_DLV_ERROR) {
@@ -1643,8 +1650,10 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
                 a message on stderr and abort(), as without
                 dbg there is no error-handler function.
                 */
-            _dwarf_error(NULL,error,myerr);
+            _dwarf_error_string(dbg,error,myerr,
+                dwarfstring_string(&msg));
         }
+        dwarfstring_destructor(&msg);
         return setup_result;
     }
     dwarf_harmless_init(&dbg->de_harmless_errors,

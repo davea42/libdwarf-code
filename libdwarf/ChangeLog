@@ -1,3 +1,28 @@
+2020-04-10: David Anderson
+    * debug-cu-tu-indexes-layout.odg: The Split-Dwarf
+      (aka debugfission) table layout is simple, but
+      this is an introduction to the 
+      layout of the arrays.  LibreOffice Draw document.
+    * dwarf_init_finish.c: Small enhancements of error messages.
+    * dwarf_util.c: Reformatted a macro here
+      (READ_UNALIGNED_CK) so the lines are not so long
+      and the backslashes are easily seen as complete.
+    * dwarf_xu_index.c: There was some confusion in the
+      code which prevented it from working.
+      Interfaces remain the same, but things work now.
+      The first part is a 20 line (or so) explanation
+      of some of the internal handling of the tables.
+      Now things work. Many error messges get
+      detailed information.
+    * dwarf_xu_index.h: Added new fields and relabeled
+      the N U S fields in the header to match the
+      DWARF5 standard.
+    * libdwarf2.1.mm: Rev 2.90 10 April 2020.
+      A little bit of reformatting to shorten the lines
+      here. Has little or no effect on the output pdf.
+      corrected the wording about the
+      dwarf_get_xu_section_offset() function. 
+    * libdwarf2.1.pdf: Regenerated Rev 2.90.
 2020-04-07: David Anderson
     * dwarf_alloc.c: Deleted useless comment and added
       a blank line to separate declarations from code.
