@@ -1,3 +1,7 @@
+2020-04-11: David Anderson
+    * dwarf_global.c: Changed break to continue
+      so we don't stop the loop too early, yet
+      still avoid leaking a useless.
 2020-04-10: David Anderson
     * debug-cu-tu-indexes-layout.odg: The Split-Dwarf
       (aka debugfission) table layout is simple, but

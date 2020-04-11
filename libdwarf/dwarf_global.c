@@ -230,7 +230,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             _dwarf_get_alloc(dbg, context_code, 1);
         if (pubnames_context == NULL) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         /*  READ_AREA_LENGTH updates pubnames_like_ptr for consumed
             bytes. */
@@ -335,7 +335,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 Nowhere to record pubnames_context); */
             dwarf_dealloc(dbg,pubnames_context,context_code);
             pubnames_context = 0;
-            break;
+            continue;
         }
         while (die_offset_in_cu) {
             int res = 0;
