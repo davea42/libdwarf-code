@@ -1,24 +1,28 @@
 /*
-  Copyright 2014-2014 David Anderson. All rights reserved.
+  Copyright 2014-2020 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
+
 */
 
 #include "globals.h"
@@ -29,19 +33,37 @@
 
 #include "print_sections.h"
 
+static const char *
+dw_dlv_string(int res)
+{
+    if (res == DW_DLV_ERROR) {
+        return "DW_DLV_ERROR";
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return "DW_DLV_NO_ENTRY";
+    }
+    if (res == DW_DLV_OK) {
+        return "DW_DLV_OK";
+    }
+    return "ERROR: Impossible libdwarf DW_DLV code";
+}
+
 static int
-print_culist_array(Dwarf_Debug dbg,
+print_culist_array(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
     Dwarf_Unsigned *cu_list_len,
-    Dwarf_Error * culist_err)
+    Dwarf_Error * err)
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i;
     int res = dwarf_gdbindex_culist_array(gdbindex,
-        &list_len,culist_err);
-    if (res != DW_DLV_OK) {
-        print_error_and_continue(dbg,
-            "dwarf_gdbindex_culist_array failed",res,*culist_err);
+        &list_len,err);
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    if (res == DW_DLV_ERROR) {
+        simple_err_return_msg_either_action(res,
+            "ERROR: dwarf_gdbindex_culist_array failed.");
         return res;
     }
     printf("  CU list. array length: %" DW_PR_DUu
@@ -51,11 +73,24 @@ print_culist_array(Dwarf_Debug dbg,
     for( i  = 0; i < list_len; i++) {
         Dwarf_Unsigned cuoffset = 0;
         Dwarf_Unsigned culength = 0;
+
         res = dwarf_gdbindex_culist_entry(gdbindex,i,
-            &cuoffset,&culength,culist_err);
+            &cuoffset,&culength,err);
         if (res != DW_DLV_OK) {
-            print_error_and_continue(dbg,
-                "dwarf_gdbindex_culist_entry failed",res,*culist_err);
+            struct esb_s msg;
+            const char * et= dw_dlv_string(res);
+
+            esb_constructor(&msg);
+            esb_append_printf_s(&msg,
+                "ERROR: dwarf_get_gdbindex_culist_entry "
+                "got %s ",et);
+            esb_append_printf_u(&msg,
+                " on entry %u ",i);
+            esb_append_printf_u(&msg," of %u entries.",
+                list_len);
+            simple_err_return_action(res,
+                esb_get_string(&msg));
+            esb_destructor(&msg);
             return res;
         }
         printf("    [%4" DW_PR_DUu "] 0x%"
@@ -77,11 +112,14 @@ print_types_culist_array(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i;
-    int res = dwarf_gdbindex_types_culist_array(gdbindex,
+    int res = 0;
+
+    res = dwarf_gdbindex_types_culist_array(gdbindex,
         &list_len,cular_err);
     if (res != DW_DLV_OK) {
         print_error_and_continue(dbg,
-            "dwarf_gdbindex_types_culist_array failed",res,*cular_err);
+            "dwarf_gdbindex_types_culist_array call failed",
+            res,*cular_err);
         return res;
     }
     printf("  TU list. array length: %" DW_PR_DUu
@@ -98,8 +136,20 @@ print_types_culist_array(Dwarf_Debug dbg,
             &signature,
             cular_err);
         if (res != DW_DLV_OK) {
-            print_error_and_continue(dbg,
-                "dwarf_gdbindex_culist_entry failed",res,*cular_err);
+            struct esb_s msg;
+            const char * et= dw_dlv_string(res);
+
+            esb_constructor(&msg);
+            esb_append_printf_s(&msg,
+                "ERROR: dwarf_get_gdbindex_culist_entry call "
+                "got %s ",et);
+            esb_append_printf_u(&msg,
+                " on entry %u ",i);
+            esb_append_printf_u(&msg," of %u entries.",
+                list_len);
+            simple_err_return_action(res,
+                esb_get_string(&msg));
+            esb_destructor(&msg);
             return res;
         }
         printf("    [%4" DW_PR_DUu "] 0x%"
@@ -143,8 +193,20 @@ print_addressarea(Dwarf_Debug dbg,
             &cu_index,
             addra_err);
         if (res != DW_DLV_OK) {
-            print_error_and_continue(dbg,
-                "dwarf_gdbindex_addressarea_entry failed",res,*addra_err);
+            struct esb_s msg;
+            const char * et= dw_dlv_string(res);
+
+            esb_constructor(&msg);
+            esb_append_printf_s(&msg,
+                "ERROR: dwarf_get_gdbindex_addressarea_entry call "
+                "got %s ",et);
+            esb_append_printf_u(&msg,
+                " on entry %u ",i);
+            esb_append_printf_u(&msg," of %u entries.",
+                list_len);
+            simple_err_return_action(res,
+                esb_get_string(&msg));
+            esb_destructor(&msg);
             return res;
         }
         printf("    [%4" DW_PR_DUu "] 0x%"
@@ -227,16 +289,39 @@ print_symtab_entry(Dwarf_Debug dbg,
     res = dwarf_gdbindex_string_by_offset(gdbindex,
         symnameoffset,&name,sym_err);
     if(res != DW_DLV_OK) {
-        print_error_and_continue(dbg,
-            "dwarf_gdbindex_string_by_offset failed",res,*sym_err);
-        *sym_err = 0;
+        struct esb_s msg;
+        const char * et= dw_dlv_string(res);
+
+        esb_constructor(&msg);
+        esb_append_printf_s(&msg,
+            "ERROR: dwarf_get_gdbindex_string_by_offset call "
+            "failed with %s ",et);
+        esb_append_printf_u(&msg,
+            " on offset 0x%lx",symnameoffset);
+        esb_append_printf_u(&msg,
+            " (%u).",symnameoffset);
+        simple_err_return_action(res,
+            esb_get_string(&msg));
+        esb_destructor(&msg);
         return res;
     }
     res = dwarf_gdbindex_cuvector_length(gdbindex,
         cuvecoffset,&cuvec_len,sym_err);
     if( res != DW_DLV_OK) {
-        print_error_and_continue(dbg,
-            "dwarf_gdbindex_cuvector_length failed",res,*sym_err);
+        struct esb_s msg;
+        const char * et= dw_dlv_string(res);
+
+        esb_constructor(&msg);
+        esb_append_printf_s(&msg,
+            "ERROR: dwarf_get_gdbindex_cuvector_length() call "
+            "failed with %s ",et);
+        esb_append_printf_u(&msg,
+            " on cu vector offset 0x%lx",cuvecoffset);
+        esb_append_printf_u(&msg,
+            " (%u).",cuvecoffset);
+        simple_err_return_action(res,
+            esb_get_string(&msg));
+        esb_destructor(&msg);
         return res;
     }
     if (glflags.verbose > 1) {
@@ -267,8 +352,20 @@ print_symtab_entry(Dwarf_Debug dbg,
             attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
             sym_err);
         if( res != DW_DLV_OK) {
-            print_error_and_continue(dbg,
-                "dwarf_gdbindex_cuvector_instance_expand_value failed",res,*sym_err);
+            struct esb_s msg;
+            const char * et= dw_dlv_string(res);
+
+            esb_constructor(&msg);
+            esb_append_printf_s(&msg,
+                "ERROR: dwarf_gdbindex_cuvector_instance_expand_value() call "
+                "failed with %s ",et);
+            esb_append_printf_u(&msg,
+                " on cu vector index %d ",ii);
+            esb_append_printf_u(&msg,
+                " on of %d entries.",cuvec_len);
+            simple_err_return_action(res,
+                esb_get_string(&msg));
+            esb_destructor(&msg);
             return res;
         }
         /*  if cu_index is > the cu-count, then it  refers
@@ -332,8 +429,16 @@ print_symboltable(Dwarf_Debug dbg,
     int res = dwarf_gdbindex_symboltable_array(gdbindex,
         &list_len,symt_err);
     if (res != DW_DLV_OK) {
-        print_error_and_continue(dbg,
-            "dwarf_gdbindex_symboltable failed",res,*symt_err);
+        struct esb_s msg;
+        const char * et= dw_dlv_string(res);
+
+        esb_constructor(&msg);
+        esb_append_printf_s(&msg,
+            "ERROR: dwarf_get_gdbindex_symboltable_array call "
+            "failed with %s ",et);
+        simple_err_return_action(res,
+            esb_get_string(&msg));
+        esb_destructor(&msg);
         return res;
     }
     printf("\n  Symbol table: length %" DW_PR_DUu
@@ -349,11 +454,24 @@ print_symboltable(Dwarf_Debug dbg,
             &symnameoffset,&cuvecoffset,
             symt_err);
         if (res != DW_DLV_OK) {
-            print_error_and_continue(dbg,
-                "dwarf_gdbindex_symboltable_entry failed",res,*symt_err);
+            struct esb_s msg;
+            const char * et= dw_dlv_string(res);
+
+            esb_constructor(&msg);
+            esb_append_printf_s(&msg,
+                "ERROR: dwarf_gdbindex_symboltable_entry() call "
+                "failed with %s ",et);
+            esb_append_printf_u(&msg,
+                " on symtab index %d ",i);
+            esb_append_printf_u(&msg,
+                " on of %d entries.",list_len);
+            simple_err_return_action(res,
+                esb_get_string(&msg));
+            esb_destructor(&msg);
             return res;
         }
-        res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,
+        res = print_symtab_entry(dbg,gdbindex,i,
+            symnameoffset,cuvecoffset,
             culist_len,symt_err);
         if (res != DW_DLV_OK) {
             return res;
@@ -366,10 +484,10 @@ print_symboltable(Dwarf_Debug dbg,
 
 
 
-extern void
-print_gdb_index(Dwarf_Debug dbg)
+int
+print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
 {
-    Dwarf_Gdbindex  gdbindex = 0;
+    Dwarf_Gdbindex gdbindex = 0;
     Dwarf_Unsigned version = 0;
     Dwarf_Unsigned cu_list_offset = 0;
     Dwarf_Unsigned types_cu_list_offset = 0;
@@ -379,13 +497,12 @@ print_gdb_index(Dwarf_Debug dbg)
     Dwarf_Unsigned section_size = 0;
     Dwarf_Unsigned unused = 0;
     const char *section_name = 0; /* unused */
-    Dwarf_Error error = 0;
     Dwarf_Unsigned culist_len = 0;
     int res = 0;
 
     glflags.current_section_id = DEBUG_GDB_INDEX;
     if (!glflags.gf_do_print_dwarf) {
-        return;
+        return DW_DLV_OK;
     }
     res = dwarf_gdbindex_header(dbg, &gdbindex,
         &version,
@@ -397,17 +514,16 @@ print_gdb_index(Dwarf_Debug dbg)
         &section_size,
         &unused,
         &section_name,
-        &error);
+        err);
     if(res == DW_DLV_NO_ENTRY) {
         /*  Silently! The section is rare so lets
             say nothing. */
-        return;
+        return res;
     }
     if(res == DW_DLV_ERROR) {
-        printf("\n%s\n",".gdb_index not readable, error.");
-        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
-        error = 0;
-        return;
+        simple_err_return_msg_either_action(res,
+            "ERROR: .gdb_index not readable.");
+        return res;
     }
     {
         struct esb_s truename;
@@ -440,46 +556,22 @@ print_gdb_index(Dwarf_Debug dbg)
         section_size);
 
 
-    res = print_culist_array(dbg,gdbindex,&culist_len,&error);
+    res = print_culist_array(dbg,gdbindex,&culist_len,err);
     if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
-            error = 0;
-        }
         dwarf_gdbindex_free(gdbindex);
-        gdbindex = 0;
-        return;
+        return res;
     }
-    res = print_types_culist_array(dbg,gdbindex,&error);
+    res = print_types_culist_array(dbg,gdbindex,err);
     if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
-            error = 0;
-        }
         dwarf_gdbindex_free(gdbindex);
-        gdbindex = 0;
-        return;
+        return res;
     }
-    res = print_addressarea(dbg,gdbindex,&error);
+    res = print_addressarea(dbg,gdbindex,err);
     if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
-            error = 0;
-        }
         dwarf_gdbindex_free(gdbindex);
-        gdbindex = 0;
-        return;
+        return res;
     }
-    res = print_symboltable(dbg,gdbindex,culist_len,&error);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
-            error = 0;
-        }
-        dwarf_gdbindex_free(gdbindex);
-        gdbindex = 0;
-        return;
-    }
+    res = print_symboltable(dbg,gdbindex,culist_len,err);
     dwarf_gdbindex_free(gdbindex);
-    gdbindex = 0;
+    return res;
 }

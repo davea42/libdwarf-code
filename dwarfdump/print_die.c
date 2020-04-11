@@ -444,10 +444,10 @@ print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
             Dwarf_Unsigned myerr = dwarf_errno(pi_err);
 
             glflags.gf_count_major_errors++;
-            fprintf(stderr, "%s ERROR:  %s:  %s (%lu)\n",
+            printf("%s ERROR:  %s:  %s (%lu)\n",
                 glflags.program_name, "attempting to print .debug_info",
                 errmsg, (unsigned long) myerr);
-            fprintf(stderr, "attempting to continue.\n");
+            printf("attempting to continue.\n");
             dwarf_dealloc(dbg,pi_err,DW_DLA_ERROR);
             pi_err = 0;
         }
@@ -460,10 +460,10 @@ print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
         Dwarf_Unsigned myerr = dwarf_errno(pi_err);
 
         glflags.gf_count_major_errors++;
-        fprintf(stderr, "%s ERROR:  %s:  %s (%lu)\n",
+        printf("%s ERROR:  %s:  %s (%lu)\n",
             glflags.program_name, "attempting to print .debug_types",
             errmsg, (unsigned long) myerr);
-        fprintf(stderr, "attempting to continue.\n");
+        printf("attempting to continue.\n");
         dwarf_dealloc(dbg,pi_err,DW_DLA_ERROR);
         pi_err = 0;
     }

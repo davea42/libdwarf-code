@@ -1045,12 +1045,32 @@ process_one_file(int fd, int tiedfd,
         clear_macro_statistics(&macinfo_check_tree);
     }
     if (glflags.gf_gdbindex_flag) {
+        int res = 0;
+        Dwarf_Error err = 0;
+
         reset_overall_CU_error_data();
         /*  By definition if gdb_index is present
             then "cu" and "tu" will not be. And vice versa.  */
-        print_gdb_index(dbg);
-        print_debugfission_index(dbg,"cu");
-        print_debugfission_index(dbg,"tu");
+        res = print_gdb_index(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the gdb index section had a problem "
+                ,res,err);
+        }
+        res = print_debugfission_index(dbg,"cu",&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the debugfission cu section "
+                "had a problem "
+                ,res,err);
+        }
+        res = print_debugfission_index(dbg,"tu",&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the debugfission tu section "
+                "had a problem "
+                ,res,err);
+        }
     }
     if (glflags.gf_pubnames_flag) {
         int res = 0;

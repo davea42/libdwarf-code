@@ -220,8 +220,8 @@ int get_proc_name_by_die(Dwarf_Debug dbg,
 
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 
-extern void print_gdb_index(Dwarf_Debug dbg);
-extern void print_debugfission_index(Dwarf_Debug dbg,const char *type);
+extern int print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err);
+extern int print_debugfission_index(Dwarf_Debug dbg,const char *type,    Dwarf_Error *);
 
 void clean_up_die_esb(void);
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);

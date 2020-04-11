@@ -1,24 +1,28 @@
 /*
-  Copyright 2014-2014 David Anderson. All rights reserved.
+  Copyright 2014-2020 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
+
 */
 
 #include "globals.h"
@@ -30,6 +34,21 @@
 
 #define TRUE 1
 #define FALSE 0
+
+static const char *
+dw_dlv_string(int res)
+{
+    if (res == DW_DLV_ERROR) {
+        return "DW_DLV_ERROR";
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return "DW_DLV_NO_ENTRY";
+    }
+    if (res == DW_DLV_OK) {
+        return "DW_DLV_OK";
+    }
+    return "ERROR: Impossible libdwarf DW_DLV code";
+}
 
 static int
 hashval_zero(Dwarf_Sig8 *val)
@@ -44,8 +63,9 @@ hashval_zero(Dwarf_Sig8 *val)
     return TRUE;
 }
 
-extern void
-print_debugfission_index(Dwarf_Debug dbg,const char *type)
+int
+print_debugfission_index(Dwarf_Debug dbg,const char *type,
+    Dwarf_Error *err)
 {
     int res = 0;
     Dwarf_Xu_Index_Header xuhdr = 0;
@@ -53,7 +73,6 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     Dwarf_Unsigned offsets_count = 0;
     Dwarf_Unsigned units_count = 0;
     Dwarf_Unsigned hash_slots_count = 0;
-    Dwarf_Error fierr = 0;
     const char * section_name = 0;
     const char * section_type2 = 0;
     const char * section_name2 = 0;
@@ -67,37 +86,63 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
         &units_count,
         &hash_slots_count,
         &section_name,
-        &fierr);
+        err);
     if (res == DW_DLV_NO_ENTRY) {
         /* This applies to most object files. */
-        return;
+        return res;
     }
     if (res == DW_DLV_ERROR) {
-        /* Odd. FIXME */
-        return;
+        simple_err_return_msg_either_action(res,
+            "ERROR: Call to dwarf_get_xu_index_header() failed.");
+        return res;
     }
     res = dwarf_get_xu_index_section_type(xuhdr,
         &section_type2,
         &section_name2,
-        &fierr);
+        err);
     if (res == DW_DLV_NO_ENTRY) {
-        /* Impossible. */
-        print_error(dbg,"dwarf_get_xu_index_section_type",
-            DW_DLE_XU_IMPOSSIBLE_ERROR,fierr);
+        struct esb_s tmsg;
+
+        esb_constructor(&tmsg);
+        esb_append(&tmsg,
+            "ERROR: dwarf_get_xu_index_section_type() "
+            " returned DW_DLV_NO_ENTRY "
+            " which should be impossible.");
+        esb_append(&tmsg," Something is corrupted.");
+        simple_err_return_action(DW_DLV_ERROR,
+            esb_get_string(&tmsg));
         dwarf_xu_header_free(xuhdr);
-        return;
+        esb_destructor(&tmsg);
+        /* We have no way to return a DW_DLV_ERROR.
+            as we cannot manufacture a Dwarf_Error */
+        return res;
     }
     if (res == DW_DLV_ERROR) {
-        /* Impossible. FIXME */
-        print_error(dbg,"dwarf_get_xu_index_section_type", res,fierr);
+        simple_err_return_msg_either_action(res,
+            "ERROR: Call to dwarf_get_xu_index_section_type() "
+            "failed.");
         dwarf_xu_header_free(xuhdr);
-        return;
+        return res;
     }
     if (strcmp(section_type2,type)) {
-        print_error(dbg,"dwarf_get_xu_index_section_type",
-            DW_DLE_XU_IMPOSSIBLE_ERROR,fierr);
+        struct esb_s tmsg;
+
+        esb_constructor(&tmsg);
+        esb_append_printf_s(&tmsg,
+            "ERROR: dwarf_get_xu_index_section_type() "
+            " returned section type %s ",
+            sanitized(section_type2));
+        esb_append_printf_s(&tmsg,
+            "whereas the call was for section type %s. ",
+            sanitized(type));
+        esb_append(&tmsg," Something is corrupted.");
+        simple_err_return_action(DW_DLV_ERROR,
+            esb_get_string(&tmsg));
+        esb_destructor(&tmsg);
         dwarf_xu_header_free(xuhdr);
-        return;
+        /* We have no way to return a DW_DLV_ERROR.
+            as we cannot manufacture a Dwarf_Error */
+        return DW_DLV_OK;
     }
     if(!section_name || !*section_name) {
         section_name = (is_cu?".debug_cu_index":".debug_tu_index");
@@ -112,83 +157,165 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);
     }
-    printf("  Version:           %" DW_PR_DUu "\n",
+    printf("  Version:           : %" DW_PR_DUu "\n",
         version_number);
-    printf("  Number of columns: %" DW_PR_DUu "\n",
+    printf("  Number of columns N: %" DW_PR_DUu "\n",
         offsets_count);
-    printf("  number of entries: %" DW_PR_DUu  "\n",
+    printf("  number of entries U: %" DW_PR_DUu  "\n",
         units_count);
-    printf("  Number of slots:   %" DW_PR_DUu "\n",
+    printf("  Number of slots   S: %" DW_PR_DUu "\n",
         hash_slots_count);
+    {
+        unsigned n = 0;
+        Dwarf_Unsigned sect_num;
+        const char *name = 0;
 
+        printf("\n");
+        printf("Columns index to section id and name \n");
+        printf("  [ ] id       name\n");
+        for ( ; n < offsets_count; ++n) {
+            res = dwarf_get_xu_section_names(xuhdr,
+                n,&sect_num,&name,err);
+            if (res == DW_DLV_ERROR) {
+                return res;
+            } if (res == DW_DLV_NO_ENTRY) {
+                printf("  [%u] unused\n",n);
+            } else {
+                printf("  [%u] %" DW_PR_DUu "        %s\n",n,
+                    sect_num,name);
+            }
+        }
+    }
     if (hash_slots_count > 0) {
         printf("\n");
-        printf("           hash               index\n");
+        printf("   slot      hash                index\n");
     }
-
     {
+        /*  For h < S */
         Dwarf_Unsigned h = 0;
         for( h = 0; h < hash_slots_count; h++) {
             Dwarf_Sig8 hashval;
             Dwarf_Unsigned index = 0;
             Dwarf_Unsigned col = 0;
-            struct esb_s hashhexstring;
 
-            esb_constructor(&hashhexstring);
             memset(&hashval,0,sizeof(hashval));
             res = dwarf_get_xu_hash_entry(xuhdr,h,
-                &hashval,&index,&fierr);
+                &hashval,&index,err);
             if (res == DW_DLV_ERROR) {
-                print_error(dbg,"dwarf_get_xu_hash_entry",res,fierr);
+                struct esb_s hmsg;
+
+                esb_constructor(&hmsg);
+                esb_append_printf_u(&hmsg,
+                    "ERROR: dwarf_get_xu_hash_entry failed "
+                    " on slot number %u ",h);
+                esb_append_printf_u(&hmsg," of %u slots.",
+                    hash_slots_count);
+                simple_err_return_action(res,
+                    esb_get_string(&hmsg));
                 dwarf_xu_header_free(xuhdr);
-                esb_destructor(&hashhexstring);
-                return;
+                esb_destructor(&hmsg);
+                return res;
             } else if (res == DW_DLV_NO_ENTRY) {
                 /* Impossible */
-                printf("  [%4" DW_PR_DUu "]  "
-                    "dwarf_get_xu_hash_entry impossible return code: "
-                    "No entry?\n",
-                    h);
+                struct esb_s hmsg;
+
+                esb_constructor(&hmsg);
+                esb_append_printf_u(&hmsg,
+                    "ERROR: dwarf_get_xu_hash_entry got NO_ENTRY "
+                    " on slot number %u ",h);
+                esb_append_printf_u(&hmsg," of %u slots."
+                    " That should be impossible.",
+                    hash_slots_count);
                 dwarf_xu_header_free(xuhdr);
-                esb_destructor(&hashhexstring);
-                return;
-            } else if (hashval_zero(&hashval) && index == 0 ) {
-                /* An unused hash slot, we do not print them */
+                esb_destructor(&hmsg);
+                return res;
+            } else if (!index) {
+                if (hashval_zero(&hashval)) {
+                    /* An unused hash slot, we do not print them */
+                } else {
+                    struct esb_s hashhexstring;
+
+                    esb_constructor(&hashhexstring);
+                    format_sig8_string(&hashval,&hashhexstring);
+                    printf("  [%4" DW_PR_DUu "] %s"
+                        " %8" DW_PR_DUu  " %s\n",
+                        h,
+                        esb_get_string(&hashhexstring),
+                        index,
+                        "Index 0 means the hash gets ignored");
+                    esb_destructor(&hashhexstring);
+                }
                 continue;
             }
-            format_sig8_string(&hashval,&hashhexstring);
-            printf("  [%4" DW_PR_DUu "] %s"
-                " %8" DW_PR_DUu  "\n",
-                h,
-                esb_get_string(&hashhexstring),
-                index);
-            esb_destructor(&hashhexstring);
-            printf("      col              section   "
-                "offset                size\n");
+            {
+                struct esb_s hashhexstring;
+
+                esb_constructor(&hashhexstring);
+                format_sig8_string(&hashval,&hashhexstring);
+                printf("  [%4" DW_PR_DUu "] %s"
+                    " %8" DW_PR_DUu  "\n",
+                    h,
+                    esb_get_string(&hashhexstring),
+                    index);
+                esb_destructor(&hashhexstring);
+            }
+            printf("    [r,c]              section   "
+                "  offset             size\n");
             for (col = 0; col < offsets_count; col++) {
                 Dwarf_Unsigned off = 0;
                 Dwarf_Unsigned len = 0;
                 const char * name = 0;
                 Dwarf_Unsigned num = 0;
                 res = dwarf_get_xu_section_names(xuhdr,
-                    col,&num,&name,&fierr);
+                    col,&num,&name,err);
                 if (res != DW_DLV_OK) {
-                    print_error(dbg,"dwarf_get_xu_section_names",res,fierr);
+                    struct esb_s hmsg;
+                    const char * et= dw_dlv_string(res);
+
+                    esb_constructor(&hmsg);
+                    esb_append_printf_s(&hmsg,
+                        "ERROR: dwarf_get_xu_section_names "
+                        "got %s ",et);
+                    esb_append_printf_u(&hmsg,
+                        " on column number %u ",col);
+                    esb_append_printf_u(&hmsg," of %u columns.",
+                        offsets_count);
+                    simple_err_return_action(res,
+                        esb_get_string(&hmsg));
+                    esb_destructor(&hmsg);
                     dwarf_xu_header_free(xuhdr);
-                    return;
+                    return res;
                 }
+                /*  index is 1-origin. We use it
+                    that way.  */
                 res = dwarf_get_xu_section_offset(xuhdr,
-                    index,col,&off,&len,&fierr);
+                    index,col,&off,&len,err);
                 if (res != DW_DLV_OK) {
-                    print_error(dbg,"dwarf_get_xu_section_offset",res,fierr);
+                    struct esb_s hmsg;
+                    const char * et= dw_dlv_string(res);
+
+                    esb_constructor(&hmsg);
+                    esb_append_printf_s(&hmsg,
+                        "ERROR: dwarf_get_xu_section_offset "
+                        "got %s ",et);
+                    esb_append_printf_u(&hmsg,
+                        " on index number %u ",index);
+                    esb_append_printf_u(&hmsg,
+                        " on column number %u ",col);
+                    esb_append_printf_u(&hmsg," of %u columns.",
+                        offsets_count);
+                    simple_err_return_action(res,
+                        esb_get_string(&hmsg));
+                    esb_destructor(&hmsg);
                     dwarf_xu_header_free(xuhdr);
-                    return;
+                    return res;
                 }
-                printf("    [,%2" DW_PR_DUu "] %20s "
+                printf("    [%1" DW_PR_DUu ",%1" DW_PR_DUu "] %20s "
                     "0x%" DW_PR_XZEROS DW_PR_DUx
                     " (%8" DW_PR_DUu ") "
                     "0x%" DW_PR_XZEROS DW_PR_DUx
                     " (%8" DW_PR_DUu ")\n",
+                    index,
                     col,name,
                     off,off,
                     len,len);
@@ -196,4 +323,5 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
         }
     }
     dwarf_xu_header_free(xuhdr);
+    return DW_DLV_OK;
 }

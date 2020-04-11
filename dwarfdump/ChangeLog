@@ -1,3 +1,16 @@
+2020-04-10  David Anderson 
+    * dwarfdump.c: Printing gdb_index and debugfission index
+      code now all returns DW_DLV* in the new style.
+    * globals.h: print_gdb_index() and print_debugfission_index()
+      get updated prototypes.
+    * print_debugfission.c: Code to match the new protypes,
+      passig errors back up.  Revised formatting a bit
+      for accuracy and completeness.
+    * print_die.c: Eliminated the odd use of stderr. All
+      now stdout.
+    * print_gdbindex.c: Improved various error messages.
+      Updated print_gdb_index() to the new return-on-error
+      approach.
 2020-04-07  David Anderson 
     * compiler_info.c: Clarified a comment and
       split a too-long line.
