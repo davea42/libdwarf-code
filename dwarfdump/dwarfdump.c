@@ -1095,8 +1095,18 @@ process_one_file(int fd, int tiedfd,
         }
     }
     if (glflags.gf_abbrev_flag) {
+        Dwarf_Error err = 0;
+        int res = 0;
+     
         reset_overall_CU_error_data();
-        print_abbrevs(dbg);
+        res = print_abbrevs(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the .debug_abbrev section"
+                " had a problem.",res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
     }
     if (glflags.gf_string_flag) {
         Dwarf_Error err = 0;

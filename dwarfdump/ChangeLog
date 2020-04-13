@@ -1,3 +1,7 @@
+2020-04-13  David Anderson 
+    * dwarfdump.c,globals.h, print_abbrevs.c: print_abbrevs()
+      now returns an error properly with the details so
+      dwarfdump can deal with it properly.
 2020-04-10  David Anderson 
     * dwarfdump.c: Printing gdb_index and debugfission index
       code now all returns DW_DLV* in the new style.

@@ -153,8 +153,8 @@ printdupab(struct abbrev_entry_s * lastaep)
     esb_destructor(&msg);
 }
 
-extern void
-print_abbrevs(Dwarf_Debug dbg)
+extern int
+print_abbrevs(Dwarf_Debug dbg,Dwarf_Error* paerr)
 {
     Dwarf_Abbrev ab;
     Dwarf_Unsigned offset = 0;
@@ -165,7 +165,6 @@ print_abbrevs(Dwarf_Debug dbg)
     int abres = 0;
     int tres = 0;
     int acres = 0;
-    Dwarf_Error paerr = 0;
     unsigned loopct = 0;
     char const_integer_string[60];
 
@@ -181,7 +180,7 @@ print_abbrevs(Dwarf_Debug dbg)
         Dwarf_Unsigned length = 0;
 
         abres = dwarf_get_abbrev(dbg, offset, &ab,
-            &length, &abbrev_entry_count, &paerr);
+            &length, &abbrev_entry_count, paerr);
         if (!loopct) {
             /*  Do this here (not before the loop)
                 so the section is loaded and uncompressed
@@ -190,31 +189,30 @@ print_abbrevs(Dwarf_Debug dbg)
             print_secname(dbg,".debug_abbrev");
         }
         if (abres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "Error reading abbreviations", abres, paerr);
-            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-            paerr = 0;
-            return;
+            return abres;
         }
         if (abres == DW_DLV_NO_ENTRY) {
-            return;
+            return abres;
         }
         /*  Here offset is the global offset in .debug_abbrev.
             The abbrev_num is a relatively worthless counter
             of all abbreviations.  */
-        tres = dwarf_get_abbrev_tag(ab, &tag, &paerr);
+        tres = dwarf_get_abbrev_tag(ab, &tag, paerr);
         if (tres == DW_DLV_ERROR) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error(dbg, "Error reading abbreviation Tag", tres, paerr);
+            print_error_and_continue(dbg, 
+                "Error reading abbreviation Tag", tres, *paerr);
+            return tres;
         }
-        tres = dwarf_get_abbrev_code(ab, &abbrev_code, &paerr);
+        tres = dwarf_get_abbrev_code(ab, &abbrev_code, paerr);
         if (tres != DW_DLV_OK) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error_and_continue(dbg, "Error reading abbreviation code",
-                tres, paerr);
-            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            print_error_and_continue(dbg, 
+                "Error reading abbreviation code",
+                tres, *paerr);
             paerr = 0;
             abbrev_code = 0;
+            return tres;
         }
         if (!tag) {
             tagname = "Abbrev 0: null abbrev entry";
@@ -246,12 +244,14 @@ print_abbrevs(Dwarf_Debug dbg)
         /* Process specific TAGs specially. */
         tag_specific_checks_setup(tag,0);
         ++abbrev_num;
-        acres = dwarf_get_abbrev_children_flag(ab, &child_flag, &paerr);
+        acres = dwarf_get_abbrev_children_flag(ab, &child_flag,
+            paerr);
         if (acres == DW_DLV_ERROR) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error(dbg, "Error reading abbreviation children flag", acres,
-                paerr);
-            return;
+            print_error_and_continue(dbg, 
+                "Error reading abbreviation children flag", 
+                acres, *paerr);
+            return acres;
         }
         if (acres == DW_DLV_NO_ENTRY) {
             child_flag = 0;
@@ -312,12 +312,14 @@ print_abbrevs(Dwarf_Debug dbg)
 
             aeres = dwarf_get_abbrev_entry_b(ab, i,
                 dofilter,&attr, &form,&impl_const, &off,
-                &paerr);
+                paerr);
             if (aeres == DW_DLV_ERROR) {
                 dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
                 free(entryarray);
-                print_error(dbg, "Error reading abbreviation entry",
-                    aeres, paerr);
+                print_error_and_continue(dbg, 
+                    "Error reading abbreviation entry",
+                    aeres, *paerr);
+                return aeres;
             }
             aep->ae_number = i;
             aep->ae_attr   = attr;
@@ -426,6 +428,7 @@ print_abbrevs(Dwarf_Debug dbg)
             printf("\n");
         }
     }
+    return DW_DLV_OK;
 }
 
 /*  Abbreviations array info for checking  abbrev tags.
