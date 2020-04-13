@@ -212,8 +212,18 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     }
     ret_abbrev->dab_tag = utmp;
     if (abbrev_ptr >= abbrev_section_end) {
+        dwarfstring m;
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
-        _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_ABBREV_DECODE_ERROR: Ran off the end "
+            "of the abbrev section reading tag, starting at"
+            " abbrev section offset 0x%x",offset);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_ABBREV_DECODE_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     ret_abbrev->dab_has_child = *(abbrev_ptr++);
@@ -233,6 +243,10 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_count = labbr_count;
     if (abbrev_ptr > abbrev_section_end) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_ABBREV_DECODE_ERROR,
+            "DW_DLE_ABBREV_DECODE_ERROR: Ran off the end "
+            "of the abbrev section reading abbrev_entries.");
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
         return DW_DLV_ERROR;
     }
@@ -293,7 +307,7 @@ dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,
     does it return all bits of the uleb attribute
     nor does it return all bits of the uleb form
     value.
-    Ugh. FIXME by providing a better function.
+    See dwarf_get_abbrev_entry_b().
 */
 
 int
@@ -417,7 +431,10 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     }
 
     if (abbrev_ptr >= abbrev_end) {
-        _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_ABBREV_DECODE_ERROR,
+            "DW_DLE_ABBREV_DECODE_ERROR: Ran off the end "
+            "of the abbrev section reading abbrev entries..");
         return DW_DLV_ERROR;
     }
 

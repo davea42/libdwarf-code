@@ -1,3 +1,6 @@
+2020-04-13: David Anderson
+    * dwarf_abbrev.c: Various errors now show additional detail
+      about what exactly is wrong.
 2020-04-11: David Anderson
     * dwarf_die_deliv.c,dwarf_xu_index.c: Each had
       a single trailing space. Removed. 
