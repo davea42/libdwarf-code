@@ -1015,10 +1015,29 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 }else if (mres == DW_DLV_ERROR) {
                     dwarf_dealloc(dbg, cu_die2, DW_DLA_DIE);
                     cu_die2 = 0;
-                    print_error(dbg, "get_macinfo_offset", mres,*pod_err);
+                    print_error_and_continue(dbg,
+                        "ERROR: get_macinfo_offset failed "
+                        "on a CU die",
+                        mres,*pod_err);
+                    return mres;
                 } else {
-                    print_macinfo_by_offset(dbg,offset);
+                    mres = print_macinfo_by_offset(dbg,
+                        offset,pod_err);
+                    if (mres==DW_DLV_ERROR) {
+                        struct esb_s m;
+
+                        esb_constructor(&m);
+                        esb_append_printf_u(&m,
+                            "\nERROR: printing macros for "
+                            " a CU at macinfo offset 0x%x "
+                            " failed ",offset);
+                        print_error_and_continue(dbg,
+                            esb_get_string(&m),
+                            mres,*pod_err);
+                        esb_destructor(&m);
+                    }
                     glflags.current_section_id = oldsection;
+                    mres = DW_DLV_OK;
                 }
             }
             dwarf_dealloc(dbg, cu_die2, DW_DLA_DIE);
@@ -1026,7 +1045,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         } else if (sres == DW_DLV_NO_ENTRY) {
             /* Do nothing I guess. */
         } else {
-            print_error(dbg, "Getting cu_die2", sres, *pod_err);
+            print_error_and_continue(dbg,
+                "ERROR: getting a compilation-unit "
+                "CU die failed ",
+                sres,*pod_err);
+            return sres;
         }
         cu_die2 = 0;
         ++cu_count;

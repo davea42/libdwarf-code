@@ -1,3 +1,15 @@
+2020-04-14  David Anderson 
+    * globals.h: Deleted unused function prototype.
+      Updated print_macinfo_by_offset() to the new
+      style of returning a DW_DLV*.
+    * print_die.c: Now a couple of places we avoid
+      calling print_error() as it exits and deal sensibly
+      with return values.
+    * print_macros.c: The printing of DWARF2,3,4 macro data
+      is now updated to avoid print_error() and to print
+      more details about problems.  And report output
+      now looks more regular.
+    * print_abbrevs.c: Fixed indents and trailing whitespace.
 2020-04-13  David Anderson 
     * dwarfdump.c,globals.h, print_abbrevs.c: print_abbrevs()
       now returns an error properly with the details so

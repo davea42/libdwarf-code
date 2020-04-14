@@ -1097,7 +1097,7 @@ process_one_file(int fd, int tiedfd,
     if (glflags.gf_abbrev_flag) {
         Dwarf_Error err = 0;
         int res = 0;
-     
+
         reset_overall_CU_error_data();
         res = print_abbrevs(dbg,&err);
         if (res == DW_DLV_ERROR) {

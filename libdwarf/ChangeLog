@@ -1,3 +1,10 @@
+2020-04-14: David Anderson
+    * libdwarf2.1.mm: Fixed wording 
+      of dwarf_get_fde_info_for_cfa_reg3_b()
+      which had the 1/0 value of has_more_rows
+      backwards.
+      Corrected several misspellings. 
+    * libdwarf2.1.pdf: Regenerated, v2.91.
 2020-04-13: David Anderson
     * dwarf_abbrev.c: Various errors now show additional detail
       about what exactly is wrong.

@@ -2,26 +2,29 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2018 David Anderson. All rights reserved.
+  Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 
 */
 
@@ -48,15 +51,16 @@ struct macro_counts_s {
     long mc_unknown;
 };
 
-static void
+static int
 print_one_macro_entry_detail(long i,
     char *type,
-    struct Dwarf_Macro_Details_s *mdp)
+    struct Dwarf_Macro_Details_s *mdp,
+    UNUSEDARG Dwarf_Error *err)
 {
     /* "DW_MACINFO_*: section-offset file-index [line] string\n" */
     if (glflags.gf_do_print_dwarf) {
         if (mdp->dmd_macro) {
-            printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
+            printf("%3ld %s: %6" DW_PR_DUu " %4" DW_PR_DSd " [%4"
                 DW_PR_DSd "] \"%s\" \n",
                 i,
                 type,
@@ -64,7 +68,7 @@ print_one_macro_entry_detail(long i,
                 mdp->dmd_fileindex, mdp->dmd_lineno,
                 sanitized(mdp->dmd_macro));
         } else {
-            printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
+            printf("%3ld %s: %6" DW_PR_DUu " %4" DW_PR_DSd " [%4"
                 DW_PR_DSd "] 0\n",
                 i,
                 type,
@@ -72,44 +76,54 @@ print_one_macro_entry_detail(long i,
                 mdp->dmd_fileindex, mdp->dmd_lineno);
         }
     }
-
+    return DW_DLV_OK;
 }
 
-static void
+/*  Nothing in here can actually fail.
+    Returns DW_DLV_OK */
+static int
 print_one_macro_entry(long i,
     struct Dwarf_Macro_Details_s *mdp,
-    struct macro_counts_s *counts)
+    struct macro_counts_s *counts,
+    UNUSEDARG Dwarf_Error *error)
 {
+    int res = 0;
 
     switch (mdp->dmd_type) {
     case 0:
         counts->mc_code_zero++;
-        print_one_macro_entry_detail(i, "DW_MACINFO_type-code-0", mdp);
+        res = print_one_macro_entry_detail(i,
+            "DW_MACINFO_type-code-0", mdp,error);
         break;
 
     case DW_MACINFO_start_file:
         counts->mc_start_file++;
-        print_one_macro_entry_detail(i, "DW_MACINFO_start_file", mdp);
+        res = print_one_macro_entry_detail(i,
+            "DW_MACINFO_start_file", mdp,error);
         break;
 
     case DW_MACINFO_end_file:
         counts->mc_end_file++;
-        print_one_macro_entry_detail(i, "DW_MACINFO_end_file  ", mdp);
+        res = print_one_macro_entry_detail(i,
+            "DW_MACINFO_end_file  ", mdp,error);
         break;
 
     case DW_MACINFO_vendor_ext:
         counts->mc_extension++;
-        print_one_macro_entry_detail(i, "DW_MACINFO_vendor_ext", mdp);
+        res = print_one_macro_entry_detail(i,
+            "DW_MACINFO_vendor_ext", mdp,error);
         break;
 
     case DW_MACINFO_define:
         counts->mc_define++;
-        print_one_macro_entry_detail(i, "DW_MACINFO_define    ", mdp);
+        res = print_one_macro_entry_detail(i,
+            "DW_MACINFO_define    ", mdp,error);
         break;
 
     case DW_MACINFO_undef:
         counts->mc_undef++;
-        print_one_macro_entry_detail(i, "DW_MACINFO_undef     ", mdp);
+        res = print_one_macro_entry_detail(i,
+            "DW_MACINFO_undef     ", mdp,error);
         break;
 
     default:
@@ -119,18 +133,21 @@ print_one_macro_entry(long i,
             esb_constructor(&typeb);
             counts->mc_unknown++;
             esb_append_printf_u(&typeb,
-                "DW_MACINFO_0x%x", mdp->dmd_type);
+                "DW_MACINFO_0x%x, of unknown type", mdp->dmd_type);
             print_one_macro_entry_detail(i,
-                esb_get_string(&typeb), mdp);
+                esb_get_string(&typeb), mdp,error);
             esb_destructor(&typeb);
         }
+        res = DW_DLV_OK;
         break;
     }
+    return res;
 }
 
 /*  print data in .debug_macinfo */
-/*ARGSUSED*/ extern void
-print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
+/*ARGSUSED*/ int
+print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned max = 0;
     Dwarf_Signed count = 0;
@@ -140,22 +157,30 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     struct macro_counts_s counts;
     Dwarf_Unsigned totallen = 0;
     Dwarf_Bool is_primary = TRUE;
-    Dwarf_Error error = 0;
 
     glflags.current_section_id = DEBUG_MACINFO;
 
     /*  No real need to get the real section name, this
         section not used much in modern compilers
         as this definition of macro data (V2-V4)
-        is obsolete as it takes too much space to be
+        is obsolete -- it takes too much space to be
         much used. */
 
     lres = dwarf_get_macro_details(dbg, offset,
-        max, &count, &maclist, &error);
+        max, &count, &maclist, error);
     if (lres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_macro_details", lres, error);
+        struct esb_s m;
+
+        esb_constructor(&m);
+        esb_append_printf_u(&m,
+            "\nERROR: dwarf_get_macro_details() fails on"
+            " offset 0x%x from print_macinfo_by_offset().",offset);
+        simple_err_only_return_action(lres,
+            esb_get_string(&m));
+        esb_destructor(&m);
+        return lres;
     } else if (lres == DW_DLV_NO_ENTRY) {
-        return;
+        return lres;
     }
 
     memset(&counts, 0, sizeof(counts));
@@ -171,24 +196,30 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
         printf("\n");
         printf("compilation-unit .debug_macinfo offset "
             "0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);
-        printf("num name section-offset file-index [line] \"string\"\n");
+        printf("                          sec    file\n");
+        printf("num name                  offset index [line] \"string\"\n");
     }
     for (i = 0; i < count; i++) {
         struct Dwarf_Macro_Details_s *mdp = &maclist[i];
-
-        print_one_macro_entry(i, mdp, &counts);
+        print_one_macro_entry(i, mdp, &counts,error);
     }
 
     if (counts.mc_start_file == 0) {
-        printf("DW_MACINFO file count of zero is invalid DWARF2/3/4\n");
+        printf("ERROR: DW_MACINFO file count of zero is "
+            "invalid DWARF2/3/4\n");
+        glflags.gf_count_major_errors++;
     }
     if (counts.mc_start_file != counts.mc_end_file) {
-        printf("Counts of DW_MACINFO file (%ld) end_file (%ld) "
-            "do not match!.\n",
+        glflags.gf_count_major_errors++;
+        printf("ERROR: Counts of DW_MACINFO start_file (%ld)"
+            " end_file (%ld) "
+            "do not match!. Incorrect DWARF2,3,4.\n",
             counts.mc_start_file, counts.mc_end_file);
     }
     if (counts.mc_code_zero < 1) {
-        printf("Count of zeros in macro group should be non-zero "
+        glflags.gf_count_major_errors++;
+        printf("ERROR: Count of zeros in macro group "
+            "should be non-zero "
             "(1 preferred), count is %ld\n",
             counts.mc_code_zero);
     }
@@ -216,5 +247,5 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     /* ASSERT: type is zero */
 
     dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
-    return;
+    return DW_DLV_OK;
 }

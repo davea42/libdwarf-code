@@ -124,7 +124,6 @@ extern int print_frames (Dwarf_Debug dbg,int want_eh,
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
 extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
-extern void print_macinfo (Dwarf_Debug dbg);
 extern void print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info);
 extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_abbrevs (Dwarf_Debug dbg,Dwarf_Error *);
@@ -209,7 +208,7 @@ extern void DWARF_CHECK_ERROR_PRINT_CU(void);
 extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl);
 
-extern void print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset);
+extern int print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Error *);
 
 void ranges_esb_string_destructor(void);
 void destruct_abbrev_array(void);

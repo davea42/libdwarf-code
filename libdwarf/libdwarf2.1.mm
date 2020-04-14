@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.90, 10 April 2020
+.ds vE Rev 2.91, 14 April 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1367,7 +1367,7 @@ DWARF allows the use of
 (DWARF4 and later)
 to specify that the strings returned are actually
 in UTF-8 format.
-What this means is that if UTF-8 is specfied on
+What this means is that if UTF-8 is specified on
 a particular object it is up to callers that wish
 to print all the characters properly to use language-appropriate
 functions to print Unicode strings appropriately.
@@ -1635,7 +1635,7 @@ By default
 \f(CWlibdwarf\fP
 tracks its allocations and
 \f(CWdwarf_finish()\fP
-cleans up alloctions
+cleans up allocations
 where 
 \f(CWdwarf_dealloc()\fP
 was not called.
@@ -3067,8 +3067,9 @@ This is new in August 2013.
 .P
 The \f(CWdwarf_print_lines()\fP function
 is intended as a helper to programs like \f(CWdwarfdump\fP
-and show some line internal details in a way only the interals
-of libdwarf can show these details.
+and show some line internal details in a way only
+the internals
+of libdwarf can show them.
 But using printf directly in libdwarf means the caller
 has limited control of where the output appears.
 So now the 'printf' output is passed back to the
@@ -5117,7 +5118,7 @@ returns
 \f(CW*dsc_low\fP,
 and
 \f(CW*dsc_high\fP
-to the discriminent values for that index.
+to the discriminant values for that index.
 Valid
 \f(CWdsc_array_index\fP
 values
@@ -5439,7 +5440,7 @@ int dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
    Dwarf_Unsigned * offset_for_branch,
    Dwarf_Error*     error);
 .DE
-On sucess
+On success
 The function
 \f(CWdwarf_get_location_op_value_c()\fP
 returns
@@ -6163,7 +6164,7 @@ If a line table is actually a two-level tables
 \f(CW*linebuf\fP is set to point to an array of
 Logicals lines.
 \f(CW*linecount\fP is set to the number of Logicals.
-\f(CW*linebuf_actals\fP is set to point to an array of
+\f(CW*linebuf_actuals\fP is set to point to an array of
 Actuals lines.
 \f(CW*linecount_actuals\fP is set to the number of Actuals.
 
@@ -10567,7 +10568,7 @@ The two new arguments may be passed in as NULL
 if their values are not needed by the caller.
 .P
 For a tool just wanting the frame information for a single
-pc_value this interface is no more useful nore more
+pc_value this interface is no more useful or
 efficient than
 \f(CWdwarf_get_fde_info_for_cfa_reg3()\fP.
 .P
@@ -10586,20 +10587,20 @@ the
 and
 \f(CWsubsequent_pc\fP
 arguments let the caller know whether there
-are further changes and if so at what pc value.
+are further rows and if so at what pc value.
 
 .P
 If
 \f(CWhas_more_rows\fP
 is non-null
-then 0 is returned through the pointer
+then 1 is returned through the pointer
 if, for the
 \f(CWpc_requested\fP
 there is frame data for addresses after
 \f(CWpc_requested\fP
 in the frame.
 And if there are no more rows in the frame data then
-1 is set through the
+0 is set through the
 \f(CWhas_more_rows\fP pointer.
 
 .P
@@ -10976,7 +10977,7 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
     Dwarf_Bool     filter_outliers,
     Dwarf_Unsigned * returned_attr_num,
     Dwarf_Unsigned * returned_form,
-    Dwarf_Signed   * returned_implict_const,
+    Dwarf_Signed   * returned_implicit_const,
     Dwarf_Off      * offset,
     Dwarf_Error    * error)\fP
 .DE
@@ -11028,7 +11029,7 @@ only if
 \f(CWreturned_attr_num\fP
 and
 and \f(CWreturned_form\fP
-are both legitmate values.
+are both legitimate values.
 .P
 If successful,
 \f(CWdwarf_get_abbrev_entry_b()\fP returns
@@ -11049,7 +11050,7 @@ The location pointed to by
 to the form of the attribute (example:
 \f(CWDW_FORM_string\fP).
 The location pointed to by 
-\f(CWreturned_implict_const\fP
+\f(CWreturned_implicit_const\fP
 is set to the implicit const value
 if and only if the FORM returned
 is 
@@ -13111,7 +13112,7 @@ If successful, the function returns DW_DLV_OK
 and sets the following arguments through the pointers:
 .P
 \f(CWtypename\fP is set to the string  \f(CWtu\fP
-or  \f(CWcu\fP to indcate the index is of a type unit
+or  \f(CWcu\fP to indicate the index is of a type unit
 or a compilation unit, respectively.
 .P
 \f(CWsectionname\fP is set to name of the object
@@ -13243,7 +13244,7 @@ this column applies to. For example, if the value is
 \f(CWDW_SECT_INFO\fP
 (1) the column came from  a .debug_info.dwo section.
 See the table of \f(CWDW_SECT_\fP identifiers and
-asigned numbers in DWARF5.
+assigned numbers in DWARF5.
 .P
 \f(CWname\fP is set to the applicable spelling of the
 section identifier, for example \f(CWDW_SECT_INFO\fP.
