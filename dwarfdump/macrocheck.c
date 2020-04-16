@@ -225,6 +225,7 @@ macro_walk_find_lowest(const void *nodep,const DW_VISIT  which,
     }
 }
 
+/* Never returns DW_DLV_ERROR */
 int
 get_next_unprinted_macro_offset(void **tree, Dwarf_Unsigned * off)
 {

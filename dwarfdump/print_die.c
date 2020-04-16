@@ -984,23 +984,70 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             /*  Traverse the line section if in check mode
                 or if line-printing requested */
             if (glflags.gf_line_flag || glflags.gf_check_decl_file) {
+                int plnres = 0;
 
                 int oldsection = glflags.current_section_id;
-                print_line_numbers_this_cu(dbg, cu_die2);
+                plnres = print_line_numbers_this_cu(dbg, 
+                    cu_die2,pod_err);
+                if (plnres == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg,
+                        "ERROR: Printing line numbers for "
+                        "the current CU failed. ",
+                        plnres,*pod_err);
+                    dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+                    *pod_err = 0;
+                }
                 glflags.current_section_id = oldsection;
             }
             if (glflags.gf_macro_flag || glflags.gf_check_macros) {
+                int mres = 0;
                 Dwarf_Bool in_import_list = FALSE;
                 Dwarf_Unsigned import_offset = 0;
                 int oldsection = glflags.current_section_id;
 
-                print_macros_5style_this_cu(dbg, cu_die2,
-                    in_import_list,import_offset);
+                mres = print_macros_5style_this_cu(dbg, cu_die2,
+                    in_import_list,import_offset,pod_err);
+                if (mres == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg,
+                        "ERROR: Printing DWARF5 macros "
+                        "for the current CU failed. ",
+                        mres,*pod_err);
+                    dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+                    *pod_err = 0;
+                }
                 in_import_list = TRUE;
-                while(get_next_unprinted_macro_offset(&macro_check_tree,
-                    &import_offset) == DW_DLV_OK) {
-                    print_macros_5style_this_cu(dbg, cu_die2,
-                        in_import_list,import_offset);
+                if (mres == DW_DLV_OK) {
+                    for(;;) {
+
+                        /* Never returns DW_DLV_ERROR */
+                        mres = get_next_unprinted_macro_offset(
+                           &macro_check_tree, &import_offset);
+                        if (mres == DW_DLV_NO_ENTRY) {
+                           break;
+                        }
+                        mres = print_macros_5style_this_cu(dbg, 
+                            cu_die2,
+                           in_import_list,import_offset,pod_err);
+                        if (mres == DW_DLV_ERROR) {
+                            struct esb_s m;
+
+                            esb_constructor(&m);
+                            esb_append_printf_u(&m,
+                                "ERROR: Printing DWARF5 macros "
+                                " at offset 0x%x "
+                                "for the current CU failed. ",
+                                import_offset);
+                            print_error_and_continue(dbg,
+                                esb_get_string(&m),
+                                mres,*pod_err);
+                            dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+                            *pod_err = 0;
+                            esb_destructor(&m);
+                            break;
+                        }
+
+
+                    }
                 }
                 glflags.current_section_id = oldsection;
             }
@@ -1013,13 +1060,14 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 if (mres == DW_DLV_NO_ENTRY) {
                     /* By far the most likely result. */
                 }else if (mres == DW_DLV_ERROR) {
-                    dwarf_dealloc(dbg, cu_die2, DW_DLA_DIE);
                     cu_die2 = 0;
                     print_error_and_continue(dbg,
-                        "ERROR: get_macinfo_offset failed "
+                        "ERROR: get_macinfo_offset for "
+                        "DWARF 2,3,or 4 failed "
                         "on a CU die",
                         mres,*pod_err);
-                    return mres;
+                    dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+                    *pod_err = 0;
                 } else {
                     mres = print_macinfo_by_offset(dbg,
                         offset,pod_err);
@@ -1035,12 +1083,13 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                             esb_get_string(&m),
                             mres,*pod_err);
                         esb_destructor(&m);
+                        dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+                        *pod_err = 0;
                     }
                     glflags.current_section_id = oldsection;
-                    mres = DW_DLV_OK;
+                    dwarf_dealloc(dbg, cu_die2, DW_DLA_DIE);
                 }
             }
-            dwarf_dealloc(dbg, cu_die2, DW_DLA_DIE);
             cu_die2 = 0;
         } else if (sres == DW_DLV_NO_ENTRY) {
             /* Do nothing I guess. */
@@ -1049,7 +1098,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 "ERROR: getting a compilation-unit "
                 "CU die failed ",
                 sres,*pod_err);
-            return sres;
+            dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+            *pod_err = 0;
         }
         cu_die2 = 0;
         ++cu_count;
@@ -1646,9 +1696,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     if (atres == DW_DLV_ERROR) {
         dealloc_all_die_stack(dbg,die);
         dealloc_all_srcfiles(dbg,srcfiles,cnt);
-        print_error(dbg,
-            "A call to dwarf_attrlist failed. Cannot continue",
-            atres, podie_err);
+        /* FIXME asap This call never returns */
+        print_error(dbg,"A call to dwarf_attrlist failed. "
+            "Cannot continue", atres,podie_err);
     } else if (atres == DW_DLV_NO_ENTRY) {
         /* indicates there are no attrs.  It is not an error. */
         atcnt = 0;

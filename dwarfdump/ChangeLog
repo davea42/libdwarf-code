@@ -1,3 +1,16 @@
+2020-04-16  David Anderson 
+    * globals.h:prototypes of print_line_numbers_this_cu and
+      print_macros_5style_this_cu changed to the new style
+      with int return and Dwarf_Error *argument.
+    * dwarf_macrocheck.c: Added a comment line.
+    * print_die.c(print_one_die_section): Calls the
+      revised section prints per-CU- so errors are
+      passed back and dealt with.
+    * print_lines.c: Now functions return int instead
+      of print_error and exit.  Various errors
+      get more detailed output too. 
+    * print_macro.c: Now with the new style of returning
+      errors up to caller.
 2020-04-14  David Anderson 
     * globals.h: Deleted unused function prototype.
       Updated print_macinfo_by_offset() to the new

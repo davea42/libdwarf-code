@@ -115,7 +115,8 @@ extern int simple_err_only_return_action(int res,const char *msg);
 extern void print_error_and_continue (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 extern void print_error (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 
-extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
+extern int print_line_numbers_this_cu (Dwarf_Debug dbg, 
+    Dwarf_Die in_die,Dwarf_Error *err);
 
 extern int print_frames (Dwarf_Debug dbg,int want_eh,
     struct dwconf_s *,
@@ -225,8 +226,8 @@ extern int print_debugfission_index(Dwarf_Debug dbg,const char *type,    Dwarf_E
 void clean_up_die_esb(void);
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
-void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
-    Dwarf_Bool in_import_list, Dwarf_Unsigned offset);
+int print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    Dwarf_Bool in_import_list, Dwarf_Unsigned offset,Dwarf_Error *);
 
 /* Detailed attributes encoding space */
 int print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error *);
