@@ -459,9 +459,9 @@ static int print_actuals_and_locals(Dwarf_Debug dbg,
     call.  */
 static int
 _dwarf_internal_printlines(Dwarf_Die die,
-    Dwarf_Error * error,
     int * err_count_out,
-    int only_line_header)
+    int only_line_header,
+    Dwarf_Error * error)
 {
     /*  This pointer is used to scan the portion of the .debug_line
         section for the current cu. */
@@ -916,9 +916,9 @@ dwarf_print_lines(Dwarf_Die die,
     int *error_count)
 {
     int only_line_header = 0;
-    int res = _dwarf_internal_printlines(die, error,
+    int res = _dwarf_internal_printlines(die,
         error_count,
-        only_line_header);
+        only_line_header,error);
     return res;
 }
 int
@@ -926,9 +926,9 @@ _dwarf_print_lines(Dwarf_Die die, Dwarf_Error * error)
 {
     int only_line_header = 0;
     int err_count = 0;
-    int res = _dwarf_internal_printlines(die, error,
+    int res = _dwarf_internal_printlines(die,
         &err_count,
-        only_line_header);
+        only_line_header,error);
     /* No way to get error count back in this interface */
     return res;
 }
@@ -937,16 +937,31 @@ _dwarf_print_lines(Dwarf_Die die, Dwarf_Error * error)
    this gets some of the issues noted with .debug_line,
    but not all. Call dwarf_print_lines() to get all issues.
    Intended for apps like dwarfdump.
+   dwarf_check_lineheader_b() new 14 April 2020.
 */
-void
-dwarf_check_lineheader(Dwarf_Die die, int *err_count_out)
+int
+dwarf_check_lineheader_b(Dwarf_Die die, int *err_count_out,
+    Dwarf_Error *err)
 {
-    Dwarf_Error err = 0;
     int res = 0;
 
     int only_line_header = 1;
-    res = _dwarf_internal_printlines(die, &err,err_count_out,
-        only_line_header);
+    res = _dwarf_internal_printlines(die,err_count_out,
+        only_line_header,err);
+    return res;
+}
+
+/*  This is ugly, no way to detect errors. They get ignored.
+    see dwarf_check_lineheader_b() above. */
+void
+dwarf_check_lineheader(Dwarf_Die die, int *err_count_out)
+{
+    int res = 0;
+    Dwarf_Error err = 0;
+
+    int only_line_header = 1;
+    res = _dwarf_internal_printlines(die,err_count_out,
+        only_line_header,&err);
     if (res == DW_DLV_ERROR) {
         Dwarf_CU_Context c = 0;
         Dwarf_Debug dbg = 0;

@@ -3276,8 +3276,15 @@ dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
     about some compiler errors we detect.
     We return the count of detected errors through the
     pointer.
+
+    Use dwarf_check_lineheader_b() (new 14 April 2020)
+    in place of dwarf_check_lineheader().
 */
-void dwarf_check_lineheader(Dwarf_Die /*cu_die*/,int *errcount_out);
+int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
+    int */*errcount_out*/,
+    Dwarf_Error * /*error*/);
+void dwarf_check_lineheader(Dwarf_Die /*cu_die*/,
+    int * /*errcount_out*/);
 
 /*  dwarf_ld_sort_lines helps SGI IRIX ld
     rearrange lines in .debug_line in a .o created with a text

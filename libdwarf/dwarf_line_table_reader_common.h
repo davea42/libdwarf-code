@@ -613,8 +613,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             directories_count > 0) {
             free(format_values);
             format_values = 0;
-            _dwarf_error(dbg, err,
-                DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH);
+            _dwarf_error_string(dbg, err,
+                DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH,
+                "DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH"
+                ": format count is zero yet directories count > 0");
             return (DW_DLV_ERROR);
         }
         memset(line_context->lc_include_directories, 0,
@@ -1159,9 +1161,19 @@ read_line_table_program(Dwarf_Debug dbg,
                 opcode % line_context->lc_line_range;
             if ((Dwarf_Signed)regs.lr_line < 0) {
                 /* Something is badly wrong */
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_i(&m,
+                    "\nERROR: DW_DLE_LINE_TABLE_LINENO_ERROR "
+                    "The line number computes as %d "
+                    "and negative line numbers "
+                    "are not correct.",(Dwarf_Signed)regs.lr_line);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_LINE_TABLE_LINENO_ERROR,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
                 regs.lr_line = 0;
-                _dwarf_error(dbg, error,
-                    DW_DLE_LINE_TABLE_LINENO_ERROR);
                 return DW_DLV_ERROR;
             }
 #ifdef PRINTING_DETAILS
@@ -1353,11 +1365,24 @@ read_line_table_program(Dwarf_Debug dbg,
 #endif /* PRINTING_DETAILS */
                 regs.lr_line = regs.lr_line + advance_line;
                 if ((Dwarf_Signed)regs.lr_line < 0) {
-                    /* Something is badly wrong */
-                    regs.lr_line = 0;
-                    _dwarf_error(dbg, error,
-                        DW_DLE_LINE_TABLE_LINENO_ERROR);
-                    return DW_DLV_ERROR;
+                    dwarfstring m;
+
+                    dwarfstring_constructor(&m);
+                    dwarfstring_append_printf_i(&m,
+                        "\nERROR: DW_DLE_LINE_TABLE_LINENO_ERROR"
+                        " The line number is %d "
+                        "and negative line numbers after "
+                        "DW_LNS_ADVANCE_LINE ",
+                        (Dwarf_Signed)regs.lr_line);
+                    dwarfstring_append_printf_i(&m,
+                        " of %d "
+                        "are not correct.",stmp);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_LINE_TABLE_LINENO_ERROR,
+                        dwarfstring_string(&m));
+                     dwarfstring_destructor(&m);
+                     regs.lr_line = 0;
+                     return DW_DLV_ERROR;
                 }
                 }
                 break;
@@ -1546,11 +1571,25 @@ read_line_table_program(Dwarf_Debug dbg,
                     advance_line = (Dwarf_Signed) stmp;
                     regs.lr_line = regs.lr_line + advance_line;
                     if ((Dwarf_Signed)regs.lr_line < 0) {
-                        /* Something is badly wrong */
-                        regs.lr_line = 0;
-                        _dwarf_error(dbg, error,
-                            DW_DLE_LINE_TABLE_LINENO_ERROR);
-                        return DW_DLV_ERROR;
+                        dwarfstring m;
+
+                        dwarfstring_constructor(&m);
+                        dwarfstring_append_printf_i(&m,
+                            "\nERROR: DW_DLE_LINE_TABLE_LINENO_ERROR"
+                            " The line number is %d "
+                            "and negative line numbers after "
+                            "DW_LNS_set_subprogram ",
+                            (Dwarf_Signed)regs.lr_line);
+                        dwarfstring_append_printf_i(&m,
+                                " of %d applied "
+                            "are not correct.",stmp);
+                        _dwarf_error_string(dbg, error,
+                            DW_DLE_LINE_TABLE_LINENO_ERROR,
+                            dwarfstring_string(&m));
+                         dwarfstring_destructor(&m);
+                         regs.lr_line = 0;
+                         return DW_DLV_ERROR;
+
                     }
                     if (regs.lr_line >= 1 &&
                         regs.lr_line - 1 < logicals_count) {

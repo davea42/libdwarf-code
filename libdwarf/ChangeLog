@@ -1,3 +1,12 @@
+2020-04-16: David Anderson
+    * dwarf_line_table_reader_common.h: more detailed error
+      messages in a few cases.
+    * dwarf_print_lines.c: Added dwarf_check_lineheader_b()
+      as dwarf_check_lineheader() did not return error
+      details.
+    * libdwarf.h.in: defined prototype for 
+      dwarf_check_lineheader_b();
+    * generated_libdwarf.h.in: regenerated.
 2020-04-14: David Anderson
     * libdwarf2.1.mm: Fixed wording 
       of dwarf_get_fde_info_for_cfa_reg3_b()
