@@ -1066,8 +1066,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                             esb_destructor(&m);
                             break;
                         }
-
-
                     }
                 }
                 glflags.current_section_id = oldsection;
@@ -1081,7 +1079,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 if (mres == DW_DLV_NO_ENTRY) {
                     /* By far the most likely result. */
                 }else if (mres == DW_DLV_ERROR) {
-                    cu_die2 = 0;
                     print_error_and_continue(dbg,
                         "ERROR: get_macinfo_offset for "
                         "DWARF 2,3,or 4 failed "
@@ -1108,8 +1105,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         *pod_err = 0;
                     }
                     glflags.current_section_id = oldsection;
-                    dwarf_dealloc(dbg, cu_die2, DW_DLA_DIE);
                 }
+            }
+            if (cu_die2) {
+                dwarf_dealloc(dbg,cu_die2,DW_DLA_DIE);
             }
             cu_die2 = 0;
         } else if (sres == DW_DLV_NO_ENTRY) {

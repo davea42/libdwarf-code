@@ -1097,6 +1097,7 @@ process_one_file(int fd, int tiedfd,
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "printing pubnames data had a problem ",res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
         }
     }
     if (glflags.gf_loc_flag) {

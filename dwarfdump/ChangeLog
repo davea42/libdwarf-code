@@ -11,6 +11,7 @@
       the standard form returning a DW_DLV* and no 
       longer call print_error
       so returns on error, does not exit().
+      Also fixed a lack of a dealloc of cu_die2 in print_die.c.
     * print_macro.c: Deleted dwarf_dealloc() that are
       no longer appropriate given we don't
       just call exit(). These were not allocated
