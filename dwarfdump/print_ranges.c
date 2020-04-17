@@ -2,26 +2,29 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2018 David Anderson. All rights reserved.
+  Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 
 */
 
@@ -118,14 +121,15 @@ print_ranges(Dwarf_Debug dbg,
 /*  Extracted this from print_range_attribute() to isolate the check of
     the range list.
 */
-static void
+static int
 check_ranges_list(Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Off die_off,
     Dwarf_Die cu_die,
     Dwarf_Unsigned original_off,
     Dwarf_Ranges *rangeset,
     Dwarf_Signed rangecount,
-    Dwarf_Unsigned bytecount)
+    Dwarf_Unsigned bytecount,
+    Dwarf_Error *err)
 {
     Dwarf_Unsigned off = original_off;
     Dwarf_Signed index = 0;
@@ -135,7 +139,6 @@ check_ranges_list(Dwarf_Debug dbg,
     Dwarf_Bool bError = FALSE;
     Dwarf_Half elf_address_size = 0;
     Dwarf_Addr elf_max_address = 0;
-    Dwarf_Error rlerr = 0;
     static boolean do_print = TRUE;
     const char *sec_name = 0;
     struct esb_s truename;
@@ -145,7 +148,7 @@ check_ranges_list(Dwarf_Debug dbg,
     get_true_section_name(dbg,".debug_ranges",
         &truename,FALSE);
     sec_name = esb_get_string(&truename);
-    get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,&rlerr);
+    get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,err);
 
     /* Ignore last entry, is the end-of-list */
     for (index = 0; index < rangecount - 1; index++) {
@@ -188,10 +191,14 @@ check_ranges_list(Dwarf_Debug dbg,
                         /*  Update DIEs offset just for printing */
                         int dioff_res = dwarf_die_offsets(cu_die,
                             &glflags.DIE_overall_offset,
-                            &glflags.DIE_offset,&rlerr);
+                            &glflags.DIE_offset,err);
                         if (dioff_res != DW_DLV_OK) {
-                            print_error(dbg, "dwarf_die_offsets",dioff_res,
-                                rlerr);
+                            simple_err_return_msg_either_action(
+                                dioff_res,
+                                "Call to dwarf_die_offsets failed "
+                                "for the CU DIE."
+                                "in printing ranges");
+                            return dioff_res;
                         }
                         printf(
                             "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -235,6 +242,7 @@ check_ranges_list(Dwarf_Debug dbg,
         do_print = FALSE;
     }
     esb_destructor(&truename);
+    return DW_DLV_OK;
 }
 
 /*  Records information about compilers (producers) found in the
@@ -309,8 +317,8 @@ record_range_array_info_entry(Dwarf_Off die_off,Dwarf_Off range_off)
 }
 
 /*  Now that we are at the end of the CU, check the range lists */
-void
-check_range_array_info(Dwarf_Debug dbg)
+int
+check_range_array_info(Dwarf_Debug dbg,Dwarf_Error * err)
 {
     if (range_array && range_array_count) {
         /*  Traverse the range array and for each entry:
@@ -319,9 +327,8 @@ check_range_array_info(Dwarf_Debug dbg)
         Dwarf_Off original_off = 0;
         Dwarf_Off die_off = 0;
         Dwarf_Unsigned index = 0;
-        Dwarf_Die cu_die;
-        int res;
-        Dwarf_Error ra_err = 0;
+        Dwarf_Die cu_die = 0;
+        int res = 0;
 
         /*  In case of errors, the correct DIE offset should be
             displayed. At this point we are at the end of the PU */
@@ -336,15 +343,33 @@ check_range_array_info(Dwarf_Debug dbg)
             die_off = range_array[index].die_off;
             original_off = range_array[index].range_off;
 
-            res = dwarf_offdie(dbg,die_off,&cu_die,&ra_err);
+            res = dwarf_offdie(dbg,die_off,&cu_die,err);
             if (res != DW_DLV_OK) {
-                print_error(dbg,"dwarf_offdie",res,ra_err);
+                struct esb_s m;
+
+                esb_constructor(&m);
+                esb_append_printf_u(&m,
+                    "Call to dwarf_offdie failed "
+                    "getting the CU die from offset "
+                    " 0x" DW_PR_XZEROS DW_PR_DUx
+                    "in checking ranges",die_off);
+                simple_err_return_msg_either_action(
+                    res,
+                    esb_get_string(&m));
+                esb_destructor(&m);
+                return res;
             }
             res = dwarf_get_ranges_a(dbg,original_off,cu_die,
-                &rangeset,&rangecount,&bytecount,&ra_err);
+                &rangeset,&rangecount,&bytecount,err);
             if (res == DW_DLV_OK) {
-                check_ranges_list(dbg,die_off,cu_die,original_off,
-                    rangeset,rangecount,bytecount);
+                res = check_ranges_list(dbg,die_off,
+                    cu_die,original_off,
+                    rangeset,rangecount,bytecount,err);
+                if (res != DW_DLV_OK) {
+                    dwarf_dealloc(dbg,cu_die,DW_DLA_DIE); 
+                    reset_range_array_info();
+                    return res;
+                }
                 dwarf_dealloc(dbg,rangeset,DW_DLA_RANGES);
             }
             dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
@@ -354,4 +379,5 @@ check_range_array_info(Dwarf_Debug dbg)
         /*  Point back to the end of the PU */
         glflags.DIE_overall_offset = DIE_overall_offset_bak;
     }
+    return DW_DLV_OK;
 }

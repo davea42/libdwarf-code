@@ -1,3 +1,22 @@
+2020-04-17  David Anderson 
+    * dwarfdump.c: Clarified some error messages and
+      changed the should_skip_this_cu() from a predicate
+      function to one in the standard form returning
+      a DW_DLV_* value with a boolean pointer and a Dwarf_Error*
+    * globals.h: Now should_skip_this_cu and 
+      print_section_groups_data are in standard form for
+      calling libdwarf functions, returning a DW_DLV*.
+    * print_die.c, print_aranges.c, print_pubmames.c,
+      print_ranges.c,print_section_groups.c: Now with 
+      the standard form returning a DW_DLV* and no 
+      longer call print_error
+      so returns on error, does not exit().
+    * print_macro.c: Deleted dwarf_dealloc() that are
+      no longer appropriate given we don't
+      just call exit(). These were not allocated
+      by the function that was dealloc-ing so
+      removed the deallocs here: Let higher levels
+      do it when we return the DW_DLV_ERROR.
 2020-04-16  David Anderson 
     * globals.h:prototypes of print_line_numbers_this_cu and
       print_macros_5style_this_cu changed to the new style

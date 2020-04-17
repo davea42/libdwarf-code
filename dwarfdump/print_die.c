@@ -813,7 +813,18 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         dieprint_cu_goffset = glflags.DIE_overall_offset;
 
         if (glflags.gf_cu_name_flag) {
-            if (should_skip_this_cu(dbg,cu_die)) {
+             boolean should_skip = FALSE;
+             int skres = 0;
+             Dwarf_Error skerr = 0;
+
+             /* always sets should_skip, even if error */
+             skres = should_skip_this_cu(dbg,
+                 &should_skip,cu_die, &skerr);
+             if (skres == DW_DLV_ERROR) {
+                 dwarf_dealloc(dbg,skerr,DW_DLA_ERROR);
+                 *pod_err = 0;
+             }
+            if (should_skip) {
                 dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
                 cu_die = 0;
                 ++cu_count;
@@ -978,7 +989,17 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
 
             /* Check the range array if in checl mode */
             if ( glflags.gf_check_ranges) {
-                check_range_array_info(dbg);
+                int rares = 0;
+                Dwarf_Error raerr = 0;
+
+                rares = check_range_array_info(dbg,&raerr);
+                if (rares == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg,
+                        "ERROR: range array checks for "
+                        "the current CU failed. ",
+                        rares,raerr);
+                    dwarf_dealloc(dbg,raerr,DW_DLA_ERROR);
+                }
             }
 
             /*  Traverse the line section if in check mode

@@ -43,41 +43,43 @@
 #include "print_sections.h"
 
 
-static void
+static int
 do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     Dwarf_Off cu_die_offset,Dwarf_Bool first_cu,
-    Dwarf_Off cu_die_offset_prev, Dwarf_Die cu_die )
+    Dwarf_Off cu_die_offset_prev, Dwarf_Die cu_die,
+    Dwarf_Error *err )
 {
     int dres = 0;
     Dwarf_Off cuhdroff = 0;
     Dwarf_Off cudieoff3 = 0;
-    Dwarf_Error checking_err = 0;
     /*  .debug_types has no address ranges, only .debug_info[.dwo]
         has them.*/
     int is_info = 1;
 
 
     dres = dwarf_get_arange_cu_header_offset(
-        arange_buf[i],&cuhdroff,&checking_err);
+        arange_buf[i],&cuhdroff,err);
     if (dres == DW_DLV_OK) {
         Dwarf_Off cudieoff2 = 0;
 
         /* Get the CU offset for easy error reporting */
         if (first_cu || cu_die_offset != cu_die_offset_prev) {
             dres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
-                &glflags.DIE_offset,&checking_err);
+                &glflags.DIE_offset,err);
             glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
             glflags.DIE_CU_offset = glflags.DIE_offset;
             if (dres != DW_DLV_OK) {
-                print_error(dbg, "dwarf_die_offsets", dres, checking_err);
+                print_error_and_continue(dbg, 
+                   "ERROR: reading dwarf_die_offsets", dres, *err);
+                return dres;
             }
         }
         dres = dwarf_get_cu_die_offset_given_cu_header_offset_b(
-            dbg,cuhdroff,is_info,&cudieoff2,&checking_err);
+            dbg,cuhdroff,is_info,&cudieoff2,err);
         if (dres == DW_DLV_OK) {
             /* Get the CU offset for easy error reporting */
             dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
-                &glflags.DIE_offset,&checking_err);
+                &glflags.DIE_offset,err);
             glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
             glflags.DIE_CU_offset = glflags.DIE_offset;
             DWARF_CHECK_COUNT(aranges_result,1);
@@ -91,13 +93,21 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                     " gets wrong offset");
             }
         } else {
-            print_error(dbg, "dwarf_get_cu_die_offset_given...", dres, checking_err);
+            print_error_and_continue(dbg,
+                "ERROR from arange checking "
+                "dwarf_get_cu_die_offset_given... fails", 
+                dres, *err);
+            return dres;
         }
     } else {
-        print_error(dbg, "dwarf_get_arange_cu_header_offset", dres, checking_err);
+        print_error_and_continue(dbg, 
+            "ERROR: from arange checking "
+            "dwarf_get_arange_cu_header_offset fails", 
+                dres, *err);
+        return dres;
     }
     dres = dwarf_get_cu_die_offset(arange_buf[i],&cudieoff3,
-        &checking_err);
+        err);
     if (dres == DW_DLV_OK) {
         DWARF_CHECK_COUNT(aranges_result,1);
         if (cudieoff3 != cu_die_offset) {
@@ -111,9 +121,13 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 " gets wrong offset");
         }
     } else {
-        print_error(dbg, "dwarf_get_cu_die_offset failed ",
-            dres,checking_err);
+        print_error_and_continue(dbg, 
+            "ERROR: from arange checking "
+            "dwarf_get_cu_die_offset fails",
+            dres,*err);
+        return dres;
     }
+    return DW_DLV_OK;
 }
 
 static void
@@ -225,7 +239,18 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     return dres;
                 }
                 if (glflags.gf_cu_name_flag) {
-                    if (should_skip_this_cu(dbg,cu_die)) {
+                    boolean should_skip = FALSE;
+                    int skres = 0;
+                    Dwarf_Error skerr = 0;
+
+                    /*  Always sets should_skip */
+                    skres = should_skip_this_cu(dbg,
+                        &should_skip,cu_die, &skerr);
+                    if (skres == DW_DLV_ERROR) {
+                        dwarf_dealloc(dbg,skerr,DW_DLA_ERROR);
+                        skerr = 0;
+                    }
+                    if (should_skip) {
                         aranges_dealloc_now(dbg,count,arange_buf);
                         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                         continue;
@@ -250,9 +275,14 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 }
 
                 if (glflags.gf_check_aranges) {
-                    do_checking(dbg,arange_buf,i,
+                    int cres = 0;
+
+                    cres = do_checking(dbg,arange_buf,i,
                         cu_die_offset,first_cu,
-                        cu_die_offset_prev,cu_die);
+                        cu_die_offset_prev,cu_die,ga_err);
+                    if (cres == DW_DLV_ERROR) {
+                        return cres;
+                    }
                 }
                 /*  Get the offset of the cu header itself in the
                     section, but not for end-entries. */

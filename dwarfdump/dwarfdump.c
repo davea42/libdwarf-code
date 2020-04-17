@@ -57,6 +57,7 @@
 #include "sanitized.h"
 #include "tag_common.h"
 #include "addrmap.h"
+#include "naming.h" /* for get_FORM_name() */
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include "command_options.h"
 #include "compiler_info.h"
@@ -896,19 +897,21 @@ process_one_file(int fd, int tiedfd,
     if (dres == DW_DLV_NO_ENTRY) {
         if (glflags.group_number > 0) {
             printf("No DWARF information present in %s "
-                "for section group %d \n", file_name,glflags.group_number);
+                "for section group %d \n", 
+                file_name,glflags.group_number);
         } else {
             printf("No DWARF information present in %s\n",file_name);
         }
         return dres;
     }
-    if (dres != DW_DLV_OK) {
+    if (dres == DW_DLV_ERROR) {
         print_error(dbg, title, dres, onef_err);
     }
 
     dres = dwarf_add_file_path(dbg,file_name,&onef_err);
     if (dres != DW_DLV_OK) {
-        print_error(dbg,"Unable to add file path to object file data", dres, onef_err);
+        print_error(dbg,"Unable to add file path "
+            "to object file data", dres, onef_err);
     }
 
     if (tiedelf || tiedfd >= 0) {
@@ -928,11 +931,13 @@ process_one_file(int fd, int tiedfd,
             return dres;
         }
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "dwarf_elf_init on tied_file", dres, onef_err);
+            print_error(dbg, "dwarf_elf_init on tied_file", 
+            dres, onef_err);
         }
         dres = dwarf_add_file_path(dbgtied,tied_file_name,&onef_err);
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "Unable to add tied file name to tied file",
+            print_error(dbg, "Unable to add tied file name "
+                "to tied file",
                 dres, onef_err);
         }
     }
@@ -962,7 +967,8 @@ process_one_file(int fd, int tiedfd,
     /*  Ok for dbgtied to be NULL. */
     dres = dwarf_set_tied_dbg(dbg,dbgtied,&onef_err);
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_set_tied_dbg() failed", dres, onef_err);
+        print_error(dbg, "dwarf_set_tied_dbg() failed",
+            dres, onef_err);
     }
 
     /* Get .text and .debug_ranges info if in check mode */
@@ -1002,7 +1008,17 @@ process_one_file(int fd, int tiedfd,
     }
 
     if (glflags.gf_section_groups_flag) {
-        print_section_groups_data(dbg);
+        int res = 0;
+        Dwarf_Error err = 0;
+
+        res = print_section_groups_data(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing section groups had a problem.",
+                res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
         /*  If groupnum > 2 this turns off some
             of the gf_flags here so we don't print
             section names of things we do not
@@ -1537,12 +1553,39 @@ print_error_and_continue(Dwarf_Debug dbg,
 }
 /*  ==============END of dwarfdump error print functions. */
 
-/*  Predicate function. Returns 'true' if the CU should
-    be skipped as the DW_AT_name of the CU
+static boolean
+is_a_string_form(int sf)
+{ 
+    switch(sf){
+        case DW_FORM_string:
+        case DW_FORM_GNU_strp_alt:
+        case DW_FORM_strp_sup:
+        case DW_FORM_GNU_str_index:
+        case DW_FORM_strx:
+        case DW_FORM_strx1:
+        case DW_FORM_strx2:
+        case DW_FORM_strx3:
+        case DW_FORM_strx4:
+        case DW_FORM_strp:
+        case DW_FORM_line_strp:
+            /*  There is some hope we can actually get
+                the string itself, depending on
+                other factors */
+            return TRUE;
+    }
+    /* Nope. No string is possible */
+    return FALSE;
+}
+/*  Always sets the return argument *should_skip,
+    whether it returns DW_DLV_NO_ENTRY or
+    DW_DLV_ERROR or DW_DLV_OK.
+    determines if the CU should be
+    skipped as the DW_AT_name of the CU
     does not match the command-line-supplied
-    cu name.  Else returns false.*/
-boolean
-should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
+    cu name.  */
+int
+should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip, 
+    Dwarf_Die cu_die,Dwarf_Error *err)
 {
     Dwarf_Half tag = 0;
     Dwarf_Attribute attrib = 0;
@@ -1550,32 +1593,33 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     int dares = 0;
     int tres = 0;
     int fres = 0;
-    Dwarf_Error lerr = 0;
 
-    tres = dwarf_tag(cu_die, &tag, &lerr);
+    tres = dwarf_tag(cu_die, &tag, err);
     if (tres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_tag in aranges",
-            tres, lerr);
+        print_error_and_continue(dbg, "ERROR: "
+        "Cannot get the TAG of the cu_die to check "
+        " if we should skip this CU or not.",
+            tres, *err);
+        *should_skip = FALSE;
+        return tres;
     }
-    dares = dwarf_attr(cu_die, DW_AT_name, &attrib,
-        &lerr);
-    if (dares != DW_DLV_OK) {
-        /* does not return */
+    dares = dwarf_attr(cu_die, DW_AT_name, &attrib, err);
+    if (dares == DW_DLV_ERROR) {
         print_error_and_continue(dbg, "should skip this cu? "
             " cu die has no DW_AT_name attribute!",
-            dares, lerr);
-        if (dares == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
-        }
-        return FALSE;
+            dares, *err);
+        *should_skip = FALSE;
+        return dares;
+    } else if (dares == DW_DLV_NO_ENTRY) {
+        *should_skip = FALSE;
+        return dares;
     }
-    fres = dwarf_whatform(attrib, &theform, &lerr);
+    fres = dwarf_whatform(attrib, &theform, err);
     if (fres == DW_DLV_OK) {
-        if (theform == DW_FORM_string
-            || theform == DW_FORM_strp) {
+        if (is_a_string_form(theform)) {
             char * temps = 0;
             int sres = dwarf_formstring(attrib, &temps,
-                &lerr);
+                err);
             if (sres == DW_DLV_OK) {
                 char *lcun = esb_get_string(glflags.cu_name);
                 char *p = temps;
@@ -1592,31 +1636,55 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 if (stricmp(lcun, p)) {
                     /* skip this cu. */
                     dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
-                    return TRUE;
+                    *should_skip = TRUE;
+                    return DW_DLV_OK;
                 }
 #else
                 if (strcmp(lcun, p)) {
                     /* skip this cu. */
                     dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
-                    return TRUE;
+                    *should_skip = TRUE;
+                    return DW_DLV_OK;
                 }
 #endif /* _WIN32 */
 
-            } else {
+            } else if (sres == DW_DLV_ERROR) {
+                struct esb_s m;
+                int dwarf_names_print_on_error = 1;
+
                 dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
-                print_error(dbg,
-                    "arange: string missing",
-                    sres, lerr);
+                esb_constructor(&m);
+                esb_append(&m,"In determining if we should "
+                    "skip this CU dwarf_formstring "
+                    "gets an error on form ");
+                esb_append(&m,get_FORM_name(theform,
+                    dwarf_names_print_on_error));
+                esb_append(&m,".");
+
+                print_error_and_continue(dbg,
+                    esb_get_string(&m),
+                    sres, *err);
+               *should_skip = FALSE;
+                esb_destructor(&m);
+               return sres;
+            } else {
+               /* DW_DLV_NO_ENTRY on the string itself */
+               dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+               *should_skip = FALSE;
+               return sres;
             }
         }
-    } else {
-        dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
-        print_error(dbg,
-            "dwarf_whatform unexpected value.",
-            fres, lerr);
-    }
+    } else if (fres == DW_DLV_ERROR) {
+        /*  DW_DLV_ERROR */
+        print_error_and_continue(dbg,
+            "dwarf_whatform failed on a CU_die when"
+            " attempting to determine if this CU should"
+            " be skipped.",
+            fres, *err);
+    } /* else DW_DLV_NO_ENTRY */
     dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
-    return FALSE;
+    *should_skip = FALSE;
+    return fres;
 }
 
 /* Returns the cu of the CU. In case of error, give up, do not return. */

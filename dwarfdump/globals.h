@@ -155,9 +155,10 @@ extern void allocate_range_array_info(void);
 extern void release_range_array_info(void);
 extern void record_range_array_info_entry(Dwarf_Off die_off,
     Dwarf_Off range_off);
-extern void check_range_array_info(Dwarf_Debug dbg);
+extern int check_range_array_info(Dwarf_Debug dbg,Dwarf_Error *);
 
-boolean should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die);
+int should_skip_this_cu(Dwarf_Debug dbg,boolean *, Dwarf_Die cu_die,
+    Dwarf_Error *);
 
 int get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Half * size,
@@ -235,7 +236,7 @@ int print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error *);
 /* Detailed tag and attributes usage */
 int print_tag_attributes_usage(Dwarf_Debug dbg, Dwarf_Error *);
 
-void print_section_groups_data(Dwarf_Debug dbg);
+int  print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *);
 void update_section_flags_per_groups(Dwarf_Debug dbg);
 void groups_restore_subsidiary_flags(void);
 

@@ -178,7 +178,6 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                dwarf_dealloc_macro_context(mcontext);
                 derive_error_message(dbg,k,macro_operator,
                    number_of_ops,
                    lres,err,"dwarf_get_macro_defundef");
@@ -205,7 +204,6 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                dwarf_dealloc_macro_context(mcontext);
                 derive_error_message(dbg,k,macro_operator,
                    number_of_ops,
                    lres,err,"dwarf_get_macro_defundef");
@@ -232,7 +230,6 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                dwarf_dealloc_macro_context(mcontext);
                 derive_error_message(dbg,k,macro_operator,
                    number_of_ops,
                    lres,err,"dwarf_get_macro_defundef");
@@ -260,7 +257,6 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                dwarf_dealloc_macro_context(mcontext);
                 derive_error_message(dbg,k,macro_operator,
                    number_of_ops,
                    lres,err,"dwarf_get_macro_defundef");
@@ -283,7 +279,6 @@ print_macro_ops(Dwarf_Debug dbg,
                 &index,
                 &macro_string,err);
             if (lres != DW_DLV_OK) {
-                dwarf_dealloc_macro_context(mcontext);
                 derive_error_message(dbg,k,macro_operator,
                    number_of_ops,
                    lres,err,"dwarf_get_macro_startend_file");
@@ -305,7 +300,6 @@ print_macro_ops(Dwarf_Debug dbg,
             lres = dwarf_get_macro_import(mcontext,
                 k,&offset,err);
             if (lres != DW_DLV_OK) {
-                dwarf_dealloc_macro_context(mcontext);
                 derive_error_message(dbg,k,macro_operator,
                    number_of_ops,
                    lres,err,"dwarf_get_macro_import");
@@ -323,7 +317,6 @@ print_macro_ops(Dwarf_Debug dbg,
             lres = dwarf_get_macro_import(mcontext,
                 k,&offset,err);
             if (lres != DW_DLV_OK) {
-                dwarf_dealloc_macro_context(mcontext);
                 derive_error_message(dbg,k,macro_operator,
                    number_of_ops,
                    lres,err,"dwarf_get_macro_import");
@@ -454,8 +447,10 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
         if (lres == DW_DLV_ERROR) {
             dwarf_dealloc_macro_context(macro_context);
-FIXME
-            print_error(dbg, "dwarf_srclines details", lres, err);
+            print_error_and_continue(dbg, 
+                "ERROR: printing source lines details",
+                lres, err);
+            return lres;
         }
 #endif
     }
