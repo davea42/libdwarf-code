@@ -1210,7 +1210,8 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
 
-        /*  IRIX bug 583450. We do not allow reading sdata from a udata
+        /*  IRIX bug 583450. We do not allow reading
+            sdata from a udata
             value. Caller can retry, calling sdata */
 
 
