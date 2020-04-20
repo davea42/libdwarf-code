@@ -473,7 +473,8 @@ the offsets printed.
 When printing or checking .debug_info, this terminates
 the search after 'number' compilation units. When printing
 frame information this terminates the FDE reporting 
-after 'number' FDEs and the CIE reporting (which occurs if one adds -v)
+after 'number' FDEs and the CIE
+reporting (which occurs if one adds -v)
 after 'number' CIEs. Example '--format-limit=1'
 
 .TP
@@ -519,10 +520,41 @@ will increase the detail (one to three are useful) or may
 change the report to show, for example, the actual
 line-data-commands instead of the resultant line-table.
 
-.SH SELECTIVE ENTRY PRINTING
+.SH URI-STYLE INPUT/OUTPUT 
+.PP
+Dwarfdump translates any characters
+in strings which are not ordinary
+printable ASCII (and some which are ASCII)
+into a uri-style output in the form %xx,
+where xx are hex digits in the form of
+ASCII 0-9a-0f.  This is a clumsy way to
+deal with UTF-8 strings and sensible way
+to deal with the low ASCII values that on
+many systems cause one's terminal to behave
+oddly. Such translations are not idempotent
+so dwarfdump avoids doing the translation
+more than once on any string.
+.PP
+For option strings input to dwarfdump
+that same technique is available
+so one can avoid messy quoting workarounds.
+So   "a(space)b" can be represented "a%20b" (without
+the quotes).
+The percent character can be represented
+as %25.
+
+.SH LIMITING OUTPUT
 
 .PP
-These --search (-S) options stand alone and 
+The simplist limiting option is to stop the
+examination/printing after <num> compilation units.
+See -H and  --format-limit above.
+This option also limits the number of FDEs
+and CIEs printed from any .debug_frame or .eh_frame
+section.
+
+.PP
+The --search (-S) options stand alone and 
 basic print information about the compilation
 unit and DIE where the string(s) appear.
 At most one of each of the following
@@ -534,12 +566,16 @@ No checking options or printing options should be supplied
 with --search(-S) options.
 The strings should use URI-style to avoid any conflicts
 with the command-line parser applicable (bash, sh, ...)
-or getopt().
+or getopt(), as well as using URI to deal with searching
+for strings in non-ASCII such as French, (etc)
+or the now-nearly-universal UTF8.
 
 These are particularly useful when the amount of
-DWARF information is really large.
+DWARF information output by -i is multiple
+gigabytes of data.
 
-If v is added to the -S option, the number of occurrences is printed.
+If v is added to the -S option, the
+number of occurrences is printed.
 (see below for an example).
 
 .TP
@@ -605,7 +641,7 @@ An example v modifier to the -S option is shown below.
 And we show the -W in context with a -S option.
 
 .TP
-.BR \--search-match-count=string1\ (\-S\ vmatch=string1)
+.BR \--search-match-count=string
 Prints information about the
 DIEs that -S matches and prints the count of occurrences.
 
@@ -615,7 +651,7 @@ DIEs that -S matches and prints the count of occurrences.
 .TP
 .BR \--search-match=string1\ \--search-print-tree
 Prints the parent tree and the children tree for the
-DIEs that -S matches.
+DIEs that --search-match  matches.
 
 .TP
 .BR \-S\ match=string2\ \-Wp 

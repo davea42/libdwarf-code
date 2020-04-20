@@ -76,11 +76,10 @@ derive_error_message(Dwarf_Debug dbg, unsigned k,
     esb_constructor(&m);
     if (res == DW_DLV_ERROR) {
         esb_append(&m,
-           "ERROR from ");
+            "ERROR from ");
     } else {
         esb_append(&m,
-           "ERROR. NO_ENTRY from ");
- 
+            "ERROR. NO_ENTRY from ");
     }
     esb_append(&m,operator_string);
     esb_append_printf_s(&m,
@@ -179,8 +178,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 err);
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
-                   number_of_ops,
-                   lres,err,"dwarf_get_macro_defundef");
+                    number_of_ops,
+                    lres,err,"dwarf_get_macro_defundef");
                 return lres;
             }
             if (glflags.gf_do_print_dwarf) {
@@ -205,8 +204,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 err);
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
-                   number_of_ops,
-                   lres,err,"dwarf_get_macro_defundef");
+                    number_of_ops,
+                    lres,err,"dwarf_get_macro_defundef");
                 return lres;
             }
             if (glflags.gf_do_print_dwarf) {
@@ -231,8 +230,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 err);
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
-                   number_of_ops,
-                   lres,err,"dwarf_get_macro_defundef");
+                    number_of_ops,
+                    lres,err,"dwarf_get_macro_defundef");
                 return lres;
             }
             if (glflags.gf_do_print_dwarf) {
@@ -258,8 +257,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 err);
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
-                   number_of_ops,
-                   lres,err,"dwarf_get_macro_defundef");
+                    number_of_ops,
+                    lres,err,"dwarf_get_macro_defundef");
                 return lres;
 
             }
@@ -280,8 +279,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,err);
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
-                   number_of_ops,
-                   lres,err,"dwarf_get_macro_startend_file");
+                    number_of_ops,
+                    lres,err,"dwarf_get_macro_startend_file");
                 return lres;
             }
             if (glflags.gf_do_print_dwarf) {
@@ -301,8 +300,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 k,&offset,err);
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
-                   number_of_ops,
-                   lres,err,"dwarf_get_macro_import");
+                    number_of_ops,
+                    lres,err,"dwarf_get_macro_import");
                 return lres;
             }
             add_macro_import(&macro_check_tree,
@@ -318,8 +317,8 @@ print_macro_ops(Dwarf_Debug dbg,
                 k,&offset,err);
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
-                   number_of_ops,
-                   lres,err,"dwarf_get_macro_import");
+                    number_of_ops,
+                    lres,err,"dwarf_get_macro_import");
                 return lres;
             }
             add_macro_import_sup(&macro_check_tree,offset);
@@ -447,7 +446,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
         if (lres == DW_DLV_ERROR) {
             dwarf_dealloc_macro_context(macro_context);
-            print_error_and_continue(dbg, 
+            print_error_and_continue(dbg,
                 "ERROR: printing source lines details",
                 lres, err);
             return lres;
@@ -557,13 +556,13 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     printf("  [%3u]  op: 0x%04x  %20s  "
                         "operandcount: %u\n",
                         i,opcode_num,
-                        get_MACRO_name(opcode_num, 
-                           dwarf_names_print_on_error),
+                        get_MACRO_name(opcode_num,
+                            dwarf_names_print_on_error),
                         operand_count);
                     for (j = 0; j < operand_count; ++j) {
                         Dwarf_Small opnd = operand_array[j];
                         printf("    [%3u] 0x%04x %20s\n", j,opnd,
-                            get_FORM_name(opnd, 
+                            get_FORM_name(opnd,
                                 dwarf_names_print_on_error));
                     }
                 }
@@ -590,8 +589,8 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     " returns NO_ENTRY  ");
             }
             print_error_and_continue(dbg,
-                            esb_get_string(&m),
-                            lres,*err);
+                esb_get_string(&m),
+                lres,*err);
             esb_destructor(&m);
             return lres;
         }

@@ -2,27 +2,30 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2018 David Anderson. All rights reserved.
+  Portions Copyright 2008-2020 David Anderson. All rights reserved.
   Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 */
 
 #include "globals.h"
@@ -173,7 +176,7 @@ process_line_table(Dwarf_Debug dbg,
             printf("[logical] BB ET IS=\n");
         } else {
             printf("[lno,col] NS BB ET PE EB IS= DI= uri:"
-               " \"filepath\"\n");
+                " \"filepath\"\n");
         }
     }
     for (i = 0; i < linecount; i++) {
@@ -188,7 +191,7 @@ process_line_table(Dwarf_Debug dbg,
             /* A line record with addr=0 was detected */
             if (SkipRecord) {
                 /* Skip records that do not have ís_addr_set' */
-                ares = dwarf_line_is_addr_set(line, 
+                ares = dwarf_line_is_addr_set(line,
                     &has_is_addr_set, lt_err);
                 if (ares == DW_DLV_OK && has_is_addr_set) {
                     SkipRecord = FALSE;
@@ -417,7 +420,7 @@ process_line_table(Dwarf_Debug dbg,
         }
 
         if (!is_actuals_table) {
-            nsres = dwarf_linebeginstatement(line, 
+            nsres = dwarf_linebeginstatement(line,
                 &newstatement, lt_err);
             if (nsres == DW_DLV_OK) {
                 if (newstatement && glflags.gf_do_print_dwarf) {
@@ -440,7 +443,7 @@ process_line_table(Dwarf_Debug dbg,
         }
 
         if (!is_logicals_table) {
-            nsres = dwarf_lineblock(line, 
+            nsres = dwarf_lineblock(line,
                 &new_basic_block, lt_err);
             if (nsres == DW_DLV_OK) {
                 if (new_basic_block && glflags.gf_do_print_dwarf) {
@@ -448,13 +451,13 @@ process_line_table(Dwarf_Debug dbg,
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 struct esb_s m;
-                esb_constructor(&m); 
+                esb_constructor(&m);
                 esb_append_printf_u(&m,
                     "\nERROR: dwarf_lineblock failed"
                     " on linebuf index %u ",i);
                 esb_append_printf_u(&m,
                     "of %u line records in the linebuf.",
-                    linecount); 
+                    linecount);
                 simple_err_return_action(nsres,
                     esb_get_string(&m));
                 esb_destructor(&m);
@@ -463,19 +466,19 @@ process_line_table(Dwarf_Debug dbg,
             nsres = dwarf_lineendsequence(line,
                 &lineendsequence, lt_err);
             if (nsres == DW_DLV_OK) {
-                if (lineendsequence && 
+                if (lineendsequence &&
                     glflags.gf_do_print_dwarf) {
                     printf(" %s", "ET");
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 struct esb_s m;
-                esb_constructor(&m); 
+                esb_constructor(&m);
                 esb_append_printf_u(&m,
                     "\nERROR: dwarf_lineendsequence failed"
                     " on linebuf index %u ",i);
                 esb_append_printf_u(&m,
                     "of %u line records in the linebuf.",
-                    linecount); 
+                    linecount);
                 simple_err_return_action(nsres,
                     esb_get_string(&m));
                 esb_destructor(&m);
@@ -493,13 +496,13 @@ process_line_table(Dwarf_Debug dbg,
                 &isa,&discriminator,lt_err);
             if (disres == DW_DLV_ERROR) {
                 struct esb_s m;
-                esb_constructor(&m); 
+                esb_constructor(&m);
                 esb_append_printf_u(&m,
                     "\nERROR: dwarf_prologue_end_etc() failed"
                     " on linebuf index %u ",i);
                 esb_append_printf_u(&m,
                     "of %u line records in the linebuf.",
-                    linecount); 
+                    linecount);
                 simple_err_return_action(nsres,
                     esb_get_string(&m));
                 esb_destructor(&m);
@@ -519,7 +522,7 @@ process_line_table(Dwarf_Debug dbg,
             }
             if (is_logicals_table) {
                 call_context = 0;
-                disres = dwarf_linecontext(line, 
+                disres = dwarf_linecontext(line,
                     &call_context, lt_err);
                 if (disres == DW_DLV_ERROR) {
                     struct esb_s m;
@@ -638,7 +641,7 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
             ". Something broken");
         return vres;
     }
-    printf(" version number      0x%" DW_PR_DUx 
+    printf(" version number      0x%" DW_PR_DUx
         " %" DW_PR_DUu "\n",
         version,version);
     printf(" number of line tables  %d.\n", table_count);
@@ -675,7 +678,7 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
 
             esb_constructor(&m);
             esb_append_printf_i(&m,
-                "\nERROR: Error accessing include directory " 
+                "\nERROR: Error accessing include directory "
                 "  %d ",i);
             esb_append_printf_i(&m,
                 "(max allowed index is %d).",dir_count);
@@ -860,7 +863,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 "\nERROR: Unable to get CU DIE dwarf tag "
                 "attempting to print line numbers for a CU ");
             if (tres == DW_DLV_ERROR) {
-               esb_append(&m,dwarf_errmsg(*err));
+                esb_append(&m,dwarf_errmsg(*err));
             }
             simple_err_return_msg_either_action(tres,
                 esb_get_string(&m));
@@ -1046,7 +1049,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             int ltres = 0;
             Dwarf_Bool is_logicals = FALSE;
             Dwarf_Bool is_actuals = FALSE;
-            ltres= process_line_table(dbg,sec_name, 
+            ltres= process_line_table(dbg,sec_name,
                 linebuf, linecount,
                 is_logicals, is_actuals,err);
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
@@ -1059,8 +1062,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             if (table_count == 1 || table_count == 0) {
                 Dwarf_Bool is_logicals = FALSE;
                 Dwarf_Bool is_actuals = FALSE;
-                
-                ltres = process_line_table(dbg,sec_name, 
+
+                ltres = process_line_table(dbg,sec_name,
                     linebuf, linecount,
                     is_logicals, is_actuals,err);
                 dwarf_srclines_dealloc(dbg,linebuf,linecount);
@@ -1071,10 +1074,10 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             } else {
                 Dwarf_Bool is_logicals = TRUE;
                 Dwarf_Bool is_actuals = FALSE;
-                ltres = process_line_table(dbg,sec_name, 
+                ltres = process_line_table(dbg,sec_name,
                     linebuf, linecount,
                     is_logicals, is_actuals,err);
-                ltres = process_line_table(dbg,sec_name, 
+                ltres = process_line_table(dbg,sec_name,
                     linebuf_actuals, linecount_actuals,
                     !is_logicals, !is_actuals,err);
                 dwarf_srclines_dealloc(dbg,linebuf,linecount);

@@ -295,7 +295,9 @@ int
 get_proc_name_by_die(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Addr low_pc,
-    struct esb_s *proc_name, void **pcMap)
+    struct esb_s *proc_name,
+    void **pcMap
+    Dwarf_Error *err)
 {
     Dwarf_Signed atcnt = 0;
     Dwarf_Signed i = 0;
@@ -323,7 +325,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     if (glflags.gf_debug_addr_missing_search_by_address) {
         return DW_DLV_NO_ENTRY;
     }
-    atres = dwarf_attrlist(die, &atlist, &atcnt, &proc_name_err);
+    atres = dwarf_attrlist(die, &atlist, &atcnt, err);
     if (atres == DW_DLV_ERROR) {
         simple_err_only_return_action(atres,
             "\nERROR: dwarf_attrlist call fails in attempt "
@@ -457,9 +459,11 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     Return 0 on failure, 1 on success.
 */
 static int
-load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
+load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
+    Dwarf_Addr low_pc,
     struct esb_s *ret_name,
-    void **pcMap)
+    void **pcMap,
+    Dwarf_Error *err)
 {
     Dwarf_Die curdie = die;
     int die_locally_gotten = 0;
@@ -467,8 +471,6 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     Dwarf_Die newchild = 0;
     Dwarf_Die newsibling = 0;
     Dwarf_Half tag;
-    Dwarf_Error nested_err = 0;
-    Dwarf_Error outer_err = 0;
     int chres = DW_DLV_OK;
     struct esb_s nestname;
 
@@ -477,7 +479,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
         int tres = 0;
 
         esb_empty_string(&nestname);
-        tres = dwarf_tag(curdie, &tag, &outer_err);
+        tres = dwarf_tag(curdie, &tag, err);
         newchild = 0;
         if (tres == DW_DLV_OK) {
             int lchres = 0;
@@ -485,7 +487,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
             if (tag == DW_TAG_subprogram) {
                 int gotit = 0;
                 gotit = get_proc_name_by_die(dbg, curdie, low_pc,
-                    &nestname, pcMap);
+                    &nestname, pcMap,err);
                 if (gotit == DW_DLV_OK) {
                     if (die_locally_gotten) {
                         /*  If we got this die from the parent, we do
@@ -495,6 +497,10 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     esb_append(ret_name,esb_get_string(&nestname));
                     esb_destructor(&nestname);
                     return DW_DLV_OK;
+                }
+                if (gotit == DW_DLV_ERROR) {
+                    dwarf_dealloc(dbg,*err,DW_DLV_ERROR);
+                    *err = 0;
                 }
                 /* Check children of subprograms recursively should
                     this really be check children of anything,
@@ -508,7 +514,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     newprog =
                         load_nested_proc_name(dbg, newchild, low_pc,
                             &nestname,
-                            pcMap);
+                            pcMap,err);
 
                     dwarf_dealloc(dbg, newchild, DW_DLA_DIE);
                     if (newprog == DW_DLV_OK) {
@@ -523,6 +529,9 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                         esb_append(ret_name,esb_get_string(&nestname));
                         esb_destructor(&nestname);
                         return DW_DLV_NO_ENTRY;
+                    } else if (newprog == DW_DLV_ERROR) {
+                        dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
+                        *err = 0;
                     }
                 } else if (lchres == DW_DLV_NO_ENTRY) {
                     /* nothing to do */
@@ -536,9 +545,9 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                         dwarf_dealloc(dbg, curdie, DW_DLA_DIE);
                     }
                     esb_destructor(&nestname);
-                    return DW_DLV_NO_ENTRY;
+                    return lchres;
                 }
-            }                   /* end if TAG_subprogram */
+            }  /* end if TAG_subprogram */
         } else {
             esb_empty_string(&nestname);
             if (tres == DW_DLV_ERROR)  {
@@ -550,9 +559,8 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     "Error is %s.",dwarf_errmsg(outer_err));
                 simple_err_only_return_action(tres,
                     esb_get_string(&m));
-                dwarf_dealloc(dbg,outer_err,DW_DLA_ERROR);
                 esb_destructor(&m);
-                outer_err = 0;
+                return tres;
             }
             if (die_locally_gotten) {
                 /*  If we got this die from the parent, we do not want
@@ -565,15 +573,16 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
         /* try next sibling */
         prev_child = curdie;
         esb_empty_string(&nestname);
-        chres = dwarf_siblingof(dbg, curdie, &newsibling, &nested_err);
+        chres = dwarf_siblingof(dbg, curdie, &newsibling, err);
         if (chres == DW_DLV_ERROR) {
             struct esb_s m;
 
             esb_constructor(&m);
             esb_append_printf_s(&m,
-                "\nERROR: Looking for function name.  dwarf_siblingof failed"
+                "\nERROR: Looking for function name. "
+                "dwarf_siblingof failed"
                 " trying to get proc name. "
-                "Error is %s.",dwarf_errmsg(nested_err));
+                "Error is %s.",dwarf_errmsg(*err));
             simple_err_only_return_action(tres,
                 esb_get_string(&m));
             esb_destructor(&m);
@@ -582,20 +591,9 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     to dealloc here! */
                 dwarf_dealloc(dbg, curdie, DW_DLA_DIE);
             }
-            dwarf_dealloc(dbg,nested_err,DW_DLA_ERROR);
             esb_destructor(&nestname);
-            return DW_DLV_NO_ENTRY;
+            return chres;
         } else if (chres == DW_DLV_NO_ENTRY) {
-            if (die_locally_gotten) {
-                /*  If we got this die from the parent, we do not want
-                    to dealloc here! */
-                dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
-            }
-            esb_destructor(&nestname);
-            return DW_DLV_NO_ENTRY;/* proc name not at this level */
-        } else {
-            /* DW_DLV_OK */
-            curdie = newsibling;
             if (die_locally_gotten) {
                 /*  If we got this die from the parent, we do not want
                     to dealloc here! */

@@ -783,7 +783,6 @@ printf_callback_for_libdwarf(UNUSEDARG void *userdata,
 }
 
 
-/*  Does not return on error. */
 int
 get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Half * size,
@@ -803,7 +802,7 @@ get_address_size_and_max(Dwarf_Debug dbg,
     if(size) {
         *size = lsize;
     }
-    return dres;
+    return DW_DLV_OK;
 }
 
 
@@ -897,7 +896,7 @@ process_one_file(int fd, int tiedfd,
     if (dres == DW_DLV_NO_ENTRY) {
         if (glflags.group_number > 0) {
             printf("No DWARF information present in %s "
-                "for section group %d \n", 
+                "for section group %d \n",
                 file_name,glflags.group_number);
         } else {
             printf("No DWARF information present in %s\n",file_name);
@@ -931,7 +930,7 @@ process_one_file(int fd, int tiedfd,
             return dres;
         }
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "dwarf_elf_init on tied_file", 
+            print_error(dbg, "dwarf_elf_init on tied_file",
             dres, onef_err);
         }
         dres = dwarf_add_file_path(dbgtied,tied_file_name,&onef_err);
@@ -952,7 +951,13 @@ process_one_file(int fd, int tiedfd,
 
     dbgsetup(dbg,l_config_file_data);
     dbgsetup(dbgtied,l_config_file_data);
-    get_address_size_and_max(dbg,&elf_address_size,0,&onef_err);
+    dres = get_address_size_and_max(dbg,&elf_address_size,0,
+        &oneferr);
+    if (dres != DW_DLV_OK) {
+        print_error(dbg,"Unable to read address"
+            " size so unable to continue",
+            dres,onef_err);
+    }
 #ifdef DWARF_WITH_LIBELF
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
@@ -1034,10 +1039,26 @@ process_one_file(int fd, int tiedfd,
         glflags.gf_cu_name_flag || glflags.gf_search_is_on ||
         glflags.gf_producer_children_flag) {
         Dwarf_Error err = 0;
+        int res = 0;
+
         reset_overall_CU_error_data();
-        print_infos(dbg,TRUE);
+        res = print_infos(dbg,TRUE,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing .debug_info had a problem.",
+                res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
         reset_overall_CU_error_data();
-        print_infos(dbg,FALSE);
+        res = print_infos(dbg,FALSE,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing .debug_types had a problem.",
+                res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
         if (glflags.gf_check_macros) {
             set_global_section_sizes(dbg);
             if(macro_check_tree) {
@@ -1556,7 +1577,7 @@ print_error_and_continue(Dwarf_Debug dbg,
 
 static boolean
 is_a_string_form(int sf)
-{ 
+{
     switch(sf){
         case DW_FORM_string:
         case DW_FORM_GNU_strp_alt:
@@ -1583,44 +1604,50 @@ is_a_string_form(int sf)
     determines if the CU should be
     skipped as the DW_AT_name of the CU
     does not match the command-line-supplied
-    cu name.  */
+    cu name.  The two callers ignore the
+    return value.
+    This suppresses any errors it finds. */
 int
-should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip, 
-    Dwarf_Die cu_die,Dwarf_Error *err)
+should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
+    Dwarf_Die cu_die);
 {
     Dwarf_Half tag = 0;
     Dwarf_Attribute attrib = 0;
     Dwarf_Half theform = 0;
+    Dwarf_Error skperr;
     int dares = 0;
     int tres = 0;
     int fres = 0;
 
-    tres = dwarf_tag(cu_die, &tag, err);
+    tres = dwarf_tag(cu_die, &tag, &skperr);
     if (tres != DW_DLV_OK) {
         print_error_and_continue(dbg, "ERROR: "
         "Cannot get the TAG of the cu_die to check "
         " if we should skip this CU or not.",
             tres, *err);
         *should_skip = FALSE;
+        if (tres == DW_DLV_ERROR){
+            dwarf_dealloc(dbg,skperr,DW_DLA_ERROR);
+        }
         return tres;
     }
-    dares = dwarf_attr(cu_die, DW_AT_name, &attrib, err);
-    if (dares == DW_DLV_ERROR) {
+    dares = dwarf_attr(cu_die, DW_AT_name, &attrib, &skperr);
+    if (dares != DW_DLV_OK) {
         print_error_and_continue(dbg, "should skip this cu? "
             " cu die has no DW_AT_name attribute!",
-            dares, *err);
+            dares, skperr);
         *should_skip = FALSE;
-        return dares;
-    } else if (dares == DW_DLV_NO_ENTRY) {
-        *should_skip = FALSE;
+        if (tres == DW_DLV_ERROR){
+            dwarf_dealloc(dbg,skperr,DW_DLA_ERROR);
+        }
         return dares;
     }
-    fres = dwarf_whatform(attrib, &theform, err);
+    fres = dwarf_whatform(attrib, &theform, &skperr);
     if (fres == DW_DLV_OK) {
         if (is_a_string_form(theform)) {
             char * temps = 0;
             int sres = dwarf_formstring(attrib, &temps,
-                err);
+                &skperr);
             if (sres == DW_DLV_OK) {
                 char *lcun = esb_get_string(glflags.cu_name);
                 char *p = temps;
@@ -1664,15 +1691,15 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
 
                 print_error_and_continue(dbg,
                     esb_get_string(&m),
-                    sres, *err);
-               *should_skip = FALSE;
+                    sres, skperr);
+                *should_skip = FALSE;
                 esb_destructor(&m);
-               return sres;
+                return sres;
             } else {
-               /* DW_DLV_NO_ENTRY on the string itself */
-               dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
-               *should_skip = FALSE;
-               return sres;
+                /* DW_DLV_NO_ENTRY on the string itself */
+                dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+                *should_skip = FALSE;
+                return sres;
             }
         }
     } else if (fres == DW_DLV_ERROR) {
@@ -1681,7 +1708,7 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
             "dwarf_whatform failed on a CU_die when"
             " attempting to determine if this CU should"
             " be skipped.",
-            fres, *err);
+            fres, skperr);
     } /* else DW_DLV_NO_ENTRY */
     dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
     *should_skip = FALSE;
@@ -1692,12 +1719,13 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
 int
 get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Off dieprint_cu_offset,
-    char * *short_name, char * *long_name)
+    char * *short_name, char * *long_name,
+    Dwarf_Error *lerr)
 {
     Dwarf_Attribute name_attr = 0;
-    Dwarf_Error lerr = 0;
     int ares;
 
+FIXME lerr
     ares = dwarf_attr(cu_die, DW_AT_name, &name_attr, &lerr);
     if (ares == DW_DLV_ERROR) {
         print_error(dbg, "hassattr on DW_AT_name", ares, lerr);
@@ -1740,47 +1768,43 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
 /*  Returns the producer of the CU
     Caller must ensure producernameout is
     a valid, constructed, empty esb_s instance before calling.
-    There is no Dwarf_Error returned, caller must be aware.
     */
 int
 get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Off dieprint_cu_offset,
-    struct esb_s *producernameout)
+    struct esb_s *producernameout,
+    Dwarf_Error *err)
 {
     Dwarf_Attribute producer_attr = 0;
-    Dwarf_Error pnerr = 0;
     int ares = 0;
 
     if (!cu_die) {
+        glflags.gf_count_major_errors++;
         esb_append(producernameout,
-            "\"<CU-missing-DW_AT_producer (null cu_die)>\"");
+            "\"<ERROR-CU-missing-DW_AT_producer (null cu_die)>\"");
         return DW_DLV_NO_ENTRY;
     }
     ares = dwarf_attr(cu_die, DW_AT_producer,
-        &producer_attr, &pnerr);
+        &producer_attr, err);
     if (ares == DW_DLV_ERROR) {
+        glflags.gf_count_major_errors++;
         esb_append(producernameout,
-            "\"<CU-missing-DW_AT_producer.>\"");
-        dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
-        return DW_DLV_NO_ENTRY;
+            "\"<Error-on-DW_AT_producer>\"");
+        return ares;
     }
     if (ares == DW_DLV_NO_ENTRY) {
         /*  We add extra quotes so it looks more like
             the names for real producers that get_attr_value
             produces. */
-        esb_append(producernameout,"\"<CU-missing-DW_AT_producer>\"");
-    } else {
-        /*  DW_DLV_OK */
-        get_attr_value(dbg, DW_TAG_compile_unit,
-            cu_die, dieprint_cu_offset,
-            producer_attr, NULL, 0, producernameout,
-            0 /*show_form_used*/,0 /* verbose */);
-        dwarf_dealloc(dbg, producer_attr, DW_DLA_ATTR);
+        esb_append(producernameout,
+            "\"<CU-missing-DW_AT_producer>\"");
+        return ares;
     }
-    /*  If ares is error or missing case,
-        producer_attr will be left
-        NULL by the call,
-        which is safe when calling dealloc(). */
+    /*  DW_DLV_OK */
+    ares = get_attr_value(dbg, DW_TAG_compile_unit,
+        cu_die, dieprint_cu_offset,
+        producer_attr, NULL, 0, producernameout,
+        0 /*show_form_used*/,0 /* verbose */,err);
     return ares;
 }
 
@@ -2012,17 +2036,22 @@ tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
             glflags.gf_check_locations) {
             ResetBucketGroup(glflags.pRangesInfo);
         }
-        /*  The following flag indicate that only low_pc and high_pc
-            values found in DW_TAG_subprograms are going to be considered when
-            building the address table used to check ranges, lines, etc */
+        /*  The following flag indicate that only
+            low_pc and high_pc
+            values found in DW_TAG_subprograms
+            are going to be considered when
+            building the address table used to check
+            ranges, lines, etc */
         glflags.need_PU_valid_code = TRUE;
         break;
 
     case DW_TAG_subprogram:
         /* Keep track of a PU */
         if (die_indent_level == 1) {
-            /*  A DW_TAG_subprogram can be nested, when is used to
-                declare a member function for a local class; process the DIE
+            /*  A DW_TAG_subprogram can be nested,
+                when is used to
+                declare a member function for a
+                local class; process the DIE
                 only if we are at level zero in the DIEs tree */
             glflags.seen_PU = TRUE;
             glflags.seen_PU_base_address = FALSE;

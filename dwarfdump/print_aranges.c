@@ -69,8 +69,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
             glflags.DIE_CU_offset = glflags.DIE_offset;
             if (dres != DW_DLV_OK) {
-                print_error_and_continue(dbg, 
-                   "ERROR: reading dwarf_die_offsets", dres, *err);
+                print_error_and_continue(dbg,
+                    "ERROR: reading dwarf_die_offsets", dres, *err);
                 return dres;
             }
         }
@@ -95,14 +95,14 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         } else {
             print_error_and_continue(dbg,
                 "ERROR from arange checking "
-                "dwarf_get_cu_die_offset_given... fails", 
+                "dwarf_get_cu_die_offset_given... fails",
                 dres, *err);
             return dres;
         }
     } else {
-        print_error_and_continue(dbg, 
+        print_error_and_continue(dbg,
             "ERROR: from arange checking "
-            "dwarf_get_arange_cu_header_offset fails", 
+            "dwarf_get_arange_cu_header_offset fails",
                 dres, *err);
         return dres;
     }
@@ -121,7 +121,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 " gets wrong offset");
         }
     } else {
-        print_error_and_continue(dbg, 
+        print_error_and_continue(dbg,
             "ERROR: from arange checking "
             "dwarf_get_cu_die_offset fails",
             dres,*err);
@@ -240,16 +240,9 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 }
                 if (glflags.gf_cu_name_flag) {
                     boolean should_skip = FALSE;
-                    int skres = 0;
-                    Dwarf_Error skerr = 0;
-
                     /*  Always sets should_skip */
-                    skres = should_skip_this_cu(dbg,
-                        &should_skip,cu_die, &skerr);
-                    if (skres == DW_DLV_ERROR) {
-                        dwarf_dealloc(dbg,skerr,DW_DLA_ERROR);
-                        skerr = 0;
-                    }
+                    should_skip_this_cu(dbg,
+                        &should_skip,cu_die);
                     if (should_skip) {
                         aranges_dealloc_now(dbg,count,arange_buf);
                         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);

@@ -1959,7 +1959,8 @@ void arg_search_regex(void)
             glflags.search_regex_text,
             REG_EXTENDED)) {
             fprintf(stderr,
-                "regcomp: unable to compile %s\n",
+                "regcomp: unable to compile "
+                " search regular expression %s\n",
                 glflags.search_regex_text);
         }
     } else {

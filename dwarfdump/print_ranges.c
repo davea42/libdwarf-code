@@ -366,7 +366,7 @@ check_range_array_info(Dwarf_Debug dbg,Dwarf_Error * err)
                     cu_die,original_off,
                     rangeset,rangecount,bytecount,err);
                 if (res != DW_DLV_OK) {
-                    dwarf_dealloc(dbg,cu_die,DW_DLA_DIE); 
+                    dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                     reset_range_array_info();
                     return res;
                 }

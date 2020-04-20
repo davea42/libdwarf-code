@@ -712,7 +712,9 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
 /*  Validate an abbreviation for the current CU.
     In case of bogus abbrev input the CU_abbrev_count
     might not be as large as abbrev_array_size says
-    the array is.  This should catch that case. */
+    the array is.  This should catch that case.
+    This just checks and reports errors.
+    */
 void
 validate_abbrev_code(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Unsigned abbrev_code)

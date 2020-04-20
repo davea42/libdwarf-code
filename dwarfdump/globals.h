@@ -115,7 +115,7 @@ extern int simple_err_only_return_action(int res,const char *msg);
 extern void print_error_and_continue (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 extern void print_error (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 
-extern int print_line_numbers_this_cu (Dwarf_Debug dbg, 
+extern int print_line_numbers_this_cu (Dwarf_Debug dbg,
     Dwarf_Die in_die,Dwarf_Error *err);
 
 extern int print_frames (Dwarf_Debug dbg,int want_eh,
@@ -125,7 +125,7 @@ extern int print_frames (Dwarf_Debug dbg,int want_eh,
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
 extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
-extern void print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info);
+extern int print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info,Dwarf_Error *);
 extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_abbrevs (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_strings (Dwarf_Debug dbg,Dwarf_Error *);
@@ -136,7 +136,6 @@ enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;
 extern int print_types(Dwarf_Debug dbg,enum type_type_e type_type,
     Dwarf_Error *);
 extern int print_weaknames(Dwarf_Debug dbg, Dwarf_Error *);
-extern void print_exception_tables(Dwarf_Debug dbg);
 extern int print_debug_names(Dwarf_Debug dbg,Dwarf_Error *);
 int print_all_pubnames_style_records(Dwarf_Debug dbg,
     const char * linetitle,
@@ -157,8 +156,8 @@ extern void record_range_array_info_entry(Dwarf_Off die_off,
     Dwarf_Off range_off);
 extern int check_range_array_info(Dwarf_Debug dbg,Dwarf_Error *);
 
-int should_skip_this_cu(Dwarf_Debug dbg,boolean *, Dwarf_Die cu_die,
-    Dwarf_Error *);
+int should_skip_this_cu(Dwarf_Debug dbg,boolean *,
+    Dwarf_Die cu_die);
 
 int get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Half * size,
@@ -168,21 +167,23 @@ int get_address_size_and_max(Dwarf_Debug dbg,
 /* Returns the producer of the CU */
 int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
     Dwarf_Off  dieprint_cu_offset,
-    char **short_name,char **long_name);
+    char **short_name,char **long_name,
+    Dwarf_Error *err);
 
 /* Get number of abbreviations for a CU */
 extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);
 /* Validate an abbreviation */
 extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
 
-extern void print_die_and_children(
+extern int print_die_and_children(
     Dwarf_Debug dbg,
     Dwarf_Die in_die,
     Dwarf_Off dieprint_cu_offset,
     Dwarf_Bool is_info,
     char **srcfiles,
-    Dwarf_Signed cnt);
-extern boolean print_one_die(
+    Dwarf_Signed cnt,
+    Dwarf_Error *);
+extern int print_one_die(
     Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Off dieprint_cu_offset,
@@ -190,7 +191,9 @@ extern boolean print_one_die(
     int die_indent_level,
     char **srcfiles,
     Dwarf_Signed cnt,
-    boolean ignore_die_stack);
+    boolean *an_attr_duplicated,
+    boolean ignore_die_stack
+    Dwarf_Error *err);
 
 /* Check for specific compiler */
 extern boolean checking_this_compiler(void);
