@@ -296,7 +296,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Addr low_pc,
     struct esb_s *proc_name,
-    void **pcMap
+    void **pcMap,
     Dwarf_Error *err)
 {
     Dwarf_Signed atcnt = 0;
@@ -506,7 +506,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                     this really be check children of anything,
                     or just children of subprograms? */
 
-                lchres = dwarf_child(curdie, &newchild, &nested_err);
+                lchres = dwarf_child(curdie, &newchild, err);
                 esb_empty_string(&nestname);
                 if (lchres == DW_DLV_OK) {
                     int newprog = 0;
@@ -552,14 +552,16 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             esb_empty_string(&nestname);
             if (tres == DW_DLV_ERROR)  {
                 struct esb_s m;
+
                 esb_constructor(&m);
                 esb_append_printf_s(&m,
                     "\nERROR: load_nested_proc_name dwarf_tag failed:"
                     " trying to get proc name. "
-                    "Error is %s.",dwarf_errmsg(outer_err));
+                    "Error is %s.",dwarf_errmsg(*err));
                 simple_err_only_return_action(tres,
                     esb_get_string(&m));
                 esb_destructor(&m);
+                esb_destructor(&nestname);
                 return tres;
             }
             if (die_locally_gotten) {
@@ -599,9 +601,19 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                     to dealloc here! */
                 dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
             }
-            prev_child = 0;
-            die_locally_gotten = true;
+            /* Not there at this level */
+            esb_destructor(&nestname);
+            return DW_DLV_NO_ENTRY;
         }
+        /* DW_DLV_OK */
+        curdie = newsibling;
+        if (die_locally_gotten) {
+            /*  If we got this die from the parent, we do not want
+                to dealloc here! */
+            dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
+        }
+        prev_child = 0;
+        die_locally_gotten = 1;
     }
     if (die_locally_gotten) {
         /*  If we got this die from the parent, we do not want to
@@ -626,7 +638,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     const char *frame_section_name,
     struct esb_s *name,
     Dwarf_Die *cu_die_for_print_frames,
-    void **pcMap)
+    void **pcMap,Dwarf_Error *err)
 {
     Dwarf_Unsigned cu_header_length = 0;
     Dwarf_Unsigned abbrev_offset = 0;
@@ -636,7 +648,6 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     int cures = DW_DLV_OK;
     int dres = DW_DLV_OK;
     int chres = DW_DLV_OK;
-    Dwarf_Error pnerr = 0;
     struct Addr_Map_Entry *ame = 0;
 
     ame = addr_map_find(low_pc,pcMap);
@@ -655,7 +666,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         cures = dwarf_next_cu_header(dbg, &cu_header_length,
             &version_stamp, &abbrev_offset,
             &address_size, &next_cu_offset,
-            &pnerr);
+            err);
         if (cures == DW_DLV_ERROR) {
             /*  If there is a serious error in DIE information
                 we just skip looking for a procedure name.
@@ -664,32 +675,31 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 "looking for a subroutine"
                 "/procedure name. Section %s. Err is %s\n",
                 sanitized(frame_section_name),
-                dwarf_errmsg(pnerr));
-            dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
+                dwarf_errmsg(*err));
             glflags.gf_all_cus_seen_search_by_address = 1;
-            return DW_DLV_NO_ENTRY;
+            return cures;
         } else if (cures == DW_DLV_NO_ENTRY) {
             /* loop thru the list again */
             *cu_die_for_print_frames = 0;
         } else {                /* DW_DLV_OK */
             dres = dwarf_siblingof(dbg, NULL,
                 cu_die_for_print_frames,
-                &pnerr);
+                err);
             if (dres == DW_DLV_ERROR) {
                 /*  If there is a serious error in DIE information
                     we just skip looking for a procedure name.
                     Perhaps we should report something? */
                 printf("\nERROR: Error getting "
-                    "dwarf_siblingof. "
+                    "dwarf_siblingof when looking for"
+                    " procedure name. "
                     "Section %s. Err is %s\n",
                     sanitized(frame_section_name),
-                    dwarf_errmsg(pnerr));
-                dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
-                return DW_DLV_NO_ENTRY;
+                    dwarf_errmsg(*err));
+                return dres;
             }
             if (dres == DW_DLV_NO_ENTRY) {
                 /*  No initial die? Something is wrong! */
-                return DW_DLV_NO_ENTRY;
+                return dres;
             }
         }
     }
@@ -701,24 +711,26 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             return DW_DLV_NO_ENTRY;
         }
         chres = dwarf_child(*cu_die_for_print_frames,
-            &child, &pnerr);
+            &child, err);
         if (chres == DW_DLV_ERROR) {
             printf("\nERROR: Error getting "
                 "dwarf_child(). "
                 "Section %s. Err is %s\n",
                 sanitized(frame_section_name),
-                dwarf_errmsg(pnerr));
-            dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
-            return DW_DLV_NO_ENTRY;
+                dwarf_errmsg(*err));
+            return chres;
         } else if (chres == DW_DLV_NO_ENTRY) {
             /* FALL THROUGH to look for more CU headers  */
-        } else {                /* DW_DLV_OK */
+        } else { /* DW_DLV_OK */
             int gotname = 0;
             gotname = load_nested_proc_name(dbg, child, low_pc, name,
-                pcMap);
+                pcMap,err);
             dwarf_dealloc(dbg, child, DW_DLA_DIE);
             if (gotname == DW_DLV_OK) {
                 return DW_DLV_OK;
+            }
+            if (gotname == DW_DLV_ERROR) {
+                return gotname;
             }
             child = 0;
         }
@@ -729,29 +741,28 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         cures = dwarf_next_cu_header(dbg, &cu_header_length,
             &version_stamp, &abbrev_offset,
             &address_size, &next_cu_offset,
-            &pnerr);
+            err);
         if (cures != DW_DLV_OK) {
             if (cures == DW_DLV_ERROR) {
                 printf("\nERROR: Error getting "
                     "next_cu_header "
                     "Section %s. Err is %s\n",
                     sanitized(frame_section_name),
-                    dwarf_errmsg(pnerr));
-                dwarf_dealloc(dbg, pnerr, DW_DLA_DIE);
+                    dwarf_errmsg(*err));
+                return cures;
             }
             glflags.gf_all_cus_seen_search_by_address = 1;
             break;
         }
 
-        dres = dwarf_siblingof(dbg, NULL, &ldie, &pnerr);
+        dres = dwarf_siblingof(dbg, NULL, &ldie, err);
         if (*cu_die_for_print_frames) {
             dwarf_dealloc(dbg, *cu_die_for_print_frames,
                 DW_DLA_DIE);
             *cu_die_for_print_frames = 0;
         }
         if (dres == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
-            return DW_DLV_NO_ENTRY;
+            return dres;
         } else if (dres == DW_DLV_NO_ENTRY) {
             return dres;
         }
@@ -768,13 +779,13 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 
             chpfres =
                 dwarf_child(*cu_die_for_print_frames, &child,
-                    &pnerr);
+                    err);
             if (chpfres == DW_DLV_ERROR) {
                 glflags.gf_count_major_errors++;
-                printf("\nERROR: Getting procedure name dwarf_child fails "
-                    " %s\n",dwarf_errmsg(pnerr));
-                dwarf_dealloc(dbg,pnerr,DW_DLA_ERROR);
-                return DW_DLV_NO_ENTRY;
+                printf("\nERROR: Getting procedure name "
+                    "dwarf_child fails "
+                    " %s\n",dwarf_errmsg(*err));
+                return chpfres;
             } else if (chpfres == DW_DLV_NO_ENTRY) {
                 /* FALL THROUGH to loop more */
             } else {
@@ -783,10 +794,13 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 
                 gotname = load_nested_proc_name(dbg, child,
                     low_pc, name,
-                    pcMap);
+                    pcMap,err);
                 dwarf_dealloc(dbg, child, DW_DLA_DIE);
                 if (gotname == DW_DLV_OK) {
-                    return DW_DLV_OK;
+                    return gotname;
+                }
+                if (gotname == DW_DLV_ERROR) {
+                    return gotname;
                 }
             }
         }
@@ -899,11 +913,14 @@ print_one_fde(Dwarf_Debug dbg,
             glflags.gf_check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
         }
-        get_fde_proc_name_by_address(dbg, low_pc,
+        fres = get_fde_proc_name_by_address(dbg, low_pc,
             frame_section_name,
             &temps,
             cu_die_for_print_frames,
-            pcMap);
+            pcMap,err);
+        if (fres == DW_DLV_ERROR) {
+            return fres;
+        }
         /* if found the name is in temps now */
         if (mp) {
             if (glflags.gf_check_frames ||
@@ -1450,16 +1467,17 @@ get_string_from_locs(Dwarf_Debug dbg,
             return lres;
         }
 
-        dwarfdump_print_one_locdesc(dbg,
+        lres = dwarfdump_print_one_locdesc(dbg,
             NULL,
             locentry,
             0, /* index 0: locdesc 0 */
             ulocentry_count,
             baseaddr,
-            out_string);
+            out_string,err);
         dwarf_loc_head_c_dealloc(head);
-        return DW_DLV_OK;
+        return lres;
     }
+    /* Using older loclist code here */
     res2 =dwarf_loclist_from_expr_a(dbg,
         bytes_in,block_len,
         addr_size,
@@ -1477,17 +1495,16 @@ get_string_from_locs(Dwarf_Debug dbg,
     /* listlen is always 1 */
     ulistlen = listlen;
 
-
-    dwarfdump_print_one_locdesc(dbg,
+    res2 = dwarfdump_print_one_locdesc(dbg,
         locdescarray,
         NULL,
         0,
         ulistlen,
         baseaddr,
-        out_string);
+        out_string,err);
     dwarf_dealloc(dbg, locdescarray->ld_s, DW_DLA_LOC_BLOCK);
     dwarf_dealloc(dbg, locdescarray, DW_DLA_LOCDESC);
-    return DW_DLV_OK;
+    return res2;
 }
 
 /*  DW_CFA_nop may be omitted for alignment,
@@ -2764,7 +2781,7 @@ print_frames(Dwarf_Debug dbg,
                 if (fdres == DW_DLV_NO_ENTRY) {
                     glflags.gf_count_major_errors++;
                     printf("ERROR: Printing fde %" DW_PR_DSd
-                        " fails saying 'no entry. Impossible.\n",
+                        " fails saying 'no entry'. Impossible.\n",
                         i);
                     return fdres;
                 }

@@ -192,7 +192,7 @@ extern int print_one_die(
     char **srcfiles,
     Dwarf_Signed cnt,
     boolean *an_attr_duplicated,
-    boolean ignore_die_stack
+    boolean ignore_die_stack,
     Dwarf_Error *err);
 
 /* Check for specific compiler */
@@ -220,7 +220,8 @@ void destruct_abbrev_array(void);
 
 int get_proc_name_by_die(Dwarf_Debug dbg,
     Dwarf_Die die, Dwarf_Addr low_pc,
-    struct esb_s *proc_name, void **pcMap);
+    struct esb_s *proc_name, void **pcMap,
+    Dwarf_Error *err);
 
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 

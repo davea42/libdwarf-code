@@ -229,7 +229,8 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                         failtype);
                     esb_append_printf_i(&m," finding the "
                         "compilation-unit DIE for "
-                        "arange number %d and that shoud never happen.",
+                        "arange number %d and that "
+                        "should never happen.",
                         i);
                     simple_err_return_msg_either_action(dres,
                         esb_get_string(&m));
@@ -253,10 +254,15 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     compiler list */
                 {
                     struct esb_s producer_name;
+                    int pres = 0;
 
                     esb_constructor(&producer_name);
-                    get_producer_name(dbg,cu_die,cu_die_offset,
-                        &producer_name);
+                    pres = get_producer_name(dbg,cu_die,cu_die_offset,
+                        &producer_name,ga_err);
+                    if (pres == DW_DLV_ERROR) {
+                        dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
+                        return pres;
+                    }
                     update_compiler_target(
                         esb_get_string(&producer_name));
                     esb_destructor(&producer_name);
@@ -322,14 +328,24 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                             So only call print_one_die if printing.
                         */
                         if (glflags.gf_do_print_dwarf){
-                            /* There is no die if its a set-end entry */
-                            print_one_die(dbg, cu_die,
+                            /*  There is no die if its a
+                                set-end entry */
+                            int pres = 0;
+                            boolean attr_duplicated = FALSE;
+
+                            pres = print_one_die(dbg, cu_die,
                                 cu_die_offset,
                                 /* print_information= */ (boolean) TRUE,
                                 /* indent_level = */0,
                                 /* srcfiles= */ 0,
                                 /* cnt= */ 0,
-                                /* ignore_die_stack= */TRUE);
+                                &attr_duplicated,
+                                /* ignore_die_stack= */TRUE,
+                                ga_err);
+                            if (pres == DW_DLV_ERROR) {
+                                dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
+                                return pres;
+                            }
                         }
                         /* Reset the state, so we can traverse the debug_info */
                         glflags.seen_CU = FALSE;

@@ -952,7 +952,7 @@ process_one_file(int fd, int tiedfd,
     dbgsetup(dbg,l_config_file_data);
     dbgsetup(dbgtied,l_config_file_data);
     dres = get_address_size_and_max(dbg,&elf_address_size,0,
-        &oneferr);
+        &onef_err);
     if (dres != DW_DLV_OK) {
         print_error(dbg,"Unable to read address"
             " size so unable to continue",
@@ -1606,10 +1606,11 @@ is_a_string_form(int sf)
     does not match the command-line-supplied
     cu name.  The two callers ignore the
     return value.
-    This suppresses any errors it finds. */
+    This suppresses any errors it finds, no
+    Dwarf_Error is lost and none is returned. */
 int
 should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
-    Dwarf_Die cu_die);
+    Dwarf_Die cu_die)
 {
     Dwarf_Half tag = 0;
     Dwarf_Attribute attrib = 0;
@@ -1624,7 +1625,7 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
         print_error_and_continue(dbg, "ERROR: "
         "Cannot get the TAG of the cu_die to check "
         " if we should skip this CU or not.",
-            tres, *err);
+            tres, skperr);
         *should_skip = FALSE;
         if (tres == DW_DLV_ERROR){
             dwarf_dealloc(dbg,skperr,DW_DLA_ERROR);
@@ -1715,7 +1716,9 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
     return fres;
 }
 
-/* Returns the cu of the CU. In case of error, give up, do not return. */
+/*  Returns the cu of the CUn the name fields when it can,
+    else a no-entry
+    else DW_DLV_ERROR.  */
 int
 get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Off dieprint_cu_offset,
@@ -1723,44 +1726,49 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Error *lerr)
 {
     Dwarf_Attribute name_attr = 0;
-    int ares;
+    int ares = 0;
 
-FIXME lerr
-    ares = dwarf_attr(cu_die, DW_AT_name, &name_attr, &lerr);
+    ares = dwarf_attr(cu_die, DW_AT_name, &name_attr, lerr);
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "hassattr on DW_AT_name", ares, lerr);
+        print_error_and_continue(dbg,
+            "dwarf_attr fails on DW_AT_name on the CU die",
+            ares, *lerr);
+        return ares;
+    } else if (ares == DW_DLV_NO_ENTRY) {
+        *short_name = "<unknown name>";
+        *long_name = "<unknown name>";
     } else {
-        if (ares == DW_DLV_NO_ENTRY) {
+        /* DW_DLV_OK */
+        /*  The string return is valid until the next call to this
+            function; so if the caller needs to keep the returned
+            string, the string must be copied (makename()). */
+        char *filename = 0;
+
+        esb_empty_string(&esb_long_cu_name);
+        ares = get_attr_value(dbg, DW_TAG_compile_unit,
+            cu_die, dieprint_cu_offset,
+            name_attr, NULL, 0, &esb_long_cu_name,
+            0 /*show_form_used*/,0 /* verbose */,lerr);
+        if (ares != DW_DLV_OK)  {
             *short_name = "<unknown name>";
             *long_name = "<unknown name>";
-        } else {
-            /* DW_DLV_OK */
-            /*  The string return is valid until the next call to this
-                function; so if the caller needs to keep the returned
-                string, the string must be copied (makename()). */
-            char *filename = 0;
-
-            esb_empty_string(&esb_long_cu_name);
-            get_attr_value(dbg, DW_TAG_compile_unit,
-                cu_die, dieprint_cu_offset,
-                name_attr, NULL, 0, &esb_long_cu_name,
-                0 /*show_form_used*/,0 /* verbose */);
-            *long_name = esb_get_string(&esb_long_cu_name);
-            /* Generate the short name (filename) */
-            filename = strrchr(*long_name,'/');
-            if (!filename) {
-                filename = strrchr(*long_name,'\\');
-            }
-            if (filename) {
-                ++filename;
-            } else {
-                filename = *long_name;
-            }
-            esb_empty_string(&esb_short_cu_name);
-            esb_append(&esb_short_cu_name,filename);
-            *short_name = esb_get_string(&esb_short_cu_name);
-            dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
+            return ares;
         }
+        *long_name = esb_get_string(&esb_long_cu_name);
+        /* Generate the short name (filename) */
+        filename = strrchr(*long_name,'/');
+        if (!filename) {
+            filename = strrchr(*long_name,'\\');
+        }
+        if (filename) {
+            ++filename;
+        } else {
+            filename = *long_name;
+        }
+        esb_empty_string(&esb_short_cu_name);
+        esb_append(&esb_short_cu_name,filename);
+        *short_name = esb_get_string(&esb_short_cu_name);
+        dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
     }
     return ares;
 }

@@ -878,14 +878,20 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
     if (glflags.verbose > 1) {
         int errcount = 0;
+        boolean attr_dup = FALSE;
         int lresv = 0;
         print_source_intro(dbg,cu_die);
-        print_one_die(dbg, cu_die,
+        lresv = print_one_die(dbg, cu_die,
             dieprint_cu_goffset,
             /* print_information= */ 1,
             /* indent level */0,
             /* srcfiles= */ 0, /* cnt= */ 0,
-            /* ignore_die_stack= */TRUE);
+            &attr_dup,
+            /* ignore_die_stack= */TRUE,
+            err);
+        if (lresv == DW_DLV_ERROR) {
+            return lresv;
+        }
         DWARF_CHECK_COUNT(lines_result,1);
         lresv = dwarf_print_lines(cu_die, err,&errcount);
         if (errcount > 0) {
@@ -999,13 +1005,20 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             }
             print_source_intro(dbg,cu_die);
             if (glflags.verbose) {
+                int dres = 0;
+                boolean attr_dup = FALSE;
                 /* FIXME */
-                print_one_die(dbg, cu_die,
+                dres = print_one_die(dbg, cu_die,
                     dieprint_cu_goffset,
                     /* print_information= */ TRUE,
                     /* indent_level= */ 0,
                     /* srcfiles= */ 0, /* cnt= */ 0,
-                    /* ignore_die_stack= */TRUE);
+
+                    &attr_dup,
+                    /* ignore_die_stack= */TRUE,err);
+                if(dres == DW_DLV_ERROR) {
+                    return dres;
+                }
             }
         }
         if(glflags.gf_line_flag_selection ==  singledw5 ||
@@ -1098,13 +1111,21 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
             print_source_intro(dbg,cu_die);
             if (glflags.verbose) {
+                int dpres = 0;
+                boolean attr_dup = FALSE;
+
                 /* FIXME */
-                print_one_die(dbg, cu_die,
+                dpres = print_one_die(dbg, cu_die,
                     dieprint_cu_goffset,
                     /* print_information= */ TRUE,
                     /* indent_level= */ 0,
                     /* srcfiles= */ 0, /* cnt= */ 0,
-                    /* ignore_die_stack= */TRUE);
+                    &attr_dup,
+                    /* ignore_die_stack= */TRUE,
+                    err);
+                if(dpres == DW_DLV_ERROR) {
+                    return dpres;
+                }
             }
             if(line_context) {
                 if (glflags.verbose > 2) {

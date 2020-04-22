@@ -443,6 +443,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 
     DW_FORM_addrx
     DW_FORM_strx
+    DW_FORM_rnglistx
     DW_FORM_GNU_addr_index
     DW_FORM_GNU_str_index
     are not references to .debug_info/.debug_types,
@@ -640,7 +641,16 @@ dwarf_formsig8(Dwarf_Attribute attr,
     See the DWARF4 document for the 3 cases fitting
     reference forms.  The caller must determine which section the
     reference 'points' to.  The function added in November 2009,
-    dwarf_get_form_class(), helps in this regard.  */
+    dwarf_get_form_class(), helps in this regard.  
+
+    unlike dwarf_formref(), this allows references to
+    sections other than just .debug_info/.debug_types.
+    See case DW_FORM_sec_offset:
+    case DW_FORM_GNU_ref_alt:   2013 GNU extension
+    case DW_FORM_GNU_strp_alt:  2013 GNU extension
+    case DW_FORM_strp_sup:      DWARF5, sup string section
+    case DW_FORM_line_strp:     DWARF5, .debug_line_str section
+*/
 
 int
 dwarf_global_formref(Dwarf_Attribute attr,
@@ -758,6 +768,16 @@ dwarf_global_formref(Dwarf_Attribute attr,
             }
         }
         break;
+#if 0
+        /* Index into .debug_rnglist section. */
+    case DW_FORM_rnglistx: {
+        unsigned length_size = cu_context->cc_length_size;
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, length_size,
+            error,section_end);
+        }
+        break;
+#endif
     case DW_FORM_sec_offset:
     case DW_FORM_GNU_ref_alt:  /* 2013 GNU extension */
     case DW_FORM_GNU_strp_alt: /* 2013 GNU extension */
@@ -791,9 +811,27 @@ dwarf_global_formref(Dwarf_Attribute attr,
             .debug_info at this point. */
         _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);
         return (DW_DLV_ERROR);
-    default:
-        _dwarf_error(dbg, error, DW_DLE_BAD_REF_FORM);
+    default: {
+        dwarfstring m;
+        int formcode = attr->ar_attribute_form;
+        int fcres = 0;
+        const char *name = 0;
+
+        dwarfstring_constructor(&m); 
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_BAD_REF_FORM: The form code is 0x%x ",
+            formcode);
+        fcres  = dwarf_get_FORM_name (formcode,&name);
+        if (fcres != DW_DLV_OK) {
+            name="<UnknownFormCode>";
+        }
+        dwarfstring_append_printf_s(&m,
+            " %s.",(char *)name);
+        _dwarf_error_string(dbg, error, DW_DLE_BAD_REF_FORM,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m); 
         return DW_DLV_ERROR;
+        }   
     }
 
     /*  We do not know what section the offset refers to, so

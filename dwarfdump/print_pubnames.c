@@ -503,14 +503,17 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 /*  Get producer name for this CU
                     and update compiler list */
                 esb_constructor(&producername);
-                get_producer_name(dbg,lcudie,cu_die_off,
-                    &producername);
+                dres = get_producer_name(dbg,lcudie,cu_die_off,
+                    &producername,err);
+                dwarf_dealloc(dbg,lcudie,DW_DLA_DIE);
+                if (dres == DW_DLV_ERROR) {
+                    esb_destructor(&producername);
+                    return dres;
+                }
                 update_compiler_target(
                     esb_get_string(&producername));
                 glflags.DIE_CU_overall_offset = cu_die_off;
                 esb_destructor(&producername);
-                dwarf_dealloc(dbg,lcudie,DW_DLA_DIE);
-                lcudie = 0;
             }
 
             /* get die at die_off */

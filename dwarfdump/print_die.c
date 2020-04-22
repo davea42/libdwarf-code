@@ -48,7 +48,7 @@
 
 /*  Traverse a DIE and attributes to
     check self references */
-static traverse_one_die(Dwarf_Debug dbg,
+static int traverse_one_die(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
@@ -56,14 +56,14 @@ static traverse_one_die(Dwarf_Debug dbg,
     char **srcfiles,
     Dwarf_Signed cnt, int die_indent_level,
     Dwarf_Error*err);
-static boolean traverse_attribute(Dwarf_Debug dbg,
+static int traverse_attribute(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Bool is_info,
     Dwarf_Half attr, Dwarf_Attribute attr_in,
     boolean print_information,
     char **srcfiles, Dwarf_Signed cnt,
-    int die_indent_level
+    int die_indent_level,
     Dwarf_Error * err);
 static int print_die_and_children_internal(Dwarf_Debug dbg,
     Dwarf_Die in_die_in,
@@ -96,16 +96,19 @@ static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Attribute actual_addr,
     boolean print_information,
     int die_indent_level, char **srcfiles,
-    Dwarf_Signed cnt, Dwarf_Error *err);
-static void get_location_list(Dwarf_Debug dbg, Dwarf_Die die,
-    Dwarf_Attribute attr, struct esb_s *esbp);
+    Dwarf_Signed cnt,
+    boolean *attr_matched,
+    Dwarf_Error *err);
+static int get_location_list(Dwarf_Debug dbg, Dwarf_Die die,
+    Dwarf_Attribute attr, struct esb_s *esbp,Dwarf_Error *);
 static int legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr);
 static int legal_tag_tree_combination(Dwarf_Half parent_tag,
     Dwarf_Half child_tag);
 static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
-    int index, Dwarf_Addr baseaddr,struct esb_s *string_out);
+    int index, Dwarf_Addr baseaddr,struct esb_s *string_out,
+    Dwarf_Error *err);
 static int formxdata_print_value(Dwarf_Debug dbg,
     Dwarf_Die die,Dwarf_Attribute attrib,
     Dwarf_Half theform,
@@ -302,6 +305,8 @@ get_die_stack_sibling()
     }
     return 0;
 }
+#if 0
+No longer needed or appropriate. */
 static void
 dealloc_all_die_stack(Dwarf_Debug dbg,Dwarf_Die altdie)
 {
@@ -322,6 +327,7 @@ dealloc_all_die_stack(Dwarf_Debug dbg,Dwarf_Die altdie)
         dwarf_dealloc(dbg,altdie,DW_DLA_DIE);
     }
 }
+#endif
 static void
 dealloc_all_srcfiles(Dwarf_Debug dbg,
   char **srcfiles,
@@ -386,7 +392,7 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
                     innersiboffset);
                 glflags.gf_count_major_errors++;
                 print_error_and_continue(dbg,
-                    esb_get_string(&pm));
+                    esb_get_string(&pm),
                     DW_DLV_OK,ouerr);
                 esb_destructor(&pm);
                 return;
@@ -716,7 +722,6 @@ macro_check_cu(Dwarf_Debug dbg,
 {
 
     int mres = 0;
-    int oldsection = glflags.current_section_id;
     Dwarf_Unsigned offset = 0;
 
     mres = get_macinfo_offset(dbg,cu_die2,&offset,err);
@@ -743,10 +748,11 @@ macro_check_cu(Dwarf_Debug dbg,
                 " failed ",offset);
             print_error_and_continue(dbg,
                 esb_get_string(&m),
-                mres,*pod_err);
+                mres,*err);
             esb_destructor(&m);
         }
     }
+    return DW_DLV_OK;
 }
 
 /*   */
@@ -877,7 +883,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             cures = get_producer_name(dbg,cu_die,
                 dieprint_cu_goffset,&producername,pod_err);
             if (cures == DW_DLV_ERROR ) {
-                return crures;
+                return cures;
             }
             if (cures == DW_DLV_OK) {
                 update_compiler_target(esb_get_string(
@@ -896,10 +902,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 dieprint_cu_goffset,
                 &cu_short_name,&cu_long_name,
                 pod_err);
-            if (cures == DW_DLV_ERROR ) {
-                return crures;
+            if (chres == DW_DLV_ERROR ) {
+                return chres;
             }
-            if (cures == DW_DLV_OK) {
+            if (chres == DW_DLV_OK) {
                 /* Add CU name to current compiler entry */
                 add_cu_name_compiler_target(cu_long_name);
             }
@@ -1081,11 +1087,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         "ERROR: Printing line numbers for "
                         "the current CU failed. ",
                         plnres,*pod_err);
-                    if (cu_die2) {
-                        dwarf_dealloc(dbg,cu_die2,
-                            DW_DLA_DIE);
-                    }
-                    return plnres;
+                    /*  Suppress the error so we print
+                        whatever we can */
+                    dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+                    *pod_err = 0;
                 }
                 glflags.current_section_id = oldsection;
             }
@@ -1102,11 +1107,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         "ERROR: Printing DWARF5 macros "
                         "for the current CU failed. ",
                         mres,*pod_err);
-                    if (cu_die2) {
-                        dwarf_dealloc(dbg,cu_die2,
-                            DW_DLA_DIE);
-                    }
-                    return mres;
+                    /*  Suppress the error so we print
+                        whatever we can */
+                    dwarf_dealloc(dbg,*pod_err,DW_DLA_ERROR);
+                    *pod_err = 0;
                 }
                 in_import_list = TRUE;
                 if (mres == DW_DLV_OK) {
@@ -1179,8 +1183,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
 static int
 print_a_die_stack(Dwarf_Debug dbg,char **srcfiles,Dwarf_Signed cnt,int lev,Dwarf_Error *err)
 {
-    /*  Print_information TRUE means attribute_matched will NOT
-        be set by attribute name match. */
+    /*  Print_information TRUE means attribute_matched
+        will NOT be set by attribute name match. */
     boolean print_information = TRUE;
     boolean ignore_die_stack = FALSE;
     boolean attribute_matched = FALSE;
@@ -1195,6 +1199,8 @@ print_a_die_stack(Dwarf_Debug dbg,char **srcfiles,Dwarf_Signed cnt,int lev,Dwarf
         err);
     return res;
 }
+
+/* Called with a CU_Die as in_die_in. */
 int
 print_die_and_children(Dwarf_Debug dbg,
     Dwarf_Die in_die_in,
@@ -1205,6 +1211,7 @@ print_die_and_children(Dwarf_Debug dbg,
 {
     int res = 0;
 
+    local_symbols_already_began = FALSE;
     res  =print_die_and_children_internal(dbg,
         in_die_in, dieprint_cu_goffset,
         is_info,srcfiles,cnt,err);
@@ -1235,6 +1242,7 @@ print_die_stack(Dwarf_Debug dbg,char **srcfiles,Dwarf_Signed cnt,
             return res;
         }
     }
+    return DW_DLV_OK;
 }
 
 /* recursively follow the die tree */
@@ -1345,35 +1353,40 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 }
             }
         }
-
         if (glflags.gf_record_dwarf_error &&
             glflags.gf_check_verbose_mode) {
             glflags.gf_record_dwarf_error = FALSE;
         }
-
         /* Here do pre-descent processing of the die. */
         {
-            boolean an_attrbute_match = FALSE;
+            boolean an_attribute_match_local = FALSE;
             boolean ignore_die_stack = FALSE;
             int pdres = 0;
             pdres = print_one_die(dbg, in_die,
                 dieprint_cu_goffset,
                 print_as_info_or_cu(),
                 die_stack_indent_level, srcfiles, cnt,
-                &an_attribute_match,
+                &an_attribute_match_local,
                 ignore_die_stack,
                 err);
             if (pdres != DW_DLV_OK) {
                 return pdres;
             }
             validate_die_stack_siblings(dbg);
-            if (!print_as_info_or_cu() && retry_print_on_match) {
+            if (!print_as_info_or_cu() && an_attribute_match_local) {
                 if (glflags.gf_display_parent_tree) {
-                    print_die_stack(dbg,srcfiles,cnt);
+                    pdres = print_die_stack(dbg,srcfiles,cnt,
+                        err);
+                    if (pdres == DW_DLV_ERROR) {
+                        return pdres;
+                    }
                 } else {
                     if (glflags.gf_display_children_tree) {
-                        print_a_die_stack(dbg,srcfiles,cnt,
-                            die_stack_indent_level);
+                        pdres = print_a_die_stack(dbg,srcfiles,cnt,
+                            die_stack_indent_level,err);
+                        if (pdres == DW_DLV_ERROR) {
+                            return pdres;
+                        }
                     }
                 }
                 if (glflags.gf_display_children_tree) {
@@ -1436,20 +1449,19 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         }
                         break;
                     }
-                } else if abtres == DW_DLV_ERROR) {
+                } else if (abtres == DW_DLV_ERROR) {
                     print_error_and_continue(dbg,
                         "Unable to read die tag!",
                         abtres,*err);
                     return abtres;
                 }
-            } else if abtres == DW_DLV_ERROR) {
+            } else if (abtres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "Unable to read die children flag",
                     abtres,*err);
                 return abtres;
             }
         }
-
         /* child first: we are doing depth-first walk */
         if (cdres == DW_DLV_OK) {
             /*  If the global offset of the (first) child is
@@ -1485,10 +1497,21 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         " so the die tree is corrupt "
                         "(showing section, not CU, offsets). ",
                         child_overall_offset);
+                    dwarf_error_creation(dbg,err,
+                        esb_get_string(&pm));
                     print_error_and_continue(dbg,
                         esb_get_string(&pm),
-                        DW_DLV_OK,dacerr);
+                        DW_DLV_ERROR,*err);
+                    /*   Original test did a print_error()
+                        here, which did exit(). 
+                        We would like to return ERROR all the way
+                        back, but have no way at present
+                        to generate a Dwarf_Error record.
+                        Because these sorts of errors
+                        are not really recoverable.
+                    */
                     esb_destructor(&pm);
+                    return DW_DLV_ERROR;
                 }
             } else if (cores == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
@@ -1504,34 +1527,35 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             SET_DIE_STACK_ENTRY(die_stack_indent_level,0,
                 dieprint_cu_goffset);
             if (die_stack_indent_level >= DIE_STACK_SIZE ) {
-                struct esb_s *m;
+                struct esb_s m;
 
                 esb_constructor(&m);
                 esb_append_printf_i(&m,
                     "ERROR: compiled in DIE_STACK_SIZE "
                     "(the depth of the DIE tree in this CU)"
-                    " of %d exceeded",DIE_STACK_SIZE);
-                print_error_and_continue(dbg,
+                    " of %d exceeded!"
+                    ,DIE_STACK_SIZE);
+                dwarf_error_creation(dbg,err,
                     esb_get_string(&m));
+                print_error_and_continue(dbg,
+                    esb_get_string(&m),
                     DW_DLV_OK,*err);
                 esb_destructor(&m);
+                return DW_DLV_ERROR;
+
             }
             pdacres = print_die_and_children_internal(dbg, child,
                 dieprint_cu_goffset,
                 is_info, srcfiles, cnt,err);
             EMPTY_DIE_STACK_ENTRY(die_stack_indent_level);
-            if (die_stack_indent_level == 0) {
-                local_symbols_already_began = FALSE;
-            }
             dwarf_dealloc(dbg, child, DW_DLA_DIE);
+            die_stack_indent_level--;
             if (pdacres == DW_DLV_ERROR) {
                 if (in_die != in_die_in) {
                     dwarf_dealloc(dbg,in_die,DW_DLA_DIE);
                 }
-                die_stack_indent_level--;
                 return pdacres;
             }
-            die_stack_indent_level--;
             child = 0;
         } else if (cdres == DW_DLV_ERROR) {
             if (in_die != in_die_in) {
@@ -1559,13 +1583,12 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             print_error_and_continue(dbg,
                 "ERROR: dwarf_siblingof fails"
                 " tracing siblings of a DIE.",
-                cdres, err);
+                cdres, *err);
             if (in_die != in_die_in) {
                 dwarf_dealloc(dbg, in_die, DW_DLA_DIE);
             }
             return cdres;
         }
-
         /*  If we have a sibling, verify that its offset
             is next to the last processed DIE;
             An incorrect sibling chain is a nasty bug.  */
@@ -1581,7 +1604,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 struct esb_s msg;
 
                 esb_constructor(&msg);
-                dwarf_dieoffset(sibling,&sib_off,&dacerr);
+                dwarf_dieoffset(sibling,&sib_off,err);
                 esb_append_printf_u(&msg,
                     "GSIB = 0x%" DW_PR_XZEROS  DW_PR_DUx,
                     sib_off);
@@ -1626,7 +1649,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
 static void
 dealloc_local_atlist(Dwarf_Debug dbg,
-    Dwarf_Attribute atlist,
+    Dwarf_Attribute *atlist,
     Dwarf_Signed    atcnt)
 {
     Dwarf_Signed i = 0;
@@ -1658,7 +1681,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     boolean print_information,
     int die_indent_level,
     char **srcfiles, Dwarf_Signed cnt,
-    boolean *an_attr_matched,
+    boolean *an_attr_matched_io,
     boolean ignore_die_stack,
     Dwarf_Error *err)
 {
@@ -1672,9 +1695,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Attribute *atlist = 0;
     int tres = 0;
     int ores = 0;
+    boolean attribute_matchedpod = FALSE;
     int atres = 0;
     int abbrev_code = dwarf_die_abbrev_code(die);
-    boolean attribute_matched = FALSE;
 
     /* Print using indentation
     < 1><0x000854ff GOFF=0x00546047>    DW_TAG_pointer_type -> 34
@@ -1692,7 +1715,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     if (!ignore_die_stack &&
         die_stack[die_indent_level].already_printed_) {
         /* FALSE seems safe . */
-        *attr_duplicated = FALSE;
+        *an_attr_matched_io = FALSE;
         return DW_DLV_OK;
     }
 
@@ -1726,7 +1749,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     }
     ores = dwarf_die_CU_offset(die, &offset, err);
     if (ores != DW_DLV_OK) {
-        print_error_and_continuie(dbg,
+        print_error_and_continue(dbg,
             "ERROR: dwarf_die_CU_offset failed", ores, *err);
         return ores;
     }
@@ -1803,7 +1826,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                             print_error_and_continue(dbg,
                                 "dwarf_die_abbrev_global_offset "
                                 "no entry?",
-                                agres, podie_err);
+                                agres, *err);
                             return agres;
                         } else {
                             printf(" ABGOFF = 0x%"
@@ -1870,7 +1893,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         print_error_and_continue(dbg,
             "ERROR: A call to dwarf_attrlist failed. "
             " Impossible error.", atres,*err);
-        return res;
+        return atres;
     } else if (atres == DW_DLV_NO_ENTRY) {
         /* indicates there are no attrs.  It is not an error. */
         atcnt = 0;
@@ -1896,7 +1919,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         Dwarf_Half attr;
         int ares;
 
-        ares = dwarf_whatattr(atlist[i], &attr, &err);
+        ares = dwarf_whatattr(atlist[i], &attr, err);
         if (ares == DW_DLV_OK) {
             /*  Check duplicated attributes; use brute force
                 as the number of attributes is quite small;
@@ -1907,12 +1930,14 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 Dwarf_Half attr_next;
                 DWARF_CHECK_COUNT(duplicated_attributes_result,1);
                 for (j = i + 1; j < atcnt; ++j) {
-                    ares = dwarf_whatattr(atlist[j], &attr_next, &podie_err);
+                    ares = dwarf_whatattr(atlist[j], &attr_next,err);
                     if (ares == DW_DLV_OK) {
                         if (attr == attr_next) {
-                            DWARF_CHECK_ERROR2(duplicated_attributes_result,
+                            DWARF_CHECK_ERROR2(
+                                duplicated_attributes_result,
                                 "Duplicated attribute ",
-                                get_AT_name(attr,pd_dwarf_names_print_on_error));
+                                get_AT_name(attr,
+                                    pd_dwarf_names_print_on_error));
                         }
                     } else {
                         struct esb_s m;
@@ -1939,7 +1964,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                     " ");
             }
             {
-                boolean attr_match = FALSE;
+                boolean attr_match_localb = FALSE;
                 int aresb = 0;
 
                 aresb = print_attribute(dbg, die,
@@ -1948,9 +1973,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                     atlist[i],
                     print_information, die_indent_level,
                     srcfiles, cnt,
-                    &attr_match,err);
+                    &attr_match_localb,err);
                 if (aresb == DW_DLV_ERROR) {
-                    struct esb_s *m;
+                    struct esb_s m;
 
                     esb_constructor(&m);
                     esb_append_printf_i(&m,
@@ -1959,13 +1984,14 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                     esb_append_printf_i(&m,
                         " of %d attributes.",atcnt);
                     print_error_and_continue(dbg,
-                        esb_get_string(&m));
+                        esb_get_string(&m),
+                        aresb,*err);
                     esb_destructor(&m);
                     dealloc_local_atlist(dbg,atlist,atcnt);
                     return aresb;
                 }
-                if (print_information == FALSE && attr_match) {
-                    attribute_matched = TRUE;
+                if (print_information == FALSE && attr_match_localb) {
+                    attribute_matchedpod = TRUE;
                 }
             }
 
@@ -1974,7 +2000,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 glflags.gf_record_dwarf_error = FALSE;
             }
         } else {
-            struct esb_s *m;
+            struct esb_s m;
 
             esb_constructor(&m);
             esb_append_printf_i(&m,
@@ -1994,7 +2020,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     if (PRINTING_DIES && glflags.dense && print_information) {
         printf("\n");
     }
-    *an_attr_matched = attribute_matched.
+    *an_attr_matched_io = attribute_matchedpod;
     return DW_DLV_OK;
 }
 
@@ -2044,7 +2070,6 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
     if (vres != DW_DLV_OK) {
         Dwarf_Signed sval = 0;
         int ires = 0;
-        Dwarf_Error ilocalerr = 0;
 
         ires = dwarf_formsdata(attrib, &sval, err);
         if (ires == DW_DLV_ERROR) {
@@ -2062,7 +2087,7 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
                     esb_append_printf_s(string_out,
                         "ERROR: %s has a bad form"
                         " for reading a value.",
-                        , attr_name);
+                        attr_name);
                 }
                 return jres;
             }
@@ -2078,11 +2103,12 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
         Dwarf_Half theform = 0;
         Dwarf_Half directform = 0;
         struct esb_s fstring;
+        int fres = 0;
 
         esb_constructor(&fstring);
-        res  = get_form_values(dbg,attrib,&theform,&directform,err);
-        if (res == DW_DLV_ERROR) {
-            return res;
+        fres  = get_form_values(dbg,attrib,&theform,&directform,err);
+        if (fres == DW_DLV_ERROR) {
+            return fres;
         }
         esb_append(&fstring, val_as_string((Dwarf_Half) uval,
             pd_dwarf_names_print_on_error));
@@ -2151,7 +2177,8 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     }
     if (array_len == 0) {
         print_error_and_continue(dbg,
-            "DW_AT_SUN_func_offsets has no data,something badly",
+            "DW_AT_SUN_func_offsets has no data (array"
+            " length is zero), something badly"
             " wrong",
             DW_DLV_OK,fblkerr);
         return;
@@ -2202,8 +2229,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Ranges *rangeset,
     Dwarf_Signed rangecount,
     Dwarf_Unsigned bytecount,
-    struct esb_s *stringbuf,
-    Dwarf_Error *err)
+    struct esb_s *stringbuf)
 {
     const char * sec_name = 0;
     Dwarf_Signed i = 0;
@@ -2328,7 +2354,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     int tres = 0;
     Dwarf_Half tag = 0;
     struct esb_s valname;
-    Dwarf_Error err = 0;
 
     esb_constructor(&valname);
     is_info = dwarf_get_die_infotypes_flag(die);
@@ -2368,7 +2393,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         Dwarf_Half directform = 0;
         char buf[100];
 
-        res = get_form_values(dbg,attrib,&theform,&directform);
+        res = get_form_values(dbg,attrib,&theform,&directform,err);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -2389,8 +2414,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
         /* Get the global offset for reference */
         res = dwarf_global_formref(attrib, &ref_goff, err);
-        if (res != DW_DLV_OK) {
-            int dwerrno = dwarf_errno(err);
+        if (res == DW_DLV_ERROR) {
+            int dwerrno = dwarf_errno(*err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 /*  No need to stop, ref_sig8 refers out of
                     the current section. */
@@ -2407,8 +2432,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         /* Gives die offset in section. */
         res = dwarf_dieoffset(die, &die_goff, err);
-        if (res != DW_DLV_OK) {
-            int dwerrno = dwarf_errno(err);
+        if (res == DW_DLV_ERROR) {
+            int dwerrno = dwarf_errno(*err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 /*  No need to stop, ref_sig8 refers out of
                     the current section. */
@@ -2547,7 +2572,7 @@ traverse_one_die(Dwarf_Debug dbg,
         }
         localvaln = esb_get_string(&bucketgroupstr);
 
-        res = dwarf_whatattr(attrib, &attr, &err);
+        res = dwarf_whatattr(attrib, &attr, err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
                 "ERROR: dwarf_whatattr fails in traverse die",
@@ -2684,15 +2709,10 @@ print_range_attribute(Dwarf_Debug dbg,
             }
             if (print_information) {
                 *append_extra_string = 1;
-                int exres = 0;
-
-                exres = print_ranges_list_to_extra(dbg,
+                print_ranges_list_to_extra(dbg,
                     original_off,
                     rangeset,rangecount,bytecount,
-                    esb_extrap,raerr);
-                if(exres == DW_DLV_ERROR) {
-                    return exres;
-                }
+                    esb_extrap);
             }
             dwarf_ranges_dealloc(dbg,rangeset,rangecount);
         } else if (rres == DW_DLV_ERROR) {
@@ -2732,6 +2752,7 @@ print_range_attribute(Dwarf_Debug dbg,
                     " fails to find DW_AT_ranges at offset");
             }
         }
+        return DW_DLV_OK;
     }
     /*  DW_DLV_NO_ENTRY or DW_DLV_ERROR */
     if (glflags.gf_do_print_dwarf) {
@@ -3021,7 +3042,7 @@ handle_location_description(Dwarf_Debug dbg,
         return res;
     }
     if (is_location_form(theform)) {
-        res  = get_location_list(dbg, die, attrib, &framebasestr);
+        res  = get_location_list(dbg, die, attrib, &framebasestr,err);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -3030,7 +3051,7 @@ handle_location_description(Dwarf_Debug dbg,
     } else if (theform == DW_FORM_exprloc)  {
         int showhextoo = 1;
         res = print_exprloc_content(dbg,die,attrib,showhextoo,
-            &framebasestr);
+            &framebasestr,err);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -3043,7 +3064,7 @@ handle_location_description(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* This was inside print_attribute()
+/* This was inside print_attribute() */
 static void
 check_attr_tag_combination(Dwarf_Half tag,Dwarf_Half attr)
 {
@@ -3071,13 +3092,15 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Half tag,
     Dwarf_Die die,
     Dwarf_Unsigned dieprint_cu_goffset,
-    Dwarf_Sourcefiles srcfiles,
+    char ** srcfiles,
     Dwarf_Signed cnt,
     Dwarf_Attribute attrib,
-    Dwarf_Bool *bSawLow,
-    Dwarf_Addr *lowAddr,
-    Dwarf_Bool *bSawHigh,
-    Dwarf_Addr *highAddr,
+    Dwarf_Half attr,
+    Dwarf_Unsigned elf_max_address,
+    Dwarf_Bool *bSawLowp,
+    Dwarf_Addr *lowAddrp,
+    Dwarf_Bool *bSawHighp,
+    Dwarf_Addr *highAddrp,
     struct esb_s *valname,
     Dwarf_Error *err)
 {
@@ -3132,12 +3155,12 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                     print_error_and_continue(dbg,
                         "get_small_encoding_integer_and_name"
                         " No Entry for DW_AT_high_pc/DW_AT_low_pc",
-                        ares, err);
+                        ares, *err);
                 } else {
                     print_error_and_continue(dbg,
                         "get_small_encoding_integer_and_name"
                         " Failed for DW_AT_high_pc/DW_AT_low_pc",
-                        ares, err);
+                        ares, *err);
                 }
                 return ares;
             }
@@ -3152,8 +3175,8 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     if (rv == DW_DLV_ERROR) {
         return rv;
     }
-    esb_empty_string(&valname);
-    esb_append(&valname, esb_get_string(&highpcstr));
+    esb_empty_string(valname);
+    esb_append(valname, esb_get_string(&highpcstr));
     esb_destructor(&highpcstr);
 
     /* Update base and high addresses for CU */
@@ -3214,15 +3237,15 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         Dwarf_Addr addr = 0;
         /* Calculate the real high_pc value */
         if (offsetDetected && glflags.seen_PU_base_address) {
-            addr = *lowAddr + highpcOff;
+            addr = *lowAddrp + highpcOff;
             cres = DW_DLV_OK;
         } else {
             cres = dwarf_formaddr(attrib, &addr, err);
         }
         if(cres == DW_DLV_OK) {
             if (attr == DW_AT_low_pc) {
-                *lowAddr = addr;
-                *bSawLow = TRUE;
+                *lowAddrp = addr;
+                *bSawLowp = TRUE;
                 /*  Record the base address of the last seen PU
                     to be used when checking line information */
                 if (glflags.seen_PU &&
@@ -3231,8 +3254,8 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                     glflags.PU_base_address = addr;
                 }
             } else { /* DW_AT_high_pc */
-                *highAddr = addr;
-                *bSawHigh = TRUE;
+                *highAddrp = addr;
+                *bSawHighp = TRUE;
                 /*  Record the high address of the last seen PU
                     to be used when checking line information */
                 if (glflags.seen_PU &&
@@ -3246,7 +3269,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         }
 
         /* We have now both low_pc and high_pc values */
-        if (*bSawLow && *bSawHigh) {
+        if (*bSawLowp && *bSawHighp) {
             /*  We need to decide if this PU is
                 valid, as the SN Linker marks a stripped
                 function by setting lowpc to -1;
@@ -3261,7 +3284,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                     instances of lowpc and highpc,
                     must be ignore (lexical blocks) */
                 in_valid_code = TRUE;
-                if (IsInvalidCode(*lowAddr,*highAddr) &&
+                if (IsInvalidCode(*lowAddrp,*highAddrp) &&
                     tag == DW_TAG_subprogram) {
                     in_valid_code = FALSE;
                 }
@@ -3270,8 +3293,8 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                 check if they are valid */
             if (in_valid_code) {
                 DWARF_CHECK_COUNT(ranges_result,1);
-                if (*lowAddr != elf_max_address &&
-                    *lowAddr > *highAddr) {
+                if (*lowAddrp != elf_max_address &&
+                    *lowAddrp > *highAddrp) {
                     DWARF_CHECK_ERROR(ranges_result,
                         ".debug_info: Incorrect values "
                         "for low_pc/high_pc");
@@ -3280,19 +3303,19 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                         printf("Low = 0x%" DW_PR_XZEROS DW_PR_DUx
                             ", High = 0x%"
                             DW_PR_XZEROS DW_PR_DUx "\n",
-                            *lowAddr,*highAddr);
+                            *lowAddrp,*highAddrp);
                     }
                 }
                 if (glflags.gf_check_decl_file ||
                     glflags.gf_check_ranges ||
                     glflags.gf_check_locations) {
                     AddEntryIntoBucketGroup(glflags.pRangesInfo,0,
-                        *lowAddr,
-                        *lowAddr,*highAddr,NULL,FALSE);
+                        *lowAddrp,
+                        *lowAddrp,*highAddrp,NULL,FALSE);
                 }
             }
-            *bSawLow = FALSE;
-            *bSawHigh = FALSE;
+            *bSawLowp = FALSE;
+            *bSawHighp = FALSE;
         }
     }
     return DW_DLV_OK;
@@ -3494,11 +3517,19 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         Dwarf_Half offset_size = 0;
         int wres = 0;
 
-        get_form_values(dbg,attrib,&theform,&directform);
+        wres = get_form_values(dbg,attrib,&theform,&directform,
+            err);
+        if (wres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "ERROR: Cannot get DW_AT_discr_list form values",
+                wres, *err);
+            return wres;
+        }
         wres = dwarf_get_version_of_die(die,&version,&offset_size);
         if (wres != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "ERROR: Cannot get DIE context version number",
+                "ERROR: Cannot get DIE context version number"
+                " for DW_AT_discr_list",
                 DW_DLV_OK,0);
             break;
         }
@@ -3526,7 +3557,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 (dwarfdump in this case) is the agent that
                 should determine the proper signedness.  */
 
-            fres = dwarf_formblock(attrib, &tempb,aerr);
+            fres = dwarf_formblock(attrib, &tempb,err);
             if (fres == DW_DLV_OK) {
                 struct esb_s bformstr;
                 int isunsigned = 0; /* Meaning unknown */
@@ -3586,8 +3617,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 tempb = 0;
             } else {
                 print_error_and_continue(dbg,
-                    "ERROR: DW_FORM_blockn cannot get block"
-                    , fres, *err);
+                    "ERROR: DW_AT_discr_list: cannot get list"
+                    "data", fres, *err);
                 return fres;
             }
         } else {
@@ -3614,7 +3645,15 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Half offset_size = 0;
             int wres = 0;
 
-            get_form_values(dbg,attrib,&theform,&directform);
+            wres = get_form_values(dbg,attrib,&theform,&directform,
+                err);
+            if (wres == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "ERROR: Cannot get DW_AT_data_member_location"
+                    " form values",
+                    wres, *err);
+                return wres;
+            }
             wres = dwarf_get_version_of_die(die,&version,
                 &offset_size);
             if (wres != DW_DLV_OK) {
@@ -3687,9 +3726,19 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Half directform = 0;
             char buf[100];
             struct esb_s funcformstr;
+            int wres = 0;
 
             esb_constructor_fixed(&funcformstr,buf,sizeof(buf));
-            get_form_values(dbg,attrib,&theform,&directform);
+            wres = get_form_values(dbg,attrib,&theform,&directform,
+                err);
+            if (wres == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "ERROR: Cannot get DW_AT_SUN_func_offsets"
+                    " form values",
+                    wres, *err);
+                return wres;
+            }
+
             get_FLAG_BLOCK_string(dbg, attrib,&funcformstr);
             show_form_itself(glflags.show_form_used,
                 glflags.verbose, theform,
@@ -3709,7 +3758,16 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             struct esb_s cfkindstr;
 
             esb_constructor(&cfkindstr);
-            get_form_values(dbg,attrib,&theform,&directform);
+            wres = get_form_values(dbg,attrib,
+                &theform,&directform,
+                err);
+            if (wres == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "ERROR: Cannot get DW_AT_SUr_cf_kind form values",
+                    wres, *err);
+                return wres;
+            }
+
             wres = dwarf_formudata (attrib,&tempud, err);
             if (wres == DW_DLV_OK) {
                 kind = tempud;
@@ -3757,9 +3815,19 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             case DW_FORM_block1: {
                 Dwarf_Half btheform = 0;
                 Dwarf_Half directform = 0;
-                rv  = get_form_values(dbg,attrib,&btheform,&directform);
-                get_location_list(dbg, die, attrib, &upperboundstr);
-                show_form_itself(glflags.show_form_used,glflags.verbose,
+                rv  = get_form_values(dbg,attrib,
+                    &btheform,&directform,err);
+                if (rv == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg,
+                        "ERROR: Cannot get DW_AT_upper_bound"
+                        " form values",
+                        rv, *err);
+                    return rv;
+                }
+                rv = get_location_list(dbg, die, attrib,
+                    &upperboundstr,err);
+                show_form_itself(glflags.show_form_used,
+                    glflags.verbose,
                     btheform,
                     directform,&upperboundstr);
                 esb_empty_string(&valname);
@@ -3767,10 +3835,18 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 }
                 break;
             default:
-                get_attr_value(dbg, tag, die,
+                rv = get_attr_value(dbg, tag, die,
                     dieprint_cu_goffset,
                     attrib, srcfiles, cnt, &upperboundstr,
-                    glflags.show_form_used,glflags.verbose);
+                    glflags.show_form_used,glflags.verbose,
+                    err);
+                if (rv == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg,
+                        "ERROR: Cannot get DW_AT_upper_bound"
+                        " form value",
+                        rv, *err);
+                    return rv;
+                }
                 esb_empty_string(&valname);
                 esb_append(&valname, esb_get_string(&upperboundstr));
                 break;
@@ -3786,10 +3862,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 die, dieprint_cu_goffset,
                 srcfiles, cnt,
                 attrib,
+                attr,
+                elf_max_address,
                 &bSawLow, &lowAddr,
                 &bSawHigh, &highAddr,
                 &valname,
-                err)
+                err);
             if (rv != DW_DLV_OK) {
                 return rv;
             }
@@ -3817,7 +3895,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_empty_string(&rangesstr);
             rv = get_attr_value(dbg, tag,die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt, &rangesstr,
-                glflags.show_form_used,glflags.verbose);
+                glflags.show_form_used,glflags.verbose,err);
             if (rv == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "Cannot find Attr value"
@@ -3834,7 +3912,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     "Cannot print range attribute "
                     "for DW_AT_ranges",
                     rv, *err);
-                return rv;
+                /*  We will not stop, this is an omission
+                    in libdwarf on DWARF5 rnglists */
+                dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
             }
             esb_empty_string(&valname);
             esb_append(&valname, esb_get_string(&rangesstr));
@@ -3855,7 +3935,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         if (ml == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "Cannot  get value "
-                "for DW_AT_MIPS_linkage_name "
+                "for DW_AT_MIPS_linkage_name ",
                 ml, *err);
             return ml;
         }
@@ -3888,7 +3968,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_GNU_template_name:
         {
         struct esb_s templatenamestr;
-        int tres = 0;
 
         esb_constructor(&templatenamestr);
         tres = get_attr_value(dbg, tag, die,
@@ -3898,7 +3977,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "Cannot  get value "
-                "for DW_AT_name/DW_AT_GNU_template_name "
+                "for DW_AT_name/DW_AT_GNU_template_name ",
                 tres, *err);
             return tres;
         }
@@ -3921,7 +4000,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if (tres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "Cannot  get check_names value "
-                    "for DW_AT_name/DW_AT_GNU_template_name "
+                    "for DW_AT_name/DW_AT_GNU_template_name ",
                     tres, *err);
                 return tres;
             }
@@ -3961,7 +4040,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if (vres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "Cannot get check-locations value "
-                    "for DW_AT_name/DW_AT_GNU_template_name "
+                    "for DW_AT_name/DW_AT_GNU_template_name ",
                     vres, *err);
                 return vres;
             }
@@ -3987,7 +4066,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if (sres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "Cannot get CU name "
-                    "for DW_AT_name/DW_AT_GNU_template_name "
+                    "for DW_AT_name/DW_AT_GNU_template_name ",
                     sres, *err);
                 return sres;
             }
@@ -4012,7 +4091,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         if (pres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "Cannot  get value "
-                "for DW_AT_producer"
+                "for DW_AT_producer",
                 pres, *err);
             return pres;
         }
@@ -4036,7 +4115,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if (pres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
                     "Cannot  get checking value "
-                    "for DW_AT_producer"
+                    "for DW_AT_producer",
                     pres, *err);
                 return pres;
             }
@@ -4063,15 +4142,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_type:
         {
         struct esb_s lesb;
-        int tres = 0;
 
         esb_constructor(&lesb);
         tres = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,attrib, srcfiles, cnt, &lesb,
-            glflags.show_form_used,glflags.verbose);
+            glflags.show_form_used,glflags.verbose,err);
         if (tres == DW_DLV_ERROR) {
             struct esb_s m;
-            char *n =
+            const char *n =
                 get_AT_name(attr,pd_dwarf_names_print_on_error);
             esb_constructor(&m);
             esb_append(&m,
@@ -4100,7 +4178,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             frres =get_form_values(dbg,attrib,&theform,&directform,
                 err);
             if (frres == DW_DLV_ERROR) {
-                char *n =
+                const char *n =
                     get_AT_name(attr,pd_dwarf_names_print_on_error);
                 struct esb_s m;
                 esb_constructor(&m);
@@ -4111,7 +4189,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     esb_get_string(&m),
                     frres,*err);
                 esb_destructor(&m);
-                return ffres;
+                return frres;
             }
             frres = dwarf_global_formref(attrib, &ref_goff, err);
             if (frres == DW_DLV_ERROR) {
@@ -4130,7 +4208,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
                     *err = 0;
                 } else {
-                    char *n =
+                    const char *n =
                         get_AT_name(attr,
                             pd_dwarf_names_print_on_error);
                     struct esb_s m;
@@ -4142,10 +4220,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         esb_get_string(&m),
                         frres,*err);
                         esb_destructor(&m);
-                    return ffres;
+                    return frres;
                 }
             } else if (frres == DW_DLV_NO_ENTRY) {
-                char *n =
+                const char *n =
                     get_AT_name(attr,pd_dwarf_names_print_on_error);
                 struct esb_s m;
 
@@ -4156,12 +4234,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 print_error_and_continue(dbg,
                     esb_get_string(&m),
                     frres,*err);
-                esb_destructor(&m);
-                return ffres;
+                return frres;
             }
-            frres = dwarf_dieoffset(die, &die_goff, &paerr);
+            frres = dwarf_dieoffset(die, &die_goff, err);
             if (frres != DW_DLV_OK) {
-                char *n =
+                const char *n =
                     get_AT_name(attr,pd_dwarf_names_print_on_error);
                 struct esb_s m;
                 esb_constructor(&m);
@@ -4172,7 +4249,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     esb_get_string(&m),
                     frres,*err);
                 esb_destructor(&m);
-                return ffres;
+                return frres;
             }
 
             if (!suppress_check &&
@@ -4208,7 +4285,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         &ref_die_cu_goff, err);
                         /* Check above call return status? FIXME */
                     if (fresb != DW_DLV_OK) {
-                        char *n =
+                        const char *n =
                             get_AT_name(attr,
                             pd_dwarf_names_print_on_error);
                         struct esb_s m;
@@ -4221,10 +4298,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                             esb_get_string(&m),
                             frres,*err);
                         esb_destructor(&m);
-                        return ffres;
+                        return frres;
                     }
 
-                    ffres = traverse_one_die(dbg,attrib,ref_die,
+                    frres = traverse_one_die(dbg,attrib,ref_die,
                         ref_die_cu_goff,
                         is_info,srcfiles,cnt,die_indent_level,
                         err);
@@ -4234,7 +4311,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 }
                 DeleteKeyInBucketGroup(glflags.pVisitedInfo,die_goff);
                 if (frres == DW_DLV_ERROR) {
-                    return ffres;
+                    return frres;
                 }
             }
 
@@ -4282,7 +4359,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 if (srcres == DW_DLV_OK) {
                     /* Get the DIE name */
                     char *name = 0;
-                    srcres = dwarf_diename(ref_die,&name,&paerr);
+                    srcres = dwarf_diename(ref_die,&name,err);
                     if (srcres == DW_DLV_OK) {
                         esb_empty_string(&valname);
                         esb_append(&valname,name);
@@ -4318,10 +4395,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_constructor(&pn);
                 /* Only looks in this one DIE's attributes */
                 found =get_proc_name_by_die(dbg,die,
-                    low_pc,&pn,/*pcMap=*/0,err);
+                    low_pc,&pn,
+                    /*pcMap=*/0,
+                    err);
                 if (found == DW_DLV_ERROR) {
                     struct esb_s m;
-                    char *n =
+                    const char *n =
                         get_AT_name(attr,
                         pd_dwarf_names_print_on_error);
                     esb_constructor(&m);
@@ -4356,7 +4435,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 glflags.show_form_used,glflags.verbose,err);
             if (dres == DW_DLV_ERROR) {
                 struct esb_s m;
-                char *n =
+                const char *n =
                     get_AT_name(attr,
                     pd_dwarf_names_print_on_error);
                 esb_constructor(&m);
@@ -4419,14 +4498,15 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     return DW_DLV_OK;
 }
 
-void
+int
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     Dwarf_Locdesc * llbuf, /* Non-zero for old interface. */
     Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
     UNUSEDARG Dwarf_Unsigned llent, /* Which desc we have . */
     Dwarf_Unsigned entrycount, /* How many location operators (DW_OP)? */
     Dwarf_Addr  baseaddr,
-    struct esb_s *string_out)
+    struct esb_s *string_out,
+    Dwarf_Error *err)
 {
 
     Dwarf_Half no_of_ops = 0;
@@ -4440,23 +4520,24 @@ dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
             Dwarf_Loc * op = &locd->ld_s[i];
 
             int res = _dwarf_print_one_expr_op(dbg,op,NULL,i,
-                baseaddr,string_out);
+                baseaddr,string_out,err);
             if (res == DW_DLV_ERROR) {
-                return;
+                return res;
             }
         }
-        return;
+        return DW_DLV_OK;
     }
     /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,NULL,locdesc,i,
-            baseaddr,string_out);
+            baseaddr,string_out,err);
         if (res == DW_DLV_ERROR) {
-            return;
+            return res;
         }
     }
+    return DW_DLV_OK;
 }
 
 static int
@@ -4925,7 +5006,7 @@ get_location_list(Dwarf_Debug dbg,
                     /*  hipc is index of a slot in .debug_addr section.
                         which contains base_address. */
                     int res = dwarf_debug_addr_index_to_addr(die,
-                        hipc,&realaddr,&llerr);
+                        hipc,&realaddr,llerr);
                     if(res == DW_DLV_OK) {
                         base_address = realaddr;
                     } else if(res == DW_DLV_ERROR) {
@@ -4935,10 +5016,14 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx,hipc);
                         esb_append_printf_s(esbp,
                             " %s>",
-                            adexplain(dwarf_errno(llerr),
+                            adexplain(dwarf_errno(*llerr),
                             "base-address-unavailable"));
                         base_address = 0;
-                    } else {
+                        print_error_and_continue(dbg,
+                            "ERROR printing addr index val fails",
+                            res,*llerr);
+                        return res;
+                    } else { /* DW_DLV_NO_ENTRY */
                         esb_append_printf_u(esbp,
                             "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx
@@ -4972,7 +5057,7 @@ get_location_list(Dwarf_Debug dbg,
                     /*  start (lopc) is index of a slot
                         in .debug_addr section. */
                     int res = dwarf_debug_addr_index_to_addr(die,
-                        lopc,&realaddr,&llerr);
+                        lopc,&realaddr,llerr);
                     if(res == DW_DLV_OK) {
                         lopc = realaddr;
                         foundaddr = TRUE;
@@ -4982,11 +5067,11 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx,lopc);
                         esb_append_printf_s(esbp,
                             " %s>",
-                            adexplain(dwarf_errno(llerr),
+                            adexplain(dwarf_errno(*llerr),
                             "start-address-unavailable"));
-                        glflags.gf_count_major_errors++
-                        dwarf_dealloc(dbg,llerr,DW_DLA_ERROR);
-                        llerr = 0;
+                        glflags.gf_count_major_errors++;
+                        dwarf_dealloc(dbg,*llerr,DW_DLA_ERROR);
+                        *llerr = 0;
                     } else {
                         esb_append_printf_u(esbp,
                             "<debug_addr index 0x%"
@@ -5054,7 +5139,7 @@ get_location_list(Dwarf_Debug dbg,
                     Dwarf_Addr realhi = 0;
                     /* start is index of a slot in .debug_addr section. */
                     int res = dwarf_debug_addr_index_to_addr(die,
-                        lopc,&reallo,&llerr);
+                        lopc,&reallo,llerr);
                     if(res == DW_DLV_OK) {
                         lopcfinal = reallo;
                         foundaddr = TRUE;
@@ -5065,8 +5150,10 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx,lopc);
                         esb_append_printf_s(esbp,
                             " %s>",
-                            adexplain(dwarf_errno(llerr),
+                            adexplain(dwarf_errno(*llerr),
                             "start-address-unavailable"));
+                        glflags.gf_count_major_errors++;
+                        dwarf_dealloc(dbg,*llerr,DW_DLA_ERROR);
                     } else {
                         esb_append_printf_u(esbp,
                             "<debug_addr index 0x%"
@@ -5076,7 +5163,7 @@ get_location_list(Dwarf_Debug dbg,
                         lopcfinal = 0;
                     }
                     res = dwarf_debug_addr_index_to_addr(die,
-                        hipc,&realhi,&llerr);
+                        hipc,&realhi,llerr);
                     if(res == DW_DLV_OK) {
                         hipcfinal = realhi;
                     } else if(res == DW_DLV_ERROR) {
@@ -5086,9 +5173,11 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx,hipc);
                         esb_append_printf_s(esbp,
                             " %s>",
-                            adexplain(dwarf_errno(llerr),
+                            adexplain(dwarf_errno(*llerr),
                             "end-address-unavailable"));
                         foundaddr = FALSE;
+                        glflags.gf_count_major_errors++;
+                        dwarf_dealloc(dbg,*llerr,DW_DLA_ERROR);
                     } else {
                         esb_append_printf_u(esbp,
                             "<debug_addr index 0x%"
@@ -5113,7 +5202,8 @@ get_location_list(Dwarf_Debug dbg,
                         ">",hipcfinal);
                 } else {
                     esb_append(esbp,
-                        "<Impossible start-end entry>");
+                        "<ERROR: Impossible start-end entry>");
+                    glflags.gf_count_major_errors++;
                     /* Impossible */
                 }
                 if (checking && foundaddr) {
@@ -5127,11 +5217,11 @@ get_location_list(Dwarf_Debug dbg,
                 esb_constructor(&unexp);
                 glflags.gf_count_major_errors++;
                 esb_append_printf_u(&unexp,
-                    "ERROR: Unexpected LLEX code 0x%x, ERROR",
+                    "ERROR: Unexpected LLEX code 0x%x",
                     lle_value);
                 print_error_and_continue(dbg,
                     esb_get_string(&unexp),
-                    DW_DLV_OK, llerr);
+                    DW_DLV_OK, 0);
                 esb_destructor(&unexp);
             }
             if (glflags.gf_display_offsets && glflags.verbose) {
@@ -5149,7 +5239,7 @@ get_location_list(Dwarf_Debug dbg,
                     locdesc_offset);
             }
         }
-        dwarfdump_print_one_locdesc(dbg,
+        lres = dwarfdump_print_one_locdesc(dbg,
             /*  Either llbuf or locentry non-zero.
                 Not both. */
             llbuf,
@@ -5157,7 +5247,10 @@ get_location_list(Dwarf_Debug dbg,
             llent, /* Which loc desc this is */
             locentry_count, /* How many ops in this loc desc */
             base_address,
-            esbp);
+            esbp,llerr);
+        if (lres == DW_DLV_ERROR) {
+            return lres;
+        }
     }
 
     if (bError &&  glflags.gf_check_verbose_mode && PRINTING_UNIQUE) {
@@ -5173,6 +5266,7 @@ get_location_list(Dwarf_Debug dbg,
         }
         dwarf_dealloc(dbg, llbufarray, DW_DLA_LIST);
     }
+    return DW_DLV_OK;
 }
 
 /*  New October 2017.
@@ -5385,8 +5479,6 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     was unsigned or signed (usually easily) and
     use that information.
 */
-
-
 static int
 formxdata_print_value(Dwarf_Debug dbg,
     Dwarf_Die die,
@@ -5399,7 +5491,6 @@ formxdata_print_value(Dwarf_Debug dbg,
     Dwarf_Unsigned tempud = 0;
     int sres = 0;
     int ures = 0;
-    Dwarf_Error serr = 0;
 
     if (theform == DW_FORM_data16) {
         Dwarf_Form_Data16 v16;
@@ -5417,9 +5508,8 @@ formxdata_print_value(Dwarf_Debug dbg,
         }
     }
     ures = dwarf_formudata(attrib, &tempud, pverr);
-    sres = dwarf_formsdata(attrib, &tempsd, &serr);
     if (ures == DW_DLV_OK) {
-        sres = dwarf_formsdata(attrib, &tempsd, &serr);
+        sres = dwarf_formsdata(attrib, &tempsd, pverr);
         if (sres == DW_DLV_OK) {
             if (tempud == (Dwarf_Unsigned)tempsd && tempsd >= 0) {
                 /*  Data is the same value and not negative,
@@ -5454,23 +5544,24 @@ formxdata_print_value(Dwarf_Debug dbg,
             return DW_DLV_OK;
         } else /* DW_DLV_ERROR */{
             formx_unsigned(tempud,esbp,hex_format);
-            dwarf_dealloc(dbg,sres,serr);
+            dwarf_dealloc(dbg,*pverr,DW_DLA_ERROR);
             return DW_DLV_OK;
         }
-    } else if {ures == DW_DLV_ERROR) {
+    } else if (ures == DW_DLV_ERROR) {
         dwarf_dealloc(dbg,*pverr,DW_DLA_ERROR);
         *pverr = 0;
         /* ures ==  DW_DLV_ERROR  or DW_DLV_NO_ENTRY*/
-        sres = dwarf_formsdata(attrib, &tempsd, &serr);
+        sres = dwarf_formsdata(attrib, &tempsd, pverr);
         if (sres == DW_DLV_OK) {
             formx_signed(tempsd,esbp);
-            return DW_DLV_OK;
-        } else  if sres == DW__DLV_ERROR{
-            dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+            return sres;
+        } else if (sres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,*pverr,DW_DLA_ERROR);
             /* Neither worked. */
+            return sres;
         }
     }
-    /* Both are DW_DLV_NO_ENTRY which is crazy, impossible. */
+    /* NO_ENTRY is crazy, impossible. */
     return DW_DLV_NO_ENTRY;
 }
 
@@ -5493,8 +5584,8 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
 {
     Dwarf_Ptr x = 0;
     Dwarf_Unsigned exprlength = 0;
-    Dwarf_Error ecerr = 0;
     int wres = 0;
+
     wres = dwarf_formexprloc(attrib,&exprlength,&x,err);
     if (wres == DW_DLV_NO_ENTRY) {
         /* Impossible case... */
@@ -5559,7 +5650,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: Unable to create "
                     "expresssion location"
-                    " with length 0x%" DW_PR_DUu  "
+                    " with length 0x%" DW_PR_DUu
                     "as a string.\n",
                     exprlength);
             }
@@ -5858,8 +5949,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     }
     /*  dwarf_whatform_direct gets the 'direct' form, so if
         the form is DW_FORM_indir that is what is returned. */
-    fres  = dwarf_whatform_direct(attrib, &direct_form, &err);
-    DROP_ERROR_INSTANCE(dbg,fres,*verr);
+    fres  = dwarf_whatform_direct(attrib, &direct_form, err);
+    DROP_ERROR_INSTANCE(dbg,fres,*err);
     /*  Ignore errors in dwarf_whatform_direct() */
 
     switch (theform) {
@@ -5921,14 +6012,15 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 /*  This is normal in a .dwo/DWP file. The .debug_addr
                     is in a .o and in the final executable. */
             } else {
-                /* Some bad error. */.
+                /* Some bad error. */
                 struct esb_s lstr;
+
                 esb_constructor(&lstr);
                 esb_append(&lstr,get_FORM_name(theform,FALSE));
                 esb_append(&lstr," form with no addr ?!");
                 print_error_and_continue(dbg,
                     esb_get_string(&lstr),
-                    bres, err);
+                    bres, *err);
                 esb_destructor(&lstr);
                 if(!glflags.gf_error_code_in_name_search_by_address) {
                     glflags.gf_error_code_in_name_search_by_address =
@@ -5961,15 +6053,15 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         } else {
             print_error_and_continue(dbg,
                 "DW_FORM_ref_addr form with no reference?!"
-                " Something is corrupted."
+                " Something is corrupted.",
                 bres, *err);
             return bres;
         }
-        wres = dwarf_whatattr(attrib, &attr, &err);
+        wres = dwarf_whatattr(attrib, &attr, err);
         if (wres != DW_DLV_OK) {
             print_error_and_continue(dbg,
                 "DW_FORM_ref_addr no attribute number?!"
-                " Something is corrupted."
+                " Something is corrupted.",
                 wres, *err);
             return wres;
         }
@@ -5994,7 +6086,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         "dwarf_dieoffsetnot available for"
                         "DW_AT_sibling. Something is corrupted.",
                         ores, *err);
-                    return ored;
+                    return ores;
                 }
                 SET_DIE_STACK_SIBLING(off);
                 if (die_overall_offset >= off) {
@@ -6018,12 +6110,16 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
                 DWARF_CHECK_COUNT(tag_tree_result,1);
                 res = dwarf_die_CU_offset_range(die,&cuoff,
-                    &culen,&err);
+                    &culen,err);
                 if (res != DW_DLV_OK) {
                     DWARF_CHECK_ERROR(tag_tree_result,
                         "DW_AT_sibling DW_FORM_ref_addr "
                         "offset range of the CU "
                         "is not available");
+                    if (res == DW_DLV_ERROR) {
+                        dwarf_dealloc(dbg,*err,DW_DLV_ERROR);
+                        *err = 0;
+                    }
                 } else {
                     Dwarf_Off cuend = cuoff+culen;
                     if (off <  cuoff || off >= cuend) {
@@ -6073,7 +6169,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             esb_append(&lstr,get_AT_name(attr,FALSE));
             esb_append(&lstr,
                 " is an attribute with no number? Impossible");
-            print_error_and_continue(dbg, esb_get_string(&lstr),
+            print_error_and_continue(dbg,
                 esb_get_string(&lstr),refres,*err);
             esb_destructor(&lstr);
             return refres;
@@ -6082,7 +6178,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         /*  Convert the local offset 'off' into a global section
             offset 'goff'. */
         refres = dwarf_convert_to_global_offset(attrib,
-            off, &goff, &referr);
+            off, &goff, err);
         if (refres != DW_DLV_OK) {
             /*  Report incorrect offset */
             struct esb_s msg;
@@ -6092,9 +6188,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 "invalid offset"
                 ",off=<0x%"  DW_PR_XZEROS  DW_PR_DUx "> ",
                 off);
-            esb_append(&lstr,"attr: ");
-            esb_append(&lstr,get_AT_name(attr,FALSE));
-            esb_append(&lstr,"local offset has no global offset! ");
+            esb_append(&msg,"attr: ");
+            esb_append(&msg,get_AT_name(attr,FALSE));
+            esb_append(&msg,"local offset has no global offset! ");
             print_error_and_continue(dbg,
                 esb_get_string(&msg), refres, *err);
             esb_destructor(&msg);
@@ -6116,7 +6212,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 esb_constructor(&lstr);
                 esb_append(&lstr,"DW_AT_sibling attr and DIE has");
                 esb_append(&lstr,"no die_offset?");
-                print_error(dbg, esb_get_string(&lstr),
+                print_error_and_continue(dbg,
+                    esb_get_string(&lstr),
                     ores, *err);
                 esb_destructor(&lstr);
                 return ores;
@@ -6137,9 +6234,11 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     " its own die GOFF="
                     "0x%"  DW_PR_XZEROS  DW_PR_DUx,
                     die_overall_offset);
-                simple_err_only_return(DW_DLV_ERROR,
+                simple_err_only_return_action(DW_DLV_ERROR,
                     esb_get_string(&lstr));
                 esb_destructor(&lstr);
+                /*  At present no way to create a Dwarf_Error
+                    inside dwarfdump. */
             }
 
         }
@@ -6258,7 +6357,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_block1:
     case DW_FORM_block2:
     case DW_FORM_block4:
-        fres = dwarf_formblock(attrib, &tempb, &err);
+        fres = dwarf_formblock(attrib, &tempb, err);
         if (fres == DW_DLV_OK) {
             unsigned u = 0;
 
@@ -6289,7 +6388,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_data16:
         {
         Dwarf_Half attr = 0;
-        fres = dwarf_whatattr(attrib, &attr, &err);
+        fres = dwarf_whatattr(attrib, &attr, err);
         if (fres != DW_DLV_OK) {
             struct esb_s lstr;
             esb_constructor(&lstr);
@@ -6338,7 +6437,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     /* attrname */ (const char *) NULL,
                     /* err_string */ ( struct esb_s *) NULL,
                     (encoding_type_func) 0,
-                    &err,show_form_here);
+                    err,show_form_here);
 
                 if (wres == DW_DLV_OK) {
                     Dwarf_Bool hex_format = TRUE;
@@ -6438,7 +6537,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     esb_append(&lstr," Cannot get const value ");
                     print_error_and_continue(dbg,
                         esb_get_string(&lstr),
-                        wres, err);
+                        wres, *err);
                     esb_destructor(&lstr);
                     return wres;
                 }
@@ -6471,10 +6570,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     esb_append(&lstr," and attribute ");
                     esb_append(&lstr,get_AT_name(attr,FALSE));
                     esb_append(&lstr," Cannot get  Dwarf_Sig8 value ");
-                    print_error(dbg, esb_get_string(&lstr),
                     print_error_and_continue(dbg,
                         esb_get_string(&lstr),
-                        wres, err);
+                        wres, *err);
                     esb_destructor(&lstr);
                     return wres;
                 }
@@ -6496,7 +6594,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     DW_AT_ranges. */
                 wres = formxdata_print_value(dbg,
                     tdie,attrib,
-                    theform,esbp, &err, chex);
+                    theform,esbp, err, chex);
                 if (wres == DW_DLV_OK) {
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {
@@ -6509,10 +6607,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     esb_append(&lstr," and attribute ");
                     esb_append(&lstr,get_AT_name(attr,FALSE));
                     esb_append(&lstr," Cannot get  Dwarf_Sig8 value ");
-                    print_error(dbg, esb_get_string(&lstr),
                     print_error_and_continue(dbg,
                         esb_get_string(&lstr),
-                        wres, err);
+                        wres, *err);
                     esb_destructor(&lstr);
                     return wres;
                 }
@@ -6535,7 +6632,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         break;
     case DW_FORM_sdata:
-        wres = dwarf_formsdata(attrib, &tempsd, &err);
+        wres = dwarf_formsdata(attrib, &tempsd, err);
         if (wres == DW_DLV_OK) {
             Dwarf_Bool hxform=TRUE;
             tempud = tempsd;
@@ -6545,12 +6642,13 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             /* nothing? */
         } else {
             print_error_and_continue(dbg,
-                "Cannot get DW_FORM_sdata value..", wres, *err);
+                "Cannot get DW_FORM_sdata value..",
+                wres, *err);
             return wres;
         }
         break;
     case DW_FORM_udata:
-        wres = dwarf_formudata(attrib, &tempud, &err);
+        wres = dwarf_formudata(attrib, &tempud, err);
         if (wres == DW_DLV_OK) {
             Dwarf_Bool hex_format = TRUE;
             formx_unsigned(tempud,esbp,hex_format);
@@ -6558,7 +6656,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             /* nothing? */
         } else {
             print_error_and_continue(dbg,
-                "Cannot get DW_FORM_udata value..", wres, *err);
+                "Cannot get DW_FORM_udata value..",
+                wres, *err);
             return wres;
         }
         break;
@@ -6587,12 +6686,18 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Unsigned index = 0;
 
                 esb_constructor(&saver);
-                sres = dwarf_get_debug_str_index(attrib,&index,&err);
+                sres = dwarf_get_debug_str_index(attrib,&index,err);
                 esb_append(&saver,temps);
                 if(sres == DW_DLV_OK) {
                     bracket_hex("(indexed string: ",index,")",esbp);
                 } else {
-                    esb_append(esbp,"(indexed string:no string provided?)");
+                    if (sres == DW_DLV_ERROR) {
+
+                        dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
+                        *err = 0;
+                    }
+                    esb_append(esbp,
+                        "(ERROR: indexed string:no string provided?)");
                 }
                 esb_append(esbp, esb_get_string(&saver));
                 esb_destructor(&saver);
@@ -6610,7 +6715,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             } else {
                 esb_append(esbp, "<no string provided?>");
             }
-        } else { /* DW_DLV_ERRO */
+        } else { /* DW_DLV_ERROR */
             if (theform == DW_FORM_strx ||
                 theform == DW_FORM_GNU_str_index ||
                 theform == DW_FORM_strx1 ||
@@ -6628,7 +6733,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     sres, *err);
                 esb_destructor(&lstr);
                 return sres;
-            } else {
+            }
+            {
                 struct esb_s lstr;
 
                 esb_constructor(&lstr);
@@ -6691,7 +6797,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             emptyattrname,
             /* err_string */ NULL,
             (encoding_type_func) 0,
-            &err,show_form_here);
+            err,show_form_here);
         if (wres == DW_DLV_NO_ENTRY) {
             /* Show nothing? */
         } else if (wres == DW_DLV_ERROR) {
@@ -6712,7 +6818,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         Dwarf_Sig8 sig8data;
 
         sig8data = zerosig;
-        wres = dwarf_formsig8(attrib,&sig8data,&err);
+        wres = dwarf_formsig8(attrib,&sig8data,err);
         if (wres != DW_DLV_OK) {
             /* Show nothing? */
             print_error_and_continue(dbg,
@@ -6733,7 +6839,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         break;
     case DW_FORM_implicit_const: {  /* DWARF5, attr val is signed uleb */
-        wres = dwarf_formsdata(attrib, &tempsd, &err);
+        wres = dwarf_formsdata(attrib, &tempsd, err);
         if (wres == DW_DLV_OK) {
             Dwarf_Bool hxform=TRUE;
             tempud = tempsd;
@@ -6800,13 +6906,14 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             "ERROR: dwarf_whatform unexpected value, form code 0x%04x",
             theform);
         simple_err_only_return_action(DW_DLV_ERROR,
-            esb_get_string(&lstr);
+            esb_get_string(&lstr));
         esb_destructor(&lstr);
         }
         break;
-    }
+    } /* end switch on theform */
     show_form_itself(show_form,local_verbose,theform,
         direct_form,esbp);
+    return DW_DLV_OK;
 }
 
 void
@@ -6830,7 +6937,8 @@ format_sig8_string(Dwarf_Sig8*data, struct esb_s *out)
 
 
 static int
-get_form_values(Dwarf_Debug dbg,Dwarf_Attribute attrib,
+get_form_values( UNUSEDARG Dwarf_Debug dbg,
+    Dwarf_Attribute attrib,
     Dwarf_Half * theform, Dwarf_Half * directform,
     Dwarf_Error *err)
 {

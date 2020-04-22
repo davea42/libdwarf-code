@@ -430,13 +430,19 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 #if 0
         int errcount = 0;
 #endif
+        boolean attr_dup = FALSE;
+        int pdres = 0;
         /* FIXME print_one_die return value needed */
-        print_one_die(dbg, cu_die,
+        pdres = print_one_die(dbg, cu_die,
             dieprint_cu_goffset,
             /* print_information= */ 1,
             /* indent level */0,
             /* srcfiles= */ 0, /* cnt= */ 0,
-            /* ignore_die_stack= */TRUE);
+            &attr_dup,
+            /* ignore_die_stack= */TRUE,err);
+        if (pdres == DW_DLV_ERROR) {
+            return pdres;
+        }
 #if 0
         DWARF_CHECK_COUNT(lines_result,1);
         lres = dwarf_print_lines(cu_die, &err,&errcount);

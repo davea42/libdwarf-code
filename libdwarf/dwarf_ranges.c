@@ -1,26 +1,29 @@
 /*
-  Copyright (C) 2008-2018 David Anderson. All Rights Reserved.
+  Copyright (C) 2008-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it
+  and/or modify it under the terms of version 2.1 of the
+  GNU Lesser General Public License as published by the Free
+  Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program; if not, write the Free Software
-  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
-  USA.
+  You should have received a copy of the GNU Lesser General
+  Public License along with this program; if not, write the
+  Free Software Foundation, Inc., 51 Franklin Street - Fifth
+  Floor, Boston MA 02110-1301, USA.
 
 */
 
@@ -222,7 +225,18 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
             localdbg = dbg->de_tied_data.td_tied_object;
         }
     }
-
+#if 0
+FIXME Implement debug_rnglists!
+    /*  de_debug_ranges is DW 3,4.
+        de_debug_rnglists is DW5. */
+    if (die_version >= DW_CU_VERSION5) {
+        res = _dwarf_load_section(localdbg, 
+            &localdbg->de_debug_rngslists,&localerror);
+    } else {
+        res = _dwarf_load_section(localdbg, 
+            &localdbg->de_debug_ranges,&localerror);
+    }
+#endif
     res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,&localerror);
     if (res == DW_DLV_ERROR) {
         _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);

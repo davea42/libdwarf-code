@@ -32,13 +32,13 @@
 extern "C" {
 #endif
 
+/* Always returns DW_DLV_OK */
 int print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned off,
     Dwarf_Ranges *rangeset,
     Dwarf_Signed rangecount,
     Dwarf_Unsigned bytecount,
-    struct esb_s *stringbuf,
-    Dwarf_Error *err);
+    struct esb_s *stringbuf);
 
 int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
     Dwarf_Off  dieprint_cu_offset,

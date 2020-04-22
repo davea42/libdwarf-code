@@ -61,6 +61,32 @@
     The failsafe means we will not abort due to
     a Dwarf_Error struct creation.
 */
+
+/*  The user provides an explanatory string, the error
+    number itself explains little.
+    This prepends DW_DLE_USER_DECLARED_ERROR to the
+    caller-provided string. 
+    New in April, 2020 .  Used by dwarfdump in a few
+    circumstances. */
+void
+dwarf_error_creation(Dwarf_Debug dbg,
+    Dwarf_Error *err,
+    char *errmsg)
+{
+    dwarfstring m;
+    if(!dbg) {
+        return;
+    }
+    dwarfstring_constructor(&m);
+    dwarfstring_append(&m,"DW_DLE_USER_DECLARED_ERROR: ");
+    dwarfstring_append(&m,errmsg);
+    _dwarf_error_string(dbg,err,
+        DW_DLE_USER_DECLARED_ERROR,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
+
 void
 _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval)
