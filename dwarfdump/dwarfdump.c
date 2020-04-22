@@ -1450,6 +1450,7 @@ process_one_file(int fd, int tiedfd,
 #endif /* DWARF_WITH_LIBELF */
     destruct_abbrev_array();
     esb_close_null_device();
+    release_range_array_info();
     helpertree_clear_statistics(&helpertree_offsets_base_info);
     helpertree_clear_statistics(&helpertree_offsets_base_types);
     return 0;

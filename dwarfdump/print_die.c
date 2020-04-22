@@ -2372,6 +2372,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         print_error_and_continue(dbg,
             "Cannot get DIE tag in traverse_attribute!",
             tres,*err);
+        esb_destructor(&valname);
         return tres;
     } else if (tres == DW_DLV_NO_ENTRY) {
         tag = 0;
@@ -2395,6 +2396,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
         res = get_form_values(dbg,attrib,&theform,&directform,err);
         if (res != DW_DLV_OK) {
+            esb_destructor(&valname);
             return res;
         }
         if (!form_refers_local_info(theform)) {
@@ -2407,6 +2409,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &specificationstr,glflags.show_form_used,glflags.verbose,
             err);
         if (res != DW_DLV_OK) {
+            esb_destructor(&valname);
             return res;
         }
         esb_append(&valname, esb_get_string(&specificationstr));
@@ -2427,6 +2430,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     "dwarf_global_formref fails in "
                     "attribute traversal",
                     res, *err);
+                esb_destructor(&valname);
                 return res;
             }
         }
@@ -2444,6 +2448,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 print_error_and_continue(dbg,
                     "dwarf_dieoffset fails in "
                     " attribute traversal", res, *err);
+                esb_destructor(&valname);
                 return res;
             }
         }
@@ -2454,6 +2459,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             print_error_and_continue(dbg,
                 "dwarf_dieoff_b fails in "
                 " attribute traversal", res, *err);
+            esb_destructor(&valname);
             return res;
         }
         if (res == DW_DLV_OK) {
@@ -2464,6 +2470,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
                 res = dwarf_die_CU_offset(die, &die_loff, err);
                 if (res != DW_DLV_OK) {
+                    esb_destructor(&valname);
                     return res;
                 }
                 do_dump_visited_info(die_indent_level,
@@ -2479,6 +2486,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     "dwarf_dieoffset() accessing cu_goff die fails"
                     " in traversal",
                     res,*err);
+                esb_destructor(&valname);
                 return res;
             }
             res = traverse_one_die(dbg,attrib,ref_die,
@@ -2489,6 +2497,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             DeleteKeyInBucketGroup(glflags.pVisitedInfo,ref_goff);
             dwarf_dealloc(dbg,ref_die,DW_DLA_DIE);
             if (res == DW_DLV_ERROR) {
+                esb_destructor(&valname);
                 return res;
             }
             --die_indent_level;
