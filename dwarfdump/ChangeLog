@@ -1,3 +1,11 @@
+2020-04-22  David Anderson 
+    * dwarfdump-ta-ext-table.h: regenerated
+    * tag_attr_ext.list: Added to common extensions list.
+      DW_AT_GNU_pubnames
+      DW_AT_GNU_pubtypes
+      DW_AT_GNU_dwo_name
+      DW_AT_GNU_ranges_base
+      DW_AT_GNU_addr_base
 2020-04-17  David Anderson 
     * dwarfdump.c: Clarified some error messages and
       changed the should_skip_this_cu() from a predicate
