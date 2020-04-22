@@ -20,6 +20,8 @@
   with this program; if not, write the Free Software Foundation, Inc., 51
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
+#ifndef GLFLAGS_H
+#define GLFLAGS_H
 
 /*  All the dwarfdump flags are gathered into a single
     global struct as it has been hard to know how many there
@@ -394,3 +396,4 @@ boolean cu_data_is_set(void);
 
 /* Print the information only if unique errors is set and it is first time */
 #define PRINTING_UNIQUE (!glflags.gf_found_error_message)
+#endif /* GLFLAGS_H */

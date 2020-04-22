@@ -832,7 +832,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             return nres;
         }
         if (cu_count >= glflags.break_after_n_units) {
-            printf("Break at %d CUs\n",cu_count);
+            const char *m = "CUs";
+            if (cu_count == 1) {
+                 m="CU";
+            }
+            printf("Break at %d %s\n",cu_count,m);
             break;
         }
         /*  Regardless of any options used, get basic
@@ -880,15 +884,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             struct esb_s producername;
 
             esb_constructor(&producername);
-            cures = get_producer_name(dbg,cu_die,
+            /* Fills in some producername no matter what status returned. */
+            cures  = get_producer_name(dbg,cu_die,
                 dieprint_cu_goffset,&producername,pod_err);
-            if (cures == DW_DLV_ERROR ) {
-                return cures;
-            }
-            if (cures == DW_DLV_OK) {
-                update_compiler_target(esb_get_string(
-                    &producername));
-            }
+            DROP_ERROR_INSTANCE(dbg,cures,*pod_err);
+            update_compiler_target(esb_get_string(&producername));
             esb_destructor(&producername);
         }
 
@@ -4126,6 +4126,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     "Cannot  get checking value "
                     "for DW_AT_producer",
                     pres, *err);
+                esb_destructor(&local_e);
                 return pres;
             }
             /* Check if this compiler version is a target */
@@ -4400,11 +4401,15 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 Dwarf_Addr low_pc =  0;
                 struct esb_s pn;
                 int found = 0;
+                /*  The cu_die_for_print_frames will not be changed
+                    by get_proc_name_by_die(). Used when printing frames */
+                Dwarf_Die cu_die_for_print_frames = 0;
 
                 esb_constructor(&pn);
                 /* Only looks in this one DIE's attributes */
-                found =get_proc_name_by_die(dbg,die,
+                found = get_proc_name_by_die(dbg,die,
                     low_pc,&pn,
+                    &cu_die_for_print_frames,
                     /*pcMap=*/0,
                     err);
                 if (found == DW_DLV_ERROR) {
@@ -5021,7 +5026,7 @@ get_location_list(Dwarf_Debug dbg,
                     } else if(res == DW_DLV_ERROR) {
                         glflags.gf_count_major_errors++;
                         esb_append_printf_u(esbp,
-                            "<ERROR: debug_addr index 0x%"
+                            "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx,hipc);
                         esb_append_printf_s(esbp,
                             " %s>",
@@ -5072,7 +5077,7 @@ get_location_list(Dwarf_Debug dbg,
                         foundaddr = TRUE;
                     } else if(res == DW_DLV_ERROR) {
                         esb_append_printf_u(esbp,
-                            "<ERROR: debug_addr index 0x%"
+                            "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx,lopc);
                         esb_append_printf_s(esbp,
                             " %s>",
@@ -5155,7 +5160,7 @@ get_location_list(Dwarf_Debug dbg,
                     } else if(res == DW_DLV_ERROR) {
                         glflags.gf_count_major_errors++;
                         esb_append_printf_u(esbp,
-                            "<ERROR: debug_addr index 0x%"
+                            "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx,lopc);
                         esb_append_printf_s(esbp,
                             " %s>",
@@ -5178,7 +5183,7 @@ get_location_list(Dwarf_Debug dbg,
                     } else if(res == DW_DLV_ERROR) {
                         glflags.gf_count_major_errors++;
                         esb_append_printf_u(esbp,
-                            "<ERROR: debug_addr index 0x%"
+                            "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx,hipc);
                         esb_append_printf_s(esbp,
                             " %s>",

@@ -120,7 +120,7 @@ extern int print_line_numbers_this_cu (Dwarf_Debug dbg,
 
 extern int print_frames (Dwarf_Debug dbg,int want_eh,
     struct dwconf_s *,
-    Dwarf_Die * cu_die_for_current_frame_cu,
+    Dwarf_Die * cu_die_for_current_frame,
     void **, void **,Dwarf_Error *);
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
@@ -220,7 +220,9 @@ void destruct_abbrev_array(void);
 
 int get_proc_name_by_die(Dwarf_Debug dbg,
     Dwarf_Die die, Dwarf_Addr low_pc,
-    struct esb_s *proc_name, void **pcMap,
+    struct esb_s *proc_name, 
+    Dwarf_Die *cu_die_for_print_frames,
+    void **pcMap,
     Dwarf_Error *err);
 
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);

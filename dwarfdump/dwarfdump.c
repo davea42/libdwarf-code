@@ -2121,10 +2121,6 @@ void PRINT_CU_INFO(void)
         sprintf(lbuf,
             "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_low_address);
     }
-#if 0 /* Old format print */
-    printf(", Low PC = 0x%08" DW_PR_DUx ", High PC = 0x%08" DW_PR_DUx ,
-        CU_low_address,CU_high_address);
-#endif
     printf(", Low PC = %s, High PC = %s", lbuf,hbuf);
     printf("\n");
 }

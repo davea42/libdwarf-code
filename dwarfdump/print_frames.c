@@ -43,7 +43,6 @@
 #include "dwconf_using_functions.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-
 #include "sanitized.h"
 #include "addrmap.h"
 #include "naming.h"
@@ -98,6 +97,133 @@ safe_strcpy(char *out, long outlen, const char *in, long inlen)
     } else {
         strcpy(out, in);
     }
+}
+
+static void
+dealloc_local_atlist(Dwarf_Debug dbg,
+    Dwarf_Attribute *atlist,
+    Dwarf_Signed atcnt)
+{
+    Dwarf_Signed k = 0;
+
+    for (; k < atcnt; k++) {
+        dwarf_dealloc(dbg, atlist[k], DW_DLA_ATTR);
+    }
+    dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+}
+
+
+/* executing this for a reporting side effect, PRINT_CU_INFO() in dwarfdump.c. */
+static void
+load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
+{
+    Dwarf_Signed atcnt = 0;
+    Dwarf_Attribute *atlist = 0;
+    Dwarf_Half tag = 0;
+    char **srcfiles = 0;
+    Dwarf_Signed srccnt = 0;
+    int local_show_form_used = 0;
+    int local_verbose = 0;
+    int atres = 0;
+    Dwarf_Signed i = 0;
+    Dwarf_Signed k = 0;
+    Dwarf_Error loadcuerr = 0;
+    Dwarf_Off cu_die_goff = 0;
+
+    if(!cu_die) {
+        return;
+    }
+    atres = dwarf_attrlist(cu_die, &atlist, &atcnt, &loadcuerr);
+    if (atres != DW_DLV_OK) {
+        /*  Something is seriously wrong if it is DW_DLV_ERROR. */
+        DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
+        return;
+    }
+    atres = dwarf_tag(cu_die, &tag, &loadcuerr);
+    if (atres != DW_DLV_OK) {
+        for (k = 0; k < atcnt; k++) {
+            dwarf_dealloc(dbg, atlist[k], DW_DLA_ATTR);
+        }
+        dealloc_local_atlist(dbg,atlist,atcnt);
+        /*  Something is seriously wrong if it is DW_DLV_ERROR. */
+        DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
+        return;
+    }
+
+    /* The offsets will be zero if it fails. Let it pass. */
+    atres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+        &glflags.DIE_offset,&loadcuerr);
+    cu_die_goff = glflags.DIE_overall_offset;
+    DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
+
+    glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+    glflags.DIE_CU_offset = glflags.DIE_offset;
+    for (i = 0; i < atcnt; i++) {
+        Dwarf_Half attr = 0;
+        int ares = 0;
+        Dwarf_Attribute attrib = atlist[i];
+
+        ares = dwarf_whatattr(attrib, &attr, &loadcuerr);
+        if (ares != DW_DLV_OK) {
+            for (k = 0; k < atcnt; k++) {
+                dwarf_dealloc(dbg, atlist[k], DW_DLA_ATTR);
+            }
+            dealloc_local_atlist(dbg,atlist,atcnt);
+            DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
+            return;
+        }
+        /*  For now we will not fully deal with the complexity of
+            DW_AT_high_pc being an offset of low pc. */
+        switch(attr) {
+        case DW_AT_low_pc:
+            {
+            ares = dwarf_formaddr(attrib, &glflags.CU_base_address, &loadcuerr);
+            DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
+            glflags.CU_low_address = glflags.CU_base_address;
+            }
+            break;
+        case DW_AT_high_pc:
+            {
+            /*  This is wrong for DWARF4 instances where
+                the attribute is really an offset.
+                It's also useless for CU DIEs that do not
+                have the DW_AT_high_pc high so CU_high_address will
+                be zero*/
+            ares = dwarf_formaddr(attrib, &glflags.CU_high_address, &loadcuerr);
+            DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
+            }
+            break;
+        case DW_AT_name:
+        case DW_AT_producer:
+            {
+            const char *name = 0;
+            struct esb_s namestr;
+
+            esb_constructor(&namestr);
+            ares = get_attr_value(dbg, tag, cu_die,
+                cu_die_goff,attrib, srcfiles, srccnt,
+                &namestr, local_show_form_used,local_verbose,&loadcuerr);
+            DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
+            if (esb_string_len(&namestr)) {
+                name = esb_get_string(&namestr);
+                if(attr == DW_AT_name) {
+                    safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),name,
+                                strlen(name));
+                } else {
+                    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
+                        name,strlen(name));
+                }
+            }
+            esb_destructor(&namestr);
+            }
+            break;
+        default:
+            /* do nothing */
+            break;
+        }
+    }
+    dealloc_local_atlist(dbg,atlist,atcnt);
+    return;
 }
 
 #define MAXLEBLEN 10
@@ -296,6 +422,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Addr low_pc,
     struct esb_s *proc_name,
+    Dwarf_Die * cu_die_for_print_frames,
     void **pcMap,
     Dwarf_Error *err)
 {
@@ -327,6 +454,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     }
     atres = dwarf_attrlist(die, &atlist, &atcnt, err);
     if (atres == DW_DLV_ERROR) {
+        load_CU_error_data(dbg,*cu_die_for_print_frames);
         simple_err_only_return_action(atres,
             "\nERROR: dwarf_attrlist call fails in attempt "
             " to get a procedure/function name");
@@ -353,6 +481,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
         if (ares == DW_DLV_ERROR) {
             struct esb_s m;
             esb_constructor(&m);
+            load_CU_error_data(dbg,*cu_die_for_print_frames);
             esb_append_printf_s(&m,
                 "\nERROR: dwarf_whatattr fails with %s",
                 dwarf_errmsg(proc_name_err));
@@ -404,6 +533,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                         dwarf_errno(proc_name_err)) {
                         glflags.gf_debug_addr_missing_search_by_address = 1;
                     } else {
+                        glflags.gf_count_major_errors++;
                         printf("\nERROR: dwarf_formaddr() failed"
                             " in get_proc_name. %s\n",
                             dwarf_errmsg(proc_name_err));
@@ -429,10 +559,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
             } /* end switch */
         } /* end DW_DLV_OK */
     } /* end for loop on atcnt */
-    for (i = 0; i < atcnt; i++) {
-        dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
-    }
-    dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+    dealloc_local_atlist(dbg,atlist,atcnt);
     if (funcnamefound && funcpcfound && pcMap ) {
         /*  Insert the name to map even if not
             the low_pc we are looking for.
@@ -462,6 +589,7 @@ static int
 load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Addr low_pc,
     struct esb_s *ret_name,
+    Dwarf_Die *cu_die_for_print_frames,
     void **pcMap,
     Dwarf_Error *err)
 {
@@ -487,7 +615,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             if (tag == DW_TAG_subprogram) {
                 int gotit = 0;
                 gotit = get_proc_name_by_die(dbg, curdie, low_pc,
-                    &nestname, pcMap,err);
+                    &nestname, cu_die_for_print_frames, pcMap,err);
                 if (gotit == DW_DLV_OK) {
                     if (die_locally_gotten) {
                         /*  If we got this die from the parent, we do
@@ -514,6 +642,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                     newprog =
                         load_nested_proc_name(dbg, newchild, low_pc,
                             &nestname,
+                            cu_die_for_print_frames,
                             pcMap,err);
 
                     dwarf_dealloc(dbg, newchild, DW_DLA_DIE);
@@ -536,6 +665,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                 } else if (lchres == DW_DLV_NO_ENTRY) {
                     /* nothing to do */
                 } else {
+                    load_CU_error_data(dbg,*cu_die_for_print_frames);
                     simple_err_only_return_action(lchres,
                         "\nERROR:load_nested_proc_name dwarf_child()"
                         " failed.");
@@ -553,6 +683,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             if (tres == DW_DLV_ERROR)  {
                 struct esb_s m;
 
+                load_CU_error_data(dbg,*cu_die_for_print_frames);
                 esb_constructor(&m);
                 esb_append_printf_s(&m,
                     "\nERROR: load_nested_proc_name dwarf_tag failed:"
@@ -579,6 +710,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
         if (chres == DW_DLV_ERROR) {
             struct esb_s m;
 
+            load_CU_error_data(dbg,*cu_die_for_print_frames);
             esb_constructor(&m);
             esb_append_printf_s(&m,
                 "\nERROR: Looking for function name. "
@@ -724,6 +856,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         } else { /* DW_DLV_OK */
             int gotname = 0;
             gotname = load_nested_proc_name(dbg, child, low_pc, name,
+                cu_die_for_print_frames,
                 pcMap,err);
             dwarf_dealloc(dbg, child, DW_DLA_DIE);
             if (gotname == DW_DLV_OK) {
@@ -781,6 +914,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 dwarf_child(*cu_die_for_print_frames, &child,
                     err);
             if (chpfres == DW_DLV_ERROR) {
+                load_CU_error_data(dbg,*cu_die_for_print_frames);
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: Getting procedure name "
                     "dwarf_child fails "
@@ -794,6 +928,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 
                 gotname = load_nested_proc_name(dbg, child,
                     low_pc, name,
+                    cu_die_for_print_frames,
                     pcMap,err);
                 dwarf_dealloc(dbg, child, DW_DLA_DIE);
                 if (gotname == DW_DLV_OK) {
