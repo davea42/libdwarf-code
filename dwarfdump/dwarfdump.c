@@ -1807,6 +1807,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             produces. */
         esb_append(producernameout,
             "\"<CU-missing-DW_AT_producer>\"");
+        dwarf_dealloc(dbg,producer_attr,DW_DLA_ATTR);
         return ares;
     }
     /*  DW_DLV_OK */
@@ -1814,6 +1815,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         cu_die, dieprint_cu_offset,
         producer_attr, NULL, 0, producernameout,
         0 /*show_form_used*/,0 /* verbose */,err);
+    dwarf_dealloc(dbg,producer_attr,DW_DLA_ATTR);
     return ares;
 }
 

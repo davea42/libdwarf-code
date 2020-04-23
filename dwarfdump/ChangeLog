@@ -1,3 +1,9 @@
+2020-04-23  David Anderson 
+    * dwarfdump.c: Added in dealloc to prevent leaks.
+    * print_aranges.c: More thorough doing dealloc
+      as soon as appropriate.
+    * print_die.c,print_frames.c,print_lines.c:  Doing
+      appropriate early dealloc in the necessary places.
 2020-04-22  David Anderson 
     * command_options.c: Added to a stderr warning (longer message).
     * dwarfdump.1: Removed SELECTIVE ENTRY PRINTING

@@ -136,6 +136,7 @@ aranges_dealloc_now(Dwarf_Debug dbg,
     Dwarf_Arange *arange_buf)
 {
     Dwarf_Signed i = 0;
+printf("dadebug aranges dealloc now count %ld line %d\n",(long)i,__LINE__);
 
     for ( ; i < count;  ++i) {
         dwarf_dealloc(dbg,arange_buf[i],DW_DLA_ARANGE);
@@ -208,8 +209,8 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     count);
                 simple_err_return_msg_either_action(aires,
                     esb_get_string(&m));
-                aranges_dealloc_now(dbg,count,arange_buf);
                 esb_destructor(&m);
+                aranges_dealloc_now(dbg,count,arange_buf);
                 return aires;
             } else {
                 int dres;
@@ -261,6 +262,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                         &producer_name,ga_err);
                     if (pres == DW_DLV_ERROR) {
                         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
+                        aranges_dealloc_now(dbg,count,arange_buf);
                         return pres;
                     }
                     update_compiler_target(
@@ -270,6 +272,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 if (!checking_this_compiler()) {
                     dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                     cu_die = 0;
+                    aranges_dealloc_now(dbg,count,arange_buf);
                     continue;
                 }
 
@@ -280,6 +283,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                         cu_die_offset,first_cu,
                         cu_die_offset_prev,cu_die,ga_err);
                     if (cres == DW_DLV_ERROR) {
+                        aranges_dealloc_now(dbg,count,arange_buf);
                         return cres;
                     }
                 }
@@ -344,6 +348,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                                 ga_err);
                             if (pres == DW_DLV_ERROR) {
                                 dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
+                                aranges_dealloc_now(dbg,count,arange_buf);
                                 return pres;
                             }
                         }

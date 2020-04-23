@@ -992,7 +992,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else if (table_count > 0) {
-        /* DW_DLV_OK */
+        /* lres DW_DLV_OK */
         if (glflags.gf_do_print_dwarf) {
             if(line_context && glflags.verbose) {
                 lres = print_line_context_record(dbg,
@@ -1000,6 +1000,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 if (lres != DW_DLV_OK){
                     /*  Should we issue message
                         about this call? */
+                    dwarf_srclines_dealloc_b(line_context);
                     return lres;
                 }
             }
@@ -1017,6 +1018,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     &attr_dup,
                     /* ignore_die_stack= */TRUE,err);
                 if(dres == DW_DLV_ERROR) {
+                    dwarf_srclines_dealloc_b(line_context);
                     return dres;
                 }
             }
@@ -1035,6 +1037,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     is_logicals,is_actuals,err);
                 if (ltres == DW_DLV_ERROR) {
                     /* what if NO_ENTRY? */
+                    dwarf_srclines_dealloc_b(line_context);
                     return ltres;
                 }
             } else {
@@ -1046,6 +1049,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     is_logicals, is_actuals,err);
                 if (ltres == DW_DLV_ERROR) {
                     /* what if NO_ENTRY? */
+                    dwarf_srclines_dealloc_b(line_context);
                     return ltres;
                 }
                 ltres = process_line_table(dbg,sec_name,
@@ -1054,6 +1058,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     !is_logicals, !is_actuals,err);
                 if (ltres == DW_DLV_ERROR) {
                     /* what if NO_ENTRY? */
+                    dwarf_srclines_dealloc_b(line_context);
                     return ltres;
                 }
             }
@@ -1102,7 +1107,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
         /* end, table_count > 0 */
     } else {
-        /* DW_DLV_OK */
+        /* lres DW_DLV_OK */
         /*  table_count == 0. no lines in table.
             Just a line table header. */
         if (glflags.gf_do_print_dwarf) {
@@ -1124,6 +1129,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     /* ignore_die_stack= */TRUE,
                     err);
                 if(dpres == DW_DLV_ERROR) {
+                    dwarf_srclines_dealloc(dbg,linebuf,linecount);
                     return dpres;
                 }
             }
@@ -1137,6 +1143,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                             "ERROR: line context record "
                             " where table count is 0 has a"
                             " problem");
+                        dwarf_srclines_dealloc(dbg,linebuf,linecount);
                         return ores;
                     }
                 }
@@ -1149,6 +1156,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                         "ERROR: line context table_offset "
                         " where table count is 0 has a"
                         " problem");
+                    dwarf_srclines_dealloc(dbg,linebuf,linecount);
                     return ores;
                 } else {
                     printf(" Line table is present (offset 0x%"
@@ -1168,5 +1176,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
         /* end, linecounttotal == 0 */
     }
+    dwarf_srclines_dealloc(dbg,linebuf,linecount);
     return DW_DLV_OK;
 }

@@ -1,4 +1,12 @@
-2020-04-220: David Anderson
+2020-04-23: David Anderson
+    * dwarf_arange.c: Using new wrapper() code
+      so that the reader macros do not interfere
+      with doing appropriate dealloc.
+    * dwarf_util.c: Implement new wrapper functions
+      _dwarf_read_unaligned_ck_wrapper() and
+      _dwarf_read_area_length_ck_wrapper.
+    * dwarf_util.h: Declare the new functions.
+2020-04-22: David Anderson
     * libdwarf.h.in: Added DW_DLE_USER_DECLARED_ERROR
       and the dwarf_error_creation() function that creates
       the Dwarf_Error.

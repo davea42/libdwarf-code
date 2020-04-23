@@ -2862,9 +2862,11 @@ print_frames(Dwarf_Debug dbg,
 
         /* Do not print any frame info if in check mode */
         if (glflags.gf_check_frames) {
-            dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                cie_element_count,
-                fde_data, fde_element_count);
+            if (fres == DW_DLV_OK) {
+                dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                    cie_element_count,
+                    fde_data, fde_element_count);
+            }
             return DW_DLV_OK;
         }
 
@@ -2911,6 +2913,9 @@ print_frames(Dwarf_Debug dbg,
                     printf("ERROR: Printing fde %" DW_PR_DSd
                         " fails. Error %s\n",
                         i,dwarf_errmsg(*err));
+                    dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                        cie_element_count,
+                        fde_data, fde_element_count);
                     return fdres;
                 }
                 if (fdres == DW_DLV_NO_ENTRY) {
@@ -2918,6 +2923,9 @@ print_frames(Dwarf_Debug dbg,
                     printf("ERROR: Printing fde %" DW_PR_DSd
                         " fails saying 'no entry'. Impossible.\n",
                         i);
+                    dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                        cie_element_count,
+                        fde_data, fde_element_count);
                     return fdres;
                 }
                 ++frame_count;

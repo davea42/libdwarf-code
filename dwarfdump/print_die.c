@@ -1370,6 +1370,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 ignore_die_stack,
                 err);
             if (pdres != DW_DLV_OK) {
+                if (in_die != in_die_in) {
+                    dwarf_dealloc(dbg, in_die, DW_DLA_DIE);
+                }
                 return pdres;
             }
             validate_die_stack_siblings(dbg);
@@ -1378,6 +1381,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     pdres = print_die_stack(dbg,srcfiles,cnt,
                         err);
                     if (pdres == DW_DLV_ERROR) {
+                        if (in_die != in_die_in) {
+                            dwarf_dealloc(dbg, in_die, DW_DLA_DIE);
+                        }
                         return pdres;
                     }
                 } else {
@@ -1385,6 +1391,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         pdres = print_a_die_stack(dbg,srcfiles,cnt,
                             die_stack_indent_level,err);
                         if (pdres == DW_DLV_ERROR) {
+                            if (in_die != in_die_in) {
+                                dwarf_dealloc(dbg,in_die,DW_DLA_DIE);
+                            }
                             return pdres;
                         }
                     }
@@ -1403,6 +1412,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             print_error_and_continue(dbg,
                 "Call to dwarf_child failed printing die tree",
                 cdres,*err);
+            if (in_die != in_die_in) {
+                dwarf_dealloc(dbg, in_die, DW_DLA_DIE);
+            }
             return cdres;
         }
         /* Check for specific compiler */
@@ -1511,6 +1523,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         are not really recoverable.
                     */
                     esb_destructor(&pm);
+                    if (in_die != in_die_in) {
+                        dwarf_dealloc(dbg, in_die, DW_DLA_DIE);
+                    }
                     return DW_DLV_ERROR;
                 }
             } else if (cores == DW_DLV_ERROR) {
@@ -1541,6 +1556,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     esb_get_string(&m),
                     DW_DLV_OK,*err);
                 esb_destructor(&m);
+                if (in_die != in_die_in) {
+                    dwarf_dealloc(dbg, in_die, DW_DLA_DIE);
+                }
                 return DW_DLV_ERROR;
 
             }
@@ -1574,12 +1592,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         sibling = 0;
         cdres = dwarf_siblingof_b(dbg, in_die,is_info,
             &sibling, err);
-        if (cdres == DW_DLV_OK) {
-            /*  print_die_and_children(dbg,sibling,srcfiles,cnt);
-                We loop around to actually print this, rather than
-                recursing. Recursing is horribly wasteful of stack
-                space. */
-        } else if (cdres == DW_DLV_ERROR) {
+        if (cdres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "ERROR: dwarf_siblingof fails"
                 " tracing siblings of a DIE.",
@@ -1589,6 +1602,10 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             }
             return cdres;
         }
+        /*  print_die_and_children(dbg,sibling,srcfiles,cnt);
+            We loop around to actually print this, rather than
+            recursing. Recursing is horribly wasteful of stack
+            space. */
         /*  If we have a sibling, verify that its offset
             is next to the last processed DIE;
             An incorrect sibling chain is a nasty bug.  */
@@ -1637,7 +1654,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             in_die = sibling;
             sibling = 0;
         } else {
-            /* ASSERT: is DW_DLV_NO_ENTRY  */
+            /* ASSERT: cdres is DW_DLV_NO_ENTRY  */
             sibling = 0;
             in_die = 0;
             /*  We are done, no more siblings at this level. */

@@ -469,6 +469,22 @@ int _dwarf_what_section_are_we(Dwarf_Debug dbg,
 /*  wrappers return either DW_DLV_OK or DW_DLV_ERROR.
     Never DW_DLV_NO_ENTRY. */
 int
+_dwarf_read_unaligned_ck_wrapper(Dwarf_Debug dbg,
+    Dwarf_Unsigned *out_value,
+    Dwarf_Small *readfrom,
+    int          readlength,
+    Dwarf_Small *end_arange,
+    Dwarf_Error *err);
+int 
+_dwarf_read_area_length_ck_wrapper(Dwarf_Debug dbg,
+    Dwarf_Unsigned *out_value,
+    Dwarf_Small **readfrom,
+    int    *  length_size_out,
+    int    *  exten_size_out,
+    Dwarf_Unsigned sectionlength,
+    Dwarf_Small *endsection,
+    Dwarf_Error *err);
+int
 _dwarf_leb128_uword_wrapper(Dwarf_Debug dbg,
     Dwarf_Small ** startptr,
     Dwarf_Small * endptr,

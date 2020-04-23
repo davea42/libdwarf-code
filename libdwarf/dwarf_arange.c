@@ -77,7 +77,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Small *header_ptr = 0;
 
     /*  Version of .debug_aranges header. */
-    Dwarf_Half version = 0;
+    Dwarf_Unsigned version = 0;
 
     /*  Offset of current set of aranges into .debug_info. */
     Dwarf_Off info_offset = 0;
@@ -119,6 +119,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         int local_length_size;
         int local_extension_size = 0;
         Dwarf_Small *end_this_arange = 0;
+        int res = 0;
 
 
         header_ptr = arange_ptr;
@@ -127,12 +128,13 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             _dwarf_error(dbg, error,DW_DLE_ARANGES_HEADER_ERROR);
             return DW_DLV_ERROR;
         }
-        /* READ_AREA_LENGTH updates arange_ptr for consumed bytes */
-        READ_AREA_LENGTH_CK(dbg, area_length, Dwarf_Unsigned,
-            arange_ptr, local_length_size,
-            local_extension_size,error,
-            section_size,
-            arange_end_section);
+        res = _dwarf_read_area_length_ck_wrapper(dbg,&area_length,
+            &arange_ptr,&local_length_size,&local_extension_size,
+            section_size,arange_end_section,error);
+        if (res != DW_DLV_OK) {
+            free_aranges_chain(dbg,head_chain);
+            return res;
+        }
         /*  arange_ptr has been incremented appropriately past
             the length field by READ_AREA_LENGTH. */
 
@@ -161,10 +163,12 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             continue;
         }
 
-        READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
-            arange_ptr, DWARF_HALF_SIZE,
-            error,end_this_arange);
-
+        res = _dwarf_read_unaligned_ck_wrapper(dbg,&version,
+            arange_ptr,DWARF_HALF_SIZE,end_this_arange,error);
+        if (res != DW_DLV_OK) {
+            free_aranges_chain(dbg,head_chain);
+            return res;
+        }
         arange_ptr += DWARF_HALF_SIZE;
         if (arange_ptr >= end_this_arange) {
             free_aranges_chain(dbg,head_chain);
@@ -176,10 +180,13 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
             return (DW_DLV_ERROR);
         }
+        res = _dwarf_read_unaligned_ck_wrapper(dbg,&info_offset,
+            arange_ptr,local_length_size,end_this_arange,error);
+        if (res != DW_DLV_OK) {
+            free_aranges_chain(dbg,head_chain);
+            return res;
+        }
 
-        READ_UNALIGNED_CK(dbg, info_offset, Dwarf_Off,
-            arange_ptr, local_length_size,
-            error,end_this_arange);
         arange_ptr += local_length_size;
         if (arange_ptr >= end_this_arange) {
             free_aranges_chain(dbg,head_chain);
@@ -191,6 +198,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             FIX_UP_OFFSET_IRIX_BUG(dbg, info_offset,
                 "arange info offset.a");
             if (info_offset >= dbg->de_debug_info.dss_size) {
+                free_aranges_chain(dbg,head_chain);
                 _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
                 return (DW_DLV_ERROR);
             }
@@ -211,7 +219,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             Unusual, but not an error. */
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
 
-        /*  The following deref means we better check the pointer for off-end. */
+        /*  The following deref means we better
+            check the pointer for off-end. */
         if (arange_ptr >= end_this_arange) {
             free_aranges_chain(dbg,head_chain);
             _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
@@ -264,17 +273,31 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 READ_UNALIGNED_CK(dbg, segment_selector, Dwarf_Unsigned,
                     arange_ptr, segment_size,
                     error,end_this_arange);
+                res = _dwarf_read_unaligned_ck_wrapper(dbg,
+                    &segment_selector,
+                    arange_ptr,segment_size,end_this_arange,error);
+                if (res != DW_DLV_OK) {
+                    free_aranges_chain(dbg,head_chain);
+                    return res;
+                }
                 arange_ptr += address_size;
             }
 
-            READ_UNALIGNED_CK(dbg, range_address, Dwarf_Addr,
-                arange_ptr, address_size,
-                error,end_this_arange);
+            res = _dwarf_read_unaligned_ck_wrapper(dbg,&range_address,
+                arange_ptr,address_size,end_this_arange,error);
+            if (res != DW_DLV_OK) {
+                free_aranges_chain(dbg,head_chain);
+                return res;
+            }
             arange_ptr += address_size;
 
-            READ_UNALIGNED_CK(dbg, range_length, Dwarf_Unsigned,
-                arange_ptr, address_size,
-                error,end_this_arange);
+            res = _dwarf_read_unaligned_ck_wrapper(dbg,&range_length,
+                arange_ptr,address_size,end_this_arange,error);
+            if (res != DW_DLV_OK) {
+                free_aranges_chain(dbg,head_chain);
+                return res;
+            }
+
             arange_ptr += address_size;
 
             {
@@ -409,6 +432,7 @@ dwarf_get_aranges(Dwarf_Debug dbg,
 
     res = dwarf_get_aranges_list(dbg,&head_chain,&arange_count,error);
     if (res != DW_DLV_OK) {
+        free_aranges_chain(dbg,head_chain);
         return res;
     }
 
@@ -416,7 +440,8 @@ dwarf_get_aranges(Dwarf_Debug dbg,
         _dwarf_get_alloc(dbg, DW_DLA_LIST, arange_count);
     if (arange_block == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        free_aranges_chain(dbg,head_chain);
+        return DW_DLV_ERROR;
     }
 
     /* See also free_aranges_chain() above */
