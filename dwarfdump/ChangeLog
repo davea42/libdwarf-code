@@ -1,6 +1,37 @@
 2020-04-22  David Anderson 
+    * command_options.c: Added to a stderr warning (longer message).
+    * dwarfdump.1: Removed SELECTIVE ENTRY PRINTING
+      section in favor of the new URI-STYLE INPUT/OUTPUT
+      and the SELECTIVE* data renamed as  LIMITING OUTPUT.
+    * dwarfdump.c: Now everywhere expects to get back status
+      from printing DWARF section data, reports on it if
+      there as an error , and continues.
+    * esb_using_functions.h: Various functions now have
+      Dwarf_Error * arg and return a DW_DLV_* value.
+    * globals.h: Now all the relevant functions return
+      a DW_DLV_* value and require Dwarf_Error * argument.
+    * print_aranges.c: Some formatting fixes plus
+      now get_producer_name() returns a DW_DLV* value,
+      like more or less everything else.
+    * print_die.c: Major revision to now return on error
+      with DW_DLV_* instead of printf followed by exit().
+    * print_frames.c: New local function dealloc_loc_atlist()
+      to clean up on-the-spot. Reintroduced load_CU_error_data()
+      to amplify the information reported on error.
+    * print_lines.c: Line formatting corrected.
+    * print_macro.c: Line formatting corrected.
+    * print_pubnames.c: Reflects new arglist to get_producer_name().
+    * print_ranges.c: Line formatting corrected.
+    * dwarf_errmsg_list.h: Added DW_DLE_USER_DECLARED_ERROR so
+      dwarfdump can declare an error on its own.
+    * dwarf_error.c: Added dwarf_error_creation() to allow dwarfdump
+      to create an error with a detailed explanation.
+    * dwarf_form.c: declared a DW_FORM_rnglistx to be used soon.
+    * dwarf_ranges.c: Comments about the missing .debug_rnglists
+      section support (coming soon).
+2020-04-22  David Anderson 
     * dwarfdump-ta-ext-table.h: regenerated
-    * tag_attr_ext.list: Added to common extensions list.
+    * tag_attr_ext.list: Added to common extensions list    .
       DW_AT_GNU_pubnames
       DW_AT_GNU_pubtypes
       DW_AT_GNU_dwo_name
