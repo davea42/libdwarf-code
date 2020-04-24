@@ -1,3 +1,7 @@
+2020-04-24: David Anderson
+    * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
+      dwarf_names_new.h, libdwarf_version.h: 
+      updated version string.
 2020-04-23: David Anderson
     * dwarf_arange.c: Using new wrapper() code
       so that the reader macros do not interfere

@@ -1,3 +1,8 @@
+2020-04-24  David Anderson 
+    * dwarf_names.c, dwarf_names.h: Updated version string.
+    * dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:
+      Updated version string.
 2020-04-23  David Anderson 
     * print_aranges.c: Remove a debugging printf.
       Delete duplicate dealloc calls.
