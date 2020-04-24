@@ -1063,6 +1063,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 }
             }
             dwarf_srclines_dealloc_b(line_context);
+            line_context = 0;
+            linebuf = 0;
         } else if (glflags.gf_line_flag_selection == orig) {
             int ltres = 0;
             Dwarf_Bool is_logicals = FALSE;
@@ -1071,6 +1073,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 linebuf, linecount,
                 is_logicals, is_actuals,err);
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
+            linebuf = 0;
             if (ltres == DW_DLV_ERROR) {
                 /* what if NO_ENTRY? */
                 return ltres;
@@ -1085,6 +1088,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     linebuf, linecount,
                     is_logicals, is_actuals,err);
                 dwarf_srclines_dealloc(dbg,linebuf,linecount);
+                linebuf = 0;
                 if (ltres == DW_DLV_ERROR) {
                     /* what if NO_ENTRY? */
                     return ltres;
@@ -1099,6 +1103,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     linebuf_actuals, linecount_actuals,
                     !is_logicals, !is_actuals,err);
                 dwarf_srclines_dealloc(dbg,linebuf,linecount);
+                linebuf = 0;
                 if (ltres == DW_DLV_ERROR) {
                     /* what if NO_ENTRY? */
                     return ltres;
@@ -1169,13 +1174,26 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
         if(glflags.gf_line_flag_selection ==  singledw5 ||
             glflags.gf_line_flag_selection == s2l) {
+            /* also deletes the linebuf... */
             dwarf_srclines_dealloc_b(line_context);
-        } else {
-            /* Original allocation. */
+            line_context = 0;
+            linebuf = 0;
+        } else if (linebuf) {
+            /* Original allocation. No context record. */
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
+            linebuf = 0;
         }
         /* end, linecounttotal == 0 */
     }
-    dwarf_srclines_dealloc(dbg,linebuf,linecount);
+    if (line_context) {
+        /* also deletes the linebuf... */
+        dwarf_srclines_dealloc_b(line_context);
+        line_context = 0;
+        linebuf = 0;
+    }
+    if (linebuf) {
+        dwarf_srclines_dealloc(dbg,linebuf,linecount);
+        linebuf = 0;
+    }
     return DW_DLV_OK;
 }

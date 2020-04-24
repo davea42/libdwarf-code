@@ -1,4 +1,10 @@
 2020-04-23  David Anderson 
+    * print_aranges.c: Remove a debugging printf.
+      Delete duplicate dealloc calls.
+    * print_lines.c: clarify what the dealloc's do
+      so we don't call dealloc on something already
+      cleared.
+2020-04-23  David Anderson 
     * dwarfdump.c: Added in dealloc to prevent leaks.
     * print_aranges.c: More thorough doing dealloc
       as soon as appropriate.

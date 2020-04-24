@@ -136,7 +136,6 @@ aranges_dealloc_now(Dwarf_Debug dbg,
     Dwarf_Arange *arange_buf)
 {
     Dwarf_Signed i = 0;
-printf("dadebug aranges dealloc now count %ld line %d\n",(long)i,__LINE__);
 
     for ( ; i < count;  ++i) {
         dwarf_dealloc(dbg,arange_buf[i],DW_DLA_ARANGE);
@@ -246,9 +245,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     should_skip_this_cu(dbg,
                         &should_skip,cu_die);
                     if (should_skip) {
-                        aranges_dealloc_now(dbg,count,arange_buf);
                         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
-                        continue;
                     }
                 }
                 /*  Get producer name for this CU and update
@@ -272,7 +269,6 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 if (!checking_this_compiler()) {
                     dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                     cu_die = 0;
-                    aranges_dealloc_now(dbg,count,arange_buf);
                     continue;
                 }
 
