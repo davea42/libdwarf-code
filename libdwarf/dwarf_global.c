@@ -256,11 +256,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         }
         /*  READ_AREA_LENGTH updates pubnames_like_ptr for consumed
             bytes. */
-#if 0
-        READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
-            pubnames_like_ptr, local_length_size,
-            local_extension_size,error,section_length,section_end_ptr);
-#endif
         mres = _dwarf_read_area_length_ck_wrapper(dbg,
             &length,&pubnames_like_ptr,&local_length_size,
             &local_extension_size,section_length,section_end_ptr,
@@ -279,11 +274,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_context->pu_pub_offset = pubnames_section_offset;
         pubnames_ptr_past_end_cu = pubnames_like_ptr + length;
 
-#if 0
-        READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
-            pubnames_like_ptr, DWARF_HALF_SIZE,
-            error,section_end_ptr);
-#endif
         mres = _dwarf_read_unaligned_ck_wrapper(dbg,
             &version,pubnames_like_ptr,DWARF_HALF_SIZE,
             section_end_ptr,error);
@@ -305,12 +295,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         }
 
         /* Offset of CU header in debug section. */
-#if 0
-        READ_UNALIGNED_CK(dbg, pubnames_context->pu_offset_of_cu_header,
-            Dwarf_Off, pubnames_like_ptr,
-            pubnames_context->pu_length_size,
-            error,section_end_ptr);
-#endif
         mres = _dwarf_read_unaligned_ck_wrapper(dbg,
             &pubnames_context->pu_offset_of_cu_header,
             pubnames_like_ptr,
@@ -328,14 +312,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         FIX_UP_OFFSET_IRIX_BUG(dbg,
             pubnames_context->pu_offset_of_cu_header,
             "pubnames cu header offset");
-
-
-#if 0
-        READ_UNALIGNED_CK(dbg, pubnames_context->pu_info_length,
-            Dwarf_Unsigned, pubnames_like_ptr,
-            pubnames_context->pu_length_size,
-            error,section_end_ptr);
-#endif
         mres = _dwarf_read_unaligned_ck_wrapper(dbg,
             &pubnames_context->pu_info_length,
             pubnames_like_ptr,
@@ -359,12 +335,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
 
         /*  Read initial offset (of DIE within CU) of a pubname, final
             entry is not a pair, just a zero offset. */
-#if 0
-        READ_UNALIGNED_CK(dbg, die_offset_in_cu, Dwarf_Off,
-            pubnames_like_ptr,
-            pubnames_context->pu_length_size,
-            error,section_end_ptr);
-#endif
         mres = _dwarf_read_unaligned_ck_wrapper(dbg,
             &die_offset_in_cu,
             pubnames_like_ptr,
@@ -488,11 +458,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             }
 
             /* Read offset for the *next* entry */
-#if 0
-            READ_UNALIGNED_CK(dbg, die_offset_in_cu, Dwarf_Off,
-                pubnames_like_ptr, pubnames_context->pu_length_size,
-                error,section_end_ptr);
-#endif
             mres = _dwarf_read_unaligned_ck_wrapper(dbg,
                 &die_offset_in_cu,
                 pubnames_like_ptr,

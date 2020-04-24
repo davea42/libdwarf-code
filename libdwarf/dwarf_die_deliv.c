@@ -2598,7 +2598,15 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         info_ptr = dataptr + offset;
     }
     die->di_debug_ptr = info_ptr;
+#if 0
     DECODE_LEB128_UWORD_CK(info_ptr, utmp,dbg,error,die_info_end);
+#endif
+    lres = _dwarf_leb128_uword_wrapper(dbg,&info_ptr,die_info_end,
+        &utmp,error);
+    if (lres != DW_DLV_OK) {
+        dwarf_dealloc(dbg, die, DW_DLA_DIE);
+        return lres;
+    }
     abbrev_code = utmp;
     if (abbrev_code == 0) {
         /* we are at a null DIE (or there is a bug). */

@@ -1,4 +1,6 @@
 2020-04-24: David Anderson
+    * dwarf_die_deliv.c: Now using wrappers so that
+      errors do not lead to a temporary leak.
     * dwarf_global.c: Now ensures that an error
       in reading globals does not lead to temporary
       leaks that rely on dwarf_finish() to clean up.
