@@ -181,7 +181,7 @@ process_line_table(Dwarf_Debug dbg,
     }
     for (i = 0; i < linecount; i++) {
         Dwarf_Line line = linebuf[i];
-        char* filename = 0;
+        char* lsrc_filename = 0;
         int nsres = 0;
         Dwarf_Bool found_line_error = FALSE;
         Dwarf_Bool has_is_addr_set = FALSE;
@@ -208,11 +208,14 @@ process_line_table(Dwarf_Debug dbg,
             DWARF_CHECK_COUNT(lines_result,1);
         }
 
-        filename = "<unknown>";
+        /*  NO. lsrc_filename is a DW_DLA_STRING, do not assign
+            a static string.
+            lsrc_filename = "<unknown>";
+        */
         if (!is_actuals_table) {
             Dwarf_Error aterr = 0;
 
-            sres = dwarf_linesrc(line, &filename, &aterr);
+            sres = dwarf_linesrc(line, &lsrc_filename, &aterr);
             if (sres == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_linesrc()";
@@ -392,7 +395,8 @@ process_line_table(Dwarf_Debug dbg,
                 printf("Record = %"  DW_PR_DUu
                     " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx
                     " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
-                    i, pc,lineno,column,sanitized(filename));
+                    i, pc,lineno,column,
+                    lsrc_filename?sanitized(lsrc_filename):"");
                 /* The compilation unit was already printed */
                 if (!glflags.gf_check_decl_file) {
                     PRINT_CU_INFO();
@@ -401,6 +405,8 @@ process_line_table(Dwarf_Debug dbg,
             glflags.gf_record_dwarf_error = FALSE;
             /* Due to a fatal error, skip current record */
             if (found_line_error) {
+                dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);
+                lsrc_filename = 0;
                 continue;
             }
         }
@@ -438,6 +444,8 @@ process_line_table(Dwarf_Debug dbg,
                 simple_err_return_action(nsres,
                     esb_get_string(&m));
                 esb_destructor(&m);
+                dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);
+                lsrc_filename = 0;
                 return nsres;
             }
         }
@@ -461,6 +469,8 @@ process_line_table(Dwarf_Debug dbg,
                 simple_err_return_action(nsres,
                     esb_get_string(&m));
                 esb_destructor(&m);
+                dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);
+                lsrc_filename = 0;
                 return nsres;
             }
             nsres = dwarf_lineendsequence(line,
@@ -482,6 +492,8 @@ process_line_table(Dwarf_Debug dbg,
                 simple_err_return_action(nsres,
                     esb_get_string(&m));
                 esb_destructor(&m);
+                dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);
+                lsrc_filename = 0;
                 return nsres;
             }
         }
@@ -506,7 +518,9 @@ process_line_table(Dwarf_Debug dbg,
                 simple_err_return_action(nsres,
                     esb_get_string(&m));
                 esb_destructor(&m);
-                return nsres;
+                dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);
+                lsrc_filename = 0;
+                return disres;
             }
             if (prologue_end && !is_actuals_table) {
                 printf(" PE");
@@ -536,7 +550,9 @@ process_line_table(Dwarf_Debug dbg,
                         simple_err_return_action(nsres,
                         esb_get_string(&m));
                     esb_destructor(&m);
-                    return nsres;
+                    dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);
+                    lsrc_filename = 0;
+                    return disres;
                 }
                 if (call_context) {
                     printf(" CC=%" DW_PR_DUu, call_context);
@@ -555,10 +571,12 @@ process_line_table(Dwarf_Debug dbg,
                     esb_append_printf_u(&m,
                         "of %u line records in the linebuf.",
                         linecount);
-                        simple_err_return_action(nsres,
+                    simple_err_return_action(nsres,
                         esb_get_string(&m));
                     esb_destructor(&m);
-                    return nsres;
+                    dwarf_dealloc(dbg, lsrc_filename, DW_DLA_STRING);
+                    lsrc_filename = 0;
+                    return disres;
                 }
                 if (subprog_name && strlen(subprog_name)) {
                     /*  We do not print an empty name.
@@ -566,12 +584,14 @@ process_line_table(Dwarf_Debug dbg,
                     printf(" SB=\"%s\"", sanitized(subprog_name));
                 }
                 dwarf_dealloc(dbg,subprog_filename, DW_DLA_STRING);
+                subprog_filename = 0;
             }
         }
 
         if (!is_actuals_table) {
             if (i > 0 &&  glflags.verbose < 3  &&
-                strcmp(filename,esb_get_string(&lastsrc)) == 0) {
+                strcmp(lsrc_filename?lsrc_filename:"",
+                    esb_get_string(&lastsrc)) == 0) {
                 /* Do not print name. */
             } else {
                 struct esb_s urs;
@@ -579,23 +599,24 @@ process_line_table(Dwarf_Debug dbg,
 
                 esb_constructor_fixed(&urs,atmp2,sizeof(atmp2));
                 esb_append(&urs, " uri: \"");
-                translate_to_uri(filename,&urs);
+                translate_to_uri(lsrc_filename?
+                    lsrc_filename:"",
+                    &urs);
                 esb_append(&urs,"\"");
                 if (glflags.gf_do_print_dwarf) {
                     printf("%s",esb_get_string(&urs));
                 }
                 esb_destructor(&urs);
                 esb_empty_string(&lastsrc);
-                esb_append(&lastsrc,filename);
-            }
-            if (sres == DW_DLV_OK) {
-                dwarf_dealloc(dbg, filename, DW_DLA_STRING);
+                esb_append(&lastsrc,
+                    lsrc_filename?lsrc_filename:"");
             }
         }
-
         if (glflags.gf_do_print_dwarf) {
             printf("\n");
         }
+        dwarf_dealloc(dbg,lsrc_filename, DW_DLA_STRING);
+        lsrc_filename = 0;
     }
     esb_destructor(&lastsrc);
     return DW_DLV_OK;
@@ -968,7 +989,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             &table_count,&line_context,
             err);
         if(lres == DW_DLV_OK) {
-            lres = dwarf_srclines_two_level_from_linecontext(line_context,
+            lres = dwarf_srclines_two_level_from_linecontext(
+                line_context,
                 &linebuf, &linecount,
                 &linebuf_actuals, &linecount_actuals,
                 err);
@@ -980,7 +1002,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             DWARF_CHECK_COUNT(decl_file_result,1);
             DWARF_CHECK_ERROR2(decl_file_result,"dwarf_srclines",
                 dwarf_errmsg(*err));
-            glflags.gf_record_dwarf_error = FALSE;  /* Clear error condition */
+            /* Clear error condition */
+            glflags.gf_record_dwarf_error = FALSE;
             dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
             *err = 0;
         } else {
@@ -1047,8 +1070,9 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 ltres = process_line_table(dbg,sec_name,
                     linebuf, linecount,
                     is_logicals, is_actuals,err);
-                if (ltres == DW_DLV_ERROR) {
-                    /* what if NO_ENTRY? */
+                if (ltres != DW_DLV_OK) {
+                    dwarf_srclines_dealloc_b(line_context);
+                    return ltres;
                     dwarf_srclines_dealloc_b(line_context);
                     return ltres;
                 }
@@ -1056,8 +1080,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     linebuf_actuals,
                     linecount_actuals,
                     !is_logicals, !is_actuals,err);
-                if (ltres == DW_DLV_ERROR) {
-                    /* what if NO_ENTRY? */
+                if (ltres != DW_DLV_OK) {
                     dwarf_srclines_dealloc_b(line_context);
                     return ltres;
                 }
@@ -1074,7 +1097,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 is_logicals, is_actuals,err);
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
             linebuf = 0;
-            if (ltres == DW_DLV_ERROR) {
+            if (ltres != DW_DLV_OK) {
                 /* what if NO_ENTRY? */
                 return ltres;
             }
@@ -1089,8 +1112,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     is_logicals, is_actuals,err);
                 dwarf_srclines_dealloc(dbg,linebuf,linecount);
                 linebuf = 0;
-                if (ltres == DW_DLV_ERROR) {
-                    /* what if NO_ENTRY? */
+                if (ltres != DW_DLV_OK) {
                     return ltres;
                 }
             } else {
@@ -1104,7 +1126,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     !is_logicals, !is_actuals,err);
                 dwarf_srclines_dealloc(dbg,linebuf,linecount);
                 linebuf = 0;
-                if (ltres == DW_DLV_ERROR) {
+                if (ltres != DW_DLV_OK) {
                     /* what if NO_ENTRY? */
                     return ltres;
                 }

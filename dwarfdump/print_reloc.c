@@ -285,7 +285,7 @@ print_relocinfo_64(Elf * elf)
                 free(printable_sects);
                 glflags.gf_count_major_errors++;
                 printf("ERROR: elf_getdata() (Elf64) failed to get symbol table "
-                    "`elf_getdata returned NULL.\n");
+                    "elf_getdata returned NULL.\n");
                 return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf64_Sym);

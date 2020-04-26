@@ -207,10 +207,12 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
             if (esb_string_len(&namestr)) {
                 name = esb_get_string(&namestr);
                 if(attr == DW_AT_name) {
-                    safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),name,
-                                strlen(name));
+                    safe_strcpy(glflags.CU_name,sizeof(
+                        glflags.CU_name),name,
+                        strlen(name));
                 } else {
-                    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
+                    safe_strcpy(glflags.CU_producer,
+                        sizeof(glflags.CU_producer),
                         name,strlen(name));
                 }
             }
@@ -434,7 +436,6 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     int funcpcfound = 0;
     int funcres = DW_DLV_OK;
     int funcnamefound = 0;
-    Dwarf_Error proc_name_err = 0;
     int loop_ok = true;
 
     if (pcMap) {
@@ -477,20 +478,20 @@ get_proc_name_by_die(Dwarf_Debug dbg,
             /* stop as soon as both found */
             break;
         }
-        ares = dwarf_whatattr(atlist[i], &attr, &proc_name_err);
+        ares = dwarf_whatattr(atlist[i], &attr, err);
         if (ares == DW_DLV_ERROR) {
             struct esb_s m;
             esb_constructor(&m);
             load_CU_error_data(dbg,*cu_die_for_print_frames);
             esb_append_printf_s(&m,
                 "\nERROR: dwarf_whatattr fails with %s",
-                dwarf_errmsg(proc_name_err));
+                dwarf_errmsg(*err));
             simple_err_only_return_action(ares,
                 esb_get_string(&m));
             esb_destructor(&m);
-            dwarf_dealloc(dbg,proc_name_err,DW_DLA_ERROR);
-            return DW_DLV_NO_ENTRY;
+            return DW_DLV_ERROR;
         } else if (ares == DW_DLV_OK) {
+            Dwarf_Error aterr = 0;
             switch (attr) {
             case DW_AT_specification:
             case DW_AT_abstract_origin:
@@ -508,7 +509,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
             case DW_AT_name:
                 /*  Even if we saw DW_AT_abstract_origin, go ahead
                     and take DW_AT_name. */
-                sres = dwarf_formstring(atlist[i], &temps, &proc_name_err);
+                sres = dwarf_formstring(atlist[i], &temps, &aterr);
                 if (sres == DW_DLV_ERROR) {
                     glflags.gf_count_major_errors++;
                     printf("\nERROR: "
@@ -516,7 +517,8 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                     /*  50 is safe wrong length since is bigger than the
                         actual string */
                     esb_append(proc_name,"ERROR in dwarf_formstring!");
-                    dwarf_dealloc(dbg,proc_name_err,DW_DLA_ERROR);
+                    dwarf_dealloc(dbg,aterr,DW_DLA_ERROR);
+                    aterr = 0;
                 } else if (sres == DW_DLV_NO_ENTRY) {
                     esb_append(proc_name,"NO ENTRY on dwarf_formstring?!");
                 } else {
@@ -526,24 +528,24 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                 break;
             case DW_AT_low_pc:
                 dres = dwarf_formaddr(atlist[i],
-                    &low_pc_for_die, &proc_name_err);
+                    &low_pc_for_die, &aterr);
                 funcpcfound = 1;
                 if (dres == DW_DLV_ERROR) {
                     if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
-                        dwarf_errno(proc_name_err)) {
+                        dwarf_errno(aterr)) {
                         glflags.gf_debug_addr_missing_search_by_address = 1;
                     } else {
                         glflags.gf_count_major_errors++;
                         printf("\nERROR: dwarf_formaddr() failed"
                             " in get_proc_name. %s\n",
-                            dwarf_errmsg(proc_name_err));
+                            dwarf_errmsg(aterr));
                         if(!glflags.gf_error_code_in_name_search_by_address) {
                             glflags.gf_error_code_in_name_search_by_address
-                                = dwarf_errno(proc_name_err);
+                                = dwarf_errno(aterr);
                         }
                     }
-                    dwarf_dealloc(dbg,proc_name_err,DW_DLA_ERROR);
-                    proc_name_err = 0;
+                    dwarf_dealloc(dbg,aterr,DW_DLA_ERROR);
+                    aterr = 0;
                     funcpcfound = 0;
                     low_pc_for_die = 0;
                     /* low_pc_for_die = ~low_pc; ??? */
@@ -614,8 +616,10 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
 
             if (tag == DW_TAG_subprogram) {
                 int gotit = 0;
+                Dwarf_Error locerr = 0;
                 gotit = get_proc_name_by_die(dbg, curdie, low_pc,
-                    &nestname, cu_die_for_print_frames, pcMap,err);
+                    &nestname, cu_die_for_print_frames,
+                    pcMap,&locerr);
                 if (gotit == DW_DLV_OK) {
                     if (die_locally_gotten) {
                         /*  If we got this die from the parent, we do
@@ -627,8 +631,8 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                     return DW_DLV_OK;
                 }
                 if (gotit == DW_DLV_ERROR) {
-                    dwarf_dealloc(dbg,*err,DW_DLV_ERROR);
-                    *err = 0;
+                    dwarf_dealloc(dbg,locerr,DW_DLA_ERROR);
+                    locerr = 0;
                 }
                 /* Check children of subprograms recursively should
                     this really be check children of anything,
@@ -638,12 +642,13 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_empty_string(&nestname);
                 if (lchres == DW_DLV_OK) {
                     int newprog = 0;
+                    Dwarf_Error innererr = 0;
                     /* look for inner subprogram */
                     newprog =
                         load_nested_proc_name(dbg, newchild, low_pc,
                             &nestname,
                             cu_die_for_print_frames,
-                            pcMap,err);
+                            pcMap,&innererr);
 
                     dwarf_dealloc(dbg, newchild, DW_DLA_DIE);
                     if (newprog == DW_DLV_OK) {
@@ -657,10 +662,10 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                         }
                         esb_append(ret_name,esb_get_string(&nestname));
                         esb_destructor(&nestname);
-                        return DW_DLV_NO_ENTRY;
+                        return DW_DLV_OK;
                     } else if (newprog == DW_DLV_ERROR) {
-                        dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
-                        *err = 0;
+                        dwarf_dealloc(dbg,innererr,DW_DLA_ERROR);
+                        innererr = 0;
                     }
                 } else if (lchres == DW_DLV_NO_ENTRY) {
                     /* nothing to do */
@@ -890,8 +895,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 
         dres = dwarf_siblingof(dbg, NULL, &ldie, err);
         if (*cu_die_for_print_frames) {
-            dwarf_dealloc(dbg, *cu_die_for_print_frames,
-                DW_DLA_DIE);
+            dwarf_dealloc(dbg, *cu_die_for_print_frames,DW_DLA_DIE);
             *cu_die_for_print_frames = 0;
         }
         if (dres == DW_DLV_ERROR) {

@@ -834,7 +834,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         if (cu_count >= glflags.break_after_n_units) {
             const char *m = "CUs";
             if (cu_count == 1) {
-                 m="CU";
+                m="CU";
             }
             printf("Break at %d %s\n",cu_count,m);
             break;
@@ -1154,8 +1154,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     pod_err);
                 if (mres == DW_DLV_ERROR) {
                     if (cu_die2) {
-                        dwarf_dealloc(dbg,cu_die2,
-                            DW_DLA_DIE);
+                        dwarf_dealloc(dbg,cu_die2,DW_DLA_DIE);
                     }
                     return mres;
                 }
@@ -1515,7 +1514,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         esb_get_string(&pm),
                         DW_DLV_ERROR,*err);
                     /*   Original test did a print_error()
-                        here, which did exit(). 
+                        here, which did exit().
                         We would like to return ERROR all the way
                         back, but have no way at present
                         to generate a Dwarf_Error record.
@@ -6148,7 +6147,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         "offset range of the CU "
                         "is not available");
                     if (res == DW_DLV_ERROR) {
-                        dwarf_dealloc(dbg,*err,DW_DLV_ERROR);
+                        dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
                         *err = 0;
                     }
                 } else {

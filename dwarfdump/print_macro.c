@@ -372,7 +372,6 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         return lres;
     }
     if(lres == DW_DLV_ERROR) {
-        /* This does not return */
         print_error_and_continue(dbg,
             "Unable to dwarf_get_macro_context()"
             " for the DWARF 5 style macro",
@@ -393,6 +392,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_macro",
             &truename,TRUE);
+        /* This does not return */
 
         if(!by_offset) {
             printf("\n%s: Macro info for a single cu\n",
@@ -441,6 +441,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             &attr_dup,
             /* ignore_die_stack= */TRUE,err);
         if (pdres == DW_DLV_ERROR) {
+            dwarf_dealloc_macro_context(macro_context);
             return pdres;
         }
 #if 0
