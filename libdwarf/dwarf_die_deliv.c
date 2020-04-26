@@ -30,7 +30,6 @@
 
 #include "config.h"
 #include <stdio.h>
-#include <stdlib.h> /* for exit() dadebug FIXME */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -867,6 +866,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     switch(unit_type) {
     case DW_UT_split_type:
     case DW_UT_type: {
+        int tres = 0;
         /*  ASSERT: DW_CU_VERSION4 or DW_CU_VERSION5,
             determined by logic above.
             Now read the debug_types extra header fields of
@@ -877,8 +877,17 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         */
         memcpy(&signaturedata,cu_ptr,sizeof(signaturedata));
         cu_ptr += sizeof(signaturedata);
+#if 0
         READ_UNALIGNED_CK(dbg, typeoffset, Dwarf_Unsigned,
             cu_ptr, local_length_size,error,section_end_ptr);
+#endif
+        tres = _dwarf_read_unaligned_ck_wrapper(dbg,
+            &typeoffset,cu_ptr,local_length_size,
+            section_end_ptr,error);
+        if (tres != DW_DLV_OK ) {
+            local_dealloc_cu_context(dbg,cu_context);
+            return tres;
+        }
         cu_context->cc_signature = signaturedata;
         cu_context->cc_signature_offset = typeoffset;
         cu_context->cc_signature_present = TRUE;
@@ -913,6 +922,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     cu_context->cc_abbrev_hash_table =
         (Dwarf_Hash_Table) _dwarf_get_alloc(dbg, DW_DLA_HASH_TABLE, 1);
     if (cu_context->cc_abbrev_hash_table == NULL) {
+        local_dealloc_cu_context(dbg,cu_context);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -2444,7 +2454,6 @@ dwarf_child(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
-/* printf("dadebug ALLOC ret_die 0x%lx line %d %s\n",(unsigned long)ret_die,__LINE__,__FILE__); */
     ret_die->di_debug_ptr = die_info_ptr;
     ret_die->di_cu_context = die->di_cu_context;
     ret_die->di_is_info = die->di_is_info;
@@ -2486,8 +2495,6 @@ dwarf_child(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_ABBREV_MISSING);
         return DW_DLV_ERROR;
     }
-
-/* printf("dadebug ALLOC dwarf_child returns 0x%lx line %d %s\n",(unsigned long)ret_die,__LINE__,__FILE__); */
     *caller_ret_die = ret_die;
     return (DW_DLV_OK);
 }

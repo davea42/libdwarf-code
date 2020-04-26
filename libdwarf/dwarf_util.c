@@ -1375,7 +1375,7 @@ int  dwarf_add_file_path(
     return DW_DLV_OK;
 }
 
-/*  New late April 2020. 
+/*  New late April 2020.
     All the crucial macros will surely
     need  to use wrapper code to ensure we do not leak
     memory at certain points.  */
@@ -1390,7 +1390,7 @@ _dwarf_read_unaligned_ck_wrapper(Dwarf_Debug dbg,
     Dwarf_Unsigned val = 0;
 
     READ_UNALIGNED_CK(dbg,val,Dwarf_Unsigned,
-       readfrom,readlength,err,end_arange);
+        readfrom,readlength,err,end_arange);
     *out_value = val;
     return DW_DLV_OK;
 }

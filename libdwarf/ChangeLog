@@ -1,3 +1,12 @@
+2020-04-25: David Anderson
+    * print_die.c: Fix indents and remove trailing whitespace.
+    * print_frames.c: Rearranged what was local Dwarf_Error
+      and what was local. Fixed a dwarf_dealloc to
+      say DW_DLA_ERROR, not DW_DLV_ERROR. Yikes.
+    * print_lines.c: Changed a local variable name,
+      filename->lsrc_filename so searches were
+      more meaningful. Added missing dwarf_dealloc
+      to clear dead data when appropriate.
 2020-04-24: David Anderson
     * dwarf_die_deliv.c: Now using wrappers so that
       errors do not lead to a temporary leak.

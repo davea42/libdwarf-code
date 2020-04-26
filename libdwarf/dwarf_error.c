@@ -65,7 +65,7 @@
 /*  The user provides an explanatory string, the error
     number itself explains little.
     This prepends DW_DLE_USER_DECLARED_ERROR to the
-    caller-provided string. 
+    caller-provided string.
     New in April, 2020 .  Used by dwarfdump in a few
     circumstances. */
 void
@@ -138,10 +138,6 @@ printf("libdwarfdetector ALLOC creating error string %s errval %ld errptr 0x%lx 
                 dwarfstring_append(em,msg);
                 errptr->er_msg = (void*)em;
             }
-        } else {
-#ifdef DEBUG
-printf("dadebug ALLOC creating error no string, errval %ld errptr 0x%lx \n",(long)errval,(unsigned long)errptr);
-#endif
         }
         *error = errptr;
         return;

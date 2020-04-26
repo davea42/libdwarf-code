@@ -140,7 +140,8 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
         }
         switch(curform) {
         default:
-            _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
+            _dwarf_error(dbg,error,
+                DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
             return DW_DLV_ERROR;
         case DW_FORM_block1:
             v =  *(Dwarf_Small *) mdata;
@@ -1245,8 +1246,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned line_table_offset = 0;
     Dwarf_Small * macro_header = 0;
     Dwarf_Small * macro_data = 0;
-    Dwarf_Half version = 0;
-    Dwarf_Small flags = 0;
+    Dwarf_Unsigned version = 0;
+    Dwarf_Unsigned flags = 0;
     Dwarf_Small offset_size = 4;
     Dwarf_Unsigned cur_offset = 0;
     Dwarf_Unsigned section_size = 0;
@@ -1291,6 +1292,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
 
     if ((section_base + DWARF_HALF_SIZE + sizeof(Dwarf_Small)) >                     section_end ) {
         dealloc_macro_srcfiles(srcfiles,srcfilescount);
+        dwarf_dealloc_macro_context(macro_context);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
@@ -1299,11 +1301,21 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     macro_context->mc_srcfiles_count = srcfilescount;
     macro_context->mc_cu_context =  cu_context;
 
-    READ_UNALIGNED_CK(dbg,version, Dwarf_Half,
-        macro_data, DWARF_HALF_SIZE,error,section_end);
+    res = _dwarf_read_unaligned_ck_wrapper(dbg,
+        &version,macro_data,DWARF_HALF_SIZE,section_end,
+        error);
+    if (res != DW_DLV_OK) {
+        dwarf_dealloc_macro_context(macro_context);
+        return res;
+    }
     macro_data +=  DWARF_HALF_SIZE;
-    READ_UNALIGNED_CK(dbg,flags, Dwarf_Small,
-        macro_data,sizeof(Dwarf_Small),error,section_end);
+    res = _dwarf_read_unaligned_ck_wrapper(dbg,
+        &flags,macro_data,sizeof(Dwarf_Small),section_end,
+        error);
+    if (res != DW_DLV_OK) {
+        dwarf_dealloc_macro_context(macro_context);
+        return res;
+    }
     macro_data += sizeof(Dwarf_Small);
 
     macro_context->mc_at_comp_dir = comp_dir;
@@ -1328,8 +1340,14 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }
-        READ_UNALIGNED_CK(dbg,line_table_offset,Dwarf_Unsigned,
-            macro_data,offset_size,error,section_end);
+        res = _dwarf_read_unaligned_ck_wrapper(dbg,
+            &line_table_offset,macro_data,
+            offset_size,section_end,
+            error);
+        if (res != DW_DLV_OK) {
+            dwarf_dealloc_macro_context(macro_context);
+            return res;
+        }
         macro_data += offset_size;
         macro_context->mc_debug_line_offset = line_table_offset;
     }
@@ -1517,6 +1535,7 @@ dwarf_dealloc_macro_context(Dwarf_Macro_Context mc)
         return;
     }
     dbg = mc->mc_dbg;
+    /* See _dwarf_macro_destructor() here */
     dwarf_dealloc(dbg,mc,DW_DLA_MACRO_CONTEXT);
 }
 

@@ -220,7 +220,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
             "DW_DLE_ABBREV_DECODE_ERROR: Ran off the end "
             "of the abbrev section reading tag, starting at"
             " abbrev section offset 0x%x",offset);
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_ABBREV_DECODE_ERROR,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
@@ -243,7 +243,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_count = labbr_count;
     if (abbrev_ptr > abbrev_section_end) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_ABBREV_DECODE_ERROR,
             "DW_DLE_ABBREV_DECODE_ERROR: Ran off the end "
             "of the abbrev section reading abbrev_entries.");
@@ -431,7 +431,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     }
 
     if (abbrev_ptr >= abbrev_end) {
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_ABBREV_DECODE_ERROR,
             "DW_DLE_ABBREV_DECODE_ERROR: Ran off the end "
             "of the abbrev section reading abbrev entries..");

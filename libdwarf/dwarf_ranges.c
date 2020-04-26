@@ -230,10 +230,10 @@ FIXME Implement debug_rnglists!
     /*  de_debug_ranges is DW 3,4.
         de_debug_rnglists is DW5. */
     if (die_version >= DW_CU_VERSION5) {
-        res = _dwarf_load_section(localdbg, 
+        res = _dwarf_load_section(localdbg,
             &localdbg->de_debug_rngslists,&localerror);
     } else {
-        res = _dwarf_load_section(localdbg, 
+        res = _dwarf_load_section(localdbg,
             &localdbg->de_debug_ranges,&localerror);
     }
 #endif

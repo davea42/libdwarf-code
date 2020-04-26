@@ -270,9 +270,6 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 segment_selectors, really. FIXME */
             if (segment_size) {
                 /*  Only applies if cu_version >= 4. */
-                READ_UNALIGNED_CK(dbg, segment_selector, Dwarf_Unsigned,
-                    arange_ptr, segment_size,
-                    error,end_this_arange);
                 res = _dwarf_read_unaligned_ck_wrapper(dbg,
                     &segment_selector,
                     arange_ptr,segment_size,end_this_arange,error);

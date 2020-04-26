@@ -641,7 +641,7 @@ dwarf_formsig8(Dwarf_Attribute attr,
     See the DWARF4 document for the 3 cases fitting
     reference forms.  The caller must determine which section the
     reference 'points' to.  The function added in November 2009,
-    dwarf_get_form_class(), helps in this regard.  
+    dwarf_get_form_class(), helps in this regard.
 
     unlike dwarf_formref(), this allows references to
     sections other than just .debug_info/.debug_types.
@@ -817,7 +817,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
         int fcres = 0;
         const char *name = 0;
 
-        dwarfstring_constructor(&m); 
+        dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_BAD_REF_FORM: The form code is 0x%x ",
             formcode);
@@ -829,9 +829,9 @@ dwarf_global_formref(Dwarf_Attribute attr,
             " %s.",(char *)name);
         _dwarf_error_string(dbg, error, DW_DLE_BAD_REF_FORM,
             dwarfstring_string(&m));
-        dwarfstring_destructor(&m); 
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
-        }   
+        }
     }
 
     /*  We do not know what section the offset refers to, so
