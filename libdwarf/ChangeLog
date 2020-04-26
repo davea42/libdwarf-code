@@ -1,12 +1,22 @@
 2020-04-25: David Anderson
-    * print_die.c: Fix indents and remove trailing whitespace.
-    * print_frames.c: Rearranged what was local Dwarf_Error
-      and what was local. Fixed a dwarf_dealloc to
-      say DW_DLA_ERROR, not DW_DLV_ERROR. Yikes.
-    * print_lines.c: Changed a local variable name,
-      filename->lsrc_filename so searches were
-      more meaningful. Added missing dwarf_dealloc
-      to clear dead data when appropriate.
+    * dwarf_abbrev.c: Fix trailing whitespace.
+    * dwarf_arange.c: Delete macro READ_UNALIGNED_CK
+      use an just use  _dwarf_read_unaligned_ck_wrapper.
+    * dwarf_die_deliv.c: Uses wrapper instead
+      of READ_UNALIGNED_CK where necessary.
+      Delete commented-out lines.
+    * dwarf_error.c: Remove unwanted debug  code.
+    * dwarf_form.c: Remove trailing whitespace.
+    * dwarf_global.c: Rename some arguments for greater
+      clarity.
+    * dwarf_line.c: Fix line handling so both DW5
+      and earlier handled better.  Improve some error
+      messages.
+    * dwarf_macro5.c:  Use wrapper() funcs, not
+      READ_UNALIGNED_CK and fix a couple local
+      variables so that works.
+    * dwarf_ranges.c: Remove trailing whitespace.
+    * dwarf_util.c: Remove trailing whitespace.
 2020-04-24: David Anderson
     * dwarf_die_deliv.c: Now using wrappers so that
       errors do not lead to a temporary leak.
