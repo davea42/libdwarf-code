@@ -1,3 +1,11 @@
+2020-04-28: David Anderson
+    *  dwarfdump.c,print_die.c,print_frames.c: Removed
+       the use of tab chars in the output and use a space
+       or two instead. This greatly shortens the line
+       length needed when printing frame information details.
+       Looks better without the 16 or 24 leading blanks on
+       all those lines too.
+       The tab characters elsewhere were removed long ago.
 2020-04-26: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

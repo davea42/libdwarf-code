@@ -965,7 +965,7 @@ process_one_file(int fd, int tiedfd,
             (mem_header && mem_header->ar_name)?
             mem_header->ar_name:"";
 
-        printf("\narchive member \t%s\n",sanitized(memname));
+        printf("\narchive member   %s\n",sanitized(memname));
     }
 #endif /* DWARF_WITH_LIBELF */
 

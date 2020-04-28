@@ -2265,7 +2265,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         esb_append_printf_u(stringbuf," (0x%" DW_PR_XZEROS DW_PR_DUx,off);
         esb_append_printf_u(stringbuf,") " "(%" DW_PR_DUu " bytes)>",bytecount);
     } else {
-        esb_append_printf_i(stringbuf,"\t\tranges: %" DW_PR_DSd,rangecount);
+        esb_append_printf_i(stringbuf,"  ranges: %" DW_PR_DSd,rangecount);
         esb_append_printf_s(stringbuf," at %s" ,
             sanitized(sec_name));
         esb_append_printf_u(stringbuf," offset %" DW_PR_DUu ,off);
@@ -2282,7 +2282,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             esb_append_printf_u(stringbuf," 0x%" DW_PR_XZEROS  DW_PR_DUx,r->dwr_addr1);
             esb_append_printf_u(stringbuf," 0x%" DW_PR_XZEROS  DW_PR_DUx ">",r->dwr_addr2);
         } else {
-            esb_append_printf_i(stringbuf,"\t\t\t[%2" DW_PR_DSd,i);
+            esb_append_printf_i(stringbuf,"   [%2" DW_PR_DSd,i);
             esb_append_printf_s(stringbuf,"] %-14s",type);
             esb_append_printf_u(stringbuf," 0x%" DW_PR_XZEROS  DW_PR_DUx,
                 r->dwr_addr1);
@@ -5013,7 +5013,7 @@ get_location_list(Dwarf_Debug dbg,
                         " with %ld entries follows>",no_of_elements);
                 }
             }
-            esb_append_printf_i(esbp, "\n\t\t\t"  "[%2d]",llent);
+            esb_append_printf_i(esbp, "\n   "  "[%2d]",llent);
         }
 
         /*  If we have a location list refering to the .debug_loc
