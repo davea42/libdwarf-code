@@ -124,6 +124,7 @@ extern int print_frames (Dwarf_Debug dbg,int want_eh,
     void **, void **,Dwarf_Error *);
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
+extern int print_raw_all_rnglists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info,Dwarf_Error *);
 extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);

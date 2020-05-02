@@ -162,19 +162,19 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_original_elf_init.lo \
 	libdwarf_la-dwarf_peread.lo libdwarf_la-dwarf_print_lines.lo \
 	libdwarf_la-dwarf_pubtypes.lo libdwarf_la-dwarf_query.lo \
-	libdwarf_la-dwarf_ranges.lo libdwarf_la-dwarf_str_offsets.lo \
-	libdwarf_la-dwarfstring.lo libdwarf_la-dwarf_stringsection.lo \
-	libdwarf_la-dwarf_tied.lo libdwarf_la-dwarf_tsearchhash.lo \
-	libdwarf_la-dwarf_types.lo libdwarf_la-dwarf_util.lo \
-	libdwarf_la-dwarf_vars.lo libdwarf_la-dwarf_weaks.lo \
-	libdwarf_la-dwarf_xu_index.lo libdwarf_la-malloc_check.lo \
-	libdwarf_la-pro_alloc.lo libdwarf_la-pro_arange.lo \
-	libdwarf_la-pro_die.lo libdwarf_la-pro_dnames.lo \
-	libdwarf_la-pro_encode_nm.lo libdwarf_la-pro_error.lo \
-	libdwarf_la-pro_expr.lo libdwarf_la-pro_finish.lo \
-	libdwarf_la-pro_forms.lo libdwarf_la-pro_frame.lo \
-	libdwarf_la-pro_funcs.lo libdwarf_la-pro_init.lo \
-	libdwarf_la-pro_line.lo \
+	libdwarf_la-dwarf_ranges.lo libdwarf_la-dwarf_rnglists.lo \
+	libdwarf_la-dwarf_str_offsets.lo libdwarf_la-dwarfstring.lo \
+	libdwarf_la-dwarf_stringsection.lo libdwarf_la-dwarf_tied.lo \
+	libdwarf_la-dwarf_tsearchhash.lo libdwarf_la-dwarf_types.lo \
+	libdwarf_la-dwarf_util.lo libdwarf_la-dwarf_vars.lo \
+	libdwarf_la-dwarf_weaks.lo libdwarf_la-dwarf_xu_index.lo \
+	libdwarf_la-malloc_check.lo libdwarf_la-pro_alloc.lo \
+	libdwarf_la-pro_arange.lo libdwarf_la-pro_die.lo \
+	libdwarf_la-pro_dnames.lo libdwarf_la-pro_encode_nm.lo \
+	libdwarf_la-pro_error.lo libdwarf_la-pro_expr.lo \
+	libdwarf_la-pro_finish.lo libdwarf_la-pro_forms.lo \
+	libdwarf_la-pro_frame.lo libdwarf_la-pro_funcs.lo \
+	libdwarf_la-pro_init.lo libdwarf_la-pro_line.lo \
 	libdwarf_la-pro_log_extra_flag_strings.lo \
 	libdwarf_la-pro_macinfo.lo libdwarf_la-pro_pubnames.lo \
 	libdwarf_la-pro_reloc.lo libdwarf_la-pro_reloc_stream.lo \
@@ -681,6 +681,8 @@ dwarf_print_lines.c \
 dwarf_pubtypes.c \
 dwarf_query.c \
 dwarf_ranges.c \
+dwarf_rnglists.c \
+dwarf_rnglists.h \
 dwarf_reading.h \
 dwarf_reloc_386.h \
 dwarf_reloc_arm.h \
@@ -972,6 +974,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_pubtypes.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_query.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_ranges.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_rnglists.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_str_offsets.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_stringsection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_tied.Plo@am__quote@
@@ -1294,6 +1297,13 @@ libdwarf_la-dwarf_ranges.lo: dwarf_ranges.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_ranges.c' object='libdwarf_la-dwarf_ranges.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_ranges.lo `test -f 'dwarf_ranges.c' || echo '$(srcdir)/'`dwarf_ranges.c
+
+libdwarf_la-dwarf_rnglists.lo: dwarf_rnglists.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_rnglists.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_rnglists.Tpo -c -o libdwarf_la-dwarf_rnglists.lo `test -f 'dwarf_rnglists.c' || echo '$(srcdir)/'`dwarf_rnglists.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_rnglists.Tpo $(DEPDIR)/libdwarf_la-dwarf_rnglists.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_rnglists.c' object='libdwarf_la-dwarf_rnglists.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_rnglists.lo `test -f 'dwarf_rnglists.c' || echo '$(srcdir)/'`dwarf_rnglists.c
 
 libdwarf_la-dwarf_str_offsets.lo: dwarf_str_offsets.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_str_offsets.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_str_offsets.Tpo -c -o libdwarf_la-dwarf_str_offsets.lo `test -f 'dwarf_str_offsets.c' || echo '$(srcdir)/'`dwarf_str_offsets.c

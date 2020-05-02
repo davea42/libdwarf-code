@@ -89,6 +89,8 @@ dwarf_print_lines.c \
 dwarf_pubtypes.c \
 dwarf_query.c \
 dwarf_ranges.c \
+dwarf_rnglists.c \
+dwarf_rnglists.h \
 dwarf_reading.h \
 dwarf_reloc_386.h \
 dwarf_reloc_arm.h \

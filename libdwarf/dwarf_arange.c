@@ -81,29 +81,23 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
 
     /*  Offset of current set of aranges into .debug_info. */
     Dwarf_Off info_offset = 0;
-
     /*  Size in bytes of addresses in target. */
     Dwarf_Small address_size = 0;
-
     /*  Size in bytes of segment offsets in target. */
     Dwarf_Small segment_size = 0;
-
     /*  Count of total number of aranges. */
     Dwarf_Signed arange_count = 0;
-
     Dwarf_Arange arange = 0;
     Dwarf_Unsigned section_size = 0;
     Dwarf_Byte_Ptr arange_end_section = 0;
-
     /*  Used to chain Dwarf_Aranges structs. */
     Dwarf_Chain curr_chain = NULL;
     Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
+
     if (!dbg->de_debug_aranges.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
-
-
     arange_ptr = dbg->de_debug_aranges.dss_data;
     arange_ptr_start = arange_ptr;
     section_size = dbg->de_debug_aranges.dss_size;

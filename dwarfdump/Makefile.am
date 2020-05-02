@@ -61,6 +61,7 @@ print_macro.c \
 print_macros.c \
 print_pubnames.c \
 print_ranges.c \
+print_rnglists.c \
 print_reloc.c \
 print_reloc.h \
 print_section_groups.c \

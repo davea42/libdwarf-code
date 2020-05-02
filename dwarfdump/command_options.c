@@ -366,6 +366,7 @@ static void arg_print_macinfo(void);
 static void arg_print_pubnames(void);
 static void arg_print_producers(void);
 static void arg_print_ranges(void);
+static void arg_print_raw_rnglists(void);
 static void arg_print_static(void);
 static void arg_print_static_func(void);
 static void arg_print_static_var(void);
@@ -464,6 +465,7 @@ static const char *usage_long_text[] = {
 "-P   --print-producers   Print list of compile units per producer",
 "-p   --print-pubnames    Print pubnames section",
 "-N   --print-ranges      Print ranges section",
+"     --print-raw_rnglists Print entire rnglists section",
 "-ta  --print-static      Print both static sections",
 "-tf  --print-static-func Print static func section",
 "-tv  --print-static-var  Print static var section",
@@ -750,6 +752,7 @@ enum longopts_vals {
   OPT_PRINT_PRODUCERS,          /* -P   --print-producers   */
   OPT_PRINT_PUBNAMES,           /* -p   --print-pubnames    */
   OPT_PRINT_RANGES,             /* -N   --print-ranges      */
+  OPT_PRINT_RAW_RNGLISTS,       /*      --print-raw-rnglists */
   OPT_PRINT_STATIC,             /* -ta  --print-static      */
   OPT_PRINT_STATIC_FUNC,        /* -tf  --print-static-func */
   OPT_PRINT_STATIC_VAR,         /* -tv  --print-static-var  */
@@ -898,6 +901,7 @@ static struct dwoption longopts[] =  {
   {"print-producers",   dwno_argument, 0, OPT_PRINT_PRODUCERS  },
   {"print-pubnames",    dwno_argument, 0, OPT_PRINT_PUBNAMES   },
   {"print-ranges",      dwno_argument, 0, OPT_PRINT_RANGES     },
+  {"print-raw-rnglists",dwno_argument, 0, OPT_PRINT_RAW_RNGLISTS},
   {"print-static",      dwno_argument, 0, OPT_PRINT_STATIC     },
   {"print-static-func", dwno_argument, 0, OPT_PRINT_STATIC_FUNC},
   {"print-static-var",  dwno_argument, 0, OPT_PRINT_STATIC_VAR },
@@ -1705,6 +1709,12 @@ void arg_print_ranges(void)
     glflags.gf_ranges_flag = TRUE;
     suppress_check_dwarf();
 }
+/*  Option '--print-raw-rnglists' */
+void arg_print_raw_rnglists(void)
+{
+    glflags.gf_print_raw_rnglists = TRUE;
+    suppress_check_dwarf();
+}
 
 /*  Option '-o[...]' */
 void arg_o_multiple_selection(void)
@@ -2424,6 +2434,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_PRODUCERS:   arg_print_producers();   break;
         case OPT_PRINT_PUBNAMES:    arg_print_pubnames();    break;
         case OPT_PRINT_RANGES:      arg_print_ranges();      break;
+        case OPT_PRINT_RAW_RNGLISTS:arg_print_raw_rnglists();break;
         case OPT_PRINT_STATIC:      arg_print_static();      break;
         case OPT_PRINT_STATIC_FUNC: arg_print_static_func(); break;
         case OPT_PRINT_STATIC_VAR:  arg_print_static_var();  break;

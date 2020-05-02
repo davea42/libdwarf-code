@@ -17,6 +17,7 @@ dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_original_elf_init.c 
 dwarf_peread.c 
 dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c 
+dwarf_rnglists.c
 dwarfstring.h dwarfstring.c
 dwarf_stringsection.c
 dwarf_tied.c 
@@ -38,7 +39,8 @@ dwarf_elf_access.h dwarf_elf_defines.h dwarf_elfread.h
 dwarf_elf_rel_detector.h 
 dwarf_elf_reloc_386.h dwarf_elf_reloc_aarch64.h 
 dwarf_elf_reloc_arm.h dwarf_elf_reloc_mips.h 
-dwarf_elf_reloc_ppc64.h dwarf_elf_reloc_ppc.h 
+dwarf_elf_reloc_ppc64.h 
+dwarf_elf_reloc_ppc.h 
 dwarf_elf_reloc_sparc.h 
 dwarf_elf_reloc_x86_64.h 
 dwarf_elfstructs.h 
@@ -51,6 +53,7 @@ dwarf_object_detector.h dwarf_opaque.h
 dwarf_pe_descr.h dwarf_peread.h
 dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 
 dwarf_reloc_ppc.h dwarf_reloc_ppc64.h dwarf_reloc_x86_64.h 
+dwarf_rnglists.h
 dwarf_tied_decls.h 
 dwarf_tsearch.h 
 dwarf_str_offsets.h

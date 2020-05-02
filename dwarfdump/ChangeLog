@@ -1,3 +1,16 @@
+2020-05-02: David Anderson
+    *  CMakeLists.txt: Added print_rnglists.c.
+    *  Makefile.am: Added print_rnglists.c.
+    *  Makefile.in: Regenerated.
+    *  command_options.c: Added a new option --print-raw-rnglists.
+    *  dwarfdump.c: Implemented printing raw rangelists, but
+       not yet completely.
+    *  gflags.c: Added a new flag gf_print_raw_rnglists.
+    *  print_rnglists.c: Prints an initial partial
+       report on  contents of any .debug_rnglists[.dwo]
+       section.
+    *  print_sections.h: Just minor reformatting of
+       comments. No change.
 2020-04-28: David Anderson
     *  dwarfdump.c,print_die.c,print_frames.c: Removed
        the use of tab chars in the output and use a space

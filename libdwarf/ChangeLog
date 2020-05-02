@@ -1,3 +1,19 @@
+2020-05-02: David Anderson
+    * CMakeLists.txt, Makefile.am: Added dwarf_rnglists.h,
+      dwarf_rnglists.c
+    * Makefile.in: Regenerated.
+    * dwarf_alloc.c: Now calls dwarf_dealloc_rnglists() at
+      finish to clean up rnglists data, if any.
+    * dwarf_arange.c: Deleted some blank lines and added one.
+    * dwarf_opaque.h: Added de_rnglists_context_count and
+      de_rnglists_context to support rnglists.
+    * dwarf_rnglists.h:  Defines the Dwarf_Rnglists_Context
+      structure.
+    * dwarf_rnglists.c:  Implements initial support of the
+      .debug_rnglists section.
+    * libdwarf.h.in: Declares new rnglist-related functions
+      and an opaque struct Dwarf_Rnglists_Context_s.
+    * generated_libdwarf.h.in: Regenerated.
 2020-04-26: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
       dwarf_names_new.h,libdwarf_version.h: Updated

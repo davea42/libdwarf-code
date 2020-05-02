@@ -130,6 +130,7 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-print_macros.$(OBJEXT) \
 	dwarfdump-print_pubnames.$(OBJEXT) \
 	dwarfdump-print_ranges.$(OBJEXT) \
+	dwarfdump-print_rnglists.$(OBJEXT) \
 	dwarfdump-print_reloc.$(OBJEXT) \
 	dwarfdump-print_section_groups.$(OBJEXT) \
 	dwarfdump-print_sections.$(OBJEXT) \
@@ -609,6 +610,7 @@ print_macro.c \
 print_macros.c \
 print_pubnames.c \
 print_ranges.c \
+print_rnglists.c \
 print_reloc.c \
 print_reloc.h \
 print_section_groups.c \
@@ -815,6 +817,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_pubnames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_ranges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_reloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_rnglists.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_section_groups.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_sections.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_static_funcs.Po@am__quote@
@@ -1258,6 +1261,20 @@ dwarfdump-print_ranges.obj: print_ranges.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_ranges.c' object='dwarfdump-print_ranges.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_ranges.obj `if test -f 'print_ranges.c'; then $(CYGPATH_W) 'print_ranges.c'; else $(CYGPATH_W) '$(srcdir)/print_ranges.c'; fi`
+
+dwarfdump-print_rnglists.o: print_rnglists.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_rnglists.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_rnglists.Tpo -c -o dwarfdump-print_rnglists.o `test -f 'print_rnglists.c' || echo '$(srcdir)/'`print_rnglists.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_rnglists.Tpo $(DEPDIR)/dwarfdump-print_rnglists.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_rnglists.c' object='dwarfdump-print_rnglists.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_rnglists.o `test -f 'print_rnglists.c' || echo '$(srcdir)/'`print_rnglists.c
+
+dwarfdump-print_rnglists.obj: print_rnglists.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_rnglists.obj -MD -MP -MF $(DEPDIR)/dwarfdump-print_rnglists.Tpo -c -o dwarfdump-print_rnglists.obj `if test -f 'print_rnglists.c'; then $(CYGPATH_W) 'print_rnglists.c'; else $(CYGPATH_W) '$(srcdir)/print_rnglists.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_rnglists.Tpo $(DEPDIR)/dwarfdump-print_rnglists.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_rnglists.c' object='dwarfdump-print_rnglists.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_rnglists.obj `if test -f 'print_rnglists.c'; then $(CYGPATH_W) 'print_rnglists.c'; else $(CYGPATH_W) '$(srcdir)/print_rnglists.c'; fi`
 
 dwarfdump-print_reloc.o: print_reloc.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_reloc.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_reloc.Tpo -c -o dwarfdump-print_reloc.o `test -f 'print_reloc.c' || echo '$(srcdir)/'`print_reloc.c

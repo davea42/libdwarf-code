@@ -551,13 +551,15 @@ typedef struct Dwarf_Cie_s*        Dwarf_Cie;
 typedef struct Dwarf_Arange_s*     Dwarf_Arange;
 typedef struct Dwarf_Gdbindex_s*   Dwarf_Gdbindex;
 struct Dwarf_Xu_Index_Header_s;
-typedef struct Dwarf_Xu_Index_Header_s* Dwarf_Xu_Index_Header;
+typedef struct Dwarf_Xu_Index_Header_s  *Dwarf_Xu_Index_Header;
 struct Dwarf_Line_Context_s;
-typedef struct Dwarf_Line_Context_s *Dwarf_Line_Context;
+typedef struct Dwarf_Line_Context_s     *Dwarf_Line_Context;
 struct Dwarf_Macro_Context_s;
-typedef struct Dwarf_Macro_Context_s *Dwarf_Macro_Context;
+typedef struct Dwarf_Macro_Context_s    *Dwarf_Macro_Context;
 struct Dwarf_Dnames_Head_s;
-typedef struct Dwarf_Dnames_Head_s* Dwarf_Dnames_Head;
+typedef struct Dwarf_Dnames_Head_s      *Dwarf_Dnames_Head;
+struct Dwarf_Rnglists_Context_s;
+typedef struct Dwarf_Rnglists_Context_s *Dwarf_Rnglists_Context;
 
 
 
@@ -4785,6 +4787,76 @@ int dwarf_get_ranges_a(Dwarf_Debug /*dbg*/,
 void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);
+
+/* ======= START .debug_rnglists interfaces.  New May 2020 */
+/*  Loads all the rnglists headers and
+    returns DW_DLV_NO_ENTRY if the section
+    is missing or empty.  
+    Intended to be done quite early and
+    done exactly once.
+    With DW_DLV_OK it returns the number of
+    rnglists headers in the section through
+    rnglists_count. */
+int dwarf_load_rnglists(Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned * /*rnglists_count*/,
+    Dwarf_Error * /*err*/);
+
+/*  Frees the memory in use in all rnglists contexts.
+    Done by dwarf_finish() if the user code fails to call this. 
+    Ok but pointless to call multiple times. */
+void dwarf_dealloc_rnglists(Dwarf_Debug  /*dbg*/);
+
+int dwarf_get_rnglist_context(Dwarf_Debug  /*dbg*/,
+    Dwarf_Unsigned  /*index*/,
+    Dwarf_Rnglists_Context * /*context_out*/,
+    Dwarf_Small ** /*first_byte_of_context*/,
+    Dwarf_Small ** /*first_byte_of_entries*/,
+    Dwarf_Small ** /*end_of_entries*/,
+    Dwarf_Error *  /*err*/);
+
+/*  Enables printing of details about the Range List Table
+    Headers, one header per call. Index starting at 0.
+    Returns DW_DLV_NO_ENTRY if index is too high for the table. 
+    A .debug_rnglists section may contain any number
+    of Range List Table Headers with their details.  */
+int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
+    Dwarf_Unsigned  /*index*/,
+    Dwarf_Unsigned * /*header_offset*/,
+    Dwarf_Small  *   /*offset_size*/,
+    Dwarf_Small  *   /*extension_size*/,
+    unsigned     *   /*version*/, /* 5 */
+    Dwarf_Small  *   /*address_size*/,
+    Dwarf_Small  *   /*segment_selector_size*/,
+    Dwarf_Unsigned * /*offset_entry_count*/,
+    Dwarf_Unsigned * /*offset_of_offset_array*/,
+    Dwarf_Unsigned ** /*offset_array*/,
+    Dwarf_Unsigned * /*offset_of_first_rangeentry*/,
+    Dwarf_Unsigned * /*offset_past_last_rangeentry*/,
+    Dwarf_Error *    /*err*/);
+
+/*  entry offset is offset_of_first_rangeentry.
+    Stop when the returned *next_entry_offset
+    is == offset_past_last_rangentry (from 
+    dwarf_get_rnglist_context_plus). 
+    This only makes sense within those ranges.
+    This retrieves raw detail from the section,
+    no base values or anything are added.
+    So this returns raw individual entries
+    for a single rnglist header, meaning a
+    a single Dwarf_Rnglists_Context.
+
+    This interface assumes there is no
+    segment selector.
+    It's not clear at present how to implement a segmented
+    address space in .debug_rnglists .  */
+int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
+    Dwarf_Unsigned  /*entry_offset*/,
+    Dwarf_Unsigned * /*entry_kind*/,
+    Dwarf_Unsigned * /*entry_operand1*/,
+    Dwarf_Unsigned * /*entry_operand2*/,
+    Dwarf_Unsigned *  /*next_entry_offset*/,
+    Dwarf_Error * /*err*/);
+/* ======= END .debug_rnglists interfaces.  */
 
 /*  New April 2018.
     Allows applications to print the .debug_str_offsets

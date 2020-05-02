@@ -128,6 +128,8 @@ init_global_flags(void)
 
     glflags.gf_print_unique_errors = FALSE;
     glflags.gf_found_error_message = FALSE;
+    glflags.gf_print_raw_rnglists = FALSE;
+
 
     glflags.gf_check_names = FALSE;
 

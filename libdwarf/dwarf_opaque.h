@@ -235,6 +235,7 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_ranges_base;   /* Zero in .dwo */
     /*  FIXME from DW_AT_str_offsets_base in CU DIE */
     Dwarf_Unsigned cc_str_offsets_base;
+
     char *     cc_dwo_name;
     Dwarf_Unsigned cc_loclists_base;
     /* === END DEBUG FISSION (Split Dwarf) data */
@@ -242,6 +243,7 @@ struct Dwarf_CU_Context_s {
     /*  Global section offset to the bytes of the CU die for this CU.
         Set when the CU die is accessed by dwarf_siblingof_b(). */
     Dwarf_Unsigned cc_cu_die_global_sec_offset;
+
 
     Dwarf_Byte_Ptr cc_last_abbrev_ptr;
     Dwarf_Byte_Ptr cc_last_abbrev_endptr;
@@ -609,6 +611,11 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_str_offsets;
     struct Dwarf_Section_s de_debug_addr;
 
+    /*  For the .debug_rnglists[.dwo] section */
+    Dwarf_Unsigned de_rnglists_context_count;
+    /*  pointer to array of pointers to  
+        rnglists context instances */
+    Dwarf_Rnglists_Context *  de_rnglists_context;
 
     /* Following for the .gdb_index section.  */
     struct Dwarf_Section_s de_debug_gdbindex;

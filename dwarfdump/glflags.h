@@ -232,6 +232,8 @@ struct glflags_s {
     boolean gf_display_offsets;
     boolean gf_print_str_offsets;
 
+    boolean gf_print_raw_rnglists;
+
     unsigned long gf_count_major_errors;
 
     /*  Base address has a special meaning in DWARF4 relative to address ranges. */

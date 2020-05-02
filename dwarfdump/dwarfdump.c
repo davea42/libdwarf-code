@@ -1188,6 +1188,20 @@ process_one_file(int fd, int tiedfd,
             err = 0;
         }
     }
+    if (glflags.gf_print_raw_rnglists) {
+        int res = 0;
+        Dwarf_Error err = 0;
+
+        reset_overall_CU_error_data();
+        res = print_raw_all_rnglists(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the raw .debug_rnglists section"
+                " had a problem.",res,err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
+        }
+    }
     if (glflags.gf_frame_flag || glflags.gf_eh_frame_flag) {
         int sres = 0;
         Dwarf_Error err = 0;
