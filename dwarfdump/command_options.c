@@ -465,7 +465,7 @@ static const char *usage_long_text[] = {
 "-P   --print-producers   Print list of compile units per producer",
 "-p   --print-pubnames    Print pubnames section",
 "-N   --print-ranges      Print ranges section",
-"     --print-raw_rnglists Print entire rnglists section",
+"     --print-raw-rnglists Print entire rnglists section",
 "-ta  --print-static      Print both static sections",
 "-tf  --print-static-func Print static func section",
 "-tv  --print-static-var  Print static var section",
