@@ -1,4 +1,11 @@
 2020-05-02: David Anderson
+    * libdwarf2.1.mm: Added a note to Changes that
+      instances of 'length_size' in the code and headers
+      variable naming will, over time, be changed to 
+      'offset_size' as this name suggests what they really
+      represent: a 4 or 8 byte offset size.
+    * libdwarf2.1.pdf: Regenerated, version 2.92
+2020-05-02: David Anderson
     * CMakeLists.txt, Makefile.am: Added dwarf_rnglists.h,
       dwarf_rnglists.c
     * Makefile.in: Regenerated.

@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.91, 14 April 2020
+.ds vE Rev 2.92, 01 May 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -228,6 +228,14 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+What was historically called 'length_size' in
+libdwarf and dwarfdump is actually the size of
+an offset (4 or 8 in DWARF2,3,4 and 5).
+For readability all instances of 'length_size'
+are being converted, as time permits,
+to 'offset_size'.
+(May 1, 2020)
 .P
 Added a new function dwarf_set_de_alloc_flag()
 which allows turning-off of libdwarf-internal
@@ -549,6 +557,9 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "May 2020"
+Adding support for DWARF5
+sections .debug_rnglists and .debug_loclists.
 .LI "March 2020"
 Added dwarf_set_de_alloc_flag()
 so consumers get a little better
@@ -7206,10 +7217,11 @@ This allows dwarfdump, or any DWARF dumper,
 to print pubnames(etc) specific CU header
 data.
 
+
 .DS
 \f(CWint dwarf_get_globals_header(Dwarf_Global global,
     Dwarf_Off      * offset_pub_header,
-    Dwarf_Unsigned * length_size,
+    Dwarf_Unsigned * offset_size,
     Dwarf_Unsigned * length_pub,
     Dwarf_Unsigned * version,
     Dwarf_Unsigned * header_info_offset,
