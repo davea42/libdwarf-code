@@ -1,24 +1,28 @@
+2020-05-04: David Anderson
+    * print_rnglists.c: Completing the code to print
+      all the details of the raw content of the
+      DWARF5 .debug_rnglists section.
 2020-05-02: David Anderson
-    *  CMakeLists.txt: Added print_rnglists.c.
-    *  Makefile.am: Added print_rnglists.c.
-    *  Makefile.in: Regenerated.
-    *  command_options.c: Added a new option --print-raw-rnglists.
-    *  dwarfdump.c: Implemented printing raw rangelists, but
-       not yet completely.
-    *  gflags.c: Added a new flag gf_print_raw_rnglists.
-    *  print_rnglists.c: Prints an initial partial
-       report on  contents of any .debug_rnglists[.dwo]
-       section.
-    *  print_sections.h: Just minor reformatting of
-       comments. No change.
+    * CMakeLists.txt: Added print_rnglists.c.
+    * Makefile.am: Added print_rnglists.c.
+    * Makefile.in: Regenerated.
+    * command_options.c: Added a new option --print-raw-rnglists.
+    * dwarfdump.c: Implemented printing raw rangelists, but
+      not yet completely.
+    * gflags.c: Added a new flag gf_print_raw_rnglists.
+    * print_rnglists.c: Prints an initial partial
+      report on  contents of any .debug_rnglists[.dwo]
+      section.
+    * print_sections.h: Just minor reformatting of
+      comments. No change.
 2020-04-28: David Anderson
-    *  dwarfdump.c,print_die.c,print_frames.c: Removed
-       the use of tab chars in the output and use a space
-       or two instead. This greatly shortens the line
-       length needed when printing frame information details.
-       Looks better without the 16 or 24 leading blanks on
-       all those lines too.
-       The tab characters elsewhere were removed long ago.
+    * dwarfdump.c,print_die.c,print_frames.c: Removed
+      the use of tab chars in the output and use a space
+      or two instead. This greatly shortens the line
+      length needed when printing frame information details.
+      Looks better without the 16 or 24 leading blanks on
+      all those lines too.
+      The tab characters elsewhere were removed long ago.
 2020-04-26: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

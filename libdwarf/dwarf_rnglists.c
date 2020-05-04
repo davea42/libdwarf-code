@@ -175,7 +175,9 @@ internal_read_header(Dwarf_Debug dbg,
         SIZEOFT32,error,end_data);
     buildhere->rc_offset_entry_count = offset_entry_count;
     data += SIZEOFT32;
-
+    if (offset_entry_count ){
+        buildhere->rc_offsets_array = data;
+    }
     localoff = data - startdata;
     lists_len = address_size *offset_entry_count;
 
@@ -320,16 +322,21 @@ int dwarf_load_rnglists(
         }
     }
     res = internal_load_rnglists_contexts(dbg,&cxt,&count,error);
-
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     dbg->de_rnglists_context = cxt;
     dbg->de_rnglists_context_count = count;
-    *rnglists_count = count;
+    if (rnglists_count) {
+        *rnglists_count = count;
+    }
     return DW_DLV_OK;
 }
 
 /*  Frees the memory in use in all rnglists contexts.
     Done by dwarf_finish() if the user code fails to call this. */
-void dwarf_dealloc_rnglists(Dwarf_Debug dbg)
+void
+_dwarf_dealloc_rnglists(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned i = 0;
     Dwarf_Rnglists_Context * rngcon = 0;
@@ -340,7 +347,6 @@ void dwarf_dealloc_rnglists(Dwarf_Debug dbg)
     rngcon = dbg->de_rnglists_context;
     for( ; i < dbg->de_rnglists_context_count; ++i,++rngcon) {
         Dwarf_Rnglists_Context con = *rngcon;
-        free(con->rc_offsets_array);
         con->rc_offsets_array = 0;
         con->rc_offset_entry_count = 0;
         free(con);
@@ -350,9 +356,10 @@ void dwarf_dealloc_rnglists(Dwarf_Debug dbg)
     dbg->de_rnglists_context_count = 0;
 }
 
-int dwarf_get_rnglist_context(
+int
+dwarf_get_rnglist_context(
     UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Unsigned index,
+    UNUSEDARG Dwarf_Unsigned context_index,
     UNUSEDARG Dwarf_Rnglists_Context *context_out,
     UNUSEDARG Dwarf_Small **first_byte_of_context,
     UNUSEDARG Dwarf_Small **first_byte_of_entries,
@@ -362,6 +369,47 @@ int dwarf_get_rnglist_context(
     return DW_DLV_NO_ENTRY;
 }
 
+int
+dwarf_get_rnglist_offset_index_value(
+    Dwarf_Debug dbg,
+    Dwarf_Unsigned context_index,
+    Dwarf_Unsigned offsetentry_index,
+    Dwarf_Unsigned * offset_value_out,
+    Dwarf_Unsigned * global_offset_value_out,
+    Dwarf_Error *error)
+{
+    Dwarf_Rnglists_Context con = 0;
+    unsigned offset_len = 0;
+    Dwarf_Small *offsetptr = 0;
+    Dwarf_Unsigned targetoffset = 0;
+
+    if (!dbg->de_rnglists_context_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (context_index >= dbg->de_rnglists_context_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    con = dbg->de_rnglists_context[context_index];
+
+    if (offsetentry_index >= con->rc_offset_entry_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    offset_len = con->rc_offset_size;
+    offsetptr = con->rc_offsets_array +
+        (offsetentry_index*offset_len);
+    READ_UNALIGNED_CK(dbg,targetoffset,Dwarf_Unsigned,
+        offsetptr,
+        offset_len,error,con->rc_endaddr);
+    if (offset_value_out) {
+        *offset_value_out = targetoffset;
+    }
+    if (global_offset_value_out) {
+        *global_offset_value_out = targetoffset +
+            con->rc_offsets_off_in_sect;
+    }
+    return DW_DLV_OK;
+}
+
 /*  Enables printing of details about the Range List Table
     Headers, one header per call. Index starting at 0.
     Returns DW_DLV_NO_ENTRY if index is too high for the table.
@@ -369,27 +417,27 @@ int dwarf_get_rnglist_context(
     of Range List Table Headers with their details.  */
 int dwarf_get_rnglist_context_basics(
     Dwarf_Debug dbg,
-    Dwarf_Unsigned index,
-    Dwarf_Unsigned *header_offset,
-    Dwarf_Small  * offset_size,
-    Dwarf_Small  * extension_size,
-    unsigned     * version, /* 5 */
-    Dwarf_Small  * address_size,
-    Dwarf_Small  * segment_selector_size,
-    Dwarf_Unsigned *offset_entry_count,
-    Dwarf_Unsigned *offset_of_offset_array,
-    Dwarf_Unsigned **offset_array,
-    Dwarf_Unsigned *offset_of_first_rangeentry,
-    Dwarf_Unsigned *offset_past_last_rangeentry,
+    Dwarf_Unsigned context_index,
+    Dwarf_Unsigned * header_offset,
+    Dwarf_Small    * offset_size,
+    Dwarf_Small    * extension_size,
+    unsigned       * version, /* 5 */
+    Dwarf_Small    * address_size,
+    Dwarf_Small    * segment_selector_size,
+    Dwarf_Unsigned * offset_entry_count,
+    Dwarf_Unsigned * offset_of_offset_array,
+    Dwarf_Unsigned * offset_of_first_rangeentry,
+    Dwarf_Unsigned * offset_past_last_rangeentry,
     UNUSEDARG Dwarf_Error *error)
 {
     Dwarf_Rnglists_Context con = 0;
     if (!dbg->de_rnglists_context_count) {
-    }
-    if (index >= dbg->de_rnglists_context_count) {
         return DW_DLV_NO_ENTRY;
     }
-    con = dbg->de_rnglists_context[index];
+    if (context_index >= dbg->de_rnglists_context_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    con = dbg->de_rnglists_context[context_index];
 
     if (header_offset) {
         *header_offset = con->rc_header_offset;
@@ -414,10 +462,6 @@ int dwarf_get_rnglist_context_basics(
     }
     if (offset_of_offset_array) {
         *offset_of_offset_array = con->rc_offsets_off_in_sect;
-    }
-    /*FIXME  Here, alloc and fill in offsets array */
-    if (offset_array) {
-        *offset_array = con->rc_offsets_array;
     }
     if (offset_of_first_rangeentry) {
         *offset_of_first_rangeentry = con->rc_first_rnglist_offset;
@@ -445,14 +489,110 @@ int dwarf_get_rnglist_context_basics(
     It's not clear at present how to implement a segmented
     address space in .debug_rnglists .
     */
-int dwarf_get_rnglist_raw_entry_detail(
-    UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Unsigned entry_offset,
-    UNUSEDARG Dwarf_Unsigned *entry_kind,
-    UNUSEDARG Dwarf_Unsigned *entry_operand1,
-    UNUSEDARG Dwarf_Unsigned *entry_operand2,
-    UNUSEDARG Dwarf_Unsigned * next_entry_offset,
-    UNUSEDARG Dwarf_Error *err)
+int dwarf_get_rnglist_rle(
+    Dwarf_Debug dbg,
+    Dwarf_Unsigned contextnumber,
+    Dwarf_Unsigned entry_offset,
+    Dwarf_Unsigned endoffset,
+    Dwarf_Unsigned *entrylen,
+    Dwarf_Unsigned *entry_kind,
+    Dwarf_Unsigned *entry_operand1,
+    Dwarf_Unsigned *entry_operand2,
+    Dwarf_Error *err)
 {
-    return DW_DLV_NO_ENTRY;
+    Dwarf_Rnglists_Context con = 0;
+    Dwarf_Small *data = 0;
+    Dwarf_Small *enddata = 0;
+    Dwarf_Small  code = 0;
+    Dwarf_Unsigned val1 = 0;
+    Dwarf_Unsigned val2 = 0;
+    Dwarf_Unsigned count = 0;
+    unsigned leblen = 0;
+    unsigned address_size = 0;
+
+    if (!dbg->de_rnglists_context_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    data = dbg->de_debug_rnglists.dss_data +
+        entry_offset;
+    enddata = dbg->de_debug_rnglists.dss_data +
+        endoffset;
+    if (contextnumber >= dbg->de_rnglists_context_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    con = dbg->de_rnglists_context[contextnumber];
+    address_size = con->rc_address_size;
+    con = dbg->de_rnglists_context[contextnumber];
+    code = *data;
+    ++data;
+    ++count;
+    switch(code) {
+    case DW_RLE_end_of_list: break;
+    case DW_RLE_base_addressx:{
+        DECODE_LEB128_UWORD_LEN_CK(data,val1,leblen,
+            dbg,err,enddata);
+        count += leblen;
+        }
+        break;
+    case DW_RLE_startx_endx:
+    case DW_RLE_startx_length:
+    case DW_RLE_offset_pair: {
+        DECODE_LEB128_UWORD_LEN_CK(data,val1,leblen,
+            dbg,err,enddata);
+        count += leblen;
+        DECODE_LEB128_UWORD_LEN_CK(data,val2,leblen,
+            dbg,err,enddata);
+        count += leblen;
+        }
+        break;
+    case DW_RLE_base_address: {
+        READ_UNALIGNED_CK(dbg,val1, Dwarf_Unsigned,
+            data,address_size,err,enddata);
+        data += address_size;
+        count += address_size;
+        }
+        break;
+    case DW_RLE_start_end: {
+        READ_UNALIGNED_CK(dbg,val1, Dwarf_Unsigned,
+            data,address_size,err,enddata);
+        data += address_size;
+        count += address_size;
+        READ_UNALIGNED_CK(dbg,val2, Dwarf_Unsigned,
+            data,address_size,err,enddata);
+        data += address_size;
+        count += address_size;
+        }
+        break;
+    case DW_RLE_start_length: {
+        READ_UNALIGNED_CK(dbg,val1, Dwarf_Unsigned,
+            data,address_size,err,enddata);
+        data += address_size;
+        count += address_size;
+        DECODE_LEB128_UWORD_LEN_CK(data,val2,leblen,
+            dbg,err,enddata);
+        count += leblen;
+        }
+        break;
+    default: {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_RNGLISTS_ERROR: "
+            "The rangelists entry at .debug_rnglists"
+            " offset 0x%x" ,entry_offset);
+        dwarfstring_append_printf_u(&m,
+            " has code 0x%x which is unknown",code);
+        _dwarf_error_string(dbg,err,DW_DLE_RNGLISTS_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+        }
+        break;
+    }
+    *entrylen = count;
+    *entry_kind = code;
+    *entry_operand1 = val1;
+    *entry_operand2 = val2;
+    return DW_DLV_OK;
 }

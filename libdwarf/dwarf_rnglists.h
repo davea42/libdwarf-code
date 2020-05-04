@@ -64,9 +64,8 @@ struct Dwarf_Rnglists_Context_s {
     /* offset in the section of the offset entries */
     Dwarf_Unsigned  rc_offsets_off_in_sect;
 
-    /*  Malloc, must be freed. The
-        rc_offset_entry_count elements in the array.  */
-    Dwarf_Unsigned  * rc_offsets_array;
+    /* Do not free. Points into section memory */
+    Dwarf_Small   * rc_offsets_array;
 
     /*  Offset in the .debug_rnglists section of the
         first rangelist in the set of rangelists for the
@@ -83,15 +82,6 @@ struct Dwarf_Rnglists_Context_s {
     Dwarf_Small    *rc_endaddr;
 
 };
-
-
-#if 0
-int dwarf_get_rnglist_index_array(Dwarf_Debug dbg,
-    Dwarf_Unsigned index,
-    Dwarf_Unsigned *entry_count,
-    Dwarf_Unsigned **entries,
-    Dwarf_Error *err);
-#endif
 
 #ifdef __cplusplus
 }

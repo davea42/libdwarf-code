@@ -1,3 +1,18 @@
+2020-05-04: David Anderson
+    * dwarf_alloc.c: renamed dwarf_dealloc_rnglists
+      to _dwarf_dealloc_rnglists.
+    * dwarf_errmsg_list.h: Added DW_DLE_RNGLISTS_ERROR.
+    * dwarf_opaque.h: Added _dwarf_dealloc_rnglists() prototype.
+    * dwarf_rnglists.c: Minor corrections of this new code.
+    * dwarf_rnglists.h: Added a new field for internal use.
+      Deleted some #if 0 lines.
+    * dwarf_util.c(_dwarf_load_debug_info): Now also
+      calls dwarf_load_rnglists as we need that in the
+      Dwarf_Debug.
+    * libdwarf.h.in: Added DW_DLE_RNGLISTS_ERROR.
+      Deleted dwarf_dealloc_rnglists as it is renamed
+      and made private to libdwarf.
+    * generated_libdwarf.h.in: Regenerated.
 2020-05-02: David Anderson
     * libdwarf2.1.mm: Added a note to Changes that
       instances of 'length_size' in the code and headers

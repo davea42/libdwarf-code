@@ -1085,7 +1085,16 @@ _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error * error)
         return res;
     }
     res = _dwarf_load_section(dbg, &dbg->de_debug_info, error);
-    return res;
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    /*  debug_info won't be meaningful without debug_rnglists
+        if there is a debug_rnglists section. */
+    res = dwarf_load_rnglists(dbg,0,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    return DW_DLV_OK;
 }
 int
 _dwarf_load_debug_types(Dwarf_Debug dbg, Dwarf_Error * error)

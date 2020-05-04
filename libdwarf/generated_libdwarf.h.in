@@ -1407,9 +1407,10 @@ Old names above with same values. */
 #define DW_DLE_DWARF_INIT_DBG_NULL             465
 #define DW_DLE_ELF_RELOC_SECTION_ERROR         466
 #define DW_DLE_USER_DECLARED_ERROR             467
+#define DW_DLE_RNGLISTS_ERROR                  468
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        467
+#define DW_DLE_LAST        468
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -4801,10 +4802,24 @@ int dwarf_load_rnglists(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*rnglists_count*/,
     Dwarf_Error * /*err*/);
 
-/*  Frees the memory in use in all rnglists contexts.
-    Done by dwarf_finish() if the user code fails to call this. 
-    Ok but pointless to call multiple times. */
-void dwarf_dealloc_rnglists(Dwarf_Debug  /*dbg*/);
+/*  Retrieve the offset from the context-index'th
+    rangelists context  and the offsetentry_index
+    element of the array of offsets. 
+    If an index is too large to be correct
+    this returns DW_DLV_NO_ENTRY. 
+    If all is correct it returns DW_DLV_OK and
+    sets *offset_value_out to the offset of
+    the range list from the base of the offset
+    array, and *global_offset_value_out is set
+    to the .debug_rnglists section offset of
+    the range list. */
+int dwarf_get_rnglist_offset_index_value(Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned   /*context_index*/,
+    Dwarf_Unsigned   /*offsetentry_index*/,
+    Dwarf_Unsigned * /*offset_value_out*/,
+    Dwarf_Unsigned * /*global_offset_value_out*/,
+    Dwarf_Error * /*error*/);
+
 
 int dwarf_get_rnglist_context(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned  /*index*/,
@@ -4829,7 +4844,6 @@ int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Small  *   /*segment_selector_size*/,
     Dwarf_Unsigned * /*offset_entry_count*/,
     Dwarf_Unsigned * /*offset_of_offset_array*/,
-    Dwarf_Unsigned ** /*offset_array*/,
     Dwarf_Unsigned * /*offset_of_first_rangeentry*/,
     Dwarf_Unsigned * /*offset_past_last_rangeentry*/,
     Dwarf_Error *    /*err*/);
@@ -4856,6 +4870,22 @@ int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned * /*entry_operand2*/,
     Dwarf_Unsigned *  /*next_entry_offset*/,
     Dwarf_Error * /*err*/);
+
+/*  If no error, returns DW_DLV_OK and sets
+    the entry length,kind, and operands through
+    the pointers. If any missing operands assign
+    zero back through tye operand pointers. */
+
+int dwarf_get_rnglist_rle( Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned /*contextnumber*/,
+    Dwarf_Unsigned /*entry_offset*/,
+    Dwarf_Unsigned /*endoffset*/,
+    Dwarf_Unsigned * /*entrylen*/,
+    Dwarf_Unsigned * /*entry_kind*/,
+    Dwarf_Unsigned * /*entry_operand1*/,
+    Dwarf_Unsigned * /*entry_operand2*/,
+    Dwarf_Error * /*err*/);
+
 /* ======= END .debug_rnglists interfaces.  */
 
 /*  New April 2018.
