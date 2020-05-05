@@ -215,8 +215,10 @@ struct Dwarf_CU_Context_s {
 
     Dwarf_Bool cc_signature_present; /* Meaning type signature
         in TU header or, for CU header, signature in CU DIE. */
+    Dwarf_Bool cc_low_pc_present;
     Dwarf_Bool cc_addr_base_present;   /* Not TRUE in .dwo */
-    Dwarf_Bool cc_ranges_base_present; /* Not TRUE in .dwo */
+    Dwarf_Bool cc_ranges_base_present; /* DW3,DW4 */
+    Dwarf_Bool cc_rnglists_base_present; /* DW5 */
     Dwarf_Bool cc_str_offsets_base_present;
     Dwarf_Bool cc_loclists_base_present;
     Dwarf_Bool cc_cu_die_has_children;
@@ -229,10 +231,13 @@ struct Dwarf_CU_Context_s {
         cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool cc_cu_die_offset_present;
 
+    /* if present, is base address of CU */
+    Dwarf_Unsigned cc_low_pc; 
     /*  FIXME from DW_AT_addr_base in CU DIE */
     Dwarf_Unsigned cc_addr_base;     /* Zero in .dwo */
+    Dwarf_Unsigned cc_ranges_base;   /* DW2, DW3, DW4 */
     /*  FIXME from DW_AT_rnglists_base in CU DIE */
-    Dwarf_Unsigned cc_ranges_base;   /* Zero in .dwo */
+    Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
     /*  FIXME from DW_AT_str_offsets_base in CU DIE */
     Dwarf_Unsigned cc_str_offsets_base;
 

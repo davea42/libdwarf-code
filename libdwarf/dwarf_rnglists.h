@@ -81,6 +81,14 @@ struct Dwarf_Rnglists_Context_s {
     /*  pointer one past end of the rnglist data. */
     Dwarf_Small    *rc_endaddr;
 
+    /*  From here on are fields used for DIE/CU specific
+        access.  First, fields from the applicable CU die: */
+    /*  DW_AT_rnglists_base */
+    Dwarf_Unsigned  rc_at_rnglists_base; 
+    /* DW_AT_low_pc of CU or zero if none. */ 
+    Dwarf_Unsigned  rc_cu_base_address; 
+    /*  DW_AT_addr_base, so we can use .debug_addr */
+    Dwarf_Unsigned  rc_at_addr_base;
 };
 
 #ifdef __cplusplus

@@ -596,3 +596,50 @@ int dwarf_get_rnglist_rle(
     *entry_operand2 = val2;
     return DW_DLV_OK;
 }
+
+
+#if 0
+int
+dwarf_get_rnglists_context(Dwarf_Die die,
+    Dwarf_Unsigned offset_in_rnglists,
+    Dwarf_Unsigned rnglistx,
+    Dwarf_Rnglists_Context * rlcontext_out,
+    Dwarf_Error *error)
+{
+
+    Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context context = 0;
+
+    Dwarf_Unsigned rnglists_base = 0;
+    Dwarf_Unsigned addr_base = 0;
+    Dwarf_Unsigned low_pc = 0;
+
+    Dwarf_Bool rnglists_base_present = 0;
+    Dwarf_Bool addr_base_present = 0;
+    Dwarf_Bool low_pc_present = 0;
+
+    if (!die) {
+ERROR FIXME
+    }
+    context = die_cu_context;
+    if (!context) {
+ERROR FIXME
+    }
+    dbg = context->cc_dbg;
+    if (!dbg) {
+ERROR FIXME
+    }
+    rnglists_base_present = context->cc_rnglists_base_present;    
+    rnglists_base = context->cc_rnglists_base;
+
+    addr_base_present = context->cc_addr_base_present;
+    addr_base         = context->cc_addr_base;
+ 
+    low_pc_present = context->cc_low_pc_present; 
+    low_pc = context->cc_low_pc;
+FIXME
+
+    FIXME
+    return DW_DLV_NO_ENTRY
+}
+#endif
