@@ -5928,6 +5928,155 @@ check_decl_file_only(char **srcfiles,
 }
 
 
+static int
+handle_loclistx(
+    UNUSEDARG Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Die die,
+    UNUSEDARG Dwarf_Attribute attrib,
+    UNUSEDARG int theform,
+    UNUSEDARG Dwarf_Unsigned index_on_attr,
+    UNUSEDARG struct esb_s *  esbp,
+    UNUSEDARG int show_form,
+    UNUSEDARG int local_verbose,
+    UNUSEDARG Dwarf_Error *err)
+{
+#if 0
+    /* This is DWARF5, by definition. Not earlier. */
+    Dwarf_Debug localdbg = 0;
+    Dwarf_Unsigned addrbase = 0;
+    Dwarf_Unsigned loclists_base = 0;
+    Dwarf_Unsigned addr = 0;
+    int res = 0;
+
+    /* FIXME loclistx */
+    res = dwarf_loclists_contextnum_from_base(dbg,ctx
+    ...
+    /*  addr_base is the offset in .debug_addr of this
+        CU's table. So index  indexes into that table. */
+    res = dwarf_extract_address_from_debug_addr(dbg,ctx,
+        index,&addr,error);
+
+#endif
+    esb_append(esbp,"\n    Incomplete DW_FORM_loclistx handling. FIXME\n");
+    /* FIXME loclistx */
+    return DW_DLV_OK;
+}
+
+static int
+expand_rnglist_entries(Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Die die,
+    Dwarf_Rnglists_Head rnglhead,
+    Dwarf_Unsigned rnglentriescount,
+    Dwarf_Unsigned rnglglobal_offset,
+    struct esb_s *  esbp,
+    UNUSEDARG int show_form,
+    int local_verbose,
+    Dwarf_Error *err)
+{
+    Dwarf_Unsigned count = 0;
+    Dwarf_Unsigned i = 0;
+    int res = 0;
+    Dwarf_Unsigned secoffset = rnglglobal_offset;
+
+    count = rnglentriescount;
+    for( ; i < count; ++i) {
+        unsigned entrylen = 0;
+        unsigned code = 0;
+        Dwarf_Unsigned raw1 = 0;
+        Dwarf_Unsigned raw2 = 0;
+        Dwarf_Unsigned cooked1 = 0;
+        Dwarf_Unsigned cooked2 = 0;
+
+        res  = dwarf_get_rnglists_entry_fields(dbg,
+            rnglhead,i,
+            &entrylen,&code,
+            &raw1,&raw2,
+            &cooked1,&cooked2,
+            err);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        if (local_verbose) {
+            const char *codename = "<unknown code>";
+
+            dwarf_get_RLE_name(code,&codename);
+            esb_append(esbp,"\n");
+            esb_append_printf_u(esbp,"[%2u] ",i);
+            esb_append_printf_s(esbp,"%-20s ",codename);
+            esb_append_printf_u(esbp," 0x%"
+                DW_PR_XZEROS DW_PR_DUx ,raw1);
+            esb_append_printf_u(esbp," 0x%"
+                DW_PR_XZEROS DW_PR_DUx ,raw2);
+            esb_append_printf_u(esbp," secoff:0x%"
+                DW_PR_XZEROS DW_PR_DUx ,secoffset);
+        }
+        {
+            const char *codename = "start , end";
+
+            esb_append(esbp,"\n");
+            esb_append_printf_u(esbp,"[%2u] ",i);
+            if (code == DW_RLE_base_addressx ||
+                code == DW_RLE_base_address) {
+                codename = "base address";
+            } else {
+                if (code == DW_RLE_end_of_list) {
+                    codename = "end of list";
+                }
+            }
+            esb_append_printf_s(esbp,"%-20s ",codename);
+            esb_append_printf_u(esbp," 0x%"
+                DW_PR_XZEROS DW_PR_DUx ,cooked1);
+            esb_append_printf_u(esbp," 0x%"
+                DW_PR_XZEROS DW_PR_DUx ,cooked2);
+            esb_append_printf_u(esbp," secoff:0x%"
+                DW_PR_XZEROS DW_PR_DUx ,secoffset);
+        }
+        secoffset += entrylen;
+    }
+    return DW_DLV_OK;
+}
+static int
+handle_rnglistx(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    UNUSEDARG Dwarf_Attribute attrib,
+    UNUSEDARG int theform,
+    Dwarf_Unsigned index_on_attr,
+    struct esb_s *  esbp,
+    int show_form,
+    int local_verbose,
+    Dwarf_Error *err)
+{
+    /* This is DWARF5, by definition. Not earlier. */
+    Dwarf_Unsigned global_offset_of_rle_set;
+    Dwarf_Unsigned count_rnglists_entries = 0;
+    Dwarf_Rnglists_Head rnglhead = 0;
+    int res = 0;
+
+    res = dwarf_rnglists_index_get_rle_head(dbg,
+        die,
+        index_on_attr,
+        &rnglhead,
+        &count_rnglists_entries,
+        &global_offset_of_rle_set,
+        err);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+
+    esb_append(esbp,"\n");
+    esb_append_printf_u(esbp,
+        "   Offset of rnglists entries..:  0x%"
+        DW_PR_XZEROS DW_PR_DUx "\n",
+        global_offset_of_rle_set);
+    res = expand_rnglist_entries(dbg,die,rnglhead,
+        count_rnglists_entries,
+        global_offset_of_rle_set,
+        esbp,
+        show_form,local_verbose,err);
+    dwarf_dealloc_rnglists_head(rnglhead);
+    return res;
+}
+
 /*  Fill buffer with attribute value.
     We pass in tag so we can try to do the right thing with
     broken compiler DW_TAG_enumerator
@@ -6887,19 +7036,52 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         break;
     case DW_FORM_loclistx:   /* DWARF5, index into .debug_loclists */
-    case DW_FORM_rnglistx: { /* DWARF5, index into .debug_rnglists */
-        /* FIXME: print loclist or rnglist  info */
         wres = dwarf_formudata(attrib, &tempud, err);
         if (wres == DW_DLV_OK) {
             Dwarf_Bool hex_format = TRUE;
             formx_unsigned(tempud,esbp,hex_format);
+            wres = handle_loclistx(dbg, die, attrib, theform,
+                tempud,
+                esbp,show_form,local_verbose,err);
+            if(wres == DW_DLV_ERROR) {
+                return wres;
+            }
+            break;
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
         } else {
             struct esb_s lstr;
             esb_constructor(&lstr);
             esb_append(&lstr,"Cannot get formudata on ");
-            esb_append(&lstr,get_FORM_name(theform,FALSE));
+            esb_append(&lstr,"DW_FORM_loclistx");
+            esb_append(&lstr,"....");
+            print_error_and_continue(dbg,
+                esb_get_string(&lstr),
+                wres, *err);
+            esb_destructor(&lstr);
+            return wres;
+        }
+        break;
+    case DW_FORM_rnglistx: { /* DWARF5, index into .debug_rnglists */
+        /* FIXME: print rnglists info */
+        wres = dwarf_formudata(attrib, &tempud, err);
+        if (wres == DW_DLV_OK) {
+            Dwarf_Bool hex_format = TRUE;
+            formx_unsigned(tempud,esbp,hex_format);
+            wres = handle_rnglistx(dbg, die, attrib, theform,
+                tempud,
+                esbp,show_form,local_verbose,err);
+            if(wres != DW_DLV_OK) {
+                return wres;
+            }
+            break;
+        } else if (wres == DW_DLV_NO_ENTRY) {
+            /* nothing? */
+        } else {
+            struct esb_s lstr;
+            esb_constructor(&lstr);
+            esb_append(&lstr,"Cannot get formudata on ");
+            esb_append(&lstr,"DW_FORM_rnglistx");
             esb_append(&lstr,"....");
             print_error_and_continue(dbg,
                 esb_get_string(&lstr),

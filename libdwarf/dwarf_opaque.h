@@ -232,7 +232,7 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool cc_cu_die_offset_present;
 
     /* if present, is base address of CU */
-    Dwarf_Unsigned cc_low_pc; 
+    Dwarf_Unsigned cc_low_pc;
     /*  FIXME from DW_AT_addr_base in CU DIE */
     Dwarf_Unsigned cc_addr_base;     /* Zero in .dwo */
     Dwarf_Unsigned cc_ranges_base;   /* DW2, DW3, DW4 */
@@ -618,7 +618,7 @@ struct Dwarf_Debug_s {
 
     /*  For the .debug_rnglists[.dwo] section */
     Dwarf_Unsigned de_rnglists_context_count;
-    /*  pointer to array of pointers to  
+    /*  pointer to array of pointers to
         rnglists context instances */
     Dwarf_Rnglists_Context *  de_rnglists_context;
 

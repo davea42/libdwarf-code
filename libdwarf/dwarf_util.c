@@ -476,7 +476,6 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     case DW_FORM_ref_sup8:
         *size_out = 8;
         return DW_DLV_OK;
-
     case DW_FORM_addrx1:
         *size_out = 1;
         return DW_DLV_OK;

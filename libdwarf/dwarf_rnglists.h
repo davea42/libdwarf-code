@@ -35,12 +35,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-/*  Rangelists header for a single CU. */
+/*  Rangelists header for a CU. The
+    type is never visible to libdwarf callers  */
 struct Dwarf_Rnglists_Context_s {
     Dwarf_Debug    rc_dbg;
     Dwarf_Unsigned rc_index; /* An index  assigned by
-       libdwarf to each rnglists context. Starting
-       with zero at the zero offset in .debug_rnglists. */
+        libdwarf to each rnglists context. Starting
+        with zero at the zero offset in .debug_rnglists. */
 
     /* Offset of the .debug_rnglists header involved. */
     Dwarf_Unsigned  rc_header_offset;
@@ -56,7 +57,7 @@ struct Dwarf_Rnglists_Context_s {
         32bit DWARF:            rc_extension_size is zero.  */
     Dwarf_Small     rc_extension_size;
 
-    unsigned        rc_version; /* 5 */ 
+    unsigned        rc_version; /* 5 */
     Dwarf_Small     rc_address_size;
     Dwarf_Small     rc_segment_selector_size;
     Dwarf_Unsigned  rc_offset_entry_count;
@@ -74,22 +75,64 @@ struct Dwarf_Rnglists_Context_s {
     Dwarf_Unsigned  rc_past_last_rnglist_offset;
 
     /* pointer to 1st byte of rangelist header*/
-    Dwarf_Small *  rc_rnglists_header; 
+    Dwarf_Small *  rc_rnglists_header;
     /*  pointer to first byte of the rnglist data
         for rnglist involved. Do not free. */
     Dwarf_Small    *rc_startaddr;
     /*  pointer one past end of the rnglist data. */
     Dwarf_Small    *rc_endaddr;
-
-    /*  From here on are fields used for DIE/CU specific
-        access.  First, fields from the applicable CU die: */
-    /*  DW_AT_rnglists_base */
-    Dwarf_Unsigned  rc_at_rnglists_base; 
-    /* DW_AT_low_pc of CU or zero if none. */ 
-    Dwarf_Unsigned  rc_cu_base_address; 
-    /*  DW_AT_addr_base, so we can use .debug_addr */
-    Dwarf_Unsigned  rc_at_addr_base;
 };
+
+typedef struct Dwarf_Rnglists_Entry_s *Dwarf_Rnglists_Entry;
+struct Dwarf_Rnglists_Entry_s {
+    unsigned       rle_entrylen;
+    unsigned       rle_code;
+    Dwarf_Unsigned rle_raw1;
+    Dwarf_Unsigned rle_raw2;
+    /*  Cooked means the raw values from the .debug_rnglists
+        section translated to DIE-specific addresses. */
+    Dwarf_Unsigned rle_cooked1;
+    Dwarf_Unsigned rle_cooked2;
+    Dwarf_Rnglists_Entry rle_next;
+};
+
+
+struct Dwarf_Rnglists_Head_s {
+    Dwarf_Rnglists_Entry *rh_rnglists;
+    /*  rh_last and rh_first used during build-up.
+        Zero when array rh_rnglists built. */
+    Dwarf_Rnglists_Entry  rh_first;
+    Dwarf_Rnglists_Entry  rh_last;
+    Dwarf_Unsigned        rh_count;
+    Dwarf_Unsigned        rh_bytes_total;
+
+    /*  A global Rnglists Context, */
+    Dwarf_CU_Context      rh_context;
+    Dwarf_Debug           rh_dbg;
+    Dwarf_Rnglists_Context rh_localcontext;
+    Dwarf_Unsigned         rh_index;
+    Dwarf_Unsigned         rh_offset_size;
+    Dwarf_Unsigned         rh_address_size;
+    unsigned               rh_segment_selector_size;
+
+    /*  DW_AT_rnglists_base */
+    Dwarf_Bool      rh_at_rnglists_base_present;
+    Dwarf_Unsigned  rh_at_rnglists_base;
+
+    /* DW_AT_low_pc of CU or zero if none. */
+    Dwarf_Bool      rh_cu_base_address_present;
+    Dwarf_Unsigned  rh_cu_base_address;
+
+    /*  DW_AT_addr_base, so we can use .debug_addr
+        if such is needed. */
+    Dwarf_Bool      rh_cu_addr_base_present;
+    Dwarf_Unsigned  rh_cu_addr_base;
+    Dwarf_Small    * rh_rlepointer;
+    Dwarf_Unsigned   rh_rlearea_offset;
+    Dwarf_Small    * rh_end_data_area;
+};
+
+void _dwarf_rnglists_head_destructor(void *m);
 
 #ifdef __cplusplus
 }

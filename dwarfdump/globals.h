@@ -221,7 +221,7 @@ void destruct_abbrev_array(void);
 
 int get_proc_name_by_die(Dwarf_Debug dbg,
     Dwarf_Die die, Dwarf_Addr low_pc,
-    struct esb_s *proc_name, 
+    struct esb_s *proc_name,
     Dwarf_Die *cu_die_for_print_frames,
     void **pcMap,
     Dwarf_Error *err);

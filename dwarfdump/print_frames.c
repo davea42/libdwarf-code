@@ -1483,7 +1483,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             /* This augmentation is from .debug_frame or
                 eh_frame of a cie. . A string. */
             /*      ("  bytes of initial instructions %"*/
-            printf("  augmentation                  %s\n", 
+            printf("  augmentation                  %s\n",
                 sanitized(augmenter));
             printf("  code_alignment_factor         %" DW_PR_DUu "\n",
                 code_alignment_factor);
@@ -1510,10 +1510,10 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 /*  We have the gnu eh_frame aug data bytes. */
                 if (glflags.gf_do_print_dwarf) {
                     unsigned k2 = 0;
- 
+
                     /*    ("  bytes of initial instructions  %" */
                     printf("  eh aug data len                0x%"
-                         DW_PR_DUx , len);
+                        DW_PR_DUx , len);
                     for (k2 = 0; data && k2 < len; ++k2) {
                         if (k2 == 0) {
                             printf(" bytes 0x");

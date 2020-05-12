@@ -1173,6 +1173,7 @@ _dwarf_allow_formudata(unsigned form)
     case DW_FORM_data8:
     case DW_FORM_udata:
     case DW_FORM_loclistx:
+    case DW_FORM_rnglistx:
     return TRUE;
     }
     return FALSE;
@@ -1247,12 +1248,9 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         *bytes_read = leblen;
         return DW_DLV_OK;
     }
-
         /*  IRIX bug 583450. We do not allow reading
             sdata from a udata
             value. Caller can retry, calling sdata */
-
-
     default:
         break;
     }

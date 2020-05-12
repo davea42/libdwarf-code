@@ -148,7 +148,7 @@
     } while (0)
 
 
-/*  Any error  found here represents a bug that cannot 
+/*  Any error  found here represents a bug that cannot
     be dealloc-d as the caller will not know there was no dbg */
 #define CHECK_DIE(die, error_ret_value)                          \
     do {                                                         \
@@ -475,7 +475,7 @@ _dwarf_read_unaligned_ck_wrapper(Dwarf_Debug dbg,
     int          readlength,
     Dwarf_Small *end_arange,
     Dwarf_Error *err);
-int 
+int
 _dwarf_read_area_length_ck_wrapper(Dwarf_Debug dbg,
     Dwarf_Unsigned *out_value,
     Dwarf_Small **readfrom,

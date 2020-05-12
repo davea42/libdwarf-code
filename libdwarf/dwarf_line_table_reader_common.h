@@ -1380,9 +1380,9 @@ read_line_table_program(Dwarf_Debug dbg,
                     _dwarf_error_string(dbg, error,
                         DW_DLE_LINE_TABLE_LINENO_ERROR,
                         dwarfstring_string(&m));
-                     dwarfstring_destructor(&m);
-                     regs.lr_line = 0;
-                     return DW_DLV_ERROR;
+                    dwarfstring_destructor(&m);
+                    regs.lr_line = 0;
+                    return DW_DLV_ERROR;
                 }
                 }
                 break;
@@ -1581,14 +1581,14 @@ read_line_table_program(Dwarf_Debug dbg,
                             "DW_LNS_set_subprogram ",
                             (Dwarf_Signed)regs.lr_line);
                         dwarfstring_append_printf_i(&m,
-                                " of %d applied "
+                            " of %d applied "
                             "are not correct.",stmp);
                         _dwarf_error_string(dbg, error,
                             DW_DLE_LINE_TABLE_LINENO_ERROR,
                             dwarfstring_string(&m));
-                         dwarfstring_destructor(&m);
-                         regs.lr_line = 0;
-                         return DW_DLV_ERROR;
+                        dwarfstring_destructor(&m);
+                        regs.lr_line = 0;
+                        return DW_DLV_ERROR;
 
                     }
                     if (regs.lr_line >= 1 &&

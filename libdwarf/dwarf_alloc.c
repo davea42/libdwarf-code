@@ -68,6 +68,7 @@
 #include "dwarf_xu_index.h"
 #include "dwarf_macro5.h"
 #include "dwarf_dnames.h"
+#include "dwarf_rnglists.h"
 #include "dwarf_dsc.h"
 #include "dwarfstring.h"
 #include "dwarf_str_offsets.h"
@@ -355,37 +356,39 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x2c 44 DW_DLA_HASH_TABLE_ENTRY */
     {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 },
 
+    /* 0x2d-0x34 reserved for future internal use. */
+
     /* 0x2d 45  reserved for future use  */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x2e-0x36 reserved for future internal use. */
-
     /* 0x2e 46 reserved for future use  */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x2f 47  reserved for future use  */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x30 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x31 reserved for future internal use */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x32 reserved for future internal use */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    /* 0x32 50 reserved for future internal use */
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x33 reserved for future internal use */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    /* 0x33 51 reserved for future internal use */
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x34 reserved for future internal use */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    /* 0x34 52 reserved for future internal use */
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x35 reserved for future internal use */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    /* 0x34 52 reserved for future internal use */
+    /* 0x35 53 reserved for future internal use */
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x36 reserved for future internal use */
-    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    /* 0x36 54 Used starting May 2020  DW_DLA_RNGLISTS_HEAD */
+    {sizeof(struct Dwarf_Rnglists_Head_s),MULTIPLY_NO,  0,
+        _dwarf_rnglists_head_destructor},
 
     /*  now,  we have types that are public. */
     /* 0x37 55.  New in June 2014. Gdb. */
@@ -567,7 +570,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         global_allocation_total += size;
 #endif /* HAVE_GLOBAL_ALLOC_SUMS */
 
-        /*  FIXME: as of March 14, 2020 it's
+        /*  As of March 14, 2020 it's
             not necessary to test for alloc type, but instead
             only call tsearch if de_alloc_tree_on. */
         if (global_de_alloc_tree_on) {
@@ -589,7 +592,6 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     }
 }
 
-/*  FIXME: This should no longer be needed as of March 14, 2020. */
 /*  This was once a long list of tests using dss_data
     and dss_size to see if 'space' was inside a debug section.
     This tfind approach removes that maintenance headache. */

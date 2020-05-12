@@ -184,10 +184,10 @@ print_entire_rangeslist(Dwarf_Debug dbg,
     Dwarf_Unsigned ct = 0;
 
     for ( ; curoffset < endoffset; ++ct ) {
-        Dwarf_Unsigned code = 0;
+        unsigned entrylen = 0;
+        unsigned code = 0;
         Dwarf_Unsigned v1 = 0;
         Dwarf_Unsigned v2 = 0;
-        Dwarf_Unsigned entrylen = 0;
         if (!ct) {
             printf("   RangeEntries (raw)\n");
         }
