@@ -4804,6 +4804,15 @@ int dwarf_rnglists_index_get_rle_head(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned *      /*global_offset_of_rle_set*/,
     Dwarf_Error    *      /*error*/);
 
+/*  For DWARF5 DW_AT_ranges DW_FORM_sec_offset */
+int dwarf_rnglists_offset_get_rle_head(Dwarf_Debug /*dbg*/,
+    Dwarf_Die             /*die*/,
+    Dwarf_Unsigned        /*offset_in_rnglists*/,
+    Dwarf_Rnglists_Head * /*head_out*/,
+    Dwarf_Unsigned *      /*count_of_entries_in_head*/,
+    Dwarf_Unsigned *      /*global_offset_of_rle_set*/,
+    Dwarf_Error    *      /*error*/);
+
 /*  Get the rnglist entries details */
 int dwarf_get_rnglists_entry_fields(Dwarf_Debug /*dbg*/,
     Dwarf_Rnglists_Head /*head*/,
@@ -4834,9 +4843,6 @@ int dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head );
 int dwarf_load_rnglists(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*rnglists_count*/,
     Dwarf_Error * /*err*/);
-
-/*  Dealloc DIE-specific rnglists data. */
-void dwarf_rnglist_dealloc(Dwarf_Rnglists_Head);
 
 /*  Retrieve the offset from the context-index'th
     rangelists context  and the offsetentry_index

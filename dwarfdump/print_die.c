@@ -74,6 +74,18 @@ static int print_die_and_children_internal(Dwarf_Debug dbg,
 static int print_one_die_section(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
     Dwarf_Error *pod_err);
+static int handle_rnglists(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    UNUSEDARG Dwarf_Attribute attrib,
+    UNUSEDARG int theform,
+    Dwarf_Bool use_index,
+    Dwarf_Unsigned index_on_attr,
+    Dwarf_Unsigned entry_offset,
+    struct esb_s *  esbp,
+    int show_form,
+    int local_verbose,
+    Dwarf_Error *err);
+
 
 /* Is this a PU has been invalidated by the SN Systems linker? */
 #define IsInvalidCode(low,high) ((low == elf_max_address) || (low == 0 && high == 0))
@@ -2669,7 +2681,9 @@ traverse_one_die(Dwarf_Debug dbg,
     It uses global data fields excessively, but so does
     print_attribute().
     The majority of the code here is checking for
-    compiler errors. */
+    compiler errors.
+    Support for .debug_rnglists here is new May 2020.
+    */
 static int
 print_range_attribute(Dwarf_Debug dbg,
    Dwarf_Die die,
@@ -2684,7 +2698,17 @@ print_range_attribute(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned original_off = 0;
     int fres = 0;
+    Dwarf_Half cu_version = 2;
+    Dwarf_Half cu_offset_size = 4;
 
+    fres = dwarf_get_version_of_die(die,&cu_version,&cu_offset_size);
+    if (fres != DW_DLV_OK) {
+        simple_err_return_msg_either_action(fres,
+            "\nERROR: Unable to get version of a DIE "
+            "to print a range attribute so something "
+            " is badly wrong. Assuming DWARF2, offset size 2"
+            "  and continuing!");
+    }
     fres = dwarf_global_formref(attr_in, &original_off, raerr);
     if (fres == DW_DLV_ERROR) {
         print_error_and_continue(dbg,
@@ -2692,7 +2716,7 @@ print_range_attribute(Dwarf_Debug dbg,
             "dwarf_global_formref failed ",fres,*raerr);
         return fres;
     }
-    if (fres == DW_DLV_OK) {
+    if (fres == DW_DLV_OK && cu_version < DWVERSION5) {
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
@@ -2778,6 +2802,28 @@ print_range_attribute(Dwarf_Debug dbg,
             }
         }
         return DW_DLV_OK;
+    } else if (fres == DW_DLV_OK && cu_version >= DWVERSION5) {
+        /*  Here we have to access the .debug_rnglists section
+            data with a new layout for DW5 */
+        int res = 0;
+
+printf("dadebug call handle_rnglists\n");
+        res = handle_rnglists(dbg,
+            die,
+            attr_in,
+            theform,
+            FALSE,
+            0,
+            original_off,
+            esb_extrap,
+            glflags.show_form_used,
+            glflags.verbose,
+            raerr);
+        if (print_information) {
+            *append_extra_string = 1;
+        }
+printf("dadebug esb content out %s\n",esb_get_string(esb_extrap));
+        return res;
     }
     /*  DW_DLV_NO_ENTRY or DW_DLV_ERROR */
     if (glflags.gf_do_print_dwarf) {
@@ -5979,6 +6025,7 @@ expand_rnglist_entries(Dwarf_Debug dbg,
     Dwarf_Unsigned secoffset = rnglglobal_offset;
 
     count = rnglentriescount;
+printf("dadebug expand_rnglist_entries count %lu\n",(unsigned long)count);
     for( ; i < count; ++i) {
         unsigned entrylen = 0;
         unsigned code = 0;
@@ -6035,12 +6082,16 @@ expand_rnglist_entries(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
+
+/* DWARF5 .debug_rnglists[.dwo] only. */
 static int
-handle_rnglistx(Dwarf_Debug dbg,
+handle_rnglists(Dwarf_Debug dbg,
     Dwarf_Die die,
     UNUSEDARG Dwarf_Attribute attrib,
     UNUSEDARG int theform,
+    Dwarf_Bool use_index,
     Dwarf_Unsigned index_on_attr,
+    Dwarf_Unsigned entry_offset,
     struct esb_s *  esbp,
     int show_form,
     int local_verbose,
@@ -6052,14 +6103,26 @@ handle_rnglistx(Dwarf_Debug dbg,
     Dwarf_Rnglists_Head rnglhead = 0;
     int res = 0;
 
-    res = dwarf_rnglists_index_get_rle_head(dbg,
-        die,
-        index_on_attr,
-        &rnglhead,
-        &count_rnglists_entries,
-        &global_offset_of_rle_set,
-        err);
+    if (use_index) {
+        res = dwarf_rnglists_index_get_rle_head(dbg,
+            die,
+            index_on_attr,
+            &rnglhead,
+            &count_rnglists_entries,
+            &global_offset_of_rle_set,
+            err);
+    } else {
+        res = dwarf_rnglists_offset_get_rle_head(dbg,
+            die,
+            entry_offset,
+            &rnglhead,
+            &count_rnglists_entries,
+            &global_offset_of_rle_set,
+            err);
+    }
+printf("dadebug rnglists return stat %d\n",res);
     if (res != DW_DLV_OK) {
+printf("dadebug no print rnglists!!!\n");
         return res;
     }
 
@@ -7063,13 +7126,14 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         break;
     case DW_FORM_rnglistx: { /* DWARF5, index into .debug_rnglists */
-        /* FIXME: print rnglists info */
         wres = dwarf_formudata(attrib, &tempud, err);
         if (wres == DW_DLV_OK) {
             Dwarf_Bool hex_format = TRUE;
             formx_unsigned(tempud,esbp,hex_format);
-            wres = handle_rnglistx(dbg, die, attrib, theform,
+            wres = handle_rnglists(dbg, die, attrib, theform,
+                TRUE,
                 tempud,
+                0,
                 esbp,show_form,local_verbose,err);
             if(wres != DW_DLV_OK) {
                 return wres;
