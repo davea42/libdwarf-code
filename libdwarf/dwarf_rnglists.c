@@ -745,10 +745,16 @@ build_array_of_rle(Dwarf_Debug dbg,
     Dwarf_Unsigned dataoffset = rctx->rh_rlearea_offset;
     Dwarf_Small *enddata      = rctx->rh_end_data_area;
     unsigned address_size     = rctx->rh_address_size;
-    Dwarf_Unsigned bytescounttotal=0;
-    Dwarf_Unsigned latestbaseaddr =  0;
-    unsigned foundbaseaddr    = FALSE;
+    Dwarf_Unsigned bytescounttotal= 0;
+    Dwarf_Unsigned latestbaseaddr = 0;
+    unsigned foundbaseaddr        = FALSE;
 
+    if (rctx->rh_cu_base_address_present) {
+        /*  The CU DIE had DW_AT_low_pc
+            and it is a base address. */
+        latestbaseaddr = rctx->rh_cu_base_address;
+        foundbaseaddr  = TRUE;
+    }
     for( ;  ; ) {
         unsigned entrylen = 0;
         unsigned code = 0;
@@ -957,6 +963,7 @@ dwarf_rnglists_index_get_rle_head(Dwarf_Debug dbg,
     lhead->rh_at_rnglists_base_present =
         ctx->cc_rnglists_base_present;
     lhead->rh_at_rnglists_base =  ctx->cc_rnglists_base;
+
     /*  DW_AT_low_pc, if present.  From CU */
     lhead->rh_cu_base_address_present = ctx->cc_low_pc_present;
     lhead->rh_cu_base_address = ctx->cc_low_pc;

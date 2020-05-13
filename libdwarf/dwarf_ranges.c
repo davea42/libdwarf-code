@@ -145,12 +145,15 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
             but did get emitted.
             http://llvm.1065342.n5.nabble.com/DebugInfo-DW-AT-GNU-ranges-base-in-non-fission-td64194.html
             */
+#if 0
         if (cucontext->cc_unit_type != DW_UT_skeleton &&
             cucontext->cc_version_stamp != DW_CU_VERSION4 &&
             cucontext->cc_ranges_base_present) {
-            /* Never needed? */
+            /* Never needed. See DW_AT_GNU_ranges_base
+            in find_cu_die_base_fields() in dwarf_die_deliv.c */
             ranges_base = cucontext->cc_ranges_base;
         }
+#endif
         address_size = cucontext->cc_address_size;
     }
 
