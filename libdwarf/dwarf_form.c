@@ -389,7 +389,6 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
             any other CU can be correct for a DWP Package File offset
             */
         break;
-
     default: {
         dwarfstring m;
 
@@ -526,7 +525,8 @@ dwarf_formref(Dwarf_Attribute attr,
         }
     }
 
-    /* Check that offset is within current cu portion of .debug_info. */
+    /*  Check that offset is within current
+        cu portion of .debug_info. */
 
     maximumoffset = cu_context->cc_length +
         cu_context->cc_length_size +
@@ -768,16 +768,17 @@ dwarf_global_formref(Dwarf_Attribute attr,
             }
         }
         break;
-#if 0
-        /* Index into .debug_rnglist section. */
+    /*  Index into .debug_rnglist section. 
+        Return the index itself. */
     case DW_FORM_rnglistx: {
         unsigned length_size = cu_context->cc_length_size;
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
             attr->ar_debug_ptr, length_size,
             error,section_end);
+printf("dadebug rnglistx reads value of 0x%lx\n",(unsigned long)offset);
         }
         break;
-#endif
+
     case DW_FORM_sec_offset:
     case DW_FORM_GNU_ref_alt:  /* 2013 GNU extension */
     case DW_FORM_GNU_strp_alt: /* 2013 GNU extension */
@@ -905,8 +906,7 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
         return res;
     }
     theform = attr->ar_attribute_form;
-    if (theform == DW_FORM_GNU_addr_index ||
-        theform == DW_FORM_addrx) {
+    if (dwarf_addr_form_is_indexed(theform)) {
         Dwarf_Unsigned index = 0;
 
         res = _dwarf_get_addr_index_itself(theform,
@@ -1060,16 +1060,21 @@ dwarf_formdata16(Dwarf_Attribute attr,
     return res;
 }
 
-
-#if 0
-case DW_FORM_GNU_addr_index:
-    case DW_FORM_addrx:
-    case DW_FORM_addrx1    :  /* DWARF5 */
-    case DW_FORM_addrx2    :  /* DWARF5 */
-    case DW_FORM_addrx3    :  /* DWARF5 */
-    case DW_FORM_addrx4    :  /* DWARF5 */
-#endif
-
+/*  The *addrx are DWARF5 standard.
+    The GNU form was non-standard gcc DWARF4 */
+Dwarf_Bool
+dwarf_addr_form_is_indexed(int form)
+{
+    if (form == DW_FORM_addrx ||
+        form == DW_FORM_addrx1 ||
+        form == DW_FORM_addrx2 ||
+        form == DW_FORM_addrx3 ||
+        form == DW_FORM_addrx4 ||
+        form == DW_FORM_GNU_addr_index) {
+        return TRUE;
+    }
+    return FALSE;
+}
 
 int
 dwarf_formaddr(Dwarf_Attribute attr,
@@ -1085,12 +1090,7 @@ dwarf_formaddr(Dwarf_Attribute attr,
         return res;
     }
     attrform = attr->ar_attribute_form;
-    if (attrform == DW_FORM_addrx ||
-        attrform == DW_FORM_addrx1 ||
-        attrform == DW_FORM_addrx2 ||
-        attrform == DW_FORM_addrx3 ||
-        attrform == DW_FORM_addrx4 ||
-        attrform == DW_FORM_GNU_addr_index) {
+    if (dwarf_addr_form_is_indexed(attrform)) {
         res = _dwarf_look_in_local_and_tied(
             attrform,
             cu_context,

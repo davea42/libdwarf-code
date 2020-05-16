@@ -163,7 +163,7 @@ print_single_rle(UNUSEDARG Dwarf_Debug dbg,
     }
     esb_destructor(&m);
     if (glflags.verbose > 1) {
-        printf("  Entrylength %" DW_PR_DUu,entrylen);
+        printf(" length %" DW_PR_DUu,entrylen);
     }
     printf("\n");
     return res;

@@ -334,8 +334,9 @@ dwarf_tdump(const void*headp_in,
 static struct ts_entry *
 allocate_ts_entry(const void *key)
 {
-    struct ts_entry *e = (struct ts_entry *)
-        malloc(sizeof(struct ts_entry));
+    struct ts_entry *e =  0;
+
+    e = (struct ts_entry *) malloc(sizeof(struct ts_entry));
     if(!e) {
         return NULL;
     }

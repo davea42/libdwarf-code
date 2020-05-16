@@ -1347,8 +1347,7 @@ dwarf_highpc_b(Dwarf_Die die,
 
     if (class == DW_FORM_CLASS_ADDRESS) {
         Dwarf_Addr addr = 0;
-        if (attr_form == DW_FORM_GNU_addr_index ||
-            attr_form == DW_FORM_addrx) {
+        if (dwarf_addr_form_is_indexed(attr_form)) {
             Dwarf_Unsigned addr_out = 0;
             Dwarf_Unsigned index_to_addr = 0;
             int res2 = 0;

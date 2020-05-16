@@ -110,6 +110,7 @@ struct Dwarf_Rnglists_Head_s {
     Dwarf_CU_Context      rh_context;
     Dwarf_Debug           rh_dbg;
     Dwarf_Rnglists_Context rh_localcontext;
+    Dwarf_Unsigned         rh_version;
     Dwarf_Unsigned         rh_index;
     Dwarf_Unsigned         rh_offset_size;
     Dwarf_Unsigned         rh_address_size;

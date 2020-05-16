@@ -81,6 +81,7 @@ static int handle_rnglists(Dwarf_Debug dbg,
     Dwarf_Bool use_index,
     Dwarf_Unsigned index_on_attr,
     Dwarf_Unsigned entry_offset,
+    Dwarf_Unsigned *rle_offset_out,
     struct esb_s *  esbp,
     int show_form,
     int local_verbose,
@@ -2709,12 +2710,22 @@ print_range_attribute(Dwarf_Debug dbg,
             " is badly wrong. Assuming DWARF2, offset size 2"
             "  and continuing!");
     }
-    fres = dwarf_global_formref(attr_in, &original_off, raerr);
-    if (fres == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "ERROR: In printing a range attribute "
-            "dwarf_global_formref failed ",fres,*raerr);
-        return fres;
+    if (theform == DW_FORM_rnglistx) {
+        fres = dwarf_formudata(attr_in, &original_off, raerr);
+        if (fres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "ERROR: In printing a range DW_FORM_rnglistx  attribute "
+                "dwarf_formudata failed ",fres,*raerr);
+            return fres;
+        }
+    } else {
+        fres = dwarf_global_formref(attr_in, &original_off, raerr);
+        if (fres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "ERROR: In printing a range attribute "
+                "dwarf_global_formref failed ",fres,*raerr);
+            return fres;
+        }
     }
     if (fres == DW_DLV_OK && cu_version < DWVERSION5) {
         Dwarf_Ranges *rangeset = 0;
@@ -2804,17 +2815,24 @@ print_range_attribute(Dwarf_Debug dbg,
         return DW_DLV_OK;
     } else if (fres == DW_DLV_OK && cu_version >= DWVERSION5) {
         /*  Here we have to access the .debug_rnglists section
-            data with a new layout for DW5 */
+            data with a new layout for DW5.  Here we
+            do not need to actually use rleoffset since it
+            is identical to original_off.  */
         int res = 0;
+        int use_index = TRUE;
+        Dwarf_Unsigned rleoffset = 0;
 
-printf("dadebug call handle_rnglists\n");
+        if (theform != DW_FORM_rnglistx) {
+            use_index = FALSE;
+        } 
         res = handle_rnglists(dbg,
             die,
             attr_in,
             theform,
-            FALSE,
-            0,
+            use_index,
             original_off,
+            original_off,
+            &rleoffset,
             esb_extrap,
             glflags.show_form_used,
             glflags.verbose,
@@ -2822,7 +2840,6 @@ printf("dadebug call handle_rnglists\n");
         if (print_information) {
             *append_extra_string = 1;
         }
-printf("dadebug esb content out %s\n",esb_get_string(esb_extrap));
         return res;
     }
     /*  DW_DLV_NO_ENTRY or DW_DLV_ERROR */
@@ -6025,7 +6042,11 @@ expand_rnglist_entries(Dwarf_Debug dbg,
     Dwarf_Unsigned secoffset = rnglglobal_offset;
 
     count = rnglentriescount;
-printf("dadebug expand_rnglist_entries count %lu\n",(unsigned long)count);
+    if (local_verbose > 1) {
+        esb_append(esbp,"\n      "
+            "                                                 "
+            "secoff");
+    }
     for( ; i < count; ++i) {
         unsigned entrylen = 0;
         unsigned code = 0;
@@ -6047,20 +6068,27 @@ printf("dadebug expand_rnglist_entries count %lu\n",(unsigned long)count);
             const char *codename = "<unknown code>";
 
             dwarf_get_RLE_name(code,&codename);
-            esb_append(esbp,"\n");
+            esb_append(esbp,"\n      ");
             esb_append_printf_u(esbp,"[%2u] ",i);
             esb_append_printf_s(esbp,"%-20s ",codename);
-            esb_append_printf_u(esbp," 0x%"
+            if (code != DW_RLE_end_of_list) {
+                esb_append_printf_u(esbp," 0x%"
                 DW_PR_XZEROS DW_PR_DUx ,raw1);
-            esb_append_printf_u(esbp," 0x%"
+                esb_append_printf_u(esbp," 0x%"
                 DW_PR_XZEROS DW_PR_DUx ,raw2);
-            esb_append_printf_u(esbp," secoff:0x%"
+            } else {
+                esb_append(esbp,
+                "                      ");
+            }
+            if (local_verbose > 1) {
+                esb_append_printf_u(esbp," 0x%"
                 DW_PR_XZEROS DW_PR_DUx ,secoffset);
+            }
         }
         {
-            const char *codename = "start , end";
+            const char *codename = "start,end";
 
-            esb_append(esbp,"\n");
+            esb_append(esbp,"\n      ");
             esb_append_printf_u(esbp,"[%2u] ",i);
             if (code == DW_RLE_base_addressx ||
                 code == DW_RLE_base_address) {
@@ -6071,17 +6099,32 @@ printf("dadebug expand_rnglist_entries count %lu\n",(unsigned long)count);
                 }
             }
             esb_append_printf_s(esbp,"%-20s ",codename);
-            esb_append_printf_u(esbp," 0x%"
+            if (code != DW_RLE_end_of_list) {
+                esb_append_printf_u(esbp," 0x%"
                 DW_PR_XZEROS DW_PR_DUx ,cooked1);
-            esb_append_printf_u(esbp," 0x%"
+                esb_append_printf_u(esbp," 0x%"
                 DW_PR_XZEROS DW_PR_DUx ,cooked2);
-            esb_append_printf_u(esbp," secoff:0x%"
+            } else {
+                esb_append(esbp,
+                "                      ");
+            }
+            if (local_verbose > 1) {
+                esb_append_printf_u(esbp," 0x%"
                 DW_PR_XZEROS DW_PR_DUx ,secoffset);
+            }
         }
         secoffset += entrylen;
     }
+    esb_append(esbp,"\n");
     return DW_DLV_OK;
 }
+
+static void
+append_local_prefix(struct esb_s *es)
+{
+    esb_append(es,"\n      ");
+}
+
 
 /* DWARF5 .debug_rnglists[.dwo] only. */
 static int
@@ -6092,13 +6135,14 @@ handle_rnglists(Dwarf_Debug dbg,
     Dwarf_Bool use_index,
     Dwarf_Unsigned index_on_attr,
     Dwarf_Unsigned entry_offset,
+    Dwarf_Unsigned *output_rle_set_offset,
     struct esb_s *  esbp,
     int show_form,
     int local_verbose,
     Dwarf_Error *err)
 {
     /* This is DWARF5, by definition. Not earlier. */
-    Dwarf_Unsigned global_offset_of_rle_set;
+    Dwarf_Unsigned global_offset_of_rle_set = 0;
     Dwarf_Unsigned count_rnglists_entries = 0;
     Dwarf_Rnglists_Head rnglhead = 0;
     int res = 0;
@@ -6120,17 +6164,111 @@ handle_rnglists(Dwarf_Debug dbg,
             &global_offset_of_rle_set,
             err);
     }
-printf("dadebug rnglists return stat %d\n",res);
     if (res != DW_DLV_OK) {
-printf("dadebug no print rnglists!!!\n");
         return res;
     }
-
-    esb_append(esbp,"\n");
+    *output_rle_set_offset = global_offset_of_rle_set;
+    esb_append(esbp,"\n      ");
     esb_append_printf_u(esbp,
-        "   Offset of rnglists entries..:  0x%"
+        "Offset of rnglists entries..:  0x%"
         DW_PR_XZEROS DW_PR_DUx "\n",
         global_offset_of_rle_set);
+    if (local_verbose > 1) {
+        Dwarf_Unsigned version = 0;
+        Dwarf_Unsigned context_index = 0;
+        Dwarf_Unsigned rle_count = 0;
+        Dwarf_Unsigned total_bytes_in_rle = 0;
+        unsigned  loffset_size = 0;
+        unsigned  laddress_size = 0;
+        unsigned  lsegment_selector_size = 0;
+        Dwarf_Unsigned section_offset_of_context = 0;
+        Dwarf_Unsigned length_of_context = 0;
+        Dwarf_Bool rnglists_base_present = 0;
+        Dwarf_Unsigned rnglists_base = 0;
+        Dwarf_Bool rnglists_base_address_present = 0;
+        Dwarf_Unsigned rnglists_base_address = 0;
+        Dwarf_Bool debug_addr_base_present = 0;
+        Dwarf_Unsigned debug_addr_base;
+
+        res = dwarf_get_rnglist_head_basics(dbg,
+            rnglhead,
+            &rle_count,
+            &version,
+            &context_index,
+            &total_bytes_in_rle,
+            &loffset_size,
+            &laddress_size,
+            &lsegment_selector_size,
+            &section_offset_of_context,
+            &length_of_context,
+            & rnglists_base_present,&rnglists_base,
+            &rnglists_base_address_present,&rnglists_base_address,
+            &debug_addr_base_present,&debug_addr_base,
+            err);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "Index of rnglist head     : %u",
+            context_index);
+
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "rnglist head version      : %u",
+            version);
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "Record count rnglist set  : %u",
+            rle_count);
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "Bytes this rnglist set    : %u",
+            total_bytes_in_rle);
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "offset size               : %u",
+            loffset_size);
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "address size              : %u",
+            laddress_size);
+
+        if (rnglists_base_present) {
+            append_local_prefix(esbp);
+            esb_append_printf_u(esbp,
+            "CU DW_AT_rnglists_base    : 0x%"
+                DW_PR_XZEROS DW_PR_DUx,
+            rnglists_base);
+        }
+        if (rnglists_base_address_present) {
+            append_local_prefix(esbp);
+            esb_append_printf_u(esbp,
+            "CU DW_AT_low_pc           : 0x%"
+                DW_PR_XZEROS DW_PR_DUx,
+                rnglists_base_address);
+        }
+        if (debug_addr_base_present) {
+            append_local_prefix(esbp);
+            esb_append_printf_u(esbp,
+            "CU DW_AT_addr_base        : 0x%"
+                DW_PR_XZEROS DW_PR_DUx,
+                debug_addr_base);
+        }
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "section offset CU rnglists: 0x%"
+                DW_PR_XZEROS DW_PR_DUx,
+            section_offset_of_context);
+        append_local_prefix(esbp);
+        esb_append_printf_u(esbp,
+            "section length CU rnglists: 0x%"
+            DW_PR_XZEROS DW_PR_DUx,
+            length_of_context);
+        esb_append_printf_u(esbp, " (%u)",
+            length_of_context);
+    }
+
     res = expand_rnglist_entries(dbg,die,rnglhead,
         count_rnglists_entries,
         global_offset_of_rle_set,
@@ -7129,16 +7267,36 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         wres = dwarf_formudata(attrib, &tempud, err);
         if (wres == DW_DLV_OK) {
             Dwarf_Bool hex_format = TRUE;
-            formx_unsigned(tempud,esbp,hex_format);
+            struct esb_s etmpa;
+            struct esb_s etmpb;
+            Dwarf_Unsigned rleoffset = 0; 
+
+            esb_constructor(&etmpa);
+            esb_constructor(&etmpb);
+            esb_append(&etmpb, "(index value: ");
+            formx_unsigned(tempud,&etmpb,hex_format);
+            esb_append(&etmpb, ")");
+            /*  For the sake of appearance we do this
+                locally and return instead of finishing
+                up after the end of the switch(). */
+            show_form_itself(show_form,local_verbose,theform,
+                direct_form,&etmpb);
             wres = handle_rnglists(dbg, die, attrib, theform,
                 TRUE,
                 tempud,
                 0,
-                esbp,show_form,local_verbose,err);
+                &rleoffset,
+                &etmpa,show_form,local_verbose,err);
             if(wres != DW_DLV_OK) {
+                esb_destructor(&etmpa);
+                esb_destructor(&etmpb);
                 return wres;
             }
-            break;
+            esb_append(esbp,esb_get_string(&etmpb));
+            esb_append(esbp,esb_get_string(&etmpa));
+            esb_destructor(&etmpa);
+            esb_destructor(&etmpb);
+            return DW_DLV_OK;
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
         } else {

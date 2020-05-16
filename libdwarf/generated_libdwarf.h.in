@@ -1768,6 +1768,10 @@ int dwarf_debug_addr_index_to_addr(Dwarf_Die /*die*/,
     Dwarf_Unsigned  /*index*/,
     Dwarf_Addr    * /*return_addr*/,
     Dwarf_Error   * /*error*/);
+/*  Reading a CU DIE with DW_AT_low_pc an indexed value
+    can be problematic as that interacts with DW_AT_addr_base
+    in that DIE. Here is a test readers may find useful */
+Dwarf_Bool dwarf_addr_form_is_indexed(int form);
 
 
 /*  dwarf_CU_dieoffset_given_die returns
@@ -4870,6 +4874,29 @@ int dwarf_get_rnglist_context(Dwarf_Debug  /*dbg*/,
     Dwarf_Small ** /*first_byte_of_entries*/,
     Dwarf_Small ** /*end_of_entries*/,
     Dwarf_Error *  /*err*/);
+
+/*  Used by dwarfdump to print basic data from the
+    data generated to look at a specific rangelist 
+    as returned by  dwarf_rnglists_index_get_rle_head() 
+    or dwarf_rnglists_offset_get_rle_head. */
+int dwarf_get_rnglist_head_basics(Dwarf_Debug /*dbg*/,
+    Dwarf_Rnglists_Head /*head*/,
+    Dwarf_Unsigned * /*rle_count*/,
+    Dwarf_Unsigned * /*rnglists_version*/,
+    Dwarf_Unsigned * /*rnglists_index_returned*/,
+    Dwarf_Unsigned * /*bytes_total_in_rle*/,
+    unsigned * /*offset_size*/,
+    unsigned * /*address_size*/,
+    unsigned * /*segment_selector_size*/,
+    Dwarf_Unsigned * /*overall offset_of_this_context*/,
+    Dwarf_Unsigned * /*total_length of this context*/,
+    Dwarf_Bool     * /*rnglists_base_present*/,
+    Dwarf_Unsigned * /*rnglists_base*/,
+    Dwarf_Bool     * /*rnglists_base_address_present*/,
+    Dwarf_Unsigned * /*rnglists_base_address*/,
+    Dwarf_Bool     * /*rnglists_debug_addr_base_present*/,
+    Dwarf_Unsigned * /*rnglists_debug_addr_base*/,
+    Dwarf_Error    * /*error*/);
 
 /*  Enables printing of details about the Range List Table
     Headers, one header per call. Index starting at 0.

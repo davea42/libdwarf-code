@@ -807,6 +807,7 @@ int _dwarf_get_addr_index_itself(int theform,
     Dwarf_CU_Context cu_context,
     Dwarf_Unsigned *val_out,
     Dwarf_Error * error);
+Dwarf_Bool _dwarf_addr_form_is_indexed(int form);
 
 int
 _dwarf_search_for_signature(Dwarf_Debug dbg,
