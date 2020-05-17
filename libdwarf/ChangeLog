@@ -1,3 +1,29 @@
+2020-05-17: David Anderson
+    * dwarf_dnames.c: Improved error reporting of the names generation
+      when something goes wrong.
+    * dwarf_elf_access.c,dwarf_elfread.c: Add MATCH_REL_SEC 
+      for the .debug_addr section.
+    * dwarf_form.c: Improved error reporting by showing specific details.
+      Now supports DW_FORM_rnglistx.  New function
+      dwarf_addr_form_is_indexed(theform) created, now using
+      it here and in dwarfdump as needed..
+    * dwarf_line_table_reader_common.h: Corrected indents.
+    * dwarf_opaque.h:  Small commentary changes, added the 
+      CU Context field cc_dwo_name_present (used for 
+      non-standard DWARF4).
+    * dwarf_query.c: Simplified some pointlessly messy code.
+      Now also using dwarf_addr_form_is_indexed() instead of
+      a list missing some DWARF5 values.
+    * dwarf_ranges.c: #if 0 some useless code for now. 
+    * dwarf_rnglists.c: The .debug_rnglists code is here.
+    * dwarf_rnglists.h: For use inside libdwarf. Opaque
+      to libdwarf callers.
+    * dwarf_tsearchhash.c: Trivial change. No logic change.
+    * dwarf_util.c: Removed pointless blank line.
+    * dwarf_util.h, dwarf_xu_index.h: Fix trailing whitespace.
+    * libdwarf.h.in: New functions and opaque types for reading
+      the .debug_rnglists section.
+    * generated_libdwarf.h.in: Regenerated.
 2020-05-05: David Anderson
     * dwarf_rnglists.h, dwarf_opaque.h, dwarf_rnglists.c: 
       Preliminary new fields/code for Rnglists_Context.

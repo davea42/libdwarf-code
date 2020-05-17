@@ -1,3 +1,16 @@
+2020-05-17: David Anderson
+    * globals.h: Remove trailing whitespace.
+    * print_die.c: Now prints DWARF5 .debug_rnglists section.
+      Fixes issues with handling certain attributes with new
+      FORMs in DWARF5.
+    * print_frames.c: Avoids terminating frame printing when
+      errors are seen attempting to get a function name
+      for an fde.
+    * print_rnglists.c: New. Implements the details of reading
+      the .debug_rnglists section.
+    * dwarf_alloc.c: Added new type, DW_DLA_RNGLISTS_HEAD.
+    * dwarf_die_deliv.c: Now reads all the DWARF5 CU DIE fields
+      that are needed to evaluate FORMs and section references.
 2020-05-04: David Anderson
     * print_rnglists.c: Completing the code to print
       all the details of the raw content of the
