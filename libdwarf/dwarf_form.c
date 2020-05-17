@@ -768,17 +768,15 @@ dwarf_global_formref(Dwarf_Attribute attr,
             }
         }
         break;
-    /*  Index into .debug_rnglist section. 
+    /*  Index into .debug_rnglist section.
         Return the index itself. */
     case DW_FORM_rnglistx: {
         unsigned length_size = cu_context->cc_length_size;
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
             attr->ar_debug_ptr, length_size,
             error,section_end);
-printf("dadebug rnglistx reads value of 0x%lx\n",(unsigned long)offset);
         }
         break;
-
     case DW_FORM_sec_offset:
     case DW_FORM_GNU_ref_alt:  /* 2013 GNU extension */
     case DW_FORM_GNU_strp_alt: /* 2013 GNU extension */

@@ -2675,7 +2675,6 @@ traverse_one_die(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  Extracted this from print_attribute()
     to get tolerable indents.
     In other words to make it readable.
@@ -2824,7 +2823,7 @@ print_range_attribute(Dwarf_Debug dbg,
 
         if (theform != DW_FORM_rnglistx) {
             use_index = FALSE;
-        } 
+        }
         res = handle_rnglists(dbg,
             die,
             attr_in,
@@ -6168,10 +6167,12 @@ handle_rnglists(Dwarf_Debug dbg,
         return res;
     }
     *output_rle_set_offset = global_offset_of_rle_set;
+    /*  Here we put newline at start of each line
+        of output, different from the usual practice */
     esb_append(esbp,"\n      ");
     esb_append_printf_u(esbp,
-        "Offset of rnglists entries..:  0x%"
-        DW_PR_XZEROS DW_PR_DUx "\n",
+        "Offset of rnglists entries: 0x%"
+        DW_PR_XZEROS DW_PR_DUx,
         global_offset_of_rle_set);
     if (local_verbose > 1) {
         Dwarf_Unsigned version = 0;
@@ -6413,7 +6414,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
             esb_constructor(&lstr);
             esb_append(&lstr,get_FORM_name(theform,FALSE));
-            esb_append(&lstr," is a DW_DLV_NO_ENTRY? Impossible");
+            esb_append(&lstr," is a DW_DLV_NO_ENTRY? "
+                "something is wrong.");
             print_error_and_continue(dbg,
                 esb_get_string(&lstr),
                 bres, *err);
@@ -7168,7 +7170,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
-    case DW_FORM_sec_offset: { /* DWARF4 */
+    case DW_FORM_sec_offset: { /* DWARF4, DWARF5 */
         char* emptyattrname = 0;
         int show_form_here = 0;
         wres = get_small_encoding_integer_and_name(dbg,
@@ -7263,42 +7265,15 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             return wres;
         }
         break;
-    case DW_FORM_rnglistx: { /* DWARF5, index into .debug_rnglists */
+    case DW_FORM_rnglistx: {
+        /*  DWARF5, index into .debug_rnglists
+            Can appear only on DW_AT_ranges attribute.*/
         wres = dwarf_formudata(attrib, &tempud, err);
         if (wres == DW_DLV_OK) {
-            Dwarf_Bool hex_format = TRUE;
-            struct esb_s etmpa;
-            struct esb_s etmpb;
-            Dwarf_Unsigned rleoffset = 0; 
-
-            esb_constructor(&etmpa);
-            esb_constructor(&etmpb);
-            esb_append(&etmpb, "(index value: ");
-            formx_unsigned(tempud,&etmpb,hex_format);
-            esb_append(&etmpb, ")");
-            /*  For the sake of appearance we do this
-                locally and return instead of finishing
-                up after the end of the switch(). */
-            show_form_itself(show_form,local_verbose,theform,
-                direct_form,&etmpb);
-            wres = handle_rnglists(dbg, die, attrib, theform,
-                TRUE,
-                tempud,
-                0,
-                &rleoffset,
-                &etmpa,show_form,local_verbose,err);
-            if(wres != DW_DLV_OK) {
-                esb_destructor(&etmpa);
-                esb_destructor(&etmpb);
-                return wres;
-            }
-            esb_append(esbp,esb_get_string(&etmpb));
-            esb_append(esbp,esb_get_string(&etmpa));
-            esb_destructor(&etmpa);
-            esb_destructor(&etmpb);
-            return DW_DLV_OK;
+            /*  Fall through to end to show the value and
+                form details. */
         } else if (wres == DW_DLV_NO_ENTRY) {
-            /* nothing? */
+            /*  nothing? */
         } else {
             struct esb_s lstr;
             esb_constructor(&lstr);

@@ -217,8 +217,8 @@ struct Dwarf_CU_Context_s {
         in TU header or, for CU header, signature in CU DIE. */
     Dwarf_Bool cc_low_pc_present;
     Dwarf_Bool cc_addr_base_present;   /* Not TRUE in .dwo */
-    /* DW_AT_GNU_ranges_base was a GNU extension that appeared
-       but was unused. See dwarf_die_deliv.c for details. */
+    /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
+        but was unused. See dwarf_die_deliv.c for details. */
     Dwarf_Bool cc_ranges_base_present; /* unused */
     Dwarf_Bool cc_rnglists_base_present; /* DW5 */
     Dwarf_Bool cc_str_offsets_base_present;
@@ -238,8 +238,8 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_low_pc;
     /*  from DW_AT_addr_base in CU DIE, offset to .debug_addr table */
     Dwarf_Unsigned cc_addr_base;     /* Zero in .dwo */
-    /* DW_AT_GNU_ranges_base was a GNU extension that appeared
-       but was unused. See dwarf_die_deliv.c for details. */
+    /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
+        but was unused. See dwarf_die_deliv.c for details. */
     Dwarf_Unsigned cc_ranges_base;   /* unused */
     /*  FIXME from DW_AT_rnglists_base in CU DIE */
     Dwarf_Unsigned cc_rnglists_base;    /*DW5 */

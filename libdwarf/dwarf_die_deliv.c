@@ -1111,7 +1111,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 sres = dwarf_formsig8_const(attr,
                     &signature,error);
                 if(sres == DW_DLV_OK) {
-                    if (cucon->cc_signature_present) {
+                    if (!cucon->cc_signature_present) {
                         cucon->cc_signature_present = TRUE;
                         cucon->cc_signature = signature;
                     } else {

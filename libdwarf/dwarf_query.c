@@ -891,16 +891,11 @@ _dwarf_look_in_local_and_tied_by_index(
             /* error is returned on dbg, not tieddbg. */
             res3 = _dwarf_get_addr_from_tied(dbg,
                 context,index,return_addr,error);
-            if ( res3 == DW_DLV_ERROR) {
-                return res3;
-            } else if ( res3 == DW_DLV_NO_ENTRY) {
-                return res3;
-            }
-        } else {
-            return res2;
+            return res3;
         }
+        return res2;
     }
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  The DIE here can be any DIE in the relevant CU.
@@ -1229,11 +1224,16 @@ _dwarf_get_ranges_base_attr_value(Dwarf_Debug dbg,
     Dwarf_Bool cu_die_offset_present = 0;
     Dwarf_Unsigned cu_die_offset = 0;
     Dwarf_Attribute myattr = 0;
+
+    if (!context) {
+        _dwarf_error(dbg, error,
+            DW_DLE_DEBUG_CU_UNAVAILABLE_FOR_FORM);
+        return (DW_DLV_ERROR);
+    }
     if(context->cc_ranges_base_present) {
         *rangesbase_out = context->cc_ranges_base;
         return DW_DLV_OK;
     }
-
     cu_die_offset = context->cc_cu_die_global_sec_offset;
     cu_die_offset_present = context->cc_cu_die_offset_present;
     if(!cu_die_offset_present) {
@@ -1542,7 +1542,7 @@ _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
         /* Associate the error with dbg, not tidedbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
-    } else if ( res != DW_DLV_NO_ENTRY) {
+    } else if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }
     res = _dwarf_get_ranges_base_attr_value(tieddbg, tiedcontext,
