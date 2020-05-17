@@ -501,8 +501,11 @@ fill_in_dwp_offsets_if_present(Dwarf_Debug dbg,
         if (resdf == DW_DLV_ERROR) {
             return resdf;
         } else if (resdf == DW_DLV_NO_ENTRY) {
-            _dwarf_error(dbg, error,
-                DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH,
+                "DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH: "
+                " dwarf_get_debugfission_for_key returned"
+                " DW_DLV_NO_ENTRY, something is wrong");
             return DW_DLV_ERROR;
         }
     } else {
@@ -516,8 +519,11 @@ fill_in_dwp_offsets_if_present(Dwarf_Debug dbg,
         if (resdf == DW_DLV_ERROR) {
             return resdf;
         } else if (resdf == DW_DLV_NO_ENTRY) {
-            _dwarf_error(dbg, error,
-                DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH,
+                "DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH: "
+                " dwarf_get_debugfission_for_offset returned"
+                " DW_DLV_NO_ENTRY, something is wrong");
             return DW_DLV_ERROR;
         }
         cu_context->cc_signature =
@@ -831,8 +837,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
             return tres;
         }
         cu_context->cc_signature = signaturedata;
-        cu_context->cc_signature_offset = typeoffset;
         cu_context->cc_signature_present = TRUE;
+        cu_context->cc_signature_offset = typeoffset;
         if (typeoffset >= max_cu_local_offset) {
             local_dealloc_cu_context(dbg,cu_context);
             _dwarf_error(dbg, error,
@@ -1112,8 +1118,8 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     &signature,error);
                 if(sres == DW_DLV_OK) {
                     if (!cucon->cc_signature_present) {
-                        cucon->cc_signature_present = TRUE;
                         cucon->cc_signature = signature;
+                        cucon->cc_signature_present = TRUE;
                     } else {
                         /*  Something wrong. Two styles ?
                             Do what? verify the same sig?

@@ -325,6 +325,7 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
     MATCH_REL_SEC(section_index,dbg->de_debug_aranges,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_sup,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_str_offsets,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_addr,relocatablesec);
     /* dbg-> de_debug_tu_index,reloctablesec); */
     /* dbg-> de_debug_cu_index,reloctablesec); */
     /* dbg-> de_debug_gdbindex,reloctablesec); */

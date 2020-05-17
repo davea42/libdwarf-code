@@ -3174,6 +3174,8 @@ check_attr_tag_combination(Dwarf_Half tag,Dwarf_Half attr)
     }
 }
 
+/*  This function needs a rewrite for completeness and
+    clarity.  FIXME */
 static int
 print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Half tag,
@@ -3212,8 +3214,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         return rv;
     }
     if (theform != DW_FORM_addr &&
-        theform != DW_FORM_GNU_addr_index &&
-        theform != DW_FORM_addrx) {
+        !dwarf_addr_form_is_indexed(theform)) {
         /*  New in DWARF4: other forms
             (of class constant) are not an address
             but are instead offset from pc.
@@ -3301,11 +3302,35 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
             if (glflags.need_CU_high_address ) {
                 /*  This is bogus in that it accepts the first
                     high address in the CU, from any TAG */
-                int ares = dwarf_formaddr(attrib,
-                    &glflags.CU_high_address, err);
-                DROP_ERROR_INSTANCE(dbg,ares,*err);
-                if (ares == DW_DLV_OK) {
-                    glflags.need_CU_high_address = FALSE;
+                if (theform != DW_FORM_addr &&
+                    !dwarf_addr_form_is_indexed(theform)) {
+                    /*  New in DWARF4: other forms
+                    (of class constant) are not an address
+                    but are instead offset from pc. */
+                    Dwarf_Unsigned hpcoff = 0;
+                    int show_form_here = 0;
+
+                    int ares = get_small_encoding_integer_and_name(
+                        dbg,
+                        attrib,
+                        &hpcoff,
+                        /* attrname */ (const char *) NULL,
+                        /* err_string */ ( struct esb_s *) NULL,
+                        (encoding_type_func) 0,
+                        err,show_form_here);
+                    if (ares == DW_DLV_OK) {
+                        if (*bSawLowp) {
+                            glflags.CU_high_address =
+                                *lowAddrp + hpcoff;
+                        }
+                    }
+                } else {
+                    int ares = dwarf_formaddr(attrib,
+                        &glflags.CU_high_address, err);
+                    DROP_ERROR_INSTANCE(dbg,ares,*err);
+                    if (ares == DW_DLV_OK) {
+                        glflags.need_CU_high_address = FALSE;
+                    }
                 }
             }
         }
@@ -3316,9 +3341,9 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     if ((glflags.gf_check_decl_file ||
         glflags.gf_check_ranges ||
         glflags.gf_check_locations) &&
-        ((theform == DW_FORM_addr ||
-        theform == DW_FORM_GNU_addr_index ||
-        theform == DW_FORM_addrx) || offsetDetected)) {
+            (theform == DW_FORM_addr ||
+            dwarf_addr_form_is_indexed(theform) ||
+            offsetDetected)) {
 
         int cres = 0;
         Dwarf_Addr addr = 0;
@@ -3327,7 +3352,13 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
             addr = *lowAddrp + highpcOff;
             cres = DW_DLV_OK;
         } else {
-            cres = dwarf_formaddr(attrib, &addr, err);
+            if (theform == DW_FORM_addr ||
+                dwarf_addr_form_is_indexed(theform)) {
+                cres = dwarf_formaddr(attrib, &addr, err);
+            } else {
+                /* Bogus. FIXME */
+                cres = DW_DLV_NO_ENTRY;
+            }
         }
         if(cres == DW_DLV_OK) {
             if (attr == DW_AT_low_pc) {
@@ -6344,8 +6375,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_addr:
         bres = dwarf_formaddr(attrib, &addr, err);
         if (bres == DW_DLV_OK) {
-            if (theform == DW_FORM_GNU_addr_index ||
-                theform == DW_FORM_addrx) {
+            if (dwarf_addr_form_is_indexed(theform)) {
                 Dwarf_Unsigned index = 0;
                 int res = dwarf_get_debug_addr_index
                     (attrib,&index,err);

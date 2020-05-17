@@ -39,6 +39,31 @@
 #define TRUE 1
 #define FALSE 0
 
+static void
+generate_form_error(Dwarf_Debug dbg,
+    Dwarf_Error *error,
+    unsigned form,
+    int err_code,
+    const char *errname,
+    const char *funcname)
+{
+    dwarfstring m;
+    const char * defaultname = "<unknown form>";
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append(&m,(char *)errname);
+    dwarfstring_append(&m,": In function ");
+    dwarfstring_append(&m,(char *)funcname);
+    dwarfstring_append_printf_u(&m,
+        " on seeing form  0x%x ",form);
+    dwarf_get_FORM_name(form,&defaultname);
+    dwarfstring_append_printf_s(&m,
+        " (%s)",(char *)defaultname);
+    _dwarf_error_string(dbg,error,err_code,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
 /* This code was repeated many times, now it
    is all in one place. */
 static int
@@ -1041,7 +1066,10 @@ dwarf_formdata16(Dwarf_Attribute attr,
     }
     attrform = attr->ar_attribute_form;
     if (attrform != DW_FORM_data16) {
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+        generate_form_error(dbg,error,attrform,
+            DW_DLE_ATTR_FORM_BAD,
+            "DW_DLE_ATTR_FORM_BAD",
+            "dwarf_formdata16");
         return DW_DLV_ERROR;
     }
     res  = get_attr_dbg(&dbg,&cu_context,attr,error);
@@ -1102,7 +1130,7 @@ dwarf_formaddr(Dwarf_Attribute attr,
             DW_FORM_ref_addr was a mistake. The value returned in that
             case is NOT an address it is a global debug_info offset (ie,
             not CU-relative offset within the CU in debug_info). The
-            Dwarf document refers to it as an address (misleadingly) in
+            DWARF2 document refers to it as an address (misleadingly) in
             sec 6.5.4 where it describes the reference form. It is
             address-sized so that the linker can easily update it, but
             it is a reference inside the debug_info section. No longer
@@ -1118,8 +1146,11 @@ dwarf_formaddr(Dwarf_Attribute attr,
         *return_addr = ret_addr;
         return (DW_DLV_OK);
     }
-    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
-    return (DW_DLV_ERROR);
+    generate_form_error(dbg,error,attrform,
+        DW_DLE_ATTR_FORM_BAD,
+        "DW_DLE_ATTR_FORM_BAD",
+        "dwarf_formaddr");
+    return DW_DLV_ERROR;
 }
 
 
@@ -1157,7 +1188,10 @@ dwarf_formflag(Dwarf_Attribute attr,
         *ret_bool = *(Dwarf_Small *)(attr->ar_debug_ptr);
         return (DW_DLV_OK);
     }
-    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+    generate_form_error(dbg,error,attr->ar_attribute_form,
+        DW_DLE_ATTR_FORM_BAD,
+        "DW_DLE_ATTR_FORM_BAD",
+        "dwarf_formflat");
     return (DW_DLV_ERROR);
 }
 
@@ -1252,7 +1286,10 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
     default:
         break;
     }
-    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+    generate_form_error(dbg,error,form,
+        DW_DLE_ATTR_FORM_BAD,
+        "DW_DLE_ATTR_FORM_BAD",
+        "formudata (internal function)");
     return (DW_DLV_ERROR);
 }
 
@@ -1362,7 +1399,10 @@ dwarf_formsdata(Dwarf_Attribute attr,
     default:
         break;
     }
-    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+    generate_form_error(dbg,error,attr->ar_attribute_form,
+        DW_DLE_ATTR_FORM_BAD,
+        "DW_DLE_ATTR_FORM_BAD",
+        "dwarf_formsdata");
     return DW_DLV_ERROR;
 }
 
@@ -1420,7 +1460,10 @@ dwarf_formblock(Dwarf_Attribute attr,
         break;
         }
     default:
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+        generate_form_error(dbg,error,attr->ar_attribute_form,
+            DW_DLE_ATTR_FORM_BAD,
+            "DW_DLE_ATTR_FORM_BAD",
+            "dwarf_formblock");
         return (DW_DLV_ERROR);
     }
 
@@ -1618,7 +1661,10 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
         *return_str = (char *)strbegin;
         return DW_DLV_OK;
     }
-    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+    generate_form_error(dbg,error,attrform,
+        DW_DLE_ATTR_FORM_BAD,
+        "DW_DLE_ATTR_FORM_BAD",
+        "extract debug_str string");
     return (DW_DLV_ERROR);
 }
 

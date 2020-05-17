@@ -717,21 +717,22 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
 
             load_CU_error_data(dbg,*cu_die_for_print_frames);
             esb_constructor(&m);
-            esb_append_printf_s(&m,
-                "\nERROR: Looking for function name. "
+            esb_append(&m,
+                "\nERROR: Looking for function name for "
+                "a frame. "
                 "dwarf_siblingof failed"
-                " trying to get proc name. "
-                "Error is %s.",dwarf_errmsg(*err));
-            simple_err_only_return_action(tres,
-                esb_get_string(&m));
+                " trying to get the name. ");
+            print_error_and_continue(dbg,
+                esb_get_string(&m), chres,*err);
             esb_destructor(&m);
+            DROP_ERROR_INSTANCE(dbg,chres,err);
             if (die_locally_gotten) {
                 /*  If we got this die from the parent, we do not want
                     to dealloc here! */
                 dwarf_dealloc(dbg, curdie, DW_DLA_DIE);
             }
             esb_destructor(&nestname);
-            return chres;
+            return DW_DLV_NO_ENTRY;
         } else if (chres == DW_DLV_NO_ENTRY) {
             if (die_locally_gotten) {
                 /*  If we got this die from the parent, we do not want
@@ -939,7 +940,8 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                     return gotname;
                 }
                 if (gotname == DW_DLV_ERROR) {
-                    return gotname;
+                    DROP_ERROR_INSTANCE(dbg,gotname,err);
+                    return DW_DLV_NO_ENTRY;
                 }
             }
         }
@@ -1058,9 +1060,15 @@ print_one_fde(Dwarf_Debug dbg,
             cu_die_for_print_frames,
             pcMap,err);
         if (fres == DW_DLV_ERROR) {
-            return fres;
+            /*  Failing to get the name is not a crucial
+                thing. Do not error off.
+                This happens when .debug_addr is not
+                available. */
+            dwarf_dealloc(dbg,err,DW_DLA_DIE);
+            *err = 0;
         }
-        /* if found the name is in temps now */
+        /*  If found the name is in temps now, or temps
+            is the empty string. */
         if (mp) {
             if (glflags.gf_check_frames ||
                 glflags.gf_check_frames_extended) {
@@ -1088,9 +1096,9 @@ print_one_fde(Dwarf_Debug dbg,
                 DWARF_CHECK_ERROR(fde_duplication,esb_get_string(&msg));
                 esb_destructor(&msg);
             }
-        } else {
+        } else if (fres == DW_DLV_OK) {
             addr_map_insert(low_pc,0,lowpcSet);
-        }
+        } /* Else we just don't know anything, so record nothing. */
     }
 
     /* Do not print if in check mode */
