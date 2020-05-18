@@ -12,6 +12,7 @@
     it appears in the same directory as libdwarf.
 
     compile with
+
 cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized \
 -Wno-long-long -Wshadow -Wbad-function-cast \
@@ -19,6 +20,9 @@ cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 
     and expect to see lots of warnings, most of which
     are nothing of interest.
+
+Simplify with a current libdwarf.h in /tmp then
+    cc -I /tmp -c checkexamples.c
 */
 
 #include <stdio.h> /* for printf */
@@ -920,12 +924,11 @@ void exampledebugnames(Dwarf_Debug dbg)
     A candidate set of hypothetical functions that
     callers would write:
 
-has_unchecked_import_in_list()
-get_next_import_from_list()
-mark_this_offset_as_examined(macro_unit_offset);
-add_offset_to_list(offset);
-
 */
+int has_unchecked_import_in_list(void);
+Dwarf_Unsigned get_next_import_from_list(void);
+void mark_this_offset_as_examined(Dwarf_Unsigned macro_unit_offset);
+void add_offset_to_list(Dwarf_Unsigned offset);
 void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
 {
     int lres = 0;
@@ -1458,20 +1461,22 @@ void examplex(Dwarf_Gdbindex gdbindex)
         Dwarf_Unsigned cuvec_len = 0;
         Dwarf_Unsigned ii = 0;
         const char *name = 0;
-        res = dwarf_gdbindex_symboltable_entry(gdbindex,i,
+        int resl = 0;
+
+        resl = dwarf_gdbindex_symboltable_entry(gdbindex,i,
             &symnameoffset,&cuvecoffset,
             &err);
-        if (res != DW_DLV_OK) {
+        if (resl != DW_DLV_OK) {
             return;
         }
-        res = dwarf_gdbindex_string_by_offset(gdbindex,
+        resl = dwarf_gdbindex_string_by_offset(gdbindex,
             symnameoffset,&name,&err);
-        if(res != DW_DLV_OK) {
+        if(resl != DW_DLV_OK) {
             return;
         }
-        res = dwarf_gdbindex_cuvector_length(gdbindex,
+        resl = dwarf_gdbindex_cuvector_length(gdbindex,
             cuvecoffset,&cuvec_len,&err);
-        if( res != DW_DLV_OK) {
+        if(resl != DW_DLV_OK) {
             return;
         }
         for(ii = 0; ii < cuvec_len; ++ii ) {
@@ -1480,19 +1485,20 @@ void examplex(Dwarf_Gdbindex gdbindex)
             Dwarf_Unsigned reserved1 = 0;
             Dwarf_Unsigned symbol_kind = 0;
             Dwarf_Unsigned is_static = 0;
+            int res2 = 0;
 
-            res = dwarf_gdbindex_cuvector_inner_attributes(
+            res2 = dwarf_gdbindex_cuvector_inner_attributes(
                 gdbindex,cuvecoffset,ii,
                 &attributes,&err);
-            if( res != DW_DLV_OK) {
+            if(res2 != DW_DLV_OK) {
                 return;
             }
             /*  'attributes' is a value with various internal
                 fields so we expand the fields. */
-            res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
+            res2 = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
                 attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
                 &err);
-            if( res != DW_DLV_OK) {
+            if(res2 != DW_DLV_OK) {
                 return;
             }
             /* Do something with the attributes. */
@@ -1700,4 +1706,86 @@ void exampledebuglink(Dwarf_Debug dbg)
     free(debuglink_fullpath);
     free(paths);
     return;
+}
+int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
+{
+    Dwarf_Unsigned count = 0;
+    int res = 0;
+    Dwarf_Unsigned i = 0;
+
+    res = dwarf_load_rnglists(dbg,&count,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    for(i =0  ; i < count ; ++i) {
+        Dwarf_Unsigned header_offset = 0;
+        Dwarf_Small   offset_size = 0;
+        Dwarf_Small   extension_size = 0;
+        unsigned      version = 0; /* 5 */
+        Dwarf_Small   address_size = 0;
+        Dwarf_Small   segment_selector_size = 0;
+        Dwarf_Unsigned offset_entry_count = 0;
+        Dwarf_Unsigned offset_of_offset_array = 0;
+        Dwarf_Unsigned offset_of_first_rangeentry = 0;
+        Dwarf_Unsigned offset_past_last_rangeentry = 0;
+
+        res = dwarf_get_rnglist_context_basics(dbg,i,
+            &header_offset,&offset_size,&extension_size,
+            &version,&address_size,&segment_selector_size,
+            &offset_entry_count,&offset_of_offset_array,
+            &offset_of_first_rangeentry,
+            &offset_past_last_rangeentry,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        {
+            Dwarf_Unsigned e = 0;
+            unsigned colmax = 4;
+            unsigned col = 0;
+            Dwarf_Unsigned global_offset_of_value = 0;
+        
+            for ( ; e < offset_entry_count; ++e) {
+                Dwarf_Unsigned value = 0;
+                int resc = 0;
+        
+                resc = dwarf_get_rnglist_offset_index_value(dbg,
+                    i,e,&value,
+                    &global_offset_of_value,error);
+                if (resc != DW_DLV_OK) {
+                    return resc;
+                }
+                /*  Do something */
+                col++;
+                if (col == colmax) {
+                    col = 0;
+                }
+            }
+
+        }
+        {
+            Dwarf_Unsigned curoffset = offset_of_first_rangeentry;
+            Dwarf_Unsigned endoffset = offset_past_last_rangeentry;
+            int rese = 0;
+            Dwarf_Unsigned ct = 0;
+
+            for ( ; curoffset < endoffset; ++ct ) {
+                unsigned entrylen = 0;
+                unsigned code = 0;
+                Dwarf_Unsigned v1 = 0;
+                Dwarf_Unsigned v2 = 0;
+                rese = dwarf_get_rnglist_rle(dbg,i,
+                    curoffset,endoffset,
+                    &entrylen,
+                    &code,&v1,&v2,error);
+                if (rese != DW_DLV_OK) {
+                    return rese;
+                }
+                curoffset += entrylen;
+                if (curoffset > endoffset) {
+                    return DW_DLV_ERROR;
+                }
+            }
+        }
+    }
+    return DW_DLV_OK;
 }
