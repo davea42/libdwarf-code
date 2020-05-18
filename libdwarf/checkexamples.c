@@ -1743,11 +1743,11 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
             unsigned colmax = 4;
             unsigned col = 0;
             Dwarf_Unsigned global_offset_of_value = 0;
-        
+
             for ( ; e < offset_entry_count; ++e) {
                 Dwarf_Unsigned value = 0;
                 int resc = 0;
-        
+
                 resc = dwarf_get_rnglist_offset_index_value(dbg,
                     i,e,&value,
                     &global_offset_of_value,error);
@@ -1780,6 +1780,7 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
                 if (rese != DW_DLV_OK) {
                     return rese;
                 }
+                /*  Do something with the values */
                 curoffset += entrylen;
                 if (curoffset > endoffset) {
                     return DW_DLV_ERROR;
