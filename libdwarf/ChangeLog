@@ -1,3 +1,16 @@
+2020-05-19: David Anderson
+    * libdwarf.h.in: Revised a couple rnglists functions
+      by removing unneeded arguments and revising the arguments
+      to dwarf_rnglists_offset_get_rle_head(),
+      dwarf_get_rnglist_head_basics(), and
+      dwarf_get_rnglists_entry_fields()
+    * generated_libdwarf.h.in: Regenerated.
+    * dwarf_rnglists.c: Checked a pointer argument for null before using.
+      Remove the unneeded function arguments (affecting several internal
+      functions too). Renamed a few internal things for clarity.
+    * libdwarf2.1.mm: Documented the new rnglists functions
+      and added examples of use.
+    * libdwarf2.1.pdf: Regenerated. Version 2.93.
 2020-05-17: David Anderson
     * dwarf_dnames.c: Improved error reporting of the names generation
       when something goes wrong.

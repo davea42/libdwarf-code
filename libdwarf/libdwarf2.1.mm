@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.92, 01 May 2020
+.ds vE Rev 2.93, 17 May 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -40,18 +40,10 @@ A Consumer Library Interface to DWARF
 .PF "'\*(vE'- \\\\nP -''"
 .AS 1
 This document describes an interface to a library of functions
-.FS
-UNIX is a registered trademark of UNIX System Laboratories, Inc.
-in the United States and other countries.
-.FE
-to access DWARF debugging information entries and DWARF line number
-information (and other DWARF2/3/4/5 information).
-It does not make recommendations as to how the functions
-described in this document should be implemented nor does it
-suggest possible optimizations.
+to access DWARF debugging information entries, DWARF line number
+information, and other DWARF2/3/4/5 information).
 .P
-The document is oriented to reading DWARF version 2 and later.
-There are certain sections which are SGI-specific (those
+There are a few sections which are SGI-specific (those
 are clearly identified in the document).
 .P
 \*(vE
@@ -228,6 +220,24 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added new functions for full .debug_rnglists support
+and fixed issues with DWARF5 .debug_addr
+index FORMs.
+New functions for general use:
+dwarf_addr_form_is_indexed(),
+dwarf_get_rnglists_entry_fields(),
+dwarf_rnglists_get_rle_head(),
+dwarf_dealloc_rnglists_head(),
+New functions for a complete listing
+of the .debug_rnglists section. 
+dwarf_load_rnglists(),
+dwarf_get_rnglist_offset_index_value(),
+dwarf_get_rnglist_context(),
+dwarf_get_rnglist_head_basics(),
+dwarf_get_rnglist_context_basics(),
+dwarf_get_rnglist_rle().
+(May 17, 2020)
 .P
 What was historically called 'length_size' in
 libdwarf and dwarfdump is actually the size of
@@ -1120,6 +1130,8 @@ The list of opaque types defined in
 \fIlibdwarf.h\fP that are pertinent to the
 Consumer Library, and their
 intended use is described below.
+This is not a full list of the opaque types, see libdwarf.h
+for the full list.
 
 .DS
 \f(CWtypedef struct Dwarf_Debug_s* Dwarf_Debug;\fP
@@ -1704,6 +1716,7 @@ uses an invocation of
 \f(CWdwarf_attrlist()\fP as an example to illustrate
 a technique that can be used to free storage from any \fIlibdwarf\fP
 routine that returns a list:
+.in +2
 .DS
 .FG "Example1 dwarf_attrlist()"
 \f(CW
@@ -1727,6 +1740,7 @@ void example1(Dwarf_Die somedie)
 }
 \fP
 .DE
+.in -2
 
 The \f(CWDwarf_Debug\fP returned from \f(CWdwarf_init_b()\fP
 or \f(CWdwarf_elf_init_b()\fP
@@ -2282,11 +2296,16 @@ has
 \f(CWDW_FORM_addrx\fP
 or
 \f(CWDW_FORM_GNU_addr_index\fP
+or one of the other indexed forms in DWARF5
 in an address attribute
 one needs both the Package file
 and the executable to extract the actual address with
 \f(CWdwarf_formaddr()\fP.
-So one does a normal
+The utility function
+\f(CWdwarf_addr_form_is_indexed(form)\fP
+is a handy way to know if an address form is
+indexed.
+One does a normal
 \f(CWdwarf_elf_init_b()\fP
 or
 \f(CWdwarf_init()_b\fP
@@ -3603,7 +3622,7 @@ The function
 .FG "Example5 dwarf_child()"
 .DS
 \f(CW
-void example5(Dwarf_Debug dbg,Dwarf_Die in_die)
+void example5(Dwarf_Die in_die)
 {
     Dwarf_Die return_kid = 0;
     Dwarf_Error error = 0;
@@ -3810,6 +3829,20 @@ to the offset of the start of the debugging information entry
 described by \f(CWdie\fP in the section containing dies i.e .debug_info.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 
+
+.H 3 "dwarf_addr_form_is_indexed()"
+\f(CWdwarf_addr_form_is_indexed(form)\fP
+is a utility function to make it simple to determine
+if a form is one of the indexed forms (there are
+several such in DWARF5).
+See DWARF5 section 7.5.5  \f(CWClasses and Forms\fP
+for more information.
+.DS
+int dwarf_addr_form_is_indexed(Dwarf_Half form);
+.DE
+It returns TRUE if the form is one of the
+indexed address forms (such as DW_FORM_addrx1)
+and FALSE otherwise.
 
 .H 3 "dwarf_debug_addr_index_to_addr()"
 .DS
@@ -5199,7 +5232,16 @@ Callers must check the discriminant type
 and call the correct function.
 
 
-.H 2 "Location List operations"
+.H 2 "Location List operations .debug_loclists"
+These operations apply to the .debug_loclists section
+in DWARF5, object files.
+.P
+No operations defined in libdwarf yet.
+TBD.
+
+.H 2 "Location List operations .debug_loc"
+These operations apply to the .debug_loc section
+in DWARF2, DWARF3, and DWARF4 object files.
 .H 3 "dwarf_get_loclist_c()"
 .DS
 int dwarf_get_loclist_c (Dwarf_Attribute attr,
@@ -5244,7 +5286,7 @@ may be possible but is a bit odd.
 .DS
 \f(CW
 void
-example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+example_loclistc(Dwarf_Attribute someattr)
 {
     Dwarf_Unsigned lcount = 0;
     Dwarf_Loc_Head_c loclist_head = 0;
@@ -5295,7 +5337,7 @@ example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                     index into .debug_addr or even a length. */
                 Dwarf_Unsigned j = 0;
                 int opres = 0;
-                 Dwarf_Small op = 0;
+                Dwarf_Small op = 0;
 
                 for (j = 0; j < ulocentry_count; ++j) {
                     Dwarf_Unsigned opd1 = 0;
@@ -6726,7 +6768,6 @@ when no longer of interest.
 .FG "Exampled dwarf_srclines()"
 .DS
 \f(CW
-/*  dwarf_srclines_b() should be used instead. */
 void exampled(Dwarf_Debug dbg,Dwarf_Die somedie)
 {
     Dwarf_Signed count = 0;
@@ -8395,14 +8436,13 @@ FIXME describe arguments.
 .in +2
 .DS
 \f(CW
-void exampledebugnames(Dwarf_Debug dbg)
+void exampledebugnames(void)
 {
 FIXME need extended example of debugnames use.
 }
 \fP
 .DE
 .in -2
-FIXME
 
 
 .H 3 " dwarf_debugnames_sizes()"
@@ -9410,9 +9450,10 @@ void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
         &count,&maclist,&error);
     if (errv == DW_DLV_OK) {
         for (i = 0; i < count; ++i) {
-            Dwarf_Macro_Details * mdp = maclist +i;
+            Dwarf_Macro_Details *  mentry = maclist +i;
             /* example of use */
-            Dwarf_Signed lineno = mdp->dmd_lineno;
+            Dwarf_Signed lineno = mentry->dmd_lineno;
+            functionusingsigned(lineno);
         }
         dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
     }
@@ -9426,9 +9467,10 @@ void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
     while((errv = dwarf_get_macro_details(dbg, cur_off,max,
         &count,&maclist,&error))== DW_DLV_OK) {
         for (i = 0; i < count; ++i) {
-            Dwarf_Macro_Details * mdp = maclist +i;
+            Dwarf_Macro_Details *  mentry = maclist +i;
             /* example of use */
-            Dwarf_Signed lineno = mdp->dmd_lineno;
+            Dwarf_Signed lineno = mentry->dmd_lineno;
+            functionusingsigned(lineno);
         }
         cur_off = maclist[count-1].dmd_offset + 1;
         dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
@@ -11491,7 +11533,7 @@ section.
 Address
 ranges map ranges of pc values to the corresponding compilation-unit
 die that covers the address range.
-In the DWARF Standard this is described under 
+In the DWARF2,3,4 Standards this is described under 
 "Accelerated Access" "Lookup by Address".
 
 .H 3 "dwarf_get_aranges_section_name()"
@@ -11756,10 +11798,587 @@ This is the preferred way to get address size when the
 \f(CWDwarf_Die\fP is known.
 
 
-.H 2 "Ranges Operations (.debug_ranges)"
+.H 2 "Ranges Operations DWARF5 (.debug_rnglists)"
+These functions provide information about the address ranges
+indicated by a  \f(CWDW_AT_ranges\fP attribute 
+of a DIE. The ranges are recorded
+in the  \f(CW.debug_rnglists\fP section.
+.P
+The section
+requires that each group of ranges
+has a header and the compilation unit
+may have a
+\f(CWDW_AT_ranges_base\fP
+attribute that must be added to
+the \f(CWDW_AT_ranges\fP attribute value
+to get the true ranges offset.
+.P
+(A compiler generating
+\f(CWDW_AT_ranges_base\fP
+will add a relocation for that attribute value
+but will not have to make the
+\f(CWDW_AT_ranges\fP
+attributes relocatable and will thus save space
+in the object (ie, .o) file
+and save link time.)
+.P
+See DWARF5 Section 2.17.3 Non-Contiguous Address Ranges
+and Section 7.28 Range List Table.
+.P
+Section 7.28 describes the header fields for a Range List
+Table.  There will usually be many such tables, in some
+sequence, in the .debug_rnglists section.
+Here we call each header 
+\f(CWDwarf_Rnglists_Head\fP
+(a pointer to an opaque struct).
+.H 3 "Getting rnglists data for a DIE"
+This set of interfaces provides access
+to the DWARF5 .debug_rnglists entries
+for a particular DIE.
+.
+Here is an example using the functions described below:
+
+.in +2
+.DS
+.FG "Example .debug_rnglist for attribute"
+\f(CW
+int example_rnglist_for_attribute(Dwarf_Attribute attr,
+    Dwarf_Unsigned attrvalue,Dwarf_Error *error)
+{
+    /*  attrvalue must be the DW_AT_ranges
+        DW_FORM_rnglistx or DW_FORM_sec_offset value
+        extracted from attr. */
+    int res = 0;
+    Dwarf_Half theform = 0;
+    Dwarf_Unsigned    entries_count;
+    Dwarf_Unsigned    global_offset_of_rle_set;
+    Dwarf_Rnglists_Head rnglhead = 0;
+    Dwarf_Unsigned i = 0;
+
+    res = dwarf_rnglists_get_rle_head(attr,
+        theform,
+        attrvalue,
+        &rnglhead,
+        &entries_count,
+        &global_offset_of_rle_set,
+        error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    for (i = 0; i < entries_count; ++i) {
+        unsigned entrylen     = 0;
+        unsigned code         = 0;
+        Dwarf_Unsigned lowpc  = 0;
+        Dwarf_Unsigned highpc = 0;
+
+        /*  Actual addresses are most likely what one
+            wants to know, not the lengths/offsets
+            recorded in .debug_rnglists. So we pass
+            NULLs to avoid dealing with values we
+            do not wish to see. */
+        res = dwarf_get_rnglists_entry_fields(rnglhead,
+            i,&entrylen,&code,
+            0,0,
+            &lowpc,&highpc,error);
+        if (res != DW_DLV_OK) {
+            dwarf_dealloc_rnglists_head(rnglhead);
+            return res;
+        }
+        if (code == DW_RLE_end_of_list) {
+            /* we are done */
+            break;
+        }
+        if (code == DW_RLE_base_addressx ||
+            code == DW_RLE_base_address) {
+            /*  We do not need to use these, they
+                have been accounted for already. */
+            continue;
+        }
+        /*  Here do something with lowpc and highpc, these
+            are real addresses */
+    }
+    dwarf_dealloc_rnglists_head(rnglhead);
+    return DW_DLV_OK;
+}
+\fP
+.DE
+.in -2
+
+
+.H 4 "dwarf_rnglists_get_rle_head()"
+This function is used to enable
+access to the specific set of rnglist entries
+applying to a specific 
+\f(CWDW_AT_rangees\fP
+attribute.
+
+.DS
+\f(CWint dwarf_rnglists_get_rle_head( Dwarf_Attribute attr,
+    Dwarf_Half     theform,
+    Dwarf_Unsigned attr_val,
+    Dwarf_Rnglists_Head *head_out,
+    Dwarf_Unsigned      *entries_count_out,
+    Dwarf_Unsigned      *global_offset_of_rle_set,
+    Dwarf_Error         *error); \fP
+.DE
+.P
+Given a 
+\f(CWDW_AT_ranges\fP 
+\f(CWDwarf_Attribute\fP, the FORM
+from that attribute, and the value of the
+the attribute (which might be an index from
+\f(CWDW_FORM_rnglistx\fP
+or a section offset from 
+\f(CWDW_FORM_sec_offset\fP
+the function determines which 
+\f(CWDwarf_Rnglists_Head\fP
+applies and returns the pointer on
+success (meaning it returned .
+\f(CWDW_DLV_OK\fP).
+And on sucess it also returns the global
+offset of a set of rnglist entries
+within that particular Dwarf_Rnglists_Head
+(not needed except to show it to users)
+as well as the count of entries in that set
+(which is crucial to iterate through
+the rnglist entries applicable).
+.P
+If not successful none of the pointers
+\f(CWhead_out\fP,
+\f(CWentries_count_out\fP,
+\f(CWglobal_offset\fP
+will not be touched by the function.
+.P
+If there is some problem with the section it
+will return 
+\f(CWDW_DLV_ERROR\fP and return
+the error informatio through.
+\f(CW*error\fP.
+.P
+There is, currently, no situation in which
+it will return 
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P
+
+See 
+\f(CWdwarf_dealloc_rnglists_head()\fP
+below to release the storage allocated
+by a successful call here.
+
+
+
+
+.H 4 "dwarf_get_rnglist_head_basics()"
+.DS
+int dwarf_get_rnglist_head_basics(
+    Dwarf_Rnglists_Head head,
+    Dwarf_Unsigned * rle_count,
+    Dwarf_Unsigned * rle_version,
+    Dwarf_Unsigned * rnglists_index_returned,
+    Dwarf_Unsigned * bytes_total_in_rle,
+    unsigned * offset_size,
+    unsigned * address_size,
+    unsigned * segment_selector_size,
+    Dwarf_Unsigned * overall_offset_of_this_context,
+    Dwarf_Unsigned * total_length_of_this_context,
+    Dwarf_Bool     * rnglists_base_present,
+    Dwarf_Unsigned * rnglists_base,
+    Dwarf_Bool     * rnglists_base_address_present,
+    Dwarf_Unsigned * rnglists_base_address,
+    Dwarf_Bool     * rnglists_debug_addr_base_present,
+    Dwarf_Unsigned * rnglists_debug_addr_base,
+    Dwarf_Error *error)
+.DE
+The function
+\f(CWdwarf_get_rnglist_head_basics()\fP
+allows caller to print or display the fields
+of the Dwarf_Rnglists_Head that might be
+of interest for understanding the section data
+for that 
+\f(CWDwarf_Rnglists_Head\fP.
+.P
+It is not needed to access the rangelist data.
+It currently returns only \f(CWDW_DLV_OK\fP.
+
+\f(CW
+\fP
+
+.H 4 "dwarf_get_rnglists_entry_fields()"
+.DS
+\f(CWint dwarf_get_rnglists_entry_fields(
+    Dwarf_Rnglists_Head head,
+    Dwarf_Unsigned entrynum,
+    unsigned *entrylen,
+    unsigned *code,
+    Dwarf_Unsigned *raw1,
+    Dwarf_Unsigned *raw2,
+    Dwarf_Unsigned *cooked1,
+    Dwarf_Unsigned *cooked2,
+    Dwarf_Error    *err)\fP
+.DE
+This is the function to access the
+rnglist entries for this
+\f(CWDwarf_Rnglists_Head\fP
+\f(CWCall this with\fP
+\f(CWentrynum\fP
+in the normal iteration 
+"i = 0; i < entries_count; ++i"
+where
+\f(CWentries_count\fP 
+was returned by
+\f(CWdwarf_rnglists_get_rle_head()\fP
+through a pointer.
+
+
+.H 4 "dwarf_dealloc_rnglists_head()"
+.DS
+\f(CWint dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head /*head*/);
+.DE
+This frees the storage allocated by the
+\f(CWdwarf_rnglists_get_rle_head()\fP
+call that created the \f(CWDwarf_Rnglists_Head\fP pointer.
+.P
+It only returns DW_DLV_OK.
+
+.H 3 "Getting raw .debug_rnglists entries"
+This set of interfaces is to read the
+(entire) 
+\f(CW.debug_rnglists\fP
+section without reference
+to any DIE.  
+As such these can only present the
+raw data from the file. There is no way
+in these interfaces to get actual addresses.
+These might be of interest if you want to
+know exactly what the compiler output in
+the 
+\f(CW.debug_rnglists\fP
+section.
+"dwarfdump ----print-raw-rnglists"
+(try adding -v or -vvv)
+makes these calls.
+.P
+Here is
+an example using all the following calls.
+
+example_rngl
+.in +2
+.FG "Examplev dwarf_get_ranges_a()"
+.DS
+\f(CW
+int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
+{
+    Dwarf_Unsigned count = 0;
+    int res = 0;
+    Dwarf_Unsigned i = 0;
+
+    res = dwarf_load_rnglists(dbg,&count,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    for(i =0  ; i < count ; ++i) {
+        Dwarf_Unsigned header_offset = 0;
+        Dwarf_Small   offset_size = 0;
+        Dwarf_Small   extension_size = 0;
+        unsigned      version = 0; /* 5 */
+        Dwarf_Small   address_size = 0;
+        Dwarf_Small   segment_selector_size = 0;
+        Dwarf_Unsigned offset_entry_count = 0;
+        Dwarf_Unsigned offset_of_offset_array = 0;
+        Dwarf_Unsigned offset_of_first_rangeentry = 0;
+        Dwarf_Unsigned offset_past_last_rangeentry = 0;
+
+        res = dwarf_get_rnglist_context_basics(dbg,i,
+            &header_offset,&offset_size,&extension_size,
+            &version,&address_size,&segment_selector_size,
+            &offset_entry_count,&offset_of_offset_array,
+            &offset_of_first_rangeentry,
+            &offset_past_last_rangeentry,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        {
+            Dwarf_Unsigned e = 0;
+            unsigned colmax = 4;
+            unsigned col = 0;
+            Dwarf_Unsigned global_offset_of_value = 0;
+        
+            for ( ; e < offset_entry_count; ++e) {
+                Dwarf_Unsigned value = 0;
+                int resc = 0;
+        
+                resc = dwarf_get_rnglist_offset_index_value(dbg,
+                    i,e,&value,
+                    &global_offset_of_value,error);
+                if (resc != DW_DLV_OK) {
+                    return resc;
+                }
+                /*  Do something */
+                col++;
+                if (col == colmax) {
+                    col = 0;
+                }
+            }
+
+        }
+        {
+            Dwarf_Unsigned curoffset = offset_of_first_rangeentry;
+            Dwarf_Unsigned endoffset = offset_past_last_rangeentry;
+            int rese = 0;
+            Dwarf_Unsigned ct = 0;
+
+            for ( ; curoffset < endoffset; ++ct ) {
+                unsigned entrylen = 0;
+                unsigned code = 0;
+                Dwarf_Unsigned v1 = 0;
+                Dwarf_Unsigned v2 = 0;
+                rese = dwarf_get_rnglist_rle(dbg,i,
+                    curoffset,endoffset,
+                    &entrylen,
+                    &code,&v1,&v2,error);
+                if (rese != DW_DLV_OK) {
+                    return rese;
+                }
+                curoffset += entrylen;
+                if (curoffset > endoffset) {
+                    return DW_DLV_ERROR;
+                }
+            }
+        }
+    }
+    return DW_DLV_OK;
+}
+\fP
+.DE
+.in -2
+
+
+.H 4 "dwarf_load_rnglists()"
+.DS
+\f(CWint dwarf_load_rnglists(
+    Dwarf_Debug dbg,
+    Dwarf_Unsigned *rnglists_count,
+    Dwarf_Error *error)\fP
+.DE
+On a successful call to
+\f(CWdwarf_load_rnglists()\fP
+the function returns 
+\f(CWDW_DLV_OK\fP,
+sets
+\f(CW*rnglists_count\fP
+(if and only if
+\f(CWrnglists_count\fP
+is non-null) to the number of distinct
+section contents that exist.
+A small amount of data for each Range Line Table
+is recorded in 
+\f(CWdbg\fP as a side effect.
+Normally libdwarf will have already called this,
+but if an application never requests any 
+\f(CW.debug_info\fP
+data the section might not be loaded.
+If the section is loaded this returns
+very quickly and will set 
+\f(CW*rnglists_count\fP
+just as described in this paragraph.
+.P
+If there is no 
+\f(CW.debug_rnglists\fP
+section in the object file this function returns
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P
+If  something is malformed it returns
+\f(CWDW_DLV_ERROR\fP
+and sets
+\f(CW*error\fP
+to the applicable error pointer describgin the problem.
+.P
+There is no dealloc call. Calling
+\f(CWdwarf_finish()\fP
+releases the modest amount of memory
+recorded for this section as a side effect.
+.P
+
+
+.H 4 "dwarf_get_rnglist_context_basics()"
+.DS
+\f(CWint dwarf_get_rnglist_context_basics(Dwarf_Debug dbg,
+    Dwarf_Unsigned context_index,
+    Dwarf_Unsigned * header_offset,
+    Dwarf_Small    * offset_size,
+    Dwarf_Small    * extension_size,
+    unsigned       * version, /* 5 */
+    Dwarf_Small    * address_size,
+    Dwarf_Small    * segment_selector_size,
+    Dwarf_Unsigned * offset_entry_count,
+    Dwarf_Unsigned * offset_of_offset_array,
+    Dwarf_Unsigned * offset_of_first_rangeentry,
+    Dwarf_Unsigned * offset_past_last_rangeentry,
+    Dwarf_Error *    /*err*/);\fP
+.DE
+On success this returns 
+\f(CWDW_DLV_OK\fP
+and returns values through the pointer arguments
+(other than
+\f(CWdbg\fP
+or
+\f(CWerror\fP)
+.P 
+A call to 
+\f(CWdwarf_load_rnglists()\fP
+that suceeds gets you the count
+of contexts
+and 
+\f(CWdwarf_get_rnglist_context_basics()\fP
+for any "i >=0 and i < count"
+gets you the context values relevant to 
+\f(CW.debug_rnglists\fP.
+.P
+Any of the pointer-arguments for returning context values
+can be passed in as 0 (in which case they will be skipped).
+.P
+You will want
+\f(CW*offset_entry_count\fP
+so you can call
+\f(CWdwarf_get_rnglist_offset_index_value()\fP
+usefully.
+.P
+If the
+\f(CWcontext_index\fP
+passed in is out of range the function returns
+\f(CWDW_DLV_NO_ENTRY\fP
+.P
+At the present time
+\f(CWDW_DLV_ERROR\fP
+is never returned.
+
+
+.H 4 "dwarf_get_rnglist_offset_index_value()"
+.DS
+\f(CWint dwarf_get_rnglist_offset_index_value(Dwarf_Debug dbg,
+    Dwarf_Unsigned context_index,
+    Dwarf_Unsigned offsetentry_index,
+    Dwarf_Unsigned * offset_value_out,
+    Dwarf_Unsigned * global_offset_value_out,
+    Dwarf_Error *error)\fP
+.DE
+.P
+On success
+\f(CWdwarf_get_rnglist_offset_index_value()\fP
+returns 
+\f(CWDW_DLV_OK\fP,
+sets
+\f(CW* offset_value_out\fP
+to the value in the Range List Table
+offset array, 
+and sets
+\f(CW* global_offset_value_out\fP
+to the section offset (in
+\f(CW.debug_addr\fP)
+of the offset value.
+.P
+Pass in
+\f(CWcontext_index\fP
+exactly as the same field passed to
+\f(CWdwarf_get_rnglist_context_basics()\fP.
+.P
+Pass in
+\f(CWoffset_entry_index\fP
+based on the return field
+\f(CWoffset_entry_count\fP
+from
+\f(CWdwarf_get_rnglist_context_basics()\fP,
+meaning for that
+\f(CWcontext_index\fP
+an
+\f(CWoffset_entry_index\fP >=0
+and < 
+\f(CWoffset_entry_count\fP.
+
+.P
+Pass in
+\f(CWoffset_entry_count\fP
+exactly as the same field passed to
+\f(CWdwarf_get_rnglist_context_basics()\fP.
+.P
+If one of the indexes passed in is out of range
+\f(CWDW_DLV_NO_ENTRY\fP will
+be returned and no return arguments touched.
+.P 
+If there is some corruption of DWARF5 data
+then
+\f(CWDW_DLV_ERROR\fP
+might be returned 
+and
+\f(CW*error\fP
+set to the error details.
+
+
+.H 4 "dwarf_get_rnglist_rle()"
+.DS
+\f(CWint dwarf_get_rnglist_rle(
+    Dwarf_Debug dbg,
+    Dwarf_Unsigned contextnumber,
+    Dwarf_Unsigned entry_offset,
+    Dwarf_Unsigned endoffset,
+    unsigned *entrylen,
+    unsigned *entry_kind,
+    Dwarf_Unsigned *entry_operand1,
+    Dwarf_Unsigned *entry_operand2,
+    Dwarf_Error *error)\fP
+.DE
+On success
+it returns a single 
+\f(CWDW_RLE*\fP
+record 
+(see dwarf.h)
+fields.
+.P
+\f(CWcontextnumber\fP
+is the number of the current rnglist context.
+.P
+\f(CWentry_offset\fP
+is the section offset (section-global
+offset) of the next record.
+.P
+\f(CWendoffset\fP
+is one past the last entry in this
+rle context. 
+.P
+\f(CW*entrylen\fP
+returns the length in the .debug_rnglists section
+of the particular record returned.
+It's used to increment to the next record
+within this rnglist context.
+.P
+\f(CW*entrykind\fP
+returns is the \f(CWDW_RLE*\fP number.
+.P
+Some record kinds have 1 or 0 operands,
+most have two operands (the records
+describing ranges).
+.P
+If the contextnumber is out of range
+it will return 
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P
+If the 
+\f(CW.debug_rnglists\fP
+section is malformed
+or the 
+\f(CWentry_offset\fP
+is incorrect
+it may return
+\f(CWDW_DLV_ERROR\fP.
+
+
+.H 2 "Ranges Operations DWARF3,4 (.debug_ranges)"
 These functions provide information about the address ranges
 indicated by a  \f(CWDW_AT_ranges\fP attribute (the ranges are recorded
 in the  \f(CW.debug_ranges\fP section) of a DIE.
+These functions apply to 
+DWARF3 and
+DWARF4.
 Each call of \f(CWdwarf_get_ranges_a()\fP
 or \f(CWdwarf_get_ranges()\fP
 returns a an array
@@ -11767,7 +12386,7 @@ of Dwarf_Ranges structs, each of which represents a single ranges
 entry.   The struct is defined in  \f(CWlibdwarf.h\fP.
 .P
 New in DWARF3,
-for DWARF3, and DWARF4 the section contained
+for DWARF3, and DWARF4 the section contains
 just ranges.
 The ranges are referenced by
 \f(CWDW_AT_ranges\fP
@@ -11790,6 +12409,8 @@ but will not have to make the
 attributes relocatable and will thus save space
 in the object (ie, .o) file
 and link time.)
+
+
 
 
 .H 3 "dwarf_get_ranges_section_name()"
@@ -11919,6 +12540,7 @@ void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
         for( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = ranges+i;
             /* Use cur. */
+            functionusingrange(cur);
         }
         dwarf_ranges_dealloc(dbg,ranges,count);
     }
@@ -12042,7 +12664,7 @@ example makes it rather too long).
 .FG "Examplew dwarf_get_gdbindex_header()"
 .DS
 \f(CW
-void examplew(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
+void examplew(Dwarf_Debug dbg
 {
     Dwarf_Gdbindex gindexptr = 0;
     Dwarf_Unsigned version = 0;
@@ -12077,7 +12699,6 @@ void examplew(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
         if (res == DW_DLV_OK) {
             for(i = 0; i < length; ++i) {
                 Dwarf_Unsigned cuoffset = 0;
-                Dwarf_Unsigned culength = 0;
                 res = dwarf_gdbindex_culist_entry(gindexptr,
                     i,&cuoffset,&culength,&error);
                 if (res == DW_DLV_OK) {
@@ -12662,7 +13283,7 @@ and that is set by libdwarf as
 .P
 An example of calling this function follows
 .DS
-.FG "Exampley dwarf_get_xu_index_header()"
+.FG "Example debuglink ()"
 \f(CWvoid exampledebuglink(Dwarf_Debug dbg)
 {
     int      res = 0;
@@ -13075,7 +13696,6 @@ void exampley(Dwarf_Debug dbg, const char *type)
     Dwarf_Unsigned units_count = 0; /* M */
     Dwarf_Unsigned hash_slots_count = 0; /* N */
     Dwarf_Error err = 0;
-    const char * ret_type = 0;
     const char * section_name = 0;
 
     res = dwarf_get_xu_index_header(dbg,
@@ -13200,7 +13820,6 @@ void examplez( Dwarf_Xu_Index_Header xuhdr,
     for( h = 0; h < hash_slots_count; h++) {
         Dwarf_Sig8 hashval;
         Dwarf_Unsigned index = 0;
-        Dwarf_Unsigned col = 0;
         int res = 0;
 
         res = dwarf_get_xu_hash_entry(xuhdr,h,

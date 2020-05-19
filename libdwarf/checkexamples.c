@@ -18,11 +18,6 @@ cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 -Wno-long-long -Wshadow -Wbad-function-cast \
 -Wmissing-parameter-type -Wnested-externs checkexamples.c
 
-    and expect to see lots of warnings, most of which
-    are nothing of interest.
-
-Simplify with a current libdwarf.h in /tmp then
-    cc -I /tmp -c checkexamples.c
 */
 
 #include <stdio.h> /* for printf */
@@ -340,7 +335,7 @@ void example_discr_list(Dwarf_Debug dbg,
     }
 }
 
-void example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+void example_loclistc(Dwarf_Attribute someattr)
 {
     Dwarf_Unsigned lcount = 0;
     Dwarf_Loc_Head_c loclist_head = 0;
@@ -560,7 +555,6 @@ void examplec(Dwarf_Die cu_die)
     Dwarf_Line  *linebuf_actuals = 0;
     Dwarf_Signed linecount_actuals = 0;
     Dwarf_Line_Context line_context = 0;
-    Dwarf_Signed linecount_total = 0;
     Dwarf_Small  table_count = 0;
     Dwarf_Unsigned lineversion = 0;
     Dwarf_Error err = 0;
@@ -702,7 +696,7 @@ void exampled(Dwarf_Debug dbg,Dwarf_Die somedie)
     Dwarf_Error error = 0;
     int sres = 0;
 
-    sres = dwarf_srclines(somedie, &linebuf,&count, &error);
+    sres = dwarf_srclines(somedie,&linebuf,&count, &error);
     if (sres == DW_DLV_OK) {
         for (i = 0; i < count; ++i) {
             /* use linebuf[i] */
@@ -910,7 +904,7 @@ void exampleo(Dwarf_Debug dbg)
     }
 }
 
-void exampledebugnames(Dwarf_Debug dbg)
+void exampledebugnames()
 {
     /* FIXME need extended example of debugnames use. */
 }
@@ -929,7 +923,7 @@ int has_unchecked_import_in_list(void);
 Dwarf_Unsigned get_next_import_from_list(void);
 void mark_this_offset_as_examined(Dwarf_Unsigned macro_unit_offset);
 void add_offset_to_list(Dwarf_Unsigned offset);
-void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
+void examplep5(Dwarf_Die cu_die)
 {
     int lres = 0;
     Dwarf_Unsigned version = 0;
@@ -1067,7 +1061,7 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
         macro_context = 0;
     }
 }
-
+void functionusingsigned(Dwarf_Signed s);
 void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
 {
     Dwarf_Error error = 0;
@@ -1087,6 +1081,7 @@ void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
             Dwarf_Macro_Details *  mentry = maclist +i;
             /* example of use */
             Dwarf_Signed lineno = mentry->dmd_lineno;
+            functionusingsigned(lineno);
         }
         dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
     }
@@ -1103,6 +1098,7 @@ void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
             Dwarf_Macro_Details *  mentry = maclist +i;
             /* example of use */
             Dwarf_Signed lineno = mentry->dmd_lineno;
+            functionusingsigned(lineno);
         }
         cur_off = maclist[count-1].dmd_offset + 1;
         dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
@@ -1336,6 +1332,7 @@ void exampleu(Dwarf_Debug dbg)
         dwarf_dealloc(dbg, arang, DW_DLA_LIST);
     }
 }
+void functionusingrange(Dwarf_Ranges *r);
 void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
 {
     Dwarf_Signed count = 0;
@@ -1350,11 +1347,12 @@ void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
         for( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = ranges+i;
             /* Use cur. */
+            functionusingrange(cur);
         }
         dwarf_ranges_dealloc(dbg,ranges,count);
     }
 }
-void examplew(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
+void examplew(Dwarf_Debug dbg)
 {
     Dwarf_Gdbindex gindexptr = 0;
     Dwarf_Unsigned version = 0;
@@ -1403,7 +1401,6 @@ void examplew(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
             for(i = 0; i < typeslength; ++i) {
                 Dwarf_Unsigned cuoffset = 0;
                 Dwarf_Unsigned tuoffset = 0;
-                Dwarf_Unsigned culength = 0;
                 Dwarf_Unsigned type_signature  = 0;
                 res = dwarf_gdbindex_types_culist_entry(gindexptr,
                     i,&cuoffset,&tuoffset,&type_signature,&error);
@@ -1516,7 +1513,6 @@ void exampley(Dwarf_Debug dbg, const char *type)
     Dwarf_Unsigned units_count = 0; /* M */
     Dwarf_Unsigned hash_slots_count = 0; /* N */
     Dwarf_Error err = 0;
-    const char * ret_type = 0;
     const char * section_name = 0;
 
     res = dwarf_get_xu_index_header(dbg,
@@ -1553,7 +1549,6 @@ void examplez( Dwarf_Xu_Index_Header xuhdr,
     for( h = 0; h < hash_slots_count; h++) {
         Dwarf_Sig8 hashval;
         Dwarf_Unsigned index = 0;
-        Dwarf_Unsigned col = 0;
         int res = 0;
 
         res = dwarf_get_xu_hash_entry(xuhdr,h,
@@ -1788,5 +1783,63 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
             }
         }
     }
+    return DW_DLV_OK;
+}
+int example_rnglist_for_attribute(Dwarf_Attribute attr,
+    Dwarf_Unsigned attrvalue,Dwarf_Error *error)
+{
+    /*  attrvalue must be the DW_AT_ranges
+        DW_FORM_rnglistx or DW_FORM_sec_offset value
+        extracted from attr. */
+    int res = 0;
+    Dwarf_Half theform = 0;
+    Dwarf_Unsigned    entries_count;
+    Dwarf_Unsigned    global_offset_of_rle_set;
+    Dwarf_Rnglists_Head rnglhead = 0;
+    Dwarf_Unsigned i = 0;
+
+    res = dwarf_rnglists_get_rle_head(attr,
+        theform,
+        attrvalue,
+        &rnglhead,
+        &entries_count,
+        &global_offset_of_rle_set,
+        error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    for (i = 0; i < entries_count; ++i) {
+        unsigned entrylen     = 0;
+        unsigned code         = 0;
+        Dwarf_Unsigned lowpc  = 0;
+        Dwarf_Unsigned highpc = 0;
+
+        /*  Actual addresses are most likely what one
+            wants to know, not the lengths/offsets
+            recorded in .debug_rnglists. So we pass
+            NULLs to avoid dealing with values we
+            do not wish to see. */
+        res = dwarf_get_rnglists_entry_fields(rnglhead,
+            i,&entrylen,&code,
+            0,0,
+            &lowpc,&highpc,error);
+        if (res != DW_DLV_OK) {
+            dwarf_dealloc_rnglists_head(rnglhead);
+            return res;
+        }
+        if (code == DW_RLE_end_of_list) {
+            /* we are done */
+            break;
+        }
+        if (code == DW_RLE_base_addressx ||
+            code == DW_RLE_base_address) {
+            /*  We do not need to use these, they
+                have been accounted for already. */
+            continue;
+        }
+        /*  Here do something with lowpc and highpc, these
+            are real addresses */
+    }
+    dwarf_dealloc_rnglists_head(rnglhead);
     return DW_DLV_OK;
 }

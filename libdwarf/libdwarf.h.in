@@ -2017,7 +2017,6 @@ int dwarf_whatform(Dwarf_Attribute /*attr*/,
 int dwarf_whatform_direct(Dwarf_Attribute /*attr*/,
     Dwarf_Half *     /*returned_initial_form*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_whatattr(Dwarf_Attribute /*attr*/,
     Dwarf_Half *     /*returned_attr_num*/,
     Dwarf_Error*     /*error*/);
@@ -4799,27 +4798,17 @@ typedef struct Dwarf_Rnglists_Entry_s * Dwarf_Rnglists_Entry;
 struct Dwarf_Rnglists_Head_s;
 typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
-/* Given DW_FORM_rnglistx value, open a Dwarf_Rnglists_Head */
-int dwarf_rnglists_index_get_rle_head(Dwarf_Debug /*dbg*/,
-    Dwarf_Die             /*die*/,
-    Dwarf_Unsigned        /*index_from_form*/,
-    Dwarf_Rnglists_Head * /*head_out*/,
-    Dwarf_Unsigned *      /*count_of_entries_in_head*/,
-    Dwarf_Unsigned *      /*global_offset_of_rle_set*/,
-    Dwarf_Error    *      /*error*/);
-
-/*  For DWARF5 DW_AT_ranges DW_FORM_sec_offset */
-int dwarf_rnglists_offset_get_rle_head(Dwarf_Debug /*dbg*/,
-    Dwarf_Die             /*die*/,
-    Dwarf_Unsigned        /*offset_in_rnglists*/,
+/*  For DWARF5 DW_AT_ranges: DW_FORM_sec_offset DW_FORM_rnglistx */
+int dwarf_rnglists_get_rle_head(Dwarf_Attribute       /*attr*/,
+    Dwarf_Half            /*theform*/,
+    Dwarf_Unsigned        /*index_or_offset_value*/,
     Dwarf_Rnglists_Head * /*head_out*/,
     Dwarf_Unsigned *      /*count_of_entries_in_head*/,
     Dwarf_Unsigned *      /*global_offset_of_rle_set*/,
     Dwarf_Error    *      /*error*/);
 
 /*  Get the rnglist entries details */
-int dwarf_get_rnglists_entry_fields(Dwarf_Debug /*dbg*/,
-    Dwarf_Rnglists_Head /*head*/,
+int dwarf_get_rnglists_entry_fields(Dwarf_Rnglists_Head /*head*/,
     Dwarf_Unsigned   /*entrynum*/,
     unsigned       * /*entrylen*/,
     unsigned       * /*code*/,
@@ -4867,20 +4856,11 @@ int dwarf_get_rnglist_offset_index_value(Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*error*/);
 
 
-int dwarf_get_rnglist_context(Dwarf_Debug  /*dbg*/,
-    Dwarf_Unsigned  /*index*/,
-    Dwarf_Rnglists_Context * /*context_out*/,
-    Dwarf_Small ** /*first_byte_of_context*/,
-    Dwarf_Small ** /*first_byte_of_entries*/,
-    Dwarf_Small ** /*end_of_entries*/,
-    Dwarf_Error *  /*err*/);
-
 /*  Used by dwarfdump to print basic data from the
     data generated to look at a specific rangelist 
     as returned by  dwarf_rnglists_index_get_rle_head() 
     or dwarf_rnglists_offset_get_rle_head. */
-int dwarf_get_rnglist_head_basics(Dwarf_Debug /*dbg*/,
-    Dwarf_Rnglists_Head /*head*/,
+int dwarf_get_rnglist_head_basics(Dwarf_Rnglists_Head /*head*/,
     Dwarf_Unsigned * /*rle_count*/,
     Dwarf_Unsigned * /*rnglists_version*/,
     Dwarf_Unsigned * /*rnglists_index_returned*/,
