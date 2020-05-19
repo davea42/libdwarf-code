@@ -1,3 +1,7 @@
+2020-05-19:
+  libdwarf and dwarfdump now support DWARF5 .debug_rnglists.
+  The new interfaces are documented in libdwarf/libdwarf2.1.pdf.
+  The new option to dwarfdump is "--print-raw-rnglists".
 2019-11-04:
   The code (dwarfdump/libdwarf), regressiontests,
   and readelfobj directories and all their tests
