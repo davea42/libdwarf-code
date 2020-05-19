@@ -1,4 +1,8 @@
 2020-05-19: David Anderson
+    * dwarf_names.c,dwarf_names.h, dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: New version string.
+2020-05-19: David Anderson
     * print_die.c: Removed arguments that were not needed from
       a couple of libdwarf rnglists functions and changed
       code here to match.

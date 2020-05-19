@@ -1,4 +1,7 @@
 2020-05-19: David Anderson
+    *  dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,
+       libdwarf_version.h : New version strings.
+2020-05-19: David Anderson
     * libdwarf.h.in: Revised a couple rnglists functions
       by removing unneeded arguments and revising the arguments
       to dwarf_rnglists_offset_get_rle_head(),
