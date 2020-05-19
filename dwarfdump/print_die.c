@@ -74,13 +74,10 @@ static int print_die_and_children_internal(Dwarf_Debug dbg,
 static int print_one_die_section(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
     Dwarf_Error *pod_err);
-static int handle_rnglists(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    UNUSEDARG Dwarf_Attribute attrib,
-    UNUSEDARG int theform,
-    Dwarf_Bool use_index,
-    Dwarf_Unsigned index_on_attr,
-    Dwarf_Unsigned entry_offset,
+static int handle_rnglists(Dwarf_Die die,
+    Dwarf_Attribute attrib,
+    Dwarf_Half theform,
+    Dwarf_Unsigned value,
     Dwarf_Unsigned *rle_offset_out,
     struct esb_s *  esbp,
     int show_form,
@@ -2706,7 +2703,7 @@ print_range_attribute(Dwarf_Debug dbg,
         simple_err_return_msg_either_action(fres,
             "\nERROR: Unable to get version of a DIE "
             "to print a range attribute so something "
-            " is badly wrong. Assuming DWARF2, offset size 2"
+            " is badly wrong. Assuming DWARF2, offset size 4"
             "  and continuing!");
     }
     if (theform == DW_FORM_rnglistx) {
@@ -2818,18 +2815,11 @@ print_range_attribute(Dwarf_Debug dbg,
             do not need to actually use rleoffset since it
             is identical to original_off.  */
         int res = 0;
-        int use_index = TRUE;
         Dwarf_Unsigned rleoffset = 0;
 
-        if (theform != DW_FORM_rnglistx) {
-            use_index = FALSE;
-        }
-        res = handle_rnglists(dbg,
-            die,
+        res = handle_rnglists(die,
             attr_in,
             theform,
-            use_index,
-            original_off,
             original_off,
             &rleoffset,
             esb_extrap,
@@ -6056,7 +6046,7 @@ handle_loclistx(
 }
 
 static int
-expand_rnglist_entries(Dwarf_Debug dbg,
+expand_rnglist_entries(
     UNUSEDARG Dwarf_Die die,
     Dwarf_Rnglists_Head rnglhead,
     Dwarf_Unsigned rnglentriescount,
@@ -6085,8 +6075,7 @@ expand_rnglist_entries(Dwarf_Debug dbg,
         Dwarf_Unsigned cooked1 = 0;
         Dwarf_Unsigned cooked2 = 0;
 
-        res  = dwarf_get_rnglists_entry_fields(dbg,
-            rnglhead,i,
+        res  = dwarf_get_rnglists_entry_fields(rnglhead,i,
             &entrylen,&code,
             &raw1,&raw2,
             &cooked1,&cooked2,
@@ -6158,13 +6147,10 @@ append_local_prefix(struct esb_s *es)
 
 /* DWARF5 .debug_rnglists[.dwo] only. */
 static int
-handle_rnglists(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    UNUSEDARG Dwarf_Attribute attrib,
-    UNUSEDARG int theform,
-    Dwarf_Bool use_index,
-    Dwarf_Unsigned index_on_attr,
-    Dwarf_Unsigned entry_offset,
+handle_rnglists(Dwarf_Die die,
+    Dwarf_Attribute attrib,
+    Dwarf_Half theform,
+    Dwarf_Unsigned attrval,
     Dwarf_Unsigned *output_rle_set_offset,
     struct esb_s *  esbp,
     int show_form,
@@ -6177,23 +6163,13 @@ handle_rnglists(Dwarf_Debug dbg,
     Dwarf_Rnglists_Head rnglhead = 0;
     int res = 0;
 
-    if (use_index) {
-        res = dwarf_rnglists_index_get_rle_head(dbg,
-            die,
-            index_on_attr,
-            &rnglhead,
-            &count_rnglists_entries,
-            &global_offset_of_rle_set,
-            err);
-    } else {
-        res = dwarf_rnglists_offset_get_rle_head(dbg,
-            die,
-            entry_offset,
-            &rnglhead,
-            &count_rnglists_entries,
-            &global_offset_of_rle_set,
-            err);
-    }
+    res = dwarf_rnglists_get_rle_head(attrib,
+        theform,
+        attrval, /* index val or offset depending on form */
+        &rnglhead,
+        &count_rnglists_entries,
+        &global_offset_of_rle_set,
+        err);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -6222,8 +6198,7 @@ handle_rnglists(Dwarf_Debug dbg,
         Dwarf_Bool debug_addr_base_present = 0;
         Dwarf_Unsigned debug_addr_base;
 
-        res = dwarf_get_rnglist_head_basics(dbg,
-            rnglhead,
+        res = dwarf_get_rnglist_head_basics(rnglhead,
             &rle_count,
             &version,
             &context_index,
@@ -6301,7 +6276,7 @@ handle_rnglists(Dwarf_Debug dbg,
             length_of_context);
     }
 
-    res = expand_rnglist_entries(dbg,die,rnglhead,
+    res = expand_rnglist_entries(die,rnglhead,
         count_rnglists_entries,
         global_offset_of_rle_set,
         esbp,

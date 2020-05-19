@@ -395,6 +395,8 @@ boolean cu_data_is_set(void);
 #define DEBUG_FRAME_EH_GNU 16
 #define DEBUG_MACRO       17
 #define DEBUG_NAMES       18
+#define DEBUG_RNGLISTS    19
+#define DEBUG_LOCLISTS    20
 
 /* Print the information only if unique errors is set and it is first time */
 #define PRINTING_UNIQUE (!glflags.gf_found_error_message)

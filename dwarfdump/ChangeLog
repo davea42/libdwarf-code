@@ -1,3 +1,12 @@
+2020-05-19: David Anderson
+    * print_die.c: Removed arguments that were not needed from
+      a couple of libdwarf rnglists functions and changed
+      code here to match.
+    * print_rnglists.c:  Fix trailing whitespace.
+      Turn on printing range lists
+      and offset table entries (if any) 
+      with --print-raw-rnglists 
+      even if no -v.
 2020-05-17: David Anderson
     * globals.h: Remove trailing whitespace.
     * print_die.c: Now prints DWARF5 .debug_rnglists section.

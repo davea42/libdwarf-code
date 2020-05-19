@@ -130,7 +130,7 @@ print_single_rle(UNUSEDARG Dwarf_Debug dbg,
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         }
         break;
-
+ 
     case DW_RLE_offset_pair: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -295,16 +295,15 @@ print_raw_all_rnglists(Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx"\n",
                 offset_past_last_rangeentry);
         }
-        if (glflags.verbose && offset_entry_count) {
+        if (offset_entry_count) {
             res = print_offset_entry_table(dbg,i,offset_entry_count,
                 error);
             if (res == DW_DLV_ERROR) {
                 return res;
             }
         }
-        if (glflags.verbose &&
-            ((offset_of_first_rangeentry+1) <
-            offset_past_last_rangeentry)) {
+        if ((offset_of_first_rangeentry+1) <
+            offset_past_last_rangeentry) {
             res = print_entire_rangeslist(dbg,i,
                 offset_of_first_rangeentry,
                 offset_past_last_rangeentry,
