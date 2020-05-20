@@ -1,4 +1,6 @@
 2020-05-19: David Anderson
+    * print_die.c: In an error case failed to dealloc the rnglists head.
+2020-05-19: David Anderson
     * dwarf_names.c,dwarf_names.h, dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
       dwarfdump-tt-table.h: New version string.

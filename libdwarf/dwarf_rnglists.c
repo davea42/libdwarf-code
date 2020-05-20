@@ -1100,6 +1100,7 @@ dwarf_rnglists_get_rle_head(
             " in libdwarf function dwarf_rnglists_index_get_rle_head()");
         return DW_DLV_ERROR;
     }
+    shead.rh_dbg = dbg;
     *lhead = shead;
     res = build_array_of_rle(dbg,lhead,error);
     if (res != DW_DLV_OK) {
@@ -1153,6 +1154,7 @@ _dwarf_free_rnglists_head(Dwarf_Rnglists_Head head)
         /*  ASSERT: rh_rnglists is NULL */
         Dwarf_Rnglists_Entry cur = head->rh_first;
         Dwarf_Rnglists_Entry next = 0;
+
         for ( ; cur ; cur = next) {
             next = cur->rle_next;
             free(cur);
@@ -1164,6 +1166,7 @@ _dwarf_free_rnglists_head(Dwarf_Rnglists_Head head)
         /*  ASSERT: rh_first and rh_last are NULL */
         /* fully built head. */
         Dwarf_Unsigned i = 0;
+
         /* Deal with the array form. */
         for( ; i < head->rh_count; ++i) {
             free(head->rh_rnglists[i]);
@@ -1177,5 +1180,6 @@ void
 _dwarf_rnglists_head_destructor(void *head)
 {
     Dwarf_Rnglists_Head h = head;
+
     _dwarf_free_rnglists_head(h);
 }

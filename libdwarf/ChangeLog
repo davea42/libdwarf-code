@@ -1,4 +1,7 @@
 2020-05-19: David Anderson
+    * dwarf_rnglists.c: Ommited a crucial assign to rh_debug so it
+      leaked if de_alloc_tree absent.
+2020-05-19: David Anderson
     *  dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,
        libdwarf_version.h : New version strings.
 2020-05-19: David Anderson

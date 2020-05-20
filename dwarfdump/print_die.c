@@ -6213,6 +6213,7 @@ handle_rnglists(Dwarf_Die die,
             &debug_addr_base_present,&debug_addr_base,
             err);
         if (res != DW_DLV_OK) {
+            dwarf_dealloc_rnglists_head(rnglhead);
             return res;
         }
         append_local_prefix(esbp);
