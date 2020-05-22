@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.93, 17 May 2020
+.ds vE Rev 2.94, 20 May 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -237,7 +237,12 @@ dwarf_get_rnglist_context(),
 dwarf_get_rnglist_head_basics(),
 dwarf_get_rnglist_context_basics(),
 dwarf_get_rnglist_rle().
-(May 17, 2020)
+Also added new functions
+dwarf_dealloc_die(), dwarf_dealloc_error(),
+and dwarf_dealloc_attribute() to provide
+type-safe calls for deallocation of the
+specific data types.
+(May 20, 2020)
 .P
 What was historically called 'length_size' in
 libdwarf and dwarfdump is actually the size of
@@ -1161,7 +1166,9 @@ and is used as a descriptor for queries
 about information related to that DIE.  The storage pointed to by this
 descriptor should be freed, using
 \f(CWdwarf_dealloc()\fP with the allocation
-type \f(CWDW_DLA_DIE\fP when no longer needed.
+type \f(CWDW_DLA_DIE\fP when no longer needed,
+or, preferably, call
+\f(CWdwarf_dealloc_die()\fP instead. 
 
 .DS
 \f(CWtypedef struct Dwarf_Line_s* Dwarf_Line;\fP
@@ -1242,7 +1249,9 @@ be freed, using
 \f(CWdwarf_dealloc()\fP with the
 allocation type
 \f(CWDW_DLA_ERROR\fP when no longer
-needed.
+needed or, preferably,
+call
+\f(CWdwarf_dealloc_error()\fP instead.
 
 .DS
 \f(CWtypedef struct Dwarf_Attribute_s* Dwarf_Attribute;\fP
@@ -1256,7 +1265,9 @@ The storage
 pointed to by this descriptor should be individually freed, using
 \f(CWdwarf_dealloc()\fP with the allocation type
 \f(CWDW_DLA_ATTR\fP when
-no longer needed.
+no longer needed, or call
+\f(CWdwarf_dealloc_attribute()\fP
+instead.
 
 .DS
 \f(CWtypedef struct Dwarf_Abbrev_s* Dwarf_Abbrev;\fP
@@ -1679,7 +1690,126 @@ call.
 See the section "Returned values in the functional interface",
 above, for the general rules where
 calls to \f(CWdwarf_dealloc()\fP
-is appropriate.
+are appropriate.
+.P
+As of May 2020 there are additional dealloc calls
+which enable type-checking the calls:
+\f(CWdwarf_dealloc_error()\fP,
+\f(CWdwarf_dealloc_die()\fP, and
+\f(CWdwarf_dealloc_attribute()\fP.
+.P
+.H 3 "dwarf_dealloc()"
+The first prototype is the generic one that can
+dealloc any of the libdwarf types, such as DW_DLA_DIE etc..
+This has the disadvantages that the 
+\f(CWspace_to_dealloc\fP
+argument
+cannot be type checked and the 
+\f(CWappropriate_dla_name\fP
+is a simple integer, hence not meaningfully
+checkable either.
+
+.P
+Whenever possible, use
+a type-safe deallocation call
+(for several types that is the only
+documented deallocation call) 
+and for 
+\f(CWDwarf_Die\fP
+\f(CWDwarf_Attribute\fP
+or
+\f(CWDwarf_Error\fP
+use the
+following dealloc functions instead
+of this one.
+The use of this form remains fully supported,
+.P
+.DS
+\f(CWvoid dwarf_dealloc(Dwarf_Debug dbg, 
+    void *space_to_dealloc,
+    int appropriate_dla_name);\fP
+.DE
+
+.in +2
+.DS
+.FG "Example_dwarf_dealloc()"
+\f(CW
+void exampledealloc(Dwarf_Debug dbg,Dwarf_Die somedie)
+{
+      dwarf_dealloc(dbg,somedie,DW_DLA_DIE);
+}
+\fP
+.DE
+.in -2
+
+.H 3 "dwarf_dealloc_die()"
+The second prototype is only to dealloc a Dwarf_Die.
+Any call to this is typechecked.
+.P
+.DS
+\f(CWvoid dwarf_dealloc_die(Dwarf_Die mydie);\fP
+.DE
+
+.in +2
+.DS
+.FG "Example_dwarf_dealloc_die()"
+\f(CW
+void exampledeallocdie(Dwarf_Die somedie)
+{
+      dwarf_dealloc_die(somedie);
+}
+\fP
+.DE
+.in -2
+
+.H 3 "dwarf_dealloc_error()"
+The second prototype is only to dealloc a Dwarf_Error.
+These arise when some libdwarf call returns DW_DLV_ERROR.
+Any call to this is typechecked.
+.P
+.DS
+\f(CWvoid dwarf_dealloc_error(Dwarf_Debug dbg,
+    Dwarf_Die mydie);\fP
+.DE
+
+.in +2
+.DS
+.FG "Example_dwarf_dealloc_error()"
+\f(CW
+void exampledeallocerror(Dwarf_Debug dbg,Dwarf_Error err)
+{
+      dwarf_dealloc_error(dbg,err);'
+}
+\fP
+.DE
+.in -2
+
+.H 3 "dwarf_dealloc_attribute()"
+The second prototype is only to dealloc a Dwarf_Attribute.
+These arise from calls from
+\f(CWdwarf_attrlist()\fP
+Any call to this is typechecked.
+.P
+.DS
+\f(CWvoid dwarf_dealloc_error(Dwarf_Debug dbg,
+    Dwarf_Die mydie);\fP
+.DE
+
+.in +2
+.DS
+.FG "Example_dwarf_dealloc_attribute()"
+\f(CW
+void exampledeallocerror(Dwarf_Attribute attr)
+{
+      dwarf_dealloc_attribute(attr);'
+}
+\fP
+.DE
+.in -2
+
+
+
+
 .P
 In some cases the pointers returned by a
 \fIlibdwarf\fP call are pointers to data which is
@@ -1707,6 +1837,8 @@ by a call to \f(CWdwarf_siblingof()\fP, the call to
 \f(CWdwarf_dealloc()\fP would be:
 .DS
     \f(CWdwarf_dealloc(dbg, die, DW_DLA_DIE);\fP
+    or, preferably,
+    \f(CWdwarf_dealloc_die(die);\fP
 .DE
 
 To free storage allocated in the form of a list of pointers (opaque
@@ -1720,20 +1852,22 @@ routine that returns a list:
 .DS
 .FG "Example1 dwarf_attrlist()"
 \f(CW
-void example1(Dwarf_Die somedie)
+void example1(Dwarf_Debug dbg,Dwarf_Die somedie)
 {
-    Dwarf_Debug dbg = 0;
-    Dwarf_Signed atcount;
-    Dwarf_Attribute *atlist;
+    Dwarf_Signed atcount = 0;
+    Dwarf_Attribute *atlist = 0;
     Dwarf_Error error = 0;
     Dwarf_Signed i = 0;
-    int errv;
+    int errv = 0;
 
     errv = dwarf_attrlist(somedie, &atlist,&atcount, &error);
     if (errv == DW_DLV_OK) {
         for (i = 0; i < atcount; ++i) {
             /* use atlist[i] */
+            dwarf_dealloc_attribute(atlist[i]);
+            /*  This origiginal form still works.
             dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
+            */
         }
         dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
     }
@@ -3574,7 +3708,10 @@ void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
     res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, &error);
     if (res == DW_DLV_OK) {
         /* Use return_sib here. */
-        dwarf_dealloc(dbg, return_sib, DW_DLA_DIE);
+        dwarf_dealloc_die(return_sib);
+        /*  This original form still works.
+            dwarf_dealloc(dbg, return_sib, DW_DLA_DIE);
+        */
         /*  return_sib is no longer usable for anything, we
             ensure we do not use it accidentally with: */
         return_sib = 0;
@@ -3631,7 +3768,10 @@ void example5(Dwarf_Die in_die)
     res = dwarf_child(in_die,&return_kid, &error);
     if (res == DW_DLV_OK) {
         /* Use return_kid here. */
-        dwarf_dealloc(dbg, return_kid, DW_DLA_DIE);
+        dwarf_dealloc_die(return_kid);
+        /*  The original form of dealloc still works
+            dwarf_dealloc(dbg, return_kid, DW_DLA_DIE);
+            */
         /*  return_die is no longer usable for anything, we
             ensure we do not use it accidentally with: */
         return_kid = 0;
@@ -3696,7 +3836,10 @@ void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
     res = dwarf_offdie_b(dbg,die_offset,is_info,&return_die, &error);
     if (res == DW_DLV_OK) {
         /* Use return_die here. */
-        dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
+        dwarf_dealloc_die(return_die);
+        /*  The original form still works:
+            dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
+        */
         /*  return_die is no longer usable for anything, we
             ensure we do not use it accidentally with: */
         return_die = 0;
@@ -3960,7 +4103,10 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
         return;
     }
     /* do something with cu_die */
-    dwarf_dealloc(dbg,cudie, DW_DLA_DIE);
+    dwarf_dealloc_die(cudie);
+    /*  The original form still works.
+        dwarf_dealloc(dbg,cudie, DW_DLA_DIE);
+    */
 }
 \fPy
 .DE
@@ -4193,7 +4339,10 @@ void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
 
         for (i = 0; i < atcount; ++i) {
             /* use atlist[i] */
-            dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
+            dwarf_dealloc_attribute(atlist[i]);
+            /*  The original form still works.
+                dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
+            */
         }
         dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
     }

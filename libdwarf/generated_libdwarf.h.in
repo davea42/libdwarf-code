@@ -3638,6 +3638,11 @@ Dwarf_Ptr dwarf_seterrarg(Dwarf_Debug /*dbg*/, Dwarf_Ptr /*errarg*/);
 
 void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
     Dwarf_Unsigned /*type*/);
+/*  These convenience functions allow type checking at the call,
+    whereas dwarf_dealloc itself uses void * so ... easy to misuse. */ 
+void dwarf_dealloc_error(Dwarf_Debug /*dbg*/, Dwarf_Error /*err*/);
+void dwarf_dealloc_die( Dwarf_Die /*die*/);
+void dwarf_dealloc_attribute(Dwarf_Attribute /*attr*/);
 
 
 /* DWARF Producer Interface */

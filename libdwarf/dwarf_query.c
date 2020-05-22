@@ -35,6 +35,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_die_deliv.h"
+#include "dwarfstring.h"
 
 #define TRUE 1
 static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
@@ -353,10 +354,8 @@ empty_local_attrlist(Dwarf_Debug dbg,
     }
 }
 
-/*  If the input is improper (see DW_DLV_ERROR)
-    this may leak memory. Such badly formed input
-    should be very very rare.
-
+/*  Now we use *_wrapper here,
+    We cannot leak memory.
 */
 int
 dwarf_attrlist(Dwarf_Die die,
@@ -401,11 +400,29 @@ dwarf_attrlist(Dwarf_Die die,
 
 
     info_ptr = die->di_debug_ptr;
-    SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end);
-    if (info_ptr >= die_info_end) {
-        /* Stepped off the end SKIPping the leb  */
-        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
-        return DW_DLV_ERROR;
+    {
+        /* SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end); */
+        Dwarf_Unsigned ignore_this = 0;
+        Dwarf_Unsigned len = 0;
+
+        lres = _dwarf_decode_u_leb128_chk(info_ptr,
+            &len,&ignore_this,die_info_end); 
+        if (lres == DW_DLV_ERROR) {
+            /* Stepped off the end SKIPping the leb  */
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_DIE_BAD: In building an attrlist "
+                "we run off the end of the DIE while skipping "
+                " the DIE tag, seeing the leb length as 0x%u ",
+                len);
+            _dwarf_error_string(dbg, error, DW_DLE_DIE_BAD,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        info_ptr += len;
     }
 
     do {
@@ -424,7 +441,6 @@ dwarf_attrlist(Dwarf_Die die,
             return res;
         }
         if (attr > DW_AT_hi_user) {
-            dwarf_dealloc(dbg,abbrev_list,DW_DLA_ABBREV_LIST);
             empty_local_attrlist(dbg,head_attr);
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
@@ -471,7 +487,8 @@ dwarf_attrlist(Dwarf_Die die,
             new_attr->ar_attribute_form_direct = attr_form;
             new_attr->ar_attribute_form = attr_form;
             if (attr_form == DW_FORM_indirect) {
-                Dwarf_Unsigned utmp6;
+                Dwarf_Unsigned utmp6 = 0;
+
                 if (_dwarf_reference_outside_section(die,
                     (Dwarf_Small*) info_ptr,
                     ((Dwarf_Small*) info_ptr )+1)) {
@@ -486,8 +503,13 @@ dwarf_attrlist(Dwarf_Die die,
                     return DW_DLV_ERROR;
                 }
 
-                /* DECODE_LEB128_UWORD does info_ptr update */
-                DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,die_info_end);
+                /*  DECODE_LEB128_UWORD does info_ptr update
+                    DECODE_LEB128_UWORD_CK(info_ptr, utmp6,
+                        dbg,error,die_info_end);
+                */
+                res = _dwarf_leb128_uword_wrapper(dbg,
+                    &info_ptr,die_info_end,&utmp6,error);
+    
                 attr_form = (Dwarf_Half) utmp6;
                 new_attr->ar_attribute_form = attr_form;
             }
@@ -513,6 +535,7 @@ dwarf_attrlist(Dwarf_Die die,
             new_attr->ar_cu_context = die->di_cu_context;
             new_attr->ar_debug_ptr = info_ptr;
             new_attr->ar_die = die;
+            new_attr->ar_dbg = dbg;
             if (attr_form == DW_FORM_implicit_const) {
                 /*  The value is here, not in a DIE.
                     Do not increment info_ptr */
@@ -627,8 +650,29 @@ _dwarf_get_value_ptr(Dwarf_Die die,
 
     info_ptr = die->di_debug_ptr;
     /* This ensures and checks die_info_end >= info_ptr */
-    SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end);
+    {
+        /* SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end); */
+        Dwarf_Unsigned ignore_this = 0;
+        Dwarf_Unsigned len = 0;
 
+        lres = _dwarf_decode_u_leb128_chk(info_ptr,
+            &len,&ignore_this,die_info_end);
+        if (lres == DW_DLV_ERROR) {
+            /* Stepped off the end SKIPping the leb  */
+            dwarfstring m;
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_DIE_BAD: In building an attrlist "
+                "we run off the end of the DIE while skipping "
+                " the DIE tag, seeing the leb length as 0x%u ",
+                len);
+            _dwarf_error_string(dbg, error, DW_DLE_DIE_BAD,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+        info_ptr += len;
+    }
     do {
         Dwarf_Unsigned formtmp3 = 0;
         Dwarf_Unsigned atmp3 = 0;
@@ -802,6 +846,7 @@ dwarf_attr(Dwarf_Die die,
     /*  Only nonnull if not DW_FORM_implicit_const */
     attrib->ar_debug_ptr = info_ptr;
     attrib->ar_die = die;
+    attrib->ar_dbg = dbg;
     *ret_attr = (attrib);
     return DW_DLV_OK;
 }

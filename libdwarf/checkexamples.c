@@ -42,7 +42,8 @@ void example1(Dwarf_Die somedie)
     if (errv == DW_DLV_OK) {
         for (i = 0; i < atcount; ++i) {
             /* use atlist[i] */
-            dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
+            dwarf_dealloc_attribute(atlist[i]);
+            atlist[i] = 0;
         }
         dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
     }
@@ -141,7 +142,7 @@ void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
     res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, &error);
     if (res == DW_DLV_OK) {
         /* Use return_sib here. */
-        dwarf_dealloc(dbg, return_sib, DW_DLA_DIE);
+        dwarf_dealloc_die(return_sib);
         /*  return_sib is no longer usable for anything, we
             ensure we do not use it accidentally with: */
         return_sib = 0;
@@ -149,7 +150,7 @@ void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
 }
 
 
-void example5(Dwarf_Debug dbg,Dwarf_Die in_die)
+void example5(Dwarf_Die in_die)
 {
     Dwarf_Die return_kid = 0;
     Dwarf_Error error = 0;
@@ -158,7 +159,7 @@ void example5(Dwarf_Debug dbg,Dwarf_Die in_die)
     res = dwarf_child(in_die,&return_kid, &error);
     if (res == DW_DLV_OK) {
         /* Use return_kid here. */
-        dwarf_dealloc(dbg, return_kid, DW_DLA_DIE);
+        dwarf_dealloc_die(return_kid);
         /*  return_die is no longer usable for anything, we
             ensure we do not use it accidentally with: */
         return_kid = 0;
@@ -174,7 +175,7 @@ void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
     res = dwarf_offdie_b(dbg,die_offset,is_info,&return_die, &error);
     if (res == DW_DLV_OK) {
         /* Use return_die here. */
-        dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
+        dwarf_dealloc_die(return_die);
         /*  return_die is no longer usable for anything, we
             ensure we do not use it accidentally with: */
         return_die = 0;
@@ -202,7 +203,7 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
         return;
     }
     /* do something with cu_die */
-    dwarf_dealloc(dbg,cudie, DW_DLA_DIE);
+    dwarf_dealloc_die(cudie);
 }
 
 
@@ -219,7 +220,8 @@ void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
 
         for (i = 0; i < atcount; ++i) {
             /* use atlist[i] */
-            dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
+            dwarf_dealloc_attribute(atlist[i]);
+            atlist[i] = 0;
         }
         dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
     }
@@ -505,6 +507,7 @@ void example9(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                 not opaque structs. */
             dwarf_dealloc(dbg, llbuf[i]->ld_s, DW_DLA_LOC_BLOCK);
             dwarf_dealloc(dbg,llbuf[i], DW_DLA_LOCDESC);
+            llbuf[i] = 0;
         }
         dwarf_dealloc(dbg, llbuf, DW_DLA_LIST);
     }

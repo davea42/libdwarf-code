@@ -48,9 +48,12 @@ free_aranges_chain(Dwarf_Debug dbg, Dwarf_Chain head)
     }
     next = head->ch_next;
     for( ;cur; cur = next) {
+        void *item = cur->ch_item;
+        int  type = cur->ch_itemtype;
+
         next = cur->ch_next;
-        if (cur->ch_item) {
-            dwarf_dealloc(dbg,cur->ch_item,DW_DLA_ARANGE);
+        if (item && type) {
+            dwarf_dealloc(dbg,item,type);
             cur->ch_item = 0;
             dwarf_dealloc(dbg,cur,DW_DLA_CHAIN);
         }
@@ -321,6 +324,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 }
 
                 curr_chain->ch_item = arange;
+                curr_chain->ch_itemtype = DW_DLA_ARANGE;
                 if (head_chain == NULL)
                     head_chain = prev_chain = curr_chain;
                 else {
@@ -438,7 +442,10 @@ dwarf_get_aranges(Dwarf_Debug dbg,
     /* See also free_aranges_chain() above */
     curr_chain = head_chain;
     for (i = 0; i < arange_count; i++) {
+
+        /*  Copies pointers. No dealloc of ch_item, */
         *(arange_block + i) = curr_chain->ch_item;
+        curr_chain->ch_item = 0;
         prev_chain = curr_chain;
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
@@ -520,12 +527,17 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     curr_chain = head_chain;
     for (i = 0; i < arange_count; i++) {
         Dwarf_Arange ar = curr_chain->ch_item;
+        int itemtype = curr_chain->ch_itemtype;
 
+        curr_chain->ch_item = 0;
         arange_addrs[i] = ar->ar_address;
         arange_offsets[i] = ar->ar_info_offset;
+        
         prev_chain = curr_chain;
         curr_chain = curr_chain->ch_next;
-        dwarf_dealloc(dbg, ar, DW_DLA_ARANGE);
+        if (ar && itemtype) {
+            dwarf_dealloc(dbg, ar, itemtype);
+        }
         dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
     }
     *count = arange_count;

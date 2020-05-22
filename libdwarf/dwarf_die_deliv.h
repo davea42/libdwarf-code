@@ -32,6 +32,8 @@
     This struct holds information about an abbreviation.
     It is put in the hash table for abbreviations for
     a compile-unit.
+
+    It's by dwarf_finish().
 */
 struct Dwarf_Abbrev_List_s {
     Dwarf_Unsigned abl_code;

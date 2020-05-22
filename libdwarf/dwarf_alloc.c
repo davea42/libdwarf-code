@@ -628,6 +628,58 @@ string_is_in_debug_section(Dwarf_Debug dbg,void * space)
     return FALSE;
 }
 
+
+/*  These wrappers for dwarf_dealloc enable type-checking
+    at call points. */
+void 
+dwarf_dealloc_error(Dwarf_Debug dbg, Dwarf_Error err)
+{
+    dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+}
+void 
+dwarf_dealloc_die( Dwarf_Die die)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context context = 0;
+
+    if (!die) {
+#ifdef DEBUG
+        printf("DEALLOC does nothing, die NULL line %d %s\n",
+            __LINE__,__FILE__);
+        fflush(stdout);
+#endif
+        return;
+    }
+    context = die->di_cu_context;
+    if (!context) {
+#ifdef DEBUG
+        printf("DEALLOC does nothing, context NULL line %d %s\n",
+            __LINE__,__FILE__);
+        fflush(stdout);
+#endif
+        return;
+    }
+    dbg = context->cc_dbg;
+    dwarf_dealloc(dbg,die,DW_DLA_DIE);
+}
+
+
+void 
+dwarf_dealloc_attribute(Dwarf_Attribute attr)
+{
+    Dwarf_Debug dbg = 0;
+
+    if (!attr) {
+#ifdef DEBUG
+        printf("DEALLOC does nothing, attr is NULL line %d %s\n",
+            __LINE__,__FILE__);
+        fflush(stdout);
+#endif
+        return;
+    }
+    dbg = attr->ar_dbg;
+    dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+}
 /*
     This function is used to deallocate a region of memory
     that was obtained by a call to _dwarf_get_alloc.  Note
@@ -666,6 +718,8 @@ dwarf_dealloc(Dwarf_Debug dbg,
 #ifdef DEBUG
         printf("DEALLOC does nothing, space NULL line %d %s\n",
             __LINE__,__FILE__);
+        fflush(stdout);
+abort();
 #endif /* DEBUG*/
         return;
     }
@@ -675,6 +729,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
 #ifdef DEBUG
         printf( "DEALLOC does nothing, dbg NULL line %d %s\n",
             __LINE__,__FILE__);
+        fflush(stdout);
 #endif /* DEBUG*/
         return;
     }
@@ -707,20 +762,24 @@ dwarf_dealloc(Dwarf_Debug dbg,
     if(dbg != r->rd_dbg) {
         /*  Something is mixed up. */
 #ifdef DEBUG
-        printf("DEALLOC does nothing, dbg 0x%lx rd_dbg 0x%lx line %d %s\n",
+        printf("DEALLOC does nothing, dbg 0x%lx rd_dbg 0x%lx space 0x%lx line %d %s\n",
             (unsigned long)dbg,
             (unsigned long)r->rd_dbg,
+            (unsigned long)space,
             __LINE__,__FILE__);
+        fflush(stdout);
 #endif /* DEBUG*/
         return;
     }
     if(alloc_type != r->rd_type) {
         /*  Something is mixed up. */
 #ifdef DEBUG
-        printf("DEALLOC does nothing, type 0x%lx rd_type 0x%lx line %d %s\n",
+        printf("DEALLOC does nothing, type 0x%lx rd_type 0x%lx space 0x%lx line %d %s\n",
             (unsigned long)alloc_type,
             (unsigned long)r->rd_type,
+            (unsigned long)space,
             __LINE__,__FILE__);
+        fflush(stdout);
 #endif /* DEBUG*/
         return;
     }
@@ -741,6 +800,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
 #ifdef DEBUG
             printf("DEALLOC does nothing, DE_STATIC line %d %s\n",
                 __LINE__,__FILE__);
+            fflush(stdout);
 #endif /* DEBUG*/
             return;
         }

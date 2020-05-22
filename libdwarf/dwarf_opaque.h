@@ -96,6 +96,7 @@ struct Dwarf_Attribute_s {
         /*  If DW_FORM_implicit const, the value is here, not
             in the DIE. */
     Dwarf_Signed ar_implicit_const;
+    Dwarf_Debug  ar_dbg; /* dbg owning the attr */
 
     Dwarf_Die ar_die;/* Access to the DIE owning the attribute */
     Dwarf_Attribute ar_next;
@@ -706,6 +707,7 @@ int _dwarf_printf(Dwarf_Debug dbg, const char * data);
 typedef struct Dwarf_Chain_s *Dwarf_Chain;
 struct Dwarf_Chain_s {
     void *ch_item;
+    int  ch_itemtype; /* Needed to dealloc chain contents */
     Dwarf_Chain ch_next;
 };
 

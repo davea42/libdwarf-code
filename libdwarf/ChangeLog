@@ -1,3 +1,41 @@
+2020-05-22: David Anderson
+    * dwarf_alloc.c: New functions with proper type checking:
+      dwarf_dealloc_error(), dwarf_dealloc_attribute(),
+      dwarf_dealloc_die().
+    * dwarf_arange.c: Now does correct free_aranges_chain() 
+      and ensures chain entry stuff dealloc-d as appropriate.  
+    * dwarf_die_deliv.c: Improved an error message in reports
+      an address-size error.
+    * dwarf_frame.c: Initialize more local variables at the
+      point of declaration. Do  all needed dealloc of
+      the chain entries 
+      when creating the list.
+    * dwarf_global.c: Now uses the new ch_itemtype
+      to dealloc properly.  Which simplifies the 
+      dealloc_globals_chain() call.
+    * dwarf_line.c:  Now uses the new ch_itemtype
+      to dealloc properly.
+    * dwarf_line_table_reader_common.h: Now uses wrappers
+      for the READ_UNALIGNED_CK DECODE_LEB128_UWORD_CK etc
+      macros so the code
+      now deallocs appropriately in case of error.
+      Most places were not doing full dealloc. Now
+      all are.
+    * dwarf_opaque.h: New field ar_dbg so attribute
+      dealloc is easier.  New chain field ch_itemtype
+      so dealloc is simpler and safer.
+    * dwarf_query.c: Removed comment about leaking memory,
+      the leaks are fixed by using the DECODE_LEB128_UWORD_CK
+      etc wrapper functions.
+    * libdwarf.h.in: Declares the new dealloc functions
+      dwarf_dealloc_error(),dwarf_dealloc_die(),
+      dwarf_dealloc_attribute().
+    * generated_libdwarf.h.in: Regenerated.
+    * libdwarf2.1.mm: New documentation of dwarf_dealloc()
+      as well as documentation of
+      dwarf_dealloc_error(),dwarf_dealloc_die(),
+      dwarf_dealloc_attribute().
+    * libdwarf2.1.pdf: Regenerated. Version 2.94.
 2020-05-19: David Anderson
     * dwarf_rnglists.c: Ommited a crucial assign to rh_debug so it
       leaked if de_alloc_tree absent.

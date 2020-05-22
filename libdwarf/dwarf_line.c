@@ -531,15 +531,15 @@ dwarf_srcfiles(Dwarf_Die die,
     curr_chain = head_chain;
     for (i = 0; i < line_context->lc_file_entry_count; i++) {
         *(ret_files + i) = curr_chain->ch_item;
+        curr_chain->ch_item = 0;
         prev_chain = curr_chain;
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
     }
     /*  Our chain is not recorded in the line_context so
-        the line_context destructor will not destroy our list of strings
-        or our strings.
+        the line_context destructor will not destroy our
+        list of strings or our strings.
         Our caller has to do the deallocations.  */
-
     *srcfiles = ret_files;
     *srcfilecount = line_context->lc_file_entry_count;
     dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
@@ -2063,6 +2063,13 @@ _dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,int count)
     Dwarf_Chain curr_chain = head;
     for (i = 0; i < count; i++) {
         Dwarf_Chain t = curr_chain;
+        void *item = t->ch_item;
+        int itype = t->ch_itemtype;
+
+        if (item && itype) { /* valid DW_DLA types are never 0 */
+            dwarf_dealloc(dbg,item,itype);
+            t->ch_item = 0;
+        }
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, t, DW_DLA_CHAIN);
     }
