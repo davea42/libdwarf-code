@@ -1006,8 +1006,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing Elf object Header  had a problem.",
                 res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
 #endif /* DWARF_WITH_LIBELF */
     }
@@ -1021,8 +1020,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing section groups had a problem.",
                 res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
         /*  If groupnum > 2 this turns off some
             of the gf_flags here so we don't print
@@ -1047,8 +1045,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing .debug_info had a problem.",
                 res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
         reset_overall_CU_error_data();
         res = print_infos(dbg,FALSE,&err);
@@ -1056,8 +1053,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing .debug_types had a problem.",
                 res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
         if (glflags.gf_check_macros) {
             set_global_section_sizes(dbg);
@@ -1118,7 +1114,7 @@ process_one_file(int fd, int tiedfd,
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "printing pubnames data had a problem ",res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
     if (glflags.gf_loc_flag) {
@@ -1142,8 +1138,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing the .debug_abbrev section"
                 " had a problem.",res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
     if (glflags.gf_string_flag) {
@@ -1156,8 +1151,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing the .debug_str section"
                 " had a problem.",res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
     if (glflags.gf_aranges_flag) {
@@ -1170,8 +1164,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing the aranges section"
                 " had a problem.",res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
     if (glflags.gf_ranges_flag) {
@@ -1184,8 +1177,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing the ranges section"
                 " had a problem.",res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
     if (glflags.gf_print_raw_rnglists) {
@@ -1198,8 +1190,7 @@ process_one_file(int fd, int tiedfd,
             print_error_and_continue(dbg,
                 "printing the raw .debug_rnglists section"
                 " had a problem.",res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
     if (glflags.gf_frame_flag || glflags.gf_eh_frame_flag) {
@@ -1225,8 +1216,7 @@ process_one_file(int fd, int tiedfd,
                 print_error_and_continue(dbg,
                     "printing standard frame data had a problem.",
                     sres,err);
-                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-                err = 0;
+                DROP_ERROR_INSTANCE(dbg,sres,err);
             }
         }
         if (glflags.gf_eh_frame_flag) {
@@ -1241,14 +1231,13 @@ process_one_file(int fd, int tiedfd,
                 print_error_and_continue(dbg,
                     "printing eh frame data had a problem.",sres,
                     err);
-                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-                err = 0;
+                DROP_ERROR_INSTANCE(dbg,sres,err);
             }
         }
         addr_map_destroy(lowpcSet);
         addr_map_destroy(map_lowpc_to_name);
         if (cu_die_for_print_frames) {
-            dwarf_dealloc(dbg,cu_die_for_print_frames, DW_DLA_DIE);
+            dwarf_dealloc_die(cu_die_for_print_frames);
         }
     }
     if (glflags.gf_static_func_flag) {
@@ -1260,8 +1249,7 @@ process_one_file(int fd, int tiedfd,
         if (sres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "printing SGI static funcs had a problem.",sres,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,sres,err);
         }
 
     }
@@ -1274,8 +1262,7 @@ process_one_file(int fd, int tiedfd,
         if (sres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "printing SGI static vars had a problem.",sres,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,sres,err);
         }
     }
     /*  DWARF_PUBTYPES is the standard typenames dwarf section.
@@ -1291,16 +1278,14 @@ process_one_file(int fd, int tiedfd,
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "printing pubtypes had a problem.",tres,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,tres,err);
         }
         reset_overall_CU_error_data();
         tres = print_types(dbg, SGI_TYPENAME,&err);
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "printing SGI typenames had a problem.",tres,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,tres,err);
         }
     }
     if (glflags.gf_weakname_flag) {
@@ -1312,21 +1297,20 @@ process_one_file(int fd, int tiedfd,
         if (res3 == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "printing weaknames had a problem.",res3,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,res3,err);
         }
     }
     if (glflags.gf_reloc_flag && elf) {
 #ifdef DWARF_WITH_LIBELF
-        int res = 0;
+        int leres = 0;
         Dwarf_Error err = 0;
+
         reset_overall_CU_error_data();
-        res = print_relocinfo(dbg,&err);
-        if (res == DW_DLV_ERROR) {
+        leres = print_relocinfo(dbg,&err);
+        if (leres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-                "printing relocinfo had a problem.",res,err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+                "printing relocinfo had a problem.",leres,err);
+            DROP_ERROR_INSTANCE(dbg,leres,err);
         }
 #else
         reset_overall_CU_error_data();
@@ -1341,8 +1325,7 @@ process_one_file(int fd, int tiedfd,
         if (nres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "print .debug_names section failed", nres, err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,nres,err);
         }
     }
 
@@ -1373,8 +1356,7 @@ process_one_file(int fd, int tiedfd,
         if (ares == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "print attributes encoding failed", ares, aerr);
-            dwarf_dealloc(dbg,aerr,DW_DLA_ERROR);
-            aerr = 0;
+            DROP_ERROR_INSTANCE(dbg,ares,aerr);
         }
     }
 
@@ -1387,8 +1369,7 @@ process_one_file(int fd, int tiedfd,
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "print tag attributes usage failed", tres, err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,tres,err);
         }
     }
 
@@ -1401,8 +1382,7 @@ process_one_file(int fd, int tiedfd,
         if (lres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "print .debug_str_offsets failed", lres, err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
+            DROP_ERROR_INSTANCE(dbg,lres,err);
         }
     }
 
@@ -1416,9 +1396,7 @@ process_one_file(int fd, int tiedfd,
         if (lres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "print gnu_debuglink data failed", lres, err);
-            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-            err = 0;
-
+            DROP_ERROR_INSTANCE(dbg,lres,err);
         }
     }
     if (glflags.gf_debug_addr_missing_search_by_address) {
@@ -1443,8 +1421,7 @@ process_one_file(int fd, int tiedfd,
         if (dres != DW_DLV_OK) {
             print_error_and_continue(dbg,
                 "dwarf_finish failed on tied dbg", dres, onef_err);
-            dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
-            onef_err = 0;
+            DROP_ERROR_INSTANCE(dbg,dres,onef_err);
         }
         dbgtied = 0;
     }
@@ -1453,10 +1430,8 @@ process_one_file(int fd, int tiedfd,
     if (dres != DW_DLV_OK) {
         print_error_and_continue(dbg,
             "dwarf_finish failed", dres, onef_err);
-        dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
-            dwarf_dealloc(dbg,onef_err,DW_DLA_ERROR);
+        DROP_ERROR_INSTANCE(dbg,dres,onef_err);
         dbg = 0;
-        onef_err = 0;
     }
     printf("\n");
 #ifdef DWARF_WITH_LIBELF
@@ -1567,9 +1542,7 @@ print_error(Dwarf_Debug dbg,
         /*  If dbg was never initialized dwarf_finish
             can do nothing useful. There is no
             global-state for libdwarf to clean up. */
-        if (dwarf_ret_val == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
-        }
+        DROP_ERROR_INSTANCE(dbg,dwarf_ret_val,lerr);
         dwarf_finish(dbg, &ignored_err);
         check_for_major_errors();
     }
@@ -1642,9 +1615,7 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
         " if we should skip this CU or not.",
             tres, skperr);
         *should_skip = FALSE;
-        if (tres == DW_DLV_ERROR){
-            dwarf_dealloc(dbg,skperr,DW_DLA_ERROR);
-        }
+        DROP_ERROR_INSTANCE(dbg,tres,skperr);
         return tres;
     }
     dares = dwarf_attr(cu_die, DW_AT_name, &attrib, &skperr);
@@ -1653,9 +1624,7 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
             " cu die has no DW_AT_name attribute!",
             dares, skperr);
         *should_skip = FALSE;
-        if (tres == DW_DLV_ERROR){
-            dwarf_dealloc(dbg,skperr,DW_DLA_ERROR);
-        }
+        DROP_ERROR_INSTANCE(dbg,dares,skperr);
         return dares;
     }
     fres = dwarf_whatform(attrib, &theform, &skperr);
@@ -1679,14 +1648,14 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
 #if _WIN32
                 if (stricmp(lcun, p)) {
                     /* skip this cu. */
-                    dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+                    dwarf_dealloc_attribute(attrib);
                     *should_skip = TRUE;
                     return DW_DLV_OK;
                 }
 #else
                 if (strcmp(lcun, p)) {
                     /* skip this cu. */
-                    dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+                    dwarf_dealloc_attribute(attrib);
                     *should_skip = TRUE;
                     return DW_DLV_OK;
                 }
@@ -1696,7 +1665,7 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
                 struct esb_s m;
                 int dwarf_names_print_on_error = 1;
 
-                dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+                dwarf_dealloc_attribute(attrib);
                 esb_constructor(&m);
                 esb_append(&m,"In determining if we should "
                     "skip this CU dwarf_formstring "
@@ -1713,7 +1682,7 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
                 return sres;
             } else {
                 /* DW_DLV_NO_ENTRY on the string itself */
-                dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+                dwarf_dealloc_attribute(attrib);
                 *should_skip = FALSE;
                 return sres;
             }
@@ -1726,7 +1695,7 @@ should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
             " be skipped.",
             fres, skperr);
     } /* else DW_DLV_NO_ENTRY */
-    dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
+    dwarf_dealloc_attribute(attrib);
     *should_skip = FALSE;
     return fres;
 }
@@ -1783,7 +1752,7 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         esb_empty_string(&esb_short_cu_name);
         esb_append(&esb_short_cu_name,filename);
         *short_name = esb_get_string(&esb_short_cu_name);
-        dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
+        dwarf_dealloc_attribute(name_attr);
     }
     return ares;
 }
@@ -1821,7 +1790,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             produces. */
         esb_append(producernameout,
             "\"<CU-missing-DW_AT_producer>\"");
-        dwarf_dealloc(dbg,producer_attr,DW_DLA_ATTR);
+        dwarf_dealloc_attribute(producer_attr);
         return ares;
     }
     /*  DW_DLV_OK */
@@ -1829,7 +1798,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         cu_die, dieprint_cu_offset,
         producer_attr, NULL, 0, producernameout,
         0 /*show_form_used*/,0 /* verbose */,err);
-    dwarf_dealloc(dbg,producer_attr,DW_DLA_ATTR);
+    dwarf_dealloc_attribute(producer_attr);
     return ares;
 }
 
@@ -2321,4 +2290,19 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
         }
         DWARF_CHECK_ERROR_PRINT_CU();
     }
+}
+
+/*  This is too much to put in the DROP_ERROR_INSTANCE macro,
+    so we put it here rather arbitrarily.  */
+void  
+report_caller_error_drop_error(int dwdlv,
+    int line, char *fname)
+{
+    printf("\nERROR in dwarfdump:" 
+        " The value passed to the macro DROP_ERROR_INSTANCE "
+        "is not one of the three allowed values, but is "
+        "%d. dwarfdump has a bug. "
+        " See line %d file %s\n",dwdlv,line,fname);
+     glflags.gf_count_major_errors++;
+
 }

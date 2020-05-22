@@ -70,15 +70,9 @@ print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
             DW_PR_XZEROS DW_PR_DUx "):\n",
             sec_name,
             (Dwarf_Unsigned) off);
-        if (lres == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,src_err, DW_DLA_ERROR);
-            src_err = 0;
-        }
+        DROP_ERROR_INSTANCE(dbg,lres,src_err);
     } else {
-        if (ores == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,src_err, DW_DLA_ERROR);
-            src_err = 0;
-        }
+        DROP_ERROR_INSTANCE(dbg,ores,src_err);
         printf("Source lines (for the CU-DIE at unknown location):\n");
     }
 }
@@ -221,8 +215,7 @@ process_line_table(Dwarf_Debug dbg,
                 where = "dwarf_linesrc()";
                 record_line_error(where,aterr);
                 found_line_error = TRUE;
-                dwarf_dealloc(dbg,aterr,DW_DLA_ERROR);
-                aterr = 0;
+                DROP_ERROR_INSTANCE(dbg,sres,aterr);
             }
         }
 
@@ -235,8 +228,7 @@ process_line_table(Dwarf_Debug dbg,
             record_line_error(where,*lt_err);
             found_line_error = TRUE;
             pc = 0;
-            dwarf_dealloc(dbg,*lt_err,DW_DLA_ERROR);
-            *lt_err = 0;
+            DROP_ERROR_INSTANCE(dbg,ares,*lt_err);
         }
         if (ares == DW_DLV_NO_ENTRY) {
             pc = 0;
@@ -249,8 +241,7 @@ process_line_table(Dwarf_Debug dbg,
                 where = "dwarf_linelogical()";
                 record_line_error(where,*lt_err);
                 found_line_error = TRUE;
-                dwarf_dealloc(dbg,*lt_err,DW_DLA_ERROR);
-                *lt_err = 0;
+                DROP_ERROR_INSTANCE(dbg,lires,*lt_err);
             }
             if (lires == DW_DLV_NO_ENTRY) {
                 logicalno = 0;
@@ -263,8 +254,7 @@ process_line_table(Dwarf_Debug dbg,
                 where = "dwarf_lineno()";
                 record_line_error(where,*lt_err);
                 found_line_error = TRUE;
-                dwarf_dealloc(dbg,*lt_err,DW_DLA_ERROR);
-                *lt_err = 0;
+                DROP_ERROR_INSTANCE(dbg,lires,*lt_err);
             }
             if (lires == DW_DLV_NO_ENTRY) {
                 lineno = 0;
@@ -275,6 +265,7 @@ process_line_table(Dwarf_Debug dbg,
                 where = "dwarf_lineoff()";
                 record_line_error(where,*lt_err);
                 found_line_error = TRUE;
+                DROP_ERROR_INSTANCE(dbg,cores,*lt_err);
             }
             if (cores == DW_DLV_NO_ENTRY) {
                 /*  Zero was always the correct default, meaning
@@ -1004,14 +995,12 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 dwarf_errmsg(*err));
             /* Clear error condition */
             glflags.gf_record_dwarf_error = FALSE;
-            dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
-            *err = 0;
         } else {
             print_error_and_continue(dbg,
                 "dwarf_srclines", lres, *err);
-            dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
-            *err = 0;
         }
+        DROP_ERROR_INSTANCE(dbg,lres,*err);
+        return DW_DLV_OK;
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else if (table_count > 0) {

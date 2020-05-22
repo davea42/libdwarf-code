@@ -85,11 +85,23 @@ extern "C" {
 #include "defined_types.h"
 #include "glflags.h"
 
-/* Used to try to avoid leakage when we hide errors. */
-#define DROP_ERROR_INSTANCE(d,r,e)           \
-    if ((r) == DW_DLV_ERROR && (e)) {        \
-        dwarf_dealloc((d),(e),DW_DLA_ERROR); \
-        (e) = 0;                             \
+/*  Used to avoid leakage when we hide errors. 
+    Use carefully: doing err when you mean
+    *err will not be caught by the compiler
+    and will not do what one wants.
+    Using *err when err is correct will
+    be caught by the compiler.  You are warned. */
+#define DROP_ERROR_INSTANCE(d,r,e)        \
+    if ((r) == DW_DLV_ERROR) {            \
+        if (e) {                          \
+            dwarf_dealloc_error((d),(e)); \
+            (e) = 0;                      \
+        }                                 \
+    } else  { if ((r) != DW_DLV_OK &&     \
+        (r) != DW_DLV_NO_ENTRY) {         \
+            report_caller_error_drop_error((r), \
+            __LINE__,__FILE__);           \
+        }                                 \
     }
 
 /* Version 5 returns DW_AT_decl_file differently than earlier versions */
@@ -252,6 +264,9 @@ int print_str_offsets_section(Dwarf_Debug dbg,Dwarf_Error *);
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
 void print_secname(Dwarf_Debug dbg,const char *secname);
+
+void  report_caller_error_drop_error(int dwdlv,
+    int line, char *filename);
 
 #ifdef __cplusplus
 }

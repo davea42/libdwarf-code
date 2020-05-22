@@ -381,7 +381,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     /*  If we fail to get the offsets we won't worry about it. */
     atres = dwarf_die_offsets(cu_die,&dieprint_cu_goffset,
         &cudie_local_offset,err);
-    DROP_ERROR_INSTANCE(dbg,atres,err);
+    DROP_ERROR_INSTANCE(dbg,atres,*err);
     add_macro_import(&macro_check_tree,is_primary, offset);
     add_macro_area_len(&macro_check_tree,offset,ops_total_byte_len);
 

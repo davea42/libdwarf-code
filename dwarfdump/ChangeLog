@@ -1,3 +1,20 @@
+2020-05-21: David Anderson
+    * dwarfdump.c: Now using DROP_ERROR_INSTANCE macro
+      everwhere needed, avoiding the hand-coding.
+      Using dwarf_dealloc_attribute() now.
+    * dwarf_globals.h: Extra parens in DROP_ERROR_INSTANCE
+      for readability, and using dwarf_dealloc_error()
+      in it for type-checking.
+    * print_die.c: Using dwarf_dealloc_attribute() 
+      and dwarf_dealloc_die() now.
+    * print_frames.c: Now we call DROP_ERROR_INSTANCE
+      with the proper arguments as the compiler can type-check
+      that sort of thing. And fixed code to honor
+      its invariants (a function that should not return
+      DW_DLV_ERROR now avoids doing so).
+    * print_lines.c: Also using DROP_ERROR_INSTANCE now.
+    * print_macro.c: Now using DROP_ERROR_INSTANCE
+      and dwarf_dealloc_attribute().
 2020-05-19: David Anderson
     * print_die.c: In an error case failed to dealloc the rnglists head.
 2020-05-19: David Anderson
