@@ -82,7 +82,7 @@ record_line_error(const char *where, Dwarf_Error line_err)
 {
     if (glflags.gf_check_lines && checking_this_compiler()) {
         struct esb_s  tmp_buff;
-        char buftmp[140];
+        char buftmp[ESB_FIXED_ALLOC_SIZE];
 
         esb_constructor_fixed(&tmp_buff,buftmp,sizeof(buftmp));
         esb_append_printf_s(&tmp_buff,
@@ -121,7 +121,7 @@ process_line_table(Dwarf_Debug dbg,
     int ares = 0;
     int lires = 0;
     int cores = 0;
-    char lastsrc_tmp[500];
+    char lastsrc_tmp[ESB_FIXED_ALLOC_SIZE];
     struct esb_s lastsrc;
     Dwarf_Addr elf_max_address = 0;
     Dwarf_Bool SkipRecord = FALSE;
@@ -310,7 +310,7 @@ process_line_table(Dwarf_Debug dbg,
                         if (pc) {
                             if (glflags.gf_check_lines &&
                                 checking_this_compiler()) {
-                                char abuf[40];
+                                char abuf[50];
                                 struct esb_s atm;
 
                                 esb_constructor_fixed(&atm,
@@ -586,7 +586,7 @@ process_line_table(Dwarf_Debug dbg,
                 /* Do not print name. */
             } else {
                 struct esb_s urs;
-                char atmp2[200];
+                char atmp2[ESB_FIXED_ALLOC_SIZE];
 
                 esb_constructor_fixed(&urs,atmp2,sizeof(atmp2));
                 esb_append(&urs, " uri: \"");
@@ -631,7 +631,7 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
     const char *name = 0;
     Dwarf_Small table_count = 0;
     struct esb_s bufr;
-    char bufr_tmp[100];
+    char bufr_tmp[ESB_FIXED_ALLOC_SIZE];
 
     esb_constructor_fixed(&bufr,bufr_tmp,sizeof(bufr_tmp));
     printf("Line Context data\n");
@@ -855,7 +855,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
     if (glflags.gf_do_print_dwarf) {
         struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
+        char buf[ESB_FIXED_ALLOC_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_line",

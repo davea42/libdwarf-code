@@ -145,19 +145,14 @@ special_cat(char *dst,char *src,
     is calculated identically for
     dwarf_srcfiles() and dwarf_filename()
 
-    We sometimes return a string pointer
-    that points inside a dwarfsection,
-    yet sometimes we return a _dwarf_get_alloc allocated string.
-    This is safe because dwarf_dealloc (which users should
-    call eventually)will not actually deallocate
-    a string unless _dwarf_get_alloc allocated the pointed-to area.
-
-    As of March 14 2020 this is converted to *always*
-    do an allocation for the string. dwarf_dealloc
+    As of March 14 2020 this *always*
+    does an allocation for the string. dwarf_dealloc
     is crucial to do no matter what.
     So we have consistency.
 
     dwarf_finish() will do the dealloc if nothing else does.
+    Unless the calling application did the call
+    dwarf_set_de_alloc_flag(0).
 */
 static int
 create_fullest_file_path(Dwarf_Debug dbg,
@@ -176,7 +171,6 @@ create_fullest_file_path(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_NO_FILE_NAME);
         return (DW_DLV_ERROR);
     }
-
     if (_dwarf_file_name_is_full_path((Dwarf_Small *)file_name)) {
         {   unsigned len = strlen(file_name);
             char *tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
@@ -198,10 +192,8 @@ create_fullest_file_path(Dwarf_Debug dbg,
         Dwarf_Unsigned compdirnamelen = 0;
 
         if (line_context->lc_compilation_directory) {
-            /*  This is safe because dwarf_dealloc is careful to not
-                dealloc strings which  dwarf_get_alloc did not
-                allocate.  */
-            comp_dir_name = (char *)line_context->lc_compilation_directory;
+            comp_dir_name = 
+                (char *)line_context->lc_compilation_directory;
             compdirnamelen = strlen(comp_dir_name);
         }
 

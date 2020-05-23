@@ -1,3 +1,10 @@
+May 23, 2020
+  dwarfdump now takes much less malloc() to work, as measured
+  by valgrind --tool=massif  and massif-visualizer.
+  A dwarfdump run that did 2.2Gib of malloc/free before the changes
+  now does 1.4GiB. If you add --suppress-de-alloc-tree
+  to the dwarfdump options dwarfdump uses 1.1GB on the
+  test run.
 December 24, 2018
   Any - or -- option on the dwarfdump command line turns off the
   default set of things to print.  So, for example, instead

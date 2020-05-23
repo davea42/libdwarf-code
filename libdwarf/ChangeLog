@@ -1,3 +1,11 @@
+2020-05-23: David Anderson
+    * dwarf_opaque.h: Defines DWARFSTRING_ALLOC_SIZE   200
+    * dwarf_form.c: Using DWARFSTRING_ALLOC_SIZE for the
+      initial allocation, (mostly) avoiding the need
+      for malloc here.  dwarfstring is mainly used
+      for error messages, so preallocation is rarely useful
+    * dwarf_line.c(create_fullest_file_path): Corrected
+      the comments for this function.
 2020-05-22: David Anderson
     * dwarf_alloc.c: New functions with proper type checking:
       dwarf_dealloc_error(), dwarf_dealloc_attribute(),

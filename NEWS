@@ -1,3 +1,8 @@
+2020-05-23:
+  dwarfdump now takes much less malloc() to work, as measured
+  by valgrind --tool=massif  and massif-visualizer.
+  A dwarfdump run that did 2.2Gib of malloc/free before the changes
+  now does 1.4GiB.
 2020-05-19:
   libdwarf and dwarfdump now support DWARF5 .debug_rnglists.
   The new interfaces are documented in libdwarf/libdwarf2.1.pdf.

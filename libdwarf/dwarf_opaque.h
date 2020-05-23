@@ -451,6 +451,7 @@ struct Dwarf_dbg_sect_s {
     for which many .debug_info (and other) sections may exist.
 */
 #define DWARF_MAX_DEBUG_SECTIONS 50
+#define DWARFSTRING_ALLOC_SIZE   200
 
 
 /*  All the Dwarf_Debug tied-file info in one place.  */

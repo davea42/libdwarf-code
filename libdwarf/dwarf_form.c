@@ -39,6 +39,11 @@
 #define TRUE 1
 #define FALSE 0
 
+/*  It is necessary at times to cause errors of this sort
+    in determining what we really have.  So best to avoid
+    too much malloc and free, hence the static constructor
+    dwarfstring will use malloc if we guess too-small
+    for the size of mbuf. */
 static void
 generate_form_error(Dwarf_Debug dbg,
     Dwarf_Error *error,
@@ -48,9 +53,11 @@ generate_form_error(Dwarf_Debug dbg,
     const char *funcname)
 {
     dwarfstring m;
+    char mbuf[DWARFSTRING_ALLOC_SIZE];
     const char * defaultname = "<unknown form>";
 
-    dwarfstring_constructor(&m);
+    dwarfstring_constructor_static(&m,mbuf,
+        sizeof(mbuf));
     dwarfstring_append(&m,(char *)errname);
     dwarfstring_append(&m,": In function ");
     dwarfstring_append(&m,(char *)funcname);

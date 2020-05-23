@@ -384,7 +384,7 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
         Dwarf_Off outersiboffset = die_stack[i].sibling_die_globaloffset_;
         if (outersiboffset ) {
             if (outersiboffset < innersiboffset) {
-                char small_buf[150];
+                char small_buf[ESB_FIXED_ALLOC_SIZE];
                 Dwarf_Error ouerr = 0;
                 /* safe: all values known length. */
                 struct esb_s pm;
@@ -700,7 +700,7 @@ print_die_secname(Dwarf_Debug dbg,int is_info)
     if (print_as_info_or_cu() && glflags.gf_do_print_dwarf) {
         const char * section_name = 0;
         struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
+        char buf[ESB_FIXED_ALLOC_SIZE];
 
         if (is_info) {
             section_name = ".debug_info";
@@ -1494,7 +1494,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
                 if (parent_sib_val &&
                     (parent_sib_val <= child_overall_offset )) {
-                    char small_buf[180];
+                    char small_buf[ESB_FIXED_ALLOC_SIZE];
                     struct esb_s pm;
 
                     esb_constructor_fixed(&pm,small_buf,
@@ -2121,10 +2121,11 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
     if (string_out) {
         Dwarf_Half theform = 0;
         Dwarf_Half directform = 0;
+        char fsbuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s fstring;
         int fres = 0;
 
-        esb_constructor(&fstring);
+        esb_constructor_fixed(&fstring,fsbuf,sizeof(fsbuf));
         fres  = get_form_values(dbg,attrib,&theform,&directform,err);
         if (fres == DW_DLV_ERROR) {
             return fres;
@@ -2247,7 +2248,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     const char * sec_name = 0;
     Dwarf_Signed i = 0;
     struct esb_s truename;
-    char buf[DWARF_SECNAME_BUFFER_SIZE];
+    char buf[ESB_FIXED_ALLOC_SIZE];
 
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     /* We don't want to set the compress data into the secname here. */
@@ -2405,7 +2406,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         struct esb_s specificationstr;
         Dwarf_Half theform = 0;
         Dwarf_Half directform = 0;
-        char buf[100];
+        char buf[ESB_FIXED_ALLOC_SIZE];
 
         res = get_form_values(dbg,attrib,&theform,&directform,err);
         if (res != DW_DLV_OK) {
@@ -2821,7 +2822,8 @@ print_range_attribute(Dwarf_Debug dbg,
     /*  DW_DLV_NO_ENTRY or DW_DLV_ERROR */
     if (glflags.gf_do_print_dwarf) {
         struct esb_s local;
-        char tmp[100];
+        char tmp[ESB_FIXED_ALLOC_SIZE];
+
         esb_constructor_fixed(&local,tmp,sizeof(tmp));
         esb_append(&local,
             " fails to find DW_AT_ranges offset");
@@ -2893,10 +2895,11 @@ have_a_search_match(const char *valname,const char *atname)
     /*  valname may have had quotes inserted, but search_match_text
         will not. So we need to use a new copy, not valname here.
         */
+    char matchbuf[100]; /* not ESB_FIXED_ALLOC_SIZE ? */
     struct esb_s esb_match;
     char *s2;
 
-    esb_constructor(&esb_match);
+    esb_constructor_fixed(&esb_match,matchbuf,sizeof(matchbuf));
     trim_quotes(valname,&esb_match);
     s2 = esb_get_string(&esb_match);
     if (glflags.search_match_text ) {
@@ -3093,11 +3096,13 @@ handle_location_description(Dwarf_Debug dbg,
     /*  The value is a location description
         or location list. */
     int res = 0;
+    char framebasebuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s framebasestr;
     Dwarf_Half theform = 0;
     Dwarf_Half directform = 0;
 
-    esb_constructor(&framebasestr);
+    esb_constructor_fixed(&framebasestr,framebasebuf,
+        sizeof(framebasebuf));
     res = get_form_values(dbg,attrib,&theform,&directform,err);
     if (res == DW_DLV_ERROR) {
         return res;
@@ -3172,9 +3177,11 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     /* For DWARF4, the high_pc offset from the low_pc */
     Dwarf_Unsigned highpcOff = 0;
     Dwarf_Bool offsetDetected = FALSE;
+    char highpcstrbuf[ESB_FIXED_ALLOC_SIZE]; 
     struct esb_s highpcstr;
 
-    esb_constructor(&highpcstr);
+    esb_constructor_fixed(&highpcstr,highpcstrbuf,
+        sizeof(highpcstrbuf));
     rv = dwarf_whatform(attrib,&theform,err);
     /*  Depending on the form and the attribute,
         process the form. */
@@ -3427,8 +3434,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Attribute attrib = 0;
     Dwarf_Unsigned uval = 0;
     const char * atname = 0;
-    struct esb_s valname;
-    struct esb_s esb_extra;
     int tres = 0;
     Dwarf_Half tag = 0;
     int append_extra_string = 0;
@@ -3436,11 +3441,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     boolean bTextFound = FALSE;
     Dwarf_Bool is_info = FALSE;
     Dwarf_Addr elf_max_address = 0;
-    char valbuf[500];
-    char xtrabuf[200];
+    struct esb_s valname;
+    struct esb_s esb_extra;
+    char valbuf[ESB_FIXED_ALLOC_SIZE*3];
+    char xtrabuf[ESB_FIXED_ALLOC_SIZE];
     int res = 0;
-    esb_constructor_fixed(&esb_extra,valbuf,sizeof(valbuf));
-    esb_constructor_fixed(&valname,xtrabuf,sizeof(xtrabuf));
+
+    esb_constructor_fixed(&esb_extra,xtrabuf,sizeof(xtrabuf));
+    esb_constructor_fixed(&valname,valbuf,sizeof(valbuf));
     is_info = dwarf_get_die_infotypes_flag(die);
     atname = get_AT_name(attr,pd_dwarf_names_print_on_error);
     res = get_address_size_and_max(dbg,0,&elf_max_address,err);
@@ -3656,8 +3664,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 Dwarf_Dsc_Head h = 0;
                 Dwarf_Unsigned arraycount = 0;
                 int sres = 0;
+                char fbuf[ESB_FIXED_ALLOC_SIZE];
 
-                char fbuf[256];
                 esb_constructor_fixed(&bformstr,fbuf,
                     sizeof(fbuf));
                 show_form_itself(glflags.show_form_used,
@@ -3849,7 +3857,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Half directform = 0;
             struct esb_s cfkindstr;
 
-            esb_constructor(&cfkindstr);
             wres = get_form_values(dbg,attrib,
                 &theform,&directform,
                 err);
@@ -3860,6 +3867,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 return wres;
             }
 
+            esb_constructor(&cfkindstr);
             wres = dwarf_formudata (attrib,&tempud, err);
             if (wres == DW_DLV_OK) {
                 kind = tempud;
@@ -3969,9 +3977,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         {
             Dwarf_Half theform = 0;
             int rv;
+            char rsbuf[ESB_FIXED_ALLOC_SIZE];
             struct esb_s rangesstr;
 
-            esb_constructor(&rangesstr);
+            esb_constructor_fixed(&rangesstr,rsbuf,
+                sizeof(rsbuf));
             rv = dwarf_whatform(attrib,&theform,err);
             if (rv == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
@@ -3983,8 +3993,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_destructor(&rangesstr);
                 break;
             }
-
-            esb_empty_string(&rangesstr);
             rv = get_attr_value(dbg, tag,die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt, &rangesstr,
                 glflags.show_form_used,glflags.verbose,err);
@@ -4016,10 +4024,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_MIPS_linkage_name:
         {
         int ml = 0;
+        char linknamebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s linkagenamestr;
 
 
-        esb_constructor(&linkagenamestr);
+        esb_constructor_fixed(&linkagenamestr,linknamebuf,
+            sizeof(linknamebuf));
         ml = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset, attrib, srcfiles,
             cnt, &linkagenamestr, glflags.show_form_used,
@@ -4059,9 +4069,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_name:
     case DW_AT_GNU_template_name:
         {
+        char atnamebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s templatenamestr;
 
-        esb_constructor(&templatenamestr);
+        esb_constructor_fixed(&templatenamestr,atnamebuf,
+            sizeof(atnamebuf));
         tres = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,attrib, srcfiles, cnt,
             &templatenamestr, glflags.show_form_used,
@@ -4234,9 +4246,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_abstract_origin:
     case DW_AT_type:
         {
+        char typebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s lesb;
 
-        esb_constructor(&lesb);
+        esb_constructor_fixed(&lesb,typebuf,
+            sizeof(typebuf));
         tres = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,attrib, srcfiles, cnt, &lesb,
             glflags.show_form_used,glflags.verbose,err);
@@ -4529,10 +4543,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     default:
         {
+            char ebuf[ESB_FIXED_ALLOC_SIZE];
             struct esb_s lesb;
             int dres = 0;
 
-            esb_constructor(&lesb);
+            esb_constructor_fixed(&lesb,ebuf,sizeof(ebuf));
             dres = get_attr_value(dbg, tag,die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt, &lesb,
                 glflags.show_form_used,glflags.verbose,err);
@@ -6822,10 +6837,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         attr == DW_AT_call_file) {
                         Dwarf_Half offset_size=0;
                         int vres = 0;
+                        char declmsgbuf[ESB_FIXED_ALLOC_SIZE];
                         struct esb_s declmsg;
                         char *fname = 0;
 
-                        esb_constructor(&declmsg);
+                        esb_constructor_fixed(&declmsg,declmsgbuf,
+                            sizeof(declmsgbuf));
                         vres = dwarf_get_version_of_die(die,
                             &dwversion,&offset_size);
                         if (srcfiles && vres == DW_DLV_OK) {
@@ -7052,10 +7069,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 theform == DW_FORM_strx3 ||
                 theform == DW_FORM_strx4 ||
                 theform == DW_FORM_GNU_str_index) {
+                char saverbuf[ESB_FIXED_ALLOC_SIZE];
                 struct esb_s saver;
                 Dwarf_Unsigned index = 0;
 
-                esb_constructor(&saver);
+                esb_constructor_fixed(&saver,saverbuf,
+                    sizeof(saverbuf));
                 sres = dwarf_get_debug_str_index(attrib,&index,err);
                 esb_append(&saver,temps);
                 if(sres == DW_DLV_OK) {

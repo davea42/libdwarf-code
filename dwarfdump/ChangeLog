@@ -1,3 +1,8 @@
+2020-05-23: David Anderson
+    * dwarf_globals.h: Define ESB_FIXED_ALLOC_SIZE 380.
+    * print_die.c,print_lines.c,print_pubnames.c: Now using 
+      ESB_FIXED_ALLOC_SIZE in many places to (mostly)
+      avoid any need for malloc/free by the esb functions.
 2020-05-21: David Anderson
     * dwarfdump.c: Now using DROP_ERROR_INSTANCE macro
       everwhere needed, avoiding the hand-coding.

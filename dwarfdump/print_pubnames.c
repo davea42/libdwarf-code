@@ -282,6 +282,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
     Dwarf_Addr elf_max_address = 0;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
     struct esb_s truename;
+    char sanbuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s sanitname;
 
     glflags.current_section_id = DEBUG_PUBNAMES;
@@ -311,7 +312,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     get_true_section_name(dbg,".debug_pubnames",
         &truename,TRUE);
-    esb_constructor(&sanitname);
+    esb_constructor_fixed(&sanitname,sanbuf,sizeof(sanbuf));
     /*  Sanitized cannot be safely reused,there is a static buffer,
         so we make a safe copy. */
     esb_append(&sanitname,sanitized(esb_get_string(&truename)));
@@ -479,6 +480,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 at 'cu_off' to see if we need to skip
                 these pubnames */
             if (cu_die_off != prev_cu_off) {
+                char proname[100];
                 struct esb_s producername;
                 Dwarf_Die lcudie = 0;
 
@@ -502,7 +504,8 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 }
                 /*  Get producer name for this CU
                     and update compiler list */
-                esb_constructor(&producername);
+                esb_constructor_fixed(&producername,proname,
+                    sizeof(proname));
                 dres = get_producer_name(dbg,lcudie,cu_die_off,
                     &producername,err);
                 dwarf_dealloc(dbg,lcudie,DW_DLA_DIE);
