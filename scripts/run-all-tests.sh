@@ -126,6 +126,9 @@ buildreadelfobj() {
   chkres $? "L FAIL: $robld mkdir failed, giving up."
   cd $robld
   chkres $? "M FAIL: cd $robld failed, giving up."
+  # Just safety, we do not care if distclean fails
+  make distclean
+  #
   $rodir/configure --enable-wall $nonstdprintf
   chkres $? "N FAIL: configure $rodir/configure failed, giving up."
   make 

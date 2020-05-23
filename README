@@ -1,3 +1,10 @@
+As of May 22, 2020 libdwarf and dwarfdump
+support DWARF5 .debug_rnglists section content,
+and do much better at containing malloc
+use (dwarf_finish() still cleans up,but
+it's not so crucial now).
+
+=========
 As of September 29, 2018 you will find difficulties
 on FreeBSD 11.2 running make, as default make is not
 gnu-make compatible. The 2018 configure change
