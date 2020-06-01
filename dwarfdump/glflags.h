@@ -233,6 +233,7 @@ struct glflags_s {
     boolean gf_print_str_offsets;
 
     boolean gf_print_raw_rnglists;
+    boolean gf_print_raw_loclists;
 
     unsigned long gf_count_major_errors;
 

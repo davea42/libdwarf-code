@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.94, 20 May 2020
+.ds vE Rev 2.95, 28 May 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -5696,6 +5696,7 @@ please test for it anyway.
 
 .H 3 "dwarf_loclist_from_expr_c()"
 .DS
+\f(CW
 int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Ptr         expression_in,
     Dwarf_Unsigned    expression_length,
@@ -5705,7 +5706,21 @@ int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Loc_Head_c* loc_head,
     Dwarf_Unsigned  * listlen,
     Dwarf_Error     * error);
+\fP
 .DE
+This interface is not sufficient 
+to work properly as it fails to pass in
+data from the Compilation Unit. 
+The earlier versions
+\f(CWdwarf_loclist_from_expr()\fP,
+\f(CWdwarf_loclist_from_expr_a()\fP,
+and
+\f(CWdwarf_loclist_from_expr_b\fP
+are all similarly deficient.
+These suffice for early DWARF locations
+but cannot work for every kind of
+DWARF5 location list or location.
+.P
 Frame operators such as
 DW_CFA_def_cfa_expression have a location expression
 and the location_expression is accessed with

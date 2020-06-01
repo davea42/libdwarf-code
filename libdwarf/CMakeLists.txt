@@ -11,6 +11,7 @@ dwarf_gdbindex.c dwarf_global.c dwarf_groups.c
 dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c 
 dwarf_leb.c 
 dwarf_line.c dwarf_loc.c 
+dwarf_loclists.c
 dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
 dwarf_names.c
 dwarf_object_read_common.c dwarf_object_detector.c

@@ -72,6 +72,7 @@
 #include "dwarf_dsc.h"
 #include "dwarfstring.h"
 #include "dwarf_str_offsets.h"
+#include "dwarf_loclists.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -356,9 +357,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x2c 44 DW_DLA_HASH_TABLE_ENTRY */
     {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 },
 
-    /* 0x2d-0x34 reserved for future internal use. */
-
-    /* 0x2d 45  reserved for future use  */
+    /* 0x2d -0x34 reserved */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x2e 46 reserved for future use  */
@@ -382,8 +381,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x34 52 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x34 52 reserved for future internal use */
-    /* 0x35 53 reserved for future internal use */
+    /* 0x35 53 reserved for future use. */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x36 54 Used starting May 2020  DW_DLA_RNGLISTS_HEAD */

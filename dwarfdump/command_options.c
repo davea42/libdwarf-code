@@ -366,6 +366,7 @@ static void arg_print_macinfo(void);
 static void arg_print_pubnames(void);
 static void arg_print_producers(void);
 static void arg_print_ranges(void);
+static void arg_print_raw_loclists(void);
 static void arg_print_raw_rnglists(void);
 static void arg_print_static(void);
 static void arg_print_static_func(void);
@@ -465,7 +466,8 @@ static const char *usage_long_text[] = {
 "-P   --print-producers   Print list of compile units per producer",
 "-p   --print-pubnames    Print pubnames section",
 "-N   --print-ranges      Print ranges section",
-"     --print-raw-rnglists Print entire rnglists section",
+"     --print-raw-rnglists Print entire .debug_rnglists section",
+"     --print-raw-loclists Print entire .debug_loclists section",
 "-ta  --print-static      Print both static sections",
 "-tf  --print-static-func Print static func section",
 "-tv  --print-static-var  Print static var section",
@@ -752,6 +754,7 @@ enum longopts_vals {
   OPT_PRINT_PRODUCERS,          /* -P   --print-producers   */
   OPT_PRINT_PUBNAMES,           /* -p   --print-pubnames    */
   OPT_PRINT_RANGES,             /* -N   --print-ranges      */
+  OPT_PRINT_RAW_LOCLISTS,       /*      --print-raw-loclists */
   OPT_PRINT_RAW_RNGLISTS,       /*      --print-raw-rnglists */
   OPT_PRINT_STATIC,             /* -ta  --print-static      */
   OPT_PRINT_STATIC_FUNC,        /* -tf  --print-static-func */
@@ -901,6 +904,7 @@ static struct dwoption longopts[] =  {
   {"print-producers",   dwno_argument, 0, OPT_PRINT_PRODUCERS  },
   {"print-pubnames",    dwno_argument, 0, OPT_PRINT_PUBNAMES   },
   {"print-ranges",      dwno_argument, 0, OPT_PRINT_RANGES     },
+  {"print-raw-loclists",dwno_argument, 0, OPT_PRINT_RAW_LOCLISTS},
   {"print-raw-rnglists",dwno_argument, 0, OPT_PRINT_RAW_RNGLISTS},
   {"print-static",      dwno_argument, 0, OPT_PRINT_STATIC     },
   {"print-static-func", dwno_argument, 0, OPT_PRINT_STATIC_FUNC},
@@ -1715,6 +1719,12 @@ void arg_print_raw_rnglists(void)
     glflags.gf_print_raw_rnglists = TRUE;
     suppress_check_dwarf();
 }
+/*  Option '--print-raw-loclists' */
+void arg_print_raw_loclists(void)
+{
+    glflags.gf_print_raw_loclists = TRUE;
+    suppress_check_dwarf();
+}
 
 /*  Option '-o[...]' */
 void arg_o_multiple_selection(void)
@@ -2434,6 +2444,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_PRODUCERS:   arg_print_producers();   break;
         case OPT_PRINT_PUBNAMES:    arg_print_pubnames();    break;
         case OPT_PRINT_RANGES:      arg_print_ranges();      break;
+        case OPT_PRINT_RAW_LOCLISTS:arg_print_raw_loclists();break;
         case OPT_PRINT_RAW_RNGLISTS:arg_print_raw_rnglists();break;
         case OPT_PRINT_STATIC:      arg_print_static();      break;
         case OPT_PRINT_STATIC_FUNC: arg_print_static_func(); break;

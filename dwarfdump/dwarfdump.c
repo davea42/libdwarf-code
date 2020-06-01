@@ -1180,6 +1180,19 @@ process_one_file(int fd, int tiedfd,
             DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
+    if (glflags.gf_print_raw_loclists) {
+        int res = 0;
+        Dwarf_Error err = 0;
+
+        reset_overall_CU_error_data();
+        res = print_raw_all_loclists(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the raw .debug_loclists section"
+                " had a problem.",res,err);
+            DROP_ERROR_INSTANCE(dbg,res,err);
+        }
+    }
     if (glflags.gf_print_raw_rnglists) {
         int res = 0;
         Dwarf_Error err = 0;

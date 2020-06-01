@@ -542,6 +542,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DWARF_INIT_DBG_NULL(465) a dwarf_init*() call the return-dbg argument is null",
     "DW_DLE_ELF_RELOC_SECTION_ERROR(466) A relocation section header link field is incorrect.",
     "DW_DLE_USER_DECLARED_ERROR(467) library user created this.",
-    "DW_DLE_RNGLISTS_ERROR(468) Corrupt dwarf. Incorrupt rnglists code",
+    "DW_DLE_RNGLISTS_ERROR(468) Corrupt dwarf. Bad .debug_rnglists data.",
+    "DW_DLE_LOCLISTS_ERROR(469) Corrupt dwarf. Bad .debug_loclists data.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

@@ -3,28 +3,31 @@
   Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it
+  and/or modify it under the terms of version 2.1 of the
+  GNU Lesser General Public License as published by the Free
+  Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program; if not, write the Free Software
-  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
-  USA.
+  You should have received a copy of the GNU Lesser General
+  Public License along with this program; if not, write the
+  Free Software Foundation, Inc., 51 Franklin Street - Fifth
+  Floor, Boston MA 02110-1301, USA.
 
 */
-
+#if 0
 int
 _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     Dwarf_Block_c *loc_block,Dwarf_Error* error)
@@ -177,13 +180,17 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
         new_loc = prev_loc->lc_next;
         dwarf_dealloc(dbg, prev_loc, DW_DLA_LOC_CHAIN);
     }
-    /* Synthesizing the DW_LLE values. */
-    if(highpc == 0 && lowpc == 0) {
-        locdesc->ld_lle_value =  DW_LLEX_end_of_list_entry;
-    } else if(lowpc == MAX_ADDR) {
-        locdesc->ld_lle_value = DW_LLEX_base_address_selection_entry;
-    } else {
-        locdesc->ld_lle_value = DW_LLEX_offset_pair_entry;
+    /*  Synthesizing the DW_LLE values for the old loclist
+        versions. */
+    if (llhead->ll_lkind == DW_LKIND_expression || 
+        llhead->ll_lkind == DW_LKIND_loclist) {
+        if(highpc == 0 && lowpc == 0) {
+            locdesc->ld_lle_value =  DW_LLE_end_of_list;
+        } else if(lowpc == MAX_ADDR) {
+            locdesc->ld_lle_value = DW_LLE_base_address;
+        } else {
+            locdesc->ld_lle_value = DW_LLE_offset_pair;
+        }
     }
     locdesc->ld_cents = op_count;
     locdesc->ld_s = block_loc;
@@ -196,6 +203,7 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
 }
 
 
+/* Non-standard DWARF4 dwo loclist */
 static int
 _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     Dwarf_Block_c * return_block,
@@ -223,6 +231,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     /* not the same as non-split loclist, but still a list. */
     return_block->bl_from_loclist = 2;
 
+    /* This is non-standard  GNU Dwarf4 loclist */
     return_block->bl_locdesc_offset = sec_offset;
     llecode = *beg;
     locptr = beg +1;
@@ -402,296 +411,212 @@ _dwarf_get_loclist_count_dwo(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  New October 2015
-    This interface requires the use of interface functions
-    to get data from Dwarf_Locdesc_c.  The structures
-    are not visible to callers. */
-int
-dwarf_get_loclist_c(Dwarf_Attribute attr,
-    Dwarf_Loc_Head_c * ll_header_out,
-    Dwarf_Unsigned    * listlen_out,
-    Dwarf_Error     * error)
+dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c ll_header,
+    unsigned int * kind,
+    UNUSED ARG Dwarf_Error  * error)
 {
-    Dwarf_Debug dbg;
+    *kind = ll_header->ll_lkind;
+    return DW_DLV_OK;
+}
 
-    /*  Dwarf_Attribute that describes the DW_AT_location in die, if
-        present. */
-    Dwarf_Attribute loc_attr = attr;
-
-    /* Dwarf_Block that describes a single location expression. */
-    Dwarf_Block_c loc_block;
-
-    Dwarf_Half form = 0;
-    Dwarf_Addr lowpc = 0;
-    Dwarf_Addr highpc = 0;
-    Dwarf_Unsigned     listlen = 0;
-    Dwarf_Locdesc_c  llbuf = 0;
-    Dwarf_Loc_Head_c llhead = 0;
-    Dwarf_CU_Context cucontext = 0;
-    unsigned address_size = 0;
-    int cuvstamp = 0;
-    Dwarf_Bool is_cu = FALSE;
-
-    int blkres = DW_DLV_ERROR;
-    int setup_res = DW_DLV_ERROR;
-
-    /* ***** BEGIN CODE ***** */
-    setup_res = _dwarf_setup_loc(attr, &dbg,&cucontext, &form, error);
-    if (setup_res != DW_DLV_OK) {
-        return setup_res;
+int
+determine_location_lkind(unsigned version, 
+    unsigned form, unsigned attribute,
+    Dwarf_Bool is_dwo)
+{
+    switch(form) {
+    case DW_FORM_exprloc: /* only defined for 
+       DW_CFA_def_cfa_expression */
+    case DW_FORM_block:
+    case DW_FORM_block1:
+    case DW_FORM_block2:
+    case DW_FORM_block4:
+       if (attribute == DW_AT_location) {
+           return DW_LKIND_expression;
+       }
+       break;
+    case DW_FORM_data4:
+    case DW_FORM_data8:
+       if (version > 1 && version < 4 &&
+           attribute == DA_AT_location) {
+           return DW_LKIND_loclist;
+       }
+       break;
+    case DW_FORM_sec_offset:
+       if (version == 5 && 
+           attribute == DA_AT_location) {
+           return DW_LKIND_exp_loclists;
+       }
+       if (version == 4 &&  is_dwo  &&
+           attribute == DA_AT_location) {
+           return DW_LKIND_GNU_exp_list;
+       }
+       break;
+    case DW_FORM_loclistx:
+       if (version == 5 && 
+           attribute == DA_AT_location) {
+           return DW_LKIND_exp_loclists;
+       }
+       break;
+    default:
+       break;
     }
-    cuvstamp = cucontext->cc_version_stamp;
-    address_size = cucontext->cc_address_size;
-    /*  If this is a form_block then it's a location expression. If it's
-        DW_FORM_data4 or DW_FORM_data8  in DWARF2 or DWARF3
-        (or in DWARF4 or 5 a DW_FORM_sec_offset) it's a loclist offset */
-    /* In final DWARF5 the situation changes . FIXME */
-    if (((cuvstamp == DW_CU_VERSION2 || cuvstamp == DW_CU_VERSION3) &&
-        (form == DW_FORM_data4 || form == DW_FORM_data8)) ||
-        ((cuvstamp == DW_CU_VERSION4 || cuvstamp == DW_CU_VERSION5) &&
-        form == DW_FORM_sec_offset)) {
-        /* Here we have a loclist to deal with. */
-        setup_res = context_is_cu_not_tu(cucontext,&is_cu);
-        if(setup_res != DW_DLV_OK) {
-            return setup_res;
-        }
-        if (cucontext->cc_is_dwo) {
-            /*  dwo loclist. If this were a skeleton CU
-                (ie, in the base, not dwo/dwp) then
-                it could not have a loclist.  */
-            /*  A reference to .debug_loc.dwo, with an offset
-                in .debug_loc.dwo of a loclist */
-            /* In DWARF5 the situation changes . FIXME */
-            Dwarf_Unsigned loclist_offset = 0;
-            int off_res  = DW_DLV_ERROR;
-            int count_res = DW_DLV_ERROR;
-            int loclist_count = 0;
-            Dwarf_Unsigned lli = 0;
+    return DW_LKIND_unknown;
+}
 
-            off_res = _dwarf_get_loclist_header_start(dbg,
+
+static int
+_dwarf_original_loclist_build(Dwarf_Debug dbg,
+    Dwarf_Loc_Head_c llhead,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned loclist_offset = 0;
+    int off_res  = DW_DLV_ERROR;
+    int count_res = DW_DLV_ERROR;
+    int loclist_count = 0;
+    Dwarf_Unsigned lli = 0;
+
+    off_res = _dwarf_get_loclist_header_start(dbg,
                 attr, &loclist_offset, error);
-            if (off_res != DW_DLV_OK) {
-                return off_res;
-            }
-            count_res = _dwarf_get_loclist_count_dwo(dbg, loclist_offset,
-                address_size, &loclist_count, error);
-            if (count_res != DW_DLV_OK) {
-                return count_res;
-            }
-            if (loclist_count == 0) {
-                return DW_DLV_NO_ENTRY;
-            }
-            llhead = (Dwarf_Loc_Head_c)_dwarf_get_alloc(dbg,
-                DW_DLA_LOC_HEAD_C, 1);
-            if (!llhead) {
-                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
-            }
-            listlen = loclist_count;
-            llbuf = (Dwarf_Locdesc_c)
-                _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
-            if (!llbuf) {
-                dwarf_loc_head_c_dealloc(llhead);
-                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
-            }
-            llhead->ll_locdesc = llbuf;
-            llhead->ll_locdesc_count = listlen;
-            llhead->ll_from_loclist = 2;
-            llhead->ll_context = cucontext;
-            llhead->ll_dbg = dbg;
-
-            /* New get loc ops, DWO version */
-            for (lli = 0; lli < listlen; ++lli) {
-                int lres = 0;
-                Dwarf_Half lle_op = 0;
-                Dwarf_Bool at_end = 0;
-
-                blkres = _dwarf_read_loc_section_dwo(dbg, &loc_block,
-                    &lowpc,
-                    &highpc,
-                    &at_end,
-                    &lle_op,
-                    loclist_offset,
-                    address_size,
-                    error);
-                if (blkres != DW_DLV_OK) {
-                    dwarf_loc_head_c_dealloc(llhead);
-                    return blkres;
-                }
-                /* Fills in the locdesc op at index lli */
-                lres = _dwarf_get_locdesc_op_c(dbg,
-                    lli,
-                    llhead,
-                    &loc_block,
-                    address_size,
-                    cucontext->cc_length_size,
-                    cucontext->cc_version_stamp,
-                    lowpc,
-                    highpc,
-                    error);
-                if (lres != DW_DLV_OK) {
-                    dwarf_loc_head_c_dealloc(llhead);
-                    /* low level error already set: let it be passed back */
-                    return lres;
-                }
-                /*  Override the syntesized lle value with the
-                    real one. */
-                llhead->ll_locdesc[lli].ld_lle_value = lle_op;
-
-                /* Now get to next loclist entry offset. */
-                loclist_offset = loc_block.bl_section_offset +
-                    loc_block.bl_len;
-            }
-        } else {
-            /*  Non-dwo loclist. If this were a skeleton CU
-                (ie, in the base, not dwo/dwp) then
-                it could not have a loclist.  */
-            /*  A reference to .debug_loc, with an offset
-                in .debug_loc of a loclist */
-            Dwarf_Unsigned loclist_offset = 0;
-            int off_res  = DW_DLV_ERROR;
-            int count_res = DW_DLV_ERROR;
-            int loclist_count = 0;
-            Dwarf_Unsigned lli = 0;
-
-            off_res = _dwarf_get_loclist_header_start(dbg,
-                attr, &loclist_offset, error);
-            if (off_res != DW_DLV_OK) {
-                return off_res;
-            }
-            count_res = _dwarf_get_loclist_count(dbg, loclist_offset,
-                address_size, &loclist_count, error);
-            if (count_res != DW_DLV_OK) {
-                return count_res;
-            }
-            if (loclist_count == 0) {
-                return DW_DLV_NO_ENTRY;
-            }
-            llhead = (Dwarf_Loc_Head_c)_dwarf_get_alloc(dbg,
-                DW_DLA_LOC_HEAD_C, 1);
-            if (!llhead) {
-                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
-            }
-            listlen = loclist_count;
-            llbuf = (Dwarf_Locdesc_c)
-                _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
-            if (!llbuf) {
-                dwarf_loc_head_c_dealloc(llhead);
-                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
-            }
-            llhead->ll_locdesc = llbuf;
-            llhead->ll_locdesc_count = listlen;
-            llhead->ll_from_loclist = 1;
-            llhead->ll_context = cucontext;
-            llhead->ll_dbg = dbg;
-
-            /* New locdesc and Loc,  non-DWO, so old format */
-            for (lli = 0; lli < listlen; ++lli) {
-                int lres = 0;
-                Dwarf_Block_c c;
-                blkres = _dwarf_read_loc_section(dbg, &c,
-                    &lowpc,
-                    &highpc,
-                    loclist_offset,
-                    address_size,
-                    error);
-                if (blkres != DW_DLV_OK) {
-                    dwarf_loc_head_c_dealloc(llhead);
-                    return (blkres);
-                }
-                loc_block.bl_len = c.bl_len;
-                loc_block.bl_data = c.bl_data;
-                loc_block.bl_from_loclist = c.bl_from_loclist;
-                loc_block.bl_section_offset = c.bl_section_offset;
-                loc_block.bl_locdesc_offset = loclist_offset;
-
-                /* Fills in the locdesc at index lli */
-                lres = _dwarf_get_locdesc_op_c(dbg,
-                    lli,
-                    llhead,
-                    &loc_block,
-                    address_size,
-                    cucontext->cc_length_size,
-                    cucontext->cc_version_stamp,
-                    lowpc, highpc,
-                    error);
-                if (lres != DW_DLV_OK) {
-                    dwarf_loc_head_c_dealloc(llhead);
-                    /*  low level error already set:
-                        let it be passed back */
-                    return lres;
-                }
-
-                /* Now get to next loclist entry offset. */
-                loclist_offset = loc_block.bl_section_offset +
-                    loc_block.bl_len;
-            }
-        }
+    if (off_res != DW_DLV_OK) {
+            return off_res;
+    }
+    if (lkind == DW_LKIND_GNU_exp_list) {
+        count_res = _dwarf_get_loclist_count_dwo(dbg,
+            loclist_offset,
+            address_size, &loclist_count, error);
     } else {
-        llhead = (Dwarf_Loc_Head_c)
-            _dwarf_get_alloc(dbg, DW_DLA_LOC_HEAD_C, 1);
-        if (!llhead) {
-            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+        count_res = _dwarf_get_loclist_count(dbg,
+            loclist_offset,
+            address_size, &loclist_count, error);
+    }
+    if (count_res != DW_DLV_OK) {
+            return count_res;
+    }
+    if (loclist_count == 0) {
+            return DW_DLV_NO_ENTRY;
+    }
+
+    listlen = loclist_count;
+    llbuf = (Dwarf_Locdesc_c)
+         _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
+    if (!llbuf) {
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return (DW_DLV_ERROR);
+    }
+    llhead->ll_locdesc = llbuf;
+    llhead->ll_locdesc_count = listlen;
+
+        /* New get loc ops */
+    for (lli = 0; lli < listlen; ++lli) {
+        int lres = 0;
+        Dwarf_Half lle_op = 0;
+        Dwarf_Bool at_end = 0;
+        Dwarf_Loc_Block_c loc_block;
+
+        memset(&loc_block,0,sizeof(loc_block);
+        if( lkind == DW_LKIND_GNU_exp_list) {
+            blkres = _dwarf_read_loc_section_dwo(dbg,
+                &loc_block,
+                &lowpc, &highpc,
+                &at_end, &lle_op,
+                loclist_offset,
+                address_size,
+                error);
+        } else {
+            blkres = _dwarf_read_loc_section(dbg,
+                &loc_block,
+                &lowpc, &highpc,
+                loclist_offset,
+                address_size,
+                error);
         }
-        if( form == DW_FORM_exprloc) {
-            blkres = dwarf_formexprloc(loc_attr,&loc_block.bl_len,
-                &loc_block.bl_data,error);
-            if(blkres != DW_DLV_OK) {
+        if (blkres != DW_DLV_OK) {
+            return blkres;
+        }
+            /* Fills in the locdesc op at index lli */
+        lres = _dwarf_get_locdesc_op_c(dbg,
+                lli,
+                llhead,
+                &loc_block,
+                address_size,
+                cucontext->cc_length_size,
+                cucontext->cc_version_stamp,
+                lowpc,
+                highpc,
+                error);
+        if (lres != DW_DLV_OK) {
+                    return lres;
+        }
+        /* Now get to next loclist entry offset. */
+        loclist_offset = loc_block.bl_section_offset +
+            loc_block.bl_len;
+    }
+}
+
+static int
+_dwarf_original_expression_build(Dwarf_Debug dbg,
+    Dwarf_Loc_Head_c llhead,
+    Dwarf_Error *error)
+{
+
+    Dwarf_Block_c loc_blockc;
+    Dwarf__Unsigned lowpc = 0;
+    Dwarf__Unsigned highpc = 0;
+
+    memset(&loc_blockc,0,sizeof(loc_blockc));
+    if( form == DW_FORM_exprloc) {
+        blkres = dwarf_formexprloc(loc_attr,&loc_blockc.bl_len,
+                &loc_blockc.bl_data,error);
+        if(blkres != DW_DLV_OK) {
                 dwarf_loc_head_c_dealloc(llhead);
                 return blkres;
-            }
-            loc_block.bl_from_loclist = 0;
-            loc_block.bl_section_offset  =
-                (char *)loc_block.bl_data -
-                (char *)dbg->de_debug_info.dss_data;
-            loc_block.bl_locdesc_offset = 0; /* not relevant */
-        } else {
-            Dwarf_Block *tblock = 0;
-            blkres = dwarf_formblock(loc_attr, &tblock, error);
-            if (blkres != DW_DLV_OK) {
-                dwarf_loc_head_c_dealloc(llhead);
-                return (blkres);
-            }
-            loc_block.bl_len = tblock->bl_len;
-            loc_block.bl_data = tblock->bl_data;
-            loc_block.bl_from_loclist = tblock->bl_from_loclist;
-            loc_block.bl_section_offset = tblock->bl_section_offset;
-            loc_block.bl_locdesc_offset = 0; /* not relevant */
-            /*  We copied tblock contents to the stack var, so can dealloc
-                tblock now.  Avoids leaks. */
-            dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
-        listlen = 1; /* One by definition of a location entry. */
-        /*  This hack ensures that the Locdesc_c
-            is marked DW_LLEX_start_end_entry */
-        lowpc = 0;   /* HACK */
-        highpc = (Dwarf_Unsigned) (-1LL); /* HACK */
+        loc_blockc.bl_from_loclist = 0;
+        loc_blockc.bl_section_offset  =
+                (char *)loc_blockc.bl_data -
+                (char *)dbg->de_debug_info.dss_data;
+        loc_blockc.bl_locdesc_offset = 0; /* not relevant */
+    } else {
+        Dwarf_Block loc_block;
 
-        llbuf = (Dwarf_Locdesc_c)
+        memset(&loc_block,0,sizeof(loc_block));
+        blkres = _dwarf_formblock_internal(loc_attr, &locblock,
+            llhead->ll_cucontext,error);
+        if (blkres != DW_DLV_OK) {
+                return blkres;
+        }
+        loc_blockc.bl_len = locblock.bl_len;
+        loc_blockc.bl_data = locblock.bl_data;
+        loc_blockc.bl_from_loclist = locblock.bl_from_loclist;
+        loc_blockc.bl_section_offset = locblock.bl_section_offset;
+        loc_blockc.bl_locdesc_offset = 0; /* not relevant */
+    }
+    listlen = 1; /* One by definition of a location entry. */
+    /*  This hack ensures that the Locdesc_c
+            is marked DW_LLE_start_end */
+    lowpc = 0;   /* HACK */
+    highpc = (Dwarf_Unsigned) (-1LL); /* HACK */
+
+    llbuf = (Dwarf_Locdesc_c)
             _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
-        if (!llbuf) {
-            dwarf_loc_head_c_dealloc(llhead);
+    if (!llbuf) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
-        }
-        llhead->ll_locdesc = llbuf;
-        llhead->ll_locdesc = llbuf;
-        llhead->ll_locdesc_count = listlen;
-        llhead->ll_from_loclist = 0;
-        llhead->ll_context = cucontext;
-        llhead->ll_dbg = dbg;
+    }
+    llhead->ll_locdesc = llbuf;
+    llhead->ll_locdesc_count = listlen;
+    llhead->ll_context = cucontext;
 
-        /*  An empty location description (block length 0) means the
-            code generator emitted no variable, the variable was not
-            generated, it was unused or perhaps never tested after being
-            set. Dwarf2, section 2.4.1 In other words, it is not an
-            error, and we don't test for block length 0 specially here. */
-        /* Fills in the locdesc at index 0 */
-        blkres = _dwarf_get_locdesc_op_c(dbg,
+    /*  An empty location description (block length 0)
+        means the code generator emitted no variable, 
+        the variable was not generated, it was unused
+        or perhaps never tested after being set. Dwarf2,
+        section 2.4.1 In other words, it is not an error,
+        and we don't test for block length 0 specially here.  */
+
+    /* Fills in the locdesc at index 0 */
+    blkres = _dwarf_get_locdesc_op_c(dbg,
             0, /* fake locdesc is index 0 */
             llhead,
             &loc_block,
@@ -700,18 +625,118 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             cucontext->cc_version_stamp,
             lowpc, highpc,
             error);
-        if (blkres != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
+    if (blkres != DW_DLV_OK) {
             /* low level error already set: let it be passed back */
             return blkres;
-        }
     }
+    return DW_DLV_OK;
+}
+
+/*  New October 2015
+    This interface requires the use of interface functions
+    to get data from Dwarf_Locdesc_c.  The structures
+    are not visible to callers. */
+int
+dwarf_get_loclist_c(Dwarf_Attribute attr,
+    Dwarf_Loc_Head_c * ll_header_out,
+    Dwarf_Unsigned   * listlen_out,
+    Dwarf_Error      * error)
+{
+    Dwarf_Debug dbg;
+    Dwarf_Attribute loc_attr = attr;
+    Dwarf_Half form = 0;
+    Dwarf_Addr lowpc = 0;
+    Dwarf_Addr highpc = 0;
+    Dwarf_Unsigned     listlen = 0;
+    Dwarf_Locdesc_c  llbuf = 0;
+    Dwarf_Loc_Head_c llhead = 0;
+    Dwarf_CU_Context cucontext = 0;
+    unsigned address_size = 0;
+    int cuversionstamp = 0;
+    Dwarf_Bool is_cu = FALSE;
+    Dwarf_Unsigned attrnum = 0;
+    int location_kind = 0;
+    Dwarf_Bool is_dwo = 0;
+
+    int blkres = DW_DLV_ERROR;
+    int setup_res = DW_DLV_ERROR;
+    Dwarf_Bool match = FALSE;
+    Dwarf_Bool use_old_interface = FALSE;
+    int lkind = 0;
+
+    FIXME: get attrnum
+    /* ***** BEGIN CODE ***** */
+    setup_res = _dwarf_setup_loc(attr, &dbg,&cucontext, &form, error);
+    if (setup_res != DW_DLV_OK) {
+        return setup_res;
+    }
+    cuversionstamp = cucontext->cc_version_stamp;
+    address_size = cucontext->cc_address_size;
+    
+    is_dwo = cucontext->cc_is_dwo;
+    lkind = determine_location_lkind(version,
+        form, attribute, is_dwo);
+    if (lkind == DW_LKIND_unknown) {
+         FIXME: error
+    }
+    /* Doing this early (first) to avoid repeating the alloc code
+       for each type  */
+    llhead = (Dwarf_Loc_Head_c)
+        _dwarf_get_alloc(dbg, DW_DLA_LOC_HEAD_C, 1);
+    if (!llhead) {
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return (DW_DLV_ERROR);
+    }
+    llhead->ll_cuversion = cuversionstamp;
+    llhead->ll_from_loclist = lkind;
+    llhead->ll_lkind = lkind;
+    llhead->ll_attrnum = attribute;
+    llhead->ll_form = form;
+    llhead->ll_dbg = dbg;
+    llhead->ll_cucontext = cucontext;
+
+    if (lkind == DW_LKIND_loclist ||
+        DW_LKIND_GNU_exp_list) {
+        /* Here we have a loclist to deal with. */
+        setup_res = context_is_cu_not_tu(cucontext,&is_cu);
+        if(setup_res != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(llhead);
+            return setup_res;
+        }
+        res = _dwarf_original_loclist_build(dbg,
+            llhead,error);
+        if (res != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(llhead);
+            return res
+        }
+    } else if (lkind == DW_LKIND_expression) {
+        /* DWARF2,3,4,5 */
+        res = _dwarf_original_expression_build(dbg,
+            llhead,error);
+        if (res != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(llhead);
+            return res
+        }
+    } else if (lkind == DW_LKIND_exp_loclists) {
+        /* DWARF5! */
+        return DW_DLV_NO_ENTRY;
+#if 0
+        res = _dwarf_loclists_expression_build(dbg,
+            llhead,error);
+        if (res != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(llhead);
+            return res
+        }
+#endif
+    }
+
     *ll_header_out = llhead;
     *listlen_out = listlen;
     return (DW_DLV_OK);
 }
 
-/* An interface giving us no cu context! */
+/*  An interface giving us no cu context! 
+    This is not going to be quite right. */
 int
 dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Ptr expression_in,
@@ -754,9 +779,10 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     }
     llhead->ll_locdesc = llbuf;
     llhead->ll_locdesc_count = local_listlen;
-    llhead->ll_from_loclist = 0;
+    llhead->ll_from_loclist = DW_LKIND_expression;
     llhead->ll_context = 0; /* Not available! */
     llhead->ll_dbg = dbg;
+    llhead->ll_lkind = DW_LKIND_expression;
 
     /* An empty location description (block length 0) means the code
     generator emitted no variable, the variable was not generated,
@@ -870,3 +896,4 @@ dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
     }
     dwarf_dealloc(dbg,loclist_head,DW_DLA_LOC_HEAD_C);
 }
+#endif

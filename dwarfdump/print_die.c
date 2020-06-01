@@ -5003,13 +5003,27 @@ get_location_list(Dwarf_Debug dbg,
     Dwarf_Unsigned section_offset = 0;
     Dwarf_Half elf_address_size = 0;
     Dwarf_Addr elf_max_address = 0;
-
+    Dwarf_Half version = 2;
+    Dwarf_Half offset_size = 4;
     /* old and new interfaces differ on signedness.  */
     Dwarf_Signed locentry_count = 0;
     Dwarf_Unsigned ulocentry_count = 0;
     Dwarf_Bool checking = FALSE;
 
-    if (!glflags.gf_use_old_dwarf_loclist) {
+    lres = dwarf_get_version_of_die(die,&version,
+            &offset_size);
+    if (lres != DW_DLV_OK) {
+        /* is DW_DLV_ERROR (see libdwarf query.c) */
+        simple_err_only_return_action(lres,
+            "\nERROR: die or context bad calling "
+            "dwarf_get_version_of_die in get_location_list."
+            " Something is very wrong.");
+        return DW_DLV_NO_ENTRY;
+    }
+
+    
+
+    if (version == DWVERSION5 || !glflags.gf_use_old_dwarf_loclist) {
         lres = dwarf_get_loclist_c(attr,&loclist_head,
             &no_of_elements,llerr);
         if (lres == DW_DLV_ERROR) {
@@ -5021,6 +5035,7 @@ get_location_list(Dwarf_Debug dbg,
             return lres;
         }
     } else {
+        /* DWARF2 loclist. Still used. */
         Dwarf_Signed sno = 0;
         lres = dwarf_loclist_n(attr, &llbufarray, &sno, llerr);
         if (lres == DW_DLV_ERROR) {
@@ -5060,7 +5075,7 @@ get_location_list(Dwarf_Debug dbg,
                 llerr);
             if (lres == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
-                    "ERROR: dwarf_get_loclist_entry_c fails",
+                    "ERROR: dwarf_get_locdesc_entry_c fails",
                     lres, *llerr);
                 return lres;
             } else if (lres == DW_DLV_NO_ENTRY) {

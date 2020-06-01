@@ -1413,28 +1413,24 @@ dwarf_formsdata(Dwarf_Attribute attr,
     return DW_DLV_ERROR;
 }
 
-
 int
-dwarf_formblock(Dwarf_Attribute attr,
-    Dwarf_Block ** return_block, Dwarf_Error * error)
+_dwarf_formblock_internal(Dwarf_Debug dbg,
+    Dwarf_Attribute attr,
+    Dwarf_CU_Context cu_context,
+    Dwarf_Block * return_block,
+    Dwarf_Error * error)
 {
-    Dwarf_CU_Context cu_context = 0;
-    Dwarf_Debug dbg = 0;
-    Dwarf_Unsigned length = 0;
-    Dwarf_Small *data = 0;
-    Dwarf_Block *ret_block = 0;
     Dwarf_Small *section_start = 0;
     Dwarf_Small *section_end = 0;
     Dwarf_Unsigned section_length = 0;
+    Dwarf_Unsigned length = 0;
+    Dwarf_Small *data = 0;
 
-    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
     section_start =
-        _dwarf_calculate_info_section_start_ptr(cu_context,&section_length);
+        _dwarf_calculate_info_section_start_ptr(cu_context,
+        &section_length);
 
     switch (attr->ar_attribute_form) {
 
@@ -1471,9 +1467,9 @@ dwarf_formblock(Dwarf_Attribute attr,
             DW_DLE_ATTR_FORM_BAD,
             "DW_DLE_ATTR_FORM_BAD",
             "dwarf_formblock");
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
-
+    /*  We have the data. Check for errors. */
     if (length >= section_length) {
         /*  Sanity test looking for wraparound:
             when length actually added in
@@ -1484,7 +1480,7 @@ dwarf_formblock(Dwarf_Attribute attr,
             "DW_DLE_FORM_BLOCK_LENGTH_ERROR: "
             "The length of the block is greater "
             "than the section length! Corrupt Dwarf.");
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if ((attr->ar_debug_ptr + length) > section_end) {
         _dwarf_error_string(dbg, error,
@@ -1493,7 +1489,7 @@ dwarf_formblock(Dwarf_Attribute attr,
             "The block length means the block "
             "runs off the end of the section length!"
             " Corrupt Dwarf.");
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (data > section_end) {
         _dwarf_error_string(dbg, error,
@@ -1503,7 +1499,7 @@ dwarf_formblock(Dwarf_Attribute attr,
             "past the end of the section!"
             " Corrupt Dwarf.");
         _dwarf_error(dbg, error, DW_DLE_FORM_BLOCK_LENGTH_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if ((data + length) > section_end) {
         _dwarf_error_string(dbg, error,
@@ -1512,23 +1508,46 @@ dwarf_formblock(Dwarf_Attribute attr,
             "The end of the block content is "
             "past the end of the section!"
             " Corrupt Dwarf.");
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
+    return_block->bl_len = length;
+    return_block->bl_data = data;
+    /*  This struct is public so use the old name instead
+        of what we now would call it:  bl_kind  */
+    return_block->bl_from_loclist =  DW_LKIND_expression;
+    return_block->bl_section_offset =  data - section_start;
+    return DW_DLV_OK;
+}
 
-    ret_block = (Dwarf_Block *) _dwarf_get_alloc(dbg, DW_DLA_BLOCK, 1);
-    if (ret_block == NULL) {
+int
+dwarf_formblock(Dwarf_Attribute attr,
+    Dwarf_Block ** return_block, Dwarf_Error * error)
+{
+    Dwarf_CU_Context cu_context = 0;
+    Dwarf_Debug dbg = 0;
+    Dwarf_Block local_block;
+    Dwarf_Block *out_block = 0;
+    int res = 0;
+
+    memset(&local_block,0,sizeof(local_block));
+    res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    res = _dwarf_formblock_internal(dbg,attr,
+        cu_context, &local_block, error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    out_block = (Dwarf_Block *)
+        _dwarf_get_alloc(dbg, DW_DLA_BLOCK, 1);
+    if (out_block == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
-
-    ret_block->bl_len = length;
-    ret_block->bl_data = (Dwarf_Ptr) data;
-    ret_block->bl_from_loclist = 0;
-    ret_block->bl_section_offset = data - section_start;
-
-
-    *return_block = ret_block;
-    return (DW_DLV_OK);
+    *out_block = local_block;
+    *return_block = out_block;
+    return DW_DLV_OK;
 }
 
 int

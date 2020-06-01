@@ -71,6 +71,11 @@
 
 */
 
+struct Dwarf_Rnglists_Context_s;
+typedef struct Dwarf_Rnglists_Context_s *Dwarf_Rnglists_Context;
+struct Dwarf_Loclists_Context_s;
+typedef struct Dwarf_Loclists_Context_s *Dwarf_Loclists_Context;
+
 struct Dwarf_Die_s {
     Dwarf_Byte_Ptr di_debug_ptr;
     Dwarf_Abbrev_List di_abbrev_list;
@@ -242,13 +247,14 @@ struct Dwarf_CU_Context_s {
     /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
         but was unused. See dwarf_die_deliv.c for details. */
     Dwarf_Unsigned cc_ranges_base;   /* unused */
-    /*  FIXME from DW_AT_rnglists_base in CU DIE */
+    /*  from DW_AT_rnglists_base in CU DIE */
     Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
-    /*  FIXME from DW_AT_str_offsets_base in CU DIE */
+    /*  from DW_AT_str_offsets_base in CU DIE */
     Dwarf_Unsigned cc_str_offsets_base;
+    /*  From DW_AT_loclists_base */
+    Dwarf_Unsigned cc_loclists_base;
 
     char *     cc_dwo_name;
-    Dwarf_Unsigned cc_loclists_base;
     /* === END DEBUG FISSION (Split Dwarf) data */
 
     /*  Global section offset to the bytes of the CU die for this CU.
@@ -629,6 +635,12 @@ struct Dwarf_Debug_s {
         rnglists context instances */
     Dwarf_Rnglists_Context *  de_rnglists_context;
 
+    /*  For the .debug_loclists[.dwo] section */
+    Dwarf_Unsigned de_loclists_context_count;
+    /*  pointer to array of pointers to
+        loclists context instances */
+    Dwarf_Loclists_Context *  de_loclists_context;
+
     /* Following for the .gdb_index section.  */
     struct Dwarf_Section_s de_debug_gdbindex;
 
@@ -741,6 +753,7 @@ int _dwarf_load_section(Dwarf_Debug,
     Dwarf_Error *);
 
 void _dwarf_dealloc_rnglists(Dwarf_Debug dbg);
+void _dwarf_dealloc_loclists(Dwarf_Debug dbg);
 
 int _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
@@ -975,6 +988,12 @@ Dwarf_Byte_Ptr _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context,
 
 Dwarf_Byte_Ptr _dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context);
 Dwarf_Byte_Ptr _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context);
+
+int _dwarf_formblock_internal(Dwarf_Debug dbg,
+    Dwarf_Attribute attr,
+    Dwarf_CU_Context cu_context,
+    Dwarf_Block * return_block,
+    Dwarf_Error * error);
 
 int _dwarf_extract_data16(Dwarf_Debug dbg,
     Dwarf_Small *data,
