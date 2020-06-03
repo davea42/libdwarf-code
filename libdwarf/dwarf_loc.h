@@ -194,6 +194,7 @@ struct Dwarf_Locdesc_c_s {
 
     /* Pointer to our header (in which we are located). */
     Dwarf_Loc_Head_c ld_loclist_head;
+    Dwarf_Locdesc_c  ld_next; /*helps building the locdescs*/
 };
 
 /*  A 'header' to the loclist and  the
@@ -223,12 +224,13 @@ struct Dwarf_Loc_Head_c_s {
     Dwarf_Unsigned   ll_index;
     Dwarf_Loclists_Context ll_localcontext;
 
-    Dwarf_Locdesc_c  ll_loclists_entries;
+    /* array of pointers */
+    Dwarf_Locdesc_c *ll_loclists_entries;
+    Dwarf_Unsigned   ll_count;
     /*  rh_last and rh_first used during build-up.
         Zero when array rh_loclists built. */
     Dwarf_Locdesc_c  ll_first;
     Dwarf_Locdesc_c  ll_last;
-    Dwarf_Unsigned   ll_count;
     Dwarf_Unsigned   ll_bytes_total;
     unsigned         ll_segment_selector_size;
 
@@ -244,8 +246,9 @@ struct Dwarf_Loc_Head_c_s {
         if such is needed. */
     Dwarf_Bool       ll_cu_addr_base_present;
     Dwarf_Unsigned   ll_cu_addr_base;
-    Dwarf_Small    * ll_rlepointer;
-    Dwarf_Unsigned   ll_rlearea_offset;
+
+    Dwarf_Small    * ll_llepointer;
+    Dwarf_Unsigned   ll_llearea_offset;
     Dwarf_Small    * ll_end_data_area;
 };
 

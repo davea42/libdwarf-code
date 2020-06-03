@@ -125,8 +125,9 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-print_die.$(OBJEXT) dwarfdump-print_dnames.$(OBJEXT) \
 	dwarfdump-print_frames.$(OBJEXT) \
 	dwarfdump-print_gdbindex.$(OBJEXT) \
-	dwarfdump-print_lines.$(OBJEXT) dwarfdump-print_locs.$(OBJEXT) \
-	dwarfdump-print_macro.$(OBJEXT) \
+	dwarfdump-print_lines.$(OBJEXT) \
+	dwarfdump-print_loclists.$(OBJEXT) \
+	dwarfdump-print_locs.$(OBJEXT) dwarfdump-print_macro.$(OBJEXT) \
 	dwarfdump-print_macros.$(OBJEXT) \
 	dwarfdump-print_pubnames.$(OBJEXT) \
 	dwarfdump-print_ranges.$(OBJEXT) \
@@ -605,6 +606,7 @@ print_frames.c \
 print_frames.h \
 print_gdbindex.c \
 print_lines.c \
+print_loclists.c \
 print_locs.c \
 print_macro.c \
 print_macros.c \
@@ -811,6 +813,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_frames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_gdbindex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_lines.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_loclists.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_locs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_macro.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_macros.Po@am__quote@
@@ -1191,6 +1194,20 @@ dwarfdump-print_lines.obj: print_lines.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_lines.c' object='dwarfdump-print_lines.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_lines.obj `if test -f 'print_lines.c'; then $(CYGPATH_W) 'print_lines.c'; else $(CYGPATH_W) '$(srcdir)/print_lines.c'; fi`
+
+dwarfdump-print_loclists.o: print_loclists.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_loclists.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_loclists.Tpo -c -o dwarfdump-print_loclists.o `test -f 'print_loclists.c' || echo '$(srcdir)/'`print_loclists.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_loclists.Tpo $(DEPDIR)/dwarfdump-print_loclists.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_loclists.c' object='dwarfdump-print_loclists.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_loclists.o `test -f 'print_loclists.c' || echo '$(srcdir)/'`print_loclists.c
+
+dwarfdump-print_loclists.obj: print_loclists.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_loclists.obj -MD -MP -MF $(DEPDIR)/dwarfdump-print_loclists.Tpo -c -o dwarfdump-print_loclists.obj `if test -f 'print_loclists.c'; then $(CYGPATH_W) 'print_loclists.c'; else $(CYGPATH_W) '$(srcdir)/print_loclists.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_loclists.Tpo $(DEPDIR)/dwarfdump-print_loclists.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_loclists.c' object='dwarfdump-print_loclists.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_loclists.obj `if test -f 'print_loclists.c'; then $(CYGPATH_W) 'print_loclists.c'; else $(CYGPATH_W) '$(srcdir)/print_loclists.c'; fi`
 
 dwarfdump-print_locs.o: print_locs.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_locs.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_locs.Tpo -c -o dwarfdump-print_locs.o `test -f 'print_locs.c' || echo '$(srcdir)/'`print_locs.c

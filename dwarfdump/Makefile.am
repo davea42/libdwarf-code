@@ -56,6 +56,7 @@ print_frames.c \
 print_frames.h \
 print_gdbindex.c \
 print_lines.c \
+print_loclists.c \
 print_locs.c \
 print_macro.c \
 print_macros.c \

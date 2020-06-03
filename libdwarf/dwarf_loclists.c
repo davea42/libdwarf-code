@@ -752,10 +752,11 @@ int dwarf_get_loclist_lle(
 
     res = read_single_lle_entry(dbg,
         data,entry_offset,enddata,
-        address_size,
-        entrylen,
+        address_size, entrylen,
         entry_kind, entry_operand1, entry_operand2,
-        ops_blocksize,ops_offset,opsdata,
+        ops_blocksize,
+        ops_offset,
+        opsdata,
         err);
     return res;
 }
@@ -896,14 +897,14 @@ alloc_rle_and_append_to_list(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     memset(e,0,sizeof(struct Dwarf_Locdesc_c_s));
-    if (rctx->rh_first) {
-        rctx->rh_last->rle_next = e;
-        rctx->rh_last = e;
+    if (rctx->ll_first) {
+        rctx->ll_last->ld_next = e;
+        rctx->ll_last = e;
     } else {
-        rctx->rh_first = e;
-        rctx->rh_last = e;
+        rctx->ll_first = e;
+        rctx->ll_last = e;
     }
-    rctx->rh_count++;
+    rctx->ll_count++;
     *e_out = e;
     return DW_DLV_OK;
 }
@@ -921,19 +922,19 @@ build_array_of_lle(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     int res = 0;
-    Dwarf_Small * data        = rctx->rh_llepointer;
-    Dwarf_Unsigned dataoffset = rctx->rh_llearea_offset;
-    Dwarf_Small *enddata      = rctx->rh_end_data_area;
-    unsigned address_size     = rctx->rh_address_size;
+    Dwarf_Small * data        = rctx->ll_llepointer;
+    Dwarf_Unsigned dataoffset = rctx->ll_llearea_offset;
+    Dwarf_Small *enddata      = rctx->ll_end_data_area;
+    unsigned address_size     = rctx->ll_address_size;
     Dwarf_Unsigned bytescounttotal= 0;
     Dwarf_Unsigned latestbaseaddr = 0;
     unsigned foundbaseaddr        = FALSE;
     int done = FALSE;
 
-    if (rctx->rh_cu_base_address_present) {
+    if (rctx->ll_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
             and it is a base address. */
-        latestbaseaddr = rctx->rh_cu_base_address;
+        latestbaseaddr = rctx->ll_cu_base_address;
         foundbaseaddr  = TRUE;
     }
     for( ; !done  ; ) {
@@ -944,11 +945,16 @@ build_array_of_lle(Dwarf_Debug dbg,
         Dwarf_Addr addr1= 0;
         Dwarf_Addr addr2 = 0;
         Dwarf_Locdesc_c e = 0;
+        Dwarf_Unsigned opsblocksize  = 0;
+        Dwarf_Unsigned opsoffset  = 0;
+        Dwarf_Small *ops = 0;
 
-        res = read_single_rle_entry(dbg,
+        res = read_single_lle_entry(dbg,
             data,dataoffset, enddata,
             address_size,&entrylen,
-            &code,&val1, &val2,error);
+            &code,&val1, &val2,
+            &opsblocksize,&opsoffset,&ops,
+            error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -956,10 +962,11 @@ build_array_of_lle(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        e->rle_code = code,
-        e->rle_entrylen = entrylen;
-        e->rle_raw1 = val1;
-        e->rle_raw2 = val2;
+        e->ld_kind = rctx->ll_kind;
+        e->ld_lle_value = code,
+        e->ld_entrylen = entrylen;
+        e->ld_rawlow = val1;
+        e->ld_rawhigh = val2;
         bytescounttotal += entrylen;
         data += entrylen;
         if (code == DW_LLE_end_of_list) {
@@ -970,61 +977,61 @@ build_array_of_lle(Dwarf_Debug dbg,
         case DW_LLE_base_addressx:
             foundbaseaddr = TRUE;
             res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val1,
+                dbg,rctx->ll_context,val1,
                 &addr1,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
-            e->rle_cooked1 = addr1;
+            e->ld_lopc = addr1;
             latestbaseaddr = addr1;
             break;
         case DW_LLE_startx_endx:
             res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val1,
+                dbg,rctx->ll_context,val1,
                 &addr1,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
             res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val2,
+                dbg,rctx->ll_context,val2,
                 &addr2,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
-            e->rle_cooked1 = addr1;
-            e->rle_cooked2 = addr2;
+            e->ld_lopc = addr1;
+            e->ld_highpc = addr2;
             break;
         case DW_LLE_startx_length:
             res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val1,
+                dbg,rctx->ll_context,val1,
                 &addr1,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
-            e->rle_cooked1 = addr1;
-            e->rle_cooked2 = val2+addr1;
+            e->ld_lopc = addr1;
+            e->ld_highpc = val2+addr1;
             break;
         case DW_LLE_offset_pair:
             if(foundbaseaddr) {
-                e->rle_cooked1 = val1+latestbaseaddr;
-                e->rle_cooked2 = val2+latestbaseaddr;
+                e->ld_lopc = val1+latestbaseaddr;
+                e->ld_highpc = val2+latestbaseaddr;
             } else {
-                e->rle_cooked1 = val1+rctx->rh_cu_base_address;
-                e->rle_cooked2 = val2+rctx->rh_cu_base_address;
+                e->ld_lopc = val1+rctx->ll_cu_base_address;
+                e->ld_highpc = val2+rctx->ll_cu_base_address;
             }
             break;
         case DW_LLE_base_address:
             foundbaseaddr = TRUE;
             latestbaseaddr = val1;
-            e->rle_cooked1 = val1;
+            e->ld_lopc = val1;
             break;
         case DW_LLE_start_end:
-            e->rle_cooked1 = val1;
-            e->rle_cooked2 = val2;
+            e->ld_lopc = val1;
+            e->ld_highpc = val2;
             break;
         case DW_LLE_start_length:
-            e->rle_cooked1 = val1;
-            e->rle_cooked2 = val2+val1;
+            e->ld_lopc = val1;
+            e->ld_highpc = val2+val1;
             break;
         default: {
             dwarfstring m;
@@ -1043,14 +1050,14 @@ build_array_of_lle(Dwarf_Debug dbg,
         }
         }
     }
-    if (rctx->rh_count > 0) {
+    if (rctx->ll_count > 0) {
         Dwarf_Locdesc_c* array = 0;
         Dwarf_Locdesc_c cur = 0;
         Dwarf_Unsigned i = 0;
 
         /*  Creating an array of pointers. */
         array = (Dwarf_Locdesc_c*)malloc(
-            rctx->rh_count *sizeof(Dwarf_Locdesc_c));
+            rctx->ll_count *sizeof(Dwarf_Locdesc_c));
         if (!array) {
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: Out of memory in "
@@ -1058,16 +1065,16 @@ build_array_of_lle(Dwarf_Debug dbg,
                 "into a pointer array");
             return DW_DLV_ERROR;
         }
-        cur = rctx->rh_first;
-        for (  ; i < rctx->rh_count; ++i) {
+        cur = rctx->ll_first;
+        for (  ; i < rctx->ll_count; ++i) {
             array[i] = cur;
-            cur = cur->rle_next;
+            cur = cur->ld_next;
         }
-        rctx->rh_loclists = array;
-        rctx->rh_first = 0;
-        rctx->rh_last = 0;
+        rctx->ll_loclists_entries = array;
+        rctx->ll_first = 0;
+        rctx->ll_last = 0;
     }
-    rctx->rh_bytes_total = bytescounttotal;
+    rctx->ll_bytes_total = bytescounttotal;
     return DW_DLV_OK;
 }
 
@@ -1081,7 +1088,7 @@ dwarf_loclists_get_lle_head(
     Dwarf_Unsigned attr_val,
     Dwarf_Loc_Head_c *head_out,
     Dwarf_Unsigned      *entries_count_out,
-    Dwarf_Unsigned      *global_offset_of_rle_set,
+    Dwarf_Unsigned      *global_offset_of_lle_set,
     Dwarf_Error         *error)
 {
     int res = 0;
@@ -1093,7 +1100,7 @@ dwarf_loclists_get_lle_head(
     Dwarf_Loclists_Context rctx = 0;
     Dwarf_Unsigned entrycount = 0;
     unsigned offsetsize = 0;
-    Dwarf_Unsigned rle_global_offset = 0;
+    Dwarf_Unsigned lle_global_offset = 0;
     Dwarf_Loc_Head_c lhead = 0;
     Dwarf_CU_Context ctx = 0;
     struct Dwarf_Loc_Head_c_s shead;
@@ -1163,28 +1170,28 @@ dwarf_loclists_get_lle_head(
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    shead.rh_context = ctx;
-    shead.rh_localcontext = rctx;
-    shead.rh_index = loclists_contextnum;
-    shead.rh_version = rctx->lc_version;
-    shead.rh_offset_size = offsetsize;
-    shead.rh_address_size  = rctx->lc_address_size;
-    shead.rh_segment_selector_size =
+    shead.ll_context = ctx;
+    shead.ll_localcontext = rctx;
+    shead.ll_index = loclists_contextnum;
+    shead.ll_cuversion = rctx->lc_version;
+    shead.ll_offset_size = offsetsize;
+    shead.ll_address_size  = rctx->lc_address_size;
+    shead.ll_segment_selector_size =
         rctx->lc_segment_selector_size;
 
     /*  DW_AT_loclists_base from CU */
-    shead.rh_at_loclists_base_present =
+    shead.ll_at_loclists_base_present =
         ctx->cc_loclists_base_present;
-    shead.rh_at_loclists_base =  ctx->cc_loclists_base;
+    shead.ll_at_loclists_base =  ctx->cc_loclists_base;
 
     /*  DW_AT_low_pc, if present.  From CU */
-    shead.rh_cu_base_address_present = ctx->cc_low_pc_present;
-    shead.rh_cu_base_address = ctx->cc_low_pc;
+    shead.ll_cu_base_address_present = ctx->cc_low_pc_present;
+    shead.ll_cu_base_address = ctx->cc_low_pc;
 
     /*  base address DW_AT_addr_base of our part of
         .debug_addr, from CU */
-    shead.rh_cu_addr_base = ctx->cc_addr_base;
-    shead.rh_cu_addr_base_present = ctx->cc_addr_base_present;
+    shead.ll_cu_addr_base = ctx->cc_addr_base;
+    shead.ll_cu_addr_base_present = ctx->cc_addr_base_present;
     if (is_loclistx) {
         Dwarf_Unsigned table_entryval = 0;
 
@@ -1193,41 +1200,42 @@ dwarf_loclists_get_lle_head(
             DW_DLV_ERROR */
         READ_UNALIGNED_CK(dbg,table_entryval, Dwarf_Unsigned,
             table_entry,offsetsize,error,enddata);
-        rle_global_offset = rctx->lc_offsets_off_in_sect +
+        lle_global_offset = rctx->lc_offsets_off_in_sect +
             table_entryval;
     } else {
-        rle_global_offset = attr_val;
+        lle_global_offset = attr_val;
     }
 
-    shead.rh_rlepointer = rctx->lc_offsets_array +
+    shead.ll_llepointer = rctx->lc_offsets_array +
         rctx->lc_offset_entry_count*offsetsize;
-    shead.rh_end_data_area = enddata;
+    shead.ll_end_data_area = enddata;
 
-    shead.rh_rlearea_offset = rle_global_offset;
-    shead.rh_rlepointer = rle_global_offset +
+    shead.ll_llearea_offset = lle_global_offset;
+    shead.ll_llepointer = lle_global_offset +
         dbg->de_debug_loclists.dss_data;
     lhead = (Dwarf_Loc_Head_c)
         _dwarf_get_alloc(dbg,DW_DLA_LOCLISTS_HEAD,1);
     if (!lhead) {
         _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
             "Allocating a Dwarf_Loc_Head_c struct fails"
-            " in libdwarf function dwarf_loclists_index_get_rle_head()");
+            " in libdwarf function "
+            "dwarf_loclists_index_get_lle_head()");
         return DW_DLV_ERROR;
     }
-    shead.rh_dbg = dbg;
+    shead.ll_dbg = dbg;
     *lhead = shead;
     res = build_array_of_lle(dbg,lhead,error);
     if (res != DW_DLV_OK) {
         dwarf_dealloc(dbg,lhead,DW_DLA_LOCLISTS_HEAD);
         return res;
     }
-    if(global_offset_of_rle_set) {
-        *global_offset_of_rle_set = rle_global_offset;
+    if(global_offset_of_lle_set) {
+        *global_offset_of_lle_set = lle_global_offset;
     }
     /*  Caller needs the head pointer else there will be leaks. */
     *head_out = lhead;
     if (entries_count_out) {
-        *entries_count_out = lhead->rh_count;
+        *entries_count_out = lhead->ll_count;
     }
     return DW_DLV_OK;
 }
@@ -1242,20 +1250,21 @@ dwarf_get_loclists_entry_fields(
     Dwarf_Unsigned *raw2,
     Dwarf_Unsigned *cooked1,
     Dwarf_Unsigned *cooked2,
+    /*  FIXME not right for loclists or their loc exprs */
     UNUSEDARG Dwarf_Error *err)
 {
     Dwarf_Locdesc_c e = 0;
 
-    if (entrynum >= head->rh_count) {
+    if (entrynum >= head->ll_count) {
         return DW_DLV_NO_ENTRY;
     }
-    e = head->rh_loclists[entrynum];
-    *entrylen  = e->rle_entrylen;
-    *code      = e->rle_code;
-    *raw1      = e->rle_raw1;
-    *raw2      = e->rle_raw2;
-    *cooked1   = e->rle_cooked1;
-    *cooked2   = e->rle_cooked2;
+    e = head->ll_loclists_entries[entrynum];
+    *entrylen  = e->ld_entrylen;
+    *code      = e->ld_lle_value;
+    *raw1      = e->ld_rawlow;
+    *raw2      = e->ld_rawhigh;
+    *cooked1   = e->ld_lopc;
+    *cooked2   = e->ld_highpc;
     return DW_DLV_OK;
 }
 
@@ -1263,30 +1272,30 @@ dwarf_get_loclists_entry_fields(
 static void
 _dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
 {
-    if (head->rh_first) {
+    if (head->ll_first) {
         /* partially built head. */
-        /*  ASSERT: rh_loclists is NULL */
-        Dwarf_Locdesc_c cur = head->rh_first;
+        /*  ASSERT: ll_loclists is NULL */
+        Dwarf_Locdesc_c cur = head->ll_first;
         Dwarf_Locdesc_c next = 0;
 
         for ( ; cur ; cur = next) {
-            next = cur->rle_next;
+            next = cur->ld_next;
             free(cur);
         }
-        head->rh_first = 0;
-        head->rh_last = 0;
-        head->rh_count = 0;
+        head->ll_first = 0;
+        head->ll_last = 0;
+        head->ll_count = 0;
     } else {
-        /*  ASSERT: rh_first and rh_last are NULL */
+        /*  ASSERT: ll_first and ll_last are NULL */
         /* fully built head. */
         Dwarf_Unsigned i = 0;
 
         /* Deal with the array form. */
-        for( ; i < head->rh_count; ++i) {
-            free(head->rh_loclists[i]);
+        for( ; i < head->ll_count; ++i) {
+            free(head->ll_loclists_entries[i]);
         }
-        free(head->rh_loclists);
-        head->rh_loclists = 0;
+        free(head->ll_loclists_entries);
+        head->ll_loclists_entries = 0;
     }
 }
 

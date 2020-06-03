@@ -110,6 +110,7 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Unsigned v1,
     Dwarf_Unsigned v2,
     Dwarf_Unsigned ops_blocklen,
+    UNUSEDARG Dwarf_Unsigned ops_offset,
     Dwarf_Small    *ops,
     Dwarf_Unsigned entrylen)
 {
@@ -141,7 +142,7 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         printf(
-            " <ops len %u>" DW_PR_DUu ,ops_blocklen);
+            " <ops len %" DW_PR_DUu ">" ,ops_blocklen);
         }
         break;
     case DW_LLE_startx_length: {
@@ -149,7 +150,7 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         printf(
-            " <ops len %u>" DW_PR_DUu ,ops_blocklen);
+            " <ops len %" DW_PR_DUu  ">",ops_blocklen);
         }
         break;
  
@@ -158,7 +159,7 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         printf(
-            " <ops len %u>" DW_PR_DUu ,ops_blocklen);
+            " <ops len %" DW_PR_DUu  ">",ops_blocklen);
         }
         break;
     case DW_LLE_default_location: {
@@ -177,7 +178,7 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         printf(
-            " <ops len %u>" DW_PR_DUu ,ops_blocklen);
+            " <ops len %" DW_PR_DUu  ">",ops_blocklen);
         }
         break;
     case DW_LLE_start_length: {
@@ -185,7 +186,7 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         printf(
-            " <ops len %u>" DW_PR_DUu ,ops_blocklen);
+            " <ops len %" DW_PR_DUu ,ops_blocklen);
         }
         break;
     default:
@@ -237,7 +238,7 @@ print_entire_loclist(Dwarf_Debug dbg,
             curoffset,endoffset,
             &entrylen,
             &code,&v1,&v2,
-            &ops_blocksize,&ops_offset,&ops_data
+            &ops_blocksize,&ops_offset,&ops_data,
             error);
         if (res != DW_DLV_OK) {
             return res;
@@ -293,8 +294,8 @@ print_raw_all_loclists(Dwarf_Debug dbg,
         Dwarf_Small   segment_selector_size = 0;
         Dwarf_Unsigned offset_entry_count = 0;
         Dwarf_Unsigned offset_of_offset_array = 0;
-        Dwarf_Unsigned offset_of_first_rangeentry = 0;
-        Dwarf_Unsigned offset_past_last_rangeentry = 0;
+        Dwarf_Unsigned offset_of_first_locentry = 0;
+        Dwarf_Unsigned offset_past_last_locentry = 0;
 
         res = dwarf_get_loclist_context_basics(dbg,i,
             &header_offset,&offset_size,&extension_size,
@@ -325,7 +326,7 @@ print_raw_all_loclists(Dwarf_Debug dbg,
         printf("   offset entry count    : %3" DW_PR_DUu "\n",
             offset_entry_count);
         printf("   context size in bytes : %3" DW_PR_DUu "\n",
-            offset_past_last_rangeentry - header_offset);
+            offset_past_last_locentry - header_offset);
         if(glflags.verbose) {
             printf("   Offset in section     : 0x%"
                 DW_PR_XZEROS DW_PR_DUx"\n",
@@ -333,7 +334,7 @@ print_raw_all_loclists(Dwarf_Debug dbg,
             printf("   Offset  of offsets    : 0x%"
                 DW_PR_XZEROS DW_PR_DUx"\n",
                 offset_of_offset_array);
-            printf("   Offsetof first range  : 0x%"
+            printf("   Offsetof first loc    : 0x%"
                 DW_PR_XZEROS DW_PR_DUx"\n",
                 offset_of_first_locentry);
             printf("   Offset past locations : 0x%"
