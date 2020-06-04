@@ -85,6 +85,46 @@ print_offset_entry_table(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+#if 0
+static void
+print_opsdetail(Dwarf_Debug dbg,
+    Dwarf_Bool use_raw,
+    Dwarf_Unsigned ops_blocklen,
+    Dwarf_Small*ops,
+    Dwarf_Unsigned opsoffset)
+{
+    Dwarf_Unsigned i = 0;
+    struct Dwarf_Locdesc_c_s locdesc;
+    struct Dwarf_Loc_c loc = 0;
+    struct esb_s m;
+    Dwarf_Error err = 0;
+    Dwarf_Unsigned baseaddr = 0; /* unknown */
+
+    if (!ops_blocklen) { 
+        return;
+    }
+    memset(&locdesc,0,sizeof(locdesc));
+    esb_constructor(&m);
+
+    locdesc.ld_cents =  1;
+    locdesc.ld_s = &loc;
+    locdesc.ld_kind = DW_LKIND_loclists;
+    locdesc.ld_locdesc_offset = opsoffset; 
+
+    res = _dwarf_print_one_expr_op(Dwarf_Debug dbg,
+        &locdesc,
+        0,
+        use_raw,
+        baseaddr,
+        &m,
+        &err);
+    printf("%s",esb_get_string(&m));
+    printf(" ");
+    esb_desstructor(&m);
+}
+#endif
+
+
 static void
 print_opsbytes(Dwarf_Unsigned ops_blocklen,
     Dwarf_Small*ops)
@@ -102,6 +142,7 @@ print_opsbytes(Dwarf_Unsigned ops_blocklen,
     printf(" ");
 }
 
+/*  Print single raw lle */
 static int
 print_single_lle(UNUSEDARG Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Unsigned contextnum,
@@ -132,34 +173,31 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
     printf("<0x%" DW_PR_XZEROS DW_PR_DUx "> %-20s",
         lineoffset,esb_get_string(&m));
     switch(code) {
-    case DW_LLE_end_of_list: break;
+    case DW_LLE_end_of_list: 
+        printf("           ");
+        printf("           ");
+        break;
     case DW_LLE_base_addressx:{
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx ,v1);
+        printf("           ");
         }
         break;
     case DW_LLE_startx_endx: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        printf(
-            " <ops len %" DW_PR_DUu ">" ,ops_blocklen);
-        }
         break;
+        }
     case DW_LLE_startx_length: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        printf(
-            " <ops len %" DW_PR_DUu  ">",ops_blocklen);
-        }
         break;
- 
+        }
     case DW_LLE_offset_pair: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        printf(
-            " <ops len %" DW_PR_DUu  ">",ops_blocklen);
         }
         break;
     case DW_LLE_default_location: {
@@ -171,22 +209,19 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
     case DW_LLE_base_address: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1);
+        printf("           ");
         }
         break;
     case DW_LLE_start_end: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        printf(
-            " <ops len %" DW_PR_DUu  ">",ops_blocklen);
         }
         break;
     case DW_LLE_start_length: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        printf(
-            " <ops len %" DW_PR_DUu ,ops_blocklen);
         }
         break;
     default:
@@ -196,11 +231,12 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
             esb_get_string(&m));
         break;
     }
+    printf( " %" DW_PR_DUu,entrylen);
     esb_destructor(&m);
-    if (glflags.verbose > 1) {
+    if (glflags.verbose && ops_blocklen > 0) {
         printf("\n");
         printf("    ");
-        printf(" length %" DW_PR_DUu,entrylen);
+        printf(" opslen %" DW_PR_DUu,ops_blocklen);
         print_opsbytes(ops_blocklen,ops);
     }
     printf("\n");
@@ -233,7 +269,11 @@ print_entire_loclist(Dwarf_Debug dbg,
 
         if (!ct) {
             printf("   Loc  (raw)\n");
+            printf("     Offset      entryname            val1 "
+                "      val2   entrylen\n");
         }
+        /*  This returns ops data as in DWARF. No
+            application of base addresses or anything. */
         res = dwarf_get_loclist_lle(dbg,contextnumber,
             curoffset,endoffset,
             &entrylen,
@@ -298,7 +338,9 @@ print_raw_all_loclists(Dwarf_Debug dbg,
         Dwarf_Unsigned offset_past_last_locentry = 0;
 
         res = dwarf_get_loclist_context_basics(dbg,i,
-            &header_offset,&offset_size,&extension_size,
+            &header_offset,
+            &offset_size,
+            &extension_size,
             &version,&address_size,&segment_selector_size,
             &offset_entry_count,&offset_of_offset_array,
             &offset_of_first_locentry,

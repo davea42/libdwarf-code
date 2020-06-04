@@ -114,11 +114,7 @@ static int get_location_list(Dwarf_Debug dbg, Dwarf_Die die,
 static int legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr);
 static int legal_tag_tree_combination(Dwarf_Half parent_tag,
     Dwarf_Half child_tag);
-static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
-    Dwarf_Loc* expr,
-    Dwarf_Locdesc_c exprc,
-    int index, Dwarf_Addr baseaddr,struct esb_s *string_out,
-    Dwarf_Error *err);
+
 static int formxdata_print_value(Dwarf_Debug dbg,
     Dwarf_Die die,Dwarf_Attribute attrib,
     Dwarf_Half theform,
@@ -136,6 +132,7 @@ static int pd_dwarf_names_print_on_error = 1;
 
 static int die_stack_indent_level = 0;
 static boolean local_symbols_already_began = FALSE;
+
 
 typedef const char *(*encoding_type_func) (unsigned,int doprintingonerr);
 
@@ -284,6 +281,7 @@ struct die_stack_data_s {
     Dwarf_Off cu_die_offset_; /* global offset. */
     boolean already_printed_;
 };
+
 static struct die_stack_data_s empty_stack_entry;
 
 #define DIE_STACK_SIZE 800
@@ -4629,6 +4627,7 @@ dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
 
     Dwarf_Half no_of_ops = 0;
     unsigned i = 0;
+    Dwarf_Bool report_raw = TRUE;
 
     if(llbuf) {
         Dwarf_Locdesc *locd = 0;
@@ -4638,6 +4637,7 @@ dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
             Dwarf_Loc * op = &locd->ld_s[i];
 
             int res = _dwarf_print_one_expr_op(dbg,op,NULL,i,
+                report_raw,
                 baseaddr,string_out,err);
             if (res == DW_DLV_ERROR) {
                 return res;
@@ -4650,6 +4650,7 @@ dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,NULL,locdesc,i,
+            report_raw,
             baseaddr,string_out,err);
         if (res == DW_DLV_ERROR) {
             return res;
@@ -4704,16 +4705,18 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index,
+    Dwarf_Bool report_raw,
     UNUSEDARG Dwarf_Addr baseaddr,
     struct esb_s *string_out,
     Dwarf_Error *err)
 {
-    /*  local_space_needed is intended to be 'more than big enough'
-        for a short group of loclist entries.  */
     Dwarf_Small op = 0;
     Dwarf_Unsigned opd1 = 0;
     Dwarf_Unsigned opd2 = 0;
     Dwarf_Unsigned opd3 = 0;
+    Dwarf_Unsigned raw1 = 0;
+    Dwarf_Unsigned raw2 = 0;
+    Dwarf_Unsigned raw3 = 0;
     Dwarf_Unsigned offsetforbranch = 0;
     const char * op_name = 0;
 
@@ -4727,8 +4730,11 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         opd2 = expr->lr_number2;
     } else {
         /* DWARF 2,3,4 and DWARF5 style */
-        int res = dwarf_get_location_op_value_c(exprc,
-            index, &op,&opd1,&opd2,&opd3,&offsetforbranch,
+        int res = dwarf_get_location_op_value_d(exprc,
+            index, 
+            &op,&opd1,&opd2,&opd3,
+            &raw1,&raw2,&raw3,
+            &offsetforbranch,
             err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
@@ -4736,6 +4742,11 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 "did not get a value!",
                 res,*err);
             return res;
+        }
+        if (report_raw) {
+           opd1 = raw1;
+           opd2 = raw2;
+           opd3 = raw3;
         }
     }
     op_name = get_OP_name(op,pd_dwarf_names_print_on_error);

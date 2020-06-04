@@ -35,6 +35,9 @@ extern "C" {
 typedef struct Dwarf_Loc_Chain_s *Dwarf_Loc_Chain;
 struct Dwarf_Loc_Chain_s {
     Dwarf_Small lc_atom;
+    Dwarf_Unsigned lc_raw1;
+    Dwarf_Unsigned lc_raw2;
+    Dwarf_Unsigned lc_raw3;
     Dwarf_Unsigned lc_number;
     Dwarf_Unsigned lc_number2;
     Dwarf_Unsigned lc_number3;
@@ -129,6 +132,11 @@ typedef struct Dwarf_Block_c_s Dwarf_Block_c;
 */
 struct Dwarf_Loc_c_s {
     Dwarf_Small     lr_atom;        /* Location operation */
+
+    /*  Operands exactly as in DWARF. */
+    Dwarf_Unsigned  lr_raw1;
+    Dwarf_Unsigned  lr_raw2;
+    Dwarf_Unsigned  lr_raw3;
 
     Dwarf_Unsigned  lr_number;      /* First operand */
 

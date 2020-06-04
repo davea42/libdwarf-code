@@ -847,10 +847,13 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     curr_loc->lr_atom = atom;
+    curr_loc->lr_raw1 =  operand1;
     curr_loc->lr_number =  operand1;
+    curr_loc->lr_raw2 =  operand2;
     curr_loc->lr_number2 = operand2;
     /*  lr_number 3 is a pointer to a value iff DW_OP_const or 
         DW_OP_GNU_const_type */
+    curr_loc->lr_raw3 = operand3;
     curr_loc->lr_number3 = operand3;
     *nextoffset_out = offset;
     return DW_DLV_OK;
@@ -962,6 +965,9 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
         new_loc->lc_number  = temp_loc.lr_number;
         new_loc->lc_number2 = temp_loc.lr_number2;
         new_loc->lc_number3 = temp_loc.lr_number3;
+        new_loc->lc_raw1  = temp_loc.lr_raw1;
+        new_loc->lc_raw2  = temp_loc.lr_raw2;
+        new_loc->lc_raw3  = temp_loc.lr_raw3;
         new_loc->lc_offset  = temp_loc.lr_offset;
         offset = nextoffset;
 
@@ -983,7 +989,8 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
 
     new_loc = head_loc;
     for (i = 0; i < op_count; i++) {
-        /* Copying only the fields needed by DWARF 2,3,4 */
+        /*  Copying only the fields needed by DWARF 2,3,4
+            the struct is public and must never be changed. */
         (block_loc + i)->lr_atom = new_loc->lc_atom;
         (block_loc + i)->lr_number = new_loc->lc_number;
         (block_loc + i)->lr_number2 = new_loc->lc_number2;
@@ -2670,12 +2677,15 @@ dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c loclist_head,
 }
 
 int
-dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
+dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     Dwarf_Unsigned   index,
     Dwarf_Small    * atom_out,
     Dwarf_Unsigned * operand1,
     Dwarf_Unsigned * operand2,
     Dwarf_Unsigned * operand3,
+    Dwarf_Unsigned * rawop1,
+    Dwarf_Unsigned * rawop2,
+    Dwarf_Unsigned * rawop3,
     Dwarf_Unsigned * offset_for_branch,
     Dwarf_Error*     error)
 {
@@ -2692,8 +2702,36 @@ dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
     *operand1 = op->lr_number;
     *operand2 = op->lr_number2;
     *operand3 = op->lr_number3;
+    *rawop1 = op->lr_raw1;
+    *rawop2 = op->lr_raw2;
+    *rawop3 = op->lr_raw3;
     *offset_for_branch = op->lr_offset;
     return DW_DLV_OK;
+}
+
+
+int
+dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
+    Dwarf_Unsigned   index,
+    Dwarf_Small    * atom_out,
+    Dwarf_Unsigned * operand1,
+    Dwarf_Unsigned * operand2,
+    Dwarf_Unsigned * operand3,
+    Dwarf_Unsigned * offset_for_branch,
+    Dwarf_Error*     error)
+{
+    Dwarf_Unsigned raw1 = 0;
+    Dwarf_Unsigned raw2 = 0;
+    Dwarf_Unsigned raw3 = 0;
+    int res = 0;
+
+    res = dwarf_get_location_op_value_d(locdesc,
+        index,atom_out,
+        operand1,operand2,operand3,
+        &raw1,&raw2,&raw3,
+        offset_for_branch,
+        error); 
+    return res;
 }
 
 
