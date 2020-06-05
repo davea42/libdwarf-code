@@ -97,7 +97,9 @@ do_all(void)
         glflags.gf_ranges_flag = TRUE;
         because nothing in
         the DWARF spec guarantees the sections are free of
-        random bytes in areas not referenced by .debug_info */
+        random bytes in areas not referenced by .debug_info.
+        though for DWARF5 .debug_loclists is free
+        of random bytes. See --print_raw_loclists */
     glflags.gf_string_flag = TRUE;
     /*  Do not do
         glflags.gf_reloc_flag = TRUE;

@@ -232,9 +232,6 @@ struct Dwarf_Loc_Head_c_s {
     Dwarf_Unsigned   ll_index;
     Dwarf_Loclists_Context ll_localcontext;
 
-    /* array of pointers */
-    Dwarf_Locdesc_c *ll_loclists_entries;
-    Dwarf_Unsigned   ll_count;
     /*  rh_last and rh_first used during build-up.
         Zero when array rh_loclists built. */
     Dwarf_Locdesc_c  ll_first;
@@ -262,7 +259,19 @@ struct Dwarf_Loc_Head_c_s {
 
 int _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     Dwarf_Block_c *loc_block,Dwarf_Error*error);
+
 void _dwarf_loclists_head_destructor(void *l);
+
+int _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
+    Dwarf_Attribute attr,
+    Dwarf_Loc_Head_c llhead,
+    Dwarf_Error *error);
+
+int _dwarf_loclists_expression_build(Dwarf_Debug dbg,
+    Dwarf_Attribute attr,
+    Dwarf_Loc_Head_c* llhead,
+    Dwarf_Error *error);
+
 
 #ifdef __cplusplus
 }

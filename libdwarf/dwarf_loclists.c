@@ -620,7 +620,7 @@ int dwarf_get_loclist_head_basics(
     UNUSEDARG Dwarf_Error *error)
 {
     Dwarf_Loclists_Context loccontext = 0;
-    *lle_count = head->ll_count;
+    *lle_count = head->ll_locdesc_count;
     *lle_version = head->ll_cuversion;
     *loclists_index_returned = head->ll_index;
     *bytes_total_in_lle = head->ll_bytes_total;
@@ -870,7 +870,7 @@ _dwarf_which_loclists_context(Dwarf_Debug dbg,
     }
     return DW_DLV_ERROR;
 }
-
+#if 0
 int
 dwarf_dealloc_loclists_head(Dwarf_Loc_Head_c h)
 {
@@ -879,6 +879,7 @@ dwarf_dealloc_loclists_head(Dwarf_Loc_Head_c h)
     dwarf_dealloc(dbg,h,DW_DLA_LOCLISTS_HEAD);
     return DW_DLV_OK;
 }
+#endif
 
 /*  Caller will eventually free as appropriate. */
 static int
@@ -904,7 +905,7 @@ alloc_rle_and_append_to_list(Dwarf_Debug dbg,
         rctx->ll_first = e;
         rctx->ll_last = e;
     }
-    rctx->ll_count++;
+    rctx->ll_locdesc_count++;
     *e_out = e;
     return DW_DLV_OK;
 }
@@ -1050,27 +1051,29 @@ build_array_of_lle(Dwarf_Debug dbg,
         }
         }
     }
-    if (rctx->ll_count > 0) {
-        Dwarf_Locdesc_c* array = 0;
+    if (rctx->ll_locdesc_count > 0) {
+        Dwarf_Locdesc_c array = 0;
         Dwarf_Locdesc_c cur = 0;
+        Dwarf_Locdesc_c prev = 0;
         Dwarf_Unsigned i = 0;
 
         /*  Creating an array of pointers. */
-        array = (Dwarf_Locdesc_c*)malloc(
-            rctx->ll_count *sizeof(Dwarf_Locdesc_c));
+        array = (Dwarf_Locdesc_c)malloc(
+            rctx->ll_locdesc_count *sizeof(struct Dwarf_Locdesc_c_s));
         if (!array) {
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: Out of memory in "
-                "turning list of loclists entries on a DIE"
-                "into a pointer array");
+                "copying list of locdescs into array ");
             return DW_DLV_ERROR;
         }
         cur = rctx->ll_first;
-        for (  ; i < rctx->ll_count; ++i) {
-            array[i] = cur;
+        for (  ; i < rctx->ll_locdesc_count; ++i) {
+            prev = cur;
+            array[i] = *cur;
             cur = cur->ld_next;
+            free(prev);
         }
-        rctx->ll_loclists_entries = array;
+        rctx->ll_locdesc = array;
         rctx->ll_first = 0;
         rctx->ll_last = 0;
     }
@@ -1082,13 +1085,9 @@ build_array_of_lle(Dwarf_Debug dbg,
     attached.
 */
 int
-dwarf_loclists_get_lle_head(
+_dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     Dwarf_Attribute attr,
-    Dwarf_Half     theform,
-    Dwarf_Unsigned attr_val,
-    Dwarf_Loc_Head_c *head_out,
-    Dwarf_Unsigned      *entries_count_out,
-    Dwarf_Unsigned      *global_offset_of_lle_set,
+    Dwarf_Loc_Head_c llhead,
     Dwarf_Error         *error)
 {
     int res = 0;
@@ -1101,19 +1100,20 @@ dwarf_loclists_get_lle_head(
     Dwarf_Unsigned entrycount = 0;
     unsigned offsetsize = 0;
     Dwarf_Unsigned lle_global_offset = 0;
-    Dwarf_Loc_Head_c lhead = 0;
     Dwarf_CU_Context ctx = 0;
-    struct Dwarf_Loc_Head_c_s shead;
     Dwarf_Unsigned offset_in_loclists = 0;
-    Dwarf_Debug dbg = 0;
     Dwarf_Bool is_loclistx = FALSE;
+    int theform = llhead->ll_attrform;
+    Dwarf_Unsigned attr_val = 0;
 
-    memset(&shead,0,sizeof(shead));
     ctx = attr->ar_cu_context;
-    dbg = ctx->cc_dbg;
     array = dbg->de_loclists_context;
     if (theform == DW_FORM_loclistx) {
          is_loclistx = TRUE;
+    }
+    res = dwarf_formudata(attr,&attr_val,error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
     /*  ASSERT:  the 3 pointers just set are non-null */
     /*  the context cc_loclists_base gives the offset
@@ -1170,28 +1170,14 @@ dwarf_loclists_get_lle_head(
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    shead.ll_context = ctx;
-    shead.ll_localcontext = rctx;
-    shead.ll_index = loclists_contextnum;
-    shead.ll_cuversion = rctx->lc_version;
-    shead.ll_offset_size = offsetsize;
-    shead.ll_address_size  = rctx->lc_address_size;
-    shead.ll_segment_selector_size =
+    llhead->ll_localcontext = rctx;
+    llhead->ll_index = loclists_contextnum;
+    llhead->ll_cuversion = rctx->lc_version;
+    llhead->ll_offset_size = offsetsize;
+    llhead->ll_address_size  = rctx->lc_address_size;
+    llhead->ll_segment_selector_size =
         rctx->lc_segment_selector_size;
 
-    /*  DW_AT_loclists_base from CU */
-    shead.ll_at_loclists_base_present =
-        ctx->cc_loclists_base_present;
-    shead.ll_at_loclists_base =  ctx->cc_loclists_base;
-
-    /*  DW_AT_low_pc, if present.  From CU */
-    shead.ll_cu_base_address_present = ctx->cc_low_pc_present;
-    shead.ll_cu_base_address = ctx->cc_low_pc;
-
-    /*  base address DW_AT_addr_base of our part of
-        .debug_addr, from CU */
-    shead.ll_cu_addr_base = ctx->cc_addr_base;
-    shead.ll_cu_addr_base_present = ctx->cc_addr_base_present;
     if (is_loclistx) {
         Dwarf_Unsigned table_entryval = 0;
 
@@ -1206,39 +1192,22 @@ dwarf_loclists_get_lle_head(
         lle_global_offset = attr_val;
     }
 
-    shead.ll_llepointer = rctx->lc_offsets_array +
+    llhead->ll_llepointer = rctx->lc_offsets_array +
         rctx->lc_offset_entry_count*offsetsize;
-    shead.ll_end_data_area = enddata;
+    llhead->ll_end_data_area = enddata;
 
-    shead.ll_llearea_offset = lle_global_offset;
-    shead.ll_llepointer = lle_global_offset +
+    llhead->ll_llearea_offset = lle_global_offset;
+    llhead->ll_llepointer = lle_global_offset +
         dbg->de_debug_loclists.dss_data;
-    lhead = (Dwarf_Loc_Head_c)
-        _dwarf_get_alloc(dbg,DW_DLA_LOCLISTS_HEAD,1);
-    if (!lhead) {
-        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
-            "Allocating a Dwarf_Loc_Head_c struct fails"
-            " in libdwarf function "
-            "dwarf_loclists_index_get_lle_head()");
-        return DW_DLV_ERROR;
-    }
-    shead.ll_dbg = dbg;
-    *lhead = shead;
-    res = build_array_of_lle(dbg,lhead,error);
+
+    res = build_array_of_lle(dbg,llhead,error);
     if (res != DW_DLV_OK) {
-        dwarf_dealloc(dbg,lhead,DW_DLA_LOCLISTS_HEAD);
+        dwarf_dealloc(dbg,llhead,DW_DLA_LOCLISTS_HEAD);
         return res;
-    }
-    if(global_offset_of_lle_set) {
-        *global_offset_of_lle_set = lle_global_offset;
-    }
-    /*  Caller needs the head pointer else there will be leaks. */
-    *head_out = lhead;
-    if (entries_count_out) {
-        *entries_count_out = lhead->ll_count;
     }
     return DW_DLV_OK;
 }
+
 
 int
 dwarf_get_loclists_entry_fields(
@@ -1255,10 +1224,10 @@ dwarf_get_loclists_entry_fields(
 {
     Dwarf_Locdesc_c e = 0;
 
-    if (entrynum >= head->ll_count) {
+    if (entrynum >= head->ll_locdesc_count) {
         return DW_DLV_NO_ENTRY;
     }
-    e = head->ll_loclists_entries[entrynum];
+    e = head->ll_locdesc + entrynum;
     *entrylen  = e->ld_entrylen;
     *code      = e->ld_lle_value;
     *raw1      = e->ld_rawlow;
@@ -1284,18 +1253,13 @@ _dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
         }
         head->ll_first = 0;
         head->ll_last = 0;
-        head->ll_count = 0;
+        head->ll_locdesc_count = 0;
     } else {
         /*  ASSERT: ll_first and ll_last are NULL */
         /* fully built head. */
-        Dwarf_Unsigned i = 0;
-
-        /* Deal with the array form. */
-        for( ; i < head->ll_count; ++i) {
-            free(head->ll_loclists_entries[i]);
-        }
-        free(head->ll_loclists_entries);
-        head->ll_loclists_entries = 0;
+        free(head->ll_locdesc);
+        head->ll_locdesc = 0;
+        head->ll_locdesc_count = 0;
     }
 }
 

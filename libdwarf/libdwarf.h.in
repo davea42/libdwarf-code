@@ -1860,9 +1860,22 @@ dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
     unsigned int  * /*lkind*/,
     Dwarf_Error   * /*error*/);
 
+int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
+   Dwarf_Unsigned    /*index*/,
+   /* identifies type of locdesc entry*/
+   Dwarf_Small    *  /*lle_value_out*/,
+   Dwarf_Unsigned *  /*rawlowpc*/,
+   Dwarf_Unsigned *  /*rawhipc*/,
+   Dwarf_Addr     *  /*lowpc_out*/,
+   Dwarf_Addr     *  /*hipc_out*/,
+   Dwarf_Unsigned *  /*loclist_count_out*/,
+   Dwarf_Locdesc_c * /*locentry_out*/,
+   Dwarf_Small    *  /*loclist_source_out*/, /* 0,1, or 2 */
+   Dwarf_Unsigned *  /*expression_offset_out*/,
+   Dwarf_Unsigned *  /*locdesc_offset_out*/,
+   Dwarf_Error    *  /*error*/);
 int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c /*loclist_head*/,
    Dwarf_Unsigned    /*index*/,
-
    /* identifies type of locdesc entry*/
    Dwarf_Small    *  /*lle_value_out*/,
    Dwarf_Addr     *  /*lowpc_out*/,
@@ -4959,17 +4972,18 @@ int dwarf_get_rnglist_rle( Dwarf_Debug /*dbg*/,
 
 /* ======= END .debug_rnglists interfaces.  */
 /* ======= START .debug_loclists interfaces.  New May 2020 */
+/*  These interfaces allow reading the .debug_loclists
+    section.  Normal use of .debug_loclists uses
+    dwarf_get_loclist_c() to open access to any kind of location
+    or loclist and uses dwarf_loc_head_c_dealloc() to
+    deallocate that memory once one is finished with
+    that data. So for most purposes you do not need
+    to use these functions  */
 struct Dwarf_Loclists_Entry_s;
 typedef struct Dwarf_Loclists_Entry_s * Dwarf_Loclists_Entry;
 
-/*  For DWARF5 DW_AT_location: DW_FORM_sec_offset DW_FORM_loclistx */
-int dwarf_loclists_get_lle_head(Dwarf_Attribute       /*attr*/,
-    Dwarf_Half            /*theform*/,
-    Dwarf_Unsigned        /*index_or_offset_value*/,
-    Dwarf_Loc_Head_c * /*head_out*/,
-    Dwarf_Unsigned *      /*count_of_entries_in_head*/,
-    Dwarf_Unsigned *      /*global_offset_of_rle_set*/,
-    Dwarf_Error    *      /*error*/);
+/*  See dwarf_get_loclist_c() to open a Dwarf_Loc_Head_c
+    on any type of location list or expression. */
 
 /*  Get the loclists entries details */
 int dwarf_get_loclists_entry_fields(Dwarf_Loc_Head_c /*head*/,
@@ -4981,8 +4995,6 @@ int dwarf_get_loclists_entry_fields(Dwarf_Loc_Head_c /*head*/,
     Dwarf_Unsigned * /*cooked1*/,
     Dwarf_Unsigned * /*cooked2*/,
     Dwarf_Error    * /*error*/);
-
-int dwarf_dealloc_loclists_head(Dwarf_Loc_Head_c );
 
 /*  Loads all the loclists headers and
     returns DW_DLV_NO_ENTRY if the section
