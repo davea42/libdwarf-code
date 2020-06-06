@@ -171,6 +171,9 @@ struct Dwarf_Locdesc_c_s {
 
     /*  A DW_LLEX or DW_LLE value, real or synthesized */
     Dwarf_Small      ld_lle_value;
+    /*  Failed means .debug_addr section needed but missing. 
+        (possibly tied file needed) */
+    Dwarf_Bool       ld_index_failed; 
 
     /*  Beginning of active range. This is actually an offset
         of an applicable base address, not a pc value.  */
@@ -214,8 +217,10 @@ struct Dwarf_Loc_Head_c_s {
         struct Loc_Desc_c_s
         If 1 it may really be a locexpr */
     Dwarf_Locdesc_c  ll_locdesc;
+
     /*  Entry count of the ll_locdesc array.  */
     Dwarf_Unsigned   ll_locdesc_count;
+
     unsigned         ll_attrnum;
     unsigned         ll_attrform;
     unsigned         ll_cuversion;

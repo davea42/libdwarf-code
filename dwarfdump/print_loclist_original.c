@@ -47,77 +47,60 @@
 /* Prints locentry descriptsions for DW_LKIND_loclist */
 
 int
-print_original_list_linecodes(Dwarf_Debug dbg,
-    Dwarf_Bool    checking,
+print_original_loclist_linecodes(Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Bool    checking,
     Dwarf_Small   lle_value,
-    Dwarf_Addr  * base_address,
+    UNUSEDARG Dwarf_Addr  * base_address,
+    Dwarf_Addr    rawlopc, 
+    Dwarf_Addr    rawhipc,
+    UNUSEDARG Dwarf_Bool    debug_addr_unavailable,
     Dwarf_Addr  * lopc,
-    Dwarf_addr  * hipc,
-    Dwarf_Unsigned locdesc_offset,
-    struct esb_s * ebsp,
-    Dwarf_Error  * llerr)
+    Dwarf_Addr  * hipc,
+    UNUSEDARG Dwarf_Unsigned locdesc_offset,
+    struct esb_s * esbp)
 {
-    Dwarf_Unsigned lopcfinal = 0;
-    Dwarf_Unsigned hipcfinal = 0;
-            locdesc->ld_lle_value =  DW_LLE_end_of_list;
-            locdesc->ld_lle_value = DW_LLE_offset_pair;
-
     if (lle_value == DW_LLE_base_address) {
-        *base_address = *hipc;
         esb_append_printf_u(esbp,
             "<new base address 0x%"
             DW_PR_XZEROS DW_PR_DUx
             ">",
-            *base_address);
-
-            } else { /* DW_DLV_NO_ENTRY */
-                esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    " no-entry finding index >",hipc);
-                /* Cannot find .debug_addr */
-                *base_address = 0;
-            }
-            esb_append_printf_u(esbp,
-                "<index to debug_addr : 0x%"
-                DW_PR_XZEROS DW_PR_DUx,hipc);
-            esb_append_printf_u(esbp,
-                " new base address 0x%"
-                DW_PR_XZEROS DW_PR_DUx
-                ">", *base_address);
-        }
+            *hipc);
     } else if (lle_value == DW_LLE_end_of_list) {
         /* Nothing to do. */
         esb_append(esbp,"<end-of-list>");
     } else if (lle_value == DW_LLE_offset_pair) {
-        lopcfinal = *lopc + *base_address;
-        hipcfinal = *hipc + *base_address;
+        if (glflags.verbose) {
+            esb_append_printf_u(esbp,
+                    "< offset pair low-off : 0x%"
+                    DW_PR_XZEROS DW_PR_DUx,rawlopc);
+            esb_append_printf_u(esbp,
+                " high-off  0x%"
+                DW_PR_XZEROS DW_PR_DUx
+                ">",rawhipc);
+        }
         esb_append_printf_u(esbp,
-            "< offset pair low-off : 0x%"
+            " <lowaddr  0x%"
             DW_PR_XZEROS DW_PR_DUx,*lopc);
-        esb_append_printf_u(esbp,
-            " addr  0x%"
-            DW_PR_XZEROS DW_PR_DUx,lopcfinal);
-        esb_append_printf_u(esbp,
-            " high-off  0x%"
-            DW_PR_XZEROS DW_PR_DUx,*hipc);
         esb_append_printf_u(esbp,
             " addr 0x%"
             DW_PR_XZEROS DW_PR_DUx
-            ">",hipcfinal);
+            ">",*hipc);
+#if 0
         if(checking) {
             loc_error_check(dbg,lopcfinal, *lopc,
                 hipcfinal,*hipc, locdesc_offset,
                 *base_address,
                 &bError);
         }
+#endif
     } else {
         struct esb_s unexp;
 
         esb_constructor(&unexp);
         glflags.gf_count_major_errors++;
         esb_append_printf_u(&unexp,
-            "ERROR: Unexpected LLEX code 0x%x",
+            "ERROR: Unexpected LLE code 0x%x"
+            " (synthesized code error)",
             lle_value);
         print_error_and_continue(dbg,
             esb_get_string(&unexp),

@@ -47,215 +47,167 @@
 /* Prints locentry descriptsions for DW_LKIND_GNU_exp_list */
 
 int
-print_llex_linecodes(Dwarf_Debug dbg,
-    Dwarf_Bool    checking,
+print_llex_linecodes( Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Bool    checking,
     Dwarf_Small   lle_value,
-    Dwarf_Addr  * base_address,
+    UNUSEDARG Dwarf_Addr  * base_address,
+    Dwarf_Addr    rawlopc,
+    Dwarf_Addr    rawhipc,
+    Dwarf_Bool    debug_addr_unavailable,
     Dwarf_Addr  * lopc,
-    Dwarf_addr  * hipc,
-    Dwarf_Unsigned locdesc_offset,
-    struct esb_s * ebsp,
-    Dwarf_Error  * llerr)
+    Dwarf_Addr  * hipc,
+    UNUSEDARG Dwarf_Unsigned locdesc_offset,
+    struct esb_s * esbp,
+    Dwarf_Bool   * bError)
+
+    
 {
-    Dwarf_Unsigned lopcfinal = 0;
-    Dwarf_Unsigned hipcfinal = 0;
-
-
+    if (debug_addr_unavailable) {
+        *bError = TRUE;
+    }
     if (lle_value == DW_LLEX_base_address_selection_entry) {
-        /*  (0xffffffff,addr), use specific address
-            (current PU address) */
-        Dwarf_Addr realaddr = 0;
-        {
-            /*  hipc is index of a slot in .debug_addr section.
-                which contains base_address. */
-            int res = dwarf_debug_addr_index_to_addr(die,
-                hipc,&realaddr,llerr);
-            if(res == DW_DLV_OK) {
-                *base_address = realaddr;
-            } else if(res == DW_DLV_ERROR) {
-                glflags.gf_count_major_errors++;
-                esb_append_printf_u(esbp,
-                            "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx,hipc);
-                esb_append_printf_s(esbp,
-                    " %s>",
-                    adexplain(dwarf_errno(*llerr),
-                    "base-address-unavailable"));
-                *base_address = 0;
-                print_error_and_continue(dbg,
-                    "ERROR printing addr index val fails",
-                    res,*llerr);
-                return res;
-            } else { /* DW_DLV_NO_ENTRY */
-                esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    " no-entry finding index >",hipc);
-                /* Cannot find .debug_addr */
-                *base_address = 0;
-            }
+{
+printf("dadebug lopc 0x%lx hipc 0x%lx unavailable %d line %d %s\n",
+(unsigned long)lopc,
+(unsigned long)hipc,
+debug_addr_unavailable,
+__LINE__,__FILE__);
+}
+        if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<index to debug_addr : 0x%"
-                DW_PR_XZEROS DW_PR_DUx,hipc);
-            esb_append_printf_u(esbp,
-                " new base address 0x%"
-                DW_PR_XZEROS DW_PR_DUx
-                ">", *base_address);
+                DW_PR_XZEROS DW_PR_DUx 
+                " .debug_addr not available>",rawhipc);
+        } else {
+            if (glflags.verbose) {
+                esb_append_printf_u(esbp,
+                    "<index to debug_addr : 0x%"
+                    DW_PR_XZEROS DW_PR_DUx 
+                    ,rawhipc);
+                esb_append_printf_u(esbp,
+                    ", new base address 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    ">", *hipc);
+            }  else {
+                esb_append_printf_u(esbp,
+                    "< new base address 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    ">", *hipc);
+            }
         }
     } else if (lle_value == DW_LLEX_end_of_list_entry) {
         /* Nothing to do. */
         esb_append(esbp,"<end-of-list>");
     } else if (lle_value == DW_LLEX_start_length_entry) {
-        int foundaddr = FALSE;
-        {
-            Dwarf_Addr realaddr = 0;
-            Dwarf_Addr slotindex = *lopc;
-            /*  start (lopc) is index of a slot
-                in .debug_addr section. */
-            int res = dwarf_debug_addr_index_to_addr(die,
-                *lopc,&realaddr,llerr);
-            if(res == DW_DLV_OK) {
-                *lopc = realaddr;
-                foundaddr = TRUE;
-            } else if(res == DW_DLV_ERROR) {
-               esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx,*
-                esb_append_printf_s(esbp,
-                    " %s>",
-                    adexplain(dwarf_errno(*llerr),
-                    "start-address-unavailable"));
-                glflags.gf_count_major_errors++;
-                DROP_ERROR_INSTANCE(dbg,res,*llerr);
-            } else {
-                esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    " no-entry finding start index >",*
-                /* Cannot find .debug_addr */
-                *lopc = 0;
-            }
+        if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<start-length index to debug_addr : 0x%"
-                DW_PR_XZEROS DW_PR_DUx,slotindex);
-            esb_append_printf_u(esbp,
-                " addr  0x%"
-                DW_PR_XZEROS DW_PR_DUx,realaddr);
-            esb_append_printf_u(esbp,
-                " length 0x%"
-                DW_PR_XZEROS DW_PR_DUx
-                "> ",hipc);
+                DW_PR_XZEROS DW_PR_DUx 
+                " .debug_addr not available>",rawlopc);
+        } else {
+            if (glflags.verbose) {
+                esb_append_printf_u(esbp,
+                        "<start index to debug_addr : 0x%"
+                    DW_PR_XZEROS DW_PR_DUx,rawlopc);
+                esb_append_printf_u(esbp,
+                        "  length: 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    ">",rawhipc);
+                esb_append_printf_u(esbp,
+                    "< startaddr  0x%"
+                    DW_PR_XZEROS DW_PR_DUx,
+                    *lopc);
+                esb_append_printf_u(esbp,
+                    " endaddr 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    "> ",*hipc);
+            } else {
+                esb_append_printf_u(esbp,
+                    "< start-addr  0x%"
+                    DW_PR_XZEROS DW_PR_DUx,
+                    *lopc);
+                esb_append_printf_u(esbp,
+                    " endaddr 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    "> ",*hipc);
+            }
         }
-        lopcfinal = *lopc;
-        hipcfinal = lopcfinal + *hipc;
-        if (checking && foundaddr) {
-            /*  bError is a boolean, not a Dwarf_Error,
-                here and below. */
-            loc_error_check(dbg,lopcfinal, *lopc,
-                hipcfinal, *hipc, locdesc_offset,
-                *base_address,
-                &bError);
-        }
+#if 0
+        loc_error_check(dbg,lopcfinal, *lopc,
+            hipcfinal, *hipc, locdesc_offset,
+            *base_address,
+            &bError);
+#endif
     } else if (lle_value == DW_LLEX_offset_pair_entry) {
-        /* Same for both loclist_source. */
-        lopcfinal = *lopc + *base_address;
-        hipcfinal = *hipc + *base_address;
-        esb_append_printf_u(esbp,
-            "< offset pair low-off : 0x%"
-            DW_PR_XZEROS DW_PR_DUx,*lopc);
-        esb_append_printf_u(esbp,
-            " addr  0x%"
-            DW_PR_XZEROS DW_PR_DUx,lopcfinal);
-        esb_append_printf_u(esbp,
-            " high-off  0x%"
-            DW_PR_XZEROS DW_PR_DUx,*hipc);
-        esb_append_printf_u(esbp,
-            " addr 0x%"
-            DW_PR_XZEROS DW_PR_DUx
-            ">",hipcfinal);
-        if(checking) {
+        if (debug_addr_unavailable) {
+            esb_append_printf_u(esbp,
+                "< offset pair low-off  : 0x%"
+                DW_PR_XZEROS DW_PR_DUx,rawlopc);
+            esb_append_printf_u(esbp,
+                " high-off  0x%"
+                DW_PR_XZEROS DW_PR_DUx 
+                " no .debug_addr available>",rawhipc);
+        } else {
+            if (glflags.verbose) {
+                esb_append_printf_u(esbp,
+                    "< offset pair low-off  : 0x%"
+                    DW_PR_XZEROS DW_PR_DUx,rawlopc);
+                esb_append_printf_u(esbp,
+                    " high-off  0x%"
+                    DW_PR_XZEROS DW_PR_DUx ">",rawhipc);
+            }
+            esb_append_printf_u(esbp,
+                "< loaddr  0x%"
+                DW_PR_XZEROS DW_PR_DUx,*lopc);
+            esb_append_printf_u(esbp,
+                " hiaddr 0x%"
+                DW_PR_XZEROS DW_PR_DUx
+                ">",*hipc);
+        }
+
+#if 0
+        if(checking && !debug_addr_unavailable) {
             loc_error_check(dbg,lopcfinal, *lopc,
                 hipcfinal,*hipc, locdesc_offset,
                 *base_address,
                 &bError);
         }
+#endif
     } else if (lle_value == DW_LLEX_start_end_entry) {
-        int foundaddr = FALSE;
-        /* These are NOT relative to *base_address */
-        {
-            /*  indices in .debug_addr of start and end
-                addresses. */
-            Dwarf_Addr reallo = 0;
-            Dwarf_Addr realhi = 0;
-            /* start is index of a slot in .debug_addr section. */
-            int res = dwarf_debug_addr_index_to_addr(die,
-                *lopc,&reallo,llerr);
-            if(res == DW_DLV_OK) {
-                lopcfinal = reallo;
-                foundaddr = TRUE;
-            } else if(res == DW_DLV_ERROR) {
-                glflags.gf_count_major_errors++;
+        if (debug_addr_unavailable) {
+            esb_append_printf_u(esbp,
+                "< start-end low-index : 0x%"
+                DW_PR_XZEROS DW_PR_DUx,rawlopc);
+            esb_append_printf_u(esbp,
+                " high-index  0x%"
+                DW_PR_XZEROS DW_PR_DUx 
+                " .debug_addr not available>",*hipc);
+        } else {
+            if (glflags.verbose) {
                 esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx,lopc);
-                esb_append_printf_s(esbp,
-                    " %s>",
-                    adexplain(dwarf_errno(*llerr),
-                    "start-address-unavailable"));
-                glflags.gf_count_major_errors++;
-                DROP_ERROR_INSTANCE(dbg,res,*llerr);
-            } else {
+                    "< start-end low-index : 0x%"
+                    DW_PR_XZEROS DW_PR_DUx,rawlopc);
                 esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    " error finding start index >",lopc);
-                /* Cannot find .debug_addr */
-                lopcfinal = 0;
+                    " high-index  0x%"
+                    DW_PR_XZEROS DW_PR_DUx 
+                    " .debug_addr not available>",rawhipc);
             }
-            res = dwarf_debug_addr_index_to_addr(die,
-                hipc,&realhi,llerr);
-            if(res == DW_DLV_OK) {
-                hipcfinal = realhi;
-            } else if(res == DW_DLV_ERROR) {
-                glflags.gf_count_major_errors++;
-                esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx,hipc);
-                esb_append_printf_s(esbp,
-                    " %s>",
-                adexplain(dwarf_errno(*llerr),
-                    "end-address-unavailable"));
-                foundaddr = FALSE;
-                glflags.gf_count_major_errors++;
-                DROP_ERROR_INSTANCE(dbg,res,*llerr);
-            } else {
-                esb_append_printf_u(esbp,
-                    "<debug_addr index 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                     " problem-finding-end-address >",hipc);
-                /* Cannot find .debug_addr */
-                hipcfinal = 0;
-                foundaddr = FALSE;
-             }
-             esb_append_printf_u(esbp,
-                 "< start-end low-index : 0x%"
-                 DW_PR_XZEROS DW_PR_DUx,*lopc);
-             esb_append_printf_u(esbp,
-                 " addr  0x%"
-                 DW_PR_XZEROS DW_PR_DUx,lopcfinal);
-             esb_append_printf_u(esbp,
-                 " high-index  0x%"
-                 DW_PR_XZEROS DW_PR_DUx,*hipc);
-             esb_append_printf_u(esbp,
-                 " addr 0x%"
-                 DW_PR_XZEROS DW_PR_DUx
-                 ">",hipcfinal);
+            esb_append_printf_u(esbp,
+                "< lowaddr : 0x%"
+                DW_PR_XZEROS DW_PR_DUx,*lopc);
+            esb_append_printf_u(esbp,
+                " highaddr  0x%"
+                DW_PR_XZEROS DW_PR_DUx 
+                ">",*hipc);
+
         }
-        if (checking && foundaddr) {
+#if 0
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(dbg,lopcfinal, *lopc,
                 hipcfinal, *hipc, locdesc_offset, 0,
                 &bError);
         }
+#endif
     } else {
         struct esb_s unexp;
 
@@ -268,6 +220,7 @@ print_llex_linecodes(Dwarf_Debug dbg,
             esb_get_string(&unexp),
             DW_DLV_OK, 0);
         esb_destructor(&unexp);
+        *bError = TRUE;
     }
     return DW_DLV_OK;
 }

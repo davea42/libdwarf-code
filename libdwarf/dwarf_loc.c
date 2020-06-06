@@ -1899,13 +1899,14 @@ _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  
-    This synthesizes the ld_lle_value of the locdesc,
-    but when it is an actual dwo this value gets
-    overridden by our caller with the true ld_lle_value. */
-    
+/*  Sets locdesc operator list information in locdesc.
+    Sets the locdesc values (rawlow, rawhigh etc).
+    This synthesizes the ld_lle_value of the locdesc
+    if it's not already provided.
+    Not passing in locdesc pointer, the locdesc_index suffices
+    to index to the relevant locdesc pointer.*/
 static int
-_dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
+_dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     Dwarf_Unsigned locdesc_index,
     Dwarf_Loc_Head_c loc_head,
     Dwarf_Block_c * loc_block,
@@ -1920,7 +1921,8 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
     /* Offset of current operator from start of block. */
     Dwarf_Unsigned offset = 0;
 
-    /* Used to chain the Dwarf_Loc_Chain_s structs. */
+    /*  Used to chain the Dwarf_Loc_Chain_s DW_OPerator
+        structs. */
     Dwarf_Loc_Chain new_loc = NULL;
     Dwarf_Loc_Chain prev_loc = NULL;
     Dwarf_Loc_Chain head_loc = NULL;
@@ -2041,9 +2043,8 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
     }
     /*  Synthesizing the DW_LLE values for the old loclist
         versions. */
-    if (loc_head->ll_kind == DW_LKIND_expression || 
-        loc_head->ll_kind == DW_LKIND_loclist) {
-        /*  Kind of meaningless for a DW_LKIND_expression */
+    if (loc_head->ll_kind == DW_LKIND_loclist) {
+        /*  Meaningless for a DW_LKIND_expression */
         if(highpc == 0 && lowpc == 0) {
             locdesc->ld_lle_value =  DW_LLE_end_of_list;
         } else if(lowpc == MAX_ADDR) {
@@ -2051,7 +2052,7 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
         } else {
             locdesc->ld_lle_value = DW_LLE_offset_pair;
         }
-    } else {
+    } else  if (DW_LKIND_GNU_exp_list){
         /* DW_LKIND_GNU_exp_list */
         locdesc->ld_lle_value = lle_op;
     }
@@ -2060,8 +2061,12 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
     locdesc->ld_kind = lkind;
     locdesc->ld_section_offset = loc_block->bl_section_offset;
     locdesc->ld_locdesc_offset = loc_block->bl_locdesc_offset;
-    locdesc->ld_rawhigh = highpc;
     locdesc->ld_rawlow = lowpc;
+    locdesc->ld_rawhigh = highpc;
+    /*  Leaving the cooked values zero. Filled in later. */
+    /*  We have not yet looked for debug_addr, so we'll
+        set it as not-missing. */
+    locdesc->ld_index_failed = FALSE;
     return DW_DLV_OK;
 }
 
@@ -2333,8 +2338,8 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
         if (blkres != DW_DLV_OK) {
             return blkres;
         }
-        /* Fills in the locdesc op at index lli */
-        lres = _dwarf_get_locdesc_op_c(dbg,
+        /* Fills in the locdesc and its operators list at index lli */
+        lres = _dwarf_fill_in_locdesc_op_c(dbg,
             lli,
             llhead,
             &loc_block,
@@ -2425,8 +2430,8 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         section 2.4.1 In other words, it is not an error,
         and we don't test for block length 0 specially here.  */
 
-    /* Fills in the locdesc at index 0 */
-    blkres = _dwarf_get_locdesc_op_c(dbg,
+    /* Fills in the locdesc and its operators list at index 0 */
+    blkres = _dwarf_fill_in_locdesc_op_c(dbg,
             0, /* fake locdesc is index 0 */
             llhead,
             &loc_blockc,
@@ -2443,24 +2448,22 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  Following the original loclist definition the low
+    value is all one bits, the high value is the base
+    address. */
 static int
  cook_original_loclist_contents(Dwarf_Debug dbg,
-    Dwarf_Loc_Head c llhead,
+    Dwarf_Loc_Head_c llhead,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned baseaddress = llhead->ll_cu_base_address;
-    Dwarf_Unsigned loclists_base = llhead->ll_at_loclists_base;
-    Dwarf_Unsigned addr_section_base = llhead->ll_cu_addr_base;
-    Dwarf_Bool     addr_section_base_present =
-        llhead->ll_cu_addr_base_present;
-    Dwarf_Unsigned count = llhead->ll_count;
+    Dwarf_Unsigned count = llhead->ll_locdesc_count;
     Dwarf_Unsigned i = 0;
-    Dwarf_CU_Context cucontext = llhead->ll_context;
-    int res = 0;
-    for ( k = 0 ; i < count ++i) {
+
+    for ( i = 0 ; i < count; ++i) {
         Dwarf_Locdesc_c  llc = 0;
 
-        llc = llhead->ll_loclists_entries +i;
+        llc = llhead->ll_locdesc +i;
         switch(llc->ld_lle_value) {
         case DW_LLE_end_of_list: {
             /* nothing to do */     
@@ -2469,16 +2472,15 @@ static int
         case DW_LLE_base_address: {
             llc->ld_lopc =  llc->ld_rawhigh;
             llc->ld_highpc =  llc->ld_rawhigh;
-            base_address =  llc->ld_rawhigh;
+            baseaddress =  llc->ld_rawhigh;
             break;
             }
         case DW_LLE_offset_pair: {
-            llc->ld_lopc = llc->ld_rawlow + base_address;
-            llc->ld_highpc = llc->ld_rawhigh + base_address;
+            llc->ld_lopc = llc->ld_rawlow + baseaddress;
+            llc->ld_highpc = llc->ld_rawhigh + baseaddress;
             break;
             }
-
-        case default:
+        default: {
             dwarfstring m;
 
             dwarfstring_constructor(&m);
@@ -2491,45 +2493,40 @@ static int
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
-
-            break;
-
-
-dadebug FIXME
-
+            }
+        }
     }
+    return DW_DLV_OK;
 }
+
 static int
 cook_gnu_loclist_contents(Dwarf_Debug dbg,
-    Dwarf_Loc_Head c llhead,
+    Dwarf_Loc_Head_c llhead,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned baseaddress = llhead->ll_cu_base_address;
-    Dwarf_Unsigned loclists_base = llhead->ll_at_loclists_base;
-    Dwarf_Unsigned addr_section_base = llhead->ll_cu_addr_base;
-    Dwarf_Bool     addr_section_base_present =
-        llhead->ll_cu_addr_base_present;
-    Dwarf_Unsigned count = llhead->ll_count;
+    Dwarf_Unsigned count = llhead->ll_locdesc_count;
     Dwarf_Unsigned i = 0;
     Dwarf_CU_Context cucontext = llhead->ll_context;
     int res = 0;
 
-    for ( k = 0 ; i < count ++i) {
+    for (i = 0 ; i < count ; ++i) {
         Dwarf_Locdesc_c  llc = 0;
 
-        llc = llhead->ll_loclists_entries +i;
+        llc = llhead->ll_locdesc +i;
         switch(llc->ld_lle_value) {
         case DW_LLEX_base_address_selection_entry:{
             Dwarf_Addr targaddr = 0;
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawhigh,&targaddr,error);
-            if (res != DW_DLV_OK {
-               
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
                 llc->ld_highpc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_lopc = targaddr;
                 llc->ld_highpc = targaddr;
@@ -2542,17 +2539,18 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             }
         case DW_LLEX_start_length_entry:{
             Dwarf_Addr targaddr = 0;
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawlow,&targaddr,error);
-            if (res != DW_DLV_OK {
-               
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_lopc = targaddr;
-                llc->ld_highpc = llc->ld_lowpc +llc->ld+rawhigh;
+                llc->ld_highpc = llc->ld_lopc +llc->ld_rawhigh;
             }
             break;
             }
@@ -2563,23 +2561,27 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             }
         case DW_LLEX_start_end_entry:{
             Dwarf_Addr targaddr = 0;
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawlow,&targaddr,error);
-            if (res != DW_DLV_OK {
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_lopc = targaddr;
             }
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawhigh,&targaddr,error);
-            if (res != DW_DLV_OK {
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_highpc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_highpc = targaddr;
             }
@@ -2587,7 +2589,7 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
 
             break;
             }
-        case default::{
+        default:{
             dwarfstring m;
 
             dwarfstring_constructor(&m);
@@ -2612,33 +2614,31 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
 /* DWARF5 */
 static int
 cook_loclists_contents(Dwarf_Debug dbg,
-    Dwarf_Loc_Head c llhead,
+    Dwarf_Loc_Head_c llhead,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned baseaddress = llhead->ll_cu_base_address;
-    Dwarf_Unsigned loclists_base = llhead->ll_at_loclists_base;
-    Dwarf_Unsigned addr_section_base = llhead->ll_cu_addr_base;
-    Dwarf_Bool     addr_section_base_present = 
-        llhead->ll_cu_addr_base_present;
-    Dwarf_Unsigned count = llhead->ll_count;
+    Dwarf_Unsigned count = llhead->ll_locdesc_count;
     Dwarf_Unsigned i = 0;
     Dwarf_CU_Context cucontext = llhead->ll_context;
     int res = 0;
    
-    for ( k = 0 ; i < count ++i) {
+    for (i = 0 ; i < count ; ++i) {
         Dwarf_Locdesc_c  llc = 0;
 
-        llc = llhead->ll_loclists_entries +i;
+        llc = llhead->ll_locdesc +i;
         switch(llc->ld_lle_value) {
         case DW_LLE_base_addressx: {
             Dwarf_Addr targaddr = 0;
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawlow,&targaddr,error);
-            if (res != DW_DLV_OK {
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_lopc = targaddr;
             }
@@ -2647,23 +2647,27 @@ cook_loclists_contents(Dwarf_Debug dbg,
         case DW_LLE_startx_endx:{
             /* two indexes into debug_addr */
             Dwarf_Addr targaddr = 0;
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawlow,&targaddr,error);
-            if (res != DW_DLV_OK {
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_lopc = targaddr;
             }
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawhigh,&targaddr,error);
-            if (res != DW_DLV_OK {
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_highpc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_highpc = targaddr;
             }
@@ -2672,23 +2676,25 @@ cook_loclists_contents(Dwarf_Debug dbg,
         case DW_LLE_startx_length:{
             /* one index to debug_addr other a length */
             Dwarf_Addr targaddr = 0;
-            res = dwarf_extract_address_from_debug_addr(dbg,
+            res = _dwarf_extract_address_from_debug_addr(dbg,
                 cucontext,llc->ld_rawlow,&targaddr,error);
-            if (res != DW_DLV_OK {
+            if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
-                dwarf_dealloc_error(dbg, *error)
-                *error = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
             } else {
                 llc->ld_lopc = targaddr;
-                lld->ld_highpc = targaddr + lld->ld_rawhigh;
+                llc->ld_highpc = targaddr + llc->ld_rawhigh;
             }
             break;
         }
         case DW_LLE_offset_pair:{
             /*offsets of the current base address*/
-            llc->ld_lopc = llc->ld_rawlow +cu_baseaddress;
-            llc->ld_highpc = llc->ld_rawhigh +cu_baseaddress;
+            llc->ld_lopc = llc->ld_rawlow +baseaddress;
+            llc->ld_highpc = llc->ld_rawhigh +baseaddress;
             break;
         }
         case DW_LLE_default_location:{
@@ -2716,7 +2722,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
             /* do nothing */
             break;
         }
-        case default: {
+        default: {
             dwarfstring m;
  
             dwarfstring_constructor(&m);
@@ -2730,20 +2736,6 @@ cook_loclists_contents(Dwarf_Debug dbg,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        }
-    }
-    return DW_DLV_OK;
-}
-
-/*  New October 2015
-    This interface requires the use of interface functions
-    to get data from Dwarf_Locdesc_c.  The structures
-    are not visible to callers. */
-int
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
-        }
-
         }
     }
     return DW_DLV_OK;
@@ -2841,8 +2833,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         DW_LKIND_GNU_exp_list) {
         int ores = 0;
         /* Here we have a loclist to deal with. */
-        setup_res = context_is_cu_not_tu(cucontext,&is_cu);
-        if(setup_res != DW_DLV_OK) {
+        ores = context_is_cu_not_tu(cucontext,&is_cu);
+        if(ores != DW_DLV_OK) {
             dwarf_loc_head_c_dealloc(llhead);
             return setup_res;
         }
@@ -2853,12 +2845,13 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             return ores;
         }
         if (lkind == DW_LKIND_loclist) {
-            res = cook_original_loclist_contents(dbg,llhead,error);
+            ores = cook_original_loclist_contents(dbg,llhead,error);
         } else {
-            res = cook_gnu_loclist_contents(dbg,llhead,error);
+            ores = cook_gnu_loclist_contents(dbg,llhead,error);
         }
-        if (res != DW_DLV_OK) {
-            return res;
+        if (ores != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(llhead);
+            return ores;
         }
     } else if (lkind == DW_LKIND_expression) {
         /* DWARF2,3,4,5 */
@@ -2879,14 +2872,15 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             dwarf_loc_head_c_dealloc(llhead);
             return leres;
         }
-        res = cook_loclists_contents(dbg,llhead,error);
-        if (res != DW_DLV_OK) {
-            return res;
+        leres = cook_loclists_contents(dbg,llhead,error);
+        if (leres != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(llhead);
+            return leres;
         }
     }
     *ll_header_out = llhead;
     *listlen_out = llhead->ll_locdesc_count;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  An interface giving us no cu context! 
@@ -2943,7 +2937,8 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     section 2.4.1 In other words, it is not an error, and we don't
     test for block length 0 specially here.  */
 
-    res = _dwarf_get_locdesc_op_c(dbg,
+    /* Fills in the locdesc and its operators list at index 0 */
+    res = _dwarf_fill_in_locdesc_op_c(dbg,
         0,
         llhead,
         &loc_block,
@@ -2973,6 +2968,7 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
    Dwarf_Small    * lle_value_out,
    Dwarf_Unsigned     * rawval1,
    Dwarf_Unsigned     * rawval2,
+   Dwarf_Bool     * debug_addr_unavailable,
    Dwarf_Addr     * lowpc_out, /* 'cooked' value */
    Dwarf_Addr     * hipc_out, /* 'cooked' value */
    Dwarf_Unsigned * loclist_count_out,
@@ -3001,6 +2997,7 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     *rawval2 = desc->ld_rawhigh;
     *lowpc_out = desc->ld_lopc;
     *hipc_out = desc->ld_highpc;
+    *debug_addr_unavailable = desc->ld_index_failed;
     *loclist_count_out = desc->ld_cents;
     *locdesc_entry_out = desc;
     *loclist_source_out = desc->ld_kind;
@@ -3024,13 +3021,15 @@ dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Error    * error)
 {
     int res = 0;
-    Dwarf_Unsigned rawlow = 0;
-    Dwarf_Unsigned rawhigh = 0;
+    Dwarf_Unsigned cookedlow = 0;
+    Dwarf_Unsigned cookedhigh = 0;
+    Dwarf_Bool debug_addr_unavailable = FALSE;
 
     res = dwarf_get_locdesc_entry_d(loclist_head,
         index,lle_value_out,
-        &rawlow,&rawhigh,
         lowpc_out,hipc_out,
+        &debug_addr_unavailable,
+        &cookedlow,&cookedhigh,
         loclist_count_out,
         locdesc_entry_out,
         loclist_source_out,

@@ -280,6 +280,42 @@ int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     struct esb_s *string_out,
     Dwarf_Error *err);
 
+int print_original_loclist_linecodes(Dwarf_Debug dbg,
+    Dwarf_Bool    checking,
+    Dwarf_Small   lle_value,
+    Dwarf_Addr  * base_address,
+    Dwarf_Addr    rawlopc,
+    Dwarf_Addr    rawhipc,
+    Dwarf_Bool    debug_addr_unavailable,
+    Dwarf_Addr  * lopc,
+    Dwarf_Addr  * hipc,
+    Dwarf_Unsigned locdesc_offset,
+    struct esb_s * ebsp);
+int print_llex_linecodes(Dwarf_Debug dbg,
+    Dwarf_Bool    checking,
+    Dwarf_Small   lle_value,
+    Dwarf_Addr  * base_address,
+    Dwarf_Addr    rawlopc,
+    Dwarf_Addr    rawhipc,
+    Dwarf_Bool    debug_addr_unavailable,
+    Dwarf_Addr  * lopc,
+    Dwarf_Addr  * hipc,
+    Dwarf_Unsigned locdesc_offset,
+    struct esb_s * ebsp,
+    Dwarf_Bool   * bError);
+int print_debug_loclists_linecodes(Dwarf_Debug dbg,
+    Dwarf_Bool    checking,
+    Dwarf_Small   lle_value,
+    Dwarf_Addr  * base_address,
+    Dwarf_Addr    rawlopc,
+    Dwarf_Addr    rawhipc,
+    Dwarf_Bool    debug_addr_unavailable,
+    Dwarf_Addr  * lopc,
+    Dwarf_Addr  * hipc,
+    Dwarf_Unsigned locdesc_offset,
+    struct esb_s * ebsp,
+    Dwarf_Bool   * bError);
+
 
 #ifdef __cplusplus
 }
