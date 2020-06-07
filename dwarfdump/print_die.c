@@ -3103,11 +3103,75 @@ handle_location_description(Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Half theform = 0;
     Dwarf_Half directform = 0;
+    enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
+    Dwarf_Half version = 0;
+    Dwarf_Half offset_size = 0;
+    Dwarf_Unsigned formval = 0;
 
     res = get_form_values(dbg,attrib,&theform,&directform,err);
     if (res == DW_DLV_ERROR) {
         return res;
     }
+    res = dwarf_get_version_of_die(die,
+        &version,&offset_size);
+
+    fc = dwarf_get_form_class(version, attr,
+         offset_size, theform);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if (fc == DW_FORM_CLASS_CONSTANT) {
+        res = dwarf_formudata(attrib,&formval,
+            err);
+        if (res != DW_DLV_OK){
+            return res;
+        }
+        if (fc == DW_FORM_CLASS_LOCLISTSPTR) {
+             esb_append_printf_u(base,
+                 "<loclists index: 0x%"
+                 DW_PR_XZEROS DW_PR_DUx
+                 ">",
+                 formval);
+             if (version >= DWVERSION5) {
+                 esb_append_printf_u(base,
+                     "<loclists offset 0x%"
+                     DW_PR_XZEROS DW_PR_DUx
+                     ">",
+                     formval);
+             } else {
+                 esb_append_printf_u(base,
+                     " ERROR! form class 0x%"
+                     DW_PR_XZEROS DW_PR_DUx
+                     , formval);
+             }
+        }
+    } else if (fc == DW_FORM_CLASS_LOCLISTSPTR ||
+        fc == DW_FORM_CLASS_LOCLIST) {
+        res = dwarf_global_formref(attrib,&formval,err);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        if (fc == DW_FORM_CLASS_LOCLISTSPTR) {
+             esb_append_printf_u(base,
+                 "<loclists index: 0x%"
+                 DW_PR_XZEROS DW_PR_DUx
+                 ">",
+                 formval);
+        } else {
+             if (version >= DWVERSION5) {
+                 esb_append_printf_u(base,
+                     "<loclists offset 0x%"
+                     DW_PR_XZEROS DW_PR_DUx
+                     ">",
+                     formval);
+             } else {
+                 esb_append_printf_u(base,
+                     "0x%"
+                     DW_PR_XZEROS DW_PR_DUx
+                     , formval);
+             }
+        }
+    } 
     if (is_location_form(theform)) {
         res  = get_location_list(dbg, die, attrib, details,err);
         if (res == DW_DLV_ERROR) {
@@ -5360,8 +5424,6 @@ get_location_list(Dwarf_Debug dbg,
                     locdesc_offset,
                     esbp,
                     &bError);
-               esb_append(esbp,"\n");
-            } else if (loclist_source == DW_LKIND_loclist) {
                 print_original_loclist_linecodes(dbg,
                     checking,
                     llent,
@@ -5372,7 +5434,6 @@ get_location_list(Dwarf_Debug dbg,
                     &lopc, &hipc,
                     locdesc_offset,
                     esbp);
-               esb_append(esbp,"\n");
             } else {
                 /* loclist_source == DW_LKIND_loclists */
                 print_debug_loclists_linecodes(dbg,
@@ -5386,7 +5447,6 @@ get_location_list(Dwarf_Debug dbg,
                     locdesc_offset,
                     esbp,
                     &bError);
-               esb_append(esbp,"\n");
             }
         } 
         lres = dwarfdump_print_one_locdesc(dbg,
