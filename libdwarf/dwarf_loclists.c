@@ -316,14 +316,6 @@ internal_read_header(Dwarf_Debug dbg,
     buildhere->lc_dbg = dbg;
     buildhere->lc_index = contextnum;
     buildhere->lc_header_offset = offset;
-{
-printf("dadebug establish localcontext %lu offset 0x%lx len %lu %d %s\n",
-(unsigned long)contextnum,
-(unsigned long)buildhere->lc_header_offset,
-(unsigned long)buildhere->lc_length,
-__LINE__,__FILE__);
-}
-
     buildhere->lc_offset_size = length_size;
     buildhere->lc_extension_size = exten_size;
     READ_UNALIGNED_CK(dbg,version,Dwarf_Unsigned,data,
@@ -619,6 +611,8 @@ int dwarf_get_loclist_head_basics(
     Dwarf_Half     * segment_selector_size,
     Dwarf_Unsigned * overall_offset_of_this_context,
     Dwarf_Unsigned * total_length_of_this_context,
+    Dwarf_Unsigned * offset_table_offset,
+    Dwarf_Unsigned * offset_table_entrycount,
     Dwarf_Bool     * loclists_base_present,
     Dwarf_Unsigned * loclists_base,
     Dwarf_Bool     * loclists_base_address_present,
@@ -638,18 +632,11 @@ int dwarf_get_loclist_head_basics(
     *segment_selector_size = head->ll_segment_selector_size;
     /*  If a dwarf_expression, no ll_loccontext */
     loccontext = head->ll_localcontext;
-{
-printf("dadebug found localcontext? %lx %d %s\n",(unsigned long)loccontext,__LINE__,__FILE__);
-}
     if (loccontext) {
-{
-printf("dadebug found localcontext offset 0x%lx len %lu %d %s\n",
-(unsigned long)loccontext->lc_header_offset,
-(unsigned long)loccontext->lc_length,
-__LINE__,__FILE__);
-}
       *overall_offset_of_this_context = loccontext->lc_header_offset;
       *total_length_of_this_context = loccontext->lc_length;
+      *offset_table_offset =  loccontext->lc_offsets_off_in_sect;
+      *offset_table_entrycount = loccontext->lc_offset_entry_count;
     }
     *loclists_base_present = head->ll_at_loclists_base_present;
     *loclists_base= head->ll_at_loclists_base;

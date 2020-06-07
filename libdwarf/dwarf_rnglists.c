@@ -511,6 +511,8 @@ int dwarf_get_rnglist_head_basics(
     Dwarf_Half     * segment_selector_size,
     Dwarf_Unsigned * overall_offset_of_this_context,
     Dwarf_Unsigned * total_length_of_this_context,
+    Dwarf_Unsigned * offset_table_offset,
+    Dwarf_Unsigned * offset_table_entrycount,
     Dwarf_Bool     * rnglists_base_present,
     Dwarf_Unsigned * rnglists_base,
     Dwarf_Bool     * rnglists_base_address_present,
@@ -528,8 +530,12 @@ int dwarf_get_rnglist_head_basics(
     *address_size = head->rh_address_size;
     *segment_selector_size = head->rh_segment_selector_size;
     rngcontext = head->rh_localcontext;
-    *overall_offset_of_this_context = rngcontext->rc_header_offset;
-    *total_length_of_this_context = rngcontext->rc_length;
+    if (rngcontext) {
+        *overall_offset_of_this_context = rngcontext->rc_header_offset;
+        *total_length_of_this_context = rngcontext->rc_length;
+        *offset_table_offset = rngcontext->rc_offsets_off_in_sect;
+        *offset_table_entrycount = rngcontext->rc_offset_entry_count;
+    }
     *rnglists_base_present = head->rh_at_rnglists_base_present;
     *rnglists_base= head->rh_at_rnglists_base;
 

@@ -4997,13 +4997,15 @@ print_loclists_context_head(
     Dwarf_Half     segment_selector_size,
     Dwarf_Unsigned overall_offset_of_this_context,
     Dwarf_Unsigned total_length_of_this_context,
+    Dwarf_Unsigned offset_table_offset,
+    Dwarf_Unsigned offset_table_entrycount,
     Dwarf_Bool     loclists_base_present,
     Dwarf_Addr     loclists_base,
     Dwarf_Bool     loclists_base_address_present,
     Dwarf_Addr     loclists_base_address,
     Dwarf_Bool     loclists_debug_addr_base_present,
     Dwarf_Addr     loclists_debug_addr_base,
-    UNUSEDARG Dwarf_Unsigned loclists_offset_lle_set,
+    Dwarf_Unsigned loclists_offset_lle_set,
     struct esb_s  *esbp)
 {
     append_local_prefix(esbp); 
@@ -5034,10 +5036,32 @@ print_loclists_context_head(
     esb_append_printf_u(esbp,
         "offset of context       : 0x%" DW_PR_XZEROS DW_PR_DUx,
         overall_offset_of_this_context);
+
+    append_local_prefix(esbp); 
+    esb_append_printf_u(esbp,
+        "offset table entrycount : %3u",
+        offset_table_entrycount);
+    if (offset_table_entrycount) {
+        append_local_prefix(esbp); 
+        esb_append_printf_u(esbp,
+            "offset table offset     : 0x%" DW_PR_XZEROS DW_PR_DUx,
+            offset_table_offset);
+    }
+    append_local_prefix(esbp); 
+    esb_append_printf_u(esbp,
+        "offset of this list set : 0x%" DW_PR_XZEROS DW_PR_DUx,
+        loclists_offset_lle_set);
+
     append_local_prefix(esbp); 
     esb_append_printf_u(esbp,
         "length of context       : %3u",
         total_length_of_this_context);
+    append_local_prefix(esbp); 
+    esb_append_printf_u(esbp,
+        "end of context offset   : 0x%" DW_PR_XZEROS DW_PR_DUx,
+        overall_offset_of_this_context + 
+        total_length_of_this_context);
+
     if (loclists_base_present) {
         append_local_prefix(esbp); 
         esb_append_printf_u(esbp,
@@ -5058,6 +5082,30 @@ print_loclists_context_head(
     }
     esb_append(esbp,"\n");
 }
+#if 0
+static void
+show_loclist_source(Dwarf_Small loclist_source,
+    Dwarf_Unsigned locdesc_offset,struct esb_s *esbp)
+{
+    if (glflags.gf_display_offsets && glflags.verbose) {
+        char *secname = ".debug_info";
+        if(loclist_source == DW_LKIND_loclist) {
+            secname = ".debug_loc";
+        } else if (loclist_source == DW_LKIND_GNU_exp_list) {
+            secname = ".debug_loc.dwo";
+        } else if (loclist_source == DW_LKIND_loclists) {
+            secname = ".debug_loclists";
+        } else if (loclist_source) {
+            secname = "<unknown location entry code. ERROR.>";
+        }
+        esb_append_printf_s(esbp,"<from %s",secname);
+        esb_append_printf_u(esbp,
+            " offset 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
+            locdesc_offset);
+        esb_append(esbp,"\n");
+    }
+}
+#endif
 
 
 /*  Fill buffer with location lists data for printing */
@@ -5112,6 +5160,8 @@ get_location_list(Dwarf_Debug dbg,
     Dwarf_Bool     loclists_debug_addr_base_present = FALSE;
     Dwarf_Unsigned loclists_debug_addr_base = 0;
     Dwarf_Unsigned loclists_offset_lle_set = 0;
+    Dwarf_Unsigned offset_table_offset = 0;
+    Dwarf_Unsigned offset_table_entrycount = 0;
 
 
     lres = dwarf_get_version_of_die(die,&version,
@@ -5151,6 +5201,8 @@ get_location_list(Dwarf_Debug dbg,
             &offset_size, &address_size, &segment_selector_size,
             &overall_offset_of_this_context,
             &total_length_of_this_context,
+            &offset_table_offset,
+            &offset_table_entrycount,
             &loclists_base_present,&loclists_base,
             &loclists_base_address_present,&loclists_base_address,
             &loclists_debug_addr_base_present,
@@ -5171,6 +5223,7 @@ get_location_list(Dwarf_Debug dbg,
                 offset_size,address_size, segment_selector_size,
                 overall_offset_of_this_context,
                 total_length_of_this_context,
+                offset_table_offset, offset_table_entrycount,
                 loclists_base_present,loclists_base,
                 loclists_base_address_present,loclists_base_address,
                 loclists_debug_addr_base_present,
@@ -5246,12 +5299,13 @@ get_location_list(Dwarf_Debug dbg,
                 lle_value = DW_LLE_start_end;
             }
         }
+        
         if (!glflags.dense ) {
             if (llent == 0) {
                 switch(loclist_source){
                 case DW_LKIND_loclist:
                     esb_append_printf_u(esbp,
-                            "<loclist at offset 0x%"
+                            "   <loclist at offset 0x%"
                             DW_PR_XZEROS DW_PR_DUx,locdesc_offset);
                     esb_append_printf_i(esbp,
                             " with %ld entries follows>",
@@ -5259,7 +5313,7 @@ get_location_list(Dwarf_Debug dbg,
                     break;
                 case DW_LKIND_GNU_exp_list:
                     esb_append_printf_u(esbp,
-                        "<dwo loclist at offset 0x%"
+                        "   <dwo loclist at offset 0x%"
                         DW_PR_XZEROS DW_PR_DUx,locdesc_offset);
                     esb_append_printf_i(esbp,
                         " with %ld entries follows>",
@@ -5267,11 +5321,12 @@ get_location_list(Dwarf_Debug dbg,
                     break;
                 case DW_LKIND_loclists:
                     esb_append_printf_u(esbp,
-                            "<.debug_loclists offset 0x%"
-                            DW_PR_XZEROS DW_PR_DUx,locdesc_offset);
+                        "   <.debug_loclists offset 0x%"
+                        DW_PR_XZEROS DW_PR_DUx,
+                        loclists_offset_lle_set);
                     esb_append_printf_i(esbp,
-                            " with %ld entries follows>",
-                            no_of_elements);
+                        " with %ld entries follows>",
+                        no_of_elements);
                     break;
                 }
             }
@@ -5305,7 +5360,7 @@ get_location_list(Dwarf_Debug dbg,
                     locdesc_offset,
                     esbp,
                     &bError);
-               printf("\n");
+               esb_append(esbp,"\n");
             } else if (loclist_source == DW_LKIND_loclist) {
                 print_original_loclist_linecodes(dbg,
                     checking,
@@ -5317,7 +5372,7 @@ get_location_list(Dwarf_Debug dbg,
                     &lopc, &hipc,
                     locdesc_offset,
                     esbp);
-               printf("\n");
+               esb_append(esbp,"\n");
             } else {
                 /* loclist_source == DW_LKIND_loclists */
                 print_debug_loclists_linecodes(dbg,
@@ -5331,24 +5386,7 @@ get_location_list(Dwarf_Debug dbg,
                     locdesc_offset,
                     esbp,
                     &bError);
-               printf("\n");
-            }
-            if (glflags.gf_display_offsets && glflags.verbose) {
-                char *secname = ".debug_info";
-                if(loclist_source == DW_LKIND_loclist) {
-                    secname = ".debug_loc";
-                } else if (loclist_source == DW_LKIND_GNU_exp_list) {
-                    secname = ".debug_loc.dwo";
-                } else if (loclist_source == DW_LKIND_loclists) {
-                    secname = ".debug_loclists";
-                } else if (loclist_source) {
-                    secname = "<unknown location entry code. ERROR.>";
-                }
-                esb_append_printf_s(esbp,"<from %s",secname);
-                esb_append_printf_u(esbp,
-                    " offset 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-                    locdesc_offset);
-                esb_append(esbp,"\n");
+               esb_append(esbp,"\n");
             }
         } 
         lres = dwarfdump_print_one_locdesc(dbg,
@@ -5366,7 +5404,9 @@ get_location_list(Dwarf_Debug dbg,
     }
 
     if (bError &&  glflags.gf_check_verbose_mode && PRINTING_UNIQUE) {
-        printf("\n");
+        esb_append(esbp,"\n");
+    } else if (glflags.gf_do_print_dwarf) {
+        esb_append(esbp,"\n");
     }
 
     if (!glflags.gf_use_old_dwarf_loclist) {
@@ -6201,6 +6241,8 @@ handle_rnglists(Dwarf_Die die,
         Dwarf_Unsigned rnglists_base_address = 0;
         Dwarf_Bool debug_addr_base_present = 0;
         Dwarf_Unsigned debug_addr_base;
+        Dwarf_Unsigned offsets_table_offset = 0;
+        Dwarf_Unsigned offsets_table_entrycount = 0;
 
         res = dwarf_get_rnglist_head_basics(rnglhead,
             &rle_count,
@@ -6212,7 +6254,9 @@ handle_rnglists(Dwarf_Die die,
             &lsegment_selector_size,
             &section_offset_of_context,
             &length_of_context,
-            & rnglists_base_present,&rnglists_base,
+            &offsets_table_offset,
+            &offsets_table_entrycount,
+            &rnglists_base_present,&rnglists_base,
             &rnglists_base_address_present,&rnglists_base_address,
             &debug_addr_base_present,&debug_addr_base,
             err);

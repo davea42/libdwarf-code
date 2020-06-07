@@ -1226,7 +1226,6 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
     if (blkres != DW_DLV_OK) {
         return blkres;
     }
-printf("dadebug loclist_offset 0x%llx line %d %s \n",loclist_offset,__LINE__,__FILE__);
     if (!dbg->de_debug_loc.dss_data) {
         int secload = _dwarf_load_section(dbg, &dbg->de_debug_loc,error);
         if (secload != DW_DLV_OK) {
