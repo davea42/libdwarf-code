@@ -5054,6 +5054,7 @@ int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
     Dwarf_Unsigned * /*loclists_base_address*/,
     Dwarf_Bool     * /*loclists_debug_addr_base_present*/,
     Dwarf_Unsigned * /*loclists_debug_addr_base*/,
+    Dwarf_Unsigned * /*offset_this_lle_area*/,
     Dwarf_Error    * /*error*/);
 
 /*  Enables printing of details about the Range List Table

@@ -56,7 +56,7 @@ print_frames.c \
 print_frames.h \
 print_gdbindex.c \
 print_lines.c \
-print_llex.c \
+print_llex_codes.c \
 print_loclist_original.c \
 print_loclists.c \
 print_loclists_codes.c \

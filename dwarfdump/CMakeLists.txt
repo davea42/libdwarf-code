@@ -7,7 +7,7 @@ set_source_group(SOURCES "Source Files" addrmap.c
         print_debugfission.c print_die.c 
 	print_dnames.c print_frames.c  print_gdbindex.c
 	print_lines.c 
-    print_locs.c  print_llex.c 
+    print_locs.c  print_llex_codes.c 
     print_loclist_original.c print_loclists_codes.c
     print_macro.c 
         print_macros.c print_pubnames.c print_ranges.c 

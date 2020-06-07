@@ -344,7 +344,8 @@ print_raw_all_loclists(Dwarf_Debug dbg,
             &version,&address_size,&segment_selector_size,
             &offset_entry_count,&offset_of_offset_array,
             &offset_of_first_locentry,
-            &offset_past_last_locentry,error);
+            &offset_past_last_locentry,
+            error);
         if (res != DW_DLV_OK) {
             struct esb_s m;
 

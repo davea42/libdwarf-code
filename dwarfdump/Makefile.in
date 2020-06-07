@@ -125,7 +125,8 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-print_die.$(OBJEXT) dwarfdump-print_dnames.$(OBJEXT) \
 	dwarfdump-print_frames.$(OBJEXT) \
 	dwarfdump-print_gdbindex.$(OBJEXT) \
-	dwarfdump-print_lines.$(OBJEXT) dwarfdump-print_llex.$(OBJEXT) \
+	dwarfdump-print_lines.$(OBJEXT) \
+	dwarfdump-print_llex_codes.$(OBJEXT) \
 	dwarfdump-print_loclist_original.$(OBJEXT) \
 	dwarfdump-print_loclists.$(OBJEXT) \
 	dwarfdump-print_loclists_codes.$(OBJEXT) \
@@ -608,7 +609,7 @@ print_frames.c \
 print_frames.h \
 print_gdbindex.c \
 print_lines.c \
-print_llex.c \
+print_llex_codes.c \
 print_loclist_original.c \
 print_loclists.c \
 print_loclists_codes.c \
@@ -818,7 +819,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_frames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_gdbindex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_lines.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_llex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_llex_codes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_loclist_original.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_loclists.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_loclists_codes.Po@am__quote@
@@ -1203,19 +1204,19 @@ dwarfdump-print_lines.obj: print_lines.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_lines.obj `if test -f 'print_lines.c'; then $(CYGPATH_W) 'print_lines.c'; else $(CYGPATH_W) '$(srcdir)/print_lines.c'; fi`
 
-dwarfdump-print_llex.o: print_llex.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_llex.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_llex.Tpo -c -o dwarfdump-print_llex.o `test -f 'print_llex.c' || echo '$(srcdir)/'`print_llex.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_llex.Tpo $(DEPDIR)/dwarfdump-print_llex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_llex.c' object='dwarfdump-print_llex.o' libtool=no @AMDEPBACKSLASH@
+dwarfdump-print_llex_codes.o: print_llex_codes.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_llex_codes.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_llex_codes.Tpo -c -o dwarfdump-print_llex_codes.o `test -f 'print_llex_codes.c' || echo '$(srcdir)/'`print_llex_codes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_llex_codes.Tpo $(DEPDIR)/dwarfdump-print_llex_codes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_llex_codes.c' object='dwarfdump-print_llex_codes.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_llex.o `test -f 'print_llex.c' || echo '$(srcdir)/'`print_llex.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_llex_codes.o `test -f 'print_llex_codes.c' || echo '$(srcdir)/'`print_llex_codes.c
 
-dwarfdump-print_llex.obj: print_llex.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_llex.obj -MD -MP -MF $(DEPDIR)/dwarfdump-print_llex.Tpo -c -o dwarfdump-print_llex.obj `if test -f 'print_llex.c'; then $(CYGPATH_W) 'print_llex.c'; else $(CYGPATH_W) '$(srcdir)/print_llex.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_llex.Tpo $(DEPDIR)/dwarfdump-print_llex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_llex.c' object='dwarfdump-print_llex.obj' libtool=no @AMDEPBACKSLASH@
+dwarfdump-print_llex_codes.obj: print_llex_codes.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_llex_codes.obj -MD -MP -MF $(DEPDIR)/dwarfdump-print_llex_codes.Tpo -c -o dwarfdump-print_llex_codes.obj `if test -f 'print_llex_codes.c'; then $(CYGPATH_W) 'print_llex_codes.c'; else $(CYGPATH_W) '$(srcdir)/print_llex_codes.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_llex_codes.Tpo $(DEPDIR)/dwarfdump-print_llex_codes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_llex_codes.c' object='dwarfdump-print_llex_codes.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_llex.obj `if test -f 'print_llex.c'; then $(CYGPATH_W) 'print_llex.c'; else $(CYGPATH_W) '$(srcdir)/print_llex.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_llex_codes.obj `if test -f 'print_llex_codes.c'; then $(CYGPATH_W) 'print_llex_codes.c'; else $(CYGPATH_W) '$(srcdir)/print_llex_codes.c'; fi`
 
 dwarfdump-print_loclist_original.o: print_loclist_original.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_loclist_original.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_loclist_original.Tpo -c -o dwarfdump-print_loclist_original.o `test -f 'print_loclist_original.c' || echo '$(srcdir)/'`print_loclist_original.c

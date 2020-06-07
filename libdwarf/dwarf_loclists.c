@@ -316,6 +316,14 @@ internal_read_header(Dwarf_Debug dbg,
     buildhere->lc_dbg = dbg;
     buildhere->lc_index = contextnum;
     buildhere->lc_header_offset = offset;
+{
+printf("dadebug establish localcontext %lu offset 0x%lx len %lu %d %s\n",
+(unsigned long)contextnum,
+(unsigned long)buildhere->lc_header_offset,
+(unsigned long)buildhere->lc_length,
+__LINE__,__FILE__);
+}
+
     buildhere->lc_offset_size = length_size;
     buildhere->lc_extension_size = exten_size;
     READ_UNALIGNED_CK(dbg,version,Dwarf_Unsigned,data,
@@ -617,6 +625,7 @@ int dwarf_get_loclist_head_basics(
     Dwarf_Unsigned * loclists_base_address,
     Dwarf_Bool     * loclists_debug_addr_base_present,
     Dwarf_Unsigned * loclists_debug_addr_base,
+    Dwarf_Unsigned * loclists_offset_lle_set,
     UNUSEDARG Dwarf_Error *error)
 {
     Dwarf_Loclists_Context loccontext = 0;
@@ -627,9 +636,21 @@ int dwarf_get_loclist_head_basics(
     *offset_size = head->ll_offset_size;
     *address_size = head->ll_address_size;
     *segment_selector_size = head->ll_segment_selector_size;
+    /*  If a dwarf_expression, no ll_loccontext */
     loccontext = head->ll_localcontext;
-    *overall_offset_of_this_context = loccontext->lc_header_offset;
-    *total_length_of_this_context = loccontext->lc_length;
+{
+printf("dadebug found localcontext? %lx %d %s\n",(unsigned long)loccontext,__LINE__,__FILE__);
+}
+    if (loccontext) {
+{
+printf("dadebug found localcontext offset 0x%lx len %lu %d %s\n",
+(unsigned long)loccontext->lc_header_offset,
+(unsigned long)loccontext->lc_length,
+__LINE__,__FILE__);
+}
+      *overall_offset_of_this_context = loccontext->lc_header_offset;
+      *total_length_of_this_context = loccontext->lc_length;
+    }
     *loclists_base_present = head->ll_at_loclists_base_present;
     *loclists_base= head->ll_at_loclists_base;
 
@@ -638,6 +659,7 @@ int dwarf_get_loclist_head_basics(
 
     *loclists_debug_addr_base_present = head->ll_cu_addr_base_present;
     *loclists_debug_addr_base  = head->ll_cu_addr_base;
+    *loclists_offset_lle_set = head->ll_llearea_offset;
     return DW_DLV_OK;
 }
 
@@ -658,8 +680,8 @@ int dwarf_get_loclist_context_basics(
     Dwarf_Small    * segment_selector_size,
     Dwarf_Unsigned * offset_entry_count,
     Dwarf_Unsigned * offset_of_offset_array,
-    Dwarf_Unsigned * offset_of_first_rangeentry,
-    Dwarf_Unsigned * offset_past_last_rangeentry,
+    Dwarf_Unsigned * offset_of_first_loclistentry,
+    Dwarf_Unsigned * offset_past_last_loclistentry,
     UNUSEDARG Dwarf_Error *error)
 {
     Dwarf_Loclists_Context con = 0;
@@ -695,22 +717,22 @@ int dwarf_get_loclist_context_basics(
     if (offset_of_offset_array) {
         *offset_of_offset_array = con->lc_offsets_off_in_sect;
     }
-    if (offset_of_first_rangeentry) {
-        *offset_of_first_rangeentry = con->lc_first_loclist_offset;
+    if (offset_of_first_loclistentry) {
+        *offset_of_first_loclistentry = con->lc_first_loclist_offset;
     }
-    if (offset_past_last_rangeentry) {
-        *offset_past_last_rangeentry =
+    if (offset_past_last_loclistentry) {
+        *offset_past_last_loclistentry =
             con->lc_past_last_loclist_offset;
     }
     return DW_DLV_OK;
 }
 
 /*  Used by dwarfdump to print raw loclists data.
-    entry offset is offset_of_first_rangeentry.
+    entry offset is offset_of_first_loclistentry.
     Stop when the returned *next_entry_offset
-    is == offset_past_last_rangentry (from
+    is == offset_past_last_loclistentry (from
     dwarf_get_loclist_context_plus).
-    This only makes sense within those ranges.
+    This only makes sense within those loclists
     This retrieves raw detail from the section,
     no base values or anything are added.
     So this returns raw individual entries
@@ -1108,39 +1130,47 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
 
     ctx = attr->ar_cu_context;
     array = dbg->de_loclists_context;
-    if (theform == DW_FORM_loclistx) {
-         is_loclistx = TRUE;
-    }
-    res = dwarf_formudata(attr,&attr_val,error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    /*  ASSERT:  the 3 pointers just set are non-null */
-    /*  the context cc_loclists_base gives the offset
-        of the array. of offsets (if cc_loclists_base_present) */
-            offset_in_loclists = attr_val;
-    if (is_loclistx) {
-        if (ctx->cc_loclists_base_present) {
-            offset_in_loclists = ctx->cc_loclists_base;
-
-        } else {
-            /* FIXME: check in tied file for a cc_loclists_base */
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_LOCLISTS_ERROR: loclists table index of"
-                " %u"  ,attr_val);
-            dwarfstring_append(&m,
-                " is unusable unless it is in a tied file."
-                " libdwarf is incomplete. FIXME");
-            _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
+    if ( theform == DW_FORM_sec_offset) {
+        /*  DW_FORM_sec_offset is not formudata , often
+            seen in in DW5 DW_AT_location etc */
+        res = dwarf_global_formref(attr, &attr_val,error);
+        if (res != DW_DLV_OK) {
+            return res;
         }
-    } else {
         offset_in_loclists = attr_val;
+    } else {
+        if (theform == DW_FORM_loclistx) {
+            is_loclistx = TRUE;
+        }
+        res = dwarf_formudata(attr,&attr_val,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        /*  the context cc_loclists_base gives the offset
+            of the array. of offsets (if cc_loclists_base_present) */
+                offset_in_loclists = attr_val;
+        if (is_loclistx) {
+            if (ctx->cc_loclists_base_present) {
+                offset_in_loclists = ctx->cc_loclists_base;
+            } else {
+                /* FIXME: check in tied file for a cc_loclists_base */
+                dwarfstring m;
+    
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_LOCLISTS_ERROR: loclists table index of"
+                    " %u"  ,attr_val);
+                dwarfstring_append(&m,
+                    " is unusable unless it is in a tied file."
+                    " libdwarf is incomplete. FIXME");
+                _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                return DW_DLV_ERROR;
+            }
+        } else {
+            offset_in_loclists = attr_val;
+        }
     }
     res = _dwarf_which_loclists_context(dbg,ctx,
         offset_in_loclists,

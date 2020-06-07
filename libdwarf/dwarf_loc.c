@@ -1224,8 +1224,9 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
 
     int blkres = dwarf_global_formref(attr, &loclist_offset, error);
     if (blkres != DW_DLV_OK) {
-        return (blkres);
+        return blkres;
     }
+printf("dadebug loclist_offset 0x%llx line %d %s \n",loclist_offset,__LINE__,__FILE__);
     if (!dbg->de_debug_loc.dss_data) {
         int secload = _dwarf_load_section(dbg, &dbg->de_debug_loc,error);
         if (secload != DW_DLV_OK) {
@@ -1245,7 +1246,8 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
         int fisres = 0;
         Dwarf_Unsigned fissoff = 0;
         Dwarf_Unsigned size = 0;
-        fisres = _dwarf_get_fission_addition_die(attr->ar_die, DW_SECT_LOCLISTS,
+        fisres = _dwarf_get_fission_addition_die(attr->ar_die,
+            DW_SECT_LOCLISTS,
             &fissoff, &size,error);
         if(fisres != DW_DLV_OK) {
             return fisres;
@@ -2830,7 +2832,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     llhead->ll_cu_addr_base_present = cucontext->cc_addr_base_present;
 
     if (lkind == DW_LKIND_loclist ||
-        DW_LKIND_GNU_exp_list) {
+        lkind == DW_LKIND_GNU_exp_list) {
         int ores = 0;
         /* Here we have a loclist to deal with. */
         ores = context_is_cu_not_tu(cucontext,&is_cu);
@@ -2877,7 +2879,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             dwarf_loc_head_c_dealloc(llhead);
             return leres;
         }
-    }
+    } /* ASSERT else impossible */
     *ll_header_out = llhead;
     *listlen_out = llhead->ll_locdesc_count;
     return DW_DLV_OK;
