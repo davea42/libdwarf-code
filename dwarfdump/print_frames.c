@@ -1577,7 +1577,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
 }
 
 int
-get_string_from_locs(Dwarf_Debug dbg,
+print_location_operations(Dwarf_Debug dbg,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
@@ -1638,11 +1638,13 @@ get_string_from_locs(Dwarf_Debug dbg,
             return lres;
         }
 
-        lres = dwarfdump_print_one_locdesc(dbg,
+        lres = dwarfdump_print_location_operations(dbg,
             NULL,
             locentry,
             0, /* index 0: locdesc 0 */
             ulocentry_count,
+            DW_LKIND_expression,
+            0, /* no die indent*/
             baseaddr,
             out_string,err);
         dwarf_loc_head_c_dealloc(head);
@@ -1666,11 +1668,13 @@ get_string_from_locs(Dwarf_Debug dbg,
     /* listlen is always 1 */
     ulistlen = listlen;
 
-    res2 = dwarfdump_print_one_locdesc(dbg,
+    res2 = dwarfdump_print_location_operations(dbg,
         locdescarray,
         NULL,
         0,
         ulistlen,
+        DW_LKIND_expression,
+        0, /* no die indent*/
         baseaddr,
         out_string,err);
     dwarf_dealloc(dbg, locdescarray->ld_s, DW_DLA_LOC_BLOCK);
@@ -2179,9 +2183,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
 
                         esb_constructor_fixed(&exprstring,exprstr_buf,
                             sizeof(exprstr_buf));
-                        gres = get_string_from_locs(dbg,
+                        gres = print_location_operations(dbg,
                             instp+1,block_len,addr_size,
-                            offset_size,version,&exprstring,&cerr);
+                            offset_size,version,
+                            &exprstring,&cerr);
                         if ( gres == DW_DLV_OK) {
                             printf("    %s\n",
                             sanitized(esb_get_string(&exprstring)));
@@ -2264,9 +2269,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         esb_constructor_fixed(&exprstring,
                             exprstr_buf,
                             sizeof(exprstr_buf));
-                        gres = get_string_from_locs(dbg,
+                        gres = print_location_operations(dbg,
                             instp+1,block_len,addr_size,
-                            offset_size,version,&exprstring,&cerr);
+                            offset_size,version,
+                            &exprstring,&cerr);
                         if ( gres == DW_DLV_OK) {
                             printf("    %s\n",
                                 sanitized(esb_get_string(&exprstring)));
@@ -2528,9 +2534,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         esb_constructor_fixed(&exprstring,
                             exprstr_buf,
                             sizeof(exprstr_buf));
-                        pres = get_string_from_locs(dbg,
+                        pres = print_location_operations(dbg,
                             instp+1,block_len,addr_size,
-                            offset_size,version,&exprstring,&cerr);
+                            offset_size,version,
+                            &exprstring,&cerr);
                         if ( pres == DW_DLV_OK) {
                             printf("    %s\n",sanitized(esb_get_string(&exprstring)));
                         } else if (pres == DW_DLV_NO_ENTRY) {
@@ -2745,9 +2752,10 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 esb_constructor_fixed(&exprstring,local_buf,
                     sizeof(local_buf));
                 /*  Here 'offset' is actually block length. */
-                gres = get_string_from_locs(dbg,
+                gres = print_location_operations(dbg,
                     block_ptr,offset,addr_size,
-                    offset_size,version,&exprstring,&cerr);
+                    offset_size,version,
+                    &exprstring,&cerr);
                 if ( gres == DW_DLV_OK) {
                     printf("<expr:%s>",sanitized(esb_get_string(&exprstring)));
                 } else if (gres == DW_DLV_NO_ENTRY) {

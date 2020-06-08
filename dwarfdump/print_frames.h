@@ -34,7 +34,7 @@ int print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     Dwarf_Half address_size,
     struct dwconf_s *config_data,
     Dwarf_Error *err);
-int get_string_from_locs(Dwarf_Debug dbg,
+int print_location_operations(Dwarf_Debug dbg,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,

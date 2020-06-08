@@ -113,7 +113,8 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
             break;
         }
 
-        fres = get_string_from_locs(dbg,data,entry_len,address_size,
+        fres = print_location_operations(dbg,data,
+            entry_len,address_size,
             offset_size,
             version,
             &exprstring,err);

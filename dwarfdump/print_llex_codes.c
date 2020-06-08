@@ -67,13 +67,6 @@ print_llex_linecodes( Dwarf_Debug dbg,
         *bError = TRUE;
     }
     if (lle_value == DW_LLEX_base_address_selection_entry) {
-{
-printf("dadebug lopc 0x%lx hipc 0x%lx unavailable %d line %d %s\n",
-(unsigned long)lopc,
-(unsigned long)hipc,
-debug_addr_unavailable,
-__LINE__,__FILE__);
-}
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_base_address_selection_entry : 0x%"
@@ -83,8 +76,8 @@ __LINE__,__FILE__);
             if (glflags.verbose) {
                 esb_append_printf_u(esbp,
                     "<index to debug_addr : 0x%"
-                    DW_PR_XZEROS DW_PR_DUx 
-                    ,rawhipc);
+                    DW_PR_XZEROS DW_PR_DUx ">", 
+                    rawhipc);
                 esb_append_printf_i(esbp, "\n   [%2d]",llent);
             }
             esb_append_printf_u(esbp,
@@ -103,12 +96,13 @@ __LINE__,__FILE__);
                 " .debug_addr not available>",rawlopc);
             esb_append_printf_u(esbp,
                 "< length : 0x%"
-                    DW_PR_XZEROS DW_PR_DUx,rawhipc);
+                    DW_PR_XZEROS DW_PR_DUx ">",rawhipc);
         } else {
             if (glflags.verbose) {
                 esb_append_printf_u(esbp,
                         "<start index to debug_addr : 0x%"
-                    DW_PR_XZEROS DW_PR_DUx,rawlopc);
+                    DW_PR_XZEROS DW_PR_DUx
+                    ,rawlopc);
                 esb_append_printf_u(esbp,
                         "  length: 0x%"
                     DW_PR_XZEROS DW_PR_DUx
@@ -117,12 +111,12 @@ __LINE__,__FILE__);
             }
             esb_append_printf_u(esbp,
                 "< start-addr  0x%"
-                DW_PR_XZEROS DW_PR_DUx,
+                DW_PR_XZEROS DW_PR_DUx ,
                 *lopc);
             esb_append_printf_u(esbp,
                 " endaddr 0x%"
                 DW_PR_XZEROS DW_PR_DUx
-                "> ",*hipc);
+                ">",*hipc);
         }
 #if 0
         loc_error_check(dbg,lopcfinal, *lopc,

@@ -41,7 +41,7 @@
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
 #include "sanitized.h"
-#include "print_frames.h"       /* for get_string_from_locs() . */
+#include "print_frames.h"  /* for print_location_operations() . */
 #include "macrocheck.h"
 #include "helpertree.h"
 #include "tag_common.h"
@@ -99,7 +99,9 @@ static void show_form_itself(int show_form,int verbose,
     int theform, int directform, struct esb_s * str_out);
 static int print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
-    int showhextoo, struct esb_s *esbp,Dwarf_Error *err);
+    int die_indent_level,
+    int showhextoo,
+    struct esb_s *esbp,Dwarf_Error *err);
 static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Half attr,
@@ -109,8 +111,9 @@ static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Signed cnt,
     boolean *attr_matched,
     Dwarf_Error *err);
-static int get_location_list(Dwarf_Debug dbg, Dwarf_Die die,
-    Dwarf_Attribute attr, struct esb_s *esbp,Dwarf_Error *);
+static int print_location_list(Dwarf_Debug dbg, Dwarf_Die die,
+    Dwarf_Attribute attr, int no_ending_newline,
+    struct esb_s *esbp,Dwarf_Error *);
 static int legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr);
 static int legal_tag_tree_combination(Dwarf_Half parent_tag,
     Dwarf_Half child_tag);
@@ -2311,6 +2314,17 @@ do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
 
 /*  DW_FORM_data16 should not apply here. */
 static boolean
+is_simple_location_expr(int form)
+{
+    if (form == DW_FORM_block1 ||
+        form == DW_FORM_block2 ||
+        form == DW_FORM_block4 ||
+        form == DW_FORM_block ) {
+        return TRUE;
+    }
+    return FALSE;
+}
+static boolean
 is_location_form(int form)
 {
     if (form == DW_FORM_block1 ||
@@ -3090,10 +3104,11 @@ tag_type_is_addressable_cu(int tag)
 }
 
 static int
-handle_location_description(Dwarf_Debug dbg,
+print_location_description(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Die die,
     Dwarf_Half attr,
+    int die_indent_level,
     struct esb_s *base,
     struct esb_s *details,
     Dwarf_Error *err)
@@ -3172,12 +3187,19 @@ handle_location_description(Dwarf_Debug dbg,
              }
         }
     }  else {
-#if 0
-       printf("dadebug form class is %u\n",(unsigned int)fc);
-#endif
     }
-    if (is_location_form(theform)) {
-        res  = get_location_list(dbg, die, attrib, details,err);
+    if (is_simple_location_expr(theform)) {
+        res  = print_location_list(dbg, die, attrib,
+            TRUE,base,err);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        show_form_itself(glflags.show_form_used, glflags.verbose,
+            theform, directform, base);
+    } else if (is_location_form(theform)) {
+        res  = print_location_list(dbg, die, attrib,
+            FALSE,
+            details,err);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -3185,7 +3207,8 @@ handle_location_description(Dwarf_Debug dbg,
             theform, directform, base);
     } else if (theform == DW_FORM_exprloc) {
         int showhextoo = 1;
-        res = print_exprloc_content(dbg,die,attrib,showhextoo,
+        res = print_exprloc_content(dbg,die,attrib,
+            die_indent_level,showhextoo,
             base,err);
         if (res == DW_DLV_ERROR) {
             return res;
@@ -3867,8 +3890,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 to one, or a mistake. */
         }
         append_extra_string = TRUE;
-        res = handle_location_description(dbg,attrib,die,
-            attr,&valname,&esb_extra,err);
+        res = print_location_description(dbg,attrib,die,
+            attr,die_indent_level,&valname,&esb_extra,err);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -3881,8 +3904,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_static_link:
     case DW_AT_frame_base:
         append_extra_string = TRUE;
-        res = handle_location_description(dbg,attrib,die,
-            attr,&valname,&esb_extra,err);
+        res = print_location_description(dbg,attrib,die,
+            attr,die_indent_level,&valname,&esb_extra,err);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -3992,7 +4015,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         rv, *err);
                     return rv;
                 }
-                rv = get_location_list(dbg, die, attrib,
+                rv = print_location_list(dbg, die, attrib,
+                    TRUE,
                     &upperboundstr,err);
                 show_form_itself(glflags.show_form_used,
                     glflags.verbose,
@@ -4685,20 +4709,20 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 }
 
 int
-dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
-    Dwarf_Locdesc * llbuf, /* Non-zero for old interface. */
+dwarfdump_print_location_operations(Dwarf_Debug dbg,
+    Dwarf_Locdesc * llbuf,    /* Non-zero for old interface. */
     Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
     UNUSEDARG Dwarf_Unsigned llent, /* Which desc we have . */
-    Dwarf_Unsigned entrycount, /* How many location operators (DW_OP)? */
+    Dwarf_Unsigned entrycount,/* How many location ops (DW_OP)? */
+    UNUSEDARG Dwarf_Small  lkind,
+    UNUSEDARG int no_ending_newlines,
     Dwarf_Addr  baseaddr,
     struct esb_s *string_out,
     Dwarf_Error *err)
 {
-
     Dwarf_Half no_of_ops = 0;
     unsigned i = 0;
     Dwarf_Bool report_raw = TRUE;
-
     if(llbuf) {
         Dwarf_Locdesc *locd = 0;
         locd = llbuf;
@@ -4801,9 +4825,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     } else {
         /* DWARF 2,3,4 and DWARF5 style */
         int res = 0;
-#if 0
-printf("dadebug print ops index %lu\n",(unsigned long)index);
-#endif
         res = dwarf_get_location_op_value_d(exprc,
             index, 
             &op,&opd1,&opd2,&opd3,
@@ -5193,9 +5214,10 @@ show_loclist_source(Dwarf_Small loclist_source,
 /*  Fill buffer with location lists data for printing */
 /*ARGSUSED*/ static
 int
-get_location_list(Dwarf_Debug dbg,
+print_location_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
+    int  no_end_newline,
     struct esb_s *esbp,
     Dwarf_Error* llerr)
 {
@@ -5254,7 +5276,7 @@ get_location_list(Dwarf_Debug dbg,
         /* is DW_DLV_ERROR (see libdwarf query.c) */
         simple_err_only_return_action(lres,
             "\nERROR: die or context bad calling "
-            "dwarf_get_version_of_die in get_location_list."
+            "dwarf_get_version_of_die in print_location_list."
             " Something is very wrong.");
         return DW_DLV_NO_ENTRY;
     }
@@ -5297,35 +5319,42 @@ get_location_list(Dwarf_Debug dbg,
             return lres;
         }
         version = lle_version;
-        append_local_prefix(esbp);
-        esb_constructor(&section_truename);
-        if (lkind == DW_LKIND_loclists) {
-            get_true_section_name(dbg,".debug_loclists",
-                &section_truename,FALSE);
-        } else {
-            get_true_section_name(dbg,".debug_loc",
-                &section_truename,FALSE);
-        }
-        esb_append_printf_s(esbp,"%-15s",
-            esb_get_string(&section_truename));
-        esb_append_printf_u(esbp,
-             " offset  :"
-             " 0x%" DW_PR_XZEROS DW_PR_DUx,
-             loclists_offset_lle_set);
-        esb_destructor(&section_truename);
-        if (glflags.verbose) {
-            print_loclists_context_head(lkind,
-                lle_count, lle_version, loclists_index,
-                bytes_total_in_lle,
-                offset_size,address_size, segment_selector_size,
-                overall_offset_of_this_context,
-                total_length_of_this_context,
-                offset_table_offset, offset_table_entrycount,
-                loclists_base_present,loclists_base,
-                loclists_base_address_present,loclists_base_address,
-                loclists_debug_addr_base_present,
-                loclists_debug_addr_base, 
-                loclists_offset_lle_set,esbp);
+        /*  append_local_prefix(esbp); No, 
+            here the newline grates, causes blank
+            line in the output. So. Just add 6 spaces.
+            the output already has a newline. */
+        if (lkind != DW_LKIND_expression) {
+            esb_append(esbp,"      ");
+            esb_constructor(&section_truename);
+            if (lkind == DW_LKIND_loclists) {
+                get_true_section_name(dbg,".debug_loclists",
+                        &section_truename,FALSE);
+            } else {
+                get_true_section_name(dbg,".debug_loc",
+                    &section_truename,FALSE);
+            }
+            esb_append_printf_s(esbp,"%-15s",
+                esb_get_string(&section_truename));
+            esb_append_printf_u(esbp,
+                 " offset  :"
+                 " 0x%" DW_PR_XZEROS DW_PR_DUx,
+                 loclists_offset_lle_set);
+            esb_destructor(&section_truename);
+            if (glflags.verbose) {
+                print_loclists_context_head(lkind,
+                    lle_count, lle_version, loclists_index,
+                    bytes_total_in_lle,
+                    offset_size,address_size, segment_selector_size,
+                    overall_offset_of_this_context,
+                    total_length_of_this_context,
+                    offset_table_offset, offset_table_entrycount,
+                    loclists_base_present,loclists_base,
+                    loclists_base_address_present,
+                    loclists_base_address,
+                    loclists_debug_addr_base_present,
+                    loclists_debug_addr_base, 
+                    loclists_offset_lle_set,esbp);
+            }
         }
     } else {
         /*  DWARF2 old loclist. Still used. Ignores
@@ -5355,6 +5384,7 @@ get_location_list(Dwarf_Debug dbg,
            the new value of DW_LKIND_loclists
            for DWARF5.  See libdwarf.h */
         Dwarf_Small loclist_source = 0;
+        int no_ending_newline = FALSE;
 
         if (!glflags.gf_use_old_dwarf_loclist) {
             lres = dwarf_get_locdesc_entry_d(loclist_head,
@@ -5397,7 +5427,7 @@ get_location_list(Dwarf_Debug dbg,
             }
         }
         
-        if (!glflags.dense ) {
+        if (!glflags.dense && loclist_source != DW_LKIND_expression) {
             if (llent == 0) {
                 switch(loclist_source){
                 case DW_LKIND_loclist:
@@ -5430,6 +5460,8 @@ get_location_list(Dwarf_Debug dbg,
                 }
             }
             esb_append_printf_i(esbp, "\n   [%2d]",llent);
+        } else {
+            no_ending_newline = TRUE;
         }
 
         /*  If we have a location list refering to the .debug_loc
@@ -5448,8 +5480,6 @@ get_location_list(Dwarf_Debug dbg,
             DW_LKIND_GNU_exp_list */
         if(loclist_source || checking) {
             if (loclist_source == DW_LKIND_GNU_exp_list) {
-
-printf("dadebug llex linecodes\n");
                 print_llex_linecodes(dbg,
                     checking,
                     llent,
@@ -5462,9 +5492,6 @@ printf("dadebug llex linecodes\n");
                     esbp,
                     &bError);
             } else if (loclist_source == DW_LKIND_loclist) {
-#if 0
-printf("dadebug old loclist linecodes\n");
-#endif
                 print_original_loclist_linecodes(dbg,
                     checking,
                     llent,
@@ -5477,9 +5504,6 @@ printf("dadebug old loclist linecodes\n");
                     esbp);
             } else {
                 /* loclist_source == DW_LKIND_loclists */
-#if 0
-printf("dadebug dw5 loclists linecodes\n");
-#endif
                 print_debug_loclists_linecodes(dbg,
                     checking,
                     llent,
@@ -5493,13 +5517,15 @@ printf("dadebug dw5 loclists linecodes\n");
                     &bError);
             }
         } 
-        lres = dwarfdump_print_one_locdesc(dbg,
+        lres = dwarfdump_print_location_operations(dbg,
             /*  Either llbuf or locentry non-zero.
                 Not both. */
             llbuf,
             locentry,
             llent, /* Which loc desc this is */
             locentry_count, /* How many ops in this loc desc */
+            loclist_source,
+            no_ending_newline,
             base_address,
             esbp,llerr);
         if (lres == DW_DLV_ERROR) {
@@ -5507,10 +5533,13 @@ printf("dadebug dw5 loclists linecodes\n");
         }
     }
 
-    if (bError &&  glflags.gf_check_verbose_mode && PRINTING_UNIQUE) {
-        esb_append(esbp,"\n");
-    } else if (glflags.gf_do_print_dwarf) {
-        esb_append(esbp,"\n");
+    if (!no_end_newline) {
+        if (bError &&  glflags.gf_check_verbose_mode &&
+            PRINTING_UNIQUE) {
+            esb_append(esbp,"\n");
+        } else if (glflags.gf_do_print_dwarf) {
+            esb_append(esbp,"\n");
+        }
     }
 
     if (!glflags.gf_use_old_dwarf_loclist) {
@@ -5839,7 +5868,9 @@ bracket_hex(const char *s1,
 static int
 print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
-    int showhextoo, struct esb_s *esbp,Dwarf_Error* err)
+    UNUSEDARG int die_indent_level,
+    int showhextoo, 
+    struct esb_s *esbp,Dwarf_Error* err)
 {
     Dwarf_Ptr x = 0;
     Dwarf_Unsigned exprlength = 0;
@@ -5902,7 +5933,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
         {
             int sres = 0;
 
-            sres =  get_string_from_locs(dbg,x,
+            sres =  print_location_operations(dbg,x,
                 exprlength,address_size,
                 offset_size,version, esbp,err);
             if (sres == DW_DLV_ERROR) {
@@ -7308,8 +7339,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         break;
     case DW_FORM_exprloc: {    /* DWARF4 */
         int showhextoo = 1;
-        wres = print_exprloc_content(dbg,die,attrib,showhextoo,esbp,
-            err);
+        wres = print_exprloc_content(dbg,die,attrib,
+            0, /* die_indent_level pointless here */
+            showhextoo,
+            esbp, err);
         if (wres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "ERROR: cannot print DW_FORM_exprloc content.",
