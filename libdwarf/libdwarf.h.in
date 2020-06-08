@@ -5115,9 +5115,9 @@ int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
     unsigned * /*entry_kind*/,
     Dwarf_Unsigned * /*entry_operand1*/,
     Dwarf_Unsigned * /*entry_operand2*/,
-    Dwarf_Unsigned * /*ops_blocksize*/,
-    Dwarf_Unsigned * /*ops_offset*/,
-    Dwarf_Small   ** /*opsdata*/,
+    Dwarf_Unsigned * /*expr_ops_blocksize*/,
+    Dwarf_Unsigned * /*expr_ops_offset*/,
+    Dwarf_Small   ** /*expr_opsdata*/,
     Dwarf_Error * /*err*/);
 
 /* ======= END .debug_loclists interfaces.  */

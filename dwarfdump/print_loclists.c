@@ -89,9 +89,9 @@ print_offset_entry_table(Dwarf_Debug dbg,
 static void
 print_opsdetail(Dwarf_Debug dbg,
     Dwarf_Bool use_raw,
-    Dwarf_Unsigned ops_blocklen,
-    Dwarf_Small*ops,
-    Dwarf_Unsigned opsoffset)
+    Dwarf_Unsigned expr_ops_blocklen,
+    Dwarf_Small*expr_ops,
+    Dwarf_Unsigned expr_opsoffset)
 {
     Dwarf_Unsigned i = 0;
     struct Dwarf_Locdesc_c_s locdesc;
@@ -100,7 +100,7 @@ print_opsdetail(Dwarf_Debug dbg,
     Dwarf_Error err = 0;
     Dwarf_Unsigned baseaddr = 0; /* unknown */
 
-    if (!ops_blocklen) { 
+    if (!expr_ops_blocklen) { 
         return;
     }
     memset(&locdesc,0,sizeof(locdesc));
@@ -126,17 +126,17 @@ print_opsdetail(Dwarf_Debug dbg,
 
 
 static void
-print_opsbytes(Dwarf_Unsigned ops_blocklen,
-    Dwarf_Small*ops)
+print_opsbytes(Dwarf_Unsigned expr_ops_blocklen,
+    Dwarf_Small* expr_ops)
 {
     Dwarf_Unsigned i = 0;
 
-    if (!ops_blocklen) { 
+    if (!expr_ops_blocklen) { 
         return;
     }
     printf(" opsbytes:");
-    for( ; i < ops_blocklen; ++i ) {
-        Dwarf_Small *b = ops+i;
+    for( ; i < expr_ops_blocklen; ++i ) {
+        Dwarf_Small *b =  expr_ops+i;
         printf(" %02x", *b);
     }
     printf(" ");
@@ -150,9 +150,9 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Unsigned code,
     Dwarf_Unsigned v1,
     Dwarf_Unsigned v2,
-    Dwarf_Unsigned ops_blocklen,
-    UNUSEDARG Dwarf_Unsigned ops_offset,
-    Dwarf_Small    *ops,
+    Dwarf_Unsigned expr_ops_blocklen,
+    UNUSEDARG Dwarf_Unsigned expr_ops_offset,
+    Dwarf_Small    *expr_ops,
     Dwarf_Unsigned entrylen)
 {
     int res = DW_DLV_OK;
@@ -233,11 +233,11 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
     }
     printf( " %" DW_PR_DUu,entrylen);
     esb_destructor(&m);
-    if (glflags.verbose && ops_blocklen > 0) {
+    if (glflags.verbose && expr_ops_blocklen > 0) {
         printf("\n");
         printf("    ");
-        printf(" opslen %" DW_PR_DUu,ops_blocklen);
-        print_opsbytes(ops_blocklen,ops);
+        printf(" opslen %" DW_PR_DUu,expr_ops_blocklen);
+        print_opsbytes(expr_ops_blocklen,expr_ops);
     }
     printf("\n");
     return res;
@@ -263,9 +263,9 @@ print_entire_loclist(Dwarf_Debug dbg,
         unsigned code = 0;
         Dwarf_Unsigned v1 = 0;
         Dwarf_Unsigned v2 = 0;
-        Dwarf_Unsigned ops_blocksize = 0;
-        Dwarf_Unsigned ops_offset = 0;
-        Dwarf_Small   *ops_data = 0;
+        Dwarf_Unsigned expr_ops_blocksize = 0;
+        Dwarf_Unsigned expr_ops_offset = 0;
+        Dwarf_Small   *expr_ops_data = 0;
 
         if (!ct) {
             printf("   Loc  (raw)\n");
@@ -278,14 +278,14 @@ print_entire_loclist(Dwarf_Debug dbg,
             curoffset,endoffset,
             &entrylen,
             &code,&v1,&v2,
-            &ops_blocksize,&ops_offset,&ops_data,
+            &expr_ops_blocksize,&expr_ops_offset,&expr_ops_data,
             error);
         if (res != DW_DLV_OK) {
             return res;
         }
         print_single_lle(dbg,contextnumber,curoffset,
-            code,v1,v2,ops_blocksize,ops_offset,
-            ops_data,entrylen);
+            code,v1,v2,expr_ops_blocksize,expr_ops_offset,
+            expr_ops_data,entrylen);
         curoffset += entrylen;
         if (curoffset > endoffset) {
             struct esb_s m;

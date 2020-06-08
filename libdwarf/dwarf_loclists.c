@@ -99,28 +99,28 @@ counted_loc_descr(Dwarf_Debug dbg,
 
 static int
 read_single_lle_entry(Dwarf_Debug dbg,
-    Dwarf_Small   *data,
-    Dwarf_Unsigned dataoffset,
-    Dwarf_Small   *enddata,
-    unsigned       address_size,
+    Dwarf_Small    *data,
+    Dwarf_Unsigned  dataoffset,
+    Dwarf_Small    *enddata,
+    unsigned        address_size,
     unsigned       *bytes_count_out,
     unsigned       *entry_kind,
     Dwarf_Unsigned *entry_operand1,
     Dwarf_Unsigned *entry_operand2,
-    Dwarf_Unsigned *opsblocksize, /* Just the ops data */
-    Dwarf_Unsigned *opsoffset, /* Just the ops data */
-    Dwarf_Small   **ops, /*  pointer to just the ops */
+    Dwarf_Unsigned *opsblocksize, /* Just the  expr data */
+    Dwarf_Unsigned *opsoffset, /* Just the expr ops data */
+    Dwarf_Small   **ops, /*  pointer to expr ops ops */
     Dwarf_Error* err)
 {
     Dwarf_Unsigned count = 0;
-    unsigned leblen = 0;
-    unsigned code = 0;
+    unsigned int   leblen = 0;
+    unsigned int   code = 0;
     Dwarf_Unsigned val1 = 0;
     Dwarf_Unsigned val2 = 0;
     Dwarf_Unsigned loc_ops_overall_size = 0;
     Dwarf_Unsigned loc_ops_count_len = 0;
     Dwarf_Unsigned loc_ops_len = 0;
-    Dwarf_Small    *lopsdata = 0;
+    Dwarf_Small   *lopsdata = 0;
     Dwarf_Unsigned lopsoffset = 0;
 
     /*  Some of these have a  Counted Location Description 
@@ -159,7 +159,8 @@ read_single_lle_entry(Dwarf_Debug dbg,
             return res;
         }
         count += loc_ops_overall_size;
-        data +=  loc_ops_overall_size;
+        data  += loc_ops_overall_size;
+
         }
         break;
     case DW_LLE_default_location: {
@@ -176,8 +177,8 @@ read_single_lle_entry(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        count += loc_ops_overall_size;
         data +=  loc_ops_overall_size;
+        count +=  loc_ops_overall_size;
         }
         break;
     case DW_LLE_base_address: {
@@ -255,6 +256,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
         }
         break;
     }
+    
     *bytes_count_out = count;
     *entry_kind      = code;
     *entry_operand1  = val1;
@@ -736,9 +738,9 @@ int dwarf_get_loclist_lle(
     unsigned *entry_kind,
     Dwarf_Unsigned *entry_operand1,
     Dwarf_Unsigned *entry_operand2,
-    Dwarf_Unsigned *ops_blocksize,
-    Dwarf_Unsigned *ops_offset,
-    Dwarf_Small   **opsdata,
+    Dwarf_Unsigned *expr_ops_blocksize,
+    Dwarf_Unsigned *expr_ops_offset,
+    Dwarf_Small   **expr_opsdata,
     Dwarf_Error *err)
 {
     Dwarf_Loclists_Context con = 0;
@@ -746,6 +748,7 @@ int dwarf_get_loclist_lle(
     Dwarf_Small *enddata = 0;
     int res = 0;
     unsigned address_size = 0;
+
 
     if (!dbg->de_loclists_context_count) {
         return DW_DLV_NO_ENTRY;
@@ -757,17 +760,15 @@ int dwarf_get_loclist_lle(
     if (contextnumber >= dbg->de_loclists_context_count) {
         return DW_DLV_NO_ENTRY;
     }
-
     con = dbg->de_loclists_context[contextnumber];
     address_size = con->lc_address_size;
-
     res = read_single_lle_entry(dbg,
         data,entry_offset,enddata,
         address_size, entrylen,
         entry_kind, entry_operand1, entry_operand2,
-        ops_blocksize,
-        ops_offset,
-        opsdata,
+        expr_ops_blocksize,
+        expr_ops_offset,
+        expr_opsdata,
         err);
     return res;
 }
