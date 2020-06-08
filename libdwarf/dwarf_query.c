@@ -1827,9 +1827,9 @@ dw_get_special_offset(Dwarf_Half attrnum,
     case DW_AT_use_location:
     case DW_AT_vtable_elem_location: {
         if (dwversion <= 4) {
-            return DW_FORM_CLASS_LOCLISTPTR;
+            return DW_FORM_CLASS_LOCLIST;
         }
-        return DW_FORM_CLASS_LOCLIST;
+        return DW_FORM_CLASS_LOCLISTPTR;
         }
     case DW_AT_sibling:
     case DW_AT_byte_size :

@@ -5041,6 +5041,7 @@ int dwarf_get_loclist_offset_index_value(Dwarf_Debug /*dbg*/,
     as returned by  dwarf_loclists_index_get_lle_head() 
     or dwarf_loclists_offset_get_lle_head. */
 int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
+    Dwarf_Small    * /*lkind*/,
     Dwarf_Unsigned * /*lle_count*/,
     Dwarf_Unsigned * /*loclists_version*/,
     Dwarf_Unsigned * /*loclists_index_returned*/,

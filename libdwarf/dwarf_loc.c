@@ -109,6 +109,7 @@ determine_location_lkind(unsigned int version,
        if (version == 4 &&  is_dwo  ) {
            return DW_LKIND_GNU_exp_list;
        }
+       return DW_LKIND_loclist;
        break;
     case DW_FORM_loclistx:
        if (version == 5 ) {
@@ -2275,6 +2276,13 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     if (off_res != DW_DLV_OK) {
             return off_res;
     }
+#if 0
+    res = dwarf_global_formref(attr,&loclist_offset,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+#endif
+
     if (lkind == DW_LKIND_GNU_exp_list) {
         count_res = _dwarf_get_loclist_count_dwo(dbg,
             loclist_offset,
@@ -2306,6 +2314,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     llhead->ll_locdesc = llbuf;
     llhead->ll_locdesc_count = listlen;
     cucontext = llhead->ll_context;
+    llhead->ll_llearea_offset = loclist_offset;
 
         /* New get loc ops */
     for (lli = 0; lli < listlen; ++lli) {

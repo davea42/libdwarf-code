@@ -229,7 +229,7 @@ struct Dwarf_Loc_Head_c_s {
     /*  The CU Context of this loclist or locexpr. */
     Dwarf_CU_Context ll_context;
     /* DW_LKIND*    */
-    unsigned         ll_kind;
+    Dwarf_Small      ll_kind;
     Dwarf_Debug      ll_dbg;
 
     /*  If ll_kind == DW_LKIND_loclists the following

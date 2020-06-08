@@ -60,10 +60,9 @@ print_original_loclist_linecodes(Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Unsigned locdesc_offset,
     struct esb_s * esbp)
 {
-    esb_append_printf_i(esbp, "\n   [%2d]",llent);
     if (lle_value == DW_LLE_base_address) {
         esb_append_printf_u(esbp,
-            "<new base address 0x%"
+            "<new base address   0x%"
             DW_PR_XZEROS DW_PR_DUx
             ">",
             *hipc);
@@ -73,16 +72,16 @@ print_original_loclist_linecodes(Dwarf_Debug dbg,
     } else if (lle_value == DW_LLE_offset_pair) {
         if (glflags.verbose) {
             esb_append_printf_u(esbp,
-                    "< DW_LLE_offset_pair : 0x%"
-                    DW_PR_XZEROS DW_PR_DUx,rawlopc);
+                "<DW_LLE_offset_pair 0x%"
+                DW_PR_XZEROS DW_PR_DUx,rawlopc);
             esb_append_printf_u(esbp,
-                "      0x%"
+                "           0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 ">",rawhipc);
             esb_append_printf_i(esbp, "\n   [%2d]",llent);
         }
         esb_append_printf_u(esbp,
-            " < low addr  0x%"
+            "<low addr           0x%"
             DW_PR_XZEROS DW_PR_DUx,*lopc);
         esb_append_printf_u(esbp,
             " high addr 0x%"

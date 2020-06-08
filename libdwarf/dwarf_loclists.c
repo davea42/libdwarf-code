@@ -602,6 +602,7 @@ dwarf_get_loclist_offset_index_value(
     or dwarf_loclists_offset_get_rle_head. */
 int dwarf_get_loclist_head_basics(
     Dwarf_Loc_Head_c head,
+    Dwarf_Small    * lkind,
     Dwarf_Unsigned * lle_count,
     Dwarf_Unsigned * lle_version,
     Dwarf_Unsigned * loclists_index_returned,
@@ -623,6 +624,7 @@ int dwarf_get_loclist_head_basics(
     UNUSEDARG Dwarf_Error *error)
 {
     Dwarf_Loclists_Context loccontext = 0;
+    *lkind = head->ll_kind;
     *lle_count = head->ll_locdesc_count;
     *lle_version = head->ll_cuversion;
     *loclists_index_returned = head->ll_index;
