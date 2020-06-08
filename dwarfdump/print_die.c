@@ -3213,6 +3213,8 @@ print_location_description(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             return res;
         }
+        show_form_itself(glflags.show_form_used, glflags.verbose,
+            theform, directform, base);
     } else {
         show_attr_form_error(dbg,attr,theform,base);
     }
@@ -4713,7 +4715,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     Dwarf_Locdesc * llbuf,    /* Non-zero for old interface. */
     Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
     UNUSEDARG Dwarf_Unsigned llent, /* Which desc we have . */
-    Dwarf_Unsigned entrycount,/* How many location ops (DW_OP)? */
+    Dwarf_Unsigned entrycount,
     UNUSEDARG Dwarf_Small  lkind,
     UNUSEDARG int no_ending_newlines,
     Dwarf_Addr  baseaddr,
@@ -4727,6 +4729,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
         Dwarf_Locdesc *locd = 0;
         locd = llbuf;
         no_of_ops = llbuf->ld_cents;
+printf("dadebug old ops count %d\n",(int)no_of_ops);
         for (i = 0; i < no_of_ops; i++) {
             Dwarf_Loc * op = &locd->ld_s[i];
 
@@ -4741,6 +4744,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     }
     /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
+printf("dadebug new ops count %d\n",(int)no_of_ops);
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,NULL,locdesc,i,
@@ -5253,7 +5257,6 @@ print_location_list(Dwarf_Debug dbg,
     Dwarf_Small    lkind = DW_LKIND_unknown;
     /* old and new interfaces differ on signedness.  */
     Dwarf_Signed   locentry_count = 0;
-    Dwarf_Unsigned ulocentry_count = 0;
     Dwarf_Bool     checking = FALSE;
     Dwarf_Unsigned bytes_total_in_lle = 0;
     Dwarf_Unsigned overall_offset_of_this_context = 0;
@@ -5377,6 +5380,7 @@ print_location_list(Dwarf_Debug dbg,
         Dwarf_Locdesc_c locentry = 0; /* 2015 */
         Dwarf_Unsigned rawlowpc = 0;
         Dwarf_Unsigned rawhipc = 0;
+        Dwarf_Unsigned ulocentry_count = 0;
         Dwarf_Bool     debug_addr_unavailable = FALSE;
         /* This has values DW_LKIND*, the same values
            that were in loclist source
@@ -5517,13 +5521,14 @@ print_location_list(Dwarf_Debug dbg,
                     &bError);
             }
         } 
+printf("\ndadebug now call dwarfdump_print_location_operations %d\n",(int)ulocentry_count);
         lres = dwarfdump_print_location_operations(dbg,
             /*  Either llbuf or locentry non-zero.
                 Not both. */
             llbuf,
             locentry,
             llent, /* Which loc desc this is */
-            locentry_count, /* How many ops in this loc desc */
+            ulocentry_count, /* How many ops in this loc desc */
             loclist_source,
             no_ending_newline,
             base_address,

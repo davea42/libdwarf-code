@@ -277,6 +277,27 @@ int _dwarf_loclists_expression_build(Dwarf_Debug dbg,
     Dwarf_Loc_Head_c* llhead,
     Dwarf_Error *error);
 
+int _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
+    Dwarf_Block_c * loc_block,
+    /* Caller: Start numbering at 0. */
+    Dwarf_Signed opnumber,
+
+    /* 2 for DWARF 2 etc. */
+    Dwarf_Half version_stamp,
+    Dwarf_Half offset_size, /* 4 or 8 */
+    Dwarf_Half address_size, /* 2,4, 8  */
+    Dwarf_Signed startoffset_in, /* offset in block,
+        not section offset */
+    Dwarf_Small *section_end,
+
+    /* nextoffset_out so caller knows next entry startoffset */
+    Dwarf_Unsigned *nextoffset_out,
+
+    /*  The values picked up. */
+    Dwarf_Loc_c curr_loc,
+    Dwarf_Error * error);
+
+
 
 #ifdef __cplusplus
 }

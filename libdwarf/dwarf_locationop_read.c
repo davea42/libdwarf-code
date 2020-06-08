@@ -44,6 +44,63 @@
 #define FALSE 0
 
 
+/*  Richard Henderson, on DW_OP_GNU_encoded_addr:
+    The operand is an absolute
+    address.  The first byte of the value
+    is an encoding length: 0 2 4 or 8.  If zero
+    it means the following is address-size.
+    The address then follows immediately for
+    that number of bytes. */
+static int
+read_encoded_addr(Dwarf_Small *loc_ptr,
+   Dwarf_Debug dbg,
+   Dwarf_Small *section_end_ptr,
+   Dwarf_Unsigned * val_out,
+   int * len_out,
+   Dwarf_Error *error)
+{
+    int len = 0;
+    Dwarf_Small op = *loc_ptr;
+    Dwarf_Unsigned operand = 0;
+    len++;
+    if (op == 0) {
+        /* FIXME: should be CU specific. */
+        op = dbg->de_pointer_size;
+    }
+    switch (op) {
+    case 1:
+        *val_out = *loc_ptr;
+        len++;
+        break;
+
+    case 2:
+        READ_UNALIGNED_CK(dbg, operand, Dwarf_Unsigned, loc_ptr, 2,
+            error,section_end_ptr);
+        *val_out = operand;
+        len +=2;
+        break;
+    case 4:
+        READ_UNALIGNED_CK(dbg, operand, Dwarf_Unsigned, loc_ptr, 4,
+            error,section_end_ptr);
+        *val_out = operand;
+        len +=4;
+        break;
+    case 8:
+        READ_UNALIGNED_CK(dbg, operand, Dwarf_Unsigned, loc_ptr, 8,
+            error,section_end_ptr);
+        *val_out = operand;
+        len +=8;
+        break;
+    default:
+        /* We do not know how much to read. */
+        _dwarf_error(dbg, error, DW_DLE_GNU_OPCODE_ERROR);
+        return DW_DLV_ERROR;
+    };
+    *len_out = len;
+    return DW_DLV_OK;
+}
+
+
 /*  Return DW_DLV_NO_ENTRY when at the end of
     the ops for this block (a single Dwarf_Loccesc
     and multiple Dwarf_Locs will eventually result
@@ -53,6 +110,7 @@
     extract operator fields. For any
     DWARF version.
 */
+int
 _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Block_c * loc_block,
     /* Caller: Start numbering at 0. */

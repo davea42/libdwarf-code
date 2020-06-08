@@ -155,6 +155,7 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_groups.lo libdwarf_la-dwarf_harmless.lo \
 	libdwarf_la-dwarf_init_finish.lo libdwarf_la-dwarf_leb.lo \
 	libdwarf_la-dwarf_line.lo libdwarf_la-dwarf_loc.lo \
+	libdwarf_la-dwarf_locationop_read.lo \
 	libdwarf_la-dwarf_loclists.lo libdwarf_la-dwarf_machoread.lo \
 	libdwarf_la-dwarf_macro.lo libdwarf_la-dwarf_macro5.lo \
 	libdwarf_la-dwarf_names.lo \
@@ -659,6 +660,7 @@ dwarf_line.h \
 dwarf_line_table_reader_common.h \
 dwarf_loc.c \
 dwarf_loc.h \
+dwarf_locationop_read.c \
 dwarf_loclists.c \
 dwarf_macho_loader.h \
 dwarf_machoread.c \
@@ -963,6 +965,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_leb.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_line.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_loc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_locationop_read.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_loclists.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_machoread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_macro.Plo@am__quote@
@@ -1215,6 +1218,13 @@ libdwarf_la-dwarf_loc.lo: dwarf_loc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_loc.c' object='libdwarf_la-dwarf_loc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_loc.lo `test -f 'dwarf_loc.c' || echo '$(srcdir)/'`dwarf_loc.c
+
+libdwarf_la-dwarf_locationop_read.lo: dwarf_locationop_read.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_locationop_read.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_locationop_read.Tpo -c -o libdwarf_la-dwarf_locationop_read.lo `test -f 'dwarf_locationop_read.c' || echo '$(srcdir)/'`dwarf_locationop_read.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_locationop_read.Tpo $(DEPDIR)/libdwarf_la-dwarf_locationop_read.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_locationop_read.c' object='libdwarf_la-dwarf_locationop_read.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_locationop_read.lo `test -f 'dwarf_locationop_read.c' || echo '$(srcdir)/'`dwarf_locationop_read.c
 
 libdwarf_la-dwarf_loclists.lo: dwarf_loclists.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_loclists.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_loclists.Tpo -c -o libdwarf_la-dwarf_loclists.lo `test -f 'dwarf_loclists.c' || echo '$(srcdir)/'`dwarf_loclists.c

@@ -1061,6 +1061,9 @@ build_array_of_lle(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         }
+        /*  Now read the operators and build a
+            collection of Dwarf_Loc_c 
+            finally building array of Dwarf_Loc_c_s */
     }
     if (rctx->ll_locdesc_count > 0) {
         Dwarf_Locdesc_c array = 0;
@@ -1068,7 +1071,7 @@ build_array_of_lle(Dwarf_Debug dbg,
         Dwarf_Locdesc_c prev = 0;
         Dwarf_Unsigned i = 0;
 
-        /*  Creating an array of pointers. */
+        /* array of structs. */
         array = (Dwarf_Locdesc_c)malloc(
             rctx->ll_locdesc_count *sizeof(struct Dwarf_Locdesc_c_s));
         if (!array) {
