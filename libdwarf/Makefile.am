@@ -66,6 +66,7 @@ dwarf_line.h \
 dwarf_line_table_reader_common.h \
 dwarf_loc.c \
 dwarf_loc.h \
+dwarf_locationop_read.c \
 dwarf_loclists.c \
 dwarf_macho_loader.h \
 dwarf_machoread.c \
