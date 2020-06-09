@@ -408,7 +408,7 @@ translate_from_uri(const char * input, struct esb_s* out)
 
 #ifdef TEST
 
-unsigned errcnt = 0;
+unsigned int errcnt = 0;
 
 static void
 mytestfrom(const char * in,const char *expected,int testnum)

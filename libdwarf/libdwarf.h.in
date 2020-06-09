@@ -1510,9 +1510,9 @@ enum Dwarf_Form_Class {
     as zero. */
 int dwarf_init_path(const char * /*path*/,
     char *            /*true_path_out_buffer*/,
-    unsigned          /*true_path_bufferlen*/,
+    unsigned int      /*true_path_bufferlen*/,
     Dwarf_Unsigned    /*access*/,
-    unsigned          /*groupnumber*/,
+    unsigned int      /*groupnumber*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
@@ -1525,7 +1525,7 @@ int dwarf_init_path(const char * /*path*/,
 /*  New March 2017 */
 int dwarf_init_b(int    /*fd*/,
     Dwarf_Unsigned    /*access*/,
-    unsigned          /*groupnumber*/,
+    unsigned int      /*groupnumber*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
@@ -1545,7 +1545,7 @@ int dwarf_init(int    /*fd*/,
 /*  New March 2017 */
 int dwarf_elf_init_b(dwarf_elf_handle /*elf*/,
     Dwarf_Unsigned    /*access*/,
-    unsigned          /*group_number*/,
+    unsigned int      /*group_number*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
@@ -1580,7 +1580,7 @@ int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
 int dwarf_object_init_b(Dwarf_Obj_Access_Interface* /*obj*/,
     Dwarf_Handler /*errhand*/,
     Dwarf_Ptr     /*errarg*/,
-    unsigned      /*groupnumber*/,
+    unsigned int  /*groupnumber*/,
     Dwarf_Debug*  /*dbg*/,
     Dwarf_Error*  /*error*/);
 
@@ -2598,15 +2598,15 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 
 int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
     char     **  /*name_returned*/,
-    unsigned char **  /*crc_returned from the debuglink section*/,
-    char     **  /*debuglink_path_returned*/,
-    unsigned *   /*debuglink_path_count_returned*/,
-    unsigned *   /*buildid_type_returned */,
-    char     **  /*buildid_owner_name_returned*/,
+    unsigned char ** /*crc_returned from the debuglink section*/,
+    char     **    /*debuglink_path_returned*/,
+    unsigned int * /*debuglink_path_count_returned*/,
+    unsigned int * /*buildid_type_returned */,
+    char     **    /*buildid_owner_name_returned*/,
     unsigned char ** /*buildid_returned*/,
-    unsigned *   /*buildid_length_returned*/,
-    char     *** /*paths_returned*/,
-    unsigned *   /*paths_length_returned*/,
+    unsigned int * /*buildid_length_returned*/,
+    char     ***   /*paths_returned*/,
+    unsigned int * /*paths_length_returned*/,
     Dwarf_Error* /*error*/);
 
 /* See
@@ -3205,7 +3205,7 @@ int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
     Dwarf_Unsigned * /*mac_offset*/,
     Dwarf_Unsigned * /*mac_len*/,
     Dwarf_Unsigned * /*mac_header_len*/,
-    unsigned       * /*flags*/,
+    unsigned int   * /*flags*/,
     Dwarf_Bool     * /*has_line_offset*/,
     Dwarf_Unsigned * /*line_offset*/,
     Dwarf_Bool     * /*has_offset_size_64*/,
@@ -4848,8 +4848,8 @@ int dwarf_rnglists_get_rle_head(Dwarf_Attribute       /*attr*/,
 /*  Get the rnglist entries details */
 int dwarf_get_rnglists_entry_fields(Dwarf_Rnglists_Head /*head*/,
     Dwarf_Unsigned   /*entrynum*/,
-    unsigned       * /*entrylen*/,
-    unsigned       * /*code*/,
+    unsigned int   * /*entrylen*/,
+    unsigned int   * /*code*/,
     Dwarf_Unsigned * /*raw1*/,
     Dwarf_Unsigned * /*raw2*/,
     Dwarf_Unsigned * /*cooked1*/,
@@ -4928,7 +4928,7 @@ int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned * /*header_offset*/,
     Dwarf_Small  *   /*offset_size*/,
     Dwarf_Small  *   /*extension_size*/,
-    unsigned     *   /*version*/, /* 5 */
+    unsigned int *   /*version*/, /* 5 */
     Dwarf_Small  *   /*address_size*/,
     Dwarf_Small  *   /*segment_selector_size*/,
     Dwarf_Unsigned * /*offset_entry_count*/,
@@ -4967,8 +4967,8 @@ int dwarf_get_rnglist_rle( Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned /*contextnumber*/,
     Dwarf_Unsigned /*entry_offset*/,
     Dwarf_Unsigned /*endoffset*/,
-    unsigned       * /*entrylen*/,
-    unsigned       * /*entry_kind*/,
+    unsigned int   * /*entrylen*/,
+    unsigned int   * /*entry_kind*/,
     Dwarf_Unsigned * /*entry_operand1*/,
     Dwarf_Unsigned * /*entry_operand2*/,
     Dwarf_Error * /*err*/);
@@ -4991,8 +4991,8 @@ typedef struct Dwarf_Loclists_Entry_s * Dwarf_Loclists_Entry;
 /*  Get the loclists entries details */
 int dwarf_get_loclists_entry_fields(Dwarf_Loc_Head_c /*head*/,
     Dwarf_Unsigned   /*entrynum*/,
-    unsigned       * /*entrylen*/,
-    unsigned       * /*code*/,
+    unsigned int   * /*entrylen*/,
+    unsigned int   * /*code*/,
     Dwarf_Unsigned * /*raw1*/,
     Dwarf_Unsigned * /*raw2*/,
     Dwarf_Unsigned * /*cooked1*/,
@@ -5071,7 +5071,7 @@ int dwarf_get_loclist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned * /*header_offset*/,
     Dwarf_Small  *   /*offset_size*/,
     Dwarf_Small  *   /*extension_size*/,
-    unsigned     *   /*version*/, /* 5 */
+    unsigned int *   /*version*/, /* 5 */
     Dwarf_Small  *   /*address_size*/,
     Dwarf_Small  *   /*segment_selector_size*/,
     Dwarf_Unsigned * /*offset_entry_count*/,
@@ -5107,11 +5107,11 @@ int dwarf_get_loclist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
     zero back through tye operand pointers. */
 
 int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned /*contextnumber*/,
-    Dwarf_Unsigned /*entry_offset*/,
-    Dwarf_Unsigned /*endoffset*/,
-    unsigned * /*entrylen*/,
-    unsigned * /*entry_kind*/,
+    Dwarf_Unsigned   /*contextnumber*/,
+    Dwarf_Unsigned   /*entry_offset*/,
+    Dwarf_Unsigned   /*endoffset*/,
+    unsigned int *   /*entrylen*/,
+    unsigned int *   /*entry_kind*/,
     Dwarf_Unsigned * /*entry_operand1*/,
     Dwarf_Unsigned * /*entry_operand2*/,
     Dwarf_Unsigned * /*expr_ops_blocksize*/,
@@ -5218,9 +5218,9 @@ int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table /*table_data*/,
     here are touched or used.
     */
 int dwarf_get_harmless_error_list(Dwarf_Debug /*dbg*/,
-    unsigned  /*count*/,
-    const char ** /*errmsg_ptrs_array*/,
-    unsigned * /*newerr_count*/);
+    unsigned int   /*count*/,
+    const char **  /*errmsg_ptrs_array*/,
+    unsigned int * /*newerr_count*/);
 
 /*  Insertion is only for testing the harmless error code, it is not
     necessarily useful otherwise. */
@@ -5232,8 +5232,8 @@ void dwarf_insert_harmless_error(Dwarf_Debug /*dbg*/,
     messages are simply dropped.  It returns the previous
     size. If zero passed in the size is unchanged
     and it simply returns the current size  */
-unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug /*dbg*/,
-    unsigned /*maxcount*/);
+unsigned int dwarf_set_harmless_error_list_size(Dwarf_Debug /*dbg*/,
+    unsigned int /*maxcount*/);
 /*  The harmless error strings (if any) are freed when the dbg
     is dwarf_finish()ed. */
 
@@ -5436,16 +5436,16 @@ int dwarf_set_de_alloc_flag(int v);
 int dwarf_object_detector_path(const char  *path,
     char *outpath,
     unsigned long,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
+    unsigned int * ftype,
+    unsigned int * endian,
+    unsigned int * offsetsize,
+    Dwarf_Unsigned *filesize,
     int * errcode);
 
 int dwarf_object_detector_fd(int fd,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
+    unsigned int *ftype,
+    unsigned int *endian,
+    unsigned int *offsetsize,
     Dwarf_Unsigned  *filesize,
     int * errcode);
 
