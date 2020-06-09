@@ -935,14 +935,17 @@ build_array_of_lle(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     int res = 0;
-    Dwarf_Small * data        = rctx->ll_llepointer;
-    Dwarf_Unsigned dataoffset = rctx->ll_llearea_offset;
-    Dwarf_Small *enddata      = rctx->ll_end_data_area;
-    unsigned address_size     = rctx->ll_address_size;
+    Dwarf_Small   *data         = rctx->ll_llepointer;
+    Dwarf_Unsigned dataoffset   = rctx->ll_llearea_offset;
+    Dwarf_Small   *enddata      = rctx->ll_end_data_area;
+    unsigned int   offset_size  = rctx->ll_offset_size;
+    unsigned int   address_size = rctx->ll_address_size;
     Dwarf_Unsigned bytescounttotal= 0;
     Dwarf_Unsigned latestbaseaddr = 0;
-    unsigned foundbaseaddr        = FALSE;
-    int done = FALSE;
+    unsigned int   foundbaseaddr  = FALSE;
+    int            done           = FALSE;
+    Dwarf_Unsigned locdesc_index  = 0;
+    Dwarf_Unsigned i              = 0;
 
     if (rctx->ll_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
@@ -950,7 +953,7 @@ build_array_of_lle(Dwarf_Debug dbg,
         latestbaseaddr = rctx->ll_cu_base_address;
         foundbaseaddr  = TRUE;
     }
-    for( ; !done  ; ) {
+    for( ; !done  ;++locdesc_index ) {
         unsigned entrylen = 0;
         unsigned code = 0;
         Dwarf_Unsigned val1 = 0;
@@ -961,7 +964,9 @@ build_array_of_lle(Dwarf_Debug dbg,
         Dwarf_Unsigned opsblocksize  = 0;
         Dwarf_Unsigned opsoffset  = 0;
         Dwarf_Small *ops = 0;
+        Dwarf_Block_c eops;
 
+        memset(&eops,0,sizeof(eops)); 
         res = read_single_lle_entry(dbg,
             data,dataoffset, enddata,
             address_size,&entrylen,
@@ -975,17 +980,25 @@ build_array_of_lle(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
+        eops.bl_len =opsblocksize;
+        eops.bl_data = ops;
+        eops.bl_kind = rctx->ll_kind;
+        eops.bl_section_offset = opsoffset;
+        eops.bl_locdesc_offset = dataoffset;
         e->ld_kind = rctx->ll_kind;
         e->ld_lle_value = code,
         e->ld_entrylen = entrylen;
         e->ld_rawlow = val1;
         e->ld_rawhigh = val2;
+        e->ld_opsblock = eops;
         bytescounttotal += entrylen;
         data += entrylen;
         if (code == DW_LLE_end_of_list) {
             done = TRUE;
             break;
         }
+        /*  Here we create the cooked values from
+            the raw values and other data. */
         switch(code) {
         case DW_LLE_base_addressx:
             foundbaseaddr = TRUE;
@@ -1062,15 +1075,11 @@ build_array_of_lle(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         }
-        /*  Now read the operators and build a
-            collection of Dwarf_Loc_Expr_Op 
-            finally building array of Dwarf_Loc_Expr_Op_s */
     }
     if (rctx->ll_locdesc_count > 0) {
         Dwarf_Locdesc_c array = 0;
         Dwarf_Locdesc_c cur = 0;
         Dwarf_Locdesc_c prev = 0;
-        Dwarf_Unsigned i = 0;
 
         /* array of structs. */
         array = (Dwarf_Locdesc_c)malloc(
@@ -1082,7 +1091,7 @@ build_array_of_lle(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         cur = rctx->ll_first;
-        for (  ; i < rctx->ll_locdesc_count; ++i) {
+        for (i = 0  ; i < rctx->ll_locdesc_count; ++i) {
             prev = cur;
             array[i] = *cur;
             cur = cur->ld_next;
@@ -1092,12 +1101,29 @@ build_array_of_lle(Dwarf_Debug dbg,
         rctx->ll_first = 0;
         rctx->ll_last = 0;
     }
+    for (i = 0; i < rctx->ll_locdesc_count; ++i) {
+        Dwarf_Locdesc_c ldc = rctx->ll_locdesc + i;
+        
+        res = _dwarf_fill_in_locdesc_op_c(dbg,
+            i,
+            rctx, 
+            &ldc->ld_opsblock,
+            address_size, offset_size,
+            rctx->ll_cuversion,
+            ldc->ld_lopc, ldc->ld_highpc,
+            ldc->ld_lle_value,
+            error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+    }
     rctx->ll_bytes_total = bytescounttotal;
     return DW_DLV_OK;
 }
 
 /*  Build a head with all the relevent Entries
-    attached.
+    attached, all the locdescs and for each such,
+    all its expression operators.
 */
 int
 _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,

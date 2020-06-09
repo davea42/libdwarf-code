@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.95, 28 May 2020
+.ds vE Rev 2.96, 09 June 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1358,7 +1358,6 @@ Dwarf_Line_Context through an argument
 and the new structure pointer lets us access line header information
 conveniently.
 .DS
-\f(CWtypedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;\fP
 \f(CWtypedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;\fP
 \f(CWtypedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;\fP
 .DE

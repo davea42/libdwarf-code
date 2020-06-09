@@ -4730,7 +4730,6 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
         Dwarf_Locdesc *locd = 0;
         locd = llbuf;
         no_of_ops = llbuf->ld_cents;
-printf("dadebug old ops count %d\n",(int)no_of_ops);
         for (i = 0; i < no_of_ops; i++) {
             Dwarf_Loc * op = &locd->ld_s[i];
 
@@ -4745,7 +4744,6 @@ printf("dadebug old ops count %d\n",(int)no_of_ops);
     }
     /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
-printf("dadebug new ops count %d\n",(int)no_of_ops);
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,NULL,locdesc,i,
@@ -5522,7 +5520,6 @@ print_location_list(Dwarf_Debug dbg,
                     &bError);
             }
         } 
-printf("\ndadebug now call dwarfdump_print_location_operations %d\n",(int)ulocentry_count);
         lres = dwarfdump_print_location_operations(dbg,
             /*  Either llbuf or locentry non-zero.
                 Not both. */
@@ -5909,6 +5906,9 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
             "len 0x%04" DW_PR_DUx ": ",exprlength);
         if (showhextoo) {
             for (u = 0; u < exprlength; u++) {
+                if (!u) {
+                    esb_append(esbp,"0x");
+                }
                 esb_append_printf_u(esbp,
                     "%02x", *(u + (unsigned char *) x));
             }

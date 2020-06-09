@@ -196,6 +196,9 @@ struct Dwarf_Locdesc_c_s {
         including any DW_OP entries */
     Dwarf_Unsigned   ld_entrylen; 
 
+    /*   For .debug_loclists, eases building record. */
+    Dwarf_Block_c    ld_opsblock;
+
     /*  count of struct Dwarf_Loc_Expr_Op_s (expression operators)
         in array. */
     Dwarf_Half       ld_cents;
@@ -266,6 +269,18 @@ struct Dwarf_Loc_Head_c_s {
     Dwarf_Unsigned   ll_llearea_offset;
     Dwarf_Small    * ll_end_data_area;
 };
+
+int _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
+    Dwarf_Unsigned locdesc_index,
+    Dwarf_Loc_Head_c loc_head,
+    Dwarf_Block_c * loc_block,
+    Dwarf_Half address_size,
+    Dwarf_Half offset_size,
+    Dwarf_Small version_stamp,
+    Dwarf_Addr lowpc,
+    Dwarf_Addr highpc,
+    Dwarf_Half lle_op,
+    Dwarf_Error * error);
 
 int _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     Dwarf_Block_c *loc_block,Dwarf_Error*error);

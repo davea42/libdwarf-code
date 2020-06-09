@@ -1320,6 +1320,15 @@ _dwarf_what_section_are_we(Dwarf_Debug dbg,
     FINDSEC(&dbg->de_debug_loc,
         our_pointer, section_name_out,
         sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_loclists,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_rnglists,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_addr,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
     FINDSEC(&dbg->de_debug_line,
         our_pointer, section_name_out,
         sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
