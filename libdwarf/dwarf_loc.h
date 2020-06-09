@@ -102,12 +102,15 @@ struct Dwarf_Loclists_Context_s {
 
 
 
-/* Contains info on an uninterpreted block of data
-   Used with certain location information functions.
-*/
+/*  Contains info on an uninterpreted block of data,
+    the data is DWARF location expression operators.  */
 struct Dwarf_Block_c_s {
-    Dwarf_Unsigned  bl_len;  /* length of block bl_data points at */
-    Dwarf_Ptr       bl_data; /* uninterpreted data */
+    /* length of block bl_data points at */
+    Dwarf_Unsigned  bl_len; 
+
+    /*  Uninterpreted data, location expressions,
+        DW_OP_reg31 etc */
+    Dwarf_Ptr       bl_data; 
 
     /*  DW_LKIND, see libdwarf.h.in  */
     Dwarf_Small     bl_kind;
@@ -116,8 +119,9 @@ struct Dwarf_Block_c_s {
     /* Section (not CU) offset which 'data' comes from. */
     Dwarf_Unsigned  bl_section_offset;
 
-    /*  Section offset where the location description itself starts.
-        So a few bytes lower than bl_section_offset */
+    /*  Section offset where the location description
+        itself starts.  So a few bytes lower than 
+        bl_section_offset */
     Dwarf_Unsigned  bl_locdesc_offset;
 };
 typedef struct Dwarf_Block_c_s Dwarf_Block_c;
