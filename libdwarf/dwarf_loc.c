@@ -194,7 +194,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
     /* OLD loop getting Loc operators. No DWARF5 */
     while (offset <= loc_block->bl_len) {
         Dwarf_Unsigned nextoffset = 0;
-        struct Dwarf_Loc_c_s temp_loc;
+        struct Dwarf_Loc_Expr_Op_s temp_loc;
 
         res = _dwarf_read_loc_expr_op(dbg,loc_block,
             op_count,
@@ -297,11 +297,12 @@ __LINE__,__FILE__);
 static int
 _dwarf_read_loc_section(Dwarf_Debug dbg,
     Dwarf_Block_c * return_block,
-    Dwarf_Addr * lowpc, Dwarf_Addr * hipc,
-    Dwarf_Off sec_offset,
-    Dwarf_Half address_size,
+    Dwarf_Addr    * lowpc, 
+    Dwarf_Addr    * hipc,
+    Dwarf_Off       sec_offset,
+    Dwarf_Half      address_size,
     UNUSEDARG unsigned   lkind,
-    Dwarf_Error * error)
+    Dwarf_Error   * error)
 {
     Dwarf_Small *beg = dbg->de_debug_loc.dss_data + sec_offset;
     Dwarf_Small *loc_section_end =
@@ -344,6 +345,8 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
         exprblock_size = 0;
         exprblock_off -=  DWARF_HALF_SIZE;
     } else {
+        /*  Here we note the address and length of the
+            expression operators, DW_OP_reg0 etc */
         READ_UNALIGNED_CK(dbg, exprblock_size, Dwarf_Half,
             beg + 2 * address_size, DWARF_HALF_SIZE,
             error,loc_section_end);
@@ -371,7 +374,7 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
 }
 
 static int
-_dwarf_get_loclist_count_dwo(Dwarf_Debug dbg,
+_dwarf_get_loclist_lle_count_dwo(Dwarf_Debug dbg,
     Dwarf_Off loclist_offset,
     Dwarf_Half address_size,
     unsigned lkind,
@@ -411,7 +414,7 @@ _dwarf_get_loclist_count_dwo(Dwarf_Debug dbg,
 }
 
 static int
-_dwarf_get_loclist_count(Dwarf_Debug dbg,
+_dwarf_get_loclist_lle_count(Dwarf_Debug dbg,
     Dwarf_Off loclist_offset,
     Dwarf_Half address_size,
     unsigned lkind, 
@@ -652,7 +655,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         if (off_res != DW_DLV_OK) {
             return off_res;
         }
-        count_res = _dwarf_get_loclist_count(dbg, loclist_offset,
+        count_res = _dwarf_get_loclist_lle_count(dbg, loclist_offset,
             address_size,lkind, &loclist_count, error);
         listlen = loclist_count;
         if (count_res != DW_DLV_OK) {
@@ -672,7 +675,8 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         for (lli = 0; lli < loclist_count; ++lli) {
             int lres = 0;
 
-            blkres = _dwarf_read_loc_section(dbg, &loc_block,
+            blkres = _dwarf_read_loc_section(dbg, 
+                &loc_block,
                 &lowpc,
                 &highpc,
                 loclist_offset,
@@ -1202,7 +1206,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     Dwarf_Unsigned op_count = 0;
 
     /* Contiguous block of Dwarf_Loc's for Dwarf_Locdesc. */
-    Dwarf_Loc_c block_loc = 0;
+    Dwarf_Loc_Expr_Op block_loc = 0;
     Dwarf_Locdesc_c locdesc = loc_head->ll_locdesc + locdesc_index;
     Dwarf_Unsigned i = 0;
     int res = 0;
@@ -1234,7 +1238,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     /* New loop getting Loc operators. Non DWO */
     while (offset <= loc_block->bl_len) {
         Dwarf_Unsigned nextoffset = 0;
-        struct Dwarf_Loc_c_s temp_loc;
+        struct Dwarf_Loc_Expr_Op_s temp_loc;
 
         /*  This call is ok even if bl_data NULL and bl_len 0 */
         res = _dwarf_read_loc_expr_op(dbg,loc_block,
@@ -1283,7 +1287,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         offset = nextoffset;
     }
     block_loc =
-        (Dwarf_Loc_c ) _dwarf_get_alloc(dbg, DW_DLA_LOC_BLOCK_C,
+        (Dwarf_Loc_Expr_Op ) _dwarf_get_alloc(dbg, DW_DLA_LOC_BLOCK_C,
         op_count);
     new_loc = head_loc;
     if (block_loc == NULL) {
@@ -1560,14 +1564,14 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
 #endif
 
     if (lkind == DW_LKIND_GNU_exp_list) {
-        count_res = _dwarf_get_loclist_count_dwo(dbg,
+        count_res = _dwarf_get_loclist_lle_count_dwo(dbg,
             loclist_offset,
             address_size, 
             llhead->ll_kind,
             &loclist_count,
             error);
     } else {
-        count_res = _dwarf_get_loclist_count(dbg,
+        count_res = _dwarf_get_loclist_lle_count(dbg,
             loclist_offset, address_size, 
             llhead->ll_kind,
             &loclist_count,
@@ -2246,8 +2250,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
 }
 
 
-/*  Need a new interface: dwarf_get_locdesc_entry_d
-    with all the Locdesc_c fields. FIXME */
+/*  New June 2020. */
 int
 dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
    Dwarf_Unsigned   index,
@@ -2257,7 +2260,7 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
    Dwarf_Bool     * debug_addr_unavailable,
    Dwarf_Addr     * lowpc_out, /* 'cooked' value */
    Dwarf_Addr     * hipc_out, /* 'cooked' value */
-   Dwarf_Unsigned * loclist_count_out,
+   Dwarf_Unsigned * loclist_expr_op_count_out,
    /* Returns pointer to the specific locdesc of the index; */
    Dwarf_Locdesc_c* locdesc_entry_out,
    Dwarf_Small    * loclist_source_out, /* 0,1, or 2 */
@@ -2290,7 +2293,7 @@ printf("dadebug ld_s 0x%lx  ld_cents %d line %d %s\n",
 __LINE__,__FILE__);
 }
     *debug_addr_unavailable = desc->ld_index_failed;
-    *loclist_count_out = desc->ld_cents;
+    *loclist_expr_op_count_out = desc->ld_cents;
     *locdesc_entry_out = desc;
     *loclist_source_out = desc->ld_kind;
     *expression_offset_out = desc->ld_section_offset;
@@ -2345,7 +2348,7 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     Dwarf_Unsigned * offset_for_branch,
     Dwarf_Error*     error)
 {
-    Dwarf_Loc_c op = 0;
+    Dwarf_Loc_Expr_Op op = 0;
     Dwarf_Unsigned max = locdesc->ld_cents;
 
     if(index >= max) {
@@ -2401,7 +2404,7 @@ dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
         Dwarf_Unsigned listlen = loclist_head->ll_locdesc_count;
         Dwarf_Unsigned i = 0;
         for ( ; i < listlen; ++i) {
-            Dwarf_Loc_c loc = desc[i].ld_s;
+            Dwarf_Loc_Expr_Op loc = desc[i].ld_s;
             if(loc) {
                 dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
             }

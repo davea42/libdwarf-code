@@ -128,7 +128,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Unsigned *nextoffset_out,
 
     /*  The values picked up. */
-    Dwarf_Loc_c curr_loc,
+    Dwarf_Loc_Expr_Op curr_loc,
     Dwarf_Error * error)
 {
     Dwarf_Small *loc_ptr = 0;

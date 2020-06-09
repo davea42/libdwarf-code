@@ -140,11 +140,10 @@ typedef struct {
 
 
 /*  NEW October 2015.  */
-/*  This provides access to Dwarf_Loc_c, a single location operator */
+/*  This provides access to Dwarf_Locdesc_c, a single 
+    location description */
 struct  Dwarf_Locdesc_c_s;
 typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
-struct  Dwarf_Loc_c_s;
-typedef struct Dwarf_Loc_c_s     * Dwarf_Loc_c;
 
 /*  NEW October 2015.  */
 /*  This provides access to Dwarf_Locdesc_c, a single

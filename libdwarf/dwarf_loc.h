@@ -130,7 +130,8 @@ typedef struct Dwarf_Block_c_s Dwarf_Block_c;
    via  cast, so an ugly hack.
    This struct is opaque. Not visible to callers.
 */
-struct Dwarf_Loc_c_s {
+typedef struct Dwarf_Loc_Expr_Op_s *Dwarf_Loc_Expr_Op;
+struct Dwarf_Loc_Expr_Op_s {
     Dwarf_Small     lr_atom;        /* Location operation */
 
     /*  Operands exactly as in DWARF. */
@@ -159,9 +160,8 @@ struct Dwarf_Loc_c_s {
         the expression we are expanding. */
     Dwarf_Unsigned  lr_opnumber;
     Dwarf_Unsigned  lr_offset; /* offset in locexpr for OP_BRA etc */
-    Dwarf_Loc_c     lr_next;   /* When a list is useful. */
+    Dwarf_Loc_Expr_Op     lr_next;   /* When a list is useful. */
 };
-typedef struct Dwarf_Loc_c_s *Dwarf_Loc_c;
 
 /* Location description DWARF 2,3,4,5
    Adds the DW_LLE value (new in DWARF5).
@@ -192,10 +192,11 @@ struct Dwarf_Locdesc_c_s {
         including any DW_OP entries */
     Dwarf_Unsigned   ld_entrylen; 
 
-    /* count of struct Dwarf_Loc_c_s in array. */
+    /*  count of struct Dwarf_Loc_Expr_Op_s (expression operators)
+        in array. */
     Dwarf_Half       ld_cents;
-    /* pointer to array of expression operators */
-    Dwarf_Loc_c      ld_s;
+    /* pointer to array of expression operator structs */
+    Dwarf_Loc_Expr_Op      ld_s;
 
     /* Section (not CU) offset where loc-expr begins*/
     Dwarf_Unsigned   ld_section_offset;
@@ -294,7 +295,7 @@ int _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Unsigned *nextoffset_out,
 
     /*  The values picked up. */
-    Dwarf_Loc_c curr_loc,
+    Dwarf_Loc_Expr_Op curr_loc,
     Dwarf_Error * error);
 
 

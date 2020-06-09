@@ -4724,6 +4724,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
 {
     Dwarf_Half no_of_ops = 0;
     unsigned i = 0;
+
     Dwarf_Bool report_raw = TRUE;
     if(llbuf) {
         Dwarf_Locdesc *locd = 0;

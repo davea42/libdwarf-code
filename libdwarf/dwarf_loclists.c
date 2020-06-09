@@ -1063,8 +1063,8 @@ build_array_of_lle(Dwarf_Debug dbg,
         }
         }
         /*  Now read the operators and build a
-            collection of Dwarf_Loc_c 
-            finally building array of Dwarf_Loc_c_s */
+            collection of Dwarf_Loc_Expr_Op 
+            finally building array of Dwarf_Loc_Expr_Op_s */
     }
     if (rctx->ll_locdesc_count > 0) {
         Dwarf_Locdesc_c array = 0;

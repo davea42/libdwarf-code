@@ -400,7 +400,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /*  These required by new features in DWARF5. Also usable
         for DWARF2,3,4. */
     /* 0x39 57 DW_DLA_LOC_BLOCK_C DWARF5 */
-    {sizeof(struct Dwarf_Loc_c_s),MULTIPLY_CT, 0, 0},
+    {sizeof(struct Dwarf_Loc_Expr_Op_s),MULTIPLY_CT, 0, 0},
 
     /* 0x3a 58  DW_DLA_LOCDESC_C */
     {sizeof(struct Dwarf_Locdesc_c_s),MULTIPLY_CT, 0, 0},
