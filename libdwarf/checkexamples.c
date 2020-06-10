@@ -1846,3 +1846,103 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     dwarf_dealloc_rnglists_head(rnglhead);
     return DW_DLV_OK;
 }
+
+void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+{
+    Dwarf_Unsigned lcount = 0;
+    Dwarf_Loc_Head_c loclist_head = 0;
+    Dwarf_Error error = 0;
+    int lres = 0;
+
+    lres = dwarf_get_loclist_c(someattr,&loclist_head,&lcount,&error);
+    if (lres == DW_DLV_OK) {
+        Dwarf_Unsigned i = 0;
+
+        /*  Before any return remember to call
+            dwarf_loc_head_c_dealloc(loclist_head); */
+        for (i = 0; i < lcount; ++i) {
+            Dwarf_Small loclist_lkind = 0;
+            Dwarf_Small lle_value = 0;
+            Dwarf_Unsigned rawval1 = 0;
+            Dwarf_Unsigned rawval2 = 0;
+            Dwarf_Bool debug_addr_unavailable = FALSE;
+            Dwarf_Addr lopc = 0;
+            Dwarf_Addr hipc = 0;
+            Dwarf_Unsigned loclist_expr_op_count = 0;
+            Dwarf_Locdesc_c locdesc_entry = 0;
+            Dwarf_Unsigned expression_offset = 0;
+            Dwarf_Unsigned locdesc_offset = 0;
+
+            lres = dwarf_get_locdesc_entry_d(loclist_head,
+                i,
+                &lle_value,
+                &rawval1,&rawval2,
+                &debug_addr_unavailable,
+                &lopc,&hipc, 
+                &loclist_expr_op_count,
+                &locdesc_entry,
+                &loclist_lkind,
+                &expression_offset,
+                &locdesc_offset,
+                &error);
+            if (lres == DW_DLV_OK) {
+                /*  Here, use loclist_source and
+                    lle_value to determine what
+                    sort of loclist it is and what to do with
+                    the values. locentry_count will only be
+                    more than zero if there is a set of location
+                    operators.
+                    One must use lle_value to determine how
+                    to interpret lopc,hipc as sometimes they
+                    are a target address and sometimes an
+                    index into .debug_addr or even a length. */
+                Dwarf_Unsigned j = 0;
+                int opres = 0;
+                Dwarf_Small op = 0;
+
+                for (j = 0; j < loclist_expr_op_count; ++j) {
+                    Dwarf_Unsigned raw1 = 0;
+                    Dwarf_Unsigned raw2 = 0;
+                    Dwarf_Unsigned raw3 = 0;
+                    Dwarf_Unsigned opd1 = 0;
+                    Dwarf_Unsigned opd2 = 0;
+                    Dwarf_Unsigned opd3 = 0;
+                    Dwarf_Unsigned offsetforbranch = 0;
+
+                    opres = dwarf_get_location_op_value_d(
+                        locdesc_entry,
+                        j,&op,
+                        &raw1,&raw2,&raw3,
+                        &opd1, &opd2,&opd3,&offsetforbranch,
+                        &error);
+                    if (opres == DW_DLV_OK) {
+                        /* Do something with the operators.
+                           Usually you want to use opd1,2,3
+                           as appropriate. Calculations
+                           involving base addresses etc
+                           have already been incorporated
+                           in opd1,2,3.  */
+                    } else {
+                        dwarf_dealloc_error(dbg,error);
+                        dwarf_loc_head_c_dealloc(loclist_head);
+                        /*Something is wrong. */
+                        return;
+                    }
+                }
+            } else {
+                /* Something is wrong. Do something. */
+                dwarf_loc_head_c_dealloc(loclist_head);
+                dwarf_dealloc_error(dbg,error);
+                return;
+            }
+        }
+    }
+    /*  Always call dwarf_loc_head_c_dealloc()
+        to free all the memory associated with loclist_head.  */
+    if (error) {
+        dwarf_dealloc_error(dbg,error);
+    }
+    dwarf_loc_head_c_dealloc(loclist_head);
+    loclist_head = 0;
+    return;
+}
