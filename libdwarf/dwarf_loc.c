@@ -2259,8 +2259,8 @@ int
 dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
    Dwarf_Unsigned   index,
    Dwarf_Small    * lle_value_out,
-   Dwarf_Unsigned     * rawval1,
-   Dwarf_Unsigned     * rawval2,
+   Dwarf_Unsigned * rawval1,
+   Dwarf_Unsigned * rawval2,
    Dwarf_Bool     * debug_addr_unavailable,
    Dwarf_Addr     * lowpc_out, /* 'cooked' value */
    Dwarf_Addr     * hipc_out, /* 'cooked' value */

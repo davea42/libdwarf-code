@@ -85,46 +85,6 @@ print_offset_entry_table(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0
-static void
-print_opsdetail(Dwarf_Debug dbg,
-    Dwarf_Bool use_raw,
-    Dwarf_Unsigned expr_ops_blocklen,
-    Dwarf_Small*expr_ops,
-    Dwarf_Unsigned expr_opsoffset)
-{
-    Dwarf_Unsigned i = 0;
-    struct Dwarf_Locdesc_c_s locdesc;
-    struct Dwarf_Loc_c loc = 0;
-    struct esb_s m;
-    Dwarf_Error err = 0;
-    Dwarf_Unsigned baseaddr = 0; /* unknown */
-
-    if (!expr_ops_blocklen) { 
-        return;
-    }
-    memset(&locdesc,0,sizeof(locdesc));
-    esb_constructor(&m);
-
-    locdesc.ld_cents =  1;
-    locdesc.ld_s = &loc;
-    locdesc.ld_kind = DW_LKIND_loclists;
-    locdesc.ld_locdesc_offset = opsoffset; 
-
-    res = _dwarf_print_one_expr_op(Dwarf_Debug dbg,
-        &locdesc,
-        0,
-        use_raw,
-        baseaddr,
-        &m,
-        &err);
-    printf("%s",esb_get_string(&m));
-    printf(" ");
-    esb_desstructor(&m);
-}
-#endif
-
-
 static void
 print_opsbytes(Dwarf_Unsigned expr_ops_blocklen,
     Dwarf_Small* expr_ops)

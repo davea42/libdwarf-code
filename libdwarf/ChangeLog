@@ -1,3 +1,57 @@
+2020-06-09: David Anderson
+    * CMakeLists.txt,Makefile.am : Deleted dwarf_loc2.h reference.
+      Added dwarf_locationop_read.c, dwarf_loclists.c.
+    * Makefile.in: Regenerated.
+    * dwarf_alloc.c: Corrected a comment about reserved numbers.
+      Reflects name change from struct Dwarf_Loc_c_s to
+      struct Dwarf_Loc_Expr_Op_s. 
+    * dwarf_errmsg_list.h: Added DW_DLE_LOCLISTS_ERROR.
+    * dwarf_form.c: Added arguments to the library
+      internal function _dwarf_formblock_internal()
+      for better support of DWARF5 loclist creation.
+    * dwarf_frame2.c: Changed a local from unsigned
+      to Dwarf_Unsigned as well as changing pointer
+      casts from 'unsigned long' to Dwarf_Unsigned.
+    * dwarf_loc.c: Lots of refactoring to make
+      the flow easier to understand.
+      Moved _dwarf_read_loc_expr_op() to
+      a new file dwarf_locationop_read.c as the 
+      function is quite large.
+      Renamed other functions so the names are not
+      so much alike.
+    * dwarf_loc.h: New fields in Dwarf_Loc_Chain_s
+      to support the raw vs. cooked values of location
+      low/high. New fields to support DWARF 5 loclists
+    * dwarf_loc2.h: Deleted. Relevant contents in
+      dwarf_loc.c and dwarf_loclists.c
+    * dwarf_locationop_read.c: Existing code
+      to read location ops refactored to a routine
+      by themselves.  Long enough by itself
+    * dwarf_loclists.c: New file with .debug_loclists
+      support. 
+    * dwarf_loclists.h: Nothing here. will be deleted.
+    * dwarf_opaque.h: New functions and arguments
+      for internal debug_loclists data.
+    * dwarf_rnglists.c: Changed certain arguments
+      to Dwarf_Half (address_size etc) where that
+      makes sense.  
+    * dwarf_util.c: Now dwarf_load_debug_info()
+      loads the base data from .debug_rnglists
+      and .debug_loclists (DWARF5)
+    * libdwarf.h.in: 'unsigned' now 'unsigned int'
+      existing function unchanged: dwarf_get_loclist_c()
+      new function dwarf_get_locdesc_entry_d()
+      new function dwarf_get_loclist_head_basics()
+      new function dwarf_get_location_op_value_d()
+      - Following for printing raw loclists, not
+      usually used.
+      new function dwarf_load_loclists()
+      new function dwarf_get_loclist_context_basics()
+      new function dwarf_get_loclist_lle()
+      new function dwarf_get_loclist_offset_index_value()
+      new function dwarf_get_loclist_raw_entry_detail()
+    * libdwarf2.1.mm: 2.96, documents the new calls.
+    * libdwarf2.1.pdf: Version 2.96.
 2020-05-23: David Anderson
     * dwarf_opaque.h: Defines DWARFSTRING_ALLOC_SIZE   200
     * dwarf_form.c: Using DWARFSTRING_ALLOC_SIZE for the

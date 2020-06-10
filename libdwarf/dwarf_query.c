@@ -853,7 +853,9 @@ dwarf_attr(Dwarf_Die die,
 
 /*  A DWP (.dwp) package object never contains .debug_addr,
     only a normal .o or executable object.
-    Error returned here is on dbg, not tieddbg. */
+    Error returned here is on dbg, not tieddbg. 
+    This looks for DW_AT_addr_base and if present
+    adds it in appropriately. */
 int
 _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_CU_Context context,

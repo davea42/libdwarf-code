@@ -1,3 +1,49 @@
+2020-06-09: David Anderson
+    * Makefile.am: New files due to refactoring.
+    * Makefile.in: Regenerated.
+    * command_options.c: Added --print-raw-loclists
+      which prints all the details of .debug_lists
+      but does not do any reference to .debug_info
+      or .debug_addr (for example).
+    * dwarfdump.c: Deals with --print-raw-loclists by
+      calling new function print_raw_all_loclists()
+    * esb_using_functions.c: Minor change to support
+      revised internal function interface to
+      dwarfdump_print_location_operations().
+    * glflags.h: Added global flag gf_print_raw_loclists.
+    * globals.h: Several new interfaces added so
+      dwarf_loc.c and dwarf_loclists.c call each other
+      as needed. And support for the different loclists
+      supported: DWARF 3, GNU Dwarf4 dwo extension,
+      and DWARF5.
+    * print_die.c:  Added die_indent_level a few places
+      for loclist printing. Significant changes to
+      support the loclist details.
+      Some renaming of things (data, functions) whose
+      purpose was obfuscated by the name.
+      Using new libdwarf interfaces that support
+      the new data in libdwarf.
+      Some significat refactoring so the structure
+      of what is being done can be easily seen.
+      No longer computes final loclist low/high addr
+      as libdwarf does that for us now.
+    * print_frames.c: Reflects the revised function
+      naming.
+    * print_frames.h: Reflects the revised function name.
+    * print_llex_codes.c: Factored out of print_die.c
+      and heavily revised to reflect the new location
+      data.
+    * print_loclist_original.c: Factored out of print_die.c
+      and heavily revised to reflect the new location
+      data.
+    * print_loclists.c: All new, this does the .debug_loclists
+      specific printing.
+    * print_loclists_codes.c: All new. Prints DWARF5
+      loclists data properly.
+    * print_locs.c: Reflects a revised function name.
+    * print_rnglists.c: Corrected an out of date comment.
+    * uri.c: 'unsigned int' instead of 'unsigned' for a
+      picky compiler.
 2020-05-23: David Anderson
     * dwarf_globals.h: Define ESB_FIXED_ALLOC_SIZE 380.
     * print_die.c,print_lines.c,print_pubnames.c: Now using 

@@ -72,7 +72,6 @@
 #include "dwarf_dsc.h"
 #include "dwarfstring.h"
 #include "dwarf_str_offsets.h"
-#include "dwarf_loclists.h"
 
 #define TRUE 1
 #define FALSE 0

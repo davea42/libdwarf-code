@@ -5071,17 +5071,6 @@ loc_error_check(UNUSEDARG Dwarf_Debug dbg,
 }
 #endif
 
-#if 0
-static const char *
-adexplain(Dwarf_Unsigned liberr,
-   const char * alterr)
-{
-    if (liberr == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
-        return  "no-tied-debug-addr-available";
-    }
-    return alterr;
-}
-#endif /* 0 */
 
 static void  
 print_loclists_context_head(
@@ -5188,31 +5177,6 @@ print_loclists_context_head(
     }
     esb_append(esbp,"\n");
 }
-#if 0
-static void
-show_loclist_source(Dwarf_Small loclist_source,
-    Dwarf_Unsigned locdesc_offset,struct esb_s *esbp)
-{
-    if (glflags.gf_display_offsets && glflags.verbose) {
-        char *secname = ".debug_info";
-        if(loclist_source == DW_LKIND_loclist) {
-            secname = ".debug_loc";
-        } else if (loclist_source == DW_LKIND_GNU_exp_list) {
-            secname = ".debug_loc.dwo";
-        } else if (loclist_source == DW_LKIND_loclists) {
-            secname = ".debug_loclists";
-        } else if (loclist_source) {
-            secname = "<unknown location entry code. ERROR.>";
-        }
-        esb_append_printf_s(esbp,"<from %s",secname);
-        esb_append_printf_u(esbp,
-            " offset 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-            locdesc_offset);
-        esb_append(esbp,"\n");
-    }
-}
-#endif
-
 
 /*  Fill buffer with location lists data for printing */
 /*ARGSUSED*/ static
@@ -6192,48 +6156,6 @@ check_decl_file_only(char **srcfiles,
         esb_destructor(&msgb);
     }
 }
-
-
-#if 0
-static int
-handle_loclistx(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    Dwarf_Attribute attrib,
-    int theform,
-    Dwarf_Unsigned index_on_attr,
-    struct esb_s *  esbp,
-    int show_form,
-    int local_verbose,
-    Dwarf_Error *err)
-{
-    /* This is DWARF5, by definition. Not DW4 or earlier. */
-    Dwarf_Debug localdbg = 0;
-    Dwarf_Unsigned addrbase = 0;
-    Dwarf_Unsigned loclists_base = 0;
-    Dwarf_Unsigned addr = 0;
-    Dwarf_Unsigned val  = 0;
-    int res = 0;
-
-    res = dwarf_formudata(attrib,&val,err);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    addrbase = 
-
-FIXME
-    /* FIXME loclistx */
-    res = dwarf_loclists_contextnum_from_base(dbg,ctx
-    ...
-    /*  addr_base is the offset in .debug_addr of this
-        CU's table. So index  indexes into that table. */
-    res = dwarf_extract_address_from_debug_addr(dbg,ctx,
-        index,&addr,error);
-
-    esb_append(esbp,"\n    Incomplete DW_FORM_loclistx handling. FIXME\n");
-    /* FIXME loclistx */
-    return DW_DLV_OK;
-}
-#endif /* 0 */
 
 static int
 expand_rnglist_entries(
@@ -7430,16 +7352,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         if (wres == DW_DLV_OK) {
             /*  Fall through to end to show the value and
                 form details. */
-#if 0
-            Dwarf_Bool hex_format = TRUE;
-            formx_unsigned(tempud,esbp,hex_format);
-            wres = handle_loclistx(dbg, die, attrib, theform,
-                tempud,
-                esbp,show_form,local_verbose,err);
-            if(wres == DW_DLV_ERROR) {
-                return wres;
-            }
-#endif
             break;
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
@@ -7522,14 +7434,6 @@ format_sig8_string(Dwarf_Sig8*data, struct esb_s *out)
     unsigned i = 0;
     esb_append(out,"0x");
     for (; i < sizeof(data->signature); ++i) {
-#if 0
-        /*  The signature is logically one glob of
-            8 bytes, not two, so show as one glob
-            using 16 ascii hex digits */
-        if (i == 4) {
-            esb_append(out," 0x");
-        }
-#endif
         esb_append_printf_u(out,  "%02x",
             (unsigned char)(data->signature[i]));
     }
