@@ -1,3 +1,8 @@
+2020-06-10: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h : Updated  version string
+
 2020-06-09: David Anderson
     * Makefile.am: New files due to refactoring.
     * Makefile.in: Regenerated.
