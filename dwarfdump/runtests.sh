@@ -160,7 +160,7 @@ fi
 # It is a sanity check, not a full check.
 f=$srcdir/testobjLE32PE.exe
 b=$srcdir/testobjLE32PE.base
-t=junk.testsmallpe
+t=junk.testobjLE32PE.base
 echo "start  dwarfdump sanity check on pe $f"
 # Windows dwarfdump emits a couple prefix lines
 #we do not want. 
@@ -193,7 +193,7 @@ fi
 
 f=$srcdir/testuriLE64ELf.obj
 b=$srcdir/testuriLE64ELf.base
-t=junk.smallLE64ELf
+t=junk.testuriLE64ELf.base
 echo "start  dwarfdump sanity check on $f"
 ./dwarfdump $f | head -n $textlim > $t
 chkres $? "running ./dwarfdump $f otuput to $t base $b "
@@ -218,7 +218,7 @@ fi
 
 f=$srcdir/test-mach-o-32.dSYM
 b=$srcdir/test-mach-o-32.base
-t=junk.macho-object32
+t=junk.test-mach-o-32.base
 echo "start  dwarfdump sanity check on $f"
 ./dwarfdump $f | head -n $textlim > $t
 chkres $? "FAIL dwarfdump/runtests.sh ./dwarfdump $f to $t base $b "

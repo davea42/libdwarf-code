@@ -1631,10 +1631,13 @@ print_location_operations(Dwarf_Debug dbg,
             &locdesc_offset,
             err);
         if (lres == DW_DLV_ERROR) {
+            dwarf_loc_head_c_dealloc(head);
             glflags.gf_count_major_errors++;
-            printf("\nERROR: calling dwarf_locdesc_entry_c() on LocDesc 0");
+            printf("\nERROR: calling dwarf_locdesc_entry_c()"
+                " on LocDesc 0");
             return lres;
         } else if (lres == DW_DLV_NO_ENTRY) {
+            dwarf_loc_head_c_dealloc(head);
             return lres;
         }
 

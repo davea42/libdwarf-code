@@ -1,8 +1,16 @@
 2020-06-10: David Anderson
+    * CMakeLists.txt: Added print_loclists.c to the C file list.
+    * runtests.sh: Changed the generated (temporary) filenames
+      so it is easier to understand where to copy the
+      new baseline result to update the right baseline.
+    * testobjLE32PE.base: New baseline, needed as loclist
+      output changed.
+    * print_frames.c: Calling loclist dealloc on
+      error to avoid leaks.
+2020-06-10: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
       dwarfdump-tt-table.h : Updated  version string
-
 2020-06-09: David Anderson
     * Makefile.am: New files due to refactoring.
     * Makefile.in: Regenerated.
