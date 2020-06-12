@@ -1,3 +1,8 @@
+2020-06-12: David Anderson
+    * dwarfdump.c, globals.h,print_die.c,print_llex_codes.c,
+      print_loclist_original.c,print_loclists.c,
+      print_loclists_codes.c,print_rnglists.c: Fix indents
+      and remove trailing whitespace.
 2020-06-10: David Anderson
     * CMakeLists.txt: Added print_loclists.c to the C file list.
     * runtests.sh: Changed the generated (temporary) filenames

@@ -60,8 +60,6 @@ print_llex_linecodes( Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Unsigned locdesc_offset,
     struct esb_s * esbp,
     Dwarf_Bool   * bError)
-
-    
 {
     if (debug_addr_unavailable) {
         *bError = TRUE;
@@ -70,13 +68,13 @@ print_llex_linecodes( Dwarf_Debug dbg,
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_base_address_selection_entry : 0x%"
-                DW_PR_XZEROS DW_PR_DUx 
+                DW_PR_XZEROS DW_PR_DUx
                 " .debug_addr not available>",rawhipc);
         } else {
             if (glflags.verbose) {
                 esb_append_printf_u(esbp,
                     "<index to debug_addr : 0x%"
-                    DW_PR_XZEROS DW_PR_DUx ">", 
+                    DW_PR_XZEROS DW_PR_DUx ">",
                     rawhipc);
                 esb_append_printf_i(esbp, "\n   [%2d]",llent);
             }
@@ -92,19 +90,19 @@ print_llex_linecodes( Dwarf_Debug dbg,
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_start_lenth_entry : 0x%"
-                DW_PR_XZEROS DW_PR_DUx 
+                DW_PR_XZEROS DW_PR_DUx
                 " .debug_addr not available>",rawlopc);
             esb_append_printf_u(esbp,
                 "< length : 0x%"
-                    DW_PR_XZEROS DW_PR_DUx ">",rawhipc);
+                DW_PR_XZEROS DW_PR_DUx ">",rawhipc);
         } else {
             if (glflags.verbose) {
                 esb_append_printf_u(esbp,
-                        "<start index to debug_addr : 0x%"
+                    "<start index to debug_addr : 0x%"
                     DW_PR_XZEROS DW_PR_DUx
                     ,rawlopc);
                 esb_append_printf_u(esbp,
-                        "  length: 0x%"
+                    "  length: 0x%"
                     DW_PR_XZEROS DW_PR_DUx
                     ">",rawhipc);
                 esb_append_printf_i(esbp, "\n   [%2d]",llent);
@@ -131,7 +129,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx,rawlopc);
             esb_append_printf_u(esbp,
                 "        0x%"
-                DW_PR_XZEROS DW_PR_DUx 
+                DW_PR_XZEROS DW_PR_DUx
                 " no .debug_addr available>",rawhipc);
         } else {
             if (glflags.verbose) {
@@ -167,7 +165,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx,rawlopc);
             esb_append_printf_u(esbp,
                 " high-index  0x%"
-                DW_PR_XZEROS DW_PR_DUx 
+                DW_PR_XZEROS DW_PR_DUx
                 " .debug_addr not available>",*hipc);
         } else {
             if (glflags.verbose) {
@@ -176,7 +174,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
                     DW_PR_XZEROS DW_PR_DUx,rawlopc);
                 esb_append_printf_u(esbp,
                     "     0x%"
-                    DW_PR_XZEROS DW_PR_DUx 
+                    DW_PR_XZEROS DW_PR_DUx
                     " .debug_addr not available>",rawhipc);
                 esb_append_printf_i(esbp, "\n   [%2d]",llent);
             }
@@ -185,7 +183,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx,*lopc);
             esb_append_printf_u(esbp,
                 " highaddr  0x%"
-                DW_PR_XZEROS DW_PR_DUx 
+                DW_PR_XZEROS DW_PR_DUx
                 ">",*hipc);
 
         }

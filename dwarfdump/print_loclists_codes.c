@@ -44,7 +44,7 @@
 #include "helpertree.h"
 #include "tag_common.h"
 
-/*  Prints locentry descriptsions for 
+/*  Prints locentry descriptsions for
     DWARF5 DW_LKIND_loclists */
 
 int
@@ -180,7 +180,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
 #endif
     } else if (lle_value == DW_LLE_start_end)  {
         /* debug_addr_unavailable does not apply here */
-        esb_append_printf_u(esbp,  
+        esb_append_printf_u(esbp,
             "<start addr           0x%"
             DW_PR_XZEROS DW_PR_DUx,*lopc);
         esb_append_printf_u(esbp,

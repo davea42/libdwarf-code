@@ -87,7 +87,7 @@ extern "C" {
 #include "defined_types.h"
 #include "glflags.h"
 
-/*  Used to avoid leakage when we hide errors. 
+/*  Used to avoid leakage when we hide errors.
     Use carefully: doing err when you mean
     *err will not be caught by the compiler
     and will not do what one wants.
@@ -274,7 +274,7 @@ void  report_caller_error_drop_error(int dwdlv,
 int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
-    int index, 
+    int index,
     Dwarf_Bool report_raw, /* non-zero reports cooked values */
     Dwarf_Addr baseaddr,
     struct esb_s *string_out,

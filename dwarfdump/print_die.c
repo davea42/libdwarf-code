@@ -419,7 +419,7 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
 static void
 append_local_prefix(struct esb_s *esbp)
 {
-      esb_append(esbp,"\n      ");
+    esb_append(esbp,"\n      ");
 }
 static int
 print_as_info_or_cu()
@@ -3131,7 +3131,7 @@ print_location_description(Dwarf_Debug dbg,
         &version,&offset_size);
 
     fc = dwarf_get_form_class(version, attr,
-         offset_size, theform);
+        offset_size, theform);
     if (res == DW_DLV_ERROR) {
         return res;
     }
@@ -3142,23 +3142,23 @@ print_location_description(Dwarf_Debug dbg,
             return res;
         }
         if (fc == DW_FORM_CLASS_LOCLISTSPTR) {
-             esb_append_printf_u(base,
-                 "<loclists index: 0x%"
-                 DW_PR_XZEROS DW_PR_DUx
-                 ">",
-                 formval);
-             if (version >= DWVERSION5) {
-                 esb_append_printf_u(base,
-                     "<loclists offset 0x%"
-                     DW_PR_XZEROS DW_PR_DUx
-                     ">",
-                     formval);
-             } else {
-                 esb_append_printf_u(base,
-                     " ERROR! form class 0x%"
-                     DW_PR_XZEROS DW_PR_DUx
-                     , formval);
-             }
+            esb_append_printf_u(base,
+                "<loclists index: 0x%"
+                DW_PR_XZEROS DW_PR_DUx
+                ">",
+                formval);
+            if (version >= DWVERSION5) {
+                esb_append_printf_u(base,
+                    "<loclists offset 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    ">",
+                    formval);
+            } else {
+                esb_append_printf_u(base,
+                    " ERROR! form class 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    , formval);
+            }
         }
     } else if (fc == DW_FORM_CLASS_LOCLISTSPTR ||
         fc == DW_FORM_CLASS_LOCLIST) {
@@ -3167,24 +3167,24 @@ print_location_description(Dwarf_Debug dbg,
             return res;
         }
         if (fc == DW_FORM_CLASS_LOCLISTSPTR) {
-             esb_append_printf_u(base,
-                 "<loclists index: 0x%"
-                 DW_PR_XZEROS DW_PR_DUx
-                 ">",
-                 formval);
+            esb_append_printf_u(base,
+                "<loclists index: 0x%"
+                DW_PR_XZEROS DW_PR_DUx
+                ">",
+                formval);
         } else {
-             if (version >= DWVERSION5) {
-                 esb_append_printf_u(base,
-                     "<loclists offset 0x%"
-                     DW_PR_XZEROS DW_PR_DUx
-                     ">",
-                     formval);
-             } else {
-                 esb_append_printf_u(base,
-                     "0x%"
-                     DW_PR_XZEROS DW_PR_DUx
-                     , formval);
-             }
+            if (version >= DWVERSION5) {
+                esb_append_printf_u(base,
+                    "<loclists offset 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    ">",
+                    formval);
+            } else {
+                esb_append_printf_u(base,
+                    "0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    , formval);
+            }
         }
     }  else {
     }
@@ -3268,7 +3268,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     /* For DWARF4, the high_pc offset from the low_pc */
     Dwarf_Unsigned highpcOff = 0;
     Dwarf_Bool offsetDetected = FALSE;
-    char highpcstrbuf[ESB_FIXED_ALLOC_SIZE]; 
+    char highpcstrbuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s highpcstr;
 
     esb_constructor_fixed(&highpcstr,highpcstrbuf,
@@ -4829,12 +4829,11 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         /* DWARF 2,3,4 and DWARF5 style */
         int res = 0;
         res = dwarf_get_location_op_value_d(exprc,
-            index, 
+            index,
             &op,&opd1,&opd2,&opd3,
             &raw1,&raw2,&raw3,
             &offsetforbranch,
             err);
-        
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
                 "dwarf_get_location_op_value_c "
@@ -4843,9 +4842,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             return res;
         }
         if (report_raw) {
-           opd1 = raw1;
-           opd2 = raw2;
-           opd3 = raw3;
+            opd1 = raw1;
+            opd2 = raw2;
+            opd3 = raw3;
         }
     }
     op_name = get_OP_name(op,pd_dwarf_names_print_on_error);
@@ -5072,15 +5071,15 @@ loc_error_check(UNUSEDARG Dwarf_Debug dbg,
 #endif
 
 
-static void  
+static void
 print_loclists_context_head(
     Dwarf_Small    lkind,
     Dwarf_Unsigned lle_count,
-    Dwarf_Unsigned lle_version, 
+    Dwarf_Unsigned lle_version,
     Dwarf_Unsigned loclists_index,
     Dwarf_Unsigned bytes_total_in_lle,
     Dwarf_Half     offset_size,
-    Dwarf_Half     address_size, 
+    Dwarf_Half     address_size,
     Dwarf_Half     segment_selector_size,
     Dwarf_Unsigned overall_offset_of_this_context,
     Dwarf_Unsigned total_length_of_this_context,
@@ -5095,83 +5094,83 @@ print_loclists_context_head(
     Dwarf_Unsigned loclists_offset_lle_set,
     struct esb_s  *esbp)
 {
-    append_local_prefix(esbp); 
+    append_local_prefix(esbp);
     esb_append_printf_u(esbp,
         "bytes total this loclist: %3u",bytes_total_in_lle);
-    append_local_prefix(esbp); 
+    append_local_prefix(esbp);
     esb_append_printf_u(esbp,
         "number of entries       : %3u", lle_count);
-    append_local_prefix(esbp); 
+    append_local_prefix(esbp);
     esb_append_printf_u(esbp,
         "context number          : %3u",loclists_index);
-    append_local_prefix(esbp); 
+    append_local_prefix(esbp);
     esb_append_printf_u(esbp,
         "version                 : %3u",lle_version);
-    append_local_prefix(esbp); 
+    append_local_prefix(esbp);
     esb_append_printf_u(esbp,
         "address size            : %3u",address_size);
-    append_local_prefix(esbp); 
+    append_local_prefix(esbp);
     esb_append_printf_u(esbp,
         "offset size             : %3u",offset_size);
     if (segment_selector_size) {
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
             "segment selector size   : %3u",
             segment_selector_size);
     }
     if(lkind == DW_LKIND_loclists) {
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-            "offset of context       : 0x%" 
+            "offset of context       : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
             overall_offset_of_this_context);
 
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
             "offset table entrycount : %3u",
             offset_table_entrycount);
         if (offset_table_entrycount) {
-            append_local_prefix(esbp); 
+            append_local_prefix(esbp);
             esb_append_printf_u(esbp,
-                "offset table offset     : 0x%" 
+                "offset table offset     : 0x%"
                 DW_PR_XZEROS DW_PR_DUx,
                 offset_table_offset);
         }
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
-            "offset of this list set : 0x%" 
+            "offset of this list set : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
             loclists_offset_lle_set);
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
             "length of context       : %3u",
             total_length_of_this_context);
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
-            "end of context offset   : 0x%" 
+            "end of context offset   : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
-            overall_offset_of_this_context + 
+            overall_offset_of_this_context +
             total_length_of_this_context);
     }
 
     if (loclists_base_present) {
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
-            "DW_AT_loclists_base     : 0x%" 
+            "DW_AT_loclists_base     : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
             loclists_base);
     }
     if (loclists_base_address_present) {
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
-            "DW_AT_low_pc(base addr) : 0x%" 
+            "DW_AT_low_pc(base addr) : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
             loclists_base_address);
     }
     if (loclists_debug_addr_base_present) {
-        append_local_prefix(esbp); 
+        append_local_prefix(esbp);
         esb_append_printf_u(esbp,
-            "DW_AT_addr_base         : 0x%" 
+            "DW_AT_addr_base         : 0x%"
             DW_PR_XZEROS DW_PR_DUx,
             loclists_debug_addr_base);
     }
@@ -5237,7 +5236,7 @@ print_location_list(Dwarf_Debug dbg,
 
 
     lres = dwarf_get_version_of_die(die,&version,
-            &offset_size);
+        &offset_size);
     if (lres != DW_DLV_OK) {
         /* is DW_DLV_ERROR (see libdwarf query.c) */
         simple_err_only_return_action(lres,
@@ -5285,7 +5284,7 @@ print_location_list(Dwarf_Debug dbg,
             return lres;
         }
         version = lle_version;
-        /*  append_local_prefix(esbp); No, 
+        /*  append_local_prefix(esbp); No,
             here the newline grates, causes blank
             line in the output. So. Just add 6 spaces.
             the output already has a newline. */
@@ -5294,17 +5293,17 @@ print_location_list(Dwarf_Debug dbg,
             esb_constructor(&section_truename);
             if (lkind == DW_LKIND_loclists) {
                 get_true_section_name(dbg,".debug_loclists",
-                        &section_truename,FALSE);
+                &section_truename,FALSE);
             } else {
                 get_true_section_name(dbg,".debug_loc",
-                    &section_truename,FALSE);
+                &section_truename,FALSE);
             }
             esb_append_printf_s(esbp,"%-15s",
                 esb_get_string(&section_truename));
             esb_append_printf_u(esbp,
-                 " offset  :"
-                 " 0x%" DW_PR_XZEROS DW_PR_DUx,
-                 loclists_offset_lle_set);
+                " offset  :"
+                " 0x%" DW_PR_XZEROS DW_PR_DUx,
+                loclists_offset_lle_set);
             esb_destructor(&section_truename);
             if (glflags.verbose) {
                 print_loclists_context_head(lkind,
@@ -5318,7 +5317,7 @@ print_location_list(Dwarf_Debug dbg,
                     loclists_base_address_present,
                     loclists_base_address,
                     loclists_debug_addr_base_present,
-                    loclists_debug_addr_base, 
+                    loclists_debug_addr_base,
                     loclists_offset_lle_set,esbp);
             }
         }
@@ -5345,11 +5344,11 @@ print_location_list(Dwarf_Debug dbg,
         Dwarf_Unsigned rawhipc = 0;
         Dwarf_Unsigned ulocentry_count = 0;
         Dwarf_Bool     debug_addr_unavailable = FALSE;
-        /* This has values DW_LKIND*, the same values
-           that were in loclist source
-           in 2019, but with
-           the new value of DW_LKIND_loclists
-           for DWARF5.  See libdwarf.h */
+        /*  This has values DW_LKIND*, the same values
+            that were in loclist source
+            in 2019, but with
+            the new value of DW_LKIND_loclists
+            for DWARF5.  See libdwarf.h */
         Dwarf_Small loclist_source = 0;
         int no_ending_newline = FALSE;
 
@@ -5393,18 +5392,17 @@ print_location_list(Dwarf_Debug dbg,
                 lle_value = DW_LLE_start_end;
             }
         }
-        
         if (!glflags.dense && loclist_source != DW_LKIND_expression) {
             if (llent == 0) {
                 switch(loclist_source){
                 case DW_LKIND_loclist:
                     esb_append_printf_u(esbp,
-                         "   <loclist at offset 0x%"
-                         DW_PR_XZEROS DW_PR_DUx,
-                         loclists_offset_lle_set);
+                        "   <loclist at offset 0x%"
+                        DW_PR_XZEROS DW_PR_DUx,
+                        loclists_offset_lle_set);
                     esb_append_printf_i(esbp,
-                         " with %ld entries follows>",
-                         no_of_elements);
+                        " with %ld entries follows>",
+                        no_of_elements);
                     break;
                 case DW_LKIND_GNU_exp_list:
                     esb_append_printf_u(esbp,
@@ -5438,7 +5436,7 @@ print_location_list(Dwarf_Debug dbg,
             checking = TRUE;
         }
         /*  When dwarf_debug_addr_index_to_addr() fails
-            it is probably 
+            it is probably
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION 257
             (because no TIED file supplied)
             but we don't distinguish that from other errors here. */
@@ -5483,7 +5481,7 @@ print_location_list(Dwarf_Debug dbg,
                     esbp,
                     &bError);
             }
-        } 
+        }
         lres = dwarfdump_print_location_operations(dbg,
             /*  Either llbuf or locentry non-zero.
                 Not both. */
@@ -5806,10 +5804,10 @@ formxdata_print_value(Dwarf_Debug dbg,
             return sres;
         } else if (sres == DW_DLV_ERROR) {
             esb_append_printf_u(esbp,
-                "<ERROR: form 0x%x ",theform); 
+                "<ERROR: form 0x%x ",theform);
             esb_append(esbp,get_FORM_name(theform,FALSE));
             esb_append(esbp,
-                " not readable signed or unsigned>");  
+                " not readable signed or unsigned>");
             simple_err_only_return_action(sres,
                 esb_get_string(esbp));
             /* Neither worked. */
@@ -5836,7 +5834,7 @@ static int
 print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
     UNUSEDARG int die_indent_level,
-    int showhextoo, 
+    int showhextoo,
     struct esb_s *esbp,Dwarf_Error* err)
 {
     Dwarf_Ptr x = 0;

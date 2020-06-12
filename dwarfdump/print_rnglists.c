@@ -130,7 +130,7 @@ print_single_rle(UNUSEDARG Dwarf_Debug dbg,
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         }
         break;
- 
+
     case DW_RLE_offset_pair: {
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx

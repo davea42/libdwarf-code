@@ -2307,15 +2307,15 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
 
 /*  This is too much to put in the DROP_ERROR_INSTANCE macro,
     so we put it here rather arbitrarily.  */
-void  
+void
 report_caller_error_drop_error(int dwdlv,
     int line, char *fname)
 {
-    printf("\nERROR in dwarfdump:" 
+   printf("\nERROR in dwarfdump:"
         " The value passed to the macro DROP_ERROR_INSTANCE "
         "is not one of the three allowed values, but is "
         "%d. dwarfdump has a bug. "
         " See line %d file %s\n",dwdlv,line,fname);
-     glflags.gf_count_major_errors++;
+   glflags.gf_count_major_errors++;
 
 }

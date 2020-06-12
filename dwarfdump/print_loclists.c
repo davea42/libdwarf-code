@@ -32,7 +32,7 @@
     compilation unit.
 
     Printing the actual address means printing
-    with the actual DIEs on hand. 
+    with the actual DIEs on hand.
 */
 
 #include "config.h"
@@ -91,7 +91,7 @@ print_opsbytes(Dwarf_Unsigned expr_ops_blocklen,
 {
     Dwarf_Unsigned i = 0;
 
-    if (!expr_ops_blocklen) { 
+    if (!expr_ops_blocklen) {
         return;
     }
     printf(" opsbytes:");
@@ -133,7 +133,7 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
     printf("<0x%" DW_PR_XZEROS DW_PR_DUx "> %-20s",
         lineoffset,esb_get_string(&m));
     switch(code) {
-    case DW_LLE_end_of_list: 
+    case DW_LLE_end_of_list:
         printf("           ");
         printf("           ");
         break;
