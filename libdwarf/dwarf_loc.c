@@ -33,6 +33,9 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* For uintptr_t */
+#endif /* HAVE_STDLIB_H */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -122,6 +125,18 @@ determine_location_lkind(unsigned int version,
     return DW_LKIND_unknown;
 }
 
+static void
+_dwarf_free_op_chain(Dwarf_Debug dbg,
+    Dwarf_Loc_Chain headloc)
+{
+    Dwarf_Loc_Chain cur = headloc;
+
+    while (cur) {
+        Dwarf_Loc_Chain next = cur->lc_next;
+        dwarf_dealloc(dbg, cur, DW_DLA_LOC_CHAIN);
+        cur = next;
+    }
+}
 /*  Given a Dwarf_Block that represents a location expression,
     this function returns a pointer to a Dwarf_Locdesc struct
     that has its ld_cents field set to the number of location
@@ -207,6 +222,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             &temp_loc,
             error);
         if (res == DW_DLV_ERROR) {
+            _dwarf_free_op_chain(dbg, head_loc);
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
@@ -215,10 +231,21 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
         }
         op_count++;
         new_loc =
-            (Dwarf_Loc_Chain) _dwarf_get_alloc(dbg, DW_DLA_LOC_CHAIN, 1);
+            (Dwarf_Loc_Chain) _dwarf_get_alloc(dbg, 
+            DW_DLA_LOC_CHAIN, 1);
         if (new_loc == NULL) {
-            /*  Some memory may leak here.  */
-            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            dwarfstring m;
+
+            _dwarf_free_op_chain(dbg, head_loc);
+            dwarfstring_constructor(&m); 
+            dwarfstring_append_printf_u(&m,
+                " DW_DLE_ALLOC_FAIL: out of memory"
+                "  allocating location"
+                " expression operator chain entry %u.",
+                op_count);
+            _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m); 
             return DW_DLV_ERROR;
         }
 
@@ -243,9 +270,10 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
     }
 
     block_loc =
-        (Dwarf_Loc *) _dwarf_get_alloc(dbg, DW_DLA_LOC_BLOCK, op_count);
+        (Dwarf_Loc *) _dwarf_get_alloc(dbg, DW_DLA_LOC_BLOCK,
+        op_count);
     if (block_loc == NULL) {
-        /*  Some memory does leak here.  */
+        _dwarf_free_op_chain(dbg, head_loc);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -733,7 +761,8 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             loc_block.bl_kind = lkind;
             loc_block.bl_section_offset = tblock->bl_section_offset;
             loc_block.bl_locdesc_offset = 0; /* not relevent */
-            /*  We copied tblock contents to the stack var, so can dealloc
+            /*  We copied tblock contents to the stack var,
+                so can dealloc
                 tblock now.  Avoids leaks. */
             dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
@@ -891,8 +920,8 @@ dwarf_loclist(Dwarf_Attribute attr,
             /* ASSERT: lkind == loc_block.bl_kind  */
             loc_block.bl_section_offset = tblock->bl_section_offset;
             /*  We copied tblock contents to the stack 
-                var, so can dealloc
-                tblock now.  Avoids leaks. */
+                var, so can dealloc tblock now.  
+                Avoids leaks. */
             dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
         /* Because we set bl_kind we don't really 
@@ -1272,7 +1301,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         new_loc =
             (Dwarf_Loc_Chain) _dwarf_get_alloc(dbg, DW_DLA_LOC_CHAIN, 1);
         if (new_loc == NULL) {
-            /*  Some memory may leak here.  */
+            _dwarf_free_op_chain(dbg,head_loc);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
@@ -1674,15 +1703,15 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
     memset(&loc_blockc,0,sizeof(loc_blockc));
     if( form == DW_FORM_exprloc) {
         blkres = dwarf_formexprloc(attr,&loc_blockc.bl_len,
-                &loc_blockc.bl_data,error);
+            &loc_blockc.bl_data,error);
         if(blkres != DW_DLV_OK) {
-                dwarf_loc_head_c_dealloc(llhead);
-                return blkres;
+            dwarf_loc_head_c_dealloc(llhead);
+            return blkres;
         }
         loc_blockc.bl_kind = llhead->ll_kind;
         loc_blockc.bl_section_offset  =
-                (char *)loc_blockc.bl_data -
-                (char *)dbg->de_debug_info.dss_data;
+            (char *)loc_blockc.bl_data -
+            (char *)dbg->de_debug_info.dss_data;
         loc_blockc.bl_locdesc_offset = 0; /* not relevant */
     } else {
         Dwarf_Block loc_block;
@@ -2225,11 +2254,14 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     llhead->ll_dbg = dbg;
     llhead->ll_kind = DW_LKIND_expression;
 
-    /* An empty location description (block length 0) means the code
-    generator emitted no variable, the variable was not generated,
-    it was unused or perhaps never tested after being set. Dwarf2,
-    section 2.4.1 In other words, it is not an error, and we don't
-    test for block length 0 specially here.  */
+    /* An empty location description (block length 0) 
+       means the code generator emitted no variable,
+       the variable was not generated,
+       it was unused or perhaps never tested
+       after being set. Dwarf2,
+       section 2.4.1 In other words, it is not 
+       an error, and we don't
+       test for block length 0 specially here.  */
 
     /* Fills in the locdesc and its operators list at index 0 */
     res = _dwarf_fill_in_locdesc_op_c(dbg,
@@ -2391,24 +2423,11 @@ dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
     return res;
 }
 
-
-
 void
 dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
 {
     Dwarf_Debug dbg = loclist_head->ll_dbg;
-    Dwarf_Locdesc_c desc = loclist_head->ll_locdesc;
-    if( desc) {
-        Dwarf_Unsigned listlen = loclist_head->ll_locdesc_count;
-        Dwarf_Unsigned i = 0;
-        for ( ; i < listlen; ++i) {
-            Dwarf_Loc_Expr_Op loc = desc[i].ld_s;
-            if(loc) {
-                dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
-            }
-        }
-        dwarf_dealloc(dbg,desc,DW_DLA_LOCDESC_C);
-    }
+    _dwarf_free_loclists_head(loclist_head);
     dwarf_dealloc(dbg,loclist_head,DW_DLA_LOC_HEAD_C);
 }
 /* ============== End of the October 2015 interfaces. */

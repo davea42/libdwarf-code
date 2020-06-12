@@ -1,4 +1,4 @@
-e."
+\."
 \." the following line may be removed if the 
 \." ff ligature works on your machine
 .lg 0
@@ -129,7 +129,8 @@ All the function interfaces were changed
 in 1994 to uniformly
 return a simple integer success-code (see DW_DLV_OK etc),
 generally following
-the recommendations in the chapter titled "Candy Machine Interfaces"
+the recommendations in the chapter 
+titled "Candy Machine Interfaces"
 of "Writing Solid Code", a book by
 Steve Maguire (published by Microsoft Press).
 .H 2 "Definitions"
@@ -223,8 +224,10 @@ recent changes.
 .P
 Added new functions for full .debug_loclists
 access:
-dwarf_get_locdesc_entry_d() and
-dwarf_get_loclist_head_basics().
+dwarf_get_locdesc_entry_d(),
+dwarf_get_loclist_head_basics(),
+dwarf_get_loclist_head_kind(), and
+dwarf_loc_head_c_dealloc().
 For accessing certain DWARF5 new location
 operators (for example DW_OP_const_type)
 as well as all other operators we add
@@ -5621,7 +5624,6 @@ At the present time
 \f(CWDW_DLV_ERROR\fP
 is never returned.
 
-
 .H 3 "dwarf_get_loclist_offset_index_value()"
 .DS
 \f(CWint dwarf_get_loclist_offset_index_value(Dwarf_Debug dbg,
@@ -5759,7 +5761,7 @@ it may return
 \f(CWDW_DLV_ERROR\fP.
 
 
-.H 2 "Location List operations .debug_loc"
+.H 2 "Location List operations .debug_loc & .debug_loclists"
 These operations apply to the .debug_loc section
 in DWARF2, DWARF3, DWARF4, and DWARF5 object files.
 Earlier versions still work as well as ever,
@@ -6041,6 +6043,33 @@ A return of
 \f(CWDW_DLV_NO_ENTRY\fP
 may be possible but is a bit odd.
 
+.H 3 "dwarf_get_loclist_head_kind()"
+.DS
+\f(CW
+int dwarf_get_loclist_head_kind(
+    Dwarf_Loclists_Head head,
+    unsigned int * kind,
+    Dwarf_Error *error)
+\fP
+.DE
+Though one should test the return code,
+at present this always returns
+\f(CWDW_DLV_OK\fP,
+and sets
+\f(CW*kind\fP
+to the
+\f(CWDW_LKIND*\fP
+value for this
+\f(CWhead\fP.
+.P
+At the present time
+neither
+\f(CWDW_DLV_ERROR\fP
+nor
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned.
+
+
 .H 3 "dwarf_get_location_op_value_d()"
 .DS
 \f(CW
@@ -6303,10 +6332,20 @@ example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
 .DS
 void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head);
 .DE
+This function takes care of all the details so
+one does not have to _dwarf_dealloc() the pieces
+individually, though code that continues to do
+the pieces individually still works.
+.P
 This function frees all the memory associated with
 the
 \f(CWloclist_head\fP.
 There is no return value.
+It's good practice to set 
+\f(CWloclist_head\fP.
+to
+zero immediately after the call, as the pointer
+is stale at that point.
 
 .H 3 "dwarf_loclist_n()"
 
@@ -6550,6 +6589,7 @@ void exampleb(Dwarf_Debug dbg,Dwarf_Ptr data, Dwarf_Unsigned len)
         Dwarf_Signed  *listlen,
         Dwarf_Error *error)\fP
 .DE
+This function is obsolete.
 The function \f(CWdwarf_loclist_from_expr_b()\fP
 is identical to  \f(CWdwarf_loclist_from_expr_a()\fP
 in every way except that the caller passes an additional argument
@@ -6576,6 +6616,7 @@ DWARF4 adds address_size to the CIE header.
         Dwarf_Signed  *listlen,
         Dwarf_Error *error)\fP
 .DE
+This function is obsolete.
 Use \f(CWdwarf_loclist_from_expr_b()\fP instead.
 This function is obsolete.
 .P
@@ -12616,6 +12657,7 @@ It currently returns only \f(CWDW_DLV_OK\fP.
 \f(CW
 \fP
 
+
 .H 4 "dwarf_get_rnglists_entry_fields()"
 .DS
 \f(CWint dwarf_get_rnglists_entry_fields(
@@ -15208,6 +15250,7 @@ and you won't otherwise need them
 a copy of alloctrack.py follows so
 you need not clone the test code.
 .DS
+\f(CW
 #!/usr/bin/env python3
 # Copyright 2020 David Anderson
 # This Python code is hereby placed into the public domain
@@ -15290,6 +15333,7 @@ if __name__ == '__main__':
        print("Mismatch on ",s," a vs d: ",allo,deallo)
     if int(allo) >  1:
        print("Reuse of ",s," a vs d: ",allo,deallo)
+\fP
 .DE
 
 .SK

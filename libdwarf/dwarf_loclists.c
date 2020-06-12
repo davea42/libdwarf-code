@@ -536,7 +536,7 @@ int dwarf_load_loclists(
 /*  Frees the memory in use in all loclists contexts.
     Done by dwarf_finish()  */
 void
-_dwarf_dealloc_loclists(Dwarf_Debug dbg)
+_dwarf_dealloc_loclists_context(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned i = 0;
     Dwarf_Loclists_Context * loccon = 0;
@@ -1082,14 +1082,15 @@ build_array_of_lle(Dwarf_Debug dbg,
         Dwarf_Locdesc_c prev = 0;
 
         /* array of structs. */
-        array = (Dwarf_Locdesc_c)malloc(
-            rctx->ll_locdesc_count *sizeof(struct Dwarf_Locdesc_c_s));
+        array = (Dwarf_Locdesc_c)_dwarf_get_alloc(dbg,
+            DW_DLA_LOCDESC_C, rctx->ll_locdesc_count);
         if (!array) {
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: Out of memory in "
                 "copying list of locdescs into array ");
             return DW_DLV_ERROR;
         }
+        rctx->ll_locdesc = array;
         cur = rctx->ll_first;
         for (i = 0  ; i < rctx->ll_locdesc_count; ++i) {
             prev = cur;
@@ -1097,7 +1098,6 @@ build_array_of_lle(Dwarf_Debug dbg,
             cur = cur->ld_next;
             free(prev);
         }
-        rctx->ll_locdesc = array;
         rctx->ll_first = 0;
         rctx->ll_last = 0;
     }
@@ -1287,9 +1287,11 @@ dwarf_get_loclists_entry_fields(
 }
 
 /*  Deals with both fully and partially build head */
-static void
+void
 _dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
 {
+    Dwarf_Debug dbg = head->ll_dbg;
+
     if (head->ll_first) {
         /* partially built head. */
         /*  ASSERT: ll_loclists is NULL */
@@ -1304,9 +1306,18 @@ _dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
         head->ll_last = 0;
         head->ll_locdesc_count = 0;
     } else {
+        Dwarf_Locdesc_c desc = head->ll_locdesc;
         /*  ASSERT: ll_first and ll_last are NULL */
         /* fully built head. */
-        free(head->ll_locdesc);
+        Dwarf_Unsigned listlen = head->ll_locdesc_count;
+        Dwarf_Unsigned i = 0;
+        for ( ; i < listlen; ++i) {
+            Dwarf_Loc_Expr_Op loc = desc[i].ld_s;
+            if(loc) {
+                dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
+            }
+        }
+        dwarf_dealloc(dbg,head->ll_locdesc,DW_DLA_LOCDESC_C);
         head->ll_locdesc = 0;
         head->ll_locdesc_count = 0;
     }

@@ -752,8 +752,8 @@ int _dwarf_load_section(Dwarf_Debug,
     struct Dwarf_Section_s *,
     Dwarf_Error *);
 
-void _dwarf_dealloc_rnglists(Dwarf_Debug dbg);
-void _dwarf_dealloc_loclists(Dwarf_Debug dbg);
+void _dwarf_dealloc_rnglists_context(Dwarf_Debug dbg);
+void _dwarf_dealloc_loclists_context(Dwarf_Debug dbg);
 
 int _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     Dwarf_CU_Context context,

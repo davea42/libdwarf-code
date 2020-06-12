@@ -1,3 +1,17 @@
+2020-06-12: David Anderson
+    * dwarf_alloc.c: Added free of loclists to 
+      _dwarf_free_all_of_one_debug().
+    * dwarf_loc.c: Created _dwarf_free_op_chain()
+      and call it so even in case of error nothing leaks.
+      Some adjustments to indents.
+    * dwarf_loclists.c: _dwarf_dealloc_loclists ->
+      _dwarf_dealloc_loclists_context for clarity.
+      Modified _dwarf_free_loclists_head() to get
+      leak-free behavior.
+    * dwarf_opaque.h: Reflects above name change.
+    * libdwarf2.1.mm: Corrected and amplified
+      words on the new functions.
+    * libdwarf2.1.pdf: Regenerated.
 2020-06-10: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
       dwarf_names_new.h,libdwarf/libdwarf_version.h:
@@ -47,6 +61,7 @@
       new function dwarf_get_locdesc_entry_d()
       new function dwarf_get_loclist_head_basics()
       new function dwarf_get_location_op_value_d()
+      new function dwarf_get_loclist_head_kind()
       - Following for printing raw loclists, not
       usually used.
       new function dwarf_load_loclists()

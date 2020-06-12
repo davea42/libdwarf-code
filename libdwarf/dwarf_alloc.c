@@ -999,7 +999,8 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     rela_free(&dbg->de_debug_tu_index);
     dwarf_harmless_cleanout(&dbg->de_harmless_errors);
 
-    _dwarf_dealloc_rnglists(dbg);
+    _dwarf_dealloc_rnglists_context(dbg);
+    _dwarf_dealloc_loclists_context(dbg);
     if (dbg->de_printf_callback.dp_buffer &&
         !dbg->de_printf_callback.dp_buffer_user_provided ) {
         free(dbg->de_printf_callback.dp_buffer);

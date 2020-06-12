@@ -434,7 +434,7 @@ int dwarf_load_rnglists(
 /*  Frees the memory in use in all rnglists contexts.
     Done by dwarf_finish()  */
 void
-_dwarf_dealloc_rnglists(Dwarf_Debug dbg)
+_dwarf_dealloc_rnglists_context(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned i = 0;
     Dwarf_Rnglists_Context * rngcon = 0;
