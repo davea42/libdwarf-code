@@ -1,4 +1,8 @@
 2020-06-12: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+      dwarf_names_new.h,libdwarf_version.h: updated
+      version string.
+2020-06-12: David Anderson
     * checkexamples.c,dwarf_alloc.c,dwarf_arange.c,
       dwarf_frame.c,dwarf_line.c,dwarf_line_table_reader_common.h,
       dwarf_loc.c,dwarf_loc.h,dwarf_locationop_read.c,

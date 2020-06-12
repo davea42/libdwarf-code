@@ -1,4 +1,8 @@
 2020-06-12: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h : updated version string.
+2020-06-12: David Anderson
     * dwarfdump.c, globals.h,print_die.c,print_llex_codes.c,
       print_loclist_original.c,print_loclists.c,
       print_loclists_codes.c,print_rnglists.c: Fix indents
