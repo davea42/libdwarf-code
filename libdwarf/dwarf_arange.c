@@ -532,7 +532,6 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
         curr_chain->ch_item = 0;
         arange_addrs[i] = ar->ar_address;
         arange_offsets[i] = ar->ar_info_offset;
-        
         prev_chain = curr_chain;
         curr_chain = curr_chain->ch_next;
         if (ar && itemtype) {

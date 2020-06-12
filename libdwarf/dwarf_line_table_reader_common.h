@@ -504,13 +504,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             /*  DECODE_LEB128_UWORD_CK(line_ptr, utmp,dbg,
                 err,line_ptr_end); */
             res =  read_uword_de(&line_ptr,&utmp,
-                    dbg,err,line_ptr_end);
+                dbg,err,line_ptr_end);
             if (res == DW_DLV_ERROR) {
-                     return DW_DLV_ERROR;
+                return DW_DLV_ERROR;
             }
-
             dir_index = (Dwarf_Unsigned) utmp;
-            if (dir_index > line_context->lc_include_directories_count) {
+            if (dir_index >
+                line_context->lc_include_directories_count) {
                 _dwarf_error(dbg, err, DW_DLE_DIR_INDEX_BAD);
                 return (DW_DLV_ERROR);
             }
@@ -520,9 +520,9 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             /*DECODE_LEB128_UWORD_CK(line_ptr,lastmod,
                 dbg,err, line_ptr_end); */
             res =  read_uword_de( &line_ptr,&lastmod,
-                    dbg,err,line_ptr_end);
+                dbg,err,line_ptr_end);
             if (res == DW_DLV_ERROR) {
-                     return DW_DLV_ERROR;
+                return DW_DLV_ERROR;
             }
 
 
@@ -1160,11 +1160,11 @@ read_line_table_program(Dwarf_Debug dbg,
                 if (ocres == DW_DLV_ERROR) {
                     _dwarf_free_chain_entries(dbg,head_chain,
                         line_count);
-                     if(curr_line) {
-                     dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
-                     curr_line = 0;
-                     }
-                     return DW_DLV_ERROR;
+                    if(curr_line) {
+                        dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        curr_line = 0;
+                    }
+                    return DW_DLV_ERROR;
                 }
 
 
@@ -1302,7 +1302,6 @@ read_line_table_program(Dwarf_Debug dbg,
                 chain_line->ch_item = curr_line;
                 _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
                 curr_line = 0;
-        
             }
 
             regs.lr_basic_block = false;
@@ -1333,7 +1332,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         return (DW_DLV_ERROR);
                     }
 
-                    /* Mark a line record as being DW_LNS_set_address */
+                    /* Mark a line record as DW_LNS_set_address */
                     curr_line->li_addr_line.li_l_data.li_is_addr_set =
                         is_addr_set;
                     is_addr_set = false;
@@ -1369,7 +1368,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                     if (chain_line == NULL) {
-                         dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                         _dwarf_free_chain_entries(dbg,head_chain,
                             line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -1402,7 +1401,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     if(curr_line) {
                         dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                     }
-                     return DW_DLV_ERROR;
+                    return DW_DLV_ERROR;
                 }
 
 
@@ -1494,7 +1493,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     if(curr_line) {
                     dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                     }
-                     return DW_DLV_ERROR;
+                    return DW_DLV_ERROR;
                 }
 
                 regs.lr_file = utmp2;
@@ -1589,11 +1588,12 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_fixed_advance_pc:{
                 Dwarf_Unsigned fpc = 0;
                 int apres = 0;
-                /*READ_UNALIGNED_CK(dbg, fixed_advance_pc, Dwarf_Half,
-                    line_ptr, DWARF_HALF_SIZE,error,line_ptr_end); */
+                /*READ_UNALIGNED_CK(dbg, fixed_advance_pc,
+                    Dwarf_Half, line_ptr,
+                    DWARF_HALF_SIZE,error,line_ptr_end); */
                 apres = _dwarf_read_unaligned_ck_wrapper(dbg,
-                      &fpc,line_ptr,DWARF_HALF_SIZE,line_ptr_end,
-                      error);
+                    &fpc,line_ptr,DWARF_HALF_SIZE,line_ptr_end,
+                    error);
                 fixed_advance_pc = fpc;
                 if (apres == DW_DLV_ERROR) {
                     if(curr_line) {
@@ -1695,7 +1695,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     /*  The value of the isa did
                         not fit in our
                         local so we record it wrong.
-                        declare an error. */ 
+                        declare an error. */
                     if(curr_line) {
                     dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                     }
@@ -1849,9 +1849,10 @@ read_line_table_program(Dwarf_Debug dbg,
                     return DW_DLV_ERROR;
                 }
                 regs.lr_call_context = line_count + stmp;
-                /*  DECODE_LEB128_UWORD_CK(line_ptr, regs.lr_subprogram,
+                /*  DECODE_LEB128_UWORD_CK(line_ptr,
+                    regs.lr_subprogram,
                     dbg,error,line_ptr_end); */
-                icres =  read_uword_de(&line_ptr,&ilcuw, 
+                icres =  read_uword_de(&line_ptr,&ilcuw,
                     dbg,error,line_ptr_end);
                 regs.lr_subprogram = ilcuw;
                 if (icres == DW_DLV_ERROR) {
@@ -1958,14 +1959,14 @@ read_line_table_program(Dwarf_Debug dbg,
             /*  DECODE_LEB128_UWORD_CK(line_ptr, utmp3,
                 dbg,error,line_ptr_end); */
             leres =  read_uword_de( &line_ptr,&utmp3,
-                    dbg,error,line_ptr_end);
+                dbg,error,line_ptr_end);
             if (leres == DW_DLV_ERROR) {
-                    _dwarf_free_chain_entries(dbg,head_chain,
-                        line_count);
-                    if(curr_line) {
+                _dwarf_free_chain_entries(dbg,head_chain,
+                    line_count);
+                if(curr_line) {
                     dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
-                    }
-                    return DW_DLV_ERROR;
+                }
+                return DW_DLV_ERROR;
             }
 
             instr_length =  utmp3;
@@ -2014,7 +2015,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 dwarfstring_destructor(&g);
                 _dwarf_free_chain_entries(dbg,head_chain,line_count);
                 if(curr_line) {
-                dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                    dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                 }
                 return DW_DLV_ERROR;
             }
@@ -2068,16 +2069,16 @@ read_line_table_program(Dwarf_Debug dbg,
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                     if (chain_line == NULL) {
-                         dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                         _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
                     chain_line->ch_itemtype = DW_DLA_LINE;
                     chain_line->ch_item = curr_line;
-                    _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
+                    _dwarf_update_chain_list(chain_line,
+                        &head_chain,&curr_chain);
                     curr_line = 0;
-                    
                 }
                 _dwarf_set_line_table_regs_default_values(&regs,
                     line_context->lc_version_number,
@@ -2087,12 +2088,13 @@ read_line_table_program(Dwarf_Debug dbg,
 
             case DW_LNE_set_address:{
                 int sares = 0;
-                /*  READ_UNALIGNED_CK(dbg, regs.lr_address, Dwarf_Addr,
+                /*  READ_UNALIGNED_CK(dbg, regs.lr_address,
+                    Dwarf_Addr,
                     line_ptr, address_size,error,line_ptr_end); */
                 sares = _dwarf_read_unaligned_ck_wrapper(dbg,
-                      &regs.lr_address,line_ptr,
-                      address_size,line_ptr_end,
-                      error);
+                    &regs.lr_address,line_ptr,
+                    address_size,line_ptr_end,
+                    error);
                 if (sares == DW_DLV_ERROR) {
                     if(curr_line) {
                     dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
@@ -2139,7 +2141,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                     if (chain_line == NULL) {
-                         dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                         _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
@@ -2244,8 +2246,8 @@ read_line_table_program(Dwarf_Debug dbg,
                     if (dlres == DW_DLV_ERROR) {
                         _dwarf_free_chain_entries(dbg,head_chain,
                             line_count);
-                         dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
-                         return DW_DLV_ERROR;
+                        dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        return DW_DLV_ERROR;
                     }
                     cur_file_entry->fi_file_length = value;
                     cur_file_entry->fi_dir_index_present = TRUE;

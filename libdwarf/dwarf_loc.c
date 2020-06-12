@@ -85,42 +85,42 @@ _dwarf_lkind_name(unsigned lkind, dwarfstring *m)
 
 
 static int
-determine_location_lkind(unsigned int version, 
-    unsigned int form, 
+determine_location_lkind(unsigned int version,
+    unsigned int form,
     UNUSEDARG unsigned int attribute,
     Dwarf_Bool is_dwo)
 {
     switch(form) {
-    case DW_FORM_exprloc: /* only defined for 
-       DW_CFA_def_cfa_expression */
+    case DW_FORM_exprloc: /* only defined for
+        DW_CFA_def_cfa_expression */
     case DW_FORM_block:
     case DW_FORM_block1:
     case DW_FORM_block2:
     case DW_FORM_block4:
-       return DW_LKIND_expression;
-       break;
+        return DW_LKIND_expression;
+        break;
     case DW_FORM_data4:
     case DW_FORM_data8:
-       if (version > 1 && version < 4) {
-           return DW_LKIND_loclist;
-       }
-       break;
+        if (version > 1 && version < 4) {
+            return DW_LKIND_loclist;
+        }
+        break;
     case DW_FORM_sec_offset:
-       if (version == 5 ) {
-           return DW_LKIND_loclists;
-       }
-       if (version == 4 &&  is_dwo  ) {
-           return DW_LKIND_GNU_exp_list;
-       }
-       return DW_LKIND_loclist;
-       break;
+        if (version == 5 ) {
+            return DW_LKIND_loclists;
+        }
+        if (version == 4 &&  is_dwo  ) {
+            return DW_LKIND_GNU_exp_list;
+        }
+        return DW_LKIND_loclist;
+        break;
     case DW_FORM_loclistx:
-       if (version == 5 ) {
-           return DW_LKIND_loclists;
-       }
-       break;
+        if (version == 5 ) {
+            return DW_LKIND_loclists;
+        }
+        break;
     default:
-       break;
+        break;
     }
     return DW_LKIND_unknown;
 }
@@ -161,7 +161,7 @@ _dwarf_free_op_chain(Dwarf_Debug dbg,
 
     Use for DWARF 2,3,4 only to avoid updating to
     later interfaces. Not for experimental
-    dwarf4 dwo either. 
+    dwarf4 dwo either.
     Better to switch to a newer interface.
 */
 static int
@@ -231,13 +231,13 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
         }
         op_count++;
         new_loc =
-            (Dwarf_Loc_Chain) _dwarf_get_alloc(dbg, 
+            (Dwarf_Loc_Chain) _dwarf_get_alloc(dbg,
             DW_DLA_LOC_CHAIN, 1);
         if (new_loc == NULL) {
             dwarfstring m;
 
             _dwarf_free_op_chain(dbg, head_loc);
-            dwarfstring_constructor(&m); 
+            dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
                 " DW_DLE_ALLOC_FAIL: out of memory"
                 "  allocating location"
@@ -245,7 +245,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
                 op_count);
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 dwarfstring_string(&m));
-            dwarfstring_destructor(&m); 
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
 
@@ -319,7 +319,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
 static int
 _dwarf_read_loc_section(Dwarf_Debug dbg,
     Dwarf_Block_c * return_block,
-    Dwarf_Addr    * lowpc, 
+    Dwarf_Addr    * lowpc,
     Dwarf_Addr    * hipc,
     Dwarf_Half    * lle_val,
     Dwarf_Off       sec_offset,
@@ -443,8 +443,8 @@ static int
 _dwarf_get_loclist_lle_count(Dwarf_Debug dbg,
     Dwarf_Off loclist_offset,
     Dwarf_Half address_size,
-    unsigned lkind, 
-    int *loclist_count, 
+    unsigned lkind,
+    int *loclist_count,
     Dwarf_Error * error)
 {
     int count = 0;
@@ -705,7 +705,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             int lres = 0;
             Dwarf_Half ll_op = 0;
 
-            blkres = _dwarf_read_loc_section(dbg, 
+            blkres = _dwarf_read_loc_section(dbg,
                 &loc_block,
                 &lowpc,
                 &highpc,
@@ -719,7 +719,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             }
             loc_section_end = dbg->de_debug_loc.dss_data+
                 dbg->de_debug_loc.dss_size;
-            lres = _dwarf_get_locdesc(dbg, 
+            lres = _dwarf_get_locdesc(dbg,
                 &loc_block,
                 address_size,
                 cucontext->cc_length_size,
@@ -772,8 +772,8 @@ dwarf_loclist_n(Dwarf_Attribute attr,
 
         /*  An empty location description (block length 0) means the
             code generator emitted no variable, the variable was not
-            generated, it was unused or perhaps never tested 
-            after being set. 
+            generated, it was unused or perhaps never tested
+            after being set.
             Dwarf2, section 2.4.1 In other words, it is not an
             error, and we don't test for block length 0
             specially here. */
@@ -919,13 +919,13 @@ dwarf_loclist(Dwarf_Attribute attr,
             loc_block.bl_kind = tblock->bl_from_loclist;
             /* ASSERT: lkind == loc_block.bl_kind  */
             loc_block.bl_section_offset = tblock->bl_section_offset;
-            /*  We copied tblock contents to the stack 
-                var, so can dealloc tblock now.  
+            /*  We copied tblock contents to the stack
+                var, so can dealloc tblock now.
                 Avoids leaks. */
             dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
-        /* Because we set bl_kind we don't really 
-           need this hack any more */
+        /*  Because we set bl_kind we don't really
+            need this hack any more */
         lowpc = 0;              /* HACK */
         highpc = (Dwarf_Unsigned) (-1LL);       /* HACK */
     }
@@ -1136,11 +1136,11 @@ dwarf_get_loclist_entry(Dwarf_Debug dbg,
         }
     }
 
-    /*  FIXME: DO NOT USE the call. address_size is not necessarily 
+    /*  FIXME: DO NOT USE the call. address_size is not necessarily
         the same in every frame. */
     address_size = dbg->de_pointer_size;
     res = _dwarf_read_loc_section(dbg,
-        &b, &lowpc, &highpc, 
+        &b, &lowpc, &highpc,
         &ll_op,offset,
         address_size,DW_LKIND_loclist,error);
     if (res != DW_DLV_OK) {
@@ -1241,7 +1241,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
 
     Dwarf_Unsigned  op_count = 0;
 
-    /*  Contiguous block of Dwarf_Loc_Expr_Op_s  
+    /*  Contiguous block of Dwarf_Loc_Expr_Op_s
         for Dwarf_Locdesc. */
     Dwarf_Loc_Expr_Op block_loc = 0;
 
@@ -1586,7 +1586,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     off_res = _dwarf_get_loclist_header_start(dbg,
         attr, &loclist_offset, error);
     if (off_res != DW_DLV_OK) {
-            return off_res;
+        return off_res;
     }
 #if 0
     res = dwarf_global_formref(attr,&loclist_offset,error);
@@ -1598,27 +1598,27 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     if (lkind == DW_LKIND_GNU_exp_list) {
         count_res = _dwarf_get_loclist_lle_count_dwo(dbg,
             loclist_offset,
-            address_size, 
+            address_size,
             llhead->ll_kind,
             &loclist_count,
             error);
     } else {
         count_res = _dwarf_get_loclist_lle_count(dbg,
-            loclist_offset, address_size, 
+            loclist_offset, address_size,
             llhead->ll_kind,
             &loclist_count,
-             error);
+            error);
     }
     if (count_res != DW_DLV_OK) {
-            return count_res;
+        return count_res;
     }
     if (loclist_count == 0) {
-            return DW_DLV_NO_ENTRY;
+        return DW_DLV_NO_ENTRY;
     }
 
     listlen = loclist_count;
     llbuf = (Dwarf_Locdesc_c)
-         _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
+        _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
     if (!llbuf) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);
@@ -1698,7 +1698,6 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
     Dwarf_Locdesc_c llbuf = 0;
     unsigned listlen = 1;
     Dwarf_CU_Context cucontext = llhead->ll_context;
-    
 
     memset(&loc_blockc,0,sizeof(loc_blockc));
     if( form == DW_FORM_exprloc) {
@@ -1717,12 +1716,12 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         Dwarf_Block loc_block;
 
         memset(&loc_block,0,sizeof(loc_block));
-        blkres = _dwarf_formblock_internal(dbg,attr, 
+        blkres = _dwarf_formblock_internal(dbg,attr,
             llhead->ll_context,
             &loc_block,
             error);
         if (blkres != DW_DLV_OK) {
-                return blkres;
+            return blkres;
         }
         loc_blockc.bl_len = loc_block.bl_len;
         loc_blockc.bl_data = loc_block.bl_data;
@@ -1737,17 +1736,17 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
     highpc = (Dwarf_Unsigned) (-1LL); /* HACK */
 
     llbuf = (Dwarf_Locdesc_c)
-            _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
+        _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
     if (!llbuf) {
-            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return (DW_DLV_ERROR);
     }
     llhead->ll_locdesc = llbuf;
     /* One by definition of a location entry. */
     llhead->ll_locdesc_count = listlen;
 
     /*  An empty location description (block length 0)
-        means the code generator emitted no variable, 
+        means the code generator emitted no variable,
         the variable was not generated, it was unused
         or perhaps never tested after being set. Dwarf2,
         section 2.4.1 In other words, it is not an error,
@@ -1755,18 +1754,18 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
 
     /* Fills in the locdesc and its operators list at index 0 */
     blkres = _dwarf_fill_in_locdesc_op_c(dbg,
-            0, /* fake locdesc is index 0 */
-            llhead,
-            &loc_blockc,
-            llhead->ll_address_size,
-            cucontext->cc_length_size,
-            cucontext->cc_version_stamp,
-            lowpc, highpc,
-            0,
-            error);
+        0, /* fake locdesc is index 0 */
+        llhead,
+        &loc_blockc,
+        llhead->ll_address_size,
+        cucontext->cc_length_size,
+        cucontext->cc_version_stamp,
+        lowpc, highpc,
+        0,
+        error);
     if (blkres != DW_DLV_OK) {
-            /* low level error already set: let it be passed back */
-            return blkres;
+        /* low level error already set: let it be passed back */
+        return blkres;
     }
     return DW_DLV_OK;
 }
@@ -1775,7 +1774,7 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
     value is all one bits, the high value is the base
     address. */
 static int
- cook_original_loclist_contents(Dwarf_Debug dbg,
+cook_original_loclist_contents(Dwarf_Debug dbg,
     Dwarf_Loc_Head_c llhead,
     Dwarf_Error *error)
 {
@@ -1789,7 +1788,7 @@ static int
         llc = llhead->ll_locdesc +i;
         switch(llc->ld_lle_value) {
         case DW_LLE_end_of_list: {
-            /* nothing to do */     
+            /* nothing to do */
             break;
             }
         case DW_LLE_base_address: {
@@ -1878,8 +1877,8 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             break;
             }
         case DW_LLEX_offset_pair_entry:{
-                llc->ld_lopc = llc->ld_rawlow + baseaddress;
-                llc->ld_highpc = llc->ld_rawhigh + baseaddress;
+            llc->ld_lopc = llc->ld_rawlow + baseaddress;
+            llc->ld_highpc = llc->ld_rawhigh + baseaddress;
             break;
             }
         case DW_LLEX_start_end_entry:{
@@ -1945,7 +1944,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
     Dwarf_Unsigned i = 0;
     Dwarf_CU_Context cucontext = llhead->ll_context;
     int res = 0;
-   
+
     for (i = 0 ; i < count ; ++i) {
         Dwarf_Locdesc_c  llc = 0;
 
@@ -2021,24 +2020,24 @@ cook_loclists_contents(Dwarf_Debug dbg,
             break;
         }
         case DW_LLE_default_location:{
-            /*  nothing to do here, just has a counted 
+            /*  nothing to do here, just has a counted
                 location description */
             break;
         }
         case DW_LLE_base_address:{
-            llc->ld_lopc = llc->ld_rawlow; 
-            llc->ld_highpc = llc->ld_rawlow; 
+            llc->ld_lopc = llc->ld_rawlow;
+            llc->ld_highpc = llc->ld_rawlow;
             baseaddress = llc->ld_rawlow;
             break;
         }
         case DW_LLE_start_end:{
-            llc->ld_lopc = llc->ld_rawlow; 
-            llc->ld_highpc = llc->ld_rawhigh; 
+            llc->ld_lopc = llc->ld_rawlow;
+            llc->ld_highpc = llc->ld_rawhigh;
             break;
         }
         case DW_LLE_start_length:{
-            llc->ld_lopc = llc->ld_rawlow; 
-            llc->ld_highpc = llc->ld_rawlow + llc->ld_rawhigh;; 
+            llc->ld_lopc = llc->ld_rawlow;
+            llc->ld_highpc = llc->ld_rawlow + llc->ld_rawhigh;
             break;
         }
         case DW_LLE_end_of_list:{
@@ -2047,7 +2046,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
         }
         default: {
             dwarfstring m;
- 
+
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
                 "DW_DLE_LOCLISTS_ERROR: improper DW_LLE code "
@@ -2086,7 +2085,6 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     int setup_res            = DW_DLV_ERROR;
     int lkind                = 0;
 
-    
     /* ***** BEGIN CODE ***** */
     setup_res = _dwarf_setup_loc(attr, &dbg,&cucontext, &form, error);
     if (setup_res != DW_DLV_OK) {
@@ -2095,7 +2093,6 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     attrnum = attr->ar_attribute;
     cuversionstamp = cucontext->cc_version_stamp;
     address_size = cucontext->cc_address_size;
-    
     is_dwo = cucontext->cc_is_dwo;
     lkind = determine_location_lkind(cuversionstamp,
         form, attrnum, is_dwo);
@@ -2114,7 +2111,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             ", attribute 0x%x (",attrnum);
         dwarfstring_append(&m,(char *)attrname);
         dwarfstring_append_printf_u(&m,
-           ") form 0x%x (",form);
+            ") form 0x%x (",form);
         dwarfstring_append(&m,(char *)formname);
         if (is_dwo) {
             dwarfstring_append(&m,") (the CU is a .dwo) ");
@@ -2127,8 +2124,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    /* Doing this early (first) to avoid repeating the alloc code
-       for each type  */
+    /*  Doing this early (first) to avoid repeating the alloc code
+        for each type  */
     llhead = (Dwarf_Loc_Head_c)
         _dwarf_get_alloc(dbg, DW_DLA_LOC_HEAD_C, 1);
     if (!llhead) {
@@ -2144,8 +2141,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     llhead->ll_offset_size = cucontext->cc_length_size;
     llhead->ll_context = cucontext;
 
-    llhead->ll_at_loclists_base_present = 
-         cucontext->cc_loclists_base_present;
+    llhead->ll_at_loclists_base_present =
+        cucontext->cc_loclists_base_present;
     llhead->ll_at_loclists_base =  cucontext->cc_loclists_base;
     llhead->ll_cu_base_address_present = cucontext->cc_low_pc_present;
     llhead->ll_cu_base_address = cucontext->cc_low_pc;
@@ -2188,7 +2185,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     } else if (lkind == DW_LKIND_loclists) {
         /* DWARF5! */
         int leres = 0;
-        
+
         leres = _dwarf_loclists_fill_in_lle_head(dbg,
             attr,llhead,error);
         if (leres != DW_DLV_OK) {
@@ -2206,7 +2203,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-/*  An interface giving us no cu context! 
+/*  An interface giving us no cu context!
     This is not going to be quite right. */
 int
 dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
@@ -2254,14 +2251,14 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     llhead->ll_dbg = dbg;
     llhead->ll_kind = DW_LKIND_expression;
 
-    /* An empty location description (block length 0) 
-       means the code generator emitted no variable,
-       the variable was not generated,
-       it was unused or perhaps never tested
-       after being set. Dwarf2,
-       section 2.4.1 In other words, it is not 
-       an error, and we don't
-       test for block length 0 specially here.  */
+    /*  An empty location description (block length 0)
+        means the code generator emitted no variable,
+        the variable was not generated,
+        it was unused or perhaps never tested
+        after being set. Dwarf2,
+        section 2.4.1 In other words, it is not
+        an error, and we don't
+        test for block length 0 specially here.  */
 
     /* Fills in the locdesc and its operators list at index 0 */
     res = _dwarf_fill_in_locdesc_op_c(dbg,
@@ -2419,7 +2416,7 @@ dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
         operand1,operand2,operand3,
         &raw1,&raw2,&raw3,
         offset_for_branch,
-        error); 
+        error);
     return res;
 }
 

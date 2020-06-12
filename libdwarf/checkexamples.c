@@ -1878,7 +1878,7 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                 &lle_value,
                 &rawval1,&rawval2,
                 &debug_addr_unavailable,
-                &lopc,&hipc, 
+                &lopc,&hipc,
                 &loclist_expr_op_count,
                 &locdesc_entry,
                 &loclist_lkind,
@@ -1916,12 +1916,12 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                         &opd1, &opd2,&opd3,&offsetforbranch,
                         &error);
                     if (opres == DW_DLV_OK) {
-                        /* Do something with the operators.
-                           Usually you want to use opd1,2,3
-                           as appropriate. Calculations
-                           involving base addresses etc
-                           have already been incorporated
-                           in opd1,2,3.  */
+                        /*  Do something with the operators.
+                            Usually you want to use opd1,2,3
+                            as appropriate. Calculations
+                            involving base addresses etc
+                            have already been incorporated
+                            in opd1,2,3.  */
                     } else {
                         dwarf_dealloc_error(dbg,error);
                         dwarf_loc_head_c_dealloc(loclist_head);

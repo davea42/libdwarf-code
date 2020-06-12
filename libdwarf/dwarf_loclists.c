@@ -85,10 +85,10 @@ counted_loc_descr(Dwarf_Debug dbg,
     Dwarf_Unsigned *opsoffset,
     Dwarf_Error *  err)
 {
-    Dwarf_Unsigned ops_len = 0; 
+    Dwarf_Unsigned ops_len = 0;
     Dwarf_Unsigned leblen = 0;
     DECODE_LEB128_UWORD_LEN_CK(data,ops_len,leblen,
-            dbg,err,enddata);
+        dbg,err,enddata);
     *loc_ops_count_len = leblen;
     *loc_ops_overall_size = ops_len+leblen;
     *loc_ops_len = ops_len;
@@ -123,7 +123,7 @@ read_single_lle_entry(Dwarf_Debug dbg,
     Dwarf_Small   *lopsdata = 0;
     Dwarf_Unsigned lopsoffset = 0;
 
-    /*  Some of these have a  Counted Location Description 
+    /*  Some of these have a  Counted Location Description
         in them. */
     code = *data;
     ++data;
@@ -256,7 +256,6 @@ read_single_lle_entry(Dwarf_Debug dbg,
         }
         break;
     }
-    
     *bytes_count_out = count;
     *entry_kind      = code;
     *entry_operand1  = val1;
@@ -637,10 +636,11 @@ int dwarf_get_loclist_head_basics(
     /*  If a dwarf_expression, no ll_loccontext */
     loccontext = head->ll_localcontext;
     if (loccontext) {
-      *overall_offset_of_this_context = loccontext->lc_header_offset;
-      *total_length_of_this_context = loccontext->lc_length;
-      *offset_table_offset =  loccontext->lc_offsets_off_in_sect;
-      *offset_table_entrycount = loccontext->lc_offset_entry_count;
+        *overall_offset_of_this_context =
+            loccontext->lc_header_offset;
+        *total_length_of_this_context = loccontext->lc_length;
+        *offset_table_offset =  loccontext->lc_offsets_off_in_sect;
+        *offset_table_entrycount = loccontext->lc_offset_entry_count;
     }
     *loclists_base_present = head->ll_at_loclists_base_present;
     *loclists_base= head->ll_at_loclists_base;
@@ -966,7 +966,7 @@ build_array_of_lle(Dwarf_Debug dbg,
         Dwarf_Small *ops = 0;
         Dwarf_Block_c eops;
 
-        memset(&eops,0,sizeof(eops)); 
+        memset(&eops,0,sizeof(eops));
         res = read_single_lle_entry(dbg,
             data,dataoffset, enddata,
             address_size,&entrylen,
@@ -1103,10 +1103,10 @@ build_array_of_lle(Dwarf_Debug dbg,
     }
     for (i = 0; i < rctx->ll_locdesc_count; ++i) {
         Dwarf_Locdesc_c ldc = rctx->ll_locdesc + i;
-        
+
         res = _dwarf_fill_in_locdesc_op_c(dbg,
             i,
-            rctx, 
+            rctx,
             &ldc->ld_opsblock,
             address_size, offset_size,
             rctx->ll_cuversion,
@@ -1174,7 +1174,7 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
             } else {
                 /* FIXME: check in tied file for a cc_loclists_base */
                 dwarfstring m;
-    
+
                 dwarfstring_constructor(&m);
                 dwarfstring_append_printf_u(&m,
                     "DW_DLE_LOCLISTS_ERROR: loclists table index of"

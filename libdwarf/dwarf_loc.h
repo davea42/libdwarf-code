@@ -106,21 +106,20 @@ struct Dwarf_Loclists_Context_s {
     the data is DWARF location expression operators.  */
 struct Dwarf_Block_c_s {
     /* length of block bl_data points at */
-    Dwarf_Unsigned  bl_len; 
+    Dwarf_Unsigned  bl_len;
 
     /*  Uninterpreted data, location expressions,
         DW_OP_reg31 etc */
-    Dwarf_Ptr       bl_data; 
+    Dwarf_Ptr       bl_data;
 
     /*  DW_LKIND, see libdwarf.h.in  */
     Dwarf_Small     bl_kind;
-
 
     /* Section (not CU) offset which 'data' comes from. */
     Dwarf_Unsigned  bl_section_offset;
 
     /*  Section offset where the location description
-        itself starts.  So a few bytes lower than 
+        itself starts.  So a few bytes lower than
         bl_section_offset */
     Dwarf_Unsigned  bl_locdesc_offset;
 };
@@ -147,7 +146,7 @@ struct Dwarf_Loc_Expr_Op_s {
 
     /*  Second operand.
         For OP_bregx, OP_bit_piece, OP_[GNU_]const_type,
-        OP_[GNU_]deref_type, OP_[GNU_]entry_value, 
+        OP_[GNU_]deref_type, OP_[GNU_]entry_value,
         OP_implicit_value,
         OP_[GNU_]implicit_pointer, OP_[GNU_]regval_type,
         OP_xderef_type,  */
@@ -155,7 +154,7 @@ struct Dwarf_Loc_Expr_Op_s {
 
     /*  Third Operand.
         For OP_[GNU_]const type, pointer to
-        block of length 'lr_number2' 
+        block of length 'lr_number2'
         FIXME: retrieve the value at the pointer,
         store the value here instead*/
     Dwarf_Unsigned  lr_number3;
@@ -163,8 +162,8 @@ struct Dwarf_Loc_Expr_Op_s {
     /*  The number assigned. 0 to the number-of-ops - 1 in
         the expression we are expanding. */
     Dwarf_Unsigned  lr_opnumber;
-    Dwarf_Unsigned  lr_offset; /* offset in locexpr for OP_BRA etc */
-    Dwarf_Loc_Expr_Op     lr_next;   /* When a list is useful. */
+    Dwarf_Unsigned  lr_offset; /* offset  for OP_BRA etc */
+    Dwarf_Loc_Expr_Op     lr_next; /* When a list is useful.*/
 };
 
 /* Location description DWARF 2,3,4,5
@@ -175,9 +174,9 @@ struct Dwarf_Locdesc_c_s {
 
     /*  A DW_LLEX or DW_LLE value, real or synthesized */
     Dwarf_Small      ld_lle_value;
-    /*  Failed means .debug_addr section needed but missing. 
+    /*  Failed means .debug_addr section needed but missing.
         (possibly tied file needed) */
-    Dwarf_Bool       ld_index_failed; 
+    Dwarf_Bool       ld_index_failed;
 
     /*  Beginning of active range. This is actually an offset
         of an applicable base address, not a pc value.  */
@@ -186,15 +185,15 @@ struct Dwarf_Locdesc_c_s {
     Dwarf_Addr       ld_lopc;
 
     /*  End of active range. This is actually an offset
-        of an applicable base address, 
+        of an applicable base address,
         or a length, never a pc value.  */
     Dwarf_Addr       ld_rawhigh;
     /*  Translated to address */
-    Dwarf_Addr       ld_highpc;   
+    Dwarf_Addr       ld_highpc;
 
     /*  Byte length of the  entire record for this entry,
         including any DW_OP entries */
-    Dwarf_Unsigned   ld_entrylen; 
+    Dwarf_Unsigned   ld_entrylen;
 
     /*   For .debug_loclists, eases building record. */
     Dwarf_Block_c    ld_opsblock;

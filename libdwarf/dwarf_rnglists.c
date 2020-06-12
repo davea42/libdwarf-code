@@ -998,7 +998,7 @@ dwarf_rnglists_get_rle_head(
     dbg = ctx->cc_dbg;
     array = dbg->de_rnglists_context;
     if (theform == DW_FORM_rnglistx) {
-         is_rnglistx = TRUE;
+        is_rnglistx = TRUE;
     }
     /*  ASSERT:  the 3 pointers just set are non-null */
     /*  the context cc_rnglists_base gives the offset

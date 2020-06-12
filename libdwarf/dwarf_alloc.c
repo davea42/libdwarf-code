@@ -628,12 +628,12 @@ string_is_in_debug_section(Dwarf_Debug dbg,void * space)
 
 /*  These wrappers for dwarf_dealloc enable type-checking
     at call points. */
-void 
+void
 dwarf_dealloc_error(Dwarf_Debug dbg, Dwarf_Error err)
 {
     dwarf_dealloc(dbg,err,DW_DLA_ERROR);
 }
-void 
+void
 dwarf_dealloc_die( Dwarf_Die die)
 {
     Dwarf_Debug dbg = 0;
@@ -661,7 +661,7 @@ dwarf_dealloc_die( Dwarf_Die die)
 }
 
 
-void 
+void
 dwarf_dealloc_attribute(Dwarf_Attribute attr)
 {
     Dwarf_Debug dbg = 0;

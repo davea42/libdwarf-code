@@ -140,7 +140,7 @@ typedef struct {
 
 
 /*  NEW October 2015.  */
-/*  This provides access to Dwarf_Locdesc_c, a single 
+/*  This provides access to Dwarf_Locdesc_c, a single
     location description */
 struct  Dwarf_Locdesc_c_s;
 typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
@@ -1851,7 +1851,7 @@ int dwarf_get_loclist_c (Dwarf_Attribute /*attr*/,
 #define DW_LKIND_loclist      1 /* DWARF 2,3,4 */
 #define DW_LKIND_GNU_exp_list 2 /* GNU DWARF4 .dwo extension */
 #define DW_LKIND_loclists     5 /* DWARF5 loclists */
-#define DW_LKIND_unknown     99 
+#define DW_LKIND_unknown     99
 
 /* DWARF2 kind is 2. DWARF3/4 kind is 3, DWARF5 kind is 5 */
 int
@@ -3663,8 +3663,9 @@ int dwarf_set_stringcheck(int /*stringcheck*/);
     Returns previous value.  */
 int dwarf_set_reloc_application(int /*apply*/);
 
-/* Unimplemented */
-Dwarf_Handler dwarf_seterrhand(Dwarf_Debug /*dbg*/, Dwarf_Handler /*errhand*/);
+/* Never Implemented */
+Dwarf_Handler dwarf_seterrhand(Dwarf_Debug /*dbg*/,
+    Dwarf_Handler /*errhand*/);
 
 /* Unimplemented */
 Dwarf_Ptr dwarf_seterrarg(Dwarf_Debug /*dbg*/, Dwarf_Ptr /*errarg*/);
@@ -3672,7 +3673,8 @@ Dwarf_Ptr dwarf_seterrarg(Dwarf_Debug /*dbg*/, Dwarf_Ptr /*errarg*/);
 void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
     Dwarf_Unsigned /*type*/);
 /*  These convenience functions allow type checking at the call,
-    whereas dwarf_dealloc itself uses void * so ... easy to misuse. */ 
+    whereas dwarf_dealloc itself uses void * so ...
+    easy to misuse. */
 void dwarf_dealloc_error(Dwarf_Debug /*dbg*/, Dwarf_Error /*err*/);
 void dwarf_dealloc_die( Dwarf_Die /*die*/);
 void dwarf_dealloc_attribute(Dwarf_Attribute /*attr*/);
@@ -4895,8 +4897,8 @@ int dwarf_get_rnglist_offset_index_value(Dwarf_Debug /*dbg*/,
 
 
 /*  Used by dwarfdump to print basic data from the
-    data generated to look at a specific rangelist 
-    as returned by  dwarf_rnglists_index_get_rle_head() 
+    data generated to look at a specific rangelist
+    as returned by  dwarf_rnglists_index_get_rle_head()
     or dwarf_rnglists_offset_get_rle_head. */
 int dwarf_get_rnglist_head_basics(Dwarf_Rnglists_Head /*head*/,
     Dwarf_Unsigned * /*rle_count*/,
@@ -5034,10 +5036,9 @@ int dwarf_get_loclist_offset_index_value(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*global_offset_value_out*/,
     Dwarf_Error * /*error*/);
 
-
 /*  Used by dwarfdump to print basic data from the
-    data generated to look at a specific rangelist 
-    as returned by  dwarf_loclists_index_get_lle_head() 
+    data generated to look at a specific rangelist
+    as returned by  dwarf_loclists_index_get_lle_head()
     or dwarf_loclists_offset_get_lle_head. */
 int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
     Dwarf_Small    * /*lkind*/,

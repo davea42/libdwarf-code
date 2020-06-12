@@ -1,4 +1,11 @@
 2020-06-12: David Anderson
+    * checkexamples.c,dwarf_alloc.c,dwarf_arange.c,
+      dwarf_frame.c,dwarf_line.c,dwarf_line_table_reader_common.h,
+      dwarf_loc.c,dwarf_loc.h,dwarf_locationop_read.c,
+      dwarf_loclists.c,dwarf_query.c,dwarf_rnglists.c,
+      dwarf_util.c,libdwarf.h.in: Fixed indents
+      and removed trailing whitespace.
+2020-06-12: David Anderson
     * dwarf_alloc.c: Added free of loclists to 
       _dwarf_free_all_of_one_debug().
     * dwarf_loc.c: Created _dwarf_free_op_chain()

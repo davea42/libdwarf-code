@@ -406,7 +406,7 @@ dwarf_attrlist(Dwarf_Die die,
         Dwarf_Unsigned len = 0;
 
         lres = _dwarf_decode_u_leb128_chk(info_ptr,
-            &len,&ignore_this,die_info_end); 
+            &len,&ignore_this,die_info_end);
         if (lres == DW_DLV_ERROR) {
             /* Stepped off the end SKIPping the leb  */
             dwarfstring m;
@@ -509,7 +509,6 @@ dwarf_attrlist(Dwarf_Die die,
                 */
                 res = _dwarf_leb128_uword_wrapper(dbg,
                     &info_ptr,die_info_end,&utmp6,error);
-    
                 attr_form = (Dwarf_Half) utmp6;
                 new_attr->ar_attribute_form = attr_form;
             }
@@ -853,7 +852,7 @@ dwarf_attr(Dwarf_Die die,
 
 /*  A DWP (.dwp) package object never contains .debug_addr,
     only a normal .o or executable object.
-    Error returned here is on dbg, not tieddbg. 
+    Error returned here is on dbg, not tieddbg.
     This looks for DW_AT_addr_base and if present
     adds it in appropriately. */
 int

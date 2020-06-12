@@ -192,7 +192,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
         Dwarf_Unsigned compdirnamelen = 0;
 
         if (line_context->lc_compilation_directory) {
-            comp_dir_name = 
+            comp_dir_name =
                 (char *)line_context->lc_compilation_directory;
             compdirnamelen = strlen(comp_dir_name);
         }

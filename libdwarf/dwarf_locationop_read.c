@@ -693,7 +693,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
 
         /*  Operand 3 points to a value in the block of size
             just gotten as operand2.
-            It must fit in a Dwarf_Unsigned. 
+            It must fit in a Dwarf_Unsigned.
             Get the type from the die at operand1
             (a CU relative offset). */
         /*  FIXME: We should do something very different than
@@ -775,7 +775,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     curr_loc->lr_number =  operand1;
     curr_loc->lr_raw2 =  operand2;
     curr_loc->lr_number2 = operand2;
-    /*  lr_number 3 is a pointer to a value iff DW_OP_const or 
+    /*  lr_number 3 is a pointer to a value iff DW_OP_const or
         DW_OP_GNU_const_type */
     curr_loc->lr_raw3 = operand3;
     curr_loc->lr_number3 = operand3;

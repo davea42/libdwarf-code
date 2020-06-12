@@ -1153,7 +1153,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
             /* This copies the structs, not pointers */
             *(head_instr_block + i) = *(Dwarf_Frame_Op *)item;
-            prev_instr = curr_instr_item; 
+            prev_instr = curr_instr_item;
             curr_instr_item = curr_instr_item->ch_next;
             /*  Now the pointed-to are space to dealloc */
             dwarf_dealloc(dbg, item, itemtype);

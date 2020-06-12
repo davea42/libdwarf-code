@@ -1087,7 +1087,7 @@ _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error * error)
     if (res != DW_DLV_OK) {
         return res;
     }
-    /*  debug_info won't be meaningful without 
+    /*  debug_info won't be meaningful without
         .debug_rnglists and .debug_rnglists if there
         is one or both such sections. */
     res = dwarf_load_rnglists(dbg,0,error);
