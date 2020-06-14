@@ -36,6 +36,9 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* for uintptr_t */
+#endif /* HAVE_STDINT_H */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -1228,8 +1231,9 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
 
     if(section_end < (frame_ptr +4)) {
         dwarfstring m;
-        Dwarf_Unsigned u = (Dwarf_Unsigned)(frame_ptr+4) -
-            (Dwarf_Unsigned)section_end;
+        Dwarf_Unsigned u = 
+            (Dwarf_Unsigned)(uintptr_t)(frame_ptr+4) -
+            (Dwarf_Unsigned)(uintptr_t)section_end;
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,

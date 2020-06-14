@@ -1130,7 +1130,8 @@ dwarf_get_loclist_entry(Dwarf_Debug dbg,
     Dwarf_Half ll_op = 0;
 
     if (!dbg->de_debug_loc.dss_data) {
-        int secload = _dwarf_load_section(dbg, &dbg->de_debug_loc,error);
+        int secload = _dwarf_load_section(dbg, 
+            &dbg->de_debug_loc,error);
         if (secload != DW_DLV_OK) {
             return secload;
         }
@@ -1569,16 +1570,17 @@ dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c ll_header,
 static int
 _dwarf_original_loclist_build(Dwarf_Debug dbg,
     Dwarf_Loc_Head_c llhead,
-    Dwarf_Attribute attr,
-    Dwarf_Error *error)
+    Dwarf_Attribute  attr,
+    Dwarf_Error     *error)
 {
     Dwarf_Unsigned loclist_offset = 0;
-    int off_res  = DW_DLV_ERROR;
-    int count_res = DW_DLV_ERROR;
-    int loclist_count = 0;
+    Dwarf_Unsigned starting_loclist_offset = 0;
+    int            off_res  = DW_DLV_ERROR;
+    int            count_res = DW_DLV_ERROR;
+    int            loclist_count = 0;
     Dwarf_Unsigned lli = 0;
-    unsigned lkind = llhead->ll_kind;
-    unsigned address_size = llhead->ll_address_size;
+    unsigned       lkind = llhead->ll_kind;
+    unsigned       address_size = llhead->ll_address_size;
     Dwarf_Unsigned listlen = 0;
     Dwarf_Locdesc_c llbuf = 0;
     Dwarf_CU_Context cucontext;
@@ -1588,12 +1590,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     if (off_res != DW_DLV_OK) {
         return off_res;
     }
-#if 0
-    res = dwarf_global_formref(attr,&loclist_offset,error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-#endif
+    starting_loclist_offset = loclist_offset;
 
     if (lkind == DW_LKIND_GNU_exp_list) {
         count_res = _dwarf_get_loclist_lle_count_dwo(dbg,
@@ -1627,8 +1624,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
     llhead->ll_locdesc_count = listlen;
     cucontext = llhead->ll_context;
     llhead->ll_llearea_offset = loclist_offset;
-
-        /* New get loc ops */
+    /* Now get loc ops */
     for (lli = 0; lli < listlen; ++lli) {
         int lres = 0;
         Dwarf_Half lle_op = 0;
@@ -1680,6 +1676,8 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
         loclist_offset = loc_block.bl_section_offset +
             loc_block.bl_len;
     }
+    llhead->ll_bytes_total = loclist_offset - 
+        starting_loclist_offset;
     return DW_DLV_OK;
 }
 
@@ -1763,6 +1761,7 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         lowpc, highpc,
         0,
         error);
+    llhead->ll_bytes_total += loc_blockc.bl_len;
     if (blkres != DW_DLV_OK) {
         /* low level error already set: let it be passed back */
         return blkres;

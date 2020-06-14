@@ -1,3 +1,24 @@
+2020-06-14: David Anderson
+    * dwarf_die_deliv.c: Adds the highest known
+      abbrev code to certain error messages.
+    * dwarf_die_deliv.h: Corrected a comment.
+    * dwarf_frame2.c: Now uses (uintptr_t) to avoid
+      warnings from certain compiler/pointer-size
+      environments.
+    * dwarf_loc.c: Update the loclist head
+      structure  ll_bytes_total
+      field with DWARF 2,3,4 loclists too.
+    * dwarf_opaque.h: Add cc_highest_known_code
+      to Dwarf_CU_Context_s for better
+      error reporting and align some field names
+      for a better appearance.
+    * dwarf_query.c: Improved error reporting
+      when an abbrev code missing.
+    * dwarf_util.c: Keep track of highest abbrev
+      code seen (per compilation unit).
+    * dwarf_util.h: Internal function declaration
+      changed to allow reporting of highest
+      abbrev code.
 2020-06-12: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
       dwarf_names_new.h,libdwarf_version.h: updated

@@ -642,11 +642,17 @@ _dwarf_format_TAG_err_msg(Dwarf_Debug dbg,
 
     See also dwarf_get_abbrev() in dwarf_abbrev.c.
 
+    On returning DW_DLV_NO_ENTRY (as well
+    as DW_DLV_OK)  it sets
+    *highest_known_code as a side effect 
+    for better error messages by callers.
+
     Returns DW_DLV_ERROR on error.  */
 int
 _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     Dwarf_Unsigned code,
     Dwarf_Abbrev_List *list_out,
+    Dwarf_Unsigned    *highest_known_code,
     Dwarf_Error *error)
 {
     Dwarf_Debug dbg = cu_context->cc_dbg;
@@ -673,6 +679,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
             DW_DLA_HASH_TABLE_ENTRY,
             hash_table_base->tb_table_entry_count);
         if (!hash_table_base->tb_entries) {
+            *highest_known_code = 
+               cu_context->cc_highest_known_code; 
             return DW_DLV_NO_ENTRY;
         }
     } else if (hash_table_base->tb_total_abbrev_count >
@@ -689,6 +697,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
             _dwarf_get_alloc(dbg, DW_DLA_HASH_TABLE_ENTRY,
             newht.tb_table_entry_count);
         if (!newht.tb_entries) {
+            *highest_known_code = 
+                cu_context->cc_highest_known_code; 
             return DW_DLV_NO_ENTRY;
         }
         /*  Copy the existing entries to the new table,
@@ -704,6 +714,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         *hash_table_base = newht;
     } /* Else is ok as is, add entry */
 
+    if (code > cu_context->cc_highest_known_code) { 
+        cu_context->cc_highest_known_code = code;
+    }
     hashable_val = code;
     hash_num = hashable_val %
         hash_table_base->tb_table_entry_count;
@@ -712,11 +725,14 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
 
     /* Determine if the 'code' is the list of synonyms already. */
     for (hash_abbrev_entry = entry_cur->at_head;
-        hash_abbrev_entry != NULL && hash_abbrev_entry->abl_code != code;
+        hash_abbrev_entry != NULL && 
+        hash_abbrev_entry->abl_code != code;
         hash_abbrev_entry = hash_abbrev_entry->abl_next);
     if (hash_abbrev_entry) {
         /*  This returns a pointer to an abbrev
             list entry, not the list itself. */
+        *highest_known_code = 
+            cu_context->cc_highest_known_code; 
         *list_out = hash_abbrev_entry;
         return DW_DLV_OK;
     }
@@ -763,7 +779,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     }
     /*  End of abbrev's for this cu, since abbrev code
         is 0. */
-    if (*abbrev_ptr == 0) {
+    if (*abbrev_ptr == 0) {    
+        *highest_known_code = 
+            cu_context->cc_highest_known_code; 
         return DW_DLV_NO_ENTRY;
     }
 
@@ -797,6 +815,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         }
 
         new_hashable_val = abbrev_code;
+        if (abbrev_code > cu_context->cc_highest_known_code) {
+            cu_context->cc_highest_known_code = abbrev_code; 
+        }
         hash_num = new_hashable_val %
             hash_table_base->tb_table_entry_count;
         inner_hash_entry = entry_base + hash_num;
@@ -807,6 +828,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         hash_table_base->tb_total_abbrev_count++;
 
         inner_list_entry->abl_code = abbrev_code;
+
         inner_list_entry->abl_tag = abbrev_tag;
         inner_list_entry->abl_has_child = *(abbrev_ptr++);
         inner_list_entry->abl_abbrev_ptr = abbrev_ptr;
@@ -819,6 +841,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
             end_abbrev_ptr,&atcount,&abbrev_ptr2,error);
         if (res != DW_DLV_OK) {
+            *highest_known_code = 
+                cu_context->cc_highest_known_code; 
             return res;
         }
         abbrev_ptr = abbrev_ptr2;
@@ -826,6 +850,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     } while ((abbrev_ptr < end_abbrev_ptr) &&
         *abbrev_ptr != 0 && abbrev_code != code);
 
+    *highest_known_code = cu_context->cc_highest_known_code; 
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
     cu_context->cc_last_abbrev_endptr = end_abbrev_ptr;
     if(abbrev_code == code) {

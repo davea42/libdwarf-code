@@ -262,9 +262,10 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_cu_die_global_sec_offset;
 
 
-    Dwarf_Byte_Ptr cc_last_abbrev_ptr;
-    Dwarf_Byte_Ptr cc_last_abbrev_endptr;
+    Dwarf_Byte_Ptr   cc_last_abbrev_ptr;
+    Dwarf_Byte_Ptr   cc_last_abbrev_endptr;
     Dwarf_Hash_Table cc_abbrev_hash_table;
+    Dwarf_Unsigned   cc_highest_known_code;
     Dwarf_CU_Context cc_next;
 
     /*unsigned char cc_offset_length; */

@@ -262,7 +262,10 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // automatic.
         }
         break;
+    case DW_FORM_CLASS_ADDRPTR:
+    case DW_FORM_CLASS_LOCLIST:
     case DW_FORM_CLASS_LOCLISTPTR:
+    case DW_FORM_CLASS_LOCLISTSPTR:
         {
         //FIXME. Needs support in dwarf producer(libdwarf)
         }
@@ -276,6 +279,9 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // automatic.
         }
         break;
+    case DW_FORM_CLASS_STROFFSETSPTR:
+    case DW_FORM_CLASS_RNGLISTSPTR:
+    case DW_FORM_CLASS_MACROPTR:
     case DW_FORM_CLASS_RANGELISTPTR:
         {
         //FIXME. Needs support in dwarf producer(libdwarf)

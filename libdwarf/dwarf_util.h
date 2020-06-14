@@ -425,7 +425,9 @@ struct Dwarf_Hash_Table_Entry_s {
 
 int _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     Dwarf_Unsigned code,
-    Dwarf_Abbrev_List *list_out,Dwarf_Error *error);
+    Dwarf_Abbrev_List *list_out,
+    Dwarf_Unsigned * highest_known_code,
+    Dwarf_Error *error);
 
 
 /* return 1 if string ends before 'endptr' else

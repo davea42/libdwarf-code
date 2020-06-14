@@ -377,6 +377,7 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Byte_Ptr die_info_end = 0;
     int lres = 0;
     Dwarf_CU_Context context = 0;
+    Dwarf_Unsigned highest_code = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     context = die->di_cu_context;
@@ -386,12 +387,27 @@ dwarf_attrlist(Dwarf_Die die,
 
     lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
-        &abbrev_list,error);
+        &abbrev_list,
+        &highest_code,error);
     if (lres == DW_DLV_ERROR) {
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
-        _dwarf_error(dbg, error, DW_DLE_ABBREV_MISSING);
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_ABBREV_MISSING "
+            "There is no abbrev present for code %u "
+            "in this compilation unit. ",
+            die->di_abbrev_list->abl_code);
+        dwarfstring_append_printf_u(&m,
+            "The highest known code is %u .",
+            highest_code);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ABBREV_MISSING,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
 
@@ -624,6 +640,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     Dwarf_Byte_Ptr die_info_end = 0;
     Dwarf_Debug dbg = 0;
     int lres = 0;
+    Dwarf_Unsigned highest_code = 0;
 
     if (!context) {
         _dwarf_error(NULL,error,DW_DLE_DIE_NO_CU_CONTEXT);
@@ -635,13 +652,27 @@ _dwarf_get_value_ptr(Dwarf_Die die,
 
     lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
-        &abbrev_list,error);
+        &abbrev_list,&highest_code,error);
     if (lres == DW_DLV_ERROR) {
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
-        _dwarf_error(dbg,error,DW_DLE_CU_DIE_NO_ABBREV_LIST);
-        return DW_DLV_ERROR;
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_CU_DIE_NO_ABBREV_LIST "
+            "There is no abbrev present for code %u "
+            "in this compilation unit. ",
+            die->di_abbrev_list->abl_code);
+        dwarfstring_append_printf_u(&m,
+            "The highest known code is %u.",
+            highest_code);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_CU_DIE_NO_ABBREV_LIST,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR; 
     }
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
@@ -659,6 +690,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         if (lres == DW_DLV_ERROR) {
             /* Stepped off the end SKIPping the leb  */
             dwarfstring m;
+
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
                 "DW_DLE_DIE_BAD: In building an attrlist "

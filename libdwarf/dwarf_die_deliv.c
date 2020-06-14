@@ -1909,6 +1909,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     Dwarf_Debug dbg = 0;
     Dwarf_Byte_Ptr abbrev_end = 0;
     int lres = 0;
+    Dwarf_Unsigned highest_code = 0;
 
     info_ptr = die_info_ptr;
     DECODE_LEB128_UWORD_CK(info_ptr, utmp,dbg,error,die_info_end);
@@ -1921,12 +1922,26 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
 
 
     lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
-        &abbrev_list,error);
+        &abbrev_list,&highest_code,error);
     if (lres == DW_DLV_ERROR) {
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
-        _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_NO_ABBREV_LIST);
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            " DW_DLE_NEXT_DIE_NO_ABBREV_LIST " 
+            "There is no abbrev present for code %u"
+            " in this compilation unit. ",
+            abbrev_code);
+        dwarfstring_append_printf_u(&m,
+            "The highest known code is %u.",
+            highest_code);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_NEXT_DIE_NO_ABBREV_LIST,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     dbg = cu_context->cc_dbg;
@@ -2163,6 +2178,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr die_info_end = 0;
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
+    Dwarf_Unsigned highest_code = 0;
     int lres = 0;
     int dieres = 0;
     /* Since die may be NULL, we rely on the input argument. */
@@ -2354,7 +2370,8 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     ret_die->di_abbrev_code = abbrev_code;
     lres = _dwarf_get_abbrev_for_code(ret_die->di_cu_context,
         abbrev_code,
-        &ret_die->di_abbrev_list,error);
+        &ret_die->di_abbrev_list,
+        &highest_code,error);
     if (lres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         return lres;
@@ -2364,8 +2381,14 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-            "There is no abbrev present for code 0x%x .",
+            "DW_DLE_DIE_ABBREV_LIST_NULL: "
+            "There is no abbrev present for code %u"
+            " in this compilation unit. ",
             abbrev_code);
+        dwarfstring_append_printf_u(&m,
+            "The highest known code is %u .",
+            highest_code);
+
         _dwarf_error_string(dbg, error,
             DW_DLE_DIE_ABBREV_LIST_NULL,dwarfstring_string(&m));
         dwarfstring_destructor(&m);
@@ -2378,7 +2401,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     }
 
     *caller_ret_die = ret_die;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -2401,6 +2424,7 @@ dwarf_child(Dwarf_Die die,
     int res = 0;
     Dwarf_CU_Context context = 0;
     int lres = 0;
+    Dwarf_Unsigned highest_code = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
@@ -2481,17 +2505,30 @@ dwarf_child(Dwarf_Die die,
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
-    lres = _dwarf_get_abbrev_for_code(die->di_cu_context, abbrev_code,
-        &ret_die->di_abbrev_list,error);
+    lres = _dwarf_get_abbrev_for_code(die->di_cu_context,
+        abbrev_code,
+        &ret_die->di_abbrev_list,
+        &highest_code,error);
     if (lres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         ret_die = 0;
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
-        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarf_dealloc_die(ret_die);
         ret_die = 0;
-        _dwarf_error(dbg, error, DW_DLE_ABBREV_MISSING);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_ABBREV_MISSING: the abbrev code not found "
+            " in dwarf_child() is %u. ",abbrev_code);
+        dwarfstring_append_printf_u(&m,
+            "The highest known code is %u.",
+            highest_code);
+        _dwarf_error_string(dbg, error, DW_DLE_ABBREV_MISSING,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     *caller_ret_die = ret_die;
@@ -2527,6 +2564,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     int lres = 0;
     Dwarf_Debug_InfoTypes dis = 0;
     Dwarf_Byte_Ptr die_info_end = 0;
+    Dwarf_Unsigned highest_code = 0;
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -2610,33 +2648,43 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     lres = _dwarf_leb128_uword_wrapper(dbg,&info_ptr,die_info_end,
         &utmp,error);
     if (lres != DW_DLV_OK) {
-        dwarf_dealloc(dbg, die, DW_DLA_DIE);
+        dwarf_dealloc_die(die);
         return lres;
     }
     abbrev_code = utmp;
     if (abbrev_code == 0) {
         /* we are at a null DIE (or there is a bug). */
-        *new_die = 0;
-        dwarf_dealloc(dbg, die, DW_DLA_DIE);
+        dwarf_dealloc_die(die);
+        die = 0;
         return DW_DLV_NO_ENTRY;
     }
     die->di_abbrev_code = abbrev_code;
     lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
-        &die->di_abbrev_list,error);
+        &die->di_abbrev_list,
+        &highest_code,error);
     if (lres == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg, die, DW_DLA_DIE);
+        dwarf_dealloc_die(die);
+        die = 0;
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
         dwarfstring m;
 
-        dwarf_dealloc(dbg,die, DW_DLA_DIE);
+        dwarf_dealloc_die(die);
+        die = 0;
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-            "There is no abbrev present for code 0x%x .",
+            "DW_DLE_DIE_ABBREV_LIST_NULL: "
+            "There is no abbrev present for code %u"
+            " in this compilation unit"
+            " when calling dwarf_offdie_b(). ",
             abbrev_code);
+        dwarfstring_append_printf_u(&m,
+            "The highest known code is %u .",
+            highest_code);
         _dwarf_error_string(dbg, error,
-            DW_DLE_DIE_ABBREV_LIST_NULL,dwarfstring_string(&m));
+            DW_DLE_DIE_ABBREV_LIST_NULL,
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }

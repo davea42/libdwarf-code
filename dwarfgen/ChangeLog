@@ -1,1 +1,6 @@
-2020-01-05 placeholder
+2020-06-14 David Anderson
+    * irepattrtodbg.cc: DWARF5 required adding new
+      DW_FORM_CLASS entries in libdwarf.h.
+      To aviod annoying warnings from dwarfgen we now
+      add the new ones. We do not do anything with them
+      at present.
