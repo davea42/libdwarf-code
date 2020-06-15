@@ -1,4 +1,11 @@
 2020-06-14: David Anderson
+    * libdwarf1.1.mm: Added examples to the Error Handling
+      section as the previous version was pretty vague
+      about the best way to call libdwarf to deal
+      with errors.
+    * libdwarf1.1.pdf: Generated version 2.97.
+     
+2020-06-14: David Anderson
     * dwarf_die_deliv.c: Adds the highest known
       abbrev code to certain error messages.
     * dwarf_die_deliv.h: Corrected a comment.

@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.96, 09 June 2020
+.ds vE Rev 2.97, 13 June 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1477,7 +1477,69 @@ and perform appropriate
 processing.
 The intent is that clients do the appropriate processing
 immediately on encountering an error and then the client
-calls \f(CWdwarf_dealloc\fP to free the descriptor.
+calls \f(CWdwarf_dealloc_error\fP to free the
+Dwarf_Error descriptor (at which point the client
+should zero that descriptor as the non-zero value is stale).
+.P
+For example we think the following is appropriate
+as a general outline. See dwarfdump source
+for many examples of both of the following
+incomplete examples.
+.in +2
+.DS
+\f(CW
+int example_codea{Dwarf_Debug dbg,Dwarf_Die indie,
+    int is_info, Dwarf_Die *sibdie, Dwarf_Error *err)
+{
+    int res = 0;
+    const char *secname = 0;
+    res = dwarf_siblingof_b(dbg,indie,is_info,sibdie,
+        err);
+    if (res == DW_DLV_ERROR) {
+        return res; /*let higher level decide what to do
+           and it will eventually need to do
+           dwarf_dealloc_error() appropriately */
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /* No sibdie created. Nothing done. *.
+        return res;
+    }
+    /*  sibdie created, caller will have to eventually
+        do dwarf_dealloc_die() appropriately. */
+    ...
+    return DW_DLV_OK;
+}
+\fP
+.DE
+.in -2
+.P
+In a case where it is ok to suppress the error as
+being unimporant, this is an outline, not 
+a useful function.
+.in +2
+.DS
+\f(CW
+int example_codeb{Dwarf_Debug dbg, const char **sec_name,
+    int is_info)
+{
+    Dwarf_Error e = 0;
+    int res = 0;
+    res = dwarf_get_die_section_name(dbg,is_info,
+        sec_name, &e);
+    if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_error(e);
+        e = 0;
+        return res; /*let higher level decide what to do,
+           Nothing allocated in the call still exists. */
+    } if (res == DW_DLV_NO_ENTRY) {
+        ....
+    } 
+    ...
+}
+\fP
+.DE
+.in -2
+
+
 .P
 In the rare case where the malloc arena is exhausted when
 trying to create a Dwarf_Error descriptor a
@@ -1500,7 +1562,18 @@ call
 \fIlibdwarf\fP
 did).
 .P
-A client program can also specify a function to be
+We strongly suggest most applications calling libdwarf
+follow the suggestion above (passing a valid
+Dwarf_Error address in the last argument when
+calling libdwarf where there are such
+Dwarf_Error arguments) there are other approaches
+described just below that might be
+worth considering
+in small simple applications as they reduce the Dwarf_Error
+argument to just passing 0 (null pointer)..
+.P
+As an alternative to the above,
+a client program can also specify a function to be
 invoked upon detection of an error at the time the
 library is initialized (see
 \f(CWdwarf_init_b()\fP).
@@ -1520,7 +1593,7 @@ after initialization using
 and
 \f(CWdwarf_seterrarg()\fP.
 .P
-In the case where
+In the  final case, where
 \fIlibdwarf\fP
 functions are not provided a pointer
 to a \f(CWDwarf_Error\fP descriptor,
