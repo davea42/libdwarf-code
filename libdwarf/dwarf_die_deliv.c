@@ -1931,7 +1931,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-            " DW_DLE_NEXT_DIE_NO_ABBREV_LIST " 
+            " DW_DLE_NEXT_DIE_NO_ABBREV_LIST "
             "There is no abbrev present for code %u"
             " in this compilation unit. ",
             abbrev_code);

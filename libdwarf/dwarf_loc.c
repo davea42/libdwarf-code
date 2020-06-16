@@ -1130,7 +1130,7 @@ dwarf_get_loclist_entry(Dwarf_Debug dbg,
     Dwarf_Half ll_op = 0;
 
     if (!dbg->de_debug_loc.dss_data) {
-        int secload = _dwarf_load_section(dbg, 
+        int secload = _dwarf_load_section(dbg,
             &dbg->de_debug_loc,error);
         if (secload != DW_DLV_OK) {
             return secload;
@@ -1676,7 +1676,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
         loclist_offset = loc_block.bl_section_offset +
             loc_block.bl_len;
     }
-    llhead->ll_bytes_total = loclist_offset - 
+    llhead->ll_bytes_total = loclist_offset -
         starting_loclist_offset;
     return DW_DLV_OK;
 }

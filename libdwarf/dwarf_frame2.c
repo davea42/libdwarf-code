@@ -1231,7 +1231,7 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
 
     if(section_end < (frame_ptr +4)) {
         dwarfstring m;
-        Dwarf_Unsigned u = 
+        Dwarf_Unsigned u =
             (Dwarf_Unsigned)(uintptr_t)(frame_ptr+4) -
             (Dwarf_Unsigned)(uintptr_t)section_end;
 
