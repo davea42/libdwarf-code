@@ -673,7 +673,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             DW_DLE_CU_DIE_NO_ABBREV_LIST,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
-        return DW_DLV_ERROR; 
+        return DW_DLV_ERROR;
     }
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
@@ -1157,14 +1157,17 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     if (context->cc_unit_type == DW_UT_split_compile) {
-        /* DW_AT_str_offsets_base is not part of split full compilation units
-           (See "3.1.3 Split Full Compilation Unit Entries" in the DWARF5
-           standard), so we can avoid checking here.
+        /*  DW_AT_str_offsets_base is not part of split full
+            compilation units (See "3.1.3 Split Full
+            Compilation Unit Entries" in the DWARF5
+            standard), so we can avoid checking here.
 
-           This is important because the call to dwarf_offdie_b below would try
-           to create a context if none is found, and we can get here during
-           context creation when reading DW_AT_dwo_name, which would cause
-           infinite recursion. */
+            This is important because the call to
+            dwarf_offdie_b below would try to create
+            a context if none is found, and we can get here during
+            context creation when reading
+            DW_AT_dwo_name, which would cause
+            infinite recursion. */
         *sbase_out = 0;
         return DW_DLV_OK;
     }

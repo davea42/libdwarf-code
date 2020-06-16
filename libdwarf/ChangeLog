@@ -1,3 +1,7 @@
+2020-06-16: David Anderson
+    * dwarf_query.c, dwarf_util.c: Remove trailing whitespace.
+      Changed indents and line lengths in a small area to match
+      the usual look.
 2020-06-16: Jorge Gorbe Moya 
     * dwarf_query.c, dwarf_util.c: Correct the handling
       of DW_UT initializations.
