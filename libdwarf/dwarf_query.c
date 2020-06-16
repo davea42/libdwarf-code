@@ -2,6 +2,7 @@
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
+  Portions Copyright 2020 Google All rights reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -1153,6 +1154,18 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
 
     if(context->cc_str_offsets_base_present) {
         *sbase_out = context->cc_str_offsets_base;
+        return DW_DLV_OK;
+    }
+    if (context->cc_unit_type == DW_UT_split_compile) {
+        /* DW_AT_str_offsets_base is not part of split full compilation units
+           (See "3.1.3 Split Full Compilation Unit Entries" in the DWARF5
+           standard), so we can avoid checking here.
+
+           This is important because the call to dwarf_offdie_b below would try
+           to create a context if none is found, and we can get here during
+           context creation when reading DW_AT_dwo_name, which would cause
+           infinite recursion. */
+        *sbase_out = 0;
         return DW_DLV_OK;
     }
     cu_die_offset = context->cc_cu_die_global_sec_offset;
