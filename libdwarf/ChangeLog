@@ -1,3 +1,6 @@
+2020-06-16: David Anderson
+    * dwarf_die_deliv.c,dwarf_frame2.c,dwarf_loc.c:
+      Remove trailing whitespace.
 2020-06-14: David Anderson
     * libdwarf1.1.mm: Added examples to the Error Handling
       section as the previous version was pretty vague
