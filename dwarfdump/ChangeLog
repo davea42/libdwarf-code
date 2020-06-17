@@ -1,3 +1,10 @@
+2020-06-17: David Anderson
+    * globals.h: Some args now just values, not pointers,
+      the Dwarf_Addr  * hipc in
+      print_llex_linecodes() was a holdover from past
+      versions. Not needed.
+    * print_die.c,print_llex_codes.c,print_loclist_original.c,
+      print_loclists_codes.c: Similarly.
 2020-06-12: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

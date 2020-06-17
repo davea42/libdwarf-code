@@ -534,23 +534,15 @@ fill_in_dwp_offsets_if_present(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-static Dwarf_Bool
-_dwarf_may_have_base_fields(Dwarf_CU_Context cu_context)
-{
-    if (cu_context->cc_version_stamp < DW_CU_VERSION4) {
-        return FALSE;
-    }
-    return TRUE;
-}
-
 static int
 finish_cu_context_via_cudie_inner(
     Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     Dwarf_Error *error)
 {
-    if (_dwarf_may_have_base_fields(cu_context)) {
+    {
         /*  DW4: Look for DW_AT_dwo_id and
+            DW_AT_low_pc and more.
             if there is one pick up the hash
             DW5: hash in skeleton CU die
             Also pick up cc_str_offset_base and
@@ -1087,6 +1079,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
     /*  DW_AT_dwo_id and/or DW_AT_GNU_dwo_id
         are only found  in some
         experimental DWARF4.
+        Even DWARF3,4 use DW_AT_low_pc as base address
         DWARF5 changed CU header contents
         to make this attribute unnecessary.
         DW_AT_GNU_odr_signature is the same format,
@@ -1370,8 +1363,9 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     }
     /*  Now we can read the CU die and determine
         the correct DW_UT_ type for DWARF4 and some
-        offset base fields for DW4-fission and DW5 */
-    if (version == DW_CU_VERSION4 || version == DW_CU_VERSION5) {
+        offset base fields for DW4-fission and DW5,
+        and even DW3 and DW4 and some non-std DW2 */
+    {
         res = finish_cu_context_via_cudie_inner(dbg,
             cu_context,
             error);

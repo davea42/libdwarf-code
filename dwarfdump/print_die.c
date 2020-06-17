@@ -2334,6 +2334,7 @@ is_location_form(int form)
         form == DW_FORM_data4 ||
         form == DW_FORM_data8 ||
         form == DW_FORM_sec_offset ||
+        form == DW_FORM_loclistx ||
         form == DW_FORM_rnglistx ) {
         return TRUE;
     }
@@ -3215,6 +3216,7 @@ print_location_description(Dwarf_Debug dbg,
         }
         show_form_itself(glflags.show_form_used, glflags.verbose,
             theform, directform, base);
+    } else if (theform == DW_FORM_loclistx) {
     } else {
         show_attr_form_error(dbg,attr,theform,base);
     }
@@ -5023,13 +5025,12 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0
-static void
-loc_error_check(UNUSEDARG Dwarf_Debug dbg,
+void
+loc_error_check(
     Dwarf_Addr lopcfinal,
-    Dwarf_Addr lopc,
+    Dwarf_Addr rawlopc,
     Dwarf_Addr hipcfinal,
-    Dwarf_Addr hipc,
+    Dwarf_Addr rawhipc,
     Dwarf_Unsigned offset,
     Dwarf_Addr base_address,
     Dwarf_Bool *bError)
@@ -5057,19 +5058,18 @@ loc_error_check(UNUSEDARG Dwarf_Debug dbg,
                     "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
                     ", Base = 0x%"  DW_PR_XZEROS DW_PR_DUx ", "
                     "Low = 0x%"  DW_PR_XZEROS DW_PR_DUx
-                    " (0x%"  DW_PR_XZEROS DW_PR_DUx
+                    " (rawlow = 0x%"  DW_PR_XZEROS DW_PR_DUx
                     "), High = 0x%"  DW_PR_XZEROS DW_PR_DUx
-                    " (0x%"  DW_PR_XZEROS DW_PR_DUx ")\n",
-                    offset,base_address,lopcfinal,
-                    lopc,
+                    " (rawhigh = 0x%"  DW_PR_XZEROS DW_PR_DUx ")\n",
+                    offset,base_address,
+                    lopcfinal,
+                    rawlopc,
                     hipcfinal,
-                    hipc);
+                    rawhipc);
             }
         }
     }
 }
-#endif
-
 
 static void
 print_loclists_context_head(
@@ -5449,10 +5449,10 @@ print_location_list(Dwarf_Debug dbg,
                     checking,
                     llent,
                     lle_value,
-                    &base_address,
+                    base_address,
                     rawlowpc, rawhipc,
                     debug_addr_unavailable,
-                    &lopc, &hipc,
+                    lopc, hipc,
                     locdesc_offset,
                     esbp,
                     &bError);
@@ -5461,22 +5461,23 @@ print_location_list(Dwarf_Debug dbg,
                     checking,
                     llent,
                     lle_value,
-                    &base_address,
+                    base_address,
                     rawlowpc, rawhipc,
                     debug_addr_unavailable,
-                    &lopc, &hipc,
+                    lopc, hipc,
                     locdesc_offset,
-                    esbp);
+                    esbp,
+                    &bError);
             } else {
                 /* loclist_source == DW_LKIND_loclists */
                 print_debug_loclists_linecodes(dbg,
                     checking,
                     llent,
                     lle_value,
-                    &base_address,
+                    base_address,
                     rawlowpc, rawhipc,
                     debug_addr_unavailable,
-                    &lopc, &hipc,
+                    lopc, hipc,
                     locdesc_offset,
                     esbp,
                     &bError);

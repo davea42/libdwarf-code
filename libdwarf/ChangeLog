@@ -1,3 +1,9 @@
+2020-06-17: David Anderson
+    * dwarf_die_deliv.c: Pick up CU DIE base fields
+      always. Not just for DWARF4,5.
+    * dwarf_loc.c: Clarify the flow. A comment added.
+    * dwarf_form.c: Added missing DW_FORM_loclistx from
+      a switch.
 2020-06-16: David Anderson
     * dwarf_query.c, dwarf_util.c: Remove trailing whitespace.
       Changed indents and line lengths in a small area to match

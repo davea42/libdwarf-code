@@ -800,8 +800,9 @@ dwarf_global_formref(Dwarf_Attribute attr,
             }
         }
         break;
-    /*  Index into .debug_rnglist section.
+    /*  Index into .debug_rnglists/.debug_loclists section.
         Return the index itself. */
+    case DW_FORM_loclistx:
     case DW_FORM_rnglistx: {
         unsigned length_size = cu_context->cc_length_size;
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,

@@ -48,24 +48,25 @@
 
 int
 print_original_loclist_linecodes(Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Bool    checking,
-    unsigned int llent,
+    Dwarf_Bool    checking,
+    unsigned int  llent,
     Dwarf_Small   lle_value,
-    UNUSEDARG Dwarf_Addr  * base_address,
+    Dwarf_Addr    base_address,
     Dwarf_Addr    rawlopc,
     Dwarf_Addr    rawhipc,
-    UNUSEDARG Dwarf_Bool    debug_addr_unavailable,
-    Dwarf_Addr  * lopc,
-    Dwarf_Addr  * hipc,
-    UNUSEDARG Dwarf_Unsigned locdesc_offset,
-    struct esb_s * esbp)
+    Dwarf_Bool    debug_addr_unavailable,
+    Dwarf_Addr    lopc,
+    Dwarf_Addr    hipc,
+    Dwarf_Unsigned locdesc_offset,
+    struct esb_s * esbp,
+    Dwarf_Bool   * bError)
 {
     if (lle_value == DW_LLE_base_address) {
         esb_append_printf_u(esbp,
             "<new base address   0x%"
             DW_PR_XZEROS DW_PR_DUx
             ">",
-            *hipc);
+            hipc);
     } else if (lle_value == DW_LLE_end_of_list) {
         /* Nothing to do. */
         esb_append(esbp,"<end-of-list>");
@@ -82,19 +83,17 @@ print_original_loclist_linecodes(Dwarf_Debug dbg,
         }
         esb_append_printf_u(esbp,
             "<low addr           0x%"
-            DW_PR_XZEROS DW_PR_DUx,*lopc);
+            DW_PR_XZEROS DW_PR_DUx, lopc);
         esb_append_printf_u(esbp,
             " high addr 0x%"
             DW_PR_XZEROS DW_PR_DUx
-            ">",*hipc);
-#if 0
-        if(checking) {
-            loc_error_check(dbg,lopcfinal, *lopc,
-                hipcfinal,*hipc, locdesc_offset,
-                *base_address,
-                &bError);
+            ">", hipc);
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(lopc, rawlopc,
+                hipc,rawhipc, locdesc_offset,
+                base_address,
+                bError);
         }
-#endif
     } else {
         struct esb_s unexp;
 
