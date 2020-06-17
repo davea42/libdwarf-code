@@ -1,4 +1,9 @@
 2020-06-17: David Anderson
+    * print_loclists.c: Improve the formatting
+      of the raw report.
+    * print_rnglists.c: Significatly improve
+      the formatting of the raw report.
+2020-06-17: David Anderson
     * globals.h: Some args now just values, not pointers,
       the Dwarf_Addr  * hipc in
       print_llex_linecodes() was a holdover from past

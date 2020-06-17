@@ -50,6 +50,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define TRUE 1
 #define FALSE 0
 
+#if 0
+static void
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}
+#endif /* 0 */
+
+
 
 /*  Used in case of error reading the
     rnglists headers (not referring to Dwarf_Rnglists_Head
@@ -182,7 +197,7 @@ internal_read_header(Dwarf_Debug dbg,
 {
     Dwarf_Small *startdata = data;
     Dwarf_Unsigned arealen = 0;
-    int length_size = 0;
+    int offset_size = 0;
     int exten_size = 0;
     Dwarf_Unsigned version = 0;
     unsigned address_size = 0;
@@ -192,7 +207,7 @@ internal_read_header(Dwarf_Debug dbg,
     Dwarf_Unsigned lists_len = 0;
 
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
-        data,length_size,exten_size,
+        data,offset_size,exten_size,
         error,
         sectionlength,end_data);
     if (arealen > sectionlength) {
@@ -212,11 +227,11 @@ internal_read_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-    buildhere->rc_length = arealen +length_size+exten_size;
+    buildhere->rc_length = arealen +offset_size+exten_size;
     buildhere->rc_dbg = dbg;
     buildhere->rc_index = contextnum;
     buildhere->rc_header_offset = offset;
-    buildhere->rc_offset_size = length_size;
+    buildhere->rc_offset_size = offset_size;
     buildhere->rc_extension_size = exten_size;
     READ_UNALIGNED_CK(dbg,version,Dwarf_Unsigned,data,
         SIZEOFT16,error,end_data);
@@ -275,7 +290,7 @@ internal_read_header(Dwarf_Debug dbg,
         buildhere->rc_offsets_array = data;
     }
     localoff = data - startdata;
-    lists_len = address_size *offset_entry_count;
+    lists_len = offset_size *offset_entry_count;
 
     data += lists_len;
 
@@ -652,7 +667,6 @@ int dwarf_get_rnglist_rle(
 
     con = dbg->de_rnglists_context[contextnumber];
     address_size = con->rc_address_size;
-
     res = read_single_rle_entry(dbg,
         data,entry_offset,enddata,
         address_size,entrylen,

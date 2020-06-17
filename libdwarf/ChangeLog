@@ -1,4 +1,9 @@
 2020-06-17: David Anderson
+    * dwarf_loclists.c, dwarf_rnglists.c: Rename 
+      length_size->offset_size
+      for clarity and correct the computation of the
+      length of the offsets array.
+2020-06-17: David Anderson
     * dwarf_die_deliv.c: Pick up CU DIE base fields
       always. Not just for DWARF4,5.
     * dwarf_loc.c: Clarify the flow. A comment added.

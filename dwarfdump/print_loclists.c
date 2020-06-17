@@ -64,10 +64,15 @@ print_offset_entry_table(Dwarf_Debug dbg,
     unsigned colmax = 4;
     unsigned col = 0;
     int res = 0;
-
+    int hasnewline = TRUE;
+   
     for ( ; e < offset_entry_count; ++e) {
         Dwarf_Unsigned value = 0;
 
+        if (e == 0) {
+            printf("   Location Offset Table :\n");
+        }
+        hasnewline = FALSE;
         res = dwarf_get_loclist_offset_index_value(dbg,
             contextnum,e,&value,0,error);
         if (res != DW_DLV_OK) {
@@ -79,8 +84,13 @@ print_offset_entry_table(Dwarf_Debug dbg,
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx, value);
         col++;
         if (col == colmax) {
+            printf("\n");
+            hasnewline = TRUE;
             col = 0;
         }
+    }
+    if (!hasnewline) {
+        printf("\n");
     }
     return DW_DLV_OK;
 }

@@ -283,7 +283,7 @@ internal_read_header(Dwarf_Debug dbg,
 {
     Dwarf_Small *startdata = data;
     Dwarf_Unsigned arealen = 0;
-    int length_size = 0;
+    int offset_size = 0;
     int exten_size = 0;
     Dwarf_Unsigned version = 0;
     unsigned address_size = 0;
@@ -293,7 +293,7 @@ internal_read_header(Dwarf_Debug dbg,
     Dwarf_Unsigned lists_len = 0;
 
     READ_AREA_LENGTH_CK(dbg,arealen,Dwarf_Unsigned,
-        data,length_size,exten_size,
+        data,offset_size,exten_size,
         error,
         sectionlength,end_data);
     if (arealen > sectionlength) {
@@ -313,11 +313,11 @@ internal_read_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-    buildhere->lc_length = arealen +length_size+exten_size;
+    buildhere->lc_length = arealen +offset_size+exten_size;
     buildhere->lc_dbg = dbg;
     buildhere->lc_index = contextnum;
     buildhere->lc_header_offset = offset;
-    buildhere->lc_offset_size = length_size;
+    buildhere->lc_offset_size = offset_size;
     buildhere->lc_extension_size = exten_size;
     READ_UNALIGNED_CK(dbg,version,Dwarf_Unsigned,data,
         SIZEOFT16,error,end_data);
@@ -376,7 +376,7 @@ internal_read_header(Dwarf_Debug dbg,
         buildhere->lc_offsets_array = data;
     }
     localoff = data - startdata;
-    lists_len = address_size *offset_entry_count;
+    lists_len = offset_size *offset_entry_count;
 
     data += lists_len;
 
