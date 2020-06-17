@@ -1,4 +1,10 @@
 2020-06-17: David Anderson
+    * Makefile.am, CMakeLists.txt: Renamed 
+      print_loclist_original.c -> print_origloclist_codes.c
+      so the three distinct format loclist 
+      printers all end in codes.c.
+    * Makefile.in: Regenerated
+2020-06-17: David Anderson
     * print_loclists.c: Improve the formatting
       of the raw report.
     * print_rnglists.c: Significatly improve
