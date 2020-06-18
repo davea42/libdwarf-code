@@ -340,7 +340,11 @@ pe_load_section (void *obj, Dwarf_Half section_index,
             *error = DW_DLE_FILE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
-        sp->loaded_data = malloc((size_t)sp->SizeOfRawData);
+        /*  VirtualSize > SizeOfRawData  if trailing zeros
+            in the section were not written to disc. 
+            Malloc enough for the whole section, read in
+            the bytes we have. */
+        sp->loaded_data = malloc((size_t)sp->VirtualSize);
         if(!sp->loaded_data) {
             *error = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;

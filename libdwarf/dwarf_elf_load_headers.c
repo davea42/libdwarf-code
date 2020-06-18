@@ -1727,6 +1727,11 @@ read_gs_section_group(
             free(data);
             return DW_DLV_ERROR;
         }
+        if (!psh->gh_entsize) {
+            free(data);
+            *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+            return DW_DLV_ERROR;
+        }
         count = seclen/psh->gh_entsize;
         if (count > ep->f_loc_shdr.g_count) {
             /* Impossible */

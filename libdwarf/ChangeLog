@@ -1,4 +1,8 @@
 2020-06-17: David Anderson
+    * dwarf_elf_load_headers.c: Catch a potential division by 
+      zero error. 
+    * dwarf_peread.c: Added comments.
+2020-06-17: David Anderson
     * dwarf_loclists.c, dwarf_rnglists.c: Rename 
       length_size->offset_size
       for clarity and correct the computation of the
