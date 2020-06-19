@@ -339,6 +339,9 @@ _dwarf_is_64bit_abs_reloc(unsigned int type, unsigned machine)
 #if defined (R_X86_64_64)
             | (type == R_X86_64_64)
 #endif
+#if defined (R_X86_64_PC64)
+            | (type == R_X86_64_PC64)
+#endif
 #if defined (R_X86_64_DTPOFF32)
             | (type == R_X86_64_DTPOFF64)
 #endif

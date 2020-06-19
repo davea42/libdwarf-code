@@ -1,3 +1,6 @@
+2020-06-19: David Anderson
+    * dwarf_reloc_x86_64.hr,dwarf_reloc_x86_64.h: Added in
+      R_X86_64_PC64 relocation as llvm is using it.
 2020-06-17: David Anderson
     * dwarf_elf_load_headers.c: Catch a potential division by 
       zero error. 

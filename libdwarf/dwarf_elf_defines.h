@@ -1104,6 +1104,9 @@ extern "C" {
 #ifndef R_X86_64_64
 #define R_X86_64_64                            1
 #endif /* R_X86_64_64 */
+#ifndef R_X86_64_PC64
+#define R_X86_64_PC64                          24
+#endif /* R_X86_64_PC64 */
 #ifndef R_X86_64_DTPOFF32
 #define R_X86_64_DTPOFF32                      21
 #endif /* R_X86_64_DTPOFF32 */
