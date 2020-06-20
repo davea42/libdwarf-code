@@ -233,6 +233,7 @@ DW_AT_entry_pc
 DW_AT_identifier_case
 DW_AT_high_pc
 DW_AT_language
+DW_AT_loclists_base
 DW_AT_low_pc
 DW_AT_macro_info /* before DWARF5 */
 DW_AT_macros  /* DWARF5 */
@@ -525,6 +526,7 @@ DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_accessibility
+DW_AT_alignment
 DW_AT_artificial
 DW_AT_bit_offset /* allowed in DWARF4 */
 DW_AT_bit_size
@@ -786,6 +788,7 @@ DW_AT_abstract_origin
 DW_AT_accessibility
 DW_AT_address_class
 DW_AT_artificial
+DW_AT_call_all_calls
 DW_AT_calling_convention
 DW_AT_containing_type
 DW_AT_declaration
@@ -801,6 +804,7 @@ DW_AT_linkage_name
 DW_AT_low_pc
 DW_AT_main_subprogram
 DW_AT_name
+DW_AT_noreturn
 DW_AT_object_pointer
 DW_AT_prototyped
 DW_AT_pure
