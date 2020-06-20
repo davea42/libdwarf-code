@@ -1,26 +1,29 @@
 /*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2010 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2009-2016 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2020 David Anderson. All Rights Reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 */
 
 #ifndef tag_common_INCLUDED
@@ -36,8 +39,8 @@
 
 /*  These next two should match the last DW_TAG+1 and last DW_AT+1 in
     the standard set from dwarf.h */
-#define DW_TAG_last 0x4a
-#define DW_AT_last 0x8a
+#define DW_TAG_last 0x4c
+#define DW_AT_last 0x8d
 
 /* TAG_TREE.LIST Expected input format
 
@@ -99,7 +102,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
     BITS_PER_WORD fields per word. Dense and quick to inspect */
 #define COUNT_ATTRIBUTE_STD 7
 
-#define STD_ATTR_TABLE_ROWS 74
+#define STD_ATTR_TABLE_ROWS 75
 #define STD_ATTR_TABLE_COLUMNS  5
 /* tag/attr tree common extension maximums. */
 #define EXT_ATTR_TABLE_ROWS 15
@@ -111,8 +114,8 @@ No blank lines or commentary allowed, no symbols, just numbers.
     (not compiled into dwarfdump)
     so if a bit too large there is no
     side effect on anything.  */
-#define ATTR_TABLE_ROW_MAXIMUM 74
-#define ATTR_TABLE_COLUMN_MAXIMUM  10
+#define ATTR_TABLE_ROW_MAXIMUM 80
+#define ATTR_TABLE_COLUMN_MAXIMUM  11
 
 /* Bits per 'int' to mark legal attrs. */
 #define BITS_PER_WORD 32

@@ -335,7 +335,8 @@ main(int argc, char **argv)
         if (standard_flag) {
             /* In standard case, the row indexed by tag */
             if (tag >= table_rows ) {
-                bad_line_input("tag %d exceeds standard table size",tag);
+                bad_line_input("tag %u exceeds standard table size"
+                    " of %u rows",tag,table_rows);
             }
         } else {
             /*  In extended case, the row indexed by 0-N

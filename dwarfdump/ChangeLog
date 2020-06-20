@@ -1,3 +1,12 @@
+2020-06-20: David Anderson
+    * tag_attr.c,tag_attr.list,tag_common.h: Adding in
+      DWARF5 TAG ATTR combinations required raising 
+      hard coded value, and improving one of the
+      error messages appearing with the wrong limit.
+2020-06-20: David Anderson
+    * tag_attr.list: Added DW_AT_loclists_base,
+      DW_AT_alignment,DW_AT_call_all_calls,DW_AT_noreturn
+      with the TAGs they go with.
 2020-06-17: David Anderson
     * Makefile.am, CMakeLists.txt: Renamed 
       print_loclist_original.c -> print_origloclist_codes.c

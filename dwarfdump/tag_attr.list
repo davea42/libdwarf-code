@@ -223,6 +223,17 @@ DW_AT_sibling
 DW_AT_visibility
 
 0xffffffff
+DW_TAG_skeleton_unit
+DW_AT_dwo_name
+DW_AT_low_pc
+DW_AT_high_pc
+DW_AT_stmt_list
+DW_AT_comp_dir
+DW_AT_use_UTF8
+DW_AT_str_offsets_base
+DW_AT_addr_base
+
+0xffffffff
 DW_TAG_compile_unit
 DW_AT_addr_base
 DW_AT_base_types
@@ -591,6 +602,7 @@ DW_AT_decl_line
 DW_AT_description
 DW_AT_export_symbols
 DW_AT_extension
+DW_AT_export_symbols
 DW_AT_name
 DW_AT_sibling
 DW_AT_start_scope
@@ -622,6 +634,7 @@ DW_AT_macro_info
 DW_AT_macros
 DW_AT_main_subprogram
 DW_AT_name
+DW_AT_noreturn
 DW_AT_producer
 DW_AT_ranges
 DW_AT_rnglists_base
@@ -635,6 +648,7 @@ DW_TAG_pointer_type
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
+DW_AT_alignment
 DW_AT_address_class
 DW_AT_alignment
 DW_AT_bit_size /* DWARF4 */
@@ -648,6 +662,7 @@ DW_TAG_ptr_to_member_type
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
+DW_AT_alignment
 DW_AT_abstract_origin
 DW_AT_address_class
 DW_AT_alignment
@@ -668,6 +683,7 @@ DW_TAG_reference_type
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
+DW_AT_alignment
 DW_AT_address_class
 DW_AT_alignment
 DW_AT_bit_size /* DWARF4 */
@@ -690,6 +706,7 @@ DW_TAG_rvalue_reference_type
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
+DW_AT_alignment
 DW_AT_address_class
 /* DW_AT_allocated */
 /* DW_AT_associated */
@@ -724,6 +741,7 @@ DW_TAG_shared_type
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
+DW_AT_alignment
 DW_AT_allocated
 DW_AT_associated
 DW_AT_alignment
@@ -787,11 +805,16 @@ DW_AT_decl_line
 DW_AT_abstract_origin
 DW_AT_accessibility
 DW_AT_address_class
+DW_AT_alignment
 DW_AT_artificial
 DW_AT_call_all_calls
+DW_AT_call_all_tail_calls
+DW_AT_call_all_source_calls
 DW_AT_calling_convention
 DW_AT_containing_type
 DW_AT_declaration
+DW_AT_defaulted
+DW_AT_deleted
 DW_AT_description
 DW_AT_elemental
 DW_AT_entry_pc
@@ -857,6 +880,7 @@ DW_AT_decl_line
 DW_AT_abstract_origin
 DW_AT_accessibility
 DW_AT_address_class
+DW_AT_alignment
 DW_AT_allocated
 DW_AT_associated
 DW_AT_data_location
@@ -905,6 +929,7 @@ DW_TAG_template_value_parameter
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
+DW_AT_alignment
 DW_AT_const_value
 DW_AT_default_value
 DW_AT_description
