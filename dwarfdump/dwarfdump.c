@@ -982,13 +982,17 @@ process_one_file(int fd, int tiedfd,
         Dwarf_Addr upper = 0;
         Dwarf_Unsigned size = 0;
         int res = 0;
-        res = dwarf_get_section_info_by_name(dbg,".text",&lower,&size,&onef_err);
+        res = dwarf_get_section_info_by_name(dbg,".text",
+            &lower,&size,&onef_err);
         if (DW_DLV_OK == res) {
             upper = lower + size;
         }
-
-        /* Set limits for Ranges Information */
+        
         if (glflags.pRangesInfo) {
+printf("dadebug SetLimitsBuc  0x%lx  0x%lx  line %d %s\n",
+(unsigned long)lower,
+(unsigned long)upper,
+__LINE__,__FILE__);
             SetLimitsBucketGroup(glflags.pRangesInfo,lower,upper);
         }
 
@@ -2138,16 +2142,19 @@ void DWARF_CHECK_ERROR_PRINT_CU()
     glflags.gf_record_dwarf_error = TRUE;
 }
 
-/*  Sometimes is useful, just to know the kind of errors in an object file;
-    not much interest in the number of errors; the specific case is just to
-    have a general idea about the DWARF quality in the file */
+/*  Sometimes is useful, just to know the kind of errors
+    in an object file; not much interest in the number 
+    of errors; the specific case is just to have a general
+    idea about the DWARF quality in the file */
+
 char ** set_unique_errors = NULL;
 unsigned int set_unique_errors_entries = 0;
 unsigned int set_unique_errors_size = 0;
 #define SET_UNIQUE_ERRORS_DELTA 64
 
 /*  Create the space to store the unique error messages */
-void allocate_unique_errors_table(void)
+void 
+allocate_unique_errors_table(void)
 {
     if (!set_unique_errors) {
         set_unique_errors = (char **)
@@ -2159,7 +2166,8 @@ void allocate_unique_errors_table(void)
 
 #ifdef TESTING
 /* Just for debugging purposes, dump the unique errors table */
-void dump_unique_errors_table(void)
+void 
+dump_unique_errors_table(void)
 {
     unsigned int index;
     printf("*** Unique Errors Table ***\n");
@@ -2173,7 +2181,8 @@ void dump_unique_errors_table(void)
 #endif
 
 /*  Release the space used to store the unique error messages */
-void release_unique_errors_table(void)
+void 
+release_unique_errors_table(void)
 {
     unsigned int index;
     for (index = 0; index < set_unique_errors_entries; ++index) {
@@ -2186,7 +2195,8 @@ void release_unique_errors_table(void)
 }
 
 /*  Returns TRUE if the text is already in the set; otherwise FALSE */
-boolean add_to_unique_errors_table(char * error_text)
+boolean 
+add_to_unique_errors_table(char * error_text)
 {
     unsigned int index;
     size_t len;
@@ -2225,7 +2235,8 @@ boolean add_to_unique_errors_table(char * error_text)
         }
     }
 
-    /* Store the new text; check if we have space to store the error text */
+    /*  Store the new text; check if we have space
+        to store the error text */
     if (set_unique_errors_entries + 1 == set_unique_errors_size) {
         set_unique_errors_size += SET_UNIQUE_ERRORS_DELTA;
         set_unique_errors = (char **)realloc(set_unique_errors,
@@ -2238,14 +2249,20 @@ boolean add_to_unique_errors_table(char * error_text)
     return FALSE;
 }
 
-/*  Print a DWARF error message and if in "reduced" output only print one
-    error of each kind; this feature is useful, when we are interested only
-    in the kind of errors and not on the number of errors.
+/*  
+    Print a DWARF error message and if in "reduced" output
+    only print one error of each kind; this feature is useful,
+    when we are interested only in the kind of errors and
+    not on the number of errors.
+
     PRECONDITION: if s3 non-null so are s1,s2.
         If  s2 is non-null so is s1.
         s1 is always non-null. */
+
 static void
-print_dwarf_check_error(const char *s1,const char *s2, const char *s3)
+print_dwarf_check_error(const char *s1,
+    const char *s2, 
+    const char *s3)
 {
     static boolean do_init = TRUE;
     boolean found = FALSE;
@@ -2259,10 +2276,6 @@ print_dwarf_check_error(const char *s1,const char *s2, const char *s3)
     }
     esb_empty_string(&dwarf_error_line);
     esb_append(&dwarf_error_line,leader);
-
-    /*  print_dwarf_check_error("\n*** DWARF CHECK: %s ***\n", str);
-        print_dwarf_check_error("\n*** DWARF CHECK: %s: %s ***\n",
-        print_dwarf_check_error("\n*** DWARF CHECK: %s -> %s: %s ***\n", */
     if (s3) {
         esb_append(&dwarf_error_line,s1);
         esb_append(&dwarf_error_line," -> ");
@@ -2293,7 +2306,8 @@ print_dwarf_check_error(const char *s1,const char *s2, const char *s3)
     glflags.gf_found_error_message = found;
 }
 
-void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
+void 
+DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl)
 {
     if (checking_this_compiler()) {

@@ -1,3 +1,6 @@
+2020-06-22: David Anderson
+    * dwarfdump.c: Fixing some old formatting mistakes.
+      NOT TO BE USED Yet.
 2020-06-20: David Anderson
     * tag_attr.c,tag_attr.list,tag_common.h: Adding in
       DWARF5 TAG ATTR combinations required raising 
