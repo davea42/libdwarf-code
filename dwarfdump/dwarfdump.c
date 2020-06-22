@@ -857,6 +857,178 @@ set_global_section_sizes(Dwarf_Debug dbg)
         &glflags.section_high_offsets_global->debug_tu_index_size);
 }
 
+/*  Set limits for Ranges Information.
+    The linker may
+    put parts of the text(code) in additional sections
+    such as .init .fini __libc_freeres_fn
+    .rodata __libc_subfreeres __libc_atexit too. */
+#define LIKELYNAMESMAX 3
+static const char *likely_ns[LIKELYNAMESMAX] = {
+/*  .text is first as it is often the only thing.See below. */
+".init",
+".text",
+".fini"
+};
+#define ORIGLKLYTEXTINDEX  1
+struct likely_names_s {
+    const char *   name;
+    int            origindex;
+    Dwarf_Unsigned low;
+    Dwarf_Unsigned size;
+    Dwarf_Unsigned end;
+}; 
+static struct likely_names_s likely_names[LIKELYNAMESMAX];
+static void
+printlnrec(const char *msg,struct likely_names_s * ln,
+    int line,char * fn)
+{
+    printf("%s: name %s origindx %d "
+        "low 0x%lx "
+        "size 0x%lx "
+        "end 0x%lx "
+        " line  %d %s\n",msg,
+        ln->name,ln->origindex,
+        (unsigned long)ln->low,
+        (unsigned long)ln->size,
+        (unsigned long)ln->end,line,fn);
+}
+
+static int
+likelycmp(const void *l_in, const void *r_in)
+{
+    struct likely_names_s *l = (struct likely_names_s *)l_in;
+    struct likely_names_s *r = (struct likely_names_s *)r_in;
+
+printlnrec("cmp l",l,__LINE__,__FILE__);
+printlnrec("cmp r",r,__LINE__,__FILE__);
+    if (l->low < r->low) {
+        return -1;
+    }
+    if (l->low > r->low ) {
+        return 1;
+    }
+    if (l->end < r->end) {
+        return -1;
+    }
+    if (l->end > r->end) {
+        return 1;
+    }
+    return 0;
+}
+
+/*  This is a bit slow, but happens only once for a dbg.
+    It is not as much help as I expected in avoiding
+    line table content CHECK warnings because, so far,
+    those come from .init csu code and the DWARF has
+    no subprogram information nor any high/low pc
+    information at all.  */
+static int
+calculate_likely_limits_of_code(Dwarf_Debug dbg,
+    Dwarf_Unsigned *lower,
+    Dwarf_Unsigned *size)
+{
+    struct likely_names_s * ln = 0;
+    int ct = 0;
+    Dwarf_Unsigned baselow = 0;
+    Dwarf_Unsigned basesize = 0;
+    Dwarf_Unsigned baseend = 0;
+    int lnindex = 0;
+    int lncount = 0;
+    int textindex = 0;
+    
+    memset(likely_names,0,sizeof(likely_names));
+    for (ct = 0 ; ct < LIKELYNAMESMAX; ct++) {
+        Dwarf_Unsigned clow = 0;
+        Dwarf_Unsigned csize = 0;
+        int res = 0;
+        Dwarf_Error err = 0;
+        const char *name = likely_ns[ct];
+
+        ln = likely_names + lnindex;
+        res = dwarf_get_section_info_by_name(dbg,name,
+            &clow,&csize,&err);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,err);
+            if (ct == ORIGLKLYTEXTINDEX) {
+printf("dadebug return %d %s\n",__LINE__,__FILE__);
+                return DW_DLV_NO_ENTRY;
+            }
+            continue;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            if (ct == ORIGLKLYTEXTINDEX) {
+printf("dadebug return %d %s\n",__LINE__,__FILE__);
+                return DW_DLV_NO_ENTRY;
+            }
+            continue;
+        }
+        ln->name = name;
+        ln->low = clow;
+        ln->size = csize;
+        ln->end = csize +clow;
+        ln->origindex = ct;
+printlnrec("init record",ln,__LINE__,__FILE__);
+        if (ct == ORIGLKLYTEXTINDEX) {
+            basesize = csize;
+            baselow  = clow;
+            baseend = csize+clow;
+printf("dadebug baselow 0x%lx basesize 0x%lx line %d %s\n",(unsigned long)baselow,(unsigned long)basesize,__LINE__,__FILE__);
+        }
+        ++lnindex;
+    }
+    if (lnindex == 0) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (lnindex == 1) {
+        *lower = baselow;
+        *size  = basesize;
+        return DW_DLV_OK;
+    }
+    lncount = lnindex;
+    qsort(likely_names,lncount,sizeof(struct likely_names_s),
+        likelycmp);
+    for (lnindex = 0; ; ++lnindex) {
+        ln = likely_names + lnindex;
+printlnrec("look for .text",ln,__LINE__,__FILE__);
+        if (lnindex >= lncount) {
+            /* Did not find .text entry. Impossible. Bug */
+            printf("Impossible bug in finding text size "
+                " lnindex %d  count %d so dwarfdump gives up finding "
+                " the true text size\n",
+                lnindex,lncount);
+            *lower = baselow;
+            *size  = basesize;
+            return DW_DLV_OK;
+        }
+        if (ln->origindex == ORIGLKLYTEXTINDEX) {
+            textindex = lnindex;
+printf("dadebug textindex %d\n",textindex);
+            break;
+        }
+    }
+printlnrec("textindexrec",likely_names +textindex,__LINE__,__FILE__);
+    
+printf("dadebug baselow 0x%lx basesize 0x%lx baseend 0x%lx line %d %s\n",(unsigned long)baselow,(unsigned long)basesize,(unsigned long)baseend,__LINE__,__FILE__);
+
+    ln = likely_names;
+    baselow =ln->low; 
+    basesize =ln->size; 
+    baseend = ln->end;
+printf("dadebug baselow 0x%lx basesize 0x%lx baseend 0x%lx line %d %s\n",(unsigned long)baselow,(unsigned long)basesize,(unsigned long)baseend,__LINE__,__FILE__);
+    for (lnindex = 1; lnindex<lncount; ++lnindex) {
+        ln = likely_names+lnindex;
+printlnrec("nextrec",ln,__LINE__,__FILE__);
+        if (ln->end > baseend) {
+             baseend = ln->end;
+             basesize = (baseend - baselow);
+printf("dadebug baselow 0x%lx basesize 0x%lx baseend 0x%lx line %d %s\n",(unsigned long)baselow,(unsigned long)basesize,(unsigned long)baseend,__LINE__,__FILE__);
+        }
+    }
+printf("dadebug baselow 0x%lx basesize 0x%lx baseend 0x%lx line %d %s\n",(unsigned long)baselow,(unsigned long)basesize,(unsigned long)baseend,__LINE__,__FILE__);
+    *lower = baselow;
+    *size  = basesize;
+    return DW_DLV_OK;
+}
 /*
   Given a file which we know is an elf file, process
   the dwarf data.
@@ -982,14 +1154,22 @@ process_one_file(int fd, int tiedfd,
         Dwarf_Addr upper = 0;
         Dwarf_Unsigned size = 0;
         int res = 0;
+#if 0
         res = dwarf_get_section_info_by_name(dbg,".text",
             &lower,&size,&onef_err);
         if (DW_DLV_OK == res) {
             upper = lower + size;
         }
-        
-        if (glflags.pRangesInfo) {
-printf("dadebug SetLimitsBuc  0x%lx  0x%lx  line %d %s\n",
+#endif
+        res = calculate_likely_limits_of_code(dbg,&lower,&size);
+        upper = lower + size;
+        /* Set limits for Ranges Information. 
+           This is not sufficient.  The linker may
+           put parts of the text(code) in additional sections
+           such as .init .fini __libc_freeres_fn
+           .rodata __libc_subfreeres __libc_atexit too. */
+        if (res == DW_DLV_OK && glflags.pRangesInfo) {
+printf("dadebug SetLimits  0x%lx  0x%lx  line %d %s\n",
 (unsigned long)lower,
 (unsigned long)upper,
 __LINE__,__FILE__);
