@@ -214,7 +214,7 @@ pe_get_section_info (void *obj,
         struct dwarf_pe_generic_image_section_header *sp = 0;
         sp = pep->pe_sectionptr + section_index;
         return_section->addr = pep->pe_OptionalHeader.ImageBase +
-            sp->VirtualAddress; ;
+            sp->VirtualAddress;
         return_section->type = 0;
         /*  SizeOfRawData can be rounded or truncated,
             use VirtualSize for the real analog of Elf
@@ -298,6 +298,8 @@ load_optional_header64(dwarf_pe_object_access_internals_t *pep,
         hdr.Magic);
     pep->pe_OptionalHeader.MajorLinkerVersion= hdr.MajorLinkerVersion;
     pep->pe_OptionalHeader.MinorLinkerVersion= hdr.MinorLinkerVersion;
+    ASNAR(pep->pe_copy_word,pep->pe_OptionalHeader.ImageBase,
+        hdr.ImageBase);
     ASNAR(pep->pe_copy_word,pep->pe_OptionalHeader.SizeOfCode,
         hdr.SizeOfCode);
     ASNAR(pep->pe_copy_word,pep->pe_OptionalHeader.SizeOfImage,

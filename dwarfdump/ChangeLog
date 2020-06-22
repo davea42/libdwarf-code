@@ -1,4 +1,28 @@
 2020-06-22: David Anderson
+    * checkutil.c: Document a bit more about how this works.
+    * dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-table.h: regenerated
+    * dwarfdump.c: Doing a slightly better job identifying
+      the true range of text addresses in the object file,
+      which matters for some -k (checking) options.
+    * globals.h: Revised some argument lists for nicer
+      reporting of errors found with -k options.
+    * naming.c: regenerated.
+    * print_die.c: Certain names revised for greater
+      clarity of intent. print_information ->
+      print_else_name_match which at least hints
+      at what the variable is doing.
+    * print_frames.c: Suppresses some output when checking.
+    * print_llex_codes.c: When checking suppress some output.  
+    * print_loclists.c: Removed pointless {}.
+    * print_loclists_codes.c,print_orginal_loclist_linecodes.c:
+      Suppresses some output when checking.
+    * print_rnglists.c: Clarify which routines apply solely
+      to printing raw rangelists.
+    * tag_attr_ext.list: Added DW_AT_encoding to common extentions
+    * tag_common.h: Incremeneted EXT_ATTR_TABLE_ROWS 16 
+      so the tables can be rebuilt.
+2020-06-22: David Anderson
     * dwarfdump.c: Fixing some old formatting mistakes.
       NOT TO BE USED Yet.
 2020-06-20: David Anderson

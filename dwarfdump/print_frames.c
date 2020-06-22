@@ -1591,7 +1591,10 @@ print_location_operations(Dwarf_Debug dbg,
     Dwarf_Unsigned ulistlen = 0;
     int res2 = 0;
     Dwarf_Addr baseaddr = 0; /* Really unknown */
-
+    /* See PRINTING_DIES macro in print_die.c */
+    boolean checking =  !(glflags.gf_do_print_dwarf ||
+        (glflags.gf_record_dwarf_error && 
+        glflags.gf_check_verbose_mode));
     if(!glflags.gf_use_old_dwarf_loclist) {
         Dwarf_Loc_Head_c head = 0;
         Dwarf_Locdesc_c locentry = 0;
@@ -1640,16 +1643,17 @@ print_location_operations(Dwarf_Debug dbg,
             dwarf_loc_head_c_dealloc(head);
             return lres;
         }
-
-        lres = dwarfdump_print_location_operations(dbg,
-            NULL,
-            locentry,
-            0, /* index 0: locdesc 0 */
-            ulocentry_count,
-            DW_LKIND_expression,
-            0, /* no die indent*/
-            baseaddr,
-            out_string,err);
+        if (!checking) {
+            lres = dwarfdump_print_location_operations(dbg,
+                NULL,
+                locentry,
+                0, /* index 0: locdesc 0 */
+                ulocentry_count,
+                DW_LKIND_expression,
+                0, /* no die indent*/
+                baseaddr,
+                out_string,err);
+        }
         dwarf_loc_head_c_dealloc(head);
         return lres;
     }
@@ -1671,15 +1675,17 @@ print_location_operations(Dwarf_Debug dbg,
     /* listlen is always 1 */
     ulistlen = listlen;
 
-    res2 = dwarfdump_print_location_operations(dbg,
-        locdescarray,
-        NULL,
-        0,
-        ulistlen,
-        DW_LKIND_expression,
-        0, /* no die indent*/
-        baseaddr,
-        out_string,err);
+    if(!checking) {
+        res2 = dwarfdump_print_location_operations(dbg,
+            locdescarray,
+            NULL,
+            0,
+            ulistlen,
+            DW_LKIND_expression,
+            0, /* no die indent*/
+            baseaddr,
+            out_string,err);
+   }
     dwarf_dealloc(dbg, locdescarray->ld_s, DW_DLA_LOC_BLOCK);
     dwarf_dealloc(dbg, locdescarray, DW_DLA_LOCDESC);
     return res2;

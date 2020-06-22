@@ -49,6 +49,8 @@
 int
 print_llex_linecodes( Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Bool    checking,
+    const char *  tagname,
+    const char *  attrname,
     unsigned int  llent,
     Dwarf_Small   lle_value,
     Dwarf_Addr    base_address,
@@ -64,7 +66,29 @@ print_llex_linecodes( Dwarf_Debug dbg,
     if (debug_addr_unavailable) {
         *bError = TRUE;
     }
-    if (lle_value == DW_LLEX_base_address_selection_entry) {
+    if (checking) {
+        switch(lle_value) {
+        case DW_LLEX_base_address_selection_entry:
+        case DW_LLEX_end_of_list_entry:
+            break;
+        case DW_LLEX_start_length_entry:
+        case DW_LLEX_offset_pair_entry:
+        case DW_LLEX_start_end_entry:
+            if(!debug_addr_unavailable) {
+                loc_error_check(
+                    tagname,attrname,
+                    lopc, 
+                    rawlopc,
+                    hipc, rawhipc, locdesc_offset,
+                    base_address,
+                    bError);
+            }
+            break;
+        }
+        return DW_DLV_OK;
+    }
+    switch(lle_value) {
+    case DW_LLEX_base_address_selection_entry:
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_base_address_selection_entry : 0x%"
@@ -83,10 +107,12 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">", hipc);
         }
-    } else if (lle_value == DW_LLEX_end_of_list_entry) {
+        break;
+    case DW_LLEX_end_of_list_entry:
         /* Nothing to do. */
         esb_append(esbp,"<end-of-list>");
-    } else if (lle_value == DW_LLEX_start_length_entry) {
+        break;
+    case DW_LLEX_start_length_entry:
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_start_lenth_entry : 0x%"
@@ -116,13 +142,8 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
-        if(checking && !debug_addr_unavailable) {
-            loc_error_check(lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset,
-                base_address,
-                bError);
-        }
-    } else if (lle_value == DW_LLEX_offset_pair_entry) {
+        break;
+    case DW_LLEX_offset_pair_entry:
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_offset_pair_entry  : 0x%"
@@ -149,14 +170,8 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
-
-        if(checking && !debug_addr_unavailable) {
-            loc_error_check(lopc, rawlopc,
-                hipc,rawhipc, locdesc_offset,
-                base_address,
-                bError);
-        }
-    } else if (lle_value == DW_LLEX_start_end_entry) {
+        break;
+    case DW_LLEX_start_end_entry:
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
                 "<DW_LLEX_start_end_entry : 0x%"
@@ -185,13 +200,8 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 ">",hipc);
 
         }
-        if (checking && !debug_addr_unavailable) {
-            loc_error_check(lopc, rawlopc,
-                hipc, rawhipc, locdesc_offset,
-                base_address,
-                bError);
-        }
-    } else {
+        break;
+    default: {
         struct esb_s unexp;
 
         esb_constructor(&unexp);
@@ -204,6 +214,8 @@ print_llex_linecodes( Dwarf_Debug dbg,
             DW_DLV_OK, 0);
         esb_destructor(&unexp);
         *bError = TRUE;
+        }
+        break;
     }
     return DW_DLV_OK;
 }

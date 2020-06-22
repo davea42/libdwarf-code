@@ -833,8 +833,10 @@ build_array_of_rle(Dwarf_Debug dbg,
     unsigned address_size     = rctx->rh_address_size;
     Dwarf_Unsigned bytescounttotal= 0;
     Dwarf_Unsigned latestbaseaddr = 0;
-    unsigned foundbaseaddr        = FALSE;
+    Dwarf_Bool foundbaseaddr        = FALSE;
     int done = FALSE;
+    Dwarf_Bool no_debug_addr_available = FALSE;
+    
 
     if (rctx->rh_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
@@ -874,49 +876,85 @@ build_array_of_rle(Dwarf_Debug dbg,
         }
         switch(code) {
         case DW_RLE_base_addressx:
-            foundbaseaddr = TRUE;
-            res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val1,
-                &addr1,error);
-            if (res != DW_DLV_OK) {
-                return res;
+            if(no_debug_addr_available) {
+                res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(
+                    dbg,rctx->rh_context,val1,
+                    &addr1,error);
             }
-            e->rle_cooked1 = addr1;
-            latestbaseaddr = addr1;
+            if (res != DW_DLV_OK) {
+                no_debug_addr_available = TRUE;
+                e->rle_index_failed = TRUE;
+                e->rle_cooked1 = 0;
+                foundbaseaddr = FALSE;
+            } else {
+                foundbaseaddr = TRUE;
+                e->rle_cooked1 = addr1;
+                latestbaseaddr = addr1;
+            }
             break;
         case DW_RLE_startx_endx:
-            res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val1,
-                &addr1,error);
-            if (res != DW_DLV_OK) {
-                return res;
+            if(no_debug_addr_available) {
+                res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(
+                    dbg,rctx->rh_context,val1,
+                    &addr1,error);
             }
-            res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val2,
-                &addr2,error);
             if (res != DW_DLV_OK) {
-                return res;
+                no_debug_addr_available = TRUE;
+                e->rle_index_failed = TRUE;
+                e->rle_cooked1 = 0;
+            } else {
+                e->rle_cooked1 = addr1;
             }
-            e->rle_cooked1 = addr1;
-            e->rle_cooked2 = addr2;
+            if(no_debug_addr_available) {
+                res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(
+                    dbg,rctx->rh_context,val2,
+                    &addr2,error);
+            }
+            if (res != DW_DLV_OK) {
+                no_debug_addr_available = TRUE;
+                e->rle_index_failed = TRUE;
+                e->rle_cooked2 = 0;
+                return res;
+            } else {
+                e->rle_cooked2 = addr2;
+            }
             break;
         case DW_RLE_startx_length:
-            res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->rh_context,val1,
-                &addr1,error);
-            if (res != DW_DLV_OK) {
-                return res;
+            if(no_debug_addr_available) {
+                res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(
+                    dbg,rctx->rh_context,val1,
+                    &addr1,error);
             }
-            e->rle_cooked1 = addr1;
-            e->rle_cooked2 = val2+addr1;
+            if (res != DW_DLV_OK) {
+                no_debug_addr_available = TRUE;
+                e->rle_index_failed = TRUE;
+                e->rle_cooked2 = 0;
+                e->rle_cooked1 = 0;
+                return res;
+            
+            } else {
+                e->rle_cooked1 = addr1;
+                e->rle_cooked2 = val2+addr1;
+            }
             break;
         case DW_RLE_offset_pair:
             if(foundbaseaddr) {
                 e->rle_cooked1 = val1+latestbaseaddr;
                 e->rle_cooked2 = val2+latestbaseaddr;
             } else {
-                e->rle_cooked1 = val1+rctx->rh_cu_base_address;
-                e->rle_cooked2 = val2+rctx->rh_cu_base_address;
+                /* Well, something failed, could be 
+                   missing debug_addr. */
+                e->rle_index_failed = TRUE;
+                e->rle_cooked2 = 0;
+                e->rle_cooked1 = 0;
             }
             break;
         case DW_RLE_base_address:
@@ -1138,6 +1176,40 @@ dwarf_rnglists_get_rle_head(
     return DW_DLV_OK;
 }
 
+/*  This version is the only one that can be used properly. */
+int
+dwarf_get_rnglists_entry_fields_a(
+    Dwarf_Rnglists_Head head,
+    Dwarf_Unsigned  entrynum,
+    unsigned       *entrylen,
+    unsigned       *rle_value_out,
+    Dwarf_Unsigned *raw1,
+    Dwarf_Unsigned *raw2,
+    Dwarf_Bool     *debug_addr_unavailable,
+    Dwarf_Unsigned *cooked1,
+    Dwarf_Unsigned *cooked2,
+    UNUSEDARG Dwarf_Error *err)
+{
+    Dwarf_Rnglists_Entry e = 0;
+
+    if (entrynum >= head->rh_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    e = head->rh_rnglists[entrynum];
+    *entrylen  = e->rle_entrylen;
+    *rle_value_out = e->rle_code;
+    *raw1      = e->rle_raw1;
+    *raw2      = e->rle_raw2;
+    *debug_addr_unavailable = e->rle_index_failed;
+    *cooked1   = e->rle_cooked1;
+    *cooked2   = e->rle_cooked2;
+    return DW_DLV_OK;
+}
+
+/*  This is missing a crucial bit, 
+    debug_addr_unavailable = e->rle_index_failed,
+    so the results cannot be reliably used.
+    DO NOT USE */
 int
 dwarf_get_rnglists_entry_fields(
     Dwarf_Rnglists_Head head,

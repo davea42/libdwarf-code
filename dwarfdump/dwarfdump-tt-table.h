@@ -791,6 +791,8 @@ static Usage_Tag_Tree *usage_tag_tree[] = {
    tag_tree_47, /* 0x47 - DW_TAG_atomic_type */
    tag_tree_48, /* 0x48 - DW_TAG_call_site */
    tag_tree_49, /* 0x49 - DW_TAG_call_site_parameter */
+    0,
+    0,
     0
 };
 
@@ -874,6 +876,8 @@ static Rate_Tag_Tree rate_tag_tree[] = {
     { 0, 0 /* 0x47 - DW_TAG_atomic_type */},
     { 1, 0 /* 0x48 - DW_TAG_call_site */},
     { 0, 0 /* 0x49 - DW_TAG_call_site_parameter */},
+    {0, 0},
+    {0, 0},
     {0, 0}
 };
 

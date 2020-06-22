@@ -1,3 +1,19 @@
+2020-06-22: David Anderson
+    * dwarf_loc.c: Using knowledge of the base address status
+      improve messaging while reducing execution time.
+    * dwarf_loclists.c: Properly deal with setting
+      up for output in case .debug_addr missing (fixing
+      an omission).
+    * dwarf_peread.c: In load_optional_header64() we were
+      failing to read hdr.ImageBase which caused addresses
+      to be wrong (base address needed to be set).
+    * dwarf_rnglists.c: Based on knowledge of lack/presence
+      of .debug_addr improve messaging and reduce
+      cpu-time spent.
+    * dwarf_rnglists.h: Added 2 line commentary.
+    * libdwarf.h.in,generated_libdwarf.h.in: Added
+      dwarf_get_rnglists_entry_fields_a(), the original
+      function was inadequate.
 2020-06-19: David Anderson
     * dwarf_reloc_x86_64.hr,dwarf_reloc_x86_64.h: Added in
       R_X86_64_PC64 relocation as llvm is using it.

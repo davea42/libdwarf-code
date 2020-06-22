@@ -59,7 +59,11 @@ skipunder(const char *v)
 #endif /*  TRIVIAL_NAMING */
 
 static const char *
-ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
+ellipname(int   res, 
+    int         val_in, 
+    const char *v,
+    const char *ty,
+    int         printonerr)
 {
 #ifndef TRIVIAL_NAMING
     if (glflags.gf_check_dwarf_constants && checking_this_compiler()) {
@@ -81,7 +85,7 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         if (printonerr && glflags.gf_check_dwarf_constants &&
             checking_this_compiler()) {
             if (glflags.gf_check_verbose_mode) {
-                fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
+                printf("%s of %d (0x%x) is unknown to dwarfdump. "
                     "Continuing. \n",ty,val_in,val_in );
             }
             DWARF_ERROR_COUNT(dwarf_constants_result,1);

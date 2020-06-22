@@ -1947,7 +1947,12 @@ cook_loclists_contents(Dwarf_Debug dbg,
     Dwarf_Unsigned i = 0;
     Dwarf_CU_Context cucontext = llhead->ll_context;
     int res = 0;
+    Dwarf_Bool base_address_fail = FALSE;
+    Dwarf_Bool debug_addr_fail = FALSE;
 
+    if (!llhead->ll_cu_base_address_present) {
+        base_address_fail = TRUE;
+    }
     for (i = 0 ; i < count ; ++i) {
         Dwarf_Locdesc_c  llc = 0;
 
@@ -1955,9 +1960,15 @@ cook_loclists_contents(Dwarf_Debug dbg,
         switch(llc->ld_lle_value) {
         case DW_LLE_base_addressx: {
             Dwarf_Addr targaddr = 0;
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawlow,&targaddr,error);
+            if (debug_addr_fail) {
+                 res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(dbg,
+                    cucontext,llc->ld_rawlow,&targaddr,error);
+            }
             if (res != DW_DLV_OK) {
+                debug_addr_fail = TRUE;
+                base_address_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
                 if (res == DW_DLV_ERROR) {
@@ -1965,6 +1976,8 @@ cook_loclists_contents(Dwarf_Debug dbg,
                     *error = 0;
                 }
             } else {
+                base_address_fail = FALSE;
+                baseaddress = targaddr;
                 llc->ld_lopc = targaddr;
             }
             break;
@@ -1972,9 +1985,14 @@ cook_loclists_contents(Dwarf_Debug dbg,
         case DW_LLE_startx_endx:{
             /* two indexes into debug_addr */
             Dwarf_Addr targaddr = 0;
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawlow,&targaddr,error);
+            if (debug_addr_fail) {
+                 res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(dbg,
+                    cucontext,llc->ld_rawlow,&targaddr,error);
+            }  
             if (res != DW_DLV_OK) {
+                debug_addr_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
                 if (res == DW_DLV_ERROR) {
@@ -1984,9 +2002,14 @@ cook_loclists_contents(Dwarf_Debug dbg,
             } else {
                 llc->ld_lopc = targaddr;
             }
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawhigh,&targaddr,error);
+            if (debug_addr_fail) {
+                 res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(dbg,
+                    cucontext,llc->ld_rawhigh,&targaddr,error);
+            }
             if (res != DW_DLV_OK) {
+                debug_addr_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_highpc = 0;
                 if (res == DW_DLV_ERROR) {
@@ -2001,9 +2024,14 @@ cook_loclists_contents(Dwarf_Debug dbg,
         case DW_LLE_startx_length:{
             /* one index to debug_addr other a length */
             Dwarf_Addr targaddr = 0;
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawlow,&targaddr,error);
+            if (debug_addr_fail) {
+                res = DW_DLV_NO_ENTRY;
+            } else  {
+                res = _dwarf_extract_address_from_debug_addr(dbg,
+                    cucontext,llc->ld_rawlow,&targaddr,error);
+            }
             if (res != DW_DLV_OK) {
+                debug_addr_fail = TRUE;
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
                 if (res == DW_DLV_ERROR) {
@@ -2017,9 +2045,15 @@ cook_loclists_contents(Dwarf_Debug dbg,
             break;
         }
         case DW_LLE_offset_pair:{
-            /*offsets of the current base address*/
-            llc->ld_lopc = llc->ld_rawlow +baseaddress;
-            llc->ld_highpc = llc->ld_rawhigh +baseaddress;
+            if (base_address_fail) {
+                llc->ld_index_failed = TRUE;
+                llc->ld_lopc = 0;
+                llc->ld_highpc = 0;
+            } else {
+                /*offsets of the current base address*/
+                llc->ld_lopc = llc->ld_rawlow +baseaddress;
+                llc->ld_highpc = llc->ld_rawhigh +baseaddress;
+            }
             break;
         }
         case DW_LLE_default_location:{
@@ -2031,6 +2065,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
             llc->ld_lopc = llc->ld_rawlow;
             llc->ld_highpc = llc->ld_rawlow;
             baseaddress = llc->ld_rawlow;
+            base_address_fail = FALSE;
             break;
         }
         case DW_LLE_start_end:{
@@ -2150,7 +2185,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     llhead->ll_cu_base_address_present = cucontext->cc_low_pc_present;
     llhead->ll_cu_base_address = cucontext->cc_low_pc;
     llhead->ll_cu_addr_base = cucontext->cc_addr_base;
-    llhead->ll_cu_addr_base_present = cucontext->cc_addr_base_present;
+    llhead->ll_cu_addr_base_present =
+        cucontext->cc_addr_base_present;
 
     if (lkind == DW_LKIND_loclist ||
         lkind == DW_LKIND_GNU_exp_list) {
@@ -2168,7 +2204,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             return ores;
         }
         if (lkind == DW_LKIND_loclist) {
-            ores = cook_original_loclist_contents(dbg,llhead,error);
+            ores = cook_original_loclist_contents(dbg,llhead,
+                error);
         } else {
             ores = cook_gnu_loclist_contents(dbg,llhead,error);
         }

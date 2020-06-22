@@ -95,6 +95,7 @@ print_offset_entry_table(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/* For printing the raw rangelist data from .debug_rnglists */
 static int
 print_single_rle(UNUSEDARG Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Unsigned contextnum,
@@ -122,7 +123,7 @@ print_single_rle(UNUSEDARG Dwarf_Debug dbg,
     printf("<0x%" DW_PR_XZEROS DW_PR_DUx "> %-20s",
         lineoffset,esb_get_string(&m));
     switch(code) {
-    case DW_RLE_end_of_list: 
+    case DW_RLE_end_of_list:
         printf("           ");
         printf("           ");
         break;
@@ -184,6 +185,7 @@ print_single_rle(UNUSEDARG Dwarf_Debug dbg,
     return res;
 }
 
+/* For printing raw rangelist data as found in .debug_rnglists */
 static int
 print_entire_rangeslist(Dwarf_Debug dbg,
     Dwarf_Unsigned contextnumber,
@@ -214,7 +216,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        
+
         if(!title_printed) {
             title_printed = TRUE;
             printf("     Offset      entryname            "
@@ -245,6 +247,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
 
 
 
+/* For printing the raw rangelist data from .debug_rnglists */
 int
 print_raw_all_rnglists(Dwarf_Debug dbg,
     Dwarf_Error *error)

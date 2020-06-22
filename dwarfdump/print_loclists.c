@@ -65,7 +65,7 @@ print_offset_entry_table(Dwarf_Debug dbg,
     unsigned col = 0;
     int res = 0;
     int hasnewline = TRUE;
-   
+
     for ( ; e < offset_entry_count; ++e) {
         Dwarf_Unsigned value = 0;
 
@@ -147,52 +147,44 @@ print_single_lle(UNUSEDARG Dwarf_Debug dbg,
         printf("           ");
         printf("           ");
         break;
-    case DW_LLE_base_addressx:{
+    case DW_LLE_base_addressx:
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx ,v1);
         printf("           ");
-        }
         break;
-    case DW_LLE_startx_endx: {
+    case DW_LLE_startx_endx:
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         break;
-        }
-    case DW_LLE_startx_length: {
+    case DW_LLE_startx_length:
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
         break;
-        }
-    case DW_LLE_offset_pair: {
+    case DW_LLE_offset_pair:
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        }
         break;
-    case DW_LLE_default_location: {
+    case DW_LLE_default_location:
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        }
         break;
-    case DW_LLE_base_address: {
+    case DW_LLE_base_address:
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1);
         printf("           ");
-        }
         break;
-    case DW_LLE_start_end: {
+    case DW_LLE_start_end:
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        }
         break;
-    case DW_LLE_start_length: {
+    case DW_LLE_start_length:
         printf(
             " 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx ,v1,v2);
-        }
         break;
     default:
         printf(" ERROR: Unknown LLE code in .debug_loclists. %s\n",

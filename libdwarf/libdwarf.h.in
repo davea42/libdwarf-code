@@ -4848,6 +4848,20 @@ int dwarf_rnglists_get_rle_head(Dwarf_Attribute       /*attr*/,
     Dwarf_Error    *      /*error*/);
 
 /*  Get the rnglist entries details */
+int dwarf_get_rnglists_entry_fields_a(
+    Dwarf_Rnglists_Head /*head*/,
+    Dwarf_Unsigned   /*entrynum*/,
+    unsigned       * /*entrylen*/,
+    unsigned       * /*rle_value_out*/,
+    Dwarf_Unsigned * /*raw1*/,
+    Dwarf_Unsigned * /*raw2*/,
+    Dwarf_Bool     * /*debug_addr_unavailable*/,
+    Dwarf_Unsigned * /*cooked1*/,
+    Dwarf_Unsigned * /*cooked2*/,
+    Dwarf_Error *    /*err*/);
+
+/* The following is not complete. DO NOT USE.
+    Use dwarf_get_rnglists_entry_fields_a() instead. */
 int dwarf_get_rnglists_entry_fields(Dwarf_Rnglists_Head /*head*/,
     Dwarf_Unsigned   /*entrynum*/,
     unsigned int   * /*entrylen*/,

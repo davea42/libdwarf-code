@@ -58,7 +58,7 @@
 
 #define MIN(a,b)  (((a) < (b))? a:b)
 
-#if 0
+#if 0 /* FOR DEBUGGING */
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {

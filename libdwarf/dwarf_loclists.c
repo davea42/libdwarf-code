@@ -50,6 +50,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define TRUE 1
 #define FALSE 0
 
+#if 0
+static void
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}
+#endif /* 0 */
 
 /*  Used in case of error reading the
     loclists headers (not referring to Dwarf_Loc_Head_c
@@ -946,6 +959,7 @@ build_array_of_lle(Dwarf_Debug dbg,
     int            done           = FALSE;
     Dwarf_Unsigned locdesc_index  = 0;
     Dwarf_Unsigned i              = 0;
+    Dwarf_Bool     debug_addr_unavailable = FALSE;
 
     if (rctx->ll_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
@@ -1001,49 +1015,85 @@ build_array_of_lle(Dwarf_Debug dbg,
             the raw values and other data. */
         switch(code) {
         case DW_LLE_base_addressx:
-            foundbaseaddr = TRUE;
             res = _dwarf_extract_address_from_debug_addr(
                 dbg,rctx->ll_context,val1,
                 &addr1,error);
             if (res != DW_DLV_OK) {
-                return res;
+                e->ld_index_failed = TRUE;
+                e->ld_lopc = 0;
+                e->ld_highpc = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }
+                debug_addr_unavailable = TRUE;
+                foundbaseaddr = FALSE;
+            } else {
+                foundbaseaddr = TRUE;
+                e->ld_lopc = addr1;
+                e->ld_highpc = addr1;
+                latestbaseaddr = addr1;
             }
-            e->ld_lopc = addr1;
-            latestbaseaddr = addr1;
             break;
         case DW_LLE_startx_endx:
-            res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->ll_context,val1,
-                &addr1,error);
-            if (res != DW_DLV_OK) {
-                return res;
+            if (debug_addr_unavailable) {
+               res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(
+                    dbg,rctx->ll_context,val1,
+                    &addr1,error);
+                if ( res== DW_DLV_OK) {
+                    res = _dwarf_extract_address_from_debug_addr(
+                        dbg,rctx->ll_context,val2,
+                        &addr2,error);
+                }
             }
-            res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->ll_context,val2,
-                &addr2,error);
             if (res != DW_DLV_OK) {
-                return res;
+                debug_addr_unavailable = TRUE;
+                e->ld_index_failed = TRUE; 
+                e->ld_lopc = 0;
+                e->ld_highpc = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }       
+            } else {
+                e->ld_lopc = addr1;
+                e->ld_highpc = addr2;
             }
-            e->ld_lopc = addr1;
-            e->ld_highpc = addr2;
             break;
         case DW_LLE_startx_length:
-            res = _dwarf_extract_address_from_debug_addr(
-                dbg,rctx->ll_context,val1,
-                &addr1,error);
-            if (res != DW_DLV_OK) {
-                return res;
+            if (debug_addr_unavailable) {
+               res = DW_DLV_NO_ENTRY;
+            } else {
+                res = _dwarf_extract_address_from_debug_addr(
+                    dbg,rctx->ll_context,val1,
+                    &addr1,error);
             }
-            e->ld_lopc = addr1;
-            e->ld_highpc = val2+addr1;
+            if (res != DW_DLV_OK) {
+                debug_addr_unavailable = TRUE;
+                e->ld_index_failed = TRUE; 
+                e->ld_lopc = 0;
+                e->ld_highpc = 0;
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg, *error);
+                    *error = 0;
+                }       
+            } else {
+                e->ld_lopc = addr1;
+                e->ld_highpc = val2+addr1;
+            }
             break;
         case DW_LLE_offset_pair:
             if(foundbaseaddr) {
                 e->ld_lopc = val1+latestbaseaddr;
                 e->ld_highpc = val2+latestbaseaddr;
             } else {
-                e->ld_lopc = val1+rctx->ll_cu_base_address;
-                e->ld_highpc = val2+rctx->ll_cu_base_address;
+                /* Well, something failed, could be 
+                   missing debug_addr. */
+                e->ld_index_failed = TRUE;
+                e->ld_lopc = 0;
+                e->ld_highpc = 0;
             }
             break;
         case DW_LLE_base_address:
@@ -1171,8 +1221,12 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
         if (is_loclistx) {
             if (ctx->cc_loclists_base_present) {
                 offset_in_loclists = ctx->cc_loclists_base;
-            } else {
-                /* FIXME: check in tied file for a cc_loclists_base */
+            } else if (dbg->de_loclists_context_count == 1) {
+                /* missing a  DW_AT_loclists_base! */
+                offset_in_loclists = 0;
+            } else  {
+                /* FIXME: check in tied file for a cc_loclists_base
+                   possibly?  Make any sense?  */
                 dwarfstring m;
 
                 dwarfstring_constructor(&m);
@@ -1240,9 +1294,6 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     } else {
         lle_global_offset = attr_val;
     }
-
-    llhead->ll_llepointer = rctx->lc_offsets_array +
-        rctx->lc_offset_entry_count*offsetsize;
     llhead->ll_end_data_area = enddata;
 
     llhead->ll_llearea_offset = lle_global_offset;

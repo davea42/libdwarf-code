@@ -87,6 +87,9 @@ typedef struct Dwarf_Rnglists_Entry_s *Dwarf_Rnglists_Entry;
 struct Dwarf_Rnglists_Entry_s {
     unsigned       rle_entrylen;
     unsigned       rle_code;
+    /*  Failed means .debug_addr section needed but missing.
+        (possibly tied file needed) */
+    Dwarf_Bool     rle_index_failed;
     Dwarf_Unsigned rle_raw1;
     Dwarf_Unsigned rle_raw2;
     /*  Cooked means the raw values from the .debug_rnglists

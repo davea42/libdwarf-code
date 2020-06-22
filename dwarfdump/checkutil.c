@@ -199,7 +199,6 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
         pBucket->Entries[0] = data;
         return;
     }
-
     pBucket = pBucketGroup->pTail;
 
     /*  Check if we have a previous allocated set of
@@ -472,7 +471,11 @@ ResetLimitsBucketSet(Bucket_Group *pBucketGroup)
     pBucketGroup->upper = 0;
 }
 
-/*  Limits are set only for ranges, so only in pRangesInfo. */
+/*  Limits are set only for ranges, so only in pRangesInfo. 
+    But is used for ranges and location lists.
+    The default is set from object data (virt addr,
+    size in object file) but that does not work
+    sensibly in PE object files. */
 void
 SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr lower,Dwarf_Addr upper)

@@ -67,6 +67,10 @@ DW_AT_GNU_guarded       /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_pt_guarded    /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 
 0xffffffff
+DW_TAG_enumeration_type
+DW_AT_encoding
+
+0xffffffff
 DW_TAG_array_type
 DW_AT_GNU_vector
 
