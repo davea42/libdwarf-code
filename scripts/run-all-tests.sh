@@ -7,7 +7,7 @@ echo "start run-all-tests.sh at $start"
 # printf formats.
 here=`pwd`
 ddsrc=$here/dwarfdump
-rosrc=$here/../readelfobj
+rosrc=$here/../readelfobj/code
 rtestsrc=$here/../regressiontests
 
 ddbld=/tmp/vaddbld

@@ -387,6 +387,10 @@ Turns on checking of aranges.
 Turns on DIE tag-attr combinations checking,
 looking for surprising attributes for DIE
 tags.
+Common extensions to the standard are
+allowed as if standard. See
+The \-C (\--format-extensions) option
+to delete allowing common extensions.
 .TP
 .BR \--check-forward-refs\ (\-kR)
 Turns on reading DIEs and checking for forward declarations
@@ -436,9 +440,10 @@ refer to appropriate locations.
 Normally when checking for tag-tag 
 or tag-attribute combinations
 both the standard combinations and 
-some common extensions are allowed.
-With -C the extensions are taken
-out of the allowed class of combinations.
+some common extensions are allowed
+(not reported).
+With this option the extensions are taken
+out of the class of allowed combinations.
 
 .TP
 .BR \--format-dense\ (\-d)

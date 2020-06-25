@@ -343,7 +343,7 @@ pe_load_section (void *obj, Dwarf_Half section_index,
             return DW_DLV_ERROR;
         }
         /*  VirtualSize > SizeOfRawData  if trailing zeros
-            in the section were not written to disc. 
+            in the section were not written to disc.
             Malloc enough for the whole section, read in
             the bytes we have. */
         sp->loaded_data = malloc((size_t)sp->VirtualSize);
@@ -484,8 +484,11 @@ dwarf_pe_load_dwarf_section_headers(
         if (res != DW_DLV_OK) {
             return res;
         }
-        sec_outp->dwarfsectname = strdup(expname);
-
+        if (expname) {
+           sec_outp->dwarfsectname = strdup(expname);
+        } else {
+           sec_outp->dwarfsectname = strdup("<sec name missing>");
+        }
         if ( !sec_outp->name || !sec_outp->dwarfsectname) {
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;

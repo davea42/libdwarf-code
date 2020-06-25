@@ -1037,7 +1037,7 @@ build_array_of_lle(Dwarf_Debug dbg,
             break;
         case DW_LLE_startx_endx:
             if (debug_addr_unavailable) {
-               res = DW_DLV_NO_ENTRY;
+                res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_extract_address_from_debug_addr(
                     dbg,rctx->ll_context,val1,
@@ -1050,13 +1050,13 @@ build_array_of_lle(Dwarf_Debug dbg,
             }
             if (res != DW_DLV_OK) {
                 debug_addr_unavailable = TRUE;
-                e->ld_index_failed = TRUE; 
+                e->ld_index_failed = TRUE;
                 e->ld_lopc = 0;
                 e->ld_highpc = 0;
                 if (res == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
-                }       
+                }
             } else {
                 e->ld_lopc = addr1;
                 e->ld_highpc = addr2;
@@ -1064,7 +1064,7 @@ build_array_of_lle(Dwarf_Debug dbg,
             break;
         case DW_LLE_startx_length:
             if (debug_addr_unavailable) {
-               res = DW_DLV_NO_ENTRY;
+                res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_extract_address_from_debug_addr(
                     dbg,rctx->ll_context,val1,
@@ -1072,13 +1072,13 @@ build_array_of_lle(Dwarf_Debug dbg,
             }
             if (res != DW_DLV_OK) {
                 debug_addr_unavailable = TRUE;
-                e->ld_index_failed = TRUE; 
+                e->ld_index_failed = TRUE;
                 e->ld_lopc = 0;
                 e->ld_highpc = 0;
                 if (res == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg, *error);
                     *error = 0;
-                }       
+                }
             } else {
                 e->ld_lopc = addr1;
                 e->ld_highpc = val2+addr1;
@@ -1089,8 +1089,8 @@ build_array_of_lle(Dwarf_Debug dbg,
                 e->ld_lopc = val1+latestbaseaddr;
                 e->ld_highpc = val2+latestbaseaddr;
             } else {
-                /* Well, something failed, could be 
-                   missing debug_addr. */
+                /*  Well, something failed, could be
+                    missing debug_addr. */
                 e->ld_index_failed = TRUE;
                 e->ld_lopc = 0;
                 e->ld_highpc = 0;
@@ -1225,8 +1225,8 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
                 /* missing a  DW_AT_loclists_base! */
                 offset_in_loclists = 0;
             } else  {
-                /* FIXME: check in tied file for a cc_loclists_base
-                   possibly?  Make any sense?  */
+                /*  FIXME: check in tied file for a cc_loclists_base
+                    possibly?  Make any sense?  */
                 dwarfstring m;
 
                 dwarfstring_constructor(&m);
@@ -1234,8 +1234,8 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
                     "DW_DLE_LOCLISTS_ERROR: loclists table index of"
                     " %u"  ,attr_val);
                 dwarfstring_append(&m,
-                    " is unusable unless it is in a tied file."
-                    " libdwarf is incomplete. FIXME");
+                    " is unusable without a tied file."
+                    );
                 _dwarf_error_string(dbg,error,DW_DLE_LOCLISTS_ERROR,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);

@@ -1,3 +1,23 @@
+2020-06-25: David Anderson
+    * checkutil.c: Removed trailing whitespace.
+    * command_options.c: 
+    * dwarfdump.1: Making the -C option intent
+      clearer.
+    * dwarfdump.c: Fixed trailing whitespace and indents.
+    * naming.c: Fixed trailing whitespace.
+    * print_die.c: Removed dead code. Corrected printing
+      if rnglists, ranges, loclists locations. Corrected 
+      handling of the output with -k detected an error.
+      Ensured a couple esb_s variables get destructed
+      in case of error.  Added explanation how the
+      print_attribute() code actually works.
+    * print_frames.c: Corrected handling location operations
+      when checking (-k options).
+    * print_llex_codes.c,print_loclists_codes.c,
+      print_origloclist_codes.c: Corrected handling 
+      location data when checking (-k options).
+    * tag_attr_ext_list.c: Added DW_AT_MIPS_linkage_name
+      as a common extension on a couple TAGs.
 2020-06-22: David Anderson
     * checkutil.c: Document a bit more about how this works.
     * dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,

@@ -48,7 +48,7 @@
 
 int
 print_llex_linecodes( Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Bool    checking,
+    Dwarf_Bool    checking,
     const char *  tagname,
     const char *  attrname,
     unsigned int  llent,
@@ -65,27 +65,6 @@ print_llex_linecodes( Dwarf_Debug dbg,
 {
     if (debug_addr_unavailable) {
         *bError = TRUE;
-    }
-    if (checking) {
-        switch(lle_value) {
-        case DW_LLEX_base_address_selection_entry:
-        case DW_LLEX_end_of_list_entry:
-            break;
-        case DW_LLEX_start_length_entry:
-        case DW_LLEX_offset_pair_entry:
-        case DW_LLEX_start_end_entry:
-            if(!debug_addr_unavailable) {
-                loc_error_check(
-                    tagname,attrname,
-                    lopc, 
-                    rawlopc,
-                    hipc, rawhipc, locdesc_offset,
-                    base_address,
-                    bError);
-            }
-            break;
-        }
-        return DW_DLV_OK;
     }
     switch(lle_value) {
     case DW_LLEX_base_address_selection_entry:
@@ -142,6 +121,15 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(
+                tagname,attrname,
+                lopc,
+                rawlopc,
+                hipc, rawhipc, locdesc_offset,
+                base_address,
+                bError);
+        }
         break;
     case DW_LLEX_offset_pair_entry:
         if (debug_addr_unavailable) {
@@ -169,6 +157,15 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 " hiaddr 0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
+        }
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(
+                tagname,attrname,
+                lopc,
+                rawlopc,
+                hipc, rawhipc, locdesc_offset,
+                base_address,
+                bError);
         }
         break;
     case DW_LLEX_start_end_entry:
@@ -199,6 +196,15 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
 
+        }
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(
+                tagname,attrname,
+                lopc,
+                rawlopc,
+                hipc, rawhipc, locdesc_offset,
+                base_address,
+                bError);
         }
         break;
     default: {

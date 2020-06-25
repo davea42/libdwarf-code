@@ -1961,7 +1961,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
         case DW_LLE_base_addressx: {
             Dwarf_Addr targaddr = 0;
             if (debug_addr_fail) {
-                 res = DW_DLV_NO_ENTRY;
+                res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_extract_address_from_debug_addr(dbg,
                     cucontext,llc->ld_rawlow,&targaddr,error);
@@ -1986,11 +1986,11 @@ cook_loclists_contents(Dwarf_Debug dbg,
             /* two indexes into debug_addr */
             Dwarf_Addr targaddr = 0;
             if (debug_addr_fail) {
-                 res = DW_DLV_NO_ENTRY;
+                res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_extract_address_from_debug_addr(dbg,
                     cucontext,llc->ld_rawlow,&targaddr,error);
-            }  
+            }
             if (res != DW_DLV_OK) {
                 debug_addr_fail = TRUE;
                 llc->ld_index_failed = TRUE;
@@ -2003,7 +2003,7 @@ cook_loclists_contents(Dwarf_Debug dbg,
                 llc->ld_lopc = targaddr;
             }
             if (debug_addr_fail) {
-                 res = DW_DLV_NO_ENTRY;
+                res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_extract_address_from_debug_addr(dbg,
                     cucontext,llc->ld_rawhigh,&targaddr,error);

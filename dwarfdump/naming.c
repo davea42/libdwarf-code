@@ -59,8 +59,8 @@ skipunder(const char *v)
 #endif /*  TRIVIAL_NAMING */
 
 static const char *
-ellipname(int   res, 
-    int         val_in, 
+ellipname(int   res,
+    int         val_in,
     const char *v,
     const char *ty,
     int         printonerr)

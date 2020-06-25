@@ -67,29 +67,8 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
     if (debug_addr_unavailable) {
         *bError = TRUE;
     }
-    if (checking) {
-        switch(lle_value) {
-        case DW_LLE_base_address:
-        case DW_LLE_base_addressx:
-        case DW_LLE_end_of_list:
-
-        case DW_LLE_start_length:
-        case DW_LLE_startx_length:
-        case DW_LLE_offset_pair:
-        case DW_LLE_start_end:
-        case DW_LLE_startx_endx: {
-            if (!debug_addr_unavailable) {
-                loc_error_check(tagname,attrname,
-                    lopc, rawlopc,
-                    hipc, rawhipc, locdesc_offset, base_address,
-                    bError);
-            }
-        }
-        }
-        return DW_DLV_OK;
-    }
     switch(lle_value) {
-    case  DW_LLE_base_address: 
+    case  DW_LLE_base_address:
         /* debug_addr_unavailable is not applicable here. */
         esb_append_printf_u(esbp,
             "<new base address     0x%"
@@ -137,6 +116,12 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
             " 0x%"
             DW_PR_XZEROS DW_PR_DUx
             ">",hipc);
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(tagname,attrname,
+                lopc, rawlopc,
+                hipc, rawhipc, locdesc_offset, base_address,
+                bError);
+        }
         break;
     case DW_LLE_startx_length:
         if (debug_addr_unavailable) {
@@ -167,6 +152,12 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
                 " 0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
+        }
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(tagname,attrname,
+                lopc, rawlopc,
+                hipc, rawhipc, locdesc_offset, base_address,
+                bError);
         }
         break;
     case  DW_LLE_offset_pair:
@@ -201,6 +192,12 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(tagname,attrname,
+                lopc, rawlopc,
+                hipc, rawhipc, locdesc_offset, base_address,
+                bError);
+        }
         break;
     case DW_LLE_start_end:
         /* debug_addr_unavailable does not apply here */
@@ -211,6 +208,12 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
             " 0x%"
             DW_PR_XZEROS DW_PR_DUx
             ">",hipc);
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(tagname,attrname,
+                lopc, rawlopc,
+                hipc, rawhipc, locdesc_offset, base_address,
+                bError);
+        }
         break;
     case DW_LLE_startx_endx:
         if (debug_addr_unavailable) {
@@ -241,6 +244,12 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
                 " 0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
+        }
+        if(checking && !debug_addr_unavailable) {
+            loc_error_check(tagname,attrname,
+                lopc, rawlopc,
+                hipc, rawhipc, locdesc_offset, base_address,
+                bError);
         }
         break;
     default: {

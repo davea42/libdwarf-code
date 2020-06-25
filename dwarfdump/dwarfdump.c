@@ -876,7 +876,7 @@ struct likely_names_s {
     Dwarf_Unsigned low;
     Dwarf_Unsigned size;
     Dwarf_Unsigned end;
-}; 
+};
 static struct likely_names_s likely_names[LIKELYNAMESMAX];
 #if 0 /* FOR DEBUG ONLY */
 static void
@@ -934,7 +934,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     Dwarf_Unsigned baseend = 0;
     int lnindex = 0;
     int lncount = 0;
-    
+
     memset(likely_names,0,sizeof(likely_names));
     for (ct = 0 ; ct < LIKELYNAMESMAX; ct++) {
         Dwarf_Unsigned clow = 0;
@@ -983,14 +983,14 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     qsort(likely_names,lncount,sizeof(struct likely_names_s),
         likelycmp);
     ln = likely_names;
-    baselow =ln->low; 
-    basesize =ln->size; 
+    baselow =ln->low;
+    basesize =ln->size;
     baseend = ln->end;
     for (lnindex = 1; lnindex<lncount; ++lnindex) {
         ln = likely_names+lnindex;
         if (ln->end > baseend) {
-             baseend = ln->end;
-             basesize = (baseend - baselow);
+            baseend = ln->end;
+            basesize = (baseend - baselow);
         }
     }
     *lower = baselow;
@@ -1131,7 +1131,7 @@ process_one_file(int fd, int tiedfd,
 #endif
         res = calculate_likely_limits_of_code(dbg,&lower,&size);
         upper = lower + size;
-        /*  Set limits for Ranges Information.  
+        /*  Set limits for Ranges Information.
             Some objects have CUs for startup code
             and the expanded range here turns out
             not to actually help.   */
@@ -2286,7 +2286,7 @@ void DWARF_CHECK_ERROR_PRINT_CU()
 }
 
 /*  Sometimes is useful, just to know the kind of errors
-    in an object file; not much interest in the number 
+    in an object file; not much interest in the number
     of errors; the specific case is just to have a general
     idea about the DWARF quality in the file */
 
@@ -2296,7 +2296,7 @@ unsigned int set_unique_errors_size = 0;
 #define SET_UNIQUE_ERRORS_DELTA 64
 
 /*  Create the space to store the unique error messages */
-void 
+void
 allocate_unique_errors_table(void)
 {
     if (!set_unique_errors) {
@@ -2309,7 +2309,7 @@ allocate_unique_errors_table(void)
 
 #ifdef TESTING
 /* Just for debugging purposes, dump the unique errors table */
-void 
+void
 dump_unique_errors_table(void)
 {
     unsigned int index;
@@ -2324,7 +2324,7 @@ dump_unique_errors_table(void)
 #endif
 
 /*  Release the space used to store the unique error messages */
-void 
+void
 release_unique_errors_table(void)
 {
     unsigned int index;
@@ -2338,7 +2338,7 @@ release_unique_errors_table(void)
 }
 
 /*  Returns TRUE if the text is already in the set; otherwise FALSE */
-boolean 
+boolean
 add_to_unique_errors_table(char * error_text)
 {
     unsigned int index;
@@ -2392,7 +2392,7 @@ add_to_unique_errors_table(char * error_text)
     return FALSE;
 }
 
-/*  
+/*
     Print a DWARF error message and if in "reduced" output
     only print one error of each kind; this feature is useful,
     when we are interested only in the kind of errors and
@@ -2404,7 +2404,7 @@ add_to_unique_errors_table(char * error_text)
 
 static void
 print_dwarf_check_error(const char *s1,
-    const char *s2, 
+    const char *s2,
     const char *s3)
 {
     static boolean do_init = TRUE;
@@ -2449,7 +2449,7 @@ print_dwarf_check_error(const char *s1,
     glflags.gf_found_error_message = found;
 }
 
-void 
+void
 DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl)
 {

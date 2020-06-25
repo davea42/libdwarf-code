@@ -471,7 +471,7 @@ ResetLimitsBucketSet(Bucket_Group *pBucketGroup)
     pBucketGroup->upper = 0;
 }
 
-/*  Limits are set only for ranges, so only in pRangesInfo. 
+/*  Limits are set only for ranges, so only in pRangesInfo.
     But is used for ranges and location lists.
     The default is set from object data (virt addr,
     size in object file) but that does not work

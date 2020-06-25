@@ -319,29 +319,6 @@ get_die_stack_sibling()
     }
     return 0;
 }
-#if 0
-No longer needed or appropriate. */
-static void
-dealloc_all_die_stack(Dwarf_Debug dbg,Dwarf_Die altdie)
-{
-    while (die_stack_indent_level >= 0) {
-        Dwarf_Die u = die_stack[die_stack_indent_level].die_;
-        if (u) {
-            if (u == altdie) {
-                altdie = 0;
-            }
-            dwarf_dealloc_die(dbg,u);
-        }
-        /* counts down one too many times... */
-        die_stack_indent_level--;
-    }
-    if(altdie) {
-        /*  This die is not in the stack and we are about
-            to error off. Lets dealloc. */
-        dwarf_dealloc_die(dbg,altdie);
-    }
-}
-#endif
 static void
 dealloc_all_srcfiles(Dwarf_Debug dbg,
   char **srcfiles,
@@ -538,19 +515,6 @@ print_cu_hdr_cudie(UNUSEDARG Dwarf_Debug dbg,
     printf("\nCOMPILE_UNIT<header overall offset = 0x%"
         DW_PR_XZEROS DW_PR_DUx ">",
         (Dwarf_Unsigned)(overall_offset - offset));
-#if 0
-    if (verbose) {
-        int fission_data_result = 0;
-        fission_data_result = dwarf_get_debugfission_for_die(cudie,
-            &fission_data,&err);
-        if (fission_data_result == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "Failure looking for Debug Fission data",
-                fission_data_result, err);
-        }
-        print_debug_fission_header(&fission_data);
-    }
-#endif
     printf(":\n");
 }
 
@@ -3232,21 +3196,7 @@ print_location_description(Dwarf_Debug dbg,
             return res;
         }
     } else if (theform == DW_FORM_exprloc) {
-#if 0
-        int showhextoo = 1;
-
-        show_form_itself(glflags.show_form_used, glflags.verbose,
-            theform, directform, base);
-printf("dadebug call print_exprloc_content  line %d %s\n",__LINE__,__FILE__);
-        res = print_exprloc_content(dbg,die,attrib,
-            checking,
-            die_indent_level,showhextoo,
-            details,err);
-        if (res == DW_DLV_ERROR) {
-            return res;
-        }
-        esb_append(details,"\n");
-#endif
+        /* printed via the form, nothing to do here. */
     } else {
         show_attr_form_error(dbg,attr,theform,base);
     }
@@ -3488,14 +3438,14 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
             }
         } else  if (cres == DW_DLV_ERROR) {
             int msgnum = dwarf_errno(*err);
-         
+
             if (msgnum == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
                 print_error_and_continue(dbg,
                     "Some checks cannot be done because "
                     "the .debug_addr section is not present",
                     cres,*err);
-               DROP_ERROR_INSTANCE(dbg,cres,*err);
-               return DW_DLV_OK;
+                DROP_ERROR_INSTANCE(dbg,cres,*err);
+                return DW_DLV_OK;
             }
             return cres;
         }
@@ -3992,7 +3942,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
         append_extra_string = TRUE;
         res = get_form_values(dbg,attrib,&theform,&directform,
-                err);
+            err);
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "ERROR: Cannot get location form",
@@ -4001,6 +3951,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return res;
         }
+        /* If DW_FORM_block*  this results 
+           in duplicating the form name (with -M). */
         res = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,
             attrib, srcfiles, cnt, &valname,
@@ -4021,11 +3973,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return res;
         }
-#if 0
-        show_form_itself(glflags.show_form_used,
-            glflags.verbose, theform,
-            directform,&valname);
-#endif
         }
         break;
     case DW_AT_SUN_func_offsets:
@@ -4204,13 +4151,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         {
             Dwarf_Half theform = 0;
             int rv;
-#if 0
-            char rsbuf[ESB_FIXED_ALLOC_SIZE];
-            struct esb_s rangesstr;
 
-            esb_constructor_fixed(&rangesstr,rsbuf,
-                sizeof(rsbuf));
-#endif
             rv = dwarf_whatform(attrib,&theform,err);
             if (rv == DW_DLV_ERROR) {
                 print_error_and_continue(dbg,
@@ -4223,16 +4164,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             } else if (rv == DW_DLV_NO_ENTRY) {
                 esb_destructor(&valname);
                 esb_destructor(&esb_extra);
-#if 0
-                esb_destructor(&rangesstr);
-#endif
                 break;
             }
             rv = get_attr_value(dbg, tag,die,
-                dieprint_cu_goffset,attrib, srcfiles, cnt, 
-#if 0
-                &rangesstr,
-#endif
+                dieprint_cu_goffset,attrib, srcfiles, cnt,
                 &valname,
                 glflags.show_form_used,glflags.verbose,err);
             if (rv == DW_DLV_ERROR) {
@@ -4258,12 +4193,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     in libdwarf on DWARF5 rnglists */
                 DROP_ERROR_INSTANCE(dbg,rv,*err);
             }
-#if 0
-printf("dadebug valname before empty %s\n",esb_get_string(&valname));
-            esb_append(&valname, esb_get_string(&rangesstr));
-printf("dadebug valname after rangesstr %s\n",esb_get_string(&valname));
-            esb_destructor(&rangesstr);
-#endif
         }
         break;
     case DW_AT_MIPS_linkage_name:
@@ -4592,7 +4521,7 @@ printf("dadebug valname after rangesstr %s\n",esb_get_string(&valname));
                     print_error_and_continue(dbg,
                         esb_get_string(&m),
                         frres,*err);
-                   esb_destructor(&m);
+                    esb_destructor(&m);
                     esb_destructor(&valname);
                     esb_destructor(&esb_extra);
                     return frres;
@@ -4947,18 +4876,8 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
 {
     Dwarf_Half no_of_ops = 0;
     unsigned i = 0;
-    boolean checking = !PRINTING_DIES;
     Dwarf_Bool report_raw = TRUE;
 
-#if 0
-printf("dadebug entry print_location_operations line %d %s\n",__LINE__,__FILE__);
-#endif
-    if (checking) {
-#if 0
-printf("dadebug exit print_location_operations line %d %s\n",__LINE__,__FILE__);
-#endif
-        return DW_DLV_OK;
-    }
     if(llbuf) {
         Dwarf_Locdesc *locd = 0;
         locd = llbuf;
@@ -4970,15 +4889,9 @@ printf("dadebug exit print_location_operations line %d %s\n",__LINE__,__FILE__);
                 report_raw,
                 baseaddr,string_out,err);
             if (res == DW_DLV_ERROR) {
-#if 0
-printf("dadebug exit print_location_operations line %d %s\n",__LINE__,__FILE__);
-#endif
                 return res;
             }
         }
-#if 0
-printf("dadebug exit print_location_operations line %d %s\n",__LINE__,__FILE__);
-#endif
         return DW_DLV_OK;
     }
     /* ASSERT: locs != NULL */
@@ -4989,15 +4902,9 @@ printf("dadebug exit print_location_operations line %d %s\n",__LINE__,__FILE__);
             report_raw,
             baseaddr,string_out,err);
         if (res == DW_DLV_ERROR) {
-#if 0
-printf("dadebug exit print_location_operations line %d %s\n",__LINE__,__FILE__);
-#endif
             return res;
         }
     }
-#if 0
-printf("dadebug exit print_location_operations line %d %s\n",__LINE__,__FILE__);
-#endif
     return DW_DLV_OK;
 }
 
@@ -5577,8 +5484,8 @@ print_location_list(Dwarf_Debug dbg,
                     loclists_offset_lle_set,
                     details);
             } else {
-               /* things look better with this...  no -v */
-               esb_append(details,"\n   ");
+                /* things look better with this...  no -v */
+                esb_append(details,"\n   ");
             }
         }
     } else {
@@ -5767,10 +5674,7 @@ print_location_list(Dwarf_Debug dbg,
                     &bError);
             }
         }
-        if (!checking) {
-#if 0
-printf("dadebug call dwarfdumpprint_location_operations %d %s\n",__LINE__,__FILE__);
-#endif
+        {
             lres = dwarfdump_print_location_operations(dbg,
                 /*  Either llbuf or locentry non-zero.
                     Not both. */
@@ -6147,9 +6051,6 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
             wres, *err);
         return wres;
     }
-#if 0
-printf("dadebug %s %d %s\n",esb_get_string(esbp),__LINE__,__FILE__);
-#endif
     {
         Dwarf_Half address_size = 0;
         Dwarf_Half offset_size = 0;
@@ -6196,9 +6097,6 @@ printf("dadebug %s %d %s\n",esb_get_string(esbp),__LINE__,__FILE__);
         if (!checking) {
             int sres = 0;
 
-#if 0
-printf("dadebug call print_location_operations %d %s\n",__LINE__,__FILE__);
-#endif
             sres =  print_location_operations(dbg,x,
                 exprlength,address_size,
                 offset_size,version, esbp,err);
@@ -6210,15 +6108,9 @@ printf("dadebug call print_location_operations %d %s\n",__LINE__,__FILE__);
                     "as a string.\n",
                     exprlength);
             }
-#if 0
-printf("dadebug return %s %d %s\n",esb_get_string(esbp),__LINE__,__FILE__);
-#endif
             return sres;
         }
     }
-#if 0
-printf("dadebug return %s %d %s\n",esb_get_string(esbp),__LINE__,__FILE__);
-#endif
     return DW_DLV_OK;
 }
 
@@ -7158,10 +7050,16 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         if (fres == DW_DLV_OK) {
             unsigned u = 0;
 
+            if (tempb->bl_len) {
+                esb_append(esbp,"0x");
+            }
             for (u = 0; u < tempb->bl_len; u++) {
                 esb_append_printf_u(esbp,
                     "%02x",
                     *(u + (unsigned char *) tempb->bl_data));
+            }
+            if (tempb->bl_len) {
+                esb_append(esbp," ");
             }
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
             tempb = 0;
@@ -7576,9 +7474,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_exprloc: {    /* DWARF4 */
         int showhextoo = 1;
 
-#if 0
-printf("dadebug call print_exprloc_content  line %d %s\n",__LINE__,__FILE__);
-#endif
         wres = print_exprloc_content(dbg,die,attrib,
             checking,
             0, /* die_indent_level pointless here */

@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.97, 13 June 2020
+.ds vE Rev 2.98, 23 June 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -248,7 +248,7 @@ and fixed issues with DWARF5 .debug_addr
 index FORMs.
 New functions for general use:
 dwarf_addr_form_is_indexed(),
-dwarf_get_rnglists_entry_fields(),
+dwarf_get_rnglists_entry_fields_a(),
 dwarf_rnglists_get_rle_head(),
 dwarf_dealloc_rnglists_head(),
 New functions for a complete listing
@@ -9156,18 +9156,31 @@ which will free up all data
 allocated for
 \f(CWdwarf_debugnames_header()\fP.
 .P
-FIXME describe arguments.
+On success the function returns
+\f(CWDW_DLV_OK\fP
+and returns  a pointer
+to the Head structure through
+\f(CWdn_out\fP.
+.P
+It also returns the count of debugnames
+entry in the debugnames index
+through the
+\f(CWdn_index_count_out\fP
+value.
 
-.in +2
-.DS
-\f(CW
-void exampledebugnames(void)
-{
-FIXME need extended example of debugnames use.
-}
-\fP
-.DE
-.in -2
+.P
+It returns 
+\f(CWDW_DLV_NO_ENTRY\fP
+if there is no 
+\f(CW.debug_names\fP
+section.
+
+.P
+It returns 
+\f(CWDW_DLV_ERROR\fP
+if there is an internal
+error such as data corruption
+in the section.
 
 
 .H 3 " dwarf_debugnames_sizes()"
@@ -9195,9 +9208,23 @@ FIXME need extended example of debugnames use.
     Dwarf_Error *    error*/)\fP
 .DE
 .P
-Allows access to fields in a .debug_names DWARF5
-header record.
-FIXME
+Given a properly created
+head
+\f(CWdn\fP
+this
+Allows access to fields a 
+\f(CW.debug_names\fP
+\f(CWDWARF5\fP
+header record
+\f(CWindex_number\fP.
+.P
+We will not describe the fields in detail
+here.
+See the
+\f(CWDWARF5\fP
+standard and
+\f(CWdwarfdump\fP
+for the motivation of this function.
 
 .H 3 " dwarf_debugnames_cu_entry()"
 .DS
@@ -9209,9 +9236,27 @@ FIXME
     Dwarf_Unsigned    * offset,
     Dwarf_Error *       error)\fP
 .DE
-Allows access to fields in cu entry from
-a .debug_names DWARF5 compilation unit entry.
-FIXME
+Given a properly created
+head
+\f(CWdn\fP
+this
+Allows access to fields in 
+cu entry 
+\f(CWindex_number\fP
+from
+a 
+\f(CW.debug_names\fP
+\f(CWDWARF5\fP
+Compilation Unit
+entry.
+.P
+We will not describe the fields in detail
+here.
+See the
+\f(CWDWARF5\fP
+standard and
+\f(CWdwarfdump\fP
+for the motivation of this function.
 
 .H 3 " dwarf_debugnames_local_tu_entry()"
 .DS
@@ -9224,7 +9269,11 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+.P
+The same as
+\f(CWdwarf_debugnames_cu_entry()\fP
+but referencing type unit fields.
+
 .H 3 " dwarf_debugnames_foreign_tu_entry()"
 .DS
 \f(CW int dwarf_debugnames_foreign_tu_entry(
@@ -9237,7 +9286,9 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+Allows retrieving the data
+for foreign type-unit entries.
+
 .H 3 " dwarf_debugnames_bucket()"
 .DS
 \f(CW int dwarf_debugnames_bucket(
@@ -9249,7 +9300,9 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+Allows retrieving the data
+for hash buckets.
+
 .H 3 " dwarf_debugnames_name()"
 .DS
 \f(CW int dwarf_debugnames_bucket(
@@ -9263,7 +9316,10 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+Allows retrieving the data
+about names and signatures.
+
+
 .H 3" dwarf_debugnames_abbrev_by_index()"
 .DS
 \f(CW int dwarf_debugnames_abbrev_by_index(
@@ -9277,7 +9333,10 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+Allows retrieving the abbreviations 
+from a portion of the 
+section by index.
+
 .H 3 " dwarf_debugnames_abbrev_by_code()"
 .DS
 \f(CW int dwarf_debugnames_abbrev_by_code(
@@ -9290,7 +9349,9 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+Allows retrieving the abbreviations 
+from a portion of the 
+section by abbrev-code.
 
 .H 3 " dwarf_debugnames_form_by_index()"
 .DS
@@ -9305,7 +9366,10 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+Allows retrieving the abbreviations 
+forms
+from a portion of the 
+section by index.
 
 .H 3 " dwarf_debugnames_entrypool()"
 .DS
@@ -9321,7 +9385,9 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
+Allows retrieving the 
+data from a portion of the entrypool
+by index and offset.
 
 .H 3 " dwarf_debugnames_entrypool_values()"
 .DS
@@ -9337,8 +9403,9 @@ FIXME
     Dwarf_Error *       error)
 \fP
 .DE
-FIXME
-
+Allows retrieving detailed 
+data from a portion of the entrypool
+by index and offset.
 
 
 
@@ -12431,17 +12498,39 @@ The function
 returns
 \f(CWDW_DLV_OK\fP
 and
-stores 
-segment number of the 
-FIXME
-FIXME
-The 
-the starting value of the address range in the location pointed
-to by \f(CWstart\fP, the length of the address range in the location
-pointed to by \f(CWlength\fP, and the offset in the .debug_info section
-of the compilation-unit DIE for the compilation-unit represented by the
+returns detailed information on the address range
+through the pointers.
+.P
+\f(CWsegment\fP 
+is the segment number for segmented
+addresss spaces and it is only meaningful
+if
+\f(CWsegment_entry_size\fP 
+is non-zero.
+.P
+It puts
+the starting value of the address range
+in the location pointed
+to by 
+\f(CWstart\fP, 
+and
+the length of the address range in the location
+pointed to by 
+\f(CWlength\fP. 
+.P
+It sets
+the
+\f(CWcu_die_offset\fP. 
+in the
+\f(CW.debug_info\fP, 
+section
+of the compilation-unit DIE for the
+compilation-unit represented by the
 address range.
+.P
 It returns \f(CWDW_DLV_ERROR\fP on error.
+and sets
+\f(CWerror\fP, 
 
 .H 3 "dwarf_get_arange_info()"
 .DS
@@ -12603,7 +12692,7 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
             recorded in .debug_rnglists. So we pass
             NULLs to avoid dealing with values we
             do not wish to see. */
-        res = dwarf_get_rnglists_entry_fields(rnglhead,
+        res = dwarf_get_rnglists_entry_fields_a(rnglhead,
             i,&entrylen,&code,
             0,0,
             &lowpc,&highpc,error);
@@ -12731,15 +12820,16 @@ It currently returns only \f(CWDW_DLV_OK\fP.
 \fP
 
 
-.H 4 "dwarf_get_rnglists_entry_fields()"
+.H 4 "dwarf_get_rnglists_entry_fields_a()"
 .DS
-\f(CWint dwarf_get_rnglists_entry_fields(
+\f(CWint dwarf_get_rnglists_entry_fields_a(
     Dwarf_Rnglists_Head head,
     Dwarf_Unsigned entrynum,
     unsigned *entrylen,
     unsigned *code,
     Dwarf_Unsigned *raw1,
     Dwarf_Unsigned *raw2,
+    Dwarf_Bool     *debug_addr_unavailable,   
     Dwarf_Unsigned *cooked1,
     Dwarf_Unsigned *cooked2,
     Dwarf_Error    *err)\fP
@@ -12756,7 +12846,108 @@ where
 was returned by
 \f(CWdwarf_rnglists_get_rle_head()\fP
 through a pointer.
+.P
+On success 
+\f(CWDW_DLV_OK\fP 
+is returned
+and the following fields are set through
+the pointers.
+.P
+The
+\f(CWentrylen\fP
+value returned is the length, in bytes,
+of the single entry's length.
 
+.P
+The
+\f(CWcode\fP
+value returned is the type of entry,
+\f(CWDW_RLE_startx_endx\fP 
+(see 
+\f(CWdwarf.h\fP).
+
+.P
+The
+\f(CWraw1\fP
+and
+\f(CWraw2\fP
+values returned are the actual values
+in the rangelist entry (address, length,
+or index depending).
+For basename entries both
+values are set to the single value in the entry
+(an address or index).
+For end of list entries neither value is set.
+.P
+If 
+\f(CWdebug_addr_unavailable\fP
+is returns non-zero then
+the 
+\f(CWcooked1\fP 
+and
+\f(CWcooked2\fP
+values are not set usefully
+and should be ignored.
+The issue arises because with dwp/dwo
+object files the 
+\f(CW.debug_addr\fP
+section will be in the executable
+and if the 
+\f(CWdwarf_set_tied_dbg()\fP
+function was not called to enable access
+to .debug_addr the 'cooked' fields cannot
+be calculated.
+.P
+The
+\f(CWcooked1\fP
+\f(CWcooked2\fP
+values returned are the actual
+addresses in the rangelist entry,
+after any necessary translation of
+indexes and offsets and lengths.
+For  non-basename entries these
+two values are the start and end addresses
+of the rnglist entry.
+If and only if 
+\f(CWdebug_addr_unavailable\fP
+returns zero.
+For  basename entries these
+two values are both the basename address.
+For end-of-list
+entries neither value means anything.
+.P
+If the
+\f(CWentrynum\fP
+is out of range,
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned.
+.P
+At present
+\f(CWDW_DLV_ERROR\fP
+is never returned, but callers
+should not assume that will aways be true.
+
+
+.H 4 "dwarf_get_rnglists_entry_fields()"
+.DS
+\f(CWint dwarf_get_rnglists_entry_fields(
+    Dwarf_Rnglists_Head head,
+    Dwarf_Unsigned entrynum,
+    unsigned *entrylen,
+    unsigned *code,
+    Dwarf_Unsigned *raw1,
+    Dwarf_Unsigned *raw2,
+    Dwarf_Unsigned *cooked1,
+    Dwarf_Unsigned *cooked2,
+    Dwarf_Error    *err)\fP
+.DE
+This the same as
+\f(CWdwarf_get_rnglists_entry_fields_a()\fP
+except this is missing the
+\f(CWdebug_addr_unavailable\fP
+argument so it's impossible for callers to know
+that the cooked values are not calculated.
+Do not use this function.
 
 .H 4 "dwarf_dealloc_rnglists_head()"
 .DS

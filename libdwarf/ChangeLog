@@ -1,3 +1,20 @@
+2020-06-25: David Anderson
+    * dwarf_loc.c: Corrected indents.
+    * dwarf_loclists.c: Corrected indents, removed
+      trailing whitespace.
+    * dwarf_peread.c: Removed trailing whitespace.
+    * dwarf_rnglists.c: Removed trailing whitespace.
+    * libdwarf2.1.mm: Rev 2.98. Added documentation
+      on the .debug_names section printing functions.
+      These intended for debugging .debug_names
+      (that is, by dwarfdump),
+      not things user code are likely to want to use. 
+      Documented the new function 
+      dwarf_get_rnglists_entry_fields_a() as the original
+      dwarf_get_rnglists_entry_fields() 
+      (which is still there and works as well as before)
+      left off a field important to callers.
+    * libdwarf2.1.pdf: Rev 2.98. Regenerated.
 2020-06-22: David Anderson
     * dwarf_loc.c: Using knowledge of the base address status
       improve messaging while reducing execution time.

@@ -836,7 +836,7 @@ build_array_of_rle(Dwarf_Debug dbg,
     Dwarf_Bool foundbaseaddr        = FALSE;
     int done = FALSE;
     Dwarf_Bool no_debug_addr_available = FALSE;
-    
+
 
     if (rctx->rh_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc
@@ -939,7 +939,7 @@ build_array_of_rle(Dwarf_Debug dbg,
                 e->rle_cooked2 = 0;
                 e->rle_cooked1 = 0;
                 return res;
-            
+
             } else {
                 e->rle_cooked1 = addr1;
                 e->rle_cooked2 = val2+addr1;
@@ -950,8 +950,8 @@ build_array_of_rle(Dwarf_Debug dbg,
                 e->rle_cooked1 = val1+latestbaseaddr;
                 e->rle_cooked2 = val2+latestbaseaddr;
             } else {
-                /* Well, something failed, could be 
-                   missing debug_addr. */
+                /*  Well, something failed, could be
+                    missing debug_addr. */
                 e->rle_index_failed = TRUE;
                 e->rle_cooked2 = 0;
                 e->rle_cooked1 = 0;
@@ -1070,7 +1070,7 @@ dwarf_rnglists_get_rle_head(
                 " %u"  ,attr_val);
             dwarfstring_append(&m,
                 " is unusable unless it is in a tied file."
-                " libdwarf is incomplete. FIXME");
+                " Possibly libdwarf is incomplete.FIXME");
             _dwarf_error_string(dbg,error,DW_DLE_RNGLISTS_ERROR,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
@@ -1206,7 +1206,7 @@ dwarf_get_rnglists_entry_fields_a(
     return DW_DLV_OK;
 }
 
-/*  This is missing a crucial bit, 
+/*  This is missing a crucial bit,
     debug_addr_unavailable = e->rle_index_failed,
     so the results cannot be reliably used.
     DO NOT USE */
