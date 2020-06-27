@@ -902,10 +902,12 @@ dwarf_print_memory_stats(UNUSEDARG Dwarf_Debug dbg)
 
 
 
-/* In the 'rela' relocation case we might have malloc'd
-   space to ensure it is read-write. In that case, free the space.  */
+/* In the 'rela' relocation case  or in case
+   of compressed sections we might have malloc'd
+   space (to ensure it is read-write or to decompress it
+   respectively, or both). In that case, free the space.  */
 static void
-rela_free(struct Dwarf_Section_s * sec)
+malloc_section_free(struct Dwarf_Section_s * sec)
 {
     if (sec->dss_data_was_malloc) {
         free(sec->dss_data);
@@ -971,32 +973,34 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     freecontextlist(dbg,&dbg->de_types_reading);
 
     /* Housecleaning done. Now really free all the space. */
-    rela_free(&dbg->de_debug_info);
-    rela_free(&dbg->de_debug_types);
-    rela_free(&dbg->de_debug_abbrev);
-    rela_free(&dbg->de_debug_line);
-    rela_free(&dbg->de_debug_line_str);
-    rela_free(&dbg->de_debug_loc);
-    rela_free(&dbg->de_debug_aranges);
-    rela_free(&dbg->de_debug_macinfo);
-    rela_free(&dbg->de_debug_macro);
-    rela_free(&dbg->de_debug_names);
-    rela_free(&dbg->de_debug_pubnames);
-    rela_free(&dbg->de_debug_str);
-    rela_free(&dbg->de_debug_sup);
-    rela_free(&dbg->de_debug_frame);
-    rela_free(&dbg->de_debug_frame_eh_gnu);
-    rela_free(&dbg->de_debug_pubtypes);
-    rela_free(&dbg->de_debug_funcnames);
-    rela_free(&dbg->de_debug_typenames);
-    rela_free(&dbg->de_debug_varnames);
-    rela_free(&dbg->de_debug_weaknames);
-    rela_free(&dbg->de_debug_ranges);
-    rela_free(&dbg->de_debug_str_offsets);
-    rela_free(&dbg->de_debug_addr);
-    rela_free(&dbg->de_debug_gdbindex);
-    rela_free(&dbg->de_debug_cu_index);
-    rela_free(&dbg->de_debug_tu_index);
+    malloc_section_free(&dbg->de_debug_info);
+    malloc_section_free(&dbg->de_debug_types);
+    malloc_section_free(&dbg->de_debug_abbrev);
+    malloc_section_free(&dbg->de_debug_line);
+    malloc_section_free(&dbg->de_debug_line_str);
+    malloc_section_free(&dbg->de_debug_loc);
+    malloc_section_free(&dbg->de_debug_aranges);
+    malloc_section_free(&dbg->de_debug_macinfo);
+    malloc_section_free(&dbg->de_debug_macro);
+    malloc_section_free(&dbg->de_debug_names);
+    malloc_section_free(&dbg->de_debug_pubnames);
+    malloc_section_free(&dbg->de_debug_str);
+    malloc_section_free(&dbg->de_debug_sup);
+    malloc_section_free(&dbg->de_debug_frame);
+    malloc_section_free(&dbg->de_debug_frame_eh_gnu);
+    malloc_section_free(&dbg->de_debug_pubtypes);
+    malloc_section_free(&dbg->de_debug_funcnames);
+    malloc_section_free(&dbg->de_debug_typenames);
+    malloc_section_free(&dbg->de_debug_varnames);
+    malloc_section_free(&dbg->de_debug_weaknames);
+    malloc_section_free(&dbg->de_debug_ranges);
+    malloc_section_free(&dbg->de_debug_str_offsets);
+    malloc_section_free(&dbg->de_debug_addr);
+    malloc_section_free(&dbg->de_debug_gdbindex);
+    malloc_section_free(&dbg->de_debug_cu_index);
+    malloc_section_free(&dbg->de_debug_tu_index);
+    malloc_section_free(&dbg->de_debug_loclists);
+    malloc_section_free(&dbg->de_debug_rnglists);
     dwarf_harmless_cleanout(&dbg->de_harmless_errors);
 
     _dwarf_dealloc_rnglists_context(dbg);

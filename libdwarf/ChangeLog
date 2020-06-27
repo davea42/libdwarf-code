@@ -1,3 +1,11 @@
+2020-06-27: David Anderson
+    * dwarf_alloc.c(_dwarf_free_all_of_one_debug): If space 
+      for debug_rnglists or
+      debug_loclists was malloc'd (relocations
+      or compressed sections force malloc) we
+      now call the function that frees that
+      data.  That function renamed:
+      rela_free->malloc_section_free.
 2020-06-25: David Anderson
     * dwarf_loc.c: Corrected indents.
     * dwarf_loclists.c: Corrected indents, removed

@@ -3527,7 +3527,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     struct esb_s    valname;
     struct esb_s    esb_extra;
     char            valbuf[ESB_FIXED_ALLOC_SIZE*3];
-    char            xtrabuf[ESB_FIXED_ALLOC_SIZE];
+    char            xtrabuf[ESB_FIXED_ALLOC_SIZE*4];
     int             res = 0;
     boolean         checking = glflags.gf_do_check_dwarf;
 
@@ -3951,8 +3951,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return res;
         }
-        /* If DW_FORM_block*  this results 
-           in duplicating the form name (with -M). */
+        /*  If DW_FORM_block*  this results
+            in duplicating the form name (with -M). */
         res = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,
             attrib, srcfiles, cnt, &valname,
