@@ -1,3 +1,8 @@
+2020-06-28: David Anderson
+    * tag_attr.list,tag_tree.list: Adding standard DWARF5
+      tag-tag and tag-attr relationships to the lists.
+    * dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-table.h: Regenerated.
 2020-06-26: David Anderson
     * print_die.c (print_attribute): Increased the stack 
       alloc of a string so that even fairly long 

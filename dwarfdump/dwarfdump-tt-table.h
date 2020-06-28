@@ -334,6 +334,7 @@ static Usage_Tag_Tree tag_tree_0a[] = {
 /* 0x0b - DW_TAG_lexical_block */
 static Usage_Tag_Tree tag_tree_0b[] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
+    {/* 0x48 */ 0, DW_TAG_call_site},
     {/* 0x46 */ 0, DW_TAG_dynamic_type},
     {/* 0x02 */ 0, DW_TAG_class_type},
     {/* 0x04 */ 0, DW_TAG_enumeration_type},
@@ -813,7 +814,7 @@ static Rate_Tag_Tree rate_tag_tree[] = {
     { 0, 0 /* 0x08 - DW_TAG_imported_declaration */},
     {0, 0},
     { 0, 0 /* 0x0a - DW_TAG_label */},
-    {32, 0 /* 0x0b - DW_TAG_lexical_block */},
+    {33, 0 /* 0x0b - DW_TAG_lexical_block */},
     {0, 0},
     { 0, 0 /* 0x0d - DW_TAG_member */},
     {0, 0},
@@ -911,7 +912,7 @@ static unsigned int tag_tree_combination_table[TAG_TREE_ROW_COUNT][TAG_TREE_COLU
 /* 0x0a - DW_TAG_label                         */
     { 0x00000000,0x00000000,0x00000000,},
 /* 0x0b - DW_TAG_lexical_block                 */
-    { 0xe0ed8d36,0x043068d3,0x000000f0,},
+    { 0xe0ed8d36,0x043068d3,0x000001f0,},
 /* 0x0c - <no name known for the TAG>          */
     { 0x00000000,0x00000000,0x00000000,},
 /* 0x0d - DW_TAG_member                        */

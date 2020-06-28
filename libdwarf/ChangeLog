@@ -1,3 +1,9 @@
+2020-06-28: David Anderson
+    * dwarf_elf_defines.h: Adding R_386_GOTPC
+      so we don't rely on /usr/include to have the
+      ones we need.
+    * dwarf_elf_rel_detector.c: Adding R_386_GOTPC
+      to identify the relocation as 32bit.
 2020-06-27: David Anderson
     * dwarf_alloc.c(_dwarf_free_all_of_one_debug): If space 
       for debug_rnglists or

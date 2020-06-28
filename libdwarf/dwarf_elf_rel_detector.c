@@ -88,6 +88,9 @@ _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
 #if defined (R_386_32)
             |  (type == R_386_32)
 #endif
+#if defined (R_386_GOTPC)
+            |  (type == R_386_GOTPC)
+#endif
 #if defined (R_386_PC32)
             |  (type == R_386_PC32)
 #endif

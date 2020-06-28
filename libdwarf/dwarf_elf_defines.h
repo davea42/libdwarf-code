@@ -996,6 +996,9 @@ extern "C" {
 #ifndef R_386_32
 #define R_386_32                               1
 #endif /* R_386_32 */
+#ifndef R_386_GOTPC
+#define R_386_GOTPC                            10
+#endif /* R_386_GOTPC */
 #ifndef R_386_PC32
 #define R_386_PC32                             2
 #endif /* R_386_PC32 */

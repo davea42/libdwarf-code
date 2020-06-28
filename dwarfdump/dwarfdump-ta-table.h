@@ -143,6 +143,7 @@ static Usage_Tag_Attr tag_attr_02[] = {
     {/* 0x4f */  0, DW_AT_associated},
     {/* 0x0d */  0, DW_AT_bit_size},
     {/* 0x0b */  0, DW_AT_byte_size},
+    {/* 0x36 */  0, DW_AT_calling_convention},
     {/* 0x1d */  0, DW_AT_containing_type},
     {/* 0x50 */  0, DW_AT_data_location},
     {/* 0x3c */  0, DW_AT_declaration},
@@ -828,6 +829,7 @@ static Usage_Tag_Attr tag_attr_13[] = {
     {/* 0x4f */  0, DW_AT_associated},
     {/* 0x0d */  0, DW_AT_bit_size},
     {/* 0x0b */  0, DW_AT_byte_size},
+    {/* 0x36 */  0, DW_AT_calling_convention},
     {/* 0x50 */  0, DW_AT_data_location},
     {/* 0x3c */  0, DW_AT_declaration},
     {/* 0x5a */  0, DW_AT_description},
@@ -1066,6 +1068,7 @@ static Usage_Tag_Attr tag_attr_17[] = {
     {/* 0x4f */  0, DW_AT_associated},
     {/* 0x0d */  0, DW_AT_bit_size},
     {/* 0x0b */  0, DW_AT_byte_size},
+    {/* 0x36 */  0, DW_AT_calling_convention},
     {/* 0x50 */  0, DW_AT_data_location},
     {/* 0x3c */  0, DW_AT_declaration},
     {/* 0x5a */  0, DW_AT_description},
@@ -1273,7 +1276,7 @@ typedef struct {
 static Rate_Tag_Attr rate_tag_attr[] = {
     {0, 0},
     {22, 0, /* 0x01 - DW_TAG_array_type */},
-    {20, 0, /* 0x02 - DW_TAG_class_type */},
+    {21, 0, /* 0x02 - DW_TAG_class_type */},
     {14, 0, /* 0x03 - DW_TAG_entry_point */},
     {23, 0, /* 0x04 - DW_TAG_enumeration_type */},
     {16, 0, /* 0x05 - DW_TAG_formal_parameter */},
@@ -1290,11 +1293,11 @@ static Rate_Tag_Attr rate_tag_attr[] = {
     {11, 0, /* 0x10 - DW_TAG_reference_type */},
     {22, 0, /* 0x11 - DW_TAG_compile_unit */},
     {20, 0, /* 0x12 - DW_TAG_string_type */},
-    {21, 0, /* 0x13 - DW_TAG_structure_type */},
+    {22, 0, /* 0x13 - DW_TAG_structure_type */},
     {0, 0},
     {19, 0, /* 0x15 - DW_TAG_subroutine_type */},
     {16, 0, /* 0x16 - DW_TAG_typedef */},
-    {20, 0, /* 0x17 - DW_TAG_union_type */},
+    {21, 0, /* 0x17 - DW_TAG_union_type */},
     { 6, 0, /* 0x18 - DW_TAG_unspecified_parameters */},
     { 9, 0, /* 0x19 - DW_TAG_variant */},
     {11, 0, /* 0x1a - DW_TAG_common_block */},
@@ -1362,7 +1365,7 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x01 - DW_TAG_array_type                    */
     { 0x00802a0a,0x1e065000,0x0401c280,0x00020000,0x00000100,},
 /* 0x02 - DW_TAG_class_type                    */
-    { 0x2080280a,0x1e061000,0x0401c080,0x00000200,0x00000100,},
+    { 0x2080280a,0x1e461000,0x0401c080,0x00000200,0x00000100,},
 /* 0x03 - DW_TAG_entry_point                   */
     { 0x0002000a,0x0e080400,0x04000341,0x00004000,0x00000000,},
 /* 0x04 - DW_TAG_enumeration_type              */
@@ -1396,7 +1399,7 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x12 - DW_TAG_string_type                   */
     { 0x0280280a,0x1e061000,0x0401c040,0x00018000,0x00000000,},
 /* 0x13 - DW_TAG_structure_type                */
-    { 0x0080280a,0x1e061000,0x0401c080,0x00004200,0x00000300,},
+    { 0x0080280a,0x1e461000,0x0401c080,0x00004200,0x00000300,},
 /* 0x14 - <no name known for the tag>          */
     { 0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x15 - DW_TAG_subroutine_type               */
@@ -1404,7 +1407,7 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x16 - DW_TAG_typedef                       */
     { 0x0080000a,0x1e061000,0x0401c200,0x00000000,0x00000100,},
 /* 0x17 - DW_TAG_union_type                    */
-    { 0x0080280a,0x1e061000,0x0401c080,0x00000200,0x00000300,},
+    { 0x0080280a,0x1e461000,0x0401c080,0x00000200,0x00000300,},
 /* 0x18 - DW_TAG_unspecified_parameters        */
     { 0x00000002,0x0e120000,0x00000000,0x00000000,0x00000000,},
 /* 0x19 - DW_TAG_variant                       */
