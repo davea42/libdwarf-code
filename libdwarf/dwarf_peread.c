@@ -485,9 +485,9 @@ dwarf_pe_load_dwarf_section_headers(
             return res;
         }
         if (expname) {
-           sec_outp->dwarfsectname = strdup(expname);
+            sec_outp->dwarfsectname = strdup(expname);
         } else {
-           sec_outp->dwarfsectname = strdup("<sec name missing>");
+            sec_outp->dwarfsectname = strdup("<sec name missing>");
         }
         if ( !sec_outp->name || !sec_outp->dwarfsectname) {
             *errcode = DW_DLE_ALLOC_FAIL;

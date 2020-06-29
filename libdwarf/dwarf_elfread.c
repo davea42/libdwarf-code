@@ -241,8 +241,12 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
         if (!sp->gh_size) {
             return DW_DLV_NO_ENTRY;
         }
-        if ((sp->gh_size + sp->gh_offset) >
-            elf->f_filesize) {
+        /*  Guarding against bad values and
+            against overflow */
+        if (sp->gh_size > elf->f_filesize ||
+            sp->gh_offset > elf->f_filesize ||
+            (sp->gh_size + sp->gh_offset) >
+                elf->f_filesize) {
             *error = DW_DLE_ELF_SECTION_ERROR;
             return DW_DLV_ERROR;
         }
@@ -254,7 +258,8 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
         }
         res = RRMOA(elf->f_fd,
             sp->gh_content, (off_t)sp->gh_offset,
-            (size_t)sp->gh_size, (off_t)elf->f_filesize, error);
+            (size_t)sp->gh_size,
+            (off_t)elf->f_filesize, error);
         if (res != DW_DLV_OK) {
             free(sp->gh_content);
             sp->gh_content = 0;

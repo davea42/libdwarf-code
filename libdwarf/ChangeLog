@@ -1,3 +1,10 @@
+2020-06-29: David Anderson
+    * dwarf_elfread.c: Added checks on section sizes
+      and offsets to ensure they don't exceed file size
+      (but only check when we try to read them, we
+      want to read dwarf even if sections we do not
+      care about have damaged section headers).
+    * dwarf_peread.c: Fixed indentation mistake.
 2020-06-28: David Anderson
     * dwarf_elf_defines.h: Adding R_386_GOTPC
       so we don't rely on /usr/include to have the
