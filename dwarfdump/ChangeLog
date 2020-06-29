@@ -1,3 +1,6 @@
+2020-06-29: David Anderson
+    * print_die.c: Fixed a minor formatting error on
+      DW_AT_location and related attributes.
 2020-06-28: David Anderson
     * tag_attr.list,tag_tree.list: Adding standard DWARF5
       tag-tag and tag-attr relationships to the lists.

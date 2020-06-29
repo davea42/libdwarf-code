@@ -84,7 +84,6 @@ static int handle_rnglists(Dwarf_Die die,
     int local_verbose,
     Dwarf_Error *err);
 
-
 /* Is this a PU has been invalidated by the SN Systems linker? */
 #define IsInvalidCode(low,high) ((low == max_address) || (low == 0 && high == 0))
 
@@ -3103,11 +3102,8 @@ print_location_description(Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Half theform = 0;
     Dwarf_Half directform = 0;
-    enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
     Dwarf_Half version = 0;
     Dwarf_Half offset_size = 0;
-    Dwarf_Unsigned formval = 0;
-
     res = get_form_values(dbg,attrib,&theform,&directform,
         err);
     if (res == DW_DLV_ERROR) {
@@ -3115,65 +3111,6 @@ print_location_description(Dwarf_Debug dbg,
     }
     res = dwarf_get_version_of_die(die,
         &version,&offset_size);
-
-    fc = dwarf_get_form_class(version, attr,
-        offset_size, theform);
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
-    if (fc == DW_FORM_CLASS_CONSTANT) {
-        res = dwarf_formudata(attrib,&formval,
-            err);
-        if (res != DW_DLV_OK){
-            return res;
-        }
-        if (fc == DW_FORM_CLASS_LOCLISTSPTR) {
-            esb_append_printf_u(base,
-                "<loclists index: 0x%"
-                DW_PR_XZEROS DW_PR_DUx
-                ">",
-                formval);
-            if (version >= DWVERSION5) {
-                esb_append_printf_u(base,
-                    "<loclists offset 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    ">",
-                    formval);
-            } else {
-                esb_append_printf_u(base,
-                    " ERROR! form class 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    , formval);
-            }
-        }
-    } else if (fc == DW_FORM_CLASS_LOCLISTSPTR ||
-        fc == DW_FORM_CLASS_LOCLIST) {
-        res = dwarf_global_formref(attrib,&formval,err);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-        if (fc == DW_FORM_CLASS_LOCLISTSPTR) {
-            esb_append_printf_u(base,
-                "<loclists index: 0x%"
-                DW_PR_XZEROS DW_PR_DUx
-                ">",
-                formval);
-        } else {
-            if (version >= DWVERSION5) {
-                esb_append_printf_u(base,
-                    "<loclists offset 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    ">",
-                    formval);
-            } else {
-                esb_append_printf_u(base,
-                    "0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    , formval);
-            }
-        }
-    }  else {
-    }
     if (is_simple_location_expr(theform)) {
         res  = print_location_list(dbg, die, attrib,
             checking,
@@ -3939,6 +3876,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_frame_base: {
         Dwarf_Half theform = 0;
         Dwarf_Half directform = 0;
+        boolean showform = glflags.show_form_used;
 
         append_extra_string = TRUE;
         res = get_form_values(dbg,attrib,&theform,&directform,
@@ -3951,12 +3889,16 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return res;
         }
-        /*  If DW_FORM_block*  this results
+        /*  If DW_FORM_block* && show_form_used
+            get_attr_value() results
             in duplicating the form name (with -M). */
+        if (is_simple_location_expr(theform)) {
+            showform = FALSE;
+        }
         res = get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,
             attrib, srcfiles, cnt, &valname,
-            glflags.show_form_used,
+            showform,
             glflags.verbose,
             err);
         if (res == DW_DLV_ERROR) {
@@ -7280,8 +7222,15 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             default:  {
                 Dwarf_Bool chex = FALSE;
                 Dwarf_Die  tdie = die;
-                if(DW_AT_ranges == attr) {
-                    /*  In this case do not look for data
+                if (DW_AT_ranges        == attr ||
+                    DW_AT_location      == attr ||
+                    DW_AT_vtable_elem_location == attr ||
+                    DW_AT_string_length == attr ||
+                    DW_AT_return_addr   == attr ||
+                    DW_AT_use_location  == attr ||
+                    DW_AT_static_link   == attr||
+                    DW_AT_frame_base    == attr) {
+                    /*  Do not look for data
                         type for unsigned/signed.
                         and do use HEX. */
                     chex = TRUE;
@@ -7560,7 +7509,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         if (wres == DW_DLV_OK) {
             /*  Fall through to end to show the form details. */
             Dwarf_Bool hex_format = TRUE;
+            esb_append(esbp,"<index to debug_loclists ");
             formx_unsigned(tempud,esbp,hex_format);
+            esb_append(esbp,">");
             break;
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
@@ -7584,7 +7535,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         if (wres == DW_DLV_OK) {
             /*  Fall through to end to show the form details. */
             Dwarf_Bool hex_format = TRUE;
+            esb_append(esbp,"<index to debug_rnglists ");
             formx_unsigned(tempud,esbp,hex_format);
+            esb_append(esbp,">");
         } else if (wres == DW_DLV_NO_ENTRY) {
             /*  nothing? */
         } else {
