@@ -1,4 +1,8 @@
 2020-06-29: David Anderson
+    * libdwarf_version.h: updated version string.
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+      dwarf_names_new.h: Regenerated.
+2020-06-29: David Anderson
     * dwarf_elfread.c: Added checks on section sizes
       and offsets to ensure they don't exceed file size
       (but only check when we try to read them, we
