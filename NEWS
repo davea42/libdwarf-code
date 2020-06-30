@@ -1,3 +1,11 @@
+2020-06-29:
+  Dwarfdump now dumps DWARF5 .debug_rnglists and
+  .debug_loclists.  To handle DWARF5 there are
+  a small number of new functions. All existing
+  functions are still supported, but
+  to read DWARF5 some small changes are required.
+  In libdwarf see libdwarf2.1.pdf and also see
+  libdwarf/ChangeLog for details. 
 2020-05-23:
   dwarfdump now takes much less malloc() to work, as measured
   by valgrind --tool=massif  and massif-visualizer.
