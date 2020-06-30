@@ -102,6 +102,23 @@ calls
 #define TRUE  1
 #define FALSE 0
 
+#if 0
+/*  One example of calling this.
+    place just before DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE
+    dumpsizes(__LINE__,strsectlength,strpsh->gh_offset, ep->f_filesize);
+*/    
+static void
+dumpsizes(int line,Dwarf_Unsigned s,
+    Dwarf_Unsigned o,
+    Dwarf_Unsigned fsz)
+{
+    Dwarf_Unsigned tlen = s + o;
+    printf("Size Error dadebug sz 0x%llx off 0x%llx fsx 0x%llx "
+        "sum 0x%llx line %d \n",
+        s,o,fsz,tlen,line);
+}
+#endif
+
 #ifdef WORDS_BIGENDIAN
 #define ASNAR(func,t,s)                         \
     do {                                        \
@@ -1038,6 +1055,13 @@ _dwarf_load_elf_symstr(
     /*  Alloc an extra byte as a guaranteed NUL byte
         at the end of the strings in case the section
         is corrupted and lacks a NUL at end. */
+    if (strsectlength > ep->f_filesize ||
+        strpsh->gh_offset >ep->f_filesize ||
+        (strsectlength + strpsh->gh_offset) >
+            ep->f_filesize) {
+        *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
+        return DW_DLV_ERROR;
+    }
     ep->f_symtab_sect_strings = calloc(1,strsectlength+1);
     if(!ep->f_symtab_sect_strings) {
         ep->f_symtab_sect_strings = 0;
@@ -1082,6 +1106,13 @@ _dwarf_elf_load_sectstrings(
         *errcode = DW_DLE_ELF_STRING_SECTION_MISSING;
         return DW_DLV_ERROR;
     }
+    if (secoffset    >=    ep->f_filesize ||
+        psh->gh_size > ep->f_filesize ||
+        (secoffset + psh->gh_size) >
+            ep->f_filesize) {
+        *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
+        return DW_DLV_ERROR;
+    }
     if(psh->gh_size > ep->f_elf_shstrings_max) {
         free(ep->f_elf_shstrings_data);
         ep->f_elf_shstrings_data = (char *)malloc(psh->gh_size);
@@ -1120,8 +1151,8 @@ elf_load_sectheaders32(
         (entsize > 200)||
         (count > ep->f_filesize) ||
         ((count *entsize +offset) > ep->f_filesize)) {
-            *errcode = DW_DLE_FILE_OFFSET_BAD;
-            return DW_DLV_ERROR;
+        *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
+        return DW_DLV_ERROR;
     }
     res = generic_shdr_from_shdr32(ep,&generic_count,
         offset,entsize,count,errcode);
@@ -1156,8 +1187,8 @@ elf_load_sectheaders64(
         (entsize > 200)||
         (count > ep->f_filesize) ||
         ((count *entsize +offset) > ep->f_filesize)) {
-            *errcode = DW_DLE_FILE_OFFSET_BAD;
-            return DW_DLV_ERROR;
+        *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
+        return DW_DLV_ERROR;
     }
     res = generic_shdr_from_shdr64(ep,&generic_count,
         offset,entsize,count,errcode);
@@ -1204,8 +1235,8 @@ _dwarf_elf_load_a_relx_batch(
     if ((offset > ep->f_filesize)||
         (size > ep->f_filesize) ||
         ((size +offset) > ep->f_filesize)) {
-            *errcode = DW_DLE_FILE_OFFSET_BAD;
-            return DW_DLV_ERROR;
+        *errcode = DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE;
+        return DW_DLV_ERROR;
     }
     if (localoffsize == RelocOffset32) {
         if (localrela ==  RelocIsRela) {

@@ -1,4 +1,14 @@
 2020-06-29: David Anderson
+    * dwarf_elf_load_headers.c: Added sanity checks
+      on section size of the section strings and
+      the symbol strings.
+      All the section-size errors now use
+      the new error code DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE.
+    * dwarf_errmsg_list.h: Added string for
+      DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE.
+    * libdwarf.h.in: Added DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE.
+    * generated_libdwarf.h.in: Regenerated.
+2020-06-29: David Anderson
     * libdwarf_version.h: updated version string.
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
       dwarf_names_new.h: Regenerated.

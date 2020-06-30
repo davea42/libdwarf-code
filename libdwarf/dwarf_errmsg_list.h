@@ -544,5 +544,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_USER_DECLARED_ERROR(467) library user created this.",
     "DW_DLE_RNGLISTS_ERROR(468) Corrupt dwarf. Bad .debug_rnglists data.",
     "DW_DLE_LOCLISTS_ERROR(469) Corrupt dwarf. Bad .debug_loclists data.",
+    "DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE(470) corrupt section header.",
+ 
 };
 #endif /* DWARF_ERRMSG_LIST_H */
