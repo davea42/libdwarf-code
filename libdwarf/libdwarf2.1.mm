@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.98, 23 June 2020
+.ds vE Rev 2.99, 1 July 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -11663,6 +11663,9 @@ This function is ill suited to use with
 21st century DWARF as there is just not
 enough data provided in the interface.
 Do not use this interface.
+Use 
+\f(CWdwarf_get_locdesc_entry_c()\fP
+instead.
 .P
 The function reads
 a location list entry starting at \f(CWoffset\fP and returns
@@ -11696,42 +11699,9 @@ you start at offset zero and proceed through all the entries).
 The \f(CWhipc_offset\fP,
 low pc \f(CWlopc_offset\fP are offsets from the beginning of the
 current procedure, not genuine pc values.
-.in +2
-.FG "Examples dwarf_get_loclist_entry()"
-.DS
-\f(CW
-void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
-{
-    /*  Looping through the dwarf_loc section finding loclists:
-        an example.  */
-    int res;
-    Dwarf_Unsigned next_entry = 0;
-    Dwarf_Addr hipc_off = 0;
-    Dwarf_Addr lowpc_off = 0;
-    Dwarf_Ptr data = 0;
-    Dwarf_Unsigned entry_len = 0;
-    Dwarf_Error err = 0;
-
-    for(;;) {
-        res = dwarf_get_loclist_entry(dbg,offset,&hipc_off,
-            &lowpc_off, &data, &entry_len,&next_entry,&err);
-        if (res == DW_DLV_OK) {
-            /* A valid entry. */
-            offset = next_entry;
-            continue;
-        } else if (res ==DW_DLV_NO_ENTRY) {
-            /* Done! */
-            break;
-        } else {
-            /* Error! */
-            break;
-        }
-    }
-}
-\fP
-.DE
-.in -2
-
+.P
+The example of use has been deleted.
+Do not use this function.
 
 .H 2 "Abbreviations access"
 These are Internal-level Interface functions.

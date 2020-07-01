@@ -1,3 +1,11 @@
+2020-07-01: David Anderson
+    * libdwarf.h.in: Comment now deprecates 
+      dwarf_get_loclist_entry().
+    * generated_libdwarf.h.in: regenerated.
+    * libdwarf2.1.mm: Deprecates dwarf_get_loclist_entry().
+    * libdwarf2.1.pdf: Regenerated, version 2.99.
+    * dwarf_locationop_read.c: Pass real address-size to
+      read_encoded_addr() so it will work properly.
 2020-06-29: David Anderson
     * dwarf_elf_load_headers.c: Added sanity checks
       on section size of the section strings and

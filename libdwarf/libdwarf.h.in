@@ -2839,7 +2839,11 @@ int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     Dwarf_Off*       /*cu_offset*/,
     Dwarf_Error*     /*error*/);
 
-/* location list section operation.  (.debug_loc access) */
+/*  location list section operation.  (.debug_loc access) 
+    DO NOT USE, it cannot deal with
+    recent dwarf or CUs with different
+    address sizes.  Use dwarf_get_locdesc_entry_c() instead.
+*/
 int dwarf_get_loclist_entry(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*offset*/,
     Dwarf_Addr*      /*hipc*/,

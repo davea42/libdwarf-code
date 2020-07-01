@@ -45,16 +45,17 @@
 
 
 /*  Richard Henderson, on DW_OP_GNU_encoded_addr:
-    The operand is an absolute
-    address.  The first byte of the value
-    is an encoding length: 0 2 4 or 8.  If zero
-    it means the following is address-size.
+    The operand is an absolute address.  
+    The first byte of the value is an encoding length:
+    0 2 4 or 8.  
+    If zero it means the following is address-size.
     The address then follows immediately for
     that number of bytes. */
 static int
 read_encoded_addr(Dwarf_Small *loc_ptr,
    Dwarf_Debug dbg,
    Dwarf_Small *section_end_ptr,
+   Dwarf_Half address_size,
    Dwarf_Unsigned * val_out,
    int * len_out,
    Dwarf_Error *error)
@@ -63,9 +64,8 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     Dwarf_Small op = *loc_ptr;
     Dwarf_Unsigned operand = 0;
     len++;
-    if (op == 0) {
-        /* FIXME: should be CU specific. */
-        op = dbg->de_pointer_size;
+    if (!op) {
+        op = address_size;
     }
     switch (op) {
     case 1:
@@ -611,6 +611,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         int length = 0;
             int reares = read_encoded_addr(loc_ptr,dbg,
                 section_end,
+                address_size,
                 &operand1, &length,error);
             if (reares != DW_DLV_OK) {
                 return reares;
