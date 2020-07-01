@@ -1,3 +1,11 @@
+2020-07-01: David Anderson
+    * esb.h: Make debug-only locals unsigned long instead of long.
+    * print_die.c: Where there is a N iteration loop adding
+      to esb strings use N and an estimate of per-loop text size
+      request a sensible space increment
+      to ensure there is enough space  that completing
+      the set of strings will not need another malloc.
+      Saved about 1% of cputime in full regression test.
 2020-06-29: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

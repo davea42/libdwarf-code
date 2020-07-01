@@ -319,6 +319,20 @@ get_die_stack_sibling()
     return 0;
 }
 static void
+possibly_increase_esb_alloc(struct esb_s *esbp,
+  Dwarf_Unsigned count,
+  Dwarf_Unsigned entrysize)
+{
+    /*  for bytes of text needed per element */
+    Dwarf_Unsigned targetsize = count*entrysize;
+    Dwarf_Unsigned used       = esb_string_len(esbp);
+    Dwarf_Unsigned cursize    = esb_get_allocated_size(esbp);
+
+    if ((targetsize+used) > cursize) {
+        esb_force_allocation(esbp,targetsize+used);
+    }
+}
+static void
 dealloc_all_srcfiles(Dwarf_Debug dbg,
   char **srcfiles,
   Dwarf_Signed cnt)
@@ -3464,7 +3478,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     struct esb_s    valname;
     struct esb_s    esb_extra;
     char            valbuf[ESB_FIXED_ALLOC_SIZE*3];
-    char            xtrabuf[ESB_FIXED_ALLOC_SIZE*4];
+    char            xtrabuf[ESB_FIXED_ALLOC_SIZE*3];
     int             res = 0;
     boolean         checking = glflags.gf_do_check_dwarf;
 
@@ -4824,6 +4838,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
         Dwarf_Locdesc *locd = 0;
         locd = llbuf;
         no_of_ops = llbuf->ld_cents;
+        possibly_increase_esb_alloc(string_out,no_of_ops,100);
         for (i = 0; i < no_of_ops; i++) {
             Dwarf_Loc * op = &locd->ld_s[i];
 
@@ -4838,6 +4853,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     }
     /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
+    possibly_increase_esb_alloc(string_out,no_of_ops,100);
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,NULL,locdesc,i,
@@ -5445,7 +5461,9 @@ print_location_list(Dwarf_Debug dbg,
             return lres;
         }
         no_of_elements = sno;
-    }
+    }    
+
+    possibly_increase_esb_alloc(details, no_of_elements,100);
     for (llent = 0; llent < no_of_elements; ++llent) {
         Dwarf_Unsigned locdesc_offset = 0;
         Dwarf_Locdesc_c locentry = 0; /* 2015 */

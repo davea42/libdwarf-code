@@ -71,8 +71,8 @@ static FILE *null_device_handle = 0;
 #endif /* _WIN32 */
 
 #ifdef MALLOC_COUNT
-long malloc_count = 0;
-long malloc_size = 0;
+unsigned long malloc_count = 0;
+unsigned long malloc_size = 0;
 #endif
 
 /*  m must be a string, like  "ESBERR..."  for this to work */
