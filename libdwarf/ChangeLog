@@ -1,4 +1,14 @@
 2020-07-02: David Anderson
+    * dwarf_gdbindex.h: Removed gdbindex_offset_type typedef
+      as it is not used anywhere.
+    * dwarf_global.c(dwarf_get_cu_die_offset_given_cu_header_offset):
+      Updated a commment to reflect handling of DWARF5 and more.
+    * dwarf_util.h: Removed SKIP_LEB128_WORD_CK as it
+      is no longer used and replaced by a better function.
+    * dwarf_query.c: Removed comment about that macro.
+    * dwarf_form.c: Revised the commentary on
+      DW_AT_str_offsets_base to match the final DWARF5.
+2020-07-02: David Anderson
     * libdwarf.h.in: Added DW_DLE_GDBINDEX_STRING_ERROR.
     * generated-libdwarf.h.in: Regenerated.
     * dwarf_errmsg_list.h: Added DW_DLE_GDBINDEX_STRING_ERROR.

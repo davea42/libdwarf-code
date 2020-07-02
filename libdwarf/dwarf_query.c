@@ -418,7 +418,7 @@ dwarf_attrlist(Dwarf_Die die,
 
     info_ptr = die->di_debug_ptr;
     {
-        /* SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end); */
+        /* SKIP_LEB128 */
         Dwarf_Unsigned ignore_this = 0;
         Dwarf_Unsigned len = 0;
 
@@ -682,7 +682,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     info_ptr = die->di_debug_ptr;
     /* This ensures and checks die_info_end >= info_ptr */
     {
-        /* SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end); */
+        /* SKIP_LEB128 */
         Dwarf_Unsigned ignore_this = 0;
         Dwarf_Unsigned len = 0;
 
@@ -1180,24 +1180,24 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     if(res != DW_DLV_OK) {
         return res;
     }
-    res = dwarf_attr(cudie,DW_AT_str_offsets_base,
-        &myattr,error);
+    res = dwarf_attr(cudie,DW_AT_str_offsets_base,&myattr,
+        error);
     if(res == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+        dwarf_dealloc_die(cudie);
         return res;
     }
     if (res == DW_DLV_OK) {
         Dwarf_Unsigned val = 0;
         /* Expect DW_FORM_sec_offset */
         if (myattr->ar_attribute_form != DW_FORM_sec_offset) {
-            dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
-            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+            dwarf_dealloc_attribute(myattr);
+            dwarf_dealloc_die(cudie);
             _dwarf_error(dbg, error,DW_DLE_STR_OFFSETS_BASE_WRONG_FORM);
             return (DW_DLV_ERROR);
         }
         res = dwarf_global_formref(myattr,&val,error);
-        dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+        dwarf_dealloc_attribute(myattr);
+        dwarf_dealloc_die(cudie);
         if(res != DW_DLV_OK) {
             return res;
         }
@@ -1208,7 +1208,7 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     }
     /*  NO ENTRY, No other attr.Not even GNU, this one is standard
         DWARF5 only.  */
-    dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+    dwarf_dealloc_die(cudie);
     /*  We do not need a base for a .dwo. We might for .dwp
         and would or .o or executable.
         FIXME: assume we do not need this.

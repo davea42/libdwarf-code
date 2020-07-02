@@ -108,46 +108,6 @@
         ptr += lu_leblen;                             \
     } while (0)
 
-
-/*
-    Skips leb128_encoded numbers that are guaranteed
-    to be no more than 4 bytes long.  Same for both
-    signed and unsigned numbers.
-
-    These seem bogus as they assume 4 bytes get a 4 byte
-    word. Wrong. FIXME
-
-    'return' only in case of error
-    else falls through.
-*/
-#define SKIP_LEB128_WORD_CK(ptr,dbg,errptr,endptr)                     \
-    do {                                          \
-        if ((*(ptr++) & 0x80) != 0) {             \
-            if (ptr >= endptr) {                  \
-                _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
-                return DW_DLV_ERROR;              \
-            }                                     \
-            if ((*(ptr++) & 0x80) != 0) {         \
-                if (ptr >= endptr) {              \
-                    _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
-                    return DW_DLV_ERROR;          \
-                }                                 \
-                if ((*(ptr++) & 0x80) != 0) {     \
-                    if (ptr >= endptr) {          \
-                        _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
-                        return DW_DLV_ERROR;      \
-                    }                             \
-                    ptr++;                        \
-                    if (ptr >= endptr) {          \
-                        _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
-                        return DW_DLV_ERROR;      \
-                    }                             \
-                }                                 \
-            }                                     \
-        }                                         \
-    } while (0)
-
-
 /*  Any error  found here represents a bug that cannot
     be dealloc-d as the caller will not know there was no dbg */
 #define CHECK_DIE(die, error_ret_value)                          \

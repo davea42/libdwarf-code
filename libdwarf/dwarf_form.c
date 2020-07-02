@@ -1585,10 +1585,18 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         res = _dwarf_get_string_base_attr_value(dbg,cu_context,
             &offset_base,error);
         if (res != DW_DLV_OK) {
-            /*  DW_DLV_NO_ENTRY could be acceptable when
+            /*  In DWARF5 (final) a missing 
+                DW_AT_str_offsets_base is surely not going
+                to work.  .debug_str_offsets starts with
+                a header, not just a table. So zero
+                offset is...problematic. We are not
+                declaring an error here though.
+
+                In the DWARF5 draft as of September 2015
+                a DW_DLV_NO_ENTRY could be acceptable when
                 a producer knows that the base offset will be zero.
                 Hence DW_AT_str_offsets_base missing.
-                DWARF5 draft as of September 2015 allows the attribute
+                The DWARF5 draft allows the attribute
                 to be missing (it's up to the compilation tools to
                 make sure that has the correct effect).
             */

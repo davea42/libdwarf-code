@@ -821,14 +821,11 @@ dwarf_get_cu_die_offset_given_cu_header_offset(Dwarf_Debug dbg,
 }
 
 /*  The following version new in October 2011, does allow finding
-    the offset if one knows whether debug_info or debug_types.
+    the offset if one knows whether debug_info or debug_types
+    or any .debug_info type including the DWARF5 flavors.
 
-    However, it is not accurate in DWARF5 because
-    there are two different header lengths (CU and TU)
-    in DWARF5 .debug_info.  In that case, pretend
-    that it's .debug_types (here) and pass is_info zero for
-    a TU (as if it was in .debug_types).
-    */
+    It indirectly calls _dwarf_length_of_cu_header()
+    which knows all the varieties of header.  */
 int
 dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug dbg,
     Dwarf_Off in_cu_header_offset,

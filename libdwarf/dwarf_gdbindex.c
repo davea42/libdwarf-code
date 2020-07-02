@@ -570,7 +570,7 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
             "DW_DLE_GDBINDEX_STRING_ERROR: "
             "The dwarf_gdbindex_string_by_offset() "
             "string starts past the end of the "
-            "section at section_offset " 
+            "section at section_offset 0x%" 
             DW_PR_XZEROS DW_PR_DUx  ".",
             (Dwarf_Unsigned)(uintptr_t)
             (stringitself -gdbindexptr->gi_section_data));
