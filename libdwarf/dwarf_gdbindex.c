@@ -29,10 +29,14 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "dwarfstring.h"
 #include "memcpy_swap.h"
 #include "dwarf_gdbindex.h"
 
@@ -370,7 +374,8 @@ dwarf_gdbindex_addressarea_entry(
     Dwarf_Unsigned cuindex = 0;
 
     if (entryindex >= max) {
-        _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
+        _dwarf_error(gdbindexptr->gi_dbg, error,
+            DW_DLE_GDB_INDEX_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
     base = gdbindexptr->gi_addressareahdr.dg_base;
@@ -416,7 +421,8 @@ dwarf_gdbindex_symboltable_entry(
     unsigned fieldlen = gdbindexptr->gi_symboltablehdr.dg_fieldlen;
 
     if (entryindex >= max) {
-        _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
+        _dwarf_error(gdbindexptr->gi_dbg, error,
+            DW_DLE_GDB_INDEX_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
     base = gdbindexptr->gi_symboltablehdr.dg_base;
@@ -446,7 +452,8 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindex,
 
     base += cuvector_offset;
     if ((base + fieldlen) >= end) {
-        _dwarf_error(gdbindex->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
+        _dwarf_error(gdbindex->gi_dbg, error,
+            DW_DLE_GDB_INDEX_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
 
@@ -474,7 +481,8 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
 
     base += cuvector_offset;
     if ((base+fieldlen) >= end) {
-        _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
+        _dwarf_error(gdbindexptr->gi_dbg, error,
+            DW_DLE_GDB_INDEX_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
     base += fieldlen;
@@ -512,22 +520,72 @@ int
 dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned   stringoffsetinpool,
     const char    ** string_ptr,
-    UNUSEDARG Dwarf_Error   *  error)
+    Dwarf_Error   *  error)
 {
     Dwarf_Small *pooldata = 0;
     Dwarf_Small *section_end = 0;
     Dwarf_Small *stringitself = 0;
+    Dwarf_Debug dbg = 0;
+    int res = 0;
 
-    /*  If gdbindexptr NULL or gdbindexptr->gi_dbg is NULL
-        this is not going to go very well. Ugh. FIXME */
+    if (!gdbindexptr) {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append(&m,"DW_DLE_GDB_INDEX_INDEX_ERROR: "
+           "The gdbindex pointer to "
+           "dwarf_gdbindex_string_by_offset()"
+           " is NULL");
+        _dwarf_error_string(gdbindexptr->gi_dbg, error,
+            DW_DLE_GDB_INDEX_INDEX_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    dbg = gdbindexptr->gi_dbg;
+    if (!dbg) {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append(&m,"DW_DLE_GDB_INDEX_INDEX_ERROR: "
+           "The gdbindex Dwarf_Debug in"
+           "dwarf_gdbindex_string_by_offset()"
+           " is NULL");
+        _dwarf_error_string(dbg, error,
+            DW_DLE_GDB_INDEX_INDEX_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     pooldata = gdbindexptr->gi_section_data +
         gdbindexptr->gi_constant_pool_offset;
     section_end = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     stringitself = pooldata + stringoffsetinpool;
     if (stringitself > section_end) {
-        _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_GDBINDEX_STRING_ERROR: "
+            "The dwarf_gdbindex_string_by_offset() "
+            "string starts past the end of the "
+            "section at section_offset " 
+            DW_PR_XZEROS DW_PR_DUx  ".",
+            (Dwarf_Unsigned)(uintptr_t)
+            (stringitself -gdbindexptr->gi_section_data));
+        _dwarf_error_string(dbg, error,
+            DW_DLE_GDBINDEX_STRING_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
+    }
+    res = _dwarf_check_string_valid(dbg,pooldata,
+        stringitself, section_end,
+        DW_DLE_GDBINDEX_STRING_ERROR,
+        error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
     *string_ptr = (const char *)stringitself;
     return DW_DLV_OK;

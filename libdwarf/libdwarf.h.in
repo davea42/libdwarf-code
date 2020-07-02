@@ -1401,9 +1401,10 @@ Old names above with same values. */
 #define DW_DLE_RNGLISTS_ERROR                  468
 #define DW_DLE_LOCLISTS_ERROR                  469
 #define DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE    470
+#define DW_DLE_GDBINDEX_STRING_ERROR           471
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        470
+#define DW_DLE_LAST        471
 
 #define DW_DLE_LO_USER     0x10000
 

@@ -1,3 +1,9 @@
+2020-07-02: David Anderson
+    * libdwarf.h.in: Added DW_DLE_GDBINDEX_STRING_ERROR.
+    * generated-libdwarf.h.in: Regenerated.
+    * dwarf_errmsg_list.h: Added DW_DLE_GDBINDEX_STRING_ERROR.
+    * dwarf_gdbindex.c(dwarf_gdbindex_addressarea_entry): Now
+      checks its arguments and the return string for problems.
 2020-07-01: David Anderson
     * libdwarf.h.in: Comment now deprecates 
       dwarf_get_loclist_entry().
