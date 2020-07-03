@@ -453,12 +453,12 @@ static const char *usage_long_text[] = {
 "-r   --print-aranges     Print aranges section",
 "-F   --print-eh-frame    Print gnu .eh_frame section",
 "-I   --print-fission     Print fission sections:",
-"                         .gdb_index, .debug_cu_index, .debug_tu_index,",
-"                         .debug_tu_index, .gdb_index, .debug_cu_index,",
-"                         .debug_tu_index, .debug_tu_index, .gdb_index,",
-"                         .debug_cu_index, .debug_tu_index",
-"-f   --print-frame       Print dwarf frame section",
-"     --print-gnu-debuglink Print .gnu_debuglink section",
+"                         .gdb_index, .debug_cu_index,",
+"                         .debug_tu_index, .gnu.debuglink,",
+"                         .note.gnu.build-id",
+"     --print-gnu-debuglink Print .gnu_debuglink,",
+"                         .note.gnu.build-id sections",
+"     --print-debug-names Print .debug_names section",
 "-i   --print-info        Print info section",
 "-l   --print-lines       Print line section",
 "-ls  --print-lines-short Print line section, but do not",
@@ -745,7 +745,7 @@ enum longopts_vals {
   OPT_PRINT_ABBREV,             /* -b   --print-abbrev      */
   OPT_PRINT_ALL,                /* -a   --print-all         */
   OPT_PRINT_ARANGES,            /* -r   --print-aranges     */
-  OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-name  */
+  OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-names */
   OPT_PRINT_GNU_DEBUGLINK,      /*      --print-gnu-debuglink  */
   OPT_PRINT_EH_FRAME,           /* -F   --print-eh-frame    */
   OPT_PRINT_FISSION,            /* -I   --print-fission     */
@@ -960,18 +960,18 @@ static struct dwoption longopts[] =  {
 
 /*  Handlers for the command line options. */
 
-/*  Option 'print_debug_names' */
+/*  Option '--print-debug-names' */
 void arg_print_debug_names(void)
 {
     glflags.gf_debug_names_flag = TRUE;
 }
-/*  Option 'print_gnu_debuglink' */
+/*  Option '--print-gnu_debuglink' */
 void arg_print_gnu_debuglink(void)
 {
     glflags.gf_gnu_debuglink_flag = TRUE;
 }
 
-/*  Option '--print_str_offsets' */
+/*  Option '--print-str-offsets' */
 void arg_print_str_offsets(void)
 {
     glflags.gf_print_str_offsets = TRUE;

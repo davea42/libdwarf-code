@@ -143,7 +143,7 @@ libdwarf_la_DEPENDENCIES =
 am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_alloc.lo libdwarf_la-dwarf_arange.lo \
 	libdwarf_la-dwarf_debuglink.lo libdwarf_la-dwarf_die_deliv.lo \
-	libdwarf_la-dwarf_dnames.lo libdwarf_la-dwarf_dsc.lo \
+	libdwarf_la-dwarf_debug_names.lo libdwarf_la-dwarf_dsc.lo \
 	libdwarf_la-dwarf_elf_access.lo \
 	libdwarf_la-dwarf_elf_load_headers.lo \
 	libdwarf_la-dwarf_elfread.lo \
@@ -614,8 +614,8 @@ dwarf_debuglink.c \
 dwarf_debuglink.h \
 dwarf_die_deliv.c \
 dwarf_die_deliv.h \
-dwarf_dnames.c \
-dwarf_dnames.h \
+dwarf_debug_names.c \
+dwarf_debug_names.h \
 dwarf_dsc.c \
 dwarf_dsc.h \
 dwarf_elf_access.c \
@@ -943,9 +943,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_alloc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_arange.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_debug_names.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_debuglink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_die_deliv.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_dnames.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_dsc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elf_access.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elf_load_headers.Plo@am__quote@
@@ -1079,12 +1079,12 @@ libdwarf_la-dwarf_die_deliv.lo: dwarf_die_deliv.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_die_deliv.lo `test -f 'dwarf_die_deliv.c' || echo '$(srcdir)/'`dwarf_die_deliv.c
 
-libdwarf_la-dwarf_dnames.lo: dwarf_dnames.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_dnames.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_dnames.Tpo -c -o libdwarf_la-dwarf_dnames.lo `test -f 'dwarf_dnames.c' || echo '$(srcdir)/'`dwarf_dnames.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_dnames.Tpo $(DEPDIR)/libdwarf_la-dwarf_dnames.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_dnames.c' object='libdwarf_la-dwarf_dnames.lo' libtool=yes @AMDEPBACKSLASH@
+libdwarf_la-dwarf_debug_names.lo: dwarf_debug_names.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_debug_names.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_debug_names.Tpo -c -o libdwarf_la-dwarf_debug_names.lo `test -f 'dwarf_debug_names.c' || echo '$(srcdir)/'`dwarf_debug_names.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_debug_names.Tpo $(DEPDIR)/libdwarf_la-dwarf_debug_names.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_debug_names.c' object='libdwarf_la-dwarf_debug_names.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_dnames.lo `test -f 'dwarf_dnames.c' || echo '$(srcdir)/'`dwarf_dnames.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_debug_names.lo `test -f 'dwarf_debug_names.c' || echo '$(srcdir)/'`dwarf_debug_names.c
 
 libdwarf_la-dwarf_dsc.lo: dwarf_dsc.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_dsc.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_dsc.Tpo -c -o libdwarf_la-dwarf_dsc.lo `test -f 'dwarf_dsc.c' || echo '$(srcdir)/'`dwarf_dsc.c

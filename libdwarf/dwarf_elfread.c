@@ -738,7 +738,12 @@ _dwarf_elf_object_access_internals_init(
 
         shp = intfc->f_shdr +i;
         section_type = shp->gh_type;
-        if (section_type == SHT_REL ||
+        if (!shp->gh_namestring) {
+            /*  A serious error which we ignore here
+                as it will be caught elsewhere
+                if necessary. */
+            continue;
+        } else if (section_type == SHT_REL ||
             (!strncmp(".rel.",shp->gh_namestring,5))) {
             localrel = RelocIsRel;
         } else if (section_type == SHT_RELA ||

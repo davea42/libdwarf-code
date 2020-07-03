@@ -20,8 +20,8 @@ dwarf_debuglink.c \
 dwarf_debuglink.h \
 dwarf_die_deliv.c \
 dwarf_die_deliv.h \
-dwarf_dnames.c \
-dwarf_dnames.h \
+dwarf_debug_names.c \
+dwarf_debug_names.h \
 dwarf_dsc.c \
 dwarf_dsc.h \
 dwarf_elf_access.c \

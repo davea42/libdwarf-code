@@ -1,7 +1,7 @@
 set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
 dwarf_alloc.c dwarf_arange.c 
 dwarf_debuglink.c dwarf_die_deliv.c 
-dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c 
+dwarf_debug_names.c dwarf_dsc.c dwarf_elf_access.c 
 dwarf_elf_load_headers.c 
 dwarf_elfread.c 
 dwarf_elf_rel_detector.c 
@@ -36,7 +36,7 @@ pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
 set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h
 dwarf_alloc.h dwarf_arange.h dwarf_base_types.h 
 dwarf_debuglink.h dwarf_die_deliv.h 
-dwarf_dnames.h dwarf_dsc.h 
+dwarf_debug_names.h dwarf_dsc.h 
 dwarf_elf_access.h dwarf_elf_defines.h dwarf_elfread.h 
 dwarf_elf_rel_detector.h 
 dwarf_elf_reloc_386.h dwarf_elf_reloc_aarch64.h 

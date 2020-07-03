@@ -1,3 +1,10 @@
+2020-07-03: David Anderson
+    * CMakeLists.txt, Makefile.am: Renamed print_dnames.c to
+      print_debug_names.c
+    * Makefile.in: Regenerated.
+    * command_options.c: Corrected the help text for
+      --print-fission.  Added --print-debug_names,
+      which does not yet do anything useful.
 2020-07-01: David Anderson
     * esb.h: Make debug-only locals unsigned long instead of long.
     * print_die.c: Where there is a N iteration loop adding

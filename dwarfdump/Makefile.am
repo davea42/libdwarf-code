@@ -51,7 +51,7 @@ print_abbrevs.c \
 print_aranges.c \
 print_debugfission.c \
 print_die.c \
-print_dnames.c \
+print_debug_names.c \
 print_frames.c \
 print_frames.h \
 print_gdbindex.c \

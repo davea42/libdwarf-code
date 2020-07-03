@@ -35,7 +35,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_global.h"
-#include "dwarf_dnames.h"
+#include "dwarf_debug_names.h"
 #include "dwarfstring.h"
 
 #define FALSE 0

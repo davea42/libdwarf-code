@@ -1,3 +1,15 @@
+2020-07-03: David Anderson
+    * CMakeLists.txt, Makefile.am: renamed dwarf_dnames.h ->
+      dwarf_debug_names.h and dwarf_dnames.c to 
+      dwarf_debug_names.c.
+    * Makefile.in: Regenerated.
+    * dwarf_alloc.c, dwarf_debug_names.c: Include
+      name updated dwarf_dnames.h to dwarf_debug_names.h .
+    * dwarf_elfread.c(_dwarf_elf_object_access_internals_init):
+      In case of a null gh_namestring we notice and skip
+      over it.
+    * dwarf_init_finish.c(_dwarf_load_section): Added to
+      the comment on zero-size sections.
 2020-07-02: David Anderson
     * dwarf_gdbindex.h: Removed gdbindex_offset_type typedef
       as it is not used anywhere.
