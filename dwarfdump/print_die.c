@@ -2860,23 +2860,21 @@ print_range_attribute(Dwarf_Debug dbg,
     and be entirely sensible. So lets
     not call things a possible error when they are not.
     Some assemblers allow '.' in an identifier too.
-    We should check for that, but we don't yet.
-
-    We should check the compiler before checking
-    for 'altabi.' too (FIXME).
 
     This is a heuristic, not all that reliable.
+    It is only used for a specific DWARF_CHECK_ERROR,
+    and the 'altabi.' is from a specific 
+    (unnamed here) compiler.
 
-    Return 0 if it is a vaguely standard identifier.
-    Else return 1, meaning 'it might be a file name
-    or have '.' in it quite sensibly.'
+    Return 0 (FALSE) if it is a vaguely standard identifier.
+    Else return 1 (TRUE), meaning 'it might be a file name
+    or have  '.' in it quite sensibly.'
 
     If we don't do the TAG check we might report "t.c"
     as a questionable DW_AT_name. Which would be silly.
 */
 static boolean
 dot_ok_in_identifier(int tag,
-    UNUSEDARG Dwarf_Die die,
     const char *val)
 {
     if (strncmp(val,"altabi.",7)) {
@@ -2884,8 +2882,11 @@ dot_ok_in_identifier(int tag,
             which apply to one specific compiler.  */
         return TRUE;
     }
-    if (tag == DW_TAG_compile_unit || tag == DW_TAG_partial_unit ||
-        tag == DW_TAG_imported_unit || tag == DW_TAG_type_unit) {
+    if (tag == DW_TAG_compile_unit || 
+        tag == DW_TAG_partial_unit ||
+        tag == DW_TAG_imported_unit || 
+        tag == DW_TAG_skeleton_unit || 
+        tag == DW_TAG_type_unit) {
         return TRUE;
     }
     return FALSE;
@@ -4253,7 +4254,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 DWARF_CHECK_ERROR(names_result,
                     "string attribute is \"(null)\".");
             } else {
-                if (!dot_ok_in_identifier(tag,die,name)
+                if (!dot_ok_in_identifier(tag,name)
                     && !glflags.need_CU_name && strchr(name,'.')) {
                     /*  This is a suggestion there 'might' be
                         a surprising name, not a guarantee of an
