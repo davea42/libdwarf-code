@@ -22,6 +22,8 @@ int DWPREFIX(get_IDX_name) (unsigned int, const char **);
 int DWPREFIX(get_LLEX_name) (unsigned int, const char **);
 int DWPREFIX(get_LLE_name) (unsigned int, const char **);
 int DWPREFIX(get_RLE_name) (unsigned int, const char **);
+int DWPREFIX(get_GNUIVIS_name) (unsigned int, const char **);
+int DWPREFIX(get_GNUIKIND_name) (unsigned int, const char **);
 int DWPREFIX(get_UT_name) (unsigned int, const char **);
 int DWPREFIX(get_SECT_name) (unsigned int, const char **);
 int DWPREFIX(get_DS_name) (unsigned int, const char **);

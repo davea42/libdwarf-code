@@ -55,6 +55,8 @@ dwarf_gdbindex.h \
 dwarf_generic_init.c \
 dwarf_global.c \
 dwarf_global.h \
+dwarf_gnu_index.h \
+dwarf_gnu_index.c \
 dwarf_groups.c \
 dwarf_harmless.c \
 dwarf_harmless.h \

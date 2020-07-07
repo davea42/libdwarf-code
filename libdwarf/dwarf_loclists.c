@@ -895,16 +895,6 @@ _dwarf_which_loclists_context(Dwarf_Debug dbg,
     }
     return DW_DLV_ERROR;
 }
-#if 0
-int
-dwarf_dealloc_loclists_head(Dwarf_Loc_Head_c h)
-{
-    Dwarf_Debug dbg = h->ll_dbg;
-
-    dwarf_dealloc(dbg,h,DW_DLA_LOCLISTS_HEAD);
-    return DW_DLV_OK;
-}
-#endif
 
 /*  Caller will eventually free as appropriate. */
 static int
@@ -1302,7 +1292,6 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
 
     res = build_array_of_lle(dbg,llhead,error);
     if (res != DW_DLV_OK) {
-        dwarf_dealloc(dbg,llhead,DW_DLA_LOCLISTS_HEAD);
         return res;
     }
     return DW_DLV_OK;
@@ -1339,7 +1328,7 @@ dwarf_get_loclists_entry_fields(
 
 /*  Deals with both fully and partially build head */
 void
-_dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
+_dwarf_free_loclists_head_content(Dwarf_Loc_Head_c head)
 {
     Dwarf_Debug dbg = head->ll_dbg;
 
@@ -1351,12 +1340,13 @@ _dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
 
         for ( ; cur ; cur = next) {
             next = cur->ld_next;
+            cur->ld_next = 0;
             free(cur);
         }
         head->ll_first = 0;
         head->ll_last = 0;
         head->ll_locdesc_count = 0;
-    } else {
+    } else if (head->ll_locdesc) {
         Dwarf_Locdesc_c desc = head->ll_locdesc;
         /*  ASSERT: ll_first and ll_last are NULL */
         /* fully built head. */
@@ -1366,6 +1356,7 @@ _dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
             Dwarf_Loc_Expr_Op loc = desc[i].ld_s;
             if(loc) {
                 dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
+                desc[i].ld_s = 0;
             }
         }
         dwarf_dealloc(dbg,head->ll_locdesc,DW_DLA_LOCDESC_C);
@@ -1374,10 +1365,12 @@ _dwarf_free_loclists_head(Dwarf_Loc_Head_c head)
     }
 }
 
+/*  dwarf_alloc calls this on dealloc. head is freed there
+    after this returns. */
 void
 _dwarf_loclists_head_destructor(void *head)
 {
     Dwarf_Loc_Head_c h = head;
 
-    _dwarf_free_loclists_head(h);
+    _dwarf_free_loclists_head_content(h);
 }

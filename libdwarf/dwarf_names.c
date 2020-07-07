@@ -2090,6 +2090,43 @@ dwarf_get_RLE_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
+dwarf_get_GNUIVIS_name (unsigned int val,const char ** s_out)
+{
+    switch (val) {
+    case DW_GNUIVIS_static:
+        *s_out = "DW_GNUIVIS_static";
+        return DW_DLV_OK;
+    case DW_GNUIVIS_global:
+        *s_out = "DW_GNUIVIS_global";
+        return DW_DLV_OK;
+    }
+    return DW_DLV_NO_ENTRY;
+}
+/* ARGSUSED */
+int
+dwarf_get_GNUIKIND_name (unsigned int val,const char ** s_out)
+{
+    switch (val) {
+    case DW_GNUIKIND_none:
+        *s_out = "DW_GNUIKIND_none";
+        return DW_DLV_OK;
+    case DW_GNUIKIND_type:
+        *s_out = "DW_GNUIKIND_type";
+        return DW_DLV_OK;
+    case DW_GNUIKIND_variable:
+        *s_out = "DW_GNUIKIND_variable";
+        return DW_DLV_OK;
+    case DW_GNUIKIND_function:
+        *s_out = "DW_GNUIKIND_function";
+        return DW_DLV_OK;
+    case DW_GNUIKIND_other:
+        *s_out = "DW_GNUIKIND_other";
+        return DW_DLV_OK;
+    }
+    return DW_DLV_NO_ENTRY;
+}
+/* ARGSUSED */
+int
 dwarf_get_UT_name (unsigned int val,const char ** s_out)
 {
     switch (val) {

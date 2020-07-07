@@ -7,7 +7,8 @@ dwarf_elfread.c
 dwarf_elf_rel_detector.c 
 dwarf_error.c 
 dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c 
-dwarf_gdbindex.c dwarf_global.c dwarf_groups.c 
+dwarf_gdbindex.c dwarf_global.c 
+dwarf_gnu_index.c dwarf_groups.c 
 dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c 
 dwarf_leb.c 
 dwarf_line.c dwarf_loc.c 
@@ -48,6 +49,7 @@ dwarf_elf_reloc_x86_64.h
 dwarf_elfstructs.h 
 dwarf_error.h dwarf_frame.h 
 dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h 
+dwarf_gnu_index.h 
 dwarf_incl.h dwarf_line.h dwarf_loc.h 
 dwarf_machoread.h dwarf_macro.h dwarf_macro5.h 
 dwarf_names.h

@@ -65,6 +65,7 @@
 #include "dwarf_harmless.h"
 #include "dwarf_tsearch.h"
 #include "dwarf_gdbindex.h"
+#include "dwarf_gnu_index.h"
 #include "dwarf_xu_index.h"
 #include "dwarf_macro5.h"
 #include "dwarf_debug_names.h"
@@ -356,7 +357,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x2c 44 DW_DLA_HASH_TABLE_ENTRY */
     {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 },
 
-    /* 0x2d -0x34 reserved */
+    /* 0x2d - 0x34 reserved */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x2e 46 reserved for future use  */
@@ -380,8 +381,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x34 52 reserved for future internal use */
     {sizeof(int),MULTIPLY_NO,  0, 0},
 
-    /* 0x35 53 reserved for future use. */
-    {sizeof(int),MULTIPLY_NO,  0, 0},
+    /* 0x35 53 Used starting July 2020 DW_DLA_GNU_INDEX_HEAD */
+    {sizeof(struct Dwarf_Gnu_Index_Head_s),MULTIPLY_NO,  0,
+        _dwarf_gnu_index_head_destructor},
 
     /* 0x36 54 Used starting May 2020  DW_DLA_RNGLISTS_HEAD */
     {sizeof(struct Dwarf_Rnglists_Head_s),MULTIPLY_NO,  0,
@@ -404,8 +406,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x3a 58  DW_DLA_LOCDESC_C */
     {sizeof(struct Dwarf_Locdesc_c_s),MULTIPLY_CT, 0, 0},
 
-    /* 0x3b 59 DW_DLA_LOC_HEAD_C */
-    {sizeof(struct Dwarf_Loc_Head_c_s),MULTIPLY_NO, 0, 0},
+    /* 0x3b 59 DW_DLA_LOC_HEAD_C  */
+    {sizeof(struct Dwarf_Loc_Head_c_s),MULTIPLY_NO, 0,
+        _dwarf_loclists_head_destructor},
 
     /* 0x3c 60 DW_DLA_MACRO_CONTEXT */
     {sizeof(struct Dwarf_Macro_Context_s),MULTIPLY_NO,

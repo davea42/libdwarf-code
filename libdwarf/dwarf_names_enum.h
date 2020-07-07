@@ -695,6 +695,19 @@ enum Dwarf_RLE_e {
     DW_RLE_start_length                      = 0x0007
 };
 
+enum Dwarf_GNUIVIS_e {
+    DW_GNUIVIS_static                        = 0x0000,
+    DW_GNUIVIS_global                        = 0x0001
+};
+
+enum Dwarf_GNUIKIND_e {
+    DW_GNUIKIND_none                         = 0x0000,
+    DW_GNUIKIND_type                         = 0x0001,
+    DW_GNUIKIND_variable                     = 0x0002,
+    DW_GNUIKIND_function                     = 0x0003,
+    DW_GNUIKIND_other                        = 0x0004
+};
+
 enum Dwarf_UT_e {
     DW_UT_compile                            = 0x0001,
     DW_UT_type                               = 0x0002,

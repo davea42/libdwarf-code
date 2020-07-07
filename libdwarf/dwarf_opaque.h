@@ -653,6 +653,8 @@ struct Dwarf_Debug_s {
         tu and cu indexes sections are distinct in DWARF4 & 5. */
     struct Dwarf_Section_s de_debug_cu_index;
     struct Dwarf_Section_s de_debug_tu_index;
+    struct Dwarf_Section_s de_debug_gnu_pubnames;
+    struct Dwarf_Section_s de_debug_gnu_pubtypes;
 
     /*  For non-elf, simply leave the following two structs zeroed and
         they will be ignored. */

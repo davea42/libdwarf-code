@@ -992,6 +992,8 @@ dwarf_loclist_from_expr(Dwarf_Debug dbg,
 
     As of 2012 we have yet another version, dwarf_loclist_from_expr_b()
     with the version_stamp and offset size (length size) passed in.
+
+    And later, dwarf_loclist_from_expr_c()
 */
 int
 dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
@@ -2464,7 +2466,8 @@ void
 dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
 {
     Dwarf_Debug dbg = loclist_head->ll_dbg;
-    _dwarf_free_loclists_head(loclist_head);
+    /*  destructor will remove content then free head
+        itself */
     dwarf_dealloc(dbg,loclist_head,DW_DLA_LOC_HEAD_C);
 }
 /* ============== End of the October 2015 interfaces. */

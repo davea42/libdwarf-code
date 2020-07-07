@@ -1,3 +1,38 @@
+2020-07-06: David Anderson
+    * dwarf_loc.c: Too-long lines in comments adjusted shorter.
+    * dwarf_loc.h: Renamed _dwarf_free_loclists_head to
+      _dwarf_free_loclists_head_content for clarity.
+    * dwarf_loclists.c: Deleted dead code. Renamed that
+      function here too. Corrected a bug in
+      _dwarf_free_loclists_head()
+    * dwarf_gnu_index.c,dwarf_gnu_index.h: New files
+      to handle sections .debug_gnu_pubnames and
+      .debug_gnu_pubtypes
+    * dwarf_init_finish.c: Added the new sections to
+      enter_section_in_de_debug_sections_array().
+    * CMakeLists.txt,Makefile.am: Added dwarf_gnu_index.c and
+      dwarf_gnu_index.h
+    * Makefile.in: Regenerated.
+    * dwarf.h: Added new nonstandard DW_GNUIVIS* and
+      DW_GNUIKIND* in support of these sections.
+    * dwarf_alloc.c: New record type DW_DLA_GNU_INDEX_HEAD
+      for these new sections.
+    * dwarf_errmsg_list.h: New errors
+    * dwarf_names.c, dwarf_names.h: Regenerated with
+      DW_GNUIVIS and DW_GNUIKIND name functions.
+    * dwarf_names_enum.h: Regenerated this too.
+    * dwarf_names_new.h: Regenerated this.
+    * libdwarf.h.in: Added Dwarf_Gnu_Index_Head type
+      and new functions and new error codes. Dropped
+      a dead DLA type and assigned it to be for
+      DW_DLA_GNU_INDEX_HEAD. Added new functions 
+      dwarf_get_gnu_index_head()
+      dwarf_gnu_index_dealloc()
+      dwarf_get_gnu_index_block() 
+      dwarf_get_gnu_index_block_entry() allowing
+      access to the data in .debug_gnu_pubtypes
+      and .debug_gu_pubnames.
+    * generated_libdwarf.h.in: Regenerated.
 2020-07-04: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: new version string.

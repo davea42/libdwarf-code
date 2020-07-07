@@ -152,6 +152,17 @@ typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 struct Dwarf_Loc_Head_c_s;
 typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 
+
+/*  NEW July 2020.  */
+/*  This provides access to data from sections
+    .debug_gnu_pubtypes or .debug_gnu_pubnames.
+    These are not standard DWARF, and can appear
+    with gcc -gdwarf-5
+    */
+struct Dwarf_Gnu_Index_Head_s;
+typedef struct Dwarf_Gnu_Index_Head_s * Dwarf_Gnu_Index_Head;
+
+
 /* NEW November 2015. For DWARF5 .debug_macro section */
 struct Dwarf_Macro_Context_s;
 typedef struct Dwarf_Macro_Context_s * Dwarf_Loc_Macro_Context;
@@ -825,7 +836,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_ADDR            0x1c     /* Dwarf_Addr sized entries */
 #define DW_DLA_RANGES          0x1d     /* Dwarf_Ranges */
 /* 0x1e (30) to 0x34 (52) reserved for internal to libdwarf types. */
-#define DW_DLA_LOCLISTS_HEAD   0x35     /* .debug_loclists DW5 */
+#define DW_DLA_GNU_INDEX_HEAD  0x35     /* .debug_gnu_typenames/pubnames, 2020 */
 #define DW_DLA_RNGLISTS_HEAD   0x36     /* .debug_rnglists DW5 */
 #define DW_DLA_GDBINDEX        0x37     /* Dwarf_Gdbindex */
 #define DW_DLA_XU_INDEX        0x38     /* Dwarf_Xu_Index_Header */
@@ -1402,9 +1413,13 @@ Old names above with same values. */
 #define DW_DLE_LOCLISTS_ERROR                  469
 #define DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE    470
 #define DW_DLE_GDBINDEX_STRING_ERROR           471
+#define DW_DLE_GNU_PUBNAMES_ERROR              472
+#define DW_DLE_GNU_PUBTYPES_ERROR              473
+#define DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES    474
+#define DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES    475
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        471
+#define DW_DLE_LAST        475
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -1837,6 +1852,39 @@ int dwarf_offset_list(Dwarf_Debug /*dbg*/,
     Dwarf_Off      ** /*offbuf*/,
     Dwarf_Unsigned *  /*offcnt*/,
     Dwarf_Error    *  /*error*/);
+
+/* BEGIN: debug_gnu_pubnames/typenames access,
+   calling these  Gnu_Index as a general reference.
+*/
+
+int dwarf_get_gnu_index_head(Dwarf_Debug /*dbg*/,
+   /*  The following arg false to select gnu_pubtypes */
+   Dwarf_Bool             /*for_gdb_pubnames*/ ,
+   Dwarf_Gnu_Index_Head * /*index_head_out*/,
+   Dwarf_Unsigned       * /*index_block_count_out*/,
+   Dwarf_Error * /*error*/);
+/*  Frees all resources used for the indexes. */
+void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head /*head*/);
+
+int dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head /*head*/,
+    Dwarf_Unsigned     /*number*/,
+    Dwarf_Unsigned   * /*block_length */,
+    Dwarf_Half       * /*version */,
+    Dwarf_Unsigned   * /*offset_into_debug_info*/,
+    Dwarf_Unsigned   * /*size_of_debug_info_area*/,
+    Dwarf_Unsigned   * /*count_of_index_entries*/,
+    Dwarf_Error      * /*error*/);
+
+int dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head /*head*/,
+    Dwarf_Unsigned    /*blocknumber*/,
+    Dwarf_Unsigned    /*entrynumber*/,
+    Dwarf_Unsigned  * /*offset_in_debug_info*/,
+    const char     ** /*name_string*/,
+    unsigned char   * /*flagbyte*/,
+    unsigned char   * /*staticorglobal*/,
+    unsigned char   * /*typeofentry*/,
+    Dwarf_Error     * /*error*/);
+/* END: debug_gnu_pubnames/typenames access, */
 
 /*  BEGIN: loclist_c interfaces
     NEW October 2015.
@@ -2840,7 +2888,7 @@ int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     Dwarf_Off*       /*cu_offset*/,
     Dwarf_Error*     /*error*/);
 
-/*  location list section operation.  (.debug_loc access) 
+/*  location list section operation.  (.debug_loc access)
     DO NOT USE, it cannot deal with
     recent dwarf or CUs with different
     address sizes.  Use dwarf_get_locdesc_entry_c() instead.
@@ -3417,7 +3465,8 @@ enum Dwarf_Form_Class dwarf_get_form_class(
 
 /*   BEGIN gdbindex operations interfaces. */
 /*  .gdb_index section operations.
-    A GDB extension.
+    A GDB extension. Completely different than
+    .debug_gnu_pubnames or .debug_gnu_pubtypes sections.
     The section is in some executables and if present
     is used to quickly map an address or name to
     a skeleton CU or TU.  If present then there are
@@ -5285,6 +5334,8 @@ extern int dwarf_get_EH_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_END_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_FORM_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_FRAME_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_GNUIKIND_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_GNUIVIS_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ID_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_IDX_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_INL_name(unsigned int /*val_in*/, const char ** /*s_out */);

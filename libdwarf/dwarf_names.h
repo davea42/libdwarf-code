@@ -21,6 +21,8 @@ extern int dwarf_get_IDX_name(unsigned int /*val_in*/, const char ** /*s_out */)
 extern int dwarf_get_LLEX_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_LLE_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_RLE_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_GNUIVIS_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_GNUIKIND_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_UT_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_SECT_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_DS_name(unsigned int /*val_in*/, const char ** /*s_out */);

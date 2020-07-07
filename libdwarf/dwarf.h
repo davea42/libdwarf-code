@@ -891,6 +891,21 @@ extern "C" {
 #define DW_RLE_start_end            0x06     /* DWARF5 */
 #define DW_RLE_start_length         0x07     /* DWARF5 */
 
+/*  GNUIndex encodings non-standard. New in 2020,
+    used in .debug_gnu_pubnames .debug_gnu_pubtypes
+    but no spellings provided? */
+#define DW_GNUIVIS_static   0
+#define DW_GNUIVIS_global   1
+
+/*  GNUIndex encodings non-standard. New in 2020,
+    used in .debug_gnu_pubnames .debug_gnu_pubtypes
+    but no spellings provided? */
+#define DW_GNUIKIND_none     0
+#define DW_GNUIKIND_type     1
+#define DW_GNUIKIND_variable 2
+#define DW_GNUIKIND_function 3
+#define DW_GNUIKIND_other    4
+
 /* DWARF5 Unit header unit type encodings */
 #define DW_UT_compile               0x01  /* DWARF5 */
 #define DW_UT_type                  0x02  /* DWARF5 */

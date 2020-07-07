@@ -315,7 +315,7 @@ int _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     /*  The values picked up. */
     Dwarf_Loc_Expr_Op curr_loc,
     Dwarf_Error * error);
-void _dwarf_free_loclists_head(Dwarf_Loc_Head_c head);
+void _dwarf_free_loclists_head_content(Dwarf_Loc_Head_c head);
 
 #ifdef __cplusplus
 }

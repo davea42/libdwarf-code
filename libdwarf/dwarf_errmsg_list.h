@@ -546,5 +546,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LOCLISTS_ERROR(469) Corrupt dwarf. Bad .debug_loclists data.",
     "DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE(470) corrupt section header.",
     "DW_DLE_GDBINDEX_STRING_ERROR(471) .gdb_index section string error",
+    "DW_DLE_GNU_PUBNAMES_ERROR(472) A problem with .debug_gnu_pubnames",
+    "DW_DLE_GNU_PUBTYPES_ERROR(473) A problem with .debug_gnu_pubtypes",
+    "DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES(474) Duplicated section .debug_gnu_pubnames",
+    "DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES(475) Duplicated section .debug_gnu_pubtypes",
+
 };
 #endif /* DWARF_ERRMSG_LIST_H */

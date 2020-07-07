@@ -703,6 +703,27 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         &dbg->de_note_gnu_buildid,
         DW_DLE_DUPLICATE_GNU_DEBUGLINK,0,
         FALSE,err);
+    /* GNU added this. It is not part of DWARF */
+    SET_UP_SECTION(dbg,scn_name,".debug_gnu_pubtypes.dwo",
+        DW_GROUPNUMBER_DWO,
+        &dbg->de_debug_gnu_pubtypes,
+        DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES,0,
+        FALSE,err);
+    SET_UP_SECTION(dbg,scn_name,".debug_gnu_pubtypes",
+        group_number,
+        &dbg->de_debug_gnu_pubtypes,
+        DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES,0,
+        FALSE,err);
+    SET_UP_SECTION(dbg,scn_name,".debug_gnu_pubnames.dwo",
+        DW_GROUPNUMBER_DWO,
+        &dbg->de_debug_gnu_pubnames,
+        DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES,0,
+        FALSE,err);
+    SET_UP_SECTION(dbg,scn_name,".debug_gnu_pubnames",
+        group_number,
+        &dbg->de_debug_gnu_pubnames,
+        DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES,0,
+        FALSE,err);
     return DW_DLV_NO_ENTRY;
 }
 static int
