@@ -49,13 +49,23 @@ option is useful.
 .PP
 Not all sections actually exist in any given object file.
 .PP
-The format may change from release to release, so it is
+The output format may change from release to release, so it is
 unwise to depend too heavily on the format.
 .PP
 Frame information (.debug_frame and .eh_frame) is heavily
 dependent on the ABI/ISA of the object file. 
 By default we use a generic set of register names
 handling up to 100 registers named r0-r99.
+
+.PP
+In many cases one can get additional detail
+by specifying \-v (sometimes \-v \-v gets
+even more). When printing DIEs (Debugging
+Information Entries) the options \-G
+(showing global offsets)
+and \-M (naming the DW_FORM* of attributes)
+(or their -- counterparts)
+can be a great aid to understanding DWARF..
 
 The 
 .BR \--format-registers\ (\-R)
@@ -204,6 +214,21 @@ this print failing.
 .TP
 .BR \--print-loc\ (\-c)
 Print locations lists.
+
+.TP
+.BR \--print-debug-gnu
+Print  the .debug_gnu_pubnames
+and .debug_gnu_typenames sections.
+
+.TP
+.BR \--print-fission
+Print  the .gdb_index, .debug_cu_index,
+ .debug_tu_index, .gnu.debuglink,
+  and .note.gnu.build-id sections.
+
+.TP
+.BR \--print-gnu-debuglink
+Print .gnu_debuglink and .note.gnu.build-id sections
 
 .TP
 .BR \--elf\ (\-E)    

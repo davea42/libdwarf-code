@@ -1,4 +1,8 @@
 2020-07-08: David Anderson
+    * dwarfdump.1: Mentioning new print options (the
+      latest additions to dwarfdump) and suggesting
+      that -v -G and -M are sometimes helpful.
+2020-07-08: David Anderson
     * print_debug_gnu.c,print_die.c: Fixed indents and
       removed trailing whitespace.
 2020-07-08: David Anderson
