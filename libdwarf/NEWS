@@ -1,3 +1,11 @@
+July 09, 2020
+  Access to .debug_gnu_pubtypes and .debug_gnu_pubnames
+  is possible. See function  dwarf_get_gnu_index_head().
+  Recently support for reading .debug_loclists
+  was added. 
+  Recently support for reading .debug_rnglists
+  was added. 
+  See libdwarf2.1.pdf and libdwarf.h for details.
 March 14, 2020
   The documentation of dwarf_diename() and dwarf_die_text()
   has been corrected. Never dwarf_dealloc() the strings

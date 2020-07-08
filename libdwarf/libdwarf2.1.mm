@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.99, 1 July 2020
+.ds vE Rev 3.01, 8 July 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -221,6 +221,15 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added new functions for 
+reading .debug_gnu_pubtypes
+and .debug_gnu_pubnames.
+ dwarf_get_gnu_index_head()
+dwarf_gnu_index_dealloc
+dwarf_get_gnu_index_block()
+dwarf_get_gnu_index_block_entry()
+(July 9, 2020);
 .P
 Added new functions for full .debug_loclists
 access:
@@ -8733,9 +8742,11 @@ The function \f(CWdwarf_func_name_offsets()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*func_name\fP to
 a pointer to
 a null-terminated string that gives the name of the static
-function described by the \f(CWDwarf_Func\fP descriptor \f(CWfunc\fP.
+function described by the 
+\f(CWDwarf_Func\fP descriptor \f(CWfunc\fP.
 It also returns in the locations
-pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, the offsets
+pointed to by \f(CWdie_offset\fP, and
+\f(CWcu_offset\fP, the offsets
 of the DIE representing the
 static function, and the DIE
 representing the compilation-unit containing the
@@ -8743,8 +8754,10 @@ static function, respectively.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 On a successful return from \f(CWdwarf_func_name_offsets()\fP
-the storage pointed to by  \f(CWfunc_name\fP should be freed using
-\f(CWdwarf_dealloc()\fP, with the allocation type \f(CWDW_DLA_STRING\fP
+the storage pointed to by 
+\f(CWfunc_name\fP should be freed using
+\f(CWdwarf_dealloc()\fP, with the 
+allocation type \f(CWDW_DLA_STRING\fP
 when no longer of interest.
 
 .H 3 "Accelerated Access Typenames"
@@ -8753,10 +8766,14 @@ and is not part of standard DWARF.
 (However, an identical section is part of DWARF version 3
 named ".debug_pubtypes", see  \f(CWdwarf_get_pubtypes()\fP above.)
 .P
-These functions operate on the .debug_typenames section of the debugging
-information.  The .debug_typenames section contains the names of file-scope
-user-defined types, the offsets of the \f(CWDIE\fPs that represent the
-definitions of those types, and the offsets of the compilation-units
+These functions operate on 
+the .debug_typenames section of the debugging
+information.  
+The .debug_typenames section contains the names of file-scope
+user-defined types, the offsets of the 
+\f(CWDIE\fPs that represent the
+definitions of those types, and the offsets 
+of the compilation-units
 that contain the definitions of those types.
 
 .H 4 "dwarf_get_types()"
@@ -9124,7 +9141,8 @@ and
 \f(CW.debug_pubtypes\fP
 as those older sections were not found to be
 useful in practice.
-
+See also 
+\f(CWNames Fast Access .debug_gnu_pubnames\fP
 .H 3 "dwarf_debugnames_header()"
 .DS
 \f(CWint dwarf_debugnames_header(
@@ -9407,7 +9425,218 @@ Allows retrieving detailed
 data from a portion of the entrypool
 by index and offset.
 
+.H 2 "Names Fast Access .debug_gnu_pubnames"
+The sections
+\f(CW.debug_gnu_pubnames\fP
+and
+\f(CW.debug_gnu_pubtypes\fP
+are non-standard sections emitted by
+gcc and clang with DWARF5.
+Typically they will be in the skeleton
+executable and the split dwarf section
+\f(CW.debug_info.dwo\fP
+will have the actual
+DWARF the offsets refer to,
+These sections would normally be read
+once by a program wanting them and
+filed in an internal format and
+then the program would do the cleanup
+\f(CWdwarf_gnu_index_dealloc()\fP.
+.P
+Each section is divided into what
+we term blocks here and within
+each block there is an array of entries.
+The functions below enable access.
 
+.H 3 "dwarf_get_gnu_index_head()"
+.DS
+\f(CWint dwarf_get_gnu_index_head(
+    Dwarf_Debug dbg,
+    /*  The following arg false to select gnu_pubtypes */
+    Dwarf_Bool             for_gdb_pubnames ,
+    Dwarf_Gnu_Index_Head * head,
+    Dwarf_Unsigned       * index_block_count,
+    Dwarf_Error * error); \fP
+.DE
+This creates an open header to use
+in subsequent data access.
+Free the memory associated with this
+by calling
+\f(CWdwarf_gnu_index_dealloc(head)\fP.
+\f(CW
+\fP
+
+.P
+The field 
+\f(CWindex_block_count\fP
+is set through the pointer to the
+number of blocks in the section.
+Call
+\f(CWdwarf_get_gnu_index_block()\fP
+and pass in valid block number
+(zero thrugh index_block_count-1)
+to get
+block information.
+
+.P
+If the section does not exist or is empty
+it returns
+\f(CWDW_DLV_NO_ENTRY\fP
+and does nothing else.
+
+.P
+If there is data corruption
+or some serious error it returns
+\f(CWDW_DLV_ERROR\fP
+and sets the error pointer with
+information about the error.
+
+\f(CW
+\fP
+
+.H 3 "dwarf_gnu_index_dealloc()"
+.DS
+\f(CWvoid dwarf_gnu_index_dealloc(
+    Dwarf_Gnu_Index_Head index_head);
+.DE
+This frees all data associated with the section.
+
+.H 3 "dwarf_get_gnu_index_block()"
+.DS
+\f(CWint dwarf_get_gnu_index_block(
+    Dwarf_Gnu_Index_Head head,
+    Dwarf_Unsigned     blocknumber,
+    Dwarf_Unsigned   * block_length,
+    Dwarf_Half       * version ,
+    Dwarf_Unsigned   * offset_into_debug_info,
+    Dwarf_Unsigned   * size_of_debug_info_area,
+    Dwarf_Unsigned   * count_of_index_entries,
+    Dwarf_Error      * error); \fP
+.DE
+On success this returns 
+\f(CWDW_DLV_OK\fP
+and fills in the various fields through
+the pointers.
+If the pointer to  a field is null
+the function ignores that field.
+.P
+The field
+\f(CWblock_length\fP
+has the byte length of the block (with its entries).
+.P
+The field
+\f(CWversion\fP
+has the version number.
+Currently it must be 2.
+
+.P
+The field
+\f(CWoffsetinto_debug_info\fP
+is the offset (in some .debug_info
+or .debug_info.owo section) of
+a Compilation Unit Header.
+
+.P
+The field
+\f(CWsize_of_debug_info_area\fP
+is the size of the referenced 
+compilation unit.
+
+.P
+The field
+\f(CWcount_of_index_entries\fP
+is the number of entries 
+attached to the block.
+See \f(CWdwarf_get_gnu_index_block_entry()\fP.
+
+.P
+If the block number is outside the valid range
+(zero through 
+\f(CWindex_block_count\fP -1)
+it returns 
+\f(CWDW_DLV_NO_ENTRY\fP
+and does nothing.
+
+.P
+If there is data corruption 
+or some serious error it returns
+\f(CWDW_DLV_ERROR\fP
+and sets the error pointer with
+information about the error.
+
+.H 3 "dwarf_get_gnu_index_block_entry()"
+.DS
+\f(CWint dwarf_get_gnu_index_block_entry(
+    Dwarf_Gnu_Index_Head head,
+    Dwarf_Unsigned     blocknumber,
+    Dwarf_Unsigned     entrynumber,
+    Dwarf_Unsigned   * offset_in_debug_info
+    const char      ** name,
+    unsigned char    * flagbyte,
+    unsigned char    * staticorglobal,
+    unsigned char    * typeofentry,
+    Dwarf_Error      * error); \fP
+.DE
+If either 
+\f(CWblocknumber\fP
+or
+\f(CWentrynumber\fP
+is outside the range of valid values
+it returns
+\f(CWDW_DLV_NO_ENTRY\fP
+and does nothing.
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP
+and sets information about each entry
+through the pointers.
+Any pointers pased in as NULL are ignored.
+
+.P
+The field
+\f(CWoffset_in_debug_info\fP
+has the offset of DIE in
+a .debug_info section.
+
+.P
+The field
+\f(CWname\fP
+has a pointer to the name of the variable
+or function that the DIE refers to.
+.P
+The field
+\f(CWflagbyte\fP
+has the entire 8 bits
+of a byte that has two useful fields.
+The next two fields are those useful fields.
+.P
+The field
+\f(CWstaticorglobal\fP
+has an integer 0
+if the DIE involved describes 
+a global (externally-visble)
+name.
+It has an integer 1
+if the name refers to a static (file-local)
+DIE.
+.P
+The field
+\f(CWtypeofentry\fP
+has a small integer describing the type.
+Zero means the type is "none".
+One means the type is "type".
+Two means the type is "variable".
+Three means the type is "function".
+Four means the type is "other".
+Any other value has, apparently,
+no assigned meaning.
+
+.P
+If there is data corruption
+or some serious error it returns
+\f(CWDW_DLV_ERROR\fP
+and sets the error pointer with
+information about the error.
 
 .H 2 "Macro Information Operations (DWARF4, DWARF5)"
 This section refers to DWARF4 and later

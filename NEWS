@@ -1,3 +1,9 @@
+2020-07-08:
+  libdwarf now reads .debug_gnu_pubtypes & pubnames
+  (non-standard but gcc creates them in DWARF5)
+  via a small number of new functions
+  and dwarfdump  --print-debug-gnu prints both sections.
+  Verifying the .debug_info offsets is not yet done.
 2020-06-29:
   Dwarfdump now dumps DWARF5 .debug_rnglists and
   .debug_loclists.  To handle DWARF5 there are
