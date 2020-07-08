@@ -45,9 +45,9 @@
 
 
 /*  Richard Henderson, on DW_OP_GNU_encoded_addr:
-    The operand is an absolute address.  
+    The operand is an absolute address.
     The first byte of the value is an encoding length:
-    0 2 4 or 8.  
+    0 2 4 or 8.
     If zero it means the following is address-size.
     The address then follows immediately for
     that number of bytes. */

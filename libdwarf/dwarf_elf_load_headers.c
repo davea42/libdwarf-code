@@ -106,7 +106,7 @@ calls
 /*  One example of calling this.
     place just before DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE
     dumpsizes(__LINE__,strsectlength,strpsh->gh_offset, ep->f_filesize);
-*/    
+*/
 static void
 dumpsizes(int line,Dwarf_Unsigned s,
     Dwarf_Unsigned o,

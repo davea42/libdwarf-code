@@ -533,9 +533,9 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
 
         dwarfstring_constructor(&m);
         dwarfstring_append(&m,"DW_DLE_GDB_INDEX_INDEX_ERROR: "
-           "The gdbindex pointer to "
-           "dwarf_gdbindex_string_by_offset()"
-           " is NULL");
+            "The gdbindex pointer to "
+            "dwarf_gdbindex_string_by_offset()"
+            " is NULL");
         _dwarf_error_string(gdbindexptr->gi_dbg, error,
             DW_DLE_GDB_INDEX_INDEX_ERROR,
             dwarfstring_string(&m));
@@ -548,9 +548,9 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
 
         dwarfstring_constructor(&m);
         dwarfstring_append(&m,"DW_DLE_GDB_INDEX_INDEX_ERROR: "
-           "The gdbindex Dwarf_Debug in"
-           "dwarf_gdbindex_string_by_offset()"
-           " is NULL");
+            "The gdbindex Dwarf_Debug in"
+            "dwarf_gdbindex_string_by_offset()"
+            " is NULL");
         _dwarf_error_string(dbg, error,
             DW_DLE_GDB_INDEX_INDEX_ERROR,
             dwarfstring_string(&m));
@@ -570,7 +570,7 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
             "DW_DLE_GDBINDEX_STRING_ERROR: "
             "The dwarf_gdbindex_string_by_offset() "
             "string starts past the end of the "
-            "section at section_offset 0x%" 
+            "section at section_offset 0x%"
             DW_PR_XZEROS DW_PR_DUx  ".",
             (Dwarf_Unsigned)(uintptr_t)
             (stringitself -gdbindexptr->gi_section_data));

@@ -1,4 +1,9 @@
 2020-07-08: David Anderson
+    * dwarf_elf_load_headers.c,dwarf_gdbindex.c,dwarf_gnu_index.c,
+	  dwarf_gnu_index.h,dwarf_init_finish.c,
+      dwarf_locationop_read.c: Fixed indents and trailing
+      whitespace.
+2020-07-08: David Anderson
     * dwarf.h: Fixed error in DW_GNUIVIS values.
     * dwarf_debug_names.h: Arranging shorter
       lines in a block of comments.

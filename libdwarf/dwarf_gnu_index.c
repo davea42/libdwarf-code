@@ -7,12 +7,12 @@
     Redistributions of source code must retain the above
     copyright notice, this list of conditions and the following
     disclaimer.
-    
+
     Redistributions in binary form must reproduce the above
     copyright notice, this list of conditions and the following
     disclaimer in the documentation and/or other materials
     provided with the distribution.
-    
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
   CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -91,9 +91,9 @@ dump_block(const char *msg,int bn, int lno,
         (unsigned long)b->ib_entryarray);
 }
 #endif
-/*  We could use dwarf_get_real_section_name() 
+/*  We could use dwarf_get_real_section_name()
     to determine the real name (perhaps ending in .dwo)
-    but for now we just use the standard name here. */ 
+    but for now we just use the standard name here. */
 static void
 get_pubxx_fields(Dwarf_Debug dbg,
     Dwarf_Bool for_gnu_pubnames,
@@ -110,12 +110,12 @@ get_pubxx_fields(Dwarf_Debug dbg,
             *sec_name_out = ".debug_gnu_pubnames";
         }
         if (sec_out) {
-            *sec_out = &dbg->de_debug_gnu_pubnames; 
+            *sec_out = &dbg->de_debug_gnu_pubnames;
         }
         if (errnum_out) {
             *errnum_out = DW_DLE_GNU_PUBNAMES_ERROR;
         }
-        
+
         if (errstr_out) {
             *errstr_out = "DW_DLE_GNU_PUBNAMES_ERROR";
         }
@@ -124,7 +124,7 @@ get_pubxx_fields(Dwarf_Debug dbg,
             *sec_name_out = ".debug_gnu_pubtypes";
         }
         if (sec_out) {
-            *sec_out = &dbg->de_debug_gnu_pubtypes; 
+            *sec_out = &dbg->de_debug_gnu_pubtypes;
         }
         if (errnum_out) {
             *errnum_out = DW_DLE_GNU_PUBTYPES_ERROR;
@@ -142,7 +142,7 @@ load_pub_section(Dwarf_Debug dbg,
 {
     struct Dwarf_Section_s * sec = 0;
     int res;
-    
+
     get_pubxx_fields(dbg,for_gnu_pubnames,&sec,0,0,0);
     res = _dwarf_load_section(dbg,sec,error);
     return res;
@@ -193,16 +193,16 @@ scan_block_entries(Dwarf_Debug  dbg,
         Dwarf_Unsigned length = 0;
         unsigned int offsetsize = 0;
         unsigned int extensize = 0;
-        
+
         if (curptr == endptr) {
-            *count_out = count; 
+            *count_out = count;
             return DW_DLV_OK;
         }
         /*  Not sure how the coders think about
             the initial value. But the last
             4 bytes are zero, ignore those.
             Unclear 64bit is not allowed. */
-        READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned, 
+        READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned,
             curptr,offsetsize,extensize,error,seclen,endptr);
         ++count;
         curptr +=  length -offsetsize - extensize;
@@ -211,11 +211,11 @@ scan_block_entries(Dwarf_Debug  dbg,
         blockoffset +=4;
     }
     /* NOTREACHED */
-    *count_out = count; 
+    *count_out = count;
     return DW_DLV_OK;
 }
 
-static int 
+static int
 count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
     struct DGI_Entry_s* entries,
     Dwarf_Error* error)
@@ -232,7 +232,7 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
 
     head = gib->ib_head;
     for_pubnames  =  head->gi_is_pubnames;
-    dbg = head->gi_dbg;    
+    dbg = head->gi_dbg;
     for(  ; curptr < endptr; ++entrycount) {
         Dwarf_Unsigned infooffset = 0;
         Dwarf_Unsigned offset = 0;
@@ -251,7 +251,7 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
             int errnum = 0;
             const char *secname = 0;
             const char*errstr = 0;
-           
+
             dwarfstring m;
             get_pubxx_fields(dbg,for_pubnames,0,&secname,
                 &errnum,&errstr);
@@ -312,15 +312,15 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
         dwarfstring_constructor_static(&m,buf,sizeof(buf));
         dwarfstring_append(&m,(char *)errstr);
         dwarfstring_append_printf_s(&m,":mismatch counts "
-             "creating %s"
-             "block_entries.",
-             (char *)secname);
+            "creating %s"
+            "block_entries.",
+            (char *)secname);
         dwarfstring_append_printf_u(&m," Origcount %u",
-              gib->ib_entry_count);
+            gib->ib_entry_count);
         dwarfstring_append_printf_u(&m," new count %u",
-             entrycount);
+            entrycount);
         _dwarf_error_string(dbg,error,err,
-             dwarfstring_string(&m));
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
@@ -343,8 +343,8 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
     Dwarf_Small    * baseptr = 0;
     Dwarf_Bool     is_for_pubnames = head->gi_is_pubnames;
     Dwarf_Debug    dbg = head->gi_dbg;
-    Dwarf_Unsigned seclen = head->gi_section_length; 
-    
+    Dwarf_Unsigned seclen = head->gi_section_length;
+
     baseptr = head->gi_section_data;
     endptr = baseptr + head->gi_section_length;
     for ( ;i < head->gi_blockcount; ++i) {
@@ -389,7 +389,7 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
         gib->ib_head  = head;
         gib->ib_offset_size         = offsetsize;
         gib->ib_block_length        = length;
-        gib->ib_block_length_offset = dataoffset; 
+        gib->ib_block_length_offset = dataoffset;
         dataoffset += offsetsize + extensize;
         gib->ib_b_data_offset       = dataoffset;
         READ_UNALIGNED_CK(dbg,version,Dwarf_Half,curptr,
@@ -417,7 +417,7 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
 
         /* Set for next block., add in4 for ending zeros */
         dataoffset = gib->ib_block_length_offset + length + 4;
-        res = count_entries_in_block(gib,0,error); 
+        res = count_entries_in_block(gib,0,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -440,7 +440,7 @@ fill_in_entries(Dwarf_Gnu_Index_Head head,
     dbg = head->gi_dbg;
     buf[0] = 0;
     entryarray = (struct DGI_Entry_s*)calloc(count,
-        sizeof(struct DGI_Entry_s)); 
+        sizeof(struct DGI_Entry_s));
     if (!entryarray) {
         int err = 0;
         const char *errstr  = 0;
@@ -452,22 +452,22 @@ fill_in_entries(Dwarf_Gnu_Index_Head head,
         dwarfstring_constructor_static(&m,buf,sizeof(buf));
         dwarfstring_append(&m,(char *)errstr);
         dwarfstring_append_printf_s(&m,": Unable to allocate "
-             "block_entries. Out of memory creating %s record.",
-             (char *)secname);
+            "block_entries. Out of memory creating %s record.",
+            (char *)secname);
         _dwarf_error_string(dbg,error,err,
-             dwarfstring_string(&m));
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
     res = count_entries_in_block(gib,
-        entryarray,error);  
+        entryarray,error);
     if (res != DW_DLV_OK) {
         free(entryarray);
         return res;
     }
     gib->ib_entryarray = entryarray;
     entryarray = 0;
-    return DW_DLV_OK; 
+    return DW_DLV_OK;
 }
 
 int
@@ -490,83 +490,82 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
             "dwarf_get_gnu_index_head");
         return DW_DLV_ERROR;
     }
-     res = load_pub_section(dbg,for_gnu_pubnames,error);
-     if (res != DW_DLV_OK) {
-         return res;
-     }
-     /*  We want this loaded for error checking by callers
-         in case they had no reason to load already. */
-     res = _dwarf_load_debug_info(dbg,error);
-     if (res == DW_DLV_ERROR) {
-         return res;
-     }
-     /* if count zero, returns DW_DLV_NO_ENTRY */
-     res = scan_block_entries(dbg,for_gnu_pubnames,&count,error);
-     if (res != DW_DLV_OK) {
-         return res;
-     }
-     head = (Dwarf_Gnu_Index_Head)
-         _dwarf_get_alloc(dbg,DW_DLA_GNU_INDEX_HEAD,1);
-     if (!head) {
-         dwarfstring m;
-         int err = 0;
-         const char *errstr  = 0;
-         const char *secname  = 0;
+    res = load_pub_section(dbg,for_gnu_pubnames,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    /*  We want this loaded for error checking by callers
+        in case they had no reason to load already. */
+    res = _dwarf_load_debug_info(dbg,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    /* if count zero, returns DW_DLV_NO_ENTRY */
+    res = scan_block_entries(dbg,for_gnu_pubnames,&count,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    head = (Dwarf_Gnu_Index_Head)
+        _dwarf_get_alloc(dbg,DW_DLA_GNU_INDEX_HEAD,1);
+    if (!head) {
+        dwarfstring m;
+        int err = 0;
+        const char *errstr  = 0;
+        const char *secname  = 0;
 
-         get_pubxx_fields(dbg,for_gnu_pubnames,0,&secname,
-             &err,&errstr);
-         dwarfstring_constructor_static(&m,buf,sizeof(buf));
-         dwarfstring_append(&m,(char *)errstr);
-         dwarfstring_append_printf_s(&m,": Unable to allocate "
-             "a header record. Out of memory creating %s record.",
-             (char *)secname);
-         _dwarf_error_string(dbg,error,err,
-             dwarfstring_string(&m));
-         dwarfstring_destructor(&m);
-         return DW_DLV_ERROR;
-     }
-     head->gi_dbg = dbg;
-     head->gi_section_data = for_gnu_pubnames?
-         dbg->de_debug_gnu_pubnames.dss_data: 
-         dbg->de_debug_gnu_pubtypes.dss_data; 
-     head->gi_section_length = for_gnu_pubnames?
-         dbg->de_debug_gnu_pubnames.dss_size: 
-         dbg->de_debug_gnu_pubtypes.dss_size; 
-     head->gi_is_pubnames = for_gnu_pubnames;
+        get_pubxx_fields(dbg,for_gnu_pubnames,0,&secname,
+            &err,&errstr);
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
+        dwarfstring_append(&m,(char *)errstr);
+        dwarfstring_append_printf_s(&m,": Unable to allocate "
+            "a header record. Out of memory creating %s record.",
+            (char *)secname);
+        _dwarf_error_string(dbg,error,err,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    head->gi_dbg = dbg;
+    head->gi_section_data = for_gnu_pubnames?
+        dbg->de_debug_gnu_pubnames.dss_data:
+        dbg->de_debug_gnu_pubtypes.dss_data;
+    head->gi_section_length = for_gnu_pubnames?
+        dbg->de_debug_gnu_pubnames.dss_size:
+        dbg->de_debug_gnu_pubtypes.dss_size;
+    head->gi_is_pubnames = for_gnu_pubnames;
+    iblock_array = calloc(count,sizeof(struct Dwarf_Gnu_IBlock_s));
+    if (!iblock_array) {
+        dwarfstring m;
+        int err = 0;
+        const char *errstr = 0;
 
-     iblock_array = calloc(count,sizeof(struct Dwarf_Gnu_IBlock_s));
-     if (!iblock_array) {
-         dwarfstring m;
-         int err = 0;
-         const char *errstr = 0;
+        get_pubxx_fields(dbg,for_gnu_pubnames,0,0,
+            &err,&errstr);
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
+        dwarfstring_append(&m,(char *)errstr);
+        dwarfstring_append_printf_u(&m,": Unable to allocate "
+            " %u block records. Out of memory.",count);
+        _dwarf_error_string(dbg,error,err,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        dwarf_gnu_index_dealloc(head);
+        return DW_DLV_ERROR;
+    }
+    head->gi_blockarray = iblock_array;
+    head->gi_blockcount = count;
 
-         get_pubxx_fields(dbg,for_gnu_pubnames,0,0,
-             &err,&errstr);
-         dwarfstring_constructor_static(&m,buf,sizeof(buf));
-         dwarfstring_append(&m,(char *)errstr);
-         dwarfstring_append_printf_u(&m,": Unable to allocate "
-             " %u block records. Out of memory.",count);
-         _dwarf_error_string(dbg,error,err,
-             dwarfstring_string(&m));
-         dwarfstring_destructor(&m);
-         dwarf_gnu_index_dealloc(head);
-         return DW_DLV_ERROR;
-     }
-     head->gi_blockarray = iblock_array;
-     head->gi_blockcount = count;
-
-     res = fill_in_blocks(head,error);
-     if (res != DW_DLV_OK) {
-         return res;
-     }
-     *index_head_out = head;
-     *index_block_count_out = count;
-     return DW_DLV_OK;
+    res = fill_in_blocks(head,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    *index_head_out = head;
+    *index_block_count_out = count;
+    return DW_DLV_OK;
 }
 
 /*  Frees all resources used for the indexes. */
 void
-_dwarf_free_gnu_index_head_content(Dwarf_Gnu_Index_Head head) 
+_dwarf_free_gnu_index_head_content(Dwarf_Gnu_Index_Head head)
 {
     if (!head) {
         return;
@@ -574,22 +573,22 @@ _dwarf_free_gnu_index_head_content(Dwarf_Gnu_Index_Head head)
     if (head->gi_blockarray) {
         Dwarf_Unsigned i = 0;
         struct Dwarf_Gnu_IBlock_s *block =
-               head->gi_blockarray;
+            head->gi_blockarray;
 
-       for( ; i < head->gi_blockcount; ++i,block++) {
+        for( ; i < head->gi_blockcount; ++i,block++) {
             if (block->ib_entryarray) {
                 free(block->ib_entryarray);
                 block->ib_entryarray = 0;
             }
             block->ib_entry_count = 0;
-       }
-       free(head->gi_blockarray);
-       head->gi_blockarray = 0;
-       head->gi_blockcount = 0;
+        }
+        free(head->gi_blockarray);
+        head->gi_blockarray = 0;
+        head->gi_blockcount = 0;
    }
 }
 
-void 
+void
 dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head head)
 {
     Dwarf_Debug dbg;
@@ -617,7 +616,7 @@ _dwarf_gnu_index_head_destructor(void *incoming)
     return;
 }
 
-int 
+int
 dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned     number,
     Dwarf_Unsigned   * block_length,
@@ -657,7 +656,7 @@ dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head head,
     return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned    blocknumber,
     Dwarf_Unsigned    entrynumber,
@@ -719,4 +718,3 @@ dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head head,
     }
     return DW_DLV_OK;
 }
-

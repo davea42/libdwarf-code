@@ -75,7 +75,6 @@ struct Dwarf_Gnu_IBlock_s {
 
     Dwarf_Unsigned ib_b_offset; /* offset of entry area */
     Dwarf_Small *  ib_b_data;   /* the entry area */
- 
     /* entrylength =  LENGTH - 2 - 2*offsetsize */
     Dwarf_Unsigned ib_b_entrylength;
 

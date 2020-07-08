@@ -1585,7 +1585,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         res = _dwarf_get_string_base_attr_value(dbg,cu_context,
             &offset_base,error);
         if (res != DW_DLV_OK) {
-            /*  In DWARF5 (final) a missing 
+            /*  In DWARF5 (final) a missing
                 DW_AT_str_offsets_base is surely not going
                 to work.  .debug_str_offsets starts with
                 a header, not just a table. So zero

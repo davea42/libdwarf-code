@@ -1893,7 +1893,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
             mean no-section-index).
             Otherwise NULL dss_data gets error.
             BSS would legitimately have no data, but
-            no DWARF related section could possbly be bss. 
+            no DWARF related section could possbly be bss.
             We also get it if the section is present but
             zero-size. */
         return res;
