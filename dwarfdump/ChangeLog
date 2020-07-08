@@ -1,3 +1,7 @@
+2020-07-08: David Anderson
+    * command_options.c: Misspelled argname in a comment.
+    * print_debug_gnu.c: Added minor checking for errors,
+      there is more to come in error checking. 
 2020-07-06: David Anderson
     * dwarf_names.c, dwarf_names.h: Regenerated,
       Adding the non-standard dwarf

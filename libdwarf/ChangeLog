@@ -1,4 +1,14 @@
 2020-07-08: David Anderson
+    * dwarf.h: Fixed error in DW_GNUIVIS values.
+    * dwarf_debug_names.h: Arranging shorter
+      lines in a block of comments.
+    * dwarf_elfread.c( find_section_to_relocate): Added 
+      de_debug_gnu_pubnames, de_dbug_gnu_pubtypes to sections
+      that can have relocations (in  a dwo.o before linking).
+    * dwarf_gnu_index.c: Now loads debug_info so that
+      in near future correctness of offsets in 
+      .debug_gnu_pubnames/pubtypes can be checked.
+2020-07-08: David Anderson
     * dwarf_gnu_index.c: Remove debug printf. Small corrections
       to the section reading.
 2020-07-06: David Anderson

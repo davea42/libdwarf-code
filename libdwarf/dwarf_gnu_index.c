@@ -494,6 +494,12 @@ dwarf_get_gnu_index_head(Dwarf_Debug dbg,
      if (res != DW_DLV_OK) {
          return res;
      }
+     /*  We want this loaded for error checking by callers
+         in case they had no reason to load already. */
+     res = _dwarf_load_debug_info(dbg,error);
+     if (res == DW_DLV_ERROR) {
+         return res;
+     }
      /* if count zero, returns DW_DLV_NO_ENTRY */
      res = scan_block_entries(dbg,for_gnu_pubnames,&count,error);
      if (res != DW_DLV_OK) {

@@ -66,6 +66,7 @@ print_block_entries(
     Dwarf_Unsigned i = 0;
     int res = 0;
 
+
     printf("    [   ] offset     Kind        Name\n");
 
     for ( ; i < entrycount; ++i) {
@@ -74,7 +75,11 @@ print_block_entries(
         unsigned char flag = 0;
         unsigned char staticorglobal = 0;
         unsigned char typeofentry = 0;
-
+        /*  flag is all 8 bits and staticorglobal
+            and typeofentry were extracted from the flag. 
+            Present here so we can check all 8 bits
+            are correct (lowest 4 should be zero).  */
+           
         res = dwarf_get_gnu_index_block_entry(head,
             blocknum,i,&offset_in_debug_info,
             &name,&flag,&staticorglobal,&typeofentry,
@@ -100,6 +105,43 @@ print_block_entries(
             ikind_types[0x7 & typeofentry]);
         printf(" %s",sanitized(name));
         printf("\n");
+        if (flag&0xf) {
+            printf("  ERROR: Block %" DW_PR_DUu 
+                " entry %" DW_PR_DUu " flag 0x%x. "
+                "The lower bits are non-zero "
+                "so there may be a corruption problem.",
+                blocknum,i, flag);
+            glflags.gf_count_major_errors++;
+            printf("\n");
+        }
+#if 0
+If it has a dwo, this needs to look up in the dwo object.
+        {
+            Dwarf_Die die = 0;
+            Dwarf_Bool is_info = TRUE;
+            res = dwarf_offdie_b(dbg,offset_in_debug_info,
+                is_info, &die,error);
+            if (res != DW_DLV_OK) {
+                printf("  ERROR: Block %" DW_PR_DUu 
+                    " entry %" DW_PR_DUu " offset 0x%"
+                    DW_PR_DUx
+                    " is not a valid DIE offset in .debug_info",
+                    blocknum,i, offset_in_debug_info);
+                if (res == DW_DLV_ERROR) {
+printf("dadebug errmsg %s\n",dwarf_errmsg(*error));
+                    dwarf_dealloc_error(dbg,*error);
+                    *error = 0;
+                } else {
+printf("dadebug err NO ENTRY line %d\n",__LINE__); 
+                }
+                glflags.gf_count_major_errors++;
+                printf("\n");
+            }else {
+                /* Look into DIE? */
+                dwarf_dealloc_die(die);
+            }
+        }
+#endif
     }
     return DW_DLV_OK;
 }
@@ -156,6 +198,50 @@ print_all_blocks(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             return res;
         }
+#if 0
+        {
+        Dwarf_Unsigned cu_die_offset           = 0;
+
+/* If has dwo, look there */
+        res = dwarf_get_cu_die_offset_given_cu_header_offset_b(
+            dbg,offset_into_debug_info,/*is_info = */ TRUE,
+            &cu_die_offset,error);
+        if (res != DW_DLV_OK) {
+            printf("  ERROR: Block %" DW_PR_DUu
+                " has an invalid .debug_info offset of "
+                "0x%" DW_PR_DUx
+                ", something is wrong\n",
+                i,offset_into_debug_info);
+            if (res == DW_DLV_ERROR) {
+                dwarf_dealloc_error(dbg,*error);
+                *error = 0;
+            }
+            glflags.gf_count_major_errors++;
+            return res;
+        } else {
+            Dwarf_Die die = 0;
+            Dwarf_Bool is_info = TRUE;
+            res = dwarf_offdie_b(dbg,cu_die_offset,
+                is_info, &die,error);
+            if (res != DW_DLV_OK) {
+                printf("  ERROR: Block %" DW_PR_DUu
+                    " cu DIE offset 0x%" DW_PR_DUx
+                    " is not a valid DIE offset in .debug_info\n",
+                    i, cu_die_offset);
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg,*error);
+                    *error = 0;
+                }
+                glflags.gf_count_major_errors++;
+            } else {
+                /* look into die */
+                dwarf_dealloc_die(die);
+            }
+
+        }
+        }
+#endif
+            
     }
     return DW_DLV_OK;
 }
