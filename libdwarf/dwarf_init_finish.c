@@ -460,6 +460,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         &dbg->de_debug_types,
         DW_DLE_DEBUG_TYPES_DUPLICATE,DW_DLE_DEBUG_TYPES_NULL,
         TRUE,err);
+    /* types.dwo  is non-standard. DWARF4 GNU maybe. */
     SET_UP_SECTION(dbg,scn_name,".debug_types.dwo",
         DW_GROUPNUMBER_DWO,
         &dbg->de_debug_types,
@@ -512,6 +513,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         &dbg->de_debug_loc,
         DW_DLE_DEBUG_LOC_DUPLICATE,0,
         FALSE,err);
+    /*  .debug_loc.dwo would be non-standard. */
     SET_UP_SECTION(dbg,scn_name,".debug_loc.dwo",
         DW_GROUPNUMBER_DWO,
         &dbg->de_debug_loc,
@@ -537,12 +539,6 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         group_number,
         &dbg->de_debug_pubtypes,
         /*13*/ DW_DLE_DEBUG_PUBTYPES_DUPLICATE,0,
-        FALSE,err);
-    /* DWARF5 */
-    SET_UP_SECTION(dbg,scn_name,".debug_names",
-        group_number,
-        &dbg->de_debug_names,
-        /*13*/ DW_DLE_DEBUG_NAMES_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_loclists",
@@ -673,7 +669,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     SET_UP_SECTION(dbg,scn_name,".debug_names",
         group_number,
         &dbg->de_debug_names,
-        DW_DLE_DEBUG_NAMES_DUPLICATE,0,
+        /*13*/ DW_DLE_DEBUG_NAMES_DUPLICATE,0,
         FALSE,err);
     /* No .debug_names.dwo allowed. */
 

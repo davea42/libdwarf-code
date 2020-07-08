@@ -1,4 +1,7 @@
 2020-07-08: David Anderson
+    * dwarf_init_finish.c: setup of .debug_names was
+      done twice (not harmful but the duplicate removed now).
+2020-07-08: David Anderson
     * dwarf_elf_load_headers.c,dwarf_gdbindex.c,dwarf_gnu_index.c,
 	  dwarf_gnu_index.h,dwarf_init_finish.c,
       dwarf_locationop_read.c: Fixed indents and trailing
