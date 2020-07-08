@@ -47,6 +47,50 @@
 #define TRUE  1
 #define FALSE 0
 
+#if 0
+static void
+dump_block(const char *msg,int bn, int lno,
+    struct Dwarf_Gnu_IBlock_s *b)
+{
+    printf("BLOCK dump block %d %s line %d\n",
+        bn,msg,lno);
+    printf("head             : 0x%lx\n",
+        (unsigned long)b->ib_head);
+    printf("index            : %lu\n",
+        (unsigned long)b->ib_index);
+    printf("blk len offset   : 0x%lx\n",
+        (unsigned long)b->ib_block_length_offset);
+    printf("block length     : %lu 0x%lx\n",
+        (unsigned long)b->ib_block_length,
+        (unsigned long)b->ib_block_length);
+    printf("offset size      : %u\n",
+        b->ib_offset_size);
+    printf("extension size   : %u\n",
+        b->ib_extension_size);
+    printf("version          : %u\n",
+        b->ib_version);
+    printf("built entries?   : %s\n",
+        b->ib_counted_entries?"yes":"no");
+    printf("debug_info offset: 0x%lx\n",
+        (unsigned long)b->ib_offset_in_debug_info);
+    printf("debug_info size  : %lu 0x%lx\n",
+        (unsigned long)b->ib_size_in_debug_info,
+        (unsigned long)b->ib_size_in_debug_info);
+    printf("data offset      : 0x%lx\n",
+        (unsigned long)b->ib_b_data_offset);
+    printf("entries offset   : 0x%lx\n",
+        (unsigned long)b->ib_b_offset);
+    printf("entries  ptr     : 0x%lx\n",
+        (unsigned long)b->ib_b_data);
+    printf("entries length   : %lu 0x%lx\n",
+        (unsigned long)b->ib_b_entrylength,
+        (unsigned long)b->ib_b_entrylength);
+    printf("entry count      : %lu\n",
+        (unsigned long)b->ib_entry_count);
+    printf("entries  array   : 0x%lx\n",
+        (unsigned long)b->ib_entryarray);
+}
+#endif
 /*  We could use dwarf_get_real_section_name() 
     to determine the real name (perhaps ending in .dwo)
     but for now we just use the standard name here. */ 
@@ -117,17 +161,18 @@ scan_block_entries(Dwarf_Debug  dbg,
     Dwarf_Unsigned seclen = 0;
     Dwarf_Unsigned count = 0;
     Dwarf_Unsigned filesize = 0;
+    Dwarf_Unsigned blockoffset = 0;
     int errnum          = 0;
     const char * errstr = 0;
     const char * secname = 0;
 
+    get_pubxx_fields(dbg,for_gnu_pubnames,&sec,&secname,
+        &errnum,&errstr);
     filesize = dbg->de_filesize;
     startptr = sec->dss_data;
     curptr   = startptr;
     seclen =   sec->dss_size;
     endptr =   startptr + seclen;
-    get_pubxx_fields(dbg,for_gnu_pubnames,0,&secname,
-        &errnum,&errstr);
     if (filesize) {
         if (seclen >= filesize) {
             dwarfstring m;
@@ -147,36 +192,27 @@ scan_block_entries(Dwarf_Debug  dbg,
     for (;;) {
         Dwarf_Unsigned length = 0;
         unsigned int offsetsize = 0;
-        UNUSEDARG unsigned int extensize = 0;
+        unsigned int extensize = 0;
         
         if (curptr == endptr) {
-            /* Missing the trailing 4 byte zeros. */
+            *count_out = count; 
             return DW_DLV_OK;
         }
+        /*  Not sure how the coders think about
+            the initial value. But the last
+            4 bytes are zero, ignore those.
+            Unclear 64bit is not allowed. */
         READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned, 
             curptr,offsetsize,extensize,error,seclen,endptr);
-        if (!length) {
-            /*  Must be end of the section */
-            *count_out = count; 
-            if (curptr != endptr) {
-                /* Something is very wrong */
-                dwarfstring m;
-                dwarfstring_constructor(&m);
-                dwarfstring_append(&m,(char *)errstr);
-                dwarfstring_append(&m,
-                    ": encountered zero area length"
-                    " before end of section");
-                _dwarf_error_string(dbg,error,errnum,
-                    dwarfstring_string(&m));
-                dwarfstring_destructor(&m);
-                return DW_DLV_ERROR;
-            }
-            return DW_DLV_OK;
-        }
         ++count;
-        curptr = curptr + length;
+        curptr +=  length -offsetsize - extensize;
+        curptr += 4;
+        blockoffset += length;
+        blockoffset +=4;
     }
     /* NOTREACHED */
+    *count_out = count; 
+    return DW_DLV_OK;
 }
 
 static int 
@@ -186,30 +222,29 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
 {
     Dwarf_Small *curptr = gib->ib_b_data;
     Dwarf_Small *endptr = curptr + gib->ib_b_entrylength;
-#if 0
-    Dwarf_Unsigned curoffset = gib->ib_data_offset;
-#endif
     Dwarf_Unsigned entrycount = 0;
     Dwarf_Half offsetsize = gib->ib_offset_size;
     struct DGI_Entry_s *curentry = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Gnu_Index_Head head = 0;
-    Dwarf_Bool for_pubnames = head->gi_is_pubnames;
+    Dwarf_Bool for_pubnames = 0;
+    char *strptr = 0;
 
     head = gib->ib_head;
+    for_pubnames  =  head->gi_is_pubnames;
     dbg = head->gi_dbg;    
     for(  ; curptr < endptr; ++entrycount) {
+        Dwarf_Unsigned infooffset = 0;
         Dwarf_Unsigned offset = 0;
         char  flagbyte = 0;
-
         READ_UNALIGNED_CK(dbg,offset,
             Dwarf_Unsigned,curptr,
             offsetsize,error,endptr);
+        infooffset = offset;
         curptr += offsetsize;
-        offset += offsetsize;
         if (entries) {
             curentry = entries +entrycount;
-            curentry->ge_debug_info_offset = offset;
+            curentry->ge_debug_info_offset = infooffset;
         }
         /* Ensure flag and start-of-string possible. */
         if ((curptr+2) >= endptr) {
@@ -224,7 +259,7 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
             dwarfstring_append_printf_s(&m,"%s: "
                 "Past end of current block reading strings",
                 (char *)errstr);
-            dwarfstring_append_printf_s(&m," reading %s",
+            dwarfstring_append_printf_s(&m," in %s",
                 (char *)secname);
             _dwarf_error_string(dbg,error,errnum,
                 dwarfstring_string(&m));
@@ -233,10 +268,10 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
         }
         flagbyte = *curptr;
         curptr += 1;
-        offset += 1;
+        strptr = (char *)curptr;
         if (curentry) {
             curentry->ge_flag_byte = flagbyte;
-            curentry->ge_string = (char *)curptr;
+            curentry->ge_string = (char *)strptr;
         }
         for( ; *curptr  ;++curptr,++offset ) {
             if (curptr >= endptr) {
@@ -261,7 +296,6 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
         }
         /* string-terminating null byte */
         curptr += 1;
-        offset += 1;
     }
     if (!entries)  {
         gib->ib_entry_count = entrycount;
@@ -290,9 +324,6 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-printf("dadebug reading entries: count %lu line %d %s\n",
-(unsigned long)entrycount,
-__LINE__,__FILE__);
     return DW_DLV_OK;
 }
 
@@ -300,23 +331,23 @@ static int
 fill_in_blocks(Dwarf_Gnu_Index_Head head,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned count = 0;
+    Dwarf_Unsigned i = 0;
     Dwarf_Unsigned dataoffset = 0;
 #if 0
     Dwarf_Unsigned blockindex = 0;
     Dwarf_Unsigned blockoffset = 0;
     Dwarf_Unsigned listoffset = 0;
 #endif
-    Dwarf_Small    * dataptr = 0;
     Dwarf_Small    * endptr = 0;
     Dwarf_Small    * curptr = 0;
+    Dwarf_Small    * baseptr = 0;
     Dwarf_Bool     is_for_pubnames = head->gi_is_pubnames;
     Dwarf_Debug    dbg = head->gi_dbg;
     Dwarf_Unsigned seclen = head->gi_section_length; 
     
-    dataptr = head->gi_section_data;
-    endptr = dataptr + head->gi_section_length;
-    for (;count < head->gi_blockcount; ++count) {
+    baseptr = head->gi_section_data;
+    endptr = baseptr + head->gi_section_length;
+    for ( ;i < head->gi_blockcount; ++i) {
         Dwarf_Unsigned length = 0;
         unsigned int offsetsize = 0;
         unsigned int extensize = 0;
@@ -326,11 +357,9 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
         struct Dwarf_Gnu_IBlock_s *gib = 0;
         int res = 0;
 
-
-printf("dadebug fill_in_blocks: index%lu line %d %s\n",
-(unsigned long)count,
-__LINE__,__FILE__);
-        gib = head->gi_blockarray+count;
+        gib = head->gi_blockarray+i;
+        /* gib is a blank slate ready to be filled */
+        curptr = baseptr+ dataoffset;
         READ_AREA_LENGTH_CK(dbg,length,Dwarf_Unsigned,
             curptr,offsetsize,extensize,error,seclen,endptr);
         if (!length) {
@@ -356,7 +385,7 @@ __LINE__,__FILE__);
             }
             return DW_DLV_OK;
         }
-        gib->ib_index = count;
+        gib->ib_index = i;
         gib->ib_head  = head;
         gib->ib_offset_size         = offsetsize;
         gib->ib_block_length        = length;
@@ -383,15 +412,16 @@ __LINE__,__FILE__);
         gib->ib_b_data = curptr;
         gib->ib_b_offset = dataoffset;
         gib->ib_b_entrylength = length - (2 + (2*offsetsize));
+        /* Followed by 4 bytes of zeroes */
+        gib->ib_b_entrylength -= 4;
 
+        /* Set for next block., add in4 for ending zeros */
+        dataoffset = gib->ib_block_length_offset + length + 4;
         res = count_entries_in_block(gib,0,error); 
         if (res != DW_DLV_OK) {
             return res;
         }
     }
-printf("dadebug fill_in_blocks returns: final ct %lu line %d %s\n",
-(unsigned long)count,
-__LINE__,__FILE__);
     return DW_DLV_OK;
 }
 

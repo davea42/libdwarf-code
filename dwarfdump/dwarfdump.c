@@ -57,6 +57,7 @@
 #include "sanitized.h"
 #include "tag_common.h"
 #include "addrmap.h"
+#include "print_debug_gnu.h"
 #include "naming.h" /* for get_FORM_name() */
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include "command_options.h"
@@ -1559,6 +1560,18 @@ process_one_file(int fd, int tiedfd,
             DROP_ERROR_INSTANCE(dbg,lres,err);
         }
     }
+    if( glflags.gf_debug_gnu_flag) {
+        int lres = 0;
+        Dwarf_Error err = 0;
+
+        lres = print_debug_gnu(dbg,&err);
+        if (lres == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "print .debug_gnu* section failed", lres, err);
+            DROP_ERROR_INSTANCE(dbg,lres,err);
+        }
+    }
+
     if (glflags.gf_debug_addr_missing_search_by_address) {
         printf("\nERROR: At some point "
             "the .debug_addr section was needed but missing, "

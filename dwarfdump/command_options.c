@@ -358,6 +358,7 @@ static void arg_print_aranges(void);
 static void arg_print_debug_frame(void);
 static void arg_print_debug_names(void);
 static void arg_print_gnu_debuglink(void);
+static void arg_print_debug_gnu(void);
 static void arg_print_fission(void);
 static void arg_print_gnu_frame(void);
 static void arg_print_info(void);
@@ -458,6 +459,8 @@ static const char *usage_long_text[] = {
 "                         .note.gnu.build-id",
 "     --print-gnu-debuglink Print .gnu_debuglink,",
 "                         .note.gnu.build-id sections",
+"     --print-debug-gnu   Print .debug_gnu_pubtypes and",
+"                         .debug_gnu_pubnames sections",
 "     --print-debug-names Print .debug_names section",
 "-i   --print-info        Print info section",
 "-l   --print-lines       Print line section",
@@ -747,6 +750,7 @@ enum longopts_vals {
   OPT_PRINT_ARANGES,            /* -r   --print-aranges     */
   OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-names */
   OPT_PRINT_GNU_DEBUGLINK,      /*      --print-gnu-debuglink  */
+  OPT_PRINT_DEBUG_GNU,          /*      --print-debug-gnu   */
   OPT_PRINT_EH_FRAME,           /* -F   --print-eh-frame    */
   OPT_PRINT_FISSION,            /* -I   --print-fission     */
   OPT_PRINT_FRAME,              /* -f   --print-frame       */
@@ -896,7 +900,8 @@ static struct dwoption longopts[] =  {
   {"print-all",         dwno_argument, 0, OPT_PRINT_ALL        },
   {"print-aranges",     dwno_argument, 0, OPT_PRINT_ARANGES    },
   {"print-debug-names", dwno_argument, 0, OPT_PRINT_DEBUG_NAMES},
-  {"print-gnu-debuglink", dwno_argument, 0, OPT_PRINT_GNU_DEBUGLINK},
+  {"print-gnu-debuglink", dwno_argument,0,OPT_PRINT_GNU_DEBUGLINK},
+  {"print-debug-gnu",   dwno_argument, 0, OPT_PRINT_DEBUG_GNU  },
   {"print-eh-frame",    dwno_argument, 0, OPT_PRINT_EH_FRAME   },
   {"print-fission",     dwno_argument, 0, OPT_PRINT_FISSION    },
   {"print-frame",       dwno_argument, 0, OPT_PRINT_FRAME      },
@@ -969,6 +974,11 @@ void arg_print_debug_names(void)
 void arg_print_gnu_debuglink(void)
 {
     glflags.gf_gnu_debuglink_flag = TRUE;
+}
+/*  Option '--print-gnu-debug' */
+void arg_print_debug_gnu(void)
+{
+    glflags.gf_debug_gnu_flag = TRUE;
 }
 
 /*  Option '--print-str-offsets' */
@@ -2437,6 +2447,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_ARANGES:     arg_print_aranges();     break;
         case OPT_PRINT_DEBUG_NAMES: arg_print_debug_names(); break;
         case OPT_PRINT_GNU_DEBUGLINK: arg_print_gnu_debuglink(); break;
+        case OPT_PRINT_DEBUG_GNU:   arg_print_debug_gnu(); break;
         case OPT_PRINT_EH_FRAME:    arg_print_gnu_frame();   break;
         case OPT_PRINT_FISSION:     arg_print_fission();     break;
         case OPT_PRINT_FRAME:       arg_print_debug_frame(); break;

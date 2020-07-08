@@ -1,3 +1,21 @@
+2020-07-06: David Anderson
+    * dwarf_names.c, dwarf_names.h: Regenerated,
+      Adding the non-standard dwarf
+      prefixes DW_GNUIVIS* and DW_GNUIKIND* in support
+      of .debug_gnu_pubtypes and .debug_gnu_pubnames.
+      The first support for these sections.
+      DW_DLE_GNU_PUBNAMES_ERROR
+      DW_DLE_GNU_PUBTYPES_ERROR
+      DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES
+      DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES
+    * Makefile.am: Adding print_debug_gnu.[ch] to the files list.
+    * Makefile.in: Regenerated.
+    * command_options.c: Add --print-debug-gnu option
+      to print these sections.
+    * dwarfdump.c: Implement printing of these sections.
+    * glflags.h: Addd boolean gf_debug_gnu_flag for the
+      --print-debug-gnu option.
+    * print_debug_gnu.c: Now prints these sections.
 2020-07-04: David Anderson
     * print_die.c(dot_ok_in_identifier): Removed unused argument.
       Added DW_TAG_skeleton_unit to the if condition.
