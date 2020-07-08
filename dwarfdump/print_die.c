@@ -2863,7 +2863,7 @@ print_range_attribute(Dwarf_Debug dbg,
 
     This is a heuristic, not all that reliable.
     It is only used for a specific DWARF_CHECK_ERROR,
-    and the 'altabi.' is from a specific 
+    and the 'altabi.' is from a specific
     (unnamed here) compiler.
 
     Return 0 (FALSE) if it is a vaguely standard identifier.
@@ -2882,10 +2882,10 @@ dot_ok_in_identifier(int tag,
             which apply to one specific compiler.  */
         return TRUE;
     }
-    if (tag == DW_TAG_compile_unit || 
+    if (tag == DW_TAG_compile_unit ||
         tag == DW_TAG_partial_unit ||
-        tag == DW_TAG_imported_unit || 
-        tag == DW_TAG_skeleton_unit || 
+        tag == DW_TAG_imported_unit ||
+        tag == DW_TAG_skeleton_unit ||
         tag == DW_TAG_type_unit) {
         return TRUE;
     }
@@ -5462,7 +5462,7 @@ print_location_list(Dwarf_Debug dbg,
             return lres;
         }
         no_of_elements = sno;
-    }    
+    }
 
     possibly_increase_esb_alloc(details, no_of_elements,100);
     for (llent = 0; llent < no_of_elements; ++llent) {

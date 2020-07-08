@@ -1,4 +1,7 @@
 2020-07-08: David Anderson
+    * print_debug_gnu.c,print_die.c: Fixed indents and
+      removed trailing whitespace.
+2020-07-08: David Anderson
     * command_options.c: Misspelled argname in a comment.
     * print_debug_gnu.c: Added minor checking for errors,
       there is more to come in error checking. 

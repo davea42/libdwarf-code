@@ -29,10 +29,10 @@
 */
 
 /*  To print .debug_gnu_pubnames, .debug_gnu_typenames */
-#include "globals.h" 
-#ifdef HAVE_STDINT_H 
+#include "globals.h"
+#ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */ 
+#endif /* HAVE_STDINT_H */
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
@@ -51,7 +51,7 @@ char *ikind_types[8] = {
     "unknown5",
     "unknown6",
     "unknown7" };
-     
+
 
 static int
 print_block_entries(
@@ -76,10 +76,10 @@ print_block_entries(
         unsigned char staticorglobal = 0;
         unsigned char typeofentry = 0;
         /*  flag is all 8 bits and staticorglobal
-            and typeofentry were extracted from the flag. 
+            and typeofentry were extracted from the flag.
             Present here so we can check all 8 bits
             are correct (lowest 4 should be zero).  */
-           
+
         res = dwarf_get_gnu_index_block_entry(head,
             blocknum,i,&offset_in_debug_info,
             &name,&flag,&staticorglobal,&typeofentry,
@@ -88,10 +88,10 @@ print_block_entries(
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-            printf("  ERROR: Block %" DW_PR_DUu 
+            printf("  ERROR: Block %" DW_PR_DUu
                 " entry %" DW_PR_DUu
                 " does not exist though entry count"
-                " is %" DW_PR_DUu 
+                " is %" DW_PR_DUu
                 ", something is wrong\n",
                 blocknum,
                 i,entrycount);
@@ -106,7 +106,7 @@ print_block_entries(
         printf(" %s",sanitized(name));
         printf("\n");
         if (flag&0xf) {
-            printf("  ERROR: Block %" DW_PR_DUu 
+            printf("  ERROR: Block %" DW_PR_DUu
                 " entry %" DW_PR_DUu " flag 0x%x. "
                 "The lower bits are non-zero "
                 "so there may be a corruption problem.",
@@ -115,24 +115,22 @@ print_block_entries(
             printf("\n");
         }
 #if 0
-If it has a dwo, this needs to look up in the dwo object.
+        If it has a dwo, this needs to look up in the dwo object.
         {
             Dwarf_Die die = 0;
             Dwarf_Bool is_info = TRUE;
             res = dwarf_offdie_b(dbg,offset_in_debug_info,
                 is_info, &die,error);
             if (res != DW_DLV_OK) {
-                printf("  ERROR: Block %" DW_PR_DUu 
+                printf("  ERROR: Block %" DW_PR_DUu
                     " entry %" DW_PR_DUu " offset 0x%"
                     DW_PR_DUx
                     " is not a valid DIE offset in .debug_info",
                     blocknum,i, offset_in_debug_info);
                 if (res == DW_DLV_ERROR) {
-printf("dadebug errmsg %s\n",dwarf_errmsg(*error));
                     dwarf_dealloc_error(dbg,*error);
                     *error = 0;
                 } else {
-printf("dadebug err NO ENTRY line %d\n",__LINE__); 
                 }
                 glflags.gf_count_major_errors++;
                 printf("\n");
@@ -170,28 +168,28 @@ print_all_blocks(Dwarf_Debug dbg,
             &size_of_debug_info_area,
             &entrycount,error);
         if (res == DW_DLV_NO_ENTRY) {
-            printf("  ERROR: Block %" DW_PR_DUu 
+            printf("  ERROR: Block %" DW_PR_DUu
                 " does not exist though block count"
-                " is %" DW_PR_DUu 
+                " is %" DW_PR_DUu
                 ", something is wrong\n",
                 i,block_count);
             glflags.gf_count_major_errors++;
             return res;
-        } 
-        if (res == DW_DLV_ERROR) {
-           return res;
         }
-        printf("  Blocknumber                         : "           
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        printf("  Blocknumber                         : "
             "%" DW_PR_DUu "\n",i);
-        printf("  Block length                        : "           
+        printf("  Block length                        : "
             "%" DW_PR_DUu "\n",block_length);
-        printf("  Version                             : "           
-            "%u\n",version);    
-        printf("  Offset into .debug_info section     : "           
+        printf("  Version                             : "
+            "%u\n",version);
+        printf("  Offset into .debug_info section     : "
             "0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset_into_debug_info);
-        printf("  Size of area in .debug_info section : "           
+        printf("  Size of area in .debug_info section : "
             "%" DW_PR_DUu "\n",size_of_debug_info_area);
-        printf("  Number of entries in block          : "           
+        printf("  Number of entries in block          : "
             "%" DW_PR_DUu "\n",entrycount);
         res = print_block_entries(dbg,for_pubnames,
             secname,head,i,entrycount,error);
@@ -202,7 +200,7 @@ print_all_blocks(Dwarf_Debug dbg,
         {
         Dwarf_Unsigned cu_die_offset           = 0;
 
-/* If has dwo, look there */
+        /* If has dwo, look there */
         res = dwarf_get_cu_die_offset_given_cu_header_offset_b(
             dbg,offset_into_debug_info,/*is_info = */ TRUE,
             &cu_die_offset,error);
@@ -241,14 +239,14 @@ print_all_blocks(Dwarf_Debug dbg,
         }
         }
 #endif
-            
+
     }
     return DW_DLV_OK;
 }
 
 
 
-int 
+int
 print_debug_gnu(UNUSEDARG Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Error *error)
 {
@@ -287,13 +285,13 @@ print_debug_gnu(UNUSEDARG Dwarf_Debug dbg,
         } else if (res == DW_DLV_NO_ENTRY) {
             continue;
         }
-        printf("\n%s with %" DW_PR_DUu 
+        printf("\n%s with %" DW_PR_DUu
             " blocks of names\n",
             sanitized(esb_get_string(&truename)),
-            block_count); 
+            block_count);
         res = print_all_blocks(dbg,for_pubnames,
             &truename, head,block_count,error);
-        if (res == DW_DLV_ERROR) {       
+        if (res == DW_DLV_ERROR) {
             glflags.gf_count_major_errors++;
             printf("ERROR: problem reading %s. %s\n",
                 sanitized(esb_get_string(&truename)),
@@ -305,7 +303,7 @@ print_debug_gnu(UNUSEDARG Dwarf_Debug dbg,
         } else {
             /* normal */
         }
-        esb_destructor(&truename);    
+        esb_destructor(&truename);
     }
     return DW_DLV_OK;
 }
