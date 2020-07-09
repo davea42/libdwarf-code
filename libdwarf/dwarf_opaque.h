@@ -711,7 +711,13 @@ struct Dwarf_Debug_s {
     /*  Used in a tied dbg  to hold global info
         on the tied object (DW_AT_dwo_id).
         And for Type Unit signatures whether tied
-        or not. */
+        or not. It is not defined whether
+        the main object is executable and
+        the tied file is a dwo/dwp or the
+        reverse. The focus of reporting
+        is on the main file, but the tied
+        file is sometimes needed
+        and referenced.*/
     struct Dwarf_Tied_Data_s de_tied_data;
 
 };

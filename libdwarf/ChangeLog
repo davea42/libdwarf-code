@@ -1,3 +1,6 @@
+2020-07-09: David Anderson
+    * dwarf_opaque.h: Changing a comment about libdwarf
+      and the tied file (if any).
 2020-07-08: David Anderson
     * libdwarf2.1.mm: Added documentation of
       .debug_gnu_pybtypes and .debug_gnu_pubnames.
