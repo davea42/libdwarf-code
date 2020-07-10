@@ -1195,8 +1195,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 http://llvm.1065342.n5.nabble.com/
                 DebugInfo-DW-AT-GNU-ranges-base-in-
                 non-fission-td64194.html
-                We therefore ignore it.  */
-                break;
+                But we accept it anyway. */
             /*  offset in .debug_rnglists  of the offsets table
                 applicable to this CU. */
             case  DW_AT_rnglists_base: {

@@ -172,6 +172,8 @@ struct Dwarf_CU_Context_s {
 
     /*  cc_debug_offset is the global offset in the section
         of the CU header of this CU.
+        The length of the CU is at offset
+        cc_debug_offset-cc_length_size-cc_extension_size;
         That is, it is a section global offset.
         May be debug_info or debug_types
         but those are distinct.

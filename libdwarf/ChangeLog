@@ -1,3 +1,12 @@
+2020-07-10: David Anderson
+    * dwarf_die_deliv.c: Handle
+      DW_AT_GNU_ranges_base in a CU DIE.
+    * dwarf_opaque.h: Added 2lines of comment
+      about cc_debug_offset.
+    * dwarf_query.c(_dwarf_get_ranges_base_attr_value):
+      Simplified as the cu_context
+      has the base values, no need to read
+      DIEs/Attributes here.
 2020-07-09: David Anderson
     * dwarf_opaque.h: Changing a comment about libdwarf
       and the tied file (if any).

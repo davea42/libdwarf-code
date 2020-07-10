@@ -1313,85 +1313,21 @@ _dwarf_get_ranges_base_attr_value(Dwarf_Debug dbg,
     Dwarf_Unsigned * rangesbase_out,
     Dwarf_Error    * error)
 {
-    int res = 0;
-    Dwarf_Die cudie = 0;
-    Dwarf_Bool cu_die_offset_present = 0;
-    Dwarf_Unsigned cu_die_offset = 0;
-    Dwarf_Attribute myattr = 0;
-
     if (!context) {
         _dwarf_error(dbg, error,
             DW_DLE_DEBUG_CU_UNAVAILABLE_FOR_FORM);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if(context->cc_ranges_base_present) {
         *rangesbase_out = context->cc_ranges_base;
         return DW_DLV_OK;
     }
-    cu_die_offset = context->cc_cu_die_global_sec_offset;
-    cu_die_offset_present = context->cc_cu_die_offset_present;
-    if(!cu_die_offset_present) {
-        _dwarf_error(dbg, error,
-            DW_DLE_DEBUG_CU_UNAVAILABLE_FOR_FORM);
-        return (DW_DLV_ERROR);
-
-    }
-    res = dwarf_offdie_b(dbg,cu_die_offset,
-        context->cc_is_info,
-        &cudie,
-        error);
-    if(res != DW_DLV_OK) {
-        return res;
-    }
-    res = dwarf_attr(cudie,DW_AT_rnglists_base,
-        &myattr,error);
-    if(res == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        return res;
-    }
-    if (res == DW_DLV_OK) {
-        Dwarf_Unsigned val = 0;
-        res = dwarf_formudata(myattr,&val,error);
-        dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        if(res != DW_DLV_OK) {
-            return res;
-        }
-        *rangesbase_out  = val;
+    if (context->cc_rnglists_base_present) {
+        /*  This also gets DW_AT_GNU_ranges_base */
+        *rangesbase_out = context->cc_rnglists_base;
         return DW_DLV_OK;
     }
-    /* NO ENTRY, try the other attr. */
-    res = dwarf_attr(cudie,DW_AT_GNU_ranges_base, &myattr,error);
-    if(res == DW_DLV_NO_ENTRY) {
-        res = dwarf_attr(cudie,DW_AT_rnglists_base, &myattr,error);
-        if (res == DW_DLV_NO_ENTRY) {
-            /*  A .o or execeutable skeleton  needs
-                a base , but a .dwo does not.
-                Assume zero is ok and works. */
-            *rangesbase_out = 0;
-            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-            return DW_DLV_OK;
-        }
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-            return res;
-        }
-    } else if (res == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        return res;
-    }
-
-    {
-        Dwarf_Unsigned val = 0;
-        res = dwarf_formudata(myattr,&val,error);
-        dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        if(res != DW_DLV_OK) {
-            return res;
-        }
-        *rangesbase_out  = val;
-    }
-    return DW_DLV_OK;
+    return DW_DLV_NO_ENTRY;
 }
 /*  This works for  all versions of DWARF.
     This is the preferred interface, cease using dwarf_highpc.
@@ -1622,10 +1558,6 @@ _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
     tieddbg = dbg->de_tied_data.td_tied_object;
     if (!tieddbg) {
         _dwarf_error(dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
-        return  DW_DLV_ERROR;
-    }
-    if (!context->cc_signature_present) {
-        _dwarf_error(dbg, error, DW_DLE_NO_TIED_SIG_AVAILABLE);
         return  DW_DLV_ERROR;
     }
     res = _dwarf_search_for_signature(tieddbg,
