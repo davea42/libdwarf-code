@@ -303,6 +303,7 @@ print_debug_gnu(UNUSEDARG Dwarf_Debug dbg,
         } else {
             /* normal */
         }
+        dwarf_gnu_index_dealloc(head);
         esb_destructor(&truename);
     }
     return DW_DLV_OK;
