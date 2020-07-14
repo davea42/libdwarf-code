@@ -107,8 +107,12 @@ static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Half attr,
     Dwarf_Attribute actual_addr,
     boolean print_else_name_match,
-    int die_indent_level, char **srcfiles,
-    Dwarf_Signed cnt,
+    int die_indent_level,
+    char **srcfiles, Dwarf_Signed srcfcnt,
+    Dwarf_Addr * lowAddr,
+    Dwarf_Addr * highAddr,
+    Dwarf_Bool * bSawLow,
+    Dwarf_Bool * bSawHigh,
     boolean *attr_matched,
     Dwarf_Error *err);
 static int print_location_list(Dwarf_Debug dbg,
@@ -140,17 +144,6 @@ static boolean local_symbols_already_began = FALSE;
 
 
 typedef const char *(*encoding_type_func) (unsigned,int doprintingonerr);
-
-/* Indicators to record a pair [low,high], these
-   are used in printing DIEs to accumulate the high
-   and low pc across attributes and to record the pair
-   as soon as both are known. Probably would be better to
-   use variables as arguments to
-   print_attribute().  */
-static Dwarf_Addr lowAddr = 0;
-static Dwarf_Addr highAddr = 0;
-static Dwarf_Bool bSawLow = FALSE;
-static Dwarf_Bool bSawHigh = FALSE;
 
 /* The following too is related to high and low pc
 attributes of a function. It's misnamed, it really means
@@ -1704,7 +1697,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     boolean print_else_name_match,
     int die_indent_level,
-    char **srcfiles, Dwarf_Signed cnt,
+    char **srcfiles, Dwarf_Signed srcfcnt,
     boolean *an_attr_matched_io,
     boolean ignore_die_stack,
     Dwarf_Error *err)
@@ -1722,6 +1715,11 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     boolean attribute_matchedpod = FALSE;
     int atres = 0;
     int abbrev_code = dwarf_die_abbrev_code(die);
+    Dwarf_Addr lowAddr = 0;
+    Dwarf_Addr highAddr = 0;
+    Dwarf_Bool bSawLow = FALSE;
+    Dwarf_Bool bSawHigh = FALSE;
+
 
     /* Print using indentation
     < 1><0x000854ff GOFF=0x00546047>    DW_TAG_pointer_type -> 34
@@ -1923,10 +1921,6 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         atcnt = 0;
     }
 
-    /* Reset any loose references to low or high PC */
-    bSawLow = FALSE;
-    bSawHigh = FALSE;
-
     /* Get the offset for easy error reporting: This is not the CU die.  */
     atres = dwarf_die_offsets(die,&glflags.DIE_overall_offset,
         &glflags.DIE_offset,err);
@@ -1996,7 +1990,11 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                     attr,
                     atlist[i],
                     print_else_name_match, die_indent_level,
-                    srcfiles, cnt,
+                    srcfiles, srcfcnt,
+                    &lowAddr,
+                    &highAddr,
+                    &bSawLow,
+                    &bSawHigh,
                     &attr_match_localb,err);
                 if (aresb == DW_DLV_ERROR) {
                     struct esb_s m;
@@ -3463,6 +3461,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     boolean print_else_name_match,
     int die_indent_level,
     char **srcfiles, Dwarf_Signed cnt,
+    Dwarf_Addr * lowAddr,
+    Dwarf_Addr * highAddr,
+    Dwarf_Bool * bSawLow,
+    Dwarf_Bool * bSawHigh,
     boolean *attr_duplication,
     Dwarf_Error *err)
 {
@@ -4093,8 +4095,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 attrib,
                 attr,
                 max_address,
-                &bSawLow, &lowAddr,
-                &bSawHigh, &highAddr,
+                bSawLow, lowAddr,
+                bSawHigh, highAddr,
                 &valname,
                 err);
             if (rv != DW_DLV_OK) {
