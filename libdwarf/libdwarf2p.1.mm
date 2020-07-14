@@ -13,7 +13,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.50, 20 September 2019
+.ds vE Rev 1.51, 14 July 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -66,30 +66,28 @@ information.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2019 David Anderson.
+Copyright 2007-2020 David Anderson.
 
-Permission is hereby granted to
-copy or republish or use any or all of this document without
-restriction except that when publishing more than a small amount
-of the document
-please acknowledge Silicon Graphics, Inc and David Anderson.
+Permission is hereby granted to copy or republish or use any
+or all of this document without restriction except that when
+publishing more than a small amount of the document please
+acknowledge Silicon Graphics, Inc and David Anderson.
 
-This document is distributed in the hope that it would be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+This document is distributed in the hope that it would be
+useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
 
 .H 2 "Purpose and Scope"
-The purpose of this document is to propose a library of functions to 
-create DWARF debugging information.
-Reading (consuming) of such records 
-is discussed in a separate document.
+The purpose of this document is to propose a library of
+functions to create DWARF debugging information.  Reading
+(consuming) of such records is discussed in a separate
+document.
 
-The functions in this document have mostly been implemented at 
-Silicon Graphics
-and used by the SGI code generator
-to provide debugging information.
-Some functions (and support for some extensions) were provided
-by Sun Microsystems.
+The functions in this document have mostly been implemented
+at Silicon Graphics and used by the SGI code generator to
+provide debugging information.  Some functions (and support
+for some extensions) were provided by Sun Microsystems.
 
 Example code showing one use of the functionality
 may be found in the dwarfgen 
@@ -256,6 +254,12 @@ is the December 2018 version, while
 dwarf_add_frame_info(), 
 dwarf_add_frame_info_b()
 are earlier versions (which are still supported).
+.LI "July 14, 2020"
+To enable testing of reading the DWARF5 section .debug_sup
+the new function dwarf_add_debug_sup() is added.
+dwarfgen can call this function, though dwarfgen
+presently only fills out a bogus .debug_sup
+section to enable simple testing.
 .LE
 
 .H 1 "Type Definitions"
@@ -4161,6 +4165,55 @@ is ignored.
 
 
 It returns a non-zero value on success, and \f(CW0\fP on error.
+
+.H 2 "DWARF5 .debug_sup section creation"
+The .debug_sup section (see the DWARF5 standard)
+enables symbolically linking two DWARF5 
+object files together.
+.sp
+.H 3 "dwarf_add_debug_sup()"
+This call provides all the information
+that the .debug_sup section has.
+.DS
+\f(CWint dwarf_add_debug_sup(
+    Dwarf_P_Debug dbg,
+    Dwarf_Half      version,
+    Dwarf_Small     is_supplementary,
+    char          * filename,
+    Dwarf_Unsigned  checksum_len,
+    Dwarf_Small   * checksum,
+    Dwarf_Error *error)\fP
+.DE
+On success it returns
+\f(CWDW_DLV_OK\fP
+and records the fields for
+creating the section.
+.sp
+The fields are as follows.
+.sp
+\f(CWversion\fP
+should be passed in as 2.
+.sp
+\f(CWfilename\fP
+must be a null-terminated string.
+.sp
+\f(CWis_supplementary\fP
+should be passed in as 0 or 1
+depending on which type of
+object file is involved 
+(see the DWARF5 standard).
+.sp
+\f(CWchecksum\fP must be a byte
+array of length 
+\f(CWchecksum_len\fP
+used to validate (by a debugger)
+the use of the target object file.
+.sp
+\f(CWDW_DLV_NO ENTRY\fP is never returned.
+.sp
+\f(CWDW_DLV_ERROR\fP is returned in case
+of an error, and
+\f(CW*error\fP is set as usual in libdwarf.
 
 
 .H 2 "Fast Access (pubnames) Operations"

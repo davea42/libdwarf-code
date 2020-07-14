@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.01, 8 July 2020
+.ds vE Rev 3.02, 14 July 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -221,6 +221,10 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added dwarf_get_debug_sup() to retrived the DWARF5
+section .debug_sup content.
+(July 13, 2020);
 .P
 Added new functions for 
 reading .debug_gnu_pubtypes
@@ -14499,6 +14503,66 @@ to the global list recorded in the
 \f(CWDwarf_Debug\fP.
 
 
+
+.H 2 "DWARF5 .debug_sup section access"
+The .debug_sup section is new in DWARF5 
+and this function returns all the data
+in that section.
+The section enables splitting off some
+DWARF5 information to a separate file,
+enabling a debugger to find the file,
+and ensuring the file found actually matches.
+See the DWARF5 standard.
+.H 3 "dwarf_get_debug_sup()"
+.DS
+\f(CWint dwarf_get_debug_sup(Dwarf_Debug dbg,
+    Dwarf_Half     * version,
+    Dwarf_Small    * is_supplementary,
+    char          ** filename,
+    Dwarf_Unsigned * checksum_len,
+    Dwarf_Small   ** checksum,
+    Dwarf_Error* error);\fP
+.DE
+
+On success it returns
+\f(CWDW_DLV_OK\fP
+and sets values through the
+pointer fields (other than
+\f(CWerror\fP).
+If any of the pointer fields
+are NULL those pointers are ignored.
+There is nothing resulting from
+this call to free or dealloc.
+.P
+The pointer values are as follows:
+.P
+\f(CWversion\fP is defined to be 2,
+and any other value is an error
+(libdwarf does not indicate an error).
+.P
+\f(CWis_supplementary\fP is a flag
+and only 0 or 1 should be present.
+and any other value is an error, though
+libdwarf does not indicate an error.
+.P
+\f(CWfilename\fP
+is a null-terminated string.
+.P
+\f(CWchecksum_len\fP
+is the length, in bytes, of the 
+data \f(CWchecksum\fP points to.
+.P
+If there is no .debug_sup section or
+if that is empty 
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned.
+.P
+On error (for example, if a field runs
+off the end of the section due to data corruption)
+\f(CWDW_DLV_ERROR\fP is returned
+and 
+\f(CW*error\fP returns the error information
+as is standard in libdwarf.
 
 .H 2 "Debug Fission (.debug_tu_index, .debug_cu_index) operations"
 We name things "xu" as these sections have the same format
