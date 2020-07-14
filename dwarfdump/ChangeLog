@@ -1,3 +1,8 @@
+2020-07-14: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with new
+      version string.
 2020-07-13: David Anderson
     * CMAkeLists.txt: Adding print_debug_sup.c  .
     * Makefile.am: Adding print_debug_sup.c  .
