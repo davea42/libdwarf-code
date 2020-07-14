@@ -4759,7 +4759,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 #if 0  /*  DEBUGGING ONLY */
     /*  This prints all the actual fields as well as the
         macro results that use the fields. */
-    printf("dadebug std print? attr name %u &&  %u  && %u || %u.  %u %u %u\n",
+    printf("DEBUGONLY std print? attr name %u &&  %u  && %u || %u.  %u %u %u\n",
     (unsigned)PRINTING_UNIQUE,
     (unsigned)PRINTING_DIES,
     (unsigned)print_else_name_match,

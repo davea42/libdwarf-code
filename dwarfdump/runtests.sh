@@ -55,7 +55,7 @@ else
     CC=cc
   fi
 fi
-#echo "dadebug cflags before runtests.sh sets it $CFLAGS"
+#echo "cflags before runtests.sh sets it $CFLAGS"
 #CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
 
 echo "dwgetopt test"
