@@ -183,6 +183,7 @@ static int CallbackFunc(
 }
 // End extern "C"
 
+static void create_debug_sup_content(Dwarf_P_Debug dbg);
 // FIXME. This is incomplete. See FIXME just below here.
 #ifdef WORDS_BIGENDIAN
 static void
@@ -295,6 +296,7 @@ CmdOptions cmdoptions = {
     false, //addimplicitconst
     false, //addframeadvanceloc
     false, //addSUNfuncoffsets
+    false, //add_debug_sup
 };
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
@@ -624,6 +626,7 @@ main(int argc, char **argv)
             {"add-implicit-const",dwno_argument,0,1002},
             {"add-frame-advance-loc",dwno_argument,0,1003},
             {"add-sun-func-offsets",dwno_argument,0,1004},
+            {"add-debug-sup",dwno_argument,0,1006},
             {"output-pointer-size",dwrequired_argument,0,'p'},
             {"output-offset-size",dwrequired_argument,0,'f'},
             {"output-dwarf-version",dwrequired_argument,0,'v'},
@@ -671,6 +674,7 @@ main(int argc, char **argv)
                 cmdoptions.addframeadvanceloc = true;
                 break;
             case 1004:
+                //{"add-sun-func-offsets",dwno_argument,0,1004},
                 // To test creating DWARF5
                 // DW_AT_SUN_func_offsets.
                 // libdwarf reading is thus testable.
@@ -679,6 +683,10 @@ main(int argc, char **argv)
             case 1005:
                 //{"output-v4-test",dwno_argument,0,1005}
                 output_v4_test = 1;
+                break;
+            case 1006:
+                //{"add-debug-sup",dwno_argument,0,1006}
+                cmdoptions.adddebugsup = true;
                 break;
             case 'c':
                 // At present we can only create a single
@@ -848,6 +856,11 @@ main(int argc, char **argv)
                 exit(EXIT_FAILURE);
             }
         }
+cout << "dadebug adddebugsup? " <<cmdoptions.adddebugsup <<endl;
+        if(cmdoptions.adddebugsup) { 
+cout << "dadebug adddebugsup! " <<cmdoptions.adddebugsup <<endl;
+            create_debug_sup_content(dbg);
+        }
         transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);
         write_object_file(dbg,Irep,machine,endian, dwbitflags,
             user_data);
@@ -891,6 +904,29 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     exit(1);
+}
+
+static void
+create_debug_sup_content(Dwarf_P_Debug dbg)
+{
+    int res = 0;
+    Dwarf_Error err = 0;
+    char x_content[] = "fake checksum_content";
+    Dwarf_Small * content = (Dwarf_Small *)x_content;
+
+cout <<  "dadebug call add_debug_sup " << endl;
+    res = dwarf_add_debug_sup(dbg,
+        2,0,
+        (char *)"fake-file/fake-file-name",
+        sizeof(x_content),
+        content,&err);
+    if (res != DW_DLV_OK) {
+        printf("FAIL creating .debug_sup data in dbg "
+            " due to error  %s\n",
+            dwarf_errmsg(err));
+        exit(1);
+    }
+    return;
 }
 
 static void

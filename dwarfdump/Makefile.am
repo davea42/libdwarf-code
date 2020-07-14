@@ -54,6 +54,7 @@ print_die.c \
 print_debug_gnu.c \
 print_debug_gnu.h \
 print_debug_names.c \
+print_debug_sup.c \
 print_frames.c \
 print_frames.h \
 print_gdbindex.c \

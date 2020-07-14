@@ -22,6 +22,7 @@ dwarf_die_deliv.c \
 dwarf_die_deliv.h \
 dwarf_debug_names.c \
 dwarf_debug_names.h \
+dwarf_debug_sup.c \
 dwarf_dsc.c \
 dwarf_dsc.h \
 dwarf_elf_access.c \
@@ -130,6 +131,7 @@ pro_alloc.c \
 pro_alloc.h \
 pro_arange.c \
 pro_arange.h \
+pro_debug_sup.c \
 pro_die.c \
 pro_die.h \
 pro_dnames.h \

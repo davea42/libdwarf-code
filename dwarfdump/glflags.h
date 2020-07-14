@@ -118,6 +118,7 @@ struct glflags_s {
     boolean gf_gdbindex_flag;   /* .gdbindex section. */
     boolean gf_gnu_debuglink_flag;   /* .gnu_debuglink section. */
     boolean gf_debug_gnu_flag;  /* .debug_gnu_pubtypes, pubnames*/
+    boolean gf_debug_sup_flag;  /* .debug_sup */
     boolean gf_info_flag;  /* .debug_info */
     boolean gf_line_flag;
     boolean gf_line_print_pc;
@@ -401,6 +402,7 @@ boolean cu_data_is_set(void);
 #define DEBUG_LOCLISTS    20
 #define DEBUG_GNU_PUBNAMES 21
 #define DEBUG_GNU_PUBTYPES 22
+#define DEBUG_SUP         23
 
 /* Print the information only if unique errors is set and it is first time */
 #define PRINTING_UNIQUE (!glflags.gf_found_error_message)

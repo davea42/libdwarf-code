@@ -696,8 +696,8 @@ enum Dwarf_RLE_e {
 };
 
 enum Dwarf_GNUIVIS_e {
-    DW_GNUIVIS_static                        = 0x0000,
-    DW_GNUIVIS_global                        = 0x0001
+    DW_GNUIVIS_global                        = 0x0000,
+    DW_GNUIVIS_static                        = 0x0001
 };
 
 enum Dwarf_GNUIKIND_e {

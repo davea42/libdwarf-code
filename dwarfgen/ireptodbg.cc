@@ -482,7 +482,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
 
         AddAttrToDie(dbg,Irep,cu,gendie,inDie,attr);
     }
-   }
+    }
     return gendie;
 }
 

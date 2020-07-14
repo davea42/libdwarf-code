@@ -550,6 +550,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_GNU_PUBTYPES_ERROR(473) A problem with .debug_gnu_pubtypes",
     "DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES(474) Duplicated section .debug_gnu_pubnames",
     "DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES(475) Duplicated section .debug_gnu_pubtypes",
+    "DW_DLE_DEBUG_SUP_STRING_ERROR(476) The string in .debug_sup head runs off the end of the section. Corrupt data",
+    "DW_DLE_DEBUG_SUP_ERROR(477). .debug_sup data corruption",
+
 
 };
 #endif /* DWARF_ERRMSG_LIST_H */

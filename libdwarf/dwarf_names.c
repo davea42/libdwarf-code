@@ -2093,11 +2093,11 @@ int
 dwarf_get_GNUIVIS_name (unsigned int val,const char ** s_out)
 {
     switch (val) {
-    case DW_GNUIVIS_static:
-        *s_out = "DW_GNUIVIS_static";
-        return DW_DLV_OK;
     case DW_GNUIVIS_global:
         *s_out = "DW_GNUIVIS_global";
+        return DW_DLV_OK;
+    case DW_GNUIVIS_static:
+        *s_out = "DW_GNUIVIS_static";
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;

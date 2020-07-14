@@ -125,6 +125,7 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-print_die.$(OBJEXT) \
 	dwarfdump-print_debug_gnu.$(OBJEXT) \
 	dwarfdump-print_debug_names.$(OBJEXT) \
+	dwarfdump-print_debug_sup.$(OBJEXT) \
 	dwarfdump-print_frames.$(OBJEXT) \
 	dwarfdump-print_gdbindex.$(OBJEXT) \
 	dwarfdump-print_lines.$(OBJEXT) \
@@ -609,6 +610,7 @@ print_die.c \
 print_debug_gnu.c \
 print_debug_gnu.h \
 print_debug_names.c \
+print_debug_sup.c \
 print_frames.c \
 print_frames.h \
 print_gdbindex.c \
@@ -819,6 +821,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_aranges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_debug_gnu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_debug_names.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_debug_sup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_debugfission.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_die.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_frames.Po@am__quote@
@@ -1180,6 +1183,20 @@ dwarfdump-print_debug_names.obj: print_debug_names.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_debug_names.c' object='dwarfdump-print_debug_names.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_debug_names.obj `if test -f 'print_debug_names.c'; then $(CYGPATH_W) 'print_debug_names.c'; else $(CYGPATH_W) '$(srcdir)/print_debug_names.c'; fi`
+
+dwarfdump-print_debug_sup.o: print_debug_sup.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_debug_sup.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_debug_sup.Tpo -c -o dwarfdump-print_debug_sup.o `test -f 'print_debug_sup.c' || echo '$(srcdir)/'`print_debug_sup.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_debug_sup.Tpo $(DEPDIR)/dwarfdump-print_debug_sup.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_debug_sup.c' object='dwarfdump-print_debug_sup.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_debug_sup.o `test -f 'print_debug_sup.c' || echo '$(srcdir)/'`print_debug_sup.c
+
+dwarfdump-print_debug_sup.obj: print_debug_sup.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_debug_sup.obj -MD -MP -MF $(DEPDIR)/dwarfdump-print_debug_sup.Tpo -c -o dwarfdump-print_debug_sup.obj `if test -f 'print_debug_sup.c'; then $(CYGPATH_W) 'print_debug_sup.c'; else $(CYGPATH_W) '$(srcdir)/print_debug_sup.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_debug_sup.Tpo $(DEPDIR)/dwarfdump-print_debug_sup.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_debug_sup.c' object='dwarfdump-print_debug_sup.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_debug_sup.obj `if test -f 'print_debug_sup.c'; then $(CYGPATH_W) 'print_debug_sup.c'; else $(CYGPATH_W) '$(srcdir)/print_debug_sup.c'; fi`
 
 dwarfdump-print_frames.o: print_frames.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_frames.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_frames.Tpo -c -o dwarfdump-print_frames.o `test -f 'print_frames.c' || echo '$(srcdir)/'`print_frames.c

@@ -1,28 +1,30 @@
 /*
-
-  Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011-2017 David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2020 David Anderson. All Rights Reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it
+  and/or modify it under the terms of version 2.1 of the
+  GNU Lesser General Public License as published by the Free
+  Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program; if not, write the Free Software
-  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
-  USA.
+  You should have received a copy of the GNU Lesser General
+  Public License along with this program; if not, write the
+  Free Software Foundation, Inc., 51 Franklin Street - Fifth
+  Floor, Boston MA 02110-1301, USA.
 
 */
 
@@ -63,6 +65,7 @@ typedef signed short Dwarf_Shalf;
     definition in pro_section.h */
 typedef struct Dwarf_P_Section_Data_s *Dwarf_P_Section_Data;
 
+
 /*
     producer:
     This struct holds file entries or
@@ -83,6 +86,8 @@ typedef struct Dwarf_P_Cie_s *Dwarf_P_Cie;
     Dwarf_Line opaque type.
 */
 typedef struct Dwarf_P_Line_s *Dwarf_P_Line;
+/*   For a .debug_sup section creation. */
+typedef struct Dwarf_P_Debug_Sup_s *Dwarf_P_Debug_Sup;
 
 /*
     producer:
@@ -121,9 +126,10 @@ typedef struct Dwarf_P_Dnames_s *Dwarf_P_Dnames;
 #define         DEBUG_MACRO     18 /* DWARF 5. */
 #define         DEBUG_LOCLISTS  19 /* DWARF 5. */
 #define         DEBUG_RNGLISTS  20 /* DWARF 5. */
+#define         DEBUG_SUP       21 /* DWARF 5. */
 
 /* Maximum number of debug_* sections not including the relocations */
-#define         NUM_DEBUG_SECTIONS      21
+#define         NUM_DEBUG_SECTIONS      22
 
 /*  The FORM codes available are defined in DWARF5
     on page 158, DW_LNCT_path  */
@@ -170,6 +176,15 @@ struct Dwarf_P_Line_Inits_s {
     struct Dwarf_P_Line_format_s pi_fileformats[DW_LINE_FORMATS_MAX];
 };
 
+/*  To enable DWARF5 testing. July 2020 */
+struct Dwarf_P_Debug_Sup_s {
+    Dwarf_Half     ds_version; /* 2 */
+    Dwarf_Small    ds_is_supplementary; /* 0 or 1 */
+    char          *ds_filename;
+    Dwarf_Unsigned ds_checksum_len;
+    Dwarf_Small   *ds_checksum;
+    Dwarf_P_Debug  ds_dbg; 
+};
 
 struct Dwarf_P_Die_s {
     Dwarf_Unsigned di_offset; /* offset in debug info */
@@ -445,6 +460,9 @@ struct Dwarf_P_Debug_s {
     Dwarf_P_Fde de_frame_fdes;
     Dwarf_P_Fde de_last_fde;
     Dwarf_Unsigned de_n_fde;
+
+    /* It's just one small record */
+    struct Dwarf_P_Debug_Sup_s de_debug_sup;
 
     /* First die, leads to all others */
     Dwarf_P_Die de_dies;

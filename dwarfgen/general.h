@@ -46,6 +46,7 @@ extern struct CmdOptions {
     bool addimplicitconst;
     bool addframeadvanceloc;
     bool addSUNfuncoffsets;
+    bool adddebugsup;
 } cmdoptions;
 
 template <typename T >

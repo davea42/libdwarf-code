@@ -28,13 +28,15 @@
 #include "config.h"
 #include "libdwarfdefs.h"
 #include "pro_incl.h"
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "pro_opaque.h"
 #include "pro_error.h"
 #include "pro_alloc.h"
-
 
 /*  This routine deallocates all memory, and does some
     finishing up
@@ -60,6 +62,12 @@ dwarf_producer_finish_a(Dwarf_P_Debug dbg, Dwarf_Error * error)
     }
 
     /* this frees all blocks, then frees dbg. */
+    free(dbg->de_debug_sup.ds_filename);
+    dbg->de_debug_sup.ds_filename = 0;
+    dbg->de_debug_sup.ds_version = 0;
+    free(dbg->de_debug_sup.ds_checksum);
+    dbg->de_debug_sup.ds_checksum = 0;
+    dbg->de_debug_sup.ds_checksum_len = 0;
     _dwarf_p_dealloc_all(dbg);
     return DW_DLV_OK ;
 }

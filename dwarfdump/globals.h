@@ -153,6 +153,8 @@ extern int print_types(Dwarf_Debug dbg,enum type_type_e type_type,
     Dwarf_Error *);
 extern int print_weaknames(Dwarf_Debug dbg, Dwarf_Error *);
 extern int print_debug_names(Dwarf_Debug dbg,Dwarf_Error *);
+int print_debug_sup(Dwarf_Debug dbg, Dwarf_Error *error);
+
 int print_all_pubnames_style_records(Dwarf_Debug dbg,
     const char * linetitle,
     const char * section_true_name,

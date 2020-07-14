@@ -142,12 +142,13 @@ const char *_dwarf_rel_section_names[] = {
     REL_SEC_PREFIX ".debug_types",      /* new in DWARF4 */
     REL_SEC_PREFIX ".debug_pubtypes",   /* new in DWARF3 */
     REL_SEC_PREFIX ".debug_names",      /* DWARF5 aka dnames */
-    REL_SEC_PREFIX ".debug_str",        /* Nothing here refers to anything.*/
+    REL_SEC_PREFIX ".debug_str",      /* Nothing here refers to anything.*/
     REL_SEC_PREFIX ".debug_rnglists",   /* DWARF5. */
-    REL_SEC_PREFIX ".debug_line_str",   /* DWARF5. Nothing referselsewhere */
+    REL_SEC_PREFIX ".debug_line_str", /* DWARF5. Nothing referselsewhere */
     REL_SEC_PREFIX ".debug_macro",      /* DWARF5. */
     REL_SEC_PREFIX ".debug_loclists",   /* DWARF5. */
     REL_SEC_PREFIX ".debug_rnglists",   /* DWARF5. */
+    REL_SEC_PREFIX ".debug_sup",   /* DWARF5. No relocs on this */
 };
 
 /*  names of sections. Ensure that it matches the defines
@@ -176,6 +177,7 @@ const char *_dwarf_sectnames[] = {
     ".debug_macro",             /* new in DWARF5 */
     ".debug_loclists",          /* new in DWARF5 */
     ".debug_rnglists",          /* new in DWARF5 */
+    ".debug_sup",               /* new in DWARF5 */
 };
 
 
@@ -227,6 +229,9 @@ static int _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
+static int _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs, Dwarf_Error * error);
+
 
 #if 0
 static void
@@ -408,6 +413,12 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
         long flags = 0;
 
         switch (sect) {
+        case DEBUG_SUP:
+printf("dadebug  case DEBUG_SUP  ver %d\n",dbg->de_debug_sup.ds_version);
+            if (!dbg->de_debug_sup.ds_version) {
+                continue;
+            }
+            break;
 
         case DEBUG_INFO:
             if (dbg->de_dies == NULL) {
@@ -549,6 +560,16 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
 
     /*  Changing the order in which the sections are generated may cause
         problems because of relocations. */
+
+    if (dbg->de_debug_sup.ds_version) {
+        int res = _dwarf_pro_generate_debugsup(dbg,
+             &nbufs, error);
+        
+printf("dadebug  generated DEBUG_SUP  res %d\n",res);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+    }
 
     if (dwarf_need_debug_line_section(dbg) == TRUE) {
         int res = _dwarf_pro_generate_debugline(dbg,&nbufs, error);
@@ -2764,8 +2785,6 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
 }
 
 /* Generate debug_info and debug_abbrev sections */
-
-
 /*  DWARF 2,3,4  */
 static int
 generate_debuginfo_header_2(Dwarf_P_Debug dbg,
@@ -3047,7 +3066,59 @@ sort_die_attrs(Dwarf_P_Debug dbg,Dwarf_P_Die die,
     return DW_DLV_OK;
 }
 
+static int
+_dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
+    Dwarf_Error * error)
+{
+    int elfsectno = 0;
+    unsigned char *data = 0;
+    Dwarf_Half version = 0;
+    unsigned int uleblen = 0;
+    int leblen = 0;
+    unsigned i = 0;
+    unsigned name_len = 0;
+    Dwarf_Unsigned alloc_size = 0;
+    int res = 0;
 
+    elfsectno = dbg->de_elf_sects[DEBUG_SUP];
+    res = pretend_write_uval(dbg->de_debug_sup.ds_checksum_len,
+         dbg, &uleblen,error);
+    if (res != DW_DLV_OK) {
+         return res;
+    }
+    version = dbg->de_debug_sup.ds_version;
+    name_len = strlen(dbg->de_debug_sup.ds_filename) +1;
+    alloc_size = DWARF_HALF_SIZE +
+        1 + name_len +
+        uleblen +  dbg->de_debug_sup.ds_checksum_len;
+    GET_CHUNK_ERR(dbg, elfsectno, data, alloc_size, error);
+     
+    WRITE_UNALIGNED(dbg, (void *) data,
+        (const void *)&version, DWARF_HALF_SIZE, DWARF_HALF_SIZE);
+    data += DWARF_HALF_SIZE;
+   
+    *data = dbg->de_debug_sup.ds_is_supplementary;
+    ++data;
+
+    for  (i = 0 ; i < name_len ; ++i,++data) {
+        *data = *(unsigned char *)(dbg->de_debug_sup.ds_filename +i);
+    }
+    
+    res = _dwarf_pro_encode_leb128_nm(
+        dbg->de_debug_sup.ds_checksum_len,
+        &leblen,
+        (char *)data,(int)uleblen);
+    if (res != DW_DLV_OK) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUG_SUP_ERROR, DW_DLV_ERROR);
+    }
+    data += uleblen;
+
+    memcpy(data,dbg->de_debug_sup.ds_checksum,
+        dbg->de_debug_sup.ds_checksum_len);
+    *nbufs =  dbg->de_n_debug_sect;
+    return DW_DLV_OK;
+}
 
 static int
 _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,

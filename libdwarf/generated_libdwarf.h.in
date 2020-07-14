@@ -1417,9 +1417,11 @@ Old names above with same values. */
 #define DW_DLE_GNU_PUBTYPES_ERROR              473
 #define DW_DLE_DUPLICATE_GNU_DEBUG_PUBNAMES    474
 #define DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES    475
+#define DW_DLE_DEBUG_SUP_STRING_ERROR          476
+#define DW_DLE_DEBUG_SUP_ERROR                 477
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        475
+#define DW_DLE_LAST        477
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -3848,6 +3850,15 @@ Dwarf_Unsigned dwarf_producer_finish(Dwarf_P_Debug /*dbg*/,
 int dwarf_producer_finish_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error* /*error*/);
 
+/* New July 2020 for testing DWARF5 */
+int dwarf_add_debug_sup(Dwarf_P_Debug /*dbg*/,
+    Dwarf_Half      /*version*/,
+    Dwarf_Small     /*is_supplementary*/,
+    char          * /*filename*/,
+    Dwarf_Unsigned  /*checksum_len*/,
+    Dwarf_Small   * /*checksum*/,
+    Dwarf_Error * /*error*/);
+
 /* Producer attribute addition functions. */
 Dwarf_P_Attribute dwarf_add_AT_targ_address(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
@@ -4886,6 +4897,15 @@ int dwarf_get_ranges_a(Dwarf_Debug /*dbg*/,
 void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);
+
+/* New July 2020 for DWARF5 */
+int dwarf_get_debug_sup(Dwarf_Debug /*dbg*/,
+    Dwarf_Half     * /*version*/,
+    Dwarf_Small    * /*is_supplementary*/,
+    char          ** /*filename*/,
+    Dwarf_Unsigned * /*checksum_len*/,
+    Dwarf_Small   ** /*checksum*/,
+    Dwarf_Error * /*error*/);
 
 /* ======= START .debug_rnglists interfaces.  New May 2020 */
 struct Dwarf_Rnglists_Entry_s;

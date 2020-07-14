@@ -1,5 +1,6 @@
 set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
 dwarf_alloc.c dwarf_arange.c 
+dwarf_debug_sup.c
 dwarf_debuglink.c dwarf_die_deliv.c 
 dwarf_debug_names.c dwarf_dsc.c dwarf_elf_access.c 
 dwarf_elf_load_headers.c 
@@ -28,6 +29,7 @@ dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
 dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c 
 malloc_check.c pro_alloc.c pro_arange.c 
+pro_debug_sup.c
 pro_die.c pro_dnames.c pro_encode_nm.c pro_error.c pro_expr.c 
 pro_finish.c pro_forms.c pro_funcs.c pro_frame.c 
 pro_init.c pro_line.c pro_reloc.c pro_reloc_stream.c 

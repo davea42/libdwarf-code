@@ -1,3 +1,20 @@
+2020-07-13: David Anderson
+    * CMakeLists.txt, Makefile.am: Added dwarf_debug_sup.c
+    * Makefile.in: Regenerated.
+    * dwarf_errmsg_list.h: Added DW_DLE_DEBUG_SUP_STRING_ERROR
+      and DW_DLE_DEBUG_SUP_ERROR.
+    * dwarf_names.c dwarf_names_enum.h: Reflects correction
+      of value of
+      DW_GNUIVIS_static (a new non-standard name in dwarf.h)
+    * generated_libdwarf.h.in,libdwarf.h.in: With the
+      two new errors and declaration of
+      dwarf_add_debug_sup() to produce .debug_sup
+      and dwarf_get_debug_sup() to retrieve the section values..
+    * pro_finish.c: Support for creating .debug_sup.
+    * pro_opaque.h: Support for creating .debug_sup.
+    * pro_section.c: Support for creating .debug_sup.
+    * dwarf_debug_sup.c: New, for .debug_sup access.
+	* pro_debug_sup.c: New. for .debug_sup creation.
 2020-07-10: David Anderson
     * dwarf_die_deliv.c: Handle
       DW_AT_GNU_ranges_base in a CU DIE.
