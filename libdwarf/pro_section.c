@@ -414,7 +414,6 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
 
         switch (sect) {
         case DEBUG_SUP:
-printf("dadebug  case DEBUG_SUP  ver %d\n",dbg->de_debug_sup.ds_version);
             if (!dbg->de_debug_sup.ds_version) {
                 continue;
             }
@@ -564,8 +563,6 @@ printf("dadebug  case DEBUG_SUP  ver %d\n",dbg->de_debug_sup.ds_version);
     if (dbg->de_debug_sup.ds_version) {
         int res = _dwarf_pro_generate_debugsup(dbg,
              &nbufs, error);
-        
-printf("dadebug  generated DEBUG_SUP  res %d\n",res);
         if (res == DW_DLV_ERROR) {
             return res;
         }

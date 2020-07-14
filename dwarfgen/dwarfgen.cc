@@ -856,9 +856,7 @@ main(int argc, char **argv)
                 exit(EXIT_FAILURE);
             }
         }
-cout << "dadebug adddebugsup? " <<cmdoptions.adddebugsup <<endl;
         if(cmdoptions.adddebugsup) { 
-cout << "dadebug adddebugsup! " <<cmdoptions.adddebugsup <<endl;
             create_debug_sup_content(dbg);
         }
         transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);
@@ -914,7 +912,6 @@ create_debug_sup_content(Dwarf_P_Debug dbg)
     char x_content[] = "fake checksum_content";
     Dwarf_Small * content = (Dwarf_Small *)x_content;
 
-cout <<  "dadebug call add_debug_sup " << endl;
     res = dwarf_add_debug_sup(dbg,
         2,0,
         (char *)"fake-file/fake-file-name",

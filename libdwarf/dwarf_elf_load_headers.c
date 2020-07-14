@@ -113,7 +113,7 @@ dumpsizes(int line,Dwarf_Unsigned s,
     Dwarf_Unsigned fsz)
 {
     Dwarf_Unsigned tlen = s + o;
-    printf("Size Error dadebug sz 0x%llx off 0x%llx fsx 0x%llx "
+    printf("Size Error DEBUGONLY sz 0x%llx off 0x%llx fsx 0x%llx "
         "sum 0x%llx line %d \n",
         s,o,fsz,tlen,line);
 }
