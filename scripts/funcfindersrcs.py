@@ -109,7 +109,7 @@ def reader(path):
     if l2.startswith("dwarf_") == 1:
       l3 = l2.split("(");
       if len(l3) < 2:
-        printf(" dadebug odd-a ",l3);
+        printf(" CHECKME: odd-a ",l3);
         continue
       if l3[1].startswith(")") == 1:
         continue

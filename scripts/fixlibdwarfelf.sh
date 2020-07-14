@@ -9,7 +9,7 @@ yorn=$1
 srcdir=$2/libdwarf
 builddir=$3/libdwarf
 
-#echo "dadebug $yourn $srcdir $builddir"
+#echo "FILES $yourn $srcdir $builddir"
 if [ x$yorn = "xno" ]
 then
   cp $srcdir/libdwarf.h.in $builddir/libdwarf.h
