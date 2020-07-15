@@ -2203,7 +2203,14 @@ void
 tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
 {
     switch (val) {
+    /*  DW_TAG_type unit will not have addresses */
+    /*  DW_TAG_skeleton unit will have addresses, but
+        likely no children. But they are useful
+        as marking glflags.seen_CU TRUE is useful */
+    case DW_TAG_partial_unit:
     case DW_TAG_compile_unit:
+    case DW_TAG_type_unit:
+    case DW_TAG_skeleton_unit:
         /* To help getting the compile unit name */
         glflags.seen_CU = TRUE;
         /*  If we are checking line information, build

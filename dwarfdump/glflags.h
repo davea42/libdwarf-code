@@ -239,13 +239,16 @@ struct glflags_s {
 
     unsigned long gf_count_major_errors;
 
-    /*  Base address has a special meaning in DWARF4 relative to address ranges. */
+    /*  Base address has a special meaning in DWARF4,5
+        relative to address ranges. */
     boolean seen_PU;                  /* Detected a PU */
     boolean seen_CU;                  /* Detected a CU */
     boolean need_CU_name;             /* Need CU name */
     boolean need_CU_base_address;     /* Need CU Base address */
     boolean need_CU_high_address;     /* Need CU High address */
     boolean need_PU_valid_code;       /* Need PU valid code */
+    boolean in_valid_code;            /* set/reset in  subprogram
+                                         and compile-unit DIES.*/
 
     boolean seen_PU_base_address;     /* Detected a Base address for PU */
     boolean seen_PU_high_address;     /* Detected a High address for PU */

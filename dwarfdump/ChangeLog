@@ -1,3 +1,25 @@
+2020-07-15: David Anderson
+    * CMakeLists.txt,Makefile.am: Added print_hipc_lopc_attr.c.
+    * Makefile.in: Regenerated.
+    * print_die.c: Moved print_hipc_lopc_attribute() from
+      here to print_hipc_lopc_attr.c.
+      Moved file-static variables bSawLow bSawHigh lowAddr
+      highAddr to print_one_die(), no need to be global.
+      get_small_encoding_integer_and_name() renamed.
+    * print_hipc_lopc_attr.c: New. Holds the larg-ish
+      function print_hipc_lopc_attribute() from .
+    * globals.h: Now _dwarf_get_small_encoding_integer_and_name()
+      can be called from more than one file in libdwarf.
+      Added print_hipc_lopc_attribute() declaration as it
+      is moved to its own source file.
+    * glflags.h: Added new member in_valid_code.
+    * glflags.c: Added glflags.in_valid_code = FALSE,
+      a new global-like variable to replace the old
+      print_die.c static variable in_valid_code.
+      Adds a bit of clarity.
+    * dwarfdump.c(tag_specific_checks_setup): Added new
+      DWARF5 CU DIE tags here. 
+    * print_debug_sup.c: Fixed indent and trailing whitespace.
 2020-07-14: David Anderson
     * print_die.c: Moved 4 variables, including
       bSawLow and bSawHigh from static to being local

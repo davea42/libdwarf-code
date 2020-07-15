@@ -282,6 +282,17 @@ int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     struct esb_s *string_out,
     Dwarf_Error *err);
 
+/* encoding_type_func used in print_die.c and print_lopc_hipc_attr.c  */
+typedef const char *(*encoding_type_func) (unsigned,int doprintingonerr);
+int _dwarf_get_small_encoding_integer_and_name(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib,
+    Dwarf_Unsigned * uval_out,
+    const char *attr_name,
+    struct esb_s* string_out,
+    encoding_type_func val_as_string,
+    Dwarf_Error * err,
+    int show_form);
+
 int print_original_loclist_linecodes(Dwarf_Debug dbg,
     Dwarf_Bool    checking,
     const char *  tagname,
@@ -337,6 +348,22 @@ void loc_error_check(
     Dwarf_Unsigned offset,
     Dwarf_Addr base_address,
     Dwarf_Bool *bError);
+int print_hipc_lopc_attribute(Dwarf_Debug dbg,
+    Dwarf_Half tag,
+    Dwarf_Die die,
+    Dwarf_Unsigned dieprint_cu_goffset,
+    char ** srcfiles,
+    Dwarf_Signed cnt,
+    Dwarf_Attribute attrib,
+    Dwarf_Half attr,
+    Dwarf_Unsigned max_address,
+    Dwarf_Bool *bSawLowp,
+    Dwarf_Addr *lowAddrp,
+    Dwarf_Bool *bSawHighp,
+    Dwarf_Addr *highAddrp,
+    struct esb_s *valname,
+    Dwarf_Error *err);
+
 
 
 

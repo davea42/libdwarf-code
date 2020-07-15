@@ -58,6 +58,7 @@ print_debug_sup.c \
 print_frames.c \
 print_frames.h \
 print_gdbindex.c \
+print_hipc_lopc_attr.c \
 print_lines.c \
 print_llex_codes.c \
 print_origloclist_codes.c \

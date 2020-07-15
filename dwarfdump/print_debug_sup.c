@@ -74,7 +74,6 @@ print_debug_sup(Dwarf_Debug dbg,
             dwarf_errmsg(*error));
         dwarf_dealloc_error(dbg,*error);
         *error = 0;
-   
         esb_destructor(&truename);
         return DW_DLV_OK;
     } else if (res == DW_DLV_NO_ENTRY) {
@@ -104,9 +103,9 @@ print_debug_sup(Dwarf_Debug dbg,
     printf("  Checksum bytes in hex:\n");
     curptr = checksum_ptr;
     if (checksum_len > 0) {
-         printf("    ");
+        printf("    ");
     }
-    for( i = 0 ; i < checksum_len; ++i,++curptr) { 
+    for( i = 0 ; i < checksum_len; ++i,++curptr) {
         if (i > 0 && (i%16) == 0) {
             printf("\n    ");
         }

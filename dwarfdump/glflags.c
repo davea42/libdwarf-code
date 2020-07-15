@@ -189,6 +189,11 @@ init_global_flags(void)
     glflags.need_CU_high_address = TRUE;  /* Need CU High address */
     glflags.need_PU_valid_code = TRUE;    /* Need PU valid code */
 
+    /*  Involved with need_PU_valid_code (set
+        in dwarfdump.c), in_valid_code set when subprogram DIE
+        or CU DIE  has lowpc and highpc.   */
+    glflags.in_valid_code = FALSE;
+
     glflags.seen_PU_base_address = FALSE; /* Detected a Base address for PU */
     glflags.seen_PU_high_address = FALSE; /* Detected a High address for PU */
     glflags.PU_base_address = 0;       /* PU Base address */
