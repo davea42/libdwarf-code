@@ -74,6 +74,8 @@
 #include "dwarfstring.h"
 #include "dwarf_str_offsets.h"
 
+/* if DEBUG is defined a lot of stdout is generated here. */
+#undef DEBUG
 #define TRUE 1
 #define FALSE 0
 /*  Some allocations are simple some not. These reduce

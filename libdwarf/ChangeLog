@@ -1,3 +1,9 @@
+2020-07-15: David Anderson
+    * dwarf_alloc.c: Improved printf if DEBUG
+      is turned on, with #undef DEBUG in source so
+      necessary to modify the source and rebuild
+      to get the voluminous alloc/dealloc debugging
+      printf turned on.
 2020-07-14: David Anderson
     * libdwarf2.1.mm: Version 3.02. Documents the new call
       dwarf_get_debug_sup() to access the DWARF5
