@@ -817,6 +817,10 @@ abort();
     type = alloc_type;
 #if DEBUG
     if(dbg != r->rd_dbg) {
+        printf("DEALLOC does nothing, dbg != rd_dbg"
+            " line %d %s\n",
+            __LINE__,__FILE__);
+        fflush(stdout);
         /*  Something is badly wrong. Better to leak than
             to crash. */
         return;
