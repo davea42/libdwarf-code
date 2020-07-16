@@ -81,7 +81,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 /*  1 more than the highest number in the DW_TAG defines,
     this is for standard TAGs. Number of rows. */
-#define STD_TAG_TABLE_ROWS  73
+#define STD_TAG_TABLE_ROWS  75
 /* Enough entries to have a bit for each standard legal tag. */
 #define STD_TAG_TABLE_COLUMNS 3
 
@@ -102,10 +102,10 @@ No blank lines or commentary allowed, no symbols, just numbers.
     BITS_PER_WORD fields per word. Dense and quick to inspect */
 #define COUNT_ATTRIBUTE_STD 7
 
-#define STD_ATTR_TABLE_ROWS 75
+#define STD_ATTR_TABLE_ROWS 76
 #define STD_ATTR_TABLE_COLUMNS  5
 /* tag/attr tree common extension maximums. */
-#define EXT_ATTR_TABLE_ROWS 16
+#define EXT_ATTR_TABLE_ROWS 17
 #define EXT_ATTR_TABLE_COLS 10
 
 /*  The following 2 used in tag_attr.c only.

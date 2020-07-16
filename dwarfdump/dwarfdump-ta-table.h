@@ -57,6 +57,9 @@ static Usage_Tag_Attr tag_attr_01[] = {
 
 /* 0x47 - DW_TAG_atomic_type */
 static Usage_Tag_Attr tag_attr_47[] = {
+    {/* 0x39 */  0, DW_AT_decl_column},
+    {/* 0x3a */  0, DW_AT_decl_file},
+    {/* 0x3b */  0, DW_AT_decl_line},
     {/* 0x88 */  0, DW_AT_alignment},
     {/* 0x01 */  0, DW_AT_sibling},
     {/* 0x49 */  0, DW_AT_type},
@@ -65,6 +68,9 @@ static Usage_Tag_Attr tag_attr_47[] = {
 
 /* 0x24 - DW_TAG_base_type */
 static Usage_Tag_Attr tag_attr_24[] = {
+    {/* 0x39 */  0, DW_AT_decl_column},
+    {/* 0x3a */  0, DW_AT_decl_file},
+    {/* 0x3b */  0, DW_AT_decl_line},
     {/* 0x88 */  0, DW_AT_alignment},
     {/* 0x4e */  0, DW_AT_allocated},
     {/* 0x4f */  0, DW_AT_associated},
@@ -163,6 +169,8 @@ static Usage_Tag_Attr tag_attr_44[] = {
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
     {/* 0x88 */  0, DW_AT_alignment},
+    {/* 0x0d */  0, DW_AT_bit_size},
+    {/* 0x0b */  0, DW_AT_byte_size},
     {/* 0x01 */  0, DW_AT_sibling},
     {/* 0x49 */  0, DW_AT_type},
     {/*      */  0, 0}
@@ -193,19 +201,6 @@ static Usage_Tag_Attr tag_attr_1b[] = {
     {/* 0x3c */  0, DW_AT_declaration},
     {/* 0x01 */  0, DW_AT_sibling},
     {/* 0x17 */  0, DW_AT_visibility},
-    {/*      */  0, 0}
-};
-
-/* 0x4a - DW_TAG_skeleton_unit */
-static Usage_Tag_Attr tag_attr_4a[] = {
-    {/* 0x76 */  0, DW_AT_dwo_name},
-    {/* 0x11 */  0, DW_AT_low_pc},
-    {/* 0x12 */  0, DW_AT_high_pc},
-    {/* 0x10 */  0, DW_AT_stmt_list},
-    {/* 0x1b */  0, DW_AT_comp_dir},
-    {/* 0x53 */  0, DW_AT_use_UTF8},
-    {/* 0x72 */  0, DW_AT_str_offsets_base},
-    {/* 0x73 */  0, DW_AT_addr_base},
     {/*      */  0, 0}
 };
 
@@ -453,6 +448,15 @@ static Usage_Tag_Attr tag_attr_08[] = {
     {/*      */  0, 0}
 };
 
+/* 0x4b - DW_TAG_immutable_type */
+static Usage_Tag_Attr tag_attr_4b[] = {
+    {/* 0x39 */  0, DW_AT_decl_column},
+    {/* 0x3a */  0, DW_AT_decl_file},
+    {/* 0x3b */  0, DW_AT_decl_line},
+    {/* 0x49 */  0, DW_AT_type},
+    {/*      */  0, 0}
+};
+
 /* 0x3a - DW_TAG_imported_module */
 static Usage_Tag_Attr tag_attr_3a[] = {
     {/* 0x39 */  0, DW_AT_decl_column},
@@ -653,7 +657,6 @@ static Usage_Tag_Attr tag_attr_3c[] = {
     {/* 0x35 */  0, DW_AT_base_types},
     {/* 0x1b */  0, DW_AT_comp_dir},
     {/* 0x5a */  0, DW_AT_description},
-    {/* 0x75 */  0, DW_AT_dwo_id},
     {/* 0x76 */  0, DW_AT_dwo_name},
     {/* 0x52 */  0, DW_AT_entry_pc},
     {/* 0x42 */  0, DW_AT_identifier_case},
@@ -789,6 +792,22 @@ static Usage_Tag_Attr tag_attr_40[] = {
     {/* 0x03 */  0, DW_AT_name},
     {/* 0x01 */  0, DW_AT_sibling},
     {/* 0x49 */  0, DW_AT_type},
+    {/*      */  0, 0}
+};
+
+/* 0x4a - DW_TAG_skeleton_unit */
+static Usage_Tag_Attr tag_attr_4a[] = {
+    {/* 0x73 */  0, DW_AT_addr_base},
+    {/* 0x1b */  0, DW_AT_comp_dir},
+    {/* 0x76 */  0, DW_AT_dwo_name},
+    {/* 0x12 */  0, DW_AT_high_pc},
+    {/* 0x11 */  0, DW_AT_low_pc},
+    {/* 0x10 */  0, DW_AT_stmt_list},
+    {/* 0x55 */  0, DW_AT_ranges},
+    {/* 0x74 */  0, DW_AT_rnglists_base},
+    {/* 0x10 */  0, DW_AT_stmt_list},
+    {/* 0x72 */  0, DW_AT_str_offsets_base},
+    {/* 0x53 */  0, DW_AT_use_UTF8},
     {/*      */  0, 0}
 };
 
@@ -1006,6 +1025,7 @@ static Usage_Tag_Attr tag_attr_31[] = {
     {/* 0x4e */  0, DW_AT_allocated},
     {/* 0x4f */  0, DW_AT_associated},
     {/* 0x50 */  0, DW_AT_data_location},
+    {/* 0x03 */  0, DW_AT_name},
     {/* 0x01 */  0, DW_AT_sibling},
     {/* 0x49 */  0, DW_AT_type},
     {/*      */  0, 0}
@@ -1264,7 +1284,7 @@ static Usage_Tag_Attr *usage_tag_attr[] = {
     tag_attr_48, /* 0x48 - DW_TAG_call_site */
     tag_attr_49, /* 0x49 - DW_TAG_call_site_parameter */
     tag_attr_4a, /* 0x4a - DW_TAG_skeleton_unit */
-    0,
+    tag_attr_4b, /* 0x4b - DW_TAG_immutable_type */
     0
 };
 
@@ -1310,7 +1330,7 @@ static Rate_Tag_Attr rate_tag_attr[] = {
     {22, 0, /* 0x21 - DW_TAG_subrange_type */},
     {12, 0, /* 0x22 - DW_TAG_with_stmt */},
     { 7, 0, /* 0x23 - DW_TAG_access_declaration */},
-    {20, 0, /* 0x24 - DW_TAG_base_type */},
+    {23, 0, /* 0x24 - DW_TAG_base_type */},
     {10, 0, /* 0x25 - DW_TAG_catch_block */},
     { 7, 0, /* 0x26 - DW_TAG_const_type */},
     {15, 0, /* 0x27 - DW_TAG_constant */},
@@ -1323,7 +1343,7 @@ static Rate_Tag_Attr rate_tag_attr[] = {
     {47, 0, /* 0x2e - DW_TAG_subprogram */},
     { 8, 0, /* 0x2f - DW_TAG_template_type_parameter */},
     {11, 0, /* 0x30 - DW_TAG_template_value_parameter */},
-    { 9, 0, /* 0x31 - DW_TAG_thrown_type */},
+    {10, 0, /* 0x31 - DW_TAG_thrown_type */},
     {10, 0, /* 0x32 - DW_TAG_try_block */},
     { 9, 0, /* 0x33 - DW_TAG_variant_part */},
     {24, 0, /* 0x34 - DW_TAG_variable */},
@@ -1334,7 +1354,7 @@ static Rate_Tag_Attr rate_tag_attr[] = {
     {10, 0, /* 0x39 - DW_TAG_namespace */},
     { 6, 0, /* 0x3a - DW_TAG_imported_module */},
     { 5, 0, /* 0x3b - DW_TAG_unspecified_type */},
-    {23, 0, /* 0x3c - DW_TAG_partial_unit */},
+    {22, 0, /* 0x3c - DW_TAG_partial_unit */},
     { 1, 0, /* 0x3d - DW_TAG_imported_unit */},
     {0, 0},
     { 5, 0, /* 0x3f - DW_TAG_condition */},
@@ -1342,20 +1362,20 @@ static Rate_Tag_Attr rate_tag_attr[] = {
     { 4, 0, /* 0x41 - DW_TAG_type_unit */},
     { 7, 0, /* 0x42 - DW_TAG_rvalue_reference_type */},
     {16, 0, /* 0x43 - DW_TAG_template_alias */},
-    { 6, 0, /* 0x44 - DW_TAG_coarray_type */},
+    { 8, 0, /* 0x44 - DW_TAG_coarray_type */},
     {21, 0, /* 0x45 - DW_TAG_generic_subrange */},
     {12, 0, /* 0x46 - DW_TAG_dynamic_type */},
-    { 3, 0, /* 0x47 - DW_TAG_atomic_type */},
+    { 6, 0, /* 0x47 - DW_TAG_atomic_type */},
     {10, 0, /* 0x48 - DW_TAG_call_site */},
     { 8, 0, /* 0x49 - DW_TAG_call_site_parameter */},
-    { 8, 0, /* 0x4a - DW_TAG_skeleton_unit */},
-    {0, 0},
+    {11, 0, /* 0x4a - DW_TAG_skeleton_unit */},
+    { 4, 0, /* 0x4b - DW_TAG_immutable_type */},
     {0, 0}
 };
 
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-#define ATTR_TREE_ROW_COUNT 75
+#define ATTR_TREE_ROW_COUNT 76
 
 #define ATTR_TREE_COLUMN_COUNT 5
 
@@ -1433,7 +1453,7 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x23 - DW_TAG_access_declaration            */
     { 0x0000000a,0x0e040000,0x04000000,0x00000000,0x00000000,},
 /* 0x24 - DW_TAG_base_type                     */
-    { 0x0000380a,0x40000000,0xfc01c000,0x00000821,0x00000100,},
+    { 0x0000380a,0x4e000000,0xfc01c000,0x00000821,0x00000100,},
 /* 0x25 - DW_TAG_catch_block                   */
     { 0x00060002,0x0e020000,0x00240040,0x00000000,0x00000000,},
 /* 0x26 - DW_TAG_const_type                    */
@@ -1459,7 +1479,7 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x30 - DW_TAG_template_value_parameter      */
     { 0x5000000e,0x0e000000,0x04000200,0x00000000,0x00000100,},
 /* 0x31 - DW_TAG_thrown_type                   */
-    { 0x00000002,0x0e000000,0x0001c200,0x00000000,0x00000100,},
+    { 0x0000000a,0x0e000000,0x0001c200,0x00000000,0x00000100,},
 /* 0x32 - DW_TAG_try_block                     */
     { 0x00060002,0x0e020000,0x00240040,0x00000000,0x00000000,},
 /* 0x33 - DW_TAG_variant_part                  */
@@ -1481,7 +1501,7 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x3b - DW_TAG_unspecified_type              */
     { 0x00000008,0x0e000000,0x04000000,0x00000000,0x00000000,},
 /* 0x3c - DW_TAG_partial_unit                  */
-    { 0x080f0008,0x00200020,0x042c004c,0x027c0400,0x00000080,},
+    { 0x080f0008,0x00200020,0x042c004c,0x025c0400,0x00000080,},
 /* 0x3d - DW_TAG_imported_unit                 */
     { 0x01000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x3e - DW_TAG_mutable_type                  */
@@ -1497,19 +1517,21 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x43 - DW_TAG_template_alias                */
     { 0x0080000a,0x1e061000,0x0401c200,0x00000200,0x00000000,},
 /* 0x44 - DW_TAG_coarray_type                  */
-    { 0x00000002,0x0e000000,0x00000200,0x00000000,0x00000100,},
+    { 0x00002802,0x0e000000,0x00000200,0x00000000,0x00000100,},
 /* 0x45 - DW_TAG_generic_subrange              */
     { 0x0080280a,0x1e82c004,0x0403c200,0x00000004,0x00000000,},
 /* 0x46 - DW_TAG_dynamic_type                  */
     { 0x0000000a,0x0e020000,0x0401c200,0x00000000,0x00000100,},
 /* 0x47 - DW_TAG_atomic_type                   */
-    { 0x00000002,0x00000000,0x00000200,0x00000000,0x00000100,},
+    { 0x00000002,0x0e000000,0x00000200,0x00000000,0x00000100,},
 /* 0x48 - DW_TAG_call_site                     */
     { 0x00000000,0x00000000,0x03800200,0xa0000000,0x0000001e,},
 /* 0x49 - DW_TAG_call_site_parameter           */
     { 0x0000000e,0x00000000,0x00000200,0x40000000,0x00000061,},
 /* 0x4a - DW_TAG_skeleton_unit                 */
-    { 0x08070000,0x00000000,0x00080000,0x004c0000,0x00000000,},
+    { 0x08070000,0x00000000,0x00280000,0x005c0000,0x00000000,},
+/* 0x4b - DW_TAG_immutable_type                */
+    { 0x00000000,0x0e000000,0x00000200,0x00000000,0x00000000,},
 };
 
 /* END FILE */

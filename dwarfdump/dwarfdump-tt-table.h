@@ -123,6 +123,15 @@ static Usage_Tag_Tree tag_tree_1b[] = {
     {/*      */ 0, 0}
 };
 
+/* 0x4a - DW_TAG_skeleton_unit */
+static Usage_Tag_Tree tag_tree_4a[] = {
+    {/* 0x13 */ 0, DW_TAG_structure_type},
+    {/* 0x17 */ 0, DW_TAG_union_type},
+    {/* 0x02 */ 0, DW_TAG_class_type},
+    {/* 0x04 */ 0, DW_TAG_enumeration_type},
+    {/*      */ 0, 0}
+};
+
 /* 0x11 - DW_TAG_compile_unit */
 static Usage_Tag_Tree tag_tree_11[] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
@@ -792,7 +801,7 @@ static Usage_Tag_Tree *usage_tag_tree[] = {
    tag_tree_47, /* 0x47 - DW_TAG_atomic_type */
    tag_tree_48, /* 0x48 - DW_TAG_call_site */
    tag_tree_49, /* 0x49 - DW_TAG_call_site_parameter */
-    0,
+   tag_tree_4a, /* 0x4a - DW_TAG_skeleton_unit */
     0,
     0
 };
@@ -877,7 +886,7 @@ static Rate_Tag_Tree rate_tag_tree[] = {
     { 0, 0 /* 0x47 - DW_TAG_atomic_type */},
     { 1, 0 /* 0x48 - DW_TAG_call_site */},
     { 0, 0 /* 0x49 - DW_TAG_call_site_parameter */},
-    {0, 0},
+    { 4, 0 /* 0x4a - DW_TAG_skeleton_unit */},
     {0, 0},
     {0, 0}
 };
@@ -886,7 +895,7 @@ static Rate_Tag_Tree rate_tag_tree[] = {
 
 #define TAG_TREE_COLUMN_COUNT 3
 
-#define TAG_TREE_ROW_COUNT 73
+#define TAG_TREE_ROW_COUNT 75
 
 static unsigned int tag_tree_combination_table[TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {
 /* 0x00 - <no name known for the TAG>          */
@@ -1035,6 +1044,10 @@ static unsigned int tag_tree_combination_table[TAG_TREE_ROW_COUNT][TAG_TREE_COLU
     { 0x00000000,0x00000000,0x00000000,},
 /* 0x48 - DW_TAG_call_site                     */
     { 0x00000000,0x00000000,0x00000200,},
+/* 0x49 - DW_TAG_call_site_parameter           */
+    { 0x00000000,0x00000000,0x00000000,},
+/* 0x4a - DW_TAG_skeleton_unit                 */
+    { 0x00880014,0x00000000,0x00000000,},
 };
 
 /* END FILE */

@@ -1,4 +1,11 @@
 2020-07-16: David Anderson
+    * tag_attr.list,tag_attr_ext.list,tag_tree.list:
+      corrections and some DWARF5 additions to the tables.
+    * tag_common.h: Increased table sizes where necessary
+      for the new *list data.
+    * dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-table.h: Regenerated
+2020-07-16: David Anderson
     * globals.h,print_die.c: Revised a key function name, yesterdays
       name was excessively long. New name is
       dd_get_integer_and_name().
