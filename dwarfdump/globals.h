@@ -284,7 +284,7 @@ int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
 
 /* encoding_type_func used in print_die.c and print_lopc_hipc_attr.c  */
 typedef const char *(*encoding_type_func) (unsigned,int doprintingonerr);
-int _dwarf_get_small_encoding_integer_and_name(Dwarf_Debug dbg,
+int dd_get_integer_and_name(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Unsigned * uval_out,
     const char *attr_name,

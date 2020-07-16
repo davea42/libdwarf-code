@@ -1,3 +1,13 @@
+2020-07-16: David Anderson
+    * globals.h,print_die.c: Revised a key function name, yesterdays
+      name was excessively long. New name is
+      dd_get_integer_and_name().
+    * print_hipc_lopc_attr.c: That name changed here too.
+      and a blob of code was factored out into a new
+      function update_cu_base_addresses() which just
+      establishes names used in presenting details
+      in case of errors (a function with no side effects
+      but setting the glflags fields for use in error reports).
 2020-07-15: David Anderson
     * CMakeLists.txt,Makefile.am: Added print_hipc_lopc_attr.c.
     * Makefile.in: Regenerated.

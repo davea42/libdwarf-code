@@ -2072,7 +2072,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     If string_out is non-NULL then attr_name and val_as_string
     must also be non-NULL.  */
 int
-_dwarf_get_small_encoding_integer_and_name(Dwarf_Debug dbg,
+dd_get_integer_and_name(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Unsigned * uval_out,
     const char *attr_name,
@@ -2978,7 +2978,7 @@ determine_discr_signedness(Dwarf_Debug dbg)
     /*  Expect DW_AT_discr or DW_AT_type here, and if
         DW_AT_discr, that might have the DW_AT_type. */
 
-    /*   FIXME: Initially lets just punt, say unsigned. */
+    /*   FIXME: For now lets just punt, say unsigned. */
     return 1;
 }
 
@@ -3233,7 +3233,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
     switch (attr) {
     case DW_AT_language:
-        res = _dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res = dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_language", &valname,
             get_LANG_name, err,
@@ -3248,7 +3248,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_accessibility:
-        res  = _dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res  = dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_accessibility",
             &valname, get_ACCESS_name,
@@ -3264,7 +3264,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_visibility:
-        res = _dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res = dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_visibility",
             &valname, get_VIS_name,
@@ -3280,7 +3280,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_virtuality:
-        res = _dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res = dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_virtuality",
             &valname,
@@ -3296,7 +3296,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_identifier_case:
-        res = _dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res = dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_identifier",
             &valname, get_ID_name,
@@ -3312,7 +3312,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_inline:
-        res = _dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res = dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_inline", &valname,
             get_INL_name, err,
@@ -3326,7 +3326,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_encoding:
-        res =_dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res =dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_encoding", &valname,
             get_ATE_name, err,
@@ -3341,7 +3341,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_ordering:
-        res =_dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res =dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_ordering", &valname,
             get_ORD_name, err,
@@ -3356,7 +3356,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
     case DW_AT_calling_convention:
-        res =_dwarf_get_small_encoding_integer_and_name(dbg, attrib,
+        res =dd_get_integer_and_name(dbg, attrib,
             &uval,
             "DW_AT_calling_convention",
             &valname, get_CC_name,
@@ -5546,7 +5546,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         return 0;
     }
 
-    res = _dwarf_get_small_encoding_integer_and_name(dbg,
+    res = dd_get_integer_and_name(dbg,
         encodingattr,
         &tempud,
         /* attrname */ (const char *) NULL,
@@ -6797,7 +6797,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_stmt_list:
             case DW_AT_MIPS_fde:
                 {  int show_form_here = 0;
-                wres = _dwarf_get_small_encoding_integer_and_name(dbg,
+                wres = dd_get_integer_and_name(dbg,
                     attrib,
                     &tempud,
                     /* attrname */ (const char *) NULL,
@@ -7168,7 +7168,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_sec_offset: { /* DWARF4, DWARF5 */
         char* emptyattrname = 0;
         int show_form_here = 0;
-        wres = _dwarf_get_small_encoding_integer_and_name(dbg,
+        wres = dd_get_integer_and_name(dbg,
             attrib,
             &tempud,
             emptyattrname,

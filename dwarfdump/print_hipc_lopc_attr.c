@@ -50,9 +50,10 @@
 #define IsInvalidCode(low,high) ((low == max_address) || (low == 0 && high == 0))
 
 
-/*  Only two types of CU can have highpc or lowpc. */
+/*  Most types of CU can have highpc and/or lowpc. 
+    DW_TAG_type_unit will not. */
 static boolean
-tag_type_is_addressable_cu(int tag)
+cu_tag_type_may_have_lopc_hipc(int tag)
 {
     if (tag == DW_TAG_compile_unit) {
         return TRUE;
@@ -60,11 +61,90 @@ tag_type_is_addressable_cu(int tag)
     if (tag == DW_TAG_partial_unit) {
         return TRUE;
     }
+    if (tag == DW_TAG_skeleton_unit) {
+        return TRUE;
+    }
     return FALSE;
 }
 
-/*  This function needs a rewrite for completeness and
-    clarity.  FIXME */
+/*  This updates values in glflags used for reporting
+    in error cases. */
+static void
+update_cu_base_addresses(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib,
+    Dwarf_Half attr,
+    Dwarf_Half tag,
+    Dwarf_Half theform,
+    Dwarf_Bool bSawLowp,
+    Dwarf_Addr lowAddrp,
+    Dwarf_Error *err)
+{
+ 
+    /* Update base address for CU */
+    if (attr == DW_AT_low_pc) {
+        if (glflags.need_CU_base_address &&
+            cu_tag_type_may_have_lopc_hipc(tag)) {
+            int lres = dwarf_formaddr(attrib,
+                &glflags.CU_base_address, err);
+            DROP_ERROR_INSTANCE(dbg,lres,*err);
+            if (lres == DW_DLV_OK) {
+                glflags.need_CU_base_address = FALSE;
+                glflags.CU_low_address =
+                    glflags.CU_base_address;
+            }
+        } else if (!glflags.CU_low_address) {
+            /*  We take the first non-zero address
+                as meaningful. Even if no such in CU DIE. */
+            int fres = dwarf_formaddr(attrib,
+                &glflags.CU_low_address, err);
+            DROP_ERROR_INSTANCE(dbg,fres,*err);
+            if (fres == DW_DLV_OK) {
+                /*  Stop looking for base. Bogus, but
+                    there is none available, so stop. */
+                glflags.need_CU_base_address = FALSE;
+            }
+        }
+    }
+
+    /* Update high address for CU */
+    if (attr == DW_AT_high_pc) {
+        if (glflags.need_CU_high_address ) {
+            /*  This is bogus in that it accepts the first
+                high address in the CU, from any TAG */
+            if (theform != DW_FORM_addr &&
+                !dwarf_addr_form_is_indexed(theform)) {
+                /*  New in DWARF4: other forms
+                (of class constant) are not an address
+                but are instead offset from pc. */
+                Dwarf_Unsigned hpcoff = 0;
+                int show_form_here = 0;
+
+                int ares = dd_get_integer_and_name(
+                    dbg,
+                    attrib,
+                    &hpcoff,
+                    /* attrname */ (const char *) NULL,
+                    /* err_string */ ( struct esb_s *) NULL,
+                    (encoding_type_func) 0,
+                    err,show_form_here);
+                if (ares == DW_DLV_OK) {
+                    if (bSawLowp) {
+                        glflags.CU_high_address =
+                            lowAddrp + hpcoff;
+                    }
+                }
+            } else {
+                int ares = dwarf_formaddr(attrib,
+                    &glflags.CU_high_address, err);
+                DROP_ERROR_INSTANCE(dbg,ares,*err);
+                if (ares == DW_DLV_OK) {
+                    glflags.need_CU_high_address = FALSE;
+                }
+            }
+        }
+    }
+}
+
 int
 print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Half tag,
@@ -104,6 +184,8 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     } else if (rv == DW_DLV_NO_ENTRY) {
         return rv;
     }
+    /*  Determine if the high pc is really an offset,
+        set offset_detected flag if so. */  
     if (theform != DW_FORM_addr &&
         !dwarf_addr_form_is_indexed(theform)) {
         /*  New in DWARF4: other forms
@@ -122,7 +204,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         if ( glflags.gf_check_ranges && attr == DW_AT_high_pc) {
             /* Get the offset value */
             int show_form_here = 0;
-            int ares = _dwarf_get_small_encoding_integer_and_name(dbg,
+            int ares = dd_get_integer_and_name(dbg,
                 attrib,
                 &highpcOff,
                 /* attrname */ (const char *) NULL,
@@ -132,12 +214,12 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
             if (ares != DW_DLV_OK) {
                 if (ares == DW_DLV_NO_ENTRY) {
                     print_error_and_continue(dbg,
-                        "_dwarf_get_small_encoding_integer_and_name"
+                        "dd_get_integer_and_name"
                         " No Entry for DW_AT_high_pc/DW_AT_low_pc",
                         ares, *err);
                 } else {
                     print_error_and_continue(dbg,
-                        "_dwarf_get_small_encoding_integer_and_name"
+                        "dd_get_integer_and_name"
                         " Failed for DW_AT_high_pc/DW_AT_low_pc",
                         ares, *err);
                 }
@@ -162,73 +244,20 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     if (glflags.seen_CU &&
         (glflags.need_CU_base_address
         || glflags.need_CU_high_address)) {
-        /* Update base address for CU */
-        if (attr == DW_AT_low_pc) {
-            if (glflags.need_CU_base_address &&
-                tag_type_is_addressable_cu(tag)) {
-                int lres = dwarf_formaddr(attrib,
-                    &glflags.CU_base_address, err);
-                DROP_ERROR_INSTANCE(dbg,lres,*err);
-                if (lres == DW_DLV_OK) {
-                    glflags.need_CU_base_address = FALSE;
-                    glflags.CU_low_address =
-                        glflags.CU_base_address;
-                }
-            } else if (!glflags.CU_low_address) {
-                /*  We take the first non-zero address
-                    as meaningful. Even if no such in CU DIE. */
-                int fres = dwarf_formaddr(attrib,
-                    &glflags.CU_low_address, err);
-                DROP_ERROR_INSTANCE(dbg,fres,*err);
-                if (fres == DW_DLV_OK) {
-                    /*  Stop looking for base. Bogus, but
-                        there is none available, so stop. */
-                    glflags.need_CU_base_address = FALSE;
-                }
-            }
-        }
-
-        /* Update high address for CU */
-        if (attr == DW_AT_high_pc) {
-            if (glflags.need_CU_high_address ) {
-                /*  This is bogus in that it accepts the first
-                    high address in the CU, from any TAG */
-                if (theform != DW_FORM_addr &&
-                    !dwarf_addr_form_is_indexed(theform)) {
-                    /*  New in DWARF4: other forms
-                    (of class constant) are not an address
-                    but are instead offset from pc. */
-                    Dwarf_Unsigned hpcoff = 0;
-                    int show_form_here = 0;
-
-                    int ares = _dwarf_get_small_encoding_integer_and_name(
-                        dbg,
-                        attrib,
-                        &hpcoff,
-                        /* attrname */ (const char *) NULL,
-                        /* err_string */ ( struct esb_s *) NULL,
-                        (encoding_type_func) 0,
-                        err,show_form_here);
-                    if (ares == DW_DLV_OK) {
-                        if (*bSawLowp) {
-                            glflags.CU_high_address =
-                                *lowAddrp + hpcoff;
-                        }
-                    }
-                } else {
-                    int ares = dwarf_formaddr(attrib,
-                        &glflags.CU_high_address, err);
-                    DROP_ERROR_INSTANCE(dbg,ares,*err);
-                    if (ares == DW_DLV_OK) {
-                        glflags.need_CU_high_address = FALSE;
-                    }
-                }
-            }
-        }
+        /* updating glflags data for checking/reporting later. */
+        update_cu_base_addresses(dbg,attrib,
+            attr, tag, theform,
+            *bSawLowp,
+            *lowAddrp,
+            err);
     }
 
-    /* Record the low and high addresses as we have them */
-    /* For DWARF4 allow the high_pc value as an offset */
+    /* Record the low and high addresses as we have them.
+       Push the calculated low/high values
+       back to caller using *bSawLowp, *lowAddrp,
+       *bSawHighp, *highAddrp.
+       For DWARF4 and later allow the high_pc value as
+       an offset */
     if ((glflags.gf_check_decl_file ||
         glflags.gf_check_ranges ||
         glflags.gf_check_locations) &&
