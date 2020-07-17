@@ -412,10 +412,12 @@ Turns on checking of aranges.
 Turns on DIE tag-attr combinations checking,
 looking for surprising attributes for DIE
 tags.
+It does not report common extensions as errors.
 Common extensions to the standard are
-allowed as if standard. See
-The \-C (\--format-extensions) option
-to delete allowing common extensions.
+allowed as if standard.
+See
+the \-C (\--format-extensions) option
+to show common extensions as errors.
 .TP
 .BR \--check-forward-refs\ (\-kR)
 Turns on reading DIEs and checking for forward declarations
@@ -430,6 +432,12 @@ Turns on checking DIE references for circular references.
 Turns on tag-tag combinations checking,
 looking for surprising parent-child DIE
 relationships.
+It does not report common extensions as errors.
+Common extensions to the standard are
+allowed as if standard.
+See
+the \-C (\--format-extensions) option
+to show common extensions as errors.
 .TP
 .BR \--check-usage\ (\-ku) 
 Print tag-tree and tag-attribute usage (basic format). 
@@ -462,6 +470,9 @@ refer to appropriate locations.
 
 .TP
 .BR \--format-extensions\ (\-C) 
+This is a secondary option 
+after \--check-tag-tag\ (\-kt)
+or \--check-tag-attr\ (\-kr).
 Normally when checking for tag-tag 
 or tag-attribute combinations
 both the standard combinations and 

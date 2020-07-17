@@ -96,6 +96,13 @@ DW_AT_GNU_all_tail_call_sites
 DW_AT_GNU_all_call_sites
 
 0xffffffff
+DW_TAG_type_unit
+DW_AT_GNU_addr_base
+DW_AT_GNU_dwo_name
+DW_AT_GNU_odr_signature
+DW_AT_GNU_pubnames
+
+0xffffffff
 DW_TAG_variable
 DW_AT_MIPS_linkage_name   /* Used by GNU, SGI-IRIX, and others. */
 DW_AT_GNU_guarded_by
@@ -118,6 +125,7 @@ DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_name
+DW_AT_sibling
 
 0xffffffff
 DW_TAG_GNU_formal_parameter_pack
@@ -125,10 +133,12 @@ DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_name
+DW_AT_sibling
 
 0xffffffff
 DW_TAG_GNU_call_site
 DW_AT_abstract_origin
+DW_AT_GNU_call_site_target
 DW_AT_low_pc
 DW_AT_sibling
 DW_AT_GNU_tail_call
@@ -136,6 +146,7 @@ DW_AT_GNU_tail_call
 0xffffffff
 DW_TAG_GNU_call_site_parameter
 DW_AT_GNU_call_site_value
+DW_AT_GNU_call_site_data_value
 DW_AT_abstract_origin
 DW_AT_location
 

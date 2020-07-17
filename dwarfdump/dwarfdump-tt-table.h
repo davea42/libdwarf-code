@@ -559,6 +559,7 @@ static Usage_Tag_Tree tag_tree_12[] = {
 /* 0x13 - DW_TAG_structure_type */
 static Usage_Tag_Tree tag_tree_13[] = {
     {/* 0x0d */ 0, DW_TAG_member},
+    {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x1c */ 0, DW_TAG_inheritance},
     {/* 0x23 */ 0, DW_TAG_access_declaration},
     {/* 0x2a */ 0, DW_TAG_friend},
@@ -572,8 +573,8 @@ static Usage_Tag_Tree tag_tree_13[] = {
     {/* 0x44 */ 0, DW_TAG_coarray_type},
     {/* 0x0f */ 0, DW_TAG_pointer_type},
     {/* 0x17 */ 0, DW_TAG_union_type},
+    {/* 0x35 */ 0, DW_TAG_volatile_type},
     {/* 0x26 */ 0, DW_TAG_const_type},
-    {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x13 */ 0, DW_TAG_structure_type},
     {/* 0x04 */ 0, DW_TAG_enumeration_type},
     {/* 0x02 */ 0, DW_TAG_class_type},
@@ -831,7 +832,7 @@ static Rate_Tag_Tree rate_tag_tree[] = {
     { 8, 0 /* 0x10 - DW_TAG_reference_type */},
     {37, 0 /* 0x11 - DW_TAG_compile_unit */},
     { 0, 0 /* 0x12 - DW_TAG_string_type */},
-    {21, 0 /* 0x13 - DW_TAG_structure_type */},
+    {22, 0 /* 0x13 - DW_TAG_structure_type */},
     {0, 0},
     { 3, 0 /* 0x15 - DW_TAG_subroutine_type */},
     { 0, 0 /* 0x16 - DW_TAG_typedef */},
@@ -937,7 +938,7 @@ static unsigned int tag_tree_combination_table[TAG_TREE_ROW_COUNT][TAG_TREE_COLU
 /* 0x12 - DW_TAG_string_type                   */
     { 0x00000000,0x00000000,0x00000000,},
 /* 0x13 - DW_TAG_structure_type                */
-    { 0x90c8a114,0x0009c458,0x00000098,},
+    { 0x90c8a114,0x0029c458,0x00000098,},
 /* 0x14 - <no name known for the TAG>          */
     { 0x00000000,0x00000000,0x00000000,},
 /* 0x15 - DW_TAG_subroutine_type               */

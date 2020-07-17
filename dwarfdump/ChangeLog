@@ -1,4 +1,20 @@
 2020-07-16: David Anderson
+    * tag_attr.list: Added some normal standard TAG/ATTR
+      combinations (some new in DWARF5)
+    * tag_attr_ext.list: Added some normal GNU 
+      TAG/ATTR usages.
+    * tag_tree.list: Added some normal standard TAG/TAG
+      relationships.
+    * tag_common.h: Increased a row maximum by one
+      to match the increase in the lists.
+    * dwarfdump.1: Improved the wording for -kt -kr
+      and the modifier -C (they have longopts names
+      too).
+    * dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-table.h: Regenerated
+    * print_hipc_lopc_attr.c: Fixed indents and
+      trailing whitespace.
+2020-07-16: David Anderson
     * tag_attr.list,tag_attr_ext.list,tag_tree.list:
       corrections and some DWARF5 additions to the tables.
     * tag_common.h: Increased table sizes where necessary

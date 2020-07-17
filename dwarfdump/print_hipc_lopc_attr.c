@@ -50,7 +50,7 @@
 #define IsInvalidCode(low,high) ((low == max_address) || (low == 0 && high == 0))
 
 
-/*  Most types of CU can have highpc and/or lowpc. 
+/*  Most types of CU can have highpc and/or lowpc.
     DW_TAG_type_unit will not. */
 static boolean
 cu_tag_type_may_have_lopc_hipc(int tag)
@@ -79,7 +79,7 @@ update_cu_base_addresses(Dwarf_Debug dbg,
     Dwarf_Addr lowAddrp,
     Dwarf_Error *err)
 {
- 
+
     /* Update base address for CU */
     if (attr == DW_AT_low_pc) {
         if (glflags.need_CU_base_address &&
@@ -185,7 +185,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         return rv;
     }
     /*  Determine if the high pc is really an offset,
-        set offset_detected flag if so. */  
+        set offset_detected flag if so. */
     if (theform != DW_FORM_addr &&
         !dwarf_addr_form_is_indexed(theform)) {
         /*  New in DWARF4: other forms
@@ -252,12 +252,12 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
             err);
     }
 
-    /* Record the low and high addresses as we have them.
-       Push the calculated low/high values
-       back to caller using *bSawLowp, *lowAddrp,
-       *bSawHighp, *highAddrp.
-       For DWARF4 and later allow the high_pc value as
-       an offset */
+    /*  Record the low and high addresses as we have them.
+        Push the calculated low/high values
+        back to caller using *bSawLowp, *lowAddrp,
+        *bSawHighp, *highAddrp.
+        For DWARF4 and later allow the high_pc value as
+        an offset */
     if ((glflags.gf_check_decl_file ||
         glflags.gf_check_ranges ||
         glflags.gf_check_locations) &&

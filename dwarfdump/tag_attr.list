@@ -349,6 +349,7 @@ DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
 DW_AT_enum_class
+DW_AT_linkage_name
 DW_AT_name
 DW_AT_sibling
 DW_AT_signature
@@ -607,6 +608,7 @@ DW_TAG_namespace
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
+DW_AT_declaration
 DW_AT_description
 DW_AT_export_symbols
 DW_AT_extension
@@ -715,6 +717,7 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_alignment
 DW_AT_address_class
+DW_AT_byte_size
 /* DW_AT_allocated */
 /* DW_AT_associated */
 /* DW_AT_data_location */
@@ -909,6 +912,7 @@ DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
 DW_AT_name
+DW_AT_object_pointer
 DW_AT_prototyped
 DW_AT_rvalue_reference
 DW_AT_sibling
@@ -1007,6 +1011,7 @@ DW_AT_visibility
 
 0xffffffff
 DW_TAG_type_unit
+DW_AT_comp_dir
 DW_AT_language
 DW_AT_stmt_list
 DW_AT_str_offsets_base
@@ -1029,6 +1034,7 @@ DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
 DW_AT_export_symbols
+DW_AT_linkage_name
 DW_AT_name
 DW_AT_sibling
 DW_AT_signature
