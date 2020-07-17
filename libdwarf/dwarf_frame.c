@@ -1027,8 +1027,17 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
 #endif
 #ifdef  DW_CFA_GNU_args_size
-            /*  Single uleb128 is the current arg area size in bytes. No
-                register exists yet to save this in */
+            /*  Single uleb128 is the current arg area
+                size in bytes. No
+                register exists yet to save this in.
+                the value of must be added to
+                an x86 register to get the correct
+                stack pointer.
+                https://lists.nongnu.org/archive/html/
+                libunwind-devel/2016-12/msg00004.html
+                https://refspecs.linuxfoundation.org/
+                LSB_3.0.0/LSB-PDA/LSB-PDA.junk/dwarfext.html
+            */
         case DW_CFA_GNU_args_size:
             {
                 UNUSEDARG Dwarf_Unsigned lreg = 0;
@@ -1038,10 +1047,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 /*  We have nowhere to store lreg.
                     FIXME
                     This is the total size of arguments pushed on
-                    the stack.
-                    https://refspecs.linuxfoundation.org/LSB_3.0.0/LSB-PDA/LSB-PDA.junk/dwarfext.html
-                    */
-
+                    the stack.  */
                 break;
             }
 #endif
@@ -2185,7 +2191,8 @@ dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
         *block_ptr = fde_table.fr_cfa_rule.ru_block;
     }
 
-    /*  Without value_type the data cannot be understood, so we insist
+    /*  Without value_type the data cannot be
+        understood, so we insist
         on it being present, we don't test it. */
     *value_type = fde_table.fr_cfa_rule.ru_value_type;
     *offset_relevant = fde_table.fr_cfa_rule.ru_is_off;

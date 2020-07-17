@@ -30,7 +30,7 @@
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
-#ifdef HAVE_STDLIB_H 
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 #include "pro_incl.h"
@@ -67,4 +67,3 @@ dwarf_add_debug_sup(Dwarf_P_Debug dbg,
     memcpy(dbg->de_debug_sup.ds_checksum,checksum,checksum_len);
     return DW_DLV_OK;
 }
-

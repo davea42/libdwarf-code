@@ -1,3 +1,8 @@
+2020-07-17: David Anderson
+    * dwarf_frame.c: rearrange comments a little and
+      add a web reference as documentation.
+	* pro_debug_sup.c,pro_section.c: Remove trailing whitespace.
+      Fix indents.
 2020-07-15: David Anderson
     * dwarf_alloc.c: Improved printf if DEBUG
       is turned on, with #undef DEBUG in source so

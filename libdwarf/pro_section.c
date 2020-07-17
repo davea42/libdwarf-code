@@ -562,7 +562,7 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
 
     if (dbg->de_debug_sup.ds_version) {
         int res = _dwarf_pro_generate_debugsup(dbg,
-             &nbufs, error);
+            &nbufs, error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -3080,9 +3080,9 @@ _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
 
     elfsectno = dbg->de_elf_sects[DEBUG_SUP];
     res = pretend_write_uval(dbg->de_debug_sup.ds_checksum_len,
-         dbg, &uleblen,error);
+        dbg, &uleblen,error);
     if (res != DW_DLV_OK) {
-         return res;
+        return res;
     }
     version = dbg->de_debug_sup.ds_version;
     name_len = strlen(dbg->de_debug_sup.ds_filename) +1;
@@ -3090,18 +3090,18 @@ _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
         1 + name_len +
         uleblen +  dbg->de_debug_sup.ds_checksum_len;
     GET_CHUNK_ERR(dbg, elfsectno, data, alloc_size, error);
-     
+
     WRITE_UNALIGNED(dbg, (void *) data,
         (const void *)&version, DWARF_HALF_SIZE, DWARF_HALF_SIZE);
     data += DWARF_HALF_SIZE;
-   
+
     *data = dbg->de_debug_sup.ds_is_supplementary;
     ++data;
 
     for  (i = 0 ; i < name_len ; ++i,++data) {
         *data = *(unsigned char *)(dbg->de_debug_sup.ds_filename +i);
     }
-    
+
     res = _dwarf_pro_encode_leb128_nm(
         dbg->de_debug_sup.ds_checksum_len,
         &leblen,
