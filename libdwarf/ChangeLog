@@ -1,3 +1,16 @@
+2020-07-22: David Anderson
+    * libdwarf2.1.mm: Now Rev 3.04. Revised the 
+      Error Handling section for greater clarity.
+      Revised dwarf_init_path() to correct formatting
+      errors. 
+    * libdwarf2.1.pdf: Regenerated as rev 3.04 .
+    * dwarf_generic_init.c(dwarf_init_pathh): Removed
+      the error-handling so when the call fails the
+      Dwarf_Debug argument is not touched. 
+      For the PE case return  the DW_DLV_ERROR or
+      DW_DLV_NO_ENTRY (return left off by accident).
+    * dwarf_arange.c: Reformatted the copyright
+      to have shorter lines.
 2020-07-17: David Anderson
     * libdwarf/libdwarf_version.h: Version string updated.
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,

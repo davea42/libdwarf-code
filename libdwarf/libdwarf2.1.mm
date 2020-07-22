@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.02, 14 July 2020
+.ds vE Rev 3.04, 22 July 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -221,6 +221,12 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+The documentation of dwarf_init_path()
+was basically correct but omitted
+meaningful mention of the dbg argument
+and a little wrongly described the error argument
+(July 22, 2020);
 .P
 Added dwarf_get_debug_sup() to retrived the DWARF5
 section .debug_sup content.
@@ -458,7 +464,8 @@ instance.
 (May 15, 2014)
 .P
 Added a printf-callback so libdwarf will not actually print
-to stdout.  Added dwarf_highpc_b()
+to \f(CWstdout\fP.
+Added dwarf_highpc_b()
 so return of a DWARF4 DW_AT_high_pc of class constant
 can be returned properly.
 (August 15 2013)
@@ -735,7 +742,8 @@ breaks binary (and possibly source in some cases)
 compatibility.
 
 .H 3 "Location Record"
-The \f(CWDwarf_Loc\fP type identifies a single atom of a location description
+The \f(CWDwarf_Loc\fP
+type identifies a single atom of a location description
 or a location expression.
 This is obsolete and should not be used,
 though it works adequately for DWARF2.
@@ -748,52 +756,82 @@ though it works adequately for DWARF2.
 } Dwarf_Loc;\fP
 .DE
 
-The \f(CWlr_atom\fP identifies the atom corresponding to the \f(CWDW_OP_*\fP
-definition in \fIdwarf.h\fP and it represents the operation to be performed
+The \f(CWlr_atom\fP
+identifies the atom corresponding to the 
+\f(CWDW_OP_*\fP
+definition in \fIdwarf.h\fP
+and it represents the operation to be performed
 in order to locate the item in question.
 
 .P
-The \f(CWlr_number\fP field is the operand to be used in the calculation
-specified by the \f(CWlr_atom\fP field; not all atoms use this field.
-Some atom operations imply signed numbers so it is necessary to cast
-this to a \f(CWDwarf_Signed\fP type for those operations.
+The \f(CWlr_number\fP field is the operand
+to be used in the calculation
+specified by the \f(CWlr_atom\fP
+ field; not all atoms use this field.
+Some atom operations imply signed numbers
+so it is necessary to cast
+this to a 
+\f(CWDwarf_Signed\fP type for those operations.
 
 .P
-The \f(CWlr_number2\fP field is the second operand specified by the
-\f(CWlr_atom\fP field; only \f(CWDW_OP_BREGX\fP has this field.  Some
-atom operations imply signed numbers so it may be necessary to cast
-this to a \f(CWDwarf_Signed\fP type for those operations.
+The 
+\f(CWlr_number2\fP
+field is the second operand specified by the
+\f(CWlr_atom\fP field; only 
+\f(CWDW_OP_BREGX\fP has this field.  Some
+atom operations imply signed numbers so
+it may be necessary to cast
+this to a 
+\f(CWDwarf_Signed\fP type for those operations.
 .P
-For a \f(CWDW_OP_implicit_value\fP operator the \f(CWlr_number2\fP
-field is a pointer to the bytes of the value. The field pointed to
-is \f(CWlr_number\fP bytes long.  There is no explicit terminator.
-Do not attempt to \f(CWfree\fP the bytes which \f(CWlr_number2\fP
+For a 
+\f(CWDW_OP_implicit_value\fP operator the
+\f(CWlr_number2\fP
+field is a pointer to the bytes of the value.
+The field pointed to
+is \f(CWlr_number\fP bytes long.
+There is no explicit terminator.
+Do not attempt to 
+\f(CWfree\fP the bytes which 
+\f(CWlr_number2\fP
 points at and do not alter those bytes. The pointer value
 remains valid till the open Dwarf_Debug is closed.
 This is a rather ugly use of a host integer to hold a pointer.
 You will normally have to do a 'cast' operation to use the value.
 .P
-For a \f(CWDW_OP_GNU_const_type\fP operator the \f(CWlr_number2\fP
+For a 
+\f(CWDW_OP_GNU_const_type\fP operator the 
+\f(CWlr_number2\fP
 field is a pointer to a block with an initial
 unsigned byte giving the number of bytes
 following, followed immediately that number of const
 value bytes.
 There is no explicit terminator.
-Do not attempt to \f(CWfree\fP the bytes which \f(CWlr_number2\fP
-points at and do not alter those bytes. The pointer value
+Do not attempt to
+\f(CWfree\fP the bytes which 
+\f(CWlr_number2\fP
+points at and do not alter those bytes.
+The pointer value
 remains valid till the open Dwarf_Debug is closed.
 This is a rather ugly use of a host integer to hold a pointer.
-You will normally have to do a 'cast' operation to use the value.
+You will normally have to do 
+a 'cast' operation to use the value.
 .P
-The \f(CWlr_offset\fP field is the byte offset (within the block the
-location record came from) of the atom specified by the \f(CWlr_atom\fP
-field.  This is set on all atoms.  This is useful for operations
-\f(CWDW_OP_SKIP\fP and \f(CWDW_OP_BRA\fP.
+The 
+\f(CWlr_offset\fP field is the byte offset
+(within the block the
+location record came from) 
+of the atom specified by the \f(CWlr_atom\fP
+field.  This is set on all atoms.
+This is useful for operations
+\f(CWDW_OP_SKIP\fP and 
+\f(CWDW_OP_BRA\fP.
 
 .H 3 "Location Description"
 This is obsolete and should not be used,
 though it works ok for DWARF2..
-The \f(CWDwarf_Locdesc\fP type represents an ordered list of
+The
+\f(CWDwarf_Locdesc\fP type represents an ordered list of
 \f(CWDwarf_Loc\fP records used in the calculation to locate
 an item.  Note that in many cases, the location can only be
 calculated at runtime of the associated program.
@@ -807,20 +845,32 @@ calculated at runtime of the associated program.
 } Dwarf_Locdesc;\fP
 .DE
 
-The \f(CWld_lopc\fP and \f(CWld_hipc\fP fields provide an address range for
-which this location descriptor is valid.  Both of these fields are set to
-\fIzero\fP if the location descriptor is valid throughout the scope of the
-item it is associated with.  These addresses are virtual memory addresses,
-not offsets-from-something.  The virtual memory addresses do not account
-for dso movement (none of the pc values from libdwarf do that, it is up to
+The 
+\f(CWld_lopc\fP and 
+\f(CWld_hipc\fP fields provide an address range for
+which this location descriptor is valid.
+Both of these fields are set to
+\fIzero\fP if the location descriptor is
+valid throughout the scope of the
+item it is associated with.
+These addresses are virtual memory addresses,
+not offsets-from-something.
+The virtual memory addresses do not account
+for dso movement (none of the pc values from
+libdwarf do that, it is up to
 the consumer to do that).
 
 .P
-The \f(CWld_cents\fP field contains a count of the number of \f(CWDwarf_Loc\fP
-entries pointed to by the \f(CWld_s\fP field.
+The \f(CWld_cents\fP field contains a count
+of the number of 
+\f(CWDwarf_Loc\fP
+entries pointed to by the 
+\f(CWld_s\fP field.
 
 .P
-The \f(CWld_s\fP field points to an array of \f(CWDwarf_Loc\fP records.
+The 
+\f(CWld_s\fP field points to an array of 
+\f(CWDwarf_Loc\fP records.
 
 .H 3 "Data Block"
 .SP
@@ -829,9 +879,11 @@ though it works ok for DWARF2.
 The \f(CWDwarf_Block\fP type is 
 used to contain the value of an attribute
 whose form is either 
-\f(CWDW_FORM_block1\fP, \f(CWDW_FORM_block2\fP,
+\f(CWDW_FORM_block1\fP,
+\f(CWDW_FORM_block2\fP,
 \f(CWDW_FORM_block4\fP, 
-\f(CWDW_FORM_block8\fP, or \f(CWDW_FORM_block\fP.
+\f(CWDW_FORM_block8\fP,
+or \f(CWDW_FORM_block\fP.
 Its intended use is to deliver the 
 value for an attribute of any of these
 forms.
@@ -1468,12 +1520,15 @@ Such can cause bad effects if simply printed to a device
 (such as a terminal).
 
 .H 1 "Error Handling"
-The method for detection and disposition of error conditions that arise
-during access of debugging information via \fIlibdwarf\fP is consistent
+The method for detection and disposition of 
+error conditions that arise
+during access of debugging information via 
+\fIlibdwarf\fP is consistent
 across all
 \fIlibdwarf\fP
 functions that are capable of producing an
-error.  This section describes the method used by \fIlibdwarf\fP in
+error.  This section describes the method used by 
+\fIlibdwarf\fP in
 notifying client programs of error conditions.
 .P
 Most functions within
@@ -1490,11 +1545,12 @@ and perform appropriate
 processing.
 The intent is that clients do the appropriate processing
 immediately on encountering an error and then the client
-calls \f(CWdwarf_dealloc_error\fP to free the
+calls 
+\f(CWdwarf_dealloc_error\fP to free the
 Dwarf_Error descriptor (at which point the client
 should zero that descriptor as the non-zero value is stale).
 .P
-For example we think the following is appropriate
+We think the following is appropriate
 as a general outline. See dwarfdump source
 for many examples of both of the following
 incomplete examples.
@@ -1575,27 +1631,54 @@ call
 \fIlibdwarf\fP
 did).
 .P
-We strongly suggest most applications calling libdwarf
+We strongly suggest most applications calling
+\fIlibdwarf\fP
 follow the suggestion above (passing a valid
 Dwarf_Error address in the last argument when
-calling libdwarf where there are such
+calling 
+\fIlibdwarf\fP
+where there are such
 Dwarf_Error arguments) there are other approaches
 described just below that might be
 worth considering
 in small simple applications as they reduce the Dwarf_Error
 argument to just passing 0 (null pointer)..
 .P
-As an alternative to the above,
-a client program can also specify a function to be
+The cases that arise when  passing a null
+for the Dwarf_Error and where there
+is an error detected are 
+A) with an error handler
+function  libdwarf will call that function
+and on return to 
+\fIlibdwarf\fP,
+\fIlibdwarf\fP
+will
+return 
+\f(CWDW_DLV_ERROR\fP
+to the original client call..
+or
+B) with no error handler
+function (see below) libdwarf will print an error
+and call \f(CWabort()\fP.
+.P
+.AL A
+.LI
+For the error-handler case
+a client program can specify a function to be
 invoked upon detection of an error at the time the
 library is initialized (see
-\f(CWdwarf_init_b()\fP).
+\f(CWdwarf_init_b()\fP
+or 
+\f(CWdwarf_init_path()\fP
+for example).
 When a \fIlibdwarf\fP routine detects an error,
 this function is called with two arguments: a code
 indicating the nature of the error and a pointer
 provided by the client at initialization (again
 see
-\f(CWdwarf_init_b()\fP).
+\f(CWdwarf_init_b()\fP
+or 
+\f(CWdwarf_init_path()\fP).
 This pointer argument
 can be used to relay information between the error
 handler and other routines of the client program.
@@ -1605,7 +1688,20 @@ after initialization using
 \f(CWdwarf_seterrhand()\fP
 and
 \f(CWdwarf_seterrarg()\fP.
+When the client error function returns
+libdwarf returns
+\f(CWDW_DLV_ERROR\fP.
 .P
+If the client passed in a  non-null
+\f(CWerror\fP 
+argument in the libdwarf
+call finding an error, the
+\f(CWdwarf_seterrhand()\fP
+function-invocation mentioned here does 
+not happen.
+
+.P
+.LI
 In the  final case, where
 \fIlibdwarf\fP
 functions are not provided a pointer
@@ -1613,7 +1709,8 @@ to a \f(CWDwarf_Error\fP descriptor,
 and no error handling function was
 provided at initialization,
 \fIlibdwarf\fP functions
-print a short message to stdout
+print a short message to
+\f(CWstdout\fP
 and terminate exectution with
 \f(CWabort()\fP.
 .P
@@ -1623,7 +1720,9 @@ gave up when there was no error handling
 by
 emitting a short message on
 \f(CWstderr\fP
+and
 calling \f(CWabort(3C)\fP.
+.LE
 
 .P
 The following lists the processing steps taken upon detection of an
@@ -1679,16 +1778,16 @@ cases.
 .P
 Some errors are so inconsequential that it does not
 warrant rejecting an object or returning an error.
-An example would be a frame length not being a
-multiple of an address-size (right now this is
-the only such inconsequential error).  To make it
+Examples would be a frame length not being a
+multiple of an address-size,
+an arange in .debug_aranges has some padding
+bytes, or a relocation could not be completed.
+To make it
 possible for a client  to report such errors the
 function \f(CWdwarf_get_harmless_error_list\fP
 returns strings with error text in them.
 This function may be ignored if client code does
-not want to bother with such error reporting. See
-\f(CWDW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE\fP in
-the libdwarf source code.
+not want to bother with such error reporting.
 
 .P
 .H 2 "Returned values in the functional interface"
@@ -1700,8 +1799,10 @@ The \f(CWDW_DLV_NO_ENTRY\fP
 case is useful for functions
 need to indicate that while there was no data to return
 there was no error either.
-For example, \f(CWdwarf_siblingof()\fP
-may return \f(CWDW_DLV_NO_ENTRY\fP to indicate that that there was
+For example, 
+\f(CWdwarf_siblingof()\fP
+may return 
+\f(CWDW_DLV_NO_ENTRY\fP to indicate that that there was
 no sibling to return.
 .DS
 .TS
@@ -1736,12 +1837,14 @@ interface returns a value.
 If \f(CWDW_DLV_OK\fP is returned, the
 \f(CWDwarf_Error\fP pointer, if supplied, is not
 touched, but any other values to be returned through
-pointers are returned.  In this case calls (depending
+pointers are returned.
+In this case calls (depending
 on the exact function returning the error) to
 \f(CWdwarf_dealloc()\fP may be appropriate once the
 particular pointer returned is no longer of interest.
 .P
-Pointers passed to allow values to be returned through them are
+Pointers passed to allow values to be
+returned through them are
 uniformly the last pointers
 in each argument list.
 .P
@@ -1760,8 +1863,9 @@ int retval = dwarf_lineoff(line,&ret_loff,&err);\fP
 for the function defined as
 .P
 .DS
-\f(CWint dwarf_lineoff(Dwarf_Line line,Dwarf_Signed *return_lineoff,
-  Dwarf_Error* err);\fP
+\f(CWint dwarf_lineoff(Dwarf_Line line,
+    Dwarf_Signed *return_lineoff,
+    Dwarf_Error* err);\fP
 .DE
 and this document refers to the function as
 returning the value through *err or *return_lineoff or
@@ -2186,7 +2290,8 @@ a \fIlibdwarf\fP operation.  The \f(CWerrarg\fP
 argument is passed as an argument to the
 \f(CWerrhand\fP function.
 .P
-\f(CWdbg\fP.
+\f(CWdbg\fP
+is used to return an initialized Dwarf_Debug pointer.
 .P
 \f(CWreserved1\fP,
 \f(CWreserved2\fP,
@@ -2195,7 +2300,7 @@ and
 are currently unused, pass 0
 in to all three.
 .P
-Pass in 0 (null) or a pointer
+Pass in a pointer
 to a Dwarf_Error to the
 \f(CWerror\fP argument
 if you wish libdwarf to return an
@@ -2706,7 +2811,9 @@ The structure is defined in \f(CWlibdwarf.h\fP.
 
 The initial version of this structure has a single field
 \f(CWcheck_verbose_mode\fP which, if non-zero, tells
-libdwarf to print some detailed messages to stdout in case
+libdwarf to print some detailed messages to 
+\f(CWstdout\fP
+in case
 certain errors are detected.
 
 The default for this value is FALSE (0) so the extra messages
@@ -11561,18 +11668,18 @@ of the additional setup that requires of the caller).
 
 .DS
 \f(CWint dwarf_get_fde_info_for_reg3_b(
-        Dwarf_Fde fde,
-        Dwarf_Half table_column,
-        Dwarf_Addr pc_requested,
-        Dwarf_Small  *value_type,
-        Dwarf_Signed *offset_relevant,
-        Dwarf_Signed *register_num,
-        Dwarf_Signed *offset_or_block_len,
-        Dwarf_Ptr    *block_ptr,
-        Dwarf_Addr   *row_pc,
-        Dwarf_Bool   *has_more_rows,
-        Dwarf_Addr   *subsequent_pc,
-        Dwarf_Error  *error);\fP
+    Dwarf_Fde fde,
+    Dwarf_Half table_column,
+    Dwarf_Addr pc_requested,
+    Dwarf_Small  *value_type,
+    Dwarf_Signed *offset_relevant,
+    Dwarf_Signed *register_num,
+    Dwarf_Signed *offset_or_block_len,
+    Dwarf_Ptr    *block_ptr,
+    Dwarf_Addr   *row_pc,
+    Dwarf_Bool   *has_more_rows,
+    Dwarf_Addr   *subsequent_pc,
+    Dwarf_Error  *error);\fP
 .DE
 .P
 This is identical to
@@ -11591,15 +11698,15 @@ if their values are not needed by the caller.
 
 .H 3 "dwarf_get_fde_info_for_cfa_reg3()"
 .DS
- \f(CWint dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
-      Dwarf_Addr          pc_requested,
-      Dwarf_Small *       value_type,
-      Dwarf_Signed*       offset_relevant,
-      Dwarf_Signed*       register_num,
-      Dwarf_Signed*       offset_or_block_len,
-      Dwarf_Ptr   *       block_ptr ,
-      Dwarf_Addr  *       row_pc_out,
-      Dwarf_Error *       error)\fP
+\f(CWint dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
+    Dwarf_Addr          pc_requested,
+    Dwarf_Small *       value_type,
+    Dwarf_Signed*       offset_relevant,
+    Dwarf_Signed*       register_num,
+    Dwarf_Signed*       offset_or_block_len,
+    Dwarf_Ptr   *       block_ptr ,
+    Dwarf_Addr  *       row_pc_out,
+    Dwarf_Error *       error)\fP
 .DE
 .P
 This is identical to
@@ -11622,17 +11729,17 @@ See \f(CWdwarfdump\fP for an example of use.
 
 .H 3 "dwarf_get_fde_info_for_cfa_reg3_b()"
 .DS
- \f(CWint dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
-      Dwarf_Addr          pc_requested,
-      Dwarf_Small *       value_type,
-      Dwarf_Signed*       offset_relevant,
-      Dwarf_Signed*       register_num,
-      Dwarf_Signed*       offset_or_block_len,
-      Dwarf_Ptr   *       block_ptr ,
-      Dwarf_Addr  *       row_pc_out,
-      Dwarf_Bool  *       has_more_rows,
-      Dwarf_Addr  *       subsequent_pc,
-      Dwarf_Error *       error)\fP
+\f(CWint dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
+    Dwarf_Addr          pc_requested,
+    Dwarf_Small *       value_type,
+    Dwarf_Signed*       offset_relevant,
+    Dwarf_Signed*       register_num,
+    Dwarf_Signed*       offset_or_block_len,
+    Dwarf_Ptr   *       block_ptr ,
+    Dwarf_Addr  *       row_pc_out,
+    Dwarf_Bool  *       has_more_rows,
+    Dwarf_Addr  *       subsequent_pc,
+    Dwarf_Error *       error)\fP
 .DE
 .P
 This is identical to
@@ -11698,11 +11805,11 @@ to determine if there are more rows.
 .H 3 "dwarf_get_fde_info_for_all_regs3()"
 .DS
 \f(CWint dwarf_get_fde_info_for_all_regs3(
-        Dwarf_Fde fde,
-        Dwarf_Addr pc_requested,
+    Dwarf_Fde fde,
+    Dwarf_Addr pc_requested,
 	Dwarf_Regtable3 *reg_table,
-        Dwarf_Addr *row_pc,
-        Dwarf_Error *error)\fP
+    Dwarf_Addr *row_pc,
+    Dwarf_Error *error)\fP
 .DE
 \f(CWdwarf_get_fde_info_for_all_regs3()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*reg_table\fP
