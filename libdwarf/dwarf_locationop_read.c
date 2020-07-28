@@ -752,6 +752,21 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             dbg,error,section_end);
         offset = offset + leb128_length;
         break;
+    case DW_OP_GNU_variable_value: { /* 0xfd, 2017 By J Jelinek */
+        /*  https://gcc.gnu.org/legacy-ml/gcc-patches/2017-02/
+            msg01499.html */
+        READ_UNALIGNED_CK(dbg, operand1, Dwarf_Unsigned, loc_ptr,
+            offset_size,error,section_end);
+        loc_ptr = loc_ptr + offset_size;
+        if (loc_ptr > section_end) {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_LOCEXPR_OFF_SECTION_END,
+                "DW_DLE_LOCEXPR_OFF_SECTION_END: Error reading "
+                "DW_OP_GNU_variable_value.");
+            return DW_DLV_ERROR;
+        }
+        break;
+    }
     default:
         _dwarf_error(dbg, error, DW_DLE_LOC_EXPR_BAD);
         return DW_DLV_ERROR;

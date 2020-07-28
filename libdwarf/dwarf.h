@@ -254,10 +254,11 @@ extern "C" {
 #define DW_FORM_addrx3                  0x2b /* DWARF5 */
 #define DW_FORM_addrx4                  0x2c /* DWARF5 */
 
-#define DW_FORM_GNU_addr_index          0x1f01 /* GNU extension in debug_info.dwo.*/
-#define DW_FORM_GNU_str_index           0x1f02 /* GNU extension, somewhat like DW_FORM_strp */
-#define DW_FORM_GNU_ref_alt             0x1f20 /* GNU extension. Offset in .debug_info. */
-#define DW_FORM_GNU_strp_alt            0x1f21 /* GNU extension. Offset in .debug_str of another object file. */
+/* Extensions http://gcc.gnu.org/wiki/DebugFission.  */
+#define DW_FORM_GNU_addr_index 0x1f01 /* GNU,  debug_info.dwo.*/
+#define DW_FORM_GNU_str_index  0x1f02 /* GNU, somewhat like DW_FORM_strp */
+#define DW_FORM_GNU_ref_alt    0x1f20 /* GNU, Offset in .debug_info. */
+#define DW_FORM_GNU_strp_alt   0x1f21 /* GNU extension. Offset in .debug_str of another object file. */
 
 #define DW_AT_sibling                           0x01
 #define DW_AT_location                          0x02
@@ -495,6 +496,7 @@ extern "C" {
 #define DW_AT_GNU_all_source_call_sites         0x2118 /* GNU */
 /*  Section offset to .debug_macro section. */
 #define DW_AT_GNU_macros                        0x2119 /* GNU */
+#define DW_AT_GNU_deleted                       0x211a /* GNU */
 /* The GNU DebugFission project: http://gcc.gnu.org/wiki/DebugFission */
 #define DW_AT_GNU_dwo_name                      0x2130 /* GNU */
 #define DW_AT_GNU_dwo_id                        0x2131 /* GNU */
@@ -506,7 +508,10 @@ extern "C" {
 
 /* To distinguish distinct basic blocks in a single source line. */
 #define DW_AT_GNU_discriminator                 0x2136 /* GNU */
+#define DW_AT_GNU_locviews                      0x2137 /* GNU */
+#define DW_AT_GNU_entry_view                    0x2138 /* GNU */
 /*  Ada GNAT gcc attributes. constant integer forms. */
+#define DW_AT_GNAT_descriptive_type             0x2302
 #define DW_AT_GNU_numerator                     0x2303 /* GNU */
 #define DW_AT_GNU_denominator                   0x2304 /* GNU */
 #define DW_AT_GNU_bias                          0x2305 /* GNU */
@@ -515,6 +520,7 @@ extern "C" {
 
 /* ALTIUM extension: ALTIUM Compliant location lists (flag) */
 #define DW_AT_ALTIUM_loclist    0x2300          /* ALTIUM  */
+
 
 /* Sun extensions */
 #define DW_AT_SUN_template                      0x2201 /* SUN */
@@ -787,8 +793,9 @@ extern "C" {
 #define DW_OP_GNU_convert               0xf7 /* GNU */
 #define DW_OP_GNU_reinterpret           0xf9 /* GNU */
 #define DW_OP_GNU_parameter_ref         0xfa /* GNU */
-#define DW_OP_GNU_addr_index            0xfb /* GNU DebugFission */
-#define DW_OP_GNU_const_index           0xfc /* GNU DebugFission */
+#define DW_OP_GNU_addr_index            0xfb /* GNU Fission */
+#define DW_OP_GNU_const_index           0xfc /* GNU Fission */
+#define DW_OP_GNU_variable_value        0xfd /* GNU 2017 */
 
     /* HP extensions. */
 #define DW_OP_HP_unknown                0xe0 /* HP conflict: GNU */

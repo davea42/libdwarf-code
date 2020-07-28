@@ -170,6 +170,8 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 struct operation_descr_s {
     int op_code;
     int op_count;
+
+    /* Nothing actually looks at op_1type */
     const char * op_1type;
 };
 struct operation_descr_s opdesc[]= {
@@ -260,6 +262,10 @@ struct operation_descr_s opdesc[]= {
     {DW_OP_GNU_const_index,1,"u" },
 
     {DW_OP_GNU_parameter_ref,1,"u" },
+
+    /* https://gcc.gnu.org/legacy-ml/gcc-patches/2017-02/msg01499.html*/
+    /* The value is a die offset, size offset_size */
+    {DW_OP_GNU_variable_value,1,"val" },
 
     {DW_OP_xderef,0,"" }, /* DWARF5 */
     {DW_OP_xderef_type,2,"1u" }, /* DWARF5 */
@@ -4766,6 +4772,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             /* No operands. */
             break;
         case DW_OP_GNU_encoded_addr:
+            bracket_hex(" ",opd1,"",string_out);
+            break;
+        case DW_OP_GNU_variable_value:
             bracket_hex(" ",opd1,"",string_out);
             break;
         case DW_OP_implicit_pointer:       /* DWARF5 */

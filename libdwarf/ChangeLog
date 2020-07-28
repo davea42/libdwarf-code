@@ -1,3 +1,10 @@
+2020-07-28: David Anderson
+    * dwarf_locationop_read.c: Added DW_OP_GNU_variable_value.
+    * dwarf_names.c, dwarf_names_enum.h: Regenerated.
+    * dwarf.h: Added in GNU names that had been accidentally
+      ommitted: DW_AT_GNU_deleted,DW_AT_GNU_locviews,
+      DW_AT_GNU_entry_view,DW_OP_GNU_variable_value.
+      These caused the regeneration of dwarf_names.h.
 2020-07-22: David Anderson
     * dwarf_abbrev.c,dwarf_debug_names.c, dwarf_debuglink.c,
 	  dwarf_dsc.c,dwarf_error.c,dwarf_form.c,dwarf_funcs.c,

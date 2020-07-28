@@ -350,6 +350,7 @@ enum Dwarf_AT_e {
     DW_AT_GNU_all_call_sites                 = 0x2117,
     DW_AT_GNU_all_source_call_sites          = 0x2118,
     DW_AT_GNU_macros                         = 0x2119,
+    DW_AT_GNU_deleted                        = 0x211a,
     DW_AT_GNU_dwo_name                       = 0x2130,
     DW_AT_GNU_dwo_id                         = 0x2131,
     DW_AT_GNU_ranges_base                    = 0x2132,
@@ -357,6 +358,8 @@ enum Dwarf_AT_e {
     DW_AT_GNU_pubnames                       = 0x2134,
     DW_AT_GNU_pubtypes                       = 0x2135,
     DW_AT_GNU_discriminator                  = 0x2136,
+    DW_AT_GNU_locviews                       = 0x2137,
+    DW_AT_GNU_entry_view                     = 0x2138,
     DW_AT_SUN_template                       = 0x2201,
     DW_AT_SUN_alignment                      = 0x2202,
     DW_AT_SUN_vtable                         = 0x2203,
@@ -614,6 +617,7 @@ enum Dwarf_OP_e {
     DW_OP_GNU_parameter_ref                  = 0x00fa,
     DW_OP_GNU_addr_index                     = 0x00fb,
     DW_OP_GNU_const_index                    = 0x00fc,
+    DW_OP_GNU_variable_value                 = 0x00fd,
     DW_OP_hi_user                            = 0x00ff
 };
 

@@ -1053,6 +1053,9 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_GNU_macros:
         *s_out = "DW_AT_GNU_macros";
         return DW_DLV_OK;
+    case DW_AT_GNU_deleted:
+        *s_out = "DW_AT_GNU_deleted";
+        return DW_DLV_OK;
     case DW_AT_GNU_dwo_name:
         *s_out = "DW_AT_GNU_dwo_name";
         return DW_DLV_OK;
@@ -1073,6 +1076,12 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
         return DW_DLV_OK;
     case DW_AT_GNU_discriminator:
         *s_out = "DW_AT_GNU_discriminator";
+        return DW_DLV_OK;
+    case DW_AT_GNU_locviews:
+        *s_out = "DW_AT_GNU_locviews";
+        return DW_DLV_OK;
+    case DW_AT_GNU_entry_view:
+        *s_out = "DW_AT_GNU_entry_view";
         return DW_DLV_OK;
     case DW_AT_SUN_template:
         *s_out = "DW_AT_SUN_template";
@@ -1222,6 +1231,7 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_GNAT_descriptive_type:
         *s_out = "DW_AT_GNAT_descriptive_type";
         return DW_DLV_OK;
+    /* Skipping alternate spelling of value 0x2302. DW_AT_GNAT_descriptive_type */
     case DW_AT_GNU_numerator:
         *s_out = "DW_AT_GNU_numerator";
         return DW_DLV_OK;
@@ -1850,6 +1860,9 @@ dwarf_get_OP_name (unsigned int val,const char ** s_out)
         return DW_DLV_OK;
     case DW_OP_GNU_const_index:
         *s_out = "DW_OP_GNU_const_index";
+        return DW_DLV_OK;
+    case DW_OP_GNU_variable_value:
+        *s_out = "DW_OP_GNU_variable_value";
         return DW_DLV_OK;
     case DW_OP_hi_user:
         *s_out = "DW_OP_hi_user";
