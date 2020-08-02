@@ -406,7 +406,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Loc_Expr_Op_s),MULTIPLY_CT, 0, 0},
 
     /* 0x3a 58  DW_DLA_LOCDESC_C */
-    {sizeof(struct Dwarf_Locdesc_c_s),MULTIPLY_CT, 0, 0},
+    {sizeof(struct Dwarf_Locdesc_c_s),MULTIPLY_CT, _dwarf_locdesc_c_constructor, 0},
 
     /* 0x3b 59 DW_DLA_LOC_HEAD_C  */
     {sizeof(struct Dwarf_Loc_Head_c_s),MULTIPLY_NO, 0,

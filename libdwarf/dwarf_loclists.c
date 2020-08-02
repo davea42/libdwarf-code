@@ -913,6 +913,7 @@ alloc_rle_and_append_to_list(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     memset(e,0,sizeof(struct Dwarf_Locdesc_c_s));
+    _dwarf_locdesc_c_constructor(dbg,e);
     if (rctx->ll_first) {
         rctx->ll_last->ld_next = e;
         rctx->ll_last = e;
@@ -1121,7 +1122,10 @@ build_array_of_lle(Dwarf_Debug dbg,
         Dwarf_Locdesc_c cur = 0;
         Dwarf_Locdesc_c prev = 0;
 
-        /* array of structs. */
+        /* array of structs. Here we copy the previous
+            malloc set of Dwarf_Locdesc_c into 
+            a dwarf_get_alloc set and free the malloc set */
+        
         array = (Dwarf_Locdesc_c)_dwarf_get_alloc(dbg,
             DW_DLA_LOCDESC_C, rctx->ll_locdesc_count);
         if (!array) {

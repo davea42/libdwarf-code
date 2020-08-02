@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.04, 22 July 2020
+.ds vE Rev 3.05, 1 August 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6144,14 +6144,20 @@ or
 the 'list' is really just a location
 expression.  The only entry
 is with \f(CWindex\fP zero.
+In this case 
+\f(CW*lle_value_out\fP 
+will have the value
+\f(CWDW_LLE_start_end\fP.
+
 .P
 \f(CWDW_LKIND_loclist\fP,
 means the list is from DWARF2, DWARF3,
 or DWARF4. The 
 \f(CW*lle_value_out\fP
 value has been
-synthesized as if ilt were a DWARF5
+synthesized as if it were a DWARF5
 expression.
+
 .P
 \f(CWDW_LKIND_GNU_exp_list\fP,
 means the list is from a DWARF4 .debug_loc.dwo
@@ -6162,6 +6168,7 @@ The
 is  
 \f(CWDW_LLEX_start_end_entry\fP
 (or one of the other DW_LLEX values).
+
 .P
 \f(CWDW_LKIND_loclists\fP
 means this is a DWARF5 loclist,
@@ -6235,6 +6242,43 @@ is set to an error designation.
 A return of
 \f(CWDW_DLV_NO_ENTRY\fP
 may be possible but is a bit odd.
+
+
+\f(CW
+\fP
+.H 3 "dwarf_get_locdesc_entry_c()"
+This is the same as 
+\f(CWdwarf_get_locdesc_entry_d()\fP
+except that the 
+\f(CWdebug_addr_unavailable\fP
+field
+is missing.
+Earlier versions (starting with
+\f(CWdwarf_get_locdesc_entry()\fP
+exist and work as well
+as they ever did, but we suggest 
+you stop using those earlier
+versions.
+We suggest you switch to using 
+\f(CWdwarf_get_locdesc_entry_d()\fP
+.DS
+\f(CW
+int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c /*loclist_head*/,
+   Dwarf_Unsigned    index,
+   Dwarf_Small    *lle_value_out,
+   Dwarf_Addr     *rawval1_out,
+   Dwarf_Addr     *rawval2_out,
+   Dwarf_Addr     *lopc_out,
+   Dwarf_Addr     *hipc_out,
+   Dwarf_Unsigned *loc_expr_op_count_out,
+   Dwarf_Locdesc_c *locentry_out,
+   Dwarf_Small    *loclist_kind,
+   Dwarf_Unsigned *expression_offset_out,
+   Dwarf_Unsigned *locdesc_offset_out,
+   Dwarf_Error    *error);
+\fP
+.DE
+
 
 .H 3 "dwarf_get_loclist_head_kind()"
 .DS

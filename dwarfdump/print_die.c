@@ -5226,6 +5226,13 @@ print_location_list(Dwarf_Debug dbg,
             rawlowpc = lopc = llbuf->ld_lopc;
             rawhipc  = hipc = llbuf->ld_hipc;
             loclist_source = llbuf->ld_from_loclist;
+            if (loclist_source > 1) {
+                printf("ERROR: Attempting to use the original "
+                    " loclist/locexpr code with DW_LKIND_GNU_exp_list "
+                    " or DW_LKIND_loclists is not going to work: "
+                    "loclist_source value %u\n",loclist_source);
+                glflags.gf_count_major_errors++;
+            }
             expr_section_offset = llbuf->ld_section_offset;
             locdesc_offset = expr_section_offset -
                 sizeof(Dwarf_Half) - 2 * address_size;
@@ -5238,6 +5245,13 @@ print_location_list(Dwarf_Debug dbg,
             } else {
                 lle_value = DW_LLE_start_end;
             }
+        }
+        if (loclist_source == DW_LKIND_expression &&
+            lle_value != DW_LLE_start_end) {
+            printf("ERROR: With DW_LKIND_expression"
+                " lle_value should be DW_LLE_start_end (7) "
+                "not %u\n",lle_value);
+            glflags.gf_count_major_errors++;
         }
         /*  If we have a location list refering to the .debug_loc
             Check for specific compiler we are validating. */

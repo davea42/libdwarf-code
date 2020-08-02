@@ -552,6 +552,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DUPLICATE_GNU_DEBUG_PUBTYPES(475) Duplicated section .debug_gnu_pubtypes",
     "DW_DLE_DEBUG_SUP_STRING_ERROR(476) The string in .debug_sup head runs off the end of the section. Corrupt data",
     "DW_DLE_DEBUG_SUP_ERROR(477). .debug_sup data corruption",
+    "DW_DLE_LOCATION_ERROR(478). A location processing libdwarf error",
 
 
 };

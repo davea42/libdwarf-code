@@ -166,6 +166,11 @@ struct Dwarf_Loc_Expr_Op_s {
     Dwarf_Loc_Expr_Op     lr_next; /* When a list is useful.*/
 };
 
+/*  Used at construction to enable verifying we set 
+    sensibly before returning to callers. */
+
+#define DW_LLE_VALUE_BOGUS 254
+
 /* Location description DWARF 2,3,4,5
    Adds the DW_LLE value (new in DWARF5).
    This struct is opaque. Not visible to callers. */
@@ -214,6 +219,8 @@ struct Dwarf_Locdesc_c_s {
     Dwarf_Loc_Head_c ld_loclist_head;
     Dwarf_Locdesc_c  ld_next; /*helps building the locdescs*/
 };
+
+int _dwarf_locdesc_c_constructor(Dwarf_Debug dbg, void *locd);
 
 /*  A 'header' to the loclist and  the
     location description(s)  attached to an attribute.

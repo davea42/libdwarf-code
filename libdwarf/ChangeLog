@@ -1,3 +1,27 @@
+2020-08-02: David Anderson
+    * dwarf_alloc.c: Added a constructor for Dwarf_Locdesc_c
+      (DW_DLA_LOCDESC_C) so fields ld_lle_value and
+      ld_kind get non-zero and 
+      erroneous initial values so
+      the values can be checked later for correctness.
+    * dwarf_errmsg_list.h: Added error DW_DLE_LOCATION_ERROR.
+    * dwarf_loc.c: Now we rigorously set and check the fields
+      ld_lle_value and ld_kind. 
+      _dwarf_locdesc_c_constructor() sets those two fields
+      so we can check correctness and in case of error, 
+      report the details.
+    * dwarf_loc.h: Added constructor prototype and a special
+      DW_LLE_VALUE_BOGUS initial value (invisible to 
+      library callers).
+    * dwarf_loclists.c: After malloc use the  Dwarf_Locdesc_c
+      constructor so later error checking possible.
+    * libdwarf.h.in: Added error DW_DLE_LOCATION_ERROR.
+    * libdwarf2.1.mm: Rev 3.05. Additional detail on
+      return values for dwarf_get_locdesc_entry_d()
+      and documented dwarf_get_locdesc_entry_c() 
+      (recommending use of dwarf_get_locdesc_entry_d()
+      instead)
+    * libdwarf2.1.pdf: Rev 3.05. Regenerated.
 2020-07-28: David Anderson
     * dwarf_locationop_read.c: Added DW_OP_GNU_variable_value.
     * dwarf_names.c, dwarf_names_enum.h: Regenerated.

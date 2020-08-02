@@ -1645,12 +1645,14 @@ print_location_operations(Dwarf_Debug dbg,
             dwarf_loc_head_c_dealloc(head);
             return lres;
         }
+        /*  ASSERT: loclist_source == DW_LKIND_expression  */
+        /*  ASSERT: lle_value == DW_LLE_start_end  */
         lres = dwarfdump_print_location_operations(dbg,
             NULL,
             locentry,
             0, /* index 0: locdesc 0 */
             ulocentry_count,
-            DW_LKIND_expression,
+            DW_LKIND_expression /* loclist_source */,
             0, /* no die indent*/
             baseaddr,
             out_string,err);
