@@ -993,6 +993,11 @@ extern "C" {
 #define R_X86_64_PLT32_BND  40
 #endif
 
+/*  Seen in a Linux Kernel. Means 'nothing to do'  */
+#ifndef R_X86_64_NONE
+#define R_X86_64_NONE        0
+#endif /* R_X86_64_NONE */
+
 #ifndef R_386_32
 #define R_386_32                               1
 #endif /* R_386_32 */

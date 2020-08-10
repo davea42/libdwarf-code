@@ -384,6 +384,9 @@ update_entry(Dwarf_Debug dbg,
         reloc_size = 4;
     } else if (_dwarf_is_64bit_abs_reloc(type, machine)) {
         reloc_size = 8;
+    } else if (machine == EM_X86_64 && type == R_X86_64_NONE) {
+        /*  There is nothing to do. */
+        return DW_DLV_OK;
     } else {
         *error = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
         return DW_DLV_ERROR;

@@ -1,3 +1,7 @@
+2020-08-10: David Anderson
+    * dwarf_elf_defines.h,dwarf_elfread.c: A linux kernel used a
+      R_X86_64_NONE (which means ignore the relocation) and
+      now we deal with it properly for EM_X86_64.
 2020-08-02: David Anderson
     * dwarf_alloc.c: Added a constructor for Dwarf_Locdesc_c
       (DW_DLA_LOCDESC_C) so fields ld_lle_value and
