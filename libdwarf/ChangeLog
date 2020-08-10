@@ -1,4 +1,8 @@
 2020-08-10: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+	  dwarf_names_new.h,libdwarf_version.h: Updated  version
+      string, regenerated files that reference it.
+2020-08-10: David Anderson
     * dwarf_elf_defines.h,dwarf_elfread.c: A linux kernel used a
       R_X86_64_NONE (which means ignore the relocation) and
       now we deal with it properly for EM_X86_64.

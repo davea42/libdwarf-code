@@ -1,3 +1,8 @@
+2020-08-10: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+	  dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Updated version string, regenerated
+      files using it.
 2020-08-02: David Anderson
     * print_die.c: Now with Additional checking of DW_LKIND
       values and an error report if one tries to use the original
