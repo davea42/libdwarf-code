@@ -1814,17 +1814,19 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     for (i = 0; i < entries_count; ++i) {
         unsigned entrylen     = 0;
         unsigned code         = 0;
+        Dwarf_Unsigned rawlowpc  = 0;
+        Dwarf_Unsigned rawhighpc = 0;
+        Dwarf_Bool debug_addr_unavailable = FALSE;
         Dwarf_Unsigned lowpc  = 0;
         Dwarf_Unsigned highpc = 0;
 
         /*  Actual addresses are most likely what one
             wants to know, not the lengths/offsets
-            recorded in .debug_rnglists. So we pass
-            NULLs to avoid dealing with values we
-            do not wish to see. */
-        res = dwarf_get_rnglists_entry_fields(rnglhead,
+            recorded in .debug_rnglists. */
+        res = dwarf_get_rnglists_entry_fields_a(rnglhead,
             i,&entrylen,&code,
-            0,0,
+            &rawlowpc,&rawhighpc,
+            &debug_addr_unavailable,
             &lowpc,&highpc,error);
         if (res != DW_DLV_OK) {
             dwarf_dealloc_rnglists_head(rnglhead);
@@ -1838,6 +1840,10 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
             code == DW_RLE_base_address) {
             /*  We do not need to use these, they
                 have been accounted for already. */
+            continue;
+        }
+        if (debug_addr_unavailable) {
+            /* lowpc and highpc are not real addresses */
             continue;
         }
         /*  Here do something with lowpc and highpc, these

@@ -1,3 +1,17 @@
+2020-08-18: David Anderson
+    * checkexamples.c: Corrected example_rnglist_for_attribute()
+      example.
+    * dwarf_ranges.c: Corrected a comment and removed #if 0
+      code as it is obsolete.
+    * dwarf_rnglists.c(dwarf_get_rnglists_entry_fields_a):
+      Allow the pointer-arguments used to return data to
+      the caller to be null pointers safely, as libdwarf2.1.pdf
+      suggested that was legal.
+    * libdwarf2.1.mm: Version 3.06. Corrected the example
+      calling dwarf_get_rnglists_entry_fields_a().
+    * libdwarf2.1.pdf: Regenerated, Version 3.06
+     
+      
 2020-08-10: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version

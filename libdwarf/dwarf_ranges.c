@@ -142,7 +142,8 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         }
         cucontext = die->di_cu_context;
         /*  The DW4 ranges base was never used in GNU
-            but did get emitted.
+            but did get emitted, the note says, but
+            the note is probably obsolete (so, now wrong).
             http://llvm.1065342.n5.nabble.com/DebugInfo-DW-AT-GNU-ranges-base-in-non-fission-td64194.html
             */
 #if 0
@@ -228,19 +229,16 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
             localdbg = dbg->de_tied_data.td_tied_object;
         }
     }
-#if 0
-FIXME Implement debug_rnglists!
-    /*  de_debug_ranges is DW 3,4.
-        de_debug_rnglists is DW5. */
-    if (die_version >= DW_CU_VERSION5) {
-        res = _dwarf_load_section(localdbg,
-            &localdbg->de_debug_rngslists,&localerror);
-    } else {
-        res = _dwarf_load_section(localdbg,
-            &localdbg->de_debug_ranges,&localerror);
-    }
-#endif
-    res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,&localerror);
+    /*  This function addresses DWARF3, DWARF4 range lists.
+        DWARF5 and later are in de_debug_rnglists.
+        See dwarf_rnglists_get_rle_head() in dwarf_rnglists.c.
+        So most callers will need to use *both* interface sets.
+        This is a little bit ugly, one must say.
+        It might be better to alter the newer interface to
+        also handle the older section.
+    */
+    res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,
+        &localerror);
     if (res == DW_DLV_ERROR) {
         _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
         return res;
