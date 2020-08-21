@@ -1,4 +1,4 @@
-\."
+
 \." the following line may be removed if the 
 \." ff ligature works on your machine
 .lg 0
@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.06, 18 August 2020
+.ds vE Rev 3.07, 21 August 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -640,11 +640,11 @@ Work on DWARF2 SGI draft begins
 .LI "June 94"
 The function returns are changed to return an error/success code
 only.
-.LI "April 2006:
+.LI "April 2006"
 Support for DWARF3 consumer operations is close to completion.
-.LI "November 2010:
+.LI "November 2010"
 Added various new functions and improved error checking.
-.LI "March 2017:
+.LI "March 2017"
 Adding support for DWARF5 split dwarf.
 .LE
 
@@ -5289,7 +5289,7 @@ represented by the descriptor \f(CWattr\fP if the form of the
 attribute belongs to the \f(CWSTRING\fP class.
 It is an error
 for the form to not belong to this class.
-.P`
+.P
 The storage pointed
 to by a successful return of \f(CWdwarf_formstring()\fP
 should not be freed.  The pointer points into
@@ -5788,7 +5788,7 @@ and returns values through the pointer arguments
 \f(CWdbg\fP
 or
 \f(CWerror\fP)
-.P 
+.P
 A call to 
 \f(CWdwarf_load_loclists()\fP
 that suceeds gets you the count
@@ -5869,7 +5869,7 @@ exactly as the same field passed to
 If one of the indexes passed in is out of range
 \f(CWDW_DLV_NO_ENTRY\fP will
 be returned and no return arguments touched.
-.P 
+.P
 If there is some corruption of DWARF5 data
 then
 \f(CWDW_DLV_ERROR\fP
@@ -6347,7 +6347,7 @@ for each operator).
 All additions of base fields, if any,
 have been done already.
 \f(CWoperand3\fP is new as of DWARF5.
-.P 
+.P
 In some cases 
 \f(CWoperand3\fP
 is actually a pointer into section data in memory
@@ -7761,7 +7761,7 @@ For earlier DWARF it refers to some file
 referenced in the compilation unit, but not
 any special file.
 
-.P 
+.P
 .in +2
 .FG "Exampled dwarf_srcfiles()"
 .DS
@@ -11394,7 +11394,8 @@ and also the offset of its CIE.
 It returns \f(CWDW_DLV_ERROR\fP if there is an error.
 .P
 It returns \f(CWDW_DLV_ERROR\fP if there is an error.
-.P It is intended to be used by applications like dwarfdump
+.P
+It is intended to be used by applications like dwarfdump
 when such want to print the offsets of CIEs and FDEs.
 
 .H 3 "dwarf_cie_section_offset()"
@@ -11411,7 +11412,8 @@ On success
 the .dwarf_line section offset of the cie passed in.
 .P
 It returns \f(CWDW_DLV_ERROR\fP if there is an error.
-.P It is intended to be used by applications like dwarfdump
+.P
+It is intended to be used by applications like dwarfdump
 when such want to print the offsets of CIEs.
 
 
@@ -13502,7 +13504,7 @@ and returns values through the pointer arguments
 \f(CWdbg\fP
 or
 \f(CWerror\fP)
-.P 
+.P
 A call to 
 \f(CWdwarf_load_rnglists()\fP
 that suceeds gets you the count
@@ -13583,7 +13585,7 @@ exactly as the same field passed to
 If one of the indexes passed in is out of range
 \f(CWDW_DLV_NO_ENTRY\fP will
 be returned and no return arguments touched.
-.P 
+.P
 If there is some corruption of DWARF5 data
 then
 \f(CWDW_DLV_ERROR\fP
@@ -15919,7 +15921,7 @@ of a string in Dwarf_Error record
 when an error record with variable 
 descriptive error information is being built/freed.
 .P
-.H 3 "Making use of the output of -DDEBUG=1
+.H 3 "Making use of the output of -DDEBUG=1"
 A small Python 3 program (alloctrack.py) in the libdwarf
 regressiontests on SourceForge.net
 will read through a file with libdwarfdetector
