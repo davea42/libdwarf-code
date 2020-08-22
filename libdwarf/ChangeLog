@@ -1,3 +1,7 @@
+2020-08-22: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+	  dwarf_names_new.h,libdwarf_version.h: Updated  version
+      string, regenerated files that reference it.
 2020-08-21: David Anderson
     * dwarf_init_finish.c(insert_sht_list_in_group_map):
       Added checks of dss_data_was_malloc around
