@@ -879,9 +879,9 @@ build_array_of_rle(Dwarf_Debug dbg,
             if(no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
-                res = _dwarf_extract_address_from_debug_addr(
-                    dbg,rctx->rh_context,val1,
-                    &addr1,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,rctx->rh_context,val1,&addr1,
+                    error);
             }
             if (res != DW_DLV_OK) {
                 no_debug_addr_available = TRUE;
@@ -898,9 +898,9 @@ build_array_of_rle(Dwarf_Debug dbg,
             if(no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
-                res = _dwarf_extract_address_from_debug_addr(
-                    dbg,rctx->rh_context,val1,
-                    &addr1,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,rctx->rh_context,val1,&addr1,
+                    error);
             }
             if (res != DW_DLV_OK) {
                 no_debug_addr_available = TRUE;
@@ -912,9 +912,9 @@ build_array_of_rle(Dwarf_Debug dbg,
             if(no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
-                res = _dwarf_extract_address_from_debug_addr(
-                    dbg,rctx->rh_context,val2,
-                    &addr2,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,rctx->rh_context,val2,&addr2,
+                    error);
             }
             if (res != DW_DLV_OK) {
                 no_debug_addr_available = TRUE;
@@ -929,9 +929,9 @@ build_array_of_rle(Dwarf_Debug dbg,
             if(no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
-                res = _dwarf_extract_address_from_debug_addr(
-                    dbg,rctx->rh_context,val1,
-                    &addr1,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,rctx->rh_context,val1,&addr1,
+                    error);
             }
             if (res != DW_DLV_OK) {
                 no_debug_addr_available = TRUE;

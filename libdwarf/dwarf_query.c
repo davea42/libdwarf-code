@@ -887,8 +887,11 @@ dwarf_attr(Dwarf_Die die,
     only a normal .o or executable object.
     Error returned here is on dbg, not tieddbg.
     This looks for DW_AT_addr_base and if present
-    adds it in appropriately. */
-int
+    adds it in appropriately. 
+    You should use _dwarf_look_in_local_and_tied_by_index()
+    instead of this, in general.
+    */
+static int
 _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned index_to_addr,
@@ -944,7 +947,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-static int
+int
 _dwarf_look_in_local_and_tied_by_index(
     Dwarf_Debug dbg,
     Dwarf_CU_Context context,
@@ -1391,48 +1394,15 @@ dwarf_highpc_b(Dwarf_Die die,
             if(res2 != DW_DLV_OK) {
                 return res2;
             }
-
-            res2 = _dwarf_extract_address_from_debug_addr(dbg,
+            res2= _dwarf_look_in_local_and_tied_by_index(dbg,
                 context,
                 index_to_addr,
                 &addr_out,
                 error);
             if(res2 != DW_DLV_OK) {
-                if (res2 == DW_DLV_ERROR &&
-                    error &&
-                    dwarf_errno(*error) ==
-                    DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
-                    && dbg->de_tied_data.td_tied_object) {
-                    /*  .debug_addr is in tied dbg. */
-                    int res3 = 0;
-
-                    /*  Do not leak the above error pointer,
-                        we have something else to try here. */
-                    dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
-                    *error = 0;
-
-                    /*  .debug_addr is in tied dbg.
-                        Get the index of the addr */
-                    res3 = _dwarf_get_addr_from_tied(dbg,
-                        context,index_to_addr,&addr_out,error);
-                    if ( res3 != DW_DLV_OK) {
-                        return res3;
-                    }
-                } else {
-                    return res2;
-                }
+                return res2;
             }
-            *return_value = addr_out;
-            /*  Allow null args starting 22 April 2019. */
-            if (return_form) {
-                *return_form = attr_form;
-            }
-            if (return_class) {
-                *return_class = class;
-            }
-            return (DW_DLV_OK);
         }
-
         READ_UNALIGNED_CK(dbg, addr, Dwarf_Addr,
             info_ptr, address_size,
             error,die_info_end);

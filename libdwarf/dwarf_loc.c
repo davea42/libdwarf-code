@@ -1977,8 +1977,10 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
         switch(llc->ld_lle_value) {
         case DW_LLEX_base_address_selection_entry:{
             Dwarf_Addr targaddr = 0;
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawhigh,&targaddr,error);
+
+            res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,cucontext,llc->ld_rawhigh,&targaddr,
+                    error);
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
@@ -1999,8 +2001,9 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             }
         case DW_LLEX_start_length_entry:{
             Dwarf_Addr targaddr = 0;
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawlow,&targaddr,error);
+            res = _dwarf_look_in_local_and_tied_by_index(
+                dbg,cucontext,llc->ld_rawlow,&targaddr,
+                error);
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
@@ -2021,8 +2024,9 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             }
         case DW_LLEX_start_end_entry:{
             Dwarf_Addr targaddr = 0;
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawlow,&targaddr,error);
+            res = _dwarf_look_in_local_and_tied_by_index(
+                dbg,cucontext,llc->ld_rawlow,&targaddr,
+                error);
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
@@ -2033,8 +2037,9 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             } else {
                 llc->ld_lopc = targaddr;
             }
-            res = _dwarf_extract_address_from_debug_addr(dbg,
-                cucontext,llc->ld_rawhigh,&targaddr,error);
+            res = _dwarf_look_in_local_and_tied_by_index(
+                dbg,cucontext,llc->ld_rawlow,&targaddr,
+                error);
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_highpc = 0;
@@ -2098,8 +2103,9 @@ cook_loclists_contents(Dwarf_Debug dbg,
             if (debug_addr_fail) {
                 res = DW_DLV_NO_ENTRY;
             } else {
-                res = _dwarf_extract_address_from_debug_addr(dbg,
-                    cucontext,llc->ld_rawlow,&targaddr,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,cucontext,llc->ld_rawlow,&targaddr,
+                    error);
             }
             if (res != DW_DLV_OK) {
                 debug_addr_fail = TRUE;
@@ -2123,8 +2129,9 @@ cook_loclists_contents(Dwarf_Debug dbg,
             if (debug_addr_fail) {
                 res = DW_DLV_NO_ENTRY;
             } else {
-                res = _dwarf_extract_address_from_debug_addr(dbg,
-                    cucontext,llc->ld_rawlow,&targaddr,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,cucontext,llc->ld_rawlow,&targaddr,
+                    error);
             }
             if (res != DW_DLV_OK) {
                 debug_addr_fail = TRUE;
@@ -2140,8 +2147,10 @@ cook_loclists_contents(Dwarf_Debug dbg,
             if (debug_addr_fail) {
                 res = DW_DLV_NO_ENTRY;
             } else {
-                res = _dwarf_extract_address_from_debug_addr(dbg,
-                    cucontext,llc->ld_rawhigh,&targaddr,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,cucontext,llc->ld_rawhigh,&targaddr,
+                    error);
+
             }
             if (res != DW_DLV_OK) {
                 debug_addr_fail = TRUE;
@@ -2162,8 +2171,9 @@ cook_loclists_contents(Dwarf_Debug dbg,
             if (debug_addr_fail) {
                 res = DW_DLV_NO_ENTRY;
             } else  {
-                res = _dwarf_extract_address_from_debug_addr(dbg,
-                    cucontext,llc->ld_rawlow,&targaddr,error);
+                res = _dwarf_look_in_local_and_tied_by_index(
+                    dbg,cucontext,llc->ld_rawlow,&targaddr,
+                    error);
             }
             if (res != DW_DLV_OK) {
                 debug_addr_fail = TRUE;

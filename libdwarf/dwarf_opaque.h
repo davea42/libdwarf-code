@@ -781,10 +781,11 @@ int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Error *error);
 
 
-int _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
+int _dwarf_look_in_local_and_tied_by_index(
+    Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned index,
-    Dwarf_Addr *addr_out,
+    Dwarf_Addr *return_addr,
     Dwarf_Error *error);
 
 int _dwarf_get_base_and_size_given_signature(

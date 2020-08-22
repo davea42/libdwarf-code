@@ -1,4 +1,12 @@
 2020-08-22: David Anderson
+    * dwarf_loc.c,dwarf_rnglists.c: call 
+      _dwarf_look_in_local_and_tied_by_index
+      not _dwarf_extract_address_from_debug_addr so 
+      .debug_addr in the tied file will be found.
+    * dwarf_opaque.h,dwarf_query.c: Make  
+      _dwarf_look_in_local_and_tied_by_index global,not
+      _dwarf_extract_address_from_debug_addr.
+2020-08-22: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version
       string, regenerated files that reference it.
