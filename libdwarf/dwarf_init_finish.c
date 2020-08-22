@@ -964,6 +964,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         if (secdata.dss_data_was_malloc) {
             free(secdata.dss_data);
+            secdata.dss_data = 0;
         }
         return res;
     }
@@ -974,6 +975,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     if (doas->entrysize != 4) {
         if (secdata.dss_data_was_malloc) {
             free(secdata.dss_data);
+            secdata.dss_data = 0;
         }
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
@@ -1001,7 +1003,10 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
         if ((data+DWARF_32BIT_SIZE) > secend) {
             /* Duplicates the check in READ_UNALIGNED_CK
                 so we can free allocated memory bere. */
-            free(secdata.dss_data);
+            if (secdata.dss_data_was_malloc) {
+                free(secdata.dss_data);
+                secdata.dss_data = 0;
+            }
             _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
             return DW_DLV_ERROR;
         }
@@ -1014,6 +1019,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             /*  Could be corrupted elf object. */
             if (secdata.dss_data_was_malloc) {
                 free(secdata.dss_data);
+                secdata.dss_data = 0;
             }
             _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
             return DW_DLV_ERROR;
@@ -1028,6 +1034,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     so we can free allocated memory bere. */
                 if (secdata.dss_data_was_malloc) {
                     free(secdata.dss_data);
+                    secdata.dss_data = 0;
                 }
                 _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
                 return DW_DLV_ERROR;
@@ -1047,6 +1054,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 if (valr > section_count) {
                     if (secdata.dss_data_was_malloc) {
                         free(secdata.dss_data);
+                        secdata.dss_data = 0;
                     }
                     _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
                     return DW_DLV_ERROR;
@@ -1072,6 +1080,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 } else if (resx == DW_DLV_ERROR){
                     if (secdata.dss_data_was_malloc) {
                         free(secdata.dss_data);
+                        secdata.dss_data = 0;
                     }
                     _dwarf_error(dbg,error,err);
                     return resx;
@@ -1087,7 +1096,10 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     doasx.name,
                     error);
                 if (res != DW_DLV_OK) {
-                    free(secdata.dss_data);
+                    if (secdata.dss_data_was_malloc) {
+                        free(secdata.dss_data);
+                        secdata.dss_data = 0;
+                    }
                     return res;
                 }
             }
@@ -1095,6 +1107,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     }
     if (secdata.dss_data_was_malloc) {
         free(secdata.dss_data);
+        secdata.dss_data = 0;
     }
     return DW_DLV_OK;
 }

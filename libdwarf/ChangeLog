@@ -1,4 +1,18 @@
 2020-08-21: David Anderson
+    * dwarf_init_finish.c(insert_sht_list_in_group_map):
+      Added checks of dss_data_was_malloc around
+      a couple of calls saying free(secdata.dss_data).
+      The missing checks could only result in duplicate
+      free with user calls that allocated their
+      own section data to load a section and a certain
+      error arising during the call.
+    * dwarf_loc.c: To elminate ambiguity, renamed
+      some fields from lowpc to rawlowpc (for example).
+    * dwarf_loclists.c(build_array_of_lle): Removed
+      a block of code duplicating work done in dwarf_loc.c.
+      Fixed arguments passing ld_lopc, ld_highpc
+      to pass ld_rawlow, ld_rawhigh for correctness.
+2020-08-21: David Anderson
     * libdwarf2.1.mm: Rev 3.07. Corrected quote mismatches
       in the mm commands, and a couple of stray
       characters after a .P command

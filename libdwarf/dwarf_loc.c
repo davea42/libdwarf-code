@@ -1498,11 +1498,13 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     }
     locdesc->ld_cents = op_count;
     locdesc->ld_s = block_loc;
+
     locdesc->ld_kind = lkind;
     locdesc->ld_section_offset = loc_block->bl_section_offset;
     locdesc->ld_locdesc_offset = loc_block->bl_locdesc_offset;
     locdesc->ld_rawlow = lowpc;
     locdesc->ld_rawhigh = highpc;
+
     res = validate_lle_value(dbg,locdesc,error);
     if (res != DW_DLV_OK) {
         dwarf_dealloc(dbg,block_loc,DW_DLA_LOC_BLOCK_C);
@@ -1760,15 +1762,15 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
         Dwarf_Half lle_op = 0;
         Dwarf_Bool at_end = 0;
         Dwarf_Block_c loc_block;
-        Dwarf_Unsigned lowpc = 0;
-        Dwarf_Unsigned highpc = 0;
+        Dwarf_Unsigned rawlowpc = 0;
+        Dwarf_Unsigned rawhighpc = 0;
         int blkres = 0;
 
         memset(&loc_block,0,sizeof(loc_block));
         if( lkind == DW_LKIND_GNU_exp_list) {
             blkres = _dwarf_read_loc_section_dwo(dbg,
                 &loc_block,
-                &lowpc, &highpc,
+                &rawlowpc, &rawhighpc,
                 &at_end, &lle_op,
                 loclist_offset,
                 address_size,
@@ -1777,7 +1779,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
         } else {
             blkres = _dwarf_read_loc_section(dbg,
                 &loc_block,
-                &lowpc, &highpc,
+                &rawlowpc, &rawhighpc,
                 &lle_op,
                 loclist_offset,
                 address_size,
@@ -1795,8 +1797,8 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
             address_size,
             cucontext->cc_length_size,
             cucontext->cc_version_stamp,
-            lowpc,
-            highpc,
+            rawlowpc,
+            rawhighpc,
             lle_op,
             error);
         if (lres != DW_DLV_OK) {
@@ -1823,8 +1825,8 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
 {
 
     Dwarf_Block_c loc_blockc;
-    Dwarf_Unsigned lowpc = 0;
-    Dwarf_Unsigned highpc = 0;
+    Dwarf_Unsigned rawlowpc = 0;
+    Dwarf_Unsigned rawhighpc = 0;
     unsigned form = llhead->ll_attrform;
     int blkres = 0;
     Dwarf_Locdesc_c llbuf = 0;
@@ -1866,8 +1868,8 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
     /*  We will mark the Locdesc_c DW_LLE_start_end
         shortly. Here we fake the address range
         as 'all addresses'. */
-    lowpc = 0;   
-    highpc = MAX_ADDR;
+    rawlowpc = 0;   
+    rawhighpc = MAX_ADDR;
 
     llbuf = (Dwarf_Locdesc_c)
         _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, listlen);
@@ -1895,7 +1897,7 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         llhead->ll_address_size,
         cucontext->cc_length_size,
         cucontext->cc_version_stamp,
-        lowpc, highpc,
+        rawlowpc, rawhighpc,
         0,
         error);
     llhead->ll_bytes_total += loc_blockc.bl_len;
@@ -2394,8 +2396,8 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Loc_Head_c llhead = 0;
     Dwarf_Locdesc_c llbuf = 0;
     int local_listlen = 1;
-    Dwarf_Addr lowpc = 0;
-    Dwarf_Addr highpc = MAX_ADDR;
+    Dwarf_Addr rawlowpc = 0;
+    Dwarf_Addr rawhighpc = MAX_ADDR;
     Dwarf_Small version_stamp = dwarf_version;
     int res = 0;
 
@@ -2441,8 +2443,8 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
         address_size,
         offset_size,
         version_stamp,
-        lowpc,
-        highpc,
+        rawlowpc,
+        rawhighpc,
         DW_LKIND_expression,
         error);
     if (res != DW_DLV_OK) {
