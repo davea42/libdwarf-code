@@ -998,9 +998,9 @@ build_array_of_lle(Dwarf_Debug dbg,
         Dwarf_Locdesc_c prev = 0;
 
         /* array of structs. Here we copy the previous
-            malloc set of Dwarf_Locdesc_c into 
+            malloc set of Dwarf_Locdesc_c into
             a dwarf_get_alloc set and free the malloc set */
-        
+
         array = (Dwarf_Locdesc_c)_dwarf_get_alloc(dbg,
             DW_DLA_LOCDESC_C, rctx->ll_locdesc_count);
         if (!array) {

@@ -1246,23 +1246,23 @@ get_loc_kind_str(Dwarf_Small lkind)
         return kindset[lkind];
     }
     if (lkind == DW_LKIND_unknown) {
-       return "DW_LKIND_unknown";
+        return "DW_LKIND_unknown";
     }
     return "UNKNOWN DW_LKIND!";
 }
 static int
 validate_lle_value(Dwarf_Debug dbg,
-    Dwarf_Locdesc_c locdesc, 
+    Dwarf_Locdesc_c locdesc,
     Dwarf_Error *error)
 {
     dwarfstring m;
 
     if (locdesc->ld_kind != DW_LKIND_GNU_exp_list) {
         switch(locdesc->ld_lle_value) {
-        case DW_LLE_end_of_list: 
-        case DW_LLE_base_addressx: 
-        case DW_LLE_startx_endx: 
-        case DW_LLE_startx_length: 
+        case DW_LLE_end_of_list:
+        case DW_LLE_base_addressx:
+        case DW_LLE_startx_endx:
+        case DW_LLE_startx_length:
         case DW_LLE_offset_pair:
         case DW_LLE_default_location:
         case DW_LLE_base_address:
@@ -1308,7 +1308,7 @@ validate_lle_value(Dwarf_Debug dbg,
         _dwarf_error_string(dbg,error,DW_DLE_LOCATION_ERROR,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
-    } 
+    }
     return DW_DLV_ERROR;
 }
 /*  Sets locdesc operator list information in locdesc.
@@ -1425,7 +1425,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         offset = nextoffset;
     }
     block_loc =
-        (Dwarf_Loc_Expr_Op ) _dwarf_get_alloc(dbg, 
+        (Dwarf_Loc_Expr_Op ) _dwarf_get_alloc(dbg,
         DW_DLA_LOC_BLOCK_C, op_count);
     new_loc = head_loc;
     if (!block_loc) {
@@ -1466,17 +1466,17 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         } else {
             locdesc->ld_lle_value = DW_LLE_offset_pair;
         }
-        }   
+        }
         break;
     case DW_LKIND_GNU_exp_list:
         /* DW_LKIND_GNU_exp_list */
         locdesc->ld_lle_value = lle_op;
-        break; 
+        break;
     case DW_LKIND_expression:
         /*  This is a kind of fake, but better than 0 */
         locdesc->ld_lle_value =  DW_LLE_start_end;
         break;
-    case DW_LKIND_loclists: 
+    case DW_LKIND_loclists:
         /* ld_lle_value already set */
         break;
     default:  {
@@ -1861,14 +1861,14 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         loc_blockc.bl_len = loc_block.bl_len;
         loc_blockc.bl_data = loc_block.bl_data;
         loc_blockc.bl_kind = llhead->ll_kind;
-        loc_blockc.bl_section_offset = 
+        loc_blockc.bl_section_offset =
             loc_block.bl_section_offset;
         loc_blockc.bl_locdesc_offset = 0; /* not relevant */
     }
     /*  We will mark the Locdesc_c DW_LLE_start_end
         shortly. Here we fake the address range
         as 'all addresses'. */
-    rawlowpc = 0;   
+    rawlowpc = 0;
     rawhighpc = MAX_ADDR;
 
     llbuf = (Dwarf_Locdesc_c)
@@ -1979,8 +1979,8 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
             Dwarf_Addr targaddr = 0;
 
             res = _dwarf_look_in_local_and_tied_by_index(
-                    dbg,cucontext,llc->ld_rawhigh,&targaddr,
-                    error);
+                dbg,cucontext,llc->ld_rawhigh,&targaddr,
+                error);
             if (res != DW_DLV_OK) {
                 llc->ld_index_failed = TRUE;
                 llc->ld_lopc = 0;
@@ -2513,8 +2513,8 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     return DW_DLV_OK;
 }
 
-/*   Use  dwarf_get_locdesc_entry_d() instead 
-     This function is not sufficient for DWARF 5. */
+/*  Use  dwarf_get_locdesc_entry_d() instead
+    This function is not sufficient for DWARF 5. */
 int
 dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Unsigned   index,
@@ -2527,7 +2527,7 @@ dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Locdesc_c* locdesc_entry_out,
 
     /* 0,1,2 or 5  DW_LKIND_* */
-    Dwarf_Small    * loclist_source_out, 
+    Dwarf_Small    * loclist_source_out,
     Dwarf_Unsigned * expression_offset_out,
     Dwarf_Unsigned * locdesc_offset_out,
     Dwarf_Error    * error)

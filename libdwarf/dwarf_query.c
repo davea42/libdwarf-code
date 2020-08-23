@@ -887,7 +887,7 @@ dwarf_attr(Dwarf_Die die,
     only a normal .o or executable object.
     Error returned here is on dbg, not tieddbg.
     This looks for DW_AT_addr_base and if present
-    adds it in appropriately. 
+    adds it in appropriately.
     You should use _dwarf_look_in_local_and_tied_by_index()
     instead of this, in general.
     */

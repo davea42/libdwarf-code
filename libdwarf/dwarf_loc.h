@@ -166,7 +166,7 @@ struct Dwarf_Loc_Expr_Op_s {
     Dwarf_Loc_Expr_Op     lr_next; /* When a list is useful.*/
 };
 
-/*  Used at construction to enable verifying we set 
+/*  Used at construction to enable verifying we set
     sensibly before returning to callers. */
 
 #define DW_LLE_VALUE_BOGUS 254

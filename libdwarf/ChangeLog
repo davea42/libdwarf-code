@@ -1,4 +1,8 @@
 2020-08-23: David Anderson
+    * dwarf_form.c,dwarf_generic_init.c,dwarf_loc.c,
+      dwarf_loc.h,dwarf_loclists.c,dwarf_query.c, dwarf_rnglists.c,
+      pro_opaque.h: Remove trailing whitespace. Fix indents.
+2020-08-23: David Anderson
     * dwarf_form.c: In case an strp offset seems wrong
       we get a more detailed error message.
     * dwarf_macro5.c: Deleted gratuitous blank line.

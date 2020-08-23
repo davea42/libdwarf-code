@@ -91,8 +91,8 @@ int
 dwarf_init(int fd,
     Dwarf_Unsigned access,
     Dwarf_Handler errhand,
-    Dwarf_Ptr errarg, 
-    Dwarf_Debug * ret_dbg, 
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * ret_dbg,
     Dwarf_Error * error)
 {
     return dwarf_init_b(fd,access, DW_GROUPNUMBER_ANY,
@@ -183,8 +183,8 @@ int dwarf_init_path(const char *path,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
-            /* *ret_dbg = dbg; Do not do this.
-               Violates the libdwarf error rules. */
+            /*  *ret_dbg = dbg; Do not do this.
+                Violates the libdwarf error rules. */
             close(fd);
             return res;
         }
@@ -202,8 +202,8 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-            /* *ret_dbg = dbg; Do not do this.
-               Violates the libdwarf error rules. */
+            /*  *ret_dbg = dbg; Do not do this.
+                Violates the libdwarf error rules. */
             return res;
         }
         dbg->de_path = strdup(file_path);
@@ -220,8 +220,8 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-            /* *ret_dbg = dbg; Do not do this.
-               Violates the libdwarf error rules. */
+            /*  *ret_dbg = dbg; Do not do this.
+                Violates the libdwarf error rules. */
             return res;
         }
         dbg->de_path = strdup(file_path);

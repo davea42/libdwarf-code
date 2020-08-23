@@ -1176,7 +1176,7 @@ dwarf_rnglists_get_rle_head(
     return DW_DLV_OK;
 }
 
-/*  This version is the only one that can be used properly. 
+/*  This version is the only one that can be used properly.
     The first public version of this did NOT allow
     any null arguments, but the documentation in
     libdwarf2.1.mm showed null args. As of 18 Aug 2020

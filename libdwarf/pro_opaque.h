@@ -183,7 +183,7 @@ struct Dwarf_P_Debug_Sup_s {
     char          *ds_filename;
     Dwarf_Unsigned ds_checksum_len;
     Dwarf_Small   *ds_checksum;
-    Dwarf_P_Debug  ds_dbg; 
+    Dwarf_P_Debug  ds_dbg;
 };
 
 struct Dwarf_P_Die_s {
