@@ -1,4 +1,7 @@
 2020-08-23: David Anderson
+    * dwarf_form.c: Slightly changed the error message 
+      for an error in DW_FORM_strp.
+2020-08-23: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version
       string, regenerated files that reference it.

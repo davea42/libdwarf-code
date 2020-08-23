@@ -1,4 +1,8 @@
 2020-08-23: David Anderson
+    * dwarfdump-ta-ext-table.h: Regenerated
+	* tag_attr_ext.list: Added DW_AT_GNU_macros
+      to the known-extensions list.
+2020-08-23: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
 	  dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
 	  dwarfdump-tt-table.h: Regenerated with latest

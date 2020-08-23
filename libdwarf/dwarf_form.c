@@ -1687,14 +1687,19 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
         }
         if (offset >= secsize) {
             dwarfstring m;
+            const char *name = "<unknownform>";
+
+            dwarf_get_FORM_name(attrform,&name);
 
             dwarfstring_constructor(&m);
+            dwarfstring_append_printf_s(&m,
+                " Form %s ",(char *)name);
             dwarfstring_append_printf_u(&m,
                 "string offset of 0x%" DW_PR_DUx " ",
                 offset);
             dwarfstring_append_printf_u(&m,
                 "is larger than the string section "
-                "size of  0x%" DW_PR_DUx ,
+                "size of  0x%" DW_PR_DUx,
                 secsize);
             _dwarf_error_string(dbg, error, errcode,
                 dwarfstring_string(&m));

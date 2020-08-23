@@ -62,6 +62,7 @@ DW_AT_GNU_pubtypes
 DW_AT_GNU_dwo_name
 DW_AT_GNU_ranges_base
 DW_AT_GNU_addr_base
+DW_AT_GNU_macros
 
 0xffffffff
 DW_TAG_partial_unit
