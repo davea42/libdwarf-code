@@ -1686,9 +1686,21 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             secend = dbg->de_debug_str.dss_data + secsize;
         }
         if (offset >= secsize) {
+            dwarfstring m;
+            
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+               "string offset of 0x%" DW_PR_DUx " ",
+               offset);
+            dwarfstring_append_printf_u(&m,
+               "is larger than the string section "
+               "size of  0x%" DW_PR_DUx ,
+               secsize);
+            _dwarf_error_string(dbg, error, errcode,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             /*  Badly damaged DWARF here. */
-            _dwarf_error(dbg, error, errcode);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,
             errcode,error);

@@ -1,3 +1,7 @@
+2020-08-23: David Anderson
+    * dwarf_form.c: In case an strp offset seems wrong
+      we get a more detailed error message.
+    * dwarf_macro5.c: Deleted gratuitous blank line.
 2020-08-22: David Anderson
     * dwarf_loc.c,dwarf_rnglists.c: call 
       _dwarf_look_in_local_and_tied_by_index

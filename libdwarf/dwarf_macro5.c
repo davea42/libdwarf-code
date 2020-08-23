@@ -497,7 +497,6 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         Dwarf_Small form1 =  curop->mo_form->mf_formbytes[1];
         char * localstr = 0;
 
-
         DECODE_LEB128_UWORD_CK(mdata,linenum,
             dbg, error,endptr);
         READ_UNALIGNED_CK(dbg,stringoffset,Dwarf_Unsigned,
