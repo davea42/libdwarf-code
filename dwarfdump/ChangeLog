@@ -1,4 +1,7 @@
 2020-08-23: David Anderson
+    * checkutil.c,dwarfdump.c,print_die.c: Removed trailing
+      whitespace, fixed indents.
+2020-08-23: David Anderson
     * checkutil.c: Removed #if 0 lines from previous commit.
     * dwarfdump.c: Removed debug printf lines.
     * print_die.c: Removed debug printf lines.

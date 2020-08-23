@@ -3160,7 +3160,7 @@ Dwarf_Half tag,Dwarf_Half attr)
             tagname = get_TAG_name(tag,
                 pd_dwarf_names_print_on_error);
             tag_specific_checks_setup(dbg,tag,
-               die_stack_indent_level);
+                die_stack_indent_level);
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,
                 pd_dwarf_names_print_on_error),

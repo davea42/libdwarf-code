@@ -1124,12 +1124,13 @@ process_one_file(int fd, int tiedfd,
         Dwarf_Unsigned size = 0;
         Dwarf_Debug dbg_with_code = dbg;
         int res = 0;
+
         if (dbgtied) {
             /*  Assuming tied is exectuable main is dwo/dwp */
             dbg_with_code = dbgtied;
         }
         res = calculate_likely_limits_of_code(dbg_with_code,
-           &lower,&size);
+            &lower,&size);
         upper = lower + size;
         /*  Set limits for Ranges Information.
             Some objects have CUs for startup code
@@ -1138,15 +1139,13 @@ process_one_file(int fd, int tiedfd,
         if (res == DW_DLV_OK && glflags.pRangesInfo) {
             SetLimitsBucketGroup(glflags.pRangesInfo,lower,upper);
             AddEntryIntoBucketGroup(glflags.pRangesInfo,
-                        1,
-                        lower,lower,
-                        upper,
-                        ".text",
-                        TRUE);
-
+                1,
+                lower,lower,
+                upper,
+                ".text",
+                TRUE);
         }
-
-        /*  Build section information 
+        /*  Build section information
             linkonce is an SNR thing, we*/
         build_linkonce_info(dbg);
     }

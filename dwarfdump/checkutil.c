@@ -454,7 +454,7 @@ IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
             for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
                 pBucketData = &pBucket->Entries[nIndex];
                 if (address >= pBucketData->low &&
-                     address <= pBucketData->high) {
+                    address <= pBucketData->high) {
                     return TRUE;
                 }
             }
