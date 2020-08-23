@@ -1320,7 +1320,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 /* Check for specific compiler */
                 if (checking_this_compiler()) {
                     /* Process specific TAGs. */
-                    tag_specific_checks_setup(tag_child,
+                    tag_specific_checks_setup(dbg,tag_child,
                         die_stack_indent_level);
                     if (cres != DW_DLV_OK || pres != DW_DLV_OK) {
                         if (cres == DW_DLV_OK) {
@@ -1766,7 +1766,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     }
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-    tag_specific_checks_setup(tag,die_indent_level);
+    tag_specific_checks_setup(dbg,tag,die_indent_level);
     ores = dwarf_dieoffset(die, &overall_offset, err);
     if (ores != DW_DLV_OK) {
         print_error_and_continue(dbg,
@@ -3146,7 +3146,8 @@ print_location_description(Dwarf_Debug dbg,
 
 /* This was inside print_attribute() */
 static void
-check_attr_tag_combination(Dwarf_Half tag,Dwarf_Half attr)
+check_attr_tag_combination(Dwarf_Debug dbg,
+Dwarf_Half tag,Dwarf_Half attr)
 {
     const char *tagname = "<tag invalid>";
 
@@ -3158,7 +3159,8 @@ check_attr_tag_combination(Dwarf_Half tag,Dwarf_Half attr)
         if (glflags.gf_check_attr_tag) {
             tagname = get_TAG_name(tag,
                 pd_dwarf_names_print_on_error);
-            tag_specific_checks_setup(tag,die_stack_indent_level);
+            tag_specific_checks_setup(dbg,tag,
+               die_stack_indent_level);
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,
                 pd_dwarf_names_print_on_error),
@@ -3234,7 +3236,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     if ((glflags.gf_check_attr_tag ||
         glflags.gf_print_usage_tag_attr)&&
         checking_this_compiler()) {
-        check_attr_tag_combination(tag,attr);
+        check_attr_tag_combination(dbg,tag,attr);
     }
 
     switch (attr) {
@@ -4869,13 +4871,24 @@ loc_error_check(
 
     /*  Check the low_pc and high_pc are within
         a valid range in the .text section */
+#if 0
+printf("dadebug Check Loc low 0x%lx hi 0x%lx line %d\n",
+(unsigned long)lopcfinal,
+(unsigned long)hipcfinal,
+__LINE__);
+#endif
     if (IsValidInBucketGroup(glflags.pRangesInfo,lopcfinal) &&
         IsValidInBucketGroup(glflags.pRangesInfo,hipcfinal)) {
+#if 0
+printf("dadebug valid addrs %d\n",
+__LINE__);
+#endif
         /* Valid values; do nothing */
     } else {
         /*  At this point may be we are dealing with
             a linkonce symbol */
-        if (IsValidInLinkonce(glflags.pLinkonceInfo,glflags.PU_name,
+        if (IsValidInLinkonce(glflags.pLinkonceInfo,
+            glflags.PU_name,
             lopcfinal,hipcfinal)) {
             /* Valid values; do nothing */
         } else {

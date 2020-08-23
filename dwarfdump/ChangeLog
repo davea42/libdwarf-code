@@ -1,4 +1,18 @@
 2020-08-23: David Anderson
+    * checkutil.c: Temporary debug printf.
+    * dwarfdump.c: Revised pRangesInfo reset
+      when we have a tied dbg, as in that case 
+      we often miss function/scope address ranges.
+      Temporary debug printf too.
+    * globals.h: Adding a Dwarf_Debug argument to
+      tag_specific_checks_setup() for when tied file
+      present.
+    * print_abbreves.c: Temporary debug.
+      New arglist for tag_specific_checks_setup()
+    * print_die.c: Get the text section bounds
+      set (from tied object, if any) so checks
+      of address will not incorrectly fail.
+2020-08-23: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
 	  dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
 	  dwarfdump-tt-table.h: Regenerated with latest

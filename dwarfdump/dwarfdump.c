@@ -1118,29 +1118,48 @@ process_one_file(int fd, int tiedfd,
     }
 
     /* Get .text and .debug_ranges info if in check mode */
+#if 0
+printf("dadebug do_check_dwarf? %d\n",glflags.gf_do_check_dwarf);
+#endif
     if (glflags.gf_do_check_dwarf) {
         Dwarf_Addr lower = 0;
         Dwarf_Addr upper = 0;
         Dwarf_Unsigned size = 0;
+        Dwarf_Debug dbg_with_code = dbg;
         int res = 0;
-#if 0
-        res = dwarf_get_section_info_by_name(dbg,".text",
-            &lower,&size,&onef_err);
-        if (DW_DLV_OK == res) {
-            upper = lower + size;
+        if (dbgtied) {
+            /*  Assuming tied is exectuable main is dwo/dwp */
+            dbg_with_code = dbgtied;
         }
-#endif
-        res = calculate_likely_limits_of_code(dbg,&lower,&size);
+        res = calculate_likely_limits_of_code(dbg_with_code,
+           &lower,&size);
+        printf("dadebug res from likely limits %d\n",res);
         upper = lower + size;
+#if 0
+printf("dadebug lower from likely limits 0x%lx\n",(unsigned long)lower);
+#endif
         /*  Set limits for Ranges Information.
             Some objects have CUs for startup code
             and the expanded range here turns out
             not to actually help.   */
         if (res == DW_DLV_OK && glflags.pRangesInfo) {
+#if 0
+printf("dadebug set pRangesInfo range: 0x%lx 0x%lx  line %d %s\n",
+(unsigned long)lower,(unsigned long)upper,
+__LINE__,__FILE__);
+#endif
             SetLimitsBucketGroup(glflags.pRangesInfo,lower,upper);
+            AddEntryIntoBucketGroup(glflags.pRangesInfo,
+                        1,
+                        lower,lower,
+                        upper,
+                        ".text",
+                        TRUE);
+
         }
 
-        /* Build section information */
+        /*  Build section information 
+            linkonce is an SNR thing, we*/
         build_linkonce_info(dbg);
     }
 
@@ -2200,7 +2219,8 @@ build_linkonce_info(Dwarf_Debug dbg)
 /* Check for specific TAGs and initialize some
     information used by '-k' options */
 void
-tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
+tag_specific_checks_setup(Dwarf_Debug dbg,
+    Dwarf_Half val,int die_indent_level)
 {
     switch (val) {
     /*  DW_TAG_type unit will not have addresses */
@@ -2218,7 +2238,21 @@ tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
         if (glflags.gf_check_decl_file ||
             glflags.gf_check_ranges ||
             glflags.gf_check_locations) {
-            ResetBucketGroup(glflags.pRangesInfo);
+            Dwarf_Debug td = 0;
+
+            if (!dbg) {
+                ResetBucketGroup(glflags.pRangesInfo);
+            } else {
+                /*  Only returns DW_DLV_OK */
+                dwarf_get_tied_dbg(dbg,&td,0);
+                /*  With a tied-dbg we do not have
+                    detailed address ranges, so
+                    do not reset the single .text-size
+                    bucket group */
+                if (!td) {
+                    ResetBucketGroup(glflags.pRangesInfo);
+                }
+            }
         }
         /*  The following flag indicate that only
             low_pc and high_pc

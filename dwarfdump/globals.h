@@ -119,9 +119,10 @@ extern boolean is_strstrnocase(const char *data, const char *pattern);
 extern void *  macro_check_tree; /* DWARF5 macros. */
 extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
 
-/* Process TAGs for checking mode and reset pRangesInfo table
-   if appropriate. */
-extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
+/*  Process TAGs for checking mode and reset pRangesInfo table
+    if appropriate. */
+extern void tag_specific_checks_setup(Dwarf_Debug dbg,
+Dwarf_Half val,int die_indent_level);
 
 extern int simple_err_return_msg_either_action(int res,const char *msg);
 extern int simple_err_return_action(int res,const char *msg);
