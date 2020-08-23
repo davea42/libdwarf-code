@@ -1,4 +1,8 @@
 2020-08-23: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+	  dwarf_names_new.h,libdwarf_version.h: Updated  version
+      string, regenerated files that reference it.
+2020-08-23: David Anderson
     * dwarf_form.c,dwarf_generic_init.c,dwarf_loc.c,
       dwarf_loc.h,dwarf_loclists.c,dwarf_query.c, dwarf_rnglists.c,
       pro_opaque.h: Remove trailing whitespace. Fix indents.
