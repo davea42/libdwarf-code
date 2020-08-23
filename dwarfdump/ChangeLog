@@ -1,4 +1,8 @@
 2020-08-23: David Anderson
+    * checkutil.c: Removed #if 0 lines from previous commit.
+    * dwarfdump.c: Removed debug printf lines.
+    * print_die.c: Removed debug printf lines.
+2020-08-22: David Anderson
     * checkutil.c: Temporary debug printf.
     * dwarfdump.c: Revised pRangesInfo reset
       when we have a tied dbg, as in that case 

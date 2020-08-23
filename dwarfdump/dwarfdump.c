@@ -1118,9 +1118,6 @@ process_one_file(int fd, int tiedfd,
     }
 
     /* Get .text and .debug_ranges info if in check mode */
-#if 0
-printf("dadebug do_check_dwarf? %d\n",glflags.gf_do_check_dwarf);
-#endif
     if (glflags.gf_do_check_dwarf) {
         Dwarf_Addr lower = 0;
         Dwarf_Addr upper = 0;
@@ -1133,21 +1130,12 @@ printf("dadebug do_check_dwarf? %d\n",glflags.gf_do_check_dwarf);
         }
         res = calculate_likely_limits_of_code(dbg_with_code,
            &lower,&size);
-        printf("dadebug res from likely limits %d\n",res);
         upper = lower + size;
-#if 0
-printf("dadebug lower from likely limits 0x%lx\n",(unsigned long)lower);
-#endif
         /*  Set limits for Ranges Information.
             Some objects have CUs for startup code
             and the expanded range here turns out
             not to actually help.   */
         if (res == DW_DLV_OK && glflags.pRangesInfo) {
-#if 0
-printf("dadebug set pRangesInfo range: 0x%lx 0x%lx  line %d %s\n",
-(unsigned long)lower,(unsigned long)upper,
-__LINE__,__FILE__);
-#endif
             SetLimitsBucketGroup(glflags.pRangesInfo,lower,upper);
             AddEntryIntoBucketGroup(glflags.pRangesInfo,
                         1,

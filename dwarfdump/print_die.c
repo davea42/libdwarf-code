@@ -4871,18 +4871,8 @@ loc_error_check(
 
     /*  Check the low_pc and high_pc are within
         a valid range in the .text section */
-#if 0
-printf("dadebug Check Loc low 0x%lx hi 0x%lx line %d\n",
-(unsigned long)lopcfinal,
-(unsigned long)hipcfinal,
-__LINE__);
-#endif
     if (IsValidInBucketGroup(glflags.pRangesInfo,lopcfinal) &&
         IsValidInBucketGroup(glflags.pRangesInfo,hipcfinal)) {
-#if 0
-printf("dadebug valid addrs %d\n",
-__LINE__);
-#endif
         /* Valid values; do nothing */
     } else {
         /*  At this point may be we are dealing with

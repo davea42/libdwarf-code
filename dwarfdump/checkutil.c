@@ -196,16 +196,9 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
         pBucketGroup->pHead = pBucket;
         pBucketGroup->pTail = pBucket;
         pBucket->nEntries = 1;
-#if 0
-printf("dadebug nEntries now 1 sec %s pBucket addr 0x%lx\n",
-name,(unsigned long)pBucket);
-#endif
         pBucket->Entries[0] = data;
         return;
     }
-#if 0
-printf("dadebug nEntries estend sec %s \n",name);
-#endif
     pBucket = pBucketGroup->pTail;
 
     /*  Check if we have a previous allocated set of
@@ -452,43 +445,16 @@ IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 
     assert(pBucketGroup);
     /* Check the address is within the allowed limits */
-#if 0
-printf("dadebug IsValidInBucketGroup range 0x%lx 0x%lx line %d\n",
-(unsigned long)pBucketGroup->lower,
-(unsigned long)pBucketGroup->upper,
-__LINE__);
-#endif
     if (address >= pBucketGroup->lower &&
         address <= pBucketGroup->upper) {
         pBucket = pBucketGroup->pHead;
-#if 0
-printf("dadebug now check buckets pHead 0x%lx, nEntries %lu\n",
-(unsigned long)pBucketGroup->pHead,
-(unsigned long)pBucket->nEntries
-);
-#endif
         for ( ;
             pBucket && pBucket->nEntries;
             pBucket = pBucket->pNext) {
-#if 0
-printf("dadebug enEntries 0x%lu\n",
-(unsigned long) pBucket->nEntries);
-#endif
             for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
-#if 0
-printf("dadebug IsValidInBucketGroup nindex %d  line %d\n",
-nIndex,__LINE__);
                 pBucketData = &pBucket->Entries[nIndex];
-printf("dadebug IsValidInBucketGroup data 0x%lx 0x%lx line %d\n",
-(unsigned long)pBucketData->low,
-(unsigned long)pBucketData->high,
-__LINE__);
-#endif
                 if (address >= pBucketData->low &&
                      address <= pBucketData->high) {
-#if 0
-printf("dadebug PASS: valid addr BucketData\n");
-#endif
                     return TRUE;
                 }
             }
