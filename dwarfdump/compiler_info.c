@@ -26,6 +26,7 @@
 
 #include "globals.h"
 #include "makename.h"
+#include "sanitized.h"
 
 #include "command_options.h"
 #include "compiler_info.h"
@@ -337,10 +338,11 @@ print_checks_results(void)
         printf("\n*** CU NAMES PER COMPILER ***\n");
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            printf("\n%02d: %s",index,pCompiler->name);
+            printf("\n%02d: %s",index,sanitized(pCompiler->name));
             count = 0;
             for (nc = pCompiler->cu_list; nc; nc = nc_next) {
-                printf("\n    %02d: '%s'",++count,nc->item);
+                printf("\n    %02d: '%s'",++count,
+                sanitized(nc->item));
                 nc_next = nc->next;
                 free(nc);
             }
@@ -376,7 +378,7 @@ print_checks_results(void)
             "\n%d Compilers detected:\n",compilers_detected_count);
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            printf("%02d: %s\n",index,pCompiler->name);
+            printf("%02d: %s\n",index,sanitized(pCompiler->name));
         }
 
         /*  Print compiler list specified by the user with the
@@ -389,7 +391,8 @@ print_checks_results(void)
                 if (!compilers_targeted[index].verified) {
                     printf(
                         "%02d: '%s'\n",
-                        ++count,compilers_targeted[index].name);
+                        ++count,
+                        sanitized(compilers_targeted[index].name));
                 }
             }
         }
@@ -402,7 +405,7 @@ print_checks_results(void)
                 printf("%02d: errors = %5d, %s\n",
                     ++count,
                     pCompiler->results[total_check_result].errors,
-                    pCompiler->name);
+                    sanitized(pCompiler->name));
             }
         }
 
@@ -417,7 +420,7 @@ print_checks_results(void)
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
                         printf("\n%02d: %s",
-                            ++count,pCompiler->name);
+                            ++count,sanitized(pCompiler->name));
                         print_specific_checks_results(pCompiler);
                     }
                 }

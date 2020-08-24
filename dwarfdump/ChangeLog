@@ -1,4 +1,8 @@
 2020-08-23: David Anderson
+    * compiler_info.c: Now we apply sanitized() to all
+      the printed strings (just in case an object file
+      is corrupted or maybe not plain ascii strings).
+2020-08-23: David Anderson
     * dwarfdump-ta-ext-table.h: Regenerated
 	* tag_attr_ext.list: Added DW_AT_GNU_macros
       to the known-extensions list.
