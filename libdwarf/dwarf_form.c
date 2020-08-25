@@ -1662,6 +1662,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
         Dwarf_Small   *strbegin = 0;
         Dwarf_Unsigned secsize = 0;
         int errcode = 0;
+        const char *errname = 0;
         int res = 0;
 
         if(attrform == DW_FORM_line_strp) {
@@ -1670,6 +1671,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
                 return res;
             }
             errcode = DW_DLE_STRP_OFFSET_BAD;
+            errname = "DW_DLE_STRP_OFFSET_BAD";
             secsize = dbg->de_debug_line_str.dss_size;
             secbegin = dbg->de_debug_line_str.dss_data;
             strbegin= dbg->de_debug_line_str.dss_data + offset;
@@ -1680,6 +1682,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
                 return res;
             }
             errcode = DW_DLE_STRING_OFFSET_BAD;
+            errname = "DW_DLE_STRING_OFFSET_BAD";
             secsize = dbg->de_debug_str.dss_size;
             secbegin = dbg->de_debug_str.dss_data;
             strbegin= dbg->de_debug_str.dss_data + offset;
@@ -1692,6 +1695,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             dwarf_get_FORM_name(attrform,&name);
 
             dwarfstring_constructor(&m);
+            dwarfstring_append(&m,(char *)errname);
             dwarfstring_append_printf_s(&m,
                 " Form %s ",(char *)name);
             dwarfstring_append_printf_u(&m,

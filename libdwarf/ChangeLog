@@ -1,3 +1,9 @@
+2020-08-25: David Anderson
+    * dwarf_form.c: Previous change failed to show
+      the actual error string 
+      DW_DLE_STRP_OFFSET_BAD or DW_DLE_STRING_OFFSET_BAD
+      along with the
+      details. Oops. Now it shows.
 2020-08-23: David Anderson
     * dwarf_form.c: Slightly changed the error message 
       for an error in DW_FORM_strp.
