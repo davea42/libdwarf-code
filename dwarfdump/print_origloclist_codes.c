@@ -107,7 +107,6 @@ print_original_loclist_linecodes(Dwarf_Debug dbg,
         struct esb_s unexp;
 
         esb_constructor(&unexp);
-        glflags.gf_count_major_errors++;
         esb_append_printf_u(&unexp,
             "ERROR: Unexpected LLE code 0x%x"
             " (synthesized code error)",

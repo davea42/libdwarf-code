@@ -30,6 +30,9 @@
 
 #include "config.h"
 #include <stdio.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* for uintptr_t */
+#endif
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -1929,7 +1932,8 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
             " in this compilation unit. ",
             abbrev_code);
         dwarfstring_append_printf_u(&m,
-            "The highest known code is %u.",
+            "The highest known code in any "
+            "compilation unit is %u.",
             highest_code);
         _dwarf_error_string(dbg, error,
             DW_DLE_NEXT_DIE_NO_ABBREV_LIST,
@@ -2067,14 +2071,41 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
             sizeb = (ptrdiff_t)sizeofval;
             if (sizeb > (die_info_end - info_ptr) ||
                 sizeb < 0) {
-                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PAST_END);
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_NEXT_DIE_PAST_END:"
+                    " the DIE value just checked is %u"
+                    " bytes long, and that would extend"
+                    " past the end of the section.",
+                    sizeofval);
+                _dwarf_error_string(dbg, error, 
+                     DW_DLE_NEXT_DIE_PAST_END,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
                 return DW_DLV_ERROR;
             }
             info_ptr += sizeofval;
             if (info_ptr > die_info_end) {
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_NEXT_DIE_PAST_END:"
+                    " the DIE value just checked is %u"
+                    " bytes long, and puts us past" 
+                    " the end of the section",
+                    sizeofval);
+                dwarfstring_append_printf_u(&m,
+                    " which is 0x%x",
+                    (Dwarf_Unsigned)(uintptr_t)die_info_end);
+                _dwarf_error_string(dbg, error, 
+                     DW_DLE_NEXT_DIE_PAST_END,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
                 /*  More than one-past-end indicates a bug somewhere,
                     likely bad dwarf generation. */
-                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PAST_END);
                 return DW_DLV_ERROR;
             }
         }
@@ -2249,12 +2280,42 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
             if (die_info_ptr2 < die_info_ptr) {
                 /*  There is something very wrong, our die value
                     decreased.  Bad DWARF. */
-                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_LOW_ERROR);
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_NEXT_DIE_LOW_ERROR: "
+                    "Somehow the next die pointer 0x%x", 
+                    (Dwarf_Unsigned)(uintptr_t)die_info_ptr2);
+                dwarfstring_append_printf_u(&m,
+                    " points before the current die "
+                    "pointer 0x%x so an "
+                    "overflow of some sort happened",
+                    (Dwarf_Unsigned)(uintptr_t)die_info_ptr);
+                _dwarf_error_string(dbg, error, 
+                    DW_DLE_NEXT_DIE_LOW_ERROR,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
                 return (DW_DLV_ERROR);
             }
             if (die_info_ptr2 > die_info_end) {
-                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PAST_END);
-                return (DW_DLV_ERROR);
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_NEXT_DIE_PAST_END: "
+                    "the next DIE at 0x%x",
+                    (Dwarf_Unsigned)(uintptr_t)die_info_ptr2); 
+                dwarfstring_append_printf_u(&m,
+                    " would be past "
+                    " the end of the section (0x%x),"
+                    " which is an error.",
+                    (Dwarf_Unsigned)(uintptr_t)die_info_end);
+                _dwarf_error_string(dbg, error, 
+                    DW_DLE_NEXT_DIE_PAST_END,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                return DW_DLV_ERROR;
             }
             die_info_ptr = die_info_ptr2;
 
@@ -2379,9 +2440,9 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
             " in this compilation unit. ",
             abbrev_code);
         dwarfstring_append_printf_u(&m,
-            "The highest known code is %u .",
+            "The highest known code"
+            " in any compilation unit is %u .",
             highest_code);
-
         _dwarf_error_string(dbg, error,
             DW_DLE_DIE_ABBREV_LIST_NULL,dwarfstring_string(&m));
         dwarfstring_destructor(&m);
@@ -2517,7 +2578,8 @@ dwarf_child(Dwarf_Die die,
             "DW_DLE_ABBREV_MISSING: the abbrev code not found "
             " in dwarf_child() is %u. ",abbrev_code);
         dwarfstring_append_printf_u(&m,
-            "The highest known code is %u.",
+            "The highest known code"
+            " in any compilation unit is %u.",
             highest_code);
         _dwarf_error_string(dbg, error, DW_DLE_ABBREV_MISSING,
             dwarfstring_string(&m));
@@ -2673,7 +2735,8 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             " when calling dwarf_offdie_b(). ",
             abbrev_code);
         dwarfstring_append_printf_u(&m,
-            "The highest known code is %u .",
+            "The highest known code "
+            "in any compilation unit is %u .",
             highest_code);
         _dwarf_error_string(dbg, error,
             DW_DLE_DIE_ABBREV_LIST_NULL,

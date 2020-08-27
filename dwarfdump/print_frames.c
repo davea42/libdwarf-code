@@ -938,7 +938,6 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 printf("\nERROR: Getting procedure name "
                     "dwarf_child fails "
                     " %s\n",dwarf_errmsg(*err));
-                glflags.gf_count_major_errors++;
                 DROP_ERROR_INSTANCE(dbg,dres,*err);
                 glflags.gf_all_cus_seen_search_by_address = 1;
                 return DW_DLV_NO_ENTRY;
@@ -2327,6 +2326,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     res = local_dwarf_decode_s_leb128_chk(instp + 1, &uleblen,
                         &sval2,endpoint);
                     if (res != DW_DLV_OK) {
+                        glflags.gf_count_major_errors++;
                         printf("\nERROR: reading leb in DW_CFA_offset_extended_sf\n");
                         return;
                     }

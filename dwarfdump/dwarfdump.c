@@ -1962,7 +1962,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     if (!cu_die) {
         glflags.gf_count_major_errors++;
         esb_append(producernameout,
-            "\"<ERROR-CU-missing-DW_AT_producer (null cu_die)>\"");
+            "\"<ERROR:CU-missing-DW_AT_producer (null cu_die)>\"");
         return DW_DLV_NO_ENTRY;
     }
     ares = dwarf_attr(cu_die, DW_AT_producer,
@@ -1970,7 +1970,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     if (ares == DW_DLV_ERROR) {
         glflags.gf_count_major_errors++;
         esb_append(producernameout,
-            "\"<Error-on-DW_AT_producer>\"");
+            "\"<ERROR:on-DW_AT_producer>\"");
         return ares;
     }
     if (ares == DW_DLV_NO_ENTRY) {
@@ -1978,7 +1978,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             the names for real producers that get_attr_value
             produces. */
         esb_append(producernameout,
-            "\"<CU-missing-DW_AT_producer>\"");
+            "\"<ERROR: CU-missing-DW_AT_producer>\"");
         dwarf_dealloc_attribute(producer_attr);
         return ares;
     }

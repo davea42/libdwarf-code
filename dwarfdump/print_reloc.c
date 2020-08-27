@@ -191,7 +191,6 @@ print_relocinfo(UNUSEDARG Dwarf_Debug dbg,
     if (!endr_ident) {
         glflags.gf_count_major_errors++;
         printf("ERROR: elf_getident() failed\n");
-        glflags.gf_count_major_errors++;
         return DW_DLV_NO_ENTRY;
     }
     is_64bit = (endr_ident[EI_CLASS] == ELFCLASS64);
@@ -223,7 +222,6 @@ print_relocinfo_64(Elf * elf)
     if (ehdr64 == NULL) {
         glflags.gf_count_major_errors++;
         printf("ERROR: elf64_getehdr() failed\n");
-        glflags.gf_count_major_errors++;
         return DW_DLV_NO_ENTRY;
     }
 

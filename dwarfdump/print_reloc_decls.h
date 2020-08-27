@@ -112,19 +112,14 @@ static unsigned long   sym_data_64_entry_count;
 #define SECT_DATA_SET(x,t,n,sout,r2) {            \
     data = elf_getdata(scn, 0);                   \
     if (!data || !data->d_size) {                 \
-        struct esb_s m;                           \
         const char * version = "null";            \
         if (data) {                               \
             version = "d_size of 0";              \
         }                                         \
-        esb_constructor(&m);                      \
-        esb_append(&m,(n));                       \
-        esb_append_printf_s(&m,                   \
-            " elf_getdata fails:"                 \
-            "  elf_getdata returns %s",version);  \
         glflags.gf_count_major_errors++;          \
-        printf("ERROR: %s\n",esb_get_string(&m)); \
-        esb_destructor(&m);                       \
+        printf("ERROR: elf_getdata fails:"        \
+            "elf_getdata returns %s\n",           \
+            version);                             \
         return DW_DLV_NO_ENTRY;                   \
     }                                             \
     sout[(r2)]      = sect_data[(x)];             \

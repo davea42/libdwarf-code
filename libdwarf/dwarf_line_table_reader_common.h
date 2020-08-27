@@ -2188,7 +2188,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     if (cur_file_entry == NULL) {
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         if(curr_line) {
-                        dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                            dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                         }
                         _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         return DW_DLV_ERROR;
@@ -2206,7 +2206,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         _dwarf_free_chain_entries(dbg,head_chain,
                             line_count);
                         if(curr_line) {
-                        dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                            dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                         }
                         return dlres;
                     }
@@ -2332,8 +2332,6 @@ read_line_table_program(Dwarf_Debug dbg,
                     dwarfstring g;
                     ptrdiff_t d = 0;
 
-                    _dwarf_free_chain_entries(dbg,head_chain,
-                        line_count);
                     d = line_ptr - section_start;
                     dwarfstring_constructor(&g);
                     dwarfstring_append_printf_u(&g,
@@ -2345,16 +2343,19 @@ read_line_table_program(Dwarf_Debug dbg,
                         "off this line table at section "
                         "offset 0x%x and ",
                         d);
-                    dwarfstring_append_printf_u(&g,"instruction length"
+                    dwarfstring_append_printf_u(&g,
+                        "instruction length "
                         "%u.",instr_length);
                     _dwarf_error_string(dbg, error,
                         DW_DLE_LINE_TABLE_BAD,
                         dwarfstring_string(&g));
                     dwarfstring_destructor(&g);
                     if(curr_line) {
-                    dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
+                        dwarf_dealloc(dbg,curr_line,
+                            DW_DLA_LINE);
                     }
-                    _dwarf_free_chain_entries(dbg,head_chain,line_count);
+                    _dwarf_free_chain_entries(dbg,head_chain,
+                        line_count);
                     return DW_DLV_ERROR;
                 }
 

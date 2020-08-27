@@ -403,7 +403,8 @@ dwarf_attrlist(Dwarf_Die die,
             "in this compilation unit. ",
             die->di_abbrev_list->abl_code);
         dwarfstring_append_printf_u(&m,
-            "The highest known code is %u .",
+            "The highest known code "
+            "in any compilation unit is %u .",
             highest_code);
         _dwarf_error_string(dbg, error,
             DW_DLE_ABBREV_MISSING,
@@ -667,7 +668,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             "in this compilation unit. ",
             die->di_abbrev_list->abl_code);
         dwarfstring_append_printf_u(&m,
-            "The highest known code is %u.",
+            "The highest known code "
+            "in any compilation unit is %u.",
             highest_code);
         _dwarf_error_string(dbg, error,
             DW_DLE_CU_DIE_NO_ABBREV_LIST,

@@ -100,7 +100,6 @@ print_ranges(Dwarf_Debug dbg,
             struct esb_s m;
 
             esb_constructor(&m);
-            glflags.gf_count_major_errors++;
             esb_append_printf_u(&m,"ERROR: at offset 0x%lx in ",off);
             esb_append_printf_s(&m,"section %s. Stopping ranges"
                 " output.",sanitized(esb_get_string(&truename)));

@@ -1,3 +1,24 @@
+2020-08-27: David Anderson
+    * dwarf_die_deliv.c: Some error messages now have more
+      detail.
+    * dwarf_line_table_reader_common.h: In an error condition
+      (meaning corrupt dwarf) _dwarf_free_chain_entries()
+      was called twice on the same data, referring to
+      freed space in doing so. Deleted the extra call.
+    * dwarf_loc.c(_dwarf_setup_loc): Removed a 
+      bogus _dwarf_error 
+      using DW_DLE_LOC_EXPR_BAD: Let the just-called
+      function error code be returned.
+      Some error conditions detected here now report
+      detailed information on the error.
+    * dwarf_query.c(dwarf_attrlist): Refined the detailed
+      error message already present.
+    * dwarf_util.c:New internal function
+      _dwarf_create_area_len_error() lets dwarf_util.h
+      macro report a more detailed error without
+      bloating the macro.
+    * dwarf_util.h: Calls that new function rather
+      than calling _dwarf_error() itself.
 2020-08-25: David Anderson
     * dwarf_form.c: Previous change failed to show
       the actual error string 

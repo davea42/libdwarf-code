@@ -42,6 +42,10 @@
     'return' only in case of error
     else falls through.
 */
+void
+_dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
+    Dwarf_Unsigned targ, Dwarf_Unsigned sectionlen);
+
 #define DECODE_LEB128_UWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                              \
         Dwarf_Unsigned lu_leblen = 0;                     \
@@ -280,8 +284,8 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                 rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE,\
                 w_error,r_endptr);                             \
             if (w_target > r_sectionlen) {                     \
-                _dwarf_error(r_dbg,w_error,                    \
-                    DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE);    \
+                _dwarf_create_area_len_error(r_dbg,w_error,    \
+                    w_target,r_sectionlen);                    \
                 return DW_DLV_ERROR;                           \
             }                                                  \
             rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;  \
@@ -293,14 +297,14 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                 if (r_dbg->de_length_size == 8) {              \
                     /* IRIX 64 bit, big endian.  This test */  \
                     /* is not a truly precise test, a precise test*/ \
-                    /* would check if the target was IRIX.  */  \
+                    /* would check if the target was IRIX.  */ \
                     READ_UNALIGNED_CK(r_dbg,w_target,r_targtype,\
-                        rw_src_data_p,                          \
-                        DISTINGUISHED_VALUE_OFFSET_SIZE,      \
+                        rw_src_data_p,                         \
+                        DISTINGUISHED_VALUE_OFFSET_SIZE,       \
                         w_error,r_endptr);                     \
                     if (w_target > r_sectionlen) {             \
-                        _dwarf_error(r_dbg,w_error,            \
-                            DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE);\
+                        _dwarf_create_area_len_error(r_dbg,w_error,\
+                            w_target,r_sectionlen);            \
                         return DW_DLV_ERROR;                   \
                     }                                          \
                     w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;\
@@ -314,8 +318,8 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                 }                                              \
             } else {                                           \
                 if (w_target > r_sectionlen) {                 \
-                    _dwarf_error(r_dbg,w_error,                \
-                        DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE);\
+                    _dwarf_create_area_len_error(r_dbg,w_error,\
+                        w_target,r_sectionlen);                \
                     return DW_DLV_ERROR;                       \
                 }                                              \
                 /* Standard 32 bit dwarf2/dwarf3 */            \

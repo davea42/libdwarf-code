@@ -146,6 +146,28 @@ _dwarf_file_has_debug_fission_index(Dwarf_Debug dbg)
     return FALSE;
 }
 
+void
+_dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
+    Dwarf_Unsigned targ, 
+    Dwarf_Unsigned sectionlen)
+{
+    dwarfstring m;
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append_printf_u(&m, 
+        "DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE: "
+        " The header length of 0x%x is larger",
+        targ);
+    dwarfstring_append_printf_u(&m," than the "
+        "section length of 0x%x.",sectionlen); 
+    _dwarf_error_string(dbg,
+        error,DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
+
+
 int
 _dwarf_internal_get_die_comp_dir(Dwarf_Die die, const char **compdir_out,
     const char **compname_out,

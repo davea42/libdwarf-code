@@ -392,7 +392,6 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
                     "0x%"  DW_PR_XZEROS DW_PR_DUx
                     ", the DIE tree is erroneous.",
                     innersiboffset);
-                glflags.gf_count_major_errors++;
                 print_error_and_continue(dbg,
                     esb_get_string(&pm),
                     DW_DLV_OK,ouerr);
@@ -1495,7 +1494,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
                     esb_constructor_fixed(&pm,small_buf,
                         sizeof(small_buf));
-                    glflags.gf_count_major_errors++;
                     esb_append_printf_u(&pm,
                         "ERROR: A parent DW_AT_sibling of "
                         "0x%" DW_PR_XZEROS  DW_PR_DUx,
@@ -2013,10 +2011,10 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                         esb_get_string(&m),
                         aresb,*err);
                     esb_destructor(&m);
-                    dealloc_local_atlist(dbg,atlist,atcnt);
-                    return aresb;
+                    DROP_ERROR_INSTANCE(dbg,aresb,*err)
                 }
-                if (print_else_name_match == FALSE && attr_match_localb) {
+                if (print_else_name_match == FALSE && 
+                    attr_match_localb) {
                     attribute_matchedpod = TRUE;
                 }
             }

@@ -1,3 +1,17 @@
+2020-08-27: David Anderson
+    * dwarfdump.c: Fix some warnings counted as errors
+      by ensuring the ERROR string is in them (they
+      just flag in particular situations that the DW_AT_producer
+      attribute is missing on the Compilation Unit).
+    * print_die.c: Fix places where we double-counted
+      errors.
+    * print_frames.c: Annotate an existing ERROR so that
+      it is counted in the ERROR count.
+    * print_llex_codes.c, print_origloclist_codes.c,
+      print_ranges.c,print_reloc.c: Fix  
+      double-counts of errors.
+    * print_reloc_decls.h: Just do a printf, no reason
+      to use struct esb_s here.
 2020-08-23: David Anderson
     * compiler_info.c: Now we apply sanitized() to all
       the printed strings (just in case an object file

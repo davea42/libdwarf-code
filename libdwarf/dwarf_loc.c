@@ -520,7 +520,6 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
     *dbg_ret = dbg;
     blkres = dwarf_whatform(attr, &form, error);
     if (blkres != DW_DLV_OK) {
-        _dwarf_error(dbg, error, DW_DLE_LOC_EXPR_BAD);
         return blkres;
     }
     *form_ret = form;
@@ -1600,8 +1599,23 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
 
         expr_offset += exprlen;
         if (expr_offset > dbg->de_debug_loc.dss_size) {
+            dwarfstring m;
 
-            _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            dwarfstring_constructor(&m);
+            dwarfstring_append(&m,
+                "DW_DLE_DEBUG_LOC_SECTION_SHORT:");
+            dwarfstring_append_printf_u(&m,
+                " in DW_LLEX_start_end_entry "
+                "The expression offset is 0x%x",
+                expr_offset);
+            dwarfstring_append_printf_u(&m,
+                " which is greater than the section size"
+                " of 0x%x. Corrupt Dwarf.",
+                 dbg->de_debug_loc.dss_size);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_DEBUG_LOC_SECTION_SHORT,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
         }
@@ -1638,7 +1652,23 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
 
         expr_offset += exprlen;
         if (expr_offset > dbg->de_debug_loc.dss_size) {
-            _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append(&m,
+                "DW_DLE_DEBUG_LOC_SECTION_SHORT:");
+            dwarfstring_append_printf_u(&m,
+                " in DW_LLEX_start_length_entry "
+                "The expression offset is 0x%x",
+                expr_offset);
+            dwarfstring_append_printf_u(&m,
+                " which is greater than the section size"
+                " of 0x%x. Corrupt Dwarf.",
+                 dbg->de_debug_loc.dss_size);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_DEBUG_LOC_SECTION_SHORT,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
         }
@@ -1676,14 +1706,44 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
 
         expr_offset += exprlen;
         if (expr_offset > dbg->de_debug_loc.dss_size) {
-            _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append(&m,
+                "DW_DLE_DEBUG_LOC_SECTION_SHORT:");
+            dwarfstring_append_printf_u(&m,
+                " in DW_LLEX_offset_pair_entry "
+                "The expression offset is 0x%x",
+                expr_offset);
+            dwarfstring_append_printf_u(&m,
+                " which is greater than the section size"
+                " of 0x%x. Corrupt Dwarf.",
+                 dbg->de_debug_loc.dss_size);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_DEBUG_LOC_SECTION_SHORT,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
         }
         break;
-    default:
+    default: {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append(&m,
+            "DW_DLE_LLE_CODE_UNKNOWN:");
+        dwarfstring_append_printf_u(&m,
+            " in DW_LLEX_ code value "
+            " is 0x%x ,not an expected value.",
+            llecode);
+        _dwarf_error_string(dbg,error,
+            DW_DLE_LLE_CODE_UNKNOWN,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         _dwarf_error(dbg,error,DW_DLE_LLE_CODE_UNKNOWN);
         return DW_DLV_ERROR;
+    }
     }
     *lle_op = llecode;
     return DW_DLV_OK;
