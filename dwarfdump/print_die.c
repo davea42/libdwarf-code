@@ -2013,7 +2013,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                     esb_destructor(&m);
                     DROP_ERROR_INSTANCE(dbg,aresb,*err)
                 }
-                if (print_else_name_match == FALSE && 
+                if (print_else_name_match == FALSE &&
                     attr_match_localb) {
                     attribute_matchedpod = TRUE;
                 }

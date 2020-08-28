@@ -1611,7 +1611,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
             dwarfstring_append_printf_u(&m,
                 " which is greater than the section size"
                 " of 0x%x. Corrupt Dwarf.",
-                 dbg->de_debug_loc.dss_size);
+                dbg->de_debug_loc.dss_size);
             _dwarf_error_string(dbg,error,
                 DW_DLE_DEBUG_LOC_SECTION_SHORT,
                 dwarfstring_string(&m));
@@ -1664,7 +1664,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
             dwarfstring_append_printf_u(&m,
                 " which is greater than the section size"
                 " of 0x%x. Corrupt Dwarf.",
-                 dbg->de_debug_loc.dss_size);
+                dbg->de_debug_loc.dss_size);
             _dwarf_error_string(dbg,error,
                 DW_DLE_DEBUG_LOC_SECTION_SHORT,
                 dwarfstring_string(&m));
@@ -1718,7 +1718,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
             dwarfstring_append_printf_u(&m,
                 " which is greater than the section size"
                 " of 0x%x. Corrupt Dwarf.",
-                 dbg->de_debug_loc.dss_size);
+                dbg->de_debug_loc.dss_size);
             _dwarf_error_string(dbg,error,
                 DW_DLE_DEBUG_LOC_SECTION_SHORT,
                 dwarfstring_string(&m));

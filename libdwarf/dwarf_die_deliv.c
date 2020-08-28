@@ -2080,8 +2080,8 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                     " bytes long, and that would extend"
                     " past the end of the section.",
                     sizeofval);
-                _dwarf_error_string(dbg, error, 
-                     DW_DLE_NEXT_DIE_PAST_END,
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_NEXT_DIE_PAST_END,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);
                 return DW_DLV_ERROR;
@@ -2094,14 +2094,14 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                 dwarfstring_append_printf_u(&m,
                     "DW_DLE_NEXT_DIE_PAST_END:"
                     " the DIE value just checked is %u"
-                    " bytes long, and puts us past" 
+                    " bytes long, and puts us past"
                     " the end of the section",
                     sizeofval);
                 dwarfstring_append_printf_u(&m,
                     " which is 0x%x",
                     (Dwarf_Unsigned)(uintptr_t)die_info_end);
-                _dwarf_error_string(dbg, error, 
-                     DW_DLE_NEXT_DIE_PAST_END,
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_NEXT_DIE_PAST_END,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);
                 /*  More than one-past-end indicates a bug somewhere,
@@ -2285,14 +2285,14 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
                 dwarfstring_constructor(&m);
                 dwarfstring_append_printf_u(&m,
                     "DW_DLE_NEXT_DIE_LOW_ERROR: "
-                    "Somehow the next die pointer 0x%x", 
+                    "Somehow the next die pointer 0x%x",
                     (Dwarf_Unsigned)(uintptr_t)die_info_ptr2);
                 dwarfstring_append_printf_u(&m,
                     " points before the current die "
                     "pointer 0x%x so an "
                     "overflow of some sort happened",
                     (Dwarf_Unsigned)(uintptr_t)die_info_ptr);
-                _dwarf_error_string(dbg, error, 
+                _dwarf_error_string(dbg, error,
                     DW_DLE_NEXT_DIE_LOW_ERROR,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);
@@ -2305,13 +2305,13 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
                 dwarfstring_append_printf_u(&m,
                     "DW_DLE_NEXT_DIE_PAST_END: "
                     "the next DIE at 0x%x",
-                    (Dwarf_Unsigned)(uintptr_t)die_info_ptr2); 
+                    (Dwarf_Unsigned)(uintptr_t)die_info_ptr2);
                 dwarfstring_append_printf_u(&m,
                     " would be past "
                     " the end of the section (0x%x),"
                     " which is an error.",
                     (Dwarf_Unsigned)(uintptr_t)die_info_end);
-                _dwarf_error_string(dbg, error, 
+                _dwarf_error_string(dbg, error,
                     DW_DLE_NEXT_DIE_PAST_END,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);

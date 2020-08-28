@@ -1,3 +1,6 @@
+2020-08-28: David Anderson
+    * dwarf_die_deliv.c,dwarf_loc.c,dwarf_util.c:Fixed
+      indents and trailing whitespace.
 2020-08-27: David Anderson
     * dwarf_die_deliv.c: Some error messages now have more
       detail.
