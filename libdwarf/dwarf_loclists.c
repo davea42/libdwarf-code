@@ -450,6 +450,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             free(newcontext);
             free_loclists_chain(dbg,head_chain);
+            return DW_DLV_ERROR;
         }
         curr_chain = (Dwarf_Chain)
             _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);

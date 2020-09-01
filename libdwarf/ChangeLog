@@ -1,3 +1,6 @@
+2020-09-01: David Anderson
+    * dwarf_loclists.c(internal_load_loclists_contexts): Added
+      a missing 'return DW_DLV_ERROR' when an error was detected.
 2020-08-28: David Anderson
     * dwarf_die_deliv.c,dwarf_loc.c,dwarf_util.c:Fixed
       indents and trailing whitespace.
