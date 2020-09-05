@@ -2778,7 +2778,7 @@ print_range_attribute(Dwarf_Debug dbg,
             if ( glflags.gf_suppress_checking_on_dwp) {
                 /* Ignore checks */
             } else if ( glflags.gf_do_print_dwarf) {
-                printf("\ndwarf_get_ranges() "
+                printf("\ndwarf_get_ranges_a() "
                     "cannot find DW_AT_ranges at offset 0x%"
                     DW_PR_XZEROS DW_PR_DUx
                     " (0x%" DW_PR_XZEROS DW_PR_DUx ").",
@@ -2797,7 +2797,7 @@ print_range_attribute(Dwarf_Debug dbg,
             if ( glflags.gf_suppress_checking_on_dwp) {
                 /* Ignore checks */
             } else if ( glflags.gf_do_print_dwarf) {
-                printf("\ndwarf_get_ranges() "
+                printf("\ndwarf_get_ranges_a() "
                     "finds no DW_AT_ranges at offset 0x%"
                     DW_PR_XZEROS DW_PR_DUx
                     " (%" DW_PR_DUu ").",

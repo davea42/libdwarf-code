@@ -1,3 +1,6 @@
+2020-09-05: David Anderson
+   *  print_die.c: In a couple error messages spell the
+      function name that returned error corretly.
 2020-08-28: David Anderson
     * print_die.c: Fixed indent and trailing whitespace.
 2020-08-27: David Anderson
