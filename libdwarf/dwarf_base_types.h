@@ -78,6 +78,7 @@
 
 /* .debug_str_offsets (and .dwo) new in DWARF5. */
 #define DW_STR_OFFSETS_VERSION5   5
+#define DW_STR_OFFSETS_VERSION4   4 /* GNU extension in DW4 */
 
 /* .debug_sup new in DWARF5. */
 #define DW_SUP_VERSION5 5

@@ -44,16 +44,6 @@ static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     Dwarf_Unsigned * return_val,
     Dwarf_Error * error);
 
-static int _dwarf_get_ranges_base_attr_value(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
-    Dwarf_Unsigned * rabase_out,
-    Dwarf_Error    * error);
-
-static int _dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
-    Dwarf_Unsigned *abase_out,
-    Dwarf_Error *error);
-
 int dwarf_get_offset_size(Dwarf_Debug dbg,
     Dwarf_Half  *    offset_size,
     Dwarf_Error *    error)
@@ -909,11 +899,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr  sectionend = 0;
     Dwarf_Unsigned  sectionsize  = 0;
 
-    res = _dwarf_get_address_base_attr_value(dbg,context,
-        &address_base, error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
+    address_base = context->cc_addr_base;
     res = _dwarf_load_section(dbg, &dbg->de_debug_addr,error);
     if (res != DW_DLV_OK) {
         /*  Ignore the inner error, report something meaningful */
@@ -938,7 +924,23 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     sectionsize = dbg->de_debug_addr.dss_size;
     sectionend = sectionstart + sectionsize;
     if (addr_offset > (sectionsize - context->cc_address_size)) {
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_ATTR_FORM_SIZE_BAD: "
+            "Extracting an address from .debug_addr fails"
+            "as the offset is  0x%x ",
+            addr_offset);
+        dwarfstring_append_printf_u(&m,
+            "but the object section is just 0x%x "
+            "bytes long so there not enough space"
+            " for an address.",
+            sectionsize);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ATTR_FORM_SIZE_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return (DW_DLV_ERROR);
     }
     READ_UNALIGNED_CK(dbg,ret_addr,Dwarf_Addr,
@@ -964,13 +966,13 @@ _dwarf_look_in_local_and_tied_by_index(
     if (res2 != DW_DLV_OK) {
         if (res2 == DW_DLV_ERROR &&
             error &&
-            dwarf_errno(*error) == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
+            dwarf_errno(*error) == 
+            DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
             && dbg->de_tied_data.td_tied_object) {
             int res3 = 0;
 
             /*  We do not want to leak error structs... */
             dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
-
             *error = 0;
             /* error is returned on dbg, not tieddbg. */
             res3 = _dwarf_get_addr_from_tied(dbg,
@@ -1138,87 +1140,96 @@ dwarf_dietype_offset(Dwarf_Die die,
     res = dwarf_attr(die,DW_AT_type,&attr,error);
     if (res == DW_DLV_OK) {
         res = dwarf_global_formref(attr,&offset,error);
-        dwarf_dealloc(die->di_cu_context->cc_dbg,attr,DW_DLA_ATTR);
+        dwarf_dealloc(die->di_cu_context->cc_dbg,attr,
+            DW_DLA_ATTR);
     }
     *return_off = offset;
     return res;
 }
 
+int
+_dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Debug tieddbg,
+    Dwarf_CU_Context *tiedcontext_out,
+    Dwarf_Error *error)
+{
+    Dwarf_CU_Context tiedcontext = 0;
+    int res = 0;
+
+    if (!tieddbg) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (!context->cc_signature_present) {
+        return DW_DLV_NO_ENTRY;
+    }
+    res = _dwarf_search_for_signature(tieddbg,
+        context->cc_signature,
+        &tiedcontext,
+        error);
+    if ( res == DW_DLV_ERROR) {
+        /* Associate the error with dbg, not tieddbg */
+        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
+        return res;
+    } else if ( res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    if (!context->cc_low_pc_present) {
+        context->cc_low_pc_present =
+            tiedcontext->cc_low_pc_present;
+        context->        cc_low_pc=
+            tiedcontext->cc_low_pc;
+    }
+    if (!context->cc_addr_base_present) {
+        context->        cc_addr_base_present =
+            tiedcontext->cc_addr_base_present;
+        context->        cc_addr_base=
+            tiedcontext->cc_addr_base;
+    }
+    if (!context->cc_rnglists_base_present) {
+        context->        cc_rnglists_base_present =
+            tiedcontext->cc_rnglists_base_present;
+        context->        cc_rnglists_base=
+            tiedcontext->cc_rnglists_base;
+    }
+    if(!context->cc_loclists_base_present) {
+        context->        cc_loclists_base_present =
+            tiedcontext->cc_loclists_base_present;
+        context->        cc_loclists_base=
+            tiedcontext->cc_loclists_base;
+    }
+    if(!context->cc_str_offsets_base_present) {
+        context->        cc_str_offsets_base_present =
+            tiedcontext->cc_str_offsets_base_present;
+        context->        cc_str_offsets_base=
+            tiedcontext->cc_str_offsets_base;
+    }
+
+    /* GNU DW4 extension. */
+    if(!context->        cc_ranges_base_present) {
+        context->        cc_ranges_base_present =
+            tiedcontext->cc_ranges_base_present;
+        context->        cc_ranges_base =
+            tiedcontext->cc_ranges_base;
+    }
+
+    if(tiedcontext_out) {
+        *tiedcontext_out = tiedcontext;
+    }
+    return DW_DLV_OK;
+}
 
 
 int
-_dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
+_dwarf_get_string_base_attr_value(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned *sbase_out,
-    Dwarf_Error *error)
+    UNUSEDARG Dwarf_Error *error)
 {
-    int res = 0;
-    Dwarf_Die cudie = 0;
-    Dwarf_Unsigned cu_die_offset = 0;
-    Dwarf_Attribute myattr = 0;
-
     if(context->cc_str_offsets_base_present) {
         *sbase_out = context->cc_str_offsets_base;
         return DW_DLV_OK;
     }
-    if (context->cc_unit_type == DW_UT_split_compile) {
-        /*  DW_AT_str_offsets_base is not part of split full
-            compilation units (See "3.1.3 Split Full
-            Compilation Unit Entries" in the DWARF5
-            standard), so we can avoid checking here.
-
-            This is important because the call to
-            dwarf_offdie_b below would try to create
-            a context if none is found, and we can get here during
-            context creation when reading
-            DW_AT_dwo_name, which would cause
-            infinite recursion. */
-        *sbase_out = 0;
-        return DW_DLV_OK;
-    }
-    cu_die_offset = context->cc_cu_die_global_sec_offset;
-    context->cc_cu_die_offset_present  = TRUE;
-    res = dwarf_offdie_b(dbg,cu_die_offset,
-        context->cc_is_info,
-        &cudie,
-        error);
-    if(res != DW_DLV_OK) {
-        return res;
-    }
-    res = dwarf_attr(cudie,DW_AT_str_offsets_base,&myattr,
-        error);
-    if(res == DW_DLV_ERROR) {
-        dwarf_dealloc_die(cudie);
-        return res;
-    }
-    if (res == DW_DLV_OK) {
-        Dwarf_Unsigned val = 0;
-        /* Expect DW_FORM_sec_offset */
-        if (myattr->ar_attribute_form != DW_FORM_sec_offset) {
-            dwarf_dealloc_attribute(myattr);
-            dwarf_dealloc_die(cudie);
-            _dwarf_error(dbg, error,DW_DLE_STR_OFFSETS_BASE_WRONG_FORM);
-            return (DW_DLV_ERROR);
-        }
-        res = dwarf_global_formref(myattr,&val,error);
-        dwarf_dealloc_attribute(myattr);
-        dwarf_dealloc_die(cudie);
-        if(res != DW_DLV_OK) {
-            return res;
-        }
-        *sbase_out  = val;
-        context->cc_str_offsets_base = val;
-        context->cc_str_offsets_base_present = TRUE;
-        return DW_DLV_OK;
-    }
-    /*  NO ENTRY, No other attr.Not even GNU, this one is standard
-        DWARF5 only.  */
-    dwarf_dealloc_die(cudie);
-    /*  We do not need a base for a .dwo. We might for .dwp
-        and would or .o or executable.
-        FIXME: assume we do not need this.
-        Should we really return DW_DLV_NO_ENTRY?
-    */
     *sbase_out = 0;
     return DW_DLV_OK;
 }
@@ -1227,113 +1238,8 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     and returns it through abase_out. If we cannot find the value
     it is a serious error in the DWARF.
     */
-static int
-_dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
-    Dwarf_Unsigned *abase_out,
-    Dwarf_Error *error)
-{
-    int res = 0;
-    Dwarf_Die cudie = 0;
-    Dwarf_Bool cu_die_offset_present = 0;
-    Dwarf_Unsigned cu_die_offset = 0;
-    Dwarf_Attribute myattr = 0;
-    if(context->cc_addr_base_present) {
-        *abase_out = context->cc_addr_base;
-        return DW_DLV_OK;
-    }
-
-    cu_die_offset = context->cc_cu_die_global_sec_offset;
-    cu_die_offset_present = context->cc_cu_die_offset_present;
-    if(!cu_die_offset_present) {
-        _dwarf_error(dbg, error,
-            DW_DLE_DEBUG_CU_UNAVAILABLE_FOR_FORM);
-        return (DW_DLV_ERROR);
-
-    }
-    res = dwarf_offdie_b(dbg,cu_die_offset,
-        context->cc_is_info,
-        &cudie,
-        error);
-    if(res != DW_DLV_OK) {
-        return res;
-    }
-    res = dwarf_attr(cudie,DW_AT_addr_base,
-        &myattr,error);
-    if(res == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        return res;
-    }
-    if (res == DW_DLV_OK) {
-        Dwarf_Unsigned val = 0;
-        res = dwarf_formudata(myattr,&val,error);
-        dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        if(res != DW_DLV_OK) {
-            return res;
-        }
-        *abase_out  = val;
-        return DW_DLV_OK;
-    }
-    /* NO ENTRY, try the other attr. */
-    res = dwarf_attr(cudie,DW_AT_GNU_addr_base, &myattr,error);
-    if(res == DW_DLV_NO_ENTRY) {
-        res = dwarf_attr(cudie,DW_AT_addr_base, &myattr,error);
-        if (res == DW_DLV_NO_ENTRY) {
-            /*  A .o or .dwp needs a base, but a .dwo does not.
-                FIXME: check this claim...
-                Assume zero is ok and works. */
-            *abase_out = 0;
-            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-            return DW_DLV_OK;
-        }
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-            return res;
-        }
-    } else if (res == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        return res;
-    }
-
-    {
-        Dwarf_Unsigned val = 0;
-        res = dwarf_formudata(myattr,&val,error);
-        dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
-        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-        if(res != DW_DLV_OK) {
-            return res;
-        }
-        *abase_out  = val;
-    }
-    return DW_DLV_OK;
-}
 
 
-/* The dbg here will be the tieddbg, and context will be
-   a tied context.  */
-static int
-_dwarf_get_ranges_base_attr_value(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
-    Dwarf_Unsigned * rangesbase_out,
-    Dwarf_Error    * error)
-{
-    if (!context) {
-        _dwarf_error(dbg, error,
-            DW_DLE_DEBUG_CU_UNAVAILABLE_FOR_FORM);
-        return DW_DLV_ERROR;
-    }
-    if(context->cc_ranges_base_present) {
-        *rangesbase_out = context->cc_ranges_base;
-        return DW_DLV_OK;
-    }
-    if (context->cc_rnglists_base_present) {
-        /*  This also gets DW_AT_GNU_ranges_base */
-        *rangesbase_out = context->cc_rnglists_base;
-        return DW_DLV_OK;
-    }
-    return DW_DLV_NO_ENTRY;
-}
 /*  This works for  all versions of DWARF.
     This is the preferred interface, cease using dwarf_highpc.
     The consumer has to check the return_form or
@@ -1479,9 +1385,9 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
         return  DW_DLV_ERROR;
     }
-    if (!context->cc_signature_present) {
-        _dwarf_error(dbg, error, DW_DLE_NO_TIED_SIG_AVAILABLE);
-        return  DW_DLV_ERROR;
+    if(! context->cc_addr_base_present) {
+        /*  Does not exist. */
+        return DW_DLV_NO_ENTRY;
     }
     res = _dwarf_search_for_signature(tieddbg,
         context->cc_signature,
@@ -1510,51 +1416,6 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     *addr_out = local_addr;
     return DW_DLV_OK;
 }
-
-int
-_dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
-    Dwarf_Unsigned * ranges_base_out,
-    Dwarf_Unsigned * addr_base_out,
-    Dwarf_Error*error)
-{
-    Dwarf_Debug tieddbg = 0;
-    int res = 0;
-    Dwarf_Unsigned tiedbase= 0;
-    Dwarf_CU_Context tiedcontext = 0;
-
-    if (!context->cc_signature_present) {
-        _dwarf_error(dbg, error, DW_DLE_NO_SIGNATURE_TO_LOOKUP);
-        return  DW_DLV_ERROR;
-    }
-    tieddbg = dbg->de_tied_data.td_tied_object;
-    if (!tieddbg) {
-        _dwarf_error(dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
-        return  DW_DLV_ERROR;
-    }
-    res = _dwarf_search_for_signature(tieddbg,
-        context->cc_signature,
-        &tiedcontext,
-        error);
-    if ( res == DW_DLV_ERROR) {
-        /* Associate the error with dbg, not tidedbg */
-        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
-        return res;
-    } else if ( res == DW_DLV_NO_ENTRY) {
-        return res;
-    }
-    res = _dwarf_get_ranges_base_attr_value(tieddbg, tiedcontext,
-        &tiedbase, error);
-    if (res != DW_DLV_OK) {
-        /* Associate the error with dbg, not tidedbg */
-        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
-        return res;
-    }
-    *ranges_base_out = tiedbase;
-    *addr_base_out =  tiedcontext->cc_addr_base;
-    return DW_DLV_OK;
-}
-
 
 /*
     Takes a die, an attribute attr, and checks if attr

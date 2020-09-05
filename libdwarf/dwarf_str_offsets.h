@@ -60,4 +60,21 @@ struct  Dwarf_Str_Offsets_Table_s {
     Dwarf_Half     so_array_entry_size;
 
 };
+
+int _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
+    Dwarf_Small *table_start_ptr,
+    Dwarf_Unsigned secsize,
+    Dwarf_Small * secendptr,
+    Dwarf_Unsigned *length_out,
+    Dwarf_Half *local_offset_size_out,
+    Dwarf_Half *local_extension_size_out,
+    Dwarf_Half *version_out,
+    Dwarf_Half *padding_out,
+    Dwarf_Error *error);
+int 
+_dwarf_find_offsets_via_fission(Dwarf_Debug dbg,
+    Dwarf_CU_Context cu_context,
+    Dwarf_Error *error);
+
+
 #endif /* DWARF_STR_OFFSETS_H */

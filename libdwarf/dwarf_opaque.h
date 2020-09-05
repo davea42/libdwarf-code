@@ -197,7 +197,8 @@ struct Dwarf_CU_Context_s {
             of some compilers to include dwo_id, but
             in a messier way(lacking DW_UT_*).
         If cc_unit_type == DW_UT_type ( DW_UT_split_type
-            was never part of DW5, never standard).
+            was never part of DW5, never standard,
+            though DW_UT_split_compile is DW5.).
             the signature is a type signature. */
 
     Dwarf_Half  cc_cu_die_tag;
@@ -230,9 +231,15 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool cc_ranges_base_present; /* unused */
     Dwarf_Bool cc_rnglists_base_present; /* DW5 */
     Dwarf_Bool cc_str_offsets_base_present;
+    Dwarf_Bool cc_str_offsets_header_length_present;
     Dwarf_Bool cc_loclists_base_present;
     Dwarf_Bool cc_cu_die_has_children;
     Dwarf_Bool cc_dwo_name_present;
+    /*  If DW_AT_strx* present in skeleton and dwp
+        CU DIEs then it's not clear how
+        DW_AT_str_offsets_base can be correct for both.
+        Here just marking this CU DIE. */
+    Dwarf_Bool cc_at_strx_present;
 
     /*  Non zero if this context is a dwo section. Either
         dwo or dwp file. */
@@ -251,8 +258,20 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_ranges_base;   /* unused */
     /*  from DW_AT_rnglists_base in CU DIE */
     Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
-    /*  from DW_AT_str_offsets_base in CU DIE */
+    /*  from DW_AT_str_offsets_base in CU DIE, offset
+        of the table array, not its header */
+    Dwarf_Unsigned cc_str_offsets_header_offset;
     Dwarf_Unsigned cc_str_offsets_base;
+    /*  to get from the start of a str_offsets table to the
+        offsets array entries.
+        See cc_str_offsets_header_length_present,
+        though not normally needed. If header_length
+        is zero all CUs in this DWP
+        uses a DWARF4 extension
+        simple offset array, not a DWARF5 set of tables. */
+    Dwarf_Unsigned cc_str_offsets_header_length;
+    Dwarf_Unsigned cc_str_offsets_offset_size;
+
     /*  From DW_AT_loclists_base */
     Dwarf_Unsigned cc_loclists_base;
 
@@ -277,9 +296,9 @@ struct Dwarf_CU_Context_s {
         section CUs.
         For DWARF5 all DIEs are in .debug_info[.dwo] */
 
-    Dwarf_Half cc_unit_type;
-        /*  DWARF5: set from header
-            For DWARF 2,3,4 this is filled in initially
+    Dwarf_Half cc_unit_type; /* DWARF5
+        Set from header as a DW_UT_ value.
+        For DWARF 2,3,4 this is filled in initially
         from the CU header and refined by inspecting
         the CU DIE to detect the correct setting. */
 
@@ -567,8 +586,9 @@ struct Dwarf_Debug_s {
         sections. 4 in 32bit, 8 in MIPS 64, ia64. */
     Dwarf_Small de_pointer_size;
 
-    /*  set at creation of a Dwarf_Debug to say if form_string should be
-        checked for valid length at every call. 0 means do the check.
+    /*  set at creation of a Dwarf_Debug to say if form_string
+        should be checked for valid length at every call. 
+        0 means do the check.
         non-zero means do not do the check. */
     Dwarf_Small de_assume_string_in_bounds;
 
@@ -576,16 +596,19 @@ struct Dwarf_Debug_s {
         Null till a tree is created */
     void * de_alloc_tree;
 
-    /*  These fields are used to process debug_frame section.  **Updated
+    /*  These fields are used to process debug_frame section.
+        Updated
         by dwarf_get_fde_list in dwarf_frame.h */
-    /*  Points to contiguous block of pointers to Dwarf_Cie_s structs. */
+    /*  Points to contiguous block of pointers to 
+        Dwarf_Cie_s structs. */
     Dwarf_Cie *de_cie_data;
     /*  Count of number of Dwarf_Cie_s structs. */
     Dwarf_Signed de_cie_count;
     /*  Keep eh (GNU) separate!. */
     Dwarf_Cie *de_cie_data_eh;
     Dwarf_Signed de_cie_count_eh;
-    /*  Points to contiguous block of pointers to Dwarf_Fde_s structs. */
+    /*  Points to contiguous block of pointers to 
+        Dwarf_Fde_s structs. */
     Dwarf_Fde *de_fde_data;
     /*  Count of number of Dwarf_Fde_s structs. */
     Dwarf_Unsigned de_fde_count;
@@ -771,6 +794,21 @@ int _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     Dwarf_Unsigned *sbase_out,
     Dwarf_Error *error);
 
+int
+_dwarf_read_str_offsets_header(Dwarf_Debug dbg,
+    Dwarf_Small*     table_start_ptr,
+    Dwarf_Unsigned   secsize,
+    Dwarf_Small*     secendptr,
+    Dwarf_CU_Context cucontext,
+    /* Followed by return values/error */
+    Dwarf_Unsigned *length,
+    Dwarf_Half    *offset_size_out,
+    Dwarf_Half    *extension_size_out,
+    Dwarf_Half    *version_out,
+    Dwarf_Half    *padding_out,
+    Dwarf_Unsigned * header_length_out,
+    Dwarf_Error *error);
+
 int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Small *data_ptr,
     Dwarf_Small *end_data_ptr,
@@ -788,6 +826,8 @@ int _dwarf_look_in_local_and_tied_by_index(
     Dwarf_Addr *return_addr,
     Dwarf_Error *error);
 
+#if 0
+/*  Never implemented. */
 int _dwarf_get_base_and_size_given_signature(
     Dwarf_CU_Context *context,
     Dwarf_Sig8 *signature_in,
@@ -796,6 +836,7 @@ int _dwarf_get_base_and_size_given_signature(
     Dwarf_Unsigned *base_out,
     Dwarf_Unsigned *size_out,
     Dwarf_Error *err);
+#endif
 
 Dwarf_Bool _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg);
 Dwarf_Bool _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg);
@@ -843,6 +884,12 @@ _dwarf_search_for_signature(Dwarf_Debug dbg,
    Dwarf_CU_Context *context_out,
    Dwarf_Error *error);
 
+int
+_dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Debug tieddbg,
+    Dwarf_CU_Context *tiedcontext_out,
+    Dwarf_Error *error);
 
 void _dwarf_tied_destroy_free_node(void *node);
 void _dwarf_destroy_group_map(Dwarf_Debug dbg);

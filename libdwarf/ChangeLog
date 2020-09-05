@@ -1,3 +1,27 @@
+2020-09-05: David Anderson
+    * dwarf_die_deliv.c: Delete old #if 0 lines.
+      Pick up Fission data about DW_SECT_STR_OFFSETS
+      to help find strings.
+      Merge any helpful base data from the skeleton (tied file)
+      CU dies into the dwp CU dies.
+    * dwarf_base_types.h: Add DW_STR_OFFSETS_VERSION4
+      to help with reading that GNU extension.
+    * dwarf_form.c: Corrected code reading from
+      .debug_str_offsets.
+    * dwarf_opaque.h: Added new fields to the CU context
+      record to support .debug_str_offsets, and a new
+      function declaration related to that.
+    * dwarf_query.c: Deleted no-longer-used functions
+      (the tied-file attribute merge happens much
+      earlier) and added 
+      _dwarf_merge_all_base_attrs_of_cu_die().
+    * dwarf_ranges.c: Better represents using .debug_ranges.dwo
+      if it's present in the dwp  .
+    * dwarf_str_offsets.c: Refactoring and revising to support
+      the two formats of .debug_str_offsets: DWARF5 and
+      GNU DWARF4.
+    * dwarf_str_offsets.h. New function prototypes for the revised
+      .debug_str_offsets[.dwo] code.
 2020-09-01: David Anderson
     * dwarf_loclists.c(internal_load_loclists_contexts): Added
       a missing 'return DW_DLV_ERROR' when an error was detected.

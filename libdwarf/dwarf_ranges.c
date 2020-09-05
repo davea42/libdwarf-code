@@ -86,6 +86,7 @@ read_unaligned_addr_check(Dwarf_Debug dbg,
     incremented by data from the executable in
     the compilation unit with the same dwo_id.
 
+   
     We return an error which is on the incoming dbg, not
     the possibly-tied-dbg localdbg.
     If incoming die is NULL there is no context, so do not look
@@ -112,7 +113,6 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     Dwarf_Half address_size = 0;
     int res = DW_DLV_ERROR;
     Dwarf_Unsigned ranges_base = 0;
-    Dwarf_Unsigned addr_base = 0;
     Dwarf_Debug localdbg = dbg;
     Dwarf_Error localerror = 0;
     Dwarf_Half die_version = 3; /* default for dwarf_get_ranges() */
@@ -144,111 +144,37 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         /*  The DW4 ranges base was never used in GNU
             but did get emitted, the note says, but
             the note is probably obsolete (so, now wrong).
-            http://llvm.1065342.n5.nabble.com/DebugInfo-DW-AT-GNU-ranges-base-in-non-fission-td64194.html
+            http://llvm.1065342.n5.nabble.com/DebugInfo\
+            -DW-AT-GNU-ranges-base-in-non-fission-td64194.html
             */
-#if 0
-        if (cucontext->cc_unit_type != DW_UT_skeleton &&
-            cucontext->cc_version_stamp != DW_CU_VERSION4 &&
-            cucontext->cc_ranges_base_present) {
-            /* Never needed. See DW_AT_GNU_ranges_base
-            in find_cu_die_base_fields() in dwarf_die_deliv.c */
-            ranges_base = cucontext->cc_ranges_base;
-        }
-#endif
+        /* ranges_base may be merged from tied context. */
+        ranges_base = cucontext->cc_ranges_base;
         address_size = cucontext->cc_address_size;
     }
 
-    /*  If tied object exists,
-        base object is DWP and tied object is the
-        skeleton/executabl CU containing a skeleton CU
-        with DW_AT_addr_base/DW_AT_GNU_addr_base and
-        DW_AT_rnglists_base/DW_AT_GNU_ranges base. */
-    if (die &&dbg->de_tied_data.td_tied_object) {
-
-        int restied = 0;
-
-        /*  dwo/dwp CU  may have (DW5 pg 63)
-            DW_AT_name
-            DW_AT_language
-            DW_AT_macros
-            DW_AT_producer
-            DW_AT_identifier_case
-            DW_AT_main_subprogram
-            DW_AT_entry_pc
-            DW_AT_ranges if DW5 offset of header (see
-                ranges_base/rnglists_base below),
-                else of ranges
-            DW_AT_GNU_pubnames
-            DW_AT_stmt_list, a trivial stmt list with
-                the list of directories and file names
-                where needed for Type Units (DW5 pg 64)
-            and must have
-            DW_AT_[GNU_]dwo_id
-            and inherited from skeleton:
-            DW_AT_low_pc, DW_AT_high_pc, DW_AT_ranges,
-            DW_AT_stmt_list, DW_AT_comp_dir,
-            DW_AT_use_UTF8, DW_AT_str_offsets_base,
-            DW_AT_addr_base and DW_AT_rnglists_base.
-
-            skeleton CU may have (DW5 pg 62)
-            DW_AT_[GNU_]addr_base   possibly needed by dwp
-            DW_AT_str_offsets_base  possibly needed by dwp
-            DW_AT_GNU_ranges_base (GNU)possibly needed by dwp
-            DW_AT_rnglists_base   (DWARF5)possibly needed by dwp
-            DW_AT_low_pc
-            DW_AT_high_pc
-            DW_AT_ranges
-            DW_AT_str_offsets_base
-            DW_AT_[GNU_]dwo_name
-            DW_AT_stmt_list
-            DW_AT_comp_dir
-            DW_AT_use_UTF8
-            and must have
-            DW_AT_[GNU_]dwo_id
-            .debug_ranges does not
-            exist in the DWP, it is only in the executable.
-        */
-        restied = _dwarf_get_ranges_base_attr_from_tied(dbg,
-            cucontext,
-            &ranges_base,
-            &addr_base,
-            error);
-        if (restied == DW_DLV_ERROR ) {
-            if(!error) {
-                return restied;
-            }
-            dwarf_dealloc(localdbg,*error,DW_DLA_ERROR);
-            *error = 0;
-            /* Nothing else to do. Look in original dbg. */
-        } else if (restied == DW_DLV_NO_ENTRY ) {
-            /* Nothing else to do. Look in original dbg. */
-        } else {
-            /*  Ranges are never in a split dwarf object.
-                In the base object
-                instead. Use the tied_object */
-            localdbg = dbg->de_tied_data.td_tied_object;
-        }
-    }
-    /*  This function addresses DWARF3, DWARF4 range lists.
-        DWARF5 and later are in de_debug_rnglists.
-        See dwarf_rnglists_get_rle_head() in dwarf_rnglists.c.
-        So most callers will need to use *both* interface sets.
-        This is a little bit ugly, one must say.
-        It might be better to alter the newer interface to
-        also handle the older section.
-    */
+    localdbg = dbg;
     res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,
-        &localerror);
+        error);
     if (res == DW_DLV_ERROR) {
-        _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
         return res;
     } else if (res == DW_DLV_NO_ENTRY) {
-        return res;
+        localdbg = dbg->de_tied_data.td_tied_object;
+        if (!localdbg) {
+            return DW_DLV_NO_ENTRY;
+        }
+        res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,
+            &localerror);
+        if (res == DW_DLV_ERROR) {
+           _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
+           return res;
+        } else if (res == DW_DLV_NO_ENTRY) {
+           return res;
+        }
     }
 
     /*  Be safe in case adding rangesoffset and rangebase
         overflows. */
-    if (rangesoffset  == localdbg->de_debug_ranges.dss_size) {
+    if (rangesoffset  >= localdbg->de_debug_ranges.dss_size) {
         return DW_DLV_NO_ENTRY;
     }
     if (rangesoffset  > localdbg->de_debug_ranges.dss_size) {

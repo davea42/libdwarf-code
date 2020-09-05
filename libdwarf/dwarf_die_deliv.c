@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it
@@ -37,6 +37,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "dwarf_str_offsets.h"
 #include "dwarfstring.h"
 #include "dwarf_die_deliv.h"
 
@@ -66,13 +67,6 @@ static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
     the final DWARF5).
 */
 
-/*  New October 2011.  Enables client code to know if
-    it is a debug_info or debug_types context. */
-Dwarf_Bool
-dwarf_get_die_infotypes_flag(Dwarf_Die die)
-{
-    return die->di_is_info;
-}
 
 #if 0
 static void
@@ -88,6 +82,15 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     printf("\n");
 }
 #endif
+
+
+/*  New October 2011.  Enables client code to know if
+    it is a debug_info or debug_types context. */
+Dwarf_Bool
+dwarf_get_die_infotypes_flag(Dwarf_Die die)
+{
+    return die->di_is_info;
+}
 
 /*
     For a given Dwarf_Debug dbg, this function checks
@@ -550,7 +553,6 @@ finish_cu_context_via_cudie_inner(
             DW5: hash in skeleton CU die
             Also pick up cc_str_offset_base and
             any other base values. */
-
         Dwarf_Die cudie = 0;
         int resdwo = 0;
 
@@ -821,10 +823,6 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         */
         memcpy(&signaturedata,cu_ptr,sizeof(signaturedata));
         cu_ptr += sizeof(signaturedata);
-#if 0
-        READ_UNALIGNED_CK(dbg, typeoffset, Dwarf_Unsigned,
-            cu_ptr, local_length_size,error,section_end_ptr);
-#endif
         tres = _dwarf_read_unaligned_ck_wrapper(dbg,
             &typeoffset,cu_ptr,local_length_size,
             section_end_ptr,error);
@@ -1051,9 +1049,10 @@ local_attrlist_dealloc(Dwarf_Debug dbg,
 
 
 /*
-    A DWO/DWP CU has different base fields than
-    a normal object/executable, but this finds
-    the base fields for both types.
+    For a DWP/DWO the base fields
+    of a CU are inherited from the skeleton.
+    DWARF5 section 3.1.3
+    "Split Full Compilation Unit Entries".
 */
 static int
 find_cu_die_base_fields(Dwarf_Debug dbg,
@@ -1090,11 +1089,35 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
         appropriate here..
     */
     for(i = 0;  i < atcount; ++i) {
-        Dwarf_Half attrnum;
+        Dwarf_Half attrnum = 0;
+        Dwarf_Half form = 0;
         int ares = 0;
+        int ares2 = 0;
         Dwarf_Attribute attr = alist[i];
+
         ares = dwarf_whatattr(attr,&attrnum,error);
-        if (ares == DW_DLV_OK) {
+        if (ares == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+        }
+        ares2 = dwarf_whatform(attr,&form,error);
+        if (ares2 == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+        }
+        /*  We are not returning on DW_DLV_NO_ENTRY
+            or DW_DLV_ERROR here. Such will be
+            caught later. Lets finish a CU die
+            scan and finish the cu_context  */
+        if (ares == DW_DLV_OK && ares2 == DW_DLV_OK) {
+            switch(form) {
+            case DW_FORM_strx:
+            case DW_FORM_strx1:
+            case DW_FORM_strx2:
+            case DW_FORM_strx3:
+            case DW_FORM_strx4:
+                cucon->cc_at_strx_present = TRUE;
+            }
             switch(attrnum) {
             case DW_AT_dwo_id:
             case DW_AT_GNU_dwo_id: {
@@ -1127,6 +1150,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                     local_attrlist_dealloc(dbg,atcount,alist);
                     return sres;
                 }
+                    /* Something is badly wrong. */
                 break;
             }
             /*  If, in .debug_rnglists for a CU the
@@ -1380,6 +1404,14 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
         if (version == DW_CU_VERSION4) {
             assign_correct_unit_type(cu_context);
         }
+        if (cu_context->cc_signature_present) {
+            /*  Initially just for DW_SECT_STR_OFFSETS,
+                finds the section offset of the
+                contribution which is not the same
+                as the table offset. */
+            res = _dwarf_find_offsets_via_fission(dbg,
+               cu_context,error); 
+        }
     }
     return DW_DLV_OK;
 }
@@ -1530,7 +1562,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         even though it might not be adequately
                         relocated. */
                     if (resd == DW_DLV_ERROR) {
-                        dwarf_dealloc(dbg,err2,DW_DLA_ERROR);
+                        dwarf_dealloc_error(dbg,err2);
                         err2 = 0;
                     }
                 } else {
@@ -1637,6 +1669,24 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     /*  Allowing null argument starting 22 April 2019. */
     if (next_cu_offset) {
         *next_cu_offset = new_offset;
+    }
+    {
+        Dwarf_Debug tieddbg = 0;
+        int tres = 0;
+        tieddbg = dbg->de_tied_data.td_tied_object;
+        if (tieddbg) {
+            tres = _dwarf_merge_all_base_attrs_of_cu_die(
+                dbg, cu_context,
+                tieddbg, 0,
+                error);
+        }
+        if (tres == DW_DLV_ERROR) {
+            /*  We'll assume any errors will be
+                discovered later. Lets get our CU_context
+                finished.  */
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+        }
     }
     return DW_DLV_OK;
 }
@@ -2399,9 +2449,6 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     ret_die->di_cu_context =
         die == NULL ? context : die->di_cu_context;
 
-#if 0
-    DECODE_LEB128_UWORD_CK(die_info_ptr, utmp,dbg,error,die_info_end);
-#endif
     dieres = _dwarf_leb128_uword_wrapper(dbg,
         &die_info_ptr,die_info_end,&utmp,error);
     if (dieres == DW_DLV_ERROR) {
@@ -2697,9 +2744,6 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         info_ptr = dataptr + offset;
     }
     die->di_debug_ptr = info_ptr;
-#if 0
-    DECODE_LEB128_UWORD_CK(info_ptr, utmp,dbg,error,die_info_end);
-#endif
     lres = _dwarf_leb128_uword_wrapper(dbg,&info_ptr,die_info_end,
         &utmp,error);
     if (lres != DW_DLV_OK) {
