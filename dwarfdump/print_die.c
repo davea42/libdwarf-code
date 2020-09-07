@@ -749,6 +749,25 @@ macro_check_cu(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/* Called with a CU_Die as in_die_in. */
+static int
+print_die_and_children(Dwarf_Debug dbg,
+    Dwarf_Die in_die_in,
+    Dwarf_Off dieprint_cu_goffset,
+    Dwarf_Bool is_info,
+    char **srcfiles, Dwarf_Signed cnt,
+    Dwarf_Error *err)
+{
+    int res = 0;
+
+    local_symbols_already_began = FALSE;
+    res  =print_die_and_children_internal(dbg,
+        in_die_in, dieprint_cu_goffset,
+        is_info,srcfiles,cnt,err);
+    return res;
+}
+
+
 /*   */
 static int
 print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
@@ -1194,24 +1213,6 @@ print_a_die_stack(Dwarf_Debug dbg,
     return res;
 }
 
-/* Called with a CU_Die as in_die_in. */
-int
-print_die_and_children(Dwarf_Debug dbg,
-    Dwarf_Die in_die_in,
-    Dwarf_Off dieprint_cu_goffset,
-    Dwarf_Bool is_info,
-    char **srcfiles, Dwarf_Signed cnt,
-    Dwarf_Error *err)
-{
-    int res = 0;
-
-    local_symbols_already_began = FALSE;
-    res  =print_die_and_children_internal(dbg,
-        in_die_in, dieprint_cu_goffset,
-        is_info,srcfiles,cnt,err);
-    return res;
-}
-
 static int
 print_die_stack(Dwarf_Debug dbg,
     char **srcfiles,
@@ -1429,10 +1430,11 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 &ab_has_child);
             if (abtres == DW_DLV_OK) {
                 Dwarf_Error tagerr = 0;
+                int tagres = 0;
 
                 DWARF_CHECK_COUNT(abbreviations_result,1);
-                abtres = dwarf_tag(in_die, &tag, &tagerr);
-                if (abtres == DW_DLV_OK) {
+                tagres = dwarf_tag(in_die, &tag, &tagerr);
+                if (tagres == DW_DLV_OK) {
                     switch (tag) {
                     case DW_TAG_array_type:
                     case DW_TAG_class_type:
@@ -1456,20 +1458,25 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                             (cdres == DW_DLV_NO_ENTRY && ab_has_child);
                         if (bError) {
                             DWARF_CHECK_ERROR(abbreviations_result,
-                                "check 'dw_children' flag combination.");
+                                "check 'dw_children'" 
+                                " flag combination.");
                         }
                         break;
                     }
-                } else if (abtres == DW_DLV_ERROR) {
+                } else if (tagres == DW_DLV_ERROR) {
+                    dwarf_dealloc_die(child);
                     print_error_and_continue(dbg,
                         "Unable to read die tag!",
-                        abtres,*err);
-                    return abtres;
+                        tagres,tagerr);
+                    /*  tagerr is unrelated to *error
+                        but leaving *error NULL should be ok. */
+                    return tagres;
                 }
             } else if (abtres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "Unable to read die children flag",
-                    abtres,*err);
+                glflags.gf_count_major_errors++;
+                printf("ERROR: Unable to read die children flag.\n");
+                /*  return is unrelated to *error
+                    but leaving *error NULL should be ok. */
                 return abtres;
             }
         }
@@ -1521,6 +1528,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         are not really recoverable.
                     */
                     esb_destructor(&pm);
+                    dwarf_dealloc_die(child);
                     if (in_die != in_die_in) {
                         dwarf_dealloc_die(in_die);
                     }
@@ -1530,6 +1538,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 print_error_and_continue(dbg,
                     "Finding a DIE offset (dwarf_dieoffset())"
                     "failed.",cores,*err);
+                dwarf_dealloc_die(child);
                 if (in_die != in_die_in) {
                     dwarf_dealloc_die(in_die);
                 }
@@ -1557,6 +1566,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 if (in_die != in_die_in) {
                     dwarf_dealloc_die(in_die);
                 }
+                dwarf_dealloc_die(child);
                 return DW_DLV_ERROR;
 
             }
@@ -1574,6 +1584,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             }
             child = 0;
         } else if (cdres == DW_DLV_ERROR) {
+            dwarf_dealloc_die(child);
             if (in_die != in_die_in) {
                 dwarf_dealloc_die(in_die);
             }
@@ -1588,6 +1599,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             glflags.gf_types_flag = FALSE;
         }
         sibling = 0;
+        dwarf_dealloc_die(child);
+        child = 0;
         cdres = dwarf_siblingof_b(dbg, in_die,is_info,
             &sibling, err);
         if (cdres == DW_DLV_ERROR) {

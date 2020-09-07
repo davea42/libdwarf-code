@@ -1,5 +1,12 @@
+2020-09-06: David Anderson
+    * globals.h:  print_die_and_children() declaration
+      removed, the function is now static in print_die.c.
+    * print_die.c: On an error following a call to dwarf_child
+      (but where dwarf_child() succeeded) we were failing to 
+      dwarf_dealloc_die(child). And even the main path
+      (no error from dwarf_child) failed to dealloc child.
 2020-09-05: David Anderson
-   *  print_die.c: In a couple error messages spell the
+    * print_die.c: In a couple error messages spell the
       function name that returned error correctly.
 2020-08-28: David Anderson
     * print_die.c: Fixed indent and trailing whitespace.

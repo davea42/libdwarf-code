@@ -194,14 +194,6 @@ extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);
 /* Validate an abbreviation */
 extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
 
-extern int print_die_and_children(
-    Dwarf_Debug dbg,
-    Dwarf_Die in_die,
-    Dwarf_Off dieprint_cu_offset,
-    Dwarf_Bool is_info,
-    char **srcfiles,
-    Dwarf_Signed cnt,
-    Dwarf_Error *);
 extern int print_one_die(
     Dwarf_Debug dbg,
     Dwarf_Die die,
