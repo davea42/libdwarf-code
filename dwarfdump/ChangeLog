@@ -1,3 +1,5 @@
+2020-09-07: David Anderson
+    * glflags.h,print_die.c: Fixed idents and trailing whitespace.
 2020-09-06: David Anderson
     * globals.h:  print_die_and_children() declaration
       removed, the function is now static in print_die.c.

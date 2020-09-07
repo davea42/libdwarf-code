@@ -248,10 +248,12 @@ struct glflags_s {
     boolean need_CU_high_address;     /* Need CU High address */
     boolean need_PU_valid_code;       /* Need PU valid code */
     boolean in_valid_code;            /* set/reset in  subprogram
-                                         and compile-unit DIES.*/
+        and compile-unit DIES.*/
 
-    boolean seen_PU_base_address;     /* Detected a Base address for PU */
-    boolean seen_PU_high_address;     /* Detected a High address for PU */
+    boolean seen_PU_base_address;     /* Detected a Base address
+        for PU */
+    boolean seen_PU_high_address;     /* Detected a High address
+        for PU */
     Dwarf_Addr PU_base_address;       /* PU Base address */
     Dwarf_Addr PU_high_address;       /* PU High address */
 

@@ -1458,7 +1458,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                             (cdres == DW_DLV_NO_ENTRY && ab_has_child);
                         if (bError) {
                             DWARF_CHECK_ERROR(abbreviations_result,
-                                "check 'dw_children'" 
+                                "check 'dw_children'"
                                 " flag combination.");
                         }
                         break;
