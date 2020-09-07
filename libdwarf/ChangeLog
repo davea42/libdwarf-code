@@ -1,4 +1,8 @@
 2020-09-07: David Anderson
+    * dwarf_line_table_reader_common.h: Places needing
+      additional dealloc in case of error:
+      lines 1232,2255,2404 (line#s in the updated version). 
+2020-09-07: David Anderson
     * dwarf_tied_decls.h: Removed declaration of
       _dwarf_loop_reading_debug_info_for_cu().
     * dwarf_tied.c: The return value from dwarf_tsearch() was
