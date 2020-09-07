@@ -156,8 +156,8 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
                 "ERROR: DW_DLE_XU_NAME_COL_ERROR  The "
                 "section number of %u ",v);
             dwarfstring_append(&s," is too high. "
-                "There sections 1-8 are listed in "
-                "DWARF5 table 7.1.");
+                "Sections 1-8 are listed in "
+                "DWARF5 Table 7.1.");
             _dwarf_error_string(dbg, err, DW_DLE_XU_NAME_COL_ERROR,
                 dwarfstring_string(&s));
             dwarfstring_destructor(&s);
@@ -246,10 +246,12 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_s(&m,
             "DW_DLE_ERRONEOUS_XU_INDEX_SECTION: "
-            "The size of the %s ",(char *)section_type);
+            "The size of the %s ",
+            (char *)section_type);
         dwarfstring_append_printf_u(&m,
-            " is just %u bytes, much to small to be "
-            " a correct section",sect->dss_size);
+            "is just %u bytes, much to small to be "
+            " a correct section",
+            sect->dss_size);
         _dwarf_error_string(dbg, error,
             DW_DLE_ERRONEOUS_XU_INDEX_SECTION,
             dwarfstring_string(&m));
@@ -265,6 +267,24 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     READ_UNALIGNED_CK(dbg,num_secs, Dwarf_Unsigned,
         data,datalen32,
         error,section_end);
+    if (num_secs > DW_SECT_RNGLISTS) {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_s(&m,
+            "DW_DLE_XU_NAME_COL_ERROR: "
+            " %s index section header ",
+            (char *)section_type);
+        dwarfstring_append_printf_u(&m,
+            "shows N, the sections count, "
+            "as %u but only values "
+            " 1 through 8 (DW_SECT_RNGLISTS) are valid.",
+            num_secs);
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR, 
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
     data += datalen32;
     /* reading U */
     READ_UNALIGNED_CK(dbg,num_CUs, Dwarf_Unsigned,

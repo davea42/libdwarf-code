@@ -1013,12 +1013,16 @@ dwarf_elf_object_access_load_section(void* obj_in,
             return DW_DLV_ERROR;
         }
 
-        /*  When using libelf as a producer, section data may be stored
-            in multiple buffers. In libdwarf however, we only use libelf
-            as a consumer (there is a dwarf producer API, but it doesn't
-            use libelf). Because of this, this single call to elf_getdata
-            will retrieve the entire section in a single contiguous
+        /*  When using libelf as a producer, section
+            data may be stored
+            in multiple buffers. In libdwarf however,
+            we only use libelf as a consumer (there
+            is a dwarf producer API, but it doesn't
+            use libelf). Because of this, this single
+            call to elf_getdata will retrieve the
+            entire section in a single contiguous
             buffer. */
+
         data = elf_getdata(scn, NULL);
         if (data == NULL) {
             /*  Most likely means that the Elf section header

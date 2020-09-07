@@ -1,4 +1,12 @@
 2020-09-07: David Anderson
+    * dwarf_xu_index.c: We were not checking the
+      value of N (in the header of .debug_cu/tu_index)
+      to ensure it was sane. Now we check and error
+      if insane (the test object is fuzzed to provoke
+      the error).
+    * dwarf_elf_access.c: Reformatted commentary so
+      the lines are not too long.
+2020-09-07: David Anderson
     * dwarf_opaque.h, dwarf_str_offsets.c: Removed trailing
       whitespace.
     * dwarf_line_table_reader_common.h: Fixed an accidental
