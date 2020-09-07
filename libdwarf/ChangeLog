@@ -1,4 +1,9 @@
 2020-09-07: David Anderson
+    * dwarf_opaque.h, dwarf_str_offsets.c: Removed trailing
+      whitespace.
+    * dwarf_line_table_reader_common.h: Fixed an accidental
+      deletion of a crucual _ (underbar) in preceeding commit.
+2020-09-07: David Anderson
     * dwarf_line_table_reader_common.h: Places needing
       additional dealloc in case of error:
       lines 1232,2255,2404 (line#s in the updated version). 

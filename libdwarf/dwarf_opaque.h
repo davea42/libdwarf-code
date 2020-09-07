@@ -587,7 +587,7 @@ struct Dwarf_Debug_s {
     Dwarf_Small de_pointer_size;
 
     /*  set at creation of a Dwarf_Debug to say if form_string
-        should be checked for valid length at every call. 
+        should be checked for valid length at every call.
         0 means do the check.
         non-zero means do not do the check. */
     Dwarf_Small de_assume_string_in_bounds;
@@ -599,7 +599,7 @@ struct Dwarf_Debug_s {
     /*  These fields are used to process debug_frame section.
         Updated
         by dwarf_get_fde_list in dwarf_frame.h */
-    /*  Points to contiguous block of pointers to 
+    /*  Points to contiguous block of pointers to
         Dwarf_Cie_s structs. */
     Dwarf_Cie *de_cie_data;
     /*  Count of number of Dwarf_Cie_s structs. */
@@ -607,7 +607,7 @@ struct Dwarf_Debug_s {
     /*  Keep eh (GNU) separate!. */
     Dwarf_Cie *de_cie_data_eh;
     Dwarf_Signed de_cie_count_eh;
-    /*  Points to contiguous block of pointers to 
+    /*  Points to contiguous block of pointers to
         Dwarf_Fde_s structs. */
     Dwarf_Fde *de_fde_data;
     /*  Count of number of Dwarf_Fde_s structs. */
