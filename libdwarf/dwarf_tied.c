@@ -124,10 +124,9 @@ _dwarf_tied_destroy_free_node(void*nodep)
     Currently it reads all the tied CUs at once, unless
     there is an error..
     */
-int
+static int
 _dwarf_loop_reading_debug_info_for_cu(
     Dwarf_Debug tieddbg,
-    Dwarf_Sig8 sig,
     Dwarf_Error *error)
 {
     unsigned loop_count = 0;
@@ -186,7 +185,6 @@ _dwarf_loop_reading_debug_info_for_cu(
                 latestcontext->cc_signature;
             void *entry =
                 _dwarf_tied_make_entry(&consign,latestcontext);
-
             if (!entry) {
                 return DW_DLV_NO_ENTRY;
             }
@@ -195,18 +193,20 @@ _dwarf_loop_reading_debug_info_for_cu(
                 &tieddbg->de_tied_data.td_tied_search,
                 _dwarf_tied_compare_function);
             if (!retval) {
+                free(entry);
                 /* FAILED might be out of memory.*/
                 return DW_DLV_NO_ENTRY;
-            }
-#if 0 /* FIXME: do this? Not? */
-            /*  This could be a compiler error. But
-                let us not decide?  FIXME */
-            if (!latestcontext->cc_addr_base_present) {
-            }
-#endif
-            if (!_dwarf_tied_compare_function(&sig,&consign) ) {
-                /*  Identical. We found the matching CU. */
-                return DW_DLV_OK;
+            } else {
+                struct Dwarf_Tied_Data_s * retent = 
+                    *(struct Dwarf_Tied_Data_s**) retval;
+                if (retent == entry) {
+                   /*  we added a record. */
+                    return DW_DLV_OK;
+                } else {
+                   /*  found existing, no add */
+                   free(entry);
+                   return DW_DLV_OK;
+                }
             }
         }
     }
@@ -249,11 +249,12 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
         return DW_DLV_OK;
     }
 
-    /*  We assume the caller is NOT doing
+    /*  We now ensure all tieddbg CUs signatures
+        are in the td_tied_search,
+        We assume the caller is NOT doing
         info section read operations
         on the tieddbg.  */
-    res  = _dwarf_loop_reading_debug_info_for_cu(
-        tieddbg,sig,error);
+    res  = _dwarf_loop_reading_debug_info_for_cu(tieddbg,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }

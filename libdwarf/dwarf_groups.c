@@ -103,14 +103,6 @@ grp_compare_function(const void *l, const void *r)
     return 0;
 }
 
-static void
-_dwarf_grp_destroy_free_node(void*nodep)
-{
-    struct Dwarf_Group_Map_Entry_s * enp = nodep;
-    free(enp);
-    return;
-}
-
 int
 _dwarf_insert_in_group_map(Dwarf_Debug dbg,
     unsigned groupnum,
@@ -381,6 +373,14 @@ _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
     lookfor_name = scn_name;
     dwarf_twalk(grp->gd_map,grp_walk_for_name);
     return found_name_in_group;
+}
+
+static void
+_dwarf_grp_destroy_free_node(void*nodep)
+{
+    struct Dwarf_Group_Map_Entry_s * enp = nodep;
+    free(enp);
+    return;
 }
 
 void

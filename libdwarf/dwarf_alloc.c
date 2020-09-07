@@ -721,7 +721,6 @@ dwarf_dealloc(Dwarf_Debug dbg,
         printf("DEALLOC does nothing, space NULL line %d %s\n",
             __LINE__,__FILE__);
         fflush(stdout);
-abort();
 #endif /* DEBUG*/
         return;
     }
@@ -1026,6 +1025,9 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
         dbg->de_alloc_tree = 0;
     }
+    /*  first, walk the search and free()
+        contents. */
+    /*  Now  do the search tree itself */
     if (dbg->de_tied_data.td_tied_search) {
         dwarf_tdestroy(dbg->de_tied_data.td_tied_search,
             _dwarf_tied_destroy_free_node);
