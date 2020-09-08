@@ -1,3 +1,8 @@
+2020-09-08: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+	  dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+	  dwarfdump-tt-table.h: Regenerated with latest
+      version string.
 2020-09-07: David Anderson
     * glflags.h,print_die.c: Fixed idents and trailing whitespace.
 2020-09-06: David Anderson

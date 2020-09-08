@@ -1,3 +1,6 @@
+2020-09-08:
+  libdwarf/dwarfdump work well with DWARF4 and
+  DWARF5, including DWP files.
 2020-07-08:
   libdwarf now reads .debug_gnu_pubtypes & pubnames
   (non-standard but gcc creates them in DWARF5)

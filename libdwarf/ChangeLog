@@ -1,3 +1,7 @@
+2020-09-08
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+	  dwarf_names_new.h,libdwarf_version.h: Updated  version
+      string, regenerated files that reference it.
 2020-09-07: David Anderson
     * dwarf_xu_index.c: We were not checking the
       value of N (in the header of .debug_cu/tu_index)
