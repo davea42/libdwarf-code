@@ -32,7 +32,7 @@ then
     # Since cmake does not copy ; sensibly we will
     # provide a unique version for _Elf platforms.
     # libdwarf.h.in differs from generated_libdwarf.h.in:
-    * update the latter.
+    # update the latter.
     mv ub_temp generated_libdwarf.h.in
 fi
 rm ub_temp
