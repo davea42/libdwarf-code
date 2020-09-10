@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.08, 9 September 2020
+.ds vE Rev 3.09, 10 September 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -221,6 +221,12 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added dwarf_get_ranges_b()
+so clients reading DWARF4 
+split dwarf (a GNU extension)
+can get the final offset of the ranges.
+(September 10, 2020)
 .P
 All the 
 dwarf_init*() and
@@ -632,6 +638,7 @@ to deal with a failure of a dwarf_init*()
 or dwarf_elf_init*() call is described in 
 Chapter 4.
 Improved support for split dwarf.
+Added dwarf_get_ranges_b().
 .LI "May 2020"
 Adding support for DWARF5
 sections .debug_rnglists and .debug_loclists.
@@ -13861,9 +13868,21 @@ all compilation units have the same address_size.
 There is no \f(CWdie\fP argument to this original
 version of the function.
 Other arguments (and deallocation) match the use
-of  \f(CWdwarf_get_ranges_a()\fP ( described next).
+of  
+\f(CWdwarf_get_ranges_b()\fP and
+\f(CWdwarf_get_ranges_a()\fP.
 
 .H 3 "dwarf_get_ranges_a()"
+This is the same as 
+\f(CWdwarf_get_ranges_b()\fP
+except it is missing the
+\f(CWfinaloffset\fP
+pointer argument, so when
+reading DWARF4 split-dwarf
+GNU extension DIEs 
+it's not possible to know the final
+offset of the ranges, but few
+applications will care..
 .DS
 \f(CWint dwarf_get_ranges_a(
         Dwarf_Debug dbg,
@@ -13874,13 +13893,52 @@ of  \f(CWdwarf_get_ranges_a()\fP ( described next).
         Dwarf_Unsigned * returned_byte_count,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_get_ranges_a()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*returned_ranges_count\fP to
+.P
+Though missing
+\f(CWfinaloffset\fP
+this function works properly and
+is usable on and DWARF2,3,4 objects.
+
+.H 3 "dwarf_get_ranges_b()"
+.DS
+\f(CWint dwarf_get_ranges_b(
+        Dwarf_Debug dbg,
+        Dwarf_Off  offset,
+        Dwarf_Die  die,
+        Dwarf_Off  *finaloffset,
+        Dwarf_Ranges **ranges,
+        Dwarf_Signed * returned_ranges_count,
+        Dwarf_Unsigned * returned_byte_count,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_get_ranges_b()\fP returns
+\f(CWDW_DLV_OK\fP and sets 
+\f(CW*returned_ranges_count\fP to
 the count of the
 number of address ranges in the group of ranges
-in the .debug_ranges section at offset  \f(CWoffset\fP
-(which ends with a pair of zeros of pointer-size).
-This function is new as of 27 April 2009.
+in the .debug_ranges section where the
+\f(CWDW_AT_ranges\fP attribute gives offset
+\f(CWoffset\fP.
+This function is new as of 10 September 2020.
+.P
+DWARF4 GNU split-dwarf extension ONLY:
+With a .dwp object and the tied (executable,a.out)
+involved the actual .debug_ranges
+offset is determined from the 
+DW_AT_GNU_ranges_base from the tied file and
+the offset from  
+\f(CWDW_AT_ranges\fP in the .dwp object and
+returned through the
+\f(CWfinaloffset\fP pointer.
+If \f(CWfinaloffset\fP pointer is null the
+function ignores it.
+.P
+If there is no use of the GNU split-dwarf
+extension to DWARF4 the
+\f(CWfinaloffset\fP value returned is identical to
+the \f(CWoffset\fP passed in.
+If the pointer is null it is ignored by the function.
 .P
 This function is normally used when one has
 a DIE
@@ -13888,19 +13946,18 @@ with the
 \f(CWDW_AT_ranges\fP
 attribute (whose value is the offset needed).
 The ranges thus apply to the DIE involved.
-This function never sees the per-compilation-unit
-headers in the .debug_ranges section so 
-of course any errors in those headers are ignored.
 .P
 See also 
 \f(CWdwarf_get_aranges()\fP,
 .P
 The
 \f(CWoffset\fP argument should be the value of
-a \f(CWDW_AT_ranges\fP attribute of a Debugging Information Entry.
+a \f(CWDW_AT_ranges\fP
+attribute of a Debugging Information Entry.
 
 The
-\f(CWdie\fP argument should be the value of
+\f(CWdie\fP
+argument should be the value of
 a 
 \f(CWDwarf_Die\fP pointer of a
 \f(CWDwarf_Die\fP with
@@ -13908,17 +13965,40 @@ the attribute containing
 this range set offset.  
 Because each compilation unit
 has its own address_size field this argument is necessary to
-to correctly read ranges. (Most executables have the
+to correctly read ranges.
+(Most executables have the
 same address_size in every compilation unit, but
 some ABIs allow multiple address sized in an executable).
 If a NULL pointer is passed in libdwarf assumes
 a single address_size is appropriate for all ranges records.
 
+On success,
 The call sets
-\f(CW*ranges\fP to point to a block of \f(CWDwarf_Ranges\fP
+\f(CW*ranges\fP to point to a block of 
+\f(CWDwarf_Ranges\fP
 structs, one for each address range.
-It returns 
-\f(CWDW_DLV_ERROR\fP on error.
+If the
+\f(CW*returned_byte_count\fP pointer is passed as non-NULL
+the number of bytes that the returned ranges
+were taken from is returned through the pointer
+(for example if the returned_ranges_count is 2
+and the pointer-size
+is 4, then returned_byte_count will be 8).
+If the
+\f(CW*returned_byte_count\fP pointer is passed as NULL
+the parameter is ignored.
+The
+\f(CW*returned_byte_count\fP is only of use to certain
+dumper applications, most applications will not use it.
+The
+\f(CWfinaloffset\fP pointer is only of use to certain
+dumper applications, and if null is passed the function
+ignores the argument.
+
+.P
+On error the function returns 
+\f(CWDW_DLV_ERROR\fP.
+.P
 It returns 
 \f(CWDW_DLV_NO_ENTRY\fP if there is no
 \f(CW.debug_ranges\fP
@@ -13926,23 +14006,8 @@ section or if
 \f(CWoffset\fP is past the end of the
 \f(CW.debug_ranges\fP section.
 
-If the 
-\f(CW*returned_byte_count\fP pointer is passed as non-NULL
-the number of bytes that the returned ranges
-were taken from is returned through the pointer
-(for example if the returned_ranges_count is 2 
-and the pointer-size
-is 4, then returned_byte_count will be 8).
-If the 
-\f(CW*returned_byte_count\fP pointer is passed as NULL
-the parameter is ignored.
-The 
-\f(CW*returned_byte_count\fP is only of use to certain
-dumper applications, most applications will not use it.
-
-
 .in +2
-.FG "Examplev dwarf_get_ranges_a()"
+.FG "Examplev dwarf_get_ranges_b()"
 .DS
 \f(CW
 void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
@@ -13951,9 +14016,10 @@ void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
     Dwarf_Ranges *ranges = 0;
     Dwarf_Unsigned bytes = 0;
     Dwarf_Error error = 0;
+    Dwarf_Off finaloffset = 0;
     int res = 0;
-    res = dwarf_get_ranges_a(dbg,offset,die,
-        &ranges,&count,&bytes,&error);
+    res = dwarf_get_ranges_b(dbg,offset,die,
+        &finaloffset, &ranges,&count,&bytes,&error);
     if (res == DW_DLV_OK) {
         Dwarf_Signed i;
         for( i = 0; i < count; ++i ) {

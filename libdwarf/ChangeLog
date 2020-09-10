@@ -1,4 +1,17 @@
 2020-09-10
+    * dwarf_die_deliv.c: Now handle DW_AT_GNU_ranges_base
+      properly.
+    * dwarf_ranges.c: New function dwarf_get_ranges_b()
+      so we can pass back the true split-dwarf offset
+      when we have DWARF4 split-dwarf extension objects.
+      And we calculate that true offset.
+    * libdwarf.h.in: New function prototype:
+      dwarf_get_ranges_b().
+    * generated_libdwarf.h.in: Regenerated.
+    * libdwarf2.1.mm:  Version 3.09. Now documents
+      dwarf_get_ranges_b().
+    * libdwarf2.1.pdf:  Version 3.09. Regenerated.
+2020-09-10
     * checkexamples.c,dwarf_die_deliv.c,dwarf_form.c,
       dwarf_line_table_reader_common.h,dwarf_query.c,
       dwarf_ranges.c,dwarf_str_offset.c,dwarf_tied.c:

@@ -1216,7 +1216,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 }
                 break;
             }
-            case DW_AT_GNU_ranges_base:
+            case DW_AT_GNU_ranges_base: {
             /*  The DW4 ranges base was never used in GNU
                 but did get emitted in skeletons.
                 http://llvm.1065342.n5.nabble.com/
@@ -1224,7 +1224,24 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 non-fission-td64194.html
                 But we accept it anyway. */
             /*  offset in .debug_rnglists  of the offsets table
-                applicable to this CU. */
+                applicable to this CU.
+                Note that this base applies when
+                referencing from the dwp, but NOT
+                when referencing from the a.out */
+                int udres = 0;
+
+                udres = dwarf_global_formref(attr,
+                    &cucon->cc_ranges_base,
+                    error);
+                if(udres == DW_DLV_OK) {
+                    cucon->cc_ranges_base_present = TRUE;
+                } else {
+                    local_attrlist_dealloc(dbg,atcount,alist);
+                    /* Something is badly wrong. */
+                    return udres;
+                }
+                break;
+                }
             case  DW_AT_rnglists_base: {
                 int udres = 0;
                 udres = dwarf_global_formref(attr,

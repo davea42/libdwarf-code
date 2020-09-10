@@ -4895,6 +4895,21 @@ int dwarf_get_ranges_a(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*bytecount*/,
     Dwarf_Error * /*error*/);
 
+/*  Adds return of the final offset to accomodate
+    DWARF4 GNU split-dwarf. Other than for split-dwarf
+    the realoffset will be set by the function
+    to be the same as rangesoffset.
+    New September 10, 2020.
+*/
+int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
+    Dwarf_Off       /*rangesoffset*/,
+    Dwarf_Die       /*diepointer */,
+    Dwarf_Off *     /*realoffset */,
+    Dwarf_Ranges ** /*rangesbuf*/,
+    Dwarf_Signed *  /*listlen*/,
+    Dwarf_Unsigned * /*bytecount*/,
+    Dwarf_Error *   /*error*/);
+
 void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);

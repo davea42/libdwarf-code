@@ -36,6 +36,9 @@
 #include "dwarf_util.h"
 #include "dwarfstring.h"
 
+#define FALSE 0
+#define TRUE  1
+
 struct ranges_entry {
    struct ranges_entry *next;
    Dwarf_Ranges cur;
@@ -100,6 +103,29 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     Dwarf_Unsigned * bytecount,
     Dwarf_Error * error)
 {
+    Dwarf_Off finaloffset = 0;
+    int res = 0;
+
+    res = dwarf_get_ranges_b(
+        dbg,rangesoffset,die,
+        &finaloffset,rangesbuf,listlen,
+        bytecount,error);
+    return res;
+}
+/*  New 10 September 2020 to accomodate the
+    GNU extension of DWARF4 split-dwarf.
+    The actual_offset field is set by the function
+    to the actual final offset of the ranges
+    in the separate tied (a.out) file. */
+int dwarf_get_ranges_b(Dwarf_Debug dbg,
+    Dwarf_Off rangesoffset,
+    Dwarf_Die die,
+    Dwarf_Off *actual_offset,
+    Dwarf_Ranges ** rangesbuf,
+    Dwarf_Signed * listlen,
+    Dwarf_Unsigned * bytecount,
+    Dwarf_Error * error)
+{
     Dwarf_Small *rangeptr = 0;
     Dwarf_Small *beginrangeptr = 0;
     Dwarf_Small *section_end = 0;
@@ -117,6 +143,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     Dwarf_Half die_version = 3; /* default for dwarf_get_ranges() */
     UNUSEDARG Dwarf_Half offset_size = 4;
     Dwarf_CU_Context cucontext = 0;
+    Dwarf_Bool rangeslocal = TRUE;
 
     if (!dbg) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -146,7 +173,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
             http://llvm.1065342.n5.nabble.com/DebugInfo\
             -DW-AT-GNU-ranges-base-in-non-fission-td64194.html
             */
-        /* ranges_base may be merged from tied context. */
+        /* ranges_base was merged from tied context. */
         ranges_base = cucontext->cc_ranges_base;
         address_size = cucontext->cc_address_size;
     }
@@ -157,6 +184,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         return res;
     } else if (res == DW_DLV_NO_ENTRY) {
+        /* data is in a.out, not dwp */
         localdbg = dbg->de_tied_data.td_tied_object;
         if (!localdbg) {
             return DW_DLV_NO_ENTRY;
@@ -169,6 +197,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         } else if (res == DW_DLV_NO_ENTRY) {
             return res;
         }
+        rangeslocal = FALSE;
     }
 
     /*  Be safe in case adding rangesoffset and rangebase
@@ -193,8 +222,8 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    if ((rangesoffset +ranges_base) >=
-        localdbg->de_debug_ranges.dss_size) {
+    if (!rangeslocal && ((rangesoffset +ranges_base) >=
+        localdbg->de_debug_ranges.dss_size)) {
         dwarfstring m;
 
         dwarfstring_constructor(&m);
@@ -215,8 +244,13 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     /*  tied address_size must match the dwo address_size */
     section_end = localdbg->de_debug_ranges.dss_data +
         localdbg->de_debug_ranges.dss_size;
-    rangeptr = localdbg->de_debug_ranges.dss_data +
-        rangesoffset + ranges_base;
+    rangeptr = localdbg->de_debug_ranges.dss_data;
+    if (!rangeslocal) {
+        /* printing ranges where range source is dwp,
+            here we just assume present. */
+        rangesoffset += ranges_base;
+    }
+    rangeptr += rangesoffset;
     beginrangeptr = rangeptr;
 
     for (;;) {
@@ -313,6 +347,9 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     free_allocated_ranges(base);
     base = 0;
     /* Callers will often not care about the bytes used. */
+    if (actual_offset) {
+        *actual_offset = rangesoffset;
+    }
     if (bytecount) {
         *bytecount = rangeptr - beginrangeptr;
     }
