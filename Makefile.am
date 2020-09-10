@@ -81,7 +81,7 @@ scripts/GETTOTOP \
 scripts/libbuild.sh \
 scripts/REBLDLIBDWARF \
 scripts/RUNPY \
-scripts/SETUP_MASTER_TREE \
+scripts/SETUP_GZ_TREE \
 scripts/UPDATEDWARFDUMPVERSION.sh \
 scripts/UPD.awk \
 tsearch/ChangeLog \
