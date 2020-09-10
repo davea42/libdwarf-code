@@ -1072,9 +1072,9 @@ process_one_file(int fd, int tiedfd,
             return dres;
         }
         if (dres == DW_DLV_ERROR) {
-            /*  Prints error, cleans up Dwarf_Error data. 
+            /*  Prints error, cleans up Dwarf_Error data.
                 Never returns*/
-            print_error(dbg, 
+            print_error(dbg,
                 "dwarf_elf_init on tied_file",
                 dres, onef_err);
         }
@@ -1736,7 +1736,7 @@ print_error(Dwarf_Debug dbg,
     if (dwarf_ret_val == DW_DLV_ERROR) {
         Dwarf_Error ignored_err = 0;
         /*  If dbg was never initialized
-            this still cleans up the Error data. */ 
+            this still cleans up the Error data. */
         DROP_ERROR_INSTANCE(dbg,dwarf_ret_val,lerr);
         dwarf_finish(dbg, &ignored_err);
         check_for_major_errors();

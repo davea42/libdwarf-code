@@ -1230,7 +1230,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 dwarfstring_destructor(&m);
                 regs.lr_line = 0;
                 _dwarf_free_chain_entries(dbg,head_chain,
-                        line_count);
+                    line_count);
                 if(curr_line) {
                     dwarf_dealloc(dbg,curr_line,DW_DLA_LINE);
                     curr_line = 0;

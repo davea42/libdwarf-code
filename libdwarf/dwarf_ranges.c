@@ -86,7 +86,6 @@ read_unaligned_addr_check(Dwarf_Debug dbg,
     incremented by data from the executable in
     the compilation unit with the same dwo_id.
 
-   
     We return an error which is on the incoming dbg, not
     the possibly-tied-dbg localdbg.
     If incoming die is NULL there is no context, so do not look
@@ -165,10 +164,10 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,
             &localerror);
         if (res == DW_DLV_ERROR) {
-           _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
-           return res;
+            _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
+            return res;
         } else if (res == DW_DLV_NO_ENTRY) {
-           return res;
+            return res;
         }
     }
 

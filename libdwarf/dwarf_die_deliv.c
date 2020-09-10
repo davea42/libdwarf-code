@@ -1410,7 +1410,7 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
                 contribution which is not the same
                 as the table offset. */
             res = _dwarf_find_offsets_via_fission(dbg,
-               cu_context,error); 
+                cu_context,error);
         }
     }
     return DW_DLV_OK;

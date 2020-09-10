@@ -966,7 +966,7 @@ _dwarf_look_in_local_and_tied_by_index(
     if (res2 != DW_DLV_OK) {
         if (res2 == DW_DLV_ERROR &&
             error &&
-            dwarf_errno(*error) == 
+            dwarf_errno(*error) ==
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
             && dbg->de_tied_data.td_tied_object) {
             int res3 = 0;

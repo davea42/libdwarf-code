@@ -1600,39 +1600,40 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         cu_context->cc_length_size;
     baseoffset = cu_context->cc_str_offsets_base;
     if (!baseoffset) {
-       if (cu_context->cc_version_stamp ==  DW_CU_VERSION5 ) {
-           /*  A base offset of 0 isnormally never correct for
-               DWARF5. but some early GNU compilers emitted
-               DWARF4 .debug_str_offsets, so lets check
-               the first table.  */
-           Dwarf_Small * ststart = dbg->de_debug_str_offsets.dss_data;
-           Dwarf_Small * stend = 0;
-           Dwarf_Unsigned  stsize = 
-              dbg->de_debug_str_offsets.dss_size;
-           Dwarf_Unsigned length            = 0;
-           Dwarf_Half local_offset_size = 0;
-           Dwarf_Half local_extension_size = 0;
-           Dwarf_Half version               = 0;
-           Dwarf_Half padding               = 0;
+        if (cu_context->cc_version_stamp ==  DW_CU_VERSION5 ) {
+            /*  A base offset of 0 isnormally never correct for
+                DWARF5. but some early GNU compilers emitted
+                DWARF4 .debug_str_offsets, so lets check
+                the first table.  */
+            Dwarf_Small * ststart =
+                dbg->de_debug_str_offsets.dss_data;
+            Dwarf_Small * stend = 0;
+            Dwarf_Unsigned  stsize =
+                dbg->de_debug_str_offsets.dss_size;
+            Dwarf_Unsigned length            = 0;
+            Dwarf_Half local_offset_size = 0;
+            Dwarf_Half local_extension_size = 0;
+            Dwarf_Half version               = 0;
+            Dwarf_Half padding               = 0;
 
-           stend = ststart + stsize;
-           res = _dwarf_trial_read_dwarf_five_hdr(dbg,
-               ststart,stsize,stend,
-               &length, &local_offset_size,
-               &local_extension_size,
-               &version,
-               &padding,
-               error);
-           if (res == DW_DLV_OK) {
-               baseoffset = local_extension_size +
-                  local_offset_size +
-                  2*DWARF_HALF_SIZE;
-           } else {
-               if (res == DW_DLV_ERROR) {
-                  dwarf_dealloc_error(dbg,*error);
-                  *error = 0;
-               }
-           }
+            stend = ststart + stsize;
+            res = _dwarf_trial_read_dwarf_five_hdr(dbg,
+                ststart,stsize,stend,
+                &length, &local_offset_size,
+                &local_extension_size,
+                &version,
+                &padding,
+                error);
+            if (res == DW_DLV_OK) {
+                baseoffset = local_extension_size +
+                    local_offset_size +
+                    2*DWARF_HALF_SIZE;
+            } else {
+                if (res == DW_DLV_ERROR) {
+                    dwarf_dealloc_error(dbg,*error);
+                    *error = 0;
+                }
+            }
         }
     }
     offsetintable = baseoffset +indexoffset;

@@ -1,3 +1,5 @@
+2020-09-10: David Anderson
+    * dwarfdump.c: Remove trailing whitespace.
 2020-09-08: David Anderson
     * dwarfdump.c: Now cleans up terminating DW_DLV_ERROR
       allocation even when the object cannot finish dwarf_init*().

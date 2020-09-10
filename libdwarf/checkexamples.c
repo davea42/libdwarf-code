@@ -2003,4 +2003,3 @@ exampleinitfail(const char *path,
         }
     }
 }
-

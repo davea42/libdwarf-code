@@ -1,3 +1,8 @@
+2020-09-10
+    * checkexamples.c,dwarf_die_deliv.c,dwarf_form.c,
+      dwarf_line_table_reader_common.h,dwarf_query.c,
+      dwarf_ranges.c,dwarf_str_offset.c,dwarf_tied.c:
+      Remove trailing whitespace. Fix indentation.
 2020-09-09
     * dwarf_alloc.c: dwarf_dealloc_error(dbg,error)
       and dwarf_dealloc(dbg,error,DW_DLA_ERROR)

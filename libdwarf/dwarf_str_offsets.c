@@ -204,8 +204,8 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     Dwarf_Half *padding_out,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned length = 0; /* length following the 
-       local_offset_size + local_extension_size */
+    Dwarf_Unsigned length = 0; /* length following the
+        local_offset_size + local_extension_size */
     Dwarf_Unsigned local_offset_size = 0;
     Dwarf_Unsigned local_extension_size = 0;
     Dwarf_Half version = 0;
@@ -246,7 +246,7 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
-         
+
     }
     if (length > secsize  ||
         secsize <
@@ -296,7 +296,7 @@ _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     READ_UNALIGNED_CK(dbg, padding, Dwarf_Half,
         table_start_ptr, DWARF_HALF_SIZE,
         error,secendptr);
-    /*  padding should be zero, but we are 
+    /*  padding should be zero, but we are
         not checking it here at present. */
     *length_out = length;
     *local_offset_size_out = local_offset_size;
@@ -370,14 +370,14 @@ _dwarf_read_str_offsets_header(Dwarf_Debug dbg,
         length = secsize;
         /*  This is likely
             GNU Dwarf4 extension .debug_str_offsets,
-            and offset size is not going to be 8 
+            and offset size is not going to be 8
             de_length_size is most likely a guess
             and not set properly at this point */
         local_offset_size = 4;
         local_extension_size = 0;
         version = DW_STR_OFFSETS_VERSION4;
         padding = 0;
-    } 
+    }
 
     if (length_out) {
         *length_out = length;
@@ -453,7 +453,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             return DW_DLV_NO_ENTRY;
         } else {
             /* bogus table offset. */
-            ptrdiff_t len = 
+            ptrdiff_t len =
                 sot->so_section_end_ptr - table_header_ptr;
             dwarfstring m;
 
@@ -513,7 +513,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     if (version == DW_STR_OFFSETS_VERSION5) {
         array_start_ptr = table_header_ptr + header_length;
         array_start_offset = table_header_offset +header_length;
-        table_end_ptr = table_header_ptr + 
+        table_end_ptr = table_header_ptr +
             local_length_size +local_extension_size +
             length;
         table_end_offset = table_header_offset +
@@ -522,9 +522,9 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     } else {
         array_start_ptr = table_header_ptr;
         array_start_offset = table_header_offset;
-        table_end_ptr = table_header_ptr + 
+        table_end_ptr = table_header_ptr +
             sot->so_section_size;
-        table_end_offset = table_header_offset + 
+        table_end_offset = table_header_offset +
             sot->so_section_size;
     }
     /*  So now table_start_ptr points to a table of local_length_size
@@ -599,7 +599,7 @@ static const char *keylist[2] = {
 "cu",
 "tu"
 };
-/*  ASSERT: The context has a signature. 
+/*  ASSERT: The context has a signature.
     ASSERT: cc_str_offsets_base_present FALSE
     ASSERT: cc_str_offsets_header_length_present  FALSE
     If .debug_cu_index or
@@ -633,9 +633,9 @@ _dwarf_find_offsets_via_fission(Dwarf_Debug dbg,
 
         memset(&fission_data,0,sizeof(fission_data));
         fdres = dwarf_get_debugfission_for_key(dbg,
-           &cu_context->cc_signature,
-           keylist[si],
-           fsd,error); 
+            &cu_context->cc_signature,
+            keylist[si],
+            fsd,error);
         if (fdres == DW_DLV_NO_ENTRY) {
             continue;
         }
@@ -663,7 +663,7 @@ _dwarf_find_offsets_via_fission(Dwarf_Debug dbg,
             /*  Something is badly wrong. Ignore it here. */
             continue;
         }
-   
+
         {
         Dwarf_Unsigned length = 0;
         Dwarf_Half     offset_size = 0;
@@ -700,4 +700,3 @@ _dwarf_find_offsets_via_fission(Dwarf_Debug dbg,
     }
     return DW_DLV_NO_ENTRY;
 }
-

@@ -197,15 +197,15 @@ _dwarf_loop_reading_debug_info_for_cu(
                 /* FAILED might be out of memory.*/
                 return DW_DLV_NO_ENTRY;
             } else {
-                struct Dwarf_Tied_Data_s * retent = 
+                struct Dwarf_Tied_Data_s * retent =
                     *(struct Dwarf_Tied_Data_s**) retval;
                 if (retent == entry) {
-                   /*  we added a record. */
+                    /*  we added a record. */
                     return DW_DLV_OK;
                 } else {
-                   /*  found existing, no add */
-                   free(entry);
-                   return DW_DLV_OK;
+                    /*  found existing, no add */
+                    free(entry);
+                    return DW_DLV_OK;
                 }
             }
         }

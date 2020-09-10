@@ -280,7 +280,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
             "as %u but only values "
             " 1 through 8 (DW_SECT_RNGLISTS) are valid.",
             num_secs);
-        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR, 
+        _dwarf_error_string(dbg,error,DW_DLE_XU_NAME_COL_ERROR,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
