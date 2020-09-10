@@ -324,7 +324,7 @@ int
 dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 {
     if(!dbg) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
+        return DW_DLV_OK;
     }
     if (dbg->de_obj_file) {
         /*  The initial character of a valid

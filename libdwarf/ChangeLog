@@ -1,3 +1,21 @@
+2020-09-09
+    * dwarf_alloc.c: dwarf_dealloc_error(dbg,error)
+      and dwarf_dealloc(dbg,error,DW_DLA_ERROR)
+      should now be called with a null dbg if
+      the failing libdwarf was one of the dwarf_init*()
+      or dwarf_elf_init*() functions and the storage
+      in the error will be freed.
+      See libdwarf2.1.pdf rev 3.08 or later for
+      details.
+      With DEBUG set additional allocation details are
+      revealed.
+    * dwarf_error.c: Repair a comparison with NULL.
+    * dwarf_finish.c(dwarf_finish): Simplify the !dbg test.
+    * dwarf_ranges.c: Remove dead code.
+    * libdwarf2.1.mm: Version 3.08. The Table of
+      Contents points to returns from dwarf_init*
+      calls (around page 28) now.
+    * libdwarf2.1.pdf: Generated Version 3.08.
 2020-09-08
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version

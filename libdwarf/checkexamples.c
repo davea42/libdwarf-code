@@ -1952,3 +1952,55 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
     loclist_head = 0;
     return;
 }
+void
+exampleinitfail(const char *path,
+    char *true_pathbuf,
+    unsigned tpathlen,
+    unsigned access,
+    unsigned groupnumber)
+{
+    Dwarf_Handler errhand = 0;
+    Dwarf_Ptr errarg = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Debug dbg = 0;
+    const char *reserved1 = 0;
+    Dwarf_Unsigned reserved2 = 0;
+    Dwarf_Unsigned reserved3 = 0;
+    int res = 0;
+
+    res = dwarf_init_path(path,true_pathbuf,
+        tpathlen,access,groupnumber,errhand,
+        errarg,&dbg,reserved1,reserved2,
+        &reserved3,
+        &error);
+    /*  Preferred version */
+    if (res == DW_DLV_ERROR) {
+        /* Valid call even though dbg is null! */
+        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+        /*  Simpler newer form shown in
+            this comment, but use the
+            older form above for compatibility
+            with older libdwarf.
+            dwarf_dealloc_error(dbg,error);
+            With libdwarf before September 2020
+            these dealloc calls will leave
+            a few bytes allocated.
+        */
+        return;
+    }
+    /*  Horrible messy alternative, best effort
+        if dwarf_package_version exists
+        (function created in October 2019
+        package version 20191106). */
+    if (res == DW_DLV_ERROR) {
+        const char *ver = dwarf_package_version();
+        int cmpres = 0;
+        cmpres = strcmp(ver,"20200822");
+        if (cmpres > 0) {
+            dwarf_dealloc_error(dbg,error);
+        } else {
+            free(error);
+        }
+    }
+}
+

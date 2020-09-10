@@ -146,7 +146,7 @@ printf("libdwarfdetector ALLOC creating error string %s errval %ld errptr 0x%lx 
         return;
     }
 
-    if (dbg != NULL && dbg->de_errhand != NULL) {
+    if (dbg  && dbg->de_errhand != NULL) {
         errptr = (Dwarf_Error) _dwarf_get_alloc(dbg, DW_DLA_ERROR, 1);
         if (errptr == NULL) {
             errptr = &_dwarf_failsafe_error;

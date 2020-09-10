@@ -175,23 +175,8 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     /*  Be safe in case adding rangesoffset and rangebase
         overflows. */
     if (rangesoffset  >= localdbg->de_debug_ranges.dss_size) {
+        /* Documented behavior in libdwarf2.1.mm */
         return DW_DLV_NO_ENTRY;
-    }
-    if (rangesoffset  > localdbg->de_debug_ranges.dss_size) {
-        dwarfstring m;
-
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_DEBUG_RANGES_OFFSET_BAD: "
-            " rangesoffset is 0x%lx ",rangesoffset);
-        dwarfstring_append_printf_u(&m,
-            " and section size is 0x%lx.",
-            localdbg->de_debug_ranges.dss_size);
-        _dwarf_error_string(dbg, error,
-            DW_DLE_DEBUG_RANGES_OFFSET_BAD,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
     }
     if (ranges_base >= localdbg->de_debug_ranges.dss_size) {
         dwarfstring m;

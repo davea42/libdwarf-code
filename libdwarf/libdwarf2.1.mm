@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.07, 21 August 2020
+.ds vE Rev 3.08, 9 September 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -221,6 +221,18 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+All the 
+dwarf_init*() and
+dwarf_elf_init*() calls 
+have always been able to return
+DW_DLV_ERROR with a Dwarf_Error
+pointer returned too.
+We now update the advice on
+dealing with this situation,
+unifying with the rest of
+libdwarf errors.
+(September 9, 2020)
 .P
 The documentation of dwarf_init_path()
 was basically correct but omitted
@@ -614,6 +626,12 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "September 2020"
+A new approach (simpler, more uniform)
+to deal with a failure of a dwarf_init*()
+or dwarf_elf_init*() call is described in 
+Chapter 4.
+Improved support for split dwarf.
 .LI "May 2020"
 Adding support for DWARF5
 sections .debug_rnglists and .debug_loclists.
@@ -1984,27 +2002,6 @@ void exampledeallocdie(Dwarf_Die somedie)
 .DE
 .in -2
 
-.H 3 "dwarf_dealloc_error()"
-The second prototype is only to dealloc a Dwarf_Error.
-These arise when some libdwarf call returns DW_DLV_ERROR.
-Any call to this is typechecked.
-.P
-.DS
-\f(CWvoid dwarf_dealloc_error(Dwarf_Debug dbg,
-    Dwarf_Die mydie);\fP
-.DE
-
-.in +2
-.DS
-.FG "Example_dwarf_dealloc_error()"
-\f(CW
-void exampledeallocerror(Dwarf_Debug dbg,Dwarf_Error err)
-{
-      dwarf_dealloc_error(dbg,err);'
-}
-\fP
-.DE
-.in -2
 
 .H 3 "dwarf_dealloc_attribute()"
 The second prototype is only to dealloc a Dwarf_Attribute.
@@ -2029,10 +2026,33 @@ void exampledeallocerror(Dwarf_Attribute attr)
 .DE
 .in -2
 
+.H 3 "dwarf_dealloc_error()"
+The second prototype is only to dealloc a Dwarf_Error.
+These arise when some libdwarf call returns DW_DLV_ERROR.
+Any call to this is typechecked.
+.P
+.DS
+\f(CWvoid dwarf_dealloc_error(Dwarf_Debug dbg,
+    Dwarf_Die mydie);\fP
+.DE
 
-
+.in +2
+.DS
+.FG "Example_dwarf_dealloc_error()"
+\f(CW
+void exampledeallocerror(Dwarf_Debug dbg,Dwarf_Error err)
+{
+      dwarf_dealloc_error(dbg,err);'
+}
+\fP
+.DE
+.in -2
 
 .P
+See also 
+\f(CWErrors Returned from dwarf_init* calls\fP
+(below).
+
 In some cases the pointers returned by a
 \fIlibdwarf\fP call are pointers to data which is
 not freeable.
@@ -2044,7 +2064,7 @@ So it is vital
 that \f(CWdwarf_dealloc()\fP be called with the
 proper allocation type.
 .P
-For most storage allocated by \fIlibdwarf\fP, the
+For all storage allocated by \fIlibdwarf\fP, the
 client can free the storage for reuse by calling
 \f(CWdwarf_dealloc()\fP, providing it with the
 \f(CWDwarf_Debug\fP descriptor specifying the
@@ -2063,12 +2083,16 @@ by a call to \f(CWdwarf_siblingof()\fP, the call to
     \f(CWdwarf_dealloc_die(die);\fP
 .DE
 
-To free storage allocated in the form of a list of pointers (opaque
-descriptors), each member of the list should be deallocated, followed
-by deallocation of the actual list itself.  The following code fragment
+To free storage allocated in the
+form of a list of pointers (opaque
+descriptors), each member of the
+list should be deallocated, followed
+by deallocation of the actual list itself.  
+The following code fragment
 uses an invocation of
 \f(CWdwarf_attrlist()\fP as an example to illustrate
-a technique that can be used to free storage from any \fIlibdwarf\fP
+a technique that can be used to free storage
+from any \fIlibdwarf\fP
 routine that returns a list:
 .in +2
 .DS
@@ -2098,28 +2122,121 @@ void example1(Dwarf_Debug dbg,Dwarf_Die somedie)
 .DE
 .in -2
 
-The \f(CWDwarf_Debug\fP returned from \f(CWdwarf_init_b()\fP
-or \f(CWdwarf_elf_init_b()\fP
-cannot be freed using \f(CWdwarf_dealloc()\fP.
-The function
-\f(CWdwarf_finish()\fP will deallocate all dynamic storage
+\f(CWdwarf_finish()\fP
+will deallocate all dynamic storage
 associated with an instance of a
-\f(CWDwarf_Debug\fP type.  In particular,
-it will deallocate all dynamically allocated space associated with the
-\f(CWDwarf_Debug\fP descriptor, and finally make the descriptor invalid.
+\f(CWDwarf_Debug\fP type.
+In particular,
+it will deallocate all
+dynamically allocated space associated with the
+\f(CWDwarf_Debug\fP
+descriptor, and finally make the descriptor invalid.
 
-An \f(CWDwarf_Error\fP returned from \f(CWdwarf_init_b()\fP
-or \f(CWdwarf_elf_init_b()\fP
-in case of a failure cannot be freed
-using \f(CWdwarf_dealloc()\fP.
-The only way to free the \f(CWDwarf_Error\fP from either of those
-calls is to use \f2free(3)\fP directly.
-Every \f(CWDwarf_Error\fP must be freed
-by \f(CWdwarf_dealloc()\fP except those
-returned by \f(CWdwarf_init_b()\fP
-or \f(CWdwarf_elf_init_b()\fP.
-
+.H 3 "Errors Returned from dwarf_init* calls"
+These errors are almost always due to
+fuzzing objects, injecting random
+values into objects. Rarely seen in any
+valid object file.
+See "https://en.wikipedia.org/wiki/Fuzzing"
 .P
+A 
+\f(CWDwarf_Error\fP returned from 
+any
+\f(CWdwarf_init*()\fP
+or \f(CWdwarf_elf_init*()\fP
+should be dealt with
+like any other error.
+We start with an example of
+how to deal with this class of errors.
+See just below the example for a further discussion.
+
+.in +2
+.DS
+void exampleinitfail(const char *path,
+    char *true_pathbuf,
+    unsigned tpathlen,
+    unsigned access,
+    unsigned groupnumber)
+{
+    Dwarf_Handler errhand = 0;
+    Dwarf_Ptr errarg = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Debug dbg = 0;
+    const char *reserved1 = 0;
+    Dwarf_Unsigned reserved2 = 0;
+    Dwarf_Unsigned reserved3 = 0;
+    int res = 0;
+
+    res = dwarf_init_path(path,true_pathbuf,
+        tpathlen,access,groupnumber,errhand,
+        errarg,&dbg,reserved1,reserved2,
+        &reserved3,
+        &error);
+    /*  Preferred version */
+    if (res == DW_DLV_ERROR) {
+        /* Valid call even though dbg is null! */
+        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+        /*  Simpler newer form in
+            this comment, but use the
+            older form above for compatibility
+            with older libdwarf.
+            dwarf_dealloc_error(dbg,error);
+            With libdwarf before September 2020
+            these dealloc calls will leave
+            a few bytes allocated.
+        */
+        /*  The orginal recommendation to call
+            free(error) in this case is still
+            valid though it will not necessarily
+            free every byte allocated with
+            September 2020 and later libdwarf. */ 
+    }
+    /*  Horrible messy alternative, best effort
+        if dwarf_package_version exists
+        (function created in October 2019
+        package version 20191106). */
+    if (res == DW_DLV_ERROR) {
+        const char *ver = dwarf_package_version();
+        int cmpres = 0;
+        cmpres = strcmp(ver,"20200822");
+        if (cmpres > 0) {
+            dwarf_dealloc_error(dbg,error);
+        } else {
+            free(error);
+        }
+    }
+}
+.DE
+.in -2
+
+.P 
+If your application needs to be absolutely
+sure not even
+a single byte leaks
+from a failed libdwarf init function call
+the only sure approach is to ensure you use
+a September 2020 (version 20200908) or later libdwarf.
+Versions between 20191104 and 20200908
+have no available function that will
+guarantee freeing these last few bytes.
+.P
+If your application does not care if
+a failed libdwarf init function leaks a few
+bytes then the September 2020 advice
+of calling dwarf_dealloc(dbg,error,DW_DLA_ERROR)
+is best, as though leaks a few bytes
+with libdwarf before September 2020.
+.P
+If your application is using 20191104 or earlier
+libdwarf  the choice of free(error)
+will avoid a leak from a failed
+dwarf init call, though changing
+to a more recent libdwarf
+will then make a few bytes leak quite
+possible until the application is changed
+to use the dwarf_dealloc call.
+
+.H 3 "Error DW_DLA error free types"
 The codes that identify the storage pointed to in calls to
 .nr aX \n(Fg+1
 \f(CWdwarf_dealloc()\fP are described in figure \n(aX.
@@ -2142,7 +2259,7 @@ DW_DLA_LINE             :     Dwarf_Line
 DW_DLA_ATTR             :     Dwarf_Attribute
 DW_DLA_TYPE             :     Dwarf_Type  (not used)
 DW_DLA_SUBSCR           :     Dwarf_Subscr (not used)
-DW_DLA_GLOBAL_CONTEXT   :     Dwarf_Global
+DW_DLA_GLOBAL           :     Dwarf_Global
 DW_DLA_ERROR            :     Dwarf_Error
 DW_DLA_LIST             :     a list of opaque descriptors
 DW_DLA_LINEBUF          :     Dwarf_Line* (not used)
@@ -2153,11 +2270,23 @@ DW_DLA_CIE              :     Dwarf_Cie
 DW_DLA_FDE              :     Dwarf_Fde
 DW_DLA_LOC_BLOCK        :     Dwarf_Loc Block
 DW_DLA_FRAME_BLOCK      :     Dwarf_Frame Block (not used)
-DW_DLA_FUNC_CONTEXT     :     Dwarf_Func
-DW_DLA_TYPENAME_CONTEXT :     Dwarf_Type
-DW_DLA_VAR_CONTEXT      :     Dwarf_Var
-DW_DLA_WEAK_CONTEXT     :     Dwarf_Weak
-DW_DLA_PUBTYPES_CONTEXT :     Dwarf_Type
+DW_DLA_FUNC             :     Dwarf_Func
+DW_DLA_TYPENAME         :     Dwarf_Type
+DW_DLA_VAR              :     Dwarf_Var
+DW_DLA_WEAK             :     Dwarf_Weak
+DW_DLA_ADDR             :     Dwarf_Addr
+DW_DLA_RANGES           :     Dwarf_Ranges
+DW_DLA_GNU_INDEX_HEAD   :     .debug_gnu_type/pubnames 
+DW_DLA_RNGLISTS_HEAD    :     .debug_rnglists
+DW_DLA_DGBINDEX         :     Dwarf_Gdbindex
+DW_DLA_XU_INDEX         :     Dwarf_Xu_Index_Header
+DW_DLA_LOC_BLOCK_C      :     Dwarf_Loc_c
+DW_DLA_LOCDESC_C        :     Dwarf_Locdesc_c
+DW_DLA_LOC_HEAD_C       :     Dwarf_Loc_Head_c
+DW_DLA_MACRO_CONTEXT    :     Dwarf_Macro_Context
+DW_DLA_DSC_HEAD         :     Dwarf_Dsc_Head
+DW_DLA_DNAMES_HEAD      :     Dwarf_Dnames_Head
+DW_DLA_STR_OFFSETS      :     Dwarf_Str_Offsets_Table
 .TE
 .FG "Allocation/Deallocation Identifiers"
 .DE
@@ -13772,9 +13901,12 @@ a \f(CWDW_AT_ranges\fP attribute of a Debugging Information Entry.
 
 The
 \f(CWdie\fP argument should be the value of
-a \f(CWDwarf_Die\fP pointer of a \f(CWDwarf_Die\fP with
+a 
+\f(CWDwarf_Die\fP pointer of a
+\f(CWDwarf_Die\fP with
 the attribute containing
-this range set offset.  Because each compilation unit
+this range set offset.  
+Because each compilation unit
 has its own address_size field this argument is necessary to
 to correctly read ranges. (Most executables have the
 same address_size in every compilation unit, but
@@ -13785,19 +13917,27 @@ a single address_size is appropriate for all ranges records.
 The call sets
 \f(CW*ranges\fP to point to a block of \f(CWDwarf_Ranges\fP
 structs, one for each address range.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It returns \f(CWDW_DLV_NO_ENTRY\fP if there is no  \f(CW.debug_ranges\fP
-section or if \f(CWoffset\fP is past the end of the
+It returns 
+\f(CWDW_DLV_ERROR\fP on error.
+It returns 
+\f(CWDW_DLV_NO_ENTRY\fP if there is no
+\f(CW.debug_ranges\fP
+section or if 
+\f(CWoffset\fP is past the end of the
 \f(CW.debug_ranges\fP section.
 
-If the \f(CW*returned_byte_count\fP pointer is passed as non-NULL
+If the 
+\f(CW*returned_byte_count\fP pointer is passed as non-NULL
 the number of bytes that the returned ranges
 were taken from is returned through the pointer
-(for example if the returned_ranges_count is 2 and the pointer-size
+(for example if the returned_ranges_count is 2 
+and the pointer-size
 is 4, then returned_byte_count will be 8).
-If the \f(CW*returned_byte_count\fP pointer is passed as NULL
+If the 
+\f(CW*returned_byte_count\fP pointer is passed as NULL
 the parameter is ignored.
-The \f(CW*returned_byte_count\fP is only of use to certain
+The 
+\f(CW*returned_byte_count\fP is only of use to certain
 dumper applications, most applications will not use it.
 
 
