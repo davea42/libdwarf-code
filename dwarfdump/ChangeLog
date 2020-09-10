@@ -1,4 +1,12 @@
 2020-09-10: David Anderson
+    * esb_using_functions.h: Adding new argument to 
+      the print_ranges_list_to_extra() prototype.
+    * print_die.c: Using that new argument to
+      pass the true offset to the printing code.
+    * print_ranges.c: Updated the printing to make it clearer
+      it clearer the .debug_ranges offset is using
+      a base address (when there is one).
+2020-09-10: David Anderson
     * dwarfdump.c: Remove trailing whitespace.
 2020-09-08: David Anderson
     * dwarfdump.c: Now cleans up terminating DW_DLV_ERROR

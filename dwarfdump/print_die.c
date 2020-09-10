@@ -2254,7 +2254,8 @@ get_rangelist_type_descr(Dwarf_Ranges *r)
     Always returns DW_DLV_OK.  */
 int
 print_ranges_list_to_extra(Dwarf_Debug dbg,
-    Dwarf_Unsigned off,
+    Dwarf_Unsigned originaloff,
+    Dwarf_Unsigned finaloff,
     Dwarf_Ranges *rangeset,
     Dwarf_Signed rangecount,
     Dwarf_Unsigned bytecount,
@@ -2271,19 +2272,44 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         &truename,FALSE);
     sec_name = esb_get_string(&truename);
     if (glflags.dense) {
-        esb_append_printf_i(stringbuf,"< ranges: %" DW_PR_DSd,rangecount);
+        esb_append_printf_i(stringbuf,"< ranges: %"
+            DW_PR_DSd,rangecount);
         esb_append_printf_s(stringbuf," ranges at %s" ,
             sanitized(sec_name));
-        esb_append_printf_u(stringbuf," offset %" DW_PR_DUu ,off);
-        esb_append_printf_u(stringbuf," (0x%" DW_PR_XZEROS DW_PR_DUx,off);
-        esb_append_printf_u(stringbuf,") " "(%" DW_PR_DUu " bytes)>",bytecount);
+        if (originaloff == finaloff) {
+            esb_append_printf_u(stringbuf," offset %" DW_PR_DUu ,
+                finaloff);
+        } else {
+            esb_append_printf_u(stringbuf,
+                " offset with non-zero ranges base %" DW_PR_DUu ,
+                finaloff);
+        }
+        esb_append_printf_u(stringbuf," (0x%"
+            DW_PR_XZEROS DW_PR_DUx,
+            finaloff);
+        esb_append_printf_u(stringbuf,") " "(%" DW_PR_DUu
+            " bytes)>",
+            bytecount);
     } else {
-        esb_append_printf_i(stringbuf,"  ranges: %" DW_PR_DSd,rangecount);
+        esb_append_printf_i(stringbuf,"  ranges: %" DW_PR_DSd,
+            rangecount);
         esb_append_printf_s(stringbuf," at %s" ,
             sanitized(sec_name));
-        esb_append_printf_u(stringbuf," offset %" DW_PR_DUu ,off);
-        esb_append_printf_u(stringbuf," (0x%" DW_PR_XZEROS DW_PR_DUx,off);
-        esb_append_printf_u(stringbuf,") " "(%" DW_PR_DUu " bytes)\n",
+        if (originaloff == finaloff) {
+            esb_append_printf_u(stringbuf," offset %"
+                DW_PR_DUu ,
+                finaloff);
+        } else {
+            esb_append_printf_u(stringbuf,
+                " offset with non-zero ranges base %"
+                DW_PR_DUu ,
+                finaloff);
+        }
+        esb_append_printf_u(stringbuf," (0x%"
+            DW_PR_XZEROS DW_PR_DUx,
+            finaloff);
+        esb_append_printf_u(stringbuf,") " "(%" DW_PR_DUu
+            " bytes)\n",
             bytecount);
     }
     for (i = 0; i < rangecount; ++i) {
@@ -2292,12 +2318,15 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
         if (glflags.dense) {
             esb_append_printf_i(stringbuf,"<[%2" DW_PR_DSd,i);
             esb_append_printf_s(stringbuf,"] %s",type);
-            esb_append_printf_u(stringbuf," 0x%" DW_PR_XZEROS  DW_PR_DUx,r->dwr_addr1);
-            esb_append_printf_u(stringbuf," 0x%" DW_PR_XZEROS  DW_PR_DUx ">",r->dwr_addr2);
+            esb_append_printf_u(stringbuf," 0x%"
+                DW_PR_XZEROS  DW_PR_DUx,r->dwr_addr1);
+            esb_append_printf_u(stringbuf," 0x%"
+                DW_PR_XZEROS  DW_PR_DUx ">",r->dwr_addr2);
         } else {
             esb_append_printf_i(stringbuf,"   [%2" DW_PR_DSd,i);
             esb_append_printf_s(stringbuf,"] %-14s",type);
-            esb_append_printf_u(stringbuf," 0x%" DW_PR_XZEROS  DW_PR_DUx,
+            esb_append_printf_u(stringbuf," 0x%"
+                DW_PR_XZEROS  DW_PR_DUx,
                 r->dwr_addr1);
             esb_append_printf_u(stringbuf,
                 " 0x%" DW_PR_XZEROS  DW_PR_DUx "\n",r->dwr_addr2);
@@ -2743,16 +2772,27 @@ print_range_attribute(Dwarf_Debug dbg,
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
+        Dwarf_Unsigned realoffset = 0;
         /*  If this is a dwp the ranges will be
             missing or reported from a tied file.
             For now we add the ranges to dbg, not tiedbg
             as we do not mention tieddbg here.
-            May need a new interface. FIXME? */
-        int rres = dwarf_get_ranges_a(dbg,original_off,
+            May need a new interface. FIXME?
+            In the dwp case where the actual
+            section is in tied (ie, a.out)
+            the DW_AT_GNU_ranges_base
+            is used, not the original_off.
+            We really want to print the actual offset,
+            in that case, not original_off.
+            realoffset is that final actual section offset.
+            */
+        int rres = dwarf_get_ranges_b(dbg,original_off,
             die,
+            &realoffset,
             &rangeset,
             &rangecount,&bytecount,raerr);
         if (rres == DW_DLV_OK) {
+
             /* Ignore ranges inside a stripped function  */
             if (!glflags.gf_suppress_checking_on_dwp &&
                 glflags.gf_check_ranges &&
@@ -2776,13 +2816,14 @@ print_range_attribute(Dwarf_Debug dbg,
                 }
                 if (dores == DW_DLV_OK) {
                     record_range_array_info_entry(die_glb_offset,
-                        original_off);
+                        realoffset);
                 }
             }
             if (print_else_name_match) {
                 *append_extra_string = 1;
                 print_ranges_list_to_extra(dbg,
                     original_off,
+                    realoffset,
                     rangeset,rangecount,bytecount,
                     esb_extrap);
             }

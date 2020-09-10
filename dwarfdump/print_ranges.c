@@ -83,7 +83,7 @@ print_ranges(Dwarf_Debug dbg,
             char *val = 0;
             printf(" Ranges group %d:\n",group_number);
             esb_empty_string(&esb_string);
-            print_ranges_list_to_extra(dbg,off,
+            print_ranges_list_to_extra(dbg,off,off,
                 rangeset,rangecount,bytecount,
                 &esb_string);
             dwarf_ranges_dealloc(dbg,rangeset,rangecount);
@@ -125,6 +125,7 @@ check_ranges_list(Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Off die_off,
     Dwarf_Die cu_die,
     Dwarf_Unsigned original_off,
+    Dwarf_Unsigned finaloff,
     Dwarf_Ranges *rangeset,
     Dwarf_Signed rangecount,
     Dwarf_Unsigned bytecount,
@@ -228,6 +229,7 @@ check_ranges_list(Dwarf_Debug dbg,
 
         printf("\n");
         print_ranges_list_to_extra(dbg,original_off,
+            finaloff,
             rangeset,rangecount,bytecount,
             &rangesstr);
         printf("%s\n", sanitized(esb_get_string(&rangesstr)));
@@ -324,6 +326,7 @@ check_range_array_info(Dwarf_Debug dbg,Dwarf_Error * err)
             Load the ranges
             Check for any outside conditions */
         Dwarf_Off original_off = 0;
+        Dwarf_Off finaloffset = 0;
         Dwarf_Off die_off = 0;
         Dwarf_Unsigned index = 0;
         Dwarf_Die cu_die = 0;
@@ -358,11 +361,13 @@ check_range_array_info(Dwarf_Debug dbg,Dwarf_Error * err)
                 esb_destructor(&m);
                 return res;
             }
-            res = dwarf_get_ranges_a(dbg,original_off,cu_die,
+            res = dwarf_get_ranges_b(dbg,original_off,
+                cu_die,
+                &finaloffset,
                 &rangeset,&rangecount,&bytecount,err);
             if (res == DW_DLV_OK) {
                 res = check_ranges_list(dbg,die_off,
-                    cu_die,original_off,
+                    cu_die,original_off,finaloffset,
                     rangeset,rangecount,bytecount,err);
                 if (res != DW_DLV_OK) {
                     dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
