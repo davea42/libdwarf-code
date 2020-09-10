@@ -1045,6 +1045,7 @@ process_one_file(int fd, int tiedfd,
         return dres;
     }
     if (dres == DW_DLV_ERROR) {
+        /* Prints error, cleans up Dwarf_Error data. Never returns*/
         print_error(dbg, title, dres, onef_err);
     }
 
@@ -1070,13 +1071,19 @@ process_one_file(int fd, int tiedfd,
                 tied_file_name);
             return dres;
         }
-        if (dres != DW_DLV_OK) {
-            print_error(dbg, "dwarf_elf_init on tied_file",
-            dres, onef_err);
+        if (dres == DW_DLV_ERROR) {
+            /*  Prints error, cleans up Dwarf_Error data. 
+                Never returns*/
+            print_error(dbg, 
+                "dwarf_elf_init on tied_file",
+                dres, onef_err);
         }
         dres = dwarf_add_file_path(dbgtied,tied_file_name,&onef_err);
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "Unable to add tied file name "
+            /*  Prints error, cleans up Dwarf_Error data if
+                any.  Never returns */
+            print_error(dbg,
+                "Unable to add tied file name "
                 "to tied file",
                 dres, onef_err);
         }
@@ -1726,11 +1733,10 @@ print_error(Dwarf_Debug dbg,
 {
     print_error_maybe_continue(dbg,msg,dwarf_ret_val,lerr,FALSE);
     glflags.gf_count_major_errors++;
-    if (dbg) {
+    if (dwarf_ret_val == DW_DLV_ERROR) {
         Dwarf_Error ignored_err = 0;
-        /*  If dbg was never initialized dwarf_finish
-            can do nothing useful. There is no
-            global-state for libdwarf to clean up. */
+        /*  If dbg was never initialized
+            this still cleans up the Error data. */ 
         DROP_ERROR_INSTANCE(dbg,dwarf_ret_val,lerr);
         dwarf_finish(dbg, &ignored_err);
         check_for_major_errors();

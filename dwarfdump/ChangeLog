@@ -1,4 +1,8 @@
 2020-09-08: David Anderson
+    * dwarfdump.c: Now cleans up terminating DW_DLV_ERROR
+      allocation even when the object cannot finish dwarf_init*().
+      Fixes print_error() so it works right with dbg null.
+2020-09-08: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
 	  dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
 	  dwarfdump-tt-table.h: Regenerated with latest
