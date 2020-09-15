@@ -1,3 +1,24 @@
+2020-09-15
+    * dwarf_alloc.c: Added ifdef DEBUG
+      printf for cases it should exist.
+      #undef debug at the top guaranties it will not
+      be turned on by accident.
+    * dwarf_loc.c(_dwarf_read_loc_section): Was missing dbg
+      in a call to _dwarf_error. Corrupt object lead to leak.
+    * dwarf_die_deliv.c(_dwarf_make_CU_Context) was missing
+      a _dwarf_error call where one was required.
+      A corrupt object lead to memory leak.
+      And _dwarf_next_die_info_ptr was failing to 
+      initialize dbg from the passed in cu_context.
+      Also causing a memory leak on some corrupt objects.
+    * dwarf_peread.c(pe_section_name_get): Was failing
+      to check for a valid null-terminated
+      string in the string table.
+      A corrupted object could cause segmentation violation.
+    * dwarf_error.c (_dwarf_error_string): Added ifdef DEBUG
+      printf where they should have been all along.
+      #undef debug at the top guaranties it will not
+      be turned on by accident.
 2020-09-10
     * dwarf_die_deliv.c: Now handle DW_AT_GNU_ranges_base
       properly.

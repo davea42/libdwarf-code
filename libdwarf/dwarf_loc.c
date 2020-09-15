@@ -362,7 +362,7 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
 
     /* If it goes past end, error */
     if (exprblock_off > dbg->de_debug_loc.dss_size) {
-        _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
+        _dwarf_error(dbg, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
         return DW_DLV_ERROR;
     }
 
@@ -502,20 +502,24 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
     Dwarf_Half form = 0;
     int blkres = DW_DLV_ERROR;
 
+    /*  Creating an error with NULL dbg is not a good thing.
+        These won't be freed if we later call dealloc
+        with a non-NULL dbg.
+    */
     if (!attr) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (attr->ar_cu_context == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     *cucontext_ret = attr->ar_cu_context;
 
     dbg = attr->ar_cu_context->cc_dbg;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     *dbg_ret = dbg;
     blkres = dwarf_whatform(attr, &form, error);

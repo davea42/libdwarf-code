@@ -706,10 +706,12 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     }
     if (offset >= section_size) {
         local_dealloc_cu_context(dbg,cu_context);
+        _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
     if ((offset+4) > section_size) {
         local_dealloc_cu_context(dbg,cu_context);
+        _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
     section_end_ptr = dataptr+section_size;
@@ -1974,6 +1976,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     int lres = 0;
     Dwarf_Unsigned highest_code = 0;
 
+    dbg = cu_context->cc_dbg;
     info_ptr = die_info_ptr;
     DECODE_LEB128_UWORD_CK(info_ptr, utmp,dbg,error,die_info_end);
     abbrev_code = (Dwarf_Unsigned) utmp;
@@ -1982,7 +1985,6 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PTR_NULL);
         return DW_DLV_ERROR;
     }
-
 
     lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
         &abbrev_list,&highest_code,error);
@@ -2724,10 +2726,11 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             res = _dwarf_make_CU_Context(dbg, new_cu_offset,is_info,
                 &cu_context,error);
             if (res != DW_DLV_OK) {
-                local_dealloc_cu_context(dbg,cu_context);
                 return res;
             }
 
+            /*  The called func does not dealloc cu_context
+                in case of error, so we do it here. */
             res = finish_up_cu_context_from_cudie(dbg,new_cu_offset,
                 cu_context,error);
             if (res == DW_DLV_ERROR) {

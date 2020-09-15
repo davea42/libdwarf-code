@@ -655,7 +655,7 @@ dwarf_dealloc_die( Dwarf_Die die)
 
     if (!die) {
 #ifdef DEBUG
-        printf("DEALLOC does nothing, die NULL line %d %s\n",
+        printf("DEALLOC die does nothing, die NULL line %d %s\n",
             __LINE__,__FILE__);
         fflush(stdout);
 #endif
@@ -664,7 +664,7 @@ dwarf_dealloc_die( Dwarf_Die die)
     context = die->di_cu_context;
     if (!context) {
 #ifdef DEBUG
-        printf("DEALLOC does nothing, context NULL line %d %s\n",
+        printf("DEALLOC die does nothing, context NULL line %d %s\n",
             __LINE__,__FILE__);
         fflush(stdout);
 #endif
@@ -944,7 +944,9 @@ freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
     Dwarf_CU_Context nextcontext = 0;
     for (context = dis->de_cu_context_list;
         context; context = nextcontext) {
-        Dwarf_Hash_Table hash_table = context->cc_abbrev_hash_table;
+        Dwarf_Hash_Table hash_table = 0;
+
+        hash_table = context->cc_abbrev_hash_table;
         _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
         hash_table->tb_entries = 0;
         nextcontext = context->cc_next;

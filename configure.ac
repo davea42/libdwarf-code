@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20200908])])
+m4_define([v_date], [20200915])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -522,14 +522,14 @@ AS_IF(
     [test "x${enable_sanitize}" = "xyes"],
     [
      CFLAGS_save=${CFLAGS}
-     CFLAGS="${CFLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined"
+     CFLAGS="${CFLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -fno-omit-frame-pointer"
      DWARF_CFLAGS=
      AC_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([[]], [[]])],
          [
           enable_sanitize="yes"
-          DWARF_CFLAGS="$DWARF_CFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined"
-          LDFLAGS="$LDFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined"
+          DWARF_CFLAGS="$DWARF_CFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined -fno-omit-frame-pointer"
+          LDFLAGS="$LDFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined -fno-omit-frame-pointer"
          ],
          [enable_sanitize="no"])
      CFLAGS="${CFLAGS_save} ${DWARF_CFLAGS}" 

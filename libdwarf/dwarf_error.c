@@ -40,6 +40,8 @@
 #include "dwarfstring.h"
 #include "dwarf_error.h"
 
+#undef DEBUG
+
 /* Array to hold string representation of errors. Any time a
    define is added to the list in libdwarf.h, a string should be
    added to this Array
@@ -124,8 +126,24 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
             if (!errptr) {
                 errptr = &_dwarf_failsafe_error;
                 errptr->er_static_alloc = DE_STATIC;
+#ifdef DEBUG
+                printf("libdwarfdetector no dbg, "
+                    "using DE_STATIC alloc, addr"
+                    " 0x%lx line %d %s\n",
+                    (unsigned long)errptr,
+                    __LINE__,__FILE__);
+#endif /* DEBUG */
+
+
             } else {
                 errptr->er_static_alloc = DE_MALLOC;
+#ifdef DEBUG
+                printf("libdwarfdetector no dbg, "
+                    "static DE_MALLOC alloc, addr"
+                    " 0x%lx line %d %s\n",
+                    (unsigned long)errptr,
+                    __LINE__,__FILE__);
+#endif /* DEBUG */
             }
         }
         errptr->er_errval = errval;
@@ -133,7 +151,9 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
             dwarfstring *em = 0;
 
 #ifdef DEBUG
-printf("libdwarfdetector ALLOC creating error string %s errval %ld errptr 0x%lx \n",msg,(long)errval,(unsigned long)errptr);
+            printf("libdwarfdetector ALLOC creating error string"
+                " %s errval %ld errptr 0x%lx \n",
+                msg,(long)errval,(unsigned long)errptr);
 #endif
             em = (dwarfstring *)calloc(1,sizeof(dwarfstring));
             if (em) {

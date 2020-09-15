@@ -1,3 +1,9 @@
+2020-09-15  David Anderson
+    * configure.ac: Now version 20200915
+      Fixed some memory leaks provoked by
+      corrupt object files.
+      Added -fno-omit-frame-pointer to the -fsanitize option set
+    * configure: Regenerated.
 2020-09-08  David Anderson
     * configure.ac: Now version 20200908
     * configure: Regenerated.
