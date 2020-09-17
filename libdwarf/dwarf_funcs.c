@@ -50,6 +50,7 @@ dwarf_get_funcs(Dwarf_Debug dbg,
 
 
     return _dwarf_internal_get_pubnames_like_data(dbg,
+        ".debug_funcnames",
         dbg->de_debug_funcnames.dss_data,
         dbg->de_debug_funcnames.dss_size,
         (Dwarf_Global **) funcs, /* Type punning for sections with identical format. */
@@ -71,9 +72,7 @@ dwarf_funcs_dealloc(Dwarf_Debug dbg, Dwarf_Func * dwgl,
     Dwarf_Signed count)
 {
     _dwarf_internal_globals_dealloc(dbg, (Dwarf_Global *) dwgl,
-        count,
-        DW_DLA_FUNC_CONTEXT,
-        DW_DLA_FUNC, DW_DLA_LIST);
+        count);
     return;
 }
 

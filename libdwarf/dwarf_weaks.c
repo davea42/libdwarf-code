@@ -50,6 +50,7 @@ dwarf_get_weaks(Dwarf_Debug dbg,
 
 
     return _dwarf_internal_get_pubnames_like_data(dbg,
+        ".debug_weaknames",
         dbg->de_debug_weaknames.dss_data,
         dbg->de_debug_weaknames.dss_size,
         (Dwarf_Global **) weaks, /* Type punning for sections
@@ -72,9 +73,7 @@ dwarf_weaks_dealloc(Dwarf_Debug dbg, Dwarf_Weak * dwgl,
     Dwarf_Signed count)
 {
     _dwarf_internal_globals_dealloc(dbg, (Dwarf_Global *) dwgl,
-        count,
-        DW_DLA_WEAK_CONTEXT,
-        DW_DLA_WEAK, DW_DLA_LIST);
+        count);
     return;
 }
 

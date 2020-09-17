@@ -51,6 +51,7 @@ dwarf_get_pubtypes(Dwarf_Debug dbg,
     }
 
     res = _dwarf_internal_get_pubnames_like_data(dbg,
+        ".debug_pubtypes",
         dbg->de_debug_pubtypes.dss_data,
         dbg->de_debug_pubtypes.dss_size,
         (Dwarf_Global **) types, /* Type punning for sections
@@ -75,11 +76,7 @@ dwarf_pubtypes_dealloc(Dwarf_Debug dbg, Dwarf_Type * dwgl,
 {
     _dwarf_internal_globals_dealloc(dbg,
         (Dwarf_Global *) dwgl,
-        count,
-        DW_DLA_PUBTYPES_CONTEXT,
-        DW_DLA_GLOBAL, /* We don't have DW_DLA_PUBTYPES,
-            so use DW_DLA_GLOBAL. */
-        DW_DLA_LIST);
+        count);
     return;
 }
 

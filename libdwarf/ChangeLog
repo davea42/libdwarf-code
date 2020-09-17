@@ -1,4 +1,18 @@
-2020-09-15
+2020-09-17: David Anderson
+    * dwarf_global.c: Refactored to eliminate 50 lines
+      of duplicated code and ensure no leaks while
+      improving error messages when the object or DWARF
+      data is damaged (fuzzed).
+    * dwarf_global.h,dwarf_funcs.c,dwarf_pubtypes.c,
+      dwarf_types.c,dwarf_vars.c,dwarf_weaks.c: Eliminated 
+      useless arguments to library-internal function.
+    * dwarf_util.h: Errors detected in a macro now 
+      report more useful information.
+    * dwarf_alloc.c: Two DEBUG lines were too long,
+      broke those lines to shorter ones.
+      Added DEBUG-only output where it had not
+      reported earler.
+2020-09-15: David Anderson
     * dwarf_alloc.c: Added ifdef DEBUG
       printf for cases it should exist.
       #undef debug at the top guaranties it will not
@@ -19,7 +33,7 @@
       printf where they should have been all along.
       #undef debug at the top guaranties it will not
       be turned on by accident.
-2020-09-10
+2020-09-10: David Anderson
     * dwarf_die_deliv.c: Now handle DW_AT_GNU_ranges_base
       properly.
     * dwarf_ranges.c: New function dwarf_get_ranges_b()
@@ -32,12 +46,12 @@
     * libdwarf2.1.mm:  Version 3.09. Now documents
       dwarf_get_ranges_b().
     * libdwarf2.1.pdf:  Version 3.09. Regenerated.
-2020-09-10
+2020-09-10: David Anderson
     * checkexamples.c,dwarf_die_deliv.c,dwarf_form.c,
       dwarf_line_table_reader_common.h,dwarf_query.c,
       dwarf_ranges.c,dwarf_str_offset.c,dwarf_tied.c:
       Remove trailing whitespace. Fix indentation.
-2020-09-09
+2020-09-09: David Anderson
     * dwarf_alloc.c: dwarf_dealloc_error(dbg,error)
       and dwarf_dealloc(dbg,error,DW_DLA_ERROR)
       should now be called with a null dbg if
@@ -55,7 +69,7 @@
       Contents points to returns from dwarf_init*
       calls (around page 28) now.
     * libdwarf2.1.pdf: Generated Version 3.08.
-2020-09-08
+2020-09-08: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version
       string, regenerated files that reference it.

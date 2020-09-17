@@ -49,6 +49,7 @@ dwarf_get_types(Dwarf_Debug dbg,
 
 
     return _dwarf_internal_get_pubnames_like_data(dbg,
+        ".debug_typenames",
         dbg->de_debug_typenames.dss_data,
         dbg->de_debug_typenames.dss_size,
         (Dwarf_Global **) types,  /* type punning, Dwarf_Type is
@@ -70,9 +71,7 @@ dwarf_types_dealloc(Dwarf_Debug dbg, Dwarf_Type * dwgl,
     Dwarf_Signed count)
 {
     _dwarf_internal_globals_dealloc(dbg, (Dwarf_Global *) dwgl,
-        count,
-        DW_DLA_TYPENAME_CONTEXT,
-        DW_DLA_TYPENAME, DW_DLA_LIST);
+        count);
     return;
 }
 

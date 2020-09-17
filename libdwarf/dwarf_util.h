@@ -150,20 +150,26 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
 
 #ifdef WORDS_BIGENDIAN
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
-    do {                                                         \
-        BIGGEST_UINT _ltmp = 0;                                  \
-        Dwarf_Byte_Ptr readend = source+length;                  \
-        if (readend <  source) {                                 \
-            _dwarf_error(dbg, error, DW_DLE_READ_BIGENDIAN_ERROR); \
-            return DW_DLV_ERROR;                                 \
-        }                                                        \
-        if (readend > endptr) {                                  \
-            _dwarf_error(dbg, error, DW_DLE_READ_BIGENDIAN_ERROR); \
-            return DW_DLV_ERROR;                                 \
-        }                                                        \
-        dbg->de_copy_word( (((char *)(&_ltmp)) +                 \
-            sizeof(_ltmp) - length),source, length) ;            \
-        dest = (desttype)_ltmp;                                  \
+    do {                                                        \
+        BIGGEST_UINT _ltmp = 0;                                 \
+        Dwarf_Byte_Ptr readend = source+length;                 \
+        if (readend <  source) {                                \
+            _dwarf_error_string(dbg, error,                     \
+                DW_DLE_READ_BIGENDIAN_ERROR,                    \
+                "DW_DLE_READ_BIGENDIAN_ERROR "                  \
+                "Read would start past the end of section");    \
+            return DW_DLV_ERROR;                                \
+        }                                                       \
+        if (readend > endptr) {                                 \
+            _dwarf_error_string(dbg, error,                     \
+                DW_DLE_READ_BIGENDIAN_ERROR,                    \
+                "DW_DLE_READ_BIGENDIAN_ERROR "                  \
+                "Read would end past the end of section");      \
+            return DW_DLV_ERROR;                                \
+        }                                                       \
+        dbg->de_copy_word( (((char *)(&_ltmp)) +                \
+            sizeof(_ltmp) - length),source, length) ;           \
+        dest = (desttype)_ltmp;                                 \
     } while (0)
 
 
@@ -185,22 +191,26 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     } while (0)
 #else /* LITTLE ENDIAN */
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
-    do  {                                       \
-        BIGGEST_UINT _ltmp = 0;                 \
-        Dwarf_Byte_Ptr readend = source+length; \
-        if (readend < source) {                 \
-            _dwarf_error(dbg, error,            \
-                DW_DLE_READ_LITTLEENDIAN_ERROR);\
-            return DW_DLV_ERROR;                \
-        }                                       \
-        if (readend > endptr) {                 \
-            _dwarf_error(dbg, error,            \
-                DW_DLE_READ_LITTLEENDIAN_ERROR);\
-            return DW_DLV_ERROR;                \
-        }                                       \
-        dbg->de_copy_word( (char *)(&_ltmp) ,   \
-            source, length) ;                   \
-        dest = (desttype)_ltmp;                 \
+    do  {                                        \
+        BIGGEST_UINT _ltmp = 0;                  \
+        Dwarf_Byte_Ptr readend = source+length;  \
+        if (readend < source) {                  \
+            _dwarf_error_string(dbg, error,      \
+                DW_DLE_READ_LITTLEENDIAN_ERROR,  \
+                "DW_DLE_READ_LITTLEENDIAN_ERROR "\
+                "Read starts past the end of section");\
+            return DW_DLV_ERROR;                 \
+        }                                        \
+        if (readend > endptr) {                  \
+            _dwarf_error_string(dbg, error,      \
+                DW_DLE_READ_LITTLEENDIAN_ERROR,  \
+                "DW_DLE_READ_LITTLEENDIAN_ERROR "\
+                "Read would end past the end of section");\
+            return DW_DLV_ERROR;                 \
+        }                                        \
+        dbg->de_copy_word( (char *)(&_ltmp) ,    \
+            source, length) ;                    \
+        dest = (desttype)_ltmp;                   \
     } while (0)
 
 

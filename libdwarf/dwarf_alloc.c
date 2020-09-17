@@ -753,6 +753,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
                 no need of a specialdestructor().
                 Mostly a historical mistake here.
                 Corrected in libdwarf March 14,2020. */
+#ifdef DEBUG
+            printf( "DEALLOC string in section, no dealloc line %d %s\n",
+                __LINE__,__FILE__);
+            fflush(stdout);
+#endif /* DEBUG*/
             return;
         }
     }
@@ -771,7 +776,8 @@ dwarf_dealloc(Dwarf_Debug dbg,
     if(dbg && dbg != r->rd_dbg) {
         /*  Something is mixed up. */
 #ifdef DEBUG
-        printf("DEALLOC does nothing, dbg 0x%lx rd_dbg 0x%lx space 0x%lx line %d %s\n",
+        printf("DEALLOC does nothing, dbg 0x%lx "
+            "rd_dbg 0x%lx space 0x%lx line %d %s\n",
             (unsigned long)dbg,
             (unsigned long)r->rd_dbg,
             (unsigned long)space,
@@ -783,7 +789,8 @@ dwarf_dealloc(Dwarf_Debug dbg,
     if(dbg && alloc_type != r->rd_type) {
         /*  Something is mixed up. */
 #ifdef DEBUG
-        printf("DEALLOC does nothing, type 0x%lx rd_type 0x%lx space 0x%lx line %d %s\n",
+        printf("DEALLOC does nothing, type 0x%lx rd_type 0x%lx"
+            " space 0x%lx line %d %s\n",
             (unsigned long)alloc_type,
             (unsigned long)r->rd_type,
             (unsigned long)space,

@@ -70,6 +70,8 @@ struct Dwarf_Global_Context_s {
     /*  Size of compilation-unit that these pubnames are in. */
     Dwarf_Unsigned pu_info_length;
 
+    unsigned pu_alloc_type; /* DW_DLA something */
+
     Dwarf_Debug pu_dbg;
 };
 
@@ -87,28 +89,24 @@ struct Dwarf_Global_s {
     /* Context for this pubname. */
     Dwarf_Global_Context gl_context;
 
+    unsigned gl_alloc_type; /* DW_DLA something */
 };
 
 int _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
-    Dwarf_Small *
-    section_data_ptr,
-    Dwarf_Unsigned
-    section_length,
+    const char     *secname,
+    Dwarf_Small    *section_data_ptr,
+    Dwarf_Unsigned  section_length,
     Dwarf_Global ** globals,
-    Dwarf_Signed * return_count,
-    Dwarf_Error * error,
-    int context_code,
-    int global_code,
-    int length_err_num,
-    int version_err_num);
+    Dwarf_Signed *  return_count,
+    Dwarf_Error *   error,
+    int             context_code,
+    int             global_code,
+    int             length_err_num,
+    int             version_err_num);
 
 void
 _dwarf_internal_globals_dealloc( Dwarf_Debug dbg, Dwarf_Global *dwgl,
-    Dwarf_Signed count,
-    int context_code,
-    int global_code,
-    int list_code);
-
+    Dwarf_Signed count);
 
 #ifdef __sgi  /* __sgi should only be defined for IRIX/MIPS. */
 void _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,

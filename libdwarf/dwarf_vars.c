@@ -49,6 +49,7 @@ dwarf_get_vars(Dwarf_Debug dbg,
     }
 
     return _dwarf_internal_get_pubnames_like_data(dbg,
+        ".debug_varnames",
         dbg->de_debug_varnames.dss_data,
         dbg->de_debug_varnames.dss_size,
         (Dwarf_Global **) vars, /* Type punning for sections
@@ -71,9 +72,7 @@ dwarf_vars_dealloc(Dwarf_Debug dbg, Dwarf_Var * dwgl,
     Dwarf_Signed count)
 {
     _dwarf_internal_globals_dealloc(dbg, (Dwarf_Global *) dwgl,
-        count,
-        DW_DLA_VAR_CONTEXT,
-        DW_DLA_VAR, DW_DLA_LIST);
+        count);
     return;
 }
 
