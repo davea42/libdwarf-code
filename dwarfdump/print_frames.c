@@ -113,7 +113,8 @@ dealloc_local_atlist(Dwarf_Debug dbg,
 }
 
 
-/* executing this for a reporting side effect, PRINT_CU_INFO() in dwarfdump.c. */
+/*  Executing this for a reporting side effect,
+    PRINT_CU_INFO() in dwarfdump.c. */
 static void
 load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
 {
@@ -177,7 +178,8 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
         switch(attr) {
         case DW_AT_low_pc:
             {
-            ares = dwarf_formaddr(attrib, &glflags.CU_base_address, &loadcuerr);
+            ares = dwarf_formaddr(attrib, 
+                &glflags.CU_base_address, &loadcuerr);
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             glflags.CU_low_address = glflags.CU_base_address;
             }
@@ -189,7 +191,8 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
                 It's also useless for CU DIEs that do not
                 have the DW_AT_high_pc high so CU_high_address will
                 be zero*/
-            ares = dwarf_formaddr(attrib, &glflags.CU_high_address, &loadcuerr);
+            ares = dwarf_formaddr(attrib, 
+                &glflags.CU_high_address, &loadcuerr);
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             }
             break;
@@ -202,7 +205,8 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
             esb_constructor(&namestr);
             ares = get_attr_value(dbg, tag, cu_die,
                 cu_die_goff,attrib, srcfiles, srccnt,
-                &namestr, local_show_form_used,local_verbose,&loadcuerr);
+                &namestr, local_show_form_used,local_verbose,
+                &loadcuerr);
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             if (esb_string_len(&namestr)) {
                 name = esb_get_string(&namestr);
@@ -938,7 +942,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 printf("\nERROR: Getting procedure name "
                     "dwarf_child fails "
                     " %s\n",dwarf_errmsg(*err));
-                DROP_ERROR_INSTANCE(dbg,dres,*err);
+                DROP_ERROR_INSTANCE(dbg,chpfres,*err);
                 glflags.gf_all_cus_seen_search_by_address = 1;
                 return DW_DLV_NO_ENTRY;
             } else if (chpfres == DW_DLV_NO_ENTRY) {

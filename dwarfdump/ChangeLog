@@ -1,3 +1,8 @@
+2020-09-17: David Anderson
+    * print_frames.c: A very old typgraphical error
+      meant that in rare circumstances memory leakage
+      of a few bytes was possible with  option
+      --suppress-de-alloc-tree.
 2020-09-10: David Anderson
     * esb_using_functions.h: Adding new argument to 
       the print_ranges_list_to_extra() prototype.
