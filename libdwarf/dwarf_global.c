@@ -200,13 +200,13 @@ pubnames_error_length(Dwarf_Debug dbg,
     dwarfstring_append(&m, (char *)specificloc);
     dwarfstring_append(&m, ".");
     _dwarf_error_string(dbg,error,DW_DLE_PUBNAMES_LENGTH_BAD,
-        dwarfstring_string(&m)); 
+        dwarfstring_string(&m));
     dwarfstring_destructor(&m);
 }
 
-/*  INVARIANTS: on error does not leak Dwarf_Global
-                glname is not malloc space. Never free.
-    
+/*  INVARIANTS:
+    1) on error does not leak Dwarf_Global
+    2) glname is not malloc space. Never free.
 */
 static int
 _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
@@ -224,7 +224,7 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
     Dwarf_Global global = 0;
 
     global = (Dwarf_Global)
-                _dwarf_get_alloc(dbg, global_DLA_code, 1);
+        _dwarf_get_alloc(dbg, global_DLA_code, 1);
     if (!global) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
@@ -343,19 +343,19 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         /*  ========pubnames_context not recorded anywhere yet. */
         /*  READ_AREA_LENGTH updates pubnames_like_ptr for consumed
             bytes. */
-        if ((pubnames_like_ptr + DWARF_32BIT_SIZE + 
-            DWARF_HALF_SIZE + DWARF_32BIT_SIZE) > 
+        if ((pubnames_like_ptr + DWARF_32BIT_SIZE +
+            DWARF_HALF_SIZE + DWARF_32BIT_SIZE) >
             /* A minimum size needed */
             section_end_ptr) {
             pubnames_error_length(dbg,error,
-                 DWARF_32BIT_SIZE + DWARF_HALF_SIZE + DWARF_32BIT_SIZE,
-                 secname,
-                 "header-record");
+                DWARF_32BIT_SIZE + DWARF_HALF_SIZE + DWARF_32BIT_SIZE,
+                secname,
+                "header-record");
             dealloc_globals_chain(dbg,head_chain);
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
-            return DW_DLV_ERROR; 
+            return DW_DLV_ERROR;
         }
         mres = _dwarf_read_area_length_ck_wrapper(dbg,
             &length,&pubnames_like_ptr,&local_length_size,
@@ -376,17 +376,17 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_context->pu_pub_offset = pubnames_section_offset;
         pubnames_ptr_past_end_cu = pubnames_like_ptr + length;
 
-        if ((pubnames_like_ptr + (DWARF_HALF_SIZE) ) > 
+        if ((pubnames_like_ptr + (DWARF_HALF_SIZE) ) >
             /* A minimum size needed */
             section_end_ptr) {
             pubnames_error_length(dbg,error,
-                  DWARF_HALF_SIZE,
-                  secname,"version-number");
+                DWARF_HALF_SIZE,
+                secname,"version-number");
             dealloc_globals_chain(dbg,head_chain);
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
-            return DW_DLV_ERROR; 
+            return DW_DLV_ERROR;
         }
         mres = _dwarf_read_unaligned_ck_wrapper(dbg,
             &version,pubnames_like_ptr,DWARF_HALF_SIZE,
@@ -411,7 +411,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         }
 
         /* Offset of CU header in debug section. */
-        if ((pubnames_like_ptr + 3*pubnames_context->pu_length_size ) > 
+        if ((pubnames_like_ptr + 3*pubnames_context->pu_length_size ) >
             section_end_ptr) {
             pubnames_error_length(dbg,error,
                 3*pubnames_context->pu_length_size,
@@ -421,7 +421,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
-            return DW_DLV_ERROR; 
+            return DW_DLV_ERROR;
         }
         mres = _dwarf_read_unaligned_ck_wrapper(dbg,
             &pubnames_context->pu_offset_of_cu_header,
@@ -497,8 +497,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 int res = 0;
 
                 /*  Here we have a pubnames CU with no actual
-                        entries so we fake up an entry to hold the
-                                header data.  There are no 'pairs' here,
+                    entries so we fake up an entry to hold the
+                    header data.  There are no 'pairs' here,
                     just the end of list zero value.  We do this
                     only if de_return_empty_pubnames is set
                     so that we by default return exactly the same
@@ -574,7 +574,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             }
             /*  ========pubnames_context recorded in chain. */
             /*  Ensure room for a next entry  to exist. */
-            if ((pubnames_like_ptr + 
+            if ((pubnames_like_ptr +
                 pubnames_context->pu_length_size ) >
                 section_end_ptr) {
                 pubnames_error_length(dbg,error,

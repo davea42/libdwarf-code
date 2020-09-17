@@ -1,4 +1,11 @@
 2020-09-17: David Anderson
+    * dwarf_peread.c: Deleted several blank lines.
+    * dwarf_global.c: Removed trailing whitespace,
+      fixed indents.
+    * dwarf_errmsg_list.h: Various error strings now
+      have extra text with meaningful, but generic,
+      content.
+2020-09-17: David Anderson
     * dwarf_global.c: Refactored to eliminate 50 lines
       of duplicated code and ensure no leaks while
       improving error messages when the object or DWARF

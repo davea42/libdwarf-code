@@ -195,7 +195,6 @@ pe_section_name_get(dwarf_pe_object_access_internals_t *pep,
         if (res != DW_DLV_OK) {
             *errcode = DW_DLE_STRING_OFFSET_BAD;
             return DW_DLV_ERROR;
-      
         }
 
         s = pep->pe_string_table +u;
@@ -486,9 +485,6 @@ dwarf_pe_load_dwarf_section_headers(
         (struct dwarf_pe_generic_image_section_header * )
         calloc((size_t)pep->pe_section_count,
         sizeof(struct dwarf_pe_generic_image_section_header));
-
-
-
     if (!pep->pe_sectionptr) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
