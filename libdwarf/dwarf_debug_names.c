@@ -669,7 +669,7 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
         if (!dn_header->dn_inhdr_first) {
             free_inhdr_list(inhdr_first);
             dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
-            _dwarf_error_string(dbg, error,DW_DLE_ALLOC_FAIL
+            _dwarf_error_string(dbg, error,DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: calloc of a Dwarf_Dnames index"
                 " header failed.");
 
