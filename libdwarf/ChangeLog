@@ -1,4 +1,8 @@
 2020-09-18: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+	  dwarf_names_new.h,libdwarf_version.h: Updated  version
+      string, regenerated files that reference it.
+2020-09-18: David Anderson
     * dwarf_debug_names.c: If allocation fails in setting up
       a Dwarf_Dnames head we now get an error and a more tailored
       error than just memory-allocation-failed.
