@@ -1,3 +1,15 @@
+2020-09-18: David Anderson
+    * dwarf_debug_names.c: If allocation fails in setting up
+      a Dwarf_Dnames head we now get an error and a more tailored
+      error than just memory-allocation-failed.
+    * dwarf_elf_load_headers.c: If the symtab section size
+      is really big (larger than the object file size!) we now
+      get a relevant error message.  Used to get malloc fail on
+      32bit systems and do a large malloc on 64bit systems before
+      getting an error eventually.
+    * dwarf_frame.c: Calling the frame-retrieval functions
+      on a corrupted object file could result in leaking memory.
+      Fixed.
 2020-09-17: David Anderson
     * dwarf_peread.c: Deleted several blank lines.
     * dwarf_global.c: Removed trailing whitespace,

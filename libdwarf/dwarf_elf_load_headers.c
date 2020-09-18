@@ -762,6 +762,10 @@ dwarf_generic_elf_load_symbols(
     if(!secnum) {
         return DW_DLV_NO_ENTRY;
     }
+    if (psh->gh_size > ep->f_filesize) {
+        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        return DW_DLV_ERROR;
+    }
     if (ep->f_offsetsize == 32) {
         res = dwarf_generic_elf_load_symbols32(ep,
             &gsym,
@@ -797,6 +801,7 @@ dwarf_load_elf_dynsym_symbols(
         return DW_DLV_NO_ENTRY;
     }
     psh = ep->f_shdr + secnum;
+    if we ever use this... gh_size big?
     res = dwarf_generic_elf_load_symbols(ep,
         secnum,
         psh,
@@ -824,6 +829,10 @@ _dwarf_load_elf_symtab_symbols(
         return DW_DLV_NO_ENTRY;
     }
     psh = ep->f_shdr + secnum;
+    if (psh->gh_size > ep->f_filesize) {
+        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        return DW_DLV_ERROR;
+    }
     res = dwarf_generic_elf_load_symbols(ep,
         secnum,
         psh,

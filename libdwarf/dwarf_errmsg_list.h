@@ -509,7 +509,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_NO_ELF_SUPPORT(432) libdwarf was compiled without Elf object support.",
     "DW_DLE_NO_STREAM_RELOC_SUPPORT(433) no elf.h so cannot generate STREAM relocations",
     "DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR(434) Flag value passed in not allowed.",
-    "DW_DLE_SECTION_SIZE_ERROR(435) Corrupt Elf. Section size not a multiple of section entry size",
+    "DW_DLE_SECTION_SIZE_ERROR(435) Corrupt Elf. Section size: greater than file size or not a multiple of section entry size",
     "DW_DLE_INTERNAL_NULL_POINTER(436) Internal libdwarf call:null pointer",
     "DW_DLE_SECTION_STRING_OFFSET_BAD(437) Corrupt Elf, an offset to section name is invalid",
     "DW_DLE_SECTION_INDEX_BAD(438) Corrupt Elf, a section index is incorrect",

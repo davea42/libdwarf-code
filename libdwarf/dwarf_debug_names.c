@@ -591,7 +591,9 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
     dn_header =  (Dwarf_Dnames_Head)_dwarf_get_alloc(dbg,
         DW_DLA_DNAMES_HEAD, 1);
     if(!dn_header) {
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL: dwarf_get_alloc of "
+            "a Dwarf_Dnames head record failed.");
         return DW_DLV_ERROR;
     }
     dn_header->dn_section_data = start_section;
@@ -664,6 +666,15 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
         dn_header->dn_inhdr_first =
             (struct Dwarf_Dnames_index_header_s *)
             calloc(inhdr_count,sizeof(struct Dwarf_Dnames_index_header_s));
+        if (!dn_header->dn_inhdr_first) {
+            free_inhdr_list(inhdr_first);
+            dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
+            _dwarf_error_string(dbg, error,DW_DLE_ALLOC_FAIL
+                "DW_DLE_ALLOC_FAIL: calloc of a Dwarf_Dnames index"
+                " header failed.");
+
+            return DW_DLV_ERROR;
+        }
         for(n = 0,cur = inhdr_first; cur; ++n ) {
             /*  We are copying these structs so do not
                 free them at this time. */
