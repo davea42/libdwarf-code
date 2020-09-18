@@ -1,4 +1,9 @@
-2020-09-17: David Anderson
+2020-09-18: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with latest
+      version string.
+2020-09-18: David Anderson
     * print_frames.c: Shortened too-long comment lines.
 2020-09-17: David Anderson
     * print_frames.c: A very old typgraphical error
