@@ -1209,13 +1209,13 @@ print_one_fde(Dwarf_Debug dbg,
         if (config_data->cf_interface_number == 3) {
             Dwarf_Signed reg = 0;
             Dwarf_Signed offset_relevant = 0;
-            Dwarf_Small value_type = 0;
+            Dwarf_Small  value_type = 0;
             Dwarf_Signed offset_or_block_len = 0;
             Dwarf_Signed offset = 0;
-            Dwarf_Ptr block_ptr = 0;
-            Dwarf_Addr row_pc = 0;
-            Dwarf_Bool has_more_rows = 0;
-            Dwarf_Addr subsequent_pc = 0;
+            Dwarf_Ptr    block_ptr = 0;
+            Dwarf_Addr   row_pc = 0;
+            Dwarf_Bool   has_more_rows = 0;
+            Dwarf_Addr   subsequent_pc = 0;
 
 
             int fires = dwarf_get_fde_info_for_cfa_reg3_b(fde,
@@ -1758,9 +1758,12 @@ check_finstr_addrs(unsigned char *iregionstart,
 }
 
 
-/*  Print the frame instructions in detail for a glob of instructions.
-    The frame data has not been checked by libdwarf as libdwarf has not
-    transformed it into simple structs. We are reading the raw data.
+/*  Print the frame instructions in detail
+    for a glob of instructions.
+    The frame data has not been checked by
+    libdwarf as libdwarf has not
+    transformed it into simple structs. 
+    We are reading the raw data.
 */
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,

@@ -1,4 +1,6 @@
 2020-09-17: David Anderson
+    * print_frames.c: Shortened too-long comment lines.
+2020-09-17: David Anderson
     * print_frames.c: A very old typgraphical error
       meant that in rare circumstances memory leakage
       of a few bytes was possible with  option
