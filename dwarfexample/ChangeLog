@@ -1,3 +1,7 @@
+2020-09-18:   David Anderson 
+    * CMakeLists.txt: Add getdebuglink to the
+      examples built (source getdebuglink.c added
+      November 2019).
 2020-03-14:   David Anderson 
     * findfuncbypc.c: do not call dwarf_dealloc on a 
       name that should not be dealloc'd (it is a static
