@@ -65,6 +65,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #define O_BINARY 0
 #endif /* O_BINARY */
 
+#define TESTING
+
 #define MINBUFLEN 1000
 #define TRUE  1
 #define FALSE 0
@@ -236,22 +238,32 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
         dwarfstring_append(target,dwarfstring_string(input));
         return DW_DLV_OK;
     }
+printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
     targlen = dwarfstring_strlen(target);
     targ = dwarfstring_string(target);
     if (targ[targlen-1] != joinchar) {
+printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
         if (*inputs != joinchar) {
+        printf("dadebug targ  %s joinstr inputs %s line %d\n",targ,inputs,__LINE__);
             dwarfstring_append(target,joinstr);
             dwarfstring_append(target,inputs);
+            printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         } else {
             dwarfstring_append(target,inputs);
+            printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         }
     } else {
+printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
         if (*inputs != joinchar) {
+printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
             dwarfstring_append(target,inputs);
+printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         } else {
             dwarfstring_append(target,inputs+1);
+printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         }
     }
+printf("dadebug output %s line %d\n",dwarfstring_string(target),__LINE__);
     return DW_DLV_OK;
 }
 /*  ASSERT: the last character in s is not a /  */
@@ -353,8 +365,14 @@ build_buildid_filename(dwarfstring *target,
             dwarfstring_append(&tmp,"/");
         }
     }
+#ifdef TESTING
+    printf("now append final .debug to %s line %d \n",dwarfstring_string(&tmp),__LINE__);
+#endif
     dwarfstring_append(&tmp,".debug");
     _dwarf_pathjoinl(target,&tmp);
+#ifdef TESTING
+    printf("append .debug done %s line %d \n",dwarfstring_string(target),__LINE__);
+#endif
     dwarfstring_destructor(&tmp);
     return;
 }
@@ -471,15 +489,23 @@ int _dwarf_construct_linkedto_path(
         dwarfstring_append(&joind.js_buildid,prefix);
         _dwarf_pathjoinl(&joind.js_buildid,
             &joind.js_buildid_filename);
+#ifdef TESTING
+            printf("buildid so var %s line %d \n",
+                dwarfstring_string(&joind.js_buildid),__LINE__);
+#endif /* TESTING */
         if (!strcmp(dwarfstring_string(&joind.js_originalfullpath),
             dwarfstring_string(&joind.js_buildid))) {
 #ifdef TESTING
-            printf("duplicated output string %s\n",
-                dwarfstring_string(&joind.js_buildid));
+            printf("duplicated output string %s line %d \n",
+                dwarfstring_string(&joind.js_buildid),__LINE__);
 #endif /* TESTING */
             /* duplicated name. spurious match. */
         } else {
             struct dwarfstring_list_s *now_last = 0;
+#ifdef TESTING
+            printf(" add to list output string %s line %d\n",
+                dwarfstring_string(&joind.js_buildid),__LINE__);
+#endif /* TESTING */
             res = dwarfstring_list_add_new(
                 &base_dwlist,
                 last_entry,&joind.js_buildid,
@@ -489,10 +515,18 @@ int _dwarf_construct_linkedto_path(
                 destruct_js(&joind);
                 return res;
             }
+#ifdef TESTING
+            printf("final output string %s line %d \n",
+                dwarfstring_string(&joind.js_buildid),__LINE__);
+#endif /* TESTING */
             last_entry = now_last;
         }
     }
     if (link_string_in) {
+#ifdef TESTING
+       printf("link string in %s line %d\n",
+                    link_string_in,__LINE__);
+#endif /* TESTING */
         /* js_cwd is a leading / directory name. */
         {
             dwarfstring_reset(&joind.js_tmp);
@@ -503,15 +537,23 @@ int _dwarf_construct_linkedto_path(
             /* We return the original link as full path this way. */
             dwarfstring_append(link_string_fullpath_out,
                 dwarfstring_string(&joind.js_tmp));
+#ifdef TESTING
+                printf("fullpath out string %s line %d\n",
+                    dwarfstring_string(link_string_fullpath_out),__LINE__);
+#endif /* TESTING */
             if (!strcmp(dwarfstring_string(&joind.js_originalfullpath),
                 dwarfstring_string(&joind.js_tmp))) {
 #ifdef TESTING
-                printf("duplicated output string %s\n",
-                    dwarfstring_string(&joind.js_tmp));
+                printf("duplicated output string %s line %d\n",
+                    dwarfstring_string(&joind.js_tmp),__LINE__);
 #endif /* TESTING */
                 /* duplicated name. spurious match. */
             } else if (res == DW_DLV_OK) {
                 struct dwarfstring_list_s *now_last = 0;
+#ifdef TESTING
+                printf(" add to list output string %s line %d\n",
+                    dwarfstring_string(&joind.js_tmp),__LINE__);
+#endif /* TESTING */
                 res = dwarfstring_list_add_new(
                     &base_dwlist,
                     last_entry,&joind.js_tmp,
@@ -542,12 +584,16 @@ int _dwarf_construct_linkedto_path(
                     &joind.js_originalfullpath),
                     dwarfstring_string(&joind.js_tmp2))) {
 #ifdef TESTING
-                printf("duplicated output string %s\n",
-                    dwarfstring_string(&joind.js_tmp2));
+                printf("duplicated output string %s line %d\n",
+                    dwarfstring_string(&joind.js_tmp2),__LINE__);
 #endif /* TESTING */
                     /* duplicated name. spurious match. */
                 } else if(res == DW_DLV_OK) {
                     struct dwarfstring_list_s *now_last = 0;
+#ifdef TESTING
+                    printf(" add to list output string %s line %d\n",
+                        dwarfstring_string(&joind.js_tmp2),__LINE__);
+#endif /* TESTING */
                     res = dwarfstring_list_add_new(
                         &base_dwlist,
                         last_entry,&joind.js_tmp2,
@@ -562,6 +608,9 @@ int _dwarf_construct_linkedto_path(
             }
         }
         /*  Not found above, now look in the global locations. */
+#ifdef TESTING
+       printf(" Now look in global locations. line %d\n",__LINE__);
+#endif
         for (global_prefix_number = 0;
             global_prefix_number < length_global_prefixes_in;
             ++global_prefix_number) {
@@ -583,6 +632,10 @@ int _dwarf_construct_linkedto_path(
 #endif /* TESTING */
                 } else if (res == DW_DLV_OK) {
                     struct dwarfstring_list_s *now_last = 0;
+#ifdef TESTING
+                    printf(" add to list output string %s line %d\n",
+                        dwarfstring_string(&joind.js_tmp3),__LINE__);
+#endif /* TESTING */
                     res = dwarfstring_list_add_new(
                         &base_dwlist,
                         last_entry,&joind.js_tmp3,
