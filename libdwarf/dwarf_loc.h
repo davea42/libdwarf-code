@@ -291,6 +291,16 @@ int _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
 int _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     Dwarf_Block_c *loc_block,Dwarf_Error*error);
 
+int _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
+    Dwarf_Unsigned contextnum,
+    Dwarf_Unsigned sectionlength,
+    Dwarf_Small *data,
+    Dwarf_Small *end_data,
+    Dwarf_Unsigned offset,
+    Dwarf_Loclists_Context  buildhere,
+    Dwarf_Unsigned *next_offset,
+    Dwarf_Error *error);
+
 void _dwarf_loclists_head_destructor(void *l);
 
 int _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,

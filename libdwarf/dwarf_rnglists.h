@@ -136,6 +136,16 @@ struct Dwarf_Rnglists_Head_s {
     Dwarf_Small    * rh_end_data_area;
 };
 
+int _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
+    Dwarf_Unsigned contextnum,
+    Dwarf_Unsigned sectionlength,
+    Dwarf_Small *data,
+    Dwarf_Small *end_data,
+    Dwarf_Unsigned offset,
+    Dwarf_Rnglists_Context  buildhere,
+    Dwarf_Unsigned *next_offset,
+    Dwarf_Error *error);
+
 void _dwarf_rnglists_head_destructor(void *m);
 
 #ifdef __cplusplus

@@ -1428,8 +1428,12 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
                 finds the section offset of the
                 contribution which is not the same
                 as the table offset. */
-            res = _dwarf_find_offsets_via_fission(dbg,
+            res = _dwarf_find_all_offsets_via_fission(dbg,
                 cu_context,error);
+            if (res == DW_DLV_ERROR) {
+                /* something seriously wrong. */
+                return res;
+            }
         }
     }
     return DW_DLV_OK;

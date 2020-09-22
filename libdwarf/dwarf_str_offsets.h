@@ -72,7 +72,7 @@ int _dwarf_trial_read_dwarf_five_hdr(Dwarf_Debug dbg,
     Dwarf_Half *padding_out,
     Dwarf_Error *error);
 int
-_dwarf_find_offsets_via_fission(Dwarf_Debug dbg,
+_dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     Dwarf_Error *error);
 

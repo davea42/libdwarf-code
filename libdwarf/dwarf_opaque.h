@@ -112,13 +112,14 @@ struct Dwarf_Attribute_s {
     This structure provides the context for a compilation unit.
     Thus, it contains the Dwarf_Debug, cc_dbg, that this cu
     belongs to.  It contains the information in the compilation
-    unit header, cc_length, cc_version_stamp, cc_abbrev_offset,
+    unit header, cc_length, cc_version_stamp, 
+    cc_abbrev_offset,
     and cc_address_size, in the .debug_info section for that cu.
     In addition, it contains the count, cc_count_cu, of the cu
     number of that cu in the list of cu's in the .debug_info.
     The count starts at 1, ie cc_count_cu is 1 for the first cu,
     2 for the second and so on.  This struct also contains a
-    pointer, cc_abbrev_table, to a list of pairs of abbrev code
+    pointer, to a list of pairs of abbrev code
     and a pointer to the start of that abbrev
     in the .debug_abbrev section.
 
@@ -202,6 +203,7 @@ struct Dwarf_CU_Context_s {
             the signature is a type signature. */
 
     Dwarf_Half  cc_cu_die_tag;
+
     Dwarf_Sig8  cc_signature;
 
     /*  cc_type_signature_offset contains the
@@ -226,19 +228,9 @@ struct Dwarf_CU_Context_s {
         in TU header or, for CU header, signature in CU DIE. */
     Dwarf_Bool cc_low_pc_present;
     Dwarf_Bool cc_addr_base_present;   /* Not TRUE in .dwo */
-    /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
-        but was unused. See dwarf_die_deliv.c for details. */
-    Dwarf_Bool cc_ranges_base_present; /* unused */
-    Dwarf_Bool cc_rnglists_base_present; /* DW5 */
-    Dwarf_Bool cc_str_offsets_base_present;
-    Dwarf_Bool cc_str_offsets_header_length_present;
-    Dwarf_Bool cc_loclists_base_present;
+
     Dwarf_Bool cc_cu_die_has_children;
     Dwarf_Bool cc_dwo_name_present;
-    /*  If DW_AT_strx* present in skeleton and dwp
-        CU DIEs then it's not clear how
-        DW_AT_str_offsets_base can be correct for both.
-        Here just marking this CU DIE. */
     Dwarf_Bool cc_at_strx_present;
 
     /*  Non zero if this context is a dwo section. Either
@@ -247,35 +239,60 @@ struct Dwarf_CU_Context_s {
 
     /*  cc_cu_die_offset_present is non-zero if
         cc_cu_die_global_sec_offset is meaningful.  */
-    Dwarf_Bool cc_cu_die_offset_present;
+    Dwarf_Bool     cc_cu_die_offset_present;
 
     /* if present, is base address of CU */
     Dwarf_Unsigned cc_low_pc;
     /*  from DW_AT_addr_base in CU DIE, offset to .debug_addr table */
-    Dwarf_Unsigned cc_addr_base;     /* Zero in .dwo */
-    /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
-        but was unused. See dwarf_die_deliv.c for details. */
-    Dwarf_Unsigned cc_ranges_base;   /* unused */
-    /*  from DW_AT_rnglists_base in CU DIE */
-    Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
-    /*  from DW_AT_str_offsets_base in CU DIE, offset
-        of the table array, not its header */
-    Dwarf_Unsigned cc_str_offsets_header_offset;
+    Dwarf_Unsigned cc_addr_base;  /* Zero in .dwo */
+
+    /*  DW_SECT_LINE */
+    Dwarf_Bool     cc_line_base_present;     /*DW5 */
+    Dwarf_Unsigned cc_line_base;             /*DW5 */
+    Dwarf_Unsigned cc_line_base_contr_size;  /*DW5 */
+
+    /*  From DW_AT_loclists_base or DW_SECT_LOCLISTS */
+    Dwarf_Unsigned cc_loclists_base;
+    Dwarf_Unsigned cc_loclists_base_contr_size;
+    Dwarf_Bool     cc_loclists_base_present;
+    Dwarf_Bool     cc_loclists_header_length_present;
+
+    /*  .debug_str_offsets DW_SECT_STR_OFFSETS DW4 DW5 vs 
+        DW_AT_str_offsets_base (table array off) */
+    Dwarf_Bool     cc_str_offsets_base_present;
+    Dwarf_Bool     cc_str_offsets_header_length_present;
+    Dwarf_Unsigned cc_str_offsets_header_offset; /* from cu/tu*/
+    Dwarf_Unsigned cc_str_offsets_contr_size;
     Dwarf_Unsigned cc_str_offsets_base;
     /*  to get from the start of a str_offsets table to the
         offsets array entries.
         See cc_str_offsets_header_length_present,
         though not normally needed. If header_length
         is zero all CUs in this DWP
-        uses a DWARF4 extension
-        simple offset array, not a DWARF5 set of tables. */
+        use a DWARF4 extension simple offset array,
+        not a DWARF5 set of tables. */
     Dwarf_Unsigned cc_str_offsets_header_length;
     Dwarf_Unsigned cc_str_offsets_offset_size;
 
-    /*  From DW_AT_loclists_base */
-    Dwarf_Unsigned cc_loclists_base;
+    /*  DW_SECT_MACRO */
+    Dwarf_Unsigned cc_macro_base;    /*DW5 */
+    Dwarf_Unsigned cc_macro_base_contr_size;    /*DW5 */
+    Dwarf_Bool     cc_macro_base_present;
+    Dwarf_Bool     cc_macro_header_length_present;
 
-    char *     cc_dwo_name;
+    /*  DW_SECT_RNGLISTS  */ 
+    Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
+    Dwarf_Unsigned cc_rnglists_base_contr_size;    /*DW5 */
+    /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
+        but was unused. See dwarf_die_deliv.c for details. */
+    Dwarf_Unsigned cc_ranges_base;   
+    /*  DW_AT_GNU_ranges_base is a GNU extension, DW4  */
+    Dwarf_Bool     cc_ranges_base_present;
+    /* .debug_rnglists */
+    Dwarf_Bool     cc_rnglists_base_present; /* DW5 */
+    Dwarf_Bool     cc_rnglists_header_length_present;
+
+    char *         cc_dwo_name;
     /* === END DEBUG FISSION (Split Dwarf) data */
 
     /*  Global section offset to the bytes of the CU die for this CU.
@@ -289,8 +306,7 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned   cc_highest_known_code;
     Dwarf_CU_Context cc_next;
 
-    /*unsigned char cc_offset_length; */
-    Dwarf_Bool cc_is_info; /* TRUE means context is
+    Dwarf_Bool cc_is_info;    /* TRUE means context is
         in debug_info, FALSE means is in debug_types.
         FALSE only possible for DWARF4 .debug_types
         section CUs.

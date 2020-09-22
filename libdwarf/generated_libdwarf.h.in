@@ -78,6 +78,8 @@ typedef unsigned long long Dwarf_Unsigned;
 typedef signed   long long Dwarf_Signed;
 typedef unsigned long long Dwarf_Off;
 typedef unsigned long long Dwarf_Addr;
+    /*  Dwarf_Bool as int is wasteful, but for compatibility
+        it must stay as int, not unsigned char. */
 typedef int                Dwarf_Bool;   /* boolean type */
 typedef unsigned short     Dwarf_Half;   /* 2 byte unsigned value */
 typedef unsigned char      Dwarf_Small;  /* 1 byte unsigned value */

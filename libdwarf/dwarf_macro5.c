@@ -1167,6 +1167,9 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     } else {
         macro_offset = offset_in;
     }
+    /*  If DWP cc_macro_base may be non-zero */
+    macro_offset += cu_context->cc_macro_base;
+
     lres = dwarf_srcfiles(die,&srcfiles,&srcfiles_count, error);
     if (lres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
@@ -1394,7 +1397,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-int dwarf_macro_context_head(Dwarf_Macro_Context head,
+int 
+dwarf_macro_context_head(Dwarf_Macro_Context head,
     Dwarf_Half     * version,
     Dwarf_Unsigned * mac_offset,
     Dwarf_Unsigned * mac_len,
@@ -1427,7 +1431,8 @@ int dwarf_macro_context_head(Dwarf_Macro_Context head,
     *opcode_count = head->mc_opcode_count;
     return DW_DLV_OK;
 }
-int dwarf_macro_operands_table(Dwarf_Macro_Context head,
+int 
+dwarf_macro_operands_table(Dwarf_Macro_Context head,
     Dwarf_Half  index, /* 0 to opcode_count -1 */
     Dwarf_Half  *opcode_number,
     Dwarf_Half  *operand_count,

@@ -1,3 +1,36 @@
+2020-09-22: David Anderson
+    * CMakeLists.txt, Makefile.am: Added new file 
+      dwarf_fission_to_cu.c.
+    * Makefile.in: Regenerated.
+    * dwarf_die_deliv.c: Renamed _dwarf_find_offsets_via_fission
+      to be _dwarf_find_all_offsets_via_fission().
+      Added status check following the call to it.
+    * dwarf_fission_to_cu.c: Now the above function
+      and supporting functions are in this source file to
+      deal with DW_SECT_LOCLISTS,DW_SECT_STR_OFFSETS,
+      DW_SECT_MACRO, DW_SECT_RNGLISTS.
+    * dwarf_loc.h: Updated prototypes for these
+      functions.
+    * dwarf_loclists.h: Now deleted. It's long been
+      unused.
+    * dwarf_loclists.c: Renamed internal_read_header as
+      _dwarf_internal_read_loclists_header for more general
+      access.
+    * dwarf_macro5.c: Now the cu-context cc_macro_base
+      field is used when needed for DWP files.
+    * dwarf_opaque.h: Rearranged some fields of Dwarf_CU_Context
+      into more logical groupings (related to debug fission).
+    * dwarf_rnglists.c: renamed internal_read_header
+      to _dwarf_internal_read_rnglists_header().
+    * dwarf_rnglists.h: Added protype for
+      _dwarf_internal_read_rnglists_header().
+    * dwarf_str_offsets.c: Removed _dwarf_find_offsets_via_fission
+      (which does more than just str_offsets now)
+      and put into dwarf_fission_to_cu.c as
+      _dwarf_find_all_offsets_via_fission().
+    * dwarf_str_offsets.h: Prototype renamed.
+    * libdwarf.h.in: Added a comment.
+    * generated_libdwarf.h.in: Regenerated.
 2020-09-18: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version

@@ -283,8 +283,8 @@ read_single_lle_entry(Dwarf_Debug dbg,
     various offsets, including offset
     of the next header. Does no memory
     allocations here. */
-static int
-internal_read_header(Dwarf_Debug dbg,
+int
+_dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
     Dwarf_Unsigned contextnum,
     Dwarf_Unsigned sectionlength,
     Dwarf_Small *data,
@@ -443,7 +443,8 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         memset(newcontext,0,sizeof(*newcontext));
-        res = internal_read_header(dbg,chainlength,
+        res = _dwarf_internal_read_loclists_header(dbg,
+            chainlength,
             section_size,
             data,end_data,offset,
             newcontext,&nextoffset,error);
