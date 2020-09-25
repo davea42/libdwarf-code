@@ -1,3 +1,7 @@
+2020-09-25: David Anderson
+    * baseline.ltp: new test baseline for debuglink.
+	* dwarf_debuglink.c: Corrected and clarified.
+	* test_linkedtopath.c: Improved test code.
 2020-09-18: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version

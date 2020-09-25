@@ -1,3 +1,6 @@
+2020-09-25:   David Anderson 
+    * debuglink.base: New baseline test output
+      reflecting corrected debuglink in libdwarf.
 2020-09-18:   David Anderson 
     * CMakeLists.txt: Add getdebuglink to the
       examples built (source getdebuglink.c added

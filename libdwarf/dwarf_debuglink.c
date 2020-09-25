@@ -48,12 +48,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* getcwd */
 #endif /* HAVE_UNISTD_H */
-#if 0
-#include <sys/types.h> /* for open() */
-#include <sys/stat.h> /* for open() */
-#include <fcntl.h> /* for open() */
-#include <errno.h>
-#endif
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -65,8 +59,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #define O_BINARY 0
 #endif /* O_BINARY */
 
-#define TESTING
-
 #define MINBUFLEN 1000
 #define TRUE  1
 #define FALSE 0
@@ -76,7 +68,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #else
 #define  UNUSEDARG
 #endif
-
 
 #if _WIN32
 #define NULL_DEVICE_NAME "NUL"
@@ -109,101 +100,30 @@ extract_buildid(Dwarf_Debug dbg,
     Dwarf_Error *error);
 
 struct joins_s {
-    char * js_fullpath;
     dwarfstring js_dirname;
-    dwarfstring js_basepath;
-    dwarfstring js_basename;
+    dwarfstring js_basenamesimple;
+    dwarfstring js_basesimpledebug;
+    dwarfstring js_binname;
     dwarfstring js_cwd;
     dwarfstring js_originalfullpath;
-    dwarfstring js_tmp;
+    dwarfstring js_linkstring;
     dwarfstring js_tmp2;
-    dwarfstring js_tmpdeb;
     dwarfstring js_tmp3;
     dwarfstring js_buildid;
     dwarfstring js_buildid_filename;
 };
 
-#if 0
-int
-_dwarf_check_string_valid(
-    void *areaptr,
-    void *strptr,
-    void *areaendptr,
-    int suggested_error,
-    int *errcode)
-{
-    Dwarf_Small *start = areaptr;
-    Dwarf_Small *p = strptr;
-    Dwarf_Small *end = areaendptr;
-    ptrdiff_t diff =  0;
-
-    if (p < start) {
-        diff = start - p;
-#ifdef  TESTING
-        printf("Error  string start  pointer error: loc %"
-            DW_PR_DSs
-            " bytes before available area \n",(Dwarf_Signed)diff);
-#endif  /* TESTING */
-        *errcode = suggested_error;
-        return DW_DLV_ERROR;
-    }
-    if (p >= end) {
-        diff = p - start;
-#ifdef  TESTING
-        printf("Error  string end  pointer error, not terminated %"
-            " before end of area. Length:  "
-            DW_PR_DSs  "\n",(Dwarf_Signed)diff);
-#endif  /* TESTING */
-        *errcode = suggested_error;
-        return DW_DLV_ERROR;
-    }
-    while (p < end) {
-        if (*p == 0) {
-            return DW_DLV_OK;
-        }
-        ++p;
-    }
-    diff =  p - start;
-#ifdef  TESTING
-    printf("Error string not terminated error:  not ended after %"
-        DW_PR_DSs " bytes (past end of available bytes)\n",
-        (Dwarf_Signed)diff);
-#endif  /* TESTING */
-    *errcode = DW_DLE_STRING_NOT_TERMINATED;
-    return DW_DLV_ERROR;
-}
-#endif
-
-
-#if 0
-static int
-does_file_exist(char *f)
-{
-    int fd = 0;
-
-    fd = open(f,O_RDONLY|O_BINARY);
-    if (fd < 0) {
-        return DW_DLV_NO_ENTRY;
-    }
-    /* Here we could derive the crc to validate the file. */
-    close(fd);
-    return DW_DLV_OK;
-}
-#endif
-
-
 static void
 construct_js(struct joins_s * js)
 {
     memset(js,0,sizeof(struct joins_s));
-    dwarfstring_constructor(&js->js_basename);
     dwarfstring_constructor(&js->js_dirname);
-    dwarfstring_constructor(&js->js_basepath);
+    dwarfstring_constructor(&js->js_basenamesimple);
+    dwarfstring_constructor(&js->js_basesimpledebug);
     dwarfstring_constructor(&js->js_cwd);
     dwarfstring_constructor(&js->js_originalfullpath);
-    dwarfstring_constructor(&js->js_tmp);
+    dwarfstring_constructor(&js->js_linkstring);
     dwarfstring_constructor(&js->js_tmp2);
-    dwarfstring_constructor(&js->js_tmpdeb);
     dwarfstring_constructor(&js->js_tmp3);
     dwarfstring_constructor(&js->js_buildid);
     dwarfstring_constructor(&js->js_buildid_filename);
@@ -212,13 +132,12 @@ static void
 destruct_js(struct joins_s * js)
 {
     dwarfstring_destructor(&js->js_dirname);
-    dwarfstring_destructor(&js->js_basepath);
-    dwarfstring_destructor(&js->js_basename);
+    dwarfstring_destructor(&js->js_basenamesimple);
+    dwarfstring_destructor(&js->js_basesimpledebug);
     dwarfstring_destructor(&js->js_cwd);
     dwarfstring_destructor(&js->js_originalfullpath);
-    dwarfstring_destructor(&js->js_tmp);
+    dwarfstring_destructor(&js->js_linkstring);
     dwarfstring_destructor(&js->js_tmp2);
-    dwarfstring_destructor(&js->js_tmpdeb);
     dwarfstring_destructor(&js->js_tmp3);
     dwarfstring_destructor(&js->js_buildid);
     dwarfstring_destructor(&js->js_buildid_filename);
@@ -238,32 +157,22 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
         dwarfstring_append(target,dwarfstring_string(input));
         return DW_DLV_OK;
     }
-printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
     targlen = dwarfstring_strlen(target);
     targ = dwarfstring_string(target);
     if (targ[targlen-1] != joinchar) {
-printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
         if (*inputs != joinchar) {
-        printf("dadebug targ  %s joinstr inputs %s line %d\n",targ,inputs,__LINE__);
             dwarfstring_append(target,joinstr);
             dwarfstring_append(target,inputs);
-            printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         } else {
             dwarfstring_append(target,inputs);
-            printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         }
     } else {
-printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
         if (*inputs != joinchar) {
-printf("dadebug targ  %s inputs %s line %d\n",targ,inputs,__LINE__);
             dwarfstring_append(target,inputs);
-printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         } else {
             dwarfstring_append(target,inputs+1);
-printf("dadebug target  %s line %d\n",dwarfstring_string(target),__LINE__);
         }
     }
-printf("dadebug output %s line %d\n",dwarfstring_string(target),__LINE__);
     return DW_DLV_OK;
 }
 /*  ASSERT: the last character in s is not a /  */
@@ -349,6 +258,19 @@ dwarfstring_list_destructor(struct dwarfstring_list_s *l)
 }
 
 static void
+prepare_linked_name(dwarfstring *out,
+    dwarfstring *dirname,
+    dwarfstring *extradir,
+    dwarfstring *linkname)
+{
+    dwarfstring_append(out, dwarfstring_string(dirname));
+    if (extradir) {
+        _dwarf_pathjoinl(out,extradir);
+    }
+    _dwarf_pathjoinl(out,linkname);
+}
+
+static void
 build_buildid_filename(dwarfstring *target,
     unsigned buildid_length,
     unsigned char *buildid)
@@ -358,6 +280,8 @@ build_buildid_filename(dwarfstring *target,
     unsigned char *cp  = 0;
 
     dwarfstring_constructor(&tmp);
+    dwarfstring_append(&tmp,".build-id");
+    dwarfstring_append(&tmp,joinstr);
     cp = buildid;
     for (bu = 0; bu < buildid_length; ++bu ,++cp) {
         dwarfstring_append_printf_u(&tmp, "%02x",*cp);
@@ -365,14 +289,8 @@ build_buildid_filename(dwarfstring *target,
             dwarfstring_append(&tmp,"/");
         }
     }
-#ifdef TESTING
-    printf("now append final .debug to %s line %d \n",dwarfstring_string(&tmp),__LINE__);
-#endif
-    dwarfstring_append(&tmp,".debug");
     _dwarf_pathjoinl(target,&tmp);
-#ifdef TESTING
-    printf("append .debug done %s line %d \n",dwarfstring_string(target),__LINE__);
-#endif
+    dwarfstring_append(target,".debug");
     dwarfstring_destructor(&tmp);
     return;
 }
@@ -391,19 +309,44 @@ dump_bytes(const char *msg,unsigned char * start, unsigned len)
 }
 #endif
 
+/*  If the compiler or the builder of the object file
+    being read has made a mistake it is possible
+    for a constructed name to match the original
+    file path, yet we do not want to add that to
+    the search path. */
+static int
+duplicatedpath(dwarfstring* l,
+    dwarfstring*r)
+{
+    if (strcmp(dwarfstring_string(l),
+        dwarfstring_string(r))) {
+        return FALSE;
+    }
+    /*  Oops. somebody made a mistake */
+    return TRUE;
+}
+
+
 
 /*  New September 2019.  Access to the GNU section named
     .gnu_debuglink
     See
-    https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
-
+    https://sourceware.org/gdb/onlinedocs/
+        gdb/Separate-Debug-Files.html
+    The default global path was set
+    to /usr/lib/debug
+    by set_global_paths_init()
+    called at libdwarf object init time.
+    So there is always the default
+    global path present.
 */
-int _dwarf_construct_linkedto_path(
+int
+_dwarf_construct_linkedto_path(
    char         **global_prefixes_in,
    unsigned       length_global_prefixes_in,
    char          *pathname_in,
    char          *link_string_in, /* from debug link */
-   dwarfstring * link_string_fullpath_out,
+   dwarfstring   *link_string_fullpath_out,
    UNUSEDARG unsigned char *crc_in, /* from debug_link, 4 bytes */
    unsigned char *buildid, /* from gnu buildid */
    unsigned       buildid_length, /* from gnu buildid */
@@ -421,23 +364,16 @@ int _dwarf_construct_linkedto_path(
 
     dwarfstring_list_constructor(&base_dwlist);
     construct_js(&joind);
-    build_buildid_filename(&joind.js_buildid_filename,
-        buildid_length, buildid);
     dirnamelen = mydirlen(depath);
     if (dirnamelen) {
-        dwarfstring_append_length(&joind.js_dirname,
+        /*  Original dirname, before cwd (if needed) */
+        dwarfstring_append_length(&joind.js_tmp2,
             depath,dirnamelen);
     }
-    dwarfstring_append(&joind.js_basepath,depath+dirnamelen);
-    dwarfstring_append(&joind.js_basename,link_string_in);
     if (depath[0] != joinchar) {
+        /*  Meaning a/b or b, not /a/b or /b ,
+            so we apply cwd */
         char  buffer[2000];
-#ifdef TESTING
-        buffer[0] = 0;
-        /*  For testing lets use a fake (consistent)
-            base dir.  */
-        strcpy(buffer,"/fake/dir/path");
-#else
         unsigned buflen= sizeof(buffer);
         char *wdret = 0;
 
@@ -451,206 +387,148 @@ int _dwarf_construct_linkedto_path(
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
-#endif /* TESTING */
         dwarfstring_append(&joind.js_cwd,buffer);
+        dwarfstring_append(&joind.js_dirname,buffer);
+        _dwarf_pathjoinl(&joind.js_dirname,&joind.js_tmp2);
         buffer[0] = 0;
+    }  else {/* else leave js_cwd empty */
+        dwarfstring_append(&joind.js_dirname,
+            dwarfstring_string(&joind.js_tmp2));
     }
 
-    {
-        /*  Builds the full path to the original
-            executable, but absent executable name. */
-        dwarfstring_append(&joind.js_originalfullpath,
-            dwarfstring_string(&joind.js_cwd));
-        _dwarf_pathjoinl(&joind.js_originalfullpath,
-            &joind.js_dirname);
-        _dwarf_pathjoinl(&joind.js_originalfullpath,
-            &joind.js_basepath);
-#ifdef TESTING
-        printf("originalfullpath    : %s\n",
-            dwarfstring_string(&joind.js_originalfullpath));
-#endif
-    }
-    {
-        /*  There is perhaps a directory prefix in the
-            incoming pathname.
-            So we add that to js_cwd. */
-        res = _dwarf_pathjoinl(&joind.js_cwd,
-            &joind.js_dirname);
-        /* This is used in a couple search paths. */
-    }
+
+    /* Creating a real basename. No slashes. */
+    dwarfstring_append(&joind.js_basenamesimple,
+        depath+dirnamelen);
+    dwarfstring_append(&joind.js_basesimpledebug,
+        dwarfstring_string(&joind.js_basenamesimple));
+    dwarfstring_append(&joind.js_basesimpledebug,".debug");
+
+    build_buildid_filename(&joind.js_buildid_filename,
+        buildid_length, buildid);
+    dwarfstring_reset(&joind.js_tmp2);
+
+    /*  Now js_dirname / js_basenamesimple
+        are reflecting a full path  */
+
+    /*  saves the full path to the original
+        executable */
+    dwarfstring_append(&joind.js_originalfullpath,
+        dwarfstring_string(&joind.js_dirname));
+    _dwarf_pathjoinl(&joind.js_originalfullpath,
+        &joind.js_basenamesimple);
+
+    /*  js_originalfullpath is a true full path
+        to the object we started with as input. */
+    /*  First, do the build-id method if it applies
+        at all */
     for (global_prefix_number = 0;
         buildid_length &&
         (global_prefix_number < length_global_prefixes_in);
         ++global_prefix_number) {
         char * prefix = 0;
+        struct dwarfstring_list_s *now_last = 0;
 
         prefix = global_prefixes_in[global_prefix_number];
         dwarfstring_reset(&joind.js_buildid);
         dwarfstring_append(&joind.js_buildid,prefix);
         _dwarf_pathjoinl(&joind.js_buildid,
             &joind.js_buildid_filename);
-#ifdef TESTING
-            printf("buildid so var %s line %d \n",
-                dwarfstring_string(&joind.js_buildid),__LINE__);
-#endif /* TESTING */
-        if (!strcmp(dwarfstring_string(&joind.js_originalfullpath),
-            dwarfstring_string(&joind.js_buildid))) {
-#ifdef TESTING
-            printf("duplicated output string %s line %d \n",
-                dwarfstring_string(&joind.js_buildid),__LINE__);
-#endif /* TESTING */
-            /* duplicated name. spurious match. */
-        } else {
-            struct dwarfstring_list_s *now_last = 0;
-#ifdef TESTING
-            printf(" add to list output string %s line %d\n",
-                dwarfstring_string(&joind.js_buildid),__LINE__);
-#endif /* TESTING */
+        res = dwarfstring_list_add_new(
+            &base_dwlist,
+            last_entry,&joind.js_buildid,
+            &now_last,errcode);
+        if(res != DW_DLV_OK) {
+            dwarfstring_list_destructor(&base_dwlist);
+            destruct_js(&joind);
+            return res;
+        }
+            last_entry = now_last;
+    } /* end loop on global prefix numbers */
+    /* end of the build-id name-finding. */
+
+    /*  Now for the debug link method of finding debug
+        files. */
+    if (link_string_in) {
+        /* First try dir of executable */
+        struct dwarfstring_list_s *now_last = 0;
+
+        dwarfstring_append(&joind.js_linkstring,
+            link_string_in);
+        dwarfstring_reset(&joind.js_tmp3);
+        dwarfstring_reset(&joind.js_tmp2);
+        prepare_linked_name(&joind.js_tmp3,
+            &joind.js_dirname,
+            0,&joind.js_linkstring);
+        dwarfstring_append(link_string_fullpath_out,
+            dwarfstring_string(&joind.js_tmp3));
+        if (!duplicatedpath(&joind.js_originalfullpath,
+            &joind.js_tmp3)) {
             res = dwarfstring_list_add_new(
                 &base_dwlist,
-                last_entry,&joind.js_buildid,
+                last_entry,&joind.js_tmp3,
                 &now_last,errcode);
             if(res != DW_DLV_OK) {
                 dwarfstring_list_destructor(&base_dwlist);
                 destruct_js(&joind);
                 return res;
             }
-#ifdef TESTING
-            printf("final output string %s line %d \n",
-                dwarfstring_string(&joind.js_buildid),__LINE__);
-#endif /* TESTING */
             last_entry = now_last;
         }
-    }
-    if (link_string_in) {
-#ifdef TESTING
-       printf("link string in %s line %d\n",
-                    link_string_in,__LINE__);
-#endif /* TESTING */
-        /* js_cwd is a leading / directory name. */
-        {
-            dwarfstring_reset(&joind.js_tmp);
-            dwarfstring_append(&joind.js_tmp,
-                dwarfstring_string(&joind.js_cwd));
-            /* If we add basename do we find what we look for? */
-            res = _dwarf_pathjoinl(&joind.js_tmp,&joind.js_basename);
-            /* We return the original link as full path this way. */
-            dwarfstring_append(link_string_fullpath_out,
-                dwarfstring_string(&joind.js_tmp));
-#ifdef TESTING
-                printf("fullpath out string %s line %d\n",
-                    dwarfstring_string(link_string_fullpath_out),__LINE__);
-#endif /* TESTING */
-            if (!strcmp(dwarfstring_string(&joind.js_originalfullpath),
-                dwarfstring_string(&joind.js_tmp))) {
-#ifdef TESTING
-                printf("duplicated output string %s line %d\n",
-                    dwarfstring_string(&joind.js_tmp),__LINE__);
-#endif /* TESTING */
-                /* duplicated name. spurious match. */
-            } else if (res == DW_DLV_OK) {
-                struct dwarfstring_list_s *now_last = 0;
-#ifdef TESTING
-                printf(" add to list output string %s line %d\n",
-                    dwarfstring_string(&joind.js_tmp),__LINE__);
-#endif /* TESTING */
+        dwarfstring_reset(&joind.js_tmp2);
+        dwarfstring_reset(&joind.js_tmp3);
+        dwarfstring_append(&joind.js_tmp3,".debug");
+        prepare_linked_name(&joind.js_tmp2,
+            &joind.js_dirname,
+            &joind.js_tmp3,&joind.js_linkstring);
+        if (! duplicatedpath(&joind.js_originalfullpath,
+            &joind.js_tmp2)) {
+            res = dwarfstring_list_add_new(
+                &base_dwlist,
+                last_entry,&joind.js_tmp2,
+                &now_last,errcode);
+            if(res != DW_DLV_OK) {
+                dwarfstring_list_destructor(&base_dwlist);
+                destruct_js(&joind);
+                return res;
+            }
+            last_entry = now_last;
+        }
+        /*  Now look in the global locations. */
+        for (global_prefix_number = 0;
+            global_prefix_number < length_global_prefixes_in;
+            ++global_prefix_number) {
+            char * prefix =
+                global_prefixes_in[global_prefix_number];
+
+            dwarfstring_reset(&joind.js_tmp2);
+            dwarfstring_reset(&joind.js_tmp3);
+            dwarfstring_append(&joind.js_tmp2, prefix);
+            prepare_linked_name(&joind.js_tmp3,
+                &joind.js_tmp2,
+                &joind.js_dirname,
+                &joind.js_linkstring);
+            if (!duplicatedpath(&joind.js_originalfullpath,
+                &joind.js_tmp3)) {
                 res = dwarfstring_list_add_new(
                     &base_dwlist,
-                    last_entry,&joind.js_tmp,
+                    last_entry,&joind.js_tmp3,
                     &now_last,errcode);
                 if(res != DW_DLV_OK) {
                     dwarfstring_list_destructor(&base_dwlist);
-                    destruct_js(&joind);
+                        destruct_js(&joind);
                     return res;
                 }
                 last_entry = now_last;
             }
         }
-        {
-            dwarfstring_reset(&joind.js_tmp2);
-            dwarfstring_reset(&joind.js_tmpdeb);
-
-            dwarfstring_append(&joind.js_tmp2,
-                dwarfstring_string(&joind.js_cwd));
-            dwarfstring_append(&joind.js_tmpdeb,".debug");
-            res = _dwarf_pathjoinl(&joind.js_tmp2,&joind.js_tmpdeb);
-            if (res == DW_DLV_OK) {
-                res = _dwarf_pathjoinl(&joind.js_tmp2,
-                    &joind.js_basename);
-                /*  this the second search path
-                    after global directories
-                    search for nn/nnnnn....debug.   */
-                if (!strcmp(dwarfstring_string(
-                    &joind.js_originalfullpath),
-                    dwarfstring_string(&joind.js_tmp2))) {
-#ifdef TESTING
-                printf("duplicated output string %s line %d\n",
-                    dwarfstring_string(&joind.js_tmp2),__LINE__);
-#endif /* TESTING */
-                    /* duplicated name. spurious match. */
-                } else if(res == DW_DLV_OK) {
-                    struct dwarfstring_list_s *now_last = 0;
-#ifdef TESTING
-                    printf(" add to list output string %s line %d\n",
-                        dwarfstring_string(&joind.js_tmp2),__LINE__);
-#endif /* TESTING */
-                    res = dwarfstring_list_add_new(
-                        &base_dwlist,
-                        last_entry,&joind.js_tmp2,
-                        &now_last,errcode);
-                    if(res != DW_DLV_OK) {
-                        dwarfstring_list_destructor(&base_dwlist);
-                        destruct_js(&joind);
-                        return res;
-                    }
-                    last_entry = now_last;
-                }
-            }
-        }
-        /*  Not found above, now look in the global locations. */
-#ifdef TESTING
-       printf(" Now look in global locations. line %d\n",__LINE__);
-#endif
-        for (global_prefix_number = 0;
-            global_prefix_number < length_global_prefixes_in;
-            ++global_prefix_number) {
-            char * prefix = global_prefixes_in[global_prefix_number];
-
-            dwarfstring_reset(&joind.js_tmp3);
-            dwarfstring_append(&joind.js_tmp3, prefix);
-            res = _dwarf_pathjoinl(&joind.js_tmp3, &joind.js_cwd);
-            if (res == DW_DLV_OK) {
-                res = _dwarf_pathjoinl(&joind.js_tmp3,
-                    &joind.js_basename);
-                if (!strcmp(dwarfstring_string(
-                    &joind.js_originalfullpath),
-                    dwarfstring_string(&joind.js_tmp3))) {
-                    /* duplicated name. spurious match. */
-#ifdef TESTING
-                    printf("duplicated output string %s\n",
-                        dwarfstring_string(&joind.js_tmp3));
-#endif /* TESTING */
-                } else if (res == DW_DLV_OK) {
-                    struct dwarfstring_list_s *now_last = 0;
-#ifdef TESTING
-                    printf(" add to list output string %s line %d\n",
-                        dwarfstring_string(&joind.js_tmp3),__LINE__);
-#endif /* TESTING */
-                    res = dwarfstring_list_add_new(
-                        &base_dwlist,
-                        last_entry,&joind.js_tmp3,
-                        &now_last,errcode);
-                    if(res != DW_DLV_OK) {
-                        dwarfstring_list_destructor(&base_dwlist);
-                        destruct_js(&joind);
-                        return res;
-                    }
-                    last_entry = now_last;
-                }
-            }
-        }
     }
 
+    /*  Now malloc space for the pointer array
+        and the strings they point at so a simple
+        free by our caller will clean up
+        everything.  Copy the data from
+        base_dwlist to the new area. */
     {
         struct dwarfstring_list_s *cur = 0;
         char **resultfullstring = 0;
@@ -675,10 +553,6 @@ int _dwarf_construct_linkedto_path(
         resultfullstring = (char **)malloc(totalareasize);
         setstrindex = pointerarraysize;
         if(!resultfullstring) {
-#ifdef TESTING
-            printf("Malloc fail making final paths. Length %lu"
-                " bytes.\n",totalareasize);
-#endif /* TESTING */
             dwarfstring_list_destructor(&base_dwlist);
             destruct_js(&joind);
             *errcode = DW_DLE_ALLOC_FAIL;
@@ -789,12 +663,6 @@ extract_buildid(Dwarf_Debug dbg,
     secsize = pbuildid->dss_size;
     ptr = pbuildid->dss_data;
     if (secsize < sizeof(struct buildid_s)) {
-#ifdef  TESTING
-        printf("ERROR section .note.gnu.build-id too small: "
-            " section length: 0x%" DW_PR_DUx
-            " minimum struct size 0x%" DW_PR_DUx  "\n",
-            secsize,(Dwarf_Unsigned) sizeof(struct buildid_s));
-#endif /* TESTING */
         _dwarf_error(dbg,error,DW_DLE_CORRUPT_NOTE_GNU_DEBUGID);
         return DW_DLV_ERROR;
     }
@@ -838,7 +706,8 @@ extract_buildid(Dwarf_Debug dbg,
 }
 
 /* */
-int dwarf_gnu_debuglink(Dwarf_Debug dbg,
+int
+dwarf_gnu_debuglink(Dwarf_Debug dbg,
     char     **  debuglink_path_returned,
     unsigned char **  crc_returned,
     char     **  debuglink_fullpath_returned,
@@ -943,6 +812,7 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
     unsigned    glpath_count_out = 0;
     const char **glpaths = 0;
     const char * path1 = 0;
+
 
     glpath_count_in = dbg->de_gnu_global_path_count;
     glpath_count_out = glpath_count_in+1;

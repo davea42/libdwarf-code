@@ -203,10 +203,6 @@ checkjoin(int expret,int gotret,char*expstr,char*gotstr,
 }
 
 
-#if 0
-int
-_dwarf_pathjoinl(dwarfstring *target,dwarfstring * input);
-#endif
 static void
 test2(Dwarf_Debug dbg)
 {
@@ -330,20 +326,6 @@ printpaths(unsigned count,char **array,dwarfstring *fullpath)
 
 }
 
-#if 0
-int _dwarf_construct_linkedto_path(
-   char         **global_prefixes_in,
-   unsigned       length_global_prefixes_in,
-   char          *pathname_in,
-   char          *link_string_in, /* from debug link */
-   unsigned char  *crc_in, /* from debug_link, 4 bytes */
-   unsigned       builid_length, /* from gnu buildid */
-   unsigned char *builid, /* from gnu buildid */
-   char        ***paths_out,
-   unsigned      *paths_out_length,
-   int *errcode);
-#endif
-
 static unsigned char buildid[20] = {
     0x11,0x22,0x33, 0x44,
     0x21,0x22,0x23, 0x44,
@@ -356,7 +338,7 @@ static unsigned char buildid[20] = {
 static void
 test3(Dwarf_Debug dbg)
 {
-    char * executablepath = "a/b";
+    char * executablepath = "/a/b";
     char * linkstring = "de";
     dwarfstring result;
     char ** global_prefix = 0;
@@ -380,6 +362,7 @@ test3(Dwarf_Debug dbg)
         * sizeof(void *);
     res = dwarf_add_debuglink_global_path(dbg,
         "/usr/lib/debug",&error);
+    printf("Adding global path /usr/lib/debug\n");
     if (res != DW_DLV_OK){
         ++errcount;
         printf("Adding debuglink global path failed line %d %s\n",
@@ -388,6 +371,7 @@ test3(Dwarf_Debug dbg)
     }
     res = dwarf_add_debuglink_global_path(dbg,
         "/fake/lib/debug",&error);
+    printf("Adding global path /fake/lib/debug\n");
     if (res != DW_DLV_OK){
         ++errcount;
         printf("Adding debuglink global path failed line %d %s\n",
@@ -395,7 +379,12 @@ test3(Dwarf_Debug dbg)
         exit(1);
     }
 
-
+    /*  The test will not be repeatable in general
+        unless we give executablepath a starting
+        / so getcwd() will not be called. */
+        
+    printf("executable path %s\n",executablepath);
+    printf("linkstring      %s\n",linkstring);
     dbg->de_path = executablepath;
     dwarfstring_constructor(&result);
     dwarfstring_constructor(&linkstring_fullpath);
@@ -420,8 +409,10 @@ test3(Dwarf_Debug dbg)
 
     dwarfstring_reset(&linkstring_fullpath);
     dwarfstring_reset(&result);
-    executablepath = "ge";
+    executablepath = "/foo/ge";
+    printf("executable path %s\n",executablepath);
     linkstring = "h/i";
+    printf("linkstring      %s\n",linkstring);
     res =_dwarf_construct_linkedto_path(
         (char **)dbg->de_gnu_global_paths,
         dbg->de_gnu_global_path_count,
@@ -444,6 +435,8 @@ test3(Dwarf_Debug dbg)
     dwarfstring_reset(&linkstring_fullpath);
     executablepath = "/somewherespecial/a/b/ge";
     linkstring = "h/i";
+    printf("executable path %s\n",executablepath);
+    printf("linkstring      %s\n",linkstring);
     res =_dwarf_construct_linkedto_path(
         (char **)dbg->de_gnu_global_paths,
         dbg->de_gnu_global_path_count,
@@ -479,26 +472,6 @@ int main()
 
     dbg = &db;
     memset(dbg,0,sizeof(db));
-
-#if 0
-    dbg->de_copy_word = _dwarf_memcpy_noswap_bytes;
-#ifdef WORDS_BIGENDIAN
-    dbg->de_big_endian_object = 1;
-    if (endianness == DW_OBJECT_LSB ) {
-        dbg->de_same_endian = 0;
-        dbg->de_big_endian_object = 0;
-        dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
-    }
-#else /* little endian */
-    dbg->de_big_endian_object = 0;
-    if (endianness == DW_OBJECT_MSB ) {
-        dbg->de_same_endian = 0;
-        dbg->de_big_endian_object = 1;
-        dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
-    }
-#endif /* !WORDS_BIGENDIAN */
-#endif
-
 
     test1(dbg);
     test2(dbg);
