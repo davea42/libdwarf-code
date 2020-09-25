@@ -1,3 +1,7 @@
+2020-09-25: David Anderson
+    * baseline.ltp: new test baseline for debuglink.
+	* dwarf_debuglink.c: Corrected and clarified.
+	* test_linkedtopath.c: Improved test code.
 2020-09-22: David Anderson
     * CMakeLists.txt, Makefile.am: Added new file 
       dwarf_fission_to_cu.c.
@@ -18,13 +22,15 @@
       access.
     * dwarf_macro5.c: Now the cu-context cc_macro_base
       field is used when needed for DWP files.
-    * dwarf_opaque.h: Rearranged some fields of Dwarf_CU_Context
+    * dwarf_opaque.h: Rearranged some fields of
+      Dwarf_CU_Context
       into more logical groupings (related to debug fission).
     * dwarf_rnglists.c: renamed internal_read_header
       to _dwarf_internal_read_rnglists_header().
     * dwarf_rnglists.h: Added protype for
       _dwarf_internal_read_rnglists_header().
-    * dwarf_str_offsets.c: Removed _dwarf_find_offsets_via_fission
+    * dwarf_str_offsets.c: Removed 
+      _dwarf_find_offsets_via_fission
       (which does more than just str_offsets now)
       and put into dwarf_fission_to_cu.c as
       _dwarf_find_all_offsets_via_fission().
