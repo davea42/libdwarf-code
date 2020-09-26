@@ -1,7 +1,13 @@
-2020-09-25: David Anderson
+2020-09-26: David Anderson
     * baseline.ltp: new test baseline for debuglink.
+	* test_linkedtopath.c: Now with better coverage
+      of the paths in tbe debuglink code, we
+      add a getcwd here to return a test cwd
+      of /exam/ple so the output of debuglink
+      does not depend on the real build
+      directory location.
+2020-09-25: David Anderson
 	* dwarf_debuglink.c: Corrected and clarified.
-	* test_linkedtopath.c: Improved test code.
 2020-09-22: David Anderson
     * CMakeLists.txt, Makefile.am: Added new file 
       dwarf_fission_to_cu.c.

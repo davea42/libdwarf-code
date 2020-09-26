@@ -59,6 +59,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
 static int errcount = 0;
 
+char *
+getcwd(UNUSEDARG char *buf, UNUSEDARG size_t size)
+{
+    if (size >= 12) {
+        strcpy(buf,"/exam/ple");
+        return buf;
+    }
+    /*  This should not happen, if it does
+        this test is coded wrong. */
+    return "/exam/ple";
+}
+
 /* dummy func we do not need real one */
 int _dwarf_load_section(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,
@@ -433,8 +445,8 @@ test3(Dwarf_Debug dbg)
 
     dwarfstring_reset(&result);
     dwarfstring_reset(&linkstring_fullpath);
-    executablepath = "/somewherespecial/a/b/ge";
-    linkstring = "h/i";
+    executablepath = "a/b/ge";
+    linkstring = "i.debug";
     printf("executable path %s\n",executablepath);
     printf("linkstring      %s\n",linkstring);
     res =_dwarf_construct_linkedto_path(
