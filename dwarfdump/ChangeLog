@@ -1,3 +1,8 @@
+2020-09-26: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with latest
+      version string.
 2020-09-18: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
@@ -26,8 +31,8 @@
       Fixes print_error() so it works right with dbg null.
 2020-09-08: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
-	  dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
-	  dwarfdump-tt-table.h: Regenerated with latest
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with latest
       version string.
 2020-09-07: David Anderson
     * glflags.h,print_die.c: Fixed idents and trailing whitespace.
@@ -63,12 +68,12 @@
       is corrupted or maybe not plain ascii strings).
 2020-08-23: David Anderson
     * dwarfdump-ta-ext-table.h: Regenerated
-	* tag_attr_ext.list: Added DW_AT_GNU_macros
+    * tag_attr_ext.list: Added DW_AT_GNU_macros
       to the known-extensions list.
 2020-08-23: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
-	  dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
-	  dwarfdump-tt-table.h: Regenerated with latest
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with latest
       version string.
 2020-08-23: David Anderson
     * checkutil.c,dwarfdump.c,print_die.c: Removed trailing
