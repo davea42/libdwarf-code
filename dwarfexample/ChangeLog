@@ -1,3 +1,6 @@
+2020-09-27:   David Anderson 
+    * getdebuglink.c: Now looks to see if target files exist
+      and reports which files were found.
 2020-09-25:   David Anderson 
     * debuglink.base: New baseline test output
       reflecting corrected debuglink in libdwarf.
