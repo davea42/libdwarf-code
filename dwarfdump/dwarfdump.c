@@ -2097,7 +2097,55 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
         printf(" an alternate object file with more detailed DWARF\n");
         for( ; i < paths_array_length; ++i) {
             char *path = paths_array[i];
+            char           outpath[2000];
+            unsigned long  outpathlen = sizeof(outpath);
+            unsigned int   ftype = 0;
+            unsigned int   endian = 0;
+            unsigned int   offsetsize = 0;
+            Dwarf_Unsigned filesize = 0;
+            int            errcode  = 0;
+
             printf("  [%u] %s\n",i,sanitized(path));
+            res = dwarf_object_detector_path(path,
+                outpath,outpathlen,&ftype,&endian,&offsetsize,
+                &filesize, &errcode);
+            if (res == DW_DLV_NO_ENTRY) {
+                if (glflags.verbose) {
+                  printf(" file does not exist\n");
+                }
+                continue;
+            }
+            if (res == DW_DLV_ERROR) {
+                printf(" file access attempt lead to error %s\n",
+                    dwarf_errmsg_by_number(errcode));
+                continue;
+            }
+            switch(ftype) {
+            case DW_FTYPE_ELF:
+                printf("       file exists and is an Elf object\n");
+                break;
+            case DW_FTYPE_MACH_O:
+                printf("       file exists and is a Mach-O object\n");
+                break;
+            case DW_FTYPE_PE:
+                printf("       file exists and is a PE object");
+                break;
+            case DW_FTYPE_CUSTOM_ELF:
+                printf("       file exists and is a custom elf object");
+                break;
+            case DW_FTYPE_ARCHIVE:
+                if (glflags.verbose) {
+                    printf("       file exists and is an archive "
+                    "so ignore it.");
+                }
+                continue;
+            default:
+                if (glflags.verbose) {
+                    printf("       file exists but is not an object "
+                        "type we recognize\n");
+                }
+                continue;
+            }
         }
         printf("\n");
     }

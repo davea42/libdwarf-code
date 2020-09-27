@@ -975,7 +975,7 @@ void arg_print_debug_names(void)
 {
     glflags.gf_debug_names_flag = TRUE;
 }
-/*  Option '--print-gnu_debuglink' */
+/*  Option '--print-gnu-debuglink' */
 void arg_print_gnu_debuglink(void)
 {
     glflags.gf_gnu_debuglink_flag = TRUE;

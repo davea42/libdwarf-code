@@ -1,3 +1,9 @@
+2020-09-27: David Anderson
+    * dwarfdump.c: Now --print-gnu_debuglink also
+      indicates what files it found in the paths
+      calculated, making --print-gnu_debuglink more useful.
+    * command_options.c: Corrected a typo in a comment about
+      the option --print-gnu_debuglink.
 2020-09-26: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
