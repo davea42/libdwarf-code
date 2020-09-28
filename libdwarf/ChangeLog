@@ -1,3 +1,15 @@
+2020-09-28: David Anderson
+    * libdwarf.h.in: Rearranged the DW_DLC_* values
+      for clarity and added commentary on the main
+      point (the 'access' argument to dwarf init
+      functions for the consumer/reader calls
+      should be zero).  This is not a change.
+    * generated_libdwarf.h.in: Documented
+      the longstanding handling of that same
+      argument to consumer/reader functions.
+    * libdwarf2.1.mm: Version 3.10. Documenting
+      that same thing.
+    * libdwarf2.1.pdf: Regenerated as version 3.10.
 2020-09-26: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
 	  dwarf_names_new.h,libdwarf_version.h: Updated  version

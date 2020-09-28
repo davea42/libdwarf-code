@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.09, 10 September 2020
+.ds vE Rev 3.10, 28 September 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -221,6 +221,22 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Clarified the DW_DLC* 
+value meaning here and in
+libdwarf.h.
+In the consumer/reader case
+DW_DLC_READ
+is zero and zero is the only
+meaningful value to pass
+as the 'access' argument
+of dwarf_init(and the like)
+consumer/reader
+initialization functions.
+All this has been true for many
+years, it is only now being
+clearly (one hopes) stated.
+(September 28, 2020)
 .P
 Added dwarf_get_ranges_b()
 so clients reading DWARF4 
@@ -2387,12 +2403,16 @@ Or use
 instead  of
 \f(CWdwarf_init_path()\fP
 .P
-Pass in the usual DW_DLC_READ
-(which only ever applied to libelf)
-to
+Pass in zero to
 \f(CWaccess\fP.
-Currently no other value is allowed.
-Non-elf objects currently ignore this field.
+The DW_DLC_READ flag,
+which only ever applied to libelf,
+is zero.
+At this time no other value than
+zero should be passed in to
+the functions documented 
+in this consumer/reader
+document.
 .P
 The
 \f(CWgroupnumber\fP argument indicates which group is to
@@ -2467,9 +2487,14 @@ an error occurred.
 .P
 The
 \f(CWaccess\fP argument indicates what access is
-allowed for the section.  The \f(CWDW_DLC_READ\fP
-parameter is valid for read access (only read access
+allowed for the section.
+The \f(CWDW_DLC_READ\fP macro value
+is zero and
+valid for read access (only read access
 is defined or discussed in this document).
+No value other than zero should be passed
+in to these consumer/reader functions.
+The value passed in is ignored.
 .P
 The
 \f(CWgroupnumber\fP argument indicates which group is to

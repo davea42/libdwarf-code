@@ -854,12 +854,25 @@ struct Dwarf_Obj_Access_Interface_s {
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
 
-/* dwarf_init() access arguments
+/*  dwarf_init() 'access' argument values.
+    Used for reading/consuming DWARF, not
+    relevant to the producer portion of libdwarf.
+    None of the following three arguments do anything. 
+    The following short set is useless.
+    Only DW_DLC_READ has a documented effect but...
+    it is useless and irrelevant as it means
+    'do the default'.
+    In the 1990's there was an option DW_DLC_MMAP
+    (deleted from libdwarf.h many years ago).
+    The old option libdwarf told IRIX libelf to mmap
+    the object file.
 */
-#define DW_DLC_READ        0        /* read only access */
-#define DW_DLC_WRITE       1        /* write only access */
-#define DW_DLC_RDWR        2        /* read/write access NOT SUPPORTED*/
+#define DW_DLC_READ               0 /* Not used */
+#define DW_DLC_WRITE              1 /* NOT USED */
+#define DW_DLC_RDWR               2 /* NOT USED */
 
+/*  ===== the following DW_DLC options are for producing DWARF,
+    not used for reading/consuming DWARF. */
 /* dwarf_producer_init* access flag modifiers
    No longer depends on compile-time settings for
    how to produce 64bit offset. See DW_DLC_IRIX_OFFSET64.
@@ -869,56 +882,45 @@ struct Dwarf_Obj_Access_Interface_s {
    set 32bit offset DWARF is assumed.
    Non-MIPS Non IA64 should use DW_DLC_SYMBOLIC_RELOCATIONS
    and handle the relocation creation for the target
-   itself using the symbolic relocations to do so, those
-   use the Dwarf_Rel_Type enum relocation indicators.
+   itself using the symbolic relocations to do so.
+   See the Dwarf_Rel_Type enum relocation indicators.
 
 */
+/*  dwarf_producer_init* access flag modifiers
+    Some new April 2014.
+    See the Dwarf_Rel_Type enum.  */
 /*  The first three are traditional dwarf producer names.
     These names still work.
     Newer names below.
 */
-/* 64-bit address-size target */
-#define DW_DLC_SIZE_64              0x40000000
+/*  64-bit address-size target */
+#define DW_DLC_SIZE_64            0x40000000 /* old spelling */
+#define DW_DLC_POINTER64          0x40000000 /* correct spelling */
 
-/* 32-bit address-size target */
-#define DW_DLC_SIZE_32              0x20000000
+/*  32-bit address-size target */
+#define DW_DLC_SIZE_32            0x20000000 /* old spelling */
+#define DW_DLC_POINTER32          0x20000000 /* correct spelling */
 
-/* 64-bit offset-size DWARF offsets (else 32bit) */
-#define DW_DLC_OFFSET_SIZE_64       0x10000000
+/*  64-bit offset-size DWARF offsets (else 32bit) */
+#define DW_DLC_OFFSET_SIZE_64     0x10000000 /* old spelling */
+#define DW_DLC_OFFSET64           0x10000000 /* correct spelling */
 
-/* 32-bit offset-size ELF object (ELFCLASS32) */
-#define DW_DLC_ELF_OFFSET_SIZE_32   0x00400000
+/*  32-bit offset-size ELF object (ELFCLASS32) */
+#define DW_DLC_ELF_OFFSET_SIZE_32 0x00400000 /* Not used. */
+/*  DW_DLC_OFFSET32 is the default, not used by libdwarf. */
+#define DW_DLC_OFFSET32           0x00010000 /* Not used. */
 
-/* 64-bit offset-size ELF object (ELFCLASS64)  */
-#define DW_DLC_ELF_OFFSET_SIZE_64   0x00020000
+/*  64-bit offset-size ELF object (ELFCLASS64)  */
+#define DW_DLC_ELF_OFFSET_SIZE_64 0x00020000 /* Not used.*/
 
-/* dwarf_producer_init* access flag modifiers
-   Some new April 2014.
-   If DW_DLC_STREAM_RELOCATIONS is set the
-   DW_DLC_ISA_* flags are ignored. See the Dwarf_Rel_Type enum.
-*/
+/*  Special for IRIX only. For producing DWARF */
+/*  Use Elf 64bit offset headers and non-standard IRIX 
+    64bitoffset headers */
+#define DW_DLC_IRIX_OFFSET64      0x00200000
 
-/* Old style Elf binary relocation (.rel) records. The default. */
-#define DW_DLC_STREAM_RELOCATIONS   0x02000000
-
-/* use 32-bit  sec  offsets */
-#define DW_DLC_OFFSET32             0x00010000
-
-/* The following 3 are new sensible names.
-Old names above with same values. */
-/* use 64-bit sec offsets in ELF */
-#define DW_DLC_OFFSET64             0x10000000
-
-/* use 4 for address_size */
-#define DW_DLC_POINTER32            0x20000000
-
-/* use 8 for address_size */
-#define DW_DLC_POINTER64            0x40000000
-
-/* Special for IRIX only */
-/* use Elf 64bit offset headers and non-std IRIX 64bitoffset headers */
-#define DW_DLC_IRIX_OFFSET64        0x00200000
-
+/*  Old style Elf binary relocation (.rel) records. The default. 
+    For producing DWARF */
+#define DW_DLC_STREAM_RELOCATIONS 0x02000000
 /*  Usable with assembly output because it is up to the producer to
     deal with locations in whatever manner the calling producer
     code wishes.  For example, when the libdwarf caller wishes
@@ -927,9 +929,9 @@ Old names above with same values. */
     */
 #define DW_DLC_SYMBOLIC_RELOCATIONS 0x04000000
 
-
-#define DW_DLC_TARGET_BIGENDIAN     0x08000000 /* Big    endian target */
-#define DW_DLC_TARGET_LITTLEENDIAN  0x00100000 /* Little endian target */
+#define DW_DLC_TARGET_BIGENDIAN   0x08000000 
+#define DW_DLC_TARGET_LITTLEENDIAN 0x00100000 
+/* ===== END DW_DLC options LIBDWARF */
 
 
 /* dwarf_pcline function, slide arguments
