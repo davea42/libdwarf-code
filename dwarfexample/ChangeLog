@@ -1,4 +1,10 @@
 2020-09-27:   David Anderson 
+    * getdebuglink.c: Removed trailing whitespace, improved
+      the new messages in previous commit (greater
+      clarity in the reference).
+    * findfuncbypc.c,simplereader.c: Removed trailing 
+      whitespace.
+2020-09-27:   David Anderson 
     * getdebuglink.c: Now looks to see if target files exist
       and reports which files were found.
 2020-09-25:   David Anderson 

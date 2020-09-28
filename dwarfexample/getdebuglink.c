@@ -148,7 +148,7 @@ one_file_debuglink(char *path)
         paths ourselves. */
     for (i =0; i < paths_count; ++i) {
         char *pa =     paths[i];
-        char           outpath[2000]; 
+        char           outpath[2000];
         unsigned long  outpathlen = sizeof(outpath);
         unsigned int   ftype = 0;
         unsigned int   endian = 0;
@@ -163,36 +163,37 @@ one_file_debuglink(char *path)
             outpath,outpathlen,&ftype,&endian,&offsetsize,
             &filesize, &errcode);
         if (res == DW_DLV_NO_ENTRY) {
-            printf(" file does not exist\n");
+            printf(" file above does not exist\n");
             continue;
         }
         if (res == DW_DLV_ERROR) {
-            printf(" file access attempt lead to error %s\n",
-                dwarf_errmsg_by_number(errcode)); 
+            printf(" file above access attempt lead to error %s\n",
+                dwarf_errmsg_by_number(errcode));
             continue;
         }
         switch(ftype) {
         case DW_FTYPE_ELF:
-            printf(" file exists and is an Elf object\n");
+            printf(" file above is an Elf object\n");
             break;
         case DW_FTYPE_MACH_O:
-            printf(" file exists and is a Mach-O object\n");
+            printf(" file above is a Mach-O object\n");
             break;
         case DW_FTYPE_PE:
-            printf(" file exists and is a PE object");
+            printf(" file above is a PE object");
             break;
-          
+
         case DW_FTYPE_CUSTOM_ELF:
-            printf(" file exists and is a custom elf object");
+            printf(" file above is a custom elf object");
             break;
         case DW_FTYPE_ARCHIVE:
-            printf(" file exists and is an archive so ignore it.");
+            printf(" file above is an archive so ignore it.");
             continue;
         default:
-            printf(" file exists but is not an object type we recognize\n"); 
+            printf(" file above is not an object type"
+                " we recognize\n");
             continue;
         }
- 
+
         /*  if crc is non-null calculate the crc of the
             opened file and compare the 4-byte values.
             If they match, this is the desired object file

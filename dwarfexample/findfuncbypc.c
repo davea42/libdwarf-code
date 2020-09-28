@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2019 David Anderson.
-  This source code is placed in the Public Domain. 
+  This source code is placed in the Public Domain.
   It may be copied or used in any way without restriction.
 */
 /*  findfuncbypc.c

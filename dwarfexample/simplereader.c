@@ -967,7 +967,7 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
     Dwarf_Signed sri = 0;
     if (sf->srcfiles) {
         for (sri = 0; sri < sf->srcfilescount; ++sri) {
-            dwarf_dealloc(dbg, sf->srcfiles[sri], 
+            dwarf_dealloc(dbg, sf->srcfiles[sri],
                 DW_DLA_STRING);
         }
         dwarf_dealloc(dbg, sf->srcfiles, DW_DLA_LIST);
@@ -1131,9 +1131,9 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     }
     /*  This dwarf_dealloc was always wrong but
         before March 14, 2020 the documentation said
-        the dwarf_dealloc was necessary. 
+        the dwarf_dealloc was necessary.
         dwarf_dealloc(dbg,name,DW_DLA_STRING); */
-    
+
 }
 
 static void
