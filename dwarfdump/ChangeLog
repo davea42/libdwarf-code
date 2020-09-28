@@ -1,4 +1,7 @@
 2020-09-27: David Anderson
+    * dwarfdump.c: --print-gnu_debuglink output wording
+      made clearer.
+2020-09-27: David Anderson
     * dwarfdump.c: Now --print-gnu_debuglink also
       indicates what files it found in the paths
       calculated, making --print-gnu_debuglink more useful.
