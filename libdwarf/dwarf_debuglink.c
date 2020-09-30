@@ -752,6 +752,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
         if (linkres == DW_DLV_ERROR) {
             return linkres;
         }
+    } else {
     }
     if (pbuildid) {
         buildidres = extract_buildid(dbg,
