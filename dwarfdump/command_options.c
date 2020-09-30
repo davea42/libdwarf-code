@@ -2613,9 +2613,18 @@ process_args(int argc, char *argv[])
         printf("To see the options list: %s -h\n",glflags.program_name);
         exit(FAILED);
     }
-    if (dwoptind != (argc - 1)) {
-        printf("No object file name provided to %s\n",glflags.program_name);
+    if (dwoptind < (argc - 1)) {
+        printf("Multiple apparent object file names "
+            "provided to %s\n",glflags.program_name);
+        printf("Only a single object name is allowed\n");
         printf("To see the options list: %s -h\n",glflags.program_name);
+        exit(FAILED);
+    }
+    if (dwoptind > (argc - 1)) {
+        printf("No object file name provided to %s\n",
+            glflags.program_name);
+        printf("To see the options list: %s -h\n",
+            glflags.program_name);
         exit(FAILED);
     }
     /*  FIXME: it seems silly to be printing section names

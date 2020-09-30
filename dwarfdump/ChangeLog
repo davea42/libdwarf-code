@@ -1,3 +1,9 @@
+2020-09-30: David Anderson
+    * command_options.c: If more than one non-dash
+      word is at the end of the dwarfdump command
+      it used to complain no object name given.
+      Now in that case it complains that more than
+      one was given. Slightly more sensible.
 2020-09-27: David Anderson
     * dwarfdump.c: --print-gnu_debuglink output wording
       made clearer.
