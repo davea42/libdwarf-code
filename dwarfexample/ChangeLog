@@ -1,3 +1,9 @@
+2020-09-30:   David Anderson 
+    * findfuncbypc.c: Removed a mistaken version
+      of include string.h
+    * getdebuglink.c: Now finds debuglink objects
+      and if one is truly a separate debug it
+      reports that.
 2020-09-29:   David Anderson 
     * getdebuglink.c: Now follows paths and compares
       buildid of the executable vs the debug object.

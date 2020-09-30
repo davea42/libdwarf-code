@@ -47,7 +47,6 @@
 #ifdef HAVE_STRING_H
 #include <string.h> /* for strchr etc */
 #endif /* HAVE_STRING_H */
-#include <string.h>
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
