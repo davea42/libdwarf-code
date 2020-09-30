@@ -1,3 +1,11 @@
+2020-09-30: David Anderson
+    * CMakeLists.txt,Makefile.am: Added dwarf_crc32.c
+    * Makefile.am: Regenerated.
+    * dwarf_crc32.c: So libdwarf can interoperate with GNU
+      debuglink to locate separate debug object files.
+    * dwarf_debuglink.c: Added {} one place. No real change.
+    * libdwarf.h.in: New interfaces for crc32.
+    * generated_libdwarf.h.in: Regenerated
 2020-09-28: David Anderson
     * libdwarf.h.in: Rearranged the DW_DLC_* values
       for clarity and added commentary on the main
