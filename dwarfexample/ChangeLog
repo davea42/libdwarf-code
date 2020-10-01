@@ -1,4 +1,9 @@
 2020-09-30:   David Anderson 
+    * Renamed getdebuglink.c to dwdebuglink.c
+      and the example executable is now dwdebuglink.
+    * Makefile.am,CMakeLists.txt: reference new name.
+    * Makefile.in: regenerated.
+2020-09-30:   David Anderson 
     * findfuncbypc.c: Removed a mistaken version
       of include string.h
     * getdebuglink.c: Now finds debuglink objects

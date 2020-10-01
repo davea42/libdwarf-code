@@ -5,7 +5,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AUTOMAKE_OPTIONS = subdir-objects
 
-bin_PROGRAMS = simplereader frame1 findfuncbypc getdebuglink
+bin_PROGRAMS = simplereader frame1 findfuncbypc dwdebuglink
 
 simplereader_SOURCES = simplereader.c
 simplereader_CPPFLAGS = -I$(top_srcdir)/libdwarf \
@@ -28,11 +28,11 @@ findfuncbypc_CFLAGS = $(DWARF_CFLAGS_WARN)
 findfuncbypc_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
-getdebuglink_SOURCES = getdebuglink.c
-getdebuglink_CPPFLAGS = -I$(top_srcdir)/libdwarf \
+dwdebuglink_SOURCES = dwdebuglink.c
+dwdebuglink_CPPFLAGS = -I$(top_srcdir)/libdwarf \
   -I$(top_builddir)/libdwarf
-getdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
-getdebuglink_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+dwdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
+dwdebuglink_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 TESTS = runtests.sh

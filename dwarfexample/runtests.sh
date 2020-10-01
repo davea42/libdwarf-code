@@ -57,17 +57,17 @@ else
   fi
 fi
 
-echo "getdebuglink test"
+echo "dwdebuglink test"
 o=junk.debuglink
-$blddir/getdebuglink a b $srcdir/dummyexecutable > $blddir/$o
-chkres $? "running getdebuglink"
+$blddir/dwdebuglink a b $srcdir/dummyexecutable > $blddir/$o
+chkres $? "running dwdebuglink"
 diff $srcdir/debuglink.base  $blddir/$o
 r=$?
 if [ $r -ne 0 ]
 then
-   echo "To update getdebuglink baseline: mv $blddir/$o $srcdir/debuglink.base"
+   echo "To update dwdebuglink baseline: mv $blddir/$o $srcdir/debuglink.base"
 fi
-chkres $r "running getdebuglink diff against baseline"
+chkres $r "running dwdebuglink diff against baseline"
 
 if [ $failcount -gt 0 ] 
 then

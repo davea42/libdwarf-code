@@ -92,7 +92,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = simplereader$(EXEEXT) frame1$(EXEEXT) \
-	findfuncbypc$(EXEEXT) getdebuglink$(EXEEXT)
+	findfuncbypc$(EXEEXT) dwdebuglink$(EXEEXT)
 subdir = dwarfexample
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/dw_compiler.m4 \
@@ -108,15 +108,22 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_findfuncbypc_OBJECTS = findfuncbypc-findfuncbypc.$(OBJEXT)
-findfuncbypc_OBJECTS = $(am_findfuncbypc_OBJECTS)
+am_dwdebuglink_OBJECTS = dwdebuglink-dwdebuglink.$(OBJEXT)
+dwdebuglink_OBJECTS = $(am_dwdebuglink_OBJECTS)
 am__DEPENDENCIES_1 =
-findfuncbypc_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+dwdebuglink_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+dwdebuglink_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(dwdebuglink_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_findfuncbypc_OBJECTS = findfuncbypc-findfuncbypc.$(OBJEXT)
+findfuncbypc_OBJECTS = $(am_findfuncbypc_OBJECTS)
+findfuncbypc_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+	$(am__DEPENDENCIES_1)
 findfuncbypc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(findfuncbypc_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -127,13 +134,6 @@ frame1_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
 frame1_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(frame1_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_getdebuglink_OBJECTS = getdebuglink-getdebuglink.$(OBJEXT)
-getdebuglink_OBJECTS = $(am_getdebuglink_OBJECTS)
-getdebuglink_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
-	$(am__DEPENDENCIES_1)
-getdebuglink_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(getdebuglink_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_simplereader_OBJECTS = simplereader-simplereader.$(OBJEXT)
 simplereader_OBJECTS = $(am_simplereader_OBJECTS)
 simplereader_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
@@ -175,10 +175,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(findfuncbypc_SOURCES) $(frame1_SOURCES) \
-	$(getdebuglink_SOURCES) $(simplereader_SOURCES)
-DIST_SOURCES = $(findfuncbypc_SOURCES) $(frame1_SOURCES) \
-	$(getdebuglink_SOURCES) $(simplereader_SOURCES)
+SOURCES = $(dwdebuglink_SOURCES) $(findfuncbypc_SOURCES) \
+	$(frame1_SOURCES) $(simplereader_SOURCES)
+DIST_SOURCES = $(dwdebuglink_SOURCES) $(findfuncbypc_SOURCES) \
+	$(frame1_SOURCES) $(simplereader_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -566,12 +566,12 @@ findfuncbypc_CFLAGS = $(DWARF_CFLAGS_WARN)
 findfuncbypc_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
-getdebuglink_SOURCES = getdebuglink.c
-getdebuglink_CPPFLAGS = -I$(top_srcdir)/libdwarf \
+dwdebuglink_SOURCES = dwdebuglink.c
+dwdebuglink_CPPFLAGS = -I$(top_srcdir)/libdwarf \
   -I$(top_builddir)/libdwarf
 
-getdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
-getdebuglink_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+dwdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
+dwdebuglink_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 TESTS = runtests.sh
@@ -679,6 +679,10 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+dwdebuglink$(EXEEXT): $(dwdebuglink_OBJECTS) $(dwdebuglink_DEPENDENCIES) $(EXTRA_dwdebuglink_DEPENDENCIES) 
+	@rm -f dwdebuglink$(EXEEXT)
+	$(AM_V_CCLD)$(dwdebuglink_LINK) $(dwdebuglink_OBJECTS) $(dwdebuglink_LDADD) $(LIBS)
+
 findfuncbypc$(EXEEXT): $(findfuncbypc_OBJECTS) $(findfuncbypc_DEPENDENCIES) $(EXTRA_findfuncbypc_DEPENDENCIES) 
 	@rm -f findfuncbypc$(EXEEXT)
 	$(AM_V_CCLD)$(findfuncbypc_LINK) $(findfuncbypc_OBJECTS) $(findfuncbypc_LDADD) $(LIBS)
@@ -686,10 +690,6 @@ findfuncbypc$(EXEEXT): $(findfuncbypc_OBJECTS) $(findfuncbypc_DEPENDENCIES) $(EX
 frame1$(EXEEXT): $(frame1_OBJECTS) $(frame1_DEPENDENCIES) $(EXTRA_frame1_DEPENDENCIES) 
 	@rm -f frame1$(EXEEXT)
 	$(AM_V_CCLD)$(frame1_LINK) $(frame1_OBJECTS) $(frame1_LDADD) $(LIBS)
-
-getdebuglink$(EXEEXT): $(getdebuglink_OBJECTS) $(getdebuglink_DEPENDENCIES) $(EXTRA_getdebuglink_DEPENDENCIES) 
-	@rm -f getdebuglink$(EXEEXT)
-	$(AM_V_CCLD)$(getdebuglink_LINK) $(getdebuglink_OBJECTS) $(getdebuglink_LDADD) $(LIBS)
 
 simplereader$(EXEEXT): $(simplereader_OBJECTS) $(simplereader_DEPENDENCIES) $(EXTRA_simplereader_DEPENDENCIES) 
 	@rm -f simplereader$(EXEEXT)
@@ -701,9 +701,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwdebuglink-dwdebuglink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/findfuncbypc-findfuncbypc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frame1-frame1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdebuglink-getdebuglink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simplereader-simplereader.Po@am__quote@
 
 .c.o:
@@ -729,6 +729,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+dwdebuglink-dwdebuglink.o: dwdebuglink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwdebuglink_CPPFLAGS) $(CPPFLAGS) $(dwdebuglink_CFLAGS) $(CFLAGS) -MT dwdebuglink-dwdebuglink.o -MD -MP -MF $(DEPDIR)/dwdebuglink-dwdebuglink.Tpo -c -o dwdebuglink-dwdebuglink.o `test -f 'dwdebuglink.c' || echo '$(srcdir)/'`dwdebuglink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwdebuglink-dwdebuglink.Tpo $(DEPDIR)/dwdebuglink-dwdebuglink.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwdebuglink.c' object='dwdebuglink-dwdebuglink.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwdebuglink_CPPFLAGS) $(CPPFLAGS) $(dwdebuglink_CFLAGS) $(CFLAGS) -c -o dwdebuglink-dwdebuglink.o `test -f 'dwdebuglink.c' || echo '$(srcdir)/'`dwdebuglink.c
+
+dwdebuglink-dwdebuglink.obj: dwdebuglink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwdebuglink_CPPFLAGS) $(CPPFLAGS) $(dwdebuglink_CFLAGS) $(CFLAGS) -MT dwdebuglink-dwdebuglink.obj -MD -MP -MF $(DEPDIR)/dwdebuglink-dwdebuglink.Tpo -c -o dwdebuglink-dwdebuglink.obj `if test -f 'dwdebuglink.c'; then $(CYGPATH_W) 'dwdebuglink.c'; else $(CYGPATH_W) '$(srcdir)/dwdebuglink.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwdebuglink-dwdebuglink.Tpo $(DEPDIR)/dwdebuglink-dwdebuglink.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwdebuglink.c' object='dwdebuglink-dwdebuglink.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwdebuglink_CPPFLAGS) $(CPPFLAGS) $(dwdebuglink_CFLAGS) $(CFLAGS) -c -o dwdebuglink-dwdebuglink.obj `if test -f 'dwdebuglink.c'; then $(CYGPATH_W) 'dwdebuglink.c'; else $(CYGPATH_W) '$(srcdir)/dwdebuglink.c'; fi`
 
 findfuncbypc-findfuncbypc.o: findfuncbypc.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(findfuncbypc_CPPFLAGS) $(CPPFLAGS) $(findfuncbypc_CFLAGS) $(CFLAGS) -MT findfuncbypc-findfuncbypc.o -MD -MP -MF $(DEPDIR)/findfuncbypc-findfuncbypc.Tpo -c -o findfuncbypc-findfuncbypc.o `test -f 'findfuncbypc.c' || echo '$(srcdir)/'`findfuncbypc.c
@@ -757,20 +771,6 @@ frame1-frame1.obj: frame1.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='frame1.c' object='frame1-frame1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
-
-getdebuglink-getdebuglink.o: getdebuglink.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdebuglink_CPPFLAGS) $(CPPFLAGS) $(getdebuglink_CFLAGS) $(CFLAGS) -MT getdebuglink-getdebuglink.o -MD -MP -MF $(DEPDIR)/getdebuglink-getdebuglink.Tpo -c -o getdebuglink-getdebuglink.o `test -f 'getdebuglink.c' || echo '$(srcdir)/'`getdebuglink.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/getdebuglink-getdebuglink.Tpo $(DEPDIR)/getdebuglink-getdebuglink.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getdebuglink.c' object='getdebuglink-getdebuglink.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdebuglink_CPPFLAGS) $(CPPFLAGS) $(getdebuglink_CFLAGS) $(CFLAGS) -c -o getdebuglink-getdebuglink.o `test -f 'getdebuglink.c' || echo '$(srcdir)/'`getdebuglink.c
-
-getdebuglink-getdebuglink.obj: getdebuglink.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdebuglink_CPPFLAGS) $(CPPFLAGS) $(getdebuglink_CFLAGS) $(CFLAGS) -MT getdebuglink-getdebuglink.obj -MD -MP -MF $(DEPDIR)/getdebuglink-getdebuglink.Tpo -c -o getdebuglink-getdebuglink.obj `if test -f 'getdebuglink.c'; then $(CYGPATH_W) 'getdebuglink.c'; else $(CYGPATH_W) '$(srcdir)/getdebuglink.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/getdebuglink-getdebuglink.Tpo $(DEPDIR)/getdebuglink-getdebuglink.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='getdebuglink.c' object='getdebuglink-getdebuglink.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdebuglink_CPPFLAGS) $(CPPFLAGS) $(getdebuglink_CFLAGS) $(CFLAGS) -c -o getdebuglink-getdebuglink.obj `if test -f 'getdebuglink.c'; then $(CYGPATH_W) 'getdebuglink.c'; else $(CYGPATH_W) '$(srcdir)/getdebuglink.c'; fi`
 
 simplereader-simplereader.o: simplereader.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.o -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
