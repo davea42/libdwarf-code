@@ -48,7 +48,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 #include <string.h> /* memcpy */
-#include <sys/types.h> /* open() */
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* open(), off_t */
+#endif /* HAVE_SYS_TYPES_H */
+
 #include <sys/stat.h> /* open() */
 #include <fcntl.h> /* open() */
 #include <time.h>

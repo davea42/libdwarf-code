@@ -45,6 +45,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif /* HAVE_ELF_H */
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* getcwd */
 #endif /* HAVE_UNISTD_H */

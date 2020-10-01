@@ -1,4 +1,10 @@
 2020-10-01: David Anderson
+    * dwarf_crc32.c: Refined the #includes so they work
+      with cmake too.
+    * dwarf_debuglink.c,dwarf_object_detector.c,
+      dwarf_peread.c: Refined the #includes to work
+      in more general circumstances.
+2020-10-01: David Anderson
     * libdwarf.h.in: Added DW_DLC_NO_FOLLOW_DEBUGLINK
       but it is not yet used.
     * generated_libdwarf.h.in: regenerated

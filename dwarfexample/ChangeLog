@@ -1,3 +1,6 @@
+2020-10-01:   David Anderson 
+    * dwdebuglink.c: Refined the #includes so they worked
+      with cmake.
 2020-09-30:   David Anderson 
     * Renamed getdebuglink.c to dwdebuglink.c
       and the example executable is now dwdebuglink.

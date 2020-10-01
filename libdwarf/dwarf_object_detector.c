@@ -31,7 +31,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
 #include <stdio.h>
+#ifdef SYS_TYPES_H
 #include <sys/types.h> /* open() */
+#endif /* HAVE_SYS_TYPES_H */
 #include <sys/stat.h> /* open() */
 #include <fcntl.h> /* O_RDONLY */
 #ifdef HAVE_UNISTD_H

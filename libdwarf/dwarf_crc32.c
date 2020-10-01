@@ -35,15 +35,25 @@
     for details. 
 */
 
-#ifdef HAVE_CONFIG_H
+/* #ifdef HAVE_CONFIG_H */
 #include "config.h"
-#endif
+/* #endif*/
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for free() */
+#endif /* HAVE_STDLIB_H */
+
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#include <sys/types.h> /* off_t ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
+#include <basetsd.h>
+typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #endif /* HAVE_UNISTD_H */
+
 #ifdef HAVE_MALLOC_H
 /* Useful include for some Windows compilers. */
 #include <malloc.h>

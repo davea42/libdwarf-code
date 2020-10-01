@@ -44,6 +44,12 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit(), C89 malloc */
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* for close */
+#endif /* HAVE_UNISTD_H */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* for off_t ssize_t */
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_MALLOC_H
 /* Useful include for some Windows compilers. */
 #include <malloc.h>
