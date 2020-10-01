@@ -1,3 +1,7 @@
+2020-10-01: David Anderson
+    * libdwarf.h.in: Added DW_DLC_NO_FOLLOW_DEBUGLINK
+      but it is not yet used.
+    * generated_libdwarf.h.in: regenerated
 2020-09-30: David Anderson
     * CMakeLists.txt,Makefile.am: Added dwarf_crc32.c
     * Makefile.am: Regenerated.

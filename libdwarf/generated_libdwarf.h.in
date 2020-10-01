@@ -867,9 +867,10 @@ struct Dwarf_Obj_Access_Interface_s {
     The old option libdwarf told IRIX libelf to mmap
     the object file.
 */
-#define DW_DLC_READ               0 /* Not used */
+#define DW_DLC_READ               0 /* Pointless. Ok to use. */
 #define DW_DLC_WRITE              1 /* DO NOT USE */
 #define DW_DLC_RDWR               2 /* DO NOT USE */
+#define DW_DLC_NO_FOLLOW_DEBUGLINK 0x00000008 /* GNU debuglink */
 
 /*  ===== the following DW_DLC options are for producing DWARF,
     not used for reading/consuming DWARF. */
