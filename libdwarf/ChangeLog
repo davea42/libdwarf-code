@@ -1,4 +1,8 @@
 2020-10-01: David Anderson
+    * libdwarf2.1.mm: Revision 3.11. Added new debuglink
+      function dwarf_crc32().
+    * libdwarf2.1.pdf: Revision 3.11. Regenerated.
+2020-10-01: David Anderson
     * dwarf_crc32.c: Refined the #includes so they work
       with cmake too.
     * dwarf_debuglink.c,dwarf_object_detector.c,

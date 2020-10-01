@@ -1,4 +1,3 @@
-
 \." the following line may be removed if the 
 \." ff ligature works on your machine
 .lg 0
@@ -11,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.10, 28 September 2020
+.ds vE Rev 3.11, 1 October 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -221,6 +220,12 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added functions dwarf_crc32()
+and dwarf_basic_crc32()
+so libdwarf can check
+debuglink/build-id
+CRC values.
 .P
 Clarified the DW_DLC* 
 value meaning here and in
@@ -14673,15 +14678,24 @@ This section deals with the way GNU tools
 allow creation of DWARF separated from the
 executable file involved.
 See
-https://sourceware.org/gdb/onlinedocs
-/gdb/Separate-Debug-Files.html
-for more information 
-(the line break is just
-to make this url print nicely, there is no space).
+https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+for more information.
 The function here is new in September 2019, revised
-in October 2019.
+in October 2020.
 An example of use follows the description
 of arguments.
+.P
+These functions are concerned with finding
+DWARF data in a companion file.
+There is no Split-Dwarf involved,
+this is a different way of splitting
+DWARF out of an executable or
+shared object..
+It never applies to simple .o object files,
+only to executable objects (or shared
+libraries).
+
+
 .H 3 "dwarf_gnu_debuglink()"
 .DS
 \f(CWint dwarf_gnu_debuglink(Dwarf_Debug dbg,
@@ -14893,6 +14907,74 @@ to the global list recorded in the
 \f(CWDwarf_Debug\fP.
 
 
+.H 3 "dwarf_crc32()"
+.DS
+\f(CWint dwarf_crc32(Dwarf_Debug dbg,
+    unsigned char * crc_buf,
+    Dwarf_Error* error);
+\fP
+.DE
+The caller must pass the address of
+a 4 byte array of unsigned char in
+\f(CWcrc_buf\fP.
+And the Dwarf_Debug must have
+been opened with
+\f(CWdwarf_init_path()\fP
+to be useful.
+If the executable is named
+\f(CWexecutable\fP
+the file containing most of
+the 
+f(CWDWARF\fP
+data would often be 
+\f(CWexecutable.debug\fP.
+This is normally called
+from libdwarf code 
+on opening 
+\f(CWexecutable\fP
+and
+\f(CWlibdwarf\fP
+may call this function on
+\f(CWexecutable.debug\fP.
+Library users could would likely
+never call it.
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP
+and sets the 4 bytes
+pointed to by 
+\f(CWcrc_buf\fP
+to the calculated CRC value.
+.P
+If it returns
+\f(CWDW_DLV_NO_ENTRY\fP
+or
+\f(CWDW_DLV_ERROR\fP
+somethine went wrong and
+\f(CWcrc_buf\fP
+is not touched.
+.P
+The function was added October 2020.
+
+.H 3 "dwarf_basic_crc32()"
+.DS
+\f(CWunsigned int dwarf_crc32(const unsigned char *buf,
+    int len,
+    unsigned int init);
+\fP
+.DE
+This computes the crc on
+\f(CWbuf\fP
+of length
+\f(CWlen\fP with initial
+value 
+\f(CWinit\fP.
+See libdwarf source
+for the details of calling this.
+It is not likely useful for
+library uses to call this directly.
+.P
+The function was added October 2020.
 
 .H 2 "DWARF5 .debug_sup section access"
 The .debug_sup section is new in DWARF5 
