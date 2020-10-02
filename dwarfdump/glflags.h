@@ -1,26 +1,30 @@
 /*
-  Copyright (C) 2017-2017 David Anderson. All Rights Reserved.
+  Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 */
-#ifndef GLFLAGS_H
+
+#ifndef GLFLAGS_H 
 #define GLFLAGS_H
 
 /*  All the dwarfdump flags are gathered into a single
@@ -121,6 +125,7 @@ struct glflags_s {
     boolean gf_debug_sup_flag;  /* .debug_sup */
     boolean gf_info_flag;  /* .debug_info */
     boolean gf_line_flag;
+    boolean gf_no_follow_debuglink;
     boolean gf_line_print_pc;
     boolean gf_line_skeleton_flag;
     boolean gf_loc_flag;
@@ -238,6 +243,9 @@ struct glflags_s {
     boolean gf_print_raw_loclists;
 
     unsigned long gf_count_major_errors;
+
+    char **  gf_global_debuglink_paths;
+    unsigned gf_global_debuglink_count;
 
     /*  Base address has a special meaning in DWARF4,5
         relative to address ranges. */

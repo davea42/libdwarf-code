@@ -87,6 +87,9 @@ do_all(void)
     glflags.gf_info_flag = TRUE;
     glflags.gf_types_flag =  TRUE; /* .debug_types */
     glflags.gf_line_flag = TRUE;
+    glflags.gf_no_follow_debuglink = FALSE;
+    glflags.gf_global_debuglink_paths = 0;
+    glflags.gf_global_debuglink_count = 0;
     glflags.gf_pubnames_flag = TRUE;
     glflags.gf_macinfo_flag = TRUE;
     glflags.gf_macro_flag = TRUE;
@@ -391,6 +394,10 @@ static void arg_reloc_loc(void);
 static void arg_reloc_pubnames(void);
 static void arg_reloc_ranges(void);
 
+static void arg_no_follow_debuglink(void);
+static void arg_add_debuglink_path(void);
+static void arg_debuglink_path_invalid(void);
+
 static void arg_search_any(void);
 static void arg_search_any_count(void);
 static void arg_search_match(void);
@@ -632,6 +639,15 @@ static const char *usage_long_text[] = {
 "                                         (as much as possible)",
 " ",
 "----------------------------------------------------------------------",
+"GNU debuglink options",
+"----------------------------------------------------------------------",
+" --no-follow-debuglink       Do not follow GNU debuglink, ",
+"                             just use the file directly so,", 
+"                             debuglink  global paths are ignored.",
+" --add-debuglink_path=<text> Add the path to the list of",
+"                             global paths debuglink searches",
+
+"----------------------------------------------------------------------",
 "Search text in attributes",
 "----------------------------------------------------------------------",
 "-S any=<text>    --search-any=<text>       Search any <text>",
@@ -742,10 +758,10 @@ enum longopts_vals {
   /* Print Output Limiters                                            */
   OPT_FORMAT_FILE,              /* -u<file> --format-file=<file>    */
   OPT_FORMAT_GCC,               /* -cg      --format-gcc            */
-  OPT_FORMAT_GROUP_NUMBER,      /* -x<n>    --format-group-number=<n>  */
-  OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>       */
-  OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str>    */
-  OPT_FORMAT_SNC,               /* -cs      --format-snc               */
+  OPT_FORMAT_GROUP_NUMBER,      /* -x<n>    --format-group-number=<n>*/
+  OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>    */
+  OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str> */
+  OPT_FORMAT_SNC,               /* -cs      --format-snc           */
 
   /* Print Debug Sections                                   */
   OPT_PRINT_ABBREV,             /* -b   --print-abbrev      */
@@ -787,7 +803,11 @@ enum longopts_vals {
   OPT_RELOC_PUBNAMES,           /* -op  --reloc-pubnames    */
   OPT_RELOC_RANGES,             /* -oR  --reloc-ranges      */
 
-  /* Search text in attributes                                               */
+  /* debuglink options */
+  OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
+  OPT_ADD_DEBUGLINK_PATH,       /* --add-debuglink-path=<text> */
+
+  /* Search text in attributes                        */
   OPT_SEARCH_ANY,               /* -S any=<text>   --search-any=<text>       */
   OPT_SEARCH_ANY_COUNT,         /* -Svany=<text>   --search-any-count=<text> */
   OPT_SEARCH_MATCH,             /* -S match=<text> --search-match=<text>     */
@@ -939,18 +959,23 @@ static struct dwoption longopts[] =  {
   {"reloc-pubnames", dwno_argument, 0, OPT_RELOC_PUBNAMES},
   {"reloc-ranges",   dwno_argument, 0, OPT_RELOC_RANGES  },
 
+  /*  GNU debuglink options */ 
+  {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
+  {"add-debuglink-path", dwrequired_argument, 0,OPT_ADD_DEBUGLINK_PATH},
+
   /* Search text in attributes. */
-  {"search-any",            dwrequired_argument, 0, OPT_SEARCH_ANY           },
+  {"search-any",            dwrequired_argument, 0, OPT_SEARCH_ANY  },
   {"search-any-count",      dwrequired_argument, 0, OPT_SEARCH_ANY_COUNT     },
-  {"search-match",          dwrequired_argument, 0, OPT_SEARCH_MATCH         },
+  {"search-match",          dwrequired_argument, 0, OPT_SEARCH_MATCH },
   {"search-match-count",    dwrequired_argument, 0, OPT_SEARCH_MATCH_COUNT   },
   {"search-print-children", dwno_argument,       0, OPT_SEARCH_PRINT_CHILDREN},
   {"search-print-parent",   dwno_argument,       0, OPT_SEARCH_PRINT_PARENT  },
   {"search-print-tree",     dwno_argument,       0, OPT_SEARCH_PRINT_TREE    },
 #ifdef HAVE_REGEX
-  {"search-regex",          dwrequired_argument, 0, OPT_SEARCH_REGEX         },
+  {"search-regex",          dwrequired_argument, 0, OPT_SEARCH_REGEX },
   {"search-regex-count",    dwrequired_argument, 0, OPT_SEARCH_REGEX_COUNT   },
 #endif /* HAVE_REGEX */
+  
 
   /* Help & Version. */
   {"help",          dwno_argument, 0, OPT_HELP         },
@@ -1940,6 +1965,25 @@ void arg_S_multiple_selection(void)
     }
 }
 
+/*  Option --no-follow-debuglink */
+void arg_no_follow_debuglink(void)
+{
+    glflags.gf_no_follow_debuglink = TRUE;
+}
+/*  Option --add-debuglink-path=<text> */
+void arg_add_debuglink_path(void)
+{
+    if (strncmp(dwoptarg,"add-debuglink-path=",21) == 0) {
+        dwoptarg = &dwoptarg[21];
+        if (strlen(dwoptarg)) {
+            /*  dosomething debuglink  FIXME */
+            return; 
+        } 
+    }
+    arg_debuglink_path_invalid();
+}
+
+
 /*  Option '-S any=' */
 void arg_search_any(void)
 {
@@ -2287,6 +2331,15 @@ static void arg_not_supported(void)
     fprintf(stderr, "-%c is no longer supported:ignored\n",arg_option);
 }
 
+/* Error message for --add-debuglink-path=path  */
+static void arg_debuglink_path_invalid(void)
+{
+    fprintf(stderr,
+        "--add-debuglink-path=<text>\n");
+    fprintf(stderr, "is allowed, not  %s\n",dwoptarg);
+    arg_usage_error = TRUE;
+    
+}
 /*  Error message for invalid '-S' option. */
 static void arg_search_invalid(void)
 {
@@ -2490,6 +2543,10 @@ set_command_options(int argc, char *argv[])
         case OPT_RELOC_LOC:      arg_reloc_loc();      break;
         case OPT_RELOC_PUBNAMES: arg_reloc_pubnames(); break;
         case OPT_RELOC_RANGES:   arg_reloc_ranges();   break;
+
+        /* debuglink attributes */
+        case OPT_NO_FOLLOW_DEBUGLINK: arg_no_follow_debuglink();break;
+        case OPT_ADD_DEBUGLINK_PATH: arg_add_debuglink_path();  break;
 
         /* Search text in attributes. */
         case OPT_SEARCH_ANY:            arg_search_any();            break;

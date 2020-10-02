@@ -1,3 +1,9 @@
+2020-10-02: David Anderson
+    * command_options.c: New options --no-follow-debuglink
+      and --add-debuglink_path=<text> for working with
+      GNU debuglink. 
+    * glflags.h: Added gf_no_follow_debuglink and
+      gf_global_debuglink_paths and gf_global_debuglink_count.
 2020-09-30: David Anderson
     * command_options.c: If more than one non-dash
       word is at the end of the dwarfdump command
