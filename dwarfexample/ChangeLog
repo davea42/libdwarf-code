@@ -1,3 +1,14 @@
+2020-10-02:   David Anderson 
+    * debuglink.base: New baseline for make check.
+	* dummyexecutable: For testing in make check.
+	* dummyexecutable.debug: For testing in make check.
+	* dwdebuglink.c:  Now checks paths a allows adding
+      debuglink global paths.
+	* runtests.sh : now has testoutput strip out blddir
+      and srcdir so no reliance on anyone's home directory name.
+    * buildingdummy.sh: Not usable as general regression test
+      but tests a number of things the regression test does
+      not (yet) and shows how a .debug is built.
 2020-10-01:   David Anderson 
     * dwdebuglink.c: Refined the #includes so they worked
       with cmake.

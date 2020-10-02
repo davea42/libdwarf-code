@@ -1,12 +1,44 @@
-==Exec-path    : a
-There is no such file as "a"
-==Exec-path    : b
-There is no such file as "b"
-==Exec-path    : /home/davea/dwarf/code/dwarfexample/dummyexecutable
+=======start
+dadebug arg --add-debuglink-path=/exam/ple
+Adding path /exam/ple
+dadebug arg --add-debuglink-path=/tmp/phony
+Adding path /tmp/phony
+dadebug arg ..src../dummyexecutable
+==Exec-path     : ..src../dummyexecutable
+Added global debuglink path /exam/ple
+Added global debuglink path /tmp/phony
+ Section .gnu_debuglink
+ Debuglink name  : dummyexecutable.debug   crc 0X: c8 ba b4 1c 
+ Debuglink target: ..src../dummyexecutable.debug
  Section .note.gnu.buildid
  Build-id  type     : 3
  Build-id  ownername: GNU
  Build-id  length   : 20
- Build-id           : 8ad280007cde31cb0b3f24fe8d78cadcfae4537b
- Path [ 0] /usr/lib/debug/.build-id/8a/d280007cde31cb0b3f24fe8d78cadcfae4537b.debug
+ Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
+ Path [ 0] /usr/lib/debug/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
  file above does not exist
+ Path [ 1] /exam/ple/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
+ file above does not exist
+ Path [ 2] /tmp/phony/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
+ file above does not exist
+ Path [ 3] ..src../dummyexecutable.debug
+ file above is an Elf object
+dadebug look for match
+    ==Referred-path : ..src../dummyexecutable.debug
+     Section .note.gnu.buildid
+     Build-id  type     : 3
+     Build-id  ownername: GNU
+     Build-id  length   : 20
+     Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
+     executable and debug buildid match
+ =====File ..src../dummyexecutable.debug is the correct .debug object
+
+ Path [ 4] ..src../.debug/dummyexecutable.debug
+ file above does not exist
+ Path [ 5] /usr/lib/debug..src../dummyexecutable.debug
+ file above does not exist
+ Path [ 6] /exam/ple..src../dummyexecutable.debug
+ file above does not exist
+ Path [ 7] /tmp/phony..src../dummyexecutable.debug
+ file above does not exist
+=======done with ..src../dummyexecutable
