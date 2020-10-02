@@ -1,3 +1,11 @@
+2020-10-02: David Anderson
+    * dwarf_generic_init.c: Implements the new
+      dwarf_init_path_dl() which allows passing debuglink
+      global paths (if one desires to). Global paths not
+      used here yet.
+    * libdwarf.h.in: Added prototype dwarf_init_path_dl()
+      but it is not yet used. Relevant commentary updated.
+    * generated_libdwarf.h.in: regenerated
 2020-10-01: David Anderson
     * libdwarf2.1.mm: Revision 3.11. Added new debuglink
       function dwarf_crc32().

@@ -130,17 +130,37 @@ set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
 
 /* New in December 2018. */
 int dwarf_init_path(const char *path,
-    char *true_path_out_buffer,
-    unsigned true_path_bufferlen,
+    char            * true_path_out_buffer,
+    unsigned          true_path_bufferlen,
     Dwarf_Unsigned    access,
     unsigned          groupnumber,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
-    Dwarf_Debug*      ret_dbg,
-    UNUSEDARG const char *       reserved1,
-    UNUSEDARG Dwarf_Unsigned     reserved2,
-    UNUSEDARG Dwarf_Unsigned  *  reserved3,
-    Dwarf_Error*      error)
+    Dwarf_Debug     * ret_dbg,
+    const char      * reserved1,
+    Dwarf_Unsigned    reserved2,
+    Dwarf_Unsigned  * reserved3,
+    Dwarf_Error     * error)
+{
+    return dwarf_init_path_dl(path,
+        true_path_out_buffer,true_path_bufferlen,
+        access,groupnumber,errhand,errarg,ret_dbg,
+        0,0,reserved1,reserved2,reserved3,error);
+}
+int dwarf_init_path_dl(const char *path,
+    char                      * true_path_out_buffer,
+    unsigned                    true_path_bufferlen,
+    Dwarf_Unsigned              access,
+    unsigned                    groupnumber,
+    Dwarf_Handler               errhand,
+    Dwarf_Ptr                   errarg,
+    Dwarf_Debug               * ret_dbg,
+    UNUSEDARG char           ** dl_path_array,
+    UNUSEDARG unsigned int      dl_path_count,
+    UNUSEDARG const char      * reserved1,
+    UNUSEDARG Dwarf_Unsigned    reserved2,
+    UNUSEDARG Dwarf_Unsigned  * reserved3,
+    Dwarf_Error               * error)
 {
     unsigned       ftype = 0;
     unsigned       endian = 0;
