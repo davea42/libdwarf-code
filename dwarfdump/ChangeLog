@@ -1,3 +1,8 @@
+2020-10-03: David Anderson
+    * Makefile.in: Autoreconf using Ubuntu 20.04 
+      made small changes.
+    * COPYING: Corrected the references to the BSD copyright
+      to use "two-clause BSD license".
 2020-10-02: David Anderson
     * command_options.c,glflags.h,print_frames.c: Remove
       trailing whitespace.

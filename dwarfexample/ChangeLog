@@ -1,3 +1,10 @@
+2020-10-03:   David Anderson 
+    * Makefile.am: Added a recent shell script to the files
+      brought into a release.
+    * Makefile.in: Ubuntu 20.04 first autoreconf and
+      the Makefile.am created small changes.
+    * COPYING: Corrected the references to the BSD copyright
+      to use "two-clause BSD license".
 2020-10-02:   David Anderson 
     * dwdebuglink.c,debuglink.base: Removed debug print lines.
 2020-10-02:   David Anderson 

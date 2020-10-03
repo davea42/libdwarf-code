@@ -52,6 +52,7 @@ ChangeLog2017 \
 ChangeLog2018 \
 CMakeLists.txt \
 runtests.sh \
+buildingdummy.sh \
 debuglink.base \
 dummyexecutable \
 dummyexecutable.c \

@@ -3,6 +3,8 @@
 	  dwarf_opaque.h,libdwarf.h.in,test_linkedtopath.c,
 	  test_linkedtopath.c: Removed whitespace and
       tabs and make indents dwarf-standard.
+    * COPYING: Corrected the references to the BSD copyright
+      to use "two-clause BSD license".
 2020-10-02: David Anderson
     * dwarf_generic_init.c: Implements the new
       dwarf_init_path_dl() which allows passing debuglink

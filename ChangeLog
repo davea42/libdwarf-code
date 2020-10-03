@@ -1,3 +1,9 @@
+2020-10-03  David Anderson
+    * Makefile.in,aclocal.m4,ar-lib,compile,configure,depcomp:
+      Running autoreconf on Ubuntu 20.04 caused some small
+      changes.
+    * COPYING: Corrected the references to the BSD copyright
+      to use "two-clause BSD license". 
 2020-09-26  David Anderson
     * configure.ac: Now version 20200926
     * configure: Regenerated.

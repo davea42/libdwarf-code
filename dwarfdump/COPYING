@@ -11,10 +11,12 @@ There are three files marked with the LGPL: tag_tree.list
 tag_attr.list acconfig.h.  These markings are left as is and
 these are are therefore LGPL files.
 
+A few files are marked with the two-clause BSD license
+(FreeBSD license).
+
+
 The DWARFDUMPCOPYRIGHT file now (Dec 24 2006) has both
 copyrights and an explanation of where each applies.
-
-
 
 -------------------------------------------
 The text present for years, thru Dec 23, 2006:
@@ -23,7 +25,6 @@ The files:
 	and all the .h and .c files in this implementation of
 	dwarfdump are copyrighted according to the file
 	DWARFDUMPCOPYRIGHT.   
-
 
 
 $Source: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/COPYING,v $
