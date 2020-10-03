@@ -1,4 +1,7 @@
 2020-10-02: David Anderson
+    * command_options.c,glflags.h,print_frames.c: Remove
+      trailing whitespace.
+2020-10-02: David Anderson
     * command_options.c: New options --no-follow-debuglink
       and --add-debuglink_path=<text> for working with
       GNU debuglink. 
