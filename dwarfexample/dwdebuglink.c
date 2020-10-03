@@ -378,7 +378,6 @@ one_file_debuglink_internal(const char *prefix,
             /*  read the executable, now look to the
                 debug (ie pa) to see if it matches. 
                 Do not pass in globals paths*/
-printf("dadebug look for match\n");
             res = one_file_debuglink_internal(
                 "    ",0,0,0, 
                 pa,crc,buildid_length, buildid,pa);
@@ -462,7 +461,6 @@ main(int argc, char **argv)
     printf("=======start\n");
     for ( ; i < argc; ++i) {
         char *arg = argv[i];
-printf("dadebug arg %s\n",arg);
         if (!strncmp(arg,"--no-follow-debuglink=",22)) {
             printf("Nofollowdebuglink TRUE");
             nofollowdebuglink = TRUE;

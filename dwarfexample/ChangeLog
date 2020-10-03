@@ -1,5 +1,6 @@
 2020-10-02:   David Anderson 
-    * debuglink.base: New baseline for make check.
+    * dwdebuglink.c,debuglink.base: Removed debug print lines.
+2020-10-02:   David Anderson 
     * dummyexecutable: For testing in make check.
     * dummyexecutable.debug: For testing in make check.
     * dwdebuglink.c:  Now checks paths a allows adding
