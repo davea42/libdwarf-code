@@ -178,7 +178,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
         switch(attr) {
         case DW_AT_low_pc:
             {
-            ares = dwarf_formaddr(attrib, 
+            ares = dwarf_formaddr(attrib,
                 &glflags.CU_base_address, &loadcuerr);
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             glflags.CU_low_address = glflags.CU_base_address;
@@ -191,7 +191,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
                 It's also useless for CU DIEs that do not
                 have the DW_AT_high_pc high so CU_high_address will
                 be zero*/
-            ares = dwarf_formaddr(attrib, 
+            ares = dwarf_formaddr(attrib,
                 &glflags.CU_high_address, &loadcuerr);
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             }
@@ -1762,7 +1762,7 @@ check_finstr_addrs(unsigned char *iregionstart,
     for a glob of instructions.
     The frame data has not been checked by
     libdwarf as libdwarf has not
-    transformed it into simple structs. 
+    transformed it into simple structs.
     We are reading the raw data.
 */
 /*ARGSUSED*/ static void

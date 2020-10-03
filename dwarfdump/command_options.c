@@ -642,7 +642,7 @@ static const char *usage_long_text[] = {
 "GNU debuglink options",
 "----------------------------------------------------------------------",
 " --no-follow-debuglink       Do not follow GNU debuglink, ",
-"                             just use the file directly so,", 
+"                             just use the file directly so,",
 "                             debuglink  global paths are ignored.",
 " --add-debuglink_path=<text> Add the path to the list of",
 "                             global paths debuglink searches",
@@ -959,7 +959,7 @@ static struct dwoption longopts[] =  {
   {"reloc-pubnames", dwno_argument, 0, OPT_RELOC_PUBNAMES},
   {"reloc-ranges",   dwno_argument, 0, OPT_RELOC_RANGES  },
 
-  /*  GNU debuglink options */ 
+  /*  GNU debuglink options */
   {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
   {"add-debuglink-path", dwrequired_argument, 0,OPT_ADD_DEBUGLINK_PATH},
 
@@ -975,7 +975,7 @@ static struct dwoption longopts[] =  {
   {"search-regex",          dwrequired_argument, 0, OPT_SEARCH_REGEX },
   {"search-regex-count",    dwrequired_argument, 0, OPT_SEARCH_REGEX_COUNT   },
 #endif /* HAVE_REGEX */
-  
+
 
   /* Help & Version. */
   {"help",          dwno_argument, 0, OPT_HELP         },
@@ -1977,8 +1977,8 @@ void arg_add_debuglink_path(void)
         dwoptarg = &dwoptarg[21];
         if (strlen(dwoptarg)) {
             /*  dosomething debuglink  FIXME */
-            return; 
-        } 
+            return;
+        }
     }
     arg_debuglink_path_invalid();
 }
@@ -2338,7 +2338,7 @@ static void arg_debuglink_path_invalid(void)
         "--add-debuglink-path=<text>\n");
     fprintf(stderr, "is allowed, not  %s\n",dwoptarg);
     arg_usage_error = TRUE;
-    
+
 }
 /*  Error message for invalid '-S' option. */
 static void arg_search_invalid(void)

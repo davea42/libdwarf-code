@@ -39,7 +39,7 @@
 #define TRUE 1
 #define FALSE 0
 
-static int                
+static int
 load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
@@ -70,7 +70,7 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
         0,soff_size,
         dbg->de_debug_loclists.dss_data,
         dbg->de_debug_loclists.dss_data +soff_size,
-        soff_hdroffset, 
+        soff_hdroffset,
         buildhere,
         &nextset,error);
     if (res != DW_DLV_OK) {
@@ -78,7 +78,7 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     }
     cu_context->cc_loclists_base_present = TRUE;
     cu_context->cc_loclists_base_contr_size = size;
-    cu_context->cc_loclists_base            = 
+    cu_context->cc_loclists_base            =
         buildhere->lc_offsets_off_in_sect;
     return DW_DLV_OK;
 }
@@ -107,7 +107,7 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,
         error);
     if (res != DW_DLV_OK) {
-            return res;
+        return res;
     }
     soff_hdroffset = fsd->pcu_offset[fsd_index];
     soff_secptr = dbg->de_debug_str_offsets.dss_data;
@@ -172,7 +172,7 @@ load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
     res = _dwarf_load_section(dbg, &dbg->de_debug_macro,
         error);
     if (res != DW_DLV_OK) {
-            return res;
+        return res;
     }
     size = fsd->pcu_size[fsd_index];
     soff_hdroffset = fsd->pcu_offset[fsd_index];
@@ -187,7 +187,7 @@ load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
     /*  Presently assuming that DW_AT_macros
         and the fission entry both
         indicate the beginning
-        of a .debug_macro sectiom macro header. 
+        of a .debug_macro sectiom macro header.
         (not true for str_offsets or for loclists!)
     */
     cu_context->cc_macro_base_present = TRUE;
@@ -197,7 +197,7 @@ load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-static int 
+static int
 load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
@@ -208,15 +208,15 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned soff_hdroffset = 0;
     Dwarf_Unsigned soff_size = 0;
-    struct Dwarf_Rnglists_Context_s builddata; 
+    struct Dwarf_Rnglists_Context_s builddata;
     Dwarf_Rnglists_Context buildhere =  &builddata;
     Dwarf_Unsigned nextoffset = 0;
     int res = 0;
-    
+
     res = _dwarf_load_section(dbg, &dbg->de_debug_rnglists,
         error);
     if (res != DW_DLV_OK) {
-            return res;
+        return res;
     }
     size = fsd->pcu_size[fsd_index];
     soff_hdroffset = fsd->pcu_offset[fsd_index];
@@ -238,7 +238,7 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
-    cu_context->cc_rnglists_base  = 
+    cu_context->cc_rnglists_base  =
         buildhere->rc_offsets_off_in_sect;
     cu_context->cc_rnglists_base_present = TRUE;
     cu_context->cc_rnglists_base_contr_size = size;
@@ -253,9 +253,9 @@ static const char *keylist[2] = {
 };
 /*  ASSERT: The context has a signature.
 
-    _dwarf_make_CU_Context() calls 
-       finish_up_cu_context_from_cudie() which calls
-         us here.
+    _dwarf_make_CU_Context() calls
+        finish_up_cu_context_from_cudie() which calls
+        us here.
     Then, _dwarf_make_CU_Context() calls
     _dwarf_merge_all_base_attrs_of_cu_die() if there
     is a tied (executable) object known.
@@ -289,7 +289,7 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
             *error = 0;
             continue;
         }
-        for (sec_index = 1; sec_index < DW_FISSION_SECT_COUNT; 
+        for (sec_index = 1; sec_index < DW_FISSION_SECT_COUNT;
             ++sec_index) {
             if (!fsd->pcu_size[sec_index]) {
                 continue;
@@ -321,7 +321,7 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
             case DW_SECT_RNGLISTS:
                 res = load_xu_rnglists_into_cucontext(dbg,
                     cu_context,
-                   fsd,keylist[si],sec_index,error);
+                    fsd,keylist[si],sec_index,error);
                 break;
             default:
                 res = DW_DLV_OK;

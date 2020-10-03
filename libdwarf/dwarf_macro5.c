@@ -1397,7 +1397,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_macro_context_head(Dwarf_Macro_Context head,
     Dwarf_Half     * version,
     Dwarf_Unsigned * mac_offset,
@@ -1431,7 +1431,7 @@ dwarf_macro_context_head(Dwarf_Macro_Context head,
     *opcode_count = head->mc_opcode_count;
     return DW_DLV_OK;
 }
-int 
+int
 dwarf_macro_operands_table(Dwarf_Macro_Context head,
     Dwarf_Half  index, /* 0 to opcode_count -1 */
     Dwarf_Half  *opcode_number,

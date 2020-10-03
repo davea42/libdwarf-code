@@ -112,7 +112,7 @@ struct Dwarf_Attribute_s {
     This structure provides the context for a compilation unit.
     Thus, it contains the Dwarf_Debug, cc_dbg, that this cu
     belongs to.  It contains the information in the compilation
-    unit header, cc_length, cc_version_stamp, 
+    unit header, cc_length, cc_version_stamp,
     cc_abbrev_offset,
     and cc_address_size, in the .debug_info section for that cu.
     In addition, it contains the count, cc_count_cu, of the cu
@@ -257,7 +257,7 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_loclists_base_present;
     Dwarf_Bool     cc_loclists_header_length_present;
 
-    /*  .debug_str_offsets DW_SECT_STR_OFFSETS DW4 DW5 vs 
+    /*  .debug_str_offsets DW_SECT_STR_OFFSETS DW4 DW5 vs
         DW_AT_str_offsets_base (table array off) */
     Dwarf_Bool     cc_str_offsets_base_present;
     Dwarf_Bool     cc_str_offsets_header_length_present;
@@ -280,12 +280,12 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool     cc_macro_base_present;
     Dwarf_Bool     cc_macro_header_length_present;
 
-    /*  DW_SECT_RNGLISTS  */ 
+    /*  DW_SECT_RNGLISTS  */
     Dwarf_Unsigned cc_rnglists_base;    /*DW5 */
     Dwarf_Unsigned cc_rnglists_base_contr_size;    /*DW5 */
     /*  DW_AT_GNU_ranges_base was a GNU extension that appeared
         but was unused. See dwarf_die_deliv.c for details. */
-    Dwarf_Unsigned cc_ranges_base;   
+    Dwarf_Unsigned cc_ranges_base;
     /*  DW_AT_GNU_ranges_base is a GNU extension, DW4  */
     Dwarf_Bool     cc_ranges_base_present;
     /* .debug_rnglists */

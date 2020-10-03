@@ -1550,8 +1550,8 @@ int dwarf_init_path(const char * /*path*/,
     In case GNU debuglink data was followed the true_path_out
     will not match path.
     If no debuglink missing or unusable libdwarf or
-    DW_DLC_NO_FOLLOW_DEBUGLINK not-set in 'access' libdwarf 
-    accepts the path given as the object to report on. 
+    DW_DLC_NO_FOLLOW_DEBUGLINK not-set in 'access' libdwarf
+    accepts the path given as the object to report on.
     Passing dl_path_array and dl_path_array size zero
     suffices unless one has unusual locations for debuglink
     objects.
@@ -2670,7 +2670,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
     https://sourceware.org/gdb/onlinedocs/gdb/
         Separate-Debug-Files.html
     The dbg argument provides data access and relies on
-    fields de_path,de_debuglink_globals, 
+    fields de_path,de_debuglink_globals,
     de_debuglink_globals_length.
     If no debuglink then name_returned,crc_returned and
     debuglink_path_returned will get set 0 through the pointers.
@@ -2701,16 +2701,16 @@ int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
     const char *pathname,
     Dwarf_Error* /*error*/);
 
-/*  crc32 used for debuglink crc calculation.  
+/*  crc32 used for debuglink crc calculation.
     Caller passes pointer to array of 4 unsigned char
-    provided by the caller and if this returns 
+    provided by the caller and if this returns
     DW_DLV_OK that is filled in. */
-int dwarf_crc32 (Dwarf_Debug /*dbg*/,unsigned char * /*crcbuf*/, 
+int dwarf_crc32 (Dwarf_Debug /*dbg*/,unsigned char * /*crcbuf*/,
     Dwarf_Error * /*error*/);
 
 /*  Public interface to the real crc calculation
     just in case some find it useful. */
-unsigned int dwarf_basic_crc32 (const unsigned char * /*buf*/, 
+unsigned int dwarf_basic_crc32 (const unsigned char * /*buf*/,
     int /*len*/, unsigned int /*init*/);
 
 /*  global name space operations (.debug_pubnames access)

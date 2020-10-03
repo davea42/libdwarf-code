@@ -24,7 +24,7 @@
   Boston MA 02110-1301, USA.
 */
 
-#ifndef GLFLAGS_H 
+#ifndef GLFLAGS_H
 #define GLFLAGS_H
 
 /*  All the dwarfdump flags are gathered into a single

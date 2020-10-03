@@ -394,7 +394,7 @@ test3(Dwarf_Debug dbg)
     /*  The test will not be repeatable in general
         unless we give executablepath a starting
         / so getcwd() will not be called. */
-        
+
     printf("executable path %s\n",executablepath);
     printf("linkstring      %s\n",linkstring);
     dbg->de_path = executablepath;

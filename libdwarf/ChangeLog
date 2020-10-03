@@ -1,4 +1,9 @@
 2020-10-02: David Anderson
+    * dwarf_crc32.c,dwarf_fission_to_cu.c,dwarf_macro5.c,
+	  dwarf_opaque.h,libdwarf.h.in,test_linkedtopath.c,
+	  test_linkedtopath.c: Removed whitespace and
+      tabs and make indents dwarf-standard.
+2020-10-02: David Anderson
     * dwarf_generic_init.c: Implements the new
       dwarf_init_path_dl() which allows passing debuglink
       global paths (if one desires to). Global paths not
