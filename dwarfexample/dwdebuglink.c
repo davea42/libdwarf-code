@@ -237,9 +237,9 @@ one_file_debuglink_internal(const char *prefix,
     char  * path = 0;
     char  * basepath = 0;
     Dwarf_Error error = 0;
-    Dwarf_Unsigned laccess = DW_DLC_READ; 
+    Dwarf_Unsigned laccess = DW_DLC_READ;
     unsigned int p = 0;
-  
+
     /*  Don't let dwarf_init_path find the debuglink,
         we want to do it here so we can show it all. */
     laccess |= DW_DLC_NO_FOLLOW_DEBUGLINK;
@@ -269,7 +269,7 @@ one_file_debuglink_internal(const char *prefix,
     }
     for (p = 0; p < gl_pathcount; ++p) {
         const char *lpath = 0;
-     
+
         lpath = (const char *)gl_pathnames[p];
         res = dwarf_add_debuglink_global_path(dbg,
             lpath, &error);
@@ -376,10 +376,10 @@ one_file_debuglink_internal(const char *prefix,
             the executable. */
         {
             /*  read the executable, now look to the
-                debug (ie pa) to see if it matches. 
+                debug (ie pa) to see if it matches.
                 Do not pass in globals paths*/
             res = one_file_debuglink_internal(
-                "    ",0,0,0, 
+                "    ",0,0,0,
                 pa,crc,buildid_length, buildid,pa);
             if (res == DW_DLV_OK) {
                 printf("%s =====File %s is the correct"
@@ -397,8 +397,8 @@ static void
 one_file_debuglink(char *path,char **dlpaths,unsigned int dlcount,
    unsigned nofollowdebuglink)
 {
-   one_file_debuglink_internal("",dlpaths,dlcount, nofollowdebuglink,
-       path,0,0,0,0);
+    one_file_debuglink_internal("",dlpaths,dlcount, nofollowdebuglink,
+        path,0,0,0,0);
 }
 
 static char **gl_pathnames;
@@ -409,7 +409,7 @@ static void add_a_path(char *path)
     char ** newpathnames = 0;
     unsigned int newslen = 0;
     unsigned int i = 0;
- 
+
     if (!path) {
         printf("Null debuglink path error\n");
         exit(1);
@@ -473,7 +473,7 @@ main(int argc, char **argv)
         }
         filenamein = arg;
         one_file_debuglink(filenamein,gl_pathnames,gl_pathcount,
-           nofollowdebuglink);
+            nofollowdebuglink);
         printf("=======done with %s\n",filenamein);
     }
     free_paths();
