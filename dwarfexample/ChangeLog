@@ -1,3 +1,11 @@
+2020-10-04:   David Anderson 
+	* dwdebuglink.c: now works as intended.
+	* runtests.sh Added a second test of debuglink
+    * debuglink.base,debuglink2.base: Baseline output
+      for dwdebuglink. Pathnames have source and
+      build directory in the output replaced with strings
+      ...src... or ...bld... so make check should
+      work anywhere.
 2020-10-03:   David Anderson 
     * Makefile.am: Added a recent shell script to the files
       brought into a release.

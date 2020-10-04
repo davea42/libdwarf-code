@@ -1,4 +1,5 @@
 ===Exec-path        : ..src../dummyexecutable
+ no follow debuglink: TRUE
  global path        : /exam/ple
  global path        : /tmp/phony
  Section            : .gnu_debuglink
@@ -17,15 +18,6 @@
  file above does not exist
  Path [ 3] ..src../dummyexecutable.debug
  file above is an Elf object
-    ===Referred-path    : ..src../dummyexecutable.debug
-     Section .note.gnu.buildid
-     Build-id  type     : 3
-     Build-id  ownername: GNU
-     Build-id  length   : 20
-     Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
-    ===executable and debug buildid match
- =====File ..src../dummyexecutable.debug is a correct .debug object
-
  Path [ 4] ..src../.debug/dummyexecutable.debug
  file above does not exist
  Path [ 5] /usr/lib/debug..src../dummyexecutable.debug
