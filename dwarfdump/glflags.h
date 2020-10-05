@@ -116,7 +116,7 @@ struct glflags_s {
 
     boolean gf_abbrev_flag;
     boolean gf_aranges_flag; /* .debug_aranges section. */
-    boolean gf_debug_names_flag;
+    boolean gf_debug_names_flag; /* .debug_names section */
     boolean gf_eh_frame_flag;   /* GNU .eh_frame section. */
     boolean gf_frame_flag;      /* .debug_frame section. */
     boolean gf_gdbindex_flag;   /* .gdbindex section. */

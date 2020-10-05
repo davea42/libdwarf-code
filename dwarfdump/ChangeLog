@@ -1,3 +1,11 @@
+2020-10-05: David Anderson
+    * command_options.c: Implemented first part of
+      making GNU debuglink options work.
+    * dwarfdump.c: Now using dwarf_init_path()
+      working toward
+      making GNU debuglink options work.
+    * glflags.h: Commented gf_debug_names_flag
+      to avoid confusing it with debuglink.
 2020-10-03: David Anderson
     * Makefile.in: Autoreconf using Ubuntu 20.04 
       made small changes.

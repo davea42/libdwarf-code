@@ -1970,14 +1970,58 @@ void arg_no_follow_debuglink(void)
 {
     glflags.gf_no_follow_debuglink = TRUE;
 }
+
+static int
+insert_debuglink_path(char *p)
+{
+    char ** newarray = 0;
+    unsigned int curcount = glflags.gf_global_debuglink_count;
+    unsigned newcount = curcount+1;
+    unsigned u = 0;
+    char * pstr = 0;
+
+    newarray = (char **)malloc(newcount * sizeof(char *));
+    if (!newarray) {
+        fprintf(stderr,"ERROR Unable to malloc space for"
+            " debuglink paths. "
+            " malloc %u pointers failed.\n",newcount);
+        fprintf(stderr,"Global debuglink path ignored: %s\n",
+            sanitized(p));
+        return DW_DLV_ERROR;
+    }
+    pstr = strdup(p);
+    if (!pstr) {
+        fprintf(stderr,"ERROR Unable to malloc space"
+            " for debuglink path: "
+            "count stays at %u\n",curcount);
+        fprintf(stderr,"Global debuglink path ignored: %s\n",
+            sanitized(p));
+        free(newarray);
+        return DW_DLV_ERROR;
+    }
+    for( u = 0; u < curcount; ++u) {
+        newarray[u] = glflags.gf_global_debuglink_paths[u];
+    }
+    newarray[curcount] = pstr;
+    free(glflags.gf_global_debuglink_paths);
+    glflags.gf_global_debuglink_paths = newarray;
+    glflags.gf_global_debuglink_count = newcount;
+    return DW_DLV_OK;
+}
+
+
 /*  Option --add-debuglink-path=<text> */
 void arg_add_debuglink_path(void)
 {
+    int res = 0;
     if (strncmp(dwoptarg,"add-debuglink-path=",21) == 0) {
         dwoptarg = &dwoptarg[21];
         if (strlen(dwoptarg)) {
             /*  dosomething debuglink  FIXME */
-            return;
+            res = insert_debuglink_path(dwoptarg);
+            if (res == DW_DLV_OK) {
+                return;
+            }
         }
     }
     arg_debuglink_path_invalid();
