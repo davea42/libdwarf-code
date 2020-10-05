@@ -1,3 +1,12 @@
+2020-10-05: David Anderson
+    * libdwarf.h.in: Removed DW_DLC_NO_FOLLOW_DEBUGLINK
+      as it is never needed and was never used or
+      documented (it's only been there for a handful
+      of days).  Updated commentary.
+    * generated_libdwar.h.in: Regenerated.
+    * libdwarf2.1.mm: Rev 3.12. Beginning documentation
+      of GNU debuglink support.
+    * libdwarf2.1.pdf: Regenerated as 3.12.
 2020-10-02: David Anderson
     * dwarf_crc32.c,dwarf_fission_to_cu.c,dwarf_macro5.c,
 	  dwarf_opaque.h,libdwarf.h.in,test_linkedtopath.c,

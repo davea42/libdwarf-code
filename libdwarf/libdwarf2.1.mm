@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.11, 1 October 2020
+.ds vE Rev 3.12, 3 October 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2330,8 +2330,56 @@ The following sections describe these functions.
 
 .H 2 "Initialization Operations"
 These functions are concerned with preparing an object file for subsequent
-access by the functions in \fIlibdwarf\fP and with releasing allocated
-resources when access is complete.
+access by the functions in \fIlibdwarf\fP and with releasing allocated resources when access is complete.
+\f(CWdwarf_init_path()\fP
+or
+\f(CWdwarf_init_path_dl()\fP
+are the initialization functions
+to use if one actually has a path
+(if you just have an open fd or 
+open libelf handle you cannot
+use the _path_ versions  that's fine).
+These both allow libdwarf to attempt
+to follow 
+\f(CWGNU debuglink\fP
+hints in a specially produced
+executable/shared-object to find
+the object file with the DWARF
+sections to match tne executable(or
+shared-object).
+For non-debuglink executables
+these two functions behave identically.
+.P
+\f(CWGNU debuglink\fP
+is completely
+different than and separate from Split Dwarf
+and MacOS dSYM.
+it would seem unlikely that these 
+could be combined in any 
+single executable/shared-object.
+All are intended to have DWARF fully
+available but not taking space in the
+executable/shared object.
+See 
+https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+for information on debuglink and the related build-id.
+.P
+\f(CWdwarf_init_path()\fP provides
+no way
+to add extra global paths to debuglink searches.
+But
+\f(CWdwarf_init_path_dl()\fP
+has 2 extra arguments to make adding extra paths
+easy.
+.P
+libdwarf lets one access the executable's
+section .eh_frame with frame/backtrace
+information by turning off recognition of
+\f(CWGNU debuglink\fP in the Dwarf_Debug
+being opened by passing in
+\f(CWtrue_path_out_buffer\fP
+\f(CWtrue_path_bufferlen\fP
+as zero.
 
 .H 3 "dwarf_init_path()"
 .DS
@@ -2388,36 +2436,57 @@ is copied into
 \f(CWtrue_path_out_buffer\fP.
 In any case, 
 This is harmless with non-MacOS
-executables, but 
-for non-MacOS
+executables, but for non-MacOS
+non
+\f(CWGNU_debuglink\fP  objects
 \f(CWtrue_path_out_buffer\fP
 will just match
 \f(CWpath\fP.
 .P
+For Elf executables/shared-objects
+using
+\f(CWGNU_debuglink\fP
+The same considerations apply:
+pass in a pointer
+to \f(CWtrue_path_out_buffer\fP
+big pointing to a buffer
+large enough to hold the passed-in
+path if that were doubled plus adding 100 characters
+(a heuristic)
+(the 100 is arbitrary: 
+\f(CWGNU_debuglink\fP paths can be
+long but not likely longer than this
+suggested size.
+
+.P
 When
 you know you won't be
 reading MacOS executables
-you could
-skip the MacOS special treatment
+and won't be accessing
+\f(CWGNU_debuglink\fP
+executables
+special treatment
 by passing 0 as arguments to
 \f(CWtrue_path_out_buffer\fP
 and
 \f(CWtrue_path_bufferlen\fP.
-Or use
-\f(CWdwarf_init_b()\fP
-instead  of
-\f(CWdwarf_init_path()\fP
+If those are zero the
+\f(CWMacOS\fP/
+\f(CWGNU_debuglink\fP
+special processing will not occur.
+
 .P
-Pass in zero to
-\f(CWaccess\fP.
-The DW_DLC_READ flag,
+Pass in zero with the
+\f(CWaccess\fP
+\f(CW
+\fP
+argument.
+The 
+\f(CWDW_DLC_READ\fP
+flag,
 which only ever applied to libelf,
 is zero.
-At this time no other value than
-zero should be passed in to
-the functions documented 
-in this consumer/reader
-document.
+
 .P
 The
 \f(CWgroupnumber\fP argument indicates which group is to
@@ -2463,9 +2532,53 @@ in to all three.
 .P
 Pass in a pointer
 to a Dwarf_Error to the
-\f(CWerror\fP argument
+\f(CWerror\fP
+argument
 if you wish libdwarf to return an
 error code.
+
+.H 3 "dwarf_init_path_dl()"
+.DS
+\f(CWint dwarf_init_path_dl(
+    const char *      path,
+    char *            true_path_out_buffer,
+    unsigned          true_path_bufferlen,
+    Dwarf_Unsigned    access,
+    unsigned          groupnumber,
+    Dwarf_Handler     errhand,
+    Dwarf_Ptr         errarg,
+    char           ** global_paths,
+    unsigned int      global_paths_count
+    Dwarf_Debug*      dbg,
+    const char *      reserved1,
+    Dwarf_Unsigned  * reserved2,
+    Dwarf_Unsigned  * reserved3,
+    Dwarf_Error*    *  error);
+\fP
+.DE
+This function is identical to
+\f(CWdwarf_init_path()\fP
+in every respect except if you
+know that you must use special paths
+to find the
+\f(CWGNU debuglink\fP
+target file with DWARF information.
+.P
+\f(CWglobal_paths\fP
+allows you to specifiy such paths.
+Pass in
+\f(CWglobal_paths\fP
+as a pointer to an array of 
+pointer-to-char, each
+pointing to a global path string.
+Pass in 
+\f(CWglobal_paths_count\fP
+with the number of entries in the
+pointer array.
+Pass both as zero if there are
+no debuglink global paths
+other than the default standard
+\f(CW/usr/lib/debug\fP.
 
 .H 3 "dwarf_init_b()"
 .DS

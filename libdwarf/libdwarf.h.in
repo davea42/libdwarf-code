@@ -870,7 +870,6 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLC_READ               0 /* Pointless. Ok to use. */
 #define DW_DLC_WRITE              1 /* DO NOT USE */
 #define DW_DLC_RDWR               2 /* DO NOT USE */
-#define DW_DLC_NO_FOLLOW_DEBUGLINK 0x00000008 /* GNU debuglink */
 
 /*  ===== the following DW_DLC options are for producing DWARF,
     not used for reading/consuming DWARF. */
@@ -1524,7 +1523,11 @@ enum Dwarf_Form_Class {
 /*  Initialization based on path. This is new October 2018.
     The path actually used is copied to true_path_out
     and in the case of MacOS dSYM may not match path.
-    In case GNU debuglink data was followed the true_path_out
+    If true_path_buffer len is zero or true_path_out_buffer
+    is zero  then the Special MacOS processing will not
+    occur, nor will the GNU_debuglink processing occur.
+    In case GNU debuglink data was followed or MacOS
+    dSYM applies the true_path_out
     will not match path.
     So consider the value put in true_path_out the
     actual file name. reserved1,2,3 should all be passed
@@ -1549,12 +1552,18 @@ int dwarf_init_path(const char * /*path*/,
     and in the case of MacOS dSYM may not match path.
     In case GNU debuglink data was followed the true_path_out
     will not match path.
-    If no debuglink missing or unusable libdwarf or
-    DW_DLC_NO_FOLLOW_DEBUGLINK not-set in 'access' libdwarf
+    If debuglink missing from the Elf executable
+    or shared-object (ie, it is a normal
+    object!) or unusable by libdwarf or
+    true_path_buffer len is zero or true_path_out_buffer
+    is zero the
     accepts the path given as the object to report on.
     Passing dl_path_array and dl_path_array size zero
     suffices unless one has unusual locations for debuglink
     objects.
+    If true_path_buffer len is zero or true_path_out_buffer
+    is zero  then the Special MacOS processing will not
+    occur either. 
     */
 int dwarf_init_path_dl(const char * /*path*/,
     char *            /*true_path_out_buffer*/,
