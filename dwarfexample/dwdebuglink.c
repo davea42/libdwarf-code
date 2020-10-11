@@ -5,10 +5,6 @@
     See
     https://sourceware.org/gdb/onlinedocs/\
         gdb/Separate-Debug-Files.html
-    to calculate the crc of a file.
-    It's unclear whether one can legally
-    copy the crc code into this library/example
-    source, so we do nothing with the crc.
 
     An emerging GNU pattern seems to be:
         If a path found from debuglink or
@@ -34,9 +30,9 @@
     for more information.
 */
 
+
 #include "config.h"
 #include <stdio.h>
-
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -60,12 +56,6 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 #define TRUE 1
 #define FALSE 0
 char trueoutpath[2000];
@@ -74,6 +64,23 @@ static const char *buildidname = ".note.gnu.buildid";
 
 static int doprintbuildid = 1;
 static int doprintdebuglink = 1;
+
+#define Dwarf_Small unsigned char
+static void
+dump_bytes(const char *prefix,char * msg,unsigned char   * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    if (!start) {
+        printf("%s ptr null, ignore. \n",msg);
+        return;
+    }
+    printf("%s%s ",prefix,msg);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
 
 static int
 blockmatch(unsigned char *l,
@@ -100,10 +107,10 @@ print_debuglink(const char *prefix,
     unsigned char *end = 0;
 
     printf("%s Section            : %s\n",prefix,dlname);
-    printf("%s Debuglink name     : %s",prefix,debuglinkpath);
+    printf("%s Debuglink name     : %s\n",prefix,debuglinkpath);
     crcx = crc;
     end = crcx + 4;
-    printf("   crc 0X: ");
+    printf("%s crc              0X: ",prefix);
     for (; crcx < end; crcx++) {
         printf("%02x ", *crcx);
     }
@@ -121,7 +128,7 @@ print_buildid(const char *prefix,
     unsigned int   buildid_length,
     unsigned char  *buildid)
 {
-    printf("%s Section %s\n",prefix,buildidname);
+    printf("%s Section            : %s\n",prefix,buildidname);
     printf("%s Build-id  type     : %u\n",prefix, buildid_type);
     printf("%s Build-id  ownername: %s\n",prefix,
         buildidownername);
@@ -179,31 +186,29 @@ match_buildid(const char *prefix,
     unsigned char *crc_base,
     unsigned         buildid_length_base,
     unsigned  char  * buildid_base,
-    UNUSEDARG char *   path_base,
     /*  *_base is executable info while
         *_debug is the debug object. */
     unsigned char  * crc_debug,
     unsigned  buildid_length_debug,
-    unsigned  char *buildid_debug,
-    UNUSEDARG char *   path_debug)
+    unsigned  char *buildid_debug)
 {
     if (crc_debug && crc_base) {
-        int res = 0;
-
         /* crc available for both */
-        res = blockmatch(crc_debug,crc_base,4);
-        if (res == DW_DLV_NO_ENTRY) {
-            printf("%s===crc does  not match",prefix);
-            return res;
+        if (!blockmatch(crc_debug,crc_base,4)) {
+            dump_bytes(prefix," crc base  ",crc_base,4);
+            dump_bytes(prefix," crc target",crc_debug,4);
+            printf("%s===crc does not match\n",prefix);
+            return DW_DLV_NO_ENTRY;
         }
+    } else {
     }
     if(buildid_length_base != buildid_length_debug) {
-        printf("%s===buildid length does  not match",prefix);
+        printf("%s===buildid length does not match",prefix);
         return DW_DLV_NO_ENTRY;
     }
     if (!blockmatch(buildid_base,buildid_debug,
         buildid_length_base)) {
-        printf("%s===buildid does not match",prefix);
+        printf("%s===buildid does not match\n",prefix);
         return DW_DLV_NO_ENTRY;
     }
     return DW_DLV_OK;
@@ -238,8 +243,6 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
     Dwarf_Error error = 0;
     Dwarf_Unsigned laccess = DW_DLC_READ;
     unsigned int p = 0;
-    char *trueout = 0;
-    unsigned int trueoutlen = 0;
 
     /*  Don't let dwarf_init_path find the debuglink,
         we want to do it here so we can show it all. */
@@ -251,7 +254,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         printf("%s===Exec-path        : %s\n",prefix,basepath);
     }
     res = dwarf_init_path(path,
-        trueout, trueoutlen,
+        0,0,
         laccess, DW_GROUPNUMBER_ANY,
         0,0, &dbg,
         0,0,0,&error);
@@ -282,7 +285,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
             exit(1);
         }
         printf("%s global path        : %s\n",prefix,lpath);
-     }
+    }
     res = dwarf_gnu_debuglink(dbg,
         &debuglinkpath,
         &crc, &debuglinkfullpath, &debuglinkfullpath_strlen,
@@ -301,7 +304,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         printf("%sThere is no %s or %s section in \"%s\"\n",
             prefix,dlname,buildidname,path);
         res = dwarf_finish(dbg,&error);
-        return res;
+        return DW_DLV_NO_ENTRY;
     }
     if (doprintdebuglink && crc) {
         print_debuglink(prefix,debuglinkpath,crc,
@@ -328,53 +331,46 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         res = match_buildid(prefix,
             /* This is the executable */
             crc_in,buildid_len_in,buildid_in,
-            basepath,
             /* pass in dbg so we can calculate the missing crc */
             /* following is the target, ie, debug */
-            crc,buildid_length,buildid,path);
+            crc,buildid_length,buildid);
         if (res == DW_DLV_OK) {
-            printf("%s===executable and debug buildid match\n",prefix);
+            printf("%s===executable and debug buildid match\n",
+                prefix);
         }
-#if 0
-        if ( res == DW_DLV_OK) {
-            /* WE FOUND IT, so stop processing. */
-            free(paths);
-            free(debuglinkfullpath);
-            dwarf_finish(dbg,&error);
-            return res;
-        }
-#endif
+        return DW_DLV_NO_ENTRY;
     }
     /*  If debug_path_in then this list does not
         mean anything. */
+    
     for (i =0; is_outer && i < paths_count; ++i) {
         char *pa =     paths[i];
-        char           outpath[2000];
-        unsigned long  outpathlen = sizeof(outpath);
         unsigned int   ftype = 0;
         unsigned int   endian = 0;
         unsigned int   offsetsize = 0;
         Dwarf_Unsigned filesize = 0;
         int errcode = 0;
         int realobj = TRUE;
+        static char lprefix[50];
 
-        printf("%s Path [%2u] %s\n",prefix,i,pa);
+        snprintf(lprefix,sizeof(lprefix), "    [%2u]",i);
+        printf("%s Path [%2u] %s\n",lprefix,i,pa);
         /*  First, open the file to determine if it exists.
             If not, loop again */
         res = dwarf_object_detector_path(pa,
-            outpath,outpathlen,&ftype,&endian,&offsetsize,
+            0,0,&ftype,&endian,&offsetsize,
             &filesize, &errcode);
         if (res == DW_DLV_NO_ENTRY) {
-            printf("%s file above does not exist\n",prefix);
+            printf("%s file above does not match/exist.\n",lprefix);
             continue;
         }
         if (res == DW_DLV_ERROR) {
             printf("%s file above access attempt "
                 "lead to error %s\n",
-                dwarf_errmsg_by_number(errcode),prefix);
+                dwarf_errmsg_by_number(errcode),lprefix);
             continue;
         }
-        realobj = print_ftype_message(prefix, ftype);
+        realobj = print_ftype_message(lprefix, ftype);
         if (!realobj) {
             continue;
         }
@@ -385,11 +381,11 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
                 debug (ie pa) to see if it matches.
                 Do not pass in globals paths*/
             res = one_file_debuglink_internal(
-                FALSE,"    ",0,0,0,
+                FALSE,lprefix,0,0,0,
                 pa,crc,buildid_length, buildid,pa);
             if (res == DW_DLV_OK) {
                 printf("%s =====File %s is a correct"
-                    " .debug object\n\n", prefix,pa);
+                    " .debug object\n\n", lprefix,pa);
             }
         }
     }
@@ -403,7 +399,8 @@ static void
 one_file_debuglink(char *path,char **dlpaths,unsigned int dlcount,
    int no_follow_debuglink)
 {
-    one_file_debuglink_internal(TRUE,"",dlpaths,dlcount, no_follow_debuglink,
+    one_file_debuglink_internal(TRUE,"",dlpaths,dlcount,
+        no_follow_debuglink,
         path,0,0,0,0);
 }
 

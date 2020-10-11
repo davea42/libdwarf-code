@@ -709,12 +709,17 @@ extract_buildid(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* */
+/*  Caller frees space returned  by debuglink_fillpath_returned and
+    debuglink_path_returned.
+    The following return pointers into the dbg itself
+    and are only valid while that dbg is open.
+    crc_returned, buildid_owner_name_returned,
+    buildid_returned, */
 int
 dwarf_gnu_debuglink(Dwarf_Debug dbg,
-    char     **  debuglink_path_returned,
+    char     **  debuglink_path_returned, /*caller frees*/
     unsigned char **  crc_returned,
-    char     **  debuglink_fullpath_returned,
+    char     **  debuglink_fullpath_returned, /* caller frees */
     unsigned *   debuglink_fullpath_length_returned,
 
     unsigned *   buildid_type_returned ,
@@ -756,7 +761,6 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
         if (linkres == DW_DLV_ERROR) {
             return linkres;
         }
-    } else {
     }
     if (pbuildid) {
         buildidres = extract_buildid(dbg,

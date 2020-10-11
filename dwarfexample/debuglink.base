@@ -4,7 +4,7 @@
  Section            : .gnu_debuglink
  Debuglink name     : dummyexecutable.debug   crc 0X: c8 ba b4 1c 
  Debuglink target   : ..src../dummyexecutable.debug
- Section .note.gnu.buildid
+ Section            : .note.gnu.buildid
  Build-id  type     : 3
  Build-id  ownername: GNU
  Build-id  length   : 20
@@ -18,7 +18,7 @@
  Path [ 3] ..src../dummyexecutable.debug
  file above is an Elf object
     ===Referred-path    : ..src../dummyexecutable.debug
-     Section .note.gnu.buildid
+     Section            : .note.gnu.buildid
      Build-id  type     : 3
      Build-id  ownername: GNU
      Build-id  length   : 20

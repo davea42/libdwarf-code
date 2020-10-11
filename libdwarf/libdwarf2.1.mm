@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.12, 3 October 2020
+.ds vE Rev 3.13, 8 October 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -14846,7 +14846,10 @@ section the first four fields will be set.
 \f(CW*debuglink_path_returned\fP
 points to the null-terminated string
 in the section.
-It must not be free()d.
+Caller must not free this.
+The bytes are in the object itself
+and the pointer is invalid once
+dwarf_finish() is run on the dbg.
 .P
 \f(CW*crc_returned\fP points
 to a 4-byte CRC value. The
@@ -14878,6 +14881,9 @@ the value 3.
 point to the null-terminated string which will
 be  "GNU".
 Do not free() this.
+The bytes are in the object itself
+and the pointer is invalid once
+dwarf_finish() is run on the dbg.
 .P
 \f(CW*buildid_returned\fP will be set to 
 point to the group of bytes
@@ -14887,6 +14893,9 @@ This is not a string and is not null-terminated.
 It is normally a 20-byte field to be used
 in its ascii-hex form.
 Do not free() this.
+The bytes are in the object itself
+and the pointer is invalid once
+dwarf_finish() is run on the dbg.
 .P
 If \f(CW*paths_returned\fP
 is passed as NULL then no paths
@@ -14917,6 +14926,7 @@ web page mentioned above.
 The default global path is "/usr/lib/debug"
 and that is set by libdwarf as 
 \f(CWpaths_returned[0]\fP.
+
 .P
 An example of calling this function follows
 .DS

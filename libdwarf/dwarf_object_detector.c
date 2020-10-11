@@ -1,5 +1,5 @@
-/* Copyright (c) 2018-2018, David Anderson
-All rights reserved.
+/*
+Copyright (c) 2018-2020, David Anderson All rights reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
@@ -46,27 +46,31 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #ifdef HAVE_STRING_H
 #include <string.h> /* memcpy, strcpy */
 #endif /* HAVE_STRING_H */
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for free() */
+#endif /*HAVE_STDLIB_H */
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
+#include "libdwarfdefs.h"
+#include "dwarf.h"
 #include "libdwarf.h"
+#include "dwarf_base_types.h"
+#include "dwarf_opaque.h"
 #include "memcpy_swap.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_object_detector.h"
+#include "dwarfstring.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif /* O_BINARY */
 
-/* This is the main() program for the object_detector executable. */
 
-#ifndef TRUE
 #define TRUE 1
 #define FALSE 0
-#endif /* TRUE */
 
 #ifndef O_RDONLY
 #define O_RDONLY 0
@@ -84,7 +88,6 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 
 #define TYP(n,l) char n[l]
 #define SIZEOFT32 4
-
 
 #define DW_DLV_NO_ENTRY -1
 #define DW_DLV_OK        0
@@ -114,6 +117,26 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #define MH_MAGIC_64 0xfeedfacf
 #define MH_CIGAM_64 0xcffaedfe
 #endif /*  MH_MAGIC_64 */
+
+#if TESTING
+static void
+dump_bytes(char * msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    if (!start) {
+        printf("%s ptr null, ignore. \n",msg);
+        return;
+    }
+
+    printf("%s 0x%lx ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
+#endif
+
 
 static unsigned long
 magic_copy(unsigned char *d, unsigned len)
@@ -532,12 +555,16 @@ dwarf_object_detector_fd(int fd,
 }
 
 int
-dwarf_object_detector_path(const char  *path,
-    char *outpath,unsigned long outpath_len,
+dwarf_object_detector_path_dSYM(
+    const char  *path,
+    char *outpath, unsigned long outpath_len,
+    UNUSEDARG char ** gl_pathnames,
+    UNUSEDARG unsigned gl_pathcount,
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
     Dwarf_Unsigned  *filesize,
+    unsigned char *pathsource,
     int *errcode)
 {
     char *cp = 0;
@@ -547,14 +574,8 @@ dwarf_object_detector_path(const char  *path,
     int res = 0;
     int have_outpath = outpath && outpath_len;
 
-#if !defined(S_ISREG)
-#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
-#endif
-#if !defined(S_ISDIR)
-#define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
-#endif
-
     if (have_outpath) {
+        /*   Looking for MacOS dSYM */
         if ((2*plen + dsprefixlen +2) >= outpath_len) {
             *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
             return DW_DLV_ERROR;
@@ -564,23 +585,350 @@ dwarf_object_detector_path(const char  *path,
         dw_stpcpy(cp,getbasename(path));
         fd = open(outpath,O_RDONLY|O_BINARY);
         if (fd < 0) {
-            *outpath = 0;
-            fd = open(path,O_RDONLY|O_BINARY);
-            dw_stpcpy(outpath,path);
+            outpath[0] = 0;
+            return DW_DLV_NO_ENTRY;
+        }
+        *pathsource = DW_PATHSOURCE_dsym;
+        res = dwarf_object_detector_fd(fd,
+            ftype,endian,offsetsize,filesize,errcode);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        close(fd);
+        return DW_DLV_OK;
+    }
+    return DW_DLV_NO_ENTRY;
+}
+
+static int
+blockmatch(unsigned char *l,
+    unsigned char* r,
+    unsigned length)
+{
+    unsigned int i = 0;
+    for( ; i < length; ++i) {
+        if (l[i] != r[i]) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+/*  The debug version we expect not to have debuglink,
+    checking here if buildid matches.
+    Never returns DW_DLV_ERROR. */
+static int
+match_buildid(
+    unsigned char *crc_base,
+    unsigned         buildid_length_base,
+    unsigned  char  * buildid_base,
+    /*  *_base is executable info while
+        *_debug is the debug object. */
+    unsigned char  * crc_debug,
+    unsigned  buildid_length_debug,
+    unsigned  char *buildid_debug)
+{
+    if (crc_debug && crc_base) {
+        /* crc available for both */
+        if (!blockmatch(crc_debug,crc_base,4)) {
+            return DW_DLV_NO_ENTRY;
+        }
+    }
+    if(buildid_length_base != buildid_length_debug) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (!blockmatch(buildid_base,buildid_debug,
+        buildid_length_base)) {
+        return DW_DLV_NO_ENTRY;
+    }
+    return DW_DLV_OK;
+}
+
+static int
+_dwarf_debuglink_finder_newpath(
+   char         * path_in,
+   unsigned char *crc_in,
+   unsigned       buildid_len_in,
+   unsigned char *buildid_in,
+   dwarfstring    *m,
+   int * fd_out,
+   int * errcode)
+{
+    unsigned char  lcrc[4];
+    char          *debuglinkpath = 0; /* must be freed */
+    unsigned char *crc = 0;
+    char          *debuglinkfullpath = 0;
+    unsigned       debuglinkfullpath_strlen = 0;
+    unsigned       buildid_type = 0;
+    char         * buildidownername = 0;
+    unsigned char *buildid = 0;
+    unsigned       buildid_length = 0;
+    char        ** paths = 0; /* must be freed */
+    unsigned       paths_count = 0;
+    Dwarf_Debug dbg = 0;
+    Dwarf_Error error = 0;
+    char *path = path_in;
+    int res = 0;
+
+    res = dwarf_init_path(path,
+        0,0,
+        DW_DLC_READ, DW_GROUPNUMBER_ANY,
+        0,0, &dbg,
+        0,0,0,&error);
+    if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,error);
+        error = 0;
+        return DW_DLV_NO_ENTRY;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        /* should never happen */
+        return DW_DLV_NO_ENTRY;
+    }
+    res = dwarf_gnu_debuglink(dbg,
+        &debuglinkpath,
+        &crc, &debuglinkfullpath, &debuglinkfullpath_strlen,
+        &buildid_type, &buildidownername,
+        &buildid, &buildid_length,
+        &paths, &paths_count, &error);
+    if (res == DW_DLV_ERROR) {
+        *errcode = dwarf_errno(error);
+        dwarf_dealloc_error(dbg,error);
+        dwarf_finish(dbg,&error);
+        return DW_DLV_NO_ENTRY;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /*  There is no debuglink section */
+        dwarf_finish(dbg,&error);
+        return DW_DLV_NO_ENTRY;
+    }
+
+    free(paths);
+    paths = 0;
+    memset(&lcrc[0],0,sizeof(lcrc));
+    if (crc_in && !crc) {
+        res = dwarf_crc32(dbg,lcrc,&error);
+        if (res == DW_DLV_ERROR) {
+            paths = 0;
+            dwarf_dealloc_error(dbg,error);
+            dwarf_finish(dbg,&error);
+            /*  Cannot match the crc_in, give up. */
+            return DW_DLV_NO_ENTRY;
+        } else if (res == DW_DLV_OK) {
+            crc = &lcrc[0];
         }
     } else {
+    }
+    res = match_buildid(
+        /* This is the executable */
+        crc_in,buildid_len_in,buildid_in,
+        /* pass in local so we can calculate the missing crc */
+        /* following is the target, ie, debug */
+        crc,buildid_length,buildid);
+    if (res == DW_DLV_OK) {
+        dwarfstring_append(m,path);
+        *fd_out = dbg->de_fd;
+        dbg->de_owns_fd = FALSE;
+        dwarf_finish(dbg,&error);
+        return DW_DLV_OK;
+    }
+    dwarf_finish(dbg,&error);
+    return DW_DLV_NO_ENTRY;
+}
+
+static int
+_dwarf_debuglink_finder_internal(
+   char         **gl_pathnames,
+   unsigned int   gl_pathcount,
+   char         * path_in,
+   dwarfstring    *m,
+   int * fd_out,
+   int * errcode)
+{
+    int res = 0;
+    /*  This local dbg is opened and then dwarf_finish()
+        here.  No dbg in the arguments! */
+    Dwarf_Debug    dbg = 0;
+    char         * path = 0;
+    Dwarf_Error    error = 0;
+    unsigned int   p = 0;
+    char          *debuglinkpath = 0; /* must be freed */
+    unsigned char *crc = 0;
+    char          *debuglinkfullpath = 0;
+    unsigned       debuglinkfullpath_strlen = 0;
+    unsigned       buildid_type = 0;
+    char         * buildidownername = 0;
+    unsigned char *buildid = 0;
+    unsigned       buildid_length = 0;
+    char        ** paths = 0; /* must be freed */
+    unsigned       paths_count = 0;
+    Dwarf_Unsigned laccess = 0;
+    unsigned int   i = 0;
+
+
+    path = path_in;
+    /*  This path will work.
+        Already know the file is there. */
+    res = dwarf_init_path(path,
+        0,0,
+        laccess, DW_GROUPNUMBER_ANY,
+        0,0, &dbg,
+        0,0,0,&error);
+    if (res == DW_DLV_ERROR) {
+        *errcode = dwarf_errno(error);
+        dwarf_dealloc_error(dbg,error);
+        error = 0;
+        return res;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    for (p = 0;  p < gl_pathcount; ++p) {
+        const char *lpath = 0;
+
+        lpath = (const char *)gl_pathnames[p];
+        res = dwarf_add_debuglink_global_path(dbg,
+            lpath, &error);
+        if (res != DW_DLV_OK){
+            *errcode = dwarf_errno(error);
+            dwarf_dealloc_error(dbg,error);
+            dwarf_finish(dbg,&error);
+            return res;
+        }
+    }
+    res = dwarf_gnu_debuglink(dbg,
+        &debuglinkpath,
+        &crc, &debuglinkfullpath, &debuglinkfullpath_strlen,
+        &buildid_type, &buildidownername,
+        &buildid, &buildid_length,
+        &paths, &paths_count, &error);
+    if (res == DW_DLV_ERROR) {
+        *errcode = dwarf_errno(error);
+        dwarf_dealloc_error(dbg,error);
+        dwarf_finish(dbg,&error);
+        return DW_DLV_NO_ENTRY;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /*  There is no debuglink section */
+        dwarf_finish(dbg,&error);
+        return DW_DLV_NO_ENTRY;
+    }
+    for (i =0; i < paths_count; ++i) {
+        char *pa =     paths[i];
+        int pfd = 0;
+
+        /*  First, open the file to determine if it exists.
+            If not, loop again */
+
+        pfd = open(pa,O_RDONLY|O_BINARY);
+        if (pfd  < 0) {
+            /*  This is the usual path. */
+            continue;
+        }
+        close(pfd);
+        res = _dwarf_debuglink_finder_newpath(
+            pa,crc,buildid_length, buildid,
+            m,fd_out,errcode);
+        if (res == DW_DLV_OK) {
+            free(paths);
+            paths = 0;
+            /*dwarfstring_append(m,pa); */
+            dwarf_finish(dbg,&error);
+            return DW_DLV_OK;
+        }
+        *errcode = 0;
+        continue;
+    }
+    free(paths);
+    paths = 0;
+    dwarf_finish(dbg,&error);
+    return DW_DLV_NO_ENTRY;
+}
+
+int
+dwarf_object_detector_path(const char  *path,
+    char *outpath, unsigned long outpath_len,
+    unsigned *ftype,
+    unsigned *endian,
+    unsigned *offsetsize,
+    Dwarf_Unsigned  *filesize,
+    int *errcode)
+{
+    unsigned char pathsource = DW_PATHSOURCE_basic;
+    return dwarf_object_detector_path_b(path,
+        outpath,outpath_len,
+        0,0,
+        ftype,endian,offsetsize,filesize,&pathsource,errcode);
+}
+int
+dwarf_object_detector_path_b(
+    const char  *path,
+    char *outpath, unsigned long outpath_len,
+    char ** gl_pathnames,
+    unsigned gl_pathcount,
+    unsigned *ftype,
+    unsigned *endian,
+    unsigned *offsetsize,
+    Dwarf_Unsigned  *filesize,
+    unsigned char *pathsource,
+    int *errcode)
+{
+    int fd = -1;
+    int res = 0;
+    int have_outpath = outpath && outpath_len;
+    unsigned char lpathsource = DW_PATHSOURCE_basic;
+
+    if(pathsource) {
+        lpathsource = *pathsource;
+    }
+    if (lpathsource == DW_PATHSOURCE_basic && have_outpath) {
+        /*  On return from the following call  we could well                      close the fd above and open a new one. */
+        int debuglink_fd = -1;
+        unsigned long dllen = 0;
+
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+
+        res = _dwarf_debuglink_finder_internal(
+            gl_pathnames,gl_pathcount,
+            (char *)path, &m,&debuglink_fd, errcode);
+        if (res == DW_DLV_ERROR) {
+            close(fd);
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            /*  We did not find an alternative path */
+            strcpy(outpath,path);
+            dwarfstring_destructor(&m);
+            lpathsource = DW_PATHSOURCE_basic;
+        } else {
+            close(fd);
+            dllen = dwarfstring_strlen(&m)+1;
+            if  (dllen >= outpath_len) {
+                close(debuglink_fd);
+                *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
+                return DW_DLV_ERROR;
+            }
+            strcpy(outpath,dwarfstring_string(&m));
+            lpathsource = DW_PATHSOURCE_debuglink;
+        }
+        fd = open(outpath,O_RDONLY|O_BINARY);
+        /* fall through to get fsize etc */
+    } else {
+        lpathsource = DW_PATHSOURCE_basic;
         fd = open(path,O_RDONLY|O_BINARY);
     }
     if (fd < 0) {
-        if (have_outpath) {
-            *outpath = 0;
+        lpathsource = DW_PATHSOURCE_unspecified;
+        if (pathsource) {
+            *pathsource = lpathsource;
         }
         return DW_DLV_NO_ENTRY;
     }
     res = dwarf_object_detector_fd(fd,
         ftype,endian,offsetsize,filesize,errcode);
-    if (res != DW_DLV_OK && have_outpath) {
-        *outpath = 0;
+    if (res != DW_DLV_OK) {
+        lpathsource = DW_PATHSOURCE_unspecified;
+    }
+    if (pathsource) {
+        *pathsource = lpathsource;
     }
     close(fd);
     return res;

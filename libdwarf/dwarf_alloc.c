@@ -972,6 +972,8 @@ freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
     The caller should assume that the Dwarf_Debug pointer
     itself is no longer valid upon return from this function.
 
+    NEVER returns DW_DLV_ERROR.
+
     In case of difficulty, this function simply returns quietly.
 */
 int
@@ -980,7 +982,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     unsigned g = 0;
 
     if (dbg == NULL) {
-        return (DW_DLV_ERROR);
+        return DW_DLV_NO_ENTRY;
     }
     /*  To do complete validation that we have no surprising
         missing or erroneous deallocs it is advisable to do
@@ -1066,7 +1068,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     dbg->de_gnu_global_path_count = 0;
     memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free(dbg);
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 /*  A special case: we have no dbg, no alloc header etc.
     So create something out of thin air that we can recognize

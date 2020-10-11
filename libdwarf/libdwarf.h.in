@@ -1418,9 +1418,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_SUP_STRING_ERROR          476
 #define DW_DLE_DEBUG_SUP_ERROR                 477
 #define DW_DLE_LOCATION_ERROR                  478
+#define DW_DLE_DEBUGLINK_PATH_SHORT            479
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        478
+#define DW_DLE_LAST        479
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -1563,7 +1564,7 @@ int dwarf_init_path(const char * /*path*/,
     objects.
     If true_path_buffer len is zero or true_path_out_buffer
     is zero  then the Special MacOS processing will not
-    occur either. 
+    occur either.
     */
 int dwarf_init_path_dl(const char * /*path*/,
     char *            /*true_path_out_buffer*/,
@@ -1575,7 +1576,8 @@ int dwarf_init_path_dl(const char * /*path*/,
     Dwarf_Debug*      /*dbg*/,
     char **           /* dl_path array */,
     unsigned int      /* dl_path array size */,
-    const char *      /* reserved1 */,
+    unsigned char   * /* path_source */,
+    const char      * /* reserved1 */,
     Dwarf_Unsigned    /* reserved2 */,
     Dwarf_Unsigned  * /* reserved3 */,
     Dwarf_Error*      /*error*/);
@@ -2678,30 +2680,32 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
     See
     https://sourceware.org/gdb/onlinedocs/gdb/
         Separate-Debug-Files.html
-    The dbg argument provides data access and relies on
-    fields de_path,de_debuglink_globals,
-    de_debuglink_globals_length.
+
     If no debuglink then name_returned,crc_returned and
     debuglink_path_returned will get set 0 through the pointers.
+
     If no .note.gnu.build-id then  buildid_length_returned,
     and buildid_returned will be set 0 through the pointers.
-    See libdwarf2.1.mm for additional important details.
-    Normally not used by callers, dwarf_init_path_dl()
-    references debuglink information (if any present).
+
+    Caller frees space returned  by
+        debuglink_fullpath_returned and paths_returned.
+
+    See libdwarf2.1.mm revision 3.13 or later for
+    additional important details.
 */
 
 int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
-    char     **  /*name_returned*/,
-    unsigned char ** /*crc_returned from the debuglink section*/,
     char     **    /*debuglink_path_returned*/,
-    unsigned int * /*debuglink_path_count_returned*/,
+    unsigned char ** /*crc_returned from the debuglink section*/,
+    char     **    /*debuglink_path_returned free this*/,
+    unsigned int * /*debuglink_path_count_returned */,
     unsigned int * /*buildid_type_returned */,
     char     **    /*buildid_owner_name_returned*/,
     unsigned char ** /*buildid_returned*/,
     unsigned int * /*buildid_length_returned*/,
     char     ***   /*paths_returned*/,
     unsigned int * /*paths_length_returned*/,
-    Dwarf_Error* /*error*/);
+    Dwarf_Error*   /*error*/);
 
 /*  Only useful inside dwarfexample/dwdebuglink.c
     so we can show all that is going on.
@@ -2720,7 +2724,7 @@ int dwarf_crc32 (Dwarf_Debug /*dbg*/,unsigned char * /*crcbuf*/,
 /*  Public interface to the real crc calculation
     just in case some find it useful. */
 unsigned int dwarf_basic_crc32 (const unsigned char * /*buf*/,
-    int /*len*/, unsigned int /*init*/);
+    unsigned long /*len*/, unsigned int /*init*/);
 
 /*  global name space operations (.debug_pubnames access)
     The pubnames and similar sections are rarely used. Few compilers
@@ -5587,21 +5591,59 @@ int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
     Returns the value the flag was before this call. */
 int dwarf_set_de_alloc_flag(int v);
 
-int dwarf_object_detector_path(const char  *path,
-    char *outpath,
-    unsigned long,
-    unsigned int * ftype,
-    unsigned int * endian,
-    unsigned int * offsetsize,
-    Dwarf_Unsigned *filesize,
-    int * errcode);
+/* Solely looks for debuglink */
+int dwarf_object_detector_path(const char  * /*path*/,
+    char           * /*outpath_buffer*/,
+    unsigned long    /*outpathlen*/,
+    unsigned int   * /*ftype*/,
+    unsigned int   * /*endian*/,
+    unsigned int   * /*offsetsize*/,
+    Dwarf_Unsigned * /*filesize*/,
+    int *  /*errcode*/);
 
-int dwarf_object_detector_fd(int fd,
-    unsigned int *ftype,
-    unsigned int *endian,
-    unsigned int *offsetsize,
+/* Solely looks for debuglink */
+int dwarf_object_detector_path_b(const char  * /*path*/,
+    char         * /*outpath_buffer*/,
+    unsigned long  /*outpathlen*/,
+    char **        /* gl_pathnames*/,
+    unsigned       /* gl_pathcount*/,
+    unsigned int * /*ftype*/,
+    unsigned int * /*endian*/,
+    unsigned int * /*offsetsize*/,
+    Dwarf_Unsigned * /*filesize*/,
+    unsigned char * /*pathsource*/,
+    int * /*errcode*/);
+
+/* Solely looks for dSYM */
+int dwarf_object_detector_path_dSYM(
+    const char  *path,
+    char *outpath, unsigned long outpath_len,
+    char ** gl_pathnames,
+    unsigned gl_pathcount,
+    unsigned *ftype,
+    unsigned *endian,
+    unsigned *offsetsize,
     Dwarf_Unsigned  *filesize,
-    int * errcode);
+    unsigned char *pathsource,
+    int *errcode);
+
+
+#define DW_PATHSOURCE_unspecified 0
+#define DW_PATHSOURCE_basic     1
+#define DW_PATHSOURCE_dsym      2 /* MacOS dSYM */
+#define DW_PATHSOURCE_debuglink 3 /* GNU debuglink */
+
+/*  Returns the pathsource value set up at init time*/
+int dwarf_get_path_source_type(Dwarf_Debug /* dbg*/,
+    unsigned char * /*path_source*/,
+    Dwarf_Error   * /*error*/);
+
+int dwarf_object_detector_fd(int /*fd*/,
+    unsigned int * /*ftype*/,
+    unsigned int * /*endian*/,
+    unsigned int * /*offsetsize*/,
+    Dwarf_Unsigned  * /*filesize*/,
+    int *  /*errcode*/);
 
 #ifdef __cplusplus
 }

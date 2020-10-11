@@ -56,7 +56,21 @@ Frame information (.debug_frame and .eh_frame) is heavily
 dependent on the ABI/ISA of the object file. 
 By default we use a generic set of register names
 handling up to 100 registers named r0-r99.
-
+.PP
+As of 2020 there are three different ways
+compiler writers separate the DWARF information
+from an executable/shared-object.
+One is DWARF5 Split Dwarf (the \--file-tied
+option is useful for these). Another
+ls GNU debuglink (libdwarf automatically
+finds the DWARF when given the name
+of the executable, use \--no-follow-debuglink
+to suppress this and make possible printing
+the backtrace data in section \.eh_frame).
+The third way is on MacOS: the debug DWARF
+is in a separate object (dwarfdump/libdwarf
+automatically find it if it is present,
+\--no-follow-debuglink suppresses this finding).
 .PP
 In many cases one can get additional detail
 by specifying \-v (sometimes \-v \-v gets
@@ -771,6 +785,9 @@ The tied file path names the executable which has
 the .debug_addr section that may be referred to from
 the main object. See Split Objects (aka Debug Fission)
 in the DWARF5 standard.
+This cannot be used with MacOS debug
+or GNU debuglink, such files do not have
+a Split Dwarf object file.
 
 .TP
 .BR \-x\ line5=s2l

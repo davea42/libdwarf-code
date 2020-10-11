@@ -1699,16 +1699,16 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
 
     Frees all memory that was not previously freed by
     dwarf_dealloc.
+    NEVER returns DW_DLV_ERROR;
+
     Aside from certain categories.  */
 int
-dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
+dwarf_object_finish(Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Error * error)
 {
     int res = 0;
 
     res = _dwarf_free_all_of_one_debug(dbg);
-    if (res == DW_DLV_ERROR) {
-        DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
-    }
     return res;
 }
 

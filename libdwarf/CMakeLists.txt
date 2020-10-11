@@ -30,6 +30,7 @@ dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
 dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c 
 malloc_check.c pro_alloc.c pro_arange.c 
+crc32.c
 pro_debug_sup.c
 pro_die.c pro_dnames.c pro_encode_nm.c pro_error.c pro_expr.c 
 pro_finish.c pro_forms.c pro_funcs.c pro_frame.c 

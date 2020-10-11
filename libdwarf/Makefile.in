@@ -173,14 +173,14 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_tsearchhash.lo libdwarf_la-dwarf_types.lo \
 	libdwarf_la-dwarf_util.lo libdwarf_la-dwarf_vars.lo \
 	libdwarf_la-dwarf_weaks.lo libdwarf_la-dwarf_xu_index.lo \
-	libdwarf_la-malloc_check.lo libdwarf_la-pro_alloc.lo \
-	libdwarf_la-pro_arange.lo libdwarf_la-pro_debug_sup.lo \
-	libdwarf_la-pro_die.lo libdwarf_la-pro_dnames.lo \
-	libdwarf_la-pro_encode_nm.lo libdwarf_la-pro_error.lo \
-	libdwarf_la-pro_expr.lo libdwarf_la-pro_finish.lo \
-	libdwarf_la-pro_forms.lo libdwarf_la-pro_frame.lo \
-	libdwarf_la-pro_funcs.lo libdwarf_la-pro_init.lo \
-	libdwarf_la-pro_line.lo \
+	libdwarf_la-crc32.lo libdwarf_la-malloc_check.lo \
+	libdwarf_la-pro_alloc.lo libdwarf_la-pro_arange.lo \
+	libdwarf_la-pro_debug_sup.lo libdwarf_la-pro_die.lo \
+	libdwarf_la-pro_dnames.lo libdwarf_la-pro_encode_nm.lo \
+	libdwarf_la-pro_error.lo libdwarf_la-pro_expr.lo \
+	libdwarf_la-pro_finish.lo libdwarf_la-pro_forms.lo \
+	libdwarf_la-pro_frame.lo libdwarf_la-pro_funcs.lo \
+	libdwarf_la-pro_init.lo libdwarf_la-pro_line.lo \
 	libdwarf_la-pro_log_extra_flag_strings.lo \
 	libdwarf_la-pro_macinfo.lo libdwarf_la-pro_pubnames.lo \
 	libdwarf_la-pro_reloc.lo libdwarf_la-pro_reloc_stream.lo \
@@ -240,7 +240,8 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo \
+am__depfiles_remade = ./$(DEPDIR)/libdwarf_la-crc32.Plo \
+	./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_alloc.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_arange.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_crc32.Plo \
@@ -808,6 +809,7 @@ dwarf_weaks.c \
 dwarf_weaks.h \
 dwarf_xu_index.c \
 dwarf_xu_index.h \
+crc32.c \
 libdwarf.h \
 libdwarf_version.h \
 libdwarfdefs.h \
@@ -1037,6 +1039,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-crc32.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_alloc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_arange.Plo@am__quote@ # am--include-marker
@@ -1529,6 +1532,13 @@ libdwarf_la-dwarf_xu_index.lo: dwarf_xu_index.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_xu_index.c' object='libdwarf_la-dwarf_xu_index.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_xu_index.lo `test -f 'dwarf_xu_index.c' || echo '$(srcdir)/'`dwarf_xu_index.c
+
+libdwarf_la-crc32.lo: crc32.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-crc32.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-crc32.Tpo -c -o libdwarf_la-crc32.lo `test -f 'crc32.c' || echo '$(srcdir)/'`crc32.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-crc32.Tpo $(DEPDIR)/libdwarf_la-crc32.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='crc32.c' object='libdwarf_la-crc32.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-crc32.lo `test -f 'crc32.c' || echo '$(srcdir)/'`crc32.c
 
 libdwarf_la-malloc_check.lo: malloc_check.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-malloc_check.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-malloc_check.Tpo -c -o libdwarf_la-malloc_check.lo `test -f 'malloc_check.c' || echo '$(srcdir)/'`malloc_check.c
@@ -2184,7 +2194,8 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libLTLIBRARIES \
 	clean-libtool mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo
+		-rm -f ./$(DEPDIR)/libdwarf_la-crc32.Plo
+	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_alloc.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_arange.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_crc32.Plo
@@ -2316,7 +2327,8 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo
+		-rm -f ./$(DEPDIR)/libdwarf_la-crc32.Plo
+	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_alloc.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_arange.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_crc32.Plo

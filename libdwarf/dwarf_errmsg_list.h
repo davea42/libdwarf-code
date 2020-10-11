@@ -553,6 +553,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_SUP_STRING_ERROR(476) The string in .debug_sup head runs off the end of the section. Corrupt data",
     "DW_DLE_DEBUG_SUP_ERROR(477). .debug_sup data corruption",
     "DW_DLE_LOCATION_ERROR(478). A location processing libdwarf error",
+    "DW_DLE_DEBUGLINK_PATH_SHORT(479) Buffer provided for GNU debuglink is too small",
 
 
 };

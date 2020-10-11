@@ -29,6 +29,37 @@
   Floor, Boston MA 02110-1301, USA.
 
 */
+/*
+Here is the deepest routes through dwarf_init_path_dl(),
+depending on arguments.
+It is called by dwarfdump to open an fd and return Dwarf_Debug.
+Much of this is to handle GNU debuglink.
+dwarf_init_path_dl(path true_path and globals, dbg1
+    dwarf_object_detector_path_dSYM (dsym only(
+        if returns DW_DLV_OK itis dSYM
+    dwarf_object_detector_path_b( &debuglink with global paths.
+        dwarf_object_detector_path_b  ftype
+            check for dSYM if found it is the object to run on.
+                dwarf_object_detector_fd (gets size ftype)
+                return
+            _dwarf_debuglink_finder_internal(TRUE passing
+                in globals paths listr)
+                new local dbg
+                dwarf_init_path(path no dysm or debuglink
+                    no global paths)
+                    dwarf_object_detector_path_b( path  no dsym
+                        or debuglink no global paths
+                        dwarf_object_detector (path
+                        dwarf_object_detector_fd (gets size ftype)
+                    for each global pathin list, add to dbg
+                    dwarf_gnu_debuglink(dbg
+                        for each global path in debuglink list
+                            _dwarf_debuglink_finder_internal(FALSE
+                                no global paths)
+                                if crc match return OK with
+                                    pathname and fd returned
+                                else return NO_ENTRY
+*/
 
 #include "config.h"
 #ifdef HAVE_LIBELF_H
@@ -145,8 +176,49 @@ int dwarf_init_path(const char *path,
     return dwarf_init_path_dl(path,
         true_path_out_buffer,true_path_bufferlen,
         access,groupnumber,errhand,errarg,ret_dbg,
-        0,0,reserved1,reserved2,reserved3,error);
+        0,0,0,
+        reserved1,reserved2,reserved3,error);
 }
+
+static void
+final_common_settings(Dwarf_Debug dbg,
+    const char *file_path,
+    int fd,
+    unsigned char lpath_source,
+    unsigned char *path_source,
+    Dwarf_Error *error)
+{
+    int res = 0;
+
+    dbg->de_path = strdup(file_path);
+    dbg->de_fd = fd;
+    dbg->de_owns_fd = TRUE;
+    dbg->de_path_source = lpath_source;
+    if (path_source) {
+        *path_source = lpath_source;
+    }
+    dbg->de_owns_fd = TRUE;
+    res = set_global_paths_init(dbg,error);
+    if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,*error);
+        *error = 0;
+    }
+    return;
+}
+/*  New October 2020
+    Given true_path_out_buffer (and true_path_bufferlen)
+    non-zero this finds a dSYM (if such exists) with the
+    file name in true_path_out_buffer
+
+    If not a dSYM it follows debuglink rules to try to find a file
+    that matches requirements. If found returns DW_DLV_OK and
+    copies the name to true_path_out_buffer;
+    If none of the above found, it copies path into true_path
+    and returns DW_DLV_OK, we know the name is good;
+
+    The fd is owned by libdwarf and is in the created dbg->de_fd
+    field.
+*/
 int dwarf_init_path_dl(const char *path,
     char                      * true_path_out_buffer,
     unsigned                    true_path_bufferlen,
@@ -155,8 +227,9 @@ int dwarf_init_path_dl(const char *path,
     Dwarf_Handler               errhand,
     Dwarf_Ptr                   errarg,
     Dwarf_Debug               * ret_dbg,
-    UNUSEDARG char           ** dl_path_array,
-    UNUSEDARG unsigned int      dl_path_count,
+    char                      ** dl_path_array,
+    unsigned int                 dl_path_count,
+    unsigned char             * path_source,
     UNUSEDARG const char      * reserved1,
     UNUSEDARG Dwarf_Unsigned    reserved2,
     UNUSEDARG Dwarf_Unsigned  * reserved3,
@@ -166,32 +239,80 @@ int dwarf_init_path_dl(const char *path,
     unsigned       endian = 0;
     unsigned       offsetsize = 0;
     Dwarf_Unsigned filesize = 0;
-    int res = 0;
+    int res =  DW_DLV_NO_ENTRY;
     int errcode = 0;
     int fd = -1;
     Dwarf_Debug dbg = 0;
     char *file_path = 0;
+    unsigned char  lpath_source = DW_PATHSOURCE_basic;
 
     if (!ret_dbg) {
-        DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
+        DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,
+            DW_DLV_ERROR);
     }
-    res = dwarf_object_detector_path(path,
-        true_path_out_buffer,
-        true_path_bufferlen,
-        &ftype,&endian,&offsetsize,&filesize,&errcode);
-    if (res == DW_DLV_NO_ENTRY) {
+    /* a special dsym call so we only check once. */
+    if (true_path_out_buffer) {
+        res = dwarf_object_detector_path_dSYM(path,
+            true_path_out_buffer,
+            true_path_bufferlen,
+            dl_path_array,dl_path_count,
+            &ftype,&endian,&offsetsize,&filesize,
+            &lpath_source,
+            &errcode);
+        if (res != DW_DLV_OK) {
+            if (res == DW_DLV_ERROR) {
+                /* ignore error. Look further. */
+                errcode = 0;
+            }
+        }
+    } else {
+    }
+    if (res != DW_DLV_OK) {
+        res = dwarf_object_detector_path_b(path,
+            true_path_out_buffer,
+            true_path_bufferlen,
+            dl_path_array,dl_path_count,
+            &ftype,&endian,&offsetsize,&filesize,
+            &lpath_source,
+            &errcode);
+        if (res != DW_DLV_OK ) {
+            if (res == DW_DLV_ERROR) {
+                errcode = 0;
+            }
+        }
+    }
+    if (res != DW_DLV_OK) {
+        /*  So as a last resurt in case
+            of data corruption in the object.
+            Lets try without
+            investigating debuglink  or dSYM. */
+        res = dwarf_object_detector_path_b(path,
+            0,
+            0,
+            dl_path_array,dl_path_count,
+            &ftype,&endian,&offsetsize,&filesize,
+            &lpath_source,
+            &errcode);
+        if (res == DW_DLV_ERROR) {
+            errcode = 0;
+        }
+    }
+    if (res != DW_DLV_OK) {
+        /* impossible. The last above *had* to work */
         return res;
     }
-    if (res == DW_DLV_ERROR) {
-        DWARF_DBG_ERROR(NULL, errcode, DW_DLV_ERROR);
-    }
-    if (true_path_out_buffer) {
+    /*  ASSERT: lpath_source != DW_PATHSOURCE_unspecified  */
+    if (lpath_source != DW_PATHSOURCE_basic  ) {
+        /* MacOS dSYM or GNU debuglink */
+
         file_path = true_path_out_buffer;
         fd = open_a_file(true_path_out_buffer);
     } else {
+        /*  ASSERT: pathlsource = DW_PATHSOURCE_basic */
         file_path = (char *)path;
         fd = open_a_file(path);
     }
+
     if(fd == -1) {
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
             DW_DLV_ERROR);
@@ -203,15 +324,11 @@ int dwarf_init_path_dl(const char *path,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
-            /*  *ret_dbg = dbg; Do not do this.
-                Violates the libdwarf error rules. */
             close(fd);
             return res;
         }
-        dbg->de_path = strdup(file_path);
-        dbg->de_fd = fd;
-        dbg->de_owns_fd = TRUE;
-        res = set_global_paths_init(dbg,error);
+        final_common_settings(dbg,file_path,fd,
+            lpath_source,path_source,error);
         *ret_dbg = dbg;
         return res;
     }
@@ -222,14 +339,10 @@ int dwarf_init_path_dl(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-            /*  *ret_dbg = dbg; Do not do this.
-                Violates the libdwarf error rules. */
             return res;
         }
-        dbg->de_path = strdup(file_path);
-        dbg->de_fd = fd;
-        dbg->de_owns_fd = TRUE;
-        set_global_paths_init(dbg,error);
+        final_common_settings(dbg,file_path,fd,
+            lpath_source,path_source,error);
         *ret_dbg = dbg;
         return res;
     }
@@ -240,22 +353,19 @@ int dwarf_init_path_dl(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-            /*  *ret_dbg = dbg; Do not do this.
-                Violates the libdwarf error rules. */
             return res;
         }
-        dbg->de_path = strdup(file_path);
-        dbg->de_fd = fd;
-        dbg->de_owns_fd = TRUE;
-        set_global_paths_init(dbg,error);
+        final_common_settings(dbg,file_path,fd,
+            lpath_source,path_source,error);
         *ret_dbg = dbg;
         return res;
     }
     default:
         close(fd);
-        DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
+        DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE,
+            DW_DLV_ERROR);
     }
-    return DW_DLV_NO_ENTRY; /* placeholder for now */
+    return DW_DLV_NO_ENTRY;
 }
 
 
@@ -382,6 +492,7 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     /*  dwarf_object_finish() also frees de_path,
         but that is safe because we set it to zero
         here so no duplicate free will occur.
+        It never returns DW_DLV_ERROR.
         Not all code uses libdwarf exactly as we do
         hence the free() there. */
     return dwarf_object_finish(dbg, error);

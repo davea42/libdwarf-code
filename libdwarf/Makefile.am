@@ -123,6 +123,7 @@ dwarf_weaks.c \
 dwarf_weaks.h \
 dwarf_xu_index.c \
 dwarf_xu_index.h \
+crc32.c \
 libdwarf.h \
 libdwarf_version.h \
 libdwarfdefs.h \

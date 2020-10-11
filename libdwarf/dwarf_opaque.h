@@ -568,6 +568,8 @@ struct Dwarf_Debug_s {
         under de_obj_file. */
     int  de_fd;
     char de_owns_fd;
+    /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
+    unsigned char de_path_source;
     /*  de_path is only set automatically if dwarf_init_path()
         was used to initialize things.
         Used with the .gnu_debuglink section. */
@@ -1077,5 +1079,9 @@ int _dwarf_extract_data16(Dwarf_Debug dbg,
     Dwarf_Form_Data16  * returned_val,
     Dwarf_Error *error);
 
+unsigned int  _dwarf_crc32(unsigned int init,
+    const unsigned char * buf,
+    size_t len);
 
-void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno);
+
+void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);

@@ -74,9 +74,6 @@ extern "C" {
     Copies the actual path into outpath, (an error
     if the length in outpath_len is less than needed
     for the object found).
-    For non-MacOS outpath will contain the string
-    taken from path.
-
     If DW_DLV_NO_ENTRY or DW_DLV_ERROR returned
     the argument values other than path
     must be considered to be in an unknown state. */
@@ -101,7 +98,14 @@ int dwarf_object_detector_fd(int fd,
     unsigned *offsetsize,
     Dwarf_Unsigned  *filesize,
     int * errcode);
-
+#if 0
+int _dwarf_object_detector_path_simple(const char  *path,
+    unsigned *ftype,
+    unsigned *endian,
+    unsigned *offsetsize,
+    Dwarf_Unsigned  *filesize,
+    int *errcode);
+#endif
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

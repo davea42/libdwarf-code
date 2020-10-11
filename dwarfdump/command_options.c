@@ -274,8 +274,10 @@ do_uri_translation(const char *s,const char *context)
 }
 
 /*  Support for short (-option) and long (--option) names options.
-    These functions implement the individual options. They are called from
-    short names and long names options. Implementation code is shared for
+    These functions implement the individual options.
+    They are called from
+    short names and long names options.
+    Implementation code is shared for
     both types of formats. */
 
 /*  Handlers for the short/long names options. */

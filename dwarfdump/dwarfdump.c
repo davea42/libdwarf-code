@@ -178,7 +178,7 @@ global_destructors(void)
 #endif /* _WIN32 */
     if (glflags.gf_global_debuglink_paths) {
         unsigned int i = 0;
-        
+
         for ( ; i < glflags.gf_global_debuglink_count ; ++i ) {
             free(glflags.gf_global_debuglink_paths[i]);
             glflags.gf_global_debuglink_paths[i] =  0;
@@ -329,7 +329,7 @@ process_using_libelf(int fd, int tiedfd,
         int isknown = 0;
         if (tiedfd == -1) {
             fprintf(stderr, "%s ERROR:  "
-                "can't open tied file %s\n",
+                "can't open tied file.... %s\n",
                 glflags.program_name,
                 tied_file_name);
             return (FAILED);
@@ -476,6 +476,8 @@ main(int argc, char *argv[])
     char *temp_path_buf = 0;
     unsigned temp_path_buf_len = 0;
     int res = 0;
+    /* path_source will be DW_PATHSOURCE_basic  */
+    unsigned char path_source = DW_PATHSOURCE_unspecified;
 
 #ifdef _WIN32
     /*  Open the null device used during formatting printing */
@@ -568,38 +570,26 @@ main(int argc, char *argv[])
         unknown objects early.  If the user
         asks for libelf with certain options
         that will rule out handling GNU_debuglink
-        on that object. It also gets us the right
-        MacOS dSYM name here, which would be done
-        in dwarf_init_path()...but ok. 
-        We keep the libelf code here. */
-    res = dwarf_object_detector_path(file_name,
-        temp_path_buf,temp_path_buf_len,
-        &ftype,&endian,&offsetsize,&filesize,&errcode);
+        on that object.  This does not concern itself
+        with dSYM or debuglink at all. */
+    res = dwarf_object_detector_path_b(file_name,
+        0,0,
+        0,0,
+        &ftype,&endian,&offsetsize,&filesize,
+        &path_source,&errcode);
     if ( res != DW_DLV_OK) {
-        if (res == DW_DLV_ERROR) {
-            char *errmsg = dwarf_errmsg_by_number(errcode);
-            fprintf(stderr, "%s ERROR:  can't open %s:"
-                " %s\n",
-                glflags.program_name, file_name,
-                errmsg);
-        } else {
-            fprintf(stderr, "%s ERROR:  Can't open %s\n",
-                glflags.program_name, file_name);
-        }
+        fprintf(stderr, "%s ERROR:  Can't open %s\n",
+            glflags.program_name, sanitized(file_name));
         global_destructors();
         free(temp_path_buf);
         return (FAILED);
     }
-    if (strcmp(file_name,temp_path_buf)) {
-        /* We have a MacOS dsym, file_name altered */
-        esb_append(&global_file_name,temp_path_buf);
-    } else {
-        esb_append(&global_file_name,file_name);
-    }
+    esb_append(&global_file_name,file_name);
     temp_path_buf[0] = 0;
-    global_basefd = open_a_file(esb_get_string(&global_file_name));
+    global_basefd = open_a_file(esb_get_string(
+        &global_file_name));
     if (global_basefd == -1) {
-        fprintf(stderr, "%s ERROR:  can't open %s\n",
+        fprintf(stderr, "%s ERROR:  can't open.. %s\n",
             glflags.program_name,
             esb_get_string(&global_file_name));
         global_destructors();
@@ -613,26 +603,31 @@ main(int argc, char *argv[])
         unsigned         toffsetsize = 0;
         Dwarf_Unsigned   tfilesize = 0;
         const char * tied_file_name = 0;
+        /* path_source will be DW_PATHSOURCE_basic  */
+        unsigned char    tpath_source = 0;
 
         temp_path_buf[0] = 0;
         tied_file_name = esb_get_string(glflags.config_file_tiedpath);
-        res = dwarf_object_detector_path(tied_file_name,
-            temp_path_buf,temp_path_buf_len,
-            &tftype,&tendian,&toffsetsize,&tfilesize,&errcode);
+        /*  A genuine tiedpath cannot be dsym or debuglink. */
+        res = dwarf_object_detector_path_b (tied_file_name,
+            0,0,
+            0,0,
+            &tftype,&tendian,&toffsetsize,&tfilesize,
+            &tpath_source,&errcode);
         if ( res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR) {
                 char *errmsg = dwarf_errmsg_by_number(errcode);
-                fprintf(stderr, "%s ERROR:  can't open tied file %s:"
+                fprintf(stderr, "%s ERROR:  can't open tied file.. %s:"
                     " %s\n",
-                    glflags.program_name, tied_file_name,
+                    glflags.program_name, sanitized(tied_file_name),
                     errmsg);
             } else {
                 fprintf(stderr,
                     "%s ERROR: tied file not an object file '%s'.\n",
-                    glflags.program_name, tied_file_name);
+                    glflags.program_name, sanitized(tied_file_name));
             }
-            global_destructors();
             free(temp_path_buf);
+            global_destructors();
             return (FAILED);
         }
         if (ftype != tftype || endian != tendian ||
@@ -641,30 +636,19 @@ main(int argc, char *argv[])
                 "main file \'%s\' not "
                 "the same kind of object!\n",
                 glflags.program_name,
-                tied_file_name,
+                sanitized(tied_file_name),
                 esb_get_string(&global_file_name));
-            global_destructors();
             free(temp_path_buf);
+            global_destructors();
             return (FAILED);
         }
-        if (strcmp(tied_file_name,temp_path_buf)) {
-            /*  We have a MacOS dsym, file_name altered.
-                Can this really happen with a tied file?
-                Not as of October 2020 anyway.  */
-            esb_empty_string(glflags.config_file_tiedpath);
-            esb_append(glflags.config_file_tiedpath,
-                temp_path_buf);
-            esb_append(&global_tied_file_name,temp_path_buf);
-        } else {
-            esb_append(&global_tied_file_name,tied_file_name);
-        }
+        esb_append(&global_tied_file_name,tied_file_name);
         global_tiedfd = open_a_file(esb_get_string(
             &global_tied_file_name));
         if (global_tiedfd == -1) {
-            fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
+            fprintf(stderr, "%s ERROR:  can't open tied file... %s\n",
                 glflags.program_name,
-                esb_get_string(&global_tied_file_name));
-            free(temp_path_buf);
+                sanitized(esb_get_string(&global_tied_file_name)));
             global_destructors();
             free(temp_path_buf);
             return (FAILED);
@@ -691,7 +675,7 @@ main(int argc, char *argv[])
             free(temp_path_buf);
             global_destructors();
             flag_data_post_cleanup();
-            exit(excode);
+            return(excode);
         }
 #else /* !DWARF_WITH_LIBELF */
         fprintf(stderr, "Can't process %s: archives and "
@@ -1036,7 +1020,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
 */
 static int
 process_one_file(
-    UNUSEDARG int fd, 
+    UNUSEDARG int fd,
     UNUSEDARG int tiedfd,
     Elf *elf, Elf *tiedelf,
     const char * file_name,
@@ -1055,14 +1039,16 @@ process_one_file(
     Dwarf_Half elf_address_size = 0;      /* Target pointer size */
     Dwarf_Error onef_err = 0;
     const char *title = 0;
+    unsigned char path_source = 0;
 
-    /*  If using a tied file group number should be 
+    /*  If using a tied file group number should be
         2 DW_GROUPNUMBER_DWO
         but in a dwp or separate-split-dwarf object then
         0 will find the .dwo data automatically. */
     if (elf) {
         title = "dwarf_elf_init_b";
-        dres = dwarf_elf_init_b(elf, DW_DLC_READ,glflags.group_number,
+        dres = dwarf_elf_init_b(elf, DW_DLC_READ,
+            glflags.group_number,
             NULL, NULL, &dbg, &onef_err);
 
         if (dres == DW_DLV_OK) {
@@ -1074,23 +1060,26 @@ process_one_file(
             }
         }
     } else {
+        /*  This will go for the real main file, whether
+            an underlying dSYM or via debuglink or
+            if those find nothing then the original. */
         char *tb = temp_path_buf;
         unsigned tblen = temp_path_buf_len;
         /*  FIXME Fix this only after debuglink updated and
             working. */
         title = "dwarf_init_b";
-        
         if (glflags.gf_no_follow_debuglink) {
-           tb = 0;
-           tblen = 0;
+            tb = 0;
+            tblen = 0;
         }
-        dres = dwarf_init_path_dl(file_name, 
+        dres = dwarf_init_path_dl(file_name,
             tb,tblen,
             DW_DLC_READ,
             glflags.group_number,
-            NULL, NULL, &dbg, 
+            NULL, NULL, &dbg,
             glflags.gf_global_debuglink_paths,
             glflags.gf_global_debuglink_count,
+            &path_source,
             0,0,0,
             &onef_err);
     }
@@ -1108,7 +1097,14 @@ process_one_file(
         /* Prints error, cleans up Dwarf_Error data. Never returns*/
         print_error(dbg, title, dres, onef_err);
     }
-
+    if (path_source == DW_PATHSOURCE_dsym) {
+        printf("Filename by dSYM is %s\n",
+            sanitized(temp_path_buf));
+    } else if (path_source == DW_PATHSOURCE_debuglink) {
+        printf("Filename by debuglink is %s\n",
+            sanitized(temp_path_buf));
+        glflags.gf_gnu_debuglink_flag = TRUE;
+    }
     if (tied_file_name && strlen(tied_file_name)) {
         if (tiedelf) {
             dres = dwarf_elf_init_b(tiedelf, DW_DLC_READ,
@@ -1128,17 +1124,18 @@ process_one_file(
                 }
             }
         } else {
-            char *tb = 0;
-            unsigned tblen = 0;
-            /*  The tied file we define as group 1, BASE. */
-            /*  cannot follow debuglink, is a tied file */
+            /*  The tied file we define as group 1, BASE.
+                Cannot follow debuglink or dSYM,
+                is a tied file */
             dres = dwarf_init_path(tied_file_name,
-                tb,tblen,
+                0,0,  /* ignore dSYM & debuglink */
                 DW_DLC_READ,
-                DW_GROUPNUMBER_BASE, NULL, NULL, &dbgtied,
-                /* split dwarf, not GNU debuglink */
+                DW_GROUPNUMBER_BASE,
+                0,0,
+                &dbgtied,
                 0,0,0,
                 &onef_err);
+            /* path_source = DW_PATHSOURCE_basic; */
         }
         if (dres == DW_DLV_NO_ENTRY) {
             printf("No DWARF information present in tied file: %s\n",
@@ -1153,7 +1150,7 @@ process_one_file(
                 dres, onef_err);
         }
     }
-    
+
     memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
     printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
     dwarf_register_printf_callback(dbg,&printfcallbackdata);
