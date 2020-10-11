@@ -56,5 +56,6 @@ buildingdummy.sh \
 debuglink.base \
 dummyexecutable \
 dummyexecutable.c \
+simplecrc.c \
 NEWS \
 $(dwarfexample_DATA)

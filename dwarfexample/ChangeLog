@@ -1,4 +1,7 @@
 2020-10-11:   David Anderson 
+    * Makefile.am: Added simplecrc.c
+    * Makefile.in: Regenerated
+2020-10-11:   David Anderson 
     * debuglink.base, debuglink2.base: New baselines
       with a small formatting correction.
     * dwdebuglink.c: Changes to correctly support dSYM
