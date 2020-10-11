@@ -1,3 +1,43 @@
+2020-10-11: David Anderson
+    * CMakeLists.txt: Added crc32.c, a new source file.
+    * Makefile.am: Same addition.
+    * Makefile.in: Regenerated.
+    * crc32.c: The crc needed to interoperate with GNU
+      debuglink.
+    * dwarf_alloc.c: Clarifying comment and removing
+      old unnecessary () around return values.
+    * dwarf_crc32.c: Removing crc from here, it was
+      the wrong crc32! Modified crc calls to match
+      the needs of the correct crc calculation. Ensured
+      a local malloc always gets freed.
+    * dwarf_debuglink.c: Added short comments.
+    * dwarf_errmsg_list.h: New error DW_DLE_DEBUGLINK_PATH_SHORT.
+    * dwarf_generic_init.c.: Updated to work properly
+      with debuglink and dSYM.
+    * dwarf_incl.h: Reformatted copyright for shorter
+      lines per libdwarf formatting, no change in content.
+    * dwarf_init_finish.c: Added comment. Removed
+      a pointless test for error (error not 
+      not set, guaranteed) in dwarf_object_finish().
+    * dwarf_object_detector.c: Implemented support
+      for debuglink, significant changes involved.
+    * dwarf_object_detector.h: Comment change
+    * dwarf_opaque.h: Updated a comment and
+      declared the internal function _dwarf_crc32();
+    * libdwarf.h.in:  Functions added for debuglink
+      and a mistake corrected (now comment the arg names
+      to avoid macro disaster) in several functions.
+      New error DW_DLE_DEBUGLINK_PATH_SHORT.
+      New function dwarf_object_detector_path_b()
+      lets one supply global paths for debuglink and
+      get back a (new!) value, one of 
+      DW_PATHSOURCE_basic, DW_PATHSOURCE_dsym,or
+      DW_PATHSOURCE_debuglink so callers know what
+      the path source by type.
+    * generated_libdwarf.h.in: Regenerated.
+    * libdwarf2.1.mm: Clarified lifetimes of several
+      arguments of debuglink-related functions. Revision 3.13.
+    * libdwarf2.1.pdf: Regenerated, version 3.13.
 2020-10-05: David Anderson
     * libdwarf.h.in: Removed DW_DLC_NO_FOLLOW_DEBUGLINK
       as it is never needed and was never used or

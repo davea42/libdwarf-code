@@ -1,3 +1,9 @@
+2020-10-11: David Anderson
+    * command_options.c: Refined a wordy comment.
+    * dwarfdump.1: Document the new ability to
+      get to GNU debuglink files automatically.
+    * dwarfdump.c: Implement support for reading GNU
+      debuglink and use it to find the target object.
 2020-10-05: David Anderson
     * command_options.c: Implemented first part of
       making GNU debuglink options work.

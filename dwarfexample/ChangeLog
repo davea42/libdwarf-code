@@ -1,3 +1,10 @@
+2020-10-11:   David Anderson 
+    * debuglink.base, debuglink2.base: New baselines
+      with a small formatting correction.
+    * dwdebuglink.c: Changes to correctly support dSYM
+      and GNU debuglink and clarify the printed output.
+    * simplecrc.c: A demonstration of using the debuglink
+      crc.
 2020-10-04:   David Anderson 
 	* dwdebuglink.c: now works as intended.
 	* runtests.sh Added a second test of debuglink

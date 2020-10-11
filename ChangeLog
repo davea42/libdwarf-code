@@ -1,3 +1,6 @@
+2020-10-11  David Anderson
+    * configure.ac: Now version 20201011
+    * configure: Regenerated.
 2020-10-03  David Anderson
     * Makefile.in,aclocal.m4,ar-lib,compile,configure,depcomp:
       Running autoreconf on Ubuntu 20.04 caused some small
