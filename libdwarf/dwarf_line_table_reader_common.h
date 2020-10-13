@@ -703,7 +703,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         line_context->lc_directory_format_values = format_values;
         format_values = 0;
-        line_context->lc_include_directories_count = 
+        line_context->lc_include_directories_count =
             directories_count;
     }
 

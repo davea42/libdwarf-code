@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.14, 12 October 2020
+.ds vE Rev 3.15, 13 October 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -10284,7 +10284,10 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
             }
             switch(macro_operator) {
             case 0:
-                /* Nothing to do. */
+                /*  Nothing to do. This
+                    sigifies it is the end-marker,
+                    standing in for the 0 byte
+                    at the end of his macro group. */
                 break;
             case DW_MACRO_end_file:
                 /* Do something */
@@ -10574,6 +10577,14 @@ or
 .P
 On success the function returns values
 through the pointers.
+.P
+If 
+\f(CWmacro_operator\fP
+returned is zero that means this
+is a placeholder for the null byte
+at the end of this array of macros.
+The other pointer values returned
+are also zero in this case.
 .P
 The
 \f(CWop_start_section_offset\fP

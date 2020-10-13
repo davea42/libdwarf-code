@@ -1,3 +1,27 @@
+2020-10-13: David Anderson
+    * dwarf_debuglink.c: Now _dwarf_pathjoinl works
+      for Windows too (see HAVE_WINDOWS_PATH) and
+      transforms all backslash to /.  This
+      has always been the behavior, it just vanished
+      for a couple days.
+    * dwarf_line_table_reader_common.h: Removed a trailing blank.
+    * dwarf_macro5.c: Now correctly handles the null byte
+      at the end of a list of macro operands. Added
+      macro CHECKNULLCONTEXT to avoid lots of 8 line
+      sequences just checking basic call sanity.
+      Gave the structure sentinal a name: MC_SENTINAL
+      (only exists in this one source file).
+    * dwarf_macro5.h: Added mc_section_size so offset
+      insanity is caught.  Added comments about
+      Dwarf_Macro_Operator_s for clarity.
+    * libdwarf.h;.in: Added comment on the DWARF 5
+      macro operands table.
+    * libdwarf2.1.mm: Rev 3.15 Added a comment in examplep5
+      on dwarf_get_macro_op() about the DWARF5
+      macro operator value 0, and
+      amplified the function wording on this point..
+    * libdwarf2.1.pdf: Rev 3.15. Regenerated.
+      .
 2020-10-12: David Anderson
     * dwarf_alloc.c: Creation of Dwarf_Error_ with
       null dbg is now gracefully handled.

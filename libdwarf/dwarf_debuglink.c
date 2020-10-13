@@ -147,54 +147,76 @@ destruct_js(struct joins_s * js)
     dwarfstring_destructor(&js->js_buildid_filename);
 }
 
-#if defined (HAVE_WINDOWS_PATH)
-static char joincharw = '\\';
-#endif
 static char joinchar = '/';
 static char* joinstr = "/";
+#if defined (HAVE_WINDOWS_PATH)
+static char joincharw = '\\';
+/*  Large enough it is unlikely dwarfstring will ever
+    do a malloc here, paths usually < 100 characters. */
+static char winbuf[200];
 
+static void
+transformtoposix(dwarfstring * out, char *in)
+{
+    char *cp = in;
+
+    for( ; *cp  ; ++cp) {
+        if ( *cp == joincharw ) {
+            dwarfstring_append_length(out,joinstr,1);
+        } else {
+            dwarfstring_append_length(out,cp,1);
+        }
+    }
+}
+
+#endif /* HAVE_WINDOWS_PATH */
+
+/*  ASSERT: the target chars already have the transformtoposix()
+    done.
+*/
 int
 _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
 {
     char *inputs = dwarfstring_string(input);
     char *targ = dwarfstring_string(target);
     size_t targlen = 0;
+#if defined (HAVE_WINDOWS_PATH)
+    dwarfstring winput;
 
-    if (!dwarfstring_strlen(target)) {
-        dwarfstring_append(target,dwarfstring_string(input));
+    dwarfstring_constructor_static(&winput,winbuf,sizeof(winbuf));
+    transformtoposix(&winput,inputs);
+    targlen = dwarfstring_strlen(target);
+    inputs = dwarfstring_string(&winput);
+    if (!targlen) {
+        dwarfstring_append(target,inputs);
         return DW_DLV_OK;
     }
+#else /* !HAVE_WINDOWS_PATH */
     targlen = dwarfstring_strlen(target);
+#endif /* HAVE_WINDOWS_PATH */
+
+    if (!targlen) {
+        dwarfstring_append(target,inputs);
+        return DW_DLV_OK;
+    }
     targ = dwarfstring_string(target);
-#if defined (HAVE_WINDOWS_PATH)
-    if (targ[targlen-1] != joinchar && targ[targlen-1] != joincharw)
-#else
-    if (targ[targlen-1] != joinchar)
-#endif
-    {
-#if defined (HAVE_WINDOWS_PATH)
-        if (*inputs != joinchar && *inputs!= joincharw)
-#else
-        if (*inputs != joinchar)
-#endif
-        {
+    if (targ[targlen-1] != joinchar) {
+        if (*inputs != joinchar) {
             dwarfstring_append(target,joinstr);
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs);
         }
     } else {
-#if defined (HAVE_WINDOWS_PATH)
-        if (*inputs != joinchar && *inputs!= joincharw)
-#else
-        if (*inputs != joinchar)
-#endif
-        {
+        if (*inputs != joinchar) {
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs+1);
         }
     }
+#if defined (HAVE_WINDOWS_PATH)
+    dwarfstring_destructor(&winput);
+#endif /* HAVE_WINDOWS_PATH */
     return DW_DLV_OK;
 }
 /*  ASSERT: the last character in s is not a /  */

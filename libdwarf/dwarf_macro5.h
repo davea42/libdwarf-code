@@ -45,7 +45,9 @@ struct Dwarf_Macro_OperationsList_s {
 };
 
 struct Dwarf_Macro_Operator_s {
-    /*  mo_opcode == mo_form->mf_code */
+    /*  mo_opcode == mo_form->mf_code unless it is
+        the final 0 byte in which case all 3 values
+        are zero */
     Dwarf_Small      mo_opcode;
 
     struct Dwarf_Macro_Forms_s * mo_form;
@@ -62,11 +64,12 @@ struct Dwarf_Macro_Operator_s {
 /*  Could be reordered to be most space efficient.
     That might be a little harder to read.  Hmm. */
 struct Dwarf_Macro_Context_s {
-    Dwarf_Unsigned     mc_sentinel;
+    Dwarf_Unsigned mc_sentinel;
     Dwarf_Half     mc_version_number;
 
     /* Section_offset in .debug_macro of macro header */
     Dwarf_Unsigned mc_section_offset;
+    Dwarf_Unsigned mc_section_size;
 
     /*  Total length of the macro data for this CU.
         Calculated, not part of header. */
@@ -83,10 +86,10 @@ struct Dwarf_Macro_Context_s {
 
     /* the following three set from the bits in mc_flags  */
     /* If 1, offsets 64 bits */
-    Dwarf_Bool mc_offset_size_flag;
+    Dwarf_Bool     mc_offset_size_flag;
 
     /* if 1, debug_line offset is present. */
-    Dwarf_Bool mc_debug_line_offset_flag;
+    Dwarf_Bool     mc_debug_line_offset_flag;
 
     /* 4 or 8, depending on mc_offset_size_flag */
     Dwarf_Small    mc_offset_size;

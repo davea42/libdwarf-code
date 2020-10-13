@@ -41,9 +41,21 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_macro5.h"
+#include "dwarfstring.h"
 
 #define TRUE 1
 #define FALSE 0
+
+#define MC_SENTINAL  0xada
+
+#define CHECKNULLCONTEXT(m,d,e)             \
+if (!m || m->mc_sentinel != MC_SENTINAL) {  \
+    if(m) { d = (m)->mc_dbg;  }             \
+    _dwarf_error(d, e,                      \
+        DW_DLE_BAD_MACRO_HEADER_POINTER);   \
+    return DW_DLV_ERROR;                    \
+}
+
 
 /*  Section 6.3: Macro Information:
     Each macro unit ends with an entry
@@ -315,7 +327,8 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
     if (build_ops_array) {
         known_ops_count = macro_context->mc_macro_ops_count;
         opsarray = (struct Dwarf_Macro_Operator_s *)
-            calloc(known_ops_count,sizeof(struct Dwarf_Macro_Operator_s));
+            calloc(known_ops_count,
+                sizeof(struct Dwarf_Macro_Operator_s));
         if(!opsarray) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
@@ -336,12 +349,19 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
         if (!op) {
             Dwarf_Unsigned opslen = 0;
             /*  End of ops, this is terminator, count the ending 0
-                as an operator so dwarfdump can print it.  */
+                as an operator so dwarfdump can print it.
+                Normally we don't see this, the end operator
+                signals end. */
             opslen = mdata - macro_context->mc_macro_ops;
             macro_context->mc_macro_ops_count = opcount;
             macro_context->mc_ops_data_length = opslen;
             macro_context->mc_total_length = opslen +
                 macro_context->mc_macro_header_length;
+            if(build_ops_array) {
+                curopsentry->mo_opcode = op;
+                curopsentry->mo_form = 0;
+                curopsentry->mo_data = 0;
+            }
             return DW_DLV_OK;
         }
         if (is_std_moperator(op)) {
@@ -393,26 +413,47 @@ dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
 {
     struct Dwarf_Macro_Operator_s *curop = 0;
     Dwarf_Debug dbg = 0;
-    if (!macro_context || macro_context->mc_sentinel != 0xada) {
-        if(macro_context) {
-            dbg = macro_context->mc_dbg;
-        }
-        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
-        return DW_DLV_ERROR;
-    }
+    Dwarf_Unsigned op_offset = 0;
+    Dwarf_Half operator = 0;
+
+    CHECKNULLCONTEXT(macro_context,dbg,error);
     dbg = macro_context->mc_dbg;
     if (op_number >= macro_context->mc_macro_ops_count) {
         _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_INDEX);
         return DW_DLV_ERROR;
     }
     curop = macro_context->mc_ops + op_number;
-
-    /*  ASSERT: *op_start_section_offset ==
-        (curop->mo_data -1) - dbg->de_debug_macro.dss_data  */
-    *op_start_section_offset =
+    operator = curop->mo_opcode;
+    if(!operator) {
+        /*  A placeholder for the null byte at the end
+            of an operator list. */
+        *op_start_section_offset = 0;
+        *macro_operator = operator;
+        *forms_count  = 0;
+        *formcode_array = 0;
+        return DW_DLV_OK;
+    }
+    op_offset =
         ((curop->mo_data -1) - macro_context->mc_macro_header) +
         macro_context->mc_section_offset;
-    *macro_operator = curop->mo_opcode;
+    if (op_offset >= macro_context->mc_section_size) {
+        dwarfstring m;
+        char buf[50];
+
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_MACRO_OFFSET_BAD: offset 0x%lx",
+            op_offset);
+        dwarfstring_append_printf_u(&m,
+            " >= section size of 0x%lx",
+            macro_context->mc_section_size);
+        _dwarf_error_string(dbg,error,DW_DLE_MACRO_OFFSET_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    *op_start_section_offset = op_offset;
+    *macro_operator = operator;
     if (curop->mo_form) {
         *forms_count  = curop->mo_form->mf_formcount;
         *formcode_array = curop->mo_form->mf_formbytes;
@@ -446,13 +487,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
     struct Dwarf_Macro_Operator_s *curop = 0;
     unsigned macop = 0;
 
-    if (!macro_context || macro_context->mc_sentinel != 0xada) {
-        if(macro_context) {
-            dbg = macro_context->mc_dbg;
-        }
-        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
-        return DW_DLV_ERROR;
-    }
+    CHECKNULLCONTEXT(macro_context,dbg,error);
     dbg = macro_context->mc_dbg;
     if (op_number >= macro_context->mc_macro_ops_count) {
         _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_INDEX);
@@ -715,13 +750,7 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
     Dwarf_Byte_Ptr startptr =  0;
     Dwarf_Byte_Ptr endptr =  0;
 
-    if (!macro_context || macro_context->mc_sentinel != 0xada) {
-        if(macro_context) {
-            dbg = macro_context->mc_dbg;
-        }
-        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
-        return DW_DLV_ERROR;
-    }
+    CHECKNULLCONTEXT(macro_context,dbg,error);
     dbg = macro_context->mc_dbg;
     if (op_number >= macro_context->mc_macro_ops_count) {
         _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_INDEX);
@@ -819,13 +848,7 @@ dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
     Dwarf_Byte_Ptr startptr =  0;
     Dwarf_Byte_Ptr endptr =  0;
 
-    if (!macro_context || macro_context->mc_sentinel != 0xada) {
-        if(macro_context) {
-            dbg = macro_context->mc_dbg;
-        }
-        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
-        return DW_DLV_ERROR;
-    }
+    CHECKNULLCONTEXT(macro_context,dbg,error);
     startptr = macro_context->mc_macro_header;
     endptr = startptr + macro_context->mc_total_length;
     dbg = macro_context->mc_dbg;
@@ -925,14 +948,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     Dwarf_Byte_Ptr startptr = 0;
     Dwarf_Byte_Ptr endptr = 0;
 
-    if (!macro_context || macro_context->mc_sentinel != 0xada) {
-        if(macro_context) {
-            dbg = macro_context->mc_dbg;
-        }
-        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
-        return DW_DLV_ERROR;
-    }
-
+    CHECKNULLCONTEXT(macro_context,dbg,error);
     dbg = macro_context->mc_dbg;
     cur_offset = (1+ macro_data) - macro_header;
     if (cur_offset >= section_size) {
@@ -1327,6 +1343,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     macro_context->mc_at_name = comp_name;
     macro_context->mc_macro_header = macro_header;
     macro_context->mc_section_offset = macro_offset;
+    macro_context->mc_section_size = section_size;
     macro_context->mc_version_number = version;
     macro_context->mc_flags = flags;
     macro_context->mc_dbg = dbg;
@@ -1411,14 +1428,9 @@ dwarf_macro_context_head(Dwarf_Macro_Context head,
     Dwarf_Half *     opcode_count,
     Dwarf_Error *error)
 {
-    if (!head || head->mc_sentinel != 0xada) {
-        Dwarf_Debug dbg = 0;
-        if(head) {
-            dbg = head->mc_dbg;
-        }
-        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
-        return DW_DLV_ERROR;
-    }
+    Dwarf_Debug dbg = 0;
+
+    CHECKNULLCONTEXT(head,dbg,error);
     *version = head->mc_version_number;
     *mac_offset = head->mc_section_offset;
     *mac_len    = head->mc_total_length;
@@ -1441,13 +1453,8 @@ dwarf_macro_operands_table(Dwarf_Macro_Context head,
 {
     struct Dwarf_Macro_Forms_s * ops = 0;
     Dwarf_Debug dbg = 0;
-    if (!head || head->mc_sentinel != 0xada) {
-        if(head) {
-            dbg = head->mc_dbg;
-        }
-        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
-        return DW_DLV_ERROR;
-    }
+
+    CHECKNULLCONTEXT(head,dbg,error);
     dbg = head->mc_dbg;
     if (index >= head->mc_opcode_count) {
         _dwarf_error(dbg, error, DW_DLE_BAD_MACRO_INDEX);
@@ -1552,7 +1559,7 @@ _dwarf_macro_constructor(Dwarf_Debug dbg, void *m)
     /* Nothing to do, the space is zeroed out */
     Dwarf_Macro_Context mc= (Dwarf_Macro_Context)m;
     /* Arbitrary sentinel. For debugging. */
-    mc->mc_sentinel = 0xada;
+    mc->mc_sentinel = MC_SENTINAL;
     mc->mc_dbg = dbg;
     return DW_DLV_OK;
 }
@@ -1587,6 +1594,7 @@ _dwarf_macro_destructor(void *m)
     free(mc->mc_opcode_forms);
     mc->mc_opcode_forms = 0;
     memset(mc,0,sizeof(*mc));
-    /* Just a recognizable sentinel. For debugging.  No real meaning. */
+    /*  Just a recognizable sentinel.
+        For debugging.  No real meaning . */
     mc->mc_sentinel = 0xdeadbeef;
 }

@@ -3320,7 +3320,8 @@ int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
     Dwarf_Error    * /*error*/);
 
 /*  Returns data from the operands table
-    in the macro unit header. */
+    in the macro unit header. The last op has
+    0 as opcode_number,operand_count and operand_array */
 int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
     Dwarf_Half    /*index*/, /* 0 to opcode_count -1 */
     Dwarf_Half  * /*opcode_number*/,
