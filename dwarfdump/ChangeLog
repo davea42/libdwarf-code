@@ -1,3 +1,7 @@
+2020-10-13: David Anderson
+    * print_macro.c: Added the required check for 0
+      opcode and print appropriately (it's the null
+      byte at end of macro operands).
 2020-10-12: David Anderson
     * dwarfdump.c: Now printf callbacks from libdwarf
       are sanitized() to prevent corrupted line data from

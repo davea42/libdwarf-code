@@ -560,6 +560,12 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                         esb_destructor(&m);
                         return lres;
                     }
+                    if (opcode_num == 0) {
+                        printf("  [%3u]  end of macro operands.",i);
+                        /*  Continue just in case something is wrong
+                            and there are more operands! */
+                        continue;
+                    }
                     printf("  [%3u]  op: 0x%04x  %20s  "
                         "operandcount: %u\n",
                         i,opcode_num,
