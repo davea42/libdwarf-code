@@ -17,7 +17,7 @@ then
   dos2unix junk.ltp
 fi
 diff $srcdir/baseline.ltp junk.ltp
-if [ $? -ne 0 ] 
+if [ $? -ne 0 ]
 then
     echo "FAIL base test "
     echo "To update baseline: mv junk.ltp $srcdir/baseline.ltp"

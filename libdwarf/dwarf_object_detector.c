@@ -708,6 +708,7 @@ _dwarf_debuglink_finder_newpath(
         res = dwarf_crc32(dbg,lcrc,&error);
         if (res == DW_DLV_ERROR) {
             paths = 0;
+            free(debuglinkfullpath);
             dwarf_dealloc_error(dbg,error);
             dwarf_finish(dbg,&error);
             /*  Cannot match the crc_in, give up. */
@@ -715,8 +716,8 @@ _dwarf_debuglink_finder_newpath(
         } else if (res == DW_DLV_OK) {
             crc = &lcrc[0];
         }
-    } else {
     }
+    free(debuglinkfullpath);
     res = match_buildid(
         /* This is the executable */
         crc_in,buildid_len_in,buildid_in,
@@ -750,9 +751,9 @@ _dwarf_debuglink_finder_internal(
     char         * path = 0;
     Dwarf_Error    error = 0;
     unsigned int   p = 0;
-    char          *debuglinkpath = 0; /* must be freed */
+    char          *debuglinkpath = 0;
     unsigned char *crc = 0;
-    char          *debuglinkfullpath = 0;
+    char          *debuglinkfullpath = 0; /* must be freed*/
     unsigned       debuglinkfullpath_strlen = 0;
     unsigned       buildid_type = 0;
     char         * buildidownername = 0;
@@ -827,15 +828,16 @@ _dwarf_debuglink_finder_internal(
             pa,crc,buildid_length, buildid,
             m,fd_out,errcode);
         if (res == DW_DLV_OK) {
+            free(debuglinkfullpath);
             free(paths);
             paths = 0;
-            /*dwarfstring_append(m,pa); */
             dwarf_finish(dbg,&error);
             return DW_DLV_OK;
         }
         *errcode = 0;
         continue;
     }
+    free(debuglinkfullpath);
     free(paths);
     paths = 0;
     dwarf_finish(dbg,&error);
@@ -890,16 +892,20 @@ dwarf_object_detector_path_b(
             gl_pathnames,gl_pathcount,
             (char *)path, &m,&debuglink_fd, errcode);
         if (res == DW_DLV_ERROR) {
-            close(fd);
+            dwarfstring_destructor(&m);
+            if (debuglink_fd != -1) {
+                close(debuglink_fd);
+            }
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
             /*  We did not find an alternative path */
             strcpy(outpath,path);
-            dwarfstring_destructor(&m);
             lpathsource = DW_PATHSOURCE_basic;
         } else {
-            close(fd);
+            if (debuglink_fd != -1) {
+                close(debuglink_fd);
+            }
             dllen = dwarfstring_strlen(&m)+1;
             if  (dllen >= outpath_len) {
                 close(debuglink_fd);
@@ -909,6 +915,7 @@ dwarf_object_detector_path_b(
             strcpy(outpath,dwarfstring_string(&m));
             lpathsource = DW_PATHSOURCE_debuglink;
         }
+        dwarfstring_destructor(&m);
         fd = open(outpath,O_RDONLY|O_BINARY);
         /* fall through to get fsize etc */
     } else {

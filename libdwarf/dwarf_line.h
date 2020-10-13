@@ -210,17 +210,16 @@ struct Dwarf_Line_Context_s {
     /*  Count of number of source files for this set of Dwarf_Line
         structures. */
     Dwarf_Unsigned lc_file_entry_count; /* all versions */
-    /*  Values Easing the process of indexing through lc_file_entries. */
+    /*  Values Easing the process of indexing
+        through lc_file_entries. */
     Dwarf_Unsigned lc_file_entry_baseindex;
     Dwarf_Unsigned lc_file_entry_endindex;
     /* ======== end file names =========*/
 
-
     /*  Points to an array of subprogram entries.
         With Two level line tables this may be non-zero.
         An array of Dwarf_Subprogram_Entry_s structs. */
-    Dwarf_Subprog_Entry lc_subprogs;
-
+        Dwarf_Subprog_Entry lc_subprogs;
     /*  Count of the number of subprogram entries
         With Two level line tables this may be non-zero. */
     Dwarf_Unsigned lc_subprogs_count;
@@ -233,9 +232,7 @@ struct Dwarf_Line_Context_s {
         so do not free this. For DWARF5 must be the same
         as lc_include_directories[0] */
     Dwarf_Small *lc_compilation_directory;
-
     Dwarf_Debug lc_dbg;
-
     /*  zero table count is skeleton, or just missing names.
         1 is standard table.
         2 means two-level table (experimantal)
@@ -294,7 +291,6 @@ void _dwarf_set_line_table_regs_default_values(
     as if the static linker (ld) had linked the shared library
     at the newly-specified address.  Most libdwarf-using
     apps will ignore li_offset and _dwarf_addr_finder().
-
 */
 struct Dwarf_Line_s {
     Dwarf_Addr li_address;  /* pc value of machine instr */

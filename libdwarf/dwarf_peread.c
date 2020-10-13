@@ -428,7 +428,7 @@ _dwarf_destruct_pe_access(
         return;
     }
     pep = (dwarf_pe_object_access_internals_t*)(aip->object);
-    if (pep->pe_destruct_close_fd) {
+    if (pep->pe_destruct_close_fd && pep->pe_fd !=-1) {
         close(pep->pe_fd);
         pep->pe_fd = -1;
     }

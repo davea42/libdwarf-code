@@ -774,9 +774,9 @@ dwarf_dealloc(Dwarf_Debug dbg,
     malloc_addr = (char *)space - DW_RESERVE;
     r =(struct reserve_data_s *)malloc_addr;
     if(dbg && dbg != r->rd_dbg) {
-        /*  Something is mixed up. */
+        /*  Mixed up or originally a no_dbg alloc */
 #ifdef DEBUG
-        printf("DEALLOC does nothing, dbg 0x%lx "
+        printf("DEALLOC find was NULL  dbg 0x%lx "
             "rd_dbg 0x%lx space 0x%lx line %d %s\n",
             (unsigned long)dbg,
             (unsigned long)r->rd_dbg,
@@ -784,7 +784,6 @@ dwarf_dealloc(Dwarf_Debug dbg,
             __LINE__,__FILE__);
         fflush(stdout);
 #endif /* DEBUG*/
-        return;
     }
     if(dbg && alloc_type != r->rd_type) {
         /*  Something is mixed up. */
@@ -822,15 +821,17 @@ dwarf_dealloc(Dwarf_Debug dbg,
         }
         if (ep->er_static_alloc == DE_MALLOC) {
             /*  This is special, we had no arena
-                so just malloc'd a Dwarf_Error_s. */
+                but have a full special area as normal. */
 #ifdef DEBUG
             printf("DEALLOC does free, DE_MALLOC line %d %s\n",
                 __LINE__,__FILE__);
             fflush(stdout);
 #endif /* DEBUG*/
+#if 0
             _dwarf_error_destructor(ep);
             free(space);
             return;
+#endif
         }
         /* Was normal alloc, use normal dealloc. */
         /* DW_DLA_ERROR has a specialdestructor */
@@ -838,13 +839,10 @@ dwarf_dealloc(Dwarf_Debug dbg,
     type = alloc_type;
 #if DEBUG
     if(dbg != r->rd_dbg) {
-        printf("DEALLOC does nothing, dbg != rd_dbg"
-            " line %d %s\n",
+        printf("DEALLOC  dbg != rd_dbg"
+            " going ahead line %d %s\n",
             __LINE__,__FILE__);
         fflush(stdout);
-        /*  Something is badly wrong. Better to leak than
-            to crash. */
-        return;
     }
 #endif
 #if DEBUG
@@ -1082,14 +1080,19 @@ struct Dwarf_Error_s *
 _dwarf_special_no_dbg_error_malloc(void)
 {
     Dwarf_Error e = 0;
-    Dwarf_Unsigned len = sizeof(struct Dwarf_Error_s);
+    Dwarf_Unsigned len = sizeof(struct Dwarf_Error_s) + DW_RESERVE;
+    struct reserve_data_s *base = 0;
     char *mem = (char *)malloc(len);
 
-    if (mem == 0) {
+    if (!mem) {
         return 0;
     }
     memset(mem, 0, len);
-    e = (Dwarf_Error)mem;
+    base = (struct reserve_data_s *)mem;
+    base->rd_dbg = 0;
+    base->rd_length = sizeof(struct Dwarf_Error_s);
+    base->rd_type = DW_DLA_ERROR;
+    e = (Dwarf_Error)(mem+DW_RESERVE);
     e->er_static_alloc = DE_MALLOC;
     return e;
 }

@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.13, 8 October 2020
+.ds vE Rev 3.14, 12 October 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -14846,7 +14846,7 @@ section the first four fields will be set.
 \f(CW*debuglink_path_returned\fP
 points to the null-terminated string
 in the section.
-Caller must not free this.
+Do not free this.
 The bytes are in the object itself
 and the pointer is invalid once
 dwarf_finish() is run on the dbg.
@@ -14866,8 +14866,8 @@ is set to the length of
 \f(CW*debuglink_fullpath_returned\fP
 just as
 \f(CWstrlen()\fP would count the length.
-Callers must
-free() \f(CW*debuglink_fullpath_returned\fP.
+Callers must free()
+\f(CW*debuglink_fullpath_returned\fP.
 .P
 If there is a
 \f(CW.note.gnu.build-id\fP

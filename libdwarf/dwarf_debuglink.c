@@ -147,6 +147,9 @@ destruct_js(struct joins_s * js)
     dwarfstring_destructor(&js->js_buildid_filename);
 }
 
+#if defined (HAVE_WINDOWS_PATH)
+static char joincharw = '\\';
+#endif
 static char joinchar = '/';
 static char* joinstr = "/";
 
@@ -163,15 +166,30 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
     }
     targlen = dwarfstring_strlen(target);
     targ = dwarfstring_string(target);
-    if (targ[targlen-1] != joinchar) {
-        if (*inputs != joinchar) {
+#if defined (HAVE_WINDOWS_PATH)
+    if (targ[targlen-1] != joinchar && targ[targlen-1] != joincharw)
+#else
+    if (targ[targlen-1] != joinchar)
+#endif
+    {
+#if defined (HAVE_WINDOWS_PATH)
+        if (*inputs != joinchar && *inputs!= joincharw)
+#else
+        if (*inputs != joinchar)
+#endif
+        {
             dwarfstring_append(target,joinstr);
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs);
         }
     } else {
-        if (*inputs != joinchar) {
+#if defined (HAVE_WINDOWS_PATH)
+        if (*inputs != joinchar && *inputs!= joincharw)
+#else
+        if (*inputs != joinchar)
+#endif
+        {
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs+1);
@@ -710,14 +728,14 @@ extract_buildid(Dwarf_Debug dbg,
 }
 
 /*  Caller frees space returned  by debuglink_fillpath_returned and
-    debuglink_path_returned.
     The following return pointers into the dbg itself
     and are only valid while that dbg is open.
+    debuglink_path_returned.
     crc_returned, buildid_owner_name_returned,
     buildid_returned, */
 int
 dwarf_gnu_debuglink(Dwarf_Debug dbg,
-    char     **  debuglink_path_returned, /*caller frees*/
+    char     **  debuglink_path_returned, /* do not free*/
     unsigned char **  crc_returned,
     char     **  debuglink_fullpath_returned, /* caller frees */
     unsigned *   debuglink_fullpath_length_returned,

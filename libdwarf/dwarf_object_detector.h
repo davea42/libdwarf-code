@@ -98,14 +98,7 @@ int dwarf_object_detector_fd(int fd,
     unsigned *offsetsize,
     Dwarf_Unsigned  *filesize,
     int * errcode);
-#if 0
-int _dwarf_object_detector_path_simple(const char  *path,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
-    int *errcode);
-#endif
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

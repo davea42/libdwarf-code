@@ -1,3 +1,32 @@
+2020-10-12: David Anderson
+    * dwarf_alloc.c: Creation of Dwarf_Error_ with
+      null dbg is now gracefully handled.
+    * dwarf_debuglink.c: Now handles
+      HAVE_WINDOWS_PATH. Needed additional #include
+      and create_fullest_file_path() now uses dwarfstsring.
+    * dwarf_line.h: Trailing whitespace.
+    * dwarf_line_table_reader_common.h: Shorten a couple lines
+      to fit libdwarf standards.
+    * dwarf_object_detector.c: Free debuglinkfull path
+      where appropriate. Ensure fd's (other than -1)
+      get closed where appropriate.
+    * dwarf_object_detector.h: Removed #if 0 lines.
+    * dwarf_peread.c: Assures fd which is not -1
+      gets closed.
+    * dwarf_print_lines.c:  Now uses 
+      dwarfstring_constructor_static() so in nearly all
+      cases no malloc/free needed. Adds DWARF5
+      specific support for indexing into includes.
+    * libdwarf.h.in: Corrected comments about what to
+      free after calling dwarf_gnu_debuglink().
+    * generated_libdwarf.h.in: regenerated.
+    * libdwarf2.1.mm: Version 3.14. Correctet
+      description of dwarf_gnu_debuglink().  
+    * libdwarf2.1.pdf: Version 3.14. Regenerated.
+    * testdebuglinksh: Remove trailing whitespace.
+2020-10-11: David Anderson
+    * dwarf_object_detector.h: Deleted #if 0 prototype.
+    * testdebuglink.sh: Removed a trailing blank.
 2020-10-11: David Anderson
 	* libdwarf_version.h: updated version string
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,

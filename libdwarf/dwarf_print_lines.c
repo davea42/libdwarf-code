@@ -41,6 +41,12 @@
 #include "dwarfstring.h"
 
 #define PRINTING_DETAILS 1
+/*  for dwarfstring_constructor_static, saving lots of malloc
+    and free but beware: make sure each routine using
+    this DOES NOT call another routine using it.
+    would be safer to have a buffer per function, but
+    currently not necessary. */
+static char locallinebuf[200];
 
 static void
 print_line_header(Dwarf_Debug dbg,
@@ -91,7 +97,8 @@ print_line_detail(
 {
     dwarfstring m1;
 
-    dwarfstring_constructor(&m1);
+    dwarfstring_constructor_static(&m1,locallinebuf,
+        sizeof(locallinebuf));
     if(!is_single_table && is_actuals_table) {
         dwarfstring_append_printf_s(&m1,"%-15s ",(char *)prefix);
         dwarfstring_append_printf_i(&m1,"%3d ",opcode);
@@ -198,12 +205,17 @@ print_include_directory_details(Dwarf_Debug dbg,
     Dwarf_Line_Context line_context)
 {
     Dwarf_Unsigned u = 0;
-    dwarfstring m4;
+    dwarfstring    m4;
+    Dwarf_Unsigned indexbase = 0;
+    Dwarf_Unsigned indexlimit = 0;
 
-    dwarfstring_constructor(&m4);
+    dwarfstring_constructor_static(&m4,locallinebuf,
+        sizeof(locallinebuf));
     if (line_version == DW_LINE_VERSION5) {
         unsigned i = 0;
-        unsigned dfcount = line_context->lc_directory_entry_format_count;
+        unsigned dfcount =
+            line_context->lc_directory_entry_format_count;
+
         dwarfstring_constructor(&m4);
         dwarfstring_append_printf_u(&m4,
             "  directory entry format count %u\n",dfcount);
@@ -241,18 +253,44 @@ print_include_directory_details(Dwarf_Debug dbg,
 
         }
     }
-    /* common print of the files */
-    dwarfstring_append_printf_i(&m4,
-        "  include directories count %d\n",
-        (int) line_context->lc_include_directories_count);
+    /*  Common print of the directories.
+        For DWARF 2,3,4 it has always started
+        the indexing at 0 even though the directory index
+        in line entries starts at 1 (zero meaning
+        current directory at compile time).
+        That is odd, given the non-dash-v printed
+        starting at 1.  So lets adjust for consistency. */
+    if (line_version == DW_LINE_VERSION5) {
+        dwarfstring_append_printf_i(&m4,
+            "  include directories count %d\n",
+            (int) line_context->lc_include_directories_count);
+    } else {
+        if(!line_context->lc_include_directories_count) {
+            dwarfstring_append_printf_i(&m4,
+                "  include directories count %d\n",
+                (int) line_context->lc_include_directories_count);
+        } else {
+            dwarfstring_append_printf_i(&m4,
+                "  include directories count %d"
+                " (index starts at 1)\n",
+                (int) line_context->lc_include_directories_count);
+        }
+    }
     _dwarf_printf(dbg,dwarfstring_string(&m4));
     dwarfstring_reset(&m4);
-    for (u = 0; u < line_context->lc_include_directories_count; ++u) {
+    if (line_version == DW_LINE_VERSION5) {
+        indexbase = 0;
+        indexlimit =  line_context->lc_include_directories_count;
+    } else {
+        indexbase = 1;
+        indexlimit = 1 + line_context->lc_include_directories_count;
+    }
+    for (u = indexbase; u < indexlimit; ++u) {
         dwarfstring_append_printf_u(&m4,
             "  include dir[%u] ",u);
         dwarfstring_append_printf_s(&m4,
-            "%s\n",
-            (char *)line_context->lc_include_directories[u]);
+            "%s\n",(char *)
+            line_context->lc_include_directories[u-indexbase]);
         _dwarf_printf(dbg,dwarfstring_string(&m4));
         dwarfstring_reset(&m4);
     }
@@ -268,7 +306,8 @@ print_just_file_entry_details(Dwarf_Debug dbg,
     Dwarf_File_Entry fe2 = fe;
     dwarfstring m3;
 
-    dwarfstring_constructor(&m3);
+    dwarfstring_constructor_static(&m3,locallinebuf,
+        sizeof(locallinebuf));
     dwarfstring_append_printf_i(&m3,
         "  file names count      %d\n",
         line_context->lc_file_entry_count);
@@ -353,7 +392,8 @@ print_file_entry_details(Dwarf_Debug dbg,
 {
     dwarfstring m5;
 
-    dwarfstring_constructor(&m5);
+    dwarfstring_constructor_static(&m5,locallinebuf,
+        sizeof(locallinebuf));
     if (line_version == DW_LINE_VERSION5) {
         unsigned i = 0;
         unsigned dfcount = line_context->lc_file_name_format_count;
@@ -410,7 +450,8 @@ print_experimental_subprograms_list(Dwarf_Debug dbg,
     Dwarf_Subprog_Entry sub = line_context->lc_subprogs;
     dwarfstring m6;
 
-    dwarfstring_constructor(&m6);
+    dwarfstring_constructor_static(&m6,locallinebuf,
+        sizeof(locallinebuf));
     dwarfstring_append_printf_u(&m6,
         "  subprograms count %" DW_PR_DUu "\n",count);
     if (count > 0) {
