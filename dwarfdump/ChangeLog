@@ -1,3 +1,8 @@
+2020-10-12: David Anderson
+    * dwarfdump.c: Now printf callbacks from libdwarf
+      are sanitized() to prevent corrupted line data from
+      compromising user terminal settings.
+    * print_lines.c: Accomodation of DWARF5 in more places.
 2020-10-11: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

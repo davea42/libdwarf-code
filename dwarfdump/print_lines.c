@@ -631,6 +631,8 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
     const char *name = 0;
     Dwarf_Small table_count = 0;
     struct esb_s bufr;
+    int include_dir_base = 1; /* DWARF2.3,4 */
+    int include_dir_limit = 0; /* set below */
     char bufr_tmp[ESB_FIXED_ALLOC_SIZE];
 
     esb_constructor_fixed(&bufr,bufr_tmp,sizeof(bufr_tmp));
@@ -657,7 +659,6 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
         " %" DW_PR_DUu "\n",
         version,version);
     printf(" number of line tables  %d.\n", table_count);
-
     vres = dwarf_srclines_comp_dir(line_context,&name,err);
     if (vres != DW_DLV_OK) {
         simple_err_return_action(vres,
@@ -682,7 +683,14 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
     printf(" include directory count 0x%"
         DW_PR_DUx " %" DW_PR_DSd "\n",
         (Dwarf_Unsigned)dir_count,dir_count);
-    for(i = 1; i <= dir_count; ++i) {
+    if (version == DW_LINE_VERSION5) {
+        include_dir_base = 0; /* DWARF2.3,4 */
+        include_dir_limit = dir_count; /* set below */
+    } else {
+        include_dir_base = 1; /* DWARF2.3,4 */
+        include_dir_limit = dir_count+1; /* set below */
+    }
+    for(i = include_dir_base; i < include_dir_limit; ++i) {
         vres = dwarf_srclines_include_dir_data(line_context,i,
             &name,err);
         if (vres != DW_DLV_OK) {

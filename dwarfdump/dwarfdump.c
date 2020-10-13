@@ -626,8 +626,8 @@ main(int argc, char *argv[])
                     "%s ERROR: tied file not an object file '%s'.\n",
                     glflags.program_name, sanitized(tied_file_name));
             }
-            free(temp_path_buf);
             global_destructors();
+            free(temp_path_buf);
             return (FAILED);
         }
         if (ftype != tftype || endian != tendian ||
@@ -721,11 +721,12 @@ main(int argc, char *argv[])
     }
 #endif
     /*  In case of a serious DWARF error
-        we never get here, we exit(1)
-        in print_error() */
+        we  try to get here, we try not
+        to  exit(1) by using print_error() */
     check_for_major_errors();
     flag_data_post_cleanup();
     global_destructors();
+    free(temp_path_buf);
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
         regardless if the file being processed has
@@ -795,7 +796,7 @@ static void
 printf_callback_for_libdwarf(UNUSEDARG void *userdata,
     const char *data)
 {
-    printf("%s",data);
+    printf("%s",sanitized(data));
 }
 
 
@@ -1046,7 +1047,7 @@ process_one_file(
         but in a dwp or separate-split-dwarf object then
         0 will find the .dwo data automatically. */
     if (elf) {
-        title = "dwarf_elf_init_b";
+        title = "dwarf_elf_init_b fails exit dwarfdump";
         dres = dwarf_elf_init_b(elf, DW_DLC_READ,
             glflags.group_number,
             NULL, NULL, &dbg, &onef_err);
@@ -1065,9 +1066,7 @@ process_one_file(
             if those find nothing then the original. */
         char *tb = temp_path_buf;
         unsigned tblen = temp_path_buf_len;
-        /*  FIXME Fix this only after debuglink updated and
-            working. */
-        title = "dwarf_init_b";
+        title = "dwarf_init_path_dl fails exit dwarfdump";
         if (glflags.gf_no_follow_debuglink) {
             tb = 0;
             tblen = 0;
@@ -1095,7 +1094,10 @@ process_one_file(
     }
     if (dres == DW_DLV_ERROR) {
         /* Prints error, cleans up Dwarf_Error data. Never returns*/
-        print_error(dbg, title, dres, onef_err);
+        print_error_and_continue(dbg,
+                title,dres,onef_err);
+        DROP_ERROR_INSTANCE(dbg,dres,onef_err);
+        return DW_DLV_ERROR;
     }
     if (path_source == DW_PATHSOURCE_dsym) {
         printf("Filename by dSYM is %s\n",
