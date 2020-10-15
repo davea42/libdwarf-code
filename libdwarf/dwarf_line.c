@@ -62,12 +62,19 @@ static struct Dwarf_Line_Registers_s _dwarf_line_table_regs_default_values = {
 
 void
 _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
-    unsigned lineversion,
+    UNUSEDARG unsigned lineversion,
     Dwarf_Bool is_stmt)
 {
     *regs = _dwarf_line_table_regs_default_values;
     if (lineversion == DW_LINE_VERSION5) {
-        /* DWARF5 file base is zero. */
+        /*  In DWARF5 change the default this way.
+            We are ignoring the DWARF5 Section 2.14
+            considering 0 a special value meaning
+            no file.  
+            The DWARF5 standard is self-contradictory
+            on this, considered as a whole.
+            So with default 0 and numbering files from 0
+            things work ok. */
         regs->lr_file = 0;
     }
     regs->lr_is_stmt = is_stmt;
@@ -469,7 +476,7 @@ dwarf_srcfiles(Dwarf_Die die,
     }
     /*  For DWARF5, use of DW_AT_comp_dir not needed.
         Line table file names and directories
-        start with comp_dir and name.  FIXME DWARF5 */
+        start with comp_dir and name. */
     line_context->lc_compilation_directory = comp_dir;
     /* We are in dwarf_srcfiles() */
     {
@@ -1106,8 +1113,8 @@ dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
 /*  If the CU DIE  has no DW_AT_comp_dir then
     the pointer pushed back to *compilation_directory
     will be NULL.
-    Foy DWARF5 the line table header has the compilation
-    directory. FIXME DWARF5.
+    For DWARF5 the line table header has the compilation
+    directory. 
     */
 int dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
     const char **  compilation_directory,
@@ -1596,7 +1603,7 @@ dwarf_filename(Dwarf_Line_Context context,
                 return DW_DLV_NO_ENTRY;
             }
             /* else ok */
-        }  /* else DW_LINE_VERSION5 so line index 0 is fine */
+        }  /* else DW_LINE_VERSION5 so file index 0 is fine */
     }
 
     file_entry = context->lc_file_entries;
@@ -2103,6 +2110,7 @@ int
 _dwarf_add_to_files_list(Dwarf_Line_Context context,
     Dwarf_File_Entry fe)
 {
+    unsigned int version = context->lc_version_number;
     if (!context->lc_file_entries) {
         context->lc_file_entries = fe;
     } else {
@@ -2113,15 +2121,12 @@ _dwarf_add_to_files_list(Dwarf_Line_Context context,
     /*  Here we attempt to write code to make it easy to interate
         though source file names without having to code specially
         for DWARF2,3,4 vs DWARF5 */
-    if (context->lc_version_number == DW_LINE_VERSION5 ) {
+    if (version == DW_LINE_VERSION5) {
         context->lc_file_entry_baseindex = 0;
-        context->lc_file_entry_endindex =
-            context->lc_file_entry_count;
+        context->lc_file_entry_endindex = context->lc_file_entry_count;
     } else {
-        /* DWARF2,3,4 and the EXPERIMENTAL_LINE_TABLES_VERSION. */
         context->lc_file_entry_baseindex = 1;
-        context->lc_file_entry_endindex =
-            context->lc_file_entry_count+1;
+        context->lc_file_entry_endindex = context->lc_file_entry_count +1;
     }
     return DW_DLV_OK;
 }

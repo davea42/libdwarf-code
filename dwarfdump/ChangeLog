@@ -1,3 +1,6 @@
+2020-10-15: David Anderson
+    * print_lines.c(print_line_context_record): Fixed the
+      comments  about DWARF4 vs 5.
 2020-10-13: David Anderson
     * print_macro.c: Added the required check for 0
       opcode and print appropriately (it's the null

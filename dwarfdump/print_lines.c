@@ -684,11 +684,11 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
         DW_PR_DUx " %" DW_PR_DSd "\n",
         (Dwarf_Unsigned)dir_count,dir_count);
     if (version == DW_LINE_VERSION5) {
-        include_dir_base = 0; /* DWARF2.3,4 */
-        include_dir_limit = dir_count; /* set below */
+        include_dir_base = 0; 
+        include_dir_limit = dir_count;
     } else {
-        include_dir_base = 1; /* DWARF2.3,4 */
-        include_dir_limit = dir_count+1; /* set below */
+        include_dir_base = 1;
+        include_dir_limit = dir_count+1;
     }
     for(i = include_dir_base; i < include_dir_limit; ++i) {
         vres = dwarf_srclines_include_dir_data(line_context,i,

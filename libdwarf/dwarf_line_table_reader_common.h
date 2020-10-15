@@ -189,6 +189,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     int local_extension_size = 0;
     Dwarf_Unsigned prologue_length = 0;
     Dwarf_Half version = 0;
+    /*  Both of the next two should point *one past*
+        the end of actual data of interest. */
     Dwarf_Small *section_end = section_start + section_length;
     Dwarf_Small *line_ptr_end = 0;
     Dwarf_Small *lp_begin = 0;
@@ -1062,7 +1064,8 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Unsigned i = 0;
     Dwarf_File_Entry cur_file_entry = 0;
     Dwarf_Line *logicals = line_context->lc_linebuf_logicals;
-    Dwarf_Unsigned logicals_count = line_context->lc_linecount_logicals;
+    Dwarf_Unsigned logicals_count = 
+        line_context->lc_linecount_logicals;
 
     struct Dwarf_Line_Registers_s regs;
 
@@ -1614,16 +1617,18 @@ read_line_table_program(Dwarf_Debug dbg,
                 line_ptr += DWARF_HALF_SIZE;
                 if (line_ptr > line_ptr_end) {
                     dwarfstring g;
-                    ptrdiff_t d = 0;
+                    Dwarf_Unsigned localoff = 
+                        (line_ptr >= section_start)?
+                        (line_ptr - section_start):0xfffffff;
+                 
 
-                    d = line_ptr - section_start;
                     dwarfstring_constructor(&g);
                     dwarfstring_append_printf_u(&g,
                         "DW_DLE_LINE_TABLE_BAD reading "
                         "DW_LNS_fixed_advance_pc we are "
                         "off this line table at section "
                         "offset. 0x%x .",
-                        d);
+                        localoff);
                     _dwarf_error_string(dbg, error,
                         DW_DLE_LINE_TABLE_BAD,
                         dwarfstring_string(&g));
@@ -1835,6 +1840,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         utmp2);
                     _dwarf_printf(dbg,
                         dwarfstring_string(&mb));
+                    dwarfstring_destructor(&mb);
 #endif /* PRINTING_DETAILS */
                 }
                 break;
@@ -1983,16 +1989,17 @@ read_line_table_program(Dwarf_Debug dbg,
                 2.0.0 spec as one might hope. */
             if (line_ptr >= line_ptr_end) {
                 dwarfstring g;
-                ptrdiff_t d = 0;
+                Dwarf_Unsigned localoffset =
+                     (line_ptr >= section_start)?
+                     (line_ptr - section_start) : 0;
 
-                d = line_ptr - section_start;
                 dwarfstring_constructor(&g);
                 dwarfstring_append_printf_u(&g,
                     "DW_DLE_LINE_TABLE_BAD reading "
                     "extended op we are "
                     "off this line table at section "
                     "offset 0x%x .",
-                    d);
+                    localoffset);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_LINE_TABLE_BAD,
                     dwarfstring_string(&g));
@@ -2007,16 +2014,17 @@ read_line_table_program(Dwarf_Debug dbg,
             line_ptr++;
             if (line_ptr > line_ptr_end) {
                 dwarfstring g;
-                ptrdiff_t d = 0;
+                Dwarf_Unsigned localoff = 
+                    (line_ptr >= section_start)?
+                    (line_ptr - section_start):0xfffffff;
 
-                d = line_ptr - section_start;
                 dwarfstring_constructor(&g);
                 dwarfstring_append_printf_u(&g,
                     "DW_DLE_LINE_TABLE_BAD reading "
                     "extended op opcode we are "
                     "off this line table at section "
                     "offset 0x%x .",
-                    d);
+                    localoff);
                 _dwarf_error_string(dbg, error,
                     DW_DLE_LINE_TABLE_BAD,
                     dwarfstring_string(&g));
@@ -2163,16 +2171,17 @@ read_line_table_program(Dwarf_Debug dbg,
                 line_ptr += address_size;
                 if (line_ptr > line_ptr_end) {
                     dwarfstring g;
-                    ptrdiff_t d = 0;
+                    Dwarf_Unsigned localoff = 
+                        (line_ptr >= section_start)?
+                        (line_ptr - section_start):0xfffffff;
 
-                    d = line_ptr - section_start;
                     dwarfstring_constructor(&g);
                     dwarfstring_append_printf_u(&g,
                         "DW_DLE_LINE_TABLE_BAD reading "
                         "DW_LNE_set_address we are "
                         "off this line table at section "
                         "offset 0x%x .",
-                        d);
+                        localoff);
                     _dwarf_error_string(dbg, error,
                         DW_DLE_LINE_TABLE_BAD,
                         dwarfstring_string(&g));
@@ -2336,13 +2345,20 @@ read_line_table_program(Dwarf_Debug dbg,
                     other than we know now many bytes it is
                     and the op code and the bytes of operand. */
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
+                Dwarf_Unsigned space_left = 
+                    (line_ptr <= line_ptr_end)?
+                    (line_ptr_end - line_ptr):0xfffffff; 
 
+                /*  By catching this here instead of PRINTING_DETAILS
+                    we avoid reading off of our data of interest*/
                 if (instr_length < 1 ||
+                    space_left < remaining_bytes ||
                     remaining_bytes > DW_LNE_LEN_MAX) {
                     dwarfstring g;
-                    ptrdiff_t d = 0;
+                    Dwarf_Unsigned localoff = 
+                        (line_ptr >= section_start)?
+                        (line_ptr - section_start):0xfffffff;
 
-                    d = line_ptr - section_start;
                     dwarfstring_constructor(&g);
                     dwarfstring_append_printf_u(&g,
                         "DW_DLE_LINE_TABLE_BAD reading "
@@ -2352,7 +2368,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         "we are "
                         "off this line table at section "
                         "offset 0x%x and ",
-                        d);
+                        localoff);
                     dwarfstring_append_printf_u(&g,
                         "instruction length "
                         "%u.",instr_length);
@@ -2379,17 +2395,26 @@ read_line_table_program(Dwarf_Debug dbg,
                     "Bytecount: %" DW_PR_DUu ,
                     (Dwarf_Unsigned)instr_length);
                 if (remaining_bytes > 0) {
+                    /*  If remaining bytes > distance to end
+                        we will have an error. */
                     dwarfstring_append(&m9d," linedata: 0x");
                     while (remaining_bytes > 0) {
                         dwarfstring_append_printf_u(&m9d,
                             "%02x",
                             (unsigned char)(*(line_ptr)));
                         line_ptr++;
-                        if (line_ptr > line_ptr_end) {
+#if 0
+                        /*  A test above (see space_left above)
+                            proves we will not run off the end here.
+                            The following test is too late anyway,
+                            we might have read off the end just
+                            before line_ptr incremented! */ 
+                        if (line_ptr >= line_ptr_end) {
                             dwarfstring g;
-                            ptrdiff_t d = 0;
+                            Dwarf_Unsigned localoff = 
+                                (line_ptr >= section_start)?
+                                (line_ptr - section_start):0xfffffff;
 
-                            d = line_ptr - section_start;
                             dwarfstring_constructor(&g);
                             dwarfstring_append_printf_u(&g,
                                 "DW_DLE_LINE_TABLE_BAD reading "
@@ -2397,7 +2422,7 @@ read_line_table_program(Dwarf_Debug dbg,
                                 "we are "
                                 "off this line table at section "
                                 "offset 0x%x .",
-                                d);
+                                localoff);
                             _dwarf_error_string(dbg, error,
                                 DW_DLE_LINE_TABLE_BAD,
                                 dwarfstring_string(&g));
@@ -2407,9 +2432,11 @@ read_line_table_program(Dwarf_Debug dbg,
                                 dwarf_dealloc(dbg,curr_line,
                                     DW_DLA_LINE);
                             }
-                            _dwarf_free_chain_entries(dbg,head_chain,line_count);
+                            _dwarf_free_chain_entries(dbg,
+                                head_chain,line_count);
                             return DW_DLV_ERROR;
                         }
+#endif
                         remaining_bytes--;
                     }
                 }
@@ -2420,9 +2447,10 @@ read_line_table_program(Dwarf_Debug dbg,
                 line_ptr += remaining_bytes;
                 if (line_ptr > line_ptr_end) {
                     dwarfstring g;
-                    ptrdiff_t d = 0;
+                    Dwarf_Unsigned localoff = 
+                        (line_ptr >= section_start)?
+                        (line_ptr - section_start):0xfffffff;
 
-                    d = line_ptr - section_start;
                     dwarfstring_constructor(&g);
                     dwarfstring_append_printf_u(&g,
                         "DW_DLE_LINE_TABLE_BAD reading "
@@ -2430,7 +2458,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         "we are "
                         "off this line table at section "
                         "offset 0x%x .",
-                        d);
+                        localoff);
                     _dwarf_error_string(dbg, error,
                         DW_DLE_LINE_TABLE_BAD,
                         dwarfstring_string(&g));

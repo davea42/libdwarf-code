@@ -1,3 +1,14 @@
+2020-10-15: David Anderson
+    * dwarf_line.c:Set up the default registers correctly
+      for DWARF5 as well as earlier versions.
+    * dwarf_line.h: update a comment.
+    * dwarf_line_table_reader_common.c: Using ptrdiff_t
+      is completely unnecessary. So not using now.
+      Removing with #if 0 some lines of checking code
+      which are now up a few lines in a corrected
+      version of earlier checking.
+    * libdwarf2.1.pdf: Regenerated 3.15. Forgot
+      to do it earlier.
 2020-10-13: David Anderson
     * dwarf_debuglink.c: Now _dwarf_pathjoinl works
       for Windows too (see HAVE_WINDOWS_PATH) and
