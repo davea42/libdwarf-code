@@ -105,6 +105,7 @@ static Usage_Tag_Attr tag_attr_48[] = {
     {/* 0x82 */  0, DW_AT_call_tail_call},
     {/* 0x83 */  0, DW_AT_call_target},
     {/* 0x84 */  0, DW_AT_call_target_clobbered},
+    {/* 0x01 */  0, DW_AT_sibling},
     {/* 0x49 */  0, DW_AT_type},
     {/*      */  0, 0}
 };
@@ -1372,7 +1373,7 @@ static Rate_Tag_Attr rate_tag_attr[] = {
     {21, 0, /* 0x45 - DW_TAG_generic_subrange */},
     {12, 0, /* 0x46 - DW_TAG_dynamic_type */},
     { 6, 0, /* 0x47 - DW_TAG_atomic_type */},
-    {10, 0, /* 0x48 - DW_TAG_call_site */},
+    {11, 0, /* 0x48 - DW_TAG_call_site */},
     { 8, 0, /* 0x49 - DW_TAG_call_site_parameter */},
     {11, 0, /* 0x4a - DW_TAG_skeleton_unit */},
     { 4, 0, /* 0x4b - DW_TAG_immutable_type */},
@@ -1531,7 +1532,7 @@ static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_CO
 /* 0x47 - DW_TAG_atomic_type                   */
     { 0x00000002,0x0e000000,0x00000200,0x00000000,0x00000100,},
 /* 0x48 - DW_TAG_call_site                     */
-    { 0x00000000,0x00000000,0x03800200,0xa0000000,0x0000001e,},
+    { 0x00000002,0x00000000,0x03800200,0xa0000000,0x0000001e,},
 /* 0x49 - DW_TAG_call_site_parameter           */
     { 0x0000000e,0x00000000,0x00000200,0x40000000,0x00000061,},
 /* 0x4a - DW_TAG_skeleton_unit                 */

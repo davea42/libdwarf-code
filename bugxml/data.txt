@@ -1,4 +1,26 @@
 
+id: DW202010-001
+cve: waiting for cve id to be granted
+datereported: 2020-10-10
+reportedby: Casper Sun
+vulnerability: A carefully corrupted line table can crash calling app
+product: libdwarf
+description: A carefully crafted object with an
+  invalid line table could cause libdwarf
+  to dereference a pointer reading a single byte outside of
+  the intended .debug_line section and potentially
+  outside of memory visible to the library.  
+  A segmentation fault is possible.
+  The code testing for the error was coded incorrectly
+  so an invalid dereference could occur.
+  Now the test code is correct and the error
+  is detected resulting in a normal error return.
+datefixed: 2020-10-17
+references: regressiontests/c-sun/poc
+gitfixid:  95f634808c01f1c61bbec56ed2395af997f397ea
+tarrelease: 
+endrec: DW202010-001
+
 id: DW201801-001
 cve:
 datereported: 2018-01-28

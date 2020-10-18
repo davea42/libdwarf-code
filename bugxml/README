@@ -13,6 +13,20 @@ will typically not be mentioned.
 Bugs in dwarfdump are not vulnerabilities in the same way
 and at present these do not get CVE identifiers.
 
+
+To update the report with a new bug prepend
+a copy of data.template to data.txt.
+Then enter the data available for the new bug.
+
+To update the local web page to check it
+go to /home/davea/web4/gweb and do
+  sh dwarfbugupdate.sh
+which will use ./readbugs.py here to  update the
+relevant web pages.
+
+Carefully follow the existing formats, the  parser
+is very very simple.
+
 David Anderson
 Created: 2016-05-03.
 Updated: 2017-07-06.

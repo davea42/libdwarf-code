@@ -1,3 +1,10 @@
+2020-10-18: David Anderson
+    * tag_attr.list: Added standard tag-attribute relationships
+      that are being used now.
+    * tag_tree.list: Added standard tag-tag relationships
+      that are being used now.
+    * dwarfdump-ta-table.h: Regenerated.
+    * dwarfdump-tt-table.h: Regenerated.
 2020-10-17: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

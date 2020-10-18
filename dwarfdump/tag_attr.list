@@ -149,6 +149,7 @@ DW_AT_call_return_pc
 DW_AT_call_tail_call
 DW_AT_call_target
 DW_AT_call_target_clobbered
+DW_AT_sibling
 DW_AT_type
 
 0xffffffff

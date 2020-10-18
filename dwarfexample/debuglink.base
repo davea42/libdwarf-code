@@ -2,36 +2,35 @@
  global path        : /exam/ple
  global path        : /tmp/phony
  Section            : .gnu_debuglink
- Debuglink name     : dummyexecutable.debug   crc 0X: c8 ba b4 1c 
+ Debuglink name     : dummyexecutable.debug
+ crc              0X: c8 ba b4 1c 
  Debuglink target   : ..src../dummyexecutable.debug
  Section            : .note.gnu.buildid
  Build-id  type     : 3
  Build-id  ownername: GNU
  Build-id  length   : 20
  Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
- Path [ 0] /usr/lib/debug/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
- file above does not exist
- Path [ 1] /exam/ple/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
- file above does not exist
- Path [ 2] /tmp/phony/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
- file above does not exist
- Path [ 3] ..src../dummyexecutable.debug
- file above is an Elf object
-    ===Referred-path    : ..src../dummyexecutable.debug
-     Section            : .note.gnu.buildid
-     Build-id  type     : 3
-     Build-id  ownername: GNU
-     Build-id  length   : 20
-     Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
-    ===executable and debug buildid match
- =====File ..src../dummyexecutable.debug is a correct .debug object
-
- Path [ 4] ..src../.debug/dummyexecutable.debug
- file above does not exist
- Path [ 5] /usr/lib/debug..src../dummyexecutable.debug
- file above does not exist
- Path [ 6] /exam/ple..src../dummyexecutable.debug
- file above does not exist
- Path [ 7] /tmp/phony..src../dummyexecutable.debug
- file above does not exist
+    [ 0] Path [ 0] /usr/lib/debug/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
+    [ 0] file above does not match/exist.
+    [ 1] Path [ 1] /exam/ple/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
+    [ 1] file above does not match/exist.
+    [ 2] Path [ 2] /tmp/phony/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
+    [ 2] file above does not match/exist.
+    [ 3] Path [ 3] ..src../dummyexecutable.debug
+    [ 3] file above is an Elf object
+    [ 3]===Referred-path    : ..src../dummyexecutable.debug
+    [ 3] Section            : .note.gnu.buildid
+    [ 3] Build-id  type     : 3
+    [ 3] Build-id  ownername: GNU
+    [ 3] Build-id  length   : 20
+    [ 3] Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
+    [ 3]===executable and debug buildid match
+    [ 4] Path [ 4] ..src../.debug/dummyexecutable.debug
+    [ 4] file above does not match/exist.
+    [ 5] Path [ 5] /usr/lib/debug..src../dummyexecutable.debug
+    [ 5] file above does not match/exist.
+    [ 6] Path [ 6] /exam/ple..src../dummyexecutable.debug
+    [ 6] file above does not match/exist.
+    [ 7] Path [ 7] /tmp/phony..src../dummyexecutable.debug
+    [ 7] file above does not match/exist.
 =======done with ..src../dummyexecutable
