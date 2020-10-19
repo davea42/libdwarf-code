@@ -172,7 +172,7 @@ the offset applies to the
 uncompressed section (in memory), 
 not the .zdebug_ compressed section
 in \f2objectfilename\fP. 
-.SH URI STYLE INPUT STRINGS
+.SH URI-STYLE INPUT STRINGS
 .PP
 The <objectfilename> and all the options taking
 name strings look for URIs and
@@ -199,7 +199,7 @@ Options
 .BR \--format-suppress-uri-msg\ (\-q)
 (making finding
 URI sequences silent) give finer control of URI interpretation.
-PP
+.PP
 As an example, to get a string'a b' make the string 'a%20b'
 (here the quote (') is for exposition not part of the string, though
 quote is certainly problematic in a name).
@@ -210,6 +210,27 @@ which are problematic to the shell or getopt.
 We strongly suggest you not type URI-style characters where
 such are not needed or use
 the % character itself in command line strings unless you must.
+.SH URI-STYLE OUTPUT (printing)
+.PP
+Dwarfdump translates any characters
+in strings which are not ordinary
+printable ASCII (and some which are ASCII)
+in the reverse of the previous section.
+It prints into a uri-style output in the form %xx,
+where xx are hex digits in the form of
+ASCII 0-9a-0f.
+The percent character(%) is printed as '%25'
+.P
+This is a clumsy way to
+deal with UTF-8 strings and sensible way
+to deal with the low ASCII values that on
+many systems cause one's terminal to behave
+oddly. Such translations are not idempotent
+so dwarfdump avoids doing the translation
+more than once on any string.
+See option \--format-suppress-sanitize
+below to eliminate the output transformation.
+
 .SH PRINTING OPTIONS
 .TP
 .BR \--print-all\ (\-a)
@@ -248,10 +269,10 @@ Print .gnu_debuglink and .note.gnu.build-id sections
 .BR \--elf\ (\-E)    
 prints,
 for Elf objects, object file details.
-See the "Print ELF sections header" section of
+See the "Print ELF Section Headers" section of
 the help file for additional choices on elf printing.
 If libdwarf or dwarfdump is built without libelf
-this option is unavailable.
+this and related options are not available.
 
 .TP
 .BR \--print-frame\ (\-f)
@@ -271,7 +292,7 @@ and .debug_tu_index sections
 that exist in the object.
 
 .TP
-.BR \--print-gnu-debuglink\
+.BR \--print-gnu-debuglink
 If the .gnu_debuglink section
 is present its content is printed.
 If the .note.gnu.build-id section
@@ -338,7 +359,9 @@ Having dwarfdump print relocations may help establish whether
 dwarfdump understands any relocations that might exist.
 Other tools may be more useful than dwarfdump
 for printing object-file details.
-See "Print Relocations Info" in the help output for
+If dwarfdump or libelf is built without libelf
+the relocation options are not available.
+See "Print Elf Relocation Data" in the help output for
 additional relocation printing choices.
 
 .TP
@@ -557,15 +580,31 @@ The <path> will be used as the file name for output instead
 of writing to stdout (stdout is the default).
 
 .TP
-.BR \-format-suppress-data\ (\-Q) 
+.BR \--format-suppress-data\ (\-Q) 
 Suppresses section data printing
 (set automatically with a checking option).
+
+.TP
+.BR \--format-suppress-sanitize
+Suppresses the default string-printing 
+translations so
+non-ascii and non-printable characters
+from the object file
+are printed as-is.
+See "URI-STYLE OUTPUT" above.
+
+.TP
+.BR \--format-suppress-uri\ (\-U) 
+Suppresses the default URI translation
+of following options on the command line.
+See "URI-STYLE INPUT STRINGS" above.
 
 .TP
 .BR \--format-registers\ (\-R) 
 When printing frames for ABIs with lots of registers, this allows
 up to 1200 registers to be named (like R999) without choosing an ABI
-with, for example '-x abi=ppc'
+with, for example '-x abi=ppc' or,
+equivalently, '--file-abi=ppc'
 
 .TP 
 .BR \--version\ (\-v)
@@ -574,29 +613,6 @@ In some sections, using more -v options
 will increase the detail (one to three are useful) or may
 change the report to show, for example, the actual
 line-data-commands instead of the resultant line-table.
-
-.SH URI-STYLE INPUT/OUTPUT 
-.PP
-Dwarfdump translates any characters
-in strings which are not ordinary
-printable ASCII (and some which are ASCII)
-into a uri-style output in the form %xx,
-where xx are hex digits in the form of
-ASCII 0-9a-0f.  This is a clumsy way to
-deal with UTF-8 strings and sensible way
-to deal with the low ASCII values that on
-many systems cause one's terminal to behave
-oddly. Such translations are not idempotent
-so dwarfdump avoids doing the translation
-more than once on any string.
-.PP
-For option strings input to dwarfdump
-that same technique is available
-so one can avoid messy quoting workarounds.
-So   "a(space)b" can be represented "a%20b" (without
-the quotes).
-The percent character can be represented
-as %25.
 
 .SH LIMITING OUTPUT
 

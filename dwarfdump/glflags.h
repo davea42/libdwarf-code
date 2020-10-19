@@ -207,6 +207,7 @@ struct glflags_s {
         otherwise print (under the circumstances). */
 
     boolean gf_check_debug_names;
+    boolean gf_no_sanitize_strings;
 
     /* Display parent/children when in wide format? */
     boolean gf_display_parent_tree;

@@ -427,12 +427,8 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
     }
     if (glflags.gf_do_print_dwarf && glflags.verbose > 1) {
-#if 0
-        int errcount = 0;
-#endif
         boolean attr_dup = FALSE;
         int pdres = 0;
-        /* FIXME print_one_die return value needed */
         pdres = print_one_die(dbg, cu_die,
             dieprint_cu_goffset,
             /* print_information= */ 1,
@@ -444,21 +440,6 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             dwarf_dealloc_macro_context(macro_context);
             return pdres;
         }
-#if 0
-        DWARF_CHECK_COUNT(lines_result,1);
-        lres = dwarf_print_lines(cu_die, &err,&errcount);
-        if (errcount > 0) {
-            DWARF_ERROR_COUNT(lines_result,errcount);
-            DWARF_CHECK_COUNT(lines_result,(errcount-1));
-        }
-        if (lres == DW_DLV_ERROR) {
-            dwarf_dealloc_macro_context(macro_context);
-            print_error_and_continue(dbg,
-                "ERROR: printing source lines details",
-                lres, err);
-            return lres;
-        }
-#endif
     }
     {
         Dwarf_Half lversion =0;

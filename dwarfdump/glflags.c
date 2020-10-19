@@ -115,6 +115,7 @@ init_global_flags(void)
     glflags.gf_generic_1200_regs = FALSE;
     glflags.gf_suppress_check_extensions_tables = FALSE;
     glflags.gf_check_duplicated_attributes = FALSE;
+    glflags.gf_no_sanitize_strings = FALSE;
 
     /* lots of checks make no sense on a dwp debugfission object. */
     glflags.gf_suppress_checking_on_dwp = FALSE;

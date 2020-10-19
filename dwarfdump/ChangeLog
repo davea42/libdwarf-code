@@ -1,4 +1,28 @@
 2020-10-19: David Anderson
+    * dwarfdump.1: Document --format-suppress-sanitize
+      Added documentation on --format-suppress-uri too.
+      Reorganized the URI sections for greater clarity.
+    * command_options.c: show --format-suppress-sanitize
+      thus mentioning the option. If there are corruptions
+      or bad string data in an object this can be dangerous
+      to your terminal window.
+    * esb.c: Remove #if 0 and the code for a function
+      that was not a good idea: esb_constructor_rigid().
+    * glflags.c: Adding glflags.gf_no_sanitize_strings 
+      initializer (used to use a global not in
+      glflags).
+    * glflags.c: Adding boolean gf_no_sanitize_strings 
+      declaration.
+    * print_frames.c(print_location_operations): Remove
+      unwanted code #if 0 through #endif
+    * print_macro.c(print_macros_5style_this_cu): #if 0
+      code removed. So deleted duplicate die printing calls.
+    * print_pubnames.c: deal_with_name_offset_err()
+      has not been used in a long time. Deleted.
+    * sanitized.c(sanitized): add includes to allow glflags.h
+      and use glflags.gf_no_sanitize_strings for
+      checking whether to sanitize.
+2020-10-19: David Anderson
     * dwarfdump.c,getopttest.c,print_lines.c,
 	  testobjLE32PE.test.c: Fixed indents and
       removed trailing whitespace.

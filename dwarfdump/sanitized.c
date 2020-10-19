@@ -26,9 +26,9 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 */
 
 /*  Definitions for TRUE, FALSE, etc. */
-#include "defined_types.h"
-
+#include "globals.h"
 #include "esb.h"
+#include "glflags.h"
 #include "sanitized.h"
 
 /*  This does a uri-style conversion of control characters.
@@ -100,7 +100,6 @@ we turn all non-ASCII to %xx below.
 
 static struct esb_s localesb = {0,0,0,0,0};
 
-boolean no_sanitize_string_garbage = FALSE;
 
 /*  do_sanity_insert() and no_questionable_chars()
     absolutely must have the same idea of
@@ -194,7 +193,7 @@ sanitized(const char *s)
 {
     const char *sout = 0;
 
-    if (no_sanitize_string_garbage) {
+    if (glflags.gf_no_sanitize_strings) {
         return s;
     }
     if (no_questionable_chars(s)) {

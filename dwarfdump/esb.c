@@ -302,20 +302,6 @@ esb_constructor(struct esb_s *data)
     memset(data, 0, sizeof(*data));
 }
 
-#if 0
-void
-esb_constructor_rigid(struct esb_s *data,char *buf,size_t buflen)
-{
-    memset(data, 0, sizeof(*data));
-    data->esb_string = buf;
-    data->esb_string[0] = 0;
-    data->esb_allocated_size = buflen;
-    data->esb_used_bytes = 0;
-    data->esb_rigid = 1;
-    data->esb_fixed = 1;
-}
-#endif
-
 /*  ASSERT: buflen > 0 */
 void
 esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen)

@@ -1595,11 +1595,7 @@ print_location_operations(Dwarf_Debug dbg,
     int res2 = 0;
     Dwarf_Addr baseaddr = 0; /* Really unknown */
     /* See PRINTING_DIES macro in print_die.c */
-#if 0
-    boolean checking =  !(glflags.gf_do_print_dwarf ||
-        (glflags.gf_record_dwarf_error &&
-        glflags.gf_check_verbose_mode));
-#endif
+
     if(!glflags.gf_use_old_dwarf_loclist) {
         Dwarf_Loc_Head_c head = 0;
         Dwarf_Locdesc_c locentry = 0;

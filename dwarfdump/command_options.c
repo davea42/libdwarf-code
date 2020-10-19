@@ -117,12 +117,6 @@ do_all(void)
         and dwarf_pubtypes. */
     glflags.gf_weakname_flag = TRUE; /* SGI only*/
     glflags.gf_gnu_debuglink_flag = FALSE;
-#if 0
-    glflags.gf_header_flag = TRUE;
-    /*  Setting this flag without saying what sections to print
-        means no section headers print. So the above
-        gf_header_flag setting here has long been a no-op. */
-#endif
     glflags.gf_debug_names_flag = TRUE;
     glflags.gf_debug_sup_flag = TRUE;
 }
@@ -498,7 +492,7 @@ static const char *usage_long_text[] = {
 "-w   --print-weakname    Print weakname section",
 " ",
 "----------------------------------------------------------------------",
-"Print Relocations Info",
+"Print Elf Relocation Data",
 "----------------------------------------------------------------------",
 #ifdef DWARF_WITH_LIBELF
 "-o   --reloc           Print relocation info [afiloprR]",
@@ -516,7 +510,7 @@ static const char *usage_long_text[] = {
 #endif /* DWARF_WITH_LIBELF */
 " ",
 "----------------------------------------------------------------------",
-"Print ELF sections header",
+"Print Elf Section Headers",
 "----------------------------------------------------------------------",
 #ifdef DWARF_WITH_LIBELF
 "-E   --elf           Print object Header and/or section information",
@@ -603,11 +597,9 @@ static const char *usage_long_text[] = {
 "                               lookup(when printing frame information",
 "                               from multi-gigabyte object files this",
 "                               option may save significant time).",
-"-D   --format-suppress-offsets do not show offsets",
-#if 0
+"-D   --format-suppress-offsets Do not show offsets",
 "-x nosanitizestrings",
-"     --format-suppress-sanitize Bogus string characters come thru printf",
-#endif
+"     --format-suppress-sanitize Arbitrary string characters come thru printf",
 "-U   --format-suppress-uri     Suppress uri-translate",
 "-q   --format-suppress-uri-msg Suppress uri-did-translate notification",
 "-C   --format-extensions       Print (with -ki) warnings",
@@ -746,26 +738,26 @@ enum longopts_vals {
   OPT_FILE_USE_NO_LIBELF,       /* --file-use-no-libelf=<path>        */
 
   /* Print Output Qualifiers                                         */
-  OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name           */
-  OPT_FORMAT_DENSE,             /* -d   --format-dense               */
-  OPT_FORMAT_ELLIPSIS,          /* -e   --format-ellipsis            */
-  OPT_FORMAT_EXTENSIONS,        /* -C   --format-extensions          */
-  OPT_FORMAT_GLOBAL_OFFSETS,    /* -G   --format-global-offsets      */
-  OPT_FORMAT_LOC,               /* -g   --format-loc                 */
-  OPT_FORMAT_REGISTERS,         /* -R   --format-registers           */
-  OPT_FORMAT_SUPPRESS_DATA,     /* -Q   --format-suppress-data       */
-  OPT_FORMAT_SUPPRESS_GROUP  ,  /* -x   --format-suppress-group      */
-  OPT_FORMAT_SUPPRESS_LOOKUP,   /* -n   --format-suppress-lookup     */
-  OPT_FORMAT_SUPPRESS_OFFSETS,  /* -D   --format-suppress-offsets    */
-  OPT_FORMAT_SUPPRESS_SANITIZE, /* -x?? --format-suppress-sanitize   */
-  OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri        */
-  OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg    */
+  OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name         */
+  OPT_FORMAT_DENSE,             /* -d   --format-dense             */
+  OPT_FORMAT_ELLIPSIS,          /* -e   --format-ellipsis          */
+  OPT_FORMAT_EXTENSIONS,        /* -C   --format-extensions        */
+  OPT_FORMAT_GLOBAL_OFFSETS,    /* -G   --format-global-offsets    */
+  OPT_FORMAT_LOC,               /* -g   --format-loc               */
+  OPT_FORMAT_REGISTERS,         /* -R   --format-registers         */
+  OPT_FORMAT_SUPPRESS_DATA,     /* -Q   --format-suppress-data     */
+  OPT_FORMAT_SUPPRESS_GROUP  ,  /* -x   --format-suppress-group    */
+  OPT_FORMAT_SUPPRESS_LOOKUP,   /* -n   --format-suppress-lookup   */
+  OPT_FORMAT_SUPPRESS_OFFSETS,  /* -D   --format-suppress-offsets  */
+ OPT_FORMAT_SUPPRESS_SANITIZE, /* -x no-sanitize-strings --format-suppress-sanitize  */
+  OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri      */
+  OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg  */
 
   /* Print Output Limiters                                            */
-  OPT_FORMAT_FILE,              /* -u<file> --format-file=<file>    */
-  OPT_FORMAT_GCC,               /* -cg      --format-gcc            */
+  OPT_FORMAT_FILE,              /* -u<file> --format-file=<file>   */
+  OPT_FORMAT_GCC,               /* -cg      --format-gcc           */
   OPT_FORMAT_GROUP_NUMBER,      /* -x<n>    --format-group-number=<n>*/
-  OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>    */
+  OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>   */
   OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str> */
   OPT_FORMAT_SNC,               /* -cs      --format-snc           */
 
@@ -2340,10 +2332,10 @@ static void arg_format_suppress_group(void)
     glflags.gf_section_groups_flag = FALSE;
 }
 
-/*  Option '-x nosanitizestrings' */
+/*  Option '-x nosanitizestrings' '--format-suppress-sanitize' */
 static void arg_format_suppress_sanitize(void)
 {
-    no_sanitize_string_garbage = TRUE;
+    glflags.gf_no_sanitize_strings = TRUE;
 }
 
 /*  Option '-x tied=' */
@@ -2583,7 +2575,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_TYPE:        arg_print_types();       break;
         case OPT_PRINT_WEAKNAME:    arg_print_weaknames();   break;
 
-        /* Print Relocations Info. */
+        /* Print Relocations Info (only with libelf). */
         case OPT_RELOC:          arg_reloc();          break;
         case OPT_RELOC_ABBREV:   arg_reloc_abbrev();   break;
         case OPT_RELOC_ARANGES:  arg_reloc_aranges();  break;

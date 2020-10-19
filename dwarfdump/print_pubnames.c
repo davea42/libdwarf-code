@@ -63,43 +63,6 @@ check_info_offset_sanity(
     }
 }
 
-#if 0
-static void
-deal_with_name_offset_err(UNUSEDARG Dwarf_Debug dbg,
-    char *err_loc,
-    const char *name,
-    Dwarf_Unsigned die_off,
-    int nres,
-    Dwarf_Error aerr)
-{
-    Dwarf_Unsigned myerr = dwarf_errno(aerr);
-    struct esb_s fullmsg;
-    struct esb_s details;
-
-    esb_constructor(&details);
-    esb_constructor(&fullmsg);
-    if (myerr == DW_DLE_OFFSET_BAD) {
-        esb_append(&details," bad offset ");
-        esb_append(&details,err_loc);
-        esb_append(&details," ");
-        esb_append(&details,"name");
-        esb_append_printf_u(&details,
-            ": %" DW_PR_DUu ,die_off);
-        esb_append_printf_u(&details,
-            " (0x%08" DW_PR_DUx ")",
-            die_off);
-    }
-    esb_append(&fullmsg,err_loc);
-    esb_append(&fullmsg,esb_get_string(&details));
-    esb_append(&fullmsg,name);
-    simple_err_return_msg_either_action(nres,
-        esb_get_string(&fullmsg));
-    esb_destructor(&fullmsg);
-    esb_destructor(&details);
-}
-#endif
-
-
 /* Unified pubnames style output.
    The error checking here against maxoff may be useless
    (in that libdwarf may return an error if the offset is bad
