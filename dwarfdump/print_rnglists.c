@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 David Anderson. All Rights Reserved.
+Copyright (C) 2020 David Anderson. All Rights Reserved.
 
     This program is free software; you can redistribute it
     and/or modify it under the terms of version 2 of the GNU

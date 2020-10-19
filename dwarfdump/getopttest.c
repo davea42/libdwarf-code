@@ -1,4 +1,6 @@
-/* This is for testing the local getopt. */
+/* This is for testing the local getopt. 
+   This test code is hereby placed into the
+   public domain by David Anderson.*/
 
 #ifdef GETOPT_FROM_SYSTEM
 #define dwgetopt  getopt

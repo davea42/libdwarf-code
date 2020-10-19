@@ -1,8 +1,8 @@
 /*
-  Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2007-2020 David Anderson. All rights reserved.
+Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
+Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
+Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
+Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of version 2 of the GNU General
@@ -27,10 +27,7 @@
   Boston MA 02110-1301, USA.
 */
 
-/*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth
-    Floor, Boston, MA 02110-1301, USA.  SGI has moved from
-    the Crittenden Lane address.  */
+/*  SGI has moved from the Crittenden Lane address.  */
 
 
 #include "globals.h"

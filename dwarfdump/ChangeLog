@@ -1,3 +1,7 @@
+2020-10-19: David Anderson
+    * *.c *.h: No license terms changed but nearly
+      all the copyright notices are now reformatted 
+      to line lengths appropriate for dwarfdump.
 2020-10-18: David Anderson
     * tag_attr.list: Added standard tag-attribute relationships
       that are being used now.

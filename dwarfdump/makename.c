@@ -1,6 +1,6 @@
 /*
-  Copyright (C) 2000,2004 Silicon Graphics, Inc. All Rights Reserved.
-  Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
+Copyright (C) 2000,2004 Silicon Graphics, Inc. All Rights Reserved.
+Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of version 2 of the GNU General

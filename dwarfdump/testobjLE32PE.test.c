@@ -1,7 +1,9 @@
 /*  This is the test file used to compile
     testobjLE32PE.exe under MinGW on Windows 8.1
     These leading comments mean a recompile would
-    not exactly match line numbers in the DWARF. */
+    not exactly match line numbers in the DWARF. 
+    This source file is hereby placed in the public domain.
+*/
 #include <stdio.h>
 
 struct something {
