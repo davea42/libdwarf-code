@@ -684,7 +684,7 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
         DW_PR_DUx " %" DW_PR_DSd "\n",
         (Dwarf_Unsigned)dir_count,dir_count);
     if (version == DW_LINE_VERSION5) {
-        include_dir_base = 0; 
+        include_dir_base = 0;
         include_dir_limit = dir_count;
     } else {
         include_dir_base = 1;

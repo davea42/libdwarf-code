@@ -1095,7 +1095,7 @@ process_one_file(
     if (dres == DW_DLV_ERROR) {
         /* Prints error, cleans up Dwarf_Error data. Never returns*/
         print_error_and_continue(dbg,
-                title,dres,onef_err);
+            title,dres,onef_err);
         DROP_ERROR_INSTANCE(dbg,dres,onef_err);
         return DW_DLV_ERROR;
     }

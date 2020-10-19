@@ -1,4 +1,8 @@
 2020-10-19: David Anderson
+    * dwarfdump.c,getopttest.c,print_lines.c,
+	  testobjLE32PE.test.c: Fixed indents and
+      removed trailing whitespace.
+2020-10-19: David Anderson
     * *.c *.h: No license terms changed but nearly
       all the copyright notices are now reformatted 
       to line lengths appropriate for dwarfdump.
