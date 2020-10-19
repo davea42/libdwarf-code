@@ -1,4 +1,8 @@
 2020-10-19: David Anderson
+    * dwarf_line_table_reader_common.h: Everywhere ptr - ptr
+      generates an unnamed ptrdiff_t is called out by
+      a short comment.
+2020-10-19: David Anderson
     * crc32.c,dwarf_debuglink.c,dwarf_die_deliv.c,dwarf_line.c,
 	  dwarf_line.h,dwarf_line_table_reader_common.h,dwarf_query.c,
 	  dwarf_str_offsets.c: Fixed indents and removed
