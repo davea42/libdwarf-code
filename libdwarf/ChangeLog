@@ -1,4 +1,10 @@
 2020-10-19: David Anderson
+    * crc32.c: Revised line lengths to under
+      20 characters for a better appearance.
+      No change in wording.
+	* pro_frame.c,pro_funcs.c: Removed a blank line
+      before the copyright text for a better appearance.
+2020-10-19: David Anderson
     * dwarf_arange.h,dwarf_base_types.h,dwarf_die_deliv.h,
 	  dwarf_dsc.h,dwarf_elf_access.h,dwarf_errmsg_list.h,
 	  dwarf_error.h,dwarf_frame.h,dwarf_funcs.h,dwarf_gdbindex.h,
