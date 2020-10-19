@@ -489,7 +489,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         hend = table_header_ptr + MIN_HEADER_LENGTH;
         /*  ptrdiff_t is generated but not named */
         len = (hend >= sot->so_section_end_ptr)?
-              (hend - sot->so_section_end_ptr): 0xffffffff; 
+            (hend - sot->so_section_end_ptr): 0xffffffff;
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_i(&m,
             "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "

@@ -1064,7 +1064,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Unsigned i = 0;
     Dwarf_File_Entry cur_file_entry = 0;
     Dwarf_Line *logicals = line_context->lc_linebuf_logicals;
-    Dwarf_Unsigned logicals_count = 
+    Dwarf_Unsigned logicals_count =
         line_context->lc_linecount_logicals;
 
     struct Dwarf_Line_Registers_s regs;
@@ -1617,10 +1617,10 @@ read_line_table_program(Dwarf_Debug dbg,
                 line_ptr += DWARF_HALF_SIZE;
                 if (line_ptr > line_ptr_end) {
                     dwarfstring g;
-                    Dwarf_Unsigned localoff = 
+                    Dwarf_Unsigned localoff =
                         (line_ptr >= section_start)?
                         (line_ptr - section_start):0xfffffff;
-                 
+
 
                     dwarfstring_constructor(&g);
                     dwarfstring_append_printf_u(&g,
@@ -1990,8 +1990,8 @@ read_line_table_program(Dwarf_Debug dbg,
             if (line_ptr >= line_ptr_end) {
                 dwarfstring g;
                 Dwarf_Unsigned localoffset =
-                     (line_ptr >= section_start)?
-                     (line_ptr - section_start) : 0;
+                    (line_ptr >= section_start)?
+                    (line_ptr - section_start) : 0;
 
                 dwarfstring_constructor(&g);
                 dwarfstring_append_printf_u(&g,
@@ -2014,7 +2014,7 @@ read_line_table_program(Dwarf_Debug dbg,
             line_ptr++;
             if (line_ptr > line_ptr_end) {
                 dwarfstring g;
-                Dwarf_Unsigned localoff = 
+                Dwarf_Unsigned localoff =
                     (line_ptr >= section_start)?
                     (line_ptr - section_start):0xfffffff;
 
@@ -2171,7 +2171,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 line_ptr += address_size;
                 if (line_ptr > line_ptr_end) {
                     dwarfstring g;
-                    Dwarf_Unsigned localoff = 
+                    Dwarf_Unsigned localoff =
                         (line_ptr >= section_start)?
                         (line_ptr - section_start):0xfffffff;
 
@@ -2345,9 +2345,9 @@ read_line_table_program(Dwarf_Debug dbg,
                     other than we know now many bytes it is
                     and the op code and the bytes of operand. */
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
-                Dwarf_Unsigned space_left = 
+                Dwarf_Unsigned space_left =
                     (line_ptr <= line_ptr_end)?
-                    (line_ptr_end - line_ptr):0xfffffff; 
+                    (line_ptr_end - line_ptr):0xfffffff;
 
                 /*  By catching this here instead of PRINTING_DETAILS
                     we avoid reading off of our data of interest*/
@@ -2355,7 +2355,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     space_left < remaining_bytes ||
                     remaining_bytes > DW_LNE_LEN_MAX) {
                     dwarfstring g;
-                    Dwarf_Unsigned localoff = 
+                    Dwarf_Unsigned localoff =
                         (line_ptr >= section_start)?
                         (line_ptr - section_start):0xfffffff;
 
@@ -2408,10 +2408,10 @@ read_line_table_program(Dwarf_Debug dbg,
                             proves we will not run off the end here.
                             The following test is too late anyway,
                             we might have read off the end just
-                            before line_ptr incremented! */ 
+                            before line_ptr incremented! */
                         if (line_ptr >= line_ptr_end) {
                             dwarfstring g;
-                            Dwarf_Unsigned localoff = 
+                            Dwarf_Unsigned localoff =
                                 (line_ptr >= section_start)?
                                 (line_ptr - section_start):0xfffffff;
 
@@ -2447,7 +2447,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 line_ptr += remaining_bytes;
                 if (line_ptr > line_ptr_end) {
                     dwarfstring g;
-                    Dwarf_Unsigned localoff = 
+                    Dwarf_Unsigned localoff =
                         (line_ptr >= section_start)?
                         (line_ptr - section_start):0xfffffff;
 

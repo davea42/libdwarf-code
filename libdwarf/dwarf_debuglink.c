@@ -233,7 +233,7 @@ mydirlen(char *s)
     }
     if (lastjoinchar) {
         /*  ptrdiff_t is generated but not named */
-        Dwarf_Unsigned sizetoendjoin = 
+        Dwarf_Unsigned sizetoendjoin =
             (lastjoinchar >= s)?(lastjoinchar-s):0xffffffff;
         /* count the last join as mydirlen. */
         if (sizetoendjoin == 0xffffffff) {

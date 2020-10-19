@@ -2112,7 +2112,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
 
                 /*  ptrdiff_t is generated but not named */
                 plen = (die_info_end >= cu_info_start)?
-                     (die_info_end - cu_info_start):0;
+                    (die_info_end - cu_info_start):0;
                 if (offset > plen) {
                     /* Error case, bad DWARF. */
                     _dwarf_error(dbg, error,DW_DLE_SIBLING_OFFSET_WRONG);

@@ -756,7 +756,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
 
             /*  ptrdiff_t is generated but not named */
             len = (die_info_end >= info_ptr)?
-                  (die_info_end - info_ptr):0;
+                (die_info_end - info_ptr):0;
             if (value_size > len) {
                 /*  Something badly wrong. We point past end
                     of debug_info or debug_types or a

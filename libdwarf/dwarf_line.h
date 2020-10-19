@@ -63,7 +63,7 @@ struct Dwarf_File_Entry_s {
     /*  Index into the list of directories of the directory in which
         this file exits.
         For DWARF5, values are 0 to N-1
-        For DWARF4 etc values are 1 to N 
+        For DWARF4 etc values are 1 to N
         so the test for overrun differs. */
     Dwarf_Unsigned fi_dir_index;
 

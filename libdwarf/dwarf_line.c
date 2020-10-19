@@ -70,7 +70,7 @@ _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
         /*  In DWARF5 change the default this way.
             We are ignoring the DWARF5 Section 2.14
             considering 0 a special value meaning
-            no file.  
+            no file.
             The DWARF5 standard is self-contradictory
             on this, considered as a whole.
             So with default 0 and numbering files from 0
@@ -1114,8 +1114,7 @@ dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
     the pointer pushed back to *compilation_directory
     will be NULL.
     For DWARF5 the line table header has the compilation
-    directory. 
-    */
+    directory.  */
 int dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
     const char **  compilation_directory,
     Dwarf_Error  *  error)
