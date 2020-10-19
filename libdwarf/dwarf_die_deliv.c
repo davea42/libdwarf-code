@@ -2108,9 +2108,12 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                 are at the end, do not return error. Higher level
                 will detect that we are at the end. */
             {   /*  Care required here. Offset can be garbage. */
-                ptrdiff_t plen = die_info_end - cu_info_start;
-                ptrdiff_t signdoffset = (ptrdiff_t)offset;
-                if (signdoffset > plen || signdoffset < 0) {
+                Dwarf_Unsigned plen = 0;
+
+                /*  ptrdiff_t is generated but not named */
+                plen = (die_info_end >= cu_info_start)?
+                     (die_info_end - cu_info_start):0;
+                if (offset > plen) {
                     /* Error case, bad DWARF. */
                     _dwarf_error(dbg, error,DW_DLE_SIBLING_OFFSET_WRONG);
                     return DW_DLV_ERROR;
@@ -2125,7 +2128,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         if (attr_form != 0 && attr_form != DW_FORM_implicit_const) {
             int res = 0;
             Dwarf_Unsigned sizeofval = 0;
-            ptrdiff_t  sizeb = 0;
+            Dwarf_Unsigned  ssize = 0;
 
             res = _dwarf_get_size_of_val(cu_context->cc_dbg,
                 attr_form,
@@ -2139,11 +2142,12 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
             if(res != DW_DLV_OK) {
                 return res;
             }
-            /*  It is ok for info_ptr == die_info_end, as we will test
-                later before using a too-large info_ptr */
-            sizeb = (ptrdiff_t)sizeofval;
-            if (sizeb > (die_info_end - info_ptr) ||
-                sizeb < 0) {
+            /*  It is ok for info_ptr == die_info_end, as we
+                will test later before using a too-large info_ptr */
+            /*  ptrdiff_t is generated but not named */
+            ssize = (die_info_end >= info_ptr)?
+                (die_info_end - info_ptr): 0;
+            if (sizeofval > ssize) {
                 dwarfstring m;
 
                 dwarfstring_constructor(&m);

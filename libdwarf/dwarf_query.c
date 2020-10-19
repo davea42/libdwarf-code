@@ -752,9 +752,12 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             return res;
         }
         {
-            /* ptrdiff_t is signed type, so use DW signed type */
-            Dwarf_Signed len = die_info_end - info_ptr;
-            if (len < 0 || (value_size > ((Dwarf_Unsigned)len))) {
+            Dwarf_Unsigned len  = 0;
+
+            /*  ptrdiff_t is generated but not named */
+            len = (die_info_end >= info_ptr)?
+                  (die_info_end - info_ptr):0;
+            if (value_size > len) {
                 /*  Something badly wrong. We point past end
                     of debug_info or debug_types or a
                     section is unreasonably sized or we are

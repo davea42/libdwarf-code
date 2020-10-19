@@ -38,10 +38,10 @@
    work with GNU debuglink.
 */
 
-#if HAVE_CONFIG_H
 #include <config.h>
-#endif
-
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* open(), off_t, size_t */
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif /* HAVE_STDDEF_H */

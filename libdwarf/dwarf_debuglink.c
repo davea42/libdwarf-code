@@ -45,9 +45,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif /* HAVE_ELF_H */
-
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* getcwd */
@@ -233,10 +232,15 @@ mydirlen(char *s)
         }
     }
     if (lastjoinchar) {
-        /* we know diff is postive in all cases */
-        ptrdiff_t diff =  lastjoinchar - s;
+        /*  ptrdiff_t is generated but not named */
+        Dwarf_Unsigned sizetoendjoin = 
+            (lastjoinchar >= s)?(lastjoinchar-s):0xffffffff;
         /* count the last join as mydirlen. */
-        return (size_t)(diff+1);
+        if (sizetoendjoin == 0xffffffff) {
+            /* impossible. */
+            return 0;
+        }
+        return sizetoendjoin;
     }
     return 0;
 }

@@ -1,3 +1,19 @@
+2020-10-19: David Anderson
+    *  dwarf_debuglink.c,dwarf_die_deliv.c,dwarf_query.c,
+	   dwarf_str_offsets.c,dwarf_util.c: These no longer
+       explicitly use ptrdiff_t. Only non-negative pointer
+       differences are converted to unsigned. The other
+       side of a compare is given an appropriate constant unsigned
+       value that will cause an immediate error (this side
+       represents an astonishing and impossible situation).
+    * crc32.c,dwarf_alloc.c,dwarf_crc32.c,dwarf_debuglink.c,
+      dwarf_die_deliv.c,dwarf_elf_access.c,dwarf_elf_load_headers.c,
+      dwarf_elfread.c,dwarf_error.c dwarf_generic_init.c,
+      dwarf_init_finish.c,dwarf_machoread.c,dwarf_object_detector.c,
+      dwarf_object_read_common.c,dwarf_original_elf_init.c,
+      dwarf_peread.c,dwarf_query.c,dwarf_str_offsets.c,
+      dwarf_util.c,pro_error.c,test_linkedtopath.c: Consistent
+      use of HAVE_SYS_STATS_H throughout.
 2020-10-17: David Anderson
     * libdwarf_version.h: updated version string
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,

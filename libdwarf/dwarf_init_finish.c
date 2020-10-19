@@ -32,7 +32,9 @@
 #include "config.h"
 #include <stdio.h>
 #include <sys/stat.h>
-#include <sys/types.h>
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
+#endif /* HAVE_SYS_TYPES_H */
 #include <string.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>

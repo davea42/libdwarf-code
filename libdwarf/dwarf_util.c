@@ -44,7 +44,9 @@
 #elif defined(_WIN32) && defined(_MSC_VER)
 #include <io.h>
 #endif /* HAVE_UNISTD_H */
-#include <sys/types.h> /* for open() */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
+#endif /* HAVE_SYS_TYPES_H */
 #include <sys/stat.h> /* for open() */
 #include <fcntl.h> /* for open() */
 #include "dwarf_incl.h"
@@ -297,7 +299,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_block1: {
-        ptrdiff_t sizeasptrdiff = 0;
+        Dwarf_Unsigned space_left = 0;
 
         if (val_ptr >= section_end_ptr) {
             _dwarf_error_string(dbg,error,
@@ -308,9 +310,10 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         ret_value =  *(Dwarf_Small *) val_ptr;
-        sizeasptrdiff = (ptrdiff_t)ret_value;
-        if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
-            sizeasptrdiff < 0) {
+        /*  ptrdiff_t is generated but not named */
+        space_left = (section_end_ptr >= val_ptr)?
+            (section_end_ptr - val_ptr):0;
+        if (ret_value > space_left)  {
             _dwarf_error_string(dbg,error,
                 DW_DLE_FORM_BLOCK_LENGTH_ERROR,
                 "DW_DLE_FORM_BLOCK_LENGTH_ERROR: DW_FORM_block1"
@@ -323,13 +326,14 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_block2: {
-        ptrdiff_t sizeasptrdiff = 0;
+        Dwarf_Unsigned space_left = 0;
 
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, DWARF_HALF_SIZE,error,section_end_ptr);
-        sizeasptrdiff = (ptrdiff_t)ret_value;
-        if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
-            sizeasptrdiff < 0) {
+        /*  ptrdiff_t is generated but not named */
+        space_left = (section_end_ptr >= val_ptr)?
+            (section_end_ptr - val_ptr):0;
+        if (ret_value > space_left)  {
             _dwarf_error_string(dbg,error,
                 DW_DLE_FORM_BLOCK_LENGTH_ERROR,
                 "DW_DLE_FORM_BLOCK_LENGTH_ERROR: DW_FORM_block2"
@@ -342,14 +346,15 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_block4: {
-        ptrdiff_t sizeasptrdiff = 0;
+        Dwarf_Unsigned space_left = 0;
 
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, DWARF_32BIT_SIZE,
             error,section_end_ptr);
-        sizeasptrdiff = (ptrdiff_t)ret_value;
-        if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
-            sizeasptrdiff < 0) {
+        /*  ptrdiff_t is generated but not named */
+        space_left = (section_end_ptr >= val_ptr)?
+            (section_end_ptr - val_ptr):0;
+        if (ret_value > space_left)  {
             _dwarf_error_string(dbg,error,
                 DW_DLE_FORM_BLOCK_LENGTH_ERROR,
                 "DW_DLE_FORM_BLOCK_LENGTH_ERROR: DW_FORM_block4"

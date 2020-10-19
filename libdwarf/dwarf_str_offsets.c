@@ -453,10 +453,13 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             return DW_DLV_NO_ENTRY;
         } else {
             /* bogus table offset. */
-            ptrdiff_t len =
-                sot->so_section_end_ptr - table_header_ptr;
+            Dwarf_Unsigned len = 0;
             dwarfstring m;
 
+            /*  ptrdiff_t is generated but not named */
+            len = (sot->so_section_end_ptr >= table_header_ptr)?
+                (sot->so_section_end_ptr - table_header_ptr):
+                0xffffffff;
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_i(&m,
                 "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "
@@ -476,14 +479,17 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             Should we generate error? Or ignore?
             As of March 10 2020 we check for garbage
             bytes in-section. */
-        ptrdiff_t len = 0;
         dwarfstring m;
+        Dwarf_Small *hend = 0;
+        Dwarf_Unsigned len = 0;
 
         if (is_all_zeroes(table_header_ptr,sot->so_section_end_ptr)){
             return DW_DLV_NO_ENTRY;
         }
-        len = (table_header_ptr + MIN_HEADER_LENGTH) -
-            sot->so_section_end_ptr;
+        hend = table_header_ptr + MIN_HEADER_LENGTH;
+        /*  ptrdiff_t is generated but not named */
+        len = (hend >= sot->so_section_end_ptr)?
+              (hend - sot->so_section_end_ptr): 0xffffffff; 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_i(&m,
             "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "

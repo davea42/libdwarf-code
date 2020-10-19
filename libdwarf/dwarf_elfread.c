@@ -70,7 +70,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* HAVE_STDLIB_H */
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h> /* open() */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
+#endif /* HAVE_SYS_TYPES_H */
 #include <sys/stat.h> /* open() */
 #include <fcntl.h> /* open() */
 #include <time.h>

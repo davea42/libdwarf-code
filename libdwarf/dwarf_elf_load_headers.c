@@ -62,7 +62,9 @@ calls
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
 #include <stddef.h>
-#include <sys/types.h>   /* for open() */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
+#endif /* HAVE_SYS_TYPES_H */
 #include <sys/stat.h>   /* for open() */
 #include <fcntl.h>   /* for open() */
 #ifdef HAVE_UNISTD_H

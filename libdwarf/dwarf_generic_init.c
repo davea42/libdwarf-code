@@ -70,7 +70,9 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #endif
 #endif
 #include <stdio.h>
-#include <sys/types.h>
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
+#endif /* HAVE_SYS_TYPES_H */
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
