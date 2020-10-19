@@ -1,4 +1,19 @@
 2020-10-19: David Anderson
+    * dwarf_arange.h,dwarf_base_types.h,dwarf_die_deliv.h,
+	  dwarf_dsc.h,dwarf_elf_access.h,dwarf_errmsg_list.h,
+	  dwarf_error.h,dwarf_frame.h,dwarf_funcs.h,dwarf_gdbindex.h,
+	  dwarf_global.h,dwarf_harmless.h,dwarf_line.h,dwarf_macro.h,
+	  dwarf_macro5.h,dwarf_reloc_386.h,dwarf_reloc_arm.h,
+	  dwarf_reloc_mips.h,dwarf_reloc_ppc.h,dwarf_reloc_ppc64.h,
+	  dwarf_reloc_x86_64.h,dwarf_tied_decls.h,dwarf_types.h,
+	  dwarf_util.h,dwarf_vars.h,dwarf_weaks.h,dwarf_xu_index.h,
+	  libdwarfdefs.h,malloc_check.h,pro_alloc.h,pro_arange.h,
+	  pro_die.h,pro_encode_nm.h,pro_error.h,pro_expr.h,
+	  pro_frame.h,pro_incl.h,pro_macinfo.h,pro_reloc.h,
+	  pro_reloc_stream.h,pro_reloc_symbolic.h,pro_section.h,
+	  pro_types.h,pro_util.h: License text reformatted
+      to fit libdwarf line lengths. No change in terms.
+2020-10-19: David Anderson
     *  dwarf_debuglink.c,dwarf_die_deliv.c,dwarf_query.c,
 	   dwarf_str_offsets.c,dwarf_util.c: These no longer
        explicitly use ptrdiff_t. Only non-negative pointer
