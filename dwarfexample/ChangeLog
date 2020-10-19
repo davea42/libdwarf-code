@@ -1,3 +1,7 @@
+2020-10-19:   David Anderson 
+    * frame1.c,simplereader.c: Copyright lines reformatted
+      to a shorter line to match libdwarf/dwarfdump
+      formatting.  No change in copyright terms.
 2020-10-11:   David Anderson 
     * debuglink.base, debuglink2.base: Improved debuglink
       formatting now in the make check baselines.
