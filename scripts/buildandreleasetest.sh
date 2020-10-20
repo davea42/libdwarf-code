@@ -46,121 +46,99 @@ then
 fi
 configloc=$wd/configure
 
+mdirs() {
+while [ $# -ne 0 ]
+do
+  f=$1
+  rm -rf $f
+  mkdir $f
+  if [ $? -ne 0 ]
+  then
+    echo "mkdir $f failed!"
+    exit 1
+  fi
+  shift
+done
+}
 
-rm -rf /tmp/dwbld
-rm -rf /tmp/dwinstall
-rm -rf /tmp/dwinstallrel
-rm -rf /tmp/dwinstallrelbld
-rm -rf /tmp/dwbigendianbld
-rm -rf /tmp/dwinstallrelbldall
-rm -f /tmp/dwrelease.tar.gz
-rm -rf /tmp/dwreleasebld
-rm -rf /tmp/cmakebld
-mkdir  /tmp/dwbld
-if [ $? -ne 0 ] 
-then
-   echo FAIL A1 mkdir
-   exit 1
-fi
-mkdir /tmp/dwinstall
-if [ $? -ne 0 ] 
-then
-   echo FAIL A2 mkdir
-   exit 1
-fi
-mkdir /tmp/dwinstallrel
-if [ $? -ne 0 ] 
-then
-   echo FAIL A3 mkdir
-   exit 1
-fi
-mkdir /tmp/dwinstallrelbld
-if [ $? -ne 0 ] 
-then
-   echo FAIL A3b mkdir
-   exit 1
-fi
-mkdir /tmp/dwinstallrelbldall
-if [ $? -ne 0 ] 
-then
-   echo FAIL A3c mkdir /tmp/dwinstallrelbldall
-   exit 1
-fi
+safecd() {
+  f=$1
+  cd $f
+  if [ $? -ne 0 ]
+  then
+    echo "cd $f failed " $2
+    exit 1
+  fi
+}
 
-mkdir /tmp/dwbigendianbld
-if [ $? -ne 0 ] 
-then
-   echo FAIL A3bigend mkdir /tmp/dwbigendianbld
-   exit 1
-fi
+abld=/tmp/a-dwbld
+ainstall=/tmp/a-install
+binstrel=/tmp/a-installrel
+binstrelbld=/tmp/b-installrelbld
+crelbld=/tmp/c-installrelbld
+dbigend=/tmp/d-bigendian
+ecmakebld=/tmp/e-cmakebld
+mdirs $abld $ainstall $binstrel $binstrelbld $crelbld
+mdirs $dbigend $ecmakebld
 
-mkdir /tmp/cmakebld
-if [ $? -ne 0 ] 
-then
-   echo FAIL A3d mkdir /tmp/cmakebld
-   exit 1
-fi
-
+arelgz=/tmp/a-dwrelease.tar.gz
 echo "dirs created empty"
-echo cd /tmp/dwbld
-cd /tmp/dwbld
-if [ $? -ne 0 ]
-then
-  echo FAIL A cd $v
-      exit 1
-fi
-echo "now: $configloc --prefix=/tmp/dwinstall $libelfopt $nonstdprintf"
-$configloc --prefix=/tmp/dwinstall $libelfopt $nonstdprintf
+
+echo cd $abld
+safecd $abld "FAIL A cd failed"
+echo "now: $configloc --prefix=$ainstall $libelfopt $nonstdprintf"
+$configloc --prefix=$ainstall $libelfopt $nonstdprintf
 if [ $? -ne 0 ]
 then
   echo FAIL A4a configure fail
   exit 1
 fi
-echo "TEST: initial (dwinstall) make install"
+echo "TEST Section A: initial $ainstall make install"
 make install
 if [ $? -ne 0 ]
 then
   echo FAIL A4b make install 
   exit 1
 fi
-ls -lR /tmp/dwinstall
+ls -lR $ainstall
 make dist
+if [ $? -ne 0 ]
+then
+  echo FAIL make dist  
+  exit 1
+fi
 ls -1 *tar.gz >/tmp/dwrelset
 ct=`wc < /tmp/dwrelset`
 echo "count of gz files $ct"
-cp *.tar.gz /tmp/dwrelease.tar.gz
+cp *.tar.gz $arelgz
 cd /tmp
 if [ $? -ne 0 ]
 then
   echo FAIL B2  cd /tmp
   exit 1
 fi
-tar -zxf /tmp/dwrelease.tar.gz
+tar -zxf $arelgz
 ls -d *dw*
-################
-echo "TEST: now cd libdwarf-$v for second build install"
-cd /tmp/dwinstallrelbld
-if [ $? -ne 0 ]
-then
-  echo FAIL C cd /tmp/dwinstallrelbld
-      exit 1
-fi
-echo "TEST: now second install install, prefix /tmp/dwinstallrel"
+################ End Section A
+################ Start Section B
+echo "TEST Section B: now cd libdwarf-$v for second build install"
+safecd $binstrelbld "FAIL C cd"
+echo "TEST: now second install install, prefix $binstrel"
 echo "TEST: Expecting src in /tmp/libdwarf-$v"
-/tmp/libdwarf-$v/configure --enable-wall --prefix=/tmp/dwinstallrel $libelfopt $nonstdprintf
+/tmp/libdwarf-$v/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrel $libelfopt $nonstdprintf
 if [ $? -ne 0 ]
 then
   echo FAIL C2  configure fail
   exit 1
 fi
-echo "TEST: In dwinstallrelbld make install from /tmp/libdwarf-$v/configure"
+echo "TEST: In $binstrelbld make install from /tmp/libdwarf-$v/configure"
 make install
 if [ $? -ne 0 ]
 then
   echo FAIL C3  final install fail
   exit 1
 fi
-ls -lR /tmp/dwinstallrel
+ls -lR $binstrel
 echo "TEST: Now lets see if make check works"
 make check
 if [ $? -ne 0 ]
@@ -168,17 +146,12 @@ then
   echo FAIL make check C4 
   exit 1
 fi
-################
+################ End section B
 
-################
-echo "TEST: now cd libdwarf-$v for big-endian build (not runnable) "
+################ Start section C
+echo "TEST Section C: now cd libdwarf-$v for big-endian build (not runnable) "
 
-cd /tmp/dwbigendianbld
-if [ $? -ne 0 ]
-then
-  echo FAIL C be1 /tmp/dwbigendianbld
-  exit 1
-fi
+safecd $dbigend "FAIL C be1 "
 echo "TEST: now second install install, prefix /tmp/dwinstallrel"
 echo "TEST: Expecting src in /tmp/libdwarf-$v"
 echo "TEST: /tmp/libdwarf-$v/configure $genopta --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel $libelfopt $nonstdprintf"
@@ -189,24 +162,18 @@ then
   exit 1
 fi
 echo "#define WORDS_BIGENDIAN 1" >> config.h
-echo "TEST: Compile In dwbigendianbld make from /tmp/libdwarf-$v/configure"
+echo "TEST: Compile In $dbigend make from /tmp/libdwarf-$v/configure"
 make
 if [ $? -ne 0 ]
 then
   echo FAIL be3  Build failed
   exit 1
 fi
-################
+################ End section C
 
-
-
-cd /tmp/dwinstallrelbldall
-if [ $? -ne 0 ]
-then
-  echo FAIL Ca cd /dwinstallrelbldall
-  exit 1
-fi
-echo "TEST: Now configure from source dir /tmp/libdwarf-$v/ in build dir /tmp/dwinstallrelbldall"
+################ Start section D
+safecd $crelbld "FAIL section D cd "
+echo "TEST: Now configure from source dir /tmp/libdwarf-$v/ in build dir $crelbld"
 /tmp/libdwarf-$v/configure --enable-wall --enable-dwarfexample $genopta
 $nonstdprintf
 if [ $? -ne 0 ]
@@ -220,13 +187,10 @@ then
   echo FAIL C9  /tmp/libdwarf-$v/configure  make
   exit 1
 fi
-cd /tmp/cmakebld
-if [ $? -ne 0 ]
-then
-  echo FAIL C10  cd /tmp/cmakebld
-  exit 1
-fi
 
+################### End Section D
+################### Cmake test E
+safecd $ecmakebld "FAIL C10 Section E cd"
 havecmake=n
 which cmake >/dev/null
 if [ $? -eq 0 ]
@@ -234,35 +198,35 @@ then
   havecmake=y
   echo "We have cmake and can test it."
 fi
-
 if [ $havecmake = "y" ]
 then
-  echo "TEST: Now cmake from source dir /tmp/libdwarf-$v/ in build dir /tmp/cmakebld"
+  echo "TEST: Now cmake from source dir /tmp/libdwarf-$v/ in build dir  $ecmakebld"
   cmake $genoptb -DWALL=ON -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON /tmp/libdwarf-$v/
   if [ $? -ne 0 ]
   then
-    echo "FAIL C10b  cmake in /tmp/cmakebld"
+    echo "FAIL C10b  cmake in $ecmakdbld"
     exit 1
   fi
   make
   if [ $? -ne 0 ]
   then
-    echo "FAIL C10c  cmake make in /tmp/cmakebld"
+    echo "FAIL C10c  cmake make in $ecmakebld"
     exit 1
   fi
   make test
   if [ $? -ne 0 ]
   then
-    echo "FAIL C10d  cmake make test in /tmp/cmakebld"
+    echo "FAIL C10d  cmake make test in $ecmakebld"
     exit 1
   fi
   ctest -R self
   if [ $? -ne 0 ]
   then
-    echo "FAIL C10e  ctest -R self in /tmp/cmakebld"
+    echo "FAIL C10e  ctest -R self in $ecmakebld"
     exit 1
   fi
 else
   echo "cmake is not installed so not tested."
 fi
+############ End Section E
 exit 0

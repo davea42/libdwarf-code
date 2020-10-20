@@ -1,3 +1,8 @@
+2020-10-20 David Anderson
+    * buildandreleasetest.sh: A major revision. 
+      Directory naming used in /tmp is now easier to 
+      follow, and using a couple script functions
+      eliminated many busywork lines.
 2020-02-25 David Anderson
     * run-all-tests.sh: Added echo statments to make
       it clearer were we are in the run.
