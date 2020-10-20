@@ -56,6 +56,7 @@ buildingdummy.sh \
 debuglink.base \
 debuglink2.base \
 dummyexecutable \
+dummyexecutable.debug \
 dummyexecutable.c \
 simplecrc.c \
 NEWS \

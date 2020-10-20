@@ -1,4 +1,7 @@
 2020-10-19:   David Anderson 
+    * Makefile.am: adding dummyexecutable.debug 
+      and debuglink2.base so 'make check' can work.
+2020-10-19:   David Anderson 
     * frame1.c,simplereader.c: Copyright lines reformatted
       to a shorter line to match libdwarf/dwarfdump
       formatting.  No change in copyright terms.
