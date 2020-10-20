@@ -54,6 +54,7 @@ CMakeLists.txt \
 runtests.sh \
 buildingdummy.sh \
 debuglink.base \
+debuglink2.base \
 dummyexecutable \
 dummyexecutable.c \
 simplecrc.c \
