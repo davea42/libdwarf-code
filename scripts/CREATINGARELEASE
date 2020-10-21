@@ -2,7 +2,7 @@
 This is an checklist of the steps in creating a new release.
 In hopes this will prevent omissions.
 
-DavidA. 30 November 2012
+DavidA. 31 October  2020
 
 Source here means libdwarf/dwarfdump/dwarfgen source (in Git).
 Tests  here means the regression tests (in another Git repository).
@@ -31,6 +31,19 @@ Run any small preliminary tests that seem applicable.
 
 In the Tests:
 
+From the code directory one can run all tests
+(assuming regressiontests is alongside code).
+  sh scripts/run-all-tests.sh
+Verifies a lot of different things.
+This will take 40 to 120 minutes to run
+depending on your hardware or VM.
+
+
+Or just run the regression tests.
+  cd /path/to/regressiontests
+  ./configure
+  make
+
 Create any new tests that seem applicable. 
 Add the appropriate lines to DWARFTEST.sh which
 actually does the test running.
@@ -38,6 +51,7 @@ actually does the test running.
 RUNALL.sh 
   Runs one test of the new dwarfdump/libdwarf executable
   against the previously saved dwarfdump/libdwarf executable.
+  it actually runs around 30,000 individual tests.
 
 The notion of keeping baseline test output and simply
 comparing output of a previous release vs the new 
@@ -75,31 +89,31 @@ In the Source:
     it need not be done at this time.
 
     The release version is in configure.ac. 
-    Currently 20181024
+    Currently 20201020
 
     git push origin master  # Push to sourceforge.
-    # We use 20181024 as an example below, use the current date.
+    # We use 20201020 as an example below, use the current date.
 
     mkdir /tmp/bld
     cd /tmp/bld
     <sourcelocation>/configure
     make dist
 
-    md5sum libdwarf-20181024.tar.gz
-    sha512sum libdwarf-20181024.tar.gz | fold -w 32
+    md5sum libdwarf-20201020.tar.gz
+    sha512sum libdwarf-20201020.tar.gz | fold -w 32
              # To get unforgeable checksums for the tar.gz file
              # md5sum is weak, but the pair should be
              # a strong confirmation.
              # The fold(1) is just to make the web
              # release page easier to work with.
 
-    git tag -a 20181024  -m 'Release 20181024'
-    git push origin 20181024   # push the tag
+    git tag -a 20201020  -m 'Release 20201020'
+    git push origin 20201020   # push the tag
 
 In the Tests:
     git push origin master
-    git tag -a 20181024  -m 'Release 20181024'
-    git push origin 20181024   # push the tag
+    git tag -a 20201020  -m 'Release 20201020'
+    git push origin 20201020   # push the tag
 
 Update web pages so that the new release is visible to users
 and copy the tar.gz to the appropriate web site.
