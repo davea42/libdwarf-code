@@ -1,3 +1,7 @@
+2020-10-21 David Anderson
+    * buildandreleasetest.sh: Now uses temp files under
+      /tmp/bart and if all passes removes that directory
+      to clean up.
 2020-10-20 David Anderson
     * ddbuild.sh: Changes to sanitized.c meant a bit
       of changing for tag_tree etc.
