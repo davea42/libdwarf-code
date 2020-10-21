@@ -67,7 +67,10 @@ static int doprintdebuglink = 1;
 
 #define Dwarf_Small unsigned char
 static void
-dump_bytes(const char *prefix,char * msg,unsigned char   * start, long len)
+dump_bytes(const char *prefix,
+    char              *msg,
+    unsigned char     *start,
+    long              len)
 {
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;
@@ -342,7 +345,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
     }
     /*  If debug_path_in then this list does not
         mean anything. */
-    
+
     for (i =0; is_outer && i < paths_count; ++i) {
         char *pa =     paths[i];
         unsigned int   ftype = 0;

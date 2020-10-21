@@ -155,7 +155,8 @@ main(int argc, char **argv)
     res = dwarf_init_b(fd,DW_DLC_READ,DW_GROUPNUMBER_ANY,
         errhand,errarg, &dbg,&error);
     if(res != DW_DLV_OK) {
-        printf("Giving up, dwarf_init failed, cannot do DWARF processing\n");
+        printf("Giving up, dwarf_init failed, "
+            "cannot do DWARF processing\n");
         if (res == DW_DLV_ERROR) {
             printf("Error code %s\n",dwarf_errmsg(error));
         }
@@ -467,7 +468,8 @@ print_fde_selected_regs( Dwarf_Fde fde)
         &fde_offset, &oneferr);
 
     if (fres == DW_DLV_ERROR) {
-        printf("FAIL: dwarf_get_fde_range err %" DW_PR_DUu " line %d\n",
+        printf("FAIL: dwarf_get_fde_range err %" DW_PR_DUu
+            " line %d\n",
             dwarf_errno(oneferr),__LINE__);
         exit(1);
     }
@@ -647,8 +649,10 @@ print_one_regentry(const char *prefix,
     printf("type: %d %s ",
         entry->dw_value_type,
         (entry->dw_value_type == DW_EXPR_OFFSET)? "DW_EXPR_OFFSET":
-        (entry->dw_value_type == DW_EXPR_VAL_OFFSET)? "DW_EXPR_VAL_OFFSET":
-        (entry->dw_value_type == DW_EXPR_EXPRESSION)? "DW_EXPR_EXPRESSION":
+        (entry->dw_value_type == DW_EXPR_VAL_OFFSET)?
+            "DW_EXPR_VAL_OFFSET":
+        (entry->dw_value_type == DW_EXPR_EXPRESSION)?
+            "DW_EXPR_EXPRESSION":
         (entry->dw_value_type == DW_EXPR_VAL_EXPRESSION)?
             "DW_EXPR_VAL_EXPRESSION":
             "Unknown");

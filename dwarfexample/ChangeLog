@@ -1,3 +1,6 @@
+2020-10-21:   David Anderson 
+    * dwdebuglink.c,findfuncbypc.c,frame1.c: Cleaning
+      up line formatting a little. 
 2020-10-19:   David Anderson 
     * Makefile.am: adding dummyexecutable.debug 
       and debuglink2.base so 'make check' can work.

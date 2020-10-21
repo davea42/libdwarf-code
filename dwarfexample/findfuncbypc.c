@@ -159,7 +159,9 @@ printusage(void)
 static void target_data_destructor( struct target_data_s *td);
 
 static int
-startswithextractnum(const char *arg,const char *lookfor, Dwarf_Unsigned *numout)
+startswithextractnum(const char *arg,
+    const char                  *lookfor,
+    Dwarf_Unsigned              *numout)
 {
     const char *s = 0;
     unsigned prefixlen = strlen(lookfor);
@@ -984,7 +986,8 @@ check_subprog_details(Dwarf_Debug dbg,
     int finalres = 0;
     int have_pc_range = FALSE;
 
-    res = getlowhighpc(dbg,td,die,level,&have_pc_range,&lowpc,&highpc,errp);
+    res = getlowhighpc(dbg,td,die,level,
+        &have_pc_range,&lowpc,&highpc,errp);
     if (res == DW_DLV_OK) {
         if (have_pc_range) {
             int res2 = DW_DLV_OK;
