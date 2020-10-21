@@ -1,4 +1,6 @@
 2020-10-20 David Anderson
+    * ddbuild.sh: Changes to sanitized.c meant a bit
+      of changing for tag_tree etc.
     * buildandreleasetest.sh: A major revision. 
       Directory naming used in /tmp is now easier to 
       follow, and using a couple script functions

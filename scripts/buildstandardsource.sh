@@ -3,7 +3,7 @@
 # in libdwarf.h.in and dwarf_errmsg_list.h and the dwarfdump *.list files.
 # If you change any of those you should run this script
 # (which, for non-linux non-unix may mean some changes of this script
-# or of scripts/libbuild.sh or scripts.ddbuild.sh or baseconfig.h)
+# or of scripts/libbuild.sh or scripts/ddbuild.sh or baseconfig.h)
 #
 
 # This script is by David Anderson and hereby put into the public domain

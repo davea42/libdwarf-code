@@ -21,12 +21,12 @@ fi
 set -x
 top_builddir=..
 top_srcdir=..
-CC="gcc -g  -I.. -I../libdwarf"
+CC="gcc -g  -I.. -I../libdwarf -I../dwarfdump"
 EXEXT=.exe
 
 cp $top_builddir/libdwarf/dwarf_names.c .
 cp $top_builddir/libdwarf/dwarf_names.h .
-$CC -DTRIVIAL_NAMING dwarf_names.c common.c \
+$CC -DTRIVIAL_NAMING   dwarf_names.c common.c \
 dwarf_tsearchbal.c \
 dwgetopt.c \
 esb.c \
@@ -34,6 +34,7 @@ makename.c \
 naming.c \
 sanitized.c \
 tag_attr.c \
+glflags.c \
 tag_common.c -o tag_attr_build$EXEXT
 if [ $? -ne 0 ]
 then
@@ -41,12 +42,13 @@ then
    exit 1
 fi
 
-$CC  -DTRIVIAL_NAMING dwarf_names.c common.c \
+$CC  -DTRIVIAL_NAMING  dwarf_names.c common.c \
 dwarf_tsearchbal.c \
 dwgetopt.c \
 esb.c \
 makename.c \
 naming.c \
+glflags.c \
 sanitized.c \
 tag_common.c \
 tag_tree.c -o tag_tree_build$EXEXT
