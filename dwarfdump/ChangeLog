@@ -1,3 +1,10 @@
+2020-10-20: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with latest
+      version string.
+    * glflags.c: see TRIVIAL_NAMING, used when doing
+      scripts/buildstandardsource.sh
 2020-10-19: David Anderson
     * dwarfdump.1: Document --format-suppress-sanitize
       Added documentation on --format-suppress-uri too.

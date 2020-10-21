@@ -38,6 +38,20 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 regex_t _search_re;
 #endif
 
+#ifdef TRIVIAL_NAMING  /* For scripts/buildstandardsource.sh */
+struct glflags_s glflags;
+void
+safe_strcpy(char *out, long outlen, const char *in, long inlen)
+{
+    if (inlen >= (outlen - 1)) {
+        strncpy(out, in, outlen - 1);
+        out[outlen - 1] = 0;
+    } else {
+        strcpy(out, in);
+    }
+}
+#endif /*TRIVIAL_NAMING*/
+
 static struct section_high_offsets_s _section_high_offsets_global;
 static struct dwconf_s _config_file_data;
 
