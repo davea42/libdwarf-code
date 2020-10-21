@@ -1,6 +1,6 @@
 #!/bin/sh
 #  A script verifying the distribution gets all needed files
-#  for building, including 'make check'
+#  for building, including "make check"
 # First, get the current configure.ac version into v:
 
 # if stdint.h does not define uintptr_t and intptr_t
@@ -44,7 +44,6 @@ then
    echo FAIL did not get configure.ac version
    exit 1
 fi
-configloc=$wd/configure
 
 chkres() {
   if [ $1 -ne 0 ]
@@ -78,6 +77,7 @@ safemv() {
   chkres $?  "mv $f $t failed  $3"
 }
 
+configloc=$wd/configure
 bart=/tmp/bart
 abld=$bart/a-dwbld
 ainstall=$bart/a-install
@@ -91,8 +91,11 @@ ecmakebld=$bart/e-cmakebld
 mdirs $bart $abld $ainstall $binstrelp $binstrelbld $crelbld
 mdirs $cinstrelp $dbigend $ecmakebld 
 relset=$bart/a-gzfilelist
+atfout=$bart/a-tarftout
+btfout=$bart/b-tarftout
 
 arelgz=$bart/a-dwrelease.tar.gz
+brelgz=$bart/b-dwrelease.tar.gz
 rm -rf $bart/a-dwrelease
 rm -rf $blibsrc
 rm -rf $arelgz
@@ -105,20 +108,19 @@ $configloc --prefix=$ainstall $libelfopt $nonstdprintf
 chkres $? "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
 make install
-chkres $? "FAIL A4b make install"
+chkres $? "FAIL Secton A 4b make install"
 ls -lR $ainstall
 make dist
-chkres $? "FAIL make dist " 
+chkres $? "FAIL make dist Section A" 
 # We know there is just one tar.gz in $abld, that we just created
 ls -1 ./*tar.gz 
-chkres $? "FAIL B2z  ls ./*tar.gz"
-safemv ./*.tar.gz $arelgz "FAIL B2  moving gz"
+chkres $? "FAIL Section A  ls ./*tar.gz"
+safemv ./*.tar.gz $arelgz "FAIL Section A moving gz"
 ls -l $arelgz
 tar -zxf $arelgz
 chkres $? "FAIL B2tar tar -zxf $arelgz"
 safemv  libdwarf-$v $blibsrc "FAIL moving libdwarf srcdir"
-echo "ls at end Section A  $bart"
-ls  $bart
+echo "  End Section A  $bart"
 ################ End Section A
 ################ Start Section B
 echo "TEST Section B: now cd $binstrelbld for second build install"
@@ -126,16 +128,30 @@ safecd $binstrelbld "FAIL C cd"
 echo "TEST: now second install install, prefix $binstrelp"
 echo "TEST: Expecting src in $blibsrc"
 $blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp $libelfopt $nonstdprintf
-chkres $? "FAIL C2  configure fail"
+chkres $? "FAIL configure fail in Section B"
 echo "TEST: In $binstrelbld make install from $blibsrc/configure"
 make install
-chkres $? "FAIL C3  final install fail"
+chkres $? "FAIL Section B install fail"
 ls -lR $binstrelp
 echo "TEST: Now lets see if make check works"
 make check
-chkres $? "FAIL make check C4"
-echo "ls at end Section B  $bart"
-ls  $bart
+chkres $? "FAIL make check in Section B"
+make dist
+chkres $? "FAIL make dist  Section B"
+# We know there is just one tar.gz in $abld, that we just created
+ls -1 ./*tar.gz
+safemv ./*.tar.gz $brelgz "FAIL Section B moving gz"
+ls -l $arelgz
+ls -l $brelgz
+# gzip does not build diffs quite identically to the byte.
+# Lots of diffs, So we do tar tf to get the file name list. 
+echo "Now tar -tf on $arelgz and $brelgz "
+tar -tf $arelgz > $atfout
+tar -tf $brelgz > $btfout
+echo "Now diff the respective -tf output file lists"
+diff $atfout $btfout
+chkres $? "FAIL second gen tar gz file list does not match first gen"
+echo "  End Section B  $bart"
 ################ End section B
 
 ################ Start section C
@@ -151,8 +167,7 @@ echo "#define WORDS_BIGENDIAN 1" >> config.h
 echo "TEST: Compile In $dbigend make from $blibsrc/configure"
 make
 chkres $? "FAIL be3  Build failed"
-echo "ls at end Section C  $bart"
-ls  $bart
+echo "  End Section C  $bart"
 ################ End section C
 
 ################ Start section D
@@ -163,8 +178,7 @@ $nonstdprintf
 chkres $? "FAIL C9  $blibsrc/configure"
 make
 chkres $? "FAIL C9  $blibsrc/configure  make"
-echo "ls at end Section D  $bart"
-ls  $bart
+echo "  End Section D  $bart"
 ################### End Section D
 ################### Cmake test E
 safecd $ecmakebld "FAIL C10 Section E cd"
@@ -189,9 +203,11 @@ then
 else
   echo "cmake is not installed so not tested."
 fi
-echo "ls at end Section E  $bart"
+echo " End Section E  $bart (ls output follows)"
 ls  $bart
 ############ End Section E
+
+
 echo "PASS scripts/buildandreleasetest.sh"
 rm -rf $bart
 exit 0
