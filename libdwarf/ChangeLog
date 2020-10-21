@@ -1,3 +1,5 @@
+2020-10-20: David Anderson
+    * crc32.c: Computing from first principles.  LGPL 2.1
 2020-10-19: David Anderson
     * dwarf_line_table_reader_common.h: Everywhere ptr - ptr
       generates an unnamed ptrdiff_t is called out by
