@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2009-2019 David Anderson.  All rights reserved.
+  Copyright (c) 2009-2020 David Anderson.  All rights reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
@@ -239,8 +239,8 @@ xfrm_to_sig8(const char *cuhash_in, Dwarf_Sig8 *hash_out)
 
     memset(localhash,0,fixed_size);
     if (hashin_len > fixed_size) {
-        printf("FAIL: argument hash too long, len %u val:\"%s\"\n",hashin_len,
-            cuhash_in);
+        printf("FAIL: argument hash too long, len %u val:\"%s\"\n",
+            hashin_len, cuhash_in);
         exit(1);
     }
     if (hashin_len  < fixed_size) {
@@ -304,7 +304,8 @@ startswithextractstring(const char *arg,const char *lookfor,
     dupstrarray[dupstrused] = *ptrout;
     dupstrused++;
     if (dupstrused >= DUPSTRARRAYSIZE) {
-        printf("FAIL: increase the value DUPSTRARRAYSIZE for test purposes\n");
+        printf("FAIL: increase the value DUPSTRARRAYSIZE"
+            " for test purposes\n");
         exit(1);
     }
     return TRUE;
@@ -444,6 +445,11 @@ main(int argc, char **argv)
             printf("Unknown argument \"%s\", give up \n",argv[i]);
             exit(1);
         }
+    }
+    if (i >= argc) {
+        printf("simplereader not given file to open\n");
+        printf("simplereader exits\n");
+        exit(1);
     }
     filepath = argv[i];
     if (dumpallnames) {

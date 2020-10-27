@@ -1,3 +1,6 @@
+2020-10-27:   David Anderson 
+    * simplereader.c: changed a few lines
+      to have shorter line lengths. No logic change. 
 2020-10-21:   David Anderson 
     * dwdebuglink.c,findfuncbypc.c,frame1.c: Cleaning
       up line formatting a little. 

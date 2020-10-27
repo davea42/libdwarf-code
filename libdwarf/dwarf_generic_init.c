@@ -252,6 +252,16 @@ int dwarf_init_path_dl(const char *path,
         DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,
             DW_DLV_ERROR);
     }
+    if (!path) {
+        /* Oops. Null path */
+        _dwarf_error_string(NULL,
+            error,DW_DLE_STRING_PTR_NULL,
+            "DW_DLE_STRING_PTR_NULL: Passing a" 
+            " null path argument to "
+            "dwarf_init_path or dwarf_init_path_dl"
+            " cannot work. Error.");
+        return DW_DLV_ERROR;
+    }
     /* a special dsym call so we only check once. */
     if (true_path_out_buffer) {
         res = dwarf_object_detector_path_dSYM(path,

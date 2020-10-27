@@ -1,3 +1,7 @@
+2020-10-27: David Anderson
+    * dwarf_generic_init.c: Now checks for a null PATH
+      passed to dwarf_init_path() or dwarf_init_path_dl()
+      and returns error.
 2020-10-20: David Anderson
     * libdwarf_version.h: updated version string
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
