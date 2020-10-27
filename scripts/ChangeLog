@@ -1,4 +1,7 @@
 2020-10-21 David Anderson
+    * run-all-tests.sh: getting directory right
+      for modified regressiontests configre.
+2020-10-21 David Anderson
     * buildandreleasetest.sh: Now uses temp files under
       /tmp/bart and if all passes removes that directory
       to clean up.
