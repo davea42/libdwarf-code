@@ -1,9 +1,30 @@
+
+id: DW202010-003
+cve:
+datereported: 2020-10-27
+reportedby: Casper Sun
+vulnerability: Passing null to %s due to corrupt line table header.
+product: libdwarf
+description: If a DWARF5 line table header has an invalid
+  FORM for a pathname, the fi_file_name field may be null
+  and printing it via %s can have unpredictable effects
+  depending on the libc involved.  Now in case of null
+  we provide a fixed string of <no file name>
+  and for the form code we print the value and <unknown form>
+  so there are no unpredictable effects.
+datefixed: 2020-10-28
+references: regressiontests/c-sun2/nullpointer
+gitfixid: 
+tarrelease:
+endrec: DW202010-003
+
+
 id: DW202010-002
 cve: 
 datereported: 2020-10-27
 reportedby: Casper Sun
 vulnerability: A circular DIE tree can corrupt random data.  
-product: libdwarf
+product: dwarfdump
 description: An object file where the DIEs form a circular
   reference due to corruption or a compiler bug 
   can result in exhausting a fixed size array and
