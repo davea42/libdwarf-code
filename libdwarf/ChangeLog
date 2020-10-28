@@ -1,4 +1,14 @@
 2020-10-28: David Anderson
+    * dwarf_print_lines.c: In case of corrupted
+      DWARF5 line header the fi_file_name field
+      for a file entry can be null. Now
+      we print a <no file name> string in that case
+      to avoid passing a null to dwarfstring_append.
+      Dwarfbug DW202010-003.
+      Also some lines longer than libdwarf standard
+      were shortened, but a few long lines really
+      must remain.
+2020-10-28: David Anderson
     * dwarf_ranges.c: Altered lines longer than libdwarf
       standard.
 2020-10-27: David Anderson

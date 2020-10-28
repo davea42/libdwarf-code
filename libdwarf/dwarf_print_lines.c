@@ -54,8 +54,10 @@ print_line_header(Dwarf_Debug dbg,
     Dwarf_Bool is_actuals_tab)
 {
 if (!is_single_tab) {
-    /* Ugly indenting follows, it makes lines shorter to see them better.
-        Best to use a wider text window to really see how it looks.*/
+    /*  Ugly indenting follows, it makes lines shorter
+        to see them better.
+        Best to use a wider text window to really
+        see how it looks.*/
 if (is_actuals_tab) {
 _dwarf_printf(dbg,"\nActuals Table\n");
 _dwarf_printf(dbg,
@@ -102,13 +104,15 @@ print_line_detail(
     if(!is_single_table && is_actuals_table) {
         dwarfstring_append_printf_s(&m1,"%-15s ",(char *)prefix);
         dwarfstring_append_printf_i(&m1,"%3d ",opcode);
-        dwarfstring_append_printf_u(&m1,"0x%" DW_PR_XZEROS DW_PR_DUx ,
+        dwarfstring_append_printf_u(&m1,"0x%" DW_PR_XZEROS DW_PR_DUx,
             regs->lr_address);
         dwarfstring_append_printf_u(&m1,"/%01u",regs->lr_op_index);
         dwarfstring_append_printf_u(&m1," %5lu", regs->lr_line);
         dwarfstring_append_printf_u(&m1," %3d",regs->lr_isa);
-        dwarfstring_append_printf_i(&m1,"   %1d", regs->lr_basic_block);
-        dwarfstring_append_printf_i(&m1,"%1d\n",  regs->lr_end_sequence);
+        dwarfstring_append_printf_i(&m1,"   %1d",
+            regs->lr_basic_block);
+        dwarfstring_append_printf_i(&m1,"%1d\n",
+            regs->lr_end_sequence);
         _dwarf_printf(dbg,dwarfstring_string(&m1));
         dwarfstring_destructor(&m1);
         return;
@@ -138,9 +142,11 @@ print_line_detail(
                 "   x%02" DW_PR_DUx ,
                 regs->lr_discriminator); /* DWARF4 */
             dwarfstring_append_printf_u(&m1,
-                "  x%02" DW_PR_DUx , regs->lr_call_context); /* EXPERIMENTAL */
+                "  x%02" DW_PR_DUx,
+                regs->lr_call_context); /* EXPERIMENTAL */
             dwarfstring_append_printf_u(&m1,
-                "  x%02" DW_PR_DUx , regs->lr_subprogram); /* EXPERIMENTAL */
+                "  x%02" DW_PR_DUx ,
+                regs->lr_subprogram); /* EXPERIMENTAL */
             dwarfstring_append_printf_i(&m1,
                 "  %1d", regs->lr_is_stmt);
             dwarfstring_append_printf_i(&m1,
@@ -236,7 +242,8 @@ print_include_directory_details(Dwarf_Debug dbg,
                 tname = "<unknown type>";
             }
             dwarfstring_append_printf_u (&m4,
-                " type 0x%" DW_PR_XZEROS DW_PR_DUx ,valpair->up_first);
+                " type 0x%" DW_PR_XZEROS DW_PR_DUx,
+                valpair->up_first);
             dwarfstring_append_printf_s (&m4,
                 " %-20s\n",(char *)tname);
             res = dwarf_get_FORM_name(valpair->up_second,&fname);
@@ -327,20 +334,22 @@ print_just_file_entry_details(Dwarf_Debug dbg,
         if (line_context->lc_file_entry_count > 9) {
             dwarfstring_append_printf_u(&m3,
                 "  file[%2u] ",fiu);
-            dwarfstring_append_printf_s(&m3,
-                "%-20s ",
-                (char *) fe->fi_file_name);
-            dwarfstring_append_printf_u(&m3,
-                "(file-number: %u)\n",
-                filenum);
         } else {
             dwarfstring_append_printf_u(&m3,
                 "  file[%u]  ", fiu);
-            dwarfstring_append_printf_s(&m3,
-                "%-20s ",(char *)fe->fi_file_name);
-            dwarfstring_append_printf_u(&m3,
-                "(file-number: %u)\n",filenum);
         }
+        /*  DWARF5 can have a null fi_file_name
+            if  the format code in the
+            line table header is unknown, such
+            as in a corrupt object file. */
+        dwarfstring_append_printf_s(&m3,
+            "%-20s ",
+            fe->fi_file_name?
+            (char *) fe->fi_file_name:
+            "<no file name>");
+        dwarfstring_append_printf_u(&m3,
+            "(file-number: %u)\n",
+            filenum);
         _dwarf_printf(dbg,dwarfstring_string(&m3));
         dwarfstring_reset(&m3);
         if (fe->fi_dir_index_present) {
@@ -509,8 +518,8 @@ _dwarf_internal_printlines(Dwarf_Die die,
     Dwarf_Small *line_ptr = 0;
     Dwarf_Small *orig_line_ptr = 0;
 
-    /*  Pointer to a DW_AT_stmt_list attribute in case it exists in the
-        die. */
+    /*  Pointer to a DW_AT_stmt_list attribute in case
+        it exists in the die. */
     Dwarf_Attribute stmt_list_attr = 0;
 
     /*  Pointer to DW_AT_comp_dir attribute in die. */
@@ -568,7 +577,8 @@ _dwarf_internal_printlines(Dwarf_Die die,
     }
 
     address_size = _dwarf_get_address_size(dbg, die);
-    resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr, error);
+    resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr,
+        error);
     if (resattr != DW_DLV_OK) {
         return resattr;
     }
@@ -600,7 +610,8 @@ _dwarf_internal_printlines(Dwarf_Die die,
     section_start =  dbg->de_debug_line.dss_data;
     {
         Dwarf_Unsigned fission_size = 0;
-        int resfis = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
+        int resfis = _dwarf_get_fission_addition_die(die,
+            DW_SECT_LINE,
             &fission_offset,&fission_size,error);
         if(resfis != DW_DLV_OK) {
             dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
@@ -612,8 +623,8 @@ _dwarf_internal_printlines(Dwarf_Die die,
     line_ptr = orig_line_ptr;
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
 
-    /*  If die has DW_AT_comp_dir attribute, get the string that names
-        the compilation directory. */
+    /*  If die has DW_AT_comp_dir attribute, get the string
+        that names the compilation directory. */
     resattr = dwarf_attr(die, DW_AT_comp_dir, &comp_dir_attr, error);
     if (resattr == DW_DLV_ERROR) {
         return resattr;
@@ -907,7 +918,8 @@ print_actuals_and_locals(Dwarf_Debug dbg,
                 is_actuals_table = true;
                 /* Read Actuals */
 
-                print_line_header(dbg, is_single_table, is_actuals_table);
+                print_line_header(dbg, is_single_table,
+                    is_actuals_table);
                 res = read_line_table_program(dbg,
                     line_ptr_actuals, line_ptr_end, orig_line_ptr,
                     section_start,
