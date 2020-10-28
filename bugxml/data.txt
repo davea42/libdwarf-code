@@ -1,3 +1,26 @@
+id: DW202010-002
+cve: 
+datereported: 2020-10-27
+reportedby: Casper Sun
+vulnerability: A circular DIE tree can corrupt random data.  
+product: libdwarf
+description: An object file where the DIEs form a circular
+  reference due to corruption or a compiler bug 
+  can result in exhausting a fixed size array and
+  writing past its end.
+  A segmentation fault is possible.
+  The code at the point of error was not adjusting
+  the array index properly
+  so an invalid dereference could occur.
+  Now the test code is correct and the error
+  is detected resulting in a normal error return.
+  Additional places where this could occur were
+  identified and the proper test added.
+datefixed: 2020-10-28
+references: regressiontests/c-sun2/globaloverflow
+gitfixid: a7fa8edd640b74daf8e7a442dcec96640875b4fb 
+tarrelease:
+endrec: DW202010-002
 
 id: DW202010-001
 cve: waiting for cve id to be granted
