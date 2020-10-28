@@ -167,6 +167,49 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 }
 #endif /* 0 */
 
+struct die_stack_data_s {
+    Dwarf_Die die_;
+    /*  sibling_die_globaloffset_ is set while processing the DIE.
+        We do not know the sibling global offset
+        when we create the stack entry.
+        If the sibling attribute absent we never know. */
+    Dwarf_Off sibling_die_globaloffset_;
+    /*  We may need is_info here too. */
+    Dwarf_Off cu_die_offset_; /* global offset. */
+    boolean already_printed_;
+};
+static struct die_stack_data_s empty_stack_entry;
+#define DIE_STACK_SIZE 800
+static struct die_stack_data_s die_stack[DIE_STACK_SIZE];
+#define SET_DIE_STACK_ENTRY(i,x,o) { die_stack[i].die_ = x; \
+    die_stack[i].cu_die_offset_ = o;                        \
+    die_stack[i].sibling_die_globaloffset_ = 0;             \
+    die_stack[i].already_printed_ = FALSE; }
+#define EMPTY_DIE_STACK_ENTRY(i) { die_stack[i] = empty_stack_entry; }
+#define SET_DIE_STACK_SIBLING(x) {                          \
+    die_stack[die_stack_indent_level].sibling_die_globaloffset_ = x; }
+
+
+static void
+report_die_stack_error(Dwarf_Debug dbg, Dwarf_Error *err)
+{
+    struct esb_s m;
+   
+    esb_constructor(&m);
+    esb_append_printf_i(&m,
+        "ERROR: compiled in DIE_STACK_SIZE "
+        "(the depth of the DIE tree in this CU)"
+        " of %d exceeded!"
+        " Likely a circular DIE reference."
+        ,DIE_STACK_SIZE);
+    dwarf_error_creation(dbg,err,
+        esb_get_string(&m));
+    print_error_and_continue(dbg,
+        esb_get_string(&m),
+        DW_DLV_OK,*err);
+    esb_destructor(&m);
+}
+
 struct operation_descr_s {
     int op_code;
     int op_count;
@@ -272,31 +315,6 @@ struct operation_descr_s opdesc[]= {
     /* terminator */
     {0,0,""}
 };
-
-struct die_stack_data_s {
-    Dwarf_Die die_;
-    /*  sibling_die_globaloffset_ is set while processing the DIE.
-        We do not know the sibling global offset
-        when we create the stack entry.
-        If the sibling attribute absent we never know. */
-    Dwarf_Off sibling_die_globaloffset_;
-    /*  We may need is_info here too. */
-    Dwarf_Off cu_die_offset_; /* global offset. */
-    boolean already_printed_;
-};
-
-static struct die_stack_data_s empty_stack_entry;
-
-#define DIE_STACK_SIZE 800
-static struct die_stack_data_s die_stack[DIE_STACK_SIZE];
-
-#define SET_DIE_STACK_ENTRY(i,x,o) { die_stack[i].die_ = x; \
-    die_stack[i].cu_die_offset_ = o;                        \
-    die_stack[i].sibling_die_globaloffset_ = 0;             \
-    die_stack[i].already_printed_ = FALSE; }
-#define EMPTY_DIE_STACK_ENTRY(i) { die_stack[i] = empty_stack_entry; }
-#define SET_DIE_STACK_SIBLING(x) {                           \
-    die_stack[die_stack_indent_level].sibling_die_globaloffset_ = x; }
 
 
 /*  The first non-zero sibling offset we can find
@@ -1544,32 +1562,17 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 }
                 return cores;
             }
-
-            die_stack_indent_level++;
-            SET_DIE_STACK_ENTRY(die_stack_indent_level,0,
-                dieprint_cu_goffset);
-            if (die_stack_indent_level >= DIE_STACK_SIZE ) {
-                struct esb_s m;
-
-                esb_constructor(&m);
-                esb_append_printf_i(&m,
-                    "ERROR: compiled in DIE_STACK_SIZE "
-                    "(the depth of the DIE tree in this CU)"
-                    " of %d exceeded!"
-                    ,DIE_STACK_SIZE);
-                dwarf_error_creation(dbg,err,
-                    esb_get_string(&m));
-                print_error_and_continue(dbg,
-                    esb_get_string(&m),
-                    DW_DLV_OK,*err);
-                esb_destructor(&m);
+            if ((1+die_stack_indent_level) >= DIE_STACK_SIZE ) {
+                report_die_stack_error(dbg,err);
                 if (in_die != in_die_in) {
                     dwarf_dealloc_die(in_die);
                 }
                 dwarf_dealloc_die(child);
                 return DW_DLV_ERROR;
-
             }
+            die_stack_indent_level++;
+            SET_DIE_STACK_ENTRY(die_stack_indent_level,0,
+                dieprint_cu_goffset);
             pdacres = print_die_and_children_internal(dbg, child,
                 dieprint_cu_goffset,
                 is_info, srcfiles, cnt,err);
@@ -1816,18 +1819,21 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         /* Print just the Tags and Attributes */
         if (!glflags.gf_display_offsets) {
             /* Print using indentation */
-            printf("%*s%s\n",die_stack_indent_level * 2 + 2," ",tagname);
+            printf("%*s%s\n",die_stack_indent_level * 2 + 2,
+                " ",tagname);
         } else {
             if (glflags.dense) {
                 if (glflags.gf_show_global_offsets) {
                     if (die_indent_level == 0) {
-                        printf("<%d><0x%" DW_PR_DUx "+0x%" DW_PR_DUx " GOFF=0x%"
+                        printf("<%d><0x%" DW_PR_DUx "+0x%" DW_PR_DUx
+                            " GOFF=0x%"
                             DW_PR_DUx ">", die_indent_level,
                             (Dwarf_Unsigned)(overall_offset - offset),
                             (Dwarf_Unsigned)offset,
                                 (Dwarf_Unsigned)overall_offset);
                         } else {
-                        printf("<%d><0x%" DW_PR_DUx " GOFF=0x%" DW_PR_DUx ">",
+                        printf("<%d><0x%" DW_PR_DUx " GOFF=0x%"
+                            DW_PR_DUx ">",
                             die_indent_level,
                             (Dwarf_Unsigned)offset,
                             (Dwarf_Unsigned)overall_offset);
@@ -2473,6 +2479,11 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         esb_constructor_fixed(&specificationstr,buf,sizeof(buf));
         ++die_indent_level;
+        if (die_indent_level >= DIE_STACK_SIZE ) {
+            esb_destructor(&valname);
+            report_die_stack_error(dbg,err);
+            return DW_DLV_ERROR;
+        }
         res = get_attr_value(dbg, tag, die, dieprint_cu_goffset,
             attrib, srcfiles, srcfcnt,
             &specificationstr,glflags.show_form_used,glflags.verbose,
@@ -2548,6 +2559,11 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     atname,esb_get_string(&valname));
             }
             ++die_indent_level;
+            if (die_indent_level >= DIE_STACK_SIZE ) {
+                report_die_stack_error(dbg,err);
+                esb_destructor(&valname);
+                return DW_DLV_ERROR;
+            }
             res =dwarf_CU_dieoffset_given_die(ref_die,
                 &target_die_cu_goff, err);
             if (res != DW_DLV_OK) {
@@ -6534,6 +6550,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         "DW_AT_sibling. Something is corrupted.",
                         ores, *err);
                     return ores;
+                }
+                if (die_stack_indent_level >= DIE_STACK_SIZE ) {
+                    report_die_stack_error(dbg,err);
+                    return DW_DLV_ERROR;
                 }
                 SET_DIE_STACK_SIBLING(off);
                 if (die_overall_offset >= off) {

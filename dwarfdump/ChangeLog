@@ -1,3 +1,12 @@
+2020-10-28: David Anderson
+    * print_die.c: Dwarfbug DW202010-002. In case of
+      a circular DIE tree memory outside of the target
+      DIE stack array would be written to and
+      referenced.  Now we test at all the places
+      the stack index is incremented and print
+      a useful error message.
+    * print_section_groups.c: #if 0 code updating
+      glftab as the table data has never been used.
 2020-10-22: David Anderson
     * command_options.c,dwarfdump.1: The man
       page and the -h (help) output spelled the long-form

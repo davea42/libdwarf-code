@@ -66,7 +66,7 @@ freeall_groups_tables(void)
 
 #define TRUE 1
 #define FALSE 0
-
+#if 0
 static struct  glfsetting_s {
     const char *secname;
     boolean *flag;
@@ -96,7 +96,7 @@ static struct  glfsetting_s {
 {".debug_weaknames",    &glflags.gf_weakname_flag,FALSE,FALSE}, /* SGI only */
 {0,0,0,0}
 };
-
+#endif /* 0 */
 
 /*  If a section is not in group N but is in group 1
     then turn off its flag. Since sections are never
@@ -109,6 +109,7 @@ static struct  glfsetting_s {
     FIXME: It would be good if, for a wholly missing
     section related to a flag, that the flag got turned
     off.  */
+#if 0
 static void
 turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
 {
@@ -132,6 +133,7 @@ turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
     }
 }
 
+#endif
 /*  Restoring original condition in the glftab array
     and in the global flags it points to.
     So that when processing an archive one can restore
@@ -142,11 +144,13 @@ turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
 void
 groups_restore_subsidiary_flags(void)
 {
+#if 0
     unsigned k = 0;
+#endif
 
     /*  Duplicative but harmless free. */
     freeall_groups_tables();
-
+#if 0
     for( ; glftab[k].secname; ++k ) {
         if(glftab[k].origset) {
             *(glftab[k].flag) = glftab[k].origflag;
@@ -154,6 +158,7 @@ groups_restore_subsidiary_flags(void)
             glftab[k].origflag = FALSE;
         }
     }
+#endif
 }
 
 
@@ -169,7 +174,8 @@ groups_restore_subsidiary_flags(void)
     changed.
     */
 void
-update_section_flags_per_groups(Dwarf_Debug dbg)
+update_section_flags_per_groups(
+    UNUSEDARG Dwarf_Debug dbg)
 {
     if (!sec_names) {
         /*  The tables are absent. Internal logic
@@ -185,7 +191,9 @@ update_section_flags_per_groups(Dwarf_Debug dbg)
         freeall_groups_tables();
         return;
     }
+#if 0
     turn_off_subsidiary_flags(dbg);
+#endif
     freeall_groups_tables();
 }
 
