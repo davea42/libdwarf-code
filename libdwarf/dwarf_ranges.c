@@ -94,7 +94,8 @@ read_unaligned_addr_check(Dwarf_Debug dbg,
     If incoming die is NULL there is no context, so do not look
     for a tied file, and address_size is the size
     of the overall object, not the address_size of the context. */
-#define MAX_ADDR ((address_size == 8)?0xffffffffffffffffULL:0xffffffff)
+#define MAX_ADDR ((address_size == 8)? \
+    0xffffffffffffffffULL:0xffffffff)
 int dwarf_get_ranges_a(Dwarf_Debug dbg,
     Dwarf_Off rangesoffset,
     Dwarf_Die die,
@@ -171,7 +172,8 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
             but did get emitted, the note says, but
             the note is probably obsolete (so, now wrong).
             http://llvm.1065342.n5.nabble.com/DebugInfo\
-            -DW-AT-GNU-ranges-base-in-non-fission-td64194.html
+            -DW-AT-GNU-ranges-base-in-non-fission-\
+            td64194.html
             */
         /* ranges_base was merged from tied context. */
         ranges_base = cucontext->cc_ranges_base;

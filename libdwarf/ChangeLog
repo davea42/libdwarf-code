@@ -1,3 +1,6 @@
+2020-10-28: David Anderson
+    * dwarf_ranges.c: Altered lines longer than libdwarf
+      standard.
 2020-10-27: David Anderson
     * dwarf_generic_init.c: Now checks for a null PATH
       passed to dwarf_init_path() or dwarf_init_path_dl()
