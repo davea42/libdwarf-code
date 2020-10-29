@@ -1,4 +1,8 @@
 2020-10-29: David Anderson
+    * libdwarf_version.h: updated version string
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+      dwarf_names_new.h: regenerated with new version string.
+2020-10-29: David Anderson
     * dwarf_print_lines.c: Fixed an old mistake passing
       %d into dwarfstrling_append_printf_u (the value
       in question is unsigned).
