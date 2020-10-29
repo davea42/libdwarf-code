@@ -358,6 +358,146 @@ test5(int tnum)
     dwarfstring_destructor(&g);
     return 0;
 }
+static int
+test6(int tnum)
+{
+    dwarfstring g;
+    char *d = 0;
+    const char *expstr = 0;
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append(&g,0);
+    d = dwarfstring_string(&g);
+    expstr = "";
+    check_string("from append",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_s(&g,"%s",0);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: null string pointer to "
+        "dwarfstring_append_printf_s>";
+    check_string("from _s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_s(&g,0,"abc");
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: null format pointer to "
+        "dwarfstring_append_printf_s>";
+    check_string("from _s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,0,12);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: null format pointer to "
+        "dwarfstring_append_printf_u>";
+    check_string("from _u",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_i(&g,0,12);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: null format pointer to "
+        "dwarfstring_append_printf_i>";
+    check_string("from _i",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_i(&g,"%s",12);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: format %s passed to "
+        "dwarfstring_append_printf_i>";
+    check_string("from _i",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_i(&g,"%x",12);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: format %x or %X passed to "
+        "dwarfstring_append_printf_i>%x";
+    check_string("from _i",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_i(&g,"%Xx",12);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: format %x or %X passed to "
+        "dwarfstring_append_printf_i>%Xx";
+    check_string("from _i",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_i(&g,"%llld",12);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: format has too many %x/d/u/l passed to "
+        "dwarfstring_append_printf_i>";
+    check_string("from _i",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_i(&g,"%+-d",12);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: format disallowed. +- passed to "
+        "dwarfstring_append_printf_i>";
+    check_string("from _i",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,0,43);
+    d = dwarfstring_string(&g);
+    expstr="<ERROR: null format pointer to "
+        "dwarfstring_append_printf_u>";
+    check_string("from _s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"aa%- bb",100);
+    d = dwarfstring_string(&g);
+    expstr="aa<ERROR: format - passed to "
+        "dwarfstring_append_printf_u "
+        "cannot be handled>";
+    check_string("from _u",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"aa%s bb",77);
+    d = dwarfstring_string(&g);
+    expstr="aa<ERROR: format %s passed to "
+        "dwarfstring_append_printf_u "
+        "cannot be handled>";
+    check_string("from _u",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"aa%xXd ubb",77);
+    d = dwarfstring_string(&g);
+    expstr="aa<ERROR: format %x X d u repeats to "
+        "dwarfstring_append_printf_u "
+        "cannot be handled>";
+    check_string("from _u",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"aa%llld ubb",77);
+    d = dwarfstring_string(&g);
+    expstr="aa<ERROR: format % lll to "
+        "dwarfstring_append_printf_u "
+        "cannot be handled>";
+    check_string("from _u",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"aa%ld ubb",77);
+    d = dwarfstring_string(&g);
+    expstr="aa<ERROR: format %d to "
+        "dwarfstring_append_printf_u "
+        "cannot be handled>";
+    check_string("from _u",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+}
 
 
 int main()
@@ -365,8 +505,9 @@ int main()
     test1(1);
     test2(2);
     test3(3);
-    test4(3);
-    test5(3);
+    test4(4);
+    test5(5);
+    test6(6);
     if (errcount) {
         exit(1);
     }

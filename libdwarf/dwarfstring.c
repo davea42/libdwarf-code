@@ -393,7 +393,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
 
     if (!format) {
         format="<ERROR: null format pointer to "
-            "dwarfstring_append_printf_u>";
+            "dwarfstring_append_printf_i>";
     }
     while (format[next] && format[next] != '%') {
         ++next;
@@ -407,10 +407,14 @@ int dwarfstring_append_printf_i(dwarfstring *data,
     next++;
     if (format[next] == '-') {
         minuscount++;
-        return FALSE;
+        next++;
     }
     if (format[next] == '+') {
         pluscount++;
+        next++;
+    }
+    if (format[next] == '-') {
+        minuscount++;
         next++;
     }
     if (format[next] == '0') {
@@ -439,6 +443,10 @@ int dwarfstring_append_printf_i(dwarfstring *data,
         next++;
     }
 #endif /* HAVE_NONSTANDARD_PRINTF_64_FORMAT */
+    if (format[next] == 'l') {
+        lcount++;
+        next++;
+    }
     if (format[next] == 'l') {
         lcount++;
         next++;
@@ -485,7 +493,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
         (Xcount+xcount+dcount+ucount) > 1) {
         /* error */
         dwarfstring_append(data,
-            "<ERROR: format has too many %x/d/u passed to "
+            "<ERROR: format has too many %x/d/u/l passed to "
             "dwarfstring_append_printf_i>");
         /* ESBERR("ESBERR_xcount_etc_i"); */
         return FALSE;
@@ -493,7 +501,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
     if (pluscount && minuscount) {
         /* We don't allow  format +- */
         dwarfstring_append(data,
-            "<ERROR: format disallwed. +- passed to "
+            "<ERROR: format disallowed. +- passed to "
             "dwarfstring_append_printf_i>");
         return FALSE;
     }
@@ -537,7 +545,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
                 dwarfstring_append(data,
                     "<ERROR: v passed to "
                     "dwarfstring_append_printf_i "
-                    " cannot be handled:integer size>");
+                    "cannot be handled:integer size>");
                 /* ESBERR("ESBERR_sizeof_v_i"); */
                 /* error */
                 return FALSE;
@@ -676,9 +684,9 @@ int dwarfstring_append_printf_u(dwarfstring *data,
         dwarfstring_append(data,
             "<ERROR: format - passed to "
             "dwarfstring_append_printf_u "
-            " cannot be handled>");
+            "cannot be handled>");
         /*ESBERR("ESBERR_printf_u - format not supported"); */
-        next++;
+        return FALSE;
     }
     if (format[next] == '0') {
         leadingzero = 1;
@@ -714,6 +722,10 @@ int dwarfstring_append_printf_u(dwarfstring *data,
         lcount++;
         next++;
     }
+    if (format[next] == 'l') {
+        lcount++;
+        next++;
+    }
     if (format[next] == 'u') {
         ucount++;
         next++;
@@ -734,16 +746,23 @@ int dwarfstring_append_printf_u(dwarfstring *data,
         dwarfstring_append(data,
             "<ERROR: format %s passed to "
             "dwarfstring_append_printf_u "
-            " cannot be handled>");
+            "cannot be handled>");
         /* ESBERR("ESBERR_pct_scount_in_u"); */
         return FALSE;
     }
-
     if ( (Xcount +xcount+dcount+ucount) > 1) {
         dwarfstring_append(data,
             "<ERROR: format %x X d u repeats to "
             "dwarfstring_append_printf_u "
-            " cannot be handled>");
+            "cannot be handled>");
+        /* ESBERR("ESBERR_pct_xcount_etc_u"); */
+        return FALSE;
+    }
+    if ( (Xcount +xcount+dcount+ucount) == 0) {
+        dwarfstring_append(data,
+            "<ERROR: format %x X d u missing to "
+            "dwarfstring_append_printf_u "
+            "cannot be handled>");
         /* ESBERR("ESBERR_pct_xcount_etc_u"); */
         return FALSE;
     }
@@ -751,7 +770,7 @@ int dwarfstring_append_printf_u(dwarfstring *data,
         dwarfstring_append(data,
             "<ERROR: format % lll to "
             "dwarfstring_append_printf_u "
-            " cannot be handled>");
+            "cannot be handled>");
         /* ESBERR("ESBERR_pct_lcount_error_u"); */
         /* error */
         return FALSE;
@@ -760,7 +779,7 @@ int dwarfstring_append_printf_u(dwarfstring *data,
         dwarfstring_append(data,
             "<ERROR: format %d to "
             "dwarfstring_append_printf_u "
-            " cannot be handled>");
+            "cannot be handled>");
         /*ESBERR("ESBERR_pct_dcount_error_u");*/
         /* error */
         return FALSE;
