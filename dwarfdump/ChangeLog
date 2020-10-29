@@ -1,3 +1,10 @@
+2020-10-29: David Anderson
+    * print_die.c: Factored out the indent-spaces code
+      into static function print_indent_prefix().
+      For now there is no change in output format,
+      though for large indents (greater than around 6)
+      the spacing gets so large the output becomes
+      unreadable.
 2020-10-28: David Anderson
     * print_die.c: Dwarfbug DW202010-002. In case of
       a circular DIE tree memory outside of the target

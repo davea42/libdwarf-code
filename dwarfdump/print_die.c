@@ -316,6 +316,11 @@ struct operation_descr_s opdesc[]= {
     {0,0,""}
 };
 
+static void
+print_indent_prefix(int indent)
+{
+    printf("%*s",indent," ");
+}
 
 /*  The first non-zero sibling offset we can find
     is what we want to return. The lowest sibling
@@ -410,6 +415,8 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
                     "0x%"  DW_PR_XZEROS DW_PR_DUx
                     ", the DIE tree is erroneous.",
                     innersiboffset);
+                esb_append_printf_i(&pm,
+                    "Die indent level; %d",i);
                 print_error_and_continue(dbg,
                     esb_get_string(&pm),
                     DW_DLV_OK,ouerr);
@@ -1799,7 +1806,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             " GOFF=0x%" DW_PR_XZEROS DW_PR_DUx "> ",
             die_indent_level, (Dwarf_Unsigned)offset,
             (Dwarf_Unsigned)overall_offset);
-        printf("%*s%s\n",die_indent_level * 2 + 2," ",tagname);
+        print_indent_prefix(die_indent_level * 2 + 2);
+        printf("%s\n",tagname);
     }
 
     /* Print the die */
@@ -1819,8 +1827,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         /* Print just the Tags and Attributes */
         if (!glflags.gf_display_offsets) {
             /* Print using indentation */
-            printf("%*s%s\n",die_stack_indent_level * 2 + 2,
-                " ",tagname);
+            print_indent_prefix(die_indent_level * 2 + 2);
+            printf("%s\n",tagname);
         } else {
             if (glflags.dense) {
                 if (glflags.gf_show_global_offsets) {
@@ -1893,7 +1901,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 }
 
                 /* Print using indentation */
-                printf("%*s%s",die_indent_level * 2 + 2," ",tagname);
+                print_indent_prefix(die_indent_level * 2 + 2);
+                printf("%s",tagname);
                 if (glflags.verbose) {
                     Dwarf_Off agoff = 0;
                     Dwarf_Unsigned acount = 0;
@@ -1998,9 +2007,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             /* Print using indentation */
             if (!glflags.dense && PRINTING_DIES &&
                 print_else_name_match) {
-
-                printf("%*s",die_indent_level * 2 + 2 + nColumn,
-                    " ");
+                print_indent_prefix(die_indent_level * 2 + 
+                    2 + nColumn);
             }
             {
                 boolean attr_match_localb = FALSE;
@@ -2352,8 +2360,8 @@ do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
         " CU-GOFF=0x%" DW_PR_XZEROS DW_PR_DUx
         "> ",
         level, loff, goff,cu_die_goff);
-    printf("%*s%s -> %s\n",level * 2 + 2,
-        " ",atname,valname);
+    print_indent_prefix(level * 2 + 2);
+    printf("%s -> %s\n",atname,valname);
 }
 
 /*  DW_FORM_data16 should not apply here. */
