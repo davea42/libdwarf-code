@@ -119,7 +119,7 @@ static const uint32_t crc32_table[256] =
 /*  The following is essentially identical
     to every crc32 anyone uses up to trivial
     differences in starting conditions.
-    The alogorithm appears on 
+    The alogorithm appears on
     https://en.wikipedia.org/wiki/Cyclic_redundancy_check
     in a simple logic loop (written in no actual
     language but English) and the following is a translation
@@ -128,7 +128,7 @@ static const uint32_t crc32_table[256] =
 unsigned int
 _dwarf_crc32 (unsigned int crc, const unsigned char *buf, size_t len)
 {
-  const unsigned char *end;
+  const unsigned char *end = 0;
 
   crc = ~crc;
   for (end = buf + len; buf < end; ++buf)
