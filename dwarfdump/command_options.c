@@ -750,7 +750,7 @@ enum longopts_vals {
   OPT_FORMAT_SUPPRESS_GROUP  ,  /* -x   --format-suppress-group    */
   OPT_FORMAT_SUPPRESS_LOOKUP,   /* -n   --format-suppress-lookup   */
   OPT_FORMAT_SUPPRESS_OFFSETS,  /* -D   --format-suppress-offsets  */
- OPT_FORMAT_SUPPRESS_SANITIZE, /* -x no-sanitize-strings --format-suppress-sanitize  */
+  OPT_FORMAT_SUPPRESS_SANITIZE, /* -x no-sanitize-strings --format-suppress-sanitize  */
   OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri      */
   OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg  */
 

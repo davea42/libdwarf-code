@@ -194,7 +194,7 @@ static void
 report_die_stack_error(Dwarf_Debug dbg, Dwarf_Error *err)
 {
     struct esb_s m;
-   
+
     esb_constructor(&m);
     esb_append_printf_i(&m,
         "ERROR: compiled in DIE_STACK_SIZE "
@@ -2007,7 +2007,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             /* Print using indentation */
             if (!glflags.dense && PRINTING_DIES &&
                 print_else_name_match) {
-                print_indent_prefix(die_indent_level * 2 + 
+                print_indent_prefix(die_indent_level * 2 +
                     2 + nColumn);
             }
             {
