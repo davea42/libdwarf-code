@@ -132,7 +132,9 @@ test1(int tnum)
     /* in this call a %x is not allowed */
     res = dwarfstring_append_printf_i(&g,"\nabc%x\n",-54);
     check_value("expected error  ",FALSE,res,__LINE__);
-    check_string("expected ",(char *)"\nabc%x\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",
+        (char *)"\nabc<ERROR: format %x or %X passed to dwarfstring_append_printf_i>%x\n",
+        dwarfstring_string(&g),__LINE__);
     dwarfstring_reset(&g);
 
     res = dwarfstring_append_printf_u(&g,"\nabc%x\n",-54);
@@ -354,7 +356,6 @@ test5(int tnum)
     expstr = "longlead (00000020) -end";
     check_string("from pct-s",(char *)expstr,d,__LINE__);
     dwarfstring_destructor(&g);
-    return 0;
     return 0;
 }
 
