@@ -108,7 +108,7 @@ print_line_detail(
             regs->lr_address);
         dwarfstring_append_printf_u(&m1,"/%01u",regs->lr_op_index);
         dwarfstring_append_printf_u(&m1," %5lu", regs->lr_line);
-        dwarfstring_append_printf_u(&m1," %3d",regs->lr_isa);
+        dwarfstring_append_printf_u(&m1," %3u",regs->lr_isa);
         dwarfstring_append_printf_i(&m1,"   %1d",
             regs->lr_basic_block);
         dwarfstring_append_printf_i(&m1,"%1d\n",

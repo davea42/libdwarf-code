@@ -1,3 +1,10 @@
+2020-10-29: David Anderson
+    * dwarf_print_lines.c: Fixed an old mistake passing
+      %d into dwarfstrling_append_printf_u (the value
+      in question is unsigned).
+    * dwarfstring.c: If a caller passes in something bogus
+      dwarfstring now adds specifics with "ERROR:"
+      to the output dwarfstring as well as returning FALSE.
 2020-10-28: David Anderson
     * dwarf_print_lines.c: In case of corrupted
       DWARF5 line header the fi_file_name field
