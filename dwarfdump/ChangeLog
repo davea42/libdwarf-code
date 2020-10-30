@@ -1,3 +1,6 @@
+2020-10-30: David Anderson
+    * esb.c,esb.h,uri.c: Removed trailing whitespace,
+      shortened a few lines.
 2020-10-29: David Anderson
     * command_options.c,print_die.c: Fix indents, remove
       trailing whitespace.

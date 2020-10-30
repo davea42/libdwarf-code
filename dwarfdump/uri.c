@@ -435,7 +435,8 @@ mytest(char *in,char *expected,int testnum)
     esb_constructor(&out);
     translate_to_uri(in, &out);
     if (strcmp(expected, esb_get_string(&out))) {
-        printf(" Fail test %d expected %s got %s\n",testnum,expected,esb_get_string(&out));
+        printf(" Fail test %d expected %s got %s\n",
+            testnum,expected,esb_get_string(&out));
         ++errcnt;
     }
     esb_destructor(&out);

@@ -98,7 +98,8 @@ void esb_close_null_device(void);
 void esb_append(struct esb_s *data, const char * in_string);
 
 /* The 'len' is believed. Do not pass in strings < len bytes long. */
-void esb_appendn(struct esb_s *data, const char * in_string, size_t len);
+void esb_appendn(struct esb_s *data,
+    const char * in_string, size_t len);
 
 /* Always returns an empty string or a non-empty string. Never 0. */
 char * esb_get_string(struct esb_s *data);
@@ -117,8 +118,10 @@ size_t esb_string_len(struct esb_s *data);
 /* *data is presumed to contain garbage, not values, and
    is properly initialized. */
 void esb_constructor(struct esb_s *data);
-void esb_constructor_rigid(struct esb_s *data,char *buf,size_t buflen);
-void esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen);
+void esb_constructor_rigid(struct esb_s *data,
+    char *buf,size_t buflen);
+void esb_constructor_fixed(struct esb_s *data,
+    char *buf,size_t buflen);
 
 void esb_force_allocation(struct esb_s *data, size_t minlen);
 
@@ -127,16 +130,20 @@ void esb_destructor(struct esb_s *data);
 
 
 /* To get all paths in the code tested, this sets the
-   allocation/reallocation to the given value, which can be quite small
+   allocation/reallocation to the given value,
+   which can be quite small
    but must not be zero. */
 void esb_alloc_size(size_t size);
 size_t esb_get_allocated_size(struct esb_s *data);
 
 /* Append a formatted string */
 void esb_append_printf(struct esb_s *data,const char *format, ...);
-void esb_append_printf_s(struct esb_s *data,const char *format,const char *s);
-void esb_append_printf_i(struct esb_s *data,const char *format,esb_int);
-void esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned);
+void esb_append_printf_s(struct esb_s *data,
+    const char *format,const char *s);
+void esb_append_printf_i(struct esb_s *data,
+    const char *format,esb_int);
+void esb_append_printf_u(struct esb_s *data,
+    const char *format,esb_unsigned);
 
 /* Get a copy of the internal data buffer */
 char * esb_get_copy(struct esb_s *data);

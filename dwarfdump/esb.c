@@ -201,7 +201,8 @@ esb_force_allocation(struct esb_s *data, size_t minlen)
     For strlen(in_string) > len bytes we take the initial len bytes.
     len does not include the trailing NUL. */
 static void
-esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
+esb_appendn_internal(struct esb_s *data,
+    const char * in_string, size_t len)
 {
     size_t remaining = 0;
     size_t needed = len;
@@ -235,7 +236,8 @@ esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
 
 /* len >= strlen(in_string) */
 void
-esb_appendn(struct esb_s *data, const char * in_string, size_t len)
+esb_appendn(struct esb_s *data,
+    const char * in_string, size_t len)
 {
     size_t full_len = strlen(in_string);
 
@@ -361,7 +363,8 @@ esb_get_allocated_size(struct esb_s *data)
 static void
 esb_appendn_internal_spaces(struct esb_s *data,size_t l)
 {
-    static char spacebuf[] = {"                                       "};
+    static char spacebuf[] =
+        {"                                       "};
     size_t charct = sizeof(spacebuf)-1;
     while (l > charct) {
         esb_appendn_internal(data,spacebuf,charct);
@@ -374,7 +377,8 @@ esb_appendn_internal_spaces(struct esb_s *data,size_t l)
 static void
 esb_appendn_internal_zeros(struct esb_s *data,size_t l)
 {
-    static char zeros[] = {"0000000000000000000000000000000000000000"};
+    static char zeros[] =
+        {"0000000000000000000000000000000000000000"};
     size_t charct = sizeof(zeros)-1;
     while (l > charct) {
         esb_appendn_internal(data,zeros,charct);
@@ -385,7 +389,8 @@ esb_appendn_internal_zeros(struct esb_s *data,size_t l)
 }
 
 void
-esb_append_printf_s(struct esb_s *data,const char *format,const char *s)
+esb_append_printf_s(struct esb_s *data,
+    const char *format,const char *s)
 {
     size_t stringlen = strlen(s);
     size_t next = 0;
@@ -480,7 +485,8 @@ static char Xtable[16] = {
    %u   %5u %05u (and ld and lld too).
    %x   %5x %05x (and ld and lld too).  */
 void
-esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
+esb_append_printf_u(struct esb_s *data,
+    const char *format,esb_unsigned v)
 {
     size_t next = 0;
     long val = 0;
@@ -654,7 +660,8 @@ static char v64m[] = {"-9223372036854775808"};
 /*  We deal with formats like:
     %d   %5d %05d %+d %+5d (and ld and lld too). */
 void
-esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
+esb_append_printf_i(struct esb_s *data,
+    const char *format,esb_int v)
 {
     size_t next = 0;
     long val = 0;
@@ -829,12 +836,14 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
                         esb_appendn_internal(data,"-",1);
                         esb_appendn_internal_zeros(data,prefixcount);
                         digptr++;
-                        esb_appendn_internal(data,digptr,digcharlen-1);
+                        esb_appendn_internal(data,
+                            digptr,digcharlen-1);
                     } else if (*digptr == '+') {
                         esb_appendn_internal(data,"+",1);
                         esb_appendn_internal_zeros(data,prefixcount);
                         digptr++;
-                        esb_appendn_internal(data,digptr,digcharlen-1);
+                        esb_appendn_internal(data,
+                            digptr,digcharlen-1);
                     } else {
                         esb_appendn_internal_zeros(data,prefixcount);
                         esb_appendn_internal(data,digptr,digcharlen);
