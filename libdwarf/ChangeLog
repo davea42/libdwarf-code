@@ -1,3 +1,13 @@
+2020-10-31: David Anderson
+    * dwarf_line.h: Removed a FIXME comment that no longer applies.
+    * dwarf_die_deliv.c: Now compares and reports
+      signature variance when
+      the DWARF4 GNU extension DW_AT_[GNU_]dwo_id used
+      with DWARF4  extension split dwarf.
+    * dwarf_errmsg_list.h: Adds DW_DLE_SIGNATURE_MISMATCH.
+    * dwarf_line.h: Deleted three obsolete comment lines.
+    * libdwarf.h.in: Added DW_DLE_SIGNATURE_MISMATCH.
+    * generated_libdwarf.h.in: Regenerated.
 2020-10-29: David Anderson
     * dwarf_generic_init.c: Remove trailing whitepace.
     * dwarf_crc32.c: Added initializer to conform

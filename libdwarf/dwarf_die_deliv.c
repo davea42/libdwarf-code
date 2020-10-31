@@ -1143,9 +1143,20 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                         cucon->cc_signature = signature;
                         cucon->cc_signature_present = TRUE;
                     } else {
-                        /*  Something wrong. Two styles ?
-                            Do what? verify the same sig?
-                            FIXME */
+                        /*  Something wrong. Two styles of sig?
+                            Can happen with DWARF4
+                            debug-fission extension DWO_id.  
+                        */
+                        if (memcmp(&signature,&cucon->cc_signature,
+                            sizeof(signature))) {
+                            /*  The two sigs do not match! */
+                            const char *m="DW_DLE_SIGNATURE_MISMATCH"
+                                "DWARF4 extension fission signature"
+                                " and DW_AT_GNU_dwo_id do not match"
+                                " ignoring DW_AT[_GNU]_dwo_id";
+                            dwarf_insert_harmless_error(dbg,
+                                (char*)m);
+                        }
                     }
                 } else {
                     /* Something is badly wrong. */

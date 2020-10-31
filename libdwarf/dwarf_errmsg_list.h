@@ -554,7 +554,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_SUP_ERROR(477). .debug_sup data corruption",
     "DW_DLE_LOCATION_ERROR(478). A location processing libdwarf error",
     "DW_DLE_DEBUGLINK_PATH_SHORT(479) Buffer provided for GNU debuglink is too small",
-
-
+    "DW_DLE_SIGNATURE_MISMATCH(480) DWARF4 extension dwo_id and dwarf5signature present but they do not match!",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

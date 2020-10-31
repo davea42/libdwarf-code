@@ -387,9 +387,6 @@ int _dwarf_internal_srclines(Dwarf_Die die,
     planned for in the  design of .debug_line)
     is too tricky to recode this several times and keep
     it right.
-
-    As it is the code starting up line-reading is duplicated
-    and that is just wrong to do. FIXME!
 */
 #define LOP_EXTENDED 1
 #define LOP_DISCARD  2
