@@ -61,12 +61,18 @@ if (!m || m->mc_sentinel != MC_SENTINAL) {  \
     Each macro unit ends with an entry
     containing an opcode of 0. */
 
-static const Dwarf_Small dwarf_udata_string_form[]  = {DW_FORM_udata,DW_FORM_string};
-static const Dwarf_Small dwarf_udata_udata_form[]   = {DW_FORM_udata,DW_FORM_udata};
-static const Dwarf_Small dwarf_udata_strp_form[]    = {DW_FORM_udata,DW_FORM_strp};
-static const Dwarf_Small dwarf_udata_strp_sup_form[] = {DW_FORM_udata,DW_FORM_strp_sup};
-static const Dwarf_Small dwarf_secoffset_form[]     = {DW_FORM_sec_offset};
-static const Dwarf_Small dwarf_udata_strx_form[]    = {DW_FORM_udata,DW_FORM_strx};
+static const Dwarf_Small dwarf_udata_string_form[] =
+    {DW_FORM_udata,DW_FORM_string};
+static const Dwarf_Small dwarf_udata_udata_form[]  =
+    {DW_FORM_udata,DW_FORM_udata};
+static const Dwarf_Small dwarf_udata_strp_form[]   =
+    {DW_FORM_udata,DW_FORM_strp};
+static const Dwarf_Small dwarf_udata_strp_sup_form[] =
+    {DW_FORM_udata,DW_FORM_strp_sup};
+static const Dwarf_Small dwarf_secoffset_form[]    =
+    {DW_FORM_sec_offset};
+static const Dwarf_Small dwarf_udata_strx_form[]   =
+    {DW_FORM_udata,DW_FORM_strx};
 
 struct Dwarf_Macro_Forms_s dw5formsarray[] = {
     {0,0,0},
@@ -91,7 +97,8 @@ struct Dwarf_Macro_Forms_s dw5formsarray[] = {
 
 /* Represents DWARF 5 macro info */
 /* .debug_macro predefined, in order by value  */
-static const struct Dwarf_Macro_OperationsList_s dwarf_default_macro_opslist = {
+static const struct Dwarf_Macro_OperationsList_s
+    dwarf_default_macro_opslist = {
 13, dw5formsarray
 };
 
@@ -275,7 +282,8 @@ dump_bytes(Dwarf_Small * start, long len)
     Dwarf_Small *cur = start;
     unsigned pos = 0;
 
-    printf("dump %ld bytes, start at 0x%lx\n",len,(unsigned long)start);
+    printf("dump %ld bytes, start at 0x%lx\n",
+        len,(unsigned long)start);
     printf("0x");
     for (; cur < end;pos++, cur++) {
         if (!(pos %4)) {
@@ -550,7 +558,8 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
             *macro_string = "<Error: getting local .debug_str>";
             return res;
         } else if (res == DW_DLV_NO_ENTRY) {
-            *macro_string = "<Error: NO_ENTRY on .debug_string (strp)>";
+            *macro_string = "<Error: NO_ENTRY on "
+                ".debug_string (strp)>";
         } else {
             *macro_string = (const char *)localstr;
         }
@@ -568,7 +577,8 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         DECODE_LEB128_UWORD_CK(mdata,linenum, dbg, error,endptr);
         *line_number = linenum;
         mdata_copy = mdata;
-        DECODE_LEB128_UWORD_CK(mdata_copy,stringindex, dbg, error,endptr);
+        DECODE_LEB128_UWORD_CK(mdata_copy,stringindex,
+            dbg, error,endptr);
         /* mdata_copy is for call below */
 
 
@@ -592,7 +602,9 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
 
             *index = stringindex;
             *offset = offsettostr;
-            ress = _dwarf_extract_local_debug_str_string_given_offset(dbg,
+            ress =
+                _dwarf_extract_local_debug_str_string_given_offset(
+                dbg,
                 form1,
                 offsettostr,
                 &localstr,
@@ -776,14 +788,16 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
         *name_index_to_line_tab = srcindex;
         /*  For DWARF 2,3,4, decrement by 1.
             FOR DWARF 5 do not decrement. */
-        if(macro_context->mc_version_number >= 5) {
+        if(macro_context->mc_version_number = 5) {
             trueindex = srcindex;
             if (trueindex < 0) {
-                *src_file_name = "<source-file-index-low-no-name-available>";
+                *src_file_name =
+                    "<source-file-index-low-no-name-available>";
                 return DW_DLV_OK;
             }
             if (trueindex < macro_context->mc_srcfiles_count) {
-                *src_file_name = macro_context->mc_srcfiles[trueindex];
+                *src_file_name =
+                    macro_context->mc_srcfiles[trueindex];
                 return DW_DLV_OK;
             } else {
                 *src_file_name =
@@ -791,15 +805,19 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
                 return DW_DLV_OK;
             }
         } else {
+            /* All except DWARF5 */
             /* Unsigned to signed here. */
             trueindex = srcindex;
-            /* Protects against crazy big srcindex, overflow territory. */
+            /*  Protects against crazy big srcindex,
+                overflow territory. */
             if (trueindex < 0 ) {
                 /* Something insane here. */
-                *src_file_name = "<source-file-index-low-no-name-available>";
+                *src_file_name =
+                    "<source-file-index-low-no-name-available>";
                 return DW_DLV_OK;
             }
-            /* Protects against crazy big srcindex, overflow territory. */
+            /*  Protects against crazy big srcindex,
+                overflow territory. */
             if (trueindex > (macro_context->mc_srcfiles_count+1)) {
                 /* Something insane here. */
                 *src_file_name =
@@ -809,18 +827,21 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
             --trueindex;
             if (trueindex > macro_context->mc_srcfiles_count) {
                 *src_file_name =
-                    "<adjusted-source-file-index-high-no-name-available>";
+                    "<adjusted-source-file-index-high-"
+                    "no-name-available>";
             }
             if (srcindex > 0 &&
                 trueindex < macro_context->mc_srcfiles_count) {
-                *src_file_name = macro_context->mc_srcfiles[trueindex];
+                *src_file_name =
+                    macro_context->mc_srcfiles[trueindex];
             } else {
-                const char *mcatcomp = construct_at_path_from_parts(
-                    macro_context);
+                const char *mcatcomp =
+                    construct_at_path_from_parts(macro_context);
                 if(mcatcomp) {
                     *src_file_name = mcatcomp;
                 } else {
-                    *src_file_name = "<no-source-file-name-available>";
+                    *src_file_name =
+                    "<no-source-file-name-available>";
                 }
             }
         }
@@ -1033,13 +1054,16 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         if (opcode_number  > DW_MACRO_undef_strx ) {
             Dwarf_Half k = 0;
             for(k = 0; k < formcount; ++k) {
-                if (!valid_macro_form(curformentry->mf_formbytes[k])) {
-                    _dwarf_error(dbg, error, DW_DLE_MACRO_OP_UNHANDLED);
+                if (!valid_macro_form(
+                    curformentry->mf_formbytes[k])) {
+                    _dwarf_error(dbg, error,
+                        DW_DLE_MACRO_OP_UNHANDLED);
                     return (DW_DLV_ERROR);
                 }
             }
         }
-        res = validate_opcode(macro_context->mc_dbg,curformentry, error);
+        res = validate_opcode(macro_context->mc_dbg,
+            curformentry, error);
         if(res != DW_DLV_OK) {
             return res;
         }
@@ -1169,13 +1193,15 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     }
     resattr = dwarf_attr(die, DW_AT_macros, &macro_attr, error);
     if (resattr == DW_DLV_NO_ENTRY) {
-        resattr = dwarf_attr(die, DW_AT_GNU_macros, &macro_attr, error);
+        resattr = dwarf_attr(die, DW_AT_GNU_macros,
+            &macro_attr, error);
     }
     if (resattr != DW_DLV_OK) {
         return resattr;
     }
     if (!offset_specified) {
-        lres = dwarf_global_formref(macro_attr, &macro_offset, error);
+        lres = dwarf_global_formref(macro_attr,
+            &macro_offset, error);
         if (lres != DW_DLV_OK) {
             dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
             return lres;
@@ -1311,7 +1337,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-    if ((section_base + DWARF_HALF_SIZE + sizeof(Dwarf_Small)) >                     section_end ) {
+    if ((section_base + DWARF_HALF_SIZE + sizeof(Dwarf_Small)) >
+        section_end ) {
         dealloc_macro_srcfiles(srcfiles,srcfilescount);
         dwarf_dealloc_macro_context(macro_context);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
