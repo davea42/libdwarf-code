@@ -285,14 +285,18 @@ create_fullest_file_path(Dwarf_Debug dbg,
 
     In DWARF2,3,4 the array of sourcefiles is represented
     differently than DWARF5.
-    DWARF 2,3,4,:
-        Take the line number from macro information or lines data
-        and subtract 1 to  index into srcfiles.  Any with line
-        number zero can be assumed to refer to DW_AT_name from the
-        CU DIE, but zero really means "no file".
+    DWARF 2,3,4, and experimental line table:
+        Subtract 1 from the DW_AT_decl_file etc
+        to index into the array of names.
+        zero means there is no file.
     DWARF 5:
-        Just like DW4, but  index 1 refers to the
-        same string as DW_AT_name of the CU DIE.
+        DW_AT_decl_file etc numbers should be directly
+        used to index into the array of names.
+        Do not subtract anything.
+    For further information
+    see the discussion of dwarf_srcfiles() in
+    libdwarf2.1.pdf version 3.16 and later, Section
+    6.14 around page 117.
 */
 int
 dwarf_srcfiles(Dwarf_Die die,

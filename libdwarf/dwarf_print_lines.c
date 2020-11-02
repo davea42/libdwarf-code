@@ -312,7 +312,11 @@ print_just_file_entry_details(Dwarf_Debug dbg,
     Dwarf_File_Entry fe = line_context->lc_file_entries;
     Dwarf_File_Entry fe2 = fe;
     dwarfstring m3;
+    unsigned increment = 1;
 
+    if (line_context->lc_version_number == DW_LINE_VERSION5 ) {
+        increment = 0;
+    }
     dwarfstring_constructor_static(&m3,locallinebuf,
         sizeof(locallinebuf));
     dwarfstring_append_printf_i(&m3,
@@ -326,7 +330,7 @@ print_just_file_entry_details(Dwarf_Debug dbg,
 
         fe = fe2;
         tlm2 = fe->fi_time_last_mod;
-        filenum = fiu+1;
+        filenum = fiu+increment;
 
         /*  The space character at the end of line is silly,
             but lets leave it there for the moment to avoid

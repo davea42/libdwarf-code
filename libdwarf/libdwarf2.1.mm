@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.15, 13 October 2020
+.ds vE Rev 3.16, 1 November 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -220,6 +220,15 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+The description of dwarf_srcfiles()
+now reflects the difference
+in line table handling between
+DWARF5  and other line table versions.
+If using dwarf_srcfiles() do
+read its documentation here
+(Section 6.14, page 117 in this
+version).
 .P
 Added functions dwarf_crc32()
 and dwarf_basic_crc32()
@@ -7971,6 +7980,83 @@ in current DWARF standards is referred to as the Line
 Table Header) are returned.
 .H 3 dwarf_srcfiles()
 This works for for all line tables.
+However indexing is different
+in DWARF5 than in other versions of dwarf.
+To understand the DWARF5 version
+look at the following
+which explains a contradiction in the DWARF5
+document and how libdwarf (and at least some
+compilers) resolve it.
+Join the next two strings together with no spaces
+to recreate the web reference.
+.P
+If the applicable file name in the line
+table Statement Program Prolog
+does not start with a '/' character
+the string in \f(CWDW_AT_comp_dir\fP
+(if applicable and present)
+and the applicable
+directory name from the line Statement Program Prolog
+is prepended to the
+file name in the line table Statement Program Prolog
+to make a full path.
+.P
+For all versions of dwarf this function
+and dwarf_linesrc() prepend the value
+of DW_AT_co prepend the value
+of DW_AT_comp_dir to the name created
+from the line table header file names and directory
+names if the line table header name(s) are not
+full paths.mp_dir to the name created
+from the line table header file names and directory
+names if the line table header name(s) are not
+full paths. 
+.P
+http://wiki.dwarfstd.org/index.php?title
+=DWARF5_Line_Table_File_Numbers
+.P
+It may help understand the file tables
+and dwarf_srcfiles() to
+use \f(CWdwarfdump\fP.
+The 
+\f(CWdwarfdump\fP
+utility program now
+will print the dwarf_srcfiles() values
+in addition to the compilation unit
+DIE and the line table header details
+(and much more)
+if one does "dwarfdump -vvv -i -l <objfilename>"
+or  "dwarfdump -vvv -a <objfilename>"
+for example.
+Since the output can be large, with your editor
+focus on lines beginning with "COMPILE_UNIT"
+(do not type the quotes) to quickly get to the
+CU die and the line table for that CU as those
+tend to be far apart in the output.
+
+.P
+DWARF5:
+\f(CWDW_MACRO_start_file\fP,
+\f(CWDW_LNS_set_file\fP,
+\f(CWDW_AT_decl_file\fP,
+\f(CWDW_AT_call_file\fP,
+and the line table state machine
+file numbers begin at zero.  To index srcfiles
+use the values directly with no subtraction.
+.P
+DWARF2-4 and experimental line table:
+\f(CWDW_MACINFO_start_file\fP,
+\f(CWDW_LNS_set_file\fP,
+\f(CWDW_AT_decl_file\fP,
+and line table state machine
+file numbers begin at one.
+In all these the value of 0 means
+there is no source file or source file name.
+To index the srcfiles array
+subtract one from the 
+\f(CWDW_AT_decl_file\fP (etc)
+file number.
+.P
 .DS
 \f(CWint dwarf_srcfiles(
         Dwarf_Die die,
@@ -7990,7 +8076,8 @@ Source files defined in the statement program are ignored.
 The given \f(CWdie\fP should have the tag
 \f(CWDW_TAG_compile_unit\fP,
 \f(CWDW_TAG_partial_unit\fP,
-or \f(CWDW_TAG_type_unit\fP
+or 
+\f(CWDW_TAG_type_unit\fP
 .
 The location pointed to by \f(CWsrcfiles\fP is set to point to a list
 of pointers to null-terminated strings that name the source
@@ -8011,34 +8098,6 @@ It returns
 if there is no
 corresponding statement program (i.e., 
 if there is no line information).
-.P
-It requires a little care to index into the
-\f(CWsrcfiles\fP
-array
-using the
-\f(CWDW_AT_decl_file\fP
-or 
-\f(CWDW_AT_decl_call_file\fP
-values.
-.P
-The value zero (0) is reserved and means
-such zero-value attributes do not refer to any
-file name.
-.P
-If value is non-zero subtract one (1) from the value
-and use that to index the 
-\f(CWsrcfiles\fP
-array.
-Of course being careful that the index is
-not too large for the array.
-.P
-For DWARF5 an index of 0 (meaning  value-1)
-refers to the compilation unit value identical
-to 
-\f(CWDW_AT_name \fP.
-For earlier DWARF it refers to some file
-referenced in the compilation unit, but not
-any special file.
 
 .P
 .in +2
@@ -8148,6 +8207,8 @@ The function \f(CWdwarf_line_srcfileno()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*returned_fileno\fP to
 the source statement line
 number corresponding to the descriptor \f(CWfile number\fP.
+.P
+DWARF2-4 and experimental:
 When the number returned through \f(CW*returned_fileno\fP is zero it means
 the file name is unknown (see the DWARF2/3 line table specification).
 When the number returned through \f(CW*returned_fileno\fP is non-zero
@@ -8161,6 +8222,12 @@ The file number may exceed the size of
 the array of strings returned by \f(CWdwarf_srcfiles()\fP
 because \f(CWdwarf_srcfiles()\fP does not return files names defined with
 the  \f(CWDW_DLE_define_file\fP  operator.
+.P
+DWARF5: 
+To index into the array of strings returned by 
+\f(CWdwarf_srcfiles()\fP 
+use the number returned through \f(CW*returned_fileno\fP.
+.P
 The function \f(CWdwarf_line_srcfileno()\fP returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 

@@ -1,3 +1,13 @@
+2020-11-01: David Anderson
+    * dwarf_line.c: Corrected the comments for dwarf_srcfiles().
+    * dwarf_print_lines.c: When turning a DW_LNS file to
+      a name, do it correctly.
+    * libdwarf2.1.mm: Rev 3.16. Document dwarf_srclines()
+      more fully and correctly. Refer to dwarfstd.org
+      for more information on DWARF file numbers.
+      dwarf_srcfileno() is also more fully
+      and more correctly described. DWARF5 differs.
+    * libdwarf2.1.pdf: Rev 3.16. Regenerated.
 2020-10-31: David Anderson
     * dwarf_line.h: Removed a FIXME comment that no longer applies.
     * dwarf_die_deliv.c: Now compares and reports
