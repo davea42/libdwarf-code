@@ -1,3 +1,11 @@
+2020-11-01: David Anderson
+    * print_die.c: With -vvv dwarfdump now prints
+      the array dwarf_srcfiles generates so library
+      users can compare the compilation unit, its
+      line table header, and what dwarf_srcfile()
+      provides. DW_AT_decl_file and DW_AT_call_file
+      now result (in printing attributes) in the right
+      source file printing.
 2020-10-30: David Anderson
     * esb.c,esb.h,uri.c: Removed trailing whitespace,
       shortened a few lines.

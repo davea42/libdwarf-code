@@ -1704,6 +1704,32 @@ dealloc_local_atlist(Dwarf_Debug dbg,
 #define PRINTING_DIES (glflags.gf_do_print_dwarf || \
     (glflags.gf_record_dwarf_error && glflags.gf_check_verbose_mode))
 
+static void
+print_srcfiles( char **srcfiles,Dwarf_Signed srcfcnt)
+{
+    Dwarf_Signed i = 0;
+    const char * cntstr = "  [%" DW_PR_DSd "]";
+
+    printf("  dwarf_srcfiles() returned strings. Count = %"
+        DW_PR_DSd ".\n",srcfcnt);
+    if (srcfcnt < 0) {
+        glflags.gf_count_major_errors++;
+        printf("ERROR: dwarf_srcfiles count less than zero "
+            "which should be impossible. Ignoring srcfiles.");
+        return;
+    }
+    if (srcfcnt > 9) {
+        if (srcfcnt > 99) {
+          cntstr = "  [%3" DW_PR_DSd "]";
+        } else { 
+          cntstr = "  [%2" DW_PR_DSd "]";
+        }
+    } 
+    for ( ; i < srcfcnt; ++i) {
+        printf(cntstr,i);
+        printf(" %s\n",sanitized(srcfiles[i]));
+    }
+}
 /*  If print_else_name_match is FALSE,
     check for attribute  matches with -S
     inr print_attribute, and if found,
@@ -1938,6 +1964,10 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 fputs("\n",stdout);
             }
         }
+    }
+    if ((glflags.verbose > 2) && (die_indent_level == 0) &&
+        srcfcnt  && PRINTING_DIES) {
+        print_srcfiles(srcfiles,srcfcnt);
     }
 
     atres = dwarf_attrlist(die, &atlist, &atcnt, err);
@@ -6933,18 +6963,28 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         vres = dwarf_get_version_of_die(die,
                             &dwversion,&offset_size);
                         if (srcfiles && vres == DW_DLV_OK) {
-                            /*  srcfiles is indexed starting at 0, but
-                                DW_AT_decl_file defines that 0 means no
-                                file, so tempud 1 means the 0th entry in
-                                srcfiles, thus tempud-1 is the correct */
-                            if (!tempud) {
-                                /* Just print the number,
-                                    there is noname. */
-                            } else if (tempud > 0 &&
-                                tempud <= (Dwarf_Unsigned)cnt) {
-                                fname = srcfiles[tempud - 1];
-                                esb_append(&declmsg,fname);
-                            } else {
+                            Dwarf_Unsigned localud = tempud;
+                            Dwarf_Bool done = FALSE;
+                            
+                            if (dwversion == DWVERSION5) {
+                               if ( localud < (Dwarf_Unsigned)cnt) {
+                                    fname = srcfiles[localud];
+                                    esb_append(&declmsg,fname);
+                                    done = TRUE;
+                                }
+                            } else { 
+                               if (!localud) {
+                                    /* Just print the number,
+                                    there is no name. */
+                                    done=TRUE;
+                                } else if (localud > 0 &&
+                                    localud <= (Dwarf_Unsigned)cnt) {
+                                    fname = srcfiles[localud - 1];
+                                    esb_append(&declmsg,fname);
+                                    done = TRUE;
+                                }
+                            }
+                            if (!done) {
                                 esb_append(&declmsg,
                                     " <DW_AT_decl_file index ");
                                 esb_append_printf_u(&declmsg,
