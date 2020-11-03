@@ -1,4 +1,6 @@
 2020-11-03: David Anderson
+    * dwarf_macro.c: shortened a pointlessly long line.
+2020-11-03: David Anderson
     * dwarf_macro5.c: Fixed a test which was a dreadful
       assignment instead of being the correct test.
       Otherwise just changing a comment and arranging

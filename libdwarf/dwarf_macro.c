@@ -448,7 +448,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             pdmd->dmd_fileindex = v1;
             (void) _dwarf_macro_stack_push_index(dbg, fileindex,
                 &msdata);
-            /*  We ignore the error, we just let fileindex ** be -1 when
+            /*  We ignore the error, we just let
+                fileindex ** be -1 when
                 we pop this one. */
             fileindex = v1;
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
