@@ -1,3 +1,8 @@
+2020-11-03: David Anderson
+    * dwarf_macro5.c: Fixed a test which was a dreadful
+      assignment instead of being the correct test.
+      Otherwise just changing a comment and arranging
+      if (... instead of if(, similarly for for(.
 2020-11-01: David Anderson
     * dwarf_line.c: Corrected the comments for dwarf_srcfiles().
     * dwarf_print_lines.c: When turning a DW_LNS file to
