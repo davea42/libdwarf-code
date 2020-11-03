@@ -1,4 +1,4 @@
-Latest update: 30 March 2018
+Latest update: 3 November 2020
 Adapted from the Cairo coding style document
 
 Libdwarf/dwarfdump  coding style.
@@ -23,7 +23,8 @@ don't submit code for libdwarf that looks like any of these.
 
 Indentation
 -----------
-Each new level is indented 4 more spaces than the previous level:
+Each new level is indented 4 more spaces than the previous level,
+and an if is followed by a space and a left-paren:
 
     if (condition) {
         do_something();
@@ -31,6 +32,12 @@ Each new level is indented 4 more spaces than the previous level:
 Done solely with space characters.  The simple project on
 sourceforge.net, dicheck-da, detects all instances of tabs,
 improper indentation and line-ending whitespace.
+
+Similarly, for is to have a single space after the r followed by 
+a left_paren.
+    for (v; condition; v2) {
+        do_something();
+    }
 
 Tab characters
 --------------
