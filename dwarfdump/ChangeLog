@@ -1,4 +1,9 @@
 2020-11-03: David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with latest
+      version string.
+2020-11-03: David Anderson
     * Makefile.am, CMakeLists.txt: print_macros.c renamed
       to print_macinfo.c for clarity in naming.
     * Makefile.in: Regenerated.
