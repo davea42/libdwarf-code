@@ -85,6 +85,8 @@ static int
 print_one_macro_entry(long i,
     struct Dwarf_Macro_Details_s *mdp,
     struct macro_counts_s *counts,
+    char ** srcfiles,
+    Dwarf_Signed srcf_count,
     UNUSEDARG Dwarf_Error *error)
 {
     int res = 0;
@@ -96,11 +98,25 @@ print_one_macro_entry(long i,
             "DW_MACINFO_type-code-0", mdp,error);
         break;
 
-    case DW_MACINFO_start_file:
+    case DW_MACINFO_start_file: {
         counts->mc_start_file++;
+        if (mdp->dmd_fileindex == 0) {
+            mdp->dmd_macro = "<zero index, no file specified>";
+        } else if (srcf_count > 0  &&
+            mdp->dmd_fileindex <= srcf_count) {
+            mdp->dmd_macro = srcfiles[mdp->dmd_fileindex-1];
+        } else {
+            if (srcf_count == 0)  {
+               mdp->dmd_macro = 
+                   "<invalid index, no line table file names exist>";
+            } else {
+               mdp->dmd_macro = "<invalid index, corrupt data?>";
+            }
+        }
         res = print_one_macro_entry_detail(i,
             "DW_MACINFO_start_file", mdp,error);
         break;
+    }
 
     case DW_MACINFO_end_file:
         counts->mc_end_file++;
@@ -144,9 +160,26 @@ print_one_macro_entry(long i,
     return res;
 }
 
+static void 
+mac_dealloc_srcfiles_data(Dwarf_Debug dbg,
+    char **srcfiles,
+    Dwarf_Signed srcf_count)
+{
+    Dwarf_Signed i = 0;
+    if (!srcfiles) {
+        return;
+    }
+    for ( ; i < srcf_count; ++i) {
+        dwarf_dealloc(dbg,srcfiles[i],DW_DLA_STRING);
+    }
+    dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+}
+
 /*  print data in .debug_macinfo */
 /*ARGSUSED*/ int
-print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,
+print_macinfo_by_offset(Dwarf_Debug dbg,
+    Dwarf_Die cu_die,
+    Dwarf_Unsigned offset,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned max = 0;
@@ -157,6 +190,8 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,
     struct macro_counts_s counts;
     Dwarf_Unsigned totallen = 0;
     Dwarf_Bool is_primary = TRUE;
+    char ** srcfiles = 0;
+    Dwarf_Signed srcf_count = 0;
 
     glflags.current_section_id = DEBUG_MACINFO;
 
@@ -182,6 +217,13 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,
     } else if (lres == DW_DLV_NO_ENTRY) {
         return lres;
     }
+    lres = dwarf_srcfiles(cu_die,&srcfiles,&srcf_count,error);
+    if (lres == DW_DLV_ERROR) {
+        /*  This error will get found other places. No need
+            to say anything here. */
+        dwarf_dealloc_error(dbg,*error);
+        *error = 0;
+    }
 
     memset(&counts, 0, sizeof(counts));
     if (glflags.gf_do_print_dwarf) {
@@ -201,7 +243,8 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,
     }
     for (i = 0; i < count; i++) {
         struct Dwarf_Macro_Details_s *mdp = &maclist[i];
-        print_one_macro_entry(i, mdp, &counts,error);
+        print_one_macro_entry(i, mdp, &counts,
+            srcfiles,srcf_count,error);
     }
 
     if (counts.mc_start_file == 0) {
@@ -245,7 +288,7 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,
 
     /* int type= maclist[count - 1].dmd_type; */
     /* ASSERT: type is zero */
-
+    mac_dealloc_srcfiles_data(dbg,srcfiles,srcf_count);
     dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
     return DW_DLV_OK;
 }

@@ -1,3 +1,26 @@
+2020-11-03: David Anderson
+    * Makefile.am, CMakeLists.txt: print_macros.c renamed
+      to print_macinfo.c for clarity in naming.
+    * Makefile.in: Regenerated.
+    * globals.h: Added Dwarf_Die argument to
+      print_macinfo_by_offset().
+      Added srccfiles, count argument to
+      print_macros_5style_this_cu().
+    * print_die.c: Renamed macro_check_cu() to
+      print_macinfo_for_cu() for clarity in naming.
+      print_macinfo_for_cu() now prints the file name
+      (from srcfiles list) if it is DW_MACINFO_start_file.
+    * print_macinfo.c: Nowuses passed-in srcfiles
+      to get the full path for the file index 
+      DW_MACINFO_start_file.
+    * print_macro.c: Prints the DWARF5 set_file macro
+      correctly with name.
+    * runtests.sh: 'make check' baselines made a bit
+      larger and added -vvv to the dwarfdump command
+      generating those baselines.
+    * test-mach-o-32.base,testobjLE32PE.base,
+      testobjLE32PE.base,testuriLE64ELf.base: New baselines
+      with additional content per CU and more lines.
 2020-11-01: David Anderson
     * print_die.c: With -vvv dwarfdump now prints
       the array dwarf_srcfiles generates so library

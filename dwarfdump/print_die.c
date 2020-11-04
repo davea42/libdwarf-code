@@ -735,7 +735,8 @@ empty_signature(const Dwarf_Sig8 *sigp)
 
 
 static int
-macro_check_cu(Dwarf_Debug dbg,
+print_macinfo_for_cu(
+    Dwarf_Debug dbg,
     Dwarf_Die cu_die2,
     Dwarf_Error *err)
 {
@@ -756,6 +757,7 @@ macro_check_cu(Dwarf_Debug dbg,
         return mres;
     } else {
         mres = print_macinfo_by_offset(dbg,
+            cu_die2,
             offset,err);
         if (mres==DW_DLV_ERROR) {
             struct esb_s m;
@@ -922,7 +924,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             struct esb_s producername;
 
             esb_constructor(&producername);
-            /* Fills in some producername no matter what status returned. */
+            /*  Fills in some producername no matter
+                what status returned. */
             cures  = get_producer_name(dbg,cu_die,
                 dieprint_cu_goffset,&producername,pod_err);
             DROP_ERROR_INSTANCE(dbg,cures,*pod_err);
@@ -1037,58 +1040,55 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             &cu_die2, pod_err);
         if (sres == DW_DLV_OK) {
             int pres = 0;
+            Dwarf_Signed cnt = 0;
+            char **srcfiles = 0;
+            int srcf =  0;
+            Dwarf_Error srcerr = 0;
 
+            srcf = dwarf_srcfiles(cu_die2,
+                    &srcfiles, &cnt, &srcerr);
+            if (srcf == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "ERROR: dwarf_srcfiles problem ",
+                    srcf,srcerr);
+                DROP_ERROR_INSTANCE(dbg,srcf,srcerr);
+                srcfiles = 0;
+                cnt = 0;
+            } else if (srcf == DW_DLV_NO_ENTRY) {
+                /*DW_DLV_NO_ENTRY generally means there
+                there is no dW_AT_stmt_list attribute.
+                and we do not want to print anything
+                about statements in that case */
+            }
             if (print_as_info_or_by_cuname() ||
                 glflags.gf_search_is_on) {
-                Dwarf_Signed cnt = 0;
-                char **srcfiles = 0;
-                Dwarf_Error srcerr = 0;
-                int srcf =  0;
+                /*  Do regardless if dwarf_srcfiles
+                    was successful to print die
+                    and children as best we can
+                    even with errors . */
+                int podres2 = 0;
+                Dwarf_Error lperr = 0;
 
-                srcf = dwarf_srcfiles(cu_die2,
-                    &srcfiles, &cnt, &srcerr);
-                if (srcf == DW_DLV_ERROR) {
-                    print_error_and_continue(dbg,
-                        "ERROR: dwarf_srcfiles problem ",
-                        srcf,srcerr);
-                    DROP_ERROR_INSTANCE(dbg,srcf,srcerr);
-                    srcfiles = 0;
-                    cnt = 0;
-                } else if (srcf == DW_DLV_NO_ENTRY) {
-                    /*DW_DLV_NO_ENTRY generally means there
-                    there is no dW_AT_stmt_list attribute.
-                    and we do not want to print anything
-                    about statements in that case */
-                }
-                {
-                    /*  Do regardless if dwarf_srcfiles
-                        was successful to print die
-                        and children as best we can
-                        even with errors . */
-                    int podres2 = 0;
-                    Dwarf_Error lperr = 0;
-
-                    /* Get the CU offset for easy error reporting */
-                    podres2 = dwarf_die_offsets(cu_die2,
-                        &glflags.DIE_overall_offset,
-                        &glflags.DIE_offset,&lperr);
-                    DROP_ERROR_INSTANCE(dbg,podres2,lperr);
-                    glflags.DIE_CU_overall_offset =
-                        glflags.DIE_overall_offset;
-                    glflags.DIE_CU_offset = glflags.DIE_offset;
-                    dieprint_cu_goffset = glflags.DIE_overall_offset;
-                    pres = print_die_and_children(dbg, cu_die2,
-                        dieprint_cu_goffset,is_info,
+                /* Get the CU offset for easy error reporting */
+                podres2 = dwarf_die_offsets(cu_die2,
+                    &glflags.DIE_overall_offset,
+                    &glflags.DIE_offset,&lperr);
+                DROP_ERROR_INSTANCE(dbg,podres2,lperr);
+                glflags.DIE_CU_overall_offset =
+                    glflags.DIE_overall_offset;
+                glflags.DIE_CU_offset = glflags.DIE_offset;
+                dieprint_cu_goffset = glflags.DIE_overall_offset;
+                pres = print_die_and_children(dbg, cu_die2,
+                    dieprint_cu_goffset,is_info,
                         srcfiles, cnt,pod_err);
+                if (pres == DW_DLV_ERROR) {
                     if (srcfiles) {
                         dealloc_all_srcfiles(dbg,srcfiles,cnt);
                         srcfiles = 0;
                         cnt = 0;
                     }
-                    if (pres == DW_DLV_ERROR) {
-                        dwarf_dealloc_die(cu_die2);
-                        return pres;
-                    }
+                    dwarf_dealloc_die(cu_die2);
+                    return pres;
                 }
             }
             /* Dump Ranges Information */
@@ -1136,8 +1136,13 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 Dwarf_Bool in_import_list = FALSE;
                 Dwarf_Unsigned import_offset = 0;
                 int oldsection = glflags.current_section_id;
+                /*  DWARF5 .debug_macro (version 5
+                    in the macro header) or GNU extesion
+                    of DWARF4 .debug_macro, with version 4
+                    in the macro header. */
 
                 mres = print_macros_5style_this_cu(dbg, cu_die2,
+                    srcfiles,cnt,
                     in_import_list,import_offset,pod_err);
                 if (mres == DW_DLV_ERROR) {
                     print_error_and_continue(dbg,
@@ -1159,6 +1164,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         }
                         mres = print_macros_5style_this_cu(dbg,
                             cu_die2,
+                            srcfiles,cnt,
                             in_import_list,import_offset,
                             pod_err);
                         if (mres == DW_DLV_ERROR) {
@@ -1181,15 +1187,22 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 }
                 glflags.current_section_id = oldsection;
             }
-            if (glflags.gf_macinfo_flag ||
+            if ( glflags.gf_macinfo_flag ||
                 glflags.gf_check_macros) {
                 int mres = 0;
+                /*  Macros have no version number befoer
+                    DWARF 5. */
 
-                mres = macro_check_cu(dbg,cu_die2,
+                mres = print_macinfo_for_cu(dbg,cu_die2,
                     pod_err);
                 if (mres == DW_DLV_ERROR) {
                     if (cu_die2) {
                         dwarf_dealloc_die(cu_die2);
+                    }
+                    if (srcfiles) {
+                       dealloc_all_srcfiles(dbg,srcfiles,cnt);
+                       srcfiles = 0;
+                       cnt = 0;
                     }
                     return mres;
                 }
@@ -1198,6 +1211,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 dwarf_dealloc_die(cu_die2);
             }
             cu_die2 = 0;
+            if (srcfiles) {
+               dealloc_all_srcfiles(dbg,srcfiles,cnt);
+               srcfiles = 0;
+               cnt = 0;
+            }
         } else if (sres == DW_DLV_NO_ENTRY) {
             /* Do nothing I guess. */
         } else {

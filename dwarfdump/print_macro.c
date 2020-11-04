@@ -277,6 +277,11 @@ print_macro_ops(Dwarf_Debug dbg,
                 k,&line_number,
                 &index,
                 &macro_string,err);
+            /*  The above call knows how to reference
+                its one srcfiles data and has the
+                .debug_macro version. So we do not
+                need to worry about getting the file name
+                here. */
             if (lres != DW_DLV_OK) {
                 derive_error_message(dbg,k,macro_operator,
                     number_of_ops,
@@ -285,10 +290,10 @@ print_macro_ops(Dwarf_Debug dbg,
             }
             if (glflags.gf_do_print_dwarf) {
                 printf("  line %" DW_PR_DUu
-                    " file number %" DW_PR_DUu
-                    " %s\n",
+                    " file number %" DW_PR_DUu,
                     line_number,
-                    index,
+                    index);
+                printf(" %s\n",
                     macro_string?sanitized(macro_string):
                         "<no-name-available>");
             }
@@ -336,6 +341,8 @@ print_macro_ops(Dwarf_Debug dbg,
 /*   This is for the DWARF5 macro section.  */
 int
 print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    char **dwarf_srcfiles, 
+    Dwarf_Signed cnt,
     int by_offset, Dwarf_Unsigned offset,
     Dwarf_Error *err)
 {
@@ -433,7 +440,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             dieprint_cu_goffset,
             /* print_information= */ 1,
             /* indent level */0,
-            /* srcfiles= */ 0, /* cnt= */ 0,
+            dwarf_srcfiles,cnt,
             &attr_dup,
             /* ignore_die_stack= */TRUE,err);
         if (pdres == DW_DLV_ERROR) {
@@ -567,7 +574,8 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 ", bytes length: %" DW_PR_DUu "\n",
                 number_of_ops,ops_total_byte_len);
         }
-        lres = print_macro_ops(dbg,macro_context,number_of_ops,err);
+        lres = print_macro_ops(dbg,macro_context,number_of_ops,
+            err);
         if (lres != DW_DLV_OK) {
             struct esb_s m;
 

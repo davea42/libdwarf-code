@@ -224,7 +224,8 @@ extern void DWARF_CHECK_ERROR_PRINT_CU(void);
 extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl);
 
-extern int print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Error *);
+extern int print_macinfo_by_offset(Dwarf_Debug dbg,
+    Dwarf_Die cudie,Dwarf_Unsigned offset,Dwarf_Error *);
 
 void ranges_esb_string_destructor(void);
 void destruct_abbrev_array(void);
@@ -245,6 +246,8 @@ void clean_up_die_esb(void);
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 int print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    char **srcfiles,
+    Dwarf_Signed cnt,
     Dwarf_Bool in_import_list, Dwarf_Unsigned offset,Dwarf_Error *);
 
 /* Detailed attributes encoding space */

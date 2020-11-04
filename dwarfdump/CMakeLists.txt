@@ -13,7 +13,7 @@ set_source_group(SOURCES "Source Files" addrmap.c
     print_llex_codes.c print_origloclist_codes.c 
     print_loclists_codes.c
     print_locs.c  print_loclists.c
-    print_macro.c print_macros.c 
+    print_macro.c print_macinfo.c 
     print_pubnames.c print_ranges.c 
     print_rnglists.c print_reloc.c 
 	print_str_offsets.c
@@ -172,14 +172,14 @@ if (DO_TESTING)
     set(peobj "${CMAKE_SOURCE_DIR}/dwarfdump/testobjLE32PE.exe") 
     set(pebase "${CMAKE_SOURCE_DIR}/dwarfdump/testobjLE32PE.base") 
     set(execpedd "${CMAKE_BINARY_DIR}/dwarfdump/dwarfdump")
-    add_test(NAME selfdwarfdumppe COMMAND sh -c "${execpedd} ${peobj} |  head -500 >junk.testoutpe ; diff ${pebase} junk.testoutpe" )
+    add_test(NAME selfdwarfdumppe COMMAND sh -c "${execpedd} -vvv -a ${peobj} |  head -700 >junk.testoutpe ; diff ${pebase} junk.testoutpe" )
 endif()
 
 if (DO_TESTING) 
     set(elfobj "${CMAKE_SOURCE_DIR}/dwarfdump/testuriLE64ELf.obj") 
     set(elfbase "${CMAKE_SOURCE_DIR}/dwarfdump/testuriLE64ELf.base")
     set(execelfdd "${CMAKE_BINARY_DIR}/dwarfdump/dwarfdump")
-    add_test(NAME selfdwarfdumpelf COMMAND sh -c "${execelfdd} ${elfobj} | head -500 > junk.testoutelf ; diff ${elfbase} junk.testoutelf" )
+    add_test(NAME selfdwarfdumpelf COMMAND sh -c "${execelfdd} -vvv -a ${elfobj} | head -700 > junk.testoutelf ; diff ${elfbase} junk.testoutelf" )
 endif()
 
 if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)

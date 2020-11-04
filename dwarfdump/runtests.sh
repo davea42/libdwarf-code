@@ -167,16 +167,19 @@ echo "start  dwarfdump sanity check on pe $f"
 # So let dwarfdump emit more then trim.
 if [ x$win = "xy" ]
 then
-  textlim=502
+  textlim=702
 else
-  textlim=500
+  textlim=700
 fi
-./dwarfdump $f | head -n $textlim > $t
+echo "./dwarfdump -a -vvv  $f | head -n $textlim > $t "
+./dwarfdump -a  -vvv $f | head -n $textlim > $t
 chkres $? "Running dwarfdump $f output to $t base $b"
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
   droptwoifwin $t
+  echo did drop two
+  wc $t
 fi
 which dos2unix
 if [ $? -eq 0 ]
@@ -195,7 +198,7 @@ f=$srcdir/testuriLE64ELf.obj
 b=$srcdir/testuriLE64ELf.base
 t=junk.testuriLE64ELf.base
 echo "start  dwarfdump sanity check on $f"
-./dwarfdump $f | head -n $textlim > $t
+./dwarfdump -vvv -a $f | head -n $textlim > $t
 chkres $? "running ./dwarfdump $f otuput to $t base $b "
 if [ x$win = "xy" ]
 then

@@ -1,8 +1,26 @@
 
 .debug_info
 
+CU_HEADER:
+  cu_header_length = 0x00000223 547
+  version_stamp    = 0x0004     4
+  abbrev_offset    = 0x00000000 0
+  address_size     = 0x04       4
+  offset_size      = 0x04       4
+  cu_type          = 0x01       DW_UT_compile
+
 COMPILE_UNIT<header overall offset = 0x00000000>:
-< 0><0x0000000b>  DW_TAG_compile_unit
+< 0><0x0000000b>  DW_TAG_compile_unit <abbrev 1>
+  dwarf_srcfiles() returned strings. Count = 9.
+  [0] c:/Users/dandelot/test.c
+  [1] c:/mingw/include/stdio.h
+  [2] c:/mingw/include/_mingw.h
+  [3] c:/mingw/include/msvcrtver.h
+  [4] c:/mingw/include/w32api.h
+  [5] c:/mingw/include/sdkddkver.h
+  [6] c:/mingw/lib/gcc/mingw32/6.3.0/include/stddef.h
+  [7] c:/mingw/include/sys/types.h
+  [8] c:/mingw/lib/gcc/mingw32/6.3.0/include/stdarg.h
                     DW_AT_producer              GNU C11 6.3.0 -mtune=generic -march=i586 -g3 -ggdb3
                     DW_AT_language              DW_LANG_C99
                     DW_AT_name                  c:/Users/dandelot/test.c
@@ -12,122 +30,122 @@ COMPILE_UNIT<header overall offset = 0x00000000>:
                     DW_AT_GNU_macros            0x00000000
 
 LOCAL_SYMBOLS:
-< 1><0x0000006a>    DW_TAG_base_type
+< 1><0x0000006a>    DW_TAG_base_type <abbrev 2>
                       DW_AT_byte_size             0x00000004
                       DW_AT_encoding              DW_ATE_unsigned
                       DW_AT_name                  unsigned int
-< 1><0x0000007a>    DW_TAG_base_type
+< 1><0x0000007a>    DW_TAG_base_type <abbrev 2>
                       DW_AT_byte_size             0x00000002
                       DW_AT_encoding              DW_ATE_unsigned
                       DW_AT_name                  short unsigned int
-< 1><0x00000090>    DW_TAG_base_type
+< 1><0x00000090>    DW_TAG_base_type <abbrev 2>
                       DW_AT_byte_size             0x00000004
                       DW_AT_encoding              DW_ATE_signed
                       DW_AT_name                  long int
-< 1><0x0000009c>    DW_TAG_base_type
+< 1><0x0000009c>    DW_TAG_base_type <abbrev 2>
                       DW_AT_byte_size             0x00000008
                       DW_AT_encoding              DW_ATE_signed
                       DW_AT_name                  long long int
-< 1><0x000000ad>    DW_TAG_base_type
+< 1><0x000000ad>    DW_TAG_base_type <abbrev 2>
                       DW_AT_byte_size             0x00000004
                       DW_AT_encoding              DW_ATE_signed
                       DW_AT_name                  int
-< 1><0x000000b4>    DW_TAG_base_type
+< 1><0x000000b4>    DW_TAG_base_type <abbrev 2>
                       DW_AT_byte_size             0x00000001
                       DW_AT_encoding              DW_ATE_signed_char
                       DW_AT_name                  char
-< 1><0x000000bc>    DW_TAG_structure_type
+< 1><0x000000bc>    DW_TAG_structure_type <abbrev 3>
                       DW_AT_name                  _iobuf
                       DW_AT_byte_size             0x00000020
                       DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                       DW_AT_decl_line             0x000000d2
                       DW_AT_sibling               <0x00000143>
-< 2><0x000000cb>      DW_TAG_member
+< 2><0x000000cb>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _ptr
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000d4
                         DW_AT_type                  <0x00000143>
                         DW_AT_data_member_location  0
-< 2><0x000000d8>      DW_TAG_member
+< 2><0x000000d8>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _cnt
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000d5
                         DW_AT_type                  <0x000000ad>
                         DW_AT_data_member_location  4
-< 2><0x000000e5>      DW_TAG_member
+< 2><0x000000e5>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _base
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000d6
                         DW_AT_type                  <0x00000143>
                         DW_AT_data_member_location  8
-< 2><0x000000f3>      DW_TAG_member
+< 2><0x000000f3>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _flag
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000d7
                         DW_AT_type                  <0x000000ad>
                         DW_AT_data_member_location  12
-< 2><0x00000101>      DW_TAG_member
+< 2><0x00000101>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _file
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000d8
                         DW_AT_type                  <0x000000ad>
                         DW_AT_data_member_location  16
-< 2><0x0000010f>      DW_TAG_member
+< 2><0x0000010f>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _charbuf
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000d9
                         DW_AT_type                  <0x000000ad>
                         DW_AT_data_member_location  20
-< 2><0x00000120>      DW_TAG_member
+< 2><0x00000120>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _bufsiz
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000da
                         DW_AT_type                  <0x000000ad>
                         DW_AT_data_member_location  24
-< 2><0x00000130>      DW_TAG_member
+< 2><0x00000130>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  _tmpfname
                         DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                         DW_AT_decl_line             0x000000db
                         DW_AT_type                  <0x00000143>
                         DW_AT_data_member_location  28
-< 1><0x00000143>    DW_TAG_pointer_type
+< 1><0x00000143>    DW_TAG_pointer_type <abbrev 5>
                       DW_AT_byte_size             0x00000004
                       DW_AT_type                  <0x000000b4>
-< 1><0x00000149>    DW_TAG_typedef
+< 1><0x00000149>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  FILE
                       DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                       DW_AT_decl_line             0x000000dc
                       DW_AT_type                  <0x000000bc>
-< 1><0x00000155>    DW_TAG_array_type
+< 1><0x00000155>    DW_TAG_array_type <abbrev 7>
                       DW_AT_type                  <0x00000149>
                       DW_AT_sibling               <0x00000160>
-< 2><0x0000015e>      DW_TAG_subrange_type
-< 1><0x00000160>    DW_TAG_variable
+< 2><0x0000015e>      DW_TAG_subrange_type <abbrev 8>
+< 1><0x00000160>    DW_TAG_variable <abbrev 9>
                       DW_AT_name                  _iob
                       DW_AT_decl_file             0x00000002 c:/mingw/include/stdio.h
                       DW_AT_decl_line             0x000000ef
                       DW_AT_type                  <0x00000155>
                       DW_AT_external              yes(1)
                       DW_AT_declaration           yes(1)
-< 1><0x0000016c>    DW_TAG_structure_type
+< 1><0x0000016c>    DW_TAG_structure_type <abbrev 3>
                       DW_AT_name                  something
                       DW_AT_byte_size             0x00000008
                       DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                       DW_AT_decl_line             0x00000004
                       DW_AT_sibling               <0x00000193>
-< 2><0x0000017e>      DW_TAG_member
+< 2><0x0000017e>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  a
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000005
                         DW_AT_type                  <0x000000ad>
                         DW_AT_data_member_location  0
-< 2><0x00000188>      DW_TAG_member
+< 2><0x00000188>      DW_TAG_member <abbrev 4>
                         DW_AT_name                  b
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000006
                         DW_AT_type                  <0x0000006a>
                         DW_AT_data_member_location  4
-< 1><0x00000193>    DW_TAG_subprogram
+< 1><0x00000193>    DW_TAG_subprogram <abbrev 10>
                       DW_AT_external              yes(1)
                       DW_AT_name                  main
                       DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
@@ -139,40 +157,40 @@ LOCAL_SYMBOLS:
                       DW_AT_frame_base            len 0x0001: 0x9c: DW_OP_call_frame_cfa
                       DW_AT_GNU_all_tail_call_sites yes(1)
                       DW_AT_sibling               <0x000001f1>
-< 2><0x000001ad>      DW_TAG_formal_parameter
+< 2><0x000001ad>      DW_TAG_formal_parameter <abbrev 11>
                         DW_AT_name                  argc
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000010
                         DW_AT_type                  <0x000000ad>
                         DW_AT_location              len 0x0002: 0x9100: DW_OP_fbreg 0
-< 2><0x000001bc>      DW_TAG_formal_parameter
+< 2><0x000001bc>      DW_TAG_formal_parameter <abbrev 11>
                         DW_AT_name                  argv
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000010
                         DW_AT_type                  <0x000001f1>
                         DW_AT_location              len 0x0002: 0x9104: DW_OP_fbreg 4
-< 2><0x000001cb>      DW_TAG_variable
+< 2><0x000001cb>      DW_TAG_variable <abbrev 12>
                         DW_AT_name                  x
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000013
                         DW_AT_type                  <0x000000ad>
                         DW_AT_location              len 0x0002: 0x741c: DW_OP_breg4+28
-< 2><0x000001d7>      DW_TAG_variable
+< 2><0x000001d7>      DW_TAG_variable <abbrev 12>
                         DW_AT_name                  y
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000014
                         DW_AT_type                  <0x000000ad>
                         DW_AT_location              len 0x0002: 0x7418: DW_OP_breg4+24
-< 2><0x000001e3>      DW_TAG_variable
+< 2><0x000001e3>      DW_TAG_variable <abbrev 12>
                         DW_AT_name                  so
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000015
                         DW_AT_type                  <0x0000016c>
                         DW_AT_location              len 0x0002: 0x7410: DW_OP_breg4+16
-< 1><0x000001f1>    DW_TAG_pointer_type
+< 1><0x000001f1>    DW_TAG_pointer_type <abbrev 5>
                       DW_AT_byte_size             0x00000004
                       DW_AT_type                  <0x00000143>
-< 1><0x000001f7>    DW_TAG_subprogram
+< 1><0x000001f7>    DW_TAG_subprogram <abbrev 13>
                       DW_AT_external              yes(1)
                       DW_AT_name                  buffle
                       DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
@@ -184,39 +202,146 @@ LOCAL_SYMBOLS:
                       DW_AT_frame_base            len 0x0001: 0x9c: DW_OP_call_frame_cfa
                       DW_AT_GNU_all_call_sites    yes(1)
                       DW_AT_sibling               <0x00000220>
-< 2><0x00000213>      DW_TAG_formal_parameter
+< 2><0x00000213>      DW_TAG_formal_parameter <abbrev 11>
                         DW_AT_name                  v
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x0000000a
                         DW_AT_type                  <0x00000220>
                         DW_AT_location              len 0x0002: 0x9100: DW_OP_fbreg 0
-< 1><0x00000220>    DW_TAG_pointer_type
+< 1><0x00000220>    DW_TAG_pointer_type <abbrev 5>
                       DW_AT_byte_size             0x00000004
                       DW_AT_type                  <0x0000016c>
 
 .debug_line: line number info for a single cu
 Source lines (from CU-DIE at .debug_info offset 0x0000000b):
 
-            NS new statement, BB new basic block, ET end of text sequence
-            PE prologue end, EB epilogue begin
-            IS=val ISA number, DI=val discriminator value
-<pc>        [lno,col] NS BB ET PE EB IS= DI= uri: "filepath"
-0x00401460  [  11, 0] NS uri: "c:/Users/dandelot/test.c"
-0x00401463  [  12, 0] NS
-0x0040146b  [  14, 0] NS
-0x0040146d  [  17, 0] NS
-0x00401476  [  17, 0] NS
-0x0040147b  [  19, 0] NS
-0x00401483  [  20, 0] NS
-0x0040148b  [  23, 0] NS
-0x00401493  [  24, 0] NS
-0x004014a3  [  25, 0] NS
-0x004014b5  [  26, 0] NS
-0x004014b7  [  26, 0] NS ET
+COMPILE_UNIT<header overall offset = 0x00000000>:
+< 0><0x0000000b>  DW_TAG_compile_unit <abbrev 1>
+                    DW_AT_producer              GNU C11 6.3.0 -mtune=generic -march=i586 -g3 -ggdb3
+                    DW_AT_language              DW_LANG_C99
+                    DW_AT_name                  c:/Users/dandelot/test.c
+                    DW_AT_low_pc                0x00401460
+                    DW_AT_high_pc               <offset-from-lowpc>87
+                    DW_AT_stmt_list             0x00000000
+                    DW_AT_GNU_macros            0x00000000
+
+*** DWARF CHECK: .debug_line: standard DWARF3 operands matched, but is DWARF2 linetable: count 12 at offset 0x00000000  ( 0 ) ***
+total line info length 256 bytes, line offset 0x00000000 0
+  line table version     2
+  line table length field length 4
+  prologue length       224
+  compilation_directory 
+  min instruction length 1
+  default is stmt        1
+  line base              -5
+  line_range             14
+  opcode base            13
+  standard opcode count  12
+  opcode[ 1] length  0
+  opcode[ 2] length  1
+  opcode[ 3] length  1
+  opcode[ 4] length  1
+  opcode[ 5] length  1
+  opcode[ 6] length  0
+  opcode[ 7] length  0
+  opcode[ 8] length  0
+  opcode[ 9] length  1
+  opcode[10] length  0
+  opcode[11] length  0
+  opcode[12] length  1
+  include directories count 4 (index starts at 1)
+  include dir[1] c:/Users/dandelot
+  include dir[2] c:/mingw/include
+  include dir[3] c:/mingw/lib/gcc/mingw32/6.3.0/include
+  include dir[4] c:/mingw/include/sys
+  file names count      9
+  file[0]  test.c               (file-number: 1)
+    dir index 1
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[1]  stdio.h              (file-number: 2)
+    dir index 2
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[2]  _mingw.h             (file-number: 3)
+    dir index 2
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[3]  msvcrtver.h          (file-number: 4)
+    dir index 2
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[4]  w32api.h             (file-number: 5)
+    dir index 2
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[5]  sdkddkver.h          (file-number: 6)
+    dir index 2
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[6]  stddef.h             (file-number: 7)
+    dir index 3
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[7]  types.h              (file-number: 8)
+    dir index 4
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  file[8]  stdarg.h             (file-number: 9)
+    dir index 3
+    last time 0x0 Wed Dec 31 16:00:00 1969
+    file length 0 0x0
+  statement prog offset in section: 0x000000ea (234)
+                                                         s b e p e i d
+                                                         t l s r p s i
+                                                         m c e o i a s
+ section    op                                       col t k q l l   c
+ offset     code               address     file line umn ? ? ? ? ?
+ [0x0000ea] DW_LNE_set_address address 0x00401460
+ [0x0000f1] DW_LNS_advance_line val 10 0x0000000a
+ [0x0000f3] DW_LNS_copy      1 0x00401460  1     11  0   1 0 0
+ [0x0000f4] Specialop  61   48 0x00401463  1     12  0   1 0 0
+ [0x0000f5] Specialop 132   119 0x0040146b  1     14  0   1 0 0
+ [0x0000f6] Specialop  49   36 0x0040146d  1     17  0   1 0 0
+ [0x0000f7] Specialop 144   131 0x00401476  1     17  0   1 0 0
+ [0x0000f8] Specialop  90   77 0x0040147b  1     19  0   1 0 0
+ [0x0000f9] Specialop 131   118 0x00401483  1     20  0   1 0 0
+ [0x0000fa] Specialop 133   120 0x0040148b  1     23  0   1 0 0
+ [0x0000fb] Specialop 131   118 0x00401493  1     24  0   1 0 0
+ [0x0000fc] Specialop 243   230 0x004014a3  1     25  0   1 0 0
+ [0x0000fd] DW_LNS_const_add_pc new address 0x004014b4
+ [0x0000fe] Specialop  33   20 0x004014b5  1     26  0   1 0 0
+ [0x0000ff] DW_LNS_advance_pc val 2 0x00000002
+ [0x000101] DW_LNE_end_sequence extended  1 0x004014b7  1     26  0   1 0 1
 
 .debug_macro: Macro info for a single cu
 Macro data from CU-DIE at .debug_info offset 0x0000000b:
+
+COMPILE_UNIT<header overall offset = 0x00000000>:
+< 0><0x0000000b>  DW_TAG_compile_unit <abbrev 1>
+  dwarf_srcfiles() returned strings. Count = 9.
+  [0] c:/Users/dandelot/test.c
+  [1] c:/mingw/include/stdio.h
+  [2] c:/mingw/include/_mingw.h
+  [3] c:/mingw/include/msvcrtver.h
+  [4] c:/mingw/include/w32api.h
+  [5] c:/mingw/include/sdkddkver.h
+  [6] c:/mingw/lib/gcc/mingw32/6.3.0/include/stddef.h
+  [7] c:/mingw/include/sys/types.h
+  [8] c:/mingw/lib/gcc/mingw32/6.3.0/include/stdarg.h
+                    DW_AT_producer              GNU C11 6.3.0 -mtune=generic -march=i586 -g3 -ggdb3
+                    DW_AT_language              DW_LANG_C99
+                    DW_AT_name                  c:/Users/dandelot/test.c
+                    DW_AT_low_pc                0x00401460
+                    DW_AT_high_pc               <offset-from-lowpc>87
+                    DW_AT_stmt_list             0x00000000
+                    DW_AT_GNU_macros            0x00000000
   Macro version: 4
+  macro section offset 0x00000000
+  flags: 0x2, line offset? 1 offsetsize 0, operands_table? 0
+  offset size 0x4
+  header length: 0x00000007  total length: 0x00003f19
+  debug_line_offset: 0x00000000
   MacroInformationEntries count: 565, bytes length: 16146
    [  0] 0x01 DW_MACRO_define       line 0 __STDC__ 1
    [  1] 0x01 DW_MACRO_define       line 0 __STDC_VERSION__ 201112L
@@ -498,3 +623,78 @@ Macro data from CU-DIE at .debug_info offset 0x0000000b:
    [277] 0x01 DW_MACRO_define       line 53 __W32API_MINOR_VERSION 0
    [278] 0x01 DW_MACRO_define       line 54 __W32API_PATCHLEVEL 1
    [279] 0x03 DW_MACRO_start_file   line 59 file number 6 c:/mingw/include/sdkddkver.h
+   [280] 0x01 DW_MACRO_define       line 34 _SDKDDKVER_H 
+   [281] 0x01 DW_MACRO_define       line 41 OSVERSION_MASK 0xFFFF0000
+   [282] 0x01 DW_MACRO_define       line 42 SPVERSION_MASK 0x0000FF00
+   [283] 0x01 DW_MACRO_define       line 43 SUBVERSION_MASK 0x000000FF
+   [284] 0x01 DW_MACRO_define       line 48 OSVER(ver) ((ver) & OSVERSION_MASK)
+   [285] 0x01 DW_MACRO_define       line 49 SPVER(ver) (((ver) & SPVERSION_MASK) >> 8)
+   [286] 0x01 DW_MACRO_define       line 50 SUBVER(ver) ((ver) & SUBVERSION_MASK)
+   [287] 0x01 DW_MACRO_define       line 51 WINNTVER(ver) ((ver) >> 16)
+   [288] 0x01 DW_MACRO_define       line 55 NTDDI_VERSION_FROM_WIN32_WINNT(ver) _NTDDI_VERSION_FROM_WIN32_WINNT(ver)
+   [289] 0x01 DW_MACRO_define       line 56 _NTDDI_VERSION_FROM_WIN32_WINNT(ver) ver ##0000
+   [290] 0x01 DW_MACRO_define       line 62 _WIN32_WINNT_NT4 0x0400
+   [291] 0x01 DW_MACRO_define       line 63 _WIN32_WINNT_NT4E 0x0401
+   [292] 0x01 DW_MACRO_define       line 64 _WIN32_WINNT_NT4SP3 0x0403
+   [293] 0x01 DW_MACRO_define       line 65 _WIN32_WINDOWS_95 0x0400
+   [294] 0x01 DW_MACRO_define       line 66 _WIN32_WINDOWS_98 0x0410
+   [295] 0x01 DW_MACRO_define       line 67 _WIN32_WINDOWS_ME 0x0490
+   [296] 0x01 DW_MACRO_define       line 68 _WIN32_WINNT_WIN2K 0x0500
+   [297] 0x01 DW_MACRO_define       line 69 _WIN32_WINNT_WINXP 0x0501
+   [298] 0x01 DW_MACRO_define       line 70 _WIN32_WINNT_WS03 0x0502
+   [299] 0x01 DW_MACRO_define       line 71 _WIN32_WINNT_WIN6 0x0600
+   [300] 0x01 DW_MACRO_define       line 72 _WIN32_WINNT_VISTA 0x0600
+   [301] 0x01 DW_MACRO_define       line 73 _WIN32_WINNT_WS08 0x0600
+   [302] 0x01 DW_MACRO_define       line 74 _WIN32_WINNT_LONGHORN 0x0600
+   [303] 0x01 DW_MACRO_define       line 75 _WIN32_WINNT_WIN7 0x0601
+   [304] 0x01 DW_MACRO_define       line 76 _WIN32_WINNT_WIN8 0x0602
+   [305] 0x01 DW_MACRO_define       line 77 _WIN32_WINNT_WINBLUE 0x0603
+   [306] 0x01 DW_MACRO_define       line 82 _WIN32_IE_IE50 0x0500
+   [307] 0x01 DW_MACRO_define       line 83 _WIN32_IE_IE501 0x0501
+   [308] 0x01 DW_MACRO_define       line 84 _WIN32_IE_IE55 0x0550
+   [309] 0x01 DW_MACRO_define       line 85 _WIN32_IE_IE56 0x0560
+   [310] 0x01 DW_MACRO_define       line 86 _WIN32_IE_IE60 0x0600
+   [311] 0x01 DW_MACRO_define       line 87 _WIN32_IE_IE60SP1 0x0601
+   [312] 0x01 DW_MACRO_define       line 88 _WIN32_IE_IE60SP2 0x0603
+   [313] 0x01 DW_MACRO_define       line 89 _WIN32_IE_IE70 0x0700
+   [314] 0x01 DW_MACRO_define       line 90 _WIN32_IE_IE80 0x0800
+   [315] 0x01 DW_MACRO_define       line 92 _WIN32_IE_IE30 0x0300
+   [316] 0x01 DW_MACRO_define       line 93 _WIN32_IE_IE301 0x0301
+   [317] 0x01 DW_MACRO_define       line 94 _WIN32_IE_IE302 0x0302
+   [318] 0x01 DW_MACRO_define       line 95 _WIN32_IE_IE40 0x0400
+   [319] 0x01 DW_MACRO_define       line 96 _WIN32_IE_IE401 0x0401
+   [320] 0x01 DW_MACRO_define       line 101 __NTDDI_WIN5 0x05000000
+   [321] 0x01 DW_MACRO_define       line 102 __NTDDI_WIN51 0x05010000
+   [322] 0x01 DW_MACRO_define       line 103 __NTDDI_WIN52 0x05020000
+   [323] 0x01 DW_MACRO_define       line 104 __NTDDI_WIN6 0x06000000
+   [324] 0x01 DW_MACRO_define       line 105 __NTDDI_WIN61 0x06010000
+   [325] 0x01 DW_MACRO_define       line 106 __NTDDI_WIN62 0x06020000
+   [326] 0x01 DW_MACRO_define       line 107 __NTDDI_WIN63 0x06030000
+   [327] 0x01 DW_MACRO_define       line 108 __NTDDI_SP0 0x00000000
+   [328] 0x01 DW_MACRO_define       line 109 __NTDDI_SP1 0x00000100
+   [329] 0x01 DW_MACRO_define       line 110 __NTDDI_SP2 0x00000200
+   [330] 0x01 DW_MACRO_define       line 111 __NTDDI_SP3 0x00000300
+   [331] 0x01 DW_MACRO_define       line 112 __NTDDI_SP4 0x00000400
+   [332] 0x01 DW_MACRO_define       line 114 NTDDI_WIN2K __NTDDI_WIN5 + __NTDDI_SP0
+   [333] 0x01 DW_MACRO_define       line 115 NTDDI_WIN2KSP1 __NTDDI_WIN5 + __NTDDI_SP1
+   [334] 0x01 DW_MACRO_define       line 116 NTDDI_WIN2KSP2 __NTDDI_WIN5 + __NTDDI_SP2
+   [335] 0x01 DW_MACRO_define       line 117 NTDDI_WIN2KSP3 __NTDDI_WIN5 + __NTDDI_SP3
+   [336] 0x01 DW_MACRO_define       line 118 NTDDI_WIN2KSP4 __NTDDI_WIN5 + __NTDDI_SP4
+   [337] 0x01 DW_MACRO_define       line 120 NTDDI_WINXP __NTDDI_WIN51 + __NTDDI_SP0
+   [338] 0x01 DW_MACRO_define       line 121 NTDDI_WINXPSP1 __NTDDI_WIN51 + __NTDDI_SP1
+   [339] 0x01 DW_MACRO_define       line 122 NTDDI_WINXPSP2 __NTDDI_WIN51 + __NTDDI_SP2
+   [340] 0x01 DW_MACRO_define       line 123 NTDDI_WINXPSP3 __NTDDI_WIN51 + __NTDDI_SP3
+   [341] 0x01 DW_MACRO_define       line 125 NTDDI_WS03 __NTDDI_WIN52 + __NTDDI_SP0
+   [342] 0x01 DW_MACRO_define       line 126 NTDDI_WS03SP1 __NTDDI_WIN52 + __NTDDI_SP1
+   [343] 0x01 DW_MACRO_define       line 127 NTDDI_WS03SP2 __NTDDI_WIN52 + __NTDDI_SP2
+   [344] 0x01 DW_MACRO_define       line 129 NTDDI_VISTA __NTDDI_WIN6 + __NTDDI_SP0
+   [345] 0x01 DW_MACRO_define       line 130 NTDDI_VISTASP1 __NTDDI_WIN6 + __NTDDI_SP1
+   [346] 0x01 DW_MACRO_define       line 131 NTDDI_VISTASP2 __NTDDI_WIN6 + __NTDDI_SP2
+   [347] 0x01 DW_MACRO_define       line 133 NTDDI_LONGHORN NTDDI_VISTA
+   [348] 0x01 DW_MACRO_define       line 135 NTDDI_WIN6 NTDDI_VISTA
+   [349] 0x01 DW_MACRO_define       line 136 NTDDI_WIN6SP1 NTDDI_VISTASP1
+   [350] 0x01 DW_MACRO_define       line 137 NTDDI_WIN6SP2 NTDDI_VISTASP2
+   [351] 0x01 DW_MACRO_define       line 139 NTDDI_WS08 __NTDDI_WIN6 + __NTDDI_SP1
+   [352] 0x01 DW_MACRO_define       line 141 NTDDI_WIN7 __NTDDI_WIN61 + __NTDDI_SP0
+   [353] 0x01 DW_MACRO_define       line 143 NTDDI_WIN8 __NTDDI_WIN62 + __NTDDI_SP0
+   [354] 0x01 DW_MACRO_define       line 145 NTDDI_WINBLUE __NTDDI_WIN63 + __NTDDI_SP0
