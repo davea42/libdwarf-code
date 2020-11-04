@@ -829,6 +829,8 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
 
 int
 print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    char **srcfiles,
+    Dwarf_Signed srcf_count,
     Dwarf_Error *err)
 {
     Dwarf_Unsigned lineversion = 0;
@@ -905,7 +907,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             dieprint_cu_goffset,
             /* print_information= */ 1,
             /* indent level */0,
-            /* srcfiles= */ 0, /* cnt= */ 0,
+            srcfiles,srcf_count,
             &attr_dup,
             /* ignore_die_stack= */TRUE,
             err);

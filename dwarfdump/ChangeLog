@@ -1,3 +1,9 @@
+2020-11-04: David Anderson
+    * globals.h,print_lines.c,print_die.c: Adding arguments for a 
+      srcfiles array for the CU to
+      to print_line_numbers_this_cu(). Now, with -vvv
+      just printing line tables will print the dwarf_srcfiles
+      array of strings.
 2020-11-03: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

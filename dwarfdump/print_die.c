@@ -1119,7 +1119,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
 
                 int oldsection = glflags.current_section_id;
                 plnres = print_line_numbers_this_cu(dbg,
-                    cu_die2,pod_err);
+                    cu_die2,
+                    srcfiles,cnt,pod_err);
                 if (plnres == DW_DLV_ERROR) {
                     print_error_and_continue(dbg,
                         "ERROR: Printing line numbers for "
