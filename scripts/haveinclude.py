@@ -15,7 +15,7 @@ includelist = [
 ("HAVE_INTTYPES_H","inttypes.h"),
 ("HAVE_LIBELF_H","libelf.h"), 
 ("HAVE_LIBELF_LIBELF_H","libelf/libelf.h"), 
-("HAVE_MALLOC_H","malloch"), 
+("HAVE_MALLOC_H","malloc.h"), 
 ("HAVE_MEMORY_H","memory.h"), 
 ("HAVE_REGEX_H","regex.h"), 
 ("HAVE_SGIDEFS_H","sgidefs.h"),
@@ -128,7 +128,7 @@ def scanfile(path):
               includetag);
     elif x == endif:
       if ifdefdepth > 1:
-        print("end nested include line ",line);
+        print("end nested include line ",iline);
       else:
         pass
       ifdefdepth = int(ifdefdepth) -1
@@ -141,12 +141,16 @@ def scanfile(path):
 
 
 if __name__ == '__main__':
-  if len(sys.argv) > 1:
-     path = sys.argv[1]
-  else:
-     print("file name argument required");
+  i = 1
+  ct = 0
+  while i < len(sys.argv):
+     path = sys.argv[i]
+     print("=======path=",path)
+     scanfile(path);
+     ct = int(ct)+1
+     i = int(i)+1
+  if int(ct) < 1:
+     print("file name argument(s) required");
      sys.exit(1)
-
-  scanfile(path);
 
 
