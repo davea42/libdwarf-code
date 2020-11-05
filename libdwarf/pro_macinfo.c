@@ -28,11 +28,13 @@
 */
 
 #include "config.h"
-#include "libdwarfdefs.h"
 #include <stdio.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
-#include "pro_incl.h"
+#endif /* HAVE_STRING_H */
 #include <stddef.h>
+#include "libdwarfdefs.h"
+#include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "pro_opaque.h"

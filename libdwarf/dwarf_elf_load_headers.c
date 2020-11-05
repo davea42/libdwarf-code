@@ -53,7 +53,9 @@ calls
 
 #include "config.h"
 #include <stdio.h>
+#ifdef HAVE_STRING_H
 #include <string.h> /* For memcpy etc */
+#endif /* HAVE_STRING_H */
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
@@ -65,7 +67,9 @@ calls
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>   /* for open() */
+#endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h>   /* for open() */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek read close */

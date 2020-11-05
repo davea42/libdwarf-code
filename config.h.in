@@ -135,7 +135,7 @@
 /* Set to 1 if zlib decompression is available. */
 #undef HAVE_ZLIB
 
-/* Define to 1 if you have the <zlib.h> header file. */
+/* Set to 1 if zlib.h header file is available. */
 #undef HAVE_ZLIB_H
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */

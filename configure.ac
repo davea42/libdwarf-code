@@ -587,6 +587,7 @@ AS_IF(
     [
      have_zlib="yes"
      AC_DEFINE([HAVE_ZLIB], [1], [Set to 1 if zlib decompression is available.])
+     AC_DEFINE([HAVE_ZLIB_H], [1], [Set to 1 if zlib.h header file is available.])
     ],
     [
      have_zlib="no"

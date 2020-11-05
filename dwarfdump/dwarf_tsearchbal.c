@@ -64,7 +64,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #else
 #define  UNUSEDARG
 #endif
+#ifdef HAVE_STDLIB_H
 #include "stdlib.h" /* for free() */
+#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */

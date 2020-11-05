@@ -36,16 +36,10 @@
 
 #include "config.h"
 #ifdef DWARF_WITH_LIBELF
-#include "dwarf_incl.h"
-#include "dwarf_error.h"
-#include "dwarf_elf_access.h"
-#include "dwarf_elf_rel_detector.h"
-
-/* Include the ELF definitions depending on system headers if any. */
-#include "dwarf_elf_defines.h"
-
 #include <stdio.h>
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
+#endif /* HAVE_SYS_STAT_H */
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
@@ -63,6 +57,15 @@
 
 #define FALSE 0
 #define TRUE  1
+#include "dwarf_incl.h"
+#include "dwarf_error.h"
+#include "dwarf_elf_access.h"
+#include "dwarf_elf_rel_detector.h"
+
+/*  Include the ELF definitions depending
+    on system headers if any. */
+#include "dwarf_elf_defines.h"
+
 
 #ifdef HAVE_ELF64_GETEHDR
 extern Elf64_Ehdr *elf64_getehdr(Elf *);

@@ -47,11 +47,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_STRING_H
 #include <string.h> /* memcpy */
+#endif /* HAVE_STRING_H */
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h> /* open() */
+#endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> /* open() */
 #include <time.h>
 #ifdef HAVE_UNISTD_H

@@ -29,12 +29,14 @@
 */
 
 #include "config.h"
-#include "libdwarfdefs.h"
 #include <stdio.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif /* HAVE_STRING_H */
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #endif
+#include "libdwarfdefs.h"
 #include "pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"

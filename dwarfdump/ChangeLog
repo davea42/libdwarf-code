@@ -1,3 +1,10 @@
+2020-11-05: David Anderson
+    * dwarf_tsearchbal.c,dwarfdump.c,print_lines.c,tag_attr.c:
+      These had some #include not protected by the HAVE_*H
+      config.h (and cmake) provide. Fixed.
+    * testobjLE32PE.base: baseline update to match current
+      output.
+
 2020-11-04: David Anderson
     * globals.h,print_lines.c,print_die.c: Adding arguments for a 
       srcfiles array for the CU to

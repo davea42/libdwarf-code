@@ -1,3 +1,23 @@
+2020-11-04: David Anderson
+    * dwarf_crc32.c,dwarf_debuglink.c,dwarf_elf_access.c,
+      dwarf_elf_load_headers.c,dwarf_elfread.c,dwarf_error.c,
+      dwarf_frame2.c,dwarf_generic_init.c,dwarf_init_finish.c,
+      dwarf_loclists.c,dwarf_machoread.c,dwarf_object_detector.c,
+      dwarf_object_read_common.c,dwarf_original_elf_init.c,
+      dwarf_peread.c,dwarf_print_lines.c,dwarf_ranges.c,
+      dwarf_rnglists.c,dwarf_util.c,dwarfstring.c,dwgetopt.c,
+      gennames.c,pro_arange.c,pro_debug_sup.c,pro_die.c,
+      pro_dnames.c,pro_encode_nm.c,pro_error.c,pro_forms.c,
+      pro_frame.c,pro_funcs.c,pro_init.c,pro_line.c: These
+      had instances of includes not protected by, for
+      example, #ifdef HAVE_STRING_H. All fixed to be
+      consistent with all the HAVE*H config.h has.
+2020-11-04: David Anderson
+    * dwarf_frame2.c: Remove useless/misleading comments.
+      Quite a few lines were longer than the libdwarf
+      standard line length. Many of them comments.
+      All now (aside from two copyright lines) have proper
+      length.
 2020-11-03: David Anderson
     * libdwarf_version.h: updated version string
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,

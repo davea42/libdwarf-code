@@ -32,7 +32,9 @@
 #include "config.h"
 #include "libdwarfdefs.h"
 #include <stdio.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif /* HAVE_STRING_H */
 #include <limits.h>
 #include "pro_incl.h"
 #include <stddef.h>

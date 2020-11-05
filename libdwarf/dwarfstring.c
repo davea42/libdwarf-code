@@ -47,7 +47,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for malloc */
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_STRING_H
 #include <string.h> /* for strlen */
+#endif /* HAVE_STRING_H */
 #ifdef HAVE_MALLOC_H
 /* Useful include for some Windows compilers. */
 #include <malloc.h>

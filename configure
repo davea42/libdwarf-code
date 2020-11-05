@@ -18796,6 +18796,9 @@ if test "x${have_pc_zlib}" = "xyes"  -o "x${have_zlib}" = "xyes"; then :
 $as_echo "#define HAVE_ZLIB 1" >>confdefs.h
 
 
+$as_echo "#define HAVE_ZLIB_H 1" >>confdefs.h
+
+
 else
 
      have_zlib="no"

@@ -30,7 +30,9 @@
 
 #include "config.h"
 #include "libdwarfdefs.h"
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif /* HAVE_STRING_H */
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "pro_encode_nm.h"

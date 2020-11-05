@@ -217,6 +217,16 @@ Source lines (from CU-DIE at .debug_info offset 0x0000000b):
 
 COMPILE_UNIT<header overall offset = 0x00000000>:
 < 0><0x0000000b>  DW_TAG_compile_unit <abbrev 1>
+  dwarf_srcfiles() returned strings. Count = 9.
+  [0] c:/Users/dandelot/test.c
+  [1] c:/mingw/include/stdio.h
+  [2] c:/mingw/include/_mingw.h
+  [3] c:/mingw/include/msvcrtver.h
+  [4] c:/mingw/include/w32api.h
+  [5] c:/mingw/include/sdkddkver.h
+  [6] c:/mingw/lib/gcc/mingw32/6.3.0/include/stddef.h
+  [7] c:/mingw/include/sys/types.h
+  [8] c:/mingw/lib/gcc/mingw32/6.3.0/include/stdarg.h
                     DW_AT_producer              GNU C11 6.3.0 -mtune=generic -march=i586 -g3 -ggdb3
                     DW_AT_language              DW_LANG_C99
                     DW_AT_name                  c:/Users/dandelot/test.c
@@ -688,13 +698,3 @@ COMPILE_UNIT<header overall offset = 0x00000000>:
    [342] 0x01 DW_MACRO_define       line 126 NTDDI_WS03SP1 __NTDDI_WIN52 + __NTDDI_SP1
    [343] 0x01 DW_MACRO_define       line 127 NTDDI_WS03SP2 __NTDDI_WIN52 + __NTDDI_SP2
    [344] 0x01 DW_MACRO_define       line 129 NTDDI_VISTA __NTDDI_WIN6 + __NTDDI_SP0
-   [345] 0x01 DW_MACRO_define       line 130 NTDDI_VISTASP1 __NTDDI_WIN6 + __NTDDI_SP1
-   [346] 0x01 DW_MACRO_define       line 131 NTDDI_VISTASP2 __NTDDI_WIN6 + __NTDDI_SP2
-   [347] 0x01 DW_MACRO_define       line 133 NTDDI_LONGHORN NTDDI_VISTA
-   [348] 0x01 DW_MACRO_define       line 135 NTDDI_WIN6 NTDDI_VISTA
-   [349] 0x01 DW_MACRO_define       line 136 NTDDI_WIN6SP1 NTDDI_VISTASP1
-   [350] 0x01 DW_MACRO_define       line 137 NTDDI_WIN6SP2 NTDDI_VISTASP2
-   [351] 0x01 DW_MACRO_define       line 139 NTDDI_WS08 __NTDDI_WIN6 + __NTDDI_SP1
-   [352] 0x01 DW_MACRO_define       line 141 NTDDI_WIN7 __NTDDI_WIN61 + __NTDDI_SP0
-   [353] 0x01 DW_MACRO_define       line 143 NTDDI_WIN8 __NTDDI_WIN62 + __NTDDI_SP0
-   [354] 0x01 DW_MACRO_define       line 145 NTDDI_WINBLUE __NTDDI_WIN63 + __NTDDI_SP0

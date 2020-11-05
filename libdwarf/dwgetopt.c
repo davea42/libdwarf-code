@@ -44,12 +44,15 @@
     It does know of the leading ":" in the option string.
     See BADCH below.
     */
-
+#include "config.h"
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_STRING_H
 #include <string.h> /* For strchr */
+#endif /* HAVE_STRING_H */
+
 #include "dwgetopt.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))

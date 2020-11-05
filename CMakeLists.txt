@@ -301,6 +301,20 @@ check_c_source_compiles( [=[
       }
       return 0;
   } ]=]  HAVE_ZLIB )
+check_c_source_compiles( [=[
+  #include "zlib.h"
+  int main()
+  {
+      Bytef dest[100];
+      uLongf destlen = 100;
+      Bytef *src = 0;
+      uLong srclen = 3;
+      int res = uncompress(dest,&destlen,src,srclen);
+      if (res == Z_OK) {
+           /* ALL IS WELL */
+      }
+      return 0;
+  } ]=]  HAVE_ZLIB_H )
 set(CMAKE_REQUIRED_LIBRARIES)
 if (HAVE_ZLIB) 
   # For linking in libz

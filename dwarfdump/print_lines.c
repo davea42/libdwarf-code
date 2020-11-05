@@ -184,7 +184,7 @@ process_line_table(Dwarf_Debug dbg,
         if (glflags.gf_check_decl_file && checking_this_compiler()) {
             /* A line record with addr=0 was detected */
             if (SkipRecord) {
-                /* Skip records that do not have ís_addr_set' */
+                /* Skip records that do not have is_addr_set */
                 ares = dwarf_line_is_addr_set(line,
                     &has_is_addr_set, lt_err);
                 if (ares == DW_DLV_OK && has_is_addr_set) {

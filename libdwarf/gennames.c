@@ -38,7 +38,9 @@
 #endif /* HAVE_STDLIB_H */
 #include <errno.h>   /* For errno declaration. */
 #include <ctype.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif /* HAVE_STRING_H */
 #include "dwgetopt.h"
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 
