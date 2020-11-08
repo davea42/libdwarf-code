@@ -1,3 +1,11 @@
+2020-11-08: David Anderson
+    * globals.h: Declaring new function print_all_abbrevs_for_cu()
+    * print_abbrevs.c: Refactored to allow printing abbrevs
+      for a single CU and/or all abbreves at once.
+    * print_die.c: If -vvvv and printing .debug_info/.debug_types
+      print the abbrev section applying to each CU reported.
+      If checking (as with -ka) check for errors in
+      the abbrevs of each CU (no -v required for checking).
 2020-11-05: David Anderson
     * dwarf_tsearchbal.c,dwarfdump.c,print_lines.c,tag_attr.c:
       These had some #include not protected by the HAVE_*H

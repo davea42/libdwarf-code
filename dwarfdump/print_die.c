@@ -794,6 +794,28 @@ print_die_and_children(Dwarf_Debug dbg,
     return res;
 }
 
+static int
+print_cu_hdr_abbrev_data(Dwarf_Debug dbg,
+    Dwarf_Off aboffset,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned initial_abbnum = 1;
+    Dwarf_Unsigned final_abbnum = 0;
+    Dwarf_Unsigned length = 0;
+    int ores = 0;
+
+    if (glflags.gf_do_print_dwarf) {
+        printf("\nAbbreviation table this CU, offset "
+            "0x%" DW_PR_XZEROS DW_PR_DUx ":\n",
+            aboffset);
+    }
+    ores = print_all_abbrevs_for_cu(dbg,
+        aboffset,
+        initial_abbnum,
+        &length,&final_abbnum,error);
+    return ores;
+
+}
 
 /*   */
 static int
@@ -1027,6 +1049,20 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         printf("\n");
                     }
                 }
+            }
+        }
+        if (glflags.gf_check_abbreviations ||
+            (glflags.verbose > 3 &&
+            (glflags.gf_info_flag || glflags.gf_types_flag) &&
+            glflags.gf_do_print_dwarf)) {
+            int hares = 0;
+            hares = print_cu_hdr_abbrev_data(dbg,
+                abbrev_offset,
+                pod_err);
+            if (hares == DW_DLV_ERROR) {
+                /*  Will be reported later, no doubt. */
+                DROP_ERROR_INSTANCE(dbg,hares,*pod_err);
+                *pod_err = 0;
             }
         }
 
@@ -1740,10 +1776,10 @@ print_srcfiles( char **srcfiles,Dwarf_Signed srcfcnt)
     if (srcfcnt > 9) {
         if (srcfcnt > 99) {
           cntstr = "  [%3" DW_PR_DSd "]";
-        } else { 
+        } else {
           cntstr = "  [%2" DW_PR_DSd "]";
         }
-    } 
+    }
     for ( ; i < srcfcnt; ++i) {
         printf(cntstr,i);
         printf(" %s\n",sanitized(srcfiles[i]));
@@ -1854,7 +1890,6 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         print_indent_prefix(die_indent_level * 2 + 2);
         printf("%s\n",tagname);
     }
-
     /* Print the die */
     if (PRINTING_DIES && print_else_name_match) {
         if (!ignore_die_stack) {
@@ -1914,20 +1949,21 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                             &agoff, &acount,err);
                         if(agres == DW_DLV_ERROR) {
                             print_error_and_continue(dbg,
-                                "dwarf_die_abbrev_global_offset call "
+                                "dwarf_die_abbrev_global_offset call"
                                 " failed",
                                 agres, *err);
                             return agres;
                         } else if (agres == DW_DLV_NO_ENTRY) {
                             print_error_and_continue(dbg,
-                                "dwarf_die_abbrev_global_offset "
-                                "no entry?",
+                                "dwarf_die_abbrev_global_offset"
+                                " no entry?",
                                 agres, *err);
                             return agres;
                         } else {
                             printf(" ABGOFF = 0x%"
                                 DW_PR_XZEROS DW_PR_DUx
-                                " count = 0x%" DW_PR_XZEROS DW_PR_DUx,
+                                " count = 0x%"
+                                DW_PR_XZEROS DW_PR_DUx,
                                 agoff, acount);
                         }
                     }
@@ -6196,7 +6232,7 @@ expand_rnglist_entries(
             "                                                 "
             "secoff");
     }
-    for( ; i < count; ++i) {
+    for ( ; i < count; ++i) {
         unsigned entrylen = 0;
         unsigned rle_code = 0;
         Dwarf_Unsigned raw1 = 0;
@@ -6488,7 +6524,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Unsigned index = 0;
                 int res = dwarf_get_debug_addr_index
                     (attrib,&index,err);
-                if(res != DW_DLV_OK) {
+                if (res != DW_DLV_OK) {
                     struct esb_s lstr;
                     esb_constructor(&lstr);
                     esb_append(&lstr,"ERROR: getting debug addr"
@@ -6514,7 +6550,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 glflags.gf_debug_addr_missing_search_by_address = 1;
                 res = dwarf_get_debug_addr_index(attrib,&index,
                     err);
-                if(res != DW_DLV_OK) {
+                if (res != DW_DLV_OK) {
                     struct esb_s lstr;
                     esb_constructor(&lstr);
                     esb_append(&lstr,get_FORM_name(theform,FALSE));
@@ -6541,7 +6577,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     esb_get_string(&lstr),
                     bres, *err);
                 esb_destructor(&lstr);
-                if(!glflags.gf_error_code_in_name_search_by_address) {
+                if (!glflags.gf_error_code_in_name_search_by_address)
+                {
                     glflags.gf_error_code_in_name_search_by_address =
                         dwarf_errno(*err);
                 }
@@ -6984,15 +7021,15 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         if (srcfiles && vres == DW_DLV_OK) {
                             Dwarf_Unsigned localud = tempud;
                             Dwarf_Bool done = FALSE;
-                            
+
                             if (dwversion == DWVERSION5) {
-                               if ( localud < (Dwarf_Unsigned)cnt) {
+                                if ( localud < (Dwarf_Unsigned)cnt) {
                                     fname = srcfiles[localud];
                                     esb_append(&declmsg,fname);
                                     done = TRUE;
                                 }
-                            } else { 
-                               if (!localud) {
+                            } else {
+                                if (!localud) {
                                     /* Just print the number,
                                     there is no name. */
                                     done=TRUE;
@@ -7230,7 +7267,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     sizeof(saverbuf));
                 sres = dwarf_get_debug_str_index(attrib,&index,err);
                 esb_append(&saver,temps);
-                if(sres == DW_DLV_OK) {
+                if (sres == DW_DLV_OK) {
                     bracket_hex("(indexed string: ",index,")",esbp);
                 } else {
                     DROP_ERROR_INSTANCE(dbg,sres,*err);

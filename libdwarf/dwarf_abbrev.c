@@ -155,7 +155,8 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     if (offset >= dbg->de_debug_abbrev.dss_size) {
         return DW_DLV_NO_ENTRY;
     }
-    ret_abbrev = (Dwarf_Abbrev) _dwarf_get_alloc(dbg, DW_DLA_ABBREV, 1);
+    ret_abbrev = (Dwarf_Abbrev) _dwarf_get_alloc(dbg,
+        DW_DLA_ABBREV, 1);
     if (ret_abbrev == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;

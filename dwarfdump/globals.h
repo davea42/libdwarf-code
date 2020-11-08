@@ -158,6 +158,13 @@ extern int print_types(Dwarf_Debug dbg,enum type_type_e type_type,
 extern int print_weaknames(Dwarf_Debug dbg, Dwarf_Error *);
 extern int print_debug_names(Dwarf_Debug dbg,Dwarf_Error *);
 int print_debug_sup(Dwarf_Debug dbg, Dwarf_Error *error);
+int print_all_abbrevs_for_cu(Dwarf_Debug dbg,
+    Dwarf_Unsigned  offset,
+    Dwarf_Unsigned abbrev_num_in,
+    Dwarf_Unsigned *length_out,
+    Dwarf_Unsigned *abbrev_num_out,
+    Dwarf_Error    *error);
+
 
 int print_all_pubnames_style_records(Dwarf_Debug dbg,
     const char * linetitle,

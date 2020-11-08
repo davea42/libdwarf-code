@@ -47,7 +47,8 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 /* The following relevent for one specific Linker. */
 #define SNLINKER_MAX_ATTRIB_COUNT  16
-/* a warning limit which is arbitrary but leaves a bit more flexibility. */
+/*  a warning limit which is arbitrary but
+    leaves a bit more flexibility. */
 #define GENERAL_MAX_ATTRIB_COUNT   32
 
 /* Print data in .debug_abbrev
@@ -155,284 +156,387 @@ printdupab(struct abbrev_entry_s * lastaep)
         "Duplicated attribute in abbrevs ");
     esb_destructor(&msg);
 }
-
-extern int
-print_abbrevs(Dwarf_Debug dbg,Dwarf_Error* paerr)
+static int
+print_one_abbrev_for_cu(Dwarf_Debug dbg,
+    Dwarf_Unsigned offset,
+    Dwarf_Unsigned abbrev_num_in,
+    Dwarf_Unsigned *length_out,
+    Dwarf_Unsigned *abbrev_num_out,
+    Dwarf_Error * error)
 {
-    Dwarf_Abbrev ab;
-    Dwarf_Unsigned offset = 0;
-    Dwarf_Off off = 0;
+    const char *tagname = "";
+    struct abbrev_entry_s *entryarray =0;
+    unsigned               entryarray_size = 0;
+    Dwarf_Unsigned abbrev_entry_count = 0;
+    Dwarf_Unsigned abbrev_code = 0;
+    Dwarf_Half     tag = 0;
+    Dwarf_Unsigned length = 0;
+    int            acres = 0;
+    Dwarf_Abbrev   ab = 0;
+    int            tres = 0;
+    Dwarf_Unsigned abbrev_num = abbrev_num_in;
+    Dwarf_Signed   child_flag = 0;
+    int            abres = 0;
     Dwarf_Unsigned i = 0;
-    Dwarf_Unsigned abbrev_num = 1;
-    Dwarf_Signed child_flag = 0;
-    int abres = 0;
-    int tres = 0;
-    int acres = 0;
-    unsigned loopct = 0;
-    char const_integer_string[60];
 
-    glflags.current_section_id = DEBUG_ABBREV;
-
-    for (loopct = 0; ; ++loopct) {
-        const char *tagname = "";
-        struct abbrev_entry_s *entryarray =0;
-        unsigned               entryarray_size = 0;
-        Dwarf_Unsigned abbrev_entry_count = 0;
-        Dwarf_Unsigned abbrev_code = 0;
-        Dwarf_Half tag = 0;
-        Dwarf_Unsigned length = 0;
-
-        abres = dwarf_get_abbrev(dbg, offset, &ab,
-            &length, &abbrev_entry_count, paerr);
-        if (!loopct) {
-            /*  Do this here (not before the loop)
-                so the section is loaded and uncompressed
-                if necessary. We get information printed
-                about the compression (if any) this way. */
-            print_secname(dbg,".debug_abbrev");
-        }
-        if (abres == DW_DLV_ERROR) {
-            return abres;
-        }
-        if (abres == DW_DLV_NO_ENTRY) {
-            return abres;
-        }
-        /*  Here offset is the global offset in .debug_abbrev.
-            The abbrev_num is a relatively worthless counter
-            of all abbreviations.  */
-        tres = dwarf_get_abbrev_tag(ab, &tag, paerr);
-        if (tres == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error_and_continue(dbg,
-                "Error reading abbreviation Tag", tres, *paerr);
-            return tres;
-        }
-        tres = dwarf_get_abbrev_code(ab, &abbrev_code, paerr);
-        if (tres != DW_DLV_OK) {
-            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error_and_continue(dbg,
-                "Error reading abbreviation code",
-                tres, *paerr);
-            paerr = 0;
-            abbrev_code = 0;
-            return tres;
-        }
-        if (!tag) {
-            tagname = "Abbrev 0: null abbrev entry";
-        } else {
-            tagname = get_TAG_name(tag,dwarf_names_print_on_error);
-        }
-        if ( glflags.gf_do_print_dwarf) {
-            if (glflags.dense) {
-                printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
-                    "><code: %" DW_PR_DUu ">",
-                    abbrev_num, offset,abbrev_code);
-                if (glflags.verbose) {
-                    printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-                        length);
-                }
-                printf(" %s", tagname);
-            }
-            else {
-                printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
-                    "><code: %3" DW_PR_DUu ">",
-                    abbrev_num, offset, abbrev_code);
-                if (glflags.verbose) {
-                    printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-                        length);
-                }
-                printf(" %-27s", tagname);
-            }
-        }
-        /* Process specific TAGs specially. */
-        tag_specific_checks_setup(dbg,tag,0);
-        ++abbrev_num;
-        acres = dwarf_get_abbrev_children_flag(ab, &child_flag,
-            paerr);
-        if (acres == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error_and_continue(dbg,
-                "Error reading abbreviation children flag",
-                acres, *paerr);
-            return acres;
-        }
-        if (acres == DW_DLV_NO_ENTRY) {
-            child_flag = 0;
-        }
-        /*  If tag is zero, it is a null byte, not a real abbreviation,
-            so there is no 'children' flag to print.  */
-        if (tag && glflags.gf_do_print_dwarf) {
-            const char * child_name = 0;
-
-            child_name = get_children_name(child_flag,
-                dwarf_names_print_on_error);
-            printf(" %s", child_name);
-        }
-        if(!glflags.dense) {
-            if ( glflags.gf_do_print_dwarf) {
-                printf("\n");
-            }
-        }
-        if (abbrev_entry_count < 1) {
-            if(tag) {
-                printf("   This abbreviation code has no entries\n");
-            }
-            if (length == 0 || length == 1 ) {
-                if ( glflags.gf_do_print_dwarf && glflags.dense ) {
-                    printf("\n");
-                }
-                if (!length) {
-                    dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-                    break;
-                }
-            }
-            /* printed null abrev name above */
-            offset += length;
-            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            continue;
-        }
-        /*  Abbrev contains the format of a die,
-            which debug_info then points to with the
-            real data. So here we just print the
-            given format. */
-        entryarray_size = abbrev_entry_count;
-        entryarray = calloc(entryarray_size,
-            sizeof(struct abbrev_entry_s));
-        if (!entryarray) {
-            printf( "%s ERROR:  Malloc of %u abbrev_entry_s"
-                " structs failed. Near section global offset 0x%"
-                DW_PR_DUx "  .\n",
-            glflags.program_name,entryarray_size,offset);
-            entryarray_size = 0;
-        }
-        for (i = 0; i < abbrev_entry_count ; i++) {
-            int aeres = 0;
-            Dwarf_Bool dofilter = FALSE;
-            Dwarf_Unsigned form = 0;
-            struct abbrev_entry_s *aep = entryarray+i;
-            Dwarf_Unsigned attr = 0;
-            Dwarf_Signed impl_const = 0;
-
-            aeres = dwarf_get_abbrev_entry_b(ab, i,
-                dofilter,&attr, &form,&impl_const, &off,
-                paerr);
-            if (aeres == DW_DLV_ERROR) {
-                dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-                free(entryarray);
-                print_error_and_continue(dbg,
-                    "Error reading abbreviation entry",
-                    aeres, *paerr);
-                return aeres;
-            }
-            aep->ae_number = i;
-            aep->ae_attr   = attr;
-            aep->ae_form   = form;
-            aep->ae_offset = off;
-            aep->ae_impl_const = impl_const;
-            if (glflags.gf_do_print_dwarf) {
-                const_integer_string[0] = 0;
-                if (form == DW_FORM_implicit_const) {
-                    sprintf(const_integer_string,
-                        " <%" DW_PR_DSd
-                        " (0x%" DW_PR_DUx
-                        ")>",impl_const,impl_const);
-                }
-                if (glflags.dense) {
-                    printf(" <%ld>%s<%s>%s", (unsigned long) off,
-                        get_AT_name(attr,dwarf_names_print_on_error),
-                        get_FORM_name((Dwarf_Half) form,
-                            dwarf_names_print_on_error),
-                        const_integer_string);
-                } else if (!const_integer_string[0])  {
-                    printf("       <0x%08lx>              %-28s%s\n",
-                        (unsigned long) off,
-                        get_AT_name(attr,
-                            dwarf_names_print_on_error),
-                        get_FORM_name((Dwarf_Half) form,
-                            dwarf_names_print_on_error));
-                } else {
-                    printf("       <0x%08lx>              %-28s%-20s%s\n",
-                        (unsigned long) off,
-                        get_AT_name(attr,
-                            dwarf_names_print_on_error),
-                        get_FORM_name((Dwarf_Half) form,
-                            dwarf_names_print_on_error),
-                        const_integer_string);
-                }
-            }
-        }
-        if (glflags.gf_check_abbreviations &&
-            entryarray_size > 0) {
-            unsigned l = 0;
-            struct abbrev_entry_s *lastaep = 0;
-
-            DWARF_CHECK_COUNT(abbreviations_result,1);
-            qsort((void *)entryarray,entryarray_size,
-                sizeof(struct abbrev_entry_s),ab_compare);
-
-            for(l = 0; l < entryarray_size ; ++l) {
-                struct abbrev_entry_s *aep = entryarray+l;
-
-                if (attr_unknown(aep->ae_attr) ) {
-                    struct esb_s msg;
-
-                    esb_constructor(&msg);
-                    esb_append_printf_u(&msg,
-                        "Attribute "
-                        "0x%"  DW_PR_XZEROS DW_PR_DUx ,
-                        aep->ae_attr);
-                    esb_append_printf_u(&msg,
-                        " near offset "
-                        "0x%"  DW_PR_XZEROS DW_PR_DUx "." ,
-                        aep->ae_offset);
-                    DWARF_CHECK_ERROR2(abbreviations_result,
-                        "Attr number unknown",
-                        esb_get_string(&msg));
-                    esb_destructor(&msg);
-                }
-                if (!is_valid_form_we_know(aep->ae_form)){
-                    struct esb_s msg;
-
-                    esb_constructor(&msg);
-                    esb_append_printf_u(&msg,
-                        "Form "
-                        "0x%"  DW_PR_XZEROS DW_PR_DUx,
-                        aep->ae_form);
-                    esb_append_printf_u(&msg,
-                        " near offset "
-                        "0x%"  DW_PR_XZEROS DW_PR_DUx ".",
-                        aep->ae_offset);
-                    DWARF_CHECK_ERROR2(abbreviations_result,
-                        "Form number unknown",
-                        esb_get_string(&msg));
-                    esb_destructor(&msg);
-                }
-                if (l == 0) {
-                    lastaep = aep;
-                } else  if (lastaep->ae_attr == aep->ae_attr) {
-                    lastaep->ae_dupcount++;
-                } else {
-                    if (lastaep->ae_dupcount) {
-                        printdupab(lastaep);
-                    }
-                    lastaep = aep;
-                }
-            }
-            if (lastaep->ae_dupcount) {
-                printdupab(lastaep);
-            }
-        }
+    abres = dwarf_get_abbrev(dbg, offset, &ab,
+        &length, &abbrev_entry_count, error);
+    if (abres == DW_DLV_ERROR) {
+        return abres;
+    }
+    if (abres == DW_DLV_NO_ENTRY) {
+        return abres;
+    }
+    /*  Here offset is the global offset in .debug_abbrev.
+        The abbrev_num is a relatively worthless counter
+        of all abbreviations.  */
+    tres = dwarf_get_abbrev_tag(ab, &tag, error);
+    if (tres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-        free(entryarray);
-        entryarray = 0;
-        entryarray_size = 0;
-        offset += length;
-        if (glflags.gf_do_print_dwarf && glflags.dense) {
+        print_error_and_continue(dbg,
+            "Error reading abbreviation Tag", tres, *error);
+        return tres;
+    }
+    tres = dwarf_get_abbrev_code(ab, &abbrev_code, error);
+    if (tres != DW_DLV_OK) {
+        dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+        print_error_and_continue(dbg,
+            "Error reading abbreviation code",
+            tres, *error);
+        return tres;
+    }
+    if (!tag) {
+        /*  This means we are done with this abbrev set,
+            abbrev for entire CU. */
+        tagname = "Abbrev 0: null abbrev entry";
+    } else {
+        tagname = get_TAG_name(tag,dwarf_names_print_on_error);
+    }
+    if ( glflags.gf_do_print_dwarf) {
+        if (glflags.dense) {
+            printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
+                "><code: %" DW_PR_DUu ">",
+                abbrev_num, offset,abbrev_code);
+            if (glflags.verbose) {
+                printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
+                    length);
+            }
+            printf(" %s", tagname);
+        }
+        else {
+            printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
+                "><code: %3" DW_PR_DUu ">",
+                abbrev_num, offset, abbrev_code);
+            if (glflags.verbose) {
+                printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
+                    length);
+            }
+            printf(" %-27s", tagname);
+        }
+    }
+    /* Process specific TAGs specially. */
+    tag_specific_checks_setup(dbg,tag,0);
+    ++abbrev_num;
+    acres = dwarf_get_abbrev_children_flag(ab, &child_flag,
+        error);
+    if (acres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+        print_error_and_continue(dbg,
+            "Error reading abbreviation children flag",
+            acres, *error);
+        return acres;
+    }
+    if (acres == DW_DLV_NO_ENTRY) {
+        child_flag = 0;
+    }
+    /*  If tag is zero, it is a null byte, not a real abbreviation,
+        so there is no 'children' flag to print.  */
+    if (tag && glflags.gf_do_print_dwarf) {
+        const char * child_name = 0;
+
+        child_name = get_children_name(child_flag,
+            dwarf_names_print_on_error);
+        printf(" %s", child_name);
+    }
+    if (!glflags.dense) {
+        if ( glflags.gf_do_print_dwarf) {
             printf("\n");
         }
     }
+    if (abbrev_entry_count < 1) {
+        if (tag && glflags.gf_do_print_dwarf) {
+            printf("   This abbreviation code has no entries\n");
+        }
+        if (length == 0 || length == 1 ) {
+            if ( glflags.gf_do_print_dwarf && glflags.dense ) {
+                printf("\n");
+            }
+            *length_out = length;
+            *abbrev_num_out = abbrev_num;
+            /*  printed null abrev name above */
+            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+            return DW_DLV_OK;
+        }
+    }
+    /*  Abbrev contains the format of a die,
+        which debug_info then points to with the
+        real data. So here we just print the
+        given format. */
+    entryarray_size = abbrev_entry_count;
+    entryarray = calloc(entryarray_size,
+        sizeof(struct abbrev_entry_s));
+    if (!entryarray) {
+        printf( "%s ERROR:  Malloc of %u abbrev_entry_s"
+            " structs failed. Near section global offset 0x%"
+            DW_PR_DUx "  .\n",
+        glflags.program_name,entryarray_size,offset);
+        entryarray_size = 0;
+    }
+    for (i = 0; i < abbrev_entry_count ; i++) {
+        int aeres = 0;
+        Dwarf_Bool dofilter = FALSE;
+        Dwarf_Unsigned form = 0;
+        struct abbrev_entry_s *aep = entryarray+i;
+        Dwarf_Unsigned attr = 0;
+        Dwarf_Signed impl_const = 0;
+        Dwarf_Off    off = 0;
+
+        aeres = dwarf_get_abbrev_entry_b(ab, i,
+            dofilter,&attr, &form,&impl_const, &off,
+            error);
+        if (aeres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+            free(entryarray);
+            print_error_and_continue(dbg,
+                "Error reading abbreviation entry",
+                aeres, *error);
+            return aeres;
+        }
+        aep->ae_number = i;
+        aep->ae_attr   = attr;
+        aep->ae_form   = form;
+        aep->ae_offset = off;
+        aep->ae_impl_const = impl_const;
+        if (glflags.gf_do_print_dwarf) {
+            char buf [80];
+            struct esb_s m;
+
+            buf[0] = 0;
+            esb_constructor_fixed(&m,buf,sizeof(buf));
+            if (form == DW_FORM_implicit_const) {
+                esb_append_printf_i(&m,
+                    " <%d",impl_const);
+                esb_append_printf_u(&m,
+                    " (0x%x)>",
+                    impl_const);
+            }
+            if (glflags.dense) {
+                printf(" <%ld>%s<%s>%s", (unsigned long) off,
+                    get_AT_name(attr,dwarf_names_print_on_error),
+                    get_FORM_name((Dwarf_Half) form,
+                        dwarf_names_print_on_error),
+                    esb_get_string(&m));
+            } else if (!esb_string_len(&m))  {
+                printf("       <0x%08lx>              %-28s%s\n",
+                    (unsigned long) off,
+                    get_AT_name(attr,
+                        dwarf_names_print_on_error),
+                    get_FORM_name((Dwarf_Half) form,
+                        dwarf_names_print_on_error));
+            } else {
+                printf("       <0x%08lx>"
+                    "              %-28s%-20s%s\n",
+                    (unsigned long) off,
+                    get_AT_name(attr,
+                        dwarf_names_print_on_error),
+                    get_FORM_name((Dwarf_Half) form,
+                        dwarf_names_print_on_error),
+                    esb_get_string(&m));
+            }
+            esb_destructor(&m);
+        }
+    }
+    if (glflags.gf_check_abbreviations &&
+        entryarray_size > 0) {
+        unsigned l = 0;
+        struct abbrev_entry_s *lastaep = 0;
+
+        DWARF_CHECK_COUNT(abbreviations_result,1);
+        qsort((void *)entryarray,entryarray_size,
+            sizeof(struct abbrev_entry_s),ab_compare);
+
+        for (l = 0; l < entryarray_size ; ++l) {
+            struct abbrev_entry_s *aep = entryarray+l;
+
+            if (attr_unknown(aep->ae_attr) ) {
+                struct esb_s msg;
+
+                esb_constructor(&msg);
+                esb_append_printf_u(&msg,
+                    "Attribute "
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx ,
+                    aep->ae_attr);
+                esb_append_printf_u(&msg,
+                    " near offset "
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx "." ,
+                    aep->ae_offset);
+                DWARF_CHECK_ERROR2(abbreviations_result,
+                    "Attr number unknown",
+                    esb_get_string(&msg));
+                esb_destructor(&msg);
+            }
+            if (!is_valid_form_we_know(aep->ae_form)){
+                struct esb_s msg;
+
+                esb_constructor(&msg);
+                esb_append_printf_u(&msg,
+                    "Form "
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx,
+                    aep->ae_form);
+                esb_append_printf_u(&msg,
+                    " near offset "
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx ".",
+                    aep->ae_offset);
+                DWARF_CHECK_ERROR2(abbreviations_result,
+                    "Form number unknown",
+                    esb_get_string(&msg));
+                esb_destructor(&msg);
+            }
+            if (l == 0) {
+                lastaep = aep;
+            } else  if (lastaep->ae_attr == aep->ae_attr) {
+                lastaep->ae_dupcount++;
+            } else {
+                if (lastaep->ae_dupcount) {
+                    printdupab(lastaep);
+                }
+                lastaep = aep;
+            }
+        }
+        if (lastaep->ae_dupcount) {
+            printdupab(lastaep);
+        }
+    }
+    dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+    free(entryarray);
+    entryarray = 0;
+    entryarray_size = 0;
+    *length_out = length;
+    *abbrev_num_out = abbrev_num;
+    if (glflags.gf_do_print_dwarf && glflags.dense) {
+        printf("\n");
+    }
     return DW_DLV_OK;
 }
+
+int
+print_all_abbrevs_for_cu(Dwarf_Debug dbg,
+    Dwarf_Unsigned  offset,
+    Dwarf_Unsigned abbrev_num_in,
+    Dwarf_Unsigned *length_out,
+    Dwarf_Unsigned *abbrev_num_out,
+    Dwarf_Error    *error)
+{
+    Dwarf_Unsigned total_len = 0;
+    int pres = 0;
+    Dwarf_Unsigned loopcount = 0;
+    /*  We have always printed the abbrev_num starting with 1.
+        Unclear why. */
+    Dwarf_Unsigned abbrev_num = abbrev_num_in;
+    Dwarf_Unsigned abbrev_num_ret = abbrev_num_in;
+
+    for ( ; ;++loopcount ) {
+        Dwarf_Unsigned local_len = 0;
+
+        abbrev_num = abbrev_num_ret;
+        pres = print_one_abbrev_for_cu(dbg,offset,
+            abbrev_num,
+            &local_len,&abbrev_num_ret,error);
+        if (pres == DW_DLV_ERROR) {
+            return pres;
+        }
+        if (pres == DW_DLV_NO_ENTRY) {
+            if (loopcount) {
+                /*  This is an incomplete final entry,
+                    the trailing NUL byte for a CU
+                    abbrev set  is missing
+                    as of end of section. */
+                printf("ERROR: The final .debug_abbrev "
+                    "abbreviation ends without its required "
+                    "final NUL byte. A harmless error at "
+                    "section offset 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    ".",offset);
+                glflags.gf_count_major_errors++;
+                return DW_DLV_OK;
+            }
+            return pres;
+        }
+        total_len += local_len;
+        if (local_len == 1) {
+            /* last of a CU data printed */
+            *abbrev_num_out = abbrev_num_ret;
+            *length_out = total_len;
+            return DW_DLV_OK;
+        }
+        offset += local_len;
+    }
+    *abbrev_num_out = abbrev_num_ret;
+    *length_out = total_len;
+    return DW_DLV_OK;
+}
+
+int
+print_abbrevs(Dwarf_Debug dbg,Dwarf_Error* paerr)
+{
+    Dwarf_Abbrev   ab = 0;
+    Dwarf_Unsigned offset = 0;
+    int            abres = 0;
+    int            tres = 0;
+    unsigned       loopct = 0;
+    Dwarf_Unsigned length = 0;
+    Dwarf_Unsigned unused_entry_count = 0;
+    Dwarf_Unsigned abbrev_num = 1;
+    Dwarf_Unsigned abbrev_num_ret = 1;
+
+    glflags.current_section_id = DEBUG_ABBREV;
+    /* Doing this just to print the section name */
+    abres = dwarf_get_abbrev(dbg, offset, &ab,
+        &length, &unused_entry_count, paerr);
+    {
+        /*  Do this after a dwarf_get_abbrev()
+            so the section is loaded and uncompressed
+            if necessary. We get information printed
+            about the compression (if any) this way. */
+        print_secname(dbg,".debug_abbrev");
+    }
+    if (abres == DW_DLV_OK) {
+        /* discard what we got. */
+        dwarf_dealloc(dbg,ab, DW_DLA_ABBREV);
+        ab = 0;
+    } else if (abres == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,*paerr);
+        *paerr = 0;
+    }
+
+
+    for (loopct = 0; ; ++loopct) {
+        tres = print_all_abbrevs_for_cu(dbg,offset,
+            abbrev_num,&length,&abbrev_num_ret,paerr);
+        if (tres == DW_DLV_NO_ENTRY) {
+            if (loopct > 0) {
+                return DW_DLV_OK;
+            }
+            return DW_DLV_NO_ENTRY;
+        }
+        if (tres == DW_DLV_ERROR) {
+            return tres;
+        }
+        offset = offset+length;
+        abbrev_num = abbrev_num_ret;
+    }
+}
+
 
 /*  Abbreviations array info for checking  abbrev tags.
     The [zero] entry is not used.
@@ -472,7 +576,7 @@ static Dwarf_Unsigned
 check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
     Dwarf_Unsigned last_abbrev_code,
     UNUSEDARG Dwarf_Unsigned l_abbrev_array_size,
-    UNUSEDARG Dwarf_Unsigned abbrev_entry_count,
+    UNUSEDARG Dwarf_Unsigned ev_entry_count,
     UNUSEDARG Dwarf_Unsigned total_abbrevs_counted)
 {
     char buf[128];
@@ -492,7 +596,8 @@ check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
                 last_abbrev_code);
             DWARF_CHECK_ERROR2(abbreviations_result,
                 esb_get_string(&ar),
-                "Questionable abbreviation code! Not checking reuse.");
+                "Questionable abbreviation code! "
+                "Not checking reuse.");
             esb_destructor(&ar);
             return 0;
         } else if ((abbrev_code-last_abbrev_code) > 1 ) {
@@ -680,7 +785,8 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                         abbrev_array_size *= 2;
                         abbrev_array = (Dwarf_Unsigned *)
                             realloc(abbrev_array,
-                            abbrev_array_size * sizeof(Dwarf_Unsigned));
+                            abbrev_array_size *
+                            sizeof(Dwarf_Unsigned));
                         /* Zero out the new bytes. */
                         memset(abbrev_array + old_size,0,
                             addl_size_bytes);

@@ -1,3 +1,10 @@
+2020-11-08: David Anderson
+    * dwarf_abbrev.c: Shorten a pointlessly long line.
+    * libdwarf2.1.mm: Rev 3.17. Remove many accidental
+      tab characters and fix indents of the function
+      prototypes.  Broke up some pointlessly
+      long lines.
+    * libdwarf2.1.pdf: Regenerated as 3.17
 2020-11-04: David Anderson
     * dwarf_crc32.c,dwarf_debuglink.c,dwarf_elf_access.c,
       dwarf_elf_load_headers.c,dwarf_elfread.c,dwarf_error.c,
