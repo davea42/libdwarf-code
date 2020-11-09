@@ -1,3 +1,6 @@
+2020-11-09  David Anderson
+    * configure.ac: Now version 20201100
+    * configure: Regenerated.
 2020-11-05  David Anderson
     * CMakeLists.txt,configure.ac: Modified so we set both
       HAVE_ZLIB and HAVE_ZLIB_H as we should have done
