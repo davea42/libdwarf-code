@@ -1,4 +1,7 @@
 2020-11-10: David Anderson
+    * dwarf_opaque.h: Fixing indents, trailing
+      whitespace, and too-long lines.
+2020-11-10: David Anderson
     * dwarf_vars.c: Shortening too-long line.
 2020-11-09: David Anderson
     * dwarf_harmless.c,dwarf_machoread.c: Modified slightly

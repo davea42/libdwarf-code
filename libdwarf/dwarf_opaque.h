@@ -111,9 +111,9 @@ struct Dwarf_Attribute_s {
 /*
     This structure provides the context for a compilation unit.
     Thus, it contains the Dwarf_Debug, cc_dbg, that this cu
-    belongs to.  It contains the information in the compilation
-    unit header, cc_length, cc_version_stamp,
-    cc_abbrev_offset,
+    belongs to.  It contains the information
+    in the compilation unit header, cc_length,
+    cc_version_stamp, cc_abbrev_offset,
     and cc_address_size, in the .debug_info section for that cu.
     In addition, it contains the count, cc_count_cu, of the cu
     number of that cu in the list of cu's in the .debug_info.
@@ -375,7 +375,9 @@ struct Dwarf_Section_s {
     Dwarf_Small    dss_zdebug_requires_decompress;
     Dwarf_Small    dss_did_decompress;
     Dwarf_Small dss_shf_compressed;  /* section flag SHF_COMPRESS */
-    Dwarf_Small dss_ZLIB_compressed; /* Section compression starts with ZLIB chars*/
+
+    /* Section compression starts with ZLIB chars*/
+    Dwarf_Small dss_ZLIB_compressed;
 
     /*  For non-elf, leaving the following fields zero
         will mean they are ignored. */
@@ -385,17 +387,19 @@ struct Dwarf_Section_s {
     Dwarf_Unsigned     dss_link;
     /*  The following is used when reading .rela sections
         (such sections appear in some .o files). */
-    Dwarf_Half     dss_reloc_index; /* Zero means ignore the reloc fields. */
+    Dwarf_Half     dss_reloc_index; /* Zero means ignore
+        the reloc fields. */
     Dwarf_Small *  dss_reloc_data;
     Dwarf_Unsigned dss_reloc_size;
     Dwarf_Unsigned dss_reloc_entrysize;
     Dwarf_Addr     dss_reloc_addr;
-    /*  dss_reloc_symtab is the sh_link of a .rela to its .symtab, leave
+    /*  dss_reloc_symtab is the sh_link of a .rela
+        to its .symtab, leave
         it 0 if non-meaningful. */
     Dwarf_Addr     dss_reloc_symtab;
-    /*  dss_reloc_link should be zero unless a reloc section has a link
-        to another (sh_link).  Used to access the symtab for relocations
-        a section. */
+    /*  dss_reloc_link should be zero unless a reloc section
+        has a link to another (sh_link).
+        Used to access the symtab for relocating a section. */
     Dwarf_Unsigned     dss_reloc_link;
     /*  Pointer to the elf symtab, used for elf .rela. Leave it 0
         if not relevant. */
@@ -481,13 +485,14 @@ struct Dwarf_dbg_sect_s {
     struct Dwarf_Section_s *ds_secdata;
 
     unsigned ds_groupnumber;
-    int ds_duperr;                     /* Error code for duplicated section */
-    int ds_emptyerr;                   /* Error code for empty section */
-    int ds_have_dwarf;                 /* Section contains DWARF */
-    int ds_have_zdebug;                /* Section compressed: .zdebug name */
+    int ds_duperr;            /* Error code for duplicated section */
+    int ds_emptyerr;          /* Error code for empty section */
+    int ds_have_dwarf;        /* Section contains DWARF */
+    int ds_have_zdebug;       /* Section compressed: .zdebug name */
 };
 
-/*  As the number of debug sections does not change very often, in the case a
+/*  As the number of debug sections does not change very often,
+    in the case a
     new section is added in 'enter_section_in_array()'
     the 'MAX_DEBUG_SECTIONS' must
     be updated accordingly.
@@ -570,6 +575,7 @@ struct Dwarf_Debug_s {
     char de_owns_fd;
     /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
     unsigned char de_path_source;
+    unsigned char de_using_libelf;
     /*  de_path is only set automatically if dwarf_init_path()
         was used to initialize things.
         Used with the .gnu_debuglink section. */
@@ -650,15 +656,14 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_loclists; /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_rnglists; /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_frame;
-    struct Dwarf_Section_s de_gnu_debuglink;  /* New September 2019 */
-    struct Dwarf_Section_s de_note_gnu_buildid; /* New September 2019 */
-
+    struct Dwarf_Section_s de_gnu_debuglink;  /* New Sept. 2019 */
+    struct Dwarf_Section_s de_note_gnu_buildid; /* New Sept. 2019 */
 
     /* gnu: the g++ eh_frame section */
     struct Dwarf_Section_s de_debug_frame_eh_gnu;
 
-    struct Dwarf_Section_s de_debug_pubtypes; /* DWARF3 .debug_pubtypes */
-
+    /* DWARF3 .debug_pubtypes */
+    struct Dwarf_Section_s de_debug_pubtypes;
 
     /*  Four SGI IRIX extensions essentially
         identical to DWARF3 .debug_pubtypes.
@@ -699,8 +704,8 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_gnu_pubnames;
     struct Dwarf_Section_s de_debug_gnu_pubtypes;
 
-    /*  For non-elf, simply leave the following two structs zeroed and
-        they will be ignored. */
+    /*  For non-elf, simply leave the following two structs
+        zeroed and they will be ignored. */
     struct Dwarf_Section_s de_elf_symtab;
     struct Dwarf_Section_s de_elf_strtab;
 
@@ -743,8 +748,11 @@ struct Dwarf_Debug_s {
         See dwarf_return_empty_pubnames() */
     unsigned char de_return_empty_pubnames;
 
-    struct Dwarf_dbg_sect_s de_debug_sections[DWARF_MAX_DEBUG_SECTIONS];
-    unsigned de_debug_sections_total_entries; /* Number actually used. */
+    struct Dwarf_dbg_sect_s de_debug_sections[
+        DWARF_MAX_DEBUG_SECTIONS];
+
+    /* Number actually used. */
+    unsigned de_debug_sections_total_entries;
 
     struct Dwarf_Harmless_s de_harmless_errors;
 
@@ -762,7 +770,6 @@ struct Dwarf_Debug_s {
         file is sometimes needed
         and referenced.*/
     struct Dwarf_Tied_Data_s de_tied_data;
-
 };
 
 /* New style. takes advantage of dwarfstrings capability.
@@ -793,13 +800,14 @@ struct Dwarf_Chain_o {
     since DWARF3. */
 #define DISTINGUISHED_VALUE  0xffffffff
 #define DISTINGUISHED_VALUE_OFFSET_SIZE 8
-#define DISTINGUISHED_VALUE_ARRAY(x)  char x[4] = { 0xff,0xff,0xff,0xff }
+#define DISTINGUISHED_VALUE_ARRAY(x)  char x[4] = \
+    { 0xff,0xff,0xff,0xff }
 
 
 int _dwarf_ignorethissection(const char *scn_name);
 
-/*  We don't load the sections until they are needed. This function is
-    used to load the section.  */
+/*  We don't load the sections until they are needed.
+    This function is used to load the section.  */
 int _dwarf_load_section(Dwarf_Debug,
     struct Dwarf_Section_s *,
     Dwarf_Error *);
@@ -885,9 +893,8 @@ int _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
 
 
 int _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
-   Dwarf_Unsigned* offset, Dwarf_Unsigned*size,
-   Dwarf_Error *error);
-
+    Dwarf_Unsigned* offset, Dwarf_Unsigned*size,
+    Dwarf_Error *error);
 int _dwarf_get_addr_index_itself(int theform,
     Dwarf_Small *info_ptr,
     Dwarf_Debug dbg,
@@ -967,12 +974,14 @@ int _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
     Dwarf_Unsigned * addr_base_out,
     Dwarf_Error    * error);
 
-int _dwarf_get_string_from_tied(Dwarf_Debug dbg, Dwarf_Unsigned offset,
+int _dwarf_get_string_from_tied(Dwarf_Debug dbg,
+    Dwarf_Unsigned offset,
     char **return_str, Dwarf_Error*error);
 
 int _dwarf_valid_form_we_know(Dwarf_Unsigned at_form,
     Dwarf_Unsigned at_name);
-int _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
+int _dwarf_extract_local_debug_str_string_given_offset(
+    Dwarf_Debug dbg,
     unsigned attrform,
     Dwarf_Unsigned offset,
     char ** return_str,
@@ -990,7 +999,8 @@ typedef int (*_dwarf_get_elf_flags_func_ptr_type)(
     Dwarf_Unsigned *flags_out,
     Dwarf_Unsigned *addralign_out,
     int *error);
-extern _dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;
+extern _dwarf_get_elf_flags_func_ptr_type
+    _dwarf_get_elf_flags_func_ptr;
 
 /* This is libelf access to Elf object. */
 extern int _dwarf_elf_setup(int fd,
@@ -1018,7 +1028,8 @@ _dwarf_elf_nlsetup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
-void _dwarf_destruct_elf_nlaccess(struct Dwarf_Obj_Access_Interface_s *aip);
+void _dwarf_destruct_elf_nlaccess(
+    struct Dwarf_Obj_Access_Interface_s *aip);
 
 extern int _dwarf_macho_setup(int fd,
     char *true_path,
@@ -1031,7 +1042,8 @@ extern int _dwarf_macho_setup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
-void _dwarf_destruct_macho_access(struct Dwarf_Obj_Access_Interface_s *aip);
+void _dwarf_destruct_macho_access(
+    struct Dwarf_Obj_Access_Interface_s *aip);
 
 extern int _dwarf_pe_setup(int fd,
     char *path,
@@ -1044,7 +1056,8 @@ extern int _dwarf_pe_setup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
-void _dwarf_destruct_pe_access(struct Dwarf_Obj_Access_Interface_s *aip);
+void _dwarf_destruct_pe_access(
+    struct Dwarf_Obj_Access_Interface_s *aip);
 
 void _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
     Dwarf_Error *error,
@@ -1061,10 +1074,14 @@ extern int _dwarf_formudata_internal(Dwarf_Debug dbg,
     Dwarf_Unsigned *bytes_read,
     Dwarf_Error *error);
 
-Dwarf_Byte_Ptr _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context, Dwarf_Unsigned *section_len_out);
+Dwarf_Byte_Ptr _dwarf_calculate_info_section_start_ptr(
+    Dwarf_CU_Context context,
+    Dwarf_Unsigned *section_len_out);
 
-Dwarf_Byte_Ptr _dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context);
-Dwarf_Byte_Ptr _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context);
+Dwarf_Byte_Ptr _dwarf_calculate_info_section_end_ptr(
+    Dwarf_CU_Context context);
+Dwarf_Byte_Ptr _dwarf_calculate_abbrev_section_end_ptr(
+    Dwarf_CU_Context context);
 
 int _dwarf_formblock_internal(Dwarf_Debug dbg,
     Dwarf_Attribute attr,
