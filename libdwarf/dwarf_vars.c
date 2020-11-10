@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2020 David Anderson. All Rights Reserved.
 
@@ -78,7 +77,9 @@ dwarf_vars_dealloc(Dwarf_Debug dbg, Dwarf_Var * dwgl,
 
 
 int
-dwarf_varname(Dwarf_Var var_in, char **ret_varname, Dwarf_Error * error)
+dwarf_varname(Dwarf_Var var_in,
+    char **ret_varname,
+    Dwarf_Error * error)
 {
     Dwarf_Global var = (Dwarf_Global) var_in;
 

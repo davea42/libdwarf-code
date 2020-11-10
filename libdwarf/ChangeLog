@@ -1,3 +1,5 @@
+2020-11-10: David Anderson
+    * dwarf_vars.c: Shortening too-long line.
 2020-11-09: David Anderson
     * dwarf_harmless.c,dwarf_machoread.c: Modified slightly
       to match libdwarf coding style.
