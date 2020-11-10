@@ -138,7 +138,8 @@ void dwarf_insert_harmless_error(Dwarf_Debug dbg,
         return;
     }
     msgspace = dhp->dh_errors[cur];
-    safe_strncpy(msgspace, newerror,DW_HARMLESS_ERROR_MSG_STRING_SIZE);
+    safe_strncpy(msgspace, newerror,
+        DW_HARMLESS_ERROR_MSG_STRING_SIZE);
     next = (cur+1) % dhp->dh_maxcount;
     dhp->dh_errs_count++;
     dhp->dh_next_to_use = next;
@@ -174,9 +175,11 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
             dwarf_harmless_init(dhp,maxcount-1);
             if (oldarray.dh_next_to_use != oldarray.dh_first) {
                 unsigned i = 0;
-                for (i = oldarray.dh_first; i != oldarray.dh_next_to_use;
+                for (i = oldarray.dh_first;
+                    i != oldarray.dh_next_to_use;
                     i = (i+1)%oldarray.dh_maxcount) {
-                    dwarf_insert_harmless_error(dbg,oldarray.dh_errors[i]);
+                    dwarf_insert_harmless_error(dbg,
+                        oldarray.dh_errors[i]);
                 }
                 if (oldarray.dh_errs_count > dhp->dh_errs_count) {
                     dhp->dh_errs_count = oldarray.dh_errs_count;
@@ -196,7 +199,7 @@ dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
     unsigned i = 0;
     memset(dhp,0,sizeof(*dhp));
     dhp->dh_maxcount = size +1;
-    dhp->dh_errors = (char **)malloc(sizeof( char *) *dhp->dh_maxcount);
+    dhp->dh_errors = (char **)malloc(sizeof(char *)*dhp->dh_maxcount);
     if (!dhp->dh_errors) {
         dhp->dh_maxcount = 0;
         return;

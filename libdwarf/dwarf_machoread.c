@@ -228,7 +228,7 @@ macho_load_section (void *obj, Dwarf_Half section_index,
 
         struct generic_macho_section *sp =
             macho->mo_dwarf_sections + section_index;
-        if(sp->loaded_data) {
+        if (sp->loaded_data) {
             *return_data = sp->loaded_data;
             return DW_DLV_OK;
         }
@@ -267,7 +267,7 @@ _dwarf_destruct_macho_access(
     dwarf_macho_object_access_internals_t *mp = 0;
     Dwarf_Unsigned i = 0;
 
-    if(!aip) {
+    if (!aip) {
         return;
     }
     mp = (dwarf_macho_object_access_internals_t *)aip->object;
@@ -288,7 +288,7 @@ _dwarf_destruct_macho_access(
         struct generic_macho_section *sp = 0;
 
         sp = mp->mo_dwarf_sections;
-        for( i=0; i < mp->mo_dwarf_sectioncount; ++i,++sp) {
+        for ( i=0; i < mp->mo_dwarf_sectioncount; ++i,++sp) {
             if (sp->loaded_data) {
                 free(sp->loaded_data);
                 sp->loaded_data = 0;
@@ -304,7 +304,8 @@ _dwarf_destruct_macho_access(
 
 /* load_macho_header32(dwarf_macho_object_access_internals_t *mfp)*/
 static int
-load_macho_header32(dwarf_macho_object_access_internals_t *mfp, int *errcode)
+load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
+    int *errcode)
 {
     struct mach_header mh32;
     int res = 0;
@@ -321,10 +322,12 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp, int *errcode)
     /* Do not adjust endianness of magic, leave as-is. */
     ASNAR(memcpy,mfp->mo_header.magic,mh32.magic);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.cputype,mh32.cputype);
-    ASNAR(mfp->mo_copy_word,mfp->mo_header.cpusubtype,mh32.cpusubtype);
+    ASNAR(mfp->mo_copy_word,mfp->mo_header.cpusubtype,
+        mh32.cpusubtype);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.filetype,mh32.filetype);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.ncmds,mh32.ncmds);
-    ASNAR(mfp->mo_copy_word,mfp->mo_header.sizeofcmds,mh32.sizeofcmds);
+    ASNAR(mfp->mo_copy_word,mfp->mo_header.sizeofcmds,
+        mh32.sizeofcmds);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.flags,mh32.flags);
     mfp->mo_header.reserved = 0;
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
@@ -352,10 +355,12 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     /* Do not adjust endianness of magic, leave as-is. */
     ASNAR(memcpy,mfp->mo_header.magic,mh64.magic);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.cputype,mh64.cputype);
-    ASNAR(mfp->mo_copy_word,mfp->mo_header.cpusubtype,mh64.cpusubtype);
+    ASNAR(mfp->mo_copy_word,mfp->mo_header.cpusubtype,
+        mh64.cpusubtype);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.filetype,mh64.filetype);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.ncmds,mh64.ncmds);
-    ASNAR(mfp->mo_copy_word,mfp->mo_header.sizeofcmds,mh64.sizeofcmds);
+    ASNAR(mfp->mo_copy_word,mfp->mo_header.sizeofcmds,
+        mh64.sizeofcmds);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.flags,mh64.flags);
     ASNAR(mfp->mo_copy_word,mfp->mo_header.reserved,mh64.reserved);
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
@@ -401,8 +406,8 @@ load_segment_command_content32(
         *errcode = DW_DLE_MACH_O_SEGOFFSET_BAD;
         return DW_DLV_ERROR;
     }
-    res = RRMOA(mfp->mo_fd, &sc, (off_t)mmp->offset_this_command, sizeof(sc),
-        (off_t)filesize, errcode);
+    res = RRMOA(mfp->mo_fd, &sc, (off_t)mmp->offset_this_command,
+        sizeof(sc), (off_t)filesize, errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -452,8 +457,8 @@ load_segment_command_content64(
         *errcode = DW_DLE_FILE_OFFSET_BAD;
         return DW_DLV_ERROR;
     }
-    res = RRMOA(mfp->mo_fd, &sc, (off_t)mmp->offset_this_command, sizeof(sc),
-        (off_t)filesize, errcode);
+    res = RRMOA(mfp->mo_fd, &sc, (off_t)mmp->offset_this_command,
+        sizeof(sc), (off_t)filesize, errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -512,10 +517,12 @@ dwarf_macho_load_segment_commands(
         int res = 0;
 
         if (cmd == LC_SEGMENT) {
-            res = load_segment_command_content32(mfp,mmp,msp,i,errcode);
+            res = load_segment_command_content32(mfp,mmp,msp,
+                i,errcode);
             ++msp;
         } else if (cmd == LC_SEGMENT_64) {
-            res = load_segment_command_content64(mfp,mmp,msp,i,errcode);
+            res = load_segment_command_content64(mfp,mmp,msp,
+                i,errcode);
             ++msp;
         }
         if (res != DW_DLV_OK) {
@@ -702,7 +709,8 @@ dwarf_macho_load_dwarf_sections(
             continue;
         }
         /* Found DWARF, for now assume only one such. */
-        res = dwarf_macho_load_dwarf_section_details(mfp,segp,segi,errcode);
+        res = dwarf_macho_load_dwarf_section_details(mfp,
+            segp,segi,errcode);
         return res;
     }
     return DW_DLV_OK;
@@ -735,7 +743,7 @@ dwarf_load_macho_commands(
 
     mfp->mo_commands = (struct generic_macho_command *) calloc(
         mfp->mo_command_count,sizeof(struct generic_macho_command));
-    if( !mfp->mo_commands) {
+    if (!mfp->mo_commands) {
         /* out of memory */
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
@@ -821,7 +829,8 @@ static Dwarf_Obj_Access_Methods const macho_methods = {
     macho_get_pointer_size,
     macho_get_section_count,
     macho_load_section,
-    /*  We do not do macho relocations. dsym files do not require it. */
+    /*  We do not do macho relocations.
+        dsym files do not require it. */
     NULL
 };
 
@@ -895,12 +904,12 @@ _dwarf_macho_object_access_internals_init(
         return res;
     }
     sp = intfc->mo_dwarf_sections+1;
-    for(i = 1; i < intfc->mo_dwarf_sectioncount ; ++i,++sp) {
+    for (i = 1; i < intfc->mo_dwarf_sectioncount ; ++i,++sp) {
         int j = 1;
         int lim = sizeof(SectionNames)/sizeof(SectionNames[0]);
         sp->dwarfsectname = "";
-        for( ; j < lim; ++j) {
-            if(!strcmp(sp->sectname,SectionNames[j].ms_moname)) {
+        for ( ; j < lim; ++j) {
+            if (!strcmp(sp->sectname,SectionNames[j].ms_moname)) {
                 sp->dwarfsectname = SectionNames[j].ms_dwname;
                 break;
             }

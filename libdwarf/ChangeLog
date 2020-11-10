@@ -1,4 +1,7 @@
 2020-11-09: David Anderson
+    * dwarf_harmless.c,dwarf_machoread.c: Modified slightly
+      to match libdwarf coding style.
+2020-11-09: David Anderson
     * libdwarf_version.h: updated version string
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
       dwarf_names_new.h: regenerated with new version string.
