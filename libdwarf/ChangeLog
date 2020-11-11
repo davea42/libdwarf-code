@@ -1,6 +1,17 @@
 2020-11-10: David Anderson
+    * Correctly dealing with SHF_COMPRESSED when
+      we are reading the object using libelf.
+      Was a surprise to learn libelf translates
+      the endianness of the little header in
+      SHF_COMPRESSED.
+    * dwarf_original_elf_init.c: Set de_using_libelf = TRUE.
+    * dwarfstring.c: Fix some if( to match libdwarf
+      coding standard.
+2020-11-10: David Anderson
     * dwarf_opaque.h: Fixing indents, trailing
       whitespace, and too-long lines.
+      Adding field de_using_libelf (helpful 
+      when using libelf and there is SHF_COMPRESSED elf)
 2020-11-10: David Anderson
     * dwarf_vars.c: Shortening too-long line.
 2020-11-09: David Anderson

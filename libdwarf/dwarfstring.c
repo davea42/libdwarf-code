@@ -97,7 +97,7 @@ dwarfstring_resize_to(struct dwarfstring_s *g,unsigned long newlen)
         g->s_size - g->s_avail;
     unsigned long malloclen = newlen+1;
 
-    if(malloclen < minimumnewlen) {
+    if (malloclen < minimumnewlen) {
         malloclen = minimumnewlen;
     }
     b = malloc(malloclen);
@@ -132,7 +132,8 @@ dwarfstring_reset(struct dwarfstring_s *g)
 }
 
 int
-dwarfstring_constructor_fixed(struct dwarfstring_s *g,unsigned long len)
+dwarfstring_constructor_fixed(struct dwarfstring_s *g,
+    unsigned long len)
 {
     int r = FALSE;
 
@@ -206,7 +207,7 @@ dwarfstring_append(struct dwarfstring_s *g,char *str)
 {
     unsigned long dlen = 0;
 
-    if(!str) {
+    if (!str) {
         return TRUE;
     }
     dlen = strlen(str);
@@ -249,7 +250,8 @@ static int
 _dwarfstring_append_zeros(dwarfstring *data, size_t l)
 {
     int res = 0;
-    static char zeros[] = {"0000000000000000000000000000000000000000"};
+    static char zeros[] = {
+        "0000000000000000000000000000000000000000"};
     size_t charct = sizeof(zeros)-1;
 
     while (l > charct) {
@@ -323,7 +325,7 @@ int dwarfstring_append_printf_s(dwarfstring *data,
     if (leftjustify) {
 
         dwarfstring_append_length(data,s,stringlen);
-        if(fixedlen) {
+        if (fixedlen) {
             size_t trailingspaces = fixedlen - stringlen;
 
             _dwarfstring_append_spaces(data,trailingspaces);
@@ -334,7 +336,7 @@ int dwarfstring_append_printf_s(dwarfstring *data,
                 taking all the chars from s*/
             dwarfstring_append_length(data,s,stringlen);
         } else {
-            if(fixedlen) {
+            if (fixedlen) {
                 size_t leadingspaces = fixedlen - stringlen;
                 size_t k = 0;
 
@@ -553,7 +555,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
                 return FALSE;
             }
         }
-        if(!done) {
+        if (!done) {
             for ( ;; ) {
                 dwarfstring_u dig = 0;
 
@@ -625,7 +627,7 @@ trimleadingzeros(char *ptr,unsigned digits,unsigned keepcount)
     unsigned leadzeroscount = 0;
     unsigned trimoff = 0;
 
-    for(; *cp; ++cp) {
+    for (; *cp; ++cp) {
         if (*cp == '0') {
             leadzeroscount++;
             continue;
