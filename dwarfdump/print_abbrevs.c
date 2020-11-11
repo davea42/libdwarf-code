@@ -468,7 +468,7 @@ print_all_abbrevs_for_cu(Dwarf_Debug dbg,
                     DW_PR_XZEROS DW_PR_DUx
                     ".",offset);
                 glflags.gf_count_major_errors++;
-                return DW_DLV_OK;
+                return pres;
             }
             return pres;
         }

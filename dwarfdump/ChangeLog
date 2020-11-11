@@ -1,3 +1,9 @@
+2020-11-11: David Anderson
+    * print_abbrevs.c: Fixing a mistake in the
+      new code. The error lead to an
+      erroneous  error being reported
+      in objects where the compiler left off the final
+      zero in the .debug_abbrev section.
 2020-11-09: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
