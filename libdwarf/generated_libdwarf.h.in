@@ -180,10 +180,11 @@ typedef struct Dwarf_Dsc_Head_s * Dwarf_Dsc_Head;
     Not usable with DWARF5 or DWARF4 with location
     operator  extensions. */
 typedef struct {
-    Dwarf_Small     lr_atom;        /* location operation */
-    Dwarf_Unsigned  lr_number;      /* operand */
-    Dwarf_Unsigned  lr_number2;     /* for OP_BREGx  and DW_OP_GNU_const_type*/
-    Dwarf_Unsigned  lr_offset;      /* offset in locexpr for OP_BRA etc */
+    Dwarf_Small     lr_atom;   /* location operation */
+    Dwarf_Unsigned  lr_number; /* operand */
+    /* for OP_BREGx  and DW_OP_GNU_const_type*/
+    Dwarf_Unsigned  lr_number2;
+    Dwarf_Unsigned  lr_offset; /* offset in locexpr for OP_BRA etc */
 } Dwarf_Loc;
 
 
@@ -331,12 +332,14 @@ typedef struct {
 #define DW_EXPR_VAL_EXPRESSION 3
 
 typedef struct Dwarf_Regtable_Entry_s {
-    /*  For each index i (naming a hardware register with dwarf number
-        i) the following is true and defines the value of that register:
+    /*  For each index i (naming a hardware register
+        with dwarf number i) the following is true and defines
+        the value of that register:
 
         If dw_regnum is Register DW_FRAME_UNDEFINED_VAL
             it is not DWARF register number but
-            a place holder indicating the register has no defined value.
+            a place holder indicating the register has
+            no defined value.
         If dw_regnum is Register DW_FRAME_SAME_VAL
             it  is not DWARF register number but
             a place holder indicating the register has the same
@@ -351,13 +354,16 @@ typedef struct Dwarf_Regtable_Entry_s {
             software register numbers in the machine hardware)
             and the following applies:
 
-            if dw_value_type == DW_EXPR_OFFSET (the only case for dwarf2):
+            if dw_value_type == DW_EXPR_OFFSET (the
+                only case for dwarf2):
                 If dw_offset_relevant is non-zero, then
                     the value is stored at at the address CFA+N where
                     N is a signed offset.
                     Rule: Offset(N)
-                If dw_offset_relevant is zero, then the value of the register
-                    is the value of (DWARF) register number dw_regnum.
+                If dw_offset_relevant is zero, then the
+                    value of the register
+                    is the value of (DWARF) register
+                    number dw_regnum.
                     Rule: register(F)
             Other values of dw_value_type are an error.
     */
@@ -387,7 +393,8 @@ typedef struct Dwarf_Regtable_Entry3_s {
 
         If dw_regnum is Register DW_FRAME_UNDEFINED_VAL
             it is not DWARF register number but
-            a place holder indicating the register has no defined value.
+            a place holder indicating the register
+            has no defined value.
         If dw_regnum is Register DW_FRAME_SAME_VAL
             it  is not DWARF register number but
             a place holder indicating the register has the same
@@ -399,7 +406,8 @@ typedef struct Dwarf_Regtable_Entry3_s {
             DW_FRAME_* Values present on disk are in dwarf.h
             Because DW_FRAME_SAME_VAL and DW_FRAME_UNDEFINED_VAL
             and DW_FRAME_CFA_COL3 are definable at runtime
-            consider the names symbolic in this comment, not absolute.
+            consider the names symbolic in this comment,
+            not absolute.
 
         Otherwise: the register number is a DWARF register number
             (see ABI documents for how this translates to hardware/
@@ -411,8 +419,8 @@ typedef struct Dwarf_Regtable_Entry3_s {
         not DW_FRAME_CFA_COL3, nor DW_FRAME_SAME_VAL, nor
         DW_FRAME_UNDEFINED_VAL.
 
-        If dw_value_type == DW_EXPR_OFFSET (the only  possible case for
-        dwarf2):
+        If dw_value_type == DW_EXPR_OFFSET (the only
+        possible case for dwarf2):
             If dw_offset_relevant is non-zero, then
                 the value is stored at at the address
                 CFA+N where N is a signed offset.
@@ -421,11 +429,13 @@ typedef struct Dwarf_Regtable_Entry3_s {
                 So dw_offset_or_block_len is a signed value, really,
                 and must be printed/evaluated as such.
                 Rule: Offset(N)
-            If dw_offset_relevant is zero, then the value of the register
+            If dw_offset_relevant is zero, then the
+                value of the register
                 is the value of (DWARF) register number dw_regnum.
                 Rule: register(R)
         If dw_value_type  == DW_EXPR_VAL_OFFSET
-            the  value of this register is CFA +N where N is a signed offset.
+            the  value of this register is CFA +N where
+            N is a signed offset.
             dw_regnum is the cfa register rule which means
             one ignores dw_regnum and uses the CFA appropriately.
             Rule: val_offset(N)
@@ -433,14 +443,16 @@ typedef struct Dwarf_Regtable_Entry3_s {
             The value of the register is the value at the address
             computed by evaluating the DWARF expression E.
             Rule: expression(E)
-            The expression E byte stream is pointed to by dw_block_ptr.
+            The expression E byte stream is pointed to by
+            dw_block_ptr.
             The expression length in bytes is given by
             dw_offset_or_block_len.
         If dw_value_type  == DW_EXPR_VAL_EXPRESSION
             The value of the register is the value
             computed by evaluating the DWARF expression E.
             Rule: val_expression(E)
-            The expression E byte stream is pointed to by dw_block_ptr.
+            The expression E byte stream is pointed to
+            by dw_block_ptr.
             The expression length in bytes is given by
             dw_offset_or_block_len.
         Other values of dw_value_type are an error.
@@ -538,7 +550,8 @@ struct Dwarf_Relocation_Data_s {
 
 typedef struct Dwarf_P_String_Attr_s  * Dwarf_P_String_Attr;
 struct Dwarf_P_String_Attr_s {
-    Dwarf_Unsigned        sa_offset;  /* Offset of string attribute data */
+    /* Offset of string attribute data */
+    Dwarf_Unsigned        sa_offset;
     Dwarf_Unsigned        sa_nbytes;
 };
 
@@ -580,18 +593,21 @@ typedef Dwarf_Unsigned                Dwarf_Tag;
 
 /* error handler function
 */
-typedef void  (*Dwarf_Handler)(Dwarf_Error /*error*/, Dwarf_Ptr /*errarg*/);
+typedef void  (*Dwarf_Handler)(Dwarf_Error /*error*/,
+    Dwarf_Ptr /*errarg*/);
 
 
 /* Begin libdwarf Object File Interface declarations.
 
 As of February 2008 there are multiple dwarf_reader object access
 initialization methods available:
-The traditional dwarf_elf_init() and dwarf_init()  and dwarf_finish()
-    which assume libelf and POSIX file access.
-An object-file and library agnostic dwarf_object_init() and dwarf_object_finish()
+The traditional dwarf_elf_init() and dwarf_init()  and
+    dwarf_finish() which assume libelf and POSIX file access.
+An object-file and library agnostic dwarf_object_init()
+and dwarf_object_finish()
     which allow the coder to provide object access routines
-    abstracting away the elf interface.  So there is no dependence in the
+    abstracting away the elf interface.
+    So there is no dependence in the
     reader code on the object format and no dependence on libelf.
     See the code in dwarf_elf_access.c  and dwarf_original_elf_init.c
     to see an example of initializing the structures mentioned below.
@@ -608,9 +624,10 @@ add a groupnumber argument so DWARF5
 split-dwarf sections can be accessed.
 */
 
-typedef struct Dwarf_Obj_Access_Interface_s   Dwarf_Obj_Access_Interface;
-typedef struct Dwarf_Obj_Access_Methods_s     Dwarf_Obj_Access_Methods;
-typedef struct Dwarf_Obj_Access_Section_s     Dwarf_Obj_Access_Section;
+typedef struct Dwarf_Obj_Access_Interface_s
+    Dwarf_Obj_Access_Interface;
+typedef struct Dwarf_Obj_Access_Methods_s   Dwarf_Obj_Access_Methods;
+typedef struct Dwarf_Obj_Access_Section_s   Dwarf_Obj_Access_Section;
 
 
 /*  Used in the get_section interface function
@@ -633,7 +650,8 @@ struct Dwarf_Obj_Access_Section_s {
     /* Size in bytes of the section. */
     Dwarf_Unsigned size;
 
-    /*  Having an accurate section name makes debugging of libdwarf easier.
+    /*  Having an accurate section name makes
+        debugging of libdwarf easier.
         and is essential to find the .debug_ sections.  */
     const char*    name;
     /*  Set link to zero if it is meaningless.  If non-zero
@@ -659,18 +677,21 @@ typedef enum {
     DW_OBJECT_LSB
 } Dwarf_Endianness;
 
-/*  The functions we need to access object data from libdwarf are declared here.
+/*  The functions we need to access object data
+    from libdwarf are declared here.
 
     In these function pointer declarations
     'void *obj' is intended to be a pointer (the object field in
     Dwarf_Obj_Access_Interface_s)
-    that hides the library-specific and object-specific data that makes
-    it possible to handle multiple object formats and multiple libraries.
-    It's not required that one handles multiple such in a single libdwarf
+    that hides the library-specific and object-specific
+    data that makes
+    it possible to handle multiple object formats
+    and multiple libraries.
+    It's not required that one handles multiple such
+    in a single libdwarf
     archive/shared-library (but not ruled out either).
     See  dwarf_elf_object_access_internals_t and dwarf_elf_access.c
     for an example.
-
 */
 struct Dwarf_Obj_Access_Methods_s {
     /*
@@ -680,11 +701,14 @@ struct Dwarf_Obj_Access_Methods_s {
 
         Parameters
         section_index - Zero-based index.
-        return_section - Pointer to a structure in which section info
-            will be placed.   Caller must provide a valid pointer to a
-            structure area.  The structure's contents will be overwritten
+        return_section - Pointer to a structure in which
+            section info will be placed.   Caller must
+            provide a valid pointer to a
+            structure area.  The structure's contents
+            will be overwritten
             by the call to get_section_info.
-        error - A pointer to an integer in which an error code may be stored.
+        error - A pointer to an integer in which an error
+            code may be stored.
 
         Return
         DW_DLV_OK - Everything ok.
@@ -696,7 +720,8 @@ struct Dwarf_Obj_Access_Methods_s {
     /*
         get_byte_order
 
-        Get whether the object file represented by this interface is big-endian
+        Get whether the object file represented by
+        this interface is big-endian
         (DW_OBJECT_MSB) or little endian (DW_OBJECT_LSB).
 
         Parameters
@@ -742,19 +767,21 @@ struct Dwarf_Obj_Access_Methods_s {
     /*
         load_section
 
-        Get a pointer to an array of bytes that represent the section.
+        Get a pointer to an array of bytes that
+        represent the section.
 
         Parameters
         section_index - Zero-based index.
-        return_data - The address of a pointer to which the section data block
+        return_data - The address of a pointer to
+            which the section data block
             will be assigned.
-        error - Pointer to an integer for returning libdwarf-defined
-            error numbers.
+        error - Pointer to an integer for returning
+            libdwarf-defined error numbers.
 
         Return
         DW_DLV_OK - No error.
-        DW_DLV_ERROR - Error. Use 'error' to indicate a libdwarf-defined
-            error number.
+        DW_DLV_ERROR - Error. Use 'error' to indicate
+            a libdwarf-defined error number.
         DW_DLV_NO_ENTRY - No such section.  */
     int    (*load_section)(void* obj, Dwarf_Half section_index,
         Dwarf_Small** return_data, int* error);
@@ -763,16 +790,19 @@ struct Dwarf_Obj_Access_Methods_s {
         relocate_a_section
         If relocations are not supported leave this pointer NULL.
 
-        Get a pointer to an array of bytes that represent the section.
+        Get a pointer to an array of bytes that represent
+        the section.
 
         Parameters
-        section_index - Zero-based index of the section to be relocated.
+        section_index - Zero-based index of the
+            section to be relocated.
         error - Pointer to an integer for returning libdwarf-defined
             error numbers.
 
         Return
         DW_DLV_OK - No error.
-        DW_DLV_ERROR - Error. Use 'error' to indicate a libdwarf-defined
+        DW_DLV_ERROR - Error. Use 'error' to indicate
+            a libdwarf-defined
             error number.
         DW_DLV_NO_ENTRY - No such section.  */
     int    (*relocate_a_section)(void* obj, Dwarf_Half section_index,
@@ -797,7 +827,8 @@ struct Dwarf_Obj_Access_Methods_s {
     or dwarf_elf_init() which take care of these details.
 */
 struct Dwarf_Obj_Access_Interface_s {
-    /*  object is a void* as it hides the data the object access routines
+    /*  object is a void* as it hides the data the
+        object access routines
         need (which varies by library in use and object format).
     */
     void* object;
@@ -810,48 +841,55 @@ struct Dwarf_Obj_Access_Interface_s {
     Dwarf_dealloc() alloc_type arguments.
     Argument points to:
 */
-#define DW_DLA_STRING          0x01     /* char* */
-#define DW_DLA_LOC             0x02     /* Dwarf_Loc */
-#define DW_DLA_LOCDESC         0x03     /* Dwarf_Locdesc */
-#define DW_DLA_ELLIST          0x04     /* Dwarf_Ellist (not used)*/
-#define DW_DLA_BOUNDS          0x05     /* Dwarf_Bounds (not used) */
-#define DW_DLA_BLOCK           0x06     /* Dwarf_Block */
-#define DW_DLA_DEBUG           0x07     /* Dwarf_Debug */
-#define DW_DLA_DIE             0x08     /* Dwarf_Die */
-#define DW_DLA_LINE            0x09     /* Dwarf_Line */
-#define DW_DLA_ATTR            0x0a     /* Dwarf_Attribute */
-#define DW_DLA_TYPE            0x0b     /* Dwarf_Type  (not used) */
-#define DW_DLA_SUBSCR          0x0c     /* Dwarf_Subscr (not used) */
-#define DW_DLA_GLOBAL          0x0d     /* Dwarf_Global */
-#define DW_DLA_ERROR           0x0e     /* Dwarf_Error */
-#define DW_DLA_LIST            0x0f     /* a list */
-#define DW_DLA_LINEBUF         0x10     /* Dwarf_Line* (not used) */
-#define DW_DLA_ARANGE          0x11     /* Dwarf_Arange */
-#define DW_DLA_ABBREV          0x12     /* Dwarf_Abbrev */
-#define DW_DLA_FRAME_OP        0x13     /* Dwarf_Frame_Op */
-#define DW_DLA_CIE             0x14     /* Dwarf_Cie */
-#define DW_DLA_FDE             0x15     /* Dwarf_Fde */
-#define DW_DLA_LOC_BLOCK       0x16     /* Dwarf_Loc */
-#define DW_DLA_FRAME_BLOCK     0x17     /* Dwarf_Frame Block (not used) */
-#define DW_DLA_FUNC            0x18     /* Dwarf_Func */
-#define DW_DLA_TYPENAME        0x19     /* Dwarf_Type */
-#define DW_DLA_VAR             0x1a     /* Dwarf_Var */
-#define DW_DLA_WEAK            0x1b     /* Dwarf_Weak */
-#define DW_DLA_ADDR            0x1c     /* Dwarf_Addr sized entries */
-#define DW_DLA_RANGES          0x1d     /* Dwarf_Ranges */
+#define DW_DLA_STRING          0x01  /* char* */
+#define DW_DLA_LOC             0x02  /* Dwarf_Loc */
+#define DW_DLA_LOCDESC         0x03  /* Dwarf_Locdesc */
+#define DW_DLA_ELLIST          0x04  /* Dwarf_Ellist (not used)*/
+#define DW_DLA_BOUNDS          0x05  /* Dwarf_Bounds (not used) */
+#define DW_DLA_BLOCK           0x06  /* Dwarf_Block */
+#define DW_DLA_DEBUG           0x07  /* Dwarf_Debug */
+#define DW_DLA_DIE             0x08  /* Dwarf_Die */
+#define DW_DLA_LINE            0x09  /* Dwarf_Line */
+#define DW_DLA_ATTR            0x0a  /* Dwarf_Attribute */
+#define DW_DLA_TYPE            0x0b  /* Dwarf_Type  (not used) */
+#define DW_DLA_SUBSCR          0x0c  /* Dwarf_Subscr (not used) */
+#define DW_DLA_GLOBAL          0x0d  /* Dwarf_Global */
+#define DW_DLA_ERROR           0x0e  /* Dwarf_Error */
+#define DW_DLA_LIST            0x0f  /* a list */
+#define DW_DLA_LINEBUF         0x10  /* Dwarf_Line* (not used) */
+#define DW_DLA_ARANGE          0x11  /* Dwarf_Arange */
+#define DW_DLA_ABBREV          0x12  /* Dwarf_Abbrev */
+#define DW_DLA_FRAME_OP        0x13  /* Dwarf_Frame_Op */
+#define DW_DLA_CIE             0x14  /* Dwarf_Cie */
+#define DW_DLA_FDE             0x15  /* Dwarf_Fde */
+#define DW_DLA_LOC_BLOCK       0x16  /* Dwarf_Loc */
+
+/* Dwarf_Frame Block (not used) */
+#define DW_DLA_FRAME_BLOCK     0x17
+
+#define DW_DLA_FUNC            0x18  /* Dwarf_Func */
+#define DW_DLA_TYPENAME        0x19  /* Dwarf_Type */
+#define DW_DLA_VAR             0x1a  /* Dwarf_Var */
+#define DW_DLA_WEAK            0x1b  /* Dwarf_Weak */
+#define DW_DLA_ADDR            0x1c  /* Dwarf_Addr sized entries */
+#define DW_DLA_RANGES          0x1d  /* Dwarf_Ranges */
 /* 0x1e (30) to 0x34 (52) reserved for internal to libdwarf types. */
-#define DW_DLA_GNU_INDEX_HEAD  0x35     /* .debug_gnu_typenames/pubnames, 2020 */
-#define DW_DLA_RNGLISTS_HEAD   0x36     /* .debug_rnglists DW5 */
-#define DW_DLA_GDBINDEX        0x37     /* Dwarf_Gdbindex */
-#define DW_DLA_XU_INDEX        0x38     /* Dwarf_Xu_Index_Header */
-#define DW_DLA_LOC_BLOCK_C     0x39     /* Dwarf_Loc_c*/
-#define DW_DLA_LOCDESC_C       0x3a     /* Dwarf_Locdesc_c */
-#define DW_DLA_LOC_HEAD_C      0x3b     /* Dwarf_Loc_Head_c */
-#define DW_DLA_MACRO_CONTEXT   0x3c     /* Dwarf_Macro_Context */
+/* .debug_gnu_typenames/pubnames, 2020 */
+#define DW_DLA_GNU_INDEX_HEAD  0x35
+
+#define DW_DLA_RNGLISTS_HEAD   0x36  /* .debug_rnglists DW5 */
+#define DW_DLA_GDBINDEX        0x37  /* Dwarf_Gdbindex */
+#define DW_DLA_XU_INDEX        0x38  /* Dwarf_Xu_Index_Header */
+#define DW_DLA_LOC_BLOCK_C     0x39  /* Dwarf_Loc_c*/
+#define DW_DLA_LOCDESC_C       0x3a  /* Dwarf_Locdesc_c */
+#define DW_DLA_LOC_HEAD_C      0x3b  /* Dwarf_Loc_Head_c */
+#define DW_DLA_MACRO_CONTEXT   0x3c  /* Dwarf_Macro_Context */
 /*  0x3d (61) is for libdwarf internal use.               */
-#define DW_DLA_DSC_HEAD        0x3e     /* Dwarf_Dsc_Head */
-#define DW_DLA_DNAMES_HEAD     0x3f     /* Dwarf_Dnames_Head */
-#define DW_DLA_STR_OFFSETS     0x40     /* struct Dwarf_Str_Offsets_Table_s */
+#define DW_DLA_DSC_HEAD        0x3e  /* Dwarf_Dsc_Head */
+#define DW_DLA_DNAMES_HEAD     0x3f  /* Dwarf_Dnames_Head */
+
+/* struct Dwarf_Str_Offsets_Table_s */
+#define DW_DLA_STR_OFFSETS     0x40
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -2287,9 +2325,11 @@ void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     interface.
     This interface only reads the line table header, so
     it takes relatively little time.
-    *is_single_table will be set non-zero for all standard dwarf line sections.
-    *is_single_table will be set zero for line sections with the
-    two_level line table extension (which will have *version_out 0xf006).  */
+    *is_single_table will be set non-zero for all
+        standard dwarf line sections.
+    *is_single_table will be set zero for
+        line sections with the two_level line table
+        extension (which will have *version_out 0xf006).  */
 int dwarf_srclines_b(Dwarf_Die /*die*/,
     Dwarf_Unsigned     * /* version_out*/,
     Dwarf_Small        * /* table_count */,
@@ -2412,13 +2452,15 @@ int dwarf_srclines_files_data(Dwarf_Line_Context /*line_context*/,
 
 /*  New October 2015. */
 /*  Count is the real count of include array entries. */
-int dwarf_srclines_include_dir_count(Dwarf_Line_Context /*line_context*/,
+int dwarf_srclines_include_dir_count(
+    Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed *  /*count*/,
     Dwarf_Error  * /* error*/);
 
 /*  New October 2015. */
 /*  Index starts with 1, last is 'count' */
-int dwarf_srclines_include_dir_data(Dwarf_Line_Context /*line_context*/,
+int dwarf_srclines_include_dir_data(
+    Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed    /*index*/,
     const char **   /*name*/,
     Dwarf_Error   * /* error*/);
@@ -2612,12 +2654,12 @@ int dwarf_debugnames_abbrev_by_index(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned *  /*abbrev_code*/,
     Dwarf_Unsigned *  /*tag*/,
 
-    /*  The number of valid abbrev_entry values: 0 to number_of_abbrev-1
-        */
+    /*  The number of valid abbrev_entry values:
+        0 to number_of_abbrev-1 */
     Dwarf_Unsigned *  /*number_of_abbrev*/,
 
-    /*  The number of attr/form pairs, not counting the trailing
-        0,0 pair. */
+    /*  The number of attr/form pairs, not counting
+        the trailing 0,0 pair. */
     Dwarf_Unsigned * /*number_of_attr_form_entries*/,
     Dwarf_Error *    /*error*/);
 
@@ -2836,9 +2878,12 @@ int dwarf_func_name_offsets(Dwarf_Func /*func*/,
     Dwarf_Off*       /*cu_offset*/,
     Dwarf_Error*     /*error*/);
 
-/* User-defined type name operations, SGI IRIX .debug_typenames section.
-   Same content as DWARF3 .debug_pubtypes, but defined years before
-   .debug_pubtypes was defined.   SGI IRIX only. */
+/*  jUser-defined type name operations,
+    SGI IRIX .debug_typenames section.
+
+    Same content as DWARF3 .debug_pubtypes, but
+    defined years before .debug_pubtypes was defined.
+    SGI IRIX only. */
 int dwarf_get_types(Dwarf_Debug    /*dbg*/,
     Dwarf_Type**     /*types*/,
     Dwarf_Signed *   /*number_of_types*/,
@@ -3144,8 +3189,8 @@ int dwarf_get_fde_info_for_reg(Dwarf_Fde /*fde*/,
 */
 /* dwarf_get_fde_info_for_reg3 is useful on a single column, but
    it is inefficient to iterate across all table_columns using this
-   function.  Instead call dwarf_get_fde_info_for_all_regs3() and index
-   into the table it fills in. */
+   function.  Instead call dwarf_get_fde_info_for_all_regs3()
+   and index into the table it fills in. */
 int dwarf_get_fde_info_for_reg3(Dwarf_Fde /*fde*/,
     Dwarf_Half       /*table_column*/,
     Dwarf_Addr       /*pc_requested*/,
@@ -3362,7 +3407,8 @@ int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Half     * /*forms_count*/,
     const char    ** /*macro_string*/,
     Dwarf_Error    * /*error*/);
-int dwarf_get_macro_startend_file(Dwarf_Macro_Context /*macro_context*/,
+int dwarf_get_macro_startend_file(
+    Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*line_number*/,
     Dwarf_Unsigned * /*name_index_to_line_tab*/,
@@ -3401,14 +3447,15 @@ int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
    int * /*error_count_out */);
 
 /*  As of August 2013, dwarf_print_lines() no longer uses printf.
-    Instead it calls back to the application using a function pointer
-    once per line-to-print.  The lines passed back already have any needed
+    Instead it calls back to the application using a function
+    pointer once per line-to-print.  The lines passed back
+    already have any needed
     newlines.    The following struct is used to initialize
     the callback mechanism.
 
-    Failing to call the dwarf_register_printf_callback() function will
-    prevent the lines from being passed back but such omission
-    is not an error.
+    Failing to call the dwarf_register_printf_callback()
+    function will prevent the lines from being passed back
+    but such omission is not an error.
     See libdwarf2.1.mm for further documentation.
 
     The return value is the previous set of callback values.
@@ -3614,7 +3661,8 @@ int dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex /*gdbindex*/,
     Dwarf_Error    * /*error*/);
 
 
-int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex /*gdbindex*/,
+int dwarf_gdbindex_cuvector_inner_attributes(
+    Dwarf_Gdbindex /*gdbindex*/,
     Dwarf_Unsigned   /*cuvector_offset*/,
     Dwarf_Unsigned   /*innerindex*/,
     /* The attr_value is a field of bits. For expanded version
@@ -3644,7 +3692,8 @@ void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
 
 /*  END gdbindex/debugfission operations. */
 
-/*  START debugfission dwp .debug_cu_index and .debug_tu_index operations. */
+/*  START debugfission dwp .debug_cu_index
+    and .debug_tu_index operations. */
 
 int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
     const char *  section_type, /* "tu" or "cu" */
@@ -3658,7 +3707,8 @@ int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
 
 int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header /*xuhdr*/,
     /*  the function returns a pointer to
-        the immutable string "tu" or "cu" via this arg. Do not free.  */
+        the immutable string "tu" or "cu" via this arg.
+        Do not free.  */
     const char ** /*typename*/,
     /*  the function returns a pointer to
         the immutable section name. Do not free.
@@ -3725,7 +3775,8 @@ struct Dwarf_Debug_Fission_Per_CU_s  {
     Dwarf_Unsigned unused1;
     Dwarf_Unsigned unused2;
 };
-typedef struct Dwarf_Debug_Fission_Per_CU_s  Dwarf_Debug_Fission_Per_CU ;
+typedef struct Dwarf_Debug_Fission_Per_CU_s
+    Dwarf_Debug_Fission_Per_CU;
 /*  For any Dwarf_Die in a compilation unit, return
     the debug fission table data through
     percu_out.   Usually applications
@@ -3738,7 +3789,8 @@ int dwarf_get_debugfission_for_die(Dwarf_Die /* die */,
     Dwarf_Debug_Fission_Per_CU * /* percu_out */,
     Dwarf_Error * /* err */);
 
-/* Given a key (hash signature)  from a .o, find the per-cu information
+/*  Given a key (hash signature)  from a .o,
+    find the per-cu information
     for the CU with that key. */
 int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
     Dwarf_Sig8 *                 /*key, hash signature */,
@@ -3746,7 +3798,8 @@ int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
     Dwarf_Debug_Fission_Per_CU * /*percu_out */,
     Dwarf_Error *                /*err */);
 
-/*  END debugfission dwp .debug_cu_index and .debug_tu_index operations. */
+/*  END debugfission dwp .debug_cu_index
+    and .debug_tu_index operations. */
 
 
 /*  Utility operations */
@@ -4142,7 +4195,8 @@ int dwarf_add_AT_implicit_const(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Error * /*error*/);
 
 /* August 2013 sleb creator. For any attribute. */
-Dwarf_P_Attribute dwarf_add_AT_any_value_sleb(Dwarf_P_Die /*ownerdie*/,
+Dwarf_P_Attribute dwarf_add_AT_any_value_sleb(
+    Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half    /*attrnum*/,
     Dwarf_Signed  /*signed_value*/,
     Dwarf_Error * /*error*/);
@@ -4155,7 +4209,8 @@ int dwarf_add_AT_any_value_sleb_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Error * /*error*/);
 
 /* Original sleb creator. Only for DW_AT_const_value. */
-Dwarf_P_Attribute dwarf_add_AT_const_value_signedint(Dwarf_P_Die /*ownerdie*/,
+Dwarf_P_Attribute dwarf_add_AT_const_value_signedint(
+    Dwarf_P_Die /*ownerdie*/,
     Dwarf_Signed    /*signed_value*/,
     Dwarf_Error*    /*error*/);
 
@@ -4166,7 +4221,8 @@ int dwarf_add_AT_const_value_signedint_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Error*    /*error*/);
 
 /* August 2013 uleb creator. For any attribute. */
-Dwarf_P_Attribute dwarf_add_AT_any_value_uleb(Dwarf_P_Die /*ownerdie*/,
+Dwarf_P_Attribute dwarf_add_AT_any_value_uleb(
+    Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half      /*attrnum*/,
     Dwarf_Unsigned  /*signed_value*/,
     Dwarf_Error *   /*error*/);
@@ -5327,7 +5383,8 @@ int dwarf_close_str_offsets_table_access(
 
     On successful call, call dwarf_str_offsets_table_entry()
     to get the individual table values on the now-active table. */
-int dwarf_next_str_offsets_table( Dwarf_Str_Offsets_Table /*table_data*/,
+int dwarf_next_str_offsets_table(
+    Dwarf_Str_Offsets_Table /*table_data*/,
     Dwarf_Unsigned * /*unit_length*/,
     Dwarf_Unsigned * /*unit_length_offset*/,
     Dwarf_Unsigned * /*table_start_offset*/,
@@ -5339,14 +5396,16 @@ int dwarf_next_str_offsets_table( Dwarf_Str_Offsets_Table /*table_data*/,
 
 /*  Valid index values n:  0 <= n <  table_entry_count
     for the active table */
-int dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table /*table_data*/,
+int dwarf_str_offsets_value_by_index(
+    Dwarf_Str_Offsets_Table /*table_data*/,
     Dwarf_Unsigned   /*index_to_entry*/,
     Dwarf_Unsigned * /*entry_value*/,
     Dwarf_Error    * /*error*/);
 
 /*  After all str_offsets read this reports final
     wasted-bytes count. */
-int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table /*table_data*/,
+int dwarf_str_offsets_statistics(
+    Dwarf_Str_Offsets_Table /*table_data*/,
     Dwarf_Unsigned * /*wasted_byte_count*/,
     Dwarf_Unsigned * /*table_count*/,
     Dwarf_Error    * /*error*/);
