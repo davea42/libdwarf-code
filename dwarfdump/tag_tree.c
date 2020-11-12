@@ -37,7 +37,8 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include "dwgetopt.h"
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 
-unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM][TAG_TABLE_COLUMN_MAXIMUM];
+unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
+    [TAG_TABLE_COLUMN_MAXIMUM];
 
 #ifdef HAVE_USAGE_TAG_ATTR
 /* Working array for a specific tag and its valid tags */
@@ -234,7 +235,8 @@ main(int argc, char **argv)
     }
     fileInp = fopen(input_name,"r");
     if (!fileInp) {
-        fprintf(stderr,"Invalid input filename, could not open '%s'\n",
+        fprintf(stderr,"Invalid input filename,"
+            " could not open '%s'\n",
             input_name);
         print_usage_message(argv[0],usage);
         exit(FAILED);
@@ -247,12 +249,14 @@ main(int argc, char **argv)
     }
     fileOut = fopen(output_name,"w");
     if (!fileOut) {
-        fprintf(stderr,"Invalid output filename, could not open: '%s'\n",
+        fprintf(stderr,"Invalid output filename,"
+            " could not open: '%s'\n",
             output_name);
         print_usage_message(argv[0],usage);
         exit(FAILED);
     }
-    if ((standard_flag && extended_flag) || (!standard_flag && !extended_flag)) {
+    if ((standard_flag && extended_flag) ||
+        (!standard_flag && !extended_flag)) {
         fprintf(stderr,"Invalid table type\n");
         fprintf(stderr,"Choose -e  or -s .\n");
         print_usage_message(argv[0],usage);
@@ -276,11 +280,13 @@ main(int argc, char **argv)
 
     /*  Generate main header, regardless of contents */
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
-    fprintf(fileOut,"/* Generated sourcedate %s */\n",DW_VERSION_DATE_STR );
+    fprintf(fileOut,"/* Generated sourcedate %s */\n",
+        DW_VERSION_DATE_STR );
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
 #ifdef HAVE_USAGE_TAG_ATTR
-    /* Generate the data type to record the usage of the pairs tag-tag */
+    /*  Generate the data type to record the usage of
+        the pairs tag-tag */
     if (standard_flag) {
         fprintf(fileOut,"#ifndef HAVE_USAGE_TAG_ATTR\n");
         fprintf(fileOut,"#define HAVE_USAGE_TAG_ATTR 1\n");
@@ -308,7 +314,8 @@ main(int argc, char **argv)
         }
         if (standard_flag) {
             if (current_row >= table_rows ) {
-                bad_line_input("tag value exceeds standard table size");
+                bad_line_input(
+                    "tag value exceeds standard table size");
             }
         } else {
             if (current_row >= table_rows) {
@@ -334,7 +341,8 @@ main(int argc, char **argv)
             tag_parents[tag] = tag;
 
             /* Clear out the working attribute vector */
-            memset(tag_tree_vector,0,DW_TAG_last * sizeof(Dwarf_Half));
+            memset(tag_tree_vector,0,DW_TAG_last *
+                sizeof(Dwarf_Half));
         }
 #endif /* HAVE_USAGE_TAG_ATTR */
 
@@ -346,20 +354,24 @@ main(int argc, char **argv)
                 if (idx >= table_columns) {
                     fprintf(stderr,"Want column %d, have only %d\n",
                         idx,table_columns);
-                    bad_line_input("too many TAGs: table incomplete.");
+                    bad_line_input(
+                        "too many TAGs: table incomplete.");
                 }
                 validate_row_col("Update columns bit",tag,idx,
                     table_rows,table_columns);
-                tag_tree_combination_table[tag][idx] |= (((unsigned)1) << bit);
+                tag_tree_combination_table[tag][idx] |=
+                    (((unsigned)1) << bit);
             } else {
                 if (nTagLoc >= table_columns) {
                     printf("Attempting to use column %d, max is %d\n",
                         nTagLoc,table_columns);
-                    bad_line_input("too many subTAGs, table incomplete.");
+                    bad_line_input(
+                        "too many subTAGs, table incomplete.");
                 }
                 validate_row_col("Update tagloc",current_row,nTagLoc,
                     table_rows,table_columns);
-                tag_tree_combination_table[current_row][nTagLoc] = num;
+                tag_tree_combination_table[current_row][nTagLoc] =
+                    num;
                 nTagLoc++;
             }
 
@@ -368,11 +380,13 @@ main(int argc, char **argv)
             if (standard_flag) {
                 /* Add child tag to current tag */
                 if (cur_tag >= DW_TAG_last) {
-                    bad_line_input("too many TAGs: table incomplete.");
+                    bad_line_input(
+                        "too many TAGs: table incomplete.");
                 }
                 /* Check for duplicated entries */
                 if (tag_tree_vector[cur_tag]) {
-                    bad_line_input("duplicated tag: table incomplete.");
+                    bad_line_input(
+                        "duplicated tag: table incomplete.");
                 }
                 tag_tree_vector[cur_tag] = num;
                 cur_tag++;
@@ -389,7 +403,8 @@ main(int argc, char **argv)
         /* Generate the tag-tree vector for current tag */
         if (standard_flag) {
             if (tag >= DW_TAG_last) {
-                bad_line_input("tag value exceeds standard table size");
+                bad_line_input(
+                    "tag value exceeds standard table size");
             }
             if (tag_children[tag]) {
                 bad_line_input("subtag 0x%02x already defined",tag);
@@ -404,7 +419,8 @@ main(int argc, char **argv)
             for (index = 1; index < cur_tag; ++index) {
                 child_tag = tag_tree_vector[index];
                 ta_get_TAG_name(child_tag,&aname);
-                fprintf(fileOut,"    {/* 0x%02x */ 0, %s},\n",child_tag,aname);
+                fprintf(fileOut,"    {/* 0x%02x */ 0, %s},\n",
+                    child_tag,aname);
             }
             fprintf(fileOut,"    {/* %4s */ 0, 0}\n};\n\n"," ");
             /* Record allowed number of attributes */
@@ -429,7 +445,8 @@ main(int argc, char **argv)
                 aname = 0;
                 ta_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "   tag_tree_%02x, /* 0x%02x - %s */\n",tag,tag,aname);
+                    "   tag_tree_%02x, /* 0x%02x - %s */\n",
+                    tag,tag,aname);
             } else {
                 fprintf(fileOut,"    0,\n");
             }
@@ -449,7 +466,8 @@ main(int argc, char **argv)
                 aname = 0;
                 ta_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "    {%2d, 0 /* 0x%02x - %s */},\n",legal,tag,aname);
+                    "    {%2d, 0 /* 0x%02x - %s */},\n",
+                    legal,tag,aname);
             } else {
                 fprintf(fileOut,"    {0, 0},\n");
             }
@@ -461,19 +479,23 @@ main(int argc, char **argv)
 
     check_unused_combo(table_rows, table_columns);
     if (standard_flag) {
-        fprintf(fileOut,"#define TAG_TREE_COLUMN_COUNT %d\n\n",table_columns);
-        fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",table_rows);
+        fprintf(fileOut,"#define TAG_TREE_COLUMN_COUNT %d\n\n",
+            table_columns);
+        fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",
+            table_rows);
         fprintf(fileOut,
             "static unsigned int tag_tree_combination_table"
             "[TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {\n");
     } else {
         fprintf(fileOut,"#define TAG_TREE_EXT_COLUMN_COUNT %d\n\n",
             table_columns);
-        fprintf(fileOut,"#define TAG_TREE_EXT_ROW_COUNT %d\n\n",table_rows);
+        fprintf(fileOut,"#define TAG_TREE_EXT_ROW_COUNT %d\n\n",
+            table_rows);
         fprintf(fileOut,"/* Common extensions */\n");
         fprintf(fileOut,
             "static unsigned int tag_tree_combination_ext_table"
-            "[TAG_TREE_EXT_ROW_COUNT][TAG_TREE_EXT_COLUMN_COUNT] = {\n");
+            "[TAG_TREE_EXT_ROW_COUNT][TAG_TREE_EXT_COLUMN_COUNT]"
+            " = {\n");
     }
 
     for (u = 0; u < table_rows; u++) {
@@ -489,7 +511,8 @@ main(int argc, char **argv)
         }
         fprintf(fileOut,"    { ");
         for (j = 0; j < table_columns; ++j ) {
-            fprintf(fileOut,"0x%08x,",tag_tree_combination_table[u][j]);
+            fprintf(fileOut,"0x%08x,",
+                tag_tree_combination_table[u][j]);
         }
         fprintf(fileOut,"},\n");
 

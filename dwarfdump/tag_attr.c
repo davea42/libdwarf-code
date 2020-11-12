@@ -43,7 +43,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "esb.h"
 #include "tag_common.h"
 #include "dwgetopt.h"
-#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR,RELEASE DATE*/
+#include "libdwarf_version.h"
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
@@ -68,16 +68,20 @@ for standard than for extended tags.
 For standard tags the generated table is indexed by
 tag number. All the columns are bit flags.
 
-For extended tags the generated table is indexed (call it j) by 0 - N-1
-and  [j][0] is the tag number and the rest of the columns (1 - N-1) are
+For extended tags the generated table is indexed
+(call it j) by 0 - N-1
+and  [j][0] is the tag number and the rest of
+the columns (1 - N-1) are
 allowed attribute numbers.
 
 */
 
-unsigned int tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM][ATTR_TABLE_COLUMN_MAXIMUM];
+unsigned int tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM]
+    [ATTR_TABLE_COLUMN_MAXIMUM];
 
 #ifdef HAVE_USAGE_TAG_ATTR
-/* Working array for a specific tag and will contain its valid attributes */
+/*  Working array for a specific tag and will
+    contain its valid attributes */
 static Dwarf_Half tag_attr_vector[DW_AT_last] = {0};
 static Dwarf_Half tag_parents[DW_TAG_last] = {0};
 static Dwarf_Half tag_children[DW_TAG_last] = {0};
@@ -263,7 +267,8 @@ main(int argc, char **argv)
     }
     fileInp = fopen(input_name,"r");
     if (!fileInp) {
-        fprintf(stderr,"Invalid input filename, could not open '%s'\n",
+        fprintf(stderr,"Invalid input filename,"
+            " could not open '%s'\n",
             input_name);
         print_usage_message(argv[0],usage);
         exit(FAILED);
@@ -276,7 +281,8 @@ main(int argc, char **argv)
     }
     fileOut = fopen(output_name,"w");
     if (!fileOut) {
-        fprintf(stderr,"Invalid output filename, could not open: '%s'\n",
+        fprintf(stderr,"Invalid output filename,"
+            " could not open: '%s'\n",
             output_name);
         print_usage_message(argv[0],usage);
         exit(FAILED);
@@ -307,11 +313,13 @@ main(int argc, char **argv)
 
     /*  Generate main header, regardless of contents */
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
-    fprintf(fileOut,"/* Generated sourcedate %s */\n",DW_VERSION_DATE_STR);
+    fprintf(fileOut,"/* Generated sourcedate %s */\n",
+        DW_VERSION_DATE_STR);
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
 #ifdef HAVE_USAGE_TAG_ATTR
-    /* Generate the data type to record the usage of the pairs tag-attr */
+    /*  Generate the data type to record the usage
+        of the pairs tag-attr */
     if (standard_flag) {
         fprintf(fileOut,"#ifndef HAVE_USAGE_TAG_ATTR\n");
         fprintf(fileOut,"#define HAVE_USAGE_TAG_ATTR 1\n");
@@ -320,8 +328,10 @@ main(int argc, char **argv)
         fprintf(fileOut,"#include \"dwarf.h\"\n");
         fprintf(fileOut,"#include \"libdwarf.h\"\n\n");
         fprintf(fileOut,"typedef struct {\n");
-        fprintf(fileOut,"    unsigned int count; /* Attribute count */\n");
-        fprintf(fileOut,"    Dwarf_Half attr;    /* Attribute value */\n");
+        fprintf(fileOut,"    unsigned int count;"
+            " /* Attribute count */\n");
+        fprintf(fileOut,"    Dwarf_Half attr;"
+            "    /* Attribute value */\n");
         fprintf(fileOut,"} Usage_Tag_Attr;\n\n");
     }
 #endif /* HAVE_USAGE_TAG_ATTR */
@@ -347,7 +357,8 @@ main(int argc, char **argv)
             /*  In extended case, the row indexed by 0-N
                 and column zero has the tag number. */
             if (current_row >= table_rows) {
-                bad_line_input("too many extended table rows. Have %u max %u",
+                bad_line_input(
+                    "too many extended table rows. Have %u max %u",
                     current_row,table_rows);
             }
             validate_row_col("Reading tag",current_row,0,
@@ -366,12 +377,13 @@ main(int argc, char **argv)
         /* Check if we have duplicated tags */
         if (standard_flag) {
             if (tag_parents[tag]) {
-                bad_line_input("tag 0x%02x value already defined",tag);
+                bad_line_input("tag 0x%02x value already defined",
+                    tag);
             }
             tag_parents[tag] = tag;
 
             /* Clear out the working attribute vector */
-            memset(tag_attr_vector,0,DW_AT_last * sizeof(Dwarf_Half));
+            memset(tag_attr_vector,0,DW_AT_last*sizeof(Dwarf_Half));
         }
 #endif /* HAVE_USAGE_TAG_ATTR */
 
@@ -393,7 +405,8 @@ main(int argc, char **argv)
                 }
                 validate_row_col("Setting attr bit",tag,idx,
                     table_rows,table_columns);
-                tag_attr_combination_table[tag][idx] |= (((unsigned)1) << bit);
+                tag_attr_combination_table[tag][idx] |=
+                    (((unsigned)1) << bit);
             } else {
                 if (curcol >= table_columns) {
                     esb_append_printf_i(&msg_buf,
@@ -403,9 +416,11 @@ main(int argc, char **argv)
                         "cols %d.",table_columns);
                     bad_line_input(esb_get_string(&msg_buf));
                 }
-                validate_row_col("Setting attr col",current_row,curcol,
+                validate_row_col("Setting attr col",
+                    current_row,curcol,
                     table_rows,table_columns);
-                tag_attr_combination_table[current_row][curcol] = num;
+                tag_attr_combination_table[current_row][curcol] =
+                    num;
                 curcol++;
 
             }
@@ -425,7 +440,8 @@ main(int argc, char **argv)
                 }
                 /* Check for duplicated entries */
                 if (tag_attr_vector[cur_attr]) {
-                    bad_line_input("duplicated attributes: table incomplete.");
+                    bad_line_input(
+                        "duplicated attributes: table incomplete.");
                 }
                 tag_attr_vector[cur_attr] = num;
                 cur_attr++;
@@ -443,7 +459,8 @@ main(int argc, char **argv)
         /* Generate the tag-attributes vector for current tag */
         if (standard_flag) {
             if (tag >= DW_TAG_last) {
-                bad_line_input("tag 0x%02x exceeds standard table size",tag);
+                bad_line_input(
+                    "tag 0x%02x exceeds standard table size",tag);
             }
             if (tag_children[tag]) {
                 bad_line_input("tag 0x%02x already defined",tag);
@@ -458,7 +475,8 @@ main(int argc, char **argv)
             for (index = 1; index < cur_attr; ++index) {
                 attr = tag_attr_vector[index];
                 ta_get_AT_name(attr,&aname);
-                fprintf(fileOut,"    {/* 0x%02x */  0, %s},\n",attr,aname);
+                fprintf(fileOut,"    {/* 0x%02x */  0, %s},\n",
+                    attr,aname);
             }
             fprintf(fileOut,"    {/* %4s */  0, 0}\n};\n\n"," ");
             /* Record allowed number of attributes */
@@ -484,7 +502,8 @@ main(int argc, char **argv)
                 aname = 0;
                 ta_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "    tag_attr_%02x, /* 0x%02x - %s */\n",tag,tag,aname);
+                    "    tag_attr_%02x, /* 0x%02x - %s */\n",
+                    tag,tag,aname);
             } else {
                 fprintf(fileOut,"    0,\n");
             }
@@ -493,8 +512,10 @@ main(int argc, char **argv)
 
         /* Generate table with allowed number of attributes */
         fprintf(fileOut,"typedef struct {\n");
-        fprintf(fileOut,"    Dwarf_Small legal; /* Legal attributes */\n");
-        fprintf(fileOut,"    Dwarf_Small found; /* Found attributes */\n");
+        fprintf(fileOut,"    Dwarf_Small legal;"
+            " /* Legal attributes */\n");
+        fprintf(fileOut,"    Dwarf_Small found;"
+            " /* Found attributes */\n");
         fprintf(fileOut,"} Rate_Tag_Attr;\n\n");
         fprintf(fileOut,
             "static Rate_Tag_Attr rate_tag_attr[] = {\n");
@@ -504,7 +525,8 @@ main(int argc, char **argv)
                 aname = 0;
                 ta_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "    {%2d, 0, /* 0x%02x - %s */},\n",legal,tag,aname);
+                    "    {%2d, 0, /* 0x%02x - %s */},\n",
+                    legal,tag,aname);
             } else {
                 fprintf(fileOut,"    {0, 0},\n");
             }
@@ -515,20 +537,24 @@ main(int argc, char **argv)
 #endif /* HAVE_USAGE_TAG_ATTR */
 
     if (standard_flag) {
-        fprintf(fileOut,"#define ATTR_TREE_ROW_COUNT %d\n\n",table_rows);
-        fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %d\n\n",table_columns);
+        fprintf(fileOut,"#define ATTR_TREE_ROW_COUNT %d\n\n",
+            table_rows);
+        fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %d\n\n",
+            table_columns);
         fprintf(fileOut,
             "static unsigned int tag_attr_combination_table"
             "[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {\n");
     }
     else {
         fprintf(fileOut,"/* Common extensions */\n");
-        fprintf(fileOut,"#define ATTR_TREE_EXT_ROW_COUNT %d\n\n",table_rows);
+        fprintf(fileOut,"#define ATTR_TREE_EXT_ROW_COUNT %d\n\n",
+            table_rows);
         fprintf(fileOut,"#define ATTR_TREE_EXT_COLUMN_COUNT %d\n\n",
             table_columns);
         fprintf(fileOut,
             "static unsigned int tag_attr_combination_ext_table"
-            "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {\n");
+            "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT]"
+            " = {\n");
     }
 
     for (u = 0; u < table_rows; u++) {
@@ -544,7 +570,8 @@ main(int argc, char **argv)
         }
         fprintf(fileOut,"    { ");
         for (j = 0; j < table_columns; ++j ) {
-            fprintf(fileOut,"0x%08x,",tag_attr_combination_table[u][j]);
+            fprintf(fileOut,"0x%08x,",
+                tag_attr_combination_table[u][j]);
         }
         fprintf(fileOut,"},\n");
     }

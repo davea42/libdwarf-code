@@ -1,3 +1,11 @@
+2020-11-12: David Anderson
+    * dwarfdump.1: Clarified the role of the --verbose
+      option and corrected spelling and formatting errors.
+    * print_lines.c: Revised one glflags.verbose test so it
+      reads the same way as other verbose tests. Fixed
+      various lines to meet the libdwarf coding style.
+    * tag_attr.c,tag_tree.c: Changed to meet the
+      libdwarf coding style. 
 2020-11-11: David Anderson
     * print_abbrevs.c: Fixing a mistake in the
       new code. The error lead to an

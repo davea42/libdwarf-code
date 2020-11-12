@@ -73,7 +73,8 @@ print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
         DROP_ERROR_INSTANCE(dbg,lres,src_err);
     } else {
         DROP_ERROR_INSTANCE(dbg,ores,src_err);
-        printf("Source lines (for the CU-DIE at unknown location):\n");
+        printf("Source lines (for the CU-DIE at unknown"
+            " location):\n");
     }
 }
 
@@ -292,15 +293,16 @@ process_line_table(Dwarf_Debug dbg,
                         is we have consumed the deug_info section
                         and we are dealing just with the records
                         from the .debug_line, so no PU_name is
-                        available and no high_pc. Traverse the linkonce
-                        table if try to match the pc value with
-                        one of those ranges.
+                        available and no high_pc.
+                        Traverse the linkonce table if try to
+                        match the pc value with one of those ranges.
                     */
                     if (glflags.gf_check_lines &&
                         checking_this_compiler()) {
                         DWARF_CHECK_COUNT(lines_result,1);
                     }
-                    if (FindAddressInBucketGroup(glflags.pLinkonceInfo,pc)){
+                    if (FindAddressInBucketGroup(
+                        glflags.pLinkonceInfo,pc)){
                         /* Valid values; do nothing */
                     } else {
                         /*  The SN Systems Linker generates
@@ -354,7 +356,8 @@ process_line_table(Dwarf_Debug dbg,
                         checking_this_compiler()) {
                         DWARF_CHECK_COUNT(lines_result,1);
                         if ((pc != glflags.PU_high_address) &&
-                            (glflags.PU_base_address != elf_max_address)) {
+                            (glflags.PU_base_address !=
+                            elf_max_address)) {
                             char addr_tmp[140];
                             struct esb_s cm;
 
@@ -364,8 +367,8 @@ process_line_table(Dwarf_Debug dbg,
                                 "%s: Address",sanitized(sec_name));
                             esb_append_printf_u(&cm,
                                 " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                " DW_LNE_end_sequence address does not"
-                                " exactly match",pc);
+                                " DW_LNE_end_sequence address"
+                                " does not exactly match",pc);
                             esb_append_printf_u(&cm,
                                 " high function addr: "
                                 " 0x%" DW_PR_XZEROS DW_PR_DUx,
@@ -382,7 +385,8 @@ process_line_table(Dwarf_Debug dbg,
         /* Display the error information */
         if (found_line_error || glflags.gf_record_dwarf_error) {
             if (glflags.gf_check_verbose_mode && PRINTING_UNIQUE) {
-                /* Print the record number for better error description */
+                /*  Print the record number for better
+                    error description */
                 printf("Record = %"  DW_PR_DUu
                     " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx
                     " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
@@ -412,7 +416,8 @@ process_line_table(Dwarf_Debug dbg,
             if (is_actuals_table) {
                 printf("[%7" DW_PR_DUu "]", logicalno);
             } else {
-                printf("[%4" DW_PR_DUu ",%2" DW_PR_DUu "]", lineno, column);
+                printf("[%4" DW_PR_DUu ",%2" DW_PR_DUu "]",
+                    lineno, column);
             }
         }
 
@@ -580,11 +585,9 @@ process_line_table(Dwarf_Debug dbg,
         }
 
         if (!is_actuals_table) {
-            if (i > 0 &&  glflags.verbose < 3  &&
+            if (i == 0  ||  glflags.verbose > 2 ||
                 strcmp(lsrc_filename?lsrc_filename:"",
-                    esb_get_string(&lastsrc)) == 0) {
-                /* Do not print name. */
-            } else {
+                    esb_get_string(&lastsrc))) {
                 struct esb_s urs;
                 char atmp2[ESB_FIXED_ALLOC_SIZE];
 
@@ -601,6 +604,9 @@ process_line_table(Dwarf_Debug dbg,
                 esb_empty_string(&lastsrc);
                 esb_append(&lastsrc,
                     lsrc_filename?lsrc_filename:"");
+            } else {
+                /*  Do not print name, it is the same
+                    as the last name printed. */
             }
         }
         if (glflags.gf_do_print_dwarf) {
@@ -669,7 +675,8 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
     if (name) {
         printf(" Compilation directory: %s\n",name);
     } else {
-        printf(" Compilation directory: <unknown no DW_AT_comp_dir>\n");
+        printf(" Compilation directory: <unknown"
+            " no DW_AT_comp_dir>\n");
     }
 
     vres = dwarf_srclines_include_dir_count(line_context,
@@ -690,7 +697,7 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
         include_dir_base = 1;
         include_dir_limit = dir_count+1;
     }
-    for(i = include_dir_base; i < include_dir_limit; ++i) {
+    for (i = include_dir_base; i < include_dir_limit; ++i) {
         vres = dwarf_srclines_include_dir_data(line_context,i,
             &name,err);
         if (vres != DW_DLV_OK) {
@@ -722,7 +729,7 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
         file_count,file_count);
     /*  Set up so just one loop control needed
         for all versions of line tables. */
-    for(i = baseindex; i < endindex; ++i) {
+    for (i = baseindex; i < endindex; ++i) {
         Dwarf_Unsigned dirindex = 0;
         Dwarf_Unsigned modtime = 0;
         Dwarf_Unsigned flength = 0;
@@ -798,7 +805,7 @@ print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
     printf(" subprograms count (experimental) 0x%"
         DW_PR_DUx " %" DW_PR_DUu "\n",
         subprog_count,subprog_count);
-    for(i = 1; i <= subprog_count; ++i) {
+    for (i = 1; i <= subprog_count; ++i) {
         Dwarf_Unsigned decl_file = 0;
         Dwarf_Unsigned decl_line = 0;
         vres = dwarf_srclines_subprog_data(line_context,i,
@@ -961,7 +968,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         lres = dwarf_srclines_b(cu_die,&lineversion,
             &table_count,&line_context,
             err);
-        if(lres == DW_DLV_OK) {
+        if (lres == DW_DLV_OK) {
             lres = dwarf_srclines_from_linecontext(line_context,
                 &linebuf, &linecount,err);
         }
@@ -970,7 +977,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         /* Useless for experimental line tables */
         lres = dwarf_srclines(cu_die,
             &linebuf, &linecount, err);
-        if(lres == DW_DLV_OK && linecount ){
+        if (lres == DW_DLV_OK && linecount ){
             table_count++;
         }
     } else if (glflags.gf_line_flag_selection == orig2l) {
@@ -979,17 +986,17 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             &linebuf, &linecount,
             &linebuf_actuals, &linecount_actuals,
             err);
-        if(lres == DW_DLV_OK && linecount){
+        if (lres == DW_DLV_OK && linecount){
             table_count++;
         }
-        if(lres == DW_DLV_OK && linecount_actuals){
+        if (lres == DW_DLV_OK && linecount_actuals){
             table_count++;
         }
     } else if (glflags.gf_line_flag_selection == s2l) {
         lres = dwarf_srclines_b(cu_die,&lineversion,
             &table_count,&line_context,
             err);
-        if(lres == DW_DLV_OK) {
+        if (lres == DW_DLV_OK) {
             lres = dwarf_srclines_two_level_from_linecontext(
                 line_context,
                 &linebuf, &linecount,
@@ -1016,7 +1023,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     } else if (table_count > 0) {
         /* lres DW_DLV_OK */
         if (glflags.gf_do_print_dwarf) {
-            if(line_context && glflags.verbose) {
+            if (line_context && glflags.verbose) {
                 lres = print_line_context_record(dbg,
                     line_context,err);
                 if (lres != DW_DLV_OK){
@@ -1039,13 +1046,13 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
                     &attr_dup,
                     /* ignore_die_stack= */TRUE,err);
-                if(dres == DW_DLV_ERROR) {
+                if (dres == DW_DLV_ERROR) {
                     dwarf_srclines_dealloc_b(line_context);
                     return dres;
                 }
             }
         }
-        if(glflags.gf_line_flag_selection ==  singledw5 ||
+        if (glflags.gf_line_flag_selection ==  singledw5 ||
             glflags.gf_line_flag_selection == s2l) {
             int ltres = 0;
 
@@ -1154,12 +1161,12 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     &attr_dup,
                     /* ignore_die_stack= */TRUE,
                     err);
-                if(dpres == DW_DLV_ERROR) {
+                if (dpres == DW_DLV_ERROR) {
                     dwarf_srclines_dealloc(dbg,linebuf,linecount);
                     return dpres;
                 }
             }
-            if(line_context) {
+            if (line_context) {
                 if (glflags.verbose > 2) {
                     ores = print_line_context_record(dbg,
                         line_context,err);
@@ -1190,10 +1197,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                         ") but no lines present\n", off);
                 }
             } else {
-                printf(" Line table is present but no lines present\n");
+                printf(" Line table is present but"
+                    " no lines present\n");
             }
         }
-        if(glflags.gf_line_flag_selection ==  singledw5 ||
+        if (glflags.gf_line_flag_selection ==  singledw5 ||
             glflags.gf_line_flag_selection == s2l) {
             /* also deletes the linebuf... */
             dwarf_srclines_dealloc_b(line_context);

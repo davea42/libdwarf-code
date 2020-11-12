@@ -62,7 +62,7 @@ compiler writers separate the DWARF information
 from an executable/shared-object.
 One is DWARF5 Split Dwarf (the \--file-tied
 option is useful for these). Another
-ls GNU debuglink (libdwarf automatically
+is GNU debuglink (libdwarf automatically
 finds the DWARF when given the name
 of the executable, use \--no-follow-debuglink
 to suppress this and make possible printing
@@ -74,7 +74,9 @@ automatically find it if it is present,
 .PP
 In many cases one can get additional detail
 by specifying \-v (sometimes \-v \-v gets
-even more). When printing DIEs (Debugging
+even more, see the --verbose
+discussion below).
+When printing DIEs (Debugging
 Information Entries) the options \-G
 (showing global offsets)
 and \-M (naming the DW_FORM* of attributes)
@@ -200,11 +202,11 @@ Options
 (making finding
 URI sequences silent) give finer control of URI interpretation.
 .PP
-As an example, to get a string'a b' make the string 'a%20b'
+As an example, to get a string 'a b' make the string 'a%20b'
 (here the quote (') is for exposition not part of the string, though
 quote is certainly problematic in a name).
-Instead of escaping " quotes in the string, type %25, as in
- 'a "b' should be typed 'a%20%25b'
+Instead of escaping " quotes in the string, type %25, as 
+in 'a "b' should be typed 'a%20%25b'.
 Any characters can be typed in URI style, not just characters
 which are problematic to the shell or getopt.
 We strongly suggest you not type URI-style characters where
@@ -426,7 +428,7 @@ Turns on checking for unused gaps in .debug_info (these
 gaps are not an error, just a waste of space).
 .TP
 .BR \--check-unique\ (\-kG) 
-Print only unique errors. Error lines are simpified
+Print only unique errors. Error lines are simplified
 (hex numbers removed, for example) and when
 a given message string would otherwise appear 
 again it is suppressed.
@@ -526,7 +528,7 @@ line as the TAG. This makes searching for DIE information
 (as with grep) much simpler as the entire DIE is on one line.
 
 .TP
-.BR \--format-supress-offsets\ (\-D)
+.BR \--format-suppress-offsets\ (\-D)
 Turns off the display of section offsets
 and attribute values in printed output.
 So the .debug_info output is just TAGs and Attributes.
@@ -607,17 +609,22 @@ with, for example '-x abi=ppc' or,
 equivalently, '--file-abi=ppc'
 
 .TP 
-.BR \--version\ (\-v)
+.BR \--verbose\ (\-v)
 Increases the detail shown when printing.
 In some sections, using more -v options
-will increase the detail (one to three are useful) or may
+will increase the detail (one to four are useful) or may
 change the report to show, for example, the actual
 line-data-commands instead of the resultant line-table.
+Two to four -v options make a difference when
+printing DIEs and rnglists (-i), 
+lines (-l), frames (-f,-F), gdb_index(-I).
+Additional -v beyond four do not currently
+add-to or change the output. 
 
 .SH LIMITING OUTPUT
 
 .PP
-The simplist limiting option is to stop the
+The simplest limiting option is to stop the
 examination/printing after <num> compilation units.
 See -H and  --format-limit above.
 This option also limits the number of FDEs
@@ -625,9 +632,10 @@ and CIEs printed from any .debug_frame or .eh_frame
 section.
 
 .PP
-The --search (-S) options stand alone and 
-basic print information about the compilation
+The --search (-S) options 
+print information about the compilation
 unit and DIE where the string(s) appear.
+These cannot be combined with other options.
 At most one of each of the following
 is effective (so for example
 one can only have one 'match', but one can 
@@ -645,7 +653,7 @@ These are particularly useful when the amount of
 DWARF information output by -i is multiple
 gigabytes of data.
 
-If v is added to the -S option, the
+If -Sv used instead of -S , the
 number of occurrences is printed.
 (see below for an example).
 
@@ -677,7 +685,7 @@ The count (Sv) form reports the count of occurrences.
 .TP
 .BR \--search-regex-count=string\ (\-Svregex=string) 
 When printing DIEs
-for each tag value or attribute name where the 'string' reqular
+for each tag value or attribute name where the 'string' regular
 expression matches print the compilation unit information
 and its section offset.
 Any CU with no match is not printed.
@@ -892,8 +900,9 @@ $(HOME)/dwarfdump.conf
 .SH NOTES
 In some cases compilers use DW_FORM_data1 (for example)
 and in such cases the signedness of the value must be taken
-from context. Rather than attempt to determine the
-context, dwarfdump prints the value with both signednesses
+from context. 
+Rather than attempt to determine the
+context, dwarfdump prints the value with both signedness
 whenever there is ambiguity about the correct interpretation.
 For example, 
 "DW_AT_const_value           176(as signed = -80)".
@@ -902,4 +911,6 @@ evaluate all attributes there is no ambiguity of signedness:
 the ambiguity for dwarfdump is due to dwarfdump evaluating
 DIEs in a simple order and not keeping track of much context.
 .SH BUGS
-Support for DWARF5 is being completed but may not be complete.
+Support for printing certain DWARF5 location expressions is
+incomplete.
+Report problems to libdwarf-list -at- linuxmail -dot- org
