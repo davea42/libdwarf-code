@@ -1,4 +1,8 @@
 2020-11-12: David Anderson
+    * libdwarf.h.in: Altering too-long lines
+      and poor indenting.
+    * generated_libdwarf.h.in: Regenerated.
+2020-11-12: David Anderson
     * CMakeLists.txt, Makefile.am: new file to
       and code to put into releases to help
       some cmake users.
