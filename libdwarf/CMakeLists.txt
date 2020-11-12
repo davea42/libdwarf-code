@@ -85,6 +85,10 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
+list(APPEND DWARF_LIBS ${LIBELF_LIBRARIES})
+if(UNIX)
+    list(APPEND DWARF_LIBS z)
+endif()
 foreach(i RANGE ${targetCount})
 	list(GET DWARF_TARGETS ${i} target)
 	list(GET DWARF_TYPES ${i} type)
@@ -111,9 +115,9 @@ foreach(i RANGE ${targetCount})
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
 
-if(UNIX AND BUILD_SHARED)
-	target_link_libraries(dwarf-shared PUBLIC z)
-endif()
+#if(UNIX AND BUILD_SHARED)
+#	target_link_libraries(dwarf-shared PUBLIC z)
+#endif()
 		
 if (DO_TESTING)
     set_source_group(TESTLEB "Source Files" dwarf_leb_test.c 

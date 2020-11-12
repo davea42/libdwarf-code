@@ -1,3 +1,7 @@
+2020-11-12: David Anderson
+    * CMakeLists.txt, Makefile.am: new file to
+      and code to put into releases to help
+      some cmake users.
 2020-11-10: David Anderson
     * Correctly dealing with SHF_COMPRESSED when
       we are reading the object using libelf.

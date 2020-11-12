@@ -2,20 +2,25 @@
 #  A script verifying the distribution gets all needed files
 #  for building, including "make check"
 # First, get the current configure.ac version into v:
-
 # if stdint.h does not define uintptr_t and intptr_t
 # Then dwarfgen (being c++) will not build
 # Use --disable-libelf to disable reliance on libelf
 # and dwarfgen.
 # To just eliminate dwarfgen build/test/install use --disable-dwarfgen.
+
 genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
 libelfopt=''
 wd=`pwd`
 nonstdprintf=
+# If passes, remove the /tmp/bart working directory.
+# Useful to consider if all intended files actually present,
+# including any possibly not used.
+savebart=n
 while [ $# -ne 0 ]
 do
   case $1 in
+   --savebart ) savebart=y ; shift  ;;
    --disable-libelf ) genopta='' ; genoptb='' 
         libelfopt=$1 ; shift ;;
    --enable-libelf )  shift  ;;
@@ -24,7 +29,7 @@ do
    * ) echo "Unknown buildandreleasetest.sh option $1. Error." ; exit 1 ;;
   esac
 done
-
+echo "savebart flag about temp files:...: $savebart"
 if [ -f ./configure.ac ]
 then
   f=./configure.ac
@@ -207,7 +212,9 @@ echo " End Section E  $bart (ls output follows)"
 ls  $bart
 ############ End Section E
 
-
 echo "PASS scripts/buildandreleasetest.sh"
-rm -rf $bart
+if [ "$savebart" = "n" ]
+then
+  rm -rf $bart
+fi
 exit 0
