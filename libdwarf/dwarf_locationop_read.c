@@ -633,6 +633,9 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             followed by a signed leb128 offset.
             For DWARF2, it is actually pointer size
             (address size).
+            The offset is global a section offset, not cu-relative.
+            Relocation to a different object file is up to
+            the user, per DWARF5 Page 41.
             http://www.dwarfstd.org/ShowIssue.php?issue=100831.1 */
         Dwarf_Small iplen = offset_size;
         if (version_stamp == DW_CU_VERSION2 /* 2 */ ) {
@@ -682,7 +685,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     case DW_OP_const_type:           /* DWARF5 */
     case DW_OP_GNU_const_type:       /* 0xf4 */
         {
-        /* die offset as uleb. */
+        /* die offset as uleb. cu-relative */
         DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand1,leb128_length,
             dbg,error,section_end);
         offset = offset + leb128_length;
