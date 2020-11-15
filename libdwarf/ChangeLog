@@ -1,3 +1,9 @@
+2020-11-15: David Anderson
+    * dwarf_locationop_read.c: Comments corrected.
+2020-11-15: David Anderson
+    * libdwarf.h.in: Cooment for dwarf_get_die_infotypes_flag()
+      corrected. 
+    * generated_libdwarf.h.in: Regenerated
 2020-11-12: David Anderson
     * libdwarf.h.in: Altering too-long lines
       and poor indenting.
