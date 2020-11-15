@@ -1832,9 +1832,8 @@ int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
     Dwarf_Die*       /*return_die*/,
     Dwarf_Error*     /*error*/);
 
-/*  Returns the is_info flag through the pointer if
-    the function returns
-    DW_DLV_OK. Needed so client software knows
+/*  Returns the is_info flag.
+    Needed so client software knows
     if a DIE is in debug_info or debug_types.
     New October 2011. */
 Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
