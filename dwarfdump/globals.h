@@ -280,6 +280,7 @@ void  report_caller_error_drop_error(int dwdlv,
     int line, char *filename);
 
 int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
+    Dwarf_Die die,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index,

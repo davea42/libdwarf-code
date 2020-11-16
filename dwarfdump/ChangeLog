@@ -1,3 +1,12 @@
+2020-11-15: David Anderson
+    * esb_using_functions.h: Add Dwarf_Die arg to
+      dwarfdump_print_location_operations().
+    * glflags.h, glflags.c: Adding gf_multi_line_expr. Not used yet.
+    * globals.h: Adding Dwarf_Die to check_die_expr_op_basic_data().
+    * print_die.c: Now printing references to DIEs in
+      DWARF expressions.
+    * print_frames.c,print_frames.h,print_locs.c: Adding Dwarf_Die
+      to arg lists. Some reformatting to libdwarf coding style.
 2020-11-12: David Anderson
     * dwarfdump.1: Clarified the role of the --verbose
       option and corrected spelling and formatting errors.

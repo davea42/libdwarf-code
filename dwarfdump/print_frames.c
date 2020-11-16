@@ -67,6 +67,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 
 static void
 print_one_frame_reg_col(Dwarf_Debug dbg,
+    Dwarf_Die die,
     Dwarf_Unsigned rule_id,
     Dwarf_Small value_type,
     Dwarf_Unsigned reg_used,
@@ -79,6 +80,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
 
 static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
+    Dwarf_Die die,
     Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
     Dwarf_Signed data_alignment_factor,
     int code_alignment_factor, Dwarf_Half addr_size,
@@ -131,7 +133,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
     Dwarf_Error loadcuerr = 0;
     Dwarf_Off cu_die_goff = 0;
 
-    if(!cu_die) {
+    if (!cu_die) {
         return;
     }
     atres = dwarf_attrlist(cu_die, &atlist, &atcnt, &loadcuerr);
@@ -210,7 +212,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             if (esb_string_len(&namestr)) {
                 name = esb_get_string(&namestr);
-                if(attr == DW_AT_name) {
+                if (attr == DW_AT_name) {
                     safe_strcpy(glflags.CU_name,sizeof(
                         glflags.CU_name),name,
                         strlen(name));
@@ -543,7 +545,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                         printf("\nERROR: dwarf_formaddr() failed"
                             " in get_proc_name. %s\n",
                             dwarf_errmsg(aterr));
-                        if(!glflags.gf_error_code_in_name_search_by_address) {
+                        if (!glflags.gf_error_code_in_name_search_by_address) {
                             glflags.gf_error_code_in_name_search_by_address
                                 = dwarf_errno(aterr);
                         }
@@ -1175,8 +1177,8 @@ print_one_fde(Dwarf_Debug dbg,
         } else if (ares == DW_DLV_OK) {
             if (glflags.gf_do_print_dwarf) {
                 printf("\n       <eh aug data len 0x%" DW_PR_DUx, len);
-                if(len) {
-                    if(!valid_fde_content(fde_bytes,fde_bytes_length,
+                if (len) {
+                    if (!valid_fde_content(fde_bytes,fde_bytes_length,
                         data,len) ) {
                         glflags.gf_count_major_errors++;
                         printf("ERROR:The .eh_frame augmentation data "
@@ -1256,7 +1258,9 @@ print_one_fde(Dwarf_Debug dbg,
                     ": ", (Dwarf_Unsigned)cur_pc_in_table);
                 printed_intro_addr = 1;
             }
-            print_one_frame_reg_col(dbg, config_data->cf_cfa_reg,
+            print_one_frame_reg_col(dbg,
+                *cu_die_for_print_frames,
+                config_data->cf_cfa_reg,
                 value_type,
                 reg,
                 address_size,
@@ -1325,7 +1329,9 @@ print_one_fde(Dwarf_Debug dbg,
                     (Dwarf_Unsigned)j);
                 printed_intro_addr = 1;
             }
-            print_one_frame_reg_col(dbg,k,
+            print_one_frame_reg_col(dbg,
+                *cu_die_for_print_frames,
+                k,
                 value_type,
                 reg,
                 address_size,
@@ -1402,7 +1408,7 @@ print_one_fde(Dwarf_Debug dbg,
                 return DW_DLV_NO_ENTRY;
             }
             cires = dwarf_get_offset_size(dbg,&cie_offset_size,err);
-            if( cires != DW_DLV_OK) {
+            if ( cires != DW_DLV_OK) {
                 return res;
             }
             cires = dwarf_get_cie_info_b(cie_data[cie_index],
@@ -1428,7 +1434,9 @@ print_one_fde(Dwarf_Debug dbg,
             } else {
                 /* Do not print if in check mode */
                 if (glflags.gf_do_print_dwarf) {
-                    print_frame_inst_bytes(dbg, instrs,
+                    print_frame_inst_bytes(dbg,
+                        *cu_die_for_print_frames,
+                        instrs,
                         (Dwarf_Signed) ilen,
                         data_alignment_factor,
                         (int) code_alignment_factor,
@@ -1454,7 +1462,9 @@ print_one_fde(Dwarf_Debug dbg,
     is clearer.
 */
 int
-print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
+print_one_cie(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Cie cie,
     Dwarf_Unsigned cie_index,
     Dwarf_Half address_size,
     struct dwconf_s *config_data,
@@ -1473,7 +1483,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     Dwarf_Half offset_size = 0;
 
     cires = dwarf_get_offset_size(dbg,&offset_size,err);
-    if( cires == DW_DLV_ERROR) {
+    if ( cires == DW_DLV_ERROR) {
         glflags.gf_count_major_errors++;
         printf("ERROR: calling dwarf_get_offset_size() fails\n");
         return cires;
@@ -1568,7 +1578,9 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 "\n", cie_length);
             /*  For better layout */
             printf("  initial instructions\n");
-            print_frame_inst_bytes(dbg, initial_instructions,
+            print_frame_inst_bytes(dbg,
+                die,
+                initial_instructions,
                 (Dwarf_Signed) initial_instructions_length,
                 data_alignment_factor,
                 (int) code_alignment_factor,
@@ -1581,6 +1593,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
 
 int
 print_location_operations(Dwarf_Debug dbg,
+    Dwarf_Die die,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
@@ -1596,7 +1609,7 @@ print_location_operations(Dwarf_Debug dbg,
     Dwarf_Addr baseaddr = 0; /* Really unknown */
     /* See PRINTING_DIES macro in print_die.c */
 
-    if(!glflags.gf_use_old_dwarf_loclist) {
+    if (!glflags.gf_use_old_dwarf_loclist) {
         Dwarf_Loc_Head_c head = 0;
         Dwarf_Locdesc_c locentry = 0;
         int lres = 0;
@@ -1616,10 +1629,10 @@ print_location_operations(Dwarf_Debug dbg,
             &head,
             &ulistlen,
             err);
-        if(res2 == DW_DLV_NO_ENTRY) {
+        if (res2 == DW_DLV_NO_ENTRY) {
             return res2;
         }
-        if(res2 == DW_DLV_ERROR) {
+        if (res2 == DW_DLV_ERROR) {
             glflags.gf_count_major_errors++;
             printf("\nERROR: calling dwarf_loclist_from_expr_c()");
             return res2;
@@ -1647,6 +1660,7 @@ print_location_operations(Dwarf_Debug dbg,
         /*  ASSERT: loclist_source == DW_LKIND_expression  */
         /*  ASSERT: lle_value == DW_LLE_start_end  */
         lres = dwarfdump_print_location_operations(dbg,
+            die,
             NULL,
             locentry,
             0, /* index 0: locdesc 0 */
@@ -1678,6 +1692,7 @@ print_location_operations(Dwarf_Debug dbg,
 
 
     res2 = dwarfdump_print_location_operations(dbg,
+        die,
         locdescarray,
         NULL,
         0,
@@ -1763,6 +1778,7 @@ check_finstr_addrs(unsigned char *iregionstart,
 */
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
+    Dwarf_Die die,
     Dwarf_Ptr cie_init_inst,
     Dwarf_Signed len_in,
     Dwarf_Signed data_alignment_factor,
@@ -2196,6 +2212,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         esb_constructor_fixed(&exprstring,exprstr_buf,
                             sizeof(exprstr_buf));
                         gres = print_location_operations(dbg,
+                            die,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2282,6 +2299,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             exprstr_buf,
                             sizeof(exprstr_buf));
                         gres = print_location_operations(dbg,
+                            die,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2548,6 +2566,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             exprstr_buf,
                             sizeof(exprstr_buf));
                         pres = print_location_operations(dbg,
+                            die,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2679,6 +2698,7 @@ printreg(Dwarf_Unsigned reg, struct dwconf_s *config_data)
     This may print something or may print nothing!  */
 static void
 print_one_frame_reg_col(Dwarf_Debug dbg,
+    Dwarf_Die die,
     Dwarf_Unsigned rule_id,
     Dwarf_Small value_type,
     Dwarf_Unsigned reg_used,
@@ -2766,6 +2786,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                     sizeof(local_buf));
                 /*  Here 'offset' is actually block length. */
                 gres = print_location_operations(dbg,
+                    die,
                     block_ptr,offset,addr_size,
                     offset_size,version,
                     &exprstring,&cerr);
@@ -2803,7 +2824,8 @@ int
 print_frames(Dwarf_Debug dbg,
     int want_eh,
     struct dwconf_s *config_data,
-    /* pass these next 3 so preserved from .eh_frame to .debug_frame */
+    /*  Pass these next 3 so preserved from .eh_frame
+        to .debug_frame */
     Dwarf_Die * cu_die_for_print_frames,
     void ** map_lowpc_to_name,
     void ** lowpcSet,
@@ -2818,9 +2840,8 @@ print_frames(Dwarf_Debug dbg,
     /*  We only get here if a flag says we want to
         process the section (want_eh is either 0 or 1). */
     glflags.current_section_id = DEBUG_FRAME;
-    /*  The address size here will not be right for all frames.
-        Only in DWARF4 is there a real address size known
-        in the frame data itself.  If any DIE
+    /*  Only in DWARF4 or later is there a real address
+        size known in the frame data itself.  If any DIE
         is known then a real address size can be gotten from
         dwarf_get_die_address_size(). */
     fres = dwarf_get_address_size(dbg, &address_size, err);
@@ -2998,7 +3019,9 @@ print_frames(Dwarf_Debug dbg,
             for (i = 0; i < cie_element_count; i++) {
                 int cres = 0;
 
-                cres = print_one_cie(dbg, cie_data[i], i, address_size,
+                cres = print_one_cie(dbg,
+                    *cu_die_for_print_frames,
+                    cie_data[i], i, address_size,
                     config_data,
                     err);
                 if (cres == DW_DLV_ERROR) {
