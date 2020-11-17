@@ -42,6 +42,7 @@ int print_one_cie(Dwarf_Debug dbg,
     Dwarf_Error *err);
 int print_location_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,

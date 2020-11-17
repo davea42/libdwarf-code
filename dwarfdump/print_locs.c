@@ -117,6 +117,7 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
 
         fres = print_location_operations(dbg,
             0, /* passing null, no die known. */
+            /* indent level*/ 4,
             data,
             entry_len,address_size,
             offset_size,

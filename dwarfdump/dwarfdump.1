@@ -47,6 +47,16 @@ If a script is to parse the output, the
 .BR \--format-dense\ (\-d)
 option is useful.
 .PP
+To improve readability of DWARF expressions,
+the
+.BR \--format-expr-op-per-line
+is useful.
+If the option is placed in the dwarfdump.conf
+file (see the file itself for the format)
+it will apply without needing to put it
+on the command line.
+
+.PP
 Not all sections actually exist in any given object file.
 .PP
 The output format may change from release to release, so it is

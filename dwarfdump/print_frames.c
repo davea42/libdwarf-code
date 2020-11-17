@@ -206,6 +206,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
 
             esb_constructor(&namestr);
             ares = get_attr_value(dbg, tag, cu_die,
+                /* die_indent_level */ 0,
                 cu_die_goff,attrib, srcfiles, srccnt,
                 &namestr, local_show_form_used,local_verbose,
                 &loadcuerr);
@@ -1594,6 +1595,7 @@ print_one_cie(Dwarf_Debug dbg,
 int
 print_location_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
@@ -1661,6 +1663,7 @@ print_location_operations(Dwarf_Debug dbg,
         /*  ASSERT: lle_value == DW_LLE_start_end  */
         lres = dwarfdump_print_location_operations(dbg,
             die,
+            die_indent_level,
             NULL,
             locentry,
             0, /* index 0: locdesc 0 */
@@ -1690,9 +1693,9 @@ print_location_operations(Dwarf_Debug dbg,
     /* listlen is always 1 */
     ulistlen = listlen;
 
-
     res2 = dwarfdump_print_location_operations(dbg,
         die,
+        die_indent_level,
         locdescarray,
         NULL,
         0,
@@ -2213,6 +2216,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             sizeof(exprstr_buf));
                         gres = print_location_operations(dbg,
                             die,
+                            /* indent */ 4,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2300,6 +2304,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             sizeof(exprstr_buf));
                         gres = print_location_operations(dbg,
                             die,
+                            /* indent */ 4,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2567,6 +2572,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             sizeof(exprstr_buf));
                         pres = print_location_operations(dbg,
                             die,
+                            /* indent */ 4,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2787,11 +2793,13 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 /*  Here 'offset' is actually block length. */
                 gres = print_location_operations(dbg,
                     die,
+                    /* indent */ 4,
                     block_ptr,offset,addr_size,
                     offset_size,version,
                     &exprstring,&cerr);
                 if ( gres == DW_DLV_OK) {
-                    printf("<expr:%s>",sanitized(esb_get_string(&exprstring)));
+                    printf("<expr:%s>",sanitized(
+                        esb_get_string(&exprstring)));
                 } else if (gres == DW_DLV_NO_ENTRY) {
                     glflags.gf_count_major_errors++;
                     printf("\nERROR: Unable to get string from"

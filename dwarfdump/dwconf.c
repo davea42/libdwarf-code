@@ -27,8 +27,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 */
 
-/* Windows specific */
 #include "config.h"
+#include "globals.h"
 #include "esb.h"
 
 /* Windows specific header files */
@@ -72,7 +72,8 @@ enum linetype_e {
     LT_REG_TABLE_SIZE,
     LT_ADDRESS_SIZE,
     LT_INCLUDEABI,
-    LT_ENDABI
+    LT_ENDABI,
+    LT_OPTION
 };
 
 struct comtable_s {
@@ -95,6 +96,7 @@ static char name_reg_table_size[] = "reg_table_size:";
 static char name_address_size[] = "address_size:";
 static char name_includeabi[] = "includeabi:";
 static char name_endabi[] = "endabi:";
+static char name_option[] = "option:";
 
 /*  The namelen field is filled in at runtime with
     the correct value. Filling in a fake '1' avoids
@@ -111,6 +113,7 @@ static struct comtable_s comtable[] = {
     {LT_ADDRESS_SIZE, name_address_size,1},
     {LT_INCLUDEABI, name_includeabi,1},
     {LT_ENDABI, name_endabi,1},
+    {LT_OPTION, name_option,1},
 };
 
 struct conf_internal_s {
@@ -188,7 +191,8 @@ find_conf_file_and_read_config_inner(const char *named_file,
 
     errcount = 0;
 
-    conf_stream = find_a_file(named_file, conf_internal->conf_defaults,
+    conf_stream = find_a_file(named_file,
+        conf_internal->conf_defaults,
         &name_used);
     if (!conf_stream) {
         ++errcount;
@@ -202,13 +206,18 @@ find_conf_file_and_read_config_inner(const char *named_file,
     }
     conf_internal->conf_name_used = name_used;
 
+    /*  And option: lines must come before any abi data. */
     res = find_abi_start(conf_stream, named_abi, &offset, &lineno);
-    if (errcount > 0 || res == FALSE) {
+    if (errcount > 0 && res == FALSE) {
         ++errcount;
         fclose(conf_stream);
         printf("dwarfdump found no ABI %s in file %s.\n",
             named_abi, name_used);
         return errcount;
+    }
+    if (!res) {
+        /* options set, if any. Nothing else to to */
+        return 0;
     }
     res = fseek(conf_stream, offset, SEEK_SET);
     if (res != 0) {
@@ -372,10 +381,12 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
 
     if (lname && (strlen(lname) > 0)) {
         /* Name given, just assume it is fully correct, try no other. */
+        #if 0
         if (glflags.verbose > 1) {
             printf("dwarfdump looking for configuration as %s\n",
                 lname);
         }
+        #endif
         fin = fopen(lname, type);
         if (fin) {
             *name_used = lname;
@@ -516,11 +527,28 @@ find_abi_start(FILE * stream, const char *abi_name,
 
         line = get_token(buf, &tok);
 
-        if (strcmp(tok.tk_data, name_begin_abi) != 0) {
+        if (!strcmp(tok.tk_data, "option:")) {
+            get_token(line, &tok);
+            if(tok.tk_data && !strcmp(tok.tk_data,
+                "--format-expr-op-per-line")) {
+              glflags.gf_expr_op_per_line = TRUE;
+            }
+            if(!abi_name) { 
+                return 0;
+            }
+            continue;
+        }
+        if (!strcmp(tok.tk_data, "beginabi:")) {
+            if(!abi_name) { 
+                return 0;
+            }
+            continue;
+        }
+        if (!abi_name) {
             continue;
         }
         get_token(line, &tok);
-        if (strcmp(tok.tk_data, abi_name) != 0) {
+        if (!strcmp(tok.tk_data, abi_name)) {
             continue;
         }
 
@@ -614,6 +642,31 @@ which_command(char *cp, struct comtable_s **tableentry)
     return LT_ERROR;
 }
 
+static int
+parseoption(char *cp, const char *fname,unsigned long lineno,
+    struct comtable_s *comtab)
+{
+    size_t clen = comtab->namelen;
+    struct token_s tok;
+
+    cp = cp + clen + 1;
+    cp = skipwhite(cp);
+    get_token(cp, &tok);
+    if (!tok.tk_data) {
+        printf("ERROR: empty option: command is ignored");
+        return FALSE;
+    }
+    ensure_has_no_more_tokens(cp + tok.tk_len, fname, lineno);
+    if (!strcmp(tok.tk_data,"--format-expr-op-per-line")) {
+        glflags.gf_expr_op_per_line = TRUE;
+    } else {
+        printf("ERROR: option command %s is not understood"
+            " and is ignored",tok.tk_data);
+        return FALSE;
+    }
+    return TRUE;
+
+}
 /* We are promised it's an abiname: command
    find the name on the line.
 */
@@ -630,7 +683,7 @@ parsebeginabi(char *cp, const char *fname, const char *abiname,
     cp = skipwhite(cp);
     get_token(cp, &tok);
     if (tok.tk_len != abinamelen ||
-        strncmp(cp, abiname, abinamelen) != 0) {
+        !strncmp(cp, abiname, abinamelen)) {
         printf("dwarfdump internal error: "
             "mismatch %s with %s   %s line %lu\n",
             cp, tok.tk_data, fname, lineno);
@@ -1111,6 +1164,9 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
         line = skipwhite(line);
         comtype = which_command(line, &comtabp);
         switch (comtype) {
+        case LT_OPTION:
+            parseoption(line, fname, lineno,comtabp);
+            break;
         case LT_ERROR:
             ++errcount;
             printf

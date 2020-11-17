@@ -1,3 +1,22 @@
+2020-11-16: David Anderson
+    * command_options.c: Now accepts --format-expr-op-per-line
+    * dwarfdump.1: Mentions the option.
+    * dwarfdump.c: Small changes passing die_indent_level
+      around so formatting looks sensible with the new option.
+    * dwconf.c: Now deals with 
+      option:  --format-expr-op-per-line
+      in dwarfdump.conf. the option: command must preceed every
+      beginabi: command.
+    * esb_using_functions.h: Adding die_indent level to another
+      function prototype.
+    * glflags.c,glflags.h: Renamed the flag for the option to 
+      gf_expr_op_per_line.
+    * print_die.c,print_frames.c,print_frames.h,
+      print_hipc_lopc_attr.c,print_locs.c: Now passing
+      die_indent_level anywhere needed.
+2020-11-15: David Anderson
+    * testdwarfdump.conf: A special version to test
+      the 'option:' command.
 2020-11-15: David Anderson
     * esb_using_functions.h: Add Dwarf_Die arg to
       dwarfdump_print_location_operations().

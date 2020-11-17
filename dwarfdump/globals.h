@@ -281,6 +281,7 @@ void  report_caller_error_drop_error(int dwdlv,
 
 int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index,
@@ -358,6 +359,7 @@ void loc_error_check(
 int print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Half tag,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Unsigned dieprint_cu_goffset,
     char ** srcfiles,
     Dwarf_Signed cnt,
@@ -370,8 +372,8 @@ int print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Addr *highAddrp,
     struct esb_s *valname,
     Dwarf_Error *err);
-
-
+void append_indent_prefix(struct esb_s *m,int indent);
+void print_indent_prefix(int indent);
 
 
 #ifdef __cplusplus

@@ -1992,7 +1992,7 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
         esb_empty_string(&esb_long_cu_name);
         ares = get_attr_value(dbg, DW_TAG_compile_unit,
-            cu_die, dieprint_cu_offset,
+            cu_die, /* die_indent */ 0, dieprint_cu_offset,
             name_attr, NULL, 0, &esb_long_cu_name,
             0 /*show_form_used*/,0 /* verbose */,lerr);
         if (ares != DW_DLV_OK)  {
@@ -2057,7 +2057,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     }
     /*  DW_DLV_OK */
     ares = get_attr_value(dbg, DW_TAG_compile_unit,
-        cu_die, dieprint_cu_offset,
+        cu_die,/* die_indent*/ 0, dieprint_cu_offset,
         producer_attr, NULL, 0, producernameout,
         0 /*show_form_used*/,0 /* verbose */,err);
     dwarf_dealloc_attribute(producer_attr);

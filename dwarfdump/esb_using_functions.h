@@ -47,6 +47,7 @@ int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
 
 int get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Off die_cu_offset,
     Dwarf_Attribute attrib,
     char **srcfiles,
@@ -58,12 +59,13 @@ void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
 
 int dwarfdump_print_location_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Locdesc * llbuf, /* 2014 interface */
     Dwarf_Locdesc_c  locs, /* 2015 interface */
     Dwarf_Unsigned llent, /* Which locdesc is this */
     Dwarf_Unsigned entrycount, /* count of DW_OP operators */
     Dwarf_Small    lkind,
-    int die_indent_level,
+    int no_ending_newlines,
     Dwarf_Addr baseaddr,
     struct esb_s *string_out,
     Dwarf_Error *err);
@@ -77,4 +79,4 @@ void get_true_section_name(Dwarf_Debug dbg,
 #ifdef __cplusplus
 }
 #endif
-#endif /* ESB_USING_FUNCTIONS_H */
+#endif /* ESi_USING_FUNCTIONS_H */

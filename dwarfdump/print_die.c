@@ -116,6 +116,7 @@ static int print_location_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
     boolean checking,
+    int die_indent_level,
     int no_ending_newline,
     struct esb_s *details,Dwarf_Error *);
 
@@ -279,21 +280,10 @@ check_die_expr_op_basic_data(Dwarf_Debug dbg,Dwarf_Die die,
         }
         /*  Offset passed in is off of CU header, not
             CU DIE. */
-#if 0
-printf("dadebug const type globaloff ret 0x%lx  offset 0x%lx, sum 0x%lx\n",
-(unsigned long)globaloff,
-(unsigned long)offset,
-(unsigned long)(offset+globaloff));
-#endif
         globaloff += offset;
     } else {
         /*  DW_OP_implicit_ptr */
         globaloff = offset;
-#if 0
-printf("dadebug implicit ptr globaloff  0x%lx  offset 0x%lx\n",
-(unsigned long)globaloff,
-(unsigned long)offset);
-#endif
     }
     if ((required_offset == NON_ZERO_OFFSET_REQUIRED)
         && !globaloff) {
@@ -362,11 +352,11 @@ printf("dadebug implicit ptr globaloff  0x%lx  offset 0x%lx\n",
              " Tag found: %s",actual_tag_name);
         glflags.gf_count_major_errors++;
     }
-    if (glflags.gf_multi_line_expr) {
+    if (glflags.gf_expr_op_per_line) {
         char *diename = 0;
 
         esb_append_printf_s(string_out,
-            "Target Die: %s",actual_tag_name);
+            " Target Die: %s",actual_tag_name);
         res = dwarf_diename(other_die,&diename,&err);
         if ( res == DW_DLV_OK)  {
             esb_append_printf_s(string_out,
@@ -490,7 +480,22 @@ struct operation_descr_s opdesc[]= {
     {0,0,""}
 };
 
-static void
+static char indentspace[] = 
+    "          "
+    "          "
+    "          ";
+static int  indentspacelen = sizeof(indentspace);
+void
+append_indent_prefix(struct esb_s *m,int indent)
+{
+    int remaining = indent;
+    while (remaining > indentspacelen) {
+         esb_append(m,indentspace);
+         remaining -= indentspacelen;
+    }
+    esb_appendn(m,indentspace,remaining);
+}
+void
 print_indent_prefix(int indent)
 {
     printf("%*s",indent," ");
@@ -2009,6 +2014,10 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     /* Attribute indent. */
     int nColumn = glflags.gf_show_global_offsets ? 34 : 18;
 
+    /* Reset indentation column if no offsets */
+    if (!glflags.gf_display_offsets) {
+        nColumn = 2;
+    }
     if (glflags.gf_check_abbreviations &&
         checking_this_compiler()) {
         validate_abbrev_code(dbg,abbrev_code);
@@ -2021,10 +2030,6 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         return DW_DLV_OK;
     }
 
-    /* Reset indentation column if no offsets */
-    if (!glflags.gf_display_offsets) {
-        nColumn = 2;
-    }
 
     tres = dwarf_tag(die, &tag, err);
     if (tres != DW_DLV_OK) {
@@ -2272,8 +2277,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             /* Print using indentation */
             if (!glflags.dense && PRINTING_DIES &&
                 print_else_name_match) {
-                print_indent_prefix(die_indent_level * 2 +
-                    2 + nColumn);
+                int attrindent = die_indent_level * 2 +
+                    2 + nColumn;
+                print_indent_prefix(attrindent);
             }
             {
                 boolean attr_match_localb = FALSE;
@@ -2757,7 +2763,9 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             report_die_stack_error(dbg,err);
             return DW_DLV_ERROR;
         }
-        res = get_attr_value(dbg, tag, die, dieprint_cu_goffset,
+        res = get_attr_value(dbg, tag, die, 
+            die_indent_level,
+            dieprint_cu_goffset,
             attrib, srcfiles, srcfcnt,
             &specificationstr,glflags.show_form_used,glflags.verbose,
             err);
@@ -2932,6 +2940,7 @@ traverse_one_die(Dwarf_Debug dbg,
 
         esb_constructor(&bucketgroupstr);
         res = get_attr_value(dbg, tag, die,
+            die_indent_level,
             dieprint_cu_goffset,
             attrib, srcfiles,
             cnt, &bucketgroupstr,
@@ -3435,9 +3444,9 @@ static int
 print_location_description(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Die die,
-    UNUSEDARG int checking,
+    int checking,
     Dwarf_Half attr,
-    UNUSEDARG int die_indent_level,
+    int die_indent_level,
     struct esb_s *base,
     struct esb_s *details,
     Dwarf_Error *err)
@@ -3459,6 +3468,7 @@ print_location_description(Dwarf_Debug dbg,
     if (is_simple_location_expr(theform)) {
         res  = print_location_list(dbg, die, attrib,
             checking,
+            die_indent_level,
             TRUE,base,err);
         if (res == DW_DLV_ERROR) {
             return res;
@@ -3468,6 +3478,7 @@ print_location_description(Dwarf_Debug dbg,
     } else if (is_location_form(theform)) {
         res  = print_location_list(dbg, die, attrib,
             checking,
+            die_indent_level,
             FALSE,
             details,err);
         if (res == DW_DLV_ERROR) {
@@ -3970,6 +3981,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             showform = FALSE;
         }
         res = get_attr_value(dbg, tag, die,
+            die_indent_level,
             dieprint_cu_goffset,
             attrib, srcfiles, cnt, &valname,
             showform,
@@ -4106,6 +4118,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 }
                 rv = print_location_list(dbg, die, attrib,
                     checking,
+                    die_indent_level,
                     TRUE,
                     &esb_extra,err);
                 if (rv == DW_DLV_ERROR) {
@@ -4122,6 +4135,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 break;
             default:
                 rv = get_attr_value(dbg, tag, die,
+                    die_indent_level,
                     dieprint_cu_goffset,
                     attrib, srcfiles, cnt, &upperboundstr,
                     glflags.show_form_used,glflags.verbose,
@@ -4146,8 +4160,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_high_pc:
         {
             int rv  = 0;
-            rv = print_hipc_lopc_attribute(dbg, tag,
-                die, dieprint_cu_goffset,
+            rv = print_hipc_lopc_attribute(dbg, tag, die,
+                die_indent_level,
+                dieprint_cu_goffset,
                 srcfiles, cnt,
                 attrib,
                 attr,
@@ -4183,6 +4198,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 break;
             }
             rv = get_attr_value(dbg, tag,die,
+                die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
                 &valname,
                 glflags.show_form_used,glflags.verbose,err);
@@ -4221,6 +4237,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor_fixed(&linkagenamestr,linknamebuf,
             sizeof(linknamebuf));
         ml = get_attr_value(dbg, tag, die,
+            die_indent_level,
             dieprint_cu_goffset, attrib, srcfiles,
             cnt, &linkagenamestr, glflags.show_form_used,
             glflags.verbose,err);
@@ -4246,6 +4263,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             get_attr_value(dbg, tag, die,
+                die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
                 &lesb, local_show_form,local_verbose,err);
 
@@ -4268,6 +4286,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor_fixed(&templatenamestr,atnamebuf,
             sizeof(atnamebuf));
         tres = get_attr_value(dbg, tag, die,
+            die_indent_level,
             dieprint_cu_goffset,attrib, srcfiles, cnt,
             &templatenamestr, glflags.show_form_used,
             glflags.verbose,err);
@@ -4292,6 +4311,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             tres = get_attr_value(dbg, tag, die,
+                die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
                 &lesb, local_show_form,local_verbose,err);
             /*  Look for specific name forms, attempting to
@@ -4337,6 +4357,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             vres = get_attr_value(dbg, tag, die,
+                die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
                 &lesb, local_show_form,local_verbose,err);
             if (vres == DW_DLV_ERROR) {
@@ -4365,6 +4386,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             sres = get_attr_value(dbg, tag, die,
+                die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
                 &lesb, local_show_form_used,local_verbose,
                 err);
@@ -4393,6 +4415,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
         esb_constructor(&lesb);
         pres = get_attr_value(dbg, tag, die,
+            die_indent_level,
             dieprint_cu_goffset,attrib, srcfiles, cnt,
             &lesb, glflags.show_form_used,glflags.verbose,
             err);
@@ -4421,6 +4444,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&local_e);
             pres = get_attr_value(dbg, tag, die,
+                die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
                 &local_e, show_form_local,local_verbose,err);
             if (pres == DW_DLV_ERROR) {
@@ -4460,6 +4484,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor_fixed(&lesb,typebuf,
             sizeof(typebuf));
         tres = get_attr_value(dbg, tag, die,
+            die_indent_level,
             dieprint_cu_goffset,attrib, srcfiles, cnt, &lesb,
             glflags.show_form_used,glflags.verbose,err);
         if (tres == DW_DLV_ERROR) {
@@ -4776,6 +4801,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor_fixed(&lesb,ebuf,sizeof(ebuf));
             dres = get_attr_value(dbg, tag,die,
+                die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt, &lesb,
                 glflags.show_form_used,glflags.verbose,err);
             if (dres == DW_DLV_ERROR) {
@@ -4881,6 +4907,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 int
 dwarfdump_print_location_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Locdesc * llbuf,    /* Non-zero for old interface. */
     Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
     UNUSEDARG Dwarf_Unsigned llent, /* Which desc we have . */
@@ -4903,7 +4930,8 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
         for (i = 0; i < no_of_ops; i++) {
             Dwarf_Loc * op = &locd->ld_s[i];
 
-            int res = _dwarf_print_one_expr_op(dbg,die,op,NULL,i,
+            int res = _dwarf_print_one_expr_op(dbg,die,
+                die_indent_level,op,NULL,i,
                 report_raw,
                 baseaddr,string_out,err);
             if (res == DW_DLV_ERROR) {
@@ -4917,7 +4945,8 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     possibly_increase_esb_alloc(string_out,no_of_ops,100);
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
-        res = _dwarf_print_one_expr_op(dbg,die,NULL,locdesc,i,
+        res = _dwarf_print_one_expr_op(dbg,die,
+            die_indent_level,NULL,locdesc,i,
             report_raw,
             baseaddr,string_out,err);
         if (res == DW_DLV_ERROR) {
@@ -4971,6 +5000,7 @@ show_contents(struct esb_s *string_out,
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index,
@@ -4989,7 +5019,16 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Unsigned offsetforbranch = 0;
     const char * op_name = 0;
 
-    if (index > 0) {
+    if (!glflags.dense && glflags.gf_expr_op_per_line) {
+        int nColumn = glflags.gf_show_global_offsets ? 34 : 18;
+        int totalindent = 0;
+        if (!glflags.gf_display_offsets) {
+            nColumn = 2;
+        }
+        totalindent = nColumn + (die_indent_level * 2) + 6;
+        esb_append(string_out,"\n");
+        append_indent_prefix(string_out,totalindent);
+    } else if (index > 0) {
         esb_append(string_out, " ");
     }
     if (expr) {
@@ -5419,6 +5458,7 @@ print_location_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
     boolean checking,
+    int die_indent_level,
     int  no_end_newline,
     struct esb_s *details,
     Dwarf_Error* llerr)
@@ -5762,20 +5802,19 @@ print_location_list(Dwarf_Debug dbg,
                     &bError);
             }
         }
-        {
-            lres = dwarfdump_print_location_operations(dbg,
-                die,
-                /*  Either llbuf or locentry non-zero.
-                    Not both. */
-                llbuf,
-                locentry,
-                llent, /* Which loc desc this is */
-                ulocentry_count, /* How many ops in this loc desc */
-                loclist_source,
-                no_ending_newline,
-                base_address,
-                details,llerr);
-        }
+        lres = dwarfdump_print_location_operations(dbg,
+            die,
+            die_indent_level,
+            /*  Either llbuf or locentry non-zero.
+                Not both. */
+            llbuf,
+            locentry,
+            llent, /* Which loc desc this is */
+            ulocentry_count, /* How many ops in this loc desc */
+            loclist_source,
+            no_ending_newline,
+            base_address,
+            details,llerr);
         if (lres == DW_DLV_ERROR) {
             return lres;
         }
@@ -6116,7 +6155,7 @@ static int
 print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
     boolean checking,
-    UNUSEDARG int die_indent_level,
+    int die_indent_level,
     UNUSEDARG int showhextoo,
     struct esb_s *esbp,Dwarf_Error* err)
 {
@@ -6186,7 +6225,8 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
         if (!checking) {
             int sres = 0;
 
-            sres =  print_location_operations(dbg,die,x,
+            sres =  print_location_operations(dbg,die,
+                die_indent_level,x,
                 exprlength,address_size,
                 offset_size,version, esbp,err);
             if (sres == DW_DLV_ERROR) {
@@ -6697,6 +6737,7 @@ handle_rnglists(Dwarf_Die die,
 int
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Die die,
+    int die_indent_level,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Attribute attrib,
     char **srcfiles, Dwarf_Signed cnt, struct esb_s *esbp,
@@ -7587,7 +7628,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
         wres = print_exprloc_content(dbg,die,attrib,
             checking,
-            0, /* die_indent_level pointless here */
+            die_indent_level,
             showhextoo,
             esbp, err);
         if (wres == DW_DLV_ERROR) {

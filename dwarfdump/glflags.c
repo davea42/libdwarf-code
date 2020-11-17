@@ -144,8 +144,7 @@ init_global_flags(void)
     glflags.gf_print_unique_errors = FALSE;
     glflags.gf_found_error_message = FALSE;
 
-    /* FALSE leaves DW_OP_ expression ops all on one line */
-    glflags.gf_multi_line_expr     = FALSE;
+    glflags.gf_expr_op_per_line     = FALSE;
     glflags.gf_print_raw_rnglists  = FALSE;
 
     glflags.gf_check_names = FALSE;
