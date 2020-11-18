@@ -1,3 +1,7 @@
+2020-11-17: David Anderson
+    * command_options.c: Minor line shortening.
+    * dwconf.c: Previous commit introduced a few bugs.
+      Fixed, and clearer now. 
 2020-11-16: David Anderson
     * command_options.c: Now accepts --format-expr-op-per-line
     * dwarfdump.1: Mentions the option.

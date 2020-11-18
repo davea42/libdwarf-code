@@ -2727,10 +2727,9 @@ process_args(int argc, char *argv[])
             config_file_abi,
             config_file_defaults,
             glflags.config_file_data);
-
         if (res > 0) {
-            printf
-                ("Frame not configured due to error(s). Giving up.\n");
+            printf("Frame not configured due to error(s)."
+               " Giving up.\n");
             glflags.gf_eh_frame_flag = FALSE;
             glflags.gf_frame_flag = FALSE;
         }
