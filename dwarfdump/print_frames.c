@@ -2216,7 +2216,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             sizeof(exprstr_buf));
                         gres = print_location_operations(dbg,
                             die,
-                            /* indent */ 4,
+                            /* indent */ 1,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2304,7 +2304,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             sizeof(exprstr_buf));
                         gres = print_location_operations(dbg,
                             die,
-                            /* indent */ 4,
+                            /* indent */ 1,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2572,7 +2572,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             sizeof(exprstr_buf));
                         pres = print_location_operations(dbg,
                             die,
-                            /* indent */ 4,
+                            /* indent */ 1,
                             instp+1,block_len,addr_size,
                             offset_size,version,
                             &exprstring,&cerr);
@@ -2793,7 +2793,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 /*  Here 'offset' is actually block length. */
                 gres = print_location_operations(dbg,
                     die,
-                    /* indent */ 4,
+                    /* indent */ 1,
                     block_ptr,offset,addr_size,
                     offset_size,version,
                     &exprstring,&cerr);
@@ -2941,8 +2941,9 @@ print_frames(Dwarf_Debug dbg,
                 loc = "dwarf_get_fde_list_eh";
             }
             glflags.gf_count_major_errors++;
-            printf("\nERROR: %s not loadable. %s\n",
-                sanitized(frame_section_name),loc);
+            printf("\nERROR: %s not loadable. %s %s\n",
+                sanitized(frame_section_name),loc,
+                dwarf_errmsg(*err));
             return fres;
         }
 
