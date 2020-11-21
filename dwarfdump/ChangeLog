@@ -1,4 +1,7 @@
 2020-11-21: David Anderson
+    * dwconf.c: Error message needed a slight wording change
+      when we discover the abi requested does not exist.
+2020-11-21: David Anderson
     * command_options.c: Added a new option, but it will be
       removed shortly as not needed.
     * dwconf.c: Clarified the code with a more complete

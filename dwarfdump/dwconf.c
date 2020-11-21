@@ -226,7 +226,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
     if (res == FOUND_ERROR) {
         ++errcount;
         fclose(conf_stream);
-        printf("dwarfdump found error %s in file %s.\n",
+        printf("dwarfdump found no usable abi %s in file %s.\n",
             named_abi?named_abi:"<not looking for abi>",
             name_used);
         return FOUND_ERROR;
