@@ -408,6 +408,12 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         if (frame_ptr >= section_ptr_end) {
             dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+                "DW_DLE_DEBUG_FRAME_LENGTH_BAD: following "
+                "a the start of a cie/fde we have run off"
+                " the end of the section.  Corrupt Dwarf");
+
             return DW_DLV_ERROR;
         }
 
@@ -666,25 +672,37 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     /*  This is a CIE, Common Information Entry: See the dwarf spec,
         section 6.4.1 */
     if (frame_ptr >= section_ptr_end) {
-        _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: reading a cie"
+            " version byte we have run off"
+            " the end of the section.  Corrupt Dwarf");
         return DW_DLV_ERROR;
     }
     version = *(Dwarf_Small *) frame_ptr;
 
     if ((frame_ptr+2) >= section_ptr_end) {
-        _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
+            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: reading an augmentation" 
+            " would run off"
+            " the end of the section.  Corrupt Dwarf");
         return DW_DLV_ERROR;
     }
-
-    frame_ptr++;
     if (version != DW_CIE_VERSION && version != DW_CIE_VERSION3 &&
         version != DW_CIE_VERSION4 && version != DW_CIE_VERSION5) {
-        _dwarf_error(dbg, error, DW_DLE_FRAME_VERSION_BAD);
-        return (DW_DLV_ERROR);
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_FRAME_VERSION_BAD: cie version %u unknown",
+            version);
+        _dwarf_error_string(dbg, error, 
+            DW_DLE_FRAME_VERSION_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
     }
-
+    frame_ptr++;
     augmentation = frame_ptr;
-
     res = _dwarf_check_string_valid(dbg,section_pointer,
         frame_ptr,section_ptr_end,
         DW_DLE_AUGMENTATION_STRING_OFF_END,error);
@@ -738,7 +756,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             if (address_size  <  1) {
                 _dwarf_error_string(dbg, error,
                     DW_DLE_ADDRESS_SIZE_ZERO,
-                    "DW_DLE_ADDRESS_SIZE_ZERO: bad addres size "
+                    "DW_DLE_ADDRESS_SIZE_ZERO: bad address size "
                     "for a DWARF4 cie header");
                 return (DW_DLV_ERROR);
             }

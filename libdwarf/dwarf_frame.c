@@ -426,11 +426,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
-
                 fp_register = reg_no;
                 fp_offset = factored_N_value;
 
@@ -475,11 +470,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                READ_UNALIGNED_CK(dbg, new_loc, Dwarf_Addr,
-                    instr_ptr, address_size,
-                    error,final_instr_ptr);
-#endif
                 instr_ptr += address_size;
                 if (new_loc != 0 && current_loc != 0) {
                     /*  Pre-relocation or before current_loc
@@ -519,11 +509,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, sizeof(Dwarf_Small),
-                    error,final_instr_ptr);
-#endif
                 instr_ptr += sizeof(Dwarf_Small);
                 fp_offset = adv_loc;
 
@@ -553,11 +538,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, DWARF_HALF_SIZE,
-                    error,final_instr_ptr);
-#endif
                 instr_ptr += DWARF_HALF_SIZE;
                 fp_offset = adv_loc;
 
@@ -586,11 +566,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, DWARF_32BIT_SIZE,
-                    error,final_instr_ptr);
-#endif
                 instr_ptr += DWARF_32BIT_SIZE;
                 fp_offset = adv_loc;
 
@@ -618,11 +593,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, DWARF_64BIT_SIZE,
-                    error,final_instr_ptr);
-#endif
                 instr_ptr += DWARF_64BIT_SIZE;
                 fp_offset = adv_loc;
 
@@ -652,10 +622,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
@@ -666,10 +632,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -697,15 +659,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
-
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-
                 if (cie != NULL && cie->ci_initial_table != NULL) {
                     localregtab[reg_no] =
                         cie->ci_initial_table->fr_reg[reg_no];
@@ -732,10 +687,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
@@ -761,10 +712,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
@@ -791,13 +738,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_noA = (reg_num_type) lreg;
-
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_noA, reg_count);
                 adres = _dwarf_leb128_uword_wrapper(dbg,
                     &instr_ptr,final_instr_ptr,
@@ -806,22 +747,14 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_noB = (reg_num_type) lreg;
-
                 if (reg_noB > reg_count) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_REG_NUM_TOO_HIGH);
                 }
-
-
                 localregtab[reg_noA].ru_is_off = 0;
                 localregtab[reg_noA].ru_value_type = DW_EXPR_OFFSET;
                 localregtab[reg_noA].ru_register = reg_noB;
                 localregtab[reg_noA].ru_offset_or_block_len = 0;
-
                 fp_register = reg_noA;
                 fp_offset = reg_noB;
                 break;
@@ -874,13 +807,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
-
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
                 adres = _dwarf_leb128_uword_wrapper(dbg,
                     &instr_ptr,final_instr_ptr,
@@ -889,11 +816,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
-
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -919,13 +841,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-
                 cfa_reg.ru_register = reg_no;
                 /*  Do NOT set ru_offset_or_block_len or ru_is_off here.
                     See dwarf2/3 spec.  */
@@ -943,11 +860,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
-
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -956,7 +868,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 cfa_reg.ru_is_off = 1;
                 cfa_reg.ru_value_type = DW_EXPR_OFFSET;
                 cfa_reg.ru_offset_or_block_len = factored_N_value;
-
                 fp_offset = factored_N_value;
                 break;
             }
@@ -972,11 +883,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
-
                 /* Not really known what the value means or is. */
                 cfa_reg.ru_is_off = 1;
                 cfa_reg.ru_value_type = DW_EXPR_OFFSET;
@@ -1004,10 +910,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, block_len,
-                    dbg,error,final_instr_ptr);
-#endif
                 cfa_reg.ru_is_off = 0;  /* arbitrary */
                 cfa_reg.ru_value_type = DW_EXPR_EXPRESSION;
                 cfa_reg.ru_offset_or_block_len = block_len;
@@ -1035,10 +937,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
@@ -1049,10 +947,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, block_len,
-                    dbg,error,final_instr_ptr);
-#endif
                 localregtab[lreg].ru_is_off = 0; /* arbitrary */
                 localregtab[lreg].ru_value_type = DW_EXPR_EXPRESSION;
                 localregtab[lreg].ru_offset_or_block_len = block_len;
@@ -1078,10 +972,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
                 adres = _dwarf_leb128_sword_wrapper(dbg,
@@ -1091,11 +981,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_SWORD_CK(instr_ptr,
-                    signed_factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -1125,10 +1010,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
                 adres = _dwarf_leb128_sword_wrapper(dbg,
@@ -1138,12 +1019,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_SWORD_CK(instr_ptr,
-                    signed_factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
-
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -1172,12 +1047,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-
-#if 0
-                DECODE_LEB128_SWORD_CK(instr_ptr,
-                    signed_factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -1208,14 +1077,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
-
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-
                 adres = _dwarf_leb128_uword_wrapper(dbg,
                     &instr_ptr,final_instr_ptr,
                     &factored_N_value,error);
@@ -1223,11 +1086,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
-
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -1258,12 +1116,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-                reg_no = (reg_num_type) lreg;
-#endif
-
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
                 adres = _dwarf_leb128_sword_wrapper(dbg,
                     &instr_ptr,final_instr_ptr,
@@ -1272,11 +1124,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_SWORD_CK(instr_ptr,
-                    signed_factored_N_value,
-                    dbg,error,final_instr_ptr);
-#endif
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -1308,11 +1155,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
                 adres = _dwarf_leb128_uword_wrapper(dbg,
@@ -1322,10 +1164,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, block_len,
-                    dbg,error,final_instr_ptr);
-#endif
                 localregtab[lreg].ru_is_off = 0;        /* arbitrary */
                 localregtab[lreg].ru_value_type = DW_EXPR_VAL_EXPRESSION;
                 localregtab[lreg].ru_offset_or_block_len = block_len;
@@ -1374,10 +1212,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     free(localregtab);
                     return adres;
                 }
-#if 0
-                DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
-                    dbg,error,final_instr_ptr);
-#endif
                 /*  We have nowhere to store lreg.
                     FIXME
                     This is the total size of arguments
@@ -1979,12 +1813,12 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             cie->ci_extension_size -
             (cie->ci_cie_instr_start -
             cie->ci_cie_start);
-
         if (instrend > cie->ci_cie_end) {
             _dwarf_error(dbg, error,DW_DLE_CIE_INSTR_PTR_ERROR);
             return DW_DLV_ERROR;
         }
-        cie->ci_initial_table = (Dwarf_Frame)_dwarf_get_alloc(dbg, DW_DLA_FRAME, 1);
+        cie->ci_initial_table = (Dwarf_Frame)_dwarf_get_alloc(dbg, 
+            DW_DLA_FRAME, 1);
 
         if (cie->ci_initial_table == NULL) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);

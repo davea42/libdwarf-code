@@ -1,3 +1,9 @@
+2020-11-21: David Anderson
+    * dwarf_frame.c: Improve a couple error messages with
+      additional detail.
+      Remove old #if0/endif around macros no longer used.
+    * dwarf_frame2.c: Improve some error messages with
+      additional detail.
 2020-11-15: David Anderson
     * dwarf_locationop_read.c: Comments corrected.
 2020-11-15: David Anderson
