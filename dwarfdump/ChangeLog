@@ -1,4 +1,12 @@
 2020-11-21: David Anderson
+    * command_options.c: Added a new option, but it will be
+      removed shortly as not needed.
+    * dwconf.c: Clarified the code with a more complete
+      set of return values.
+    * dwconf.h: Macro defines for the new return values.
+    * print_die.c: Now allows printing expression operations
+      one per line. Which will be the default very soon. 
+2020-11-21: David Anderson
     * print_frames.c: Error message improvements and
       refactored fde/cie printing to make it easier
       to follow.  Now if fde printing errors-out

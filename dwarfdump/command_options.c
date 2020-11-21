@@ -2709,15 +2709,10 @@ process_args(int argc, char *argv[])
 
     /*  Process the arguments and sets the appropiated option */
     set_command_options(argc, argv);
-
-    init_conf_file_data(glflags.config_file_data);
     if (config_file_abi && glflags.gf_generic_1200_regs) {
         printf("Specifying both -R and -x abi= is not allowed. Use one "
             "or the other.  -x abi= ignored.\n");
         config_file_abi = 0;
-    }
-    if (glflags.gf_generic_1200_regs) {
-        init_generic_config_1200_regs(glflags.config_file_data);
     }
     {   /*  even with no abi we look as there may be
             a dwarfdump option there we know about. */
@@ -2727,11 +2722,17 @@ process_args(int argc, char *argv[])
             config_file_abi,
             config_file_defaults,
             glflags.config_file_data);
-        if (res > 0) {
+        if (res == FOUND_ERROR) {
             printf("Frame not configured due to error(s)."
-               " Giving up.\n");
+               " using generic 100 registers.\n");
             glflags.gf_eh_frame_flag = FALSE;
             glflags.gf_frame_flag = FALSE;
+        } else if (res == FOUND_DONE || res == FOUND_OPTION) {
+            if (glflags.gf_generic_1200_regs) {
+                init_generic_config_1200_regs(glflags.config_file_data);
+            }
+        } else { 
+            /* FOUND_ABI_START nothing to do. */
         }
     }
     if (arg_usage_error ) {

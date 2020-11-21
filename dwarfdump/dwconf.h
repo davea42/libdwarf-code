@@ -33,6 +33,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define FOUND_ABI_START 1
+#define FOUND_OPTION    2
+#define FOUND_ERROR     3
+#define FOUND_DONE      4
+
 /*  Declarations helping configure the frame reader.
     We are not allowing negative register numbers.
     Which could be  allowed if necessary with a little work. */

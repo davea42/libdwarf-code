@@ -352,7 +352,7 @@ check_die_expr_op_basic_data(Dwarf_Debug dbg,Dwarf_Die die,
              " Tag found: %s",actual_tag_name);
         glflags.gf_count_major_errors++;
     }
-    if (glflags.gf_expr_op_per_line) {
+    if (!glflags.dense && glflags.gf_expr_op_per_line) {
         char *diename = 0;
 
         esb_append_printf_s(string_out,
@@ -5019,7 +5019,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Unsigned offsetforbranch = 0;
     const char * op_name = 0;
 
-    if (!glflags.dense && glflags.gf_expr_op_per_line) {
+    if (!glflags.dense && glflags.expr_op_per_line) {
         int nColumn = glflags.gf_show_global_offsets ? 34 : 18;
         int totalindent = 0;
         if (!glflags.gf_display_offsets) {
