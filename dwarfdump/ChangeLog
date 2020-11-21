@@ -1,3 +1,8 @@
+2020-11-21: David Anderson
+    * print_frames.c: Error message improvements and
+      refactored fde/cie printing to make it easier
+      to follow.  Now if fde printing errors-out
+      we continue on to attempting to print cies.
 2020-11-20: David Anderson
     * print_frames.c: A better indent for expression ops
       from frames. More detailed error message too.

@@ -1236,7 +1236,8 @@ print_one_fde(Dwarf_Debug dbg,
             if (fires == DW_DLV_ERROR) {
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: on getting fde details for "
-                    "fde row for address 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                    "fde row for address 0x%" 
+                    DW_PR_XZEROS DW_PR_DUx "\n",
                     j);
                 return fires;
             }
@@ -2719,15 +2720,15 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     char *type_title = "";
     int print_type_title = 1;
 
+    if (!glflags.gf_do_print_dwarf) {
+        return;
+    }
     if (reg_used == config_data->cf_initial_rule_value &&
         (value_type == DW_EXPR_OFFSET ||
         value_type == DW_EXPR_VAL_OFFSET) ) {
         /*  This is really an empty column. Nothing to do.
             Would be great if we could tell the caller
             the *next* column used here or something. */
-        return;
-    }
-    if (!glflags.gf_do_print_dwarf) {
         return;
     }
     if (config_data->cf_interface_number == 2) {
@@ -2824,6 +2825,139 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     return;
 }
 
+static int
+print_all_fdes(Dwarf_Debug dbg,
+    const char *frame_section_name,
+    Dwarf_Fde *fde_data,
+    Dwarf_Signed fde_element_count,
+    Dwarf_Cie *cie_data, 
+    Dwarf_Signed cie_element_count,
+    Dwarf_Half address_size,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
+    int is_eh,
+    struct dwconf_s *config_data,
+    void **map_lowpc_to_name,
+    void **lowpcSet,
+    Dwarf_Die *cu_die_for_print_frames,
+    Dwarf_Error*err)
+{   
+    Dwarf_Signed i = 0;
+    int frame_count = 0;
+
+    /* Do not print if in check mode */
+    if (glflags.gf_do_print_dwarf) {
+        struct esb_s truename;
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
+        const char *stdsecname = 0;
+
+        if (!is_eh) {
+            stdsecname=".debug_frame";
+        } else {
+            stdsecname=".eh_frame";
+        }
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,stdsecname,
+            &truename,true);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
+        printf("\nfde:\n");
+    }
+
+    for (i = 0; i < fde_element_count; i++) {
+        int fdres = 0;
+
+        fdres = print_one_fde(dbg, 
+            frame_section_name, fde_data[i],
+            i, cie_data, cie_element_count,
+            address_size, offset_size, version,
+            is_eh, config_data,
+            map_lowpc_to_name,
+            lowpcSet,
+            cu_die_for_print_frames,
+            err);
+        if (fdres == DW_DLV_ERROR) {
+            glflags.gf_count_major_errors++;
+            printf("ERROR: Printing fde %" DW_PR_DSd
+                " fails. Error %s\n",
+                i,dwarf_errmsg(*err));
+            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                cie_element_count,
+                fde_data, fde_element_count);
+            return fdres;
+        }
+        if (fdres == DW_DLV_NO_ENTRY) {
+            glflags.gf_count_major_errors++;
+            printf("ERROR: Printing fde %" DW_PR_DSd
+                " fails saying 'no entry'. Impossible.\n",
+                i);
+            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                cie_element_count,
+                fde_data, fde_element_count);
+            return fdres;
+        }
+        ++frame_count;
+        if (frame_count >= glflags.break_after_n_units) {
+            break;
+        }
+    }
+    return DW_DLV_OK;
+}
+
+static int
+print_all_cies(Dwarf_Debug dbg,
+    Dwarf_Fde *fde_data,
+    Dwarf_Signed fde_element_count,
+    Dwarf_Cie *cie_data,
+    Dwarf_Signed cie_element_count,
+    Dwarf_Half address_size,
+    struct dwconf_s *config_data,
+    Dwarf_Die *cu_die_for_print_frames,
+    Dwarf_Error*err)
+{
+    /* Print the cie set. */
+    /* Do not print if in check mode */
+    Dwarf_Signed i = 0;
+    Dwarf_Signed cie_count = 0;
+
+    if (glflags.gf_do_print_dwarf) {
+        printf("\ncie:\n");
+    }
+    for (i = 0; i < cie_element_count; i++) {
+        int cres = 0;
+
+        cres = print_one_cie(dbg,
+            *cu_die_for_print_frames,
+            cie_data[i], i, address_size,
+            config_data,
+            err);
+        if (cres == DW_DLV_ERROR) {
+            glflags.gf_count_major_errors++;
+            printf("\nERROR: Printing cie %" DW_PR_DSd
+                " fails. Error %s\n",
+                i,dwarf_errmsg(*err));
+            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                cie_element_count,
+                fde_data, fde_element_count);
+            return cres;
+        } else if (cres == DW_DLV_NO_ENTRY) {
+            glflags.gf_count_major_errors++;
+            printf("\nERROR: Printing cie %" DW_PR_DSd
+                " fails. saying NO_ENTRY!\n",
+                i);
+            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                cie_element_count,
+                fde_data, fde_element_count);
+            return cres;
+        } else {
+            ++cie_count;
+            if (cie_count >= glflags.break_after_n_units) {
+                break;
+            }
+        }
+    }
+    return DW_DLV_OK;
+}
 /*  get all the data in .debug_frame (or .eh_frame).
     The '3' versions mean print using the dwarf3 new interfaces.
     The non-3 mean use the old interfaces.
@@ -2839,7 +2973,6 @@ print_frames(Dwarf_Debug dbg,
     void ** lowpcSet,
     Dwarf_Error *err)
 {
-    Dwarf_Signed i;
     int fres = 0;
     Dwarf_Half address_size = 0;
     Dwarf_Half offset_size = 0;
@@ -2864,8 +2997,6 @@ print_frames(Dwarf_Debug dbg,
         Dwarf_Signed cie_element_count = 0;
         Dwarf_Fde *fde_data = NULL;
         Dwarf_Signed fde_element_count = 0;
-        int frame_count = 0;
-        int cie_count = 0;
         const char *frame_section_name = 0;
         int silent_if_missing = 0;
         int is_eh = 0;
@@ -2965,103 +3096,48 @@ print_frames(Dwarf_Debug dbg,
             /* no frame information */
             return fres;
         } else {                /* DW_DLV_OK */
-            /* Do not print if in check mode */
-            if (glflags.gf_do_print_dwarf) {
-                struct esb_s truename;
-                char buf[DWARF_SECNAME_BUFFER_SIZE];
-                const char *stdsecname = 0;
+            int res = 0;
 
-                if (!is_eh) {
-                    stdsecname=".debug_frame";
-                } else {
-                    stdsecname=".eh_frame";
-                }
-                esb_constructor_fixed(&truename,buf,sizeof(buf));
-                get_true_section_name(dbg,stdsecname,
-                    &truename,true);
-                printf("\n%s\n",sanitized(esb_get_string(&truename)));
-                esb_destructor(&truename);
-                printf("\nfde:\n");
+            res = print_all_fdes(dbg,frame_section_name,fde_data,
+                fde_element_count,
+                cie_data, cie_element_count,
+                address_size,offset_size,version,is_eh,
+                config_data,map_lowpc_to_name,
+                lowpcSet,
+                cu_die_for_print_frames,
+                err);
+            if (res == DW_DLV_ERROR) {
+                glflags.gf_count_major_errors++;
+                printf("ERROR: printing fdes fails. %s "
+                    " Attempting to continue. \n",
+                    dwarf_errmsg(*err));
+                dwarf_dealloc_error(dbg,*err);
+                *err = 0;
             }
-
-            for (i = 0; i < fde_element_count; i++) {
-                int fdres = 0;
-
-                fdres = print_one_fde(dbg, frame_section_name, fde_data[i],
-                    i, cie_data, cie_element_count,
-                    address_size, offset_size, version,
-                    is_eh, config_data,
-                    map_lowpc_to_name,
-                    lowpcSet,
-                    cu_die_for_print_frames,
-                    err);
-                if (fdres == DW_DLV_ERROR) {
-                    glflags.gf_count_major_errors++;
-                    printf("ERROR: Printing fde %" DW_PR_DSd
-                        " fails. Error %s\n",
-                        i,dwarf_errmsg(*err));
-                    dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                        cie_element_count,
-                        fde_data, fde_element_count);
-                    return fdres;
-                }
-                if (fdres == DW_DLV_NO_ENTRY) {
-                    glflags.gf_count_major_errors++;
-                    printf("ERROR: Printing fde %" DW_PR_DSd
-                        " fails saying 'no entry'. Impossible.\n",
-                        i);
-                    dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                        cie_element_count,
-                        fde_data, fde_element_count);
-                    return fdres;
-                }
-                ++frame_count;
-                if (frame_count >= glflags.break_after_n_units) {
-                    break;
-                }
-            }
-            /* Print the cie set. */
-            /* Do not print if in check mode */
-            if (glflags.gf_do_print_dwarf) {
-                printf("\ncie:\n");
-            }
-            for (i = 0; i < cie_element_count; i++) {
-                int cres = 0;
-
-                cres = print_one_cie(dbg,
-                    *cu_die_for_print_frames,
-                    cie_data[i], i, address_size,
-                    config_data,
-                    err);
-                if (cres == DW_DLV_ERROR) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: Printing cie %" DW_PR_DSd
-                        " fails. Error %s\n",
-                        i,dwarf_errmsg(*err));
-                    dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                        cie_element_count,
-                        fde_data, fde_element_count);
-                    return cres;
-                } else if (cres == DW_DLV_NO_ENTRY) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: Printing cie %" DW_PR_DSd
-                        " fails. saying NO_ENTRY!\n",
-                        i);
-                    dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                        cie_element_count,
-                        fde_data, fde_element_count);
-                    return cres;
-                } else {
-                    ++cie_count;
-                    if (cie_count >= glflags.break_after_n_units) {
-                        break;
-                    }
-                }
+            
+            res = print_all_cies(dbg,
+                /* frame_section_name, */
+                fde_data,
+                fde_element_count,
+                cie_data, cie_element_count,
+                address_size,
+                /* offset_size,version,is_eh, */
+                config_data,
+                /* map_lowpc_to_name, lowpcSet, */
+                cu_die_for_print_frames,
+                err);
+            if (res == DW_DLV_ERROR) {
+                glflags.gf_count_major_errors++;
+                printf("ERROR: printing cies fails. %s "
+                    " Attempting to continue. \n",
+                    dwarf_errmsg(*err));
+                dwarf_dealloc_error(dbg,*err);
+                *err = 0;
             }
             dwarf_fde_cie_list_dealloc(dbg, cie_data,
                 cie_element_count,
                 fde_data, fde_element_count);
-        }
-    }
+        } /*  End innner scope, not a loop */
+    } /*  End innner scope, not a loop */
     return DW_DLV_OK;
 }
