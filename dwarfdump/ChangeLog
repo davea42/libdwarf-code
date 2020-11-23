@@ -1,4 +1,10 @@
 2020-11-22: David Anderson
+    * print_die.c: When an attribute expression DW_OP is
+      a DWARF5 reference to a DW_TAG the details of the
+      reference are indented a little and printed on
+      the line after the attribute itself. 
+      Seems easier to read that way.
+2020-11-22: David Anderson
     * command_options.c: The option is now
       --format-expr-ops-joined
     * dwarfdump.1,dwarfdump.conf,testdwarfdump.conf: Reflects

@@ -98,7 +98,8 @@ static int print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     boolean checking,
     int die_indent_level,
     int showhextoo,
-    struct esb_s *esbp,Dwarf_Error *err);
+    struct esb_s *esbp,
+    Dwarf_Error *err);
 static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Half attr,
@@ -225,6 +226,7 @@ report_die_stack_error(Dwarf_Debug dbg, Dwarf_Error *err)
 static void
 check_die_expr_op_basic_data(Dwarf_Debug dbg,Dwarf_Die die,
     const char * op_name,
+    int indentspaces,
     int required_tag,
     int required_offset,
     int within_cu,
@@ -355,8 +357,25 @@ check_die_expr_op_basic_data(Dwarf_Debug dbg,Dwarf_Die die,
     if (!glflags.dense && !glflags.gf_expr_ops_joined) {
         char *diename = 0;
 
-        esb_append_printf_s(string_out,
-            " Target Die: %s",actual_tag_name);
+        /*  <0x000854ff GOFF=0x00546047> */
+        esb_append(string_out,"\n");
+        append_indent_prefix(string_out,indentspaces+2);
+        esb_append(string_out," Target Die: ");
+        if (within_cu) {
+            esb_append_printf_u(string_out,
+                "<0x%" DW_PR_XZEROS DW_PR_DUx ,offset);
+            if (glflags.gf_show_global_offsets) {
+                esb_append_printf_u(string_out,
+                    " GOFF=0x%" DW_PR_XZEROS DW_PR_DUx,
+                    globaloff);
+            }
+            esb_append(string_out,"> ");
+        } else {
+            esb_append_printf_u(string_out,
+                "<GOFF=0x%" DW_PR_XZEROS DW_PR_DUx
+                "> ",globaloff);
+        }
+        esb_append(string_out,actual_tag_name);
         res = dwarf_diename(other_die,&diename,&err);
         if ( res == DW_DLV_OK)  {
             esb_append_printf_s(string_out,
@@ -3963,7 +3982,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         Dwarf_Half directform = 0;
         boolean showform = glflags.show_form_used;
 
-        append_extra_string = TRUE;
         res = get_form_values(dbg,attrib,&theform,&directform,
             err);
         if (res == DW_DLV_ERROR) {
@@ -3992,6 +4010,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return res;
         }
+        append_extra_string = TRUE;
         res = print_location_description(dbg,attrib,die,
             checking,
             attr,die_indent_level,
@@ -4880,19 +4899,23 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             printf("%-28s\n",atname);
         } else {
             if (glflags.dense) {
-                printf(" %s<%s>", atname, esb_get_string(&valname));
+                char *v = 0;
+                v = esb_get_string(&valname);
+                printf(" %s<%s>", atname, sanitized(v));
                 if (append_extra_string) {
-                    char *v = esb_get_string(&esb_extra);
-                    printf("%s", v);
+                    v = esb_get_string(&esb_extra);
+                    printf("%s", sanitized(v));
                 }
             } else {
+                char *v = 0;
                 printf("%-28s", atname);
                 if (strlen(atname) >= 28) {
                     printf(" ");
                 }
-                printf("%s\n", sanitized(esb_get_string(&valname)));
+                v = esb_get_string(&valname);
+                printf("%s\n", sanitized(v));
                 if (append_extra_string) {
-                    char *v = esb_get_string(&esb_extra);
+                    v = esb_get_string(&esb_extra);
                     printf("%s", sanitized(v));
                 }
             }
@@ -5018,6 +5041,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Unsigned raw3 = 0;
     Dwarf_Unsigned offsetforbranch = 0;
     const char * op_name = 0;
+    int indentspaces = 0;
 
     if (!glflags.dense && !glflags.gf_expr_ops_joined) {
         int nColumn = glflags.gf_show_global_offsets ? 34 : 18;
@@ -5028,6 +5052,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         totalindent = nColumn + (die_indent_level * 2) + 6;
         esb_append(string_out,"\n");
         append_indent_prefix(string_out,totalindent);
+        indentspaces = totalindent;
     } else if (index > 0) {
         esb_append(string_out, " ");
     }
@@ -5107,6 +5132,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_call2: {
             bracket_hex(" ",opd1,"",string_out);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 NO_SPECIFIC_TAG,NON_ZERO_OFFSET_REQUIRED,
                 WITHIN_CU,opd1,string_out);
             }
@@ -5114,6 +5140,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_call4: {
             bracket_hex(" ",opd1,"",string_out);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 NO_SPECIFIC_TAG,NON_ZERO_OFFSET_REQUIRED,
                 WITHIN_CU,opd1,string_out);
             }
@@ -5121,6 +5148,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_call_ref: {
             bracket_hex(" ",opd1,"",string_out);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 NO_SPECIFIC_TAG,NON_ZERO_OFFSET_REQUIRED,
                 WITHIN_CU,opd1,string_out);
             }
@@ -5173,6 +5201,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_GNU_variable_value: {
             bracket_hex(" ",opd1,"",string_out);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 NO_SPECIFIC_TAG,NON_ZERO_OFFSET_REQUIRED,
                 WITHIN_CU,opd1,string_out);
             }
@@ -5189,6 +5218,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             esb_append(string_out, " ");
             formx_signed(opd2,string_out);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 NO_SPECIFIC_TAG, 
                 op= DW_OP_implicit_pointer?
                     ZERO_OFFSET_GENERIC_TYPE:
@@ -5235,6 +5265,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 show_contents(string_out,length,bp);
             }
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 DW_TAG_base_type, NON_ZERO_OFFSET_REQUIRED,
                 WITHIN_CU,opd1,string_out);
             }
@@ -5245,6 +5276,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 " 0x%" DW_PR_DUx , opd1);
             bracket_hex(" ",opd2,"",string_out);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 DW_TAG_base_type,NON_ZERO_OFFSET_REQUIRED,
                 WITHIN_CU,opd2,string_out);
             }
@@ -5256,6 +5288,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 " 0x%02" DW_PR_DUx , opd1);
             bracket_hex(" ",opd2,"",string_out);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 DW_TAG_base_type,NON_ZERO_OFFSET_REQUIRED,
                 WITHIN_CU,opd2,string_out);
             }
@@ -5270,6 +5303,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             esb_append_printf_u(string_out,
                 " 0x%02"  DW_PR_DUx , opd1);
             check_die_expr_op_basic_data(dbg,die,op_name,
+                indentspaces,
                 DW_TAG_base_type,ZERO_OFFSET_GENERIC_TYPE,
                 WITHIN_CU,opd2,string_out);
             }
@@ -5508,7 +5542,6 @@ print_location_list(Dwarf_Debug dbg,
     Dwarf_Unsigned offset_table_offset = 0;
     Dwarf_Unsigned offset_table_entrycount = 0;
     struct esb_s   section_truename;
-
 
     lres = dwarf_get_version_of_die(die,&version,
         &offset_size);
