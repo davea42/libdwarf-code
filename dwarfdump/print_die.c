@@ -99,6 +99,7 @@ static int print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     int die_indent_level,
     int showhextoo,
     struct esb_s *esbp,
+    struct esb_s *exprops,
     Dwarf_Error *err);
 static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
@@ -4135,6 +4136,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         rv, *err);
                     return rv;
                 }
+                append_extra_string = TRUE;
                 rv = print_location_list(dbg, die, attrib,
                     checking,
                     die_indent_level,
@@ -4145,7 +4147,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     esb_destructor(&esb_extra);
                     return rv;
                 }
-                append_extra_string = TRUE;
                 show_form_itself(glflags.show_form_used,
                     glflags.verbose,
                     btheform,
@@ -6190,7 +6191,9 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     boolean checking,
     int die_indent_level,
     UNUSEDARG int showhextoo,
-    struct esb_s *esbp,Dwarf_Error* err)
+    struct esb_s *esbp,
+    struct esb_s *exprops,
+    Dwarf_Error* err)
 {
     Dwarf_Ptr x = 0;
     Dwarf_Unsigned exprlength = 0;
@@ -6261,7 +6264,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
             sres =  print_location_operations(dbg,die,
                 die_indent_level,x,
                 exprlength,address_size,
-                offset_size,version, esbp,err);
+                offset_size,version, exprops,err);
             if (sres == DW_DLV_ERROR) {
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: Unable to create "
@@ -6794,6 +6797,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Half direct_form = 0;
     Dwarf_Bool is_info = TRUE;
     boolean checking = !PRINTING_DIES;
+    struct esb_s esb_expr;
+    int esb_expr_alive = FALSE;
 
     is_info = dwarf_get_die_infotypes_flag(die);
     /*  Dwarf_whatform gets the real form, DW_FORM_indir is
@@ -6927,70 +6932,68 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 wres, *err);
             return wres;
         }
-        {
-            if (attr == DW_AT_sibling) {
-                /*  The value had better be inside the current CU
-                    else there is a nasty error here, as a sibling
-                    has to be in the same CU, it seems. */
-                /*  The target offset (off) had better be
-                    following the die's global offset else
-                    we have a serious botch. this FORM
-                    defines the value as a .debug_info
-                    global offset. */
-                Dwarf_Off cuoff = 0;
-                Dwarf_Off culen = 0;
-                Dwarf_Off die_overall_offset = 0;
-                int res = 0;
-                int ores = dwarf_dieoffset(die, &die_overall_offset,
-                    err);
-                if (ores != DW_DLV_OK) {
-                    print_error_and_continue(dbg,
-                        "dwarf_dieoffsetnot available for"
-                        "DW_AT_sibling. Something is corrupted.",
-                        ores, *err);
-                    return ores;
-                }
-                if (die_stack_indent_level >= DIE_STACK_SIZE ) {
-                    report_die_stack_error(dbg,err);
-                    return DW_DLV_ERROR;
-                }
-                SET_DIE_STACK_SIBLING(off);
-                if (die_overall_offset >= off) {
-                    struct esb_s msg;
+        if (attr == DW_AT_sibling) {
+            /*  The value had better be inside the current CU
+                else there is a nasty error here, as a sibling
+                has to be in the same CU, it seems. */
+            /*  The target offset (off) had better be
+                following the die's global offset else
+                we have a serious botch. this FORM
+                defines the value as a .debug_info
+                global offset. */
+            Dwarf_Off cuoff = 0;
+            Dwarf_Off culen = 0;
+            Dwarf_Off die_overall_offset = 0;
+            int res = 0;
+            int ores = dwarf_dieoffset(die, &die_overall_offset,
+                err);
+            if (ores != DW_DLV_OK) {
+                print_error_and_continue(dbg,
+                    "dwarf_dieoffsetnot available for"
+                    "DW_AT_sibling. Something is corrupted.",
+                    ores, *err);
+                return ores;
+            }
+            if (die_stack_indent_level >= DIE_STACK_SIZE ) {
+                report_die_stack_error(dbg,err);
+                return DW_DLV_ERROR;
+            }
+            SET_DIE_STACK_SIBLING(off);
+            if (die_overall_offset >= off) {
+                struct esb_s msg;
 
-                    esb_constructor(&msg);
-                    esb_append_printf_u(&msg,
-                        "ERROR: Sibling DW_FORM_ref_offset 0x%"
-                        DW_PR_XZEROS DW_PR_DUx ,
-                        off);
-                    esb_append_printf_s(&msg,
-                        " points %s die Global offset ",
-                        (die_overall_offset == off)?"at":"before");
-                    esb_append_printf_u(&msg,
-                        "0x%"  DW_PR_XZEROS  DW_PR_DUx,
-                        die_overall_offset);
-                    simple_err_only_return_action(DW_DLV_ERROR,
-                        esb_get_string(&msg));
-                    esb_destructor(&msg);
-                }
+                esb_constructor(&msg);
+                esb_append_printf_u(&msg,
+                    "ERROR: Sibling DW_FORM_ref_offset 0x%"
+                    DW_PR_XZEROS DW_PR_DUx ,
+                    off);
+                esb_append_printf_s(&msg,
+                    " points %s die Global offset ",
+                    (die_overall_offset == off)?"at":"before");
+                esb_append_printf_u(&msg,
+                    "0x%"  DW_PR_XZEROS  DW_PR_DUx,
+                    die_overall_offset);
+                simple_err_only_return_action(DW_DLV_ERROR,
+                    esb_get_string(&msg));
+                esb_destructor(&msg);
+            }
 
-                DWARF_CHECK_COUNT(tag_tree_result,1);
-                res = dwarf_die_CU_offset_range(die,&cuoff,
-                    &culen,err);
-                if (res != DW_DLV_OK) {
+            DWARF_CHECK_COUNT(tag_tree_result,1);
+            res = dwarf_die_CU_offset_range(die,&cuoff,
+                &culen,err);
+            if (res != DW_DLV_OK) {
+                DWARF_CHECK_ERROR(tag_tree_result,
+                    "DW_AT_sibling DW_FORM_ref_addr "
+                    "offset range of the CU "
+                    "is not available");
+                DROP_ERROR_INSTANCE(dbg,res,*err);
+            } else {
+                Dwarf_Off cuend = cuoff+culen;
+                if (off <  cuoff || off >= cuend) {
                     DWARF_CHECK_ERROR(tag_tree_result,
                         "DW_AT_sibling DW_FORM_ref_addr "
-                        "offset range of the CU "
-                        "is not available");
-                    DROP_ERROR_INSTANCE(dbg,res,*err);
-                } else {
-                    Dwarf_Off cuend = cuoff+culen;
-                    if (off <  cuoff || off >= cuend) {
-                        DWARF_CHECK_ERROR(tag_tree_result,
-                            "DW_AT_sibling DW_FORM_ref_addr "
-                            "offset points "
-                            "outside of current CU");
-                    }
+                        "offset points "
+                        "outside of current CU");
                 }
             }
         }
@@ -7659,15 +7662,19 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_exprloc: {    /* DWARF4 */
         int showhextoo = 1;
 
+        esb_expr_alive = TRUE; 
+        esb_constructor(&esb_expr);
         wres = print_exprloc_content(dbg,die,attrib,
             checking,
             die_indent_level,
             showhextoo,
-            esbp, err);
+            esbp, &esb_expr,
+            err);
         if (wres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "ERROR: cannot print DW_FORM_exprloc content.",
                 wres,*err);
+            esb_destructor(&esb_expr);
             return wres;
         }
         }
@@ -7825,6 +7832,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     } /* end switch on theform */
     show_form_itself(show_form,local_verbose,theform,
         direct_form,esbp);
+    if (esb_expr_alive) {
+        /*  So the expr ops follow the FORM of the attribute
+            if indeed FORMs shown. */
+        esb_append(esbp,esb_get_string(&esb_expr));
+        esb_destructor(&esb_expr);
+    }
     return DW_DLV_OK;
 }
 
