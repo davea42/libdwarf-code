@@ -1,12 +1,14 @@
-2020-11-16:
-  dwarfdump adds the option --format-expr-op-per-line which
-  makes viewing DWARF expressions much nicer.  Those expression
+2020-11-21:
+  dwarfdump now prints DWARF expression operators
+  each on its own line.  This makes viewing DWARF expressions
+  much nicer given the increased use of much longer
+  expressions.  Those expression
   operators that reference DIES are now followed,
-  verified, and the target TAG and name attribute are printed.
-  A new dwarfdump.conf command 'option:' lets one specify
-  option: --format-expr-op-per-line
-  and that works as if one added the option in
-  every dwarfdump command you type.
+  verified, and the target DW_TAG and DW_AT_name
+  are printed.  A new dwarfdump.conf command 'option:'
+  lets one specify option: --format-expr-ops-joined
+  in case you want the old style DWARF expression 
+  operators-on-one-line.
 2020-09-08:
   libdwarf/dwarfdump work well with DWARF4 and
   DWARF5, including DWP files.

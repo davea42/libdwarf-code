@@ -337,7 +337,7 @@ static void arg_file_use_no_libelf(void);
 static void arg_format_attr_name(void);
 static void arg_format_dense(void);
 static void arg_format_ellipsis(void);
-static void arg_format_expr_op_per_line(void);
+static void arg_format_expr_ops_joined(void);
 static void arg_format_extensions(void);
 static void arg_format_global_offsets(void);
 static void arg_format_loc(void);
@@ -588,9 +588,8 @@ static const char *usage_long_text[] = {
 "-e   --format-ellipsis         Short names for tags, attrs etc.",
 "-G   --format-global-offsets   Show global die offsets",
 "-g   --format-loc              (Was loclist support. Do not use.)",
-"     --format-expr-op-per-line Print DWARF expression operators",
-"                               one-per-line",
-
+"     --format-expr-ops-joined  Print each group of DWARF DW_OPs",
+"                               on one line rather than one per line.",
 "-R   --format-registers        Print frame register names as r33 etc",
 "                               and allow up to 1200 registers.",
 "                               Print using a 'generic' register set.",
@@ -746,7 +745,7 @@ enum longopts_vals {
   OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name         */
   OPT_FORMAT_DENSE,             /* -d   --format-dense             */
   OPT_FORMAT_ELLIPSIS,          /* -e   --format-ellipsis          */
-  OPT_FORMAT_EXPR_OP_PER_LINE,  /* -C   --format-expr-op-per-line */
+  OPT_FORMAT_EXPR_OPS_JOINED,   /*      --format-expr-ops-joined */
   OPT_FORMAT_EXTENSIONS,        /* -C   --format-extensions        */
   OPT_FORMAT_GLOBAL_OFFSETS,    /* -G   --format-global-offsets    */
   OPT_FORMAT_LOC,               /* -g   --format-loc               */
@@ -903,7 +902,7 @@ static struct dwoption longopts[] =  {
   {"format-attr-name",         dwno_argument, 0, OPT_FORMAT_ATTR_NAME        },
   {"format-dense",             dwno_argument, 0, OPT_FORMAT_DENSE            },
   {"format-ellipsis",          dwno_argument, 0, OPT_FORMAT_ELLIPSIS         },
-  {"format-expr-op-per-line",  dwno_argument, 0, OPT_FORMAT_EXPR_OP_PER_LINE },
+  {"format-expr-ops-joined",  dwno_argument, 0, OPT_FORMAT_EXPR_OPS_JOINED },
   {"format-extensions",        dwno_argument, 0, OPT_FORMAT_EXTENSIONS       },
   {"format-global-offsets",    dwno_argument, 0, OPT_FORMAT_GLOBAL_OFFSETS   },
   {"format-loc",               dwno_argument, 0, OPT_FORMAT_LOC              },
@@ -1104,10 +1103,11 @@ void arg_format_producer(void)
     }
 }
 
-/*  Option '--format-expr-op-per-line' */
-void arg_format_expr_op_per_line(void)
+/*  Option '--format-expr-ops-joined' 
+    restoring pre- December 2020 expression block printing */
+void arg_format_expr_ops_joined(void)
 {
-    glflags.gf_expr_op_per_line = TRUE;
+    glflags.gf_expr_ops_joined = TRUE;
 }
 /*  Option '-C' */
 void arg_format_extensions(void)
@@ -2541,8 +2541,8 @@ set_command_options(int argc, char *argv[])
             arg_format_dense();            break;
         case OPT_FORMAT_ELLIPSIS:
             arg_format_ellipsis();         break;
-        case OPT_FORMAT_EXPR_OP_PER_LINE:
-            arg_format_expr_op_per_line(); break;
+        case OPT_FORMAT_EXPR_OPS_JOINED:
+            arg_format_expr_ops_joined(); break;
         case OPT_FORMAT_EXTENSIONS:       
             arg_format_extensions();       break;
         case OPT_FORMAT_GLOBAL_OFFSETS:

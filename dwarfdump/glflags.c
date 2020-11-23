@@ -144,9 +144,10 @@ init_global_flags(void)
     glflags.gf_print_unique_errors = FALSE;
     glflags.gf_found_error_message = FALSE;
 
-    glflags.gf_expr_op_per_line     = FALSE;
-    glflags.gf_print_raw_rnglists  = FALSE;
+    /* if TRUE, use old behavior of all expr ops joined on one line*/
+    glflags.gf_expr_ops_joined     = FALSE;
 
+    glflags.gf_print_raw_rnglists  = FALSE;
     glflags.gf_check_names = FALSE;
 
     /* During '-k' mode, display errors */

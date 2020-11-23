@@ -1,10 +1,11 @@
 November 16, 2020
-  dwarfdump now supports the --format-expr-op-per-line
-  option which makes it much easier to read the
+  dwarfdump now prints DWARF expression ops
+  on indivdidual lines which makes it much easier to read the
   contents of a DWARF expression.
-  The option can be placed in dwarfdump.conf so
-  one will get the option without typing it on the
-  command line (see dwarfdump.conf for the details).
+  dwarfdump.conf now implements support of
+  'option: --format-expr-ops-joined' which gets you
+  the older format without specifying --format-expr-ops-joined
+  on the command line.
 May 23, 2020
   dwarfdump now takes much less malloc() to work, as measured
   by valgrind --tool=massif  and massif-visualizer.

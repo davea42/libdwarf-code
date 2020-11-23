@@ -239,7 +239,7 @@ struct glflags_s {
     boolean gf_show_global_offsets;
     boolean gf_display_offsets;
     boolean gf_print_str_offsets;
-    boolean gf_expr_op_per_line;
+    boolean gf_expr_ops_joined;
     boolean gf_print_raw_rnglists;
     boolean gf_print_raw_loclists;
 

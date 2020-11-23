@@ -553,8 +553,10 @@ find_abi_start(FILE * stream, const char *abi_name,
         if (!strcmp(tok.tk_data, "option:")) {
             get_token(line, &tok);
             if (tok.tk_data && !strcmp(tok.tk_data,
-                "--format-expr-op-per-line")) {
-                glflags.gf_expr_op_per_line = TRUE;
+                "--format-expr-ops-joined")) {
+                /*  print expr ops joined onto one line:
+                    matching historical behavior. */
+                glflags.gf_expr_ops_joined = TRUE;
             } else {
                 printf("ERROR: option command %s is not understood"
                     " giving up\n",tok.tk_data);
@@ -682,8 +684,8 @@ parseoption(char *cp, const char *fname,unsigned long lineno,
         return FALSE;
     }
     ensure_has_no_more_tokens(cp + tok.tk_len, fname, lineno);
-    if (!strcmp(tok.tk_data,"--format-expr-op-per-line")) {
-        glflags.gf_expr_op_per_line = TRUE;
+    if (!strcmp(tok.tk_data,"--format-expr-ops-joined")) {
+        glflags.gf_expr_ops_joined = TRUE;
     } else {
         printf("ERROR: option command %s is not understood"
             " and is ignored",tok.tk_data);

@@ -47,9 +47,16 @@ If a script is to parse the output, the
 .BR \--format-dense\ (\-d)
 option is useful.
 .PP
-To improve readability of DWARF expressions,
+As of December 2020 DWARF expressions
+are broken out to print each expression
+(DW_OP_plus for example) in a block
+on a separate line. 
+To restore the previous behavior, sort
+of like \--format-dense but only applying
+to blocks of DWARF expression operators
+(DW_OP*).
 the
-.BR \--format-expr-op-per-line
+.BR \--format-expr-ops-joined
 is useful.
 If the option is placed in the dwarfdump.conf
 file (see the file itself for the format)

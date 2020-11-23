@@ -1,3 +1,10 @@
+2020-11-22: David Anderson
+    * command_options.c: The option is now
+      --format-expr-ops-joined
+    * dwarfdump.1,dwarfdump.conf,testdwarfdump.conf: Reflects
+      the new option.
+    * dwconf.c,glflags.c,glflags.h: Reflects the new option.
+    * print_die.c: Reflects the new option.
 2020-11-21: David Anderson
     * dwconf.c: Error message needed a slight wording change
       when we discover the abi requested does not exist.
