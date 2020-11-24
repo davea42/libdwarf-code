@@ -1,4 +1,6 @@
 2020-11-22: David Anderson
+    * print_frames.c: The refactoring left old dealloc
+      in place that are no longer appropriate.  Removed them.
     * print_die.c: DW_FORM_exprloc was, when printing FORMs,
       printing the FORM later than desired. Now shows
       up in the right place.

@@ -2825,6 +2825,8 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     return;
 }
 
+/*  We do NOT want to free cie/fde data as we will
+    use that in print_all_cies() */
 static int
 print_all_fdes(Dwarf_Debug dbg,
     const char *frame_section_name,
@@ -2881,9 +2883,6 @@ print_all_fdes(Dwarf_Debug dbg,
             printf("ERROR: Printing fde %" DW_PR_DSd
                 " fails. Error %s\n",
                 i,dwarf_errmsg(*err));
-            dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                cie_element_count,
-                fde_data, fde_element_count);
             return fdres;
         }
         if (fdres == DW_DLV_NO_ENTRY) {
@@ -2891,9 +2890,6 @@ print_all_fdes(Dwarf_Debug dbg,
             printf("ERROR: Printing fde %" DW_PR_DSd
                 " fails saying 'no entry'. Impossible.\n",
                 i);
-            dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                cie_element_count,
-                fde_data, fde_element_count);
             return fdres;
         }
         ++frame_count;
@@ -2906,8 +2902,6 @@ print_all_fdes(Dwarf_Debug dbg,
 
 static int
 print_all_cies(Dwarf_Debug dbg,
-    Dwarf_Fde *fde_data,
-    Dwarf_Signed fde_element_count,
     Dwarf_Cie *cie_data,
     Dwarf_Signed cie_element_count,
     Dwarf_Half address_size,
@@ -2936,18 +2930,12 @@ print_all_cies(Dwarf_Debug dbg,
             printf("\nERROR: Printing cie %" DW_PR_DSd
                 " fails. Error %s\n",
                 i,dwarf_errmsg(*err));
-            dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                cie_element_count,
-                fde_data, fde_element_count);
             return cres;
         } else if (cres == DW_DLV_NO_ENTRY) {
             glflags.gf_count_major_errors++;
             printf("\nERROR: Printing cie %" DW_PR_DSd
                 " fails. saying NO_ENTRY!\n",
                 i);
-            dwarf_fde_cie_list_dealloc(dbg, cie_data,
-                cie_element_count,
-                fde_data, fde_element_count);
             return cres;
         } else {
             ++cie_count;
@@ -3117,8 +3105,6 @@ print_frames(Dwarf_Debug dbg,
             
             res = print_all_cies(dbg,
                 /* frame_section_name, */
-                fde_data,
-                fde_element_count,
                 cie_data, cie_element_count,
                 address_size,
                 /* offset_size,version,is_eh, */
@@ -3134,6 +3120,7 @@ print_frames(Dwarf_Debug dbg,
                 dwarf_dealloc_error(dbg,*err);
                 *err = 0;
             }
+            /*  Here we do the free. Not earlier. */
             dwarf_fde_cie_list_dealloc(dbg, cie_data,
                 cie_element_count,
                 fde_data, fde_element_count);
