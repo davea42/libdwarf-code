@@ -1,3 +1,8 @@
+2020-11-25:   David Anderson 
+    * Makefile.am: Now creates DWARF_BIGENDIAN env var for the tests
+    * Makefile.in: Regenerated.
+    * runtests.sh: Now skips the test (of crc32) that will always fail
+      on a bigendian build.
 2020-10-27:   David Anderson 
     * simplereader.c: changed a few lines
       to have shorter line lengths. No logic change. 

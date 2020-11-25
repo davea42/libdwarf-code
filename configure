@@ -639,6 +639,7 @@ LIBOBJS
 ALLOCA
 DWARF_CFLAGS_WARN
 DWARF_CXXFLAGS_WARN
+DWARF_BIGENDIAN
 struct_elf
 DWARF_LIBS
 CXXCPP
@@ -811,7 +812,8 @@ CXX
 CXXFLAGS
 CCC
 CXXCPP
-DWARF_LIBS'
+DWARF_LIBS
+DWARF_BIGENDIAN'
 
 
 # Initialize some variables set by options.
@@ -1499,6 +1501,8 @@ Some influential environment variables:
   CXXFLAGS    C++ compiler flags
   CXXCPP      C++ preprocessor
   DWARF_LIBS  linker flags when linking libdwarf
+  DWARF_BIGENDIAN
+              big endian yes/no needed for dwarfexample test
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -18096,6 +18100,11 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
      as_fn_error $? "unknown endianness
  presetting ac_cv_c_bigendian=no (or yes) will help" "$LINENO" 5 ;;
  esac
+
+
+${ac_cv_c_bigendian}
+DWARF_BIGENDIAN=${ac_cv_c_bigendian}
+
 
 
 # gcc accepts even totally bogus -Wno flags. Other compilers..no

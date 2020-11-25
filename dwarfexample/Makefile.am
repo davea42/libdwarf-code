@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = simplereader frame1 findfuncbypc dwdebuglink
+dwarfbigend=@DWARF_BIGENDIAN@
 
 simplereader_SOURCES = simplereader.c
 simplereader_CPPFLAGS = -I$(top_srcdir)/libdwarf \
@@ -36,7 +37,7 @@ dwdebuglink_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 TESTS = runtests.sh
-AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
+AM_TESTS_ENVIRONMENT = DWARF_BIGENDIAN='$(dwarfbigend)'; export DWARF_BIGENDIAN ;  DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
 EXTRA_DIST = \
 ChangeLog \

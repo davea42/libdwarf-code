@@ -1,7 +1,6 @@
 #!/bin/sh
 #
 # Intended to be run only on local machine.
-# Run in the dwarfdump directory
 # Run only after config.h created in a configure
 # in the source directory
 # Assumes env vars DWTOPSRCDIR set to the path to source.
@@ -16,6 +15,8 @@ then
 else
   top_srcdir=$DWTOPSRCDIR
 fi
+# So we know the build. Because of debuglink.
+echo "DWARF_BIGENDIAN=$DWARF_BIGENDIAN"
 srcdir=$top_srcdir/dwarfexample
 if [ x"$DWCOMPILERFLAGS" = 'x' ]
 then
@@ -57,31 +58,37 @@ else
   fi
 fi
 
-echo "dwdebuglink test1"
-o=junk.debuglink1
-p="--add-debuglink-path=/exam/ple"
-p2="--add-debuglink-path=/tmp/phony"
-$blddir/dwdebuglink $p $p2 $srcdir/dummyexecutable > $blddir/$o
-chkres $? "running dwdebuglink"
-# we strip out the actual srcdir and blddir for the obvious
-# reason: We want the baseline data to be meaningful no matter
-# where one's source/build directories are.
-sed "s:$srcdir:..src..:" <$blddir/$o  >$blddir/${o}a
-sed "s:$blddir:..bld..:" <$blddir/${o}a  >$blddir/${o}b
-diff $srcdir/debuglink.base  $blddir/${o}b
-r=$?
-if [ $r -ne 0 ]
+if [ $DWARF_BIGENDIAN = "yes" ]
 then
-   echo "To update dwdebuglink baseline: mv $blddir/${o}b $srcdir/debuglink.base"
+  echo "SKIP dwdebuglink test1, cannot work on bigendian build"
+else
+  echo "dwdebuglink test1"
+  o=junk.debuglink1
+  p="--add-debuglink-path=/exam/ple"
+  p2="--add-debuglink-path=/tmp/phony"
+  $blddir/dwdebuglink $p $p2 $srcdir/dummyexecutable > $blddir/$o
+  chkres $? "running dwdebuglink test1"
+  # we strip out the actual srcdir and blddir for the obvious
+  # reason: We want the baseline data to be meaningful no matter
+  # where one's source/build directories are.
+  sed "s:$srcdir:..src..:" <$blddir/$o  >$blddir/${o}a
+  sed "s:$blddir:..bld..:" <$blddir/${o}a  >$blddir/${o}b
+  diff $srcdir/debuglink.base  $blddir/${o}b
+  r=$?
+  if [ $r -ne 0 ]
+  then
+     echo "To update dwdebuglink baseline:"
+     echo "mv $blddir/${o}b $srcdir/debuglink.base"
+  fi
+  chkres $r "running dwdebuglink test1 diff against baseline"
 fi
-chkres $r "running dwdebuglink test1 diff against baseline"
 
 echo "dwdebuglink test2"
 o=junk.debuglink2
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
 $blddir/dwdebuglink $p $p2 $srcdir/dummyexecutable > $blddir/$o
-chkres $? "running dwdebuglink"
+chkres $? "running dwdebuglink test2"
 # we strip out the actual srcdir and blddir for the obvious
 # reason: We want the baseline data to be meaningful no matter
 # where one's source/build directories are.
@@ -91,12 +98,9 @@ diff $srcdir/debuglink2.base  $blddir/${o}b
 r=$?
 if [ $r -ne 0 ]
 then
-   echo "To update dwdebuglink baseline: mv $blddir/${o}b $srcdir/debuglink2.base"
+   echo "To update dwdebuglink test2 baseline: mv $blddir/${o}b $srcdir/debuglink2.base"
 fi
 chkres $r "running dwdebuglink test2 diff against baseline"
-
-
-
 
 if [ $failcount -gt 0 ] 
 then
