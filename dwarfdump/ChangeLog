@@ -1,4 +1,6 @@
 2020-11-23: David Anderson
+    * CMakeLists.txt: now -D-DDWARF_WITH_LIBELF=OFF works
+2020-11-23: David Anderson
     * glflags.h, glflags.c: Added field glflags.gf_max_space_indent
       with value 10 so that really deep TAG nesting does not
       result in mostly blank thousand-character lines. 
