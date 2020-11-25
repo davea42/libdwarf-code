@@ -18,7 +18,8 @@ LOCAL_SYMBOLS:
                       DW_AT_external              yes(1)
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000084
-                      DW_AT_location              0x037cbc0500 DW_OP_addr 0x0005bc7c
+                      DW_AT_location              0x037cbc0500 
+                          DW_OP_addr 0x0005bc7c
 < 1><0x00000038>    DW_TAG_pointer_type
                       DW_AT_type                  <0x0000003d>
 < 1><0x0000003d>    DW_TAG_typedef
@@ -36,121 +37,141 @@ LOCAL_SYMBOLS:
                         DW_AT_type                  <0x00000169>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000007b
-                        DW_AT_data_member_location  DW_OP_plus_uconst 0
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 0
 < 2><0x0000005e>      DW_TAG_member
                         DW_AT_name                  _r
                         DW_AT_type                  <0x00000175>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000007c
-                        DW_AT_data_member_location  DW_OP_plus_uconst 4
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 4
 < 2><0x0000006c>      DW_TAG_member
                         DW_AT_name                  _w
                         DW_AT_type                  <0x00000175>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000007d
-                        DW_AT_data_member_location  DW_OP_plus_uconst 8
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 8
 < 2><0x0000007a>      DW_TAG_member
                         DW_AT_name                  _flags
                         DW_AT_type                  <0x0000017c>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000007e
-                        DW_AT_data_member_location  DW_OP_plus_uconst 12
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 12
 < 2><0x00000088>      DW_TAG_member
                         DW_AT_name                  _file
                         DW_AT_type                  <0x0000017c>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000007f
-                        DW_AT_data_member_location  DW_OP_plus_uconst 14
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 14
 < 2><0x00000096>      DW_TAG_member
                         DW_AT_name                  _bf
                         DW_AT_type                  <0x00000183>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000080
-                        DW_AT_data_member_location  DW_OP_plus_uconst 16
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 16
 < 2><0x000000a4>      DW_TAG_member
                         DW_AT_name                  _lbfsize
                         DW_AT_type                  <0x00000175>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000081
-                        DW_AT_data_member_location  DW_OP_plus_uconst 24
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 24
 < 2><0x000000b2>      DW_TAG_member
                         DW_AT_name                  _cookie
                         DW_AT_type                  <0x000001a8>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000084
-                        DW_AT_data_member_location  DW_OP_plus_uconst 28
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 28
 < 2><0x000000c0>      DW_TAG_member
                         DW_AT_name                  _close
                         DW_AT_type                  <0x000001a9>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000085
-                        DW_AT_data_member_location  DW_OP_plus_uconst 32
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 32
 < 2><0x000000ce>      DW_TAG_member
                         DW_AT_name                  _read
                         DW_AT_type                  <0x000001ba>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000086
-                        DW_AT_data_member_location  DW_OP_plus_uconst 36
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 36
 < 2><0x000000dc>      DW_TAG_member
                         DW_AT_name                  _seek
                         DW_AT_type                  <0x000001e1>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000087
-                        DW_AT_data_member_location  DW_OP_plus_uconst 40
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 40
 < 2><0x000000ea>      DW_TAG_member
                         DW_AT_name                  _write
                         DW_AT_type                  <0x00000224>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000088
-                        DW_AT_data_member_location  DW_OP_plus_uconst 44
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 44
 < 2><0x000000f8>      DW_TAG_member
                         DW_AT_name                  _ub
                         DW_AT_type                  <0x00000183>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000008b
-                        DW_AT_data_member_location  DW_OP_plus_uconst 48
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 48
 < 2><0x00000106>      DW_TAG_member
                         DW_AT_name                  _extra
                         DW_AT_type                  <0x00000249>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000008c
-                        DW_AT_data_member_location  DW_OP_plus_uconst 56
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 56
 < 2><0x00000114>      DW_TAG_member
                         DW_AT_name                  _ur
                         DW_AT_type                  <0x00000175>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000008d
-                        DW_AT_data_member_location  DW_OP_plus_uconst 60
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 60
 < 2><0x00000122>      DW_TAG_member
                         DW_AT_name                  _ubuf
                         DW_AT_type                  <0x00000254>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000090
-                        DW_AT_data_member_location  DW_OP_plus_uconst 64
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 64
 < 2><0x00000130>      DW_TAG_member
                         DW_AT_name                  _nbuf
                         DW_AT_type                  <0x00000267>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000091
-                        DW_AT_data_member_location  DW_OP_plus_uconst 67
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 67
 < 2><0x0000013e>      DW_TAG_member
                         DW_AT_name                  _lb
                         DW_AT_type                  <0x00000183>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000094
-                        DW_AT_data_member_location  DW_OP_plus_uconst 68
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 68
 < 2><0x0000014c>      DW_TAG_member
                         DW_AT_name                  _blksize
                         DW_AT_type                  <0x00000175>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000097
-                        DW_AT_data_member_location  DW_OP_plus_uconst 76
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 76
 < 2><0x0000015a>      DW_TAG_member
                         DW_AT_name                  _offset
                         DW_AT_type                  <0x000001fc>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000098
-                        DW_AT_data_member_location  DW_OP_plus_uconst 80
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 80
 < 1><0x00000169>    DW_TAG_pointer_type
                       DW_AT_type                  <0x0000016e>
 < 1><0x0000016e>    DW_TAG_base_type
@@ -175,13 +196,15 @@ LOCAL_SYMBOLS:
                         DW_AT_type                  <0x00000169>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x00000059
-                        DW_AT_data_member_location  DW_OP_plus_uconst 0
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 0
 < 2><0x00000199>      DW_TAG_member
                         DW_AT_name                  _size
                         DW_AT_type                  <0x00000175>
                         DW_AT_decl_file             0x00000001 /usr/include/stdio.h
                         DW_AT_decl_line             0x0000005a
-                        DW_AT_data_member_location  DW_OP_plus_uconst 4
+                        DW_AT_data_member_location  
+                            DW_OP_plus_uconst 4
 < 1><0x000001a8>    DW_TAG_pointer_type
 < 1><0x000001a9>    DW_TAG_pointer_type
                       DW_AT_type                  <0x000001ae>
@@ -277,26 +300,30 @@ LOCAL_SYMBOLS:
                       DW_AT_external              yes(1)
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000091
-                      DW_AT_location              0x0380bc0500 DW_OP_addr 0x0005bc80
+                      DW_AT_location              0x0380bc0500 
+                          DW_OP_addr 0x0005bc80
 < 1><0x00000285>    DW_TAG_variable
                       DW_AT_name                  cu_offset_size
                       DW_AT_type                  <0x00000175>
                       DW_AT_external              yes(1)
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000092
-                      DW_AT_location              0x0384bc0500 DW_OP_addr 0x0005bc84
+                      DW_AT_location              0x0384bc0500 
+                          DW_OP_addr 0x0005bc84
 < 1><0x00000297>    DW_TAG_variable
                       DW_AT_name                  namesoptionon
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000081
-                      DW_AT_location              0x0398bc0500 DW_OP_addr 0x0005bc98
+                      DW_AT_location              0x0398bc0500 
+                          DW_OP_addr 0x0005bc98
 < 1><0x000002a8>    DW_TAG_variable
                       DW_AT_name                  dupstrused
                       DW_AT_type                  <0x000002b9>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x000000a5
-                      DW_AT_location              0x03bcbc0500 DW_OP_addr 0x0005bcbc
+                      DW_AT_location              0x03bcbc0500 
+                          DW_OP_addr 0x0005bcbc
 < 1><0x000002b9>    DW_TAG_base_type
                       DW_AT_name                  unsigned int
                       DW_AT_encoding              DW_ATE_unsigned
@@ -306,7 +333,8 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x000002d1>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x000000a4
-                      DW_AT_location              0x03c0bc0500 DW_OP_addr 0x0005bcc0
+                      DW_AT_location              0x03c0bc0500 
+                          DW_OP_addr 0x0005bcc0
 < 1><0x000002d1>    DW_TAG_array_type
                       DW_AT_type                  <0x0000023f>
 < 2><0x000002d6>      DW_TAG_subrange_type
@@ -317,55 +345,64 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x0000023f>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000085
-                      DW_AT_location              0x039cbc0500 DW_OP_addr 0x0005bc9c
+                      DW_AT_location              0x039cbc0500 
+                          DW_OP_addr 0x0005bc9c
 < 1><0x000002ee>    DW_TAG_variable
                       DW_AT_name                  dumpallnames
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000083
-                      DW_AT_location              0x03a0bc0500 DW_OP_addr 0x0005bca0
+                      DW_AT_location              0x03a0bc0500 
+                          DW_OP_addr 0x0005bca0
 < 1><0x000002ff>    DW_TAG_variable
                       DW_AT_name                  checkoptionon
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000082
-                      DW_AT_location              0x03a4bc0500 DW_OP_addr 0x0005bca4
+                      DW_AT_location              0x03a4bc0500 
+                          DW_OP_addr 0x0005bca4
 < 1><0x00000310>    DW_TAG_variable
                       DW_AT_name                  tuhash
                       DW_AT_type                  <0x0000023f>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x0000009c
-                      DW_AT_location              0x03a8bc0500 DW_OP_addr 0x0005bca8
+                      DW_AT_location              0x03a8bc0500 
+                          DW_OP_addr 0x0005bca8
 < 1><0x00000321>    DW_TAG_variable
                       DW_AT_name                  cuhash
                       DW_AT_type                  <0x0000023f>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x0000009b
-                      DW_AT_location              0x03acbc0500 DW_OP_addr 0x0005bcac
+                      DW_AT_location              0x03acbc0500 
+                          DW_OP_addr 0x0005bcac
 < 1><0x00000332>    DW_TAG_variable
                       DW_AT_name                  tufissionhash
                       DW_AT_type                  <0x0000023f>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x0000009e
-                      DW_AT_location              0x03b0bc0500 DW_OP_addr 0x0005bcb0
+                      DW_AT_location              0x03b0bc0500 
+                          DW_OP_addr 0x0005bcb0
 < 1><0x00000343>    DW_TAG_variable
                       DW_AT_name                  cufissionhash
                       DW_AT_type                  <0x0000023f>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x0000009d
-                      DW_AT_location              0x03b4bc0500 DW_OP_addr 0x0005bcb4
+                      DW_AT_location              0x03b4bc0500 
+                          DW_OP_addr 0x0005bcb4
 < 1><0x00000354>    DW_TAG_variable
                       DW_AT_name                  passnullerror
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000098
-                      DW_AT_location              0x03b8bc0500 DW_OP_addr 0x0005bcb8
+                      DW_AT_location              0x03b8bc0500 
+                          DW_OP_addr 0x0005bcb8
 < 1><0x00000365>    DW_TAG_variable
                       DW_AT_name                  g_is_info
                       DW_AT_type                  <0x00000376>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x0000008f
-                      DW_AT_location              0x0358b40500 DW_OP_addr 0x0005b458
+                      DW_AT_location              0x0358b40500 
+                          DW_OP_addr 0x0005b458
 < 1><0x00000376>    DW_TAG_typedef
                       DW_AT_type                  <0x00000175>
                       DW_AT_name                  Dwarf_Bool
@@ -376,25 +413,29 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x0000008e
-                      DW_AT_location              0x035cb40500 DW_OP_addr 0x0005b45c
+                      DW_AT_location              0x035cb40500 
+                          DW_OP_addr 0x0005b45c
 < 1><0x00000392>    DW_TAG_variable
                       DW_AT_name                  fissionfordie
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000097
-                      DW_AT_location              0x0360b40500 DW_OP_addr 0x0005b460
+                      DW_AT_location              0x0360b40500 
+                          DW_OP_addr 0x0005b460
 < 1><0x000003a3>    DW_TAG_variable
                       DW_AT_name                  stdrun
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x0000008c
-                      DW_AT_location              0x0364b40500 DW_OP_addr 0x0005b464
+                      DW_AT_location              0x0364b40500 
+                          DW_OP_addr 0x0005b464
 < 1><0x000003b4>    DW_TAG_variable
                       DW_AT_name                  dienumber
                       DW_AT_type                  <0x00000175>
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000096
-                      DW_AT_location              0x0350be0500 DW_OP_addr 0x0005be50
+                      DW_AT_location              0x0350be0500 
+                          DW_OP_addr 0x0005be50
 < 1><0x000003c5>    DW_TAG_enumeration_type
                       DW_AT_name                  Dwarf_Form_Class
                       DW_AT_byte_size             0x00000004
@@ -477,7 +518,8 @@ LOCAL_SYMBOLS:
 < 1><0x00000464>    DW_TAG_subprogram
                       DW_AT_low_pc                0x000025c0
                       DW_AT_high_pc               0x000034d6
-                      DW_AT_frame_base            0x55 DW_OP_reg5
+                      DW_AT_frame_base            0x55 
+                          DW_OP_reg5
                       DW_AT_name                  main
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000164
@@ -485,73 +527,85 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x00000175>
                       DW_AT_external              yes(1)
 < 2><0x0000047c>      DW_TAG_formal_parameter
-                        DW_AT_location              0x91907c DW_OP_fbreg -496
+                        DW_AT_location              0x91907c 
+                            DW_OP_fbreg -496
                         DW_AT_name                  argc
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x00000164
                         DW_AT_type                  <0x00000175>
 < 2><0x0000048c>      DW_TAG_formal_parameter
-                        DW_AT_location              0x918c7c DW_OP_fbreg -500
+                        DW_AT_location              0x918c7c 
+                            DW_OP_fbreg -500
                         DW_AT_name                  argv
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x00000164
                         DW_AT_type                  <0x000012c8>
 < 2><0x0000049c>      DW_TAG_variable
-                        DW_AT_location              0x91887c DW_OP_fbreg -504
+                        DW_AT_location              0x91887c 
+                            DW_OP_fbreg -504
                         DW_AT_name                  dbg
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x00000166
                         DW_AT_type                  <0x000012cd>
 < 2><0x000004ac>      DW_TAG_variable
-                        DW_AT_location              0x91847c DW_OP_fbreg -508
+                        DW_AT_location              0x91847c 
+                            DW_OP_fbreg -508
                         DW_AT_name                  fd
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x00000167
                         DW_AT_type                  <0x00000175>
 < 2><0x000004bc>      DW_TAG_variable
-                        DW_AT_location              0x91807c DW_OP_fbreg -512
+                        DW_AT_location              0x91807c 
+                            DW_OP_fbreg -512
                         DW_AT_name                  filepath
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x00000168
                         DW_AT_type                  <0x0000023f>
 < 2><0x000004cc>      DW_TAG_variable
-                        DW_AT_location              0x91fc7b DW_OP_fbreg -516
+                        DW_AT_location              0x91fc7b 
+                            DW_OP_fbreg -516
                         DW_AT_name                  res
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x00000169
                         DW_AT_type                  <0x00000175>
 < 2><0x000004dc>      DW_TAG_variable
-                        DW_AT_location              0x91f87b DW_OP_fbreg -520
+                        DW_AT_location              0x91f87b 
+                            DW_OP_fbreg -520
                         DW_AT_name                  error
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x0000016a
                         DW_AT_type                  <0x000012e4>
 < 2><0x000004ec>      DW_TAG_variable
-                        DW_AT_location              0x91f47b DW_OP_fbreg -524
+                        DW_AT_location              0x91f47b 
+                            DW_OP_fbreg -524
                         DW_AT_name                  errhand
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x0000016b
                         DW_AT_type                  <0x000012fb>
 < 2><0x000004fc>      DW_TAG_variable
-                        DW_AT_location              0x91f07b DW_OP_fbreg -528
+                        DW_AT_location              0x91f07b 
+                            DW_OP_fbreg -528
                         DW_AT_name                  errarg
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x0000016c
                         DW_AT_type                  <0x00000447>
 < 2><0x0000050c>      DW_TAG_variable
-                        DW_AT_location              0x9168 DW_OP_fbreg -24
+                        DW_AT_location              0x9168 
+                            DW_OP_fbreg -24
                         DW_AT_name                  hash8
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x0000016d
                         DW_AT_type                  <0x00001319>
 < 2><0x0000051b>      DW_TAG_variable
-                        DW_AT_location              0x91ec7b DW_OP_fbreg -532
+                        DW_AT_location              0x91ec7b 
+                            DW_OP_fbreg -532
                         DW_AT_name                  errp
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x0000016e
                         DW_AT_type                  <0x00001347>
 < 2><0x0000052b>      DW_TAG_variable
-                        DW_AT_location              0x91e87b DW_OP_fbreg -536
+                        DW_AT_location              0x91e87b 
+                            DW_OP_fbreg -536
                         DW_AT_name                  simpleerrhand
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x0000016f
@@ -560,7 +614,8 @@ LOCAL_SYMBOLS:
                         DW_AT_low_pc                0x0000266d
                         DW_AT_high_pc               0x00002b51
 < 3><0x00000544>        DW_TAG_variable
-                          DW_AT_location              0x91e47b DW_OP_fbreg -540
+                          DW_AT_location              0x91e47b 
+                              DW_OP_fbreg -540
                           DW_AT_name                  i
                           DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                           DW_AT_decl_line             0x00000174
@@ -569,7 +624,8 @@ LOCAL_SYMBOLS:
                         DW_AT_low_pc                0x00002c81
                         DW_AT_high_pc               0x00002e70
 < 3><0x0000055e>        DW_TAG_variable
-                          DW_AT_location              0x91e07b DW_OP_fbreg -544
+                          DW_AT_location              0x91e07b 
+                              DW_OP_fbreg -544
                           DW_AT_name                  die
                           DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                           DW_AT_decl_line             0x000001c4
@@ -578,7 +634,8 @@ LOCAL_SYMBOLS:
                           DW_AT_low_pc                0x00002d35
                           DW_AT_high_pc               0x00002dd9
 < 4><0x00000577>          DW_TAG_variable
-                            DW_AT_location              0x91d07b DW_OP_fbreg -560
+                            DW_AT_location              0x91d07b 
+                                DW_OP_fbreg -560
                             DW_AT_name                  sf
                             DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                             DW_AT_decl_line             0x000001cd
@@ -587,7 +644,8 @@ LOCAL_SYMBOLS:
                         DW_AT_low_pc                0x00002e86
                         DW_AT_high_pc               0x00003075
 < 3><0x00000592>        DW_TAG_variable
-                          DW_AT_location              0x91cc7b DW_OP_fbreg -564
+                          DW_AT_location              0x91cc7b 
+                              DW_OP_fbreg -564
                           DW_AT_name                  die
                           DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                           DW_AT_decl_line             0x000001dc
@@ -596,7 +654,8 @@ LOCAL_SYMBOLS:
                           DW_AT_low_pc                0x00002f3a
                           DW_AT_high_pc               0x00002fde
 < 4><0x000005ab>          DW_TAG_variable
-                            DW_AT_location              0x91b87b DW_OP_fbreg -584
+                            DW_AT_location              0x91b87b 
+                                DW_OP_fbreg -584
                             DW_AT_name                  sf
                             DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                             DW_AT_decl_line             0x000001e5
@@ -605,7 +664,8 @@ LOCAL_SYMBOLS:
                         DW_AT_low_pc                0x00003098
                         DW_AT_high_pc               0x0000323e
 < 3><0x000005c6>        DW_TAG_variable
-                          DW_AT_location              0x91807e DW_OP_fbreg -256
+                          DW_AT_location              0x91807e 
+                              DW_OP_fbreg -256
                           DW_AT_name                  fisdata
                           DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                           DW_AT_decl_line             0x000001f5
@@ -614,7 +674,8 @@ LOCAL_SYMBOLS:
                         DW_AT_low_pc                0x00003261
                         DW_AT_high_pc               0x00003407
 < 3><0x000005e0>        DW_TAG_variable
-                          DW_AT_location              0x91987c DW_OP_fbreg -488
+                          DW_AT_location              0x91987c 
+                              DW_OP_fbreg -488
                           DW_AT_name                  fisdata
                           DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                           DW_AT_decl_line             0x00000209
@@ -622,79 +683,18 @@ LOCAL_SYMBOLS:
 < 1><0x000005f2>    DW_TAG_subprogram
                       DW_AT_low_pc                0x000034e0
                       DW_AT_high_pc               0x000035c8
-                      DW_AT_frame_base            0x55 DW_OP_reg5
+                      DW_AT_frame_base            0x55 
+                          DW_OP_reg5
                       DW_AT_name                  startswithextractstring
                       DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                       DW_AT_decl_line             0x00000103
                       DW_AT_prototyped            yes(1)
                       DW_AT_type                  <0x00000175>
 < 2><0x00000609>      DW_TAG_formal_parameter
-                        DW_AT_location              0x9174 DW_OP_fbreg -12
+                        DW_AT_location              0x9174 
+                            DW_OP_fbreg -12
                         DW_AT_name                  arg
                         DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
                         DW_AT_decl_line             0x00000103
                         DW_AT_type                  <0x0000023f>
 < 2><0x00000618>      DW_TAG_formal_parameter
-                        DW_AT_location              0x9170 DW_OP_fbreg -16
-                        DW_AT_name                  lookfor
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x00000103
-                        DW_AT_type                  <0x0000023f>
-< 2><0x00000627>      DW_TAG_formal_parameter
-                        DW_AT_location              0x916c DW_OP_fbreg -20
-                        DW_AT_name                  ptrout
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x00000104
-                        DW_AT_type                  <0x0000142e>
-< 2><0x00000636>      DW_TAG_variable
-                        DW_AT_location              0x9168 DW_OP_fbreg -24
-                        DW_AT_name                  s
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x00000106
-                        DW_AT_type                  <0x0000023f>
-< 2><0x00000645>      DW_TAG_variable
-                        DW_AT_location              0x9164 DW_OP_fbreg -28
-                        DW_AT_name                  prefixlen
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x00000107
-                        DW_AT_type                  <0x000002b9>
-< 1><0x00000655>    DW_TAG_subprogram
-                      DW_AT_low_pc                0x000035d0
-                      DW_AT_high_pc               0x00003661
-                      DW_AT_frame_base            0x55 DW_OP_reg5
-                      DW_AT_name                  startswithextractnum
-                      DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                      DW_AT_decl_line             0x000000f2
-                      DW_AT_prototyped            yes(1)
-                      DW_AT_type                  <0x00000175>
-< 2><0x0000066b>      DW_TAG_formal_parameter
-                        DW_AT_location              0x9178 DW_OP_fbreg -8
-                        DW_AT_name                  arg
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x000000f2
-                        DW_AT_type                  <0x0000023f>
-< 2><0x00000679>      DW_TAG_formal_parameter
-                        DW_AT_location              0x9174 DW_OP_fbreg -12
-                        DW_AT_name                  lookfor
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x000000f2
-                        DW_AT_type                  <0x0000023f>
-< 2><0x00000687>      DW_TAG_formal_parameter
-                        DW_AT_location              0x9170 DW_OP_fbreg -16
-                        DW_AT_name                  numout
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x000000f2
-                        DW_AT_type                  <0x00001433>
-< 2><0x00000695>      DW_TAG_variable
-                        DW_AT_location              0x916c DW_OP_fbreg -20
-                        DW_AT_name                  s
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x000000f4
-                        DW_AT_type                  <0x0000023f>
-< 2><0x000006a3>      DW_TAG_variable
-                        DW_AT_location              0x9168 DW_OP_fbreg -24
-                        DW_AT_name                  prefixlen
-                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
-                        DW_AT_decl_line             0x000000f5
-                        DW_AT_type                  <0x000002b9>
-< 2><0x000006b1>      DW_TAG_variable

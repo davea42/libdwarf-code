@@ -9,6 +9,7 @@
     * print_die.c: Too deep nesting is unreadable so now
       when 10 or more deep the output uses for example ...100...
       instead of hundreds of spaces to indicate depth.      
+      Indentation of DW_OP output changed in some cases.
 2020-11-22: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

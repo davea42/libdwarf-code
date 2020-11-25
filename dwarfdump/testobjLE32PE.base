@@ -154,7 +154,8 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x000000ad>
                       DW_AT_low_pc                0x0040146d
                       DW_AT_high_pc               <offset-from-lowpc>74
-                      DW_AT_frame_base            len 0x0001: 0x9c: DW_OP_call_frame_cfa
+                      DW_AT_frame_base            len 0x0001: 0x9c: 
+                          DW_OP_call_frame_cfa
                       DW_AT_GNU_all_tail_call_sites yes(1)
                       DW_AT_sibling               <0x000001f1>
 < 2><0x000001ad>      DW_TAG_formal_parameter <abbrev 11>
@@ -162,31 +163,36 @@ LOCAL_SYMBOLS:
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000010
                         DW_AT_type                  <0x000000ad>
-                        DW_AT_location              len 0x0002: 0x9100: DW_OP_fbreg 0
+                        DW_AT_location              len 0x0002: 0x9100: 
+                            DW_OP_fbreg 0
 < 2><0x000001bc>      DW_TAG_formal_parameter <abbrev 11>
                         DW_AT_name                  argv
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000010
                         DW_AT_type                  <0x000001f1>
-                        DW_AT_location              len 0x0002: 0x9104: DW_OP_fbreg 4
+                        DW_AT_location              len 0x0002: 0x9104: 
+                            DW_OP_fbreg 4
 < 2><0x000001cb>      DW_TAG_variable <abbrev 12>
                         DW_AT_name                  x
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000013
                         DW_AT_type                  <0x000000ad>
-                        DW_AT_location              len 0x0002: 0x741c: DW_OP_breg4+28
+                        DW_AT_location              len 0x0002: 0x741c: 
+                            DW_OP_breg4+28
 < 2><0x000001d7>      DW_TAG_variable <abbrev 12>
                         DW_AT_name                  y
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000014
                         DW_AT_type                  <0x000000ad>
-                        DW_AT_location              len 0x0002: 0x7418: DW_OP_breg4+24
+                        DW_AT_location              len 0x0002: 0x7418: 
+                            DW_OP_breg4+24
 < 2><0x000001e3>      DW_TAG_variable <abbrev 12>
                         DW_AT_name                  so
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x00000015
                         DW_AT_type                  <0x0000016c>
-                        DW_AT_location              len 0x0002: 0x7410: DW_OP_breg4+16
+                        DW_AT_location              len 0x0002: 0x7410: 
+                            DW_OP_breg4+16
 < 1><0x000001f1>    DW_TAG_pointer_type <abbrev 5>
                       DW_AT_byte_size             0x00000004
                       DW_AT_type                  <0x00000143>
@@ -199,7 +205,8 @@ LOCAL_SYMBOLS:
                       DW_AT_type                  <0x000000ad>
                       DW_AT_low_pc                0x00401460
                       DW_AT_high_pc               <offset-from-lowpc>13
-                      DW_AT_frame_base            len 0x0001: 0x9c: DW_OP_call_frame_cfa
+                      DW_AT_frame_base            len 0x0001: 0x9c: 
+                          DW_OP_call_frame_cfa
                       DW_AT_GNU_all_call_sites    yes(1)
                       DW_AT_sibling               <0x00000220>
 < 2><0x00000213>      DW_TAG_formal_parameter <abbrev 11>
@@ -207,7 +214,8 @@ LOCAL_SYMBOLS:
                         DW_AT_decl_file             0x00000001 c:/Users/dandelot/test.c
                         DW_AT_decl_line             0x0000000a
                         DW_AT_type                  <0x00000220>
-                        DW_AT_location              len 0x0002: 0x9100: DW_OP_fbreg 0
+                        DW_AT_location              len 0x0002: 0x9100: 
+                            DW_OP_fbreg 0
 < 1><0x00000220>    DW_TAG_pointer_type <abbrev 5>
                       DW_AT_byte_size             0x00000004
                       DW_AT_type                  <0x0000016c>
@@ -690,11 +698,3 @@ COMPILE_UNIT<header overall offset = 0x00000000>:
    [334] 0x01 DW_MACRO_define       line 116 NTDDI_WIN2KSP2 __NTDDI_WIN5 + __NTDDI_SP2
    [335] 0x01 DW_MACRO_define       line 117 NTDDI_WIN2KSP3 __NTDDI_WIN5 + __NTDDI_SP3
    [336] 0x01 DW_MACRO_define       line 118 NTDDI_WIN2KSP4 __NTDDI_WIN5 + __NTDDI_SP4
-   [337] 0x01 DW_MACRO_define       line 120 NTDDI_WINXP __NTDDI_WIN51 + __NTDDI_SP0
-   [338] 0x01 DW_MACRO_define       line 121 NTDDI_WINXPSP1 __NTDDI_WIN51 + __NTDDI_SP1
-   [339] 0x01 DW_MACRO_define       line 122 NTDDI_WINXPSP2 __NTDDI_WIN51 + __NTDDI_SP2
-   [340] 0x01 DW_MACRO_define       line 123 NTDDI_WINXPSP3 __NTDDI_WIN51 + __NTDDI_SP3
-   [341] 0x01 DW_MACRO_define       line 125 NTDDI_WS03 __NTDDI_WIN52 + __NTDDI_SP0
-   [342] 0x01 DW_MACRO_define       line 126 NTDDI_WS03SP1 __NTDDI_WIN52 + __NTDDI_SP1
-   [343] 0x01 DW_MACRO_define       line 127 NTDDI_WS03SP2 __NTDDI_WIN52 + __NTDDI_SP2
-   [344] 0x01 DW_MACRO_define       line 129 NTDDI_VISTA __NTDDI_WIN6 + __NTDDI_SP0
