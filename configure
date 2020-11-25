@@ -18102,7 +18102,6 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
  esac
 
 
-${ac_cv_c_bigendian}
 DWARF_BIGENDIAN=${ac_cv_c_bigendian}
 
 

@@ -466,7 +466,6 @@ AC_SUBST([struct_elf])
 
 AC_C_BIGENDIAN([AC_DEFINE([WORDS_BIGENDIAN], [1], [Set to 1 if bigendian build])],,)
 
-${ac_cv_c_bigendian}
 AC_SUBST([DWARF_BIGENDIAN],[${ac_cv_c_bigendian}])
 AC_ARG_VAR([DWARF_BIGENDIAN], [big endian yes/no needed for dwarfexample test])
 
