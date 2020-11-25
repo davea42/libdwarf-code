@@ -94,8 +94,9 @@ cinstrelp=$bart/c-installrelp
 dbigend=$bart/d-bigendian
 ecmakebld=$bart/e-cmakebld
 fcmakebld=$bart/f-cmakebld
+gcmakebld=$bart/g-cmakebld
 mdirs $bart $abld $ainstall $binstrelp $binstrelbld $crelbld
-mdirs $cinstrelp $dbigend $ecmakebld $fcmakebld
+mdirs $cinstrelp $dbigend $ecmakebld $fcmakebld $gcmakebld
 relset=$bart/a-gzfilelist
 atfout=$bart/a-tarftout
 btfout=$bart/b-tarftout
@@ -238,6 +239,32 @@ fi
 echo " End Section F  $bart (ls output follows)"
 ls  $bart
 ############ End Section F
+################### Cmake test G
+safecd $gcmakebld "FAIL C11 Section G cd"
+havecmake=n
+which cmake >/dev/null
+if [ $? -eq 0 ]
+then
+  havecmake=y
+  echo "We have cmake and can test it."
+fi
+if [ $havecmake = "y" ]
+then
+  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
+  cmake $genoptb -DWALL=ON -DBUILD_NON_SHARED=OFF -DBUILD_SHARED=ON -DBUILD_DWARFGEN=ON -DBUILD_DWARFEXAMPLE=ON $blibsrc
+  chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
+  make
+  chkres $? "FAIL Sec F C11c  cmake make in $gcmakebld"
+  make test
+  chkres $? "FAIL Sec F C11d  cmake make test in $gcmakebld"
+  ctest -R self
+  chkres $? "FAIL Sec F C11e  ctest -R self in $gcmakebld"
+else
+  echo "cmake not installed so Section G not tested."
+fi
+echo " End Section G  $bart (ls output follows)"
+ls  $bart
+############ End Section G
 
 
 echo "PASS scripts/buildandreleasetest.sh"
