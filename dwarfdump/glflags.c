@@ -185,6 +185,11 @@ init_global_flags(void)
     glflags.gf_display_children_tree = FALSE;
     glflags.gf_stop_indent_level    = 0;
 
+    /*  10 is sort of arbitrary, it tries to keep
+        the indentation sane ( a 500 level DIE tree
+        is just too much to represent with prefix 
+        spaces).*/
+    glflags.gf_max_space_indent = 10;
     /* Print search results in wide format? */
     glflags.gf_search_wide_format   = FALSE;
     /* -S option: strings for 'any' and 'match' */

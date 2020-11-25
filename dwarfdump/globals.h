@@ -372,9 +372,6 @@ int print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Addr *highAddrp,
     struct esb_s *valname,
     Dwarf_Error *err);
-void append_indent_prefix(struct esb_s *m,int indent);
-void print_indent_prefix(int indent);
-
 
 #ifdef __cplusplus
 }

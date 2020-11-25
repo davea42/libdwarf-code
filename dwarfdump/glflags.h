@@ -226,6 +226,10 @@ struct glflags_s {
     /* Avoid some unneccesary work lookup by address. */
     char    gf_all_cus_seen_search_by_address;
 
+    /*  Die indents >= this prefix an indent count instead
+        of actual spaces. */
+    int     gf_max_space_indent;
+
     /*  ====End searching for function name. */
 
     /* Print search results in wide format? */
