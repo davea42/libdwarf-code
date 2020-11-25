@@ -93,8 +93,9 @@ crelbld=$bart/c-installrelbld
 cinstrelp=$bart/c-installrelp
 dbigend=$bart/d-bigendian
 ecmakebld=$bart/e-cmakebld
+fcmakebld=$bart/f-cmakebld
 mdirs $bart $abld $ainstall $binstrelp $binstrelbld $crelbld
-mdirs $cinstrelp $dbigend $ecmakebld 
+mdirs $cinstrelp $dbigend $ecmakebld $fcmakebld
 relset=$bart/a-gzfilelist
 atfout=$bart/a-tarftout
 btfout=$bart/b-tarftout
@@ -206,11 +207,38 @@ then
   ctest -R self
   chkres $? "FAIL C10e  ctest -R self in $ecmakebld"
 else
-  echo "cmake is not installed so not tested."
+  echo "cmake not installed so Test section E not tested."
 fi
 echo " End Section E  $bart (ls output follows)"
 ls  $bart
 ############ End Section E
+################### Cmake test F
+safecd $fcmakebld "FAIL C11 Section F cd"
+havecmake=n
+which cmake >/dev/null
+if [ $? -eq 0 ]
+then
+  havecmake=y
+  echo "We have cmake and can test it."
+fi
+if [ $havecmake = "y" ]
+then
+  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $fcmakebld"
+  cmake $genoptb -DWALL=ON -DDWARF_WITH_LIBELF=OFF -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON $blibsrc
+  chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
+  make
+  chkres $? "FAIL Sec F C11c  cmake make in $fcmakebld"
+  make test
+  chkres $? "FAIL Sec F C11d  cmake make test in $fcmakebld"
+  ctest -R self
+  chkres $? "FAIL Sec F C11e  ctest -R self in $fcmakebld"
+else
+  echo "cmake not installed so -DDWARF_WITH_LIBELF=OFF (sec. F) not tested."
+fi
+echo " End Section F  $bart (ls output follows)"
+ls  $bart
+############ End Section F
+
 
 echo "PASS scripts/buildandreleasetest.sh"
 if [ "$savebart" = "n" ]
