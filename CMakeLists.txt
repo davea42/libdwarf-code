@@ -160,6 +160,13 @@ if (DWARF_WITH_LIBELF AND
     NOT HAVE_LIBELF_H AND 
     NOT HAVE_LIBELF_LIBELF_H)
     set(DWARF_WITH_LIBELF OFF)
+    set(HAVE_ELF_H OFF)
+elseif (NOT DWARF_WITH_LIBELF)
+    set(HAVE_ELF_H OFF)
+    set(HAVE_LIBELF_LIBELF_H OFF)
+    set(HAVE_LIBELF_H OFF)
+    set(HAVE_ELF64_GETSHDR OFF)
+    set(HAVE_ELF64_GETEHDR OFF)
 endif ()
 
 if (DWARF_WITH_LIBELF)
@@ -220,6 +227,7 @@ if (DWARF_WITH_LIBELF)
    int i = 12;
    return 0;
   }" HAVE_STRUCT_UNDERSCORE_ELF)
+else()
 endif()
 message(STATUS "Assuming struct Elf for the default libdwarf.h")
 # Because cmake treats ; in an interesting way attempting
@@ -230,11 +238,11 @@ if(HAVE_STRUCT_UNDERSCORE_ELF AND DWARF_WITH_LIBELF)
    message(STATUS "Using struct _Elf in libdwarf.h")
    configure_file(libdwarf/generated_libdwarf.h.in 
        libdwarf/libdwarf.h COPYONLY)
-else()
+elseif(NOT DWARF_WITH_LIBELF)
    configure_file(libdwarf/libdwarf.h.in 
        libdwarf/libdwarf.h COPYONLY)
    message(STATUS "${JUST_LIBELF} does not have struct _Elf")
-   message(STATUS "Using struct Elf in libdwarf.h")
+   message(STATUS "Using struct Elf in libdwarf.h, no actual elf.h used")
 endif()
 
 check_c_source_runs("

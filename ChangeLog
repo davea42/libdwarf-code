@@ -1,3 +1,6 @@
+2020-11-24  David Anderson
+    * CMakeLists.txt: now supports -DDWARF_WITH_LIBELF=OFF
+      (which it was supposed to do...)
 2020-11-23  David Anderson
     * configure.ac: Now version 20201123.
     * configure: Regenerated.
