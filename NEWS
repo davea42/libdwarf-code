@@ -1,31 +1,34 @@
 2020-11-21:
-  dwarfdump now prints DWARF expression operators
-  each on its own line.  This makes viewing DWARF expressions
-  much nicer given the increased use of much longer
-  expressions.  Those expression
-  operators that reference DIES are now followed,
-  verified, and the target DW_TAG and DW_AT_name
-  are printed.  A new dwarfdump.conf command 'option:'
-  lets one specify option: --format-expr-ops-joined
-  in case you want the old style DWARF expression 
-  operators-on-one-line.
+  dwarfdump now prints DWARF expression operators each on
+  its own line.  This makes viewing DWARF expressions much
+  nicer given the increased use of much longer expressions.
+  Those expression operators that reference DIES are now
+  followed, verified, and the target DW_TAG and DW_AT_name
+  are printed.  A new dwarfdump.conf command 'option:' lets
+  one specify option: --format-expr-ops-joined in case you
+  want the old style DWARF expression operators-on-one-line.
+  Where the DWARF DIE children nest > nine-deep dwarfdump
+  switches from indentation by spaces to a nest-level number.
+
 2020-09-08:
-  libdwarf/dwarfdump work well with DWARF4 and
-  DWARF5, including DWP files.
+  libdwarf/dwarfdump work well with DWARF4 and DWARF5,
+  including DWP files.
+
 2020-07-08:
   libdwarf now reads .debug_gnu_pubtypes & pubnames
-  (non-standard but gcc creates them in DWARF5)
-  via a small number of new functions
-  and dwarfdump  --print-debug-gnu prints both sections.
-  Verifying the .debug_info offsets is not yet done.
+  (non-standard but gcc creates them in DWARF5) via a small
+  number of new functions and dwarfdump  --print-debug-gnu
+  prints both sections.  Verifying the .debug_info offsets
+  is not yet done.
+
 2020-06-29:
   Dwarfdump now dumps DWARF5 .debug_rnglists and
-  .debug_loclists.  To handle DWARF5 there are
-  a small number of new functions. All existing
-  functions are still supported, but
-  to read DWARF5 some small changes are required.
-  In libdwarf see libdwarf2.1.pdf and also see
-  libdwarf/ChangeLog for details. 
+  .debug_loclists.  To handle DWARF5 there are a small
+  number of new functions. All existing functions are
+  still supported, but to read DWARF5 some small changes
+  are required.  In libdwarf see libdwarf2.1.pdf and also
+  see libdwarf/ChangeLog for details.
+
 2020-05-23:
   dwarfdump now takes much less malloc() to work, as measured
   by valgrind --tool=massif  and massif-visualizer.
