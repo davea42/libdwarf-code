@@ -144,7 +144,8 @@ dwarf_die_CU_offset(Dwarf_Die die,
     dataptr = die->di_is_info? dbg->de_debug_info.dss_data:
         dbg->de_debug_types.dss_data;
 
-    *cu_off = (die->di_debug_ptr - dataptr - cu_context->cc_debug_offset);
+    *cu_off = (die->di_debug_ptr - dataptr -
+        cu_context->cc_debug_offset);
     return DW_DLV_OK;
 }
 
@@ -560,7 +561,7 @@ dwarf_attrlist(Dwarf_Die die,
                     &sov,
                     die_info_end,
                     error);
-                if(vres!= DW_DLV_OK) {
+                if (vres!= DW_DLV_OK) {
                     dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
                     empty_local_attrlist(dbg,head_attr);
                     return vres;
@@ -704,7 +705,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         Dwarf_Signed implicit_const = 0;
         int res = 0;
 
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, atmp3,dbg,error,abbrev_end);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, atmp3,dbg,
+            error,abbrev_end);
         if (atmp3 > DW_AT_hi_user) {
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
@@ -723,7 +725,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             Dwarf_Unsigned utmp6;
 
             /* DECODE_LEB128_UWORD updates info_ptr */
-            DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,die_info_end);
+            DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,
+                error,die_info_end);
             curr_attr_form = (Dwarf_Half) utmp6;
         }
         if (curr_attr_form == DW_FORM_implicit_const) {
@@ -733,7 +736,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         }
         if (curr_attr == attr) {
             *attr_form = curr_attr_form;
-            if(implicit_const_out) {
+            if (implicit_const_out) {
                 *implicit_const_out = implicit_const;
             }
             *ptr_to_value = info_ptr;
@@ -820,10 +823,10 @@ dwarf_hasattr(Dwarf_Die die,
 
     res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,
         &implicit_const,error);
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         return res;
     }
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         *return_bool = false;
         return DW_DLV_OK;
     }
@@ -848,10 +851,10 @@ dwarf_attr(Dwarf_Die die,
 
     res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,
         &implicit_const,error);
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         return res;
     }
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
 
@@ -921,7 +924,8 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
         which is in the CU die. */
 
     sectionstart = dbg->de_debug_addr.dss_data;
-    addr_offset = address_base + (addrindex * context->cc_address_size);
+    addr_offset = address_base +
+        (addrindex * context->cc_address_size);
     /*  The offsets table is a series of address-size entries
         but with a base. */
     sectionsize = dbg->de_debug_addr.dss_size;
@@ -1032,7 +1036,7 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     dbg = context->cc_dbg;
     res2 = _dwarf_get_addr_index_itself(attr_form,
         info_ptr,dbg,context, &index_to_addr,error);
-    if(res2 != DW_DLV_OK) {
+    if (res2 != DW_DLV_OK) {
         return res2;
     }
     /* error is returned on dbg, not tieddbg. */
@@ -1066,10 +1070,10 @@ dwarf_lowpc(Dwarf_Die die,
     offset_size = context->cc_length_size;
     res = _dwarf_get_value_ptr(die, DW_AT_low_pc,
         &attr_form,&info_ptr,0,error);
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         return res;
     }
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     version = context->cc_version_stamp;
@@ -1081,7 +1085,7 @@ dwarf_lowpc(Dwarf_Die die,
         return (DW_DLV_ERROR);
     }
 
-    if(attr_form == DW_FORM_GNU_addr_index ||
+    if (attr_form == DW_FORM_GNU_addr_index ||
         attr_form == DW_FORM_addrx) {
         /* error is returned on dbg, not tieddbg. */
         res = _dwarf_look_in_local_and_tied(
@@ -1195,13 +1199,13 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         context->        cc_rnglists_base=
             tiedcontext->cc_rnglists_base;
     }
-    if(!context->cc_loclists_base_present) {
+    if (!context->cc_loclists_base_present) {
         context->        cc_loclists_base_present =
             tiedcontext->cc_loclists_base_present;
         context->        cc_loclists_base=
             tiedcontext->cc_loclists_base;
     }
-    if(!context->cc_str_offsets_base_present) {
+    if (!context->cc_str_offsets_base_present) {
         context->        cc_str_offsets_base_present =
             tiedcontext->cc_str_offsets_base_present;
         context->        cc_str_offsets_base=
@@ -1209,14 +1213,14 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
     }
 
     /* GNU DW4 extension. */
-    if(!context->        cc_ranges_base_present) {
+    if (!context->        cc_ranges_base_present) {
         context->        cc_ranges_base_present =
             tiedcontext->cc_ranges_base_present;
         context->        cc_ranges_base =
             tiedcontext->cc_ranges_base;
     }
 
-    if(tiedcontext_out) {
+    if (tiedcontext_out) {
         *tiedcontext_out = tiedcontext;
     }
     return DW_DLV_OK;
@@ -1229,7 +1233,7 @@ _dwarf_get_string_base_attr_value(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Unsigned *sbase_out,
     UNUSEDARG Dwarf_Error *error)
 {
-    if(context->cc_str_offsets_base_present) {
+    if (context->cc_str_offsets_base_present) {
         *sbase_out = context->cc_str_offsets_base;
         return DW_DLV_OK;
     }
@@ -1243,7 +1247,7 @@ _dwarf_get_string_base_attr_value(UNUSEDARG Dwarf_Debug dbg,
     */
 
 
-/*  This works for  all versions of DWARF.
+/*  This works for all versions of DWARF.
     This is the preferred interface, cease using dwarf_highpc.
     The consumer has to check the return_form or
     return_class to decide if the value returned
@@ -1275,10 +1279,10 @@ dwarf_highpc_b(Dwarf_Die die,
 
     res = _dwarf_get_value_ptr(die, DW_AT_high_pc,
         &attr_form,&info_ptr,0,error);
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         return res;
     }
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     die_info_end = _dwarf_calculate_info_section_end_ptr(
@@ -1302,7 +1306,7 @@ dwarf_highpc_b(Dwarf_Die die,
             /* error is returned on dbg, not tied */
             res2 = _dwarf_get_addr_index_itself(attr_form,
                 info_ptr,dbg,context,&index_to_addr,error);
-            if(res2 != DW_DLV_OK) {
+            if (res2 != DW_DLV_OK) {
                 return res2;
             }
             res2= _dwarf_look_in_local_and_tied_by_index(dbg,
@@ -1310,7 +1314,7 @@ dwarf_highpc_b(Dwarf_Die die,
                 index_to_addr,
                 &addr_out,
                 error);
-            if(res2 != DW_DLV_OK) {
+            if (res2 != DW_DLV_OK) {
                 return res2;
             }
         }
@@ -1323,15 +1327,15 @@ dwarf_highpc_b(Dwarf_Die die,
         Dwarf_Unsigned v = 0;
         res3 = _dwarf_die_attr_unsigned_constant(die,DW_AT_high_pc,
             &v,error);
-        if(res3 != DW_DLV_OK) {
+        if (res3 != DW_DLV_OK) {
             Dwarf_Byte_Ptr info_ptr2 = 0;
 
             res3 = _dwarf_get_value_ptr(die, DW_AT_high_pc,
                 &attr_form,&info_ptr2,0,error);
-            if(res3 == DW_DLV_ERROR) {
+            if (res3 == DW_DLV_ERROR) {
                 return res3;
             }
-            if(res3 == DW_DLV_NO_ENTRY) {
+            if (res3 == DW_DLV_NO_ENTRY) {
                 return res3;
             }
             if (attr_form == DW_FORM_sdata) {
@@ -1388,7 +1392,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
         return  DW_DLV_ERROR;
     }
-    if(! context->cc_addr_base_present) {
+    if (!context->cc_addr_base_present) {
         /*  Does not exist. */
         return DW_DLV_NO_ENTRY;
     }
@@ -1396,7 +1400,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         context->cc_signature,
         &tiedcontext,
         error);
-    if ( res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         /* Associate the error with dbg, not tieddbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
@@ -1448,11 +1452,12 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
-    die_info_end = _dwarf_calculate_info_section_end_ptr(die->di_cu_context);
+    die_info_end =
+        _dwarf_calculate_info_section_end_ptr(die->di_cu_context);
     dbg = die->di_cu_context->cc_dbg;
     res = _dwarf_get_value_ptr(die,attr,&attr_form,
         &info_ptr,0,error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         return res;
     }
     switch (attr_form) {
@@ -1700,8 +1705,8 @@ dwarf_get_form_class(
 
     case  DW_FORM_data4:
         if (dwversion <= 3 && offset_size == 4) {
-            enum Dwarf_Form_Class class = dw_get_special_offset(attrnum,
-                dwversion);
+            enum Dwarf_Form_Class class =
+                dw_get_special_offset(attrnum, dwversion);
             if (class != DW_FORM_CLASS_UNKNOWN) {
                 return class;
             }
@@ -1709,8 +1714,8 @@ dwarf_get_form_class(
         return DW_FORM_CLASS_CONSTANT;
     case  DW_FORM_data8:
         if (dwversion <= 3 && offset_size == 8) {
-            enum Dwarf_Form_Class class = dw_get_special_offset(attrnum,
-                dwversion);
+            enum Dwarf_Form_Class class =
+                dw_get_special_offset(attrnum, dwversion);
             if (class != DW_FORM_CLASS_UNKNOWN) {
                 return class;
             }
@@ -1718,8 +1723,8 @@ dwarf_get_form_class(
         return DW_FORM_CLASS_CONSTANT;
     case  DW_FORM_sec_offset:
         {
-            enum Dwarf_Form_Class class = dw_get_special_offset(attrnum,
-                dwversion);
+            enum Dwarf_Form_Class class =
+                dw_get_special_offset(attrnum, dwversion);
             if (class != DW_FORM_CLASS_UNKNOWN) {
                 return class;
             }
@@ -1753,18 +1758,23 @@ dwarf_get_form_class(
     case  DW_FORM_flag:         return DW_FORM_CLASS_FLAG;
     case  DW_FORM_flag_present: return DW_FORM_CLASS_FLAG;
 
-    case  DW_FORM_addrx:           return DW_FORM_CLASS_ADDRESS; /* DWARF5 */
+    case  DW_FORM_addrx:
+        return DW_FORM_CLASS_ADDRESS; /* DWARF5 */
     case  DW_FORM_GNU_addr_index:  return DW_FORM_CLASS_ADDRESS;
-    case  DW_FORM_strx:            return DW_FORM_CLASS_STRING;  /* DWARF5 */
+    case  DW_FORM_strx:
+        return DW_FORM_CLASS_STRING;  /* DWARF5 */
     case  DW_FORM_GNU_str_index:   return DW_FORM_CLASS_STRING;
 
-    case  DW_FORM_rnglistx:     return DW_FORM_CLASS_RNGLIST;    /* DWARF5 */
-    case  DW_FORM_loclistx:     return DW_FORM_CLASS_LOCLIST;    /* DWARF5 */
+    case  DW_FORM_rnglistx:
+        return DW_FORM_CLASS_RNGLIST;    /* DWARF5 */
+    case  DW_FORM_loclistx:
+        return DW_FORM_CLASS_LOCLIST;    /* DWARF5 */
 
     case  DW_FORM_GNU_ref_alt:  return DW_FORM_CLASS_REFERENCE;
     case  DW_FORM_GNU_strp_alt: return DW_FORM_CLASS_STRING;
-    case  DW_FORM_strp_sup:     return DW_FORM_CLASS_STRING;    /* DWARF5 */
-    case  DW_FORM_implicit_const: return DW_FORM_CLASS_CONSTANT; /* DWARF5 */
+    case  DW_FORM_strp_sup:     return DW_FORM_CLASS_STRING; /* DW5 */
+    case  DW_FORM_implicit_const:
+        return DW_FORM_CLASS_CONSTANT; /* DWARF5 */
 
     case  DW_FORM_indirect:
     default:
@@ -1811,7 +1821,8 @@ _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context,
     struct Dwarf_Section_s *sec = 0;
 
     dbg = context->cc_dbg;
-    sec = context->cc_is_info? &dbg->de_debug_info: &dbg->de_debug_types;
+    sec = context->cc_is_info? &dbg->de_debug_info:
+        &dbg->de_debug_types;
     dataptr = sec->dss_data;
     *section_len = sec->dss_size;
     return dataptr;
@@ -1849,4 +1860,71 @@ _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context)
     abbrev_start = sec->dss_data;
     abbrev_end = abbrev_start + sec->dss_size;
     return abbrev_end;
+}
+
+/*  New December 2020.  Any Dwarf_Die will work.
+    The values returned are about the CU itself, not a DIE.
+    extension_size is set zero unless it offset_size
+    is 64 and it is standard Dwarf, in which case
+    extension_size is set to 4.
+    If there is no signature *signature is set zero,
+    offset_of_length is the section offset of the first
+    byte of the compilation-unit length field.
+    total_byte_length includes the length field and
+    all the CU data.
+    The offset of the first byte of the CU is therefore
+    offset_of_lenth + offset_size + extension_size.
+    is_info is always non-zero except if the section
+    of the CU is DWARF4 .debug_types.
+*/
+int dwarf_cu_header_basics(Dwarf_Die die,
+    Dwarf_Half *version,
+    Dwarf_Bool *is_info,
+    Dwarf_Bool *is_dwo,
+    Dwarf_Half *offset_size,
+    Dwarf_Half *address_size,
+    Dwarf_Half *extension_size,
+    Dwarf_Sig8 **signature,
+    Dwarf_Off  *offset_of_length,
+    Dwarf_Unsigned  *total_byte_length,
+    Dwarf_Error *error)
+{
+    Dwarf_CU_Context context = 0;
+    CHECK_DIE(die, DW_DLV_ERROR);
+
+    context= die->di_cu_context;
+    if (version) {
+        *version = context->cc_version_stamp;
+    }
+    if (is_info) {
+        /*  ASSERT: matches context->cc_is_info */
+        *is_info = die->di_is_info;
+    }
+    if (is_dwo) {
+        *is_dwo = context->cc_is_dwo;
+    }
+    if (offset_size) {
+        *offset_size = context->cc_length_size;
+    }
+    if (address_size) {
+        *address_size = context->cc_address_size;
+    }
+    if (extension_size) {
+        *extension_size = context->cc_extension_size;
+    }
+    if (signature) {
+        if (context->cc_signature_present) {
+            *signature =  &context->cc_signature;
+        } else {
+            *signature = 0;
+        }
+    }
+    if (offset_of_length) {
+        *offset_of_length = context->cc_debug_offset;
+    }
+    if (total_byte_length) {
+        *total_byte_length = context->cc_length +
+            context->cc_length_size + context->cc_extension_size;
+    }
+    return DW_DLV_OK;
 }

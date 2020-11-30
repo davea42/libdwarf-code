@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.17 7 November 2020
+.ds vE Rev 3.18 29 November 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -4447,12 +4447,70 @@ attributes, dealing with each one as appropriate.
 \f(CWDwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die die)\fP
 .DE
 .P
-The function \f(CWdwarf_tag()\fP returns the section flag
+The function 
+\f(CWdwarf_get_die_infotypes_flag()\fP
+returns the section flag
 indicating which section the DIE originates from.
 If the returned value is non-zero the DIE
 originates from the .debug_info section.
 If the returned value is zero the DIE
 originates from the .debug_types section.
+
+.H 3 "dwarf_cu_header_basics()"
+.DS
+\f(CWint dwarf_cu_header_basics(Dwarf_Die die
+    Dwarf_Half *version,
+    Dwarf_Bool *is_info,
+    Dwarf_Bool *is_dwo,
+    Dwarf_Half *offset_size,
+    Dwarf_Half *address_size,
+    Dwarf_Half *extension_size,
+    Dwarf_Sig8 **signature,
+    Dwarf_Off  *offset_of_length,
+    Dwarf_Unsigned  *total_byte_length,
+    Dwarf_Error *error)\fP
+.DE
+.P
+On success,
+the function \f(CWcu_header_basics()\fP
+various data items from the CU header 
+and the CU die passed in.
+Any return-value
+pointer may be passed in as NULL,
+indicating that the value is not needed.
+.P
+Summing
+\f(CWoffset_size\fP
+and
+\f(CWextention_size\fP
+gives the length of the CU length field,
+which is immediately followed by
+the CU header.
+.P
+\f(CWis_dwo\fP
+field will surely always be 0
+as dwo/dwp .debug_info
+cannot be skeleton CUs.
+.P
+The
+\f(CWsignature\fP
+value is returned
+if there a signature in the DWARF5
+CU header or the CU die.
+.P
+The
+\f(CWoffset_of_length\fP
+returned is the offset of the first byte
+of the length field of the CU.
+.P
+The
+\f(CWtotal_byte_Length\fP
+returned is the length of data
+in the CU counting from the first byte
+at
+\f(CWoffset_of_length\fP.
+
+
 
 .H 3 "dwarf_tag()"
 .DS
@@ -4890,12 +4948,21 @@ If it fails, it returns \f(CWDW_DLV_ERROR\fP.
 When it returns \f(CWDW_DLV_OK\fP,
 the function \f(CWdwarf_attr()\fP
 sets
-\f(CW*return_attr\fP to the  \f(CWDwarf_Attribute\fP
+\f(CW*return_attr\fP to the 
+\f(CWDwarf_Attribute\fP
 descriptor of \f(CWdie\fP having the attribute \f(CWattr\fP.
-It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWattr\fP is not contained
-in \f(CWdie\fP.
-It returns \f(CWDW_DLV_ERROR\fP if an error occurred.
-
+When one no longer needs the attribute call
+\f(CWdwarf_dealloc_attribute(return_attr)\fP.
+.P
+It returns 
+\f(CWDW_DLV_NO_ENTRY\fP if 
+\f(CWattr\fP is not contained
+in 
+\f(CWdie\fP.
+.P
+It returns 
+\f(CWDW_DLV_ERROR\fP
+and sets the *error argument if an error occurred.
 
 .H 3 "dwarf_lowpc()"
 .DS

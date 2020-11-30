@@ -1838,6 +1838,20 @@ int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
     New October 2011. */
 Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
 
+/*  New December 2020.  Any Dwarf_Die will work.
+    The values returned are about the CU itself, not a DIE. */
+int dwarf_cu_header_basics(Dwarf_Die die,
+    Dwarf_Half     * /*version*/,
+    Dwarf_Bool     * /*is_info*/,
+    Dwarf_Bool     * /*is_dwo*/,
+    Dwarf_Half     * /*offset_size*/,
+    Dwarf_Half     * /*address_size*/,
+    Dwarf_Half     * /*extension_size*/,
+    Dwarf_Sig8    ** /*signature*/,
+    Dwarf_Off      * /*offset_of_length*/,
+    Dwarf_Unsigned * /*total_byte_length*/,
+    Dwarf_Error    * /*error*/);
+
 /*  New March 2016.
     So we can associate a DIE's abbreviations with the contents
     the abbreviations section. */

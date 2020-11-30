@@ -1,3 +1,16 @@
+2020-11-29 David Anderson
+    * dwarf_form.c: Correct comments on dwarf_formsig8_const()
+    * dwarf_query.c: Fix if( to if ( in some places.
+      Shorten some too-long lines. Implement the new function
+      dwarf_cu_header_basics().
+    * dwarf_opaque.h: Corrected a comment on one field.
+    * libdwarf.h.in: Prototype for dwarf_cu_header_basics()
+      added.
+    * generated_libdwarf.h.in: regenerated.
+    * libdwarf2.1.mm. Version 3.18. Added to the description
+      of dwarf_attr(), which was incomplete.
+      Documented dwarf_cu_header_basics().
+    * libdwarf.2.1.pdf: Regenerated 3.18
 2020-11-25 David Anderson
     * Makefile.in: Regenerated from configure.ac.
       To support data needed for dwarfexample make check.

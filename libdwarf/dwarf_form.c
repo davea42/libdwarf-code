@@ -645,7 +645,9 @@ dwarf_formsig8_const(Dwarf_Attribute attr,
 /*  dwarf_formsig8 returns in the caller-provided 8 byte area
     the 8 bytes of a DW_FORM_ref_sig8 (copying the bytes
     directly to the caller).  Not a string, an 8 byte
-    MD5 hash.  This function is new in DWARF4 libdwarf.
+    MD5 hash or a signature.
+    This function is new in DWARF4 libdwarf and used in
+    more places in DWARF5.
 */
 int
 dwarf_formsig8(Dwarf_Attribute attr,

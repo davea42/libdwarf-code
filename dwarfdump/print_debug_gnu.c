@@ -115,33 +115,236 @@ print_block_entries(
             glflags.gf_count_major_errors++;
             printf("\n");
         }
-#if 0
-        If it has a dwo, this needs to look up in the dwo object.
-        {
-            Dwarf_Die die = 0;
-            Dwarf_Bool is_info = TRUE;
-            res = dwarf_offdie_b(dbg,offset_in_debug_info,
-                is_info, &die,error);
-            if (res != DW_DLV_OK) {
-                printf("  ERROR: Block %" DW_PR_DUu
-                    " entry %" DW_PR_DUu " offset 0x%"
-                    DW_PR_DUx
-                    " is not a valid DIE offset in .debug_info",
-                    blocknum,i, offset_in_debug_info);
+    }
+    return DW_DLV_OK;
+}
+
+int attrlist[] = {
+DW_AT_GNU_dwo_name,
+DW_AT_dwo_name,
+DW_AT_comp_dir,
+DW_AT_GNU_dwo_id,
+0 };
+
+static void
+error_report(int errcode,
+    const char *text,
+    Dwarf_Error *error) {
+    if (errcode == DW_DLV_ERROR) {
+        printf("  ERROR: %s"
+            ", ignoring other attributes here: %s\n",
+            text,
+            dwarf_errmsg(*error));
+        glflags.gf_count_major_errors++;
+        return;
+    } else {
+        printf("  ERROR impossible DW_DLV_NO_ENTRY: %s"
+            ", ignoringother attributes here. \n",
+            text);
+    }
+    return;
+}
+static void
+print_selected_attributes(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Half version,
+    Dwarf_Half offset_size,
+    Dwarf_Error *error)
+{
+    int res = 0;
+    int i = 0; 
+
+    for ( ; attrlist[i]; ++i) {
+        Dwarf_Attribute attr = 0;
+        int attrid = 0;
+        const char * atname = 0;
+        Dwarf_Half form = 0;
+        enum Dwarf_Form_Class fclass = 0;
+        char *formstring = 0;
+        int print_str = FALSE;
+        struct esb_s m;
+        Dwarf_Sig8 sig;
+
+        attrid = attrlist[i];
+        res = dwarf_attr(die,attrid,&attr,error);
+        if (res == DW_DLV_ERROR) {
+            error_report(res,"dwarf_attr() returned error",error);
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+            return;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            continue;
+        }
+        /* ok, this attribute is present */
+        atname = get_AT_name(attrid,FALSE);
+        res = dwarf_whatform(attr,&form,error);
+        if (res != DW_DLV_OK) {
+            error_report(res,"dwarf_whatform() problem: ",error);
+            dwarf_dealloc_error(dbg,*error);
+            dwarf_dealloc_attribute(attr);
+            *error = 0;
+            return;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            /* impossible, cannot get here */
+            dwarf_dealloc_attribute(attr);
+            continue;
+        }
+        esb_constructor(&m);
+        fclass = dwarf_get_form_class(version,attrid,
+            offset_size,form);
+        if (fclass == DW_FORM_CLASS_STRING) {
+            res = dwarf_formstring(attr,&formstring,error);
+            if (res == DW_DLV_OK) {
+                print_str = TRUE; 
+                esb_append(&m,formstring);
+            } else {
+                error_report(res,"dwarf_formstring() returned error",
+                    error);
                 if (res == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg,*error);
                     *error = 0;
+               }
+               dwarf_dealloc_attribute(attr);
+               esb_destructor(&m);
+               break;
+            }
+        } else if (fclass == DW_FORM_CLASS_CONSTANT)  {
+            if (form == DW_FORM_data8) {
+                res = dwarf_formsig8_const(attr,&sig,error);
+                if (res == DW_DLV_OK) {
+                    print_str = TRUE; 
+                    format_sig8_string(&sig,&m);
                 } else {
+                    error_report(res,"dwarf_formsig8_const() "
+                        "returned error",error);
+                    if (res == DW_DLV_ERROR) {
+                        dwarf_dealloc_error(dbg,*error);
+                        *error = 0;
+                    }
+                    esb_destructor(&m);
+                    dwarf_dealloc_attribute(attr);
+                    break;
                 }
-                glflags.gf_count_major_errors++;
-                printf("\n");
-            }else {
-                /* Look into DIE? */
-                dwarf_dealloc_die(die);
+            }
+        } else if (fclass == DW_FORM_CLASS_REFERENCE) {
+            /* includes DW_FORM_ref_sig8, DW_FORM_ref* */
+            if (form == DW_FORM_ref_sig8) {
+                res = dwarf_formsig8(attr,&sig,error);
+                if (res == DW_DLV_OK) {
+                    print_str = TRUE; 
+                    esb_constructor(&m);
+                    format_sig8_string(&sig,&m);
+                } else {
+                    error_report(res,"dwarf_formsig8() "
+                        "problem error",error);
+                    if (res == DW_DLV_ERROR) {
+                        dwarf_dealloc_error(dbg,*error);
+                        *error = 0;
+                    }
+                    esb_destructor(&m);
+                    dwarf_dealloc_attribute(attr);
+                    break;
+                }
             }
         }
-#endif
+        if (print_str) {
+            printf("  %-18s                  : %s\n",
+                atname,esb_get_string(&m));
+        }
+        dwarf_dealloc_attribute(attr);
+        esb_destructor(&m);
     }
+}
+
+
+static int
+print_die_basics(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    UNUSEDARG Dwarf_Unsigned cudie_goff,
+    Dwarf_Error *error)
+{
+    int res = 0;
+    Dwarf_Half tag = 0;
+    Dwarf_Half version = 0;
+    Dwarf_Bool is_info = 0;
+    Dwarf_Bool is_dwo = 0;
+    Dwarf_Half offset_size = 0;
+    Dwarf_Half address_size = 0;
+    Dwarf_Half extension_size = 0;
+    Dwarf_Sig8 *signature = 0;
+    Dwarf_Off  offset_of_length = 0;
+    Dwarf_Unsigned  total_byte_length = 0;
+
+    res = dwarf_cu_header_basics(die, &version,
+        &is_info,&is_dwo,
+        &offset_size,&address_size,&extension_size,
+        &signature,&offset_of_length,&total_byte_length,error);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            printf("ERROR: Cannot access compilation unit data: %s",
+               dwarf_errmsg(*error));
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+        } else {
+            printf("ERROR:  Cannot access compilation unit data"
+               "No such found");
+        }
+        glflags.gf_count_major_errors++;
+        return DW_DLV_OK;
+    }
+    printf("  Compilation unit data follows\n");
+    printf("  CU version                          : %d\n",version); 
+    if (!is_info) {
+        printf("  CU  section is .debug_types");
+    }
+    printf("  CU section is dwo?                  : %s\n",
+        is_dwo?"yes":"no");
+    printf("  CU offset size                      : %u\n",
+        offset_size);
+    printf("  CU extension size                   : %u\n",
+        extension_size);
+    printf("  CU address size                     : %u\n",
+        address_size);
+    printf("  CU beginning offset                 : 0x%"
+        DW_PR_XZEROS DW_PR_DUx "\n",
+        offset_of_length);
+    printf("  CU total length                     : 0x%"
+        DW_PR_XZEROS DW_PR_DUx "\n",
+        total_byte_length);
+
+    if (signature) {
+        struct esb_s m;
+        char buf[24];
+
+        esb_constructor_fixed(&m,buf,sizeof(buf));
+        printf("  CU signature                        : ");
+        format_sig8_string(signature,&m);
+        printf("%s\n", esb_get_string(&m));
+        esb_destructor(&m);
+    }
+    res = dwarf_tag(die,&tag,error);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            printf("ERROR: Cannot access DIE tag  ERROR: %s\n",
+               dwarf_errmsg(*error));
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+        } else {
+            printf("ERROR:  Cannot access DIE tag "
+               "No such found\n");
+        }
+        printf("\n");
+        glflags.gf_count_major_errors++;
+    } else {
+        const char *actual_tag_name = 0;
+
+        actual_tag_name = get_TAG_name(tag,FALSE);
+        printf("  CU die TAG                          : "
+            "%s\n", actual_tag_name);
+    }
+    print_selected_attributes(dbg,die,version,offset_size,error);
     return DW_DLV_OK;
 }
 
@@ -192,19 +395,18 @@ print_all_blocks(Dwarf_Debug dbg,
             "%" DW_PR_DUu "\n",size_of_debug_info_area);
         printf("  Number of entries in block          : "
             "%" DW_PR_DUu "\n",entrycount);
-        res = print_block_entries(dbg,for_pubnames,
-            secname,head,i,entrycount,error);
-        if (res == DW_DLV_ERROR) {
-            return res;
-        }
-#if 0
-        {
-        Dwarf_Unsigned cu_die_offset           = 0;
-
-        /* If has dwo, look there */
+     
+        /*  The CU offsets appear to be those in
+            the executable here. Not in
+            any dwo object. The offsets within
+            the entries in a block are a different
+            story and some of that seems odd,
+            the content names many things  in libraries,
+            not just the executable or its dwo. ?
+            */
         res = dwarf_get_cu_die_offset_given_cu_header_offset_b(
             dbg,offset_into_debug_info,/*is_info = */ TRUE,
-            &cu_die_offset,error);
+            &offset_into_debug_info,error);
         if (res != DW_DLV_OK) {
             printf("  ERROR: Block %" DW_PR_DUu
                 " has an invalid .debug_info offset of "
@@ -216,40 +418,52 @@ print_all_blocks(Dwarf_Debug dbg,
                 *error = 0;
             }
             glflags.gf_count_major_errors++;
-            return res;
         } else {
             Dwarf_Die die = 0;
             Dwarf_Bool is_info = TRUE;
-            res = dwarf_offdie_b(dbg,cu_die_offset,
+            res = dwarf_offdie_b(dbg,offset_into_debug_info,
                 is_info, &die,error);
             if (res != DW_DLV_OK) {
                 printf("  ERROR: Block %" DW_PR_DUu
                     " cu DIE offset 0x%" DW_PR_DUx
                     " is not a valid DIE offset in .debug_info\n",
-                    i, cu_die_offset);
+                    i, offset_into_debug_info);
                 if (res == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg,*error);
                     *error = 0;
                 }
                 glflags.gf_count_major_errors++;
             } else {
-                /* look into die */
+                /* Always returns DW_DLV_OK */
+                print_die_basics(dbg, die,
+                    offset_into_debug_info, error);
+                printf("\n");
                 dwarf_dealloc_die(die);
             }
-
         }
+        res = print_block_entries(dbg,for_pubnames,
+            secname,head,i,entrycount,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
-#endif
-
     }
     return DW_DLV_OK;
 }
 
-
-
+/*  November 25,2020: gdb 10.2 binutils source 
+    can print these sections
+    but gdb does not, AFAICT, use this at all.
+    (binutils can print it, as can we).
+    The Block offset is part of the skeleton, and refers
+    to the skeleton CU DIEs (when
+    that is involved) but the individual item offsets
+    are referring to I-do-not-know-what.
+    Block zero refers to the single CU_DIE in
+    the .dwo file. The others....?
+    Nothing suggests how things actually connect up. */
 int
-print_debug_gnu(UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Error *error)
+print_debug_gnu(Dwarf_Debug dbg,
+    Dwarf_Error *error)
 {
     int res = 0;
     Dwarf_Gnu_Index_Head head = 0;
@@ -263,7 +477,7 @@ print_debug_gnu(UNUSEDARG Dwarf_Debug dbg,
     for(i = 0; i < 2; i++) {
         esb_constructor_fixed(&truename,buf,
             DWARF_SECNAME_BUFFER_SIZE);
-        if(!i) {
+        if (!i) {
             glflags.current_section_id = DEBUG_GNU_PUBNAMES;
             for_pubnames = TRUE;
             stdname =  ".debug_gnu_pubnames";

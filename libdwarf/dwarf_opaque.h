@@ -138,7 +138,6 @@ struct Dwarf_CU_Context_s {
     Dwarf_Debug cc_dbg;
     /*  The sum of cc_length, cc_length_size, and cc_extension_size
         is the total length of the CU including its header.
-
         cc_length is the length of the compilation unit excluding
         cc_length_size and cc_extension_size.  */
     Dwarf_Unsigned cc_length;
@@ -172,12 +171,11 @@ struct Dwarf_CU_Context_s {
     Dwarf_Small cc_segment_selector_size;
 
     /*  cc_debug_offset is the global offset in the section
-        of the CU header of this CU.
-        The length of the CU is at offset
-        cc_debug_offset-cc_length_size-cc_extension_size;
-        That is, it is a section global offset.
-        May be debug_info or debug_types
-        but those are distinct.
+        of the area length field of the CU.
+        The CU header of the CU is at offset
+        cc_debug_offset+cc_length_size+cc_extension_size;
+        This is a section global offset.
+        May be debug_info or debug_types.
         Even in DWP this is set to true global offset
         right away when cu_context created.
         See cc_is_info flag. */
