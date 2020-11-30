@@ -1,3 +1,7 @@
+2020-11-30 David Anderson
+    * libdwarf_version.h: updated version string
+    * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+      dwarf_names_new.h: regenerated with new version string.
 2020-11-29 David Anderson
     * dwarf_form.c: Correct comments on dwarf_formsig8_const()
     * dwarf_query.c: Fix if( to if ( in some places.

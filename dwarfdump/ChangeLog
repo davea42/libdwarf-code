@@ -1,3 +1,8 @@
+2020-11-30 David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated with latest
+      version string.
 2020-11-26 David Anderson
     * print_debug_gnu.c: In current compilers the blocks
       have a CU offset to the skeleton DIEs (when
