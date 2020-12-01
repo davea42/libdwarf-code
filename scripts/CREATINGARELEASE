@@ -2,9 +2,10 @@
 This is an checklist of the steps in creating a new release.
 In hopes this will prevent omissions.
 
-DavidA. 31 October  2020
+DavidA. 1 December  2020
 
-Source here means libdwarf/dwarfdump/dwarfgen source (in Git).
+Source here means libdwarf/dwarfdump/dwarfgen/dwarfexample
+source (in Git).
 Tests  here means the regression tests (in another Git repository).
 
 In the Source:
@@ -31,22 +32,29 @@ Run any small preliminary tests that seem applicable.
 
 In the Tests:
 
-From the code directory one can run all tests
-(assuming regressiontests is alongside code).
+From the code directory one can run all tests (assuming
+regressiontests is alongside code).
+
   sh scripts/run-all-tests.sh
-Verifies a lot of different things.
-This will take 40 to 120 minutes to run
-depending on your hardware or VM.
+Verifies a lot of different things.  This will take 40 to
+120 minutes to run depending on your hardware or VM.
+
+  sh scripts/buildandreleasetest.sh
+is also useful as it creates a release and using that
+(temporary) release rebuilds everything including 3 different
+cmake builds.  The primary purpose of this is to ensure all
+the needed files get into the release, and the secondary
+purpose is to ensure the CMakeLists.txt files work properly.
 
 
 Or just run the regression tests.
-  cd /path/to/regressiontests
-  ./configure
+  mkdir /tmp/dwarfregr
+  cd /tmp/dwarfregr
+  /path/to/regressiontests/configure
   make
 
-Create any new tests that seem applicable. 
-Add the appropriate lines to DWARFTEST.sh which
-actually does the test running.
+Create any new tests that seem applicable.  Add the appropriate
+lines to DWARFTEST.sh which actually does the test running.
 
 RUNALL.sh 
   Runs one test of the new dwarfdump/libdwarf executable
@@ -54,10 +62,9 @@ RUNALL.sh
   it actually runs around 30,000 individual tests.
 
 The notion of keeping baseline test output and simply
-comparing output of a previous release vs the new 
-candidate release would involve saving some really large files.
-So the present test suite instead runs each test with
-two dwarfdump* versions and compares the output.
+comparing output of a previous release vs the new candidate
+release would involve saving some really large files.  So the
+present test suite instead runs tests with dwarfdump.
 
 To run all the tests, most of which
 compare the (committed in tests) dwarfdump
@@ -65,8 +72,7 @@ against your new source:
    sh PICKUPBIN   # This picks up latest source and compiles
                   # (for some files multiple times)
                   # It is essential before each test run.
-   sh RUNALL.sh   # This runs the tests 3 times with different
-                  # dwarfdump[2] and different comparisons
+   sh RUNALL.sh   # This runs the tests.
 
 To check for failure:
     grep FAIL  ALL*
@@ -75,7 +81,8 @@ To check for failure:
     the output change that is expected given the Source changes.
 
 In case all tests pass:
-    cp dwarfdump dwarfdump.O
+    cp dwarfdump dwarfdump<something>.O
+    (each environment has a unique name for the .O)
     commit the updated .O executables as the new baseline good
     dwarfdump for the next test run.
 
@@ -83,37 +90,37 @@ In the Source:
     sh UPDATEDWARFDUMPVERSION.sh #updates the version string
     a libdwarf header file (libdwarf/dwarf_version.h).
 
-    Update dwarfdump[2]/ChangeLog files to reflect the new version.
+    Update dwarfdump/ChangeLog files to reflect the new version.
     commit the new version string. If this has been done recently
     enough that users won't see the current version string 
     it need not be done at this time.
 
     The release version is in configure.ac. 
-    Currently 20201020
+    Currently 20201201
 
     git push origin master  # Push to sourceforge.
-    # We use 20201020 as an example below, use the current date.
+    # We use 20201201 as an example below, use the current date.
 
     mkdir /tmp/bld
     cd /tmp/bld
     <sourcelocation>/configure
     make dist
 
-    md5sum libdwarf-20201020.tar.gz
-    sha512sum libdwarf-20201020.tar.gz | fold -w 32
+    md5sum libdwarf-20201201.tar.gz
+    sha512sum libdwarf-20201201.tar.gz | fold -w 32
              # To get unforgeable checksums for the tar.gz file
              # md5sum is weak, but the pair should be
              # a strong confirmation.
              # The fold(1) is just to make the web
              # release page easier to work with.
 
-    git tag -a 20201020  -m 'Release 20201020'
-    git push origin 20201020   # push the tag
+    git tag -a 20201201  -m 'Release 20201201'
+    git push origin 20201201   # push the tag
 
 In the Tests:
     git push origin master
-    git tag -a 20201020  -m 'Release 20201020'
-    git push origin 20201020   # push the tag
+    git tag -a 20201201  -m 'Release 20201201'
+    git push origin 20201201   # push the tag
 
 Update web pages so that the new release is visible to users
 and copy the tar.gz to the appropriate web site.
