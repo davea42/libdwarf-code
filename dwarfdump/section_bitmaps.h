@@ -144,7 +144,7 @@ extern struct section_map_s  map_sectnames[] ;
 #define DW_SECTNAME_RELA_DEBUG_RANGES   ".rela.debug_ranges"
 #define DW_SECTNAME_RELA_DEBUG_RNGLISTS ".rela.debug_rnglists"
 #define DW_SECTNAME_RELA_DEBUG_TYPES    ".rela.debug_types"
-#define DW_SECTNAME_RELA_DEBUG_STR_OFFSETS    ".rela.debug_str_offsets"
+#define DW_SECTNAME_RELA_DEBUG_STR_OFFSETS ".rela.debug_str_offsets"
 #define DW_SECTNAME_RELA_DEBUG_PUBTYPES ".rela.debug_pubtypes"
 #define DW_SECTNAME_RELA_GDB_INDEX ".rela.debug_gdb_index"
 #define DW_SECTNAME_RELA_EH_FRAME ".rela.eh_frame"

@@ -254,7 +254,7 @@ void
 esb_append(struct esb_s *data, const char * in_string)
 {
     size_t len = 0;
-    if(in_string) {
+    if (in_string) {
         len = strlen(in_string);
         if (len) {
             esb_appendn_internal(data, in_string, len);
@@ -309,7 +309,7 @@ void
 esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen)
 {
     memset(data, 0, sizeof(*data));
-    if  (buflen < 1) {
+    if (buflen < 1) {
         return;
     }
     data->esb_string = buf;
@@ -325,7 +325,7 @@ esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen)
 void
 esb_destructor(struct esb_s *data)
 {
-    if(data->esb_fixed) {
+    if (data->esb_fixed) {
         data->esb_allocated_size = 0;
         data->esb_used_bytes = 0;
         data->esb_string = 0;
@@ -431,7 +431,7 @@ esb_append_printf_s(struct esb_s *data,
     }
     if (leftjustify) {
         esb_appendn_internal(data,s,stringlen);
-        if(fixedlen) {
+        if (fixedlen) {
             size_t trailingspaces = fixedlen - stringlen;
 
             esb_appendn_internal_spaces(data,trailingspaces);
@@ -443,7 +443,7 @@ esb_append_printf_s(struct esb_s *data,
                 the fixedlen*/
             esb_appendn_internal(data,s,stringlen);
         } else {
-            if(fixedlen) {
+            if (fixedlen) {
                 size_t leadingspaces = fixedlen - stringlen;
                 size_t k = 0;
 
@@ -800,7 +800,7 @@ esb_append_printf_i(struct esb_s *data,
                 return;
             }
         }
-        if(!done) {
+        if (!done) {
             for ( ;; ) {
                 esb_unsigned dig = 0;
 
@@ -870,7 +870,7 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     size_t remaining = 0;
 
     if (!null_device_handle) {
-        if(!esb_open_null_device()) {
+        if (!esb_open_null_device()) {
             esb_append(data," Unable to open null printf device on:");
             esb_append(data,in_string);
             return;

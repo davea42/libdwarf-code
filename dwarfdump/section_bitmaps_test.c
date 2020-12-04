@@ -58,7 +58,8 @@ int main()
             exit(1);
         }
         if (!mp->name) {
-            printf("FAIL map_sections.c at entry %u we have no name!\n",i);
+            printf("FAIL map_sections.c at entry %u"
+                " we have no name!\n",i);
             exit(1);
         }
     }

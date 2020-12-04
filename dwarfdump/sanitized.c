@@ -109,7 +109,7 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
 {
     const char *cp = s;
 
-    for( ; *cp; cp++) {
+    for ( ; *cp; cp++) {
         unsigned c = *cp & 0xff ;
 
         if (c == '%') {
@@ -151,7 +151,7 @@ static int
 no_questionable_chars(const char *s) {
     const char *cp = s;
 
-    for( ; *cp; cp++) {
+    for ( ; *cp; cp++) {
         unsigned c = *cp & 0xff ;
         if (c == '%') {
             /* Always sanitize a % ASCII char. */

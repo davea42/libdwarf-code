@@ -144,7 +144,7 @@ struct glflags_s {
     boolean gf_header_flag; /* Control printing of Elf header. */
     boolean gf_section_groups_flag;
 
-    boolean gf_producer_children_flag;   /* List of CUs per compiler */
+    boolean gf_producer_children_flag; /* List of CUs per compiler */
     boolean gf_check_abbrev_code;
     boolean gf_check_pubname_attr;
     boolean gf_check_reloc_offset;
@@ -181,10 +181,13 @@ struct glflags_s {
     boolean gf_found_error_message;
 
     boolean gf_check_names;
-    boolean gf_check_verbose_mode; /* During '-k' mode, display errors */
+
+    /* During '-k' mode, display errors */
+    boolean gf_check_verbose_mode;
+
     boolean gf_check_frames;
-    boolean gf_check_frames_extended;    /* Extensive frames check */
-    boolean gf_check_locations;          /* Location list check */
+    boolean gf_check_frames_extended;   /* Extensive frames check */
+    boolean gf_check_locations;         /* Location list check */
 
     boolean gf_print_usage_tag_attr;      /* Print basic usage */
     boolean gf_print_usage_tag_attr_full; /* Print full usage */
@@ -254,31 +257,35 @@ struct glflags_s {
 
     /*  Base address has a special meaning in DWARF4,5
         relative to address ranges. */
-    boolean seen_PU;                  /* Detected a PU */
-    boolean seen_CU;                  /* Detected a CU */
-    boolean need_CU_name;             /* Need CU name */
-    boolean need_CU_base_address;     /* Need CU Base address */
-    boolean need_CU_high_address;     /* Need CU High address */
-    boolean need_PU_valid_code;       /* Need PU valid code */
-    boolean in_valid_code;            /* set/reset in  subprogram
+    boolean seen_PU;               /* Detected a PU */
+    boolean seen_CU;               /* Detected a CU */
+    boolean need_CU_name;          /* Need CU name */
+    boolean need_CU_base_address;  /* Need CU Base address */
+    boolean need_CU_high_address;  /* Need CU High address */
+    boolean need_PU_valid_code;    /* Need PU valid code */
+    boolean in_valid_code;         /* set/reset in  subprogram
         and compile-unit DIES.*/
 
-    boolean seen_PU_base_address;     /* Detected a Base address
+    boolean seen_PU_base_address;  /* Detected a Base address
         for PU */
-    boolean seen_PU_high_address;     /* Detected a High address
+    boolean seen_PU_high_address;  /* Detected a High address
         for PU */
-    Dwarf_Addr PU_base_address;       /* PU Base address */
-    Dwarf_Addr PU_high_address;       /* PU High address */
+    Dwarf_Addr PU_base_address;    /* PU Base address */
+    Dwarf_Addr PU_high_address;    /* PU High address */
 
-    Dwarf_Off  DIE_offset;            /* DIE offset in compile unit */
-    Dwarf_Off  DIE_overall_offset;    /* DIE offset in .debug_info */
+    Dwarf_Off  DIE_offset;         /* DIE offset in compile unit */
+    Dwarf_Off  DIE_overall_offset; /* DIE offset in .debug_info */
 
     /*  These globals enable better error reporting. */
-    Dwarf_Off  DIE_CU_offset;         /* CU DIE offset in compile unit */
-    Dwarf_Off  DIE_CU_overall_offset; /* CU DIE offset in .debug_info */
-    int current_section_id;           /* Section being process */
+    Dwarf_Off  DIE_CU_offset;      /* CU DIE offset in compile unit */
 
-    /*  Base Address is needed for range lists and must come from a CU.
+    /* CU DIE offset in .debug_info */
+    Dwarf_Off  DIE_CU_overall_offset;
+
+    int current_section_id;        /* Section being process */
+
+    /*  Base Address is needed for range lists and
+        must come from a CU.
         Low address is for information and can come from a function
         or something in the CU. */
     Dwarf_Addr CU_base_address;       /* CU Base address */
@@ -385,15 +392,22 @@ boolean cu_data_is_set(void);
 /*  Shortcuts for additional trace options */
 #define DUMP_OPTIONS                0   /* Dump options. */
 #define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
-#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
-#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
+
+/* Dump Location (.debug_loc) Info. */
+#define DUMP_LOCATION_SECTION_INFO  2
+
+/* Dump Ranges (.debug_ranges) Info. */
+#define DUMP_RANGES_SECTION_INFO    3
+
 #define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
 #define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
 
 #define dump_options                glflags.nTrace[DUMP_OPTIONS]
 #define dump_ranges_info            glflags.nTrace[DUMP_RANGES_INFO]
-#define dump_location_section_info  glflags.nTrace[DUMP_LOCATION_SECTION_INFO]
-#define dump_ranges_section_info    glflags.nTrace[DUMP_RANGES_SECTION_INFO]
+#define dump_location_section_info \
+    glflags.nTrace[DUMP_LOCATION_SECTION_INFO]
+#define dump_ranges_section_info   \
+    glflags.nTrace[DUMP_RANGES_SECTION_INFO]
 #define dump_linkonce_info          glflags.nTrace[DUMP_LINKONCE_INFO]
 #define dump_visited_info           glflags.nTrace[DUMP_VISITED_INFO]
 
@@ -422,6 +436,7 @@ boolean cu_data_is_set(void);
 #define DEBUG_GNU_PUBTYPES 22
 #define DEBUG_SUP         23
 
-/* Print the information only if unique errors is set and it is first time */
+/*  Print the information only if unique errors
+    is set and it is first time */
 #define PRINTING_UNIQUE (!glflags.gf_found_error_message)
 #endif /* GLFLAGS_H */

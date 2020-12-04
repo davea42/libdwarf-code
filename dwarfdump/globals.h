@@ -106,11 +106,13 @@ extern "C" {
         }                                 \
     }
 
-/* Version 5 returns DW_AT_decl_file differently than earlier versions */
+/*  Version 5 returns DW_AT_decl_file differently
+    than earlier versions */
 #define DWVERSION5  5
 
 /* Calculate wasted space */
-extern void calculate_attributes_usage(Dwarf_Half attr,Dwarf_Half theform,
+extern void calculate_attributes_usage(Dwarf_Half attr,
+    Dwarf_Half theform,
     Dwarf_Unsigned value);
 
 extern boolean is_strstrnocase(const char *data, const char *pattern);
@@ -124,11 +126,14 @@ extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
 extern void tag_specific_checks_setup(Dwarf_Debug dbg,
 Dwarf_Half val,int die_indent_level);
 
-extern int simple_err_return_msg_either_action(int res,const char *msg);
+extern int simple_err_return_msg_either_action(int res,
+    const char *msg);
 extern int simple_err_return_action(int res,const char *msg);
 extern int simple_err_only_return_action(int res,const char *msg);
-extern void print_error_and_continue (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
-extern void print_error (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
+extern void print_error_and_continue (Dwarf_Debug dbg,
+    const char * msg,int res, Dwarf_Error err);
+extern void print_error (Dwarf_Debug dbg, const char * msg,
+    int res, Dwarf_Error err);
 
 extern int print_line_numbers_this_cu (Dwarf_Debug dbg,
     Dwarf_Die in_die,
@@ -145,7 +150,8 @@ extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
 extern int print_raw_all_rnglists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_raw_all_loclists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
-extern int print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info,Dwarf_Error *);
+extern int print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info,
+    Dwarf_Error *);
 extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_abbrevs (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_strings (Dwarf_Debug dbg,Dwarf_Error *);
@@ -200,9 +206,11 @@ int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
     Dwarf_Error *err);
 
 /* Get number of abbreviations for a CU */
-extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);
+extern void get_abbrev_array_info(Dwarf_Debug dbg,
+    Dwarf_Unsigned offset);
 /* Validate an abbreviation */
-extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
+extern void validate_abbrev_code(Dwarf_Debug dbg,
+    Dwarf_Unsigned abbrev_code);
 
 extern int print_one_die(
     Dwarf_Debug dbg,
@@ -226,8 +234,10 @@ extern void add_cu_name_compiler_target(char *name);
     they kept (for now) their capitalization.
     The capitalization will likely change. */
 extern void PRINT_CU_INFO(void);
-extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
-extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc);
+extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category,
+    int inc);
+extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category,
+    int inc);
 extern void DWARF_CHECK_ERROR_PRINT_CU(void);
 #define DWARF_CHECK_ERROR(c,d)    DWARF_CHECK_ERROR3(c,d,0,0)
 #define DWARF_CHECK_ERROR2(c,d,e) DWARF_CHECK_ERROR3(c,d,e,0)
@@ -250,7 +260,8 @@ int get_proc_name_by_die(Dwarf_Debug dbg,
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 
 extern int print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err);
-extern int print_debugfission_index(Dwarf_Debug dbg,const char *type,    Dwarf_Error *);
+extern int print_debugfission_index(Dwarf_Debug dbg,
+    const char *type, Dwarf_Error *);
 
 void clean_up_die_esb(void);
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
@@ -290,8 +301,10 @@ int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     struct esb_s *string_out,
     Dwarf_Error *err);
 
-/* encoding_type_func used in print_die.c and print_lopc_hipc_attr.c  */
-typedef const char *(*encoding_type_func) (unsigned,int doprintingonerr);
+/*  encoding_type_func used in print_die.c and
+    print_lopc_hipc_attr.c  */
+typedef const char *(*encoding_type_func)
+    (unsigned,int doprintingonerr);
 int dd_get_integer_and_name(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Unsigned * uval_out,

@@ -93,8 +93,13 @@ init_global_flags(void)
     glflags.gf_frame_flag = FALSE;      /* .debug_frame section. */
     glflags.gf_eh_frame_flag = FALSE;   /* GNU .eh_frame section. */
     glflags.gf_pubnames_flag = FALSE;
-    glflags.gf_macinfo_flag = FALSE; /* DWARF2,3,4. Old macro section*/
-    glflags.gf_macro_flag = FALSE; /* DWARF5(and DWARF4 extension) new macro section */
+
+    /* DWARF2,3,4. Old macro section*/
+    glflags.gf_macinfo_flag = FALSE;
+
+    /* DWARF5(and DWARF4 extension) new macro section */
+    glflags.gf_macro_flag = FALSE;
+
     glflags.gf_loc_flag = FALSE;
     glflags.gf_aranges_flag = FALSE; /* .debug_aranges section. */
     glflags.gf_ranges_flag = FALSE; /* .debug_ranges section. */
@@ -104,9 +109,15 @@ init_global_flags(void)
     glflags.gf_static_var_flag = FALSE;
     glflags.gf_types_flag = FALSE;
     glflags.gf_weakname_flag = FALSE;
-    glflags.gf_header_flag = FALSE; /* Control printing of Elf header. */
+
+    /* Control printing of Elf header. */
+    glflags.gf_header_flag = FALSE;
+
     glflags.gf_gdbindex_flag = FALSE;
-    glflags.gf_producer_children_flag = FALSE;   /* List of CUs per compiler */
+
+    /* List of CUs per compiler */
+    glflags.gf_producer_children_flag = FALSE;
+
     glflags.gf_check_abbrev_code = FALSE;
     glflags.gf_check_pubname_attr = FALSE;
     glflags.gf_check_reloc_offset = FALSE;
@@ -125,7 +136,10 @@ init_global_flags(void)
     glflags.gf_check_di_gaps = FALSE;
     glflags.gf_check_forward_decl = FALSE;
     glflags.gf_check_self_references = FALSE;
-    glflags.gf_check_attr_encoding = FALSE;   /* Attributes encoding */
+
+    /* Attributes encoding */
+    glflags.gf_check_attr_encoding = FALSE;
+
     glflags.gf_generic_1200_regs = FALSE;
     glflags.gf_suppress_check_extensions_tables = FALSE;
     glflags.gf_check_duplicated_attributes = FALSE;
@@ -187,7 +201,7 @@ init_global_flags(void)
 
     /*  10 is sort of arbitrary, it tries to keep
         the indentation sane ( a 500 level DIE tree
-        is just too much to represent with prefix 
+        is just too much to represent with prefix
         spaces).*/
     glflags.gf_max_space_indent = 10;
     /* Print search results in wide format? */
@@ -203,7 +217,8 @@ init_global_flags(void)
     glflags.gf_error_code_in_name_search_by_address = 0;
     glflags.gf_all_cus_seen_search_by_address = 0;
 
-    /*  Base address has a special meaning in DWARF4 relative to address ranges. */
+    /*  Base address has a special meaning in
+        DWARF4 relative to address ranges. */
     glflags.seen_PU = FALSE;              /* Detected a PU */
     glflags.seen_CU = FALSE;              /* Detected a CU */
     glflags.need_CU_name = TRUE;          /* Need CU name */
@@ -216,20 +231,29 @@ init_global_flags(void)
         or CU DIE  has lowpc and highpc.   */
     glflags.in_valid_code = FALSE;
 
-    glflags.seen_PU_base_address = FALSE; /* Detected a Base address for PU */
-    glflags.seen_PU_high_address = FALSE; /* Detected a High address for PU */
+    /* Detected a Base address for PU */
+    glflags.seen_PU_base_address = FALSE;
+
+    /* Detected a High address for PU */
+    glflags.seen_PU_high_address = FALSE;
+
     glflags.PU_base_address = 0;       /* PU Base address */
     glflags.PU_high_address = 0;       /* PU High address */
 
-    glflags.DIE_offset = 0;            /* DIE offset in compile unit */
-    glflags.DIE_overall_offset = 0;    /* DIE offset in .debug_info */
+    glflags.DIE_offset = 0;         /* DIE offset in compile unit */
+    glflags.DIE_overall_offset = 0; /* DIE offset in .debug_info */
 
     /*  These globals  enable better error reporting. */
-    glflags.DIE_CU_offset = 0;         /* CU DIE offset in compile unit */
-    glflags.DIE_CU_overall_offset = 0; /* CU DIE offset in .debug_info */
-    glflags.current_section_id = 0;           /* Section being process */
 
-    /*  Base Address is needed for range lists and must come from a CU.
+    /* CU DIE offset in compile unit */
+    glflags.DIE_CU_offset = 0;
+
+    /* CU DIE offset in .debug_info */
+    glflags.DIE_CU_overall_offset = 0;
+    glflags.current_section_id = 0; /* Section being process */
+
+    /*  Base Address is needed for range lists and
+        must come from a CU.
         Low address is for information and can come from a function
         or something in the CU. */
     glflags.CU_base_address = 0;       /* CU Base address */
@@ -270,7 +294,8 @@ init_global_flags(void)
     */
     glflags.break_after_n_units = INT_MAX;
 
-    glflags.section_high_offsets_global = &_section_high_offsets_global;
+    glflags.section_high_offsets_global =
+        &_section_high_offsets_global;
 
     glflags.pRangesInfo = NULL;
     glflags.pLinkonceInfo = NULL;

@@ -90,7 +90,7 @@ section_name_is_debug_and_wanted(const char *section_name)
         return TRUE;
     }
     for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
-        if(!strcmp(section_name,map_sectnames[i].name) &&
+        if (!strcmp(section_name,map_sectnames[i].name) &&
             section_map[map_sectnames[i].value]) {
             return TRUE;
         }
@@ -130,14 +130,15 @@ any_section_header_to_print(void)
 {
     unsigned i = 1;
     for ( ; i < DW_HDR_HEADER; ++i) {
-        if(section_map[i]) {
+        if (section_map[i]) {
             return TRUE;
         }
     }
     return FALSE;
 }
 
-/*  TRUE if the section map entry specified by the index has been enabled. */
+/*  TRUE if the section map entry specified by the
+    index has been enabled. */
 boolean
 section_map_enabled(unsigned index)
 {
@@ -154,7 +155,8 @@ enable_section_map_entry(unsigned index)
     }
 }
 
-/*  TRUE if the reloc map entry specified by the index has been enabled. */
+/*  TRUE if the reloc map entry specified
+    by the index has been enabled. */
 boolean
 reloc_map_enabled(unsigned index)
 {

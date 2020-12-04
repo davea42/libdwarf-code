@@ -38,13 +38,15 @@ strstr or strcasestr in the case of
 an empty 'contained' argument: we return FALSE (this
 case is not interesting for dwarfdump).
 
-There is a public domain stristr().    But given that dwarfdump is GPL,
+There is a public domain stristr().
+But given that dwarfdump is GPL,
 it would seem (IANAL) that we cannot mix public domain code
 into the release.
 
 The software here is independently written and indeed trivial.
 
-The POSIX function tolower() is only properly defined on unsigned char, hence
+The POSIX function tolower() is only properly
+defined on unsigned char, hence
 the ugly casts.
 
 strstrnocase.c
@@ -60,7 +62,8 @@ is_strstrnocase(const char * container, const char * contained)
     const unsigned char *ct = (const unsigned char *)container;
     for (; *ct; ++ct )
     {
-        const unsigned char * cntnd = (const unsigned char *)contained;
+        const unsigned char * cntnd =
+            (const unsigned char *)contained;
 
         for (; *cntnd && *ct ; ++cntnd,++ct)
         {
