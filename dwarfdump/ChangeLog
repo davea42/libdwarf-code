@@ -1,3 +1,11 @@
+2020-12-03 David Anderson
+    * command_options.c: The --print-macinfo prints whatever
+      .debug_macro or .debug_macinfo section exists.
+      Updated the --help output to say that.
+      Removed trailing whitespace and a few other
+      small changes to match libdwarf codingstyle.
+    * compiler_info.c: Removed trailing whitespace and a few other
+      small changes to match libdwarf codingstyle.
 2020-11-30 David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

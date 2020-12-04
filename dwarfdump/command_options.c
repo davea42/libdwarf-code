@@ -209,9 +209,9 @@ special_program_name(char *n)
     char *cp = n;
     size_t mslen = strlen(mp);
 
-    for(  ; *cp; ++cp ) {
+    for ( ; *cp; ++cp) {
         if (*cp == *mp) {
-            if(!strncmp(cp,mp,mslen)){
+            if (!strncmp(cp,mp,mslen)){
                 esb_append(glflags.newprogname,revstr);
                 cp += mslen-1;
             } else {
@@ -478,7 +478,8 @@ static const char *usage_long_text[] = {
 "-ls  --print-lines-short Print line section, but do not",
 "                         print <pc> address",
 "-c   --print-loc         Print loc section",
-"-m   --print-macinfo     Print macinfo section",
+"-m   --print-macinfo     Print DWARF5 style .debug_macro section",
+"                         and DWARF2,3,4 .debug_macinfo section.",
 "-P   --print-producers   Print list of compile units per producer",
 "-p   --print-pubnames    Print pubnames section",
 "-N   --print-ranges      Print ranges section",
@@ -1103,7 +1104,7 @@ void arg_format_producer(void)
     }
 }
 
-/*  Option '--format-expr-ops-joined' 
+/*  Option '--format-expr-ops-joined'
     restoring pre- December 2020 expression block printing */
 void arg_format_expr_ops_joined(void)
 {
@@ -2009,7 +2010,7 @@ insert_debuglink_path(char *p)
         free(newarray);
         return DW_DLV_ERROR;
     }
-    for( u = 0; u < curcount; ++u) {
+    for ( u = 0; u < curcount; ++u) {
         newarray[u] = glflags.gf_global_debuglink_paths[u];
     }
     newarray[curcount] = pstr;
@@ -2543,7 +2544,7 @@ set_command_options(int argc, char *argv[])
             arg_format_ellipsis();         break;
         case OPT_FORMAT_EXPR_OPS_JOINED:
             arg_format_expr_ops_joined(); break;
-        case OPT_FORMAT_EXTENSIONS:       
+        case OPT_FORMAT_EXTENSIONS:
             arg_format_extensions();       break;
         case OPT_FORMAT_GLOBAL_OFFSETS:
             arg_format_global_offsets();   break;
@@ -2714,7 +2715,8 @@ process_args(int argc, char *argv[])
             "or the other.  -x abi= ignored.\n");
         config_file_abi = 0;
     }
-    {   /*  even with no abi we look as there may be
+    {
+        /*  even with no abi we look as there may be
             a dwarfdump option there we know about. */
         int res = 0;
         res = find_conf_file_and_read_config(
@@ -2724,14 +2726,14 @@ process_args(int argc, char *argv[])
             glflags.config_file_data);
         if (res == FOUND_ERROR) {
             printf("Frame not configured due to error(s)."
-               " using generic 100 registers.\n");
+                " using generic 100 registers.\n");
             glflags.gf_eh_frame_flag = FALSE;
             glflags.gf_frame_flag = FALSE;
         } else if (res == FOUND_DONE || res == FOUND_OPTION) {
             if (glflags.gf_generic_1200_regs) {
                 init_generic_config_1200_regs(glflags.config_file_data);
             }
-        } else { 
+        } else {
             /* FOUND_ABI_START nothing to do. */
         }
     }

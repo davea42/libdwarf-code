@@ -80,7 +80,8 @@ print_specific_checks_results(Compiler *pCompiler)
     printf("\nDWARF CHECK RESULT\n");
     printf("<item>                    <checks>    <errors>\n");
     if (glflags.gf_check_pubname_attr) {
-        PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
+        PRINT_CHECK_RESULT("pubname_attr", pCompiler,
+            pubname_attr_result);
     }
     if (glflags.gf_check_attr_tag) {
         PRINT_CHECK_RESULT("attr_tag", pCompiler, attr_tag_result);
@@ -89,7 +90,8 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("tag_tree", pCompiler, tag_tree_result);
     }
     if (glflags.gf_check_type_offset) {
-        PRINT_CHECK_RESULT("type_offset", pCompiler, type_offset_result);
+        PRINT_CHECK_RESULT("type_offset", pCompiler,
+            type_offset_result);
     }
     if (glflags.gf_check_decl_file) {
         PRINT_CHECK_RESULT("decl_file", pCompiler, decl_file_result);
@@ -114,15 +116,18 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("frames",pCompiler, frames_result);
     }
     if (glflags.gf_check_locations) {
-        PRINT_CHECK_RESULT("locations",pCompiler, locations_result);
+        PRINT_CHECK_RESULT("locations",pCompiler,
+            locations_result);
     }
 
     if (glflags.gf_check_harmless) {
-        PRINT_CHECK_RESULT("harmless_errors", pCompiler, harmless_result);
+        PRINT_CHECK_RESULT("harmless_errors", pCompiler,
+            harmless_result);
     }
 
     if (glflags.gf_check_abbreviations) {
-        PRINT_CHECK_RESULT("abbreviations", pCompiler, abbreviations_result);
+        PRINT_CHECK_RESULT("abbreviations", pCompiler,
+            abbreviations_result);
     }
 
     if (glflags.gf_check_dwarf_constants) {
@@ -131,7 +136,8 @@ print_specific_checks_results(Compiler *pCompiler)
     }
 
     if (glflags.gf_check_di_gaps) {
-        PRINT_CHECK_RESULT("debug_info_gaps", pCompiler, di_gaps_result);
+        PRINT_CHECK_RESULT("debug_info_gaps", pCompiler,
+            di_gaps_result);
     }
 
     if (glflags.gf_check_forward_decl) {
@@ -146,7 +152,8 @@ print_specific_checks_results(Compiler *pCompiler)
 
     /* Display attributes encoding results */
     if (glflags.gf_check_attr_encoding) {
-        PRINT_CHECK_RESULT("attr_encoding", pCompiler, attr_encoding_result);
+        PRINT_CHECK_RESULT("attr_encoding", pCompiler,
+            attr_encoding_result);
     }
 
     /* Duplicated attributes */
@@ -155,7 +162,8 @@ print_specific_checks_results(Compiler *pCompiler)
             pCompiler, duplicated_attributes_result);
     }
 
-    PRINT_CHECK_RESULT("** Summarize **",pCompiler, total_check_result);
+    PRINT_CHECK_RESULT("** Summarize **",pCompiler,
+        total_check_result);
     fflush(stdout);
 }
 
@@ -239,7 +247,8 @@ update_compiler_target(const char *producer_name)
             hasprefix(glflags.CU_producer,"SN") ? TRUE : FALSE;
         boolean gcc_compiler =
             hasprefix(glflags.CU_producer,"GNU") ? TRUE : FALSE;
-        current_cu_is_checked_compiler = glflags.gf_check_all_compilers ||
+        current_cu_is_checked_compiler =
+            glflags.gf_check_all_compilers ||
             (snc_compiler && glflags.gf_check_snc_compiler) ||
             (gcc_compiler && glflags.gf_check_gcc_compiler) ;
     }
@@ -248,9 +257,11 @@ update_compiler_target(const char *producer_name)
     for (index = 1; index <= compilers_detected_count; ++index) {
         if (
 #if _WIN32
-            !stricmp(compilers_detected[index].name,glflags.CU_producer)
+            !stricmp(compilers_detected[index].name,
+                glflags.CU_producer)
 #else
-            !strcmp(compilers_detected[index].name,glflags.CU_producer)
+            !strcmp(compilers_detected[index].name,
+                glflags.CU_producer)
 #endif /* _WIN32 */
             ) {
             /* Set current compiler index */
@@ -264,7 +275,8 @@ update_compiler_target(const char *producer_name)
         if (compilers_detected_count + 1 < COMPILER_TABLE_MAX) {
             Compiler *pCompiler = 0;
             char *cmp = makename(glflags.CU_producer);
-            /* Set current compiler index, first compiler at position [1] */
+            /*  Set current compiler index,
+                first compiler at position [1] */
             current_compiler = ++compilers_detected_count;
             pCompiler = &compilers_detected[current_compiler];
             reset_compiler_entry(pCompiler);
@@ -386,8 +398,10 @@ print_checks_results(void)
         if (compilers_not_detected) {
             count = 0;
             printf(
-                "\n%d Compilers not detected:\n",compilers_not_detected);
-            for (index = 1; index <= compilers_targeted_count; ++index) {
+                "\n%d Compilers not detected:\n",
+                compilers_not_detected);
+            for (index = 1; index <= compilers_targeted_count;
+                ++index) {
                 if (!compilers_targeted[index].verified) {
                     printf(
                         "%02d: '%s'\n",
@@ -416,7 +430,8 @@ print_checks_results(void)
             if (glflags.gf_print_summary_all) {
                 count = 0;
                 printf("\n*** ERRORS PER COMPILER ***\n");
-                for (index = 1; index <= compilers_detected_count; ++index) {
+                for (index = 1; index <= compilers_detected_count;
+                    ++index) {
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
                         printf("\n%02d: %s",
@@ -438,10 +453,12 @@ void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc)
 {
     compilers_detected[0].results[category].checks += inc;
     compilers_detected[0].results[total_check_result].checks += inc;
-    if (current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
-        compilers_detected[current_compiler].results[category].checks += inc;
-        compilers_detected[current_compiler].results[total_check_result].checks
-            += inc;
+    if (current_compiler > 0 &&
+        current_compiler <  COMPILER_TABLE_MAX) {
+        compilers_detected[current_compiler].
+            results[category].checks += inc;
+        compilers_detected[current_compiler].
+            results[total_check_result].checks += inc;
         compilers_detected[current_compiler].verified = TRUE;
     }
 }
@@ -450,10 +467,12 @@ void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc)
 {
     compilers_detected[0].results[category].errors += inc;
     compilers_detected[0].results[total_check_result].errors += inc;
-    if (current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
-        compilers_detected[current_compiler].results[category].errors += inc;
-        compilers_detected[current_compiler].results[total_check_result].errors
-            += inc;
+    if (current_compiler > 0 &&
+        current_compiler <  COMPILER_TABLE_MAX) {
+        compilers_detected[current_compiler].
+            results[category].errors += inc;
+        compilers_detected[current_compiler].results[
+            total_check_result].errors += inc;
     }
 }
 
