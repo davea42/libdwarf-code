@@ -50,67 +50,67 @@ print_entry(int c)
     char v[2];
     v[0] = c;
     v[1] = 0;
-    if(c == 0) {
+    if (c == 0) {
         printf("0, /* NUL 0x%02x */\n",c);
         return;
     }
-    if(isalnum(c) || c == ' ' ) {
+    if (isalnum(c) || c == ' ' ) {
         /*  We let the space character print as space since
             lots of files are named that way in Mac and Windows.
         */
         printf("1, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if(c == 0x21 || c == 0x23 || c == 0x26) {
+    if (c == 0x21 || c == 0x23 || c == 0x26) {
         /*  We let the space character print as space since
             lots of files are named that way in Mac and Windows.
         */
         printf("1, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if(isspace(c) ) {
+    if (isspace(c) ) {
         /* Other white space translated. */
         printf("0, /* whitespace 0x%02x */\n",c);
         return;
     }
-    if(c == 0x7f) {
+    if (c == 0x7f) {
         printf("0, /* DEL 0x%02x */\n",c);
         return;
     }
-    if(c >= 0x01 && c <=  0x20 ) {
+    if (c >= 0x01 && c <=  0x20 ) {
         /* ASCII control characters. */
         printf("0, /* control 0x%02x */\n",c);
         return;
     }
-    if(c == '\'' || c == '\"' || c == '%' || c == ';' ) {
+    if (c == '\'' || c == '\"' || c == '%' || c == ';' ) {
         printf("0, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if(c >= 0x3a && c <=  0x40 ) {
+    if (c >= 0x3a && c <=  0x40 ) {
         /* ASCII */
         printf("1, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if(c == 0xa0 || c == 0xff ) {
+    if (c == 0xa0 || c == 0xff ) {
         printf("0, /* other: 0x%02x */\n",c);
         return;
     }
-    if(c >= 0x27 && c <=  0x2f ) {
+    if (c >= 0x27 && c <=  0x2f ) {
         /* ASCII */
         printf("1, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if(c >= 0x5b && c <=  0x5f ) {
+    if (c >= 0x5b && c <=  0x5f ) {
         /* ASCII */
         printf("1, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if(c >= 0x60 && c <=  0x60 ) {
+    if (c >= 0x60 && c <=  0x60 ) {
         /* ASCII */
         printf("0, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if(c >= 0x7b && c <=  0x7e ) {
+    if (c >= 0x7b && c <=  0x7e ) {
         /* ASCII */
         printf("1, /* \'%s\' 0x%02x */\n",v,c);
         return;

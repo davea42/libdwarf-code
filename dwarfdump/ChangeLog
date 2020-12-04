@@ -1,4 +1,8 @@
 2020-12-04 David Anderson
+    * testesb.c,uritablebuild.c: Revisions to pass
+      dicheck coding-style
+      rules (libdwarf codingstyle).
+2020-12-04 David Anderson
     * compiler_info.h: Reduced 2 line lengths for consistency
       with libdwarf codingstyle.
     * compiler_info.c: Introducing a local pointer shortened

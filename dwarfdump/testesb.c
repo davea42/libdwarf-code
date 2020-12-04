@@ -48,20 +48,26 @@ validate_esb(int instance,
 {
     if (esb_string_len(d) != explen) {
         ++failcount;
-        printf("  FAIL instance %d  esb_string_len() %u explen %u line %d\n",
-            instance,(unsigned)esb_string_len(d),(unsigned)explen,line);
+        printf("  FAIL instance %d  esb_string_len()"
+            " %u explen %u line %d\n",
+            instance,(unsigned)esb_string_len(d),
+            (unsigned)explen,line);
     }
 #if 0
-    This test not critical Lets not check allocation size any more. Februar 25, 2020
+    This test not critical Lets not check allocation size
+    any more. Februar 25, 2020
     if (d->esb_allocated_size != expalloc) {
         ++failcount;
-        printf("  FAIL instance %d  esb_allocated_size  %u expalloc %u line %d\n",
-            instance,(unsigned)d->esb_allocated_size,(unsigned)expalloc,line);
+        printf("  FAIL instance %d  esb_allocated_size  %u"
+            " expalloc %u line %d\n",
+            instance,(unsigned)d->esb_allocated_size,
+            (unsigned)expalloc,line);
     }
 #endif
-    if(strcmp(esb_get_string(d),expout)) {
+    if (strcmp(esb_get_string(d),expout)) {
         ++failcount;
-        printf("  FAIL instance %d esb_get_string %s expstr %s line %d\n",
+        printf("  FAIL instance %d esb_get_string"
+            " %s expstr %s line %d\n",
             instance,esb_get_string(d),expout,line);
     }
 }
@@ -186,7 +192,8 @@ int main()
             Now inserts particular string instead. */
         esb_appendn(&d,oddarray,6);
         validate_esb(10,&d,23,24,"ESBERR_appendn bad call",__LINE__);
-        /*  The next one just keeps the previous ESBERR* and adds a 'c' */
+        /*  The next one just keeps the previous ESBERR*
+            and adds a 'c' */
         esb_appendn(&d,"cc",1);
         validate_esb(11,&d,24,25,"ESBERR_appendn bad callc",__LINE__);
         esb_empty_string(&d);
@@ -332,7 +339,8 @@ int main()
         i = u;
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
         esb_append_printf_i(&d5,"aaa %4d bbb",i);
-        validate_esb(26,&d5,28,29,"aaa -9223372036854775808 bbb",__LINE__);
+        validate_esb(26,&d5,28,29,"aaa -9223372036854775808 bbb",
+            __LINE__);
         esb_destructor(&d5);
 
         i = 987665432;
