@@ -451,28 +451,32 @@ print_checks_results(void)
 
 void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc)
 {
-    compilers_detected[0].results[category].checks += inc;
-    compilers_detected[0].results[total_check_result].checks += inc;
+    Compiler * c = 0;
+
+    c = &compilers_detected[0];
+    c->results[category].checks += inc;
+    c->results[total_check_result].checks += inc;
     if (current_compiler > 0 &&
         current_compiler <  COMPILER_TABLE_MAX) {
-        compilers_detected[current_compiler].
-            results[category].checks += inc;
-        compilers_detected[current_compiler].
-            results[total_check_result].checks += inc;
-        compilers_detected[current_compiler].verified = TRUE;
+        c = &compilers_detected[current_compiler];
+        c->results[category].checks += inc;
+        c->results[total_check_result].checks += inc;
+        c->verified = TRUE;
     }
 }
 
 void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc)
 {
-    compilers_detected[0].results[category].errors += inc;
-    compilers_detected[0].results[total_check_result].errors += inc;
+    Compiler * c = 0;
+
+    c = &compilers_detected[0];
+    c->results[category].errors += inc;
+    c->results[total_check_result].errors += inc;
     if (current_compiler > 0 &&
         current_compiler <  COMPILER_TABLE_MAX) {
-        compilers_detected[current_compiler].
-            results[category].errors += inc;
-        compilers_detected[current_compiler].results[
-            total_check_result].errors += inc;
+        c = &compilers_detected[current_compiler];
+        c->results[category].errors += inc;
+        c->results[total_check_result].errors += inc;
     }
 }
 

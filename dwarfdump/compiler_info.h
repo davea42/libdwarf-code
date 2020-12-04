@@ -63,8 +63,10 @@ extern boolean checking_this_compiler(void);
 extern void reset_compiler_entry(Compiler *compiler);
 extern void print_checks_results(void);
 
-extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
-extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc);
+extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category,
+    int inc);
+extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category,
+    int inc);
 
 extern boolean record_producer(char *name);
 

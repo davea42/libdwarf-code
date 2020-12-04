@@ -1,3 +1,8 @@
+2020-12-04 David Anderson
+    * compiler_info.h: Reduced 2 line lengths for consistency
+      with libdwarf codingstyle.
+    * compiler_info.c: Introducing a local pointer shortened
+      a few lines. Is now easier to read two small functions.
 2020-12-03 David Anderson
     * command_options.c: The --print-macinfo prints whatever
       .debug_macro or .debug_macinfo section exists.
