@@ -1,5 +1,5 @@
 2020-12-04 David Anderson
-    * testesb.c,uritablebuild.c: Revisions to pass
+    * tag_common.c,testesb.c,uritablebuild.c: Revisions to pass
       dicheck coding-style
       rules (libdwarf codingstyle).
 2020-12-04 David Anderson

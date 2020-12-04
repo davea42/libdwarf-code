@@ -122,7 +122,8 @@ read_value(unsigned int *outval, FILE*file)
             }
 
             /* Impossible */
-            fprintf(stderr, "tag_attr: Impossible error reading table, "
+            fprintf(stderr, "tag_attr: "
+                "Impossible error reading table, "
                 "%d lines read\n", linecount);
             exit(FAILED);
         }
