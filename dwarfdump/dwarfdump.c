@@ -85,7 +85,8 @@ extern int elf_open(const char *name,int mode);
 #endif /* HAVE_ELF_OPEN */
 
 #ifdef HAVE_CUSTOM_LIBELF
-extern int elf_is_custom_format(void *header, size_t headerlen, size_t *size,
+extern int elf_is_custom_format(void *header, size_t headerlen,
+    size_t *size,
     unsigned *endian, unsigned *offsetsize, int *errcode);
 #endif /* HAVE_CUSTOM_LIBELF */
 
@@ -252,7 +253,8 @@ flag_data_pre_allocation(void)
         glflags.gf_do_check_dwarf ||
         glflags.gf_check_self_references) {
         glflags.pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
-        glflags.pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
+        glflags.pLinkonceInfo =
+            AllocateBucketGroup(KIND_SECTIONS_INFO);
         glflags.pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
     }
     /* Create the unique error table */
@@ -500,19 +502,22 @@ main(int argc, char *argv[])
     esb_constructor(&dwarf_error_line);
 #ifdef _WIN32
     /*  Often we redirect the output to a file, but we have found
-        issues due to the buffering associated with stdout. Some issues
-        were fixed just by the use of 'fflush', but the main issued
-        remained.
-        The stdout stream is buffered, so will only display what's in the
-        buffer after it reaches a newline (or when it's told to). We have a
-        few options to print immediately:
+        issues due to the buffering associated with stdout.
+        Some issues were fixed just by the use of 'fflush',
+        but the main issued remained.
+        The stdout stream is buffered, so will only display 
+        what's in the buffer after it reaches a newline
+        (or when it's told to).
+        We have a few options to print immediately:
         - Print to stderr instead using fprintf.
-        - Print to stdout and flush stdout whenever we need it to using fflush.
+        - Print to stdout and flush stdout whenever
+            we need it to using fflush.
         - We can also disable buffering on stdout by using setbuf:
             setbuf(stdout,NULL);
             Make stdout unbuffered; this seems to work for all cases.
-        The problem is no longer present. September 2018.
-    */
+        The problem is no longer present. Now, for practical
+        purposes, there is no stderr output, all is stdout.
+        September 2018.  */
 
     /*  Calling setbuf() with NULL argument, it turns off
         all buffering for the specified stream.
@@ -561,7 +566,7 @@ main(int argc, char *argv[])
         MacOS dsym or a GNU debuglink might need, we hope. */
     temp_path_buf_len = strlen(file_name)*3 + 200 + 2;
     temp_path_buf = malloc(temp_path_buf_len);
-    if(!temp_path_buf) {
+    if (!temp_path_buf) {
         fprintf(stderr, "%s ERROR:  Unable to malloc %lu bytes "
             "for possible path string %s.\n",
             glflags.program_name,(unsigned long)temp_path_buf_len,
@@ -580,7 +585,7 @@ main(int argc, char *argv[])
         0,0,
         &ftype,&endian,&offsetsize,&filesize,
         &path_source,&errcode);
-    if ( res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         fprintf(stderr, "%s ERROR:  Can't open %s\n",
             glflags.program_name, sanitized(file_name));
         global_destructors();
@@ -617,11 +622,11 @@ main(int argc, char *argv[])
             0,0,
             &tftype,&tendian,&toffsetsize,&tfilesize,
             &tpath_source,&errcode);
-        if ( res != DW_DLV_OK) {
+        if (res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR) {
                 char *errmsg = dwarf_errmsg_by_number(errcode);
-                fprintf(stderr, "%s ERROR:  can't open tied file.. %s:"
-                    " %s\n",
+                fprintf(stderr, "%s ERROR:  can't open tied file"
+                    ".. %s: %s\n",
                     glflags.program_name, sanitized(tied_file_name),
                     errmsg);
             } else {
@@ -649,7 +654,8 @@ main(int argc, char *argv[])
         global_tiedfd = open_a_file(esb_get_string(
             &global_tied_file_name));
         if (global_tiedfd == -1) {
-            fprintf(stderr, "%s ERROR:  can't open tied file... %s\n",
+            fprintf(stderr, "%s ERROR:  can't open tied file"
+                "... %s\n",
                 glflags.program_name,
                 sanitized(esb_get_string(&global_tied_file_name)));
             global_destructors();
@@ -660,7 +666,7 @@ main(int argc, char *argv[])
     /* ======= end FINDING NAMES AND OPENING FDs ===== */
     temp_path_buf[0] = 0;
     /* ======= BEGIN PROCESSING OBJECT FILES BY TYPE ===== */
-    if ( (ftype == DW_FTYPE_ELF && (glflags.gf_reloc_flag ||
+    if ((ftype == DW_FTYPE_ELF && (glflags.gf_reloc_flag ||
         glflags.gf_header_flag)) ||
 #ifdef HAVE_CUSTOM_LIBELF
         ftype == DW_FTYPE_CUSTOM_ELF ||
@@ -747,7 +753,8 @@ print_any_harmless_errors(Dwarf_Debug dbg)
     unsigned totalcount = 0;
     unsigned i = 0;
     unsigned printcount = 0;
-    int res = dwarf_get_harmless_error_list(dbg,LOCAL_PTR_ARY_COUNT,buf,
+    int res = dwarf_get_harmless_error_list(dbg,
+        LOCAL_PTR_ARY_COUNT,buf,
         &totalcount);
     if (res == DW_DLV_NO_ENTRY) {
         return;
@@ -816,10 +823,10 @@ get_address_size_and_max(Dwarf_Debug dbg,
     if (dres != DW_DLV_OK) {
         return dres;
     }
-    if(max) {
+    if (max) {
         *max = (lsize == 8 ) ? 0xffffffffffffffffULL : 0xffffffff;
     }
-    if(size) {
+    if (size) {
         *size = lsize;
     }
     return DW_DLV_OK;
@@ -1285,20 +1292,22 @@ process_one_file(
         }
         if (glflags.gf_check_macros) {
             set_global_section_sizes(dbg);
-            if(macro_check_tree) {
+            if (macro_check_tree) {
                 /* Fake item representing end of section. */
                 /* Length of the fake item is zero. */
                 print_macro_statistics("DWARF5 .debug_macro",
                     &macro_check_tree,
-                    glflags.section_high_offsets_global->debug_macro_size,
+                    glflags.section_high_offsets_global->
+                        debug_macro_size,
                     &err);
             }
-            if(macinfo_check_tree) {
+            if (macinfo_check_tree) {
                 /* Fake item representing end of section. */
                 /* Length of the fake item is zero. */
                 print_macro_statistics("DWARF2 .debug_macinfo",
                     &macinfo_check_tree,
-                    glflags.section_high_offsets_global->debug_macinfo_size,
+                    glflags.section_high_offsets_global->
+                        debug_macinfo_size,
                     &err);
             }
         }
@@ -1353,7 +1362,8 @@ process_one_file(
         locres = print_locs(dbg,&locerr);
         if (locres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-                "printing location data had a problem ",locres,locerr);
+                "printing location data had a problem ",
+                locres,locerr);
         }
     }
     if (glflags.gf_abbrev_flag) {
@@ -1629,7 +1639,7 @@ process_one_file(
 
     /*  prints nothing unless section .gnu_debuglink is present.
         Lets print for a few critical sections.  */
-    if( glflags.gf_gnu_debuglink_flag) {
+    if (glflags.gf_gnu_debuglink_flag) {
         int lres = 0;
         Dwarf_Error err = 0;
 
@@ -1640,7 +1650,7 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,lres,err);
         }
     }
-    if( glflags.gf_debug_gnu_flag) {
+    if (glflags.gf_debug_gnu_flag) {
         int lres = 0;
         Dwarf_Error err = 0;
 
@@ -1651,7 +1661,7 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,lres,err);
         }
     }
-    if( glflags.gf_debug_sup_flag) {
+    if (glflags.gf_debug_sup_flag) {
         int lres = 0;
         Dwarf_Error err = 0;
 
@@ -1709,17 +1719,21 @@ process_one_file(
 }
 
 /* Generic constants for debugging */
-#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
-#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
-#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
-#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
-#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
+#define DUMP_RANGES_INFO           1 /* Dump RangesInfo Table. */
+
+/* Dump Location (.debug_loc) Info. */
+#define DUMP_LOCATION_SECTION_INFO 2
+
+/* Dump Ranges (.debug_ranges) Info. */
+#define DUMP_RANGES_SECTION_INFO   3
+
+#define DUMP_LINKONCE_INFO         4 /* Dump Linkonce Table. */
+#define DUMP_VISITED_INFO          5 /* Dump Visited Info. */
 
 /*  ==============START of dwarfdump error print functions. */
 int
 simple_err_return_msg_either_action(int res,const char *msg)
 {
-    /*const char *msg = "\nERROR: dwarf_get_address_size() fails.";*/
     const char *etype = "No-entry";
     if (res == DW_DLV_ERROR) {
         etype="Major error";
@@ -2131,7 +2145,8 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
             }
             printf("\n");
             if (link_path_len) {
-                printf(" Debuglink target: %s\n",sanitized(link_path));
+                printf(" Debuglink target: %s\n",
+                    sanitized(link_path));
             }
         }
     }
@@ -2161,8 +2176,9 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
 
         printf(" Possible "
             ".gnu_debuglink/.note.gnu.build-id pathnames for\n");
-        printf(" an alternate object file with more detailed DWARF\n");
-        for( ; i < paths_array_length; ++i) {
+        printf(" an alternate object file with more detailed "
+            "DWARF\n");
+        for ( ; i < paths_array_length; ++i) {
             char *path = paths_array[i];
             char           outpath[2000];
             unsigned long  outpathlen = sizeof(outpath);
@@ -2223,7 +2239,7 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
 }
 
 /* GCC linkonce names */
-char *lo_text           = ".text.";               /*".gnu.linkonce.t.";*/
+char *lo_text           = ".text."; /*".gnu.linkonce.t.";*/
 char *lo_debug_abbr     = ".gnu.linkonce.wa.";
 char *lo_debug_aranges  = ".gnu.linkonce.wr.";
 char *lo_debug_frame_1  = ".gnu.linkonce.wf.";
@@ -2295,13 +2311,14 @@ build_linkonce_info(Dwarf_Debug dbg)
     nCount = dwarf_get_section_count(dbg);
 
     /* Ignore section with index=0 */
-    for (section_index = 1; section_index < nCount; ++section_index) {
+    for (section_index = 1;
+        section_index < nCount;
+        ++section_index) {
         res = dwarf_get_section_info_by_index(dbg,section_index,
             &section_name,
             &section_addr,
             &section_size,
             &error);
-
         if (res == DW_DLV_OK) {
             for (nIndex = 0; linkonce_names[nIndex]; ++nIndex) {
                 if (section_name == strstr(section_name,
@@ -2528,9 +2545,12 @@ add_to_unique_errors_table(char * error_text)
     filtered_text = makename(error_text);
     len = strlen(filtered_text);
 
-    /*  Remove from the error_text, any hexadecimal numbers (start with 0x),
-        because for some errors, an additional information is given in the
-        form of addresses; we are interested just in the general error. */
+    /*  Remove from the error_text, any hexadecimal
+        numbers (start with 0x),
+        because for some errors, an additional
+        information is given in the
+        form of addresses; we are interested just in
+        the general error. */
     start = strstr(filtered_text,pattern);
     while (start) {
         /* We have found the start of the pattern; look for a space */

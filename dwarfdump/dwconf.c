@@ -219,9 +219,9 @@ find_conf_file_and_read_config_inner(const char *named_file,
     /*  And option: lines must come before any abi data. */
     res = find_abi_start(conf_stream, named_abi, &offset, &lineno);
     if (res == FOUND_DONE ||res == FOUND_OPTION) {
-       /* nothing more to do */
-       fclose(conf_stream);
-       return FOUND_DONE;
+        /* nothing more to do */
+        fclose(conf_stream);
+        return FOUND_DONE;
     }
     if (res == FOUND_ERROR) {
         ++errcount;
@@ -347,13 +347,15 @@ test_canonical_append(void)
                 printf("PASS %u\n", i);
             } else {
                 ++failcount;
-                printf("FAIL: entry %u wrong, expected %s, got NULL\n",
+                printf("FAIL: entry %u wrong, expected "
+                    "%s, got NULL\n",
                     i, canap[i].res_exp);
             }
         } else {
             if (canap[i].res_exp == 0) {
                 ++failcount;
-                printf("FAIL: entry %u wrong, got %s expected NULL\n",
+                printf("FAIL: entry %u wrong, got %s "
+                    "expected NULL\n",
                     i, res);
             } else {
                 if (strcmp(res, canap[i].res_exp) == 0) {
@@ -361,7 +363,8 @@ test_canonical_append(void)
                     /* GOOD */
                 } else {
                     ++failcount;
-                    printf("FAIL: entry %u wrong, expected %s got %s\n",
+                    printf("FAIL: entry %u wrong, "
+                        "expected %s got %s\n",
                         i, canap[i].res_exp, res);
                 }
             }
@@ -371,10 +374,10 @@ test_canonical_append(void)
 
 }
 #endif /* BUILD_FOR_TEST */
-/* Try to find a file as named and open for read.
-   We treat each name as a full name, we are not
-   combining separate name and path components.
-   This is  an arbitrary choice...
+/*  Try to find a file as named and open for read.
+    We treat each name as a full name, we are not
+    combining separate name and path components.
+    This is  an arbitrary choice...
 
     The defaults are listed in command_options.c in the array
     config_file_defaults[].
@@ -384,7 +387,9 @@ test_canonical_append(void)
     no-name.
 */
 static FILE *
-find_a_file(const char *named_file, char **defaults, const char ** name_used)
+find_a_file(const char *named_file,
+    char **defaults,
+    const char ** name_used)
 {
     FILE *fin = 0;
     const char *lname = named_file;
@@ -434,7 +439,8 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
                 /* Add the configuration name to the pathname */
                 ++pDir;
                 len = pDir - szPath;
-                safe_strcpy(pDir,sizeof(szPath)-len,"dwarfdump.conf",14);
+                safe_strcpy(pDir,sizeof(szPath)-len,
+                    "dwarfdump.conf",14);
                 lname = szPath;
             }
         }
@@ -509,7 +515,9 @@ skipwhite(char *cp)
    Emit error message if error.
 */
 static int
-ensure_has_no_more_tokens(char *cp, const char *fname, unsigned long lineno)
+ensure_has_no_more_tokens(char *cp,
+    const char *fname,
+    unsigned long lineno)
 {
     struct token_s tok;
 
@@ -770,14 +778,16 @@ make_a_number(char *cmd, const char *filename, unsigned long
     val = strtoul(tok->tk_data, &endnum, 0);
     if (val == 0 && endnum == (tok->tk_data)) {
         printf("dwarfdump.conf error: "
-            "%s missing register number (\"%s\" not valid)  %s line %lu\n",
+            "%s missing register number (\"%s\" "
+            "not valid)  %s line %lu\n",
             cmd, tok->tk_data, filename, lineno);
         ++errcount;
         return FALSE;
     }
     if (endnum != (tok->tk_data + tok->tk_len)) {
         printf("dwarfdump.conf error: "
-            "%s Missing register number (\"%s\" not valid)  %s line %lu\n",
+            "%s Missing register number (\"%s\" "
+            "not valid)  %s line %lu\n",
             cmd, tok->tk_data, filename, lineno);
         ++errcount;
         return FALSE;
@@ -829,7 +839,8 @@ parsereg(char *cp, const char *fname, unsigned long lineno,
         return FALSE;
     }
 
-    add_to_reg_table(conf->conf_out, tokreg.tk_data, val, fname, lineno);
+    add_to_reg_table(conf->conf_out, tokreg.tk_data,
+        val, fname, lineno);
 
     res = ensure_has_no_more_tokens(cp, fname, lineno);
     return res;
@@ -840,8 +851,11 @@ parsereg(char *cp, const char *fname, unsigned long lineno,
    Parse it and record the value data.
 */
 static int
-parseframe_interface(char *cp, const char *fname, unsigned long lineno,
-    struct conf_internal_s *conf, struct comtable_s *comtab)
+parseframe_interface(char *cp,
+    const char *fname,
+    unsigned long lineno,
+    struct conf_internal_s *conf,
+    struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
@@ -1105,7 +1119,8 @@ parseendabi(char *cp, const char *fname,
     cp = get_token(cp, &tok);
     if (strcmp(abiname, tok.tk_data) != 0) {
         printf("%s error: "
-            "mismatch abi name %s (here) vs. %s (beginabi:)  %s line %lu\n",
+            "mismatch abi name %s (here) vs. "
+            "%s (beginabi:)  %s line %lu\n",
             comtab->name, tok.tk_data, abiname, fname, lineno);
         ++errcount;
         return FALSE;
@@ -1197,8 +1212,8 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             break;
         case LT_ERROR:
             ++errcount;
-            printf
-                ("dwarfdump: Unknown text in %s is \"%s\" at line %lu\n",
+            printf ("dwarfdump: Unknown text in %s is \"%s\" "
+                "at line %lu\n",
                 fname, line, lineno);
             break;
         case LT_COMMENT:
@@ -1208,13 +1223,14 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
         case LT_BEGINABI:
             if (conf_internal->beginabi_lineno > 0) {
                 ++errcount;
-                printf
-                    ("dwarfdump: Encountered beginabi: when not expected. "
-                    "%s line %lu previous beginabi line %lu\n", fname,
+                printf("dwarfdump: Encountered beginabi: "
+                    "when not expected. "
+                    "%s line %lu previous beginabi line %lu\n",
+                    fname,
                     lineno, conf_internal->beginabi_lineno);
             }
             conf_internal->beginabi_lineno = lineno;
-            inourabi = parsebeginabi(line, fname, 
+            inourabi = parsebeginabi(line, fname,
                 abiname, lineno, comtabp);
             break;
 
@@ -1227,10 +1243,12 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (!inourabi) break;
             if (conf_internal->frame_interface_lineno > 0) {
                 ++errcount;
-                printf
-                    ("dwarfdump: Encountered duplicate frame_interface: "
-                    "%s line %lu previous frame_interface: line %lu\n",
-                    fname, lineno, conf_internal->frame_interface_lineno);
+                printf("dwarfdump: Encountered duplicate "
+                    "frame_interface: "
+                    "%s line %lu previous frame_interface: "
+                    "line %lu\n",
+                    fname, lineno,
+                    conf_internal->frame_interface_lineno);
             }
             conf_internal->frame_interface_lineno = lineno;
             parseframe_interface(line, fname,
@@ -1251,9 +1269,12 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (!inourabi) break;
             if (conf_internal->initial_reg_value_lineno > 0) {
                 printf
-                    ("dwarfdump: Encountered duplicate initial_reg_value: "
-                    "%s line %lu previous initial_reg_value: line %lu\n",
-                    fname, lineno, conf_internal->initial_reg_value_lineno);
+                    ("dwarfdump: Encountered duplicate "
+                    "initial_reg_value: "
+                    "%s line %lu previous initial_reg_value: "
+                    "line %lu\n",
+                    fname, lineno,
+                    conf_internal->initial_reg_value_lineno);
                 ++errcount;
             }
             conf_internal->initial_reg_value_lineno = lineno;
@@ -1265,9 +1286,12 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (conf_internal->same_val_reg_lineno > 0) {
                 ++errcount;
                 printf
-                    ("dwarfdump: Encountered duplicate same_val_reg: "
-                    "%s line %lu previous initial_reg_value: line %lu\n",
-                    fname, lineno, conf_internal->initial_reg_value_lineno);
+                    ("dwarfdump: Encountered duplicate "
+                    "same_val_reg: "
+                    "%s line %lu previous initial_reg_value: "
+                    "line %lu\n",
+                    fname, lineno,
+                    conf_internal->initial_reg_value_lineno);
             }
             conf_internal->same_val_reg_lineno = lineno;
             parsesame_val_reg(line, fname,
@@ -1278,9 +1302,12 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (conf_internal->undefined_val_reg_lineno > 0) {
                 ++errcount;
                 printf
-                    ("dwarfdump: Encountered duplicate undefined_val_reg: "
-                    "%s line %lu previous initial_reg_value: line %lu\n",
-                    fname, lineno, conf_internal->initial_reg_value_lineno);
+                    ("dwarfdump: Encountered duplicate "
+                    "undefined_val_reg: "
+                    "%s line %lu previous initial_reg_value: "
+                    "line %lu\n",
+                    fname, lineno,
+                    conf_internal->initial_reg_value_lineno);
             }
             if (!inourabi) break;
             conf_internal->undefined_val_reg_lineno = lineno;
@@ -1292,7 +1319,8 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             if (conf_internal->reg_table_size_lineno > 0) {
                 printf("dwarfdump: duplicate reg_table_size: "
                     "%s line %lu previous reg_table_size: line %lu\n",
-                    fname, lineno, conf_internal->reg_table_size_lineno);
+                    fname, lineno,
+                    conf_internal->reg_table_size_lineno);
                 ++errcount;
             }
             conf_internal->reg_table_size_lineno = lineno;
@@ -1302,7 +1330,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
         case LT_ENDABI:
             if (!inourabi) break;
             parseendabi(line, fname, abiname, lineno, comtabp);
-            if (conf_internal->regcount > 
+            if (conf_internal->regcount >
                 localconf->cf_table_entry_count) {
                 printf("dwarfdump: more registers named than "
                     " in  %s  ( %lu named vs  %s %lu)"
@@ -1406,8 +1434,8 @@ static char *regnames[] = {
 */
 static char *genericregnames[] = {
   "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9",
-  "r10", "r11", "r12", "r13", "r14", "r15", "r16", "r17", "r18", "r19",
-  "r20"
+  "r10", "r11", "r12", "r13", "r14", "r15", "r16",
+  "r17", "r18", "r19", "r20"
 };
 
 /*  This is a simple generic set of registers.  The

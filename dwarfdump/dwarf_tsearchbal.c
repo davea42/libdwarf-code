@@ -154,13 +154,13 @@ tdump_inner(struct ts_entry *t,
     const char *descr, int level)
 {
     const char * keyv = "";
-    if(!t) {
+    if (!t) {
         return;
     }
     tdump_inner(t->rlink,keyprint,"right",level+1);
 
     printlevel(level);
-    if(t->keyptr) {
+    if (t->keyptr) {
         keyv = keyprint(t->keyptr);
     }
     printf("0x%08" DW_PR_DUx " <keyptr 0x%08" DW_PR_DUx "> "
@@ -183,20 +183,23 @@ tdump_inner(struct ts_entry *t,
     Returns the depth.
 */
 int
-dwarf_check_balance_inner(struct ts_entry *t,int level,int maxdepth,
-    int *founderror,const char *prefix)
+dwarf_check_balance_inner(struct ts_entry *t,int level,
+    int maxdepth,
+    int *founderror,
+    const char *prefix)
 {
     int l = 0;
     int r = 0;
-    if(level > maxdepth) {
-        printf("%s Likely internal erroneous link loop, got to depth %d.\n",
+    if (level > maxdepth) {
+        printf("%s Likely internal erroneous link loop, "
+            "got to depth %d.\n",
             prefix,level);
         exit(1);
     }
-    if(!t) {
+    if (!t) {
         return 0;
     }
-    if(!t->llink && !t->rlink) {
+    if (!t->llink && !t->rlink) {
         if (t->balance != 0) {
             printf("%s: Balance at 0x%" DW_PR_DUx
                 " should be 0 is %d.\n",
@@ -220,8 +223,8 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,int maxdepth,
         (*founderror)++;
         return l+1;
     }
-    if(l > r) {
-        if(  (l-r) != 1) {
+    if (l > r) {
+        if (  (l-r) != 1) {
             printf("%s depth mismatch at 0x%" DW_PR_DUx
                 "  l %d r %d.\n",
                 prefix,
@@ -239,8 +242,8 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,int maxdepth,
         }
         return l+1;
     }
-    if(r != l) {
-        if(  (r-l) != 1) {
+    if (r != l) {
+        if (  (r-l) != 1) {
             printf("%s depth mismatch at 0x%" DW_PR_DUx
                 " r %d l %d.\n",
                 prefix,
@@ -278,19 +281,19 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
     int errcount = 0;
     int depth = 0;
     struct ts_entry*root = 0;
-    if(finalprefix) {
+    if (finalprefix) {
         prefix = "BalanceError:";
     } else {
         prefix = "BalanceWarn:";
     }
 
-    if(!head) {
+    if (!head) {
         printf("%s check balance null tree ptr\n",prefix);
         return;
     }
     root = head->rlink;
     headdepth = head->llink - (struct ts_entry *)0;
-    if(!root) {
+    if (!root) {
         printf("%s check balance null tree ptr\n",prefix);
         return;
     }
@@ -298,7 +301,8 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
     maxdepth = headdepth+10;
     /* Counting in levels, not level number of top level. */
     headdepth++;
-    depth = dwarf_check_balance_inner(root,depth,maxdepth,&errcount,prefix);
+    depth = dwarf_check_balance_inner(root,depth,maxdepth,
+        &errcount,prefix);
     if (depth != headdepth) {
         printf("%s Head node says depth %lu, it is really %d\n",
             prefix,
@@ -306,7 +310,7 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
             depth);
         ++errcount;
     }
-    if(errcount) {
+    if (errcount) {
         printf("%s error count %d\n",prefix,errcount);
     }
     return;
@@ -322,7 +326,7 @@ dwarf_tdump(const void*headp_in,
     const struct ts_entry *head = (const struct ts_entry *)headp_in;
     struct ts_entry *root = 0;
     size_t headdepth = 0;
-    if(!head) {
+    if (!head) {
         printf("dumptree null tree ptr : %s\n",msg);
         return;
     }
@@ -333,7 +337,7 @@ dwarf_tdump(const void*headp_in,
         (int)headdepth,
         msg);
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         printf("Empty tree\n");
         return;
     }
@@ -342,7 +346,7 @@ dwarf_tdump(const void*headp_in,
 static void
 setlink(struct ts_entry*t,int a,struct ts_entry *x)
 {
-    if(a < 0) {
+    if (a < 0) {
         t->llink = x;
     } else {
         t->rlink = x;
@@ -351,7 +355,7 @@ setlink(struct ts_entry*t,int a,struct ts_entry *x)
 static struct ts_entry*
 getlink(struct ts_entry*t,int a)
 {
-    if(a < 0) {
+    if (a < 0) {
         return(t->llink);
     }
     return(t->rlink);
@@ -362,7 +366,7 @@ allocate_ts_entry(const void *key)
 {
     struct ts_entry *e = (struct ts_entry *)
         malloc(sizeof(struct ts_entry));
-    if(!e) {
+    if (!e) {
         return NULL;
     }
     /*  We will eventually ask it be freed, so
@@ -398,7 +402,7 @@ tsearch_inner_do_insert(const void *key,
 {
     struct ts_entry *q = 0;
     q =  tsearch_insert_k(key,kc,p);
-    if(q) {
+    if (q) {
         *inserted = 1;
     }
     return q;
@@ -410,7 +414,7 @@ tsearch_inner_do_insert(const void *key,
    and possibly more.
 
    We could recurse on this routine, but instead we
-   iterate (like Knuth does, but using for(;;) instead
+   iterate (like Knuth does, but using for (;;) instead
    of go-to.
 
   */
@@ -432,13 +436,13 @@ tsearch_inner( const void *key, struct ts_entry* head,
 
     int a = 0;
     int kc = 0;
-    for(;;) {
+    for (;;) {
         /* A2. */
         kc = compar(key,p->keyptr);
-        if(kc) {
+        if (kc) {
             /* A3 and A4 handled here. */
             q = getlink(p,kc);
-            if(!q) {
+            if (!q) {
                 /* Does step A5. */
                 q = tsearch_inner_do_insert(key,kc,inserted,p);
                 if (!q) {
@@ -447,7 +451,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
                 }
                 break; /* to A5. */
             }
-            if(q->balance) {
+            if (q->balance) {
                 t = p;
                 s = q;
             }
@@ -473,7 +477,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
         r = p = getlink(s,a);
         while (p != q) {
             int kc3 = compar(key,p->keyptr);
-            if(kc3 < 0) {
+            if (kc3 < 0) {
                 p->balance = -1;
                 p = p->llink;
             } else if (kc3 > 0) {
@@ -488,21 +492,21 @@ tsearch_inner( const void *key, struct ts_entry* head,
 
     /* A7: */
     {
-        if(! s->balance) {
+        if (! s->balance) {
             /* Tree has grown higher. */
             s->balance = a;
             /* Counting in pointers, not integers. Ugh. */
             head->llink  = head->llink + 1;
             return q;
         }
-        if(s->balance == -a) {
+        if (s->balance == -a) {
             /* Tree is more balanced */
             s->balance = 0;
             return q;
         }
         if (s->balance == a) {
             /* Rebalance. */
-            if(r->balance == a) {
+            if (r->balance == a) {
                 /* single rotation, step A8. */
                 p = r;
                 setlink(s,a,getlink(r,-a));
@@ -516,7 +520,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
                 setlink(p,a,r);
                 setlink(s,a,getlink(p,-a));
                 setlink(p,-a,s);
-                if(p->balance == a) {
+                if (p->balance == a) {
                     s->balance = -a;
                     r->balance = 0;
                 } else if (p->balance  == 0) {
@@ -528,7 +532,8 @@ tsearch_inner( const void *key, struct ts_entry* head,
                 }
                 p->balance = 0;
             } else {
-                fprintf(stderr,"Impossible balanced tree situation!\n");
+                fprintf(stderr,"Impossible balanced "
+                    "tree situation!\n");
                 /* Impossible. Cannot be here. */
                 exit(1);
             }
@@ -571,11 +576,11 @@ dwarf_tsearch(const void *key, void **headin,
     if (!head) {
         struct ts_entry *root = 0;
         head = allocate_ts_entry(0);
-        if(!head) {
+        if (!head) {
             return NULL;
         }
         root = allocate_ts_entry(key);
-        if(!root) {
+        if (!root) {
             free(head);
             return NULL;
         }
@@ -611,7 +616,7 @@ dwarf_tfind(const void *key, void *const*rootp,
     p = head->rlink;
     while(p) {
         int kc = compar(key,p->keyptr);
-        if(!kc) {
+        if (!kc) {
             return (void *)(&(p->keyptr));
         }
         p  = getlink(p,kc);
@@ -738,7 +743,7 @@ tdelete_inner(const void *key,
         here  and the depth might increase.  */
     depth = depth + 4;
     pkarray = calloc(sizeof(struct pkrecord),depth);
-    if(!pkarray) {
+    if (!pkarray) {
         /* Malloc fails, we could abort... */
         return NULL;
     }
@@ -752,12 +757,12 @@ tdelete_inner(const void *key,
         kc = compar(key,p->keyptr);
         pkarray[k].pk = p;
         pkarray[k].ak = kc;
-        if(!kc) {
+        if (!kc) {
             break;
         }
         p  = getlink(p,kc);
     }
-    if(!p) {
+    if (!p) {
         /* Node to delete never found. */
         free(pkarray);
         return NULL;
@@ -777,8 +782,8 @@ tdelete_inner(const void *key,
         /* Found a match. p to be deleted. */
         t = p;
         *did_delete = 1;
-        if(!t->rlink) {
-            if(k == 1 && !t->llink) {
+        if (!t->rlink) {
+            if (k == 1 && !t->llink) {
                 *tree_empty = 1;
                 /* upper level will fix up head node. */
                 free(t);
@@ -797,7 +802,7 @@ tdelete_inner(const void *key,
         }
 #ifdef IMPLEMENTD15
         /* Step D1.5 */
-        if(!t->llink) {
+        if (!t->llink) {
             setlink(pp,ppak,t->rlink);
             /* we change the left link off ak */
             k--;
@@ -835,8 +840,8 @@ tdelete_inner(const void *key,
     balance:
     {
     unsigned k2 = k;
-    /*  We do not want a test in the for() itself. */
-    for(  ; 1 ; k2--) {
+    /*  We do not want a test in the for () itself. */
+    for ( ; 1 ; k2--) {
         struct ts_entry *pk = 0;
         int ak = 0;
         int bk = 0;
@@ -852,11 +857,11 @@ tdelete_inner(const void *key,
         }
         ak = pkarray[k2].ak;
         bk = pk->balance;
-        if(bk == ak) {
+        if (bk == ak) {
             pk->balance = 0;
             continue;
         }
-        if(bk == 0) {
+        if (bk == 0) {
             pk->balance = -ak;
             goto cleanup;
         }
@@ -880,7 +885,7 @@ tdelete_inner(const void *key,
             r = getlink(s,adel);
             pa = pkarray[k2-1].pk;
             pak = pkarray[k2-1].ak;
-            if(r->balance == adel) {
+            if (r->balance == adel) {
                 /* case 1. */
                 setlink(s,adel,getlink(r,-adel));
                 setlink(r,-adel,s);
@@ -901,7 +906,7 @@ tdelete_inner(const void *key,
 
                 /* A10 in tsearch. */
                 setlink(pa,pak,x);
-                if(x->balance == adel) {
+                if (x->balance == adel) {
                     s->balance = -adel;
                     r->balance = 0;
                 } else if (x->balance  == 0) {
@@ -958,7 +963,7 @@ dwarf_tdelete(const void *key, void **rootp,
         return NULL;
     }
     parentp = tdelete_inner(key,head,compar,&tree_empty,&did_delete);
-    if(tree_empty) {
+    if (tree_empty) {
         head->rlink = 0;
         head->llink = 0;
         free(head);
@@ -966,7 +971,7 @@ dwarf_tdelete(const void *key, void **rootp,
         return NULL;
     }
     /* ASSERT: head->rlink non-null. */
-    if(did_delete) {
+    if (did_delete) {
         if (!parentp) {
             parentp = head->rlink;
         }
@@ -978,7 +983,8 @@ dwarf_tdelete(const void *key, void **rootp,
 
 static void
 dwarf_twalk_inner(struct ts_entry *p,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth),
+    void (*action)(const void *nodep,
+        const DW_VISIT which, const int depth),
     unsigned level)
 {
     if (!p->llink && !p->rlink) {
@@ -986,11 +992,11 @@ dwarf_twalk_inner(struct ts_entry *p,
         return;
     }
     action((const void *)(&(p->keyptr)),dwarf_preorder,level);
-    if(p->llink) {
+    if (p->llink) {
         dwarf_twalk_inner(p->llink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_postorder,level);
-    if(p->rlink) {
+    if (p->rlink) {
         dwarf_twalk_inner(p->rlink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_endorder,level);
@@ -999,15 +1005,16 @@ dwarf_twalk_inner(struct ts_entry *p,
 
 void
 dwarf_twalk(const void *rootp,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth))
+    void (*action)(const void *nodep,
+        const DW_VISIT which, const int depth))
 {
     const struct ts_entry *head = (const struct ts_entry *)rootp;
     struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         return;
     }
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         return;
     }
     /* Get to actual tree. */
@@ -1019,11 +1026,11 @@ dwarf_tdestroy_inner(struct ts_entry*p,
     void (*free_node)(void *nodep),
     int depth)
 {
-    if(p->llink) {
+    if (p->llink) {
         dwarf_tdestroy_inner(p->llink,free_node,depth+1);
         p->llink = 0;
     }
-    if(p->rlink) {
+    if (p->rlink) {
         dwarf_tdestroy_inner(p->rlink,free_node,depth+1);
         p->rlink = 0;
     }
@@ -1043,11 +1050,11 @@ dwarf_tdestroy(void *rootp, void (*free_node)(void *nodep))
 {
     struct ts_entry *head = (struct ts_entry *)rootp;
     struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         return;
     }
     root = head->rlink;
-    if(root) {
+    if (root) {
         dwarf_tdestroy_inner(root,free_node,0);
     }
     free(head);

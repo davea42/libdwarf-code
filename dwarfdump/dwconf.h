@@ -50,14 +50,18 @@ struct dwconf_s {
         DWARF3-capable and configureable-abi interface.
 
         Now, anyone who revises dwarf.h and libdwarf.h to match their
-        abi-of-interest will still be able to use cf_interface_number 2
-        as before.  But most folks don't update those header files and
+        abi-of-interest will still be able to use
+        cf_interface_number 2
+        as before.  But most folks don't update those header
+        files and
         instead of making *them* configurable we make dwarfdump (and
-        libdwarf) configurable sufficiently to print frame information
+        libdwarf) configurable sufficiently to print
+        frame information
         sensibly. */
     int cf_interface_number;
 
-    /* The number of table rules , aka columns. For MIPS/IRIX is 66. */
+    /*  The number of table rules , aka columns.
+        For MIPS/IRIX is 66. */
     unsigned long cf_table_entry_count;
 
     /*  Array of cf_table_entry_count reg names. Names not filled in
@@ -98,7 +102,8 @@ struct dwconf_s {
 };
 
 
-/* Returns DW_DLV_OK if works. DW_DLV_ERROR if cannot do what is asked. */
+/*  Returns DW_DLV_OK if works.
+    Returns DW_DLV_ERROR if cannot do what is asked. */
 int find_conf_file_and_read_config(const char *named_file,
     const char *named_abi, char **defaults,
     struct dwconf_s *conf_out);

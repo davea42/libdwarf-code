@@ -1,4 +1,7 @@
 2020-12-04 David Anderson
+    * dwarf_tsearchbal.c,dwarfdump.c,dwconf.c,dwconf.h,dwgetopt.c:
+      Trivial tiny changes for codingstyle.
+2020-12-04 David Anderson
     * esb.c,glflags.c,glflags.h,globals.h,sanitized.c,
       section_bitmaps.c,section_bitmap,.h,section_bitmaps_test.c,
       strstrnocase.c: Trivial tiny changes for codingstyle.

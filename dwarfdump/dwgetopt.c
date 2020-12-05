@@ -103,7 +103,7 @@ dwoptnamematches(
     unsigned arglen = 0;
     int d = 0;
 
-    for(eq = iplace; *eq; ++eq) {
+    for (eq = iplace; *eq; ++eq) {
         if (*eq != '=') {
             continue;
         }
@@ -179,7 +179,7 @@ int dwgetopt_long(int nargc, char *const nargv[],
         place = EMSG;
         return (-1);
     }
-    if  (*lplace  != '-') {
+    if (*lplace  != '-') {
         /* Notice place not  disturbed. */
         int v = dwgetopt(nargc,nargv,ostr);
         return v;
@@ -198,7 +198,7 @@ int dwgetopt_long(int nargc, char *const nargv[],
     {
     int lo_num = 0;
 
-    for(;;lo_num++) {
+    for (;;lo_num++) {
         const struct dwoption *dwlopt = longopts +lo_num;
         const char * argloc = 0;
         int argerr = 0;
@@ -245,7 +245,8 @@ int dwgetopt_long(int nargc, char *const nargv[],
                     of taking next argv as the arg value.
                     and thus making getopt_long succeed. */
                 (void)fprintf(stderr,
-                    "%s: missing required long option argument '--%s'\n",
+                    "%s: missing required long option "
+                    "argument '--%s'\n",
                     nargv[0]?nargv[0]:"",
                     place);
             } else {
@@ -346,8 +347,8 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
             /* Pair of :: means special treatment of dwoptarg */
             reqnextarg = 0;
         }
-        /* Option-argument is either the rest of this argument or the
-        entire next argument. */
+        /*  Option-argument is either the rest of this argument or the
+            entire next argument. */
         if (*place ) {
             /* Whether : or :: */
             dwoptarg = STRIP_OFF_CONSTNESS(place);
