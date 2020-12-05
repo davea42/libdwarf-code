@@ -74,7 +74,8 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type,
         &truename,TRUE);
     {
         esb_constructor(&sanitname);
-        /*  Sanitized cannot be safely reused,there is a static buffer,
+        /*  Sanitized cannot be safely reused,
+            there is a static buffer,
             so we make a safe copy. */
         esb_append(&sanitname,sanitized(esb_get_string(&truename)));
     }

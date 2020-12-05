@@ -55,7 +55,7 @@ main()
             ++failcount;
         }
     }
-    if(failcount) {
+    if (failcount) {
         printf("FAIL print_reloc selftest\n");
         exit(1);
     }

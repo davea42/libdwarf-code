@@ -285,12 +285,13 @@ print_relocinfo_64(Elf * elf)
                 free(scn_names);
                 free(printable_sects);
                 glflags.gf_count_major_errors++;
-                printf("ERROR: elf_getdata() (Elf64) failed to get symbol table "
+                printf("ERROR: elf_getdata() (Elf64) "
+                    "failed to get symbol table "
                     "elf_getdata returned NULL.\n");
                 return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf64_Sym);
-            if(sym_size%sizeof(Elf64_Sym)) {
+            if (sym_size%sizeof(Elf64_Sym)) {
                 glflags.gf_count_major_errors++;
                 free(scn_names);
                 free(printable_sects);
@@ -404,7 +405,8 @@ print_relocinfo_32(Elf * elf)
             printf("ERROR: elf_nextscn returns null \n");
             return DW_DLV_NO_ENTRY;
         }
-        scn_name = elf_strptr(elf, ehdr32->e_shstrndx, shdr32->sh_name);
+        scn_name = elf_strptr(elf,
+            ehdr32->e_shstrndx,shdr32->sh_name);
         if (scn_name == NULL) {
             free(printable_sects);
             free(scn_names);
@@ -423,12 +425,13 @@ print_relocinfo_32(Elf * elf)
                 free(printable_sects);
                 free(scn_names);
                 glflags.gf_count_major_errors++;
-                printf("ERROR: elf_getdata() (Elf32) failed to get symbol table"
+                printf("ERROR: elf_getdata() (Elf32) "
+                    "failed to get symbol table"
                     " elf_getdata returned null\n");
                 return DW_DLV_NO_ENTRY;
             }
             count = sym_size / sizeof(Elf32_Sym);
-            if(sym_size%sizeof(Elf32_Sym)) {
+            if (sym_size%sizeof(Elf32_Sym)) {
                 glflags.gf_count_major_errors++;
                 free(printable_sects);
                 free(scn_names);
@@ -511,9 +514,11 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
     struct esb_s tempesb;
     struct esb_s tempesc;
 
-    printf("\n[%3d] %s:\n",section_no, sanitized(scn_names[section_no]));
+    printf("\n[%3d] %s:\n",section_no,
+        sanitized(scn_names[section_no]));
     /* Print some headers and change the order for better reading */
-    printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
+    printf("Offset     Addend     %-26s Index   Symbol Name\n",
+        "Reloc Type");
 
 #if HAVE_ELF64_GETEHDR
     for (off = 0; off < size; off += rel_size) {
@@ -556,7 +561,8 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         esb_destructor(&tempesb);
         esb_destructor(&tempesc);
 #else  /* ! R_INFO */
-        /*  sgi/mips -64 does not have r_info in the 64bit relocations,
+        /*  sgi/mips -64 does not have r_info in the
+            64bit relocations,
             but seperate fields, with 3 types, actually. Only one of
             which prints here, as only one really used with dwarf */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
@@ -602,10 +608,12 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
     struct esb_s tempesb;
     struct esb_s tempesc;
 
-    printf("\n[%3d] %s:\n",section_no, sanitized(scn_names[section_no]));
+    printf("\n[%3d] %s:\n",section_no,
+        sanitized(scn_names[section_no]));
 
     /* Print some headers and change the order for better reading. */
-    printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
+    printf("Offset     Addend     %-26s Index   Symbol Name\n",
+        "Reloc Type");
 
     for (off = 0; off < size; off += rel_size) {
         Elf32_Rel *p = (Elf32_Rel *) (buf + off);
@@ -616,7 +624,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
         if (sym_data) {
             size_t index = ELF32_R_SYM(p->r_info) - 1;
 
-            if(index < sym_data_entry_count) {
+            if (index < sym_data_entry_count) {
                 name = sym_data[index].name;
                 if ((!name || !name[0]) && sym_data) {
                     SYM *sym = &sym_data[index];
@@ -775,11 +783,15 @@ print_object_header(Dwarf_Debug dbg,Dwarf_Error *err)
         printf("  Data encoding = %02x (%s)\n",
             eh32->e_ident[EI_DATA],eh_literals.e_ident_data_encoding);
         printf("  File version  = %02x (%s)\n",
-            eh32->e_ident[EI_VERSION],eh_literals.e_ident_file_version);
-        printf("  OS ABI        = %02x (%s) (%s)\n",eh32->e_ident[EI_OSABI],
-            eh_literals.e_ident_os_abi_s,eh_literals.e_ident_os_abi_l);
+            eh32->e_ident[EI_VERSION],
+            eh_literals.e_ident_file_version);
+        printf("  OS ABI        = %02x (%s) (%s)\n",
+            eh32->e_ident[EI_OSABI],
+            eh_literals.e_ident_os_abi_s,
+            eh_literals.e_ident_os_abi_l);
         printf("  ABI version   = %02x (%s)\n",
-            eh32->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
+            eh32->e_ident[EI_ABIVERSION],
+            eh_literals.e_ident_abi_version);
         printf("e_type     : 0x%x (%s)\n",
             eh32->e_type,eh_literals.e_type);
         printf("e_machine  : 0x%x (%s) (%s)\n",eh32->e_machine,
@@ -805,25 +817,35 @@ print_object_header(Dwarf_Debug dbg,Dwarf_Error *err)
             elf64_gethdr_literals(eh64,&eh_literals);
             /* Print 64-bit obj header */
             printf("\nObject Header:\ne_ident:\n");
-            printf("  File ID       = %s\n",eh_literals.e_ident_file_id);
+            printf("  File ID       = %s\n",
+                eh_literals.e_ident_file_id);
             printf("  File class    = %02x (%s)\n",
-                eh64->e_ident[EI_CLASS],eh_literals.e_ident_file_class);
+                eh64->e_ident[EI_CLASS],
+                eh_literals.e_ident_file_class);
             printf("  Data encoding = %02x (%s)\n",
-                eh64->e_ident[EI_DATA],eh_literals.e_ident_data_encoding);
+                eh64->e_ident[EI_DATA],
+                eh_literals.e_ident_data_encoding);
             printf("  File version  = %02x (%s)\n",
-                eh64->e_ident[EI_VERSION],eh_literals.e_ident_file_version);
-            printf("  OS ABI        = %02x (%s) (%s)\n",eh64->e_ident[EI_OSABI],
-                eh_literals.e_ident_os_abi_s,eh_literals.e_ident_os_abi_l);
+                eh64->e_ident[EI_VERSION],
+                eh_literals.e_ident_file_version);
+            printf("  OS ABI        = %02x (%s) (%s)\n",
+                eh64->e_ident[EI_OSABI],
+                eh_literals.e_ident_os_abi_s,
+                eh_literals.e_ident_os_abi_l);
             printf("  ABI version   = %02x (%s)\n",
-                eh64->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
+                eh64->e_ident[EI_ABIVERSION],
+                eh_literals.e_ident_abi_version);
             printf("e_type     : 0x%x (%s)\n",
                 eh64->e_type,eh_literals.e_type);
             printf("e_machine  : 0x%x (%s) (%s)\n",eh64->e_machine,
                 eh_literals.e_machine_s,eh_literals.e_machine_l);
             printf("e_version  : 0x%x\n", eh64->e_version);
-            printf("e_entry    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh64->e_entry);
-            printf("e_phoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh64->e_phoff);
-            printf("e_shoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh64->e_shoff);
+            printf("e_entry    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                eh64->e_entry);
+            printf("e_phoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                eh64->e_phoff);
+            printf("e_shoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                eh64->e_shoff);
             printf("e_flags    : 0x%x\n",eh64->e_flags);
             printf("e_ehsize   : 0x%x\n",eh64->e_ehsize);
             printf("e_phentsize: 0x%x\n",eh64->e_phentsize);
@@ -871,12 +893,12 @@ print_object_header(Dwarf_Debug dbg,Dwarf_Error *err)
                     section_name);
                 if (print_it) {
                     ++printed_sections;
-                    printf("  %3d "                         /* nro */
-                        "0x%03x "                        /* index */
-                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
-                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
-                        "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
-                        "%s\n",                          /* name */
+                    printf("  %3d "
+                        "0x%03x "
+                        "0x%" DW_PR_XZEROS DW_PR_DUx " "
+                        "0x%" DW_PR_XZEROS DW_PR_DUx " "
+                        "%" DW_PR_XZEROS DW_PR_DUu " "
+                        "%s\n",
                         printed_sections,
                         section_index,
                         section_addr,
@@ -886,7 +908,8 @@ print_object_header(Dwarf_Debug dbg,Dwarf_Error *err)
                 }
             }
         }
-        printf("*** Summary: %" DW_PR_DUu " bytes for %d section(s) ***\n",
+        printf("*** Summary: %" DW_PR_DUu " bytes "
+            "for %d section(s) ***\n",
             total_bytes, printed_sections);
     }
     return DW_DLV_OK;
