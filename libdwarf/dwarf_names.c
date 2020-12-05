@@ -9,7 +9,8 @@
 
 /* ARGSUSED */
 int
-dwarf_get_TAG_name (unsigned int val,const char ** s_out)
+dwarf_get_TAG_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_TAG_array_type:
@@ -126,7 +127,8 @@ dwarf_get_TAG_name (unsigned int val,const char ** s_out)
     case DW_TAG_namelist_item:
         *s_out = "DW_TAG_namelist_item";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2c. DW_TAG_namelist_items */
+    /*  Skipping alternate spelling of value
+        0x2c. DW_TAG_namelist_items */
     case DW_TAG_packed_type:
         *s_out = "DW_TAG_packed_type";
         return DW_DLV_OK;
@@ -136,11 +138,13 @@ dwarf_get_TAG_name (unsigned int val,const char ** s_out)
     case DW_TAG_template_type_parameter:
         *s_out = "DW_TAG_template_type_parameter";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2f. DW_TAG_template_type_param */
+    /*  Skipping alternate spelling of value
+        0x2f. DW_TAG_template_type_param */
     case DW_TAG_template_value_parameter:
         *s_out = "DW_TAG_template_value_parameter";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x30. DW_TAG_template_value_param */
+    /*  Skipping alternate spelling of value
+        0x30. DW_TAG_template_value_param */
     case DW_TAG_thrown_type:
         *s_out = "DW_TAG_thrown_type";
         return DW_DLV_OK;
@@ -249,7 +253,8 @@ dwarf_get_TAG_name (unsigned int val,const char ** s_out)
     case DW_TAG_GNU_template_template_parameter:
         *s_out = "DW_TAG_GNU_template_template_parameter";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x4106. DW_TAG_GNU_template_template_param */
+    /*  Skipping alternate spelling of value
+        0x4106. DW_TAG_GNU_template_template_param */
     case DW_TAG_GNU_template_parameter_pack:
         *s_out = "DW_TAG_GNU_template_parameter_pack";
         return DW_DLV_OK;
@@ -339,7 +344,8 @@ dwarf_get_TAG_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_children_name (unsigned int val,const char ** s_out)
+dwarf_get_children_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_children_no:
@@ -353,7 +359,8 @@ dwarf_get_children_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_FORM_name (unsigned int val,const char ** s_out)
+dwarf_get_FORM_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_FORM_addr:
@@ -502,7 +509,8 @@ dwarf_get_FORM_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_AT_name (unsigned int val,const char ** s_out)
+dwarf_get_AT_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_AT_sibling:
@@ -601,7 +609,8 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_bit_stride:
         *s_out = "DW_AT_bit_stride";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2e. DW_AT_stride_size */
+    /*  Skipping alternate spelling of value
+        0x2e. DW_AT_stride_size */
     case DW_AT_upper_bound:
         *s_out = "DW_AT_upper_bound";
         return DW_DLV_OK;
@@ -704,7 +713,8 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_byte_stride:
         *s_out = "DW_AT_byte_stride";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x51. DW_AT_stride */
+    /*  Skipping alternate spelling of value
+        0x51. DW_AT_stride */
     case DW_AT_entry_pc:
         *s_out = "DW_AT_entry_pc";
         return DW_DLV_OK;
@@ -885,28 +895,35 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_HP_block_index:
         *s_out = "DW_AT_HP_block_index";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2000. DW_AT_lo_user */
+    /*  Skipping alternate spelling of value
+        0x2000. DW_AT_lo_user */
     case DW_AT_MIPS_fde:
         *s_out = "DW_AT_MIPS_fde";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2001. DW_AT_HP_unmodifiable */
-    /* Skipping alternate spelling of value 0x2001. DW_AT_CPQ_discontig_ranges */
+    /*  Skipping alternate spelling of value
+        0x2001. DW_AT_HP_unmodifiable */
+    /*  Skipping alternate spelling of value
+        0x2001. DW_AT_CPQ_discontig_ranges */
     case DW_AT_MIPS_loop_begin:
         *s_out = "DW_AT_MIPS_loop_begin";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2002. DW_AT_CPQ_semantic_events */
+    /*  Skipping alternate spelling of value
+        0x2002. DW_AT_CPQ_semantic_events */
     case DW_AT_MIPS_tail_loop_begin:
         *s_out = "DW_AT_MIPS_tail_loop_begin";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2003. DW_AT_CPQ_split_lifetimes_var */
+    /*  Skipping alternate spelling of value
+        0x2003. DW_AT_CPQ_split_lifetimes_var */
     case DW_AT_MIPS_epilog_begin:
         *s_out = "DW_AT_MIPS_epilog_begin";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2004. DW_AT_CPQ_split_lifetimes_rtn */
+    /*  Skipping alternate spelling of value
+        0x2004. DW_AT_CPQ_split_lifetimes_rtn */
     case DW_AT_MIPS_loop_unroll_factor:
         *s_out = "DW_AT_MIPS_loop_unroll_factor";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2005. DW_AT_CPQ_prologue_length */
+    /*  Skipping alternate spelling of value
+        0x2005. DW_AT_CPQ_prologue_length */
     case DW_AT_MIPS_software_pipeline_depth:
         *s_out = "DW_AT_MIPS_software_pipeline_depth";
         return DW_DLV_OK;
@@ -940,11 +957,13 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_MIPS_assumed_shape_dopetype:
         *s_out = "DW_AT_MIPS_assumed_shape_dopetype";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2010. DW_AT_HP_actuals_stmt_list */
+    /*  Skipping alternate spelling of value
+        0x2010. DW_AT_HP_actuals_stmt_list */
     case DW_AT_MIPS_assumed_size:
         *s_out = "DW_AT_MIPS_assumed_size";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2011. DW_AT_HP_proc_per_section */
+    /*  Skipping alternate spelling of value
+        0x2011. DW_AT_HP_proc_per_section */
     case DW_AT_HP_raw_data_ptr:
         *s_out = "DW_AT_HP_raw_data_ptr";
         return DW_DLV_OK;
@@ -1086,7 +1105,8 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_SUN_template:
         *s_out = "DW_AT_SUN_template";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2201. DW_AT_VMS_rtnbeg_pd_address */
+    /*  Skipping alternate spelling of value
+        0x2201. DW_AT_VMS_rtnbeg_pd_address */
     case DW_AT_SUN_alignment:
         *s_out = "DW_AT_SUN_alignment";
         return DW_DLV_OK;
@@ -1231,7 +1251,8 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_GNAT_descriptive_type:
         *s_out = "DW_AT_GNAT_descriptive_type";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x2302. DW_AT_GNAT_descriptive_type */
+    /*  Skipping alternate spelling of value
+        0x2302. DW_AT_GNAT_descriptive_type */
     case DW_AT_GNU_numerator:
         *s_out = "DW_AT_GNU_numerator";
         return DW_DLV_OK;
@@ -1280,15 +1301,18 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
     case DW_AT_APPLE_block:
         *s_out = "DW_AT_APPLE_block";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x3fe4. DW_AT_APPLE_closure */
+    /*  Skipping alternate spelling of value
+        0x3fe4. DW_AT_APPLE_closure */
     case DW_AT_APPLE_major_runtime_vers:
         *s_out = "DW_AT_APPLE_major_runtime_vers";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x3fe5. DW_AT_APPLE_major_runtime_vers */
+    /*  Skipping alternate spelling of value
+        0x3fe5. DW_AT_APPLE_major_runtime_vers */
     case DW_AT_APPLE_runtime_class:
         *s_out = "DW_AT_APPLE_runtime_class";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x3fe6. DW_AT_APPLE_runtime_class */
+    /*  Skipping alternate spelling of value
+        0x3fe6. DW_AT_APPLE_runtime_class */
     case DW_AT_APPLE_omit_frame_ptr:
         *s_out = "DW_AT_APPLE_omit_frame_ptr";
         return DW_DLV_OK;
@@ -1300,7 +1324,8 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_OP_name (unsigned int val,const char ** s_out)
+dwarf_get_OP_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_OP_addr:
@@ -1798,8 +1823,10 @@ dwarf_get_OP_name (unsigned int val,const char ** s_out)
     case DW_OP_GNU_push_tls_address:
         *s_out = "DW_OP_GNU_push_tls_address";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0xe0. DW_OP_lo_user */
-    /* Skipping alternate spelling of value 0xe0. DW_OP_HP_unknown */
+    /*  Skipping alternate spelling of value
+        0xe0. DW_OP_lo_user */
+    /*  Skipping alternate spelling of value
+        0xe0. DW_OP_HP_unknown */
     case DW_OP_HP_is_value:
         *s_out = "DW_OP_HP_is_value";
         return DW_DLV_OK;
@@ -1824,7 +1851,8 @@ dwarf_get_OP_name (unsigned int val,const char ** s_out)
     case DW_OP_GNU_uninit:
         *s_out = "DW_OP_GNU_uninit";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0xf0. DW_OP_APPLE_uninit */
+    /*  Skipping alternate spelling of value
+        0xf0. DW_OP_APPLE_uninit */
     case DW_OP_GNU_encoded_addr:
         *s_out = "DW_OP_GNU_encoded_addr";
         return DW_DLV_OK;
@@ -1872,7 +1900,8 @@ dwarf_get_OP_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_ATE_name (unsigned int val,const char ** s_out)
+dwarf_get_ATE_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_ATE_address:
@@ -1932,12 +1961,15 @@ dwarf_get_ATE_name (unsigned int val,const char ** s_out)
     case DW_ATE_ALTIUM_fract:
         *s_out = "DW_ATE_ALTIUM_fract";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x80. DW_ATE_lo_user */
-    /* Skipping alternate spelling of value 0x80. DW_ATE_HP_float80 */
+    /*  Skipping alternate spelling of value
+        0x80. DW_ATE_lo_user */
+    /*  Skipping alternate spelling of value
+        0x80. DW_ATE_HP_float80 */
     case DW_ATE_ALTIUM_accum:
         *s_out = "DW_ATE_ALTIUM_accum";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x81. DW_ATE_HP_complex_float80 */
+    /*  Skipping alternate spelling of value
+        0x81. DW_ATE_HP_complex_float80 */
     case DW_ATE_HP_float128:
         *s_out = "DW_ATE_HP_float128";
         return DW_DLV_OK;
@@ -1967,7 +1999,8 @@ dwarf_get_ATE_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_DEFAULTED_name (unsigned int val,const char ** s_out)
+dwarf_get_DEFAULTED_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_DEFAULTED_no:
@@ -1984,7 +2017,8 @@ dwarf_get_DEFAULTED_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_IDX_name (unsigned int val,const char ** s_out)
+dwarf_get_IDX_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_IDX_compile_unit:
@@ -2013,7 +2047,8 @@ dwarf_get_IDX_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_LLEX_name (unsigned int val,const char ** s_out)
+dwarf_get_LLEX_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_LLEX_end_of_list_entry:
@@ -2036,7 +2071,8 @@ dwarf_get_LLEX_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_LLE_name (unsigned int val,const char ** s_out)
+dwarf_get_LLE_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_LLE_end_of_list:
@@ -2071,7 +2107,8 @@ dwarf_get_LLE_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_RLE_name (unsigned int val,const char ** s_out)
+dwarf_get_RLE_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_RLE_end_of_list:
@@ -2103,7 +2140,8 @@ dwarf_get_RLE_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_GNUIVIS_name (unsigned int val,const char ** s_out)
+dwarf_get_GNUIVIS_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_GNUIVIS_global:
@@ -2117,7 +2155,8 @@ dwarf_get_GNUIVIS_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_GNUIKIND_name (unsigned int val,const char ** s_out)
+dwarf_get_GNUIKIND_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_GNUIKIND_none:
@@ -2140,7 +2179,8 @@ dwarf_get_GNUIKIND_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_UT_name (unsigned int val,const char ** s_out)
+dwarf_get_UT_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_UT_compile:
@@ -2172,7 +2212,8 @@ dwarf_get_UT_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_SECT_name (unsigned int val,const char ** s_out)
+dwarf_get_SECT_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_SECT_INFO:
@@ -2204,7 +2245,8 @@ dwarf_get_SECT_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_DS_name (unsigned int val,const char ** s_out)
+dwarf_get_DS_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_DS_unsigned:
@@ -2227,7 +2269,8 @@ dwarf_get_DS_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_END_name (unsigned int val,const char ** s_out)
+dwarf_get_END_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_END_default:
@@ -2250,7 +2293,8 @@ dwarf_get_END_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_ATCF_name (unsigned int val,const char ** s_out)
+dwarf_get_ATCF_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_ATCF_lo_user:
@@ -2288,7 +2332,8 @@ dwarf_get_ATCF_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_ACCESS_name (unsigned int val,const char ** s_out)
+dwarf_get_ACCESS_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_ACCESS_public:
@@ -2305,7 +2350,8 @@ dwarf_get_ACCESS_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_VIS_name (unsigned int val,const char ** s_out)
+dwarf_get_VIS_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_VIS_local:
@@ -2322,7 +2368,8 @@ dwarf_get_VIS_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_VIRTUALITY_name (unsigned int val,const char ** s_out)
+dwarf_get_VIRTUALITY_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_VIRTUALITY_none:
@@ -2339,7 +2386,8 @@ dwarf_get_VIRTUALITY_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_LANG_name (unsigned int val,const char ** s_out)
+dwarf_get_LANG_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_LANG_C89:
@@ -2476,7 +2524,8 @@ dwarf_get_LANG_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_ID_name (unsigned int val,const char ** s_out)
+dwarf_get_ID_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_ID_case_sensitive:
@@ -2496,7 +2545,8 @@ dwarf_get_ID_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_CC_name (unsigned int val,const char ** s_out)
+dwarf_get_CC_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_CC_normal:
@@ -2517,7 +2567,8 @@ dwarf_get_CC_name (unsigned int val,const char ** s_out)
     case DW_CC_lo_user:
         *s_out = "DW_CC_lo_user";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x40. DW_CC_GNU_renesas_sh */
+    /*  Skipping alternate spelling of value
+        0x40. DW_CC_GNU_renesas_sh */
     case DW_CC_GNU_borland_fastcall_i386:
         *s_out = "DW_CC_GNU_borland_fastcall_i386";
         return DW_DLV_OK;
@@ -2541,7 +2592,8 @@ dwarf_get_CC_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_INL_name (unsigned int val,const char ** s_out)
+dwarf_get_INL_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_INL_not_inlined:
@@ -2561,7 +2613,8 @@ dwarf_get_INL_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_ORD_name (unsigned int val,const char ** s_out)
+dwarf_get_ORD_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_ORD_row_major:
@@ -2575,7 +2628,8 @@ dwarf_get_ORD_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_DSC_name (unsigned int val,const char ** s_out)
+dwarf_get_DSC_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_DSC_label:
@@ -2589,7 +2643,8 @@ dwarf_get_DSC_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_LNCT_name (unsigned int val,const char ** s_out)
+dwarf_get_LNCT_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_LNCT_path:
@@ -2627,7 +2682,8 @@ dwarf_get_LNCT_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_LNS_name (unsigned int val,const char ** s_out)
+dwarf_get_LNS_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_LNS_copy:
@@ -2669,7 +2725,8 @@ dwarf_get_LNS_name (unsigned int val,const char ** s_out)
     case DW_LNS_set_address_from_logical:
         *s_out = "DW_LNS_set_address_from_logical";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0xd. DW_LNS_set_subprogram */
+    /*  Skipping alternate spelling of value
+        0xd. DW_LNS_set_subprogram */
     case DW_LNS_inlined_call:
         *s_out = "DW_LNS_inlined_call";
         return DW_DLV_OK;
@@ -2681,7 +2738,8 @@ dwarf_get_LNS_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_LNE_name (unsigned int val,const char ** s_out)
+dwarf_get_LNE_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_LNE_end_sequence:
@@ -2729,7 +2787,8 @@ dwarf_get_LNE_name (unsigned int val,const char ** s_out)
     case DW_LNE_HP_source_file_correlation:
         *s_out = "DW_LNE_HP_source_file_correlation";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x80. DW_LNE_lo_user */
+    /*  Skipping alternate spelling of value
+        0x80. DW_LNE_lo_user */
     case DW_LNE_hi_user:
         *s_out = "DW_LNE_hi_user";
         return DW_DLV_OK;
@@ -2738,7 +2797,8 @@ dwarf_get_LNE_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_ISA_name (unsigned int val,const char ** s_out)
+dwarf_get_ISA_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_ISA_UNKNOWN:
@@ -2755,7 +2815,8 @@ dwarf_get_ISA_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_MACRO_name (unsigned int val,const char ** s_out)
+dwarf_get_MACRO_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_MACRO_define:
@@ -2805,7 +2866,8 @@ dwarf_get_MACRO_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_MACINFO_name (unsigned int val,const char ** s_out)
+dwarf_get_MACINFO_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_MACINFO_define:
@@ -2828,13 +2890,15 @@ dwarf_get_MACINFO_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_CFA_name (unsigned int val,const char ** s_out)
+dwarf_get_CFA_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_CFA_extended:
         *s_out = "DW_CFA_extended";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x0. DW_CFA_nop */
+    /*  Skipping alternate spelling of value
+        0x0. DW_CFA_nop */
     case DW_CFA_set_loc:
         *s_out = "DW_CFA_set_loc";
         return DW_DLV_OK;
@@ -2904,7 +2968,8 @@ dwarf_get_CFA_name (unsigned int val,const char ** s_out)
     case DW_CFA_lo_user:
         *s_out = "DW_CFA_lo_user";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x1c. DW_CFA_low_user */
+    /*  Skipping alternate spelling of value
+        0x1c. DW_CFA_low_user */
     case DW_CFA_MIPS_advance_loc8:
         *s_out = "DW_CFA_MIPS_advance_loc8";
         return DW_DLV_OK;
@@ -2937,7 +3002,8 @@ dwarf_get_CFA_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_EH_name (unsigned int val,const char ** s_out)
+dwarf_get_EH_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_EH_PE_absptr:
@@ -2990,15 +3056,19 @@ dwarf_get_EH_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_FRAME_name (unsigned int val,const char ** s_out)
+dwarf_get_FRAME_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_FRAME_CFA_COL:
         *s_out = "DW_FRAME_CFA_COL";
         return DW_DLV_OK;
-    /* Skipping alternate spelling of value 0x0. DW_FRAME_LAST_REG_NUM */
-    /* Skipping alternate spelling of value 0x0. DW_FRAME_RA_COL */
-    /* Skipping alternate spelling of value 0x0. DW_FRAME_STATIC_LINK */
+    /*  Skipping alternate spelling of value
+        0x0. DW_FRAME_LAST_REG_NUM */
+    /*  Skipping alternate spelling of value
+        0x0. DW_FRAME_RA_COL */
+    /*  Skipping alternate spelling of value
+        0x0. DW_FRAME_STATIC_LINK */
     case DW_FRAME_REG1:
         *s_out = "DW_FRAME_REG1";
         return DW_DLV_OK;
@@ -3331,7 +3401,8 @@ dwarf_get_FRAME_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_CHILDREN_name (unsigned int val,const char ** s_out)
+dwarf_get_CHILDREN_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_CHILDREN_no:
@@ -3345,7 +3416,8 @@ dwarf_get_CHILDREN_name (unsigned int val,const char ** s_out)
 }
 /* ARGSUSED */
 int
-dwarf_get_ADDR_name (unsigned int val,const char ** s_out)
+dwarf_get_ADDR_name (unsigned int val,
+    const char ** s_out)
 {
     switch (val) {
     case DW_ADDR_none:

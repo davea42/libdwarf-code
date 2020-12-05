@@ -39,7 +39,8 @@ struct Addr_Map_Entry {
 
 struct Addr_Map_Entry * addr_map_insert(Dwarf_Unsigned addr,
     char *name, void **map);
-struct Addr_Map_Entry * addr_map_find(Dwarf_Unsigned addr, void **map);
+struct Addr_Map_Entry * addr_map_find(Dwarf_Unsigned addr,
+    void **map);
 void addr_map_destroy(void *map);
 
 #ifdef __cplusplus

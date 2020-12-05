@@ -37,32 +37,58 @@ extern "C" {
 
 
 extern const char * get_TAG_name(unsigned int val_in,int printonerr);
-extern const char * get_children_name(unsigned int val_in,int printonerr);
-extern const char * get_FORM_name(unsigned int val_in,int printonerr);
-extern const char * get_AT_name(unsigned int val_in,int printonerr);
-extern const char * get_OP_name(unsigned int val_in,int printonerr);
-extern const char * get_ATE_name(unsigned int val_in,int printonerr);
-extern const char * get_DS_name(unsigned int val_in,int printonerr);
-extern const char * get_END_name(unsigned int val_in,int printonerr);
-extern const char * get_ATCF_name(unsigned int val_in,int printonerr);
-extern const char * get_ACCESS_name(unsigned int val_in,int printonerr);
-extern const char * get_VIS_name(unsigned int val_in,int printonerr);
-extern const char * get_VIRTUALITY_name(unsigned int val_in,int printonerr);
-extern const char * get_LANG_name(unsigned int val_in,int printonerr);
-extern const char * get_ID_name(unsigned int val_in,int printonerr);
-extern const char * get_CC_name(unsigned int val_in,int printonerr);
-extern const char * get_INL_name(unsigned int val_in,int printonerr);
-extern const char * get_ORD_name(unsigned int val_in,int printonerr);
-extern const char * get_DSC_name(unsigned int val_in,int printonerr);
-extern const char * get_LNS_name(unsigned int val_in,int printonerr);
-extern const char * get_LNE_name(unsigned int val_in,int printonerr);
-extern const char * get_MACINFO_name(unsigned int val_in,int printonerr);
-extern const char * get_MACRO_name(unsigned int val_in,int printonerr);
-extern const char * get_CFA_name(unsigned int val_in,int printonerr);
-extern const char * get_EH_name(unsigned int val_in,int printonerr);
-extern const char * get_FRAME_name(unsigned int val_in,int printonerr);
-extern const char * get_CHILDREN_name(unsigned int val_in,int printonerr);
-extern const char * get_ADDR_name(unsigned int val_in,int printonerr);
+extern const char * get_children_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_FORM_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_AT_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_OP_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_ATE_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_DS_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_END_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_ATCF_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_ACCESS_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_VIS_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_VIRTUALITY_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_LANG_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_ID_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_CC_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_INL_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_ORD_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_DSC_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_LNS_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_LNE_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_MACINFO_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_MACRO_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_CFA_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_EH_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_FRAME_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_CHILDREN_name(unsigned int val_in,
+    int printonerr);
+extern const char * get_ADDR_name(unsigned int val_in,
+    int printonerr);
 
 #ifdef __cplusplus
 }

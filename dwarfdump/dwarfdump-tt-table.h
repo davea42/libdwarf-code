@@ -899,7 +899,8 @@ static Rate_Tag_Tree rate_tag_tree[] = {
 
 #define TAG_TREE_ROW_COUNT 75
 
-static unsigned int tag_tree_combination_table[TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {
+static unsigned int tag_tree_combination_table
+    [TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {
 /* 0x00 - <no name known for the TAG>          */
     { 0x00000000,0x00000000,0x00000000,},
 /* 0x01 - DW_TAG_array_type                    */

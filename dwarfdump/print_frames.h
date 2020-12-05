@@ -33,7 +33,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-int print_one_cie(Dwarf_Debug dbg, 
+int print_one_cie(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Cie cie,
     Dwarf_Unsigned cie_index,

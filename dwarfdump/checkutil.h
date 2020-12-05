@@ -87,17 +87,24 @@ void AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key,Dwarf_Addr base,Dwarf_Addr low,Dwarf_Addr high,
     const char *name, Dwarf_Bool bFlag);
 
-Dwarf_Bool DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key);
+Dwarf_Bool DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr key);
 
-Dwarf_Bool FindAddressInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address);
-Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key);
-Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key);
-Bucket_Data *FindNameInBucketGroup(Bucket_Group *pBucketGroup,char *name);
+Dwarf_Bool FindAddressInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr address);
+Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr key);
+Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr key);
+Bucket_Data *FindNameInBucketGroup(Bucket_Group *pBucketGroup,
+    char *name);
 
-Dwarf_Bool IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr pc);
+Dwarf_Bool IsValidInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr pc);
 
 void ResetLimitsBucketSet(Bucket_Group *pBucketGroup);
-void SetLimitsBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr lower,Dwarf_Addr upper);
+void SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr lower,Dwarf_Addr upper);
 Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     const char *name,Dwarf_Addr lopc,Dwarf_Addr hipc);
 

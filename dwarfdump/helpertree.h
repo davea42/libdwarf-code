@@ -28,11 +28,11 @@
 #define HELPERTREE_H
 
 /*  This is a tsearch tree  interface we may use in various ways
-    where each different sort of use is a different Helpertree_Base_s
-    instance. */
+    where each different sort of use is a different
+    Helpertree_Base_s instance. */
 
-/*  We create Helpertree_Base_s so we can use type-checked calls, not
-    showing the tsearch void* outside of helpertree.c. */
+/*  We create Helpertree_Base_s so we can use type-checked calls,
+    not showing the tsearch void* outside of helpertree.c. */
 struct Helpertree_Base_s {
     void * hb_base;
 };
@@ -62,9 +62,11 @@ struct Helpertree_Map_Entry_s *
 helpertree_add_entry( Dwarf_Unsigned offset, int  val,
     struct Helpertree_Base_s *helper);
 
-/* Look for entry. Use hm_val (if non-null return) to determine signedness. */
+/*  Look for entry. Use hm_val (if non-null return)
+    to determine signedness. */
 struct Helpertree_Map_Entry_s *
-helpertree_find(Dwarf_Unsigned offset,struct Helpertree_Base_s *helper);
+helpertree_find(Dwarf_Unsigned offset,
+    struct Helpertree_Base_s *helper);
 
 void helpertree_clear_statistics(struct Helpertree_Base_s *helper);
 #endif /* HELPERTREE_H */

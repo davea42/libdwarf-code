@@ -46,7 +46,8 @@ void add_macro_import_sup(void **base,Dwarf_Unsigned offset);
 void add_macro_area_len(void **base, Dwarf_Unsigned offset,
     Dwarf_Unsigned len);
 
-int get_next_unprinted_macro_offset(void **base, Dwarf_Unsigned * off);
+int get_next_unprinted_macro_offset(void **base,
+    Dwarf_Unsigned * off);
 void mark_macro_offset_printed(void **base, Dwarf_Unsigned offset);
 
 int print_macro_statistics(const char *name,void **basep,

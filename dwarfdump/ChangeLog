@@ -1,3 +1,16 @@
+2020-12-05 David Anderson
+    * addrmap.h,checkutil.h,dwgetopt.c,dwgetopt.h,helpertree.h,
+      macrocheck.h,naming.h,print_frames.h,print_reloc.h,
+      print_reloc_decls.h: modified for line length.
+      No logic changes.
+
+    * tag_attr.c,tag_tree.c: Modified to generate no
+      long C source lines.
+
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated using the above
+      tag_*.c sources, now with no long lines.
 2020-12-04 David Anderson
     * print_reloc.c,print_reloc_test.c,print_types.c,
       print_weaknames.c: Trivial tiny changes for codingstyle.

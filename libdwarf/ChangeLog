@@ -1,3 +1,7 @@
+2020-12-05 David Anderson
+    * gennames.c: Modified to generate no long C source libes.
+    * dwarf_names.c,dwarf_names.h: Regenerated, now
+      with no long source lines.
 2020-11-30 David Anderson
     * libdwarf_version.h: updated version string
     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,

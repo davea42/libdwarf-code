@@ -457,12 +457,16 @@ GenerateOneSet(void)
     fprintf(f_names_new_h,"int DWPREFIX(get_%s_name) (unsigned int, const char **);\n",prefix_id);
 
     /* Generate entries for 'dwarf_names.h' and libdwarf.h */
-    fprintf(f_names_h,"extern int dwarf_get_%s_name(unsigned int /*val_in*/, const char ** /*s_out */);\n",prefix_id);
+    fprintf(f_names_h,"extern int dwarf_get_%s_name"
+        "(unsigned int /*val_in*/,\n",prefix_id);
+    fprintf(f_names_h,"    const char ** /*s_out */);\n");
 
     /* Generate code for 'dwarf_names.c' */
     fprintf(f_names_c,"/* ARGSUSED */\n");
     fprintf(f_names_c,"int\n");
-    fprintf(f_names_c,"dwarf_get_%s_name (unsigned int val,const char ** s_out)\n",prefix_id);
+    fprintf(f_names_c,"dwarf_get_%s_name (unsigned int val,\n",
+        prefix_id);
+    fprintf(f_names_c,"    const char ** s_out)\n");
     fprintf(f_names_c,"{\n");
     if (use_tables) {
         fprintf(f_names_c,"    static Names_Data Dwarf_%s_n[] = {\n",prefix_id);
@@ -474,7 +478,9 @@ GenerateOneSet(void)
         /* Check if value already dumped */
         if (u > 0 && group_array[u].value == prev_value) {
             fprintf(f_names_c,
-                "    /* Skipping alternate spelling of value 0x%x. %s_%s */\n",
+                "    /*  Skipping alternate spelling of value\n"); 
+            fprintf(f_names_c,
+                "        0x%x. %s_%s */\n",
                 (unsigned)prev_value,
                 prefix,
                 group_array[u].name);

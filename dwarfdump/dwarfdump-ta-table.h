@@ -1386,7 +1386,8 @@ static Rate_Tag_Attr rate_tag_attr[] = {
 
 #define ATTR_TREE_COLUMN_COUNT 5
 
-static unsigned int tag_attr_combination_table[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {
+static unsigned int tag_attr_combination_table
+[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {
 /* 0x00 - <no name known for the tag>          */
     { 0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x01 - DW_TAG_array_type                    */

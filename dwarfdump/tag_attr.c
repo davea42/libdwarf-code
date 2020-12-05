@@ -542,7 +542,8 @@ main(int argc, char **argv)
         fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %d\n\n",
             table_columns);
         fprintf(fileOut,
-            "static unsigned int tag_attr_combination_table"
+            "static unsigned int tag_attr_combination_table\n");
+        fprintf(fileOut,
             "[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {\n");
     }
     else {
@@ -552,8 +553,10 @@ main(int argc, char **argv)
         fprintf(fileOut,"#define ATTR_TREE_EXT_COLUMN_COUNT %d\n\n",
             table_columns);
         fprintf(fileOut,
-            "static unsigned int tag_attr_combination_ext_table"
-            "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT]"
+            "static unsigned int tag_attr_combination_ext_table\n");
+        fprintf(fileOut,
+            "    [ATTR_TREE_EXT_ROW_COUNT]"
+            "[ATTR_TREE_EXT_COLUMN_COUNT]"
             " = {\n");
     }
 
@@ -570,6 +573,9 @@ main(int argc, char **argv)
         }
         fprintf(fileOut,"    { ");
         for (j = 0; j < table_columns; ++j ) {
+            if (j && j%5 == 0) {
+                fprintf(fileOut,"\n        ");
+            }
             fprintf(fileOut,"0x%08x,",
                 tag_attr_combination_table[u][j]);
         }
