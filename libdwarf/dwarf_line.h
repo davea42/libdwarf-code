@@ -151,7 +151,8 @@ struct Dwarf_Line_Context_s {
     /*  Start of the lines themselves. */
     Dwarf_Small *lc_line_ptr_lines;
 
-    /* Used to check that decoding of the line prologue is done right. */
+    /*  Used to check that decoding of the line prologue
+        is done right. */
     Dwarf_Small *lc_line_prologue_start;
 
     Dwarf_Small lc_default_is_stmt; /* all versions */
@@ -160,13 +161,15 @@ struct Dwarf_Line_Context_s {
 
     /* Highest std opcode (+1).  */
     Dwarf_Small lc_opcode_base; /* all versions */
-    /*  pf_opcode_base -1 entries (each a count, normally the value of
+    /*  pf_opcode_base -1 entries (each a count,
+        normally the value of
         each entry is 0 or 1). */
     Dwarf_Small *lc_opcode_length_table; /* all versions */
 
     /*  The number to treat as standard ops. This is a special
         accomodation of gcc using the new standard opcodes but not
-        updating the version number. It's legal dwarf2, but much better
+        updating the version number.
+        It's legal dwarf2, but much better
         for the user to understand as dwarf3 when 'it looks ok'. */
     Dwarf_Small lc_std_op_count;
 
@@ -186,9 +189,10 @@ struct Dwarf_Line_Context_s {
     Dwarf_Unsigned lc_directory_entry_format_count; /* DWARF5 */
 
     Dwarf_Unsigned lc_directory_entry_values_count; /* DWARF5 */
+
     /*  This must be freed,malloc space, an array of the
-        values of each entry. */
-    struct Dwarf_Unsigned_Pair_s * lc_directory_format_values; /* DWARF5 */
+        values of each entry.  DWARF5 */
+    struct Dwarf_Unsigned_Pair_s * lc_directory_format_values;
 
     /* ======== end includes =========*/
 
@@ -204,7 +208,8 @@ struct Dwarf_Line_Context_s {
     /*  Points to a singly-linked list of entries providing info
         about source files
         for the current set of Dwarf_Line structures.
-        The initial  entry on the list is 'file 1' per DWARF2,3,4 rules.
+        The initial  entry on the list is 'file 1'
+        per DWARF2,3,4 rules.
         And so on.  lc_last_entry points at the last entry
         in the list (so we can easily expand the list).
         It's a list (not a table) since we may encounter
@@ -273,7 +278,8 @@ struct Dwarf_Line_Registers_s {
     Dwarf_Bool lr_prologue_end;   /* DWARF3 */
     Dwarf_Bool lr_epilogue_begin; /* DWARF3 */
     Dwarf_Small lr_isa;           /* DWARF3 */
-    Dwarf_Unsigned lr_op_index;      /* DWARF4, operation within VLIW instruction. */
+    Dwarf_Unsigned lr_op_index;   /* DWARF4, operation
+        within VLIW instruction. */
     Dwarf_Unsigned lr_discriminator; /* DWARF4 */
     Dwarf_Unsigned lr_call_context;       /* EXPERIMENTAL */
     Dwarf_Unsigned lr_subprogram;     /* EXPERIMENTAL */
@@ -312,13 +318,14 @@ struct Dwarf_Line_s {
                 Dwarf_Unsigned lc_file_entry_count;) */
             Dwarf_Unsigned li_file;
 
-            /*  In single-level table is line number in source file. 1-N
+            /*  In single-level table is line number in
+                source file. 1-N
                 In logicals table is not used.
-                In actuals table is index into logicals table.  1-N*/
+                In actuals table is index into logicals table. 1-N*/
             Dwarf_Unsigned li_line;
 
-            Dwarf_Half li_column; /* source file column number  1-N */
-            Dwarf_Small li_isa;   /* New as of DWARF4. */
+            Dwarf_Half li_column; /*source file column number 1-N */
+            Dwarf_Small li_isa;   /*New as of DWARF4. */
 
             /*  Two-level line tables.
                 Is index from logicals table
@@ -393,7 +400,8 @@ int _dwarf_internal_srclines(Dwarf_Die die,
 #define LOP_STANDARD 3
 #define LOP_SPECIAL  4
 
-#define WHAT_IS_OPCODE(type,opcode,base,opcode_length,line_ptr,highest_std) \
+#define WHAT_IS_OPCODE(type,opcode,base,opcode_length,\
+line_ptr,highest_std) \
     if ((opcode) < (base)) {                             \
         /*  we know we must treat as a standard op       \
             or a special case. */                        \
@@ -441,7 +449,8 @@ int _dwarf_internal_srclines(Dwarf_Die die,
    of standard-opcode-lengths in the line table prologue.  */
 #define STANDARD_OPERAND_COUNT_DWARF2 9
 #define STANDARD_OPERAND_COUNT_DWARF3 12
-/* For two-level line tables, we have three additional standard opcodes. */
+/*  For two-level line tables, we have three additional
+    standard opcodes. */
 #define STANDARD_OPERAND_COUNT_TWO_LEVEL 15
 
 void _dwarf_print_header_issue(Dwarf_Debug dbg,
@@ -468,7 +477,8 @@ int _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
 
 void _dwarf_update_chain_list( Dwarf_Chain chain_line,
     Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain);
-void _dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,int count);
+void _dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,
+    int count);
 
 int _dwarf_line_context_constructor(Dwarf_Debug dbg, void *m);
 void _dwarf_line_context_destructor(void *m);
@@ -476,4 +486,5 @@ void _dwarf_line_context_destructor(void *m);
 void _dwarf_print_line_context_record(Dwarf_Debug dbg,
     Dwarf_Line_Context line_context);
 void _dwarf_context_src_files_destroy(Dwarf_Line_Context context);
-int _dwarf_add_to_files_list(Dwarf_Line_Context context, Dwarf_File_Entry fe);
+int _dwarf_add_to_files_list(Dwarf_Line_Context context,
+    Dwarf_File_Entry fe);

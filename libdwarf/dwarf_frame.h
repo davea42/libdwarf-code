@@ -64,7 +64,8 @@ Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
 
 
     ---START SGI-ONLY COMMENT:
-    SGI-IRIX versions of cie or fde  were intended to use "z1", "z2" as the
+    SGI-IRIX versions of cie or fde  were intended
+    to use "z1", "z2" as the
     augmenter strings if required for new augmentation.
     However, that never happened (as of March 2005).
 
@@ -111,10 +112,12 @@ struct Dwarf_Reg_Rule_s {
     /*  Is a flag indicating whether the rule includes the offset
         field, ie whether the ru_offset field is valid or not.
         Applies only if DW_EXPR_OFFSET or DW_EXPR_VAL_OFFSET.
-        It is important, since reg+offset (offset of 0) is different from
+        It is important, since reg+offset (offset of 0)
+        is different from
         just 'register' since the former means 'read memory at address
         given by the sum of register contents plus offset to get the
-        value'. whereas the latter means 'the value is in the register'.
+        value'. whereas the latter
+        means 'the value is in the register'.
 
         The 'register' numbers are either real registers (ie, table
         columns defined as real registers) or defined entries that are
@@ -180,7 +183,8 @@ struct Dwarf_Frame_Op_List_s {
 /* See dwarf_frame.c for the heuristics used to set the
    Dwarf_Cie ci_augmentation_type.
 
-   This succinctly helps interpret the size and meaning of .debug_frame
+   This succinctly helps interpret the size and
+   meaning of .debug_frame
    and (for gcc) .eh_frame.
 
    In the case of gcc .eh_frame (gcc 3.3, 3.4)
@@ -265,7 +269,8 @@ struct Dwarf_Cie_s {
     Dwarf_Small *  ci_section_ptr;
     Dwarf_Unsigned ci_section_length;
     Dwarf_Small *  ci_section_end;
-    /*  DWARF4 adds address size and segment size to the CIE: the .debug_info
+    /*  DWARF4 adds address size and segment size to the CIE:
+        the .debug_info
         section may not always be present to allow libdwarf to
         find address_size from the compilation-unit. */
     Dwarf_Half   ci_address_size;
@@ -317,7 +322,7 @@ struct Dwarf_Fde_s {
         Language Specific Data Area (LSDA). If not 'L" is zero. */
 
 
-    /* The following 3 are about the Elf section the FDEs come from. */
+    /* The following 3 are about the Elf section the FDEs come from.*/
     Dwarf_Small * fd_section_ptr;
     Dwarf_Unsigned fd_section_length;
     Dwarf_Unsigned fd_section_index;
@@ -388,7 +393,7 @@ struct cie_fde_prefix_s {
     int            cf_local_length_size;
     int            cf_local_extension_size;
     Dwarf_Unsigned cf_cie_id;
-    Dwarf_Small *  cf_cie_id_addr; /* used for eh_frame calculations. */
+    Dwarf_Small *  cf_cie_id_addr; /*used for eh_frame calculations.*/
 
     /*  Simplifies passing around these values to create fde having
         these here. */

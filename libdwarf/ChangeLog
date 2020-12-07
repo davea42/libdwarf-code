@@ -1,4 +1,10 @@
 2020-12-07 David Anderson
+    * dwarf_errmsg_list.h,dwarf_frame.h,dwarf_line.h,
+      dwarf_line_table_reader_common.h: Incredible number
+      of too-long lines here. All transformed.
+    * dwarf_names.c: Regenerated. Regeneration adds
+      a two-line comment.
+2020-12-07 David Anderson
     * Makefile.am: Added a new test to ensure some nearly
       unused headers are compilable.
     * Makefile.in: Regnerated.

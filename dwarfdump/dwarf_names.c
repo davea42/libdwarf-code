@@ -1283,6 +1283,8 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_PGI_lbase:
         *s_out = "DW_AT_PGI_lbase";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x3a00. DW_AT_PGI_lbase */
     case DW_AT_PGI_soffset:
         *s_out = "DW_AT_PGI_soffset";
         return DW_DLV_OK;
