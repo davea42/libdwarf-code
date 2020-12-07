@@ -42,7 +42,8 @@ static struct Addr_Map_Entry *
 addr_map_create_entry(Dwarf_Unsigned k,char *name)
 {
     struct Addr_Map_Entry *mp =
-        (struct Addr_Map_Entry *)malloc(sizeof(struct Addr_Map_Entry));
+        (struct Addr_Map_Entry *)malloc(
+        sizeof(struct Addr_Map_Entry));
     if (!mp) {
         return 0;
     }

@@ -105,7 +105,7 @@ print_opsbytes(Dwarf_Unsigned expr_ops_blocklen,
         return;
     }
     printf(" opsbytes:");
-    for( ; i < expr_ops_blocklen; ++i ) {
+    for ( ; i < expr_ops_blocklen; ++i ) {
         Dwarf_Small *b =  expr_ops+i;
         printf(" %02x", *b);
     }
@@ -323,7 +323,7 @@ print_raw_all_loclists(Dwarf_Debug dbg,
         printf("   Version               : %3u\n",version);
         printf("   address size          : %3u\n",address_size);
         printf("   offset size           : %3u\n",offset_size);
-        if(glflags.verbose) {
+        if (glflags.verbose) {
             printf("   extension size        : %3u\n",extension_size);
         }
         printf("   segment selector size : %3u\n",
@@ -332,7 +332,7 @@ print_raw_all_loclists(Dwarf_Debug dbg,
             offset_entry_count);
         printf("   context size in bytes : %3" DW_PR_DUu "\n",
             offset_past_last_locentry - header_offset);
-        if(glflags.verbose) {
+        if (glflags.verbose) {
             printf("   Offset in section     : 0x%"
                 DW_PR_XZEROS DW_PR_DUx"\n",
                 header_offset);
@@ -359,7 +359,7 @@ print_raw_all_loclists(Dwarf_Debug dbg,
                 offset_of_first_locentry,
                 offset_past_last_locentry,
                 error);
-            if(res != DW_DLV_OK) {
+            if (res != DW_DLV_OK) {
                 return res;
             }
         }

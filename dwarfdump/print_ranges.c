@@ -91,7 +91,8 @@ print_ranges(Dwarf_Debug dbg,
             printf("%s",sanitized(val));
             ++group_number;
         } else if (rres == DW_DLV_NO_ENTRY) {
-            printf("End of %s.\n",sanitized(esb_get_string(&truename)));
+            printf("End of %s.\n",
+                sanitized(esb_get_string(&truename)));
             break;
         } else {
             /*  ERROR, which does not quite mean a real error,
@@ -117,8 +118,8 @@ print_ranges(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Extracted this from print_range_attribute() to isolate the check of
-    the range list.
+/*  Extracted this from print_range_attribute()
+    to isolate the check of the range list.
 */
 static int
 check_ranges_list(Dwarf_Debug dbg,
@@ -148,14 +149,16 @@ check_ranges_list(Dwarf_Debug dbg,
     get_true_section_name(dbg,".debug_ranges",
         &truename,FALSE);
     sec_name = esb_get_string(&truename);
-    get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,err);
+    get_address_size_and_max(dbg,&elf_address_size,
+        &elf_max_address,err);
 
     /* Ignore last entry, is the end-of-list */
     for (index = 0; index < rangecount - 1; index++) {
         Dwarf_Ranges *r = rangeset + index;
 
         if (r->dwr_addr1 == elf_max_address) {
-            /* (0xffffffff,addr), use specific address (current PU address) */
+            /*  (0xffffffff,addr), use specific address
+                (current PU address) */
             base_address = r->dwr_addr2;
         } else {
             /* (offset,offset), update using CU address */
@@ -221,8 +224,8 @@ check_ranges_list(Dwarf_Debug dbg,
         off += elf_address_size * 2;
     }
 
-    /*  In the case of errors, we have to print the range records that
-        caused the error. */
+    /*  In the case of errors, we have to print the range
+        records that caused the error. */
     if (bError && glflags.gf_check_verbose_mode && do_print) {
         struct esb_s rangesstr;
         esb_constructor(&rangesstr);
@@ -236,8 +239,8 @@ check_ranges_list(Dwarf_Debug dbg,
         esb_destructor(&rangesstr);
     }
 
-    /*  In the case of printing unique errors, stop the printing of any
-        subsequent errors, which have the same text. */
+    /*  In the case of printing unique errors, stop the printing
+        of any subsequent errors, which have the same text. */
     if (bError && glflags.gf_check_verbose_mode &&
         glflags.gf_print_unique_errors) {
         do_print = FALSE;
@@ -254,18 +257,21 @@ typedef struct {
     Dwarf_Off range_off;
 } Range_Array_Entry;
 
-/*  Array to record the DW_AT_range attribute DIE, to be used at the end
-    of the CU, to check the range values; DWARF4 allows an offset relative
-    to the low_pc as the high_pc value. Also, LLVM generates for the CU the
-    pair (low_pc, at_ranges) instead of the traditional (low_pc, high_pc).
+/*  Array to record the DW_AT_range attribute DIE, to be used
+    at the end of the CU, to check the range values; DWARF4
+    allows an offset relative to the low_pc as the high_pc
+    value. Also, LLVM generates for the CU the
+    pair (low_pc, at_ranges) instead of the traditional
+    (low_pc, high_pc).
 */
 static Range_Array_Entry *range_array = NULL;
 static Dwarf_Unsigned range_array_size = 0;
 static Dwarf_Unsigned range_array_count = 0;
 #define RANGE_ARRAY_INITIAL_SIZE 64
 
-/*  Allocate space to store information about the ranges; the values are
-    extracted from the DW_AT_ranges attribute. The space is reused by all CUs.
+/*  Allocate space to store information about the ranges;
+    the values are extracted from the DW_AT_ranges attribute.
+    The space is reused by all CUs.
 */
 void
 allocate_range_array_info()
@@ -273,7 +279,8 @@ allocate_range_array_info()
     if (range_array == NULL) {
         /* Allocate initial range array info */
         range_array = (Range_Array_Entry *)
-            calloc(RANGE_ARRAY_INITIAL_SIZE,sizeof(Range_Array_Entry));
+            calloc(RANGE_ARRAY_INITIAL_SIZE,
+                sizeof(Range_Array_Entry));
         range_array_size = RANGE_ARRAY_INITIAL_SIZE;
     }
 }

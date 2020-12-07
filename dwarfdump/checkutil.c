@@ -47,12 +47,14 @@ static int FindDataIndexInBucket(Bucket_Group *pBucketGroup,
 static void PrintBucketData(Bucket_Group *pBucketGroup,
     Bucket_Data *pBucketData);
 static void ProcessBucketGroup(Bucket_Group *pBucketGroup,
-    void (*pFunction)(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData));
+    void (*pFunction)(Bucket_Group *pBucketGroup,
+        Bucket_Data *pBucketData));
 
 Bucket_Group *
 AllocateBucketGroup(int kind)
 {
-    Bucket_Group *pBucketGroup = (Bucket_Group *)calloc(1,sizeof(Bucket_Group));
+    Bucket_Group *pBucketGroup = (Bucket_Group *)calloc(1,
+        sizeof(Bucket_Group));
     pBucketGroup->kind = kind;
     return pBucketGroup;
 }
@@ -64,7 +66,7 @@ ReleaseBucketGroup(Bucket_Group *pBucketGroup)
     Bucket *pNext = 0;
 
     assert(pBucketGroup);
-    for (pBucket = pBucketGroup->pHead; pBucket; /*pBucket = pBucket->pNext*/) {
+    for (pBucket = pBucketGroup->pHead; pBucket; ) {
         pNext = pBucket->pNext;
         free(pBucket);
         pBucket = pNext;
@@ -80,7 +82,8 @@ ResetBucketGroup(Bucket_Group *pBucketGroup)
     Bucket *pBucket = 0;
 
     assert(pBucketGroup);
-    for (pBucket = pBucketGroup->pHead; pBucket; pBucket = pBucket->pNext) {
+    for (pBucket = pBucketGroup->pHead; pBucket;
+        pBucket = pBucket->pNext) {
         pBucket->nEntries = 0;
     }
     ResetSentinelBucketGroup(pBucketGroup);
@@ -156,7 +159,8 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
             (Dwarf_Unsigned)(uintptr_t)pBucket);
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
-            printf("[%06d] Key = 0x%08" DW_PR_DUx ", Base = 0x%08" DW_PR_DUx
+            printf("[%06d] Key = 0x%08" DW_PR_DUx
+                ", Base = 0x%08" DW_PR_DUx
                 ", Low = 0x%08" DW_PR_DUx ", High = 0x%08" DW_PR_DUx
                 ", Flag = %d, Name = '%s'\n",
                 ++nCount,
@@ -215,7 +219,8 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
             pBucket->Entries[0] = data;
         }
     } else {
-        /*  We have an allocated bucket with zero entries; search for the
+        /*  We have an allocated bucket with zero entries;
+            search for the
             first available bucket to be used as the current
             insertion point */
         for (pBucket = pBucketGroup->pHead; pBucket;
@@ -253,7 +258,8 @@ DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
                 for (nStart = nIndex + 1; nStart < pBucket->nEntries;
                     ++nStart) {
 
-                    pBucket->Entries[nIndex] = pBucket->Entries[nStart];
+                    pBucket->Entries[nIndex] =
+                        pBucket->Entries[nStart];
                     ++nIndex;
                 }
                 pBucket->Entries[nIndex] = data;
@@ -270,7 +276,8 @@ DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
     This matches == if high is exact match (which usually means
     one-past-true-high).  */
 Dwarf_Bool
-FindAddressInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
+FindAddressInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr address)
 {
     int nIndex = 0;
     Bucket *pBucket = 0;
@@ -293,7 +300,8 @@ FindAddressInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 }
 
 /*  Search an entry (Bucket Data) in the Bucket Set */
-Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
+Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr key)
 {
     int mid = 0;
     int low = 0;
@@ -303,7 +311,8 @@ Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 
     assert(pBucketGroup);
 
-    for (pBucket = pBucketGroup->pHead; pBucket; pBucket = pBucket->pNext) {
+    for (pBucket = pBucketGroup->pHead; pBucket;
+        pBucket = pBucket->pNext) {
         /* Get lower and upper references */
         if (pBucket->nEntries) {
             low = 0;
@@ -335,7 +344,8 @@ Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 /*  Find the Bucket that contains a given Bucket Data
     and return its local index. Else return -1.  */
 static int
-FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
+FindDataIndexInBucket(Bucket_Group *pBucketGroup,
+    Bucket_Data *pBucketData)
 {
     Bucket *pBucket = 0;
     Bucket_Data *pLower = 0;
@@ -351,7 +361,8 @@ FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
         pBucketData <= pBucketGroup->pLast) {
 
         /* Find bucket that contains the first sentinel */
-        for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
+        for (pBucket = pBucketGroup->pHead;
+            pBucket && pBucket->nEntries;
             pBucket = pBucket->pNext) {
 
             pLower = &pBucket->Entries[0];
@@ -366,7 +377,8 @@ FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
         }
     } else {
         /* Find bucket that contains the entry */
-        for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
+        for (pBucket = pBucketGroup->pHead;
+            pBucket && pBucket->nEntries;
             pBucket = pBucket->pNext) {
 
             pLower = &pBucket->Entries[0];
@@ -386,7 +398,8 @@ FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
 /*  Search an entry (Bucket Data) in the Bucket Group.
     The key is an offset, a DIE offset
     within Visited info. */
-Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
+Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,
+    Dwarf_Addr key)
 {
     int nIndex = 0;
     Bucket *pBucket = 0;
@@ -491,7 +504,8 @@ SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
 /* Traverse Bucket Set and execute a supplied function */
 static void
 ProcessBucketGroup(Bucket_Group *pBucketGroup,
-    void (*pFunction)(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData))
+    void (*pFunction)(Bucket_Group *pBucketGroup,
+        Bucket_Data *pBucketData))
 {
     int nIndex = 0;
     int nStart = 0;
@@ -517,7 +531,8 @@ ProcessBucketGroup(Bucket_Group *pBucketGroup,
         pUpper = &pBucket->Entries[pBucket->nEntries - 1];
 
         /* Check if the first sentinel is in this bucket */
-        if (pBucketGroup->pFirst >= pLower && pBucketGroup->pFirst <= pUpper) {
+        if (pBucketGroup->pFirst >= pLower &&
+            pBucketGroup->pFirst <= pUpper) {
             /* Low sentinel is in this bucket */
             bFound = TRUE;
             break;
@@ -563,7 +578,8 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
 #define SECTION_NAME_LEN 2048 /* Guessing a sensible length */
     static char section_name[SECTION_NAME_LEN];
     Bucket_Data *pBucketData = 0;
-    /*  Since text is quite uniformly just this name, no need to get it
+    /*  Since text is quite uniformly just this name,
+        no need to get it
         from elsewhere, though it will not work for non-elf.  */
     const char *lo_text = ".text.";
 
@@ -579,7 +595,8 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     esb_destructor(&sn);
     if (pBucketData) {
         if (lopc >= pBucketData->low && lopc <= pBucketData->high) {
-            if (hipc >= pBucketData->low && hipc <= pBucketData->high) {
+            if (hipc >= pBucketData->low &&
+                hipc <= pBucketData->high) {
                 return TRUE;
             }
         }

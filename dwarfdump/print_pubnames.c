@@ -92,14 +92,16 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             we will get an error here but we just
             let that create an error,
             papering it over here by subtracting out
-            the applicatble debug_info CU header offset is problematic. */
+            the applicatble debug_info CU header offset
+            is problematic. */
     if (dres != DW_DLV_OK) {
         struct esb_s details;
         esb_constructor(&details);
         esb_append(&details,line_title);
         esb_append(&details," dwarf_offdie : "
             "die offset does not reference valid DIE ");
-        esb_append_printf_u(&details,"at offset 0x%"  DW_PR_DUx, die_off);
+        esb_append_printf_u(&details,"at offset 0x%"
+            DW_PR_DUx, die_off);
         esb_append(&details,".");
         print_error_and_continue(dbg,
             esb_get_string(&details), dres, *err);
@@ -134,7 +136,8 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             esb_append(&details,line_title);
             esb_append(&details," dwarf_offdie: "
                 "cu die offset  does not reference valid CU DIE.  ");
-            esb_append_printf_u(&details,"0x%"  DW_PR_DUx, cu_die_off);
+            esb_append_printf_u(&details,"0x%"  DW_PR_DUx,
+                cu_die_off);
             esb_append(&details,".");
             /* does not return */
             print_error_and_continue(dbg,
@@ -183,7 +186,8 @@ print_pubname_style_entry(Dwarf_Debug dbg,
 
     /* Display offsets */
     if (glflags.gf_display_offsets && glflags.verbose) {
-        printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx , global_cu_offset);
+        printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx ,
+            global_cu_offset);
     }
 
     /* Print 'name'at the end for better layout */
@@ -322,7 +326,8 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
     ares = get_address_size_and_max(dbg,0,&elf_max_address,err);
     if (ares != DW_DLV_OK) {
         simple_err_return_msg_either_action(ares,
-            "ERROR: print_pubnames style call to get address size and max address"
+            "ERROR: print_pubnames style call to get "
+            "address size and max address"
             " fails.");
         return ares;
     }
@@ -357,7 +362,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
             esb_destructor(&m);
             return nres;
         }
-        if(glflags.verbose) {
+        if (glflags.verbose) {
             /*  We know no die_off can be zero
                 (except for the fake global created when
                 the debug_pubnames for a CU has no actual entries)
@@ -391,7 +396,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                     esb_destructor(&msge);
                     return nres;
                 }
-                if(glflags.gf_do_print_dwarf) {
+                if (glflags.gf_do_print_dwarf) {
                     print_globals_header(pub_section_hdr_offset,
                         pub_offset_size,
                         pub_length,
@@ -491,7 +496,8 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 esb_append(&msge,"ERROR Accessing dwarf_offdie ");
                 esb_append_printf_i(&msge," for index %d in ",i);
                 esb_append(&msge,section_true_name);
-                esb_append_printf_u(&msge," with die offset 0x%x ",die_off);
+                esb_append_printf_u(&msge," with die offset 0x%x ",
+                    die_off);
                 esb_append(&msge,".");
                 simple_err_return_msg_either_action(dres,
                     esb_get_string(&msge));

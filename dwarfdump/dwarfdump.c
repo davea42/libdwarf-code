@@ -505,7 +505,7 @@ main(int argc, char *argv[])
         issues due to the buffering associated with stdout.
         Some issues were fixed just by the use of 'fflush',
         but the main issued remained.
-        The stdout stream is buffered, so will only display 
+        The stdout stream is buffered, so will only display
         what's in the buffer after it reaches a newline
         (or when it's told to).
         We have a few options to print immediately:

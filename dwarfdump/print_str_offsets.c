@@ -47,14 +47,14 @@ print_str_offsets_section(Dwarf_Debug dbg,Dwarf_Error *err)
     Dwarf_Unsigned tabnum = 0;
 
     res = dwarf_open_str_offsets_table_access(dbg, &sot,err);
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         /* No such table */
         return res;
     }
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         return res;
     }
-    for(;; ++tabnum) {
+    for (;; ++tabnum) {
         Dwarf_Unsigned unit_length =0;
         Dwarf_Unsigned unit_length_offset =0;
         Dwarf_Unsigned table_start_offset =0;
@@ -102,7 +102,8 @@ print_str_offsets_section(Dwarf_Debug dbg,Dwarf_Error *err)
         printf(" entry size  %u\n",entry_size);
         printf(" version     %u\n",version);
         if (padding) {
-            printf("Error: padding is non-zero. Something is wrong.\n");
+            printf("Error: padding is non-zero. "
+                "Something is wrong.\n");
         }
         printf(" padding     0x%x\n",padding);
         printf(" arraysize   %" DW_PR_DUu "\n",table_value_count);
@@ -123,7 +124,7 @@ print_str_offsets_section(Dwarf_Debug dbg,Dwarf_Error *err)
             printf(" 0x%" DW_PR_XZEROS DW_PR_DUx ,
                 table_entry_value);
             ++count_in_row;
-            if( count_in_row < rowlim) {
+            if (count_in_row < rowlim) {
                 continue;
             }
             printf("\n");

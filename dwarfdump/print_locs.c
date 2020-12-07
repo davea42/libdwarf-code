@@ -71,9 +71,10 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
     if (!glflags.gf_do_print_dwarf) {
         return DW_DLV_OK;
     }
-    if(!glflags.gf_use_old_dwarf_loclist) {
+    if (!glflags.gf_use_old_dwarf_loclist) {
         printf("\n");
-        printf("Printing location lists with -c is no longer supported\n");
+        printf("Printing location lists with -c is "
+            "no longer supported\n");
         return DW_DLV_OK;
     }
 
@@ -103,7 +104,8 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
     }
 
     printf("Format <i o b e l>: "
-        "index section-offset begin-addr end-addr length-of-block-entry\n");
+        "index section-offset begin-addr end-addr "
+        "length-of-block-entry\n");
     /*  Pre=October 2015 version. */
     for (loopct = 0; ; ++loopct) {
         lres = dwarf_get_loclist_entry(dbg, offset,

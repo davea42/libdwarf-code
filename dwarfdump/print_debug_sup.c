@@ -106,7 +106,7 @@ print_debug_sup(Dwarf_Debug dbg,
     if (checksum_len > 0) {
         printf("    ");
     }
-    for( i = 0 ; i < checksum_len; ++i,++curptr) {
+    for (i = 0 ; i < checksum_len; ++i,++curptr) {
         if (i > 0 && (i%16) == 0) {
             printf("\n    ");
         }

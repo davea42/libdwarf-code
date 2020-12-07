@@ -128,7 +128,8 @@ helpertree_find(Dwarf_Unsigned offset,struct Helpertree_Base_s *base)
     struct  Helpertree_Map_Entry_s *e = 0;
 
     e = helpertree_map_create_entry(offset,0);
-    retval = dwarf_tfind(e,&base->hb_base, helpertree_map_compare_func);
+    retval = dwarf_tfind(e,&base->hb_base,
+        helpertree_map_compare_func);
     if (retval) {
         re = *(struct  Helpertree_Map_Entry_s **)retval;
     }
@@ -143,7 +144,7 @@ helpertree_find(Dwarf_Unsigned offset,struct Helpertree_Base_s *base)
 void
 helpertree_clear_statistics(struct Helpertree_Base_s *base)
 {
-    if(!base) {
+    if (!base) {
         return;
     }
     if (!base->hb_base) {

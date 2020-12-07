@@ -47,7 +47,8 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 #include "tag_common.h"
 
 /* Is this a PU has been invalidated by the SN Systems linker? */
-#define IsInvalidCode(low,high) ((low == max_address) || (low == 0 && high == 0))
+#define IsInvalidCode(low,high) \
+    ((low == max_address) || (low == 0 && high == 0))
 
 
 /*  Most types of CU can have highpc and/or lowpc.
@@ -282,7 +283,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                 cres = DW_DLV_NO_ENTRY;
             }
         }
-        if(cres == DW_DLV_OK) {
+        if (cres == DW_DLV_OK) {
             if (attr == DW_AT_low_pc) {
                 *lowAddrp = addr;
                 *bSawLowp = TRUE;

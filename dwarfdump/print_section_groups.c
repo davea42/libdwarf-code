@@ -86,14 +86,24 @@ static struct  glfsetting_s {
 {".debug_loc",          &glflags.gf_loc_flag,FALSE,FALSE},
 /*{".debug_loclists",     &glflags.gf_loclists_flag,FALSE,FALSE}, */
 {".debug_pubnames",     &glflags.gf_pubnames_flag,FALSE,FALSE},
-{".debug_pubtypes",     &glflags.gf_pubtypes_flag,FALSE,FALSE}, /* SGI only */
+
+/* SGI only */
+{".debug_pubtypes",     &glflags.gf_pubtypes_flag,FALSE,FALSE},
+
 {".debug_ranges",       &glflags.gf_ranges_flag,FALSE,FALSE},
-/*{".debug_rnglists",     &glflags.gf_rnglists_flag,FALSE,FALSE},  */
-{".debug_static_func",  &glflags.gf_static_func_flag,FALSE,FALSE}, /* SGI only */
-{".debug_static_var",   &glflags.gf_static_var_flag,FALSE,FALSE}, /* SGI only */
+/*{".debug_rnglists",     &glflags.gf_rnglists_flag,FALSE,FALSE}, */
+
+/* SGI only */
+{".debug_static_func",  &glflags.gf_static_func_flag,FALSE,FALSE},
+
+/* SGI only */
+{".debug_static_var",   &glflags.gf_static_var_flag,FALSE,FALSE},
+
 {".debug_str",          &glflags.gf_string_flag,FALSE,FALSE},
 {".debug_types",        &glflags.gf_types_flag,FALSE,FALSE},
-{".debug_weaknames",    &glflags.gf_weakname_flag,FALSE,FALSE}, /* SGI only */
+
+/* SGI only */
+{".debug_weaknames",    &glflags.gf_weakname_flag,FALSE,FALSE},
 {0,0,0,0}
 };
 #endif /* 0 */
@@ -115,14 +125,14 @@ turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
 {
     Dwarf_Unsigned i = 0;
 
-    for( ; i < group_map_entry_count; ++i) {
+    for ( ; i < group_map_entry_count; ++i) {
         if (group_nums[i] == 1) {
             unsigned k = 0;
             const char* oursec = sec_names[i];
 
-            for( ; glftab[k].secname; ++k ) {
+            for ( ; glftab[k].secname; ++k ) {
                 if (!strcmp(oursec,glftab[k].secname)) {
-                    if(!glftab[k].origset) {
+                    if (!glftab[k].origset) {
                         glftab[k].origset = TRUE;
                         glftab[k].origflag = *(glftab[k].flag);
                     }
@@ -151,8 +161,8 @@ groups_restore_subsidiary_flags(void)
     /*  Duplicative but harmless free. */
     freeall_groups_tables();
 #if 0
-    for( ; glftab[k].secname; ++k ) {
-        if(glftab[k].origset) {
+    for ( ; glftab[k].secname; ++k ) {
+        if (glftab[k].origset) {
             *(glftab[k].flag) = glftab[k].origflag;
             glftab[k].origset = FALSE;
             glftab[k].origflag = FALSE;
@@ -210,7 +220,7 @@ print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *error)
     res = dwarf_sec_group_sizes(dbg,&section_count,
         &group_count,&selected_group, &group_map_entry_count,
         error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         simple_err_return_msg_either_action(res,
             "ERROR: dwarf_sec_group_sizes failed");
         return res;
@@ -234,7 +244,7 @@ print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *error)
         group_map_entry_count);
 
     sec_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
-    if(!sec_nums) {
+    if (!sec_nums) {
         glflags.gf_count_major_errors++;
         printf("ERROR: Unable to allocate %4" DW_PR_DUu
             " map section values, cannot print group map\n",
@@ -242,7 +252,7 @@ print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *error)
         return DW_DLV_OK;
     }
     group_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
-    if(!group_nums) {
+    if (!group_nums) {
         free(group_nums);
         glflags.gf_count_major_errors++;
         printf("ERROR: Unable to allocate %4" DW_PR_DUu
@@ -251,7 +261,7 @@ print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *error)
         return DW_DLV_OK;
     }
     sec_names = calloc(group_map_entry_count,sizeof(char*));
-    if(!sec_names) {
+    if (!sec_names) {
         free(group_nums);
         free(sec_nums);
         glflags.gf_count_major_errors++;
@@ -263,13 +273,13 @@ print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *error)
 
     res = dwarf_sec_group_map(dbg,group_map_entry_count,
         group_nums,sec_nums,sec_names,error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         simple_err_return_msg_either_action(res,
             "ERROR: dwarf_sec_group_map failed");
         return res;
     }
 
-    for( i = 0; i < group_map_entry_count; ++i) {
+    for ( i = 0; i < group_map_entry_count; ++i) {
         if (i == 0) {
             printf("  [index]  group section\n");
         }

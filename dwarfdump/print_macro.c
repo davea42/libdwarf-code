@@ -151,7 +151,7 @@ print_macro_ops(Dwarf_Debug dbg,
             forms_count > 0) {
             unsigned l = 0;
             printf("\n     Forms count %2u:",forms_count);
-            for(; l < forms_count;++l) {
+            for (; l < forms_count;++l) {
                 Dwarf_Small form = formcode_array[l];
                 printf(" 0x%02x %-18s ",
                     form,
@@ -162,7 +162,7 @@ print_macro_ops(Dwarf_Debug dbg,
         switch(macro_operator) {
         case 0:
         case DW_MACRO_end_file:
-            if(glflags.gf_do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("\n");
             }
             break;
@@ -341,7 +341,7 @@ print_macro_ops(Dwarf_Debug dbg,
 /*   This is for the DWARF5 macro section.  */
 int
 print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
-    char **dwarf_srcfiles, 
+    char **dwarf_srcfiles,
     Dwarf_Signed cnt,
     int by_offset, Dwarf_Unsigned offset,
     Dwarf_Error *err)
@@ -358,7 +358,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     int atres = 0;
 
     glflags.current_section_id = DEBUG_MACRO;
-    if(!by_offset) {
+    if (!by_offset) {
         lres = dwarf_get_macro_context(cu_die,
             &version,&macro_context,
             &macro_unit_offset,
@@ -375,10 +375,10 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             err);
         is_primary = FALSE;
     }
-    if(lres == DW_DLV_NO_ENTRY) {
+    if (lres == DW_DLV_NO_ENTRY) {
         return lres;
     }
-    if(lres == DW_DLV_ERROR) {
+    if (lres == DW_DLV_ERROR) {
         print_error_and_continue(dbg,
             "Unable to dwarf_get_macro_context()"
             " for the DWARF 5 style macro",
@@ -401,7 +401,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             &truename,TRUE);
         /* This does not return */
 
-        if(!by_offset) {
+        if (!by_offset) {
             printf("\n%s: Macro info for a single cu\n",
                 sanitized(esb_get_string(&truename)));
             print_source_intro(cu_die);
@@ -467,12 +467,12 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             &line_offset,
             &has_offset_size_64,&has_operands_table,
             &opcode_count,err);
-        if(lres == DW_DLV_NO_ENTRY) {
+        if (lres == DW_DLV_NO_ENTRY) {
             dwarf_dealloc_macro_context(macro_context);
             /* Impossible */
             return lres;
         }
-        if(lres == DW_DLV_ERROR) {
+        if (lres == DW_DLV_ERROR) {
             dwarf_dealloc_macro_context(macro_context);
             print_error_and_continue(dbg,
                 "ERROR: dwarf_macro_context_head failed",
@@ -486,23 +486,26 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             printf("  Macro version: %d\n",lversion);
         }
         if (glflags.verbose && glflags.gf_do_print_dwarf) {
-            printf("  macro section offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+            printf("  macro section offset 0x%"
+                DW_PR_XZEROS DW_PR_DUx "\n",
                 mac_offset);
             printf("  flags: 0x%x, line offset? %u offsetsize %u, "
                 "operands_table? %u\n",
-                mflags,has_line_offset,has_offset_size_64, has_operands_table);
+                mflags,has_line_offset,has_offset_size_64,
+                has_operands_table);
             printf("  offset size 0x%x\n",offset_size);
             printf("  header length: 0x%" DW_PR_XZEROS DW_PR_DUx
                 "  total length: 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                 mac_header_len,mac_len);
             if (has_line_offset) {
-                printf("  debug_line_offset: 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                printf("  debug_line_offset: 0x%"
+                    DW_PR_XZEROS DW_PR_DUx "\n",
                     line_offset);
             }
             if (has_operands_table) {
                 Dwarf_Half i = 0;
 
-                for( i = 0; i < opcode_count; ++i) {
+                for (i = 0; i < opcode_count; ++i) {
                     Dwarf_Half opcode_num = 0;
                     Dwarf_Half operand_count = 0;
                     const Dwarf_Small *operand_array = 0;

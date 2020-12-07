@@ -217,7 +217,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
             return res;
         }
 
-        if(!title_printed) {
+        if (!title_printed) {
             title_printed = TRUE;
             printf("     Offset      entryname            "
                 "val1       val2       entrylen\n");
@@ -297,7 +297,7 @@ print_raw_all_rnglists(Dwarf_Debug dbg,
         printf("   Version               : %3u\n",version);
         printf("   address size          : %3u\n",address_size);
         printf("   offset size           : %3u\n",offset_size);
-        if(glflags.verbose) {
+        if (glflags.verbose) {
             printf("   extension size        : %3u\n",extension_size);
         }
         printf("   segment selector size : %3u\n",
@@ -306,7 +306,7 @@ print_raw_all_rnglists(Dwarf_Debug dbg,
             offset_entry_count);
         printf("   context size in bytes : %3" DW_PR_DUu "\n",
             offset_past_last_rangeentry - header_offset);
-        if(glflags.verbose) {
+        if (glflags.verbose) {
             printf("   Offset in section     : 0x%"
                 DW_PR_XZEROS DW_PR_DUx"\n",
                 header_offset);
@@ -333,7 +333,7 @@ print_raw_all_rnglists(Dwarf_Debug dbg,
                 offset_of_first_rangeentry,
                 offset_past_last_rangeentry,
                 error);
-            if(res != DW_DLV_OK) {
+            if (res != DW_DLV_OK) {
                 return res;
             }
         }

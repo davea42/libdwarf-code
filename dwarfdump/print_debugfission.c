@@ -55,7 +55,7 @@ hashval_zero(Dwarf_Sig8 *val)
 {
     unsigned u = 0;
 
-    for(u=0 ; u < sizeof(Dwarf_Sig8);++u) {
+    for (u=0 ; u < sizeof(Dwarf_Sig8);++u) {
         if (val->signature[u]) {
             return FALSE;
         }
@@ -144,7 +144,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type,
             as we cannot manufacture a Dwarf_Error */
         return DW_DLV_OK;
     }
-    if(!section_name || !*section_name) {
+    if (!section_name || !*section_name) {
         section_name = (is_cu?".debug_cu_index":".debug_tu_index");
     }
     {
@@ -193,7 +193,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type,
     {
         /*  For h < S */
         Dwarf_Unsigned h = 0;
-        for( h = 0; h < hash_slots_count; h++) {
+        for ( h = 0; h < hash_slots_count; h++) {
             Dwarf_Sig8 hashval;
             Dwarf_Unsigned index = 0;
             Dwarf_Unsigned col = 0;

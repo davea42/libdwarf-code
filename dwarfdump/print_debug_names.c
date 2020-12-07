@@ -39,8 +39,9 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     Dwarf_Unsigned dnindex = 0;
     int res = 0;
 
-    if(!dbg) {
-        printf("ERROR: Cannot print .debug_names, no Dwarf_Debug passed in");
+    if (!dbg) {
+        printf("ERROR: Cannot print .debug_names, "
+            "no Dwarf_Debug passed in");
         return DW_DLV_NO_ENTRY;
     }
     glflags.current_section_id = DEBUG_NAMES;
@@ -69,7 +70,7 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     if (glflags.gf_do_print_dwarf) {
         printf("names tables: %" DW_PR_DUu "\n",dn_count);
     }
-    for (  ; dnindex < dn_count; ++dnindex) {
+    for ( ; dnindex < dn_count; ++dnindex) {
         if (glflags.gf_do_print_dwarf) {
             printf("names table %" DW_PR_DUu "\n",dnindex);
         }

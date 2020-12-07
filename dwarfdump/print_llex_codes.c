@@ -118,7 +118,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(
                 tagname,attrname,
                 lopc,
@@ -155,7 +155,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(
                 tagname,attrname,
                 lopc,
@@ -194,7 +194,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
                 ">",hipc);
 
         }
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(
                 tagname,attrname,
                 lopc,

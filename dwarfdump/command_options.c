@@ -110,7 +110,7 @@ do_all(void)
     glflags.gf_string_flag = TRUE;
     /*  Do not do
         glflags.gf_reloc_flag = TRUE;
-        as print_relocs makes no sense for non-elf dwarfdump users.  */
+        as print_relocs makes no sense for non-elf dwarfdump users.*/
     glflags.gf_static_func_flag = TRUE; /* SGI only*/
     glflags.gf_static_var_flag = TRUE; /* SGI only*/
     glflags.gf_pubtypes_flag = TRUE;  /* both SGI typenames
@@ -438,7 +438,8 @@ static void arg_x_multiple_selection(void);
 static void arg_not_supported(void);
 static void arg_x_invalid(void);
 
-/*  Extracted from 'process_args', as they are used by option handlers. */
+/*  Extracted from 'process_args',
+    as they are used by option handlers. */
 static boolean arg_usage_error = FALSE;
 static int arg_option = 0;
 
@@ -456,9 +457,9 @@ static const char *usage_debug_text[] = {
 static const char *usage_long_text[] = {
 "Usage: DwarfDump <options> <object file>",
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Print Debug Sections",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "-b   --print-abbrev      Print abbrev section",
 "-a   --print-all         Print all debug_* sections",
 "-r   --print-aranges     Print aranges section",
@@ -493,9 +494,9 @@ static const char *usage_long_text[] = {
 "-y   --print-type        Print pubtypes section",
 "-w   --print-weakname    Print weakname section",
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Print Elf Relocation Data",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 #ifdef DWARF_WITH_LIBELF
 "-o   --reloc           Print relocation info [afiloprR]",
 "-oa  --reloc-abbrev    Print relocation .debug_abbrev section",
@@ -511,9 +512,9 @@ static const char *usage_long_text[] = {
 "  to see relocations",
 #endif /* DWARF_WITH_LIBELF */
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Print Elf Section Headers",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 #ifdef DWARF_WITH_LIBELF
 "-E   --elf           Print object Header and/or section information",
 "                     Same as -E[adfhiIlmoprRstx]",
@@ -538,9 +539,9 @@ static const char *usage_long_text[] = {
 "  to see elf file details",
 #endif /* DWARF_WITH_LIBELF */
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Check DWARF Integrity",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "-kb  --check-abbrev         Check abbreviations",
 "-ka  --check-all            Do all checks",
 "-kM  --check-aranges        Check ranges list (.debug_aranges)",
@@ -581,39 +582,45 @@ static const char *usage_long_text[] = {
 "                            (full format)",
 #endif /* HAVE_USAGE_TAG_ATTR */
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Print Output Qualifiers",
-"----------------------------------------------------------------------",
-"-M   --format-attr-name        Print the form name for each attribute",
-"-d   --format-dense            One line per entry (info section only)",
+"-------------------------------------------------------------------",
+"-M   --format-attr-name        Print the form name for each",
+"                               attribute",
+"-d   --format-dense            One line per entry (info section)",
 "-e   --format-ellipsis         Short names for tags, attrs etc.",
 "-G   --format-global-offsets   Show global die offsets",
 "-g   --format-loc              (Was loclist support. Do not use.)",
 "     --format-expr-ops-joined  Print each group of DWARF DW_OPs",
-"                               on one line rather than one per line.",
-"-R   --format-registers        Print frame register names as r33 etc",
-"                               and allow up to 1200 registers.",
-"                               Print using a 'generic' register set.",
+"                               on one line rather than one",
+"                               per line.",
+"-R   --format-registers        Print frame register names as",
+"                               r33 etc and allow up to 1200",
+"                               registers using a generic",
+"                               register set.",
 "-Q   --format-suppress-data    Suppress printing section data",
 "-x noprintsectiongroups",
 "     --format-suppress-group   Do not print section groups",
-"-n   --format-suppress-lookup  Suppress frame information function name",
-"                               lookup(when printing frame information",
-"                               from multi-gigabyte object files this",
+"-n   --format-suppress-lookup  Suppress frame information function",
+"                               name lookup(when printing frame",
+"                               information from multi-gigabyte",
+"                               object files this",
 "                               option may save significant time).",
 "-D   --format-suppress-offsets Do not show offsets",
 "-x nosanitizestrings",
-"     --format-suppress-sanitize Arbitrary string characters come thru printf",
+"     --format-suppress-sanitize Arbitrary string characters",
+"                               come thru printf",
 "-U   --format-suppress-uri     Suppress uri-translate",
-"-q   --format-suppress-uri-msg Suppress uri-did-translate notification",
+"-q   --format-suppress-uri-msg Suppress uri-did-translate",
+"                               notification",
 "-C   --format-extensions       Print (with -ki) warnings",
 "                               for some common DWARF extensions",
 "                               (by default extensions accepted",
 "                               as standard).",
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Print Output Limiters",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "-u<file> --format-file=<file>  Print only specified file (CU name)",
 "-cg      --format-gcc          Check only GCC compiler objects",
 "-x groupnumber=<n>    ",
@@ -621,42 +628,46 @@ static const char *usage_long_text[] = {
 "-H<num>  --format-limit=<num>  Limit output to the first <num>",
 "                               major units.",
 "                               Stop after <num> compilation units",
-"-c<str>  --format-producer=<str> Check only specific compiler objects",
-"                               <str> is described by 'DW_AT_producer'",
-"                               -c'350.1' check only compiler objects",
+"-c<str>  --format-producer=<str> Check only specific compiler",
+"                               objects  <str> is described by",
+"                               'DW_AT_producer'  -c'350.1' ",
+"                               check only compiler objects",
 "                               with 350.1 in the CU name",
 "-cs      --format-snc          Check only SNC compiler objects",
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "File Specifications",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "-x abi=<abi>     --file-abi=<abi>      Name abi in dwarfdump.conf",
 "-x name=<path>   --file-name=<path>    Name dwarfdump.conf",
 "-x line5=<val>   --file-line5=<val>    Table DWARF5 new interfaces",
 "                                         where <val> is:",
 "                                           std, s2l, orig or orig2l",
 "-O file=<path>   --file-output=<path>  Name the output file",
-"-x tied=<path>   --file-tied=<path>    Name an associated object file",
-"                                         (Split DWARF)",
-"                 --file-use-no-libelf  Use non-libelf to read objects",
+"-x tied=<path>   --file-tied=<path>    Name an associated object",
+"                                       file (Split DWARF)",
+"                 --file-use-no-libelf  Use non-libelf to",
+"                                       read objects",
 "                                         (as much as possible)",
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "GNU debuglink options",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 " --no-follow-debuglink       Do not follow GNU debuglink, ",
 "                             just use the file directly so,",
 "                             debuglink  global paths are ignored.",
 " --add-debuglink_path=<text> Add the path to the list of",
 "                             global paths debuglink searches",
 
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Search text in attributes",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "-S any=<text>    --search-any=<text>       Search any <text>",
-"-Svany=<text>    --search-any-count=<text> print number of occurrences",
+"-Svany=<text>    --search-any-count=<text> print number of",
+"                                           occurrences",
 "-S match=<text>  --search-match=<text>     Search matching <text>",
-"-Svmatch=<text>  --search-match-count<text> print number of occurrences",
+"-Svmatch=<text>  --search-match-count<text> print number of",
+"                                           occurrences",
 #ifdef HAVE_REGEX
 "-S regex=<text>  --search-regex=<text>     Use regular expression",
 "                                           matching",
@@ -667,14 +678,16 @@ static const char *usage_long_text[] = {
 "                             regex= only usable if the functions",
 "                             required are found at configure time",
 " ",
-"-Wc  --search-print-children Print children tree (wide format) with -S",
-"-Wp  --search-print-parent   Print parent tree (wide format) with -S",
+"-Wc  --search-print-children Print children tree",
+"                             (wide format) with -S",
+"-Wp  --search-print-parent   Print parent tree ",
+"                             (wide format) with -S",
 "-W   --search-print-tree     Print parent/children tree ",
 "                             (wide format) with -S",
 " ",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "Help & Version",
-"----------------------------------------------------------------------",
+"-------------------------------------------------------------------",
 "-h   --help          Print this dwarfdump help message.",
 "-v   --verbose       Show more information.",
 "-vv  --verbose-more  Show even more information.",
@@ -683,319 +696,343 @@ static const char *usage_long_text[] = {
 };
 
 enum longopts_vals {
-  OPT_BEGIN = 999,
+OPT_BEGIN = 999,
 
-  /* Check DWARF Integrity                                                   */
-  OPT_CHECK_ABBREV,             /* -kb  --check-abbrev                       */
-  OPT_CHECK_ALL,                /* -ka  --check-all                          */
-  OPT_CHECK_ARANGES,            /* -kM  --check-aranges                      */
-  OPT_CHECK_ATTR_DUP,           /* -kD  --check-attr-dup                     */
-  OPT_CHECK_ATTR_ENCODINGS,     /* -kE  --check-attr-encodings               */
-  OPT_CHECK_ATTR_NAMES,         /* -kn  --check-attr-names                   */
-  OPT_CHECK_CONSTANTS,          /* -kc  --check-constants                    */
-  OPT_CHECK_FILES_LINES,        /* -kF  --check-files-lines                  */
-  OPT_CHECK_FORWARD_REFS,       /* -kR  --check-forward-refs                 */
-  OPT_CHECK_FRAME_BASIC,        /* -kx  --check-frame-basic                  */
-  OPT_CHECK_FRAME_EXTENDED,     /* -kxe --check-frame-extended               */
-  OPT_CHECK_FRAME_INFO,         /* -kf  --check-frame-info                   */
-  OPT_CHECK_GAPS,               /* -kg  --check-gaps                         */
-  OPT_CHECK_LOC,                /* -kl  --check-loc                          */
-  OPT_CHECK_MACROS,             /* -kw  --check-macros                       */
-  OPT_CHECK_PUBNAMES,           /* -ke  --check-pubnames                     */
-  OPT_CHECK_RANGES,             /* -km  --check-ranges                       */
-  OPT_CHECK_SELF_REFS,          /* -kS  --check-self-refs                    */
-  OPT_CHECK_SHOW,               /* -kd  --check-show                         */
-  OPT_CHECK_SILENT,             /* -ks  --check-silent                       */
-  OPT_CHECK_SUMMARY,            /* -ki  --check-summary                      */
-  OPT_CHECK_TAG_ATTR,           /* -kr  --check-tag-attr                     */
-  OPT_CHECK_TAG_TAG,            /* -kt  --check-tag-tag                      */
-  OPT_CHECK_TYPE,               /* -ky  --check-type                         */
-  OPT_CHECK_UNIQUE,             /* -kG  --check-unique                       */
+/* Check DWARF Integrity         */
+OPT_CHECK_ABBREV,             /* -kb  --check-abbrev   */
+OPT_CHECK_ALL,                /* -ka  --check-all      */
+OPT_CHECK_ARANGES,            /* -kM  --check-aranges  */
+OPT_CHECK_ATTR_DUP,           /* -kD  --check-attr-dup */
+OPT_CHECK_ATTR_ENCODINGS,     /* -kE  --check-attr-encodings*/
+OPT_CHECK_ATTR_NAMES,         /* -kn  --check-attr-names    */
+OPT_CHECK_CONSTANTS,          /* -kc  --check-constants     */
+OPT_CHECK_FILES_LINES,        /* -kF  --check-files-lines   */
+OPT_CHECK_FORWARD_REFS,       /* -kR  --check-forward-refs  */
+OPT_CHECK_FRAME_BASIC,        /* -kx  --check-frame-basic   */
+OPT_CHECK_FRAME_EXTENDED,     /* -kxe --check-frame-extended*/
+OPT_CHECK_FRAME_INFO,         /* -kf  --check-frame-info    */
+OPT_CHECK_GAPS,               /* -kg  --check-gaps          */
+OPT_CHECK_LOC,                /* -kl  --check-loc           */
+OPT_CHECK_MACROS,             /* -kw  --check-macros        */
+OPT_CHECK_PUBNAMES,           /* -ke  --check-pubnames      */
+OPT_CHECK_RANGES,             /* -km  --check-ranges        */
+OPT_CHECK_SELF_REFS,          /* -kS  --check-self-refs     */
+OPT_CHECK_SHOW,               /* -kd  --check-show          */
+OPT_CHECK_SILENT,             /* -ks  --check-silent        */
+OPT_CHECK_SUMMARY,            /* -ki  --check-summary       */
+OPT_CHECK_TAG_ATTR,           /* -kr  --check-tag-attr      */
+OPT_CHECK_TAG_TAG,            /* -kt  --check-tag-tag       */
+OPT_CHECK_TYPE,               /* -ky  --check-type          */
+OPT_CHECK_UNIQUE,             /* -kG  --check-unique        */
 #ifdef HAVE_USAGE_TAG_ATTR
-  OPT_CHECK_USAGE,              /* -ku  --check-usage                        */
-  OPT_CHECK_USAGE_EXTENDED,     /* -kuf --check-usage-extended               */
+OPT_CHECK_USAGE,              /* -ku  --check-usage         */
+OPT_CHECK_USAGE_EXTENDED,     /* -kuf --check-usage-extended*/
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-  /* Print ELF sections header                                          */
-  OPT_ELF,                      /* -E   --elf                           */
-  OPT_ELF_ABBREV,               /* -Ea  --elf-abbrev                    */
-  OPT_ELF_ARANGES,              /* -Er  --elf-aranges                   */
-  OPT_ELF_DEFAULT,              /* -Ed  --elf-default                   */
-  OPT_ELF_FISSION,              /* -EI  --elf-fission                   */
-  OPT_ELF_FRAMES,               /* -Ef  --elf-frames                    */
-  OPT_ELF_HEADER,               /* -Eh  --elf-header                    */
-  OPT_ELF_INFO,                 /* -Ei  --elf-info                      */
-  OPT_ELF_LINE,                 /* -El  --elf-line                      */
-  OPT_ELF_LOC,                  /* -Eo  --elf-loc                       */
-  OPT_ELF_MACINFO,              /* -Em  --elf-macinfo                   */
-  OPT_ELF_PUBNAMES,             /* -Ep  --elf-pubnames                  */
-  OPT_ELF_PUBTYPES,             /* -Et  --elf-pubtypes                  */
-  OPT_ELF_RANGES,               /* -ER  --elf-ranges                    */
-  OPT_ELF_STRINGS,              /* -Es  --elf-strings                   */
-  OPT_ELF_TEXT,                 /* -Ex  --elf-text                      */
+/* Print ELF sections header                         */
+OPT_ELF,                      /* -E   --elf          */
+OPT_ELF_ABBREV,               /* -Ea  --elf-abbrev   */
+OPT_ELF_ARANGES,              /* -Er  --elf-aranges  */
+OPT_ELF_DEFAULT,              /* -Ed  --elf-default  */
+OPT_ELF_FISSION,              /* -EI  --elf-fission  */
+OPT_ELF_FRAMES,               /* -Ef  --elf-frames   */
+OPT_ELF_HEADER,               /* -Eh  --elf-header   */
+OPT_ELF_INFO,                 /* -Ei  --elf-info     */
+OPT_ELF_LINE,                 /* -El  --elf-line     */
+OPT_ELF_LOC,                  /* -Eo  --elf-loc      */
+OPT_ELF_MACINFO,              /* -Em  --elf-macinfo  */
+OPT_ELF_PUBNAMES,             /* -Ep  --elf-pubnames */
+OPT_ELF_PUBTYPES,             /* -Et  --elf-pubtypes */
+OPT_ELF_RANGES,               /* -ER  --elf-ranges   */
+OPT_ELF_STRINGS,              /* -Es  --elf-strings  */
+OPT_ELF_TEXT,                 /* -Ex  --elf-text    */
+/* File Specifications    */
+OPT_FILE_ABI,          /* -x abi=<abi>    --file-abi=<abi>     */
+OPT_FILE_LINE5,        /* -x line5=<val>  --file-line5=<val>   */
+OPT_FILE_NAME,         /* -x name=<path>  --file-name=<path>   */
+OPT_FILE_OUTPUT,       /* -O file=<path>  --file-output=<path> */
+OPT_FILE_TIED,         /* -x tied=<path>  --file-tied=<path>   */
+OPT_FILE_USE_NO_LIBELF,/* --file-use-no-libelf=<path>        */
 
-  /* File Specifications                                                */
-  OPT_FILE_ABI,                 /* -x abi=<abi>    --file-abi=<abi>     */
-  OPT_FILE_LINE5,               /* -x line5=<val>  --file-line5=<val>   */
-  OPT_FILE_NAME,                /* -x name=<path>  --file-name=<path>   */
-  OPT_FILE_OUTPUT,              /* -O file=<path>  --file-output=<path> */
-  OPT_FILE_TIED,                /* -x tied=<path>  --file-tied=<path>   */
-  OPT_FILE_USE_NO_LIBELF,       /* --file-use-no-libelf=<path>        */
+/* Print Output Qualifiers  */
+OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name       */
+OPT_FORMAT_DENSE,             /* -d   --format-dense           */
+OPT_FORMAT_ELLIPSIS,          /* -e   --format-ellipsis        */
+OPT_FORMAT_EXPR_OPS_JOINED,   /*      --format-expr-ops-joined */
+OPT_FORMAT_EXTENSIONS,        /* -C   --format-extensions      */
+OPT_FORMAT_GLOBAL_OFFSETS,    /* -G   --format-global-offsets  */
+OPT_FORMAT_LOC,               /* -g   --format-loc             */
+OPT_FORMAT_REGISTERS,         /* -R   --format-registers       */
+OPT_FORMAT_SUPPRESS_DATA,     /* -Q   --format-suppress-data   */
+OPT_FORMAT_SUPPRESS_GROUP  ,  /* -x   --format-suppress-group  */
+OPT_FORMAT_SUPPRESS_LOOKUP,   /* -n   --format-suppress-lookup */
+OPT_FORMAT_SUPPRESS_OFFSETS,  /* -D   --format-suppress-offsets  */
+OPT_FORMAT_SUPPRESS_SANITIZE,
+    /* -x no-sanitize-strings --format-suppress-sanitize  */
+OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri    */
+OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg  */
 
-  /* Print Output Qualifiers                                         */
-  OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name         */
-  OPT_FORMAT_DENSE,             /* -d   --format-dense             */
-  OPT_FORMAT_ELLIPSIS,          /* -e   --format-ellipsis          */
-  OPT_FORMAT_EXPR_OPS_JOINED,   /*      --format-expr-ops-joined */
-  OPT_FORMAT_EXTENSIONS,        /* -C   --format-extensions        */
-  OPT_FORMAT_GLOBAL_OFFSETS,    /* -G   --format-global-offsets    */
-  OPT_FORMAT_LOC,               /* -g   --format-loc               */
-  OPT_FORMAT_REGISTERS,         /* -R   --format-registers         */
-  OPT_FORMAT_SUPPRESS_DATA,     /* -Q   --format-suppress-data     */
-  OPT_FORMAT_SUPPRESS_GROUP  ,  /* -x   --format-suppress-group    */
-  OPT_FORMAT_SUPPRESS_LOOKUP,   /* -n   --format-suppress-lookup   */
-  OPT_FORMAT_SUPPRESS_OFFSETS,  /* -D   --format-suppress-offsets  */
-  OPT_FORMAT_SUPPRESS_SANITIZE, /* -x no-sanitize-strings --format-suppress-sanitize  */
-  OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri      */
-  OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg  */
+/* Print Output Limiters    */
+OPT_FORMAT_FILE,              /* -u<file> --format-file=<file> */
+OPT_FORMAT_GCC,               /* -cg      --format-gcc         */
+OPT_FORMAT_GROUP_NUMBER,      /* -x<n>  --format-group-number=<n>*/
+OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>   */
+OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str> */
+OPT_FORMAT_SNC,               /* -cs      --format-snc           */
 
-  /* Print Output Limiters                                            */
-  OPT_FORMAT_FILE,              /* -u<file> --format-file=<file>   */
-  OPT_FORMAT_GCC,               /* -cg      --format-gcc           */
-  OPT_FORMAT_GROUP_NUMBER,      /* -x<n>    --format-group-number=<n>*/
-  OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>   */
-  OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str> */
-  OPT_FORMAT_SNC,               /* -cs      --format-snc           */
+/* Print Debug Sections                                   */
+OPT_PRINT_ABBREV,             /* -b   --print-abbrev      */
+OPT_PRINT_ALL,                /* -a   --print-all         */
+OPT_PRINT_ARANGES,            /* -r   --print-aranges     */
+OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-names */
+OPT_PRINT_GNU_DEBUGLINK,      /*      --print-gnu-debuglink  */
+OPT_PRINT_DEBUG_GNU,          /*      --print-debug-gnu   */
+OPT_PRINT_DEBUG_SUP,          /*      --print-debug-sup   */
+OPT_PRINT_EH_FRAME,           /* -F   --print-eh-frame    */
+OPT_PRINT_FISSION,            /* -I   --print-fission     */
+OPT_PRINT_FRAME,              /* -f   --print-frame       */
+OPT_PRINT_INFO,               /* -i   --print-info        */
+OPT_PRINT_LINES,              /* -l   --print-lines       */
+OPT_PRINT_LINES_SHORT,        /* -ls  --print-lines-short */
+OPT_PRINT_LOC,                /* -c   --print-loc         */
+OPT_PRINT_MACINFO,            /* -m   --print-macinfo     */
+OPT_PRINT_PRODUCERS,          /* -P   --print-producers   */
+OPT_PRINT_PUBNAMES,           /* -p   --print-pubnames    */
+OPT_PRINT_RANGES,             /* -N   --print-ranges      */
+OPT_PRINT_RAW_LOCLISTS,       /*      --print-raw-loclists */
+OPT_PRINT_RAW_RNGLISTS,       /*      --print-raw-rnglists */
+OPT_PRINT_STATIC,             /* -ta  --print-static      */
+OPT_PRINT_STATIC_FUNC,        /* -tf  --print-static-func */
+OPT_PRINT_STATIC_VAR,         /* -tv  --print-static-var  */
+OPT_PRINT_STRINGS,            /* -s   --print-strings     */
+OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets */
+OPT_PRINT_TYPE,               /* -y   --print-type        */
+OPT_PRINT_WEAKNAME,           /* -w   --print-weakname    */
 
-  /* Print Debug Sections                                   */
-  OPT_PRINT_ABBREV,             /* -b   --print-abbrev      */
-  OPT_PRINT_ALL,                /* -a   --print-all         */
-  OPT_PRINT_ARANGES,            /* -r   --print-aranges     */
-  OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-names */
-  OPT_PRINT_GNU_DEBUGLINK,      /*      --print-gnu-debuglink  */
-  OPT_PRINT_DEBUG_GNU,          /*      --print-debug-gnu   */
-  OPT_PRINT_DEBUG_SUP,          /*      --print-debug-sup   */
-  OPT_PRINT_EH_FRAME,           /* -F   --print-eh-frame    */
-  OPT_PRINT_FISSION,            /* -I   --print-fission     */
-  OPT_PRINT_FRAME,              /* -f   --print-frame       */
-  OPT_PRINT_INFO,               /* -i   --print-info        */
-  OPT_PRINT_LINES,              /* -l   --print-lines       */
-  OPT_PRINT_LINES_SHORT,        /* -ls  --print-lines-short */
-  OPT_PRINT_LOC,                /* -c   --print-loc         */
-  OPT_PRINT_MACINFO,            /* -m   --print-macinfo     */
-  OPT_PRINT_PRODUCERS,          /* -P   --print-producers   */
-  OPT_PRINT_PUBNAMES,           /* -p   --print-pubnames    */
-  OPT_PRINT_RANGES,             /* -N   --print-ranges      */
-  OPT_PRINT_RAW_LOCLISTS,       /*      --print-raw-loclists */
-  OPT_PRINT_RAW_RNGLISTS,       /*      --print-raw-rnglists */
-  OPT_PRINT_STATIC,             /* -ta  --print-static      */
-  OPT_PRINT_STATIC_FUNC,        /* -tf  --print-static-func */
-  OPT_PRINT_STATIC_VAR,         /* -tv  --print-static-var  */
-  OPT_PRINT_STRINGS,            /* -s   --print-strings     */
-  OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets */
-  OPT_PRINT_TYPE,               /* -y   --print-type        */
-  OPT_PRINT_WEAKNAME,           /* -w   --print-weakname    */
+/* Print Relocations Info                                 */
+OPT_RELOC,                    /* -o   --reloc             */
+OPT_RELOC_ABBREV,             /* -oa  --reloc-abbrev      */
+OPT_RELOC_ARANGES,            /* -or  --reloc-aranges     */
+OPT_RELOC_FRAMES,             /* -of  --reloc-frames      */
+OPT_RELOC_INFO,               /* -oi  --reloc-info        */
+OPT_RELOC_LINE,               /* -ol  --reloc-line        */
+OPT_RELOC_LOC,                /* -oo  --reloc-loc         */
+OPT_RELOC_PUBNAMES,           /* -op  --reloc-pubnames    */
+OPT_RELOC_RANGES,             /* -oR  --reloc-ranges      */
 
-  /* Print Relocations Info                                 */
-  OPT_RELOC,                    /* -o   --reloc             */
-  OPT_RELOC_ABBREV,             /* -oa  --reloc-abbrev      */
-  OPT_RELOC_ARANGES,            /* -or  --reloc-aranges     */
-  OPT_RELOC_FRAMES,             /* -of  --reloc-frames      */
-  OPT_RELOC_INFO,               /* -oi  --reloc-info        */
-  OPT_RELOC_LINE,               /* -ol  --reloc-line        */
-  OPT_RELOC_LOC,                /* -oo  --reloc-loc         */
-  OPT_RELOC_PUBNAMES,           /* -op  --reloc-pubnames    */
-  OPT_RELOC_RANGES,             /* -oR  --reloc-ranges      */
+/* debuglink options */
+OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
+OPT_ADD_DEBUGLINK_PATH,       /* --add-debuglink-path=<text> */
 
-  /* debuglink options */
-  OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
-  OPT_ADD_DEBUGLINK_PATH,       /* --add-debuglink-path=<text> */
-
-  /* Search text in attributes                        */
-  OPT_SEARCH_ANY,               /* -S any=<text>   --search-any=<text>       */
-  OPT_SEARCH_ANY_COUNT,         /* -Svany=<text>   --search-any-count=<text> */
-  OPT_SEARCH_MATCH,             /* -S match=<text> --search-match=<text>     */
-  OPT_SEARCH_MATCH_COUNT,       /* -Svmatch=<text> --search-match-count<text>*/
-  OPT_SEARCH_PRINT_CHILDREN,    /* -Wc --search-print-children               */
-  OPT_SEARCH_PRINT_PARENT,      /* -Wp --search-print-parent                 */
-  OPT_SEARCH_PRINT_TREE,        /* -W  --search-print-tree                   */
+/* Search text in attributes                        */
+OPT_SEARCH_ANY,       /* -S any=<text>   --search-any=<text>  */
+OPT_SEARCH_ANY_COUNT, /* -Svany=<text>   --search-any-count=<text> */
+OPT_SEARCH_MATCH,     /* -S match=<text> --search-match=<text>     */
+OPT_SEARCH_MATCH_COUNT,
+    /* -Svmatch=<text> --search-match-count<text>*/
+OPT_SEARCH_PRINT_CHILDREN, /* -Wc --search-print-children */
+OPT_SEARCH_PRINT_PARENT, /* -Wp --search-print-parent    */
+OPT_SEARCH_PRINT_TREE,        /* -W  --search-print-tree  */
 #ifdef HAVE_REGEX
-  OPT_SEARCH_REGEX,             /* -S regex=<text> --search-regex=<text>     */
-  OPT_SEARCH_REGEX_COUNT,       /* -Svregex=<text> --search-regex-count<text>*/
+OPT_SEARCH_REGEX,       /* -S regex=<text> --search-regex=<text> */
+OPT_SEARCH_REGEX_COUNT,
+    /* -Svregex=<text> --search-regex-count<text>*/
 #endif /* HAVE_REGEX */
 
-  /* Help & Version                                            */
-  OPT_HELP,                     /* -h  --help                  */
-  OPT_VERBOSE,                  /* -v  --verbose               */
-  OPT_VERBOSE_MORE,             /* -vv --verbose-more          */
-  OPT_VERSION,                  /* -V  --version               */
+/* Help & Version                                            */
+OPT_HELP,                     /* -h  --help                  */
+OPT_VERBOSE,                  /* -v  --verbose               */
+OPT_VERBOSE_MORE,             /* -vv --verbose-more          */
+OPT_VERSION,                  /* -V  --version               */
 
-  /* Trace                                                     */
-  OPT_TRACE,                    /* -# --trace=<num>            */
+/* Trace                                                     */
+OPT_TRACE,                    /* -# --trace=<num>            */
 
-  /* allocation statistics */
-  OPT_ALLOC_PRINT_SUMS,         /* --print-alloc-sums */
-  OPT_ALLOC_TREE_OFF,           /* --suppress-de-alloc-tree */
+/* allocation statistics */
+OPT_ALLOC_PRINT_SUMS,         /* --print-alloc-sums */
+OPT_ALLOC_TREE_OFF,           /* --suppress-de-alloc-tree */
 
-  OPT_END
+OPT_END
 };
 
 static struct dwoption longopts[] =  {
 
-  /* Check DWARF Integrity. */
-  {"check-abbrev",         dwno_argument, 0, OPT_CHECK_ABBREV        },
-  {"check-all",            dwno_argument, 0, OPT_CHECK_ALL           },
-  {"check-aranges",        dwno_argument, 0, OPT_CHECK_ARANGES       },
-  {"check-attr-dup",       dwno_argument, 0, OPT_CHECK_ATTR_DUP      },
-  {"check-attr-encodings", dwno_argument, 0, OPT_CHECK_ATTR_ENCODINGS},
-  {"check-attr-names",     dwno_argument, 0, OPT_CHECK_ATTR_NAMES    },
-  {"check-constants",      dwno_argument, 0, OPT_CHECK_CONSTANTS     },
-  {"check-files-lines",    dwno_argument, 0, OPT_CHECK_FILES_LINES   },
-  {"check-forward-refs",   dwno_argument, 0, OPT_CHECK_FORWARD_REFS  },
-  {"check-frame-basic",    dwno_argument, 0, OPT_CHECK_FRAME_BASIC   },
-  {"check-frame-extended", dwno_argument, 0, OPT_CHECK_FRAME_EXTENDED},
-  {"check-frame-info",     dwno_argument, 0, OPT_CHECK_FRAME_INFO    },
-  {"check-gaps",           dwno_argument, 0, OPT_CHECK_GAPS          },
-  {"check-loc",            dwno_argument, 0, OPT_CHECK_LOC           },
-  {"check-macros",         dwno_argument, 0, OPT_CHECK_MACROS        },
-  {"check-pubnames",       dwno_argument, 0, OPT_CHECK_PUBNAMES      },
-  {"check-ranges",         dwno_argument, 0, OPT_CHECK_RANGES        },
-  {"check-self-refs",      dwno_argument, 0, OPT_CHECK_SELF_REFS     },
-  {"check-show",           dwno_argument, 0, OPT_CHECK_SHOW          },
-  {"check-silent",         dwno_argument, 0, OPT_CHECK_SILENT        },
-  {"check-summary",        dwno_argument, 0, OPT_CHECK_SUMMARY       },
-  {"check-tag-attr",       dwno_argument, 0, OPT_CHECK_TAG_ATTR      },
-  {"check-tag-tag",        dwno_argument, 0, OPT_CHECK_TAG_TAG       },
-  {"check-type",           dwno_argument, 0, OPT_CHECK_TYPE          },
-  {"check-unique",         dwno_argument, 0, OPT_CHECK_UNIQUE        },
+/* Check DWARF Integrity. */
+{"check-abbrev",         dwno_argument, 0, OPT_CHECK_ABBREV        },
+{"check-all",            dwno_argument, 0, OPT_CHECK_ALL           },
+{"check-aranges",        dwno_argument, 0, OPT_CHECK_ARANGES       },
+{"check-attr-dup",       dwno_argument, 0, OPT_CHECK_ATTR_DUP      },
+{"check-attr-encodings", dwno_argument, 0, OPT_CHECK_ATTR_ENCODINGS},
+{"check-attr-names",     dwno_argument, 0, OPT_CHECK_ATTR_NAMES    },
+{"check-constants",      dwno_argument, 0, OPT_CHECK_CONSTANTS     },
+{"check-files-lines",    dwno_argument, 0, OPT_CHECK_FILES_LINES   },
+{"check-forward-refs",   dwno_argument, 0, OPT_CHECK_FORWARD_REFS  },
+{"check-frame-basic",    dwno_argument, 0, OPT_CHECK_FRAME_BASIC   },
+{"check-frame-extended", dwno_argument, 0, OPT_CHECK_FRAME_EXTENDED},
+{"check-frame-info",     dwno_argument, 0, OPT_CHECK_FRAME_INFO    },
+{"check-gaps",           dwno_argument, 0, OPT_CHECK_GAPS          },
+{"check-loc",            dwno_argument, 0, OPT_CHECK_LOC           },
+{"check-macros",         dwno_argument, 0, OPT_CHECK_MACROS        },
+{"check-pubnames",       dwno_argument, 0, OPT_CHECK_PUBNAMES      },
+{"check-ranges",         dwno_argument, 0, OPT_CHECK_RANGES        },
+{"check-self-refs",      dwno_argument, 0, OPT_CHECK_SELF_REFS     },
+{"check-show",           dwno_argument, 0, OPT_CHECK_SHOW          },
+{"check-silent",         dwno_argument, 0, OPT_CHECK_SILENT        },
+{"check-summary",        dwno_argument, 0, OPT_CHECK_SUMMARY       },
+{"check-tag-attr",       dwno_argument, 0, OPT_CHECK_TAG_ATTR      },
+{"check-tag-tag",        dwno_argument, 0, OPT_CHECK_TAG_TAG       },
+{"check-type",           dwno_argument, 0, OPT_CHECK_TYPE          },
+{"check-unique",         dwno_argument, 0, OPT_CHECK_UNIQUE        },
 #ifdef HAVE_USAGE_TAG_ATTR
-  {"check-usage",          dwno_argument, 0, OPT_CHECK_USAGE         },
-  {"check-usage-extended", dwno_argument, 0, OPT_CHECK_USAGE_EXTENDED},
+{"check-usage",          dwno_argument, 0, OPT_CHECK_USAGE         },
+{"check-usage-extended", dwno_argument, 0, OPT_CHECK_USAGE_EXTENDED},
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-  /* Print ELF sections header. */
-  {"elf",          dwno_argument, 0, OPT_ELF         },
-  {"elf-abbrev",   dwno_argument, 0, OPT_ELF_ABBREV  },
-  {"elf-aranges",  dwno_argument, 0, OPT_ELF_ARANGES },
-  {"elf-default",  dwno_argument, 0, OPT_ELF_DEFAULT },
-  {"elf-fission",  dwno_argument, 0, OPT_ELF_FISSION },
-  {"elf-frames",   dwno_argument, 0, OPT_ELF_FRAMES  },
-  {"elf-header",   dwno_argument, 0, OPT_ELF_HEADER  },
-  {"elf-info",     dwno_argument, 0, OPT_ELF_INFO    },
-  {"elf-line",     dwno_argument, 0, OPT_ELF_LINE    },
-  {"elf-loc",      dwno_argument, 0, OPT_ELF_LOC     },
-  {"elf-macinfo",  dwno_argument, 0, OPT_ELF_MACINFO },
-  {"elf-pubnames", dwno_argument, 0, OPT_ELF_PUBNAMES},
-  {"elf-pubtypes", dwno_argument, 0, OPT_ELF_PUBTYPES},
-  {"elf-ranges",   dwno_argument, 0, OPT_ELF_RANGES  },
-  {"elf-strings",  dwno_argument, 0, OPT_ELF_STRINGS },
-  {"elf-text",     dwno_argument, 0, OPT_ELF_TEXT    },
+/* Print ELF sections header. */
+{"elf",          dwno_argument, 0, OPT_ELF         },
+{"elf-abbrev",   dwno_argument, 0, OPT_ELF_ABBREV  },
+{"elf-aranges",  dwno_argument, 0, OPT_ELF_ARANGES },
+{"elf-default",  dwno_argument, 0, OPT_ELF_DEFAULT },
+{"elf-fission",  dwno_argument, 0, OPT_ELF_FISSION },
+{"elf-frames",   dwno_argument, 0, OPT_ELF_FRAMES  },
+{"elf-header",   dwno_argument, 0, OPT_ELF_HEADER  },
+{"elf-info",     dwno_argument, 0, OPT_ELF_INFO    },
+{"elf-line",     dwno_argument, 0, OPT_ELF_LINE    },
+{"elf-loc",      dwno_argument, 0, OPT_ELF_LOC     },
+{"elf-macinfo",  dwno_argument, 0, OPT_ELF_MACINFO },
+{"elf-pubnames", dwno_argument, 0, OPT_ELF_PUBNAMES},
+{"elf-pubtypes", dwno_argument, 0, OPT_ELF_PUBTYPES},
+{"elf-ranges",   dwno_argument, 0, OPT_ELF_RANGES  },
+{"elf-strings",  dwno_argument, 0, OPT_ELF_STRINGS },
+{"elf-text",     dwno_argument, 0, OPT_ELF_TEXT    },
 
-  /* File Specifications. */
-  {"file-abi",    dwrequired_argument, 0, OPT_FILE_ABI   },
-  {"file-line5",  dwrequired_argument, 0, OPT_FILE_LINE5 },
-  {"file-name",   dwrequired_argument, 0, OPT_FILE_NAME  },
-  {"file-output", dwrequired_argument, 0, OPT_FILE_OUTPUT},
-  {"file-tied",   dwrequired_argument, 0, OPT_FILE_TIED  },
-  {"file-use-no-libelf",   dwno_argument, 0, OPT_FILE_USE_NO_LIBELF  },
+/* File Specifications. */
+{"file-abi",    dwrequired_argument, 0, OPT_FILE_ABI   },
+{"file-line5",  dwrequired_argument, 0, OPT_FILE_LINE5 },
+{"file-name",   dwrequired_argument, 0, OPT_FILE_NAME  },
+{"file-output", dwrequired_argument, 0, OPT_FILE_OUTPUT},
+{"file-tied",   dwrequired_argument, 0, OPT_FILE_TIED  },
+{"file-use-no-libelf",   dwno_argument, 0, OPT_FILE_USE_NO_LIBELF  },
 
-  /* Print Output Qualifiers. */
-  {"format-attr-name",         dwno_argument, 0, OPT_FORMAT_ATTR_NAME        },
-  {"format-dense",             dwno_argument, 0, OPT_FORMAT_DENSE            },
-  {"format-ellipsis",          dwno_argument, 0, OPT_FORMAT_ELLIPSIS         },
-  {"format-expr-ops-joined",  dwno_argument, 0, OPT_FORMAT_EXPR_OPS_JOINED },
-  {"format-extensions",        dwno_argument, 0, OPT_FORMAT_EXTENSIONS       },
-  {"format-global-offsets",    dwno_argument, 0, OPT_FORMAT_GLOBAL_OFFSETS   },
-  {"format-loc",               dwno_argument, 0, OPT_FORMAT_LOC              },
-  {"format-registers",         dwno_argument, 0, OPT_FORMAT_REGISTERS        },
-  {"format-suppress-data",     dwno_argument, 0, OPT_FORMAT_SUPPRESS_DATA    },
-  {"format-suppress-group",    dwno_argument, 0, OPT_FORMAT_SUPPRESS_GROUP   },
-  {"format-suppress-lookup",   dwno_argument, 0, OPT_FORMAT_SUPPRESS_LOOKUP  },
-  {"format-suppress-offsets",  dwno_argument, 0, OPT_FORMAT_SUPPRESS_OFFSETS },
-  {"format-suppress-sanitize", dwno_argument, 0, OPT_FORMAT_SUPPRESS_SANITIZE},
-  {"format-suppress-uri",      dwno_argument, 0, OPT_FORMAT_SUPPRESS_URI     },
-  {"format-suppress-uri-msg",  dwno_argument, 0, OPT_FORMAT_SUPPRESS_URI_MSG },
+/* Print Output Qualifiers. */
+{"format-attr-name",         dwno_argument, 0,
+    OPT_FORMAT_ATTR_NAME        },
+{"format-dense",             dwno_argument, 0,
+    OPT_FORMAT_DENSE            },
+{"format-ellipsis",          dwno_argument, 0,
+    OPT_FORMAT_ELLIPSIS         },
+{"format-expr-ops-joined",   dwno_argument, 0,
+    OPT_FORMAT_EXPR_OPS_JOINED },
+{"format-extensions",        dwno_argument, 0,
+    OPT_FORMAT_EXTENSIONS       },
+{"format-global-offsets",    dwno_argument, 0,
+    OPT_FORMAT_GLOBAL_OFFSETS   },
+{"format-loc",               dwno_argument, 0,
+    OPT_FORMAT_LOC              },
+{"format-registers",         dwno_argument, 0,
+    OPT_FORMAT_REGISTERS        },
+{"format-suppress-data",     dwno_argument, 0,
+    OPT_FORMAT_SUPPRESS_DATA    },
+{"format-suppress-group",    dwno_argument, 0,
+    OPT_FORMAT_SUPPRESS_GROUP   },
+{"format-suppress-lookup",   dwno_argument, 0,
+    OPT_FORMAT_SUPPRESS_LOOKUP  },
+{"format-suppress-offsets",  dwno_argument, 0,
+OPT_FORMAT_SUPPRESS_OFFSETS },
+{"format-suppress-sanitize", dwno_argument, 0,
+    OPT_FORMAT_SUPPRESS_SANITIZE},
+{"format-suppress-uri",      dwno_argument, 0,
+    OPT_FORMAT_SUPPRESS_URI     },
+{"format-suppress-uri-msg",  dwno_argument, 0,
+    OPT_FORMAT_SUPPRESS_URI_MSG },
 
-  /* Print Output Limiters. */
-  {"format-file",         dwrequired_argument, 0, OPT_FORMAT_FILE        },
-  {"format-gcc",          dwno_argument,       0, OPT_FORMAT_GCC         },
-  {"format-group-number", dwrequired_argument, 0, OPT_FORMAT_GROUP_NUMBER},
-  {"format-limit",        dwrequired_argument, 0, OPT_FORMAT_LIMIT       },
-  {"format-producer",     dwrequired_argument, 0, OPT_FORMAT_PRODUCER    },
-  {"format-snc",          dwno_argument,       0, OPT_FORMAT_SNC         },
+/* Print Output Limiters. */
+{"format-file",         dwrequired_argument, 0, OPT_FORMAT_FILE },
+{"format-gcc",          dwno_argument,       0, OPT_FORMAT_GCC },
+{"format-group-number", dwrequired_argument, 0,
+    OPT_FORMAT_GROUP_NUMBER},
+{"format-limit",        dwrequired_argument, 0, OPT_FORMAT_LIMIT },
+{"format-producer",     dwrequired_argument, 0, OPT_FORMAT_PRODUCER},
+{"format-snc",          dwno_argument,       0, OPT_FORMAT_SNC },
 
-  /* Print Debug Sections. */
-  {"print-abbrev",      dwno_argument, 0, OPT_PRINT_ABBREV     },
-  {"print-all",         dwno_argument, 0, OPT_PRINT_ALL        },
-  {"print-aranges",     dwno_argument, 0, OPT_PRINT_ARANGES    },
-  {"print-debug-names", dwno_argument, 0, OPT_PRINT_DEBUG_NAMES},
-  {"print-gnu-debuglink", dwno_argument,0,OPT_PRINT_GNU_DEBUGLINK},
-  {"print-debug-gnu",   dwno_argument, 0, OPT_PRINT_DEBUG_GNU  },
-  {"print-debug-sup",   dwno_argument, 0, OPT_PRINT_DEBUG_SUP  },
-  {"print-eh-frame",    dwno_argument, 0, OPT_PRINT_EH_FRAME   },
-  {"print-fission",     dwno_argument, 0, OPT_PRINT_FISSION    },
-  {"print-frame",       dwno_argument, 0, OPT_PRINT_FRAME      },
-  {"print-info",        dwno_argument, 0, OPT_PRINT_INFO       },
-  {"print-lines",       dwno_argument, 0, OPT_PRINT_LINES      },
-  {"print-lines-short", dwno_argument, 0, OPT_PRINT_LINES_SHORT},
-  {"print-loc",         dwno_argument, 0, OPT_PRINT_LOC        },
-  {"print-macinfo",     dwno_argument, 0, OPT_PRINT_MACINFO    },
-  {"print-producers",   dwno_argument, 0, OPT_PRINT_PRODUCERS  },
-  {"print-pubnames",    dwno_argument, 0, OPT_PRINT_PUBNAMES   },
-  {"print-ranges",      dwno_argument, 0, OPT_PRINT_RANGES     },
-  {"print-raw-loclists",dwno_argument, 0, OPT_PRINT_RAW_LOCLISTS},
-  {"print-raw-rnglists",dwno_argument, 0, OPT_PRINT_RAW_RNGLISTS},
-  {"print-static",      dwno_argument, 0, OPT_PRINT_STATIC     },
-  {"print-static-func", dwno_argument, 0, OPT_PRINT_STATIC_FUNC},
-  {"print-static-var",  dwno_argument, 0, OPT_PRINT_STATIC_VAR },
-  {"print-strings",     dwno_argument, 0, OPT_PRINT_STRINGS    },
-  {"print-str-offsets", dwno_argument, 0, OPT_PRINT_STR_OFFSETS},
-  {"print-type",        dwno_argument, 0, OPT_PRINT_TYPE       },
-  {"print-weakname",    dwno_argument, 0, OPT_PRINT_WEAKNAME   },
+/* Print Debug Sections. */
+{"print-abbrev",      dwno_argument, 0, OPT_PRINT_ABBREV     },
+{"print-all",         dwno_argument, 0, OPT_PRINT_ALL        },
+{"print-aranges",     dwno_argument, 0, OPT_PRINT_ARANGES    },
+{"print-debug-names", dwno_argument, 0, OPT_PRINT_DEBUG_NAMES},
+{"print-gnu-debuglink", dwno_argument,0,OPT_PRINT_GNU_DEBUGLINK},
+{"print-debug-gnu",   dwno_argument, 0, OPT_PRINT_DEBUG_GNU  },
+{"print-debug-sup",   dwno_argument, 0, OPT_PRINT_DEBUG_SUP  },
+{"print-eh-frame",    dwno_argument, 0, OPT_PRINT_EH_FRAME   },
+{"print-fission",     dwno_argument, 0, OPT_PRINT_FISSION    },
+{"print-frame",       dwno_argument, 0, OPT_PRINT_FRAME      },
+{"print-info",        dwno_argument, 0, OPT_PRINT_INFO       },
+{"print-lines",       dwno_argument, 0, OPT_PRINT_LINES      },
+{"print-lines-short", dwno_argument, 0, OPT_PRINT_LINES_SHORT},
+{"print-loc",         dwno_argument, 0, OPT_PRINT_LOC        },
+{"print-macinfo",     dwno_argument, 0, OPT_PRINT_MACINFO    },
+{"print-producers",   dwno_argument, 0, OPT_PRINT_PRODUCERS  },
+{"print-pubnames",    dwno_argument, 0, OPT_PRINT_PUBNAMES   },
+{"print-ranges",      dwno_argument, 0, OPT_PRINT_RANGES     },
+{"print-raw-loclists",dwno_argument, 0, OPT_PRINT_RAW_LOCLISTS},
+{"print-raw-rnglists",dwno_argument, 0, OPT_PRINT_RAW_RNGLISTS},
+{"print-static",      dwno_argument, 0, OPT_PRINT_STATIC     },
+{"print-static-func", dwno_argument, 0, OPT_PRINT_STATIC_FUNC},
+{"print-static-var",  dwno_argument, 0, OPT_PRINT_STATIC_VAR },
+{"print-strings",     dwno_argument, 0, OPT_PRINT_STRINGS    },
+{"print-str-offsets", dwno_argument, 0, OPT_PRINT_STR_OFFSETS},
+{"print-type",        dwno_argument, 0, OPT_PRINT_TYPE       },
+{"print-weakname",    dwno_argument, 0, OPT_PRINT_WEAKNAME   },
 
-  /* Print Relocations Info. */
-  {"reloc",          dwno_argument, 0, OPT_RELOC         },
-  {"reloc-abbrev",   dwno_argument, 0, OPT_RELOC_ABBREV  },
-  {"reloc-aranges",  dwno_argument, 0, OPT_RELOC_ARANGES },
-  {"reloc-frames",   dwno_argument, 0, OPT_RELOC_FRAMES  },
-  {"reloc-info",     dwno_argument, 0, OPT_RELOC_INFO    },
-  {"reloc-line",     dwno_argument, 0, OPT_RELOC_LINE    },
-  {"reloc-loc",      dwno_argument, 0, OPT_RELOC_LOC     },
-  {"reloc-pubnames", dwno_argument, 0, OPT_RELOC_PUBNAMES},
-  {"reloc-ranges",   dwno_argument, 0, OPT_RELOC_RANGES  },
+/* Print Relocations Info. */
+{"reloc",          dwno_argument, 0, OPT_RELOC         },
+{"reloc-abbrev",   dwno_argument, 0, OPT_RELOC_ABBREV  },
+{"reloc-aranges",  dwno_argument, 0, OPT_RELOC_ARANGES },
+{"reloc-frames",   dwno_argument, 0, OPT_RELOC_FRAMES  },
+{"reloc-info",     dwno_argument, 0, OPT_RELOC_INFO    },
+{"reloc-line",     dwno_argument, 0, OPT_RELOC_LINE    },
+{"reloc-loc",      dwno_argument, 0, OPT_RELOC_LOC     },
+{"reloc-pubnames", dwno_argument, 0, OPT_RELOC_PUBNAMES},
+{"reloc-ranges",   dwno_argument, 0, OPT_RELOC_RANGES  },
 
-  /*  GNU debuglink options */
-  {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
-  {"add-debuglink-path", dwrequired_argument, 0,OPT_ADD_DEBUGLINK_PATH},
+/*  GNU debuglink options */
+{"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
+{"add-debuglink-path", dwrequired_argument, 0,OPT_ADD_DEBUGLINK_PATH},
 
-  /* Search text in attributes. */
-  {"search-any",            dwrequired_argument, 0, OPT_SEARCH_ANY  },
-  {"search-any-count",      dwrequired_argument, 0, OPT_SEARCH_ANY_COUNT     },
-  {"search-match",          dwrequired_argument, 0, OPT_SEARCH_MATCH },
-  {"search-match-count",    dwrequired_argument, 0, OPT_SEARCH_MATCH_COUNT   },
-  {"search-print-children", dwno_argument,       0, OPT_SEARCH_PRINT_CHILDREN},
-  {"search-print-parent",   dwno_argument,       0, OPT_SEARCH_PRINT_PARENT  },
-  {"search-print-tree",     dwno_argument,       0, OPT_SEARCH_PRINT_TREE    },
+/* Search text in attributes. */
+{"search-any",            dwrequired_argument, 0,OPT_SEARCH_ANY  },
+{"search-any-count",      dwrequired_argument, 0,
+    OPT_SEARCH_ANY_COUNT     },
+{"search-match",          dwrequired_argument, 0,
+    OPT_SEARCH_MATCH },
+{"search-match-count",    dwrequired_argument, 0,
+    OPT_SEARCH_MATCH_COUNT   },
+{"search-print-children", dwno_argument,  0,
+    OPT_SEARCH_PRINT_CHILDREN},
+{"search-print-parent",   dwno_argument,  0,
+    OPT_SEARCH_PRINT_PARENT  },
+{"search-print-tree",     dwno_argument,  0,
+    OPT_SEARCH_PRINT_TREE    },
 #ifdef HAVE_REGEX
-  {"search-regex",          dwrequired_argument, 0, OPT_SEARCH_REGEX },
-  {"search-regex-count",    dwrequired_argument, 0, OPT_SEARCH_REGEX_COUNT   },
+{"search-regex",          dwrequired_argument, 0, OPT_SEARCH_REGEX },
+{"search-regex-count",    dwrequired_argument, 0,
+    OPT_SEARCH_REGEX_COUNT   },
 #endif /* HAVE_REGEX */
 
 
-  /* Help & Version. */
-  {"help",          dwno_argument, 0, OPT_HELP         },
-  {"verbose",       dwno_argument, 0, OPT_VERBOSE      },
-  {"verbose-more",  dwno_argument, 0, OPT_VERBOSE_MORE },
-  {"version",       dwno_argument, 0, OPT_VERSION      },
+/* Help & Version. */
+{"help",          dwno_argument, 0, OPT_HELP         },
+{"verbose",       dwno_argument, 0, OPT_VERBOSE      },
+{"verbose-more",  dwno_argument, 0, OPT_VERBOSE_MORE },
+{"version",       dwno_argument, 0, OPT_VERSION      },
 
-  /* Trace. */
-  {"trace", dwrequired_argument, 0, OPT_TRACE},
+/* Trace. */
+{"trace", dwrequired_argument, 0, OPT_TRACE},
 
-  /* alloc sums. */
-  {"print-alloc-sums", dwno_argument, 0, OPT_ALLOC_PRINT_SUMS},
-  {"suppress-de-alloc-tree",dwno_argument,0,OPT_ALLOC_TREE_OFF},
-
-  {0,0,0,0}
+/* alloc sums. */
+{"print-alloc-sums", dwno_argument, 0, OPT_ALLOC_PRINT_SUMS},
+{"suppress-de-alloc-tree",dwno_argument,0,OPT_ALLOC_TREE_OFF},
+{0,0,0,0}
 };
 
 /*  Handlers for the command line options. */
@@ -1890,7 +1927,8 @@ void arg_O_multiple_selection(void)
 /*  Option '-O file=' */
 void arg_file_output(void)
 {
-    const char *ctx = arg_option > OPT_BEGIN ? "--file-output=" : "-O file=";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--file-output=" : "-O file=";
 
     const char *path = do_uri_translation(dwoptarg,ctx);
     if (strlen(path) > 0) {
@@ -2043,7 +2081,8 @@ void arg_add_debuglink_path(void)
 void arg_search_any(void)
 {
     const char *tempstr = 0;
-    const char *ctx = arg_option > OPT_BEGIN ? "--search-any=" : "-S any=";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--search-any=" : "-S any=";
 
     /* -S any=<text> */
     glflags.gf_search_is_on = TRUE;
@@ -2066,7 +2105,8 @@ void arg_search_any_count(void)
 void arg_search_match(void)
 {
     const char *tempstr = 0;
-    const char *ctx = arg_option > OPT_BEGIN ? "--search-match=" : "-S match=";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--search-match=" : "-S match=";
 
     /* -S match=<text> */
     glflags.gf_search_is_on = TRUE;
@@ -2090,7 +2130,8 @@ void arg_search_match_count(void)
 void arg_search_regex(void)
 {
     const char *tempstr = 0;
-    const char *ctx = arg_option > OPT_BEGIN ? "--search-regex=" : "-S regex=";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--search-regex=" : "-S regex=";
 
     /* -S regex=<regular expression> */
     glflags.gf_search_is_on = TRUE;
@@ -2164,7 +2205,8 @@ void arg_print_static_var(void)
 /*  Option '-u' */
 void arg_format_file(void)
 {
-    const char *ctx = arg_option > OPT_BEGIN ? "--format-file=" : "-u<cu name>";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--format-file=" : "-u<cu name>";
 
     /* compile unit */
     const char *tstr = 0;
@@ -2275,7 +2317,8 @@ void arg_x_multiple_selection(void)
 static void
 arg_file_abi(void)
 {
-    const char *ctx = arg_option > OPT_BEGIN ? "--file-abi=" : "-x abi=";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--file-abi=" : "-x abi=";
 
     /*  -x abi=<abi> meaning select abi from dwarfdump.conf
         file. Must always select abi to use dwarfdump.conf */
@@ -2327,7 +2370,8 @@ arg_file_line5(void)
 /*  Option '-x name=' */
 static void arg_file_name(void)
 {
-    const char *ctx = arg_option > OPT_BEGIN ? "--file-name=" : "-x name=";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--file-name=" : "-x name=";
 
     /*  -x name=<path> meaning name dwarfdump.conf file. */
     const char *path = do_uri_translation(dwoptarg,ctx);
@@ -2354,7 +2398,8 @@ static void arg_format_suppress_sanitize(void)
 /*  Option '-x tied=' */
 static void arg_file_tied(void)
 {
-    const char *ctx = arg_option > OPT_BEGIN ? "--file-tied=" : "-x tied=";
+    const char *ctx = arg_option > OPT_BEGIN ?
+        "--file-tied=" : "-x tied=";
 
     const char *tiedpath = do_uri_translation(dwoptarg,ctx);
     if (strlen(tiedpath) > 0) {
@@ -2383,7 +2428,8 @@ static void arg_print_types(void)
 /*  Option not supported */
 static void arg_not_supported(void)
 {
-    fprintf(stderr, "-%c is no longer supported:ignored\n",arg_option);
+    fprintf(stderr, "-%c is no longer supported:ignored\n",
+        arg_option);
 }
 
 /* Error message for --add-debuglink-path=path  */
@@ -2421,7 +2467,8 @@ static void arg_x_invalid(void)
     arg_usage_error = TRUE;
 }
 
-/*  Process the command line arguments and sets the appropiated options. All
+/*  Process the command line arguments and sets the
+    appropiated options. All
     the options are within the global flags structure. */
 static void
 set_command_options(int argc, char *argv[])
@@ -2430,7 +2477,8 @@ set_command_options(int argc, char *argv[])
 
     /* j unused */
     while ((arg_option = dwgetopt_long(argc, argv,
-        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz",
+        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:"
+        "u:UvVwW::x:yz",
         longopts,&longindex)) != EOF) {
 
         switch (arg_option) {
@@ -2479,34 +2527,40 @@ set_command_options(int argc, char *argv[])
         case 'z': arg_not_supported();           break;
 
         /* Check DWARF Integrity. */
-        case OPT_CHECK_ABBREV:         arg_check_abbrev();         break;
-        case OPT_CHECK_ALL:            arg_check_all();            break;
-        case OPT_CHECK_ARANGES:        arg_check_aranges();        break;
-        case OPT_CHECK_ATTR_DUP:       arg_check_attr_dup();       break;
-        case OPT_CHECK_ATTR_ENCODINGS: arg_check_attr_encodings(); break;
-        case OPT_CHECK_ATTR_NAMES:     arg_check_attr_names();     break;
-        case OPT_CHECK_CONSTANTS:      arg_check_constants();      break;
-        case OPT_CHECK_FILES_LINES:    arg_check_files_lines();    break;
-        case OPT_CHECK_FORWARD_REFS:   arg_check_forward_refs();   break;
-        case OPT_CHECK_FRAME_BASIC:    arg_check_frame_basic();    break;
-        case OPT_CHECK_FRAME_EXTENDED: arg_check_frame_extended(); break;
-        case OPT_CHECK_FRAME_INFO:     arg_check_frame_info();     break;
-        case OPT_CHECK_GAPS:           arg_check_gaps();           break;
-        case OPT_CHECK_LOC:            arg_check_loc();            break;
-        case OPT_CHECK_MACROS:         arg_check_macros();         break;
-        case OPT_CHECK_PUBNAMES:       arg_check_pubnames();       break;
-        case OPT_CHECK_RANGES:         arg_check_ranges();         break;
-        case OPT_CHECK_SELF_REFS:      arg_check_self_refs();      break;
-        case OPT_CHECK_SHOW:           arg_check_show();           break;
-        case OPT_CHECK_SILENT:         arg_check_silent();         break;
-        case OPT_CHECK_SUMMARY:        arg_check_summary();        break;
-        case OPT_CHECK_TAG_ATTR:       arg_check_tag_attr();       break;
-        case OPT_CHECK_TAG_TAG:        arg_check_tag_tag();        break;
-        case OPT_CHECK_TYPE:           arg_check_type();           break;
-        case OPT_CHECK_UNIQUE:         arg_check_unique();         break;
+        case OPT_CHECK_ABBREV:         arg_check_abbrev();    break;
+        case OPT_CHECK_ALL:            arg_check_all();       break;
+        case OPT_CHECK_ARANGES:        arg_check_aranges();   break;
+        case OPT_CHECK_ATTR_DUP:       arg_check_attr_dup();  break;
+        case OPT_CHECK_ATTR_ENCODINGS: arg_check_attr_encodings();
+            break;
+        case OPT_CHECK_ATTR_NAMES:     arg_check_attr_names();break;
+        case OPT_CHECK_CONSTANTS:      arg_check_constants(); break;
+        case OPT_CHECK_FILES_LINES:    arg_check_files_lines();
+            break;
+        case OPT_CHECK_FORWARD_REFS:   arg_check_forward_refs();
+            break;
+        case OPT_CHECK_FRAME_BASIC:    arg_check_frame_basic();
+            break;
+        case OPT_CHECK_FRAME_EXTENDED: arg_check_frame_extended();
+            break;
+        case OPT_CHECK_FRAME_INFO:     arg_check_frame_info();break;
+        case OPT_CHECK_GAPS:           arg_check_gaps();     break;
+        case OPT_CHECK_LOC:            arg_check_loc();      break;
+        case OPT_CHECK_MACROS:         arg_check_macros();   break;
+        case OPT_CHECK_PUBNAMES:       arg_check_pubnames(); break;
+        case OPT_CHECK_RANGES:         arg_check_ranges();   break;
+        case OPT_CHECK_SELF_REFS:      arg_check_self_refs();break;
+        case OPT_CHECK_SHOW:           arg_check_show();     break;
+        case OPT_CHECK_SILENT:         arg_check_silent();   break;
+        case OPT_CHECK_SUMMARY:        arg_check_summary();  break;
+        case OPT_CHECK_TAG_ATTR:       arg_check_tag_attr(); break;
+        case OPT_CHECK_TAG_TAG:        arg_check_tag_tag();  break;
+        case OPT_CHECK_TYPE:           arg_check_type();     break;
+        case OPT_CHECK_UNIQUE:         arg_check_unique();   break;
     #ifdef HAVE_USAGE_TAG_ATTR
-        case OPT_CHECK_USAGE:          arg_check_usage();          break;
-        case OPT_CHECK_USAGE_EXTENDED: arg_check_usage_extended(); break;
+        case OPT_CHECK_USAGE:          arg_check_usage();break;
+        case OPT_CHECK_USAGE_EXTENDED: arg_check_usage_extended();
+            break;
     #endif /* HAVE_USAGE_TAG_ATTR */
 
         /* Print ELF sections header. */
@@ -2533,7 +2587,7 @@ set_command_options(int argc, char *argv[])
         case OPT_FILE_NAME:   arg_file_name();   break;
         case OPT_FILE_OUTPUT: arg_file_output(); break;
         case OPT_FILE_TIED:   arg_file_tied();   break;
-        case OPT_FILE_USE_NO_LIBELF:   arg_file_use_no_libelf();   break;
+        case OPT_FILE_USE_NO_LIBELF: arg_file_use_no_libelf(); break;
 
         /* Print Output Qualifiers. */
         case OPT_FORMAT_ATTR_NAME:
@@ -2568,19 +2622,20 @@ set_command_options(int argc, char *argv[])
             arg_format_suppress_uri_msg(); break;
 
         /* Print Output Limiters. */
-        case OPT_FORMAT_FILE:         arg_format_file();        break;
-        case OPT_FORMAT_GCC:          arg_format_gcc();         break;
+        case OPT_FORMAT_FILE:         arg_format_file();       break;
+        case OPT_FORMAT_GCC:          arg_format_gcc();        break;
         case OPT_FORMAT_GROUP_NUMBER: arg_format_groupnumber(); break;
-        case OPT_FORMAT_LIMIT:        arg_format_limit();       break;
-        case OPT_FORMAT_PRODUCER:     arg_format_producer();    break;
-        case OPT_FORMAT_SNC:          arg_format_snc();         break;
+        case OPT_FORMAT_LIMIT:        arg_format_limit();      break;
+        case OPT_FORMAT_PRODUCER:     arg_format_producer();   break;
+        case OPT_FORMAT_SNC:          arg_format_snc();        break;
 
         /* Print Debug Sections. */
         case OPT_PRINT_ABBREV:      arg_print_abbrev();      break;
         case OPT_PRINT_ALL:         arg_print_all();         break;
         case OPT_PRINT_ARANGES:     arg_print_aranges();     break;
         case OPT_PRINT_DEBUG_NAMES: arg_print_debug_names(); break;
-        case OPT_PRINT_GNU_DEBUGLINK: arg_print_gnu_debuglink(); break;
+        case OPT_PRINT_GNU_DEBUGLINK: arg_print_gnu_debuglink();
+            break;
         case OPT_PRINT_DEBUG_GNU:   arg_print_debug_gnu(); break;
         case OPT_PRINT_DEBUG_SUP:   arg_print_debug_sup(); break;
         case OPT_PRINT_EH_FRAME:    arg_print_gnu_frame();   break;
@@ -2620,16 +2675,23 @@ set_command_options(int argc, char *argv[])
         case OPT_ADD_DEBUGLINK_PATH: arg_add_debuglink_path();  break;
 
         /* Search text in attributes. */
-        case OPT_SEARCH_ANY:            arg_search_any();            break;
-        case OPT_SEARCH_ANY_COUNT:      arg_search_any_count();      break;
-        case OPT_SEARCH_MATCH:          arg_search_match();          break;
-        case OPT_SEARCH_MATCH_COUNT:    arg_search_match_count();    break;
-        case OPT_SEARCH_PRINT_CHILDREN: arg_search_print_children(); break;
-        case OPT_SEARCH_PRINT_PARENT:   arg_search_print_parent();   break;
-        case OPT_SEARCH_PRINT_TREE:     arg_search_print_tree();     break;
+        case OPT_SEARCH_ANY:            arg_search_any();
+            break;
+        case OPT_SEARCH_ANY_COUNT:      arg_search_any_count();
+            break;
+        case OPT_SEARCH_MATCH:          arg_search_match();
+            break;
+        case OPT_SEARCH_MATCH_COUNT:    arg_search_match_count();
+            break;
+        case OPT_SEARCH_PRINT_CHILDREN: arg_search_print_children();
+            break;
+        case OPT_SEARCH_PRINT_PARENT:   arg_search_print_parent();
+            break;
+        case OPT_SEARCH_PRINT_TREE:     arg_search_print_tree();break;
     #ifdef HAVE_REGEX
-        case OPT_SEARCH_REGEX:          arg_search_regex();          break;
-        case OPT_SEARCH_REGEX_COUNT:    arg_search_regex_count();    break;
+        case OPT_SEARCH_REGEX:          arg_search_regex();break;
+        case OPT_SEARCH_REGEX_COUNT:    arg_search_regex_count();
+            break;
     #endif /* HAVE_REGEX */
 
         /* Help & Version. */
@@ -2711,7 +2773,8 @@ process_args(int argc, char *argv[])
     /*  Process the arguments and sets the appropiated option */
     set_command_options(argc, argv);
     if (config_file_abi && glflags.gf_generic_1200_regs) {
-        printf("Specifying both -R and -x abi= is not allowed. Use one "
+        printf("Specifying both -R and -x abi= is not "
+            "allowed. Use one "
             "or the other.  -x abi= ignored.\n");
         config_file_abi = 0;
     }
@@ -2731,7 +2794,8 @@ process_args(int argc, char *argv[])
             glflags.gf_frame_flag = FALSE;
         } else if (res == FOUND_DONE || res == FOUND_OPTION) {
             if (glflags.gf_generic_1200_regs) {
-                init_generic_config_1200_regs(glflags.config_file_data);
+                init_generic_config_1200_regs(
+                    glflags.config_file_data);
             }
         } else {
             /* FOUND_ABI_START nothing to do. */
@@ -2739,14 +2803,16 @@ process_args(int argc, char *argv[])
     }
     if (arg_usage_error ) {
         printf("%s option error.\n",glflags.program_name);
-        printf("To see the options list: %s -h\n",glflags.program_name);
+        printf("To see the options list: %s -h\n",
+            glflags.program_name);
         exit(FAILED);
     }
     if (dwoptind < (argc - 1)) {
         printf("Multiple apparent object file names "
             "provided to %s\n",glflags.program_name);
         printf("Only a single object name is allowed\n");
-        printf("To see the options list: %s -h\n",glflags.program_name);
+        printf("To see the options list: %s -h\n",
+            glflags.program_name);
         exit(FAILED);
     }
     if (dwoptind > (argc - 1)) {
@@ -2783,7 +2849,8 @@ process_args(int argc, char *argv[])
     }
 
     if (glflags.gf_do_check_dwarf) {
-        /* Reduce verbosity when checking (checking means checking-only). */
+        /*  Reduce verbosity when checking
+            (checking means checking-only). */
         glflags.verbose = 1;
     }
     return do_uri_translation(argv[dwoptind],"file-to-process");

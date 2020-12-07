@@ -154,12 +154,14 @@ macrocheck_map_destroy(void *map)
 
 
 void
-add_macro_import(void **base,Dwarf_Bool is_primary,Dwarf_Unsigned offset)
+add_macro_import(void **base,
+    Dwarf_Bool is_primary,
+    Dwarf_Unsigned offset)
 {
     Dwarf_Unsigned prim_count  = 0;
     Dwarf_Unsigned sec_count  = 0;
 
-    if(is_primary) {
+    if (is_primary) {
         prim_count = 1;
     } else {
         sec_count = 1;
@@ -310,7 +312,7 @@ print_macro_statistics(const char *name,void **tsbase,
     Dwarf_Unsigned wholegap = 0;
     Dwarf_Unsigned i = 0;
 
-    if(! *tsbase) {
+    if (! *tsbase) {
         return DW_DLV_NO_ENTRY;
     }
     count = macro_count_recs(tsbase);
@@ -322,7 +324,7 @@ print_macro_statistics(const char *name,void **tsbase,
     mac_as_array_next = 0;
     mac_as_array = (struct Macrocheck_Map_Entry_s **)calloc(count,
         sizeof(struct Macrocheck_Map_Entry_s *));
-    if(!mac_as_array) {
+    if (!mac_as_array) {
 #ifdef SELFTEST
         ++failcount;
 #endif
@@ -421,10 +423,12 @@ print_macro_statistics(const char *name,void **tsbase,
             glflags.gf_count_major_errors++;
             printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
                 " %" DW_PR_DUu
-                " there is a crazy overlap with the previous end offset of "
+                " there is a crazy overlap with the previous "
+                "end offset of "
                 "0x%"  DW_PR_XZEROS DW_PR_DUx
                 " %"  DW_PR_DUu
-                " (previous start offset of 0x%"  DW_PR_XZEROS DW_PR_DUx ")"
+                " (previous start offset of 0x%"
+                DW_PR_XZEROS DW_PR_DUx ")"
                 " %"  DW_PR_DUu
                 "\n",
                 r->mp_key,
@@ -455,7 +459,7 @@ print_macro_statistics(const char *name,void **tsbase,
     } else {
         wholegap += (section_size - lastend);
     }
-    if(wholegap) {
+    if (wholegap) {
         printf("  Macro Offsets internal unused space: "
             "0x%" DW_PR_XZEROS DW_PR_DUx
             "\n",
@@ -474,7 +478,7 @@ print_macro_statistics(const char *name,void **tsbase,
 void
 clear_macro_statistics(void **tsbase)
 {
-    if(! *tsbase) {
+    if (!*tsbase) {
         return;
     }
     macrocheck_map_destroy(*tsbase);
@@ -548,7 +552,8 @@ main()
     add_macro_import(&base,FALSE,50);
     add_macro_import(&base,FALSE,60);
     add_macro_area_len(&base,60,10);
-    printf( "\n  Expect an ERROR about offset 50 having 2 primaries\n");
+    printf( "\n  Expect an ERROR about offset 50 having "
+        "2 primaries\n");
     printf( "  and Expect an ERROR about offset 50 having 2\n"
         "  primaries"
         " and a secondary\n");

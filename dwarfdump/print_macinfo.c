@@ -107,10 +107,10 @@ print_one_macro_entry(long i,
             mdp->dmd_macro = srcfiles[mdp->dmd_fileindex-1];
         } else {
             if (srcf_count == 0)  {
-               mdp->dmd_macro = 
-                   "<invalid index, no line table file names exist>";
+                mdp->dmd_macro =
+                    "<invalid index, no line table file names exist>";
             } else {
-               mdp->dmd_macro = "<invalid index, corrupt data?>";
+                mdp->dmd_macro = "<invalid index, corrupt data?>";
             }
         }
         res = print_one_macro_entry_detail(i,
@@ -160,7 +160,7 @@ print_one_macro_entry(long i,
     return res;
 }
 
-static void 
+static void
 mac_dealloc_srcfiles_data(Dwarf_Debug dbg,
     char **srcfiles,
     Dwarf_Signed srcf_count)
@@ -239,7 +239,8 @@ print_macinfo_by_offset(Dwarf_Debug dbg,
         printf("compilation-unit .debug_macinfo offset "
             "0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);
         printf("                          sec    file\n");
-        printf("num name                  offset index [line] \"string\"\n");
+        printf("num name                  offset index [line] "
+            "\"string\"\n");
     }
     for (i = 0; i < count; i++) {
         struct Dwarf_Macro_Details_s *mdp = &maclist[i];

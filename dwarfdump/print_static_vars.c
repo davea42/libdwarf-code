@@ -56,7 +56,8 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
         &truename,TRUE);
     {
         esb_constructor(&sanitname);
-        /*  Sanitized cannot be safely reused,there is a static buffer,
+        /*  Sanitized cannot be safely reused,there is a
+            static buffer,
             so we make a safe copy. */
         esb_append(&sanitname,sanitized(esb_get_string(&truename)));
     }
@@ -90,7 +91,7 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
             (Dwarf_Global *)globbuf, count,
             err);
         if (pres == DW_DLV_ERROR) {
-            if(!printed){
+            if (!printed){
                 printf("\n%s\n",esb_get_string(&sanitname));
             }
         }

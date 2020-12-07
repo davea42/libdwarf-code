@@ -59,9 +59,11 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
 
         /* Get the CU offset for easy error reporting */
         if (first_cu || cu_die_offset != cu_die_offset_prev) {
-            dres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+            dres = dwarf_die_offsets(cu_die,&glflags.
+                DIE_overall_offset,
                 &glflags.DIE_offset,err);
-            glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+            glflags.DIE_CU_overall_offset =
+                glflags.DIE_overall_offset;
             glflags.DIE_CU_offset = glflags.DIE_offset;
             if (dres != DW_DLV_OK) {
                 print_error_and_continue(dbg,
@@ -75,7 +77,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             /* Get the CU offset for easy error reporting */
             dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
                 &glflags.DIE_offset,err);
-            glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+            glflags.DIE_CU_overall_offset =
+                glflags.DIE_overall_offset;
             glflags.DIE_CU_offset = glflags.DIE_offset;
             DWARF_CHECK_COUNT(aranges_result,1);
             if (cu_die_offset != cudieoff2) {
@@ -220,7 +223,8 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     }
                     esb_constructor(&m);
                     esb_append_printf_s(&m,
-                        "\nERROR: dwarf_offdie() gets a return of %s ",
+                        "\nERROR: dwarf_offdie() gets a "
+                        "return of %s ",
                         failtype);
                     esb_append_printf_i(&m," finding the "
                         "compilation-unit DIE for "
@@ -292,12 +296,14 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                         }
                         esb_constructor(&m);
                         esb_append_printf_s(&m,
-                            "\nERROR: dwarf_get_arange_cu_header_offset() "
+                            "\nERROR: dwarf_get_arange_cu_"
+                            "header_offset() "
                             "gets a return of %s ",
                             failtype);
                         esb_append_printf_i(&m,"finding the "
                             "compilation-unit DIE offset for "
-                            "arange number %d and that shoud never happen.",
+                            "arange number %d and that should "
+                            "never happen.",
                             i);
                         simple_err_return_msg_either_action(cures3,
                             esb_get_string(&m));
@@ -330,7 +336,8 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
 
                             pres = print_one_die(dbg, cu_die,
                                 cu_die_offset,
-                                /* print_information= */ (boolean) TRUE,
+                                /* print_information= */
+                                (boolean) TRUE,
                                 /* indent_level = */0,
                                 /* srcfiles= */ 0,
                                 /* cnt= */ 0,
@@ -339,11 +346,13 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                                 ga_err);
                             if (pres == DW_DLV_ERROR) {
                                 dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
-                                aranges_dealloc_now(dbg,count,arange_buf);
+                                aranges_dealloc_now(dbg,
+                                    count,arange_buf);
                                 return pres;
                             }
                         }
-                        /* Reset the state, so we can traverse the debug_info */
+                        /*  Reset the state, so we can traverse
+                            the debug_info */
                         glflags.seen_CU = FALSE;
                         glflags.need_CU_name = TRUE;
                         if (glflags.gf_do_print_dwarf) {
@@ -372,7 +381,8 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                             length,
                             (Dwarf_Unsigned)cu_die_offset);
                     }
-                    if (glflags.verbose && glflags.gf_do_print_dwarf) {
+                    if (glflags.verbose &&
+                        glflags.gf_do_print_dwarf) {
                         printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx
                             "\n",
                             (Dwarf_Unsigned)off);

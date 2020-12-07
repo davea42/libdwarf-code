@@ -152,7 +152,7 @@ print_selected_attributes(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     int res = 0;
-    int i = 0; 
+    int i = 0;
 
     for ( ; attrlist[i]; ++i) {
         Dwarf_Attribute attr = 0;
@@ -197,7 +197,7 @@ print_selected_attributes(Dwarf_Debug dbg,
         if (fclass == DW_FORM_CLASS_STRING) {
             res = dwarf_formstring(attr,&formstring,error);
             if (res == DW_DLV_OK) {
-                print_str = TRUE; 
+                print_str = TRUE;
                 esb_append(&m,formstring);
             } else {
                 error_report(res,"dwarf_formstring() returned error",
@@ -205,16 +205,16 @@ print_selected_attributes(Dwarf_Debug dbg,
                 if (res == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg,*error);
                     *error = 0;
-               }
-               dwarf_dealloc_attribute(attr);
-               esb_destructor(&m);
-               break;
+                }
+                dwarf_dealloc_attribute(attr);
+                esb_destructor(&m);
+                break;
             }
         } else if (fclass == DW_FORM_CLASS_CONSTANT)  {
             if (form == DW_FORM_data8) {
                 res = dwarf_formsig8_const(attr,&sig,error);
                 if (res == DW_DLV_OK) {
-                    print_str = TRUE; 
+                    print_str = TRUE;
                     format_sig8_string(&sig,&m);
                 } else {
                     error_report(res,"dwarf_formsig8_const() "
@@ -233,7 +233,7 @@ print_selected_attributes(Dwarf_Debug dbg,
             if (form == DW_FORM_ref_sig8) {
                 res = dwarf_formsig8(attr,&sig,error);
                 if (res == DW_DLV_OK) {
-                    print_str = TRUE; 
+                    print_str = TRUE;
                     esb_constructor(&m);
                     format_sig8_string(&sig,&m);
                 } else {
@@ -284,18 +284,18 @@ print_die_basics(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
             printf("ERROR: Cannot access compilation unit data: %s",
-               dwarf_errmsg(*error));
+                dwarf_errmsg(*error));
             dwarf_dealloc_error(dbg,*error);
             *error = 0;
         } else {
             printf("ERROR:  Cannot access compilation unit data"
-               "No such found");
+                "No such found");
         }
         glflags.gf_count_major_errors++;
         return DW_DLV_OK;
     }
     printf("  Compilation unit data follows\n");
-    printf("  CU version                          : %d\n",version); 
+    printf("  CU version                          : %d\n",version);
     if (!is_info) {
         printf("  CU  section is .debug_types");
     }
@@ -328,12 +328,12 @@ print_die_basics(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
             printf("ERROR: Cannot access DIE tag  ERROR: %s\n",
-               dwarf_errmsg(*error));
+                dwarf_errmsg(*error));
             dwarf_dealloc_error(dbg,*error);
             *error = 0;
         } else {
             printf("ERROR:  Cannot access DIE tag "
-               "No such found\n");
+                "No such found\n");
         }
         printf("\n");
         glflags.gf_count_major_errors++;
@@ -395,7 +395,6 @@ print_all_blocks(Dwarf_Debug dbg,
             "%" DW_PR_DUu "\n",size_of_debug_info_area);
         printf("  Number of entries in block          : "
             "%" DW_PR_DUu "\n",entrycount);
-     
         /*  The CU offsets appear to be those in
             the executable here. Not in
             any dwo object. The offsets within
@@ -450,7 +449,7 @@ print_all_blocks(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  November 25,2020: gdb 10.2 binutils source 
+/*  November 25,2020: gdb 10.2 binutils source
     can print these sections
     but gdb does not, AFAICT, use this at all.
     (binutils can print it, as can we).
@@ -474,7 +473,7 @@ print_debug_gnu(Dwarf_Debug dbg,
     struct esb_s truename;
     unsigned int i = 0;
 
-    for(i = 0; i < 2; i++) {
+    for (i = 0; i < 2; i++) {
         esb_constructor_fixed(&truename,buf,
             DWARF_SECNAME_BUFFER_SIZE);
         if (!i) {

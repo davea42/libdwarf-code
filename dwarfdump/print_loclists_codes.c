@@ -113,7 +113,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
             " 0x%"
             DW_PR_XZEROS DW_PR_DUx
             ">",hipc);
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
                 lopc, rawlopc,
                 hipc, rawhipc, locdesc_offset, base_address,
@@ -150,7 +150,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
                 lopc, rawlopc,
                 hipc, rawhipc, locdesc_offset, base_address,
@@ -189,7 +189,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
                 lopc, rawlopc,
                 hipc, rawhipc, locdesc_offset, base_address,
@@ -205,7 +205,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
             " 0x%"
             DW_PR_XZEROS DW_PR_DUx
             ">",hipc);
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
                 lopc, rawlopc,
                 hipc, rawhipc, locdesc_offset, base_address,
@@ -242,7 +242,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
                 DW_PR_XZEROS DW_PR_DUx
                 ">",hipc);
         }
-        if(checking && !debug_addr_unavailable) {
+        if (checking && !debug_addr_unavailable) {
             loc_error_check(tagname,attrname,
                 lopc, rawlopc,
                 hipc, rawhipc, locdesc_offset, base_address,

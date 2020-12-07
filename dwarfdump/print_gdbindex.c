@@ -70,7 +70,7 @@ print_culist_array(UNUSEDARG Dwarf_Debug dbg,
         " format: [entry#] cuoffset culength\n",
         list_len);
 
-    for( i  = 0; i < list_len; i++) {
+    for (i = 0; i < list_len; i++) {
         Dwarf_Unsigned cuoffset = 0;
         Dwarf_Unsigned culength = 0;
 
@@ -126,7 +126,7 @@ print_types_culist_array(Dwarf_Debug dbg,
         " format: [entry#] cuoffset culength signature\n",
         list_len);
 
-    for( i  = 0; i < list_len; i++) {
+    for (i = 0; i < list_len; i++) {
         Dwarf_Unsigned cuoffset = 0;
         Dwarf_Unsigned culength = 0;
         Dwarf_Unsigned signature = 0;
@@ -183,7 +183,7 @@ print_addressarea(Dwarf_Debug dbg,
         " format: [entry#] lowpc highpc cu-index\n",
         list_len);
 
-    for( i  = 0; i < list_len; i++) {
+    for (i = 0; i < list_len; i++) {
         Dwarf_Unsigned lowpc = 0;
         Dwarf_Unsigned highpc = 0;
         Dwarf_Unsigned cu_index = 0;
@@ -282,13 +282,15 @@ print_symtab_entry(Dwarf_Debug dbg,
 
     if (symnameoffset == 0 && cuvecoffset == 0) {
         if (glflags.verbose > 1) {
-            printf("        [%4" DW_PR_DUu "] \"empty-hash-entry\"\n", index);
+            printf("        [%4" DW_PR_DUu "] "
+                "\"empty-hash-entry\"\n",
+                index);
         }
         return DW_DLV_OK;
     }
     res = dwarf_gdbindex_string_by_offset(gdbindex,
         symnameoffset,&name,sym_err);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         struct esb_s msg;
         const char * et= dw_dlv_string(res);
 
@@ -307,7 +309,7 @@ print_symtab_entry(Dwarf_Debug dbg,
     }
     res = dwarf_gdbindex_cuvector_length(gdbindex,
         cuvecoffset,&cuvec_len,sym_err);
-    if( res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         struct esb_s msg;
         const char * et= dw_dlv_string(res);
 
@@ -331,7 +333,7 @@ print_symtab_entry(Dwarf_Debug dbg,
             " cuveclen 0x%"    DW_PR_XZEROS DW_PR_DUx "\n",
             index,symnameoffset,cuvecoffset,cuvec_len);
     }
-    for(ii = 0; ii < cuvec_len; ++ii ) {
+    for (ii = 0; ii < cuvec_len; ++ii ) {
         Dwarf_Unsigned attributes = 0;
         Dwarf_Unsigned cu_index = 0;
         Dwarf_Unsigned reserved1 = 0;
@@ -343,21 +345,23 @@ print_symtab_entry(Dwarf_Debug dbg,
         res = dwarf_gdbindex_cuvector_inner_attributes(
             gdbindex,cuvecoffset,ii,
             &attributes,sym_err);
-        if( res != DW_DLV_OK) {
+        if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "dwarf_gdbindex_cuvector_inner_attributes failed",res,*sym_err);
+                "dwarf_gdbindex_cuvector_inner_attributes failed",
+                res,*sym_err);
             return res;
         }
         res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
-            attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
-            sym_err);
-        if( res != DW_DLV_OK) {
+            attributes, &cu_index,&reserved1,&symbol_kind,
+            &is_static, sym_err);
+        if (res != DW_DLV_OK) {
             struct esb_s msg;
             const char * et= dw_dlv_string(res);
 
             esb_constructor(&msg);
             esb_append_printf_s(&msg,
-                "ERROR: dwarf_gdbindex_cuvector_instance_expand_value() call "
+                "ERROR: dwarf_gdbindex_cuvector_instance_expand"
+                "_value() call "
                 "failed with %s ",et);
             esb_append_printf_u(&msg,
                 " on cu vector index %d ",ii);
@@ -447,7 +451,7 @@ print_symboltable(Dwarf_Debug dbg,
     printf("                          "
         " format: [entry#]  \"name\" , list of  cuindex [type]\n");
 
-    for( i  = 0; i < list_len; i++) {
+    for (i = 0; i < list_len; i++) {
         Dwarf_Unsigned symnameoffset = 0;
         Dwarf_Unsigned cuvecoffset = 0;
         res = dwarf_gdbindex_symboltable_entry(gdbindex,i,
@@ -515,12 +519,12 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
         &unused,
         &section_name,
         err);
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         /*  Silently! The section is rare so lets
             say nothing. */
         return res;
     }
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         simple_err_return_msg_either_action(res,
             "ERROR: .gdb_index not readable.");
         return res;

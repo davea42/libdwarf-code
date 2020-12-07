@@ -64,7 +64,8 @@ ellipname(int   res,
     int         printonerr)
 {
 #ifndef TRIVIAL_NAMING
-    if (glflags.gf_check_dwarf_constants && checking_this_compiler()) {
+    if (glflags.gf_check_dwarf_constants &&
+        checking_this_compiler()) {
         DWARF_CHECK_COUNT(dwarf_constants_result,1);
     }
 #endif

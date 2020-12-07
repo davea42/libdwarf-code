@@ -59,7 +59,8 @@ printcheckargs(
     int testline)
 {
     printf("chkval entry ct %d test %s line %d\n",ct,testid,testline);
-    printf("       rchar 0x%x('%c') xchar 0x%x('%c') roptarg %s xoptarg %s\n",
+    printf("       rchar 0x%x('%c') xchar 0x%x('%c') roptarg "
+        "%s xoptarg %s\n",
         rchar,turnprintable(rchar),
         xchar,turnprintable(xchar),
         roptarg?roptarg:"",xoptarg?xoptarg:"");
@@ -90,7 +91,8 @@ chkval(
         int pr = turnprintable(rchar);
         int px = turnprintable(xchar);
         err++;
-        printf("Mismatch %d %s line  %d: got char %c %d 0x%x; exp char %c %d 0x%x\n",
+        printf("Mismatch %d %s line  %d: got char %c "
+            "%d 0x%x; exp char %c %d 0x%x\n",
             ct,testid,testline,pr,rchar,rchar,px,xchar,xchar);
     }
     if (roptarg != xoptarg) {
@@ -99,7 +101,8 @@ chkval(
             /* strings match. */
         } else {
             err++;
-            printf("Mismatch %d %s line %d: got dwoptarg %s 0x%lx exp optarg %s 0x%lx\n",
+            printf("Mismatch %d %s line %d: got dwoptarg "
+                "%s 0x%lx exp optarg %s 0x%lx\n",
                 ct,testid,testline,
                 roptarg?roptarg:"",
                 (unsigned long)roptarg,
@@ -109,12 +112,14 @@ chkval(
     }
     if (roptind != xoptind) {
         err++;
-        printf("Mismatch %d %s line %d: got dwoptind %d 0x%x exp optind %d 0x%x\n",
+        printf("Mismatch %d %s line %d: got dwoptind %d "
+            "0x%x exp optind %d 0x%x\n",
             ct,testid,testline,
             roptind,roptind,xoptind,xoptind);
     }
     if (err > 0) {
-        printcheckargs(ct,rchar,xchar,roptarg,xoptarg,roptind,xoptind,testid,testline);
+        printcheckargs(ct,rchar,xchar,roptarg,xoptarg,
+            roptind,xoptind,testid,testline);
         printf("FAIL getopttest %s line %d\n",testid,testline);
         exit(1);
     }
@@ -130,13 +135,16 @@ static void chkval_long(
 {
     int err = 0;
 
-    chkval(ct,rchar,xchar,roptarg,xoptarg,roptind,xoptind,testid,testline);
+    chkval(ct,rchar,xchar,roptarg,xoptarg,roptind,xoptind,
+        testid,testline);
     if (rlongindex != xlongindex) {
-        printf("chkval_long entry ct %d test %s line %d\n",ct,testid,testline);
+        printf("chkval_long entry ct %d test %s line %d\n",ct,
+            testid,testline);
         printf("       rlongindex %d xlongindex %d\n",
             rlongindex,xlongindex);
         ++err;
-        printf("Mismatch %d %s line %d:  on longopt longindex got %d expected %d\n",
+        printf("Mismatch %d %s line %d:  on longopt longindex "
+            "got %d expected %d\n",
             ct,testid,testline,
             rlongindex,xlongindex);
     }
@@ -194,7 +202,8 @@ test3(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
-        printf("FAIL test3 on non-dash dwoptind %d arg got %s exp %s\n",
+        printf("FAIL test3 on non-dash dwoptind %d arg got "
+            "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
         exit(1);
     }
@@ -222,14 +231,16 @@ test2(void)
         chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test21",__LINE__);
         break;
     case 2:
-        chkval(ct,c,'#',dwoptarg,"pound",dwoptind,3,"test22",__LINE__);
+        chkval(ct,c,'#',dwoptarg,"pound",dwoptind,3,"test22",
+            __LINE__);
         break;
         break;
     case 3:
         chkval(ct,c,'b',dwoptarg,0,dwoptind,4,"test23",__LINE__);
         break;
     case 4:
-        chkval(ct,c,'c',dwoptarg,"filename",dwoptind,5,"test24",__LINE__);
+        chkval(ct,c,'c',dwoptarg,"filename",dwoptind,5,"test24",
+            __LINE__);
         break;
     default:
         printf("FAIL test2 unexpected ct %d\n",ct);
@@ -240,7 +251,8 @@ test2(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (argv1[dwoptind]) {
-        printf("FAIL test2 on non-dash arg dwoptind %d got 0x%lx exp NULL\n",
+        printf("FAIL test2 on non-dash arg dwoptind %d "
+            "got 0x%lx exp NULL\n",
             dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
@@ -310,7 +322,8 @@ ltest1(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
-        printf("FAIL ltest1 on non-dash arg dwoptind %d got %s exp %s\n",
+        printf("FAIL ltest1 on non-dash arg dwoptind %d got "
+            "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
         exit(1);
     }
@@ -378,7 +391,8 @@ ltest2(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
-        printf("FAIL ltest2 on non-dash arg dwoptind %d got %s exp %s\n",
+        printf("FAIL ltest2 on non-dash arg dwoptind %d got "
+            "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
         exit(1);
     }
@@ -408,7 +422,8 @@ test1(void)
     argv1[12]="progtoread";
     argv1[13]=0;
     for ( ;(c = dwgetopt(argct, argv1,
-        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz"))
+        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:"
+        "u:UvVwW::x:yz"))
         != EOF; ct++) {
     switch(ct) {
     case 1:
@@ -433,7 +448,8 @@ test1(void)
         chkval(ct,c,'l',dwoptarg,"v",dwoptind,10,"test17",__LINE__);
         break;
     case 8:
-        chkval(ct,c,'x',dwoptarg,"path=./foo",dwoptind,12,"test18",__LINE__);
+        chkval(ct,c,'x',dwoptarg,"path=./foo",dwoptind,12,"test18",
+            __LINE__);
         break;
     default:
         printf("FAIL test1 unexpected ct %d in test1\n",ct);
@@ -444,7 +460,8 @@ test1(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
-        printf("FAIL test1 on non-dash arg dwoptind %d got %s exp %s\n",
+        printf("FAIL test1 on non-dash arg dwoptind %d got "
+            "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
         exit(1);
     }
@@ -491,7 +508,8 @@ test5(void)
         chkval(ct,c,'d',dwoptarg,"a",dwoptind,8,"test17",__LINE__);
         break;
     default:
-        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
+        printf("FAIL test5 unexpected ct %d in test1 char "
+            "0x%x %c\n",ct,c,c);
         exit(1);
     }
     }
@@ -499,7 +517,8 @@ test5(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (argv1[dwoptind]) {
-        printf("FAIL test5 there is a non-dash arg dwoptind %d got 0x%lx\n",
+        printf("FAIL test5 there is a non-dash arg dwoptind "
+            "%d got 0x%lx\n",
             dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
@@ -522,12 +541,14 @@ test6(void)
         chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test61",__LINE__);
         break;
     default:
-        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
+        printf("FAIL test5 unexpected ct %d in test1 char "
+            "0x%x %c\n",ct,c,c);
         exit(1);
     }
     }
     if (argv1[dwoptind]) {
-        printf("FAIL test6 there is a non-dash arg dwoptind %d got 0x%lx\n",
+        printf("FAIL test6 there is a non-dash arg dwoptind "
+            "%d got 0x%lx\n",
             dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
@@ -550,12 +571,14 @@ test7(void)
         chkval(ct,c,':',dwoptarg,0,dwoptind,2,"test7.1",__LINE__);
         break;
     default:
-        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
+        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",
+            ct,c,c);
         exit(1);
     }
     }
     if (argv1[dwoptind]) {
-        printf("FAIL test7 there is a non-dash arg dwoptind %d got 0x%lx\n",
+        printf("FAIL test7 there is a non-dash arg dwoptind "
+            "%d got 0x%lx\n",
             dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
@@ -578,12 +601,14 @@ test8(void)
         chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test8.1",__LINE__);
         break;
     default:
-        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
+        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",
+            ct,c,c);
         exit(1);
     }
     }
     if (argv1[dwoptind]) {
-        printf("FAIL test8 there is a non-dash arg dwoptind %d got 0x%lx\n",
+        printf("FAIL test8 there is a non-dash arg "
+            "dwoptind %d got 0x%lx\n",
             dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
@@ -726,7 +751,7 @@ int main(int argc, const char **argv)
     int ct = 0;
     int failct = 0;
     printf("argc: %d\n",argc);
-    for( ct = 0; ct < argc ; ++ct) {
+    for (ct = 0; ct < argc ; ++ct) {
         printf("argv[%d] = %s\n",ct,argv[ct]);
     }
     if ( argc == 3) {
