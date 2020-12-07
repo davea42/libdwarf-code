@@ -63,4 +63,4 @@ struct Dwarf_Xu_Index_Header_s {
     const char     * gx_section_name;
 };
 
-#endif  /* DWARF_XU_INDEX_H */
+#endif /* DWARF_XU_INDEX_H */

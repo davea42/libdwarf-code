@@ -69,7 +69,8 @@ struct Dwarf_P_Dnames_s {
 
     struct Dwarf_P_Dnames_uarray_s dn_buckets;
 
-    /* Hashes count applies to string offsets and entry offsets arrays too. */
+    /*  Hashes count applies to string offsets
+        and entry offsets arrays too. */
     struct Dwarf_P_Dnames_uarray_s dn_hashes;
     struct Dwarf_P_Dnames_uarray_s dn_string_offsets;
     struct Dwarf_P_Dnames_uarray_s dn_entry_pool;

@@ -86,7 +86,8 @@ struct dwarf_pe_generic_optional_header
     Dwarf_Unsigned LoaderFlags;
     Dwarf_Unsigned NumberOfRvaAndSizes;
     Dwarf_Unsigned SizeOfDataDirEntry; /* size in object file */
-    struct dwarf_pe_generic_data_directory DataDirectory[DWARF_PE_IMAGE_NUMBER_OF_DIRECTORY_ENTRIES];
+    struct dwarf_pe_generic_data_directory
+        DataDirectory[DWARF_PE_IMAGE_NUMBER_OF_DIRECTORY_ENTRIES];
 };
 
 struct dwarf_pe_generic_image_section_header

@@ -71,4 +71,5 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
     Dwarf_Error *error);
 
 /* adds an attribute to a die */
-void _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr);
+void _dwarf_pro_add_at_to_die(Dwarf_P_Die die,
+    Dwarf_P_Attribute attr);

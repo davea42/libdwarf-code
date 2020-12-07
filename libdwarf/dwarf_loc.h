@@ -46,7 +46,8 @@ struct Dwarf_Loc_Chain_s {
     Dwarf_Loc_Chain lc_next;
 };
 
-/*  Dwarf_Loclists_Context_s contains the data from the .debug_loclists
+/*  Dwarf_Loclists_Context_s contains the data from
+    the .debug_loclists
     section headers (if that section exists).  Dwarf 2,3,4 .debug_loc
     has no such data.  The array (one of these per header in
     .debug_loclists) is recorded in Dwarf_Debug. These
@@ -247,7 +248,8 @@ struct Dwarf_Loc_Head_c_s {
     Dwarf_Debug      ll_dbg;
 
     /*  If ll_kind == DW_LKIND_loclists the following
-        pointer is non-null and index is the index of the localcontext */
+        pointer is non-null and index is the index
+        of the localcontext */
     Dwarf_Unsigned   ll_index;
     Dwarf_Loclists_Context ll_localcontext;
 

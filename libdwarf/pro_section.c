@@ -2297,9 +2297,9 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
                 curfde->fde_end_symbol != 0 &&
                 curfde->fde_addr_range == 0) {
                 /*  symbolic reloc, need reloc for length What if we
-                    really know the length? If so, should use the other
-                    part of 'if'. */
-                Dwarf_Unsigned val;
+                    really know the length? If so, should use
+                    the other part of 'if'. */
+                Dwarf_Unsigned val = 0;
 
                 res = dbg->de_relocate_pair_by_symbol(dbg,
                     DEBUG_FRAME,

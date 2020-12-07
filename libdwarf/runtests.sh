@@ -44,6 +44,10 @@ chkres $? "compiling dwarftied test"
 chkres $? "Running dwarftiedtest test"
 rm ./dwarftied
 
+$CC $CFLAGS $srcdir/test_headersok.c -o dwarfheadersok
+chkres $? "compiling test_headersok.c"
+rm ./test_headersok
+
 if [ $failcount -ne 0 ]
 then
    echo "FAIL $failcount in libdwarf/runtests.sh"

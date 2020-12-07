@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
 
   This program is free software; you can redistribute it
@@ -31,7 +30,8 @@ int _dwarf_pro_pre_alloc_specific_reloc_slots(Dwarf_P_Debug dbg,
     Dwarf_P_Per_Reloc_Sect p_reloc,
     Dwarf_Unsigned newslots);
 
-int _dwarf_pro_alloc_reloc_slots(Dwarf_P_Debug dbg, int rel_sec_index);
+int _dwarf_pro_alloc_reloc_slots(Dwarf_P_Debug dbg,
+    int rel_sec_index);
 
 int _dwarf_pro_reloc_get_a_slot(Dwarf_P_Debug dbg,
     int base_sec_index,

@@ -44,7 +44,9 @@
 
 void dwarf_malloc_check_alloc_data(void * addr,unsigned char code);
 void dwarf_malloc_check_dealloc_data(void * addr,unsigned char code);
-void dwarf_malloc_check_complete(char *wheremsg); /* called at exit of app */
+
+/* called at exit of app */
+void dwarf_malloc_check_complete(char *wheremsg);
 
 #else /* !WANT_LIBBDWARF_MALLOC_CHECK */
 

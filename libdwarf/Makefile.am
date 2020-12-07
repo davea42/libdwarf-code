@@ -191,7 +191,7 @@ libdwarf2.1.pdf \
 libdwarf2p.1.pdf 
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
-  test_linkedtopath
+  test_linkedtopath test_headersok
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    dwarfstring.h dwarfstring.c
@@ -212,6 +212,15 @@ test_linkedtopath_SOURCES = test_linkedtopath.c \
    dwarf_error.h 
 test_linkedtopath_CFLAGS = $(RO_CFLAGS_WARN) -DTESTING
 test_linkedtopath_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+
+# Just ensures the headers usable, no C source errors.
+test_headersok_SOURCES = test_headersok.c \
+    dwarf_reloc_386.h  dwarf_reloc_mips.h  \
+    dwarf_reloc_ppc.h dwarf_reloc_arm.h    \
+    dwarf_reloc_ppc64.h  dwarf_reloc_x86_64.h
+test_headersok_CFLAGS = $(RO_CFLAGS_WARN)
+test_headersok_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
 
 check_TESTS = testdebuglink.sh

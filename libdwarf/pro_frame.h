@@ -85,7 +85,8 @@ struct Dwarf_P_Fde_s {
         symbol indicated by fde_r_symidx */
     Dwarf_Addr fde_initloc;
 
-    /* Relocation symbol for address of the code this frame applies to.  */
+    /*  Relocation symbol for address of the code this
+        frame applies to.  */
     Dwarf_Unsigned fde_r_symidx;
 
     /* Bytes of instr for this fde, if known */
@@ -111,8 +112,9 @@ struct Dwarf_P_Fde_s {
 
     Dwarf_P_Fde fde_next;
 
-    /*  The symbol and offset of the end symbol. When fde_end_symbol is
-        non-zero we must represent the */
+    /*  The symbol and offset of the end symbol.
+        When fde_end_symbol is
+        non-zero we must represent the length in relocs. */
     Dwarf_Addr fde_end_symbol_offset;
     Dwarf_Unsigned fde_end_symbol;
 

@@ -43,7 +43,10 @@ struct generic_macho_header {
     Dwarf_Unsigned   cpusubtype;
     Dwarf_Unsigned   filetype;
     Dwarf_Unsigned   ncmds;      /* number of load commands */
-    Dwarf_Unsigned   sizeofcmds; /* the size of all the load commands */
+
+    /* the size of all the load commands */
+    Dwarf_Unsigned   sizeofcmds;
+
     Dwarf_Unsigned   flags;
     Dwarf_Unsigned   reserved;
 };
@@ -124,9 +127,11 @@ typedef struct dwarf_macho_filedata_s {
     struct generic_macho_section *mo_dwarf_sections;
 } dwarf_macho_object_access_internals_t;
 
-int dwarf_load_macho_header(dwarf_macho_object_access_internals_t * mfp,
+int dwarf_load_macho_header(
+    dwarf_macho_object_access_internals_t * mfp,
     int *errcode);
-int dwarf_load_macho_commands(dwarf_macho_object_access_internals_t * mfp,
+int dwarf_load_macho_commands(
+    dwarf_macho_object_access_internals_t * mfp,
     int *errcode);
 
 #ifdef __cplusplus

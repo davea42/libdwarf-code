@@ -56,8 +56,8 @@ struct Dwarf_Global_Context_s {
     /* Size of the pubnames data for the CU */
     unsigned char pu_length;
 
-    /*  For this CU, size of the extension 0 except for dwarf2 extension
-        64bit, in which case is 4. */
+    /*  For this CU, size of the extension 0 except
+        for dwarf2 extension 64bit, in which case is 4. */
     unsigned char pu_extension_size;
 
     Dwarf_Half pu_version; /* 2,3, or 4 */
@@ -65,8 +65,8 @@ struct Dwarf_Global_Context_s {
     /*  offset in pubnames of the  pu header. */
     Dwarf_Off      pu_pub_offset;
 
-    /*  Offset into .debug_info of the compilation-unit header (not DIE)
-        for this set of pubnames. */
+    /*  Offset into .debug_info of the compilation-unit header
+        (not DIE) for this set of pubnames. */
     Dwarf_Off pu_offset_of_cu_header;
 
     /*  Size of compilation-unit that these pubnames are in. */
@@ -114,7 +114,8 @@ _dwarf_internal_globals_dealloc( Dwarf_Debug dbg, Dwarf_Global *dwgl,
 void _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,
     Dwarf_Unsigned *varp,
     char *caller_site_name);
-#define FIX_UP_OFFSET_IRIX_BUG(ldbg,var,name) _dwarf_fix_up_offset_irix(ldbg,&var,name)
+#define FIX_UP_OFFSET_IRIX_BUG(ldbg,var,name) \
+    _dwarf_fix_up_offset_irix(ldbg,&var,name)
 #else  /* ! __sgi */
 #define FIX_UP_OFFSET_IRIX_BUG(ldbg,var,name)
-#endif  /* __sgi */
+#endif /* __sgi */

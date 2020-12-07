@@ -231,12 +231,16 @@ typedef struct elf_filedata_s {
 int dwarf_construct_elf_access(int fd,
     const char *path,
     dwarf_elf_object_access_internals_t **ep,int *errcode);
-int dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t *ep,int *errcode);
-int _dwarf_load_elf_header(dwarf_elf_object_access_internals_t *ep,int *errcode);
-int _dwarf_load_elf_sectheaders(dwarf_elf_object_access_internals_t* ep,int *errcode);
-
-int _dwarf_load_elf_symtab_symbols(dwarf_elf_object_access_internals_t *ep,int *errcode);
-int _dwarf_load_elf_symstr( dwarf_elf_object_access_internals_t *ep, int *errcode);
+int dwarf_destruct_elf_access(
+    dwarf_elf_object_access_internals_t *ep,int *errcode);
+int _dwarf_load_elf_header(
+    dwarf_elf_object_access_internals_t *ep,int *errcode);
+int _dwarf_load_elf_sectheaders(
+    dwarf_elf_object_access_internals_t* ep,int *errcode);
+int _dwarf_load_elf_symtab_symbols(
+    dwarf_elf_object_access_internals_t *ep,int *errcode);
+int _dwarf_load_elf_symstr(
+    dwarf_elf_object_access_internals_t *ep, int *errcode);
 
 /*  These two enums used for type safety in passing
     values. */

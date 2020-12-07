@@ -40,18 +40,18 @@
 /* Include the definitions only in the case of Windows */
 #ifdef _WIN32
 /* PowerPC relocations defined by the ABIs */
-#define R_PPC_NONE                   0
-#define R_PPC_ADDR32                 1 /* 32bit absolute address */
-#define R_PPC_ADDR24                 2 /* 26bit address, 2 bits ignored.  */
-#define R_PPC_ADDR16                 3 /* 16bit absolute address */
-#define R_PPC_ADDR16_LO              4 /* lower 16bit of absolute address */
-#define R_PPC_ADDR16_HI              5 /* high 16bit of absolute address */
-#define R_PPC_ADDR16_HA              6 /* adjusted high 16bit */
-#define R_PPC_ADDR14                 7 /* 16bit address, 2 bits ignored */
-#define R_PPC_ADDR14_BRTAKEN         8
-#define R_PPC_ADDR14_BRNTAKEN        9
-#define R_PPC_REL24                 10 /* PC relative 26 bit */
-#define R_PPC_REL14                 11 /* PC relative 16 bit */
+#define R_PPC_NONE            0
+#define R_PPC_ADDR32          1 /* 32bit absolute address */
+#define R_PPC_ADDR24          2 /* 26bit address, 2 bits ignored.  */
+#define R_PPC_ADDR16          3 /* 16bit absolute address */
+#define R_PPC_ADDR16_LO       4 /* lower 16bit of absolute address */
+#define R_PPC_ADDR16_HI       5 /* high 16bit of absolute address */
+#define R_PPC_ADDR16_HA       6 /* adjusted high 16bit */
+#define R_PPC_ADDR14          7 /* 16bit address, 2 bits ignored */
+#define R_PPC_ADDR14_BRTAKEN  8
+#define R_PPC_ADDR14_BRNTAKEN 9
+#define R_PPC_REL24           10 /* PC relative 26 bit */
+#define R_PPC_REL14           11 /* PC relative 16 bit */
 #define R_PPC_REL14_BRTAKEN         12
 #define R_PPC_REL14_BRNTAKEN        13
 #define R_PPC_GOT16                 14
@@ -113,34 +113,34 @@
 #define R_PPC_66                    66
 
 /* PowerPC relocations defined for the TLS access ABI.  */
-#define R_PPC_TLS                   67 /* none      (sym+add)@tls */
-#define R_PPC_DTPMOD32              68 /* word32    (sym+add)@dtpmod */
-#define R_PPC_TPREL16               69 /* half16*   (sym+add)@tprel */
-#define R_PPC_TPREL16_LO            70 /* half16    (sym+add)@tprel@l */
-#define R_PPC_TPREL16_HI            71 /* half16    (sym+add)@tprel@h */
-#define R_PPC_TPREL16_HA            72 /* half16    (sym+add)@tprel@ha */
-#define R_PPC_TPREL32               73 /* word32    (sym+add)@tprel */
-#define R_PPC_DTPREL16              74 /* half16*   (sym+add)@dtprel */
-#define R_PPC_DTPREL16_LO           75 /* half16    (sym+add)@dtprel@l */
-#define R_PPC_DTPREL16_HI           76 /* half16    (sym+add)@dtprel@h */
-#define R_PPC_DTPREL16_HA           77 /* half16    (sym+add)@dtprel@ha */
-#define R_PPC_DTPREL32              78 /* word32    (sym+add)@dtprel */
-#define R_PPC_GOT_TLSGD16           79 /* half16*   (sym+add)@got@tlsgd */
-#define R_PPC_GOT_TLSGD16_LO        80 /* half16    (sym+add)@got@tlsgd@l */
-#define R_PPC_GOT_TLSGD16_HI        81 /* half16    (sym+add)@got@tlsgd@h */
-#define R_PPC_GOT_TLSGD16_HA        82 /* half16    (sym+add)@got@tlsgd@ha */
-#define R_PPC_GOT_TLSLD16           83 /* half16*   (sym+add)@got@tlsld */
-#define R_PPC_GOT_TLSLD16_LO        84 /* half16    (sym+add)@got@tlsld@l */
-#define R_PPC_GOT_TLSLD16_HI        85 /* half16    (sym+add)@got@tlsld@h */
-#define R_PPC_GOT_TLSLD16_HA        86 /* half16    (sym+add)@got@tlsld@ha */
-#define R_PPC_GOT_TPREL16           87 /* half16*   (sym+add)@got@tprel */
-#define R_PPC_GOT_TPREL16_LO        88 /* half16    (sym+add)@got@tprel@l */
-#define R_PPC_GOT_TPREL16_HI        89 /* half16    (sym+add)@got@tprel@h */
-#define R_PPC_GOT_TPREL16_HA        90 /* half16    (sym+add)@got@tprel@ha */
-#define R_PPC_GOT_DTPREL16          91 /* half16*   (sym+add)@got@dtprel */
-#define R_PPC_GOT_DTPREL16_LO       92 /* half16*   (sym+add)@got@dtprel@l */
-#define R_PPC_GOT_DTPREL16_HI       93 /* half16*   (sym+add)@got@dtprel@h */
-#define R_PPC_GOT_DTPREL16_HA       94 /* half16*   (sym+add)@got@dtprel@ha */
+#define R_PPC_TLS             67 /* none      (sym+add)@tls */
+#define R_PPC_DTPMOD32        68 /* word32    (sym+add)@dtpmod */
+#define R_PPC_TPREL16         69 /* half16*   (sym+add)@tprel */
+#define R_PPC_TPREL16_LO      70 /* half16    (sym+add)@tprel@l */
+#define R_PPC_TPREL16_HI      71 /* half16    (sym+add)@tprel@h */
+#define R_PPC_TPREL16_HA      72 /* half16    (sym+add)@tprel@ha */
+#define R_PPC_TPREL32         73 /* word32    (sym+add)@tprel */
+#define R_PPC_DTPREL16        74 /* half16*   (sym+add)@dtprel */
+#define R_PPC_DTPREL16_LO     75 /* half16  (sym+add)@dtprel@l */
+#define R_PPC_DTPREL16_HI     76 /* half16  (sym+add)@dtprel@h */
+#define R_PPC_DTPREL16_HA     77 /* half16  (sym+add)@dtprel@ha */
+#define R_PPC_DTPREL32        78 /* word32  (sym+add)@dtprel */
+#define R_PPC_GOT_TLSGD16     79 /* half16* (sym+add)@got@tlsgd */
+#define R_PPC_GOT_TLSGD16_LO  80 /* half16 (sym+add)@got@tlsgd@l */
+#define R_PPC_GOT_TLSGD16_HI  81 /* half16 (sym+add)@got@tlsgd@h */
+#define R_PPC_GOT_TLSGD16_HA  82 /* half16 (sym+add)@got@tlsgd@ha */
+#define R_PPC_GOT_TLSLD16     83 /* half16* (sym+add)@got@tlsld */
+#define R_PPC_GOT_TLSLD16_LO  84 /* half16  (sym+add)@got@tlsld@l */
+#define R_PPC_GOT_TLSLD16_HI  85 /* half16  (sym+add)@got@tlsld@h */
+#define R_PPC_GOT_TLSLD16_HA  86 /* half16 (sym+add)@got@tlsld@ha */
+#define R_PPC_GOT_TPREL16     87 /* half16* (sym+add)@got@tprel */
+#define R_PPC_GOT_TPREL16_LO  88 /* half16  (sym+add)@got@tprel@l */
+#define R_PPC_GOT_TPREL16_HI  89 /* half16  (sym+add)@got@tprel@h */
+#define R_PPC_GOT_TPREL16_HA  90 /* half16  (sym+add)@got@tprel@ha */
+#define R_PPC_GOT_DTPREL16    91 /* half16* (sym+add)@got@dtprel */
+#define R_PPC_GOT_DTPREL16_LO 92 /* half16* (sym+add)@got@dtprel@l */
+#define R_PPC_GOT_DTPREL16_HI 93 /* half16* (sym+add)@got@dtprel@h */
+#define R_PPC_GOT_DTPREL16_HA 94 /* half16* (sym+add)@got@dtprel@ha */
 
 /* Keep this the last entry.  */
 #define R_PPC_NUM                   95

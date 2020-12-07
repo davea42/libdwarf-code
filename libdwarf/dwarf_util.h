@@ -46,32 +46,35 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     Dwarf_Unsigned targ, Dwarf_Unsigned sectionlen);
 
 #define DECODE_LEB128_UWORD_CK(ptr, value,dbg,errptr,endptr) \
-    do {                                              \
-        Dwarf_Unsigned lu_leblen = 0;                     \
-        Dwarf_Unsigned lu_local = 0;                  \
-        int lu_res = 0;                               \
-        lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen,&lu_local,endptr); \
-        if (lu_res == DW_DLV_ERROR) {                 \
-            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
-            return DW_DLV_ERROR;                      \
-        }                                             \
-        value = lu_local;                             \
-        ptr += lu_leblen;                             \
+    do {                                                    \
+        Dwarf_Unsigned lu_leblen = 0;                       \
+        Dwarf_Unsigned lu_local = 0;                        \
+        int lu_res = 0;                                     \
+        lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen, \
+            &lu_local,endptr);                              \
+        if (lu_res == DW_DLV_ERROR) {                       \
+            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
+            return DW_DLV_ERROR;                            \
+        }                                                   \
+        value = lu_local;                                   \
+        ptr += lu_leblen;                                   \
     } while (0)
 
-#define DECODE_LEB128_UWORD_LEN_CK(ptr, value,leblen,dbg,errptr,endptr) \
+#define DECODE_LEB128_UWORD_LEN_CK(ptr, value,leblen,dbg,\
+    errptr,endptr) \
     do {                                              \
-        Dwarf_Unsigned lu_leblen = 0;                     \
+        Dwarf_Unsigned lu_leblen = 0;                 \
         Dwarf_Unsigned lu_local = 0;                  \
         int lu_res = 0;                               \
-        lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen,&lu_local,endptr); \
+        lu_res = _dwarf_decode_u_leb128_chk(ptr,      \
+            &lu_leblen,&lu_local,endptr);             \
         if (lu_res == DW_DLV_ERROR) {                 \
             _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
             return DW_DLV_ERROR;                      \
         }                                             \
         value = lu_local;                             \
         ptr += lu_leblen;                             \
-        leblen = lu_leblen;                          \
+        leblen = lu_leblen;                           \
     } while (0)
 
 /*
@@ -84,26 +87,28 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
 */
 #define DECODE_LEB128_SWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                              \
-        Dwarf_Unsigned uleblen = 0;                       \
+        Dwarf_Unsigned uleblen = 0;                   \
         Dwarf_Signed local = 0;                       \
         int lu_res = 0;                               \
-        lu_res = _dwarf_decode_s_leb128_chk(ptr,&uleblen,&local,endptr); \
-        if (lu_res == DW_DLV_ERROR) {                 \
-            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
+        lu_res = _dwarf_decode_s_leb128_chk(ptr,&uleblen,  \
+            &local,endptr);                                \
+        if (lu_res == DW_DLV_ERROR) {                      \
+            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);\
             return DW_DLV_ERROR;                      \
         }                                             \
         value = local;                                \
         ptr += uleblen;                               \
     } while (0)
-#define DECODE_LEB128_SWORD_LEN_CK(ptr, value,leblen,dbg,errptr,endptr) \
+#define DECODE_LEB128_SWORD_LEN_CK(ptr, value,leblen,dbg,\
+    errptr,endptr)                                    \
     do {                                              \
-        Dwarf_Unsigned lu_leblen = 0;                     \
+        Dwarf_Unsigned lu_leblen = 0;                 \
         Dwarf_Signed lu_local = 0;                    \
         int lu_res = 0;                               \
         lu_res = _dwarf_decode_s_leb128_chk(ptr,&lu_leblen,\
-            &lu_local,endptr); \
-        if (lu_res == DW_DLV_ERROR) {                 \
-            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
+            &lu_local,endptr);                             \
+        if (lu_res == DW_DLV_ERROR) {                      \
+            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);\
             return DW_DLV_ERROR;                      \
         }                                             \
         leblen = lu_leblen;                           \
@@ -148,7 +153,8 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
 typedef Dwarf_Unsigned BIGGEST_UINT;
 
 #ifdef WORDS_BIGENDIAN
-#define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
+#define READ_UNALIGNED_CK(dbg,dest,desttype, source,\
+    length,error,endptr)                                        \
     do {                                                        \
         BIGGEST_UINT _ltmp = 0;                                 \
         Dwarf_Byte_Ptr readend = source+length;                 \
@@ -189,7 +195,8 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
         }                                                         \
     } while (0)
 #else /* LITTLE ENDIAN */
-#define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
+#define READ_UNALIGNED_CK(dbg,dest,desttype, source,\
+    length,error,endptr)                         \
     do  {                                        \
         BIGGEST_UINT _ltmp = 0;                  \
         Dwarf_Byte_Ptr readend = source+length;  \
@@ -411,12 +418,14 @@ int _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
     void *startptr, void *endptr,
     int suggested_error, Dwarf_Error *error);
 
-int _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
+int _dwarf_length_of_cu_header(Dwarf_Debug dbg,
+    Dwarf_Unsigned offset,
     Dwarf_Bool is_info,
     Dwarf_Unsigned *area_length_out,
     Dwarf_Error *error);
 
-Dwarf_Unsigned _dwarf_length_of_cu_header_simple(Dwarf_Debug,Dwarf_Bool dinfo);
+Dwarf_Unsigned _dwarf_length_of_cu_header_simple(Dwarf_Debug,
+    Dwarf_Bool dinfo);
 
 int  _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error *error);
 int  _dwarf_load_debug_types(Dwarf_Debug dbg, Dwarf_Error *error);
@@ -429,7 +438,8 @@ int _dwarf_reference_outside_section(Dwarf_Die die,
 void _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     Dwarf_Debug dbgt,Dwarf_Error *errt);
 
-int _dwarf_internal_get_die_comp_dir(Dwarf_Die die, const char **compdir_out,
+int _dwarf_internal_get_die_comp_dir(Dwarf_Die die,
+    const char **compdir_out,
     const char **comp_name_out,
     Dwarf_Error *error);
 

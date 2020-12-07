@@ -45,9 +45,11 @@ extern "C" {
 
 
 /*  Data types
-    see https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx */
+    see https://msdn.microsoft.com/en-us/library/\
+    windows/desktop/aa383751(v=vs.85).aspx */
 
-/*#define FIELD_OFFSET(type,field) ((LONG)(LONG_PTR)&(((type *)0)->field))*/
+/*#define FIELD_OFFSET(type,field) \
+    ((LONG)(LONG_PTR)&(((type *)0)->field))*/
 
 #define IMAGE_SIZEOF_SYMBOL 18
 
@@ -58,7 +60,8 @@ struct dos_header_dw {
 };
 
 /*  IMAGE_FILE_HEADER_dw
-    see https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680313(v=vs.85).aspx */
+    see https://msdn.microsoft.com/fr-fr/library/\
+    windows/desktop/ms680313(v=vs.85).aspx */
 
 typedef struct
 {
@@ -72,7 +75,8 @@ typedef struct
 } IMAGE_FILE_HEADER_dw;
 
 /*  IMAGE_DATA_DIRECTORY_dw
-    see https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680305(v=vs.85).aspx */
+    see https://msdn.microsoft.com/fr-fr/library/\
+    windows/desktop/ms680305(v=vs.85).aspx */
 
 typedef struct
 {
@@ -81,7 +85,8 @@ typedef struct
 } IMAGE_DATA_DIRECTORY_dw;
 
 /*  IMAGE_OPTIONAL_HEADER
-    see https://msdn.microsoft.com/en-us/library/windows/desktop/ms680339(v=vs.85).aspx */
+    see https://msdn.microsoft.com/en-us/library/\
+    windows/desktop/ms680339(v=vs.85).aspx */
 
 #define IMAGE_NUMBEROF_DIRECTORY_ENTRIES 16
 
@@ -117,7 +122,8 @@ typedef struct
     TYP(SizeOfHeapCommit,4);
     TYP(LoaderFlags,4);
     TYP(NumberOfRvaAndSizes,4);
-    IMAGE_DATA_DIRECTORY_dw DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+    IMAGE_DATA_DIRECTORY_dw
+        DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 } IMAGE_OPTIONAL_HEADER32_dw;
 
 typedef struct
@@ -151,11 +157,13 @@ typedef struct
     TYP(SizeOfHeapCommit,8);
     TYP(LoaderFlags,4);
     TYP(NumberOfRvaAndSizes,4);
-    IMAGE_DATA_DIRECTORY_dw DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+    IMAGE_DATA_DIRECTORY_dw
+        DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 } IMAGE_OPTIONAL_HEADER64_dw;
 
 /*  IMAGE_NT_HEADERS
-    see https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680336(v=vs.85).aspx */
+    see https://msdn.microsoft.com/fr-fr/library/\
+    windows/desktop/ms680336(v=vs.85).aspx */
 
 #define IMAGE_NT_OPTIONAL_HDR32_MAGIC 0x10b
 #define IMAGE_NT_OPTIONAL_HDR64_MAGIC 0x20b
@@ -178,9 +186,11 @@ typedef struct
 
 /*  IMAGE_SECTION_HEADER_dw
     see:
-    https://msdn.microsoft.com/en-us/library/windows/desktop/ms680341(v=vs.85).aspx
+    https://msdn.microsoft.com/en-us/library/windows/\
+    desktop/ms680341(v=vs.85).aspx
     and, for details on VirtualSize and SizeOfRawData:
-    https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-_image_section_header */
+    https://docs.microsoft.com/en-us/windows/desktop/\
+    api/winnt/ns-winnt-_image_section_header */
 
 #define IMAGE_SIZEOF_SHORT_NAME 8
 
