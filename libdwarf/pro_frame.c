@@ -55,7 +55,8 @@
         unsigned sbyte = 0;                 \
         const char *p = 0;                        \
         if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            _dwarf_p_error(dbg, error,      \
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
             return DW_DLV_ERROR;            \
         }                                   \
         sbyte = sizeof(s) - l;              \
@@ -67,7 +68,8 @@
     do {                                    \
         const char *p = 0;                  \
         if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            _dwarf_p_error(dbg, error,      \
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
             return DW_DLV_ERROR;            \
         }                                   \
         p = (const char *)(&s);             \
@@ -267,7 +269,8 @@ dwarf_add_frame_fde_c(Dwarf_P_Debug dbg,
 }
 
 /*  This function adds information to an fde. The fde is
-    linked into the linked list of fde's maintained in the Dwarf_P_Debug
+    linked into the linked list of fde's
+    maintained in the Dwarf_P_Debug
     structure.
     dbg: The debug descriptor.
     fde: The fde to be added.
@@ -509,7 +512,7 @@ dwarf_fde_cfa_offset_a(Dwarf_P_Fde fde,
 /*  Generic routine to add opcode to fde instructions. val1 and
     val2 are parameters whose interpretation depends on the 'op'.
 
-    This does not work properly for  DW_DLC_SYMBOLIC_RELOCATIONS
+    This does not work properly for DW_DLC_SYMBOLIC_RELOCATIONS
     for DW_CFA_set_loc or DW_DVA_advance_loc* 'op', as
     these ops normally are addresses or (DW_CFA_set_loc)
     or code lengths (DW_DVA_advance_loc*) and such must be

@@ -40,15 +40,15 @@ dwarf_get_weaks(Dwarf_Debug dbg,
     Dwarf_Weak ** weaks,
     Dwarf_Signed * ret_weak_count, Dwarf_Error * error)
 {
-    int res = _dwarf_load_section(dbg, &dbg->de_debug_weaknames,error);
+    int res = _dwarf_load_section(dbg, &dbg->de_debug_weaknames,
+        error);
+
     if (res != DW_DLV_OK) {
         return res;
     }
     if (!dbg->de_debug_weaknames.dss_size) {
         return (DW_DLV_NO_ENTRY);
     }
-
-
     return _dwarf_internal_get_pubnames_like_data(dbg,
         ".debug_weaknames",
         dbg->de_debug_weaknames.dss_data,
@@ -80,7 +80,9 @@ dwarf_weaks_dealloc(Dwarf_Debug dbg, Dwarf_Weak * dwgl,
 
 
 int
-dwarf_weakname(Dwarf_Weak weak_in, char **ret_name, Dwarf_Error * error)
+dwarf_weakname(Dwarf_Weak weak_in,
+    char **ret_name,
+    Dwarf_Error * error)
 {
     Dwarf_Global weak = (Dwarf_Global) weak_in;
 

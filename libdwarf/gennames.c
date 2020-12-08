@@ -88,7 +88,8 @@ static void ParseDefinitionsAndWriteOutput(void);
 
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000
-/* We don't need a variable array size, it just has to be big enough. */
+/*  We don't need a variable array size,
+    it just has to be big enough. */
 #define ARRAY_SIZE 300
 
 #define MAX_NAME_LEN 64
@@ -262,8 +263,8 @@ static FILE *
 open_path(const char *base, const char *file, const char *direction)
 {
     FILE *f = 0;
-    /*  POSIX PATH_MAX  would suffice, normally stdio BUFSIZ is larger
-        than PATH_MAX */
+    /*  POSIX PATH_MAX  would suffice, normally stdio
+        BUFSIZ is larger than PATH_MAX */
     static char path_name[BUFSIZ];
 
     /* 2 == space for / and NUL */
@@ -307,7 +308,8 @@ static void
 GenerateInitialFileLines(void)
 {
     /* Generate entries for 'dwarf_names_enum.h' */
-    fprintf(f_names_enum_h,"/* Automatically generated, do not edit. */\n");
+    fprintf(f_names_enum_h,
+        "/* Automatically generated, do not edit. */\n");
     fprintf(f_names_enum_h,"/* Generated sourcedate %s */\n",
         DW_VERSION_DATE_STR);
     fprintf(f_names_enum_h,"\n/* BEGIN FILE */\n\n");
@@ -315,18 +317,21 @@ GenerateInitialFileLines(void)
     fprintf(f_names_enum_h,"#define __DWARF_NAMES_ENUM_H__\n");
 
     /* Generate entries for 'dwarf_names_new.h' */
-    fprintf(f_names_new_h,"/* Automatically generated, do not edit. */\n");
+    fprintf(f_names_new_h,
+        "/* Automatically generated, do not edit. */\n");
     fprintf(f_names_new_h,"/* Generated sourcedate %s */\n",
         DW_VERSION_DATE_STR);
     fprintf(f_names_new_h,"\n/* BEGIN FILE */\n\n");
-    fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX before this\n");
+    fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX "
+        "before this\n");
     fprintf(f_names_new_h,"   point if you wish to.  */\n");
     fprintf(f_names_new_h,"#ifndef DWARF_PRINT_PREFIX\n");
     fprintf(f_names_new_h,"#define DWARF_PRINT_PREFIX dwarf_\n");
     fprintf(f_names_new_h,"#endif\n");
     fprintf(f_names_new_h,"#define dw_glue(x,y) x##y\n");
     fprintf(f_names_new_h,"#define dw_glue2(x,y) dw_glue(x,y)\n");
-    fprintf(f_names_new_h,"#define DWPREFIX(x) dw_glue2(DWARF_PRINT_PREFIX,x)\n");
+    fprintf(f_names_new_h,"#define DWPREFIX(x) "
+        "dw_glue2(DWARF_PRINT_PREFIX,x)\n");
 
     /* Generate entries for 'dwarf_names.h' */
     fprintf(f_names_h,"/* Generated routines, do not edit. */\n");
@@ -355,24 +360,28 @@ GenerateInitialFileLines(void)
         fprintf(f_names_c,"} Names_Data;\n\n");
 
         /* Generate code to find an entry */
-        fprintf(f_names_c,"/* Use standard binary search to get entry */\n");
+        fprintf(f_names_c,
+            "/* Use standard binary search to get entry */\n");
         fprintf(f_names_c,"static int\nfind_entry(Names_Data *table,"
             "const int last,unsigned value, const char **s_out)\n");
         fprintf(f_names_c,"{\n");
         fprintf(f_names_c,"    int low = 0;\n");
         fprintf(f_names_c,"    int high = last;\n");
         fprintf(f_names_c,"    int mid;\n");
-        fprintf(f_names_c,"    unsigned maxval = table[last-1].value;\n");
+        fprintf(f_names_c,"    unsigned maxval = "
+            "table[last-1].value;\n");
         fprintf(f_names_c,"\n");
         fprintf(f_names_c,"    if (value > maxval) {\n");
         fprintf(f_names_c,"        return DW_DLV_NO_ENTRY;\n");
         fprintf(f_names_c,"    }\n");
         fprintf(f_names_c,"    while (low < high) {\n");
-        fprintf(f_names_c,"        mid = low + ((high - low) / 2);\n");
-        fprintf(f_names_c,"        if(mid == last) {\n");
+        fprintf(f_names_c,"        mid = low + ((high - low) "
+            "/ 2);\n");
+        fprintf(f_names_c,"        if (mid == last) {\n");
         fprintf(f_names_c,"            break;\n");
         fprintf(f_names_c,"        }\n");
-        fprintf(f_names_c,"        if (table[mid].value < value) {\n");
+        fprintf(f_names_c,"        if (table[mid].value "
+            "< value) {\n");
         fprintf(f_names_c,"            low = mid + 1;\n");
         fprintf(f_names_c,"        }\n");
         fprintf(f_names_c,"        else {\n");
@@ -380,7 +389,8 @@ GenerateInitialFileLines(void)
         fprintf(f_names_c,"        }\n");
         fprintf(f_names_c,"    }\n");
         fprintf(f_names_c,"\n");
-        fprintf(f_names_c,"    if (low < last && table[low].value == value) {\n");
+        fprintf(f_names_c,"    if (low < last && table[low]."
+            "value == value) {\n");
         fprintf(f_names_c,"        /* Found: low is the entry */\n");
         fprintf(f_names_c,"      *s_out = table[low].l_name;\n");
         fprintf(f_names_c,"      return DW_DLV_OK;\n");
@@ -443,7 +453,8 @@ GenerateOneSet(void)
         ascending order; if we use '-t' we must be sure the values are
         sorted, for the binary search to work properly.
         We want a stable sort, hence mergesort.  */
-    qsort((void *)&group_array,array_count,sizeof(array_data),(compfn)Compare);
+    qsort((void *)&group_array,array_count,
+        sizeof(array_data),(compfn)Compare);
 
 #ifdef TRACE_ARRAY
     printf("\nList after sorting:\n");
@@ -454,7 +465,8 @@ GenerateOneSet(void)
     fprintf(f_names_enum_h,"\nenum Dwarf_%s_e {\n",prefix_id);
 
     /* Generate entries for 'dwarf_names_new.h' */
-    fprintf(f_names_new_h,"int DWPREFIX(get_%s_name) (unsigned int, const char **);\n",prefix_id);
+    fprintf(f_names_new_h,"int DWPREFIX(get_%s_name) "
+        "(unsigned int, const char **);\n",prefix_id);
 
     /* Generate entries for 'dwarf_names.h' and libdwarf.h */
     fprintf(f_names_h,"extern int dwarf_get_%s_name"
@@ -469,7 +481,8 @@ GenerateOneSet(void)
     fprintf(f_names_c,"    const char ** s_out)\n");
     fprintf(f_names_c,"{\n");
     if (use_tables) {
-        fprintf(f_names_c,"    static Names_Data Dwarf_%s_n[] = {\n",prefix_id);
+        fprintf(f_names_c,"    static Names_Data Dwarf_%s_n[] = {\n",
+            prefix_id);
     } else {
         fprintf(f_names_c,"    switch (val) {\n");
     }
@@ -478,7 +491,7 @@ GenerateOneSet(void)
         /* Check if value already dumped */
         if (u > 0 && group_array[u].value == prev_value) {
             fprintf(f_names_c,
-                "    /*  Skipping alternate spelling of value\n"); 
+                "    /*  Skipping alternate spelling of value\n");
             fprintf(f_names_c,
                 "        0x%x. %s_%s */\n",
                 (unsigned)prev_value,
@@ -519,9 +532,12 @@ GenerateOneSet(void)
         fprintf(f_names_c,"    };\n\n");
 
         /* Closing code for 'dwarf_names.c' */
-        fprintf(f_names_c,"    const int last_entry = %d;\n",actual_array_count);
+        fprintf(f_names_c,"    const int last_entry = %d;\n",
+            actual_array_count);
         fprintf(f_names_c,"    /* find the entry */\n");
-        fprintf(f_names_c,"    int r = find_entry(Dwarf_%s_n,last_entry,val,s_out);\n",prefix_id);
+        fprintf(f_names_c,
+            "    int r = find_entry(Dwarf_%s_n,"
+            "last_entry,val,s_out);\n",prefix_id);
         fprintf(f_names_c,"    return r;\n");
         fprintf(f_names_c,"}\n");
     } else {
@@ -550,8 +566,9 @@ static void
 safe_strncpy(char *out, unsigned out_len,
     char *in,unsigned in_len)
 {
-    if(in_len >= out_len) {
-        fprintf(stderr,"Impossible input line from dwarf.h. Giving up. \n");
+    if (in_len >= out_len) {
+        fprintf(stderr,"Impossible input line from dwarf.h. "
+            "Giving up. \n");
         fprintf(stderr,"Length %u is too large, limited to %u.\n",
             in_len,out_len);
         exit(1);
@@ -581,12 +598,13 @@ ParseDefinitionsAndWriteOutput(void)
         char *fgbad = 0;
         errno = 0;
         fgbad = fgets(line_in,sizeof(line_in),f_dwarf_in);
-        if(!fgbad) {
-            if(feof(f_dwarf_in)) {
+        if (!fgbad) {
+            if (feof(f_dwarf_in)) {
                 break;
             }
             /*  Is error. errno must be set. */
-            fprintf(stderr,"Error reading dwarf.h!. Errno %d\n",errno);
+            fprintf(stderr,"Error reading dwarf.h!. Errno %d\n",
+                errno);
             exit(1);
         }
         if (is_skippable_line(line_in)) {
@@ -615,7 +633,8 @@ ParseDefinitionsAndWriteOutput(void)
 
         /* Be sure we have a valid entry */
         if (array_count >= ARRAY_SIZE) {
-            printf("Too many entries for current group_array size of %d",ARRAY_SIZE);
+            printf("Too many entries for current "
+                "group_array size of %d",ARRAY_SIZE);
             exit(1);
         }
 

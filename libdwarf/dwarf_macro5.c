@@ -737,7 +737,8 @@ construct_at_path_from_parts(Dwarf_Macro_Context mc)
     if (!mc->mc_at_name || !mc->mc_at_name[0]) {
         return NULL;
     }
-    if (_dwarf_file_name_is_full_path((Dwarf_Small *)mc->mc_at_name)) {
+    if (_dwarf_file_name_is_full_path(
+        (Dwarf_Small *)mc->mc_at_name)) {
         return mc->mc_at_name;
     }
     /* Dwarf_Macro_Context destructor will free this. */

@@ -211,7 +211,8 @@ checkjoin(int expret,int gotret,char*expstr,char*gotstr,
     }
     if (strcmp(expstr,gotstr)) {
         errcount++;
-        printf("ERROR expected string \"%s\", got \"%s\" line %d %s\n",
+        printf("ERROR expected string \"%s\", got \"%s\" "
+            "line %d %s\n",
             expstr,gotstr,line,filename_in);
     }
 }
@@ -330,7 +331,7 @@ printpaths(unsigned count,char **array,dwarfstring *fullpath)
     printf("\n");
 
     printf("    Paths:\n");
-    for(i = 0 ; i < count ; ++i) {
+    for (i = 0 ; i < count ; ++i) {
         char *s = array[i];
 
         printf("    [%2d] \"%s\"\n",i,s);
@@ -415,7 +416,8 @@ test3(Dwarf_Debug dbg)
         &errcode);
     checklinkedto(DW_DLV_OK,res,6,paths_returned_count,
         __LINE__,__FILE__);
-    printpaths(paths_returned_count,paths_returned,&linkstring_fullpath);
+    printpaths(paths_returned_count,paths_returned,
+        &linkstring_fullpath);
     free(paths_returned);
     paths_returned = 0;
     paths_returned_count = 0;
@@ -439,7 +441,8 @@ test3(Dwarf_Debug dbg)
         &errcode);
     checklinkedto(DW_DLV_OK,res,6,paths_returned_count,
         __LINE__,__FILE__);
-    printpaths(paths_returned_count,paths_returned,&linkstring_fullpath);
+    printpaths(paths_returned_count,paths_returned,
+        &linkstring_fullpath);
     free(paths_returned);
     paths_returned = 0;
     paths_returned_count = 0;
@@ -463,7 +466,8 @@ test3(Dwarf_Debug dbg)
         &errcode);
     checklinkedto(DW_DLV_OK,res,6,paths_returned_count,
         __LINE__,__FILE__);
-    printpaths(paths_returned_count,paths_returned,&linkstring_fullpath);
+    printpaths(paths_returned_count,paths_returned,
+        &linkstring_fullpath);
     free(paths_returned);
     free(global_prefix);
     paths_returned = 0;

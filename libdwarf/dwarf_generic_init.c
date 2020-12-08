@@ -329,7 +329,7 @@ int dwarf_init_path_dl(const char *path,
         fd = open_a_file(path);
     }
 
-    if(fd == -1) {
+    if (fd == -1) {
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
             DW_DLV_ERROR);
     }
@@ -469,7 +469,7 @@ dwarf_init_b(int fd,
 int
 dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 {
-    if(!dbg) {
+    if (!dbg) {
         return DW_DLV_OK;
     }
     if (dbg->de_obj_file) {
@@ -524,9 +524,11 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     New September 2015.
 */
 int
-dwarf_set_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug tieddbg,Dwarf_Error*error)
+dwarf_set_tied_dbg(Dwarf_Debug dbg,
+    Dwarf_Debug tieddbg,
+    Dwarf_Error*error)
 {
-    if(!dbg) {
+    if (!dbg) {
         DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
     }
     dbg->de_tied_data.td_tied_object = tieddbg;

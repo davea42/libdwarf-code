@@ -147,7 +147,7 @@ magic_copy(unsigned char *d, unsigned len)
     unsigned long v = 0;
 
     v = d[0];
-    for(i = 1 ; i < len; ++i) {
+    for (i = 1 ; i < len; ++i) {
         v <<= 8;
         v |=  d[i];
     }
@@ -186,21 +186,37 @@ struct elf_header {
 
 /*  Windows. Certain PE objects.
     The following references may be of interest.
-https://msdn.microsoft.com/library/windows/desktop/ms680547(v=vs.85).aspx       #PE format overview and various machine magic numbers
+https://msdn.microsoft.com/library/windows/\
+desktop/ms680547(v=vs.85).aspx
+#PE format overview and various machine magic numbers
 
-https://msdn.microsoft.com/en-us/library/ms809762.aspx  # describes some details of PE headers, basically an overview
+https://msdn.microsoft.com/en-us/library/\
+ms809762.aspx
+# describes some details of PE headers, basically an overview
 
-https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx #defines sizes of various types
+https://msdn.microsoft.com/en-us/library/\
+windows/desktop/aa383751(v=vs.85).aspx
+#defines sizes of various types
 
-https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680313(v=vs.85).aspx #defines IMAGE_FILE_HEADER and Machine fields (32/64)
+https://msdn.microsoft.com/fr-fr/library/\
+windows/desktop/ms680313(v=vs.85).aspx
+#defines IMAGE_FILE_HEADER and Machine fields (32/64)
 
-https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680305(v=vs.85).aspx #defines IMAGE_DATA_DIRECTORY
+https://msdn.microsoft.com/fr-fr/library/\
+windows/desktop/ms680305(v=vs.85).aspx
+#defines IMAGE_DATA_DIRECTORY
 
-https://msdn.microsoft.com/en-us/library/windows/desktop/ms680339(v=vs.85).aspx #Defines IMAGE_OPTIONAL_HEADER and some magic numbers
+https://msdn.microsoft.com/en-us/library/\
+windows/desktop/ms680339(v=vs.85).aspx
+#Defines IMAGE_OPTIONAL_HEADER and some magic numbers
 
-https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680336(v=vs.85).aspx # defines _IMAGE_NT_HEADERS 32 64
+https://msdn.microsoft.com/fr-fr/library/\
+windows/desktop/ms680336(v=vs.85).aspx
+# defines _IMAGE_NT_HEADERS 32 64
 
-https://msdn.microsoft.com/en-us/library/windows/desktop/ms680341(v=vs.85).aspx # defines _IMAGE_SECTION_HEADER
+https://msdn.microsoft.com/en-us/library/\
+windows/desktop/ms680341(v=vs.85).aspx
+# defines _IMAGE_SECTION_HEADER
 
 */
 
@@ -327,7 +343,7 @@ is_archive_magic(struct elf_header *h) {
     int i = 0;
     int len = sizeof(archive_magic);
     const char *cp = (const char *)h;
-    for( ; i < len; ++i) {
+    for ( ; i < len; ++i) {
         if (cp[i] != archive_magic[i]) {
             return FALSE;
         }
@@ -368,23 +384,24 @@ is_pe_object(int fd,
     dos_sig = magic_copy((unsigned char *)dhinmem.dh_mz,
         sizeof(dhinmem.dh_mz));
     if (dos_sig == IMAGE_DOS_SIGNATURE_dw) {
-        /*  IMAGE_DOS_SIGNATURE_dw assumes bytes reversed by little-endian
+        /*  IMAGE_DOS_SIGNATURE_dw assumes bytes
+            reversed by little-endian
             load, so we intrepet a match the other way. */
         /* BIG ENDIAN. From looking at hex characters in object  */
-#ifdef  WORDS_BIGENDIAN
+#ifdef WORDS_BIGENDIAN
         word_swap = _dwarf_memcpy_noswap_bytes;
-#else   /* LITTLE ENDIAN */
+#else  /* LITTLE ENDIAN */
         word_swap =  _dwarf_memcpy_swap_bytes;
-#endif  /* LITTLE- BIG-ENDIAN */
+#endif /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_BIG;
     } else if (dos_sig == IMAGE_DOS_REVSIGNATURE_dw) {
         /* raw load, so  intrepet a match the other way. */
         /* LITTLE ENDIAN */
-#ifdef  WORDS_BIGENDIAN
+#ifdef WORDS_BIGENDIAN
         word_swap =  _dwarf_memcpy_swap_bytes;
-#else   /* LITTLE ENDIAN */
+#else  /* LITTLE ENDIAN */
         word_swap = _dwarf_memcpy_noswap_bytes;
-#endif  /* LITTLE- BIG-ENDIAN */
+#endif /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_LITTLE;
     } else {
         /* Not dos header not a PE file we recognize */
@@ -493,7 +510,7 @@ dwarf_object_detector_fd(int fd,
     ssize_t readval = 0;
 
     fsize = lseek(fd,0L,SEEK_END);
-    if(fsize < 0) {
+    if (fsize < 0) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
@@ -503,7 +520,7 @@ dwarf_object_detector_fd(int fd,
         return DW_DLV_ERROR;
     }
     lsval  = lseek(fd,0L,SEEK_SET);
-    if(lsval < 0) {
+    if (lsval < 0) {
         *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
@@ -544,7 +561,8 @@ dwarf_object_detector_fd(int fd,
     }
     /* Check for custom ELF format. */
 #ifdef HAVE_CUSTOM_LIBELF
-    res = elf_is_custom_format(&h,readlen,&fsize,endian,offsetsize,errcode);
+    res = elf_is_custom_format(&h,readlen,&fsize,
+        endian,offsetsize,errcode);
     if (res == DW_DLV_OK) {
         *ftype = DW_FTYPE_CUSTOM_ELF;
         *filesize = (size_t)fsize;
@@ -608,7 +626,7 @@ blockmatch(unsigned char *l,
     unsigned length)
 {
     unsigned int i = 0;
-    for( ; i < length; ++i) {
+    for ( ; i < length; ++i) {
         if (l[i] != r[i]) {
             return FALSE;
         }
@@ -636,7 +654,7 @@ match_buildid(
             return DW_DLV_NO_ENTRY;
         }
     }
-    if(buildid_length_base != buildid_length_debug) {
+    if (buildid_length_base != buildid_length_debug) {
         return DW_DLV_NO_ENTRY;
     }
     if (!blockmatch(buildid_base,buildid_debug,
@@ -879,11 +897,12 @@ dwarf_object_detector_path_b(
     int have_outpath = outpath && outpath_len;
     unsigned char lpathsource = DW_PATHSOURCE_basic;
 
-    if(pathsource) {
+    if (pathsource) {
         lpathsource = *pathsource;
     }
     if (lpathsource == DW_PATHSOURCE_basic && have_outpath) {
-        /*  On return from the following call  we could well                      close the fd above and open a new one. */
+        /*  On return from the following call  we could well
+            close the fd above and open a new one. */
         int debuglink_fd = -1;
         unsigned long dllen = 0;
 
@@ -909,7 +928,7 @@ dwarf_object_detector_path_b(
                 close(debuglink_fd);
             }
             dllen = dwarfstring_strlen(&m)+1;
-            if  (dllen >= outpath_len) {
+            if (dllen >= outpath_len) {
                 close(debuglink_fd);
                 *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
                 return DW_DLV_ERROR;

@@ -66,7 +66,7 @@ _dwarf_tied_make_entry(Dwarf_Sig8 *key, Dwarf_CU_Context val)
 {
     struct Dwarf_Tied_Entry_s *e = 0;
     e = calloc(1,sizeof(struct Dwarf_Tied_Entry_s));
-    if(e) {
+    if (e) {
         e->dt_key =    *key;
         e->dt_context = val;
     }
@@ -97,7 +97,7 @@ _dwarf_tied_compare_function(const void *l, const void *r)
     const char *rcp = (const char *)&rp->dt_key.signature;
     const char *lcpend = lcp + sizeof(Dwarf_Sig8);
 
-    for(; lcp < lcpend; ++lcp,++rcp) {
+    for ( ;lcp < lcpend; ++lcp,++rcp) {
         if (*lcp < *rcp) {
             return -1;
         } else  if (*lcp > *rcp) {

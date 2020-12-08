@@ -74,9 +74,11 @@ _dwarf_p_error(Dwarf_P_Debug dbg,
         /*  We do not expect to ever see such an error number,
             DW_DLE_LO_USER is not used. */
         fprintf(stderr,"ERROR VALUE: %lu - %s\n",
-            (unsigned long) errval, "this error value is unknown to libdwarf.");
+            (unsigned long) errval,
+            "this error value is unknown to libdwarf.");
     }
-    /*  Allow NULL dbg on entry, since sometimes that can happen and we
+    /*  Allow NULL dbg on entry, since sometimes
+        that can happen and we
         want to report the upper-level error, not this one. */
     if (error != NULL) {
         errptr = (Dwarf_Error)

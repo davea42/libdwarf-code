@@ -260,7 +260,7 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
         }
 
         sp->gh_content = malloc((size_t)sp->gh_size);
-        if(!sp->gh_content) {
+        if (!sp->gh_content) {
             *error = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
@@ -322,25 +322,40 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
     MATCH_REL_SEC(section_index,dbg->de_debug_loc,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_aranges,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_macinfo,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_pubnames,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_pubnames,
+        relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_ranges,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_frame,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_frame_eh_gnu,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_pubtypes,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_funcnames,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_typenames,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_varnames,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_weaknames,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_frame,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_frame_eh_gnu,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_pubtypes,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_funcnames,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_typenames,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_varnames,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_weaknames,
+        relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_types,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_macro,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_rnglists,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_loclists,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_aranges,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_sup,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_str_offsets,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_rnglists,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_loclists,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_aranges,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_sup,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_str_offsets,
+        relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_addr,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_gnu_pubnames,relocatablesec);
-    MATCH_REL_SEC(section_index,dbg->de_debug_gnu_pubtypes,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_gnu_pubnames,
+        relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_gnu_pubtypes,
+        relocatablesec);
     /* dbg-> de_debug_tu_index,reloctablesec); */
     /* dbg-> de_debug_cu_index,reloctablesec); */
     /* dbg-> de_debug_gdbindex,reloctablesec); */
@@ -567,7 +582,7 @@ _dwarf_destruct_elf_nlaccess(
     free(ep->f_ehdr);
     shp = ep->f_shdr;
     shcount = ep->f_loc_shdr.g_count;
-    for(i = 0; i < shcount; ++i,++shp) {
+    for (i = 0; i < shcount; ++i,++shp) {
         free(shp->gh_rels);
         shp->gh_rels = 0;
         free(shp->gh_content);

@@ -453,7 +453,8 @@ dwarf_add_file_decl_a(Dwarf_P_Debug dbg,
         dbg->de_last_file_entry = cur;
         dbg->de_n_file_entries++;
     }
-    cur->dfe_name = (char *) _dwarf_p_get_alloc(dbg, strlen(name) + 1);
+    cur->dfe_name = (char *) _dwarf_p_get_alloc(dbg,
+        strlen(name) + 1);
     if (cur->dfe_name == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
     }
@@ -477,7 +478,8 @@ dwarf_add_file_decl_a(Dwarf_P_Debug dbg,
         DWARF_P_DBG_ERROR(dbg,DW_DLE_LEB_OUT_ERROR,DW_DLV_ERROR);
     }
     cur->dfe_args = (char *)
-        _dwarf_p_get_alloc(dbg, nbytes_idx + nbytes_time + nbytes_len);
+        _dwarf_p_get_alloc(dbg, nbytes_idx +
+            nbytes_time + nbytes_len);
     if (cur->dfe_args == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
     }

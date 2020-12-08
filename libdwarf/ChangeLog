@@ -1,3 +1,27 @@
+2020-12-08 David Anderson
+    * checkexamples.c,dwarf_alloc.c,dwarf_arange.c,dwarf_crc32.c,
+      dwarf_debug_names.c,dwarf_debug_sup.c,dwarf_debuglink.c,
+      dwarf_die_deliv.c,dwarf_dsc.c,dwarf_elf_access.c,
+      dwarf_elf_load_headers.c,dwarf_elf_rel_detector.c,
+      dwarf_elfread.c,dwarf_error.c,dwarf_fission_to_cu.c,
+      dwarf_form.c,dwarf_frame.c,dwarf_frame2.c,dwarf_funcs.c,
+      dwarf_gdbindex.c,dwarf_generic_init.c,dwarf_global.c,
+      dwarf_gnu_index.c,dwarf_groups.c,dwarf_init_finish.c,
+      dwarf_leb.c,dwarf_leb_test.c,dwarf_line.c,dwarf_loc.c,
+      dwarf_locationop_read.c,dwarf_loclists.c,dwarf_machoread.c,
+      dwarf_macro.c,dwarf_macro5.c,dwarf_object_detector.c,
+      dwarf_original_elf_init.c,dwarf_peread.c,dwarf_print_lines.c,
+      dwarf_ranges.c,dwarf_rnglists.c,dwarf_str_offsets.c,
+      dwarf_test_errmsg_list.c,dwarf_tied.c,dwarf_tied_test.c,
+      dwarf_tsearchhash.c,dwarf_types.c,dwarf_util.c,dwarf_weaks.c,
+      dwarf_xu_index.c,dwgetopt.c,gennames.c,malloc_check.c,
+      pro_alloc.c,pro_arange.c,pro_die.c,pro_encode_nm.c,pro_error.c,
+      pro_expr.c,pro_forms.c,pro_frame.c,pro_init.c,pro_line.c,
+      pro_log_extra_flag_strings.c,pro_macinfo.c,pro_reloc_stream.c,
+      pro_section.c,pro_types.c,test_dwarfstring.c,
+      test_extra_flag_strings.c,test_headersok.c,
+      test_linkedtopath.c: No logic changed. Just more consistent
+      formatting.
 2020-12-07 David Anderson
     * dwarf_errmsg_list.h,dwarf_frame.h,dwarf_line.h,
       dwarf_line_table_reader_common.h: Incredible number

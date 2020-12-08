@@ -37,9 +37,11 @@
 int
 dwarf_get_types(Dwarf_Debug dbg,
     Dwarf_Type ** types,
-    Dwarf_Signed * ret_type_count, Dwarf_Error * error)
+    Dwarf_Signed * ret_type_count,
+    Dwarf_Error * error)
 {
-    int res = _dwarf_load_section(dbg, &dbg->de_debug_typenames,error);
+    int res = _dwarf_load_section(dbg, &dbg->de_debug_typenames,
+        error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -77,7 +79,9 @@ dwarf_types_dealloc(Dwarf_Debug dbg, Dwarf_Type * dwgl,
 
 
 int
-dwarf_typename(Dwarf_Type type_in, char **ret_name, Dwarf_Error * error)
+dwarf_typename(Dwarf_Type type_in,
+    char **ret_name,
+    Dwarf_Error * error)
 {
     Dwarf_Global type = (Dwarf_Global) type_in;
 

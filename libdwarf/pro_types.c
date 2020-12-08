@@ -196,9 +196,11 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     for (debug_sect = dbg->de_debug_sects; debug_sect != NULL;
         debug_sect = debug_sect->ds_next) {
         /*  We want the size of the .debug_info section for this CU
-            because the dwarf spec requires us to output it below so we
+            because the dwarf spec requires us
+            to output it below so we
             look for it specifically. */
-        if (debug_sect->ds_elf_sect_no == dbg->de_elf_sects[DEBUG_INFO]) {
+        if (debug_sect->ds_elf_sect_no ==
+            dbg->de_elf_sects[DEBUG_INFO]) {
             debug_info_size += debug_sect->ds_nbytes;
         }
     }
@@ -234,7 +236,8 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
 
     }
     /* Write the adjusted length of .debug_*names section. */
-    adjusted_length = stream_bytes_count - uword_size - extension_size;
+    adjusted_length = stream_bytes_count - uword_size -
+        extension_size;
     WRITE_UNALIGNED(dbg, cur_stream_bytes_ptr,
         (const void *) &adjusted_length,
         sizeof(adjusted_length), uword_size);

@@ -161,7 +161,7 @@ transformtoposix(dwarfstring * out, char *in)
 {
     char *cp = in;
 
-    for( ; *cp  ; ++cp) {
+    for ( ; *cp  ; ++cp) {
         if ( *cp == joincharw ) {
             dwarfstring_append_length(out,joinstr,1);
         } else {
@@ -228,7 +228,7 @@ mydirlen(char *s)
     char *lastjoinchar = 0;
     size_t count =0;
 
-    for(cp = s ; *cp ; ++cp,++count)  {
+    for (cp = s ; *cp ; ++cp,++count)  {
         if (*cp == joinchar) {
             lastjoinchar = cp;
         }
@@ -267,7 +267,7 @@ dwarfstring_list_add_new(struct dwarfstring_list_s * base_entry,
     int *errcode)
 {
     struct dwarfstring_list_s *next = 0;
-    if(prev) {
+    if (prev) {
         next = ( struct dwarfstring_list_s *)
         malloc(sizeof(struct dwarfstring_list_s));
         if (!next) {
@@ -299,7 +299,7 @@ dwarfstring_list_destructor(struct dwarfstring_list_s *l)
     dwarfstring_destructor(&curl->dl_string);
     curl->dl_next = 0;
     curl = nextl;
-    for( ; curl ; curl = nextl) {
+    for ( ; curl ; curl = nextl) {
         nextl = curl->dl_next;
         dwarfstring_destructor(&curl->dl_string);
         curl->dl_next = 0;
@@ -488,7 +488,7 @@ _dwarf_construct_linkedto_path(
             &base_dwlist,
             last_entry,&joind.js_buildid,
             &now_last,errcode);
-        if(res != DW_DLV_OK) {
+        if (res != DW_DLV_OK) {
             dwarfstring_list_destructor(&base_dwlist);
             destruct_js(&joind);
             return res;
@@ -518,7 +518,7 @@ _dwarf_construct_linkedto_path(
                 &base_dwlist,
                 last_entry,&joind.js_tmp3,
                 &now_last,errcode);
-            if(res != DW_DLV_OK) {
+            if (res != DW_DLV_OK) {
                 dwarfstring_list_destructor(&base_dwlist);
                 destruct_js(&joind);
                 return res;
@@ -537,7 +537,7 @@ _dwarf_construct_linkedto_path(
                 &base_dwlist,
                 last_entry,&joind.js_tmp2,
                 &now_last,errcode);
-            if(res != DW_DLV_OK) {
+            if (res != DW_DLV_OK) {
                 dwarfstring_list_destructor(&base_dwlist);
                 destruct_js(&joind);
                 return res;
@@ -564,7 +564,7 @@ _dwarf_construct_linkedto_path(
                     &base_dwlist,
                     last_entry,&joind.js_tmp3,
                     &now_last,errcode);
-                if(res != DW_DLV_OK) {
+                if (res != DW_DLV_OK) {
                     dwarfstring_list_destructor(&base_dwlist);
                         destruct_js(&joind);
                     return res;
@@ -602,7 +602,7 @@ _dwarf_construct_linkedto_path(
         totalareasize = pointerarraysize + sumstringlengths +8;
         resultfullstring = (char **)malloc(totalareasize);
         setstrindex = pointerarraysize;
-        if(!resultfullstring) {
+        if (!resultfullstring) {
             dwarfstring_list_destructor(&base_dwlist);
             destruct_js(&joind);
             *errcode = DW_DLE_ALLOC_FAIL;
@@ -785,7 +785,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pdebuglink = 0;
     struct Dwarf_Section_s * pbuildid = 0;
 
-    if(!dbg) {
+    if (!dbg) {
         _dwarf_error(dbg,error,DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }
@@ -836,7 +836,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
             paths_returned,
             paths_count_returned,
             &errcode);
-        if(res != DW_DLV_OK) {
+        if (res != DW_DLV_OK) {
             dwarfstring_destructor(&debuglink_fullpath);
             return res;
         }

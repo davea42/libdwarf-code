@@ -233,7 +233,7 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
     head = gib->ib_head;
     for_pubnames  =  head->gi_is_pubnames;
     dbg = head->gi_dbg;
-    for(  ; curptr < endptr; ++entrycount) {
+    for ( ; curptr < endptr; ++entrycount) {
         Dwarf_Unsigned infooffset = 0;
         Dwarf_Unsigned offset = 0;
         char  flagbyte = 0;
@@ -273,7 +273,7 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
             curentry->ge_flag_byte = flagbyte;
             curentry->ge_string = (char *)strptr;
         }
-        for( ; *curptr  ;++curptr,++offset ) {
+        for ( ; *curptr  ;++curptr,++offset ) {
             if (curptr >= endptr) {
                 int errnum = 0;
                 const char*secname = 0;
@@ -299,7 +299,7 @@ count_entries_in_block(struct Dwarf_Gnu_IBlock_s * gib,
     }
     if (!entries)  {
         gib->ib_entry_count = entrycount;
-    } else if(gib->ib_entry_count != entrycount) {
+    } else if (gib->ib_entry_count != entrycount) {
         int err = 0;
         const char *errstr  = 0;
         const char *secname  = 0;
@@ -575,7 +575,7 @@ _dwarf_free_gnu_index_head_content(Dwarf_Gnu_Index_Head head)
         struct Dwarf_Gnu_IBlock_s *block =
             head->gi_blockarray;
 
-        for( ; i < head->gi_blockcount; ++i,block++) {
+        for ( ; i < head->gi_blockcount; ++i,block++) {
             if (block->ib_entryarray) {
                 free(block->ib_entryarray);
                 block->ib_entryarray = 0;
@@ -688,21 +688,21 @@ dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head head,
             return res;
         }
     }
-    if(entrynumber >= gib->ib_entry_count) {
+    if (entrynumber >= gib->ib_entry_count) {
         return DW_DLV_NO_ENTRY;
     }
     be = gib->ib_entryarray + entrynumber;
 
-    if(offset_in_debug_info) {
+    if (offset_in_debug_info) {
         *offset_in_debug_info = be->ge_debug_info_offset;
     }
-    if(name_string) {
+    if (name_string) {
         *name_string = be->ge_string;
     }
-    if(flagbyte) {
+    if (flagbyte) {
         *flagbyte = be->ge_flag_byte;
     }
-    if(staticorglobal) {
+    if (staticorglobal) {
         if (be->ge_flag_byte &0x80) {
             /* value 1, of course... */
             *staticorglobal = DW_GNUIVIS_global;
@@ -710,7 +710,7 @@ dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head head,
             *staticorglobal = DW_GNUIVIS_static;
         }
     }
-    if(typeofentry) {
+    if (typeofentry) {
         /* DW_GNUIKIND_ */
         unsigned v = be->ge_flag_byte & 0x70;
         v = v>>4;

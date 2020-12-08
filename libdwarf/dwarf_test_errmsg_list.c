@@ -65,7 +65,7 @@ check_errnum_mismatches(unsigned i)
     unsigned prevchar = 0;
     unsigned value = 0;
 
-    for( ; *cp; cp++) {
+    for ( ; *cp; cp++) {
         unsigned c = 0;
         c = 0xff & *cp;
         if ( c >= '0' && c <= '9' && !innit
@@ -96,7 +96,8 @@ check_errnum_mismatches(unsigned i)
         return FALSE;
     }
     /* There is no number to check. Ignore it. */
-    printf("mismatch value %d has no errnum to check %s\n",i,_dwarf_errmsgs[i]);
+    printf("mismatch value %d has no errnum to check %s\n",
+        i,_dwarf_errmsgs[i]);
     return TRUE;
 }
 
@@ -132,11 +133,11 @@ check_dle_list(const char *path)
     FILE*fin = 0;
 
     fin = fopen(path, "r");
-    if(!fin) {
+    if (!fin) {
         printf("Unable to open define list to read %s\n",path);
         exit(1);
     }
-    for(;;++linenum) {
+    for ( ;;++linenum) {
         char *line = 0;
         unsigned linelen = 0;
         char *  curdefname = 0;
@@ -147,7 +148,7 @@ check_dle_list(const char *path)
         unsigned long v = 0;
 
         line = fgets(buffer,MAXDEFINELINE,fin);
-        if(!line) {
+        if (!line) {
             break;
         }
         linelen = strlen(line);
@@ -155,15 +156,17 @@ check_dle_list(const char *path)
             printf("define line %u is too long!\n",linenum);
             exit(1);
         }
-        if(strncmp(line,"#define DW_DLE_",15)) {
-            printf("define line %u has wrong leading chars!\n",linenum);
+        if (strncmp(line,"#define DW_DLE_",15)) {
+            printf("define line %u has wrong leading chars!\n",
+                linenum);
             exit(1);
         }
         curdefname = line+8;
         /* ASSERT: line ends with NUL byte. */
-        for( ; ; curdefname_len++) {
+        for ( ; ; curdefname_len++) {
             if (foundlouser) {
-                printf("define line %u has  stuff after DW_DLE_LO_USER!\n",
+                printf("define line %u has  stuff after "
+                    "DW_DLE_LO_USER!\n",
                     linenum);
                 exit(1);
             }
@@ -211,10 +214,11 @@ check_dle_list(const char *path)
                 printf("Invalid: Last value mismatch! %lu vs %lu\n",
                     v,prevdefval);
             }
-        } else if (splmatches(curdefname,curdefname_len,"DW_DLE_LO_USER")) {
+        } else if (splmatches(curdefname,curdefname_len,
+            "DW_DLE_LO_USER")) {
             if (!foundlast) {
-                printf("error:expected DW_DLE_LO_USER after LAST! line %u\n",
-                    linenum);
+                printf("error:expected DW_DLE_LO_USER after LAST! "
+                    "line %u\n", linenum);
                 exit(1);
             }
             if (foundlouser) {
@@ -247,7 +251,8 @@ main(int argc, char **argv)
     const char *path = 0;
 
     if (argc != 3) {
-        printf("Expected -f <filename> of DW_DLE lines from libdwarf.h");
+        printf("Expected -f <filename> of DW_DLE lines "
+            "from libdwarf.h");
         exit(1);
     }
     if (strcmp(argv[1],"-f")) {
@@ -260,7 +265,8 @@ main(int argc, char **argv)
 
     if (arraysize != (DW_DLE_LAST + 1)) {
         printf("Missing or extra entry in dwarf error strings array"
-            " %u expected DW_DLE_LAST+1 %d\n",arraysize, DW_DLE_LAST+1);
+            " %u expected DW_DLE_LAST+1 %d\n",
+            arraysize, DW_DLE_LAST+1);
         printone(1);
         printone(100);
         printone(200);
@@ -278,7 +284,7 @@ main(int argc, char **argv)
         exit(1);
     }
     for ( i = 0; i <= DW_DLE_LAST; ++i) {
-        if(check_errnum_mismatches(i)) {
+        if (check_errnum_mismatches(i)) {
             printf("mismatch value %d is: %s\n",i,_dwarf_errmsgs[i]);
             exit(1);
         }

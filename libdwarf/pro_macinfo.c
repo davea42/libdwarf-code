@@ -80,8 +80,8 @@ libdwarf_compose_begin(Dwarf_P_Debug dbg, int code,
             blen = 2 * maxlen;
         }
         len = sizeof(struct dw_macinfo_block_s) + blen;
-        newb =
-            (struct dw_macinfo_block_s *) _dwarf_p_get_alloc(dbg, len);
+        newb = (struct dw_macinfo_block_s *)
+            _dwarf_p_get_alloc(dbg, len);
         if (!newb) {
             *compose_error_type = DW_DLE_MACINFO_MALLOC_FAIL;
             return DW_DLV_ERROR;
@@ -105,8 +105,8 @@ libdwarf_compose_begin(Dwarf_P_Debug dbg, int code,
             blen = 2 * maxlen;
         }
         len = sizeof(struct dw_macinfo_block_s) + blen;
-        newb =
-            (struct dw_macinfo_block_s *) _dwarf_p_get_alloc(dbg, len);
+        newb = (struct dw_macinfo_block_s *)
+            _dwarf_p_get_alloc(dbg, len);
         if (!newb) {
             *compose_error_type = DW_DLE_MACINFO_MALLOC_FAIL;
             return DW_DLV_ERROR;
@@ -123,8 +123,8 @@ libdwarf_compose_begin(Dwarf_P_Debug dbg, int code,
     /* now curblk has enough room */
     dbg->de_compose_avail = curblk->mb_avail_len;
     dbg->de_compose_used_len = curblk->mb_used_len;
-    nextchar =
-        (unsigned char *) (curblk->mb_data + dbg->de_compose_used_len);
+    nextchar = (unsigned char *)
+        (curblk->mb_data + dbg->de_compose_used_len);
     *nextchar = code;
     dbg->de_compose_avail--;
     ++dbg->de_compose_used_len;
@@ -134,21 +134,20 @@ libdwarf_compose_begin(Dwarf_P_Debug dbg, int code,
 
 
 static void
-libdwarf_compose_add_string(Dwarf_P_Debug dbg, const char *string, size_t len)
+libdwarf_compose_add_string(Dwarf_P_Debug dbg,
+    const char *string,
+    size_t len)
 {
     struct dw_macinfo_block_s *curblk = dbg->de_current_macinfo;
     unsigned char *nextchar;
 
-    nextchar =
-        (unsigned char *) (curblk->mb_data + dbg->de_compose_used_len);
-
+    nextchar = (unsigned char *)
+        (curblk->mb_data + dbg->de_compose_used_len);
     len += 1;                   /* count the null terminator */
-
     memcpy(nextchar, string, len);
     dbg->de_compose_avail -= len;
     dbg->de_compose_used_len += len;
     return;
-
 }
 static int
 libdwarf_compose_add_line(Dwarf_P_Debug dbg,
@@ -159,8 +158,8 @@ libdwarf_compose_add_line(Dwarf_P_Debug dbg,
     int res;
     int nbytes;
 
-    nextchar =
-        (unsigned char *) (curblk->mb_data + dbg->de_compose_used_len);
+    nextchar = (unsigned char *)
+        (curblk->mb_data + dbg->de_compose_used_len);
 
     /*  Put the created leb number directly into the macro buffer If
         dbg->de_compose_avail is > INT_MAX this will not work as the
@@ -186,7 +185,8 @@ libdwarf_compose_complete(Dwarf_P_Debug dbg, int *compose_error_type)
 {
     struct dw_macinfo_block_s *curblk = dbg->de_current_macinfo;
 
-    if (dbg->de_compose_used_len > curblk->mb_macinfo_data_space_len) {
+    if (dbg->de_compose_used_len >
+        curblk->mb_macinfo_data_space_len) {
         *compose_error_type = DW_DLE_MACINFO_INTERNAL_ERROR_SPACE;
         return DW_DLV_ERROR;
     }
@@ -314,7 +314,8 @@ dwarf_start_macro_file(Dwarf_P_Debug dbg,
         return (DW_DLV_ERROR);
     }
     length_est = COMMAND_LEN + LINE_LEN + LINE_LEN;
-    res = libdwarf_compose_begin(dbg, DW_MACINFO_start_file, length_est,
+    res = libdwarf_compose_begin(dbg, DW_MACINFO_start_file,
+        length_est,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
@@ -385,13 +386,15 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
         return (DW_DLV_ERROR);
     }
     length_est = COMMAND_LEN + LINE_LEN + len;
-    res = libdwarf_compose_begin(dbg, DW_MACINFO_vendor_ext, length_est,
+    res = libdwarf_compose_begin(dbg, DW_MACINFO_vendor_ext,
+        length_est,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
     }
-    res = libdwarf_compose_add_line(dbg, constant, &compose_error_type);
+    res = libdwarf_compose_add_line(dbg, constant,
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);

@@ -91,7 +91,7 @@ void examplesecgroup(Dwarf_Debug dbg)
     res = dwarf_sec_group_sizes(dbg,&section_count,
         &group_count,&selected_group, &group_map_entry_count,
         &error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         /* Something is badly wrong*/
         return;
     }
@@ -99,18 +99,18 @@ void examplesecgroup(Dwarf_Debug dbg)
         or COMDAT sections we now have
         selected_group == 1. */
     sec_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
-    if(!sec_nums) {
+    if (!sec_nums) {
         /* FAIL. out of memory */
         return;
     }
     group_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
-    if(!group_nums) {
+    if (!group_nums) {
         free(group_nums);
         /* FAIL. out of memory */
         return;
     }
     sec_names = calloc(group_map_entry_count,sizeof(char*));
-    if(!sec_names) {
+    if (!sec_names) {
         free(group_nums);
         free(sec_nums);
         /* FAIL. out of memory */
@@ -119,10 +119,10 @@ void examplesecgroup(Dwarf_Debug dbg)
 
     res = dwarf_sec_group_map(dbg,group_map_entry_count,
         group_nums,sec_nums,sec_names,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         /* FAIL. Something badly wrong. */
     }
-    for( i = 0; i < group_map_entry_count; ++i) {
+    for ( i = 0; i < group_map_entry_count; ++i) {
         /*  Now do something with
             group_nums[i],sec_nums[i],sec_names[i] */
     }
@@ -193,12 +193,12 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
     Dwarf_Error error = 0;
 
     res = dwarf_CU_dieoffset_given_die(in_die,&cudieoff,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         /*  FAIL */
         return;
     }
     res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         /* FAIL */
         return;
     }
@@ -296,7 +296,7 @@ void example_discr_list(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
                 return;
             }
-            for(u = 0; u < arraycount; u++) {
+            for (u = 0; u < arraycount; u++) {
                 int u2res = 0;
                 Dwarf_Half dtype = 0;
                 Dwarf_Signed dlow = 0;
@@ -311,13 +311,13 @@ void example_discr_list(Dwarf_Debug dbg,
                     u2res = dwarf_discr_entry_s(h,u,
                         &dtype,&dlow,&dhigh,err);
                 }
-                if( u2res == DW_DLV_ERROR) {
+                if (u2res == DW_DLV_ERROR) {
                     /* Something wrong */
                     dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
                     dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
                     return;
                 }
-                if( u2res == DW_DLV_NO_ENTRY) {
+                if (u2res == DW_DLV_NO_ENTRY) {
                     /* Impossible. u < arraycount. */
                     dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
                     dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
@@ -358,7 +358,8 @@ void example_loclistc(Dwarf_Attribute someattr)
             Dwarf_Unsigned ulocentry_count = 0;
             Dwarf_Locdesc_c locentry = 0;
 
-            /*  section_offset is the section offset of the expression, not
+            /*  section_offset is the section offset
+                of the expression, not
                 the location description prefix. */
             Dwarf_Unsigned section_offset = 0;
 
@@ -445,10 +446,10 @@ void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         &head,
         &ulistlen,
         &error);
-    if(res2 == DW_DLV_NO_ENTRY) {
+    if (res2 == DW_DLV_NO_ENTRY) {
         return;
     }
-    if(res2 == DW_DLV_ERROR) {
+    if (res2 == DW_DLV_ERROR) {
         return;
     }
     /*  These are a location expression, not loclist.
@@ -650,7 +651,8 @@ void examplec(Dwarf_Die cu_die)
 
         /*  For 'something C' (two-level line tables)
             one codes something like this
-            Note that we do not define the meaning or use of two-level line
+            Note that we do not define the meaning or
+            use of two-level line
             tables as these are experimental, not standard DWARF. */
         sres = dwarf_srclines_two_level_from_linecontext(line_context,
             &linebuf,&linecount,
@@ -658,10 +660,12 @@ void examplec(Dwarf_Die cu_die)
             &err);
         if (sres == DW_DLV_OK) {
             for (i = 0; i < linecount; ++i) {
-                /* use linebuf[i], these are the 'logicals' entries. */
+                /*  use linebuf[i], these are the 'logicals'
+                    entries. */
             }
             for (i = 0; i < linecount_actuals; ++i) {
-                /* use linebuf_actuals[i], these are the actuals entries */
+                /*  use linebuf_actuals[i], these are the
+                    actuals entries */
             }
             dwarf_srclines_dealloc_b(line_context);
             line_context = 0;
@@ -938,7 +942,7 @@ void examplep5(Dwarf_Die cu_die)
     unsigned k = 0;
     Dwarf_Error err = 0;
 
-    for(;;) {
+    for (;;) {
         if (is_primary) {
             lres = dwarf_get_macro_context(cu_die,
                 &version,&macro_context,
@@ -1225,7 +1229,7 @@ void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     Dwarf_Unsigned entry_len = 0;
     Dwarf_Error err = 0;
 
-    for(;;) {
+    for (;;) {
         res = dwarf_get_loclist_entry(dbg,offset,&hipc_off,
             &lowpc_off, &data, &entry_len,&next_entry,&err);
         if (res == DW_DLV_OK) {
@@ -1255,15 +1259,15 @@ void examplestroffsets(Dwarf_Debug dbg)
     Dwarf_Error error = 0;
 
     res = dwarf_open_str_offsets_table_access(dbg, &sot,&error);
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         /* No such table */
         return;
     }
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         /* Something is very wrong. Print the error? */
         return;
     }
-    for(;;) {
+    for (;;) {
         Dwarf_Unsigned unit_length =0;
         Dwarf_Unsigned unit_length_offset =0;
         Dwarf_Unsigned table_start_offset =0;
@@ -1347,7 +1351,7 @@ void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
         &ranges,&count,&bytes,&error);
     if (res == DW_DLV_OK) {
         Dwarf_Signed i;
-        for( i = 0; i < count; ++i ) {
+        for ( i = 0; i < count; ++i ) {
             Dwarf_Ranges *cur = ranges+i;
             /* Use cur. */
             functionusingrange(cur);
@@ -1388,7 +1392,7 @@ void examplew(Dwarf_Debug dbg)
             &length,&error);
         /* Example actions. */
         if (res == DW_DLV_OK) {
-            for(i = 0; i < length; ++i) {
+            for (i = 0; i < length; ++i) {
                 Dwarf_Unsigned cuoffset = 0;
                 Dwarf_Unsigned culength = 0;
                 res = dwarf_gdbindex_culist_entry(gindexptr,
@@ -1401,7 +1405,7 @@ void examplew(Dwarf_Debug dbg)
         res = dwarf_gdbindex_types_culist_array(gindexptr,
             &typeslength,&error);
         if (res == DW_DLV_OK) {
-            for(i = 0; i < typeslength; ++i) {
+            for (i = 0; i < typeslength; ++i) {
                 Dwarf_Unsigned cuoffset = 0;
                 Dwarf_Unsigned tuoffset = 0;
                 Dwarf_Unsigned type_signature  = 0;
@@ -1427,7 +1431,7 @@ void examplewgdbindex(Dwarf_Gdbindex gdbindex)
         /* Something wrong, ignore the addressarea */
     }
     /* Iterate through the address area. */
-    for( i  = 0; i < list_len; i++) {
+    for (i  = 0; i < list_len; i++) {
         Dwarf_Unsigned lowpc = 0;
         Dwarf_Unsigned highpc = 0;
         Dwarf_Unsigned cu_index = 0;
@@ -1455,7 +1459,7 @@ void examplex(Dwarf_Gdbindex gdbindex)
     if (res != DW_DLV_OK) {
         return;
     }
-    for( i  = 0; i < symtab_list_length; i++) {
+    for (i  = 0; i < symtab_list_length; i++) {
         Dwarf_Unsigned symnameoffset = 0;
         Dwarf_Unsigned cuvecoffset = 0;
         Dwarf_Unsigned cuvec_len = 0;
@@ -1471,15 +1475,15 @@ void examplex(Dwarf_Gdbindex gdbindex)
         }
         resl = dwarf_gdbindex_string_by_offset(gdbindex,
             symnameoffset,&name,&err);
-        if(resl != DW_DLV_OK) {
+        if (resl != DW_DLV_OK) {
             return;
         }
         resl = dwarf_gdbindex_cuvector_length(gdbindex,
             cuvecoffset,&cuvec_len,&err);
-        if(resl != DW_DLV_OK) {
+        if (resl != DW_DLV_OK) {
             return;
         }
-        for(ii = 0; ii < cuvec_len; ++ii ) {
+        for (ii = 0; ii < cuvec_len; ++ii ) {
             Dwarf_Unsigned attributes = 0;
             Dwarf_Unsigned cu_index = 0;
             Dwarf_Unsigned reserved1 = 0;
@@ -1490,15 +1494,16 @@ void examplex(Dwarf_Gdbindex gdbindex)
             res2 = dwarf_gdbindex_cuvector_inner_attributes(
                 gdbindex,cuvecoffset,ii,
                 &attributes,&err);
-            if(res2 != DW_DLV_OK) {
+            if (res2 != DW_DLV_OK) {
                 return;
             }
             /*  'attributes' is a value with various internal
                 fields so we expand the fields. */
-            res2 = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
-                attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
+            res2 = dwarf_gdbindex_cuvector_instance_expand_value(
+                gdbindex, attributes, &cu_index,&reserved1,
+                &symbol_kind, &is_static,
                 &err);
-            if(res2 != DW_DLV_OK) {
+            if (res2 != DW_DLV_OK) {
                 return;
             }
             /* Do something with the attributes. */
@@ -1549,7 +1554,7 @@ void examplez( Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Error err = 0;
     Dwarf_Unsigned h = 0;
 
-    for( h = 0; h < hash_slots_count; h++) {
+    for (h = 0; h < hash_slots_count; h++) {
         Dwarf_Sig8 hashval;
         Dwarf_Unsigned index = 0;
         int res = 0;
@@ -1619,7 +1624,7 @@ void examplezb(void)
 
     /* The following is meaningful.*/
     res = dwarf_get_TAG_name(DW_TAG_entry_point,&out);
-    if( res == DW_DLV_OK) {
+    if ( res == DW_DLV_OK) {
         /*  Here 'out' is a pointer one can use which
             points to the string "DW_TAG_entry_point". */
     } else {
@@ -1686,7 +1691,7 @@ void exampledebuglink(Dwarf_Debug dbg)
         printf("\n");
         printf("debuglink fullpath: %s\n",debuglink_fullpath);
     }
-    if(buildid_length) {
+    if (buildid_length) {
         printf("buildid type      : %u\n",buildid_type);
         printf("Buildid owner     : %s\n",buildidowner_name);
         printf("buildid byte count: %u\n",buildid_length);
@@ -1715,7 +1720,7 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
     if (res != DW_DLV_OK) {
         return res;
     }
-    for(i =0  ; i < count ; ++i) {
+    for (i =0  ; i < count ; ++i) {
         Dwarf_Unsigned header_offset = 0;
         Dwarf_Small   offset_size = 0;
         Dwarf_Small   extension_size = 0;

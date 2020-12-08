@@ -83,7 +83,7 @@ dwarf_error_creation(Dwarf_Debug dbg,
     char *errmsg)
 {
     dwarfstring m;
-    if(!dbg) {
+    if (!dbg) {
         return;
     }
     dwarfstring_constructor(&m);
@@ -108,8 +108,9 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
 {
     Dwarf_Error errptr;
 
-    /*  Allow NULL dbg on entry, since sometimes that can happen and we
-        want to report the upper-level error, not this one. */
+    /*  Allow NULL dbg on entry, since sometimes that
+        can happen and we want to report the upper-level
+        error, not this one. */
     if (error) {
         /*  If dbg is NULL, use the alternate error struct. However,
             this will overwrite the earlier error. */

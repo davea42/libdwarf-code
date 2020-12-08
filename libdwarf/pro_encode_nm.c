@@ -100,9 +100,11 @@ _dwarf_pro_encode_signed_leb128_nm(Dwarf_Signed value, int *nbytes,
         if (str >= end) {
             return DW_DLV_ERROR;
         }
-        /*  Remaining chunks would just contain the sign bit, and this chunk
+        /*  Remaining chunks would just contain the sign
+            bit, and this chunk
             has already captured at least one sign bit.  */
-        if (value == sign && ((byte & SIGN_BIT) == (sign & SIGN_BIT))) {
+        if (value == sign &&
+            ((byte & SIGN_BIT) == (sign & SIGN_BIT))) {
             more = 0;
         } else {
             byte |= MORE_BYTES;

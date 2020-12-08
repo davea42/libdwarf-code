@@ -72,10 +72,10 @@ free_loclists_chain(Dwarf_Debug dbg, Dwarf_Chain head)
     Dwarf_Chain cur = head;
     Dwarf_Chain next = 0;
 
-    if(!head) {
+    if (!head) {
         return;
     }
-    for( ;cur; cur = next) {
+    for ( ;cur; cur = next) {
         next = cur->ch_next;
         if (cur->ch_item) {
             free(cur->ch_item);
@@ -428,7 +428,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     Dwarf_Loclists_Context *fullarray = 0;
     Dwarf_Unsigned i = 0;
 
-    for( ; data < end_data ; ) {
+    for ( ; data < end_data ; ) {
         Dwarf_Loclists_Context newcontext = 0;
 
         /* sizeof the context struct, not sizeof a pointer */
@@ -482,7 +482,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     curr_chain = head_chain;
-    for( i = 0; i < chainlength; ++i) {
+    for (i = 0; i < chainlength; ++i) {
         fullarray[i] = (Dwarf_Loclists_Context)curr_chain->ch_item;
         curr_chain->ch_item = 0;
         prev_chain = curr_chain;
@@ -558,7 +558,7 @@ _dwarf_dealloc_loclists_context(Dwarf_Debug dbg)
         return;
     }
     loccon = dbg->de_loclists_context;
-    for( ; i < dbg->de_loclists_context_count; ++i,++loccon) {
+    for ( ; i < dbg->de_loclists_context_count; ++i,++loccon) {
         Dwarf_Loclists_Context con = *loccon;
         con->lc_offsets_array = 0;
         con->lc_offset_entry_count = 0;
@@ -950,7 +950,7 @@ build_array_of_lle(Dwarf_Debug dbg,
     Dwarf_Unsigned locdesc_index  = 0;
     Dwarf_Unsigned i              = 0;
 
-    for( ; !done  ;++locdesc_index ) {
+    for ( ; !done  ;++locdesc_index ) {
         unsigned entrylen = 0;
         unsigned code = 0;
         Dwarf_Unsigned val1 = 0;
@@ -1234,7 +1234,7 @@ _dwarf_free_loclists_head_content(Dwarf_Loc_Head_c head)
         Dwarf_Unsigned i = 0;
         for ( ; i < listlen; ++i) {
             Dwarf_Loc_Expr_Op loc = desc[i].ld_s;
-            if(loc) {
+            if (loc) {
                 dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
                 desc[i].ld_s = 0;
             }

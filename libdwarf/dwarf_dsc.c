@@ -98,7 +98,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
                 DECODE_LEB128_UWORD_LEN_CK(p,high,
                     leblen, dbg,error,endp);
             }
-            if(ary) {
+            if (ary) {
                 struct Dwarf_Dsc_Entry_s *arye =
                     ary+larraycount;
 
@@ -132,7 +132,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
                 DECODE_LEB128_SWORD_LEN_CK(p,high,
                     leblen,dbg,error,endp);
             }
-            if(ary) {
+            if (ary) {
                 struct Dwarf_Dsc_Entry_s *arye =
                     ary+larraycount;
 
@@ -147,7 +147,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
     }
     if (ary) {
         /*  Just verify this recount matches original */
-        if(iarraycount != larraycount) {
+        if (iarraycount != larraycount) {
             _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
             return DW_DLV_ERROR;
         }
@@ -183,7 +183,7 @@ int dwarf_discr_list(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     dscblockp = (Dwarf_Small *)calloc(blocklen,sizeof(Dwarf_Small));
-    if(!dscblockp) {
+    if (!dscblockp) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -200,7 +200,7 @@ int dwarf_discr_list(Dwarf_Debug dbg,
     }
 
     h = (Dwarf_Dsc_Head)_dwarf_get_alloc(dbg,DW_DLA_DSC_HEAD,1);
-    if(!h) {
+    if (!h) {
         free(dscblockp);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
@@ -213,7 +213,7 @@ int dwarf_discr_list(Dwarf_Debug dbg,
 
     ary = (struct Dwarf_Dsc_Entry_s *)calloc(arraycount,
         sizeof(struct Dwarf_Dsc_Entry_s));
-    if(!ary) {
+    if (!ary) {
         dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;

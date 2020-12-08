@@ -63,7 +63,8 @@ dwarf_find_macro_value_start(char *str)
             funclike = 1;
             break;
         case RIGHTPAREN:
-            /* lcp+1 must be a space, and following char is the value */
+            /*  lcp+1 must be a space, and following
+                char is the value */
             return lcp + 2;
         case SPACE:
             /*  We allow extraneous spaces inside macro parameter **
@@ -324,8 +325,10 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
         case DW_MACINFO_end_file:
             if (--depth == 0) {
-                /*  done = 1; no, do not stop here, at least one gcc had
-                    the wrong depth settings in the gcc 3.4 timeframe. */
+                /*  done = 1; no, do not stop here,
+                    at least one gcc had
+                    the wrong depth settings in the
+                    gcc 3.4 timeframe. */
             }
             /* no string or number here */
             break;
@@ -359,8 +362,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
     /* extra 2 not really needed */
     space_needed = string_offset + str_space + 2;
-    return_data = pdata =
-        (Dwarf_Small *)_dwarf_get_alloc(dbg, DW_DLA_STRING, space_needed);
+    return_data = pdata = (Dwarf_Small *)_dwarf_get_alloc(
+        dbg, DW_DLA_STRING, space_needed);
     latest_str_loc = pdata + string_offset;
     if (pdata == 0) {
         free_macro_stack(dbg,&msdata);
@@ -373,7 +376,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
     /* A series ends with a type code of 0. */
 
-    for (final_count = 0; !done && final_count < count; ++final_count) {
+    for (final_count = 0; !done && final_count < count;
+        ++final_count) {
         unsigned long slen = 0;
         Dwarf_Unsigned v1 = 0;
         Dwarf_Macro_Details *pdmd = (Dwarf_Macro_Details *) (pdata +

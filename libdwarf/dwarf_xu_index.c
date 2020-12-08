@@ -141,7 +141,7 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
     unsigned i = 0;
 
     data = section_start +headerline_offset;
-    for( ; i < num_sects ; ++i) {
+    for ( ; i < num_sects ; ++i) {
         Dwarf_Unsigned v = 0;
 
         READ_UNALIGNED_CK(dbg,v, Dwarf_Unsigned,
@@ -546,7 +546,7 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned sec_num = 0;
     Dwarf_Debug dbg = xuhdr->gx_dbg;
 
-    if( column_index >= xuhdr->gx_column_count_sections) {
+    if ( column_index >= xuhdr->gx_column_count_sections) {
         dwarfstring s;
 
         dwarfstring_constructor(&s);
@@ -604,7 +604,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         xuhdr->gx_section_length;
     Dwarf_Unsigned row_index = irow_index-1;
 
-    if(!irow_index) {
+    if (!irow_index) {
         dwarfstring s;
 
         dwarfstring_constructor(&s);
@@ -619,7 +619,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         dwarfstring_destructor(&s);
         return DW_DLV_ERROR;
     }
-    if( row_index >= xuhdr->gx_units_in_index) {
+    if (row_index >= xuhdr->gx_units_in_index) {
         dwarfstring s;
 
         dwarfstring_constructor(&s);
@@ -634,7 +634,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         return DW_DLV_ERROR;
     }
 
-    if( column_index >=  xuhdr->gx_column_count_sections) {
+    if (column_index >=  xuhdr->gx_column_count_sections) {
         dwarfstring s;
 
         dwarfstring_constructor(&s);
@@ -871,7 +871,7 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
         secnums[i] = num;
     }
     n = percu_index;
-    for(l = 0; l < max_cols; ++l) {  /* L */
+    for (l = 0; l < max_cols; ++l) {  /* L */
         Dwarf_Unsigned sec_off = 0;
         Dwarf_Unsigned sec_size = 0;
         unsigned l_as_sect = secnums[l];
@@ -961,7 +961,7 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
 void
 dwarf_xu_header_free(Dwarf_Xu_Index_Header indexptr)
 {
-    if(indexptr) {
+    if (indexptr) {
         Dwarf_Debug dbg = indexptr->gx_dbg;
         dwarf_dealloc(dbg,indexptr,DW_DLA_XU_INDEX);
     }

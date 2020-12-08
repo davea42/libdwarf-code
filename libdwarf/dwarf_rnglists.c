@@ -74,10 +74,10 @@ free_rnglists_chain(Dwarf_Debug dbg, Dwarf_Chain head)
     Dwarf_Chain cur = head;
     Dwarf_Chain next = 0;
 
-    if(!head) {
+    if (!head) {
         return;
     }
-    for( ;cur; cur = next) {
+    for ( ;cur; cur = next) {
         next = cur->ch_next;
         if (cur->ch_item) {
             free(cur->ch_item);
@@ -329,7 +329,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
     Dwarf_Rnglists_Context *fullarray = 0;
     Dwarf_Unsigned i = 0;
 
-    for( ; data < end_data ; ) {
+    for ( ; data < end_data ; ) {
         Dwarf_Rnglists_Context newcontext = 0;
 
         /* sizeof the context struct, not sizeof a pointer */
@@ -382,7 +382,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     curr_chain = head_chain;
-    for( i = 0; i < chainlength; ++i) {
+    for (i = 0; i < chainlength; ++i) {
         fullarray[i] = (Dwarf_Rnglists_Context)curr_chain->ch_item;
         curr_chain->ch_item = 0;
         prev_chain = curr_chain;
@@ -458,7 +458,7 @@ _dwarf_dealloc_rnglists_context(Dwarf_Debug dbg)
         return;
     }
     rngcon = dbg->de_rnglists_context;
-    for( ; i < dbg->de_rnglists_context_count; ++i,++rngcon) {
+    for ( ; i < dbg->de_rnglists_context_count; ++i,++rngcon) {
         Dwarf_Rnglists_Context con = *rngcon;
         con->rc_offsets_array = 0;
         con->rc_offset_entry_count = 0;
@@ -546,7 +546,8 @@ int dwarf_get_rnglist_head_basics(
     *segment_selector_size = head->rh_segment_selector_size;
     rngcontext = head->rh_localcontext;
     if (rngcontext) {
-        *overall_offset_of_this_context = rngcontext->rc_header_offset;
+        *overall_offset_of_this_context =
+            rngcontext->rc_header_offset;
         *total_length_of_this_context = rngcontext->rc_length;
         *offset_table_offset = rngcontext->rc_offsets_off_in_sect;
         *offset_table_entrycount = rngcontext->rc_offset_entry_count;
@@ -844,7 +845,7 @@ build_array_of_rle(Dwarf_Debug dbg,
         latestbaseaddr = rctx->rh_cu_base_address;
         foundbaseaddr  = TRUE;
     }
-    for( ; !done  ; ) {
+    for ( ; !done  ; ) {
         unsigned entrylen = 0;
         unsigned code = 0;
         Dwarf_Unsigned val1 = 0;
@@ -876,7 +877,7 @@ build_array_of_rle(Dwarf_Debug dbg,
         }
         switch(code) {
         case DW_RLE_base_addressx:
-            if(no_debug_addr_available) {
+            if (no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
@@ -895,7 +896,7 @@ build_array_of_rle(Dwarf_Debug dbg,
             }
             break;
         case DW_RLE_startx_endx:
-            if(no_debug_addr_available) {
+            if (no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
@@ -909,7 +910,7 @@ build_array_of_rle(Dwarf_Debug dbg,
             } else {
                 e->rle_cooked1 = addr1;
             }
-            if(no_debug_addr_available) {
+            if (no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
@@ -926,7 +927,7 @@ build_array_of_rle(Dwarf_Debug dbg,
             }
             break;
         case DW_RLE_startx_length:
-            if(no_debug_addr_available) {
+            if (no_debug_addr_available) {
                 res = DW_DLV_NO_ENTRY;
             } else {
                 res = _dwarf_look_in_local_and_tied_by_index(
@@ -946,7 +947,7 @@ build_array_of_rle(Dwarf_Debug dbg,
             }
             break;
         case DW_RLE_offset_pair:
-            if(foundbaseaddr) {
+            if (foundbaseaddr) {
                 e->rle_cooked1 = val1+latestbaseaddr;
                 e->rle_cooked2 = val2+latestbaseaddr;
             } else {
@@ -1003,7 +1004,7 @@ build_array_of_rle(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         cur = rctx->rh_first;
-        for (  ; i < rctx->rh_count; ++i) {
+        for ( ; i < rctx->rh_count; ++i) {
             array[i] = cur;
             cur = cur->rle_next;
         }
@@ -1155,7 +1156,8 @@ dwarf_rnglists_get_rle_head(
     if (!lhead) {
         _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
             "Allocating a Dwarf_Rnglists_Head struct fails"
-            " in libdwarf function dwarf_rnglists_index_get_rle_head()");
+            " in libdwarf function "
+            "dwarf_rnglists_index_get_rle_head()");
         return DW_DLV_ERROR;
     }
     shead.rh_dbg = dbg;
@@ -1165,7 +1167,7 @@ dwarf_rnglists_get_rle_head(
         dwarf_dealloc(dbg,lhead,DW_DLA_RNGLISTS_HEAD);
         return res;
     }
-    if(global_offset_of_rle_set) {
+    if (global_offset_of_rle_set) {
         *global_offset_of_rle_set = rle_global_offset;
     }
     /*  Caller needs the head pointer else there will be leaks. */
@@ -1280,7 +1282,7 @@ _dwarf_free_rnglists_head(Dwarf_Rnglists_Head head)
         Dwarf_Unsigned i = 0;
 
         /* Deal with the array form. */
-        for( ; i < head->rh_count; ++i) {
+        for ( ; i < head->rh_count; ++i) {
             free(head->rh_rnglists[i]);
         }
         free(head->rh_rnglists);

@@ -116,7 +116,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     /* Size of the byte stream buffer that needs to be memcpy-ed. */
     int operand_size = 0;
 
-    /*  Points to the byte stream for the first operand, and finally to
+    /*  Points to the byte stream for the first operand,
+        and finally to
         the buffer that is memcp-ed into the Dwarf_P_Expr_s struct. */
     Dwarf_Small *operand = 0;
 
@@ -215,7 +216,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         res = _dwarf_pro_encode_signed_leb128_nm(val1,
             &operand_size, encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
@@ -225,7 +227,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         res = _dwarf_pro_encode_leb128_nm(val1, &operand_size,
             encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
@@ -302,7 +305,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         res = _dwarf_pro_encode_leb128_nm(val1,
             &operand_size, encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
@@ -314,7 +318,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
@@ -326,7 +331,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
@@ -337,17 +343,20 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
-        /* put this one directly into 'operand' at tail of prev value */
+        /*  Put this one directly into 'operand' at
+            tail of prev value */
         res = _dwarf_pro_encode_signed_leb128_nm(val2, &operand2_size,
             ((char *) operand) +
             operand_size,
             sizeof(encode_buffer2));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand_size += operand2_size;
@@ -395,7 +404,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
@@ -418,7 +428,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     case DW_OP_skip:
     case DW_OP_bra:
         /* FIX: unhandled! OP_bra, OP_skip! */
-        _dwarf_p_error(expr->ex_dbg, error, DW_DLE_BAD_EXPR_OPCODE);
+        _dwarf_p_error(expr->ex_dbg, error,
+            DW_DLE_BAD_EXPR_OPCODE);
         return DW_DLV_ERROR;
 
     case DW_OP_piece:
@@ -426,7 +437,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
@@ -463,17 +475,20 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand = (Dwarf_Small *) encode_buffer;
-        /* put this one directly into 'operand' at tail of prev value */
+        /*  Put this one directly into 'operand'
+            at tail of prev value */
         res = _dwarf_pro_encode_leb128_nm(val2, &operand2_size,
             ((char *) operand) +
             operand_size,
             sizeof(encode_buffer2));
         if (res != DW_DLV_OK) {
-            _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+            _dwarf_p_error(expr->ex_dbg, error,
+                DW_DLE_EXPR_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         operand_size += operand2_size;

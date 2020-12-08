@@ -123,8 +123,8 @@ static int common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags,
     errhand(): Error Handler provided by user
     errarg: Argument to errhand()
     error: returned error value */
-    /*  We want the following to have an elf section number that matches
-        'nothing' */
+    /*  We want the following to have an elf section
+        number that matches 'nothing' */
 static struct Dwarf_P_Section_Data_s init_sect = {
     MAGIC_SECT_NO, 0, 0, 0, 0
 };
@@ -220,7 +220,7 @@ set_reloc_numbers(Dwarf_P_Debug dbg,
     if (!abiname) {
         return DW_DLV_NO_ENTRY;
     }
-    for(isap = &isa_relocs[0];  ;isap++) {
+    for (isap = &isa_relocs[0];  ;isap++) {
         if (!isap->name_) {
             /* No more names known. Never found the one we wanted. */
             return DW_DLV_NO_ENTRY;
@@ -248,7 +248,8 @@ set_reloc_numbers(Dwarf_P_Debug dbg,
 /*  This is the Daniel J Bernstein hash function
     originally posted to Usenet news.
     http://en.wikipedia.org/wiki/List_of_hash_functions or
-    http://stackoverflow.com/questions/10696223/reason-for-5381-number-in-djb-hash-function).
+    http://stackoverflow.com/questions/\
+    10696223/reason-for-5381-number-in-djb-hash-function).
     See Also DWARF5 Section 7.33
 */
 static DW_TSHASHTYPE
@@ -314,10 +315,10 @@ common_init(Dwarf_P_Debug dbg,
     dbg->de_big_endian = (dbg->de_flags&DW_DLC_TARGET_BIGENDIAN)?
         TRUE:FALSE;
     /*  DW_DLC_POINTER64 is identical to DW_DLC_SIZE_64 */
-    if(dbg->de_flags & DW_DLC_POINTER64) {
+    if (dbg->de_flags & DW_DLC_POINTER64) {
         dbg->de_pointer_size = 8;
     }
-    if(dbg->de_flags & DW_DLC_OFFSET64) {
+    if (dbg->de_flags & DW_DLC_OFFSET64) {
         dbg->de_pointer_size = 8;
         dbg->de_dwarf_offset_size = 4;
         dbg->de_64bit_extension = 0;
@@ -326,7 +327,7 @@ common_init(Dwarf_P_Debug dbg,
             de_64bit_extension to 1. */
         dbg->de_elf_offset_size = 8;
     } else {
-        if(dbg->de_flags & DW_DLC_IRIX_OFFSET64) {
+        if (dbg->de_flags & DW_DLC_IRIX_OFFSET64) {
             dbg->de_pointer_size = 8;
             dbg->de_big_endian = TRUE;
             dbg->de_dwarf_offset_size = 8;
@@ -335,7 +336,7 @@ common_init(Dwarf_P_Debug dbg,
         }
     }
 
-    if(abiname && (!strcmp(abiname,"irix"))) {
+    if (abiname && (!strcmp(abiname,"irix"))) {
         dbg->de_irix_exc_augmentation = 1;
     } else {
         dbg->de_irix_exc_augmentation = 0;
@@ -351,7 +352,7 @@ common_init(Dwarf_P_Debug dbg,
         return DW_DLV_ERROR;
     }
     dbg->de_output_version = 2;
-    if(dwarf_version) {
+    if (dwarf_version) {
         if (!strcmp(dwarf_version,"V2")) {
             dbg->de_output_version = 2;
         } else if (!strcmp(dwarf_version,"V3")) {
@@ -431,7 +432,8 @@ common_init(Dwarf_P_Debug dbg,
                 _dwarf_pro_reloc_name_stream32;
         }
         dbg->de_relocate_pair_by_symbol = 0;
-        dbg->de_transform_relocs_to_disk = _dwarf_stream_relocs_to_disk;
+        dbg->de_transform_relocs_to_disk =
+            _dwarf_stream_relocs_to_disk;
 #else /* DWARF_WITH_LIBELF */
         *err_ret = DW_DLE_NO_STREAM_RELOC_SUPPORT;
         return DW_DLV_ERROR;

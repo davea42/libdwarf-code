@@ -101,14 +101,15 @@ dwarf_open_str_offsets_table_access(Dwarf_Debug dbg,
     sec_size = dbg->de_debug_str_offsets.dss_size;
     local_table_data = (Dwarf_Str_Offsets_Table)_dwarf_get_alloc(dbg,
         DW_DLA_STR_OFFSETS,1);
-    if(!local_table_data) {
+    if (!local_table_data) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
     local_table_data->so_dbg = dbg;
     local_table_data->so_magic_value  = STR_OFFSETS_MAGIC;
     local_table_data->so_section_start_ptr = offsets_start_ptr;
-    local_table_data->so_section_end_ptr = offsets_start_ptr +sec_size;
+    local_table_data->so_section_end_ptr = offsets_start_ptr +
+        sec_size;
     local_table_data->so_section_size = sec_size;
     local_table_data->so_next_table_offset = 0;
     local_table_data->so_wasted_section_bytes = 0;
@@ -182,7 +183,7 @@ is_all_zeroes(Dwarf_Small*start,
             a defensive test. */
         return TRUE;
     }
-    for( ; start < end; ++start) {
+    for ( ; start < end; ++start) {
         if (!*start) {
             /* There is some garbage here. */
             return FALSE;
@@ -445,7 +446,8 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     if (table_header_offset >= sot->so_section_size) {
         return DW_DLV_NO_ENTRY;
     }
-    table_header_ptr = sot->so_section_start_ptr + table_header_offset;
+    table_header_ptr = sot->so_section_start_ptr +
+        table_header_offset;
     sot->so_header_ptr = table_header_ptr;
     if (table_header_ptr >= sot->so_section_end_ptr) {
         if (table_header_ptr == sot->so_section_end_ptr) {
@@ -592,10 +594,10 @@ dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table table_data,
     Dwarf_Error    * error)
 {
     VALIDATE_SOT(table_data)
-    if(wasted_byte_count) {
+    if (wasted_byte_count) {
         *wasted_byte_count = table_data->so_wasted_section_bytes;
     }
-    if(table_count) {
+    if (table_count) {
         *table_count = table_data->so_table_count;
     }
     return DW_DLV_OK;

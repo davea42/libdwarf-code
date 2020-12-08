@@ -202,7 +202,9 @@ _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
         break;
 #endif /* EM_S390 */
 
-#if defined(EM_X86_64) && ( defined(R_X86_64_32) || defined(R_X86_64_PC32) || defined(R_X86_64_DTPOFF32) )
+#if defined(EM_X86_64) && \
+    ( defined(R_X86_64_32) || defined(R_X86_64_PC32) ||\
+    defined(R_X86_64_DTPOFF32) )
 #if defined(EM_K10M)
     case EM_K10M:
 #endif

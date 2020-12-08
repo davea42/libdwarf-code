@@ -273,7 +273,7 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
     int res = 0;
 
     fsd = &fission_data;
-    for(si = 0; si < smax ; ++si) {
+    for (si = 0; si < smax ; ++si) {
         int sec_index = 0;
 
         memset(&fission_data,0,sizeof(fission_data));

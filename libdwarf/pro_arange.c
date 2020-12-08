@@ -34,7 +34,7 @@
 
 #ifdef HAVE_STRING_H
 #include <string.h>
-#endif  /* HAVE_STRING_H */
+#endif /* HAVE_STRING_H */
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #endif
@@ -145,7 +145,8 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     /* Total num of bytes in .debug_aranges section. */
     Dwarf_Unsigned arange_num_bytes = 0;
 
-    /*  Adjustment to align the start of the actual address ranges on a
+    /*  Adjustment to align the start of the actual
+        address ranges on a
         boundary aligned with twice the address size. */
     Dwarf_Small remainder = 0;
 
@@ -183,16 +184,18 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
         sizeof(Dwarf_Small) +   /* Size of address size field. */
         sizeof(Dwarf_Small);    /* Size of segment size field. */
 
-    /*  Adjust the size so that the set of aranges begins on a boundary
-        that aligned with twice the address size.  This is a Libdwarf
-        requirement. */
+    /*  Adjust the size so that the set of aranges
+        begins on a boundary
+        that aligned with twice the address size.
+        This is a Libdwarf requirement. */
     remainder = arange_num_bytes % (2 * upointer_size);
     if (remainder != 0)
         arange_num_bytes += (2 * upointer_size) - remainder;
 
 
     /* Add the bytes for the actual address ranges. */
-    arange_num_bytes += upointer_size * 2 * (dbg->de_arange_count + 1);
+    arange_num_bytes += upointer_size * 2 *
+        (dbg->de_arange_count + 1);
 
     GET_CHUNK(dbg, dbg->de_elf_sects[DEBUG_ARANGES],
         arange, (unsigned long) arange_num_bytes, error);
@@ -286,8 +289,8 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
 
 
 
-    /*  The arange address, length are pointer-size fields of the target
-        machine. */
+    /*  The arange address, length are pointer-size
+        fields of the target machine. */
     for (given_arange = dbg->de_arange; given_arange != NULL;
         given_arange = given_arange->ag_next) {
 
@@ -311,9 +314,10 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
         if (dbg->de_relocate_pair_by_symbol &&
             given_arange->ag_end_symbol_index != 0 &&
             given_arange->ag_length == 0) {
-            /*  symbolic reloc, need reloc for length What if we really
-                know the length? If so, should use the other part of
-                'if'. */
+            /*  Symbolic reloc, need reloc for length
+                What if we really
+                know the length? If so, should use
+                the other part of 'if'. */
             Dwarf_Unsigned val;
 
             res = dbg->de_relocate_pair_by_symbol(dbg,

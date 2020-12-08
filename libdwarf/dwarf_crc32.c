@@ -85,7 +85,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     unsigned int init = 0;
     int fd = -1;
 
-    if(!dbg) {
+    if (!dbg) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: Bad call to dwarf_crc32");
         return DW_DLV_ERROR;
@@ -105,7 +105,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
         fsize = size_left = dbg->de_filesize;
     } else {
         fsize = size_left = lseek(fd,0L,SEEK_END);
-        if(fsize   == (off_t)-1) {
+        if (fsize   == (off_t)-1) {
             _dwarf_error_string(dbg,error,DW_DLE_SEEK_ERROR,
                 "DW_DLE_SEEK_ERROR: dwarf_crc32 seek "
                 "to end fails");
@@ -118,7 +118,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
         return DW_DLV_NO_ENTRY;
     }
     lsval  = lseek(fd,0L,SEEK_SET);
-    if(lsval < 0) {
+    if (lsval < 0) {
         _dwarf_error_string(dbg,error,DW_DLE_SEEK_ERROR,
             "DW_DLE_SEEK_ERROR: dwarf_crc32 seek "
             "to start fails");

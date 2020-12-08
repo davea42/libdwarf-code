@@ -43,7 +43,8 @@
 #include "dwarf_debuglink.h"
 
 /* Line Register Set initial conditions. */
-static struct Dwarf_Line_Registers_s _dwarf_line_table_regs_default_values = {
+static struct Dwarf_Line_Registers_s
+    _dwarf_line_table_regs_default_values = {
     /* Dwarf_Addr lr_address */ 0,
     /* Dwarf_Unsigned lr_file */ 1,
     /* Dwarf_Unsigned lr_line */  1,
@@ -178,7 +179,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
         _dwarf_pathjoinl(&targ,&nxt);
         tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
             dwarfstring_strlen(&targ)+1);
-        if(tmp) {
+        if (tmp) {
             strcpy(tmp,dwarfstring_string(&targ));
             *name_ptr_out = tmp;
             dwarfstring_destructor(&targ);
@@ -307,8 +308,8 @@ dwarf_srcfiles(Dwarf_Die die,
         section for the current cu. */
     Dwarf_Small *line_ptr = 0;
 
-    /*  Pointer to a DW_AT_stmt_list attribute in case it exists in the
-        die. */
+    /*  Pointer to a DW_AT_stmt_list attribute
+        in case it exists in the die. */
     Dwarf_Attribute stmt_list_attr = 0;
 
     const char * const_comp_name = 0;
@@ -352,7 +353,8 @@ dwarf_srcfiles(Dwarf_Die die,
     context = die->di_cu_context;
     dbg = context->cc_dbg;
 
-    resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr, error);
+    resattr = dwarf_attr(die, DW_AT_stmt_list,
+        &stmt_list_attr, error);
     if (resattr != DW_DLV_OK) {
         return resattr;
     }
@@ -422,7 +424,7 @@ dwarf_srcfiles(Dwarf_Die die,
         Dwarf_Unsigned fission_size = 0;
         int resl = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
-        if(resl != DW_DLV_OK) {
+        if (resl != DW_DLV_OK) {
             dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
             return resl;
         }
@@ -565,11 +567,11 @@ dwarf_srcfiles(Dwarf_Die die,
     return (DW_DLV_OK);
 }
 
-
-
 /*  Return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
-    doaddrs is true iff this is being called for SGI IRIX rqs processing
-    (ie, not a normal libdwarf dwarf_srclines or two-level  user call at all).
+    doaddrs is true iff this is being called for
+    SGI IRIX rqs processing
+    (ie, not a normal libdwarf dwarf_srclines or
+    two-level  user call at all).
     dolines is true iff this is called by a dwarf_srclines call.
 
     In case of error or NO_ENTRY in this code we use the
@@ -577,7 +579,6 @@ dwarf_srcfiles(Dwarf_Die die,
     and dealloc of DW_DLA_LINE_CONTEXT
     from the new interface for uniformity here.
 */
-
 int
 _dwarf_internal_srclines(Dwarf_Die die,
     Dwarf_Bool is_new_interface,
@@ -596,19 +597,20 @@ _dwarf_internal_srclines(Dwarf_Die die,
         section for the current cu. */
     Dwarf_Small *line_ptr = 0;
 
-    /*  This points to the last byte of the .debug_line portion for the
-        current cu. */
+    /*  This points to the last byte of the
+        .debug_line portion for the current cu. */
     Dwarf_Small *line_ptr_end = 0;
 
-    /*  For two-level line tables, this points to the first byte of the
-        actuals table (and the end of the logicals table) for the current
-        cu. */
+    /*  For two-level line tables, this points to the
+        first byte of the
+        actuals table (and the end of the logicals table)
+        for the current cu. */
     Dwarf_Small *line_ptr_actuals = 0;
     Dwarf_Small *section_start = 0;
     Dwarf_Small *section_end = 0;
 
-    /*  Pointer to a DW_AT_stmt_list attribute in case it exists in the
-        die. */
+    /*  Pointer to a DW_AT_stmt_list attribute in case
+        it exists in the die. */
     Dwarf_Attribute stmt_list_attr = 0;
 
     const char * const_comp_name = 0;
@@ -658,7 +660,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
     }
 
     address_size = _dwarf_get_address_size(dbg, die);
-    resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr, error);
+    resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr,
+        error);
     if (resattr != DW_DLV_OK) {
         return resattr;
     }
@@ -679,7 +682,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         Dwarf_Unsigned fission_size = 0;
         int resf = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
-        if(resf != DW_DLV_OK) {
+        if (resf != DW_DLV_OK) {
             dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
             return resf;
         }
@@ -695,7 +698,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
     orig_line_ptr = section_start + line_offset + fission_offset;
     line_ptr = orig_line_ptr;
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-    if ((line_offset + fission_offset) > dbg->de_debug_line.dss_size) {
+    if ((line_offset + fission_offset) >
+        dbg->de_debug_line.dss_size) {
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
@@ -736,7 +740,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             0);
 
         if (resp == DW_DLV_ERROR) {
-            if(is_new_interface) {
+            if (is_new_interface) {
                 dwarf_srclines_dealloc_b(line_context);
             } else {
                 dwarf_dealloc(dbg,line_context,DW_DLA_LINE_CONTEXT);
@@ -744,7 +748,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             return resp;
         }
         if (resp == DW_DLV_NO_ENTRY) {
-            if(is_new_interface) {
+            if (is_new_interface) {
                 dwarf_srclines_dealloc_b(line_context);
             } else {
                 dwarf_dealloc(dbg,line_context,DW_DLA_LINE_CONTEXT);
@@ -776,7 +780,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             error,
             &err_count_out);
         if (res != DW_DLV_OK) {
-            if(is_new_interface) {
+            if (is_new_interface) {
                 dwarf_srclines_dealloc_b(line_context);
             } else {
                 dwarf_dealloc(dbg,line_context,DW_DLA_LINE_CONTEXT);
@@ -810,7 +814,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             is_actuals_table, error,
             &err_count_out);
         if (res != DW_DLV_OK) {
-            if(is_new_interface) {
+            if (is_new_interface) {
                 dwarf_srclines_dealloc_b(line_context);
             } else {
                 dwarf_dealloc(dbg,line_context,DW_DLA_LINE_CONTEXT);
@@ -846,7 +850,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 *linebuf_actuals = line_context->lc_linebuf_actuals;
             }
             if (linecount_actuals != NULL) {
-                *linecount_actuals = line_context->lc_linecount_actuals;
+                *linecount_actuals =
+                    line_context->lc_linecount_actuals;
             }
         }
     }
@@ -1036,10 +1041,10 @@ dwarf_srclines_b(Dwarf_Die die,
     if (res == DW_DLV_OK) {
         (*line_context)->lc_new_style_access = true;
     }
-    if(linecount_actuals ) {
+    if (linecount_actuals ) {
         tcount++;
     }
-    if(linecount ) {
+    if (linecount ) {
         tcount++;
     }
     *table_count = tcount;
@@ -1070,7 +1075,8 @@ dwarf_srclines_from_linecontext(Dwarf_Line_Context line_context,
 
 /* New October 2015. */
 int
-dwarf_srclines_two_level_from_linecontext(Dwarf_Line_Context line_context,
+dwarf_srclines_two_level_from_linecontext(
+    Dwarf_Line_Context line_context,
     Dwarf_Line**     linebuf,
     Dwarf_Signed *   linecount,
     Dwarf_Line**     linebuf_actuals,
@@ -1104,7 +1110,7 @@ dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
         return (DW_DLV_ERROR);
     }
-    if( line_context->lc_magic != DW_CONTEXT_MAGIC) {
+    if ( line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error,
             DW_DLE_LINE_CONTEXT_BOTCH);
         return (DW_DLV_ERROR);
@@ -1127,7 +1133,7 @@ int dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
         return (DW_DLV_ERROR);
     }
-    if( line_context->lc_magic != DW_CONTEXT_MAGIC) {
+    if (line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error,
             DW_DLE_LINE_CONTEXT_BOTCH);
         return (DW_DLV_ERROR);
@@ -1150,7 +1156,7 @@ dwarf_srclines_subprog_count(Dwarf_Line_Context line_context,
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
         return (DW_DLV_ERROR);
     }
-    if( line_context->lc_magic != DW_CONTEXT_MAGIC) {
+    if (line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
         return (DW_DLV_ERROR);
     }
@@ -1231,7 +1237,7 @@ dwarf_srclines_files_indexes(Dwarf_Line_Context line_context,
     Dwarf_Signed   *endindex,
     Dwarf_Error    * error)
 {
-    if(line_context->lc_magic != DW_CONTEXT_MAGIC) {
+    if (line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
         return DW_DLV_ERROR;
     }
@@ -1286,14 +1292,14 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
     }
     for ( i = baseindex;i < index; i++) {
         fi = fi->fi_next;
-        if(!fi) {
+        if (!fi) {
             _dwarf_error(line_context->lc_dbg, error,
                 DW_DLE_LINE_HEADER_CORRUPT);
             return DW_DLV_ERROR;
         }
     }
 
-    if(name) {
+    if (name) {
         *name = (const char *)fi->fi_file_name;
     }
     if (directory_index) {
@@ -1450,14 +1456,16 @@ dwarf_lineno(Dwarf_Line line,
     return DW_DLV_OK;
 }
 
-/*  Each 'line' entry has a file-number, and index into the file table.
+/*  Each 'line' entry has a file-number, an index
+    into the file table.
     If the entry is a DW_LNE_end_sequence the index is
     meaningless (see dwarf_lineendsequence(), just above).
     The file number returned is an index into the file table
     produced by dwarf_srcfiles(), but care is required: the
     li_file begins with 1 for DWARF2,3,4
     files, so that the li_file returned here
-    is 1 greater than its index into the dwarf_srcfiles() output array.
+    is 1 greater than its index into the dwarf_srcfiles()
+    output array.
 
     And entries from DW_LNE_define_file don't appear in
     the dwarf_srcfiles() output so file indexes from here may exceed
@@ -1622,7 +1630,8 @@ dwarf_filename(Dwarf_Line_Context context,
 }
 
 int
-dwarf_linesrc(Dwarf_Line line, char **ret_linesrc, Dwarf_Error * error)
+dwarf_linesrc(Dwarf_Line line, char **ret_linesrc,
+    Dwarf_Error * error)
 {
     if (line == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_LINE_NULL);
@@ -1663,12 +1672,13 @@ int dwarf_prologue_end_etc(Dwarf_Line  line,
 {
     if (line == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_LINE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
-    *prologue_end = (line->li_addr_line.li_l_data.li_prologue_end);
-    *epilogue_begin = (line->li_addr_line.li_l_data.li_epilogue_begin);
-    *isa = (line->li_addr_line.li_l_data.li_isa);
-    *discriminator = (line->li_addr_line.li_l_data.li_discriminator);
+    *prologue_end = line->li_addr_line.li_l_data.li_prologue_end;
+    *epilogue_begin =
+        line->li_addr_line.li_l_data.li_epilogue_begin;
+    *isa = line->li_addr_line.li_l_data.li_isa;
+    *discriminator = line->li_addr_line.li_l_data.li_discriminator;
     return DW_DLV_OK;
 }
 
@@ -1679,9 +1689,9 @@ dwarf_linelogical(Dwarf_Line line,
 {
     if (line == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_LINE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
-    *logical = (line->li_addr_line.li_l_data.li_line);
+    *logical = line->li_addr_line.li_l_data.li_line;
     return DW_DLV_OK;
 }
 
@@ -1767,7 +1777,7 @@ delete_line_context_itself(Dwarf_Line_Context context)
     Dwarf_Debug dbg = 0;
     Dwarf_File_Entry fe = 0;
 
-    if(context->lc_magic != DW_CONTEXT_MAGIC) {
+    if (context->lc_magic != DW_CONTEXT_MAGIC) {
         /* Something is wrong. */
         return;
     }
@@ -1838,7 +1848,7 @@ dwarf_srclines_dealloc(Dwarf_Debug dbg, Dwarf_Line * linebuf,
     struct Dwarf_Line_Context_s *line_context = 0;
 
 
-    if(!linebuf) {
+    if (!linebuf) {
         return;
     }
     if (count > 0) {
@@ -1848,20 +1858,23 @@ dwarf_srclines_dealloc(Dwarf_Debug dbg, Dwarf_Line * linebuf,
             so for single and two-level tables the space
             is deallocated. */
         line_context = linebuf[0]->li_context;
-        if (line_context && line_context->lc_magic != DW_CONTEXT_MAGIC ) {
+        if (line_context && line_context->lc_magic !=
+            DW_CONTEXT_MAGIC ) {
             /* Something is very wrong. */
             line_context = 0;
         } else if (line_context) {
             if (linebuf == line_context->lc_linebuf_logicals) {
                 line_context->lc_linebuf_logicals = 0;
                 line_context->lc_linecount_logicals = 0;
-                alternate_data_count = line_context->lc_linecount_actuals;
+                alternate_data_count =
+                    line_context->lc_linecount_actuals;
                 /* Ok to delete logicals */
             } else if (linebuf == line_context->lc_linebuf_actuals) {
                 /* Ok to delete actuals */
                 line_context->lc_linebuf_actuals = 0;
                 line_context->lc_linecount_actuals = 0;
-                alternate_data_count = line_context->lc_linecount_logicals;
+                alternate_data_count =
+                    line_context->lc_linecount_logicals;
             } else {
                 /* Something is wrong very wrong. */
                 return;
@@ -1902,10 +1915,10 @@ dwarf_srclines_dealloc_b(Dwarf_Line_Context line_context)
     Dwarf_Signed i = 0;
     Dwarf_Debug dbg = 0;
 
-    if(!line_context) {
+    if (!line_context) {
         return;
     }
-    if(line_context->lc_magic != DW_CONTEXT_MAGIC) {
+    if (line_context->lc_magic != DW_CONTEXT_MAGIC) {
         /* Something is wrong. */
         return; }
     dbg = line_context->lc_dbg;
@@ -2020,7 +2033,8 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         secstart = dbg->de_debug_line_str.dss_data;
         secend = secstart + dbg->de_debug_line_str.dss_size;
 
-        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,offsetptr, offset_size,
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            offsetptr, offset_size,
             error,line_ptr_end);
         *line_ptr += offset_size;
         strptr = secstart + offset;
@@ -2126,10 +2140,12 @@ _dwarf_add_to_files_list(Dwarf_Line_Context context,
         for DWARF2,3,4 vs DWARF5 */
     if (version == DW_LINE_VERSION5) {
         context->lc_file_entry_baseindex = 0;
-        context->lc_file_entry_endindex = context->lc_file_entry_count;
+        context->lc_file_entry_endindex =
+        context->lc_file_entry_count;
     } else {
         context->lc_file_entry_baseindex = 1;
-        context->lc_file_entry_endindex = context->lc_file_entry_count +1;
+        context->lc_file_entry_endindex =
+            context->lc_file_entry_count +1;
     }
     return DW_DLV_OK;
 }

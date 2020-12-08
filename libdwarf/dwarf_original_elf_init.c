@@ -189,7 +189,8 @@ _dwarf_elf_setup(
     Dwarf_Error *error)
 {
 #ifndef DWARF_WITH_LIBELF
-    DWARF_DBG_ERROR(NULL, DW_DLE_PRODUCER_CODE_NOT_AVAILABLE, DW_DLV_ERROR);
+    DWARF_DBG_ERROR(NULL, DW_DLE_PRODUCER_CODE_NOT_AVAILABLE,
+        DW_DLV_ERROR);
 #else /* DWARF_WITH_LIBELF */
     Elf_Cmd what_kind_of_elf_read = ELF_C_READ;
     Dwarf_Obj_Access_Interface *binary_interface = 0;

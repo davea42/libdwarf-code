@@ -44,11 +44,11 @@ free_aranges_chain(Dwarf_Debug dbg, Dwarf_Chain head)
     Dwarf_Chain cur = head;
     Dwarf_Chain next = 0;
 
-    if(!head) {
+    if (!head) {
         return;
     }
     next = head->ch_next;
-    for( ;cur; cur = next) {
+    for ( ;cur; cur = next) {
         void *item = cur->ch_item;
         int  type = cur->ch_itemtype;
 
@@ -76,7 +76,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Small *arange_ptr = 0;
     Dwarf_Small *arange_ptr_start = 0;
 
-    /*  Start of arange header.  Used for rounding offset of arange_ptr
+    /*  Start of arange header.
+        Used for rounding offset of arange_ptr
         to twice the tuple size.  Libdwarf requirement. */
     Dwarf_Small *header_ptr = 0;
 
@@ -235,16 +236,16 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
-
-        /* Code below will check for == end_this_arange as appropriate. */
+        /*  Code below will check for == end_this_arange
+            as appropriate. */
         if (arange_ptr > end_this_arange) {
             free_aranges_chain(dbg,head_chain);
             _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }
-
         range_entry_size = 2*address_size + segment_size;
-        /* Round arange_ptr offset to next multiple of address_size. */
+        /*  Round arange_ptr offset to next multiple of
+            address_size. */
         remainder = (Dwarf_Unsigned) (arange_ptr - header_ptr) %
             (range_entry_size);
         if (remainder != 0) {
@@ -339,8 +340,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 There can be multiple sets in that DWARF
                 does not explicitly forbid multiple sets.
                 DWARF2,3,4 section 7.20
-                We stop short to avoid overrun of the end of the CU.  */
-
+                We stop short to avoid overrun of the
+                end of the CU.  */
         } while (end_this_arange >= (arange_ptr + range_entry_size));
 
         /*  A compiler could emit some padding bytes here. dwarf2/3

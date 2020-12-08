@@ -618,7 +618,8 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             }
             loc_ptr += length;
             if (loc_ptr > section_end) {
-                _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+                _dwarf_error(dbg,error,
+                    DW_DLE_LOCEXPR_OFF_SECTION_END);
                 return DW_DLV_ERROR;
             }
             offset  += length;

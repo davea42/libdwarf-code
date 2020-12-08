@@ -329,7 +329,8 @@ dwarf_uncompress_integer_block(
     }
 
     if (remain != 0) {
-        dwarf_dealloc(dbg, (unsigned char *)output_block, DW_DLA_STRING);
+        dwarf_dealloc(dbg, (unsigned char *)output_block,
+            DW_DLA_STRING);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return((Dwarf_P_Attribute)DW_DLV_BADADDR);
     }
@@ -588,7 +589,8 @@ dwarf_formref(Dwarf_Attribute attr,
             DW_AT_sibling != attr->ar_attribute &&
             offset > maximumoffset) {
             _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_OFFSET_BAD);
-            /* Return the incorrect offset for better error reporting */
+            /*  Return the incorrect offset for better
+                error reporting */
             *ret_offset = (offset);
             return DW_DLV_ERROR;
         }
@@ -801,7 +803,8 @@ dwarf_global_formref(Dwarf_Attribute attr,
                     attr->ar_debug_ptr, DWARF_64BIT_SIZE,
                     error,section_end);
             } else {
-                _dwarf_error(dbg, error, DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
+                _dwarf_error(dbg, error,
+                    DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
                 return (DW_DLV_ERROR);
             }
         }
@@ -837,7 +840,8 @@ dwarf_global_formref(Dwarf_Attribute attr,
                     attr->ar_debug_ptr, DWARF_64BIT_SIZE,
                     error,section_end);
             } else {
-                _dwarf_error(dbg, error, DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
+                _dwarf_error(dbg, error,
+                    DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
                 return (DW_DLV_ERROR);
             }
         }
@@ -1143,10 +1147,12 @@ dwarf_formaddr(Dwarf_Attribute attr,
     if (attrform == DW_FORM_addr
         /*  || attrform == DW_FORM_ref_addr Allowance of
             DW_FORM_ref_addr was a mistake. The value returned in that
-            case is NOT an address it is a global debug_info offset (ie,
-            not CU-relative offset within the CU in debug_info). The
-            DWARF2 document refers to it as an address (misleadingly) in
-            sec 6.5.4 where it describes the reference form. It is
+            case is NOT an address it is a global debug_info
+            offset (ie, not CU-relative offset within the CU
+            in debug_info).
+            The DWARF2 document refers to it as an address
+            (misleadingly) in sec 6.5.4 where it describes
+            the reference form. It is
             address-sized so that the linker can easily update it, but
             it is a reference inside the debug_info section. No longer
             allowed. */
@@ -1701,8 +1707,9 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
         const char *errname = 0;
         int res = 0;
 
-        if(attrform == DW_FORM_line_strp) {
-            res = _dwarf_load_section(dbg, &dbg->de_debug_line_str,error);
+        if (attrform == DW_FORM_line_strp) {
+            res = _dwarf_load_section(dbg,
+                &dbg->de_debug_line_str,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
@@ -1833,9 +1840,11 @@ dwarf_formstring(Dwarf_Attribute attr,
         res = _dwarf_get_string_from_tied(dbg, soffset,
             return_str, &alterr);
         if (res == DW_DLV_ERROR) {
-            if (dwarf_errno(alterr) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
+            if (dwarf_errno(alterr) ==
+                DW_DLE_NO_TIED_FILE_AVAILABLE) {
                 dwarf_dealloc(dbg,alterr,DW_DLA_ERROR);
-                if( attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
+                if ( attr->ar_attribute_form ==
+                    DW_FORM_GNU_strp_alt) {
                     *return_str =
                         (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
                 } else {
@@ -1850,7 +1859,7 @@ dwarf_formstring(Dwarf_Attribute attr,
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-            if( attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
+            if ( attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
                 *return_str =
                     (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
             }else {
@@ -1924,7 +1933,8 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         return  DW_DLV_ERROR;
     }
     /* The 'offset' into .debug_str is set. */
-    res = _dwarf_load_section(tieddbg, &tieddbg->de_debug_str,&localerror);
+    res = _dwarf_load_section(tieddbg, &tieddbg->de_debug_str,
+        &localerror);
     if (res == DW_DLV_ERROR) {
         Dwarf_Unsigned lerrno = dwarf_errno(localerror);
         dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);

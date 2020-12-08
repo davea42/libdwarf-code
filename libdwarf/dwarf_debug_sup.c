@@ -102,7 +102,8 @@ dwarf_get_debug_sup(Dwarf_Debug dbg,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m, "DW_DLE_DEBUG_SUP_ERROR: "
-            ".debug_sup section size 0x%x bigger than file size! Corrupt",
+            ".debug_sup section size 0x%x bigger than file "
+            "size! Corrupt",
             size);
         _dwarf_error_string(dbg,error,
             DW_DLE_DEBUG_SUP_ERROR,
@@ -177,16 +178,16 @@ dwarf_get_debug_sup(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     checksum_ptr = data;
-    if(version_out) {
+    if (version_out) {
         *version_out = version;
     }
-    if(is_supp) {
+    if (is_supp) {
         *is_supplementary_out = is_supp;
     }
-    if(filename_out) {
+    if (filename_out) {
         *filename_out = filename;
     }
-    if(checksum_len_out) {
+    if (checksum_len_out) {
         *checksum_len_out = checksum_len;
     }
     if (checksum_out) {

@@ -129,7 +129,7 @@ insone(void**tree,unsigned long instance, unsigned ct)
     entry = makeentry(instance, ct);
     retval = dwarf_tsearch(entry,tree, _dwarf_tied_compare_function);
 
-    if(retval == 0) {
+    if (!retval) {
         printf("FAIL ENOMEM in search on rec %u adr  0x%lu,"
             " error in insone\n",
             ct,(unsigned long)instance);
@@ -137,7 +137,7 @@ insone(void**tree,unsigned long instance, unsigned ct)
     } else {
         struct Dwarf_Tied_Entry_s *re = 0;
         re = *(struct Dwarf_Tied_Entry_s **)retval;
-        if(re != entry) {
+        if (re != entry) {
             /* Found existing, error. */
             printf("insertone rec %u addr 0x%lu found record"
                 " preexisting, error\n",
@@ -151,7 +151,7 @@ insone(void**tree,unsigned long instance, unsigned ct)
             retval = dwarf_tfind(entry2,tree,
                 _dwarf_tied_compare_function);
             _dwarf_tied_destroy_free_node(entry2);
-            if(!retval) {
+            if (!retval) {
                 printf("insertonebypointer record %d addr 0x%lu "
                     "failed to add as desired,"
                     " error\n",

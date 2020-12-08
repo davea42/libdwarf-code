@@ -62,12 +62,12 @@
 
 struct mc_data_s {
     struct mc_data_s *mc_prev;
-    unsigned long mc_address;   /* Assumes this is large enough to hold
-        a pointer! */
+    unsigned long mc_address; /* Assumes this is large
+        enough to hold a pointer! */
 
-    long mc_alloc_number;       /* Assigned in order by when record
+    long mc_alloc_number; /* Assigned in order by when record
         created. */
-    unsigned char mc_alloc_code;        /* Allocation code, libdwarf. */
+    unsigned char mc_alloc_code;   /* Allocation code, libdwarf. */
     unsigned char mc_type;
     unsigned char mc_dealloc_noted;     /* Used on an ALLOC node. */
     unsigned char mc_dealloc_noted_count;       /* Used on an ALLOC
@@ -251,8 +251,8 @@ dwarf_malloc_check_dealloc_data(void *addr_in, unsigned char code)
     newd->mc_alloc_code = code;
     newd->mc_type = MC_TYPE_DEALLOC;
     newd->mc_prev = *base;
-    prev =
-        balanced_by_alloc_p(newd, &addr_match_num, &addr_match, *base);
+    prev = balanced_by_alloc_p(newd, &addr_match_num,
+        &addr_match, *base);
     if (prev < 0) {
         fprintf(stderr,
             "Unbalanced dealloc at index %ld\n", mc_data_list_size);

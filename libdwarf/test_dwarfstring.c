@@ -47,7 +47,7 @@ static void
 check_string(const char *msg,char *exp,
     char *actual,int line)
 {
-    if(!strcmp(exp,actual)) {
+    if (!strcmp(exp,actual)) {
         printf("PASS got \"%s\" line %d\n",exp,line);
         return;
     }
@@ -59,7 +59,7 @@ static void
 check_value_i(const char *msg,unsigned long exp,
     unsigned long actual,int line)
 {
-    if(exp == actual) {
+    if (exp == actual) {
         return;
     }
     printf("FAIL %s expected %lu got %lu test line %d\n",
@@ -72,7 +72,7 @@ static void
 check_value(const char *msg,unsigned long exp,
     unsigned long actual,int line)
 {
-    if(exp == actual) {
+    if (exp == actual) {
         return;
     }
     printf("FAIL %s return expected %lu got %lu test line %d\n",
@@ -100,10 +100,12 @@ test1(int tnum)
     d = dwarfstring_string(&g);
     check_string("expected empty string",(char *)expstr,d,__LINE__);
 
-    /* caller coding error here, works  no % but we call it TRUE anyway */
+    /*  Caller coding error here, works no % but we call
+        it TRUE anyway */
     res = dwarfstring_append_printf_i(&g,"\nabc\n",54);
     check_value_i("expected TRUE  ",TRUE,res,__LINE__);
-    check_string("expected ",(char *)"\nabc\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",(char *)"\nabc\n",
+        dwarfstring_string(&g),__LINE__);
 
     dwarfstring_reset(&g);
     res = dwarfstring_append_printf_s(&g,"x%-15sy",mediumstr);
@@ -114,43 +116,50 @@ test1(int tnum)
     dwarfstring_reset(&g);
     res = dwarfstring_append_printf_i(&g,"\nabc%d\n",54);
     check_value("expected TRUE  ",TRUE,res,__LINE__);
-    check_string("expected ",(char *)"\nabc54\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",(char *)"\nabc54\n",
+        dwarfstring_string(&g),__LINE__);
     dwarfstring_reset(&g);
 
     res = dwarfstring_append_printf_i(&g,"\nabc%d\n",54);
     check_value("expected TRUE  ",TRUE,res,__LINE__);
-    check_string("expected ",(char *)"\nabc54\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",(char *)"\nabc54\n",
+        dwarfstring_string(&g),__LINE__);
 
     dwarfstring_destructor(&g);
     dwarfstring_constructor(&g);
 
     res = dwarfstring_append_printf_i(&g,"\nabc%lld\n",-54);
     check_value("expected ok  ",TRUE,res,__LINE__);
-    check_string("expected ",(char *)"\nabc-54\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",(char *)"\nabc-54\n",
+        dwarfstring_string(&g),__LINE__);
     dwarfstring_reset(&g);
 
     /* in this call a %x is not allowed */
     res = dwarfstring_append_printf_i(&g,"\nabc%x\n",-54);
     check_value("expected error  ",FALSE,res,__LINE__);
     check_string("expected ",
-        (char *)"\nabc<ERROR: format %x or %X passed to dwarfstring_append_printf_i>%x\n",
+        (char *)"\nabc<ERROR: format %x or %X passed to "
+        "dwarfstring_append_printf_i>%x\n",
         dwarfstring_string(&g),__LINE__);
     dwarfstring_reset(&g);
 
     res = dwarfstring_append_printf_u(&g,"\nabc%x\n",-54);
     check_value("expected error  ",FALSE,res,__LINE__);
-    check_string("expected ",(char *)"\nabcffffffffffffffca\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",(char *)"\nabcffffffffffffffca\n",
+        dwarfstring_string(&g),__LINE__);
     dwarfstring_reset(&g);
 
     res = dwarfstring_append_printf_u(&g,"\nabc 0x%x\n",-54);
     check_value("expected error  ",FALSE,res,__LINE__);
-    check_string("expected ",(char *)"\nabc 0xffffffffffffffca\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",(char *)"\nabc 0xffffffffffffffca\n",
+        dwarfstring_string(&g),__LINE__);
     dwarfstring_reset(&g);
 
 #if 0
     res = dwarfstring_append_printf_i(&g,"\nabc%x\n",-54);
     check_value("expected error  ",FALSE,res,__LINE__);
-    check_string("expected ",(char *)"\nabc0xffffffffffffffca\n",dwarfstring_string(&g),__LINE__);
+    check_string("expected ",(char *)"\nabc0xffffffffffffffca\n",
+        dwarfstring_string(&g),__LINE__);
     dwarfstring_reset(&g);
 #endif
 

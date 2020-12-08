@@ -78,7 +78,8 @@
         unsigned sbyte = 0;                 \
         char *p = 0;                        \
         if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            _dwarf_p_error(dbg, error,      \
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
             return DW_DLV_ERROR;            \
         }                                   \
         sbyte = sizeof(s) - l;              \
@@ -90,7 +91,8 @@
     do {                                    \
         const char *p = 0;                  \
         if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            _dwarf_p_error(dbg, error,      \
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
             return DW_DLV_ERROR;            \
         }                                   \
         p = (const char *)(&s);             \
@@ -535,7 +537,8 @@ dwarf_dealloc_compressed_block(Dwarf_P_Debug dbg, void * space)
     _dwarf_p_dealloc(dbg, space);
 }
 
-/*  This is very similar to targ_address but results in a different FORM */
+/*  This is very similar to targ_address but results
+    in a different FORM */
 /*  dbg->de_ar_data_attribute_form is data4 or data8
     and dwarf4 changes the definition for such on DW_AT_high_pc.
     DWARF 3: the FORM here has no defined meaning for dwarf3.
@@ -642,8 +645,8 @@ dwarf_add_AT_block_a(
         return DW_DLV_ERROR;
     }
 
-    /* I don't mess with block1, block2, block4, not worth the effort */
-
+    /*  I don't mess with block1, block2, block4,
+        not worth the effort */
     /* So, encode the length into LEB128 */
     result = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
         encode_buffer,sizeof(encode_buffer));
@@ -803,7 +806,10 @@ dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug dbg,
     new_attr->ar_attribute = attr;
     new_attr->ar_attribute_form = attr_form;
     new_attr->ar_rel_type = R_MIPS_NONE;
-    new_attr->ar_reloc_len = 0; /* irrelevant: unused with R_MIPS_NONE */
+
+    /* irrelevant: unused with R_MIPS_NONE */
+    new_attr->ar_reloc_len = 0;
+
     new_attr->ar_nbytes = size;
     new_attr->ar_next = 0;
 
@@ -839,7 +845,7 @@ dwarf_add_AT_signed_const(Dwarf_P_Debug dbg,
 
     res = dwarf_add_AT_signed_const_a(dbg,
         ownerdie,attr,value,&a,error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     return a;
@@ -914,7 +920,10 @@ dwarf_add_AT_signed_const_a(Dwarf_P_Debug dbg,
     new_attr->ar_attribute = attr;
     new_attr->ar_attribute_form = attr_form;
     new_attr->ar_rel_type = R_MIPS_NONE;
-    new_attr->ar_reloc_len = 0; /* irrelevant: unused with R_MIPS_NONE */
+
+    /* irrelevant: unused with R_MIPS_NONE */
+    new_attr->ar_reloc_len = 0;
+
     new_attr->ar_nbytes = size;
     new_attr->ar_next = 0;
 
@@ -1080,7 +1089,8 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
     }
 
     if (do_len_as_int) {
-        WRITE_UNALIGNED(dbg, block_dest_ptr, (const void *) &block_size,
+        WRITE_UNALIGNED(dbg, block_dest_ptr,
+            (const void *) &block_size,
             sizeof(block_size), len_size);
     } else {
         /* Is uleb number form, DW_FORM_block. See above. */
@@ -1092,7 +1102,8 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
         _dwarf_p_error(dbg, error, DW_DLE_EXPR_LENGTH_BAD);
         return DW_DLV_ERROR;
     }
-    memcpy(block_dest_ptr, &(loc_expr->ex_byte_stream[0]), block_size);
+    memcpy(block_dest_ptr, &(loc_expr->ex_byte_stream[0]),
+        block_size);
 
     /* add attribute to the die */
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
@@ -1286,17 +1297,17 @@ dwarf_fixup_AT_reference_die(Dwarf_P_Debug dbg,
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }
-    for(cur = sourcedie->di_attrs; cur; cur = cur->ar_next) {
+    for (cur = sourcedie->di_attrs; cur; cur = cur->ar_next) {
         if (attrnum == cur->ar_attribute) {
             a = cur;
             break;
         }
     }
-    if(!a) {
+    if (!a) {
         _dwarf_p_error(dbg, error, DW_DLE_AT_FIXUP_NULL);
         return DW_DLV_ERROR;
     }
-    if(a->ar_ref_die) {
+    if (a->ar_ref_die) {
         _dwarf_p_error(dbg, error, DW_DLE_AT_FIXUP_DUP);
         return DW_DLV_ERROR;
     }
@@ -1421,7 +1432,10 @@ dwarf_add_AT_string_a(Dwarf_P_Debug dbg,
     /* See also: pro_section.c for same strings attribute list. */
     case DW_AT_comp_dir:
     case DW_AT_const_value:
-    case DW_AT_linkage_name:/* DWARF5, but ok for any version really.*/
+
+    /* DWARF5, but ok for any version really.*/
+    case DW_AT_linkage_name:
+
     case DW_AT_MIPS_abstract_name:
     case DW_AT_MIPS_linkage_name:
     case DW_AT_name:

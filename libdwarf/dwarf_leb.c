@@ -95,8 +95,9 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
         /* Gets messy to hand-inline more byte checking. */
     }
 
-    /*  The rest handles long numbers Because the 'number' may be larger
-        than the default int/unsigned, we must cast the 'byte' before
+    /*  The rest handles long numbers. Because the 'number'
+        may be larger than the default int/unsigned,
+        we must cast the 'byte' before
         the shift for the shift to have a defined result. */
     number = 0;
     shift = 0;
@@ -118,7 +119,7 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
             /*  Erroneous input.  */
-            if( leb128_length) {
+            if (leb128_length) {
                 *leb128_length = BYTESLEBMAX;
             }
             break;
@@ -136,7 +137,8 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
 #define BITSINBYTE 8
 
 int
-_dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Unsigned * leb128_length,
+_dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
+    Dwarf_Unsigned * leb128_length,
     Dwarf_Signed *outval,Dwarf_Byte_Ptr endptr)
 {
     Dwarf_Unsigned byte   = 0;
@@ -146,7 +148,8 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Unsigned * leb128_length,
     /*  The byte_length value will be a small non-negative integer. */
     unsigned byte_length = 1;
 
-    /*  byte_length being the number of bytes of data absorbed so far in
+    /*  byte_length being the number of bytes
+        of data absorbed so far in
         turning the leb into a Dwarf_Signed. */
     if (!outval) {
         return DW_DLV_ERROR;

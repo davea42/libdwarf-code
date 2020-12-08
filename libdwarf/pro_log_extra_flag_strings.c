@@ -66,7 +66,7 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
         (*(cp+1) == 'x'|| (*(cp+1) == 'X'))) {
         digits += 2;
         cp = digits;
-        for( ; *cp; cp++) {
+        for ( ; *cp; cp++) {
             l = l << 4;
             switch (*cp) {
             case '0':
@@ -123,7 +123,7 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
     }
 
     cp = digits;
-    for( ; *cp; cp++) {
+    for ( ; *cp; cp++) {
         l = l * 10;
         switch (*cp) {
         case '9':
@@ -153,7 +153,9 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
 }
 
 static int
-update_named_field(Dwarf_P_Debug dbg, dwarfstring *cmsname,dwarfstring *cmsvalue,
+update_named_field(Dwarf_P_Debug dbg,
+    dwarfstring *cmsname,
+    dwarfstring *cmsvalue,
     int *err)
 {
     char *name = dwarfstring_string(cmsname);
@@ -174,9 +176,11 @@ update_named_field(Dwarf_P_Debug dbg, dwarfstring *cmsname,dwarfstring *cmsvalue
     if (!strcmp(name,"default_is_stmt")) {
         dbg->de_line_inits.pi_default_is_stmt = (unsigned)v;
     } else if (!strcmp(name,"minimum_instruction_length")) {
-        dbg->de_line_inits.pi_minimum_instruction_length = (unsigned)v;
+        dbg->de_line_inits.pi_minimum_instruction_length =
+        (unsigned)v;
     } else if (!strcmp(name,"maximum_operations_per_instruction")) {
-        dbg->de_line_inits.pi_maximum_operations_per_instruction = (unsigned)v;
+        dbg->de_line_inits.pi_maximum_operations_per_instruction =
+            (unsigned)v;
     } else if (!strcmp(name,"opcode_base")) {
         dbg->de_line_inits.pi_opcode_base = (unsigned)v;
     } else if (!strcmp(name,"line_base")) {
@@ -230,7 +234,8 @@ update_named_value(Dwarf_P_Debug dbg, dwarfstring*cms,
         dwarfstring_destructor(&cmsname);
         dwarfstring_destructor(&cmsvalue);
 #ifdef TESTING
-        printf("ERROR due to  trailing spaces before = in \"%s\", line %d %s\n",
+        printf("ERROR due to  trailing spaces before = "
+            "in \"%s\", line %d %s\n",
             cp,__LINE__,__FILE__);
 #endif
         *err = DW_DLE_PRO_INIT_EXTRAS_ERR;
@@ -259,7 +264,7 @@ static int
 find_next_comma(const char *base,const char **nextcomma)
 {
     const char *cp = base;
-    for( ; *cp ; ++cp) {
+    for ( ; *cp ; ++cp) {
         if (*cp == ',') {
             *nextcomma = cp;
             return DW_DLV_OK;

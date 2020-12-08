@@ -203,7 +203,8 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
         total_size = ct * len;
         sec_index = prb->pr_sect_num_of_reloc_sect;
         if (sec_index == 0) {
-            /*  Call de_callback_func or de_callback_func_b or _c, getting
+            /*  Call de_callback_func or de_callback_func_b
+                or _c, getting
                 section number of reloc section. */
             int rel_section_index = 0;
             Dwarf_Unsigned name_idx = 0;
@@ -239,7 +240,8 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
         /*  Following loop executes at least once. Effects the
             consolidation to a single block or, if already a single
             block, simply copies to the output buffer. And frees the
-            input block. The new block is in the de_debug_sects list. */
+            input block. The new block is in the
+            de_debug_sects list. */
         while (p_blk) {
             unsigned long lenk =
                 p_blk->rb_where_to_add_next - p_blk->rb_data;

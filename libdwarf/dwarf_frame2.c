@@ -683,7 +683,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     if ((frame_ptr+2) >= section_ptr_end) {
         _dwarf_error_string(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD,
-            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: reading an augmentation" 
+            "DW_DLE_DEBUG_FRAME_LENGTH_BAD: reading an augmentation"
             " would run off"
             " the end of the section.  Corrupt Dwarf");
         return DW_DLV_ERROR;
@@ -695,7 +695,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         dwarfstring_append_printf_u(&m,
             "DW_DLE_FRAME_VERSION_BAD: cie version %u unknown",
             version);
-        _dwarf_error_string(dbg, error, 
+        _dwarf_error_string(dbg, error,
             DW_DLE_FRAME_VERSION_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);

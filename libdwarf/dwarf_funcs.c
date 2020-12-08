@@ -40,7 +40,8 @@ dwarf_get_funcs(Dwarf_Debug dbg,
     Dwarf_Func ** funcs,
     Dwarf_Signed * ret_func_count, Dwarf_Error * error)
 {
-    int res = _dwarf_load_section(dbg, &dbg->de_debug_funcnames,error);
+    int res = _dwarf_load_section(dbg, &dbg->de_debug_funcnames,
+        error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -53,7 +54,10 @@ dwarf_get_funcs(Dwarf_Debug dbg,
         ".debug_funcnames",
         dbg->de_debug_funcnames.dss_data,
         dbg->de_debug_funcnames.dss_size,
-        (Dwarf_Global **) funcs, /* Type punning for sections with identical format. */
+
+        /* Type punning for sections with identical format. */
+        (Dwarf_Global **) funcs,
+
         ret_func_count,
         error,
         DW_DLA_FUNC_CONTEXT,
@@ -79,7 +83,9 @@ dwarf_funcs_dealloc(Dwarf_Debug dbg, Dwarf_Func * dwgl,
 
 
 int
-dwarf_funcname(Dwarf_Func func_in, char **ret_name, Dwarf_Error * error)
+dwarf_funcname(Dwarf_Func func_in,
+    char **ret_name,
+    Dwarf_Error * error)
 {
     Dwarf_Global func = (Dwarf_Global) func_in;
 

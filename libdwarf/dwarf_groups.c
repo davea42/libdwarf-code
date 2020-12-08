@@ -67,7 +67,7 @@ grp_make_entry(unsigned section, unsigned group,const char *name)
 {
     struct Dwarf_Group_Map_Entry_s *e = 0;
     e = calloc(1,sizeof(struct Dwarf_Group_Map_Entry_s));
-    if(e) {
+    if (e) {
         e->gm_key =    section;
         e->gm_group_number = group;
         e->gm_section_name = name;
@@ -265,7 +265,7 @@ int dwarf_sec_group_map(Dwarf_Debug dbg,
     Dwarf_Unsigned i = 0;
     struct Dwarf_Group_Data_s *grp = 0;
 
-    if(temp_map_data) {
+    if (temp_map_data) {
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
     }
@@ -275,8 +275,9 @@ int dwarf_sec_group_map(Dwarf_Debug dbg,
         _dwarf_error(dbg,error,DW_DLE_GROUP_COUNT_ERROR);
         return DW_DLV_ERROR;
     }
-    temp_map_data = calloc(map_entry_count,sizeof(struct temp_map_struc_s));
-    if(!temp_map_data) {
+    temp_map_data = calloc(map_entry_count,
+        sizeof(struct temp_map_struc_s));
+    if (!temp_map_data) {
         _dwarf_error(dbg,error,DW_DLE_GROUP_MAP_ALLOC);
         return DW_DLV_ERROR;
     }
@@ -328,7 +329,7 @@ _dwarf_dwo_groupnumber_given_name(
     const char **s = 0;
 
     for (s = dwo_secnames; *s; s++) {
-        if(!strcmp(name,*s)) {
+        if (!strcmp(name,*s)) {
             *grpnum_out = DW_GROUPNUMBER_DWO;
             return DW_DLV_OK;
         }
@@ -352,7 +353,7 @@ grp_walk_for_name(const void *nodep,
         return;
     }
     if (re->gm_group_number == target_group) {
-        if(!strcmp(lookfor_name,re->gm_section_name)) {
+        if (!strcmp(lookfor_name,re->gm_section_name)) {
             found_name_in_group = TRUE;
         }
     }
@@ -386,6 +387,7 @@ _dwarf_grp_destroy_free_node(void*nodep)
 void
 _dwarf_destroy_group_map(Dwarf_Debug dbg)
 {
-    dwarf_tdestroy(dbg->de_groupnumbers.gd_map,_dwarf_grp_destroy_free_node);
+    dwarf_tdestroy(dbg->de_groupnumbers.gd_map,
+        _dwarf_grp_destroy_free_node);
     dbg->de_groupnumbers.gd_map = 0;
 }

@@ -140,7 +140,8 @@ signedtest(unsigned len)
             ++errcnt;
         }
         if (stest[t] != decodeval) {
-            printf("FAIL signed decode val index %u val 0x%llx vs 0x%llx\n",
+            printf("FAIL signed decode val index %u "
+                "val 0x%llx vs 0x%llx\n",
                 t,stest[t],decodeval);
             ++errcnt;
         }
@@ -184,7 +185,8 @@ unsignedtest(unsigned len)
             ++errcnt;
         }
         if (utest[t] != decodeval) {
-            printf("FAIL signed decode val index %u val 0x%llx vs 0x%llx\n",
+            printf("FAIL signed decode val index %u "
+                "val 0x%llx vs 0x%llx\n",
                 t,utest[t],decodeval);
             ++errcnt;
         }
@@ -223,10 +225,12 @@ static unsigned char v3[] = {
 
 /*  This warning with --enable-sanitize is fixed
     as of November 11, 2016 when decoding test v4.
-    dwarf_leb.c: runtime error: negation of -9223372036854775808 cannot be
+    dwarf_leb.c: runtime error: negation of
+    -9223372036854775808 cannot be
     represented in type 'Dwarf_Signed' (aka 'long long');
     cast to an unsigned type to negate this value to itself.
-    The actual value here is -4611686018427387904 0xc000000000000000 */
+    The actual value here is
+    -4611686018427387904 0xc000000000000000 */
 static unsigned char v4[] = {
 0x80, 0x80, 0x80,
 0x80, 0x80, 0x80,
@@ -299,7 +303,8 @@ specialtests(void)
     }
     if ((Dwarf_Unsigned)decodeval !=
         (Dwarf_Unsigned)0x8000000000000000) {
-        printf("FAIL signed decode special v3 value check %lld vs %lld \n",
+        printf("FAIL signed decode special v3 value check %lld "
+            "vs %lld \n",
             decodeval,(Dwarf_Signed)0x8000000000000000);
         ++errcnt;
     }
@@ -315,9 +320,11 @@ specialtests(void)
         ++errcnt;
     }
     if (decodeval != -4611686018427387904) {
-        printf("FAIL signed decode special v4 value check %lld vs %lld \n",
+        printf("FAIL signed decode special v4 value check %lld "
+            "vs %lld \n",
             decodeval,-4611686018427387904LL);
-        printf("FAIL signed decode special v4 value check 0x%llx vs 0x%llx \n",
+        printf("FAIL signed decode special v4 value check 0x%llx "
+            "vs 0x%llx \n",
             decodeval,-4611686018427387904LL);
         ++errcnt;
     }

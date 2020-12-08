@@ -72,7 +72,8 @@ resetdbg(Dwarf_P_Debug dbg)
 "segment_size"
 dbg->de_line_inits.pi_default_is_stmt = (unsigned)v;
 dbg->de_line_inits.pi_minimum_instruction_length = (unsigned)v;
-dbg->de_line_inits.pi_maximum_operations_per_instruction = (unsigned)v;
+dbg->de_line_inits.pi_maximum_operations_per_instruction =
+    (unsigned)v;
 dbg->de_line_inits.pi_opcode_base = (unsigned)v;
 dbg->de_line_inits.pi_line_base = (int)v;
 dbg->de_line_inits.pi_line_range = (int)v;
@@ -107,7 +108,8 @@ check_expected(int exp, int got, int err_exp, int err_got,
     }
     if ( exp_val != got_val) {
         ++errcount;
-        printf("Expected value %" DW_PR_DSd ", got %" DW_PR_DSd " line %d\n",
+        printf("Expected value %" DW_PR_DSd ", got %"
+            DW_PR_DSd " line %d\n",
             exp_val,got_val,line);
     }
 }
@@ -119,7 +121,8 @@ test1(Dwarf_P_Debug dbg)
     int err = 0;
 
     res = _dwarf_log_extra_flagstrings(dbg,"default_is_stmt=1",&err);
-    check_expected(DW_DLV_OK,res,0,err,1,dbg->de_line_inits.pi_default_is_stmt,
+    check_expected(DW_DLV_OK,res,0,err,1,
+        dbg->de_line_inits.pi_default_is_stmt,
         __LINE__);
 
     err = 0;
@@ -134,19 +137,23 @@ test1(Dwarf_P_Debug dbg)
     err = 0;
     resetdbg(dbg);
     res = _dwarf_log_extra_flagstrings(dbg,",line_base=-1,",&err);
-    check_expected(DW_DLV_OK,res,0,err,-1,dbg->de_line_inits.pi_line_base,
+    check_expected(DW_DLV_OK,res,0,err,-1,
+        dbg->de_line_inits.pi_line_base,
         __LINE__);
 
     err = 0;
     resetdbg(dbg);
     res = _dwarf_log_extra_flagstrings(dbg,",,line_base=-1,,",&err);
-    check_expected(DW_DLV_OK,res,0,err,-1,dbg->de_line_inits.pi_line_base,
+    check_expected(DW_DLV_OK,res,0,err,-1,
+        dbg->de_line_inits.pi_line_base,
         __LINE__);
 
     resetdbg(dbg);
     err = 0;
     res = _dwarf_log_extra_flagstrings(dbg,",,line_base =-1,,",&err);
-    check_expected(DW_DLV_ERROR,res,err,DW_DLE_PRO_INIT_EXTRAS_ERR,dbg->de_line_inits.pi_line_base,0,
+    check_expected(DW_DLV_ERROR,res,err,
+        DW_DLE_PRO_INIT_EXTRAS_ERR,
+        dbg->de_line_inits.pi_line_base,0,
         __LINE__);
 
 }

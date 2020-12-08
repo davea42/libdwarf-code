@@ -32,7 +32,7 @@
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif  /* HAVE_STDLIB_H */
+#endif /* HAVE_STDLIB_H */
 #include <time.h>
 
 #include "dwarf_incl.h"
@@ -72,22 +72,32 @@ _dwarf_printf(dbg,
 } else {
 _dwarf_printf(dbg,"\nLogicals Table\n");
 _dwarf_printf(dbg,
-"                                                                              s pe\n"
-"                                                                              tirp\n"
-"                                                                              msoi\n"
-" section          op                                                          tall\n"
-" offset      row  code                address/indx fil lne col disc cntx subp ????\n");
+"                                                        "
+    "                      s pe\n"
+"                                                        "
+    "                      tirp\n"
+"                                                        "
+    "                      msoi\n"
+" section          op                                    "
+    "                      tall\n"
+" offset      row  code                address/indx fil l"
+    "ne col disc cntx subp ????\n");
     return;
 }
 }
 
 /* Single level table */
 _dwarf_printf(dbg,
-"                                                         s b e p e i d\n"
-"                                                         t l s r p s i\n"
-"                                                         m c e o i a s\n"
-" section    op                                       col t k q l l   c\n"
-" offset     code               address     file line umn ? ? ? ? ?\n");
+"                                                         "
+    "s b e p e i d\n"
+"                                                         "
+    "t l s r p s i\n"
+"                                                         "
+    "m c e o i a s\n"
+" section    op                                       col "
+    "t k q l l   c\n"
+" offset     code               address     file line umn ? ? ? ? ?\n"
+);
 } /* End of function with ugly indenting. */
 
 static void
@@ -103,7 +113,7 @@ print_line_detail(
 
     dwarfstring_constructor_static(&m1,locallinebuf,
         sizeof(locallinebuf));
-    if(!is_single_table && is_actuals_table) {
+    if (!is_single_table && is_actuals_table) {
         dwarfstring_append_printf_s(&m1,"%-15s ",(char *)prefix);
         dwarfstring_append_printf_i(&m1,"%3d ",opcode);
         dwarfstring_append_printf_u(&m1,"0x%" DW_PR_XZEROS DW_PR_DUx,
@@ -119,7 +129,7 @@ print_line_detail(
         dwarfstring_destructor(&m1);
         return;
     }
-    if(!is_single_table && !is_actuals_table) {
+    if (!is_single_table && !is_actuals_table) {
         dwarfstring_append_printf_i(&m1,
             "[%3d] "  /* row number */, curr_line);
         dwarfstring_append_printf_s(&m1,
@@ -274,7 +284,7 @@ print_include_directory_details(Dwarf_Debug dbg,
             "  include directories count %d\n",
             (int) line_context->lc_include_directories_count);
     } else {
-        if(!line_context->lc_include_directories_count) {
+        if (!line_context->lc_include_directories_count) {
             dwarfstring_append_printf_i(&m4,
                 "  include directories count %d\n",
                 (int) line_context->lc_include_directories_count);
@@ -345,7 +355,7 @@ print_just_file_entry_details(Dwarf_Debug dbg,
                 "  file[%u]  ", fiu);
         }
         /*  DWARF5 can have a null fi_file_name
-            if  the format code in the
+            if the format code in the
             line table header is unknown, such
             as in a corrupt object file. */
         dwarfstring_append_printf_s(&m3,
@@ -619,7 +629,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
         int resfis = _dwarf_get_fission_addition_die(die,
             DW_SECT_LINE,
             &fission_offset,&fission_size,error);
-        if(resfis != DW_DLV_OK) {
+        if (resfis != DW_DLV_OK) {
             dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
             return resfis;
         }

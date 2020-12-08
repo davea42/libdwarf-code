@@ -116,7 +116,7 @@ dwarf_get_endian_copy_function(Dwarf_Debug dbg)
 Dwarf_Bool
 _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
 {
-    if(!dbg) {
+    if (!dbg) {
         return FALSE;
     }
     if (dbg->de_cu_hashindex_data) {
@@ -127,7 +127,7 @@ _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
 Dwarf_Bool
 _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg)
 {
-    if(!dbg) {
+    if (!dbg) {
         return FALSE;
     }
     if (dbg->de_tu_hashindex_data ) {
@@ -140,7 +140,7 @@ _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg)
 Dwarf_Bool
 _dwarf_file_has_debug_fission_index(Dwarf_Debug dbg)
 {
-    if(!dbg) {
+    if (!dbg) {
         return FALSE;
     }
     if (dbg->de_cu_hashindex_data ||
@@ -173,7 +173,8 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
 
 
 int
-_dwarf_internal_get_die_comp_dir(Dwarf_Die die, const char **compdir_out,
+_dwarf_internal_get_die_comp_dir(Dwarf_Die die,
+    const char **compdir_out,
     const char **compname_out,
     Dwarf_Error *error)
 {
@@ -276,7 +277,8 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         if (address_size) {
             *size_out = address_size;
         } else {
-            /* This should never happen, address_size should be set. */
+            /*  This should never happen,
+                address_size should be set. */
             *size_out = dbg->de_pointer_size;
         }
         return DW_DLV_OK;
@@ -287,7 +289,8 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
     /*  DWARF2 was wrong on the size of the attribute for
         DW_FORM_ref_addr.  We assume compilers are using the
-        corrected DWARF3 text (for 32bit pointer target objects pointer and
+        corrected DWARF3 text (for 32bit pointer target
+        objects pointer and
         offsets are the same size anyway).
         It is clear (as of 2014) that for 64bit folks used
         the V2 spec in the way V2 was
@@ -440,14 +443,16 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
             int res = 0;
             Dwarf_Unsigned info_data_len = 0;
 
-            DECODE_LEB128_UWORD_LEN_CK(val_ptr,form_indirect,indir_len,
+            DECODE_LEB128_UWORD_LEN_CK(val_ptr,form_indirect,
+                indir_len,
                 dbg,error,section_end_ptr);
             if (form_indirect == DW_FORM_indirect) {
                 /* We are in big trouble: The true form
                     of DW_FORM_indirect is
                     DW_FORM_indirect? Nonsense. Should
                     never happen. */
-                _dwarf_error(dbg,error,DW_DLE_NESTED_FORM_INDIRECT_ERROR);
+                _dwarf_error(dbg,error,
+                    DW_DLE_NESTED_FORM_INDIRECT_ERROR);
                 return DW_DLV_ERROR;
             }
             /*  If form_indirect  is DW_FORM_implicit_const then
@@ -461,7 +466,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
                 &info_data_len,
                 section_end_ptr,
                 error);
-            if(res != DW_DLV_OK) {
+            if (res != DW_DLV_OK) {
                 return res;
             }
             *size_out = indir_len + info_data_len;
@@ -611,7 +616,7 @@ int
 _dwarf_valid_form_we_know(Dwarf_Unsigned at_form,
     Dwarf_Unsigned at_name)
 {
-    if(at_form == 0 && at_name == 0) {
+    if (at_form == 0 && at_name == 0) {
         return TRUE;
     }
     if (at_name == 0) {
@@ -886,7 +891,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     *highest_known_code = cu_context->cc_highest_known_code;
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
     cu_context->cc_last_abbrev_endptr = end_abbrev_ptr;
-    if(abbrev_code == code) {
+    if (abbrev_code == code) {
         *list_out = inner_list_entry;
         return DW_DLV_OK;
     }
@@ -981,7 +986,9 @@ _dwarf_reference_outside_section(Dwarf_Die die,
   Only 2,4,8 should be lengths passed in.
 */
 void
-_dwarf_memcpy_noswap_bytes(void *s1, const void *s2, unsigned long len)
+_dwarf_memcpy_noswap_bytes(void *s1,
+    const void *s2,
+    unsigned long len)
 {
     memcpy(s1,s2,(size_t)len);
     return;
@@ -1070,28 +1077,28 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
                 DWARF_HALF_SIZE + /* Size of version stamp field. */
                 sizeof(Dwarf_Small)+ /* Size of  unit type field. */
                 sizeof(Dwarf_Small)+ /* Size of address size field. */
-                local_length_size ;  /* Size of abbrev offset field. */
+                local_length_size ; /* Size of abbrev offset field. */
             break;
         case DW_UT_type:
         case DW_UT_split_type:
             final_size = local_extension_size +
-                local_length_size  + /* Size of type unit length field. */
+                local_length_size +/*Size of type unit length field.*/
                 DWARF_HALF_SIZE + /* Size of version stamp field. */
-                sizeof(Dwarf_Small)+ /* Size of unit type field. */
-                sizeof(Dwarf_Small)+ /* Size of address size field. */
-                local_length_size +  /* Size of abbrev offset field. */
-                sizeof(Dwarf_Sig8) + /* Size of type signature field. */
+                sizeof(Dwarf_Small)+ /*Size of unit type field. */
+                sizeof(Dwarf_Small)+ /*Size of address size field. */
+                local_length_size +  /*Size of abbrev offset field. */
+                sizeof(Dwarf_Sig8) + /*Size of type signature field.*/
                 local_length_size; /* Size of type offset field. */
             break;
         case DW_UT_skeleton:
         case DW_UT_split_compile:
             final_size = local_extension_size +
-                local_length_size +   /* Size of unit length field. */
-                DWARF_HALF_SIZE +     /* Size of version stamp field. */
+                local_length_size +  /* Size of unit length field. */
+                DWARF_HALF_SIZE +   /* Size of version stamp field. */
                 sizeof(Dwarf_Small) + /* Size of unit type field. */
-                sizeof(Dwarf_Small) + /* Size of address size field. */
-                local_length_size +   /* Size of abbrev offset field. */
-                sizeof(Dwarf_Sig8);   /* Size of dwo id field. */
+                sizeof(Dwarf_Small)+ /* Size of address size field. */
+                local_length_size + /* Size of abbrev offset field. */
+                sizeof(Dwarf_Sig8); /* Size of dwo id field. */
             break;
         default:
             _dwarf_error(dbg,error,DW_DLE_UNIT_TYPE_NOT_HANDLED);
@@ -1196,7 +1203,7 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
     /*  A Hash Table is an array with tb_table_entry_count struct
         Dwarf_Hash_Table_s entries in the array. */
     unsigned hashnum = 0;
-    if(!hash_table) {
+    if (!hash_table) {
         /*  Not fully set up yet. There is nothing to do. */
         return;
     }
@@ -1269,12 +1276,14 @@ struct  Dwarf_Printf_Callback_Info_s
 dwarf_register_printf_callback( Dwarf_Debug dbg,
     struct  Dwarf_Printf_Callback_Info_s * newvalues)
 {
-    struct  Dwarf_Printf_Callback_Info_s oldval = dbg->de_printf_callback;
+    struct  Dwarf_Printf_Callback_Info_s oldval =
+        dbg->de_printf_callback;
+
     if (!newvalues) {
         return oldval;
     }
-    if( newvalues->dp_buffer_user_provided) {
-        if( oldval.dp_buffer_user_provided) {
+    if ( newvalues->dp_buffer_user_provided) {
+        if ( oldval.dp_buffer_user_provided) {
             /* User continues to control the buffer. */
             dbg->de_printf_callback = *newvalues;
         }else {
@@ -1333,8 +1342,8 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     if (!dbgs || !dbgt) {
         return;
     }
-    if(dbgs == dbgt) {
-        if(errs != errt) {
+    if (dbgs == dbgt) {
+        if (errs != errt) {
             Dwarf_Error ers = *errs;
             *errs = 0;
             *errt = ers;
@@ -1461,7 +1470,7 @@ int  dwarf_add_file_path(
     const char *          file_name,
     Dwarf_Error* error)
 {
-    if(!dbg || !file_name) {
+    if (!dbg || !file_name) {
         /*  Pretty much a disaster. Caller error. */
         _dwarf_error(dbg,error,DW_DLE_NULL_ARGS_DWARF_ADD_PATH);
         return DW_DLV_ERROR;

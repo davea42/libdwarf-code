@@ -193,8 +193,8 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
         if (!localdbg) {
             return DW_DLV_NO_ENTRY;
         }
-        res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,
-            &localerror);
+        res = _dwarf_load_section(localdbg,
+            &localdbg->de_debug_ranges, &localerror);
         if (res == DW_DLV_ERROR) {
             _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
             return res;

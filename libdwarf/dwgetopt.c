@@ -17,24 +17,28 @@
 * are met:
 * 1. Redistributions of source code must retain the above copyright
 *    notice, this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-*    notice, this list of conditions and the following disclaimer in the
-*    documentation and/or other materials provided with the distribution.
-* 3. Neither the name of the University nor the names of its contributors
-*    may be used to endorse or promote products derived from this software
-*    without specific prior written permission.
+* 2. Redistributions in binary form must reproduce the above
+*    copyright notice, this list of conditions and the following
+*    disclaimer in the documentation and/or other materials
+*    provided with the distribution.
+* 3. Neither the name of the University nor the names of its
+*    contributors may be used to endorse or promote products
+*    derived from this software without specific prior written
+*    permission.
 *
-* THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
-* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-* OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-* SUCH DAMAGE.
+* THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT
+* SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+* OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*  This does not presently handle the option string
@@ -44,15 +48,15 @@
     It does know of the leading ":" in the option string.
     See BADCH below.
     */
+
 #include "config.h"
 #include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_STRING_H
-#include <string.h> /* For strchr */
+#include <string.h> /* for strchr etc */
 #endif /* HAVE_STRING_H */
-
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #include "dwgetopt.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))
@@ -99,11 +103,11 @@ dwoptnamematches(
 {
 
     const char *eq = 0;
-    size_t namelen = 0;
-    size_t arglen = 0;
+    unsigned namelen = 0;
+    unsigned arglen = 0;
     int d = 0;
 
-    for(eq = iplace; *eq; ++eq) {
+    for (eq = iplace; *eq; ++eq) {
         if (*eq != '=') {
             continue;
         }
@@ -179,7 +183,7 @@ int dwgetopt_long(int nargc, char *const nargv[],
         place = EMSG;
         return (-1);
     }
-    if  (*lplace  != '-') {
+    if (*lplace  != '-') {
         /* Notice place not  disturbed. */
         int v = dwgetopt(nargc,nargv,ostr);
         return v;
@@ -198,7 +202,7 @@ int dwgetopt_long(int nargc, char *const nargv[],
     {
     int lo_num = 0;
 
-    for(;;lo_num++) {
+    for (;;lo_num++) {
         const struct dwoption *dwlopt = longopts +lo_num;
         const char * argloc = 0;
         int argerr = 0;
@@ -245,7 +249,8 @@ int dwgetopt_long(int nargc, char *const nargv[],
                     of taking next argv as the arg value.
                     and thus making getopt_long succeed. */
                 (void)fprintf(stderr,
-                    "%s: missing required long option argument '--%s'\n",
+                    "%s: missing required long option "
+                    "argument '--%s'\n",
                     nargv[0]?nargv[0]:"",
                     place);
             } else {
@@ -346,8 +351,8 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
             /* Pair of :: means special treatment of dwoptarg */
             reqnextarg = 0;
         }
-        /* Option-argument is either the rest of this argument or the
-        entire next argument. */
+        /*  Option-argument is either the rest of this argument or the
+            entire next argument. */
         if (*place ) {
             /* Whether : or :: */
             dwoptarg = STRIP_OFF_CONSTNESS(place);

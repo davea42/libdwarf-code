@@ -42,7 +42,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#ifdef  HAVE_STRING_H 
+#ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
 #include <stddef.h>
@@ -544,7 +544,8 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     case _dwarf_hash_debug_str_sup:
     default:
         /* Not supported or unknown. */
-        _dwarf_p_error(dbg, error, DW_DLE_STRING_HASHTAB_IDENTITY_ERROR);
+        _dwarf_p_error(dbg, error,
+            DW_DLE_STRING_HASHTAB_IDENTITY_ERROR);
         return DW_DLV_ERROR;
     }
     res = make_debug_str_entry(dbg,&mt,name,
@@ -649,7 +650,7 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
         res = _dwarf_insert_or_find_in_debug_str(dbg,name,
             _dwarf_hash_debug_str,slen,
             &offset_in_debug_str,error);
-        if(res != DW_DLV_OK) {
+        if (res != DW_DLV_OK) {
             return res;
         }
         new_attr->ar_attribute_form = form;
@@ -680,9 +681,9 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
 }
 
 
-/*-------------------------------------------------------------------
+/*------------------------------------------------------------------
     Add AT_name attribute to die
----------------------------------------------------------------------*/
+--------------------------------------------------------------------*/
 /*  Original function. dwarf_add_AT_name_a() is the
     suggested alternative. */
 Dwarf_P_Attribute
