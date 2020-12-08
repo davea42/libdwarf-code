@@ -2448,7 +2448,7 @@ dwarf_get_fde_n(Dwarf_Fde * fde_data,
     fdecount = fde_data[0]->fd_is_eh?
         dbg->de_fde_count_eh:dbg->de_fde_count;
     if (fde_index >= fdecount) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     *returned_fde = (*(fde_data + fde_index));
     return DW_DLV_OK;
@@ -2514,7 +2514,7 @@ dwarf_get_fde_at_pc(Dwarf_Fde * fde_data,
         return DW_DLV_OK;
     }
 
-    return (DW_DLV_NO_ENTRY);
+    return DW_DLV_NO_ENTRY;
 }
 
 

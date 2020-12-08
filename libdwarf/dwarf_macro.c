@@ -226,17 +226,17 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     }
     if (!dbg->de_debug_abbrev.dss_size) {
         free_macro_stack(dbg,&msdata);
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     macro_base = dbg->de_debug_macinfo.dss_data;
     if (macro_base == NULL) {
         free_macro_stack(dbg,&msdata);
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     if (macro_offset >= dbg->de_debug_macinfo.dss_size) {
         free_macro_stack(dbg,&msdata);
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     macro_end = macro_base + dbg->de_debug_macinfo.dss_size;
     /*   FIXME debugfission is NOT handled here.  */

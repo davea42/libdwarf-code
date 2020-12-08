@@ -580,7 +580,7 @@ dwarf_get_arange(Dwarf_Arange * aranges,
         }
     }
 
-    return (DW_DLV_NO_ENTRY);
+    return DW_DLV_NO_ENTRY;
 }
 
 

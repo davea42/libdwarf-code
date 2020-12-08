@@ -46,7 +46,7 @@ dwarf_get_funcs(Dwarf_Debug dbg,
         return res;
     }
     if (!dbg->de_debug_funcnames.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
 

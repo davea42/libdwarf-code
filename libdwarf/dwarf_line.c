@@ -372,7 +372,7 @@ dwarf_srcfiles(Dwarf_Die die,
     }
     if (!dbg->de_debug_line.dss_size) {
         dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     section_start = dbg->de_debug_line.dss_data;
 
@@ -656,7 +656,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         return res;
     }
     if (!dbg->de_debug_line.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     address_size = _dwarf_get_address_size(dbg, die);

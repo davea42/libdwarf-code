@@ -68,7 +68,7 @@ dwarf_get_str(Dwarf_Debug dbg,
         return res;
     }
     if (!dbg->de_debug_str.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     secptr =dbg->de_debug_str.dss_data;
     begin = (char *)secptr + offset;

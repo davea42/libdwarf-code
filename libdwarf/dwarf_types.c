@@ -46,7 +46,7 @@ dwarf_get_types(Dwarf_Debug dbg,
         return res;
     }
     if (!dbg->de_debug_typenames.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
 

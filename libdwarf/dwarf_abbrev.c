@@ -387,7 +387,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
         return DW_DLV_ERROR;
     }
     if (abbrev->dab_code == 0) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     if (abbrev->dab_dbg == NULL) {

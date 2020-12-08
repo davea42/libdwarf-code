@@ -2354,14 +2354,14 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
 
         die_info_ptr = die->di_debug_ptr;
         if (*die_info_ptr == 0) {
-            return (DW_DLV_NO_ENTRY);
+            return DW_DLV_NO_ENTRY;
         }
         context = die->di_cu_context;
         cu_info_start = dataptr+ context->cc_debug_offset;
         die_info_end = _dwarf_calculate_info_section_end_ptr(context);
 
         if ((*die_info_ptr) == 0) {
-            return (DW_DLV_NO_ENTRY);
+            return DW_DLV_NO_ENTRY;
         }
         child_depth = 0;
         do {
@@ -2482,10 +2482,10 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         die_info_ptr == die_info_end means 'one past end, no more DIEs
         here'. */
     if (die_info_ptr >= die_info_end) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     if ((*die_info_ptr) == 0) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     ret_die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
@@ -2516,7 +2516,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     if (abbrev_code == 0) {
         /* Zero means a null DIE */
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
     lres = _dwarf_get_abbrev_for_code(ret_die->di_cu_context,

@@ -589,7 +589,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
         return res;
     }
     if (!dbg->de_debug_line.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     address_size = _dwarf_get_address_size(dbg, die);

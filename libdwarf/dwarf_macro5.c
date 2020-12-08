@@ -1192,7 +1192,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
         return res;
     }
     if (!dbg->de_debug_macro.dss_size) {
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     resattr = dwarf_attr(die, DW_AT_macros, &macro_attr, error);
     if (resattr == DW_DLV_NO_ENTRY) {
@@ -1316,7 +1316,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     }
     if (!dbg->de_debug_macro.dss_size) {
         dealloc_macro_srcfiles(srcfiles,srcfilescount);
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     section_base = dbg->de_debug_macro.dss_data;

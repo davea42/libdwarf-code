@@ -580,7 +580,7 @@ dwarf_attrlist(Dwarf_Die die,
     if (!attr_count) {
         *attrbuf = NULL;
         *attrcnt = 0;
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
     attr_ptr = (Dwarf_Attribute *)
         _dwarf_get_alloc(dbg, DW_DLA_LIST, attr_count);
