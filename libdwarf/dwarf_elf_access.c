@@ -672,7 +672,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
 
     if (relocation_section == NULL) {
         *error = DW_DLE_RELOC_SECTION_PTR_NULL;
-        returnDW_DLV_ERROR;
+        return DW_DLV_ERROR;
     }
 
     if ((relocation_section_size != 0)) {
@@ -686,7 +686,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
         *relas = malloc(bytescount);
         if (!*relas) {
             *error = DW_DLE_MAF;
-            returnDW_DLV_ERROR;
+            return DW_DLV_ERROR;
         }
         memset(*relas,0,bytescount);
         get_relocations_array(is_64bit,endianness,machine,
@@ -694,7 +694,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
             relocation_section,
             *nrelas, *relas);
     }
-    return(DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  Returns DW_DLV_OK if it works, else DW_DLV_ERROR.

@@ -544,7 +544,7 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     *count = arange_count;
     *offsets = arange_offsets;
     *addrs = arange_addrs;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -576,7 +576,7 @@ dwarf_get_arange(Dwarf_Arange * aranges,
             address <
             curr_arange->ar_address + curr_arange->ar_length) {
             *returned_arange = curr_arange;
-            return (DW_DLV_OK);
+            return DW_DLV_OK;
         }
     }
 
@@ -709,7 +709,7 @@ dwarf_get_arange_info(Dwarf_Arange arange,
         }
         *cu_die_offset = headerlen + offset;
     }
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -760,5 +760,5 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
         *cu_die_offset = offset + headerlen;
 
     }
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }

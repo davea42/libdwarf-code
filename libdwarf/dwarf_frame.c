@@ -1420,7 +1420,7 @@ int dwarf_get_cie_index(
     }
 
     *indx = cie->ci_index;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  For g++ .eh_frame fde and cie.
@@ -1780,7 +1780,7 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
         *offset_size = cie->ci_length_size;
     }
     *bytes_in_cie = (cie->ci_length);
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /* Return the register rules for all registers at a given pc.
@@ -2511,7 +2511,7 @@ dwarf_get_fde_at_pc(Dwarf_Fde * fde_data,
             *hipc =
                 fde->fd_initial_location + fde->fd_address_range - 1;
         *returned_fde = fde;
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
     }
 
     return (DW_DLV_NO_ENTRY);

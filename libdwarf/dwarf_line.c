@@ -564,7 +564,7 @@ dwarf_srcfiles(Dwarf_Die die,
     *srcfiles = ret_files;
     *srcfilecount = line_context->lc_file_entry_count;
     dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  Return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
@@ -873,7 +873,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         *version = line_context->lc_version_number;
     }
     *line_context_out = line_context;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 int

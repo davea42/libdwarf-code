@@ -827,7 +827,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
 
     *llbuf_out = llbuf;
     *listlen_out = listlen;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  Handles only a location expression.
@@ -978,7 +978,7 @@ dwarf_loclist(Dwarf_Attribute attr,
 
     *llbuf = locdesc;
     *listlen = 1;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -2540,7 +2540,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     }
     *loc_head = llhead;
     *listlen = local_listlen;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 

@@ -1,4 +1,10 @@
 2020-12-08 David Anderson
+    * dwarf_abbrev.c,dwarf_arange.c,dwarf_die_deliv.c,
+      dwarf_elf_access.c,dwarf_form.c,dwarf_frame.c,
+      dwarf_frame2.c,dwarf_line.c,dwarf_loc.c,dwarf_query.c:
+      Similarly turned return (DW_DLV_OK); to 
+      return DW_DLV_OK;
+2020-12-08 David Anderson
     * dwarf_abbrev.c,dwarf_arange.c,dwarf_debug_names.c,
       dwarf_die_deliv.c,dwarf_elf_access.c,dwarf_form.c,
       dwarf_frame.c,dwarf_frame2.c,dwarf_funcs.c,dwarf_gdbindex.c,

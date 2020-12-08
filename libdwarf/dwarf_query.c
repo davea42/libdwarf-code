@@ -596,7 +596,7 @@ dwarf_attrlist(Dwarf_Die die,
     }
     *attrbuf = attr_ptr;
     *attrcnt = attr_count;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -1102,7 +1102,7 @@ dwarf_lowpc(Dwarf_Die die,
         error,die_info_end);
 
     *return_addr = ret_addr;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -1129,7 +1129,7 @@ dwarf_highpc(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_HIGHPC_WRONG_FORM);
         return DW_DLV_ERROR;
     }
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  If the giving 'die' contains the DW_AT_type attribute, it returns
@@ -1466,28 +1466,28 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
             info_ptr, sizeof(Dwarf_Small),
             error,die_info_end);
         *return_val = ret_value;
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
 
     case DW_FORM_data2:
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             info_ptr, sizeof(Dwarf_Shalf),
             error,die_info_end);
         *return_val = ret_value;
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
 
     case DW_FORM_data4:
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             info_ptr, DWARF_32BIT_SIZE,
             error,die_info_end);
         *return_val = ret_value;
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
 
     case DW_FORM_data8:
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             info_ptr, DWARF_64BIT_SIZE,
             error,die_info_end);
         *return_val = ret_value;
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
 
     case DW_FORM_udata: {
         Dwarf_Unsigned v = 0;

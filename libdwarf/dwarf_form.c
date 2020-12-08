@@ -135,7 +135,7 @@ dwarf_whatform_direct(Dwarf_Attribute attr,
     }
 
     *return_form = attr->ar_attribute_form_direct;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  Pass in the content of a block and the length of that
@@ -358,7 +358,7 @@ dwarf_whatform(Dwarf_Attribute attr,
         return res;
     }
     *return_form = attr->ar_attribute_form;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -1165,7 +1165,7 @@ dwarf_formaddr(Dwarf_Attribute attr,
             cu_context->cc_address_size,
             error,section_end);
         *return_addr = ret_addr;
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
     }
     generate_form_error(dbg,error,attrform,
         DW_DLE_ATTR_FORM_BAD,
@@ -1202,12 +1202,12 @@ dwarf_formflag(Dwarf_Attribute attr,
         /*  Implicit means we don't read any data at all. Just
             the existence of the Form does it. DWARF4. */
         *ret_bool = 1;
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
     }
 
     if (attr->ar_attribute_form == DW_FORM_flag) {
         *ret_bool = *(Dwarf_Small *)(attr->ar_debug_ptr);
-        return (DW_DLV_OK);
+        return DW_DLV_OK;
     }
     generate_form_error(dbg,error,attr->ar_attribute_form,
         DW_DLE_ATTR_FORM_BAD,

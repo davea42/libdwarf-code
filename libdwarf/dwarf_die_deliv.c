@@ -1942,7 +1942,7 @@ dwarf_validate_die_sibling(Dwarf_Die sibling,Dwarf_Off *offset)
     *offset = 0;
     if (dis->de_last_die && dis->de_last_di_ptr) {
         if (sibling->di_debug_ptr == dis->de_last_di_ptr) {
-            return (DW_DLV_OK);
+            return DW_DLV_OK;
         }
     }
     /* Calculate global offset used for error reporting */
@@ -2684,7 +2684,7 @@ dwarf_child(Dwarf_Die die,
         return DW_DLV_ERROR;
     }
     *caller_ret_die = ret_die;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  Given a (global, not cu_relative) die offset, this returns

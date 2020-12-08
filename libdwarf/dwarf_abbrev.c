@@ -287,7 +287,7 @@ dwarf_get_abbrev_tag(Dwarf_Abbrev abbrev,
     }
 
     *returned_tag = abbrev->dab_tag;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
@@ -302,7 +302,7 @@ dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,
     }
 
     *returned_flag = abbrev->dab_has_child;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 
