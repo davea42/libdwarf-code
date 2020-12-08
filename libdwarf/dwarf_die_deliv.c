@@ -1556,7 +1556,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dis = is_info? &dbg->de_info_reading: &dbg->de_types_reading;
     /*  Get offset into .debug_info of next CU.
@@ -1948,7 +1948,7 @@ dwarf_validate_die_sibling(Dwarf_Die sibling,Dwarf_Off *offset)
     /* Calculate global offset used for error reporting */
     dwarf_ptr_CU_offset(sibling->di_cu_context,
         dis->de_last_di_ptr,sibling->di_is_info,offset);
-    return (DW_DLV_ERROR);
+    return DW_DLV_ERROR;
 }
 
 /*  This function does two slightly different things
@@ -2309,7 +2309,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dataptr = is_info? dbg->de_debug_info.dss_data:
         dbg->de_debug_types.dss_data;
@@ -2325,7 +2325,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
             context will be NULL. */
         if (!context) {
             local_dealloc_cu_context(dbg,context);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         off2 = context->cc_debug_offset;
         cu_info_start = dataptr + off2;
@@ -2395,7 +2395,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
                     DW_DLE_NEXT_DIE_LOW_ERROR,
                     dwarfstring_string(&m));
                 dwarfstring_destructor(&m);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             if (die_info_ptr2 > die_info_end) {
                 dwarfstring m;
@@ -2491,7 +2491,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     ret_die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
     if (ret_die == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     ret_die->di_is_info = is_info;
@@ -2510,7 +2510,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
             Something is badly wrong. */
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     abbrev_code = (Dwarf_Unsigned) utmp;
     if (abbrev_code == 0) {
@@ -2720,7 +2720,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dis = is_info? &dbg->de_info_reading:
         &dbg->de_types_reading;
@@ -2752,7 +2752,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
                 _dwarf_length_of_cu_header_simple(dbg,is_info)) >=
                 section_size) {
                 _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             res = _dwarf_make_CU_Context(dbg, new_cu_offset,is_info,
                 &cu_context,error);
@@ -2784,7 +2784,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
     if (!die) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     die->di_cu_context = cu_context;
     die->di_is_info = is_info;
@@ -2898,7 +2898,7 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
     }
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     for (i=0; i < dbg->de_debug_sections_total_entries; i++) {
         struct Dwarf_dbg_sect_s *sdata = &dbg->de_debug_sections[i];
@@ -2955,7 +2955,7 @@ dwarf_get_die_section_name(Dwarf_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (is_info) {
         sec = &dbg->de_debug_info;

@@ -227,7 +227,7 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
             if (rel_section_index == -1) {
                 {
                     _dwarf_p_error(dbg, error, DW_DLE_ELF_SECT_ERR);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
 
             }

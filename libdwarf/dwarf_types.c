@@ -87,7 +87,7 @@ dwarf_typename(Dwarf_Type type_in,
 
     if (type == NULL) {
         _dwarf_error(NULL, error, DW_DLE_TYPE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *ret_name = (char *) (type->gl_name);

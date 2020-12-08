@@ -177,7 +177,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         if (version != DW_ARANGES_VERSION2) {
             free_aranges_chain(dbg,head_chain);
             _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         res = _dwarf_read_unaligned_ck_wrapper(dbg,&info_offset,
             arange_ptr,local_length_size,end_this_arange,error);
@@ -199,7 +199,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             if (info_offset >= dbg->de_debug_info.dss_size) {
                 free_aranges_chain(dbg,head_chain);
                 _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
         }
 
@@ -233,7 +233,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         if (segment_size > sizeof(Dwarf_Addr)) {
             free_aranges_chain(dbg,head_chain);
             _dwarf_error(dbg, error, DW_DLE_SEGMENT_SIZE_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
         /*  Code below will check for == end_this_arange
@@ -241,7 +241,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         if (arange_ptr > end_this_arange) {
             free_aranges_chain(dbg,head_chain);
             _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         range_entry_size = 2*address_size + segment_size;
         /*  Round arange_ptr offset to next multiple of
@@ -306,7 +306,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 if (arange == NULL) {
                     free_aranges_chain(dbg,head_chain);
                     _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
 
                 arange->ar_segment_selector = segment_selector;
@@ -322,7 +322,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 if (curr_chain == NULL) {
                     free_aranges_chain(dbg,head_chain);
                     _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
 
                 curr_chain->ch_item = arange;
@@ -374,7 +374,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     if (arange_ptr != arange_end_section) {
         free_aranges_chain(dbg,head_chain);
         _dwarf_error(dbg, error, DW_DLE_ARANGE_DECODE_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     *chain_out = head_chain;
     *chain_count_out = arange_count;
@@ -413,7 +413,7 @@ dwarf_get_aranges(Dwarf_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_aranges, error);
@@ -496,7 +496,7 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_aranges,error);
@@ -517,13 +517,13 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
         _dwarf_get_alloc(dbg, DW_DLA_ADDR, arange_count);
     if (arange_addrs == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     arange_offsets = (Dwarf_Off *)
         _dwarf_get_alloc(dbg, DW_DLA_ADDR, arange_count);
     if (arange_offsets == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     curr_chain = head_chain;
@@ -568,7 +568,7 @@ dwarf_get_arange(Dwarf_Arange * aranges,
 
     if (aranges == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ARANGES_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     for (i = 0; i < arange_count; i++) {
         curr_arange = *(aranges + i);
@@ -606,7 +606,7 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
 
     if (arange == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ARANGE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dbg = arange->ar_dbg;
     offset = arange->ar_info_offset;
@@ -643,7 +643,7 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
     Dwarf_Debug dbg = 0;
     if (arange == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ARANGE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dbg = arange->ar_dbg;
     /* This applies to debug_info only, not to debug_types. */
@@ -681,7 +681,7 @@ dwarf_get_arange_info(Dwarf_Arange arange,
 {
     if (arange == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ARANGE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (start != NULL)

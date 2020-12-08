@@ -932,22 +932,22 @@ validate_opcode(Dwarf_Debug dbg,
     }
     if (curform->mf_code > DW_MACRO_undef_strx) {
         _dwarf_error(dbg, error, DW_DLE_MACRO_OPCODE_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (!curform->mf_code){
         _dwarf_error(dbg, error, DW_DLE_MACRO_OPCODE_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     stdfptr = &dwarf_default_macro_opslist.mol_data[curform->mf_code];
 
     if (curform->mf_formcount != stdfptr->mf_formcount) {
         _dwarf_error(dbg, error, DW_DLE_MACRO_OPCODE_FORM_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     for (i = 0; i < curform->mf_formcount; ++i) {
         if (curform->mf_formbytes[i] != stdfptr->mf_formbytes[1]) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OPCODE_FORM_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
     }
     return DW_DLV_OK;
@@ -977,7 +977,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     cur_offset = (1+ macro_data) - macro_header;
     if (cur_offset >= section_size) {
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     startptr = macro_context->mc_macro_header;
@@ -991,7 +991,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     cur_offset = (local_size+ macro_data) - section_base;
     if (cur_offset >= section_size) {
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     /* first, get size of table. */
     table_data_start = macro_data;
@@ -1009,7 +1009,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         cur_offset = (formcount+ macro_data) - section_base;
         if (cur_offset >= section_size) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         /* The 1 ubyte forms follow. Step past them. */
         macro_data += formcount;
@@ -1035,7 +1035,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         cur_offset = (2 + macro_data) - section_base;
         if (cur_offset >= section_size) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg,opcode_number,Dwarf_Small,
             macro_data,sizeof(Dwarf_Small),
@@ -1050,7 +1050,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         cur_offset = (formcount+ macro_data) - section_base;
         if (cur_offset >= section_size) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         curformentry->mf_formbytes = macro_data;
         macro_data += formcount;
@@ -1061,7 +1061,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
                     curformentry->mf_formbytes[k])) {
                     _dwarf_error(dbg, error,
                         DW_DLE_MACRO_OP_UNHANDLED);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
             }
         }
@@ -1243,7 +1243,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
             dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
             drop_srcfiles(dbg,srcfiles,srcfiles_count);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         lres  = translate_srcfiles_to_srcfiles2(srcfiles,
             srcfiles_count,srcfiles2);
@@ -1325,7 +1325,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     if ((3+macro_offset) >= section_size) {
         dealloc_macro_srcfiles(srcfiles,srcfilescount);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     macro_header = macro_offset + section_base;
     macro_data = macro_header;
@@ -1390,7 +1390,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
         if (cur_offset >= section_size) {
             dwarf_dealloc_macro_context(macro_context);
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         res = _dwarf_read_unaligned_ck_wrapper(dbg,
             &line_table_offset,macro_data,

@@ -193,7 +193,7 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
             if (rel_section_index == -1) {
                 {
                     _dwarf_p_error(dbg, &error, DW_DLE_ELF_SECT_ERR);
-                    return (DW_DLV_ERROR);
+                    return DW_DLV_ERROR;
                 }
             }
             p_reloc->pr_sect_num_of_reloc_sect = rel_section_index;

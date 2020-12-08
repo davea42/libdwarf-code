@@ -672,7 +672,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
 
     if (relocation_section == NULL) {
         *error = DW_DLE_RELOC_SECTION_PTR_NULL;
-        return(DW_DLV_ERROR);
+        returnDW_DLV_ERROR;
     }
 
     if ((relocation_section_size != 0)) {
@@ -686,7 +686,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
         *relas = malloc(bytescount);
         if (!*relas) {
             *error = DW_DLE_MAF;
-            return(DW_DLV_ERROR);
+            returnDW_DLV_ERROR;
         }
         memset(*relas,0,bytescount);
         get_relocations_array(is_64bit,endianness,machine,
@@ -1188,7 +1188,7 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     struct Dwarf_Obj_Access_Interface_s * obj = 0;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     obj = dbg->de_obj_file;
@@ -1203,7 +1203,7 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
         internals = (dwarf_elf_object_access_internals_t*)obj->object;
         if (internals->elf == NULL) {
             _dwarf_error(dbg, error, DW_DLE_FNO);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         *elf = internals->elf;
         return DW_DLV_OK;

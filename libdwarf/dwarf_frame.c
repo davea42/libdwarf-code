@@ -47,12 +47,12 @@
     do {                                               \
         if ((fde) == NULL) {                           \
             _dwarf_error(NULL, error, DW_DLE_FDE_NULL);\
-        return (DW_DLV_ERROR);                         \
+        return DW_DLV_ERROR;                         \
     }                                                  \
     (dbg)= (fde)->fd_dbg;                              \
     if ((dbg) == NULL) {                               \
         _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);\
-        return (DW_DLV_ERROR);                         \
+        return DW_DLV_ERROR;                         \
     } } while (0)
 
 
@@ -1400,7 +1400,7 @@ dwarf_get_cie_of_fde(Dwarf_Fde fde,
 {
     if (fde == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *cie_returned = fde->fd_cie;
@@ -1416,7 +1416,7 @@ int dwarf_get_cie_index(
     if (cie == NULL)
     {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *indx = cie->ci_index;
@@ -1527,7 +1527,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
 
     if (die == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DIE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     resattr = dwarf_attr(die, DW_AT_MIPS_fde, &attr, error);
@@ -1626,7 +1626,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         new_fde->fd_cie = new_cie;
     } else {
         _dwarf_error(dbg, error, DW_DLE_NO_CIE_FOR_FDE);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *ret_fde = new_fde;
@@ -1649,13 +1649,13 @@ dwarf_get_fde_range(Dwarf_Fde fde,
 
     if (fde == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     dbg = fde->fd_dbg;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     /*  We have always already done the section load here,
         so no need to load the section. We did the section
@@ -1693,7 +1693,7 @@ dwarf_get_fde_exception_info(Dwarf_Fde fde,
     dbg = fde->fd_dbg;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     *offset_into_exception_tables =
         fde->fd_offset_into_exception_tables;
@@ -1749,13 +1749,13 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
 
     if (cie == NULL) {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     dbg = cie->ci_dbg;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_CIE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (ptr_to_version != NULL)
@@ -2116,7 +2116,7 @@ dwarf_get_fde_info_for_reg(Dwarf_Fde fde,
         dwarf_free_fde_table(&fde_table);
         _dwarf_error(NULL, error,
             DW_DLE_FRAME_REGISTER_UNREPRESENTABLE);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (table_column == dbg->de_frame_cfa_col_number) {
         if (register_num) {
@@ -2238,7 +2238,7 @@ dwarf_get_fde_info_for_reg3_b(Dwarf_Fde fde,
             dwarf_free_fde_table(fde_table);
             fde->fd_have_fde_tab = false;
             _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
 
         /*  _dwarf_get_fde_info_for_a_pc_row will perform
@@ -2409,13 +2409,13 @@ dwarf_get_fde_instr_bytes(Dwarf_Fde inFde, Dwarf_Ptr * outinstraddr,
 
     if (inFde == NULL) {
         _dwarf_error(dbg, error, DW_DLE_FDE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     dbg = inFde->fd_dbg;
     if (dbg == NULL) {
         _dwarf_error(dbg, error, DW_DLE_FDE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     instrs = inFde->fd_fde_instr_start;
@@ -2440,7 +2440,7 @@ dwarf_get_fde_n(Dwarf_Fde * fde_data,
 
     if (fde_data == NULL) {
         _dwarf_error(dbg, error, DW_DLE_FDE_PTR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     FDE_NULL_CHECKS_AND_SET_DBG(*fde_data, dbg);
@@ -2472,7 +2472,7 @@ dwarf_get_fde_at_pc(Dwarf_Fde * fde_data,
 
     if (fde_data == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_PTR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     /*  Assumes fde_data table has at least one entry. */
@@ -2544,13 +2544,13 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
 
     if (cie == 0) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dbg = cie->ci_dbg;
 
     if (returned_op_list == 0 || returned_op_count == 0) {
         _dwarf_error(dbg, error, DW_DLE_RET_OP_LIST_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if ( instr_end < instr_start) {
         /*  Impossible unless there was wraparond somewhere and
@@ -2672,7 +2672,7 @@ dwarf_get_cie_augmentation_data(Dwarf_Cie cie,
 {
     if (cie == NULL) {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (cie->ci_gnu_eh_augmentation_len == 0) {
         return DW_DLV_NO_ENTRY;
@@ -2711,7 +2711,7 @@ dwarf_get_fde_augmentation_data(Dwarf_Fde fde,
 
     if (fde == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (!fde->fd_gnu_eh_aug_present) {
         return DW_DLV_NO_ENTRY;
@@ -2719,7 +2719,7 @@ dwarf_get_fde_augmentation_data(Dwarf_Fde fde,
     cie = fde->fd_cie;
     if (cie == NULL) {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     *augdata = (Dwarf_Small *) fde->fd_gnu_eh_augmentation_bytes;
     *augdata_len = fde->fd_gnu_eh_augmentation_len;
@@ -2863,7 +2863,7 @@ init_reg_rules_alloc(Dwarf_Debug dbg,struct Dwarf_Frame_s *f,
         if (error) {
             _dwarf_error(dbg, error, DW_DLE_DF_ALLOC_FAIL);
         }
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dwarf_init_reg_rules_ru(f->fr_reg,0, count,
         dbg->de_frame_rule_initial_value);

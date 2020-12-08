@@ -336,7 +336,7 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
         /* Error, apply to original, not local dbg. */
         free_allocated_ranges(base);
         _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OUT_OF_MEM);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     curre = base;
     *rangesbuf = ranges_data_out;

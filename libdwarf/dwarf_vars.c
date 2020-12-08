@@ -85,7 +85,7 @@ dwarf_varname(Dwarf_Var var_in,
 
     if (var == NULL) {
         _dwarf_error(NULL, error, DW_DLE_VAR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *ret_varname = (char *) (var->gl_name);

@@ -758,7 +758,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                     DW_DLE_ADDRESS_SIZE_ZERO,
                     "DW_DLE_ADDRESS_SIZE_ZERO: bad address size "
                     "for a DWARF4 cie header");
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             if (address_size  > sizeof(Dwarf_Addr)) {
                 _dwarf_create_address_size_dwarf_error(dbg,
@@ -780,7 +780,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             ++frame_ptr;
             if (segment_size  > sizeof(Dwarf_Addr)) {
                 _dwarf_error(dbg, error, DW_DLE_SEGMENT_SIZE_BAD);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
         }
 
@@ -820,7 +820,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         if (return_address_register >
             dbg->de_frame_reg_rules_entry_count) {
             _dwarf_error(dbg, error, DW_DLE_CIE_RET_ADDR_REG_ERROR);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         frame_ptr += size;
         if ((frame_ptr)  > section_ptr_end) {
@@ -958,7 +958,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     new_cie = (Dwarf_Cie) _dwarf_get_alloc(dbg, DW_DLA_CIE, 1);
     if (new_cie == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     new_cie->ci_cie_version_number = version;
@@ -977,7 +977,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     if ( frame_ptr > section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     new_cie->ci_cie_instr_start = frame_ptr;
     new_cie->ci_dbg = dbg;
@@ -998,7 +998,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         new_cie->ci_length_size+ new_cie->ci_extension_size;
     if ( new_cie->ci_cie_end > section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     /* The Following new in DWARF4 */
@@ -1207,13 +1207,13 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     }                           /* End switch on augmentation type */
     if ( frame_ptr > section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     new_fde = (Dwarf_Fde) _dwarf_get_alloc(dbg, DW_DLA_FDE, 1);
     if (new_fde == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     new_fde->fd_length = prefix->cf_length;
@@ -1236,7 +1236,7 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         prefix->cf_local_extension_size;
     if ( new_fde->fd_fde_end > section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     new_fde->fd_dbg = dbg;

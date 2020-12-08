@@ -216,7 +216,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         free_macro_stack(dbg,&msdata);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_macinfo,error);
@@ -258,7 +258,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         }
         _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_LENGTH_BAD);
         free_macro_stack(dbg,&msdata);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     for (count = 0; !done && count < max_count; ++count) {
         unsigned long slen = 0;
@@ -281,7 +281,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             res = _dwarf_check_string_valid(dbg,
                 macro_base,pnext,macro_end,
@@ -296,7 +296,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             str_space += slen;
             break;
@@ -309,7 +309,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             DECODE_LEB128_UWORD_CK(pnext,utemp,dbg,error,
                 macro_end);
@@ -318,7 +318,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             ++depth;
             break;
@@ -339,7 +339,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         default:
             free_macro_stack(dbg,&msdata);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_INCONSISTENT);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
             /* bogus macinfo! */
         }
 
@@ -349,7 +349,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         } else if (endloc > dbg->de_debug_macinfo.dss_size) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_LENGTH_BAD);
             free_macro_stack(dbg,&msdata);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
     }
     /*  ASSERT: The above loop will never let us get here
@@ -368,7 +368,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     if (pdata == 0) {
         free_macro_stack(dbg,&msdata);
         _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_MALLOC_SPACE);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     pnext = macro_base + macro_offset;
 
@@ -387,7 +387,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         if (endloc > dbg->de_debug_macinfo.dss_size) {
             free_macro_stack(dbg,&msdata);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_LENGTH_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         uc = *pnext;
         pdmd->dmd_offset = (pnext - macro_base);
@@ -412,7 +412,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             res = _dwarf_check_string_valid(dbg,
                 macro_base,pnext,macro_end,
@@ -431,7 +431,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             break;
         case DW_MACINFO_start_file:
@@ -445,7 +445,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             DECODE_LEB128_UWORD_CK(pnext,v1,dbg,error,
                 macro_end);
@@ -462,7 +462,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             break;
 
@@ -478,7 +478,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
             free_macro_stack(dbg,&msdata);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_INCONSISTENT);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
     }
     *entry_count = count;

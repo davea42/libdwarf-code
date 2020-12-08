@@ -550,20 +550,20 @@ dwarf_add_expr_addr_c(Dwarf_P_Expr expr,
 
     if (expr == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_EXPR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     dbg = expr->ex_dbg;
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     upointer_size = dbg->de_pointer_size;
     next_byte_offset = expr->ex_next_byte_offset + upointer_size + 1;
     if (next_byte_offset > MAXIMUM_LOC_EXPR_LENGTH) {
         _dwarf_p_error(dbg, error, DW_DLE_EXPR_LENGTH_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     next_byte_ptr =
@@ -576,7 +576,7 @@ dwarf_add_expr_addr_c(Dwarf_P_Expr expr,
 
     if (expr->ex_reloc_offset != 0) {
         _dwarf_p_error(dbg, error, DW_DLE_MULTIPLE_RELOC_IN_EXPR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     expr->ex_reloc_sym_index = sym_index;

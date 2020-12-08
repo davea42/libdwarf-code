@@ -283,7 +283,7 @@ dwarf_get_abbrev_tag(Dwarf_Abbrev abbrev,
 {
     if (abbrev == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_ABBREV_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *returned_tag = abbrev->dab_tag;
@@ -298,7 +298,7 @@ dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,
 {
     if (abbrev == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_ABBREV_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *returned_flag = abbrev->dab_has_child;
@@ -384,7 +384,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
 
     if (abbrev == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_ABBREV_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (abbrev->dab_code == 0) {
         return (DW_DLV_NO_ENTRY);
@@ -392,7 +392,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
 
     if (abbrev->dab_dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dbg = abbrev->dab_dbg;
     abbrev_ptr = abbrev->dab_abbrev_ptr;
@@ -422,7 +422,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
         if (filter_outliers &&
             !_dwarf_valid_form_we_know(form,attr)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         if (form ==  DW_FORM_implicit_const) {
             /* The value is here, not in a DIE. */

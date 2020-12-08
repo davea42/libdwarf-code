@@ -86,18 +86,18 @@ get_attr_dbg(Dwarf_Debug *dbg,
     Dwarf_CU_Context cup;
     if (attr == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     cup = attr->ar_cu_context;
     if (cup == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (cup->cc_dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     *cu_context = cup;
     *dbg = cup->cc_dbg;
@@ -544,7 +544,7 @@ dwarf_formref(Dwarf_Attribute attr,
             The reference is to .debug_types
             not a .debug_info CU local offset. */
         _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     default: {
         dwarfstring m;
 
@@ -618,14 +618,14 @@ _dwarf_formsig8_internal(Dwarf_Attribute attr,
 
     if (attr->ar_attribute_form != formexpected ) {
         _dwarf_error(dbg, error, formerrnum);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
     field_end = attr->ar_debug_ptr + sizeof(Dwarf_Sig8);
     if (field_end > section_end) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     memcpy(returned_sig_bytes, attr->ar_debug_ptr,
@@ -749,7 +749,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
             cu_context->cc_length_size +
             cu_context->cc_extension_size) {
             _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_OFFSET_BAD);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
 
         /* globalize the offset */
@@ -765,7 +765,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
     case DW_FORM_data4:
         if (context_version >= DW_CU_VERSION4) {
             _dwarf_error(dbg, error, DW_DLE_NOT_REF_FORM);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
             attr->ar_debug_ptr, DWARF_32BIT_SIZE,
@@ -775,7 +775,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
     case DW_FORM_data8:
         if (context_version >= DW_CU_VERSION4) {
             _dwarf_error(dbg, error, DW_DLE_NOT_REF_FORM);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
             attr->ar_debug_ptr, DWARF_64BIT_SIZE,
@@ -805,7 +805,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
             } else {
                 _dwarf_error(dbg, error,
                     DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
         }
         break;
@@ -842,7 +842,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
             } else {
                 _dwarf_error(dbg, error,
                     DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
         }
         break;
@@ -852,7 +852,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
             this function only returns an offset in
             .debug_info at this point. */
         _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     default: {
         dwarfstring m;
         int formcode = attr->ar_attribute_form;
@@ -1184,19 +1184,19 @@ dwarf_formflag(Dwarf_Attribute attr,
 
     if (attr == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     cu_context = attr->ar_cu_context;
     if (cu_context == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dbg = cu_context->cc_dbg;
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (attr->ar_attribute_form == DW_FORM_flag_present) {
         /*  Implicit means we don't read any data at all. Just
@@ -1213,7 +1213,7 @@ dwarf_formflag(Dwarf_Attribute attr,
         DW_DLE_ATTR_FORM_BAD,
         "DW_DLE_ATTR_FORM_BAD",
         "dwarf_formflat");
-    return (DW_DLV_ERROR);
+    return DW_DLV_ERROR;
 }
 
 Dwarf_Bool
@@ -1311,7 +1311,7 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         DW_DLE_ATTR_FORM_BAD,
         "DW_DLE_ATTR_FORM_BAD",
         "formudata (internal function)");
-    return (DW_DLV_ERROR);
+    return DW_DLV_ERROR;
 }
 
 int
@@ -1667,7 +1667,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             DW_DLE_ATTR_FORM_SIZE_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     {
@@ -1767,7 +1767,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
         DW_DLE_ATTR_FORM_BAD,
         "DW_DLE_ATTR_FORM_BAD",
         "extract debug_str string");
-    return (DW_DLV_ERROR);
+    return DW_DLV_ERROR;
 }
 
 /* Contrary to pre-2005 documentation,
@@ -1946,7 +1946,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     if (offset >= tieddbg->de_debug_str.dss_size) {
         /*  Badly damaged DWARF here. */
         _dwarf_error(dbg, error,  DW_DLE_NO_TIED_STRING_AVAILABLE);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     secbegin = tieddbg->de_debug_str.dss_data;
     strbegin= tieddbg->de_debug_str.dss_data + offset;
@@ -1956,7 +1956,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     /*  Ensure the offset lies within the .debug_str */
     if (offset >= tieddbg->de_debug_str.dss_size) {
         _dwarf_error(dbg, error,  DW_DLE_NO_TIED_STRING_AVAILABLE);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res= _dwarf_check_string_valid(tieddbg,secbegin,strbegin, secend,
         DW_DLE_NO_TIED_STRING_AVAILABLE,
@@ -1991,7 +1991,7 @@ dwarf_formexprloc(Dwarf_Attribute attr,
     }
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (attr->ar_attribute_form == DW_FORM_exprloc ) {
         Dwarf_Die die = 0;

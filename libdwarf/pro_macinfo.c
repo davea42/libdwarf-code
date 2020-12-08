@@ -210,16 +210,16 @@ dwarf_def_macro(Dwarf_P_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (macname == 0) {
         _dwarf_p_error(NULL, error, DW_DLE_MACINFO_STRING_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     len = strlen(macname) + 1;
     if (len == 0) {
         _dwarf_p_error(NULL, error, DW_DLE_MACINFO_STRING_EMPTY);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (macvalue) {
         len2 = strlen(macvalue) + 1;
@@ -234,12 +234,12 @@ dwarf_def_macro(Dwarf_P_Debug dbg,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res = libdwarf_compose_add_line(dbg, line, &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     libdwarf_compose_add_string(dbg, macname, len);
     libdwarf_compose_add_string(dbg, " ", 1);
@@ -250,7 +250,7 @@ dwarf_def_macro(Dwarf_P_Debug dbg,
     res = libdwarf_compose_complete(dbg, &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     return DW_DLV_OK;
 }
@@ -268,34 +268,34 @@ dwarf_undef_macro(Dwarf_P_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (macname == 0) {
         _dwarf_p_error(NULL, error, DW_DLE_MACINFO_STRING_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     len = strlen(macname) + 1;
     if (len == 0) {
         _dwarf_p_error(NULL, error, DW_DLE_MACINFO_STRING_EMPTY);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     length_est = COMMAND_LEN + LINE_LEN + len;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_undef, length_est,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res = libdwarf_compose_add_line(dbg, line, &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     libdwarf_compose_add_string(dbg, macname, len);
     res = libdwarf_compose_complete(dbg, &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     return DW_DLV_OK;
 }
@@ -311,7 +311,7 @@ dwarf_start_macro_file(Dwarf_P_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     length_est = COMMAND_LEN + LINE_LEN + LINE_LEN;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_start_file,
@@ -319,19 +319,19 @@ dwarf_start_macro_file(Dwarf_P_Debug dbg,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res = libdwarf_compose_add_line(dbg, fileindex,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res = libdwarf_compose_add_line(dbg, linenumber,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     return DW_DLV_OK;
 }
@@ -345,14 +345,14 @@ dwarf_end_macro_file(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     length_est = COMMAND_LEN;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_end_file, length_est,
         &compose_error_type);
     if (res == DW_DLV_ERROR) {
         _dwarf_p_error(dbg, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res = libdwarf_compose_complete(dbg, &compose_error_type);
     if (res == DW_DLV_ERROR) {
@@ -374,16 +374,16 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (string == 0) {
         _dwarf_p_error(NULL, error, DW_DLE_MACINFO_STRING_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     len = strlen(string) + 1;
     if (len == 0) {
         _dwarf_p_error(NULL, error, DW_DLE_MACINFO_STRING_EMPTY);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     length_est = COMMAND_LEN + LINE_LEN + len;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_vendor_ext,
@@ -391,13 +391,13 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res = libdwarf_compose_add_line(dbg, constant,
         &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     libdwarf_compose_add_string(dbg, string, len);
     libdwarf_compose_complete(dbg, &compose_error_type);

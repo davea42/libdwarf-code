@@ -45,7 +45,7 @@ dwarf_get_str(Dwarf_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (offset == dbg->de_debug_str.dss_size) {
@@ -55,12 +55,12 @@ dwarf_get_str(Dwarf_Debug dbg,
     }
     if (offset > dbg->de_debug_str.dss_size) {
         _dwarf_error(dbg, error, DW_DLE_DEBUG_STR_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (string == NULL) {
         _dwarf_error(dbg, error, DW_DLE_STRING_PTR_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);

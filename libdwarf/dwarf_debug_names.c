@@ -321,7 +321,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
     if (version != DWARF_DNAMES_VERSION5) {
         _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     READ_UNALIGNED_CK(dbg, padding, Dwarf_Half,
         curptr, DWARF_HALF_SIZE,
@@ -333,7 +333,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
     if (padding) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
@@ -391,7 +391,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         calloc(1,sizeof(*di_header));
     if (!di_header) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     di_header->din_dbg = dbg;

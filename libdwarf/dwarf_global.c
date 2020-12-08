@@ -302,7 +302,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
 
     if (!dbg) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     /* We will eventually need the .debug_info data. Load it now. */
     if (!dbg->de_debug_info.dss_data) {
@@ -461,7 +461,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
             _dwarf_error(dbg, error, length_err_num);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
 
         /* ====begin pubname  */
@@ -688,7 +688,7 @@ dwarf_globname(Dwarf_Global glob,
 {
     if (glob == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *ret_name = (char *) (glob->gl_name);
@@ -707,12 +707,12 @@ dwarf_global_die_offset(Dwarf_Global global,
 {
     if (global == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (global->gl_context == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_CONTEXT_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *ret_off = (global->gl_named_die_offset_within_cu +
@@ -740,14 +740,14 @@ dwarf_global_cu_offset(Dwarf_Global global,
 
     if (global == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     con = global->gl_context;
 
     if (con == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_CONTEXT_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     /*  In early libdwarf, this incorrectly returned the offset of the
@@ -802,14 +802,14 @@ dwarf_global_name_offsets(Dwarf_Global global,
 
     if (global == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     con = global->gl_context;
 
     if (con == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_CONTEXT_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     cuhdr_off = con->pu_offset_of_cu_header;
@@ -825,7 +825,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
     dbg = con->pu_dbg;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     /* Cannot refer to debug_types */
     if (dbg->de_debug_info.dss_size &&
@@ -839,7 +839,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
         _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 #undef MIN_CU_HDR_SIZE
     /*  If global->gl_named_die_offset_within_cu
@@ -880,7 +880,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         cres = _dwarf_length_of_cu_header(dbg, cuhdr_off,true,
             &headerlen,error);

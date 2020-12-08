@@ -610,7 +610,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
         attrform != DW_FORM_sec_offset ) {
         dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);
     if (lres != DW_DLV_OK) {
@@ -621,7 +621,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
     if (line_offset >= dbg->de_debug_line.dss_size) {
         dwarf_dealloc(dbg,stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     section_start =  dbg->de_debug_line.dss_data;
     {
@@ -663,7 +663,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
         _dwarf_get_alloc(dbg, DW_DLA_LINE_CONTEXT, 1);
     if (line_context == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     {
         Dwarf_Small *newlinep = 0;
@@ -913,7 +913,7 @@ print_actuals_and_locals(Dwarf_Debug dbg,
                 dwarf_srclines_dealloc_b(line_context);
                 dwarfstring_destructor(&m8);
                 _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
             /* Read Logicals */
             print_line_header(dbg, is_single_table, is_actuals_table);

@@ -404,7 +404,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
         _dwarf_get_alloc(dbg,DW_DLA_XU_INDEX,1);
     if (indexptr == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     /*  Only "cu" or "tu" allowed, that is checked above.
         But for safety we just copy the allowed bytes*/

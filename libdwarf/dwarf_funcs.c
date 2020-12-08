@@ -91,7 +91,7 @@ dwarf_funcname(Dwarf_Func func_in,
 
     if (func == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FUNC_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *ret_name = (char *) (func->gl_name);

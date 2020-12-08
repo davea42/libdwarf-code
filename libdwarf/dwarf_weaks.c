@@ -88,7 +88,7 @@ dwarf_weakname(Dwarf_Weak weak_in,
 
     if (weak == NULL) {
         _dwarf_error(NULL, error, DW_DLE_WEAK_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     *ret_name = (char *) (weak->gl_name);
     return DW_DLV_OK;
