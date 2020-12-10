@@ -1,3 +1,7 @@
+2020-12-10 David Anderson
+    * command_options.c, dwarfdump.1: Refined the
+      description of the --file-tied option to be
+      a bit more accurate.
 2020-12-07 David Anderson
     * dwarf_names.c: Regenerated. The new version has
       a new comment (no code change).

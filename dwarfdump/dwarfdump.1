@@ -811,8 +811,12 @@ one must use
 to print the dwo sections.
 Adding 
 .BR \--file-tied=<path>
-naming the same object file ties
-in the non-dwo sections.
+naming the object file ties
+in the non-dwo skeleton sections
+(the <path>
+is to the skeleton object file
+when the main object file
+is dwo/dwp).
 
 .TP
 .BR \-x\ tied=/t/i/depath
