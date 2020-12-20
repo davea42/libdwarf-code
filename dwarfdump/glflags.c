@@ -213,8 +213,9 @@ init_global_flags(void)
     glflags.gf_show_global_offsets  = FALSE;
     glflags.gf_display_offsets      = TRUE;
 
-    glflags.gf_debug_addr_missing_search_by_address = 0;
-    glflags.gf_error_code_in_name_search_by_address = 0;
+    /*  Means we need to search by addr. Split Dwarf. */
+    glflags.gf_debug_addr_missing = 0;
+    glflags.gf_error_code_search_by_address = 0;
     glflags.gf_all_cus_seen_search_by_address = 0;
 
     /*  Base address has a special meaning in

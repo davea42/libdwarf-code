@@ -269,7 +269,7 @@ print_macinfo_by_offset(Dwarf_Debug dbg,
     }
     /* next byte is  maclist[count - 1].dmd_offset + 1; */
     totallen = (maclist[count - 1].dmd_offset + 1) - offset;
-    add_macro_import(&macinfo_check_tree,is_primary, offset);
+    add_macro_import(&macinfo_check_tree,is_primary, offset,0,0);
     add_macro_area_len(&macinfo_check_tree,offset,totallen);
     if (glflags.gf_do_print_dwarf) {
         printf("Macro counts: start file %ld, "

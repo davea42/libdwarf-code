@@ -1425,9 +1425,13 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     of DWARF4 .debug_macro, with version 4
                     in the macro header. */
 
+                macro_import_stack_cleanout();
                 mres = print_macros_5style_this_cu(dbg, cu_die2,
                     srcfiles,cnt,
-                    in_import_list,import_offset,pod_err);
+                    glflags.gf_do_print_dwarf,
+                    TRUE /* descend_into_imports */,
+                    in_import_list,
+                    import_offset,pod_err);
                 if (mres == DW_DLV_ERROR) {
                     print_error_and_continue(dbg,
                         "ERROR: Printing DWARF5 macros "
@@ -1437,19 +1441,27 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         whatever we can */
                     DROP_ERROR_INSTANCE(dbg,mres,*pod_err);
                 }
+
+                macro_import_stack_cleanout();
                 in_import_list = TRUE;
-                if (mres == DW_DLV_OK) {
+                /*  The above would have checked all reachable
+                    macro units, so no need to check here. */
+                if (!glflags.gf_do_check_dwarf && mres == DW_DLV_OK) {
                     for (;;) {
                         /* Never returns DW_DLV_ERROR */
                         mres = get_next_unprinted_macro_offset(
                             &macro_check_tree, &import_offset);
-                        if (mres == DW_DLV_NO_ENTRY) {
+                        if (mres != DW_DLV_OK) {
                             break;
                         }
+                        macro_import_stack_cleanout();
                         mres = print_macros_5style_this_cu(dbg,
                             cu_die2,
                             srcfiles,cnt,
-                            in_import_list,import_offset,
+                            glflags.gf_do_print_dwarf,
+                            FALSE /* no descend_into_imports */,
+                            in_import_list,
+                            import_offset,
                             pod_err);
                         if (mres == DW_DLV_ERROR) {
                             struct esb_s m;
@@ -1458,7 +1470,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                             esb_append_printf_u(&m,
                                 "ERROR: Printing DWARF5 macros "
                                 " at offset 0x%x "
-                                "for the current CU failed. ",
+                                "for the current macro import"
+                                " in the macros  failed. ",
                                 import_offset);
                             print_error_and_continue(dbg,
                                 esb_get_string(&m),
@@ -1467,6 +1480,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                             esb_destructor(&m);
                             break;
                         }
+                        macro_import_stack_cleanout();
                     }
                 }
                 glflags.current_section_id = oldsection;
@@ -1474,7 +1488,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             if ( glflags.gf_macinfo_flag ||
                 glflags.gf_check_macros) {
                 int mres = 0;
-                /*  Macros have no version number befoer
+                /*  Macros have no version number before
                     DWARF 5. */
 
                 mres = print_macinfo_for_cu(dbg,cu_die2,
@@ -6929,7 +6943,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 int res = 0;
 
                 DROP_ERROR_INSTANCE(dbg,bres,*err);
-                glflags.gf_debug_addr_missing_search_by_address = 1;
+                glflags.gf_debug_addr_missing = 1;
                 res = dwarf_get_debug_addr_index(attrib,&index,
                     err);
                 if (res != DW_DLV_OK) {
@@ -6959,9 +6973,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     esb_get_string(&lstr),
                     bres, *err);
                 esb_destructor(&lstr);
-                if (!glflags.gf_error_code_in_name_search_by_address)
-                {
-                    glflags.gf_error_code_in_name_search_by_address =
+                if (!glflags.gf_error_code_search_by_address) {
+                    glflags.gf_error_code_search_by_address =
                         dwarf_errno(*err);
                 }
                 return bres;

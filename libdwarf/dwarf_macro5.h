@@ -64,6 +64,8 @@ struct Dwarf_Macro_Operator_s {
 #define MACRO_OFFSET_SIZE_FLAG 1
 #define MACRO_LINE_OFFSET_FLAG 2
 #define MACRO_OP_TABLE_FLAG 4
+#define DW_MACRO_VERSION4  4  /* GNU Extension for DWARF 4 */
+#define DW_MACRO_VERSION5  5  /* DWARF 5 */
 
 /*  Could be reordered to be most space efficient.
     That might be a little harder to read.  Hmm. */
@@ -75,7 +77,8 @@ struct Dwarf_Macro_Context_s {
     Dwarf_Unsigned mc_section_offset;
     Dwarf_Unsigned mc_section_size;
 
-    /*  Total length of the macro data for this CU.
+    /*  Total length of the macro data for this 
+        macro unit.
         Calculated, not part of header. */
     Dwarf_Unsigned mc_total_length;
 

@@ -113,8 +113,8 @@ chkres $? "compiling helpertree.c selfhelpertree"
 chkres $? "running selfhelpertree "
 rm -f selfhelpertree selfhelpertree.exe
 
-echo "start selfmc"
-$CC -DSELFTEST $CFLAGS -g $srcdir/macrocheck.c  $srcdir/esb.c dwarf_tsearchbal.o -o selfmc
+echo "start selfmc macrocheck.c tests"
+$CC -DSELFTEST $CFLAGS -g $srcdir/macrocheck.c $srcdir/esb.c dwarf_tsearchbal.o -o selfmc
 chkres $? "compiling macrocheck.c selfmc"
 ./selfmc
 chkres $? "running selfmc "

@@ -108,6 +108,7 @@ extern "C" {
 
 /*  Version 5 returns DW_AT_decl_file differently
     than earlier versions */
+#define DWVERSION4  4
 #define DWVERSION5  5
 
 /* Calculate wasted space */
@@ -116,10 +117,6 @@ extern void calculate_attributes_usage(Dwarf_Half attr,
     Dwarf_Unsigned value);
 
 extern boolean is_strstrnocase(const char *data, const char *pattern);
-
-/* tsearch tree used in macro checking. */
-extern void *  macro_check_tree; /* DWARF5 macros. */
-extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
 
 /*  Process TAGs for checking mode and reset pRangesInfo table
     if appropriate. */
@@ -269,7 +266,11 @@ void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 int print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     char **srcfiles,
     Dwarf_Signed cnt,
-    Dwarf_Bool in_import_list, Dwarf_Unsigned offset,Dwarf_Error *);
+    int do_print_dwarf /* not relying on gf_do_print_dwarf here */,
+    int descend_into_imports /* TRUE means follow imports */,
+    Dwarf_Bool in_import_list /* helps make print readable */,
+    Dwarf_Unsigned offset,
+    Dwarf_Error *);
 
 /* Detailed attributes encoding space */
 int print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error *);

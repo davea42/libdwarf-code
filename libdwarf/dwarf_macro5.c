@@ -51,8 +51,10 @@
 #define CHECKNULLCONTEXT(m,d,e)             \
 if (!m || m->mc_sentinel != MC_SENTINAL) {  \
     if (m) { d = (m)->mc_dbg;  }            \
-    _dwarf_error(d, e,                      \
-        DW_DLE_BAD_MACRO_HEADER_POINTER);   \
+    _dwarf_error_string(d, e,               \
+        DW_DLE_BAD_MACRO_HEADER_POINTER,    \
+        "DW_DLE_BAD_MACRO_HEADER_POINTER "  \
+        " NULL header or corrupt header");    \
     return DW_DLV_ERROR;                    \
 }
 
@@ -433,9 +435,10 @@ dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
     curop = macro_context->mc_ops + op_number;
     operator = curop->mo_opcode;
     if (!operator) {
-        /*  A placeholder for the null byte at the end
-            of an operator list. */
-        *op_start_section_offset = 0;
+        /*  For the null byte at the end
+            of an operator list.  */
+        *op_start_section_offset = macro_context->mc_total_length+
+            macro_context->mc_section_offset -1;
         *macro_operator = operator;
         *forms_count  = 0;
         *formcode_array = 0;
@@ -1359,6 +1362,28 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
         dwarf_dealloc_macro_context(macro_context);
         return res;
     }
+    if (version != DW_MACRO_VERSION4  &&
+        version != DW_MACRO_VERSION5) {
+        dwarfstring ms;
+
+        dwarfstring_constructor(&ms);
+        dwarfstring_append_printf_u(&ms,
+            "DW_DLE_MACRO_VERSION_ERROR: "
+            "version 0x%x ",version);
+        dwarfstring_append_printf_u(&ms,
+             "at section offset "
+             "0x%" DW_PR_XZEROS DW_PR_DUx " "
+             "is incorrect, only 5 "
+             "or the GNU extension value of 4 are valid. "
+             "Corrupt dwarf.",
+             macro_offset);
+        _dwarf_error_string(dbg,error,
+             DW_DLE_MACRO_VERSION_ERROR,
+             dwarfstring_string(&ms));
+        dwarfstring_destructor(&ms);
+        dwarf_dealloc_macro_context(macro_context);
+        return DW_DLV_ERROR;
+    }
     macro_data +=  DWARF_HALF_SIZE;
     res = _dwarf_read_unaligned_ck_wrapper(dbg,
         &flags,macro_data,sizeof(Dwarf_Small),section_end,
@@ -1441,6 +1466,21 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     *macro_ops_data_length = macro_context->mc_ops_data_length;
     *version_out = version;
     *macro_context_out = macro_context;
+    return DW_DLV_OK;
+}
+
+int
+dwarf_macro_context_total_length(Dwarf_Macro_Context head,
+    Dwarf_Unsigned * mac_total_len,
+    Dwarf_Error *error)
+{
+    Dwarf_Debug dbg = 0;
+
+    if(head) {
+        dbg = head->mc_dbg;
+    }
+    CHECKNULLCONTEXT(head,dbg,error);
+    *mac_total_len = head->mc_total_length;
     return DW_DLV_OK;
 }
 

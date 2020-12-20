@@ -1449,9 +1449,6 @@ init_conf_file_data(struct dwconf_s *config_file_data)
     config_file_data->cf_config_file_path = "";
     config_file_data->cf_interface_number = 3;
     config_file_data->cf_table_entry_count = 100;
-#if 0
-printf("dadebug init generic 100 table entries\n");
-#endif
     config_file_data->cf_initial_rule_value = DW_FRAME_UNDEFINED_VAL;
     config_file_data->cf_cfa_reg =  DW_FRAME_CFA_COL3;
     config_file_data->cf_address_size =  0;

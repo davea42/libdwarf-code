@@ -1,3 +1,17 @@
+2020-12-20 David Anderson
+    * dwarf_base_types.h: Added DW_CU_VERSION4 and
+      DW_CU_VERSION5 for clearer checking of
+      .debug_macro macro unit versions.
+    * dwarf_errmsg_list.h: New error DW_DLE_MACRO_VERSION_ERROR.
+    * dwarf_macro5.c: Checks for correct version number.
+      New function dwarf_macro_context_total_length() lets
+      callers get the total length of a single macro unit. 
+    * dwarf_macro5.h: Added DW_MACRO_VERSION4  DW_MACRO_VERSION5.
+    * libdwarf.h.in: Added prototype for the new function
+      dwarf_macro_context_total_length().
+    * generated_libdwarf.h.in: Regenerated.
+    * libdwarf2.1.mm: Documented the new function.
+    * libdwarf2.1.pdf: Regenerated as Rev 3.19.
 2020-12-08 David Anderson
     * dwarf_abbrev.c,dwarf_arange.c,dwarf_die_deliv.c,dwarf_frame.c,
       dwarf_funcs.c,dwarf_line.c,dwarf_loc.c,dwarf_macro.c,

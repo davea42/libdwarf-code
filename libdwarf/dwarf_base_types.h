@@ -48,6 +48,10 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
 #define DW_CU_VERSION4 4
 #define DW_CU_VERSION5 5
 
+/*   For .debug_macro: DWARF 4 (extension) or DWARF5 */
+#define DW_MACRO_VERSION4 4
+#define DW_MACRO_VERSION5 5
+
 /* DWARF2,3, 4  and 5.*/
 #define DW_ARANGES_VERSION2 2
 
@@ -66,8 +70,6 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
 
 
 
-/* .debug_macro (and .dwo) new in DWARF5. */
-#define DW_MACRO_VERSION5   5
 /* .debug_names new in DWARF5. */
 #define DW_NAMES_VERSION5   5
 

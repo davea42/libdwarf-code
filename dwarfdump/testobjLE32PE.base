@@ -332,7 +332,7 @@ total line info length 256 bytes, line offset 0x00000000 0
  [0x0000ff] DW_LNS_advance_pc val 2 0x00000002
  [0x000101] DW_LNE_end_sequence extended  1 0x004014b7  1     26  0   1 0 1
 
-.debug_macro: Macro info for a single cu
+.debug_macro: Macro info for a single cu at macro Offset 0x00000000
 Macro data from CU-DIE at .debug_info offset 0x0000000b:
 
 COMPILE_UNIT<header overall offset = 0x00000000>:
@@ -354,9 +354,10 @@ COMPILE_UNIT<header overall offset = 0x00000000>:
                     DW_AT_high_pc               <offset-from-lowpc>87
                     DW_AT_stmt_list             0x00000000
                     DW_AT_GNU_macros            0x00000000
-  Macro version: 4
+  Nested import level: 0
+  Macro version      : 4
   macro section offset 0x00000000
-  flags: 0x2, line offset? 1 offsetsize 0, operands_table? 0
+  flags: 0x2, offsetsize64?  no, lineoffset? yes, operands_table?  no
   offset size 0x4
   header length: 0x00000007  total length: 0x00003f19
   debug_line_offset: 0x00000000
@@ -697,4 +698,3 @@ COMPILE_UNIT<header overall offset = 0x00000000>:
    [333] 0x01 DW_MACRO_define       line 115 NTDDI_WIN2KSP1 __NTDDI_WIN5 + __NTDDI_SP1
    [334] 0x01 DW_MACRO_define       line 116 NTDDI_WIN2KSP2 __NTDDI_WIN5 + __NTDDI_SP2
    [335] 0x01 DW_MACRO_define       line 117 NTDDI_WIN2KSP3 __NTDDI_WIN5 + __NTDDI_SP3
-   [336] 0x01 DW_MACRO_define       line 118 NTDDI_WIN2KSP4 __NTDDI_WIN5 + __NTDDI_SP4

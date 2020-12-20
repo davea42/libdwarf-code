@@ -1460,9 +1460,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_LOCATION_ERROR                  478
 #define DW_DLE_DEBUGLINK_PATH_SHORT            479
 #define DW_DLE_SIGNATURE_MISMATCH              480
+#define DW_DLE_MACRO_VERSION_ERROR             481
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        480
+#define DW_DLE_LAST        481
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -3369,6 +3370,13 @@ int dwarf_get_macro_context_by_offset(Dwarf_Die /*die*/,
     Dwarf_Unsigned      * /*macro_ops_count_out*/,
     Dwarf_Unsigned      * /*macro_ops_data_length*/,
     Dwarf_Error         * /*error*/);
+
+
+/*  New December 2020. Sometimes its necessary to know
+    a context total length including macro 5 header */
+int dwarf_macro_context_total_length(Dwarf_Macro_Context /*head*/,
+    Dwarf_Unsigned * /*mac_total_len*/,
+    Dwarf_Error    * /*error*/);
 
 void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);
 int dwarf_get_macro_section_name(Dwarf_Debug /*dbg*/,

@@ -635,5 +635,7 @@ const char *_dwarf_errmsgs[] = {
     "debuglink is too small",
 "DW_DLE_SIGNATURE_MISMATCH(480) DWARF4 extension dwo_id and "
     "dwarf5signature present but they do not match!",
+"DW_DLE_MACRO_VERSION_ERROR(481) Unknown DWARF5 macro version."
+    " Corrupt data.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

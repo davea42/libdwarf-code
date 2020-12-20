@@ -1290,29 +1290,34 @@ process_one_file(
                 res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
         }
-        if (glflags.gf_check_macros) {
+        {
             set_global_section_sizes(dbg);
+            /*  The statistics are for ALL of the
+                DWARF5 (and DWARF4 with .debug_macro)
+                across all CUs.  */
             if (macro_check_tree) {
-                /* Fake item representing end of section. */
-                /* Length of the fake item is zero. */
-                print_macro_statistics("DWARF5 .debug_macro",
+                /* debug_macro_size is to check the section end */
+                print_macrocheck_statistics("DWARF5 .debug_macro",
                     &macro_check_tree,
+                    /* DWARF5 */ TRUE,
                     glflags.section_high_offsets_global->
                         debug_macro_size,
                     &err);
             }
+        }
+        if (glflags.gf_check_macros) {
             if (macinfo_check_tree) {
-                /* Fake item representing end of section. */
-                /* Length of the fake item is zero. */
-                print_macro_statistics("DWARF2 .debug_macinfo",
+                /* debug_macinfo_size is to check the section end */
+                print_macrocheck_statistics("DWARF2 .debug_macinfo",
                     &macinfo_check_tree,
+                    /* DWARF5 */ FALSE,
                     glflags.section_high_offsets_global->
                         debug_macinfo_size,
                     &err);
             }
         }
-        clear_macro_statistics(&macro_check_tree);
-        clear_macro_statistics(&macinfo_check_tree);
+        clear_macrocheck_statistics(&macro_check_tree);
+        clear_macrocheck_statistics(&macinfo_check_tree);
     }
     if (glflags.gf_gdbindex_flag) {
         int res = 0;
@@ -1672,20 +1677,20 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,lres,err);
         }
     }
-    if (glflags.gf_debug_addr_missing_search_by_address) {
+    if (glflags.gf_debug_addr_missing) {
         printf("\nERROR: At some point "
             "the .debug_addr section was needed but missing, "
             "meaning some frame information was missing "
             "relevant function names. See the dwarfdump "
             " option --file-tied=</path/to/executable> .");
     }
-    if (glflags.gf_error_code_in_name_search_by_address) {
+    if (glflags.gf_error_code_search_by_address) {
         printf("\nERROR: At some point "
             "There was some data corruption in frame data "
             "so at least the following error occurred: "
             "%s .\n",
             dwarf_errmsg_by_number(
-            glflags.gf_error_code_in_name_search_by_address));
+            glflags.gf_error_code_search_by_address));
     }
 
     /*  Could finish dbg first. Either order ok. */

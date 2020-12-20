@@ -220,11 +220,13 @@ struct glflags_s {
     /*  ====Searching for function name (printing frame data).  */
 
     /*  split dwarf lookup by address or die.
-        if non-zero then .debug_addr is needed but missing. */
-    char     gf_debug_addr_missing_search_by_address;
+        if non-zero then .debug_addr is needed but missing.
+        Tells dwarfdump to only search by address
+        locally. */
+    char     gf_debug_addr_missing;
 
     /* Other error in lookup by address or by_die */
-    int     gf_error_code_in_name_search_by_address;
+    int     gf_error_code_search_by_address;
 
     /* Avoid some unneccesary work lookup by address. */
     char    gf_all_cus_seen_search_by_address;

@@ -25,6 +25,30 @@
 
 */
 
+/*  macrocheck.c, .h  create a map of macro import
+    operators to establish that they are resolved and
+    that their offsets refer to actual macro groups.
+    This is across all CUs in the object file,
+    not per-cu..
+
+    DEFECTS: There are some things done here that are
+    not correct and need fixing at some point.
+    See macfile_stack, macro_import_stack,
+    macro_check_tree and macinfo_check_tree here
+    and in print_macro.c and in print_die.c
+    print_macro.c, print_die.c, and macrocheck.c
+    work together in checking DWARF macro data.
+
+    A)  macro_import_stack and macfile_stack are global
+        to dwarfdump and therefore these can only be safely
+        used with DWARF5-style .debug_macro data. Not
+        with .debug_macinfo.
+    B)  To support .debug_macro_sup in a separate object
+        will likely require moving all the macro data
+        out of global and into something per-open-dbg.
+*/
+
+
 #include "globals.h"
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
@@ -44,14 +68,26 @@
     long ago.
 */
 
-void *  macro_check_tree;    /* DWARF5 macros */
+Dwarf_Unsigned macro_import_stack[MACRO_IMPORT_STACK_DEPTH +1];
+unsigned macro_import_stack_next_to_use;
+unsigned macro_import_stack_max_seen;
+
+unsigned macfile_stack_next_to_use = 0;
+unsigned macfile_stack[MACFILE_STACK_DEPTH_MAX+1];
+unsigned macfile_stack_max_seen;
+
+
+
+
+void *  macro_check_tree;   /* DWARF5 macros */
 void *  macinfo_check_tree; /* DWARF 2,3,4 macros */
+void *  macdefundeftree;    /* DWARF5 macros */
 
 static struct Macrocheck_Map_Entry_s * macrocheck_map_insert(
     Dwarf_Unsigned off,
-    unsigned prim,unsigned sec, void **map);
-static struct Macrocheck_Map_Entry_s * macrocheck_map_find(
-    Dwarf_Unsigned offset,
+    unsigned prim,unsigned sec,
+    Dwarf_Unsigned linenum,
+    unsigned src_file_num,
     void **map);
 static void macrocheck_map_destroy(void *map);
 static Dwarf_Unsigned macro_count_recs(void **base);
@@ -102,11 +138,15 @@ macrocheck_map_compare_func(const void *l, const void *r)
 
 static struct Macrocheck_Map_Entry_s *
 macrocheck_map_insert(Dwarf_Unsigned offset,
-    unsigned add_prim,unsigned add_sec,void **tree1)
+    unsigned add_prim,unsigned add_sec,
+    Dwarf_Unsigned line_num,
+    unsigned src_file_num,
+    void **tree1)
 {
     void *retval = 0;
     struct Macrocheck_Map_Entry_s *re = 0;
     struct Macrocheck_Map_Entry_s *e;
+
     e  = macrocheck_map_create_entry(offset,add_prim,add_sec);
     /*  tsearch records e's contents unless e
         is already present . We must not free it till
@@ -116,18 +156,24 @@ macrocheck_map_insert(Dwarf_Unsigned offset,
         re = *(struct Macrocheck_Map_Entry_s **)retval;
         if (re != e) {
             /*  We returned an existing record, e not needed.
-                Increment refcounts. */
+                Increment refcounts. Lets update line, filenum
+                to latest. So later reports show latest...?  */
+            re->mp_import_linenum = line_num;
+            re->mp_import_from_filenum = src_file_num;
             re->mp_refcount_primary += add_prim;
             re->mp_refcount_secondary += add_sec;
             macrocheck_map_free_func(e);
         } else {
+            /* New record */
+            e->mp_import_linenum = line_num;
+            e->mp_import_from_filenum = src_file_num;
             /* Record e got added to tree1, do not free record e. */
         }
     }
     return NULL;
 }
 
-static struct Macrocheck_Map_Entry_s *
+struct Macrocheck_Map_Entry_s *
 macrocheck_map_find(Dwarf_Unsigned offset,void **tree1)
 {
     void *retval = 0;
@@ -152,11 +198,20 @@ macrocheck_map_destroy(void *map)
     dwarf_tdestroy(map,macrocheck_map_free_func);
 }
 
+void
+add_macro_import_sup(UNUSEDARG void **base,
+    UNUSEDARG Dwarf_Unsigned offset)
+{
+    /* FIXME */
+    return;
+}
 
 void
 add_macro_import(void **base,
     Dwarf_Bool is_primary,
-    Dwarf_Unsigned offset)
+    Dwarf_Unsigned offset,
+    Dwarf_Unsigned line_num,
+    unsigned src_filenum)
 {
     Dwarf_Unsigned prim_count  = 0;
     Dwarf_Unsigned sec_count  = 0;
@@ -166,15 +221,10 @@ add_macro_import(void **base,
     } else {
         sec_count = 1;
     }
-    macrocheck_map_insert(offset,prim_count,sec_count,base);
+    macrocheck_map_insert(offset,prim_count,sec_count,
+        line_num,src_filenum,base);
 }
-void
-add_macro_import_sup(UNUSEDARG void **base,
-    UNUSEDARG Dwarf_Unsigned offset)
-{
-    /* FIXME */
-    return;
-}
+
 void
 add_macro_area_len(void **base, Dwarf_Unsigned offset,
     Dwarf_Unsigned len)
@@ -207,7 +257,7 @@ macro_count_recs(void **base)
     return reccount;
 }
 
-static Dwarf_Unsigned lowestoff = 0;
+static Dwarf_Unsigned lowestoff = 0xffffff;
 static Dwarf_Bool lowestfound = FALSE;
 static void
 macro_walk_find_lowest(const void *nodep,const DW_VISIT  which,
@@ -220,12 +270,10 @@ macro_walk_find_lowest(const void *nodep,const DW_VISIT  which,
         return;
     }
     if (!re->mp_printed) {
-        if (lowestfound) {
-            if (lowestoff > re->mp_key) {
-                lowestoff = re->mp_key;
-            }
-        } else {
+        if (!lowestfound) {
+            lowestoff = re->mp_key;
             lowestfound = TRUE;
+        } else if (re->mp_key <= lowestoff) {
             lowestoff = re->mp_key;
         }
     }
@@ -236,7 +284,7 @@ int
 get_next_unprinted_macro_offset(void **tree, Dwarf_Unsigned * off)
 {
     lowestfound = FALSE;
-    lowestoff = 0;
+    lowestoff = 0xffffffff;
 
     /*  This walks the tree to find one entry.
         Which could get slow if the tree has lots of entries. */
@@ -298,8 +346,35 @@ qsort_compare(const void *lin, const void *rin)
     return 0;
 }
 
+static void
+warnprimeandsecond(struct Macrocheck_Map_Entry_s *r)
+{
+#ifdef SELFTEST
+        ++failcount;
+#endif
+    glflags.gf_count_major_errors++;
+    printf("\nERROR: For offset "
+        "0x%" DW_PR_XZEROS DW_PR_DUx
+        " %" DW_PR_DUu
+        " there is a nonzero primary count of "
+        "0x%"  DW_PR_XZEROS DW_PR_DUx
+        " %" DW_PR_DUu
+        " with a secondary count of "
+        "0x%"  DW_PR_XZEROS DW_PR_DUx
+        " %" DW_PR_DUu
+        "\n",
+        r->mp_key,
+        r->mp_key,
+        r->mp_refcount_primary,
+        r->mp_refcount_primary,
+        r->mp_refcount_secondary,
+        r->mp_refcount_secondary);
+}
+
+
 int
-print_macro_statistics(const char *name,void **tsbase,
+print_macrocheck_statistics(const char *name,void **tsbase,
+    int isdwarf5,
     Dwarf_Unsigned section_size,
     UNUSEDARG Dwarf_Error * err)
 {
@@ -311,6 +386,7 @@ print_macro_statistics(const char *name,void **tsbase,
     Dwarf_Unsigned internalgap = 0;
     Dwarf_Unsigned wholegap = 0;
     Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned end = 0;
 
     if (! *tsbase) {
         return DW_DLV_NO_ENTRY;
@@ -342,7 +418,6 @@ print_macro_statistics(const char *name,void **tsbase,
         count,sizeof(struct Macrocheck_Map_Entry_s *),
         qsort_compare);
     for (i = 0; i < count ; ++i) {
-        Dwarf_Unsigned end = 0;
         struct Macrocheck_Map_Entry_s *r = mac_as_array[i];
 #if 0
         printf("debugging: i %u off 0x%x len 0x%x printed? %u "
@@ -376,26 +451,12 @@ print_macro_statistics(const char *name,void **tsbase,
                 r->mp_refcount_primary,
                 r->mp_refcount_primary);
         }
-        if (r->mp_refcount_primary && r->mp_refcount_secondary) {
-#ifdef SELFTEST
-            ++failcount;
-#endif
-            glflags.gf_count_major_errors++;
-            printf("\nERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
-                " %" DW_PR_DUu
-                " there is a nonzero primary count of "
-                "0x%"  DW_PR_XZEROS DW_PR_DUx
-                " %" DW_PR_DUu
-                " with a secondary count of "
-                "0x%"  DW_PR_XZEROS DW_PR_DUx
-                " %" DW_PR_DUu
-                "\n",
-                r->mp_key,
-                r->mp_key,
-                r->mp_refcount_primary,
-                r->mp_refcount_primary,
-                r->mp_refcount_secondary,
-                r->mp_refcount_secondary);
+        /*  For DWARF5 style macros (in .debug_macro)
+            having both counts
+            is normal. Not so for DWARF2 .debug_macinfo.  */
+        if (!isdwarf5 && r->mp_refcount_primary &&
+            r->mp_refcount_secondary) {
+            warnprimeandsecond(r);
         }
     }
     lastend =
@@ -427,8 +488,8 @@ print_macro_statistics(const char *name,void **tsbase,
                 "end offset of "
                 "0x%"  DW_PR_XZEROS DW_PR_DUx
                 " %"  DW_PR_DUu
-                " (previous start offset of 0x%"
-                DW_PR_XZEROS DW_PR_DUx ")"
+                " (previous start offset "
+                "of 0x%" DW_PR_XZEROS DW_PR_DUx ")"
                 " %"  DW_PR_DUu
                 "\n",
                 r->mp_key,
@@ -469,6 +530,14 @@ print_macro_statistics(const char *name,void **tsbase,
             "\n",
             wholegap);
     }
+    if (macfile_stack_max_seen)  {
+        printf("Maximum nest depth of DW_MACRO_start_file: %u\n",
+            macfile_stack_max_seen-1);
+    }
+    if (macro_import_stack_max_seen)  {
+        printf("Maximum nest depth of DW_MACRO_import    : %u\n",
+            macro_import_stack_max_seen-1);
+    }
     free (mac_as_array);
     mac_as_array = 0;
     mac_as_array_next = 0;
@@ -476,13 +545,87 @@ print_macro_statistics(const char *name,void **tsbase,
 }
 
 void
-clear_macro_statistics(void **tsbase)
+clear_macrocheck_statistics(void **tsbase)
 {
     if (!*tsbase) {
         return;
     }
     macrocheck_map_destroy(*tsbase);
     *tsbase = 0;
+}
+
+void
+print_macro_import_stack(void)
+{
+    unsigned i = 0;
+
+    printf("Macro Stack Depth: %u\n",
+        macro_import_stack_next_to_use);
+    for ( ; i <  macro_import_stack_next_to_use; ++i) {
+        printf("Macro Stack[%u] "
+            "MOFF=0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+            i,macro_import_stack[i]);
+    }
+}
+
+/*  Returns DW_DLV_ERROR if the push could not done,
+    which would be because full.
+    Else returns DW_DLV_OK.  */
+int
+macro_import_stack_push(Dwarf_Unsigned offset)
+{
+    if (macro_import_stack_next_to_use >=
+        MACRO_IMPORT_STACK_DEPTH) {
+        printf("ERROR: The macro_import_stack has exceeded "
+            "its maximum of %d\n",MACRO_IMPORT_STACK_DEPTH);
+        print_macro_import_stack();
+        glflags.gf_count_major_errors++;
+        return DW_DLV_ERROR;
+    }
+    macro_import_stack[macro_import_stack_next_to_use] = offset;
+    ++macro_import_stack_next_to_use;
+    if (macro_import_stack_max_seen <
+        macro_import_stack_next_to_use) {
+        macro_import_stack_max_seen = macro_import_stack_next_to_use;
+    }
+    return DW_DLV_OK;
+}
+
+/*  Returns DW_DLV_ERROR if the pop could not done,
+    else returns DW_DLV_OK.  */
+int
+macro_import_stack_pop(void)
+{
+    if (!macro_import_stack_next_to_use) {
+        printf("ERROR: The macro_import_stack is"
+            " empty and the attempted pop() is "
+            "impossible. A dwarfdump bug.\n");
+        glflags.gf_count_major_errors++;
+        return DW_DLV_ERROR;
+    }
+    --macro_import_stack_next_to_use;
+    return DW_DLV_OK;
+}
+
+/*  Returns DW_DLV_OK if offset present
+    else DW_DLV_NO_ENTRY. */
+int
+macro_import_stack_present(Dwarf_Unsigned offset)
+{
+    unsigned i = 0;
+
+    for ( ; i < macro_import_stack_next_to_use;++i) {
+        if (macro_import_stack[i] == offset) {
+            return DW_DLV_OK;
+        }
+    }
+    return DW_DLV_NO_ENTRY;
+}
+
+void
+macro_import_stack_cleanout(void)
+{
+    macro_import_stack_next_to_use = 0;
 }
 
 
@@ -494,38 +637,39 @@ main()
     Dwarf_Unsigned count = 0;
     int basefailcount = 0;
     Dwarf_Error err = 0;
+    int isdwarf5=FALSE;
 
     /* Test 1 */
-    add_macro_import(&base,TRUE,200);
+    add_macro_import(&base,TRUE,200,0,0);
     count = macro_count_recs(&base);
     if (count != 1) {
         printf("FAIL: expect count 1, got %" DW_PR_DUu "\n",count);
         ++failcount;
     }
-    print_macro_statistics("test1",&base,2000,&err);
+    print_macrocheck_statistics("test1",&base,isdwarf5,2000,&err);
 
     /* Test two */
     add_macro_area_len(&base,200,100);
-    add_macro_import(&base,FALSE,350);
+    add_macro_import(&base,FALSE,350,0,0);
     add_macro_area_len(&base,350,100);
     count = macro_count_recs(&base);
     if (count != 2) {
         printf("FAIL: expect count 2, got %" DW_PR_DUu "\n",count);
         ++failcount;
     }
-    print_macro_statistics("test 2",&base,2000,&err);
-    clear_macro_statistics(&base);
+    print_macrocheck_statistics("test 2",&base,isdwarf5,2000,&err);
+    clear_macrocheck_statistics(&base);
 
     /* Test three */
     basefailcount = failcount;
-    add_macro_import(&base,TRUE,0);
+    add_macro_import(&base,TRUE,0,0,0);
     add_macro_area_len(&base,0,1000);
-    add_macro_import(&base,FALSE,2000);
+    add_macro_import(&base,FALSE,2000,0,0);
     add_macro_area_len(&base,2000,100);
     mark_macro_offset_printed(&base,2000);
-    add_macro_import(&base,FALSE,1000);
+    add_macro_import(&base,FALSE,1000,0,0);
     add_macro_area_len(&base,1000,900);
-    add_macro_import(&base,FALSE,1000);
+    add_macro_import(&base,FALSE,1000,0,0);
     add_macro_area_len(&base,1000,900);
     count = macro_count_recs(&base);
     if (count != 3) {
@@ -534,8 +678,8 @@ main()
     }
     printf("\n  Expect an ERROR about overlap with "
         "the end of section\n");
-    print_macro_statistics("test 3",&base,2000,&err);
-    clear_macro_statistics(&base);
+    print_macrocheck_statistics("test 3",&base,isdwarf5,2000,&err);
+    clear_macrocheck_statistics(&base);
     if ((basefailcount+1) != failcount) {
         printf("FAIL: Found no error in test 3 checking!\n");
         ++failcount;
@@ -545,12 +689,12 @@ main()
 
     /* Test Four */
     basefailcount = failcount;
-    add_macro_import(&base,TRUE,50);
-    add_macro_import(&base,TRUE,50);
+    add_macro_import(&base,TRUE,50,0,0);
+    add_macro_import(&base,TRUE,50,0,0);
     add_macro_area_len(&base,50,50);
-    add_macro_import(&base,FALSE,200);
-    add_macro_import(&base,FALSE,50);
-    add_macro_import(&base,FALSE,60);
+    add_macro_import(&base,FALSE,200,0,0);
+    add_macro_import(&base,FALSE,50,0,0);
+    add_macro_import(&base,FALSE,60,0,0);
     add_macro_area_len(&base,60,10);
     printf( "\n  Expect an ERROR about offset 50 having "
         "2 primaries\n");
@@ -558,8 +702,8 @@ main()
         "  primaries"
         " and a secondary\n");
     printf( "  and Expect an ERROR about crazy overlap 60\n\n");
-    print_macro_statistics("test 4",&base,2000,&err);
-    clear_macro_statistics(&base);
+    print_macrocheck_statistics("test 4",&base,isdwarf5,2000,&err);
+    clear_macrocheck_statistics(&base);
     if ((basefailcount + 3) != failcount) {
         printf("FAIL: Found wrong errors in test 4 checking!\n");
     } else {

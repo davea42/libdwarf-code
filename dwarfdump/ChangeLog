@@ -1,3 +1,25 @@
+2020-12-20 David Anderson
+    * dwarfdump.c: Revised calls to print DWARF5 macro data.
+    * dwconf.c: Removed  dead code.
+    * glflags.c, glflags.h: Renamed two flags as the names
+      in use were awkwardly long.
+    * globals.h:  Moved a couple extern decls to macrocheck.c
+      Revised prototypes for printing .debug_macro data.
+    * macrocheck.c: Major changes to support full printing
+      and checking of .debug_macro data.
+    * macrocheck.h: extern decls for .debug_macro moved from 
+      globals.h to here.
+    * print_die.c: Revised dwarfdump arglists to deal
+      with .debug_macro data and revised glflags names.
+    * print_frames.c: To match revised glflags names.
+    * print_macinfo.c: To match revised import recording
+      function args to add_macro_import().
+    * print_macro.c: Major revisions to descend through
+      imported macros and print and assess-correctness. 
+    * runtests.sh: Changing comments to make it clearer
+      what each test is.
+    * testobjLE32PE.base: Updated baseline to match
+      improved .debug_macro reporting.
 2020-12-10 David Anderson
     * command_options.c, dwarfdump.1: Refined the
       description of the --file-tied option to be

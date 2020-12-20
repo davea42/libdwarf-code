@@ -457,7 +457,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     if (glflags.gf_all_cus_seen_search_by_address) {
         return DW_DLV_NO_ENTRY;
     }
-    if (glflags.gf_debug_addr_missing_search_by_address) {
+    if (glflags.gf_debug_addr_missing) {
         return DW_DLV_NO_ENTRY;
     }
     atres = dwarf_attrlist(die, &atlist, &atcnt, err);
@@ -541,15 +541,16 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                 if (dres == DW_DLV_ERROR) {
                     if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
                         dwarf_errno(aterr)) {
-                        glflags.gf_debug_addr_missing_search_by_address = 1;
+                        glflags.gf_debug_addr_missing = 1;
                     } else {
                         glflags.gf_count_major_errors++;
                         printf("\nERROR: dwarf_formaddr() failed"
                             " in get_proc_name. %s\n",
                             dwarf_errmsg(aterr));
                         /* the long name is horrible */
-                        if (!glflags.gf_error_code_in_name_search_by_address) {
-                            glflags.gf_error_code_in_name_search_by_address = dwarf_errno(aterr);
+                        if (!glflags.gf_error_code_search_by_address){
+                            glflags.gf_error_code_search_by_address=
+                                dwarf_errno(aterr);
                         }
                     }
                     dwarf_dealloc(dbg,aterr,DW_DLA_ERROR);
@@ -806,7 +807,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     if (glflags.gf_all_cus_seen_search_by_address) {
         return DW_DLV_NO_ENTRY;
     }
-    if (glflags.gf_debug_addr_missing_search_by_address) {
+    if (glflags.gf_debug_addr_missing) {
         return DW_DLV_NO_ENTRY;
     }
     if (*cu_die_for_print_frames == NULL) {

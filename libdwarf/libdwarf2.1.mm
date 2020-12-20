@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.18 29 November 2020
+.ds vE Rev 3.19 17 December 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -220,6 +220,10 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added dwarf_macro_context_total_length()
+because callers of dwarf_get_macro_context[_by_offset]()
+sometimes want to know the length of ops  + header.
 .P
 The description of dwarf_srcfiles()
 now reflects the difference
@@ -10260,6 +10264,9 @@ The value
 is set to the offset in the .debug_macro section
 of the first byte of macro data for this CU.
 .P
+Macro unit is defined in the DWARF5 standard, 
+Section 6.3 Macro Information on page 165.
+.P
 The value
 \f(CWmacro_ops_count_out\fP
 is set to the number of macro entries in the macro data
@@ -10270,9 +10277,11 @@ the macro unit).
 .P
 The value
 \f(CWmacro_ops_data_length_out\fP
-is set to the number of bytes of data in the macro unit,
-including the macro unit header.
-
+is set to the number of bytes of data in the set
+of ops (not including macro_unit header bytes).
+See 
+\f(CWdwarf_macro_context_total_length()\fP
+to get the macro unit total length.
 .P
 If
 \f(CWDW_DLV_NO_ENTRY\fP
@@ -10305,9 +10314,7 @@ macro unit for that CU on success.
 .P
 On success
 the function produces the same output values as
-\f(CWdwarf_get_macro_context()\fP
-except  there is no offset returned (
-the caller provides it).
+\f(CWdwarf_get_macro_context()\fP.
 .P
 If
 \f(CWDW_DLV_NO_ENTRY\fP
@@ -10319,7 +10326,39 @@ is returned and
 the error details are returned through the pointer
 \f(CWerror\fP.
 
-
+.H 4 "dwarf_macro_context_total_length()"
+.DS
+\f(CWint dwarf_macro_context_total_length(
+    Dwarf_Macro_Context macro_context,
+    Dwarf_Unsigned *total_length,
+    Dwarf_Error         * error);\fP
+.DE
+New in December, 2020,
+\f(CWdwarf_macro_context_total_length()\fP
+because callers of
+\f(CWdwarf_get_macro_context[_by_offset]()\fP
+sometimes want to know the length of macro ops
+plus the length of the DWARF5-style header.
+.P
+On success function returns
+\f(CWDW_DLV_OK\fP
+and sets 
+\f(CW*total_length\fP
+to the total length
+of the DWARF5-style macro unit.
+.P 
+It never returns
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P 
+If the 
+\f(CW
+\fP
+macro_context
+argument is NULL or invalid it returns
+\f(CWDW_DLV_ERROR\fP.
+and sets
+\f(CW*error\fP
+to an appropriate error value.
 
 .H 4 "dwarf_dealloc_macro_context()"
 .DS
