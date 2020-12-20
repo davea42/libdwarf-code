@@ -49,7 +49,7 @@ typedef struct {
     categories (see -k option). */
 typedef struct {
     const char *name;
-    boolean verified;
+    Dwarf_Bool verified;
     a_name_chain *cu_list;
     a_name_chain *cu_last;
     Dwarf_Check_Result results[LAST_CATEGORY];
@@ -59,7 +59,7 @@ typedef struct {
 extern void update_compiler_target(const char *producer_name);
 extern void add_cu_name_compiler_target(char *name);
 extern void clean_up_compilers_detected(void);
-extern boolean checking_this_compiler(void);
+extern Dwarf_Bool checking_this_compiler(void);
 extern void reset_compiler_entry(Compiler *compiler);
 extern void print_checks_results(void);
 
@@ -68,7 +68,7 @@ extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category,
 extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category,
     int inc);
 
-extern boolean record_producer(char *name);
+extern Dwarf_Bool record_producer(char *name);
 
 #ifdef __cplusplus
 }

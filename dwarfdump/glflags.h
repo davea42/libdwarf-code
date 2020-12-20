@@ -111,110 +111,110 @@ struct glflags_s {
         dwarf_get_loclist_c(). See -g option.
         original IRIX dwarf_loclist() no longer tested
         as of October 2015. */
-    boolean gf_use_old_dwarf_loclist;
+    Dwarf_Bool gf_use_old_dwarf_loclist;
     enum line_flag_type_e gf_line_flag_selection;
 
-    boolean gf_abbrev_flag;
-    boolean gf_aranges_flag; /* .debug_aranges section. */
-    boolean gf_debug_names_flag; /* .debug_names section */
-    boolean gf_eh_frame_flag;   /* GNU .eh_frame section. */
-    boolean gf_frame_flag;      /* .debug_frame section. */
-    boolean gf_gdbindex_flag;   /* .gdbindex section. */
-    boolean gf_gnu_debuglink_flag;   /* .gnu_debuglink section. */
-    boolean gf_debug_gnu_flag;  /* .debug_gnu_pubtypes, pubnames*/
-    boolean gf_debug_sup_flag;  /* .debug_sup */
-    boolean gf_info_flag;  /* .debug_info */
-    boolean gf_line_flag;
-    boolean gf_no_follow_debuglink;
-    boolean gf_line_print_pc;
-    boolean gf_line_skeleton_flag;
-    boolean gf_loc_flag;
-    boolean gf_macinfo_flag; /* DWARF2,3,4. Old macro section*/
-    boolean gf_macro_flag; /* DWARF5 */
-    boolean gf_pubnames_flag;
-    boolean gf_ranges_flag; /* .debug_ranges section. */
-    boolean gf_reloc_flag;  /* Elf relocations, not DWARF. */
-    boolean gf_static_func_flag;/* SGI only */
-    boolean gf_static_var_flag; /* SGI only */
-    boolean gf_string_flag;
-    boolean gf_pubtypes_flag;   /* SGI only */
-    boolean gf_types_flag; /* .debug_types, not all CU types */
-    boolean gf_weakname_flag;   /* SGI only */
+    Dwarf_Bool gf_abbrev_flag;
+    Dwarf_Bool gf_aranges_flag; /* .debug_aranges section. */
+    Dwarf_Bool gf_debug_names_flag; /* .debug_names section */
+    Dwarf_Bool gf_eh_frame_flag;   /* GNU .eh_frame section. */
+    Dwarf_Bool gf_frame_flag;      /* .debug_frame section. */
+    Dwarf_Bool gf_gdbindex_flag;   /* .gdbindex section. */
+    Dwarf_Bool gf_gnu_debuglink_flag;   /* .gnu_debuglink section. */
+    Dwarf_Bool gf_debug_gnu_flag;  /* .debug_gnu_pubtypes, pubnames*/
+    Dwarf_Bool gf_debug_sup_flag;  /* .debug_sup */
+    Dwarf_Bool gf_info_flag;  /* .debug_info */
+    Dwarf_Bool gf_line_flag;
+    Dwarf_Bool gf_no_follow_debuglink;
+    Dwarf_Bool gf_line_print_pc;
+    Dwarf_Bool gf_line_skeleton_flag;
+    Dwarf_Bool gf_loc_flag;
+    Dwarf_Bool gf_macinfo_flag; /* DWARF2,3,4. Old macro section*/
+    Dwarf_Bool gf_macro_flag; /* DWARF5 */
+    Dwarf_Bool gf_pubnames_flag;
+    Dwarf_Bool gf_ranges_flag; /* .debug_ranges section. */
+    Dwarf_Bool gf_reloc_flag;  /* Elf relocations, not DWARF. */
+    Dwarf_Bool gf_static_func_flag;/* SGI only */
+    Dwarf_Bool gf_static_var_flag; /* SGI only */
+    Dwarf_Bool gf_string_flag;
+    Dwarf_Bool gf_pubtypes_flag;   /* SGI only */
+    Dwarf_Bool gf_types_flag; /* .debug_types, not all CU types */
+    Dwarf_Bool gf_weakname_flag;   /* SGI only */
 
-    boolean gf_header_flag; /* Control printing of Elf header. */
-    boolean gf_section_groups_flag;
+    Dwarf_Bool gf_header_flag; /* Control printing of Elf header. */
+    Dwarf_Bool gf_section_groups_flag;
 
-    boolean gf_producer_children_flag; /* List of CUs per compiler */
-    boolean gf_check_abbrev_code;
-    boolean gf_check_pubname_attr;
-    boolean gf_check_reloc_offset;
-    boolean gf_check_attr_tag;
-    boolean gf_check_tag_tree;
-    boolean gf_check_type_offset;
-    boolean gf_check_decl_file;
-    boolean gf_check_macros;
-    boolean gf_check_lines;
-    boolean gf_check_fdes;
-    boolean gf_check_ranges;
-    boolean gf_check_aranges;
-    boolean gf_check_harmless;
-    boolean gf_check_abbreviations;
-    boolean gf_check_dwarf_constants;
-    boolean gf_check_di_gaps;
-    boolean gf_check_forward_decl;
-    boolean gf_check_self_references;
-    boolean gf_check_attr_encoding;   /* Attributes encoding */
-    boolean gf_generic_1200_regs;
-    boolean gf_suppress_check_extensions_tables;
-    boolean gf_check_duplicated_attributes;
+    Dwarf_Bool gf_producer_children_flag; /* List of CUs per compiler */
+    Dwarf_Bool gf_check_abbrev_code;
+    Dwarf_Bool gf_check_pubname_attr;
+    Dwarf_Bool gf_check_reloc_offset;
+    Dwarf_Bool gf_check_attr_tag;
+    Dwarf_Bool gf_check_tag_tree;
+    Dwarf_Bool gf_check_type_offset;
+    Dwarf_Bool gf_check_decl_file;
+    Dwarf_Bool gf_check_macros;
+    Dwarf_Bool gf_check_lines;
+    Dwarf_Bool gf_check_fdes;
+    Dwarf_Bool gf_check_ranges;
+    Dwarf_Bool gf_check_aranges;
+    Dwarf_Bool gf_check_harmless;
+    Dwarf_Bool gf_check_abbreviations;
+    Dwarf_Bool gf_check_dwarf_constants;
+    Dwarf_Bool gf_check_di_gaps;
+    Dwarf_Bool gf_check_forward_decl;
+    Dwarf_Bool gf_check_self_references;
+    Dwarf_Bool gf_check_attr_encoding;   /* Attributes encoding */
+    Dwarf_Bool gf_generic_1200_regs;
+    Dwarf_Bool gf_suppress_check_extensions_tables;
+    Dwarf_Bool gf_check_duplicated_attributes;
     /* lots of checks make no sense on a dwp debugfission object. */
-    boolean gf_suppress_checking_on_dwp;
+    Dwarf_Bool gf_suppress_checking_on_dwp;
 
     /*  suppress_nested_name_search is a band-aid.
         A workaround. A real fix for N**2 behavior is needed.  */
-    boolean gf_suppress_nested_name_search;
-    boolean gf_uri_options_translation;
-    boolean gf_do_print_uri_in_input;
+    Dwarf_Bool gf_suppress_nested_name_search;
+    Dwarf_Bool gf_uri_options_translation;
+    Dwarf_Bool gf_do_print_uri_in_input;
 
     /* Print global (unique) error messages */
-    boolean gf_print_unique_errors;
-    boolean gf_found_error_message;
+    Dwarf_Bool gf_print_unique_errors;
+    Dwarf_Bool gf_found_error_message;
 
-    boolean gf_check_names;
+    Dwarf_Bool gf_check_names;
 
     /* During '-k' mode, display errors */
-    boolean gf_check_verbose_mode;
+    Dwarf_Bool gf_check_verbose_mode;
 
-    boolean gf_check_frames;
-    boolean gf_check_frames_extended;   /* Extensive frames check */
-    boolean gf_check_locations;         /* Location list check */
+    Dwarf_Bool gf_check_frames;
+    Dwarf_Bool gf_check_frames_extended;   /* Extensive frames check */
+    Dwarf_Bool gf_check_locations;         /* Location list check */
 
-    boolean gf_print_usage_tag_attr;      /* Print basic usage */
-    boolean gf_print_usage_tag_attr_full; /* Print full usage */
+    Dwarf_Bool gf_print_usage_tag_attr;      /* Print basic usage */
+    Dwarf_Bool gf_print_usage_tag_attr_full; /* Print full usage */
 
-    boolean gf_check_all_compilers;
-    boolean gf_check_snc_compiler; /* Check SNC compiler */
-    boolean gf_check_gcc_compiler;
-    boolean gf_print_summary_all;
-    boolean gf_file_use_no_libelf;
+    Dwarf_Bool gf_check_all_compilers;
+    Dwarf_Bool gf_check_snc_compiler; /* Check SNC compiler */
+    Dwarf_Bool gf_check_gcc_compiler;
+    Dwarf_Bool gf_print_summary_all;
+    Dwarf_Bool gf_file_use_no_libelf;
 
     /*  The check and print flags here make it easy to
         allow check-only or print-only.  We no longer support
         check-and-print in a single run.  */
-    boolean gf_do_check_dwarf;
-    boolean gf_do_print_dwarf;
-    boolean gf_check_show_results;  /* Display checks results. */
-    boolean gf_record_dwarf_error;  /* A test has failed, this
+    Dwarf_Bool gf_do_check_dwarf;
+    Dwarf_Bool gf_do_print_dwarf;
+    Dwarf_Bool gf_check_show_results;  /* Display checks results. */
+    Dwarf_Bool gf_record_dwarf_error;  /* A test has failed, this
         is normally set FALSE shortly after being set TRUE, it is
         a short-range hint we should print something we might not
         otherwise print (under the circumstances). */
 
-    boolean gf_check_debug_names;
-    boolean gf_no_sanitize_strings;
+    Dwarf_Bool gf_check_debug_names;
+    Dwarf_Bool gf_no_sanitize_strings;
 
     /* Display parent/children when in wide format? */
-    boolean gf_display_parent_tree;
-    boolean gf_display_children_tree;
+    Dwarf_Bool gf_display_parent_tree;
+    Dwarf_Bool gf_display_children_tree;
     int     gf_stop_indent_level;
 
     /*  ====Searching for function name (printing frame data).  */
@@ -238,19 +238,19 @@ struct glflags_s {
     /*  ====End searching for function name. */
 
     /* Print search results in wide format? */
-    boolean gf_search_wide_format;
+    Dwarf_Bool gf_search_wide_format;
 
     /* -S option: strings for 'any' and 'match' */
-    boolean gf_search_is_on;
+    Dwarf_Bool gf_search_is_on;
 
-    boolean gf_search_print_results;
-    boolean gf_cu_name_flag;
-    boolean gf_show_global_offsets;
-    boolean gf_display_offsets;
-    boolean gf_print_str_offsets;
-    boolean gf_expr_ops_joined;
-    boolean gf_print_raw_rnglists;
-    boolean gf_print_raw_loclists;
+    Dwarf_Bool gf_search_print_results;
+    Dwarf_Bool gf_cu_name_flag;
+    Dwarf_Bool gf_show_global_offsets;
+    Dwarf_Bool gf_display_offsets;
+    Dwarf_Bool gf_print_str_offsets;
+    Dwarf_Bool gf_expr_ops_joined;
+    Dwarf_Bool gf_print_raw_rnglists;
+    Dwarf_Bool gf_print_raw_loclists;
 
     unsigned long gf_count_major_errors;
 
@@ -259,18 +259,18 @@ struct glflags_s {
 
     /*  Base address has a special meaning in DWARF4,5
         relative to address ranges. */
-    boolean seen_PU;               /* Detected a PU */
-    boolean seen_CU;               /* Detected a CU */
-    boolean need_CU_name;          /* Need CU name */
-    boolean need_CU_base_address;  /* Need CU Base address */
-    boolean need_CU_high_address;  /* Need CU High address */
-    boolean need_PU_valid_code;    /* Need PU valid code */
-    boolean in_valid_code;         /* set/reset in  subprogram
+    Dwarf_Bool seen_PU;               /* Detected a PU */
+    Dwarf_Bool seen_CU;               /* Detected a CU */
+    Dwarf_Bool need_CU_name;          /* Need CU name */
+    Dwarf_Bool need_CU_base_address;  /* Need CU Base address */
+    Dwarf_Bool need_CU_high_address;  /* Need CU High address */
+    Dwarf_Bool need_PU_valid_code;    /* Need PU valid code */
+    Dwarf_Bool in_valid_code;         /* set/reset in  subprogram
         and compile-unit DIES.*/
 
-    boolean seen_PU_base_address;  /* Detected a Base address
+    Dwarf_Bool seen_PU_base_address;  /* Detected a Base address
         for PU */
-    boolean seen_PU_high_address;  /* Detected a High address
+    Dwarf_Bool seen_PU_high_address;  /* Detected a High address
         for PU */
     Dwarf_Addr PU_base_address;    /* PU Base address */
     Dwarf_Addr PU_high_address;    /* PU High address */
@@ -314,9 +314,9 @@ struct glflags_s {
         be incremented with -v but not decremented. */
     int verbose;
 
-    boolean dense;
-    boolean ellipsis;
-    boolean show_form_used;
+    Dwarf_Bool dense;
+    Dwarf_Bool ellipsis;
+    Dwarf_Bool show_form_used;
 
     /*  break_after_n_units is mainly for testing.
         It enables easy limiting of output size/running time
@@ -389,7 +389,7 @@ void init_global_flags(void);
 void reset_global_flags(void);
 void set_checks_off(void);
 void reset_overall_CU_error_data(void);
-boolean cu_data_is_set(void);
+Dwarf_Bool cu_data_is_set(void);
 
 /*  Shortcuts for additional trace options */
 #define DUMP_OPTIONS                0   /* Dump options. */

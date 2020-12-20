@@ -1,4 +1,6 @@
 2020-12-20 David Anderson
+    * gennames.c: Renamed boolean to Dwarf_Bool.
+2020-12-20 David Anderson
     * dwarf_base_types.h: Added DW_CU_VERSION4 and
       DW_CU_VERSION5 for clearer checking of
       .debug_macro macro unit versions.

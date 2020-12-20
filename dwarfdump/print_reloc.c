@@ -885,7 +885,7 @@ print_object_header(Dwarf_Debug dbg,Dwarf_Error *err)
                 &section_size,
                 &error);
             if (res == DW_DLV_OK) {
-                boolean print_it = FALSE;
+                Dwarf_Bool print_it = FALSE;
 
                 /* Use original mapping */
                 /* Check if the section name is a debug section */

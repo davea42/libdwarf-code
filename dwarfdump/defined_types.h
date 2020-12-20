@@ -28,10 +28,6 @@
 #ifndef DEFINED_TYPES_H
 #define DEFINED_TYPES_H
 
-#ifndef BOOLEAN_TYPEDEFED
-#define BOOLEAN_TYPEDEFED
-typedef int boolean;
-#endif /* BOOLEAN_TYPEDEFED */
 #ifndef FALSE
 #define FALSE 0
 #endif

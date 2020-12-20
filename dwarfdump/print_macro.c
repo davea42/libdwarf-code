@@ -217,7 +217,7 @@ add_def_undef(unsigned opnum,
     const char * macro_string,
     Dwarf_Off  macro_unit_offset,
     struct esb_s *mtext,
-    boolean didprintdwarf)
+    Dwarf_Bool didprintdwarf)
 {
     unsigned int key_length = 0;
     macfile_entry *m = 0;
@@ -508,7 +508,7 @@ add_to_file_stack(unsigned k,
     Dwarf_Off      macro_unit_offset,
     const char   * macro_string,
     struct esb_s * mtext,
-    boolean didprintdwarf)
+    Dwarf_Bool didprintdwarf)
 {
     if (operator == DW_MACRO_end_file) {
         unsigned stack_useme = 0;
@@ -1121,7 +1121,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
     }
     if (do_print_dwarf && glflags.verbose > 1) {
-        boolean attr_dup = FALSE;
+        Dwarf_Bool attr_dup = FALSE;
         int pdres = 0;
         pdres = print_one_die(dbg, cu_die,
             dieprint_cu_goffset,

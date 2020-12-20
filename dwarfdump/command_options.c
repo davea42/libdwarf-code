@@ -440,7 +440,7 @@ static void arg_x_invalid(void);
 
 /*  Extracted from 'process_args',
     as they are used by option handlers. */
-static boolean arg_usage_error = FALSE;
+static Dwarf_Bool arg_usage_error = FALSE;
 static int arg_option = 0;
 
 static const char *usage_debug_text[] = {

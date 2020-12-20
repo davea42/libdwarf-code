@@ -53,7 +53,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
 /*  Most types of CU can have highpc and/or lowpc.
     DW_TAG_type_unit will not. */
-static boolean
+static Dwarf_Bool
 cu_tag_type_may_have_lopc_hipc(int tag)
 {
     if (tag == DW_TAG_compile_unit) {

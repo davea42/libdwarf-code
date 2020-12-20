@@ -56,7 +56,7 @@ strstrnocase.c
 #include <stdio.h>
 #include "globals.h"
 
-boolean
+Dwarf_Bool
 is_strstrnocase(const char * container, const char * contained)
 {
     const unsigned char *ct = (const unsigned char *)container;
@@ -95,7 +95,7 @@ is_strstrnocase(const char * container, const char * contained)
 static void
 test(const  char *t1, const char *t2,int resexp)
 {
-    boolean  res = is_strstrnocase(t1,t2);
+    Dwarf_Bool  res = is_strstrnocase(t1,t2);
     if (res == resexp) {
         return;
     }

@@ -400,7 +400,7 @@ reset_overall_CU_error_data(void)
     glflags.CU_low_address = 0;
 }
 
-boolean
+Dwarf_Bool
 cu_data_is_set(void)
 {
     if (strcmp(glflags.CU_name,default_cu_producer) ||

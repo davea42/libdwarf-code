@@ -140,7 +140,7 @@ check_ranges_list(Dwarf_Debug dbg,
     Dwarf_Bool bError = FALSE;
     Dwarf_Half elf_address_size = 0;
     Dwarf_Addr elf_max_address = 0;
-    static boolean do_print = TRUE;
+    static Dwarf_Bool do_print = TRUE;
     const char *sec_name = 0;
     struct esb_s truename;
     char buf[DWARF_SECNAME_BUFFER_SIZE];

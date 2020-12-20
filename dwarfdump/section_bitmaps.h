@@ -174,19 +174,19 @@ extern struct section_map_s  map_sectnames[] ;
 #define DW_SECTNAME_REL_DEBUG_NAMES    ".rel.debug_names"
 
 
-boolean section_name_is_debug_and_wanted(const char *section_name);
+Dwarf_Bool section_name_is_debug_and_wanted(const char *section_name);
 unsigned section_bitmap_array_size(void);
 
 void set_all_section_defaults(void);
 
-boolean any_section_header_to_print(void);
+Dwarf_Bool any_section_header_to_print(void);
 
 void enable_section_map_entry(unsigned index);
-boolean section_map_enabled(unsigned index);
+Dwarf_Bool section_map_enabled(unsigned index);
 void set_all_sections_on(void);
 
 void enable_reloc_map_entry(unsigned index);
-boolean reloc_map_enabled(unsigned index);
+Dwarf_Bool reloc_map_enabled(unsigned index);
 void set_all_reloc_sections_on(void);
 
 #endif /* SECTION_BITMAPS_H_INCLUDED*/

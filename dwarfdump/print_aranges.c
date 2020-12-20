@@ -239,7 +239,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     return dres;
                 }
                 if (glflags.gf_cu_name_flag) {
-                    boolean should_skip = FALSE;
+                    Dwarf_Bool should_skip = FALSE;
                     /*  Always sets should_skip */
                     should_skip_this_cu(dbg,
                         &should_skip,cu_die);
@@ -332,12 +332,12 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                             /*  There is no die if its a
                                 set-end entry */
                             int pres = 0;
-                            boolean attr_duplicated = FALSE;
+                            Dwarf_Bool attr_duplicated = FALSE;
 
                             pres = print_one_die(dbg, cu_die,
                                 cu_die_offset,
                                 /* print_information= */
-                                (boolean) TRUE,
+                                (Dwarf_Bool) TRUE,
                                 /* indent_level = */0,
                                 /* srcfiles= */ 0,
                                 /* cnt= */ 0,

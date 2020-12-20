@@ -53,7 +53,7 @@ static int compilers_targeted_count = 0;
 static int current_compiler = -1;
 
 /* Indicates if the current CU is a target */
-static boolean current_cu_is_checked_compiler = TRUE;
+static Dwarf_Bool current_cu_is_checked_compiler = TRUE;
 
 static int
 hasprefix(const char *sample, const char *prefix)
@@ -219,7 +219,7 @@ reset_compiler_entry(Compiler *compiler)
 void
 update_compiler_target(const char *producer_name)
 {
-    boolean cFound = FALSE;
+    Dwarf_Bool cFound = FALSE;
     int index = 0;
 
     safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
@@ -243,9 +243,9 @@ update_compiler_target(const char *producer_name)
         }
     } else {
         /* Internally the strings do not include quotes */
-        boolean snc_compiler =
+        Dwarf_Bool snc_compiler =
             hasprefix(glflags.CU_producer,"SN") ? TRUE : FALSE;
-        boolean gcc_compiler =
+        Dwarf_Bool gcc_compiler =
             hasprefix(glflags.CU_producer,"GNU") ? TRUE : FALSE;
         current_cu_is_checked_compiler =
             glflags.gf_check_all_compilers ||
@@ -296,7 +296,7 @@ clean_up_compilers_detected(void)
 /*  Are we checking for errors from the
     compiler of the current compilation unit?
 */
-boolean
+Dwarf_Bool
 checking_this_compiler(void)
 {
     /*  This flag has been update by 'update_compiler_target()'
@@ -480,10 +480,10 @@ void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc)
     }
 }
 
-boolean
+Dwarf_Bool
 record_producer(char *name)
 {
-    boolean recorded = FALSE;
+    Dwarf_Bool recorded = FALSE;
     if ((compilers_targeted_count+1) < COMPILER_TABLE_MAX) {
         Compiler *pCompiler = 0;
         const char *cmp = 0;

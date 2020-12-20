@@ -69,9 +69,9 @@ freeall_groups_tables(void)
 #if 0
 static struct  glfsetting_s {
     const char *secname;
-    boolean *flag;
-    boolean origset;
-    boolean origflag;
+    Dwarf_Bool *flag;
+    Dwarf_Bool origset;
+    Dwarf_Bool origflag;
 } glftab[] = {
 {".debug_abbrev",       &glflags.gf_abbrev_flag,FALSE,FALSE},
 {".debug_aranges",      &glflags.gf_aranges_flag,FALSE,FALSE},

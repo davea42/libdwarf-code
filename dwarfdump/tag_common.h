@@ -125,7 +125,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 extern void bad_line_input(char *format,...);
 extern void trim_newline(char *line, int max);
-extern boolean is_blank_line(char *pLine);
+extern Dwarf_Bool is_blank_line(char *pLine);
 extern int read_value(unsigned int *outval,FILE *f);
 
 /* Define to 1 to support the generation of tag-attr usage */

@@ -74,7 +74,7 @@ map_sectnames[DW_HDR_ARRAY_SIZE] = {
 static char reloc_map[DW_SECTION_REL_ARRAY_SIZE];
 static char section_map[DW_HDR_ARRAY_SIZE];
 
-static boolean all_sections_on;
+static Dwarf_Bool all_sections_on;
 
 unsigned section_bitmap_array_size(void)
 {
@@ -82,7 +82,7 @@ unsigned section_bitmap_array_size(void)
     return len;
 }
 
-boolean
+Dwarf_Bool
 section_name_is_debug_and_wanted(const char *section_name)
 {
     unsigned i = 1;
@@ -125,7 +125,7 @@ void set_all_reloc_sections_on(void)
     }
 }
 
-boolean
+Dwarf_Bool
 any_section_header_to_print(void)
 {
     unsigned i = 1;
@@ -139,7 +139,7 @@ any_section_header_to_print(void)
 
 /*  TRUE if the section map entry specified by the
     index has been enabled. */
-boolean
+Dwarf_Bool
 section_map_enabled(unsigned index)
 {
     if (index <= 0 || index >= DW_HDR_ARRAY_SIZE)
@@ -157,7 +157,7 @@ enable_section_map_entry(unsigned index)
 
 /*  TRUE if the reloc map entry specified
     by the index has been enabled. */
-boolean
+Dwarf_Bool
 reloc_map_enabled(unsigned index)
 {
     if (index <= 0 || index >= DW_SECTION_REL_ARRAY_SIZE)

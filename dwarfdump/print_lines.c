@@ -907,7 +907,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
     if (glflags.verbose > 1) {
         int errcount = 0;
-        boolean attr_dup = FALSE;
+        Dwarf_Bool attr_dup = FALSE;
         int lresv = 0;
         print_source_intro(dbg,cu_die);
         lresv = print_one_die(dbg, cu_die,
@@ -1036,7 +1036,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             print_source_intro(dbg,cu_die);
             if (glflags.verbose) {
                 int dres = 0;
-                boolean attr_dup = FALSE;
+                Dwarf_Bool attr_dup = FALSE;
                 /* FIXME */
                 dres = print_one_die(dbg, cu_die,
                     dieprint_cu_goffset,
@@ -1150,7 +1150,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             print_source_intro(dbg,cu_die);
             if (glflags.verbose) {
                 int dpres = 0;
-                boolean attr_dup = FALSE;
+                Dwarf_Bool attr_dup = FALSE;
 
                 /* FIXME */
                 dpres = print_one_die(dbg, cu_die,

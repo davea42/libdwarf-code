@@ -108,7 +108,7 @@ static void release_unique_errors_table(void);
 #ifdef TESTING
 static void dump_unique_errors_table(void);
 #endif
-static boolean add_to_unique_errors_table(char * error_text);
+static Dwarf_Bool add_to_unique_errors_table(char * error_text);
 
 static struct esb_s esb_short_cu_name;
 static struct esb_s esb_long_cu_name;
@@ -1844,7 +1844,7 @@ print_error_and_continue(Dwarf_Debug dbg,
 }
 /*  ==============END of dwarfdump error print functions. */
 
-static boolean
+static Dwarf_Bool
 is_a_string_form(int sf)
 {
     switch(sf){
@@ -1878,7 +1878,7 @@ is_a_string_form(int sf)
     This suppresses any errors it finds, no
     Dwarf_Error is lost and none is returned. */
 int
-should_skip_this_cu(Dwarf_Debug dbg, boolean*should_skip,
+should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
     Dwarf_Die cu_die)
 {
     Dwarf_Half tag = 0;
@@ -2533,7 +2533,7 @@ release_unique_errors_table(void)
 }
 
 /*  Returns TRUE if the text is already in the set; otherwise FALSE */
-boolean
+Dwarf_Bool
 add_to_unique_errors_table(char * error_text)
 {
     unsigned int index;
@@ -2605,8 +2605,8 @@ print_dwarf_check_error(const char *s1,
     const char *s2,
     const char *s3)
 {
-    static boolean do_init = TRUE;
-    boolean found = FALSE;
+    static Dwarf_Bool do_init = TRUE;
+    Dwarf_Bool found = FALSE;
     char * error_text = NULL;
     static char *leader =  "\n*** DWARF CHECK: ";
     static char *trailer = " ***\n";

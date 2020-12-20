@@ -116,7 +116,8 @@ extern void calculate_attributes_usage(Dwarf_Half attr,
     Dwarf_Half theform,
     Dwarf_Unsigned value);
 
-extern boolean is_strstrnocase(const char *data, const char *pattern);
+extern Dwarf_Bool is_strstrnocase(const char *data,
+    const char *pattern);
 
 /*  Process TAGs for checking mode and reset pRangesInfo table
     if appropriate. */
@@ -188,7 +189,7 @@ extern void record_range_array_info_entry(Dwarf_Off die_off,
     Dwarf_Off range_off);
 extern int check_range_array_info(Dwarf_Debug dbg,Dwarf_Error *);
 
-int should_skip_this_cu(Dwarf_Debug dbg,boolean *,
+int should_skip_this_cu(Dwarf_Debug dbg,Dwarf_Bool *,
     Dwarf_Die cu_die);
 
 int get_address_size_and_max(Dwarf_Debug dbg,
@@ -213,16 +214,16 @@ extern int print_one_die(
     Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Off dieprint_cu_offset,
-    boolean print_information,
+    Dwarf_Bool print_information,
     int die_indent_level,
     char **srcfiles,
     Dwarf_Signed cnt,
-    boolean *an_attr_duplicated,
-    boolean ignore_die_stack,
+    Dwarf_Bool *an_attr_duplicated,
+    Dwarf_Bool ignore_die_stack,
     Dwarf_Error *err);
 
 /* Check for specific compiler */
-extern boolean checking_this_compiler(void);
+extern Dwarf_Bool checking_this_compiler(void);
 extern void update_compiler_target(const char *producer_name);
 extern void add_cu_name_compiler_target(char *name);
 

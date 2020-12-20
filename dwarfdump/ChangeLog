@@ -1,4 +1,14 @@
 2020-12-20 David Anderson
+    * sanitized.c: Removed unused global variable.
+    * command_options.c,compiler_info.c,compiler_info.h,
+      defined_types.h,dwarfdump.c,glflags.c,glflags.h,globals.h,
+      print_aranges.c,print_die.c,print_hipc_lopc_attr.c,
+      print_lines.c,print_macro.c,print_ranges.c,print_reloc.c,
+      print_section_groups.c,sanitized.h,section_bitmaps.c,
+      section_bitmaps.h,strstrnocase.c,tag_attr.c,tag_common.c,
+      tag_common.h,tag_tree.c: Switched all instances of
+      'boolean' to be Dwarf_Bool.
+2020-12-20 David Anderson
     * dwarfdump.c: Revised calls to print DWARF5 macro data.
     * dwconf.c: Removed  dead code.
     * glflags.c, glflags.h: Renamed two flags as the names

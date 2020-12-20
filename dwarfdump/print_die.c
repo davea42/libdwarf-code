@@ -61,7 +61,7 @@ static int traverse_attribute(Dwarf_Debug dbg,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Bool is_info,
     Dwarf_Half attr, Dwarf_Attribute attr_in,
-    boolean print_else_name_match,
+    Dwarf_Bool print_else_name_match,
     char **srcfiles, Dwarf_Signed cnt,
     int die_indent_level,
     Dwarf_Error * err);
@@ -95,7 +95,7 @@ static void show_form_itself(int show_form,int verbose,
     int theform, int directform, struct esb_s * str_out);
 static int print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
-    boolean checking,
+    Dwarf_Bool checking,
     int die_indent_level,
     int showhextoo,
     struct esb_s *esbp,
@@ -105,19 +105,19 @@ static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Half attr,
     Dwarf_Attribute actual_addr,
-    boolean print_else_name_match,
+    Dwarf_Bool print_else_name_match,
     int die_indent_level,
     char **srcfiles, Dwarf_Signed srcfcnt,
     Dwarf_Bool * bSawLow,
     Dwarf_Addr * lowAddr,
     Dwarf_Bool * bSawHigh,
     Dwarf_Addr * highAddr,
-    boolean *attr_matched,
+    Dwarf_Bool *attr_matched,
     Dwarf_Error *err);
 static int print_location_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
-    boolean checking,
+    Dwarf_Bool checking,
     int die_indent_level,
     int no_ending_newline,
     struct esb_s *details,Dwarf_Error *);
@@ -142,7 +142,7 @@ static void formx_signed(Dwarf_Signed s, struct esb_s *esbp);
 static int pd_dwarf_names_print_on_error = 1;
 
 static int die_stack_indent_level = 0;
-static boolean local_symbols_already_began = FALSE;
+static Dwarf_Bool local_symbols_already_began = FALSE;
 
 /*  See tag_specific_checks_setup() and
     glflags.need_PU_valid_code as those
@@ -239,7 +239,7 @@ struct die_stack_data_s {
     Dwarf_Off sibling_die_globaloffset_;
     /*  We may need is_info here too. */
     Dwarf_Off cu_die_offset_; /* global offset. */
-    boolean already_printed_;
+    Dwarf_Bool already_printed_;
 };
 static struct die_stack_data_s empty_stack_entry;
 #define DIE_STACK_SIZE 800
@@ -1175,7 +1175,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         dieprint_cu_goffset = glflags.DIE_overall_offset;
 
         if (glflags.gf_cu_name_flag) {
-            boolean should_skip = FALSE;
+            Dwarf_Bool should_skip = FALSE;
 
             /* always sets should_skip, even if error */
             should_skip_this_cu(dbg, &should_skip,cu_die);
@@ -1539,9 +1539,9 @@ print_a_die_stack(Dwarf_Debug dbg,
     /*  Print_information TRUE means attribute_matched
         will NOT be set by attribute name match.
         Just print the die at the top of stack.*/
-    boolean print_else_name_match = TRUE;
-    boolean ignore_die_stack = FALSE;
-    boolean attribute_matched = FALSE;
+    Dwarf_Bool print_else_name_match = TRUE;
+    Dwarf_Bool ignore_die_stack = FALSE;
+    Dwarf_Bool attribute_matched = FALSE;
     int res = 0;
 
     res = print_one_die(dbg,
@@ -1565,9 +1565,9 @@ print_die_stack(Dwarf_Debug dbg,
         will NOT be set by attribute name match.
         Just print the dies in the stack.*/
 
-    boolean print_else_name_match = TRUE;
-    boolean ignore_die_stack = FALSE;
-    boolean attribute_matched = FALSE;
+    Dwarf_Bool print_else_name_match = TRUE;
+    Dwarf_Bool ignore_die_stack = FALSE;
+    Dwarf_Bool attribute_matched = FALSE;
 
     for (lev = 0; lev <= die_stack_indent_level; ++lev)
     {
@@ -1700,8 +1700,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         }
         /* Here do pre-descent processing of the die. */
         {
-            boolean an_attribute_match_local = FALSE;
-            boolean ignore_die_stack = FALSE;
+            Dwarf_Bool an_attribute_match_local = FALSE;
+            Dwarf_Bool ignore_die_stack = FALSE;
             int pdres = 0;
             pdres = print_one_die(dbg, in_die,
                 dieprint_cu_goffset,
@@ -2065,11 +2065,11 @@ print_srcfiles( char **srcfiles,Dwarf_Signed srcfcnt)
 int
 print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
-    boolean print_else_name_match,
+    Dwarf_Bool print_else_name_match,
     int die_indent_level,
     char **srcfiles, Dwarf_Signed srcfcnt,
-    boolean *an_attr_matched_io,
-    boolean ignore_die_stack,
+    Dwarf_Bool *an_attr_matched_io,
+    Dwarf_Bool ignore_die_stack,
     Dwarf_Error *err)
 {
     Dwarf_Signed i = 0;
@@ -2082,7 +2082,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Attribute *atlist = 0;
     int tres = 0;
     int ores = 0;
-    boolean attribute_matchedpod = FALSE;
+    Dwarf_Bool attribute_matchedpod = FALSE;
     int atres = 0;
     int abbrev_code = dwarf_die_abbrev_code(die);
     Dwarf_Bool bSawLow = FALSE;
@@ -2358,7 +2358,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                     die_indent_level,2);
             }
             {
-                boolean attr_match_localb = FALSE;
+                Dwarf_Bool attr_match_localb = FALSE;
                 int aresb = 0;
 
                 aresb = print_attribute(dbg, die,
@@ -2713,7 +2713,7 @@ do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
 }
 
 /*  DW_FORM_data16 should not apply here. */
-static boolean
+static Dwarf_Bool
 is_simple_location_expr(int form)
 {
     if (form == DW_FORM_block1 ||
@@ -2724,7 +2724,7 @@ is_simple_location_expr(int form)
     }
     return FALSE;
 }
-static boolean
+static Dwarf_Bool
 is_location_form(int form)
 {
     if (form == DW_FORM_data4 ||
@@ -2775,7 +2775,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Bool is_info,
     Dwarf_Half attr,
     Dwarf_Attribute attr_in,
-    UNUSEDARG boolean print_else_name_match,
+    UNUSEDARG Dwarf_Bool print_else_name_match,
     char **srcfiles, Dwarf_Signed srcfcnt,
     int die_indent_level,
     Dwarf_Error *err)
@@ -2975,7 +2975,7 @@ traverse_one_die(Dwarf_Debug dbg,
     Dwarf_Off overall_offset = 0;
     Dwarf_Signed atcnt = 0;
     int res = 0;
-    boolean print_else_name_match = FALSE;
+    Dwarf_Bool print_else_name_match = FALSE;
 
     res = dwarf_tag(die, &tag, err);
     if (res != DW_DLV_OK) {
@@ -3108,7 +3108,7 @@ print_range_attribute(Dwarf_Debug dbg,
    Dwarf_Attribute attr_in,
    Dwarf_Half theform,
    int pra_dwarf_names_print_on_error,
-   boolean print_else_name_match,
+   Dwarf_Bool print_else_name_match,
    int *append_extra_string,
    struct esb_s *esb_extrap,
    Dwarf_Error *raerr)
@@ -3303,7 +3303,7 @@ print_range_attribute(Dwarf_Debug dbg,
     If we don't do the TAG check we might report "t.c"
     as a questionable DW_AT_name. Which would be silly.
 */
-static boolean
+static Dwarf_Bool
 dot_ok_in_identifier(int tag,
     const char *val)
 {
@@ -3335,7 +3335,7 @@ trim_quotes(const char *val,struct esb_s *es)
     esb_append(es,val);
 }
 
-static boolean
+static Dwarf_Bool
 have_a_search_match(const char *valname,const char *atname)
 {
     /*  valname may have had quotes inserted, but search_match_text
@@ -3604,14 +3604,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Half attr,
     Dwarf_Attribute attr_in,
-    boolean print_else_name_match,
+    Dwarf_Bool print_else_name_match,
     int die_indent_level,
     char **srcfiles, Dwarf_Signed cnt,
     Dwarf_Bool * bSawLow,
     Dwarf_Addr * lowAddr,
     Dwarf_Bool * bSawHigh,
     Dwarf_Addr * highAddr,
-    boolean *attr_duplication,
+    Dwarf_Bool *attr_duplication,
     Dwarf_Error *err)
 {
     Dwarf_Attribute attrib = 0;
@@ -3620,8 +3620,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     int             tres = 0;
     Dwarf_Half      tag = 0;
     int             append_extra_string = 0;
-    boolean         found_search_attr = FALSE;
-    boolean         bTextFound = FALSE;
+    Dwarf_Bool         found_search_attr = FALSE;
+    Dwarf_Bool         bTextFound = FALSE;
     Dwarf_Bool      is_info = FALSE;
     Dwarf_Addr      max_address = 0;
     struct esb_s    valname;
@@ -3629,7 +3629,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     char            valbuf[ESB_FIXED_ALLOC_SIZE*3];
     char            xtrabuf[ESB_FIXED_ALLOC_SIZE*3];
     int             res = 0;
-    boolean         checking = glflags.gf_do_check_dwarf;
+    Dwarf_Bool         checking = glflags.gf_do_check_dwarf;
 
     esb_constructor_fixed(&esb_extra,xtrabuf,sizeof(xtrabuf));
     esb_constructor_fixed(&valname,valbuf,sizeof(valbuf));
@@ -4040,7 +4040,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_frame_base: {
         Dwarf_Half theform = 0;
         Dwarf_Half directform = 0;
-        boolean showform = glflags.show_form_used;
+        Dwarf_Bool showform = glflags.show_form_used;
 
         res = get_form_values(dbg,attrib,&theform,&directform,
             err);
@@ -5552,7 +5552,7 @@ static int
 print_location_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
-    boolean checking,
+    Dwarf_Bool checking,
     int die_indent_level,
     int  no_end_newline,
     struct esb_s *details,
@@ -6263,7 +6263,7 @@ bracket_hex(const char *s1,
 static int
 print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
-    boolean checking,
+    Dwarf_Bool checking,
     int die_indent_level,
     UNUSEDARG int showhextoo,
     struct esb_s *esbp,
@@ -6381,7 +6381,7 @@ static int attributes_encoding_factor[DW_FORM_data16 + 1];
 /*  These must be reset for each object if we are processing
     an archive! see print_attributes_encoding(). */
 static a_attr_encoding *attributes_encoding_table = NULL;
-static boolean attributes_encoding_do_init = TRUE;
+static Dwarf_Bool attributes_encoding_do_init = TRUE;
 
 /*  Check the potential amount of space wasted by
     attributes values that can
@@ -6475,7 +6475,7 @@ print_attributes_encoding(Dwarf_Debug dbg,
     Dwarf_Error* attr_error)
 {
     if (attributes_encoding_table) {
-        boolean print_header = TRUE;
+        Dwarf_Bool print_header = TRUE;
         Dwarf_Unsigned total_entries = 0;
         Dwarf_Unsigned total_bytes_formx = 0;
         Dwarf_Unsigned total_bytes_leb128 = 0;
@@ -6882,7 +6882,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     int dres = 0;
     Dwarf_Half direct_form = 0;
     Dwarf_Bool is_info = TRUE;
-    boolean checking = !PRINTING_DIES;
+    Dwarf_Bool checking = !PRINTING_DIES;
     struct esb_s esb_expr;
     int esb_expr_alive = FALSE;
 
@@ -8112,7 +8112,7 @@ print_tag_attributes_usage(UNUSEDARG Dwarf_Debug dbg,
         then use the DW_TAG value as an index into the
         tag_attr table to print its
         associated usage all together. */
-    boolean print_header = TRUE;
+    Dwarf_Bool print_header = TRUE;
     Rate_Tag_Tree *tag_rate;
     Rate_Tag_Attr *atr_rate;
     Usage_Tag_Tree *usage_tag_tree_ptr;

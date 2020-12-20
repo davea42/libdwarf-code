@@ -70,7 +70,6 @@
     a simple switch or code doing binary search.
     This choice affects the runtime speed of dwarfdump.  */
 
-typedef int boolean;
 #define TRUE 1
 #define FALSE 0
 #define FAILED 1
@@ -83,7 +82,7 @@ static void GenerateOneSet(void);
 #ifdef TRACE_ARRAY
 static void PrintArray(void);
 #endif /* TRACE_ARRAY */
-static boolean is_skippable_line(char *pLine);
+static Dwarf_Bool is_skippable_line(char *pLine);
 static void ParseDefinitionsAndWriteOutput(void);
 
 /* We don't need really long lines: the input file is simple. */
@@ -148,8 +147,8 @@ print_args(int argc, char *argv[])
 char *program_name = 0;
 static char *input_name = 0;
 static char *output_name = 0;
-static boolean use_switch = TRUE;
-static boolean use_tables = FALSE;
+static Dwarf_Bool use_switch = TRUE;
+static Dwarf_Bool use_tables = FALSE;
 
 static void
 print_version(const char * name)
@@ -179,7 +178,7 @@ static void
 process_args(int argc, char *argv[])
 {
     int c = 0;
-    boolean usage_error = FALSE;
+    Dwarf_Bool usage_error = FALSE;
 
     program_name = argv[0];
 
@@ -551,10 +550,10 @@ GenerateOneSet(void)
 }
 
 /*  Detect empty lines (and other lines we do not want to read) */
-static boolean
+static Dwarf_Bool
 is_skippable_line(char *pLine)
 {
-    boolean empty = TRUE;
+    Dwarf_Bool empty = TRUE;
 
     for (; *pLine && empty; ++pLine) {
         empty = isspace(*pLine);

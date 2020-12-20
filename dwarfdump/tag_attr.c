@@ -45,7 +45,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "dwgetopt.h"
 #include "libdwarf_version.h"
 
-boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
+Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 
 /* Expected input format
 
@@ -108,7 +108,7 @@ static void
 process_args(int argc, char *argv[])
 {
     int c = 0;
-    boolean usage_error = FALSE;
+    Dwarf_Bool usage_error = FALSE;
 
     program_name = argv[0];
 

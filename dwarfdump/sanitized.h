@@ -45,12 +45,6 @@ extern "C" {
 const char * sanitized(const char *s);
 void sanitized_string_destructor(void);
 
-/* Set TRUE if you want to simply assume strings to be
-   printed are safe to print. Leave FALSE if you want
-   dangerous or unprintable characters to be switched to the
-   character '?'. */
-extern boolean no_sanitize_string_garbage;
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
