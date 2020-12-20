@@ -115,10 +115,6 @@ foreach(i RANGE ${targetCount})
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
 
-#if(UNIX AND BUILD_SHARED)
-#	target_link_libraries(dwarf-shared PUBLIC z)
-#endif()
-		
 if (DO_TESTING)
     set_source_group(TESTLEB "Source Files" dwarf_leb_test.c 
         dwarf_leb.c pro_encode_nm.c )
