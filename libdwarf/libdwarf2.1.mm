@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.19 17 December 2020
+.ds vE Rev 3.21 20 December 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -220,6 +220,9 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added dwarf_decode_leb128() and dwarf_decode_signed_leb128()
+so library users can access these library-internal functions.
 .P
 Added dwarf_macro_context_total_length()
 because callers of dwarf_get_macro_context[_by_offset]()
@@ -13445,6 +13448,148 @@ of the compilation unit owning the \f(CWdie\fP
 This is the preferred way to get address size when the
 \f(CWDwarf_Die\fP is known.
 
+.H 3 "dwarf_decode_leb128()"
+See the DWARF5 standard Section 7.6
+for a general description of LEB encoded values.
+.DS
+\f(CWint dwarf_decode_leb128(char* leb, 
+    Dwarf_Unsigned* leblen,
+    Dwarf_Unsigned* outval,
+    char* endptr)\fP
+.DE
+In December 2020 this makes
+library decoding visible to library users
+for the first time.
+.P
+The user should pass in 
+\f(CWleb\fP
+with a pointer to the initial byte of the leb number.
+and pass in
+\f(CWendptr\fP
+with a pointer at least one-past
+the content of the leb value.
+Typically 
+\f(CWendptr\fP
+points at an end of section 
+(if reading object sections) or
+some other value representing
+the end of
+memory the function should be
+allowed to read.
+.P
+On success the function returns
+\f(CWDW_DLV_OK\fP
+and sets
+\f(CWleblen\fP
+(if 
+\f(CWleblen\fP
+passed in non-null)
+to the number of bytes read in decoding.
+It sets 
+\f(CWoutval\fP
+to the unsigned value decoded.
+.P
+If the function 
+detects it has read to the 
+\f(CWendptr\fP
+it returns 
+\f(CWDW_DLV_ERROR\fP.
+.P
+If the function 
+reads too many bytes
+without reaching a terminator
+or 
+\f(CWendptr\fP
+it returns 
+\f(CWDW_DLV_ERROR\fP
+on the assumption that
+nobody would intentionally
+produce wastefully long
+LEB data, so something is wrong.
+.P
+Only the argment
+\f(CWleblen\fP
+may be passed in as NULL,
+the others must be valid non-null
+values.
+.P
+There is no way for the library
+to determine whether the value
+is signed or unsigned.
+The caller must know and call the
+the correct function.
+
+.H 3 "dwarf_decode_signed_leb128()"
+See the DWARF5 standard Section 7.6
+for a general description of LEB encoded values.
+.DS
+\f(CWint dwarf_decode_signed_leb128(char* leb, 
+    Dwarf_Unsigned* leblen,
+    Dwarf_Signed* outval,
+    char* endptr)\fP
+.DE
+In December 2020 this makes
+library decoding visible to library users
+for the first time.
+.P
+The user should pass in
+\f(CWleb\fP
+with a pointer to the initial byte of the leb number.
+and pass in
+\f(CWendptr\fP
+with a pointer at least one-past
+the content of the leb value.
+Typically
+\f(CWendptr\fP
+points at an end of section
+(if reading object sections) or
+some other value representing
+the end of
+memory the function should be
+allowed to read.
+.P
+On success the function returns
+\f(CWDW_DLV_OK\fP
+and sets
+\f(CWleblen\fP
+(if 
+\f(CWleblen\fP
+passed in non-null)
+to the number of bytes read in decoding.
+It sets
+\f(CWoutval\fP
+to the signed value decoded.
+.P
+If the function
+detects it has read to the
+\f(CWendptr\fP
+it returns
+\f(CWDW_DLV_ERROR\fP.
+.P
+If the function
+reads too many bytes
+without reaching a terminator
+or
+\f(CWendptr\fP
+it returns
+\f(CWDW_DLV_ERROR\fP
+on the assumption that
+nobody would intentionally
+produce wastefully long
+LEB data, so something is wrong.
+.P
+.P
+Only the argment
+\f(CWleblen\fP
+may be passed in as NULL,
+the others must be valid non-null
+values.
+.P
+There is no way for the library
+to determine whether the value
+is signed or unsigned.
+The caller must know and call the
+the correct function.
 
 
 .H 2 "Ranges Operations DWARF5 (.debug_rnglists)"

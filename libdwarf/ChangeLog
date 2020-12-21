@@ -1,4 +1,21 @@
 2020-12-20 David Anderson
+    * Makefile.am: Add runtests.sh to check_TESTS
+      so the leb tests get run with make check.
+    * Makefile.in: Regenerate
+    * dwarf_leb.c: Implement dwarf_decode_leb128()
+      and dwarf_decode_signed_leb128() as public interfaces
+      to the leb-reading functions.
+    * dwarf_leb_test.c: Ensure the public interfaces get
+      checked too.
+    * dwarf_util.c: Delete a single unintentional blank line.
+    * libdwarf.h.in: Add dwarf_decode_signed_leb128() and
+      dwarf_decode_leb128() to the interfaces declared.
+    * generated_libdwarf.h.in: Regenerate.
+    * gennames.c: Eliminate Dwarf_Bool and just use int here.
+      The program does not need or want libdwarf.h types.(
+    * libdwarf2.1.mm: Document the two new public leb interfaces.
+    * libdwarf2.1.pdf: Rev 3.21.
+2020-12-20 David Anderson
     * gennames.c: Renamed boolean to Dwarf_Bool.
 2020-12-20 David Anderson
     * dwarf_base_types.h: Added DW_CU_VERSION4 and

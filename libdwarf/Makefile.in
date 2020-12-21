@@ -915,7 +915,7 @@ test_headersok_CFLAGS = $(RO_CFLAGS_WARN)
 test_headersok_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
 
-check_TESTS = testdebuglink.sh
+check_TESTS = testdebuglink.sh runtests.sh
 EXTRA_DIST = \
 COPYING \
 LGPL.txt \
@@ -2140,6 +2140,13 @@ test_headersok.log: test_headersok$(EXEEXT)
 testdebuglink.sh.log: testdebuglink.sh
 	@p='testdebuglink.sh'; \
 	b='testdebuglink.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+runtests.sh.log: runtests.sh
+	@p='runtests.sh'; \
+	b='runtests.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

@@ -31,6 +31,7 @@
 #include "config.h"
 #include <stdio.h>
 #include "dwarf_incl.h"
+#include "libdwarf.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "pro_encode_nm.h"
@@ -129,6 +130,28 @@ signedtest(unsigned len)
                 t,stest[t]);
             ++errcnt;
         }
+        res = dwarf_decode_signed_leb128(
+            (char *)bufferspace,
+            &decodelen,
+            &decodeval,
+            (char *)(&bufferspace[BUFFERLEN-1]));
+        if (res != DW_DLV_OK) {
+            printf("FAIL public signed decode index %u val 0x%llx\n",
+                t,stest[t]);
+            ++errcnt;
+        }
+        if (stest[t] != decodeval) {
+            printf("FAIL public signed decode val index %u "
+                "val 0x%llx vs 0x%llx\n",
+                t,stest[t],decodeval);
+            ++errcnt;
+        }
+        if ((Dwarf_Unsigned)encodelen != decodelen) {
+            printf("FAIL public signed decodelen val "
+                "index %u val 0x%llx\n",
+                t,stest[t]);
+            ++errcnt;
+        }
         res = _dwarf_decode_s_leb128_chk(
             (Dwarf_Small *)bufferspace,
             &decodelen,
@@ -174,6 +197,28 @@ unsignedtest(unsigned len)
                 t,utest[t]);
             ++errcnt;
         }
+        res = dwarf_decode_leb128(
+            (char *)bufferspace,
+            &decodelen,
+            &decodeval,
+            (char *)(&bufferspace[BUFFERLEN-1]));
+        if (res != DW_DLV_OK) {
+            printf("FAIL public unsigned decode index %u val 0x%llx\n",
+                t,utest[t]);
+            ++errcnt;
+        }
+        if (utest[t] != decodeval) {
+            printf("FAIL public unsigned decode val index %u "
+                "val 0x%llx vs 0x%llx\n",
+                t,utest[t],decodeval);
+            ++errcnt;
+        }
+        if ((Dwarf_Unsigned)encodelen != decodelen) {
+            printf("FAIL public unsigned decodelen val index %u val 0x%llx\n",
+                t,utest[t]);
+            ++errcnt;
+        }
+
         res = _dwarf_decode_u_leb128_chk(
             (Dwarf_Small *)bufferspace,
             &decodelen,

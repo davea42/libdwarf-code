@@ -1271,7 +1271,6 @@ int dwarf_encode_signed_leb128(Dwarf_Signed val, int *nbytes,
     return _dwarf_pro_encode_signed_leb128_nm(val,nbytes,space,splen);
 }
 
-
 struct  Dwarf_Printf_Callback_Info_s
 dwarf_register_printf_callback( Dwarf_Debug dbg,
     struct  Dwarf_Printf_Callback_Info_s * newvalues)

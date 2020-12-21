@@ -223,7 +223,7 @@ test_headersok_CFLAGS = $(RO_CFLAGS_WARN)
 test_headersok_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
 
-check_TESTS = testdebuglink.sh
+check_TESTS = testdebuglink.sh runtests.sh
 
 EXTRA_DIST = \
 COPYING \

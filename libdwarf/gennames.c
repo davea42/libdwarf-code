@@ -82,7 +82,7 @@ static void GenerateOneSet(void);
 #ifdef TRACE_ARRAY
 static void PrintArray(void);
 #endif /* TRACE_ARRAY */
-static Dwarf_Bool is_skippable_line(char *pLine);
+static int is_skippable_line(char *pLine);
 static void ParseDefinitionsAndWriteOutput(void);
 
 /* We don't need really long lines: the input file is simple. */
@@ -147,8 +147,8 @@ print_args(int argc, char *argv[])
 char *program_name = 0;
 static char *input_name = 0;
 static char *output_name = 0;
-static Dwarf_Bool use_switch = TRUE;
-static Dwarf_Bool use_tables = FALSE;
+static int use_switch = TRUE;
+static int use_tables = FALSE;
 
 static void
 print_version(const char * name)
@@ -178,7 +178,7 @@ static void
 process_args(int argc, char *argv[])
 {
     int c = 0;
-    Dwarf_Bool usage_error = FALSE;
+    int usage_error = FALSE;
 
     program_name = argv[0];
 
@@ -550,10 +550,10 @@ GenerateOneSet(void)
 }
 
 /*  Detect empty lines (and other lines we do not want to read) */
-static Dwarf_Bool
+static int
 is_skippable_line(char *pLine)
 {
-    Dwarf_Bool empty = TRUE;
+    int empty = TRUE;
 
     for (; *pLine && empty; ++pLine) {
         empty = isspace(*pLine);

@@ -3510,7 +3510,7 @@ dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
     in place of dwarf_check_lineheader().
 */
 int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
-    int */*errcount_out*/,
+    int         * /*errcount_out*/,
     Dwarf_Error * /*error*/);
 void dwarf_check_lineheader(Dwarf_Die /*cu_die*/,
     int * /*errcount_out*/);
@@ -5667,6 +5667,7 @@ int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
 void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
     (void *, const void * /*src*/, unsigned long /*srclen*/);
 
+
 /*  These make the  LEB encoding routines visible to libdwarf
     callers. Added November, 2012. */
 int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
@@ -5677,6 +5678,18 @@ int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
     int * /*nbytes*/,
     char * /*space*/,
     int /*splen*/);
+/*  Same for LEB decoding routines.  
+    caller sets endptr to an address one past the last valid
+    address the library should be allowed to 
+    access. */
+int dwarf_decode_leb128(char * /*leb*/,
+    Dwarf_Unsigned * /*leblen*/,
+    Dwarf_Unsigned * /*outval*/,
+    char           * /*endptr*/);
+int dwarf_decode_signed_leb128(char * /*leb*/,
+    Dwarf_Unsigned * /*leblen*/,
+    Dwarf_Signed   * /*outval*/,
+    char           * /*endptr*/);
 
 /*  Record some application command line options in libdwarf.
     This is not arc/argv processing, just precooked setting

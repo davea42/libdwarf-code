@@ -132,6 +132,14 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     }
     return DW_DLV_ERROR;
 }
+/* Public Interface: Decode an unsigned LEB128 value. */
+int dwarf_decode_leb128(char* leb, Dwarf_Unsigned* leblen,
+    Dwarf_Unsigned* outval, char* endptr)
+{
+    return _dwarf_decode_u_leb128_chk((Dwarf_Small*)leb,
+        leblen, outval,
+        (Dwarf_Small*)endptr);
+}
 
 
 #define BITSINBYTE 8
@@ -200,3 +208,14 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
     *outval = number;
     return DW_DLV_OK;
 }
+
+/* Public Interface: Decode a signed LEB128 value. */
+int dwarf_decode_signed_leb128(char* leb, Dwarf_Unsigned* leblen,
+    Dwarf_Signed* outval, char* endptr)
+{
+    return _dwarf_decode_s_leb128_chk((Dwarf_Small *)leb,
+        leblen, outval,
+        (Dwarf_Small*)endptr);
+}
+
+
