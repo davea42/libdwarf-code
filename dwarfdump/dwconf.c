@@ -38,7 +38,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #if defined(_WIN32) && defined(HAVE_WINDOWS_H)
 #include <windows.h>
-#define BOOLEAN_TYPEDEFED 1
 #endif /* HAVE_WINDOWS_H */
 
 #include "globals.h"

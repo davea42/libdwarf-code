@@ -1,4 +1,7 @@
 2020-12-20 David Anderson
+    * dwconf.c: Removed BOOLEAN_TYPEDEF as the 'boolean'
+      define it referred to is no longer present anywhere.
+2020-12-20 David Anderson
     * sanitized.c: Removed unused global variable.
     * command_options.c,compiler_info.c,compiler_info.h,
       defined_types.h,dwarfdump.c,glflags.c,glflags.h,globals.h,
