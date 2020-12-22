@@ -151,10 +151,10 @@ static void
 print_stack_crash(void)
 {
     unsigned i = 0;
-    printf("ERROR: The start file operation just above"
+    printf("MACRONOTE: The start file operation just above"
         " exceeds the max allowed of %d. "
         "Possibly corrupt dwarf\n",MACFILE_STACK_DEPTH_MAX);
-    glflags.gf_count_major_errors++;
+    glflags.gf_count_macronotes++;
     printf("    []  op#    line   filenum   filename\n");
     for (i = 0; i < macfile_stack_next_to_use; ++i) {
         macfile_entry * m = macfile_array[macfile_stack[i]];
@@ -278,8 +278,8 @@ add_def_undef(unsigned opnum,
                 if (!didprintdwarf) {
                     printf("%s",sanitized(esb_get_string(mtext)));
                 }
-                glflags.gf_count_major_errors++;
-                printf("ERROR: Duplicating the macro "
+                glflags.gf_count_macronotes++;
+                printf("MACRONOTE: Duplicating the macro "
                     "name \"%s\" but with a different spelling "
                     "seems to be an error\n",
                     sanitized(keystr));
@@ -396,8 +396,8 @@ add_def_undef(unsigned opnum,
         free(keystr);
         return;
     }
-    glflags.gf_count_major_errors++;
-    printf("ERROR: Duplicating the undefine of macro "
+    glflags.gf_count_macronotes++;
+    printf("MACRONOTE: Duplicating the undefine of macro "
         "name \"%s\" "
         "could possibly be an error.\n",
         sanitized(keystr));
@@ -522,14 +522,14 @@ add_to_file_stack(unsigned k,
             m = macfile_from_array_index(
                 macfile_array_next_to_use -1);
             if (macfile_stack_next_to_use < 1) {
-                printf("ERROR: End file operation just above"
+                printf("MACRONOTE: End file operation just above"
                     "  MOFF=0x%" DW_PR_XZEROS DW_PR_DUx
                     " file %s"
                     " has no applicable start file!"
                     " Possibly corrupt dwarf.\n",
                     macro_unit_offset,
                     sanitized(m->ms_filename));
-                glflags.gf_count_major_errors++;
+                glflags.gf_count_macronotes++;
                 return;
             }
         }
@@ -1597,14 +1597,12 @@ macdef_tree_run_checks(void)
     free(mac_as_array);
     mac_as_array = 0;
     mac_as_array_next = 0;
-    if (glflags.gf_do_check_dwarf) {
-        return;
-    }
     if (macfile_stack_next_to_use > 1) {
-        printf("ERROR: The DWARF5 macro start-file stack has"
+        printf("MACRONOTE: The DWARF5 macro start-file stack has"
             " %u entries left on the stack. Missing "
-            " some end-file entries?",macfile_stack_next_to_use);
-        glflags.gf_count_major_errors++;
+            " some end-file entries?\n",
+            macfile_stack_next_to_use);
+        glflags.gf_count_macronotes++;
         printf("    []  op#    line   filenum   filename\n");
         for (i = 0; i < macfile_stack_next_to_use; ++i) {
             macfile_entry * m = macfile_array[macfile_stack[i]];
@@ -1615,6 +1613,9 @@ macdef_tree_run_checks(void)
         }
     }
     /* Now check the def/undef tree left */
+    if (!glflags.gf_do_check_dwarf) {
+        return;
+    }
     if (!macdefundeftree) {
         return;
     }

@@ -337,7 +337,10 @@ with slight differences is required.
 .TP
 .BR \--print-macinfo\ (\-m)
 Print the .debug_macinfo (DWARF 2,3,4) and .debug_macro
-(DWARF5) sections.
+(DWARF5) sections. The .debug_macro reporting may
+show output labeled MACRONOTES, mentioning
+macro content that might be questionable.  
+See also \--check-macros\ (\-kw).
 
 .TP
 .BR \--print-ranges\ (\-N)
@@ -407,8 +410,23 @@ might not want to use it routinely.)
 Checks for certain abbreviations section errors when reading DIEs.
 
 .TP
+.BR \--check-macros\ (\-kw) 
+Checks for issues in DWARF5 .debug_macro
+and identifies issues that might be
+questionable but not necessarily
+errors with the string MACRONOTES (and
+reports some MACRONOTES that \--print-macinfo
+will not show).
+It also checks .debug_macinfo,
+but less thoroughly and never emits MACRONOTES
+for .debug_macinfo.
+See also \--print-macinfo\ (\-m).
+(regrettably inconsistent spelling...).
+
+.TP
 .BR \--check-constants\ (\-kc) 
 Checks for errors in constants in debug_info.
+
 .TP
 .BR \-check-show\ (\-kd) 
 Turns on full reporting of error totals per producer.

@@ -144,7 +144,9 @@ struct glflags_s {
     Dwarf_Bool gf_header_flag; /* Control printing of Elf header. */
     Dwarf_Bool gf_section_groups_flag;
 
-    Dwarf_Bool gf_producer_children_flag; /* List of CUs per compiler */
+    /* Print list of CUs per compiler */
+    Dwarf_Bool gf_producer_children_flag;
+
     Dwarf_Bool gf_check_abbrev_code;
     Dwarf_Bool gf_check_pubname_attr;
     Dwarf_Bool gf_check_reloc_offset;
@@ -186,8 +188,8 @@ struct glflags_s {
     Dwarf_Bool gf_check_verbose_mode;
 
     Dwarf_Bool gf_check_frames;
-    Dwarf_Bool gf_check_frames_extended;   /* Extensive frames check */
-    Dwarf_Bool gf_check_locations;         /* Location list check */
+    Dwarf_Bool gf_check_frames_extended; /* Extensive frames check */
+    Dwarf_Bool gf_check_locations;       /* Location list check */
 
     Dwarf_Bool gf_print_usage_tag_attr;      /* Print basic usage */
     Dwarf_Bool gf_print_usage_tag_attr_full; /* Print full usage */
@@ -253,6 +255,7 @@ struct glflags_s {
     Dwarf_Bool gf_print_raw_loclists;
 
     unsigned long gf_count_major_errors;
+    unsigned long gf_count_macronotes;
 
     char **  gf_global_debuglink_paths;
     unsigned gf_global_debuglink_count;

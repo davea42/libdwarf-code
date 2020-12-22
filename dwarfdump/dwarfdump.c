@@ -220,6 +220,23 @@ is_it_known_elf_header(Elf *elf)
 #endif /* DWARF_WITH_LIBELF */
 
 static void
+check_for_notes(void)
+{
+    long int ect = glflags.gf_count_macronotes;
+    const char *w = "was";
+    const char *e = "MACRONOTE";
+    if (!ect) {
+        return;
+    }
+    if (ect > 1) {
+        w = "were";
+        e = "MACRONOTEs";
+    }
+    printf("There %s %ld DWARF %s reported: "
+        "see MACRONOTE above.\n",
+        w, ect,e);
+}
+static void
 check_for_major_errors(void)
 {
     long int ect = glflags.gf_count_major_errors;
@@ -234,7 +251,7 @@ check_for_major_errors(void)
     }
     printf("There %s %ld DWARF %s reported: "
         "see ERROR above.\n",
-        w, glflags.gf_count_major_errors,e);
+        w, ect,e);
 }
 
 static void
@@ -733,6 +750,7 @@ main(int argc, char *argv[])
         we  try to get here, we try not
         to  exit(1) by using print_error() */
     check_for_major_errors();
+    check_for_notes();
     flag_data_post_cleanup();
     global_destructors();
     free(temp_path_buf);
@@ -1826,6 +1844,7 @@ print_error(Dwarf_Debug dbg,
         DROP_ERROR_INSTANCE(dbg,dwarf_ret_val,lerr);
         dwarf_finish(dbg, &ignored_err);
         check_for_major_errors();
+        check_for_notes();
     }
     global_destructors();
     flag_data_post_cleanup();
