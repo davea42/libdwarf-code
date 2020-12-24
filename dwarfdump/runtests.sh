@@ -154,6 +154,11 @@ then
   cp junk.tmp $i
 fi
 }
+fixlasttime() {
+  i=$1
+  sed 's/last time 0x.*/last time 0x0/' <$i >junk.tmp
+  cp junk.tmp $i
+}
 
 # The following stop after 400 lines to limit the size
 # of the data here.  
@@ -165,6 +170,9 @@ echo "start  dwarfdump sanity check on pe $f"
 # Windows dwarfdump emits a couple prefix lines
 #we do not want. 
 # So let dwarfdump emit more then trim.
+# In addition the zero date for file time in line tables
+# prints differently for different time zones.
+# Delete what follows 'last time 0x0'
 if [ x$win = "xy" ]
 then
   textlim=702
@@ -181,6 +189,7 @@ then
   echo did drop two
   wc $t
 fi
+fixlasttime $t
 which dos2unix
 if [ $? -eq 0 ]
 then
@@ -206,6 +215,7 @@ then
   droptwoifwin $t
 fi
 echo "if update required, mv $top_blddir/dwarfdump/$t $b"
+fixlasttime $t
 which dos2unix
 if [ $? -eq 0 ]
 then
@@ -232,6 +242,7 @@ then
 fi
 chkres $? "Running dwarfdump on $f"
 echo "if update required, mv $top_blddir/dwarfdump/$t $b"
+fixlasttime $t
 which dos2unix
 if [ $? -eq 0 ]
 then

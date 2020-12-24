@@ -1,4 +1,13 @@
 2020-12-24 David Anderson
+    * runtests.sh: The 'last time' timestamp expansion
+      got different strings out of libc depending on timezone.
+      We do not really care what the date/time is, so 
+      now we trim off the date/time text portion.
+    * testobjLE32PE.base: Now contains the trimmed
+      data with 0x0 but no day or year or time
+      so we can compare equal with 'make check'
+      anywhere we run it.
+2020-12-24 David Anderson
     * macrocheck.h: Added a needed 'extern' for macdefundeftree.
 2020-12-23 David Anderson
     * CMakeLists.txt: Adds opscounttab.c and opscounttab.h

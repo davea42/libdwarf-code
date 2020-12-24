@@ -275,39 +275,39 @@ total line info length 256 bytes, line offset 0x00000000 0
   file names count      9
   file[0]  test.c               (file-number: 1)
     dir index 1
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[1]  stdio.h              (file-number: 2)
     dir index 2
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[2]  _mingw.h             (file-number: 3)
     dir index 2
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[3]  msvcrtver.h          (file-number: 4)
     dir index 2
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[4]  w32api.h             (file-number: 5)
     dir index 2
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[5]  sdkddkver.h          (file-number: 6)
     dir index 2
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[6]  stddef.h             (file-number: 7)
     dir index 3
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[7]  types.h              (file-number: 8)
     dir index 4
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   file[8]  stdarg.h             (file-number: 9)
     dir index 3
-    last time 0x0 Wed Dec 31 16:00:00 1969
+    last time 0x0
     file length 0 0x0
   statement prog offset in section: 0x000000ea (234)
                                                          s b e p e i d
