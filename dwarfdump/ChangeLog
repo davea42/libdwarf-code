@@ -1,3 +1,5 @@
+2020-12-24 David Anderson
+    * macrocheck.h: Added a needed 'extern' for macdefundeftree.
 2020-12-23 David Anderson
     * CMakeLists.txt: Adds opscounttab.c and opscounttab.h
       to the files in the build of dwarfdump.

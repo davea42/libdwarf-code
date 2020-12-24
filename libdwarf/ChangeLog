@@ -1,3 +1,11 @@
+2020-12-24 David Anderson
+    * dwarfstring.c: Improved checking for caller errors
+      and changed the error message keyword from ERROR
+      to DWARFSTRINGERR.  These are all errors in
+      libdwarf calls to dwarfstring.
+    * test_dwarfstring.c: The new message spelling means
+      the extected results from calls with errors
+      changed so 'make check' passes.
 2020-12-20 David Anderson
     * Makefile.am: Add runtests.sh to check_TESTS
       so the leb tests get run with make check.

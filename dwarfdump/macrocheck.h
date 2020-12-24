@@ -28,9 +28,9 @@ Copyright 2015-2016 David Anderson. All rights reserved.
 #define MACROCHECK_H
 
 /* tsearch trees used in macro checking. */
-extern void *  macro_check_tree; /* DWARF5 macros. */
-extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
-void *macdefundeftree; /* DWARF5 style macros */
+extern void * macro_check_tree; /* DWARF5 macros. */
+extern void * macinfo_check_tree; /* DWARF2,3,4 macros */
+extern void * macdefundeftree; /* DWARF5 style macros */
 
 struct Macrocheck_Map_Entry_s {
     Dwarf_Unsigned mp_key; /* Key is offset */

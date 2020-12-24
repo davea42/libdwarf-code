@@ -39,7 +39,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     All these return either TRUE (the values altered)
     or FALSE (something went wrong, quite likely
     the caller presented a bad format string for the
-    value).
+    value). Normally a string like
+    DWARFSTRINGERR is stuck in the output in case of error.
+
 */
 
 #include "config.h"
@@ -68,6 +70,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define  UNUSEDARG
 #endif
 
+/*  m must be a string, like  "DWARFSTRINGERR..."  for this to work */
+#define DWSERR(m) dwarfstring_append_length(data,m,sizeof(m)-1) 
 
 static unsigned long minimumnewlen = 30;
 /*
@@ -193,6 +197,7 @@ dwarfstring_append_length(struct dwarfstring_s *g,char *str,
         newlen = g->s_size + slen+2;
         r = dwarfstring_resize_to(g,newlen);
         if (!r) {
+            /* Unable to resize, dare not do anything. */
             return FALSE;
         }
     }
@@ -283,13 +288,15 @@ int dwarfstring_append_printf_s(dwarfstring *data,
     int res = 0;
 
     if (!s) {
-        s="<ERROR: null string pointer to "
-            "dwarfstring_append_printf_s>";
+        DWSERR("<DWARFSTRINGERR: null string pointer to "
+            "dwarfstring_append_printf_s>");
+        return FALSE;
     }
     stringlen = strlen(s);
     if (!format) {
-        format="<ERROR: null format pointer to "
-            "dwarfstring_append_printf_s>";
+        DWSERR("<DWARFSTRINGERR: null format pointer to "
+            "dwarfstring_append_printf_s>");
+        return FALSE;
     }
     while (format[next] && format[next] != '%') {
         ++next;
@@ -298,10 +305,24 @@ int dwarfstring_append_printf_s(dwarfstring *data,
     if (prefixlen) {
         dwarfstring_append_length(data,format,prefixlen);
     }
-    if (!format[next]) {
-        return TRUE;
+    if (format[next] != '%') {
+        /*   No % operator found, we are done */
+        DWSERR("<DWARFSTRINGERR: no percent passed to "
+            "dwarfstring_append_printf_s>");
+        return FALSE;
     }
     next++;
+    if (!format[next]) {
+        DWSERR("<DWARFSTRINGERR: empty percent  to "
+            "dwarfstring_append_printf_s>");
+        return FALSE;
+    }
+    if (format[next] == ' ') {
+        DWSERR("<DWARFSTRINGERR: empty percent  to "
+            "dwarfstring_append_printf_s>");
+        return FALSE;
+    }
+
     if (format[next] == '-') {
         leftjustify++;
         next++;
@@ -313,6 +334,8 @@ int dwarfstring_append_printf_s(dwarfstring *data,
     }
     next = (endptr - format);
     if (format[next] != 's') {
+        DWSERR("<DWARFSTRINGERR: no percent-s to "
+            "dwarfstring_append_printf_s>");
         return FALSE;
     }
     next++;
@@ -396,8 +419,9 @@ int dwarfstring_append_printf_i(dwarfstring *data,
     int done = 0;
 
     if (!format) {
-        format="<ERROR: null format pointer to "
-            "dwarfstring_append_printf_i>";
+        DWSERR("<DWARFSTRINGERR: null format pointer to "
+            "dwarfstring_append_printf_i>");
+        return FALSE;
     }
     while (format[next] && format[next] != '%') {
         ++next;
@@ -406,9 +430,21 @@ int dwarfstring_append_printf_i(dwarfstring *data,
     dwarfstring_append_length(data,format,prefixlen);
     if (format[next] != '%') {
         /*   No % operator found, we are done */
-        return TRUE;
+        DWSERR("<DWARFSTRINGERR: no percent passed to "
+            "dwarfstring_append_printf_i>");
+        return FALSE;
     }
     next++;
+    if (!format[next]) {
+        DWSERR("<DWARFSTRINGERR: empty percent  to "
+            "dwarfstring_append_printf_i>");
+        return FALSE;
+    }
+    if (format[next] == ' ') {
+        DWSERR("<DWARFSTRINGERR: empty percent  to "
+            "dwarfstring_append_printf_i>");
+        return FALSE;
+    }
     if (format[next] == '-') {
         minuscount++;
         next++;
@@ -476,9 +512,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
         next++;
     }
     if (format[next] == 's') {
-        /* ESBERR("ESBERR_pct_scount_in_i"); */
-        dwarfstring_append(data,
-            "<ERROR: format %s passed to "
+        DWSERR( "<DWARFSTRINGERR: format percent s passed to "
             "dwarfstring_append_printf_i>");
         return FALSE;
     }
@@ -487,25 +521,21 @@ int dwarfstring_append_printf_i(dwarfstring *data,
             just copying the entire format makes
             it easier for coders to understand
             nothing much was done */
-        dwarfstring_append(data,
-            "<ERROR: format %x or %X passed to "
+        DWSERR("<DWARFSTRINGERR: format %x or %X passed to "
             "dwarfstring_append_printf_i>");
-        dwarfstring_append(data,format+prefixlen);
         return FALSE;
     }
     if (!dcount || (lcount >2) ||
         (Xcount+xcount+dcount+ucount) > 1) {
         /* error */
-        dwarfstring_append(data,
-            "<ERROR: format has too many %x/d/u/l passed to "
+        DWSERR( "<DWARFSTRINGERR: format has too many "
+            "percent x/d/u/l passed to "
             "dwarfstring_append_printf_i>");
-        /* ESBERR("ESBERR_xcount_etc_i"); */
         return FALSE;
     }
     if (pluscount && minuscount) {
         /* We don't allow  format +- */
-        dwarfstring_append(data,
-            "<ERROR: format disallowed. +- passed to "
+        DWSERR("<DWARFSTRINGERR: format disallowed. +- passed to "
             "dwarfstring_append_printf_i>");
         return FALSE;
     }
@@ -546,12 +576,9 @@ int dwarfstring_append_printf_i(dwarfstring *data,
                     remaining = -v;
                 }
             }else {
-                dwarfstring_append(data,
-                    "<ERROR: v passed to "
+                DWSERR("<DWARFSTRINGERR: v passed to "
                     "dwarfstring_append_printf_i "
                     "cannot be handled:integer size>");
-                /* ESBERR("ESBERR_sizeof_v_i"); */
-                /* error */
                 return FALSE;
             }
         }
@@ -671,8 +698,9 @@ int dwarfstring_append_printf_u(dwarfstring *data,
     size_t prefixlen = 0;
 
     if (!format) {
-        format="<ERROR: null format pointer to "
-            "dwarfstring_append_printf_u>";
+        DWSERR("<DWARFSTRINGERR: null format pointer to "
+            "dwarfstring_append_printf_u>");
+        return FALSE;
     }
     while (format[next] && format[next] != '%') {
         ++next;
@@ -681,15 +709,25 @@ int dwarfstring_append_printf_u(dwarfstring *data,
     dwarfstring_append_length(data,format,prefixlen);
     if (format[next] != '%') {
         /*   No % operator found, we are done */
-        return TRUE;
+        DWSERR("<DWARFSTRINGERR: no percent passed to "
+            "dwarfstring_append_printf_u>");
+        return FALSE;
     }
     next++;
+    if (!format[next]) {
+        DWSERR("<DWARFSTRINGERR: empty percent  to "
+            "dwarfstring_append_printf_u>");
+        return FALSE;
+    }
+    if (format[next] == ' ') {
+        DWSERR("<DWARFSTRINGERR: empty percent  to "
+            "dwarfstring_append_printf_u>");
+        return FALSE;
+    }
     if (format[next] == '-') {
-        dwarfstring_append(data,
-            "<ERROR: format - passed to "
+        DWSERR("<DWARFSTRINGERR: format - passed to "
             "dwarfstring_append_printf_u "
             "cannot be handled>");
-        /*ESBERR("ESBERR_printf_u - format not supported"); */
         return FALSE;
     }
     if (format[next] == '0') {
@@ -747,45 +785,33 @@ int dwarfstring_append_printf_u(dwarfstring *data,
         next++;
     }
     if (format[next] == 's') {
-        dwarfstring_append(data,
-            "<ERROR: format %s passed to "
+        DWSERR("<DWARFSTRINGERR: format percent-s passed to "
             "dwarfstring_append_printf_u "
             "cannot be handled>");
-        /* ESBERR("ESBERR_pct_scount_in_u"); */
         return FALSE;
     }
     if ( (Xcount +xcount+dcount+ucount) > 1) {
-        dwarfstring_append(data,
-            "<ERROR: format %x X d u repeats to "
+        DWSERR("<DWARFSTRINGERR: format  percent -x X d u repeats to "
             "dwarfstring_append_printf_u "
             "cannot be handled>");
-        /* ESBERR("ESBERR_pct_xcount_etc_u"); */
         return FALSE;
     }
     if ( (Xcount +xcount+dcount+ucount) == 0) {
-        dwarfstring_append(data,
-            "<ERROR: format %x X d u missing to "
+        DWSERR("<DWARFSTRINGERR: format percent x X d u missing to "
             "dwarfstring_append_printf_u "
             "cannot be handled>");
-        /* ESBERR("ESBERR_pct_xcount_etc_u"); */
         return FALSE;
     }
     if (lcount > 2) {
-        dwarfstring_append(data,
-            "<ERROR: format % lll to "
+        DWSERR("<DWARFSTRINGERR: format percent lll to "
             "dwarfstring_append_printf_u "
             "cannot be handled>");
-        /* ESBERR("ESBERR_pct_lcount_error_u"); */
-        /* error */
         return FALSE;
     }
     if (dcount > 0) {
-        dwarfstring_append(data,
-            "<ERROR: format %d to "
+        DWSERR("<DWARFSTRINGERR: format  percent-d to "
             "dwarfstring_append_printf_u "
             "cannot be handled>");
-        /*ESBERR("ESBERR_pct_dcount_error_u");*/
-        /* error */
         return FALSE;
     }
     if (ucount) {
