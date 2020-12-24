@@ -175,7 +175,7 @@ if (DO_TESTING)
     set(peobj "${CMAKE_SOURCE_DIR}/dwarfdump/testobjLE32PE.exe") 
     set(pebase "${CMAKE_SOURCE_DIR}/dwarfdump/testobjLE32PE.base") 
     set(execpedd "${CMAKE_BINARY_DIR}/dwarfdump/dwarfdump")
-    add_test(NAME selfdwarfdumppe COMMAND sh -c "${execpedd} -vvv -a ${peobj} |  head -700 >junk.testoutpe ; diff ${pebase} junk.testoutpe" )
+    add_test(NAME selfdwarfdumppe COMMAND sh -c "${execpedd} -vvv -a ${peobj} |  head -700 | sed 's/last time 0x.*/last time 0x0/' >junk.testoutpe ; diff ${pebase} junk.testoutpe" )
 endif()
 
 if (DO_TESTING) 

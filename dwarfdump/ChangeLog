@@ -1,4 +1,8 @@
 2020-12-24 David Anderson
+    * CMakeLists.txt: Needed the same sed transformation
+      that was added in runtests.sh a few minutes ago to
+      pass 'make test'.
+2020-12-24 David Anderson
     * runtests.sh: The 'last time' timestamp expansion
       got different strings out of libc depending on timezone.
       We do not really care what the date/time is, so 
