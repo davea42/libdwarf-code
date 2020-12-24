@@ -78,6 +78,13 @@ unsigned long malloc_size = 0;
 /*  m must be a string, like  "ESBERR..."  for this to work */
 #define ESBERR(m) esb_appendn_internal(data,m,sizeof(m)-1)
 
+#define INCRVALIDATENEXT(n) do { \
+     ++n ;                       \
+     if (!format[n]) {         \
+        ESBERR("ESBERR_next_followedby_end"); \
+        return;                  \
+     }                           \
+     } while (0) 
 FILE *esb_open_null_device(void)
 {
     if (!null_device_handle) {
@@ -410,7 +417,20 @@ esb_append_printf_s(struct esb_s *data,
     if (prefixlen) {
         esb_appendn_internal(data,format,prefixlen);
     }
+    if (format[next] != '%') {
+        /*   No % operator found */
+        ESBERR("ESBERR..esb_append_printf_s has no percent operator");
+        return;
+    }
     next++;
+    if (format[next] == ' ') {
+        ESBERR("ESBERR_pct_followedby_space_in_s");
+        return;
+    }
+    if (!format[next]) {
+        ESBERR("ESBERR_pct_followedby_wrong_in_s");
+        return;
+    }
     if (format[next] == '-') {
         leftjustify++;
         next++;
@@ -510,17 +530,25 @@ esb_append_printf_u(struct esb_s *data,
     esb_appendn_internal(data,format,prefixlen);
     if (format[next] != '%') {
         /*   No % operator found */
-        ESBERR("ESBERR..esb_append_printf_u has no % operator");
+        ESBERR("ESBERR..esb_append_printf_u has no percent operator");
         return;
     }
     next++;
+    if (format[next] == ' ') {
+        ESBERR("ESBERR_pct_followedby_space_in_s");
+        return;
+    }
+    if (!format[next]) {
+        ESBERR("ESBERR_pct_followedby_wrong_in_s");
+        return;
+    }
     if (format[next] == '-') {
         ESBERR("ESBERR_printf_u - format not supported");
-        next++;
+        INCRVALIDATENEXT(next);
     }
     if (format[next] == '0') {
         leadingzero = 1;
-        next++;
+        INCRVALIDATENEXT(next);
     }
     numptr = format+next;
     val = strtol(numptr,&endptr,10);
@@ -686,21 +714,29 @@ esb_append_printf_i(struct esb_s *data,
     esb_appendn_internal(data,format,prefixlen);
     if (format[next] != '%') {
         /*   No % operator found */
-        ESBERR("ESBERR..esb_append_printf_i has no % operator");
+        ESBERR("ESBERR..esb_append_printf_i has no percent operator");
         return;
     }
     next++;
+    if (format[next] == ' ') { 
+        ESBERR("ESBERR_pct_followedby_space_in_s");
+        return;
+    }
+    if (!format[next]) {
+        ESBERR("ESBERR_pct_followedby_wrong_in_s");
+        return;
+    }
     if (format[next] == '-') {
         ESBERR("ESBERR_printf_i - format not supported");
-        next++;
+        INCRVALIDATENEXT(next);
     }
     if (format[next] == '+') {
         pluscount++;
-        next++;
+        INCRVALIDATENEXT(next);
     }
     if (format[next] == '0') {
         leadingzero = 1;
-        next++;
+        INCRVALIDATENEXT(next);
     }
     numptr = format+next;
     val = strtol(numptr,&endptr,10);

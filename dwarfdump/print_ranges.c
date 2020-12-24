@@ -360,7 +360,7 @@ check_range_array_info(Dwarf_Debug dbg,Dwarf_Error * err)
                 esb_append_printf_u(&m,
                     "Call to dwarf_offdie failed "
                     "getting the CU die from offset "
-                    " 0x" DW_PR_XZEROS DW_PR_DUx
+                    " 0x%" DW_PR_XZEROS DW_PR_DUx
                     "in checking ranges",die_off);
                 simple_err_return_msg_either_action(
                     res,

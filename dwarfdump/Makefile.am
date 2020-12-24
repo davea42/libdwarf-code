@@ -47,6 +47,8 @@ makename.c \
 makename.h \
 naming.c \
 naming.h \
+opscounttab.c \
+opscounttab.h \
 print_abbrevs.c \
 print_aranges.c \
 print_debugfission.c \
@@ -133,6 +135,7 @@ NEWS \
 README \
 README.testcases \
 CODINGSTYLE \
+buildopscounttab.c \
 print_reloc_decls.h \
 makename_test.c  \
 section_bitmaps_test.c \

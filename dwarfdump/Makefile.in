@@ -119,6 +119,7 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-esb.$(OBJEXT) dwarfdump-glflags.$(OBJEXT) \
 	dwarfdump-helpertree.$(OBJEXT) dwarfdump-macrocheck.$(OBJEXT) \
 	dwarfdump-makename.$(OBJEXT) dwarfdump-naming.$(OBJEXT) \
+	dwarfdump-opscounttab.$(OBJEXT) \
 	dwarfdump-print_abbrevs.$(OBJEXT) \
 	dwarfdump-print_aranges.$(OBJEXT) \
 	dwarfdump-print_debugfission.$(OBJEXT) \
@@ -192,6 +193,7 @@ am__depfiles_remade = ./$(DEPDIR)/dwarfdump-addrmap.Po \
 	./$(DEPDIR)/dwarfdump-macrocheck.Po \
 	./$(DEPDIR)/dwarfdump-makename.Po \
 	./$(DEPDIR)/dwarfdump-naming.Po \
+	./$(DEPDIR)/dwarfdump-opscounttab.Po \
 	./$(DEPDIR)/dwarfdump-print_abbrevs.Po \
 	./$(DEPDIR)/dwarfdump-print_aranges.Po \
 	./$(DEPDIR)/dwarfdump-print_debug_gnu.Po \
@@ -656,6 +658,8 @@ makename.c \
 makename.h \
 naming.c \
 naming.h \
+opscounttab.c \
+opscounttab.h \
 print_abbrevs.c \
 print_aranges.c \
 print_debugfission.c \
@@ -738,6 +742,7 @@ NEWS \
 README \
 README.testcases \
 CODINGSTYLE \
+buildopscounttab.c \
 print_reloc_decls.h \
 makename_test.c  \
 section_bitmaps_test.c \
@@ -871,6 +876,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-macrocheck.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-makename.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-naming.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-opscounttab.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_abbrevs.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_aranges.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_debug_gnu.Po@am__quote@ # am--include-marker
@@ -1160,6 +1166,20 @@ dwarfdump-naming.obj: naming.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='naming.c' object='dwarfdump-naming.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-naming.obj `if test -f 'naming.c'; then $(CYGPATH_W) 'naming.c'; else $(CYGPATH_W) '$(srcdir)/naming.c'; fi`
+
+dwarfdump-opscounttab.o: opscounttab.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-opscounttab.o -MD -MP -MF $(DEPDIR)/dwarfdump-opscounttab.Tpo -c -o dwarfdump-opscounttab.o `test -f 'opscounttab.c' || echo '$(srcdir)/'`opscounttab.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-opscounttab.Tpo $(DEPDIR)/dwarfdump-opscounttab.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='opscounttab.c' object='dwarfdump-opscounttab.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-opscounttab.o `test -f 'opscounttab.c' || echo '$(srcdir)/'`opscounttab.c
+
+dwarfdump-opscounttab.obj: opscounttab.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-opscounttab.obj -MD -MP -MF $(DEPDIR)/dwarfdump-opscounttab.Tpo -c -o dwarfdump-opscounttab.obj `if test -f 'opscounttab.c'; then $(CYGPATH_W) 'opscounttab.c'; else $(CYGPATH_W) '$(srcdir)/opscounttab.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-opscounttab.Tpo $(DEPDIR)/dwarfdump-opscounttab.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='opscounttab.c' object='dwarfdump-opscounttab.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-opscounttab.obj `if test -f 'opscounttab.c'; then $(CYGPATH_W) 'opscounttab.c'; else $(CYGPATH_W) '$(srcdir)/opscounttab.c'; fi`
 
 dwarfdump-print_abbrevs.o: print_abbrevs.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_abbrevs.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_abbrevs.Tpo -c -o dwarfdump-print_abbrevs.o `test -f 'print_abbrevs.c' || echo '$(srcdir)/'`print_abbrevs.c
@@ -2033,6 +2053,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/dwarfdump-macrocheck.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-makename.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-naming.Po
+	-rm -f ./$(DEPDIR)/dwarfdump-opscounttab.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_abbrevs.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_aranges.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_debug_gnu.Po
@@ -2129,6 +2150,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/dwarfdump-macrocheck.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-makename.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-naming.Po
+	-rm -f ./$(DEPDIR)/dwarfdump-opscounttab.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_abbrevs.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_aranges.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_debug_gnu.Po

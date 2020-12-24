@@ -333,17 +333,17 @@ print_raw_all_loclists(Dwarf_Debug dbg,
         printf("   context size in bytes : %3" DW_PR_DUu "\n",
             offset_past_last_locentry - header_offset);
         if (glflags.verbose) {
-            printf("   Offset in section     : 0x%"
-                DW_PR_XZEROS DW_PR_DUx"\n",
+            printf("   Offset in section     : "
+                "0x%"  DW_PR_XZEROS DW_PR_DUx"\n",
                 header_offset);
-            printf("   Offset  of offsets    : 0x%"
-                DW_PR_XZEROS DW_PR_DUx"\n",
+            printf("   Offset  of offsets    : "
+                "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
                 offset_of_offset_array);
-            printf("   Offsetof first loc    : 0x%"
-                DW_PR_XZEROS DW_PR_DUx"\n",
+            printf("   Offsetof first loc    : "
+                "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
                 offset_of_first_locentry);
-            printf("   Offset past locations : 0x%"
-                DW_PR_XZEROS DW_PR_DUx"\n",
+            printf("   Offset past locations : "
+                "0x%" DW_PR_XZEROS DW_PR_DUx"\n",
                 offset_past_last_locentry);
         }
         if (offset_entry_count) {

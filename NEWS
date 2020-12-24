@@ -1,3 +1,12 @@
+2020-12-23:
+  dwarfdump --print-macinfo now follows DW_MACRO_imports
+  and does several additional checks on .debug_macro section
+  data. --check-macros skips printing most entries but does
+  all that and reports even more about that section. Since
+  .debug_macro does not reproduce all macro operations in
+  the original source the MACRONOTEs printed are indications
+  of things to consider, not errors.
+
 2020-11-21:
   dwarfdump now prints DWARF expression operators each on
   its own line.  This makes viewing DWARF expressions much
@@ -30,10 +39,11 @@
   see libdwarf/ChangeLog for details.
 
 2020-05-23:
-  dwarfdump now takes much less malloc() to work, as measured
-  by valgrind --tool=massif  and massif-visualizer.
-  A dwarfdump run that did 2.2Gib of malloc/free before the changes
-  now does 1.4GiB.
+  dwarfdump now takes much less malloc() to work, as
+  measured by valgrind --tool=massif  and massif-visualizer.
+  A dwarfdump run that did 2.2Gib of malloc/free before the
+  changes now does 1.4GiB.
+
 2020-05-19:
   libdwarf and dwarfdump now support DWARF5 .debug_rnglists.
   The new interfaces are documented in libdwarf/libdwarf2.1.pdf.

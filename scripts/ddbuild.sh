@@ -102,6 +102,23 @@ then
    echo tag_tree_build 4 compile fail
    exit 1
 fi
+
+$CC -I $top_srcdir/libdwarf \
+  $top_srcdir/dwarfdump/buildopscounttab.c \
+  $top_srcdir/dwarfdump/dwarf_names.c -o buildop
+if [ $? -ne 0 ]
+then
+    echo "FAIL compiling buildop  and building opstabcount.c source"
+    exit 1
+fi
+./buildop >opscounttab.c
+if [ $? -ne 0 ]
+then
+    echo "FAIL building opstabcount.c source"
+    exit 1
+fi
+rm -f ./buildop
+
 rm -f tmp-tag-tree-build4.tmp 
 rm -f tmp-t4.c
 

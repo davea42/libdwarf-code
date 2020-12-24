@@ -3,7 +3,9 @@ set_source_group(SOURCES "Source Files" addrmap.c
     checkutil.c dwarfdump.c dwconf.c helpertree.c 
 	glflags.c command_options.c compiler_info.c
     dwarf_names.c
-	macrocheck.c print_abbrevs.c print_aranges.c
+	macrocheck.c 
+    opscounttab.c
+    print_abbrevs.c print_aranges.c
     print_debugfission.c print_die.c 
     print_debug_gnu.c
 	print_debug_names.c  print_debug_sup.c
@@ -28,6 +30,7 @@ set_source_group(HEADERS "Header Files"
   addrmap.h checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
   dwarf_names.h
+  opscounttab.h 
   print_debug_gnu.h
   dwconf_using_functions.h esb_using_functions.h
   dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 

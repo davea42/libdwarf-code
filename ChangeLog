@@ -1,3 +1,10 @@
+2020-12-23  David Anderson
+    * configure.ac: Now version 20201223.
+    * configure: Regenerated.
+    * scripts/buildstandardsource.sh: Added a clarifying
+      comment.
+    * scripts/ddbuild.sh: Now builds the sourcefile
+      opstabcount.c for dwarfdump.
 2020-11-25  David Anderson
     * configure.ac: Now version 20201201.
     * configure: Regenerated.

@@ -49,6 +49,7 @@ then
     echo "FAIL cd back to top-level"
     exit 1
 fi
+#Now build the source files needed by dwarfdump builds.
 cd dwarfdump
 if [ $? -ne 0 ]
 then
@@ -73,6 +74,5 @@ rm -f config.h
 rm -f libdwarf/libdwarf.h
 
 echo "PASS. The .c and .h files are built"
-
 
 exit 0

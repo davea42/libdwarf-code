@@ -1,3 +1,30 @@
+2020-12-23 David Anderson
+    * CMakeLists.txt: Adds opscounttab.c and opscounttab.h
+      to the files in the build of dwarfdump.
+    * Makefile.am: Adds opscounttab.c opscounttab.h and
+      buildopscounttab.c appropriately.
+    * Makefile.in: Regenerated.
+    * buildopscounttab.h: Fixes spelling mistake.
+    * buildopscounttab.c: Fixes DW_OP_lit0 input.
+      Adjusts indents, remove trailing white and trailing
+      blank lines.
+    * esb.c: Added ESBERR checks and that found mistakes
+      in dwarfdump source.
+    * print_die.c: include opscounttab.h. op_has_no_operands()
+      is just  reference to a byte in dwarf_opscounttab array.
+      Deleted a struct and table that is not used.
+    * print_macro.c: Fixed a esb_append_printf_u() call
+      missing a % .  Removed a stray newline from printf output.
+    * print_ranges.c: An error message was missing
+      a % to esb_append_printf_u. Fixed.
+    * print_loclists.c: Rearranged 4 lines so it is easy
+      to see that the printf has its 0x%  before DW_PR_XZEROS etc.
+2020-12-22 David Anderson
+    * buildopscounttab.c: Builds a simple table per DW_OP
+      operator. More use of it shortly.
+    * opscounttab.h: Type decl and array decl.
+    * opscounttab.c: Generated this file.Speeds up
+      inquiring if a DW_OP has zero operands.
 2020-12-22 David Anderson
     * dwarfdump.1: Added descriptions to the
       options for

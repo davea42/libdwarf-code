@@ -44,6 +44,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 #include "print_frames.h"  /* for print_location_operations() . */
 #include "macrocheck.h"
 #include "helpertree.h"
+#include "opscounttab.h"
 #include "tag_common.h"
 
 /*  Traverse a DIE and attributes to
@@ -455,112 +456,6 @@ check_die_expr_op_basic_data(Dwarf_Debug dbg,Dwarf_Die die,
     }
     dwarf_dealloc_die(other_die);
 }
-
-struct operation_descr_s {
-    int op_code;
-    int op_count;
-
-    /* Nothing actually looks at op_1type */
-    const char * op_1type;
-};
-struct operation_descr_s opdesc[]= {
-    {DW_OP_addr,1,"addr" },
-
-    {DW_OP_deref,0,"" },
-    {DW_OP_const1u,1,"1u" },
-    {DW_OP_const1s,1,"1s" },
-    {DW_OP_const2u,1,"2u" },
-    {DW_OP_const2s,1,"2s" },
-    {DW_OP_const4u,1,"4u" },
-    {DW_OP_const4s,1,"4s" },
-    {DW_OP_const8u,1,"8u" },
-    {DW_OP_const8s,1,"8s" },
-    {DW_OP_constu,1,"uleb" },
-    {DW_OP_consts,1,"sleb" },
-    {DW_OP_dup,0,""},
-    {DW_OP_drop,0,""},
-    {DW_OP_over,0,""},
-    {DW_OP_pick,1,"1u"},
-    {DW_OP_swap,0,""},
-    {DW_OP_rot,0,""},
-    {DW_OP_xderef,0,""}, /* DWARF5 */
-    {DW_OP_abs,0,""},
-    {DW_OP_and,0,""},
-    {DW_OP_div,0,""},
-    {DW_OP_minus,0,""},
-    {DW_OP_mod,0,""},
-    {DW_OP_mul,0,""},
-    {DW_OP_neg,0,""},
-    {DW_OP_not,0,""},
-    {DW_OP_or,0,""},
-    {DW_OP_plus,0,""},
-    {DW_OP_plus_uconst,1,"uleb"},
-    {DW_OP_shl,0,""},
-    {DW_OP_shr,0,""},
-    {DW_OP_shra,0,""},
-    {DW_OP_xor,0,""},
-    {DW_OP_skip,1,"2s"},
-    {DW_OP_bra,1,"2s"},
-    {DW_OP_eq,0,""},
-    {DW_OP_ge,0,""},
-    {DW_OP_gt,0,""},
-    {DW_OP_le,0,""},
-    {DW_OP_lt,0,""},
-    {DW_OP_ne,0,""},
-    /* lit0 thru reg31 handled specially, no operands */
-    /* breg0 thru breg31 handled specially, 1 operand */
-    {DW_OP_regx,1,"uleb"},
-    {DW_OP_fbreg,1,"sleb"},
-    {DW_OP_bregx,2,"uleb"},
-    {DW_OP_piece,1,"uleb"},
-    {DW_OP_deref_size,1,"1u"},
-    {DW_OP_xderef_size,1,"1u"},
-    {DW_OP_nop,0,""},
-    {DW_OP_push_object_address,0,""},
-    {DW_OP_call2,1,"2u"},
-    {DW_OP_call4,1,"4u"},
-    {DW_OP_call_ref,1,"off"},
-    {DW_OP_form_tls_address,0,""},
-    {DW_OP_call_frame_cfa,0,""},
-    {DW_OP_bit_piece,2,"uleb"},
-    {DW_OP_implicit_value,2,"u"},
-    {DW_OP_stack_value,0,""},
-    {DW_OP_GNU_uninit,0,""},
-    {DW_OP_GNU_encoded_addr,1,"addr"},
-    {DW_OP_implicit_pointer,2,"addr" }, /* DWARF5 */
-    {DW_OP_GNU_implicit_pointer,2,"addr" },
-    {DW_OP_entry_value,2,"val" }, /* DWARF5 */
-    {DW_OP_GNU_entry_value,2,"val" },
-    {DW_OP_const_type,3,"uleb" }, /* DWARF5 */
-    {DW_OP_GNU_const_type,3,"uleb" },
-    {DW_OP_regval_type,2,"uleb" }, /* DWARF5 */
-    {DW_OP_GNU_regval_type,2,"uleb" },
-    {DW_OP_deref_type,1,"val" }, /* DWARF5 */
-    {DW_OP_GNU_deref_type,1,"val" },
-    {DW_OP_convert,1,"uleb" }, /* DWARF5 */
-    {DW_OP_GNU_convert,1,"uleb" },
-    {DW_OP_reinterpret,1,"uleb" }, /* DWARF5 */
-    {DW_OP_GNU_reinterpret,1,"uleb" },
-
-    {DW_OP_GNU_parameter_ref,1,"val" },
-    {DW_OP_GNU_const_index,1,"val" },
-    {DW_OP_GNU_push_tls_address,0,"" },
-
-    {DW_OP_addrx,1,"uleb" }, /* DWARF5 */
-    {DW_OP_GNU_addr_index,1,"val" },
-    {DW_OP_constx,1,"u" }, /* DWARF5 */
-    {DW_OP_GNU_const_index,1,"u" },
-    {DW_OP_GNU_parameter_ref,1,"u" },
-
-    /*  https://gcc.gnu.org/legacy-ml/gcc-patches/
-        2017-02/msg01499.html */
-    /* The value is a die offset, size offset_size */
-    {DW_OP_GNU_variable_value,1,"val" },
-
-    {DW_OP_xderef_type,2,"1u" }, /* DWARF5 */
-    /* terminator */
-    {0,0,""}
-};
 
 /*  The first non-zero sibling offset we can find
     is what we want to return. The lowest sibling
@@ -5044,26 +4939,9 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
 }
 
 static int
-op_has_no_operands(int op)
+op_has_no_operands(Dwarf_Small op)
 {
-    unsigned i = 0;
-    if (op >= DW_OP_lit0 && op <= DW_OP_reg31) {
-        return TRUE;
-    }
-    for (; ; ++i) {
-        struct operation_descr_s *odp = opdesc+i;
-        if (odp->op_code == 0) {
-            break;
-        }
-        if (odp->op_code != op) {
-            continue;
-        }
-        if (odp->op_count == 0) {
-            return TRUE;
-        }
-        return FALSE;
-    }
-    return FALSE;
+    return (dwarf_opscounttab[op].oc_opcount == 0);
 }
 
 static void

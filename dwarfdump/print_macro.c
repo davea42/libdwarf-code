@@ -680,7 +680,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     dwarf_names_print_on_error):
                 "end-of-macros"));
         if (glflags.gf_show_global_offsets) {
-            esb_append_printf_u(&mtext," <GOFF=0x"
+            esb_append_printf_u(&mtext," <GOFF=0x%"
                 DW_PR_XZEROS DW_PR_DUx ">",
                 section_offset);
         }
@@ -714,9 +714,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 " next byte offset 0x%" DW_PR_XZEROS DW_PR_DUx,
                 section_offset+1);
             *macro_unit_length = macro_unit_len;
-            if (do_print_dwarf) {
-                esb_append(&mtext,"\n");
-            }
+            esb_append(&mtext,"\n");
             if (do_print_dwarf) {
                 printf("%s",sanitized(esb_get_string(&mtext)));
             }
@@ -825,8 +823,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 " %s\n",macro_string?
                 sanitized(macro_string):nonameavail);
             if (do_print_dwarf) {
-                printf("%s",
-                sanitized(esb_get_string(&mtext)));
+                printf("%s",sanitized(esb_get_string(&mtext)));
             }
             add_def_undef(k,offset,macro_operator,
                 line_number,macro_string,
@@ -920,9 +917,10 @@ print_macro_ops(Dwarf_Debug dbg,
             }
             if (do_print_dwarf) {
                 esb_append_printf(&mtext,
-                    "  offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                    "  offset 0x%" DW_PR_XZEROS DW_PR_DUx ,
                     offset);
             }
+            esb_append(&mtext,"\n");
             if (do_print_dwarf) {
                 printf("%s",sanitized(esb_get_string(&mtext)));
             }
