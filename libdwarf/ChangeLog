@@ -1,4 +1,8 @@
 2020-12-25  David Anderson
+    * test_dwarfstring.c: One function was lacking its
+      return 0; leading to a compiler warning from
+      make check.  Fixed. 
+2020-12-25  David Anderson
     * NEWS,crc32.c,dwarf.h,dwarf_abbrev.c,dwarf_abbrev.h,
       dwarf_alloc.c,dwarf_elf_access.c,dwarf_errmsg_list.h,
       dwarf_frame.c,dwarf_frame.h,dwarf_frame2.c,dwarf_global.c,

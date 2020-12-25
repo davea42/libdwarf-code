@@ -504,6 +504,7 @@ test6(int tnum)
         "dwarfstring_append_printf_u cannot be handled>";
     check_string("from _u",(char *)expstr,d,__LINE__);
     dwarfstring_destructor(&g);
+    return 0;
 }
 
 
