@@ -1,3 +1,5 @@
+2020-12-25 David Anderson
+    * print_die.c: expresssion -> expression in a printf string.
 2020-12-24 David Anderson
     * CMakeLists.txt: Needed the same sed transformation
       that was added in runtests.sh a few minutes ago to

@@ -6221,7 +6221,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
             if (sres == DW_DLV_ERROR) {
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: Unable to create "
-                    "expresssion location"
+                    "expression location"
                     " with length 0x%" DW_PR_DUu
                     "as a string.\n",
                     exprlength);
