@@ -32,7 +32,7 @@
     If ag_end_symbol_index is zero,
     ag_length must be known and non-zero.
 
-    Deals with length being known costant or fr
+    Deals with length being known constant or from
     assembler output, not known.
 */
 

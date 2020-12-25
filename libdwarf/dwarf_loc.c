@@ -2377,7 +2377,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         } else {
             dwarfstring_append(&m,") (the CU is not a .dwo) ");
         }
-        dwarfstring_append(&m," we don't undrstand the location");
+        dwarfstring_append(&m," we don't understand the location");
         _dwarf_error_string(dbg,error,DW_DLE_LOC_EXPR_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);

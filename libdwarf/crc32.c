@@ -119,7 +119,7 @@ static const uint32_t crc32_table[256] =
 /*  The following is essentially identical
     to every crc32 anyone uses up to trivial
     differences in starting conditions.
-    The alogorithm appears on
+    The algorithm appears on
     https://en.wikipedia.org/wiki/Cyclic_redundancy_check
     in a simple logic loop (written in no actual
     language but English) and the following is a translation

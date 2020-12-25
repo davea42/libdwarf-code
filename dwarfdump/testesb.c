@@ -55,7 +55,7 @@ validate_esb(int instance,
     }
 #if 0
     This test not critical Lets not check allocation size
-    any more. Februar 25, 2020
+    any more. February 25, 2020
     if (d->esb_allocated_size != expalloc) {
         ++failcount;
         printf("  FAIL instance %d  esb_allocated_size  %u"

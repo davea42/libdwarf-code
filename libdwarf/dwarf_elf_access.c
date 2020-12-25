@@ -322,7 +322,7 @@ _dwarf_get_elf_flags_func(
     accordingly.
 
     Should have gotten sh_flags, sh_addralign too.
-    But Dwarf_Obj_Access_Section is publically defined so changing
+    But Dwarf_Obj_Access_Section is publicly defined so changing
     it is quite painful for everyone.
 */
 static
@@ -526,7 +526,7 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
 #define ELF64MIPS_REL_SYM(i) ((i) & 0xffffffff)
 #define ELF64MIPS_REL_TYPE(i) ((i >> 56) &0xff)
     if (machine == EM_MIPS && endianness == DW_OBJECT_LSB ){
-        /*  This is really wierd. Treat this very specially.
+        /*  This is really weird. Treat this very specially.
             The Elf64 LE MIPS object used for
             testing (that has rela) wants the
             values as  sym  ssym type3 type2 type, treating
@@ -569,7 +569,7 @@ get_rel_elf64(Dwarf_Small *data, unsigned int i,
 #define ELF64MIPS_REL_SYM(i) ((i) & 0xffffffff)
 #define ELF64MIPS_REL_TYPE(i) ((i >> 56) &0xff)
     if (machine == EM_MIPS && endianness == DW_OBJECT_LSB ){
-        /*  This is really wierd. Treat this very specially.
+        /*  This is really weird. Treat this very specially.
             The Elf64 LE MIPS object used for
             testing (that has rela) wants the
             values as  sym  ssym type3 type2 type, treating

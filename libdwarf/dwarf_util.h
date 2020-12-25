@@ -262,7 +262,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
 /*  This one handles the v3 64bit extension
     and 32bit (and   SGI/MIPS fixed 64  bit via the
         dwarf_init-set r_dbg->de_length_size)..
-    It does not recognize any but the one distingushed value
+    It does not recognize any but the one distinguished value
     (the only one with defined meaning).
     It assumes that no CU will have a length
         0xffffffxx  (32bit length)

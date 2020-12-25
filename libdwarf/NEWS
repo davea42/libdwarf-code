@@ -151,7 +151,7 @@ May 19, 2014
   REASON FOR RELEASE
   Now handles DebugFission (part of the unreleased standard
   named DWARF5) in which debug information can be split from
-  objects and gathered into seperate object files.
+  objects and gathered into separate object files.
 
   MINOR POINT:
 
@@ -451,9 +451,9 @@ February 9, 2007
   as David Anderson has left SGI.
 
 March 29, 2006
-  The March  27, 2006 version accomodates DWARF3.
+  The March  27, 2006 version accommodates DWARF3.
   Some people have been using the library without
-  altering dwarf.h, libdwarf.h to accomodate
+  altering dwarf.h, libdwarf.h to accommodate
   large numbers of registers.  This exposed a bug
   (an off-by-one error) but also makes it clear
   additional documentation is needed.  So 
@@ -621,11 +621,11 @@ Sept 29, 1999
   cygnus is definitely 32bit-offsets for earlier 64bit pointer
   environments.
 
-  At any rate, now the dwarf reader allows and accomodates
-  both and the dwarf producer also accomodates both.
+  At any rate, now the dwarf reader allows and accommodates
+  both and the dwarf producer also accommodates both.
   Some tweaking of the pro_init.c or dwarf_init_finish.c
   files may be necessary in future: no other changes should
-  be needed to accomodate the two 64bit approaches, as
+  be needed to accommodate the two 64bit approaches, as
   the library (and dwarfdump) now deal with both forms.
 
 

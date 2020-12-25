@@ -578,7 +578,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
                     _dwarf_find_memory when
                     constructor fails. */
 #if DEBUG
-    printf("libdwarfdetector ALLOC construtor fails ret NULL "
+    printf("libdwarfdetector ALLOC constructor fails ret NULL "
         "type 0x%x size %lu line %d %s\n",
         (unsigned)alloc_type,(unsigned long)size,__LINE__,__FILE__);
 #endif
@@ -586,7 +586,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             }
         }
         /*  See global flag.
-            If zero then caller choses not
+            If zero then caller chooses not
             to track allocations, so dwarf_finish()
             is unable to free anything the caller
             omitted to dealloc. Normally

@@ -3188,7 +3188,7 @@ print_frames(Dwarf_Debug dbg,
             dwarf_fde_cie_list_dealloc(dbg, cie_data,
                 cie_element_count,
                 fde_data, fde_element_count);
-        } /*  End innner scope, not a loop */
-    } /*  End innner scope, not a loop */
+        } /*  End inner scope, not a loop */
+    } /*  End inner scope, not a loop */
     return DW_DLV_OK;
 }

@@ -1749,7 +1749,7 @@ dwarf_object_finish(Dwarf_Debug dbg,
     case 2:
     The section flag bit  SHF_COMPRESSED (1 << 11)
     must be set.
-    we then do the eqivalent of reading a
+    we then do the equivalent of reading a
         Elf32_External_Chdr
     or
         Elf64_External_Chdr
@@ -1955,7 +1955,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
             mean no-section-index).
             Otherwise NULL dss_data gets error.
             BSS would legitimately have no data, but
-            no DWARF related section could possbly be bss.
+            no DWARF related section could possibly be bss.
             We also get it if the section is present but
             zero-size. */
         return res;

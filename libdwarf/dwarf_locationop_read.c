@@ -598,7 +598,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
     case DW_OP_GNU_uninit:            /* 0xf0 */
         /*  Unimplemented in gdb 7.5.1  */
-        /*  Carolyn Tice: Follws a DW_OP_reg or DW_OP_regx
+        /*  Carolyn Tice: Follows a DW_OP_reg or DW_OP_regx
             and marks the reg as being uninitialized. */
         break;
     case DW_OP_GNU_encoded_addr: {      /*  0xf1 */

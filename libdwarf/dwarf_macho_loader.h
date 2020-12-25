@@ -125,7 +125,7 @@ struct mach_header_64 {
 *  For all but the MH_OBJECT
 * file type the segments are padded
 * out and aligned on a segment alignment
-* boundary for efficient demand pageing.
+* boundary for efficient demand paging.
 *  The MH_EXECUTE, MH_FVMLIB, MH_DYLIB,
 * MH_DYLINKER and MH_BUNDLE file types also
 * have the headers included as part
@@ -149,7 +149,7 @@ struct mach_header_64 {
 * preload it before execution.
 *
 * A core file is in MH_CORE format and can be
-* any in an arbritray legal
+* in any legal
 * Mach-O file.
 *
 * Constants for the filetype field of the mach_header
@@ -193,7 +193,7 @@ struct mach_header_64 {
 #define MH_FORCE_FLAT  0x100 /* the executable is forcing all images
     to use flat name space bindings */
 #define MH_NOMULTIDEFS 0x200 /* this umbrella guarantees no multiple
-    defintions of symbols in its
+    definitions of symbols in its
     sub-images so the two-level namespace
     hints can always be used. */
 #define MH_NOFIXPREBINDING 0x400    /* do not have dyld notify the
@@ -1393,7 +1393,7 @@ struct dysymtab_command {
 /*
 * An indirect symbol table entry is simply a 32bit index into
 * the symbol table to the symbol that the pointer or stub is
-* refering to.  Unless it is for a * non-lazy symbol pointer
+* referring to.  Unless it is for a * non-lazy symbol pointer
 * section for a defined symbol which strip(1) has
 * removed.  In which case it has the value INDIRECT_SYMBOL_LOCAL.
 * If the * symbol was also absolute INDIRECT_SYMBOL_ABS is or'ed
@@ -1606,7 +1606,7 @@ struct encryption_info_command {
     TYP(cmdsize,4); /* sizeof(struct encryption_info_command) */
     TYP(cryptoff,4); /* file offset of encrypted range */
     TYP(cryptsize,4); /* file size of encrypted range */
-    TYP(cryptid,4); /* which enryption system,
+    TYP(cryptid,4); /* which encryption system,
         0 means not-encrypted yet */
 };
 
@@ -1620,7 +1620,7 @@ struct encryption_info_command_64 {
     TYP(cmdsize,4); /* sizeof(struct encryption_info_command_64) */
     TYP(cryptoff,4); /* file offset of encrypted range */
     TYP(cryptsize,4); /* file size of encrypted range */
-    TYP(cryptid,4); /* which enryption system,
+    TYP(cryptid,4); /* which encryption system,
         0 means not-encrypted yet */
     TYP(pad,4); /* padding to make this struct's size a multiple
         of 8 bytes */

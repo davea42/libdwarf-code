@@ -80,7 +80,7 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 
 /*  TYP, SIZEOFT32 and ASNAR
     mean we can use correctly-sized arrays of char for the
-    struct members instead of determing a proper integer
+    struct members instead of determining a proper integer
     that size.
 
     We are dealing with carefully constructed structs

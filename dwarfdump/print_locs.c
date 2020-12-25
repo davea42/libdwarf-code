@@ -155,7 +155,7 @@ print_locs(Dwarf_Debug dbg, Dwarf_Error *err)
         offset = next_entry;
     }
     if (!loopct) {
-        /* Nothing happned, so announce the section name anyway */
+        /* Nothing happened, so announce the section name anyway */
         print_secname(dbg,esb_get_string(&secname));
     }
     esb_destructor(&exprstring);

@@ -169,7 +169,7 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
     returned.  In this case since we are not interested
     in the contents
     of the table, the input Cie can be NULL.  This is the only case
-    where the inpute Cie can be NULL.
+    where the input Cie can be NULL.
 
     (2) If search_pc is true, frame instructions are executed till
     either a location is reached that is greater than the
@@ -330,7 +330,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Unsigned i = 0;
 
     /*  Initialize first row from associated Cie.
-        Using temp regs explicity */
+        Using temp regs explicitly */
 
     if (!localregtab) {
         SER(DW_DLE_ALLOC_FAIL);
@@ -1332,7 +1332,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         }
 
         /*  Store Dwarf_Frame_Op instances in this array and
-            deallocate the structs that chain the Dwarf_Frame_Op's. */
+            deallocate the structs that chain the Dwarf_Frame_Op
+            instances. */
         curr_instr_item = head_instr_chain;
         for (i = 0; i < instr_count; i++) {
             void *item = curr_instr_item->ch_item;
@@ -2782,7 +2783,7 @@ dwarf_set_frame_rule_inital_value(Dwarf_Debug dbg, Dwarf_Half value)
 /*  This allows consumers to set the array size of the  reg rules
     table so that
     an ISA/ABI specific value can be used, dynamically,
-    at run time.  Useful for non-MIPS archtectures.
+    at run time.  Useful for non-MIPS architectures.
     The value  defaults  to DW_FRAME_LAST_REG_NUM.
     but dwarfdump can dump multiple ISA/ABI objects so
     consumers want to get this set to what the ABI says is correct.
@@ -2809,7 +2810,7 @@ dwarf_set_frame_rule_table_size(Dwarf_Debug dbg, Dwarf_Half value)
 }
 /*  This allows consumers to set the CFA register value
     so that an ISA/ABI specific value can be used, dynamically,
-    at run time.  Useful for non-MIPS archtectures.
+    at run time.  Useful for non-MIPS architectures.
     The value  defaults  to DW_FRAME_CFA_COL3 and should be
     higher than any real register in the ABI.
     Dwarfdump can dump multiple ISA/ABI objects so

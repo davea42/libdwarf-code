@@ -1489,7 +1489,7 @@ init_mips_conf_file_data(struct dwconf_s *config_file_data)
     config_file_data->cf_named_regs_table_size = base_table_count;
     config_file_data->cf_regs_malloced = 0;
     if (config_file_data->cf_table_entry_count != base_table_count) {
-        printf("dwarfdump: improper base table initization, "
+        printf("dwarfdump: improper base table initialization, "
             "header files wrong: "
             "DW_REG_TABLE_SIZE %u != string table size %lu\n",
             (unsigned) DW_REG_TABLE_SIZE,

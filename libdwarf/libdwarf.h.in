@@ -1511,7 +1511,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLX_EH_OFFSET_UNAVAILABLE  (-2LL)
 
 /* The dwarf specification separates FORMs into
-different classes.  To do the seperation properly
+different classes.  To do the separation properly
 requires 4 pieces of data as of DWARF4 (thus the
 function arguments listed here).
 The DWARF4 specification class definition suffices to
@@ -3052,14 +3052,14 @@ int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
     Those doing extra things (like dwarfdump) will
     call with filter_outliers zero to get the raw data
     (effectively); */
-int dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
-    Dwarf_Unsigned indx,
-    Dwarf_Bool     filter_outliers,
-    Dwarf_Unsigned * returned_attr_num,
-    Dwarf_Unsigned * returned_form,
-    Dwarf_Signed   * returned_implict_const,
-    Dwarf_Off      * offset,
-    Dwarf_Error    * error);
+int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
+    Dwarf_Unsigned   /*indx*/,
+    Dwarf_Bool       /*filter_outliers*/,
+    Dwarf_Unsigned * /*returned_attr_num*/,
+    Dwarf_Unsigned * /*returned_form*/,
+    Dwarf_Signed   * /*returned_implicit_const*/,
+    Dwarf_Off      * /*offset*/,
+    Dwarf_Error    * /*error*/);
 
 /*  Obsolete because it cannot return the
     DW_FORM_implicit_const value. */
@@ -5033,7 +5033,7 @@ int dwarf_get_ranges_a(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*bytecount*/,
     Dwarf_Error * /*error*/);
 
-/*  Adds return of the final offset to accomodate
+/*  Adds return of the final offset to accommodate
     DWARF4 GNU split-dwarf. Other than for split-dwarf
     the realoffset will be set by the function
     to be the same as rangesoffset.

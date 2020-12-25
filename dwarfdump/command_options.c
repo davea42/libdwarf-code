@@ -2467,8 +2467,8 @@ static void arg_x_invalid(void)
     arg_usage_error = TRUE;
 }
 
-/*  Process the command line arguments and sets the
-    appropiated options. All
+/*  Process the command line arguments and set the
+    appropriate options. All
     the options are within the global flags structure. */
 static void
 set_command_options(int argc, char *argv[])
@@ -2770,7 +2770,7 @@ process_args(int argc, char *argv[])
     }
     glflags.gf_section_groups_flag = TRUE;
 
-    /*  Process the arguments and sets the appropiated option */
+    /*  Process the arguments and set the appropriate options. */
     set_command_options(argc, argv);
     if (config_file_abi && glflags.gf_generic_1200_regs) {
         printf("Specifying both -R and -x abi= is not "

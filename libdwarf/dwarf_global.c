@@ -293,7 +293,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     Dwarf_Chain prev_chain = 0;
     Dwarf_Chain head_chain = 0;
 
-    /* Points to contiguous block of Dwarf_Global's to be returned. */
+    /* Points to contiguous block of Dwarf_Global to be returned. */
     Dwarf_Global *ret_globals = 0;
     int mres = 0;
 
@@ -646,7 +646,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_like_ptr = pubnames_ptr_past_end_cu;
     } while (pubnames_like_ptr < section_end_ptr);
 
-    /* Points to contiguous block of Dwarf_Global's. */
+    /* Points to contiguous block of Dwarf_Global. */
     ret_globals = (Dwarf_Global *)
         _dwarf_get_alloc(dbg, DW_DLA_LIST, global_count);
     if (ret_globals == NULL) {

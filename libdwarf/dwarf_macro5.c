@@ -1568,7 +1568,7 @@ dwarf_get_macro_context(Dwarf_Die cu_die,
 }
 
 /*  Like  dwarf_get_macro_context but
-    here we use a specfied offset  instead  of
+    here we use a specified offset  instead  of
     the offset in the cu_die. */
 int
 dwarf_get_macro_context_by_offset(Dwarf_Die cu_die,

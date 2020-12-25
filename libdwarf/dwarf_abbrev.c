@@ -455,7 +455,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
         *returned_attr_num = attr;
     }
     if (returned_implicitconst) {
-        /*  Callers should only examine implict const value
+        /*  Callers should only examine implicit const value
             if the form is DW_FORM_implicit_const.  */
         *returned_implicitconst = implicitconst;
     }

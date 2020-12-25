@@ -435,7 +435,7 @@ struct Dwarf_Harmless_s {
   char **  dh_errors;
 };
 
-/* Data needed seperately for debug_info and debug_types
+/* Data needed separately for debug_info and debug_types
    as we may be reading both interspersed. */
 
 struct Dwarf_Debug_InfoTypes_s {
@@ -597,7 +597,7 @@ struct Dwarf_Debug_s {
     /*  Number of bytes in the length, and offset field in various
         .debu* sections.  It's not very meaningful, and is
         only used in one 'approximate' calculation.
-        de_offset_size would be a more appropos name. */
+        de_offset_size would be a more apropos name. */
     Dwarf_Small de_length_size;
 
     /*  Size of the object file in bytes. If Unknown

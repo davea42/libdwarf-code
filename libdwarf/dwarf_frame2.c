@@ -151,7 +151,7 @@ qsort_compare(const void *elem1, const void *elem2)
 }
 
 /*  Adds 'newone' to the end of the list starting at 'head'
-    and makes the new one 'cur'rent. */
+    and makes the new one current. */
 static void
 chain_up_fde(Dwarf_Fde newone, Dwarf_Fde * head, Dwarf_Fde * cur)
 {
@@ -165,7 +165,7 @@ chain_up_fde(Dwarf_Fde newone, Dwarf_Fde * head, Dwarf_Fde * cur)
 }
 
 /*  Adds 'newone' to the end of the list starting at 'head'
-    and makes the new one 'cur'rent. */
+    and makes the new one current. */
 static void
 chain_up_cie(Dwarf_Cie newone, Dwarf_Cie * head, Dwarf_Cie * cur)
 {
@@ -940,8 +940,8 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             prefix->cf_length + prefix->cf_local_length_size
             + prefix->cf_local_extension_size;
         /*  FIX -- What are the values of data_alignment_factor,
-            code_alignement_factor, return_address_register and
-            instruction start? They were clearly uninitalized in the
+            code_alignment_factor, return_address_register and
+            instruction start? They were clearly uninitialized in the
             previous version and I am leaving them the same way. */
         }
         if ((frame_ptr)  > section_ptr_end) {

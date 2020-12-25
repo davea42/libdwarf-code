@@ -553,7 +553,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
         bytes. */
     Dwarf_Half attrform = 0;
 
-    /*  In case there are wierd bytes 'after' the line table
+    /*  In case there are weird bytes 'after' the line table
         prologue this lets us print something. This is a gcc
         compiler bug and we expect the bytes count to be 12.  */
     Dwarf_Small* bogus_bytes_ptr = 0;

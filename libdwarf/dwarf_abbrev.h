@@ -31,8 +31,8 @@
 
 
 /*  In a given CU, one of these is (eventually) set up
-    for every abbreviation we need to find (and for all.
-    those ealier in the abbreviations for that CU).
+    for every abbreviation we need to find (and for all
+    those earlier in the abbreviations for that CU).
     So we don't want elements needlessly big.
 */
 struct Dwarf_Abbrev_s {

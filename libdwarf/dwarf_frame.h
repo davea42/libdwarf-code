@@ -153,7 +153,7 @@ typedef struct Dwarf_Frame_s *Dwarf_Frame;
     Fr_loc is the pc value for this row, and Fr_reg
     contains the rule for each column.
 
-    Entry DW_FRAME_CFA_COL of fr_reg was the tradional MIPS
+    Entry DW_FRAME_CFA_COL of fr_reg was the traditional MIPS
     way of setting CFA.  cfa_rule is the new one.
 */
 struct Dwarf_Frame_s {
@@ -283,7 +283,7 @@ struct Dwarf_Cie_s {
     Most of the fields are taken straight from the definition.
     fd_cie_index is the index of the Cie associated with this
     Fde in the list of Cie's for this debug_frame.  Fd_cie
-    points to the corresponsing Dwarf_Cie structure.  Fd_fde_start
+    points to the corresponding Dwarf_Cie structure.  Fd_fde_start
     points to the start address of the Fde.  Fd_fde_instr_start
     points to the start of the instructions for this Fde.  Fd_dbg
     points to the associated Dwarf_Debug structure.

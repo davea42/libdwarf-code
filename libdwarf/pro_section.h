@@ -38,7 +38,7 @@ extern const char *_dwarf_rel_section_names[];
 /* section names */
 extern const char *_dwarf_sectnames[];
 
-/*  struct to hold relocation entries. Its mantained as a linked
+/*  struct to hold relocation entries. It is maintained as a linked
     list of relocation structs, and will then be written at as a
     whole into the relocation section. Whether its 32 bit or
     64 bit will be obtained from Dwarf_Debug pointer.  */

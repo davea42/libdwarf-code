@@ -210,7 +210,7 @@ static const Dwarf_Ubyte std_opcode_len[] = { 0, /* DW_LNS_copy */
     1,                          /* DW_LNS_set_isa */
 };
 
-/*  struct to hold relocation entries. Its mantained as a linked
+/*  struct to hold relocation entries. Its maintained as a linked
     list of relocation structs, and will then be written at as a
     whole into the relocation section. Whether its 32 bit or
     64 bit will be obtained from Dwarf_Debug pointer.
@@ -3603,7 +3603,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         (const void *) &du, sizeof(du), offset_size);
 
 
-    data = 0;                   /* Emphasise not usable now */
+    data = 0;                   /* Emphasize not usable now */
 
     res = write_out_debug_abbrev(dbg,
         abbrev_head, error);

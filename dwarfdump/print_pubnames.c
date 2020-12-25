@@ -92,7 +92,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             we will get an error here but we just
             let that create an error,
             papering it over here by subtracting out
-            the applicatble debug_info CU header offset
+            the applicable debug_info CU header offset
             is problematic. */
     if (dres != DW_DLV_OK) {
         struct esb_s details;
@@ -151,7 +151,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     }
     /* Display offsets */
     if (glflags.gf_display_offsets) {
-        /* Print 'name'at the end for better layout */
+        /* Print 'name' at the end for better layout */
         printf("%s die-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx
             ", cu-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx ","
             " die-in-cu 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -190,7 +190,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             global_cu_offset);
     }
 
-    /* Print 'name'at the end for better layout */
+    /* Print 'name' at the end for better layout */
     printf(" '%s'\n",name);
     dwarf_dealloc(dbg, die, DW_DLA_DIE);
     check_info_offset_sanity(line_title,
@@ -410,7 +410,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
         if (glflags.verbose) {
             /* If verbose we can see a zero die_off. */
             if (!die_off  && !strlen(name)) {
-                /*  A different and impossble cu die offset in case
+                /*  A different and impossible cu die offset in case
                     of an empty pubnames CU. */
                 continue;
             }

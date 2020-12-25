@@ -1,3 +1,14 @@
+2020-12-25  David Anderson
+    * NEWS,crc32.c,dwarf.h,dwarf_abbrev.c,dwarf_abbrev.h,
+      dwarf_alloc.c,dwarf_elf_access.c,dwarf_errmsg_list.h,
+      dwarf_frame.c,dwarf_frame.h,dwarf_frame2.c,dwarf_global.c,
+      dwarf_init_finish.c,dwarf_line.h,dwarf_loc.c,
+      dwarf_locationop_read.c,dwarf_macho_loader.h,dwarf_macro5.c,
+      dwarf_object_detector.c,dwarf_opaque.h,dwarf_print_lines.c,
+      dwarf_util.h,dwarf_xu_index.c,dwgetopt.c,
+      generated_libdwarf.h.in,libdwarf.h.in,pro_arange.h,
+      pro_line.c,pro_reloc.c,pro_section.c,pro_section.h:
+      Correcting bad spelling in comments and one printf.
 2020-12-24 David Anderson
     * dwarfstring.c: Improved checking for caller errors
       and changed the error message keyword from ERROR

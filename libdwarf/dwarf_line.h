@@ -246,7 +246,7 @@ struct Dwarf_Line_Context_s {
     Dwarf_Debug lc_dbg;
     /*  zero table count is skeleton, or just missing names.
         1 is standard table.
-        2 means two-level table (experimantal)
+        2 means two-level table (experimental)
         Other is a bug somewhere.  */
     Dwarf_Small lc_table_count;
     Dwarf_Bool lc_is_single_table;

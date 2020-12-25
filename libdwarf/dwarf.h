@@ -52,7 +52,7 @@ extern "C" {
     always use a 'vendor id' string in extension names.
 
     Vendors should use a vendor string in names and
-    whereever possible avoid duplicating values used by
+    wherever possible avoid duplicating values used by
     other vendor extensions
 
     The DWARF1 comments indicate values unused in

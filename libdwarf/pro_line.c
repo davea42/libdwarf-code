@@ -285,7 +285,7 @@ dwarf_lne_end_sequence_a(Dwarf_P_Debug dbg,
 
 /* As of December 2018 this returns DW_DLV_OK, DW_DLV_ERROR
     not 0, DW_DLV_NOCOUNT*/
-/*  Add an entry in the internal list of lines mantained by producer.
+/*  Add an entry in the internal list of lines maintained by producer.
     Opc indicates if an opcode needs to be generated, rather than just
     an entry in the matrix. During opcodes generation time, these
     opcodes will be used. */

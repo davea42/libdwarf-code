@@ -42,7 +42,7 @@
     A note about the index field from the index table.
     See DWARF5 7.5.3.5.
     The index table array index values are [1,S)
-    These value ae used to call functions requestiong
+    These value ae used to call functions requesting
     values from the offset table and size table.
 
     Inside the code in this file we subtract 1 and use

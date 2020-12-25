@@ -1,4 +1,8 @@
 2020-12-25 David Anderson
+    * command_options.c,dwconf.c,dwgetopt.c,dwgetopt.h,
+      print_die.c,print_frames.c,print_locs.c,print_pubnames.c,
+      testesb.c: Correct spelling in comments.
+2020-12-25 David Anderson
     * print_die.c: expresssion -> expression in a printf string.
 2020-12-24 David Anderson
     * CMakeLists.txt: Needed the same sed transformation
@@ -436,7 +440,7 @@
     * dwarfdump.c: Now printf callbacks from libdwarf
       are sanitized() to prevent corrupted line data from
       compromising user terminal settings.
-    * print_lines.c: Accomodation of DWARF5 in more places.
+    * print_lines.c: Accommodation of DWARF5 in more places.
 2020-10-11: David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
@@ -816,13 +820,13 @@
     * print_llex_codes.c: When checking suppress some
       output.  
     * print_loclists.c: Removed pointless {}.    
-    * print_loclists_codes.c,print_orginal_loclist_linecodes.c:
+    * print_loclists_codes.c,print_original_loclist_linecodes.c:
       Suppresses some output when checking.
     * print_rnglists.c: Clarify which routines apply solely
       to printing raw rangelists.
     * tag_attr_ext.list: Added DW_AT_encoding to
-      common extentions 
-    * tag_common.h: Incremeneted
+      common extensions 
+    * tag_common.h: Incremented
       EXT_ATTR_TABLE_ROWS 16
       so the tables can be rebuilt.
 2020-06-22: David Anderson
@@ -846,7 +850,7 @@
 2020-06-17: David Anderson
     * print_loclists.c: Improve the formatting
       of the raw report.
-    * print_rnglists.c: Significatly improve
+    * print_rnglists.c: Significantly improve
       the formatting of the raw report.
 2020-06-17: David Anderson
     * globals.h: Some args now just values, not pointers,
@@ -902,7 +906,7 @@
       the loclist details.  Some renaming of things (data,
       functions) whose purpose was obfuscated by the name.
       Using new libdwarf interfaces that support the new
-      data in libdwarf.  Some significat refactoring so the
+      data in libdwarf.  Some significant refactoring so the
       structure of what is being done can be easily seen.
       No longer computes final loclist low/high addr as
       libdwarf does that for us now.

@@ -1316,7 +1316,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 Dwarf_Unsigned import_offset = 0;
                 int oldsection = glflags.current_section_id;
                 /*  DWARF5 .debug_macro (version 5
-                    in the macro header) or GNU extesion
+                    in the macro header) or GNU extension
                     of DWARF4 .debug_macro, with version 4
                     in the macro header. */
 

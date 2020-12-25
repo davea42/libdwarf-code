@@ -83,7 +83,7 @@ _dwarf_pro_pre_alloc_specific_reloc_slots(Dwarf_P_Debug dbg,
         return DW_DLV_ERROR;
     }
     data->rb_slots_in_block = slots_in_blk;     /* could use default
-        here, as fallback in case our origininal
+        here, as fallback in case our original
         estimate wrong. When we call this we
         presumably know what we are doing, so
         keep this count for now */

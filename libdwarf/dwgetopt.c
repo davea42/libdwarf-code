@@ -156,7 +156,7 @@ dwoptnamematches(
 
 
 /*  dwgetopt_long
-    A reimplemenation of  a portion of
+    A reimplementation of  a portion of
     the getopt(3) GNU/Linux  getopt_long().
     See dwgetopt.h for more details.
 */

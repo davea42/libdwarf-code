@@ -36,7 +36,7 @@ Portions Copyright (C) 2008-2020 David Anderson.  All Rights Reserved.
 
    Errors in the list (missing a comma, for example)
    happen too often. Making this a separate little file
-   simplfies testing for missing-commas/extra-strings.
+   simplifies testing for missing-commas/extra-strings.
 
    String count should match DW_DLE_LAST+1
 */
@@ -446,7 +446,7 @@ const char *_dwarf_errmsgs[] = {
     "Inconsistent line table, corrupted.",
 "DW_DLE_COMPRESSED_EMPTY_SECTION(347) corrupt section data",
 "DW_DLE_SIZE_WRAPAROUND(348) Impossible string length",
-"DW_DLE_ILLOGICAL_TSEARCH(349) Impossible sitauation. "
+"DW_DLE_ILLOGICAL_TSEARCH(349) Impossible situation. "
     "Corrupted data?",
 "DW_DLE_BAD_STRING_FORM(350) Not a currently allowed form",
 "DW_DLE_DEBUGSTR_ERROR(351) problem generating .debug_str section",
@@ -463,7 +463,7 @@ const char *_dwarf_errmsgs[] = {
 "DW_DLE_DEBUG_RNGLISTS_DUPLICATE(359)",
 "DW_DLE_ABBREV_OFF_END(360)",
 "DW_DLE_FORM_STRING_BAD_STRING(361) string runs off end of data",
-"DW_DLE_AUGMENTATION_STRING_OFF_END(362) augmenation runs off "
+"DW_DLE_AUGMENTATION_STRING_OFF_END(362) augmentation runs off "
     "of its section",
 "DW_DLE_STRING_OFF_END_PUBNAMES_LIKE(363) one of the global "
     "sections, string bad",
@@ -601,7 +601,7 @@ const char *_dwarf_errmsgs[] = {
 "DW_DLE_CORRUPT_GNU_DEBUGID_SIZE(458) Section .note.gnu.debugid "
     "size incorrect",
 "DW_DLE_CORRUPT_GNU_DEBUGID_STRING(459) Section .note.gnu.debugid "
-    "ownder string not terminated properly",
+    "owner string not terminated properly",
 "DW_DLE_HEX_STRING_ERROR(460).  dwarf_producer_init() "
     "extras string has a bad hex string",
 "DW_DLE_DECIMAL_STRING_ERROR(461) dwarf_producer_init() extras "

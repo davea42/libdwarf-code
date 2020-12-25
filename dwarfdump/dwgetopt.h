@@ -50,7 +50,7 @@ extern char *dwoptarg;
 
 int dwgetopt(int nargc, char * const nargv[], const char *ostr);
 
-/*  As of October 2017 it seems adviseable to allow
+/*  As of October 2017 it seems advisable to allow
     long option names.  So based on a reading of
     'man 3 getopt' we reimplement a portion of GNU getopt_long().
     It's a wonderfully sensible design and all the credit
