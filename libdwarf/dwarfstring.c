@@ -71,7 +71,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 /*  m must be a string, like  "DWARFSTRINGERR..."  for this to work */
-#define DWSERR(m) dwarfstring_append_length(data,m,sizeof(m)-1) 
+#define DWSERR(m) dwarfstring_append_length(data,m,sizeof(m)-1)
 
 static unsigned long minimumnewlen = 30;
 /*

@@ -1,4 +1,7 @@
 2020-12-26  David Anderson
+    * dwarf_leb.c,dwarf_leb_test.c,dwarf_macro5.c, dwarfstring.c:
+      Fixing indents and trailing whitespace.
+2020-12-26  David Anderson
     * libdwarf2.1.mm: Rev now 3.23. Added comments
       on the abstract page, now the first page to appear.
     * libdwarf2.1.pdf: Regenerated with table of contents

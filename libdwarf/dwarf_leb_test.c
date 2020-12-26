@@ -203,8 +203,8 @@ unsignedtest(unsigned len)
             &decodeval,
             (char *)(&bufferspace[BUFFERLEN-1]));
         if (res != DW_DLV_OK) {
-            printf("FAIL public unsigned decode index %u val 0x%llx\n",
-                t,utest[t]);
+            printf("FAIL public unsigned decode index %u "
+                "val 0x%llx\n", t,utest[t]);
             ++errcnt;
         }
         if (utest[t] != decodeval) {
@@ -214,8 +214,8 @@ unsignedtest(unsigned len)
             ++errcnt;
         }
         if ((Dwarf_Unsigned)encodelen != decodelen) {
-            printf("FAIL public unsigned decodelen val index %u val 0x%llx\n",
-                t,utest[t]);
+            printf("FAIL public unsigned decodelen val index %u "
+                "val 0x%llx\n", t,utest[t]);
             ++errcnt;
         }
 

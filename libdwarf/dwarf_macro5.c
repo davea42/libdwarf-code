@@ -1371,15 +1371,15 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
             "DW_DLE_MACRO_VERSION_ERROR: "
             "version 0x%x ",version);
         dwarfstring_append_printf_u(&ms,
-             "at section offset "
-             "0x%" DW_PR_XZEROS DW_PR_DUx " "
-             "is incorrect, only 5 "
-             "or the GNU extension value of 4 are valid. "
-             "Corrupt dwarf.",
-             macro_offset);
+            "at section offset "
+            "0x%" DW_PR_XZEROS DW_PR_DUx " "
+            "is incorrect, only 5 "
+            "or the GNU extension value of 4 are valid. "
+            "Corrupt dwarf.",
+            macro_offset);
         _dwarf_error_string(dbg,error,
-             DW_DLE_MACRO_VERSION_ERROR,
-             dwarfstring_string(&ms));
+            DW_DLE_MACRO_VERSION_ERROR,
+            dwarfstring_string(&ms));
         dwarfstring_destructor(&ms);
         dwarf_dealloc_macro_context(macro_context);
         return DW_DLV_ERROR;
@@ -1476,7 +1476,7 @@ dwarf_macro_context_total_length(Dwarf_Macro_Context head,
 {
     Dwarf_Debug dbg = 0;
 
-    if(head) {
+    if (head) {
         dbg = head->mc_dbg;
     }
     CHECKNULLCONTEXT(head,dbg,error);
