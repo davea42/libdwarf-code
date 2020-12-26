@@ -13,7 +13,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.51, 14 July 2020
+.ds vE Rev 1.52, 26 December 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -866,7 +866,7 @@ for
 DWARF3 through DWARF5.
 All these default to something, but the something
 depends on environment what macro names 
-are set by the envirnment or a just constants
+are set by the environment or a just constants
 which makes it difficult to alter these values.
 See pro_line.h for the use of line-table related
 constants (which will vary depending on the target ISA
@@ -1954,7 +1954,7 @@ the string specified by
 \f(CWname\fP as the
 value of the \f(CWDW_AT_name\fP attribute for the
 given \f(CWDIE\fP, \f(CWownerdie\fP.  It returns
-DW_DLV_OK on success and assignes the new
+DW_DLV_OK on success and assigns the new
 attribute descriptor to
 \f(CW*attr_out\fP.
 
@@ -2207,7 +2207,7 @@ The
 in the abbreviation table as a signed leb
 value.
 .P
-For a successfull call the function returns
+For a successful call the function returns
 \f(CWDW_DLV_OK.\fP
 and a pointer to the created argument is returned
 through the pointer 
@@ -2486,7 +2486,7 @@ instead of
 \f(CWdwarf_add_AT_targ_address_b\fP 
 or
 \f(CWdwarf_add_AT_targ_address\fP 
-when is is convient for you.
+when is is convenient for you.
 The function 
 \f(CWdwarf_add_AT_targ_address_b\fP 
 is identical to 

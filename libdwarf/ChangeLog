@@ -1,3 +1,7 @@
+2020-12-26  David Anderson
+    * libdwarf2.1.mm: Fixed spelling errors. Rev now 3.22.
+    * libdwarf2p.1.mm: Fixed spelling errors. Rev now 1.52.
+    * libdwarf2.1.pdf, libdwarf2p.1.pdf: Regenerated.
 2020-12-25  David Anderson
     * test_dwarfstring.c: One function was lacking its
       return 0; leading to a compiler warning from

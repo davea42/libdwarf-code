@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.21 20 December 2020
+.ds vE Rev 3.22 26 December 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1773,7 +1773,7 @@ provided at initialization,
 \fIlibdwarf\fP functions
 print a short message to
 \f(CWstdout\fP
-and terminate exectution with
+and terminate execution with
 \f(CWabort()\fP.
 .P
 Before March 2016
@@ -2155,7 +2155,7 @@ void example1(Dwarf_Debug dbg,Dwarf_Die somedie)
         for (i = 0; i < atcount; ++i) {
             /* use atlist[i] */
             dwarf_dealloc_attribute(atlist[i]);
-            /*  This origiginal form still works.
+            /*  This original form still works.
             dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
             */
         }
@@ -2581,7 +2581,7 @@ to find the
 target file with DWARF information.
 .P
 \f(CWglobal_paths\fP
-allows you to specifiy such paths.
+allows you to specify such paths.
 Pass in
 \f(CWglobal_paths\fP
 as a pointer to an array of 
@@ -4489,7 +4489,7 @@ indicating that the value is not needed.
 Summing
 \f(CWoffset_size\fP
 and
-\f(CWextention_size\fP
+\f(CWextension_size\fP
 gives the length of the CU length field,
 which is immediately followed by
 the CU header.
@@ -6118,7 +6118,7 @@ If  something is malformed it returns
 \f(CWDW_DLV_ERROR\fP
 and sets
 \f(CW*error\fP
-to the applicable error pointer describgin the problem.
+to the applicable error pointer describing the problem.
 .P
 There is no dealloc call. Calling
 \f(CWdwarf_finish()\fP
@@ -6153,7 +6153,7 @@ or
 .P
 A call to 
 \f(CWdwarf_load_loclists()\fP
-that suceeds gets you the count
+that succeeds gets you the count
 of contexts
 and 
 \f(CWdwarf_get_loclist_context_basics()\fP
@@ -8337,7 +8337,7 @@ It sets \f(CWreturn_lineoff\fP to zero
 if the column number of the statement is not represented
 (meaning the producer library call was given zero
 as the column number).  Zero is the correct value meaning "left edge"
-as defined in the DWARF2/3/4 specication (section 6.2.2).
+as defined in the DWARF2/3/4 specification (section 6.2.2).
 .P
 Before December 2011 zero was not returned through
 the  \f(CWreturn_lineoff\fP pointer, -1 was returned through the pointer.
@@ -10049,7 +10049,7 @@ number of blocks in the section.
 Call
 \f(CWdwarf_get_gnu_index_block()\fP
 and pass in valid block number
-(zero thrugh index_block_count-1)
+(zero through index_block_count-1)
 to get
 block information.
 
@@ -10189,7 +10189,7 @@ The field
 \f(CWstaticorglobal\fP
 has an integer 0
 if the DIE involved describes 
-a global (externally-visble)
+a global (externally-visible)
 name.
 It has an integer 1
 if the name refers to a static (file-local)
@@ -13507,7 +13507,7 @@ nobody would intentionally
 produce wastefully long
 LEB data, so something is wrong.
 .P
-Only the argment
+Only the argument
 \f(CWleblen\fP
 may be passed in as NULL,
 the others must be valid non-null
@@ -13579,7 +13579,7 @@ produce wastefully long
 LEB data, so something is wrong.
 .P
 .P
-Only the argment
+Only the argument
 \f(CWleblen\fP
 may be passed in as NULL,
 the others must be valid non-null
@@ -13735,7 +13735,7 @@ the function determines which
 applies and returns the pointer on
 success (meaning it returned .
 \f(CWDW_DLV_OK\fP).
-And on sucess it also returns the global
+And on success it also returns the global
 offset of a set of rnglist entries
 within that particular Dwarf_Rnglists_Head
 (not needed except to show it to users)
@@ -13909,8 +13909,7 @@ is returned.
 At present
 \f(CWDW_DLV_ERROR\fP
 is never returned, but callers
-should not assume that will aways be true.
-
+should not assume that will always be true.
 
 .H 4 "dwarf_get_rnglists_entry_fields()"
 .DS
@@ -14094,7 +14093,7 @@ If  something is malformed it returns
 \f(CWDW_DLV_ERROR\fP
 and sets
 \f(CW*error\fP
-to the applicable error pointer describgin the problem.
+to the applicable error pointer describing the problem.
 .P
 There is no dealloc call. Calling
 \f(CWdwarf_finish()\fP
