@@ -568,7 +568,7 @@ is a static member or a non-static member function.
 .H 2 "Misspelling of DW_AT_const_value"
 Twice in appendix 1, DW_AT_const_value is misspelled
 as DW_AT_constant_value.
-.H 2 "Mistake in Atribute Encodings"
+.H 2 "Mistake in Attribute Encodings"
 Section 7.5.4, "Attribute Encodings"
 has a brief discussion of "constant"
 which says there are 6 forms of constants.
@@ -670,7 +670,7 @@ The value of this attribute is a string.
 When IPA inlines a routine and the abstract origin is
 in another compilation unit, there is a problem with putting
 in a reference, since the ordering and timing of the 
-creation of references is unpredicatable with reference to
+creation of references is unpredictable with reference to
 the DIE and compilation unit the reference refers to. 
 .P
 Since there may be NO ordering of the compilation units that
@@ -807,7 +807,7 @@ Consider the following code.
 arrays is an allocatable array (1 dimension) whose size is
 not known at compile time (it has
 a Dope Vector).  At run time, the
-allocate statement creats 20 array_ptr dope vectors
+allocate statement creates 20 array_ptr dope vectors
 and marks the base arrays dopevector as allocated.
 The myvar variable is just there to add complexity to
 the example :-)
