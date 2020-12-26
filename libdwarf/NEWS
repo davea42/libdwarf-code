@@ -1,3 +1,10 @@
+December 26, 2020
+  With mm -> pdf the table of contents of libdwarf2.1.pdf
+  is at the end of the pdf and difficult to locate.
+  Now we extract a companion pdf: libdwarftoc.pdf , which
+  contains the 1 page abstract followed by the table of contents
+  and list of figures.  We hope this will make finding
+  functions of interest easier.
 July 09, 2020
   Access to .debug_gnu_pubtypes and .debug_gnu_pubnames
   is possible. See function  dwarf_get_gnu_index_head().

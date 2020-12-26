@@ -34,15 +34,27 @@ TROFF=/usr/bin/groff
 PSTOPDF=/usr/bin/ps2pdf
 if [ $c = "y" ]
 then
-  pr -t -e libdwarf2.1.mm | tbl | $TROFF -mm >libdwarf2.1.ps
-  $PSTOPDF libdwarf2.1.ps libdwarf2.1.pdf
+  rm -f libdwarf2.1.pdf
+  t=junklibdwarfread.pdf
+  pr -t -e libdwarf2.1.mm | tbl | $TROFF -n16 -mm >libdwarf2.1.ps
+  $PSTOPDF libdwarf2.1.ps $t
+  echo "Now create libdwarf2.1.mm by tranforming $t"
+  set +x
+  sh ../scripts/rebuildpdf.sh $t libdwarf2.1.pdf
+  #rm $t
+  set -x
 fi
 
 if [ $p = "y" ]
 then
+  rm -f libdwarf2p.1.pdf
   pr -t -e  libdwarf2p.1.mm  | tbl | $TROFF -mm >libdwarf2p.1.ps
   $PSTOPDF libdwarf2p.1.ps libdwarf2p.1.pdf
 fi
+set +x
+echo "Check libdwarf/libdwarf2.1.pdf is correct "
+echo "Should start with abstract page then follow with"
+echo "libdwarf2.1.pdf table of contents."
 
 rm -f libdwarf2.1.ps
 rm -f libdwarf2p.1.ps

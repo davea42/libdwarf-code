@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.22 26 December 2020
+.ds vE Rev 3.23 26 December 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -31,6 +31,9 @@
 *(Cw
 ..
 .nr Cl 4
+\." set P one lower than desired start of printed page number of real 
+\." content to get pdf and printed numbers to agree.
+.nr P 15 1
 .SA 1
 .TL
 A Consumer Library Interface to DWARF
@@ -44,6 +47,14 @@ information, and other DWARF2/3/4/5 information).
 .P
 There are a few sections which are SGI-specific (those
 are clearly identified in the document).
+.P
+Starting December 2020 we rearrange the pdf that
+GNU groff -mm gives us (mm is not exceptionally flexible)
+using tools pdftotext, pdfseparate, and pdfunite from
+the poppler-utils package for debian/ubuntu.
+We hope the new arrangement with the table of contents following
+this page followed by the library documentation itself
+makes the document easier to navigate.
 .P
 \*(vE
 

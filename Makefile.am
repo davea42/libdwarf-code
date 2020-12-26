@@ -72,6 +72,7 @@ scripts/CPTOPUBLIC \
 scripts/CREATINGARELEASE \
 scripts/dateorder   \
 scripts/ddbuild.sh  \
+scripts/find_pdfpages.py \
 scripts/FIX-CONFIGURE-TIMES \
 scripts/fixlibdwarfelf.sh \
 scripts/funcfinderhdr.py \
@@ -79,6 +80,7 @@ scripts/funcfindermm.py \
 scripts/funcfindersrcs.py \
 scripts/GETTOTOP \
 scripts/libbuild.sh \
+scripts/rebuildpdf.sh \
 scripts/REBLDLIBDWARF \
 scripts/RUNPY \
 scripts/SETUP_GZ_TREE \
