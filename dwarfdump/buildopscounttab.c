@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright (c) 2020, David Anderson
 All rights reserved.
 
@@ -8,7 +8,7 @@ For use by anyone for any purpose.
 
 /* This uses this condensed table to make
    a simple fast-access C table.
-   Build and run with 
+   Build and run with
    cc -I ../libdwarf buildopscounttab.c dwarf_names.c -o buildop
    ./buildop >opscounttab.c
 
@@ -25,7 +25,7 @@ struct ops_table_s {
 };
 /*  Must match libdwarf.h macros */
 #define DW_DLV_OK 0
-#define DW_DLV_ERROR -1 
+#define DW_DLV_ERROR -1
 
 struct ops_table_s optabsource[]= {
 {DW_OP_addr  ,         0                       , 1 },
@@ -67,11 +67,11 @@ struct ops_table_s optabsource[]= {
 {0,0}
 };
 
-int main() 
+int main()
 {
     struct ops_table_s *op;
     int inindex = 0;
-    int outindex = 0; 
+    int outindex = 0;
     int f = 0;
     int l = 0;
     int c = 0;
@@ -89,48 +89,48 @@ int main()
         op = &optabsource[inindex];
         f = op->ot_first;
         if (!f) {
-              break;
+            break;
         }
         if (lastop && f < lastop) {
-              printf("FAILED buildopscounttab on OP,out of sequence"
-                  " f=0x%x lastop=0x%x\n",
-                  (unsigned)f,(unsigned)lastop);
-             return 1; /* effectively exit(1) */
+            printf("FAILED buildopscounttab on OP,out of sequence"
+                " f=0x%x lastop=0x%x\n",
+                (unsigned)f,(unsigned)lastop);
+            return 1; /* effectively exit(1) */
         }
         l = op->ot_last;
         c = op->ot_opcount;
         while (f > outindex) {
-              printf("{/* %-26s 0x%02x*/ %d},\n","unused",outindex,-1);
-              ++outindex;
+            printf("{/* %-26s 0x%02x*/ %d},\n","unused",outindex,-1);
+            ++outindex;
         }
         if (!l) {
-              res = dwarf_get_OP_name(f,&opn);
-              if (res != DW_DLV_OK) {
-                  printf("FAILED buildopscounttab on OP 0x%x\n",
-                      f);
-                  return 1; /* effectively exit(1) */
-              }
-              lastop = f;
-              printf("{/* %-26s 0x%02x*/ %d},\n",opn,f,c);
-              ++outindex;
+            res = dwarf_get_OP_name(f,&opn);
+            if (res != DW_DLV_OK) {
+                printf("FAILED buildopscounttab on OP 0x%x\n",
+                    f);
+                return 1; /* effectively exit(1) */
+            }
+            lastop = f;
+            printf("{/* %-26s 0x%02x*/ %d},\n",opn,f,c);
+            ++outindex;
         } else {
-              int j = f;
-              for (  ; j <= l; ++j) {
-                  res = dwarf_get_OP_name(j,&opn);
-                  if (res != DW_DLV_OK) {
-                      printf("FAILED buildopscounttab on OP 0x%x\n",
-                          f);
-                      return 1; /* effectively exit(1); */
-                  }
-                  printf("{/* %-26s 0x%2x*/ %d},\n",opn,j,c);
-                  ++outindex;
-                  lastop = j;
-              }
+            int j = f;
+            for ( ; j <= l; ++j) {
+                res = dwarf_get_OP_name(j,&opn);
+                if (res != DW_DLV_OK) {
+                    printf("FAILED buildopscounttab on OP 0x%x\n",
+                        f);
+                    return 1; /* effectively exit(1); */
+                }
+                printf("{/* %-26s 0x%2x*/ %d},\n",opn,j,c);
+                ++outindex;
+                lastop = j;
+            }
         }
     }
     while (outindex < DWOPS_ARRAY_SIZE) {
-          printf("{/* %-26s 0x%02x*/ %d},\n","unused",outindex,-1);
-          ++outindex;
+        printf("{/* %-26s 0x%02x*/ %d},\n","unused",outindex,-1);
+        ++outindex;
     }
     printf("};\n");
     return 0;

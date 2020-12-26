@@ -79,12 +79,12 @@ unsigned long malloc_size = 0;
 #define ESBERR(m) esb_appendn_internal(data,m,sizeof(m)-1)
 
 #define INCRVALIDATENEXT(n) do { \
-     ++n ;                       \
-     if (!format[n]) {         \
+    ++n ;                       \
+    if (!format[n]) {           \
         ESBERR("ESBERR_next_followedby_end"); \
-        return;                  \
-     }                           \
-     } while (0) 
+        return;                 \
+    }                           \
+    } while (0)
 FILE *esb_open_null_device(void)
 {
     if (!null_device_handle) {
@@ -116,7 +116,7 @@ init_esb_string(struct esb_s *data, size_t min_len)
         Now Allow for string space. */
     if (min_len < alloc_size) {
         min_len = alloc_size;
-    } else  {
+    } else {
         min_len++ ; /* Allow for NUL at end */
     }
     d = malloc(min_len);
@@ -718,7 +718,7 @@ esb_append_printf_i(struct esb_s *data,
         return;
     }
     next++;
-    if (format[next] == ' ') { 
+    if (format[next] == ' ') {
         ESBERR("ESBERR_pct_followedby_space_in_s");
         return;
     }
