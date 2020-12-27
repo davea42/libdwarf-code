@@ -35,7 +35,8 @@
    map (mapping an integer to a string).
    The following struct is the example basis
    because that is the capability I wanted to use.
-   tsearch has no idea what data is involved, only the comparison function
+   tsearch has no idea what data is involved,
+   only the comparison function
    mt_compare_func() and the  free function mt_free_func()
    (passed in to tsearch calls) know what data is involved.
    Making tsearch very flexible indeed.
@@ -59,12 +60,12 @@ make_my_tentry(unsigned k,char *name)
 {
     struct my_tentry *mt =
         (struct my_tentry *)calloc(sizeof(struct my_tentry),1);
-    if(!mt) {
+    if (!mt) {
         printf("calloc fail\n");
         exit(1);
     }
     mt->mt_key = k;
-    if(name) {
+    if (name) {
         mt->mt_name = strdup(name);
     }
     return mt;
@@ -73,7 +74,7 @@ void
 mt_free_func(void *mt_data)
 {
     struct my_tentry *m = mt_data;
-    if(!m) {
+    if (!m) {
         return;
     }
     free(m->mt_name);
@@ -85,10 +86,10 @@ int mt_compare_func(const void *l, const void *r)
 {
     const struct my_tentry *ml = l;
     const struct my_tentry *mr = r;
-    if(ml->mt_key < mr->mt_key) {
+    if (ml->mt_key < mr->mt_key) {
         return -1;
     }
-    if(ml->mt_key > mr->mt_key) {
+    if (ml->mt_key > mr->mt_key) {
         return 1;
     }
     return 0;
@@ -115,7 +116,7 @@ int main()
     void *tree1 = 0;
 #define RECMAX 3
 
-    for(i = 0 ; i < RECMAX ; ++i) {
+    for (i = 0 ; i < RECMAX ; ++i) {
         int k = 0;
         char kbuf[40];
         char dbuf[60];
@@ -133,13 +134,13 @@ int main()
             errno = 0;
             /* tsearch adds an entry if its not present already. */
             retval = tsearch(mt,&tree1, mt_compare_func  );
-            if(retval == 0) {
+            if (retval == 0) {
                 printf("Fail ENOMEM\n");
                 exit(1);
             } else {
                 struct my_tentry *re = 0;
                 re = *(struct my_tentry **)retval;
-                if(re != mt) {
+                if (re != mt) {
                     printf("found existing ok %u\n",i);
                     /*  Prevents data leak: mt was
                         already present. */
@@ -151,7 +152,7 @@ int main()
             }
         }
     }
-    for(i = 0 ; i < 5 ; ++i) {
+    for (i = 0 ; i < 5 ; ++i) {
         char kbuf[40];
         char dbuf[60];
         dbuf[0] = 0;
@@ -161,8 +162,8 @@ int main()
         snprintf(kbuf,sizeof(kbuf),"%u",i);
         mt = make_my_tentry(i,dbuf);
         retval = tfind(mt,&tree1,mt_compare_func);
-        if(!retval) {
-            if(i < RECMAX) {
+        if (!retval) {
+            if (i < RECMAX) {
                 printf("Fail TSRCH on %s is FAILURE\n",kbuf);
                 exit(1);
             } else {
@@ -189,7 +190,7 @@ int main()
             r = tdelete(mt,&tree1,mt_compare_func);
             /* We don't want the 'test' node left around. */
             mt_free_func(mt);
-            if(r) {
+            if (r) {
                 struct my_tentry *re2 = 0;
                 re2 = *(struct my_tentry **)r;
                 printf("tdelete returned parent: %u %s\n",

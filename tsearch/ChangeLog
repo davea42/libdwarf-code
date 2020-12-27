@@ -4,4 +4,5 @@
       tsearch_tester.c: No logic changes, just altering
       to fit libdwarf codingstyle consisently, with
       no too-long lines.
+    * tsearch.c: Same changes, codingstyle.
 
