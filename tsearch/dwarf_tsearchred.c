@@ -136,7 +136,7 @@ dwarf_initialize_search_hash( void **treeptr,
 static int
 isred(const struct ts_entry*n)
 {
-    if(n && n->color == RED) {
+    if (n && n->color == RED) {
         return TRUE;
     }
     return FALSE;
@@ -148,13 +148,13 @@ isred(const struct ts_entry*n)
 static int
 is_twonode(const struct ts_entry *h)
 {
-    if(!h) {
+    if (!h) {
         return TRUE;
     }
-    if(isred(h)) {
+    if (isred(h)) {
         return FALSE;
     }
-    if(isred(h->llink)) {
+    if (isred(h->llink)) {
         return FALSE;
     }
     return TRUE;
@@ -165,7 +165,7 @@ static const char *
 printnode(struct ts_entry*n)
 {
     static char b[400];
-    if(!n) {
+    if (!n) {
         return "Null node";
     }
     snprintf(b,sizeof(b),"0x%x 2-node %d red %d  l 0x%x r 0x%x",
@@ -214,11 +214,11 @@ dumptree_inner(const struct ts_entry *t,
     const char *descr, int level)
 {
     const char *v = "";
-    if(!t) {
+    if (!t) {
         return;
     }
     dumptree_inner(t->rlink,keyprint,"right",level+1);
-    if(t->keyptr) {
+    if (t->keyptr) {
         v = keyprint(t->keyptr);
     }
     printlevel(level);
@@ -245,12 +245,12 @@ dwarf_tdump(const void*rootin,
 {
     const struct ts_entry *head = (const struct ts_entry *)rootin;
     const struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         printf("dwarf_tdump null tree ptr : %s\n",msg);
         return;
     }
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         printf("dwarf_tdump empty tree : %s\n",msg);
         return;
     }
@@ -292,7 +292,7 @@ check_or_set(struct ts_entry*t,
         balcount->firstcount_ = t;
         return;
     }
-    if(balcount->blackcount_ == linkcount) {
+    if (balcount->blackcount_ == linkcount) {
         return;
     }
     printf("%s Black link count does not match: node 0x%" DW_PR_DUx
@@ -317,12 +317,13 @@ dwarf_check_balance_inner(struct ts_entry *t,
     int redcount = 0;
     int leftbcount = blacklinkcount;
     int rightbcount = blacklinkcount;
-    if(level > maxdepth) {
-        printf("%s Likely internal erroneous link loop, got to depth %d.\n",
+    if (level > maxdepth) {
+        printf("%s Likely internal erroneous link loop, "
+            "got to depth %d.\n",
             prefix,level);
         exit(1);
     }
-    if(!t) {
+    if (!t) {
         return 0;
     }
     redcount = isred(t) + isred(t->llink) + isred(t->rlink);
@@ -334,22 +335,22 @@ dwarf_check_balance_inner(struct ts_entry *t,
             redcount);
         (*founderror)++;
     }
-    if(isred(t->rlink)) {
+    if (isred(t->rlink)) {
         printf("%s red right link an error at node 0x%" DW_PR_DUx
         "\n",
             prefix,
             (Dwarf_Unsigned)(uintptr_t)t)
         (*founderror)++;
     }
-    if(t->llink) {
-        if(!isred(t->llink)) {
+    if (t->llink) {
+        if (!isred(t->llink)) {
             leftbcount++;
         }
     } else {
         check_or_set(t,founderror,balcount,leftbcount,prefix);
     }
-    if(t->rlink) {
-        if(!isred(t->rlink)) {
+    if (t->rlink) {
+        if (!isred(t->rlink)) {
             rightbcount++;
         }
     } else {
@@ -374,19 +375,19 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
     struct balance_s balancect;
 
     struct ts_entry*root = 0;
-    if(finalprefix) {
+    if (finalprefix) {
         prefix = "BalanceError:";
     } else {
         prefix = "BalanceWarn:";
     }
     balancect = zerobal;
 
-    if(!head) {
+    if (!head) {
         printf("%s check balance null tree ptr\n",prefix);
         return;
     }
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         printf("%s check balance null tree ptr\n",prefix);
         return;
     }
@@ -394,17 +395,17 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
     /* Counting in levels, not level number of top level. */
     depth = dwarf_check_balance_inner(root,depth,maxdepth,
         blackcount, &balancect,&errcount,prefix);
-    if(errcount) {
+    if (errcount) {
         printf("%s error count %d\n",prefix,errcount);
     }
     return;
 }
-#endif  /* DW_CHECK_CONSISTENCY */
+#endif /* DW_CHECK_CONSISTENCY */
 
 static struct ts_entry*
 getlink(struct ts_entry*t,int a)
 {
-    if(a < 0) {
+    if (a < 0) {
         return(t->llink);
     }
     return(t->rlink);
@@ -415,7 +416,7 @@ allocate_ts_entry(const void *key)
 {
     struct ts_entry *e = (struct ts_entry *)
         malloc(sizeof(struct ts_entry));
-    if(!e) {
+    if (!e) {
         return NULL;
     }
     e->keyptr = key;
@@ -430,8 +431,8 @@ flipcolors(struct ts_entry*h)
 {
     /*  Sedgewick does not verify llink rlink non-null?  */
     h->color = RED;
-    if(h->llink) h->llink->color = BLACK;
-    if(h->rlink) h->rlink->color = BLACK;
+    if (h->llink) h->llink->color = BLACK;
+    if (h->rlink) h->rlink->color = BLACK;
 }
 
 
@@ -465,7 +466,7 @@ moveredright(struct ts_entry *h)
     flipcolors(h);
     /*  In 4th Ed. book had ! before isred,
         corrected in errata, Oct 2012. */
-    if(isred(h->llink->llink)) {
+    if (isred(h->llink->llink)) {
         h = rotateright(h);
     }
     return h;
@@ -477,7 +478,7 @@ moveredleft(struct ts_entry *h)
 {
     flipcolors(h);
     /* Added test for h->rlink.. davea. */
-    if(h->rlink && isred(h->rlink->llink)) {
+    if (h->rlink && isred(h->rlink->llink)) {
         h->rlink = rotateright(h->rlink);
         h = rotateleft(h);
     }
@@ -492,7 +493,7 @@ tsearch_insert( const void *key,
     struct ts_entry **insertednode)
 {
     int kc = 1;
-    if(!h) {
+    if (!h) {
         h = allocate_ts_entry(key);
         if (!h) {
             return h;
@@ -503,16 +504,18 @@ tsearch_insert( const void *key,
         return h;
     }
     kc = compar(key,h->keyptr);
-    if(kc < 0) {
-        struct ts_entry *t = tsearch_insert(key,h->llink,compar,inserted, insertednode);
-        if(!t) {
+    if (kc < 0) {
+        struct ts_entry *t = tsearch_insert(key,h->llink,compar,
+            inserted, insertednode);
+        if (!t) {
             /* out of memory */
             return t;
         }
         h->llink = t;
     } else if (kc > 0) {
-        struct ts_entry *t = tsearch_insert(key,h->rlink,compar,inserted, insertednode);
-        if(!t) {
+        struct ts_entry *t = tsearch_insert(key,h->rlink,compar,
+            inserted, insertednode);
+        if (!t) {
             /* out of memory */
             return t;
         }
@@ -522,17 +525,17 @@ tsearch_insert( const void *key,
         return h;
     }
     /* Now fix up links so left is red and right is black. */
-    if(isred(h->rlink) && !isred(h->llink)) {
+    if (isred(h->rlink) && !isred(h->llink)) {
         /* Maintaining red on left. */
         /* insert is between. */
         h = rotateleft(h);
     }
-    if(isred(h->llink) && isred(h->llink->llink)) {
+    if (isred(h->llink) && isred(h->llink->llink)) {
         /* Avoiding sequencial red links, turning into
             paired reds fixed just below. */
         h = rotateright(h);
     }
-    if(isred(h->llink) && isred(h->rlink)) {
+    if (isred(h->llink) && isred(h->rlink)) {
         /* Pair reds below h,flip to black. */
         flipcolors(h);
     }
@@ -555,11 +558,11 @@ dwarf_tsearch(const void *key, void **headpin,
         struct ts_entry *rhead = 0;
         struct ts_entry *r2 = 0;
         rhead = allocate_ts_entry(0);
-        if(!rhead) {
+        if (!rhead) {
             return NULL;
         }
         r2 = allocate_ts_entry(key);
-        if(!r2) {
+        if (!r2) {
             free(rhead);
             return NULL;
         }
@@ -575,7 +578,7 @@ dwarf_tsearch(const void *key, void **headpin,
     }
 #ifdef DW_CHECK_CONSISTENCY
     dwarf_check_balance(head,1);
-#endif   /* DW_CHECK_CONSISTENCY */
+#endif /* DW_CHECK_CONSISTENCY */
     if (inserted) {
         /*  Discards const.  Required by the interface definition. */
         /*  root might change, but never the head pointer, so
@@ -616,21 +619,26 @@ static void
 complementcolors( struct ts_entry *h)
 {
     h->color = !h->color;
-    if(h->llink) { h->llink->color = !h->llink->color; }
-    if(h->rlink) { h->rlink->color = !h->rlink->color; }
+    if (h->llink) { h->llink->color = !h->llink->color; }
+    if (h->rlink) { h->rlink->color = !h->rlink->color; }
 }
 
 /* Kindle loc 8155. */
 static struct ts_entry *
 balance( struct ts_entry *h)
 {
-    if(!h) { return NULL; }
-    if(isred(h->rlink)) { h = rotateleft(h); }
+    if (!h) { return NULL; }
+    if (isred(h->rlink)) { h = rotateleft(h); }
 
-    /* The following from the insert code. loc 7930. plus complementcolors() */
-    if(isred(h->rlink) && !isred(h->llink)) { h = rotateleft(h); }
-    if(isred(h->llink) && isred(h->llink->llink)) { h = rotateright(h); }
-    if(isred(h->llink) && isred(h->rlink)) { complementcolors(h); }
+    /*  The following from the insert code. loc 7930.
+        plus complementcolors() */
+    if (isred(h->rlink) && !isred(h->llink)) {
+        h = rotateleft(h);
+    }
+    if (isred(h->llink) && isred(h->llink->llink)) {
+        h = rotateright(h);
+    }
+    if (isred(h->llink) && isred(h->rlink)) { complementcolors(h); }
     return h;
 }
 
@@ -641,7 +649,7 @@ balance( struct ts_entry *h)
 static struct ts_entry *
 findmin(struct ts_entry *h)
 {
-    if(!h) {
+    if (!h) {
         return NULL;
     }
     while (h->llink) {
@@ -660,14 +668,14 @@ findmin(struct ts_entry *h)
 static struct ts_entry *
 deletemin(struct ts_entry *h)
 {
-    if(!h->llink) {
+    if (!h->llink) {
         /*  Found minimum with key > key to delete.
             Sedgewick does not do this, so something
             is wrong somewhere.
             Mistake in Sedgewick?   */
         return h->rlink;
     }
-    if(!isred(h->llink) && !isred(h->llink->llink)) {
+    if (!isred(h->llink) && !isred(h->llink->llink)) {
         h = moveredleft(h);
     }
     h->llink = deletemin(h->llink);
@@ -682,7 +690,7 @@ enum delete_result_e {
     dr_noteparent
 };
 
-/* Kindle location 8168 for  the algorithm. */
+/* Kindle location 8168 for the algorithm. */
 
 static struct ts_entry *
 tdelete_inner(const void *key,
@@ -693,18 +701,19 @@ tdelete_inner(const void *key,
 {
     int kc = 0;
 
-    if(!h) {
+    if (!h) {
         *dr = dr_notfound;
         return NULL;
     }
     kc = compar(key,h->keyptr);
-    if(kc < 0) {
-        if(!isred(h->llink) && (h->llink && !isred(h->llink->llink))) {
+    if (kc < 0) {
+        if (!isred(h->llink) && (h->llink &&
+            !isred(h->llink->llink))) {
             h = moveredleft(h);
         }
         h->llink = tdelete_inner(key,h->llink, compar,
             parent,dr);
-        if( *dr == dr_noteparent) {
+        if (*dr == dr_noteparent) {
             *dr = dr_deleted;
             *parent = h;
         }
@@ -726,13 +735,13 @@ tdelete_inner(const void *key,
         }
         /*  Fixed test. Mistake in Sedgewick.
             Unless both links off h are non-null we crash. */
-        if(h->rlink && h->llink &&
+        if (h->rlink && h->llink &&
             !isred(h->rlink) &&
             !isred(h->rlink->llink)) {
             h = moveredright(h);
         }
         kc = compar(key,h->keyptr);
-        if(!kc) {
+        if (!kc) {
             struct ts_entry *r = 0;
             /* ASSERT: We have non-null rlink. */
             r = findmin(h->rlink);
@@ -745,7 +754,7 @@ tdelete_inner(const void *key,
             *dr = dr_noteparent;
         } else   {
             h->rlink = tdelete_inner(key,h->rlink,compar,parent,dr);
-            if( *dr == dr_noteparent) {
+            if (*dr == dr_noteparent) {
                 *parent = h;
                 *dr = dr_deleted;
             }
@@ -777,7 +786,7 @@ dwarf_tdelete(const void *key, void **rootp,
         p->color = RED;
     }
     p = tdelete_inner(key,root,compar,&parent,&dr);
-    if( dr == dr_unknown || dr == dr_notfound ) {
+    if (dr == dr_unknown || dr == dr_notfound ) {
         return NULL;
     }
     if (dr == dr_noteparent) {
@@ -785,7 +794,7 @@ dwarf_tdelete(const void *key, void **rootp,
         dr = dr_deleted;
     }
     /* INVARIANT: dr == dr_deleted. */
-    if(p) {
+    if (p) {
         /* ASSERT: parent non-null */
         root = p;
         root->color = BLACK;
@@ -809,7 +818,8 @@ dwarf_tdelete(const void *key, void **rootp,
 
 static void
 dwarf_twalk_inner(const struct ts_entry *p,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth),
+    void (*action)(const void *nodep,
+    const DW_VISIT which, const int depth),
     unsigned level)
 {
     if (!p->llink && !p->rlink) {
@@ -817,11 +827,11 @@ dwarf_twalk_inner(const struct ts_entry *p,
         return;
     }
     action((const void *)(&(p->keyptr)),dwarf_preorder,level);
-    if(p->llink) {
+    if (p->llink) {
         dwarf_twalk_inner(p->llink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_postorder,level);
-    if(p->rlink) {
+    if (p->rlink) {
         dwarf_twalk_inner(p->rlink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_endorder,level);
@@ -830,15 +840,16 @@ dwarf_twalk_inner(const struct ts_entry *p,
 
 void
 dwarf_twalk(const void *rootp,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth))
+    void (*action)(const void *nodep,
+    const DW_VISIT which, const int depth))
 {
     const struct ts_entry *head = (const struct ts_entry *)rootp;
     const struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         return;
     }
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         return;
     }
     dwarf_twalk_inner(root,action,0);
@@ -849,11 +860,11 @@ dwarf_tdestroy_inner(struct ts_entry*p,
     void (*free_node)(void *nodep),
     int depth)
 {
-    if(p->llink) {
+    if (p->llink) {
         dwarf_tdestroy_inner(p->llink,free_node,depth+1);
         p->llink = 0;
     }
-    if(p->rlink) {
+    if (p->rlink) {
         dwarf_tdestroy_inner(p->rlink,free_node,depth+1);
         p->rlink = 0;
     }
@@ -869,11 +880,11 @@ dwarf_tdestroy(void *rootp, void (*free_node)(void *nodep))
 {
     struct ts_entry *head = (struct ts_entry *)rootp;
     struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         return;
     }
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         free(head);
         return;
     }

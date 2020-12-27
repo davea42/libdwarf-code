@@ -126,15 +126,17 @@ dumptree_inner(const struct ts_entry *t,
     const char *descr, int level)
 {
     const char *v = "";
-    if(!t) {
+    if (!t) {
         return;
     }
     dumptree_inner(t->rlink,keyprint,"left ",level+1);
-    if(t->keyptr) {
+    if (t->keyptr) {
         v = keyprint(t->keyptr);
     }
     printlevel(level);
-    printf("0x%08" DW_PR_DUx " <keyptr 0x%08" DW_PR_DUx "> <%s %s> <l 0x%08" DW_PR_DUx "> <r 0x%08" DW_PR_DUx "> %s\n",
+    printf("0x%08" DW_PR_DUx " <keyptr 0x%08" DW_PR_DUx
+        "> <%s %s> <l 0x%08" DW_PR_DUx "> <r 0x%08" DW_PR_DUx
+        "> %s\n",
         (Dwarf_Unsigned)(uintptr_t)t,
         (Dwarf_Unsigned)(uintptr_t)t->keyptr,
         t->keyptr?"key ":"null",
@@ -148,7 +150,7 @@ dumptree_inner(const struct ts_entry *t,
 static struct ts_entry*
 getlink(struct ts_entry*t,int a)
 {
-    if(a < 0) {
+    if (a < 0) {
         return(t->llink);
     }
     return(t->rlink);
@@ -163,12 +165,12 @@ dwarf_tdump(const void*rootin,
 {
     const struct ts_entry *head = (const struct ts_entry *)rootin;
     const struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         printf("dwarf_tdump null tree ptr : %s\n",msg);
         return;
     }
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         printf("dwarf_tdump empty tree : %s\n",msg);
         return;
     }
@@ -188,7 +190,7 @@ allocate_ts_entry(const void *key)
 {
     struct ts_entry *e = (struct ts_entry *)
         malloc(sizeof(struct ts_entry));
-    if(!e) {
+    if (!e) {
         return NULL;
     }
     e->keyptr = key;
@@ -207,7 +209,7 @@ tsearch_insert_k(const void *key,int kc,
         /* out of memory */
         return NULL;
     }
-    if( kc < 0) {
+    if (kc < 0) {
         p->llink = e;
     } else {
         p->rlink = e;
@@ -225,7 +227,7 @@ tsearch_inner_do_insert(const void *key,
 {
     struct ts_entry *q = 0;
     q =  tsearch_insert_k(key,kc,p);
-    if(q) {
+    if (q) {
         *inserted = 1;
     }
     return q;
@@ -235,7 +237,7 @@ tsearch_inner_do_insert(const void *key,
     key is pointer to a user data area containing the key
     and possibly more.
 
-    We iterate like Knuth does, but using for(;;) instead
+    We iterate like Knuth does, but using for (;;) instead
     of go-to.  */
 static struct ts_entry *
 tsearch_inner( const void *key, struct ts_entry* localrootp,
@@ -243,11 +245,11 @@ tsearch_inner( const void *key, struct ts_entry* localrootp,
     int*inserted)
 {
     struct ts_entry* p = localrootp;
-    for(;;) {
+    for (;;) {
         struct ts_entry *r = 0;
         /* T2. */
         int kc = compar(key,p->keyptr);
-        if(kc < 0) {
+        if (kc < 0) {
             /* T3. */
             struct ts_entry *l = p->llink;
             if (l) {
@@ -285,24 +287,24 @@ dwarf_tsearch(const void *key, void **headpin,
     struct ts_entry *r = 0;
     int inserted = 0;
 
-    if(!headpin) {
+    if (!headpin) {
         return NULL;
     }
     head = (struct ts_entry *)*headpin;
-    if(head) {
+    if (head) {
         root = head->rlink;
     }
-    if(!head || !root) {
+    if (!head || !root) {
         int allocatedhead = 0;
-        if(!head) {
+        if (!head) {
             head = allocate_ts_entry(0);
             allocatedhead = 1;
         }
-        if(!head) {
+        if (!head) {
             return NULL;
         }
         root = allocate_ts_entry(key);
-        if(!root) {
+        if (!root) {
             if (allocatedhead) {
                 free(head);
             }
@@ -334,16 +336,16 @@ dwarf_tfind(const void *key, void *const*headppin,
     struct ts_entry *root  = 0;
     struct ts_entry *p     = 0;
 
-    if(!headppin) {
+    if (!headppin) {
         return NULL;
     }
     head = (struct ts_entry *)*headppin;
-    if(!head) {
+    if (!head) {
         return NULL;
     }
     proot = &head->rlink;
     root = *proot;
-    if(!root) {
+    if (!root) {
         return NULL;
     }
     p = root;
@@ -405,7 +407,7 @@ dwarf_tdelete(const void *key, void **headin,
         parentcomparv = kc;
         p  = getlink(p,kc);
     }
-    if(!p) {
+    if (!p) {
         return NULL;
     }
     {
@@ -426,7 +428,7 @@ dwarf_tdelete(const void *key, void **headin,
         }
         /* D1. *q is what Knuth calls q. */
         t = *q;
-        if(!eppingerleft) {
+        if (!eppingerleft) {
             struct ts_entry *r  = 0;
             eppingerleft = 1;
             r = t->rlink;
@@ -444,7 +446,7 @@ dwarf_tdelete(const void *key, void **headin,
             while (!done) {
                 /* D3. */
                 s = r->llink;
-                if(s->llink) {
+                if (s->llink) {
                     r = s;
                     continue;
                 }
@@ -472,7 +474,7 @@ dwarf_tdelete(const void *key, void **headin,
             while (!done) {
                 /* D3. */
                 s = l->rlink;
-                if(s->rlink) {
+                if (s->rlink) {
                     l = s;
                     continue;
                 }
@@ -484,12 +486,12 @@ dwarf_tdelete(const void *key, void **headin,
             }
         }
         /* Step D4. */
-        if(!t->llink && !t->rlink) {
+        if (!t->llink && !t->rlink) {
             emptied_a_leaf = 1;
         }
         free(t);
 
-        if(emptied_a_leaf) {
+        if (emptied_a_leaf) {
             if (p == root) {
                 /*  The tree is completely empty now.
                     Free the special head node.
@@ -499,7 +501,7 @@ dwarf_tdelete(const void *key, void **headin,
                 return NULL;
             }
         }
-        if(!parentp) {
+        if (!parentp) {
             /*  The item we found was at top of tree,
                 found == root.
                 We have a new root node.
@@ -513,7 +515,8 @@ dwarf_tdelete(const void *key, void **headin,
 
 static void
 dwarf_twalk_inner(const struct ts_entry *p,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth),
+    void (*action)(const void *nodep,
+        const DW_VISIT which, const int depth),
     unsigned level)
 {
     if (!p->llink && !p->rlink) {
@@ -521,11 +524,11 @@ dwarf_twalk_inner(const struct ts_entry *p,
         return;
     }
     action((const void *)(&(p->keyptr)),dwarf_preorder,level);
-    if(p->llink) {
+    if (p->llink) {
         dwarf_twalk_inner(p->llink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_postorder,level);
-    if(p->rlink) {
+    if (p->rlink) {
         dwarf_twalk_inner(p->rlink,action,level+1);
     }
     action((const void *)(&(p->keyptr)),dwarf_endorder,level);
@@ -534,15 +537,16 @@ dwarf_twalk_inner(const struct ts_entry *p,
 
 void
 dwarf_twalk(const void *headin,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth))
+    void (*action)(const void *nodep, const DW_VISIT which,
+        const int depth))
 {
     const struct ts_entry *head = (const struct ts_entry *)headin;
     const struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         return;
     }
     root = head->rlink;
-    if(!root) {
+    if (!root) {
         return;
     }
     dwarf_twalk_inner(root,action,0);
@@ -553,11 +557,11 @@ dwarf_tdestroy_inner(struct ts_entry*p,
     void (*free_node)(void *nodep),
     int depth)
 {
-    if(p->llink) {
+    if (p->llink) {
         dwarf_tdestroy_inner(p->llink,free_node,depth+1);
         p->llink = 0;
     }
-    if(p->rlink) {
+    if (p->rlink) {
         dwarf_tdestroy_inner(p->rlink,free_node,depth+1);
         p->rlink = 0;
     }
@@ -576,11 +580,11 @@ dwarf_tdestroy(void *headin, void (*free_node)(void *nodep))
 {
     struct ts_entry *head = (struct ts_entry *)headin;
     struct ts_entry *root = 0;
-    if(!head) {
+    if (!head) {
         return;
     }
     root = head->rlink;
-    if(head) {
+    if (head) {
         dwarf_tdestroy_inner(root,free_node,0);
     }
     free(head);

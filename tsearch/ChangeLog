@@ -1,1 +1,7 @@
-2020-01-05 placeholder
+2020-12-26 David Anderson
+    * dwarf_tsearchbal.c,dwarf_tsearchbin.c,dwarf_tsearchepp.c,
+      dwarf_tsearchhash.c,dwarf_tsearchred.c,tsearch.c,
+      tsearch_tester.c: No logic changes, just altering
+      to fit libdwarf codingstyle consisently, with
+      no too-long lines.
+
