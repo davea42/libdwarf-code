@@ -46,14 +46,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     If -showa is given then extra output is generated identifying
     some some add/delete actions.
 
-    If -byvalue is given then the tests are run using values not pointes.
+    If -byvalue is given then the tests are run using values
+    not pointers.
     Run like this it is impossible to differentiate whether
-    dwarf_tsearch() adds a new tree entry or just finds an existing one.
+    dwarf_tsearch() adds a new tree entry or just finds an
+    existing one.
     In the right circumstances this approach is useful in that
     it is a bit faster than the default.  See applybyvalue() and
     applybypointer.
 
-    For timing tests, you probably want to compile with -DFULL_SPEED_RUN
+    For timing tests, you probably want to compile with
+    -DFULL_SPEED_RUN
 
 */
 
@@ -94,7 +97,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    map (mapping an integer to a string).
    The following struct is the example basis
    because that is the capability I wanted to use.
-   tsearch has no idea what data is involved, only the comparison function
+   tsearch has no idea what data is involved,
+   only the comparison function
    mt_compare_func() and the  free function mt_free_func()
    (passed in to tsearch calls) know what data is involved.
    Making tsearch very flexible indeed.
@@ -342,13 +346,14 @@ static struct example_tentry *
 make_example_tentry(unsigned k,char *name)
 {
     struct example_tentry *mt =
-        (struct example_tentry *)calloc(sizeof(struct example_tentry),1);
-    if(!mt) {
+        (struct example_tentry *)calloc(
+            sizeof(struct example_tentry),1);
+    if (!mt) {
         printf("calloc fail\n");
         exit(1);
     }
     mt->mt_key = k;
-    if(name) {
+    if (name) {
         mt->mt_name = strdup(name);
     }
     return mt;
@@ -357,7 +362,7 @@ static void
 mt_free_func(void *mt_data)
 {
     struct example_tentry *m = mt_data;
-    if(!m) {
+    if (!m) {
         return;
     }
     free(m->mt_name);
@@ -394,10 +399,10 @@ mt_compare_func(const void *l, const void *r)
 {
     const struct example_tentry *ml = l;
     const struct example_tentry *mr = r;
-    if(ml->mt_key < mr->mt_key) {
+    if (ml->mt_key < mr->mt_key) {
         return -1;
     }
-    if(ml->mt_key > mr->mt_key) {
+    if (ml->mt_key > mr->mt_key) {
         return 1;
     }
     return 0;
@@ -405,7 +410,8 @@ mt_compare_func(const void *l, const void *r)
 static void
 walk_entry(const void *mt_data,DW_VISIT x,int level)
 {
-    const struct example_tentry *m = *(const struct example_tentry **)mt_data;
+    const struct example_tentry *m =
+        *(const struct example_tentry **)mt_data;
     printlevel(level);
     printf("Walk on node %s %u %s  \n",
         x == dwarf_preorder?"preorder":
@@ -436,7 +442,8 @@ static char *
 mt_keyprint(const void *v)
 {
     static char buf[50];
-    const struct example_tentry *mt = (const struct example_tentry *)v;
+    const struct example_tentry *mt =
+        (const struct example_tentry *)v;
     buf[0] = 0;
     snprintf(buf,sizeof(buf),"0x%08x",(unsigned)mt->mt_key);
     return buf;
@@ -454,10 +461,11 @@ value_keyprint(const void *v)
 #endif /* LIBC_TSEARCH */
 
 static int
-insertrecsbypointer(int max, void **tree, const enum insertorder order)
+insertrecsbypointer(int max, void **tree,
+    const enum insertorder order)
 {
     int indx = 0;
-    for(indx = 0 ; indx < max ; ++indx) {
+    for (indx = 0 ; indx < max ; ++indx) {
         int i = 0;
         int k = 0;
         char kbuf[40];
@@ -479,14 +487,15 @@ insertrecsbypointer(int max, void **tree, const enum insertorder order)
             errno = 0;
             /* tsearch adds an entry if its not present already. */
             retval = dwarf_tsearch(mt,tree, mt_compare_func  );
-            if(retval == 0) {
-                printf("FAIL ENOMEM in search on  %d, give up insertrecsbypointer\n",i);
+            if (retval == 0) {
+                printf("FAIL ENOMEM in search on  %d, "
+                    "give up insertrecsbypointer\n",i);
                 exit(1);
             } else {
                 struct example_tentry *re = 0;
                 re = *(struct example_tentry **)retval;
-                if(re != mt) {
-                    if(!k) {
+                if (re != mt) {
+                    if (!k) {
                         printf("FAIL found existing an error %u\n",i);
                         mt_free_func(mt);
                         return 1;
@@ -497,10 +506,11 @@ insertrecsbypointer(int max, void **tree, const enum insertorder order)
                         already present. */
                     mt_free_func(mt);
                 } else {
-                    if(!k) {
+                    if (!k) {
                         printf("insert new ok %u\n",i);
                     } else {
-                        printf("FAIL new found but expected existing %u\n",i);
+                        printf("FAIL new found but expected "
+                            "existing %u\n",i);
                     }
                     /* New entry mt was added. */
                 }
@@ -516,7 +526,7 @@ findrecsbypointer(int max,int findexpected,
     const enum insertorder order)
 {
     int indx = 0;
-    for(indx = 0 ; indx < max ; ++indx) {
+    for (indx = 0 ; indx < max ; ++indx) {
         char kbuf[40];
         char dbuf[60];
         struct example_tentry *mt = 0;
@@ -530,8 +540,8 @@ findrecsbypointer(int max,int findexpected,
         mt = make_example_tentry(i,dbuf);
         printf("findrec %d\n",i);
         retval = dwarf_tfind(mt,(void *const*)tree,mt_compare_func);
-        if(!retval) {
-            if(indx < findexpected) {
+        if (!retval) {
+            if (indx < findexpected) {
                 mt_free_func(mt);
                 printf("FAIL tfind on %s is FAILURE\n",kbuf);
                 return 1;
@@ -540,9 +550,10 @@ findrecsbypointer(int max,int findexpected,
             }
         } else {
             printf("found ok %u\n",i);
-            if(indx >= findexpected) {
+            if (indx >= findexpected) {
                 mt_free_func(mt);
-                printf("FAIL: found with tfind on %s is FAILURE\n",kbuf);
+                printf("FAIL: found with tfind on %s is FAILURE\n",
+                    kbuf);
                 return 1;
             } else {
                 printf("Found with tfind on %s is ok\n",kbuf);
@@ -558,7 +569,8 @@ findrecsbypointer(int max,int findexpected,
    but the difference is what we look for when we look.
 */
 static int
-delrecsbypointer(int max,int findexpected, void **tree,const enum insertorder order,int dodump)
+delrecsbypointer(int max,int findexpected, void **tree,
+    const enum insertorder order,int dodump)
 {
     int indx = 0;
     for (indx = 0; indx < max; indx++) {
@@ -569,8 +581,8 @@ delrecsbypointer(int max,int findexpected, void **tree,const enum insertorder or
         int i = 0;
 
         i = get_record_id(order,indx);
-        printf("delrec %d\n",i);
         mt = make_example_tentry(i,0);
+        printf("delrec %d\n",i);
         r = dwarf_tfind(mt,(void *const*)tree,mt_compare_func);
         if (r) {
             /*  This is what tdelete will delete.
@@ -583,11 +595,12 @@ delrecsbypointer(int max,int findexpected, void **tree,const enum insertorder or
                 worked and use the tfind result to delete
                 your contents if you want to.*/
             re3 = *(struct example_tentry **)r;
-            if(indx < findexpected) {
+            if (indx < findexpected) {
                 ;
             } else {
                 mt_free_func(mt);
-                printf("FAIL delrecsbypointer should not have found record to delete for %d\n",i);
+                printf("FAIL delrecsbypointer should not have found "
+                    "record to delete for %d\n",i);
                 return 1;
             }
             r = dwarf_tdelete(mt,tree,mt_compare_func);
@@ -595,7 +608,7 @@ delrecsbypointer(int max,int findexpected, void **tree,const enum insertorder or
                 printf("tree itself now empty\n");
             }
             /* We don't want the 'test' node left around. */
-            if(r) {
+            if (r) {
                 /*  If the node deleted was root, r
                     is really the new root, not the parent.
                     Or r is non-null but bogus.
@@ -605,17 +618,19 @@ delrecsbypointer(int max,int findexpected, void **tree,const enum insertorder or
             } else {
                 printf("tdelete returned NULL, tree now empty.\n");
 #ifdef HASHSEARCH
-                printf("Only really means some hash chain is now empty.\n");
+                printf("Only really means some hash chain is "
+                    "now empty.\n");
 #endif /* HASHSEARCH */
             }
             mt_free_func(mt);
             mt_free_func(re3);
         } else {
-            if(indx >= findexpected) {
+            if (indx >= findexpected) {
                 ;
             } else {
                 mt_free_func(mt);
-                printf("FAIL delrecsbypointer should have found record to delete for %d\n",i);
+                printf("FAIL delrecsbypointer should have found "
+                    "record to delete for %d\n",i);
                 return 1;
             }
             /* There is no node like this to delete. */
@@ -630,9 +645,12 @@ delrecsbypointer(int max,int findexpected, void **tree,const enum insertorder or
     return 0;
 }
 
-/*  mt must point to data in static storage for this to make any sense.
-    Malloc()ed data or unique static data for this instance mt points at.
-    For example, if there was an immobile array and make_example_tentry() somehow
+/*  mt must point to data in static storage for this to
+    make any sense.
+    Malloc()ed data or unique static data for this instance mt
+    points at.
+    For example, if there was an immobile array and
+    make_example_tentry() somehow
     selected a unique entry.
 */
 static int
@@ -643,7 +661,7 @@ insertonebypointer(void **tree, unsigned long addr,int ct)
     mt = make_example_tentry(addr,0);
     /* tsearch adds an entry if its not present already. */
     retval = dwarf_tsearch(mt,tree, mt_compare_func  );
-    if(retval == 0) {
+    if (retval == 0) {
         printf("FAIL ENOMEM in search on rec %d adr  0x%lu,"
             " error in insertonebypointer\n",
             ct,(unsigned long)addr);
@@ -651,10 +669,10 @@ insertonebypointer(void **tree, unsigned long addr,int ct)
     } else {
         struct example_tentry *re = 0;
         re = *(struct example_tentry **)retval;
-        if(re != mt) {
+        if (re != mt) {
             /* Found existing, error. */
-            printf("insertonebypointer rec %d addr %lu 0x%lx found record"
-                " preexisting, error\n",
+            printf("insertonebypointer rec %d addr %lu 0x%lx "
+                "found record preexisting, error\n",
                 ct,
                 (unsigned long)addr,
                 (unsigned long)addr);
@@ -666,7 +684,7 @@ insertonebypointer(void **tree, unsigned long addr,int ct)
             struct example_tentry *mt2 = make_example_tentry(addr,0);
             retval = dwarf_tfind(mt2,tree,mt_compare_func);
             mt_free_func(mt2);
-            if(!retval) {
+            if (!retval) {
                 printf("insertonebypointer record %d addr 0x%lu "
                     "failed to add as desired,"
                     " error\n",
@@ -698,7 +716,8 @@ deleteonebypointer(void **tree, unsigned addr,int ct)
         mt_free_func(mt);
         mt_free_func(re3);
     } else {
-        printf("deleteonebypointer could not find rec %d ! error! addr"
+        printf("deleteonebypointer could not find rec %d ! "
+            "error! addr"
             " 0x%lx\n",
             ct,(unsigned long)addr);
         mt_free_func(mt);
@@ -740,22 +759,24 @@ applybypointer(struct myacts *m,
     int errcount = 0;
 
     INITTREE(treesq1,mt_hashfunc);
-    printf("special sequence %s\n",msg);
-    for(; m->action_ != 0; m++,ct++) {
-        if(!hideactions) {
+    printf("special sequence applybypointer %s line %d\n",msg,
+        __LINE__);
+    for (; m->action_ != 0; m++,ct++) {
+        if (!hideactions) {
             printf("Action %2u: %s 0x%x val 0x%x\n",ct,
                 describe_action(m->action_),
                 m->action_,m->addr_);
         }
-        if(m->action_ == 'a') {
+        if (m->action_ == 'a') {
             errcount += insertonebypointer(&treesq1,m->addr_,ct);
             continue;
         }
-        if(m->action_ == 'd') {
+        if (m->action_ == 'd') {
             errcount += deleteonebypointer(&treesq1,m->addr_,ct);
             continue;
         }
-        printf("Fail applybypointer, bad action %s entry %d.\n",msg,ct);
+        printf("Fail applybypointer, bad action %s entry %d.\n",
+            msg,ct);
         return 1;
     }
     dwarf_tdestroy(treesq1,mt_free_func);
@@ -777,10 +798,10 @@ value_compare_func(const void *l, const void *r)
 {
     VALTYPE lp = (VALTYPE)(uintptr_t)l;
     VALTYPE rp = (VALTYPE)(uintptr_t)r;
-    if(lp < rp) {
+    if (lp < rp) {
         return -1;
     }
-    if(lp > rp) {
+    if (lp > rp) {
         return 1;
     }
     return 0;
@@ -798,12 +819,14 @@ insertbyvalue(void **tree, VALTYPE addr,int ct)
 {
     void *retval = 0;
     /*  tsearch adds an entry if its not present already. */
-    /*  Since in this test we do not malloc anything there is no free needed either.
-        Instead we just let tsearch store the value in the pointer in the tree.   */
+    /*  Since in this test we do not malloc anything there
+        is no free needed either.
+        Instead we just let tsearch store the value in the
+        pointer in the tree.   */
     VALTYPE  newval = addr;
     retval = dwarf_tsearch((void *)(uintptr_t)newval,
         tree, value_compare_func  );
-    if(retval == 0) {
+    if (retval == 0) {
         printf("FAIL ENOMEM in search  on item %d, value %lu, "
             "error in insertbyvalue\n",
             ct, (unsigned long)newval);
@@ -817,7 +840,7 @@ insertbyvalue(void **tree, VALTYPE addr,int ct)
             VALTYPE mt2 = addr;
             retval = dwarf_tfind((void *)(uintptr_t)mt2,
                 tree,value_compare_func);
-            if(!retval) {
+            if (!retval) {
                 printf("insertone record %d value 0x%lu failed to add"
                     " as desired, error\n",
                     ct,(unsigned long)mt2);
@@ -837,13 +860,14 @@ deletebyvalue(void **tree, unsigned  addr,int ct)
     int err=0;
 
     VALTYPE newval = addr;
-    /* We are not mallocing, so nothing to free he tree holds simple values for us. */
+    /*  We are not mallocing, so nothing to free he tree holds
+        simple values for us. */
     r = dwarf_tfind((void *)(uintptr_t)newval,
         (void *const*)tree,value_compare_func);
     if (r) {
         void *r2 = dwarf_tdelete((void *)(uintptr_t)newval,
             tree,value_compare_func);
-        if(r2) {
+        if (r2) {
             /* tdelete returned parent */
         } else {
             /* tdelete returned NULL, tree now empty */
@@ -878,27 +902,29 @@ applybyvalue(struct myacts *m,
     int errcount = 0;
 
     INITTREE(treesq1,value_hashfunc);
-    printf("special sequence %s\n",msg);
-    for(; m->action_ != 0; m++,ct++) {
-        if(!hideactions) {
+    printf("special sequence applybyvalue %s line %d\n",msg,
+        __LINE__);
+    for (; m->action_ != 0; m++,ct++) {
+        if (!hideactions) {
             printf("Action %2u: %s 0x%x val 0x%x\n",ct,
                 describe_action(m->action_),
                 m->action_,m->addr_);
         }
-        if(m->action_ == 'a') {
+        if (m->action_ == 'a') {
             errcount += insertbyvalue(&treesq1,m->addr_,ct);
-            if(ct == 0) {
+            if (ct == 0) {
                 printf("Add    done. action# %2d value 0x%x\n",
                     ct,m->addr_);
-                dwarf_tdump(treesq1,value_keyprint,"first sequence2 added");
-            } else if(dumpeverystage) {
+                dwarf_tdump(treesq1,value_keyprint,
+                    "first sequence2 added");
+            } else if (dumpeverystage) {
                 dwarf_tdump(treesq1,value_keyprint,"after add");
             }
             continue;
         }
-        if(m->action_ == 'd') {
+        if (m->action_ == 'd') {
             errcount += deletebyvalue(&treesq1,m->addr_,ct);
-            if(dumpeverystage) {
+            if (dumpeverystage) {
                 printf("Delete done. action# %2d value 0x%x\n",
                     ct,m->addr_);
                 dwarf_tdump(treesq1,value_keyprint,"after delete");
@@ -908,11 +934,12 @@ applybyvalue(struct myacts *m,
         printf("Fail applybyvalue, bad action %s entry %d.\n",msg,ct);
         return 1;
     }
-    if(printwalk) {
+    if (printwalk) {
         printf("Twalk start, simple value \n");
         dwarf_twalk(treesq1,value_only_walk_entry);
         printf("Twalk end, simple value\n");
-        dwarf_tdump(treesq1,value_keyprint,"tdump simple value from applybyvalue");
+        dwarf_tdump(treesq1,value_keyprint,
+            "tdump simple value from applybyvalue");
     }
     dwarf_tdestroy(treesq1,value_node_free);
     return errcount;
@@ -926,21 +953,24 @@ standard_tests(void)
     void *tree1 = 0;
     int errcount = 0;
 
-    if(applyby == applybypointer) {
+    if (applyby == applybypointer) {
         printf("Test with increasing input\n");
         INITTREE(tree1,mt_hashfunc);
 
         errcount += insertrecsbypointer(3,&tree1,increasing);
-        errcount += findrecsbypointer(6,3,(const void **)&tree1,increasing);
+        errcount += findrecsbypointer(6,3,(const void **)&tree1,
+            increasing);
         dwarf_twalk(tree1,walk_entry);
-        dwarf_tdump(tree1,mt_keyprint,"Dump Tree from increasing input");
+        dwarf_tdump(tree1,mt_keyprint,
+            "Dump Tree from increasing input");
         errcount += delrecsbypointer(6,3,&tree1,increasing,0);
 #ifdef HASHSEARCH
         dwarf_tdestroy(tree1,mt_free_func);
         tree1 = 0;
 #endif
-        if(tree1) {
-            printf("FAIL: delrecsbypointer of increasing did not empty the tree.\n");
+        if (tree1) {
+            printf("FAIL: delrecsbypointer of increasing did "
+                "not empty the tree.\n");
             exit(1);
         }
 
@@ -955,34 +985,42 @@ standard_tests(void)
         tree1 = 0;
 
         INITTREE(tree1,mt_hashfunc);
-        printf("Now test with decreasing input and test twalk and tdelete\n");
+        printf("Now test with decreasing input and test twalk "
+            "and tdelete\n");
         errcount += insertrecsbypointer(5,&tree1,decreasing);
-        errcount += findrecsbypointer(6,5,(const void **)&tree1,decreasing);
+        errcount += findrecsbypointer(6,5,(const void **)&tree1,
+            decreasing);
         dwarf_twalk(tree1,walk_entry);
-        dwarf_tdump(tree1,mt_keyprint,"Dump Tree from decreasing input");
+        dwarf_tdump(tree1,mt_keyprint,
+            "Dump Tree from decreasing input");
         errcount += delrecsbypointer(6,5,&tree1,decreasing,0);
 #ifdef HASHSEARCH
         dwarf_tdestroy(tree1,mt_free_func);
         tree1 = 0;
 #endif
-        if(tree1) {
-            printf("FAIL: delrecsbypointer of decreasing did not empty the tree.\n");
+        if (tree1) {
+            printf("FAIL: delrecsbypointer of decreasing "
+                "did not empty the tree.\n");
             exit(1);
         }
 
         INITTREE(tree1,mt_hashfunc);
-        printf("Now test with balanced input and test twalk and tdelete\n");
+        printf("Now test with balanced input and test twalk and "
+            "tdelete\n");
         errcount += insertrecsbypointer(4,&tree1,balanced);
-        errcount += findrecsbypointer(6,4,(const void **)&tree1,balanced);
+        errcount += findrecsbypointer(6,4,(const void **)&tree1,
+            balanced);
         dwarf_twalk(tree1,walk_entry);
-        dwarf_tdump(tree1,mt_keyprint,"Dump Tree from balanced input");
+        dwarf_tdump(tree1,mt_keyprint,
+            "Dump Tree from balanced input");
         errcount += delrecsbypointer(6,4,&tree1,balanced,1);
 #ifdef HASHSEARCH
         dwarf_tdestroy(tree1,mt_free_func);
         tree1 = 0;
 #endif
-        if(tree1) {
-            printf("FAIL: delrecsbypointer of balanced did not empty the tree.\n");
+        if (tree1) {
+            printf("FAIL: delrecsbypointer of balanced did not "
+                "empty the tree.\n");
             exit(1);
         }
 
@@ -1014,7 +1052,7 @@ getaddr(const char *in, unsigned long *addrout)
 
     errno = 0;
     res = strtoul(in,0,0);
-    if(errno) {
+    if (errno) {
         return 1;
     }
     *addrout = res;
@@ -1037,21 +1075,24 @@ static int
 build_filetest(struct myacts **tout, char *pathout,
    const char *filename,FILE *f)
 {
-    char buffer[500];
-    char * buf = &buffer[0];
-    size_t bufsize = sizeof(buffer);
+    size_t bufsize = 500;
     size_t filelen = 0;
     size_t ct = 0;
     int done = 0;
     size_t ixout = 0;
     struct myacts *recordacts = 0;
+    char *buf  = 0;
 
+    buf = (char *)calloc(1,bufsize);
+    if (!buf) {
+        printf("FAIL malloc bufsize %lu fails line %d\n",
+            (unsigned long)bufsize,__LINE__);
+    }
     while(!done) {
         ssize_t charsread = 0;
 
-        bufsize = sizeof(buffer);
         charsread = getline(&buf,&bufsize,f);
-        if(charsread < 0) {
+        if (charsread < 0) {
             done = 1;
             break;
         }
@@ -1063,37 +1104,37 @@ build_filetest(struct myacts **tout, char *pathout,
     *tout = recordacts;
     strcpy(pathout,filename);
     done = 0;
-    for(ct = 0; !done && ( ct < filelen); ++ct) {
+    for (ct = 0; !done && ( ct < filelen); ++ct) {
         ssize_t charsread = 0;
 
         charsread = getline(&buf,&bufsize,f);
-        if(charsread < 0) {
+        if (charsread < 0) {
             done = 1;
             break;
         }
-        if(buf[0] == '#') {
+        if (buf[0] == '#') {
             continue;
         }
-        if(buf[0] == 'a' && buf[1] == ' ') {
+        if (buf[0] == 'a' && buf[1] == ' ') {
             int readaddrfail = 0;
             unsigned long addr = 0;
             recordacts[ixout].action_ = 'a';
             readaddrfail = getaddr(&buf[2],&addr);
-            if(readaddrfail) {
-                fprintf(stderr,"Improper value input, line %lu of file %s\n"
-                    "%s\n",
+            if (readaddrfail) {
+                fprintf(stderr,"Improper value input, "
+                    "line %lu of file %s\n %s\n",
                     (unsigned long)ct,filename,buf);
                 return 1;
             }
             recordacts[ixout].addr_ = addr;
-        } else if(buf[0] == 'd' && buf[1] == ' ') {
+        } else if (buf[0] == 'd' && buf[1] == ' ') {
             int readaddrfail = 0;
             unsigned long addr = 0;
             recordacts[ixout].action_ = 'd';
             readaddrfail = getaddr(&buf[2],&addr);
-            if(readaddrfail) {
-                fprintf(stderr,"Improper value input, line %lu of file %s\n"
-                    "%s\n",
+            if (readaddrfail) {
+                fprintf(stderr,"Improper value input, line %lu "
+                    "of file %s\n %s\n",
                     (unsigned long)ct,filename,buf);
                 return 1;
             }
@@ -1121,16 +1162,21 @@ fill_in_filetest(const char *filename)
         fprintf(stderr,"Open of %s failed",filename);
         return 1;
     }
-    if(!filetest1) {
-        errcount += build_filetest(&filetest1,filetest1name,filename,f);
-    } else if(!filetest2) {
-        errcount += build_filetest(&filetest2,filetest2name,filename,f);
-    } else if(!filetest3) {
-        errcount += build_filetest(&filetest3,filetest3name,filename,f);
-    } else if(!filetest4) {
-        errcount += build_filetest(&filetest4,filetest4name,filename,f);
+    if (!filetest1) {
+        errcount += build_filetest(&filetest1,filetest1name,
+            filename,f);
+    } else if (!filetest2) {
+        errcount += build_filetest(&filetest2,filetest2name,
+            filename,f);
+    } else if (!filetest3) {
+        errcount += build_filetest(&filetest3,filetest3name,
+            filename,f);
+    } else if (!filetest4) {
+        errcount += build_filetest(&filetest4,filetest4name,
+            filename,f);
     } else {
-        printf("Exceeded limit on input files. %s ignored\n",filename);
+        printf("Exceeded limit on input files. %s ignored\n",
+            filename);
         errcount = 1;
     }
 
@@ -1156,37 +1202,38 @@ readargs(int argc, char **argv)
     int ix = 0;
     int notedstd = 0;
     int defaultstd = 1;
-    if(argc < 2) {
+    if (argc < 2) {
         /* No arguments, take defaults. */
         return;
     }
-    for(ix = 1; ix <argc; ++ix) {
+    for (ix = 1; ix <argc; ++ix) {
         int resfail = 0;
         const char *a=argv[ix];
-        if(strcmp(a,"-showa") == 0) {
+        if (strcmp(a,"-showa") == 0) {
             g_hideactions = 0;
             continue;
         }
-        if(strcmp(a,"-adds") == 0) {
+        if (strcmp(a,"-adds") == 0) {
             g_showallactions = 1;
             continue;
         }
-        if(strcmp(a,"-std") == 0) {
+        if (strcmp(a,"-std") == 0) {
             notedstd = 1;
             continue;
         }
-        if(strcmp(a,"-byvalue") == 0) {
+        if (strcmp(a,"-byvalue") == 0) {
             applyby = applybyvalue;
             continue;
         }
         resfail = fill_in_filetest(a);
         defaultstd = 0;
-        if(resfail) {
-            print_usage("Failed in attempting to read in file ",a,argv[0]);
+        if (resfail) {
+            print_usage("Failed in attempting to read in file ",
+                a,argv[0]);
         }
     }
     runstandardtests = defaultstd;
-    if(notedstd) {
+    if (notedstd) {
         runstandardtests = 1;
     }
     return;
@@ -1199,23 +1246,23 @@ main(int argc, char **argv)
     applyby = applybypointer;
     readargs(argc,argv);
 
-    if( runstandardtests) {
+    if (runstandardtests) {
         errcount += standard_tests();
     }
     {
-        if(filetest1) {
+        if (filetest1) {
             errcount += applyby(filetest1,filetest1name,
                 g_hideactions,0,g_showallactions);
         }
-        if(filetest2) {
+        if (filetest2) {
             errcount += applyby(filetest2,filetest2name,
                 g_hideactions,0,g_showallactions);
         }
-        if(filetest3) {
+        if (filetest3) {
             errcount += applyby(filetest3,filetest3name,
                 g_hideactions,0,g_showallactions);
         }
-        if(filetest4) {
+        if (filetest4) {
             errcount += applyby(filetest4,filetest4name,
                 g_hideactions,0,g_showallactions);
         }
@@ -1225,9 +1272,7 @@ main(int argc, char **argv)
     free(filetest3);
     free(filetest4);
 
-    if(errcount) {
-        printf("FAIL tsearch test.\n");
-        exit(1);
+    if (errcount) {
     }
     printf("PASS tsearch test.\n");
     exit(0);

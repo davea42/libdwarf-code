@@ -1,4 +1,12 @@
 2020-12-26 David Anderson
+    * tsearch_tester.c: Mostly the same codingstyle issues,
+      but the call to  getline() in libc was coded
+      in a way that violated the calling rules. 
+      Unless one accidentally passed in a file name that
+      lead to something with really long lines (ie, not
+      a test in the testsuite) one would not notice. But still, it
+      was wrong.  Now fixed.
+2020-12-26 David Anderson
     * dwarf_tsearchbal.c,dwarf_tsearchbin.c,dwarf_tsearchepp.c,
       dwarf_tsearchhash.c,dwarf_tsearchred.c,tsearch.c,
       tsearch_tester.c: No logic changes, just altering
