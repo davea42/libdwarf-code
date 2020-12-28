@@ -1,5 +1,8 @@
 David Anderson.  
-January 2014.
+Written January  2014
+Updated December 2020
+
+See RUNNING TESTS below.
 
 In 2013 I realized I could simplify some code in libdwarf
 (another project) by removing some complicated and messy
@@ -152,26 +155,72 @@ into the testcase/* format.
 It is unlikely you will find them much use
 except as starting points.
 
+==================
+RUNNING TESTS
+
+The test scheme should be revised to do each test 'right'
+and do something about those pointer values printed.
+But for now this is how it works.
+
+Getting started:
+   rm -rf testcases
+   cp -r ../regressiontests/tsearchtests
+   mv tsearchtests testcases
+   cd testcases
+   gunzip action-F-dwgenb-dwarfgen.log.gz     
+   gunzip action-f-v-v-irix64-libc.so.log.gz   
+   gunzip action-i-dwarf4-dd2g4.5dwarf-4.log.gz
+   gunzip action-l-irix64-libc.so.log.gz
+   cd ..
+All the files in testcases except two are
+just data for the tests.
+   testcases/testfail.base and testcases/testpass.base
+are baseline outputs and if what the test cases or
+dwarf_dump changes those are what need to be updated.
+
+All the tests are done by the script RUNTEST.
+   sh RUNTEST [-save]
+The -save option tells the script to save (rather
+than delete) the temp files it writes to.
+
+First tests run and are saved in 'testfail'
+Then that content (which includes passes and fails
+and all that is normal)
+  diff testfail testcases/testfail.base
+should show no differences.
+
+The second part involves the file testpass
+which takes a little longer. The message from the
+script suggests you inspect the difference with
+a graphical compare tool (I use fldiff) because
+most lines that appear involve printing pointers
+and of course those do not match between runs.
+The actual diff is on files with hex numbers
+transformed to 0xyyy so an overall PASS
+is normal..
+
+Overall on an ordinary 3GHz 64Bit
+machine a run takes around seven minutes.
 
 ==================
 REFERENCES:
 
-Donald E Knuth, The Art of Computer Programming Volume 3, Second Edition.
-(Quite difficult to interpret some parts of Knuth's
-algorithms, but then I always found Knuth hard to 
-understand. Still, Knuth is the essential source for
-algorithms.)
+Donald E Knuth, The Art of Computer Programming Volume 3,
+Second Edition.
+
+(Quite difficult to interpret some parts of Knuth's algorithms,
+but then I always found Knuth hard to understand. Still,
+Knuth is the essential source for algorithms.)
 
 The Open Group, The Single UNIX Specification, Version 3(2001).
 The Single Unix Specification (or whatever it is called now)
 is a reference source everyone should have.
 
 Robert Sedgewick and Kevin Wayne, Algorithms (4th Ed).
-This is the crucial reference on red-black trees.
-There is a crucial fix in the errata of the 3rd printing.
-In addition, in dwarf_tsearchred.c in two places I had to fix things,
+This is the crucial reference on red-black trees.  There is a
+crucial fix in the errata of the 3rd printing.  In addition,
+in dwarf_tsearchred.c in two places I had to fix things,
 look for 'Mistake' in the source.
-
 
 http://www.prevanders.net/tsearch.html
 

@@ -6,6 +6,9 @@
       lead to something with really long lines (ie, not
       a test in the testsuite) one would not notice. But still, it
       was wrong.  Now fixed.
+    * RUNTEST: Now uses logic that lets the tests be meaningful
+      while allowing the tests to PASS if all is well.
+    * README: Now explains how to run the tests.
 2020-12-26 David Anderson
     * dwarf_tsearchbal.c,dwarf_tsearchbin.c,dwarf_tsearchepp.c,
       dwarf_tsearchhash.c,dwarf_tsearchred.c,tsearch.c,

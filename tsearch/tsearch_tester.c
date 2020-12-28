@@ -115,7 +115,16 @@ struct example_tentry {
     char * mt_name;
 };
 
-/*  used to hold test data */
+/*  Used to hold test data.
+    It would be a much better testing regime
+    to add two flags here. One indicating pass/fail
+    for normal interfaces (as with use of
+    struct example_tentry here), one indicating pass/fail
+    for -byvalue runs (-byvalue has limitations
+    in that its impossible to detect if an add
+    is a duplicate or a new add).
+    That is good reason to avoid -byvalue in most
+    situations. */
 struct myacts {
     char action_;
     unsigned addr_;
@@ -455,7 +464,8 @@ value_keyprint(const void *v)
     VALTYPE val = (VALTYPE)(uintptr_t)v;
     static char buf[50];
     buf[0] = 0;
-    snprintf(buf,sizeof(buf),"0x%08lx",(unsigned long)val);
+    snprintf(buf,sizeof(buf),"0x%08lx (%lu)",(unsigned long)val,
+        (unsigned long)val);
     return buf;
 }
 #endif /* LIBC_TSEARCH */
@@ -759,8 +769,7 @@ applybypointer(struct myacts *m,
     int errcount = 0;
 
     INITTREE(treesq1,mt_hashfunc);
-    printf("special sequence applybypointer %s line %d\n",msg,
-        __LINE__);
+    printf("special sequence applybypointer %s\n",msg);
     for (; m->action_ != 0; m++,ct++) {
         if (!hideactions) {
             printf("Action %2u: %s 0x%x val 0x%x\n",ct,
@@ -902,8 +911,7 @@ applybyvalue(struct myacts *m,
     int errcount = 0;
 
     INITTREE(treesq1,value_hashfunc);
-    printf("special sequence applybyvalue %s line %d\n",msg,
-        __LINE__);
+    printf("special sequence applybyvalue %s\n",msg);
     for (; m->action_ != 0; m++,ct++) {
         if (!hideactions) {
             printf("Action %2u: %s 0x%x val 0x%x\n",ct,
