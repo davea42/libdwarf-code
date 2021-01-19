@@ -1,5 +1,15 @@
 #! /usr/bin/env python3
-#conddef.py.py
+"""
+Reads
+    #define x y
+lines
+and turns them into
+    #ifndef x
+    #define x y
+    #endif
+
+conddef.py.py
+"""
 
 #Copyright (c) 2018, David Anderson
 #All rights reserved.
@@ -30,15 +40,6 @@
 #CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 #OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 #EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-#Reads
-    #define x y
-#lines
-#and turns them into
-    #ifndef x
-    #define x y
-    #endif
 
 import os
 import sys

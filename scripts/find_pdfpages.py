@@ -1,11 +1,12 @@
 #/usr/bin/env python3
-#  Run this against the output of
-#   pdftotxt
-#  Here we us formfeeds to identify pages and page numbers.
-#  This is invoked via libdwarf/pdfbld.sh -c
-#  to rearrange a pdf so the order is
-#  abstract, table of contents,major document content.
-#  See also scripts/rebuildpdf.sh
+"""
+Run this against the output of pdftotxt
+Here we use formfeeds to identify pages and page numbers.
+This is invoked via libdwarf/pdfbld.sh -c
+to rearrange a pdf so the order is
+abstract, table of contents,major document content.
+See also scripts/rebuildpdf.sh
+"""
 
 
 import os
