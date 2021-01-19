@@ -32,72 +32,72 @@
 #EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-#Reads  
-  #define x y
+#Reads
+    #define x y
 #lines
 #and turns them into
-  #ifndef x
-  #define x y
-  #endif
+    #ifndef x
+    #define x y
+    #endif
 
 import os
 import sys
 
 def getfirstthree(s):
-  out = ""
-  if len(s) >= 3:
-     out = "".join((s[0],s[1],s[2]))
-  return out
+    out = ""
+    if len(s) >= 3:
+        out = "".join((s[0],s[1],s[2]))
+    return out
 
 def reader(path):
-  try:
-    file = open(path,"r")
-  except IOError as  message:
-    print("File could not be opened: ", message,file=sys.stderr)
-    sys.exit(1)
-  out = []
-  iline = 0
-  saveword = ""
-  for line in file:
-    iline = int(iline) + 1
-    l2 = line.rstrip()
-    wds = l2.split()
-    if len(wds) < 3:
-       continue
-    if wds[0] != "#define":
-      continue
-    mdef = wds[1]
-    val = wds[2]
-    out+= [(mdef,val)] 
-  file.close()
-  return out
-if __name__ == '__main__':
-  filename = ""
-  if len(sys.argv) == 3:
-    if sys.argv[1] == "--infile":
-      filename = sys.argv[2]
-    else:
-      print("argument ", sys.argv[1]," ignored")
-  else:
-    print("Usage: conddef.py --infile <filepath>")
-    sys.exit(1)
+    try:
+        file = open(path,"r")
+    except IOError as  message:
+        print("File could not be opened: ", message,file=sys.stderr)
+        sys.exit(1)
+    out = []
+    iline = 0
+    saveword = ""
+    for line in file:
+        iline = int(iline) + 1
+        l2 = line.rstrip()
+        wds = l2.split()
+        if len(wds) < 3:
+            continue
+        if wds[0] != "#define":
+            continue
+        mdef = wds[1]
+        val = wds[2]
+        out+= [(mdef,val)]
+    file.close()
+    return out
 
-  full_list = reader(filename)
-  maxlen = 16
-  for f in full_list:
-    (mdef,val) = f
-    dlen = len(mdef)
-    if int(dlen) > int(maxlen):
-       maxlen = int(dlen)
-  pstr = "#define %-" + str(maxlen) + "s %s"
-  initial = ""
-  for f in full_list:
-     (mdef,val) = f
-     ourthree = getfirstthree(mdef)
-     if initial != ourthree:
-        print("")
-        initial = ourthree
-     print("#ifndef",mdef)
-     print(pstr % (mdef,val))
-     print("#endif")
-    
+if __name__ == '__main__':
+    filename = ""
+    if len(sys.argv) == 3:
+        if sys.argv[1] == "--infile":
+            filename = sys.argv[2]
+        else:
+            print("argument ", sys.argv[1]," ignored")
+    else:
+        print("Usage: conddef.py --infile <filepath>")
+        sys.exit(1)
+
+    full_list = reader(filename)
+    maxlen = 16
+    for f in full_list:
+        (mdef,val) = f
+        dlen = len(mdef)
+        if int(dlen) > int(maxlen):
+            maxlen = int(dlen)
+    pstr = "#define %-" + str(maxlen) + "s %s"
+    initial = ""
+    for f in full_list:
+        (mdef,val) = f
+        ourthree = getfirstthree(mdef)
+        if initial != ourthree:
+            print("")
+            initial = ourthree
+        print("#ifndef",mdef)
+        print(pstr % (mdef,val))
+        print("#endif")
