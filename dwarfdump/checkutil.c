@@ -174,8 +174,8 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     }
 }
 
-/* Insert entry into Bucket Group.
-   We make no check for duplicate information. */
+/*  Insert entry into Bucket Group.
+    We make no check for duplicate information. */
 void
 AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key,Dwarf_Addr base,
@@ -234,8 +234,8 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     }
 }
 
-/* For Groups where entries are individually deleted, this does
-   that work.  */
+/*  For Groups where entries are individually deleted, this does
+    that work.  */
 Dwarf_Bool
 DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 {

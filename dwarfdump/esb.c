@@ -496,14 +496,14 @@ static char Xtable[16] = {
 '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
 };
 
-/* With gcc version 5.4.0 20160609  a version using
-   const char *formatp instead of format[next]
-   and deleting the 'next' variable
-   is a few hundredths of a second slower, repeatably.
+/*  With gcc version 5.4.0 20160609  a version using
+    const char *formatp instead of format[next]
+    and deleting the 'next' variable
+    is a few hundredths of a second slower, repeatably.
 
-   We deal with formats like:
-   %u   %5u %05u (and ld and lld too).
-   %x   %5x %05x (and ld and lld too).  */
+    We deal with formats like:
+    %u   %5u %05u (and ld and lld too).
+    %x   %5x %05x (and ld and lld too).  */
 void
 esb_append_printf_u(struct esb_s *data,
     const char *format,esb_unsigned v)

@@ -193,9 +193,9 @@ int should_skip_this_cu(Dwarf_Debug dbg,Dwarf_Bool *,
     Dwarf_Die cu_die);
 
 int get_address_size_and_max(Dwarf_Debug dbg,
-   Dwarf_Half * size,
-   Dwarf_Addr * max,
-   Dwarf_Error *err);
+    Dwarf_Half * size,
+    Dwarf_Addr * max,
+    Dwarf_Error *err);
 
 /* Returns the producer of the CU */
 int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,

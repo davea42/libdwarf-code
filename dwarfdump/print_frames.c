@@ -53,8 +53,8 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
     do {                                        \
         unsigned tbyte = sizeof(t) - sizeof(s); \
         t = 0;                                  \
-        func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
-  } while (0)
+        func(((char *)&t)+tbyte ,&s[0],sizeof(s)); \
+    } while (0)
 #else /* LITTLE ENDIAN */
 #define ASNAR(func,t,s)                         \
     do {                                        \
@@ -1756,10 +1756,10 @@ lastop_pointless(int op)
 */
 static int
 check_finstr_addrs(unsigned char *iregionstart,
-  unsigned char *idata,
-  unsigned char *idata_end,
-  unsigned char *iregionend,
-  const char *msg)
+    unsigned char *idata,
+    unsigned char *idata_end,
+    unsigned char *iregionend,
+    const char *msg)
 {
     if ( idata > idata_end) {
         /* zero length allowed.  But maybe overflow happened. */

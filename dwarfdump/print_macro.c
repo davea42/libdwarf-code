@@ -330,7 +330,7 @@ add_def_undef(unsigned opnum,
             mee->md_undefcount = undefcount+1;
         }
         free(keystr);
-   /*     free(me); */
+        /* free(me); */
         return;
     }
     /*  We have seen it and we have an undef for it now */
@@ -357,7 +357,7 @@ add_def_undef(unsigned opnum,
         mec->md_undefined = TRUE;
         mec->md_defcount = defcount;
         mec->md_undefcount = undefcount+1;
-   /*     free(me); */
+        /* free(me); */
         free(keystr);
         return;
     }
@@ -383,7 +383,7 @@ add_def_undef(unsigned opnum,
         med->md_undefined = TRUE;
         med->md_defcount = defcount;
         med->md_undefcount = undefcount+1;
-   /*     free(me); */
+        /* free(me); */
         free(keystr);
         return;
     }
@@ -418,7 +418,7 @@ add_def_undef(unsigned opnum,
         sanitized(m->ms_filename));
     printf(" %s\n",sanitized(keystr));
     free(keystr);
-   /*     free(me); */
+    /*     free(me); */
     return;
 }
 static void

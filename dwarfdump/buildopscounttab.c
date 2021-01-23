@@ -19,9 +19,9 @@ For use by anyone for any purpose.
 #include "dwarf_names.h"
 #include "opscounttab.h"
 struct ops_table_s {
-   unsigned char ot_first;
-   unsigned char ot_last;
-   signed   char ot_opcount;
+    unsigned char ot_first;
+    unsigned char ot_last;
+    signed   char ot_opcount;
 };
 /*  Must match libdwarf.h macros */
 #define DW_DLV_OK 0

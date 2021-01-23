@@ -1,6 +1,6 @@
-/* This is for testing the local getopt.
-   This test code is hereby placed into the
-   public domain by David Anderson.*/
+/*  This is for testing the local getopt.
+    This test code is hereby placed into the
+    public domain by David Anderson.*/
 
 #ifdef GETOPT_FROM_SYSTEM
 #define dwgetopt  getopt
@@ -31,11 +31,11 @@ char *argv1[20];
 static void
 dwgetoptresetfortestingonly(void)
 {
-   dwopterr   = 1;
-   dwoptind   = 1;
-   dwoptopt   = 0;
-   dwoptreset = 0;
-   dwoptarg   = 0;
+    dwopterr   = 1;
+    dwoptind   = 1;
+    dwoptopt   = 0;
+    dwoptreset = 0;
+    dwoptarg   = 0;
 }
 
 

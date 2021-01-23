@@ -224,14 +224,14 @@ print_addressarea(Dwarf_Debug dbg,
 
 
 const char *kind_list[] = {
-  "unknown(0)  ",
-  "type(1)     ",
-  "var-enum(2) ",
-  "function(3) ",
-  "other-sym(4)",
-  "reserved(5) ",
-  "function(6) ",
-  "reserved(7) ",
+    "unknown(0)  ",
+    "type(1)     ",
+    "var-enum(2) ",
+    "function(3) ",
+    "other-sym(4)",
+    "reserved(5) ",
+    "function(6) ",
+    "reserved(7) ",
 };
 
 static void

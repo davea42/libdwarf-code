@@ -53,10 +53,10 @@ the others are translated.
 NUL Null             0  00              Ctrl-@ ^@
 SOH Start of heading 1  01      Alt-1   Ctrl-A ^A
 STX Start of text    2  02      Alt-2   Ctrl-B ^B
-ETX End of text	     3  03      Alt-3   Ctrl-C ^C
-EOT End of transmission	4 04    Alt-4   Ctrl-D ^D
+ETX End of text      3  03      Alt-3   Ctrl-C ^C
+EOT End of transmission 4 04    Alt-4   Ctrl-D ^D
 ENQ Enquiry          5    05    Alt-5   Ctrl-E ^E
-ACK Acknowledge	     6    06    Alt-6   Ctrl-F ^F
+ACK Acknowledge      6    06    Alt-6   Ctrl-F ^F
 BEL Bell             7    07    Alt-7   Ctrl-G ^G
 BS  Backspace        8    08    Alt-8   Ctrl-H ^H
 HT  Horizontal tab   9    09    Alt-9   Ctrl-I ^I
@@ -65,7 +65,7 @@ VT  Vertical tab    11    0B    Alt-11  Ctrl-K ^K
 FF  Form feed       12    0C    Alt-12  Ctrl-L ^L
 CR  Carriage return 13    0D    Alt-13  Ctrl-M ^M
 SO  Shift out       14    0E    Alt-14  Ctrl-N ^N
-SI  Shift in        15    0F    Alt-15	Ctrl-O ^O
+SI  Shift in        15    0F    Alt-15  Ctrl-O ^O
 DLE Data line escape 16   10    Alt-16  Ctrl-P ^P
 DC1 Device control 1 17   11    Alt-17  Ctrl-Q ^Q
 DC2 Device control 2 18   12    Alt-18  Ctrl-R ^R

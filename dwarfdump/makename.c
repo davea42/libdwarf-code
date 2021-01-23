@@ -75,8 +75,8 @@ value_compare_func(const void *l, const void *r)
 static void
 value_node_free(void *valp)
 {
-   VALTYPE v = (VALTYPE)valp;
-   free(v);
+    VALTYPE v = (VALTYPE)valp;
+    free(v);
 }
 
 void

@@ -14,4 +14,3 @@ struct dwarf_opscounttab_s {
 
 #define DWOPS_ARRAY_SIZE 256
 extern struct dwarf_opscounttab_s dwarf_opscounttab[DWOPS_ARRAY_SIZE];
-

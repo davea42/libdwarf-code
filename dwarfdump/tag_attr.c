@@ -89,12 +89,12 @@ static Dwarf_Small tag_attr_legal[DW_TAG_last] = {0};
 #endif /* HAVE_USAGE_TAG_ATTR */
 
 static const char *usage[] = {
-  "Usage: tag_attr_build <options>",
-  "    -i input-table-path",
-  "    -o output-table-path",
-  "    -s (Generate standard attribute table)",
-  "    -e (Generate extended attribute table (common extensions))",
-  ""
+    "Usage: tag_attr_build <options>",
+    "    -i input-table-path",
+    "    -o output-table-path",
+    "    -s (Generate standard attribute table)",
+    "    -e (Generate extended attribute table (common extensions))",
+    ""
 };
 
 const char *program_name = 0;

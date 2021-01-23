@@ -112,163 +112,163 @@ ellipname(int   res,
 
 const char * get_TAG_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_TAG_name(val_in,&v);
-   return ellipname(res,val_in,v,"TAG",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_TAG_name(val_in,&v);
+    return ellipname(res,val_in,v,"TAG",printonerr);
 }
 const char * get_children_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_children_name(val_in,&v);
-   return ellipname(res,val_in,v,"children",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_children_name(val_in,&v);
+    return ellipname(res,val_in,v,"children",printonerr);
 }
 const char * get_FORM_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_FORM_name(val_in,&v);
-   return ellipname(res,val_in,v,"FORM",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_FORM_name(val_in,&v);
+    return ellipname(res,val_in,v,"FORM",printonerr);
 }
 const char * get_AT_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_AT_name(val_in,&v);
-   return ellipname(res,val_in,v,"AT",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_AT_name(val_in,&v);
+    return ellipname(res,val_in,v,"AT",printonerr);
 }
 const char * get_OP_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_OP_name(val_in,&v);
-   return ellipname(res,val_in,v,"OP",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_OP_name(val_in,&v);
+    return ellipname(res,val_in,v,"OP",printonerr);
 }
 const char * get_ATE_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_ATE_name(val_in,&v);
-   return ellipname(res,val_in,v,"ATE",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_ATE_name(val_in,&v);
+    return ellipname(res,val_in,v,"ATE",printonerr);
 }
 const char * get_DS_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_DS_name(val_in,&v);
-   return ellipname(res,val_in,v,"DS",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_DS_name(val_in,&v);
+    return ellipname(res,val_in,v,"DS",printonerr);
 }
 const char * get_END_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_END_name(val_in,&v);
-   return ellipname(res,val_in,v,"END",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_END_name(val_in,&v);
+    return ellipname(res,val_in,v,"END",printonerr);
 }
 const char * get_ATCF_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_ATCF_name(val_in,&v);
-   return ellipname(res,val_in,v,"ATCF",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_ATCF_name(val_in,&v);
+    return ellipname(res,val_in,v,"ATCF",printonerr);
 }
 const char * get_ACCESS_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_ACCESS_name(val_in,&v);
-   return ellipname(res,val_in,v,"ACCESS",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_ACCESS_name(val_in,&v);
+    return ellipname(res,val_in,v,"ACCESS",printonerr);
 }
 const char * get_VIS_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_VIS_name(val_in,&v);
-   return ellipname(res,val_in,v,"VIS",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_VIS_name(val_in,&v);
+    return ellipname(res,val_in,v,"VIS",printonerr);
 }
 const char * get_VIRTUALITY_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_VIRTUALITY_name(val_in,&v);
-   return ellipname(res,val_in,v,"VIRTUALITY",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_VIRTUALITY_name(val_in,&v);
+    return ellipname(res,val_in,v,"VIRTUALITY",printonerr);
 }
 const char * get_LANG_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_LANG_name(val_in,&v);
-   return ellipname(res,val_in,v,"LANG",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_LANG_name(val_in,&v);
+    return ellipname(res,val_in,v,"LANG",printonerr);
 }
 const char * get_ID_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_ID_name(val_in,&v);
-   return ellipname(res,val_in,v,"ID",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_ID_name(val_in,&v);
+    return ellipname(res,val_in,v,"ID",printonerr);
 }
 const char * get_CC_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_CC_name(val_in,&v);
-   return ellipname(res,val_in,v,"CC",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_CC_name(val_in,&v);
+    return ellipname(res,val_in,v,"CC",printonerr);
 }
 const char * get_INL_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_INL_name(val_in,&v);
-   return ellipname(res,val_in,v,"INL",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_INL_name(val_in,&v);
+    return ellipname(res,val_in,v,"INL",printonerr);
 }
 const char * get_ORD_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_ORD_name(val_in,&v);
-   return ellipname(res,val_in,v,"ORD",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_ORD_name(val_in,&v);
+    return ellipname(res,val_in,v,"ORD",printonerr);
 }
 const char * get_DSC_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_DSC_name(val_in,&v);
-   return ellipname(res,val_in,v,"DSC",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_DSC_name(val_in,&v);
+    return ellipname(res,val_in,v,"DSC",printonerr);
 }
 const char * get_LNS_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_LNS_name(val_in,&v);
-   return ellipname(res,val_in,v,"LNS",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_LNS_name(val_in,&v);
+    return ellipname(res,val_in,v,"LNS",printonerr);
 }
 const char * get_LNE_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_LNE_name(val_in,&v);
-   return ellipname(res,val_in,v,"LNE",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_LNE_name(val_in,&v);
+    return ellipname(res,val_in,v,"LNE",printonerr);
 }
 const char * get_MACINFO_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_MACINFO_name(val_in,&v);
-   return ellipname(res,val_in,v,"MACINFO",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_MACINFO_name(val_in,&v);
+    return ellipname(res,val_in,v,"MACINFO",printonerr);
 }
 const char * get_MACRO_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_MACRO_name(val_in,&v);
-   return ellipname(res,val_in,v,"MACRO",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_MACRO_name(val_in,&v);
+    return ellipname(res,val_in,v,"MACRO",printonerr);
 }
 const char * get_CFA_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_CFA_name(val_in,&v);
-   return ellipname(res,val_in,v,"CFA",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_CFA_name(val_in,&v);
+    return ellipname(res,val_in,v,"CFA",printonerr);
 }
 const char * get_EH_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_EH_name(val_in,&v);
-   return ellipname(res,val_in,v,"EH",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_EH_name(val_in,&v);
+    return ellipname(res,val_in,v,"EH",printonerr);
 }
 const char * get_FRAME_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_FRAME_name(val_in,&v);
-   return ellipname(res,val_in,v,"FRAME",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_FRAME_name(val_in,&v);
+    return ellipname(res,val_in,v,"FRAME",printonerr);
 }
 const char * get_CHILDREN_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_CHILDREN_name(val_in,&v);
-   return ellipname(res,val_in,v,"CHILDREN",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_CHILDREN_name(val_in,&v);
+    return ellipname(res,val_in,v,"CHILDREN",printonerr);
 }
 const char * get_ADDR_name(unsigned int val_in,int printonerr)
 {
-   const char *v = 0;
-   int res = dwarf_get_ADDR_name(val_in,&v);
-   return ellipname(res,val_in,v,"ADDR",printonerr);
+    const char *v = 0;
+    int res = dwarf_get_ADDR_name(val_in,&v);
+    return ellipname(res,val_in,v,"ADDR",printonerr);
 }

@@ -72,8 +72,8 @@ trim_newline(char *line, int max)
             *line = 0;
             return;
         }
-   }
-   return;
+    }
+    return;
 }
 
 /*  Detect empty lines (and other lines we do not want to read) */

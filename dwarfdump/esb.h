@@ -105,18 +105,18 @@ void esb_appendn(struct esb_s *data,
 char * esb_get_string(struct esb_s *data);
 
 
-/* Sets esb_used_bytes to zero. The string is not freed and
-   esb_allocated_size is unchanged.  */
+/*  Sets esb_used_bytes to zero. The string is not freed and
+    esb_allocated_size is unchanged.  */
 void esb_empty_string(struct esb_s *data);
 
 
-/* Return esb_used_bytes. */
+/*  Return esb_used_bytes. */
 size_t esb_string_len(struct esb_s *data);
 
-/* The following are for testing esb, not use by dwarfdump. */
+/*  The following are for testing esb, not use by dwarfdump. */
 
-/* *data is presumed to contain garbage, not values, and
-   is properly initialized. */
+/*  *data is presumed to contain garbage, not values, and
+    is properly initialized. */
 void esb_constructor(struct esb_s *data);
 void esb_constructor_rigid(struct esb_s *data,
     char *buf,size_t buflen);
@@ -129,10 +129,10 @@ void esb_force_allocation(struct esb_s *data, size_t minlen);
 void esb_destructor(struct esb_s *data);
 
 
-/* To get all paths in the code tested, this sets the
-   allocation/reallocation to the given value,
-   which can be quite small
-   but must not be zero. */
+/*  To get all paths in the code tested, this sets the
+    allocation/reallocation to the given value,
+    which can be quite small
+    but must not be zero. */
 void esb_alloc_size(size_t size);
 size_t esb_get_allocated_size(struct esb_s *data);
 

@@ -65,11 +65,11 @@ static char *config_file_defaults[] = {
     "HOME/.dwarfdump.conf",
     "HOME/dwarfdump.conf",
 #ifdef CONFPREFIX
-/* See Makefile.am dwarfdump_CFLAGS. This prefix
+/*  See Makefile.am dwarfdump_CFLAGS. This prefix
     is the --prefix option (defaults to /usr/local
     and Makefile.am adds /share/dwarfdump ) */
-/* We need 2 levels of macro to get the name turned into
-   the string we want. */
+/*  We need 2 levels of macro to get the name turned into
+    the string we want. */
 #define STR2(s) # s
 #define STR(s)  STR2(s)
     STR(CONFPREFIX) "/dwarfdump.conf",
@@ -148,9 +148,9 @@ static void suppress_print_dwarf(void)
     glflags.gf_do_check_dwarf = TRUE;
 }
 
-/* Remove matching leading/trailing quotes.
-   Does not alter the passed in string.
-   If quotes removed does a makename on a modified string. */
+/*  Remove matching leading/trailing quotes.
+    Does not alter the passed in string.
+    If quotes removed does a makename on a modified string. */
 static const char *
 remove_quotes_pair(const char *text)
 {
@@ -1779,9 +1779,9 @@ void arg_print_lines(void)
 /*  Option '-ls' */
 void arg_print_lines_short(void)
 {
-  /* -ls : suppress <pc> addresses */
-  glflags.gf_line_print_pc = FALSE;
-  arg_print_lines();
+    /* -ls : suppress <pc> addresses */
+    glflags.gf_line_print_pc = FALSE;
+    arg_print_lines();
 }
 
 /*  Option '-m' */
@@ -2557,11 +2557,11 @@ set_command_options(int argc, char *argv[])
         case OPT_CHECK_TAG_TAG:        arg_check_tag_tag();  break;
         case OPT_CHECK_TYPE:           arg_check_type();     break;
         case OPT_CHECK_UNIQUE:         arg_check_unique();   break;
-    #ifdef HAVE_USAGE_TAG_ATTR
+#ifdef HAVE_USAGE_TAG_ATTR
         case OPT_CHECK_USAGE:          arg_check_usage();break;
         case OPT_CHECK_USAGE_EXTENDED: arg_check_usage_extended();
             break;
-    #endif /* HAVE_USAGE_TAG_ATTR */
+#endif /* HAVE_USAGE_TAG_ATTR */
 
         /* Print ELF sections header. */
         case OPT_ELF:           arg_elf();          break;
@@ -2688,11 +2688,11 @@ set_command_options(int argc, char *argv[])
         case OPT_SEARCH_PRINT_PARENT:   arg_search_print_parent();
             break;
         case OPT_SEARCH_PRINT_TREE:     arg_search_print_tree();break;
-    #ifdef HAVE_REGEX
+#ifdef HAVE_REGEX
         case OPT_SEARCH_REGEX:          arg_search_regex();break;
         case OPT_SEARCH_REGEX_COUNT:    arg_search_regex_count();
             break;
-    #endif /* HAVE_REGEX */
+#endif /* HAVE_REGEX */
 
         /* Help & Version. */
         case OPT_HELP:          arg_help();          break;

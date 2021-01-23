@@ -40,10 +40,10 @@ ranges_esb_string_destructor(void)
 {
     esb_destructor(&esb_string);
 }
-/* Because we do not know what DIE is involved, if the
-   object being printed has different address sizes
-   in different compilation units this will not work
-   properly: anything could happen. */
+/*  Because we do not know what DIE is involved, if the
+    object being printed has different address sizes
+    in different compilation units this will not work
+    properly: anything could happen. */
 extern int
 print_ranges(Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Error *err)

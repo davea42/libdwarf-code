@@ -409,15 +409,13 @@ tsearch_inner_do_insert(const void *key,
 }
 
 
-/* Algorithm A of Knuth 6.2.3, balanced tree.
-   key is pointer to a user data area containing the key
-   and possibly more.
+/*  Algorithm A of Knuth 6.2.3, balanced tree.
+    key is pointer to a user data area containing the key
+    and possibly more.
 
-   We could recurse on this routine, but instead we
-   iterate (like Knuth does, but using for (;;) instead
-   of go-to.
-
-  */
+    We could recurse on this routine, but instead we
+    iterate (like Knuth does, but using for (;;) instead
+    of go-to.  */
 static struct ts_entry *
 tsearch_inner( const void *key, struct ts_entry* head,
     int (*compar)(const void *, const void *),
@@ -727,11 +725,10 @@ rearrange_tree_so_p_llink_null( struct pkrecord * pkarray,
 */
 static struct ts_entry *
 tdelete_inner(const void *key,
-  struct ts_entry *head,
-  int (*compar)(const void *, const void *),
-  int *tree_empty,
-  int *did_delete
-  )
+    struct ts_entry *head,
+    int (*compar)(const void *, const void *),
+    int *tree_empty,
+    int *did_delete)
 {
     struct ts_entry *p        = 0;
     struct ts_entry *pp       = 0;

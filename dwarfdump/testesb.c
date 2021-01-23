@@ -40,11 +40,11 @@ static int failcount = 0;
 
 static void
 validate_esb(int instance,
-   struct esb_s* d,
-   UNUSEDARG size_t explen,
-   UNUSEDARG size_t expalloc,
-   const char *expout,
-   int line )
+    struct esb_s* d,
+    UNUSEDARG size_t explen,
+    UNUSEDARG size_t expalloc,
+    const char *expout,
+    int line )
 {
     if (esb_string_len(d) != explen) {
         ++failcount;
@@ -156,7 +156,7 @@ int main()
     }
 
 
-   {
+    {
         struct esb_s d;
         esb_constructor(&d);
         esb_append(&d,"a");

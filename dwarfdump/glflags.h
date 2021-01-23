@@ -35,10 +35,10 @@ struct esb_s;
 struct dwconf_s;
 
 enum line_flag_type_e {
-  singledw5,  /* Meaning choose single table DWARF5 new interfaces. */
-  s2l,        /* Meaning choose two-level DWARF5 new interfaces. */
-  orig,       /* Meaning choose DWARF2,3,4 single level interface. */
-  orig2l      /* Meaning choose DWARF 2,3,4 two-level interface. */
+    singledw5,/* Meaning choose single table DWARF5 new interfaces. */
+    s2l,      /* Meaning choose two-level DWARF5 new interfaces. */
+    orig,     /* Meaning choose DWARF2,3,4 single level interface. */
+    orig2l    /* Meaning choose DWARF 2,3,4 two-level interface. */
 };
 
 /* Check categories corresponding to the -k option */

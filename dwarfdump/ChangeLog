@@ -1,4 +1,14 @@
 201-01-23 David Anderson
+   * buildopscounttab.c,checkutil.c,command_options.c,common.c,
+     dwarf_tsearch.h,dwarf_tsearchbal.c,dwarfdump-tt-table.h,dwarfdump.c,
+     dwconf.c,dwgetopt.c,esb.c,esb.h,getopttest.c,glflags.h,globals.h,
+     makename.c,naming.c,opscounttab.h,print_die.c,print_frames.c,
+     print_gdbindex.c,print_macro.c,print_pubnames.c,print_ranges.c,
+     print_reloc.c,sanitize.c,section_bitmaps.c,tag_attr.c,
+     tag_common.c,tag_tree.c,testesb.c: Fixed indentation
+     errors.
+
+201-01-23 David Anderson
    * print_die.c: Now checks all instances of DW_OP_bra
      and DW_OP_skip to be sure the target offset actually
      is a valid target in this expression block.

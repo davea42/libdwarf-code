@@ -59,10 +59,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 typedef enum
 {
-  dwarf_preorder,
-  dwarf_postorder,
-  dwarf_endorder,
-  dwarf_leaf
+    dwarf_preorder,
+    dwarf_postorder,
+    dwarf_endorder,
+    dwarf_leaf
 }
 DW_VISIT;
 
@@ -95,8 +95,8 @@ void dwarf_twalk(const void * /*root*/,
     const DW_VISIT  /*which*/,
     const int  /*depth*/));
 
-/* dwarf_tdestroy() cannot set the root pointer NULL, you must do
-   so on return from dwarf_tdestroy(). */
+/*  dwarf_tdestroy() cannot set the root pointer NULL, you must do
+    so on return from dwarf_tdestroy(). */
 void dwarf_tdestroy(void * /*root*/,
     void (* /*free_node*/)(void * /*nodep*/));
 
@@ -106,8 +106,8 @@ void dwarf_tdump(const void*root,
     char *(* /*keyprint*/)(const void *),
     const char *msg);
 
-/* Returns NULL  and does nothing
-   unless the implemenation used uses a hash tree. */
+/*  Returns NULL  and does nothing
+    unless the implemenation used uses a hash tree. */
 void * dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE (*hashfunc)(const void *key),
     unsigned long size_estimate);

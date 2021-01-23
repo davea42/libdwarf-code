@@ -830,9 +830,9 @@ printf_callback_for_libdwarf(UNUSEDARG void *userdata,
 
 int
 get_address_size_and_max(Dwarf_Debug dbg,
-   Dwarf_Half * size,
-   Dwarf_Addr * max,
-   Dwarf_Error *aerr)
+    Dwarf_Half * size,
+    Dwarf_Addr * max,
+    Dwarf_Error *aerr)
 {
     int dres = 0;
     Dwarf_Half lsize = 4;
@@ -2685,11 +2685,11 @@ void
 report_caller_error_drop_error(int dwdlv,
     int line, char *fname)
 {
-   printf("\nERROR in dwarfdump:"
+    printf("\nERROR in dwarfdump:"
         " The value passed to the macro DROP_ERROR_INSTANCE "
         "is not one of the three allowed values, but is "
         "%d. dwarfdump has a bug. "
         " See line %d file %s\n",dwdlv,line,fname);
-   glflags.gf_count_major_errors++;
+    glflags.gf_count_major_errors++;
 
 }

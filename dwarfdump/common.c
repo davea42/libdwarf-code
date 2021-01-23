@@ -53,8 +53,8 @@ const char * dwarf_package_version(void);
 
 /* PACKAGE_VERSION is from config.h */
 
-/* The Linux/Unix version does not want a version string to print
-   unless -V is on the command line. */
+/*  The Linux/Unix version does not want a version string to print
+    unless -V is on the command line. */
 void
 print_version_details(UNUSEDARG const char * name,
 #ifdef _WIN32
@@ -69,9 +69,9 @@ print_version_details(UNUSEDARG const char * name,
     char *acType = "Release";
 #endif /* _DEBUG */
 #ifdef _WIN64
-  char *bits = "64";
+    char *bits = "64";
 #else
-  char *bits = "32";
+    char *bits = "32";
 #endif /* _WIN64 */
     printf("%s [%s %s %s Win%s (%s)]\n",
         sanitized(name),__DATE__,__TIME__,acType,bits,

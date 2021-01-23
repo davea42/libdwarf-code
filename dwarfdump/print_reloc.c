@@ -117,7 +117,7 @@ set_relocation_table_names(Dwarf_Small machine_type)
         reloc_type_names = 0;
         number_of_reloc_type_names = 0;
         break;
-  }
+    }
 }
 
 static void
@@ -597,8 +597,8 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 
 static void
 print_reloc_information_32(int section_no, Dwarf_Small * buf,
-   Dwarf_Unsigned size, Elf64_Xword type, char **scn_names,
-   int scn_names_count)
+    Dwarf_Unsigned size, Elf64_Xword type, char **scn_names,
+    int scn_names_count)
 {
     /*  Include support for Elf32_Rel and Elf32_Rela */
     Dwarf_Unsigned add = 0;

@@ -72,12 +72,12 @@ check_info_offset_sanity(
 */
 static int
 print_pubname_style_entry(Dwarf_Debug dbg,
-   const char *line_title,
-   char *name,
-   Dwarf_Unsigned die_off,
-   Dwarf_Unsigned cu_die_off,
-   Dwarf_Unsigned global_cu_offset,
-   Dwarf_Unsigned maxoff,Dwarf_Error *err)
+    const char *line_title,
+    char *name,
+    Dwarf_Unsigned die_off,
+    Dwarf_Unsigned cu_die_off,
+    Dwarf_Unsigned global_cu_offset,
+    Dwarf_Unsigned maxoff,Dwarf_Error *err)
 {
     Dwarf_Die die = NULL;
     Dwarf_Off die_CU_off = 0;

@@ -69,8 +69,8 @@ map_sectnames[DW_HDR_ARRAY_SIZE] = {
     {"Elf Header",                      DW_HDR_HEADER},
 };
 
-/* See section_bitmaps.c, .h Control section header
-   printing. (not DWARF printing)  */
+/*  See section_bitmaps.c, .h Control section header
+    printing. (not DWARF printing)  */
 static char reloc_map[DW_SECTION_REL_ARRAY_SIZE];
 static char section_map[DW_HDR_ARRAY_SIZE];
 

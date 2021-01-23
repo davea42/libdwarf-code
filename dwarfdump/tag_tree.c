@@ -71,13 +71,13 @@ Blank lines are allowed and are dropped.
 */
 
 static const char *usage[] = {
-  "Usage: tag_tree_build <options>",
-  "options:\t-t\tGenerate Tags table",
-  "    -i Input-file-path",
-  "    -o Output-table-path",
-  "    -e   (Want Extended table (common extensions))",
-  "    -s   (Want Standard table)",
-  ""
+    "Usage: tag_tree_build <options>",
+    "options:\t-t\tGenerate Tags table",
+    "    -i Input-file-path",
+    "    -o Output-table-path",
+    "    -e   (Want Extended table (common extensions))",
+    "    -s   (Want Standard table)",
+    ""
 };
 
 static char *input_name = 0;
@@ -445,7 +445,7 @@ main(int argc, char **argv)
                 aname = 0;
                 ta_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "   tag_tree_%02x, /* 0x%02x - %s */\n",
+                    "    tag_tree_%02x, /* 0x%02x - %s */\n",
                     tag,tag,aname);
             } else {
                 fprintf(fileOut,"    0,\n");

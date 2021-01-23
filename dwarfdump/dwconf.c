@@ -476,8 +476,8 @@ find_a_file(const char *named_file,
     return 0;
 }
 
-/* Start at a token begin, see how long it is,
-   return length. */
+/*  Start at a token begin, see how long it is,
+    return length. */
 static unsigned
 find_token_len(char *cp)
 {
@@ -1432,9 +1432,9 @@ static char *regnames[] = {
     a little bit faster.
 */
 static char *genericregnames[] = {
-  "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9",
-  "r10", "r11", "r12", "r13", "r14", "r15", "r16",
-  "r17", "r18", "r19", "r20"
+    "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9",
+    "r10", "r11", "r12", "r13", "r14", "r15", "r16",
+    "r17", "r18", "r19", "r20"
 };
 
 /*  This is a simple generic set of registers.  The

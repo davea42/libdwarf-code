@@ -4918,7 +4918,7 @@ alloc_skip_branch_array(Dwarf_Half no_of_ops,
 {
     op_branch_checking->opcount = 0;
     op_branch_checking->ops_array = 0;
-    if(!no_of_ops) {
+    if (!no_of_ops) {
         return;
     }
     op_branch_checking->ops_array = (struct OpBranchEntry_s *)
@@ -4952,9 +4952,9 @@ skip_branch_target_ok(struct OpBranchHead_s *op_branch_checking,
     i = index;
     ec = op_branch_checking->ops_array+i;
     for ( ; i < op_branch_checking->opcount; ++i,++ec) {
-       if ( ec->offset == ein->target_offset) {
-           return TRUE;
-       }
+        if ( ec->offset == ein->target_offset) {
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -4970,24 +4970,24 @@ check_skip_branch_offsets(struct OpBranchHead_s *op_branch_checking,
     for ( ; i < high ; ++i,++e) {
         char *opname = "DW_OP_skip";
         if (e->op != DW_OP_bra && e->op != DW_OP_skip) {
-             continue;
+            continue;
         }
         if (e->op == DW_OP_bra) {
-             opname = "DW_OP_bra";
+            opname = "DW_OP_bra";
         }
-        if(skip_branch_target_ok(op_branch_checking,i,e)){
+        if (skip_branch_target_ok(op_branch_checking,i,e)){
             continue;
         }
         /*  Oops. An error. The skip or branch target
             is wrong. Corrupt dwarf */
         esb_append_printf_s(str,
             "\nERROR: The operation %s",opname);
-        esb_append_printf_u(str, 
+        esb_append_printf_u(str,
             " at expression block offset 0x%04x ",e->offset);
-        esb_append_printf_u(str, 
+        esb_append_printf_u(str,
             " has target of 0x%04x which is not a valid "
             "expression offset in this expression block\n",
-            e->target_offset); 
+            e->target_offset);
         glflags.gf_count_major_errors++;
     }
 }
@@ -5214,16 +5214,16 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         showblockoffsets = TRUE;
     }
     if (showblockoffsets ) {
-        /* New January 2021, showing offsets relevant to 
-           DW_OP_bra and DW_OP_skip . 
-           offsetforbranch comes from a 16 bit field, so
-           is never large.
-           */
+        /*  New January 2021, showing offsets relevant to
+            DW_OP_bra and DW_OP_skip .
+            offsetforbranch comes from a 16 bit field, so
+            is never large.
+            */
         esb_append_printf_u(string_out,
             "<blkoff 0x%04" DW_PR_DUx "> ",
             offsetforbranch);
     }
-    if(oparray && oparray->opcount && 
+    if (oparray && oparray->opcount &&
         index <  oparray->opcount) {
         echecking = oparray->ops_array+ index;
         echecking->op = op;
@@ -5260,13 +5260,13 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 off = off + targ;
                 if (off < 0 ) {
                     esb_append_printf_i(string_out,
-                       " <ERROR. branch/skip target erronous %d>",
-                       off);
+                        " <ERROR. branch/skip target erronous %d>",
+                        off);
                     glflags.gf_count_major_errors++;
                 } else {
                     esb_append_printf_u(string_out,
-                       " <target op: 0x%04" DW_PR_DUx ">",
-                       (Dwarf_Unsigned)off);
+                        " <target op: 0x%04" DW_PR_DUx ">",
+                        (Dwarf_Unsigned)off);
                 }
                 if (echecking) {
                     echecking->target_offset = off;
@@ -6240,8 +6240,6 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     } else {
         if (tempud == DW_ATE_unsigned ||
             tempud == DW_ATE_unsigned_char) {
-                /*esb_append(esbp,
-                    "helper small encoding UNSIGNED ");*/
                 retval = 1;
         }
     }
