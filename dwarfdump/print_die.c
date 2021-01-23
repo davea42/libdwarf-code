@@ -46,6 +46,18 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "opscounttab.h"
 #include "tag_common.h"
 
+/*  OpBranchHead_s gives us nice type-checking
+    in calls. */
+struct OpBranchEntry_s {
+    Dwarf_Unsigned offset;
+    Dwarf_Unsigned target_offset;
+    Dwarf_Small    op;
+};
+struct OpBranchHead_s {
+    Dwarf_Half           opcount;
+    struct OpBranchEntry_s * ops_array;
+};
+
 /*  Traverse a DIE and attributes to
     check self references */
 static int traverse_one_die(Dwarf_Debug dbg,
@@ -91,6 +103,7 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Locdesc_c exprc,
     int index,
     Dwarf_Bool has_skip_or_branch,
+    struct OpBranchHead_s *oparray,
     Dwarf_Bool report_raw, /* non-zero reports cooked values */
     Dwarf_Addr baseaddr,
     struct esb_s *string_out,
@@ -489,8 +502,8 @@ get_die_stack_sibling()
 }
 static void
 possibly_increase_esb_alloc(struct esb_s *esbp,
-  Dwarf_Unsigned count,
-  Dwarf_Unsigned entrysize)
+    Dwarf_Unsigned count,
+    Dwarf_Unsigned entrysize)
 {
     /*  for bytes of text needed per element */
     Dwarf_Unsigned targetsize = count*entrysize;
@@ -503,8 +516,8 @@ possibly_increase_esb_alloc(struct esb_s *esbp,
 }
 static void
 dealloc_all_srcfiles(Dwarf_Debug dbg,
-  char **srcfiles,
-  Dwarf_Signed cnt)
+    char **srcfiles,
+    Dwarf_Signed cnt)
 {
     Dwarf_Signed i = 0;
 
@@ -3011,15 +3024,15 @@ traverse_one_die(Dwarf_Debug dbg,
     */
 static int
 print_range_attribute(Dwarf_Debug dbg,
-   Dwarf_Die die,
-   Dwarf_Half attr,
-   Dwarf_Attribute attr_in,
-   Dwarf_Half theform,
-   int pra_dwarf_names_print_on_error,
-   Dwarf_Bool print_else_name_match,
-   int *append_extra_string,
-   struct esb_s *esb_extrap,
-   Dwarf_Error *raerr)
+    Dwarf_Die die,
+    Dwarf_Half attr,
+    Dwarf_Attribute attr_in,
+    Dwarf_Half theform,
+    int pra_dwarf_names_print_on_error,
+    Dwarf_Bool print_else_name_match,
+    int *append_extra_string,
+    struct esb_s *esb_extrap,
+    Dwarf_Error *raerr)
 {
     Dwarf_Unsigned original_off = 0;
     int fres = 0;
@@ -3326,10 +3339,10 @@ determine_discr_signedness(Dwarf_Debug dbg)
 
 static void
 checksignv(
-   struct esb_s *strout,
-   const char *title,
-   Dwarf_Signed sv,
-   Dwarf_Unsigned uv)
+    struct esb_s *strout,
+    const char *title,
+    Dwarf_Signed sv,
+    Dwarf_Unsigned uv)
 {
     /*  The test and output are not entirely meaningful, but
         it can be useful for readers of dwarfdump output. */
@@ -4899,6 +4912,97 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     return DW_DLV_OK;
 }
 
+static void
+alloc_skip_branch_array(Dwarf_Half no_of_ops,
+    struct OpBranchHead_s *op_branch_checking)
+{
+    op_branch_checking->opcount = 0;
+    op_branch_checking->ops_array = 0;
+    if(!no_of_ops) {
+        return;
+    }
+    op_branch_checking->ops_array = (struct OpBranchEntry_s *)
+        calloc(no_of_ops,sizeof(struct OpBranchEntry_s));
+    if (!op_branch_checking->ops_array) {
+        return;
+    }
+    op_branch_checking->opcount = no_of_ops;
+}
+
+static Dwarf_Bool
+skip_branch_target_ok(struct OpBranchHead_s *op_branch_checking,
+    Dwarf_Half index,
+    struct OpBranchEntry_s*ein)
+{
+    Dwarf_Half i = 0;
+    struct OpBranchEntry_s*ec = 0;
+
+    if (ein->target_offset == ein->offset) {
+        /* Infinite loop! */
+        return FALSE;
+    } else if (ein->target_offset < ein->offset) {
+        ec = op_branch_checking->ops_array;
+        for ( ; i < index; ++i) {
+            if ( ec->offset == ein->target_offset) {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+    i = index;
+    ec = op_branch_checking->ops_array+i;
+    for ( ; i < op_branch_checking->opcount; ++i,++ec) {
+       if ( ec->offset == ein->target_offset) {
+           return TRUE;
+       }
+    }
+    return FALSE;
+}
+
+static void
+check_skip_branch_offsets(struct OpBranchHead_s *op_branch_checking,
+    struct esb_s *str)
+{
+    Dwarf_Half i = 0;
+    Dwarf_Half high = op_branch_checking->opcount;
+    struct OpBranchEntry_s*e = op_branch_checking->ops_array;
+
+    for ( ; i < high ; ++i,++e) {
+        char *opname = "DW_OP_skip";
+        if (e->op != DW_OP_bra && e->op != DW_OP_skip) {
+             continue;
+        }
+        if (e->op == DW_OP_bra) {
+             opname = "DW_OP_bra";
+        }
+        if(skip_branch_target_ok(op_branch_checking,i,e)){
+            continue;
+        }
+        /*  Oops. An error. The skip or branch target
+            is wrong. Corrupt dwarf */
+        esb_append_printf_s(str,
+            "\nERROR: The operation %s",opname);
+        esb_append_printf_u(str, 
+            " at expression block offset 0x%04x ",e->offset);
+        esb_append_printf_u(str, 
+            " has target of 0x%04x which is not a valid "
+            "expression offset in this expression block\n",
+            e->target_offset); 
+        glflags.gf_count_major_errors++;
+    }
+}
+
+static void
+dealloc_skip_branch_array(struct OpBranchHead_s *op_branch_checking)
+{
+    if (op_branch_checking->opcount) {
+        free(op_branch_checking->ops_array);
+        op_branch_checking->ops_array = 0;
+        op_branch_checking->opcount = 0;
+    }
+}
+
+
 static Dwarf_Bool
 op_is_skip_or_branch(Dwarf_Debug dbg,
     Dwarf_Locdesc_c exprc,
@@ -4955,7 +5059,9 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     unsigned i = 0;
     Dwarf_Bool report_raw = TRUE;
     Dwarf_Bool has_skip_or_branch = FALSE;
+    struct OpBranchHead_s op_branch_checking;
 
+    alloc_skip_branch_array(0,&op_branch_checking);
     if (llbuf) {
         Dwarf_Locdesc *locd = 0;
         locd = llbuf;
@@ -4968,6 +5074,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
                 lkind,
                 die_indent_level,op,NULL,i,
                 has_skip_or_branch,
+                NULL,
                 report_raw,
                 baseaddr,string_out,err);
             if (res == DW_DLV_ERROR) {
@@ -4987,18 +5094,27 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
             }
         }
     }
+    if (has_skip_or_branch) {
+        alloc_skip_branch_array(no_of_ops,&op_branch_checking);
+    }
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,die,
             lkind,
             die_indent_level,NULL,locdesc,i,
             has_skip_or_branch,
+            &op_branch_checking,
             report_raw,
             baseaddr,string_out,err);
         if (res == DW_DLV_ERROR) {
+            dealloc_skip_branch_array(&op_branch_checking);
             return res;
         }
     }
+    if (has_skip_or_branch) {
+        check_skip_branch_offsets(&op_branch_checking,string_out);
+    }
+    dealloc_skip_branch_array(&op_branch_checking);
     return DW_DLV_OK;
 }
 
@@ -5035,6 +5151,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Locdesc_c exprc,
     int         index,
     Dwarf_Bool  has_skip_or_branch,
+    struct OpBranchHead_s *oparray,
     Dwarf_Bool  report_raw,
     UNUSEDARG Dwarf_Addr baseaddr,
     struct esb_s *string_out,
@@ -5052,6 +5169,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     int indentprespaces = 0;
     int indentpostspaces = 0;
     Dwarf_Bool showblockoffsets = FALSE;
+    struct OpBranchEntry_s *echecking = 0;
 
     if (!glflags.dense && !glflags.gf_expr_ops_joined) {
         indentprespaces = standard_indent();
@@ -5105,6 +5223,12 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             "<blkoff 0x%04" DW_PR_DUx "> ",
             offsetforbranch);
     }
+    if(oparray && oparray->opcount && 
+        index <  oparray->opcount) {
+        echecking = oparray->ops_array+ index;
+        echecking->op = op;
+        echecking->offset =  offsetforbranch;
+    }
     esb_append(string_out, op_name);
     if (op_has_no_operands(op)) {
         /* Nothing to add. */
@@ -5143,6 +5267,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                     esb_append_printf_u(string_out,
                        " <target op: 0x%04" DW_PR_DUx ">",
                        (Dwarf_Unsigned)off);
+                }
+                if (echecking) {
+                    echecking->target_offset = off;
                 }
             }
             break;

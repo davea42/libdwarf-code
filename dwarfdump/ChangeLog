@@ -1,3 +1,7 @@
+201-01-23 David Anderson
+   * print_die.c: Now checks all instances of DW_OP_bra
+     and DW_OP_skip to be sure the target offset actually
+     is a valid target in this expression block.
 201-01-22 David Anderson
    * glflags.h: Moved _dwarf_print_one_expr_op() out,
      it is now static in print_die.c
