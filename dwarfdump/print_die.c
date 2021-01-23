@@ -2,7 +2,7 @@
 Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
 Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
 Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-Portions Copyright 2007-2020 David Anderson. All rights reserved.
+Portions Copyright 2007-2021 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of version 2 of the GNU General
@@ -31,7 +31,6 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
     Free Software Foundation, Inc., 51 Franklin St, Fifth
     Floor, Boston, MA 02110-1301, USA.  SGI has moved from
     the Crittenden Lane address.  */
-
 
 #include "globals.h"
 #ifdef HAVE_STDINT_H
@@ -84,6 +83,20 @@ static int handle_rnglists(Dwarf_Die die,
     int show_form,
     int local_verbose,
     Dwarf_Error *err);
+static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Small lkind,
+    int die_indent_level,
+    Dwarf_Loc* expr,
+    Dwarf_Locdesc_c exprc,
+    int index,
+    Dwarf_Bool has_skip_or_branch,
+    Dwarf_Bool report_raw, /* non-zero reports cooked values */
+    Dwarf_Addr baseaddr,
+    struct esb_s *string_out,
+    Dwarf_Error *err);
+
+
 
 #ifdef HAVE_USAGE_TAG_ATTR
 /*  Record TAGs usage */
@@ -4886,23 +4899,62 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     return DW_DLV_OK;
 }
 
+static Dwarf_Bool
+op_is_skip_or_branch(Dwarf_Debug dbg,
+    Dwarf_Locdesc_c exprc,
+    int         index,
+    Dwarf_Error *err)
+{
+    Dwarf_Small op = 0;
+    Dwarf_Unsigned opd1 = 0;
+    Dwarf_Unsigned opd2 = 0;
+    Dwarf_Unsigned opd3 = 0;
+    Dwarf_Unsigned raw1 = 0;
+    Dwarf_Unsigned raw2 = 0;
+    Dwarf_Unsigned raw3 = 0;
+    Dwarf_Unsigned offsetforbranch = 0;
+    int res = 0;
+
+    res = dwarf_get_location_op_value_d(exprc,
+        index,
+        &op,&opd1,&opd2,&opd3,
+        &raw1,&raw2,&raw3,
+        &offsetforbranch,
+        err);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            DROP_ERROR_INSTANCE(dbg,res,*err);
+        }
+        return FALSE;
+    }
+    if (op == DW_OP_bra) {
+        return TRUE;
+    }
+    if (op == DW_OP_skip) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
 int
 dwarfdump_print_location_operations(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    int die_indent_level,
+    Dwarf_Die       die,
+    int             die_indent_level,
     Dwarf_Locdesc * llbuf,    /* Non-zero for old interface. */
     Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
     UNUSEDARG Dwarf_Unsigned llent, /* Which desc we have . */
-    Dwarf_Unsigned entrycount,
-    UNUSEDARG Dwarf_Small  lkind,
-    UNUSEDARG int no_ending_newlines,
-    Dwarf_Addr  baseaddr,
-    struct esb_s *string_out,
-    Dwarf_Error *err)
+    Dwarf_Unsigned  entrycount,
+    Dwarf_Small     lkind,
+    UNUSEDARG int   no_ending_newlines,
+    Dwarf_Addr      baseaddr,
+    struct esb_s   *string_out,
+    Dwarf_Error    *err)
 {
     Dwarf_Half no_of_ops = 0;
     unsigned i = 0;
     Dwarf_Bool report_raw = TRUE;
+    Dwarf_Bool has_skip_or_branch = FALSE;
 
     if (llbuf) {
         Dwarf_Locdesc *locd = 0;
@@ -4913,7 +4965,9 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
             Dwarf_Loc * op = &locd->ld_s[i];
 
             int res = _dwarf_print_one_expr_op(dbg,die,
+                lkind,
                 die_indent_level,op,NULL,i,
+                has_skip_or_branch,
                 report_raw,
                 baseaddr,string_out,err);
             if (res == DW_DLV_ERROR) {
@@ -4925,10 +4979,20 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
     possibly_increase_esb_alloc(string_out,no_of_ops,100);
+    if (no_of_ops > 1) {
+        for (i = 0; i < no_of_ops; i++) {
+            if (op_is_skip_or_branch(dbg,locdesc,i,err)) {
+                has_skip_or_branch = TRUE;
+                break;
+            }
+        }
+    }
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,die,
+            lkind,
             die_indent_level,NULL,locdesc,i,
+            has_skip_or_branch,
             report_raw,
             baseaddr,string_out,err);
         if (res == DW_DLV_ERROR) {
@@ -4937,6 +5001,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
+
 
 static int
 op_has_no_operands(Dwarf_Small op)
@@ -4961,15 +5026,16 @@ show_contents(struct esb_s *string_out,
     }
 }
 
-
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    int die_indent_level,
-    Dwarf_Loc* expr,
+    Dwarf_Die   die,
+    Dwarf_Small lkind,
+    int         die_indent_level,
+    Dwarf_Loc * expr,
     Dwarf_Locdesc_c exprc,
-    int index,
-    Dwarf_Bool report_raw,
+    int         index,
+    Dwarf_Bool  has_skip_or_branch,
+    Dwarf_Bool  report_raw,
     UNUSEDARG Dwarf_Addr baseaddr,
     struct esb_s *string_out,
     Dwarf_Error *err)
@@ -4985,6 +5051,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     const char * op_name = 0;
     int indentprespaces = 0;
     int indentpostspaces = 0;
+    Dwarf_Bool showblockoffsets = FALSE;
 
     if (!glflags.dense && !glflags.gf_expr_ops_joined) {
         indentprespaces = standard_indent();
@@ -5023,6 +5090,21 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         }
     }
     op_name = get_OP_name(op,pd_dwarf_names_print_on_error);
+    if (lkind != DW_LKIND_expression &&
+        has_skip_or_branch &&
+        glflags.verbose) {
+        showblockoffsets = TRUE;
+    }
+    if (showblockoffsets ) {
+        /* New January 2021, showing offsets relevant to 
+           DW_OP_bra and DW_OP_skip . 
+           offsetforbranch comes from a 16 bit field, so
+           is never large.
+           */
+        esb_append_printf_u(string_out,
+            "<blkoff 0x%04" DW_PR_DUx "> ",
+            offsetforbranch);
+    }
     esb_append(string_out, op_name);
     if (op_has_no_operands(op)) {
         /* Nothing to add. */
@@ -5039,11 +5121,30 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_const4s:
         case DW_OP_const8s:
         case DW_OP_consts:
-        case DW_OP_skip:
-        case DW_OP_bra:
         case DW_OP_fbreg:
             esb_append(string_out," ");
             formx_signed(opd1,string_out);
+            break;
+        case DW_OP_skip:
+        case DW_OP_bra:
+            esb_append(string_out," ");
+            formx_signed(opd1,string_out);
+            if (showblockoffsets) {
+                Dwarf_Signed targ = (Dwarf_Signed)opd1;
+                Dwarf_Signed off  = offsetforbranch +2;
+
+                off = off + targ;
+                if (off < 0 ) {
+                    esb_append_printf_i(string_out,
+                       " <ERROR. branch/skip target erronous %d>",
+                       off);
+                    glflags.gf_count_major_errors++;
+                } else {
+                    esb_append_printf_u(string_out,
+                       " <target op: 0x%04" DW_PR_DUx ">",
+                       (Dwarf_Unsigned)off);
+                }
+            }
             break;
         case DW_OP_GNU_addr_index: /* unsigned val */
         case DW_OP_addrx:  /* DWARF5: unsigned val */

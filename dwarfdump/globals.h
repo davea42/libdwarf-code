@@ -292,17 +292,6 @@ void print_secname(Dwarf_Debug dbg,const char *secname);
 void  report_caller_error_drop_error(int dwdlv,
     int line, char *filename);
 
-int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    int die_indent_level,
-    Dwarf_Loc* expr,
-    Dwarf_Locdesc_c exprc,
-    int index,
-    Dwarf_Bool report_raw, /* non-zero reports cooked values */
-    Dwarf_Addr baseaddr,
-    struct esb_s *string_out,
-    Dwarf_Error *err);
-
 /*  encoding_type_func used in print_die.c and
     print_lopc_hipc_attr.c  */
 typedef const char *(*encoding_type_func)
