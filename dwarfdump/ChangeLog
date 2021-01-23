@@ -1,0 +1,7 @@
+201-01-22 David Anderson
+   * glflags.h: Moved _dwarf_print_one_expr_op() out,
+     it is now static in print_die.c
+   * print_die.c: Now notices if DW_OP_skip or DW_OP_bra
+     is in a set of operations and prefixes each operation
+     with its block offset so its easy to understand the target
+     offset.
