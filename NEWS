@@ -1,3 +1,9 @@
+2021-01-23:
+  dwarfdump now reports and checks-for-sensible-values
+  the expression block offsets that DW_OP_bra and 
+  DW_OP_skip use.  If an expression does not use either of
+  those operators dwarfdump does not report the individual DW_OP
+  expression offsets.
 2020-12-23:
   dwarfdump --print-macinfo now follows DW_MACRO_imports
   and does several additional checks on .debug_macro section
