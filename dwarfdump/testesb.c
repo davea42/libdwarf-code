@@ -53,17 +53,6 @@ validate_esb(int instance,
             instance,(unsigned)esb_string_len(d),
             (unsigned)explen,line);
     }
-#if 0
-    This test not critical Lets not check allocation size
-    any more. February 25, 2020
-    if (d->esb_allocated_size != expalloc) {
-        ++failcount;
-        printf("  FAIL instance %d  esb_allocated_size  %u"
-            " expalloc %u line %d\n",
-            instance,(unsigned)d->esb_allocated_size,
-            (unsigned)expalloc,line);
-    }
-#endif
     if (strcmp(esb_get_string(d),expout)) {
         ++failcount;
         printf("  FAIL instance %d esb_get_string"

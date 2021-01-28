@@ -60,12 +60,8 @@ Portions Copyright(C) David Anderson 2016. All Rights reserved.
 #define TRUE 1
 #define FALSE 0
 
-#if 0
-static void * makename_data;
-#endif
 #define VALTYPE char *
 #define DW_TSHASHTYPE uintptr_t
-
 
 char *samples[]  = {
 "abcd",

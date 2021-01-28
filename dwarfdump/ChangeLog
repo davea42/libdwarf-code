@@ -1,4 +1,9 @@
 2021-01-28 David Anderson
+   * print_die.c: Cleared out dead #if 0 and fixed indents.
+   * compiler_info.c,getopttest.c,makename_test.c,
+     print_hipc_lopc_attr.c,testesb.c: Cleared out dead code
+     and fixed indents.
+2021-01-28 David Anderson
    * compiler_info.c: Added comments about an unusual
      aspect of a couple arrays here. 
    * dwarfdump.c: Removed a stray back-quote from a comment.

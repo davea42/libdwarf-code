@@ -244,7 +244,6 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         esb_append_printf_u(&highpcstr,
             "<highpc: 0x" DW_PR_XZEROS DW_PR_DUu ">",
             highpcOff + *lowAddrp);
-            
     }
 #endif
     esb_empty_string(valname);

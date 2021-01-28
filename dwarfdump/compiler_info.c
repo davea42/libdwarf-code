@@ -36,7 +36,7 @@
    of the name may have been checked to cause the
    compiler data to be entered here.
 
-   The detected/targeted arrays leave index 0 unused. 
+   The detected/targeted arrays leave index 0 unused.
    There is no particularly good reason for this.
    current_compiler starts at -1, and is legitimately
    1 through COMPILER_TABLE_MAX-1.
@@ -178,7 +178,7 @@ print_specific_checks_results(Compiler *pCompiler)
 
 /*  Add a CU name to the current compiler entry, specified by the
     'current_compiler'; the name is added to the 'compilers_detected'
-    table and is printed if the '-P' or '--print-producers' 
+    table and is printed if the '-P' or '--print-producers'
     option is specified in the
     command line. */
 void
@@ -263,7 +263,7 @@ update_compiler_target(const char *producer_name)
             (gcc_compiler && glflags.gf_check_gcc_compiler) ;
     }
 
-    
+
     /* Check for already detected compiler */
     for (index = 1; index <= compilers_detected_count; ++index) {
         const char *name = compilers_detected[index].name;

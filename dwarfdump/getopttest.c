@@ -198,9 +198,6 @@ test3(void)
         printf("FAIL test3 unexpected ct %d\n",ct);
     }
     }
-#if 0
-    printf(" final check: ct %d dwoptind %d\n",ct,optind);
-#endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL test3 on non-dash dwoptind %d arg got "
             "%s exp %s\n",
@@ -247,9 +244,6 @@ test2(void)
         exit(1);
     }
     }
-#if 0
-    printf(" final check: ct %d dwoptind %d\n",ct,optind);
-#endif
     if (argv1[dwoptind]) {
         printf("FAIL test2 on non-dash arg dwoptind %d "
             "got 0x%lx exp NULL\n",
@@ -318,9 +312,6 @@ ltest1(void)
         exit(1);
     }
     }
-#if 0
-    printf(" final check: ct %d dwoptind %d\n",ct,optind);
-#endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL ltest1 on non-dash arg dwoptind %d got "
             "%s exp %s\n",
@@ -387,9 +378,6 @@ ltest2(void)
         exit(1);
     }
     }
-#if 0
-    printf(" final check: ct %d dwoptind %d\n",ct,optind);
-#endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL ltest2 on non-dash arg dwoptind %d got "
             "%s exp %s\n",
@@ -456,9 +444,6 @@ test1(void)
         exit(1);
     }
     }
-#if 0
-    printf(" final check: ct %d dwoptind %d\n",ct,optind);
-#endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL test1 on non-dash arg dwoptind %d got "
             "%s exp %s\n",
@@ -513,9 +498,6 @@ test5(void)
         exit(1);
     }
     }
-#if 0
-    printf(" final check: ct %d dwoptind %d\n",ct,optind);
-#endif
     if (argv1[dwoptind]) {
         printf("FAIL test5 there is a non-dash arg dwoptind "
             "%d got 0x%lx\n",

@@ -120,16 +120,6 @@ static int get_form_values(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     Dwarf_Half * theform, Dwarf_Half * directform,Dwarf_Error *err);
 static void show_form_itself(int show_form,int verbose,
     int theform, int directform, struct esb_s * str_out);
-#if 0
-static int print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
-    Dwarf_Attribute attrib,
-    Dwarf_Bool checking,
-    int die_indent_level,
-    int showhextoo,
-    struct esb_s *esbp,
-    struct esb_s *exprops,
-    Dwarf_Error *err);
-#endif
 static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Half attr,
@@ -3478,10 +3468,6 @@ print_location_description(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             return res;
         }
-#if 0
-        show_form_itself(glflags.show_form_used, glflags.verbose,
-            theform, directform, base);
-#endif
     } else if (is_location_form(theform)) {
         res  = print_location_list(dbg, die, attrib,
             checking,
@@ -3529,13 +3515,13 @@ Dwarf_Half tag,Dwarf_Half attr)
 
 static void
 remark_wrong_string_format(Dwarf_Half attr,
-   Dwarf_Half theform,
-   UNUSEDARG enum Dwarf_Form_Class fc)
+    Dwarf_Half theform,
+    UNUSEDARG enum Dwarf_Form_Class fc)
 {
 #define VSFBUFSZ 200
     char buf[VSFBUFSZ+1];
     struct esb_s m;
-    esb_constructor_fixed(&m,buf,VSFBUFSZ); 
+    esb_constructor_fixed(&m,buf,VSFBUFSZ);
     esb_append_printf_s(&m,
         "ERROR: Cannot print the value of "
         "attribute %s ",
@@ -3933,40 +3919,16 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     esb_get_string(&classconstantstr));
                 esb_destructor(&classconstantstr);
                 break;
-#if 0
-                if (wres == DW_DLV_OK){
-                    /* String appended already. */
-                    break;
-                } else if (wres == DW_DLV_NO_ENTRY) {
-                    simple_err_return_action(wres,
-                        "\nERROR: Cannot format"
-                        " DW_AT_data_member_location, "
-                        "which suggests something is badly wrong.\n");
-                    break;
-                }
-#endif
             }
             /*  FALL THRU, this is a
                 a location description, or a reference
                 to one, or a mistake. */
         }
-#if 0
-        append_extra_string = TRUE;
-        res = print_location_description(dbg,attrib,die,
-            checking, attr,die_indent_level,
-            &valname,&esb_extra,err);
-        if (res == DW_DLV_ERROR) {
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return res;
-        }
-        break;
-#endif
         /* Fall Through */
     case DW_AT_call_value:
     case DW_AT_call_data_value:
     case DW_AT_call_data_location:
-    case DW_AT_frame_base: 
+    case DW_AT_frame_base:
     case DW_AT_GNU_call_site_value:
     case DW_AT_GNU_call_site_target:
     case DW_AT_byte_size:
@@ -3984,11 +3946,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         /*  If DW_FORM_block* && show_form_used
             get_attr_value() results
             in duplicating the form name (with -M). */
-#if 0
-        if (is_simple_location_expr(theform)) {
-            showform = FALSE;
-        }
-#endif
         /*  For block forms, this will show block len and bytes
             and if showing form, then form shown */
         res = get_attr_value(dbg, tag, die,
@@ -4208,7 +4165,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&linkagenamestr);
             return DW_DLV_NO_ENTRY;
         }
-        
+
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&linkagenamestr));
         esb_destructor(&linkagenamestr);
@@ -4419,7 +4376,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_append(&valname, esb_get_string(&lesb));
         esb_destructor(&lesb);
         /* If we are in checking mode, identify the compiler */
-        if (attr == DW_AT_producer && 
+        if (attr == DW_AT_producer &&
             (glflags.gf_do_check_dwarf || glflags.gf_search_is_on)) {
             /*  Do not use show-form here! We just want
                 the producer name, not the form name. */
@@ -5211,8 +5168,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             esb_append(string_out," ");
             formx_signed(opd1,string_out);
 #if 0 /* FIX */
-Turn on later
-            if(opd1) {
+            Turn on later
+            if (opd1) {
                 esb_append_printf_u(string_out,
                     " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
                     opd1);
@@ -5261,7 +5218,7 @@ Turn on later
             esb_append_printf_u(string_out,
                 " %" DW_PR_DUu , opd1);
 #if 0 /* FIX */
-Turn on later
+            Turn on later
             if (opd1 > 9) {
                 esb_append_printf_u(string_out,
                     " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
@@ -6342,102 +6299,6 @@ bracket_hex(const char *s1,
     esb_append(esbp,s2);
 }
 
-#if 0
-static int
-print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
-    Dwarf_Attribute attrib,
-    Dwarf_Bool checking,
-    int die_indent_level,
-    UNUSEDARG int showhextoo,
-    struct esb_s *esbp,
-    struct esb_s *exprops,
-    Dwarf_Error* err)
-{
-    Dwarf_Ptr x = 0;
-    Dwarf_Unsigned exprlength = 0;
-    int wres = 0;
-
-    wres = dwarf_formexprloc(attrib,&exprlength,&x,err);
-    if (wres == DW_DLV_NO_ENTRY) {
-        /* Impossible case... */
-        print_error_and_continue(dbg,
-            "Cannot get a  DW_FORM_exprloc...."
-            "NO ENTRY! So not printable. "
-            "Something is wrong",
-            wres, *err);
-        return wres;
-    } else if (wres == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get a  DW_FORM_exprloc...."
-            "so not printable. Something is wrong.",
-            wres, *err);
-        return wres;
-    }
-    {
-        Dwarf_Half address_size = 0;
-        Dwarf_Half offset_size = 0;
-        Dwarf_Half version = 0;
-        int ares = 0;
-
-        {
-            unsigned u = 0;
-            esb_append_printf_u(esbp,
-                "len 0x%04" DW_PR_DUx ": ",exprlength);
-            if (showhextoo) {
-                for (u = 0; u < exprlength; u++) {
-                    if (!u) {
-                        esb_append(esbp,"0x");
-                    }
-                    esb_append_printf_u(esbp,
-                        "%02x", *(u + (unsigned char *) x));
-                }
-                esb_append(esbp,": ");
-            }
-        }
-        /*  If this fails the DIE has no context or dbg
-            attached. Very Very wrong. */
-        ares = dwarf_get_version_of_die(die,&version,
-            &offset_size);
-        if (ares != DW_DLV_OK) {
-            /* is DW_DLV_ERROR (see libdwarf query.c) */
-            simple_err_only_return_action(ares,
-                "\nERROR: die or context bad calling "
-                "dwarf_get_version_of_die. Something"
-                " is very wrong.");
-            /*  Cannot return ERROR as we have no
-                Dwarf_Error record. */
-            return DW_DLV_NO_ENTRY;
-        }
-        ares = dwarf_get_die_address_size(die,
-            &address_size,err);
-        if (ares != DW_DLV_OK) {
-            print_error_and_continue(dbg,
-                "Cannot get die address size for exprloc",
-                ares,*err);
-            return ares;
-        }
-        if (!checking) {
-            int sres = 0;
-
-            sres =  print_location_operations(dbg,die,
-                die_indent_level,x,
-                exprlength,address_size,
-                offset_size,version, exprops,err);
-            if (sres == DW_DLV_ERROR) {
-                glflags.gf_count_major_errors++;
-                printf("\nERROR: Unable to create "
-                    "expression location"
-                    " with length 0x%" DW_PR_DUu
-                    " as a string.\n",
-                    exprlength);
-            }
-            return sres;
-        }
-    }
-    return DW_DLV_OK;
-}
-#endif
-
 /*  Borrow the definition from pro_encode_nm.h */
 /*  Bytes needed to encode a number.
     Not a tight bound, just a reasonable bound.
@@ -6966,9 +6827,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     int dres = 0;
     Dwarf_Half direct_form = 0;
     Dwarf_Bool is_info = TRUE;
-#if 0
-    Dwarf_Bool checking = !PRINTING_DIES;
-#endif
     struct esb_s esb_expr;
     int esb_expr_alive = FALSE;
 
@@ -7394,7 +7252,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         if (fres == DW_DLV_OK) {
             unsigned u = 0;
             esb_append_printf_u(esbp, "len 0x%04x: ",
-               tempb->bl_len);
+                tempb->bl_len);
             if (tempb->bl_len) {
                 esb_append(esbp,"0x");
             }
@@ -7843,28 +7701,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         esb_append(esbp, get_FORM_name(theform,
             pd_dwarf_names_print_on_error));
         break;
-#if 0
-    case DW_FORM_exprloc: {    /* DWARF4 */
-        int showhextoo = 1;
-
-        esb_expr_alive = TRUE;
-        esb_constructor(&esb_expr);
-        wres = print_exprloc_content(dbg,die,attrib,
-            checking,
-            die_indent_level,
-            showhextoo,
-            esbp, &esb_expr,
-            err);
-        if (wres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "ERROR: cannot print DW_FORM_exprloc content.",
-                wres,*err);
-            esb_destructor(&esb_expr);
-            return wres;
-        }
-        }
-        break;
-#endif
     case DW_FORM_sec_offset: { /* DWARF4, DWARF5 */
         char* emptyattrname = 0;
         int show_form_here = 0;
