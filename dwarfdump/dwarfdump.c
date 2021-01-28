@@ -1799,7 +1799,7 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
     unsigned long realmajorerr = glflags.gf_count_major_errors;
     printf("\n");
     if (dwarf_ret_val == DW_DLV_ERROR) {
-        /* We do not dwarf_dealloc the error` here. */
+        /* We do not dwarf_dealloc the error here. */
         char * errmsg = dwarf_errmsg(lerr);
 
         /*  We now (April 2016) guarantee the

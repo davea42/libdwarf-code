@@ -239,6 +239,14 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     if (rv == DW_DLV_ERROR) {
         return rv;
     }
+#if 0 /* FIX */
+    if (offsetDetected && bSawLowp) {
+        esb_append_printf_u(&highpcstr,
+            "<highpc: 0x" DW_PR_XZEROS DW_PR_DUu ">",
+            highpcOff + *lowAddrp);
+            
+    }
+#endif
     esb_empty_string(valname);
     esb_append(valname, esb_get_string(&highpcstr));
     esb_destructor(&highpcstr);

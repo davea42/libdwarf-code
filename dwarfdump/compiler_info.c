@@ -35,7 +35,16 @@
    Full CU names recorded here, though only a portion
    of the name may have been checked to cause the
    compiler data to be entered here.
-   The +1 guarantees we do not overstep the array.
+
+   The detected/targeted arrays leave index 0 unused. 
+   There is no particularly good reason for this.
+   current_compiler starts at -1, and is legitimately
+   1 through COMPILER_TABLE_MAX-1.
+
+   compilers_targeted_count and compilers_detected_count
+   are the actual count, so loops use things like
+   for (i = 1 ; i <= compilers_detected_count; ++1)
+   for example.
 */
 static Compiler compilers_detected[COMPILER_TABLE_MAX];
 static int compilers_detected_count = 0;
@@ -169,7 +178,8 @@ print_specific_checks_results(Compiler *pCompiler)
 
 /*  Add a CU name to the current compiler entry, specified by the
     'current_compiler'; the name is added to the 'compilers_detected'
-    table and is printed if the '-P' option is specified in the
+    table and is printed if the '-P' or '--print-producers' 
+    option is specified in the
     command line. */
 void
 add_cu_name_compiler_target(char *name)
@@ -253,26 +263,27 @@ update_compiler_target(const char *producer_name)
             (gcc_compiler && glflags.gf_check_gcc_compiler) ;
     }
 
+    
     /* Check for already detected compiler */
     for (index = 1; index <= compilers_detected_count; ++index) {
+        const char *name = compilers_detected[index].name;
         if (
 #if _WIN32
-            !stricmp(compilers_detected[index].name,
-                glflags.CU_producer)
+            !stricmp(name,glflags.CU_producer)
 #else
-            !strcmp(compilers_detected[index].name,
-                glflags.CU_producer)
+            !strcmp(name, glflags.CU_producer)
 #endif /* _WIN32 */
             ) {
             /* Set current compiler index */
             current_compiler = index;
             cFound = TRUE;
             break;
+        } else {
         }
     }
     if (!cFound) {
         /* Record a new detected compiler name. */
-        if (compilers_detected_count + 1 < COMPILER_TABLE_MAX) {
+        if ((compilers_detected_count + 1) < COMPILER_TABLE_MAX) {
             Compiler *pCompiler = 0;
             char *cmp = makename(glflags.CU_producer);
             /*  Set current compiler index,
@@ -334,10 +345,13 @@ print_checks_results(void)
     Compiler *pCompilers;
     Compiler *pCompiler;
 
-    /* Sort based on errors detected; the first entry is reserved */
+    /*  Sort based on errors detected; the first entry is reserved
+        and unused count started at 1 */
     pCompilers = &compilers_detected[1];
-    qsort((void *)pCompilers,compilers_detected_count,
-        sizeof(Compiler),qsort_compare_compiler);
+    if (compilers_detected_count > 1) {
+        qsort((void *)pCompilers,compilers_detected_count,
+            sizeof(Compiler),qsort_compare_compiler);
+    }
 
     /* Print list of CUs for each compiler detected */
     if (glflags.gf_producer_children_flag) {

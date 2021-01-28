@@ -1,4 +1,17 @@
-201-01-23 David Anderson
+2021-01-28 David Anderson
+   * compiler_info.c: Added comments about an unusual
+     aspect of a couple arrays here. 
+   * dwarfdump.c: Removed a stray back-quote from a comment.
+   * print_die.c: Revised printing of dwarf expressions
+     and ensured such appear in more places. Revised error
+     detection of attributes requiring a string yet
+     that do not have any sort of string FORM.
+     Some #if 0 present to be removed shortly.
+   * print_hipc_lopc_attr.c: A new #if 0 here is a non-functional
+     improvment in printing high-pc. Not ready for prime time.
+   * print_origloclist_codes.c: added DW_LLE_start_end case
+     seen in test object.
+2021-01-23 David Anderson
    * buildopscounttab.c,checkutil.c,command_options.c,common.c,
      dwarf_tsearch.h,dwarf_tsearchbal.c,dwarfdump-tt-table.h,dwarfdump.c,
      dwconf.c,dwgetopt.c,esb.c,esb.h,getopttest.c,glflags.h,globals.h,
@@ -8,11 +21,11 @@
      tag_common.c,tag_tree.c,testesb.c: Fixed indentation
      errors.
 
-201-01-23 David Anderson
+2021-01-23 David Anderson
    * print_die.c: Now checks all instances of DW_OP_bra
      and DW_OP_skip to be sure the target offset actually
      is a valid target in this expression block.
-201-01-22 David Anderson
+2021-01-22 David Anderson
    * glflags.h: Moved _dwarf_print_one_expr_op() out,
      it is now static in print_die.c
    * print_die.c: Now notices if DW_OP_skip or DW_OP_bra

@@ -120,6 +120,7 @@ static int get_form_values(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     Dwarf_Half * theform, Dwarf_Half * directform,Dwarf_Error *err);
 static void show_form_itself(int show_form,int verbose,
     int theform, int directform, struct esb_s * str_out);
+#if 0
 static int print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
     Dwarf_Bool checking,
@@ -128,6 +129,7 @@ static int print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     struct esb_s *esbp,
     struct esb_s *exprops,
     Dwarf_Error *err);
+#endif
 static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Half attr,
@@ -1118,8 +1120,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 what status returned. */
             cures  = get_producer_name(dbg,cu_die,
                 dieprint_cu_goffset,&producername,pod_err);
-            DROP_ERROR_INSTANCE(dbg,cures,*pod_err);
-            update_compiler_target(esb_get_string(&producername));
+            if (cures == DW_DLV_OK) {
+                update_compiler_target(esb_get_string(&producername));
+            } else {
+                DROP_ERROR_INSTANCE(dbg,cures,*pod_err);
+            }
             esb_destructor(&producername);
         }
 
@@ -2640,7 +2645,8 @@ is_simple_location_expr(int form)
     if (form == DW_FORM_block1 ||
         form == DW_FORM_block2 ||
         form == DW_FORM_block4 ||
-        form == DW_FORM_block ) {
+        form == DW_FORM_block  ||
+        form == DW_FORM_exprloc) {
         return TRUE;
     }
     return FALSE;
@@ -3450,13 +3456,13 @@ print_location_description(Dwarf_Debug dbg,
     struct esb_s *details,
     Dwarf_Error *err)
 {
-    /*  The value is a location description
-        or location list. */
+    /*  The attribute is a location description or location list. */
     int res = 0;
     Dwarf_Half theform = 0;
     Dwarf_Half directform = 0;
     Dwarf_Half version = 0;
     Dwarf_Half offset_size = 0;
+
     res = get_form_values(dbg,attrib,&theform,&directform,
         err);
     if (res == DW_DLV_ERROR) {
@@ -3472,8 +3478,10 @@ print_location_description(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             return res;
         }
+#if 0
         show_form_itself(glflags.show_form_used, glflags.verbose,
             theform, directform, base);
+#endif
     } else if (is_location_form(theform)) {
         res  = print_location_list(dbg, die, attrib,
             checking,
@@ -3487,13 +3495,12 @@ print_location_description(Dwarf_Debug dbg,
                 res, *err);
             return res;
         }
-    } else if (theform == DW_FORM_exprloc) {
-        /* printed via the form, nothing to do here. */
     } else {
         show_attr_form_error(dbg,attr,theform,base);
     }
     return DW_DLV_OK;
 }
+
 
 /* This was inside print_attribute() */
 static void
@@ -3519,6 +3526,31 @@ Dwarf_Half tag,Dwarf_Half attr)
         }
     }
 }
+
+static void
+remark_wrong_string_format(Dwarf_Half attr,
+   Dwarf_Half theform,
+   UNUSEDARG enum Dwarf_Form_Class fc)
+{
+#define VSFBUFSZ 200
+    char buf[VSFBUFSZ+1];
+    struct esb_s m;
+    esb_constructor_fixed(&m,buf,VSFBUFSZ); 
+    esb_append_printf_s(&m,
+        "ERROR: Cannot print the value of "
+        "attribute %s ",
+        get_AT_name(attr,FALSE));
+    esb_append_printf_s(&m,
+        "as it has form %s which seems wrong.",
+        get_FORM_name(theform,FALSE));
+    esb_append(&m," Corrupted DWARF? Continuing.");
+    simple_err_return_msg_either_action(DW_DLV_ERROR,
+        esb_get_string(&m));
+    esb_destructor(&m);
+    return;
+#undef VSFBUFSZ
+}
+
 
 static int
 print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
@@ -3551,6 +3583,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     char            xtrabuf[ESB_FIXED_ALLOC_SIZE*3];
     int             res = 0;
     Dwarf_Bool         checking = glflags.gf_do_check_dwarf;
+    Dwarf_Half theform = 0;
+    Dwarf_Half directform = 0;
+    Dwarf_Half version = 0;
+    Dwarf_Half offset_size = 0;
+    enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
 
     esb_constructor_fixed(&esb_extra,xtrabuf,sizeof(xtrabuf));
     esb_constructor_fixed(&valname,valbuf,sizeof(valbuf));
@@ -3568,6 +3605,27 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         in the face of an
         incorrect doubling, or worse, of attributes. */
     attrib = attr_in;
+    res = get_form_values(dbg,attrib,&theform,&directform, err);
+    if (res == DW_DLV_ERROR) {
+        print_error_and_continue(dbg,
+            "ERROR: Cannot get form values",
+            res, *err);
+        esb_destructor(&valname);
+        esb_destructor(&esb_extra);
+        return res;
+    }
+    res = dwarf_get_version_of_die(die,&version,&offset_size);
+    if (res != DW_DLV_OK) {
+        print_error_and_continue(dbg,
+            "ERROR: Cannot get DIE context version number"
+            " for DW_AT_discr_list",
+            DW_DLV_OK,0);
+        esb_destructor(&valname);
+        esb_destructor(&esb_extra);
+        /* Returning DW_DLV_ERROR would be bogus */
+        return DW_DLV_NO_ENTRY;
+    }
+    fc = dwarf_get_form_class(version,attr,offset_size,theform);
     /*  Do not get attr via dwarf_attr:
         if there are (erroneously)
         multiple of an attr in a DIE,
@@ -3735,34 +3793,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             It should be in a DW_TAG_variant.
             Up to September 2016 it was treated as integer or name
             here, which was quite wrong. */
-        enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
-        Dwarf_Half theform = 0;
-        Dwarf_Half directform = 0;
-        Dwarf_Half version = 0;
-        Dwarf_Half offset_size = 0;
-        int wres = 0;
 
-        wres = get_form_values(dbg,attrib,&theform,&directform,
-            err);
-        if (wres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "ERROR: Cannot get DW_AT_discr_list form values",
-                wres, *err);
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return wres;
-        }
-        wres = dwarf_get_version_of_die(die,&version,&offset_size);
-        if (wres != DW_DLV_OK) {
-            print_error_and_continue(dbg,
-                "ERROR: Cannot get DIE context version number"
-                " for DW_AT_discr_list",
-                DW_DLV_OK,0);
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            break;
-        }
-        fc = dwarf_get_form_class(version,attr,offset_size,theform);
         if (fc == DW_FORM_CLASS_BLOCK) {
             int fres = 0;
             Dwarf_Block *tempb = 0;
@@ -3866,6 +3897,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         }
         break;
+    case DW_AT_const_value:
     case DW_AT_data_member_location:
         {
             /*  Value is a constant or a location
@@ -3875,45 +3907,19 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 or a reference is nontrivial
                 since DW_FORM_data{4,8}
                 could be either in DWARF{2,3}  */
-            enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
-            Dwarf_Half theform = 0;
-            Dwarf_Half directform = 0;
-            Dwarf_Half version = 0;
-            Dwarf_Half offset_size = 0;
-            int wres = 0;
 
-            wres = get_form_values(dbg,attrib,&theform,&directform,
-                err);
-            if (wres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "ERROR: Cannot get DW_AT_data_member_location"
-                    " form values",
-                    wres, *err);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return wres;
-            }
-            wres = dwarf_get_version_of_die(die,&version,
-                &offset_size);
-            if (wres != DW_DLV_OK) {
-                simple_err_return_action(wres,
-                    "\nERROR: Cannot get DIE context version number"
-                    " via dwarf_get_version_of_die() "
-                    "for DW_AT_data_member_location "
-                    "which suggests something is badly"
-                    " wrong.\n");
-            }
-            fc = dwarf_get_form_class(version,attr,
-                offset_size,theform);
             if (fc == DW_FORM_CLASS_CONSTANT) {
                 struct esb_s classconstantstr;
+                Dwarf_Bool chex = FALSE;
+                int wres = 0;
+
                 esb_constructor(&classconstantstr);
                 /*  Makes no sense to look at type of our DIE
                     to determine how to print the constant. */
                 wres = formxdata_print_value(dbg,NULL,attrib,
                     theform,
                     &classconstantstr,
-                    err, FALSE);
+                    err, chex);
                 if (wres != DW_DLV_OK) {
                     esb_destructor(&valname);
                     esb_destructor(&esb_extra);
@@ -3926,7 +3932,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_append(&valname,
                     esb_get_string(&classconstantstr));
                 esb_destructor(&classconstantstr);
-
+                break;
+#if 0
                 if (wres == DW_DLV_OK){
                     /* String appended already. */
                     break;
@@ -3937,11 +3944,13 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         "which suggests something is badly wrong.\n");
                     break;
                 }
+#endif
             }
             /*  FALL THRU, this is a
                 a location description, or a reference
                 to one, or a mistake. */
         }
+#if 0
         append_extra_string = TRUE;
         res = print_location_description(dbg,attrib,die,
             checking, attr,die_indent_level,
@@ -3952,33 +3961,36 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             return res;
         }
         break;
+#endif
+        /* Fall Through */
+    case DW_AT_call_value:
+    case DW_AT_call_data_value:
+    case DW_AT_call_data_location:
+    case DW_AT_frame_base: 
+    case DW_AT_GNU_call_site_value:
+    case DW_AT_GNU_call_site_target:
+    case DW_AT_byte_size:
+    case DW_AT_bit_size:
     case DW_AT_location:
-    case DW_AT_vtable_elem_location:
-    case DW_AT_string_length:
     case DW_AT_return_addr:
-    case DW_AT_use_location:
+    case DW_AT_segment:
     case DW_AT_static_link:
-    case DW_AT_frame_base: {
-        Dwarf_Half theform = 0;
-        Dwarf_Half directform = 0;
+    case DW_AT_string_length:
+    case DW_AT_use_location:
+    case DW_AT_vtable_elem_location:
+        {
         Dwarf_Bool showform = glflags.show_form_used;
 
-        res = get_form_values(dbg,attrib,&theform,&directform,
-            err);
-        if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "ERROR: Cannot get location form",
-                res, *err);
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return res;
-        }
         /*  If DW_FORM_block* && show_form_used
             get_attr_value() results
             in duplicating the form name (with -M). */
+#if 0
         if (is_simple_location_expr(theform)) {
             showform = FALSE;
         }
+#endif
+        /*  For block forms, this will show block len and bytes
+            and if showing form, then form shown */
         res = get_attr_value(dbg, tag, die,
             die_indent_level,
             dieprint_cu_goffset,
@@ -3987,44 +3999,39 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             glflags.verbose,
             err);
         if (res == DW_DLV_ERROR) {
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return res;
+            print_error_and_continue(dbg,
+                "Cannot get attr form value", res,*err);
+            DROP_ERROR_INSTANCE(dbg,res,*err);
+            break;
         }
         append_extra_string = TRUE;
-        res = print_location_description(dbg,attrib,die,
-            checking,
-            attr,die_indent_level,
-            &valname,&esb_extra,err);
-        if (res == DW_DLV_ERROR) {
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return res;
+        if (fc == DW_FORM_CLASS_EXPRLOC ||
+            fc == DW_FORM_CLASS_LOCLIST ||
+            fc == DW_FORM_CLASS_LOCLISTPTR) {
+            /*  Form class exprloc is set even for DWARF2&3,
+                see libdwarf: dwarf_get_form_class(). */
+            res = print_location_description(dbg,attrib,die,
+                checking,
+                attr,die_indent_level,
+                &valname,&esb_extra,err);
+            if (res == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "Cannot get location data, attr "
+                    "(with -M  also form) "
+                    "follow", res,*err);
+                DROP_ERROR_INSTANCE(dbg,res,*err);
+                break;
+            }
         }
         }
         break;
     case DW_AT_SUN_func_offsets:
         {
             /* value is a location description or location list */
-            Dwarf_Half theform = 0;
-            Dwarf_Half directform = 0;
             char buf[100];
             struct esb_s funcformstr;
-            int wres = 0;
 
             esb_constructor_fixed(&funcformstr,buf,sizeof(buf));
-            wres = get_form_values(dbg,attrib,&theform,&directform,
-                err);
-            if (wres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "ERROR: Cannot get DW_AT_SUN_func_offsets"
-                    " form values",
-                    wres, *err);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return wres;
-            }
-
             get_FLAG_BLOCK_string(dbg, attrib,&funcformstr);
             show_form_itself(glflags.show_form_used,
                 glflags.verbose, theform,
@@ -4039,21 +4046,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Half kind = 0;
             Dwarf_Unsigned tempud = 0;
             int wres = 0;
-            Dwarf_Half theform = 0;
-            Dwarf_Half directform = 0;
             struct esb_s cfkindstr;
-
-            wres = get_form_values(dbg,attrib,
-                &theform,&directform,
-                err);
-            if (wres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "ERROR: Cannot get DW_AT_SUr_cf_kind form values",
-                    wres, *err);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return wres;
-            }
 
             esb_constructor(&cfkindstr);
             wres = dwarf_formudata (attrib,&tempud, err);
@@ -4083,40 +4076,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     case DW_AT_upper_bound:
         {
-            Dwarf_Half theform;
             int rv;
             struct esb_s upperboundstr;
 
             esb_constructor(&upperboundstr);
-            rv = dwarf_whatform(attrib,&theform,err);
-            /*  Depending on the form and the attribute,
-                process the form. */
-            if (rv == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                "dwarf_whatform Cannot find attr form"
-                " for DW_AT_upper_bound.",
-                    rv, *err);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return rv;
-            } else if (rv == DW_DLV_NO_ENTRY) {
-                esb_destructor(&upperboundstr);
-                break;
-            }
-
             switch (theform) {
             case DW_FORM_block1: {
-                Dwarf_Half btheform = 0;
-                Dwarf_Half directform = 0;
-                rv  = get_form_values(dbg,attrib,
-                    &btheform,&directform,err);
-                if (rv == DW_DLV_ERROR) {
-                    print_error_and_continue(dbg,
-                        "ERROR: Cannot get DW_AT_upper_bound"
-                        " form values",
-                        rv, *err);
-                    return rv;
-                }
                 append_extra_string = TRUE;
                 rv = print_location_list(dbg, die, attrib,
                     checking,
@@ -4130,7 +4095,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 }
                 show_form_itself(glflags.show_form_used,
                     glflags.verbose,
-                    btheform,
+                    theform,
                     directform,&valname);
                 }
                 break;
@@ -4181,23 +4146,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     case DW_AT_ranges:
         {
-            Dwarf_Half theform = 0;
             int rv;
 
-            rv = dwarf_whatform(attrib,&theform,err);
-            if (rv == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "dwarf_whatform cannot find Attr Form"
-                    "for DW_AT_ranges",
-                    rv, *err);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return rv;
-            } else if (rv == DW_DLV_NO_ENTRY) {
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                break;
-            }
             rv = get_attr_value(dbg, tag,die,
                 die_indent_level,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -4234,7 +4184,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         char linknamebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s linkagenamestr;
 
-
         esb_constructor_fixed(&linkagenamestr,linknamebuf,
             sizeof(linknamebuf));
         ml = get_attr_value(dbg, tag, die,
@@ -4252,6 +4201,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&linkagenamestr);
             return ml;
         }
+        if (fc != DW_FORM_CLASS_STRING) {
+            remark_wrong_string_format(attr,theform,fc);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            esb_destructor(&linkagenamestr);
+            return DW_DLV_NO_ENTRY;
+        }
+        
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&linkagenamestr));
         esb_destructor(&linkagenamestr);
@@ -4284,6 +4241,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         char atnamebuf[ESB_FIXED_ALLOC_SIZE];
         struct esb_s templatenamestr;
 
+        if (fc != DW_FORM_CLASS_STRING) {
+            remark_wrong_string_format(attr,theform,fc);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return DW_DLV_NO_ENTRY;
+        }
         esb_constructor_fixed(&templatenamestr,atnamebuf,
             sizeof(atnamebuf));
         tres = get_attr_value(dbg, tag, die,
@@ -4299,6 +4262,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&valname);
             esb_destructor(&esb_extra);
             return tres;
+        }
+        if (fc != DW_FORM_CLASS_STRING) {
+            remark_wrong_string_format(attr,theform,fc);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return DW_DLV_NO_ENTRY;
         }
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&templatenamestr));
@@ -4410,11 +4379,19 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         break;
 
+    case DW_AT_linkage_name:
+    case DW_AT_comp_dir:
     case DW_AT_producer:
         {
         struct esb_s lesb;
         int pres = 0;
 
+        if (fc != DW_FORM_CLASS_STRING) {
+            remark_wrong_string_format(attr,theform,fc);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return DW_DLV_NO_ENTRY;
+        }
         esb_constructor(&lesb);
         pres = get_attr_value(dbg, tag, die,
             die_indent_level,
@@ -4431,13 +4408,19 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return pres;
         }
-
+        if (fc != DW_FORM_CLASS_STRING) {
+            remark_wrong_string_format(attr,theform,fc);
+            esb_destructor(&lesb);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return DW_DLV_NO_ENTRY;
+        }
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&lesb));
         esb_destructor(&lesb);
         /* If we are in checking mode, identify the compiler */
-        if ( glflags.gf_do_check_dwarf ||
-            glflags.gf_search_is_on) {
+        if (attr == DW_AT_producer && 
+            (glflags.gf_do_check_dwarf || glflags.gf_search_is_on)) {
             /*  Do not use show-form here! We just want
                 the producer name, not the form name. */
             int show_form_local = FALSE;
@@ -4516,27 +4499,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Off ref_goff = 0;
             int frres = 0;
             int suppress_check = 0;
-            Dwarf_Half theform = 0;
-            Dwarf_Half directform = 0;
 
-            frres =get_form_values(dbg,attrib,&theform,&directform,
-                err);
-            if (frres == DW_DLV_ERROR) {
-                const char *n =
-                    get_AT_name(attr,pd_dwarf_names_print_on_error);
-                struct esb_s m;
-                esb_constructor(&m);
-                esb_append(&m,
-                    "Cannot get forms for a ");
-                esb_append(&m,n);
-                print_error_and_continue(dbg,
-                    esb_get_string(&m),
-                    frres,*err);
-                esb_destructor(&m);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return frres;
-            }
             frres = dwarf_global_formref(attrib, &ref_goff, err);
             if (frres == DW_DLV_ERROR) {
                 int myerr = dwarf_errno(*err);
@@ -5145,7 +5108,7 @@ show_contents(struct esb_s *string_out,
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
-    Dwarf_Small lkind,
+    UNUSEDARG Dwarf_Small lkind,
     int         die_indent_level,
     Dwarf_Loc * expr,
     Dwarf_Locdesc_c exprc,
@@ -5208,8 +5171,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         }
     }
     op_name = get_OP_name(op,pd_dwarf_names_print_on_error);
-    if (lkind != DW_LKIND_expression &&
-        has_skip_or_branch &&
+    if (has_skip_or_branch &&
         glflags.verbose) {
         showblockoffsets = TRUE;
     }
@@ -5248,6 +5210,14 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_fbreg:
             esb_append(string_out," ");
             formx_signed(opd1,string_out);
+#if 0 /* FIX */
+Turn on later
+            if(opd1) {
+                esb_append_printf_u(string_out,
+                    " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
+                    opd1);
+            }
+#endif
             break;
         case DW_OP_skip:
         case DW_OP_bra:
@@ -5290,6 +5260,14 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_xderef_size:
             esb_append_printf_u(string_out,
                 " %" DW_PR_DUu , opd1);
+#if 0 /* FIX */
+Turn on later
+            if (opd1 > 9) {
+                esb_append_printf_u(string_out,
+                    " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
+                    opd1);
+            }
+#endif
             break;
         case DW_OP_bregx:
             bracket_hex(" ",opd1,"",string_out);
@@ -6364,6 +6342,7 @@ bracket_hex(const char *s1,
     esb_append(esbp,s2);
 }
 
+#if 0
 static int
 print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute attrib,
@@ -6449,7 +6428,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
                 printf("\nERROR: Unable to create "
                     "expression location"
                     " with length 0x%" DW_PR_DUu
-                    "as a string.\n",
+                    " as a string.\n",
                     exprlength);
             }
             return sres;
@@ -6457,6 +6436,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     }
     return DW_DLV_OK;
 }
+#endif
 
 /*  Borrow the definition from pro_encode_nm.h */
 /*  Bytes needed to encode a number.
@@ -6963,7 +6943,7 @@ handle_rnglists(Dwarf_Die die,
 int
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Die die,
-    int die_indent_level,
+    UNUSEDARG int die_indent_level,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Attribute attrib,
     char **srcfiles, Dwarf_Signed cnt, struct esb_s *esbp,
@@ -6986,7 +6966,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     int dres = 0;
     Dwarf_Half direct_form = 0;
     Dwarf_Bool is_info = TRUE;
+#if 0
     Dwarf_Bool checking = !PRINTING_DIES;
+#endif
     struct esb_s esb_expr;
     int esb_expr_alive = FALSE;
 
@@ -7206,7 +7188,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             esb_constructor(&msg);
             /* Report incorrect offset */
             esb_append_printf_s(&msg,
-                "reference form %s with no valid local ref?!: %s ",
+                "reference form on attr %s has "
+                "no valid cu_relative offset?! ",
                 get_AT_name(attr,FALSE));
             esb_append_printf_u(&msg,
                 ", for offset=<0x%"  DW_PR_XZEROS  DW_PR_DUx ">",
@@ -7406,10 +7389,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_block1:
     case DW_FORM_block2:
     case DW_FORM_block4:
+    case DW_FORM_exprloc:
         fres = dwarf_formblock(attrib, &tempb, err);
         if (fres == DW_DLV_OK) {
             unsigned u = 0;
-
+            esb_append_printf_u(esbp, "len 0x%04x: ",
+               tempb->bl_len);
             if (tempb->bl_len) {
                 esb_append(esbp,"0x");
             }
@@ -7419,7 +7404,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     *(u + (unsigned char *) tempb->bl_data));
             }
             if (tempb->bl_len) {
-                esb_append(esbp," ");
+                esb_append(esbp,": ");
             }
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
             tempb = 0;
@@ -7589,10 +7574,11 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 }
                 }
                 break;
-            case DW_AT_const_value:
+            case DW_AT_const_value: {
                 /* Do not use hexadecimal format */
+                Dwarf_Bool chex = FALSE;
                 wres = formxdata_print_value(dbg,die,attrib,
-                    theform,esbp, err, FALSE);
+                    theform,esbp, err, /* hex format?*/chex);
                 if (wres == DW_DLV_OK){
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {
@@ -7610,6 +7596,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         wres, *err);
                     esb_destructor(&lstr);
                     return wres;
+                }
                 }
                 break;
             case DW_AT_GNU_dwo_id:
@@ -7660,7 +7647,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     DW_AT_string_length == attr ||
                     DW_AT_return_addr   == attr ||
                     DW_AT_use_location  == attr ||
-                    DW_AT_static_link   == attr||
+                    DW_AT_static_link   == attr ||
                     DW_AT_frame_base    == attr) {
                     /*  Do not look for data
                         type for unsigned/signed.
@@ -7856,6 +7843,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         esb_append(esbp, get_FORM_name(theform,
             pd_dwarf_names_print_on_error));
         break;
+#if 0
     case DW_FORM_exprloc: {    /* DWARF4 */
         int showhextoo = 1;
 
@@ -7876,6 +7864,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
+#endif
     case DW_FORM_sec_offset: { /* DWARF4, DWARF5 */
         char* emptyattrname = 0;
         int show_form_here = 0;

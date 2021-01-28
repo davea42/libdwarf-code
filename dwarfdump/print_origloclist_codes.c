@@ -103,13 +103,30 @@ print_original_loclist_linecodes(Dwarf_Debug dbg,
             }
         }
         break;
+    case DW_LLE_start_end:
+        /* debug_addr_unavailable does not apply here */
+        esb_append_printf_u(esbp,
+            "<start,end            0x%"
+            DW_PR_XZEROS DW_PR_DUx,lopc);
+        esb_append_printf_u(esbp,
+            " 0x%"
+            DW_PR_XZEROS DW_PR_DUx
+            ">",hipc);
+        if (checking && !debug_addr_unavailable) {
+            loc_error_check(tagname,attrname,
+                lopc, rawlopc,
+                hipc, rawhipc, locdesc_offset, base_address,
+                bError);
+        }
+        break;
+
     default: {
         struct esb_s unexp;
 
         esb_constructor(&unexp);
         esb_append_printf_u(&unexp,
             "ERROR: Unexpected LLE code 0x%x"
-            " (synthesized code error)",
+            " in original loclist (synthesized code error)",
             lle_value);
         print_error_and_continue(dbg,
             esb_get_string(&unexp),
