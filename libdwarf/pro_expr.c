@@ -50,30 +50,43 @@
 #define SIZEOFT64 8
 
 /*
-    This function creates a new expression
+    These two function creates a new expression
     struct that can be used to build up a
     location expression.
+    Neither ever returns DW_DLV_NO_ENTRY
 */
 Dwarf_P_Expr
 dwarf_new_expr(Dwarf_P_Debug dbg, Dwarf_Error * error)
+{
+    Dwarf_P_Expr e = 0;
+    int res = dwarf_new_expr_a(dbg,&e,error);
+    if (res != DW_DLV_OK) {
+        return NULL;
+    }
+    return e;
+}
+/*  New January 2021.  Was accidentally forgotten
+    when doing the addition of producer functions
+    returning DW_DLV_OK etc in place of pointers. */
+int dwarf_new_expr_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Expr *newexpr,
+    Dwarf_Error *error)
 {
     Dwarf_P_Expr ret_expr;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
-
     ret_expr = (Dwarf_P_Expr)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Expr_s));
     if (ret_expr == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
-
     ret_expr->ex_dbg = dbg;
-
-    return (ret_expr);
+    *newexpr = ret_expr;
+    return DW_DLV_OK;
 }
 
 Dwarf_Unsigned
@@ -123,6 +136,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
 
     /*  Size of the byte stream for second operand. */
     int operand2_size = 0;
+    int address_size = 0;
+    /* int offset_size = 0; */
 
     /*  Points to next byte to be written in Dwarf_P_Expr_s struct. */
     Dwarf_Small *next_byte_ptr = 0;
@@ -138,10 +153,12 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     }
     dbg = expr->ex_dbg;
 
-    if (expr->ex_dbg == NULL) {
+    if (!dbg) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }
+    address_size =dbg->de_pointer_size; 
+    /* offset_size =dbg->de_dwarf_offset_size; */
 
     operand = NULL;
     operand_size = 0;
@@ -269,8 +286,11 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_addr:
-        _dwarf_p_error(expr->ex_dbg, error, DW_DLE_BAD_EXPR_OPCODE);
-        return DW_DLV_ERROR;
+        operand = (Dwarf_Small *) & operand_buffer[0];
+        WRITE_UNALIGNED(dbg, operand, &val1,sizeof(val1),
+            address_size);
+        operand_size = address_size;
+        break;
 
     case DW_OP_const1u:
     case DW_OP_const1s:
@@ -427,10 +447,12 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
 
     case DW_OP_skip:
     case DW_OP_bra:
-        /* FIX: unhandled! OP_bra, OP_skip! */
-        _dwarf_p_error(expr->ex_dbg, error,
-            DW_DLE_BAD_EXPR_OPCODE);
-        return DW_DLV_ERROR;
+        /* The operand is 16bit, signed. */
+        WRITE_UNALIGNED(dbg, encode_buffer, &val1,\
+            sizeof(val1), SIZEOFT16);
+        operand_size = SIZEOFT16;
+        operand = (Dwarf_Small *) encode_buffer;
+        break;
 
     case DW_OP_piece:
         res = _dwarf_pro_encode_leb128_nm(val1, &operand_size,

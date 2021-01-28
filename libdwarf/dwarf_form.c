@@ -1467,6 +1467,7 @@ _dwarf_formblock_internal(Dwarf_Debug dbg,
         data = attr->ar_debug_ptr + DWARF_32BIT_SIZE;
         break;
 
+    case DW_FORM_exprloc:
     case DW_FORM_block: {
         Dwarf_Byte_Ptr tmp = attr->ar_debug_ptr;
         Dwarf_Unsigned leblen = 0;

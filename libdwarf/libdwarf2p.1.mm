@@ -13,7 +13,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.52, 26 December 2020
+.ds vE Rev 1.53, 25 January 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -66,7 +66,7 @@ information.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2020 David Anderson.
+Copyright 2007-2021 David Anderson.
 
 Permission is hereby granted to copy or republish or use any
 or all of this document without restriction except that when
@@ -260,6 +260,9 @@ the new function dwarf_add_debug_sup() is added.
 dwarfgen can call this function, though dwarfgen
 presently only fills out a bogus .debug_sup
 section to enable simple testing.
+.LI "January 25, 2021"
+dwarf_add_AT_block_a() now also supports
+the DWARF5 form DW_FORM_exprloc.
 .LE
 
 .H 1 "Type Definitions"
@@ -1885,7 +1888,7 @@ the Elf symbol table for the object
         Dwarf_Error *error) \fP
 .DE
 On success the function
-\f(CWdwarf_add_AT_location_expr()\fP
+\f(CWdwarf_add_AT_location_expr_a()\fP
 returns
 \f(CWDW_DLV_OK\fP
 and adds the attribute
@@ -1904,6 +1907,16 @@ The location expression that is the value
 is represented by the
 \f(CWDwarf_P_Expr\fP descriptor
 \f(CWloc_expr\fP.
+
+If the expression has a 
+\f(CWDW_OP_addr\fP
+the code simply assumes that
+\f(CWDW_OP_addr\fP
+is
+the first operation and
+bases the only relocation
+that can be created
+on that assumption.
 
 On error it returns 
 \f(CWDW_DLV_ERROR\fP.
@@ -2529,6 +2542,13 @@ instead].
     Dwarf_P_Attribute*  attr_out,
     Dwarf_Error         *error)
 .DE
+This function works with
+all
+\f(CWDW_FORM_block\fP
+forms
+as well as
+\f(CWDW_FORM_exprloc\fP.
+
 On success this returns 
 \f(CWDW_DLV_OK\fP
 an attribute

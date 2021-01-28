@@ -1,3 +1,26 @@
+2020-12-28  David Anderson
+    * dwarf_form.c(_formblock_internal): Add DW_FORM_exprloc 
+      as that's required for DWARF4 and 5.
+    * dwarf_locationop_read.c: Ensure DW_OP_skip and DW_OP_bra
+      operand gets sign-extended. Give better detail
+      in the error when the operator detected is not understood. 
+    * dwarf_query.c(dwarf_get_form_class): Correct the handling
+      of DW_FORM_exprloc and DW_FORM_block cases.
+    * libdwarf2p.1.mm: Clarify the description of
+      what dwarf_add_AT_location_expr() does if there is a
+      DW_OP_addr that may be added.
+    * pro_expr.h: The hard limit on expression length 
+      was 20, now 300. Kind of a sanity check, but real
+      DWARF expressions are now longer than 20.
+    * pro_expr.c: Implemented dwarf_new_expr_a(), which
+      was already documented but not implemented. Now
+      DW_OP_addr gets its address-size from the Dwarf_P_Debug
+      and creating it is supported for output.
+      DW_OP_skip and DW_OP_bra are now also supported for output.
+    * pro_forms.c: Now location expressions are supported
+      more correctly.
+    * pro_section.c: Added DW_FORM_exprloc, using DW_FORM_block
+      code when determining output file size.
 2020-12-26  David Anderson
     * dwarf_leb.c,dwarf_leb_test.c,dwarf_macro5.c, dwarfstring.c:
       Fixing indents and trailing whitespace.

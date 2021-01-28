@@ -1132,6 +1132,7 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                     }
                     break;
                 case DW_FORM_block:
+                case DW_FORM_exprloc:
                 default:
                     DWARF_P_DBG_ERROR(dbg,
                         DW_DLE_LNCT_FORM_CODE_NOT_HANDLED,

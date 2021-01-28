@@ -38,7 +38,8 @@
 #include "dwarf_die_deliv.h"
 #include "dwarfstring.h"
 
-#define TRUE 1
+#define TRUE  1
+#define FALSE 0
 static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     Dwarf_Half attr,
     Dwarf_Unsigned * return_val,
@@ -1688,6 +1689,31 @@ dw_get_special_offset(Dwarf_Half attrnum,
     return DW_FORM_CLASS_UNKNOWN;
 }
 
+static int
+block_means_locexpr(Dwarf_Half attr)
+{
+    switch(attr) {
+    case DW_AT_bit_size:
+    case DW_AT_byte_size:
+    case DW_AT_call_data_location:
+    case DW_AT_call_data_value:
+    case DW_AT_call_value:
+    case DW_AT_data_member_location:
+    case DW_AT_frame_base:
+    case DW_AT_GNU_call_site_target:
+    case DW_AT_GNU_call_site_value:
+    case DW_AT_location:
+    case DW_AT_return_addr:
+    case DW_AT_segment:
+    case DW_AT_static_link:
+    case DW_AT_string_length:
+    case DW_AT_use_location:
+    case DW_AT_vtable_elem_location:
+        return TRUE;
+    }
+    return FALSE;
+}
+
 /* It takes 4 pieces of data (including the FORM)
    to accurately determine the form 'class' as documented
    in the DWARF spec. This is per DWARF4, but will work
@@ -1735,10 +1761,18 @@ dwarf_get_form_class(
     case  DW_FORM_string: return DW_FORM_CLASS_STRING;
     case  DW_FORM_strp:   return DW_FORM_CLASS_STRING;
 
-    case  DW_FORM_block:  return DW_FORM_CLASS_BLOCK;
-    case  DW_FORM_block1: return DW_FORM_CLASS_BLOCK;
-    case  DW_FORM_block2: return DW_FORM_CLASS_BLOCK;
-    case  DW_FORM_block4: return DW_FORM_CLASS_BLOCK;
+    case  DW_FORM_block: 
+    case  DW_FORM_block1:
+    case  DW_FORM_block2:
+    case  DW_FORM_block4:
+        if (dwversion <= 3) {
+            if (block_means_locexpr(attrnum)) {
+                return DW_FORM_CLASS_EXPRLOC;
+            }
+        }
+        return DW_FORM_CLASS_BLOCK;
+    /* DWARF4 and DWARF5 */
+    case  DW_FORM_exprloc:      return DW_FORM_CLASS_EXPRLOC;
 
     case  DW_FORM_data16:  return DW_FORM_CLASS_CONSTANT;
     case  DW_FORM_data1:  return DW_FORM_CLASS_CONSTANT;
@@ -1753,16 +1787,25 @@ dwarf_get_form_class(
     case  DW_FORM_ref_udata:   return DW_FORM_CLASS_REFERENCE;
     case  DW_FORM_ref_sig8:    return DW_FORM_CLASS_REFERENCE;
 
-    case  DW_FORM_exprloc:      return DW_FORM_CLASS_EXPRLOC;
 
     case  DW_FORM_flag:         return DW_FORM_CLASS_FLAG;
     case  DW_FORM_flag_present: return DW_FORM_CLASS_FLAG;
 
     case  DW_FORM_addrx:
+    case  DW_FORM_addrx1:
+    case  DW_FORM_addrx2:
+    case  DW_FORM_addrx3:
+    case  DW_FORM_addrx4:
         return DW_FORM_CLASS_ADDRESS; /* DWARF5 */
     case  DW_FORM_GNU_addr_index:  return DW_FORM_CLASS_ADDRESS;
-    case  DW_FORM_strx:
-        return DW_FORM_CLASS_STRING;  /* DWARF5 */
+    case  DW_FORM_strx:  /* DWARF5 */
+    case  DW_FORM_strx1: /* DWARF5 */
+    case  DW_FORM_strx2: /* DWARF5 */
+    case  DW_FORM_strx3: /* DWARF5 */
+    case  DW_FORM_line_strp: /* DWARF5 */
+    case  DW_FORM_strp_sup:  /* DWARF5 */
+    case  DW_FORM_GNU_strp_alt: 
+        return DW_FORM_CLASS_STRING;  
     case  DW_FORM_GNU_str_index:   return DW_FORM_CLASS_STRING;
 
     case  DW_FORM_rnglistx:
@@ -1771,8 +1814,6 @@ dwarf_get_form_class(
         return DW_FORM_CLASS_LOCLIST;    /* DWARF5 */
 
     case  DW_FORM_GNU_ref_alt:  return DW_FORM_CLASS_REFERENCE;
-    case  DW_FORM_GNU_strp_alt: return DW_FORM_CLASS_STRING;
-    case  DW_FORM_strp_sup:     return DW_FORM_CLASS_STRING; /* DW5 */
     case  DW_FORM_implicit_const:
         return DW_FORM_CLASS_CONSTANT; /* DWARF5 */
 

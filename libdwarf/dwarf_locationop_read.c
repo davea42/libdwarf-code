@@ -159,13 +159,12 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     curr_loc->lr_opnumber = opnumber;
     curr_loc->lr_offset = offset;
 
-    /*  loc_ptr is ok to deref, see loc_ptr+1 test just above. */
+   /*  loc_ptr is ok to deref, see loc_ptr+1 test just above. */
     atom = *(Dwarf_Small *) loc_ptr;
     loc_ptr++;
     offset++;
     curr_loc->lr_atom = atom;
     switch (atom) {
-
     case DW_OP_reg0:
     case DW_OP_reg1:
     case DW_OP_reg2:
@@ -497,6 +496,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     case DW_OP_bra:
         READ_UNALIGNED_CK(dbg, operand1, Dwarf_Unsigned, loc_ptr, 2,
             error,section_end);
+        SIGN_EXTEND(operand1,2);
         loc_ptr = loc_ptr + 2;
         offset = offset + 2;
         break;
@@ -506,7 +506,6 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
             dbg,error,section_end);
         offset = offset + leb128_length;
         break;
-
     case DW_OP_nop:
         break;
     case DW_OP_push_object_address: /* DWARF3 */
@@ -771,9 +770,27 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         }
         break;
     }
-    default:
-        _dwarf_error(dbg, error, DW_DLE_LOC_EXPR_BAD);
+    default: {
+        dwarfstring m;   
+        const char *atomname = 0;
+
+        /*  This can happen if the offset_size or address_size
+            in the OP stream was incorrect for the object file.*/
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "ERROR: DW_DLE_LOC_EXPR_BAD as DW_OP atom "
+            "0x%x ",atom);
+         dwarfstring_append(&m, "(");
+         dwarf_get_OP_name(atom,&atomname);
+         dwarfstring_append(&m,(char *)(atomname?
+             atomname:"<no name>"));
+         dwarfstring_append(&m, ")");
+         dwarfstring_append(&m,"is unknown.");
+        _dwarf_error_string(dbg, error, DW_DLE_LOC_EXPR_BAD,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
+    }
     }
     if (loc_ptr > section_end) {
         _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);

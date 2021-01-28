@@ -47,6 +47,11 @@
 #include "pro_die.h"
 #include "pro_expr.h"
 
+#define TRUE 1
+#define FALSE 0
+
+#define DW_CU_VERSION5 5
+
 #ifndef R_MIPS_NONE
 #define R_MIPS_NONE 0
 #endif
@@ -619,6 +624,8 @@ dwarf_add_AT_block(
     }
     return new_attr;
 }
+
+/*  For DW_FORM_block* or DW_FORM_exprloc */
 int
 dwarf_add_AT_block_a(
     Dwarf_P_Debug       dbg,
@@ -634,7 +641,22 @@ dwarf_add_AT_block_a(
     char encode_buffer[ENCODE_SPACE_NEEDED];
     int len_size = 0;
     char * attrdata = 0;
+    Dwarf_Bool is_exprloc_related = FALSE;
+    Dwarf_Half out_version = dbg->de_output_version;
 
+    switch (attr) {
+    case DW_AT_location:
+    case DW_AT_use_location:
+    case DW_AT_return_addr:
+    case DW_AT_data_member_location:
+    case DW_AT_frame_base:
+    case DW_AT_static_link:
+    case DW_AT_vtable_elem_location:
+    case DW_AT_lower_bound:
+    case DW_AT_upper_bound:
+    case DW_AT_data_location:
+        is_exprloc_related = TRUE;
+    }
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
@@ -646,7 +668,8 @@ dwarf_add_AT_block_a(
     }
 
     /*  I don't mess with block1, block2, block4,
-        not worth the effort */
+        not worth the effort, and block would be wrong
+        to use block for DW_FORM_exprloc  */
     /* So, encode the length into LEB128 */
     result = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
         encode_buffer,sizeof(encode_buffer));
@@ -665,7 +688,11 @@ dwarf_add_AT_block_a(
 
     /* Fill in the attribute */
     new_attr->ar_attribute = attr;
-    new_attr->ar_attribute_form = DW_FORM_block;
+    if (is_exprloc_related && out_version == 5) {
+        new_attr->ar_attribute_form = DW_FORM_exprloc;
+    } else {
+        new_attr->ar_attribute_form = DW_FORM_block;
+    }
     new_attr->ar_nbytes = len_size + block_size;
     new_attr->ar_next = 0;
 
@@ -942,7 +969,6 @@ dwarf_add_AT_signed_const_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  This function adds attributes whose value
     is a location expression.  */
 Dwarf_P_Attribute
@@ -980,6 +1006,8 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
     Dwarf_Unsigned block_size = 0;
     char *block_dest_ptr = 0;
     int do_len_as_int = 0;
+    int dwarf_version = dbg->de_output_version;
+    Dwarf_Bool is_exprloc_related = FALSE;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
@@ -1004,8 +1032,6 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
 
     switch (attr) {
     case DW_AT_location:
-    case DW_AT_string_length:
-    case DW_AT_const_value:
     case DW_AT_use_location:
     case DW_AT_return_addr:
     case DW_AT_data_member_location:
@@ -1014,15 +1040,20 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
     case DW_AT_vtable_elem_location:
     case DW_AT_lower_bound:
     case DW_AT_upper_bound:
+    case DW_AT_data_location:
+        is_exprloc_related = TRUE;
+        break;
+
+    case DW_AT_string_length:
+    case DW_AT_const_value:
     case DW_AT_count:
     case DW_AT_associated:
     case DW_AT_allocated:
-    case DW_AT_data_location:
     case DW_AT_byte_stride:
     case DW_AT_bit_stride:
     case DW_AT_byte_size:
     case DW_AT_bit_size:
-    break;
+        break;
 
     default:
         if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
@@ -1035,7 +1066,17 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
     /*  Compute the number of bytes needed to hold constant.
         This is a bit fake in that the size will never
         be particularly large and always < UINT_MAX. */
-    if (block_size <= UCHAR_MAX) {
+    if (is_exprloc_related && dwarf_version == DW_CU_VERSION5) {
+        attr_form = DW_FORM_exprloc;
+        res = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
+            encode_buffer,
+            sizeof(encode_buffer));
+        if (res != DW_DLV_OK) {
+            _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
+        }
+        len_str = (char *) encode_buffer;
+    } else if (block_size <= UCHAR_MAX) {
         attr_form = DW_FORM_block1;
         len_size = 1;
         do_len_as_int = 1;
@@ -1075,8 +1116,10 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
         new_attr->ar_rel_type = R_MIPS_NONE;
     }
     new_attr->ar_rel_symidx = loc_expr->ex_reloc_sym_index;
-    new_attr->ar_rel_offset =
-        loc_expr->ex_reloc_offset + len_size;
+    /*  If there is a relocation the code assumes
+        that relocation on a DW_OP_addr and
+        the addr is the initial expression in the block */
+    new_attr->ar_rel_offset = loc_expr->ex_reloc_offset + len_size;
 
     new_attr->ar_nbytes = block_size + len_size;
 
@@ -1093,7 +1136,8 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
             (const void *) &block_size,
             sizeof(block_size), len_size);
     } else {
-        /* Is uleb number form, DW_FORM_block. See above. */
+        /*  Is uleb number form, DW_FORM_block or
+            DW_FORM_exprloc. See above. */
         memcpy(block_dest_ptr, len_str, len_size);
     }
     block_dest_ptr += len_size;
@@ -1110,6 +1154,84 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
     *attr_out = new_attr;
     return DW_DLV_OK;
 }
+#if 0
+/*   New for DWARF5 DW_FORM_exprloc */
+int
+dwarf_add_AT_exprloc(Dwarf_P_Debug dbg,
+    Dwarf_P_Die ownerdie,
+    Dwarf_Half attr,
+    Dwarf_Block *b,
+    Dwarf_P_Attribute *attr_out,
+    Dwarf_Error * error)
+{
+    char encode_buffer[ENCODE_SPACE_NEEDED];
+    int               res = 0;
+    Dwarf_P_Attribute new_attr = 0;
+    char             *len_str = 0;
+    int               len_size = 0;
+    Dwarf_Unsigned    block_size = 0;
+    char             *block_dest_ptr = 0;
+
+    Dwarf_Half attr_form = DW_FORM_exprloc;
+#if 0
+    if (attr_form != DW_FORM_exprloc) {
+        /* This is just for a single FORM! */
+        _dwarf_p_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+        return DW_DLV_ERROR;
+    }
+#endif
+    block_size = b.dl_len;
+    res = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
+        encode_buffer,
+        sizeof(encode_buffer));
+    if (res != DW_DLV_OK) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    len_str = (char *) encode_buffer;
+    new_attr = (Dwarf_P_Attribute)
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
+    if (new_attr == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    new_attr->ar_attribute = attr;
+    new_attr->ar_attribute_form = attr_form;
+    new_attr->ar_reloc_len = dbg->de_pointer_size;
+    if (loc_expr->ex_reloc_sym_index != NO_ELF_SYM_INDEX) {
+        new_attr->ar_rel_type = dbg->de_ptr_reloc;
+    } else {
+        new_attr->ar_rel_type = R_MIPS_NONE;
+    }
+    new_attr->ar_rel_symidx = loc_expr->ex_reloc_sym_index;
+    /*  If there is a relocation the code assumes
+        that relocation on a DW_OP_addr and
+        the addr is the initial expression in the block */
+
+    new_attr->ar_nbytes = block_size + len_size;
+    new_attr->ar_next = 0;
+    new_attr->ar_data = block_dest_ptr =
+        (char *) _dwarf_p_get_alloc(dbg, block_size + len_size);
+    if (new_attr->ar_data == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    /* Is uleb number form */
+    memcpy(block_dest_ptr, len_str, len_size);
+    block_dest_ptr += len_size;
+    if (block_size > sizeof(loc_expr->ex_byte_stream)) {
+        /* ex_byte_stream has a fixed max value. */
+        _dwarf_p_error(dbg, error, DW_DLE_EXPR_LENGTH_BAD);
+        return DW_DLV_ERROR;
+    }
+    memcpy(block_dest_ptr, &(loc_expr->ex_byte_stream[0]),
+        block_size);
+    /* add attribute to the die */
+    _dwarf_pro_add_at_to_die(ownerdie, new_attr);
+    *attr_out = new_attr;
+    return DW_DLV_OK;
+}
+#endif /* 0 */
 
 
 /*  This function adds attributes of reference class.
