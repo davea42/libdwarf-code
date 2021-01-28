@@ -96,14 +96,16 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 
     switch(formclass) {
     case DW_FORM_CLASS_UNKNOWN:
-        cerr << "ERROR AddAttrToDie: Impossible DW_FORM_CLASS_UNKNOWN, attrnum "
+        cerr << "ERROR AddAttrToDie: Impossible "
+            "DW_FORM_CLASS_UNKNOWN, attrnum "
             <<attrnum << endl;
         break;
     case DW_FORM_CLASS_ADDRESS:
         {
         IRFormAddress *f = dynamic_cast<IRFormAddress *>(form_a);
         if (!f) {
-            cerr << "ERROR Impossible DW_FORM_CLASS_ADDRESS cast fails, attrnum "
+            cerr << "ERROR Impossible DW_FORM_CLASS_ADDRESS "
+                "cast fails, attrnum "
                 <<attrnum << endl;
             break;
         }
@@ -132,18 +134,22 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         }
         break;
     case DW_FORM_CLASS_BLOCK:
+    case DW_FORM_CLASS_EXPRLOC:
         {
         IRFormBlock *f = dynamic_cast<IRFormBlock *>(form_a);
-        // FIXME: Handle form indirect
-        // DW_FORM_block2
-        // DW_FORM_block
-        // DW_FORM_block4
-        // DW_FORM_block1
+        if (!f) {
+            cerr << "ERROR Impossible DW_FORM_CLASS_BLOCK/EXPRLOC "
+                "cast fails, attrnum "
+                <<attrnum << endl;
+            break;
+        }
 
         Dwarf_Unsigned block_len = f->getBlockLen();
         Dwarf_Small * block_data = f->getBlockBytes();
         Dwarf_P_Attribute attrb =0;
 
+        /*  Always generates uleb followed by block,
+            sets form based on output dwarf version. */
         res = dwarf_add_AT_block_a(dbg,outdie,attrnum,
             block_data,
             block_len,
@@ -224,20 +230,15 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                 dwarf_errmsg(error) <<
                 " attrnum " << attrnum <<
                 " Continuing" << endl;
-
         }
-        }
-        break;
-    case DW_FORM_CLASS_EXPRLOC:
-        {
-        //FIXME
         }
         break;
     case DW_FORM_CLASS_FLAG:
         {
         IRFormFlag *f = dynamic_cast<IRFormFlag *>(form_a);
         if (!f) {
-            cerr << "ERROR Impossible DW_FORM_CLASS_FLAG cast fails, attrnum "
+            cerr << "ERROR Impossible DW_FORM_CLASS_FLAG cast fails"
+                ", attrnum "
                 <<attrnum << endl;
             break;
         }
@@ -245,7 +246,8 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // FIXME: handle implicit flag (libdwarf needs feature).
         // FIXME: rel type ok?
         Dwarf_P_Attribute a = 0;
-        res = dwarf_add_AT_flag_a(dbg,outdie,attrnum,f->getFlagVal(),&a,&error);
+        res = dwarf_add_AT_flag_a(dbg,outdie,attrnum,
+            f->getFlagVal(),&a,&error);
         if(res != DW_DLV_OK) {
             cerr << "ERROR dwarf_add_AT_flag fails, attrnum "
                 <<attrnum << endl;

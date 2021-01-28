@@ -105,6 +105,7 @@ IRForm *formFactory(Dwarf_Debug dbg,
             return f;
         }
         break;
+    case DW_FORM_CLASS_EXPRLOC:
     case DW_FORM_CLASS_BLOCK:
         {
             IRFormBlock *f = new IRFormBlock(&interface);
@@ -114,12 +115,6 @@ IRForm *formFactory(Dwarf_Debug dbg,
     case DW_FORM_CLASS_CONSTANT:
         {
             IRFormConstant *f = new IRFormConstant(&interface);
-            return f;
-        }
-        break;
-    case DW_FORM_CLASS_EXPRLOC:
-        {
-            IRFormExprloc *f = new IRFormExprloc(&interface);
             return f;
         }
         break;
@@ -212,7 +207,9 @@ IRFormAddress::IRFormAddress(IRFormInterface * interface)
 
     int res = dwarf_formaddr(interface->attr_,&val, &error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read flag value. Impossible error.\n" << endl;
+        cerr << "Unable to read flag value. Impossible error.\n"
+           << " line " << __LINE__ << " file " <<
+           __FILE__ <<  endl;
         exit(1);
     }
     // FIXME do we need to do anything about the symbol here?
@@ -235,7 +232,9 @@ IRFormBlock::IRFormBlock(IRFormInterface * interface)
     Dwarf_Error error = 0;
     int res = dwarf_formblock(interface->attr_,&blockptr, &error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read flag value. Impossible error.\n" << endl;
+        cerr << "Unable to read block . Impossible error.\n"
+           << " line " << __LINE__ << " file " <<
+           __FILE__ <<  endl;
         exit(1);
     }
     insertBlock(blockptr);
@@ -305,7 +304,9 @@ IRFormExprloc::IRFormExprloc(IRFormInterface * interface)
 
     int res = dwarf_formexprloc(interface->attr_,&len, &data, &error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read flag value. Impossible error.\n" << endl;
+        cerr << "Unable to read flag value. Impossible error.\n"
+           << " line " << __LINE__ << " file " <<
+           __FILE__ <<  endl;
         exit(1);
     }
     // FIXME: Would be nice to expand to the expression details
@@ -327,7 +328,9 @@ IRFormFlag::IRFormFlag(IRFormInterface * interface)
     Dwarf_Error error = 0;
     int res = dwarf_formflag(interface->attr_,&flagval, &error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read flag value. Impossible error.\n" << endl;
+        cerr << "Unable to read flag value. Impossible error.\n"
+           << " line " << __LINE__ << " file " <<
+           __FILE__ <<  endl;
         exit(1);
     }
     setFlagVal(flagval);

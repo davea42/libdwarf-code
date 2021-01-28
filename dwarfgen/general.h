@@ -47,6 +47,7 @@ extern struct CmdOptions {
     bool addframeadvanceloc;
     bool addSUNfuncoffsets;
     bool adddebugsup;
+    bool addskipbranch;
 } cmdoptions;
 
 template <typename T >

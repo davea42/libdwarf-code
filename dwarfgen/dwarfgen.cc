@@ -297,6 +297,7 @@ CmdOptions cmdoptions = {
     false, //addframeadvanceloc
     false, //addSUNfuncoffsets
     false, //add_debug_sup
+    false //addskipbranch
 };
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
@@ -634,6 +635,7 @@ main(int argc, char **argv)
             {"default-form-strp",dwno_argument,0,'s'},
             {"show-reloc-details",dwno_argument,0,'r'},
             {"high-pc-as-const",dwno_argument,0,'h'},
+            {"add-skip-branch-ops",dwno_argument,0,1007},
             {0,0,0,0},
         };
         // -p is pointer size
@@ -687,6 +689,10 @@ main(int argc, char **argv)
             case 1006:
                 //{"add-debug-sup",dwno_argument,0,1006}
                 cmdoptions.adddebugsup = true;
+                break;
+            case 1007:
+                //{"add-skip-branch-ops",dwno_argument,0,1007},
+                cmdoptions.addskipbranch = true;
                 break;
             case 'c':
                 // At present we can only create a single

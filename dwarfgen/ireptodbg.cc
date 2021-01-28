@@ -82,6 +82,133 @@ static Dwarf_Error error;
 
 typedef std::map<std::string,unsigned> pathToUnsignedType;
 
+// This set of operations is meaningless.
+const int skipscount = 10;
+struct Skips {
+    Dwarf_Small opcode;
+    Dwarf_Signed sval1;
+    Dwarf_Unsigned uval2;
+} skips[10] = {
+{ DW_OP_breg3,-4,0},
+{ DW_OP_dup,0,0},
+{ DW_OP_const4s,-1000,0},
+{ DW_OP_dup,0,0},
+{ DW_OP_const4s,4000,0},
+{ DW_OP_swap,0,0},
+{ DW_OP_skip,-1,0}, //This will be an error for dwarfdump to note,
+    //not usable offset.
+{ DW_OP_bra,2,0}, //This will be an error for dwarfdump to note,
+    // not usable offset.
+{ DW_OP_const4s,-6000,0},
+{ DW_OP_const4s,8000,0},
+};
+
+static int
+createskipbranchblock(
+    Dwarf_P_Debug dbg,
+    Dwarf_Block &bl)
+{
+    Dwarf_P_Expr ex = 0;
+    int res = 0;
+    Dwarf_Unsigned stream_len = 0;
+
+    error = 0;
+    res = dwarf_new_expr_a(dbg,&ex, &error);
+    if (res != DW_DLV_OK) {
+        cout << "FAIL dwarf_new_expr_a createskipbranchblock "
+            <<endl;
+        error = 0;
+        return res;
+    }
+    for (int i = 0; i < skipscount; ++i) {
+        struct Skips * sp = skips+i;
+        res = dwarf_add_expr_gen_a(ex,sp->opcode,
+            sp->sval1,sp->uval2,&stream_len,&error);
+        if (res != DW_DLV_OK) {
+            cout << 
+                "FAIL dwarf_add_expr_gen_a createskipbranchblock " 
+                << dwarf_errmsg(error) << endl;
+    
+            error = 0;
+            return res;
+        }
+    }
+    Dwarf_Unsigned exlen = 0;
+    Dwarf_Small * exptr = 0;
+    res = dwarf_expr_into_block_a(ex, &exlen,&exptr,&error);
+    if (res != DW_DLV_OK) {
+        cout << "FAIL dwarf_expr_into_block_a createskipbranchblock"
+            <<endl;
+        error = 0;
+        return res;
+    }
+    if (exlen != stream_len) {
+        cout << "FAIL createskipbranchblock " <<
+           "block len:"<< exlen << 
+           " streamlen:" <<stream_len <<endl;
+        error = 0;
+        return DW_DLV_ERROR;
+    }
+    error = 0;
+    bl.bl_len = exlen;
+    bl.bl_data = exptr;
+    bl.bl_from_loclist = false;
+    bl.bl_section_offset = 0; // FAKE
+cout << "debug OK createskipbranchblock " <<
+           "block len:"<< exlen << 
+           " streamlen:" <<stream_len <<endl;
+    return DW_DLV_OK;
+}
+
+static void
+addSkipBranchOps(Dwarf_P_Debug dbg,
+    IRepresentation & Irep UNUSEDARG,
+    Dwarf_P_Die ourdie UNUSEDARG,
+    IRDie &inDie,
+    IRDie &inParent UNUSEDARG,
+    list<IRAttr>& attrs,
+    unsigned level UNUSEDARG)
+{
+    static int done  = false;
+    if (!cmdoptions.addskipbranch) {
+        // No transformation of this sort requested.
+        return;
+    }
+    if (done) {
+        return;
+    }
+    Dwarf_Half dietag = inDie.getTag();
+    if (dietag != DW_TAG_variable) {
+        return;
+    }
+    for (list<IRAttr>::iterator it = attrs.begin();
+        it != attrs.end();
+        it++) {
+        IRAttr & attr = *it;
+        Dwarf_Half attrnum = attr.getAttrNum();
+        Dwarf_Form_Class formclass = attr.getFormClass();
+        if (attrnum == DW_AT_location) {
+            //  Before DW5 there was no DW_FORM_CLASS_EXPRLOC,
+            //  so we would have done this with a different
+            //  test.
+            if (formclass != DW_FORM_CLASS_EXPRLOC) {
+                // Ignore this.
+                return;
+            }
+            IRForm*f = attr.getFormData();
+            IRFormBlock *f2 = dynamic_cast<IRFormBlock *>(f);
+            std::vector<unsigned char> vec= f2->getBlockData();
+            Dwarf_Block bl;
+            int res = createskipbranchblock(dbg,bl);
+            if (res != DW_DLV_OK) {
+                return;
+            }
+            f2->insertBlock(&bl);
+            done = true;
+            break;
+        }
+    }
+}
 
 // The first special transformation is converting DW_AT_high_pc
 // from FORM_addr to an offset and we choose FORM_uleb
@@ -472,6 +599,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     addData16DataItem(dbg,Irep,gendie,inDie,inParent,attrs,level);
     addImplicitConstItem(dbg,Irep,gendie,inDie,inParent,attrs,level);
     addSUNfuncoffsets(dbg,Irep,gendie,inDie,inParent,attrs,level);
+    addSkipBranchOps( dbg,Irep,gendie,inDie,inParent,attrs,level);
 
     // Now we add attributes (content), if any, to the
     // output die 'gendie'.
