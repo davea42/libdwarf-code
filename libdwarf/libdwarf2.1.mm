@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.23 26 December 2020
+.ds vE Rev 3.24 28 January 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -15565,7 +15565,7 @@ the value as  a structure whose type name is
 To look up a name in the hash (to find
 which CU(s) it exists in).
 use
-\f(CWdwarf_get_debugfission_for_key()fP,
+\f(CWdwarf_get_debugfission_for_key()\fP,
 defined below.
 .P
 The second group of interfaces here
