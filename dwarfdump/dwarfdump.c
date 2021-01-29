@@ -1700,7 +1700,7 @@ process_one_file(
             "the .debug_addr section was needed but missing, "
             "meaning some frame information was missing "
             "relevant function names. See the dwarfdump "
-            " option --file-tied=</path/to/executable> .");
+            " option --file-tied=</path/to/executable>.");
     }
     if (glflags.gf_error_code_search_by_address) {
         printf("\nERROR: At some point "
@@ -2069,11 +2069,13 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
 {
     Dwarf_Attribute producer_attr = 0;
     int ares = 0;
+    /*  See also glflags.c for "<unknown>" as default producer
+        string */
 
     if (!cu_die) {
         glflags.gf_count_major_errors++;
         esb_append(producernameout,
-            "\"<ERROR:CU-missing-DW_AT_producer (null cu_die)>\"");
+            "\"<ERROR: CU-missing-DW_AT_producer (null cu_die)>\"");
         return DW_DLV_NO_ENTRY;
     }
     ares = dwarf_attr(cu_die, DW_AT_producer,
@@ -2081,13 +2083,14 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     if (ares == DW_DLV_ERROR) {
         glflags.gf_count_major_errors++;
         esb_append(producernameout,
-            "\"<ERROR:on-DW_AT_producer>\"");
+            "\"<ERROR: CU-DW_AT_producer-error>\"");
         return ares;
     }
     if (ares == DW_DLV_NO_ENTRY) {
         /*  We add extra quotes so it looks more like
             the names for real producers that get_attr_value
             produces. */
+        /* Same string is in glflags.c */
         esb_append(producernameout,
             "\"<ERROR: CU-missing-DW_AT_producer>\"");
         dwarf_dealloc_attribute(producer_attr);

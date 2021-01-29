@@ -382,7 +382,11 @@ set_checks_off(void)
 
 /*  Making this a named string makes it simpler to change
     what the reset,or 'I do not know'  value is for
-    CU name or producer name for PRINT_CU_INFO. */
+    CU name or producer name for PRINT_CU_INFO.
+    different string string is seen in dwarfdump.c
+    when getting producer name for the list of CUs
+    shown by -P  --print-producers and
+    in 'Compilers detected' output.  */
 static const char * default_cu_producer = "<unknown>";
 void
 reset_overall_CU_error_data(void)

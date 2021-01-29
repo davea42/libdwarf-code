@@ -1,3 +1,8 @@
+2021-01-29 David Anderson
+   * dwarfdump.c: Added commentary and slightly modified the
+     producer names produced on CU DIE issues with the producer
+     string.
+   * glflags.c: Added commentary about the default producer name.
 2021-01-28 David Anderson
    * print_die.c: Cleared out dead #if 0 and fixed indents.
    * compiler_info.c,getopttest.c,makename_test.c,
