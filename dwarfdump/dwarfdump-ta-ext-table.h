@@ -4,7 +4,7 @@
 /* BEGIN FILE */
 
 /* Common extensions */
-#define ATTR_TREE_EXT_ROW_COUNT 18
+#define ATTR_TREE_EXT_ROW_COUNT 19
 
 #define ATTR_TREE_EXT_COLUMN_COUNT 10
 
@@ -16,6 +16,9 @@ static unsigned int tag_attr_combination_ext_table
 /* 0x11 - DW_TAG_compile_unit                  */
     { 0x00000011,0x00003fe1,0x00002131,0x00002134,0x00002135,
         0x00002130,0x00002132,0x00002133,0x00002119,0x00000000,},
+/* 0x4a - DW_TAG_skeleton_unit                 */
+    { 0x0000004a,0x00002131,0x00002134,0x00002135,0x00002130,
+        0x00002132,0x00002133,0x00002119,0x00000000,0x00000000,},
 /* 0x3c - DW_TAG_partial_unit                  */
     { 0x0000003c,0x00000075,0x00000000,0x00000000,0x00000000,
         0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},

@@ -1,4 +1,7 @@
 2021-01-29 David Anderson
+   * tag_attr_ext.list: Added some DW_AT_GNU entries to
+     DW_TAG_skeleton unit as common extensions.
+2021-01-29 David Anderson
    * dwarfdump.c: Added commentary and slightly modified the
      producer names produced on CU DIE issues with the producer
      string.
