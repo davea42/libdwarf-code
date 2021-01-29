@@ -45,8 +45,8 @@
 #define FALSE 0
 
 struct test_data_s {
-   const char action;
-   unsigned long val;
+    const char action;
+    unsigned long val;
 }  testdata[] = {
 {'a', 0x33c8},
 {'a', 0x34d8},

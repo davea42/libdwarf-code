@@ -1,4 +1,17 @@
 2021-01-28  David Anderson
+    * checkexamples.c,crc32.c,dwarf_alloc.c,dwarf_arange.c,
+      dwarf_debuglink.c,dwarf_die_deli,.c,dwarf_elf_access.c,
+      dwarf_elf_load_headers.c,dwarf_elfread.c,dwarf_form.c,
+      dwarf_frame.c,dwarf_frame2.c,dwarf_global.c,dwarf_gnu_index.c,
+      dwarf_init_finish.c,dwarf_line.c,dwarf_loc.c,
+      dwarf_locationop_read.c,dwarf_macro5.c,dwarf_object_detector.c,
+      dwarf_query.c,dwarf_ranges.c,dwarf_stringsection.c,
+      dwarf_tied_test.c,dwarf_tsearchhash.c,dwarf_util.c,
+      dwarf_xu_index.c,dwarfstring.c,dwgetopt.c,pro_die.c,
+      pro_expr.c,pro_forms.c,pro_frame.c,pro_funcs.c,pro_init.c,
+      pro_log_extra_flag_strings.c,test_linkedtopath.c:
+      Fix indents.
+2021-01-28  David Anderson
     * libdwarf2p.1.mm: Rev 1.53. Added a few words
       about relocating DW_OP_addr data: Such relocation
       generation only works right

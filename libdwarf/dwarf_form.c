@@ -75,8 +75,8 @@ generate_form_error(Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
 }
 
-/* This code was repeated many times, now it
-   is all in one place. */
+/*  This code was repeated many times, now it
+    is all in one place. */
 static int
 get_attr_dbg(Dwarf_Debug *dbg,
     Dwarf_CU_Context * cu_context,
@@ -488,8 +488,8 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 
 int
 dwarf_formref(Dwarf_Attribute attr,
-   Dwarf_Off * ret_offset,
-   Dwarf_Error * error)
+    Dwarf_Off * ret_offset,
+    Dwarf_Error * error)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Unsigned offset = 0;
@@ -962,11 +962,11 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
 
 static int
 dw_read_index_val_itself(Dwarf_Debug dbg,
-   unsigned theform,
-   Dwarf_Small *info_ptr,
-   Dwarf_Small *section_end,
-   Dwarf_Unsigned *return_index,
-   Dwarf_Error *error)
+    unsigned theform,
+    Dwarf_Small *info_ptr,
+    Dwarf_Small *section_end,
+    Dwarf_Unsigned *return_index,
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned index = 0;
 

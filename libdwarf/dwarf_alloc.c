@@ -197,14 +197,14 @@ _dwarf_error_destructor(void *m)
     _dwarf_get_alloc situation. */
 /* Here is the extra we malloc for a prefix. */
 struct reserve_size_s {
-   void *dummy_rsv1;
-   void *dummy_rsv2;
+    void *dummy_rsv1;
+    void *dummy_rsv2;
 };
 /* Here is how we use the extra prefix area. */
 struct reserve_data_s {
-   void *rd_dbg;
-   unsigned short rd_length;
-   unsigned short rd_type;
+    void *rd_dbg;
+    unsigned short rd_length;
+    unsigned short rd_type;
 };
 #define DW_RESERVE sizeof(struct reserve_size_s)
 
@@ -949,10 +949,10 @@ dwarf_print_memory_stats(UNUSEDARG Dwarf_Debug dbg)
 
 
 
-/* In the 'rela' relocation case  or in case
-   of compressed sections we might have malloc'd
-   space (to ensure it is read-write or to decompress it
-   respectively, or both). In that case, free the space.  */
+/*  In the 'rela' relocation case  or in case
+    of compressed sections we might have malloc'd
+    space (to ensure it is read-write or to decompress it
+    respectively, or both). In that case, free the space.  */
 static void
 malloc_section_free(struct Dwarf_Section_s * sec)
 {

@@ -759,9 +759,9 @@ dwarf_global_cu_offset(Dwarf_Global global,
 
 static void
 build_off_end_msg(Dwarf_Unsigned offval,
-   Dwarf_Unsigned withincr,
-   Dwarf_Unsigned secsize,
-   dwarfstring *m)
+    Dwarf_Unsigned withincr,
+    Dwarf_Unsigned secsize,
+    dwarfstring *m)
 {
     const char *msg = "past";
     if (offval < secsize){

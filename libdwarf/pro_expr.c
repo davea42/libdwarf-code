@@ -157,7 +157,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }
-    address_size =dbg->de_pointer_size; 
+    address_size =dbg->de_pointer_size;
     /* offset_size =dbg->de_dwarf_offset_size; */
 
     operand = NULL;

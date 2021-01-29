@@ -181,16 +181,16 @@ calculate_allowed_fill(unsigned long fill_percent, unsigned long ct)
     return v;
 }
 
-/* Initialize the hash and pass in the hash function.
-   If the entry count needed is unknown, pass in
-   0 as a count estimate,
-   but if the number of hash entries needed can be estimated,
-   pass in the estimate (which need not be prime,
-   we actually use
-   the nearest higher prime from the above table).
-   If the estimated count is
-   Return the tree base, or return NULL if insufficient
-   memory. */
+/*  Initialize the hash and pass in the hash function.
+    If the entry count needed is unknown, pass in
+    0 as a count estimate,
+    but if the number of hash entries needed can be estimated,
+    pass in the estimate (which need not be prime,
+    we actually use
+    the nearest higher prime from the above table).
+    If the estimated count is
+    Return the tree base, or return NULL if insufficient
+    memory. */
 void *
 dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE(*hashfunc)(const void *key),
@@ -438,8 +438,7 @@ resize_table(struct hs_base *head,
     return;
 }
 
-/*   Inner search of the hash and synonym chains.
-  */
+/*  Inner search of the hash and synonym chains.  */
 static struct ts_entry *
 tsearch_inner( const void *key, struct hs_base* head,
     int (*compar)(const void *, const void *),

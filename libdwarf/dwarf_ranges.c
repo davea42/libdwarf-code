@@ -42,8 +42,8 @@
 #define TRUE  1
 
 struct ranges_entry {
-   struct ranges_entry *next;
-   Dwarf_Ranges cur;
+    struct ranges_entry *next;
+    Dwarf_Ranges cur;
 };
 
 

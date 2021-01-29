@@ -48,8 +48,8 @@
     It returns 0 on error, and 1 otherwise. */
 Dwarf_Unsigned
 dwarf_add_funcname(Dwarf_P_Debug dbg,
-   Dwarf_P_Die die,
-   char *function_name, Dwarf_Error * error)
+    Dwarf_P_Die die,
+    char *function_name, Dwarf_Error * error)
 {
     int res = 0;
 
@@ -62,8 +62,8 @@ dwarf_add_funcname(Dwarf_P_Debug dbg,
 }
 int
 dwarf_add_funcname_a(Dwarf_P_Debug dbg,
-   Dwarf_P_Die die,
-   char *function_name, Dwarf_Error * error)
+    Dwarf_P_Die die,
+    char *function_name, Dwarf_Error * error)
 {
     int res = 0;
 

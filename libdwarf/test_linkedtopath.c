@@ -78,7 +78,7 @@ int _dwarf_load_section(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,
     Dwarf_Error * error)
 {
-   return DW_DLV_OK;
+    return DW_DLV_OK;
 }
 
 /* A horrible fake version for these tests */

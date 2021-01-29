@@ -725,9 +725,9 @@ dwarf_add_AT_block_a(
 */
 Dwarf_P_Attribute
 dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
-   Dwarf_P_Die ownerdie,
-   Dwarf_Half attr,
-   Dwarf_Unsigned value, Dwarf_Error * error)
+    Dwarf_P_Die ownerdie,
+    Dwarf_Half attr,
+    Dwarf_Unsigned value, Dwarf_Error * error)
 {
     Dwarf_P_Attribute a = 0;
     int res = 0;
@@ -744,11 +744,11 @@ dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
 
 int
 dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug dbg,
-   Dwarf_P_Die ownerdie,
-   Dwarf_Half attr,
-   Dwarf_Unsigned value,
-   Dwarf_P_Attribute *attr_out,
-   Dwarf_Error * error)
+    Dwarf_P_Die ownerdie,
+    Dwarf_Half attr,
+    Dwarf_Unsigned value,
+    Dwarf_P_Attribute *attr_out,
+    Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr = 0;
     Dwarf_Half attr_form = 0;
@@ -1408,10 +1408,10 @@ dwarf_add_AT_reference_b(Dwarf_P_Debug dbg,
 
 int
 dwarf_fixup_AT_reference_die(Dwarf_P_Debug dbg,
-   Dwarf_Half attrnum,
-   Dwarf_P_Die sourcedie,
-   Dwarf_P_Die targetdie,
-   Dwarf_Error *error)
+    Dwarf_Half attrnum,
+    Dwarf_P_Die sourcedie,
+    Dwarf_P_Die targetdie,
+    Dwarf_Error *error)
 {
     Dwarf_P_Attribute a = 0;
     Dwarf_P_Attribute cur = 0;

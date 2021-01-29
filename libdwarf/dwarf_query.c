@@ -1714,10 +1714,10 @@ block_means_locexpr(Dwarf_Half attr)
     return FALSE;
 }
 
-/* It takes 4 pieces of data (including the FORM)
-   to accurately determine the form 'class' as documented
-   in the DWARF spec. This is per DWARF4, but will work
-   for DWARF2 or 3 as well.  */
+/*  It takes 4 pieces of data (including the FORM)
+    to accurately determine the form 'class' as documented
+    in the DWARF spec. This is per DWARF4, but will work
+    for DWARF2 or 3 as well.  */
 enum Dwarf_Form_Class
 dwarf_get_form_class(
     Dwarf_Half dwversion,
@@ -1761,7 +1761,7 @@ dwarf_get_form_class(
     case  DW_FORM_string: return DW_FORM_CLASS_STRING;
     case  DW_FORM_strp:   return DW_FORM_CLASS_STRING;
 
-    case  DW_FORM_block: 
+    case  DW_FORM_block:
     case  DW_FORM_block1:
     case  DW_FORM_block2:
     case  DW_FORM_block4:
@@ -1804,8 +1804,8 @@ dwarf_get_form_class(
     case  DW_FORM_strx3: /* DWARF5 */
     case  DW_FORM_line_strp: /* DWARF5 */
     case  DW_FORM_strp_sup:  /* DWARF5 */
-    case  DW_FORM_GNU_strp_alt: 
-        return DW_FORM_CLASS_STRING;  
+    case  DW_FORM_GNU_strp_alt:
+        return DW_FORM_CLASS_STRING;
     case  DW_FORM_GNU_str_index:   return DW_FORM_CLASS_STRING;
 
     case  DW_FORM_rnglistx:

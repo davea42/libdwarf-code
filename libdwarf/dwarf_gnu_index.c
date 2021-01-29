@@ -585,7 +585,7 @@ _dwarf_free_gnu_index_head_content(Dwarf_Gnu_Index_Head head)
         free(head->gi_blockarray);
         head->gi_blockarray = 0;
         head->gi_blockcount = 0;
-   }
+    }
 }
 
 void

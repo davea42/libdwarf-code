@@ -583,7 +583,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     htin with stale data. */
 static void
 copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
-  Dwarf_Hash_Table htout)
+    Dwarf_Hash_Table htout)
 {
     Dwarf_Hash_Table_Entry entry_in = htin->tb_entries;
     unsigned entry_in_count = htin->tb_table_entry_count;

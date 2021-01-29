@@ -80,11 +80,11 @@ char *dwoptarg;      /* argument associated with option */
 void
 dwgetoptresetfortestingonly(void)
 {
-   dwopterr   = 1;
-   dwoptind   = 1;
-   dwoptopt   = 0;
-   dwoptreset = 0;
-   dwoptarg   = 0;
+    dwopterr   = 1;
+    dwoptind   = 1;
+    dwoptopt   = 0;
+    dwoptreset = 0;
+    dwoptarg   = 0;
 }
 #endif /* FOR DEBUGGING ONLY */
 

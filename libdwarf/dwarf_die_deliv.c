@@ -229,9 +229,9 @@ _dwarf_get_dwp_extra_offset(struct Dwarf_Debug_Fission_Per_CU_s* dwp,
 */
 int
 _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
-   Dwarf_Unsigned *offset,
-   Dwarf_Unsigned *size,
-   Dwarf_Error *error)
+    Dwarf_Unsigned *offset,
+    Dwarf_Unsigned *size,
+    Dwarf_Error *error)
 {
     /* We do not yet know the DIE hash, so we cannot use it
         to identify the offset. */

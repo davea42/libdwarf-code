@@ -753,11 +753,11 @@ _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,
     return DW_DLV_NO_ENTRY;
 }
 
-/* Slow. Consider tsearch. */
-/* For type units and for CUs. */
-/* We're finding an index entry refers
-   to a global offset in some CU
-   and hence is unique in the target. */
+/*  Slow. Consider tsearch. */
+/*  For type units and for CUs. */
+/*  We're finding an index entry refers
+    to a global offset in some CU
+    and hence is unique in the target. */
 static int
 _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
     Dwarf_Xu_Index_Header xuhdr,
@@ -823,11 +823,11 @@ _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
 
 static int
 _dwarf_get_xuhdr(Dwarf_Debug dbg,
-   const char *sigtype,
-   Dwarf_Xu_Index_Header *xuout,
-   Dwarf_Error *error)
+    const char *sigtype,
+    Dwarf_Xu_Index_Header *xuout,
+    Dwarf_Error *error)
 {
-   if (!strcmp(sigtype,"tu")) {
+    if (!strcmp(sigtype,"tu")) {
         if (!dbg->de_tu_hashindex_data) {
             return DW_DLV_NO_ENTRY;
         }

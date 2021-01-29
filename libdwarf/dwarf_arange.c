@@ -713,8 +713,8 @@ dwarf_get_arange_info(Dwarf_Arange arange,
 }
 
 
-/* New for DWARF4, entries may have segment information.
-   *segment is only meaningful if *segment_entry_size is non-zero. */
+/*  New for DWARF4, entries may have segment information.
+    *segment is only meaningful if *segment_entry_size is non-zero. */
 int
 dwarf_get_arange_info_b(Dwarf_Arange arange,
     Dwarf_Unsigned*  segment,

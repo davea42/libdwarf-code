@@ -1007,7 +1007,7 @@ dwarf_srclines_two_level(Dwarf_Die die,
         /* addrlist= */ false,
         /* linelist= */ true,
         error);
-   return res;
+    return res;
 }
 
 /* New October 2015. */
@@ -1661,8 +1661,8 @@ dwarf_lineblock(Dwarf_Line line,
     return DW_DLV_OK;
 }
 
-/* We gather these into one call as it's likely one
-   will want all or none of them.  */
+/*  We gather these into one call as it's likely one
+    will want all or none of them.  */
 int dwarf_prologue_end_etc(Dwarf_Line  line,
     Dwarf_Bool  *    prologue_end,
     Dwarf_Bool  *    epilogue_begin,
@@ -1950,8 +1950,8 @@ dwarf_srclines_dealloc_b(Dwarf_Line_Context line_context)
     delete_line_context_itself(line_context);
 }
 
-/* There is an error, so count it. If we are printing
-   errors by command line option, print the details.  */
+/*  There is an error, so count it. If we are printing
+    errors by command line option, print the details.  */
 void
 _dwarf_print_header_issue(Dwarf_Debug dbg,
     const char *specific_msg,

@@ -233,7 +233,7 @@ dwarfstring_strlen(struct dwarfstring_s *g)
 
 static int
 _dwarfstring_append_spaces(dwarfstring *data,
-   size_t count)
+    size_t count)
 {
     int res = 0;
     char spacebuf[] = {"                                       "};
@@ -668,14 +668,14 @@ trimleadingzeros(char *ptr,unsigned digits,unsigned keepcount)
 }
 #endif /* 0 */
 
-/* With gcc version 5.4.0 20160609  a version using
-   const char *formatp instead of format[next]
-   and deleting the 'next' variable
-   is a few hundredths of a second slower, repeatably.
+/*  With gcc version 5.4.0 20160609  a version using
+    const char *formatp instead of format[next]
+    and deleting the 'next' variable
+    is a few hundredths of a second slower, repeatably.
 
-   We deal with formats like:
-   %u   %5u %05u (and ld and lld too).
-   %x   %5x %05x (and ld and lld too).  */
+    We deal with formats like:
+    %u   %5u %05u (and ld and lld too).
+    %x   %5x %05x (and ld and lld too).  */
 
 int dwarfstring_append_printf_u(dwarfstring *data,
     char *format,

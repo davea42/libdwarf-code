@@ -263,7 +263,7 @@ _dwarf_get_elf_flags_func(
     Dwarf_Unsigned *addralign_out,
     int *error)
 {
-   dwarf_elf_object_access_internals_t*obj =
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
 
     Elf32_Shdr *shdr32 = 0;
@@ -429,7 +429,7 @@ if (i_ == s_.dss_index) { \
 
 static int
 find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
-   struct Dwarf_Section_s **relocatablesec, int *error)
+    struct Dwarf_Section_s **relocatablesec, int *error)
 {
     MATCH_REL_SEC(section_index,dbg->de_debug_info,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_abbrev,relocatablesec);
@@ -480,9 +480,9 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
 
 static void
 get_rela_elf32(Dwarf_Small *data, unsigned int i,
-  UNUSEDARG int endianness,
-  UNUSEDARG int machine,
-  struct Dwarf_Elf_Rela *relap)
+    UNUSEDARG int endianness,
+    UNUSEDARG int machine,
+    struct Dwarf_Elf_Rela *relap)
 {
     Elf32_Rela *relp = 0;
 
@@ -496,9 +496,9 @@ get_rela_elf32(Dwarf_Small *data, unsigned int i,
 }
 static void
 get_rel_elf32(Dwarf_Small *data, unsigned int i,
-  UNUSEDARG int endianness,
-  UNUSEDARG int machine,
-  struct Dwarf_Elf_Rela *relap)
+    UNUSEDARG int endianness,
+    UNUSEDARG int machine,
+    struct Dwarf_Elf_Rela *relap)
 {
     Elf32_Rel *relp = 0;
 
@@ -514,9 +514,9 @@ get_rel_elf32(Dwarf_Small *data, unsigned int i,
 
 static void
 get_rela_elf64(Dwarf_Small *data, unsigned int i,
-  int endianness,
-  int machine,
-  struct Dwarf_Elf_Rela *relap)
+    int endianness,
+    int machine,
+    struct Dwarf_Elf_Rela *relap)
 {
 #ifdef HAVE_ELF64_RELA
     Elf64_Rela * relp = 0;
@@ -557,9 +557,9 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
 
 static void
 get_rel_elf64(Dwarf_Small *data, unsigned int i,
-  int endianness,
-  int machine,
-  struct Dwarf_Elf_Rela *relap)
+    int endianness,
+    int machine,
+    struct Dwarf_Elf_Rela *relap)
 {
 #ifdef HAVE_ELF64_RELA
     Elf64_Rel * relp = 0;
@@ -869,10 +869,10 @@ apply_rela_entries(Dwarf_Debug dbg,
 
 static int
 loop_through_relocations(
-   Dwarf_Debug dbg,
-   dwarf_elf_object_access_internals_t* obj,
-   struct Dwarf_Section_s *relocatablesec,
-   int *error)
+    Dwarf_Debug dbg,
+    dwarf_elf_object_access_internals_t* obj,
+    struct Dwarf_Section_s *relocatablesec,
+    int *error)
 {
     Dwarf_Small *target_section = 0;
     Dwarf_Small *symtab_section = obj->symtab->dss_data;

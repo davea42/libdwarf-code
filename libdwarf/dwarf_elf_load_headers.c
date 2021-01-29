@@ -1416,9 +1416,9 @@ this_rel_is_a_section_dwarf_related(
     *oksecnum_out = oksecnum;
     return DW_DLV_OK;
 }
-/* Secnum here is the secnum of rela. Not
-   the target of the relocations.
-   This also loads .rel. */
+/*  Secnum here is the secnum of rela. Not
+    the target of the relocations.
+    This also loads .rel. */
 int
 _dwarf_load_elf_relx(
     dwarf_elf_object_access_internals_t *ep,
@@ -1486,9 +1486,9 @@ _dwarf_load_elf_relx(
 }
 static int
 validate_section_name_string(Dwarf_Unsigned section_length,
-  Dwarf_Unsigned string_loc_index,
-  const char * strings_start,
-  int  * errcode)
+    Dwarf_Unsigned string_loc_index,
+    const char * strings_start,
+    int  * errcode)
 {
     const char *endpoint = strings_start + section_length;
     const char *cur = 0;

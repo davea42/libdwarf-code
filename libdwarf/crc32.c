@@ -44,10 +44,10 @@
 
 #define uint32_t unsigned int
 
-/* Table computed by David Anderson
-   with Mark Adler's table builder
-   logic on October 20,2020
-   with pattern from polynomial (0xedb88320) */
+/*  Table computed by David Anderson
+    with Mark Adler's table builder
+    logic on October 20,2020
+    with pattern from polynomial (0xedb88320) */
 static const uint32_t crc32_table[256] =
 {
 0x00000000,0x77073096,0xee0e612c,0x990951ba,
@@ -128,10 +128,10 @@ static const uint32_t crc32_table[256] =
 unsigned int
 _dwarf_crc32 (unsigned int crc, const unsigned char *buf, size_t len)
 {
-  const unsigned char *end = 0;
+    const unsigned char *end = 0;
 
-  crc = ~crc;
-  for (end = buf + len; buf < end; ++buf)
-    crc = crc32_table[(crc ^ *buf) & 0xff] ^ (crc >> 8);
-  return ~crc;
+    crc = ~crc;
+    for (end = buf + len; buf < end; ++buf)
+        crc = crc32_table[(crc ^ *buf) & 0xff] ^ (crc >> 8);
+    return ~crc;
 }

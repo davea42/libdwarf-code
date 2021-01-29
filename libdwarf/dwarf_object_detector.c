@@ -666,13 +666,13 @@ match_buildid(
 
 static int
 _dwarf_debuglink_finder_newpath(
-   char         * path_in,
-   unsigned char *crc_in,
-   unsigned       buildid_len_in,
-   unsigned char *buildid_in,
-   dwarfstring    *m,
-   int * fd_out,
-   int * errcode)
+    char         * path_in,
+    unsigned char *crc_in,
+    unsigned       buildid_len_in,
+    unsigned char *buildid_in,
+    dwarfstring    *m,
+    int * fd_out,
+    int * errcode)
 {
     unsigned char  lcrc[4];
     char          *debuglinkpath = 0; /* must be freed */
@@ -757,12 +757,12 @@ _dwarf_debuglink_finder_newpath(
 
 static int
 _dwarf_debuglink_finder_internal(
-   char         **gl_pathnames,
-   unsigned int   gl_pathcount,
-   char         * path_in,
-   dwarfstring    *m,
-   int * fd_out,
-   int * errcode)
+    char         **gl_pathnames,
+    unsigned int   gl_pathcount,
+    char         * path_in,
+    dwarfstring    *m,
+    int * fd_out,
+    int * errcode)
 {
     int res = 0;
     /*  This local dbg is opened and then dwarf_finish()

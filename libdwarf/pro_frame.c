@@ -389,9 +389,9 @@ dwarf_add_frame_info_c(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* This is an alternate to inserting frame instructions
-   one instruction at a time.  But use either this
-   or instruction level, not both in one fde. */
+/*  This is an alternate to inserting frame instructions
+    one instruction at a time.  But use either this
+    or instruction level, not both in one fde. */
 int
 dwarf_insert_fde_inst_bytes(Dwarf_P_Debug dbg,
     Dwarf_P_Fde fde,Dwarf_Unsigned len, Dwarf_Ptr ibytes,

@@ -280,8 +280,8 @@ find_next_comma(const char *base,const char **nextcomma)
     of the code here. */
 int
 _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
-  const char *extra,
-  int *err)
+    const char *extra,
+    int *err)
 {
     int res = 0;
     const char *nextcharloc = 0;

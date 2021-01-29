@@ -165,8 +165,8 @@ endswith(const char * input, char* ckfor)
 }
 #endif
 
-/* Unifies the basic duplicate/empty testing and section
-   data setting to one place. */
+/*  Unifies the basic duplicate/empty testing and section
+    data setting to one place. */
 static int
 get_basic_section_data(Dwarf_Debug dbg,
     struct Dwarf_Section_s *secdata,
@@ -2253,8 +2253,8 @@ Dwarf_Cmdline_Options dwarf_cmdline_options = {
     FALSE /* Use quiet mode by default. */
 };
 
-/* Lets libdwarf reflect a command line option, so we can get details
-   of some errors printed using libdwarf-internal information. */
+/*  Lets libdwarf reflect a command line option, so we can get details
+    of some errors printed using libdwarf-internal information. */
 void
 dwarf_record_cmdline_options(Dwarf_Cmdline_Options options)
 {

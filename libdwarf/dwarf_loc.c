@@ -47,15 +47,15 @@
 #define FALSE 0
 
 static int _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
-   Dwarf_Block_c * return_block,
-   Dwarf_Addr * lowpc,
-   Dwarf_Addr * highpc,
-   Dwarf_Bool * at_end,
-   Dwarf_Half * lle_op,
-   Dwarf_Off    sec_offset,
-   Dwarf_Half   address_size,
-   Dwarf_Half   lkind,
-   Dwarf_Error *error);
+    Dwarf_Block_c * return_block,
+    Dwarf_Addr * lowpc,
+    Dwarf_Addr * highpc,
+    Dwarf_Bool * at_end,
+    Dwarf_Half * lle_op,
+    Dwarf_Off    sec_offset,
+    Dwarf_Half   address_size,
+    Dwarf_Half   lkind,
+    Dwarf_Error *error);
 
 
 /*  Used to enable sanity checking of these data
@@ -2547,20 +2547,20 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
 /*  New June 2020. */
 int
 dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
-   Dwarf_Unsigned   index,
-   Dwarf_Small    * lle_value_out,
-   Dwarf_Unsigned * rawval1,
-   Dwarf_Unsigned * rawval2,
-   Dwarf_Bool     * debug_addr_unavailable,
-   Dwarf_Addr     * lowpc_out, /* 'cooked' value */
-   Dwarf_Addr     * hipc_out, /* 'cooked' value */
-   Dwarf_Unsigned * loclist_expr_op_count_out,
-   /* Returns pointer to the specific locdesc of the index; */
-   Dwarf_Locdesc_c* locdesc_entry_out,
-   Dwarf_Small    * loclist_source_out, /* 0,1, or 2 */
-   Dwarf_Unsigned * expression_offset_out,
-   Dwarf_Unsigned * locdesc_offset_out,
-   Dwarf_Error    * error)
+    Dwarf_Unsigned   index,
+    Dwarf_Small    * lle_value_out,
+    Dwarf_Unsigned * rawval1,
+    Dwarf_Unsigned * rawval2,
+    Dwarf_Bool     * debug_addr_unavailable,
+    Dwarf_Addr     * lowpc_out, /* 'cooked' value */
+    Dwarf_Addr     * hipc_out, /* 'cooked' value */
+    Dwarf_Unsigned * loclist_expr_op_count_out,
+    /* Returns pointer to the specific locdesc of the index; */
+    Dwarf_Locdesc_c* locdesc_entry_out,
+    Dwarf_Small    * loclist_source_out, /* 0,1, or 2 */
+    Dwarf_Unsigned * expression_offset_out,
+    Dwarf_Unsigned * locdesc_offset_out,
+    Dwarf_Error    * error)
 {
     Dwarf_Locdesc_c descs_base =  0;
     Dwarf_Locdesc_c desc =  0;

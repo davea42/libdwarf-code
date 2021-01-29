@@ -58,10 +58,10 @@
 #define ISA_IA64(dbg) ((dbg)->de_flags & DW_DLC_ISA_IA64 ? 1 : 0)
 
 struct isa_relocs_s {
-   const char *name_;
-   int         reloc32_;
-   int         reloc64_;
-   int         segrel_; /* only used if IRIX */
+    const char *name_;
+    int         reloc32_;
+    int         reloc64_;
+    int         segrel_; /* only used if IRIX */
 };
 
 #ifndef TRUE
@@ -75,25 +75,25 @@ struct isa_relocs_s {
     relocations. FIXME. Most will be unusable without
     additional effort as they have not been tested.
 */
-#define R_MIPS_32		2
-#define R_MIPS_64		18
-#define R_MIPS_SCN_DISP		32
-#define R_386_32                 1
-#define R_386_64                 0  /* impossible */
-#define R_X86_64_32             10
-#define R_X86_64_64              1
-#define R_SPARC_UA32            23
-#define R_SPARC_UA64            54
-#define R_ARM_ABS32              2
-#define R_ARM_ABS64              0 /* impossible */
-#define R_AARCH64_ABS32        258
-#define R_AARCH64_ABS64        257
-#define R_IA64_DIR32LSB       0x25
-#define R_IA64_DIR64LSB       0x27
-#define R_PPC_REL32             26
-#define R_PPC_REL64             44
-#define R_PPC64_REL32         R_PPC_REL32
-#define R_PPC64_REL64           44
+#define R_MIPS_32         2
+#define R_MIPS_64         18
+#define R_MIPS_SCN_DISP   32
+#define R_386_32          1
+#define R_386_64          0  /* impossible */
+#define R_X86_64_32       10
+#define R_X86_64_64       1
+#define R_SPARC_UA32      23
+#define R_SPARC_UA64      54
+#define R_ARM_ABS32       2
+#define R_ARM_ABS64       0 /* impossible */
+#define R_AARCH64_ABS32   258
+#define R_AARCH64_ABS64   257
+#define R_IA64_DIR32LSB   0x25
+#define R_IA64_DIR64LSB   0x27
+#define R_PPC_REL32       26
+#define R_PPC_REL64       44
+#define R_PPC64_REL32     R_PPC_REL32
+#define R_PPC64_REL64     44
 
 
 static struct isa_relocs_s isa_relocs[] = {
@@ -199,8 +199,8 @@ dwarf_producer_init(Dwarf_Unsigned flags,
 
 int
 dwarf_pro_set_default_string_form(Dwarf_P_Debug dbg,
-   int form,
-   UNUSEDARG Dwarf_Error * error)
+    int form,
+    UNUSEDARG Dwarf_Error * error)
 {
     if (form != DW_FORM_string &&
         form != DW_FORM_strp) {

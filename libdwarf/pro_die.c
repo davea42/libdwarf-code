@@ -87,8 +87,8 @@ dwarf_new_die(Dwarf_P_Debug dbg,
     return created;
 }
 
-/* New September 2016. Preferred as error checking
-   is easier, no need for ugly cast. */
+/*  New September 2016. Preferred as error checking
+    is easier, no need for ugly cast. */
 int
 dwarf_new_die_a(Dwarf_P_Debug dbg,
     Dwarf_Tag tag,

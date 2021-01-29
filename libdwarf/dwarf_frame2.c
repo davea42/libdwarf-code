@@ -1471,17 +1471,16 @@ dwarf_create_cie_from_start(Dwarf_Debug dbg,
 }
 
 
-/* This is for gnu eh frames, the 'z' case.
-   We find the letter involved
-   Return the augmentation character and, if applicable,
-   the personality routine address.
+/*  This is for gnu eh frames, the 'z' case.
+    We find the letter involved
+    Return the augmentation character and, if applicable,
+    the personality routine address.
 
-   personality_routine_out -
+    personality_routine_out -
         if 'P' is augchar, is personality handler addr.
         Otherwise is not set.
-   aug_data  - if 'P' points  to data space of the
-   aug_data_len - length of areas aug_data points to.
-
+    aug_data  - if 'P' points  to data space of the
+    aug_data_len - length of areas aug_data points to.
 */
 
 /*  It is not clear if this is entirely correct. */

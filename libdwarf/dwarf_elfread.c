@@ -314,7 +314,7 @@ if (i_ == s_.dss_index) { \
 
 static int
 find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
-   struct Dwarf_Section_s **relocatablesec, int *error)
+    struct Dwarf_Section_s **relocatablesec, int *error)
 {
     MATCH_REL_SEC(section_index,dbg->de_debug_info,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_abbrev,relocatablesec);

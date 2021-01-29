@@ -1246,10 +1246,10 @@ void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     }
 }
 
-/* We'll do in one function and not worry about
-   memory leakage to keep the example short.
-   dwarf_finish() will deallocate  if we do not
-   do so here. */
+/*  We'll do in one function and not worry about
+    memory leakage to keep the example short.
+    dwarf_finish() will deallocate  if we do not
+    do so here. */
 void examplestroffsets(Dwarf_Debug dbg)
 {
     int res = 0;

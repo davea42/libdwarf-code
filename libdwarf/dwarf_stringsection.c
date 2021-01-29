@@ -34,9 +34,9 @@
 
 int
 dwarf_get_str(Dwarf_Debug dbg,
-   Dwarf_Off offset,
-   char **string,
-   Dwarf_Signed * returned_str_len, Dwarf_Error * error)
+    Dwarf_Off offset,
+    char **string,
+    Dwarf_Signed * returned_str_len, Dwarf_Error * error)
 {
     int res = DW_DLV_ERROR;
     void *secptr = 0;

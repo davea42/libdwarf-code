@@ -709,7 +709,7 @@ specialcat(char *targ,char *src,int trimtarg)
 /* If returns NULL caller must handle it. */
 static const char *
 construct_from_dir_and_name(const char *dir,
-   const char *name)
+    const char *name)
 {
     int truelen = 0;
     char *final = 0;
@@ -924,8 +924,8 @@ valid_macro_form(Dwarf_Half form)
 
 static int
 validate_opcode(Dwarf_Debug dbg,
-   struct Dwarf_Macro_Forms_s *curform,
-   Dwarf_Error * error)
+    struct Dwarf_Macro_Forms_s *curform,
+    Dwarf_Error * error)
 {
     unsigned i = 0;
     struct Dwarf_Macro_Forms_s *stdfptr = 0;
@@ -1104,8 +1104,8 @@ dealloc_macro_srcfiles(char ** srcfiles,
     duplicate frees in case of error. */
 static int
 translate_srcfiles_to_srcfiles2(char **srcfiles,
-   Dwarf_Signed srcfiles_count,
-   char **srcfiles2)
+    Dwarf_Signed srcfiles_count,
+    char **srcfiles2)
 {
     Dwarf_Signed i = 0;
 
@@ -1596,8 +1596,8 @@ dwarf_get_macro_context_by_offset(Dwarf_Die cu_die,
 }
 
 int dwarf_get_macro_section_name(Dwarf_Debug dbg,
-   const char **sec_name_out,
-   UNUSEDARG Dwarf_Error *error)
+    const char **sec_name_out,
+    UNUSEDARG Dwarf_Error *error)
 {
     struct Dwarf_Section_s *sec = 0;
 

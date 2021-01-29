@@ -53,12 +53,12 @@
     that number of bytes. */
 static int
 read_encoded_addr(Dwarf_Small *loc_ptr,
-   Dwarf_Debug dbg,
-   Dwarf_Small *section_end_ptr,
-   Dwarf_Half address_size,
-   Dwarf_Unsigned * val_out,
-   int * len_out,
-   Dwarf_Error *error)
+    Dwarf_Debug dbg,
+    Dwarf_Small *section_end_ptr,
+    Dwarf_Half address_size,
+    Dwarf_Unsigned * val_out,
+    int * len_out,
+    Dwarf_Error *error)
 {
     int len = 0;
     Dwarf_Small op = *loc_ptr;
@@ -159,7 +159,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     curr_loc->lr_opnumber = opnumber;
     curr_loc->lr_offset = offset;
 
-   /*  loc_ptr is ok to deref, see loc_ptr+1 test just above. */
+    /*  loc_ptr is ok to deref, see loc_ptr+1 test just above. */
     atom = *(Dwarf_Small *) loc_ptr;
     loc_ptr++;
     offset++;
@@ -771,7 +771,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
     }
     default: {
-        dwarfstring m;   
+        dwarfstring m;
         const char *atomname = 0;
 
         /*  This can happen if the offset_size or address_size
@@ -780,12 +780,12 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         dwarfstring_append_printf_u(&m,
             "ERROR: DW_DLE_LOC_EXPR_BAD as DW_OP atom "
             "0x%x ",atom);
-         dwarfstring_append(&m, "(");
-         dwarf_get_OP_name(atom,&atomname);
-         dwarfstring_append(&m,(char *)(atomname?
-             atomname:"<no name>"));
-         dwarfstring_append(&m, ")");
-         dwarfstring_append(&m,"is unknown.");
+        dwarfstring_append(&m, "(");
+        dwarf_get_OP_name(atom,&atomname);
+        dwarfstring_append(&m,(char *)(atomname?
+            atomname:"<no name>"));
+        dwarfstring_append(&m, ")");
+        dwarfstring_append(&m,"is unknown.");
         _dwarf_error_string(dbg, error, DW_DLE_LOC_EXPR_BAD,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);

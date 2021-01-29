@@ -97,8 +97,8 @@ static void dump_frame_rule(char *msg,
 
 int
 dwarf_get_frame_section_name(Dwarf_Debug dbg,
-   const char **sec_name,
-   Dwarf_Error *error)
+    const char **sec_name,
+    Dwarf_Error *error)
 {
     struct Dwarf_Section_s *sec = 0;
     if (error != NULL) {
@@ -115,8 +115,8 @@ dwarf_get_frame_section_name(Dwarf_Debug dbg,
 
 int
 dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
-   const char **sec_name,
-   Dwarf_Error *error)
+    const char **sec_name,
+    Dwarf_Error *error)
 {
     struct Dwarf_Section_s *sec = 0;
     if (error != NULL) {
@@ -2855,7 +2855,7 @@ Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug dbg,
 
 static int
 init_reg_rules_alloc(Dwarf_Debug dbg,struct Dwarf_Frame_s *f,
-   unsigned count, Dwarf_Error * error)
+    unsigned count, Dwarf_Error * error)
 {
     f->fr_reg_count = count;
     f->fr_reg = (struct Dwarf_Reg_Rule_s *)
