@@ -1105,16 +1105,17 @@ dwarf_formdata16(Dwarf_Attribute attr,
 }
 
 /*  The *addrx are DWARF5 standard.
-    The GNU form was non-standard gcc DWARF4 */
+    The GNU form is non-standard gcc DWARF4 */
 Dwarf_Bool
 dwarf_addr_form_is_indexed(int form)
 {
-    if (form == DW_FORM_addrx ||
-        form == DW_FORM_addrx1 ||
-        form == DW_FORM_addrx2 ||
-        form == DW_FORM_addrx3 ||
-        form == DW_FORM_addrx4 ||
-        form == DW_FORM_GNU_addr_index) {
+    switch(form) {
+    case DW_FORM_addrx:
+    case DW_FORM_addrx1:
+    case DW_FORM_addrx2:
+    case DW_FORM_addrx3:
+    case DW_FORM_addrx4:
+    case DW_FORM_GNU_addr_index:
         return TRUE;
     }
     return FALSE;

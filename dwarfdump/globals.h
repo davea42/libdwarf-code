@@ -111,6 +111,35 @@ extern "C" {
 #define DWVERSION4  4
 #define DWVERSION5  5
 
+/* FALSE for the flags means off */
+#define LOHIPC_SAWADDR  1
+#define LOHIPC_SAWOFFSET  2
+struct LoHiPc_s {
+    Dwarf_Unsigned lopc;
+
+    /*  hival is either an address if sawhi ==LOHIPC_SAWADDR
+        or an offset if sawhi_flag == LOWHIPC_SAWOFFSET.
+        or zero (sawhi_flag == FALSE)*/
+    Dwarf_Unsigned hival;
+
+    /*  The result of adding lopc to hival. */
+    Dwarf_Unsigned hifinal;
+
+    /* non-zero if DW_AT_lowpc seen */
+    Dwarf_Small sawlo_flag;
+
+    /*  non-zero if DW_AT_high_pc seen
+        defaults FALSE, otherwise is
+        LOHIPC_SAWADDR  or LOHIPC_SAWOFFSET */
+    Dwarf_Small sawhi_flag;
+
+    /*  If non-zero, hifinal is set to the hipc address
+        Defaults to FALSE*/
+    Dwarf_Small havefinal_flag;
+};
+
+typedef struct LoHiPc_s LoHiPc;
+
 /* Calculate wasted space */
 extern void calculate_attributes_usage(Dwarf_Half attr,
     Dwarf_Half theform,
@@ -370,10 +399,7 @@ int print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Half attr,
     Dwarf_Unsigned max_address,
-    Dwarf_Bool *bSawLowp,
-    Dwarf_Addr *lowAddrp,
-    Dwarf_Bool *bSawHighp,
-    Dwarf_Addr *highAddrp,
+    LoHiPc  *lohipc,
     struct esb_s *valname,
     Dwarf_Error *err);
 

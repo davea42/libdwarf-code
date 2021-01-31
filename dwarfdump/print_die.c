@@ -58,6 +58,9 @@ struct OpBranchHead_s {
     struct OpBranchEntry_s * ops_array;
 };
 
+/*  Defaults to all 0, never changes */
+static const LoHiPc  lohipc_zero;
+
 /*  Traverse a DIE and attributes to
     check self references */
 static int traverse_one_die(Dwarf_Debug dbg,
@@ -127,10 +130,7 @@ static int print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Bool print_else_name_match,
     int die_indent_level,
     char **srcfiles, Dwarf_Signed srcfcnt,
-    Dwarf_Bool * bSawLow,
-    Dwarf_Addr * lowAddr,
-    Dwarf_Bool * bSawHigh,
-    Dwarf_Addr * highAddr,
+    LoHiPc *lohipc,
     Dwarf_Bool *attr_matched,
     Dwarf_Error *err);
 static int print_location_list(Dwarf_Debug dbg,
@@ -2001,12 +2001,10 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Bool attribute_matchedpod = FALSE;
     int atres = 0;
     int abbrev_code = dwarf_die_abbrev_code(die);
-    Dwarf_Bool bSawLow = FALSE;
-    Dwarf_Addr lowAddr = 0;
-    Dwarf_Bool bSawHigh = FALSE;
-    Dwarf_Addr highAddr = 0;
+    LoHiPc  lohipc;
     int indentprespaces = 0;
 
+    lohipc = lohipc_zero;
     /* Print using indentation see standard_indent() above.
     < 1><0x000854ff GOFF=0x00546047>    DW_TAG_pointer_type -> 34
     < 1><0x000854ff>    DW_TAG_pointer_type                 -> 18
@@ -2283,10 +2281,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                     atlist[i],
                     print_else_name_match, die_indent_level,
                     srcfiles, srcfcnt,
-                    &bSawLow,
-                    &lowAddr,
-                    &bSawHigh,
-                    &highAddr,
+                    &lohipc,
                     &attr_match_localb,err);
                 if (aresb == DW_DLV_ERROR) {
                     struct esb_s m;
@@ -3546,10 +3541,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Bool print_else_name_match,
     int die_indent_level,
     char **srcfiles, Dwarf_Signed cnt,
-    Dwarf_Bool * bSawLow,
-    Dwarf_Addr * lowAddr,
-    Dwarf_Bool * bSawHigh,
-    Dwarf_Addr * highAddr,
+    LoHiPc     * lohipc,
     Dwarf_Bool *attr_duplication,
     Dwarf_Error *err)
 {
@@ -4090,8 +4082,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 attrib,
                 attr,
                 max_address,
-                bSawLow, lowAddr,
-                bSawHigh, highAddr,
+                lohipc,
                 &valname,
                 err);
             if (rv != DW_DLV_OK) {

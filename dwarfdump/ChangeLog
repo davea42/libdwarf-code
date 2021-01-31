@@ -1,3 +1,15 @@
+2021-01-31 David Anderson
+    * dwarfdump.c: Ensures ERROR printf appear in the error count
+      (A couple errors printed at the end were not counted.)
+    * globals.h: Defining LoHiPc_s struct so we can calculate
+      the high_pc from low_pc and offset-from-low-pc values.
+      Simpler and better type checking than before.
+    * print_die.c: Eliminate sets of 4 arguments,
+      replace with LoHiPc pointer.
+    * print_hipc_lopc_attr.c: Implement filling in
+      LoHiPc_s and printing the calculated high_pc
+      when appropriate.  Much easier to understand than
+      the earlier use of bSawLowp etc. 
 2021-01-29 David Anderson
    * tag_attr_ext.list: Added some DW_AT_GNU entries to
      DW_TAG_skeleton unit as common extensions.

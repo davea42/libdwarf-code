@@ -1701,6 +1701,7 @@ process_one_file(
             "meaning some frame information was missing "
             "relevant function names. See the dwarfdump "
             " option --file-tied=</path/to/executable>.");
+        glflags.gf_count_major_errors++;
     }
     if (glflags.gf_error_code_search_by_address) {
         printf("\nERROR: At some point "
@@ -1709,6 +1710,7 @@ process_one_file(
             "%s .\n",
             dwarf_errmsg_by_number(
             glflags.gf_error_code_search_by_address));
+        glflags.gf_count_major_errors++;
     }
 
     /*  Could finish dbg first. Either order ok. */

@@ -1,3 +1,6 @@
+2021-01-31  David Anderson
+    * dwarf_form.c(dwarf_addr_form_is_indexed): For better
+      readability a chain of if-statements is now a switch/case.
 2021-01-28  David Anderson
     * checkexamples.c,crc32.c,dwarf_alloc.c,dwarf_arange.c,
       dwarf_debuglink.c,dwarf_die_deli,.c,dwarf_elf_access.c,

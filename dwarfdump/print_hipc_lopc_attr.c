@@ -75,12 +75,9 @@ update_cu_base_addresses(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Half attr,
     Dwarf_Half tag,
-    Dwarf_Half theform,
-    Dwarf_Bool bSawLowp,
-    Dwarf_Addr lowAddrp,
+    LoHiPc     *lohipc,
     Dwarf_Error *err)
 {
-
     /* Update base address for CU */
     if (attr == DW_AT_low_pc) {
         if (glflags.need_CU_base_address &&
@@ -112,40 +109,94 @@ update_cu_base_addresses(Dwarf_Debug dbg,
         if (glflags.need_CU_high_address ) {
             /*  This is bogus in that it accepts the first
                 high address in the CU, from any TAG */
-            if (theform != DW_FORM_addr &&
-                !dwarf_addr_form_is_indexed(theform)) {
-                /*  New in DWARF4: other forms
-                (of class constant) are not an address
-                but are instead offset from pc. */
-                Dwarf_Unsigned hpcoff = 0;
-                int show_form_here = 0;
-
-                int ares = dd_get_integer_and_name(
-                    dbg,
-                    attrib,
-                    &hpcoff,
-                    /* attrname */ (const char *) NULL,
-                    /* err_string */ ( struct esb_s *) NULL,
-                    (encoding_type_func) 0,
-                    err,show_form_here);
-                if (ares == DW_DLV_OK) {
-                    if (bSawLowp) {
-                        glflags.CU_high_address =
-                            lowAddrp + hpcoff;
-                    }
-                }
-            } else {
-                int ares = dwarf_formaddr(attrib,
-                    &glflags.CU_high_address, err);
-                DROP_ERROR_INSTANCE(dbg,ares,*err);
-                if (ares == DW_DLV_OK) {
-                    glflags.need_CU_high_address = FALSE;
-                }
+            if (lohipc->sawhi_flag == LOHIPC_SAWADDR) {
+                glflags.need_CU_high_address = FALSE;
+                glflags.CU_high_address = lohipc->hival;
+            } else if (lohipc->havefinal_flag) {
+                glflags.CU_high_address = lohipc->hifinal;
+                glflags.need_CU_high_address = FALSE;
             }
         }
     }
 }
 
+#if 0
+static void
+dumplohipc(LoHiPc *hilopc,char *msg, int line)
+{
+    printf("LoHiPc  %s line %d "
+        "sawlo:    %d  0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+        msg,line,
+        hilopc->sawlo_flag,hilopc->lopc);
+    printf( "    sawhi:    %d  0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+        hilopc->sawhi_flag,hilopc->hival);
+    printf( "    havefinal:%d  0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+        hilopc->havefinal_flag,hilopc->hifinal);
+}
+#endif
+
+/*  ASSERT: attrnum == DW_AT_low_pc or DW_AT_high_pc
+    This does not print errors as those checks will be
+    redone by other related code.
+*/
+static void
+get_pc_value(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib,
+    Dwarf_Half attrnum,
+    Dwarf_Half theform,
+    LoHiPc *lohipc,
+    Dwarf_Error *err)
+{
+    int bres = 0;
+    int islowaddr =(attrnum == DW_AT_low_pc)?TRUE:FALSE;
+    Dwarf_Unsigned uval = 0;
+    Dwarf_Addr addr = 0;
+
+    if (!islowaddr && (theform != DW_FORM_addr &&
+        !dwarf_addr_form_is_indexed(theform))) {
+        /*  New in DWARF4: other forms
+        (of class constant) are not an address
+        but are instead offset from pc. */
+        bres = dwarf_formudata(attrib,&uval,err);
+        if (bres == DW_DLV_OK) {
+            if (!lohipc->sawhi_flag) {
+                lohipc->sawhi_flag = LOHIPC_SAWOFFSET;
+                lohipc->hival = uval;
+                if (lohipc->sawlo_flag && !lohipc->havefinal_flag ) {
+                    lohipc->havefinal_flag = TRUE;
+                    lohipc->hifinal = lohipc->lopc +
+                        uval;
+                }
+            }
+        } else {
+            if (bres == DW_DLV_ERROR) {
+                DROP_ERROR_INSTANCE(dbg,bres,*err);
+            }
+        }
+        return;
+    }
+    bres = dwarf_formaddr(attrib, &addr, err);
+    if (bres == DW_DLV_OK) {
+        if (islowaddr) {
+            lohipc->lopc = addr;
+            lohipc->sawlo_flag = TRUE;
+            if (lohipc->sawhi_flag ==
+                LOHIPC_SAWOFFSET && !lohipc->havefinal_flag) {
+                lohipc->havefinal_flag = TRUE;
+                lohipc->hifinal = addr + lohipc->hival;
+            }
+        } else {
+            if (!lohipc->sawhi_flag ) {
+                lohipc->hival = addr;
+                lohipc->sawhi_flag = TRUE;
+                lohipc->hifinal = addr;
+                lohipc->havefinal_flag = TRUE;
+            }
+        }
+    } else if (bres == DW_DLV_ERROR) {
+        DROP_ERROR_INSTANCE(dbg,bres,*err);
+    }
+}
 int
 print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Half tag,
@@ -157,10 +208,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Half attr,
     Dwarf_Unsigned max_address,
-    Dwarf_Bool *bSawLowp,
-    Dwarf_Addr *lowAddrp,
-    Dwarf_Bool *bSawHighp,
-    Dwarf_Addr *highAddrp,
+    LoHiPc *lohipc,
     struct esb_s *valname,
     Dwarf_Error *err)
 {
@@ -168,7 +216,6 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     int rv = 0;
     /* For DWARF4, the high_pc offset from the low_pc */
     Dwarf_Unsigned highpcOff = 0;
-    Dwarf_Bool offsetDetected = FALSE;
     char highpcstrbuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s highpcstr;
 
@@ -182,10 +229,13 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
             "dwarf_whatform cannot"
             " Find attr form",
             rv, *err);
+        esb_destructor(&highpcstr);
         return rv;
     } else if (rv == DW_DLV_NO_ENTRY) {
+        esb_destructor(&highpcstr);
         return rv;
     }
+    get_pc_value(dbg, attrib, attr, theform,lohipc,err);
     /*  Determine if the high pc is really an offset,
         set offset_detected flag if so. */
     if (theform != DW_FORM_addr &&
@@ -200,7 +250,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
             A normal consumer would have to
             add this value to
             DW_AT_low_pc to get a true pc. */
-        esb_append(&highpcstr,"<offset-from-lowpc>");
+        esb_append(&highpcstr,"<offset-from-lowpc> ");
         /*  Update the high_pc value if we
             are checking the ranges */
         if ( glflags.gf_check_ranges && attr == DW_AT_high_pc) {
@@ -225,9 +275,9 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                         " Failed for DW_AT_high_pc/DW_AT_low_pc",
                         ares, *err);
                 }
+                esb_destructor(&highpcstr);
                 return ares;
             }
-            offsetDetected = TRUE;
         }
     }
     rv = get_attr_value(dbg, tag, die,
@@ -239,13 +289,12 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     if (rv == DW_DLV_ERROR) {
         return rv;
     }
-#if 0 /* FIX */
-    if (offsetDetected && bSawLowp) {
+    if (lohipc->sawhi_flag == LOHIPC_SAWOFFSET &&
+        lohipc->havefinal_flag) {
         esb_append_printf_u(&highpcstr,
-            "<highpc: 0x" DW_PR_XZEROS DW_PR_DUu ">",
-            highpcOff + *lowAddrp);
+            " <highpc: 0x%" DW_PR_XZEROS DW_PR_DUx ">",
+            lohipc->hifinal);
     }
-#endif
     esb_empty_string(valname);
     esb_append(valname, esb_get_string(&highpcstr));
     esb_destructor(&highpcstr);
@@ -256,83 +305,36 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         || glflags.need_CU_high_address)) {
         /* updating glflags data for checking/reporting later. */
         update_cu_base_addresses(dbg,attrib,
-            attr, tag, theform,
-            *bSawLowp,
-            *lowAddrp,
+            attr, tag,
+            lohipc,
             err);
     }
 
-    /*  Record the low and high addresses as we have them.
-        Push the calculated low/high values
-        back to caller using *bSawLowp, *lowAddrp,
-        *bSawHighp, *highAddrp.
-        For DWARF4 and later allow the high_pc value as
-        an offset */
     if ((glflags.gf_check_decl_file ||
         glflags.gf_check_ranges ||
-        glflags.gf_check_locations) &&
-            (theform == DW_FORM_addr ||
-            dwarf_addr_form_is_indexed(theform) ||
-            offsetDetected)) {
-
-        int cres = 0;
-        Dwarf_Addr addr = 0;
-        /* Calculate the real high_pc value */
-        if (offsetDetected && glflags.seen_PU_base_address) {
-            addr = *lowAddrp + highpcOff;
-            cres = DW_DLV_OK;
-        } else {
-            if (theform == DW_FORM_addr ||
-                dwarf_addr_form_is_indexed(theform)) {
-                cres = dwarf_formaddr(attrib, &addr, err);
-            } else {
-                /* Bogus. FIXME */
-                cres = DW_DLV_NO_ENTRY;
-            }
+        glflags.gf_check_locations)) {
+        if (glflags.seen_PU &&
+            !glflags.seen_PU_base_address
+            && lohipc->sawlo_flag) {
+            glflags.seen_PU_base_address = TRUE;
+            glflags.PU_base_address =  lohipc->lopc;
         }
-        if (cres == DW_DLV_OK) {
-            if (attr == DW_AT_low_pc) {
-                *lowAddrp = addr;
-                *bSawLowp = TRUE;
-                /*  Record the base address of the last seen PU
-                    to be used when checking line information */
-                if (glflags.seen_PU &&
-                    !glflags.seen_PU_base_address) {
-                    glflags.seen_PU_base_address = TRUE;
-                    glflags.PU_base_address = addr;
-                }
-            } else { /* DW_AT_high_pc */
-                *highAddrp = addr;
-                *bSawHighp = TRUE;
-                /*  Record the high address of the last seen PU
-                    to be used when checking line information */
-                if (glflags.seen_PU &&
-                    !glflags.seen_PU_high_address) {
-                    glflags.seen_PU_high_address = TRUE;
-                    glflags.PU_high_address = addr;
-                }
-            }
-        } else  if (cres == DW_DLV_ERROR) {
-            int msgnum = dwarf_errno(*err);
-
-            if (msgnum == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
-                print_error_and_continue(dbg,
-                    "Some checks cannot be done because "
-                    "the .debug_addr section is not present",
-                    cres,*err);
-                DROP_ERROR_INSTANCE(dbg,cres,*err);
-                return DW_DLV_OK;
-            }
-            return cres;
+        if (glflags.seen_PU &&
+            !glflags.seen_PU_high_address &&
+            lohipc->havefinal_flag) {
+            glflags.seen_PU_high_address = TRUE;
+            glflags.PU_high_address = lohipc->hifinal;
         }
 
         /* We have now both low_pc and high_pc values */
-        if (*bSawLowp && *bSawHighp) {
+        if (lohipc->havefinal_flag && lohipc->sawlo_flag) {
             /*  We need to decide if this PU is
                 valid, as the SN Linker marks a stripped
                 function by setting lowpc to -1;
                 also for discarded comdat, both lowpc
                 and highpc are zero */
+            Dwarf_Unsigned lowaddr = lohipc->lopc;
+            Dwarf_Unsigned highaddr = lohipc->hifinal;
             if (glflags.need_PU_valid_code) {
                 glflags.need_PU_valid_code = FALSE;
                 /*  To ignore a PU as invalid code,
@@ -342,7 +344,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                     instances of lowpc and highpc,
                     must be ignored (lexical blocks) */
                 glflags.in_valid_code = TRUE;
-                if (IsInvalidCode(*lowAddrp,*highAddrp) &&
+                if (IsInvalidCode(lowaddr,highaddr) &&
                     tag == DW_TAG_subprogram) {
                     glflags.in_valid_code = FALSE;
                 }
@@ -351,8 +353,8 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                 check if they are valid */
             if (glflags.in_valid_code) {
                 DWARF_CHECK_COUNT(ranges_result,1);
-                if (*lowAddrp != max_address &&
-                    *lowAddrp > *highAddrp) {
+                if (lowaddr != max_address &&
+                    lowaddr > highaddr ) {
                     DWARF_CHECK_ERROR(ranges_result,
                         ".debug_info: Incorrect values "
                         "for low_pc/high_pc");
@@ -361,20 +363,18 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                         printf("Low = 0x%" DW_PR_XZEROS DW_PR_DUx
                             ", High = 0x%"
                             DW_PR_XZEROS DW_PR_DUx "\n",
-                            *lowAddrp,*highAddrp);
+                            lowaddr,highaddr);
                     }
                 }
                 if (glflags.gf_check_decl_file ||
                     glflags.gf_check_ranges ||
                     glflags.gf_check_locations) {
                     AddEntryIntoBucketGroup(glflags.pRangesInfo,0,
-                        *lowAddrp,
-                        *lowAddrp,*highAddrp,NULL,FALSE);
+                        lowaddr, lowaddr,highaddr,NULL,FALSE);
                 }
             }
-            *bSawLowp = FALSE;
-            *bSawHighp = FALSE;
         }
     }
+    esb_destructor(&highpcstr);
     return DW_DLV_OK;
 }
