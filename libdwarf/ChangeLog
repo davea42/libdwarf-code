@@ -1,3 +1,13 @@
+2021-02-02  David Anderson
+    * dwarf_form_class_names.c: new. Lets library clients
+      print the name of any enum Dwarf_Form_Class variable
+      by calling dwarf_get_FORM_CLASS name().
+    * CMakeLists.txt,Makefile.am: Now builds
+      dwarf_form_class_names.c.
+    * Makefile.in:Regenerated.
+    * libdwarf.h.in: Adds prototype for
+      dwarf_get_FORM_CLASS name().
+    * generated_libdwarf.h.in: Regenerated.
 2021-01-31  David Anderson
     * dwarf_form.c(dwarf_addr_form_is_indexed): For better
       readability a chain of if-statements is now a switch/case.

@@ -8,7 +8,8 @@ dwarf_elfread.c
 dwarf_elf_rel_detector.c 
 dwarf_error.c 
 dwarf_fission_to_cu.c
-dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c 
+dwarf_form.c dwarf_form_class_names.c
+dwarf_frame.c dwarf_frame2.c dwarf_funcs.c 
 dwarf_gdbindex.c dwarf_global.c 
 dwarf_gnu_index.c dwarf_groups.c 
 dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c 

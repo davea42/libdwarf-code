@@ -48,6 +48,7 @@ dwarf_error.c \
 dwarf_error.h \
 dwarf_fission_to_cu.c \
 dwarf_form.c \
+dwarf_form_class_names.c \
 dwarf_frame.c \
 dwarf_frame.h \
 dwarf_frame2.c \

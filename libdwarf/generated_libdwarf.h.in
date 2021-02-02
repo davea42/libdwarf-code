@@ -5576,6 +5576,10 @@ extern int dwarf_get_VIS_name(unsigned int /*val_in*/,
     const char ** /*s_out */);
 /* END FILE */
 
+int 
+dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class /*fc*/,
+    const char ** /*s_out*/);
+
 /* Convert local offset into global offset */
 int dwarf_convert_to_global_offset(Dwarf_Attribute  /*attr*/,
     Dwarf_Off        /*offset*/,
