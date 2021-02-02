@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.24 28 January 2021
+.ds vE Rev 3.25 02 February 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -231,6 +231,11 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+Added dwarf_get_FORM_CLASS_name()
+so library uses can print a form
+class value usefully.
+2 February 2021.
 .P
 Added dwarf_decode_leb128() and dwarf_decode_signed_leb128()
 so library users can access these library-internal functions.
@@ -16254,6 +16259,30 @@ Returns  a TAG name through the \f(CWs_out\fP pointer.
 Returns  a virtuality code name through the \f(CWs_out\fP pointer.
 .H 3 "dwarf_get_VIS_name()"
 Returns a visibility code name  through the \f(CWs_out\fP pointer.
+.H 3 "dwarf_get_FORM_CLASS_name()"
+Only different from the others in that it applies to
+an enum value.
+It returns the name (for example 
+DW_FORM_CLASS_REFERENCE)
+through the pointer.
+.in +2
+.DS
+\f(CWint dwarf_get_FORM_CLASS_name(
+    enum Dwarf_Form_Class fc,
+    char **s_out,
+    );\fP
+.DE
+.in -2
+If the enum value is out of the valid range
+it returns
+\f(CWDW_DLV_NO_ENTRY\fP
+and ignores 
+\f(CWs_out\fP.
+.P
+It never returns
+\f(CWDW_DLV_ERROR\fP.
+
+
 
 
 .H 2 "Section Operations"

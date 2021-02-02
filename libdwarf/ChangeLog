@@ -1,4 +1,8 @@
 2021-02-02  David Anderson
+    * libdwarf2.1.mm: Rev 3.25. Documents
+      dwarf_get_FORM_CLASS_name().
+    * libdwarf2.1.pdf: Rev 3.25. Regenerated
+2021-02-02  David Anderson
     * dwarf_form_class_names.c: new. Lets library clients
       print the name of any enum Dwarf_Form_Class variable
       by calling dwarf_get_FORM_CLASS name().
