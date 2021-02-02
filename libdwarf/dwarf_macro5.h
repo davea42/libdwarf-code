@@ -77,7 +77,7 @@ struct Dwarf_Macro_Context_s {
     Dwarf_Unsigned mc_section_offset;
     Dwarf_Unsigned mc_section_size;
 
-    /*  Total length of the macro data for this 
+    /*  Total length of the macro data for this
         macro unit.
         Calculated, not part of header. */
     Dwarf_Unsigned mc_total_length;

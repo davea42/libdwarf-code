@@ -74,7 +74,7 @@
 #define R_MIPS_CALL_HI16             30
 #define R_MIPS_CALL_LO16             31
 #define R_MIPS_SCN_DISP              32
-#define	R_MIPS_REL16                 33
+#define R_MIPS_REL16                 33
 #define R_MIPS_ADD_IMMEDIATE         34
 
 /*  Keep this the last entry.  */

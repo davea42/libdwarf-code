@@ -28,10 +28,10 @@
 
 
 /*  This is really a sanity limit. It could be increased
-    as necesary for long dwarf expressions.  
+    as necesary for long dwarf expressions.
     Originally it was 20, and expressions longer than that
     are now pretty routine. 24 January 2021 */
-#define	MAXIMUM_LOC_EXPR_LENGTH		300
+#define MAXIMUM_LOC_EXPR_LENGTH 300
 
 struct Dwarf_P_Expr_s {
     Dwarf_Small ex_byte_stream[MAXIMUM_LOC_EXPR_LENGTH];

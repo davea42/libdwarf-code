@@ -91,16 +91,16 @@ Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
 #define DW_DEBUG_FRAME_VERSION4    4 /* DWARF4 */
 /*  The following is SGI/IRIX specific, and probably no longer
     in use anywhere. */
-#define DW_DEBUG_FRAME_AUGMENTER_STRING     	"mti v1"
+#define DW_DEBUG_FRAME_AUGMENTER_STRING     "mti v1"
 
 /* The value of the offset field for Cie's. */
-#define DW_CIE_OFFSET		~(0x0)
+#define DW_CIE_OFFSET ~(0x0)
 
-/* The augmentation string may be NULL.	*/
-#define DW_EMPTY_STRING		""
+/* The augmentation string may be NULL. */
+#define DW_EMPTY_STRING ""
 
-#define DW_FRAME_INSTR_OPCODE_SHIFT		6
-#define DW_FRAME_INSTR_OFFSET_MASK		0x3f
+#define DW_FRAME_INSTR_OPCODE_SHIFT 6
+#define DW_FRAME_INSTR_OFFSET_MASK  0x3f
 
 /*
     This struct denotes the rule for a register in a row of

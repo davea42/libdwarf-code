@@ -35,11 +35,11 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
 #define DW_ADDR_VERSION5   5
 
 /* To identify a cie. That is, for .debug_frame */
-#define DW_CIE_ID 		~(0x0)
-#define DW_CIE_VERSION		1 /* DWARF2 */
-#define DW_CIE_VERSION3		3 /* DWARF3 */
-#define DW_CIE_VERSION4		4 /* DWARF4 */
-#define DW_CIE_VERSION5		5 /* DWARF5 */
+#define DW_CIE_ID         ~(0x0)
+#define DW_CIE_VERSION      1 /* DWARF2 */
+#define DW_CIE_VERSION3     3 /* DWARF3 */
+#define DW_CIE_VERSION4     4 /* DWARF4 */
+#define DW_CIE_VERSION5     5 /* DWARF5 */
 
 /*  For .debug_info DWARF2,3,4,5.
     .debug_types in DWARF4 only,  and gets DW_CU_VERSION4.  */
@@ -121,7 +121,7 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
 
 /*  Maximum number of allocation types for allocation routines.
     Only used with malloc_check.c and that is basically obsolete. */
-#define MAX_DW_DLA		0x3a
+#define MAX_DW_DLA  0x3a
 
 typedef signed char Dwarf_Sbyte;
 typedef unsigned char Dwarf_Ubyte;

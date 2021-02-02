@@ -1,3 +1,15 @@
+2021-02-02: David Anderson
+    * dwarf.h,dwarf_base_types.h,dwarf_debuglink.h,
+      dwarf_form_class_names.c,dwarf_frame.h,dwarf_gdbindex.h,
+      dwarf_line.h,dwarf_line_table_reader_common.h,
+      dwarf_loc.h,dwarf_macro5.h,dwarf_opaque.h,
+      dwarf_reloc_mips.h,dwarf_tied_decls.h,dwarf_tsearch.h,
+      dwarf_util.h,dwarfstring.h,libdwarf.h.in,pro_die.h,
+      pro_expr.h,pro_frame.h,pro_incl.h,pro_line.h,
+      pro_opaque.h,pro_reloc_stream.h,pro_util.h: Fixed
+      many indent issues found by the latest version
+      of dicheck.
+    * generated_libdwarf.h.in: Regenerated.
 2021-01-19: David Anderson
     * scripts/conddef.py,scripts/find_pdfpages.py,
       scripts/funcfinderhdr.py,scripts/funcfindermm.py,

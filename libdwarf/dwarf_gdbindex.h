@@ -51,10 +51,10 @@
 
 typedef Dwarf_Unsigned gdbindex_64;
 enum gdbindex_type_e {
-   git_unknown,
-   git_std,
-   git_address,
-   git_cuvec
+    git_unknown,
+    git_std,
+    git_address,
+    git_cuvec
 };
 
 struct Dwarf_Gdbindex_array_instance_s {

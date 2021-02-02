@@ -47,10 +47,10 @@ extern "C" {
 #endif /* __cplusplus */
 
 struct dwarfstring_s {
-   char *        s_data;
-   unsigned long s_size;
-   unsigned long s_avail;
-   unsigned char s_malloc;
+    char *        s_data;
+    unsigned long s_size;
+    unsigned long s_avail;
+    unsigned char s_malloc;
 };
 
 typedef unsigned long long   dwarfstring_u;

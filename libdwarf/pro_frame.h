@@ -35,15 +35,15 @@
     the opcode since there are only 6 bits in the
     register field.
 */
-#define MAX_6_BIT_VALUE		0x3f
+#define MAX_6_BIT_VALUE 0x3f
 
 /* This struct holds debug_frame instructions */
 typedef struct Dwarf_P_Frame_Pgm_s *Dwarf_P_Frame_Pgm;
 
 struct Dwarf_P_Frame_Pgm_s {
     Dwarf_Ubyte    dfp_opcode; /* opcode - includes reg # */
-    char *         dfp_args;	 /* operands */
-    Dwarf_Unsigned dfp_nbytes;	 /* number of bytes in args */
+    char *         dfp_args;   /* operands */
+    Dwarf_Unsigned dfp_nbytes; /* number of bytes in args */
     Dwarf_P_Frame_Pgm dfp_next;
 };
 
@@ -60,10 +60,10 @@ struct Dwarf_P_Cie_s {
     char *cie_aug;
 
 
-    Dwarf_Ubyte cie_code_align;	/* alignment of code */
+    Dwarf_Ubyte cie_code_align; /* alignment of code */
     Dwarf_Sbyte cie_data_align;
-    Dwarf_Ubyte cie_ret_reg;	/* return register # */
-    char *cie_inst;		/* initial instruction */
+    Dwarf_Ubyte cie_ret_reg;    /* return register # */
+    char *cie_inst;             /* initial instruction */
     long cie_inst_bytes;
     /* no of init_inst */
     Dwarf_P_Cie cie_next;

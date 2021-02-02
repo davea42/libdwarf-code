@@ -39,13 +39,13 @@
 #endif /* HASHSEARCH */
 
 
-/* Contexts are in a list in a dbg and
-   do not move once established.
-   So saving one is ok. as long as the dbg
-   exists. */
+/*  Contexts are in a list in a dbg and
+    do not move once established.
+    So saving one is ok. as long as the dbg
+    exists. */
 struct Dwarf_Tied_Entry_s {
-  Dwarf_Sig8 dt_key;
-  Dwarf_CU_Context dt_context;
+    Dwarf_Sig8 dt_key;
+    Dwarf_CU_Context dt_context;
 };
 
 int _dwarf_tied_compare_function(const void *l, const void *r);

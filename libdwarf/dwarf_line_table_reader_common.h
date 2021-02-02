@@ -53,11 +53,11 @@ STANDARD_OPERAND_COUNT_TWO_LEVEL] = {
     1, 2, 0,
 };
 
-/* We have a normal standard opcode base, but
-   an arm compiler emitted a non-standard table!
-   This could lead to problems...
-   ARM C/C++ Compiler, RVCT4.0 [Build 4
-   00] seems to get the table wrong .  */
+/*  We have a normal standard opcode base, but
+    an arm compiler emitted a non-standard table!
+    This could lead to problems...
+    ARM C/C++ Compiler, RVCT4.0 [Build 4
+    00] seems to get the table wrong .  */
 static unsigned char
 dwarf_arm_standard_opcode_operand_count[
 STANDARD_OPERAND_COUNT_DWARF3] = {

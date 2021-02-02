@@ -39,8 +39,8 @@
 #ifdef HAVE_ELF_H /* does includes of elf.h libelf.h here. */
 #include <elf.h>
 #elif defined(HAVE_LIBELF_H)
-/* On one platform without elf.h this gets Elf32_Rel
-   type defined (a required type). */
+/*  On one platform without elf.h this gets Elf32_Rel
+    type defined (a required type). */
 #include <libelf.h>
 /* Consider the other known directory too */
 #elif defined(HAVE_LIBELF_LIBELF_H)

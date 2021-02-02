@@ -38,17 +38,17 @@ extern "C" {
 int _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input);
 
 int _dwarf_construct_linkedto_path(
-   char         **global_prefixes_in,
-   unsigned       length_global_prefixes_in,
-   char          *pathname_in,
-   char          *link_string_in, /* from debug link */
-   dwarfstring   *link_string_fullpath,
-   unsigned char *crc_in, /* from debug_link, 4 bytes */
-   unsigned char *buildid, /* from gnu buildid */
-   unsigned       buildid_length, /* from gnu buildid */
-   char        ***paths_out,
-   unsigned      *paths_out_length,
-   int *errcode);
+    char         **global_prefixes_in,
+    unsigned       length_global_prefixes_in,
+    char          *pathname_in,
+    char          *link_string_in, /* from debug link */
+    dwarfstring   *link_string_fullpath,
+    unsigned char *crc_in, /* from debug_link, 4 bytes */
+    unsigned char *buildid, /* from gnu buildid */
+    unsigned       buildid_length, /* from gnu buildid */
+    char        ***paths_out,
+    unsigned      *paths_out_length,
+    int *errcode);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

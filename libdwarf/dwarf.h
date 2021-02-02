@@ -1,31 +1,30 @@
 /*
-  Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2007-2020 David Anderson. All rights reserved.
+Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
+Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
+Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
-  This program is free software; you can redistribute it
-  and/or modify it under the terms of version 2.1 of the
-  GNU Lesser General Public License as published by the Free
-  Software Foundation.
+This program is free software; you can redistribute it
+and/or modify it under the terms of version 2.1 of the
+GNU Lesser General Public License as published by the Free
+Software Foundation.
 
-  This program is distributed in the hope that it would be
-  useful, but WITHOUT ANY WARRANTY; without even the implied
-  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-  PURPOSE.
+This program is distributed in the hope that it would be
+useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
 
-  Further, this software is distributed without any warranty
-  that it is free of the rightful claim of any third person
-  regarding infringement or the like.  Any license provided
-  herein, whether implied or otherwise, applies only to this
-  software file.  Patent licenses, if any, provided herein
-  do not apply to combinations of this program with other
-  software, or any other product whatsoever.
+Further, this software is distributed without any warranty
+that it is free of the rightful claim of any third person
+regarding infringement or the like.  Any license provided
+herein, whether implied or otherwise, applies only to this
+software file.  Patent licenses, if any, provided herein
+do not apply to combinations of this program with other
+software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General
-  Public License along with this program; if not, write the
-  Free Software Foundation, Inc., 51 Franklin Street - Fifth
-  Floor, Boston MA 02110-1301, USA.
-
+You should have received a copy of the GNU Lesser General
+Public License along with this program; if not, write the
+Free Software Foundation, Inc., 51 Franklin Street - Fifth
+Floor, Boston MA 02110-1301, USA.
 */
 
 
@@ -383,10 +382,10 @@ extern "C" {
 #define DW_AT_rank                              0x71 /* DWARF5 */
 #define DW_AT_str_offsets_base                  0x72 /* DWARF5 */
 #define DW_AT_addr_base                         0x73 /* DWARF5 */
-  /* Use DW_AT_rnglists_base, DW_AT_ranges_base is obsolete as */
-  /* it was only used in some DWARF5 drafts, not the final DWARF5. */
+/* Use DW_AT_rnglists_base, DW_AT_ranges_base is obsolete as */
+/* it was only used in some DWARF5 drafts, not the final DWARF5. */
 #define DW_AT_rnglists_base                     0x74 /* DWARF5 */
-  /*  DW_AT_dwo_id, an experiment in some DWARF4+. Not DWARF5! */
+/*  DW_AT_dwo_id, an experiment in some DWARF4+. Not DWARF5! */
 #define DW_AT_dwo_id                            0x75 /* DWARF4!*/
 #define DW_AT_dwo_name                          0x76 /* DWARF5 */
 #define DW_AT_reference                         0x77 /* DWARF5 */
@@ -412,8 +411,8 @@ extern "C" {
 #define DW_AT_defaulted                         0x8b /* DWARF5 */
 #define DW_AT_loclists_base                     0x8c /* DWARF5 */
 
-/* In extensions, we attempt to include the vendor extension
-   in the name even when the vendor leaves it out. */
+/*  In extensions, we attempt to include the vendor extension
+    in the name even when the vendor leaves it out. */
 
 /* HP extensions. */
 #define DW_AT_HP_block_index                    0x2000  /* HP */
@@ -619,8 +618,8 @@ most-likely-useful name. */
     between elements in the dimension. */
 #define DW_AT_PGI_lstride                       0x3a02
 
-/* There are two groups of Apple extensions here, it is
-   unclear what exactly is correct.  */
+/*  There are two groups of Apple extensions here, it is
+    unclear what exactly is correct.  */
 #define DW_AT_APPLE_optimized                   0x3fe1 /* Apple */
 #define DW_AT_APPLE_flags                       0x3fe2 /* Apple */
 #define DW_AT_APPLE_isa                         0x3fe3 /* Apple */
@@ -907,9 +906,9 @@ most-likely-useful name. */
 #define DW_IDX_lo_user              0x2000   /* DWARF5 */
 #define DW_IDX_hi_user              0x0fff   /* DWARF5 */
 
-/* These with not-quite-the-same-names were used in DWARF4
-   We call then DW_LLEX.
-   Never official and should not be used by anyone.*/
+/*  These with not-quite-the-same-names were used in DWARF4
+    We call then DW_LLEX.
+    Never official and should not be used by anyone.*/
 #define DW_LLEX_end_of_list_entry            0x0
 #define DW_LLEX_base_address_selection_entry 0x01
 #define DW_LLEX_start_end_entry              0x02
@@ -1043,10 +1042,10 @@ most-likely-useful name. */
 #define DW_LANG_UPC                     0x0012 /* DWARF3f */
 #define DW_LANG_D                       0x0013 /* DWARF3f */
 #define DW_LANG_Python                  0x0014 /* DWARF4 */
-/* The following 2 are not yet formally approved October 2010, but
-   it seems extremely likely they will be approved as the committee
-   chair agrees these should be ok and no one on the committee
-   has objected. */
+/*  The following 2 are not yet formally approved October 2010, but
+    it seems extremely likely they will be approved as the committee
+    chair agrees these should be ok and no one on the committee
+    has objected. */
 #define DW_LANG_OpenCL                  0x0015 /* DWARF5 */
 #define DW_LANG_Go                      0x0016 /* DWARF5 */
 #define DW_LANG_Modula3                 0x0017 /* DWARF5 */
@@ -1219,9 +1218,9 @@ most-likely-useful name. */
 #define DW_MACINFO_end_file             0x04
 #define DW_MACINFO_vendor_ext           0xff
 
-/* CFA operator compaction (a space saving measure, see
-   the DWARF standard) means DW_CFA_extended and DW_CFA_nop
-   have the same value here.  */
+/*  CFA operator compaction (a space saving measure, see
+    the DWARF standard) means DW_CFA_extended and DW_CFA_nop
+    have the same value here.  */
 #define DW_CFA_advance_loc        0x40
 #define DW_CFA_offset             0x80
 #define DW_CFA_restore            0xc0
@@ -1261,9 +1260,9 @@ most-likely-useful name. */
 #define DW_CFA_GNU_args_size                 0x2e /* GNU */
 #define DW_CFA_GNU_negative_offset_extended  0x2f /* GNU */
 
-/* Metaware if HC is augmentation, apparently meaning High C
-   and the op has a single uleb operand.
-   See http://sourceforge.net/p/elftoolchain/tickets/397/  */
+/*  Metaware if HC is augmentation, apparently meaning High C
+    and the op has a single uleb operand.
+    See http://sourceforge.net/p/elftoolchain/tickets/397/  */
 #define DW_CFA_METAWARE_info     0x34
 
 #define DW_CFA_high_user         0x3f
@@ -1310,10 +1309,10 @@ most-likely-useful name. */
    frame definitions here (and the fixed table sizes
    they imply) obsolete.  They are left here for compatibility.
 */
-/* Default column used for CFA in the libdwarf reader client.
-   Assumes reg 0 never appears as
-   a register in DWARF information. Usable for MIPS,
-   but never a good idea, really.    */
+/*  Default column used for CFA in the libdwarf reader client.
+    Assumes reg 0 never appears as
+    a register in DWARF information. Usable for MIPS,
+    but never a good idea, really.    */
 /*  These identifiers are not defined by any DWARFn standard. */
 #define DW_FRAME_CFA_COL 0
 
@@ -1453,33 +1452,31 @@ most-likely-useful name. */
 #ifndef DW_FRAME_HIGHEST_NORMAL_REGISTER
 #define DW_FRAME_HIGHEST_NORMAL_REGISTER 188
 #endif
-/* This is the number of columns in the Frame Table.
-   This constant should
-   be kept in sync with DW_REG_TABLE_SIZE defined in libdwarf.h
-   It must also be large enough to be beyond the highest
-   compiler-defined-register (meaning
-   DW_FRAME_RA_COL DW_FRAME_STATIC_LINK
-   in the MIPS/IRIX case */
+/*  This is the number of columns in the Frame Table.
+    This constant should
+    be kept in sync with DW_REG_TABLE_SIZE defined in libdwarf.h
+    It must also be large enough to be beyond the highest
+    compiler-defined-register (meaning
+    DW_FRAME_RA_COL DW_FRAME_STATIC_LINK
+    in the MIPS/IRIX case */
 #ifndef DW_FRAME_LAST_REG_NUM
 #define DW_FRAME_LAST_REG_NUM   (DW_FRAME_HIGHEST_NORMAL_REGISTER + 3)
 #endif
 
 
-/* Column recording ra (return address from a function call).
-   This is common to many architectures, but as a 'simple register'
-   is not necessarily adequate for all architectures.
-   For MIPS/IRIX this register number is actually recorded on disk
-   in the .debug_frame section.
-   */
+/*  Column recording ra (return address from a function call).
+    This is common to many architectures, but as a 'simple register'
+    is not necessarily adequate for all architectures.
+    For MIPS/IRIX this register number is actually recorded on disk
+    in the .debug_frame section.  */
 #define DW_FRAME_RA_COL  (DW_FRAME_HIGHEST_NORMAL_REGISTER + 1)
 
-/* Column recording static link applicable to up-level
-   addressing, as in IRIX mp code, pascal, etc.
-   This is common to many architectures but
-   is not necessarily adequate for all architectures.
-   For MIPS/IRIX this register number is actually recorded on disk
-   in the .debug_frame section.
-*/
+/*  Column recording static link applicable to up-level
+    addressing, as in IRIX mp code, pascal, etc.
+    This is common to many architectures but
+    is not necessarily adequate for all architectures.
+    For MIPS/IRIX this register number is actually recorded on disk
+    in the .debug_frame section.  */
 #define DW_FRAME_STATIC_LINK (DW_FRAME_HIGHEST_NORMAL_REGISTER + 2)
 
 

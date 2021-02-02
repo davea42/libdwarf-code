@@ -43,7 +43,7 @@ dwarf_get_FORM_CLASS_name (enum Dwarf_Form_Class fc,
     const char ** s_out)
 {
     switch (fc) {
-    case DW_FORM_CLASS_UNKNOWN: 
+    case DW_FORM_CLASS_UNKNOWN:
         *s_out = "DW_FORM_CLASS_UNKNOWN";
         return DW_DLV_OK;
     case DW_FORM_CLASS_ADDRESS:

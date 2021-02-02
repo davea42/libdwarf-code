@@ -172,9 +172,9 @@ struct Dwarf_Loc_Expr_Op_s {
 
 #define DW_LLE_VALUE_BOGUS 254
 
-/* Location description DWARF 2,3,4,5
-   Adds the DW_LLE value (new in DWARF5).
-   This struct is opaque. Not visible to callers. */
+/*  Location description DWARF 2,3,4,5
+    Adds the DW_LLE value (new in DWARF5).
+    This struct is opaque. Not visible to callers. */
 struct Dwarf_Locdesc_c_s {
     Dwarf_Small      ld_kind; /* DW_LKIND */
 

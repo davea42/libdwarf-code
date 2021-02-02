@@ -35,22 +35,22 @@
 #define DW_LINE_VERSION4   4
 
 #if defined(__i386) || defined(__x86_64)
-#define MIN_INST_LENGTH			1
+#define MIN_INST_LENGTH  1
 #elif defined(__s390__) || defined(__s390x__)
 /*  Correct value unknown.  This is temporary
     as we need a better way to set this (in
     dwarfgen). This at least works for dwarfgen testing
     at this point, avoids an error. */
-#define MIN_INST_LENGTH			1
+#define MIN_INST_LENGTH  1
 #else
 /*  1 is not necessarily the most efficient (space-wise) for various
     architectures, but will allow line tables to be generated
     without error if the input expects the min length to be 1.
     When using dwarfgen the setting should be that of the
     output arch, not the host (unless the two essentially match).  */
-#define MIN_INST_LENGTH			4
+#define MIN_INST_LENGTH 4
 #endif
-#define DEFAULT_IS_STMT			false
+#define DEFAULT_IS_STMT false
 /*  line base and range are temporarily defines.
     They need to be calculated later. */
 #define LINE_BASE   -1
@@ -61,9 +61,9 @@
 
 
 
-/* This struct holds file or include_dir
-   entries for the statement prologue.
-   Defined in pro_line.h */
+/*  This struct holds file or include_dir
+    entries for the statement prologue.
+    Defined in pro_line.h */
 struct Dwarf_P_F_Entry_s {
     char *dfe_name;
     Dwarf_P_F_Entry dfe_next;

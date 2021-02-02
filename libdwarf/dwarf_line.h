@@ -39,10 +39,10 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 */
 #define MAX_LINE_DIFF       UINT_MAX
 
-/* This is for a sanity check on line
-   table extended opcodes.
-   It is entirely arbitrary, and 100 is surely too small if
-   someone was inserting strings in the opcode. */
+/*  This is for a sanity check on line
+    table extended opcodes.
+    It is entirely arbitrary, and 100 is surely too small if
+    someone was inserting strings in the opcode. */
 #define DW_LNE_LEN_MAX   100
 
 
@@ -443,10 +443,10 @@ line_ptr,highest_std) \
 
 #define MAX_LINE_OP_CODE  255
 
-/* Operand counts per standard operand.
-   The initial zero is for DW_LNS_copy.
-   This is an economical way to verify we understand the table
-   of standard-opcode-lengths in the line table prologue.  */
+/*  Operand counts per standard operand.
+    The initial zero is for DW_LNS_copy.
+    This is an economical way to verify we understand the table
+    of standard-opcode-lengths in the line table prologue.  */
 #define STANDARD_OPERAND_COUNT_DWARF2 9
 #define STANDARD_OPERAND_COUNT_DWARF3 12
 /*  For two-level line tables, we have three additional

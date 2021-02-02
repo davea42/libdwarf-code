@@ -428,15 +428,15 @@ struct Dwarf_Section_s {
     If next_to_use+1 (mod maxcount) == first the slots are all used
 */
 struct Dwarf_Harmless_s {
-  unsigned dh_maxcount;
-  unsigned dh_next_to_use;
-  unsigned dh_first;
-  unsigned dh_errs_count;
-  char **  dh_errors;
+    unsigned dh_maxcount;
+    unsigned dh_next_to_use;
+    unsigned dh_first;
+    unsigned dh_errs_count;
+    char **  dh_errors;
 };
 
-/* Data needed separately for debug_info and debug_types
-   as we may be reading both interspersed. */
+/*  Data needed separately for debug_info and debug_types
+    as we may be reading both interspersed. */
 
 struct Dwarf_Debug_InfoTypes_s {
     /*  Context for the compilation_unit just read by a call to
@@ -539,7 +539,7 @@ struct Dwarf_Tied_Data_s {
     dg_groupnum 1 is base
     dg_groupnum 2 is dwo
     dg_groupnum 3 and higher are COMDAT groups (if any).
-  */
+*/
 struct Dwarf_Group_Data_s {
     /* For traditional DWARF the value is one, just one group. */
     unsigned gd_number_of_groups;
@@ -903,9 +903,9 @@ Dwarf_Bool _dwarf_addr_form_is_indexed(int form);
 
 int
 _dwarf_search_for_signature(Dwarf_Debug dbg,
-   Dwarf_Sig8 sig,
-   Dwarf_CU_Context *context_out,
-   Dwarf_Error *error);
+    Dwarf_Sig8 sig,
+    Dwarf_CU_Context *context_out,
+    Dwarf_Error *error);
 
 int
 _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
@@ -937,8 +937,8 @@ int _dwarf_insert_in_group_map(Dwarf_Debug dbg,
     const char *name,
     Dwarf_Error * error);
 
-/* returns TRUE/FALSE: meaning this section name is in
-   map for this groupnum  or not.*/
+/*  returns TRUE/FALSE: meaning this section name is in
+    map for this groupnum  or not.*/
 int _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
     const char * scn_name,
     unsigned groupnum);

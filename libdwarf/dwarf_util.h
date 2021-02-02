@@ -347,8 +347,8 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     } while (0)
 
 
-/* Fuller checking. Returns DW_DLV_ERROR or DW_DLV_OK
-   Caller must set Dwarf_Error */
+/*  Fuller checking. Returns DW_DLV_ERROR or DW_DLV_OK
+    Caller must set Dwarf_Error */
 int _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Unsigned * leb128_length,
     Dwarf_Unsigned *outval,Dwarf_Byte_Ptr endptr);

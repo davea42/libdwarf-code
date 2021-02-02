@@ -354,8 +354,8 @@ struct Dwarf_P_Per_Reloc_Sect_s {
 #define DEFAULT_SLOTS_PER_BLOCK 3
 
 typedef struct memory_list_s {
-  struct memory_list_s *prev;
-  struct memory_list_s *next;
+    struct memory_list_s *prev;
+    struct memory_list_s *next;
 } memory_list_t;
 
 struct Dwarf_P_Per_Sect_String_Attrs_s {
@@ -612,5 +612,5 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     Dwarf_Error *error);
 
 int _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
-  const char *extra,
-  int *err);
+    const char *extra,
+    int *err);

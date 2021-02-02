@@ -28,8 +28,8 @@
 
 */
 
-/* Definition of sizes of types. Independent of
-   target or host, these are. */
+/*  Definition of sizes of types. Independent of
+    target or host, these are. */
 #define sizeof_ubyte(dbg) 1
 #define sizeof_uhalf(dbg) DWARF_HALF_SIZE
 
