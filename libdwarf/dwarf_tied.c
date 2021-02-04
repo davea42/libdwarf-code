@@ -121,8 +121,10 @@ _dwarf_tied_destroy_free_node(void*nodep)
 /*  This presumes only we are reading the debug_info
     CUs from tieddbg. That is a reasonable
     requirement, one hopes.
-    Currently it reads all the tied CUs at once, unless
-    there is an error..
+    Currently it reads all the tied CUs at once up to
+    the point of finding a match unless there is an error..
+    This the only way we call _dwarf_next_cu_header*( )
+    on the tied file, so safe.
     */
 static int
 _dwarf_loop_reading_debug_info_for_cu(
@@ -251,9 +253,10 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
 
     /*  We now ensure all tieddbg CUs signatures
         are in the td_tied_search,
-        We assume the caller is NOT doing
+        The caller is NOT doing
         info section read operations
-        on the tieddbg.  */
+        on the tieddbg in this (tied)dbg, so it
+        cannot goof up their _dwarf_next_cu_header*().  */
     res  = _dwarf_loop_reading_debug_info_for_cu(tieddbg,error);
     if (res == DW_DLV_ERROR) {
         return res;

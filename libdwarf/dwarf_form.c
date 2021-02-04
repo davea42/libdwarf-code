@@ -848,7 +848,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
         break;
     case DW_FORM_ref_sig8: /* FIXME */
         /*  We cannot handle this yet.
-            The reference is to .debug_types, and
+            The reference could be to .debug_types, and
             this function only returns an offset in
             .debug_info at this point. */
         _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);

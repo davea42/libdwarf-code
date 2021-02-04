@@ -1,3 +1,14 @@
+2021-02-04  David Anderson
+    * dwarf_die_deliv.c: Refactored the code creating
+      CU_Context records, removing duplicated code to
+      three new small functions: calculate_next_cu_context_offset(),
+      create_a_new_cu_context_record_on_list() and
+      load_die_containing_section(). Much easier to understand
+      the flow now. 
+    * dwarf_form.c: Clarified a comment.
+    * dwarf_opaque.h: Corrected a comment about cc_unit_type
+      field.
+    * dwarf_tied.c: Corrected commentary about reading CUs.
 2021-02-02  David Anderson
     * libdwarf2.1.mm: Rev 3.25. Documents
       dwarf_get_FORM_CLASS_name().

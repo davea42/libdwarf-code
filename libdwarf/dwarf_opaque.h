@@ -195,11 +195,8 @@ struct Dwarf_CU_Context_s {
         Some early DW5 drafts encouraged DWARF4 output
             of some compilers to include dwo_id, but
             in a messier way(lacking DW_UT_*).
-        If cc_unit_type == DW_UT_type ( DW_UT_split_type
-            was never part of DW5, never standard,
-            though DW_UT_split_compile is DW5.).
+        If cc_unit_type ==  DW_UT_split_type
             the signature is a type signature. */
-
     Dwarf_Half  cc_cu_die_tag;
 
     Dwarf_Sig8  cc_signature;
