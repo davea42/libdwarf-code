@@ -1,4 +1,5 @@
 /*
+
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -67,6 +68,7 @@ static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
     the final DWARF5).
 */
 
+static struct Dwarf_Sig8_s dwarfsig8zero;
 
 #if 0
 static void
@@ -668,19 +670,26 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr   section_end_ptr = 0;
     int              local_length_size = 0;
     Dwarf_Unsigned   bytes_read = 0;
-    const char *     secname = is_info?dbg->de_debug_info.dss_name:
-        dbg->de_debug_types.dss_name;
-    Dwarf_Debug_InfoTypes dis = is_info? &dbg->de_info_reading:
-        &dbg->de_types_reading;
-    Dwarf_Unsigned   section_size = is_info?
-        dbg->de_debug_info.dss_size:
-        dbg->de_debug_types.dss_size;
+    const char *     secname = 0;
+    Dwarf_Debug_InfoTypes dis = 0;
+    struct Dwarf_Section_s * secdp = 0;
+    Dwarf_Unsigned   section_size = 0;
     int              unit_type = 0;
     int              version = 0;
     Dwarf_Small *    dataptr = 0;
     int              res = 0;
+    if (is_info) {
+        secname = dbg->de_debug_info.dss_name;
+        dis     = &dbg->de_info_reading;
+        secdp   = &dbg->de_debug_info;
+    } else {
+        secname = dbg->de_debug_types.dss_name;
+        dis =     &dbg->de_types_reading;
+        secdp   = &dbg->de_debug_types;
+    }
+    section_size = secdp->dss_size;
 
-    memset(&signaturedata,0,sizeof(signaturedata));
+    signaturedata = dwarfsig8zero;
     cu_context =
         (Dwarf_CU_Context)_dwarf_get_alloc(dbg, DW_DLA_CU_CONTEXT, 1);
     if (!cu_context) {
@@ -1130,7 +1139,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                         DW_DLE_IMPROPER_DWO_ID);
                     return DW_DLV_ERROR;
                 }
-                memset(&signature, 0, sizeof(signature));
+                signature = dwarfsig8zero;
                 sres = dwarf_formsig8_const(attr,
                     &signature,error);
                 if (sres == DW_DLV_OK) {
@@ -1379,7 +1388,7 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     int res = 0;
 
 
-    memset(&signaturedata,0,sizeof(signaturedata));
+    signaturedata = dwarfsig8zero;
     signaturedata = cu_context->cc_signature;
 
     /*  Loads and initializes the dwarf .debug_cu_index
@@ -1514,8 +1523,8 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
     return;
 }
 
-static Dwarf_Unsigned
-calculate_next_cu_context_offset(Dwarf_CU_Context cu_context)
+Dwarf_Unsigned
+_dwarf_calculate_next_cu_context_offset(Dwarf_CU_Context cu_context)
 {            
     Dwarf_Unsigned next_cu_offset = 0;
  
@@ -1526,8 +1535,8 @@ calculate_next_cu_context_offset(Dwarf_CU_Context cu_context)
     return next_cu_offset;
 }
 
-static int
-create_a_new_cu_context_record_on_list(
+int
+_dwarf_create_a_new_cu_context_record_on_list(
     Dwarf_Debug dbg,
     Dwarf_Debug_InfoTypes dis,
     Dwarf_Bool is_info,
@@ -1568,8 +1577,8 @@ create_a_new_cu_context_record_on_list(
     return DW_DLV_OK;
 }
 
-static int
-load_die_containing_section(Dwarf_Debug dbg,
+int
+_dwarf_load_die_containing_section(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
     Dwarf_Error *error)
 {
@@ -1651,6 +1660,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Debug_InfoTypes dis = 0;
     Dwarf_Unsigned section_size =  0;
     Dwarf_Small *dataptr = 0;
+    struct Dwarf_Section_s *secdp = 0;
     int res = 0;
 
     /* ***** BEGIN CODE ***** */
@@ -1662,14 +1672,16 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     if (is_info) {
         dis =&dbg->de_info_reading;
         dataptr = dbg->de_debug_info.dss_data;
+        secdp = &dbg->de_debug_info;
     } else {
         dis =&dbg->de_types_reading;
         dataptr = dbg->de_debug_types.dss_data;
+        secdp = &dbg->de_debug_types;
     }
     
     if (!dataptr) {
-        res = load_die_containing_section(dbg,is_info,
-            error);
+        res = _dwarf_load_die_containing_section(dbg,
+            is_info, error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -1734,12 +1746,13 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             }
         }
     }
-#endif
+#endif /* 0 */
     if (!dis->de_cu_context) {
         /*  We are leaving new_offset zero. We are at the
             start of a section. */
+        new_offset = 0;
     } else {
-        new_offset = calculate_next_cu_context_offset(
+        new_offset = _dwarf_calculate_next_cu_context_offset(
             dis->de_cu_context);
     }
 
@@ -1749,8 +1762,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         of debug_info section, and reset
         de_cu_debug_info_offset to
         enable looping back through the cu's. */
-    section_size = is_info? dbg->de_debug_info.dss_size:
-        dbg->de_debug_types.dss_size;
+    section_size = secdp->dss_size;
     if ((new_offset +
         _dwarf_length_of_cu_header_simple(dbg,is_info)) >=
         section_size) {
@@ -1763,7 +1775,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
 
     /* If not, make CU Context for it. */
     if (!cu_context) {
-        res = create_a_new_cu_context_record_on_list(
+        res = _dwarf_create_a_new_cu_context_record_on_list(
             dbg,dis,is_info,section_size,new_offset,
             &cu_context,error);
         if (res != DW_DLV_OK) {
@@ -2822,6 +2834,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Debug_InfoTypes dis = 0;
     Dwarf_Byte_Ptr   die_info_end = 0;
     Dwarf_Unsigned   highest_code = 0;
+    struct Dwarf_Section_s * secdp = 0;
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -2829,15 +2842,17 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     }
     if (is_info) {
         dis =&dbg->de_info_reading;
+        secdp = &dbg->de_debug_info;
         dataptr = dbg->de_debug_info.dss_data;
     } else {
         dis =&dbg->de_types_reading;
+        secdp = &dbg->de_debug_types;
         dataptr = dbg->de_debug_types.dss_data;
     }
 
     if (!dataptr) {
-        lres = load_die_containing_section(dbg,is_info,
-            error);
+        lres = _dwarf_load_die_containing_section(dbg,
+            is_info, error);
         if (lres != DW_DLV_OK) {
             return lres;
         }
@@ -2847,21 +2862,19 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         Dwarf_Unsigned section_size = 0;
 
         if (dis->de_cu_context_list_end != NULL) {
-            new_cu_offset = calculate_next_cu_context_offset(
+            new_cu_offset = _dwarf_calculate_next_cu_context_offset(
                dis->de_cu_context_list_end);
         }/* Else new_cu_offset remains 0, no CUs on list,
             a fresh section setup. */
-        section_size = is_info?
-            dbg->de_debug_info.dss_size:
-            dbg->de_debug_types.dss_size;
+        section_size = secdp->dss_size;
         do {
-            lres = create_a_new_cu_context_record_on_list(
+            lres = _dwarf_create_a_new_cu_context_record_on_list(
                 dbg, dis,is_info,section_size,new_cu_offset,
                 &cu_context,error);
             if (lres != DW_DLV_OK) {
                 return lres;
             }
-            new_cu_offset =  calculate_next_cu_context_offset(
+            new_cu_offset =  _dwarf_calculate_next_cu_context_offset(
                 cu_context);
             /*  Not setting dis->de_cu_context, leave
                 that unchanged. */

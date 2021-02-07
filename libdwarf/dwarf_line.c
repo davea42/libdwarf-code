@@ -277,6 +277,34 @@ create_fullest_file_path(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+static void
+report_bogus_stmt_list_form(Dwarf_Debug dbg,
+    Dwarf_Half attrform, Dwarf_Error *error)
+{
+    dwarfstring m;
+    dwarfstring f;
+    const char *formname = 0;
+
+    dwarfstring_constructor(&f);
+    dwarf_get_FORM_name(attrform,&formname);
+    if (!formname) {
+        dwarfstring_append_printf_u(&f,"Invalid Form Code "
+            " 0x" DW_PR_DUx,attrform);
+    } else {
+        dwarfstring_append(&f,(char *)formname);
+    }
+    dwarfstring_constructor(&m);
+    dwarfstring_append_printf_s(&m,
+        "DW_DLE_LINE_OFFSET_WRONG_FORM: form %s "
+        "instead of an allowed section offset form.",
+        dwarfstring_string(&f));
+    _dwarf_error_string(dbg, error, DW_DLE_LINE_OFFSET_WRONG_FORM,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+    dwarfstring_destructor(&f);
+}
+
+
 /*  Although source files is supposed to return the
     source files in the compilation-unit, it does
     not look for any in the statement program.  In
@@ -381,37 +409,37 @@ dwarf_srcfiles(Dwarf_Die die,
         dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         return lres;
     }
-    if (attrform != DW_FORM_data4 && attrform != DW_FORM_data8 &&
+    if (attrform == DW_FORM_addr) {
+        Dwarf_Addr addr = 0;
+        /*  DW_AT_producer
+            4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2.9)
+            generated DW_FORM_addr for DW_AT_stmt_list! */ 
+        lres = dwarf_formaddr(stmt_list_attr,&addr,error);
+        if (lres != DW_DLV_OK) {
+            if (lres == DW_DLV_ERROR) {
+                report_bogus_stmt_list_form(dbg,
+                    attrform,error);
+                dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
+             }  
+             return lres;
+        }
+        line_offset = (Dwarf_Unsigned)addr;
+    } else if (attrform != DW_FORM_data4 && 
+        attrform != DW_FORM_data8 &&
         attrform != DW_FORM_sec_offset  &&
         attrform != DW_FORM_GNU_ref_alt) {
-        dwarfstring m;
-        dwarfstring f;
-        const char *formname = 0;
-
-        dwarfstring_constructor(&f);
-        dwarf_get_FORM_name(attrform,&formname);
-        if (!formname) {
-            dwarfstring_append_printf_u(&f,"Invalid Form Code "
-                " 0x" DW_PR_DUx,attrform);
-        } else {
-            dwarfstring_append(&f,(char *)formname);
-        }
+        report_bogus_stmt_list_form(dbg,
+            attrform,error);
         dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_s(&m,
-            "DW_DLE_LINE_OFFSET_WRONG_FORM: form %s "
-            "instead of an allowed section offset form.",
-            dwarfstring_string(&f));
-        _dwarf_error_string(dbg, error, DW_DLE_LINE_OFFSET_WRONG_FORM,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        dwarfstring_destructor(&f);
         return DW_DLV_ERROR;
-    }
-    lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);
-    if (lres != DW_DLV_OK) {
-        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-        return lres;
+    } else {
+        /* standard setup. */
+        lres = dwarf_global_formref(stmt_list_attr, 
+            &line_offset, error);
+        if (lres != DW_DLV_OK) {
+            dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
+            return lres;
+        }
     }
     if (line_offset >= dbg->de_debug_line.dss_size) {
         dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);

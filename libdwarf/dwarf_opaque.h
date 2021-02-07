@@ -433,8 +433,8 @@ struct Dwarf_Harmless_s {
 };
 
 /*  Data needed separately for debug_info and debug_types
-    as we may be reading both interspersed. */
-
+    as we may be reading both interspersed.  So we always
+    select the one we need. */
 struct Dwarf_Debug_InfoTypes_s {
     /*  Context for the compilation_unit just read by a call to
         dwarf_next_cu_header. **Updated by dwarf_next_cu_header in
@@ -898,14 +898,27 @@ int _dwarf_get_addr_index_itself(int theform,
     Dwarf_Error * error);
 Dwarf_Bool _dwarf_addr_form_is_indexed(int form);
 
-int
-_dwarf_search_for_signature(Dwarf_Debug dbg,
+int _dwarf_load_die_containing_section(Dwarf_Debug dbg,
+    Dwarf_Bool is_info,
+    Dwarf_Error *error);
+
+int _dwarf_create_a_new_cu_context_record_on_list(
+    Dwarf_Debug dbg,
+    Dwarf_Debug_InfoTypes dis,
+    Dwarf_Bool is_info,
+    Dwarf_Unsigned section_size,
+    Dwarf_Unsigned new_cu_offset,
+    Dwarf_CU_Context *context_out,
+    Dwarf_Error *error);
+Dwarf_Unsigned _dwarf_calculate_next_cu_context_offset(
+    Dwarf_CU_Context cu_context);
+
+int _dwarf_search_for_signature(Dwarf_Debug dbg,
     Dwarf_Sig8 sig,
     Dwarf_CU_Context *context_out,
     Dwarf_Error *error);
 
-int
-_dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
+int _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Debug tieddbg,
     Dwarf_CU_Context *tiedcontext_out,

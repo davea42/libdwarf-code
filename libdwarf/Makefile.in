@@ -151,8 +151,8 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_elf_load_headers.lo \
 	libdwarf_la-dwarf_elfread.lo \
 	libdwarf_la-dwarf_elf_rel_detector.lo \
-	libdwarf_la-dwarf_error.lo libdwarf_la-dwarf_fission_to_cu.lo \
-	libdwarf_la-dwarf_form.lo \
+	libdwarf_la-dwarf_error.lo libdwarf_la-dwarf_find_sigref.lo \
+	libdwarf_la-dwarf_fission_to_cu.lo libdwarf_la-dwarf_form.lo \
 	libdwarf_la-dwarf_form_class_names.lo \
 	libdwarf_la-dwarf_frame.lo libdwarf_la-dwarf_frame2.lo \
 	libdwarf_la-dwarf_funcs.lo libdwarf_la-dwarf_gdbindex.lo \
@@ -264,6 +264,7 @@ am__depfiles_remade = ./$(DEPDIR)/libdwarf_la-crc32.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_elfread.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_error.Plo \
+	./$(DEPDIR)/libdwarf_la-dwarf_find_sigref.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_fission_to_cu.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_form.Plo \
 	./$(DEPDIR)/libdwarf_la-dwarf_form_class_names.Plo \
@@ -744,6 +745,7 @@ dwarf_elfstructs.h \
 dwarf_errmsg_list.h \
 dwarf_error.c \
 dwarf_error.h \
+dwarf_find_sigref.c \
 dwarf_fission_to_cu.c \
 dwarf_form.c \
 dwarf_form_class_names.c \
@@ -1083,6 +1085,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elfread.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_error.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_find_sigref.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_fission_to_cu.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_form.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_form_class_names.Plo@am__quote@ # am--include-marker
@@ -1283,6 +1286,13 @@ libdwarf_la-dwarf_error.lo: dwarf_error.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_error.c' object='libdwarf_la-dwarf_error.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_error.lo `test -f 'dwarf_error.c' || echo '$(srcdir)/'`dwarf_error.c
+
+libdwarf_la-dwarf_find_sigref.lo: dwarf_find_sigref.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_find_sigref.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_find_sigref.Tpo -c -o libdwarf_la-dwarf_find_sigref.lo `test -f 'dwarf_find_sigref.c' || echo '$(srcdir)/'`dwarf_find_sigref.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_find_sigref.Tpo $(DEPDIR)/libdwarf_la-dwarf_find_sigref.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_find_sigref.c' object='libdwarf_la-dwarf_find_sigref.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_find_sigref.lo `test -f 'dwarf_find_sigref.c' || echo '$(srcdir)/'`dwarf_find_sigref.c
 
 libdwarf_la-dwarf_fission_to_cu.lo: dwarf_fission_to_cu.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_fission_to_cu.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_fission_to_cu.Tpo -c -o libdwarf_la-dwarf_fission_to_cu.lo `test -f 'dwarf_fission_to_cu.c' || echo '$(srcdir)/'`dwarf_fission_to_cu.c
@@ -2275,6 +2285,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_elfread.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_error.Plo
+	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_find_sigref.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_fission_to_cu.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_form.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_form_class_names.Plo
@@ -2410,6 +2421,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_elfread.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_error.Plo
+	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_find_sigref.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_fission_to_cu.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_form.Plo
 	-rm -f ./$(DEPDIR)/libdwarf_la-dwarf_form_class_names.Plo

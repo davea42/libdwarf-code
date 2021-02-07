@@ -146,7 +146,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         /*  Loads abbrev section (and .debug_info as we do those
             together). */
         res = _dwarf_load_debug_info(dbg, error);
-
         if (res != DW_DLV_OK) {
             return res;
         }

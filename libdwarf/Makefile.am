@@ -46,6 +46,7 @@ dwarf_elfstructs.h \
 dwarf_errmsg_list.h \
 dwarf_error.c \
 dwarf_error.h \
+dwarf_find_sigref.c \
 dwarf_fission_to_cu.c \
 dwarf_form.c \
 dwarf_form_class_names.c \

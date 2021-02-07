@@ -1,3 +1,25 @@
+2021-02-06  David Anderson
+    * CMakeLists.txt: Adding dwarf_find_sigref.c which follows
+      DW_FORM_ref_sig8 to report targets.
+    * Makefile.am: Adding dwarf_find_sigref.c which follows
+      DW_FORM_ref_sig8 to report targets.
+    * Makefile.in: Regenerated.
+    * dwarf_abbrev.c: Deleted a blank line.
+    * dwarf_die_deliv.c: Additional minor refactoring for clarity
+      and reuse.
+    * dwarf_find_sigref.c: Now correctly finds the ref_sig8
+      targets.  Does not yet reference any tied-file.
+    * dwarf_line.c: Minor refactoring to focus on the 
+      code flow, but also allowing (and reporting)
+      when a compiler erroneously used DW_FORM_addr
+      on DW_AT_stmt_list.
+    * dwarf_opaque.h: refactored new CU context
+      functions now availablt
+      to dwarf_find_sigref.c.
+    * libdwarf.h.in: New function dwarf_find_die_given_sig8()
+      lets callers follow the references.
+      Not yet documented in libdwarf2.1.mm.
+    * generated_libdwarf.h.in: Regenerated.
 2021-02-04  David Anderson
     * dwarf_die_deliv.c: Refactored the code creating
       CU_Context records, removing duplicated code to
