@@ -413,18 +413,18 @@ dwarf_srcfiles(Dwarf_Die die,
         Dwarf_Addr addr = 0;
         /*  DW_AT_producer
             4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2.9)
-            generated DW_FORM_addr for DW_AT_stmt_list! */ 
+            generated DW_FORM_addr for DW_AT_stmt_list! */
         lres = dwarf_formaddr(stmt_list_attr,&addr,error);
         if (lres != DW_DLV_OK) {
             if (lres == DW_DLV_ERROR) {
                 report_bogus_stmt_list_form(dbg,
                     attrform,error);
                 dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
-             }  
-             return lres;
+            }
+            return lres;
         }
         line_offset = (Dwarf_Unsigned)addr;
-    } else if (attrform != DW_FORM_data4 && 
+    } else if (attrform != DW_FORM_data4 &&
         attrform != DW_FORM_data8 &&
         attrform != DW_FORM_sec_offset  &&
         attrform != DW_FORM_GNU_ref_alt) {
@@ -434,7 +434,7 @@ dwarf_srcfiles(Dwarf_Die die,
         return DW_DLV_ERROR;
     } else {
         /* standard setup. */
-        lres = dwarf_global_formref(stmt_list_attr, 
+        lres = dwarf_global_formref(stmt_list_attr,
             &line_offset, error);
         if (lres != DW_DLV_OK) {
             dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);

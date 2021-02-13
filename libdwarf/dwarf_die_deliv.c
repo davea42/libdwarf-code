@@ -1525,9 +1525,9 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
 
 Dwarf_Unsigned
 _dwarf_calculate_next_cu_context_offset(Dwarf_CU_Context cu_context)
-{            
+{
     Dwarf_Unsigned next_cu_offset = 0;
- 
+
     next_cu_offset = cu_context->cc_debug_offset +
         cu_context->cc_length +
         cu_context->cc_length_size +
@@ -1543,16 +1543,16 @@ _dwarf_create_a_new_cu_context_record_on_list(
     Dwarf_Unsigned section_size,
     Dwarf_Unsigned new_cu_offset,
     Dwarf_CU_Context *context_out,
-    Dwarf_Error *error)    
+    Dwarf_Error *error)
 {
     int res = 0;
     Dwarf_CU_Context cu_context = 0;
 
     if ((new_cu_offset +
-         _dwarf_length_of_cu_header_simple(dbg,is_info)) >=
-         section_size) {
-         _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
-         return DW_DLV_ERROR;
+        _dwarf_length_of_cu_header_simple(dbg,is_info)) >=
+        section_size) {
+        _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
+        return DW_DLV_ERROR;
     }
     res = _dwarf_make_CU_Context(dbg, new_cu_offset,is_info,
         &cu_context,error);
@@ -1627,7 +1627,7 @@ _dwarf_load_die_containing_section(Dwarf_Debug dbg,
             dwarf_dealloc_error(dbg,err2);
         }
         return DW_DLV_ERROR;
-    } 
+    }
     return resd;
 }
 
@@ -1678,7 +1678,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         dataptr = dbg->de_debug_types.dss_data;
         secdp = &dbg->de_debug_types;
     }
-    
+
     if (!dataptr) {
         res = _dwarf_load_die_containing_section(dbg,
             is_info, error);
@@ -1782,7 +1782,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             return res;
         }
     }
-    /*  Next assignment is what makes 
+    /*  Next assignment is what makes
         _dwarf_next_cu_header*()
         with no offset presented work to march
         through all the CUs in order. Other places
@@ -2863,7 +2863,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
 
         if (dis->de_cu_context_list_end != NULL) {
             new_cu_offset = _dwarf_calculate_next_cu_context_offset(
-               dis->de_cu_context_list_end);
+                dis->de_cu_context_list_end);
         }/* Else new_cu_offset remains 0, no CUs on list,
             a fresh section setup. */
         section_size = secdp->dss_size;

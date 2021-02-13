@@ -1,3 +1,8 @@
+2021-02-13  David Anderson
+    * dwarf_die_deliv.c: Fixing indents and trailing whitespace.
+      Removed a couple blank lines.
+    * dwarf_find_sigref.c,dwarf_line.c: Fixing indents
+      and trailing whitespace.
 2021-02-12  David Anderson
     * dwarf_find_sigref.c: Deleted two pointless
       blank lines.

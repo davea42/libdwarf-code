@@ -1,3 +1,8 @@
+2021-02-13 David Anderson
+    * print_die.c: Somehow hundreds of lines got indented
+      4 spaces for no reason. Fixed that mistake.
+      Added a trailing > where intended in printing
+      DW_AT_decl_file when the file name is unavailable.
 2021-02-06 David Anderson
     * print_die.c: Refactoring for clarity and adding
       following DW_FORM_ref_sig8 links to find DW_AT_type

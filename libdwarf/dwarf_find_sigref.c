@@ -56,10 +56,10 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
     int lres = 0;
     Dwarf_Debug_InfoTypes dis = 0;
     struct Dwarf_Section_s *secdp = 0;
-    
-    /*  Loop once with is_info, once with !is_info. 
+
+    /*  Loop once with is_info, once with !is_info.
         Then stop. */
-    for( ; loopcount < 2; ++loopcount) {
+    for ( ; loopcount < 2; ++loopcount) {
         Dwarf_CU_Context prev_cu_context = 0;
         Dwarf_Unsigned section_size = 0;
         Dwarf_Unsigned new_cu_offset = 0;
@@ -75,7 +75,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
         }
         lres = _dwarf_load_die_containing_section(dbg,is_info,error);
         if (lres == DW_DLV_ERROR) {
-             return lres;
+            return lres;
         }
         if (lres == DW_DLV_NO_ENTRY ) {
             continue;
@@ -94,7 +94,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
                 *cu_context_out = cu_context;
                 *is_info_out = cu_context->cc_is_info;
                 return DW_DLV_OK;
-            } 
+            }
         }
         if (prev_cu_context) {
             Dwarf_CU_Context lcu_context = prev_cu_context;
@@ -106,7 +106,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
         }
         section_size = secdp->dss_size;
         for ( ; new_cu_offset < section_size;
-            new_cu_offset =  
+            new_cu_offset =
                 _dwarf_calculate_next_cu_context_offset(
                 cu_context)) {
 #if 0
@@ -134,15 +134,15 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
             }
             if (cu_context->cc_unit_type == DW_UT_split_type||
                 cu_context->cc_unit_type == DW_UT_type) {
-                 *cu_context_out = cu_context;
-                 *is_info_out = cu_context->cc_is_info;
-                 return DW_DLV_OK;
-            } 
+                *cu_context_out = cu_context;
+                *is_info_out = cu_context->cc_is_info;
+                return DW_DLV_OK;
+            }
         }
     }   /* Loop-end.  */
     /*  Not found */
     return DW_DLV_NO_ENTRY;
-}    
+}
 
 
 
@@ -164,7 +164,7 @@ dwarf_find_die_given_sig8(Dwarf_Debug dbg,
     Dwarf_CU_Context context  = 0;
     Dwarf_Bool result_is_info = FALSE;
     Dwarf_Unsigned dieoffset  = 0;
-    
+
     res =_dwarf_find_CU_Context_given_sig(dbg,
         ref, &context, &result_is_info,error);
     if (res != DW_DLV_OK) {
