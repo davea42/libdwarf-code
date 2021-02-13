@@ -43,8 +43,6 @@ Floor, Boston MA 02110-1301, USA.
 #define TRUE 1
 #define FALSE 0
 
-
-
 static int
 _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
     Dwarf_Sig8 *sig_in,
@@ -113,7 +111,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
                 cu_context)) {
 #if 0
             lres = _dwarf_load_die_containing_section(dbg,
-                 is_info,error);
+                is_info,error);
             if (lres == DW_DLV_ERROR) {
                 return lres;
             }

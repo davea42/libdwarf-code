@@ -1835,11 +1835,11 @@ int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
 /*  New 4 February 2021. returns DIE and
     is_info flag if it finds the referenced
     DW_UT_split_type or DW_UT_type CU. */
-int dwarf_find_die_given_sig8(Dwarf_Debug dbg,
-    Dwarf_Sig8 *ref,
-    Dwarf_Die  *die_out,
-    Dwarf_Bool *is_info,
-    Dwarf_Error *error);
+int dwarf_find_die_given_sig8(Dwarf_Debug /*dbg*/,
+    Dwarf_Sig8 * /*ref*/,
+    Dwarf_Die  * /*die_out*/,
+    Dwarf_Bool * /*is_info*/,
+    Dwarf_Error * /*error*/);
 
 /*  Returns the is_info flag.
     Needed so client software knows

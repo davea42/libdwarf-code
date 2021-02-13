@@ -1,3 +1,10 @@
+2021-02-12  David Anderson
+    * dwarf_find_sigref.c: Deleted two pointless
+      blank lines.
+    * libdwarf.h.in: The dwarf_find_die_given_sig8 prototype
+      showed actual argument names. Now those names hidden
+      in comments.
+    * generates_libdwarf.h.in: Regenerated.
 2021-02-06  David Anderson
     * CMakeLists.txt: Adding dwarf_find_sigref.c which follows
       DW_FORM_ref_sig8 to report targets.

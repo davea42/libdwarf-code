@@ -1,3 +1,7 @@
+2021-02-12: David Anderson
+    * print_die.c: Somehow hundreds of lines of code indented
+      by four that...was just wrong. Restored proper indents. 
+      Recent botch.
 2021-02-02: David Anderson
     * dwarf.h,dwarf_base_types.h,dwarf_debuglink.h,
       dwarf_form_class_names.c,dwarf_frame.h,dwarf_gdbindex.h,
