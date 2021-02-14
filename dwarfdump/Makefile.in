@@ -148,6 +148,7 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-print_static_vars.$(OBJEXT) \
 	dwarfdump-print_str_offsets.$(OBJEXT) \
 	dwarfdump-print_strings.$(OBJEXT) \
+	dwarfdump-print_tag_attributes_usage.$(OBJEXT) \
 	dwarfdump-print_types.$(OBJEXT) \
 	dwarfdump-print_weaknames.$(OBJEXT) \
 	dwarfdump-sanitized.$(OBJEXT) \
@@ -222,6 +223,7 @@ am__depfiles_remade = ./$(DEPDIR)/dwarfdump-addrmap.Po \
 	./$(DEPDIR)/dwarfdump-print_static_vars.Po \
 	./$(DEPDIR)/dwarfdump-print_str_offsets.Po \
 	./$(DEPDIR)/dwarfdump-print_strings.Po \
+	./$(DEPDIR)/dwarfdump-print_tag_attributes_usage.Po \
 	./$(DEPDIR)/dwarfdump-print_types.Po \
 	./$(DEPDIR)/dwarfdump-print_weaknames.Po \
 	./$(DEPDIR)/dwarfdump-sanitized.Po \
@@ -692,6 +694,7 @@ print_static_funcs.c \
 print_static_vars.c \
 print_str_offsets.c \
 print_strings.c \
+print_tag_attributes_usage.c \
 print_types.c \
 print_weaknames.c \
 sanitized.c \
@@ -905,6 +908,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_static_vars.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_str_offsets.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_strings.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_tag_attributes_usage.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_types.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-print_weaknames.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-sanitized.Po@am__quote@ # am--include-marker
@@ -1573,6 +1577,20 @@ dwarfdump-print_strings.obj: print_strings.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_strings.obj `if test -f 'print_strings.c'; then $(CYGPATH_W) 'print_strings.c'; else $(CYGPATH_W) '$(srcdir)/print_strings.c'; fi`
 
+dwarfdump-print_tag_attributes_usage.o: print_tag_attributes_usage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_tag_attributes_usage.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_tag_attributes_usage.Tpo -c -o dwarfdump-print_tag_attributes_usage.o `test -f 'print_tag_attributes_usage.c' || echo '$(srcdir)/'`print_tag_attributes_usage.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_tag_attributes_usage.Tpo $(DEPDIR)/dwarfdump-print_tag_attributes_usage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_tag_attributes_usage.c' object='dwarfdump-print_tag_attributes_usage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_tag_attributes_usage.o `test -f 'print_tag_attributes_usage.c' || echo '$(srcdir)/'`print_tag_attributes_usage.c
+
+dwarfdump-print_tag_attributes_usage.obj: print_tag_attributes_usage.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_tag_attributes_usage.obj -MD -MP -MF $(DEPDIR)/dwarfdump-print_tag_attributes_usage.Tpo -c -o dwarfdump-print_tag_attributes_usage.obj `if test -f 'print_tag_attributes_usage.c'; then $(CYGPATH_W) 'print_tag_attributes_usage.c'; else $(CYGPATH_W) '$(srcdir)/print_tag_attributes_usage.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_tag_attributes_usage.Tpo $(DEPDIR)/dwarfdump-print_tag_attributes_usage.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='print_tag_attributes_usage.c' object='dwarfdump-print_tag_attributes_usage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-print_tag_attributes_usage.obj `if test -f 'print_tag_attributes_usage.c'; then $(CYGPATH_W) 'print_tag_attributes_usage.c'; else $(CYGPATH_W) '$(srcdir)/print_tag_attributes_usage.c'; fi`
+
 dwarfdump-print_types.o: print_types.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-print_types.o -MD -MP -MF $(DEPDIR)/dwarfdump-print_types.Tpo -c -o dwarfdump-print_types.o `test -f 'print_types.c' || echo '$(srcdir)/'`print_types.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-print_types.Tpo $(DEPDIR)/dwarfdump-print_types.Po
@@ -2082,6 +2100,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/dwarfdump-print_static_vars.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_str_offsets.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_strings.Po
+	-rm -f ./$(DEPDIR)/dwarfdump-print_tag_attributes_usage.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_types.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_weaknames.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-sanitized.Po
@@ -2179,6 +2198,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/dwarfdump-print_static_vars.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_str_offsets.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_strings.Po
+	-rm -f ./$(DEPDIR)/dwarfdump-print_tag_attributes_usage.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_types.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-print_weaknames.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-sanitized.Po

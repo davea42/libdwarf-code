@@ -1,4 +1,12 @@
 2021-02-14 David Anderson
+    * Makefile.am: Added print_tag_attributes_usage.c
+    * Added print_tag_attributes_usage.c: Extracted
+      this code (which prints a summary of tag/attr use)
+      from print_die and put in this new function.
+    * Makefile.in: Regenerated.  
+    * dwarfdump.1: Made the description of -kE a bit more
+      specific.
+2021-02-14 David Anderson
     * command_options.c: Improved some commentary.
     * attr_form.c, attr_form_build.c: Fixed indents,
       trailing whitespace.
