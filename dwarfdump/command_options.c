@@ -1468,7 +1468,7 @@ void arg_check_all(void)
     glflags.gf_check_duplicated_attributes = TRUE;
 }
 
-/*  Option '-kb' */
+/*  Option '-kb' --check-abbrev */
 void arg_check_abbrev(void)
 {
     /* Abbreviations */
@@ -1481,7 +1481,7 @@ void arg_check_abbrev(void)
     glflags.gf_abbrev_flag = TRUE;
 }
 
-/*  Option '-kc' */
+/*  Option '-kc' --check-constants */
 void arg_check_constants(void)
 {
     /* DWARF constants */
@@ -1491,7 +1491,7 @@ void arg_check_constants(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kd' */
+/*  Option '-kd' --check-show */
 void arg_check_show(void)
 {
     /* Display check results */
@@ -1499,7 +1499,7 @@ void arg_check_show(void)
     glflags.gf_check_show_results = TRUE;
 }
 
-/*  Option '-kD' */
+/*  Option '-kD' --check-attr-dup */
 void arg_check_attr_dup(void)
 {
     /* Check duplicated attributes */
@@ -1512,7 +1512,7 @@ void arg_check_attr_dup(void)
     glflags.gf_abbrev_flag = TRUE;
 }
 
-/*  Option '-ke' */
+/*  Option '-ke' --check-pubnames */
 void arg_check_pubnames(void)
 {
     suppress_print_dwarf();
@@ -1532,7 +1532,7 @@ void arg_check_attr_encodings(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kf' */
+/*  Option '-kf' --check-frame-info */
 void arg_check_frame_info(void)
 {
     suppress_print_dwarf();
@@ -1540,7 +1540,7 @@ void arg_check_frame_info(void)
     glflags.gf_check_fdes = TRUE;
 }
 
-/*  Option '-kF' */
+/*  Option '-kF' --check-files-lines */
 void arg_check_files_lines(void)
 {
     /* files-lines */
