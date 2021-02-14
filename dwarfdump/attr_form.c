@@ -34,9 +34,9 @@ const Three_Key_Entry threekeyzero;
 
 int
 make_3key(Dwarf_Half k1,
-    Dwarf_Half k2, 
+    Dwarf_Half k2,
     Dwarf_Half k3,
-    Dwarf_Small std_or_exten, 
+    Dwarf_Small std_or_exten,
     Dwarf_Small from_preset,
     Dwarf_Unsigned count,
     Three_Key_Entry ** out)
@@ -56,34 +56,34 @@ make_3key(Dwarf_Half k1,
     return DW_DLV_OK;
 }
 
-void 
+void
 free_func_3key_entry(void *keystructptr)
 {
     Three_Key_Entry *e = keystructptr;
     free(e);
 }
 
-int 
+int
 std_compare_3key_entry(const void *l_in, const void *r_in)
 {
     const Three_Key_Entry *l = l_in;
     const Three_Key_Entry *r = r_in;
-    if(l->key1 < r->key1) {
+    if (l->key1 < r->key1) {
         return -1;
     }
-    if(l->key1 > r->key1) {
+    if (l->key1 > r->key1) {
         return 1;
     }
-    if(l->key2 < r->key2) {
+    if (l->key2 < r->key2) {
         return -1;
     }
-    if(l->key2 > r->key2) {
+    if (l->key2 > r->key2) {
         return 1;
     }
-    if(l->key3 < r->key3) {
+    if (l->key3 < r->key3) {
         return -1;
     }
-    if(l->key3 > r->key3) {
+    if (l->key3 > r->key3) {
         return 1;
     }
     return 0;
@@ -91,17 +91,17 @@ std_compare_3key_entry(const void *l_in, const void *r_in)
 }
 
 Dwarf_Unsigned counting_global;
-static void 
+static void
 count_3key_entry(UNUSEDARG const void * vptr,
-    DW_VISIT x, 
+    DW_VISIT x,
     UNUSEDARG int level)
 {
-     if (x == dwarf_preorder) {
-         ++counting_global;
-     }
+    if (x == dwarf_preorder) {
+        ++counting_global;
+    }
 }
 
-Dwarf_Unsigned 
+Dwarf_Unsigned
 three_key_entry_count(void *base)
 {
     Dwarf_Unsigned count = 0;
@@ -125,7 +125,7 @@ insert_new_tab_entry(void *tree,
     res = make_3key(tab->attr,tab->formclass,0,
         tab->section,
         1 /* is from preset data */,
-        0 /* count is zero during preset   */, 
+        0 /* count is zero during preset   */,
         &e);
     if (res != DW_DLV_OK) {
         *errnum = DW_DLE_ALLOC_FAIL;
@@ -140,7 +140,7 @@ insert_new_tab_entry(void *tree,
         /* Normal. Added. */
         return DW_DLV_OK;
     }
-    /*  A full duplicate in the table. Oops. 
+    /*  A full duplicate in the table. Oops.
         Not a great choice of error code. */
     *errnum = DW_DLE_ATTR_FORM_BAD;
     return DW_DLV_ERROR;
@@ -153,7 +153,7 @@ build_attr_form_base_tree(int*errnum)
     struct af_table_s * tab = 0;
     int res;
     void *tree = &threekey_attr_form_base;
-    
+
     for (tab = &attr_formclass_table[0]; ; tab++) {
         if (!tab->attr && !tab->formclass && !tab->section) {
             /* Done */
@@ -161,7 +161,7 @@ build_attr_form_base_tree(int*errnum)
         }
         res  = insert_new_tab_entry(tree,tab,errnum);
         if (res != DW_DLV_OK) {
-            return res; 
+            return res;
         }
     }
     return DW_DLV_OK;
@@ -169,10 +169,9 @@ build_attr_form_base_tree(int*errnum)
 
 
 /*  The standard main tree for attr_form data.
-    Starting out as a simple global variable. 
+    Starting out as a simple global variable.
     In general, pass &threekey_attr_form_base
     (for example) to tsearch calls. */
 void * threekey_attr_form_base;
 void * threekey_attr_count_base; /* for attr only */
 void * threekey_form_count_base; /* for form only */
-

@@ -1522,7 +1522,7 @@ void arg_check_pubnames(void)
     glflags.gf_check_fdes = TRUE;
 }
 
-/*  Option '-kE' */
+/*  Option '-kE' --check-attr-encodings */
 void arg_check_attr_encodings(void)
 {
     /* Attributes encoding usage */
@@ -1681,7 +1681,7 @@ void arg_ku_multiple_selection(void)
     }
 }
 
-/*  Option '-ku' */
+/*  Option '-ku' --check-usage  */
 void arg_check_usage(void)
 {
     suppress_print_dwarf();
@@ -1690,7 +1690,7 @@ void arg_check_usage(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kuf' */
+/*  Option '-kuf' --check-usage-extended  */
 void arg_check_usage_extended(void)
 {
     arg_check_usage();
@@ -1700,7 +1700,7 @@ void arg_check_usage_extended(void)
 }
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-/*  Option '-kw' */
+/*  Option '-kw' --check-macros */
 void arg_check_macros(void)
 {
     suppress_print_dwarf();
@@ -1723,7 +1723,7 @@ void arg_kx_multiple_selection(void)
     }
 }
 
-/*  Option '-kx' */
+/*  Option '-kx' --check-frame-basic */
 void arg_check_frame_basic(void)
 {
     suppress_print_dwarf();
@@ -1732,7 +1732,7 @@ void arg_check_frame_basic(void)
     glflags.gf_eh_frame_flag = TRUE;
 }
 
-/*  Option '-kxe' */
+/*  Option '-kxe' --check-frame-extended */
 void arg_check_frame_extended(void)
 {
     arg_check_frame_basic();

@@ -1,4 +1,8 @@
 2021-02-14 David Anderson
+    * command_options.c: Improved some commentary.
+    * attr_form.c, attr_form_build.c: Fixed indents,
+      trailing whitespace.
+2021-02-14 David Anderson
     * attr_form.c,attr_form.h,attr_form_build.c: Code to build
       and use date for recording and checking attr/form
       combinations. Not yet used by dwarfdump.

@@ -69,12 +69,12 @@ is requested.
 The file is named dwarfump/dwarfdump-af-table.h and is intended
 to be included in exactly one place in dwarfdump source.
 
-The list is N entries (N is not limited) of 
-     attribute#  formclass#   std1/extended2 flag
+The list is N entries (N is not limited) of
+    attribute#  formclass#   std1/extended2 flag
 followed by a space and the # and then names.
 
 For example:
-{0x02,10, 1},  DW_AT_location, DW_FORM_CLASS_REFERENCE, Std 
+{0x02,10, 1},  DW_AT_location, DW_FORM_CLASS_REFERENCE, Std
 with the names in a C comment block (which we do not
 show quite right here). See dwarfdump/dwarfdump-af-table.h
 
@@ -88,7 +88,7 @@ a DW_FORM_lo_user value)
 Lines beggining with a # character are ignored
 by the code in dwarfdump reading this output.
 Any lines commented with C comments are stripped
-by the initial C pre-processor invocation. 
+by the initial C pre-processor invocation.
 
 */
 
