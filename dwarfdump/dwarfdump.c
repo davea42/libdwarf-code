@@ -1639,7 +1639,7 @@ process_one_file(
         int tres = 0;
         Dwarf_Error err = 0;
 
-        tres = print_tag_attributes_usage(dbg,&err);
+        tres = print_tag_attributes_usage();
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "print tag attributes usage failed", tres, err);

@@ -126,40 +126,40 @@ static char *enumvals[] = {
 
 static int lookup_enum_val( char * lin)
 {
-     char **v = enumvals;
-     const char *s = enumvals[0];
-     char *lp = lin;
-     int inputlen = 0;
-     int enumindex = -1;
-     int i = 0;
-     for(i = 0;*lp; ++lp,++i) { 
-         if (*lp == ' ' || *lp == '\n') {
-             break;
-         }
-         ++inputlen;
-     }
-     if (inputlen < 14) {
-         bad_line_input("bad DW_FORM_CLASS_ input!");
-     }
-     if (strncmp(lin,"DW_FORM_CLASS_",14)) {
-         bad_line_input("bad DW_FORM_CLASS_ input..");
-     }
-     for(i = 0 ; s ; ++i, s = enumvals[i]) { 
-          int len = inputlen;
-          int arslen = strlen(s);
-          if(arslen > len) {
-              len = arslen;
-          }
-          if(!strncmp(s,lin,len)) {
-              enumindex = i;
-              return enumindex;
-              break;
-          }
-     }
-     if (enumindex < 1) {
-          bad_line_input("DW_FORM_CLASS not matched");
-     }
-     return -1;
+    char **v = enumvals;
+    const char *s = enumvals[0];
+    char *lp = lin;
+    int inputlen = 0;
+    int enumindex = -1;
+    int i = 0;
+    for (i = 0;*lp; ++lp,++i) {
+        if (*lp == ' ' || *lp == '\n') {
+            break;
+        }
+        ++inputlen;
+    }
+    if (inputlen < 14) {
+        bad_line_input("bad DW_FORM_CLASS_ input!");
+    }
+    if (strncmp(lin,"DW_FORM_CLASS_",14)) {
+        bad_line_input("bad DW_FORM_CLASS_ input..");
+    }
+    for (i = 0 ; s ; ++i, s = enumvals[i]) {
+        int len = inputlen;
+        int arslen = strlen(s);
+        if (arslen > len) {
+            len = arslen;
+        }
+        if (!strncmp(s,lin,len)) {
+            enumindex = i;
+            return enumindex;
+            break;
+        }
+    }
+    if (enumindex < 1) {
+        bad_line_input("DW_FORM_CLASS not matched");
+    }
+    return -1;
 }
 
 int

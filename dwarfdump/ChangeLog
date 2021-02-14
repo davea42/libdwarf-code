@@ -1,8 +1,18 @@
 2021-02-14 David Anderson
+    * print_die.c: Move the last few hundred lines to 
+      the new file print_tag_attributes_usage.c.
+    * tag_common.c: Fixed large indent botch.
+    * globals.h: Now with  print_tag_attributes_usage,
+      record_tag_usage, legal_tag_attr_combination,
+      legal_tag_tree_combination public for access from
+      print_die.c.
+    * dwarfdump.c: Reflects the simpler arguments to
+      call print_tag_attributes_usage().
+2021-02-14 David Anderson
     * Makefile.am: Added print_tag_attributes_usage.c
-    * Added print_tag_attributes_usage.c: Extracted
+    * print_tag_attributes_usage.c: New file. Extracted
       this code (which prints a summary of tag/attr use)
-      from print_die and put in this new function.
+      from print_die.c and put in this new file.
     * Makefile.in: Regenerated.  
     * dwarfdump.1: Made the description of -kE a bit more
       specific.

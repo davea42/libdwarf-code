@@ -306,11 +306,18 @@ int print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 int print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error *);
 
 /* Detailed tag and attributes usage */
-int print_tag_attributes_usage(Dwarf_Debug dbg, Dwarf_Error *);
+int print_tag_attributes_usage(void);
+void record_tag_usage(int tag);
+
 
 int  print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *);
 void update_section_flags_per_groups(Dwarf_Debug dbg);
 void groups_restore_subsidiary_flags(void);
+
+int legal_tag_attr_combination(Dwarf_Half tag,
+    Dwarf_Half attr);
+int legal_tag_tree_combination(Dwarf_Half parent_tag,
+    Dwarf_Half child_tag);
 
 int print_str_offsets_section(Dwarf_Debug dbg,Dwarf_Error *);
 
