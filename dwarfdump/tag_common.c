@@ -47,7 +47,7 @@ bad_line_input(char *format,...)
     va_list ap;
     va_start(ap,format);
     fprintf(stderr,
-        "tag_(tree,attr) table build failed, line %d: \"%s\". ",
+        "tag_(tree,attr,form) table build failed, line %d: \"%s\". ",
         linecount, line_in);
     vfprintf(stderr,format, ap);
     /*  "The object ap may be passed as an argument to another
@@ -96,8 +96,74 @@ is_skippable_line(char *pLine)
     Exits  with non-zero status
     if the table is erroneous in some way.
 */
+
+/*  This array must match exactly the order of
+    the enum entries in Dwarf_Form_Class in libdwarf.h.in. */
+static char *enumvals[] = {
+"DW_FORM_CLASS_UNKNOWN",
+"DW_FORM_CLASS_ADDRESS",
+"DW_FORM_CLASS_BLOCK",
+"DW_FORM_CLASS_CONSTANT",
+"DW_FORM_CLASS_EXPRLOC",
+"DW_FORM_CLASS_FLAG",
+"DW_FORM_CLASS_LINEPTR",
+"DW_FORM_CLASS_LOCLISTPTR",   /* DWARF2,3,4 only */
+"DW_FORM_CLASS_MACPTR",       /* DWARF2,3,4 only */
+"DW_FORM_CLASS_RANGELISTPTR", /* DWARF2,3,4 only */
+"DW_FORM_CLASS_REFERENCE",
+"DW_FORM_CLASS_STRING",
+"DW_FORM_CLASS_FRAMEPTR",      /* MIPS/IRIX DWARF2 only */
+"DW_FORM_CLASS_MACROPTR",      /* DWARF5 */
+"DW_FORM_CLASS_ADDRPTR",       /* DWARF5 */
+"DW_FORM_CLASS_LOCLIST",       /* DWARF5 */
+"DW_FORM_CLASS_LOCLISTSPTR",   /* DWARF5 */
+"DW_FORM_CLASS_RNGLIST",       /* DWARF5 */
+"DW_FORM_CLASS_RNGLISTSPTR",   /* DWARF5 */
+"DW_FORM_CLASS_STROFFSETSPTR",  /* DWARF5 */
+0
+
+};
+
+static int lookup_enum_val( char * lin)
+{
+     char **v = enumvals;
+     const char *s = enumvals[0];
+     char *lp = lin;
+     int inputlen = 0;
+     int enumindex = -1;
+     int i = 0;
+     for(i = 0;*lp; ++lp,++i) { 
+         if (*lp == ' ' || *lp == '\n') {
+             break;
+         }
+         ++inputlen;
+     }
+     if (inputlen < 14) {
+         bad_line_input("bad DW_FORM_CLASS_ input!");
+     }
+     if (strncmp(lin,"DW_FORM_CLASS_",14)) {
+         bad_line_input("bad DW_FORM_CLASS_ input..");
+     }
+     for(i = 0 ; s ; ++i, s = enumvals[i]) { 
+          int len = inputlen;
+          int arslen = strlen(s);
+          if(arslen > len) {
+              len = arslen;
+          }
+          if(!strncmp(s,lin,len)) {
+              enumindex = i;
+              return enumindex;
+              break;
+          }
+     }
+     if (enumindex < 1) {
+          bad_line_input("DW_FORM_CLASS not matched");
+     }
+     return -1;
+}
+
 int
-read_value(unsigned int *outval, FILE*file)
+read_value(unsigned int *outval,FILE*file)
 {
     char *res = 0;
     unsigned long lval;
@@ -112,7 +178,7 @@ read_value(unsigned int *outval, FILE*file)
         if (res == 0) {
             if (ferror(file)) {
                 fprintf(stderr,
-                    "tag_attr: Error reading table, %d lines read\n",
+                    "attr_form: Error reading table, %d lines read\n",
                     linecount);
                 exit(FAILED);
             }
@@ -122,7 +188,7 @@ read_value(unsigned int *outval, FILE*file)
             }
 
             /* Impossible */
-            fprintf(stderr, "tag_attr: "
+            fprintf(stderr, "attr_form: "
                 "Impossible error reading table, "
                 "%d lines read\n", linecount);
             exit(FAILED);
@@ -136,17 +202,20 @@ read_value(unsigned int *outval, FILE*file)
     lval = strtoul(line_in, &strout, 0);
 
     if (strout == line_in) {
-        bad_line_input("bad number input!");
+        int enumindex = -1;
+        /*  We have outlen, so look up an enum value */
+        enumindex  = lookup_enum_val(line_in);
+        if (enumindex < 1) {
+            bad_line_input("Cannot find enum value");
+        }
+        *outval = enumindex;
+        return NOT_EOF;
     }
-
     if (errno != 0) {
         int myerr = errno;
-
-        fprintf(stderr, "tag_attr errno %d\n", myerr);
+        fprintf(stderr, "attr_form errno %d\n", myerr);
         bad_line_input("invalid number on line");
     }
-
     *outval = (int) lval;
-
     return NOT_EOF;
 }

@@ -130,5 +130,7 @@ extern int read_value(unsigned int *outval,FILE *f);
 
 /* Define to 1 to support the generation of tag-attr usage */
 #define HAVE_USAGE_TAG_ATTR 1
+/* Define to 1 to support the generation of attr/formclass usage */
+#define HAVE_USAGE_ATTR_FORMCLASS 1
 
 #endif /* tag_common_INCLUDED */

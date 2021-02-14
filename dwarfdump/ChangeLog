@@ -1,3 +1,19 @@
+2021-02-14 David Anderson
+    * attr_form.c,attr_form.h,attr_form_build.c: Code to build
+      and use date for recording and checking attr/form
+      combinations. Not yet used by dwarfdump.
+    * attr_formclass.list: List of standard attr/form-class
+      combinations.
+    * attr_formclass_ext.list: List of extension attr/form-class
+      combinations.
+    * dwarfdump-af-table.h: Generated C array of attr/form-class
+      combinations in easy-to-use form for dwarfdump.
+    * dwarfdump-af-table.h: New, a table to quickly
+      load attr/form(class) standard matches.
+    * tag_common.c: Added code to turn FORM_CLASS
+      names into their enum values.
+    * tag_common.h: Added define of HAVE_USAGE_ATTR_FORMCLASS 
+      (not strictly necessary at this point).
 2021-02-13 David Anderson
     * print_die.c: Somehow hundreds of lines got indented
       4 spaces for no reason. Fixed that mistake.

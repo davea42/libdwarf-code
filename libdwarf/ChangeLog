@@ -1,3 +1,8 @@
+2021-02-14  David Anderson
+    * dwarf_form_class_names: Fixed whitespace issue.
+    * libdwarf.h.in: Revised the Form_Class enum
+      for better readability.
+    * generated_libdwarf.h.in: Regenerated.
 2021-02-13  David Anderson
     * dwarf_die_deliv.c: Fixing indents and trailing whitespace.
       Removed a couple blank lines.

@@ -16,7 +16,11 @@ then
    echo FAIL Run this in the dwarfdump directory.
    exit 1
 fi
-
+# Following two lines needed for independent tests of
+# this script. Done by buildstandardsource.sh normally.
+# If added *must* be removed else dwarfdump builds will fail.
+#cp ../scripts/baseconfig.h config.h
+#cp ../libdwarf/libdwarf.h.in libdwarf.h
 
 set -x
 top_builddir=..
@@ -58,6 +62,64 @@ then
    exit 1
 fi
 rm -f tmp-t1.c
+
+#=======
+echo BEGIN attr_form build
+taf=tempaftab
+rm $taf
+af=dwarfdump-af-table.h
+if [ ! -f $af ]
+then
+  touch $af
+fi
+$CC  -DTRIVIAL_NAMING  dwarf_names.c common.c \
+../libdwarf/dwarf_form_class_names.c \
+attr_form.c \
+dwarf_tsearchbal.c \
+dwgetopt.c \
+esb.c \
+makename.c \
+naming.c \
+glflags.c \
+sanitized.c \
+tag_common.c \
+attr_form_build.c -o attr_form_build$EXEXT
+if [ $? -ne 0 ]
+then
+   echo attr_form_build compile fail
+   exit 1
+fi
+rm -f tmp-t1.c
+
+cp $top_srcdir/dwarfdump/attr_formclass.list tmp-t1.c
+ls -l tmp-t1.c
+$CC -E tmp-t1.c >tmp-attr-formclass-build1.tmp
+ls -l tmp-attr-formclass-build1.tmp
+
+cp $top_srcdir/dwarfdump/attr_formclass_ext.list tmp-t2.c
+ls -l tmp-t2.c
+$CC -E tmp-t2.c >tmp-attr-formclass-build2.tmp
+ls -l tmp-attr-formclass-build2.tmp
+
+# Both of the next two add to the same array used by
+# dwarfdump itself.
+./attr_form_build$EXEXT -s -i tmp-attr-formclass-build1.tmp -o $taf
+if [ $? -ne 0 ]
+then
+   echo attr_formclass_build 1  FAIL
+   exit 1
+fi
+./attr_form_build$EXEXT -e -i tmp-attr-formclass-build2.tmp -o $taf
+if [ $? -ne 0 ]
+then
+   echo attr_formclass_build 2  FAIL
+   exit 1
+fi
+mv $taf $af
+rm -f tmp-attr-formclass-build1.tmp 
+rm -f tmp-attr-formclass-build2.tmp 
+rm -f ./attr_form_build$EXEXT 
+
 cp $top_srcdir/dwarfdump/tag_tree.list tmp-t1.c
 $CC -E tmp-t1.c >tmp-tag-tree-build1.tmp
 ./tag_tree_build$EXEXT -s -i tmp-tag-tree-build1.tmp -o dwarfdump-tt-table.h
@@ -124,5 +186,6 @@ rm -f tmp-t4.c
 
 rm -f tag_attr_build$EXEXT
 rm -f tag_tree_build$EXEXT
+rm -f attr_form_build$EXEXT
 
 exit 0
