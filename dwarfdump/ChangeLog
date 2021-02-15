@@ -1,4 +1,9 @@
 2021-02-15 David Anderson
+    * dwarf_names.c,dwarf_names.hdwarfdump-af-table.h,
+      dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:
+      Regenerated with new version string.
+2021-02-15 David Anderson
     * CMakeLists.txt: Added the new source files.
     * Makefile.am: Added the new list and build files
       so they get into releases and the build.

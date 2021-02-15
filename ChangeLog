@@ -1,3 +1,6 @@
+2021-02-15: David Anderson
+    * configure.ac: Now version 20210214.
+    * configure: Regenerated.
 2021-02-14: David Anderson
     * scripts/ddbuild.sh: Now also builds a table
       for initializing standard attr/form tables
