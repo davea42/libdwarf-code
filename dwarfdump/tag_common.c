@@ -126,7 +126,6 @@ static char *enumvals[] = {
 
 static int lookup_enum_val( char * lin)
 {
-    char **v = enumvals;
     const char *s = enumvals[0];
     char *lp = lin;
     int inputlen = 0;

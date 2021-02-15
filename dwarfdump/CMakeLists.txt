@@ -6,6 +6,7 @@ set_source_group(SOURCES "Source Files" addrmap.c
 	macrocheck.c 
     opscounttab.c
     print_abbrevs.c print_aranges.c
+    attr_form.c
     print_debugfission.c print_die.c 
     print_debug_gnu.c
 	print_debug_names.c  print_debug_sup.c
@@ -20,19 +21,21 @@ set_source_group(SOURCES "Source Files" addrmap.c
     print_rnglists.c print_reloc.c 
 	print_str_offsets.c
 	print_sections.c  print_section_groups.c print_static_funcs.c
-    print_static_vars.c print_strings.c print_types.c 
+    print_static_vars.c print_strings.c 
+    print_tag_attributes_usage.c print_types.c 
     print_weaknames.c  
 	sanitized.c section_bitmaps.c strstrnocase.c 
     true_section_name.c uri.c dwgetopt.c makename.c 
     naming.c common.c esb.c dwarf_tsearchbal.c)
 	
 set_source_group(HEADERS "Header Files" 
-  addrmap.h checkutil.h common.h dwconf.h
+  addrmap.h attr_form.h checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
   dwarf_names.h
   opscounttab.h 
   print_debug_gnu.h
   dwconf_using_functions.h esb_using_functions.h
+  dwarfdump-af-table.h
   dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 
   dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
   dwgetopt.h esb.h glflags.h globals.h macrocheck.h defined_types.h

@@ -25,13 +25,14 @@ fi
 set -x
 top_builddir=..
 top_srcdir=..
-CC="gcc -g  -I.. -I../libdwarf -I../dwarfdump"
+CC="gcc -g -Wall  -I.. -I../libdwarf -I../dwarfdump"
 EXEXT=.exe
 
 cp $top_builddir/libdwarf/dwarf_names.c .
 cp $top_builddir/libdwarf/dwarf_names.h .
 $CC -DTRIVIAL_NAMING   dwarf_names.c common.c \
 dwarf_tsearchbal.c \
+$top_srcdir/libdwarf/dwarf_form_class_names.c \
 dwgetopt.c \
 esb.c \
 makename.c \
@@ -48,6 +49,7 @@ fi
 
 $CC  -DTRIVIAL_NAMING  dwarf_names.c common.c \
 dwarf_tsearchbal.c \
+$top_srcdir/libdwarf/dwarf_form_class_names.c \
 dwgetopt.c \
 esb.c \
 makename.c \
@@ -73,7 +75,7 @@ then
   touch $af
 fi
 $CC  -DTRIVIAL_NAMING  dwarf_names.c common.c \
-../libdwarf/dwarf_form_class_names.c \
+$top_srcdir/libdwarf/dwarf_form_class_names.c \
 attr_form.c \
 dwarf_tsearchbal.c \
 dwgetopt.c \

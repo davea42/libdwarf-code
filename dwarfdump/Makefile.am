@@ -10,6 +10,8 @@ bin_PROGRAMS = dwarfdump
 dwarfdump_SOURCES = \
 addrmap.c \
 addrmap.h \
+attr_form.h \
+attr_form.c \
 checkutil.c \
 checkutil.h \
 command_options.c \
@@ -20,6 +22,7 @@ compiler_info.c \
 compiler_info.h \
 defined_types.h \
 dwarfdump.c \
+dwarfdump-af-table.h\
 dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
@@ -136,6 +139,7 @@ NEWS \
 README \
 README.testcases \
 CODINGSTYLE \
+attr_form_build.c \
 buildopscounttab.c \
 print_reloc_decls.h \
 makename_test.c  \
@@ -155,6 +159,8 @@ testobjLE32PE.test.c \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \
 tag_tree.c \
+attr_formclass.list \
+attr_formclass_ext.list \
 tag_attr.list \
 tag_attr_ext.list \
 tag_tree.list \

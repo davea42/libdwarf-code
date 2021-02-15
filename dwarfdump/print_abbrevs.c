@@ -235,7 +235,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
         }
     }
     /* Process specific TAGs specially. */
-    tag_specific_checks_setup(dbg,tag,0);
+    tag_specific_globals_setup(dbg,tag,0);
     ++abbrev_num;
     acres = dwarf_get_abbrev_children_flag(ab, &child_flag,
         error);

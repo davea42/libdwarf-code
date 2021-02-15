@@ -45,6 +45,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "helpertree.h"
 #include "opscounttab.h"
 #include "tag_common.h"
+#include "attr_form.h"
 
 static int pd_dwarf_names_print_on_error = 1;
 
@@ -255,9 +256,9 @@ print_tag_attributes_usage(void)
         print_header = TRUE;
     }
     printf("** Summary **\n"
-        "Number of tags      : %10" /*DW_PR_XZEROS*/
+        "Number of standard tags      : %10" /*DW_PR_XZEROS*/
         DW_PR_DUu "\n"  /* TAGs */
-        "Number of attributes: %10" /*DW_PR_XZEROS*/
+        "Number of standard attributes: %10" /*DW_PR_XZEROS*/
         DW_PR_DUu "\n"  /* ATRs */,
         total_tags,
         total_atrs);
@@ -268,7 +269,7 @@ print_tag_attributes_usage(void)
     total_found_atrs = 0;
 
     /* Print percentage of TAGs covered */
-    printf("\n*** TAGS AND ATTRIBUTES USAGE RATE ***\n");
+    printf("\n*** STANDARD TAGS AND ATTRIBUTES USAGE RATE ***\n");
     printf("%-32s %-16s %-16s\n"," ","Tags","Attributes");
     printf("%-32s legal found rate legal found rate\n","TAG name");
     for (tag = 1; tag < DW_TAG_last; ++tag) {
@@ -303,7 +304,11 @@ print_tag_attributes_usage(void)
         "** Summary **",
         total_legal_tags,total_found_tags,rate_1,
         total_legal_atrs,total_found_atrs,rate_2);
-
+    if (glflags.gf_check_attr_tag ||
+        glflags.gf_check_attr_encoding ||
+        glflags.gf_print_usage_tag_attr) {
+        print_attr_form_usage(pd_dwarf_names_print_on_error);
+    }
 #endif /* HAVE_USAGE_TAG_ATTR */
     return DW_DLV_OK;
 }

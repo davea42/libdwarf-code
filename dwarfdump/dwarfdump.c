@@ -60,6 +60,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "sanitized.h"
 #include "tag_common.h"
 #include "addrmap.h"
+#include "attr_form.h"
 #include "print_debug_gnu.h"
 #include "naming.h" /* for get_FORM_name() */
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
@@ -1042,11 +1043,8 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     *size  = basesize;
     return DW_DLV_OK;
 }
-/*
-  Given a file which we know is an elf file, process
-  the dwarf data.
-
-*/
+/*  Given a file which is an object type
+    we think we can read, process the dwarf data.  */
 static int
 process_one_file(
     UNUSEDARG int fd,
@@ -1069,6 +1067,7 @@ process_one_file(
     Dwarf_Error onef_err = 0;
     const char *title = 0;
     unsigned char path_source = 0;
+    int localerrno = 0;
 
     /*  If using a tied file group number should be
         2 DW_GROUPNUMBER_DWO
@@ -1197,6 +1196,16 @@ process_one_file(
         print_error(dbg,"Unable to read address"
             " size so unable to continue",
             dres,onef_err);
+    }
+    if (glflags.gf_check_attr_tag ||
+        glflags.gf_check_attr_encoding ||
+        glflags.gf_print_usage_tag_attr) {
+        dres = build_attr_form_base_tree(&localerrno);
+        if (dres != DW_DLV_OK) {
+            simple_err_return_msg_either_action(dres,
+                "ERROR: Failed to initialize attribute/form"
+                " tables properly");
+        }
     }
 #ifdef DWARF_WITH_LIBELF
     if (archive) {
@@ -1621,8 +1630,14 @@ process_one_file(
     print_checks_results();
 
     /*  Print the detailed attribute usage space
-        and free the attributes_encoding data allocated. */
-    if (glflags.gf_check_attr_encoding) {
+        and free the attributes_encoding data allocated. 
+        Option -kE
+        Also prints the attr/formclass/form reports
+        from attr_form.c  See build_attr_form_base()
+        call above and record_attr_form_use() in print_die.c */
+    if (glflags.gf_check_attr_tag ||
+        glflags.gf_check_attr_encoding ||
+        glflags.gf_print_usage_tag_attr) {
         int ares = 0;
         Dwarf_Error aerr = 0;
 
@@ -1634,7 +1649,7 @@ process_one_file(
         }
     }
 
-    /*  Print the tags and attribute usage */
+    /*  Print the tags and attribute usage  -ku or -kuf */
     if (glflags.gf_print_usage_tag_attr) {
         int tres = 0;
         Dwarf_Error err = 0;
@@ -1735,6 +1750,11 @@ process_one_file(
 #ifdef DWARF_WITH_LIBELF
     clean_up_syms_malloc_data();
 #endif /* DWARF_WITH_LIBELF */
+    if (glflags.gf_check_attr_tag ||
+        glflags.gf_check_attr_encoding ||
+        glflags.gf_print_usage_tag_attr) {
+        destroy_attr_form_trees();
+    }
     destruct_abbrev_array();
     esb_close_null_device();
     release_range_array_info();
@@ -2374,7 +2394,7 @@ build_linkonce_info(Dwarf_Debug dbg)
 /* Check for specific TAGs and initialize some
     information used by '-k' options */
 void
-tag_specific_checks_setup(Dwarf_Debug dbg,
+tag_specific_globals_setup(Dwarf_Debug dbg,
     Dwarf_Half val,int die_indent_level)
 {
     switch (val) {

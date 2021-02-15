@@ -24,6 +24,11 @@
   Boston MA 02110-1301, USA.
 */
 
+#ifndef ATTR_FORM_H
+#define ATTR_FORM_H
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 struct Three_Key_Entry_s {
     Dwarf_Half  key1; /* usually AT number */
@@ -51,6 +56,10 @@ Dwarf_Unsigned three_key_entry_count(void *base);
 void free_func_3key_entry(void *keystructptr);
 int  std_compare_3key_entry(const void *l, const void *r);
 int  build_attr_form_base_tree(int*errnum);
+void destroy_attr_form_trees(void);
+
+void record_attr_form_use(Dwarf_Half attr,
+    Dwarf_Half fclass , Dwarf_Half form);
 
 /*  The standard main tree for attr_form data.
     Starting out as simple global variables. */
@@ -58,4 +67,9 @@ extern void * threekey_attr_form_base; /* for attr-form combos */
 extern void * threekey_attr_count_base; /* for attr only */
 extern void * threekey_form_count_base; /* for form only */
 
+void print_attr_form_usage(int poe);
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* ATTR_FORM_H */

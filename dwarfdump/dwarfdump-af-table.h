@@ -1,5 +1,12 @@
 /* Generated table, do not edit. */
 /* Generated sourcedate  2020-11-30 11:14:43-08:00   */
+
+#ifndef DWARFDUMP_AF_TABLE_H
+#define DWARFDUMP_AF_TABLE_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 struct af_table_s {
     Dwarf_Half attr;
     Dwarf_Half formclass;
@@ -173,3 +180,7 @@ struct af_table_s {
 {0x2225,11,2},/*DW_AT_SUN_part_link_name DW_FORM_CLASS_STRING Ext*/
 { 0,0,0 }
 }; /* end af_table extended */
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+#endif /* DWARFDUMP_AF_TABLE_H */

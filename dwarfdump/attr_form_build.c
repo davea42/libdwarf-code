@@ -249,6 +249,19 @@ main(int argc, char **argv)
         fprintf(fileOut,"/* Generated table, do not edit. */\n");
         fprintf(fileOut,"/* Generated sourcedate %s */\n",
             DW_VERSION_DATE_STR );
+        fprintf(fileOut,"\n");
+        fprintf(fileOut,"%s\n",
+            "#ifndef DWARFDUMP_AF_TABLE_H");
+        fprintf(fileOut,"%s\n",
+            "#define DWARFDUMP_AF_TABLE_H");
+        fprintf(fileOut,"\n");
+
+        fprintf(fileOut,"%s\n",
+            "#ifdef __cplusplus");
+        fprintf(fileOut,"%s\n", "extern \"C\" {");
+        fprintf(fileOut,"%s\n",
+            "#endif /* __cplusplus */");
+
         fprintf(fileOut,"struct af_table_s {\n");
         fprintf(fileOut,"    Dwarf_Half attr;\n");
         fprintf(fileOut,"    Dwarf_Half formclass;\n");
@@ -257,9 +270,6 @@ main(int argc, char **argv)
     }
     while (!feof(stdin)) {
         unsigned int attr = 0;
-        unsigned int curcol = 0;
-        unsigned int cur_attr = 0;
-        int kres = 0;
 
         input_eof = read_value(&attr,fileInp);
         if (IS_EOF == input_eof) {
@@ -271,9 +281,6 @@ main(int argc, char **argv)
         if (IS_EOF == input_eof) {
             bad_line_input("Not terminated correctly..");
         }
-        curcol = 1;
-        cur_attr = 1;
-
         while (num != MAGIC_TOKEN_VALUE) {
             int res = 0;
             const char *name  = 0;
@@ -307,6 +314,14 @@ main(int argc, char **argv)
     if (extended_flag) {
         fprintf(fileOut,"{ 0,0,0 }\n");
         fprintf(fileOut,"}; /* end af_table extended */\n");
+        fprintf(fileOut,"%s\n",
+            "#ifdef __cplusplus");
+        fprintf(fileOut,"%s\n",
+            "extern \"C\" {");
+        fprintf(fileOut,"%s\n",
+            "#endif /* __cplusplus */");
+        fprintf(fileOut,"%s\n",
+            "#endif /* DWARFDUMP_AF_TABLE_H */");
     } else {
         fprintf(fileOut,"/* end af_table standard */\n");
     }

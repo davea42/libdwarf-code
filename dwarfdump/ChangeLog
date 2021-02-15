@@ -1,3 +1,39 @@
+2021-02-15 David Anderson
+    * CMakeLists.txt: Added the new source files.
+    * Makefile.am: Added the new list and build files
+      so they get into releases and the build.
+    * Makefile.in: Regenerated.
+    * attr_form.c: Added printing of attr/form/formclass
+      reports with the existing -kE option.
+    * globals.h: Renamed tag_specific_checks_setup()
+      to tag_specific_globals_setup() to better reflect
+      the meaning of the function.
+    * attr_form.h: Added declaration so dwarfdump.c can
+      call attr_form.c functions. Added idempotency
+      in include and __cplusplus ifdefs.
+    * attr_form_build.c: now we add idempotency
+      code when generating dwarfdump-af-table.h.
+    * dwarf_tsearch.h: Commentary improvements.
+    * dwarfdump-af-table.h: Regenerated.
+    * dwarfdump.c: When doing checks, set up
+      the 3key tables using attr_form.c functions.
+    * naming.c,naming.h: Added new function 
+      get_FORM_CLASS_name() to both.
+    * print_abbrevs.c: Renaming per globals.h function rename.
+    * print_die.c: Include attr_form.h, call
+      record_attr_form_use(). Renamin here too per
+      the globals.h function rename.
+    * attr_form_build.c: Added idempotency
+      and __cplusplus guards to the output 
+      file generated: dwarfdump-af-table.h.
+    * print_tag_attributes_usage.c: Improvements in
+      the specificity of some summary header lines.
+      Now calls print_attr_form_usage() to print
+      the attr/formclass/form tables (option -kE
+      or -ka ).
+    * tag_common.c: Removed unused local variables.
+    * test-mach-o-32.base,testobjLE32PE.base,testuriLE64ELf.base,
+      New baseline based on recent changes.
 2021-02-14 David Anderson
     * print_die.c: Move the last few hundred lines to 
       the new file print_tag_attributes_usage.c.

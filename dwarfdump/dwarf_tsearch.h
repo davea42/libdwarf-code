@@ -49,7 +49,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*  The hashfunc return is now easily changed with
-    cc -Duintptr_t or something. */
+    cc "-DDW_TSHASHTYPE=unsigned long" 
+    The quotes required here as the example type
+    has a space character. */
 #ifndef DW_TSHASHTYPE
 #define DW_TSHASHTYPE uintptr_t
 #endif
@@ -59,9 +61,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 typedef enum
 {
-    dwarf_preorder,
-    dwarf_postorder,
-    dwarf_endorder,
+    dwarf_preorder, /* Before visit children */
+    dwarf_postorder,/* After first children visit, before last */
+    dwarf_endorder, /* After visit of children, last visit */
     dwarf_leaf
 }
 DW_VISIT;
@@ -69,6 +71,7 @@ DW_VISIT;
 /* void * return values are actually
    void **key so you must dereference these
    once to get a key you passed in.
+   Hence the void ** and rootp name.
 
 */
 
@@ -90,6 +93,7 @@ void *dwarf_tfind(const void * /*key*/, void *const * /*rootp*/,
 void *dwarf_tdelete(const void * /*key*/, void ** /*rootp*/,
     int (* /*compar*/)(const void *, const void *));
 
+/*  Here the argument is really void *, theroot*/
 void dwarf_twalk(const void * /*root*/,
     void (* /*action*/)(const void * /*nodep*/,
     const DW_VISIT  /*which*/,

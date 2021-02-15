@@ -26,7 +26,6 @@ Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
 
 */
 
-
 /* naming.h */
 #ifndef NAMING_H_INCLUDED
 #define NAMING_H_INCLUDED
@@ -34,8 +33,8 @@ Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
 extern "C" {
 #endif
 
-
-
+extern const char * get_FORM_CLASS_name(unsigned int val_in,
+    int printonerr);
 extern const char * get_TAG_name(unsigned int val_in,int printonerr);
 extern const char * get_children_name(unsigned int val_in,
     int printonerr);

@@ -1,3 +1,9 @@
+February 15, 2021
+  dwarfdump given -ku now prints brief lists counting
+  the uses of each TAG, each ATtribute, and each FORM
+  at the end..
+  These new lists report on all standard and extension
+  used in the object file.
 November 16, 2020
   dwarfdump now prints DWARF expression ops
   on indivdidual lines which makes it much easier to read the

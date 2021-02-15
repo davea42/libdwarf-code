@@ -45,6 +45,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "helpertree.h"
 #include "opscounttab.h"
 #include "tag_common.h"
+#include "attr_form.h"
 
 /*  OpBranchHead_s gives us nice type-checking
     in calls. */
@@ -154,7 +155,7 @@ static int pd_dwarf_names_print_on_error = 1;
 static int die_stack_indent_level = 0;
 static Dwarf_Bool local_symbols_already_began = FALSE;
 
-/*  See tag_specific_checks_setup() and
+/*  See tag_specific_globals_setup() and
     glflags.need_PU_valid_code as those
     oversee resetting of this. It is
     set when a compilation-unit DIE or
@@ -1577,7 +1578,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 /* Check for specific compiler */
                 if (checking_this_compiler()) {
                     /* Process specific TAGs. */
-                    tag_specific_checks_setup(dbg,tag_child,
+                    tag_specific_globals_setup(dbg,tag_child,
                         die_stack_indent_level);
                     if (cres != DW_DLV_OK || pres != DW_DLV_OK) {
                         if (cres == DW_DLV_OK) {
@@ -2043,7 +2044,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     }
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-    tag_specific_checks_setup(dbg,tag,die_indent_level);
+    tag_specific_globals_setup(dbg,tag,die_indent_level);
     ores = dwarf_dieoffset(die, &overall_offset, err);
     if (ores != DW_DLV_OK) {
         print_error_and_continue(dbg,
@@ -3825,7 +3826,7 @@ Dwarf_Half tag,Dwarf_Half attr)
         if (glflags.gf_check_attr_tag) {
             tagname = get_TAG_name(tag,
                 pd_dwarf_names_print_on_error);
-            tag_specific_checks_setup(dbg,tag,
+            tag_specific_globals_setup(dbg,tag,
                 die_stack_indent_level);
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,
@@ -3948,9 +3949,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         return tres;
     }
     if ((glflags.gf_check_attr_tag ||
+        glflags.gf_check_attr_encoding ||
         glflags.gf_print_usage_tag_attr)&&
         checking_this_compiler()) {
         check_attr_tag_combination(dbg,tag,attr);
+        record_attr_form_use(attr,(Dwarf_Half)fc,theform);
     }
 
     switch (attr) {

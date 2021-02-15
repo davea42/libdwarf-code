@@ -110,7 +110,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(dwarfdumpdevdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
-	dwarfdump-checkutil.$(OBJEXT) \
+	dwarfdump-attr_form.$(OBJEXT) dwarfdump-checkutil.$(OBJEXT) \
 	dwarfdump-command_options.$(OBJEXT) dwarfdump-common.$(OBJEXT) \
 	dwarfdump-compiler_info.$(OBJEXT) \
 	dwarfdump-dwarfdump.$(OBJEXT) dwarfdump-dwarf_names.$(OBJEXT) \
@@ -180,6 +180,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/dwarfdump-addrmap.Po \
+	./$(DEPDIR)/dwarfdump-attr_form.Po \
 	./$(DEPDIR)/dwarfdump-checkutil.Po \
 	./$(DEPDIR)/dwarfdump-command_options.Po \
 	./$(DEPDIR)/dwarfdump-common.Po \
@@ -623,6 +624,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 dwarfdump_SOURCES = \
 addrmap.c \
 addrmap.h \
+attr_form.h \
+attr_form.c \
 checkutil.c \
 checkutil.h \
 command_options.c \
@@ -633,6 +636,7 @@ compiler_info.c \
 compiler_info.h \
 defined_types.h \
 dwarfdump.c \
+dwarfdump-af-table.h\
 dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
@@ -745,6 +749,7 @@ NEWS \
 README \
 README.testcases \
 CODINGSTYLE \
+attr_form_build.c \
 buildopscounttab.c \
 print_reloc_decls.h \
 makename_test.c  \
@@ -764,6 +769,8 @@ testobjLE32PE.test.c \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \
 tag_tree.c \
+attr_formclass.list \
+attr_formclass_ext.list \
 tag_attr.list \
 tag_attr_ext.list \
 tag_tree.list \
@@ -864,6 +871,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-addrmap.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-attr_form.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-checkutil.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-command_options.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-common.Po@am__quote@ # am--include-marker
@@ -960,6 +968,20 @@ dwarfdump-addrmap.obj: addrmap.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='addrmap.c' object='dwarfdump-addrmap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-addrmap.obj `if test -f 'addrmap.c'; then $(CYGPATH_W) 'addrmap.c'; else $(CYGPATH_W) '$(srcdir)/addrmap.c'; fi`
+
+dwarfdump-attr_form.o: attr_form.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-attr_form.o -MD -MP -MF $(DEPDIR)/dwarfdump-attr_form.Tpo -c -o dwarfdump-attr_form.o `test -f 'attr_form.c' || echo '$(srcdir)/'`attr_form.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-attr_form.Tpo $(DEPDIR)/dwarfdump-attr_form.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='attr_form.c' object='dwarfdump-attr_form.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-attr_form.o `test -f 'attr_form.c' || echo '$(srcdir)/'`attr_form.c
+
+dwarfdump-attr_form.obj: attr_form.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-attr_form.obj -MD -MP -MF $(DEPDIR)/dwarfdump-attr_form.Tpo -c -o dwarfdump-attr_form.obj `if test -f 'attr_form.c'; then $(CYGPATH_W) 'attr_form.c'; else $(CYGPATH_W) '$(srcdir)/attr_form.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-attr_form.Tpo $(DEPDIR)/dwarfdump-attr_form.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='attr_form.c' object='dwarfdump-attr_form.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-attr_form.obj `if test -f 'attr_form.c'; then $(CYGPATH_W) 'attr_form.c'; else $(CYGPATH_W) '$(srcdir)/attr_form.c'; fi`
 
 dwarfdump-checkutil.o: checkutil.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-checkutil.o -MD -MP -MF $(DEPDIR)/dwarfdump-checkutil.Tpo -c -o dwarfdump-checkutil.o `test -f 'checkutil.c' || echo '$(srcdir)/'`checkutil.c
@@ -2056,6 +2078,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/dwarfdump-addrmap.Po
+	-rm -f ./$(DEPDIR)/dwarfdump-attr_form.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-checkutil.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-command_options.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-common.Po
@@ -2154,6 +2177,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/dwarfdump-addrmap.Po
+	-rm -f ./$(DEPDIR)/dwarfdump-attr_form.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-checkutil.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-command_options.Po
 	-rm -f ./$(DEPDIR)/dwarfdump-common.Po

@@ -122,6 +122,12 @@ const char * get_children_name(unsigned int val_in,int printonerr)
     int res = dwarf_get_children_name(val_in,&v);
     return ellipname(res,val_in,v,"children",printonerr);
 }
+const char * get_FORM_CLASS_name(unsigned int val_in,int printonerr)
+{
+    const char *v = 0;
+    int res = dwarf_get_FORM_CLASS_name(val_in,&v);
+    return ellipname(res,val_in,v,"FORM_CLASS",printonerr);
+}
 const char * get_FORM_name(unsigned int val_in,int printonerr)
 {
     const char *v = 0;
