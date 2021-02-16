@@ -126,8 +126,8 @@ three_key_entry_count(void *base)
     return count;
 }
 
-/* tree argument expected is 
-   &threekey_attr_form_base for example */
+/*  tree argument expected is
+    &threekey_attr_form_base for example */
 static int
 insert_new_tab_entry(void *tree,
     struct af_table_s * tab,
@@ -202,12 +202,14 @@ destroy_attr_form_trees(void)
 
 
 void
-record_attr_form_use(Dwarf_Half attr,Dwarf_Half fclass , Dwarf_Half form)
+record_attr_form_use(Dwarf_Half attr,
+    Dwarf_Half fclass,
+    Dwarf_Half form)
 {
     Three_Key_Entry *e =  0;
     Three_Key_Entry *re =  0;
     void *ret =  0;
-    Dwarf_Small std_or_exten = 1; 
+    Dwarf_Small std_or_exten = 1;
     int res = 0;
 
     if (attr >= DW_AT_lo_user) {
@@ -231,9 +233,9 @@ record_attr_form_use(Dwarf_Half attr,Dwarf_Half fclass , Dwarf_Half form)
     }
     re = *(Three_Key_Entry **)ret;
     if (re == e) {
-         /*  Brand new entry. Done. 
-             local malloc is in the tree. */
-         return;
+        /*  Brand new entry. Done.
+            local malloc is in the tree. */
+        return;
     }
     /* Was already entered.*/
     ++re->count;
@@ -252,7 +254,7 @@ extract_3key_entry(const void * vptr,
 {
     if (x == dwarf_preorder || x == dwarf_leaf) {
         Three_Key_Entry *m = *(Three_Key_Entry **)vptr;
-        if(recordcount >= recordmax) { 
+        if (recordcount >= recordmax) {
             /* Should never happen */
             return;
         }
@@ -345,7 +347,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
 
     recordmax = three_key_entry_count(threekey_attr_form_base);
     if (!recordmax) {
-        return; 
+        return;
     }
     tk_l = (Three_Key_Entry *)calloc(recordmax+1,
         sizeof(Three_Key_Entry));
@@ -367,9 +369,9 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         tkarray = 0;
         return;
     }
-    for(i = 0; i < recordmax; ++i) {
+    for (i = 0; i < recordmax; ++i) {
         Three_Key_Entry * tke = tk_l+i;
-       
+
         if (!tke->key3) {
             /* Skip table building data */
             continue;
@@ -386,9 +388,9 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         "                found rate\n");
     localformat="[%3u] %-30s %-20s %7" DW_PR_DUu " %.0f%%\n";
     localsum = 0;
-    for(i = 0; i < recordmax; ++i) {
+    for (i = 0; i < recordmax; ++i) {
         Three_Key_Entry * tke = tk_l+i;
-       
+
         if (!tke->key3) {
             /* Skip table building data */
             continue;
@@ -415,7 +417,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
     printf("[]                                 found rate\n");
     localsum = 0;
     localformat="[%2u] %-28s %6" DW_PR_DUu " %.0f%%\n";
-    for(i = 0; i < recordmax; ++i) {
+    for (i = 0; i < recordmax; ++i) {
         Three_Key_Entry * tke = tk_l+i;
 
         if (!tke->key3) {
@@ -467,7 +469,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
     printf("[]                         found rate\n");
     localformat="[%2u] %-20s %6" DW_PR_DUu " %.0f%%\n";
     localsum = 0;
-    for(i = 0; i < recordmax; ++i) {
+    for (i = 0; i < recordmax; ++i) {
         Three_Key_Entry * tke = tk_l+i;
 
         if (!tke->key3) {
@@ -485,7 +487,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
             printf(localformat,
                 (unsigned)j,
                 get_FORM_name(curform,
-                pd_dwarf_names_print_on_error), 
+                pd_dwarf_names_print_on_error),
                 formtotal,pct);
             localsum += formtotal;
             curform = tke->key3;
@@ -500,7 +502,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         printf(localformat,
             (unsigned)j,
             get_FORM_name(curform,
-            pd_dwarf_names_print_on_error), 
+            pd_dwarf_names_print_on_error),
             formtotal,pct);
         localsum += formtotal;
     }
@@ -515,7 +517,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
     printf("[]                                   found rate\n");
     localsum = 0;
     localformat="[%2u] %-30s %6" DW_PR_DUu " %.0f%%\n";
-    for(i = 0; i < recordmax; ++i) {
+    for (i = 0; i < recordmax; ++i) {
         Three_Key_Entry * tke = tk_l+i;
 
         if (!tke->key3) {
@@ -543,12 +545,11 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         }
         formtotal += tke->count;
     }
-    if(attrtotal) {
+    if (attrtotal) {
         pct = ( (float)attrtotal / total)*100.0;
         printf(localformat,
             (unsigned)j,
-            get_AT_name(curattr,
-               pd_dwarf_names_print_on_error),
+            get_AT_name(curattr,pd_dwarf_names_print_on_error),
             attrtotal,pct);
         localsum += attrtotal;
     }

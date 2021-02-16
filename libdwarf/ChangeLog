@@ -1,3 +1,6 @@
+2021-02-16  David Anderson
+    * dwarf_query.c: Removed a () that was accidental.
+    * dwarf_form_class_names.c: Removed a trailing space.
 2021-02-15  David Anderson
     * libdwarf_version.h: Updated version string.
     * dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,

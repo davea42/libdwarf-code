@@ -878,7 +878,7 @@ dwarf_attr(Dwarf_Die die,
     attrib->ar_debug_ptr = info_ptr;
     attrib->ar_die = die;
     attrib->ar_dbg = dbg;
-    *ret_attr = (attrib);
+    *ret_attr = attrib;
     return DW_DLV_OK;
 }
 

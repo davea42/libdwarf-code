@@ -2759,14 +2759,14 @@ append_useful_die_name(UNUSEDARG Dwarf_Debug dbg,
     struct esb_s *outstr,
     Dwarf_Error *err)
 {
-    int res = 0;
+    int             res = 0;
     Dwarf_Attribute nattr = 0;
     Dwarf_Half      nattr_form = 0;
     Dwarf_Attribute lattr = 0;
-    Dwarf_Unsigned filenum = 0;
-    Dwarf_Unsigned linenum = 0;
-    Dwarf_Half version = 0;
-    Dwarf_Half offset_size = 0;
+    Dwarf_Unsigned  filenum = 0;
+    Dwarf_Unsigned  linenum = 0;
+    Dwarf_Half      version = 0;
+    Dwarf_Half      offset_size = 0;
 
     res = dwarf_get_version_of_die(die,&version,&offset_size);
     if (res != DW_DLV_OK) {
@@ -2788,6 +2788,7 @@ append_useful_die_name(UNUSEDARG Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             DROP_ERROR_INSTANCE(dbg,res,*err);
         }
+        dwarf_dealloc_attribute(nattr);
         return;
     }
     res = dwarf_attr(die,DW_AT_decl_line,&lattr,err);
@@ -2805,6 +2806,8 @@ append_useful_die_name(UNUSEDARG Dwarf_Debug dbg,
             linenum = 0;
         }
     }
+    dwarf_dealloc_attribute(lattr);
+    lattr = 0;
     turn_file_num_to_string(dbg,die,
         nattr, nattr_form,
         version,filenum, srcfiles,srcfiles_cnt,
@@ -2814,6 +2817,7 @@ append_useful_die_name(UNUSEDARG Dwarf_Debug dbg,
         esb_append_printf_u(outstr,
             " line: %u",linenum);
     }
+    dwarf_dealloc_attribute(nattr);
     return;
 }
 
@@ -2873,6 +2877,7 @@ print_sig8_target(Dwarf_Debug dbg,
             "dwarf_dieoffset fails following a signature  in "
             "attribute traversal",
             res, *err);
+        dwarf_dealloc_die(targdie);
         return res;
     }
     if (res == DW_DLV_OK) {
@@ -2893,6 +2898,7 @@ print_sig8_target(Dwarf_Debug dbg,
             "dwarf_tag fails following a signature in "
             "attribute traversal",
             res, *err);
+        dwarf_dealloc_die(targdie);
         return res;
     }
     if (res == DW_DLV_OK) {
@@ -2908,6 +2914,7 @@ print_sig8_target(Dwarf_Debug dbg,
             "dwarf_tag   fails following a signature in "
             "attribute traversal",
             res, *err);
+        dwarf_dealloc_die(targdie);
         return res;
     } else if (res == DW_DLV_NO_ENTRY) {
         append_useful_die_name(dbg,targdie,
@@ -2921,6 +2928,7 @@ print_sig8_target(Dwarf_Debug dbg,
         esb_append(valname,">\n");
     }
     /*  If we get here we extablished the target. */
+    dwarf_dealloc_die(targdie);
     return DW_DLV_OK;
 }
 

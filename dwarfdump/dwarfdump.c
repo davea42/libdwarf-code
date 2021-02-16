@@ -1630,7 +1630,7 @@ process_one_file(
     print_checks_results();
 
     /*  Print the detailed attribute usage space
-        and free the attributes_encoding data allocated. 
+        and free the attributes_encoding data allocated.
         Option -kE
         Also prints the attr/formclass/form reports
         from attr_form.c  See build_attr_form_base()
