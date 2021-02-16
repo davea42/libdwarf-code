@@ -121,7 +121,7 @@ init_global_flags(void)
     glflags.gf_check_abbrev_code = FALSE;
     glflags.gf_check_pubname_attr = FALSE;
     glflags.gf_check_reloc_offset = FALSE;
-    glflags.gf_check_attr_tag = FALSE;
+    glflags.gf_check_tag_attr = FALSE;
     glflags.gf_check_tag_tree = FALSE;
     glflags.gf_check_type_offset = FALSE;
     glflags.gf_check_decl_file = FALSE;
@@ -361,7 +361,7 @@ set_checks_off(void)
     glflags.gf_check_abbrev_code = FALSE;
     glflags.gf_check_pubname_attr = FALSE;
     glflags.gf_check_reloc_offset = FALSE;
-    glflags.gf_check_attr_tag = FALSE;
+    glflags.gf_check_tag_attr = FALSE;
     glflags.gf_check_tag_tree = FALSE;
     glflags.gf_check_type_offset = FALSE;
     glflags.gf_check_decl_file = FALSE;

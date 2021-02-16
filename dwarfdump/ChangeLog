@@ -1,4 +1,14 @@
 2021-02-16 David Anderson
+    * command_options.c,compiler_info.c,glflags.c,
+      glflags.h,print_tag_attributes_usage.c: 
+      sed 's/gf_check_attr_tag/gf_check_tag_attr/' fixed the
+      ever-confusing name reversal unique to this flag.
+    * print_die.c,dwarfdump.c: The above plus correcting
+      minor mistakes in handling of -ku -kuf options.
+    * dwarfdump.1: Clarified the meaning and use of
+      -kr -ku -kuf -C as the descriptions have been
+      misleading for a long time.
+2021-02-16 David Anderson
     * attr_form.c: Fixed indents and trailing whitespace.
     * dwarfdump.c: Fixed trailing whitespace.
     * print_die.c(append_useful_die_name): was not doing

@@ -578,8 +578,7 @@ static const char *usage_long_text[] = {
 #ifdef HAVE_USAGE_TAG_ATTR
 "-ku  --check-usage          Print tag-tree & tag-attr usage",
 "                            (basic format)",
-"-kuf --check-usage-extended Print tag-tree & tag-attr usage",
-"                            (full format)",
+"-kuf --check-usage-extended Modifies -ku to add summary detail.",
 #endif /* HAVE_USAGE_TAG_ATTR */
 " ",
 "-------------------------------------------------------------------",
@@ -1436,7 +1435,7 @@ void arg_check_all(void)
 {
     suppress_print_dwarf();
     glflags.gf_check_pubname_attr = TRUE;
-    glflags.gf_check_attr_tag = TRUE;
+    glflags.gf_check_tag_attr = TRUE;
     glflags.gf_check_tag_tree = TRUE;
     glflags.gf_check_type_offset = TRUE;
     glflags.gf_gnu_debuglink_flag = FALSE;
@@ -1621,7 +1620,7 @@ void arg_check_attr_names(void)
 void arg_check_tag_attr(void)
 {
     suppress_print_dwarf();
-    glflags.gf_check_attr_tag = TRUE;
+    glflags.gf_check_tag_attr = TRUE;
     glflags.gf_info_flag = TRUE;
     glflags.gf_types_flag = TRUE;
     glflags.gf_check_harmless = TRUE;
@@ -1690,7 +1689,9 @@ void arg_check_usage(void)
     glflags.gf_types_flag = TRUE;
 }
 
-/*  Option '-kuf' --check-usage-extended  */
+/*  Option '-kuf' --check-usage-extended,
+    a modifier to -ku or -kr to add details
+    to the summary report */
 void arg_check_usage_extended(void)
 {
     arg_check_usage();

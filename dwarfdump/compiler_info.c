@@ -92,7 +92,7 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("pubname_attr", pCompiler,
             pubname_attr_result);
     }
-    if (glflags.gf_check_attr_tag) {
+    if (glflags.gf_check_tag_attr) {
         PRINT_CHECK_RESULT("attr_tag", pCompiler, attr_tag_result);
     }
     if (glflags.gf_check_tag_tree) {

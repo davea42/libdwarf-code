@@ -113,7 +113,7 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
             }
         }
     }
-    return (FALSE);
+    return FALSE;
 }
 
 #include "dwarfdump-tt-table.h"
@@ -304,7 +304,7 @@ print_tag_attributes_usage(void)
         "** Summary **",
         total_legal_tags,total_found_tags,rate_1,
         total_legal_atrs,total_found_atrs,rate_2);
-    if (glflags.gf_check_attr_tag ||
+    if (glflags.gf_check_tag_attr ||
         glflags.gf_check_attr_encoding ||
         glflags.gf_print_usage_tag_attr) {
         print_attr_form_usage(pd_dwarf_names_print_on_error);

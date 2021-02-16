@@ -150,7 +150,7 @@ struct glflags_s {
     Dwarf_Bool gf_check_abbrev_code;
     Dwarf_Bool gf_check_pubname_attr;
     Dwarf_Bool gf_check_reloc_offset;
-    Dwarf_Bool gf_check_attr_tag;
+    Dwarf_Bool gf_check_tag_attr;
     Dwarf_Bool gf_check_tag_tree;
     Dwarf_Bool gf_check_type_offset;
     Dwarf_Bool gf_check_decl_file;

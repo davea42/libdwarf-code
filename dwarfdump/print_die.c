@@ -3831,7 +3831,7 @@ Dwarf_Half tag,Dwarf_Half attr)
         /* OK */
     } else {
         /* Report errors only if tag-attr check is on */
-        if (glflags.gf_check_attr_tag) {
+        if (glflags.gf_check_tag_attr) {
             tagname = get_TAG_name(tag,
                 pd_dwarf_names_print_on_error);
             tag_specific_globals_setup(dbg,tag,
@@ -3956,8 +3956,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_destructor(&esb_extra);
         return tres;
     }
-    if ((glflags.gf_check_attr_tag ||
-        glflags.gf_check_attr_encoding ||
+    if ((glflags.gf_check_tag_attr ||
         glflags.gf_print_usage_tag_attr)&&
         checking_this_compiler()) {
         check_attr_tag_combination(dbg,tag,attr);
@@ -6796,7 +6795,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     }
 }
 
-/* Print a detailed encoding usage per attribute */
+/* Print a detailed encoding usage per attribute -kE */
 int
 print_attributes_encoding(Dwarf_Debug dbg,
     Dwarf_Error* attr_error)

@@ -1197,8 +1197,7 @@ process_one_file(
             " size so unable to continue",
             dres,onef_err);
     }
-    if (glflags.gf_check_attr_tag ||
-        glflags.gf_check_attr_encoding ||
+    if (glflags.gf_check_tag_attr ||
         glflags.gf_print_usage_tag_attr) {
         dres = build_attr_form_base_tree(&localerrno);
         if (dres != DW_DLV_OK) {
@@ -1635,9 +1634,7 @@ process_one_file(
         Also prints the attr/formclass/form reports
         from attr_form.c  See build_attr_form_base()
         call above and record_attr_form_use() in print_die.c */
-    if (glflags.gf_check_attr_tag ||
-        glflags.gf_check_attr_encoding ||
-        glflags.gf_print_usage_tag_attr) {
+    if (glflags.gf_check_attr_encoding ) {
         int ares = 0;
         Dwarf_Error aerr = 0;
 
@@ -1750,8 +1747,7 @@ process_one_file(
 #ifdef DWARF_WITH_LIBELF
     clean_up_syms_malloc_data();
 #endif /* DWARF_WITH_LIBELF */
-    if (glflags.gf_check_attr_tag ||
-        glflags.gf_check_attr_encoding ||
+    if (glflags.gf_check_tag_attr ||
         glflags.gf_print_usage_tag_attr) {
         destroy_attr_form_trees();
     }

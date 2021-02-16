@@ -445,13 +445,6 @@ emitted such.
 .BR \--check-pubnames\ (\-ke)
 Turns on reading pubnames and checking for fde errors.
 .TP
-.BR \--check-attr-encodings\ (\-kE) 
-Checks the integer encoding representation in debug_info,
-computing whether these integer values
-could fit in fewer bytes if represented in LEB128
-and reports the space saving that would achieve.
-
-.TP
 .BR \--check-frame-info\ (\-kf) 
 Turns on checking for FDE errors (.debug_frame 
 and .eh_frame).
@@ -482,17 +475,37 @@ Turns on checking of ranges.
 .TP
 .BR \--check-aranges\ (\-kM) 
 Turns on checking of aranges.
+
 .TP
 .BR \--check-tag-attr\ (\-kr)
 Turns on DIE tag-attr combinations checking,
 looking for surprising attributes for DIE
-tags.
+tags. 
+Prints a DWARF-CHECK message for each such found.
 It does not report common extensions as errors.
+A summary of usage is printed at the end.
 Common extensions to the standard are
 allowed as if standard.
-See
-the \-C (\--format-extensions) option
-to show common extensions as errors.
+See the \-C (\--format-extensions) option
+to show common extensions as DWARF-CHECK
+messages.
+See \-kuf (\--check-usage-extended) to add
+additional details to the summary report.
+
+.TP
+.BR \--check-usage\ (\-ku)
+The same as \-kr except only the summary
+is printed at the end,  the detailed
+DWARF-CHECK messages per instance are not printed.
+
+.TP
+.BR \--check-attr-encodings\ (\-kE)
+Checks the integer encoding representation of
+constant FORMs in debug_info,
+computing whether these integer values
+could fit in fewer bytes if represented in LEB128
+and reports the space saving that would achieve.
+
 .TP
 .BR \--check-forward-refs\ (\-kR)
 Turns on reading DIEs and checking for forward declarations
@@ -513,19 +526,6 @@ allowed as if standard.
 See
 the \-C (\--format-extensions) option
 to show common extensions as errors.
-.TP
-.BR \--check-usage\ (\-ku) 
-Print standard tag-tree and tag-attribute usage (basic format). 
-As of February 2021 it adds new
-reports summarizing counts of all TAGs,
-ATtributes, and FORMS (including DWARF extensions).
-.TP
-.BR \--check-usage-extended\ (\-kuf)
-Print standard tag-tree and tag-attribute usage (full format). 
-For standard TAGs and ATtributes this presents an overview
-of how they were used.  As of February 2021 it adds new
-reporting summarizing count of all TAGs,
-ATtributes, and FORMS (including DWARF extensions).
 
 .TP
 .BR \--check-frame-basic\ (\-kx) 
@@ -552,7 +552,8 @@ refer to appropriate locations.
 .BR \--format-extensions\ (\-C) 
 This is a secondary option 
 after \--check-tag-tag\ (\-kt)
-or \--check-tag-attr\ (\-kr).
+or \--check-tag-attr\ (\-kr)
+or 
 Normally when checking for tag-tag 
 or tag-attribute combinations
 both the standard combinations and 
@@ -560,6 +561,14 @@ some common extensions are allowed
 (not reported).
 With this option the extensions are taken
 out of the class of allowed combinations.
+
+.TP
+.BR \-kuf\ (\--check-usage-extended)
+This modifies \--check-tag-attr\ (\-kr)
+or \--check-usage\ (\-ku) to print
+additional details in the summary.
+Add the \-kuf\ (\--check-usage-extended)
+before or after the option it modifies.
 
 .TP
 .BR \--format-dense\ (\-d)
