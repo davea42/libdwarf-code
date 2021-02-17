@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
 Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-Portions Copyright 2007-2020 David Anderson. All rights reserved.
+Portions Copyright 2007-2021 David Anderson. All rights reserved.
 
 This program is free software; you can redistribute it
 and/or modify it under the terms of version 2.1 of the
@@ -26,6 +26,7 @@ Public License along with this program; if not, write the
 Free Software Foundation, Inc., 51 Franklin Street - Fifth
 Floor, Boston MA 02110-1301, USA.
 */
+/* Added non-standard DW_AT names/values. 2021-02-17 */
 
 
 #ifndef __DWARF_H
@@ -460,6 +461,15 @@ most-likely-useful name. */
 #define DW_AT_CPQ_split_lifetimes_rtn           0x2004 /* COMPAQ/HP */
 #define DW_AT_CPQ_prologue_length               0x2005 /* COMPAQ/HP */
 
+/*  From DWARF2 DW_AT_producer GHS C 2012.5.4 [dual]
+    GreenHills ghs.com Possibly PowerPC */
+#define DW_AT_GHS_unknown1 0x2083
+#define DW_AT_GHS_unknown2 0x2087
+#define DW_AT_GHS_unknown3 0x2085
+#define DW_AT_GHS_unknown4 0x2086
+#define DW_AT_GHS_unknown5 0x2092
+
+
 #define DW_AT_INTEL_other_endian 0x2026 /* Intel, 1 if byte swapped.*/
 
 /* GNU extensions. */
@@ -603,6 +613,10 @@ most-likely-useful name. */
 
 /*  PGI (STMicroelectronics) extensions. */
 #define DW_AT_PGI_lbase                         0x3a00
+
+#define DW_AT_IBM_wsa_addr                      0x393e
+#define DW_AT_IBM_home_location                 0x393f
+#define DW_AT_IBM_alt_srcview                   0x3940
 
 /*  PGI. Block, constant, reference. This attribute is an ASTPLAB
     extension used to describe the array local base.  */
