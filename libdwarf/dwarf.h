@@ -26,8 +26,7 @@ Public License along with this program; if not, write the
 Free Software Foundation, Inc., 51 Franklin Street - Fifth
 Floor, Boston MA 02110-1301, USA.
 */
-/* Added non-standard DW_AT names/values. 2021-02-17 */
-
+/* With latest non-standard DW_AT/TAG. 2021-02-18 */
 
 #ifndef __DWARF_H
 #define __DWARF_H
@@ -182,9 +181,6 @@ extern "C" {
 #define DW_TAG_upc_strict_type          0x8766 /* UPC */
 #define DW_TAG_upc_relaxed_type         0x8767 /* UPC */
 
-/* PGI (STMicroelectronics) extensions. */
-#define DW_TAG_PGI_kanji_type           0xa000 /* PGI */
-#define DW_TAG_PGI_interface_block      0xa020 /* PGI */
 /* The following are SUN extensions */
 #define DW_TAG_SUN_function_template    0x4201 /* SUN */
 #define DW_TAG_SUN_class_template       0x4202 /* SUN */
@@ -200,6 +196,15 @@ extern "C" {
 #define DW_TAG_SUN_f90_interface        0x420c /* SUN */
 #define DW_TAG_SUN_fortran_vax_structure 0x420d /* SUN */
 #define DW_TAG_SUN_hi                   0x42ff /* SUN */
+/* PGI (STMicroelectronics) extensions. */
+#define DW_TAG_PGI_kanji_type           0xa000 /* PGI */
+#define DW_TAG_PGI_interface_block      0xa020 /* PGI */
+
+#define DW_TAG_BORLAND_property             0xb000
+#define DW_TAG_BORLAND_Delphi_string        0xb001
+#define DW_TAG_BORLAND_Delphi_dynamic_array 0xb002
+#define DW_TAG_BORLAND_Delphi_set           0xb003
+#define DW_TAG_BORLAND_Delphi_variant       0xb004
 
 #define DW_TAG_hi_user                  0xffff
 
@@ -442,6 +447,8 @@ most-likely-useful name. */
 
 /* HP extensions. */
 #define DW_AT_HP_unmodifiable      0x2001 /* conflict: MIPS */
+#define DW_AT_HP_prologue          0x2005 /* conflict: MIPS */
+#define DW_AT_HP_epilogue          0x2008 /* conflict: MIPS */
 #define DW_AT_HP_actuals_stmt_list 0x2010 /* conflict: MIPS */
 #define DW_AT_HP_proc_per_section  0x2011 /* conflict: MIPS */
 #define DW_AT_HP_raw_data_ptr                   0x2012 /* HP */
@@ -454,6 +461,13 @@ most-likely-useful name. */
 #define DW_AT_HP_all_variables_modifiable       0x2019 /* HP */
 #define DW_AT_HP_linkage_name                   0x201a /* HP */
 #define DW_AT_HP_prof_flags                     0x201b /* HP */
+#define DW_AT_HP_unit_name                      0x201f
+#define DW_AT_HP_unit_size                      0x2020
+#define DW_AT_HP_widened_byte_size              0x2021
+#define DW_AT_HP_definition_points              0x2022
+#define DW_AT_HP_default_location               0x2023
+#define DW_AT_HP_is_result_param                0x2029
+
 
 #define DW_AT_CPQ_discontig_ranges              0x2001 /* COMPAQ/HP */
 #define DW_AT_CPQ_semantic_events               0x2002 /* COMPAQ/HP */
@@ -529,16 +543,13 @@ most-likely-useful name. */
 #define DW_AT_GNU_discriminator                 0x2136 /* GNU */
 #define DW_AT_GNU_locviews                      0x2137 /* GNU */
 #define DW_AT_GNU_entry_view                    0x2138 /* GNU */
-/*  Ada GNAT gcc attributes. constant integer forms. */
-#define DW_AT_GNAT_descriptive_type             0x2302
-#define DW_AT_GNU_numerator                     0x2303 /* GNU */
-#define DW_AT_GNU_denominator                   0x2304 /* GNU */
-#define DW_AT_GNU_bias                          0x2305 /* GNU */
 
 
 
 /* ALTIUM extension: ALTIUM Compliant location lists (flag) */
 #define DW_AT_ALTIUM_loclist    0x2300          /* ALTIUM  */
+/* See https://gcc.gnu.org/wiki/DW_AT_GNU_bias */
+#define DW_AT_GNU_bias          0x2305
 
 
 /* Sun extensions */
@@ -590,9 +601,17 @@ most-likely-useful name. */
 #define DW_AT_SUN_fortran_main_alias            0x223a /* SUN */
 #define DW_AT_SUN_fortran_based                 0x223b /* SUN */
 
+/* ALTIUM extension: ALTIUM Compliant location lists (flag) */
+#define DW_AT_ALTIUM_loclist    0x2300          /* ALTIUM  */
+/*  Ada GNAT gcc attributes. constant integer forms. */
 /*   See http://gcc.gnu.org/wiki/DW_AT_GNAT_descriptive_type .  */
-#define DW_AT_use_GNAT_descriptive_type         0x2301 /* GNAT */
-#define DW_AT_GNAT_descriptive_type             0x2302 /* GNAT */
+#define DW_AT_use_GNAT_descriptive_type         0x2301
+#define DW_AT_GNAT_descriptive_type             0x2302
+#define DW_AT_GNU_numerator                     0x2303 /* GNU */
+#define DW_AT_GNU_denominator                   0x2304 /* GNU */
+/* See https://gcc.gnu.org/wiki/DW_AT_GNU_bias */
+#define DW_AT_GNU_bias                          0x2305 /* GNU */
+
 
 /*  Go-specific type attributes
     Naming as lower-case go instead of GO is a small mistake
@@ -608,16 +627,16 @@ most-likely-useful name. */
 
 #define DW_AT_go_runtime_type                   0x2904
 
+
+
 /* UPC extension. */
 #define DW_AT_upc_threads_scaled                0x3210 /* UPC */
-
-/*  PGI (STMicroelectronics) extensions. */
-#define DW_AT_PGI_lbase                         0x3a00
 
 #define DW_AT_IBM_wsa_addr                      0x393e
 #define DW_AT_IBM_home_location                 0x393f
 #define DW_AT_IBM_alt_srcview                   0x3940
 
+/*  PGI (STMicroelectronics) extensions. */
 /*  PGI. Block, constant, reference. This attribute is an ASTPLAB
     extension used to describe the array local base.  */
 #define DW_AT_PGI_lbase                         0x3a00
@@ -645,8 +664,16 @@ most-likely-useful name. */
 /* Apple Extensions for closures  */
 #define DW_AT_APPLE_closure                     0x3fe4 /* Apple */
 /* Apple Extensions for Objective-C runtime info */
-#define DW_AT_APPLE_major_runtime_vers          0x3fe5 /* Apple */
-#define DW_AT_APPLE_runtime_class               0x3fe6 /* Apple */
+#define DW_AT_APPLE_major_runtime_vers    0x3fe5 /* Apple */
+#define DW_AT_APPLE_runtime_class         0x3fe6 /* Apple */
+#define DW_AT_APPLE_omit_frame_ptr        0x3fe7
+#define  DW_AT_APPLE_property_name        0x3fe8
+#define  DW_AT_APPLE_property_getter      0x3fe9
+#define  DW_AT_APPLE_property_setter      0x3fea
+#define  DW_AT_APPLE_property_attribute   0x3feb
+#define  DW_AT_APPLE_objc_complete_type   0x3fec
+#define  DW_AT_APPLE_property             0x3fed
+
 
 
 #define DW_AT_hi_user                           0x3fff
