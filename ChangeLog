@@ -1,3 +1,7 @@
+2021-02-19: David Anderson
+    * scripts/ddbuild.sh: needed a -DSKIP_AF_CHECK
+      to allow building a helper program that
+      emits C source for dwarfdump.
 2021-02-15: David Anderson
     * configure.ac: Now version 20210214.
     * configure: Regenerated.

@@ -74,7 +74,7 @@ if [ ! -f $af ]
 then
   touch $af
 fi
-$CC  -DTRIVIAL_NAMING  dwarf_names.c common.c \
+$CC  -DTRIVIAL_NAMING -DSKIP_AF_CHECK  dwarf_names.c common.c \
 $top_srcdir/libdwarf/dwarf_form_class_names.c \
 attr_form.c \
 dwarf_tsearchbal.c \
