@@ -89,7 +89,7 @@ static void ParseDefinitionsAndWriteOutput(void);
 #define MAX_LINE_SIZE 1000
 /*  We don't need a variable array size,
     it just has to be big enough. */
-#define ARRAY_SIZE 300
+#define ARRAY_SIZE 350
 
 #define MAX_NAME_LEN 64
 
@@ -321,9 +321,9 @@ GenerateInitialFileLines(void)
     fprintf(f_names_new_h,"/* Generated sourcedate %s */\n",
         DW_VERSION_DATE_STR);
     fprintf(f_names_new_h,"\n/* BEGIN FILE */\n\n");
-    fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX "
+    fprintf(f_names_new_h,"/*  define DWARF_PRINT_PREFIX "
         "before this\n");
-    fprintf(f_names_new_h,"   point if you wish to.  */\n");
+    fprintf(f_names_new_h,"    point if you wish to.  */\n");
     fprintf(f_names_new_h,"#ifndef DWARF_PRINT_PREFIX\n");
     fprintf(f_names_new_h,"#define DWARF_PRINT_PREFIX dwarf_\n");
     fprintf(f_names_new_h,"#endif\n");

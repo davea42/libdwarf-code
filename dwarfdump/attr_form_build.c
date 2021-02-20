@@ -188,16 +188,11 @@ check_for_dup_attr(unsigned attr)
 int
 main(int argc, char **argv)
 {
-    unsigned u = 0;
     unsigned int num = 0;
     int input_eof = 0;
-    unsigned table_rows = 0;
-    unsigned table_columns = 0;
     unsigned current_row = 0;
     FILE * fileInp = 0;
     FILE * fileOut = 0;
-    const char *aname = 0;
-    unsigned int index = 0;
 
     print_version_details(argv[0],FALSE);
     print_args(argc,argv);

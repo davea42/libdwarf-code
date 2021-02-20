@@ -3,8 +3,8 @@
 
 /* BEGIN FILE */
 
-/* define DWARF_PRINT_PREFIX before this
-   point if you wish to.  */
+/*  define DWARF_PRINT_PREFIX before this
+    point if you wish to.  */
 #ifndef DWARF_PRINT_PREFIX
 #define DWARF_PRINT_PREFIX dwarf_
 #endif

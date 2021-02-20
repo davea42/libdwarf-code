@@ -415,7 +415,8 @@ main(int argc, char **argv)
             ta_get_TAG_name(tag,&aname);
             fprintf(fileOut,"/* 0x%02x - %s */\n",tag,aname);
             fprintf(fileOut,
-                "static Usage_Tag_Tree tag_tree_%02x[] = {\n",tag);
+                "static Usage_Tag_Tree tag_tree_%02x[] = {\n",
+                tag);
             for (index = 1; index < cur_tag; ++index) {
                 child_tag = tag_tree_vector[index];
                 ta_get_TAG_name(child_tag,&aname);
@@ -438,7 +439,8 @@ main(int argc, char **argv)
         unsigned int legal = 0;
 
         fprintf(fileOut,
-            "static Usage_Tag_Tree *usage_tag_tree[] = {\n");
+            "static Usage_Tag_Tree *usage_tag_tree[0x%02x] = {\n",
+            DW_TAG_last+1);
         for (index = 0; index < DW_TAG_last; ++index) {
             tag = tag_children[index];
             if (tag) {
@@ -459,7 +461,8 @@ main(int argc, char **argv)
         fprintf(fileOut,"    Dwarf_Small found; /* Found tags */\n");
         fprintf(fileOut,"} Rate_Tag_Tree;\n\n");
         fprintf(fileOut,
-            "static Rate_Tag_Tree rate_tag_tree[] = {\n");
+            "static Rate_Tag_Tree rate_tag_tree[0x%02x] = {\n",
+            DW_TAG_last+1);
         for (tag = 0; tag < DW_TAG_last; ++tag) {
             if (tag_children[tag]) {
                 legal = tag_tree_legal[tag];

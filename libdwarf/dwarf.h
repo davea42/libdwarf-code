@@ -26,7 +26,7 @@ Public License along with this program; if not, write the
 Free Software Foundation, Inc., 51 Franklin Street - Fifth
 Floor, Boston MA 02110-1301, USA.
 */
-/* With latest non-standard DW_AT/TAG. 2021-02-18 */
+/* Latest update 2021-02-19 */
 
 #ifndef __DWARF_H
 #define __DWARF_H
@@ -423,8 +423,8 @@ extern "C" {
 /* HP extensions. */
 #define DW_AT_HP_block_index                    0x2000  /* HP */
 
-/* Follows extension so dwarfdump prints the
-most-likely-useful name. */
+/*  0x2000 Follows extension so dwarfdump prints the
+    most-likely-useful name. */
 #define DW_AT_lo_user                           0x2000
 
 #define DW_AT_MIPS_fde                          0x2001 /* MIPS/SGI */
@@ -433,7 +433,7 @@ most-likely-useful name. */
 #define DW_AT_MIPS_epilog_begin                 0x2004 /* MIPS/SGI */
 #define DW_AT_MIPS_loop_unroll_factor           0x2005 /* MIPS/SGI */
 #define DW_AT_MIPS_software_pipeline_depth      0x2006 /* MIPS/SGI */
-#define DW_AT_MIPS_linkage_name 0x2007 /* MIPS/SGI, GNU, and others.*/
+#define DW_AT_MIPS_linkage_name 0x2007 /* MIPS/SGI,GNU,and others.*/
 #define DW_AT_MIPS_stride                       0x2008 /* MIPS/SGI */
 #define DW_AT_MIPS_abstract_name                0x2009 /* MIPS/SGI */
 #define DW_AT_MIPS_clone_origin                 0x200a /* MIPS/SGI */
@@ -544,13 +544,8 @@ most-likely-useful name. */
 #define DW_AT_GNU_locviews                      0x2137 /* GNU */
 #define DW_AT_GNU_entry_view                    0x2138 /* GNU */
 
-
-
-/* ALTIUM extension: ALTIUM Compliant location lists (flag) */
-#define DW_AT_ALTIUM_loclist    0x2300          /* ALTIUM  */
 /* See https://gcc.gnu.org/wiki/DW_AT_GNU_bias */
 #define DW_AT_GNU_bias          0x2305
-
 
 /* Sun extensions */
 #define DW_AT_SUN_template                      0x2201 /* SUN */
@@ -651,30 +646,47 @@ most-likely-useful name. */
     between elements in the dimension. */
 #define DW_AT_PGI_lstride                       0x3a02
 
-/*  There are two groups of Apple extensions here, it is
-    unclear what exactly is correct.  */
-#define DW_AT_APPLE_optimized                   0x3fe1 /* Apple */
-#define DW_AT_APPLE_flags                       0x3fe2 /* Apple */
-#define DW_AT_APPLE_isa                         0x3fe3 /* Apple */
-#define DW_AT_APPLE_block                       0x3fe4 /* Apple */
-#define DW_AT_APPLE_major_runtime_vers          0x3fe5 /* Apple */
-#define DW_AT_APPLE_runtime_class               0x3fe6 /* Apple */
-#define DW_AT_APPLE_omit_frame_ptr              0x3fe7 /* Apple */
+#define DW_AT_BORLAND_property_read             0x3b11
+#define DW_AT_BORLAND_property_write            0x3b12
+#define DW_AT_BORLAND_property_implements       0x3b13
+#define DW_AT_BORLAND_property_index            0x3b14
+#define DW_AT_BORLAND_property_default          0x3b15
+#define DW_AT_BORLAND_Delphi_unit               0x3b20
+#define DW_AT_BORLAND_Delphi_class              0x3b21
+#define DW_AT_BORLAND_Delphi_record             0x3b22
+#define DW_AT_BORLAND_Delphi_metaclass          0x3b23
+#define DW_AT_BORLAND_Delphi_constructor        0x3b24
+#define DW_AT_BORLAND_Delphi_destructor         0x3b25
+#define DW_AT_BORLAND_Delphi_anonymous_method   0x3b26
+#define DW_AT_BORLAND_Delphi_interface          0x3b27
+#define DW_AT_BORLAND_Delphi_ABI                0x3b28
+#define DW_AT_BORLAND_Delphi_frameptr           0x3b30
+#define DW_AT_BORLAND_closure                   0x3b31
 
-/* Apple Extensions for closures  */
-#define DW_AT_APPLE_closure                     0x3fe4 /* Apple */
-/* Apple Extensions for Objective-C runtime info */
-#define DW_AT_APPLE_major_runtime_vers    0x3fe5 /* Apple */
-#define DW_AT_APPLE_runtime_class         0x3fe6 /* Apple */
-#define DW_AT_APPLE_omit_frame_ptr        0x3fe7
-#define  DW_AT_APPLE_property_name        0x3fe8
-#define  DW_AT_APPLE_property_getter      0x3fe9
-#define  DW_AT_APPLE_property_setter      0x3fea
-#define  DW_AT_APPLE_property_attribute   0x3feb
-#define  DW_AT_APPLE_objc_complete_type   0x3fec
-#define  DW_AT_APPLE_property             0x3fed
+#define DW_AT_LLVM_include_path                 0x3e00
+#define DW_AT_LLVM_config_macros                 0x3e01
+#define DW_AT_LLVM_sysroot                 0x3e02
+#define DW_AT_LLVM_tag_offset                 0x3e03
+/*  LLVM intends to use 0x3e04 - 0x3e06 */
+#define DW_AT_LLVM_apinotes                     0x3e03
 
-
+#define DW_AT_APPLE_optimized                   0x3fe1
+#define DW_AT_APPLE_flags                       0x3fe2
+#define DW_AT_APPLE_isa                         0x3fe3
+/*  0x3fe4 Also known as DW_AT_APPLE_closure, block preferred. */
+#define DW_AT_APPLE_block                       0x3fe4
+/* The rest of APPLE here are in support of Objective C */
+#define DW_AT_APPLE_major_runtime_vers          0x3fe5
+#define DW_AT_APPLE_runtime_class               0x3fe6
+#define DW_AT_APPLE_omit_frame_ptr              0x3fe7
+#define DW_AT_APPLE_property_name               0x3fe8
+#define DW_AT_APPLE_property_getter             0x3fe9
+#define DW_AT_APPLE_property_setter             0x3fea
+#define DW_AT_APPLE_property_attribute          0x3feb
+#define DW_AT_APPLE_objc_complete_type          0x3fec
+#define DW_AT_APPLE_property                    0x3fed
+#define DW_AT_APPLE_objc_direct                 0x3fee
+#define DW_AT_APPLE_sdk                         0x3fef
 
 #define DW_AT_hi_user                           0x3fff
 
@@ -845,8 +857,9 @@ most-likely-useful name. */
 #define DW_OP_reinterpret               0xa9 /* DWARF5 */
 
 
-    /* GNU extensions. */
 #define DW_OP_GNU_push_tls_address      0xe0 /* GNU */
+#define DW_OP_WASM_location             0xed
+#define DW_OP_WASM_location_int         0xee
 
 /* Follows extension so dwarfdump prints the
 most-likely-useful name. */
@@ -1133,8 +1146,6 @@ most-likely-useful name. */
 #define DW_CC_GNU_renesas_sh            0x40 /* GNU */
 #define DW_CC_GNU_borland_fastcall_i386 0x41 /* GNU */
 
-
-
 /* ALTIUM extensions. */
 /*  Function is an interrupt handler,
     return address on system stack. */
@@ -1147,7 +1158,31 @@ most-likely-useful name. */
 #define DW_CC_ALTIUM_near_user_stack    0x67  /* ALTIUM */
 
 /* Huge function model, return address on user stack.  */
-#define DW_CC_ALTIUM_huge_user_stack    0x68  /* ALTIUM */
+#define DW_CC_ALTIUM_huge_user_stack  0x68  /* ALTIUM */
+
+#define DW_CC_GNU_BORLAND_safecall    0xb0
+#define DW_CC_GNU_BORLAND_stdcall     0xb1
+#define DW_CC_GNU_BORLAND_pascal      0xb2
+#define DW_CC_GNU_BORLAND_msfastcall  0xb3
+#define DW_CC_GNU_BORLAND_msreturn    0xb4
+#define DW_CC_GNU_BORLAND_thiscall    0xb5
+#define DW_CC_GNU_BORLAND_fastcall    0xb6
+
+#define DW_CC_LLVM_vectorcall         0xc0
+#define DW_CC_LLVM_Win64              0xc1
+#define DW_CC_LLVM_X86_64SysV         0xc2
+#define DW_CC_LLVM_AAPCS              0xc3
+#define DW_CC_LLVM_AAPCS_VFP          0xc4
+#define DW_CC_LLVM_IntelOclBicc       0xc5
+#define DW_CC_LLVM_SpirFunction       0xc6
+#define DW_CC_LLVM_OpenCLKernel       0xc7
+#define DW_CC_LLVM_Swift              0xc8
+#define DW_CC_LLVM_PreserveMost       0xc9
+#define DW_CC_LLVM_PreserveAll        0xca
+#define DW_CC_LLVM_X86RegCall         0xcb
+#define DW_CC_GDB_IBM_OpenCL          0xff
+
+
 
 
 #define DW_CC_hi_user                   0xff
@@ -1177,6 +1212,7 @@ most-likely-useful name. */
 #define DW_LNCT_GNU_decl_file           0x7
 #define DW_LNCT_GNU_decl_line           0x8
 #define DW_LNCT_lo_user                 0x2000 /* DWARF5 */
+#define DW_LNCT_LLVM_source             0x2001
 #define DW_LNCT_hi_user                 0x3fff /* DWARF5 */
 
 /* Line number standard opcode name. */
@@ -1282,14 +1318,14 @@ most-likely-useful name. */
 #define DW_CFA_def_cfa          0x0c
 #define DW_CFA_def_cfa_register 0x0d
 #define DW_CFA_def_cfa_offset   0x0e
-#define DW_CFA_def_cfa_expression 0x0f     /* DWARF3 */
-#define DW_CFA_expression       0x10       /* DWARF3 */
-#define DW_CFA_offset_extended_sf 0x11     /* DWARF3 */
-#define DW_CFA_def_cfa_sf       0x12       /* DWARF3 */
-#define DW_CFA_def_cfa_offset_sf 0x13      /* DWARF3 */
-#define DW_CFA_val_offset        0x14      /* DWARF3f */
-#define DW_CFA_val_offset_sf     0x15      /* DWARF3f */
-#define DW_CFA_val_expression    0x16      /* DWARF3f */
+#define DW_CFA_def_cfa_expression 0x0f /* DWARF3 */
+#define DW_CFA_expression         0x10 /* DWARF3 */
+#define DW_CFA_offset_extended_sf 0x11 /* DWARF3 */
+#define DW_CFA_def_cfa_sf         0x12 /* DWARF3 */
+#define DW_CFA_def_cfa_offset_sf  0x13 /* DWARF3 */
+#define DW_CFA_val_offset         0x14 /* DWARF3f */
+#define DW_CFA_val_offset_sf      0x15 /* DWARF3f */
+#define DW_CFA_val_expression     0x16 /* DWARF3f */
 #define DW_CFA_lo_user     0x1c
 #define DW_CFA_low_user    0x1c  /* Incorrect spelling, do not use. */
 
@@ -1298,6 +1334,7 @@ most-likely-useful name. */
 
 /* GNU extensions. */
 #define DW_CFA_GNU_window_save               0x2d /* GNU */
+#define DW_CFA_AARCH64_negate_ra_state       0x2d
 #define DW_CFA_GNU_args_size                 0x2e /* GNU */
 #define DW_CFA_GNU_negative_offset_extended  0x2f /* GNU */
 

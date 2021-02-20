@@ -1612,7 +1612,9 @@ dwarf_die_abbrev_children_flag(Dwarf_Die die,Dwarf_Half *ab_has_child)
     return DW_DLV_ERROR;
 }
 
-/* Helper function for finding form class. */
+/*  Helper function for finding form class.
+    Only called for FORMs that might be offsets
+    to one or another section.  */
 static enum Dwarf_Form_Class
 dw_get_special_offset(Dwarf_Half attrnum,
     Dwarf_Half dwversion)
@@ -1629,12 +1631,15 @@ dw_get_special_offset(Dwarf_Half attrnum,
         }
         return DW_FORM_CLASS_RNGLIST;
         }
-    case DW_AT_rnglists_base: /* DWARF5 */
+    case DW_AT_GNU_ranges_base: /* DWARF5-like */
+    case DW_AT_rnglists_base:   /* DWARF5 */
         return DW_FORM_CLASS_RNGLISTSPTR;
+    case DW_AT_GNU_macros:    /* DWARF5-like */
     case DW_AT_macros:        /* DWARF5 */
         return DW_FORM_CLASS_MACROPTR;
     case DW_AT_loclists_base: /* DWARF5 */
         return DW_FORM_CLASS_LOCLISTSPTR;
+    case DW_AT_GNU_addr_base: /* DWARF55-like */
     case DW_AT_addr_base:     /* DWARF5 */
         return DW_FORM_CLASS_ADDRPTR;
     case DW_AT_str_offsets_base: /* DWARF5 */
@@ -1756,6 +1761,7 @@ dwarf_get_form_class(
             }
         }
         /* We do not know what this is. */
+        return DW_FORM_CLASS_UNKNOWN;
         break;
 
     case  DW_FORM_string: return DW_FORM_CLASS_STRING;

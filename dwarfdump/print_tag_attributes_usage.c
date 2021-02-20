@@ -312,3 +312,36 @@ print_tag_attributes_usage(void)
 #endif /* HAVE_USAGE_TAG_ATTR */
     return DW_DLV_OK;
 }
+
+/*  This is only needed when processing archives.
+    There is no data to free, but there are
+    counts to reset.
+    usage_tag_tree has a count field.
+    rate_tag_tree has a found field.
+    Function created February 2021.
+    The usage info printed by dwarfdump from
+    Elf archives has been wrong for a few years
+    due to the lack of this function..
+*/
+void
+reset_usage_rate_tag_trees(void)
+{
+    int i = 0;
+
+    for (i = 0 ; i < DW_TAG_last; ++i) {
+         tag_usage[i] = 0;
+     }
+     for (i = 0 ; i < DW_TAG_last; ++i) {
+         Usage_Tag_Tree *usage_ptr = usage_tag_tree[i];
+         if (!usage_ptr) {
+             continue;
+         }
+         for (; usage_ptr->tag; ++usage_ptr) {
+             usage_ptr->count = 0;
+         }
+     }
+     for (i = 0 ; i < DW_TAG_last; ++i) {
+         rate_tag_tree[i].found = 0;
+     }
+}
+

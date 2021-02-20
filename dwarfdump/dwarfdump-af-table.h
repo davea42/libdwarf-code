@@ -51,6 +51,7 @@ struct af_table_s {
 {0x36, 3,1},/*DW_AT_calling_convention DW_FORM_CLASS_CONSTANT Std*/
 {0x59, 3,1},/*DW_AT_call_line DW_FORM_CLASS_CONSTANT Std*/
 {0x7f, 4,1},/*DW_AT_call_origin DW_FORM_CLASS_EXPRLOC Std*/
+{0x7f,10,1},/*DW_AT_call_origin DW_FORM_CLASS_REFERENCE Std*/
 {0x80,10,1},/*DW_AT_call_parameter DW_FORM_CLASS_REFERENCE Std*/
 {0x81, 1,1},/*DW_AT_call_pc DW_FORM_CLASS_ADDRESS Std*/
 {0x7d, 1,1},/*DW_AT_call_return_pc DW_FORM_CLASS_ADDRESS Std*/
@@ -101,6 +102,8 @@ struct af_table_s {
 {0x40, 4,1},/*DW_AT_frame_base DW_FORM_CLASS_EXPRLOC Std*/
 {0x40,15,1},/*DW_AT_frame_base DW_FORM_CLASS_LOCLIST Std*/
 {0x41,10,1},/*DW_AT_friend DW_FORM_CLASS_REFERENCE Std*/
+{0x12, 3,1},/*DW_AT_high_pc DW_FORM_CLASS_CONSTANT Std*/
+{0x12, 1,1},/*DW_AT_high_pc DW_FORM_CLASS_ADDRESS Std*/
 {0x42, 3,1},/*DW_AT_identifier_case DW_FORM_CLASS_CONSTANT Std*/
 {0x18,10,1},/*DW_AT_import DW_FORM_CLASS_REFERENCE Std*/
 {0x20, 3,1},/*DW_AT_inline DW_FORM_CLASS_CONSTANT Std*/
@@ -109,6 +112,7 @@ struct af_table_s {
 {0x6e,11,1},/*DW_AT_linkage_name DW_FORM_CLASS_STRING Std*/
 {0x02, 4,1},/*DW_AT_location DW_FORM_CLASS_EXPRLOC Std*/
 {0x02,15,1},/*DW_AT_location DW_FORM_CLASS_LOCLIST Std*/
+{0x02, 7,1},/*DW_AT_location DW_FORM_CLASS_LOCLISTPTR Std*/
 {0x8c,16,1},/*DW_AT_loclists_base DW_FORM_CLASS_LOCLISTSPTR Std*/
 {0x22, 3,1},/*DW_AT_lower_bound DW_FORM_CLASS_CONSTANT Std*/
 {0x22, 4,1},/*DW_AT_lower_bound DW_FORM_CLASS_EXPRLOC Std*/
@@ -129,6 +133,8 @@ struct af_table_s {
 {0x27, 5,1},/*DW_AT_prototyped DW_FORM_CLASS_FLAG Std*/
 {0x67, 5,1},/*DW_AT_pure DW_FORM_CLASS_FLAG Std*/
 {0x55,17,1},/*DW_AT_ranges DW_FORM_CLASS_RNGLIST Std*/
+{0x55, 9,1},/*DW_AT_ranges DW_FORM_CLASS_RANGELISTPTR Std*/
+{0x55,18,1},/*DW_AT_ranges DW_FORM_CLASS_RNGLISTSPTR Std*/
 {0x71, 3,1},/*DW_AT_rank DW_FORM_CLASS_CONSTANT Std*/
 {0x71, 4,1},/*DW_AT_rank DW_FORM_CLASS_EXPRLOC Std*/
 {0x68, 5,1},/*DW_AT_recursive DW_FORM_CLASS_FLAG Std*/
@@ -172,12 +178,39 @@ struct af_table_s {
 {0x4d,15,1},/*DW_AT_vtable_elem_location DW_FORM_CLASS_LOCLIST Std*/
 /* end af_table standard */
 {0x2133,14,2},/*DW_AT_GNU_addr_base DW_FORM_CLASS_ADDRPTR Ext*/
+{0x2117, 5,2},/*DW_AT_GNU_all_call_sites DW_FORM_CLASS_FLAG Ext*/
+{0x2116, 5,2},/*DW_AT_GNU_all_tail_call_sites DW_FORM_CLASS_FLAG Ext*/
+{0x2112, 4,2},/*DW_AT_GNU_call_site_data_value DW_FORM_CLASS_EXPRLOC Ext*/
+{0x2113, 4,2},/*DW_AT_GNU_call_site_target DW_FORM_CLASS_EXPRLOC Ext*/
+{0x2111, 4,2},/*DW_AT_GNU_call_site_value DW_FORM_CLASS_EXPRLOC Ext*/
+{0x2304, 3,2},/*DW_AT_GNU_denominator DW_FORM_CLASS_CONSTANT Ext*/
+{0x2136, 3,2},/*DW_AT_GNU_discriminator DW_FORM_CLASS_CONSTANT Ext*/
 {0x2131,10,2},/*DW_AT_GNU_dwo_id DW_FORM_CLASS_REFERENCE Ext*/
+{0x2131, 3,2},/*DW_AT_GNU_dwo_id DW_FORM_CLASS_CONSTANT Ext*/
+{0x2130,11,2},/*DW_AT_GNU_dwo_name DW_FORM_CLASS_STRING Ext*/
+{0x2119,13,2},/*DW_AT_GNU_macros DW_FORM_CLASS_MAXCROPTR Ext*/
+{0x2303, 3,2},/*DW_AT_GNU_numerator DW_FORM_CLASS_CONSTANT Ext*/
+{0x210f, 3,2},/*DW_AT_GNU_odr_signature DW_FORM_CLASS_CONSTANT Ext*/
 {0x210f,10,2},/*DW_AT_GNU_odr_signature DW_FORM_CLASS_REFERENCE Ext*/
+{0x2134,10,2},/*DW_AT_GNU_pubnames DW_FORM_CLASS_REFERENCE Ext*/
+{0x2134, 5,2},/*DW_AT_GNU_pubnames DW_FORM_CLASS_FLAG Ext*/
+{0x2134, 3,2},/*DW_AT_GNU_pubnames DW_FORM_CLASS_CONSTANT Ext*/
+{0x2135,10,2},/*DW_AT_GNU_pubtypes DW_FORM_CLASS_REFERENCE Ext*/
+{0x2135, 5,2},/*DW_AT_GNU_pubtypes DW_FORM_CLASS_FLAG Ext*/
+{0x2135, 3,2},/*DW_AT_GNU_pubtypes DW_FORM_CLASS_CONSTANT Ext*/
+{0x2132,18,2},/*DW_AT_GNU_ranges_base DW_FORM_CLASS_RNGLISTSPTR Ext*/
+{0x2115, 5,2},/*DW_AT_GNU_tail_call DW_FORM_CLASS_FLAG Ext*/
 {0x2009,11,2},/*DW_AT_MIPS_abstract_name DW_FORM_CLASS_STRING Ext*/
+{0x2001,12,2},/*DW_AT_MIPS_fde DW_FORM_CLASS_FRAMEPTR Ext*/
+{0x200b, 5,2},/*DW_AT_MIPS_has_inlines DW_FORM_CLASS_FLAG Ext*/
 {0x2007,11,2},/*DW_AT_MIPS_linkage_name DW_FORM_CLASS_STRING Ext*/
 {0x2226,11,2},/*DW_AT_SUN_link_name DW_FORM_CLASS_STRING Ext*/
 {0x2225,11,2},/*DW_AT_SUN_part_link_name DW_FORM_CLASS_STRING Ext*/
+{0x2083, 3,2},/*DW_AT_GHS_unknown1 DW_FORM_CLASS_CONSTANT Ext*/
+{0x2087, 3,2},/*DW_AT_GHS_unknown2 DW_FORM_CLASS_CONSTANT Ext*/
+{0x2085, 3,2},/*DW_AT_GHS_unknown3 DW_FORM_CLASS_CONSTANT Ext*/
+{0x2086, 3,2},/*DW_AT_GHS_unknown4 DW_FORM_CLASS_CONSTANT Ext*/
+{0x2092, 3,2},/*DW_AT_GHS_unknown5 DW_FORM_CLASS_CONSTANT Ext*/
 { 0,0,0 }
 }; /* end af_table extended */
 #ifdef __cplusplus

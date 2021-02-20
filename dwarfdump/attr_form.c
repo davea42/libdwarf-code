@@ -32,7 +32,6 @@
 #include "dwarfdump-af-table.h"
 
 const Three_Key_Entry threekeyzero;
-
 #if 0
 static void
 print_3key_record(int num,Three_Key_Entry *e)
@@ -171,6 +170,10 @@ build_attr_form_base_tree(int*errnum)
     int res;
     void *tree = &threekey_attr_form_base;
 
+    if (threekey_attr_form_base) {
+        /*  Do not init again if a tied file */
+        return DW_DLV_OK;
+    }
     for (tab = &attr_formclass_table[0]; ; tab++) {
         if (!tab->attr && !tab->formclass && !tab->section) {
             /* Done */
@@ -194,31 +197,121 @@ void * threekey_attr_form_base;
 void
 destroy_attr_form_trees(void)
 {
+    if (!threekey_attr_form_base) {
+        return;
+    }
     dwarf_tdestroy(threekey_attr_form_base,
         free_func_3key_entry);
     threekey_attr_form_base = 0;
 }
 
+/*  SKIP_AF_CHECK defined means this is in scripts/ddbuild.sh
+    and this checking makes no sense and will not compile. */
+#ifndef SKIP_AF_CHECK
+static Dwarf_Bool
+legal_attr_formclass_combination(Dwarf_Half attr, 
+    Dwarf_Half fc)
+{
+    Three_Key_Entry *e = 0;
+    Three_Key_Entry *re = 0;
+    void *ret = 0;
+    int res = 0;
+
+    res = make_3key(attr,fc,0,0,0,0,&e);
+    if (res!= DW_DLV_OK) {
+        /*  Hiding some sort of botch/malloc issue */
+        return TRUE;
+    }
+    ret = dwarf_tfind(e,&threekey_attr_form_base,
+        std_compare_3key_entry);
+    if (!ret) {
+        /*  Surprising combo. */
+        free(e);
+        return FALSE;
+    }
+    re = *(Three_Key_Entry **)ret;
+    if(!glflags.gf_suppress_check_extensions_tables) {
+        free(e);
+        return TRUE;
+    }
+    if (re->std_or_exten == AF_STD) {
+        free(e);
+        return TRUE;
+    }
+    free(e);
+    return FALSE;
+}
+
+static void
+check_attr_formclass_combination(Dwarf_Debug dbg,
+    Dwarf_Half tag,
+    Dwarf_Half attrnum,
+    Dwarf_Half fc,
+    int pd_dwarf_names_print_on_error,
+    int die_stack_indent_level)
+{
+    const char *tagname = "<AT invalid>";
+    const char *formclassname = "<FORM_CLASS invalid>";
+    DWARF_CHECK_COUNT(attr_formclass_result,1);
+    if (legal_attr_formclass_combination(attrnum,fc)) {
+        /* OK */
+    } else {
+        /* Report errors only if tag-attr check is on */
+        if (glflags.gf_check_tag_attr) {
+            tagname = get_AT_name(attrnum,
+                pd_dwarf_names_print_on_error);
+            tag_specific_globals_setup(dbg,tag,
+                die_stack_indent_level);
+            formclassname = get_FORM_CLASS_name(fc,
+                pd_dwarf_names_print_on_error);
+
+            DWARF_CHECK_ERROR3(attr_formclass_result,tagname,
+                formclassname,
+                "check the attr-formclass combination");
+        }
+    }
+}
+#endif /* SKIP_AF_CHECK  */
 
 
 void
-record_attr_form_use(Dwarf_Half attr,
+record_attr_form_use(
+#ifndef SKIP_AF_CHECK 
+    Dwarf_Debug dbg,
+    Dwarf_Half tag,
+    Dwarf_Half attr,
     Dwarf_Half fclass,
-    Dwarf_Half form)
+    Dwarf_Half form,
+    int pd_dwarf_names_print_on_error,
+    int die_stack_indent_level)
+#else
+    UNUSEDARG Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Half tag,
+    Dwarf_Half attr,
+    Dwarf_Half fclass,
+    Dwarf_Half form,
+    UNUSEDARG int pd_dwarf_names_print_on_error,
+    UNUSEDARG int die_stack_indent_level)
+#endif /* SKIP_AF_CHECK */
 {
     Three_Key_Entry *e =  0;
     Three_Key_Entry *re =  0;
     void *ret =  0;
-    Dwarf_Small std_or_exten = 1;
+    Dwarf_Small std_or_exten = AF_STD;
     int res = 0;
 
     if (attr >= DW_AT_lo_user) {
-        std_or_exten = 2;
+        std_or_exten = AF_EXTEN;
     } else if (form > DW_FORM_addrx4) {
         /*  There is no lo_user code for FORMs,
             they really are limited. */
-        std_or_exten = 2;
+        std_or_exten = AF_EXTEN;
     }
+#ifndef SKIP_AF_CHECK 
+    check_attr_formclass_combination(dbg,
+        tag,attr,fclass,pd_dwarf_names_print_on_error,
+        die_stack_indent_level);
+#endif /* SKIP_AF_CHECK */
     res = make_3key(attr,fclass,form,std_or_exten,0,1,&e);
     if (res!= DW_DLV_OK) {
         /*  Could print something */
@@ -358,6 +451,8 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         glflags.gf_count_major_errors++;
         return;
     }
+    /* Reset the file-global! */
+    recordcount = 0;
     dwarf_twalk(threekey_attr_form_base,extract_3key_entry);
     if (recordcount != recordmax) {
         printf("ERROR: unable to fill in attr/form array "

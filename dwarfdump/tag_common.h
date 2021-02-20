@@ -106,7 +106,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define STD_ATTR_TABLE_COLUMNS  5
 /* tag/attr tree common extension maximums. */
 #define EXT_ATTR_TABLE_ROWS 19
-#define EXT_ATTR_TABLE_COLS 10
+#define EXT_ATTR_TABLE_COLS 15
 
 /*  The following 2 used in tag_attr.c only.
     They must be large enough but they are only used
@@ -115,7 +115,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
     so if a bit too large there is no
     side effect on anything.  */
 #define ATTR_TABLE_ROW_MAXIMUM 80
-#define ATTR_TABLE_COLUMN_MAXIMUM  11
+#define ATTR_TABLE_COLUMN_MAXIMUM  16
 
 /* Bits per 'int' to mark legal attrs. */
 #define BITS_PER_WORD 32

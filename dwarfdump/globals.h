@@ -308,6 +308,7 @@ int print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error *);
 /* Detailed tag and attributes usage */
 int print_tag_attributes_usage(void);
 void record_tag_usage(int tag);
+void reset_usage_rate_tag_trees(void);
 
 
 int  print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *);

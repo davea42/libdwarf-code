@@ -94,15 +94,33 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         }
         DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
             dbg,error,abbrev_section_end);
+        /* If we have attr, form as 0,0, fall through to end */
         if (!_dwarf_valid_form_we_know(attr_form,attr_name)) {
             dwarfstring m;
 
             dwarfstring_constructor(&m);
             dwarfstring_append_printf_u(&m,
-                "DW_DLE_UNKNOWN_FORM: Abbrev invalid form 0x%"
-                DW_PR_DUx,attr_form);
-            dwarfstring_append_printf_u(&m,
-                " with attribute 0x%" DW_PR_DUx,attr_name);
+                "DW_DLE_UNKNOWN_FORM: Abbrev form 0x%"
+                DW_PR_DUx,
+                attr_form);
+            if (attr_name) {
+                dwarfstring_append_printf_u(&m,
+                    " DW_DLE_UNKNOWN_FORM: Abbrev form 0x%"
+                    DW_PR_DUx,
+                    attr_form);
+                dwarfstring_append_printf_u(&m,
+                    " with attribute 0x%" DW_PR_DUx,
+                    attr_name);
+            } else {
+                dwarfstring_append_printf_u(&m,
+                    " DW_DLE_UNKNOWN_FORM(really unknown attr)"
+                    ": Abbrev form 0x%"
+                    DW_PR_DUx,
+                    attr_form);
+                dwarfstring_append_printf_u(&m,
+                    " with attribute 0x%" DW_PR_DUx,
+                    attr_name);
+            }
             dwarfstring_append(&m," so abbreviations unusable. ");
             _dwarf_error_string(dbg, error, DW_DLE_UNKNOWN_FORM,
                 dwarfstring_string(&m));

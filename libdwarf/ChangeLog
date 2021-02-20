@@ -1,3 +1,19 @@
+2021-02-19  David Anderson
+    * dwarf.h: Many DWARF-extension name/value pairs were made
+      available to me, so those are now in dwarf.h. 
+    * dwarf_abbrev.c: An error issue with a corrupted
+      object lead to an errormessage that read very
+      confusingly.  I've updated the message to be
+      a bit clearer.
+    * dwarf_names.c,dwarf_names_enum.h: Regenerated.
+    * dwarf_query.c(dw_get_special_offset): Updated 
+      so we get some additional form classes report d
+      correctly on certain DW_AT extensions to the
+      standard..
+    * gennames.c: More names, so a constant used
+      to generate .c and .h files needed to go 300->350.
+      The array is only used to build C source code and
+      does not appear in libdwarf or dwarfdump.
 2021-02-16  David Anderson
     * dwarf_query.c: Removed a () that was accidental.
     * dwarf_form_class_names.c: Removed a trailing space.

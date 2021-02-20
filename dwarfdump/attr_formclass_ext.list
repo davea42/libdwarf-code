@@ -32,7 +32,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <dwarf.h>
 
 /*  Most of these are not formally documented, hopefully
-    we'll figure out some of them.
+    we'll figure out some of them. */
 
 /*  badly named GNU extensions. */
 0xffffffff
@@ -90,44 +90,53 @@ DW_FORM_CLASS_ADDRPTR
 
 0xffffffff
 DW_AT_GNU_all_call_sites
+DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_GNU_all_source_call_sites
 
 0xffffffff
 DW_AT_GNU_all_tail_call_sites
+DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_GNU_bias
 
 0xffffffff
 DW_AT_GNU_call_site_data_value
+DW_FORM_CLASS_EXPRLOC
 
 0xffffffff
 DW_AT_GNU_call_site_target
+DW_FORM_CLASS_EXPRLOC
 
 0xffffffff
 DW_AT_GNU_call_site_target_clobbered
 
 0xffffffff
 DW_AT_GNU_call_site_value
+DW_FORM_CLASS_EXPRLOC
 
 0xffffffff
 DW_AT_GNU_deleted
 
 0xffffffff
 DW_AT_GNU_denominator
+DW_FORM_CLASS_CONSTANT
 
 0xffffffff
 DW_AT_GNU_discriminator
+DW_FORM_CLASS_CONSTANT
 
 /* Expect DW_FORM_ref_sig8 */
 0xffffffff
 DW_AT_GNU_dwo_id
 DW_FORM_CLASS_REFERENCE
+DW_FORM_CLASS_CONSTANT
 
 0xffffffff
 DW_AT_GNU_dwo_name
+DW_FORM_CLASS_STRING
 
 0xffffffff
 DW_AT_GNU_entry_view
@@ -158,27 +167,43 @@ DW_AT_GNU_locviews
 
 0xffffffff
 DW_AT_GNU_macros
+DW_FORM_CLASS_MACROPTR
 
 0xffffffff
 DW_AT_GNU_numerator
+DW_FORM_CLASS_CONSTANT
 
 /* Expect DW_FORM_ref_sig8 */
 0xffffffff
 DW_AT_GNU_odr_signature
+DW_FORM_CLASS_CONSTANT
 DW_FORM_CLASS_REFERENCE
 
+/* https://binutils.sourceware.narkive.com/zhSf69Vo/gold-patch-handle-dw-at-gnu-pubnames-in-dw-form-flag-present */
 0xffffffff
 DW_AT_GNU_pubnames
+DW_FORM_CLASS_REFERENCE
+DW_FORM_CLASS_FLAG
+DW_FORM_CLASS_CONSTANT
+/*  Have seen all the above formclasses from gcc */
 
 0xffffffff
 DW_AT_GNU_pubtypes
+DW_FORM_CLASS_REFERENCE
+DW_FORM_CLASS_FLAG
+DW_FORM_CLASS_CONSTANT
+/*  Have seen all the above formclasses from gcc */
+
 
 0xffffffff
 DW_AT_GNU_ranges_base
+/*DW_FORM_CLASS_REFERENCE */
+DW_FORM_CLASS_RNGLISTSPTR
 
 
 0xffffffff
 DW_AT_GNU_tail_call
+DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_GNU_template_name
@@ -243,8 +268,10 @@ DW_AT_MIPS_clone_origin
 DW_AT_MIPS_epilog_begin
 0xffffffff
 DW_AT_MIPS_fde
+DW_FORM_CLASS_FRAMEPTR
 0xffffffff
 DW_AT_MIPS_has_inlines
+DW_FORM_CLASS_FLAG
 
 0xffffffff
 DW_AT_MIPS_linkage_name
@@ -368,4 +395,21 @@ DW_AT_SUN_vtable_abi
 DW_AT_SUN_vtable_index
 0xffffffff
 DW_AT_use_GNAT_descriptive_type
+0xffffffff
+/* The following are possibly defined by GreenHills,
+   though the correct spelling is unknown.. */
+DW_AT_GHS_unknown1
+DW_FORM_CLASS_CONSTANT
+0xffffffff
+DW_AT_GHS_unknown2
+DW_FORM_CLASS_CONSTANT
+0xffffffff
+DW_AT_GHS_unknown3
+DW_FORM_CLASS_CONSTANT
+0xffffffff
+DW_AT_GHS_unknown4
+DW_FORM_CLASS_CONSTANT
+0xffffffff
+DW_AT_GHS_unknown5 
+DW_FORM_CLASS_CONSTANT
 0xffffffff

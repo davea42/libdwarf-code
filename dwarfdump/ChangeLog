@@ -1,3 +1,41 @@
+2021-02-19 David Anderson
+    * attr_form.c: Now checks attr/form-class
+      combinations and reports on them. The -ku
+      option lets one see interesting counts
+      without details cluttering the output.
+    * attr_form.h: Argument list updates
+      to support latest functionality.
+    * attr_formclass.list,attr_formclass_ext.list:
+      New declarations of attr/formclass combinations
+      one expects to see. No doubt there will be
+      more such to do.
+    * attr_form_build.c: Deleted unused locals,
+      fixing some compiler warnings.
+    * dwarf_names.h: Regenerated.
+    * dwarfdump-af-table.h: Regenerated the attr/formclass
+      table.
+    * dwarfdump-ta-ext-table.h: New extensions added.
+    * dwarfdump-tt-table.h: Regenerated with explicit
+      array sizes so compilers can check array references.
+    * dwarfdump.c: Added calls to certain cleanups
+      that have long been needed for correct
+      -ku output when reading an Elf Archive
+    * glflags.h: Added a new Dwarf_Check_Catetories entry
+      of attr_formclass_result.
+    * globals.h: New function declarations for
+      form_class and tag-tree tag-attr counts
+      in the Elf archive case.
+    * print_die.c: Added arguments to record_attr_form_use
+      now that we check and count usages.
+    * print_tag_attributes_usage.c(reset_usage_rate_tag_tree): 
+      added reset function so printing of Elf archive
+      member objects usages are correct.
+    * tag_attr_ext.list: Added GHS attributes to list.
+    * tag_common.h: Increased column counts due to 
+      adding the GHS attributes to tag_attr_ext.list.
+    * tag_tree.c: Added array size to emitted C
+      source so compiler can check references when
+      that emitted source is built into dwarfdump.
 2021-02-16 David Anderson
     * command_options.c,compiler_info.c,glflags.c,
       glflags.h,print_tag_attributes_usage.c: 

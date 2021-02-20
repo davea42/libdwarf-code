@@ -285,7 +285,8 @@ flag_data_pre_allocation(void)
     }
 }
 
-static void flag_data_post_cleanup(void)
+static void 
+flag_data_post_cleanup(void)
 {
 #ifdef DWARF_WITH_LIBELF
     clean_up_syms_malloc_data();
@@ -412,6 +413,7 @@ process_using_libelf(int fd, int tiedfd,
             0,0,
             archive,
             glflags.config_file_data);
+        reset_usage_rate_tag_trees();
         flag_data_post_cleanup();
         cmd = elf_next(elf);
         elf_end(elf);
@@ -1747,10 +1749,7 @@ process_one_file(
 #ifdef DWARF_WITH_LIBELF
     clean_up_syms_malloc_data();
 #endif /* DWARF_WITH_LIBELF */
-    if (glflags.gf_check_tag_attr ||
-        glflags.gf_print_usage_tag_attr) {
-        destroy_attr_form_trees();
-    }
+    destroy_attr_form_trees();
     destruct_abbrev_array();
     esb_close_null_device();
     release_range_array_info();
@@ -1866,6 +1865,7 @@ print_error(Dwarf_Debug dbg,
     }
     global_destructors();
     flag_data_post_cleanup();
+    destroy_attr_form_trees();
     exit(FAILED);
 }
 /* ARGSUSED */

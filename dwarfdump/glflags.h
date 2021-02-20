@@ -75,6 +75,7 @@ typedef enum /* Dwarf_Check_Categories */ {
     attr_encoding_result,
     duplicated_attributes_result,
     total_check_result,
+    attr_formclass_result,
     LAST_CATEGORY  /* Must be last */
 } Dwarf_Check_Categories;
 

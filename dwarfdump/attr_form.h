@@ -30,6 +30,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define AF_STD   1
+#define AF_EXTEN 2
+
 struct Three_Key_Entry_s {
     Dwarf_Half  key1; /* usually AT number */
     Dwarf_Half  key2; /* usually  FORM_CLASS number */
@@ -57,16 +60,15 @@ void free_func_3key_entry(void *keystructptr);
 int  std_compare_3key_entry(const void *l, const void *r);
 int  build_attr_form_base_tree(int*errnum);
 void destroy_attr_form_trees(void);
-
-void record_attr_form_use(Dwarf_Half attr,
-    Dwarf_Half fclass , Dwarf_Half form);
+void record_attr_form_use(Dwarf_Debug dbg,
+    Dwarf_Half tag, Dwarf_Half attr, 
+    Dwarf_Half fclass, Dwarf_Half form,
+    int pd_dwarf_names_print_on_error,
+    int die_stack_indent_level);
 
 /*  The standard main tree for attr_form data.
     Starting out as simple global variables. */
 extern void * threekey_attr_form_base; /* for attr-form combos */
-extern void * threekey_attr_count_base; /* for attr only */
-extern void * threekey_form_count_base; /* for form only */
-
 void print_attr_form_usage(int poe);
 
 #ifdef __cplusplus

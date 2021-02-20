@@ -336,6 +336,21 @@ dwarf_get_TAG_name (unsigned int val,
     case DW_TAG_PGI_interface_block:
         *s_out = "DW_TAG_PGI_interface_block";
         return DW_DLV_OK;
+    case DW_TAG_BORLAND_property:
+        *s_out = "DW_TAG_BORLAND_property";
+        return DW_DLV_OK;
+    case DW_TAG_BORLAND_Delphi_string:
+        *s_out = "DW_TAG_BORLAND_Delphi_string";
+        return DW_DLV_OK;
+    case DW_TAG_BORLAND_Delphi_dynamic_array:
+        *s_out = "DW_TAG_BORLAND_Delphi_dynamic_array";
+        return DW_DLV_OK;
+    case DW_TAG_BORLAND_Delphi_set:
+        *s_out = "DW_TAG_BORLAND_Delphi_set";
+        return DW_DLV_OK;
+    case DW_TAG_BORLAND_Delphi_variant:
+        *s_out = "DW_TAG_BORLAND_Delphi_variant";
+        return DW_DLV_OK;
     case DW_TAG_hi_user:
         *s_out = "DW_TAG_hi_user";
         return DW_DLV_OK;
@@ -923,6 +938,8 @@ dwarf_get_AT_name (unsigned int val,
         *s_out = "DW_AT_MIPS_loop_unroll_factor";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
+        0x2005. DW_AT_HP_prologue */
+    /*  Skipping alternate spelling of value
         0x2005. DW_AT_CPQ_prologue_length */
     case DW_AT_MIPS_software_pipeline_depth:
         *s_out = "DW_AT_MIPS_software_pipeline_depth";
@@ -933,6 +950,8 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_MIPS_stride:
         *s_out = "DW_AT_MIPS_stride";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2008. DW_AT_HP_epilogue */
     case DW_AT_MIPS_abstract_name:
         *s_out = "DW_AT_MIPS_abstract_name";
         return DW_DLV_OK;
@@ -994,8 +1013,41 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_HP_prof_flags:
         *s_out = "DW_AT_HP_prof_flags";
         return DW_DLV_OK;
+    case DW_AT_HP_unit_name:
+        *s_out = "DW_AT_HP_unit_name";
+        return DW_DLV_OK;
+    case DW_AT_HP_unit_size:
+        *s_out = "DW_AT_HP_unit_size";
+        return DW_DLV_OK;
+    case DW_AT_HP_widened_byte_size:
+        *s_out = "DW_AT_HP_widened_byte_size";
+        return DW_DLV_OK;
+    case DW_AT_HP_definition_points:
+        *s_out = "DW_AT_HP_definition_points";
+        return DW_DLV_OK;
+    case DW_AT_HP_default_location:
+        *s_out = "DW_AT_HP_default_location";
+        return DW_DLV_OK;
     case DW_AT_INTEL_other_endian:
         *s_out = "DW_AT_INTEL_other_endian";
+        return DW_DLV_OK;
+    case DW_AT_HP_is_result_param:
+        *s_out = "DW_AT_HP_is_result_param";
+        return DW_DLV_OK;
+    case DW_AT_GHS_unknown1:
+        *s_out = "DW_AT_GHS_unknown1";
+        return DW_DLV_OK;
+    case DW_AT_GHS_unknown3:
+        *s_out = "DW_AT_GHS_unknown3";
+        return DW_DLV_OK;
+    case DW_AT_GHS_unknown4:
+        *s_out = "DW_AT_GHS_unknown4";
+        return DW_DLV_OK;
+    case DW_AT_GHS_unknown2:
+        *s_out = "DW_AT_GHS_unknown2";
+        return DW_DLV_OK;
+    case DW_AT_GHS_unknown5:
+        *s_out = "DW_AT_GHS_unknown5";
         return DW_DLV_OK;
     case DW_AT_sf_names:
         *s_out = "DW_AT_sf_names";
@@ -1251,8 +1303,6 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_GNAT_descriptive_type:
         *s_out = "DW_AT_GNAT_descriptive_type";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x2302. DW_AT_GNAT_descriptive_type */
     case DW_AT_GNU_numerator:
         *s_out = "DW_AT_GNU_numerator";
         return DW_DLV_OK;
@@ -1262,6 +1312,8 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_GNU_bias:
         *s_out = "DW_AT_GNU_bias";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2305. DW_AT_GNU_bias */
     case DW_AT_go_kind:
         *s_out = "DW_AT_go_kind";
         return DW_DLV_OK;
@@ -1280,17 +1332,86 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_upc_threads_scaled:
         *s_out = "DW_AT_upc_threads_scaled";
         return DW_DLV_OK;
+    case DW_AT_IBM_wsa_addr:
+        *s_out = "DW_AT_IBM_wsa_addr";
+        return DW_DLV_OK;
+    case DW_AT_IBM_home_location:
+        *s_out = "DW_AT_IBM_home_location";
+        return DW_DLV_OK;
+    case DW_AT_IBM_alt_srcview:
+        *s_out = "DW_AT_IBM_alt_srcview";
+        return DW_DLV_OK;
     case DW_AT_PGI_lbase:
         *s_out = "DW_AT_PGI_lbase";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x3a00. DW_AT_PGI_lbase */
     case DW_AT_PGI_soffset:
         *s_out = "DW_AT_PGI_soffset";
         return DW_DLV_OK;
     case DW_AT_PGI_lstride:
         *s_out = "DW_AT_PGI_lstride";
         return DW_DLV_OK;
+    case DW_AT_BORLAND_property_read:
+        *s_out = "DW_AT_BORLAND_property_read";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_property_write:
+        *s_out = "DW_AT_BORLAND_property_write";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_property_implements:
+        *s_out = "DW_AT_BORLAND_property_implements";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_property_index:
+        *s_out = "DW_AT_BORLAND_property_index";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_property_default:
+        *s_out = "DW_AT_BORLAND_property_default";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_unit:
+        *s_out = "DW_AT_BORLAND_Delphi_unit";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_class:
+        *s_out = "DW_AT_BORLAND_Delphi_class";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_record:
+        *s_out = "DW_AT_BORLAND_Delphi_record";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_metaclass:
+        *s_out = "DW_AT_BORLAND_Delphi_metaclass";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_constructor:
+        *s_out = "DW_AT_BORLAND_Delphi_constructor";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_destructor:
+        *s_out = "DW_AT_BORLAND_Delphi_destructor";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_anonymous_method:
+        *s_out = "DW_AT_BORLAND_Delphi_anonymous_method";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_interface:
+        *s_out = "DW_AT_BORLAND_Delphi_interface";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_ABI:
+        *s_out = "DW_AT_BORLAND_Delphi_ABI";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_Delphi_frameptr:
+        *s_out = "DW_AT_BORLAND_Delphi_frameptr";
+        return DW_DLV_OK;
+    case DW_AT_BORLAND_closure:
+        *s_out = "DW_AT_BORLAND_closure";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_include_path:
+        *s_out = "DW_AT_LLVM_include_path";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_config_macros:
+        *s_out = "DW_AT_LLVM_config_macros";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_sysroot:
+        *s_out = "DW_AT_LLVM_sysroot";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_tag_offset:
+        *s_out = "DW_AT_LLVM_tag_offset";
+        return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x3e03. DW_AT_LLVM_apinotes */
     case DW_AT_APPLE_optimized:
         *s_out = "DW_AT_APPLE_optimized";
         return DW_DLV_OK;
@@ -1303,20 +1424,38 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_APPLE_block:
         *s_out = "DW_AT_APPLE_block";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x3fe4. DW_AT_APPLE_closure */
     case DW_AT_APPLE_major_runtime_vers:
         *s_out = "DW_AT_APPLE_major_runtime_vers";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x3fe5. DW_AT_APPLE_major_runtime_vers */
     case DW_AT_APPLE_runtime_class:
         *s_out = "DW_AT_APPLE_runtime_class";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x3fe6. DW_AT_APPLE_runtime_class */
     case DW_AT_APPLE_omit_frame_ptr:
         *s_out = "DW_AT_APPLE_omit_frame_ptr";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_property_name:
+        *s_out = "DW_AT_APPLE_property_name";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_property_getter:
+        *s_out = "DW_AT_APPLE_property_getter";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_property_setter:
+        *s_out = "DW_AT_APPLE_property_setter";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_property_attribute:
+        *s_out = "DW_AT_APPLE_property_attribute";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_objc_complete_type:
+        *s_out = "DW_AT_APPLE_objc_complete_type";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_property:
+        *s_out = "DW_AT_APPLE_property";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_objc_direct:
+        *s_out = "DW_AT_APPLE_objc_direct";
+        return DW_DLV_OK;
+    case DW_AT_APPLE_sdk:
+        *s_out = "DW_AT_APPLE_sdk";
         return DW_DLV_OK;
     case DW_AT_hi_user:
         *s_out = "DW_AT_hi_user";
@@ -1849,6 +1988,12 @@ dwarf_get_OP_name (unsigned int val,
         return DW_DLV_OK;
     case DW_OP_INTEL_bit_piece:
         *s_out = "DW_OP_INTEL_bit_piece";
+        return DW_DLV_OK;
+    case DW_OP_WASM_location:
+        *s_out = "DW_OP_WASM_location";
+        return DW_DLV_OK;
+    case DW_OP_WASM_location_int:
+        *s_out = "DW_OP_WASM_location_int";
         return DW_DLV_OK;
     case DW_OP_GNU_uninit:
         *s_out = "DW_OP_GNU_uninit";
@@ -2586,9 +2731,68 @@ dwarf_get_CC_name (unsigned int val,
     case DW_CC_ALTIUM_huge_user_stack:
         *s_out = "DW_CC_ALTIUM_huge_user_stack";
         return DW_DLV_OK;
-    case DW_CC_hi_user:
-        *s_out = "DW_CC_hi_user";
+    case DW_CC_GNU_BORLAND_safecall:
+        *s_out = "DW_CC_GNU_BORLAND_safecall";
         return DW_DLV_OK;
+    case DW_CC_GNU_BORLAND_stdcall:
+        *s_out = "DW_CC_GNU_BORLAND_stdcall";
+        return DW_DLV_OK;
+    case DW_CC_GNU_BORLAND_pascal:
+        *s_out = "DW_CC_GNU_BORLAND_pascal";
+        return DW_DLV_OK;
+    case DW_CC_GNU_BORLAND_msfastcall:
+        *s_out = "DW_CC_GNU_BORLAND_msfastcall";
+        return DW_DLV_OK;
+    case DW_CC_GNU_BORLAND_msreturn:
+        *s_out = "DW_CC_GNU_BORLAND_msreturn";
+        return DW_DLV_OK;
+    case DW_CC_GNU_BORLAND_thiscall:
+        *s_out = "DW_CC_GNU_BORLAND_thiscall";
+        return DW_DLV_OK;
+    case DW_CC_GNU_BORLAND_fastcall:
+        *s_out = "DW_CC_GNU_BORLAND_fastcall";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_vectorcall:
+        *s_out = "DW_CC_LLVM_vectorcall";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_Win64:
+        *s_out = "DW_CC_LLVM_Win64";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_X86_64SysV:
+        *s_out = "DW_CC_LLVM_X86_64SysV";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_AAPCS:
+        *s_out = "DW_CC_LLVM_AAPCS";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_AAPCS_VFP:
+        *s_out = "DW_CC_LLVM_AAPCS_VFP";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_IntelOclBicc:
+        *s_out = "DW_CC_LLVM_IntelOclBicc";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_SpirFunction:
+        *s_out = "DW_CC_LLVM_SpirFunction";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_OpenCLKernel:
+        *s_out = "DW_CC_LLVM_OpenCLKernel";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_Swift:
+        *s_out = "DW_CC_LLVM_Swift";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_PreserveMost:
+        *s_out = "DW_CC_LLVM_PreserveMost";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_PreserveAll:
+        *s_out = "DW_CC_LLVM_PreserveAll";
+        return DW_DLV_OK;
+    case DW_CC_LLVM_X86RegCall:
+        *s_out = "DW_CC_LLVM_X86RegCall";
+        return DW_DLV_OK;
+    case DW_CC_GDB_IBM_OpenCL:
+        *s_out = "DW_CC_GDB_IBM_OpenCL";
+        return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0xff. DW_CC_hi_user */
     }
     return DW_DLV_NO_ENTRY;
 }
@@ -2675,6 +2879,9 @@ dwarf_get_LNCT_name (unsigned int val,
         return DW_DLV_OK;
     case DW_LNCT_lo_user:
         *s_out = "DW_LNCT_lo_user";
+        return DW_DLV_OK;
+    case DW_LNCT_LLVM_source:
+        *s_out = "DW_LNCT_LLVM_source";
         return DW_DLV_OK;
     case DW_LNCT_hi_user:
         *s_out = "DW_LNCT_hi_user";
@@ -2978,6 +3185,8 @@ dwarf_get_CFA_name (unsigned int val,
     case DW_CFA_GNU_window_save:
         *s_out = "DW_CFA_GNU_window_save";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2d. DW_CFA_AARCH64_negate_ra_state */
     case DW_CFA_GNU_args_size:
         *s_out = "DW_CFA_GNU_args_size";
         return DW_DLV_OK;

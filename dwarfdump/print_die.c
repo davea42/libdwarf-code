@@ -3962,376 +3962,376 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         check_attr_tag_combination(dbg,tag,attr);
         record_attr_form_use(dbg,tag,attr,(Dwarf_Half)fc,
             theform, pd_dwarf_names_print_on_error,
-            die_stack_indent_level); 
+            die_stack_indent_level);
     }
 
-switch (attr) {
-case DW_AT_language:
-    res = dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_language", &valname,
-        get_LANG_name, err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get DW_AT_language value. ",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_accessibility:
-    res  = dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_accessibility",
-        &valname, get_ACCESS_name,
-        err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get DW_AT_accessibility value",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_visibility:
-    res = dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_visibility",
-        &valname, get_VIS_name,
-        err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get DW_AT_visibility value.",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_virtuality:
-    res = dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_virtuality",
-        &valname,
-        get_VIRTUALITY_name, err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get DW_AT_virtuality",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_identifier_case:
-    res = dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_identifier",
-        &valname, get_ID_name,
-        err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get DW_AT_identifier_case",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_inline:
-    res = dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_inline", &valname,
-        get_INL_name, err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get DW_AT_inline", res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_encoding:
-    res =dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_encoding", &valname,
-        get_ATE_name, err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "ERROR:Cannot get DW_AT_encoding",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_ordering:
-    res =dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_ordering", &valname,
-        get_ORD_name, err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "ERROR:Cannot get DW_AT_ordering",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_calling_convention:
-    res =dd_get_integer_and_name(dbg, attrib,
-        &uval,
-        "DW_AT_calling_convention",
-        &valname, get_CC_name,
-        err,
-        glflags.show_form_used);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "ERROR:Cannot get DW_AT_calling_convention",
-            res,*err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return res;
-    }
-    break;
-case DW_AT_discr_list: {      /* DWARF2 */
-    /*  This has one of the block forms.
-        It should be in a DW_TAG_variant.
-        Up to September 2016 it was treated as integer or name
-        here, which was quite wrong. */
-
-    if (fc == DW_FORM_CLASS_BLOCK) {
-        int fres = 0;
-        Dwarf_Block *tempb = 0;
-        /*  the block is a series of entries each of one
-            of these formats:
-            DW_DSC_label  caselabel
-            DW_DSC_range  lowvalue highvalue
-
-            The values are all LEB. Signed or unsigned
-            depending on the DW_TAG_variant_part owning
-            the DW_TAG_variant.  The DW_TAG_variant_part
-            will have a DW_AT_type or a DW_AT_discr
-            and that attribute will reveal the
-            signedness of all
-            the leb values.
-            As a practical matter DW_DSC_label/DW_DSC_range
-            value (zero or one, so far)
-            can safely be read as ULEB or SLEB
-            and one gets a valid value whereas
-            the caselabel, lowvalue,highvalue must be
-            decoded with the proper sign. the high level
-            (dwarfdump in this case) is the agent that
-            should determine the proper signedness.  */
-
-        fres = dwarf_formblock(attrib, &tempb,err);
-        if (fres == DW_DLV_OK) {
-            struct esb_s bformstr;
-            int isunsigned = 0; /* Meaning unknown */
-            Dwarf_Dsc_Head h = 0;
-            Dwarf_Unsigned arraycount = 0;
-            int sres = 0;
-            char fbuf[ESB_FIXED_ALLOC_SIZE];
-
-            esb_constructor_fixed(&bformstr,fbuf,
-                sizeof(fbuf));
-            show_form_itself(glflags.show_form_used,
-                glflags.verbose,
-                theform, directform,&bformstr);
-            isunsigned = determine_discr_signedness(dbg);
-            esb_empty_string(&valname);
-
-            sres = dwarf_discr_list(dbg,
-                (Dwarf_Small *)tempb->bl_data,
-                tempb->bl_len,
-                &h,&arraycount,err);
-            if (sres == DW_DLV_NO_ENTRY) {
-                esb_append(&bformstr,
-                    "<empty discriminant list>");
-                break;
-            }
-            if (sres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "ERROR: DW_AT_discr_list access fail",
-                    sres, *err);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return sres;
-            }
-            sres = append_discr_array_vals(dbg,h,arraycount,
-                isunsigned,&bformstr,err);
-            if (sres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "ERROR: getting discriminant values "
-                    "failed",
-                    sres, *err);
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return sres;
-            }
-
-            if (glflags.verbose > 1) {
-                unsigned u = 0;
-                esb_append_printf_u(&bformstr,
-                    "\n        block byte len:"
-                    "0x%" DW_PR_XZEROS DW_PR_DUx
-                    "\n        ",tempb->bl_len);
-                for (u = 0; u < tempb->bl_len; u++) {
-                    esb_append_printf_u(&bformstr, "%02x ",
-                        *(u +
-                        (unsigned char *)tempb->bl_data));
-                }
-            }
-            esb_append(&valname, esb_get_string(&bformstr));
-            dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
-            dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
-            esb_destructor(&bformstr);
-            tempb = 0;
-        } else {
-            print_error_and_continue(dbg,
-                "ERROR: DW_AT_discr_list: cannot get list"
-                "data", fres, *err);
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return fres;
-        }
-    } else {
-        print_error_and_continue(dbg,
-            "DW_AT_discr_list is not form class BLOCK",
-            fc, *err);
-        esb_destructor(&valname);
-        esb_destructor(&esb_extra);
-        return fc;
-    }
-    }
-    break;
-case DW_AT_const_value:
-case DW_AT_data_member_location:
-    {
-        /*  Value is a constant or a location
-            description or location list.
-            If a constant, it could be signed or
-            unsigned.  Telling whether a constant
-            or a reference is nontrivial
-            since DW_FORM_data{4,8}
-            could be either in DWARF{2,3}  */
-
-        if (fc == DW_FORM_CLASS_CONSTANT) {
-            struct esb_s classconstantstr;
-            Dwarf_Bool chex = FALSE;
-            int wres = 0;
-
-            esb_constructor(&classconstantstr);
-            /*  Makes no sense to look at type of our DIE
-                to determine how to print the constant. */
-            wres = formxdata_print_value(dbg,NULL,attrib,
-                theform,
-                &classconstantstr,
-                err, chex);
-            if (wres != DW_DLV_OK) {
-                esb_destructor(&valname);
-                esb_destructor(&esb_extra);
-                return wres;
-            }
-            show_form_itself(glflags.show_form_used,
-                glflags.verbose,
-                theform, directform, &classconstantstr);
-            esb_empty_string(&valname);
-            esb_append(&valname,
-                esb_get_string(&classconstantstr));
-            esb_destructor(&classconstantstr);
-            break;
-        }
-        /*  FALL THRU, this is a
-            a location description, or a reference
-            to one, or a mistake. */
-    }
-    /* Fall Through */
-case DW_AT_call_value:
-case DW_AT_call_data_value:
-case DW_AT_call_data_location:
-case DW_AT_frame_base:
-case DW_AT_GNU_call_site_value:
-case DW_AT_GNU_call_site_target:
-case DW_AT_byte_size:
-case DW_AT_bit_size:
-case DW_AT_location:
-case DW_AT_return_addr:
-case DW_AT_segment:
-case DW_AT_static_link:
-case DW_AT_string_length:
-case DW_AT_use_location:
-case DW_AT_vtable_elem_location:
-    {
-    Dwarf_Bool showform = glflags.show_form_used;
-
-    /*  If DW_FORM_block* && show_form_used
-        get_attr_value() results
-        in duplicating the form name (with -M). */
-    /*  For block forms, this will show block len and bytes
-        and if showing form, then form shown */
-    res = get_attr_value(dbg, tag, die,
-        die_indent_level,
-        dieprint_cu_goffset,
-        attrib, srcfiles, srcfiles_cnt, &valname,
-        showform,
-        glflags.verbose,
-        err);
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Cannot get attr form value", res,*err);
-        DROP_ERROR_INSTANCE(dbg,res,*err);
-        break;
-    }
-    append_extra_string = TRUE;
-    if (fc == DW_FORM_CLASS_EXPRLOC ||
-        fc == DW_FORM_CLASS_LOCLIST ||
-        fc == DW_FORM_CLASS_LOCLISTPTR) {
-        /*  Form class exprloc is set even for DWARF2&3,
-            see libdwarf: dwarf_get_form_class(). */
-        res = print_location_description(dbg,attrib,die,
-            checking,
-            attr,die_indent_level,
-            &valname,&esb_extra,err);
+    switch (attr) {
+    case DW_AT_language:
+        res = dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_language", &valname,
+            get_LANG_name, err,
+            glflags.show_form_used);
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-                "Cannot get location data, attr "
-                "(with -M  also form) "
-                "follow", res,*err);
+                "Cannot get DW_AT_language value. ",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_accessibility:
+        res  = dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_accessibility",
+            &valname, get_ACCESS_name,
+            err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Cannot get DW_AT_accessibility value",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_visibility:
+        res = dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_visibility",
+            &valname, get_VIS_name,
+            err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Cannot get DW_AT_visibility value.",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_virtuality:
+        res = dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_virtuality",
+            &valname,
+            get_VIRTUALITY_name, err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Cannot get DW_AT_virtuality",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_identifier_case:
+        res = dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_identifier",
+            &valname, get_ID_name,
+            err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Cannot get DW_AT_identifier_case",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_inline:
+        res = dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_inline", &valname,
+            get_INL_name, err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Cannot get DW_AT_inline", res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_encoding:
+        res =dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_encoding", &valname,
+            get_ATE_name, err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "ERROR:Cannot get DW_AT_encoding",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_ordering:
+        res =dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_ordering", &valname,
+            get_ORD_name, err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "ERROR:Cannot get DW_AT_ordering",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_calling_convention:
+        res =dd_get_integer_and_name(dbg, attrib,
+            &uval,
+            "DW_AT_calling_convention",
+            &valname, get_CC_name,
+            err,
+            glflags.show_form_used);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "ERROR:Cannot get DW_AT_calling_convention",
+                res,*err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return res;
+        }
+        break;
+    case DW_AT_discr_list: {      /* DWARF2 */
+        /*  This has one of the block forms.
+            It should be in a DW_TAG_variant.
+            Up to September 2016 it was treated as integer or name
+            here, which was quite wrong. */
+
+        if (fc == DW_FORM_CLASS_BLOCK) {
+            int fres = 0;
+            Dwarf_Block *tempb = 0;
+            /*  the block is a series of entries each of one
+                of these formats:
+                DW_DSC_label  caselabel
+                DW_DSC_range  lowvalue highvalue
+
+                The values are all LEB. Signed or unsigned
+                depending on the DW_TAG_variant_part owning
+                the DW_TAG_variant.  The DW_TAG_variant_part
+                will have a DW_AT_type or a DW_AT_discr
+                and that attribute will reveal the
+                signedness of all
+                the leb values.
+                As a practical matter DW_DSC_label/DW_DSC_range
+                value (zero or one, so far)
+                can safely be read as ULEB or SLEB
+                and one gets a valid value whereas
+                the caselabel, lowvalue,highvalue must be
+                decoded with the proper sign. the high level
+                (dwarfdump in this case) is the agent that
+                should determine the proper signedness.  */
+
+            fres = dwarf_formblock(attrib, &tempb,err);
+            if (fres == DW_DLV_OK) {
+                struct esb_s bformstr;
+                int isunsigned = 0; /* Meaning unknown */
+                Dwarf_Dsc_Head h = 0;
+                Dwarf_Unsigned arraycount = 0;
+                int sres = 0;
+                char fbuf[ESB_FIXED_ALLOC_SIZE];
+
+                esb_constructor_fixed(&bformstr,fbuf,
+                    sizeof(fbuf));
+                show_form_itself(glflags.show_form_used,
+                    glflags.verbose,
+                    theform, directform,&bformstr);
+                isunsigned = determine_discr_signedness(dbg);
+                esb_empty_string(&valname);
+
+                sres = dwarf_discr_list(dbg,
+                    (Dwarf_Small *)tempb->bl_data,
+                    tempb->bl_len,
+                    &h,&arraycount,err);
+                if (sres == DW_DLV_NO_ENTRY) {
+                    esb_append(&bformstr,
+                        "<empty discriminant list>");
+                    break;
+                }
+                if (sres == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg,
+                        "ERROR: DW_AT_discr_list access fail",
+                        sres, *err);
+                    esb_destructor(&valname);
+                    esb_destructor(&esb_extra);
+                    return sres;
+                }
+                sres = append_discr_array_vals(dbg,h,arraycount,
+                    isunsigned,&bformstr,err);
+                if (sres == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg,
+                        "ERROR: getting discriminant values "
+                        "failed",
+                        sres, *err);
+                    esb_destructor(&valname);
+                    esb_destructor(&esb_extra);
+                    return sres;
+                }
+
+                if (glflags.verbose > 1) {
+                    unsigned u = 0;
+                    esb_append_printf_u(&bformstr,
+                        "\n        block byte len:"
+                        "0x%" DW_PR_XZEROS DW_PR_DUx
+                        "\n        ",tempb->bl_len);
+                    for (u = 0; u < tempb->bl_len; u++) {
+                        esb_append_printf_u(&bformstr, "%02x ",
+                            *(u +
+                            (unsigned char *)tempb->bl_data));
+                    }
+                }
+                esb_append(&valname, esb_get_string(&bformstr));
+                dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+                dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                esb_destructor(&bformstr);
+                tempb = 0;
+            } else {
+                print_error_and_continue(dbg,
+                    "ERROR: DW_AT_discr_list: cannot get list"
+                    "data", fres, *err);
+                esb_destructor(&valname);
+                esb_destructor(&esb_extra);
+                return fres;
+            }
+        } else {
+            print_error_and_continue(dbg,
+                "DW_AT_discr_list is not form class BLOCK",
+                fc, *err);
+            esb_destructor(&valname);
+            esb_destructor(&esb_extra);
+            return fc;
+        }
+        }
+        break;
+    case DW_AT_const_value:
+    case DW_AT_data_member_location:
+        {
+            /*  Value is a constant or a location
+                description or location list.
+                If a constant, it could be signed or
+                unsigned.  Telling whether a constant
+                or a reference is nontrivial
+                since DW_FORM_data{4,8}
+                could be either in DWARF{2,3}  */
+
+            if (fc == DW_FORM_CLASS_CONSTANT) {
+                struct esb_s classconstantstr;
+                Dwarf_Bool chex = FALSE;
+                int wres = 0;
+
+                esb_constructor(&classconstantstr);
+                /*  Makes no sense to look at type of our DIE
+                    to determine how to print the constant. */
+                wres = formxdata_print_value(dbg,NULL,attrib,
+                    theform,
+                    &classconstantstr,
+                    err, chex);
+                if (wres != DW_DLV_OK) {
+                    esb_destructor(&valname);
+                    esb_destructor(&esb_extra);
+                    return wres;
+                }
+                show_form_itself(glflags.show_form_used,
+                    glflags.verbose,
+                    theform, directform, &classconstantstr);
+                esb_empty_string(&valname);
+                esb_append(&valname,
+                    esb_get_string(&classconstantstr));
+                esb_destructor(&classconstantstr);
+                break;
+            }
+            /*  FALL THRU, this is a
+                a location description, or a reference
+                to one, or a mistake. */
+        }
+        /* Fall Through */
+    case DW_AT_call_value:
+    case DW_AT_call_data_value:
+    case DW_AT_call_data_location:
+    case DW_AT_frame_base:
+    case DW_AT_GNU_call_site_value:
+    case DW_AT_GNU_call_site_target:
+    case DW_AT_byte_size:
+    case DW_AT_bit_size:
+    case DW_AT_location:
+    case DW_AT_return_addr:
+    case DW_AT_segment:
+    case DW_AT_static_link:
+    case DW_AT_string_length:
+    case DW_AT_use_location:
+    case DW_AT_vtable_elem_location:
+        {
+        Dwarf_Bool showform = glflags.show_form_used;
+
+        /*  If DW_FORM_block* && show_form_used
+            get_attr_value() results
+            in duplicating the form name (with -M). */
+        /*  For block forms, this will show block len and bytes
+            and if showing form, then form shown */
+        res = get_attr_value(dbg, tag, die,
+            die_indent_level,
+            dieprint_cu_goffset,
+            attrib, srcfiles, srcfiles_cnt, &valname,
+            showform,
+            glflags.verbose,
+            err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Cannot get attr form value", res,*err);
             DROP_ERROR_INSTANCE(dbg,res,*err);
             break;
         }
-    }
-    }
-    break;
-case DW_AT_SUN_func_offsets:
-    {
-        /* value is a location description or location list */
-        char buf[100];
-        struct esb_s funcformstr;
+        append_extra_string = TRUE;
+        if (fc == DW_FORM_CLASS_EXPRLOC ||
+            fc == DW_FORM_CLASS_LOCLIST ||
+            fc == DW_FORM_CLASS_LOCLISTPTR) {
+            /*  Form class exprloc is set even for DWARF2&3,
+                see libdwarf: dwarf_get_form_class(). */
+            res = print_location_description(dbg,attrib,die,
+                checking,
+                attr,die_indent_level,
+                &valname,&esb_extra,err);
+            if (res == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "Cannot get location data, attr "
+                    "(with -M  also form) "
+                    "follow", res,*err);
+                DROP_ERROR_INSTANCE(dbg,res,*err);
+                break;
+            }
+        }
+        }
+        break;
+    case DW_AT_SUN_func_offsets:
+        {
+            /* value is a location description or location list */
+            char buf[100];
+            struct esb_s funcformstr;
 
-        esb_constructor_fixed(&funcformstr,buf,sizeof(buf));
-        get_FLAG_BLOCK_string(dbg, attrib,&funcformstr);
-        show_form_itself(glflags.show_form_used,
-            glflags.verbose, theform,
-            directform,&funcformstr);
-        esb_empty_string(&valname);
-        esb_append(&valname, esb_get_string(&funcformstr));
-        esb_destructor(&funcformstr);
-    }
-    break;
-case DW_AT_SUN_cf_kind:
+            esb_constructor_fixed(&funcformstr,buf,sizeof(buf));
+            get_FLAG_BLOCK_string(dbg, attrib,&funcformstr);
+            show_form_itself(glflags.show_form_used,
+                glflags.verbose, theform,
+                directform,&funcformstr);
+            esb_empty_string(&valname);
+            esb_append(&valname, esb_get_string(&funcformstr));
+            esb_destructor(&funcformstr);
+        }
+        break;
+    case DW_AT_SUN_cf_kind:
     {
         Dwarf_Half kind = 0;
         Dwarf_Unsigned tempud = 0;

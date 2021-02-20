@@ -728,7 +728,7 @@ static Usage_Tag_Tree tag_tree_22[] = {
     {/*      */ 0, 0}
 };
 
-static Usage_Tag_Tree *usage_tag_tree[] = {
+static Usage_Tag_Tree *usage_tag_tree[0x4d] = {
     0,
     tag_tree_01, /* 0x01 - DW_TAG_array_type */
     tag_tree_02, /* 0x02 - DW_TAG_class_type */
@@ -813,7 +813,7 @@ typedef struct {
     Dwarf_Small found; /* Found tags */
 } Rate_Tag_Tree;
 
-static Rate_Tag_Tree rate_tag_tree[] = {
+static Rate_Tag_Tree rate_tag_tree[0x4d] = {
     {0, 0},
     { 4, 0 /* 0x01 - DW_TAG_array_type */},
     {21, 0 /* 0x02 - DW_TAG_class_type */},
