@@ -17,7 +17,7 @@ typedef struct {
 } Usage_Tag_Attr;
 
 /* 0x23 - DW_TAG_access_declaration */
-static Usage_Tag_Attr tag_attr_23[] = {
+static Usage_Tag_Attr tag_attr_23[9] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -29,7 +29,7 @@ static Usage_Tag_Attr tag_attr_23[] = {
 };
 
 /* 0x01 - DW_TAG_array_type */
-static Usage_Tag_Attr tag_attr_01[] = {
+static Usage_Tag_Attr tag_attr_01[24] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -56,7 +56,7 @@ static Usage_Tag_Attr tag_attr_01[] = {
 };
 
 /* 0x47 - DW_TAG_atomic_type */
-static Usage_Tag_Attr tag_attr_47[] = {
+static Usage_Tag_Attr tag_attr_47[8] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -67,7 +67,7 @@ static Usage_Tag_Attr tag_attr_47[] = {
 };
 
 /* 0x24 - DW_TAG_base_type */
-static Usage_Tag_Attr tag_attr_24[] = {
+static Usage_Tag_Attr tag_attr_24[25] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -95,7 +95,7 @@ static Usage_Tag_Attr tag_attr_24[] = {
 };
 
 /* 0x48 - DW_TAG_call_site */
-static Usage_Tag_Attr tag_attr_48[] = {
+static Usage_Tag_Attr tag_attr_48[13] = {
     {/* 0x57 */  0, DW_AT_call_column},
     {/* 0x58 */  0, DW_AT_call_file},
     {/* 0x59 */  0, DW_AT_call_line},
@@ -111,7 +111,7 @@ static Usage_Tag_Attr tag_attr_48[] = {
 };
 
 /* 0x49 - DW_TAG_call_site_parameter */
-static Usage_Tag_Attr tag_attr_49[] = {
+static Usage_Tag_Attr tag_attr_49[10] = {
     {/* 0x85 */  0, DW_AT_call_data_location},
     {/* 0x86 */  0, DW_AT_call_data_value},
     {/* 0x80 */  0, DW_AT_call_parameter},
@@ -124,7 +124,7 @@ static Usage_Tag_Attr tag_attr_49[] = {
 };
 
 /* 0x25 - DW_TAG_catch_block */
-static Usage_Tag_Attr tag_attr_25[] = {
+static Usage_Tag_Attr tag_attr_25[12] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -139,7 +139,7 @@ static Usage_Tag_Attr tag_attr_25[] = {
 };
 
 /* 0x02 - DW_TAG_class_type */
-static Usage_Tag_Attr tag_attr_02[] = {
+static Usage_Tag_Attr tag_attr_02[23] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -165,7 +165,7 @@ static Usage_Tag_Attr tag_attr_02[] = {
 };
 
 /* 0x44 - DW_TAG_coarray_type */
-static Usage_Tag_Attr tag_attr_44[] = {
+static Usage_Tag_Attr tag_attr_44[10] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -178,7 +178,7 @@ static Usage_Tag_Attr tag_attr_44[] = {
 };
 
 /* 0x1a - DW_TAG_common_block */
-static Usage_Tag_Attr tag_attr_1a[] = {
+static Usage_Tag_Attr tag_attr_1a[13] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -194,7 +194,7 @@ static Usage_Tag_Attr tag_attr_1a[] = {
 };
 
 /* 0x1b - DW_TAG_common_inclusion */
-static Usage_Tag_Attr tag_attr_1b[] = {
+static Usage_Tag_Attr tag_attr_1b[9] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -206,7 +206,7 @@ static Usage_Tag_Attr tag_attr_1b[] = {
 };
 
 /* 0x11 - DW_TAG_compile_unit */
-static Usage_Tag_Attr tag_attr_11[] = {
+static Usage_Tag_Attr tag_attr_11[24] = {
     {/* 0x73 */  0, DW_AT_addr_base},
     {/* 0x35 */  0, DW_AT_base_types},
     {/* 0x1b */  0, DW_AT_comp_dir},
@@ -233,7 +233,7 @@ static Usage_Tag_Attr tag_attr_11[] = {
 };
 
 /* 0x3f - DW_TAG_condition */
-static Usage_Tag_Attr tag_attr_3f[] = {
+static Usage_Tag_Attr tag_attr_3f[7] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -243,7 +243,7 @@ static Usage_Tag_Attr tag_attr_3f[] = {
 };
 
 /* 0x26 - DW_TAG_const_type */
-static Usage_Tag_Attr tag_attr_26[] = {
+static Usage_Tag_Attr tag_attr_26[9] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -255,7 +255,7 @@ static Usage_Tag_Attr tag_attr_26[] = {
 };
 
 /* 0x27 - DW_TAG_constant */
-static Usage_Tag_Attr tag_attr_27[] = {
+static Usage_Tag_Attr tag_attr_27[17] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -275,13 +275,13 @@ static Usage_Tag_Attr tag_attr_27[] = {
 };
 
 /* 0x36 - DW_TAG_dwarf_procedure */
-static Usage_Tag_Attr tag_attr_36[] = {
+static Usage_Tag_Attr tag_attr_36[3] = {
     {/* 0x02 */  0, DW_AT_location},
     {/*      */  0, 0}
 };
 
 /* 0x46 - DW_TAG_dynamic_type */
-static Usage_Tag_Attr tag_attr_46[] = {
+static Usage_Tag_Attr tag_attr_46[14] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -298,7 +298,7 @@ static Usage_Tag_Attr tag_attr_46[] = {
 };
 
 /* 0x03 - DW_TAG_entry_point */
-static Usage_Tag_Attr tag_attr_03[] = {
+static Usage_Tag_Attr tag_attr_03[16] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -317,7 +317,7 @@ static Usage_Tag_Attr tag_attr_03[] = {
 };
 
 /* 0x04 - DW_TAG_enumeration_type */
-static Usage_Tag_Attr tag_attr_04[] = {
+static Usage_Tag_Attr tag_attr_04[26] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -346,7 +346,7 @@ static Usage_Tag_Attr tag_attr_04[] = {
 };
 
 /* 0x28 - DW_TAG_enumerator */
-static Usage_Tag_Attr tag_attr_28[] = {
+static Usage_Tag_Attr tag_attr_28[9] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -358,7 +358,7 @@ static Usage_Tag_Attr tag_attr_28[] = {
 };
 
 /* 0x29 - DW_TAG_file_type */
-static Usage_Tag_Attr tag_attr_29[] = {
+static Usage_Tag_Attr tag_attr_29[18] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -379,7 +379,7 @@ static Usage_Tag_Attr tag_attr_29[] = {
 };
 
 /* 0x05 - DW_TAG_formal_parameter */
-static Usage_Tag_Attr tag_attr_05[] = {
+static Usage_Tag_Attr tag_attr_05[18] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -400,7 +400,7 @@ static Usage_Tag_Attr tag_attr_05[] = {
 };
 
 /* 0x2a - DW_TAG_friend */
-static Usage_Tag_Attr tag_attr_2a[] = {
+static Usage_Tag_Attr tag_attr_2a[8] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -411,7 +411,7 @@ static Usage_Tag_Attr tag_attr_2a[] = {
 };
 
 /* 0x45 - DW_TAG_generic_subrange */
-static Usage_Tag_Attr tag_attr_45[] = {
+static Usage_Tag_Attr tag_attr_45[23] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -437,7 +437,7 @@ static Usage_Tag_Attr tag_attr_45[] = {
 };
 
 /* 0x08 - DW_TAG_imported_declaration */
-static Usage_Tag_Attr tag_attr_08[] = {
+static Usage_Tag_Attr tag_attr_08[11] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -451,7 +451,7 @@ static Usage_Tag_Attr tag_attr_08[] = {
 };
 
 /* 0x4b - DW_TAG_immutable_type */
-static Usage_Tag_Attr tag_attr_4b[] = {
+static Usage_Tag_Attr tag_attr_4b[6] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -460,7 +460,7 @@ static Usage_Tag_Attr tag_attr_4b[] = {
 };
 
 /* 0x3a - DW_TAG_imported_module */
-static Usage_Tag_Attr tag_attr_3a[] = {
+static Usage_Tag_Attr tag_attr_3a[8] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -471,13 +471,13 @@ static Usage_Tag_Attr tag_attr_3a[] = {
 };
 
 /* 0x3d - DW_TAG_imported_unit */
-static Usage_Tag_Attr tag_attr_3d[] = {
+static Usage_Tag_Attr tag_attr_3d[3] = {
     {/* 0x18 */  0, DW_AT_import},
     {/*      */  0, 0}
 };
 
 /* 0x1c - DW_TAG_inheritance */
-static Usage_Tag_Attr tag_attr_1c[] = {
+static Usage_Tag_Attr tag_attr_1c[10] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -490,7 +490,7 @@ static Usage_Tag_Attr tag_attr_1c[] = {
 };
 
 /* 0x1d - DW_TAG_inlined_subroutine */
-static Usage_Tag_Attr tag_attr_1d[] = {
+static Usage_Tag_Attr tag_attr_1d[16] = {
     {/* 0x31 */  0, DW_AT_abstract_origin},
     {/* 0x57 */  0, DW_AT_call_column},
     {/* 0x58 */  0, DW_AT_call_file},
@@ -509,7 +509,7 @@ static Usage_Tag_Attr tag_attr_1d[] = {
 };
 
 /* 0x38 - DW_TAG_interface_type */
-static Usage_Tag_Attr tag_attr_38[] = {
+static Usage_Tag_Attr tag_attr_38[12] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -524,7 +524,7 @@ static Usage_Tag_Attr tag_attr_38[] = {
 };
 
 /* 0x0a - DW_TAG_label */
-static Usage_Tag_Attr tag_attr_0a[] = {
+static Usage_Tag_Attr tag_attr_0a[12] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -539,7 +539,7 @@ static Usage_Tag_Attr tag_attr_0a[] = {
 };
 
 /* 0x0b - DW_TAG_lexical_block */
-static Usage_Tag_Attr tag_attr_0b[] = {
+static Usage_Tag_Attr tag_attr_0b[14] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -556,7 +556,7 @@ static Usage_Tag_Attr tag_attr_0b[] = {
 };
 
 /* 0x0d - DW_TAG_member */
-static Usage_Tag_Attr tag_attr_0d[] = {
+static Usage_Tag_Attr tag_attr_0d[23] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -582,7 +582,7 @@ static Usage_Tag_Attr tag_attr_0d[] = {
 };
 
 /* 0x1e - DW_TAG_module */
-static Usage_Tag_Attr tag_attr_1e[] = {
+static Usage_Tag_Attr tag_attr_1e[18] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -603,7 +603,7 @@ static Usage_Tag_Attr tag_attr_1e[] = {
 };
 
 /* 0x2b - DW_TAG_namelist */
-static Usage_Tag_Attr tag_attr_2b[] = {
+static Usage_Tag_Attr tag_attr_2b[11] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -617,7 +617,7 @@ static Usage_Tag_Attr tag_attr_2b[] = {
 };
 
 /* 0x2c - DW_TAG_namelist_item */
-static Usage_Tag_Attr tag_attr_2c[] = {
+static Usage_Tag_Attr tag_attr_2c[7] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -627,7 +627,7 @@ static Usage_Tag_Attr tag_attr_2c[] = {
 };
 
 /* 0x39 - DW_TAG_namespace */
-static Usage_Tag_Attr tag_attr_39[] = {
+static Usage_Tag_Attr tag_attr_39[13] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -643,7 +643,7 @@ static Usage_Tag_Attr tag_attr_39[] = {
 };
 
 /* 0x2d - DW_TAG_packed_type */
-static Usage_Tag_Attr tag_attr_2d[] = {
+static Usage_Tag_Attr tag_attr_2d[9] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -655,7 +655,7 @@ static Usage_Tag_Attr tag_attr_2d[] = {
 };
 
 /* 0x3c - DW_TAG_partial_unit */
-static Usage_Tag_Attr tag_attr_3c[] = {
+static Usage_Tag_Attr tag_attr_3c[24] = {
     {/* 0x73 */  0, DW_AT_addr_base},
     {/* 0x35 */  0, DW_AT_base_types},
     {/* 0x1b */  0, DW_AT_comp_dir},
@@ -682,7 +682,7 @@ static Usage_Tag_Attr tag_attr_3c[] = {
 };
 
 /* 0x0f - DW_TAG_pointer_type */
-static Usage_Tag_Attr tag_attr_0f[] = {
+static Usage_Tag_Attr tag_attr_0f[13] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -698,7 +698,7 @@ static Usage_Tag_Attr tag_attr_0f[] = {
 };
 
 /* 0x1f - DW_TAG_ptr_to_member_type */
-static Usage_Tag_Attr tag_attr_1f[] = {
+static Usage_Tag_Attr tag_attr_1f[20] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -721,7 +721,7 @@ static Usage_Tag_Attr tag_attr_1f[] = {
 };
 
 /* 0x10 - DW_TAG_reference_type */
-static Usage_Tag_Attr tag_attr_10[] = {
+static Usage_Tag_Attr tag_attr_10[13] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -737,7 +737,7 @@ static Usage_Tag_Attr tag_attr_10[] = {
 };
 
 /* 0x37 - DW_TAG_restrict_type */
-static Usage_Tag_Attr tag_attr_37[] = {
+static Usage_Tag_Attr tag_attr_37[8] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -748,7 +748,7 @@ static Usage_Tag_Attr tag_attr_37[] = {
 };
 
 /* 0x42 - DW_TAG_rvalue_reference_type */
-static Usage_Tag_Attr tag_attr_42[] = {
+static Usage_Tag_Attr tag_attr_42[10] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -761,7 +761,7 @@ static Usage_Tag_Attr tag_attr_42[] = {
 };
 
 /* 0x20 - DW_TAG_set_type */
-static Usage_Tag_Attr tag_attr_20[] = {
+static Usage_Tag_Attr tag_attr_20[20] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -784,7 +784,7 @@ static Usage_Tag_Attr tag_attr_20[] = {
 };
 
 /* 0x40 - DW_TAG_shared_type */
-static Usage_Tag_Attr tag_attr_40[] = {
+static Usage_Tag_Attr tag_attr_40[13] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -800,7 +800,7 @@ static Usage_Tag_Attr tag_attr_40[] = {
 };
 
 /* 0x4a - DW_TAG_skeleton_unit */
-static Usage_Tag_Attr tag_attr_4a[] = {
+static Usage_Tag_Attr tag_attr_4a[13] = {
     {/* 0x73 */  0, DW_AT_addr_base},
     {/* 0x1b */  0, DW_AT_comp_dir},
     {/* 0x76 */  0, DW_AT_dwo_name},
@@ -816,7 +816,7 @@ static Usage_Tag_Attr tag_attr_4a[] = {
 };
 
 /* 0x12 - DW_TAG_string_type */
-static Usage_Tag_Attr tag_attr_12[] = {
+static Usage_Tag_Attr tag_attr_12[22] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -841,7 +841,7 @@ static Usage_Tag_Attr tag_attr_12[] = {
 };
 
 /* 0x13 - DW_TAG_structure_type */
-static Usage_Tag_Attr tag_attr_13[] = {
+static Usage_Tag_Attr tag_attr_13[24] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -868,7 +868,7 @@ static Usage_Tag_Attr tag_attr_13[] = {
 };
 
 /* 0x2e - DW_TAG_subprogram */
-static Usage_Tag_Attr tag_attr_2e[] = {
+static Usage_Tag_Attr tag_attr_2e[49] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -920,7 +920,7 @@ static Usage_Tag_Attr tag_attr_2e[] = {
 };
 
 /* 0x21 - DW_TAG_subrange_type */
-static Usage_Tag_Attr tag_attr_21[] = {
+static Usage_Tag_Attr tag_attr_21[24] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -947,7 +947,7 @@ static Usage_Tag_Attr tag_attr_21[] = {
 };
 
 /* 0x15 - DW_TAG_subroutine_type */
-static Usage_Tag_Attr tag_attr_15[] = {
+static Usage_Tag_Attr tag_attr_15[22] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -972,7 +972,7 @@ static Usage_Tag_Attr tag_attr_15[] = {
 };
 
 /* 0x43 - DW_TAG_template_alias */
-static Usage_Tag_Attr tag_attr_43[] = {
+static Usage_Tag_Attr tag_attr_43[18] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -993,7 +993,7 @@ static Usage_Tag_Attr tag_attr_43[] = {
 };
 
 /* 0x2f - DW_TAG_template_type_parameter */
-static Usage_Tag_Attr tag_attr_2f[] = {
+static Usage_Tag_Attr tag_attr_2f[10] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1006,7 +1006,7 @@ static Usage_Tag_Attr tag_attr_2f[] = {
 };
 
 /* 0x30 - DW_TAG_template_value_parameter */
-static Usage_Tag_Attr tag_attr_30[] = {
+static Usage_Tag_Attr tag_attr_30[13] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1022,7 +1022,7 @@ static Usage_Tag_Attr tag_attr_30[] = {
 };
 
 /* 0x31 - DW_TAG_thrown_type */
-static Usage_Tag_Attr tag_attr_31[] = {
+static Usage_Tag_Attr tag_attr_31[12] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1037,7 +1037,7 @@ static Usage_Tag_Attr tag_attr_31[] = {
 };
 
 /* 0x32 - DW_TAG_try_block */
-static Usage_Tag_Attr tag_attr_32[] = {
+static Usage_Tag_Attr tag_attr_32[12] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1052,7 +1052,7 @@ static Usage_Tag_Attr tag_attr_32[] = {
 };
 
 /* 0x16 - DW_TAG_typedef */
-static Usage_Tag_Attr tag_attr_16[] = {
+static Usage_Tag_Attr tag_attr_16[18] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1073,7 +1073,7 @@ static Usage_Tag_Attr tag_attr_16[] = {
 };
 
 /* 0x41 - DW_TAG_type_unit */
-static Usage_Tag_Attr tag_attr_41[] = {
+static Usage_Tag_Attr tag_attr_41[7] = {
     {/* 0x1b */  0, DW_AT_comp_dir},
     {/* 0x13 */  0, DW_AT_language},
     {/* 0x10 */  0, DW_AT_stmt_list},
@@ -1083,7 +1083,7 @@ static Usage_Tag_Attr tag_attr_41[] = {
 };
 
 /* 0x17 - DW_TAG_union_type */
-static Usage_Tag_Attr tag_attr_17[] = {
+static Usage_Tag_Attr tag_attr_17[24] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1110,7 +1110,7 @@ static Usage_Tag_Attr tag_attr_17[] = {
 };
 
 /* 0x18 - DW_TAG_unspecified_parameters */
-static Usage_Tag_Attr tag_attr_18[] = {
+static Usage_Tag_Attr tag_attr_18[8] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1121,7 +1121,7 @@ static Usage_Tag_Attr tag_attr_18[] = {
 };
 
 /* 0x3b - DW_TAG_unspecified_type */
-static Usage_Tag_Attr tag_attr_3b[] = {
+static Usage_Tag_Attr tag_attr_3b[7] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1131,7 +1131,7 @@ static Usage_Tag_Attr tag_attr_3b[] = {
 };
 
 /* 0x34 - DW_TAG_variable */
-static Usage_Tag_Attr tag_attr_34[] = {
+static Usage_Tag_Attr tag_attr_34[26] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1160,7 +1160,7 @@ static Usage_Tag_Attr tag_attr_34[] = {
 };
 
 /* 0x19 - DW_TAG_variant */
-static Usage_Tag_Attr tag_attr_19[] = {
+static Usage_Tag_Attr tag_attr_19[11] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1174,7 +1174,7 @@ static Usage_Tag_Attr tag_attr_19[] = {
 };
 
 /* 0x33 - DW_TAG_variant_part */
-static Usage_Tag_Attr tag_attr_33[] = {
+static Usage_Tag_Attr tag_attr_33[11] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1188,7 +1188,7 @@ static Usage_Tag_Attr tag_attr_33[] = {
 };
 
 /* 0x35 - DW_TAG_volatile_type */
-static Usage_Tag_Attr tag_attr_35[] = {
+static Usage_Tag_Attr tag_attr_35[8] = {
     {/* 0x39 */  0, DW_AT_decl_column},
     {/* 0x3a */  0, DW_AT_decl_file},
     {/* 0x3b */  0, DW_AT_decl_line},
@@ -1199,7 +1199,7 @@ static Usage_Tag_Attr tag_attr_35[] = {
 };
 
 /* 0x22 - DW_TAG_with_stmt */
-static Usage_Tag_Attr tag_attr_22[] = {
+static Usage_Tag_Attr tag_attr_22[14] = {
     {/* 0x32 */  0, DW_AT_accessibility},
     {/* 0x33 */  0, DW_AT_address_class},
     {/* 0x3c */  0, DW_AT_declaration},
@@ -1215,7 +1215,7 @@ static Usage_Tag_Attr tag_attr_22[] = {
     {/*      */  0, 0}
 };
 
-static Usage_Tag_Attr *usage_tag_attr[] = {
+static Usage_Tag_Attr *usage_tag_attr[77] = {
     0,
     tag_attr_01, /* 0x01 - DW_TAG_array_type */
     tag_attr_02, /* 0x02 - DW_TAG_class_type */
@@ -1300,7 +1300,7 @@ typedef struct {
     Dwarf_Small found; /* Found attributes */
 } Rate_Tag_Attr;
 
-static Rate_Tag_Attr rate_tag_attr[] = {
+static Rate_Tag_Attr rate_tag_attr[77] = {
     {0, 0},
     {22, 0, /* 0x01 - DW_TAG_array_type */},
     {21, 0, /* 0x02 - DW_TAG_class_type */},

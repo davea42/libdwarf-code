@@ -1,3 +1,11 @@
+2021-02-20 David Anderson
+    * tag_attr.c,tag_tree.c: When creating 
+      the tables below insert the precise array
+      length in the array declarations so the 
+      compiler can check them.
+    * dwarfdump-ta-table.h,dwarfdump-tt-table.h:
+      Regenerated, now with precise array sizes
+      everywhere.
 2021-02-19 David Anderson
     * attr_form.c: Now checks attr/form-class
       combinations and reports on them. The -ku

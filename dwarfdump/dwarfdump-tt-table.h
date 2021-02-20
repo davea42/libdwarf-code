@@ -17,12 +17,12 @@ typedef struct {
 } Usage_Tag_Tree;
 
 /* 0x23 - DW_TAG_access_declaration */
-static Usage_Tag_Tree tag_tree_23[] = {
+static Usage_Tag_Tree tag_tree_23[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x01 - DW_TAG_array_type */
-static Usage_Tag_Tree tag_tree_01[] = {
+static Usage_Tag_Tree tag_tree_01[6] = {
     {/* 0x21 */ 0, DW_TAG_subrange_type},
     {/* 0x46 */ 0, DW_TAG_dynamic_type},
     {/* 0x45 */ 0, DW_TAG_generic_subrange},
@@ -31,23 +31,23 @@ static Usage_Tag_Tree tag_tree_01[] = {
 };
 
 /* 0x24 - DW_TAG_base_type */
-static Usage_Tag_Tree tag_tree_24[] = {
+static Usage_Tag_Tree tag_tree_24[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x48 - DW_TAG_call_site */
-static Usage_Tag_Tree tag_tree_48[] = {
+static Usage_Tag_Tree tag_tree_48[3] = {
     {/* 0x49 */ 0, DW_TAG_call_site_parameter},
     {/*      */ 0, 0}
 };
 
 /* 0x49 - DW_TAG_call_site_parameter */
-static Usage_Tag_Tree tag_tree_49[] = {
+static Usage_Tag_Tree tag_tree_49[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x25 - DW_TAG_catch_block */
-static Usage_Tag_Tree tag_tree_25[] = {
+static Usage_Tag_Tree tag_tree_25[27] = {
     {/* 0x05 */ 0, DW_TAG_formal_parameter},
     {/* 0x18 */ 0, DW_TAG_unspecified_parameters},
     {/* 0x01 */ 0, DW_TAG_array_type},
@@ -77,7 +77,7 @@ static Usage_Tag_Tree tag_tree_25[] = {
 };
 
 /* 0x02 - DW_TAG_class_type */
-static Usage_Tag_Tree tag_tree_02[] = {
+static Usage_Tag_Tree tag_tree_02[23] = {
     {/* 0x0d */ 0, DW_TAG_member},
     {/* 0x1c */ 0, DW_TAG_inheritance},
     {/* 0x23 */ 0, DW_TAG_access_declaration},
@@ -103,7 +103,7 @@ static Usage_Tag_Tree tag_tree_02[] = {
 };
 
 /* 0x44 - DW_TAG_coarray_type */
-static Usage_Tag_Tree tag_tree_44[] = {
+static Usage_Tag_Tree tag_tree_44[7] = {
     {/* 0x21 */ 0, DW_TAG_subrange_type},
     {/* 0x45 */ 0, DW_TAG_generic_subrange},
     {/* 0x46 */ 0, DW_TAG_dynamic_type},
@@ -113,18 +113,18 @@ static Usage_Tag_Tree tag_tree_44[] = {
 };
 
 /* 0x1a - DW_TAG_common_block */
-static Usage_Tag_Tree tag_tree_1a[] = {
+static Usage_Tag_Tree tag_tree_1a[3] = {
     {/* 0x34 */ 0, DW_TAG_variable},
     {/*      */ 0, 0}
 };
 
 /* 0x1b - DW_TAG_common_inclusion */
-static Usage_Tag_Tree tag_tree_1b[] = {
+static Usage_Tag_Tree tag_tree_1b[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x4a - DW_TAG_skeleton_unit */
-static Usage_Tag_Tree tag_tree_4a[] = {
+static Usage_Tag_Tree tag_tree_4a[6] = {
     {/* 0x13 */ 0, DW_TAG_structure_type},
     {/* 0x17 */ 0, DW_TAG_union_type},
     {/* 0x02 */ 0, DW_TAG_class_type},
@@ -133,7 +133,7 @@ static Usage_Tag_Tree tag_tree_4a[] = {
 };
 
 /* 0x11 - DW_TAG_compile_unit */
-static Usage_Tag_Tree tag_tree_11[] = {
+static Usage_Tag_Tree tag_tree_11[39] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
     {/* 0x46 */ 0, DW_TAG_dynamic_type},
     {/* 0x02 */ 0, DW_TAG_class_type},
@@ -175,7 +175,7 @@ static Usage_Tag_Tree tag_tree_11[] = {
 };
 
 /* 0x41 - DW_TAG_type_unit */
-static Usage_Tag_Tree tag_tree_41[] = {
+static Usage_Tag_Tree tag_tree_41[35] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
     {/* 0x46 */ 0, DW_TAG_dynamic_type},
     {/* 0x02 */ 0, DW_TAG_class_type},
@@ -213,34 +213,34 @@ static Usage_Tag_Tree tag_tree_41[] = {
 };
 
 /* 0x3f - DW_TAG_condition */
-static Usage_Tag_Tree tag_tree_3f[] = {
+static Usage_Tag_Tree tag_tree_3f[4] = {
     {/* 0x27 */ 0, DW_TAG_constant},
     {/* 0x21 */ 0, DW_TAG_subrange_type},
     {/*      */ 0, 0}
 };
 
 /* 0x47 - DW_TAG_atomic_type */
-static Usage_Tag_Tree tag_tree_47[] = {
+static Usage_Tag_Tree tag_tree_47[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x26 - DW_TAG_const_type */
-static Usage_Tag_Tree tag_tree_26[] = {
+static Usage_Tag_Tree tag_tree_26[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x27 - DW_TAG_constant */
-static Usage_Tag_Tree tag_tree_27[] = {
+static Usage_Tag_Tree tag_tree_27[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x36 - DW_TAG_dwarf_procedure */
-static Usage_Tag_Tree tag_tree_36[] = {
+static Usage_Tag_Tree tag_tree_36[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x03 - DW_TAG_entry_point */
-static Usage_Tag_Tree tag_tree_03[] = {
+static Usage_Tag_Tree tag_tree_03[5] = {
     {/* 0x05 */ 0, DW_TAG_formal_parameter},
     {/* 0x18 */ 0, DW_TAG_unspecified_parameters},
     {/* 0x1b */ 0, DW_TAG_common_inclusion},
@@ -248,53 +248,53 @@ static Usage_Tag_Tree tag_tree_03[] = {
 };
 
 /* 0x04 - DW_TAG_enumeration_type */
-static Usage_Tag_Tree tag_tree_04[] = {
+static Usage_Tag_Tree tag_tree_04[3] = {
     {/* 0x28 */ 0, DW_TAG_enumerator},
     {/*      */ 0, 0}
 };
 
 /* 0x28 - DW_TAG_enumerator */
-static Usage_Tag_Tree tag_tree_28[] = {
+static Usage_Tag_Tree tag_tree_28[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x29 - DW_TAG_file_type */
-static Usage_Tag_Tree tag_tree_29[] = {
+static Usage_Tag_Tree tag_tree_29[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x05 - DW_TAG_formal_parameter */
-static Usage_Tag_Tree tag_tree_05[] = {
+static Usage_Tag_Tree tag_tree_05[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x2a - DW_TAG_friend */
-static Usage_Tag_Tree tag_tree_2a[] = {
+static Usage_Tag_Tree tag_tree_2a[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x08 - DW_TAG_imported_declaration */
-static Usage_Tag_Tree tag_tree_08[] = {
+static Usage_Tag_Tree tag_tree_08[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x3a - DW_TAG_imported_module */
-static Usage_Tag_Tree tag_tree_3a[] = {
+static Usage_Tag_Tree tag_tree_3a[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x3d - DW_TAG_imported_unit */
-static Usage_Tag_Tree tag_tree_3d[] = {
+static Usage_Tag_Tree tag_tree_3d[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x1c - DW_TAG_inheritance */
-static Usage_Tag_Tree tag_tree_1c[] = {
+static Usage_Tag_Tree tag_tree_1c[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x1d - DW_TAG_inlined_subroutine */
-static Usage_Tag_Tree tag_tree_1d[] = {
+static Usage_Tag_Tree tag_tree_1d[33] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x24 */ 0, DW_TAG_base_type},
@@ -330,19 +330,19 @@ static Usage_Tag_Tree tag_tree_1d[] = {
 };
 
 /* 0x38 - DW_TAG_interface_type */
-static Usage_Tag_Tree tag_tree_38[] = {
+static Usage_Tag_Tree tag_tree_38[4] = {
     {/* 0x0d */ 0, DW_TAG_member},
     {/* 0x2e */ 0, DW_TAG_subprogram},
     {/*      */ 0, 0}
 };
 
 /* 0x0a - DW_TAG_label */
-static Usage_Tag_Tree tag_tree_0a[] = {
+static Usage_Tag_Tree tag_tree_0a[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x0b - DW_TAG_lexical_block */
-static Usage_Tag_Tree tag_tree_0b[] = {
+static Usage_Tag_Tree tag_tree_0b[35] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x24 */ 0, DW_TAG_base_type},
@@ -380,28 +380,28 @@ static Usage_Tag_Tree tag_tree_0b[] = {
 };
 
 /* 0x0d - DW_TAG_member */
-static Usage_Tag_Tree tag_tree_0d[] = {
+static Usage_Tag_Tree tag_tree_0d[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x1e - DW_TAG_module */
-static Usage_Tag_Tree tag_tree_1e[] = {
+static Usage_Tag_Tree tag_tree_1e[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x2b - DW_TAG_namelist */
-static Usage_Tag_Tree tag_tree_2b[] = {
+static Usage_Tag_Tree tag_tree_2b[3] = {
     {/* 0x2c */ 0, DW_TAG_namelist_item},
     {/*      */ 0, 0}
 };
 
 /* 0x2c - DW_TAG_namelist_item */
-static Usage_Tag_Tree tag_tree_2c[] = {
+static Usage_Tag_Tree tag_tree_2c[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x39 - DW_TAG_namespace */
-static Usage_Tag_Tree tag_tree_39[] = {
+static Usage_Tag_Tree tag_tree_39[33] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x24 */ 0, DW_TAG_base_type},
@@ -437,12 +437,12 @@ static Usage_Tag_Tree tag_tree_39[] = {
 };
 
 /* 0x2d - DW_TAG_packed_type */
-static Usage_Tag_Tree tag_tree_2d[] = {
+static Usage_Tag_Tree tag_tree_2d[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x3c - DW_TAG_partial_unit */
-static Usage_Tag_Tree tag_tree_3c[] = {
+static Usage_Tag_Tree tag_tree_3c[32] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x24 */ 0, DW_TAG_base_type},
@@ -477,7 +477,7 @@ static Usage_Tag_Tree tag_tree_3c[] = {
 };
 
 /* 0x0f - DW_TAG_pointer_type */
-static Usage_Tag_Tree tag_tree_0f[] = {
+static Usage_Tag_Tree tag_tree_0f[10] = {
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x26 */ 0, DW_TAG_const_type},
     {/* 0x2d */ 0, DW_TAG_packed_type},
@@ -490,12 +490,12 @@ static Usage_Tag_Tree tag_tree_0f[] = {
 };
 
 /* 0x1f - DW_TAG_ptr_to_member_type */
-static Usage_Tag_Tree tag_tree_1f[] = {
+static Usage_Tag_Tree tag_tree_1f[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x10 - DW_TAG_reference_type */
-static Usage_Tag_Tree tag_tree_10[] = {
+static Usage_Tag_Tree tag_tree_10[10] = {
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x26 */ 0, DW_TAG_const_type},
     {/* 0x2d */ 0, DW_TAG_packed_type},
@@ -508,7 +508,7 @@ static Usage_Tag_Tree tag_tree_10[] = {
 };
 
 /* 0x42 - DW_TAG_rvalue_reference_type */
-static Usage_Tag_Tree tag_tree_42[] = {
+static Usage_Tag_Tree tag_tree_42[10] = {
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x26 */ 0, DW_TAG_const_type},
     {/* 0x2d */ 0, DW_TAG_packed_type},
@@ -521,7 +521,7 @@ static Usage_Tag_Tree tag_tree_42[] = {
 };
 
 /* 0x37 - DW_TAG_restrict_type */
-static Usage_Tag_Tree tag_tree_37[] = {
+static Usage_Tag_Tree tag_tree_37[10] = {
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x26 */ 0, DW_TAG_const_type},
     {/* 0x2d */ 0, DW_TAG_packed_type},
@@ -534,12 +534,12 @@ static Usage_Tag_Tree tag_tree_37[] = {
 };
 
 /* 0x20 - DW_TAG_set_type */
-static Usage_Tag_Tree tag_tree_20[] = {
+static Usage_Tag_Tree tag_tree_20[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x40 - DW_TAG_shared_type */
-static Usage_Tag_Tree tag_tree_40[] = {
+static Usage_Tag_Tree tag_tree_40[11] = {
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x26 */ 0, DW_TAG_const_type},
     {/* 0x2d */ 0, DW_TAG_packed_type},
@@ -553,12 +553,12 @@ static Usage_Tag_Tree tag_tree_40[] = {
 };
 
 /* 0x12 - DW_TAG_string_type */
-static Usage_Tag_Tree tag_tree_12[] = {
+static Usage_Tag_Tree tag_tree_12[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x13 - DW_TAG_structure_type */
-static Usage_Tag_Tree tag_tree_13[] = {
+static Usage_Tag_Tree tag_tree_13[24] = {
     {/* 0x23 */ 0, DW_TAG_access_declaration},
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x24 */ 0, DW_TAG_base_type},
@@ -585,7 +585,7 @@ static Usage_Tag_Tree tag_tree_13[] = {
 };
 
 /* 0x2e - DW_TAG_subprogram */
-static Usage_Tag_Tree tag_tree_2e[] = {
+static Usage_Tag_Tree tag_tree_2e[40] = {
     {/* 0x01 */ 0, DW_TAG_array_type},
     {/* 0x47 */ 0, DW_TAG_atomic_type},
     {/* 0x24 */ 0, DW_TAG_base_type},
@@ -628,17 +628,17 @@ static Usage_Tag_Tree tag_tree_2e[] = {
 };
 
 /* 0x21 - DW_TAG_subrange_type */
-static Usage_Tag_Tree tag_tree_21[] = {
+static Usage_Tag_Tree tag_tree_21[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x45 - DW_TAG_generic_subrange */
-static Usage_Tag_Tree tag_tree_45[] = {
+static Usage_Tag_Tree tag_tree_45[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x15 - DW_TAG_subroutine_type */
-static Usage_Tag_Tree tag_tree_15[] = {
+static Usage_Tag_Tree tag_tree_15[5] = {
     {/* 0x05 */ 0, DW_TAG_formal_parameter},
     {/* 0x16 */ 0, DW_TAG_typedef},
     {/* 0x18 */ 0, DW_TAG_unspecified_parameters},
@@ -646,32 +646,32 @@ static Usage_Tag_Tree tag_tree_15[] = {
 };
 
 /* 0x2f - DW_TAG_template_type_parameter */
-static Usage_Tag_Tree tag_tree_2f[] = {
+static Usage_Tag_Tree tag_tree_2f[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x30 - DW_TAG_template_value_parameter */
-static Usage_Tag_Tree tag_tree_30[] = {
+static Usage_Tag_Tree tag_tree_30[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x31 - DW_TAG_thrown_type */
-static Usage_Tag_Tree tag_tree_31[] = {
+static Usage_Tag_Tree tag_tree_31[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x32 - DW_TAG_try_block */
-static Usage_Tag_Tree tag_tree_32[] = {
+static Usage_Tag_Tree tag_tree_32[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x16 - DW_TAG_typedef */
-static Usage_Tag_Tree tag_tree_16[] = {
+static Usage_Tag_Tree tag_tree_16[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x17 - DW_TAG_union_type */
-static Usage_Tag_Tree tag_tree_17[] = {
+static Usage_Tag_Tree tag_tree_17[12] = {
     {/* 0x02 */ 0, DW_TAG_class_type},
     {/* 0x04 */ 0, DW_TAG_enumeration_type},
     {/* 0x2a */ 0, DW_TAG_friend},
@@ -686,45 +686,45 @@ static Usage_Tag_Tree tag_tree_17[] = {
 };
 
 /* 0x43 - DW_TAG_template_alias */
-static Usage_Tag_Tree tag_tree_43[] = {
+static Usage_Tag_Tree tag_tree_43[4] = {
     {/* 0x2f */ 0, DW_TAG_template_type_parameter},
     {/* 0x30 */ 0, DW_TAG_template_value_parameter},
     {/*      */ 0, 0}
 };
 
 /* 0x18 - DW_TAG_unspecified_parameters */
-static Usage_Tag_Tree tag_tree_18[] = {
+static Usage_Tag_Tree tag_tree_18[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x3b - DW_TAG_unspecified_type */
-static Usage_Tag_Tree tag_tree_3b[] = {
+static Usage_Tag_Tree tag_tree_3b[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x34 - DW_TAG_variable */
-static Usage_Tag_Tree tag_tree_34[] = {
+static Usage_Tag_Tree tag_tree_34[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x19 - DW_TAG_variant */
-static Usage_Tag_Tree tag_tree_19[] = {
+static Usage_Tag_Tree tag_tree_19[3] = {
     {/* 0x33 */ 0, DW_TAG_variant_part},
     {/*      */ 0, 0}
 };
 
 /* 0x33 - DW_TAG_variant_part */
-static Usage_Tag_Tree tag_tree_33[] = {
+static Usage_Tag_Tree tag_tree_33[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x35 - DW_TAG_volatile_type */
-static Usage_Tag_Tree tag_tree_35[] = {
+static Usage_Tag_Tree tag_tree_35[2] = {
     {/*      */ 0, 0}
 };
 
 /* 0x22 - DW_TAG_with_stmt */
-static Usage_Tag_Tree tag_tree_22[] = {
+static Usage_Tag_Tree tag_tree_22[2] = {
     {/*      */ 0, 0}
 };
 

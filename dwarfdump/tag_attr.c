@@ -471,7 +471,8 @@ main(int argc, char **argv)
             ta_get_TAG_name(tag,&aname);
             fprintf(fileOut,"/* 0x%02x - %s */\n",tag,aname);
             fprintf(fileOut,
-                "static Usage_Tag_Attr tag_attr_%02x[] = {\n",tag);
+                "static Usage_Tag_Attr tag_attr_%02x[%d] = {\n",
+                tag,cur_attr+1);
             for (index = 1; index < cur_attr; ++index) {
                 attr = tag_attr_vector[index];
                 ta_get_AT_name(attr,&aname);
@@ -495,7 +496,8 @@ main(int argc, char **argv)
         unsigned int legal;
 
         fprintf(fileOut,
-            "static Usage_Tag_Attr *usage_tag_attr[] = {\n");
+            "static Usage_Tag_Attr *usage_tag_attr[%d] = {\n",
+            DW_TAG_last+1);
         for (index = 0; index < DW_TAG_last; ++index) {
             tag = tag_children[index];
             if (tag) {
@@ -518,7 +520,8 @@ main(int argc, char **argv)
             " /* Found attributes */\n");
         fprintf(fileOut,"} Rate_Tag_Attr;\n\n");
         fprintf(fileOut,
-            "static Rate_Tag_Attr rate_tag_attr[] = {\n");
+            "static Rate_Tag_Attr rate_tag_attr[%d] = {\n",
+            DW_TAG_last+1);
         for (tag = 0; tag < DW_TAG_last; ++tag) {
             if (tag_children[tag]) {
                 legal = tag_attr_legal[tag];

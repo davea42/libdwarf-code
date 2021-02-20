@@ -415,8 +415,8 @@ main(int argc, char **argv)
             ta_get_TAG_name(tag,&aname);
             fprintf(fileOut,"/* 0x%02x - %s */\n",tag,aname);
             fprintf(fileOut,
-                "static Usage_Tag_Tree tag_tree_%02x[] = {\n",
-                tag);
+                "static Usage_Tag_Tree tag_tree_%02x[%d] = {\n",
+                tag,cur_tag+1);
             for (index = 1; index < cur_tag; ++index) {
                 child_tag = tag_tree_vector[index];
                 ta_get_TAG_name(child_tag,&aname);
