@@ -1,3 +1,13 @@
+2021-02-24 David Anderson
+    * attr_form_build.c: Catastophic error texts
+      now all have a trailing newline.
+    * attr_formclass_ext.list: The _ghs_
+      attributes are now properly named as GreenHillls
+      spells them
+    * dwarf_names.c: Regenerated with the proper
+      _ghs_ names.
+    * dwarfdump-af-table.h,dwarfdump-ta-ext-table.h: Regenerated
+      with the proper _ghs_ names.
 2021-02-20 David Anderson
     * tag_attr.c,tag_tree.c: When creating 
       the tables below insert the precise array

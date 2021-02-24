@@ -321,6 +321,18 @@ dwarf_get_TAG_name (unsigned int val,
     case DW_TAG_ALTIUM_rom:
         *s_out = "DW_TAG_ALTIUM_rom";
         return DW_DLV_OK;
+    case DW_TAG_ghs_namespace:
+        *s_out = "DW_TAG_ghs_namespace";
+        return DW_DLV_OK;
+    case DW_TAG_ghs_using_namespace:
+        *s_out = "DW_TAG_ghs_using_namespace";
+        return DW_DLV_OK;
+    case DW_TAG_ghs_using_declaration:
+        *s_out = "DW_TAG_ghs_using_declaration";
+        return DW_DLV_OK;
+    case DW_TAG_ghs_template_templ_param:
+        *s_out = "DW_TAG_ghs_template_templ_param";
+        return DW_DLV_OK;
     case DW_TAG_upc_shared_type:
         *s_out = "DW_TAG_upc_shared_type";
         return DW_DLV_OK;
@@ -907,6 +919,15 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_loclists_base:
         *s_out = "DW_AT_loclists_base";
         return DW_DLV_OK;
+    case DW_AT_ghs_namespace_alias:
+        *s_out = "DW_AT_ghs_namespace_alias";
+        return DW_DLV_OK;
+    case DW_AT_ghs_using_namespace:
+        *s_out = "DW_AT_ghs_using_namespace";
+        return DW_DLV_OK;
+    case DW_AT_ghs_using_declaration:
+        *s_out = "DW_AT_ghs_using_declaration";
+        return DW_DLV_OK;
     case DW_AT_HP_block_index:
         *s_out = "DW_AT_HP_block_index";
         return DW_DLV_OK;
@@ -947,6 +968,8 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_MIPS_linkage_name:
         *s_out = "DW_AT_MIPS_linkage_name";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2007. DW_AT_ghs_mangled */
     case DW_AT_MIPS_stride:
         *s_out = "DW_AT_MIPS_stride";
         return DW_DLV_OK;
@@ -1034,20 +1057,23 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_HP_is_result_param:
         *s_out = "DW_AT_HP_is_result_param";
         return DW_DLV_OK;
-    case DW_AT_GHS_unknown1:
-        *s_out = "DW_AT_GHS_unknown1";
+    case DW_AT_ghs_rsm:
+        *s_out = "DW_AT_ghs_rsm";
         return DW_DLV_OK;
-    case DW_AT_GHS_unknown3:
-        *s_out = "DW_AT_GHS_unknown3";
+    case DW_AT_ghs_frsm:
+        *s_out = "DW_AT_ghs_frsm";
         return DW_DLV_OK;
-    case DW_AT_GHS_unknown4:
-        *s_out = "DW_AT_GHS_unknown4";
+    case DW_AT_ghs_frames:
+        *s_out = "DW_AT_ghs_frames";
         return DW_DLV_OK;
-    case DW_AT_GHS_unknown2:
-        *s_out = "DW_AT_GHS_unknown2";
+    case DW_AT_ghs_rso:
+        *s_out = "DW_AT_ghs_rso";
         return DW_DLV_OK;
-    case DW_AT_GHS_unknown5:
-        *s_out = "DW_AT_GHS_unknown5";
+    case DW_AT_ghs_subcpu:
+        *s_out = "DW_AT_ghs_subcpu";
+        return DW_DLV_OK;
+    case DW_AT_ghs_lbrace_line:
+        *s_out = "DW_AT_ghs_lbrace_line";
         return DW_DLV_OK;
     case DW_AT_sf_names:
         *s_out = "DW_AT_sf_names";

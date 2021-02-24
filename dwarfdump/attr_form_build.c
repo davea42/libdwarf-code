@@ -165,7 +165,7 @@ check_for_dup_attr(unsigned attr)
     ret = dwarf_tfind(e,&attr_check_dups,
         std_compare_3key_entry);
     if (ret) {
-        printf("FAIL as attribute 0x%x is duplicated",
+        printf("FAIL as attribute 0x%x is duplicated\n",
             attr);
         exit(1);
     }
@@ -179,7 +179,7 @@ check_for_dup_attr(unsigned attr)
     }
     re = *(Three_Key_Entry **)ret;
     if (re != e) {
-        printf("FAIL as attribute 0x%x is duplicated",
+        printf("FAIL as attribute 0x%x is duplicated\n",
             attr);
         /* If we did not exit we would free e here */
         exit(1);
@@ -286,14 +286,14 @@ main(int argc, char **argv)
             res = dwarf_get_AT_name(attr,&name);
             if (res != DW_DLV_OK) {
                 printf("Unknown attribute number of 0x%x,"
-                    " Giving up",num);
+                    " Giving up\n",num);
                 exit(1);
             }
             fprintf(fileOut,"/*%s ",name);
             res = dwarf_get_FORM_CLASS_name(num,&name);
             if (res != DW_DLV_OK) {
                 printf("Unknown form class number of 0x%x,"
-                    " Giving up",num);
+                    " Giving up\n",num);
                 exit(1);
             }
             fprintf(fileOut,"%s ",name);

@@ -31,8 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include <dwarf.h>
 
-/*  Most of these are not formally documented, hopefully
-    we'll figure out some of them. */
+/*  Most of these are not formally documented. */
 
 /*  badly named GNU extensions. */
 0xffffffff
@@ -396,20 +395,18 @@ DW_AT_SUN_vtable_index
 0xffffffff
 DW_AT_use_GNAT_descriptive_type
 0xffffffff
-/* The following are possibly defined by GreenHills,
-   though the correct spelling is unknown.. */
-DW_AT_GHS_unknown1
+DW_AT_ghs_rsm
 DW_FORM_CLASS_CONSTANT
 0xffffffff
-DW_AT_GHS_unknown2
+DW_AT_ghs_frsm
 DW_FORM_CLASS_CONSTANT
 0xffffffff
-DW_AT_GHS_unknown3
+DW_AT_ghs_frames
 DW_FORM_CLASS_CONSTANT
 0xffffffff
-DW_AT_GHS_unknown4
+DW_AT_ghs_rso 
 DW_FORM_CLASS_CONSTANT
 0xffffffff
-DW_AT_GHS_unknown5 
+DW_AT_ghs_subcpu 
 DW_FORM_CLASS_CONSTANT
 0xffffffff

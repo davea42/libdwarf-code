@@ -206,11 +206,11 @@ struct af_table_s {
 {0x2007,11,2},/*DW_AT_MIPS_linkage_name DW_FORM_CLASS_STRING Ext*/
 {0x2226,11,2},/*DW_AT_SUN_link_name DW_FORM_CLASS_STRING Ext*/
 {0x2225,11,2},/*DW_AT_SUN_part_link_name DW_FORM_CLASS_STRING Ext*/
-{0x2083, 3,2},/*DW_AT_GHS_unknown1 DW_FORM_CLASS_CONSTANT Ext*/
-{0x2087, 3,2},/*DW_AT_GHS_unknown2 DW_FORM_CLASS_CONSTANT Ext*/
-{0x2085, 3,2},/*DW_AT_GHS_unknown3 DW_FORM_CLASS_CONSTANT Ext*/
-{0x2086, 3,2},/*DW_AT_GHS_unknown4 DW_FORM_CLASS_CONSTANT Ext*/
-{0x2092, 3,2},/*DW_AT_GHS_unknown5 DW_FORM_CLASS_CONSTANT Ext*/
+{0x2083, 3,2},/*DW_AT_ghs_rsm DW_FORM_CLASS_CONSTANT Ext*/
+{0x2085, 3,2},/*DW_AT_ghs_frsm DW_FORM_CLASS_CONSTANT Ext*/
+{0x2086, 3,2},/*DW_AT_ghs_frames DW_FORM_CLASS_CONSTANT Ext*/
+{0x2087, 3,2},/*DW_AT_ghs_rso DW_FORM_CLASS_CONSTANT Ext*/
+{0x2092, 3,2},/*DW_AT_ghs_subcpu DW_FORM_CLASS_CONSTANT Ext*/
 { 0,0,0 }
 }; /* end af_table extended */
 #ifdef __cplusplus

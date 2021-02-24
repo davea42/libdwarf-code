@@ -105,11 +105,11 @@ DW_AT_APPLE_omit_frame_ptr  /* Used by LLVM */
 DW_AT_APPLE_optimized /* Used by LLVM */
 DW_AT_GNU_all_tail_call_sites
 DW_AT_GNU_all_call_sites
-DW_AT_GHS_unknown1
-DW_AT_GHS_unknown2
-DW_AT_GHS_unknown3
-DW_AT_GHS_unknown4
-DW_AT_GHS_unknown5
+DW_AT_ghs_rsm
+DW_AT_ghs_frsm
+DW_AT_ghs_rso
+DW_AT_ghs_frames
+DW_AT_ghs_subcpu
 
 0xffffffff
 DW_TAG_type_unit

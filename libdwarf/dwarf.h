@@ -26,7 +26,7 @@ Public License along with this program; if not, write the
 Free Software Foundation, Inc., 51 Franklin Street - Fifth
 Floor, Boston MA 02110-1301, USA.
 */
-/* Latest update 2021-02-19 */
+/* Latest update 2021-02-23 with DW_AT_ghs_* entries. */
 
 #ifndef __DWARF_H
 #define __DWARF_H
@@ -196,6 +196,13 @@ extern "C" {
 #define DW_TAG_SUN_f90_interface        0x420c /* SUN */
 #define DW_TAG_SUN_fortran_vax_structure 0x420d /* SUN */
 #define DW_TAG_SUN_hi                   0x42ff /* SUN */
+
+/* GHS C */
+#define DW_TAG_ghs_namespace            0x8004
+#define DW_TAG_ghs_using_namespace      0x8005
+#define DW_TAG_ghs_using_declaration    0x8006
+#define DW_TAG_ghs_template_templ_param 0x8007
+
 /* PGI (STMicroelectronics) extensions. */
 #define DW_TAG_PGI_kanji_type           0xa000 /* PGI */
 #define DW_TAG_PGI_interface_block      0xa020 /* PGI */
@@ -417,6 +424,11 @@ extern "C" {
 #define DW_AT_defaulted                         0x8b /* DWARF5 */
 #define DW_AT_loclists_base                     0x8c /* DWARF5 */
 
+/* GreenHills, ghs.com GHS C */
+#define DW_AT_ghs_namespace_alias   0x806
+#define DW_AT_ghs_using_namespace   0x807
+#define DW_AT_ghs_using_declaration 0x808
+
 /*  In extensions, we attempt to include the vendor extension
     in the name even when the vendor leaves it out. */
 
@@ -475,14 +487,14 @@ extern "C" {
 #define DW_AT_CPQ_split_lifetimes_rtn           0x2004 /* COMPAQ/HP */
 #define DW_AT_CPQ_prologue_length               0x2005 /* COMPAQ/HP */
 
-/*  From DWARF2 DW_AT_producer GHS C 2012.5.4 [dual]
-    GreenHills ghs.com Possibly PowerPC */
-#define DW_AT_GHS_unknown1 0x2083
-#define DW_AT_GHS_unknown2 0x2087
-#define DW_AT_GHS_unknown3 0x2085
-#define DW_AT_GHS_unknown4 0x2086
-#define DW_AT_GHS_unknown5 0x2092
-
+/*  From GHS C GreenHills ghs.com */
+#define DW_AT_ghs_mangled    0x2007  /* conflict MIPS */
+#define DW_AT_ghs_rsm                           0x2083
+#define DW_AT_ghs_frsm                          0x2085
+#define DW_AT_ghs_frames                        0x2086
+#define DW_AT_ghs_rso                           0x2087
+#define DW_AT_ghs_subcpu                        0x2092
+#define DW_AT_ghs_lbrace_line                   0x2093 
 
 #define DW_AT_INTEL_other_endian 0x2026 /* Intel, 1 if byte swapped.*/
 

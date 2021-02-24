@@ -1,3 +1,8 @@
+2021-02-24  David Anderson
+    * dwarf.h: Now with the properly spelled _ghs_ names.
+    * dwarf_names.c,dwarf_names_enum.h: Regenerated
+      with the properly 
+      spelled _ghs_ names.
 2021-02-19  David Anderson
     * dwarf.h: Many DWARF-extension name/value pairs were made
       available to me, so those are now in dwarf.h. 
