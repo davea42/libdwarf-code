@@ -1,4 +1,9 @@
 2021-03-05 David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-af-table.h,
+      dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:
+      Regenerated with new version string.
+2021-03-05 David Anderson
     * dwconf.c: In case no dwarfdump.conf file found
       in one of the standard places (such as $HOME)
       the message printed is much clearer
@@ -77,7 +82,7 @@
       had turned off automatic cleanup at dwarf_finish()),
       but now it deallocs as desired.
 2021-02-15 David Anderson
-    * dwarf_names.c,dwarf_names.hdwarfdump-af-table.h,
+    * dwarf_names.c,dwarf_names.h,dwarfdump-af-table.h,
       dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
       dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:
       Regenerated with new version string.
