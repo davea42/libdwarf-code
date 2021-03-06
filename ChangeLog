@@ -1,3 +1,7 @@
+2021-03-05: David Anderson
+    * configure.ac: Now version 20210305.
+    * configure: Regenerated.
+2021-02-14: David Anderson
 2021-02-19: David Anderson
     * scripts/ddbuild.sh: needed a -DSKIP_AF_CHECK
       to allow building a helper program that
