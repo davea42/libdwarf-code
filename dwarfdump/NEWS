@@ -1,3 +1,17 @@
+March 5, 2021
+  "dwarfdump found no file !" is a message one might see in
+  dwarfdump before March 2021. It means dwarfdump cannot
+  find a dwarfdump.conf .  For several months dwarfdump
+  has required a dwarfdump.conf be present in one of the
+  defined standard places.  $HOME/dwarfdump.conf  and
+  $HOME/.dwarfdump.conf are good choices.  dwarfdump.conf
+  is in every release.  In years past dwarfdump.conf was
+  only required if printing frames, but now dwarfdump
+  needs to know appropriate register names in a variety
+  of situations, hence a dwarfdump.conf is needed.
+  As of the March 6 2021 release the basic error for this case is
+  "dwarfdump found no dwarfdump.conf file in any of the
+  standard places!"
 February 15, 2021
   dwarfdump given -ku now prints brief lists counting
   the uses of each TAG, each ATtribute, and each FORM

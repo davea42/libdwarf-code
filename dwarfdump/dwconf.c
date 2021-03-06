@@ -204,10 +204,16 @@ find_conf_file_and_read_config_inner(const char *named_file,
         conf_internal->conf_defaults,
         &name_used);
     if (!conf_stream) {
+        const char *localnamed_file = named_file;
         ++errcount;
-        printf("dwarfdump found no file %s!\n",
-            named_file ? named_file : "readable for configuration. "
-            "(add options -v -v to see what file names tried)\n");
+        if (!named_file || !strlen(named_file)) {
+            localnamed_file = "readable for "
+               "configuring register names (Option --file-name)";
+        }
+        printf("dwarfdump found no dwarfdump.conf file %s in any "
+            " of the standard places!\n%s\n",
+            localnamed_file,
+            "(add options -v -v to see what file paths tried)");
         return FOUND_ERROR;
     }
     if (glflags.verbose > 6) {

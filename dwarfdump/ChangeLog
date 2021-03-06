@@ -1,3 +1,8 @@
+2021-03-05 David Anderson
+    * dwconf.c: In case no dwarfdump.conf file found
+      in one of the standard places (such as $HOME)
+      the message printed is much clearer
+      and more specific.
 2021-02-24 David Anderson
     * attr_form_build.c: Catastophic error texts
       now all have a trailing newline.
