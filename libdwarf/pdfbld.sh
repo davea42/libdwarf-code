@@ -37,10 +37,15 @@ then
   rm -f libdwarf2.1.pdf
   t=junklibdwarfread.pdf
   pr -t -e libdwarf2.1.mm | tbl | $TROFF -n16 -mm >libdwarf2.1.ps
-  $PSTOPDF libdwarf2.1.ps $t
-  echo "Now create libdwarf2.1.mm by tranforming $t"
-  set +x
-  sh ../scripts/rebuildpdf.sh $t libdwarf2.1.pdf
+  $PSTOPDF libdwarf2.1.ps libdwarf2.1.pdf
+  # The rearrangement bloats the pdf from 600KB to 14MB
+  # and makes the release gigantic. So never mind.
+  #$PSTOPDF libdwarf2.1.ps $t
+  #ls -l junklibdwarfread.pdf  
+  #echo "Now create libdwarf2.1.mm by tranforming $t"
+  #set +x
+  #sh ../scripts/rebuildpdf.sh $t libdwarf2.1.pdf
+  ls -l libdwarf2.1.pdf
   #rm $t
   set -x
 fi

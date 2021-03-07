@@ -1,3 +1,8 @@
+2021-03-07  David Anderson
+    * pdfbld.sh: Abandon the rearrangement  of the pdf,
+      it bloated the pdf from 600KB to over 14MB.
+      and would double the size of a release.
+    * libdwarf2.1.pdf: Regenerated.
 2021-03-05  David Anderson
     * libdwarf_version.h: Updated version string.
     * dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,
