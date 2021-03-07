@@ -418,6 +418,7 @@ static void arg_help(void);
 static void arg_trace(void);
 static void arg_verbose(void);
 static void arg_version(void);
+static void arg_show_dwarfdump_conf(void);
 
 static void arg_c_multiple_selection(void);
 static void arg_E_multiple_selection(void);
@@ -691,6 +692,7 @@ static const char *usage_long_text[] = {
 "-v   --verbose       Show more information.",
 "-vv  --verbose-more  Show even more information.",
 "-V   --version       Print version information.",
+"     --show-dwarfdump-conf Show what dwarfdump.conf is being used",
 "",
 };
 
@@ -843,6 +845,7 @@ OPT_HELP,                     /* -h  --help                  */
 OPT_VERBOSE,                  /* -v  --verbose               */
 OPT_VERBOSE_MORE,             /* -vv --verbose-more          */
 OPT_VERSION,                  /* -V  --version               */
+OPT_SHOW_DWARFDUMP_CONF,      /*   --show-dwarfdump-conf     */
 
 /* Trace                                                     */
 OPT_TRACE,                    /* -# --trace=<num>            */
@@ -1024,6 +1027,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"verbose",       dwno_argument, 0, OPT_VERBOSE      },
 {"verbose-more",  dwno_argument, 0, OPT_VERBOSE_MORE },
 {"version",       dwno_argument, 0, OPT_VERSION      },
+{"show-dwarfdump-conf",dwno_argument, 0, OPT_SHOW_DWARFDUMP_CONF },
 
 /* Trace. */
 {"trace", dwrequired_argument, 0, OPT_TRACE},
@@ -2222,10 +2226,15 @@ void arg_format_suppress_uri(void)
     glflags.gf_uri_options_translation = FALSE;
 }
 
-/*  Option '-v' */
+/*  Option '-v' --verbose */
 void arg_verbose(void)
 {
     glflags.verbose++;
+}
+/*  Option '--show-dwarfdump-conf' */
+void arg_show_dwarfdump_conf(void)
+{
+    glflags.gf_show_dwarfdump_conf++;
 }
 
 /*  Option '-V' */
@@ -2700,7 +2709,8 @@ set_command_options(int argc, char *argv[])
         case OPT_VERBOSE:       arg_verbose();       break;
         case OPT_VERBOSE_MORE:  arg_verbose();       break;
         case OPT_VERSION:       arg_version();       break;
-
+        case OPT_SHOW_DWARFDUMP_CONF: 
+                                arg_show_dwarfdump_conf();break;
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
 
@@ -2725,9 +2735,25 @@ set_command_options(int argc, char *argv[])
     even with these special args we want do_all() to be
     called by process_args() below if there are no
     'normal' - or -- args.
+    And of course -v --verbose are special too.
     So regression testing can behave identically
-    with or without the two specials.
+    with or without the specials.
     Function new March 6, 2020  */
+static const char *simplestdargs[] ={
+"-v",
+"-vv",
+"-vvv",
+"-vvvv",
+"-vvvvv",
+"-vvvvvv",
+"--verbose",
+"--show-dwarfdump-conf",
+"--verbose-more",
+"--print-alloc-sums",
+"--suppress-de-alloc-tree",
+0
+};
+
 static int
 lacking_normal_args (int argct,char **args)
 {
@@ -2735,24 +2761,27 @@ lacking_normal_args (int argct,char **args)
     int i = 0;
 
     for ( i = 0; i < argct ; ++i) {
+        int k = 0;
+        int simple = FALSE;
         curarg = args[i];
         if (curarg[0] != '-') {
             /*  Standard case. */
             return TRUE;
         }
-        if (!strcmp(curarg,"--print-alloc-sums")) {
-            /* Ok. One of the specials. Check more. */
-            continue;
+        for (k = 0; simplestdargs[k]; ++k) {
+            if (!strcmp(curarg,simplestdargs[k])) {
+                 simple = TRUE;
+                 break;
+            }
         }
-        if (!strcmp(curarg,"--suppress-de-alloc-tree")) {
-            /* Ok. One of the specials. Check more. */
+        if (simple) {
             continue;
         }
         /*  Not one of the specials, a normal argument,
             so we have some 'real' args. */
         return FALSE;
     }
-    /*  Never found any argument at all, let regular
+    /*  Never found any non-simple argument, let regular
         arg processing deal with it. */
     return TRUE;
 }
@@ -2789,10 +2818,20 @@ process_args(int argc, char *argv[])
             config_file_defaults,
             glflags.config_file_data);
         if (res == FOUND_ERROR) {
-            printf("Frame not configured due to error(s)."
-                " using generic 100 registers.\n");
-            glflags.gf_eh_frame_flag = FALSE;
-            glflags.gf_frame_flag = FALSE;
+            if (!glflags.gf_do_print_dwarf && 
+                !glflags.gf_do_check_dwarf) {
+                printf("Frame not configured due to "
+                    "configure error(s).\n");
+                printf("(Since no print or check options provided "
+                    "dwarfdump may now silently exit)\n");
+            } else {
+                printf("Frame not configured due to "
+                    "configure error(s), "
+                    "using generic 100 registers.\n"
+                    "Frame section access suppressed.\n");
+                glflags.gf_eh_frame_flag = FALSE;
+                glflags.gf_frame_flag = FALSE;
+            }
         } else if (res == FOUND_DONE || res == FOUND_OPTION) {
             if (glflags.gf_generic_1200_regs) {
                 init_generic_config_1200_regs(

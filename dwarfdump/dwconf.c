@@ -29,6 +29,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include "config.h"
 #include "globals.h"
+#include "sanitized.h"
 #include "esb.h"
 
 /* Windows specific header files */
@@ -204,20 +205,27 @@ find_conf_file_and_read_config_inner(const char *named_file,
         conf_internal->conf_defaults,
         &name_used);
     if (!conf_stream) {
-        const char *localnamed_file = named_file;
         ++errcount;
         if (!named_file || !strlen(named_file)) {
-            localnamed_file = "readable for "
-               "configuring register names (Option --file-name)";
+            printf("dwarfdump found no dwarfdump.conf file "
+                "in any of the standard places\n"
+                "(precede all arguments"
+                "with option --show-dwarfdump-conf to see "
+                "what file paths tried)\n"
+                "If no print/check arguments also provided "
+                "dwarfdump may silently just stop.\n");
+        } else {
+            printf("dwarfdump found no dwarfdump.conf "
+                "file \"%s\"\n"
+                "If no print/check arguments also provided "
+                "dwarfdump may silently just stop.\n",
+                sanitized(named_file));
         }
-        printf("dwarfdump found no dwarfdump.conf file %s in any "
-            " of the standard places!\n%s\n",
-            localnamed_file,
-            "(add options -v -v to see what file paths tried)");
         return FOUND_ERROR;
     }
-    if (glflags.verbose > 6) {
-        printf("dwarfdump using configuration file %s\n", name_used);
+    if (glflags.gf_show_dwarfdump_conf) {
+        printf("dwarfdump using configuration "
+           "file \"%s\"\n", sanitized(name_used));
     }
     conf_internal->conf_name_used = name_used;
 
@@ -231,7 +239,8 @@ find_conf_file_and_read_config_inner(const char *named_file,
     if (res == FOUND_ERROR) {
         ++errcount;
         fclose(conf_stream);
-        printf("dwarfdump found no usable abi %s in file %s.\n",
+        printf("dwarfdump found no usable abi \"%s\" "
+            "in file \"%s\".\n",
             named_abi?named_abi:"<not looking for abi>",
             name_used);
         return FOUND_ERROR;
@@ -408,14 +417,8 @@ find_a_file(const char *named_file,
     if (lname && (strlen(lname) > 0)) {
         /*  Name given, just assume it is fully correct,
             try no other. */
-#ifdef BUILD_FOR_TEST
-#endif /* BUILD_FOR_TEST */
         printf("dwarfdump looking for"
-            " configuration as %s\n", lname);
-        #if 0
-        if (glflags.verbose > 1) {
-        }
-        #endif
+            " configuration as \"%s\"\n", lname);
         fin = fopen(lname, type);
         if (fin) {
             *name_used = lname;
@@ -465,14 +468,13 @@ find_a_file(const char *named_file,
             }
         }
 #endif /* _WIN32 */
-#ifdef BUILD_FOR_TEST
-        printf("dwarfdump looking for"
-            " configuration as %s\n", lname);
-#endif /* BUILD_FOR_TEST */
-#if 0
-        if (glflags.verbose > 1) {
+        if (glflags.gf_show_dwarfdump_conf) {
+            if (!lname || !strlen(lname)) {
+                lname="<Impossible name  string>";
+            } 
+            printf("dwarfdump looking for"
+                " configuration as: \"%s\"\n", lname);
         }
-#endif
         fin = fopen(lname, type);
         if (fin) {
             *name_used = lname;

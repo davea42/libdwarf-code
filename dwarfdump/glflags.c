@@ -280,6 +280,7 @@ init_global_flags(void)
     /*  Start verbose at zero. verbose can
         be incremented with -v but not decremented. */
     glflags.verbose = 0;
+    glflags.gf_show_dwarfdump_conf = 0;
 
     glflags.dense = FALSE;
     glflags.ellipsis = FALSE;

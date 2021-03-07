@@ -1,3 +1,13 @@
+2021-03-06 David Anderson
+    * command_options.c,dwconf.c: When a dwarfdump.conf
+      is not findable the messages are now more meaningful
+      and not quite so mysterious.
+      Added new option --show-dwarfdump-conf to show
+      the .dwarfdump.conf in use. The old and broken
+      depencence on -v is gone.
+    * glflags.c,glflags.h: New flag gf_show_dwarfdump_conf
+      for the new option. 
+    * dwarfdump.1: Documented new option --show-dwarfdump-conf
 2021-03-05 David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-af-table.h,
       dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,

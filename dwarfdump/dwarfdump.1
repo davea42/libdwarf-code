@@ -107,7 +107,7 @@ handling up to 1200 registers named r0-r1199.
 .PP
 
 The 
-.BR \-file-abi=<abi>\ (\-x\ abi=<abi>)
+.BR \--file-abi=<abi>\ (\-x\ abi=<abi>)
 description below shows how to name
 an abi and use that to guide
 the 
@@ -116,14 +116,14 @@ or
 .BR \--print-eh-frame\ (\-F)
 processing.
 .PP
-Unless one of
+One of
 .BR \--print-frame\ (\-f)
 or
 .B \--print-eh-frame\ (\-F) 
-or
-.BR \--print-all\ (\-a)
-is used any abi reference is ignored
-because no frame data will be printed.
+implies lots of abi (register names, 
+register counts) in the output, but
+sections other than frame sections
+may also need register names.
 
 .PP
 Unless the cpu for the object file being dumped has many registers,
@@ -155,16 +155,19 @@ Without
 .BR \--format-registers\ (\-R)
 or 
 .BR \-file-abi=<abi>\ (\-x\ abi=<abi>)
-dwarfdump ignores
-the dwarfdump.conf file and uses compiled-in generic set of
+dwarfdump uses
+a compiled-in generic set of
 register names.
 If no 
 .BR \--file-name=<path>\ (\-x\ name=<path>)
 is given, dwarfdump
 looks for "./dwarfdump.conf", 
+"$HOME/dwarfdump.conf", 
 "$HOME/.dwarfdump.conf", 
 "<install-prefix>/lib/dwarfdump.conf" 
 and takes the first it finds.
+Use the \--show-dwarfdump-conf
+option  to see what dwarfdump finds.
 If one or more 
 .BR \--file-name=<path>\ (\-x\ name=<path>)
 is given the last of these is
@@ -210,7 +213,7 @@ the & character might cause input issues so
 .B \--format-producer=S%26T
 should be used instead.
 To actually input a single % character (in a name, for example), 
-double it to %% on the command line (or simply use %25).
+double it to %% on the command line (or use %25).
 .PP
 Options 
 .BR \--format-suppress-uri\ (\-U)
@@ -670,6 +673,11 @@ printing DIEs and rnglists (-i),
 lines (-l), frames (-f,-F), gdb_index(-I).
 Additional -v beyond four do not currently
 add-to or change the output. 
+.TP
+.BR \--show-dwarfdump-conf
+Shows what files are checked
+to find a dwarfdump.conf and its
+register naming tables.
 
 .SH LIMITING OUTPUT
 

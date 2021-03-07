@@ -317,7 +317,8 @@ struct glflags_s {
     /*  Start verbose at zero. verbose can
         be incremented with -v but not decremented. */
     int verbose;
-
+    int gf_show_dwarfdump_conf;/* Incremented with 
+        --show-dwarfdump-conf, never decremented */
     Dwarf_Bool dense;
     Dwarf_Bool ellipsis;
     Dwarf_Bool show_form_used;
