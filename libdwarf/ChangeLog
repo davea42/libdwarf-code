@@ -1,3 +1,7 @@
+2021-04-20  David Anderson
+    * pdfbld.sh: Now build the consumer both in
+      standard and bloated form (we only ship the
+      standard form).
 2021-03-07  David Anderson
     * pdfbld.sh: Abandon the rearrangement  of the pdf,
       it bloated the pdf from 600KB to over 14MB.

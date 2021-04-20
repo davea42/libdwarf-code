@@ -3,6 +3,10 @@
 # when changes made. Not done during build or install.
 # Just use the built pdf to install.
 # Run in the libdwarf source directory.
+# This generates two reader/consumer pdfs with -c or -a:
+# libdwarf2.1.pdf is standard mm output.
+# and libdwarf2.1xl.pdf is rearranged to have
+# TOC first but is...gigantic, so not shipped. 
 
 c="n"
 p="n"
@@ -39,14 +43,19 @@ then
   pr -t -e libdwarf2.1.mm | tbl | $TROFF -n16 -mm >libdwarf2.1.ps
   $PSTOPDF libdwarf2.1.ps libdwarf2.1.pdf
   # The rearrangement bloats the pdf from 600KB to 14MB
-  # and makes the release gigantic. So never mind.
-  #$PSTOPDF libdwarf2.1.ps $t
-  #ls -l junklibdwarfread.pdf  
-  #echo "Now create libdwarf2.1.mm by tranforming $t"
-  #set +x
-  #sh ../scripts/rebuildpdf.sh $t libdwarf2.1.pdf
+  # and makes the release gigantic. So make it separate.
+  $PSTOPDF libdwarf2.1.ps $t
+  echo "Now create libdwarf2.1.mm by tranforming $t"
+  set +x
+  sh ../scripts/rebuildpdf.sh $t libdwarf2.1xl.pdf
   ls -l libdwarf2.1.pdf
-  #rm $t
+  ls -l libdwarf2.1xl.pdf
+  rm $t
+  if [ -d ~/web4/gweb/pagedata ]
+  then
+    echo "Copying libdwarf2.1xl.pdf to ~/web4/gweb/pagedata"
+    cp libdwarf2.1xl.pdf ~/web4/gweb/pagedata
+  fi
   set -x
 fi
 
@@ -57,9 +66,10 @@ then
   $PSTOPDF libdwarf2p.1.ps libdwarf2p.1.pdf
 fi
 set +x
-echo "Check libdwarf/libdwarf2.1.pdf is correct "
+echo "Check libdwarf/libdwarf2.1xl.pdf is correct "
 echo "Should start with abstract page then follow with"
 echo "libdwarf2.1.pdf table of contents."
+
 
 rm -f libdwarf2.1.ps
 rm -f libdwarf2p.1.ps
