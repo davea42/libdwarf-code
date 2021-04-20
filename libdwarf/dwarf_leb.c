@@ -45,11 +45,23 @@
     room for a 64bit number.
     While any number of leading zeroes would be legal, so
     no max is really truly required here, why would a
-    compiler generate leading zeros?  That would
-    be strange.
+    compiler generate leading zeros (for unsigned leb)?
+    That would seem strange except in rare circumstances
+    a compiler may want, for overall alignment, to
+    add extra bytes..
+
+    So we allow more than 10 as it is legal for a compiler to
+    generate an leb with correct but useless trailing
+    zero bytes (note the interaction with sign in the signed case).
+    The value of BYTESLEBMAX is arbitrary but allows catching
+    corrupt data before dark.
+    Before April 2021 BYTESLEBMAX was 10.
 */
-#define BYTESLEBMAX 10
+#define BYTESLEBMAX 24
 #define BITSPERBYTE 8
+
+#define TRUE 1
+#define FALSE 0
 
 
 /* Decode ULEB with checking */
@@ -59,12 +71,12 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Unsigned *outval,
     Dwarf_Byte_Ptr endptr)
 {
-    Dwarf_Unsigned byte     = 0;
+    unsigned       byte        = 0;
     Dwarf_Unsigned word_number = 0;
-    Dwarf_Unsigned number  = 0;
-    unsigned shift      = 0;
+    Dwarf_Unsigned number      = 0;
+    size_t shift               = 0;
     /*  The byte_length value will be a small non-negative integer. */
-    unsigned byte_length   = 0;
+    unsigned byte_length       = 0;
 
     if (leb128 >=endptr) {
         return DW_DLV_ERROR;
@@ -73,22 +85,25 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
         unpacks into 32 bits to make this as fast as possible.
         word_number is assumed big enough that the shift has a defined
         result. */
-    if ((*leb128 & 0x80) == 0) {
+    byte = *leb128;
+    if ((byte & 0x80) == 0) {
         if (leb128_length) {
             *leb128_length = 1;
         }
-        *outval = *leb128;
+        *outval = byte;
         return DW_DLV_OK;
     } else {
+        unsigned       byte2        = 0;
         if ((leb128+1) >=endptr) {
             return DW_DLV_ERROR;
         }
-        if ((*(leb128 + 1) & 0x80) == 0) {
+        byte2 = *(leb128 + 1);
+        if ((byte2 & 0x80) == 0) {
             if (leb128_length) {
                 *leb128_length = 2;
             }
-            word_number = *leb128 & 0x7f;
-            word_number |= (*(leb128 + 1) & 0x7f) << 7;
+            word_number = byte & 0x7f;
+            word_number |= (byte2 & 0x7f) << 7;
             *outval = word_number;
             return DW_DLV_OK;
         }
@@ -102,12 +117,36 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     number = 0;
     shift = 0;
     byte_length = 1;
-    byte = *leb128;
     for (;;) {
+        unsigned b = byte & 0x7f;
         if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            /*  Shift is large. Maybe corrupt value,
+                maybe some padding high-end byte zeroes
+                that we can ignore. */
+            if (!b) {
+                ++byte_length;
+                if (byte_length > BYTESLEBMAX) {
+                    /*  Erroneous input.  */
+                    if (leb128_length) {
+                        *leb128_length = BYTESLEBMAX;
+                    }
+                    return DW_DLV_ERROR;
+                }
+                ++leb128;
+                /*  shift cannot overflow as
+                    BYTESLEBMAX is not a large value */
+                shift += 7;
+                if (leb128 >=endptr) {
+                    return DW_DLV_ERROR;
+                }
+                byte = *leb128;
+                continue;
+            }
+            /*  Too big, corrupt data given the non-zero
+                byte content */
             return DW_DLV_ERROR;
         }
-        number |= (byte & 0x7f) << shift;
+        number |= ((Dwarf_Unsigned)b << shift);
         if ((byte & 0x80) == 0) {
             if (leb128_length) {
                 *leb128_length = byte_length;
@@ -125,7 +164,7 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
             break;
         }
         ++leb128;
-        if ((leb128) >=endptr) {
+        if (leb128 >=endptr) {
             return DW_DLV_ERROR;
         }
         byte = *leb128;
@@ -142,18 +181,16 @@ dwarf_decode_leb128(char* leb, Dwarf_Unsigned* leblen,
         (Dwarf_Small*)endptr);
 }
 
-
-#define BITSINBYTE 8
-
 int
 _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Unsigned * leb128_length,
     Dwarf_Signed *outval,Dwarf_Byte_Ptr endptr)
 {
-    Dwarf_Unsigned byte   = 0;
+    Dwarf_Unsigned byte  = 0;
+    unsigned int b       = 0;
     Dwarf_Signed number  = 0;
-    Dwarf_Bool sign      = 0;
-    Dwarf_Unsigned shift     = 0;
+    size_t shift         = 0;
+    int    sign          = FALSE;
     /*  The byte_length value will be a small non-negative integer. */
     unsigned byte_length = 1;
 
@@ -168,13 +205,46 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
     }
     byte   = *leb128;
     for (;;) {
-        sign = byte & 0x40;
+        b = byte & 0x7f;
         if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            /*  Shift is large. Maybe corrupt value,
+                maybe some padding high-end byte zeroes
+                that we can ignore (but notice sign bit
+                from the last usable byte). */
+
+            sign =  b & 0x40;
+            if (!byte || byte == 0x40) {
+                /*  The value is complete. */
+                break;
+            }
+            if (b == 0) {
+                ++byte_length;
+                if (byte_length > BYTESLEBMAX) {
+                    /*  Erroneous input.  */
+                    if (leb128_length) {
+                        *leb128_length = BYTESLEBMAX;
+                    }
+                    return DW_DLV_ERROR;
+                }
+                ++leb128;
+                /*  shift cannot overflow as
+                    BYTESLEBMAX is not a large value */
+                shift += 7;
+                if (leb128 >=endptr) {
+                    return DW_DLV_ERROR;
+                }
+                byte = *leb128;
+                continue;
+            }
+            /*  Too big, corrupt data given the non-zero
+                byte content */
             return DW_DLV_ERROR;
         }
-        number |= ((Dwarf_Unsigned) ((byte & 0x7f))) << shift;
+        /* this bit of the last (most-significant
+           useful) byte indicates sign */
+        sign =  b & 0x40;
+        number |= ((Dwarf_Unsigned)b) << shift;
         shift += 7;
-
         if ((byte & 0x80) == 0) {
             break;
         }
@@ -192,23 +262,29 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
             return DW_DLV_ERROR;
         }
     }
-
     if (sign) {
         /* The following avoids undefined behavior. */
-        unsigned shiftlim = sizeof(Dwarf_Signed) * BITSINBYTE -1;
+        unsigned shiftlim = sizeof(Dwarf_Signed) * BITSPERBYTE -1;
         if (shift < shiftlim) {
-            number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+            Dwarf_Signed y = (Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+            Dwarf_Signed x = -y;
+            number |= x;
         } else if (shift == shiftlim) {
-            number |= (((Dwarf_Unsigned)1) << shift);
+            Dwarf_Signed x= (((Dwarf_Unsigned)1) << shift);
+            number |= x;
+        } else {
+            /* trailing zeroes case */
+            Dwarf_Signed x= (((Dwarf_Unsigned)1) << shiftlim);
+            number |= x;
         }
     }
-
     if (leb128_length) {
         *leb128_length = byte_length;
     }
     *outval = number;
     return DW_DLV_OK;
 }
+
 
 /* Public Interface: Decode a signed LEB128 value. */
 int

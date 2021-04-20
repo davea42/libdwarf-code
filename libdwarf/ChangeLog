@@ -1,4 +1,12 @@
 2021-04-20  David Anderson
+    * dwarf_leb.c: Now reads uleb/sleb allowing
+      zeroes padding at the end.
+    * dwarf_leb_test.c: Additional tests added with
+      constructed examples with zeroes padding and
+      comments explaining how it all works. See
+      tests v5, v6, and v7.
+2021-04-20  David Anderson
+    * libdwarf2.1.pdf: Regenerated, no change intended.
     * pdfbld.sh: Now build the consumer both in
       standard and bloated form (we only ship the
       standard form).
