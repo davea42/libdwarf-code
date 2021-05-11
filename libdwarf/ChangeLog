@@ -1,3 +1,8 @@
+2021-05-11  David Anderson
+    * libdwarf2.1.mm: Corrected errors in the formatting
+      of a couple input lines to get consistency.
+      the output in the pdf doex not change. Ver 3.26
+    * libdwarf2.1.pdf: Regenerated as 3.26
 2021-04-20  David Anderson
     * dwarf_leb.c: Now reads uleb/sleb allowing
       zeroes padding at the end.

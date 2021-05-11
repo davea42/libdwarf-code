@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.25 02 February 2021
+.ds vE Rev 3.26 02 May 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1118,7 +1118,7 @@ the consumer code should add the value to
 the value of the register \f(CWdw_regnum\fP to produce the
 value.
 
-.H 3 "Frame Operation Codes: DWARF 3 (for DWARF2 and later )
+.H 3 "Frame Operation Codes: DWARF 3 (for DWARF2 and later )"
 This interface was intended
 to be  adequate for DWARF3 and for DWARF2 (and DWARF4)
 but was never implemented.
@@ -8068,7 +8068,7 @@ to the compilation-unit represented by the given DIE.  Only the source
 files named in the statement program prologue (which
 in current DWARF standards is referred to as the Line
 Table Header) are returned.
-.H 3 dwarf_srcfiles()
+.H 3 "dwarf_srcfiles()"
 This works for for all line tables.
 However indexing is different
 in DWARF5 than in other versions of dwarf.
@@ -9929,7 +9929,7 @@ Allows retrieving the data
 about names and signatures.
 
 
-.H 3" dwarf_debugnames_abbrev_by_index()"
+.H 3 " dwarf_debugnames_abbrev_by_index()"
 .DS
 \f(CW int dwarf_debugnames_abbrev_by_index(
     Dwarf_Dnames_Head dn,
