@@ -58,9 +58,46 @@ else
   fi
 fi
 
+# echo "y" or "n"
+srcrelativepath () {
+  p="$1"
+  rm -f /tmp/srcrel.$$
+  echo "$p" >/tmp/srcrel.$$
+  grep '^/' </tmp/srcrel.$$ >/dev/null 2>/dev/null
+  if [ $? -eq 0 ]
+  then 
+    echo "n"
+  else
+    echo "y"
+  fi
+  rm /tmp/srcrel.$$
+}
+
+#lsiok=y
+#ls -i $blddir >/dev/null 2>/dev/null
+#r=$?
+#if [ $r -ne 0 ]
+#then
+#  echo "SKIP dwdebuglink tests cannot work when ls -i does not work"
+#  lsiok=n
+#fi
+rel=`srcrelativepath "$srcdir"`
+if [  $rel = "y" ]
+then
+  echo "dwdebuglink tests: $srcdir is a relative path"
+  echo "so we are building in the source tree. Use $blddir "
+  srcdir="$blddir"
+  #This depends on perhaps-incorrect belief that 
+  #only srcdir can be a relative path (if
+  #the test is run out-of-source-tree srcdir will
+  #be a full path too). 
+  # For both srcdir and blddir the final directory component will
+  # be 'dwarfexample'
+fi
+
 if [ $DWARF_BIGENDIAN = "yes" ]
 then
-  echo "SKIP dwdebuglink test1, cannot work on bigendian build"
+  echo "SKIP dwdebuglink test1, cannot work on bigendian build "
 else
   echo "dwdebuglink test1"
   o=junk.debuglink1
@@ -71,8 +108,12 @@ else
   # we strip out the actual srcdir and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
-  sed "s:$srcdir:..src..:" <$blddir/$o  >$blddir/${o}a
-  sed "s:$blddir:..bld..:" <$blddir/${o}a  >$blddir/${o}b
+  echo $srcdir | sed "s:[.]:\[.\]:g" >$blddir/${o}sed1
+  sedv1=`head -n 1 $blddir/${o}sed1`
+  sed "s:$sedv1:..src..:" <$blddir/$o  >$blddir/${o}a
+  echo $blddir | sed "s:[.]:\[.\]:g" >$blddir/${o}sed2
+  sedv2=`head -n 1 $blddir/${o}sed2`
+  sed "s:$sedv2:..bld..:" <$blddir/${o}a  >$blddir/${o}b
   diff $srcdir/debuglink.base  $blddir/${o}b
   r=$?
   if [ $r -ne 0 ]
