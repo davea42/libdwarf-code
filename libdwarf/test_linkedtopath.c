@@ -164,7 +164,6 @@ test1(Dwarf_Debug dbg)
     const char *msg = "This is a simple string for testing.";
     int res = 0;
     char *end = testbuffer +100;
-    int errcode = 0;
     Dwarf_Error error = 0;
 
 
@@ -357,8 +356,6 @@ test3(Dwarf_Debug dbg)
     char * linkstring = "de";
     dwarfstring result;
     char ** global_prefix = 0;
-    unsigned global_prefix_count = 2;
-    unsigned global_prefix_len = 0;
     unsigned char crc[4];
     unsigned buildid_length = 20;
     char **paths_returned = 0;
@@ -373,8 +370,6 @@ test3(Dwarf_Debug dbg)
     crc[1] = 0x34;
     crc[2] = 0x56;
     crc[3] = 0xab;
-    global_prefix_len =  (global_prefix_count+1)
-        * sizeof(void *);
     res = dwarf_add_debuglink_global_path(dbg,
         "/usr/lib/debug",&error);
     printf("Adding global path /usr/lib/debug\n");

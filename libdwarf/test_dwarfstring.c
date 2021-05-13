@@ -246,7 +246,6 @@ test3(int tnum)
     char *d = 0;
     const char *expstr = "";
     int res = 0;
-    unsigned long biglen = 0;
     char *bigstr = "a012345";
     char *targetbigstr = "a012345xy";
 
@@ -280,7 +279,6 @@ test4(int tnum)
     char *d = 0;
     const char *expstr = "";
     int res = 0;
-    unsigned long biglen = 0;
     char *mystr = "a01234";
     char *targetmystr = "a01234xyz";
     char fixedarea[7];
@@ -320,11 +318,9 @@ test5(int tnum)
     struct dwarfstring_s g;
     char *d = 0;
     const char *expstr = "";
-    int res = 0;
     unsigned long biglen = 0x654a;
     signed long lminus= -55;
     char *mystr = "a01234";
-    char *targetmystr = "a01234xyz";
 
     dwarfstring_constructor(&g);
     dwarfstring_append_printf_s(&g,"initialstring-%s-finalstring",

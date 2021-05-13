@@ -1,3 +1,6 @@
+2021-05-13  David Anderson
+    * test_dwarfstring.c,test_headersok.c,test_linkedtopath.c:
+      Changes made to avoid compiler warnings.
 2021-05-11  David Anderson
     * libdwarf2.1.mm: Corrected errors in the formatting
       of a couple input lines to get consistency.

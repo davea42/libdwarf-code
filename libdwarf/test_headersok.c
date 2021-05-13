@@ -7,7 +7,37 @@
 #include "dwarf_reloc_ppc64.h"
 #include "dwarf_reloc_x86_64.h"
 
+/*  The assignments and tests are to avoid compiler warnings
+    with -Wall */
 int main()
 {
+    const char *y = reloc_type_names_PPC64[0];
+    if (!y) {
+        return 1;
+    }
+    y = reloc_type_names_X86_64[0];
+    if (!y) {
+        return 1;
+    }
+    y = reloc_type_names_ARM[0];
+    if (!y) {
+        return 1;
+    }
+    y = reloc_type_names_PPC[0];
+    if (!y) {
+        return 1;
+    }
+    y = reloc_type_names_MIPS[0];
+    if (!y) {
+        return 1;
+    }
+    y = reloc_type_names_386[0];
+    if (!y) {
+        return 1;
+    }
+    y = reloc_type_names_386[0];
+    if (!y) {
+        return 1;
+    }
     return 0;
 }
