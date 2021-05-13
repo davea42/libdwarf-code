@@ -238,7 +238,7 @@ if(HAVE_STRUCT_UNDERSCORE_ELF AND DWARF_WITH_LIBELF)
    message(STATUS "Using struct _Elf in libdwarf.h")
    configure_file(libdwarf/generated_libdwarf.h.in 
        libdwarf/libdwarf.h COPYONLY)
-elseif(NOT DWARF_WITH_LIBELF)
+else()
    configure_file(libdwarf/libdwarf.h.in 
        libdwarf/libdwarf.h COPYONLY)
    message(STATUS "${JUST_LIBELF} does not have struct _Elf")

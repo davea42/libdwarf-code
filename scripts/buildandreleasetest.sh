@@ -95,8 +95,10 @@ dbigend=$bart/d-bigendian
 ecmakebld=$bart/e-cmakebld
 fcmakebld=$bart/f-cmakebld
 gcmakebld=$bart/g-cmakebld
+hcmakebld=$bart/h-cmakebld
 mdirs $bart $abld $ainstall $binstrelp $binstrelbld $crelbld
 mdirs $cinstrelp $dbigend $ecmakebld $fcmakebld $gcmakebld
+mdirs $hcmakebld
 relset=$bart/a-gzfilelist
 atfout=$bart/a-tarftout
 btfout=$bart/b-tarftout
@@ -251,7 +253,7 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake $genoptb -DWALL=ON -DBUILD_NON_SHARED=OFF -DBUILD_SHARED=ON -DBUILD_DWARFGEN=ON -DBUILD_DWARFEXAMPLE=ON $blibsrc
+  cmake $genoptb  -DWALL=ON -DBUILD_NON_SHARED=OFF -DBUILD_SHARED=ON -DBUILD_DWARFGEN=ON -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
   make
   chkres $? "FAIL Sec F C11c  cmake make in $gcmakebld"
@@ -265,6 +267,33 @@ fi
 echo " End Section G  $bart (ls output follows)"
 ls  $bart
 ############ End Section G
+
+################### Cmake test H
+safecd $hcmakebld "FAIL C12 Section H cd"
+havecmake=n
+which cmake >/dev/null
+if [ $? -eq 0 ]
+then
+  havecmake=y
+  echo "We have cmake and can test it."
+fi
+if [ $havecmake = "y" ]
+then
+  echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
+  cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON -DBUILD_SHARED=OFF -DBUILD_DWARFEXAMPLE=ON $blibsrc
+  chkres $? "FAIL Sec H C12b  cmake in $ecmakdbld"
+  make
+  chkres $? "FAIL Sec H C12c  cmake make in $gcmakebld"
+  make test
+  chkres $? "FAIL Sec H C12d  cmake make test in $gcmakebld"
+  ctest -R self
+  chkres $? "FAIL Sec H C12e  ctest -R self in $gcmakebld"
+else
+  echo "cmake not installed so Section H not tested."
+fi
+echo " End Section H  $bart (ls output follows)"
+ls  $bart
+############ End Section H
 
 
 echo "PASS scripts/buildandreleasetest.sh"

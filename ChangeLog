@@ -1,3 +1,8 @@
+2021-05-12: David Anderson
+    * CMakeLists.txt: Fixing a disastrous error removing
+      creation of libdwarf.h from the build. The mistake
+      was made in a commit 24 November 2020.
+      Now ctest -R passes again, with or without libelf.
 2021-03-05: David Anderson
     * configure.ac: Now version 20210305.
     * configure: Regenerated.
