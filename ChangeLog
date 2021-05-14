@@ -1,3 +1,10 @@
+2021-05-14: David Anderson
+    * CMakeLists.txt: Updateing version to match
+      configure.ac and adding comment to keep these
+      files in sync.
+    * configure.ac: Added comment to keep the version
+      here and in CMakeLists.txt in sync. 
+      No other change.
 2021-05-12: David Anderson
     * CMakeLists.txt: Fixing a disastrous error removing
       creation of libdwarf.h from the build. The mistake
