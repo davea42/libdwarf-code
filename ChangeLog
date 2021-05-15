@@ -1,4 +1,7 @@
 2021-05-14: David Anderson
+    * bugxml/bugrecord.py, bugxml/readbugs.py: Reformatted
+      to standard python style.
+2021-05-14: David Anderson
     * CMakeLists.txt: Updateing version to match
       configure.ac and adding comment to keep these
       files in sync.
