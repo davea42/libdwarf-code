@@ -1,3 +1,8 @@
+2021-05-15  David Anderson
+    * libdwarf2.1.mm: Added additional explanation
+      of an example call to the library  in the 
+      Dwarf_Error section. Now rev 3.27.
+    * libdwarf2.1.pdf: Regenerated. Version 3.27.
 2021-05-13  David Anderson
     * test_dwarfstring.c,test_headersok.c,test_linkedtopath.c:
       Changes made to avoid compiler warnings.

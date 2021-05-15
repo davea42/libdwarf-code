@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.26 02 May 2021
+.ds vE Rev 3.27 15 May 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1632,6 +1632,9 @@ We think the following is appropriate
 as a general outline. See dwarfdump source
 for many examples of both of the following
 incomplete examples.
+The very few functions not following this
+general call/return plan are specifically
+documented.
 .in +2
 .DS
 \f(CW
@@ -1643,14 +1646,20 @@ int example_codea{Dwarf_Debug dbg,Dwarf_Die indie,
     res = dwarf_siblingof_b(dbg,indie,is_info,sibdie,
         err);
     if (res == DW_DLV_ERROR) {
-        return res; /*let higher level decide what to do
-           and it will eventually need to do
-           dwarf_dealloc_error() appropriately */
+        return res; /*Let higher level decide what to do
+            and it will eventually need to do
+            dwarf_dealloc_error() appropriately,
+            the sibdie argument is not touched
+            or used by the called function */
     } else if (res == DW_DLV_NO_ENTRY) {
-        /* No sibdie created. Nothing done. *.
-        return res;
+        return res; /* No sibdie created. Nothing done,
+            the sibdie argument is not touched
+            or used by the called function */
     }
-    /*  sibdie created, caller will have to eventually
+    /*  sibdie created. The function stored
+        a DIE pointer (pointing to a created
+        DIE record) through the sibdie pointer.
+        Caller should eventually
         do dwarf_dealloc_die() appropriately. */
     ...
     return DW_DLV_OK;
