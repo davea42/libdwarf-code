@@ -253,7 +253,7 @@ fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake $genoptb  -DWALL=ON -DBUILD_NON_SHARED=OFF -DBUILD_SHARED=ON -DBUILD_DWARFGEN=ON -DBUILD_DWARFEXAMPLE=ON $blibsrc
+  cmake $genoptb  -DWALL=ON -DBUILD_NON_SHARED=OFF -DDO_TESTING=ON -DBUILD_SHARED=ON -DBUILD_DWARFGEN=ON -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
   make
   chkres $? "FAIL Sec F C11c  cmake make in $gcmakebld"
@@ -276,11 +276,13 @@ if [ $? -eq 0 ]
 then
   havecmake=y
   echo "We have cmake and can test it."
+else
+  echo "We do NOT have cmake, cannot test it."
 fi
 if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
-  cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON -DBUILD_SHARED=OFF -DBUILD_DWARFEXAMPLE=ON $blibsrc
+  cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON -DDO_TESTING=ON -DBUILD_SHARED=OFF -DBUILD_DWARFEXAMPLE=ON $blibsrc
   chkres $? "FAIL Sec H C12b  cmake in $ecmakdbld"
   make
   chkres $? "FAIL Sec H C12c  cmake make in $gcmakebld"

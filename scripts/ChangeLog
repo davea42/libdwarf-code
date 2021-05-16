@@ -1,3 +1,7 @@
+2021-05-16 David Anderson
+    * buildandreleasetest.sh. The cmake test H and G
+      script sections were missing -DDO_TESTING=ON so ctest
+      found nothing to run. Fixed.
 2021-05-14 David Anderson
     * conddef.py,find_pdfpages.py,funcfinderhdr.py,funcfindermm.py,
       funcfindersrcs.py,scripts/haveinclude.py: Reformatted
