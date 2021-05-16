@@ -1,3 +1,6 @@
+2021-05-16 David Anderson
+    * runtests.sh: A few small temporary files were
+      overlooked and left behind. Now they are deleted.
 2021-03-06 David Anderson
     * command_options.c,dwconf.c: When a dwarfdump.conf
       is not findable the messages are now more meaningful

@@ -152,12 +152,14 @@ then
   l=`expr $l - 2`
   tail -$l <$i >junk.tmp
   cp junk.tmp $i
+  rm -f junk.tmp
 fi
 }
 fixlasttime() {
   i=$1
   sed 's/last time 0x.*/last time 0x0/' <$i >junk.tmp
   cp junk.tmp $i
+  rm -f junk.tmp
 }
 
 # The following stop after 400 lines to limit the size
@@ -202,6 +204,8 @@ if [ $r -ne 0 ]
 then
   echo "to update , mv $top_blddir/dwarfdump/$t $b"
 fi
+rm -f $t
+rm -f $t.diffjunk.testsmallpe.diff
 
 f=$srcdir/testuriLE64ELf.obj
 b=$srcdir/testuriLE64ELf.base
@@ -228,6 +232,8 @@ if [ $r -ne 0 ]
 then
   echo "to update , mv  $top_blddir/dwarfdump/$t $b"
 fi
+rm -f $t
+rm -f $t.diff
 
 f=$srcdir/test-mach-o-32.dSYM
 b=$srcdir/test-mach-o-32.base
@@ -260,4 +266,6 @@ then
    echo "FAIL $failcount dwarfdump/runtests.sh"
    exit 1
 fi
+rm -f $t
+rm -f $t.diff
 exit 0
