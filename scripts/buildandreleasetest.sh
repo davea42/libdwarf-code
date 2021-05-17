@@ -254,11 +254,9 @@ if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
   cmake $genoptb  -DWALL=ON -DBUILD_NON_SHARED=OFF -DDO_TESTING=ON -DBUILD_SHARED=ON -DBUILD_DWARFGEN=ON -DBUILD_DWARFEXAMPLE=ON $blibsrc
-  chkres $? "FAIL Sec F C11b  cmake in $ecmakdbld"
+  chkres $? "FAIL Sec F C11b  cmake in $gcmakdbld"
   make
-  chkres $? "FAIL Sec F C11c  cmake make in $gcmakebld"
-  make test
-  chkres $? "FAIL Sec F C11d  cmake make test in $gcmakebld"
+  chkres $? "FAIL Sec F C11d cmake  make in $gcmakebld"
   ctest -R self
   chkres $? "FAIL Sec F C11e  ctest -R self in $gcmakebld"
 else
@@ -283,13 +281,11 @@ if [ $havecmake = "y" ]
 then
   echo "TEST: Now cmake from source dir $blibsrc/ in build dir  $gcmakebld"
   cmake -DDWARF_WITH_LIBELF=OFF -DWALL=ON -DBUILD_NON_SHARED=ON -DDO_TESTING=ON -DBUILD_SHARED=OFF -DBUILD_DWARFEXAMPLE=ON $blibsrc
-  chkres $? "FAIL Sec H C12b  cmake in $ecmakdbld"
+  chkres $? "FAIL Sec H C12b  cmake in $hcmakdbld"
   make
-  chkres $? "FAIL Sec H C12c  cmake make in $gcmakebld"
-  make test
-  chkres $? "FAIL Sec H C12d  cmake make test in $gcmakebld"
+  chkres $? "FAIL Sec H C12d  cmake make test in $hcmakebld"
   ctest -R self
-  chkres $? "FAIL Sec H C12e  ctest -R self in $gcmakebld"
+  chkres $? "FAIL Sec H C12e  ctest -R self in $hcmakebld"
 else
   echo "cmake not installed so Section H not tested."
 fi

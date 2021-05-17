@@ -1,4 +1,10 @@
 2021-05-16 David Anderson
+    * buildandreleasetest.sh: Some comments referred to 
+      the wrong test name for F G and H, which
+      caused confusion.
+      Removed 'make test' for cmake, now using ctest -R self
+      (and only that).
+2021-05-16 David Anderson
     * scanconfig.py: A tool to make it simple to know
       if config.h.in and config.h.in.cmake match
       properly.  Is to be run by hand on each file
