@@ -117,11 +117,8 @@ zlib is available in source from
 
 libelf is available in source from
     http://www.mr511.de/software/
-and
-    https://github.com/vtorri/libelf
 though libelf is not (as of May 2019)
-not needed.
-
+needed.
 
 NOTE: When building out of source tree the source tree must
 be cleaned of any files created by a build in the source tree
