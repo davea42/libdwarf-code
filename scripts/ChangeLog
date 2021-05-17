@@ -1,4 +1,11 @@
 2021-05-16 David Anderson
+    * scanconfig.py: A tool to make it simple to know
+      if config.h.in and config.h.in.cmake match
+      properly.  Is to be run by hand on each file
+      and the diff checked. Only config.h.in
+      should have NO_MINUS_C_MINUS_O as that is a configure
+      thing, not used by cmake.
+2021-05-16 David Anderson
     * buildandreleasetest.sh. The cmake test H and G
       script sections were missing -DDO_TESTING=ON so ctest
       found nothing to run. Fixed.
