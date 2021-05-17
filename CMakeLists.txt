@@ -64,6 +64,8 @@ endif()
 
 check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H) 
 check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H ) 
+check_include_file( "inttypes.h"      HAVE_INTTYPES_H   ) 
+check_include_file( "stddef.h"        HAVE_STDDEF_H   ) 
 check_include_file( "stdlib.h"        HAVE_STDLIB_H   ) 
 check_include_file( "string.h"        HAVE_STRING_H   ) 
 check_include_file( "memory.h"        HAVE_MEMORY_H   ) 
@@ -259,17 +261,6 @@ check_c_source_runs("
       return 0;
   }"    HAVE_UNUSED_ATTRIBUTE)
 message(STATUS "Checking compiler supports __attribute__ unused... ${HAVE_UNUSED_ATTRIBUTE}")
-
-#  checking for ia 64 types, which might be enums, 
-#  using HAVE_R_IA_64_DIR32LSB
-#  to stand in for a small set.
-check_c_source_compiles("
-  #include ${HAVE_LOCATION_OF_LIBELFHEADER}
-  int main()
-  {  
-      int p; p = R_IA_64_DIR32LSB;
-      return 0;
-  }" HAVE_R_IA_64_DIR32LSB)
 
 check_c_source_compiles([=[
   #include "stdafx.h"

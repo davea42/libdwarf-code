@@ -52,6 +52,9 @@
 #cmakedefine HAVE_ELF_H 1
 
 /* Define to 1 if you have the <libelf.h> header file. */
+#cmakedefine HAVE_INTTYPES_H 1
+
+/* Define to 1 if you have the <libelf.h> header file. */
 #cmakedefine HAVE_LIBELF_H 1
 
 /* Define to 1 if you have the <libelf/libelf.h> header file. */
@@ -80,6 +83,9 @@
 
 /* Define to 1 if you have the <sgidefs.h> header file. */
 #cmakedefine HAVE_SGIDEFS_H 1
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDDEF_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H 1
@@ -143,9 +149,6 @@
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #cmakedefine LT_OBJDIR 1
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#cmakedefine NO_MINUS_C_MINUS_O 1
 
 /* Name of package */
 #cmakedefine PACKAGE

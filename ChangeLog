@@ -1,4 +1,12 @@
 2021-05-17: David Anderson
+    * CMakeLists.txt: Removed test that has been
+      irrelevant for quite a while (and had a serious
+      misspelling too).
+    * config.h.in.cmake: Added two missing header file
+      checks and the associated cmakedefine lines.
+      Removed cmakedefine NO_MINUS_C_MINUS_O as it
+      only applies to configure (not to cmake).
+2021-05-17: David Anderson
     * README: Removed obsolete reference to libelf source.
 2021-05-14: David Anderson
     * bugxml/bugrecord.py, bugxml/readbugs.py: Reformatted
