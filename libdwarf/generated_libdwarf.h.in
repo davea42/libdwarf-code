@@ -1460,9 +1460,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUGLINK_PATH_SHORT            479
 #define DW_DLE_SIGNATURE_MISMATCH              480
 #define DW_DLE_MACRO_VERSION_ERROR             481
+#define DW_DLE_NEGATIVE_SIZE                   482
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        481
+#define DW_DLE_LAST        482
 
 #define DW_DLE_LO_USER     0x10000
 

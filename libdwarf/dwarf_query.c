@@ -1431,6 +1431,10 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     whose form is in the "constant" class.  If attr occurs
     in die, the value is returned.
 
+    It does not really allow for a signed constant, and
+    DWARF does not always specify that only non-negative
+    values are allowed..
+
     Returns DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY as
     appropriate. Sets the value thru the pointer return_val.
 
@@ -1447,6 +1451,7 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Half attr_form = 0;
     Dwarf_Unsigned ret_value = 0;
+    Dwarf_Signed implicit_const_value = 0;
     Dwarf_Debug dbg = 0;
     int res = 0;
     Dwarf_Byte_Ptr die_info_end = 0;
@@ -1457,7 +1462,7 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
         _dwarf_calculate_info_section_end_ptr(die->di_cu_context);
     dbg = die->di_cu_context->cc_dbg;
     res = _dwarf_get_value_ptr(die,attr,&attr_form,
-        &info_ptr,0,error);
+        &info_ptr,&implicit_const_value,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1499,6 +1504,25 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
 
 
     }
+    case DW_FORM_implicit_const: {
+       if (implicit_const_value < (Dwarf_Signed)0) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_i(&m,
+                "DW_DLE_NEGATIVE_SIZE "
+                "An implicit const value of "
+                "%d is inappropriate as a size",
+                implicit_const_value);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_NEGATIVE_SIZE,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+       }
+       *return_val = implicit_const_value;
+       return DW_DLV_OK;
+    }
 
     default:
         _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
@@ -1507,6 +1531,8 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
 }
 
 
+/* size Value >= 0 is not specified in DWARF5, but
+   a negative value is surely not meaningful. */
 int
 dwarf_bytesize(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
@@ -1519,6 +1545,8 @@ dwarf_bytesize(Dwarf_Die die,
 }
 
 
+/* size Value >= 0 is not specified in DWARF5, but
+   a negative value is not meaningful. */
 int
 dwarf_bitsize(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
@@ -1531,6 +1559,7 @@ dwarf_bitsize(Dwarf_Die die,
 }
 
 
+/* size Value >= 0 required. DWARF5 sec5.7.6 */
 int
 dwarf_bitoffset(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
@@ -1543,7 +1572,9 @@ dwarf_bitoffset(Dwarf_Die die,
 }
 
 
-/* Refer section 3.1, page 21 in Dwarf Definition. */
+/*  Refer section 3.1, page 21 in Dwarf Definition. 
+    Language codes are always non-negative
+    and specified in the DWARF standard*/
 int
 dwarf_srclang(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
@@ -1556,7 +1587,9 @@ dwarf_srclang(Dwarf_Die die,
 }
 
 
-/* Refer section 5.4, page 37 in Dwarf Definition. */
+/*  Refer section 5.4, page 37 in Dwarf Definition. 
+    array order values are always non-negative
+    and specified in the DWARF standard*/
 int
 dwarf_arrayorder(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)

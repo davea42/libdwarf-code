@@ -1720,6 +1720,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             secsize = dbg->de_debug_line_str.dss_size;
             secbegin = dbg->de_debug_line_str.dss_data;
             strbegin= dbg->de_debug_line_str.dss_data + offset;
+            secend = dbg->de_debug_line_str.dss_data + secsize;
         } else {
             /* DW_FORM_strp  etc */
             res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);

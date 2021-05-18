@@ -1,10 +1,25 @@
 2021-05-18  David Anderson
+    * dwarf_errmsg_list.h, libdwarf.h.in:
+      Add error DW_DLE_NEGATIVE_SIZE.
+      generated_libdwarf.h.in: Regenerated.
+    * dwarf_form.c: Properly set secend in
+      _dwarf_extract_local_debug_str_string_given_offset
+      for DW_FORM_line_strp.
+    * dwarf_query.c: In _dwarf_die_attr_unsigned_constant()
+      allow DW_FORM_implicit_const and add some
+      comments on small functions.
+      Return error and DW_DLE_NEGATIVE_SIZE in case
+      the form is a negative implicit const.
+2021-05-18  David Anderson
     * pdfbld.sh: Comment out the build of the rearranged
       (placing the table of contents at the front)
       libdwarf2.1.pdf as that version is 20MiB!
     * CMakeLists.txt: Moved the install  of libdwarf stuff
       here from ../CMakeLists.txt so it works for cmake before
       and after cmake 3.13.
+      Repair an old ommission in an install that
+      modern cmake seemingly did not care if
+      repaired or not.
 2021-05-15  David Anderson
     * libdwarf2.1.mm: Added additional explanation
       of an example call to the library  in the 
