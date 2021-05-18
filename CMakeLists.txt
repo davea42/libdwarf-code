@@ -421,7 +421,7 @@ if ( BUILD_DWARFEXAMPLE )
 endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )
-add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
+# add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
 # installation of libdwarf has to be in libdwarf/CMakeLists.txt
 # so that it works properly for cmake before cmake 3.13.
 

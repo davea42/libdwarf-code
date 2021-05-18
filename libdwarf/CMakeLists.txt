@@ -140,7 +140,10 @@ endif()
 # ../CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
-install(TARGETS ${DWARF_TARGETS} EXPORT libdwarfTargets ARCHIVE DESTINATION lib)
+add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
+install(TARGETS ${DWARF_TARGETS} EXPORT libdwarfTargets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib)
 install(EXPORT libdwarfTargets
     FILE libdwarf-targets.cmake
     NAMESPACE libdwarf::
@@ -155,4 +158,3 @@ install(DIRECTORY libdwarf DESTINATION include/
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/libdwarf/libdwarf.h
     DESTINATION include/libdwarf)
-
