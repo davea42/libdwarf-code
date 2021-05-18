@@ -43,20 +43,20 @@ then
   pr -t -e libdwarf2.1.mm | tbl | $TROFF -n16 -mm >libdwarf2.1.ps
   $PSTOPDF libdwarf2.1.ps libdwarf2.1.pdf
   # The rearrangement bloats the pdf from 600KB to 14MB
-  # and makes the release gigantic. So make it separate.
-  $PSTOPDF libdwarf2.1.ps $t
-  echo "Now create libdwarf2.1.mm by tranforming $t"
-  set +x
-  sh ../scripts/rebuildpdf.sh $t libdwarf2.1xl.pdf
-  ls -l libdwarf2.1.pdf
-  ls -l libdwarf2.1xl.pdf
-  rm $t
-  if [ -d ~/web4/gweb/pagedata ]
-  then
-    echo "Copying libdwarf2.1xl.pdf to ~/web4/gweb/pagedata"
-    cp libdwarf2.1xl.pdf ~/web4/gweb/pagedata
-  fi
-  set -x
+  # and makes the release gigantic. So skip it.
+  #$PSTOPDF libdwarf2.1.ps $t
+  #echo "Now create libdwarf2.1.mm by tranforming $t"
+  #set +x
+  #sh ../scripts/rebuildpdf.sh $t libdwarf2.1xl.pdf
+  #ls -l libdwarf2.1.pdf
+  #ls -l libdwarf2.1xl.pdf
+  #rm $t
+  #if [ -d ~/web4/gweb/pagedata ]
+  #then
+  #  echo "Copying libdwarf2.1xl.pdf to ~/web4/gweb/pagedata"
+  #  cp libdwarf2.1xl.pdf ~/web4/gweb/pagedata
+  #fi
+  #set -x
 fi
 
 if [ $p = "y" ]

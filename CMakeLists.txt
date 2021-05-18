@@ -422,20 +422,6 @@ endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )
 add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
-# installation
-install(TARGETS ${DWARF_TARGETS} EXPORT libdwarfTargets ARCHIVE DESTINATION lib)
-install(EXPORT libdwarfTargets
-    FILE libdwarf-targets.cmake
-    NAMESPACE libdwarf::
-    DESTINATION lib/cmake/libdwarf
-)
-install(
-    FILES cmake/libdwarf-config.cmake
-    DESTINATION lib/cmake/libdwarf
-)
-install(DIRECTORY libdwarf DESTINATION include/
-    FILES_MATCHING PATTERN "*.h")
-install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/libdwarf/libdwarf.h
-    DESTINATION include/libdwarf
-)
+# installation of libdwarf has to be in libdwarf/CMakeLists.txt
+# so that it works properly for cmake before cmake 3.13.
+

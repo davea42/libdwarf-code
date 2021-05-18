@@ -1,3 +1,10 @@
+2021-05-18  David Anderson
+    * pdfbld.sh: Comment out the build of the rearranged
+      (placing the table of contents at the front)
+      libdwarf2.1.pdf as that version is 20MiB!
+    * CMakeLists.txt: Moved the install  of libdwarf stuff
+      here from ../CMakeLists.txt so it works for cmake before
+      and after cmake 3.13.
 2021-05-15  David Anderson
     * libdwarf2.1.mm: Added additional explanation
       of an example call to the library  in the 

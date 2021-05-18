@@ -136,3 +136,23 @@ if (DO_TESTING)
     target_compile_options(selftied PRIVATE ${DW_FWALL})
     add_test(NAME teststring COMMAND teststring)
 endif()
+# The install has to be here, not in
+# ../CMakeLists.txt  to make install work properly
+# for cmake before cmake 3.13. This also works
+# for newer cmake.
+install(TARGETS ${DWARF_TARGETS} EXPORT libdwarfTargets ARCHIVE DESTINATION lib)
+install(EXPORT libdwarfTargets
+    FILE libdwarf-targets.cmake
+    NAMESPACE libdwarf::
+    DESTINATION lib/cmake/libdwarf
+)
+install(
+    FILES cmake/libdwarf-config.cmake
+    DESTINATION lib/cmake/libdwarf
+)
+install(DIRECTORY libdwarf DESTINATION include/
+    FILES_MATCHING PATTERN "*.h")
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/libdwarf/libdwarf.h
+    DESTINATION include/libdwarf)
+
