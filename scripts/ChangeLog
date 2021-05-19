@@ -1,3 +1,6 @@
+2021-05-19 David Anderson
+    * scanconfig.py: Reformatted with the 'black'
+      formatter.
 2021-05-16 David Anderson
     * buildandreleasetest.sh: Some comments referred to 
       the wrong test name for F G and H, which

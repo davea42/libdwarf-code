@@ -22,7 +22,6 @@ def lineisofinterest(line):
     return False
 
 
-
 def scanfile(path):
     try:
         fx = open(path, "r")
@@ -52,7 +51,8 @@ def scanfile(path):
         if not x:
             continue
         wds = tline.split()
-        print("config",wds[1])
+        print("config", wds[1])
+
 
 if __name__ == "__main__":
     i = 1
