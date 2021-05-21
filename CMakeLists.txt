@@ -47,7 +47,7 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
-set(VERSION 20210502)
+set(VERSION 20210520)
 set(PACKAGE_VERSION "\"${VERSION}\"") 
 set(PACKAGE_NAME "libdwarf" )
 ###set(VERSION ${PACKAGE_VERSION} )

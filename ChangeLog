@@ -1,7 +1,7 @@
-2021-05-18: David Anderson
-    * CMakeLists.txt: Moved the install  of libdwarf stuff
-      to libdwarf/CMakeLists.txt so it works for cmake before
-      and after cmake 3.13.
+2021-05-20: David Anderson
+    * CMakeLists.txt, configure.ac: Now version
+      20210520
+    * configure: Regenerated.
 2021-05-17: David Anderson
     * CMakeLists.txt: Removed test that has been
       irrelevant for quite a while (and had a serious
