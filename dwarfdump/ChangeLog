@@ -1,3 +1,7 @@
+2021-05-20 David Anderson
+    * print_die.c: If a DW_OP_skip or DW_OP_bra
+      went to a previous offset the correctness check
+      did not find it and issued an erroneous error.
 2021-05-16 David Anderson
     * runtests.sh: A few small temporary files were
       overlooked and left behind. Now they are deleted.

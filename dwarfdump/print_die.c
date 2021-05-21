@@ -5231,7 +5231,7 @@ skip_branch_target_ok(struct OpBranchHead_s *op_branch_checking,
         return FALSE;
     } else if (ein->target_offset < ein->offset) {
         ec = op_branch_checking->ops_array;
-        for ( ; i < index; ++i) {
+        for ( ; i < index; ++i,++ec) {
             if ( ec->offset == ein->target_offset) {
                 return TRUE;
             }
@@ -5551,7 +5551,10 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             formx_signed(opd1,string_out);
             if (showblockoffsets) {
                 Dwarf_Signed targ = (Dwarf_Signed)opd1;
-                Dwarf_Signed off  = offsetforbranch +2;
+                /*  offsetforbranch is the op offset,
+                    and we need the the value 1 past
+                    the bytes in the DW_OP */
+                Dwarf_Signed off  = offsetforbranch +2+1;
 
                 off = off + targ;
                 if (off < 0 ) {
