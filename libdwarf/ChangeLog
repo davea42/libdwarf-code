@@ -1,3 +1,17 @@
+2021-05-20  David Anderson
+    * dwarf_line.h: Modified libdwarf-internal functions
+      for LNCT handlng. Added a couple new functions 
+      for that as well. Added new fields for reporting the DW_LNCT
+      extensions beyond DWARF5.
+    * dwarf_line.c: New helper functions to report properly
+      on errors in DW_LNCT forms.
+      Completed handling of DWARF5 DW_LNCT and its FORMs.
+    * dwarf_line_table_reader_common.h: Modified calls
+      of the LNCT reading/checking for completeness.
+      Moved some array/member refs to make the calls
+      to _dwarf_decode_line_udata_form etc (all to do
+      with DW_LNCT values).
+    * dwarf_print_lines.c: Now prints the DW_LNCT extensions.
 2021-05-18  David Anderson
     * dwarf_errmsg_list.h, libdwarf.h.in:
       Add error DW_DLE_NEGATIVE_SIZE.

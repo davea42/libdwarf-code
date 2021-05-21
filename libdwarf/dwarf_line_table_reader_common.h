@@ -141,7 +141,6 @@ read_sword_de(Dwarf_Small **lp,
     return DW_DLV_OK;
 }
 
-
 /*  Common line table header reading code.
     Returns DW_DLV_OK, DW_DLV_ERROR.
     DW_DLV_NO_ENTRY cannot be returned, but callers should
@@ -680,12 +679,15 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
         for (i = 0; i < directories_count; i++) {
             for (j = 0; j < directory_format_count; j++) {
-
-                switch (format_values[j].up_first) {
+                Dwarf_Unsigned lntype =
+                    format_values[j].up_first;
+                Dwarf_Unsigned lnform =
+                    format_values[j].up_second;
+                switch (lntype) {
                 case DW_LNCT_path: {
                     char *inc_dir_ptr = 0;
                     res = _dwarf_decode_line_string_form(dbg,
-                        format_values[j].up_second,
+                        lntype,lnform,
                         local_length_size,
                         &line_ptr,
                         line_ptr_end,
@@ -716,7 +718,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
         }
-        line_context->lc_directory_format_values = format_values;
+        line_context->lc_directory_format_values =
+           format_values;
         format_values = 0;
         line_context->lc_include_directories_count =
             directories_count;
@@ -725,7 +728,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (version == DW_LINE_VERSION5 ||
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* DWARF 5.  file names.*/
-        struct Dwarf_Unsigned_Pair_s * filename_entry_pairs = 0;
+        struct Dwarf_Unsigned_Pair_s *
+            filename_entry_pairs = 0;
         Dwarf_Unsigned filename_format_count = 0;
         Dwarf_Unsigned files_count = 0;
         Dwarf_Unsigned i = 0;
@@ -733,7 +737,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         int dres = 0;
 
         if (line_ptr >= line_ptr_end) {
-            _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+            _dwarf_error(dbg, err, 
+                DW_DLE_LINE_NUMBER_HEADER_ERROR);
             return (DW_DLV_ERROR);
         }
         filename_format_count = *(unsigned char *) line_ptr;
@@ -755,7 +760,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 free(filename_entry_pairs);
                 return dres;
             }
-            dres=read_uword_de(&line_ptr,&filename_entry_pairs[i].
+            dres=read_uword_de(&line_ptr,
+                &filename_entry_pairs[i].
                 up_second, dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
                 free(filename_entry_pairs);
@@ -784,10 +790,49 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             _dwarf_add_to_files_list(line_context,curline);
             for (j = 0; j < filename_format_count; j++) {
                 Dwarf_Unsigned dirindex = 0;
-                switch (filename_entry_pairs[j].up_first) {
-                case DW_LNCT_path:
+                Dwarf_Unsigned lntype =
+                    filename_entry_pairs[j].up_first;
+                Dwarf_Unsigned lnform =
+                    filename_entry_pairs[j].up_second;
+                switch (lntype) {
+                /* The LLVM LNCT is documented in
+                    https://releases.llvm.org/9.0.0/docs
+                    /AMDGPUUsage.html
+                */
+
+                /* Cannot find the GNU items documented.? */
+                case DW_LNCT_GNU_decl_file: /* FORM udata*/
+                    res = _dwarf_decode_line_udata_form(dbg,
+                        lntype,lnform,
+                        &line_ptr,
+                        &dirindex,
+                        line_ptr_end,
+                        err);
+                    if (res != DW_DLV_OK) {
+                        free(filename_entry_pairs);
+                        return res;
+                    }
+                    curline->fi_gnu_decl_file = dirindex;
+                    curline->fi_gnu_decl_file_present = TRUE;
+                    break;
+                case DW_LNCT_GNU_decl_line: /* FORM udata */
+                    res = _dwarf_decode_line_udata_form(dbg,
+                        lntype,lnform,
+                        &line_ptr,
+                        &dirindex,
+                        line_ptr_end,
+                        err);
+                    if (res != DW_DLV_OK) {
+                        free(filename_entry_pairs);
+                        return res;
+                    }
+                    curline->fi_gnu_decl_line = dirindex;
+                    curline->fi_gnu_decl_line_present = TRUE;
+                    break;
+               
+                case DW_LNCT_path: {
                     res = _dwarf_decode_line_string_form(dbg,
-                        filename_entry_pairs[j].up_second,
+                        lntype, lnform,
                         local_length_size,
                         &line_ptr,
                         line_ptr_end,
@@ -797,10 +842,39 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         free(filename_entry_pairs);
                         return res;
                     }
+                    }
+                    break;
+                case DW_LNCT_GNU_subprogram_name: {
+                    res = _dwarf_decode_line_string_form(dbg,
+                        lntype, lnform,
+                        local_length_size,
+                        &line_ptr,
+                        line_ptr_end,
+                        (char **)&curline->fi_gnu_subprogram_name,
+                        err);
+                    if (res != DW_DLV_OK) {
+                        free(filename_entry_pairs);
+                        return res;
+                    }
+                    }
+                    break;
+                case DW_LNCT_LLVM_source: {
+                    res = _dwarf_decode_line_string_form(dbg,
+                        lntype, lnform,
+                        local_length_size,
+                        &line_ptr,
+                        line_ptr_end,
+                        (char **)&curline->fi_llvm_source,
+                        err);
+                    if (res != DW_DLV_OK) {
+                        free(filename_entry_pairs);
+                        return res;
+                    }
+                    }
                     break;
                 case DW_LNCT_directory_index:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        filename_entry_pairs[j].up_second,
+                        lntype,lnform,
                         &line_ptr,
                         &dirindex,
                         line_ptr_end,
@@ -814,7 +888,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     break;
                 case DW_LNCT_timestamp:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        filename_entry_pairs[j].up_second,
+                        lntype, lnform,
                         &line_ptr,
                         &curline->fi_time_last_mod,
                         line_ptr_end,
@@ -827,7 +901,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     break;
                 case DW_LNCT_size:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        filename_entry_pairs[j].up_second,
+                        lntype, lnform,
                         &line_ptr,
                         &curline->fi_file_length,
                         line_ptr_end,
@@ -864,8 +938,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
                 default:
                     free(filename_entry_pairs);
-                    _dwarf_error(dbg, err,
-                        DW_DLE_LINE_NUMBER_HEADER_ERROR);
+                    _dwarf_report_bad_lnct(dbg,
+                        lntype,
+                        DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                        "DW_DLE_LINE_NUMBER_HEADER_ERROR",
+                        err);
                     return (DW_DLV_ERROR);
                 }
                 if (line_ptr > line_ptr_end) {
@@ -879,7 +956,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_context->lc_file_format_values = filename_entry_pairs;
         filename_entry_pairs = 0;
     }
-    /* For two-level line tables, read the subprograms table. */
+    /*  For two-level line tables, read the 
+        subprograms table. */
     if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         Dwarf_Unsigned subprog_format_count = 0;
         Dwarf_Unsigned *subprog_entry_types = 0;
@@ -948,10 +1026,14 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             struct Dwarf_Subprog_Entry_s *curline =
                 line_context->lc_subprogs + i;
             for (j = 0; j < subprog_format_count; j++) {
-                switch (subprog_entry_types[j]) {
+                Dwarf_Unsigned lntype =
+                    subprog_entry_types[j];
+                Dwarf_Unsigned lnform =
+                    subprog_entry_forms[j];
+                switch (lntype) {
                 case DW_LNCT_GNU_subprogram_name:
                     res = _dwarf_decode_line_string_form(dbg,
-                        subprog_entry_forms[j],
+                        lntype,lnform,
                         local_length_size,
                         &line_ptr,
                         line_ptr_end,
@@ -965,7 +1047,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     break;
                 case DW_LNCT_GNU_decl_file:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        subprog_entry_forms[j],
+                        lntype,lnform,
                         &line_ptr,
                         &curline->ds_decl_file,
                         line_ptr_end,
@@ -978,7 +1060,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     break;
                 case DW_LNCT_GNU_decl_line:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        subprog_entry_forms[j],
+                        lntype,lnform,
                         &line_ptr,
                         &curline->ds_decl_line,
                         line_ptr_end,
@@ -992,8 +1074,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 default:
                     free(subprog_entry_forms);
                     free(subprog_entry_types);
-                    _dwarf_error(dbg, err,
-                        DW_DLE_LINE_NUMBER_HEADER_ERROR);
+                    _dwarf_report_bad_lnct(dbg,
+                        lntype,
+                        DW_DLE_LINE_NUMBER_HEADER_ERROR,
+                        "DW_DLE_LINE_NUMBER_HEADER_ERROR",
+                        err);
                     return (DW_DLV_ERROR);
                 }
                 if (line_ptr >= line_ptr_end) {

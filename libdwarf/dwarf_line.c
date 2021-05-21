@@ -2033,9 +2033,99 @@ _dwarf_print_header_issue(Dwarf_Debug dbg,
     *err_count_out += 1;
 }
 
+void
+_dwarf_report_bad_lnct( Dwarf_Debug dbg,
+    Dwarf_Unsigned ltype,
+    int dlecode,
+    const char  *dlename,
+    Dwarf_Error *err)
+{
+    dwarfstring m;
+    dwarfstring f2;
+    const char *typename = 0;
+    char tnbuf[40];
+    char mnbuf[100];
+
+    dwarfstring_constructor_static(&f2,tnbuf,sizeof(tnbuf));
+    dwarf_get_LNCT_name(ltype,&typename);
+    if (!typename) {
+        dwarfstring_append_printf_u(&f2,
+            "Invalid attribute "
+            " 0x" DW_PR_DUx,ltype);
+    } else {
+        dwarfstring_append(&f2,(char *)typename);
+    }
+    dwarfstring_constructor_static(&m,mnbuf,sizeof(mnbuf));
+    dwarfstring_append_printf_s(&m,
+        "%s: Unexpected DW_LNCT type",(char *)dlename); 
+    dwarfstring_append_printf_s(&m,
+        " %s ",
+        dwarfstring_string(&f2));
+    _dwarf_error_string(dbg, err, dlecode,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+    dwarfstring_destructor(&f2);
+}
+
+
+static void
+report_ltype_form_issue(Dwarf_Debug dbg,
+    int ltype,
+    int form,
+    const char *splmsg,
+    Dwarf_Error *error) 
+{
+    dwarfstring m;
+    dwarfstring f2;
+    dwarfstring f;
+    const char *formname = 0;
+    const char *typename = 0;
+    char fnbuf[32];
+    char f2buf[32];
+    char mbuf[120];
+
+    dwarfstring_constructor_static(&f,fnbuf,sizeof(fnbuf));
+    dwarfstring_constructor_static(&f2,f2buf,sizeof(f2buf));
+    dwarf_get_LNCT_name(ltype,&typename);
+    if (!typename) {
+        dwarfstring_append_printf_u(&f2,
+            "Invalid DW_LNCT "
+            " 0x" DW_PR_DUx,ltype);
+    } else {
+        dwarfstring_append(&f2,(char *)typename);
+    }
+    dwarf_get_FORM_name(form,&formname);
+    if (!formname) {
+        dwarfstring_append_printf_u(&f,
+            "Invalid Form Code "
+            " 0x" DW_PR_DUx,form);
+    } else {
+        dwarfstring_append(&f,(char *)formname);
+    }
+    dwarfstring_constructor_static(&m,mbuf,sizeof(mbuf));
+    dwarfstring_append_printf_s(&m,
+        "DW_DLE_LNCT_FORM_CODE_NOT_HANDLED: form %s "
+        "instead of a specifically " 
+        "allowed offset form",
+        dwarfstring_string(&f));
+    dwarfstring_append_printf_s(&m,
+        " on line type %s",
+        dwarfstring_string(&f2));
+    if (splmsg) {
+        dwarfstring_append(&m," ");
+        dwarfstring_append(&m,(char *)splmsg);
+    }
+    _dwarf_error_string(dbg, error, 
+        DW_DLE_LNCT_FORM_CODE_NOT_HANDLED,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+    dwarfstring_destructor(&f);
+    dwarfstring_destructor(&f2);
+}
 
 int
 _dwarf_decode_line_string_form(Dwarf_Debug dbg,
+    Dwarf_Unsigned ltype,
     Dwarf_Unsigned form,
     Dwarf_Unsigned offset_size,
     Dwarf_Small **line_ptr,
@@ -2053,7 +2143,8 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         Dwarf_Unsigned offset = 0;
         Dwarf_Small *offsetptr = *line_ptr;
 
-        res = _dwarf_load_section(dbg, &dbg->de_debug_line_str,error);
+        res = _dwarf_load_section(dbg, 
+            &dbg->de_debug_line_str,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -2080,7 +2171,8 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         Dwarf_Small *strptr = *line_ptr;
 
         res = _dwarf_check_string_valid(dbg,
-            strptr ,strptr,secend,DW_DLE_LINE_STRING_BAD,error);
+            strptr ,strptr,secend,
+            DW_DLE_LINE_STRING_BAD,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -2089,13 +2181,15 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         return DW_DLV_OK;
         }
     default:
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+        report_ltype_form_issue(dbg, ltype,
+            form,0,error);
         return DW_DLV_ERROR;
     }
 }
 
 int
 _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
+    Dwarf_Unsigned ltype,
     Dwarf_Unsigned form,
     Dwarf_Small **line_ptr,
     Dwarf_Unsigned *return_val,
@@ -2104,19 +2198,105 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned val = 0;
     Dwarf_Small * lp = *line_ptr;
+    const char *splmsg = 0;
 
+    /* We will not get here for DW_LNCT_MD5,
+        no need to consider DW_FORM_data16. */
     switch (form) {
-
     case DW_FORM_udata:
+        if (ltype != DW_LNCT_directory_index &&
+            ltype != DW_LNCT_timestamp &&
+            ltype != DW_LNCT_GNU_decl_file &&
+            ltype != DW_LNCT_GNU_decl_line &&
+            ltype != DW_LNCT_size) {
+            break;
+        }
         DECODE_LEB128_UWORD_CK(lp, val,dbg,error,line_end_ptr);
         *return_val = val;
         *line_ptr = lp;
         return DW_DLV_OK;
+    case DW_FORM_data1:
+        if (ltype != DW_LNCT_directory_index &&
+            ltype != DW_LNCT_GNU_decl_file &&
+            ltype != DW_LNCT_GNU_decl_line &&
+            ltype != DW_LNCT_size) {
+            break;
+        }
+        *return_val = *lp;
+        *line_ptr = lp+1;
+        return DW_DLV_OK;
+    case DW_FORM_data2:
+        if (ltype != DW_LNCT_directory_index &&
+            ltype != DW_LNCT_GNU_decl_file &&
+            ltype != DW_LNCT_GNU_decl_line &&
+            ltype != DW_LNCT_size) {
+            break;
+        }
+        READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,
+            lp,DWARF_HALF_SIZE,
+            error,line_end_ptr);
+        *return_val = val;
+        *line_ptr = lp + DWARF_HALF_SIZE;
+        return DW_DLV_OK;
+    case DW_FORM_data4:
+        if (ltype != DW_LNCT_timestamp &&
+            ltype != DW_LNCT_GNU_decl_file &&
+            ltype != DW_LNCT_GNU_decl_line &&
+            ltype != DW_LNCT_size) {
+            break;
+        }
+        READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,
+            lp,DWARF_32BIT_SIZE,
+            error,line_end_ptr);
+        *return_val = val;
+        *line_ptr = lp + DWARF_32BIT_SIZE;
+        return DW_DLV_OK;
+    case DW_FORM_block: {
+        Dwarf_Unsigned leblen = 0;
+        Dwarf_Unsigned length = 0;
+        Dwarf_Small *dataptr = 0;
 
-    default:
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
-        return DW_DLV_ERROR;
+        if (ltype != DW_LNCT_timestamp) {
+            break;
+        }
+        DECODE_LEB128_UWORD_LEN_CK(lp, length, leblen,
+            dbg,error,line_end_ptr);
+        dataptr = lp +leblen;
+        if (length > sizeof(Dwarf_Unsigned)) {
+            splmsg = "FORM_block length bigger than Dwarf_Unsigned";
+            break;
+        }
+        if (dataptr >= line_end_ptr ) {
+            splmsg = "FORM_block data starts past end of data";
+            break;
+        }
+        if ((dataptr + length) > line_end_ptr) {
+            splmsg = "FORM_block data runs past end of data";
+            break;
+        }
+        READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,
+            dataptr,length,
+            error,line_end_ptr);
+        *return_val = val;
+        *line_ptr = dataptr+length;
+        return DW_DLV_OK;
+        }
+
+    case DW_FORM_data8:
+        if (ltype != DW_LNCT_size &&
+            ltype != DW_LNCT_size) {
+            break;
+        }
+        READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,
+            lp,DWARF_64BIT_SIZE,
+            error,line_end_ptr);
+        *return_val = val;
+        *line_ptr = lp + DWARF_64BIT_SIZE;
+        return DW_DLV_OK;
     }
+    report_ltype_form_issue(dbg, ltype,
+        form,splmsg,error);
+    return DW_DLV_ERROR;
 }
 
 

@@ -402,6 +402,28 @@ print_just_file_entry_details(Dwarf_Debug dbg,
             }
             dwarfstring_append(&m3,"\n");
         }
+        if (fe->fi_llvm_source) {
+            dwarfstring_append_printf_s(&m3,
+                "%-20s\n",
+                (char *) fe->fi_llvm_source);
+        }
+        if (fe->fi_gnu_subprogram_name) {
+            dwarfstring_append_printf_s(&m3,
+                "%-20s\n",
+                (char *) fe->fi_gnu_subprogram_name);
+        }
+        if (fe->fi_gnu_decl_file_present) {
+            Dwarf_Unsigned di = 0;
+            di = fe->fi_gnu_decl_file;
+            dwarfstring_append_printf_i(&m3,
+                "    gnu decl file %d\n", di);
+        }
+        if (fe->fi_gnu_decl_line_present) {
+            Dwarf_Unsigned di = 0;
+            di = fe->fi_gnu_decl_line;
+            dwarfstring_append_printf_i(&m3,
+                "    gnu decl line %d\n", di);
+        }
         if (dwarfstring_strlen(&m3)) {
             _dwarf_printf(dbg,dwarfstring_string(&m3));
             dwarfstring_reset(&m3);

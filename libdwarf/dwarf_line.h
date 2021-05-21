@@ -57,8 +57,11 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 struct Dwarf_File_Entry_s {
     struct Dwarf_File_Entry_s *fi_next;
 
-    /* Points to string naming the file. */
+    /* Points to string naming the file: DW_LNCT_path. */
     Dwarf_Small *fi_file_name;
+    /* points to string naming the source, with \n endings
+       and null terminated (UTF-8). Embedded source. */
+    Dwarf_Small *fi_llvm_source;
 
     /*  Index into the list of directories of the directory in which
         this file exits.
@@ -73,11 +76,17 @@ struct Dwarf_File_Entry_s {
     /* Length in bytes of the file. */
     Dwarf_Unsigned fi_file_length;
 
+    Dwarf_Small  * fi_gnu_subprogram_name;
+    Dwarf_Unsigned fi_gnu_decl_file;
+    Dwarf_Unsigned fi_gnu_decl_line;
+
     Dwarf_Form_Data16   fi_md5_value;
     char           fi_dir_index_present;
     char           fi_time_last_mod_present;
     char           fi_file_length_present;
     char           fi_md5_present;
+    char           fi_gnu_decl_file_present;
+    char           fi_gnu_decl_line_present;
 };
 
 /*  Part of two-level line tables support. */
@@ -462,6 +471,7 @@ void _dwarf_print_header_issue(Dwarf_Debug dbg,
     unsigned linetabv,
     int *err_count_out);
 int _dwarf_decode_line_string_form(Dwarf_Debug dbg,
+    Dwarf_Unsigned attrnum,
     Dwarf_Unsigned form,
     Dwarf_Unsigned offset_size,
     Dwarf_Small **line_ptr,
@@ -469,11 +479,18 @@ int _dwarf_decode_line_string_form(Dwarf_Debug dbg,
     char **return_str,
     Dwarf_Error * error);
 int _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
+    Dwarf_Unsigned attrnum,
     Dwarf_Unsigned form,
     Dwarf_Small **line_ptr,
     Dwarf_Unsigned *return_val,
     Dwarf_Small *line_end_ptr,
     Dwarf_Error * error);
+void _dwarf_report_bad_lnct( Dwarf_Debug dbg,
+    Dwarf_Unsigned ltype,
+    int dlecode,
+    const char * dlename,
+    Dwarf_Error *err);
+
 
 void _dwarf_update_chain_list( Dwarf_Chain chain_line,
     Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain);
