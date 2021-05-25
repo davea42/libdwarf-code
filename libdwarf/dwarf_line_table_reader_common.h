@@ -719,7 +719,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             }
         }
         line_context->lc_directory_format_values =
-           format_values;
+            format_values;
         format_values = 0;
         line_context->lc_include_directories_count =
             directories_count;
@@ -737,7 +737,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         int dres = 0;
 
         if (line_ptr >= line_ptr_end) {
-            _dwarf_error(dbg, err, 
+            _dwarf_error(dbg, err,
                 DW_DLE_LINE_NUMBER_HEADER_ERROR);
             return (DW_DLV_ERROR);
         }
@@ -829,7 +829,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     curline->fi_gnu_decl_line = dirindex;
                     curline->fi_gnu_decl_line_present = TRUE;
                     break;
-               
+
                 case DW_LNCT_path: {
                     res = _dwarf_decode_line_string_form(dbg,
                         lntype, lnform,
@@ -956,7 +956,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_context->lc_file_format_values = filename_entry_pairs;
         filename_entry_pairs = 0;
     }
-    /*  For two-level line tables, read the 
+    /*  For two-level line tables, read the
         subprograms table. */
     if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         Dwarf_Unsigned subprog_format_count = 0;

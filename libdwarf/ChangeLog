@@ -1,4 +1,7 @@
 2021-05-25  David Anderson
+    * dwarf.h,dwarf_errmsg_list.h,dwarf_line.h,
+      dwarf_line_table_reader_common.h: Removed trailing
+      whitespace, fixed indents.
     * dwarf_leb.c,dwarf_leb_test.c,dwarf_line.c,dwarf_query.c:
       Fixed indents and removed trailing whitespace.
       Fixed one too-long line by splitting to 2 lines.

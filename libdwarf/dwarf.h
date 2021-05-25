@@ -494,7 +494,7 @@ extern "C" {
 #define DW_AT_ghs_frames                        0x2086
 #define DW_AT_ghs_rso                           0x2087
 #define DW_AT_ghs_subcpu                        0x2092
-#define DW_AT_ghs_lbrace_line                   0x2093 
+#define DW_AT_ghs_lbrace_line                   0x2093
 
 #define DW_AT_INTEL_other_endian 0x2026 /* Intel, 1 if byte swapped.*/
 

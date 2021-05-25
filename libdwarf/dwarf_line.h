@@ -59,8 +59,8 @@ struct Dwarf_File_Entry_s {
 
     /* Points to string naming the file: DW_LNCT_path. */
     Dwarf_Small *fi_file_name;
-    /* points to string naming the source, with \n endings
-       and null terminated (UTF-8). Embedded source. */
+    /*  Points to string naming the source, with \n endings
+        and null terminated (UTF-8). Embedded source. */
     Dwarf_Small *fi_llvm_source;
 
     /*  Index into the list of directories of the directory in which

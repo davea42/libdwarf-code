@@ -638,6 +638,6 @@ const char *_dwarf_errmsgs[] = {
 "DW_DLE_MACRO_VERSION_ERROR(481) Unknown DWARF5 macro version."
     " Corrupt data.",
 "DW_DLE_NEGATIVE_SIZE(482) A size < 0 "
-    "(from DW_FORM_implicit_const) is not appropriate", 
+    "(from DW_FORM_implicit_const) is not appropriate",
 };
 #endif /* DWARF_ERRMSG_LIST_H */
