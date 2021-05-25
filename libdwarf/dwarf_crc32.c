@@ -46,8 +46,10 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #elif defined(_WIN32) && defined(_MSC_VER)
+/*  Want to have SEEK_CUR and SEEK_SET defined. */
 #include <io.h>
 #include <basetsd.h>
+/*  Should we have include <windows.h> instead? */
 typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #endif /* HAVE_UNISTD_H */
 

@@ -1,4 +1,8 @@
 2021-05-25  David Anderson
+    * dwarf_crc32.c: Added a comment for the Windows case
+      in case it will help someone. I have no way to
+      really test the alternative #include <windows.h>.
+2021-05-25  David Anderson
     * dwarf.h,dwarf_errmsg_list.h,dwarf_line.h,
       dwarf_line_table_reader_common.h: Removed trailing
       whitespace, fixed indents.
