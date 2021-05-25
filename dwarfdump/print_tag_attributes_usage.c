@@ -329,19 +329,18 @@ reset_usage_rate_tag_trees(void)
     int i = 0;
 
     for (i = 0 ; i < DW_TAG_last; ++i) {
-         tag_usage[i] = 0;
-     }
-     for (i = 0 ; i < DW_TAG_last; ++i) {
-         Usage_Tag_Tree *usage_ptr = usage_tag_tree[i];
-         if (!usage_ptr) {
-             continue;
-         }
-         for (; usage_ptr->tag; ++usage_ptr) {
-             usage_ptr->count = 0;
-         }
-     }
-     for (i = 0 ; i < DW_TAG_last; ++i) {
-         rate_tag_tree[i].found = 0;
-     }
+        tag_usage[i] = 0;
+    }
+    for (i = 0 ; i < DW_TAG_last; ++i) {
+        Usage_Tag_Tree *usage_ptr = usage_tag_tree[i];
+        if (!usage_ptr) {
+            continue;
+        }
+        for (; usage_ptr->tag; ++usage_ptr) {
+            usage_ptr->count = 0;
+        }
+    }
+    for (i = 0 ; i < DW_TAG_last; ++i) {
+        rate_tag_tree[i].found = 0;
+    }
 }
-

@@ -1,3 +1,7 @@
+2021-05-25 David Anderson
+    * attr_form.c,command_options.c,compiler_info.c,dwarfdump.c,
+      dwconf.c,print_tag_attributes_usage.c: Fixed indents,
+      removed trailing whitespace.
 2021-05-20 David Anderson
     * print_die.c: If a DW_OP_skip or DW_OP_bra
       went to a previous offset the correctness check

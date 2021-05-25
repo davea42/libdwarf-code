@@ -225,7 +225,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
     }
     if (glflags.gf_show_dwarfdump_conf) {
         printf("dwarfdump using configuration "
-           "file \"%s\"\n", sanitized(name_used));
+            "file \"%s\"\n", sanitized(name_used));
     }
     conf_internal->conf_name_used = name_used;
 
@@ -471,7 +471,7 @@ find_a_file(const char *named_file,
         if (glflags.gf_show_dwarfdump_conf) {
             if (!lname || !strlen(lname)) {
                 lname="<Impossible name  string>";
-            } 
+            }
             printf("dwarfdump looking for"
                 " configuration as: \"%s\"\n", lname);
         }

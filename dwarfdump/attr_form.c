@@ -209,7 +209,7 @@ destroy_attr_form_trees(void)
     and this checking makes no sense and will not compile. */
 #ifndef SKIP_AF_CHECK
 static Dwarf_Bool
-legal_attr_formclass_combination(Dwarf_Half attr, 
+legal_attr_formclass_combination(Dwarf_Half attr,
     Dwarf_Half fc)
 {
     Three_Key_Entry *e = 0;
@@ -230,7 +230,7 @@ legal_attr_formclass_combination(Dwarf_Half attr,
         return FALSE;
     }
     re = *(Three_Key_Entry **)ret;
-    if(!glflags.gf_suppress_check_extensions_tables) {
+    if (!glflags.gf_suppress_check_extensions_tables) {
         free(e);
         return TRUE;
     }
@@ -276,7 +276,7 @@ check_attr_formclass_combination(Dwarf_Debug dbg,
 
 void
 record_attr_form_use(
-#ifndef SKIP_AF_CHECK 
+#ifndef SKIP_AF_CHECK
     Dwarf_Debug dbg,
     Dwarf_Half tag,
     Dwarf_Half attr,
@@ -307,7 +307,7 @@ record_attr_form_use(
             they really are limited. */
         std_or_exten = AF_EXTEN;
     }
-#ifndef SKIP_AF_CHECK 
+#ifndef SKIP_AF_CHECK
     check_attr_formclass_combination(dbg,
         tag,attr,fclass,pd_dwarf_names_print_on_error,
         die_stack_indent_level);

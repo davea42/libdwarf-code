@@ -2709,8 +2709,8 @@ set_command_options(int argc, char *argv[])
         case OPT_VERBOSE:       arg_verbose();       break;
         case OPT_VERBOSE_MORE:  arg_verbose();       break;
         case OPT_VERSION:       arg_version();       break;
-        case OPT_SHOW_DWARFDUMP_CONF: 
-                                arg_show_dwarfdump_conf();break;
+        case OPT_SHOW_DWARFDUMP_CONF:
+            arg_show_dwarfdump_conf();break;
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
 
@@ -2770,8 +2770,8 @@ lacking_normal_args (int argct,char **args)
         }
         for (k = 0; simplestdargs[k]; ++k) {
             if (!strcmp(curarg,simplestdargs[k])) {
-                 simple = TRUE;
-                 break;
+                simple = TRUE;
+                break;
             }
         }
         if (simple) {
@@ -2818,7 +2818,7 @@ process_args(int argc, char *argv[])
             config_file_defaults,
             glflags.config_file_data);
         if (res == FOUND_ERROR) {
-            if (!glflags.gf_do_print_dwarf && 
+            if (!glflags.gf_do_print_dwarf &&
                 !glflags.gf_do_check_dwarf) {
                 printf("Frame not configured due to "
                     "configure error(s).\n");

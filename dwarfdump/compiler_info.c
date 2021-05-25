@@ -94,7 +94,7 @@ print_specific_checks_results(Compiler *pCompiler)
     }
     if (glflags.gf_check_tag_attr) {
         PRINT_CHECK_RESULT("attr_tag", pCompiler, attr_tag_result);
-        PRINT_CHECK_RESULT("attr_formclass", pCompiler, 
+        PRINT_CHECK_RESULT("attr_formclass", pCompiler,
             attr_formclass_result);
     }
     if (glflags.gf_check_tag_tree) {

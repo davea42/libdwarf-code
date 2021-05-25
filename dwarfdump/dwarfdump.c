@@ -285,7 +285,7 @@ flag_data_pre_allocation(void)
     }
 }
 
-static void 
+static void
 flag_data_post_cleanup(void)
 {
 #ifdef DWARF_WITH_LIBELF
