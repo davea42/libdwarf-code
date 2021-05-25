@@ -1,3 +1,7 @@
+2021-05-25  David Anderson
+    * dwarf_leb.c,dwarf_leb_test.c,dwarf_line.c,dwarf_query.c:
+      Fixed indents and removed trailing whitespace.
+      Fixed one too-long line by splitting to 2 lines.
 2021-05-20  David Anderson
     * dwarf_line.h: Modified libdwarf-internal functions
       for LNCT handlng. Added a couple new functions 

@@ -2057,7 +2057,7 @@ _dwarf_report_bad_lnct( Dwarf_Debug dbg,
     }
     dwarfstring_constructor_static(&m,mnbuf,sizeof(mnbuf));
     dwarfstring_append_printf_s(&m,
-        "%s: Unexpected DW_LNCT type",(char *)dlename); 
+        "%s: Unexpected DW_LNCT type",(char *)dlename);
     dwarfstring_append_printf_s(&m,
         " %s ",
         dwarfstring_string(&f2));
@@ -2073,7 +2073,7 @@ report_ltype_form_issue(Dwarf_Debug dbg,
     int ltype,
     int form,
     const char *splmsg,
-    Dwarf_Error *error) 
+    Dwarf_Error *error)
 {
     dwarfstring m;
     dwarfstring f2;
@@ -2105,7 +2105,7 @@ report_ltype_form_issue(Dwarf_Debug dbg,
     dwarfstring_constructor_static(&m,mbuf,sizeof(mbuf));
     dwarfstring_append_printf_s(&m,
         "DW_DLE_LNCT_FORM_CODE_NOT_HANDLED: form %s "
-        "instead of a specifically " 
+        "instead of a specifically "
         "allowed offset form",
         dwarfstring_string(&f));
     dwarfstring_append_printf_s(&m,
@@ -2115,7 +2115,7 @@ report_ltype_form_issue(Dwarf_Debug dbg,
         dwarfstring_append(&m," ");
         dwarfstring_append(&m,(char *)splmsg);
     }
-    _dwarf_error_string(dbg, error, 
+    _dwarf_error_string(dbg, error,
         DW_DLE_LNCT_FORM_CODE_NOT_HANDLED,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
@@ -2143,7 +2143,7 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         Dwarf_Unsigned offset = 0;
         Dwarf_Small *offsetptr = *line_ptr;
 
-        res = _dwarf_load_section(dbg, 
+        res = _dwarf_load_section(dbg,
             &dbg->de_debug_line_str,error);
         if (res != DW_DLV_OK) {
             return res;

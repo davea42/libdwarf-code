@@ -296,7 +296,7 @@ static unsigned char v4[] = {
     plays the role of incorporating the bit and
     also requesting a sign bit. */
 
-/*  sort of v4 with zero padding on end. 
+/*  sort of v4 with zero padding on end.
     Here with target signed 64bit twos complement */
 static unsigned char v5[] = {
 0x80, 0x80, 0x80,
@@ -312,20 +312,20 @@ static unsigned char v5[] = {
 };
 
 /*  If we had a target of 32bit signed int we would, to
-    to get 0xc0000000 with trailing padding: 
+    to get 0xc0000000 with trailing padding:
 0x80, 0x80, 0x80,
 0x80, 0x84, The 4 gets into the int., 8 continues
-                  the input any higher bits in the bottom
-                  7 bits get shifted off and vanish,
-                  so 0xf6 would get the same value.
+    the input any higher bits in the bottom
+    7 bits get shifted off and vanish,
+    so 0xf6 would get the same value.
 0x80, 0x80, 0x80,
 0x80, 0x80, 0x80,
 0x80, 0x80, 0x40     The 0x40  gets the sign set
 
 Simlarly, but without any padding bytes:
 0x80, 0x80, 0x80,
-0x80, 0x44, The  second 4 (and 2 zero bits) gets into the int, 
-                  first 4 gets the sign bit set 
+0x80, 0x44, The  second 4 (and 2 zero bits) gets into the int,
+    first 4 gets the sign bit set
 */
 
 
@@ -357,7 +357,7 @@ static unsigned char v8[] = {
 0x80, 0x80, 0x80, 0x80,
 0x80, 0x80, 0x80, 0x80,
 0x80, 0x80, 0x80, 0x80,
-0x80 
+0x80
 };
 
 
@@ -473,7 +473,7 @@ specialtests(void)
     }
     if (decodelen != vlen) {
         printf("FAIL signed decode special v5 decode len ck"
-            "Expected decode len %u" 
+            "Expected decode len %u"
             "got decode len  %u  line %d\n",
             (unsigned)vlen,(unsigned)decodelen,__LINE__);
     }

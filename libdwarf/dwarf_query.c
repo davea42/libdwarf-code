@@ -1505,7 +1505,7 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
 
     }
     case DW_FORM_implicit_const: {
-       if (implicit_const_value < (Dwarf_Signed)0) {
+        if (implicit_const_value < (Dwarf_Signed)0) {
             dwarfstring m;
 
             dwarfstring_constructor(&m);
@@ -1519,9 +1519,9 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
                 dwarfstring_string(&m));
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
-       }
-       *return_val = implicit_const_value;
-       return DW_DLV_OK;
+        }
+        *return_val = implicit_const_value;
+        return DW_DLV_OK;
     }
 
     default:
@@ -1531,8 +1531,8 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
 }
 
 
-/* size Value >= 0 is not specified in DWARF5, but
-   a negative value is surely not meaningful. */
+/*  Size Value >= 0 is not specified in DWARF5, but
+    a negative value is surely not meaningful. */
 int
 dwarf_bytesize(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
@@ -1545,8 +1545,8 @@ dwarf_bytesize(Dwarf_Die die,
 }
 
 
-/* size Value >= 0 is not specified in DWARF5, but
-   a negative value is not meaningful. */
+/*  Size Value >= 0 is not specified in DWARF5, but
+    a negative value is not meaningful. */
 int
 dwarf_bitsize(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
@@ -1559,7 +1559,7 @@ dwarf_bitsize(Dwarf_Die die,
 }
 
 
-/* size Value >= 0 required. DWARF5 sec5.7.6 */
+/* Size Value >= 0 required. DWARF5 sec5.7.6 */
 int
 dwarf_bitoffset(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
@@ -1572,7 +1572,7 @@ dwarf_bitoffset(Dwarf_Die die,
 }
 
 
-/*  Refer section 3.1, page 21 in Dwarf Definition. 
+/*  Refer section 3.1, page 21 in Dwarf Definition.
     Language codes are always non-negative
     and specified in the DWARF standard*/
 int
@@ -1587,7 +1587,7 @@ dwarf_srclang(Dwarf_Die die,
 }
 
 
-/*  Refer section 5.4, page 37 in Dwarf Definition. 
+/*  Refer section 5.4, page 37 in Dwarf Definition.
     array order values are always non-negative
     and specified in the DWARF standard*/
 int

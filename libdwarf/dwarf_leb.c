@@ -240,8 +240,8 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
                 byte content */
             return DW_DLV_ERROR;
         }
-        /* this bit of the last (most-significant
-           useful) byte indicates sign */
+        /*  This bit of the last (most-significant
+            useful) byte indicates sign */
         sign =  b & 0x40;
         number |= ((Dwarf_Unsigned)b) << shift;
         shift += 7;
@@ -266,7 +266,8 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
         /* The following avoids undefined behavior. */
         unsigned shiftlim = sizeof(Dwarf_Signed) * BITSPERBYTE -1;
         if (shift < shiftlim) {
-            Dwarf_Signed y = (Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+            Dwarf_Signed y = (Dwarf_Signed)
+                (((Dwarf_Unsigned)1) << shift);
             Dwarf_Signed x = -y;
             number |= x;
         } else if (shift == shiftlim) {
