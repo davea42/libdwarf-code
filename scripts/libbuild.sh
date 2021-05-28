@@ -1,8 +1,10 @@
 # libbuild.sh
 # Build the .c .h needed for libdwarf.
 # Intended for simple non-elf builds on systems
-# This script is by David Anderson and hereby put into the public domain
+# This script is by David Anderson and hereby
+# put into the public domain
 # for anyone to use in any way.
+# This is used by scripts/buildstandardsource.sh
 
 # Requires a basic config.h at top level
 # Possibly cp scripts/baseconfig.h config.h

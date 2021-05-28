@@ -1,4 +1,6 @@
 #!/bin/sh
+#  For cmake, this results in getting the correct
+#  libdwarf.h 
 if [ $# -ne 3 ]
 then
   echo "ERROR fixlibdwarfelf.sh  wrong argument count: $#"

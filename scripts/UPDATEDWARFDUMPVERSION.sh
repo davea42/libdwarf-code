@@ -1,6 +1,10 @@
 #!/bin/bash
 # Do not turn on -x here. it will screw things up!
-
+# This puts the current date/time into 
+# libdwarf/libdwarf_version.h
+# so libdwarf and dwarfdump can report the date time
+# applying currently to the source.
+# Sometimes only used. just before a release.
 l=`pwd`
 echo $l
 lb=`basename $l`

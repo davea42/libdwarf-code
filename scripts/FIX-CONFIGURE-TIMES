@@ -2,7 +2,7 @@
 
 # After doing  a copy of the source tree (as by 'cp -r')
 # the timestamps are not always
-# such that a build will work. File timestamps matter
+# such that a build using configure will work. File timestamps matter
 # with the new configure.  
 # If the 'configure ; make' ends in failure with a message about
 # aclocal-1.15 being missing then this script
@@ -11,6 +11,11 @@
 # Note that one user found the command:
 #  touch aclocal.m4 Makefile.am configure Makefile.in
 # sufficient to avoid the problem.
+# Partly motivated by git clone because
+# git does not record timestamps so builds from
+# a cloned tree will not work unless this is run
+# to help configure.
+# cmake users can ignore this.
 
 l=`pwd`
 echo $l

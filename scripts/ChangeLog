@@ -1,3 +1,17 @@
+2021-05-28 David Anderson
+    * UPDATEDWARFDUMPVERSION.sh,baseconfig.h,ddbuild.sh,
+      fixlibdwarfelf.sh,libbuild.sh: Comments added
+      to explain the role each plays.
+2021-05-28 David Anderson
+    * BLDLIBDWARF,BLDLIBDWARFTAR,BLDTESTDIR,CPTARTOWEBDIR,
+      CPTOPUBLIC,CREATINGARELEASE,GETTOTOP,REBLDLIBDWARF,
+      RUNPY,SETUP_GZ_TREE,conddef.py,dateorder,
+      extractrelocdefines.sh,
+      find_pdfpages.py,funcfinderhdr.py,funcfindermm.py,
+      funcfindersrcs.py,haveinclude.py,rebuildpdf.sh,
+      scanconfig.py: None of these play any role
+      in any part of the build, test, or update now.
+      Deleting them.
 2021-05-19 David Anderson
     * scanconfig.py: Reformatted with the 'black'
       formatter.

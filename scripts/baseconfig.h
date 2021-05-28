@@ -1,4 +1,14 @@
-/* baseconfig.h.  Maintained by hand for buildstandardsource.sh */
+/*  baseconfig.h.  Maintained by hand for buildstandardsource.sh
+    This avoids the necessity for running configure but
+    makes assumptions (such as the existence of libz)
+    that are not tested.  So you may need to
+    alter this to make buildstandardsource.sh work
+    if your environment is sufficiently different.
+    Assuming you have a reason to run
+    scripts/buildstandardsource.sh  (you most likely
+    have no reason) .
+*/
+
 
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */

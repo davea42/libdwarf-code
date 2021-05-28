@@ -5,6 +5,7 @@
 # This script is by David Anderson and hereby 
 # put into the public domain
 # for anyone to use in any way.
+# This is used by scripts/buildstandardsource.sh
 
 # Requires a basic config.h at top level
 
