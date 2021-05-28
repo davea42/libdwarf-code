@@ -1,3 +1,8 @@
+2021-05-28 David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-af-table.h,
+      dwarfdump-ta-ext-table.h,dwarfdump-ta-table.h,
+      dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:
+      Regenerated with new version string.
 2021-05-25 David Anderson
     * attr_form.c,command_options.c,compiler_info.c,dwarfdump.c,
       dwconf.c,print_tag_attributes_usage.c: Fixed indents,
