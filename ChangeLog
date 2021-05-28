@@ -1,3 +1,13 @@
+2021-05-28: David Anderson
+    * CMakeLists.txt:Version string now 20210528
+    * Makefile.am: Added scripts ChangeLogs for 2019,
+      2020. Removed scripts items that were deleted
+      from the source (no longer needed)
+    * Makefile.in: Regenerated.
+    * README.md: Removes reference to deleted script,
+      references 'make dist' instead.
+    * configure.ac: Version 20210528
+    * configure: regenerated
 2021-05-20: David Anderson
     * CMakeLists.txt, configure.ac: Now version
       20210520

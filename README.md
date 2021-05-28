@@ -80,13 +80,8 @@ Sanity checking:
 ### Distributing
 
 When ready to create a new source distribution do
-```bash
-./CPTOPUBLIC
-./BLDLIBDWARF yyyymmdd
-# where that could be
-./BLDLIBDWARF 20140131
-# as an example.
-```
+a build and then 
+  make dist
 
-David Anderson.  Updated October 10 2020
+David Anderson.  Updated May 2021
 
