@@ -1,3 +1,15 @@
+It's recently been brought to our attention that it is
+not easy to know where to find documentation on libdwarf.
+In every version (preferably choose current git master)
+see 
+    libdwarf/libdwarf2.1.pdf
+for the documentation of the library and all consumer
+(DWARF reader) API calls.  A side effect of its production
+using groff -mm is that the table of contents is at the end
+of the document.  And there are effectively no live links
+present, one has to just search with one's pdf reader.
+
+=========
 As of May 22, 2020 libdwarf and dwarfdump
 support DWARF5 .debug_rnglists section content,
 and do much better at containing malloc
