@@ -1,4 +1,6 @@
 2021-05-31  David Anderson
+    * moved all .mm and .pdf and bldpdf.sh to doc directory
+2021-05-31  David Anderson
     * test_linktopath.c: Fixed omission broke
       windows make check.
 2021-05-28  David Anderson
