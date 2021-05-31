@@ -1,3 +1,8 @@
+2021-05-31: David Anderson
+    * CMakeLists.txt,configure.ac: version string is
+      0.1.0 
+    * README mentions the new location of documentation:
+      the doc directory, which we added just now.
 2021-05-28: David Anderson
     * CMakeLists.txt:Version string now 20210528
     * Makefile.am: Added scripts ChangeLogs for 2019,
