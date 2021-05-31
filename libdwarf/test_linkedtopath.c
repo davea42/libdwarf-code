@@ -43,8 +43,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include <elf.h>
 #endif /* HAVE_ELF_H */
 #ifdef HAVE_UNISTD_H
-#include <unistd.h> /* lseek read close */
-#endif /* HAVE_UNISTD_H */
+#include <unistd.h> 
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
+#endif /* HAVE_UNISTD_H */ 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
