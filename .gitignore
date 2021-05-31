@@ -4,3 +4,17 @@ junk*
 build/
 cscope.files
 TAGS
+
+# autotools ignore
+*.lo
+*.la
+Makefile
+config.h
+config.log
+config.status
+libtool
+stamp-h1
+libdwarf/libdwarf.h
+autom4te.cache/
+.deps/
+.libs/
