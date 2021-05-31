@@ -42,7 +42,9 @@ else
     exit 
   fi
 fi
-v=`grep -o '20[1-2][0-9][0-9][0-9][0-9][0-9]'< $f | head -n 1`
+#v=`grep -o '20[1-2][0-9][0-9][0-9][0-9][0-9]'< $f | head -n 1`
+v=`grep -o '[1-9][0-9]*[.][0-9][0-9]*[.][0-9][0-9]*'< $f | head -n 1`
+echo "configure.ac version is v=$v"
 
 if [ x$v = "x" ]
 then
