@@ -262,9 +262,7 @@ dwgetopt.h \
 dwgetopt.c \
 CMakeLists.txt \
 cmake/libdwarf-config.cmake \
-libdwarf.h.in \
 testdebuglink.sh \
-generated_libdwarf.h.in \
 pdfbld.sh \
 NEWS \
 README \

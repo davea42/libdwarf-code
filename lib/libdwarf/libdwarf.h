@@ -54,24 +54,7 @@ extern "C" {
     so one can use grep  to each declaration in its entirety.
     The declarations are a little harder to read this way, but...
 
-    The seeming duplication of the Elf typedef allows
-    both verification we have the right struct name (when
-    libelf.h included before this) and
-    creation of a local handle so we have the struct pointer
-    here (if libelf.h is not included before this file).
-
 */
-
-typedef struct Elf Elf;
-typedef struct Elf* dwarf_elf_handle;
-
-/* To enable printing with printf regardless of the
-   actual underlying data type, we define the DW_PR_xxx macros.
-   To ensure uses of DW_PR_DUx or DW_PR_DSx look the way you want
-   ensure the right DW_PR_XZEROS define is uncommented.
-*/
-/*#define DW_PR_XZEROS "" */
-#define DW_PR_XZEROS "08"
 
 typedef unsigned long long Dwarf_Unsigned;
 typedef signed   long long Dwarf_Signed;
@@ -84,18 +67,6 @@ typedef unsigned short     Dwarf_Half;   /* 2 byte unsigned value */
 typedef unsigned char      Dwarf_Small;  /* 1 byte unsigned value */
 /*  If sizeof(Dwarf_Half) is greater than 2
     we believe libdwarf still works properly. */
-
-#if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
-#define DW_PR_DUx "I64x"
-#define DW_PR_DSx "I64x"
-#define DW_PR_DUu "I64u"
-#define DW_PR_DSd "I64d"
-#else
-#define DW_PR_DUx "llx"
-#define DW_PR_DSx "llx"
-#define DW_PR_DUu "llu"
-#define DW_PR_DSd "lld"
-#endif /* DW_PR defines */
 
 typedef void*        Dwarf_Ptr;          /* host machine pointer */
 
@@ -1655,25 +1626,20 @@ int dwarf_init(int    /*fd*/,
     be used on Elf files. */
 /*  Initialization based on libelf/sgi-fastlibelf open pointer. */
 /*  New March 2017 */
-int dwarf_elf_init_b(dwarf_elf_handle /*elf*/,
+int dwarf_elf_init_b(void * /*elf*/,
     Dwarf_Unsigned    /*access*/,
     unsigned int      /*group_number*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
     Dwarf_Error*      /*error*/);
-int dwarf_elf_init(dwarf_elf_handle /*elf*/,
+int dwarf_elf_init(void * /*elf*/,
     Dwarf_Unsigned    /*access*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
     Dwarf_Error*      /*error*/);
 
-/*  New September 2019.
-    When using dwarf_elf_init[_b]() we still want the file path
-    in the record. So we add it after the init phase.
-    Path is needed for buildid and debuglink to fully work.
-*/
 int  dwarf_add_file_path(Dwarf_Debug /*dbg*/,
     const char * /*file_name*/,
     Dwarf_Error*      /*error*/);
@@ -1682,7 +1648,7 @@ int  dwarf_add_file_path(Dwarf_Debug /*dbg*/,
 void dwarf_print_memory_stats(Dwarf_Debug  /*dbg*/);
 
 int dwarf_get_elf(Dwarf_Debug /*dbg*/,
-    dwarf_elf_handle* /*return_elfptr*/,
+    void * /*return_elfptr*/,
     Dwarf_Error*      /*error*/);
 
 int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
