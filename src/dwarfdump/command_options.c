@@ -26,6 +26,7 @@
 */
 
 #include "globals.h"
+#undef DWARF_WITH_LIBELF
 #include "dwconf.h"
 #include "dwgetopt.h"
 

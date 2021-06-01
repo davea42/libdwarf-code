@@ -62,6 +62,9 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 */
 
 #include "config.h"
+#undef DWARF_WITH_LIBELF
+#undef HAVE_LIBELF_H
+#undef HAVE_LIBELF_LIBELF_H
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
 #else

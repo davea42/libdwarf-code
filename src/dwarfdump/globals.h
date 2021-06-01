@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 #include "config.h"
+#undef DWARF_WITH_LIBELF
 #ifdef DWARF_WITH_LIBELF  /* Without libelf no need for _GNU_SOURCE */
 #if (!defined(HAVE_RAW_LIBELF_OK) && defined(HAVE_LIBELF_OFF64_OK) )
 /* At a certain point libelf.h requires _GNU_SOURCE.
@@ -80,6 +81,7 @@ extern "C" {
 #endif /* DWARF_WITH_LIBELF */
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #ifdef HAVE_REGEX
 #include <regex.h>
 #endif

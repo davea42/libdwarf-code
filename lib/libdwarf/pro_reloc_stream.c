@@ -58,12 +58,13 @@
 /*  Return DW_DLV_ERROR on malloc error or reltarget_length error.
     Return DW_DLV_OK otherwise */
 /*ARGSUSED*/ int
-_dwarf_pro_reloc_name_stream64(Dwarf_P_Debug dbg,
-    int base_sec_index,
-    Dwarf_Unsigned offset,      /* r_offset of reloc */
-    Dwarf_Unsigned symidx,
-    enum Dwarf_Rel_Type type,
-    int reltarget_length)
+_dwarf_pro_reloc_name_stream64(
+    UNUSEDARG Dwarf_P_Debug dbg,
+    UNUSEDARG int base_sec_index,
+    UNUSEDARG Dwarf_Unsigned offset,      /* r_offset of reloc */
+    UNUSEDARG Dwarf_Unsigned symidx,
+    UNUSEDARG enum Dwarf_Rel_Type type,
+    UNUSEDARG int reltarget_length)
 {
 #if HAVE_ELF64_GETEHDR
     REL64 *elf64_reloc = 0;

@@ -49,6 +49,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <io.h>
 #endif
 
+#undef DWARF_WITH_LIBELF
 #include "makename.h"
 #include "macrocheck.h"
 #include "dwconf.h"
@@ -66,6 +67,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include "command_options.h"
 #include "compiler_info.h"
+#undef DWARF_WITH_LIBELF /* seems necessary. Bug somewhere. */
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -120,7 +122,7 @@ static struct esb_s global_file_name;
 static struct esb_s global_tied_file_name;
 
 static int process_one_file(int fd, int tiedfd,
-    Elf *efp, Elf * tiedfp,
+    void *efp, void * tiedfp,
     const char * file_name,
     const char * tied_file_name,
     char *       tempbuf,
@@ -219,6 +221,7 @@ is_it_known_elf_header(Elf *elf)
     return 0;
 }
 #endif /* DWARF_WITH_LIBELF */
+
 
 static void
 check_for_notes(void)
@@ -1051,7 +1054,7 @@ static int
 process_one_file(
     UNUSEDARG int fd,
     UNUSEDARG int tiedfd,
-    Elf *elf, Elf *tiedelf,
+    void *elf, void *tiedelf,
     const char * file_name,
     const char * tied_file_name,
     char *       temp_path_buf,

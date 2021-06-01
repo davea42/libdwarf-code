@@ -35,6 +35,8 @@
     For */
 
 #include "config.h"
+/*  We refuse to use libelf */
+#undef DWARF_WITH_LIBELF
 #ifdef DWARF_WITH_LIBELF
 #include <stdio.h>
 #ifdef HAVE_SYS_STAT_H

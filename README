@@ -1,6 +1,13 @@
 Documentation is in the doc directory as of
 31 May 2021
 =========
+As of 1 June 2021 we are using semanantic
+versions (not a date version)
+and dwarfdump no longer uses libelf
+and cannot report libelf (or any other) object data
+section details.
+WORK IN PROGRESS. Most things don't work yet.
+=========
 As of May 22, 2020 libdwarf and dwarfdump
 support DWARF5 .debug_rnglists section content,
 and do much better at containing malloc

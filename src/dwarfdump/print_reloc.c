@@ -26,6 +26,7 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd. All Rights Reserved
   Boston MA 02110-1301, USA.
 
 */
+#if 0
 #include "globals.h"
 #ifdef DWARF_WITH_LIBELF
 #define DWARF_RELOC_MIPS
@@ -915,3 +916,4 @@ print_object_header(Dwarf_Debug dbg,Dwarf_Error *err)
     return DW_DLV_OK;
 }
 #endif /* DWARF_WITH_LIBELF */
+#endif /* 0 */

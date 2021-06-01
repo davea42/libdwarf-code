@@ -3,8 +3,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = lib/libdwarf
-###SUBDIRS = src/dwarfdump
+SUBDIRS = lib/libdwarf src/dwarfdump
 
 if HAVE_DWARFGEN
 SUBDIRS += src/dwarfgen

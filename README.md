@@ -3,8 +3,19 @@
 
 # This is README.md
 ## BUILDING
+   in source base dir, do
+      x=`pwd`
+      sh autogen.sh
+      rm -rf /tmp/empty
+      mkdir /tmp/empty
+      cd /tmp/empty
+      # CFLAGS and enable-wall are optional.
+      CFLAGS='-g -O0' $x/configure \ --enable-wall
+      make
 
-To just build libdwarf and dwarfdump, if the source tree is in `/a/b/libdwarf-1`
+
+ THE FOLLOWING IS ALL OBSOLETE
+
 
 ### Using CMake
 

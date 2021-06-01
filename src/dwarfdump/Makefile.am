@@ -75,8 +75,6 @@ print_macro.c \
 print_pubnames.c \
 print_ranges.c \
 print_rnglists.c \
-print_reloc.c \
-print_reloc.h \
 print_section_groups.c \
 print_sections.c \
 print_sections.h \
@@ -98,23 +96,22 @@ uri.c \
 uri.h \
 warningcontrol.h
 
-dwarfdump_CPPFLAGS =  -I$(top_srcdir)/libdwarf \
--I$(top_builddir)/libdwarf
+dwarfdump_CPPFLAGS =  -I$(top_srcdir)/lib/libdwarf \
+-I$(top_builddir)/lib/libdwarf
 
 dwarfdump_CFLAGS = $(DWARF_CFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfdump" 
 
 dwarfdump_LDADD = \
-$(top_builddir)/libdwarf/libdwarf.la \
+$(top_builddir)/lib/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
 TESTS = runtests.sh
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
-man_MANS = dwarfdump.1
-
-dwarfdumpdevdir = $(datadir)/dwarfdump
+dwarfdumpdevdir = $(top_builddir)/src/dwarfdump
 dwarfdumpdev_DATA = dwarfdump.conf
 
+### The tests go elsewhere.
 EXTRA_DIST = \
 $(man_MANS) \
 COPYING \

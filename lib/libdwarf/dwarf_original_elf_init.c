@@ -31,6 +31,8 @@
 */
 
 #include "config.h"
+#undef HAVE_LIBELF_H
+#undef HAVE_LIBELF_LIBELF_H
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
 #else
@@ -75,12 +77,12 @@ dwarf_elf_init_b(
     UNUSEDARG Dwarf_Ptr errarg,
     UNUSEDARG Dwarf_Debug * ret_dbg,
 #else
-    void * elf_file_pointer,
-    Dwarf_Unsigned access,
-    unsigned group_number,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg,
+    UNUSEDARG void * elf_file_pointer,
+    UNUSEDARG Dwarf_Unsigned access,
+    UNUSEDARG unsigned group_number,
+    UNUSEDARG Dwarf_Handler errhand,
+    UNUSEDARG Dwarf_Ptr errarg,
+    UNUSEDARG Dwarf_Debug * ret_dbg,
 #endif /* DWARF_WITH_LIBELF */
     Dwarf_Error * error)
 {
@@ -96,11 +98,11 @@ dwarf_elf_init(
     UNUSEDARG Dwarf_Ptr errarg,
     UNUSEDARG Dwarf_Debug * ret_dbg,
 #else
-    void * elf_file_pointer,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg,
+    UNUSEDARG void * elf_file_pointer,
+    UNUSEDARG Dwarf_Unsigned access,
+    UNUSEDARG Dwarf_Handler errhand,
+    UNUSEDARG Dwarf_Ptr errarg,
+    UNUSEDARG Dwarf_Debug * ret_dbg,
 #endif
     Dwarf_Error * error)
 {
