@@ -189,9 +189,7 @@ AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
 
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
-libdwarfdev_DATA = \
-libdwarf2.1.pdf \
-libdwarf2p.1.pdf 
+libdwarfdev_DATA = 
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok

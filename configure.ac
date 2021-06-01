@@ -51,7 +51,7 @@ AC_ARG_ENABLE([dwarfexample],
 AM_CONDITIONAL([HAVE_DWARFEXAMPLE], [test "x${enable_dwarfexample}" = "xyes"])
 
 ### Solely for checking libdwarf allocation counts,sizes
-### Do not use without a good reason . See libdwarf/dwarf_alloc.c
+### Do not use without a good reason . See lib/libdwarf/dwarf_alloc.c
 AC_ARG_ENABLE(globalallocsums,AS_HELP_STRING([--enable-global-alloc-sums],
         [Enables some allocation counting in dwarf_alloc.c (default is NO)]),
         [ AC_DEFINE([HAVE_GLOBAL_ALLOC_SUMS],[1],
@@ -361,7 +361,7 @@ AC_MSG_RESULT([${have_regex}])
 
 AC_CONFIG_FILES([
 Makefile
-libdwarf/Makefile
+lib/libdwarf/Makefile
 src/dwarfdump/Makefile
 src/dwarfgen/Makefile
 src/dwarfexample/Makefile

@@ -15,4 +15,4 @@ srcdir=`dirname $0`
 
 # This is a beginning attempt, FIX. 
 set -e -x
-autoreconf--warnings=all --install --verbose --force
+autoreconf --warnings=all --install --verbose --force
