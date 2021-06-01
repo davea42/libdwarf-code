@@ -127,6 +127,7 @@ dwarf_xu_index.c \
 dwarf_xu_index.h \
 crc32.c \
 libdwarf.h \
+libdwarf_private.h \
 libdwarf_version.h \
 libdwarfdefs.h \
 malloc_check.c \

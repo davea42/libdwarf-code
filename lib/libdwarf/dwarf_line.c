@@ -41,6 +41,7 @@
 #include "dwarf_line.h"
 #include "dwarfstring.h"
 #include "dwarf_debuglink.h"
+#include "libdwarf_private.h"
 
 /* Line Register Set initial conditions. */
 static struct Dwarf_Line_Registers_s
