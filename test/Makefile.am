@@ -1,2 +1,5 @@
 
-A placeholder to run tests, as in 'make check'.
+###A placeholder to run tests , as in 'make check'.
+
+MAINTAINERCLEANFILES = Makefile.in
+
