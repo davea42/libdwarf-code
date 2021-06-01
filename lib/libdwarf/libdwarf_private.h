@@ -29,6 +29,8 @@
   Floor, Boston MA 02110-1301, USA.
 
 */
+#ifndef LIBDWARF_PRIVATE_H
+#define LIBDWARF_PRIVATE_H
 
 /* To enable printing with printf regardless of the
    actual underlying data type, we define the DW_PR_xxx macros.
@@ -50,3 +52,4 @@
 #define DW_PR_DSd "lld"
 #endif /* DW_PR defines */
 
+#endif /* LIBDWARF_PRIVATE_H */

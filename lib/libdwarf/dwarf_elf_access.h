@@ -32,11 +32,11 @@ Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
 
 
 
-/* ELF (usually libelf) object access for the generic
-object file interface */
+/*  libelf) object access for the generic
+    object file interface */
 
 int
-dwarf_elf_object_access_init(dwarf_elf_handle  elf ,
+dwarf_elf_object_access_init(void *  elf ,
     int libdwarf_owns_elf,
     Dwarf_Obj_Access_Interface**  ret_obj,
     int *err );

@@ -51,5 +51,6 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "libdwarf_private.h"
 #include "dwarf_opaque.h"
 #endif /* DWARF_INCL_H */

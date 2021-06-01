@@ -68,14 +68,14 @@
 int
 dwarf_elf_init_b(
 #ifndef DWARF_WITH_LIBELF
-    UNUSEDARG dwarf_elf_handle elf_file_pointer,
+    UNUSEDARG void * elf_file_pointer,
     UNUSEDARG Dwarf_Unsigned access,
     UNUSEDARG unsigned group_number,
     UNUSEDARG Dwarf_Handler errhand,
     UNUSEDARG Dwarf_Ptr errarg,
     UNUSEDARG Dwarf_Debug * ret_dbg,
 #else
-    dwarf_elf_handle elf_file_pointer,
+    void * elf_file_pointer,
     Dwarf_Unsigned access,
     unsigned group_number,
     Dwarf_Handler errhand,
@@ -84,63 +84,19 @@ dwarf_elf_init_b(
 #endif /* DWARF_WITH_LIBELF */
     Dwarf_Error * error)
 {
-#ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);
-#else /* DWARF_WITH_LIBELF */
-    Dwarf_Obj_Access_Interface *binary_interface = 0;
-    int res = DW_DLV_OK;
-    int localerrnum = 0;
-    int libdwarf_owns_elf = FALSE;
-
-    if (!ret_dbg) {
-        DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
-    }
-    if (access != DW_DLC_READ) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
-    }
-
-    /* This allocates and fills in *binary_interface. */
-    res = dwarf_elf_object_access_init(
-        elf_file_pointer,
-        libdwarf_owns_elf,
-        &binary_interface,
-        &localerrnum);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_NO_ENTRY) {
-            return res;
-        }
-        DWARF_DBG_ERROR(NULL, localerrnum, DW_DLV_ERROR);
-    }
-    /* allocates and initializes Dwarf_Debug */
-    res = dwarf_object_init_b(binary_interface, errhand, errarg,
-        group_number,
-        ret_dbg, error);
-    if (res != DW_DLV_OK){
-        dwarf_elf_object_access_finish(binary_interface);
-        return res;
-    }
-    (*ret_dbg)->de_using_libelf = TRUE;
-    res = dwarf_add_debuglink_global_path(*ret_dbg,
-        "/usr/lib/debug",error);
-    if (res != DW_DLV_OK){
-        dwarf_elf_object_access_finish(binary_interface);
-        return res;
-    }
-    /* DBG known */
-    return res;
-#endif /* DWARF_WITH_LIBELF */
 }
 
 int
 dwarf_elf_init(
 #ifndef DWARF_WITH_LIBELF
-    UNUSEDARG dwarf_elf_handle elf_file_pointer,
+    UNUSEDARG void * elf_file_pointer,
     UNUSEDARG Dwarf_Unsigned access,
     UNUSEDARG Dwarf_Handler errhand,
     UNUSEDARG Dwarf_Ptr errarg,
     UNUSEDARG Dwarf_Debug * ret_dbg,
 #else
-    dwarf_elf_handle elf_file_pointer,
+    void * elf_file_pointer,
     Dwarf_Unsigned access,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
@@ -148,89 +104,6 @@ dwarf_elf_init(
 #endif
     Dwarf_Error * error)
 {
-#ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);
-#else /* DWARF_WITH_LIBELF */
-    int res = 0;
-    res = dwarf_elf_init_b(elf_file_pointer,
-        DW_GROUPNUMBER_ANY,
-        access,errhand,errarg,ret_dbg,error);
-    return res;
-#endif /* DWARF_WITH_LIBELF */
 }
 
-int
-_dwarf_elf_setup(
-#ifndef  DWARF_WITH_LIBELF
-    UNUSEDARG int fd,
-    UNUSEDARG char *path,
-    UNUSEDARG unsigned ftype,
-    UNUSEDARG unsigned endian,
-    UNUSEDARG unsigned offsetsize,
-    UNUSEDARG size_t filesize,
-    UNUSEDARG Dwarf_Unsigned access,
-    UNUSEDARG unsigned groupnumber,
-    UNUSEDARG Dwarf_Handler errhand,
-    UNUSEDARG Dwarf_Ptr errarg,
-    UNUSEDARG Dwarf_Debug *dbg,
-#else
-    int fd,
-    UNUSEDARG char *path,
-    UNUSEDARG unsigned ftype,
-    UNUSEDARG unsigned endian,
-    UNUSEDARG unsigned offsetsize,
-    size_t filesize,
-    UNUSEDARG Dwarf_Unsigned access,
-    unsigned groupnumber,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug *dbg,
-#endif /* DWARF_WITH_LIBELF */
-    Dwarf_Error *error)
-{
-#ifndef DWARF_WITH_LIBELF
-    DWARF_DBG_ERROR(NULL, DW_DLE_PRODUCER_CODE_NOT_AVAILABLE,
-        DW_DLV_ERROR);
-#else /* DWARF_WITH_LIBELF */
-    Elf_Cmd what_kind_of_elf_read = ELF_C_READ;
-    Dwarf_Obj_Access_Interface *binary_interface = 0;
-    int res = DW_DLV_OK;
-    int localerrnum = 0;
-    int libdwarf_owns_elf = TRUE;
-    dwarf_elf_handle elf_file_pointer = 0;
-
-    elf_version(EV_CURRENT);
-    elf_file_pointer = elf_begin(fd, what_kind_of_elf_read, 0);
-    if (elf_file_pointer == NULL) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_ELF_BEGIN_ERROR, DW_DLV_ERROR);
-    }
-    /* Sets up elf access function pointers. */
-    res = dwarf_elf_object_access_init(
-        elf_file_pointer,
-        libdwarf_owns_elf,
-        &binary_interface,
-        &localerrnum);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_NO_ENTRY) {
-            return res;
-        }
-        DWARF_DBG_ERROR(NULL, localerrnum, DW_DLV_ERROR);
-    }
-    /* allocates and initializes Dwarf_Debug */
-    res = dwarf_object_init_b(binary_interface, errhand, errarg,
-        groupnumber,
-        dbg, error);
-    if (res != DW_DLV_OK){
-        dwarf_elf_object_access_finish(binary_interface);
-        return res;
-    }
-    (*dbg)->de_filesize = filesize;
-    (*dbg)->de_using_libelf = TRUE;
-    res = dwarf_add_debuglink_global_path(*dbg,
-        "/usr/lib/debug",error);
-    if (res != DW_DLV_OK){
-        dwarf_elf_object_access_finish(binary_interface);
-    }
-    return res;
-#endif /* DWARF_WITH_LIBELF */
-}

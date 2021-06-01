@@ -186,9 +186,10 @@ TESTS = $(check_PROGRAMS) $(check_TESTS)
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 
 
-include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
+include_HEADERS = $(top_srcdir)/lib/libdwarf/dwarf.h  \
+   $(top_srcdir)/lib/libdwarf/libdwarf.h
 
-libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
+libdwarfdevdir = $(datadir)/lib/libdwarf/libdwarf-devel
 libdwarfdev_DATA = 
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
