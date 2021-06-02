@@ -105,8 +105,8 @@ dwarfdump_LDADD = \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
-TESTS = runtests.sh
-AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
+###TESTS = runtests.sh
+###AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
 dwarfdumpdevdir = $(top_builddir)/src/bin/dwarfdump
 dwarfdumpdev_DATA = dwarfdump.conf

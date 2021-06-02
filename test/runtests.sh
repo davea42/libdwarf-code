@@ -1,5 +1,6 @@
 #!/bin/sh
-#
+#The original libdwarf test setup.
+#Not used.
 
 top_blddir=`pwd`/..
 if [ x$DWTOPSRCDIR = "x" ]

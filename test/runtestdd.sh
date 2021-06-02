@@ -1,12 +1,5 @@
 #!/bin/sh
 #
-# Intended to be run only on local machine.
-# Run in the dwarfdump directory
-# Run only after config.h created in a configure
-# in the source directory
-# Assumes env vars DWTOPSRCDIR set to the path to source.
-# Assumes CFLAGS warning stuff set in env var DWCOMPILERFLAGS 
-# Assumes we run the script in the dwarfdump directory.
 
 top_blddir=`pwd`/..
 if [ x$DWTOPSRCDIR = "x" ]
@@ -58,88 +51,6 @@ fi
 #echo "cflags before runtests.sh sets it $CFLAGS"
 #CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
 
-echo "dwgetopt test"
-$CC $CFLAGS  -o getopttest $srcdir/getopttest.c $srcdir/dwgetopt.c
-chkres $? "compiling getopttest test"
-./getopttest
-chkres $? "running getopttest"
-# we will want to know if windows
-if [ -f getopttest.exe ]
-then
-  win=y
-else
-  win=n
-fi
-rm -f getopttest getopttest.exe
-
-# The following tests are not really relevant: 
-# we do not use system getopt in libdwarf etc.
-#echo "Now use system getopt to validate our tests"
-#$CC $CFLAGS -DGETOPT_FROM_SYSTEM -o getopttestnat $srcdir/getopttest.c $srcdir/dwgetopt.c
-#chkres $? "compiling getopttestnat "
-#./getopttestnat -c 1
-#chkres $? "running getopttestnat -c 1 "
-#./getopttestnat -c 2
-#chkres $? "running getopttestnat -c 2 "
-#./getopttestnat -c 3
-#chkres $? "running getopttestnat -c 3 "
-#./getopttestnat -c 5
-#chkres $? "running getopttestnat -c 5 "
-#./getopttestnat -c 6
-#chkres $? "running getopttestnat -c 6 "
-#./getopttestnat -c 7
-#chkres $? "running getopttestnat -c 7 "
-#./getopttestnat -c 8
-#chkres $? "running getopttestnat -c 8 "
-#./getopttestnat -c 9
-#chkres $? "running getopttestnat -c 9 "
-#./getopttestnat -c 10
-#chkres $? "running getopttestnat -c 10 "
-#rm  ./getopttestnat
-
-echo "start selfmakename"
-$CC $CFLAGS  -c $srcdir/esb.c $srcdir/dwarf_tsearchbal.c 
-chkres $? "compiling makename test"
-$CC -g $CFLAGS $srcdir/makename.c $srcdir/makename_test.c dwarf_tsearchbal.o esb.o -o selfmakename
-chkres $? "compiling selfmakename test"
-./selfmakename
-chkres $? "running selfmakename "
-rm -f selfmakename selfmakename.exe
-
-echo "start selfhelpertree"
-$CC $CFLAGS -g $srcdir/helpertree_test.c $srcdir/helpertree.c dwarf_tsearchbal.o -o selfhelpertree
-chkres $? "compiling helpertree.c selfhelpertree"
-./selfhelpertree
-chkres $? "running selfhelpertree "
-rm -f selfhelpertree selfhelpertree.exe
-
-echo "start selfmc macrocheck.c tests"
-$CC -DSELFTEST $CFLAGS -g $srcdir/macrocheck.c $srcdir/esb.c dwarf_tsearchbal.o -o selfmc
-chkres $? "compiling macrocheck.c selfmc"
-./selfmc
-chkres $? "running selfmc "
-rm -f ./selfmc selfmc.exe
-
-echo "start selfesb"
-$CC  $CFLAGS $srcdir/testesb.c $srcdir/esb.c -o selfesb
-chkres $? "compiling selfesb.c selfesb"
-./selfesb
-chkres $? "running selfesb "
-rm -f ./selfesb selfesb.exe
-
-echo "start selfsetion_bitmaps"
-$CC  $CFLAGS -g $srcdir/section_bitmaps_test.c  $srcdir/section_bitmaps.c -o selfsection_bitmaps
-chkres $? "compiling bitmaps.c section_bitmaps"
-./selfsection_bitmaps
-chkres $? "running selfsection_bitmaps "
-rm -f ./selfsection_bitmaps selfsection_bitmaps.exe
-
-echo "start selfprint_reloc"
-$CC $CFLAGS -DSELFTEST=1 -DTESTING=1 $srcdir/print_reloc_test.c esb.o -o selfprint_reloc
-chkres $? "compiling print_reloc.c selfprint_reloc"
-./selfprint_reloc
-chkres $? "running selfprint_reloc "
-rm -f ./selfprint_reloc selfprint_reloc.exe
 
 # Remove the leading two lines for windows
 # as windows dwarfdump emits two leading lines
