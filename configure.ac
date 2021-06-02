@@ -600,10 +600,10 @@ AC_MSG_RESULT([${have_regex}])
 
 AC_CONFIG_FILES([
 Makefile
-lib/libdwarf/Makefile
-src/dwarfdump/Makefile
-src/dwarfgen/Makefile
-src/dwarfexample/Makefile
+src/lib/libdwarf/Makefile
+src/bin/dwarfdump/Makefile
+src/bin/dwarfgen/Makefile
+src/bin/dwarfexample/Makefile
 test/Makefile
 doc/Makefile
 ])

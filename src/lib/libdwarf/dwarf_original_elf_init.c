@@ -31,15 +31,6 @@
 */
 
 #include "config.h"
-#undef HAVE_LIBELF_H
-#undef HAVE_LIBELF_LIBELF_H
-#ifdef HAVE_LIBELF_H
-#include <libelf.h>
-#else
-#ifdef HAVE_LIBELF_LIBELF_H
-#include <libelf/libelf.h>
-#endif
-#endif
 #include <stdio.h>
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -56,8 +47,6 @@
 
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
-#include "dwarf_elf_access.h"
-#include "dwarf_object_detector.h"
 
 
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
@@ -66,24 +55,15 @@
 #define FALSE  0
 #define TRUE   1
 
-/* New March 2017 */
+/*  No longer appropriate. No libelf. */
 int
 dwarf_elf_init_b(
-#ifndef DWARF_WITH_LIBELF
     UNUSEDARG void * elf_file_pointer,
     UNUSEDARG Dwarf_Unsigned access,
     UNUSEDARG unsigned group_number,
     UNUSEDARG Dwarf_Handler errhand,
     UNUSEDARG Dwarf_Ptr errarg,
     UNUSEDARG Dwarf_Debug * ret_dbg,
-#else
-    UNUSEDARG void * elf_file_pointer,
-    UNUSEDARG Dwarf_Unsigned access,
-    UNUSEDARG unsigned group_number,
-    UNUSEDARG Dwarf_Handler errhand,
-    UNUSEDARG Dwarf_Ptr errarg,
-    UNUSEDARG Dwarf_Debug * ret_dbg,
-#endif /* DWARF_WITH_LIBELF */
     Dwarf_Error * error)
 {
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);
@@ -91,19 +71,11 @@ dwarf_elf_init_b(
 
 int
 dwarf_elf_init(
-#ifndef DWARF_WITH_LIBELF
     UNUSEDARG void * elf_file_pointer,
     UNUSEDARG Dwarf_Unsigned access,
     UNUSEDARG Dwarf_Handler errhand,
     UNUSEDARG Dwarf_Ptr errarg,
     UNUSEDARG Dwarf_Debug * ret_dbg,
-#else
-    UNUSEDARG void * elf_file_pointer,
-    UNUSEDARG Dwarf_Unsigned access,
-    UNUSEDARG Dwarf_Handler errhand,
-    UNUSEDARG Dwarf_Ptr errarg,
-    UNUSEDARG Dwarf_Debug * ret_dbg,
-#endif
     Dwarf_Error * error)
 {
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);

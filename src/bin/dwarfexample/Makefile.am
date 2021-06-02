@@ -9,31 +9,31 @@ bin_PROGRAMS = simplereader frame1 findfuncbypc dwdebuglink
 dwarfbigend=@DWARF_BIGENDIAN@
 
 simplereader_SOURCES = simplereader.c
-simplereader_CPPFLAGS = -I$(top_srcdir)/libdwarf \
-  -I$(top_builddir)/libdwarf
+simplereader_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+  -I$(top_builddir)/src/lib/libdwarf
 simplereader_CFLAGS = $(DWARF_CFLAGS_WARN)
-simplereader_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+simplereader_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 frame1_SOURCES = frame1.c
-frame1_CPPFLAGS = -I$(top_srcdir)/libdwarf \
-  -I$(top_builddir)/libdwarf
+frame1_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+  -I$(top_builddir)/src/lib/libdwarf
 frame1_CFLAGS = $(DWARF_CFLAGS_WARN)
-frame1_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+frame1_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 findfuncbypc_SOURCES = findfuncbypc.c
-findfuncbypc_CPPFLAGS = -I$(top_srcdir)/libdwarf \
-  -I$(top_builddir)/libdwarf
+findfuncbypc_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+  -I$(top_builddir)/src/lib/libdwarf
 findfuncbypc_CFLAGS = $(DWARF_CFLAGS_WARN)
-findfuncbypc_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+findfuncbypc_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 dwdebuglink_SOURCES = dwdebuglink.c
-dwdebuglink_CPPFLAGS = -I$(top_srcdir)/libdwarf \
+dwdebuglink_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
   -I$(top_builddir)/libdwarf
 dwdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
-dwdebuglink_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+dwdebuglink_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 TESTS = runtests.sh

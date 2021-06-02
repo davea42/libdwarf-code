@@ -37,9 +37,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*  Use the system headers if they are available. */
-#undef HAVE_ELF_H
-#undef HAVE_LIBELF_H
-#undef HAVE_LIBELF_LIBELF_H
+/*  Use the system headers if they are available. */
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif /* HAVE_ELF_H */
@@ -52,6 +50,7 @@ extern "C" {
 #include <libelf/libelf.h>
 #endif /* HAVE_LIBELF_LIBELF_H */
 #endif /* HAVE_LIBELF_H */
+
 
 /* Standard Elf section types. */
 #ifndef SHT_NULL

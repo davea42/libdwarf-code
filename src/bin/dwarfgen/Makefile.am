@@ -27,13 +27,13 @@ ireptodbg.h \
 strtabdata.h
 
 # dwarfdump here is so we find dwgetopt.h
-dwarfgen_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_srcdir)/dwarfdump -I$(top_builddir)/libdwarf
+dwarfgen_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf -I$(top_srcdir)/src/lib/dwarfdump -I$(top_builddir)/src/lib/libdwarf
 
 dwarfgen_CXXFLAGS = $(DWARF_CXXFLAGS_WARN)
 
 dwarfgen_LDADD = \
-$(top_builddir)/dwarfdump/dwarfdump-dwgetopt.o \
-$(top_builddir)/libdwarf/libdwarf.la \
+$(top_builddir)/src/bin/dwarfdump/dwarfdump-dwgetopt.o \
+$(top_builddir)/src/lib/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
 EXTRA_DIST = \

@@ -62,16 +62,6 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 */
 
 #include "config.h"
-#undef DWARF_WITH_LIBELF
-#undef HAVE_LIBELF_H
-#undef HAVE_LIBELF_LIBELF_H
-#ifdef HAVE_LIBELF_H
-#include <libelf.h>
-#else
-#ifdef HAVE_LIBELF_LIBELF_H
-#include <libelf/libelf.h>
-#endif
-#endif
 #include <stdio.h>
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
@@ -99,7 +89,6 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
 #include "dwarf_object_detector.h"
-#include "dwarf_elf_access.h" /* Needed while libelf in use */
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -483,9 +472,6 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 
         switch(otype) {
         case 'E':
-#ifdef DWARF_WITH_LIBELF
-            dwarf_elf_object_access_finish(dbg->de_obj_file);
-#endif /* DWARF_WITH_LIBELF */
             break;
         case 'F':
             /* Non-libelf elf access */

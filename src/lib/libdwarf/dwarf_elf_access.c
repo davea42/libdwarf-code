@@ -31,52 +31,8 @@
 
 */
 
-/*  This file is ONLY used for libelf and with libelf
-    For */
+/*  This file is ONLY used for libelf and with libelf */
 
-#include "config.h"
-/*  We refuse to use libelf */
-#undef DWARF_WITH_LIBELF
-#ifdef DWARF_WITH_LIBELF
-#include <stdio.h>
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif /* HAVE_SYS_STAT_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* for close */
-#endif /* HAVE_UNISTD_H */
-#include <string.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-
-#define FALSE 0
-#define TRUE  1
-#include "dwarf_incl.h"
-#include "dwarf_error.h"
-#include "dwarf_elf_access.h"
-#include "dwarf_elf_rel_detector.h"
-
-/*  Include the ELF definitions depending
-    on system headers if any. */
-#include "dwarf_elf_defines.h"
-
-
-#ifdef HAVE_ELF64_GETEHDR
-extern Elf64_Ehdr *elf64_getehdr(Elf *);
-#endif
-#ifdef HAVE_ELF64_GETSHDR
-extern Elf64_Shdr *elf64_getshdr(Elf_Scn *);
-#endif
-
-#ifdef WORDS_BIGENDIAN
 #define READ_UNALIGNED_SAFE(dbg,dest, source, length) \
     do {                                             \
         Dwarf_Unsigned _ltmp = 0;                    \

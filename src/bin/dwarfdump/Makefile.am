@@ -96,19 +96,19 @@ uri.c \
 uri.h \
 warningcontrol.h
 
-dwarfdump_CPPFLAGS =  -I$(top_srcdir)/lib/libdwarf \
--I$(top_builddir)/lib/libdwarf
+dwarfdump_CPPFLAGS =  -I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_builddir)/src/lib/libdwarf
 
 dwarfdump_CFLAGS = $(DWARF_CFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfdump" 
 
 dwarfdump_LDADD = \
-$(top_builddir)/lib/libdwarf/libdwarf.la \
+$(top_builddir)/src/lib/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
 TESTS = runtests.sh
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
-dwarfdumpdevdir = $(top_builddir)/src/dwarfdump
+dwarfdumpdevdir = $(top_builddir)/src/bin/dwarfdump
 dwarfdumpdev_DATA = dwarfdump.conf
 
 ### The tests go elsewhere.

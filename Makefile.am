@@ -3,21 +3,14 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = lib/libdwarf src/dwarfdump
+SUBDIRS = src/lib/libdwarf src/bin/dwarfdump
 
 if HAVE_DWARFGEN
-SUBDIRS += src/dwarfgen
+SUBDIRS += src/bin/dwarfgen
 endif
 
-###if HAVE_LIBELF
-###SUBDIRS += dwarfgen
-###endif
-###if HAVE_LIBELF_LIBELF
-###SUBDIRS += dwarfgen
-###endif
-
 if HAVE_DWARFEXAMPLE
-SUBDIRS += src/dwarfexample
+SUBDIRS += src/bin/dwarfexample
 endif
 
 DISTCLEANFILES = 
@@ -42,7 +35,7 @@ m4/ltversion.m4 \
 m4/lt~obsolete.m4 \
 missing 
 
-###$(distdir).tar.gz \
+###$(distdir).tar.gz 
 ###$(distdir).tar.xz
 
 EXTRA_DIST = \

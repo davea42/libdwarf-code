@@ -55,14 +55,6 @@
 #include "dwarf_harmless.h"
 #include "dwarfstring.h"
 
-/* For consistency, use the HAVE_LIBELF_H symbol */
-#ifdef HAVE_LIBELF_H
-#include <libelf.h>
-#else
-#ifdef HAVE_LIBELF_LIBELF_H
-#include <libelf/libelf.h>
-#endif /* HAVE_LIBELF_LIBELF_H */
-#endif /* HAVE_LIBELF_H */
 #ifdef HAVE_ZLIB_H
 #include "zlib.h"
 #endif

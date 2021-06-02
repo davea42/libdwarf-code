@@ -35,6 +35,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
+#undef DWARF_WITH_LIBELF
 #ifdef DWARF_WITH_LIBELF
 #ifdef HAVE_ELF_H /* does includes of elf.h libelf.h here. */
 #include <elf.h>
@@ -52,6 +53,7 @@
 #include <sys/elf_SPARC.h>
 #include <sys/elf_386.h>
 #endif
+#undef DWARF_WITH_LIBELF
 
 /* The target address is given: the place in the source integer
    is to be determined.

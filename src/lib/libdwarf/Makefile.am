@@ -26,7 +26,6 @@ dwarf_debug_names.h \
 dwarf_debug_sup.c \
 dwarf_dsc.c \
 dwarf_dsc.h \
-dwarf_elf_access.c \
 dwarf_elf_access.h \
 dwarf_elf_defines.h \
 dwarf_elf_load_headers.c \
@@ -164,8 +163,6 @@ pro_opaque.h \
 pro_pubnames.c \
 pro_reloc.c \
 pro_reloc.h \
-pro_reloc_stream.c \
-pro_reloc_stream.h \
 pro_reloc_symbolic.c \
 pro_reloc_symbolic.h \
 pro_section.c \
@@ -186,10 +183,10 @@ TESTS = $(check_PROGRAMS) $(check_TESTS)
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 
 
-include_HEADERS = $(top_srcdir)/lib/libdwarf/dwarf.h  \
-   $(top_srcdir)/lib/libdwarf/libdwarf.h
+include_HEADERS = $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
+   $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 
-libdwarfdevdir = $(datadir)/lib/libdwarf/libdwarf-devel
+libdwarfdevdir = $(datadir)/src/lib/libdwarf/libdwarf-devel
 libdwarfdev_DATA = 
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
@@ -199,14 +196,14 @@ test_dwarfstring_SOURCES = test_dwarfstring.c \
    dwarfstring.h dwarfstring.c
 test_dwarfstring_CFLAGS = $(CFLAGS_WARN)
 test_dwarfstring_CPPFLAGS = \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
    pro_log_extra_flag_strings.c \
    dwarfstring.h dwarfstring.c
 test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 test_linkedtopath_SOURCES = test_linkedtopath.c \
    dwarfstring.h dwarfstring.c \
@@ -214,7 +211,7 @@ test_linkedtopath_SOURCES = test_linkedtopath.c \
    dwarf_error.h 
 test_linkedtopath_CFLAGS = $(RO_CFLAGS_WARN) -DTESTING
 test_linkedtopath_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 # Just ensures the headers usable, no C source errors.
 test_headersok_SOURCES = test_headersok.c \
@@ -223,7 +220,7 @@ test_headersok_SOURCES = test_headersok.c \
     dwarf_reloc_ppc64.h  dwarf_reloc_x86_64.h
 test_headersok_CFLAGS = $(RO_CFLAGS_WARN)
 test_headersok_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 check_TESTS = testdebuglink.sh runtests.sh
 
