@@ -8,7 +8,7 @@ then
 else
   top_srcdir=$DWTOPSRCDIR
 fi
-srcdir=$top_srcdir/dwarfdump
+srcdir=$top_srcdir/test
 if [ x"$DWCOMPILERFLAGS" = 'x' ]
 then
   CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra"
@@ -92,8 +92,9 @@ then
 else
   textlim=700
 fi
-echo "./dwarfdump -a -vvv  $f | head -n $textlim > $t "
-./dwarfdump -a  -vvv $f | head -n $textlim > $t
+dd=../src/bin/dwarfdump/dwarfdump
+echo "$dd -a -vvv  $f | head -n $textlim > $t "
+$dd -a  -vvv $f | head -n $textlim > $t
 chkres $? "Running dwarfdump $f output to $t base $b"
 if [ x$win = "xy" ]
 then
@@ -122,8 +123,8 @@ f=$srcdir/testuriLE64ELf.obj
 b=$srcdir/testuriLE64ELf.base
 t=junk.testuriLE64ELf.base
 echo "start  dwarfdump sanity check on $f"
-./dwarfdump -vvv -a $f | head -n $textlim > $t
-chkres $? "running ./dwarfdump $f otuput to $t base $b "
+$dd -vvv -a $f | head -n $textlim > $t
+chkres $? "running $dd $f output to $t base $b "
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -150,15 +151,15 @@ f=$srcdir/test-mach-o-32.dSYM
 b=$srcdir/test-mach-o-32.base
 t=junk.test-mach-o-32.base
 echo "start  dwarfdump sanity check on $f"
-./dwarfdump $f | head -n $textlim > $t
-chkres $? "FAIL dwarfdump/runtests.sh ./dwarfdump $f to $t base $b "
+$dd $f | head -n $textlim > $t
+chkres $? "FAIL dwarfdump/runtests.sh $dd $f to $t base $b "
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
   droptwoifwin $t
 fi
 chkres $? "Running dwarfdump on $f"
-echo "if update required, mv $top_blddir/dwarfdump/$t $b"
+echo "if update required, mv $top_blddir/$t $b"
 fixlasttime $t
 which dos2unix
 if [ $? -eq 0 ]

@@ -52,31 +52,40 @@ test_headersok_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 test_dwgetopt_SOURCES = getopttest.c \
+    $(top_srcdir)/src/bin/dwarfdump/dwgetopt.h \
     $(top_srcdir)/src/bin/dwarfdump/dwgetopt.c
-test_dwgetoptopt_CFLAGS = $(RO_CFLAGS_WARN)
-test_dwgetoptopt_CPPFLAGS =  -DTESTING \
+test_dwgetopt_CFLAGS = $(RO_CFLAGS_WARN)
+test_dwgetopt_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/bin/dwarfdump
 
 test_makenametest_SOURCES = makename_test.c \
     $(top_srcdir)/src/bin/dwarfdump/esb.c \
+    $(top_srcdir)/src/bin/dwarfdump/makename.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_makenametest_CFLAGS = $(RO_CFLAGS_WARN)
 test_makenametest_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/bin/dwarfdump
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
 
 test_helpertree_SOURCES = helpertree_test.c \
     $(top_srcdir)/src/bin/dwarfdump/helpertree.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c 
 test_helpertree_FLAGS = $(RO_CFLAGS_WARN)
 test_helpertree_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/bin/dwarfdump
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
 
-test_macrocheck_SOURCES = $(top_srcdir)/src/bin/macrocheck.c.c \
+test_macrocheck_SOURCES = \
+    $(top_srcdir)/src/bin/dwarfdump/macrocheck.c \
     $(top_srcdir)/src/bin/dwarfdump/esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c 
 test_macrocheck_FLAGS = $(RO_CFLAGS_WARN)
 test_macrocheck_CPPFLAGS =  -DSELFTEST \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/bin/dwarfdump
+-I$(top_srcdir) -I$(top_builddir) \ 
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
 
 test_testesb_SOURCES = testesb.c \
     $(top_srcdir)/src/bin/dwarfdump/esb.c \
@@ -89,7 +98,9 @@ test_sectionbitmaps_SOURCES = section_bitmaps_test.c \
     $(top_srcdir)/src/bin/dwarfdump/section_bitmaps.c
 test_sectionbitmaps_FLAGS = $(RO_CFLAGS_WARN)
 test_sectionbitmaps_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/bin/dwarfdump
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
 
 
 TESTS = runtestdd.sh
