@@ -1,3 +1,4 @@
+[![Github Build status](https://github.com/vtorri/libdwarf-code/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/vtorri/libdwarf-code/actions?query=workflow%3A%22GitHub+CI%22)
 [![Travis Build Status](https://travis-ci.org/dvirtz/libdwarf.svg?branch=cmake)](https://travis-ci.org/dvirtz/libdwarf)
 [![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/oxh8pg7hsuav2jrl?svg=true)](https://ci.appveyor.com/project/dvirtz/libdwarf)
 
