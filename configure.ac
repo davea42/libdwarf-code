@@ -185,6 +185,9 @@ release_info="v_rel"
 AC_SUBST([version_info])
 AC_SUBST([release_info])
 
+VMAJ=v_maj
+AC_SUBST([VMAJ])
+
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CC_C_O
@@ -205,12 +208,19 @@ AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h])
 AC_CHECK_HEADERS([windows.h])
 
+requirements_libdwarf_pc=
+requirements_libdwarf_libs=
+
 AC_CHECK_HEADERS([zlib.h])
 AS_IF(
     [test "x${ac_cv_header_zlib_h}" = "xyes"],
     [ have_pc_zlib="yes" ; echo "have zlib" ; 
-      DWARF_LIBS="${DWARF_LIBS} -lz" ],
+      DWARF_LIBS="${DWARF_LIBS} -lz" ;
+      requirements_libdwarf_libs=-lz],
     [ have_pc_zlib="no" ; echo "no zlib" ])
+
+AC_SUBST([requirements_libdwarf_pc])
+AC_SUBST([requirements_libdwarf_libs])
 
 ### for use in casts to uint to avoid 32bit warnings.
 ### Also needed by C++ cstdint
@@ -606,6 +616,7 @@ src/dwarfgen/Makefile
 src/dwarfexample/Makefile
 test/Makefile
 doc/Makefile
+libdwarf.pc
 ])
 
 AC_OUTPUT
