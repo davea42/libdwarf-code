@@ -1,3 +1,7 @@
+2021-05-31 David Anderson
+    * buildandreleasetest.sh: Now nows the semantic
+      versioning version syntax so it knows the version
+      for producing...things.
 2021-05-28 David Anderson
     * UPDATEDWARFDUMPVERSION.sh,baseconfig.h,ddbuild.sh,
       fixlibdwarfelf.sh,libbuild.sh: Comments added

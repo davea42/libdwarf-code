@@ -1,0 +1,209 @@
+2021-05-31  David Anderson
+    * moved all .mm and .pdf and bldpdf.sh to doc directory
+2021-05-31  David Anderson
+    * test_linktopath.c: Fixed omission broke
+      windows make check.
+2021-05-28  David Anderson
+    * libdwarf_version.h: Updated version string.
+    * dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,
+      dwarf_names.c:  Regenerated.
+2021-05-25  David Anderson
+    * dwarf_crc32.c: Added a comment for the Windows case
+      in case it will help someone. I have no way to
+      really test the alternative #include <windows.h>.
+2021-05-25  David Anderson
+    * dwarf.h,dwarf_errmsg_list.h,dwarf_line.h,
+      dwarf_line_table_reader_common.h: Removed trailing
+      whitespace, fixed indents.
+    * dwarf_leb.c,dwarf_leb_test.c,dwarf_line.c,dwarf_query.c:
+      Fixed indents and removed trailing whitespace.
+      Fixed one too-long line by splitting to 2 lines.
+2021-05-20  David Anderson
+    * dwarf_line.h: Modified libdwarf-internal functions
+      for LNCT handlng. Added a couple new functions 
+      for that as well. Added new fields for reporting the DW_LNCT
+      extensions beyond DWARF5.
+    * dwarf_line.c: New helper functions to report properly
+      on errors in DW_LNCT forms.
+      Completed handling of DWARF5 DW_LNCT and its FORMs.
+    * dwarf_line_table_reader_common.h: Modified calls
+      of the LNCT reading/checking for completeness.
+      Moved some array/member refs to make the calls
+      to _dwarf_decode_line_udata_form etc (all to do
+      with DW_LNCT values).
+    * dwarf_print_lines.c: Now prints the DW_LNCT extensions.
+2021-05-18  David Anderson
+    * dwarf_errmsg_list.h, libdwarf.h.in:
+      Add error DW_DLE_NEGATIVE_SIZE.
+      generated_libdwarf.h.in: Regenerated.
+    * dwarf_form.c: Properly set secend in
+      _dwarf_extract_local_debug_str_string_given_offset
+      for DW_FORM_line_strp.
+    * dwarf_query.c: In _dwarf_die_attr_unsigned_constant()
+      allow DW_FORM_implicit_const and add some
+      comments on small functions.
+      Return error and DW_DLE_NEGATIVE_SIZE in case
+      the form is a negative implicit const.
+2021-05-18  David Anderson
+    * pdfbld.sh: Comment out the build of the rearranged
+      (placing the table of contents at the front)
+      libdwarf2.1.pdf as that version is 20MiB!
+    * CMakeLists.txt: Moved the install  of libdwarf stuff
+      here from ../CMakeLists.txt so it works for cmake before
+      and after cmake 3.13.
+      Repair an old ommission in an install that
+      modern cmake seemingly did not care if
+      repaired or not.
+2021-05-15  David Anderson
+    * libdwarf2.1.mm: Added additional explanation
+      of an example call to the library  in the 
+      Dwarf_Error section. Now rev 3.27.
+    * libdwarf2.1.pdf: Regenerated. Version 3.27.
+2021-05-13  David Anderson
+    * test_dwarfstring.c,test_headersok.c,test_linkedtopath.c:
+      Changes made to avoid compiler warnings.
+2021-05-11  David Anderson
+    * libdwarf2.1.mm: Corrected errors in the formatting
+      of a couple input lines to get consistency.
+      the output in the pdf doex not change. Ver 3.26
+    * libdwarf2.1.pdf: Regenerated as 3.26
+2021-04-20  David Anderson
+    * dwarf_leb.c: Now reads uleb/sleb allowing
+      zeroes padding at the end.
+    * dwarf_leb_test.c: Additional tests added with
+      constructed examples with zeroes padding and
+      comments explaining how it all works. See
+      tests v5, v6, and v7.
+2021-04-20  David Anderson
+    * libdwarf2.1.pdf: Regenerated, no change intended.
+    * pdfbld.sh: Now build the consumer both in
+      standard and bloated form (we only ship the
+      standard form).
+2021-03-07  David Anderson
+    * pdfbld.sh: Abandon the rearrangement  of the pdf,
+      it bloated the pdf from 600KB to over 14MB.
+      and would double the size of a release.
+    * libdwarf2.1.pdf: Regenerated.
+2021-03-05  David Anderson
+    * libdwarf_version.h: Updated version string.
+    * dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,
+      dwarf_names.c:  Regenerated.
+2021-02-24  David Anderson
+    * dwarf.h: Now with the properly spelled _ghs_ names.
+    * dwarf_names.c,dwarf_names_enum.h: Regenerated
+      with the properly 
+      spelled _ghs_ names.
+2021-02-19  David Anderson
+    * dwarf.h: Many DWARF-extension name/value pairs were made
+      available to me, so those are now in dwarf.h. 
+    * dwarf_abbrev.c: An error issue with a corrupted
+      object lead to an errormessage that read very
+      confusingly.  I've updated the message to be
+      a bit clearer.
+    * dwarf_names.c,dwarf_names_enum.h: Regenerated.
+    * dwarf_query.c(dw_get_special_offset): Updated 
+      so we get some additional form classes report d
+      correctly on certain DW_AT extensions to the
+      standard..
+    * gennames.c: More names, so a constant used
+      to generate .c and .h files needed to go 300->350.
+      The array is only used to build C source code and
+      does not appear in libdwarf or dwarfdump.
+2021-02-16  David Anderson
+    * dwarf_query.c: Removed a () that was accidental.
+    * dwarf_form_class_names.c: Removed a trailing space.
+2021-02-15  David Anderson
+    * libdwarf_version.h: Updated version string.
+    * dwarf_names.h,dwarf_names_enum.h,dwarf_names_new.h,
+      dwarf_names.c:  Regenerated.
+2021-02-14  David Anderson
+    * dwarf_form_class_names: Fixed whitespace issue.
+    * libdwarf.h.in: Revised the Form_Class enum
+      for better readability.
+    * generated_libdwarf.h.in: Regenerated.
+2021-02-13  David Anderson
+    * dwarf_die_deliv.c: Fixing indents and trailing whitespace.
+      Removed a couple blank lines.
+    * dwarf_find_sigref.c,dwarf_line.c: Fixing indents
+      and trailing whitespace.
+2021-02-12  David Anderson
+    * dwarf_find_sigref.c: Deleted two pointless
+      blank lines.
+    * libdwarf.h.in: The dwarf_find_die_given_sig8 prototype
+      showed actual argument names. Now those names hidden
+      in comments.
+    * generates_libdwarf.h.in: Regenerated.
+2021-02-06  David Anderson
+    * CMakeLists.txt: Adding dwarf_find_sigref.c which follows
+      DW_FORM_ref_sig8 to report targets.
+    * Makefile.am: Adding dwarf_find_sigref.c which follows
+      DW_FORM_ref_sig8 to report targets.
+    * Makefile.in: Regenerated.
+    * dwarf_abbrev.c: Deleted a blank line.
+    * dwarf_die_deliv.c: Additional minor refactoring for clarity
+      and reuse.
+    * dwarf_find_sigref.c: Now correctly finds the ref_sig8
+      targets.  Does not yet reference any tied-file.
+    * dwarf_line.c: Minor refactoring to focus on the 
+      code flow, but also allowing (and reporting)
+      when a compiler erroneously used DW_FORM_addr
+      on DW_AT_stmt_list.
+    * dwarf_opaque.h: refactored new CU context
+      functions now availablt
+      to dwarf_find_sigref.c.
+    * libdwarf.h.in: New function dwarf_find_die_given_sig8()
+      lets callers follow the references.
+      Not yet documented in libdwarf2.1.mm.
+    * generated_libdwarf.h.in: Regenerated.
+2021-02-04  David Anderson
+    * dwarf_die_deliv.c: Refactored the code creating
+      CU_Context records, removing duplicated code to
+      three new small functions: calculate_next_cu_context_offset(),
+      create_a_new_cu_context_record_on_list() and
+      load_die_containing_section(). Much easier to understand
+      the flow now. 
+    * dwarf_form.c: Clarified a comment.
+    * dwarf_opaque.h: Corrected a comment about cc_unit_type
+      field.
+    * dwarf_tied.c: Corrected commentary about reading CUs.
+2021-02-02  David Anderson
+    * libdwarf2.1.mm: Rev 3.25. Documents
+      dwarf_get_FORM_CLASS_name().
+    * libdwarf2.1.pdf: Rev 3.25. Regenerated
+2021-02-02  David Anderson
+    * dwarf_form_class_names.c: new. Lets library clients
+      print the name of any enum Dwarf_Form_Class variable
+      by calling dwarf_get_FORM_CLASS name().
+    * CMakeLists.txt,Makefile.am: Now builds
+      dwarf_form_class_names.c.
+    * Makefile.in:Regenerated.
+    * libdwarf.h.in: Adds prototype for
+      dwarf_get_FORM_CLASS name().
+    * generated_libdwarf.h.in: Regenerated.
+2021-01-31  David Anderson
+    * dwarf_form.c(dwarf_addr_form_is_indexed): For better
+      readability a chain of if-statements is now a switch/case.
+2021-01-28  David Anderson
+    * checkexamples.c,crc32.c,dwarf_alloc.c,dwarf_arange.c,
+      dwarf_debuglink.c,dwarf_die_deli,.c,dwarf_elf_access.c,
+      dwarf_elf_load_headers.c,dwarf_elfread.c,dwarf_form.c,
+      dwarf_frame.c,dwarf_frame2.c,dwarf_global.c,dwarf_gnu_index.c,
+      dwarf_init_finish.c,dwarf_line.c,dwarf_loc.c,
+      dwarf_locationop_read.c,dwarf_macro5.c,dwarf_object_detector.c,
+      dwarf_query.c,dwarf_ranges.c,dwarf_stringsection.c,
+      dwarf_tied_test.c,dwarf_tsearchhash.c,dwarf_util.c,
+      dwarf_xu_index.c,dwarfstring.c,dwgetopt.c,pro_die.c,
+      pro_expr.c,pro_forms.c,pro_frame.c,pro_funcs.c,pro_init.c,
+      pro_log_extra_flag_strings.c,test_linkedtopath.c:
+      Fix indents.
+2021-01-28  David Anderson
+    * libdwarf2p.1.mm: Rev 1.53. Added a few words
+      about relocating DW_OP_addr data: Such relocation
+      generation only works right
+      if the DW_OP_addr is the very first DW_OP
+      in the expression.
+    * libdwarf2p.1.pdf: Rev 1.53. Regenerated.
+    * libdwarf2.1.mm: Rev 3.24. A font-marker
+      was missing a \ so from page 252 the fonts
+      were mixed up.
+    * libdwarf2.1.pdf: Rev 3.24. Regenerated

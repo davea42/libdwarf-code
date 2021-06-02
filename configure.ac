@@ -2,12 +2,10 @@
 ###This code is public domain and can be freely used or copied.
 
 dnl defines the version name of  the libdwarf.so
-m4_define([v_maj], [1])
-m4_define([v_min], [0])
+m4_define([v_maj], [0])
+m4_define([v_min], [1])
 m4_define([v_mic], [0])
-###m4_define([v_ver], [v_maj.v_min.v_mic])
-###Returning to older version, .so.1
-m4_define([v_ver], [v_maj])
+m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([v_rel], [])
 m4_define([lt_cur], [m4_eval(v_maj + v_min)])
@@ -16,12 +14,11 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20210528])
-###Also set version in CMakeLists.txt
+###Also SET (VERSION ..) in CMakeLists.txt
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
-AC_INIT([libdwarf], [v_date], [libdwarf-list -at- linuxmail -dot- org])
+AC_INIT([libdwarf], [v_ver], [libdwarf-list -at- linuxmail -dot- org])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
@@ -54,7 +51,7 @@ AC_ARG_ENABLE([dwarfexample],
 AM_CONDITIONAL([HAVE_DWARFEXAMPLE], [test "x${enable_dwarfexample}" = "xyes"])
 
 ### Solely for checking libdwarf allocation counts,sizes
-### Do not use without a good reason . See libdwarf/dwarf_alloc.c
+### Do not use without a good reason . See lib/libdwarf/dwarf_alloc.c
 AC_ARG_ENABLE(globalallocsums,AS_HELP_STRING([--enable-global-alloc-sums],
         [Enables some allocation counting in dwarf_alloc.c (default is NO)]),
         [ AC_DEFINE([HAVE_GLOBAL_ALLOC_SUMS],[1],
@@ -222,27 +219,25 @@ AC_TYPE_INTPTR_T
 ### Now we know uintptr_t is either in stdint.h or
 ### is defined in config.h by configure.
 
-# test Elf headers in the preprocessor path search
+# test Elf headers in the preprocessor path search in case dwarfgen
 CPPFLAGS_save=${CPPFLAGS}
 ### we set $dwarf_with_libelf above.
 if test  $dwarf_with_libelf = "yes" ; then
   AC_CHECK_HEADERS([sgidefs.h])
   AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
   AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
-  
-  ### if no libelf.h add no -lelf and turn off 
+ 
+  ### if no libelf.h add no -lelf and turn off
   ### libelf recognition.
   AS_IF([test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes" ],
     [ dwarf_with_libelf="no"
       echo "no libelf headers, no libelf" ],
-    [ DWARF_LIBS="${DWARF_LIBS} -lelf"  
-      dwarf_with_libelf="yes" 
+    [ DWARF_LIBS="${DWARF_LIBS} -lelf"
+      dwarf_with_libelf="yes"
       echo "Allowing use of libelf."
       AC_DEFINE([DWARF_WITH_LIBELF],[1],
-        [Set to 1 as we are building with libelf]) 
+        [Set to 1 as we are building with libelf])
     ])
-
-
 ### begin checking for Elf structs
 # Elf64_Rela in elf.h
 AC_LINK_IFELSE(
@@ -302,7 +297,6 @@ p.r_offset = 1;
 
 AC_MSG_CHECKING([for Elf64_Rela in elf.h])
 AC_MSG_RESULT([${have_elf64_rela}])
-
 # Elf64_Rel in elf.h
 AC_LINK_IFELSE(
     [AC_LANG_PROGRAM(
@@ -342,6 +336,7 @@ AS_IF(
 #ifdef HAVE_LIBELF_H
 # include <libelf.h>
 #endif
+
 #ifdef HAVE_LIBELF_LIBELF_H
 # include <libelf/libelf.h>
 #endif
@@ -421,7 +416,6 @@ p.st_info = 1;
 AC_MSG_CHECKING([for Elf64_Sym in elf.h])
 AC_MSG_RESULT([${have_elf64_sym}])
 ### end checking for Elf structs
-
 ### Checks for Elf structures
 # test if struct _Elf is used instead of struct Elf
 AC_COMPILE_IFELSE(
@@ -452,6 +446,8 @@ struct _Elf *a = 0;
 
 AC_MSG_CHECKING([whether struct _Elf is used])
 AC_MSG_RESULT([${have_struct__elf}])
+AC_MSG_CHECKING([whether struct _Elf is used])
+AC_MSG_RESULT([${have_struct__elf}])
 else
   ### end where dwarf_with_libelf == "no" via
   ### --disable-libelf
@@ -462,6 +458,9 @@ else
   have_elf64_sym="no"
 fi
 AC_SUBST([struct_elf])
+
+
+
 
 ### Checks for compiler characteristics
 
@@ -551,36 +550,8 @@ AC_MSG_RESULT([${enable_sanitize}])
 
 AC_FUNC_ALLOCA
 
-if test  $dwarf_with_libelf = "yes" ; then
-# elf64_getehdr
-CPPFLAGS_save=${CPPFLAGS}
-CPPFLAGS="${CPPFLAGS}"
-LIBS_save=${LIBS}
-LIBS="${LIBS} ${DWARF_LIBS}"
-AC_SEARCH_LIBS(
-    [elf64_getehdr], [elf],
-    [
-     have_getehdr="yes"
-     AC_DEFINE(
-         [HAVE_ELF64_GETEHDR], [1],
-	 [Set to 1 if the elf64_getehdr function is in libelf.])
-     ],
-     [have_getehdr="no"])
-AC_SEARCH_LIBS(
-    [elf64_getshdr], [elf],
-    [
-     have_getshdr="yes"
-     AC_DEFINE(
-         [HAVE_ELF64_GETSHDR], [1],
-	 [Set to 1 if the elf64_getshdr function is in libelf.])
-     ],
-     [have_getshdr="no"])
-CPPFLAGS=${CPPFLAGS_save}
-LIBS=${LIBS_save}
-else
-  have_getehdr="no"
-  have_getshdr="no"
-fi
+have_getehdr="no"
+have_getshdr="no"
 
 AS_IF(
     [test "x${have_pc_zlib}" = "xno"  -a "x${have_zlib}" = "xyes"],
@@ -629,18 +600,13 @@ AC_MSG_RESULT([${have_regex}])
 
 AC_CONFIG_FILES([
 Makefile
-libdwarf/Makefile
-dwarfdump/Makefile
-dwarfgen/Makefile
-dwarfexample/Makefile
+lib/libdwarf/Makefile
+src/dwarfdump/Makefile
+src/dwarfgen/Makefile
+src/dwarfexample/Makefile
+test/Makefile
+doc/Makefile
 ])
-
-### libdwarf needs to be adjusted to support struct Elf
-### or struct _Elf, whichever the system defines in libelf.
-AC_CONFIG_COMMANDS([libdwarf/libdwarf.h],
-  [ sh $src/scripts/fixlibdwarfelf.sh $haself $src $top ],
-  [ haself=${have_struct__elf}  top=${ac_pwd}   src=${srcdir} ]  )
-
 
 AC_OUTPUT
 
@@ -672,8 +638,6 @@ echo "    Windows path corr..: ${enable_windowspath}"
 echo "    Nonstandardprintf..: ${enable_nonstandardprintf}"
 echo "    Custom libelf......: ${enable_havecustomlibelf}"
 echo "  dwarfdump............: always"
-echo "    elf64_getehdr......: ${have_getehdr}"
-echo "    Elf64_Rel (r_info).: ${have_elf64_rel}"
 echo "    regex..............: ${have_regex}"
 echo "  dwarfgen.............: ${enable_dwarfgen}"
 echo "  dwarfexample.........: ${enable_dwarfexample}"

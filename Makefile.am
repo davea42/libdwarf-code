@@ -3,10 +3,10 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libdwarf dwarfdump
+SUBDIRS = lib/libdwarf src/dwarfdump
 
 if HAVE_DWARFGEN
-SUBDIRS += dwarfgen
+SUBDIRS += src/dwarfgen
 endif
 
 ###if HAVE_LIBELF
@@ -17,11 +17,10 @@ endif
 ###endif
 
 if HAVE_DWARFEXAMPLE
-SUBDIRS += dwarfexample
+SUBDIRS += src/dwarfexample
 endif
 
-DISTCLEANFILES = \
-libdwarf/libdwarf.h
+DISTCLEANFILES = 
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -41,9 +40,10 @@ m4/ltoptions.m4 \
 m4/ltsugar.m4 \
 m4/ltversion.m4 \
 m4/lt~obsolete.m4 \
-missing \
-$(distdir).tar.gz \
-$(distdir).tar.xz
+missing 
+
+###$(distdir).tar.gz \
+###$(distdir).tar.xz
 
 EXTRA_DIST = \
 appveyor.yml \
@@ -53,7 +53,7 @@ ChangeLog2018 \
 cmake \
 CMakeLists.txt \
 codingstyle.txt \
-config.h.in.cmake \
+cmake/config.h.cmake \
 dwarfdump/runtests.sh \
 libdwarf/runtests.sh \
 README.md \
