@@ -20,6 +20,9 @@ if HAVE_DWARFEXAMPLE
 SUBDIRS += src/dwarfexample
 endif
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libdwarf.pc
+
 DISTCLEANFILES = 
 
 MAINTAINERCLEANFILES = \
@@ -57,6 +60,7 @@ cmake/config.h.cmake \
 dwarfdump/runtests.sh \
 libdwarf/runtests.sh \
 README.md \
+libdwarf.pc.in \
 scripts/baseconfig.h  \
 scripts/buildandreleasetest.sh \
 scripts/buildstandardsource.sh \
