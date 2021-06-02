@@ -147,13 +147,13 @@ AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
         ],
         [enable_nonstandardprintf="no"])
 
-AC_ARG_ENABLE(havecustomlibelf,AS_HELP_STRING([--enable-havecustomlibelf],
-        [including a custom libelf library (default is NO)]),
-        [ AC_DEFINE([HAVE_CUSTOM_LIBELF],[1],
-           [Define 1 if including a custom libelf library] )
-           [enable_havecustomlibelf="yes"]
-        ],
-        [enable_havecustomlibelf="no"])
+##AC_ARG_ENABLE(havecustomlibelf,AS_HELP_STRING([--enable-havecustomlibelf],
+##       [including a custom libelf library (default is NO)]),
+##        [ AC_DEFINE([HAVE_CUSTOM_LIBELF],[1],
+##           [Define 1 if including a custom libelf library] )
+##           [enable_havecustomlibelf="yes"]
+##        ],
+##        [enable_havecustomlibelf="no"])
 
 ### Default options with respect to host
 
@@ -219,9 +219,15 @@ AC_TYPE_INTPTR_T
 ### Now we know uintptr_t is either in stdint.h or
 ### is defined in config.h by configure.
 
-# test Elf headers in the preprocessor path search in case dwarfgen
+# test Elf headers in the preprocessor path search
+# We need Elf.h defines like Ehdr32 and relocations
+# to read them with our local elf-section reader code.
+# On Solaris libelf.h has relocation defines we need.
+# so we check for libelf.h too.
 CPPFLAGS_save=${CPPFLAGS}
+# dwarfgen needs an actual libelf else it cannot be built.
 ### we set $dwarf_with_libelf above.
+
 if test  $dwarf_with_libelf = "yes" ; then
   AC_CHECK_HEADERS([sgidefs.h])
   AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
