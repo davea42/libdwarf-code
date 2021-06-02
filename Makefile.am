@@ -3,7 +3,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src/lib/libdwarf src/bin/dwarfdump
+SUBDIRS = src/lib/libdwarf src/bin/dwarfdump test
 
 if HAVE_DWARFGEN
 SUBDIRS += src/bin/dwarfgen
@@ -50,8 +50,6 @@ cmake \
 CMakeLists.txt \
 codingstyle.txt \
 cmake/config.h.cmake \
-dwarfdump/runtests.sh \
-libdwarf/runtests.sh \
 README.md \
 libdwarf.pc.in \
 scripts/baseconfig.h  \
@@ -63,8 +61,6 @@ scripts/ChangeLog2019 \
 scripts/ChangeLog2020 \
 scripts/CLEANUP \
 scripts/ddbuild.sh  \
-scripts/FIX-CONFIGURE-TIMES \
-scripts/fixlibdwarfelf.sh \
 scripts/libbuild.sh \
 scripts/UPDATEDWARFDUMPVERSION.sh \
 scripts/UPD.awk \

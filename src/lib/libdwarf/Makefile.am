@@ -194,40 +194,6 @@ $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 libdwarfdevdir = $(datadir)/src/lib/libdwarf/libdwarf-devel
 libdwarfdev_DATA = 
 
-check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
-  test_linkedtopath test_headersok
-
-test_dwarfstring_SOURCES = test_dwarfstring.c \
-   dwarfstring.h dwarfstring.c
-test_dwarfstring_CFLAGS = $(CFLAGS_WARN)
-test_dwarfstring_CPPFLAGS = \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
-
-test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
-   pro_log_extra_flag_strings.c \
-   dwarfstring.h dwarfstring.c
-test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN)
-test_extra_flag_strings_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
-
-test_linkedtopath_SOURCES = test_linkedtopath.c \
-   dwarfstring.h dwarfstring.c \
-   dwarf_debuglink.h dwarf_debuglink.c \
-   dwarf_error.h 
-test_linkedtopath_CFLAGS = $(RO_CFLAGS_WARN) -DTESTING
-test_linkedtopath_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
-
-# Just ensures the headers usable, no C source errors.
-test_headersok_SOURCES = test_headersok.c \
-    dwarf_reloc_386.h  dwarf_reloc_mips.h  \
-    dwarf_reloc_ppc.h dwarf_reloc_arm.h    \
-    dwarf_reloc_ppc64.h  dwarf_reloc_x86_64.h
-test_headersok_CFLAGS = $(RO_CFLAGS_WARN)
-test_headersok_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
-
-check_TESTS = testdebuglink.sh runtests.sh
 
 EXTRA_DIST = \
 COPYING \
@@ -250,21 +216,14 @@ ChangeLog2017 \
 ChangeLog2018 \
 CODINGSTYLE \
 baseline.ltp  \
-dwarf_leb_test.c \
-dwarf_tied_test.c \
 dwarf_names_new.h \
 dwarf_names_enum.h \
 gennames.c \
 dwarf_test_errmsg_list.c \
-libdwarf2.1.mm \
-libdwarf2p.1.mm \
-mips_extensions.mm \
-mips_extensions.pdf  \
 dwgetopt.h \
 dwgetopt.c \
 CMakeLists.txt \
 cmake/libdwarf-config.cmake \
-testdebuglink.sh \
 pdfbld.sh \
 NEWS \
 README \
