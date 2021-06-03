@@ -7,7 +7,7 @@
    To ensure uses of DW_PR_DUx or DW_PR_DSx look the way you want
    ensure the DW_PR_XZEROS define as you want it.
 */
-ifndef LIBDWARF_PRIVATE_H
+#ifndef LIBDWARF_PRIVATE_H
 #define LIBDWARF_PRIVATE_H
 #define DW_PR_XZEROS "08"
 
