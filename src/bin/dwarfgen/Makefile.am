@@ -50,7 +50,6 @@ ChangeLog2018 \
 CMakeLists.txt \
 NEWS \
 README \
-dwarfgen.1 \
 TESTmallocfail \
 $(dwarfgen_DATA) \
 dwarf-generator.txt \
