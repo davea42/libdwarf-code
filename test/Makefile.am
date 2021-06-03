@@ -83,7 +83,7 @@ test_macrocheck_SOURCES = \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c 
 test_macrocheck_FLAGS = $(RO_CFLAGS_WARN)
 test_macrocheck_CPPFLAGS =  -DSELFTEST \
--I$(top_srcdir) -I$(top_builddir) \ 
+-I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 

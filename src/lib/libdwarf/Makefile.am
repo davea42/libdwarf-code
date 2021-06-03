@@ -182,18 +182,13 @@ libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_
 TESTS = $(check_PROGRAMS) $(check_TESTS)
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 
-
-include_HEADERS = $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
-   $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 libdwarfpkgincludedir = $(pkgincludedir)-@VMAJ@
 libdwarfpkginclude_DATA = \
 $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
 $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 
-
 libdwarfdevdir = $(datadir)/src/lib/libdwarf/libdwarf-devel
 libdwarfdev_DATA = 
-
 
 EXTRA_DIST = \
 COPYING \
