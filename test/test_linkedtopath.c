@@ -42,11 +42,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif /* HAVE_ELF_H */
+
+#if defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
+#else
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> 
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
 #endif /* HAVE_UNISTD_H */ 
+#endif /* defined(_WIN32) */
+
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */

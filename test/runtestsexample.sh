@@ -15,15 +15,18 @@ then
 else
   top_srcdir=$DWTOPSRCDIR
 fi
+srcloc=$top_srcdir/src/bin/dwarfexample
+bldloc=$top_blddir/src/bin/dwarfexample
+testbin=$top_blddir/test
+testsrc=$top_srcdir/test
 # So we know the build. Because of debuglink.
 echo "DWARF_BIGENDIAN=$DWARF_BIGENDIAN"
-srcdir=$top_srcdir/dwarfexample
 if [ x"$DWCOMPILERFLAGS" = 'x' ]
 then
-  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra"
+  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/src/lib/libdwarf  -I$top_blddir/src/lib/libdwarf -Wall -Wextra"
   echo "CFLAGS basic default default  $CFLAGS"
 else
-  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf $DWCOMPILERFLAGS"
+  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/src/lib/libdwarf  -I$top_blddir/src/lib/libdwarf $DWCOMPILERFLAGS"
   echo "CFLAGS via configure $CFLAGS"
 fi
 
@@ -95,7 +98,7 @@ then
   # be 'dwarfexample'
 fi
 
-if [ $DWARF_BIGENDIAN = "yes" ]
+if [ x"$DWARF_BIGENDIAN" = "xyes" ]
 then
   echo "SKIP dwdebuglink test1, cannot work on bigendian build "
 else
@@ -103,23 +106,23 @@ else
   o=junk.debuglink1
   p="--add-debuglink-path=/exam/ple"
   p2="--add-debuglink-path=/tmp/phony"
-  $blddir/dwdebuglink $p $p2 $srcdir/dummyexecutable > $blddir/$o
+  $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
   chkres $? "running dwdebuglink test1"
   # we strip out the actual srcdir and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
-  echo $srcdir | sed "s:[.]:\[.\]:g" >$blddir/${o}sed1
-  sedv1=`head -n 1 $blddir/${o}sed1`
-  sed "s:$sedv1:..src..:" <$blddir/$o  >$blddir/${o}a
-  echo $blddir | sed "s:[.]:\[.\]:g" >$blddir/${o}sed2
-  sedv2=`head -n 1 $blddir/${o}sed2`
-  sed "s:$sedv2:..bld..:" <$blddir/${o}a  >$blddir/${o}b
-  diff $srcdir/debuglink.base  $blddir/${o}b
+  echo $srcdir | sed "s:[.]:\[.\]:g" >$testbin/${o}sed1
+  sedv1=`head -n 1 $testbin/${o}sed1`
+  sed "s:$sedv1:..src..:" <$testbin/$o  >$testbin/${o}a
+  echo $blddir | sed "s:[.]:\[.\]:g" >$testbin/${o}sed2
+  sedv2=`head -n 1 $testbin/${o}sed2`
+  sed "s:$sedv2:..bld..:" <$testbin/${o}a  >$testbin/${o}b
+  diff $testsrc/debuglink.base  $testbin/${o}b
   r=$?
   if [ $r -ne 0 ]
   then
      echo "To update dwdebuglink baseline:"
-     echo "mv $blddir/${o}b $srcdir/debuglink.base"
+     echo "mv $testbin/${o}b $testsrc/debuglink.base"
   fi
   chkres $r "running dwdebuglink test1 diff against baseline"
 fi
@@ -128,24 +131,24 @@ echo "dwdebuglink test2"
 o=junk.debuglink2
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
-$blddir/dwdebuglink $p $p2 $srcdir/dummyexecutable > $blddir/$o
+$bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
 chkres $? "running dwdebuglink test2"
 # we strip out the actual srcdir and blddir for the obvious
 # reason: We want the baseline data to be meaningful no matter
 # where one's source/build directories are.
-sed "s:$srcdir:..src..:" <$blddir/$o  >$blddir/${o}a
-sed "s:$blddir:..bld..:" <$blddir/${o}a  >$blddir/${o}b
-diff $srcdir/debuglink2.base  $blddir/${o}b
+sed "s:$srcdir:..src..:" <$testbin/$o  >$testbin/${o}a
+sed "s:$blddir:..bld..:" <$testbin/${o}a  >$testbin/${o}b
+diff $testsrc/debuglink2.base  $testbin/${o}b
 r=$?
 if [ $r -ne 0 ]
 then
-   echo "To update dwdebuglink test2 baseline: mv $blddir/${o}b $srcdir/debuglink2.base"
+   echo "To update dwdebuglink test2 baseline: mv $testbin/${o}b $testsrc/debuglink2.base"
 fi
 chkres $r "running dwdebuglink test2 diff against baseline"
 
 if [ $failcount -gt 0 ] 
 then
-   echo "FAIL $failcount dwarfexample/runtests.sh"
+   echo "FAIL $failcount dwarfexample/runtestsexample.sh"
    exit 1
 fi
 exit 0

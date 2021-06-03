@@ -52,6 +52,7 @@
 #endif /* HAVE_STDINT_H */
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */

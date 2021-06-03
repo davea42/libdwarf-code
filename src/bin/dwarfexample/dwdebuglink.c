@@ -55,6 +55,7 @@
 #endif /* HAVE_STRING_H */
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 
 #define TRUE 1
 #define FALSE 0

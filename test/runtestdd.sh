@@ -11,10 +11,10 @@ fi
 srcdir=$top_srcdir/test
 if [ x"$DWCOMPILERFLAGS" = 'x' ]
 then
-  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra"
+  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/src/lib/libdwarf  -I$top_blddir/src/lib/libdwarf -Wall -Wextra"
   echo "CFLAGS basic default default  $CFLAGS"
 else
-  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf $DWCOMPILERFLAGS"
+  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/src/lib/libdwarf  -I$top_blddir/src/lib/libdwarf $DWCOMPILERFLAGS"
   echo "CFLAGS via configure $CFLAGS"
 fi
 
@@ -73,12 +73,16 @@ fixlasttime() {
   rm -f junk.tmp
 }
 
+srcloc=$top_srcdir/src/bin/dwarfexample
+bldloc=$top_blddir/src/bin/dwarfdump
+testbin=$top_blddir/test
+testsrc=$top_srcdir/test
 # The following stop after 400 lines to limit the size
 # of the data here.  
 # It is a sanity check, not a full check.
-f=$srcdir/testobjLE32PE.exe
-b=$srcdir/testobjLE32PE.base
-t=junk.testobjLE32PE.base
+f=$testsrc/testobjLE32PE.exe
+b=$testsrc/testobjLE32PE.base
+t=$testbin/junk.testobjLE32PE.base
 echo "start  dwarfdump sanity check on pe $f"
 # Windows dwarfdump emits a couple prefix lines
 #we do not want. 
@@ -92,7 +96,7 @@ then
 else
   textlim=700
 fi
-dd=../src/bin/dwarfdump/dwarfdump
+dd=$bldloc/dwarfdump
 echo "$dd -a -vvv  $f | head -n $textlim > $t "
 $dd -a  -vvv $f | head -n $textlim > $t
 chkres $? "Running dwarfdump $f output to $t base $b"
@@ -114,14 +118,14 @@ r=$?
 chkres $r "FAIL diff of $b $t"
 if [ $r -ne 0 ]
 then
-  echo "to update , mv $top_blddir/dwarfdump/$t $b"
+  echo "to update , mv $t $b"
 fi
 rm -f $t
 rm -f $t.diffjunk.testsmallpe.diff
 
-f=$srcdir/testuriLE64ELf.obj
-b=$srcdir/testuriLE64ELf.base
-t=junk.testuriLE64ELf.base
+f=$testsrc/testuriLE64ELf.obj
+b=$testsrc/testuriLE64ELf.base
+t=$testbin/junk.testuriLE64ELf.base
 echo "start  dwarfdump sanity check on $f"
 $dd -vvv -a $f | head -n $textlim > $t
 chkres $? "running $dd $f output to $t base $b "
@@ -130,7 +134,7 @@ then
   echo "drop two lines"
   droptwoifwin $t
 fi
-echo "if update required, mv $top_blddir/dwarfdump/$t $b"
+echo "if update required, mv $t $b"
 fixlasttime $t
 which dos2unix
 if [ $? -eq 0 ]
@@ -142,7 +146,7 @@ r=$?
 chkres $r "FAIL diff of $b $t"
 if [ $r -ne 0 ]
 then
-  echo "to update , mv  $top_blddir/dwarfdump/$t $b"
+  echo "to update , mv  $t $b"
 fi
 rm -f $t
 rm -f $t.diff

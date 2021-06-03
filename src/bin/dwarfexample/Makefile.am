@@ -36,9 +36,6 @@ dwdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
 dwdebuglink_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
-TESTS = runtests.sh
-AM_TESTS_ENVIRONMENT = DWARF_BIGENDIAN='$(dwarfbigend)'; export DWARF_BIGENDIAN ;  DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
-
 EXTRA_DIST = \
 ChangeLog \
 ChangeLog2009 \
@@ -52,13 +49,6 @@ ChangeLog2016 \
 ChangeLog2017 \
 ChangeLog2018 \
 CMakeLists.txt \
-runtests.sh \
-buildingdummy.sh \
-debuglink.base \
-debuglink2.base \
-dummyexecutable \
-dummyexecutable.debug \
-dummyexecutable.c \
 simplecrc.c \
 NEWS \
 $(dwarfexample_DATA)

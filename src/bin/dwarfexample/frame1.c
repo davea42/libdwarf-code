@@ -91,6 +91,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <errno.h>
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 
 
 static void read_frame_data(Dwarf_Debug dbg,const char *sec);

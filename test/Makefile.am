@@ -1,5 +1,12 @@
-
-###A placeholder to run tests
+# Copyright 2021 David Anderson
+# This Makefile.am is hereby placed in the public domain
+### Any error in thie file will lead to:
+### error: Something went wrong bootstrapping makefile fragments
+### for automatic dependency tracking
+###Entering directory '/var/tmp/bld/src/lib/libdwarf'
+###CC       libdwarf_la-dwarf_abbrev.lo
+###/bin/bash: ../../../libtool: No such file or directory
+### with no hint as to what the problem really is..
 
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -8,11 +15,16 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES =
 EXTRA_DIS  =
 
-
-check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
+TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb   test_sectionbitmaps
+
+check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
+  test_linkedtopath test_headersok test_dwgetopt \
+ test_makenametest test_helpertree test_macrocheck \
+ test_testesb   test_sectionbitmaps
+
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
@@ -102,9 +114,45 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
+TESTS += runtestdd.sh
 
-TESTS = runtestdd.sh
+if HAVE_DWARFEXAMPLE
+TESTS += runtestsexample.sh
+endif
+
+###if HAVE_DWARFGEN
+###SUBDIRS += src/bin/dwarfgen
+###endif
+
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
 
-###heck_TESTS = testdebuglink.sh runtestdd.sh
+EXTRA_DIST= \
+buildingdummy.sh \
+debuglink2.base \
+debuglink.base \
+dummyexecutable \
+dummyexecutable.c \
+dummyexecutable.debug \
+dwarf_leb_test.c \
+dwarf_tied_test.c \
+getopttest.c \
+helpertree_test.c \
+makename_test.c \
+runtestdd.sh \
+runtestsexample.sh \
+runtests.sh \
+section_bitmaps_test.c \
+testdebuglink.sh \
+test_dwarfstring.c \
+testesb.c \
+test_extra_flag_strings.c \
+test_headersok.c \
+test_linkedtopath.c \
+test-mach-o-32.base \
+test-mach-o-32.dSYM \
+testobjLE32PE.base \
+testobjLE32PE.exe \
+testobjLE32PE.test.c \
+testuriLE64ELf.base \
+testuriLE64ELf.obj 
