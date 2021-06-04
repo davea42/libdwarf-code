@@ -26,6 +26,7 @@
     Fifth Floor, Boston MA 02110-1301, USA.
 
 */
+/*   Used by scripts/libbuild.sh. Not in libdwarf itself. */
 
 #include "config.h"
 #ifdef _WIN32

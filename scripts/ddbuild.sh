@@ -11,29 +11,28 @@
 
 d=`pwd`
 db=`basename $d`
+topdir=$d/../../..
+libdir=$d/../../lib/libdwarf
 
 if [ x$db != "xdwarfdump" ]
 then
    echo FAIL Run this in the dwarfdump directory.
    exit 1
 fi
-# Following two lines needed for independent tests of
-# this script. Done by buildstandardsource.sh normally.
-# If added *must* be removed else dwarfdump builds will fail.
-#cp ../scripts/baseconfig.h config.h
-#cp ../libdwarf/libdwarf.h.in libdwarf.h
-
+if [ ! -d "$libdir" ]
+then
+   echo FAIL $libdir  not found. Run this in the dwarfdump directory.
+   exit 1
+fi
 set -x
-top_builddir=..
-top_srcdir=..
-CC="gcc -g -Wall  -I.. -I../libdwarf -I../dwarfdump"
+CC="gcc -g -Wall  -I. -I$libdir "
 EXEXT=.exe
 
-cp $top_builddir/libdwarf/dwarf_names.c .
-cp $top_builddir/libdwarf/dwarf_names.h .
+cp $libdir/dwarf_names.c .
+cp $libdir/dwarf_names.h .
 $CC -DTRIVIAL_NAMING   dwarf_names.c common.c \
 dwarf_tsearchbal.c \
-$top_srcdir/libdwarf/dwarf_form_class_names.c \
+$libdir/dwarf_form_class_names.c \
 dwgetopt.c \
 esb.c \
 makename.c \
@@ -50,7 +49,7 @@ fi
 
 $CC  -DTRIVIAL_NAMING  dwarf_names.c common.c \
 dwarf_tsearchbal.c \
-$top_srcdir/libdwarf/dwarf_form_class_names.c \
+$libdir/dwarf_form_class_names.c \
 dwgetopt.c \
 esb.c \
 makename.c \
@@ -68,15 +67,15 @@ rm -f tmp-t1.c
 
 #=======
 echo BEGIN attr_form build
-taf=tempaftab
-rm $taf
 af=dwarfdump-af-table.h
 if [ ! -f $af ]
 then
   touch $af
 fi
+taf=tempaftab
+rm -f $taf
 $CC  -DTRIVIAL_NAMING -DSKIP_AF_CHECK  dwarf_names.c common.c \
-$top_srcdir/libdwarf/dwarf_form_class_names.c \
+$libdir/dwarf_form_class_names.c \
 attr_form.c \
 dwarf_tsearchbal.c \
 dwgetopt.c \
@@ -94,12 +93,12 @@ then
 fi
 rm -f tmp-t1.c
 
-cp $top_srcdir/dwarfdump/attr_formclass.list tmp-t1.c
+cp attr_formclass.list tmp-t1.c
 ls -l tmp-t1.c
 $CC -E tmp-t1.c >tmp-attr-formclass-build1.tmp
 ls -l tmp-attr-formclass-build1.tmp
 
-cp $top_srcdir/dwarfdump/attr_formclass_ext.list tmp-t2.c
+cp attr_formclass_ext.list tmp-t2.c
 ls -l tmp-t2.c
 $CC -E tmp-t2.c >tmp-attr-formclass-build2.tmp
 ls -l tmp-attr-formclass-build2.tmp
@@ -123,7 +122,7 @@ rm -f tmp-attr-formclass-build1.tmp
 rm -f tmp-attr-formclass-build2.tmp 
 rm -f ./attr_form_build$EXEXT 
 
-cp $top_srcdir/dwarfdump/tag_tree.list tmp-t1.c
+cp tag_tree.list tmp-t1.c
 $CC -E tmp-t1.c >tmp-tag-tree-build1.tmp
 ./tag_tree_build$EXEXT -s -i tmp-tag-tree-build1.tmp -o dwarfdump-tt-table.h
 if [ $? -ne 0 ]
@@ -133,10 +132,10 @@ then
 fi
 rm -f tmp-tag-tree-build1.tmp 
 rm -f tmp-t1.c
-
 rm -f tmp-t2.c
-cp $top_srcdir/dwarfdump/tag_attr.list tmp-t2.c
-$CC -DTRIVIAL_NAMING  -I$top_srcdir/libdwarf -E tmp-t2.c >tmp-tag-attr-build2.tmp
+
+cp tag_attr.list tmp-t2.c
+$CC -DTRIVIAL_NAMING  -I$libdir -E tmp-t2.c >tmp-tag-attr-build2.tmp
 ./tag_attr_build$EXEXT -s -i tmp-tag-attr-build2.tmp -o dwarfdump-ta-table.h
 if [ $? -ne 0 ]
 then
@@ -145,10 +144,10 @@ then
 fi
 rm -f tmp-tag-attr-build2.tmp 
 rm -f tmp-t2.c
-
 rm -f tmp-t3.c
-cp $top_srcdir/dwarfdump/tag_attr_ext.list tmp-t3.c
-$CC  -I$top_srcdir/libdwarf -DTRIVIAL_NAMING -E tmp-t3.c > tmp-tag-attr-build3.tmp
+
+cp tag_attr_ext.list tmp-t3.c
+$CC  -I$libdir -DTRIVIAL_NAMING -E tmp-t3.c > tmp-tag-attr-build3.tmp
 ./tag_attr_build$EXEXT -e -i tmp-tag-attr-build3.tmp -o dwarfdump-ta-ext-table.h
 if [ $? -ne 0 ]
 then
@@ -159,8 +158,8 @@ rm -f tmp-tag-attr-build3.tmp
 rm -f tmp-t3.c
 
 rm -f tmp-t4.c
-cp $top_srcdir/dwarfdump/tag_tree_ext.list tmp-t4.c
-$CC  -I$top_srcdir/libdwarf  -DTRIVIAL_NAMING -E tmp-t4.c > tmp-tag-tree-build4.tmp
+cp tag_tree_ext.list tmp-t4.c
+$CC  -I$libdir  -DTRIVIAL_NAMING -E tmp-t4.c > tmp-tag-tree-build4.tmp
 ./tag_tree_build$EXEXT -e -i tmp-tag-tree-build4.tmp -o dwarfdump-tt-ext-table.h
 if [ $? -ne 0 ]
 then
@@ -168,9 +167,9 @@ then
    exit 1
 fi
 
-$CC -I $top_srcdir/libdwarf \
-  $top_srcdir/dwarfdump/buildopscounttab.c \
-  $top_srcdir/dwarfdump/dwarf_names.c -o buildop
+$CC -I $libdir \
+  buildopscounttab.c \
+  dwarf_names.c -o buildop
 if [ $? -ne 0 ]
 then
     echo "FAIL compiling buildop  and building opstabcount.c source"

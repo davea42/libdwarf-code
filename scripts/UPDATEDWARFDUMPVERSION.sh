@@ -7,49 +7,24 @@
 # Sometimes only used. just before a release.
 l=`pwd`
 echo $l
-lb=`basename $l`
-ld=`dirname $l`
-#echo " lb: $lb"
-#echo " ld: $ld"
-cdtarg=.
-sloc=$l/scripts
-if [ x$lb = "xscripts" ]
-then
-  #echo "ld: $ld"
-  ldb=`basename $ld`
-  #echo "ldb: $ldb"
-  if [ x$ldb = "xcode" ]
+
+chkisdir() {
+  if [ ! -d $1 ]
   then
-     cdtarg=..
-     sloc=$l
-  else
-     echo "Run from */code, not $l , giving up."
-     exit 1
-  fi
-  cd $cdtarg
-  if [ $? -ne 0 ]
-  then
-     echo "cd $cdtarg failed, giving up."
-     exit 1
-  fi
-else
-  if [ x$lb = "xcode" ]
-  then
-    cdtarg="."
-  else
-    echo "Run from */code, not $l , giving up."
+    echo "The directory $1 is not found"
+    echo "we are in the wrong directory to update version strings"
     exit 1
   fi
-  # No need to cd.
-fi
-l=`pwd`
-#echo "Now at $l"
-#echo "sloc $sloc"
+}
 
+chkisdir scripts
+libdir=src/lib/libdwarf
+chkisdir $libdir
+chkisdir src/bin/dwarfdump
 
 
 x=`date --rfc-3339=seconds |tr '\n' ' '`
-cat > $sloc/UPD.awk <<\EOF
+cat > scripts/UPD.awk <<\EOF
 BEGIN {
 if (ARGC <=  2)  {
     print "Bogus use of awk file, requires arg"
@@ -62,5 +37,7 @@ if (ARGC <=  2)  {
 $0 ~  /#define DW_VERSION_DATE_STR/ { print $1, $2, "\"",v,"\"" }
 $0 !~ /^#define DW_VERSION_DATE_STR/ { print $0 }
 EOF
-awk -f $sloc/UPD.awk  "$x"  $l/libdwarf/libdwarf_version.h >t
-mv t $l/libdwarf/libdwarf_version.h
+awk -f scripts/UPD.awk  "$x"  "$libdir/libdwarf_version.h" >t
+mv t "$libdir/libdwarf_version.h"
+rm -f t
+rm -f scripts/UPD.awk

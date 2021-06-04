@@ -12,6 +12,7 @@
 
 d=`pwd`
 db=`basename $d`
+topdir=$d/../../..
 
 if [ x$db != "xlibdwarf" ]
 then
@@ -40,7 +41,7 @@ fi
 # This produces no output. 
 # If it fails it indicates a problem with the DW_DLE names or strings.
 # If it passes there is no problem.
-grep DW_DLE libdwarf.h.in >errmsg_check_list
+grep DW_DLE libdwarf.h >errmsg_check_list
 ./errmsg_check -f errmsg_check_list
 if [ $? -ne 0 ]
 then
