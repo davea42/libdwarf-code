@@ -209,7 +209,6 @@ AC_ARG_VAR([DWARF_LIBS], [linker flags when linking libdwarf])
 AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
 ### for uintptr_t 
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h])
-AC_CHECK_HEADERS([windows.h])
 
 requirements_libdwarf_pc=
 requirements_libdwarf_libs=

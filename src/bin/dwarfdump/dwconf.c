@@ -37,9 +37,9 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#if defined(_WIN32) && defined(HAVE_WINDOWS_H)
+#if defined(_WIN32)
 #include <windows.h>
-#endif /* HAVE_WINDOWS_H */
+#endif /* _WIN32 */
 
 #include "globals.h"
 #include "dwarf.h"

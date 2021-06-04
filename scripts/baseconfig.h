@@ -81,9 +81,6 @@
 /* Set to 1 if __attribute__ ((unused)) is available. */
 #define HAVE_UNUSED_ATTRIBUTE 1
 
-/* Define to 1 if you have the <windows.h> header file. */
-/* #undef HAVE_WINDOWS_H */
-
 /* Define 1 if want to allow Windows full path detection */
 /* #undef HAVE_WINDOWS_PATH */
 
