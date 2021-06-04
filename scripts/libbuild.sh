@@ -1,14 +1,14 @@
-# libbuild.sh
-# Build the .c .h needed for libdwarf.
-# Intended for simple non-elf builds on systems
+# scripts/libbuild.sh
 # This script is by David Anderson and hereby
 # put into the public domain
 # for anyone to use in any way.
-# This is used by scripts/buildstandardsource.sh
 
-# Requires a basic config.h at top level
-# Possibly cp scripts/baseconfig.h config.h
-# Run this from the libdwarf directory.
+# Do not run this by hand.
+# This is used by scripts/buildstandardsource.sh
+# Builds various names .c and .h needed for libdwarf.
+# Checks that the DW_DLE match up in dwarf_errmsg_list.c
+# and libdwarf.h
+# Expects a trivial config.h (see scripts/baseconfig.h)
 
 d=`pwd`
 db=`basename $d`
@@ -23,7 +23,8 @@ fi
 set -x
 CC="gcc -g  -I.."
 $CC gennames.c dwgetopt.c -o gennames
-rm -f dwarf_names.h dwarf_names.c  dwarf_names_enum.h dwarf_names_new.h
+rm -f dwarf_names.h dwarf_names.c  
+rm -f dwarf_names_enum.h dwarf_names_new.h
 ./gennames -i . -o .
 if [ $? -ne 0 ]
 then
@@ -39,7 +40,8 @@ then
 fi
 
 # This produces no output. 
-# If it fails it indicates a problem with the DW_DLE names or strings.
+# If it fails it indicates a problem with the 
+# DW_DLE names or strings.
 # If it passes there is no problem.
 grep DW_DLE libdwarf.h >errmsg_check_list
 ./errmsg_check -f errmsg_check_list

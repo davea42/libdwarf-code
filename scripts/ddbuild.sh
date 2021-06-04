@@ -1,11 +1,14 @@
-# ddbuild.sh
-# A primitive build.
-# Intended for simple non-elf builds on systems
-# with no libelf, no elf.h, no libz.
+# scripts/ddbuild.sh
 # This script is by David Anderson and hereby 
 # put into the public domain
 # for anyone to use in any way.
+
+# Do not run this by hand.
 # This is used by scripts/buildstandardsource.sh
+# A primitive build of a little bit of stuff
+# from libdwarf and dwarfdump to create
+# standard C source for libdwarf and dwarfdump.
+
 
 # Requires a basic config.h at top level
 
