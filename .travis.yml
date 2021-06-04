@@ -1,0 +1,8 @@
+
+compiler:
+  - gcc
+  - clang
+os: linux
+script: 
+  - sh autogen.sh && configure --enable-wall --enable-dwarfexamples && make && make check
+  - cmake . 
