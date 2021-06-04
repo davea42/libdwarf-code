@@ -67,7 +67,7 @@ dwarf_tied_decls.h
 dwarf_tsearch.h 
 dwarf_str_offsets.h
 dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h 
-dwarf_xu_index.h libdwarfdefs.h 
+dwarf_xu_index.h libdwarf_private.h
 dwarf_macho_loader.h malloc_check.h 
 memcpy_swap.h
 pro_alloc.h pro_arange.h pro_die.h 

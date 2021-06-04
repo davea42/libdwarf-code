@@ -29,7 +29,7 @@
 */
 
 #include "config.h"
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */

@@ -128,7 +128,6 @@ crc32.c \
 libdwarf.h \
 libdwarf_private.h \
 libdwarf_version.h \
-libdwarfdefs.h \
 malloc_check.c \
 malloc_check.h \
 memcpy_swap.h \

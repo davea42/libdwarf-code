@@ -29,7 +29,7 @@
 */
 
 #include "config.h"
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>

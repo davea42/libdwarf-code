@@ -33,7 +33,7 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 #include <stddef.h>
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarf.h"

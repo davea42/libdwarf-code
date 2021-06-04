@@ -36,7 +36,7 @@
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #endif
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #include "pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"

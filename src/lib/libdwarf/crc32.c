@@ -36,7 +36,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"

@@ -22,5 +22,14 @@
 #define DW_PR_DUu "llu"
 #define DW_PR_DSd "lld"
 #endif /* DW_PR defines */
+
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
+
+#define DWARF_HALF_SIZE 2
+
 #endif /* LIBDWARF_PRIVATE_H */
 

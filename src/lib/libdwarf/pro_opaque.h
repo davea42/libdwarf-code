@@ -28,7 +28,7 @@
 
 */
 
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 
 #define true                    1
 #define false                   0

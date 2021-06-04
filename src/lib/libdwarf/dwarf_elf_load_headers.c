@@ -82,7 +82,7 @@ calls
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"

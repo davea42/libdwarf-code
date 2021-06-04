@@ -30,7 +30,7 @@
 
 #include "config.h"
 #ifdef DWARF_WITH_LIBELF
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #include <stdio.h>
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>

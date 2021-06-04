@@ -30,7 +30,7 @@
 */
 
 #include "config.h"
-#include "libdwarfdefs.h"
+#include "libdwarf_private.h"
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
@@ -40,10 +40,8 @@
 #include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
 #include "pro_opaque.h"
 #include "dwarfstring.h"
-
 
 static int errcount;
 
@@ -52,8 +50,6 @@ _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
   const char *extra,
   int *err)
 */
-
-
 
 static void
 resetdbg(Dwarf_P_Debug dbg)
@@ -91,7 +87,6 @@ returnvalstr(int res)
     if (res == DW_DLV_ERROR) return "DW_DLV_ERROR";
     return "Unknown";
 }
-
 
 static void
 check_expected(int exp, int got, int err_exp, int err_got,
