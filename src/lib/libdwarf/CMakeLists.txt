@@ -2,7 +2,7 @@ set_source_group(SOURCES "Source Files" dwarf_abbrev.c
 dwarf_alloc.c dwarf_crc32.c dwarf_arange.c 
 dwarf_debug_sup.c
 dwarf_debuglink.c dwarf_die_deliv.c 
-dwarf_debug_names.c dwarf_dsc.c dwarf_elf_access.c 
+dwarf_debug_names.c dwarf_dsc.c
 dwarf_elf_load_headers.c 
 dwarf_elfread.c 
 dwarf_elf_rel_detector.c 
@@ -79,7 +79,7 @@ pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h
 pro_section.h pro_types.h pro_util.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
-    ${CMAKE_SOURCE_DIR}/config.h.in.cmake 
+    ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake 
     ${CMAKE_BINARY_DIR}/config.h)
 
 
@@ -96,7 +96,7 @@ foreach(i RANGE ${targetCount})
 	add_library(${target} ${type} ${SOURCES} ${HEADERS}
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
-	set_folder(${target} libdwarf)
+	set_folder(${target} src/lib/libdwarf)
 	target_include_directories(${target} PUBLIC 
             ${LIBELF_INCLUDE_DIRS})
         target_compile_options(${target} PRIVATE ${DW_FWALL})
@@ -115,27 +115,6 @@ foreach(i RANGE ${targetCount})
 		LIBRARY DESTINATION ${LIBDIR}
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
-
-if (DO_TESTING)
-    set_source_group(TESTLEB "Source Files" dwarf_leb_test.c 
-        dwarf_leb.c pro_encode_nm.c )
-    add_executable(selfleb ${TESTLEB})
-    target_compile_options(selfleb PRIVATE ${DW_FWALL})
-    add_test(NAME selfleb COMMAND selfleb)
-endif()
-if (DO_TESTING)
-    set_source_group(TESTTIED "Source Files" 
-        dwarf_tied_test.c dwarf_tied.c dwarf_tsearchhash.c )
-    add_executable(selftied ${TESTTIED})
-    target_compile_options(selftied PRIVATE ${DW_FWALL})
-    add_test(NAME selftied COMMAND selftied)
-
-    set_source_group(TESTSTRING "Source Files" 
-        test_dwarfstring.c dwarfstring.c dwarfstring.h)
-    add_executable(teststring ${TESTSTRING})
-    target_compile_options(selftied PRIVATE ${DW_FWALL})
-    add_test(NAME teststring COMMAND teststring)
-endif()
 # The install has to be here, not in
 # ../CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
@@ -156,5 +135,5 @@ install(
 install(DIRECTORY libdwarf DESTINATION include/
     FILES_MATCHING PATTERN "*.h")
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/libdwarf/libdwarf.h
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/src/lib/libdwarf/libdwarf.h
     DESTINATION include/libdwarf)

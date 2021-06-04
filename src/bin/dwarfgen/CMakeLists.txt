@@ -16,7 +16,7 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
     
 add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
-set_folder(dwarfgen dwarfgen)
+set_folder(dwarfgen src/bin/dwarfgen)
 
 target_compile_options(dwarfgen PRIVATE ${DW_FWALLXX})
 

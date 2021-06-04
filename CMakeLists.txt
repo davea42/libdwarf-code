@@ -231,22 +231,6 @@ if (DWARF_WITH_LIBELF)
   }" HAVE_STRUCT_UNDERSCORE_ELF)
 else()
 endif()
-message(STATUS "Assuming struct Elf for the default libdwarf.h")
-# Because cmake treats ; in an interesting way attempting
-# to read/update/write Elf to _Elf fails badly: semicolons vanish.
-# So for _Elf use a pre-prepared version.
-if(HAVE_STRUCT_UNDERSCORE_ELF AND DWARF_WITH_LIBELF)
-   message(STATUS "Found struct _Elf in ${JUST_LIBELF}")
-   message(STATUS "Using struct _Elf in libdwarf.h")
-   configure_file(libdwarf/generated_libdwarf.h.in 
-       libdwarf/libdwarf.h COPYONLY)
-else()
-   configure_file(libdwarf/libdwarf.h.in 
-       libdwarf/libdwarf.h COPYONLY)
-   message(STATUS "${JUST_LIBELF} does not have struct _Elf")
-   message(STATUS "Using struct Elf in libdwarf.h, no actual elf.h used")
-endif()
-
 check_c_source_runs("
   static unsigned foo( unsigned x, 
       __attribute__ ((unused)) int y)
@@ -394,7 +378,7 @@ message(STATUS "Checking producer generates only 32bit... ${HAVE_STRICT_DWARF2_3
 find_package(LibElf REQUIRED)
 list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})
 
-configure_file(config.h.in.cmake config.h)
+configure_file(cmake/config.h.cmake config.h)
 
 if(BUILD_NON_SHARED)
 	set(DWARF_TARGETS dwarf-static)
@@ -407,21 +391,21 @@ if(BUILD_SHARED)
 	set(dwarf-target dwarf-shared)
 endif()
 
-add_subdirectory(libdwarf)
-add_subdirectory(dwarfdump)
+add_subdirectory(src/lib/libdwarf)
+add_subdirectory(src/bin/dwarfdump)
 if ( BUILD_DWARFGEN )
 	if ( DWARF_WITH_LIBELF )
-	    add_subdirectory(dwarfgen)
+	    add_subdirectory(src/bin/dwarfgen)
         else ()
             message(STATUS "Not building dwarfgen because libelf is not available" )
         endif ()
 endif()
 if ( BUILD_DWARFEXAMPLE )
-	add_subdirectory(dwarfexample)
+	add_subdirectory(src/bin/dwarfexample)
 endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )
-# add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
-# installation of libdwarf has to be in libdwarf/CMakeLists.txt
+# installation of libdwarf has to be in
+# src/lib/libdwarf/CMakeLists.txt
 # so that it works properly for cmake before cmake 3.13.
 

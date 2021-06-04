@@ -32,7 +32,8 @@
 */
 
 /*  This file is ONLY used for libelf and with libelf */
-
+#
+#ifdef WORDS_BIGENDIAN
 #define READ_UNALIGNED_SAFE(dbg,dest, source, length) \
     do {                                             \
         Dwarf_Unsigned _ltmp = 0;                    \
