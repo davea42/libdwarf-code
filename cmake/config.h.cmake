@@ -135,9 +135,6 @@
 /* Set to 1 if __attribute__ ((unused)) is available. */
 #cmakedefine HAVE_UNUSED_ATTRIBUTE 1
 
-/* Define to 1 if you have the <windows.h> header file. */
-#cmakedefine HAVE_WINDOWS_H 1
-
 /* Define 1 if want to allow Windows full path detection */
 #cmakedefine HAVE_WINDOWS_PATH 1
 

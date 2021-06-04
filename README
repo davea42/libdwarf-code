@@ -66,7 +66,7 @@ The configure option --disable-libelf
 is no longer needed (but is allowed).
 
 Under MinGW the gcc CFLAGS 
- -DHAVE_WINDOWS_H -DHAVE_NONSTANDARD_PRINTF_64_FORMAT \
+ -DHAVE_NONSTANDARD_PRINTF_64_FORMAT \
  -fno-dwarf2-cfi-asm
 have helped some people, though for my MinGW tests
 these are not necessary or appropriate.
