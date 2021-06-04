@@ -43,12 +43,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include <elf.h>
 #endif /* HAVE_ELF_H */
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)
 #include <io.h>
 #else
 #ifdef HAVE_UNISTD_H
-#include <unistd.h> 
-#endif /* HAVE_UNISTD_H */ 
+#include <unistd.h>
+#endif /* HAVE_UNISTD_H */
 #endif /* defined(_WIN32) */
 
 #ifdef HAVE_SYS_TYPES_H
@@ -66,18 +66,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include "dwarf_debuglink.h"
 
 static int errcount = 0;
-
-char *
-getcwd(UNUSEDARG char *buf, UNUSEDARG size_t size)
-{
-    if (size >= 12) {
-        strcpy(buf,"/exam/ple");
-        return buf;
-    }
-    /*  This should not happen, if it does
-        this test is coded wrong. */
-    return "/exam/ple";
-}
 
 /* dummy func we do not need real one */
 int _dwarf_load_section(Dwarf_Debug dbg,
@@ -397,7 +385,7 @@ test3(Dwarf_Debug dbg)
 
     /*  The test will not be repeatable in general
         unless we give executablepath a starting
-        / so getcwd() will not be called. */
+        /  (ie, unless it already has a full path) */
 
     printf("executable path %s\n",executablepath);
     printf("linkstring      %s\n",linkstring);
