@@ -178,6 +178,9 @@ AM_PROG_AR
 AM_INIT_AUTOMAKE([1.6])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+AS_IF(
+    [test "x${have_win32}" = "xyes"],
+    [lt_cv_deplibs_check_method=pass_all])
 LT_INIT([win32-dll disable-shared static])
 
 version_info="lt_cur:lt_rev:lt_age"
