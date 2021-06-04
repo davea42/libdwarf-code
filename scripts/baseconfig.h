@@ -6,23 +6,24 @@
     if your environment is sufficiently different.
     Assuming you have a reason to run
     scripts/buildstandardsource.sh  (you most likely
-    have no reason) .
+    have no reason).
 */
 
 
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
-/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
-   systems. This function is required for `alloca.c' support on those systems.
-   */
+/*  Define to one of `_getb67', `GETB67', `getb67' for
+    Cray-2 and Cray-YMP
+    systems. This function is required for `alloca.c'
+    support on those systems.  */
 /* #undef CRAY_STACKSEG_END */
 
 /* Define to 1 if using `alloca.c'. */
 /* #undef C_ALLOCA */
 
 /* Define to 1 if you have `alloca', as a function or macro. */
-#define HAVE_ALLOCA 1
+#undef HAVE_ALLOCA
 
 /* Only defined here, done for the benefit if
    buildstandardsource.sh */
@@ -30,10 +31,10 @@
 
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
-#define HAVE_ALLOCA_H 1
+#undef HAVE_ALLOCA_H 
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#define HAVE_DLFCN_H 1
+#undef HAVE_DLFCN_H 
 
 /*  Fake. For buildstandardsource.sh */
 #define PACKAGE_VERSION "20190101"
@@ -87,10 +88,10 @@
 /* #undef HAVE_WINDOWS_PATH */
 
 /* Set to 1 if zlib decompression is available. */
-#define HAVE_ZLIB 1
+#undef HAVE_ZLIB 
 
 /* Define to 1 if you have the <zlib.h> header file. */
-#define HAVE_ZLIB_H 1
+#undef HAVE_ZLIB_H
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
