@@ -1,6 +1,3 @@
-[![Travis Build Status](https://travis-ci.org/dvirtz/libdwarf.svg?branch=cmake)](https://travis-ci.org/dvirtz/libdwarf)
-[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/oxh8pg7hsuav2jrl?svg=true)](https://ci.appveyor.com/project/dvirtz/libdwarf)
-
 # This is README.md
 ## BUILDING
    in source base dir, do
@@ -9,12 +6,17 @@
       rm -rf /tmp/empty
       mkdir /tmp/empty
       cd /tmp/empty
-      # CFLAGS and enable-wall are optional.
-      CFLAGS='-g -O0' $x/configure \ --enable-wall
-      make
+      # CFLAGS and enable-wall and
+      # dwarfgen and dwarfexample are optional.
+      CFLAGS='-g -O0' $x/configure \
+         --enable-dwarfexample --enable-dwarfgen \
+         --enable-wall
+      make 
+      make check
 
 
  THE FOLLOWING IS ALL OBSOLETE
+will be fixed soon, won't be much different.
 
 
 ### Using CMake
