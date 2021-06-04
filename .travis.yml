@@ -4,5 +4,5 @@ compiler:
   - clang
 os: linux
 script: 
-  - sh autogen.sh && ./configure --enable-wall --enable-dwarfexamples && make && make check
+  - sh autogen.sh && ./configure --enable-wall --enable-dwarfexample && make && make check
   - cmake . 
