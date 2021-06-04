@@ -44,12 +44,9 @@ extern "C" {
 #endif
 #endif /* DWARF_WITH_LIBELF */
 
-#include "warningcontrol.h"
 
 #define DWARF_SECNAME_BUFFER_SIZE 50
-
 #define ESB_FIXED_ALLOC_SIZE 300
-
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit(), C89 malloc */

@@ -56,6 +56,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* Useful include for some Windows compilers. */
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
+#include "libdwarf_private.h"
 #include "dwarfstring.h"
 #ifndef TRUE
 #define TRUE 1
@@ -63,12 +64,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef FALSE
 #define FALSE 0
 #endif /* FALSE */
-
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
 
 /*  m must be a string, like  "DWARFSTRINGERR..."  for this to work */
 #define DWSERR(m) dwarfstring_append_length(data,m,sizeof(m)-1)

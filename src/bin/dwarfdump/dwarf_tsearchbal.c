@@ -59,11 +59,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* _WIN32 */
 
 #include "config.h"
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
+#include "libdwarf_private.h"
 #ifdef HAVE_STDLIB_H
 #include "stdlib.h" /* for free() */
 #endif /* HAVE_STDLIB_H */

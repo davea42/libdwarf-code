@@ -31,7 +31,6 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 
 #include "config.h"
 
-
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -40,10 +39,9 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 #include "common.h"
 #include "defined_types.h"
 #include "sanitized.h"
-#include "warningcontrol.h"
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include <stdio.h>
-
+#include "libdwarf_private.h"
 #ifndef BUILD_STANDARD_SOURCE
 /*  Must match libdwarf.h.in declaration. */
 const char * dwarf_package_version(void);

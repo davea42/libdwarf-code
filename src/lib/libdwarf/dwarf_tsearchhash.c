@@ -59,11 +59,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "config.h"
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
 #ifdef HAVE_STDLIB_H
 #include "stdlib.h" /* for malloc, free() etc */
 #endif /* HAVE_STDLIB_H */
@@ -75,16 +70,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* for uintptr_t */
 #endif /* HAVE_STDINT_H */
+#include "libdwarf_private.h"
 /*  This must match the types and print options
     found in libdwarf.h.  */
 #define Dwarf_Unsigned unsigned long long
-#if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
-#define DW_PR_DUx "I64x"
-#define DW_PR_DUu "I64u"
-#else
-#define DW_PR_DUx "llx"
-#define DW_PR_DUu "llu"
-#endif /* DW_PR defines */
 #include "dwarf_tsearch.h"
 
 /*  A table of primes used to size  and resize the hash table.

@@ -81,18 +81,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_pe_descr.h"
 #include "dwarf_peread.h"
 
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 #define DOS_HEADER_LEN 64
 
 #ifndef TYP
 #define TYP(n,l) char n[l]
 #endif /* TYP */
-
 
 #ifndef SIZEOFT32
 #define SIZEOFT32 4

@@ -32,7 +32,7 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 */
 
 #include "config.h"
-#include "warningcontrol.h"
+#include "libdwarf_private.h"
 #include "esb.h"
 #define TRUE 1
 

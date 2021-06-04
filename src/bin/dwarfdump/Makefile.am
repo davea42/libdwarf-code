@@ -93,8 +93,7 @@ strstrnocase.c \
 true_section_name.c \
 tag_common.h \
 uri.c \
-uri.h \
-warningcontrol.h
+uri.h
 
 dwarfdump_CPPFLAGS =  -I$(top_srcdir)/src/lib/libdwarf \
 -I$(top_builddir)/src/lib/libdwarf

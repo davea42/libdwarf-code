@@ -104,7 +104,9 @@ test_testesb_SOURCES = testesb.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c 
 test_testesb_FLAGS = $(RO_CFLAGS_WARN)
 test_testesb_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/bin/dwarfdump
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
 
 test_sectionbitmaps_SOURCES = section_bitmaps_test.c \
     $(top_srcdir)/src/bin/dwarfdump/section_bitmaps.c

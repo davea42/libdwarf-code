@@ -68,12 +68,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #define TRUE  1
 #define FALSE 0
 
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 #if _WIN32
 #define NULL_DEVICE_NAME "NUL"
 #else

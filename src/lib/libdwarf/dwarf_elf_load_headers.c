@@ -100,11 +100,6 @@ calls
 #define O_BINARY 0
 #endif /* O_BINARY */
 
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
 #define TRUE  1
 #define FALSE 0
 
