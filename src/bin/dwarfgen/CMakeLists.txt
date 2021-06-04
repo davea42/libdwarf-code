@@ -1,17 +1,17 @@
 set_source_group(SOURCES "Source Files" createirepformfrombinary.cc
     createirepfrombinary.cc
     dwarfgen.cc irepattrtodbg.cc ireptodbg.cc
-    ../libdwarf/dwgetopt.c)
+    ../../lib/libdwarf/dwgetopt.c)
     
 set_source_group(HEADERS "Header Files" createirepfrombinary.h
     general.h irepattrtodbg.h 
     irepdie.h irepform.h irepframe.h 
     irepline.h irepmacro.h ireppubnames.h 
-    irepresentation.h ireptodbg.h 
-    strtabdata.h ../libdwarf/dwgetopt.h)
+    irepresentation.h ireptodbg.h strtabdata.h
+    ../../lib/libdwarf/dwgetopt.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
-    ${CMAKE_SOURCE_DIR}/config.h.in.cmake
+    ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake
     ${CMAKE_BINARY_DIR}/config.h)
     
 add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
@@ -33,4 +33,4 @@ install(TARGETS dwarfgen DESTINATION
 
 #install(FILES dwarfgen.conf DESTINATION lib)
 
-install(FILES dwarfgen.1 DESTINATION share/man/man1)
+#install(FILES dwarfgen.1 DESTINATION share/man/man1)

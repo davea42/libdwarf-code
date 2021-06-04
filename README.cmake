@@ -1,12 +1,7 @@
 Created 26 April 2019 
 Updated 03 October 2019
 
-The configure script scripts/FIX-COMPILE-TIMES does not apply
-to cmake. Don't bother to use it if you build with cmake.
-The FIX-COMPILE-TIMES script is irrelevant to cmake.
-
-The cmake build has been revised somewhat.  By default the
-build builds just libdwarf and dwarfdump.
+By default the build builds just libdwarf and dwarfdump.
 
 Lets assume the base directory of the the libdwarf source in a
 directory named 'code' inside the directory '/path/to/' Always

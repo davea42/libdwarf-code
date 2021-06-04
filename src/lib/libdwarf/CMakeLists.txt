@@ -35,7 +35,7 @@ crc32.c
 pro_debug_sup.c
 pro_die.c pro_dnames.c pro_encode_nm.c pro_error.c pro_expr.c 
 pro_finish.c pro_forms.c pro_funcs.c pro_frame.c 
-pro_init.c pro_line.c pro_reloc.c pro_reloc_stream.c 
+pro_init.c pro_line.c pro_reloc.c 
 pro_reloc_symbolic.c pro_pubnames.c pro_section.c 
 pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
 

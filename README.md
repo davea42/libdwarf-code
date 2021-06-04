@@ -1,5 +1,5 @@
 # This is README.md
-## BUILDING
+## BUILDING from a git clone of the source tree with configure
    in source base dir, do
       x=`pwd`
       sh autogen.sh
@@ -15,17 +15,14 @@
       make check
 
 
- THE FOLLOWING IS ALL OBSOLETE
-will be fixed soon, won't be much different.
-
-
-### Using CMake
-
-August 23 2018 and the following seems to work:
+## BUILDING from a git clone of the source tree with cmake
+   # where code is the directory name for the libdwarf project
    rm -rf /tmp/bld
    mkdir /tmp/bld
    cd /tmp/bld
-   cmake /a/b/libdwarf-1
+   cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON \
+      -DBUILD_DWARFGEN=ON  /path/to/code
+   ctest -R self
 
 # The following does not necessarily work. ?
 To build using CMake one might do
@@ -35,9 +32,11 @@ To build using CMake one might do
 * (optionally install): `sudo cmake --build _Release --target install`
 
 # for autotools builds, see README
-### Using autotools
 
-#### Builing in Source Tree
+### Using autotools
+IGNORE THE FOLLOWING. NEEDS REWRITE
+
+#### Building in Source Tree
 
 ```bash
 cd /a/b/libdwarf-1
