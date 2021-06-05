@@ -5,18 +5,34 @@
 # in the source directory
 # Assumes env vars DWTOPSRCDIR set to the path to source.
 # Assumes CFLAGS warning stuff set in env var DWCOMPILERFLAGS
-# Assumes we run the script in the dwarfexample directory.
+# Assumes we run the script in the test directory.
+# srcdir is from the environment and is, here, the 
+# place of the top director itself (may be a relative
+# path).
 
 blddir=`pwd`
-top_blddir=`pwd`/..
+top_blddir=`dirname $blddir`
 if [ x$DWTOPSRCDIR = "x" ]
 then
   top_srcdir=$top_blddir
 else
   top_srcdir=$DWTOPSRCDIR
 fi
+if [ $top_srcdir = ".." ]
+then
+  # This case hopefully eliminates relative path to test dir. 
+  top_srcdir=$top_blddir
+fi
+# srcloc and bldloc are the executable directories.
 srcloc=$top_srcdir/src/bin/dwarfexample
 bldloc=$top_blddir/src/bin/dwarfexample
+#localsrc is the build directory of the test
+localsrc=$srcdir
+if [ $localsrc = "." ]
+then
+  localsrc=$top_srcdir/test
+fi
+
 testbin=$top_blddir/test
 testsrc=$top_srcdir/test
 # So we know the build. Because of debuglink.
@@ -33,7 +49,9 @@ fi
 goodcount=0
 failcount=0
 
-echo "TOP topsrc $top_srcdir topbld $top_blddir localsrc $srcdir"
+echo "TOP topsrc  : $top_srcdir"
+echo "TOP topbld  : $top_blddir"
+echo "TOP localsrc: $localsrc"
 chkres() {
 r=$1
 m=$2
@@ -61,20 +79,6 @@ else
   fi
 fi
 
-# echo "y" or "n"
-srcrelativepath () {
-  p="$1"
-  rm -f /tmp/srcrel.$$
-  echo "$p" >/tmp/srcrel.$$
-  grep '^/' </tmp/srcrel.$$ >/dev/null 2>/dev/null
-  if [ $? -eq 0 ]
-  then 
-    echo "n"
-  else
-    echo "y"
-  fi
-  rm /tmp/srcrel.$$
-}
 
 #lsiok=y
 #ls -i $blddir >/dev/null 2>/dev/null
@@ -84,19 +88,6 @@ srcrelativepath () {
 #  echo "SKIP dwdebuglink tests cannot work when ls -i does not work"
 #  lsiok=n
 #fi
-rel=`srcrelativepath "$srcdir"`
-if [  $rel = "y" ]
-then
-  echo "dwdebuglink tests: $srcdir is a relative path"
-  echo "so we are building in the source tree. Use $blddir "
-  srcdir="$blddir"
-  #This depends on perhaps-incorrect belief that 
-  #only srcdir can be a relative path (if
-  #the test is run out-of-source-tree srcdir will
-  #be a full path too). 
-  # For both srcdir and blddir the final directory component will
-  # be 'dwarfexample'
-fi
 
 if [ x"$DWARF_BIGENDIAN" = "xyes" ]
 then
@@ -108,10 +99,10 @@ else
   p2="--add-debuglink-path=/tmp/phony"
   $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
   chkres $? "running dwdebuglink test1"
-  # we strip out the actual srcdir and blddir for the obvious
+  # we strip out the actual localsrc and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
-  echo $srcdir | sed "s:[.]:\[.\]:g" >$testbin/${o}sed1
+  echo $localsrc | sed "s:[.]:\[.\]:g" >$testbin/${o}sed1
   sedv1=`head -n 1 $testbin/${o}sed1`
   sed "s:$sedv1:..src..:" <$testbin/$o  >$testbin/${o}a
   echo $blddir | sed "s:[.]:\[.\]:g" >$testbin/${o}sed2
@@ -133,10 +124,10 @@ p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
 $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
 chkres $? "running dwdebuglink test2"
-# we strip out the actual srcdir and blddir for the obvious
+# we strip out the actual localsrc and blddir for the obvious
 # reason: We want the baseline data to be meaningful no matter
 # where one's source/build directories are.
-sed "s:$srcdir:..src..:" <$testbin/$o  >$testbin/${o}a
+sed "s:$localsrc:..src..:" <$testbin/$o  >$testbin/${o}a
 sed "s:$blddir:..bld..:" <$testbin/${o}a  >$testbin/${o}b
 diff $testsrc/debuglink2.base  $testbin/${o}b
 r=$?

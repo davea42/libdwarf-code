@@ -1,53 +1,81 @@
 #!/bin/bash
 # CLEANUP
-l=`pwd`
-echo $l
-lb=`basename $l`
-ld=`dirname $l`
-#echo " lb: $lb"
-#echo " ld: $ld"
-cdtarg=.
-sloc=$l/scripts
-if [ x$lb = "xscripts" ]
-then
-  #echo "ld: $ld"
-  ldb=`basename $ld`
-  #echo "ldb: $ldb"
-  if [ x$ldb = "xcode" ]
+# This is not really needed, as autogen.sh updates
+# what needs to be,
+# And if all built in-tree 'make maintainer-clean'
+# does a good job.  But this does a lot towards cleanup. 
+
+chkisdir() {
+  if [ ! -d $1 ]
   then
-     cdtarg=..
-     sloc=$l
-  else
-     echo "Run from */code, not $l , giving up."
-     exit 1
-  fi
-  cd $cdtarg
-  if [ $? -ne 0 ]
-  then
-     echo "cd $cdtarg failed, giving up."
-     exit 1
-  fi
-else
-  if [ x$lb = "xcode" ]
-  then
-    cdtarg="."
-  else
-    echo "Run from */code, not $l , giving up."
+    echo "The directory $1 is not found"
+    echo "we are in the wrong directory to run scripts/CLEANUP
     exit 1
   fi
-  # No need to cd.
-fi
+}
+
+chkisdir scripts
+chkisdir test
+chkisdir doc
+chkisdir src/lib/libdwarf
+chkisdir src/bin/dwarfdump
+chkisdir src/bin/dwarfexample
+
 l=`pwd`
 #echo "Now at $l"
 #echo "sloc $sloc"
 
 # Won't work unless configure was done.
-make distclean
+# in the source tree. Just ignore failure.
+make maintainer-clean
 
 # Some unlikely but possible files no one wants:
-rm -f libdwarf/BLD
-rm -f dwarfdump/BLD
-rm -f dwarfgen/configure.lineno
-rm -f ALLd*
+
+rm -f src/bin/dwarfgen/configure.lineno
 rm -f junk* */junk*
 rm -f *~ */*~
+
+#Leftovers from building in-tree.
+for i in src/bin/dwarfdump/dwarfdump src/bin/dwarfexample/dwdebuglink \
+  src/bin/dwarfexample/findfuncbypc src/bin/dwarfexample/frame1 \
+  src/bin/dwarfexample/simplereader test/runtestdd.sh.log \
+  test/runtestdd.sh.trs test/runtestsexample.sh.log \
+  test/runtestsexample.sh.trs test/test_dwarfstring \
+  test/test_dwarfstring.log test/test_dwarfstring.trs \
+  test/test_dwgetopt test/test_dwgetopt.log \
+  test/test_dwgetopt.trs test/test_extra_flag_strings \
+  test/test_extra_flag_strings.log test/test_extra_flag_strings.trs \
+  test/test_headersok test/test_headersok.log \
+  test/test_headersok.trs test/test_helpertree \
+  test/test_helpertree.log test/test_helpertree.trs \
+  test/test_linkedtopath test/test_linkedtopath.log \
+  test/test_linkedtopath.trs test/test_macrocheck \
+  test/test_macrocheck.log test/test_macrocheck.trs \
+  test/test_makenametest test/test_makenametest.log \
+  test/test_makenametest.trs test/test_sectionbitmaps \
+  test/test_sectionbitmaps.log test/test_sectionbitmaps.trs \
+  test/test_testesb test/test_testesb.log \
+  test/test_testesb.trs 
+do
+  rm -f $i
+done
+
+#Leftovers from autoreconf /autogen.sh
+for i in junk* *~ cscope.files TAGS *.exe *.lo *.la .dirstamp \
+  aclocal.m4 \
+  ar-lib compile config.guess config.h config.h.in config.log config.sub \
+  configure config.status depcomp install-sh libdwarf.pc libtool ltmain.sh \
+  m4/libtool.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 m4/lt~obsolete.m4 \
+  missing stamp-h1 test-driver test-suite.log  \
+do
+  rm -f $i
+done
+
+for i in Makefile Makefile.in
+do
+  for d in . test src/bin/dwarfdump src/bin/dwarfgen src/bin/dwarfexample \
+    src/lib/libdwarf
+  do
+    rm -f $d/$i
+  done
+done
