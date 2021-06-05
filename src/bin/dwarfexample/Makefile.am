@@ -3,8 +3,6 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AUTOMAKE_OPTIONS = subdir-objects
-
 bin_PROGRAMS = simplereader frame1 findfuncbypc dwdebuglink
 dwarfbigend=@DWARF_BIGENDIAN@
 

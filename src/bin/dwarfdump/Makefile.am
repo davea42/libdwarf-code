@@ -3,8 +3,6 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AUTOMAKE_OPTIONS = subdir-objects
-
 bin_PROGRAMS = dwarfdump
 
 dwarfdump_SOURCES = \
