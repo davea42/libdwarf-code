@@ -49,7 +49,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <io.h>
 #endif
 
-#undef DWARF_WITH_LIBELF
 #include "makename.h"
 #include "macrocheck.h"
 #include "dwconf.h"
@@ -67,7 +66,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include "command_options.h"
 #include "compiler_info.h"
-#undef DWARF_WITH_LIBELF /* seems necessary. Bug somewhere. */
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -127,9 +125,6 @@ static int process_one_file(int fd, int tiedfd,
     const char * tied_file_name,
     char *       tempbuf,
     unsigned int tempbuflen,
-#ifdef DWARF_WITH_LIBELF
-    int archive,
-#endif
     struct dwconf_s *conf);
 
 static int print_gnu_debuglink(Dwarf_Debug dbg,Dwarf_Error *err);
@@ -195,33 +190,6 @@ global_destructors(void)
     }
     glflags.gf_global_debuglink_count = 0;
 }
-
-
-#ifdef DWARF_WITH_LIBELF
-static int
-is_it_known_elf_header(Elf *elf)
-{
-    Elf32_Ehdr *eh32;
-
-    eh32 = elf32_getehdr(elf);
-    if (eh32) {
-        return 1;
-    }
-#ifdef HAVE_ELF64_GETEHDR
-    {
-        Elf64_Ehdr *eh64;
-        /* not a 32-bit obj */
-        eh64 = elf64_getehdr(elf);
-        if (eh64) {
-            return 1;
-        }
-    }
-#endif /* HAVE_ELF64_GETEHDR */
-    /* Not something we can handle. */
-    return 0;
-}
-#endif /* DWARF_WITH_LIBELF */
-
 
 static void
 check_for_notes(void)
@@ -291,9 +259,6 @@ flag_data_pre_allocation(void)
 static void
 flag_data_post_cleanup(void)
 {
-#ifdef DWARF_WITH_LIBELF
-    clean_up_syms_malloc_data();
-#endif /* DWARF_WITH_LIBELF */
     if (glflags.pRangesInfo) {
         ReleaseBucketGroup(glflags.pRangesInfo);
         glflags.pRangesInfo = 0;
@@ -317,119 +282,6 @@ flag_data_post_cleanup(void)
     clean_up_compilers_detected();
     destruct_abbrev_array();
 }
-
-#ifdef DWARF_WITH_LIBELF
-static int
-process_using_libelf(int fd, int tiedfd,
-    const char *file_name,
-    const char *tied_file_name,
-    int archive)
-{
-    Elf_Cmd cmd = 0;
-    Elf *arf = 0;
-    Elf *elf = 0;
-    Elf *elftied = 0;
-    int archmemnum = 0;
-
-    (void) elf_version(EV_NONE);
-    if (elf_version(EV_CURRENT) == EV_NONE) {
-        (void) fprintf(stderr,
-            "dwarfdump: libelf.a out of date.\n");
-        exit(FAILED);
-    }
-
-    /*  We will use libelf to process an archive
-        so long as is convienient.
-        we don't intend to ever write our own
-        archive reader.  Archive support was never
-        tested and may disappear. */
-    cmd = ELF_C_READ;
-    arf = elf_begin(fd, cmd, (Elf *) 0);
-    if (!arf) {
-        fprintf(stderr, "%s ERROR:  "
-            "Unable to obtain ELF descriptor for %s\n",
-            glflags.program_name,
-            file_name);
-        return (FAILED);
-    }
-    if (esb_string_len(glflags.config_file_tiedpath) > 0) {
-        int isknown = 0;
-        if (tiedfd == -1) {
-            fprintf(stderr, "%s ERROR:  "
-                "can't open tied file.... %s\n",
-                glflags.program_name,
-                tied_file_name);
-            return (FAILED);
-        }
-        elftied = elf_begin(tiedfd, cmd, (Elf *) 0);
-        if (elf_kind(elftied) == ELF_K_AR) {
-            fprintf(stderr, "%s ERROR:  tied file  %s is "
-                "an archive. Not allowed. Giving up.\n",
-                glflags.program_name,
-                tied_file_name);
-            return (FAILED);
-        }
-        isknown = is_it_known_elf_header(elftied);
-        if (!isknown) {
-            fprintf(stderr,
-                "Cannot process tied file %s: unknown format\n",
-                tied_file_name);
-            return FAILED;
-        }
-    }
-    while ((elf = elf_begin(fd, cmd, arf)) != 0) {
-        int isknown = is_it_known_elf_header(elf);
-
-        if (!isknown) {
-            /* not a 64-bit obj either! */
-            /* dwarfdump is almost-quiet when not an object */
-            if (archive) {
-                Elf_Arhdr *mem_header = elf_getarhdr(elf);
-                const char *memname =
-                    (mem_header && mem_header->ar_name)?
-                    mem_header->ar_name:"";
-
-                /*  / and // archive entries are not archive
-                    objects, but are not errors.
-                    For the ATT/USL type of archive. */
-                if (strcmp(memname,"/") && strcmp(memname,"//")) {
-                    fprintf(stderr, "Can't process archive member "
-                        "%d %s of %s: unknown format\n",
-                        archmemnum,
-                        sanitized(memname),
-                        file_name);
-                }
-            } else {
-                fprintf(stderr, "Can't process %s: unknown format\n",
-                    file_name);
-            }
-            glflags.check_error = 1;
-            cmd = elf_next(elf);
-            elf_end(elf);
-            continue;
-        }
-        flag_data_pre_allocation();
-        process_one_file(fd,tiedfd,
-            elf,elftied,
-            file_name,
-            tied_file_name,
-            0,0,
-            archive,
-            glflags.config_file_data);
-        reset_usage_rate_tag_trees();
-        flag_data_post_cleanup();
-        cmd = elf_next(elf);
-        elf_end(elf);
-        archmemnum += 1;
-    }
-    elf_end(arf);
-    if (elftied) {
-        elf_end(elftied);
-        elftied = 0;
-    }
-    return 0; /* normal return. */
-}
-#endif /* DWARF_WITH_LIBELF */
 
 void _dwarf_alloc_tree_counts(Dwarf_Unsigned *allocount,
     Dwarf_Unsigned *allosum,
@@ -695,26 +547,10 @@ main(int argc, char *argv[])
         ftype == DW_FTYPE_CUSTOM_ELF ||
 #endif /* HAVE_CUSTOM_LIBELF */
         ftype == DW_FTYPE_ARCHIVE) {
-#ifdef DWARF_WITH_LIBELF
-        int excode = 0;
-
-        excode = process_using_libelf(global_basefd,
-            global_tiedfd,
-            esb_get_string(&global_file_name),
-            esb_get_string(&global_tied_file_name),
-            (ftype == DW_FTYPE_ARCHIVE)? TRUE:FALSE);
-        if (excode) {
-            free(temp_path_buf);
-            global_destructors();
-            flag_data_post_cleanup();
-            return(excode);
-        }
-#else /* !DWARF_WITH_LIBELF */
         fprintf(stderr, "Can't process %s: archives and "
             "printing elf headers not supported in this dwarfdump "
             "--disable-libelf build.\n",
             file_name);
-#endif /* DWARF_WITH_LIBELF */
     } else if (ftype == DW_FTYPE_ELF ||
         ftype ==  DW_FTYPE_MACH_O  ||
         ftype == DW_FTYPE_PE  ) {
@@ -728,9 +564,6 @@ main(int argc, char *argv[])
             esb_get_string(&global_file_name),
             esb_get_string(&global_tied_file_name),
             temp_path_buf, temp_path_buf_len,
-#ifdef DWARF_WITH_LIBELF
-            0 /* elf_archive */,
-#endif
             glflags.config_file_data);
         flag_data_post_cleanup();
     } else {
@@ -1059,9 +892,6 @@ process_one_file(
     const char * tied_file_name,
     char *       temp_path_buf,
     unsigned int temp_path_buf_len,
-#ifdef DWARF_WITH_LIBELF
-    int archive,
-#endif
     struct dwconf_s *l_config_file_data)
 {
     Dwarf_Debug dbg = 0;
@@ -1211,16 +1041,6 @@ process_one_file(
                 " tables properly");
         }
     }
-#ifdef DWARF_WITH_LIBELF
-    if (archive) {
-        Elf_Arhdr *mem_header = elf_getarhdr(elf);
-        const char *memname =
-            (mem_header && mem_header->ar_name)?
-            mem_header->ar_name:"";
-
-        printf("\narchive member   %s\n",sanitized(memname));
-    }
-#endif /* DWARF_WITH_LIBELF */
 
     /*  Ok for dbgtied to be NULL. */
     dres = dwarf_set_tied_dbg(dbg,dbgtied,&onef_err);
@@ -1260,21 +1080,6 @@ process_one_file(
         /*  Build section information
             linkonce is an SNR thing, we*/
         build_linkonce_info(dbg);
-    }
-
-    if (glflags.gf_header_flag && elf) {
-#ifdef DWARF_WITH_LIBELF
-        int res = 0;
-        Dwarf_Error err = 0;
-
-        res = print_object_header(dbg,&err);
-        if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "printing Elf object Header  had a problem.",
-                res,err);
-            DROP_ERROR_INSTANCE(dbg,res,err);
-        }
-#endif /* DWARF_WITH_LIBELF */
     }
 
     if (glflags.gf_section_groups_flag) {
@@ -1588,20 +1393,7 @@ process_one_file(
         }
     }
     if (glflags.gf_reloc_flag && elf) {
-#ifdef DWARF_WITH_LIBELF
-        int leres = 0;
-        Dwarf_Error err = 0;
-
         reset_overall_CU_error_data();
-        leres = print_relocinfo(dbg,&err);
-        if (leres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "printing relocinfo had a problem.",leres,err);
-            DROP_ERROR_INSTANCE(dbg,leres,err);
-        }
-#else
-        reset_overall_CU_error_data();
-#endif /* DWARF_WITH_LIBELF */
     }
     if (glflags.gf_debug_names_flag) {
         int nres = 0;
@@ -1749,9 +1541,6 @@ process_one_file(
         dbg = 0;
     }
     printf("\n");
-#ifdef DWARF_WITH_LIBELF
-    clean_up_syms_malloc_data();
-#endif /* DWARF_WITH_LIBELF */
     destroy_attr_form_trees();
     destruct_abbrev_array();
     esb_close_null_device();

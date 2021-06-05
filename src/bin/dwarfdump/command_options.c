@@ -26,7 +26,6 @@
 */
 
 #include "globals.h"
-#undef DWARF_WITH_LIBELF
 #include "dwconf.h"
 #include "dwgetopt.h"
 
@@ -499,47 +498,14 @@ static const char *usage_long_text[] = {
 "-------------------------------------------------------------------",
 "Print Elf Relocation Data",
 "-------------------------------------------------------------------",
-#ifdef DWARF_WITH_LIBELF
-"-o   --reloc           Print relocation info [afiloprR]",
-"-oa  --reloc-abbrev    Print relocation .debug_abbrev section",
-"-or  --reloc-aranges   Print relocation .debug_aranges section",
-"-of  --reloc-frames    Print relocation .debug_frame section",
-"-oi  --reloc-info      Print relocation .debug_info section",
-"-ol  --reloc-line      Print relocation .debug_line section",
-"-oo  --reloc-loc       Print relocation .debug_loc section",
-"-op  --reloc-pubnames  Print relocation .debug_pubnames section",
-"-oR  --reloc-ranges    Print relocation .debug_ranges section",
-#else
 "  libelf not present, use GNU readelf or readelfobj",
 "  to see relocations",
-#endif /* DWARF_WITH_LIBELF */
 " ",
 "-------------------------------------------------------------------",
 "Print Elf Section Headers",
 "-------------------------------------------------------------------",
-#ifdef DWARF_WITH_LIBELF
-"-E   --elf           Print object Header and/or section information",
-"                     Same as -E[adfhiIlmoprRstx]",
-"-Ea  --elf-abbrev    Print .debug_abbrev header",
-"-Er  --elf-aranges   Print .debug_aranges header",
-"-Ed  --elf-default   Same as -E and {liaprfoRstx}",
-"-EI  --elf-fission   Print fission headers,",
-"                     .gdb_index, .debug_cu_index, .debug_tu_index",
-"-Ef  --elf-frames    Print .debug_frame header",
-"-Eh  --elf-header    Print ELF header",
-"-Ei  --elf-info      Print .debug_info header",
-"-El  --elf-line      Print .debug_line header",
-"-Eo  --elf-loc       Print .debug_loc header",
-"-Em  --elf-macinfo   Print old macinfo and dwarf5 macro header",
-"-Ep  --elf-pubnames  Print .debug_pubnames header",
-"-Et  --elf-pubtypes  Print .debug_types header",
-"-ER  --elf-ranges    Print .debug_ranges header",
-"-Es  --elf-strings   Print .debug_string header",
-"-Ex  --elf-text      Print .text header",
-#else
 "  libelf not present, use GNU readelf or readelfobj",
 "  to see elf file details",
-#endif /* DWARF_WITH_LIBELF */
 " ",
 "-------------------------------------------------------------------",
 "Check DWARF Integrity",
