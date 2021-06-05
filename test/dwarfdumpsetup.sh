@@ -9,8 +9,6 @@ else
   top_srcdir=$DWTOPSRCDIR
 fi
 srcdir=$top_srcdir/test
-goodcount=0
-failcount=0
 
 echo "TOP topsrc $top_srcdir topbld $top_blddir localsrc $srcdir"
 chkres() {
@@ -25,20 +23,6 @@ else
 fi
 }
 
-which cc
-if [ $? -eq 0 ]
-then
-  CC=cc
-else
-  which gcc
-  if [ $? -eq 0 ]
-  then
-    CC=gcc
-  else
-    # we will fail
-    CC=cc
-  fi
-fi
 # So let dwarfdump emit more then trim.
 # In addition the zero date for file time in line tables
 # prints differently for different time zones.
