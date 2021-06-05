@@ -10,10 +10,11 @@ compiler:
 
 install:
   - sudo apt-get -qq update
-  - sudo apt install build-essential zlib1g-dev
+  - sudo apt install build-essential zlib1g-dev mailutils mutt
 
 before_script:
   - autoreconf -vif
 
 script:
   - ./configure --enable-wall --enable-dwarfexample && make && make check
+  - mutt -s "libdwarf test log" -a test/test-suite.log -- vincent.torri@gmail.com <<< 'msg'
