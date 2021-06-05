@@ -17,4 +17,5 @@ before_script:
 
 script:
   - ./configure --enable-wall --enable-dwarfexample && make && make check
+  - cat test/test-suite.log
   - mutt -s "libdwarf test log" -a test/test-suite.log -- vincent.torri@gmail.com <<< 'msg'
