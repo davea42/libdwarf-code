@@ -9,7 +9,8 @@ compiler:
   - clang
 
 install:
- - sudo apt install zlib1g-dev
+  - sudo apt-get -qq update
+  - sudo apt install build-essential zlib1g-dev
 
 before_script:
   - autoreconf -vif
