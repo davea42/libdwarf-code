@@ -129,7 +129,7 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-TESTS += runtestdd.sh
+TESTS += dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh 
 
 if HAVE_DWARFEXAMPLE
 TESTS += runtestsexample.sh runtestsexample-b.sh
@@ -153,8 +153,10 @@ getopttest.c \
 helpertree_test.c \
 makename_test.c \
 README.testcases \
-runtestdd.sh \
+dwarfdumpsetup.sh \
+dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
 runtestsexample.sh \
+runtestsexample-b.sh \
 runtests.sh \
 section_bitmaps_test.c \
 testdebuglink.sh \
