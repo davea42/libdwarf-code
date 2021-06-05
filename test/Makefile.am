@@ -8,9 +8,9 @@
 ###/bin/bash: ../../../libtool: No such file or directory
 ### with no hint as to what the problem really is..
 
-AUTOMAKE_OPTIONS = subdir-objects
-
 MAINTAINERCLEANFILES = Makefile.in
+
+AUTOMAKE_OPTIONS = subdir-objects
 
 CLEANFILES =
 EXTRA_DIS  =
@@ -122,9 +122,7 @@ if HAVE_DWARFEXAMPLE
 TESTS += runtestsexample.sh
 endif
 
-###if HAVE_DWARFGEN
-###SUBDIRS += src/bin/dwarfgen
-###endif
+### no dwarfgen tests here.
 
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
