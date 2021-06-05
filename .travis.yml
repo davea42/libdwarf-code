@@ -12,7 +12,7 @@ install:
  - sudo apt install zlib1g-dev
 
 before_script:
-  - ./autogen.sh
+  - autoreconf -vif
 
 script:
   - ./configure --enable-wall --enable-dwarfexample && make && make check
