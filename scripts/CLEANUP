@@ -9,7 +9,7 @@ chkisdir() {
   if [ ! -d $1 ]
   then
     echo "The directory $1 is not found"
-    echo "we are in the wrong directory to run scripts/CLEANUP
+    echo "we are in the wrong directory to run scripts/CLEANUP"
     exit 1
   fi
 }
@@ -66,7 +66,7 @@ for i in junk* *~ cscope.files TAGS *.exe *.lo *.la .dirstamp \
   ar-lib compile config.guess config.h config.h.in config.log config.sub \
   configure config.status depcomp install-sh libdwarf.pc libtool ltmain.sh \
   m4/libtool.m4 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4 m4/lt~obsolete.m4 \
-  missing stamp-h1 test-driver test-suite.log  \
+  missing stamp-h1 test-driver test-suite.log 
 do
   rm -f $i
 done

@@ -458,7 +458,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
+#ifdef _WIN32
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;
@@ -471,7 +471,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
         /*lcount++;*/
         next++;
     }
-#endif /* HAVE_NONSTANDARD_PRINTF_64_FORMAT */
+#endif /* _WIN32 */
     if (format[next] == 'l') {
         lcount++;
         next++;
@@ -731,7 +731,7 @@ int dwarfstring_append_printf_u(dwarfstring *data,
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
+#ifdef _WIN32
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;
@@ -744,7 +744,7 @@ int dwarfstring_append_printf_u(dwarfstring *data,
         /*lcount++;*/
         next++;
     }
-#endif /* HAVE_NONSTANDARD_PRINTF_64_FORMAT */
+#endif /* _WIN32 */
     if (format[next] == 'l') {
         lcount++;
         next++;
