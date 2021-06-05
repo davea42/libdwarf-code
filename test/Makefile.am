@@ -157,7 +157,6 @@ dwarfdumpsetup.sh \
 dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
 runtestsexample.sh \
 runtestsexample-b.sh \
-runtests.sh \
 section_bitmaps_test.c \
 testdebuglink.sh \
 test_dwarfstring.c \
