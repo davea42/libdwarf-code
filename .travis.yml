@@ -1,3 +1,4 @@
+
 langage: c
 os: linux
 dist: bionic
@@ -6,8 +7,10 @@ cache: false
 compiler:
   - gcc
   - clang
-
 os: linux
+
+install:
+  - sudo apt install zlib1g-dev
 
 before_script:
   - autoreconf -vif
