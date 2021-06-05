@@ -43,9 +43,6 @@
 #include "dwarf_macro5.h"
 #include "dwarfstring.h"
 
-#define TRUE 1
-#define FALSE 0
-
 #define MC_SENTINAL  0xada
 
 #define CHECKNULLCONTEXT(m,d,e)             \

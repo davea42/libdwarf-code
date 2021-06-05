@@ -45,9 +45,6 @@ extern "C" {
 #define DW_DLV_ERROR 1
 #endif /* DW_DLV_OK */
 
-#define TRUE 1
-#define FALSE 0
-
 #define ALIGN4 4
 #define ALIGN8 8
 

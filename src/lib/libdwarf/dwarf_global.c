@@ -37,9 +37,6 @@
 #include "dwarfstring.h"
 #include "dwarf_global.h"
 
-#define FALSE 0
-#define TRUE 1
-
 #ifdef __sgi  /* __sgi should only be defined for IRIX/MIPS. */
 /* The 'fixup' here intended for IRIX targets only.
    With a  2+GB Elf64 IRIX executable (under 4GB in size),

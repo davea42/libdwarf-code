@@ -41,9 +41,6 @@
 #include "dwarf_util.h"
 #include "dwarf_dsc.h"
 
-#define FALSE 0
-#define TRUE 1
-
 /*  When called with ary and *arraycount 0
     this just counts the elements found.
     Otherwise it records the values in ary and

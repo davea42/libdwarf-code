@@ -40,9 +40,6 @@
 #include "dwarf_str_offsets.h"
 #include "dwarfstring.h"
 
-#define TRUE 1
-#define FALSE 0
-
 /*  It is necessary at times to cause errors of this sort
     in determining what we really have.  So best to avoid
     too much malloc and free, hence the static constructor

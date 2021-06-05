@@ -71,9 +71,6 @@ char *dwoptarg;      /* argument associated with option */
 #define BADARG  (int)':'
 #define EMSG    ""
 
-#define TRUE 1
-#define FALSE 0
-
 #if 0 /* FOR DEBUGGING ONLY */
 /*  Use for testing dwgetopt only.
     Not a standard function. */

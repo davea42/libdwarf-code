@@ -47,10 +47,6 @@
 #include "pro_reloc.h"
 #include "pro_dnames.h"
 
-#define FALSE 0
-#define TRUE  1
-
-
 int
 dwarf_force_debug_names(Dwarf_P_Debug dbg,
     Dwarf_Error * error)

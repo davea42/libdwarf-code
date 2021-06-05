@@ -60,10 +60,6 @@
 #define BYTESLEBMAX 24
 #define BITSPERBYTE 8
 
-#define TRUE 1
-#define FALSE 0
-
-
 /* Decode ULEB with checking */
 int
 _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,

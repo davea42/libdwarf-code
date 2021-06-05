@@ -41,9 +41,6 @@
 #include "dwarf_debug_names.h"
 #include "dwarfstring.h"
 
-#define FALSE 0
-#define TRUE  1
-
 /*  freedabs attempts to do some cleanup in the face
     of an error. */
 static void

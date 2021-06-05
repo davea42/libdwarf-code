@@ -35,9 +35,6 @@
 #include "dwarf_util.h"
 #include "dwarfstring.h"
 
-#define TRUE 1
-#define FALSE 0
-
 /*  This is used to print a .debug_abbrev section without
     knowing about the DIEs that use the abbrevs.
 

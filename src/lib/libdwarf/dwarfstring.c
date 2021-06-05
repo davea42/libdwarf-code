@@ -58,12 +58,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* HAVE_MALLOC_H */
 #include "libdwarf_private.h"
 #include "dwarfstring.h"
-#ifndef TRUE
-#define TRUE 1
-#endif /* TRUE */
-#ifndef FALSE
-#define FALSE 0
-#endif /* FALSE */
 
 /*  m must be a string, like  "DWARFSTRINGERR..."  for this to work */
 #define DWSERR(m) dwarfstring_append_length(data,m,sizeof(m)-1)

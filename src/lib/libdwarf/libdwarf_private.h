@@ -29,6 +29,13 @@
 #define  UNUSEDARG
 #endif
 
+#ifndef TRUE
+#define TRUE 1
+#endif  /* TRUE */
+#ifndef FALSE
+#define FALSE 0
+#endif  /* FALSE */
+
 #define DWARF_HALF_SIZE 2
 
 #endif /* LIBDWARF_PRIVATE_H */

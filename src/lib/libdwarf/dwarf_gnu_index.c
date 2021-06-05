@@ -44,9 +44,6 @@
 #include "dwarf_gnu_index.h"
 #include "dwarfstring.h"
 
-#define TRUE  1
-#define FALSE 0
-
 #if 0
 static void
 dump_block(const char *msg,int bn, int lno,

@@ -38,9 +38,6 @@
 #include "dwarf_error.h"
 #include "dwarf_tsearch.h"
 
-#define TRUE  1
-#define FALSE 0
-
 #define HASHSEARCH
 
 /*  It has not escaped our attention that the section-group

@@ -77,13 +77,6 @@
 #define R_MIPS_NONE 0
 #endif
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
-
 #ifdef WORDS_BIGENDIAN
 #define ASNOUT(t,s,l)                       \
     do {                                    \

@@ -36,9 +36,6 @@
     This way we have just one blob of code that reads
     the table operations.  */
 
-#define TRUE 1
-#define FALSE 0
-
 static unsigned char
 dwarf_standard_opcode_operand_count[
 STANDARD_OPERAND_COUNT_TWO_LEVEL] = {

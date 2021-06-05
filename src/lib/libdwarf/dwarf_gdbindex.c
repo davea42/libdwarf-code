@@ -42,9 +42,6 @@
 #include "memcpy_swap.h"
 #include "dwarf_gdbindex.h"
 
-#define TRUE 1
-#define FALSE 0
-
 /*  The dwarf_util macro READ_UNALIGNED
     cannot be directly used because
     gdb defines the section contents of

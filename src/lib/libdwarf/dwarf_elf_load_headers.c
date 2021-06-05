@@ -100,9 +100,6 @@ calls
 #define O_BINARY 0
 #endif /* O_BINARY */
 
-#define TRUE  1
-#define FALSE 0
-
 #if 0
 /*  One example of calling this.
     place just before DW_DLE_SECTION_SIZE_OR_OFFSET_LARGE

@@ -34,9 +34,6 @@
 #include "dwarfstring.h"
 #include "dwarf_str_offsets.h"
 
-#define TRUE 1
-#define FALSE 0
-
 #define STR_OFFSETS_MAGIC 0x2feed2
 
 #define VALIDATE_SOT(xsot)                                \

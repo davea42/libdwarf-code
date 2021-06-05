@@ -36,9 +36,6 @@
 
 #include "dwarf_errmsg_list.h"
 
-
-#define FALSE 0
-#define TRUE 1
 /* This is just to help localize the error. */
 static void
 printone(int i)

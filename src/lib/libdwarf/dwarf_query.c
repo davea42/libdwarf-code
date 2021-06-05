@@ -38,8 +38,6 @@
 #include "dwarf_die_deliv.h"
 #include "dwarfstring.h"
 
-#define TRUE  1
-#define FALSE 0
 static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     Dwarf_Half attr,
     Dwarf_Unsigned * return_val,

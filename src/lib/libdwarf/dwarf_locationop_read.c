@@ -40,10 +40,6 @@
 #include "dwarf_loc.h"
 #include "dwarfstring.h"
 
-#define TRUE 1
-#define FALSE 0
-
-
 /*  Richard Henderson, on DW_OP_GNU_encoded_addr:
     The operand is an absolute address.
     The first byte of the value is an encoding length:

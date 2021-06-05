@@ -38,9 +38,6 @@
 #include "dwarf_util.h"
 #include "dwarfstring.h"
 
-#define FALSE 0
-#define TRUE  1
-
 struct ranges_entry {
     struct ranges_entry *next;
     Dwarf_Ranges cur;
