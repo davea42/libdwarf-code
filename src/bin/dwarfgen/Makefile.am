@@ -32,7 +32,7 @@ dwarfgen_CXXFLAGS = $(DWARF_CXXFLAGS_WARN)
 dwarfgen_LDADD = \
 $(top_builddir)/src/bin/dwarfdump/dwarfdump-dwgetopt.o \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la \
-@DWARF_LIBS@
+@DWARF_LIBS@ @DWARFGEN_LIBS@
 
 EXTRA_DIST = \
 COPYING \

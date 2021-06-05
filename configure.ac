@@ -32,7 +32,7 @@ AC_ARG_ENABLE([dwarfgen],
    [
     AS_IF(
         [test "x${enableval}" = "xyes"],
-        [enable_dwarfgen="yes"],
+        [enable_dwarfgen="yes" ],
         [enable_dwarfgen="no"])
    ],
    [enable_dwarfgen="no"])
@@ -201,6 +201,8 @@ AC_PROG_CC_C_O
 
 AC_SUBST([DWARF_LIBS])
 AC_ARG_VAR([DWARF_LIBS], [linker flags when linking libdwarf])
+AC_SUBST([DWARFGEN_LIBS])
+AC_ARG_VAR([DWARFGEN_LIBS], [extra linker flags when linking dwarfgen])
 
 
 ### Checks for header files
@@ -240,21 +242,25 @@ CPPFLAGS_save=${CPPFLAGS}
 # dwarfgen needs an actual libelf else it cannot be built.
 ### we set $dwarf_with_libelf above.
 
-if test  $dwarf_with_libelf = "yes" ; then
+if test  "$dwarf_with_libelf" = "yes" ; then
   AC_CHECK_HEADERS([sgidefs.h])
   AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
   AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
  
   ### if no libelf.h add no -lelf and turn off
   ### libelf recognition.
+  ### if no dwarfgen do not add -lelf
   AS_IF([test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes" ],
     [ dwarf_with_libelf="no"
-      echo "no libelf headers, no libelf" ],
-    [ DWARF_LIBS="${DWARF_LIBS} -lelf"
-      dwarf_with_libelf="yes"
-      echo "Allowing use of libelf."
-      AC_DEFINE([DWARF_WITH_LIBELF],[1],
-        [Set to 1 as we are building with libelf])
+      echo "no libelf headers, so no libelf" ],
+    [ AS_IF([ test "x${enable_dwarfgen}" != "xyes" ], 
+      [ dwarf_with_libelf="no"
+        echo "dwarfgen not needed, so no libelf"],
+      [ DWARFGEN_LIBS="${DWARFGEN_LIBS} -lelf"
+        dwarf_with_libelf="yes"
+        echo "Allowing use of libelf for dwarfgen."
+        AC_DEFINE([DWARF_WITH_LIBELF],[1],
+          [Set to 1 as we are building dwarfgen with libelf])])
     ])
 ### begin checking for Elf structs
 # Elf64_Rela in elf.h
@@ -667,6 +673,7 @@ echo "  CFLAGS...............: $CFLAGS ${c_compiler_flags}"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LIBS.................: $LIBS"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
+echo "  DWARFGEN_LIBS........: $DWARFGEN_LIBS"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
