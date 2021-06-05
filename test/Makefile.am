@@ -8,7 +8,20 @@
 ###/bin/bash: ../../../libtool: No such file or directory
 ### with no hint as to what the problem really is..
 
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in \
+  runtestdd.sh.log	     test_linkedtopath.log \
+  test_dwarfstring.log	     test_macrocheck.log \
+  test_dwgetopt.log	     test_makenametest.log \
+  test_extra_flag_strings.log  test_sectionbitmaps.log \
+  test_headersok.log	     test_testesb.log \
+  test_helpertree.log  \
+  runtestdd.sh.trs	     test_linkedtopath.trs \
+  test_dwarfstring.trs	     test_macrocheck.trs \
+  test_dwgetopt.trs	     test_makenametest.trs \
+  test_extra_flag_strings.trs  test_sectionbitmaps.trs \
+  test_headersok.trs	     test_testesb.trs \
+  test_helpertree.trs
+
 
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -119,7 +132,7 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 TESTS += runtestdd.sh
 
 if HAVE_DWARFEXAMPLE
-TESTS += runtestsexample.sh
+TESTS += runtestsexample.sh runtestsexample-b.sh
 endif
 
 ### no dwarfgen tests here.
