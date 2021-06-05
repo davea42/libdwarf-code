@@ -1,8 +1,16 @@
+langage: c
+os: linux
+dist: bionic
+cache: false
 
 compiler:
   - gcc
   - clang
+
 os: linux
+
+before_script:
+  - autoreconf -vif
+
 script: 
-  - sh autogen.sh && ./configure --enable-wall --enable-dwarfexample && make && make check
-  - cmake . 
+  - ./configure --enable-wall --enable-dwarfexample && make && make check
