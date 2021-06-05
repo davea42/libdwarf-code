@@ -1,8 +1,18 @@
 
+langage: c
+os: linux
+dist: bionic
+cache: false
+
 compiler:
   - gcc
   - clang
-os: linux
-script: 
-  - sh autogen.sh && ./configure --enable-wall --enable-dwarfexample && make && make check
-  - cmake . 
+
+install:
+ - sudo apt install zlib1g-dev
+
+before_script:
+  - ./autogen.sh
+
+script:
+  - ./configure --enable-wall --enable-dwarfexample && make && make check
