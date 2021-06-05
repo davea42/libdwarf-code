@@ -205,11 +205,6 @@ int print_all_pubnames_style_records(Dwarf_Debug dbg,
     Dwarf_Signed count,
     Dwarf_Error *err);
 
-/*  These three ELF only */
-extern int print_object_header(Dwarf_Debug dbg,Dwarf_Error *);
-extern int print_relocinfo (Dwarf_Debug dbg, Dwarf_Error*);
-void clean_up_syms_malloc_data(void);
-
 /*  Space used to record range information */
 extern void allocate_range_array_info(void);
 extern void release_range_array_info(void);

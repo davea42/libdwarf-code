@@ -141,6 +141,7 @@ dwarf_tied_test.c \
 getopttest.c \
 helpertree_test.c \
 makename_test.c \
+README.testcases \
 runtestdd.sh \
 runtestsexample.sh \
 runtests.sh \

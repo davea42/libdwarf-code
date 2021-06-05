@@ -213,12 +213,10 @@ baseline.ltp  \
 dwarf_names_new.h \
 dwarf_names_enum.h \
 gennames.c \
-dwarf_test_errmsg_list.c \
 dwgetopt.h \
 dwgetopt.c \
 CMakeLists.txt \
 cmake/libdwarf-config.cmake \
-pdfbld.sh \
 NEWS \
 README \
 CODINGSTYLE \
