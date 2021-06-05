@@ -8,31 +8,32 @@ else
 fi
 . $t/test/dwarfdumpsetup.sh
 
-f=$testsrc/testuriLE64ELf.obj
-b=$testsrc/testuriLE64ELf.base
-t=$testbin/junk.testuriLE64ELf.base
-echo "start  dwarfdump sanity check on $f"
-$dd -vvv -a $f | head -n $textlim > $t
-chkres $? "running $dd $f output to $t base $b "
+f=$top_srcdir/test/testuriLE64ELf.obj
+b=$top_srcdir/test/testuriLE64ELf.base
+testbin=$top_blddir/test
+tx=$testbin/junk.testuriLE64ELf.base
+echo "start  dwarfdumpLinux.sh sanity check on $f"
+$dd -vvv -a $f | head -n $textlim > $tx
+chkres $? "dwarfdumpLinux.sh running $dd $f output to $tx base $b "
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
-  droptwoifwin $t
+  droptwoifwin $tx
 fi
-echo "if update required, mv $t $b"
-fixlasttime $t
+echo "if update required, mv $tx $b"
+fixlasttime $tx
 which dos2unix
 if [ $? -eq 0 ]
 then
-  dos2unix $t
+  dos2unix $tx
 fi
-diff $b $t > $t.diff
+diff $b $tx > $tx.diff
 r=$?
-chkres $r "FAIL diff of $b $t"
+chkres $r "FAIL dwarfdumpLinux.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
-  echo "to update , mv  $t $b"
+  echo "to update , mv  $tx $b"
 fi
-rm -f $t
-rm -f $t.diff
+rm -f $tx
+rm -f $tx.diff
 exit 0

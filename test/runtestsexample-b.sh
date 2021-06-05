@@ -36,18 +36,6 @@ fi
 testbin=$top_blddir/test
 testsrc=$top_srcdir/test
 # So we know the build. Because of debuglink.
-echo "DWARF_BIGENDIAN=$DWARF_BIGENDIAN"
-if [ x"$DWCOMPILERFLAGS" = 'x' ]
-then
-  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/src/lib/libdwarf  -I$top_blddir/src/lib/libdwarf -Wall -Wextra"
-  echo "CFLAGS basic default default  $CFLAGS"
-else
-  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/src/lib/libdwarf  -I$top_blddir/src/lib/libdwarf $DWCOMPILERFLAGS"
-  echo "CFLAGS via configure $CFLAGS"
-fi
-
-goodcount=0
-failcount=0
 
 echo "TOP topsrc  : $top_srcdir"
 echo "TOP topbld  : $top_blddir"
@@ -58,36 +46,9 @@ m=$2
 if [ $r -ne 0 ]
 then
   echo "FAIL $m.  Exit status for the test $r"
-  failcount=`expr $failcount + 1`
-else 
-  goodcount=`expr $goodcount + 1`
+  exit 1
 fi
 }
-
-which cc
-if [ $? -eq 0 ]
-then
-  CC=cc
-else
-  which gcc
-  if [ $? -eq 0 ]
-  then
-    CC=gcc
-  else
-    # we will fail
-    CC=cc
-  fi
-fi
-
-
-#lsiok=y
-#ls -i $blddir >/dev/null 2>/dev/null
-#r=$?
-#if [ $r -ne 0 ]
-#then
-#  echo "SKIP dwdebuglink tests cannot work when ls -i does not work"
-#  lsiok=n
-#fi
 
 echo "dwdebuglink test2"
 o=junk.debuglink2
@@ -106,11 +67,6 @@ if [ $r -ne 0 ]
 then
    echo "To update dwdebuglink test2 baseline: mv $testbin/${o}b $testsrc/debuglink2.base"
 fi
-chkres $r "running dwdebuglink test2 diff against baseline"
+chkres $r "runtestsexample-b.shrunning dwdebuglink test2 diff against baseline"
 
-if [ $failcount -gt 0 ] 
-then
-   echo "FAIL $failcount dwarfexample/runtestsexample.sh"
-   exit 1
-fi
 exit 0

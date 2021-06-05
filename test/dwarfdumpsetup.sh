@@ -17,9 +17,7 @@ m=$2
 if [ $r -ne 0 ]
 then
   echo "FAIL $m.  Exit status for the test $r"
-  failcount=`expr $failcount + 1`
-else 
-  goodcount=`expr $goodcount + 1`
+  exit 1
 fi
 }
 

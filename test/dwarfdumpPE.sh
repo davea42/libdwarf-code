@@ -18,7 +18,7 @@ testsrc=$top_srcdir/test
 f=$testsrc/testobjLE32PE.exe
 b=$testsrc/testobjLE32PE.base
 t=$testbin/junk.testobjLE32PE.base
-echo "start  dwarfdump sanity check on pe $f"
+echo "start  dwarfdumpPE.sh sanity check on pe $f"
 # Windows dwarfdump emits a couple prefix lines
 #we do not want. 
 # So let dwarfdump emit more then trim.
@@ -34,7 +34,7 @@ fi
 dd=$bldloc/dwarfdump
 echo "$dd -a -vvv  $f | head -n $textlim > $t "
 $dd -a  -vvv $f | head -n $textlim > $t
-chkres $? "Running dwarfdump $f output to $t base $b"
+chkres $? "dwarfdumpPE.sh dwarfdump $f output to $t base $b"
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -50,7 +50,7 @@ then
 fi
 diff  $b $t > $t.diffjunk.testsmallpe.diff
 r=$?
-chkres $r "FAIL diff of $b $t"
+chkres $r "FAILdwarfdumpPE.sh diff of $b $t"
 if [ $r -ne 0 ]
 then
   echo "to update , mv $t $b"
