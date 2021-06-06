@@ -10,10 +10,12 @@ compiler:
 os: linux
 
 install:
-  - sudo apt install zlib1g-dev
+  - sudo apt-get -qq update
+  - sudo apt install build-essential zlib1g-dev
 
 before_script:
   - autoreconf -vif
 
 script: 
   - ./configure --enable-wall --enable-dwarfexample && make && make check
+  - cat test/test-suite.log

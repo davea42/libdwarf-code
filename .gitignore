@@ -39,3 +39,5 @@ test-suite.log
 autom4te.cache/
 .deps/
 .libs/
+test/*.log
+test/*.trs

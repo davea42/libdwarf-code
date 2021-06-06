@@ -22,9 +22,6 @@ MAINTAINERCLEANFILES = Makefile.in \
   test_headersok.trs	     test_testesb.trs \
   test_helpertree.trs
 
-
-AUTOMAKE_OPTIONS = subdir-objects
-
 CLEANFILES =
 EXTRA_DIS  =
 
