@@ -1,5 +1,7 @@
 Documentation is in the doc directory as of
 31 May 2021
+THE FOLLOWING IS NOT YET UPDATED TO MATCH 
+June 2021 source. 
 =========
 As of 1 June 2021 we are using semanantic
 versions (not a date version)
@@ -66,7 +68,6 @@ The configure option --disable-libelf
 is no longer needed (but is allowed).
 
 Under MinGW the gcc CFLAGS 
- -DHAVE_NONSTANDARD_PRINTF_64_FORMAT \
  -fno-dwarf2-cfi-asm
 have helped some people, though for my MinGW tests
 these are not necessary or appropriate.

@@ -29,7 +29,6 @@ default build next:
         -DWALL=OFF \
         -DDO_TESTING=OFF\
         -DHAVE_CUSTOM_LIBELF=OFF \
-        -DHAVE_NONSTANDARD_PRINTF_64_FORMAT=OFF \
         -DHAVE_WINDOWS_PATH=OFF \
         -DHAVE_OLD_FRAME_CFA_COL=OFF \
         -DHAVE_SGI_IRIX_OFFSETS=OFF \
