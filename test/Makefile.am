@@ -135,10 +135,10 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 TESTS += dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh 
 
 if HAVE_DWARFEXAMPLE
-TESTS += runtestsexample.sh runtestsexample-b.sh
+TESTS += debuglinktest-a.sh debuglinktest-b.sh
 endif
 
-### no dwarfgen tests here.
+### no dwarfgen tests available.
 
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
@@ -158,10 +158,9 @@ makename_test.c \
 README.testcases \
 dwarfdumpsetup.sh \
 dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
-runtestsexample.sh \
-runtestsexample-b.sh \
+debuglinktest-a.sh \
+debuglinktest-b.sh \
 section_bitmaps_test.c \
-testdebuglink.sh \
 test_dwarfstring.c \
 testesb.c \
 test_extra_flag_strings.c \
