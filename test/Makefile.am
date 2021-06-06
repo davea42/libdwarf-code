@@ -20,7 +20,11 @@ MAINTAINERCLEANFILES = Makefile.in \
   test_dwgetopt.trs	     test_makenametest.trs \
   test_extra_flag_strings.trs  test_sectionbitmaps.trs \
   test_headersok.trs	     test_testesb.trs \
-  test_helpertree.trs
+  test_helpertree.trs \
+  junk.debuglink1 junk.debuglink1a \
+  junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
+  junk.debuglink2 junk.debuglink2a junk.debuglink2b
+
 
 CLEANFILES =
 EXTRA_DIS  =

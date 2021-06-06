@@ -1,7 +1,7 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
 
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in junk.ltp
 
 ### libdwarf
 
@@ -223,4 +223,4 @@ CODINGSTYLE \
 $(libdwarf_DATA) \
 $(libdwarfdev_DATA)
 
-CLEANFILES = 
+CLEANFILES =  Makefile
