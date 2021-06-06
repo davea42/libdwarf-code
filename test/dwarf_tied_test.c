@@ -79,20 +79,20 @@ struct test_data_s {
 /* We don't test this here, referenced from dwarf_tied.c. */
 int
 _dwarf_next_cu_header_internal(
-    UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Bool is_info,
-    UNUSEDARG Dwarf_Unsigned * cu_header_length,
-    UNUSEDARG Dwarf_Half * version_stamp,
-    UNUSEDARG Dwarf_Unsigned * abbrev_offset,
-    UNUSEDARG Dwarf_Half * address_size,
-    UNUSEDARG Dwarf_Half * offset_size,
-    UNUSEDARG Dwarf_Half * extension_size,
-    UNUSEDARG Dwarf_Sig8 * signature,
-    UNUSEDARG Dwarf_Bool * has_signature,
-    UNUSEDARG Dwarf_Unsigned *typeoffset,
-    UNUSEDARG Dwarf_Unsigned * next_cu_offset,
-    UNUSEDARG Dwarf_Half     * header_cu_type,
-    UNUSEDARG Dwarf_Error * error)
+    Dwarf_Debug dbg UNUSEDARG,
+    Dwarf_Bool is_info UNUSEDARG,
+    Dwarf_Unsigned * cu_header_length UNUSEDARG,
+    Dwarf_Half * version_stamp UNUSEDARG,
+    Dwarf_Unsigned * abbrev_offset UNUSEDARG,
+    Dwarf_Half * address_size UNUSEDARG,
+    Dwarf_Half * offset_size UNUSEDARG,
+    Dwarf_Half * extension_size UNUSEDARG,
+    Dwarf_Sig8 * signature UNUSEDARG,
+    Dwarf_Bool * has_signature UNUSEDARG,
+    Dwarf_Unsigned *typeoffset UNUSEDARG,
+    Dwarf_Unsigned * next_cu_offset UNUSEDARG,
+    Dwarf_Half     * header_cu_type UNUSEDARG,
+    Dwarf_Error * error UNUSEDARG)
 {
     return DW_DLV_NO_ENTRY;
 }

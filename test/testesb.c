@@ -41,8 +41,8 @@ static int failcount = 0;
 static void
 validate_esb(int instance,
     struct esb_s* d,
-    UNUSEDARG size_t explen,
-    UNUSEDARG size_t expalloc,
+    size_t explen UNUSEDARG,
+    size_t expalloc UNUSEDARG,
     const char *expout,
     int line )
 {
