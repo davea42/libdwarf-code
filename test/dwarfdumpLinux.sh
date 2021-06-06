@@ -14,7 +14,13 @@ testbin=$top_blddir/test
 tx=$testbin/junk.testuriLE64ELf.base
 echo "start  dwarfdumpLinux.sh sanity check on $f"
 $dd -vvv -a $f | head -n $textlim > $tx
-chkres $? "dwarfdumpLinux.sh running $dd $f output to $tx base $b "
+r=$?
+chkres $r "dwarfdumpLinux.sh running $dd $f output to $tx base $b "
+if [ $r -ne 0 ]
+then
+  echo "$dd failed"
+  exit $r
+fi
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -32,7 +38,10 @@ r=$?
 chkres $r "FAIL dwarfdumpLinux.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
-  echo "to update , mv  $tx $b"
+  echo "Showing diff $b $tx"
+  diff $b $tx
+  echo "To update , mv  $tx $b"
+  exit $r
 fi
 rm -f $tx
 rm -f $tx.diff

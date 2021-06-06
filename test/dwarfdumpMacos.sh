@@ -14,7 +14,14 @@ b=$srcdir/test-mach-o-32.base
 t=junk.test-mach-o-32.base
 echo "start dwarfdumpMacos.sh dwarfdump sanity check on $f"
 $dd $f | head -n $textlim > $t
-chkres $? "FAIL test/dwarfdumpMacos.sh $dd $f to $t base $b "
+r=$?
+chkres $r "FAIL test/dwarfdumpMacos.sh $dd $f to $t base $b "
+if [ $r -ne 0 ]
+then
+  echo "$dd FAILED"
+  exit $r
+fi
+
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -33,7 +40,10 @@ r=$?
 chkres $r "FAIL test/dwarfdumpMacos.sh diff of $b $t"
 if [ $r -ne 0 ]
 then
+  echo "Showing diff $b $t"
+  diff $b $t
   echo "to update , mv  $top_blddir/dwarfdump/$t $b"
+  exit $r 
 fi
 rm -f $t
 rm -f $t.diff

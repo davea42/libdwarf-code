@@ -3,8 +3,6 @@
 
 MAINTAINERCLEANFILES = Makefile.in Makefile
 
-AUTOMAKE_OPTIONS = 
-
 ### The following is very wrong. FIX
 all: libdwarf2.1.pdf  libdwarf2p.1.pdf
 

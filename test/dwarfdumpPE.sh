@@ -34,7 +34,13 @@ fi
 dd=$bldloc/dwarfdump
 echo "$dd -a -vvv  $f | head -n $textlim > $t "
 $dd -a  -vvv $f | head -n $textlim > $t
-chkres $? "dwarfdumpPE.sh dwarfdump $f output to $t base $b"
+r=$?
+chkres $r "dwarfdumpPE.sh dwarfdump $f output to $t base $b"
+if [ $r -ne 0 ]
+then
+   echo "$dd FAILED"
+   exit $r
+fi
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -48,12 +54,14 @@ if [ $? -eq 0 ]
 then
   dos2unix $t
 fi
-diff  $b $t > $t.diffjunk.testsmallpe.diff
 r=$?
 chkres $r "FAILdwarfdumpPE.sh diff of $b $t"
 if [ $r -ne 0 ]
 then
-  echo "to update , mv $t $b"
+  echo "Showing diff $b $t"
+  diff $b $t
+  echo "To update , mv $t $b"
+  exit $r
 fi
 rm -f $t
 rm -f $t.diffjunk.testsmallpe.diff

@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 
+
 top_blddir=`pwd`/..
 if [ x$DWTOPSRCDIR = "x" ]
 then
@@ -17,7 +18,6 @@ m=$2
 if [ $r -ne 0 ]
 then
   echo "FAIL $m.  Exit status for the test $r"
-  exit 1
 fi
 }
 
