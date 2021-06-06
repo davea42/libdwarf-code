@@ -13,6 +13,7 @@ b=$top_srcdir/test/testuriLE64ELf.base
 testbin=$top_blddir/test
 tx=$testbin/junk.testuriLE64ELf.base
 echo "start  dwarfdumpLinux.sh sanity check on $f"
+echo "Run: $dd -a -vvv  $f | head -n $textlim"
 $dd -vvv -a $f | head -n $textlim > $tx
 r=$?
 chkres $r "dwarfdumpLinux.sh running $dd $f output to $tx base $b "

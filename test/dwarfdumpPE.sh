@@ -32,7 +32,7 @@ else
   textlim=700
 fi
 dd=$bldloc/dwarfdump
-echo "$dd -a -vvv  $f | head -n $textlim > $t "
+echo "Run: $dd -a -vvv  $f | head -n $textlim"
 $dd -a  -vvv $f | head -n $textlim > $t
 r=$?
 chkres $r "dwarfdumpPE.sh dwarfdump $f output to $t base $b"

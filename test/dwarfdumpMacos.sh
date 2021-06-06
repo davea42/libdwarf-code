@@ -13,6 +13,7 @@ f=$srcdir/test-mach-o-32.dSYM
 b=$srcdir/test-mach-o-32.base
 t=junk.test-mach-o-32.base
 echo "start dwarfdumpMacos.sh dwarfdump sanity check on $f"
+echo "Run: $dd -a -vvv  $f | head -n $textlim"
 $dd $f | head -n $textlim > $t
 r=$?
 chkres $r "FAIL test/dwarfdumpMacos.sh $dd $f to $t base $b "

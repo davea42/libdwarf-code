@@ -31,7 +31,8 @@ then
 else
   textlim=700
 fi
-dd="$top_blddir/src/bin/dwarfdump/dwarfdump --file-name=$top_srcdir/src/bld/dwarfdump.conf"
+cp "$top_srcdir/src/bin/dwarfdump/dwarfdump.conf" .
+dd=$top_blddir/src/bin/dwarfdump/dwarfdump
 # Remove the leading two lines for windows
 # as windows dwarfdump emits two leading lines
 # as compared to non-windows dwarfdump
