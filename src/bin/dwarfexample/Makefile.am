@@ -46,6 +46,8 @@ ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
 ChangeLog2018 \
+ChangeLog2019 \
+ChangeLog2020 \
 CMakeLists.txt \
 simplecrc.c \
 NEWS \

@@ -1,7 +1,8 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
 
-MAINTAINERCLEANFILES = Makefile.in Makefile
+MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES = Makefile
 
 ### The following is very wrong. FIX
 all: libdwarf2.1.pdf  libdwarf2p.1.pdf
@@ -14,15 +15,19 @@ libdwarf2p.1.pdf: libdwarf2p.1.pdf
 ###above wrong.
 
 man_MANS = dwarfdump.1
-
-dwarfdumpdevdir = $(datadir)/src/dwarfdump
+man_MANS += dwarfgen.1
 
 EXTRA_DIST = \
-README.testcases \
 mips_extensions.mm \
 mips_extensions.pdf \
+dwarfdump.1 \
+dwarfgen.1  \
+libdwarf2.1.mm \
+libdwarf2.1.pdf \
+libdwarf2p.1.mm \
+libdwarf2p.1.pdf \
+pdfbld.sh \
 $(man_MANS) 
 
 
-CLEANFILES = 
 

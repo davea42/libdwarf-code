@@ -145,6 +145,7 @@ AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPI
 
 EXTRA_DIST= \
 buildingdummy.sh \
+CMakeLists.txt \
 debuglink2.base \
 debuglink.base \
 dummyexecutable \

@@ -15,6 +15,8 @@ if HAVE_DWARFEXAMPLE
 SUBDIRS += src/bin/dwarfexample
 endif
 
+SUBDIRS += doc
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdwarf.pc
 
@@ -45,18 +47,24 @@ $(distdir).tar.xz
 
 EXTRA_DIST = \
 appveyor.yml \
+autogen.sh \
 bugxml \
 ChangeLog \
 ChangeLog2018 \
+ChangeLog2019 \
+ChangeLog2020 \
 cmake \
 CMakeLists.txt \
 codingstyle.txt \
 cmake/config.h.cmake \
+README \
 README.md \
+README.cmake \
 libdwarf.pc.in \
 scripts/baseconfig.h  \
 scripts/buildandreleasetest.sh \
 scripts/buildstandardsource.sh \
+scripts/run-all-tests.sh \
 scripts/ChangeLog \
 scripts/ChangeLog2018 \
 scripts/ChangeLog2019 \
@@ -90,6 +98,7 @@ tsearch/scripts \
 tsearch/tsearch.c \
 tsearch/tsearchlibtimes.csv \
 tsearch/tsearchlibtimes.ods \
-tsearch/tsearch_tester.c
+tsearch/tsearch_tester.c \
+.travis.yml
 
 # AUTHORS, ChangeLog and COPYING must be present

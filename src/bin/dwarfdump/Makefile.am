@@ -125,6 +125,8 @@ ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
 ChangeLog2018 \
+ChangeLog2019 \
+ChangeLog2020 \
 CMakeLists.txt \
 NEWS \
 README \
@@ -132,6 +134,7 @@ CODINGSTYLE \
 attr_form_build.c \
 buildopscounttab.c \
 tag_common.c \
+testdwarfdump.conf \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \
 tag_tree.c \
@@ -140,7 +143,8 @@ attr_formclass_ext.list \
 tag_attr.list \
 tag_attr_ext.list \
 tag_tree.list \
-tag_tree_ext.list
+tag_tree_ext.list \
+uritablebuild.c
 
 CLEANFILES = 
 

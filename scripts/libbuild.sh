@@ -1,4 +1,4 @@
-# scripts/libbuild.sh
+#scripts/libbuild.sh
 # This script is by David Anderson and hereby
 # put into the public domain
 # for anyone to use in any way.
