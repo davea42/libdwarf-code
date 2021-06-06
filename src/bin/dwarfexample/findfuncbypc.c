@@ -17,11 +17,6 @@
         ./findfuncbypc --pc=0x10000 ./findfuncbypc
 */
 #include "config.h"
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -305,7 +300,7 @@ target_data_destructor( struct target_data_s *td)
 
 
 static void
-print_target_info( UNUSEDARG Dwarf_Debug dbg,
+print_target_info( Dwarf_Debug dbg UNUSEDARG,
     struct target_data_s *td)
 {
     printf("FOUND function \"%s\", requested pc 0x%" DW_PR_DUx
@@ -335,7 +330,7 @@ print_target_info( UNUSEDARG Dwarf_Debug dbg,
 }
 
 static int
-read_line_data(UNUSEDARG Dwarf_Debug dbg,
+read_line_data(Dwarf_Debug dbg UNUSEDARG,
     struct target_data_s *td,
     Dwarf_Error *errp)
 {
@@ -839,10 +834,10 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
 #endif
 
 static int
-getlowhighpc(UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG struct target_data_s *td,
+getlowhighpc(Dwarf_Debug dbg UNUSEDARG,
+    struct target_data_s *td UNUSEDARG,
     Dwarf_Die die,
-    UNUSEDARG int level,
+    int level UNUSEDARG,
     int  *have_pc_range,
     Dwarf_Addr *lowpc_out,
     Dwarf_Addr *highpc_out,
@@ -873,9 +868,9 @@ getlowhighpc(UNUSEDARG Dwarf_Debug dbg,
 
 static int
 check_subprog_ranges_for_match(Dwarf_Debug dbg,
-    UNUSEDARG int is_info,
+    int is_info UNUSEDARG,
     Dwarf_Die die,
-    UNUSEDARG int level,
+    int level UNUSEDARG,
     struct target_data_s *td,
     int  *have_pc_range,
     Dwarf_Addr *lowpc_out,
@@ -974,7 +969,7 @@ static int
 check_subprog_details(Dwarf_Debug dbg,
     int is_info,
     Dwarf_Die die,
-    UNUSEDARG int level,
+    int level UNUSEDARG,
     struct target_data_s *td,
     int  *have_pc_range_out,
     Dwarf_Addr *lowpc_out,

@@ -37,12 +37,6 @@
 // ireptodbg.cc
 
 #include "config.h"
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -63,6 +57,7 @@
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "irepresentation.h"
 #include "ireptodbg.h"
 #include "irepattrtodbg.h"
@@ -406,11 +401,11 @@ const char *testnames[3] = {
 static void
 addSUNfuncoffsets(Dwarf_P_Debug dbg ,
     IRepresentation & Irep UNUSEDARG,
-    UNUSEDARG Dwarf_P_Die ourdie,
+    Dwarf_P_Die ourdie UNUSEDARG ,
     IRDie &inDie,
-    UNUSEDARG IRDie &inParent,
+    IRDie &inParent UNUSEDARG,
     list<IRAttr>& attrs,
-    UNUSEDARG unsigned level)
+    unsigned level UNUSEDARG)
 {
     if(!cmdoptions.addSUNfuncoffsets) {
         // No transformation of this sort requested.

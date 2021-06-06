@@ -28,12 +28,6 @@
 // irepattrtodbg.cc
 
 #include "config.h"
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -57,6 +51,7 @@
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "irepresentation.h"
 #include "ireptodbg.h"
 #include "irepattrtodbg.h"
@@ -85,7 +80,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     IRCUdata  &cu,
     Dwarf_P_Die outdie,
-    UNUSEDARG IRDie & irdie,
+    IRDie & irdie UNUSEDARG,
     IRAttr &irattr)
 {
     int attrnum = irattr.getAttrNum();

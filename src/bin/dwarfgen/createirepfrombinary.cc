@@ -31,13 +31,6 @@
 // an object intended to hold all the dwarf data.
 
 #include "config.h"
-
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -62,6 +55,7 @@
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "irepresentation.h"
 #include "createirepfrombinary.h"
 #include "general.h" // For IToHex()
