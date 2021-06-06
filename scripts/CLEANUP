@@ -34,6 +34,7 @@ make maintainer-clean
 rm -f src/bin/dwarfgen/configure.lineno
 rm -f junk* */junk*
 rm -f *~ */*~
+rm -rf autom4te.cache/
 
 #Leftovers from building in-tree.
 for i in src/bin/dwarfdump/dwarfdump src/bin/dwarfexample/dwdebuglink \
