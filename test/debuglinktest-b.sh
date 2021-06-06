@@ -50,12 +50,18 @@ then
 fi
 }
 
-echo "dwdebuglink test2"
+echo "debuglinktest-b.sh test2"
 o=junk.debuglink2
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
 $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
-chkres $? "running dwdebuglink test2"
+r=$?
+chkres $r "running dwdebuglink test2"
+if [ $r -ne 0 ]
+then
+  echo "Error debuglinktest-a.sh"
+  exit $r
+fi
 # we strip out the actual localsrc and blddir for the obvious
 # reason: We want the baseline data to be meaningful no matter
 # where one's source/build directories are.
@@ -63,10 +69,11 @@ sed "s:$localsrc:..src..:" <$testbin/$o  >$testbin/${o}a
 sed "s:$blddir:..bld..:" <$testbin/${o}a  >$testbin/${o}b
 diff $testsrc/debuglink2.base  $testbin/${o}b
 r=$?
+chkres $r "running debuglinktest-b.sh  diff against baseline"
 if [ $r -ne 0 ]
 then
-   echo "To update dwdebuglink test2 baseline: mv $testbin/${o}b $testsrc/debuglink2.base"
+   echo "To update debuglinktest-b.sh  baseline: mv $testbin/${o}b $testsrc/debuglink2.base"
+   exit $r
 fi
-chkres $r "runtestsexample-b.shrunning dwdebuglink test2 diff against baseline"
 
 exit 0

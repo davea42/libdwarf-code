@@ -53,14 +53,20 @@ fi
 
 if [ x"$DWARF_BIGENDIAN" = "xyes" ]
 then
-  echo "SKIP dwdebuglink test1, cannot work on bigendian build "
+  echo "SKIP debuglinktest-a.sh , cannot work on bigendian build "
 else
-  echo "dwdebuglink test1"
+  echo "debuglinktest-a.sh "
   o=junk.debuglink1
   p="--add-debuglink-path=/exam/ple"
   p2="--add-debuglink-path=/tmp/phony"
   $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
-  chkres $? "runtestsexample.sh running dwdebuglink test1"
+  f=$?
+  chkres $r "debuglinktest-a.sh running dwdebuglink test1"
+  if [ $r -ne 0 ]
+  then
+    echo "Error debuglinktest-a.sh"
+    exit $r
+  fi
   # we strip out the actual localsrc and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
@@ -72,11 +78,12 @@ else
   sed "s:$sedv2:..bld..:" <$testbin/${o}a  >$testbin/${o}b
   diff $testsrc/debuglink.base  $testbin/${o}b
   r=$?
+  chkres $r "running debuglinktest-a.sh test1 diff against baseline"
   if [ $r -ne 0 ]
   then
-     echo "To update dwdebuglink baseline:"
+     echo "To update debuglinktest-a.sh baseline:"
      echo "mv $testbin/${o}b $testsrc/debuglink.base"
+     exit $r
   fi
-  chkres $r "running runtestsexample.sh test1 diff against baseline"
 fi
 exit 0
