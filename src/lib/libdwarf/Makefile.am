@@ -178,9 +178,6 @@ libdwarf_la_LIBADD = @DWARF_LIBS@
 
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
-TESTS = $(check_PROGRAMS) $(check_TESTS)
-AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
-
 libdwarfpkgincludedir = $(pkgincludedir)-@VMAJ@
 libdwarfpkginclude_DATA = \
 $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
