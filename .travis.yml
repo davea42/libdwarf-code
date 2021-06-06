@@ -18,5 +18,5 @@ before_script:
 
 
 script: 
-  - ./configure --enable-wall --enable-dwarfexample && make && make check
+  - ./configure --enable-wall && make && make check
   - cat test/test-suite.log
