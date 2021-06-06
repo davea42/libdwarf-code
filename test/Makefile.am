@@ -8,6 +8,9 @@
 ###/bin/bash: ../../../libtool: No such file or directory
 ### with no hint as to what the problem really is..
 
+### autoreconf gets lots of warnings without this present here.
+AUTOMAKE_OPTIONS = subdir-objects
+
 MAINTAINERCLEANFILES = Makefile.in \
   runtestdd.sh.log	     test_linkedtopath.log \
   test_dwarfstring.log	     test_macrocheck.log \

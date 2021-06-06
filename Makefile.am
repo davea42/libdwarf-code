@@ -3,6 +3,8 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
+AUTOMAKE_OPTIONS = subdir-objects
+
 SUBDIRS = src/lib/libdwarf src/bin/dwarfdump test
 
 if HAVE_DWARFGEN
@@ -37,7 +39,7 @@ m4/ltsugar.m4 \
 m4/ltversion.m4 \
 m4/lt~obsolete.m4 \
 missing  \
-test-driver
+test-driver \
 $(distdir).tar.gz  \
 $(distdir).tar.xz 
 
