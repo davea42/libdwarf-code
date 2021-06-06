@@ -91,9 +91,6 @@
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);
 
-#define FALSE 0
-#define TRUE  1
-
 /*  Global definition of the function pointer type, typedef
     in dwarf_opaque.h */
 _dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;

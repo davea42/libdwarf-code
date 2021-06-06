@@ -40,7 +40,7 @@ set_source_group(HEADERS "Header Files"
   dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
   dwgetopt.h esb.h glflags.h globals.h macrocheck.h defined_types.h
   makename.h dwarf_tsearch.h print_frames.h 
-  print_reloc.h print_reloc_decls.h section_bitmaps.h uri.h
+  section_bitmaps.h uri.h
   ../../lib/libdwarf/libdwarf_private.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files"

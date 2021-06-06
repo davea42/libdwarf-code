@@ -431,8 +431,6 @@ update_entry(Dwarf_Debug dbg,
         Dwarf_Small *targ = target_section+offset;
         Dwarf_Unsigned presentval = 0;
         Dwarf_Unsigned outval = 0;
-        /*  See also: READ_UNALIGNED_SAFE in
-            dwarf_elf_access.c  */
 
         if (!is_rela) {
             READ_UNALIGNED_SAFE(dbg,presentval,

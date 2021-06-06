@@ -78,9 +78,6 @@
 #define  HASHSIGNATURELEN 8
 #define  LEN32BIT   4
 
-#define TRUE 1
-#define FALSE 0
-
 /* The following actually assumes (as used here)
     that t is 8 bytes (integer) while s is
     also 8 bytes (Dwarf_Sig8 struct). */

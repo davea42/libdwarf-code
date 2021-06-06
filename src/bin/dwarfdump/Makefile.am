@@ -102,9 +102,6 @@ dwarfdump_LDADD = \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
-###TESTS = runtests.sh
-###AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
-
 dwarfdumpdevdir = $(top_builddir)/src/bin/dwarfdump
 dwarfdumpdev_DATA = dwarfdump.conf
 
@@ -131,25 +128,10 @@ ChangeLog2018 \
 CMakeLists.txt \
 NEWS \
 README \
-README.testcases \
 CODINGSTYLE \
 attr_form_build.c \
 buildopscounttab.c \
-print_reloc_decls.h \
-makename_test.c  \
-section_bitmaps_test.c \
-helpertree_test.c \
-print_reloc_test.c \
-getopttest.c \
 tag_common.c \
-testesb.c \
-test-mach-o-32.dSYM \
-test-mach-o-32.base \
-testobjLE32PE.exe \
-testuriLE64ELf.obj \
-testobjLE32PE.base \
-testuriLE64ELf.base \
-testobjLE32PE.test.c \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \
 tag_tree.c \

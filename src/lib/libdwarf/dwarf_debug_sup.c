@@ -29,7 +29,6 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 */
 
 /*  This provides access to the DWARF5 .debug_sup section. */
@@ -45,9 +44,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_util.h"
 #include "dwarf_global.h"
 #include "dwarfstring.h"
-
-#define FALSE 0
-#define TRUE  1
 
 static void
 get_sup_fields(Dwarf_Debug dbg,

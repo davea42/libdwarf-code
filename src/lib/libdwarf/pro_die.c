@@ -61,9 +61,6 @@
 #define R_MIPS_NONE 0
 #endif
 
-#define TRUE 1
-#define FALSE 0
-
 /*  This function creates a new die.
     tag: tag of the new die to be created
     parent,child,left,right: specify neighbors of the new die. Only

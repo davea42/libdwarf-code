@@ -52,9 +52,6 @@
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);
 
-#define FALSE  0
-#define TRUE   1
-
 /*  No longer appropriate. No libelf. */
 int
 dwarf_elf_init_b(

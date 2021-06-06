@@ -33,17 +33,6 @@ extern "C" {
 #endif
 
 #include "config.h"
-#undef DWARF_WITH_LIBELF
-#ifdef DWARF_WITH_LIBELF  /* Without libelf no need for _GNU_SOURCE */
-#if (!defined(HAVE_RAW_LIBELF_OK) && defined(HAVE_LIBELF_OFF64_OK) )
-/* At a certain point libelf.h requires _GNU_SOURCE.
-   here we assume the criteria in configure determined that
-   usefully.
-*/
-#define _GNU_SOURCE 1
-#endif
-#endif /* DWARF_WITH_LIBELF */
-
 
 #define DWARF_SECNAME_BUFFER_SIZE 50
 #define ESB_FIXED_ALLOC_SIZE 300
@@ -64,18 +53,6 @@ extern "C" {
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#ifdef DWARF_WITH_LIBELF
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif /* HAVE_ELF_H */
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#else /* !HAVE_LIBELF_H */
-# ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-# endif /* HAVE_LIBELF_LIBELF_H */
-#endif /* HAVE_LIB_ELF */
-#endif /* DWARF_WITH_LIBELF */
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -204,11 +181,6 @@ int print_all_pubnames_style_records(Dwarf_Debug dbg,
     Dwarf_Global *globbuf,
     Dwarf_Signed count,
     Dwarf_Error *err);
-
-/*  These three ELF only */
-extern int print_object_header(Dwarf_Debug dbg,Dwarf_Error *);
-extern int print_relocinfo (Dwarf_Debug dbg, Dwarf_Error*);
-void clean_up_syms_malloc_data(void);
 
 /*  Space used to record range information */
 extern void allocate_range_array_info(void);

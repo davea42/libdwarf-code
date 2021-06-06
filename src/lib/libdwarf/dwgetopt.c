@@ -58,6 +58,7 @@
 #include <stdlib.h> /* for exit() */
 #endif /* HAVE_STDLIB_H */
 #include "dwgetopt.h"
+#include "libdwarf_private.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))
 
@@ -70,9 +71,6 @@ char *dwoptarg;      /* argument associated with option */
 #define BADCH   (int)'?'
 #define BADARG  (int)':'
 #define EMSG    ""
-
-#define TRUE 1
-#define FALSE 0
 
 #if 0 /* FOR DEBUGGING ONLY */
 /*  Use for testing dwgetopt only.

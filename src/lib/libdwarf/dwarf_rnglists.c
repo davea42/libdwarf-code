@@ -46,8 +46,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SIZEOFT16 2
 #define SIZEOFT32 4
 #define SIZEOFT64 8
-#define TRUE 1
-#define FALSE 0
 
 #if 0
 static void

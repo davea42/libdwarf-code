@@ -104,13 +104,9 @@ dwarf_init_path_dl(path true_path and globals, dbg1
     cannot be read.
 */
 
-
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);
 
-
-#define FALSE  0
-#define TRUE   1
 /*  An original basic dwarf initializer function for consumers.
     Return a libdwarf error code on error, return DW_DLV_OK
     if this succeeds.

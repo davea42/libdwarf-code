@@ -43,9 +43,6 @@
 #include "dwarf_loc.h"
 #include "dwarfstring.h"
 
-#define TRUE 1
-#define FALSE 0
-
 static int _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     Dwarf_Block_c * return_block,
     Dwarf_Addr * lowpc,

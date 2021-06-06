@@ -36,7 +36,6 @@ fi
 testbin=$top_blddir/test
 testsrc=$top_srcdir/test
 # So we know the build. Because of debuglink.
-echo "DWARF_BIGENDIAN=$DWARF_BIGENDIAN"
 
 echo "TOP topsrc  : $top_srcdir"
 echo "TOP topbld  : $top_blddir"
@@ -51,32 +50,23 @@ then
 fi
 }
 
-if [ x"$DWARF_BIGENDIAN" = "xyes" ]
+echo "dwdebuglink test2"
+o=junk.debuglink2
+p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
+p2="--add-debuglink-path=/tmp/phony"
+$bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
+chkres $? "running dwdebuglink test2"
+# we strip out the actual localsrc and blddir for the obvious
+# reason: We want the baseline data to be meaningful no matter
+# where one's source/build directories are.
+sed "s:$localsrc:..src..:" <$testbin/$o  >$testbin/${o}a
+sed "s:$blddir:..bld..:" <$testbin/${o}a  >$testbin/${o}b
+diff $testsrc/debuglink2.base  $testbin/${o}b
+r=$?
+if [ $r -ne 0 ]
 then
-  echo "SKIP dwdebuglink test1, cannot work on bigendian build "
-else
-  echo "dwdebuglink test1"
-  o=junk.debuglink1
-  p="--add-debuglink-path=/exam/ple"
-  p2="--add-debuglink-path=/tmp/phony"
-  $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
-  chkres $? "runtestsexample.sh running dwdebuglink test1"
-  # we strip out the actual localsrc and blddir for the obvious
-  # reason: We want the baseline data to be meaningful no matter
-  # where one's source/build directories are.
-  echo $localsrc | sed "s:[.]:\[.\]:g" >$testbin/${o}sed1
-  sedv1=`head -n 1 $testbin/${o}sed1`
-  sed "s:$sedv1:..src..:" <$testbin/$o  >$testbin/${o}a
-  echo $blddir | sed "s:[.]:\[.\]:g" >$testbin/${o}sed2
-  sedv2=`head -n 1 $testbin/${o}sed2`
-  sed "s:$sedv2:..bld..:" <$testbin/${o}a  >$testbin/${o}b
-  diff $testsrc/debuglink.base  $testbin/${o}b
-  r=$?
-  if [ $r -ne 0 ]
-  then
-     echo "To update dwdebuglink baseline:"
-     echo "mv $testbin/${o}b $testsrc/debuglink.base"
-  fi
-  chkres $r "running runtestsexample.sh test1 diff against baseline"
+   echo "To update dwdebuglink test2 baseline: mv $testbin/${o}b $testsrc/debuglink2.base"
 fi
+chkres $r "runtestsexample-b.shrunning dwdebuglink test2 diff against baseline"
+
 exit 0

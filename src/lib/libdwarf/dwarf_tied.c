@@ -43,10 +43,6 @@
 #include "dwarf_tsearch.h"
 #include "dwarf_tied_decls.h"
 
-#define TRUE  1
-#define FALSE 0
-
-
 void
 _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno)
 {

@@ -25,9 +25,7 @@ cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 #include <string.h> /* for memcmp() */
 #include "dwarf.h"
 #include "libdwarf.h"
-
-#define FALSE 0
-#define TRUE 1
+#include "libdwarf_private.h"
 
 void example1(Dwarf_Die somedie)
 {

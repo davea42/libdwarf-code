@@ -42,9 +42,6 @@
 #include "dwarfstring.h"
 #include "dwarf_die_deliv.h"
 
-#define FALSE 0
-#define TRUE 1
-
 /* These are sanity checks, not 'rules'. */
 #define MINIMUM_ADDRESS_SIZE 2
 #define MAXIMUM_ADDRESS_SIZE 8

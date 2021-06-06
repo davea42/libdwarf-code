@@ -36,9 +36,6 @@
 #include "dwarf_loc.h"
 #include "dwarf_rnglists.h"
 
-#define TRUE 1
-#define FALSE 0
-
 static int
 load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,

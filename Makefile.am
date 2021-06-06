@@ -36,10 +36,9 @@ m4/ltoptions.m4 \
 m4/ltsugar.m4 \
 m4/ltversion.m4 \
 m4/lt~obsolete.m4 \
-missing 
-
-###$(distdir).tar.gz 
-###$(distdir).tar.xz
+missing  \
+$(distdir).tar.gz  \
+$(distdir).tar.xz 
 
 EXTRA_DIST = \
 appveyor.yml \
@@ -63,7 +62,6 @@ scripts/CLEANUP \
 scripts/ddbuild.sh  \
 scripts/libbuild.sh \
 scripts/UPDATEDWARFDUMPVERSION.sh \
-scripts/UPD.awk \
 tsearch/ChangeLog \
 tsearch/ChangeLog2014 \
 tsearch/ChangeLog2015 \

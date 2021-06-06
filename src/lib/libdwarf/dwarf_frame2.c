@@ -59,11 +59,6 @@
     tables for fast access into .eh_frame.
 */
 
-
-
-#define TRUE 1
-#define FALSE 0
-
 #if 0  /* FOR DEBUGGING */
 /* For debugging only. */
 static void

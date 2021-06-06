@@ -8,7 +8,22 @@
 ###/bin/bash: ../../../libtool: No such file or directory
 ### with no hint as to what the problem really is..
 
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in \
+  runtestdd.sh.log	     test_linkedtopath.log \
+  test_dwarfstring.log	     test_macrocheck.log \
+  test_dwgetopt.log	     test_makenametest.log \
+  test_extra_flag_strings.log  test_sectionbitmaps.log \
+  test_headersok.log	     test_testesb.log \
+  test_helpertree.log  \
+  runtestdd.sh.trs	     test_linkedtopath.trs \
+  test_dwarfstring.trs	     test_macrocheck.trs \
+  test_dwgetopt.trs	     test_makenametest.trs \
+  test_extra_flag_strings.trs  test_sectionbitmaps.trs \
+  test_headersok.trs	     test_testesb.trs \
+  test_helpertree.trs
+
+
+AUTOMAKE_OPTIONS = subdir-objects
 
 CLEANFILES =
 EXTRA_DIS  =
@@ -114,15 +129,13 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-TESTS += runtestdd.sh
+TESTS += dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh 
 
 if HAVE_DWARFEXAMPLE
-TESTS += runtestsexample.sh
+TESTS += runtestsexample.sh runtestsexample-b.sh
 endif
 
-###if HAVE_DWARFGEN
-###SUBDIRS += src/bin/dwarfgen
-###endif
+### no dwarfgen tests here.
 
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
 
@@ -139,9 +152,11 @@ dwarf_tied_test.c \
 getopttest.c \
 helpertree_test.c \
 makename_test.c \
-runtestdd.sh \
+README.testcases \
+dwarfdumpsetup.sh \
+dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
 runtestsexample.sh \
-runtests.sh \
+runtestsexample-b.sh \
 section_bitmaps_test.c \
 testdebuglink.sh \
 test_dwarfstring.c \

@@ -71,12 +71,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  This must match the types and print options
     found in libdwarf.h.  */
 #define Dwarf_Unsigned unsigned long long
-#if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
-#define DW_PR_DUx "I64x"
-#else
-#define DW_PR_DUx "llx"
-#endif /* DW_PR defines */
-
 #include "dwarf_tsearch.h"
 
 #define IMPLEMENTD15 1

@@ -65,8 +65,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #endif /* O_BINARY */
 
 #define MINBUFLEN 1000
-#define TRUE  1
-#define FALSE 0
 
 #if _WIN32
 #define NULL_DEVICE_NAME "NUL"

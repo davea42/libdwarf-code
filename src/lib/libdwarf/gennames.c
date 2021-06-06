@@ -71,8 +71,6 @@
     a simple switch or code doing binary search.
     This choice affects the runtime speed of dwarfdump.  */
 
-#define TRUE 1
-#define FALSE 0
 #define FAILED 1
 
 static void OpenAllFiles(void);

@@ -70,10 +70,6 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #define O_BINARY 0
 #endif /* O_BINARY */
 
-
-#define TRUE 1
-#define FALSE 0
-
 #ifndef O_RDONLY
 #define O_RDONLY 0
 #endif

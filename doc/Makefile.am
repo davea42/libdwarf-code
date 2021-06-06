@@ -20,6 +20,9 @@ man_MANS = dwarfdump.1
 dwarfdumpdevdir = $(datadir)/src/dwarfdump
 
 EXTRA_DIST = \
+README.testcases \
+mips_extensions.mm \
+mips_extensions.pdf \
 $(man_MANS) 
 
 

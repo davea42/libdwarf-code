@@ -64,13 +64,6 @@ struct isa_relocs_s {
     int         segrel_; /* only used if IRIX */
 };
 
-#ifndef TRUE
-#define TRUE 1
-#endif /*TRUE*/
-#ifndef FALSE
-#define FALSE 0
-#endif /*FALSE*/
-
 /*  Some of these may be the wrong relocation for DWARF
     relocations. FIXME. Most will be unusable without
     additional effort as they have not been tested.
