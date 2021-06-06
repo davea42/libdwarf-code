@@ -71,6 +71,19 @@ do
   rm -f $i
 done
 
+rm -f	doc/Makefile
+rm -f	doc/Makefile.in
+rm -f	src/lib/libdwarf/junk.ltp
+rm -f	test-driver
+rm -f	test/junk.debuglink1
+rm -f	test/junk.debuglink1a
+rm -f	test/junk.debuglink1b
+rm -f	test/junk.debuglink1sed1
+rm -f	test/junk.debuglink1sed2
+rm -f	test/junk.debuglink2
+rm -f	test/junk.debuglink2a
+rm -f	test/junk.debuglink2b
+
 for i in Makefile Makefile.in
 do
   for d in . test src/bin/dwarfdump src/bin/dwarfgen src/bin/dwarfexample \
