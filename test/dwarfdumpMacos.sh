@@ -28,7 +28,6 @@ then
   echo "drop two lines"
   droptwoifwin $t
 fi
-chkres $? "test/dwarfdumpMacos.sh Running dwarfdump on $f"
 echo "if update required, mv $top_blddir/$t $b"
 fixlasttime $t
 which dos2unix
