@@ -4,15 +4,21 @@
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = Makefile
 
-### The following is very wrong. FIX
-all: libdwarf2.1.pdf  libdwarf2p.1.pdf
+# These pdf builds are to be undertaken only on request.
+buildconsumerpdf:
+	cp $(top_srcdir)/doc/libdwarf2.1.mm .
+	sh $(top_srcdir)/doc/pdfbld.sh -c
+	cp libdwarf2.1.pdf $(top_srcdir)/doc/
 
-libdwarf2.1.pdf: libdwarf2.1.mm
-	sh pdfbld.sh -c $(top_srcdir)/libdwarf2.1.mm
+buildproducerpdf:
+	cp $(top_srcdir)/doc/libdwarf2p.1.mm .
+	sh $(top_srcdir)/doc/pdfbld.sh -p
+	cp libdwarf2p.1.pdf $(top_srcdir)/doc/
 
-libdwarf2p.1.pdf: libdwarf2p.1.pdf
-	sh pdfbld.sh -p  $(top_srcdir)/libdwarf2p.1.mm
-###above wrong.
+libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
+libdwarfdev_DATA = \
+libdwarf2.1.pdf \
+libdwarf2p.1.pdf
 
 man_MANS = dwarfdump.1
 man_MANS += dwarfgen.1
