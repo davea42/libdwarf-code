@@ -207,7 +207,7 @@ static Dwarf_Unsigned elf_get_nolibelf_section_count (void *obj)
 static int elf_get_nolibelf_section_info (void *obj,
     Dwarf_Half section_index,
     Dwarf_Obj_Access_Section *return_section,
-    UNUSEDARG int *error)
+    int *error UNUSEDARG)
 {
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
@@ -675,7 +675,7 @@ _dwarf_elf_object_access_internals_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    UNUSEDARG Dwarf_Unsigned access,
+    Dwarf_Unsigned access UNUSEDARG,
     int *errcode)
 {
     dwarf_elf_object_access_internals_t * intfc = internals;

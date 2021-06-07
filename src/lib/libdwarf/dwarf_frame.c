@@ -1214,7 +1214,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             */
         case DW_CFA_GNU_args_size:
             {
-                UNUSEDARG Dwarf_Unsigned lreg = 0;
+                Dwarf_Unsigned lreg UNUSEDARG = 0;
                 int adres = 0;
 
                 adres = _dwarf_leb128_uword_wrapper(dbg,

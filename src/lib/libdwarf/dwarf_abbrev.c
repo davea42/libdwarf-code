@@ -70,7 +70,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
     Dwarf_Unsigned abbrev_count = 0;
     Dwarf_Unsigned attr_name = 0;
     Dwarf_Unsigned attr_form = 0;
-    UNUSEDARG Dwarf_Unsigned implicit_const = 0;
+    Dwarf_Unsigned implicit_const UNUSEDARG = 0;
 
     /*  The abbreviations table ends with an entry with a single
         byte of zero for the abbreviation code.

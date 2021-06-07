@@ -254,7 +254,7 @@ dwarf_construct_elf_access(int fd,
     the caller to avoid use of the pointer. */
 int
 dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t* ep,
-    UNUSEDARG int *errcode)
+    int *errcode UNUSEDARG)
 {
     struct generic_shdr *shp = 0;
     Dwarf_Unsigned shcount = 0;
@@ -297,7 +297,7 @@ dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t* ep,
 static int
 generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     struct generic_ehdr *ehdr, dw_elf32_ehdr *e,
-    UNUSEDARG int *errcode)
+    int *errcode UNUSEDARG)
 {
     int i = 0;
 
@@ -330,7 +330,7 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
 static int
 generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     struct generic_ehdr *ehdr, dw_elf64_ehdr *e,
-    UNUSEDARG int *errcode)
+    int *errcode UNUSEDARG)
 {
     int i = 0;
 
@@ -1580,7 +1580,7 @@ validate_struct_sizes(
 #ifdef HAVE_ELF_H
     int*errcode
 #else
-    UNUSEDARG int*errcode
+    int*errcode UNUSEDARG
 #endif
     )
 {

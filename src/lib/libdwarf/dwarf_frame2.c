@@ -718,7 +718,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         augmentation, use_gnu_cie_calc);
     if (augt == aug_eh) {
         /* REFERENCED *//* Not used in this instance */
-        UNUSEDARG Dwarf_Unsigned exception_table_addr;
+        Dwarf_Unsigned exception_table_addr UNUSEDARG = 0;
 
         if ((frame_ptr+local_length_size)  >= section_ptr_end) {
             _dwarf_error_string(dbg, error,
@@ -1755,7 +1755,7 @@ read_encoded_ptr(Dwarf_Debug dbg,
     as augmentations are implementation specific.  */
 /* ARGSUSED */
 enum Dwarf_augmentation_type
-_dwarf_get_augmentation_type(UNUSEDARG Dwarf_Debug dbg,
+_dwarf_get_augmentation_type(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Small * augmentation_string,
     int is_gcc_eh_frame)
 {
@@ -1837,7 +1837,7 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
 
     if (augtype == aug_gcc_eh_z) {
         /* Has leading 'z'. */
-        UNUSEDARG Dwarf_Unsigned val = 0;
+        Dwarf_Unsigned val UNUSEDARG = 0;
         Dwarf_Unsigned leb128_length = 0;
 
         /* Dwarf_Unsigned eh_value = */

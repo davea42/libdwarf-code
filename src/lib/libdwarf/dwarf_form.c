@@ -1567,7 +1567,7 @@ int
 _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Small *data_ptr,
     Dwarf_Small *end_data_ptr,
-    UNUSEDARG Dwarf_Half   attrnum,
+    Dwarf_Half   attrnum UNUSEDARG,
     Dwarf_Half   attrform,
     Dwarf_CU_Context cu_context,
     Dwarf_Unsigned *str_sect_offset_out,

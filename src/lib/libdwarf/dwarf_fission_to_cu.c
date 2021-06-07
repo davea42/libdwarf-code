@@ -40,9 +40,9 @@ static int
 load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    UNUSEDARG const char * xu_type,
+    const char * xu_type UNUSEDARG,
     int fsd_index,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned soff_hdroffset = 0;
@@ -90,9 +90,9 @@ static int
 load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    UNUSEDARG const char * xu_type,
+    const char * xu_type UNUSEDARG,
     int fsd_index,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     Dwarf_Small *soff_secptr = 0;
     Dwarf_Small *soff_hdrptr = 0;
@@ -157,9 +157,9 @@ static int
 load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    UNUSEDARG const char * xu_type,
+    const char * xu_type UNUSEDARG,
     int fsd_index,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned soff_hdroffset = 0;
@@ -198,9 +198,9 @@ static int
 load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    UNUSEDARG const char * xu_type,
+    const char * xu_type UNUSEDARG,
     int fsd_index,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned soff_hdroffset = 0;

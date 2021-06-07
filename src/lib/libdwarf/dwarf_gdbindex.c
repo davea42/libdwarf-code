@@ -273,7 +273,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
 int
 dwarf_gdbindex_culist_array(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned       * list_length,
-    UNUSEDARG Dwarf_Error          * error)
+    Dwarf_Error * error UNUSEDARG)
 {
     *list_length = gdbindexptr->gi_culisthdr.dg_count;
     return DW_DLV_OK;
@@ -315,7 +315,7 @@ dwarf_gdbindex_culist_entry(Dwarf_Gdbindex gdbindexptr,
 int
 dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned       * list_length,
-    UNUSEDARG Dwarf_Error          * error)
+    Dwarf_Error  * error UNUSEDARG)
 {
     *list_length = gdbindexptr->gi_typesculisthdr.dg_count;
     return DW_DLV_OK;
@@ -363,7 +363,7 @@ dwarf_gdbindex_types_culist_entry(Dwarf_Gdbindex gdbindexptr,
 int
 dwarf_gdbindex_addressarea(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned            * list_length,
-    UNUSEDARG Dwarf_Error               * error)
+    Dwarf_Error     * error UNUSEDARG)
 {
     *list_length = gdbindexptr->gi_addressareahdr.dg_count;
     return DW_DLV_OK;
@@ -411,7 +411,7 @@ dwarf_gdbindex_addressarea_entry(
 int
 dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned            * list_length,
-    UNUSEDARG Dwarf_Error               * error)
+    Dwarf_Error     * error UNUSEDARG)
 {
     *list_length = gdbindexptr->gi_symboltablehdr.dg_count;
     return DW_DLV_OK;
@@ -511,13 +511,13 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
 
 int
 dwarf_gdbindex_cuvector_instance_expand_value(
-    UNUSEDARG Dwarf_Gdbindex gdbindexptr,
+    Dwarf_Gdbindex gdbindexptr UNUSEDARG,
     Dwarf_Unsigned   value,
     Dwarf_Unsigned * cu_index,
     Dwarf_Unsigned * reserved1,
     Dwarf_Unsigned * symbol_kind,
     Dwarf_Unsigned * is_static,
-    UNUSEDARG Dwarf_Error    * error)
+    Dwarf_Error * error UNUSEDARG)
 {
     *cu_index =    value         & 0xffffff;
     *reserved1 =   (value >> 24) & 0xf;

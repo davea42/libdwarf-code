@@ -129,15 +129,15 @@ static Dwarf_Unsigned global_de_alloc_tree_early_dealloc_count;
 static Dwarf_Unsigned global_de_alloc_tree_early_dealloc_size;
 #endif /* HAVE_GLOBAL_ALLOC_SUMS */
 
-void _dwarf_alloc_tree_counts( UNUSEDARG Dwarf_Unsigned *allocount,
-    UNUSEDARG Dwarf_Unsigned *allosum,
-    UNUSEDARG Dwarf_Unsigned *treecount,
-    UNUSEDARG Dwarf_Unsigned *treesum,
-    UNUSEDARG Dwarf_Unsigned *earlydealloccount,
-    UNUSEDARG Dwarf_Unsigned *earlydeallocsize,
-    UNUSEDARG Dwarf_Unsigned *unused1,
-    UNUSEDARG Dwarf_Unsigned *unused2,
-    UNUSEDARG Dwarf_Unsigned *unused3)
+void _dwarf_alloc_tree_counts( Dwarf_Unsigned *allocount UNUSEDARG,
+    Dwarf_Unsigned *allosum UNUSEDARG,
+    Dwarf_Unsigned *treecount UNUSEDARG,
+    Dwarf_Unsigned *treesum UNUSEDARG,
+    Dwarf_Unsigned *earlydealloccount UNUSEDARG,
+    Dwarf_Unsigned *earlydeallocsize UNUSEDARG,
+    Dwarf_Unsigned *unused1 UNUSEDARG,
+    Dwarf_Unsigned *unused2 UNUSEDARG,
+    Dwarf_Unsigned *unused3 UNUSEDARG)
 {
 #ifdef HAVE_GLOBAL_ALLOC_SUMS
     *allocount = global_allocation_count;
@@ -941,7 +941,7 @@ _dwarf_get_debug(void)
     No longer used.
 */
 void
-dwarf_print_memory_stats(UNUSEDARG Dwarf_Debug dbg)
+dwarf_print_memory_stats(Dwarf_Debug dbg UNUSEDARG)
 {
 }
 

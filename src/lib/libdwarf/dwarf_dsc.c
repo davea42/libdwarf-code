@@ -78,7 +78,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Unsigned dsc = 0;
             Dwarf_Unsigned low = 0;
             Dwarf_Unsigned high = 0;
-            UNUSEDARG Dwarf_Unsigned leblen = 0;
+            Dwarf_Unsigned leblen UNUSEDARG = 0;
 
             if (ary && (larraycount >= iarraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
@@ -112,7 +112,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Signed dsc = 0;
             Dwarf_Signed low = 0;
             Dwarf_Signed high = 0;
-            UNUSEDARG Dwarf_Unsigned leblen = 0;
+            Dwarf_Unsigned leblen UNUSEDARG = 0;
 
             if (ary && (larraycount >= iarraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
@@ -234,7 +234,7 @@ int dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
     Dwarf_Half     * out_type,
     Dwarf_Unsigned * out_discr_low,
     Dwarf_Unsigned * out_discr_high,
-    UNUSEDARG Dwarf_Error    * error)
+    Dwarf_Error    * error UNUSEDARG)
 {
     struct Dwarf_Dsc_Entry_s *dse = 0;
 
@@ -276,7 +276,7 @@ int dwarf_discr_entry_s(Dwarf_Dsc_Head  dsh,
     Dwarf_Half     * out_type,
     Dwarf_Signed   * out_discr_low,
     Dwarf_Signed   * out_discr_high,
-    UNUSEDARG Dwarf_Error    * error)
+    Dwarf_Error    * error UNUSEDARG)
 {
     struct Dwarf_Dsc_Entry_s *dse = 0;
 
