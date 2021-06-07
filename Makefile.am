@@ -3,8 +3,6 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-AUTOMAKE_OPTIONS = subdir-objects
-
 SUBDIRS = src/lib/libdwarf src/bin/dwarfdump test
 
 if HAVE_DWARFGEN
