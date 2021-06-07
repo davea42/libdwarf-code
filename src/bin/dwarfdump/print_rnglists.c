@@ -97,8 +97,8 @@ print_offset_entry_table(Dwarf_Debug dbg,
 
 /* For printing the raw rangelist data from .debug_rnglists */
 static int
-print_single_rle(UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Unsigned contextnum,
+print_single_rle(Dwarf_Debug dbg UNUSEDARG,
+    Dwarf_Unsigned contextnum UNUSEDARG,
     Dwarf_Unsigned lineoffset,
     Dwarf_Unsigned code,
     Dwarf_Unsigned v1,

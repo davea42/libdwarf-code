@@ -1507,9 +1507,9 @@ macfile_array_destroy(void)
 
 static Dwarf_Unsigned walk_reccount = 0;
 static void
-macro_walk_count_recs(UNUSEDARG const void *nodep,
+macro_walk_count_recs(const void *nodep UNUSEDARG,
     const DW_VISIT which,
-    UNUSEDARG const int depth)
+    const int depth UNUSEDARG)
 {
     if (which == dwarf_postorder || which == dwarf_endorder) {
         return;
@@ -1530,7 +1530,7 @@ static macdef_entry **mac_as_array = 0;
 static unsigned mac_as_array_next = 0;
 static void
 macro_walk_to_array(const void *nodep,const DW_VISIT  which,
-    UNUSEDARG const int  depth)
+    const int  depth UNUSEDARG)
 {
     macdef_entry * re = *(macdef_entry**)nodep;
 

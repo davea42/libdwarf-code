@@ -121,7 +121,7 @@ static struct  glfsetting_s {
     off.  */
 #if 0
 static void
-turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
+turn_off_subsidiary_flags(Dwarf_Debug dbg UNUSEDARG)
 {
     Dwarf_Unsigned i = 0;
 
@@ -185,7 +185,7 @@ groups_restore_subsidiary_flags(void)
     */
 void
 update_section_flags_per_groups(
-    UNUSEDARG Dwarf_Debug dbg)
+    Dwarf_Debug dbg UNUSEDARG)
 {
     if (!sec_names) {
         /*  The tables are absent. Internal logic

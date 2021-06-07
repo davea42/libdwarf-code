@@ -55,7 +55,7 @@ static int
 print_one_macro_entry_detail(long i,
     char *type,
     struct Dwarf_Macro_Details_s *mdp,
-    UNUSEDARG Dwarf_Error *err)
+    Dwarf_Error *err UNUSEDARG)
 {
     /* "DW_MACINFO_*: section-offset file-index [line] string\n" */
     if (glflags.gf_do_print_dwarf) {
@@ -87,7 +87,7 @@ print_one_macro_entry(long i,
     struct macro_counts_s *counts,
     char ** srcfiles,
     Dwarf_Signed srcf_count,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     int res = 0;
 

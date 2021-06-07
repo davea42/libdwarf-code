@@ -685,8 +685,8 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
 }
 
 static void
-print_cu_hdr_cudie(UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Die cudie,
+print_cu_hdr_cudie(Dwarf_Debug dbg UNUSEDARG,
+    Dwarf_Die cudie UNUSEDARG,
     Dwarf_Unsigned overall_offset,
     Dwarf_Unsigned offset )
 {
@@ -2637,9 +2637,9 @@ do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
 /*  Always returns DW_DLV_OK.
     Expected attr is DW_AT_decl_file or DW_AT_call_file */
 static int
-turn_file_num_to_string(UNUSEDARG Dwarf_Debug dbg,
+turn_file_num_to_string(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Die die,
-    UNUSEDARG Dwarf_Attribute attrib,
+    Dwarf_Attribute attrib UNUSEDARG,
     Dwarf_Half theform,
     Dwarf_Half dwversion,
     Dwarf_Unsigned filenum,/* decl_file number */
@@ -2752,7 +2752,7 @@ turn_file_num_to_string(UNUSEDARG Dwarf_Debug dbg,
 }
 
 static void
-append_useful_die_name(UNUSEDARG Dwarf_Debug dbg,
+append_useful_die_name(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Die die,
     char **srcfiles,
     Dwarf_Signed srcfiles_cnt,
@@ -2996,7 +2996,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Bool is_info,
     Dwarf_Half attr,
     Dwarf_Attribute attr_in,
-    UNUSEDARG Dwarf_Bool print_else_name_match,
+    Dwarf_Bool print_else_name_match UNUSEDARG,
     char **srcfiles, Dwarf_Signed srcfcnt,
     int die_indent_level,
     Dwarf_Error *err)
@@ -3847,7 +3847,7 @@ Dwarf_Half tag,Dwarf_Half attr)
 static void
 remark_wrong_string_format(Dwarf_Half attr,
     Dwarf_Half theform,
-    UNUSEDARG enum Dwarf_Form_Class fc)
+    enum Dwarf_Form_Class fc UNUSEDARG)
 {
 #define VSFBUFSZ 200
     char buf[VSFBUFSZ+1];
@@ -5336,10 +5336,10 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     int             die_indent_level,
     Dwarf_Locdesc * llbuf,    /* Non-zero for old interface. */
     Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
-    UNUSEDARG Dwarf_Unsigned llent, /* Which desc we have . */
+    Dwarf_Unsigned llent UNUSEDARG, /* Which desc we have . */
     Dwarf_Unsigned  entrycount,
     Dwarf_Small     lkind,
-    UNUSEDARG int   no_ending_newlines,
+    int   no_ending_newlines UNUSEDARG,
     Dwarf_Addr      baseaddr,
     struct esb_s   *string_out,
     Dwarf_Error    *err)
@@ -5434,7 +5434,7 @@ show_contents(struct esb_s *string_out,
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
-    UNUSEDARG Dwarf_Small lkind,
+    Dwarf_Small lkind UNUSEDARG,
     int         die_indent_level,
     Dwarf_Loc * expr,
     Dwarf_Locdesc_c exprc,
@@ -5442,7 +5442,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Bool  has_skip_or_branch,
     struct OpBranchHead_s *oparray,
     Dwarf_Bool  report_raw,
-    UNUSEDARG Dwarf_Addr baseaddr,
+    Dwarf_Addr baseaddr UNUSEDARG,
     struct esb_s *string_out,
     Dwarf_Error *err)
 {
@@ -6407,7 +6407,7 @@ formx_unsigned_and_signed_if_neg(Dwarf_Unsigned tempud,
 static int
 check_for_type_unsigned(Dwarf_Debug dbg,
     Dwarf_Die die,
-    UNUSEDARG struct esb_s *esbp)
+    struct esb_s *esbp UNUSEDARG)
 {
     Dwarf_Bool is_info = 0;
     struct Helpertree_Base_s * helperbase = 0;
@@ -6970,12 +6970,12 @@ check_decl_file_only(char **srcfiles,
 
 static int
 expand_rnglist_entries(
-    UNUSEDARG Dwarf_Die die,
+    Dwarf_Die die UNUSEDARG,
     Dwarf_Rnglists_Head rnglhead,
     Dwarf_Unsigned rnglentriescount,
     Dwarf_Unsigned rnglglobal_offset,
     struct esb_s *  esbp,
-    UNUSEDARG int show_form,
+    int show_form UNUSEDARG,
     int local_verbose,
     Dwarf_Error *err)
 {
@@ -7267,7 +7267,7 @@ check_sensible_addr_for_form(Dwarf_Debug dbg,
 int
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Die die,
-    UNUSEDARG int die_indent_level,
+    int die_indent_level UNUSEDARG,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Attribute attrib,
     char **srcfiles, Dwarf_Signed srcfiles_cnt,
@@ -8288,7 +8288,7 @@ format_sig8_string(Dwarf_Sig8*data, struct esb_s *out)
 
 
 static int
-get_form_values( UNUSEDARG Dwarf_Debug dbg,
+get_form_values( Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Attribute attrib,
     Dwarf_Half * theform, Dwarf_Half * directform,
     Dwarf_Error *err)

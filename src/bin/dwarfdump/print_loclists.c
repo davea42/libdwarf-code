@@ -114,14 +114,14 @@ print_opsbytes(Dwarf_Unsigned expr_ops_blocklen,
 
 /*  Print single raw lle */
 static int
-print_single_lle(UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Unsigned contextnum,
+print_single_lle(Dwarf_Debug dbg UNUSEDARG,
+    Dwarf_Unsigned contextnum UNUSEDARG,
     Dwarf_Unsigned lineoffset,
     Dwarf_Unsigned code,
     Dwarf_Unsigned v1,
     Dwarf_Unsigned v2,
     Dwarf_Unsigned expr_ops_blocklen,
-    UNUSEDARG Dwarf_Unsigned expr_ops_offset,
+    Dwarf_Unsigned expr_ops_offset UNUSEDARG,
     Dwarf_Small    *expr_ops,
     Dwarf_Unsigned entrylen)
 {

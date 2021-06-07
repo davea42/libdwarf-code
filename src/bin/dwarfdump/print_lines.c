@@ -621,7 +621,7 @@ process_line_table(Dwarf_Debug dbg,
 
 /* Here we test the interfaces into Dwarf_Line_Context. */
 static int
-print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
+print_line_context_record(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Line_Context line_context,
     Dwarf_Error *err)
 {

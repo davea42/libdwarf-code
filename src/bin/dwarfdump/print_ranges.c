@@ -46,7 +46,7 @@ ranges_esb_string_destructor(void)
     properly: anything could happen. */
 extern int
 print_ranges(Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Error *err)
+    Dwarf_Error *err UNUSEDARG)
 {
     Dwarf_Unsigned off = 0;
     int group_number = 0;
@@ -123,7 +123,7 @@ print_ranges(Dwarf_Debug dbg,
 */
 static int
 check_ranges_list(Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Off die_off,
+    Dwarf_Off die_off UNUSEDARG,
     Dwarf_Die cu_die,
     Dwarf_Unsigned original_off,
     Dwarf_Unsigned finaloff,

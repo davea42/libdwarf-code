@@ -49,7 +49,7 @@ dw_dlv_string(int res)
 }
 
 static int
-print_culist_array(UNUSEDARG Dwarf_Debug dbg,
+print_culist_array(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Gdbindex  gdbindex,
     Dwarf_Unsigned *cu_list_len,
     Dwarf_Error * err)
