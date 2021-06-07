@@ -243,7 +243,7 @@ static int
 pe_get_section_info (void *obj,
     Dwarf_Half section_index,
     Dwarf_Obj_Access_Section *return_section,
-    UNUSEDARG int *error)
+    int *error UNUSEDARG)
 {
     dwarf_pe_object_access_internals_t *pep =
         (dwarf_pe_object_access_internals_t*)(obj);
@@ -826,7 +826,7 @@ _dwarf_pe_object_access_internals_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    UNUSEDARG Dwarf_Unsigned access,
+    Dwarf_Unsigned access UNUSEDARG,
     int *errcode)
 {
     dwarf_pe_object_access_internals_t * intfc = internals;

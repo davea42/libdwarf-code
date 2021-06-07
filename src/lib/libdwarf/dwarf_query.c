@@ -1227,10 +1227,10 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
 
 
 int
-_dwarf_get_string_base_attr_value(UNUSEDARG Dwarf_Debug dbg,
+_dwarf_get_string_base_attr_value(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_CU_Context context,
     Dwarf_Unsigned *sbase_out,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     if (context->cc_str_offsets_base_present) {
         *sbase_out = context->cc_str_offsets_base;

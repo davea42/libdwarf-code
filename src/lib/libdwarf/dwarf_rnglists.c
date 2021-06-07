@@ -410,7 +410,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
 int dwarf_load_rnglists(
     Dwarf_Debug dbg,
     Dwarf_Unsigned *rnglists_count,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     int res = DW_DLV_ERROR;
     Dwarf_Rnglists_Context *cxt = 0;
@@ -532,7 +532,7 @@ int dwarf_get_rnglist_head_basics(
     Dwarf_Unsigned * rnglists_base_address,
     Dwarf_Bool     * rnglists_debug_addr_base_present,
     Dwarf_Unsigned * rnglists_debug_addr_base,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     Dwarf_Rnglists_Context rngcontext = 0;
     *rle_count = head->rh_count;
@@ -580,7 +580,7 @@ int dwarf_get_rnglist_context_basics(
     Dwarf_Unsigned * offset_of_offset_array,
     Dwarf_Unsigned * offset_of_first_rangeentry,
     Dwarf_Unsigned * offset_past_last_rangeentry,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     Dwarf_Rnglists_Context con = 0;
     if (!dbg->de_rnglists_context_count) {
@@ -1194,7 +1194,7 @@ dwarf_get_rnglists_entry_fields_a(
     Dwarf_Bool     *debug_addr_unavailable,
     Dwarf_Unsigned *cooked1,
     Dwarf_Unsigned *cooked2,
-    UNUSEDARG Dwarf_Error *err)
+    Dwarf_Error *err UNUSEDARG)
 {
     Dwarf_Rnglists_Entry e = 0;
 
@@ -1240,7 +1240,7 @@ dwarf_get_rnglists_entry_fields(
     Dwarf_Unsigned *raw2,
     Dwarf_Unsigned *cooked1,
     Dwarf_Unsigned *cooked2,
-    UNUSEDARG Dwarf_Error *err)
+    Dwarf_Error *err UNUSEDARG)
 {
     Dwarf_Rnglists_Entry e = 0;
 
