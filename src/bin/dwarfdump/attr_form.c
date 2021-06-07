@@ -103,9 +103,9 @@ std_compare_3key_entry(const void *l_in, const void *r_in)
 
 static Dwarf_Unsigned counting_global;
 static void
-count_3key_entry(UNUSEDARG const void * vptr,
+count_3key_entry(const void * vptr UNUSEDARG,
     DW_VISIT x,
-    UNUSEDARG int level)
+    int level UNUSEDARG)
 {
     if (x == dwarf_preorder || x == dwarf_leaf) {
         ++counting_global;
@@ -285,13 +285,13 @@ record_attr_form_use(
     int pd_dwarf_names_print_on_error,
     int die_stack_indent_level)
 #else
-    UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Half tag,
+    Dwarf_Debug dbg UNUSEDARG,
+    Dwarf_Half tag UNUSEDARG,
     Dwarf_Half attr,
     Dwarf_Half fclass,
     Dwarf_Half form,
-    UNUSEDARG int pd_dwarf_names_print_on_error,
-    UNUSEDARG int die_stack_indent_level)
+    int pd_dwarf_names_print_on_error UNUSEDARG,
+    int die_stack_indent_level UNUSEDARG)
 #endif /* SKIP_AF_CHECK */
 {
     Three_Key_Entry *e =  0;
@@ -343,7 +343,7 @@ static Three_Key_Entry * tkarray = 0;
 static void
 extract_3key_entry(const void * vptr,
     DW_VISIT x,
-    UNUSEDARG int level)
+    int level UNUSEDARG)
 {
     if (x == dwarf_preorder || x == dwarf_leaf) {
         Three_Key_Entry *m = *(Three_Key_Entry **)vptr;

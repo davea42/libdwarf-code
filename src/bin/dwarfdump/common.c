@@ -54,11 +54,12 @@ const char * dwarf_package_version(void);
 /*  The Linux/Unix version does not want a version string to print
     unless -V is on the command line. */
 void
-print_version_details(UNUSEDARG const char * name,
+print_version_details(const char * name UNUSEDARG,
+    int alwaysprint
 #ifdef _WIN32
-    UNUSEDARG /* we don't use this arg with Windows */
+                    UNUSEDARG /* we don't use this arg with Windows */
 #endif
-    int alwaysprint)
+        )
 {
 #ifdef _WIN32
 #ifdef _DEBUG
@@ -89,7 +90,7 @@ print_version_details(UNUSEDARG const char * name,
 }
 
 void
-print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
+print_args(int argc UNUSEDARG, char *argv[] UNUSEDARG)
 {
 #ifdef _WIN32
     int index = 1;
@@ -105,7 +106,7 @@ print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
     dwarfdump only calls if requested by user.  */
 void
 print_usage_message(
-    UNUSEDARG const char *program_name_in,
+    const char *program_name_in UNUSEDARG,
     const char **text)
 {
     unsigned i = 0;

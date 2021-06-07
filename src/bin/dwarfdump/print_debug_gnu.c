@@ -56,9 +56,9 @@ char *ikind_types[8] = {
 
 static int
 print_block_entries(
-    UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Bool for_pubnames,
-    UNUSEDARG struct esb_s * secname,
+    Dwarf_Debug dbg UNUSEDARG,
+    Dwarf_Bool for_pubnames UNUSEDARG,
+    struct esb_s * secname UNUSEDARG,
     Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned blocknum,
     Dwarf_Unsigned entrycount,
@@ -262,7 +262,7 @@ print_selected_attributes(Dwarf_Debug dbg,
 static int
 print_die_basics(Dwarf_Debug dbg,
     Dwarf_Die die,
-    UNUSEDARG Dwarf_Unsigned cudie_goff,
+    Dwarf_Unsigned cudie_goff UNUSEDARG,
     Dwarf_Error *error)
 {
     int res = 0;

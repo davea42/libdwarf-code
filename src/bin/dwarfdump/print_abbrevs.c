@@ -575,9 +575,9 @@ destruct_abbrev_array(void)
 static Dwarf_Unsigned
 check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
     Dwarf_Unsigned last_abbrev_code,
-    UNUSEDARG Dwarf_Unsigned l_abbrev_array_size,
-    UNUSEDARG Dwarf_Unsigned ev_entry_count,
-    UNUSEDARG Dwarf_Unsigned total_abbrevs_counted)
+    Dwarf_Unsigned l_abbrev_array_size UNUSEDARG,
+    Dwarf_Unsigned ev_entry_count UNUSEDARG,
+    Dwarf_Unsigned total_abbrevs_counted UNUSEDARG)
 {
     char buf[128];
 
@@ -822,7 +822,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
     This just checks and reports errors.
     */
 void
-validate_abbrev_code(UNUSEDARG Dwarf_Debug dbg,
+validate_abbrev_code(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Unsigned abbrev_code)
 {
     char buf[128];

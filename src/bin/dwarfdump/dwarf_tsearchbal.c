@@ -119,8 +119,8 @@ static void printlevel(int level)
 /* Not needed for this set of functions. */
 void *
 dwarf_initialize_search_hash( void **treeptr,
-    UNUSEDARG DW_TSHASHTYPE(*hashfunc)(const void *key),
-    UNUSEDARG unsigned long size_estimate)
+    DW_TSHASHTYPE(*hashfunc)(const void *key) UNUSEDARG,
+    unsigned long size_estimate UNUSEDARG)
 {
     return *treeptr;
 }
@@ -410,8 +410,8 @@ static struct ts_entry *
 tsearch_inner( const void *key, struct ts_entry* head,
     int (*compar)(const void *, const void *),
     int*inserted,
-    UNUSEDARG struct ts_entry **nullme,
-    UNUSEDARG int * comparres)
+    struct ts_entry **nullme UNUSEDARG,
+    int * comparres UNUSEDARG)
 {
     /* t points to parent of p */
     struct ts_entry *t = head;
@@ -639,11 +639,11 @@ struct pkrecord {
 static unsigned
 rearrange_tree_so_p_llink_null( struct pkrecord * pkarray,
     unsigned k,
-    UNUSEDARG struct ts_entry *head,
+    struct ts_entry *head UNUSEDARG,
     struct ts_entry *r,
     struct ts_entry *p,
-    UNUSEDARG int pak,
-    UNUSEDARG struct ts_entry *pp,
+    int pak UNUSEDARG,
+    struct ts_entry *pp UNUSEDARG,
     int ppak)
 {
     struct ts_entry *s = 0;

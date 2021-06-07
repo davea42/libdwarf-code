@@ -660,7 +660,7 @@ print_search_results(void)
 
 /* This is for dwarf_print_lines() */
 static void
-printf_callback_for_libdwarf(UNUSEDARG void *userdata,
+printf_callback_for_libdwarf(void *userdata UNUSEDARG,
     const char *data)
 {
     printf("%s",sanitized(data));
@@ -885,8 +885,8 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     we think we can read, process the dwarf data.  */
 static int
 process_one_file(
-    UNUSEDARG int fd,
-    UNUSEDARG int tiedfd,
+    int fd UNUSEDARG,
+    int tiedfd UNUSEDARG,
     void *elf, void *tiedelf,
     const char * file_name,
     const char * tied_file_name,
@@ -1599,7 +1599,7 @@ simple_err_only_return_action(int res,const char *msg)
 
 /* ARGSUSED */
 static void
-print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
+print_error_maybe_continue(Dwarf_Debug dbg UNUSEDARG,
     const char * msg,
     int dwarf_ret_val,
     Dwarf_Error lerr,
