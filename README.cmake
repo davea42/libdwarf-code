@@ -1,6 +1,13 @@
 Created 26 April 2019 
-Updated 03 October 2019
+Updated 6 June 2021
 
+At this point none of the following works,
+it needs to be fixed now we are using
+a new source structure and using semantic versioning
+for tar.gz names.
+The assumption is that you usually download an appropriate
+libdwarf-0.1.0.tar.gz (or a later one)
+============================
 By default the build builds just libdwarf and dwarfdump.
 
 Lets assume the base directory of the the libdwarf source in a
