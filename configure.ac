@@ -203,6 +203,8 @@ AC_SUBST([DWARF_LIBS])
 AC_ARG_VAR([DWARF_LIBS], [linker flags when linking libdwarf])
 AC_SUBST([DWARFGEN_LIBS])
 AC_ARG_VAR([DWARFGEN_LIBS], [extra linker flags when linking dwarfgen])
+AC_SUBST([DWARFGEN_MANPAGE])
+AC_ARG_VAR([DWARFGEN_MANPAGE], [manpage name when building dwarfgen])
 
 
 ### Checks for header files
@@ -619,6 +621,17 @@ regfree(&r);
 
 AC_MSG_CHECKING([for regex library])
 AC_MSG_RESULT([${have_regex}])
+
+
+FIXME
+AS_IF(
+    [test "x${enable_dwarfgen}" = "xyes" ],
+    [
+        DWARFGEN_MANPAGE="dwarfgen.1"
+    ],
+    [
+        DWARFGEN_MANPAGE=
+    ])
 
 ### Checks for system services
 

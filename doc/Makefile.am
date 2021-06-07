@@ -21,7 +21,7 @@ libdwarf2.1.pdf \
 libdwarf2p.1.pdf
 
 man_MANS = dwarfdump.1
-man_MANS += dwarfgen.1
+man_MANS += @DWARFGEN_MANPAGE@
 
 EXTRA_DIST = \
 mips_extensions.mm \
