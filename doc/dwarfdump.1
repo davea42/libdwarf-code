@@ -288,15 +288,6 @@ Print  the .gdb_index, .debug_cu_index,
 Print .gnu_debuglink and .note.gnu.build-id sections
 
 .TP
-.BR \--elf\ (\-E)    
-prints,
-for Elf objects, object file details.
-See the "Print ELF Section Headers" section of
-the help file for additional choices on elf printing.
-If libdwarf or dwarfdump is built without libelf
-this and related options are not available.
-
-.TP
 .BR \--print-frame\ (\-f)
 Print the .debug_frame section.
 .TP
@@ -378,22 +369,6 @@ and .debug_static_vars.
 .BR \--print-type\ (\-y)
 Print the .debug_pubtypes section
 (and .debug_typenames, an SGI IRIX-only section).
-
-.PP
-Having dwarfdump print relocations may help establish whether
-dwarfdump understands any relocations that might exist.
-Other tools may be more useful than dwarfdump
-for printing object-file details.
-If dwarfdump or libelf is built without libelf
-the relocation options are not available.
-See "Print Elf Relocation Data" in the help output for
-additional relocation printing choices.
-
-.TP
-.BR \--reloc\ (\-o)    
-Print all relocation records as well as we can manage.
-If libdwarf or dwarfdump were built without libelf
-this option is unavailable.
 
 .TP
 .BR \--version\ (\-V)  
