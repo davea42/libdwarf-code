@@ -1,6 +1,5 @@
 #!/bin/sh
 #
-#Set stuff up.
 if [ x$DWTOPSRCDIR = "x" ]
 then
   t=$top_blddir
@@ -9,42 +8,42 @@ else
 fi
 . $t/test/dwarfdumpsetup.sh
 
-f=$srcdir/test-mach-o-32.dSYM
-b=$srcdir/test-mach-o-32.base
-t=junk.test-mach-o-32.base
+f=$top_srcdir/test/test-mach-o-32.dSYM
+b=$top_srcdir/test/test-mach-o-32.base
+testbin=$top_blddir/test
+tx=$testbin/junk.test-mach-o-32.base
 echo "start dwarfdumpMacos.sh dwarfdump sanity check on $f"
 echo "Run: $dd -a -vvv  $f | head -n $textlim"
-$dd $f | head -n $textlim > $t
+$dd -a -vvv $f | head -n $textlim > $tx
 r=$?
-chkres $r "FAIL test/dwarfdumpMacos.sh $dd $f to $t base $b "
+chkres $r "FAIL test/dwarfdumpMacos.sh $dd $f to $tx base $b "
 if [ $r -ne 0 ]
 then
   echo "$dd FAILED"
   exit $r
 fi
-
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
-  droptwoifwin $t
+  droptwoifwin $tx
 fi
-echo "if update required, mv $top_blddir/$t $b"
-fixlasttime $t
+echo "if update required, mv $tx $b"
+fixlasttime $tx
 which dos2unix
 if [ $? -eq 0 ]
 then
-  dos2unix $t
+  dos2unix $tx
 fi
-diff $b $t > $t.diff
+diff $b $tx > $tx.diff
 r=$?
-chkres $r "FAIL test/dwarfdumpMacos.sh diff of $b $t"
+chkres $r "FAIL test/dwarfdumpMacos.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
-  echo "Showing diff $b $t"
-  diff $b $t
-  echo "to update , mv  $top_blddir/dwarfdump/$t $b"
+  echo "Showing diff $b $tx"
+  diff $b $tx
+  echo "to update , mv $tx $b"
   exit $r 
 fi
-rm -f $t
-rm -f $t.diff
+rm -f $tx
+rm -f $tx.diff
 exit 0

@@ -1,7 +1,6 @@
 #!/bin/sh
 #
 
-
 top_blddir=`pwd`/..
 if [ x$DWTOPSRCDIR = "x" ]
 then

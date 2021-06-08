@@ -216,18 +216,6 @@ if (DWARF_WITH_LIBELF)
       off64_t  p; p = 0;
       return 0;
   }"  HAVE_LIBELF_OFF64_OK)
-
-  check_c_source_compiles("
-  #include ${JUST_LIBELF}
-  /* This must be at global scope */
-  struct _Elf;
-  typedef struct _Elf Elf;
-  struct _Elf *a = 0;
-  int main()
-  {
-   int i = 12;
-   return 0;
-  }" HAVE_STRUCT_UNDERSCORE_ELF)
 else()
 endif()
 check_c_source_runs("
@@ -392,6 +380,9 @@ endif()
 
 add_subdirectory(src/lib/libdwarf)
 add_subdirectory(src/bin/dwarfdump)
+if (DO_TESTING)
+add_subdirectory(test)
+endif()
 if ( BUILD_DWARFGEN )
 	if ( DWARF_WITH_LIBELF )
 	    add_subdirectory(src/bin/dwarfgen)

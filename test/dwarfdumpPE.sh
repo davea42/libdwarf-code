@@ -8,34 +8,15 @@ else
 fi
 . $t/test/dwarfdumpsetup.sh
 
-srcloc=$top_srcdir/src/bin/dwarfexample
-bldloc=$top_blddir/src/bin/dwarfdump
+f=$top_srcdir/test/testobjLE32PE.exe
+b=$top_srcdir/test/testobjLE32PE.base
 testbin=$top_blddir/test
-testsrc=$top_srcdir/test
-# The following stop after 400 lines to limit the size
-# of the data here.  
-# It is a sanity check, not a full check.
-f=$testsrc/testobjLE32PE.exe
-b=$testsrc/testobjLE32PE.base
-t=$testbin/junk.testobjLE32PE.base
+tx=$testbin/junk.testobjLE32PE.base
 echo "start  dwarfdumpPE.sh sanity check on pe $f"
-# Windows dwarfdump emits a couple prefix lines
-#we do not want. 
-# So let dwarfdump emit more then trim.
-# In addition the zero date for file time in line tables
-# prints differently for different time zones.
-# Delete what follows 'last time 0x0'
-if [ x$win = "xy" ]
-then
-  textlim=702
-else
-  textlim=700
-fi
-dd=$bldloc/dwarfdump
-echo "Run: $dd -a -vvv  $f | head -n $textlim"
-$dd -a  -vvv $f | head -n $textlim > $t
+echo "Run: $dd -vvv -a  $f | head -n $textlim"
+$dd -vvv -a $f | head -n $textlim > $tx
 r=$?
-chkres $r "dwarfdumpPE.sh dwarfdump $f output to $t base $b"
+chkres $r "dwarfdumpPE.sh dwarfdump $f output to $tx xbase $b"
 if [ $r -ne 0 ]
 then
    echo "$dd FAILED"
@@ -44,25 +25,25 @@ fi
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
-  droptwoifwin $t
-  echo did drop two
-  wc $t
+  droptwoifwin $tx
 fi
-fixlasttime $t
+echo "if update required, mv $tx $b"
+fixlasttime $tx
 which dos2unix
 if [ $? -eq 0 ]
 then
-  dos2unix $t
+  dos2unix $tx
 fi
+diff $b $tx > $tx.diff 
 r=$?
-chkres $r "FAILdwarfdumpPE.sh diff of $b $t"
+chkres $r "FAILdwarfdumpPE.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
-  echo "Showing diff $b $t"
-  diff $b $t
-  echo "To update , mv $t $b"
+  echo "Showing diff $b $tx"
+  diff $b $tx
+  echo "To update , mv $tx $b"
   exit $r
 fi
-rm -f $t
-rm -f $t.diffjunk.testsmallpe.diff
+rm -f $tx
+rm -f $tx.diff
 exit 0
