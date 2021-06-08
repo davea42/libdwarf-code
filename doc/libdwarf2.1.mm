@@ -7317,7 +7317,7 @@ This is the
 \f(CWint dwarf_srclines_b(
         Dwarf_Die die,
         Dwarf_Unsigned *version_out,
-        Dwarf_Bool     *is_single_table,
+        Dwarf_Small    *table_count,
         Dwarf_Line_Context *context_out,
         Dwarf_Error *error)\fP
 .DE

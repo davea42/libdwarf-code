@@ -2316,16 +2316,11 @@ void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     interface.
     This interface only reads the line table header, so
     it takes relatively little time.
-    *is_single_table will be set non-zero for all
-        standard dwarf line sections.
-    *is_single_table will be set zero for
-        line sections with the two_level line table
-        extension (which will have *version_out 0xf006).  */
 int dwarf_srclines_b(Dwarf_Die /*die*/,
-    Dwarf_Unsigned     * /* version_out*/,
-    Dwarf_Small        * /* table_count */,
-    Dwarf_Line_Context * /* linecontext*/,
-    Dwarf_Error        * /* error*/);
+    Dwarf_Unsigned     * /*version_out*/,
+    Dwarf_Small        * /*table_count*/,
+    Dwarf_Line_Context * /*linecontext*/,
+    Dwarf_Error        * /*error*/);
 
 /*  Functions passing in a Dwarf_Line_Context  are only
     available if dwarf_srclines_b() was used to access
