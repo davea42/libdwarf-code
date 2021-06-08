@@ -4,6 +4,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = Makefile
 
+doc: buildconsumerpdf buildproducerpdf
 # These pdf builds are to be undertaken only on request.
 buildconsumerpdf:
 	cp $(top_srcdir)/doc/libdwarf2.1.mm .

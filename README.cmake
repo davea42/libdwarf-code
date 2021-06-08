@@ -35,7 +35,6 @@ default build next:
         -DBUILD_DWARFEXAMPLE=OFF \
         -DWALL=OFF \
         -DDO_TESTING=OFF\
-        -DHAVE_CUSTOM_LIBELF=OFF \
         -DHAVE_WINDOWS_PATH=OFF \
         -DHAVE_OLD_FRAME_CFA_COL=OFF \
         -DHAVE_SGI_IRIX_OFFSETS=OFF \
@@ -43,16 +42,12 @@ default build next:
         /path/to/code
     make
 
-Ignore the -DHAVE_CUSTOM_LIBELF line, that option is not
-intended for you :-) .
 
 The options after -DHAVE_WINDOWS_PATH should not normally be
 used, they are for testing old features and not relevant to
 modern usage.
 
-
 The short form, doing the same as the default:
-
     cmake /path/to/code
     make
 
@@ -66,11 +61,6 @@ For dwarfexample:
 
 If libelf is missing -DBUILD_DWARFGEN=ON will not be honored
 as dwarfgen will not build without libelf.
-
-=============ctest not working 6 June 2021
-
-If you wish to run the selftests (both internal tests and
-runs of dwarfdump on a couple selected object files):
 
     cmake -DDO_TESTING=ON /path/to/code
     make

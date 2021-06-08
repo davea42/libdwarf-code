@@ -135,5 +135,5 @@ install(
 install(DIRECTORY libdwarf DESTINATION include/
     FILES_MATCHING PATTERN "*.h")
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/src/lib/libdwarf/libdwarf.h
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarf.h
     DESTINATION include/libdwarf)
