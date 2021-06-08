@@ -93,3 +93,13 @@ do
     rm -f $d/$i
   done
 done
+
+for dl in CMakeFiles/ Testing/ src/bin/dwarfdump/CMakeFiles/ src/lib/libdwarf/CMakeFiles/ test/CMakeFiles/
+do
+  rm -rf $dl
+done
+for fi in CMakeCache.txt CTestTestfile.cmake cmake_install.cmake src/bin/dwarfdump/CTestTestfile.cmake src/bin/dwarfdump/cmake_install.cmake src/lib/libdwarf/CTestTestfile.cmake src/lib/libdwarf/cmake_install.cmake test/CTestTestfile.cmake test/cmake_install.cmake test/selfesb test/selfgetopttest test/selfhelpertree test/selfleb test/selfmakename test/selfmc test/selfsectionbitmaps test/selftestesb test/selftied test/teststring
+do
+  rm -f $fi
+done
+
