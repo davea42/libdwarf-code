@@ -102,8 +102,8 @@ dwarfdump_LDADD = \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
-dwarfdumpdevdir = $(top_builddir)/src/bin/dwarfdump
-dwarfdumpdev_DATA = dwarfdump.conf
+dwarfdumpconfdir = $(datadir)/dwarfdump
+dwarfdumpconf_DATA = dwarfdump.conf
 
 ### The tests go elsewhere.
 EXTRA_DIST = \
