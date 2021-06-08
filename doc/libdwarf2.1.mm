@@ -7498,8 +7498,7 @@ Actuals lines.
 .H 3 "dwarf_srclines_dealloc_b()"
 .DS
 \f(CWvoid dwarf_srclines_dealloc_b(
-        Dwarf_Line_Context line_context,
-        Dwarf_Error *error)\fP
+        Dwarf_Line_Context line_context)\fP
 .DE
 This does a complete deallocation of
 the memory of the
