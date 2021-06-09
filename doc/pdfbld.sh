@@ -11,8 +11,8 @@ p="n"
 if [ $# -lt 1 ]
 then
   echo "Usage: pdfbld.sh [-c] [-p]"
-  echo "where: -c formats libdwarf2.1.pdf"
-  echo "where: -p formats libdwarf2p.1.pdf"
+  echo "where: -c formats libdwarf.pdf"
+  echo "where: -p formats libdwarfp.pdf"
   exit 1
 fi
 for i in $*
@@ -20,12 +20,12 @@ do
   case $i in
     -c) c="y"
        echo "Build libdwarf consumer pdf for $src"
-       fin=libdwarf2.1.mm
-       fout=libdwarf2.1.pdf
+       fin=libdwarf.mm
+       fout=libdwarf.pdf
        shift ;;
     -p) p="y"
-       fin=libdwarf2p.1.mm
-       fout=libdwarf2p.1.pdf
+       fin=libdwarfp.mm
+       fout=libdwarfp.pdf
        echo "Build libdwarf consumer pdf for $src"
        shift ;;
     *)  echo "Giving up: unknown argument use argument -a or -c or -p"

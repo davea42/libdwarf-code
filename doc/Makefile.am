@@ -7,14 +7,14 @@ CLEANFILES = Makefile
 doc: buildconsumerpdf buildproducerpdf
 # These pdf builds are to be undertaken only on request.
 buildconsumerpdf:
-	cp $(top_srcdir)/doc/libdwarf2.1.mm .
+	cp $(top_srcdir)/doc/libdwarf.mm .
 	sh $(top_srcdir)/doc/pdfbld.sh -c
-	cp libdwarf2.1.pdf $(top_srcdir)/doc/
+	cp libdwarf.pdf $(top_srcdir)/doc/
 
 buildproducerpdf:
-	cp $(top_srcdir)/doc/libdwarf2p.1.mm .
+	cp $(top_srcdir)/doc/libdwarfp.mm .
 	sh $(top_srcdir)/doc/pdfbld.sh -p
-	cp libdwarf2p.1.pdf $(top_srcdir)/doc/
+	cp libdwarfp.pdf $(top_srcdir)/doc/
 
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
 libdwarfdev_DATA = \
@@ -29,10 +29,10 @@ mips_extensions.mm \
 mips_extensions.pdf \
 dwarfdump.1 \
 dwarfgen.1  \
-libdwarf2.1.mm \
-libdwarf2.1.pdf \
-libdwarf2p.1.mm \
-libdwarf2p.1.pdf \
+libdwarf.mm \
+libdwarf.pdf \
+libdwarfp.mm \
+libdwarfp.pdf \
 pdfbld.sh \
 $(man_MANS) 
 
