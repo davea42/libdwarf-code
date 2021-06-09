@@ -16,7 +16,7 @@ endif
 SUBDIRS += doc
 
 doc:
-	make -C doc
+	make -C doc doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdwarf.pc

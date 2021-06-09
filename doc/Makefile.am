@@ -18,11 +18,14 @@ buildproducerpdf:
 
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
 libdwarfdev_DATA = \
-libdwarf2.1.pdf \
-libdwarf2p.1.pdf
+libdwarf.pdf \
+libdwarfp.pdf
 
 man_MANS = dwarfdump.1
-man_MANS += @DWARFGEN_MANPAGE@
+
+if HAVE_DWARFGEN
+man_MANS += dwarfgen.1
+endif
 
 EXTRA_DIST = \
 mips_extensions.mm \
@@ -33,8 +36,4 @@ libdwarf.mm \
 libdwarf.pdf \
 libdwarfp.mm \
 libdwarfp.pdf \
-pdfbld.sh \
-$(man_MANS) 
-
-
-
+pdfbld.sh 
