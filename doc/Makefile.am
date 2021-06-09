@@ -22,7 +22,9 @@ libdwarf2.1.pdf \
 libdwarf2p.1.pdf
 
 man_MANS = dwarfdump.1
-man_MANS += @DWARFGEN_MANPAGE@
+if HAVE_DWARFGEN
+man_MANS += dwarfgen.1
+endif
 
 EXTRA_DIST = \
 mips_extensions.mm \
@@ -33,8 +35,4 @@ libdwarf2.1.mm \
 libdwarf2.1.pdf \
 libdwarf2p.1.mm \
 libdwarf2p.1.pdf \
-pdfbld.sh \
-$(man_MANS) 
-
-
-
+pdfbld.sh
