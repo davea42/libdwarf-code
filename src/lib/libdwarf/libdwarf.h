@@ -2315,7 +2315,7 @@ void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     New work should use the new Dwarf_Line_Context
     interface.
     This interface only reads the line table header, so
-    it takes relatively little time.
+    it takes relatively little time.  */
 int dwarf_srclines_b(Dwarf_Die /*die*/,
     Dwarf_Unsigned     * /*version_out*/,
     Dwarf_Small        * /*table_count*/,
