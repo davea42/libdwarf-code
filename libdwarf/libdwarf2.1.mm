@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 3.27 15 May 2021
+.ds vE Rev 3.28 09 June 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -7317,9 +7317,9 @@ This is the
 \f(CWint dwarf_srclines_b(
         Dwarf_Die die,
         Dwarf_Unsigned *version_out,
-        Dwarf_Bool     *is_single_table,
+        Dwarf_Small    *table_count,
         Dwarf_Line_Context *context_out,
-        Dwarf_Error *error)\fP
+        Dwarf_Error    'error)\fP
 .DE
 \f(CWdwarf_srclines_b()\fP
 takes a single argument as input,
@@ -7498,8 +7498,7 @@ Actuals lines.
 .H 3 "dwarf_srclines_dealloc_b()"
 .DS
 \f(CWvoid dwarf_srclines_dealloc_b(
-        Dwarf_Line_Context line_context,
-        Dwarf_Error *error)\fP
+        Dwarf_Line_Context line_context)\fP
 .DE
 This does a complete deallocation of
 the memory of the
