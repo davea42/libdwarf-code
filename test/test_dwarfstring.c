@@ -81,7 +81,7 @@ check_value(const char *msg,unsigned long exp,
 }
 
 static int
-test1(int tnum)
+test1(void)
 {
     struct dwarfstring_s g;
     char *d = 0;
@@ -197,7 +197,7 @@ test1(int tnum)
 }
 
 static int
-test2(int tnum)
+test2(void)
 {
     struct dwarfstring_s g;
     char *d = 0;
@@ -240,7 +240,7 @@ test2(int tnum)
 }
 
 static int
-test3(int tnum)
+test3(void)
 {
     struct dwarfstring_s g;
     char *d = 0;
@@ -273,7 +273,7 @@ test3(int tnum)
 }
 
 static int
-test4(int tnum)
+test4(void)
 {
     struct dwarfstring_s g;
     char *d = 0;
@@ -313,7 +313,7 @@ test4(int tnum)
 }
 
 static int
-test5(int tnum)
+test5(void)
 {
     struct dwarfstring_s g;
     char *d = 0;
@@ -366,7 +366,7 @@ test5(int tnum)
     return 0;
 }
 static int
-test6(int tnum)
+test6(void)
 {
     dwarfstring g;
     char *d = 0;
@@ -506,12 +506,12 @@ test6(int tnum)
 
 int main()
 {
-    test1(1);
-    test2(2);
-    test3(3);
-    test4(4);
-    test5(5);
-    test6(6);
+    test1();
+    test2();
+    test3();
+    test4();
+    test5();
+    test6();
     if (errcount) {
         exit(1);
     }

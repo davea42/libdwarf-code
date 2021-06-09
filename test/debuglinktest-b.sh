@@ -3,15 +3,40 @@
 # Intended to be run only on local machine.
 # Run only after config.h created in a configure
 # in the source directory
-# Assumes env vars DWTOPSRCDIR set to the path to source.
-# Assumes CFLAGS warning stuff set in env var DWCOMPILERFLAGS
 # Assumes we run the script in the test directory.
 # srcdir is from the environment and is, here, the 
 # place of the top director itself (may be a relative
 # path).
 
-blddir=`pwd`
-top_blddir=`dirname $blddir`
+chkres() {
+r=$1
+m=$2
+if [ $r -ne 0 ]
+then
+  echo "FAIL $m.  Exit status for the test $r"
+  exit 1
+fi
+}
+
+if [ $# -eq 2 ]
+then
+  DWTOPSRCDIR="$1"
+  top_srcdir="$1"
+  top_blddir="$2"
+else
+  blddir=`pwd`
+  top_blddir=`dirname $blddir`
+fi
+if [ $# -eq 2 ]
+then
+  DWTOPSRCDIR="$1"
+  blddir="$2"
+  top_blddir=$blddir
+else
+  # DWTOPSRCDIR an env var.
+  blddir=`pwd`
+  top_blddir=`dirname $blddir`
+fi
 if [ x$DWTOPSRCDIR = "x" ]
 then
   top_srcdir=$top_blddir
@@ -27,12 +52,8 @@ fi
 srcloc=$top_srcdir/src/bin/dwarfexample
 bldloc=$top_blddir/src/bin/dwarfexample
 #localsrc is the build directory of the test
-localsrc=$srcdir
-if [ $localsrc = "." ]
-then
-  localsrc=$top_srcdir/test
-fi
-
+localsrc=$top_srcdir/test
+srcdir=$top_srcdir/test
 testbin=$top_blddir/test
 testsrc=$top_srcdir/test
 # So we know the build. Because of debuglink.

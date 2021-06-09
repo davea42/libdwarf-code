@@ -79,7 +79,7 @@ dbg->de_line_inits.pi_segment_selector_size = (unsigned)v;
 dbg->de_line_inits.pi_segment_size = (unsigned)v;
 #endif /* 0 */
 
-const char *
+static const char *
 returnvalstr(int res)
 {
     if (res == DW_DLV_OK) return "DW_DLV_OK";

@@ -25,20 +25,20 @@ MAINTAINERCLEANFILES = Makefile.in \
   junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
 
-
 CLEANFILES =
 EXTRA_DIS  =
 
 TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
-  test_testesb   test_sectionbitmaps
+  test_testesb test_sectionbitmaps test_dwarflebtest \
+  test_tied
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
- test_testesb   test_sectionbitmaps
-
+ test_testesb  test_sectionbitmaps test_dwarflebtest  \
+ test_tied
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
@@ -130,7 +130,26 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-TESTS += dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh 
+test_dwarflebtest_SOURCES = dwarf_leb_test.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_leb.c \
+    $(top_srcdir)/src/lib/libdwarf/pro_encode_nm.c
+test_dwarflebtest_FLAGS = $(RO_CFLAGS_WARN)
+test_dwarflebtest_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
+
+test_tied_SOURCES = dwarf_tied_test.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_tied.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c
+test_tied_FLAGS = $(RO_CFLAGS_WARN)
+test_tied_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf
+
+
+
+TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh 
 
 if HAVE_DWARFEXAMPLE
 TESTS += debuglinktest-a.sh debuglinktest-b.sh

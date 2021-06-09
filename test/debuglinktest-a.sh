@@ -4,30 +4,48 @@
 # Run only after config.h created in a configure
 # in the source directory
 # Assumes env vars DWTOPSRCDIR set to the path to source.
-# Assumes CFLAGS warning stuff set in env var DWCOMPILERFLAGS
 # Assumes we run the script in the test directory.
-# srcdir is from the environment and is, here, the 
 # place of the top director itself (may be a relative
 # path).
 
+chkres() {
+r=$1
+m=$2
+if [ $r -ne 0 ]
+then
+  echo "FAIL $m.  Exit status for the test $r"
+  exit 1
+fi
+}
+
 blddir=`pwd`
-top_blddir=`dirname $blddir`
+if [ $# -eq 2 ]
+then
+  DWTOPSRCDIR="$1"
+  blddir="$2"
+  top_blddir=$blddir
+else
+  # DWTOPSRCDIR an env var.
+  blddir=`pwd`
+  top_blddir=`dirname $blddir`
+fi
 if [ x$DWTOPSRCDIR = "x" ]
 then
   top_srcdir=$top_blddir
+  echo "top_srcdir from top_blddir $top_srcdir"
 else
   top_srcdir=$DWTOPSRCDIR
+  echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
 fi
-if [ $top_srcdir = ".." ]
+if [ "x$top_srcdir" = "x.." ]
 then
   # This case hopefully eliminates relative path to test dir. 
   top_srcdir=$top_blddir
 fi
-# srcloc and bldloc are the executable directories.
-srcloc=$top_srcdir/src/bin/dwarfexample
+# bld loc to find dwdebuglink executable.
 bldloc=$top_blddir/src/bin/dwarfexample
-#localsrc is the build directory of the test
-localsrc=$srcdir
+#localsrc is the build directory
+localsrc=$top_srcdir/test
 if [ $localsrc = "." ]
 then
   localsrc=$top_srcdir/test
@@ -41,15 +59,6 @@ echo "DWARF_BIGENDIAN=$DWARF_BIGENDIAN"
 echo "TOP topsrc  : $top_srcdir"
 echo "TOP topbld  : $top_blddir"
 echo "TOP localsrc: $localsrc"
-chkres() {
-r=$1
-m=$2
-if [ $r -ne 0 ]
-then
-  echo "FAIL $m.  Exit status for the test $r"
-  exit 1
-fi
-}
 
 if [ x"$DWARF_BIGENDIAN" = "xyes" ]
 then
@@ -59,8 +68,9 @@ else
   o=junk.debuglink1
   p="--add-debuglink-path=/exam/ple"
   p2="--add-debuglink-path=/tmp/phony"
+  echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
   $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
-  f=$?
+  r=$?
   chkres $r "debuglinktest-a.sh running dwdebuglink test1"
   if [ $r -ne 0 ]
   then
