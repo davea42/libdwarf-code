@@ -2530,8 +2530,10 @@ is zero.
 
 .P
 The
-\f(CWgroupnumber\fP argument indicates which group is to
-be accessed Group one is normal dwarf sections such as
+\f(CWgroupnumber\fP
+argument indicates which group is to
+be accessed.
+Group one is normal dwarf sections such as
 \f(CW.debug_info\fP.
 Group two is DWARF5 dwo split-dwarf dwarf
 sections such as .debug_info.dwo.
@@ -4459,9 +4461,12 @@ entry has the attribute of interest prior to issuing the query for
 information about the attribute.
 
 .LI
-Supply an \f(CWerror\fP argument, and check its value after the call to
-a query indicates an unsuccessful return, to determine the nature of the
-problem.  The \f(CWerror\fP argument will indicate whether an error occurred,
+Supply an \f(CWerror\fP argument,
+and check its value after the call to
+a query indicates an unsuccessful return,
+to determine the nature of the
+problem.  
+The \f(CWerror\fP argument will indicate whether an error occurred,
 or the specific attribute needed was missing in that die.
 
 .LI
