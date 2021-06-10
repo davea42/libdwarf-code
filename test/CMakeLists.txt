@@ -198,3 +198,26 @@ if (DO_TESTING)
     set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/dwbuglink")
     add_test(NAME selfdebuglinkb COMMAND sh -c ${CMAKE_SOURCE_DIR}/test/debuglinktest-b.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 endif()
+
+set_source_group(TESTFILES "Testing Files"
+  buildingdummy.sh       Makefile.am
+  CMakeLists.txt
+  debuglink2.base        makename_test.c
+  debuglink.base	 README.testcases
+  debuglinktest-a.sh     section_bitmaps_test.c
+  debuglinktest-b.sh     test_dwarfstring.c
+  dummyexecutable        testesb.c
+  dummyexecutable.c      test_extra_flag_strings.c
+  dummyexecutable.debug  test_headersok.c
+  dwarfdumpLinux.sh      test_linkedtopath.c
+  dwarfdumpMacos.sh      test-mach-o-32.base
+  dwarfdumpPE.sh	 test-mach-o-32.dSYM
+  dwarfdumpsetup.sh      testobjLE32PE.base
+  dwarf_leb_test.c       testobjLE32PE.exe
+  dwarf_tied_test.c      testobjLE32PE.test.c
+  getopttest.c	       testuriLE64ELf.base
+  helpertree_test.c      testuriLE64ELf.obj)
+
+add_library(testdata ${TESTFILES} )
+set_folder(testdata test)
+

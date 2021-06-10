@@ -322,9 +322,6 @@ endif()
 option(HAVE_CUSTOM_LIBELF "Have a custom libelf library (default is NO)" FALSE)
 message(STATUS "Including a custom libelf library... ${HAVE_CUSTOM_LIBELF}")
 
-option(HAVE_NONSTANDARD_PRINTF_64_FORMAT "Use a special printf format for 64bit (default is NO)" FALSE)
-message(STATUS "Checking enable non standard printf... ${HAVE_NONSTANDARD_PRINTF_64_FORMAT}")
-
 option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
 message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
 
@@ -343,10 +340,7 @@ if(NAMES_TABLE)
 else()
     set(dwarf_namestable "-t")
 endif()
-    
-option(HAVE_WINDOWS_PATH "Detect certain Windows paths as full paths (default is NO)" FALSE)
-message(STATUS "Checking enable windows path... ${HAVE_WINDOWS_PATH}")
-    
+
 option(HAVE_OLD_FRAME_CFA_COL "Use HAVE_OLD_FRAME_CFA_COL (default is to use new DW_FRAME_CFA_COL3)" FALSE)
 message(STATUS "Checking enable old frame columns... ${HAVE_OLD_FRAME_CFA_COL}")
 

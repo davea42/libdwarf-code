@@ -94,6 +94,7 @@ uri.c \
 uri.h
 
 dwarfdump_CPPFLAGS =  -I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_builddir)/src/lib/libdwarf
 
 dwarfdump_CFLAGS = $(DWARF_CFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfdump" 
@@ -136,6 +137,7 @@ buildopscounttab.c \
 tag_common.c \
 testdwarfdump.conf \
 $(dwarfdumpdev_DATA) \
+$(dwarfdumpconf_DATA) \
 tag_attr.c \
 tag_tree.c \
 attr_formclass.list \

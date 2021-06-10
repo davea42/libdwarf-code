@@ -48,9 +48,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
-/* Define 1 if need nonstandard printf format for 64bit */
-/* #undef HAVE_NONSTANDARD_PRINTF_64_FORMAT */
-
 /* Set to 1 if old frame columns are enabled. */
 /* #undef HAVE_OLD_FRAME_CFA_COL */
 
@@ -80,9 +77,6 @@
 
 /* Set to 1 if __attribute__ ((unused)) is available. */
 #define HAVE_UNUSED_ATTRIBUTE 1
-
-/* Define 1 if want to allow Windows full path detection */
-/* #undef HAVE_WINDOWS_PATH */
 
 /* Set to 1 if zlib decompression is available. */
 #undef HAVE_ZLIB 

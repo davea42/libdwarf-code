@@ -115,19 +115,6 @@ AC_ARG_ENABLE([libelf],
    ],
    [dwarf_with_libelf="yes"])
 
-
-AC_ARG_ENABLE([windowspath],
-   [AS_HELP_STRING([--enable-windowspath],
-                  [Detect certain Windows paths as full paths (default is NO)])],
-   [ 
-     AC_DEFINE([HAVE_WINDOWS_PATH],[1],
-       [Define 1 if want to allow Windows full path detection] )
-       [enable_windowspath="yes"]
-   ],
-   [ 
-     enable_windowspath="no"
-   ])
-
 AC_ARG_ENABLE([wall],
    [AS_HELP_STRING([--enable-wall],
                    [enable -Wall and other options @<:@default=no@:>@])],
@@ -138,14 +125,6 @@ AC_ARG_ENABLE([wall],
         [enable_wall="no"])
    ],
    [enable_wall="no"])
-
-AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
-        [Use a special printf format for 64bit (default is NO)]),
-        [ AC_DEFINE([HAVE_NONSTANDARD_PRINTF_64_FORMAT],[1],
-           [Define 1 if need nonstandard printf format for 64bit] )
-           [enable_nonstandardprintf="yes"]
-        ],
-        [enable_nonstandardprintf="no"])
 
 ##AC_ARG_ENABLE(havecustomlibelf,AS_HELP_STRING([--enable-havecustomlibelf],
 ##       [including a custom libelf library (default is NO)]),
@@ -659,8 +638,6 @@ echo "    Elf64_Rela.........: ${have_elf64_rela}"
 echo "    Elf64_Sym..........: ${have_elf64_sym}"
 echo "    Elf spelled........: ${struct_elf}"
 echo "    libelf.............: ${dwarf_with_libelf}"
-echo "    Windows path corr..: ${enable_windowspath}"
-echo "    Nonstandardprintf..: ${enable_nonstandardprintf}"
 echo "    Custom libelf......: ${enable_havecustomlibelf}"
 echo "  dwarfdump............: always"
 echo "    regex..............: ${have_regex}"

@@ -142,11 +142,11 @@ destruct_js(struct joins_s * js)
 
 static char joinchar = '/';
 static char* joinstr = "/";
-#if defined (HAVE_WINDOWS_PATH)
+#if defined (_WIN32)
 static char joincharw = '\\';
 /*  Large enough it is unlikely dwarfstring will ever
-    do a malloc here, paths usually < 100 characters. */
-static char winbuf[200];
+    do a malloc here, Windows paths usually < 256 characters. */
+static char winbuf[256];
 
 static void
 transformtoposix(dwarfstring * out, char *in)
@@ -162,7 +162,7 @@ transformtoposix(dwarfstring * out, char *in)
     }
 }
 
-#endif /* HAVE_WINDOWS_PATH */
+#endif /* _WIN32 */
 
 /*  ASSERT: the target chars already have the transformtoposix()
     done.
@@ -173,7 +173,7 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
     char *inputs = dwarfstring_string(input);
     char *targ = dwarfstring_string(target);
     size_t targlen = 0;
-#if defined (HAVE_WINDOWS_PATH)
+#if defined (_WIN32)
     dwarfstring winput;
 
     dwarfstring_constructor_static(&winput,winbuf,sizeof(winbuf));
@@ -184,9 +184,9 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
         dwarfstring_append(target,inputs);
         return DW_DLV_OK;
     }
-#else /* !HAVE_WINDOWS_PATH */
+#else /* !_Windows */
     targlen = dwarfstring_strlen(target);
-#endif /* HAVE_WINDOWS_PATH */
+#endif /* _WIN32 */
 
     if (!targlen) {
         dwarfstring_append(target,inputs);
@@ -207,9 +207,9 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
             dwarfstring_append(target,inputs+1);
         }
     }
-#if defined (HAVE_WINDOWS_PATH)
+#if defined (_WIN32)
     dwarfstring_destructor(&winput);
-#endif /* HAVE_WINDOWS_PATH */
+#endif /* _WIN32 */
     return DW_DLV_OK;
 }
 /*  ASSERT: the last character in s is not a /  */

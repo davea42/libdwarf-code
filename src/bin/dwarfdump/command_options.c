@@ -64,19 +64,15 @@ static char *config_file_defaults[] = {
     "./dwarfdump.conf",
     "HOME/.dwarfdump.conf",
     "HOME/dwarfdump.conf",
-#ifdef CONFPREFIX
 /*  See Makefile.am dwarfdump_CFLAGS. This prefix
     is the --prefix option (defaults to /usr/local
-    and Makefile.am adds /share/dwarfdump ) */
-/*  We need 2 levels of macro to get the name turned into
+    and Makefile.am adds /share/dwarfdump )
+    We need 2 levels of macro to get the name turned into
     the string we want. */
 #define STR2(s) # s
 #define STR(s)  STR2(s)
     STR(CONFPREFIX) "/dwarfdump.conf",
-#else
-    /*  This no longer used as of August 2018. */
-    "/usr/lib/dwarfdump.conf",
-#endif
+    "/usr/share/dwarfdump/dwarfdump.conf",
     0
 };
 static const char *config_file_abi = 0;

@@ -35,7 +35,6 @@ default build next:
         -DBUILD_DWARFEXAMPLE=OFF \
         -DWALL=OFF \
         -DDO_TESTING=OFF\
-        -DHAVE_WINDOWS_PATH=OFF \
         -DHAVE_OLD_FRAME_CFA_COL=OFF \
         -DHAVE_SGI_IRIX_OFFSETS=OFF \
         -DHAVE_STRICT_DWARF2_32BIT_OFFSET=OFF \
@@ -43,7 +42,7 @@ default build next:
     make
 
 
-The options after -DHAVE_WINDOWS_PATH should not normally be
+The options after -DDO_TESTING should not normally be
 used, they are for testing old features and not relevant to
 modern usage.
 

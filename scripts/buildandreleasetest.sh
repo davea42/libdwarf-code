@@ -42,8 +42,25 @@ else
     exit 
   fi
 fi
-#v=`grep -o '20[1-2][0-9][0-9][0-9][0-9][0-9]'< $f | head -n 1`
-v=`grep -o '[1-9][0-9]*[.][0-9][0-9]*[.][0-9][0-9]*'< $f | head -n 1`
+
+onenumber() {
+  t=/tmp/t.$$
+  t2=/tmp/t2.$$
+  rm -f $t $t2
+  grep $1 < $2 |head -1 > $t
+  sed s/m4_define// < $t > $t2
+  m=`grep -o '[0-9]*' < $t2`
+  rm -f $t $t2
+  echo $m
+}
+getver() {
+  maj=`onenumber v_maj $1`
+  min=`onenumber v_min $1`
+  mic=`onenumber v_mic $1`
+  echo $maj.$min.$mic
+}
+v=`getver configure.ac`
+
 echo "configure.ac version is v=$v"
 
 if [ x$v = "x" ]
@@ -118,6 +135,7 @@ echo "now: $configloc --prefix=$ainstall $libelfopt $nonstdprintf"
 $configloc --prefix=$ainstall $libelfopt $nonstdprintf
 chkres $? "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
+make
 make install
 chkres $? "FAIL Secton A 4b make install"
 ls -lR $ainstall
@@ -141,6 +159,7 @@ echo "TEST: Expecting src in $blibsrc"
 $blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefix=$binstrelp $libelfopt $nonstdprintf
 chkres $? "FAIL configure fail in Section B"
 echo "TEST: In $binstrelbld make install from $blibsrc/configure"
+make
 make install
 chkres $? "FAIL Section B install fail"
 ls -lR $binstrelp

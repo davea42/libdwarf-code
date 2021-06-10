@@ -81,51 +81,36 @@ _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
     regs->lr_is_stmt = is_stmt;
 }
 
-
-static int
-is_path_separator(Dwarf_Small s)
-{
-    if (s == '/') {
-        return 1;
-    }
-#ifdef HAVE_WINDOWS_PATH
-    if (s == '\\') {
-        return 1;
-    }
-#endif
-    return 0;
-}
-
-/*  Return 0 if false, 1 if true.
-    If HAVE_WINDOWS_PATH is defined we
-    attempt to handle windows full paths:
-    \\something   or  C:cwdpath.c
-*/
-int
+Dwarf_Bool
 _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 {
-    Dwarf_Small firstc = *fname;
-    if (is_path_separator(firstc)) {
-        /* Full path. */
+#ifdef _WIN32
+    /*
+     * Not relative path if
+     * - path begins with \\ (UNC path)
+     * - path begins with ?:\, with ? being a letter
+     * - path bagins with \
+     * see
+     * https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#paths
+     */
+    if (*fname == '\\')
         return 1;
-    }
-    if (!firstc) {
-        return 0;
-    }
-/*  This is a windows path test, but we do have
-    a few windows paths in our regression tests...
-    This is extremely unlikely to cause UN*X/POSIX
-    users any problems. */
-    if ((firstc >= 'A' && firstc <= 'Z') ||
-        (firstc >= 'a' && firstc <= 'z')) {
 
-        Dwarf_Small secondc = fname[1];
-        if (secondc == ':') {
-            return 1;
+    if (((*fname >= 'a') && (*fname <= 'z')) ||
+        ((*fname >= 'A') && (*fname <= 'Z'))) {
+        fname++;
+        if (*fname == ':') {
+            fname++;
+            if (*fname == '\\')
+                return TRUE;
         }
     }
-/* End Windows style */
-    return 0;
+#else
+    if (*fname == '/')
+        return TRUE;
+#endif
+
+    return FALSE;
 }
 #include "dwarf_line_table_reader_common.h"
 

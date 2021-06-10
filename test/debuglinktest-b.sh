@@ -75,6 +75,7 @@ echo "debuglinktest-b.sh test2"
 o=junk.debuglink2
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
+echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
 $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
 r=$?
 chkres $r "running dwdebuglink test2"

@@ -66,9 +66,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
 
-/* Define 1 if need nonstandard printf format for 64bit */
-#cmakedefine HAVE_NONSTANDARD_PRINTF_64_FORMAT 1
-
 /* Set to 1 if old frame columns are enabled. */
 #cmakedefine HAVE_OLD_FRAME_CFA_COL 1
 
@@ -134,9 +131,6 @@
 
 /* Set to 1 if __attribute__ ((unused)) is available. */
 #cmakedefine HAVE_UNUSED_ATTRIBUTE 1
-
-/* Define 1 if want to allow Windows full path detection */
-#cmakedefine HAVE_WINDOWS_PATH 1
 
 /* Set to 1 if zlib decompression is available. */
 #cmakedefine HAVE_ZLIB 1

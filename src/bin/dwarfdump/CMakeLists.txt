@@ -70,5 +70,3 @@ install(TARGETS dwarfdump DESTINATION
 	ARCHIVE DESTINATION ${LIBDIR})
 
 install(FILES dwarfdump.conf DESTINATION ${LIBDIR})
-
-#install(FILES dwarfdump.1 DESTINATION share/man/man1)
