@@ -17,16 +17,7 @@ then
   exit 1
 fi
 }
-
-if [ $# -eq 2 ]
-then
-  DWTOPSRCDIR="$1"
-  top_srcdir="$1"
-  top_blddir="$2"
-else
-  blddir=`pwd`
-  top_blddir=`dirname $blddir`
-fi
+echo "Argument count: $#"
 if [ $# -eq 2 ]
 then
   DWTOPSRCDIR="$1"
@@ -40,18 +31,19 @@ fi
 if [ x$DWTOPSRCDIR = "x" ]
 then
   top_srcdir=$top_blddir
+  echo "top_srcdir from top_blddir $top_srcdir"
 else
   top_srcdir=$DWTOPSRCDIR
+  echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
 fi
-if [ $top_srcdir = ".." ]
+if [ "x$top_srcdir" = "x.." ]
 then
   # This case hopefully eliminates relative path to test dir. 
   top_srcdir=$top_blddir
 fi
-# srcloc and bldloc are the executable directories.
-srcloc=$top_srcdir/src/bin/dwarfexample
+# bldloc is the executable directories.
 bldloc=$top_blddir/src/bin/dwarfexample
-#localsrc is the build directory of the test
+#localsrc is the source dir with baseline data
 localsrc=$top_srcdir/test
 srcdir=$top_srcdir/test
 testbin=$top_blddir/test

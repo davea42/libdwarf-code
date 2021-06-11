@@ -18,7 +18,7 @@ then
 fi
 }
 
-blddir=`pwd`
+echo "Argument count: $#"
 if [ $# -eq 2 ]
 then
   DWTOPSRCDIR="$1"
@@ -44,12 +44,8 @@ then
 fi
 # bld loc to find dwdebuglink executable.
 bldloc=$top_blddir/src/bin/dwarfexample
-#localsrc is the build directory
+#localsrc is the source dir with baseline data
 localsrc=$top_srcdir/test
-if [ $localsrc = "." ]
-then
-  localsrc=$top_srcdir/test
-fi
 
 testbin=$top_blddir/test
 testsrc=$top_srcdir/test
