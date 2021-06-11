@@ -209,7 +209,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
         if (!named_file || !strlen(named_file)) {
             printf("dwarfdump found no dwarfdump.conf file "
                 "in any of the standard places\n"
-                "(precede all arguments"
+                "(precede all arguments "
                 "with option --show-dwarfdump-conf to see "
                 "what file paths tried)\n"
                 "If no print/check arguments also provided "
