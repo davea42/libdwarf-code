@@ -2530,8 +2530,10 @@ is zero.
 
 .P
 The
-\f(CWgroupnumber\fP argument indicates which group is to
-be accessed Group one is normal dwarf sections such as
+\f(CWgroupnumber\fP
+argument indicates which group is to
+be accessed.
+Group one is normal dwarf sections such as
 \f(CW.debug_info\fP.
 Group two is DWARF5 dwo split-dwarf dwarf
 sections such as .debug_info.dwo.
