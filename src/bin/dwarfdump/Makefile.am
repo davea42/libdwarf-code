@@ -1,8 +1,6 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
 
-MAINTAINERCLEANFILES = Makefile.in
-
 bin_PROGRAMS = dwarfdump
 
 dwarfdump_SOURCES = \
@@ -147,6 +145,3 @@ tag_attr_ext.list \
 tag_tree.list \
 tag_tree_ext.list \
 uritablebuild.c
-
-CLEANFILES = 
-
