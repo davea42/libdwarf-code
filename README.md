@@ -8,16 +8,16 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
       rm -rf /tmp/empty
       mkdir /tmp/empty
       cd /tmp/empty
-      # CFLAGS and enable-wall and
-      # dwarfgen and dwarfexample are optional.
+      # CFLAGS and --enable-wall and
+      # --enable-dwarfgen and --enable-dwarfexample are optional.
       CFLAGS='-g -O0' $x/configure \
          --enable-dwarfexample --enable-dwarfgen \
          --enable-wall
       make 
       make check
 
-
 ## BUILDING from a git clone of the source tree with cmake
+   # See also README.cmake
    # where code is the directory name for the libdwarf project
    rm -rf /tmp/bld
    mkdir /tmp/bld
@@ -26,7 +26,17 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
       -DBUILD_DWARFGEN=ON  /path/to/code
    ctest -R self
 
-# The following does not necessarily work. ?
+## BUILDING from a tar.gz or tar.xz in code (base) dir:
+   rm -rf /tmp/bld
+   x=`pwd`
+   mkdir /tmp/bld
+   cd /tmp/bld
+   # CFLAGS and --enable-wall and
+   # --enable-dwarfgen and --enable-dwarfexample are optional.
+   CFLAGS='-g -O0' $x/configure \
+       --enable-dwarfexample --enable-dwarfgen \
+       --enable-wall
+
 To build using CMake one might do
 * `cd /a/b/libdwarf-1`
 * configure: `cmake . -B_Release -DCMAKE_BUILD_TYPE=Release`
@@ -38,30 +48,7 @@ To build using CMake one might do
 ### Using autotools
 IGNORE THE FOLLOWING. NEEDS REWRITE
 
-#### Building in Source Tree
-
-```bash
-cd /a/b/libdwarf-1
-./configure
-make dd
-#You may need to be root to do the following copy commands
-cp dwarfdump/dwarfdump      /usr/local/bin
-cp dwarfdump/dwarfdump.conf /usr/local/lib
-#The following is optional, not needed to run dwarfdump
-#when doing the default build.
-cp libdwarf/libdwarf.a      /usr/local/lib
-```
-
-#### Building Out of Source Tree
-
-```bash
-mkdir /var/tmp/dwarfex
-cd /var/tmp/dwarfex
-/a/b/libdwarf-1/configure
-make dd
-```
- In this case the source directory is not touched and
-all objects and files created are under `/var/tmp/dwarfex`
+#### Building out of Source Tree
  
  NOTE: When building out of source tree the source tree
  must be cleaned of any files created by a build
@@ -69,11 +56,6 @@ all objects and files created are under `/var/tmp/dwarfex`
  VPATH works.
 ### Build All
  
- To build all the tools (including dwarfgen and 
-dwarfexample) use `--target all` on CMake or `make all` on autotools. 
-There are known small compile-time issues with building dwarfgen on 
- MaxOSX and most don't need to build dwarfgen.
-
 ### Options
 
 By default configure compiles and uses libdwarf.a.
@@ -97,5 +79,5 @@ When ready to create a new source distribution do
 a build and then 
   make dist
 
-David Anderson.  Updated May 2021
+David Anderson.  Updated June 2021
 
