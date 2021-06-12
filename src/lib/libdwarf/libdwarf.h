@@ -571,16 +571,13 @@ typedef void  (*Dwarf_Handler)(Dwarf_Error /*error*/,
 
 As of February 2008 there are multiple dwarf_reader object access
 initialization methods available:
-The traditional dwarf_elf_init() and dwarf_init()  and
-    dwarf_finish() which assume libelf and POSIX file access.
+None of them use libelf as of June 2021.
 An object-file and library agnostic dwarf_object_init()
 and dwarf_object_finish()
     which allow the coder to provide object access routines
     abstracting away the elf interface.
     So there is no dependence in the
     reader code on the object format and no dependence on libelf.
-    See the code in dwarf_elf_access.c  and dwarf_original_elf_init.c
-    to see an example of initializing the structures mentioned below.
 
 Projects using dwarf_elf_init() or dwarf_init() can ignore
 the Dwarf_Obj_Access* structures entirely as all these details
@@ -793,8 +790,8 @@ struct Dwarf_Obj_Access_Methods_s {
     a libdwarf instance is open (meaning
     after dwarf_init) and before dwarf_finish)).
 
-    If you are reading Elf objects and libelf use dwarf_init()
-    or dwarf_elf_init() which take care of these details.
+    If you are reading Elf objects dwarf_init_path_dl()
+    or dwarf_init_path() which take care of these details.
 */
 struct Dwarf_Obj_Access_Interface_s {
     /*  object is a void* as it hides the data the
@@ -1624,7 +1621,8 @@ int dwarf_init(int    /*fd*/,
 /*  The dwarf_elf_init* functions continue to be supported,
     but should be considered deprecated as they can ONLY
     be used on Elf files. */
-/*  Initialization based on libelf/sgi-fastlibelf open pointer. */
+/*  Initialization was based libelf/sgi-fastlibelf open pointer,
+    but this is obsolete. */
 /*  New March 2017 */
 int dwarf_elf_init_b(void * /*elf*/,
     Dwarf_Unsigned    /*access*/,
