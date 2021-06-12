@@ -1,4 +1,8 @@
 #!/bin/sh
+# Copyright (C) 2021 David Anderson
+# This test script is in the public domain for use
+# by anyone for any purpose.
+
 start=`date`
 echo "start run-all-tests.sh at $start"
 echo "This removes and recreates /tmp/dw-regression"

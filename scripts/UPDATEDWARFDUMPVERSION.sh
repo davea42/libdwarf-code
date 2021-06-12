@@ -1,4 +1,8 @@
 #!/bin/bash
+# Copyright (C) 2021 David Anderson
+# This test script is in the public domain for use
+# by anyone for any purpose.
+
 # Do not turn on -x here. it will screw things up!
 # This puts the current date/time into 
 # libdwarf/libdwarf_version.h

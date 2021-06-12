@@ -1,4 +1,8 @@
-#
+#!/bin/sh
+# Copyright (C) 2021 David Anderson
+# This test script is in the public domain for use
+# by anyone for any purpose.
+
 # Use to build the .c and .h source based on static information
 # in libdwarf.h and dwarf_errmsg_list.h and the
 # dwarfdump *.list files.
@@ -9,10 +13,6 @@
 # changes the output files will not be any different
 # than before.
 
-# This script is by David Anderson and 
-# is hereby put into the public domain
-# for anyone to use in any way.
-#
 if [ $? -ne 0 ]
 then
     echo "FAIL getting base config.h for .c .h builing.Runningfrom wrong place?"

@@ -1,6 +1,18 @@
 #!/bin/sh
+# Copyright (C) 2021 David Anderson
+# This test script is in the public domain for use
+# by anyone for any purpose.
+
+#  scripts/buildandreleasetest.sh
 #  A script verifying the distribution gets all needed files
 #  for building, including "make check"
+#
+#  For a guaranteed clean run:
+#    sh scripts/CLEANUP
+#    sh autogen.sh
+#    sh scripts/buildandreleasetest.sh
+#  In this script all the generated files are in /tmp/bart
+#
 # First, get the current configure.ac version into v:
 # if stdint.h does not define uintptr_t and intptr_t
 # Then dwarfgen (being c++) will not build
@@ -12,7 +24,6 @@ genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
 libelfopt=''
 wd=`pwd`
-nonstdprintf=
 # If passes, remove the /tmp/bart working directory.
 # Useful to consider if all intended files actually present,
 # including any possibly not used.

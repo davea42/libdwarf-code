@@ -1,14 +1,13 @@
 # scripts/ddbuild.sh
-# This script is by David Anderson and hereby 
-# put into the public domain
-# for anyone to use in any way.
+# Copyright (C) 2021 David Anderson
+# This test script is in the public domain for use
+# by anyone for any purpose.
 
 # Do not run this by hand.
 # This is used by scripts/buildstandardsource.sh
 # A primitive build of a little bit of stuff
 # from libdwarf and dwarfdump to create
 # standard C source for libdwarf and dwarfdump.
-
 
 # Requires a basic config.h at top level
 
