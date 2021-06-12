@@ -554,6 +554,30 @@ AC_FUNC_ALLOCA
 
 have_getehdr="no"
 have_getshdr="no"
+CPPFLAGS_save=${CPPFLAGS}
+CPPFLAGS="${CPPFLAGS}"
+LIBS_save=${LIBS}
+LIBS="${LIBS} ${DWARF_LIBS}"
+AC_SEARCH_LIBS(
+    [elf64_getehdr], [elf],
+    [
+     have_getehdr="yes"
+     AC_DEFINE(
+         [HAVE_ELF64_GETEHDR], [1],
+         [Set to 1 if the elf64_getehdr function is in libelf.])
+     ],
+     [have_getehdr="no"])
+AC_SEARCH_LIBS(
+    [elf64_getshdr], [elf],
+    [
+     have_getshdr="yes"
+     AC_DEFINE(
+         [HAVE_ELF64_GETSHDR], [1],
+         [Set to 1 if the elf64_getshdr function is in libelf.])
+     ],
+     [have_getshdr="no"])
+CPPFLAGS=${CPPFLAGS_save}
+LIBS=${LIBS_save}
 
 AS_IF(
     [test "x${have_pc_zlib}" = "xno"  -a "x${have_zlib}" = "xyes"],

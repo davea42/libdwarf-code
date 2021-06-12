@@ -162,13 +162,9 @@ if (DWARF_WITH_LIBELF AND
     NOT HAVE_LIBELF_LIBELF_H)
     set(DWARF_WITH_LIBELF OFF)
     set(HAVE_ELF_H OFF)
-elseif (NOT DWARF_WITH_LIBELF)
-    set(HAVE_ELF_H OFF)
-    set(HAVE_LIBELF_LIBELF_H OFF)
-    set(HAVE_LIBELF_H OFF)
-    set(HAVE_ELF64_GETSHDR OFF)
-    set(HAVE_ELF64_GETEHDR OFF)
 endif ()
+# HAVE_ELF64_GETEHDR and HAVE_ELF64_GETSHDR matter to dwarfgen.
+# Do not turn them off.
 
 if (DWARF_WITH_LIBELF)
   message(STATUS "checking using HAVE_ELF_H ... ${HAVE_ELF_H}")
