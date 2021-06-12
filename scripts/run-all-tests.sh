@@ -12,10 +12,28 @@ echo "This removes and recreates /tmp/dw-regression"
 # printf formats.
 # Removes and recreates /tmp/dwtestalldd directory
 # for the regression tests.
+
+chkisdir() {
+  if [ ! -d $1 ]
+  then
+    echo "The directory $1 is not found"
+    echo "we are in the wrong directory to run-all-tests.sh"
+    exit 1
+  fi
+}
 here=`pwd`
-ddsrc=$here/dwarfdump
+ddsrc=$here/src/bin/dwarfdump
 rosrc=$here/../readelfobj/code
 rtestsrc=$here/../regressiontests
+# Sanity checks ensuring we are in the right place.
+chkisdir scripts
+chkisdir $ddsrc
+chkisdir $rtestsrc
+chkisdir $here/src/lib/libdwarf
+chkisdir $here/src/bin/dwarfexample
+chkisdir $here/src/bin/dwarfgen
+chkisdir $here/test
+chkisdir $here/doc
 
 # We run the regression tests here.
 ddtestdir=/tmp/dw-regression
@@ -58,27 +76,26 @@ fi
 
 echo "Starting run-all-tests.sh now"
 echo run from $here
-if [ ! -d $here/dwarfdump ]
+if [ ! -d $here/src/bin/dwarfdump ]
 then
    chkres 1 "A FAIL: This is not the libdwarf 'code' directory "
-   echo "A FAIL: $here/dwarfdump missing. Run from 'code'"
-   exit 0
+   echo "A FAIL: $here/src/bin/dwarfdump missing. Run from 'code'"
+   exit 1
 fi
-if [ ! -d $here/libdwarf ]
+if [ ! -d $here/src/lib/libdwarf ]
 then
   chkres 1 "B FAIL: This is not the libdwarf 'code' directory "
-  echo "B FAIL: $here/libdwarf missing"
+  echo "B FAIL: $here/src/lib/libdwarf missing"
 fi
-if [ ! -d $here/dwarfexample ]
+if [ ! -d $here/src/bin/dwarfexample ]
 then
   chkres 1 "C FAIL: This is not the libdwarf 'code' directory"
-  echo "C FAIL: $here/dwarfexample missing"
-  exit 0
+  echo "C FAIL: $here/src/bin/dwarfexample missing"
+  exit 1
 fi
 
 
 # If we have no libelf we must not attempt to build dwarfgen.
-# FIXME
 # ========
 builddwarfdump() {
   echo "Build dwarfdump source: $here builddir: $ddbld nonstdprintf $nonstdprintf"
