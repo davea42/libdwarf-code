@@ -81,10 +81,12 @@ _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
     regs->lr_is_stmt = is_stmt;
 }
 
+/*  Detect Windows full paths as well as Unix/Linux.
+    ASSERT: fname != NULL  */
 Dwarf_Bool
 _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 {
-#ifdef _WIN32
+    Dwarf_Small firstc = *fname;
     /*
      * Not relative path if
      * - path begins with \\ (UNC path)
@@ -93,23 +95,37 @@ _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
      * see
      * https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#paths
      */
-    if (*fname == '\\')
-        return 1;
-
-    if (((*fname >= 'a') && (*fname <= 'z')) ||
-        ((*fname >= 'A') && (*fname <= 'Z'))) {
-        fname++;
-        if (*fname == ':') {
-            fname++;
-            if (*fname == '\\')
+    if (!firstc) {
+        return FALSE;
+    }
+    if (firstc == '/') {
+        return TRUE;
+    }
+    if (firstc == '\\') {
+        return TRUE;
+    }
+    /*  We assume anything starting with c: (etc)
+        is a genuine Windows name. That turns out
+        to be important as we dump PE objects on
+        linux! It's safe too, as a specially crafted
+        file might have add path output, but would
+        not break anything.  */
+    if (((firstc >= 'a') && (firstc <= 'z')) ||
+        ((firstc >= 'A') && (firstc <= 'Z'))) {
+        if (fname[1] == ':') {
+            /*  Some test cases use /, some \\ */
+            if (fname[2] == '\\') {
                 return TRUE;
+            }
+            if (fname[2] == '/') {
+                return TRUE;
+            }
+            /*   This is a relative path to the current
+                 directory on the drive named.
+                 Windows has a 'current directory'
+                 with each drive letter in use.  */
         }
     }
-#else
-    if (*fname == '/')
-        return TRUE;
-#endif
-
     return FALSE;
 }
 #include "dwarf_line_table_reader_common.h"
