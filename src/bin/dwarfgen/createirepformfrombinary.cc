@@ -50,6 +50,7 @@
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarfp.h"
 #include "libdwarf_private.h"
 #include "irepresentation.h"
 #include "createirepfrombinary.h"

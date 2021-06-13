@@ -35,6 +35,7 @@
 #endif /* HAVE_STRING_H */
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarfp.h"
 #include "pro_encode_nm.h"
 
 #define MORE_BYTES      0x80

@@ -30,7 +30,6 @@
 */
 
 #include "config.h"
-#include "libdwarf_private.h"
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
@@ -40,6 +39,8 @@
 #include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarfp.h"
+#include "libdwarf_private.h"
 #include "pro_opaque.h"
 #include "dwarfstring.h"
 

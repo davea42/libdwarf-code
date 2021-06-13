@@ -329,7 +329,7 @@ dwarf_uncompress_integer_block(
         dwarf_dealloc(dbg, (unsigned char *)output_block,
             DW_DLA_STRING);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return((Dwarf_P_Attribute)DW_DLV_BADADDR);
+        return((void*) DW_DLV_BADADDR);
     }
 
     *output_length_in_units_ptr = output_length_in_units;

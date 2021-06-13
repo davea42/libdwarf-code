@@ -40,6 +40,7 @@
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarfp.h"
 #include "pro_opaque.h"
 #include "pro_section.h"
 
