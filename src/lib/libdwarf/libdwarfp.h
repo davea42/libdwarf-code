@@ -41,7 +41,7 @@ extern "C" {
     For libdwarf producers
     Does not stand on its own, so includes libdwarf.h.
 */
-#include "libdwarf.h"
+#include <libdwarf.h>
 
 /* Opaque types for Producer Library. */
 typedef struct Dwarf_P_Debug_s*       Dwarf_P_Debug;
