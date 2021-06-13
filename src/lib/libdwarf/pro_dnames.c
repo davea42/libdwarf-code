@@ -38,7 +38,6 @@
 #include "pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"
-#include "libdwarf.h"
 #include "libdwarfp.h"
 #include "pro_opaque.h"
 #include "pro_error.h"

@@ -38,7 +38,6 @@
 #endif /* HAVE_STDINT_H */
 #include "pro_incl.h"
 #include "dwarf.h"
-#include "libdwarf.h"
 #include "libdwarfp.h"
 #include "libdwarf_private.h"
 #include "pro_opaque.h"

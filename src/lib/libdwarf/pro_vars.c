@@ -42,7 +42,6 @@
 #include <stddef.h>
 #endif /* HAVE_STDDEF_H */
 #include "dwarf.h"
-#include "libdwarf.h"
 #include "libdwarfp.h"
 #include "pro_opaque.h"
 #include "pro_error.h"
