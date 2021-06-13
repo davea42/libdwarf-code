@@ -76,6 +76,11 @@ dwarfgen).
 BUILDING ALL THE TOOLS
 To build basic Makefile.in etc
      sh autogen.sh
+version 1.16.1 of automake reports:
+"warning: source file '$(top_srcdir)...' is in a subdirectory"
+many times. Bug reports suggest this is an automake bug.
+Just ignore the annoying warnings.
+
 A tar.gz or tar.xz 'tarball' has the configure
 file already created.  The git source code
 from github does not have configure, so running autogen.sh
