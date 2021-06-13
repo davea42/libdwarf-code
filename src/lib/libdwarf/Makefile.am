@@ -131,47 +131,7 @@ libdwarf_private.h \
 libdwarf_version.h \
 malloc_check.c \
 malloc_check.h \
-memcpy_swap.h \
-pro_alloc.c \
-pro_alloc.h \
-pro_arange.c \
-pro_arange.h \
-pro_debug_sup.c \
-pro_die.c \
-pro_die.h \
-pro_dnames.h \
-pro_dnames.c \
-pro_encode_nm.c \
-pro_encode_nm.h \
-pro_error.c \
-pro_error.h \
-pro_expr.c \
-pro_expr.h \
-pro_finish.c \
-pro_forms.c \
-pro_frame.c \
-pro_frame.h \
-pro_funcs.c \
-pro_incl.h \
-pro_init.c \
-pro_line.c \
-pro_line.h \
-pro_log_extra_flag_strings.c \
-pro_macinfo.c \
-pro_macinfo.h \
-pro_opaque.h \
-pro_pubnames.c \
-pro_reloc.c \
-pro_reloc.h \
-pro_reloc_symbolic.c \
-pro_reloc_symbolic.h \
-pro_section.c \
-pro_section.h \
-pro_types.c \
-pro_types.h \
-pro_util.h \
-pro_vars.c \
-pro_weaks.c
+memcpy_swap.h 
 
 libdwarf_la_CFLAGS = $(DWARF_CFLAGS_WARN) 
 

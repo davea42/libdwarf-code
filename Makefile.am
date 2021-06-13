@@ -8,6 +8,7 @@ SUBDIRS = src/lib/libdwarf src/bin/dwarfdump test
 
 if HAVE_DWARFGEN
 SUBDIRS += src/bin/dwarfgen
+SUBDIRS += src/lib/libdwarfp
 endif
 
 if HAVE_DWARFEXAMPLE
