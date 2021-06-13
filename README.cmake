@@ -1,13 +1,15 @@
 Created 26 April 2019 
 Updated 6 June 2021
 
-Now we are using
-a new source structure and using semantic versioning
-for tar.gz names.
+Now we are using a new source structure and using semantic
+versioning for tar.xz names (earlier we used tar.gz).
 The assumption is that you usually download an appropriate
 libdwarf-0.1.0.tar.gz (or a later one)
+You may find README or README.md useful to read.
 
 ============================
+For cmake, ignore the autogen.sh
+script in the base source directory.
 By default the build builds just libdwarf and dwarfdump.
 
 Lets assume the base directory of the the libdwarf source in a
@@ -81,12 +83,6 @@ passed at compile time use
 instead of plain
     make
 
-On Unix/Linux cmake 'make install' will install to
-"/usr/local".  The cmake 'make install' here is not
-guaranteed to do everything one might hope with libdwarf.
-To set another install target set
-CMAKE_INSTALL_PREFIX.  Example:
+cmake make install and make dist do not yet work properly.
+Use configure for those.
 
-   mkdir /tmp/cmitest
-   cmake -DCMAKE_INSTALL_PREFIX=/tmp/cmitest
-   make install

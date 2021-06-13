@@ -1,6 +1,7 @@
 [![Travis Build
 Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
 # This is README.md
+#Updated 13 June 2021
 ## BUILDING from a git clone of the source tree with configure
    in source base dir, do
       x=`pwd`
@@ -79,5 +80,5 @@ When ready to create a new source distribution do
 a build and then 
   make dist
 
-David Anderson.  Updated June 2021
+David Anderson. 
 

@@ -1,15 +1,18 @@
-Documentation is in the doc directory as of
-31 May 2021
+Updated 13 June 2021
+Library Documentation is in the doc directory.
+See LIBRARY AND HEADER REQUIREMENTS
+and BUILDING ALL THE TOOLS
+below if you wonder what is required.
 =========
 As of 1 June 2021 we are using semanantic
 versions (not a date version)
 and dwarfdump no longer uses libelf
 and cannot report libelf (or any other) object data
 section details.
-The presumption is all builds will be from 
-libdwarf-n.n.n.tar.gz (currently n.n.n is 0.1.0)
+Normally your builds will be from a
+libdwarf-n.n.n.tar.xz (for example 0.1.0)
 Not from cloning the library.
-See README.md for using a git clone source.
+README.md may be helpful to read.
 =========
 As of May 22, 2020 libdwarf and dwarfdump
 support DWARF5 .debug_rnglists section content,
@@ -35,8 +38,8 @@ save space in this example we do not show checking for errors):
 The option --enable-wall is optional.
 
     #assuming a clean directory.
-    #download a libdwarf-0.1.0.tar.gz (or a later version)
-    tar xzf libdwarf-*.tar.gz
+    #download a libdwarf-0.1.0.tar.xz (or a later version)
+    tar xzf libdwarf-*.tar.xz
     cd libdwarf*
     $src/configure --enable-wall
     make
@@ -55,21 +58,31 @@ BUILDING in UNIX/Linux
 BUILDING in MacOS (tried on Catalina)
     The same as Linux
 ========= End of Standard Builds non-Windows
-    
 
 LIBRARY AND HEADER REQUIREMENTS
 zlib has to be installed
 to handle zlib compressed sections
 (common in linux, not normally found with Windows).
-in Ubuntu 16.04 and 18.04, install using:
+in Ubuntu 16.04,18.04,20.04, install using:
     sudo apt-get install zlib1g zlib1g-dev
-
+To be able to run autogen.sh (to generate
+configure etc)
+    sudo apt-get install autoconf libtool
 zlib is available in source from
     http://zlib.net
+libelf is unnecessary (unless you wish to build
+dwarfgen).
 
 BUILDING ALL THE TOOLS
-To build all the tools (including dwarfgen and dwarfexample)
-use  a different configure command:
+To build basic Makefile.in etc
+     sh autogen.sh
+A tar.gz or tar.xz 'tarball' has the configure
+file already created.  The git source code
+from github does not have configure, so running autogen.sh
+is a necessary first step.
+
+To build all the programs (including dwarfgen and dwarfexample)
+use:
     ./configure --enable-dwarfgen --enable-dwarfexample ; make
 
 To see all the available options to configure do
@@ -118,6 +131,8 @@ what 'make install' added but does not delete the
 /usr/local/share/libdwarf directory that the 'make install'
 created.
 
+cmake here does not support make install.
+
 CHECKING FOR MEMORY CORRUPTION
 
 Recent gcc has some checks that can be done at runtime.
@@ -151,26 +166,24 @@ the build environment for itself so we don't use --build here.
 
 On build machine:
 sudo apt-get install gcc-arm-linux-gnueabihf
-#  Install libelf and zlib (libz) into
+#  Install zlib (libz) into
 #  the gcc cross-build tree too.
 #  I cheated: copied from arm machine into
 #  gcc-arm-linux-gnueabihf.
 
 mkdir emptycross
 cd emptycross
-# Download a tar.gz
-tar xzf libdwarf-0.1.0.tar.gz (or a later version)
+# Download a tarfile
+# Extract the contents
+tar xzf libdwarf-0.1.0.tar.xz (or a later version)
 cd libdwarf*
 $src/configure --host=arm-linux-gnueabihf
 make
 
 
 ------------------ notes on working with git cloned source  ------
-
-To update configure after hand updating a Makefile.am or
-the configure.ac do the following command at the top level
-(where this file is):
     If you want to work with the git tree do the following:
+    rm -rf code
     git clone https://github.com/davea42/libdwarf-code code
     cd code
     sh autogen.sh
@@ -183,7 +196,6 @@ the configure.ac do the following command at the top level
     make install
 
 ==================================================
-=========7 June 2021. None of the following is working
 ==================================================
 A further set of tests is available.
     sh scripts/buildandreleasetest.sh
@@ -200,15 +212,12 @@ These tests outside the scope of this README.
 This script will not work on Windows.
 
 To create a release file on Linux do:
-    ./configure --enable-dwarfexample --enable-dwarfgen
+    ./configure
     make
     make dist
-will generate a libdwarf-yyyymmdd.tar.gz file with the files
+will generate a libdwarf-<n>.<n>.<n>.tar.xz file with the files
 needed in a release
-    scripts/CPTARTOWEBDIR is an example of generating
-fingerprints for the release file and copying the file.
 
-See the configure.ac for the version used.
-For example: 'm4_define([v_date], [20190505])])'
+See the configure.ac v_maj,v_min,v_mic for the version in use.
 
-David Anderson.  Updated 7 November 2019
+David Anderson.
