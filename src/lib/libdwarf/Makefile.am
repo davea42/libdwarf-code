@@ -118,6 +118,8 @@ dwarf_types.c \
 dwarf_types.h \
 dwarf_util.c \
 dwarf_util.h \
+pro_encode_nm.c \
+pro_encode_nm.h \
 dwarf_vars.c \
 dwarf_vars.h \
 dwarf_weaks.c \
@@ -126,7 +128,6 @@ dwarf_xu_index.c \
 dwarf_xu_index.h \
 crc32.c \
 libdwarf.h \
-libdwarfp.h \
 libdwarf_private.h \
 libdwarf_version.h \
 malloc_check.c \
@@ -142,7 +143,6 @@ libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_
 libdwarfpkgincludedir = $(pkgincludedir)-@VMAJ@
 libdwarfpkginclude_DATA = \
 $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
-$(top_srcdir)/src/lib/libdwarf/libdwarfp.h \
 $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 
 libdwarfdevdir = $(datadir)/src/lib/libdwarf/libdwarf-devel

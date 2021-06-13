@@ -48,12 +48,14 @@ test_dwarfstring_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
-   $(top_srcdir)/src/lib/libdwarf/pro_log_extra_flag_strings.c \
+   $(top_srcdir)/src/lib/libdwarfp/pro_log_extra_flag_strings.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
 test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarfp \
+-I$(top_srcdir)/src/lib/libdwarf 
 
 test_linkedtopath_SOURCES = test_linkedtopath.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
