@@ -1238,6 +1238,7 @@ _dwarf_allow_formudata(unsigned form)
 
 int
 _dwarf_formudata_internal(Dwarf_Debug dbg,
+    Dwarf_Attribute attr,
     unsigned form,
     Dwarf_Byte_Ptr data,
     Dwarf_Byte_Ptr section_end,
@@ -1299,11 +1300,24 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         *bytes_read = leblen;
         return DW_DLV_OK;
     }
-        /*  IRIX bug 583450. We do not allow reading
-            sdata from a udata
-            value. Caller can retry, calling sdata */
+   /*  IRIX bug 583450. We do not allow reading
+       sdata from a udata
+       value. Caller can retry, calling sdata */
     default:
         break;
+    }
+    if (attr) {
+ 
+        int res = 0;
+        Dwarf_Signed s = 0;
+        res = dwarf_formsdata(attr,&s,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        if (s < 0 ) {
+            _dwarf_error(dbg, error, DW_DLE_UDATA_VALUE_NEGATIVE);
+            return DW_DLV_ERROR;
+        }
     }
     generate_form_error(dbg,error,form,
         DW_DLE_ATTR_FORM_BAD,
@@ -1332,6 +1346,7 @@ dwarf_formudata(Dwarf_Attribute attr,
     form = attr->ar_attribute_form;
 
     res = _dwarf_formudata_internal(dbg,
+        attr,
         form, data, section_end, return_uval,
         &bytes_read, error);
     return res;

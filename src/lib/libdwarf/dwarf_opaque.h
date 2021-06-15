@@ -1075,6 +1075,7 @@ void _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
 
 extern Dwarf_Bool _dwarf_allow_formudata(unsigned form);
 extern int _dwarf_formudata_internal(Dwarf_Debug dbg,
+    Dwarf_Attribute attr,
     unsigned form,
     Dwarf_Byte_Ptr data,
     Dwarf_Byte_Ptr section_end,

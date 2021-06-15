@@ -1316,7 +1316,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head dn,
         } else if (_dwarf_allow_formudata(form)) {
             Dwarf_Unsigned val = 0;
             Dwarf_Unsigned bytesread = 0;
-            res = _dwarf_formudata_internal(dbg,form,poolptr,
+            res = _dwarf_formudata_internal(dbg,0,form,poolptr,
                 endpool,&val,&bytesread,error);
             if (res != DW_DLV_OK) {
                 return res;

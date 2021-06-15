@@ -639,5 +639,8 @@ const char *_dwarf_errmsgs[] = {
     " Corrupt data.",
 "DW_DLE_NEGATIVE_SIZE(482) A size < 0 "
     "(from DW_FORM_implicit_const) is not appropriate",
+"DW_DLE_UDATA_VALUE_NEGATIVE(483) Reading a negative value from "
+    " from dwarf_formudata() is not allowed.",
+    
 };
 #endif /* DWARF_ERRMSG_LIST_H */
