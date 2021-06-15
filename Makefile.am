@@ -22,7 +22,10 @@ doc:
 	make -C doc doc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libdwarf.pc libdwarfp.pc
+pkgconfig_DATA = libdwarf.pc
+if HAVE_DWARFGEN 
+pkgconfig_DATA +=  libdwarfp.pc
+endif
 
 DISTCLEANFILES =
 
