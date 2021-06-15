@@ -21,35 +21,28 @@ ireppubnames.h \
 irepresentation.h \
 ireptodbg.cc \
 ireptodbg.h \
+dwgetopt.c \
+dwgetopt.h \
 strtabdata.h
 
 # dwarfdump here is so we find dwgetopt.h
-dwarfgen_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf -I$(top_srcdir)/src/lib/dwarfdump -I$(top_builddir)/src/lib/libdwarf
+dwarfgen_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarfp \
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_builddir)/src/lib/libdwarf \
+-I$(top_builddir)/src/lib/libdwarfp
 
-dwarfgen_CXXFLAGS = $(DWARF_CXXFLAGS_WARN)
+dwarfgen_CXXFLAGS = $(DWARF_CXXFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfgen"
 
 dwarfgen_LDADD = \
-$(top_builddir)/src/bin/dwarfdump/dwarfdump-dwgetopt.o \
+$(top_builddir)/src/lib/libdwarfp/libdwarfp.la \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 @DWARF_LIBS@ @DWARFGEN_LIBS@
 
 EXTRA_DIST = \
 COPYING \
 ChangeLog \
-ChangeLog2011 \
-ChangeLog2012 \
-ChangeLog2013 \
-ChangeLog2014 \
-ChangeLog2015 \
-ChangeLog2016 \
-ChangeLog2017 \
-ChangeLog2018 \
-ChangeLog2019 \
-ChangeLog2020 \
 CMakeLists.txt \
 NEWS \
 README \
-TESTmallocfail \
 $(dwarfgen_DATA) \
-dwarf-generator.txt \
-fakemalloc.in
+dwarf-generator.txt 

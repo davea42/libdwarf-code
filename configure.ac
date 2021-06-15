@@ -23,7 +23,6 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
 
-
 ### Additional options to configure
 
 AC_ARG_ENABLE([dwarfgen],
@@ -204,6 +203,9 @@ AS_IF(
 AC_SUBST([requirements_libdwarf_pc])
 AC_SUBST([requirements_libdwarf_libs])
 
+requirements_libdwarfp_pc=
+requirements_libdwarfp_libs=
+
 ### for use in casts to uint to avoid 32bit warnings.
 ### Also needed by C++ cstdint
 AC_TYPE_UINTPTR_T
@@ -234,7 +236,7 @@ if test  "$dwarf_with_libelf" = "yes" ; then
     [ AS_IF([ test "x${enable_dwarfgen}" != "xyes" ], 
       [ dwarf_with_libelf="no"
         echo "dwarfgen not needed, so no libelf"],
-      [ DWARFGEN_LIBS="${DWARFGEN_LIBS} -lelf"
+      [ DWARFGEN_LIBS="${DWARFGEN_LIBS} -ldwarf -lelf"
         dwarf_with_libelf="yes"
         echo "Allowing use of libelf for dwarfgen."
         AC_DEFINE([DWARF_WITH_LIBELF],[1],
@@ -628,12 +630,14 @@ AC_MSG_RESULT([${have_regex}])
 AC_CONFIG_FILES([
 Makefile
 src/lib/libdwarf/Makefile
+src/lib/libdwarfp/Makefile
 src/bin/dwarfdump/Makefile
 src/bin/dwarfgen/Makefile
 src/bin/dwarfexample/Makefile
 test/Makefile
 doc/Makefile
 libdwarf.pc
+libdwarfp.pc
 ])
 
 AC_OUTPUT

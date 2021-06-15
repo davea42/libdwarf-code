@@ -3,17 +3,18 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src/lib/libdwarf src/bin/dwarfdump test
-
+SUBDIRS = src/lib/libdwarf src/bin/dwarfdump
 
 if HAVE_DWARFGEN
-SUBDIRS += src/bin/dwarfgen
-SUBDIRS += src/lib/libdwarfp
+  SUBDIRS += src/lib/libdwarfp
+  SUBDIRS += src/bin/dwarfgen
 endif
 
 if HAVE_DWARFEXAMPLE
 SUBDIRS += src/bin/dwarfexample
 endif
+
+SUBDIRS += test
 
 SUBDIRS += doc
 
@@ -21,9 +22,9 @@ doc:
 	make -C doc doc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libdwarf.pc
+pkgconfig_DATA = libdwarf.pc libdwarfp.pc
 
-DISTCLEANFILES = 
+DISTCLEANFILES =
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -64,6 +65,7 @@ README \
 README.md \
 README.cmake \
 libdwarf.pc.in \
+libdwarfp.pc.in \
 scripts/baseconfig.h  \
 scripts/buildandreleasetest.sh \
 scripts/buildstandardsource.sh \

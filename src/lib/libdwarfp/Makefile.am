@@ -19,8 +19,8 @@ pro_die.c \
 pro_die.h \
 pro_dnames.h \
 pro_dnames.c \
-pro_encode_nm.c \
-pro_encode_nm.h \
+$(top_srcdir)/src/lib/libdwarf/pro_encode_nm.c \
+$(top_srcdir)/src/lib/libdwarf/pro_encode_nm.h \
 pro_error.c \
 pro_error.h \
 pro_expr.c \
@@ -51,7 +51,9 @@ pro_util.h \
 pro_vars.c \
 pro_weaks.c
 
-libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN) 
+
+libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN)
+libdwarfp_la_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf
 
 libdwarfp_la_LIBADD = @DWARF_LIBS@
 
@@ -65,13 +67,9 @@ $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 
 libdwarfpdevdir = $(datadir)/src/lib/libdwarfp/libdwarfp-devel
 libdwarfpdev_DATA = 
-malloc_check.h \
 
 EXTRA_DIST = \
 COPYING \
-LGPL.txt \
-LIBDWARFCOPYRIGHT \
-CHANGES \
 ChangeLog \
 pro_reloc_stream.h \
 pro_reloc_stream.c \
@@ -79,7 +77,5 @@ CMakeLists.txt \
 cmake/libdwarfp-config.cmake \
 NEWS \
 README \
-CODINGSTYLE \
 $(libdwarfp_DATA) \
 $(libdwarfpdev_DATA)
-

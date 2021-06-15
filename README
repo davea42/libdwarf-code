@@ -39,7 +39,7 @@ The option --enable-wall is optional.
 
     #assuming a clean directory.
     #download a libdwarf-0.1.0.tar.xz (or a later version)
-    tar xzf libdwarf-*.tar.xz
+    tar xf libdwarf-*.tar.xz
     cd libdwarf*
     $src/configure --enable-wall
     make
@@ -180,7 +180,7 @@ mkdir emptycross
 cd emptycross
 # Download a tarfile
 # Extract the contents
-tar xzf libdwarf-0.1.0.tar.xz (or a later version)
+tar xf libdwarf-0.1.0.tar.xz (or a later version)
 cd libdwarf*
 $src/configure --host=arm-linux-gnueabihf
 make

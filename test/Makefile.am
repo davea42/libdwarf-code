@@ -45,7 +45,8 @@ test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
 test_dwarfstring_CFLAGS = $(CFLAGS_WARN)
 test_dwarfstring_CPPFLAGS = \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
    $(top_srcdir)/src/lib/libdwarfp/pro_log_extra_flag_strings.c \
@@ -84,7 +85,8 @@ test_dwgetopt_SOURCES = getopttest.c \
     $(top_srcdir)/src/bin/dwarfdump/dwgetopt.c
 test_dwgetopt_CFLAGS = $(RO_CFLAGS_WARN)
 test_dwgetopt_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/bin/dwarfdump
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump
 
 test_makenametest_SOURCES = makename_test.c \
     $(top_srcdir)/src/bin/dwarfdump/esb.c \
