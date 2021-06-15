@@ -177,8 +177,6 @@ dw-linetableheader.txt \
 dwarf_test_errmsg_list.c \
 dwarf_names_new.h \
 dwarf_names_enum.h \
-pro_reloc_stream.h \
-pro_reloc_stream.c \
 gennames.c \
 dwgetopt.h \
 dwgetopt.c \

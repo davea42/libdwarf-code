@@ -35,7 +35,6 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#undef DWARF_WITH_LIBELF
 #ifdef DWARF_WITH_LIBELF
 #ifdef HAVE_ELF_H /* does includes of elf.h libelf.h here. */
 #include <elf.h>

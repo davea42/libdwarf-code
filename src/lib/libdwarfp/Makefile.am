@@ -43,6 +43,8 @@ pro_reloc.c \
 pro_reloc.h \
 pro_reloc_symbolic.c \
 pro_reloc_symbolic.h \
+pro_reloc_stream.h \
+pro_reloc_stream.c \
 pro_section.c \
 pro_section.h \
 pro_types.c \
@@ -71,8 +73,6 @@ libdwarfpdev_DATA =
 EXTRA_DIST = \
 COPYING \
 ChangeLog \
-pro_reloc_stream.h \
-pro_reloc_stream.c \
 CMakeLists.txt \
 cmake/libdwarfp-config.cmake \
 NEWS \
