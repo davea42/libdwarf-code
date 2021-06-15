@@ -299,8 +299,8 @@ int main()
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
 # libdwarf default-disabled shared
-option(BUILD_SHARED "build shared library libdwarf.so and use it if present" FALSE)
-option(BUILD_NON_SHARED "build archive library libdwarf.a" TRUE)
+option(BUILD_SHARED "build shared library libdwarf[p].so and use it if present" FALSE)
+option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
 
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
@@ -361,31 +361,41 @@ if(BUILD_NON_SHARED)
 	set(DWARF_TARGETS dwarf-static)
 	set(DWARF_TYPES STATIC)
 	set(dwarf-target dwarf-static)
+	set(DWARFP_TARGETS dwarfp-static)
+	set(DWARFP_TYPES STATIC)
+	set(dwarfp-target dwarfp-static)
 endif()
 if(BUILD_SHARED)
 	list(APPEND DWARF_TARGETS dwarf-shared)
 	list(APPEND DWARF_TYPES SHARED)
 	set(dwarf-target dwarf-shared)
+	list(APPEND DWARFP_TARGETS dwarfp-shared)
+	list(APPEND DWARFP_TYPES SHARED)
+	set(dwarfp-target dwarfp-shared)
 endif()
 
 add_subdirectory(src/lib/libdwarf)
 add_subdirectory(src/bin/dwarfdump)
+
+if ( BUILD_DWARFEXAMPLE )
+	add_subdirectory(src/bin/dwarfexample)
+endif()
 if (DO_TESTING)
 add_subdirectory(test)
 endif()
+
 if ( BUILD_DWARFGEN )
 	if ( DWARF_WITH_LIBELF )
+            set(LIBDWARF_INCLUDE_DIR ../libdwarf)
+            message(" dadebug outer inc ${LIBDWARF_INCLUDE_DIR}" )
+	    add_subdirectory(src/lib/libdwarfp)
 	    add_subdirectory(src/bin/dwarfgen)
         else ()
             message(STATUS "Not building dwarfgen because libelf is not available" )
         endif ()
 endif()
-if ( BUILD_DWARFEXAMPLE )
-	add_subdirectory(src/bin/dwarfexample)
-endif()
 
 message(STATUS "Install prefix ... ${CMAKE_INSTALL_PREFIX}" )
-# installation of libdwarf has to be in
-# src/lib/libdwarf/CMakeLists.txt
+# installation of libdwarf[p] has to be in
+# src/lib/libdwarf[p]/CMakeLists.txt
 # so that it works properly for cmake before cmake 3.13.
-

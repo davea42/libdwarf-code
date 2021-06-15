@@ -232,12 +232,6 @@ test2(Dwarf_P_Debug dbg)
     check_expected(DW_DLV_OK,res,err,0,
         dbg->de_line_inits.pi_segment_size,9,
         __LINE__);
-
-
-
-
-
-
 }
 
 static void

@@ -8,7 +8,10 @@ set_source_group(HEADERS "Header Files" createirepfrombinary.h
     irepdie.h irepform.h irepframe.h 
     irepline.h irepmacro.h ireppubnames.h 
     irepresentation.h ireptodbg.h strtabdata.h
-    ../../lib/libdwarf/dwgetopt.h)
+    ../../lib/libdwarf/libdwarf_private.h
+    ../../lib/libdwarf/dwgetopt.h
+    ../../lib/libdwarf/dwarf.h
+    ../../lib/libdwarfp/libdwarfp.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
     ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake
@@ -19,8 +22,13 @@ add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 set_folder(dwarfgen src/bin/dwarfgen)
 
 target_compile_options(dwarfgen PRIVATE ${DW_FWALLXX})
+message( "dadebug dg current src dir ${CMAKE_CURRENT_SOURCE_DIR}" )
+target_include_directories(dwarfgen PRIVATE 
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/libdwarf
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/libdwarfp)
 
-target_link_libraries(dwarfgen PRIVATE ${dwarf-target} ${DW_FZLIB})
+target_link_libraries(dwarfgen PRIVATE ${dwarfp-target}
+   ${dwarf-target} ${DW_FZLIB})
 
 set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
 set(LIBDIR lib${SUFFIX})

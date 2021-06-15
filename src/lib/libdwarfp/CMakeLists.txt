@@ -1,77 +1,18 @@
-set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
-dwarf_alloc.c dwarf_crc32.c dwarf_arange.c 
-dwarf_debug_sup.c
-dwarf_debuglink.c dwarf_die_deliv.c 
-dwarf_debug_names.c dwarf_dsc.c
-dwarf_elf_load_headers.c 
-dwarf_elfread.c 
-dwarf_elf_rel_detector.c 
-dwarf_error.c 
-dwarf_find_sigref.c dwarf_fission_to_cu.c
-dwarf_form.c dwarf_form_class_names.c
-dwarf_frame.c dwarf_frame2.c dwarf_funcs.c 
-dwarf_gdbindex.c dwarf_global.c 
-dwarf_gnu_index.c dwarf_groups.c 
-dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c 
-dwarf_leb.c 
-dwarf_line.c dwarf_loc.c 
-dwarf_loclists.c
-dwarf_locationop_read.c
-dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
-dwarf_names.c
-dwarf_object_read_common.c dwarf_object_detector.c
-dwarf_original_elf_init.c 
-dwarf_peread.c 
-dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c 
-dwarf_rnglists.c
-dwarfstring.h dwarfstring.c
-dwarf_stringsection.c
-dwarf_tied.c 
-dwarf_str_offsets.c
-dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
-dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c 
-malloc_check.c pro_alloc.c pro_arange.c 
-crc32.c
+set_source_group(SOURCES "Source Files" 
+pro_alloc.c pro_arange.c 
 pro_debug_sup.c
-pro_die.c pro_dnames.c pro_encode_nm.c pro_error.c pro_expr.c 
+pro_die.c pro_dnames.c 
+pro_error.c pro_expr.c 
 pro_finish.c pro_forms.c pro_funcs.c pro_frame.c 
 pro_init.c pro_line.c pro_reloc.c 
 pro_reloc_symbolic.c pro_pubnames.c pro_section.c 
 pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
 
-set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h
-dwarf_alloc.h dwarf_arange.h dwarf_base_types.h 
-dwarf_debuglink.h dwarf_die_deliv.h 
-dwarf_debug_names.h dwarf_dsc.h 
-dwarf_elf_access.h dwarf_elf_defines.h dwarf_elfread.h 
-dwarf_elf_rel_detector.h 
-dwarf_elf_reloc_386.h dwarf_elf_reloc_aarch64.h 
-dwarf_elf_reloc_arm.h dwarf_elf_reloc_mips.h 
-dwarf_elf_reloc_ppc64.h 
-dwarf_elf_reloc_ppc.h 
-dwarf_elf_reloc_sparc.h 
-dwarf_elf_reloc_x86_64.h 
-dwarf_elfstructs.h 
-dwarf_error.h dwarf_frame.h 
-dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h 
-dwarf_gnu_index.h 
-dwarf_incl.h dwarf_line.h dwarf_loc.h 
-dwarf_machoread.h dwarf_macro.h dwarf_macro5.h 
-dwarf_names.h
-dwarf_object_detector.h dwarf_opaque.h 
-dwarf_pe_descr.h dwarf_peread.h
-dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 
-dwarf_reloc_ppc.h dwarf_reloc_ppc64.h dwarf_reloc_x86_64.h 
-dwarf_rnglists.h
-dwarf_tied_decls.h 
-dwarf_tsearch.h 
-dwarf_str_offsets.h
-dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h 
-dwarf_xu_index.h libdwarf_private.h
-dwarf_macho_loader.h malloc_check.h 
-memcpy_swap.h
+set_source_group(HEADERS "Header Files"
+libdwarfp.h
 pro_alloc.h pro_arange.h pro_die.h 
-pro_encode_nm.h pro_error.h pro_expr.h pro_frame.h 
+../../lib/libdwarf/pro_encode_nm.h
+pro_error.h pro_expr.h pro_frame.h 
 pro_incl.h pro_line.h 
 pro_log_extra_flag_strings.c
 pro_macinfo.h pro_opaque.h 
@@ -82,29 +23,33 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
     ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake 
     ${CMAKE_BINARY_DIR}/config.h)
 
-
 	
-list(LENGTH DWARF_TARGETS targetCount)
+list(LENGTH DWARFP_TARGETS targetCount)
+message(" dadebug targetCount $(targetCount)" )
+message(" dadebug cmake sourcedir ${CMAKE_SOURCE_DIR}")
 math(EXPR targetCount "${targetCount} - 1")
-list(APPEND DWARF_LIBS ${LIBELF_LIBRARIES})
-if(UNIX)
-    list(APPEND DWARF_LIBS z)
-endif()
+list(APPEND DWARFP_LIBS ${LIBELF_LIBRARIES})
 foreach(i RANGE ${targetCount})
-	list(GET DWARF_TARGETS ${i} target)
-	list(GET DWARF_TYPES ${i} type)
+	list(GET DWARFP_TARGETS ${i} target)
+	list(GET DWARFP_TYPES ${i} type)
+        message(" dadebug p range ${i} ${target} ${type}" )
+        message(" dadebug targ ${DWARFP_TARGETS}" )
+        message(" dadebug src ${CMAKE_CURRENT_SOURCE_DIR}" )
+        message(" dadebug inc ${LIBDWARF_INCLUDE_DIR}" )
 	add_library(${target} ${type} ${SOURCES} ${HEADERS}
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
-	set_folder(${target} src/lib/libdwarf)
+	set_folder(${target} src/lib/libdwarfp)
 	target_include_directories(${target} PUBLIC 
-            ${LIBELF_INCLUDE_DIRS})
+            ${LIBELF_INCLUDE_DIRS} )
+	target_include_directories(${target} PRIVATE 
+            ${LIBDWARF_INCLUDE_DIR} )
         target_compile_options(${target} PRIVATE ${DW_FWALL})
 	msvc_posix(${target})
 
 	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES})
 	
-	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarf)
+	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarfp)
 
 	set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
 	set(LIBDIR lib${SUFFIX})
@@ -119,21 +64,22 @@ endforeach()
 # ../CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
-add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
-install(TARGETS ${DWARF_TARGETS} EXPORT libdwarfTargets
+add_custom_target(dg DEPENDS ${DWARFP_TARGETS} dwarfgen)
+install(TARGETS ${DWARFP_TARGETS} EXPORT libdwarfpTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)
-install(EXPORT libdwarfTargets
-    FILE libdwarf-targets.cmake
-    NAMESPACE libdwarf::
-    DESTINATION lib/cmake/libdwarf
+install(EXPORT libdwarfpTargets
+    FILE libdwarfp-targets.cmake
+
+    NAMESPACE libdwarfp::
+    DESTINATION lib/cmake/libdwarfp
 )
 install(
-    FILES cmake/libdwarf-config.cmake
-    DESTINATION lib/cmake/libdwarf
+    FILES cmake/libdwarfp-config.cmake
+    DESTINATION lib/cmake/libdwarfp
 )
-install(DIRECTORY libdwarf DESTINATION include/
+install(DIRECTORY libdwarfp DESTINATION include/
     FILES_MATCHING PATTERN "*.h")
 install(
-    FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarf.h
-    DESTINATION include/libdwarf)
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/libdwarfp.h
+    DESTINATION include/libdwarfp)

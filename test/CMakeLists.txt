@@ -14,13 +14,14 @@ endif()
 if (DO_TESTING)
     set_source_group(TESTEXTRASTRING "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_extra_flag_strings.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/pro_log_extra_flag_strings.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarfp/pro_log_extra_flag_strings.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.h)
     add_executable(selftestextrastring ${TESTEXTRASTRING})
     target_compile_options(selftestextrastring PRIVATE "-DTESTING" )
     target_compile_options(selftestextrastring PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selftestextrastring PRIVATE ${DW_FWALL})
     add_test(NAME selftestextrastring COMMAND selftestextrastring)
 endif()
@@ -36,7 +37,8 @@ if (DO_TESTING)
     add_executable(selftest_linkedtopath ${TESTEXTRASTRING})
     target_compile_options(selftest_linkedtopath PRIVATE "-DTESTING" )
     target_compile_options(selftest_linkedtopath PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selftest_linkedtopath PRIVATE ${DW_FWALL})
     add_test(NAME selftest_linkedtopath COMMAND selftest_linkedtopath)
 endif()
@@ -53,7 +55,8 @@ if (DO_TESTING)
     add_executable(selftest_headersok ${TESTEXTRASTRING})
     target_compile_options(selftest_headersok PRIVATE "-DTESTING" )
     target_compile_options(selftest_headersok PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selftest_headersok PRIVATE ${DW_FWALL})
     add_test(NAME selftest_headersok COMMAND selftest_headersok)
 endif()
@@ -64,7 +67,8 @@ if (DO_TESTING)
       ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwgetopt.c)
     add_executable(selfgetopttest ${GETOPTEST_SOURCES})
     target_compile_options(selfgetopttest PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selfgetopttest PRIVATE ${DW_FWALL})
     add_test(NAME selfgetopttest COMMAND selfgetopttest)
 endif()   
@@ -78,7 +82,8 @@ if (DO_TESTING)
     add_executable(selfmakename ${MAKENAME_SOURCES})
     target_compile_options(selfmakename PRIVATE ${DW_FWALL})
     target_compile_options(selfmakename PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selfmakename PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
     add_test(NAME selfmakename COMMAND selfmakename)
@@ -107,7 +112,8 @@ if (DO_TESTING)
     target_compile_options(selfmacrocheck PRIVATE ${SELFTEST} )
     target_compile_options(selfmacrocheck PRIVATE ${DW_FWALL})
     target_compile_options(selfmacrocheck PRIVATE 
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf") 
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selfmacrocheck PRIVATE 
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
     add_test(NAME selfmacrocheck COMMAND selfmacrocheck)
@@ -193,12 +199,12 @@ if (DO_TESTING)
     add_test(NAME selfdwarfdumpmacho COMMAND sh -c "${execelfdd} -vvv -a ${elfobj} | head -700 > junk.testoutelf ; diff ${elfbase} junk.testoutelf" )
 endif()
 
-if (DO_TESTING) 
+if (DO_TESTING AND BUILD_DWARFEXAMPLE) 
     set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/dwbuglink")
     add_test(NAME selfdebuglinka COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/debuglinktest-a.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}")
 endif()
 
-if (DO_TESTING) 
+if (DO_TESTING AND BUILD_DWARFEXAMPLE) 
     set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/dwbuglink")
     add_test(NAME selfdebuglinkb COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/debuglinktest-b.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}")
 endif()
