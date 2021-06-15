@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.1 9 June 2021
+.ds vE Rev 4.2 15 June 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -231,6 +231,12 @@ libdwarf from the libdwarf draft for DWARF Version 1 and
 recent changes.
 
 .H 2 "Items Changed"
+.P
+If dwarf_formudata() encounters a signed form
+it checks the value. If the value is non-negative
+it returns the non-negative value, otherwise
+it returns an error.
+15 June 2021
 .P
 Added dwarf_get_FORM_CLASS_name()
 so library uses can print a form
@@ -5601,12 +5607,19 @@ The function
 to
 the \f(CWDwarf_Unsigned\fP
 value of the attribute represented by the descriptor \f(CWattr\fP if the
-form of the attribute belongs to the \f(CWCONSTANT\fP class.
+form of the attribute belongs to the \f(CWCONSTANT\fP class
+and and the value is non-negative (if the form is DW_FORM_sdata
+for example,
+but the value is non-negative,
+the non-negative value is returned). 
+
 It is an
-error for the form to not belong to this class.
+error for the form to not belong to this class
+or (in case the FORM is a signed form) for the
+value to be negative.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 
-Never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 For DWARF2 and DWARF3, \f(CWDW_FORM_data4\fP and \f(CWDW_FORM_data8\fP
 are possibly class \f(CWCONSTANT\fP,

@@ -13,7 +13,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.1, 9 January 2021
+.ds vE Rev 4.1, 13 January 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -210,6 +210,16 @@ writing of object data to the disk.  The producer program does that.
 
 .H 2 "Revision History"
 .VL 15
+.LI "June 2021"
+The library is now in its own file (libdwarfp.a
+or libdwarfp.so) and the source
+in its own directory (src/lib/libdwarfp).
+libdwarfp is only built if a build of dwarfgen
+is requested.  Meaning with standard builds
+this library is not provided.
+It only creates DWARF2 with any completeness,
+so it's not clear how it could possibly be
+generally useful.
 .LI "March 1993"
 Work on dwarf2 sgi producer draft begins
 .LI "March 1999"
