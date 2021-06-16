@@ -128,25 +128,10 @@ dwarf_new_die_a(Dwarf_P_Debug dbg,
     one of these may be non-null
     This is the original version. Use dwarf_die_link_a()
     instead as that function is easier to use (in checking for error).
-    */
-Dwarf_P_Die
-dwarf_die_link(Dwarf_P_Die new_die,
-    Dwarf_P_Die parent,
-    Dwarf_P_Die child,
-    Dwarf_P_Die left, Dwarf_P_Die right, Dwarf_Error * error)
-{
-    int res = 0;
-
-    res = dwarf_die_link_a(new_die,parent,child,left,right,error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Die)DW_DLV_BADADDR;
-    }
-    return new_die;
-}
-
-/*  New September 2016.
+    
+    New September 2016.
     Error return easier to deal with
-    than dwarf_die_link(). */
+    old version. */
 int
 dwarf_die_link_a(Dwarf_P_Die new_die,
     Dwarf_P_Die parent,
@@ -257,19 +242,6 @@ dwarf_add_die_marker_a(Dwarf_P_Debug dbg,
 }
 
 
-Dwarf_Unsigned
-dwarf_get_die_marker(Dwarf_P_Debug dbg,
-    Dwarf_P_Die die,
-    Dwarf_Unsigned * marker,
-    Dwarf_Error * error)
-{
-    if (die == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_DIE_NULL,
-            DW_DLV_NOCOUNT);
-    }
-    *marker = die->di_marker;
-    return 0;
-}
 int
 dwarf_get_die_marker_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,

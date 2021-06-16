@@ -13,7 +13,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.1, 13 January 2021
+.ds vE Rev 4.2, 16 January 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -211,6 +211,11 @@ writing of object data to the disk.  The producer program does that.
 .H 2 "Revision History"
 .VL 15
 .LI "June 2021"
+Removing the obsolete functions that return Dwarf_Unsigned
+etc and required ugly casting
+to check success/fail. The ones returning int
+DW_DLV_OK etc are the only ones that should be used.
+.LI "June 2021"
 The library is now in its own file (libdwarfp.a
 or libdwarfp.so) and the source
 in its own directory (src/lib/libdwarfp).
@@ -224,7 +229,7 @@ generally useful.
 Work on dwarf2 sgi producer draft begins
 .LI "March 1999"
 Adding a function to allow any number of trips
-through the dwarf_get_section_bytes() call.
+through the dwarf_get_section_bytes_a() call.
 .LI "April 10 1999"
 Added support for assembler text output of dwarf
 (as when the output must pass through an assembler).
@@ -439,9 +444,7 @@ can not be reclaimed  (and must
 not be freed) except that
 all such libdwarf-allocated memory
 is freed by 
-\f(CWdwarf_producer_finish_a(dbg)\fP  
-or
-\f(CWdwarf_producer_finish(dbg)\fP.  
+\f(CWdwarf_producer_finish_a(dbg)\fP  .
 
 All data for a particular \f(CWDwarf_P_Debug\fP descriptor
 is separate from the data for any other 
@@ -489,9 +492,6 @@ The function
 can also return
 \f(CWDW_DLV_NO_ENTRY\fP.
 .P
-The original interfaces will remain.
-Binary and source compatibility for old
-code using the older interfaces is retained.
 
 .H 1 "Functional Interface"
 This section describes the functions available in the \fILibdwarf\fP
@@ -1073,9 +1073,10 @@ For each successful return (return value
 points to \f(CW*length\fP bytes of data that are normally
 added to the output 
 object in \f(CWElf\fP section \f(CW*elf_section\fP by the producer application.
-It is illegal to call these in any order other than 0 through N-1 where
+It is illegal to call these in
+any order other than 0 through N-1 where
 N is the number of dwarf sections
-returned by \f(CWdwarf_transform_to_disk_form() \fP.
+returned by \f(CWdwarf_transform_to_disk_form_a() \fP.
 The elf section number is returned through the pointer
 \f(CWelf_section_index\fP.
 
@@ -1108,82 +1109,6 @@ by the \f(CWdwarf_producer_finish_a() \fP call
 (or would be if the \f(CWdwarf_producer_finish_a() \fP
 was actually correct), along
 with all the other space in use with that Dwarf_P_Debug.
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_get_section_bytes()"
-.DS
-\f(CWDwarf_Ptr dwarf_get_section_bytes(
-        Dwarf_P_Debug dbg,
-        Dwarf_Signed dwarf_section,
-        Dwarf_Signed *elf_section_index, 
-        Dwarf_Unsigned *length,
-        Dwarf_Error* error)\fP
-.DE
-Beginning in September 2016 one should call
-\f(CWdwarf_get_section_bytes_a()\fP
- in preference to
-\f(CWdwarf_get_section_bytes()\fP as
-the former makes checking for errors easier.
-.P
-The function 
-\f(CWdwarf_get_section_bytes()\fP
-must be called repetitively,
-with the index 
-\f(CWdwarf_section\fP
-starting at 0 and continuing for the
-number of sections
-returned by \f(CWdwarf_transform_to_disk_form() \fP.
-.P
-It returns 
-\f(CWNULL\fP to indicate that there are no more sections of
-\f(CWDwarf\fP information.
-Normally one would index through using the sectioncount
-from dwarf_transform_to_disk_form_a() so
-\f(CWNULL\fP
-would never be seen.
-.P
-For each non-NULL return, the return value
-points to \f(CW*length\fP bytes of data that are normally
-added to the output
-object in \f(CWElf\fP section \f(CW*elf_section\fP by the producer application.
-The elf section number is returned through the pointer
-\f(CWelf_section_index\fP.
-.P
-In case of an error, 
-\f(CWDW_DLV_BADADDR\fP
-is returned and 
-the \f(CWerror\fP argument is set to indicate the error.
-.P
-It is illegal to call these in any order other than 0 through N-1 where
-N is the number of dwarf sections
-returned by \f(CWdwarf_transform_to_disk_form() \fP.
-The \f(CWdwarf_section\fP
-number is actually ignored: the data is returned as if the
-caller passed in the correct dwarf_section numbers in the
-required sequence.
-The \f(CWerror\fP argument is not used.
-.P
-There is no requirement that the section bytes actually
-be written to an elf file.
-For example, consider the .debug_info section and its
-relocation section (the call back function would resulted in
-assigning 'section' numbers and the link field to tie these
-together (.rel.debug_info would have a link to .debug_info).
-One could examine the relocations, split the .debug_info
-data at relocation boundaries, emit byte streams (in hex)
-as assembler output, and at each relocation point,
-emit an assembler directive with a symbol name for the assembler.
-Examining the relocations is awkward though.
-It is much better to use \f(CWdwarf_get_section_relocation_info() \fP
-.P
-
-The memory space of the section byte stream is freed
-by the \f(CWdwarf_producer_finish_a() \fP call
-(or would be if the \f(CWdwarf_producer_finish_a() \fP
-was actually correct), along
-with all the other space in use with that Dwarf_P_Debug.
-
 
 
 .H 3 "dwarf_get_relocation_info_count()"
@@ -1375,14 +1300,14 @@ with all the other space in use with that Dwarf_P_Debug.
 .DE
 The function \f(CWdwarf_reset_section_bytes() \fP 
 is used to reset the internal information so that
-\f(CWdwarf_get_section_bytes() \fP will begin (on the next
+\f(CWdwarf_get_section_bytes_a() \fP will begin (on the next
 call) at the initial dwarf section again.
 It also resets so that calls to 
 \f(CWdwarf_get_relocation_info() \fP
 will begin again at the initial array of relocation information.
 
 Some dwarf producers need to be able to run through
-the \f(CWdwarf_get_section_bytes()\fP
+the \f(CWdwarf_get_section_bytes_a()\fP
 and/or
 the \f(CWdwarf_get_relocation_info()\fP
 calls more than once and this call makes additional 
@@ -1390,7 +1315,7 @@ passes possible.
 The set of Dwarf_Ptr values returned is identical to the
 set returned by the first pass.
 It is acceptable to call this before finishing a pass
-of \f(CWdwarf_get_section_bytes()\fP
+of \f(CWdwarf_get_section_bytes_a()\fP
 or
 \f(CWdwarf_get_relocation_info()\fP
 calls.
@@ -1462,37 +1387,6 @@ if successful.
 .P
 On error it returns
 \f(CWDW_DLV_ERROR\fP 
-and sets
-\f(CWerror\fP 
-through the pointer.
-
-.H 4 "dwarf_producer_finish()"
-.DS
-\f(CWDwarf_Unsigned dwarf_producer_finish(
-        Dwarf_P_Debug dbg,
-        Dwarf_Error* error) \fP
-.DE
-This is the original interface. 
-It works but calling 
-\f(CWdwarf_producer_finish_a() \fP
-is preferred as it matches the latest libdwarf
-interface standard.
-.P
-The function 
-\f(CWdwarf_producer_finish() \fP
-should be called after all 
-the bytes of data have been copied somewhere
-(normally the bytes are written to disk).  
-It frees all dynamic space 
-allocated for \f(CWdbg\fP, include space for the structure pointed to by
-\f(CWdbg\fP.  
-This should not be called till the data have been 
-copied or written 
-to disk or are no longer of interest.  
-It returns zero if successful.
-.P
-On error it returns
-\f(CWDW_DLV_NOCOUNT\fP 
 and sets
 \f(CWerror\fP 
 through the pointer.
@@ -1698,26 +1592,6 @@ and sets
 \f(CWerror\fP 
 with the specific applicable error code.
 
-
-.H 4 "dwarf_die_link()"
-.DS
-\f(CWDwarf_P_Die dwarf_die_link(
-        Dwarf_P_Die die, 
-        Dwarf_P_Die parent,
-        Dwarf_P_Die child,
-        Dwarf_P_Die left-sibling, 
-        Dwarf_P_Die right_sibling,
-        Dwarf_Error *error) \fP
-.DE
-This is the original function to link
-\f(CWDIEs\fP together.
-The function 
-does the same thing as 
-\f(CWdwarf_die_link_a()\fP but.
-the newer function is simpler to
-work with.
-
-
 .H 2 "DIE Markers"
 DIE markers provide a way for a producer to extract DIE offsets
 from DIE generation.  The markers do not influence the
@@ -1789,7 +1663,7 @@ On error it returns \f(CWDW_DLV_NOCOUNT\fP.
         Dwarf_Unsigned *marker,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_get_die_marker() \fP returns the
+The function \f(CWdwarf_get_die_marker_a() \fP returns the
 current marker value for this DIE
 through the pointer \f(CWmarker\fP.
 A marker value of 0 means 'no marker was set'.
@@ -1797,21 +1671,6 @@ A marker value of 0 means 'no marker was set'.
 It returns \f(CWDW_DLV_OK\fP, on success.  
 On error it returns \f(CWDW_DLV_ERROR\fP.
 
-.H 4 "dwarf_get_die_marker()"
-.DS
-\f(CWDwarf_Unsigned dwarf_get_die_marker(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        Dwarf_Unsigned *marker,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWdwarf_get_die_marker() \fP returns the
-current marker value for this DIE
-through the pointer \f(CWmarker\fP.
-A marker value of 0 means 'no marker was set'.
-
-It returns \f(CW0\fP, on success.  
-On error it returns \f(CWDW_DLV_NOCOUNT\fP.
 
 .H 3 "dwarf_get_die_markers_a()"
 .DS
@@ -2418,10 +2277,6 @@ descriptor for this attribute on success.  On error, it returns
 The function 
 \f(CWdwarf_add_AT_targ_address_cfP 
 is identical to 
-\f(CWdwarf_add_AT_targ_address_bfP
-except for the return value and an added argument.
-Because this is type-safe use this instead of
-\f(CWdwarf_add_AT_targ_address_bfP.
 
 .P
 \f(CWsym_index\fP is guaranteed to
@@ -2461,85 +2316,6 @@ On failure the function returns
 
 Function created 01 December 2018.
 
-.H 4 "dwarf_add_AT_targ_address()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_targ_address(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_Unsigned pc_value,
-        Dwarf_Signed sym_index,
-        Dwarf_Error *error) \fP
-.DE
-The function 
-\f(CWdwarf_add_AT_targ_address\fP
-adds an attribute that
-belongs to the "address" class to the die specified by 
-\f(CWownerdie\fP.  
-The attribute is specified by 
-\f(CWattr\fP, and the object that the 
-\f(CWDIE\fP belongs to is specified by 
-\f(CWdbg\fP.  The relocatable 
-address that is the value of the attribute is specified by 
-\f(CWpc_value\fP. 
-The symbol to be used for relocation is specified by the 
-\f(CWsym_index\fP,
-which is the index of the symbol in the Elf symbol table.
-
-It returns the 
-\f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and 
-\f(CWDW_DLV_BADADDR\fP on error.
-
-
-
-.H 4 "dwarf_add_AT_targ_address_b()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_targ_address_b(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_Unsigned pc_value,
-        Dwarf_Unsigned sym_index,
-        Dwarf_Error *error) \fP
-.DE
-Please use
-\f(CWdwarf_add_AT_targ_address_c\fP 
-instead of
-\f(CWdwarf_add_AT_targ_address_b\fP 
-or
-\f(CWdwarf_add_AT_targ_address\fP 
-when is is convenient for you.
-The function 
-\f(CWdwarf_add_AT_targ_address_b\fP 
-is identical to 
-\f(CWdwarf_add_AT_targ_address\fP
-except that 
-\f(CWsym_index\fP is guaranteed to 
-be large enough that it can contain a pointer to
-arbitrary data (so the caller can pass in a real elf
-symbol index, an arbitrary number, or a pointer
-to arbitrary data).  
-The ability to pass in a pointer through 
-\f(CWsym_index\fP
-is only usable with 
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
-
-The 
-\f(CWpc_value\fP
-is put into the section stream output and
-the 
-\f(CWsym_index\fP is applied to the relocation
-information.
-
-Do not use this function for attr 
-\f(CWDW_AT_high_pc\fP
-if the value to be recorded is an offset (not a pc)
-[ use 
-\f(CWdwarf_add_AT_unsigned_const_a\fP  
-or  
-\f(CWdwarf_add_AT_any_value_uleb_a\fP 
-instead].
 
 .H 3 "dwarf_add_AT_block_a()"
 .DS
@@ -2576,31 +2352,6 @@ through the pointer
 
 On failure this returns
 \f(CWDW_DLV_ERROR\fP
-
-/*  New December 2018. Preferred version. */
-
-.H 4 "dwarf_add_AT_block()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_block(
-    Dwarf_P_Debug       dbg,
-    Dwarf_P_Die         ownerdie,
-    Dwarf_Half          attr,
-    Dwarf_Small         *block_data,
-    Dwarf_Unsigned      block_size,
-    Dwarf_Error         *error)
-.DE
-On success this returns 
-an attribute pointer
-just as
-\f(CWdwarf_add_AT_block_a\fP
- does
-and returns the attribute.
-
-On failure it returns
-\f(CWDW_DLV_BADADDR\fP.
-
-jjk
-
 
 .H 3 "dwarf_add_AT_dataref_a()"
 .DS
@@ -2747,42 +2498,6 @@ Do not use this function for
 
 Function created 01 December 2018.
 
-.H 4 "dwarf_add_AT_ref_address()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_ref_address(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_Unsigned pc_value,
-        Dwarf_Unsigned sym_index,
-        Dwarf_Error *error) \fP
-.DE
-
-This is very similar to \f(CWdwarf_add_AT_targ_address_b() \fP
-but results in a different FORM (results in \f(CWDW_FORM_ref_addr\fP
-being generated).
-
-Useful for  \f(CWDW_AT_type\fP and \f(CWDW_AT_import\fP attributes.
-
-\f(CWsym_index() \fP is guaranteed to
-be large enough that it can contain a pointer to
-arbitrary data (so the caller can pass in a real elf
-symbol index, an arbitrary number, or a pointer
-to arbitrary data).
-The ability to pass in a pointer through 
-\f(CWsym_index()\fP
-is only usable with
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
-
-The 
-\f(CWpc_value\fP
-is put into the section stream output and
-the 
-\f(CWsym_index\fP is applied to the relocation
-information.
-
-Do not use this function for \f(CWDW_AT_high_pc\fP.
-
 .H 3 "dwarf_add_AT_unsigned_const_a()"
 .DS
 \f(CWint dwarf_add_AT_unsigned_const_a(
@@ -2820,37 +2535,6 @@ It returns
 \f(CWDW_DLV_ERROR\fP on error.
 
 Function created 01 December 2018.
-
-.H 4 "dwarf_add_AT_unsigned_const()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_unsigned_const(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_Unsigned value,
-        Dwarf_Error *error) \fP
-.DE
-The function 
-\f(CWdwarf_add_AT_unsigned_const()\fP adds an attribute
-with a 
-\f(CWDwarf_Unsigned\fP value belonging to the "constant" class, 
-to the 
-\f(CWDIE\fP specified by 
-\f(CWownerdie\fP.  The object that
-the 
-\f(CWDIE\fP belongs to is specified by 
-\f(CWdbg\fP.  The attribute
-is specified by 
-\f(CWattr\fP, and its value is specified by 
-\f(CWvalue\fP.
-
-The FORM of the output will be one of the 
-\f(CWDW_FORM_data<n>\fP forms.
-
-It returns the 
-\f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and 
-\f(CWDW_DLV_BADADDR\fP on error.
 
 .H 3 "dwarf_add_AT_signed_const_a()"
 .DS

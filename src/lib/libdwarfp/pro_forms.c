@@ -140,55 +140,6 @@ local_add_AT_address_a(Dwarf_P_Debug dbg,
     Dwarf_P_Attribute *attr_out,
     Dwarf_Error * error);
 
-/* old interface */
-Dwarf_P_Attribute
-dwarf_add_AT_targ_address(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_Unsigned pc_value,
-    Dwarf_Signed sym_index, Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    if (sym_index < 0) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    res =   dwarf_add_AT_targ_address_c(dbg,
-        ownerdie, attr, pc_value,
-        (Dwarf_Unsigned) sym_index,
-        &a,
-        error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-
-}
-
-/*  New interface, replacing dwarf_add_AT_targ_address.
-    Essentially just makes sym_index a Dwarf_Unsigned
-    so for symbolic relocations it can be a full address.  */
-Dwarf_P_Attribute
-dwarf_add_AT_targ_address_b(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_Unsigned pc_value,
-    Dwarf_Unsigned sym_index,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_targ_address_c(dbg,
-        ownerdie,attr,pc_value,sym_index,
-        &a, error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-
-}
 int
 dwarf_add_AT_targ_address_c(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,
@@ -228,25 +179,6 @@ dwarf_add_AT_targ_address_c(Dwarf_P_Debug dbg,
     res = local_add_AT_address_a(dbg, ownerdie, attr, DW_FORM_addr,
         pc_value, sym_index,attr_out, error);
     return res;
-}
-
-Dwarf_P_Attribute
-dwarf_add_AT_ref_address(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_Unsigned pc_value,
-    Dwarf_Unsigned sym_index,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_ref_address_a(dbg,ownerdie,
-        attr,pc_value,sym_index,&a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
 }
 
 int
@@ -602,26 +534,6 @@ dwarf_add_AT_dataref(
     return a;
 }
 
-Dwarf_P_Attribute
-dwarf_add_AT_block(
-    Dwarf_P_Debug       dbg,
-    Dwarf_P_Die         ownerdie,
-    Dwarf_Half          attr,
-    Dwarf_Small         *block_data,
-    Dwarf_Unsigned      block_size,
-    Dwarf_Error         *error)
-{
-    int res = 0;
-    Dwarf_P_Attribute   new_attr = 0;
-
-    res = dwarf_add_AT_block_a(dbg,ownerdie,attr,
-        block_data,block_size,&new_attr,error);
-    if (res != DW_DLV_OK) {
-        return((Dwarf_P_Attribute)DW_DLV_BADADDR);
-    }
-    return new_attr;
-}
-
 /*  For DW_FORM_block* or DW_FORM_exprloc */
 int
 dwarf_add_AT_block_a(
@@ -720,25 +632,6 @@ dwarf_add_AT_block_a(
     size of the value field from the value of
     the constant.
 */
-Dwarf_P_Attribute
-dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_Unsigned value, Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_unsigned_const_a(dbg,
-        ownerdie,attr,value,
-        &a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-}
-
-
 int
 dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,

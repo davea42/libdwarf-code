@@ -887,7 +887,7 @@ main(int argc, char **argv)
             cout << "Debug_Str: Reused count " <<reused_count <<
                 ", byte total len not emitted " <<reused_len << endl;
         }
-        dwarf_producer_finish( dbg, 0);
+        dwarf_producer_finish_a( dbg, 0);
         return 0;
     } // End try
     catch (std::bad_alloc &ba) {
@@ -1081,7 +1081,8 @@ write_text_section(Elf * elf_w,unsigned elfclass)
 #ifdef HAVE_ELF64_GETSHDR
         Elf64_Shdr * shdr1 = elf64_getshdr(scn1);
         if(!shdr1) {
-            cerr << "dwarfgen: Unable to elf32_getshdr() on " << outfile << endl;
+            cerr << "dwarfgen: Unable to elf32_getshdr() on "
+                << outfile << endl;
             exit(1);
         }
         shdr1->sh_name =  osecnameoff;
@@ -1102,12 +1103,21 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf_i)
 {
     Dwarf_Signed elf_section_index = 0;
     Dwarf_Unsigned length = 0;
-    Dwarf_Ptr bytes = dwarf_get_section_bytes(dbg,d,
-        &elf_section_index,&length,0);
+    int res = 0;
+    Dwarf_Ptr bytes = 0;
+
+    res = dwarf_get_section_bytes_a(dbg,d,
+        &elf_section_index,&length,&bytes,0);
+    if (res != DW_DLV_OK) {
+        cerr << "dwarfgen: get_section_bytes_a problem " << d
+            << endl;
+        exit(1);
+    }
 
     Elf_Scn *scn =  elf_getscn(elf_i,elf_section_index);
     if(!scn) {
-        cerr << "dwarfgen: Unable to elf_getscn on disk transform # " << d << endl;
+        cerr << "dwarfgen: Unable to elf_getscn on disk transform # "
+            << d << endl;
         exit(1);
     }
 
@@ -1116,7 +1126,8 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf_i)
 
     Elf_Data* ed =elf_newdata(scn);
     if(!ed) {
-        cerr << "dwarfgen: elf_newdata died on transformed index " << d << endl;
+        cerr << "dwarfgen: elf_newdata died on transformed index "
+            << d << endl;
         exit(1);
     }
     ed->d_buf = bytes;
@@ -1126,8 +1137,8 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf_i)
     sfd.setNextOffset(ed->d_off + length);
     ed->d_align = 1;
     ed->d_version = EV_CURRENT;
-    cout << "Inserted " << length << " bytes into elf section index " <<
-        elf_section_index << endl;
+    cout << "Inserted " << length << " bytes into elf section index "
+        << elf_section_index << endl;
 }
 
 #if 0
@@ -1272,7 +1283,8 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf_w,
     res = dwarf_get_relocation_info_count(dbg,&reloc_sections_count,
         &drd_version,&err);
     if( res != DW_DLV_OK) {
-        cerr << "dwarfgen: Error getting relocation info count." << endl;
+        cerr << "dwarfgen: Error getting relocation info count."
+            << endl;
         exit(1);
 
     }

@@ -375,23 +375,6 @@ dwarf_need_debug_names_section(Dwarf_P_Debug dbg)
 /*  Convert debug information to  a format such that
     it can be written on disk.
     Called exactly once per execution.
-    This is the traditional interface. Bad interface design.
-*/
-Dwarf_Signed
-dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
-{
-    Dwarf_Signed count = 0;
-    int res = 0;
-
-    res = dwarf_transform_to_disk_form_a(dbg, &count,error);
-    if (res == DW_DLV_ERROR) {
-        return DW_DLV_NOCOUNT;
-    }
-    return count;
-}
-/*  Convert debug information to  a format such that
-    it can be written on disk.
-    Called exactly once per execution.
     This is the interface design used with the consumer
     interface, so easier for callers to work with.
 */
@@ -2452,22 +2435,6 @@ marker_add(Dwarf_P_Debug dbg,
     return DW_DLV_ERROR;
 }
 
-Dwarf_Signed
-dwarf_get_die_markers(Dwarf_P_Debug dbg,
-    Dwarf_P_Marker * marker_list, /* pointer to a pointer */
-    Dwarf_Unsigned * marker_count,
-    Dwarf_Error * error)
-{
-    int res = 0;
-
-    res = dwarf_get_die_markers_a(dbg,marker_list,marker_count,
-        error);
-    if (res == DW_DLV_ERROR) {
-        return DW_DLV_BADADDR;
-    }
-    return 0;
-}
-
 int
 dwarf_get_die_markers_a(Dwarf_P_Debug dbg,
     Dwarf_P_Marker * marker_list, /* pointer to a pointer */
@@ -3660,37 +3627,6 @@ _dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
         dbg->de_debug_line_str->ds_nbytes);
     *nbufs = dbg->de_n_debug_sect;
     return DW_DLV_OK;
-}
-
-
-/*  Get a buffer of section data.
-    section_idx is the elf-section number that this data applies to.
-    length shows length of returned data
-    This is the original format. Hard to check for error. */
-
-/*ARGSUSED*/                   /* pretend all args used */
-Dwarf_Ptr
-dwarf_get_section_bytes(Dwarf_P_Debug dbg,
-    UNUSEDARG Dwarf_Signed dwarf_section,
-    Dwarf_Signed * section_idx,
-    Dwarf_Unsigned * length, Dwarf_Error * error)
-{
-    Dwarf_Ptr s_bytes = 0;
-    int res = 0;
-
-    res = dwarf_get_section_bytes_a(dbg,
-        dwarf_section,
-        section_idx,
-        length,
-        &s_bytes,
-        error);
-    if (res == DW_DLV_ERROR) {
-        return (Dwarf_Ptr)DW_DLV_BADADDR;
-    }
-    if (res == DW_DLV_NO_ENTRY) {
-        return NULL;
-    }
-    return s_bytes;
 }
 
 /*  Get a buffer of section data.

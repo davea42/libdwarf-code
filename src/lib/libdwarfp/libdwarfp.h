@@ -144,9 +144,6 @@ int dwarf_pro_set_default_string_form(Dwarf_P_Debug /*dbg*/,
     int /*desired_form*/,
     Dwarf_Error*     /*error*/);
 
-/*  the old interface. Still supported. */
-Dwarf_Signed dwarf_transform_to_disk_form(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Error*     /*error*/);
 /*  New September 2016. The preferred interface. */
 int dwarf_transform_to_disk_form_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Signed *   /*nbufs_out*/,
@@ -158,13 +155,6 @@ int dwarf_get_section_bytes_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Signed*    /*elf_section_index*/,
     Dwarf_Unsigned*  /*length*/,
     Dwarf_Ptr     *  /*section_bytes*/,
-    Dwarf_Error*     /*error*/);
-
-/* Original function.  Checking for error is difficult. */
-Dwarf_Ptr dwarf_get_section_bytes(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Signed     /*dwarf_section*/,
-    Dwarf_Signed*    /*elf_section_index*/,
-    Dwarf_Unsigned*  /*length*/,
     Dwarf_Error*     /*error*/);
 
 int  dwarf_get_relocation_info_count(
@@ -188,12 +178,6 @@ int dwarf_get_relocation_info(
 /* Markers are not written  to DWARF2/3/4, they are user
    defined and may be used for any purpose.
 */
-Dwarf_Signed dwarf_get_die_markers(
-    Dwarf_P_Debug     /*dbg*/,
-    Dwarf_P_Marker *  /*marker_list*/,
-    Dwarf_Unsigned *  /*marker_count*/,
-    Dwarf_Error *     /*error*/);
-
 /* Preferred version December 2018. */
 int dwarf_get_die_markers_a(
     Dwarf_P_Debug     /*dbg*/,
@@ -214,9 +198,6 @@ int dwarf_get_string_attributes_info(Dwarf_P_Debug,
 
 void dwarf_reset_section_bytes(Dwarf_P_Debug /*dbg*/);
 
-Dwarf_Unsigned dwarf_producer_finish(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Error* /*error*/);
-
 /*  Returns DW_DLV_OK or DW_DLV_ERROR */
 int dwarf_producer_finish_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error* /*error*/);
@@ -229,20 +210,6 @@ int dwarf_add_debug_sup(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned  /*checksum_len*/,
     Dwarf_Small   * /*checksum*/,
     Dwarf_Error * /*error*/);
-
-/* Producer attribute addition functions. */
-Dwarf_P_Attribute dwarf_add_AT_targ_address(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Unsigned  /*pc_value*/,
-    Dwarf_Signed    /*sym_index*/,
-    Dwarf_Error*    /*error*/);
-Dwarf_P_Attribute dwarf_add_AT_targ_address_b(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Unsigned  /*pc_value*/,
-    Dwarf_Unsigned    /*sym_index*/,
-    Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_targ_address_c(Dwarf_P_Debug /*dbg*/,
@@ -260,20 +227,6 @@ int dwarf_add_AT_block_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Small*    /*block_data*/,
     Dwarf_Unsigned  /*block_len*/,
     Dwarf_P_Attribute * /*attr_out*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_P_Attribute dwarf_add_AT_block(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Small*    /*block_data*/,
-    Dwarf_Unsigned  /*block_len*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_P_Attribute dwarf_add_AT_ref_address(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Unsigned  /*pc_value*/,
-    Dwarf_Unsigned  /*sym_index*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
@@ -814,11 +767,6 @@ int dwarf_add_die_marker_a(Dwarf_P_Debug dbg,
     Dwarf_Unsigned marker,
     Dwarf_Error * error);
 
-Dwarf_Unsigned dwarf_get_die_marker(
-    Dwarf_P_Debug   /*dbg*/,
-    Dwarf_P_Die     /*die*/,
-    Dwarf_Unsigned *  /*marker*/,
-    Dwarf_Error *   /*error*/);
 
 /*  Preferred version, new December 2018. */
 int dwarf_get_die_marker_a(
@@ -829,15 +777,6 @@ int dwarf_get_die_marker_a(
 
 /*  New September 2016. Preferred version */
 int dwarf_die_link_a(
-    Dwarf_P_Die     /*die*/,
-    Dwarf_P_Die     /*parent*/,
-    Dwarf_P_Die     /*child*/,
-    Dwarf_P_Die     /*left*/,
-    Dwarf_P_Die     /*right*/,
-    Dwarf_Error*    /*error*/);
-
-/*  Original version. Use dwarf_die_link_a() instead. */
-Dwarf_P_Die dwarf_die_link(
     Dwarf_P_Die     /*die*/,
     Dwarf_P_Die     /*parent*/,
     Dwarf_P_Die     /*child*/,

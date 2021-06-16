@@ -42,20 +42,6 @@
 #include "pro_alloc.h"
 
 /*  This routine deallocates all memory, and does some
-    finishing up
-    This is the original version using a badly designed return
-    value approach.
-    Please use dwarf_producer_finish_a() instead.  */
-/*ARGSUSED*/ Dwarf_Unsigned
-dwarf_producer_finish(Dwarf_P_Debug dbg, Dwarf_Error * error)
-{
-    int res = dwarf_producer_finish_a(dbg,error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return 0;
-}
-/*  This routine deallocates all memory, and does some
     finishing up.  New September 2016. */
 int
 dwarf_producer_finish_a(Dwarf_P_Debug dbg, Dwarf_Error * error)
