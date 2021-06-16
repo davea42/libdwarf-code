@@ -8,6 +8,7 @@ Name: libdwarfp
 Description: DWARF debug symbols producer library
 Version: @PACKAGE_VERSION@
 Requires.private: @requirements_libdwarfp_pc@
-Libs: -L${libdir} -ldwarf -ldwarfp
+Requires: libdwarf
+Libs: -L${libdir} -ldwarfp
 Libs.private: @requirements_libdwarfp_libs@
 Cflags: -I${pkgincludedir}
