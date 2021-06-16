@@ -9,6 +9,10 @@ compiler:
   - clang
 os: linux
 
+arch:
+  - amd64
+  - arm64
+
 install:
   - sudo apt-get -qq update
   - sudo apt install build-essential zlib1g-dev
