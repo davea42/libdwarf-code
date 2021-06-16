@@ -42,7 +42,6 @@
 #include "pro_opaque.h"
 #include "pro_error.h"
 #include "pro_alloc.h"
-#include "pro_encode_nm.h"
 
 int
 dwarf_add_debug_sup(Dwarf_P_Debug dbg,

@@ -39,10 +39,10 @@
 #include "libdwarfp.h"
 #include "pro_opaque.h"
 #include "pro_error.h"
-#include "pro_encode_nm.h"
 #include "pro_alloc.h"
 #include "pro_section.h"
 #include "pro_macinfo.h"
+#include "dwarf_encode_nm.h"
 
 /*  I don't much like the error strings this generates, since
     like the rest of libdwarf they are simple strings with
@@ -163,9 +163,9 @@ libdwarf_compose_add_line(Dwarf_P_Debug dbg,
 
     /*  Put the created leb number directly into the macro buffer If
         dbg->de_compose_avail is > INT_MAX this will not work as the
-        'int' will look negative to _dwarf_pro_encode_leb128_nm! */
+        'int' will look negative to _dwarf_encode_leb128_nm! */
 
-    res = _dwarf_pro_encode_leb128_nm(line, &nbytes,
+    res = _dwarf_encode_leb128_nm(line, &nbytes,
         (char *) nextchar,
         (int) dbg->de_compose_avail);
     if (res != DW_DLV_OK) {

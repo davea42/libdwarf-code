@@ -35,9 +35,9 @@
 #define ENCODE_SPACE_NEEDED   (2*sizeof(Dwarf_Unsigned))
 
 
-int _dwarf_pro_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
+int _dwarf_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
     char *space, int splen);
 
-int _dwarf_pro_encode_signed_leb128_nm(Dwarf_Signed value,
+int _dwarf_encode_signed_leb128_nm(Dwarf_Signed value,
     int *nbytes,
     char *space, int splen);

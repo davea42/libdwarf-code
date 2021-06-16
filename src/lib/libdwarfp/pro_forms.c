@@ -42,10 +42,10 @@
 #include "libdwarfp.h"
 #include "pro_opaque.h"
 #include "pro_error.h"
-#include "pro_encode_nm.h"
 #include "pro_alloc.h"
 #include "pro_die.h"
 #include "pro_expr.h"
+#include "dwarf_encode_nm.h"
 
 #define DW_CU_VERSION5 5
 
@@ -385,7 +385,7 @@ dwarf_compress_integer_block_a(
         Dwarf_Signed unit = 0;
 
         unit = input_array[u];
-        result = _dwarf_pro_encode_signed_leb128_nm(
+        result = _dwarf_encode_signed_leb128_nm(
             unit, &unit_encoded_size,
             encode_buffer,sizeof(encode_buffer));
         if (result !=  DW_DLV_OK) {
@@ -409,7 +409,7 @@ dwarf_compress_integer_block_a(
         Dwarf_Signed unit = 0;
 
         unit = input_array[u];
-        result = _dwarf_pro_encode_signed_leb128_nm(unit,
+        result = _dwarf_encode_signed_leb128_nm(unit,
             &unit_encoded_size,
             ptr, remain);
         if (result !=  DW_DLV_OK) {
@@ -482,7 +482,7 @@ dwarf_compress_integer_block(
 
         ASNAR(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
-        result = _dwarf_pro_encode_signed_leb128_nm(
+        result = _dwarf_encode_signed_leb128_nm(
             unit, &unit_encoded_size,
             encode_buffer,sizeof(encode_buffer));
         if (result !=  DW_DLV_OK) {
@@ -511,7 +511,7 @@ dwarf_compress_integer_block(
 
         ASNAR(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
-        result = _dwarf_pro_encode_signed_leb128_nm(unit,
+        result = _dwarf_encode_signed_leb128_nm(unit,
             &unit_encoded_size,
             ptr, remain);
         if (result !=  DW_DLV_OK) {
@@ -668,7 +668,7 @@ dwarf_add_AT_block_a(
         not worth the effort, and block would be wrong
         to use block for DW_FORM_exprloc  */
     /* So, encode the length into LEB128 */
-    result = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
+    result = _dwarf_encode_leb128_nm(block_size, &len_size,
         encode_buffer,sizeof(encode_buffer));
     if (result !=  DW_DLV_OK) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -1065,7 +1065,7 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
         be particularly large and always < UINT_MAX. */
     if (is_exprloc_related && dwarf_version == DW_CU_VERSION5) {
         attr_form = DW_FORM_exprloc;
-        res = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
+        res = _dwarf_encode_leb128_nm(block_size, &len_size,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
@@ -1087,7 +1087,7 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
         do_len_as_int = 1;
     } else {
         attr_form = DW_FORM_block;
-        res = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
+        res = _dwarf_encode_leb128_nm(block_size, &len_size,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
@@ -1178,7 +1178,7 @@ dwarf_add_AT_exprloc(Dwarf_P_Debug dbg,
     }
 #endif
     block_size = b.dl_len;
-    res = _dwarf_pro_encode_leb128_nm(block_size, &len_size,
+    res = _dwarf_encode_leb128_nm(block_size, &len_size,
         encode_buffer,
         sizeof(encode_buffer));
     if (res != DW_DLV_OK) {
@@ -1867,7 +1867,7 @@ dwarf_add_AT_any_value_sleb_a(Dwarf_P_Die ownerdie,
     new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
     new_attr->ar_next = 0;
 
-    res = _dwarf_pro_encode_signed_leb128_nm(signed_value, &leb_size,
+    res = _dwarf_encode_signed_leb128_nm(signed_value, &leb_size,
         encode_buffer,
         sizeof(encode_buffer));
     if (res != DW_DLV_OK) {
@@ -2010,7 +2010,7 @@ dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die ownerdie,
     new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
     new_attr->ar_next = 0;
 
-    res = _dwarf_pro_encode_leb128_nm(unsigned_value, &leb_size,
+    res = _dwarf_encode_leb128_nm(unsigned_value, &leb_size,
         encode_buffer,
         sizeof(encode_buffer));
     if (res != DW_DLV_OK) {

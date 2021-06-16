@@ -59,7 +59,7 @@
 #include "memcpy_swap.h"
 #include "dwarf_die_deliv.h"
 #include "dwarfstring.h"
-#include "pro_encode_nm.h"
+#include "dwarf_encode_nm.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -1256,7 +1256,7 @@ int dwarf_encode_leb128(Dwarf_Unsigned val, int *nbytes,
     char *space, int splen)
 {
     /* Encode val as an unsigned LEB128. */
-    return _dwarf_pro_encode_leb128_nm(val,nbytes,space,splen);
+    return _dwarf_encode_leb128_nm(val,nbytes,space,splen);
 }
 
 /* Encode val as a signed LEB128. */
@@ -1264,7 +1264,7 @@ int dwarf_encode_signed_leb128(Dwarf_Signed val, int *nbytes,
     char *space, int splen)
 {
     /* Encode val as a signed LEB128. */
-    return _dwarf_pro_encode_signed_leb128_nm(val,nbytes,space,splen);
+    return _dwarf_encode_signed_leb128_nm(val,nbytes,space,splen);
 }
 
 struct  Dwarf_Printf_Callback_Info_s

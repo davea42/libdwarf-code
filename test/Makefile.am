@@ -136,7 +136,7 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 
 test_dwarflebtest_SOURCES = dwarf_leb_test.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_leb.c \
-    $(top_srcdir)/src/lib/libdwarf/pro_encode_nm.c
+    $(top_srcdir)/src/lib/libdwarf/dwarf_encode_nm.c
 test_dwarflebtest_FLAGS = $(RO_CFLAGS_WARN)
 test_dwarflebtest_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \

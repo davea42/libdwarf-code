@@ -30,7 +30,7 @@ dwarf_tied.c
 dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
 dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c 
-pro_encode_nm.c
+dwarf_encode_nm.c
 malloc_check.c 
 crc32.c )
 
@@ -47,7 +47,7 @@ dwarf_elf_reloc_ppc.h
 dwarf_elf_reloc_sparc.h 
 dwarf_elf_reloc_x86_64.h 
 dwarf_elfstructs.h 
-pro_encode_nm.h
+dwarf_encode_nm.h
 dwarf_error.h dwarf_frame.h 
 dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h 
 dwarf_gnu_index.h 

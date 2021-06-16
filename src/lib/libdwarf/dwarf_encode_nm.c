@@ -35,7 +35,7 @@
 #endif /* HAVE_STRING_H */
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "pro_encode_nm.h"
+#include "dwarf_encode_nm.h"
 
 #define MORE_BYTES      0x80
 #define DATA_MASK       0x7f
@@ -50,7 +50,7 @@
     passing length.
     number of bytes used returned thru nbytes arg */
 int
-_dwarf_pro_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
+_dwarf_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
     char *space, int splen)
 {
     char *a;
@@ -82,7 +82,7 @@ _dwarf_pro_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
 ** encodes a signed number.
 */
 int
-_dwarf_pro_encode_signed_leb128_nm(Dwarf_Signed value, int *nbytes,
+_dwarf_encode_signed_leb128_nm(Dwarf_Signed value, int *nbytes,
     char *space, int splen)
 {
     char *str;

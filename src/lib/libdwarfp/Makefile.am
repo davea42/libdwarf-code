@@ -19,8 +19,8 @@ pro_die.c \
 pro_die.h \
 pro_dnames.h \
 pro_dnames.c \
-$(top_srcdir)/src/lib/libdwarf/pro_encode_nm.c \
-$(top_srcdir)/src/lib/libdwarf/pro_encode_nm.h \
+$(top_srcdir)/src/lib/libdwarf/dwarf_encode_nm.c \
+$(top_srcdir)/src/lib/libdwarf/dwarf_encode_nm.h \
 pro_error.c \
 pro_error.h \
 pro_expr.c \

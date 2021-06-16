@@ -42,8 +42,8 @@
 #include "pro_opaque.h"
 #include "pro_error.h"
 #include "pro_alloc.h"
-#include "pro_encode_nm.h"
 #include "pro_frame.h"
+#include "dwarf_encode_nm.h"
 
 #define SIZEOFT16 2
 #define SIZEOFT32 4
@@ -488,7 +488,7 @@ dwarf_fde_cfa_offset_a(Dwarf_P_Fde fde,
     }
     opc = opc | regno;          /* lower 6 bits are register number */
     curinst->dfp_opcode = opc;
-    res = _dwarf_pro_encode_leb128_nm(offset, &nbytes,
+    res = _dwarf_encode_leb128_nm(offset, &nbytes,
         buff1, sizeof(buff1));
     if (res != DW_DLV_OK) {
         _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
@@ -650,7 +650,7 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
         if (val1 <= MAX_6_BIT_VALUE) {
             db = val1;
             op |= db;
-            res = _dwarf_pro_encode_leb128_nm(val2, &nbytes,
+            res = _dwarf_encode_leb128_nm(val2, &nbytes,
                 buff1, sizeof(buff1));
             if (res != DW_DLV_OK) {
                 _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
@@ -689,18 +689,18 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
     case DW_CFA_register:
     case DW_CFA_def_cfa:
     two_leb:
-        res = _dwarf_pro_encode_leb128_nm(val1, &nbytes1,
+        res = _dwarf_encode_leb128_nm(val1, &nbytes1,
             buff1, sizeof(buff1));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
             return DW_DLV_ERROR;
         }
         if (!signed_second) {
-            res = _dwarf_pro_encode_leb128_nm(val2, &nbytes2,
+            res = _dwarf_encode_leb128_nm(val2, &nbytes2,
                 buff2, sizeof(buff2));
         } else {
             Dwarf_Signed val2s = val2;
-            res = _dwarf_pro_encode_signed_leb128_nm(val2s, &nbytes2,
+            res = _dwarf_encode_signed_leb128_nm(val2s, &nbytes2,
                 buff2, sizeof(buff2));
         }
         if (res != DW_DLV_OK) {
@@ -708,7 +708,7 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
             return DW_DLV_ERROR;
         }
 
-        res = _dwarf_pro_encode_leb128_nm(val2, &nbytes2,
+        res = _dwarf_encode_leb128_nm(val2, &nbytes2,
             buff2, sizeof(buff2));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
@@ -732,11 +732,11 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
     case DW_CFA_def_cfa_offset:
     one_leb:
         if (!signed_first) {
-            res = _dwarf_pro_encode_leb128_nm(val1, &nbytes,
+            res = _dwarf_encode_leb128_nm(val1, &nbytes,
                 buff1, sizeof(buff1));
         } else {
             Dwarf_Signed val1s = val1;
-            res = _dwarf_pro_encode_signed_leb128_nm(val1s, &nbytes,
+            res = _dwarf_encode_signed_leb128_nm(val1s, &nbytes,
                 buff1, sizeof(buff1));
         }
         if (res != DW_DLV_OK) {

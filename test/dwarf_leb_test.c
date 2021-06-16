@@ -34,7 +34,7 @@
 #include "libdwarf.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "pro_encode_nm.h"
+#include "dwarf_encode_nm.h"
 
 
 static void
@@ -123,7 +123,7 @@ signedtest(unsigned len)
         Dwarf_Unsigned decodelen = 0;
         Dwarf_Signed decodeval = 0;
 
-        res = _dwarf_pro_encode_signed_leb128_nm(
+        res = _dwarf_encode_signed_leb128_nm(
             stest[t],&encodelen,bufferspace,BUFFERLEN);
         if (res != DW_DLV_OK) {
             printf("FAIL signed encode "
@@ -200,7 +200,7 @@ unsignedtest(unsigned len)
         Dwarf_Unsigned decodelen = 0;
         Dwarf_Unsigned decodeval = 0;
 
-        res = _dwarf_pro_encode_leb128_nm(
+        res = _dwarf_encode_leb128_nm(
             utest[t],&encodelen,bufferspace,BUFFERLEN);
         if (res != DW_DLV_OK) {
             printf("FAIL signed encode index %u val 0x%llx line:%d\n",
