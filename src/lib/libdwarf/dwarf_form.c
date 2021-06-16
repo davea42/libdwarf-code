@@ -1318,6 +1318,9 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_UDATA_VALUE_NEGATIVE);
             return DW_DLV_ERROR;
         }
+        *return_uval = (Dwarf_Unsigned)s;
+        *bytes_read = 0;
+        return DW_DLV_OK;
     }
     generate_form_error(dbg,error,form,
         DW_DLE_ATTR_FORM_BAD,
