@@ -1363,7 +1363,6 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_SIGNATURE_MISMATCH              480
 #define DW_DLE_MACRO_VERSION_ERROR             481
 #define DW_DLE_NEGATIVE_SIZE                   482
-#define DW_DLE_NEGATIVE_SIZE                   482
 #define DW_DLE_UDATA_VALUE_NEGATIVE            483
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
