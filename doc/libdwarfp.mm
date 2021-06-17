@@ -86,7 +86,8 @@ document.
 
 The functions in this document have mostly been implemented
 at Silicon Graphics and used by the SGI code generator to
-provide debugging information.  Some functions (and support
+provide DWARF2 debugging information in the 1990's.
+Some functions (and support
 for some extensions) were provided by Sun Microsystems.
 
 Example code showing one use of the functionality
@@ -210,21 +211,6 @@ writing of object data to the disk.  The producer program does that.
 
 .H 2 "Revision History"
 .VL 15
-.LI "June 2021"
-Removing the obsolete functions that return Dwarf_Unsigned
-etc and required ugly casting
-to check success/fail. The ones returning int
-DW_DLV_OK etc are the only ones that should be used.
-.LI "June 2021"
-The library is now in its own file (libdwarfp.a
-or libdwarfp.so) and the source
-in its own directory (src/lib/libdwarfp).
-libdwarfp is only built if a build of dwarfgen
-is requested.  Meaning with standard builds
-this library is not provided.
-It only creates DWARF2 with any completeness,
-so it's not clear how it could possibly be
-generally useful.
 .LI "March 1993"
 Work on dwarf2 sgi producer draft begins
 .LI "March 1999"
@@ -278,6 +264,21 @@ section to enable simple testing.
 .LI "January 25, 2021"
 dwarf_add_AT_block_a() now also supports
 the DWARF5 form DW_FORM_exprloc.
+.LI "June 2021"
+Removing the obsolete functions that return Dwarf_Unsigned
+etc and required ugly casting
+to check success/fail. The ones returning int
+DW_DLV_OK etc are the only ones that should be used.
+The library is now in its own file (libdwarfp.a
+or libdwarfp.so) and the source
+in its own directory (src/lib/libdwarfp).
+libdwarfp is only built if a build of dwarfgen
+is requested.  Meaning with standard builds
+this library is not provided.
+It only creates DWARF2 with any completeness,
+so it's not clear how it could possibly be
+generally useful.
+
 .LE
 
 .H 1 "Type Definitions"
@@ -286,8 +287,20 @@ the DWARF5 form DW_FORM_exprloc.
 The \fIlibdwarf.h\fP 
 header file contains typedefs and preprocessor 
 definitions of types and symbolic names 
-used to reference objects of \fI Libdwarf \fP .  
-The types defined by typedefs contained in \fI libdwarf.h\fP 
+used to reference objects of and types
+used by 
+\fIlibdwarf\fP
+and some declarations
+needed by
+\fIlibdwarfp\fP
+The \fIlibdwarfp.h\fP 
+header file defines producer functions and
+type specifically used by
+\fIlibdwarfp\fP.
+The types defined by typedefs contained in 
+\fI libdwarf.h\fP 
+and
+\fI libdwarfp.h\fP 
 all use the convention of adding \fI Dwarf_ \fP 
 as a prefix to
 indicate that they refer to objects used by Libdwarf.  
@@ -313,8 +326,8 @@ The library is probably usable with other object formats
 that allow arbitrary sections to be created.
 The library does not write anything to disk.
 Instead it provides access so that callers
-can do that.
-
+can do that in whatever object format
+is appropriate.
 
 .H 2 "binary or assembler output"
 With 
@@ -375,7 +388,6 @@ and the section numbers in binary form so
 the section numbers and symbol indices must really 
 be Elf (or elf-like) numbers.
 
-
 With
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP 
 the values passed as symbol indexes can be any
@@ -412,7 +424,7 @@ The following applies to calls that
 pass in symbol indices, addresses, and offsets, such
 as
 \f(CWdwarf_add_AT_targ_address_c() \fP 
-\f(CWdwarf_add_arange_b()\fP 
+\f(CWdwarf_add_arange_c()\fP 
 and
 \f(CWdwarf_add_frame_fde_c()\fP.
 
@@ -534,7 +546,7 @@ use this \f(CWDwarf_P_Debug\fP descriptor to accumulate debugging
 information for this object using functions from other sections of 
 this document.  
 Once all the information had been added, it would 
-call \f(CWdwarf_transform_to_disk_form()\fP to convert the accumulated 
+call \f(CWdwarf_transform_to_disk_form_a()\fP to convert the accumulated 
 information into byte streams in accordance with the \f(CWDWARF\fP 
 standard.  
 The application would then repeatedly call 
@@ -938,7 +950,6 @@ On error it returns \f(CWDW_DLV_ERROR\fP.
         Dwarf_Signed *chunk_count_out,
         Dwarf_Error* error)\fP
 .DE
-New September 2016.
 The function
 \f(CWdwarf_transform_to_disk_form_a()\fP 
 is new in September 2016. 
@@ -1434,7 +1445,6 @@ It returns
         Dwarf_P_Die *die_out,
         Dwarf_Error *error) \fP
 .DE
-New September 2016.
 On success 
 \f(CWdwarf_new_die_a() \fP 
 returns DW_DLV_OK
@@ -1505,7 +1515,6 @@ returns DW_DLV_ERROR and sets
         Dwarf_P_Die right_sibling,
         Dwarf_Error *error) \fP
 .DE
-New September 2016.
 On success
 the function 
 \f(CWdwarf_die_link_a() \fP 
@@ -1740,7 +1749,6 @@ On error it returns
         Dwarf_P_Attribute * attr_out,
         Dwarf_Error *error) \fP
 .DE
-New November 2018.
 
 The function \f(CWdwarf_add_AT_name_a() \fP adds
 the string specified by
@@ -1836,9 +1844,6 @@ and sets
 \f(CW*out_attr\fP to the created attribute.
 
 On error, it returns \f(CWDW_DLV_ERROR\fP.
-
-The function was created 01 December 2018.
-
 
 .H 3 "dwarf_add_AT_const_value_signedint_a()"
 .DS
@@ -1937,8 +1942,6 @@ to the newly created attribute.
 
 On error, it returns \f(CWDW_DLV_ERROR\fP.
 
-The function was created 01 December 2018.
-
 .H 3 "dwarf_add_AT_const_value_unsignedint_a()"
 .DS
 \f(CWint dwarf_add_AT_const_value_unsignedint_a(
@@ -1972,7 +1975,6 @@ and sets \f(CW*attr_out\fP
 to the newly created attribute.
 
 On error, it returns \f(CWDW_DLV_ERROR\fP.
-Created 01 December 2018.
 
 .H 3 "dwarf_add_AT_const_value_string_a()"
 .DS
@@ -1983,7 +1985,7 @@ Created 01 December 2018.
     Dwarf_Error *error) \fP
 .DE
 The function 
-\f(CWdwarf_add_AT_const_value_string_afP adds the
+\f(CWdwarf_add_AT_const_value_string_a()\fP adds the
 string value given by 
 \f(CWstring_value\fP as the value of the
 \f(CWDW_AT_const_value\fP attribute for the 
@@ -2011,7 +2013,7 @@ On error, it returns
         Dwarf_Error *error) \fP
 .DE
 The function 
-\f(CWdwarf_add_AT_targ_address_cfP 
+\f(CWdwarf_add_AT_targ_address_c()\fP 
 is identical to 
 
 .P
@@ -2049,9 +2051,6 @@ instead].
 
 On failure the function returns
 \f(CWDW_DLV_ERROR\fP
-
-Function created 01 December 2018.
-
 
 .H 3 "dwarf_add_AT_block_a()"
 .DS
@@ -2184,8 +2183,6 @@ On failure the function returns
 Do not use this function for 
 \f(CWDW_AT_high_pc\fP.  
 
-Function created 01 December 2018.
-
 .H 3 "dwarf_add_AT_unsigned_const_a()"
 .DS
 \f(CWint dwarf_add_AT_unsigned_const_a(
@@ -2222,8 +2219,6 @@ and sets
 It returns
 \f(CWDW_DLV_ERROR\fP on error.
 
-Function created 01 December 2018.
-
 .H 3 "dwarf_add_AT_signed_const_a()"
 .DS
 \f(CWint dwarf_add_AT_signed_const_a(
@@ -2256,8 +2251,6 @@ with a pointer to the new attribute.
 On error it returns
 \f(CWDW_DLV_ERROR\fP.
 
-Function created 01 December 2018.
-
 .H 3 "dwarf_add_AT_reference_c()"
 .DS
 \f(CWint dwarf_add_AT_reference_c(
@@ -2286,8 +2279,6 @@ through \f(CW*attr_out\fP.
 
 On failure it returns
 \f(CWDW_DLV_ERROR\fP.
-
-Function created 01 December 2018.
 
 .H 3 "dwarf_fixup_AT_reference_die()"
 .DS
@@ -2321,8 +2312,6 @@ It returns either \f(CWDW_DLV_OK\fP (on success)
 or \f(CWDW_DLV_ERROR\fP (on error).
 Calling this on an attribute where \f(CWotherdie\fP
 was already set is an error.
-
-New 22 October, 2013.
 
 .H 3 "dwarf_add_AT_flag_a()"
 .DS
@@ -2502,8 +2491,6 @@ a to build up a location expression.
 
 On failure it returns
 \f(CWDW_DLV_OK\fP.
-
-Function created 01 December 2018.
 
 .H 3 "dwarf_add_expr_gen_a()"
 .DS
@@ -2769,8 +2756,6 @@ It returns
 \f(CWDW_DLV_OK\fP on success, and 
 \f(CWDW_DLV_ERROR\fP on error.
 
-Function created 01 December 2018.
-
 .H 3 "dwarf_lne_end_sequence_a()"
 .DS
 \f(CWint dwarf_lne_end_sequence_a(
@@ -2797,8 +2782,6 @@ It returns
 on success and
 \f(CWDW_DLV_ERROR\fP
 on error.
-
-Function created 01 December 2018.
 
 .H 3 "dwarf_add_directory_decl_a()"
 .DS
@@ -3513,14 +3496,6 @@ On error, it returns \f(CWDW_DLV_ERROR\fP.
         Dwarf_Unsigned *index_to_fde,
         Dwarf_Error*    error)\fP
 .DE
-New December 2018, this function has
-a simpler return value so checking for
-failure is easier. 
-Otherwise
-\f(CWdwarf_add_frame_fde_c()\fP
-is essentially similar to
-\f(CWdwarf_add_frame_fde_b()\fP.
-
 .P
 On success 
 The function 
@@ -3541,9 +3516,6 @@ the pointer
 On failure it returns 
 \f(CWDW_DLV_ERROR\fP.
 
-Function created 01 December 2018.
-
-
 .H 3 "dwarf_fde_cfa_offset_a()"
 .DS
 \f(CWint dwarf_fde_cfa_offset_a( Dwarf_P_Fde fde,
@@ -3551,9 +3523,6 @@ Function created 01 December 2018.
         Dwarf_Signed offset,
         Dwarf_Error *error)\fP
 .DE
-New December 2018, this function has
-a simpler return value so checking for
-failure is easier. 
 .P
 The function 
 \f(CWdwarf_fde_cfa_offset()\fP appends a 
@@ -3563,7 +3532,7 @@ operation to the
 \f(CWfde\fP,  being constructed.
 The first operand of the 
 \f(CWDW_CFA_offset\fP operation is specified by
-\f(CWreg\P.  
+\f(CWreg\fP.  
 The register specified should not exceed 6 bits.  
 The second
 operand of the 
