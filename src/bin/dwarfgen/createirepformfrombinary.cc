@@ -269,7 +269,12 @@ IRFormConstant::IRFormConstant(IRFormInterface * interface)
     int resu = dwarf_formudata(interface->attr_, &uval,&error);
     if(resu == DW_DLV_OK ) {
         if(ress == DW_DLV_OK) {
-            oursign = SIGN_UNKNOWN;
+            if (finalform == DW_FORM_sdata) {
+                /* sval set */
+                oursign = SIGNED;
+            } else {
+                oursign = SIGN_UNKNOWN;
+            }
         } else {
             oursign = UNSIGNED;
             sval = static_cast<Dwarf_Signed>(uval);

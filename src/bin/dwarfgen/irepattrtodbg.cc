@@ -204,7 +204,9 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             } else {
                 //cerr << "ERROR how can we know "
                 //    "a non-sdata const is signed?, attrnum " <<
-                //    attrnum <<endl;
+                //    attrnum <<
+                //    " formv " <<  formv <<
+                //    endl;
                 res = dwarf_add_AT_signed_const_a(dbg,
                     outdie,attrnum,
                     sval,&a,&error);
@@ -322,7 +324,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                 }
                 // We must add the attribute when we have the
                 // target Dwarf_P_Die, which should get set shortly.
-                // And do the  dwarf_add_AT_reference() then.
+                // And do the  dwarf_add_AT_reference_c() then.
                 // Before transform_to_disk_form.
                 // NULL targetoutdie allowed here.
                 // Arranging DIE order so there were no forward-refs
