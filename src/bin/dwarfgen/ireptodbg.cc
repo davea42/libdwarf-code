@@ -746,7 +746,7 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep,
     // This is not a good design as DWARF3/4 have
     // requirements of multiple CUs in a single creation,
     // which cannot be handled yet.
-    Dwarf_Unsigned res = dwarf_add_die_to_debug(dbg,cudie,&lerror);
+    int res = dwarf_add_die_to_debug_a(dbg,cudie,&lerror);
     if(res != DW_DLV_OK)  {
         cerr << "Unable to add_die_to_debug " << endl;
         exit(1);
@@ -1059,11 +1059,11 @@ transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
             if(targdie) {
                 // Ugly. Old mistake in libdwarf declaration.
                 char *mystr = const_cast<char *>(pub.getName().c_str());
-                Dwarf_Unsigned res = dwarf_add_pubname(
+                int res = dwarf_add_pubname_a(
                     dbg,targdie,
                     mystr,
                     &error);
-                if(!res) {
+                if(res != DW_DLV_OK) {
                     cerr << "Failed to add pubname entry for offset"
                         << ourdieoff
                         << "in CU at offset " << pubcuoff << endl;
@@ -1092,7 +1092,7 @@ transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
             if(targdie) {
                 // Ugly. Old mistake in libdwarf declaration.
                 char *mystr = const_cast<char *>(pub.getName().c_str());
-                Dwarf_Unsigned res = dwarf_add_pubtype(
+                int res = dwarf_add_pubtype_a(
                     dbg,targdie,
                     mystr,
                     &error);
