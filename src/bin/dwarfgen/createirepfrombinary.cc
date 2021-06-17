@@ -36,11 +36,11 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#elif defined(_WIN32) && defined(_MSC_VER)
+#ifdef _WIN32
 #include <io.h>
-#endif
+#elif defined HAVE_UNISTD_H
+#include <unistd.h>
+#endif /* _WIN32 */
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
 #endif /* HAVE_STDLIB_H */
