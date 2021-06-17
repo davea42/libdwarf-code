@@ -54,50 +54,8 @@
 
 /*  This function adds another address range
     to the list of address ranges for the
-    given Dwarf_P_Debug.  It returns 0 on error,
-    and 1 otherwise.  */
-Dwarf_Unsigned
-dwarf_add_arange(Dwarf_P_Debug dbg,
-    Dwarf_Addr begin_address,
-    Dwarf_Unsigned length,
-    Dwarf_Signed symbol_index, Dwarf_Error * error)
-{
-    int res = 0;
-
-    res = dwarf_add_arange_b(dbg, begin_address, length, symbol_index,
-        /* end_symbol_index */ 0,
-        /* offset_from_end_sym */ 0,
-        error);
-    if (res != DW_DLV_OK) {
-        return 0;
-    }
-    return 1;
-
-}
-
-/*  This function adds another address range
-    to the list of address ranges for the
     given Dwarf_P_Debug.  It returns DW_DLV_ERROR on error,
     and DW_DLV_OK otherwise.  */
-Dwarf_Unsigned
-dwarf_add_arange_b(Dwarf_P_Debug dbg,
-    Dwarf_Addr begin_address,
-    Dwarf_Unsigned length,
-    Dwarf_Unsigned symbol_index,
-    Dwarf_Unsigned end_symbol_index,
-    Dwarf_Addr offset_from_end_sym,
-    Dwarf_Error * error)
-{
-    int res = 0;
-
-    res = dwarf_add_arange_c(dbg,begin_address,length,
-        symbol_index, end_symbol_index,
-        offset_from_end_sym,error);
-    if (res != DW_DLV_OK) {
-        return 0;
-    }
-    return 1;
-}
 int
 dwarf_add_arange_c(Dwarf_P_Debug dbg,
     Dwarf_Addr begin_address,

@@ -1422,21 +1422,6 @@ It returns
 \f(CWDW_DLV_OK\fP on success, and 
 \f(CWDW_DLV_error\fP on error.
 
-Function created 2016.
-
-.H 4 "dwarf_add_die_to_debug()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_die_to_debug(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die first_die,
-        Dwarf_Error *error) \fP
-.DE
-This is the original form of the call.
-Use \f(CWdwarf_add_die_to_debug_a() instead.
-.P
-It returns \f(CW0\fP on success, and 
-\f(CWDW_DLV_NOCOUNT\fP on error.
-
 .H 3 "dwarf_new_die_a()"
 .DS
 \f(CWint dwarf_new_die_a(
@@ -1509,27 +1494,6 @@ On failure
 \f(CWdwarf_new_die_a() \fP 
 returns DW_DLV_ERROR and sets 
 \f(CW*error\fP. 
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_new_die()"
-.DS
-\f(CWDwarf_P_Die dwarf_new_die(
-        Dwarf_P_Debug dbg, 
-        Dwarf_Tag new_tag,
-        Dwarf_P_Die parent,
-        Dwarf_P_Die child,
-        Dwarf_P_Die left_sibling, 
-        Dwarf_P_Die right_sibling,
-        Dwarf_Error *error) \fP
-.DE
-This is the original form of the function and
-users should switch to calling
-\f(CWdwarf_new_die_a()\fP 
-instead to use the newer interface.
-See
-\f(CWdwarf_new_die_a()\fP 
-for details (both functions do the same thing).
 
 .H 3 "dwarf_die_link_a()"
 .DS
@@ -1632,30 +1596,8 @@ Passing in a marker of 0 means 'there is no marker'
 
 It returns \f(CWDW_DLV_OK\fP, on success.  
 On error it returns \f(CWDW_DLV_ERROR\fP.
-.H 4 "dwarf_add_die_marker()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_die_marker(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        Dwarf_Unsigned marker,
-        Dwarf_Error *error) \fP
-.DE
-This is preferred over
-\f(CWdwarf_add_die_marker()\fP.
-The function
-\f(CWdwarf_add_die_marker_a()\fP
-writes the
-value
-\f(CWmarker\fP
-to the \f(CWDIE\fP descriptor given by
-\f(CWdie\fP.
-Passing in a marker of 0 means 'there is no marker'
-(zero is the default in DIEs).
 
-It returns \f(CW0\fP, on success.
-On error it returns \f(CWDW_DLV_NOCOUNT\fP.
-
-.H 4 "dwarf_get_die_marker_a()"
+.H 3 "dwarf_get_die_marker_a()"
 .DS
 \f(CWint dwarf_get_die_marker_a(
         Dwarf_P_Debug dbg,
@@ -2529,7 +2471,7 @@ blocks so that attributes with values that are location expressions
 can store their values as a \f(CWDW_FORM_blockn\fP value.  This is for 
 both .debug_info and .debug_loc expression blocks.
 
-To create an expression, first call \f(CWdwarf_new_expr()\fP to get 
+To create an expression, first call \f(CWdwarf_new_expr_a()\fP to get 
 a \f(CWDwarf_P_Expr\fP descriptor that can be used to build up the
 block containing the location expression.  Then insert the parts of 
 the expression in prefix order (exactly the order they would be 
@@ -2562,22 +2504,6 @@ On failure it returns
 \f(CWDW_DLV_OK\fP.
 
 Function created 01 December 2018.
-
-.H 4 "dwarf_new_expr()"
-.DS
-\f(CWDwarf_P_Expr dwarf_new_expr(
-        Dwarf_P_Debug dbg,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_new_expr()\fP creates a new expression area 
-in which a location expression stream can be created.
-It returns
-a 
-\f(CWDwarf_P_Expr\fP descriptor that can be used to add operators
-to build up a location expression.
-It returns 
-\f(CWNULL\fP on error.
 
 .H 3 "dwarf_add_expr_gen_a()"
 .DS
@@ -2628,50 +2554,6 @@ the function cannot
 not set up a relocation record that is needed when target addresses are
 involved.
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_expr_gen()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_expr_gen(
-        Dwarf_P_Expr expr,
-        Dwarf_Small opcode, 
-        Dwarf_Unsigned val1,
-        Dwarf_Unsigned val2,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_add_expr_gen()\fP takes an operator specified
-by 
-\f(CWopcode\fP, along with up to 2 operands specified by 
-\f(CWval1\fP,
-and 
-\f(CWval2\fP, converts it into the 
-\f(CWDwarf\fP representation and 
-appends the bytes to the byte stream being assembled for the location
-expression represented by 
-\f(CWexpr\fP.
-The first operand, if present,
-to 
-\f(CWopcode\fP is in 
-\f(CWval1\fP, and the second operand, if present,
-is in 
-\f(CWval2\fP.  Both the operands may actually be signed or unsigned
-depending on 
-\f(CWopcode\fP.  It returns the number of bytes in the byte
-stream for 
-\f(CWexpr\fP currently generated, i.e. after the addition of
-\f(CWopcode\fP.
-
-It returns 
-\f(CWDW_DLV_NOCOUNT\fP on error.
-
-The function 
-\f(CWdwarf_add_expr_gen()\fP works for all opcodes except
-those that have a target address as an operand.  This is because 
-the function cannot
-not set up a relocation record that is needed when target addresses are
-involved.
-
 .H 3 "dwarf_add_expr_addr_c()"
 .DS
 \f(CWint dwarf_add_expr_addr_c(
@@ -2709,51 +2591,6 @@ in
 On failure the function returns
 \f(CWDW_DLV_ERROR\fP.
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_expr_addr()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_expr_addr(
-        Dwarf_P_Expr expr,
-        Dwarf_Unsigned address,
-        Dwarf_Signed sym_index,
-        Dwarf_Error *error)\fP 
-.DE
-The function \f(CWdwarf_add_expr_addr()\fP is used to add the
-\f(CWDW_OP_addr\fP opcode to the location expression represented
-by the given \f(CWDwarf_P_Expr\fP descriptor, \f(CWexpr\fP.  The
-value of the relocatable address is given by \f(CWaddress\fP.  
-The symbol to be used for relocation is given by \f(CWsym_index\fP,
-which is the index of the symbol in the Elf symbol table.  It returns 
-the number of bytes in the byte stream for \f(CWexpr\fP currently 
-generated, i.e. after the addition of the \f(CWDW_OP_addr\fP operator.  
-It returns \f(CWDW_DLV_NOCOUNT\fP on error.
-
-.H 4 "dwarf_add_expr_addr_b()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_expr_addr_b(
-        Dwarf_P_Expr expr,
-        Dwarf_Unsigned address,
-        Dwarf_Unsigned sym_index,
-        Dwarf_Error *error)\fP 
-.DE
-The function 
-\f(CWdwarf_add_expr_addr_b()\fP is
-identical to 
-\f(CWdwarf_add_expr_addr()\fP
-except that 
-\f(CWsym_index() \fP is guaranteed to
-be large enough that it can contain a pointer to
-arbitrary data (so the caller can pass in a real elf
-symbol index, an arbitrary number, or a pointer
-to arbitrary data).
-The ability to pass in a pointer through 
-\f(CWsym_index() \fP
-is only usable with
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
-
-
-
 .H 3 "dwarf_expr_current_offset_a()"
 .DS
 \f(CWint dwarf_expr_current_offset_a(
@@ -2773,23 +2610,6 @@ stream.
 
 On failure the function returns
 \f(CWDW_DLV_ERROR\fP.
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_expr_current_offset()"
-.DS
-\f(CWDwarf_Unsigned dwarf_expr_current_offset(
-        Dwarf_P_Expr expr, 
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_expr_current_offset()\fP returns the number
-of bytes currently in the byte stream for the location expression
-represented by the given 
-\fCW(Dwarf_P_Expr\fP descriptor, 
-\f(CWexpr\fP.
-It returns 
-\f(CWDW_DLV_NOCOUNT\fP on error.
 
 .H 3 "dwarf_expr_into_block_a()"
 .DS
@@ -2815,30 +2635,6 @@ is currently held in the executing libdwarf into
 .P
 On failure it returns
 \f(CWDW_DLV_ERROR\fP.
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_expr_into_block()"
-.DS
-\f(CWDwarf_Addr dwarf_expr_into_block(
-        Dwarf_P_Expr expr,
-        Dwarf_Unsigned *length,
-        Dwarf_Error *error)\fP 
-.DE
-The function 
-\f(CWdwarf_expr_into_block()\fP returns the address
-of the start of the byte stream generated for the location expression
-represented by the given 
-\f(CWDwarf_P_Expr\fP descriptor, 
-\f(CWexpr\fP.
-The address is a pointer into the current application memory
-known to libdwarf (stored in a Dwarf_Addr).
-
-The length of the byte stream is returned 
-in the location pointed to
-by 
-\f(CWlength\fP.  It returns 
-f(CWDW_DLV_BADADDR\fP on error.
 
 .H 3 "dwarf_expr_reset()"
 .DS
@@ -3193,128 +2989,6 @@ on success and
 on error.
 
 
-
-Function created 01 December 2018.
-
-
-.H 4 "dwarf_add_arange()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_arange(
-        Dwarf_P_Debug dbg,
-        Dwarf_Addr begin_address,
-        Dwarf_Unsigned length,
-        Dwarf_Signed symbol_index,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_add_arange()\fP adds another address range 
-to be added to the section 
-containing address range information, .debug_aranges.  
-The relocatable start address of the range is 
-specified by 
-\f(CWbegin_address\fP, and the length of the address 
-range is specified by 
-\f(CWlength\fP.  
-The relocatable symbol to be 
-used to relocate the start of the address range is specified by 
-\f(CWsymbol_index\fP, which is normally 
-the index of the symbol in the Elf
-symbol table.
-
-It returns a non-zero value on success, and \f(CW0\fP on error.
-
-.H 4 "dwarf_add_arange_b()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_arange_b(
-        Dwarf_P_Debug dbg,
-        Dwarf_Addr begin_address,
-        Dwarf_Unsigned length,
-        Dwarf_Unsigned symbol_index,
-	Dwarf_Unsigned end_symbol_index,
-	Dwarf_Addr     offset_from_end_symbol,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_add_arange_b()\fP adds another address range
-to be added to the section containing 
-address range information, .debug_aranges.  
-
-If
-\f(CWend_symbol_index is not zero\fP
-we are using two symbols to create a length
-(must be \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP to be useful)
-.sp
-.in +2
-\f(CWbegin_address\fP
-is the offset from the symbol specified by
-\f(CWsymbol_index\fP .
-\f(CWoffset_from_end_symbol\fP
-is the offset from the symbol specified by
-\f(CWend_symbol_index\fP.
-\f(CWlength\fP is ignored.
-This begin-end pair will be show up in the
-relocation array returned by
-\f(CWdwarf_get_relocation_info() \fP
-as a
-\f(CWdwarf_drt_first_of_length_pair\fP
-and
-\f(CWdwarf_drt_second_of_length_pair\fP
-pair of relocation records.
-The consuming application will turn that pair into
-something conceptually identical to
-.sp
-.nf
-.in +4
- .word end_symbol + offset_from_end - \\
-   ( start_symbol + begin_address)
-.in -4
-.fi
-.sp
-The reason offsets are allowed on the begin and end symbols
-is to allow the caller to re-use existing labels
-when the labels are available
-and the corresponding offset is known  
-(economizing on the number of labels in use).
-The  'offset_from_end - begin_address'
-will actually be in the binary stream, not the relocation
-record, so the app processing the relocation array
-must read that stream value into (for example)
-net_offset and actually emit something like
-.sp
-.nf
-.in +4
- .word end_symbol - start_symbol + net_offset
-.in -4
-.fi
-.sp
-.in -2
-
-If
-\f(CWend_symbol_index\fP is zero
-we must be given a length
-(either
-\f(CWDW_DLC_STREAM_RELOCATIONS\fP
-or
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
-):
-.sp
-.in +2
-The relocatable start address of the range is
-specified by \f(CWbegin_address\fP, and the length of the address
-range is specified by \f(CWlength\fP.  
-The relocatable symbol to be
-used to relocate the start of the address range is specified by
-\f(CWsymbol_index\fP, which is normally
-the index of the symbol in the Elf
-symbol table.
-The 
-\f(CWoffset_from_end_symbol\fP
-is ignored.
-.in -2
-
-
-It returns a non-zero value on success, and \f(CW0\fP on error.
-
 .H 2 "DWARF5 .debug_sup section creation"
 The .debug_sup section (see the DWARF5 standard)
 enables symbolically linking two DWARF5 
@@ -3382,23 +3056,6 @@ on success and
 \f(CWDW_DLV_ERROR\fP
 on error.
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_pubname()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_pubname(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        char *pubname_name,
-        Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_add_pubname()\fP adds the pubname specified
-by \f(CWpubname_name\fP to the section containing pubnames, i.e.
-  .debug_pubnames.  The \f(CWDIE\fP that represents the function
-being named is specified by \f(CWdie\fP.  
-
-It returns a non-zero value on success, and \f(CW0\fP on error.
-
 .H 2 "Fast Access (pubtypes) Operations"
 These functions operate on the .debug_pubtypes section.
 An SGI-defined extension.
@@ -3418,25 +3075,6 @@ on success and
 \f(CWDW_DLV_ERROR\fP
 on error.
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_pubtype()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_pubtype(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        char *pubname_name,
-        Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_add_pubtype()\fP adds the pubtype specified
-by \f(CWpubtype_name\fP to the section containing 
-pubtypes, i.e.  .debug_pubtypes.
-The \f(CWDIE\fP that represents the function
-being named is specified by \f(CWdie\fP.
-
-It returns a non-zero value on success, and \f(CW0\fP on error.
-
-
 .H 2 "Fast Access (weak names) Operations"
 These functions operate on the .debug_weaknames section.
 An SGI-defined extension.
@@ -3455,23 +3093,6 @@ It returns
 on success and
 \f(CWDW_DLV_ERROR\fP
 on error.
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_weakname()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_weakname(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        char *weak_name,
-        Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_add_weakname()\fP adds the weak name specified
-by \f(CWweak_name\fP to the section containing weak names, i.e.  
- .debug_weaknames.  The \f(CWDIE\fP that represents the function
-being named is specified by \f(CWdie\fP.  
-
-It returns a non-zero value on success, and \f(CW0\fP on error.
 
 .H 2 "Static Function Names Operations"
 The .debug_funcnames section contains the names of static function 
@@ -3505,30 +3126,6 @@ It returns
 It returns 
 \f(CWDW_DLV_ERROR\fP on error.
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_funcname()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_funcname(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        char *func_name,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_add_funcname()\fP adds the name of a static
-function specified by 
-\f(CWfunc_name\fP to the section containing the
-names of static functions defined in the object represented by 
-\f(CWdbg\fP.
-The 
-\f(CWDIE\fP that represents the definition of the function is
-specified by 
-\f(CWdie\fP.
-
-It returns a non-zero value on success, and 
-\f(CW0\fP on error.
-
 .H 2 "File-scope User-defined Type Names Operations"
 The .debug_typenames section contains the names of file-scope
 user-defined types in the given object, and also the offsets 
@@ -3552,30 +3149,6 @@ except that on success this returns
 and on failure this returns
 \f(CWDW_DLV_ERROR\fP.
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_typename()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_typename(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        char *type_name,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_add_typename()\fP
-adds the name of a file-scope
-user-defined type specified by
-\f(CWtype_name\fP to the section that 
-contains the names of file-scope user-defined type.  The object that 
-this section belongs to is specified by 
-\f(CWdbg\fP.
-The \f(CWDIE\fP 
-that represents the definition of the type is specified by 
-\f(CWdie\fP.
-
-It returns a non-zero value on success, and \f(CW0\fP on error.
-
 .H 2 "File-scope Static Variable Names Operations"
 The .debug_varnames section contains the names of file-scope static
 variables in the given object, and also the offsets of the 
@@ -3598,31 +3171,6 @@ except that on success this returns
 \f(CWDW_DLV_OK\fP
 and on failure this returns
 \f(CWDW_DLV_ERROR\fP.
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_varname()"
-.DS
-\f(CWDwarf_Unsigned dwarf_add_varname(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die die,
-        char *var_name,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_add_varname()\fP adds the name of a file-scope
-static variable specified by 
-\f(CWvar_name\fP to the section that 
-contains the names of file-scope static variables defined by the 
-object represented by 
-\f(CWdbg\fP.  
-The 
-\f(CWDIE\fP that represents
-the definition of the static variable is specified by 
-\f(CWdie\fP.
-
-It returns a non-zero value on success, and 
-\f(CW0\fP on error.
 
 .H 2 "Macro Information Creation"
 All strings passed in by the caller are copied by these

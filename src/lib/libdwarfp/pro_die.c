@@ -65,27 +65,6 @@
     tag: tag of the new die to be created
     parent,child,left,right: specify neighbors of the new die. Only
     one of these may be non-null */
-Dwarf_P_Die
-dwarf_new_die(Dwarf_P_Debug dbg,
-    Dwarf_Tag tag,
-    Dwarf_P_Die parent,
-    Dwarf_P_Die child,
-    Dwarf_P_Die left, Dwarf_P_Die right,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Die created = 0;
-    int res = 0;
-
-    res = dwarf_new_die_a(dbg,tag,parent,child,
-        left,right,&created,error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Die)DW_DLV_BADADDR;
-    }
-    return created;
-}
-
-/*  New September 2016. Preferred as error checking
-    is easier, no need for ugly cast. */
 int
 dwarf_new_die_a(Dwarf_P_Debug dbg,
     Dwarf_Tag tag,
@@ -216,17 +195,6 @@ dwarf_die_link_a(Dwarf_P_Die new_die,
     return DW_DLV_OK;
 }
 
-Dwarf_Unsigned
-dwarf_add_die_marker(Dwarf_P_Debug dbg,
-    Dwarf_P_Die die,
-    Dwarf_Unsigned marker,
-    Dwarf_Error * error) {
-    if (die == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_DIE_NULL, DW_DLV_NOCOUNT);
-    }
-    die->di_marker = marker;
-    return 0;
-}
 int
 dwarf_add_die_marker_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
@@ -261,19 +229,6 @@ dwarf_get_die_marker_a(Dwarf_P_Debug dbg,
     This function adds a die to dbg struct. It should
     be called using the root of all the dies.
 ---------------------------------------------------------*/
-/*  Original form of this call..
-    dwarf_add_die_to_debug_a() is preferred now. */
-Dwarf_Unsigned
-dwarf_add_die_to_debug(Dwarf_P_Debug dbg,
-    Dwarf_P_Die first_die, Dwarf_Error * error)
-{
-    int res = dwarf_add_die_to_debug_a(dbg,first_die,error);
-    if (res == DW_DLV_ERROR) {
-        return DW_DLV_NOCOUNT;
-    }
-    return 0;
-}
-
 /*  New September 2016. The new and preferred form. */
 int
 dwarf_add_die_to_debug_a(Dwarf_P_Debug dbg,

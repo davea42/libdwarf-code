@@ -50,24 +50,11 @@
 #define SIZEOFT64 8
 
 /*
-    These two function creates a new expression
+    Creates a new expression
     struct that can be used to build up a
     location expression.
     Neither ever returns DW_DLV_NO_ENTRY
 */
-Dwarf_P_Expr
-dwarf_new_expr(Dwarf_P_Debug dbg, Dwarf_Error * error)
-{
-    Dwarf_P_Expr e = 0;
-    int res = dwarf_new_expr_a(dbg,&e,error);
-    if (res != DW_DLV_OK) {
-        return NULL;
-    }
-    return e;
-}
-/*  New January 2021.  Was accidentally forgotten
-    when doing the addition of producer functions
-    returning DW_DLV_OK etc in place of pointers. */
 int dwarf_new_expr_a(Dwarf_P_Debug dbg,
     Dwarf_P_Expr *newexpr,
     Dwarf_Error *error)
@@ -87,24 +74,6 @@ int dwarf_new_expr_a(Dwarf_P_Debug dbg,
     ret_expr->ex_dbg = dbg;
     *newexpr = ret_expr;
     return DW_DLV_OK;
-}
-
-Dwarf_Unsigned
-dwarf_add_expr_gen(Dwarf_P_Expr expr,
-    Dwarf_Small opcode,
-    Dwarf_Unsigned val1,
-    Dwarf_Unsigned val2, Dwarf_Error * error)
-{
-    Dwarf_Unsigned len = 0;
-    int res = 0;
-
-    res = dwarf_add_expr_gen_a(expr,opcode,
-        val1,val2,&len,error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return len;
-
 }
 
 int
@@ -541,23 +510,6 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     return DW_DLV_OK;
 }
 
-Dwarf_Unsigned
-dwarf_add_expr_addr_b(Dwarf_P_Expr expr,
-    Dwarf_Unsigned addr,
-    Dwarf_Unsigned sym_index,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned length = 0;
-    int res = 0;
-
-    res = dwarf_add_expr_addr_c(expr,addr,sym_index,
-        &length,error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return length;
-
-}
 int
 dwarf_add_expr_addr_c(Dwarf_P_Expr expr,
     Dwarf_Unsigned addr,
@@ -609,44 +561,6 @@ dwarf_add_expr_addr_c(Dwarf_P_Expr expr,
     return DW_DLV_OK;
 }
 
-Dwarf_Unsigned
-dwarf_add_expr_addr(Dwarf_P_Expr expr,
-    Dwarf_Unsigned addr,
-    Dwarf_Signed sym_index,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned length = 0;
-    int res = 0;
-    Dwarf_P_Debug dbg = 0;
-
-    if (sym_index < 0) {
-        _dwarf_p_error(dbg, error,
-            DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD);
-        return DW_DLV_NOCOUNT;
-    }
-    res = dwarf_add_expr_addr_c(expr,
-        (Dwarf_Unsigned)addr,
-        (Dwarf_Unsigned)sym_index,
-        &length,error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_Unsigned)DW_DLV_NOCOUNT;
-    }
-    return length;
-}
-
-Dwarf_Unsigned
-dwarf_expr_current_offset(Dwarf_P_Expr expr, Dwarf_Error * error)
-{
-    Dwarf_Unsigned l = 0;
-    int res = 0;
-
-    res = dwarf_expr_current_offset_a(expr,&l,error);
-    if (res != DW_DLV_OK) {
-        return (DW_DLV_NOCOUNT);
-    }
-    return l;
-}
-
 int
 dwarf_expr_current_offset_a(Dwarf_P_Expr expr,
     Dwarf_Unsigned * stream_length_out,
@@ -674,22 +588,6 @@ dwarf_expr_reset(Dwarf_P_Expr expr, Dwarf_Error * error)
     }
     expr->ex_next_byte_offset=0;
 }
-
-Dwarf_Addr
-dwarf_expr_into_block(Dwarf_P_Expr expr,
-    Dwarf_Unsigned * length,
-    Dwarf_Error * error)
-{
-    Dwarf_Small *addr = 0;
-    int res = 0;
-
-    res = dwarf_expr_into_block_a(expr,length,&addr,error);
-    if (res != DW_DLV_OK) {
-        return (DW_DLV_BADADDR);
-    }
-    return (Dwarf_Addr)(uintptr_t)addr;
-}
-
 
 int
 dwarf_expr_into_block_a(Dwarf_P_Expr expr,

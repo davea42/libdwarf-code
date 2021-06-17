@@ -43,23 +43,6 @@
 #include "pro_opaque.h"
 #include "pro_section.h"
 
-/*  This function adds another function name to the
-    list of function names for the given Dwarf_P_Debug.
-    It returns 0 on error, and 1 otherwise. */
-Dwarf_Unsigned
-dwarf_add_funcname(Dwarf_P_Debug dbg,
-    Dwarf_P_Die die,
-    char *function_name, Dwarf_Error * error)
-{
-    int res = 0;
-
-    res = _dwarf_add_simple_name_entry(dbg, die, function_name,
-        dwarf_snk_funcname, error);
-    if (res != DW_DLV_OK) {
-        return 0;
-    }
-    return 1;
-}
 int
 dwarf_add_funcname_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,

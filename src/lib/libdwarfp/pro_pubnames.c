@@ -45,26 +45,6 @@
 #include "pro_error.h"
 #include "pro_section.h"
 
-
-/*  This function adds another public name to the
-    list of public names for the given Dwarf_P_Debug.
-    It returns 0 on error, and 1 otherwise.  */
-
-Dwarf_Unsigned
-dwarf_add_pubname(Dwarf_P_Debug dbg,
-    Dwarf_P_Die die,
-    char *pubname_name, Dwarf_Error * error)
-{
-    int res = 0;
-
-    res =  _dwarf_add_simple_name_entry(dbg, die, pubname_name,
-        dwarf_snk_pubname, error);
-    if (res != DW_DLV_OK) {
-        return 0;
-    }
-    return 1;
-}
-
 int
 dwarf_add_pubname_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
@@ -78,22 +58,6 @@ dwarf_add_pubname_a(Dwarf_P_Debug dbg,
     return res;
 }
 
-
-
-Dwarf_Unsigned
-dwarf_add_pubtype(Dwarf_P_Debug dbg,
-    Dwarf_P_Die die,
-    char *pubtype_name, Dwarf_Error * error)
-{
-    int res  = 0;
-
-    res = _dwarf_add_simple_name_entry(dbg, die, pubtype_name,
-        dwarf_snk_pubtype, error);
-    if (res != DW_DLV_OK) {
-        return 0;
-    }
-    return 1;
-}
 int
 dwarf_add_pubtype_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
