@@ -236,6 +236,8 @@ If dwarf_formudata() encounters a signed form
 it checks the value. If the value is non-negative
 it returns the non-negative value, otherwise
 it returns an error.
+This means success calling dwarf_formudata()
+does not prove the form is not DW_FORM_sdata.
 15 June 2021
 .P
 Added dwarf_get_FORM_CLASS_name()
@@ -5612,6 +5614,9 @@ and and the value is non-negative (if the form is DW_FORM_sdata
 for example,
 but the value is non-negative,
 the non-negative value is returned). 
+
+If the data is definitely a signed type,
+the form will be DW_FORM_sdata.
 
 It is an
 error for the form to not belong to this class
