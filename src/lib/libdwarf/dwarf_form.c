@@ -1234,7 +1234,15 @@ _dwarf_allow_formudata(unsigned form)
     in the Dwarf_Error is  DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION.
     When that arises, a consumer should call
     dwarf_get_debug_addr_index() and use that on the appropriate
-    .debug_addr section in the executable or another object. */
+    .debug_addr section in the executable or another object. 
+
+    Since this accept some signed values, callers
+    must not assume a DW_DLV_OK means
+    the value is unsigned. The form is the first clue here.
+    If DW_FORM_sdata, then signed. Else unknown sign or
+    is unsigned.
+*/
+
 
 int
 _dwarf_formudata_internal(Dwarf_Debug dbg,
