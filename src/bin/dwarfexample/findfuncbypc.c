@@ -32,11 +32,11 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
 #endif /* HAVE_STDLIB_H */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>     /* For close() */
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
-#endif
+#ifdef _WIN32
+#include <io.h> /* for close() */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* for close() */
+#endif /* _WIN32 */
 #include <stdio.h>
 #include <errno.h>
 #ifdef HAVE_STRING_H

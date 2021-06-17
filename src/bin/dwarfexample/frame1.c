@@ -70,11 +70,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* Useful include for some Windows compilers. */
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>     /* For close() */
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
-#endif
+#ifdef _WIN32
+#include <io.h> /* close() */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* close() */
+#endif /* _WIN32 */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */

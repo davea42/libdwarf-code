@@ -43,11 +43,11 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #endif /* SYS_STAT_H */
 #include <fcntl.h>
 #include <limits.h>
-#ifdef HAVE_UNISTD_H
+#ifdef _WIN32
+#include <io.h> /* for dup2() */
+#elif defined HAVE_UNISTD_H
 #include <unistd.h> /* for dup2() */
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
-#endif
+#endif /* _WIN32 */
 
 #include "makename.h"
 #include "macrocheck.h"
