@@ -709,23 +709,6 @@ dwarf_add_AT_name_a(Dwarf_P_Die die, char *name,
 /*--------------------------------------------------------------------
     Add AT_comp_dir attribute to die
 --------------------------------------------------------------------*/
-Dwarf_P_Attribute
-dwarf_add_AT_comp_dir(Dwarf_P_Die ownerdie,
-    char *current_working_directory,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_comp_dir_a(ownerdie,
-        current_working_directory,
-        &a, error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Attribute)(DW_DLV_BADADDR);
-    }
-    return a;
-}
-
 int
 dwarf_add_AT_comp_dir_a(Dwarf_P_Die ownerdie,
     char *current_working_directory,

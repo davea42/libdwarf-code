@@ -238,12 +238,6 @@ int dwarf_add_AT_ref_address_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Attribute * /*attr_out*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_P_Attribute dwarf_add_AT_unsigned_const(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Unsigned  /*value*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
@@ -252,35 +246,12 @@ int dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Attribute * /*attr_out*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_P_Attribute dwarf_add_AT_signed_const(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Signed    /*value*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_signed_const_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_Signed    /*value*/,
     Dwarf_P_Attribute * /*attr_out*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_P_Attribute dwarf_add_AT_reference(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_P_Die     /*otherdie*/,
-    Dwarf_Error*    /*error*/);
-
-/*  dwarf_add_AT_reference_b allows otherdie to be NULL with
-    the assumption the caller will then later call
-    dwarf_fixup_AT_reference_die() with a non-null target die.
-    New 22 October, 2013
-*/
-Dwarf_P_Attribute dwarf_add_AT_reference_b(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_P_Die     /*otherdie*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
@@ -304,14 +275,6 @@ int dwarf_fixup_AT_reference_die(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die   /* targetdie*/,
     Dwarf_Error * /*error*/);
 
-Dwarf_P_Attribute dwarf_add_AT_dataref(
-    Dwarf_P_Debug   /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Unsigned  /*pcvalue*/,
-    Dwarf_Unsigned  /*sym_index*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_dataref_a(
     Dwarf_P_Debug   /*dbg*/,
@@ -322,22 +285,11 @@ int dwarf_add_AT_dataref_a(
     Dwarf_P_Attribute * /*attr_out*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_P_Attribute dwarf_add_AT_const_value_string(
-    Dwarf_P_Die /*ownerdie*/,
-    char*           /*string_value*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_const_value_string_a(
     Dwarf_P_Die /*ownerdie*/,
     char*           /*string_value*/,
     Dwarf_P_Attribute * /*attr_out*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_P_Attribute dwarf_add_AT_location_expr(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_P_Expr    /*loc_expr*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
@@ -348,12 +300,6 @@ int dwarf_add_AT_location_expr_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Attribute * /*attr_out*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_P_Attribute dwarf_add_AT_string(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    char*           /*string*/,
-    Dwarf_Error*     /*error*/);
-
 /*  Preferred as of December 2018. */
 int dwarf_add_AT_string_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
@@ -362,22 +308,12 @@ int dwarf_add_AT_string_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Attribute * /*attr_out*/,
     Dwarf_Error*     /*error*/);
 
-Dwarf_P_Attribute dwarf_add_AT_flag(Dwarf_P_Debug /*dbg*/,
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Half      /*attr*/,
-    Dwarf_Small     /*flag*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_flag_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_Small     /*flag*/,
     Dwarf_P_Attribute * /*attr_out*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_P_Attribute dwarf_add_AT_producer(Dwarf_P_Die /*ownerdie*/,
-    char*           /*producer_string*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
@@ -403,38 +339,18 @@ int dwarf_add_AT_implicit_const(Dwarf_P_Die /*ownerdie*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error * /*error*/);
 
-/* August 2013 sleb creator. For any attribute. */
-Dwarf_P_Attribute dwarf_add_AT_any_value_sleb(
-    Dwarf_P_Die /*ownerdie*/,
-    Dwarf_Half    /*attrnum*/,
-    Dwarf_Signed  /*signed_value*/,
-    Dwarf_Error * /*error*/);
-
-/*  New December 2018. Preferred version. */
+/*  New December 2018. */
 int dwarf_add_AT_any_value_sleb_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half    /*attrnum*/,
     Dwarf_Signed  /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error * /*error*/);
 
-/* Original sleb creator. Only for DW_AT_const_value. */
-Dwarf_P_Attribute dwarf_add_AT_const_value_signedint(
-    Dwarf_P_Die /*ownerdie*/,
-    Dwarf_Signed    /*signed_value*/,
-    Dwarf_Error*    /*error*/);
-
 /*  Preferred as of December 2018. */
 int dwarf_add_AT_const_value_signedint_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Signed    /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);
-
-/* August 2013 uleb creator. For any attribute. */
-Dwarf_P_Attribute dwarf_add_AT_any_value_uleb(
-    Dwarf_P_Die /*ownerdie*/,
-    Dwarf_Half      /*attrnum*/,
-    Dwarf_Unsigned  /*signed_value*/,
-    Dwarf_Error *   /*error*/);
 
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die /*ownerdie*/,
@@ -449,15 +365,11 @@ Dwarf_P_Attribute dwarf_add_AT_const_value_unsignedint(
     Dwarf_Unsigned  /*unsigned_value*/,
     Dwarf_Error*    /*error*/);
 
-/*  New December 2018. Preferred version. */
+/*  New December 2018.  .Only for DW_AT_const_value. */
 int dwarf_add_AT_const_value_unsignedint_a(
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Unsigned  /*unsigned_value*/,
     Dwarf_P_Attribute * /*outattr*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_P_Attribute dwarf_add_AT_comp_dir(Dwarf_P_Die /*ownerdie*/,
-    char*           /*current_working_directory*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */

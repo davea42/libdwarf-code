@@ -483,8 +483,8 @@ dwarf_dealloc_compressed_block(Dwarf_P_Debug dbg, void * space)
     address at all.  Instead a simple offset.
     But this should NOT be called for a simple non-relocated offset.
     So do not call this with an attr of DW_AT_high_pc.
-    Use dwarf_add_AT_unsigned_const() (for example) instead of
-    dwarf_add_AT_dataref when the value is a simple offset .  */
+    Use dwarf_add_AT_unsigned_const_a() (for example) instead of
+    dwarf_add_AT_dataref_a when the value is a simple offset .  */
 
 int
 dwarf_add_AT_dataref_a(
@@ -506,32 +506,6 @@ dwarf_add_AT_dataref_a(
         attr_out,
         error);
     return res;
-}
-
-
-Dwarf_P_Attribute
-dwarf_add_AT_dataref(
-    Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_Unsigned pc_value,
-    Dwarf_Unsigned sym_index,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    /* TODO: Add checking here */
-    res = local_add_AT_address_a(dbg, ownerdie, attr,
-        dbg->de_ar_data_attribute_form,
-        pc_value,
-        sym_index,
-        &a,
-        error);
-    if (res != DW_DLV_OK) {
-        return((Dwarf_P_Attribute)DW_DLV_BADADDR);
-    }
-    return a;
 }
 
 /*  For DW_FORM_block* or DW_FORM_exprloc */
@@ -745,29 +719,6 @@ dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-/*  This function adds attributes whose value
-    is an signed constant.  It determines the
-    size of the value field from the value of
-    the constant.  */
-Dwarf_P_Attribute
-dwarf_add_AT_signed_const(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_Signed value,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_signed_const_a(dbg,
-        ownerdie,attr,value,&a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-}
-
 int
 dwarf_add_AT_signed_const_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,
@@ -857,25 +808,6 @@ dwarf_add_AT_signed_const_a(Dwarf_P_Debug dbg,
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
     *attr_out = new_attr;
     return DW_DLV_OK;
-}
-
-/*  This function adds attributes whose value
-    is a location expression.  */
-Dwarf_P_Attribute
-dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_P_Expr loc_expr, Dwarf_Error * error)
-{
-    int res = 0;
-    Dwarf_P_Attribute a = 0;
-
-    res = dwarf_add_AT_location_expr_a(dbg,ownerdie,attr,
-        loc_expr,&a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
 }
 
 /* Preferred interface as of December 2018 */
@@ -1244,58 +1176,6 @@ dwarf_add_AT_reference_c(Dwarf_P_Debug dbg,
     return res;
 }
 
-
-
-Dwarf_P_Attribute
-dwarf_add_AT_reference(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_P_Die otherdie, Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = _dwarf_add_AT_reference_internal_a(dbg,
-        ownerdie,
-        attr,
-        otherdie,
-        /* check otherdie */ 1,
-        &a,
-        error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Attribute)DW_DLV_BADADDR;
-    }
-    return a;
-}
-
-/*  Allowing the target die to be identified later.
-    */
-Dwarf_P_Attribute
-dwarf_add_AT_reference_b(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_P_Die otherdie,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = _dwarf_add_AT_reference_internal_a(dbg,
-        ownerdie,
-        attr,
-        otherdie,
-        /* check otherdie */ 0,
-        &a,
-        error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Attribute)DW_DLV_BADADDR;
-    }
-    return a;
-}
-
-
-
-
 int
 dwarf_fixup_AT_reference_die(Dwarf_P_Debug dbg,
     Dwarf_Half attrnum,
@@ -1327,25 +1207,6 @@ dwarf_fixup_AT_reference_die(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-/* This function adds attributes of the flag class.  */
-Dwarf_P_Attribute
-dwarf_add_AT_flag(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr,
-    Dwarf_Small flag,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_flag_a(dbg,ownerdie,attr,flag,
-        &a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-}
 int
 dwarf_add_AT_flag_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,
@@ -1393,24 +1254,6 @@ dwarf_add_AT_flag_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-/*  This function adds values of attributes
-    belonging to the string class. */
-Dwarf_P_Attribute
-dwarf_add_AT_string(Dwarf_P_Debug dbg,
-    Dwarf_P_Die ownerdie,
-    Dwarf_Half attr, char *string, Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_string_a(dbg,
-        ownerdie,attr,string,&a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-}
 
 int
 dwarf_add_AT_string_a(Dwarf_P_Debug dbg,
@@ -1472,21 +1315,6 @@ dwarf_add_AT_string_a(Dwarf_P_Debug dbg,
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
     *attr_out = new_attr;
     return DW_DLV_OK;
-}
-
-Dwarf_P_Attribute
-dwarf_add_AT_const_value_string(Dwarf_P_Die ownerdie,
-    char *string_value, Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_const_value_string_a(ownerdie,
-        string_value,&a,error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Attribute) DW_DLV_BADADDR;
-    }
-    return a;
 }
 
 int
@@ -1583,23 +1411,6 @@ dwarf_add_AT_with_ref_sig8_a(Dwarf_P_Die ownerdie,
     return DW_DLV_OK;
 }
 
-
-
-Dwarf_P_Attribute
-dwarf_add_AT_producer(Dwarf_P_Die ownerdie,
-    char *producer_string, Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_producer_a(ownerdie,
-        producer_string,&a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute)DW_DLV_BADADDR);
-    }
-    return a;
-}
-
 int
 dwarf_add_AT_producer_a(Dwarf_P_Die ownerdie,
     char *producer_string,
@@ -1650,24 +1461,6 @@ dwarf_add_AT_const_value_signedint_a(Dwarf_P_Die ownerdie,
     return res;
 }
 
-Dwarf_P_Attribute
-dwarf_add_AT_const_value_signedint(Dwarf_P_Die ownerdie,
-    Dwarf_Signed signed_value,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_any_value_sleb_a(
-        ownerdie,DW_AT_const_value,
-        signed_value,
-        &a, error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Attribute)DW_DLV_BADADDR;
-    }
-    return a;
-}
-
 int
 dwarf_add_AT_implicit_const(Dwarf_P_Die ownerdie,
     Dwarf_Half attrnum,
@@ -1707,25 +1500,6 @@ dwarf_add_AT_implicit_const(Dwarf_P_Die ownerdie,
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
     *outattr = new_attr;
     return DW_DLV_OK;
-}
-
-Dwarf_P_Attribute
-dwarf_add_AT_any_value_sleb(Dwarf_P_Die ownerdie,
-    Dwarf_Half attrnum,
-    Dwarf_Signed signed_value,
-    Dwarf_Error * error)
-{
-    int res = 0;
-    Dwarf_P_Attribute a = 0;
-
-    res = dwarf_add_AT_any_value_sleb_a(ownerdie,
-        attrnum,
-        signed_value,
-        &a, error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
 }
 
 int
@@ -1782,26 +1556,6 @@ dwarf_add_AT_any_value_sleb_a(Dwarf_P_Die ownerdie,
     return DW_DLV_OK;
 }
 
-/* AT_const_value, uleb */
-Dwarf_P_Attribute
-dwarf_add_AT_const_value_unsignedint(Dwarf_P_Die ownerdie,
-    Dwarf_Unsigned unsigned_value,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a =0;
-    int res = 0;
-
-    res = dwarf_add_AT_any_value_uleb_a(
-        ownerdie,DW_AT_const_value,
-        unsigned_value,
-        &a,
-        error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-}
-
 int
 dwarf_add_AT_const_value_unsignedint_a(Dwarf_P_Die ownerdie,
     Dwarf_Unsigned unsigned_value,
@@ -1856,22 +1610,6 @@ dwarf_add_AT_data16(Dwarf_P_Die ownerdie,
     return DW_DLV_OK;
 }
 
-Dwarf_P_Attribute
-dwarf_add_AT_any_value_uleb(Dwarf_P_Die ownerdie,
-    Dwarf_Half attrnum,
-    Dwarf_Unsigned unsigned_value,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_any_value_uleb_a(ownerdie,
-        attrnum,unsigned_value,&a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-}
 int
 dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die ownerdie,
     Dwarf_Half attrnum,

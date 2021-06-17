@@ -1790,36 +1790,6 @@ on that assumption.
 On error it returns 
 \f(CWDW_DLV_ERROR\fP.
 
-
-.H 4 "dwarf_add_AT_location_expr()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_location_expr(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_P_Expr loc_expr,
-        Dwarf_Error *error) \fP
-.DE
-The function 
-\f(CWdwarf_add_AT_location_expr()\fP adds the attribute
-specified by 
-\f(CWattr\fP to the 
-\f(CWDIE\fP descriptor given by
-\f(CWownerdie\fP.
-The attribute should be one that has a location
-expression as its value.
-The location expression that is the value
-is represented by the 
-\f(CWDwarf_P_Expr\fP descriptor 
-\f(CWloc_expr\fP.
-
-It returns the 
-\f(CWDwarf_P_Attribute\fP descriptor for the attribute
-given, on success.  
-
-On error it returns 
-\f(CWDW_DLV_BADADDR\fP.
-
 .H 3 "dwarf_add_AT_name_a()"
 .DS
 \f(CWint dwarf_add_AT_name_a(
@@ -1888,25 +1858,6 @@ On error, it returns
 \f(CWDW_DLV_ERROR\fP
 and does not touch \f(CWattr_out\fP .
 
-.H 4 "dwarf_add_AT_comp_dir()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_comp_dir(
-        Dwarf_P_Die ownerdie,
-        char *current_working_directory,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWint dwarf_add_AT_comp_dir\fP
-adds the string given by
-\f(CWcurrent_working_directory\fP
-as the value of the 
-\f(CWDW_AT_comp_dir\fP
-attribute for the 
-\f(CWDIE\fP described by the given
-\f(CWownerdie\fP.  
-It returns the \f(CWDwarf_P_Attribute\fP for this attribute on success.
-On error, it returns
-\f(CWDW_DLV_BADADDR\fP.
-
 .H 3 "dwarf_add_AT_producer_a()"
 .DS
 \f(CWint dwarf_add_AT_producer_a(
@@ -1916,7 +1867,7 @@ On error, it returns
         Dwarf_Error *error) \fP
 .DE
 The function 
-\f(CWdwarf_add_AT_producer()\fP
+\f(CWdwarf_add_AT_producer_a()\fP
 adds the string given by
 \f(CWproducer_string\fP as the value of the 
 \f(CWDW_AT_producer\fP
@@ -1933,24 +1884,6 @@ through the pointer argument
 
 On error, it returns 
 \f(CWDW_DLV_ERROR\fP.
-
-
-.H 4 "dwarf_add_AT_producer()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_producer(
-        Dwarf_P_Die ownerdie,
-        char *producer_string,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWdwarf_add_AT_producer() \fP adds the string given by
-\f(CWproducer_string\fP
-as the value of the 
-\f(CWDW_AT_producer\fP
-attribute for the \f(CWDIE\fP given by 
-\f(CWownerdie\fP.  It returns
-the \f(CWDwarf_P_Attribute\fP descriptor representing this attribute
-on success.  On error, it returns 
-\f(CWDW_DLV_BADADDR\fP.
 
 .H 3 "dwarf_add_AT_any_value_sleb_a()"
 .DS
@@ -1985,29 +1918,6 @@ On error, it returns \f(CWDW_DLV_ERROR\fP.
 The function was created 01 December 2018.
 
 
-.H 4 "dwarf_add_AT_any_value_sleb()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_any_value_sleb(
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half  attrnum,
-        Dwarf_Signed signed_value,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWdwarf_add_AT_any_value_sleb() \fP adds the
-given \f(CWDwarf_Signed\fP value \f(CWsigned_value\fP as the value
-of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP
-described by the given \f(CWownerdie\fP.
-
-The FORM of the output value is \f(CWDW_FORM_sdata\fP (signed leb number)
-and the attribute will be \f(CWDW_AT_const_value\fP.
-
-It returns the
-\f(CWDwarf_P_Attribute\fP descriptor for this attribute on success.
-
-On error, it returns \f(CWDW_DLV_BADADDR\fP.
-
-The function was created 13 August 2013.
-
 .H 3 "dwarf_add_AT_const_value_signedint_a()"
 .DS
 \f(CWint dwarf_add_AT_const_value_signedint_a(
@@ -2036,32 +1946,6 @@ On success it returns \f(CWDW_DLV_OK\fP
 and sets *attr_out to the created attribute.
 
 On error, it returns \f(CWDW_DLV_ERROR\fP.
-
-
-.H 4 "dwarf_add_AT_const_value_signedint()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_const_value_signedint(
-        Dwarf_P_Die ownerdie,
-        Dwarf_Signed signed_value,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWdwarf_add_AT_const_value_signedint\fP adds the
-given \f(CWDwarf_Signed\fP value \f(CWsigned_value\fP as the value
-of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP
-described by the given \f(CWownerdie\fP.  
-
-The FORM of the output value is \f(CWDW_FORM_data<n>\fP (signed leb number)
-and the attribute will be \f(CWDW_AT_const_value\fP.
-
-With this interface and output, there is no way for consumers
-to know from the FORM that the value is signed.
-
-
-It returns the 
-\f(CWDwarf_P_Attribute\fP descriptor for this attribute on success.  
-
-On error, it returns \f(CWDW_DLV_BADADDR\fP.
-
 
 .H 3 "dwarf_add_AT_implicit_const()"
 .DS
@@ -2133,30 +2017,6 @@ On error, it returns \f(CWDW_DLV_ERROR\fP.
 
 The function was created 01 December 2018.
 
-
-.H 4 "dwarf_add_AT_any_value_uleb()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_any_value_uleb(
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half  attrnum,
-        Dwarf_Unsigned unsigned_value,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWdwarf_add_AT_any_value_uleb\fP adds the
-given \f(CWDwarf_Unsigned\fP value \f(CWunsigned_value\fP as the value
-of the \f(CWattrnum\fP attribute for the \f(CWDIE\fP described
-by the given \f(CWownerdie\fP.
-
-The FORM of the output value is \f(CWDW_FORM_udata\fP (unsigned leb number)
-and the attribute is \f(CWattrnum\fP.
-
-It returns the \f(CWDwarf_P_Attribute\fP
-descriptor for this attribute on success.
-
-On error, it returns \f(CWDW_DLV_BADADDR\fP.
-
-The function was created 13 August 2013.
-
 .H 3 "dwarf_add_AT_const_value_unsignedint_a()"
 .DS
 \f(CWint dwarf_add_AT_const_value_unsignedint_a(
@@ -2192,29 +2052,6 @@ to the newly created attribute.
 On error, it returns \f(CWDW_DLV_ERROR\fP.
 Created 01 December 2018.
 
-.H 4 "dwarf_add_AT_const_value_unsignedint()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_const_value_unsignedint(
-        Dwarf_P_Die ownerdie,
-        Dwarf_Unsigned unsigned_value,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWdwarf_add_AT_const_value_unsignedint\fP adds the
-given \f(CWDwarf_Unsigned\fP value \f(CWunsigned_value\fP as the value
-of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP described 
-by the given \f(CWownerdie\fP.  
-
-The FORM of the output value is \f(CWDW_FORM_data<n>\fP
-and the attribute will be \f(CWDW_AT_const_value\fP.
-
-With this interface and output, there is no way for consumers
-to know from the FORM that the value is signed.
-
-It returns the \f(CWDwarf_P_Attribute\fP
-descriptor for this attribute on success.  
-
-On error, it returns \f(CWDW_DLV_BADADDR\fP.
-
 .H 3 "dwarf_add_AT_const_value_string_a()"
 .DS
 \f(CWint dwarf_add_AT_const_value_string_a(
@@ -2239,29 +2076,6 @@ to a newly created attribute.
 .P
 On error, it returns
 \f(CWDW_DLV_ERROR\fP.
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_AT_const_value_string()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_const_value_string(
-        Dwarf_P_Die ownerdie,
-        char *string_value,
-        Dwarf_Error *error) \fP
-.DE
-The function 
-\f(CWdwarf_add_AT_const_value_stringfP adds the 
-string value given by 
-\f(CWstring_value\fP as the value of the 
-\f(CWDW_AT_const_value\fP attribute for the 
-\f(CWDIE\fP described 
-by the given 
-\f(CWownerdie\fP.  
-.P
-It returns the 
-\f(CWDwarf_P_Attribute\fP
-descriptor for this attribute on success.  On error, it returns
-\f(CWDW_DLV_BADADDR\fP.
 
 .H 3 "dwarf_add_AT_targ_address_c()"
 .DS
@@ -2403,54 +2217,6 @@ or
 \f(CWdwarf_add_AT_targ_address_b\fP [ if the value
 to be recorded is an address].
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_AT_dataref()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_dataref(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_Unsigned pc_value,
-        Dwarf_Unsigned sym_index,
-        Dwarf_Error *error) \fP
-.DE
-This is very similar to 
-\f(CWdwarf_add_AT_targ_address_b\fP
-but results in a different FORM (results in DW_FORM_data4
-or DW_FORM_data8).
-
-Useful for adding relocatable addresses in location lists.
-
-\f(CWsym_index\fP is guaranteed to
-be large enough that it can contain a pointer to
-arbitrary data (so the caller can pass in a real elf
-symbol index, an arbitrary number, or a pointer
-to arbitrary data).
-The ability to pass in a pointer through 
-\f(CWsym_index\fP
-is only usable with
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
-
-The 
-\f(CWpc_value\fP
-is put into the section stream output and
-the 
-\f(CWsym_index\fP is applied to the relocation
-information.
-
-Do not use this function for 
-\f(CWDW_AT_high_pc\fP, use
-\f(CWdwarf_add_AT_unsigned_const\fP 
-or 
-\f(CWdwarf_add_AT_any_value_uleb\fP 
-[ if the value to be recorded is
-an offset of 
-\f(CWDW_AT_low_pc\fP]
-or 
-\f(CWdwarf_add_AT_targ_address_b\fP [ if the value
-to be recorded is an address].
-
 .H 3 "dwarf_add_AT_ref_address_a"
 .DS
 \f(CWint dwarf_add_AT_ref_address_a(
@@ -2570,35 +2336,6 @@ On error it returns
 
 Function created 01 December 2018.
 
-.H 4 "dwarf_add_AT_signed_const()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_signed_const(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_Signed value,
-        Dwarf_Error *error) \fP
-.DE
-The function 
-\f(CWdwarf_add_AT_signed_const()\fP adds an attribute
-with a 
-\f(CWDwarf_Signed\fP value belonging to the "constant" class,
-to the 
-\f(CWDIE\fP specified by 
-\f(CWownerdie\fP.  The object that
-the 
-\f(CWDIE\fP belongs to is specified by 
-
-\f(CWdbg\fP.  The attribute
-is specified by 
-\f(CWattr\fP, and its value is specified by 
-\f(CWvalue\fP.
-
-It returns the 
-\f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and 
-\f(CWDW_DLV_BADADDR\fP on error.
-
 .H 3 "dwarf_add_AT_reference_c()"
 .DS
 \f(CWint dwarf_add_AT_reference_c(
@@ -2609,13 +2346,6 @@ on success, and
         Dwarf_P_Attribute *attr_out,
         Dwarf_Error *error)\fP
 .DE
-The function 
-\f(CWdwarf_add_AT_reference_c()\fP
-is the same as  
-\f(CWdwarf_add_AT_reference_b()\fP
-except that 
-\f(CWdwarf_add_AT_reference_c()\fP
-returns a simple error code.
 
 \f(CWdwarf_add_AT_reference_c()\fP
 accepts a NULL 
@@ -2636,48 +2366,6 @@ On failure it returns
 \f(CWDW_DLV_ERROR\fP.
 
 Function created 01 December 2018.
-
-.H 4 "dwarf_add_AT_reference()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_reference(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_P_Die otherdie,
-        Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_add_AT_reference()\fP adds an attribute
-with a value that is a reference to another \f(CWDIE\fP in the
-same compilation-unit to the \f(CWDIE\fP specified by \f(CWownerdie\fP.  
-The object that the \f(CWDIE\fP belongs to is specified by \f(CWdbg\fP.  
-The attribute is specified by \f(CWattr\fP, and the other \f(CWDIE\fP
-being referred to is specified by \f(CWotherdie\fP.
-
-The FORM of the output will be one of the \f(CWDW_FORM_data<n>\fP forms.
-
-This cannot generate DW_FORM_ref_addr references to
-\f(CWDIE\fPs in other compilation units.
-
-It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and \f(CWDW_DLV_BADADDR\fP on error.
-
-.H 4 "dwarf_add_AT_reference_b()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_reference_b(
-        Dwarf_P_Debug dbg,
-        Dwarf_Half attr,
-        Dwarf_P_Die ownerdie,
-        Dwarf_P_Die otherdie,
-        Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_add_AT_reference_b()\fP
-is the same as  \f(CWdwarf_add_AT_reference()\fP
-except that \f(CWdwarf_add_AT_reference_b()\fP
-accepts a NULL \f(CWotherdie\fP with the assumption
-that \f(CWdwarf_fixup_AT_reference_die()\fP
-will be called by user code 
-to fill in the missing \f(CWotherdie\fP 
-before the DIEs are transformed to disk form.
 
 .H 3 "dwarf_fixup_AT_reference_die()"
 .DS
@@ -2747,28 +2435,6 @@ through
 On error it returns
 \f(CWDW_DLV_ERROR\fP.
 
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_AT_flag()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_flag(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        Dwarf_Small flag,
-        Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_add_AT_flag()\fP adds an attribute with 
-a \f(CWDwarf_Small\fP value belonging to the "flag" class, to the 
-\f(CWDIE\fP specified by 
-\f(CWownerdie\fP.  The object that the 
-\f(CWDIE\fP belongs to is specified by 
-\f(CWdbg\fP.  The attribute
-is specified by \f(CWattr\fP, and its value is specified by \f(CWflag\fP.
-
-It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and \f(CWDW_DLV_BADADDR\fP on error.
-
 .H 3 "dwarf_add_AT_string_a()"
 .DS
 \f(CWint dwarf_add_AT_string_a(
@@ -2799,35 +2465,6 @@ with a pointer to the new attribute.
 
 On failure it returns 
 \f(CWDW_DLV_ERROR\fP.
-
-Function created 01 December 2018.
-
-.H 4 "dwarf_add_AT_string()"
-.DS
-\f(CWDwarf_P_Attribute dwarf_add_AT_string(
-        Dwarf_P_Debug dbg,
-        Dwarf_P_Die ownerdie,
-        Dwarf_Half attr,
-        char *string,
-        Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_add_AT_string()\fP adds an attribute with a 
-value that is a character string to the 
-\f(CWDIE\fP specified by 
-\f(CWownerdie\fP.  The object that the 
-\f(CWDIE\fP belongs to is 
-specified by 
-\f(CWdbg\fP.  
-The attribute is specified by 
-\f(CWattr\fP, 
-and its value is pointed to by 
-\f(CWstring\fP.
-
-It returns the 
-\f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and 
-\f(CWDW_DLV_BADADDR\fP on error.
 
 .H 3 "dwarf_add_AT_with_ref_sig8_a()"
 .DS
