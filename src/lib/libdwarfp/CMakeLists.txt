@@ -26,17 +26,11 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
 
 	
 list(LENGTH DWARFP_TARGETS targetCount)
-message(" dadebug targetCount $(targetCount)" )
-message(" dadebug cmake sourcedir ${CMAKE_SOURCE_DIR}")
 math(EXPR targetCount "${targetCount} - 1")
 list(APPEND DWARFP_LIBS ${LIBELF_LIBRARIES})
 foreach(i RANGE ${targetCount})
 	list(GET DWARFP_TARGETS ${i} target)
 	list(GET DWARFP_TYPES ${i} type)
-        message(" dadebug p range ${i} ${target} ${type}" )
-        message(" dadebug targ ${DWARFP_TARGETS}" )
-        message(" dadebug src ${CMAKE_CURRENT_SOURCE_DIR}" )
-        message(" dadebug inc ${LIBDWARF_INCLUDE_DIR}" )
 	add_library(${target} ${type} ${SOURCES} ${HEADERS}
             ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
