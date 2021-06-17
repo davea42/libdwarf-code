@@ -80,11 +80,11 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 /* Useful include for some Windows compilers. */
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#elif defined(_WIN32) && defined(_MSC_VER)
+#ifdef _WIN32
 #include <io.h>
-#endif /* HAVE_UNISTD_H */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h>
+#endif /* _WIN32 */
 
 #include "dwarf_incl.h"
 #include "dwarf_error.h"

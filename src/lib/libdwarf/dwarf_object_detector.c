@@ -38,13 +38,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/stat.h> /* open() */
 #endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> /* O_RDONLY */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* lseek read close */
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
-#include <basetsd.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <io.h> /* lseek(), read(), close() */
 typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
-#endif /* HAVE_UNISTD_H */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* lseek(), read(), close() */
+#endif /* _WIN32 */
 #ifdef HAVE_STRING_H
 #include <string.h> /* memcpy, strcpy */
 #endif /* HAVE_STRING_H */

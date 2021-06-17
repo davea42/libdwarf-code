@@ -82,11 +82,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> /* open() */
 #include <time.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* lseek read close */
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
-#endif /* HAVE_UNISTD_H */
+#ifdef _WIN32
+#include <io.h> /* lseek(), read(), close() */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* lseek(), read(), close() */
+#endif /* _WIN32 */
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)

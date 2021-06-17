@@ -51,18 +51,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memcpy */
 #endif /* HAVE_STRING_H */
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
+#include <sys/types.h> /* open(), off_t, size_t */
 #endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h> /* open() */
 #endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> /* open() */
 #include <time.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* lseek read close */
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
-#endif /* HAVE_UNISTD_H */
+#ifdef _WIN32
+#include <io.h> /* lseek(), read(), close() */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* lseek(), read(), close() */
+#endif /* _WIN32 */
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)

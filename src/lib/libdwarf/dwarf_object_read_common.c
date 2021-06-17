@@ -42,13 +42,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* lseek read close */
-#elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h>
-#include <basetsd.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <io.h> /* lseek(), read(), close() */
 typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
-#endif /* HAVE_UNISTD_H */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* lseek(), read(), close() */
+#endif /* _WIN32 */
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
