@@ -89,31 +89,6 @@ static void _dwarf_pro_add_to_fde(Dwarf_P_Fde fde,
     init_bytes: byts having initial instructions
     init_n_bytes: number of bytes of initial instructions */
 
-
-Dwarf_Unsigned
-dwarf_add_frame_cie(Dwarf_P_Debug dbg,
-    char *augmenter,
-    Dwarf_Small code_align,
-    Dwarf_Small data_align,
-    Dwarf_Small return_reg,
-    Dwarf_Ptr init_bytes,
-    Dwarf_Unsigned init_n_bytes,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned index = 0;
-    int res = 0;
-
-    res = dwarf_add_frame_cie_a(dbg,augmenter, code_align,
-        data_align,return_reg,init_bytes,
-        init_n_bytes,
-        &index,error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return index;
-}
-
-
 int
 dwarf_add_frame_cie_a(Dwarf_P_Debug dbg,
     char *augmenter,
@@ -180,52 +155,6 @@ dwarf_add_frame_cie_a(Dwarf_P_Debug dbg,
         add_frame_cie() routine.
     virt_addr: beginning address
     code_len: length of code reps by the fde */
-/*ARGSUSED*/                   /* pretend all args used */
-Dwarf_Unsigned
-dwarf_add_frame_fde(Dwarf_P_Debug dbg,
-    Dwarf_P_Fde fde,
-    Dwarf_P_Die die,
-    Dwarf_Unsigned cie,
-    Dwarf_Unsigned virt_addr,
-    Dwarf_Unsigned code_len,
-    Dwarf_Unsigned symidx, Dwarf_Error * error)
-{
-    Dwarf_Unsigned index = 0;
-    int res = 0;
-
-    res = dwarf_add_frame_fde_c(dbg, fde, die, cie, virt_addr,
-        code_len, symidx, 0, 0,&index, error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return index;
-}
-
-/*  There is no dwarf_add_frame_fde_a */
-/*ARGSUSED10*/
-Dwarf_Unsigned
-dwarf_add_frame_fde_b(Dwarf_P_Debug dbg,
-    Dwarf_P_Fde fde,
-    Dwarf_P_Die die,
-    Dwarf_Unsigned cie,
-    Dwarf_Unsigned virt_addr,
-    Dwarf_Unsigned code_len,
-    Dwarf_Unsigned symidx,
-    Dwarf_Unsigned symidx_of_end,
-    Dwarf_Addr offset_from_end_sym,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned index = 0;
-    int res = 0;
-
-    res = dwarf_add_frame_fde_c(dbg,fde,die,cie,
-        virt_addr,code_len,symidx,symidx_of_end,
-        offset_from_end_sym,&index,error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return index;
-}
 
 /*  New December 2018 */
 int
@@ -288,64 +217,6 @@ dwarf_add_frame_fde_c(Dwarf_P_Debug dbg,
     exception_table_symbol: The symbol id of the section for exception
         tables wrt to which the offset_into_exception_tables will
         be relocated. */
-Dwarf_Unsigned
-dwarf_add_frame_info(Dwarf_P_Debug dbg,
-    Dwarf_P_Fde fde,
-    Dwarf_P_Die die,
-    Dwarf_Unsigned cie,
-    Dwarf_Unsigned virt_addr,
-    Dwarf_Unsigned code_len,
-    Dwarf_Unsigned symidx,
-    Dwarf_Signed offset_into_exception_tables,
-    Dwarf_Unsigned exception_table_symbol,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned fde_index = 0;
-    int res = 0;
-
-    res = dwarf_add_frame_info_c(dbg, fde, die, cie, virt_addr,
-        code_len, symidx,
-        /* end_symbol */ 0,
-        /* offset_from_end */ 0,
-        offset_into_exception_tables,
-        exception_table_symbol,
-        &fde_index, error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return fde_index;
-}
-
-/*ARGSUSED*/                   /* pretend all args used */
-Dwarf_Unsigned
-dwarf_add_frame_info_b(Dwarf_P_Debug dbg,
-    Dwarf_P_Fde fde,
-    Dwarf_P_Die die,
-    Dwarf_Unsigned cie,
-    Dwarf_Unsigned virt_addr,
-    Dwarf_Unsigned code_len,
-    Dwarf_Unsigned symidx,
-    Dwarf_Unsigned end_symidx,
-    Dwarf_Unsigned offset_from_end_symbol,
-    Dwarf_Signed offset_into_exception_tables,
-    Dwarf_Unsigned exception_table_symbol,
-    UNUSEDARG Dwarf_Error * error)
-{
-    Dwarf_Unsigned fde_index = 0;
-    int res = 0;
-
-    res = dwarf_add_frame_info_c(dbg, fde, die, cie, virt_addr,
-        code_len, symidx, end_symidx,
-        offset_from_end_symbol,
-        offset_into_exception_tables,
-        exception_table_symbol,
-        &fde_index, error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return fde_index;
-}
-
 int
 dwarf_add_frame_info_c(Dwarf_P_Debug dbg,
     Dwarf_P_Fde fde,
@@ -414,18 +285,6 @@ dwarf_insert_fde_inst_bytes(Dwarf_P_Debug dbg,
 
 
 /* Create a new fde. */
-Dwarf_P_Fde
-dwarf_new_fde(Dwarf_P_Debug dbg, Dwarf_Error * error)
-{
-    Dwarf_P_Fde fde = 0;
-    int res = 0;
-
-    res = dwarf_new_fde_a(dbg,&fde,error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Fde) DW_DLV_BADADDR;
-    }
-    return fde;
-}
 int
 dwarf_new_fde_a(Dwarf_P_Debug dbg,
     Dwarf_P_Fde *fde_out,
@@ -446,21 +305,6 @@ dwarf_new_fde_a(Dwarf_P_Debug dbg,
 
 
 /*  Add a cfe_offset instruction to the fde passed in. */
-Dwarf_P_Fde
-dwarf_fde_cfa_offset(Dwarf_P_Fde fde,
-    Dwarf_Unsigned reg,
-    Dwarf_Signed offset,
-    Dwarf_Error * error)
-{
-    int res = 0;
-
-    res = dwarf_fde_cfa_offset_a(fde,reg,offset,error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_P_Fde) DW_DLV_BADADDR;
-    }
-    return fde;
-}
-
 
 int
 dwarf_fde_cfa_offset_a(Dwarf_P_Fde fde,
@@ -528,22 +372,7 @@ dwarf_fde_cfa_offset_a(Dwarf_P_Fde fde,
     version is 3(for dwarf3) or 4 (for dwarf4) or 5
     when applying operations that are only valid for
     particular versions. */
-Dwarf_P_Fde
-dwarf_add_fde_inst(Dwarf_P_Fde fde,
-    Dwarf_Small op,
-    Dwarf_Unsigned val1,
-    Dwarf_Unsigned val2, Dwarf_Error * error)
-{
-    int res = 0;
 
-    res = dwarf_add_fde_inst_a(fde,op,val1,val2,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Fde) DW_DLV_BADADDR);
-    }
-    return fde;
-}
-
-/*  December 2018. A more sensible return value. */
 int
 dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
     Dwarf_Small op,

@@ -1353,23 +1353,6 @@ dwarf_add_AT_const_value_string_a(Dwarf_P_Die ownerdie,
     return DW_DLV_OK;
 }
 
-Dwarf_P_Attribute
-dwarf_add_AT_with_ref_sig8(Dwarf_P_Die ownerdie,
-    Dwarf_Half attrnum,
-    const Dwarf_Sig8 *sig8_in,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_with_ref_sig8_a(ownerdie,
-        attrnum,sig8_in,&a,error);
-    if (res != DW_DLV_OK) {
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
-    }
-    return a;
-}
-
 int
 dwarf_add_AT_with_ref_sig8_a(Dwarf_P_Die ownerdie,
     Dwarf_Half attrnum,

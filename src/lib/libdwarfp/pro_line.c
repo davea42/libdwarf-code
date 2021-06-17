@@ -58,47 +58,6 @@ static int _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     Dwarf_Unsigned discriminator,
     Dwarf_Error * error);
 
-/*  Add a entry to the line information section
-    file_index: index of file in file entries, obtained from
-    add_file_entry() call.
-
-    This function actually calls _dwarf_pro_add_line_entry(), with
-    an extra parameter, the opcode. Done so that interface calls
-    dwarf_lne_set_address() and dwarf_lne_end_sequence() can use
-    this internal routine.
-
-    The return value of the original
-    interfaces is really signed. Bogus interface.
-    With dwarf_add_line_entry_c the interface is corrected. */
-Dwarf_Unsigned
-dwarf_add_line_entry_b(Dwarf_P_Debug dbg,
-    Dwarf_Unsigned file_index,
-    Dwarf_Addr     code_address,
-    Dwarf_Unsigned line_no,
-    Dwarf_Signed   col_no,
-    Dwarf_Bool     is_stmt_begin,
-    Dwarf_Bool     is_bb_begin,
-    Dwarf_Bool     isepilbeg,
-    Dwarf_Bool     isprolend,
-    Dwarf_Unsigned isa,
-    Dwarf_Unsigned discriminator,
-    Dwarf_Error *  error)
-{
-    Dwarf_Unsigned retval = 0;
-    Dwarf_Ubyte opc = 0;
-    Dwarf_Unsigned symidx = 0;
-
-    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address,
-        symidx,
-        line_no, col_no, is_stmt_begin,
-        is_bb_begin,
-        opc,
-        isepilbeg,isprolend,isa,discriminator, error);
-    if (retval != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return 0;
-}
 int
 dwarf_add_line_entry_c(Dwarf_P_Debug dbg,
     Dwarf_Unsigned file_index,
@@ -124,39 +83,6 @@ dwarf_add_line_entry_c(Dwarf_P_Debug dbg,
         opc,
         isepilbeg,isprolend,isa,discriminator, error);
     return retval;
-}
-
-
-
-/*  The return value is really signed. Bogus interface.*/
-Dwarf_Unsigned
-dwarf_add_line_entry(Dwarf_P_Debug dbg,
-    Dwarf_Unsigned file_index,
-    Dwarf_Addr code_address,
-    Dwarf_Unsigned line_no,
-    Dwarf_Signed col_no, /* Wrong, should be unsigned. */
-    Dwarf_Bool is_stmt_begin,
-    Dwarf_Bool is_bb_begin, Dwarf_Error * error)
-{
-    int retval = 0;
-    Dwarf_Ubyte opc = 0;
-    Dwarf_Unsigned symidx = 0;
-    Dwarf_Bool isepilbeg = 0;
-    Dwarf_Bool isprolend  = 0;
-    Dwarf_Unsigned isa = 0;
-    Dwarf_Unsigned discriminator = 0;
-
-    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address,
-        symidx,
-        line_no, col_no, is_stmt_begin,
-        is_bb_begin,
-        opc,
-        isepilbeg, isprolend, isa, discriminator,
-        error);
-    if (retval != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return 0;
 }
 
 void
@@ -197,20 +123,6 @@ _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg)
 /*  Ask to emit DW_LNE_set_address opcode explicitly. Used by be
     to emit start of a new .text section, or to force a relocated
     address into debug line information entry. */
-Dwarf_Unsigned
-dwarf_lne_set_address(Dwarf_P_Debug dbg,
-    Dwarf_Addr offs,
-    Dwarf_Unsigned symidx, Dwarf_Error * error)
-{
-    int res = 0;
-
-    res = dwarf_lne_set_address_a(dbg,offs,symidx,error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return 0;
-
-}
 int
 dwarf_lne_set_address_a(Dwarf_P_Debug dbg,
     Dwarf_Addr offs,
@@ -243,18 +155,6 @@ dwarf_lne_set_address_a(Dwarf_P_Debug dbg,
 /*  Ask to emit end_seqence opcode. Used normally at the end of a
     compilation unit. Can also be used in the middle if there
     are gaps in the region described by the code address.  */
-Dwarf_Unsigned
-dwarf_lne_end_sequence(Dwarf_P_Debug dbg,
-    Dwarf_Addr end_address, Dwarf_Error * error)
-{
-    int retval = 0;
-
-    retval = dwarf_lne_end_sequence_a(dbg,end_address,error);
-    if (retval != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return 0;
-}
 int
 dwarf_lne_end_sequence_a(Dwarf_P_Debug dbg,
     Dwarf_Addr end_address, Dwarf_Error * error)
@@ -340,21 +240,6 @@ _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
 
 /*  Add a directory declaration to the debug_line section. Stored
     in linked list. */
-Dwarf_Unsigned
-dwarf_add_directory_decl(Dwarf_P_Debug dbg,
-    char *name,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned index = 0;
-    int res = 0;
-    /* DW_DLV_NOCOUNT on error, de_n_inc_dirs on success. */
-
-    res = dwarf_add_directory_decl_a(dbg,name,&index,error);
-    if (res != DW_DLV_OK) {
-        return (Dwarf_Unsigned)DW_DLV_NOCOUNT;
-    }
-    return index;
-}
 int
 dwarf_add_directory_decl_a(Dwarf_P_Debug dbg,
     char *name,
@@ -393,27 +278,6 @@ dwarf_add_directory_decl_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Add a file entry declaration to the debug_line section. Stored
-    in linked list. The data is immediately encoded as leb128
-    and stored in Dwarf_P_F_Entry_s struct. */
-Dwarf_Unsigned
-dwarf_add_file_decl(Dwarf_P_Debug dbg,
-    char *name,
-    Dwarf_Unsigned dir_idx,
-    Dwarf_Unsigned time_mod,
-    Dwarf_Unsigned length,
-    Dwarf_Error * error)
-{
-    Dwarf_Unsigned filecount = 0;
-    int res = 0;
-
-    res = dwarf_add_file_decl_a(dbg,name,dir_idx,
-        time_mod,length,&filecount,error);
-    if (res != DW_DLV_OK) {
-        return DW_DLV_NOCOUNT;
-    }
-    return filecount;
-}
 int
 dwarf_add_file_decl_a(Dwarf_P_Debug dbg,
     char *name,

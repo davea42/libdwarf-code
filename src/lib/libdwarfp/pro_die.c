@@ -653,24 +653,6 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
 /*------------------------------------------------------------------
     Add AT_name attribute to die
 --------------------------------------------------------------------*/
-/*  Original function. dwarf_add_AT_name_a() is the
-    suggested alternative. */
-Dwarf_P_Attribute
-dwarf_add_AT_name(Dwarf_P_Die die,
-    char *name,
-    Dwarf_Error * error)
-{
-    Dwarf_P_Attribute a = 0;
-    int res = 0;
-
-    res = dwarf_add_AT_name_a(die, name,
-        &a, error);
-    if (res == DW_DLV_ERROR) {
-        return (Dwarf_P_Attribute)(DW_DLV_BADADDR);
-    }
-    return a;
-}
-
 /*   New December 2018.  */
 int
 dwarf_add_AT_name_a(Dwarf_P_Die die, char *name,

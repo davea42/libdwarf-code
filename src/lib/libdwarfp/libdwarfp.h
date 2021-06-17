@@ -359,12 +359,6 @@ int dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error *   /*error*/);
 
-/* Original uleb creator. Only for DW_AT_const_value. */
-Dwarf_P_Attribute dwarf_add_AT_const_value_unsignedint(
-    Dwarf_P_Die     /*ownerdie*/,
-    Dwarf_Unsigned  /*unsigned_value*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018.  .Only for DW_AT_const_value. */
 int dwarf_add_AT_const_value_unsignedint_a(
     Dwarf_P_Die     /*ownerdie*/,
@@ -378,21 +372,11 @@ int dwarf_add_AT_comp_dir_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_P_Attribute dwarf_add_AT_name(Dwarf_P_Die    /*die*/,
-    char*           /*name*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_name_a(Dwarf_P_Die    /*die*/,
     char*           /*name*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);
-
-Dwarf_P_Attribute dwarf_add_AT_with_ref_sig8(
-    Dwarf_P_Die   /*ownerdie */,
-    Dwarf_Half    /*attrnum */,
-    const Dwarf_Sig8 *  /*sig8_in*/,
-    Dwarf_Error * /*error*/);
 
 /*  New December 2018. Preferred version. */
 int dwarf_add_AT_with_ref_sig8_a(
@@ -404,21 +388,9 @@ int dwarf_add_AT_with_ref_sig8_a(
 
 
 /* Producer line creation functions (.debug_line) */
-Dwarf_Unsigned dwarf_add_directory_decl(Dwarf_P_Debug /*dbg*/,
-    char*           /*name*/,
-    Dwarf_Error*    /*error*/);
-
-/*  New December 2018. Preferred version. */
 int dwarf_add_directory_decl_a(Dwarf_P_Debug /*dbg*/,
     char*           /*name*/,
     Dwarf_Unsigned * /*index_in_directories*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_Unsigned dwarf_add_file_decl(Dwarf_P_Debug /*dbg*/,
-    char*           /*name*/,
-    Dwarf_Unsigned  /*dir_index*/,
-    Dwarf_Unsigned  /*time_last_modified*/,
-    Dwarf_Unsigned  /*length*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
@@ -444,56 +416,15 @@ int dwarf_add_line_entry_c(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned  /*discriminator*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_Unsigned dwarf_add_line_entry_b(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Unsigned  /*file_index*/,
-    Dwarf_Addr      /*code_address*/,
-    Dwarf_Unsigned  /*lineno*/,
-    Dwarf_Signed    /*column_number*/,
-    Dwarf_Bool      /*is_source_stmt_begin*/,
-    Dwarf_Bool      /*is_basic_block_begin*/,
-    Dwarf_Bool      /*is_epilogue_begin*/,
-    Dwarf_Bool      /*is_prologue_end*/,
-    Dwarf_Unsigned  /*isa*/,
-    Dwarf_Unsigned  /*discriminator*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_Unsigned dwarf_add_line_entry(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Unsigned  /*file_index*/,
-    Dwarf_Addr      /*code_address*/,
-    Dwarf_Unsigned  /*lineno*/,
-    Dwarf_Signed    /*column_number*/,
-    Dwarf_Bool      /*is_source_stmt_begin*/,
-    Dwarf_Bool      /*is_basic_block_begin*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_Unsigned dwarf_lne_set_address(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Unsigned  /*offset*/,
-    Dwarf_Unsigned  /*symbol_index*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_lne_set_address_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned  /*offset*/,
     Dwarf_Unsigned  /*symbol_index*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_Unsigned dwarf_lne_end_sequence(Dwarf_P_Debug /*dbg*/,
-    Dwarf_Addr      /*end_address*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_lne_end_sequence_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Addr      /*end_address*/,
-    Dwarf_Error*    /*error*/);
-
-/* Producer .debug_frame functions */
-Dwarf_Unsigned dwarf_add_frame_cie(Dwarf_P_Debug /*dbg*/,
-    char*           /*augmenter*/,
-    Dwarf_Small     /*code_alignment_factor*/,
-    Dwarf_Small     /*data_alignment_factor*/,
-    Dwarf_Small     /*return_address_reg*/,
-    Dwarf_Ptr       /*initialization_bytes*/,
-    Dwarf_Unsigned  /*init_byte_len*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
@@ -506,28 +437,6 @@ int dwarf_add_frame_cie_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned  /*init_byte_len*/,
     Dwarf_Unsigned * /*cie_index_out*/,
     Dwarf_Error*    /*error*/);
-
-Dwarf_Unsigned dwarf_add_frame_fde(
-    Dwarf_P_Debug   /*dbg*/,
-    Dwarf_P_Fde     /*fde*/,
-    Dwarf_P_Die     /*corresponding subprogram die*/,
-    Dwarf_Unsigned  /*cie_to_use*/,
-    Dwarf_Unsigned  /*virt_addr_of_described_code*/,
-    Dwarf_Unsigned  /*length_of_code*/,
-    Dwarf_Unsigned  /*symbol_index*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_Unsigned dwarf_add_frame_fde_b(
-    Dwarf_P_Debug  /*dbg*/,
-    Dwarf_P_Fde    /*fde*/,
-    Dwarf_P_Die    /*die*/,
-    Dwarf_Unsigned /*cie*/,
-    Dwarf_Addr     /*virt_addr*/,
-    Dwarf_Unsigned /*code_len*/,
-    Dwarf_Unsigned /*sym_idx*/,
-    Dwarf_Unsigned /*sym_idx_of_end*/,
-    Dwarf_Addr     /*offset_from_end_sym*/,
-    Dwarf_Error*   /*error*/);
 
 /*  New December 2018. Preferred version. */
 int dwarf_add_frame_fde_c(
@@ -559,40 +468,6 @@ int dwarf_add_frame_info_c(
     Dwarf_Unsigned * /*fde_index_out*/,
     Dwarf_Error*    /*error*/);
 
-Dwarf_Unsigned dwarf_add_frame_info_b(
-    Dwarf_P_Debug   /*dbg*/,
-    Dwarf_P_Fde     /*fde*/,
-    Dwarf_P_Die     /*die*/,
-    Dwarf_Unsigned  /*cie*/,
-    Dwarf_Addr      /*virt_addr*/,
-    Dwarf_Unsigned  /*code_len*/,
-    Dwarf_Unsigned  /*symidx*/,
-    Dwarf_Unsigned  /*end_symbol */,
-    Dwarf_Addr      /*offset_from_end_symbol */,
-    Dwarf_Signed    /*offset_into_exception_tables*/,
-    Dwarf_Unsigned  /*exception_table_symbol*/,
-    Dwarf_Error*    /*error*/);
-
-Dwarf_Unsigned dwarf_add_frame_info(
-    Dwarf_P_Debug   /*dbg*/,
-    Dwarf_P_Fde     /*fde*/,
-    Dwarf_P_Die     /*die*/,
-    Dwarf_Unsigned  /*cie*/,
-    Dwarf_Addr      /*virt_addr*/,
-    Dwarf_Unsigned  /*code_len*/,
-    Dwarf_Unsigned  /*symidx*/,
-    Dwarf_Signed    /*offset_into_exception_tables*/,
-    Dwarf_Unsigned  /*exception_table_symbol*/,
-    Dwarf_Error*    /*error*/);
-
-/* The fde returned is just the one passed in. Silly. */
-Dwarf_P_Fde dwarf_add_fde_inst(
-    Dwarf_P_Fde     /*fde*/,
-    Dwarf_Small     /*op*/,
-    Dwarf_Unsigned  /*val1*/,
-    Dwarf_Unsigned  /*val2*/,
-    Dwarf_Error*    /*error*/);
-
 /*  New December 2018. Preferred version. */
 int dwarf_add_fde_inst_a(
     Dwarf_P_Fde     /*fde*/,
@@ -609,21 +484,10 @@ int dwarf_insert_fde_inst_bytes(
     Dwarf_Ptr      /*ibytes*/,
     Dwarf_Error*   /*error*/);
 
-Dwarf_P_Fde dwarf_new_fde(Dwarf_P_Debug    /*dbg*/,
-    Dwarf_Error* /*error*/);
-
-/*  New December 2018. Preferred version. */
 int dwarf_new_fde_a(Dwarf_P_Debug    /*dbg*/,
     Dwarf_P_Fde * /*fde_out*/,
     Dwarf_Error* /*error*/);
 
-Dwarf_P_Fde dwarf_fde_cfa_offset(
-    Dwarf_P_Fde     /*fde*/,
-    Dwarf_Unsigned  /*register_number*/,
-    Dwarf_Signed    /*offset*/,
-    Dwarf_Error*    /*error*/);
-
-/*  New December 2018. Preferred version. */
 int dwarf_fde_cfa_offset_a(
     Dwarf_P_Fde     /*fde*/,
     Dwarf_Unsigned  /*register_number*/,
