@@ -135,7 +135,13 @@ dwarf_whatform_direct(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-/*  Pass in the content of a block and the length of that
+/*  This code was contributed around 2007.
+    As of 2021 it is not clear that Sun Sparc
+    compilers are in current use, nor whether
+    there is a reason to make reads of
+    this data format safe from corrupted object files.
+
+    Pass in the content of a block and the length of that
     content. On success return DW_DLV_OK and set *value_count
     to the size of the array returned through value_array. */
 int
@@ -227,114 +233,6 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
     there is a reason to make reads of
     this data format safe from corrupted object files.
 */
-void *
-dwarf_uncompress_integer_block(
-    Dwarf_Debug      dbg,
-    Dwarf_Bool       unit_is_signed,
-    Dwarf_Small      unit_length_in_bits,
-    void*            input_block,
-    Dwarf_Unsigned   input_length_in_bytes,
-    Dwarf_Unsigned*  output_length_in_units_ptr,
-    Dwarf_Error*     error
-)
-{
-    Dwarf_Unsigned output_length_in_units = 0;
-    void * output_block = 0;
-    unsigned i = 0;
-    char * ptr = 0;
-    int remain = 0;
-    /*  This only applies to Sun and there an unsigned
-        is 4 bytes so this works.  As with
-        most linux. */
-    unsigned * array = 0;
-    Dwarf_Byte_Ptr endptr = (Dwarf_Byte_Ptr)input_block+
-        input_length_in_bytes;
-
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
-        return((void *)DW_DLV_BADADDR);
-    }
-
-
-    if (unit_is_signed == false ||
-        unit_length_in_bits != 32 ||
-        input_block == NULL ||
-        input_length_in_bytes == 0 ||
-        output_length_in_units_ptr == NULL) {
-
-        _dwarf_error(NULL, error, DW_DLE_BADBITC);
-        return ((void *) DW_DLV_BADADDR);
-    }
-
-    /* At this point we assume the format is: signed 32 bit */
-
-    /* first uncompress everything to find the total size. */
-
-    output_length_in_units = 0;
-    remain = input_length_in_bytes;
-    ptr = input_block;
-    while (remain > 0) {
-        Dwarf_Unsigned len = 0;
-        Dwarf_Signed value = 0;
-        int rres = 0;
-
-        rres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
-            &len, &value,endptr);
-        if (rres != DW_DLV_OK) {
-            return ((void *)DW_DLV_BADADDR);
-        }
-        ptr += len;
-        remain -= len;
-        output_length_in_units++;
-    }
-
-    if (remain != 0) {
-        _dwarf_error(NULL, error, DW_DLE_ALLOC_FAIL);
-        return((void *)DW_DLV_BADADDR);
-    }
-
-    /* then alloc */
-
-    output_block = (void *)
-        _dwarf_get_alloc(dbg,
-            DW_DLA_STRING,
-            output_length_in_units * (unit_length_in_bits / 8));
-    if (output_block == NULL) {
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return((void*)DW_DLV_BADADDR);
-    }
-
-    /* then uncompress again and copy into new buffer */
-
-    array = (unsigned *) output_block;
-    remain = input_length_in_bytes;
-    ptr = input_block;
-    for (i=0; i<output_length_in_units && remain>0; i++) {
-        Dwarf_Signed num;
-        Dwarf_Unsigned len;
-        int sres = 0;
-
-        sres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
-            &len, &num,endptr);
-        if (sres != DW_DLV_OK) {
-            dwarf_dealloc(dbg,output_block,DW_DLA_STRING);
-            return ((void *) DW_DLV_BADADDR);
-        }
-        ptr += len;
-        remain -= len;
-        array[i] = num;
-    }
-
-    if (remain != 0) {
-        dwarf_dealloc(dbg, (unsigned char *)output_block,
-            DW_DLA_STRING);
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return((void*) DW_DLV_BADADDR);
-    }
-
-    *output_length_in_units_ptr = output_length_in_units;
-    return output_block;
-}
 
 void
 dwarf_dealloc_uncompressed_block(Dwarf_Debug dbg, void * space)

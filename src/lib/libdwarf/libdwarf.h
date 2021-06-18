@@ -772,16 +772,16 @@ struct Dwarf_Obj_Access_Methods_s {
 
 /*  These structures are allocated and deallocated by your code
     when you are using the libdwarf Object File Interface
-    [dwarf_object_init and dwarf_object_finish)] directly.
-    dwarf_object_finish) does not free
+    [dwarf_object_init_b() and  dwarf_object_finish()] directly.
+    dwarf_object_finish()  does not free
     struct Dwarf_Obj_Access_Interface_s or its content.
     (libdwarf does record a pointer to this struct: you must
     ensure that pointer remains valid for as long as
     a libdwarf instance is open (meaning
-    after dwarf_init) and before dwarf_finish)).
+    after dwarf_init_b() and before dwarf_finish())).
 
-    If you are reading Elf objects dwarf_init_path_dl()
-    or dwarf_init_path() which take care of these details.
+    dwarf_init_path_dl() or dwarf_init_path() take care
+    of these details.
 */
 struct Dwarf_Obj_Access_Interface_s {
     /*  object is a void* as it hides the data the
