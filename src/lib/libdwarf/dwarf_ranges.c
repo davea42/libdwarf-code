@@ -95,23 +95,6 @@ read_unaligned_addr_check(Dwarf_Debug dbg,
     of the overall object, not the address_size of the context. */
 #define MAX_ADDR ((address_size == 8)? \
     0xffffffffffffffffULL:0xffffffff)
-int dwarf_get_ranges_a(Dwarf_Debug dbg,
-    Dwarf_Off rangesoffset,
-    Dwarf_Die die,
-    Dwarf_Ranges ** rangesbuf,
-    Dwarf_Signed * listlen,
-    Dwarf_Unsigned * bytecount,
-    Dwarf_Error * error)
-{
-    Dwarf_Off finaloffset = 0;
-    int res = 0;
-
-    res = dwarf_get_ranges_b(
-        dbg,rangesoffset,die,
-        &finaloffset,rangesbuf,listlen,
-        bytecount,error);
-    return res;
-}
 /*  New 10 September 2020 to accomodate the
     GNU extension of DWARF4 split-dwarf.
     The actual_offset field is set by the function
@@ -355,19 +338,6 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
         *bytecount = rangeptr - beginrangeptr;
     }
     return DW_DLV_OK;
-}
-
-int dwarf_get_ranges(Dwarf_Debug dbg,
-    Dwarf_Off rangesoffset,
-    Dwarf_Ranges ** rangesbuf,
-    Dwarf_Signed * listlen,
-    Dwarf_Unsigned * bytecount,
-    Dwarf_Error * error)
-{
-    Dwarf_Die die = 0;
-    int res = dwarf_get_ranges_a(dbg,rangesoffset,die,
-        rangesbuf,listlen,bytecount,error);
-    return res;
 }
 
 void

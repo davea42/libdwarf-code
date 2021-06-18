@@ -563,7 +563,7 @@ typedef void  (*Dwarf_Handler)(Dwarf_Error /*error*/,
 As of February 2008 there are multiple dwarf_reader object access
 initialization methods available:
 None of them use libelf as of June 2021.
-An object-file and library agnostic dwarf_object_init()
+An object-file and library agnostic dwarf_object_init_b()
 and dwarf_object_finish()
     which allow the coder to provide object access routines
     abstracting away the elf interface.
@@ -1540,13 +1540,6 @@ int dwarf_init_path_dl(const char * /*path*/,
 int dwarf_init_b(int    /*fd*/,
     Dwarf_Unsigned    /*access*/,
     unsigned int      /*groupnumber*/,
-    Dwarf_Handler     /*errhand*/,
-    Dwarf_Ptr         /*errarg*/,
-    Dwarf_Debug*      /*dbg*/,
-    Dwarf_Error*      /*error*/);
-
-int dwarf_init(int    /*fd*/,
-    Dwarf_Unsigned    /*access*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
@@ -3775,18 +3768,9 @@ Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
     Dwarf_Small /* value */);
 
 /*  As of April 27, 2009, this version with no diepointer is
-    obsolete though supported.  Use dwarf_get_ranges_a() instead. */
+    obsolete though supported.  Use dwarf_get_ranges_b() instead. */
 int dwarf_get_ranges(Dwarf_Debug /*dbg*/,
     Dwarf_Off /*rangesoffset*/,
-    Dwarf_Ranges ** /*rangesbuf*/,
-    Dwarf_Signed * /*listlen*/,
-    Dwarf_Unsigned * /*bytecount*/,
-    Dwarf_Error * /*error*/);
-
-/* This adds the address_size argument. New April 27, 2009 */
-int dwarf_get_ranges_a(Dwarf_Debug /*dbg*/,
-    Dwarf_Off /*rangesoffset*/,
-    Dwarf_Die  /* diepointer */,
     Dwarf_Ranges ** /*rangesbuf*/,
     Dwarf_Signed * /*listlen*/,
     Dwarf_Unsigned * /*bytecount*/,

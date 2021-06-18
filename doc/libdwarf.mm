@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.2 15 June 2021
+.ds vE Rev 4.3 18 June 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -275,7 +275,7 @@ DW_DLC_READ
 is zero and zero is the only
 meaningful value to pass
 as the 'access' argument
-of dwarf_init(and the like)
+of dwarf_init_b(and the like)
 consumer/reader
 initialization functions.
 All this has been true for many
@@ -391,7 +391,7 @@ a call was required.
 (March 14, 2020)
 .P
 Now we document here
-that if one uses dwarf_init() or
+that if one uses
 dwarf_init_b() or dwarf_init_path()
 that the function dwarf_get_elf() 
 cannot succeed as there is no longer
@@ -2670,6 +2670,10 @@ The
 be accessed Group one is normal dwarf sections such as
 \f(CW.debug_info\fP.  Group two is DWARF5 dwo split-dwarf dwarf
 sections such as .debug_info.dwo.
+If you don't know specific value, use
+DW_GROUPNUMBER_ANY
+and it will work for you in almost all
+cases.
 
 Groups three and higher are for COMDAT groups.  If an object
 file has only sections from one of the groups then passing
@@ -2698,57 +2702,25 @@ the \f(CWaccess\fP argument, and cannot be closed or
 used as an argument to any system calls by the client
 until after \f(CWdwarf_finish()\fP is called.  The
 seek position of the file associated with \f(CWfd\fP
-is undefined upon return of \f(CWdwarf_init()\fP.
+is undefined upon return of \f(CWdwarf_init_b()\fP.
 .P
 Historical Note:
 With SGI IRIX, by default it was allowed that
 the app \f(CWclose()\fP \f(CWfd\fP immediately
-after calling \f(CWdwarf_init()\fP, but that
+after calling \f(CWdwarf_init_b()\fP, but that
 is not  a portable approach (that it worked was an
 accidental side effect of the fact that SGI IRIX used
-\f(CWELF_C_READ_MMAP\fP in its hidden internal call
-to \f(CWelf_begin()\fP).
+\f(CWELF_C_READ_MMAP\fP in its hidden internals)
 The portable approach is to
 consider that \f(CWfd\fP must be left open till after
 the corresponding dwarf_finish() call has returned.
 .P
-Since \f(CWdwarf_init()\fP uses the same error
+Since \f(CWdwarf_init_b()\fP uses the same error
 handling processing as other \fIlibdwarf\fP functions
 (see \fIError Handling\fP above), client programs
 will generally supply an \f(CWerror\fP parameter
 to bypass the default actions during initialization
 unless the default actions are appropriate.
-
-.H 3 "dwarf_init()"
-.DS
-\f(CWint dwarf_init(
-    int fd,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * dbg,
-    Dwarf_Error *error)\fP
-.DE
-\f(CWdwarf_init()\fP
-is identical to
-\f(CWdwarf_init_b()\fP
-except that 
-\f(CWdwarf_init()\fP
-is missing the groupnumber
-argument so access to an object file containing
-both dwo and non-dwo DWARF5 object sections will
-access only group one (and will ignore the dwo sections).
-.P
-The \f(CWdwarf_get_elf()\fP
-function 
-cannot succeed when using
-\f(CWdwarf_init()\fP
-or
-\f(CWdwarf_init_b()\fP
-or
-\f(CWdwarf_init_path()\fP
-to
-open an object file.
 
 .H 3 "dwarf_set_de_alloc_flag()"
 .DS
@@ -5257,7 +5229,7 @@ one should always supply an
 \f(CWerror\fP
 parameter or have arranged
 to have an error handling function invoked (see
-\f(CWdwarf_init()\fP
+\f(CWdwarf_init_b()\fP
 )
 to determine the validity of the returned value and the nature of any
 errors that may have occurred.
@@ -13965,7 +13937,7 @@ an example using all the following calls.
 
 example_rngl
 .in +2
-.FG "Examplev dwarf_get_ranges_a()"
+.FG "Examplev dwarf_rnglists)"
 .DS
 \f(CW
 int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
@@ -14346,44 +14318,6 @@ If there is an internal error detected the
 function returns \f(CWDW_DLV_ERROR\fP and sets the
 \f(CW*error\fP pointer.
 
-
-.H 3 "dwarf_get_ranges()"
-This is the original call and it will work fine when
-all compilation units have the same address_size.
-There is no \f(CWdie\fP argument to this original
-version of the function.
-Other arguments (and deallocation) match the use
-of  
-\f(CWdwarf_get_ranges_b()\fP and
-\f(CWdwarf_get_ranges_a()\fP.
-
-.H 3 "dwarf_get_ranges_a()"
-This is the same as 
-\f(CWdwarf_get_ranges_b()\fP
-except it is missing the
-\f(CWfinaloffset\fP
-pointer argument, so when
-reading DWARF4 split-dwarf
-GNU extension DIEs 
-it's not possible to know the final
-offset of the ranges, but few
-applications will care..
-.DS
-\f(CWint dwarf_get_ranges_a(
-        Dwarf_Debug dbg,
-        Dwarf_Off  offset,
-        Dwarf_Die  die,
-        Dwarf_Ranges **ranges,
-        Dwarf_Signed * returned_ranges_count,
-        Dwarf_Unsigned * returned_byte_count,
-        Dwarf_Error *error)\fP
-.DE
-.P
-Though missing
-\f(CWfinaloffset\fP
-this function works properly and
-is usable on and DWARF2,3,4 objects.
-
 .H 3 "dwarf_get_ranges_b()"
 .DS
 \f(CWint dwarf_get_ranges_b(
@@ -14431,6 +14365,8 @@ with the
 \f(CWDW_AT_ranges\fP
 attribute (whose value is the offset needed).
 The ranges thus apply to the DIE involved.
+If no DIE is available or possible
+pass in 0 (NULL) as the DIE pointer.
 .P
 See also 
 \f(CWdwarf_get_aranges()\fP,
@@ -14439,7 +14375,7 @@ The
 \f(CWoffset\fP argument should be the value of
 a \f(CWDW_AT_ranges\fP
 attribute of a Debugging Information Entry.
-
+.P
 The
 \f(CWdie\fP
 argument should be the value of
@@ -14455,8 +14391,9 @@ to correctly read ranges.
 same address_size in every compilation unit, but
 some ABIs allow multiple address sized in an executable).
 If a NULL pointer is passed in libdwarf assumes
-a single address_size is appropriate for all ranges records.
-
+a single address_size is appropriate for all ranges records
+and that TIED files are not involved or available.
+.P
 On success,
 The call sets
 \f(CW*ranges\fP to point to a block of 

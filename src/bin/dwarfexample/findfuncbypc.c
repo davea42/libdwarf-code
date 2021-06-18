@@ -883,12 +883,14 @@ check_subprog_ranges_for_match(Dwarf_Debug dbg,
     Dwarf_Unsigned  byte_count;
     Dwarf_Signed i = 0;
     Dwarf_Addr baseaddr = 0;
+    Dwarf_Off actualoffset = 0;
     int done = FALSE;
 
     /*  Check libdwarf to ensure ranges_base not added
-        again. FIXME */
-    res = dwarf_get_ranges_a(dbg,td->td_ranges_offset,
+        again. */
+    res = dwarf_get_ranges_b(dbg,td->td_ranges_offset,
         die,
+        &actualoffset,
         &ranges,
         &ranges_count,
         &byte_count,
@@ -1188,14 +1190,16 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
         /*  We can do get ranges now as we already saw
             ranges base above (if any). */
         int resr = 0;
-        Dwarf_Ranges *ranges;
-        Dwarf_Signed  ranges_count;
-        Dwarf_Unsigned  byte_count;
+        Dwarf_Ranges *ranges = 0;
+        Dwarf_Signed  ranges_count =0;
+        Dwarf_Unsigned  byte_count =0;
+        Dwarf_Off     actualoffset = 0;
         Dwarf_Signed k = 0;
         int done = FALSE;
 
-        resr = dwarf_get_ranges_a(dbg,real_ranges_offset,
+        resr = dwarf_get_ranges_b(dbg,real_ranges_offset,
             die,
+            &actualoffset,
             &ranges,
             &ranges_count,
             &byte_count,

@@ -107,23 +107,6 @@ dwarf_init_path_dl(path true_path and globals, dbg1
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);
 
-/*  An original basic dwarf initializer function for consumers.
-    Return a libdwarf error code on error, return DW_DLV_OK
-    if this succeeds.
-    dwarf_init_b() is a better choice where there
-    are section groups in an object file. */
-int
-dwarf_init(int fd,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg,
-    Dwarf_Error * error)
-{
-    return dwarf_init_b(fd,access, DW_GROUPNUMBER_ANY,
-        errhand,errarg,ret_dbg,error);
-}
-
 static int
 open_a_file(const char * name)
 {
@@ -374,7 +357,10 @@ int dwarf_init_path_dl(const char *path,
 
 
 /*  New March 2017, this provides for reading
-    object files with multiple elf section groups.  */
+    object files with multiple elf section groups.  
+    If you are unsure about group_number, use
+    DW_GROUPNUMBER_ANY  as groupnumber.
+*/
 int
 dwarf_init_b(int fd,
     Dwarf_Unsigned access,

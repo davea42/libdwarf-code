@@ -43,7 +43,10 @@ ranges_esb_string_destructor(void)
 /*  Because we do not know what DIE is involved, if the
     object being printed has different address sizes
     in different compilation units this will not work
-    properly: anything could happen. */
+    properly: anything could happen. 
+    This applies to .debug_ranges, something only used
+    in DWARF3 and DWARF4.
+*/
 extern int
 print_ranges(Dwarf_Debug dbg,
     Dwarf_Error *err UNUSEDARG)
@@ -68,11 +71,13 @@ print_ranges(Dwarf_Debug dbg,
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
+        Dwarf_Off  actual_offset = 0;
         Dwarf_Error pr_err;
 
-        /*  We do not know what DIE is involved, we use
-            the older call here. */
-        int rres = dwarf_get_ranges(dbg,off,&rangeset,
+        int rres = dwarf_get_ranges_b(dbg,off,
+            0 /*No DIE available here, we will do
+                the best we can. */,
+            &actual_offset,&rangeset,
             &rangecount,&bytecount,&pr_err);
         if (!loopct) {
             get_true_section_name(dbg,".debug_ranges",
