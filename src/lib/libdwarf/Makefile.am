@@ -88,7 +88,6 @@ dwarf_object_detector.h \
 dwarf_object_read_common.c \
 dwarf_object_read_common.h \
 dwarf_opaque.h \
-dwarf_original_elf_init.c \
 dwarf_pe_descr.h \
 dwarf_peread.c \
 dwarf_peread.h \

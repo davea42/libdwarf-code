@@ -570,12 +570,11 @@ and dwarf_object_finish()
     So there is no dependence in the
     reader code on the object format and no dependence on libelf.
 
-Projects using dwarf_elf_init() or dwarf_init() can ignore
+Projects using  dwarf_init() can ignore
 the Dwarf_Obj_Access* structures entirely as all these details
 are completed for you.
 
 As of March 2017 additional
-functions dwarf_elf_init_b
 and dwarf_init_b
 and dwarf_object_init_b
 add a groupnumber argument so DWARF5
@@ -1547,26 +1546,6 @@ int dwarf_init_b(int    /*fd*/,
     Dwarf_Error*      /*error*/);
 
 int dwarf_init(int    /*fd*/,
-    Dwarf_Unsigned    /*access*/,
-    Dwarf_Handler     /*errhand*/,
-    Dwarf_Ptr         /*errarg*/,
-    Dwarf_Debug*      /*dbg*/,
-    Dwarf_Error*      /*error*/);
-
-/*  The dwarf_elf_init* functions continue to be supported,
-    but should be considered deprecated as they can ONLY
-    be used on Elf files. */
-/*  Initialization was based libelf/sgi-fastlibelf open pointer,
-    but this is obsolete. */
-/*  New March 2017 */
-int dwarf_elf_init_b(void * /*elf*/,
-    Dwarf_Unsigned    /*access*/,
-    unsigned int      /*group_number*/,
-    Dwarf_Handler     /*errhand*/,
-    Dwarf_Ptr         /*errarg*/,
-    Dwarf_Debug*      /*dbg*/,
-    Dwarf_Error*      /*error*/);
-int dwarf_elf_init(void * /*elf*/,
     Dwarf_Unsigned    /*access*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,

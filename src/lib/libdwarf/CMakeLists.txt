@@ -20,7 +20,6 @@ dwarf_locationop_read.c
 dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
 dwarf_names.c
 dwarf_object_read_common.c dwarf_object_detector.c
-dwarf_original_elf_init.c 
 dwarf_peread.c 
 dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c 
 dwarf_rnglists.c

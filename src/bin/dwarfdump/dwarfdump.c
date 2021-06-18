@@ -119,8 +119,7 @@ static int global_tiedfd = -1;
 static struct esb_s global_file_name;
 static struct esb_s global_tied_file_name;
 
-static int process_one_file(int fd, int tiedfd,
-    void *efp, void * tiedfp,
+static int process_one_file(
     const char * file_name,
     const char * tied_file_name,
     char *       tempbuf,
@@ -559,8 +558,7 @@ main(int argc, char *argv[])
         global_basefd = -1;
         close_a_file(global_tiedfd);
         global_tiedfd = -1;
-        process_one_file(-1,-1,
-            0,0,
+        process_one_file(
             esb_get_string(&global_file_name),
             esb_get_string(&global_tied_file_name),
             temp_path_buf, temp_path_buf_len,
@@ -889,9 +887,6 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
     we think we can read, process the dwarf data.  */
 static int
 process_one_file(
-    int fd UNUSEDARG,
-    int tiedfd UNUSEDARG,
-    void *elf, void *tiedelf,
     const char * file_name,
     const char * tied_file_name,
     char *       temp_path_buf,
@@ -912,21 +907,7 @@ process_one_file(
         2 DW_GROUPNUMBER_DWO
         but in a dwp or separate-split-dwarf object then
         0 will find the .dwo data automatically. */
-    if (elf) {
-        title = "dwarf_elf_init_b fails exit dwarfdump";
-        dres = dwarf_elf_init_b(elf, DW_DLC_READ,
-            glflags.group_number,
-            NULL, NULL, &dbg, &onef_err);
-
-        if (dres == DW_DLV_OK) {
-            int pres = 0;
-            pres = dwarf_add_file_path(dbg,file_name,&onef_err);
-            if (pres != DW_DLV_OK) {
-                print_error(dbg,"Unable to add file path "
-                    "to object file data", pres, onef_err);
-            }
-        }
-    } else {
+    {
         /*  This will go for the real main file, whether
             an underlying dSYM or via debuglink or
             if those find nothing then the original. */
@@ -974,24 +955,7 @@ process_one_file(
         glflags.gf_gnu_debuglink_flag = TRUE;
     }
     if (tied_file_name && strlen(tied_file_name)) {
-        if (tiedelf) {
-            dres = dwarf_elf_init_b(tiedelf, DW_DLC_READ,
-                DW_GROUPNUMBER_BASE, NULL, NULL, &dbgtied,
-                &onef_err);
-            if (dres == DW_DLV_OK) {
-                int pres = 0;
-                pres = dwarf_add_file_path(dbgtied,
-                    tied_file_name,&onef_err);
-                if (pres != DW_DLV_ERROR) {
-                    /*  Prints error, cleans up Dwarf_Error data if
-                        any.  Never returns */
-                    print_error(dbg,
-                        "Unable to add tied file name "
-                        "to tied file",
-                        pres, onef_err);
-                }
-            }
-        } else {
+        {
             /*  The tied file we define as group 1, BASE.
                 Cannot follow debuglink or dSYM,
                 is a tied file */
@@ -1014,7 +978,7 @@ process_one_file(
             /*  Prints error, cleans up Dwarf_Error data.
                 Never returns*/
             print_error(dbg,
-                "dwarf_elf_init on tied_file",
+                "dwarf_init_path on tied_file",
                 dres, onef_err);
         }
     }
@@ -1396,7 +1360,8 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,res3,err);
         }
     }
-    if (glflags.gf_reloc_flag && elf) {
+    if (glflags.gf_reloc_flag) {
+        /* Harmless, though likely not needed here. */
         reset_overall_CU_error_data();
     }
     if (glflags.gf_debug_names_flag) {
