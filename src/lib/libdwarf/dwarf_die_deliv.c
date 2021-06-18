@@ -917,88 +917,7 @@ reloc_incomplete(int res,Dwarf_Error err)
     pointer.
     It sequentially moves from one
     cu to the next.  The current cu is recorded
-    internally by libdwarf.
-
-    The _b form is new for DWARF4 adding new returned fields.  */
-int
-dwarf_next_cu_header(Dwarf_Debug dbg,
-    Dwarf_Unsigned * cu_header_length,
-    Dwarf_Half * version_stamp,
-    Dwarf_Unsigned * abbrev_offset,
-    Dwarf_Half * address_size,
-    Dwarf_Unsigned * next_cu_offset,
-    Dwarf_Error * error)
-{
-    Dwarf_Bool is_info = true;
-    Dwarf_Half header_type = 0;
-    return _dwarf_next_cu_header_internal(dbg,
-        is_info,
-        cu_header_length,
-        version_stamp,
-        abbrev_offset,
-        address_size,
-        0,0,0,0,0,
-        next_cu_offset,
-        &header_type,
-        error);
-}
-int
-dwarf_next_cu_header_b(Dwarf_Debug dbg,
-    Dwarf_Unsigned * cu_header_length,
-    Dwarf_Half * version_stamp,
-    Dwarf_Unsigned * abbrev_offset,
-    Dwarf_Half * address_size,
-    Dwarf_Half * offset_size,
-    Dwarf_Half * extension_size,
-    Dwarf_Unsigned * next_cu_offset,
-    Dwarf_Error * error)
-{
-    Dwarf_Bool is_info = true;
-    Dwarf_Half header_type = 0;
-    return _dwarf_next_cu_header_internal(dbg,
-        is_info,
-        cu_header_length,
-        version_stamp,
-        abbrev_offset,
-        address_size,
-        offset_size,extension_size,
-        0,0,0,
-        next_cu_offset,
-        &header_type,
-        error);
-}
-
-int
-dwarf_next_cu_header_c(Dwarf_Debug dbg,
-    Dwarf_Bool is_info,
-    Dwarf_Unsigned * cu_header_length,
-    Dwarf_Half * version_stamp,
-    Dwarf_Unsigned * abbrev_offset,
-    Dwarf_Half * address_size,
-    Dwarf_Half * offset_size,
-    Dwarf_Half * extension_size,
-    Dwarf_Sig8 * signature,
-    Dwarf_Unsigned * typeoffset,
-    Dwarf_Unsigned * next_cu_offset,
-    Dwarf_Error * error)
-{
-    Dwarf_Half header_type = 0;
-    int res =_dwarf_next_cu_header_internal(dbg,
-        is_info,
-        cu_header_length,
-        version_stamp,
-        abbrev_offset,
-        address_size,
-        offset_size,
-        extension_size,
-        signature,
-        0,
-        typeoffset,
-        next_cu_offset,
-        &header_type,
-        error);
-    return res;
-}
+    internally by libdwarf. */
 int
 dwarf_next_cu_header_d(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
@@ -2362,23 +2281,9 @@ is_cu_tag(int t)
     and the adjacent die is NULL.  Algorithm returns when
     child_depth is 0.
 
-    **NOTE: Do not modify input die, since it is used at the end.  */
-int
-dwarf_siblingof(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    Dwarf_Die * caller_ret_die, Dwarf_Error * error)
-{
-    int res = 0;
-    Dwarf_Bool is_info = TRUE;
-    Dwarf_Debug_InfoTypes dis = 0;
+    **NOTE: Do not modify input die, since it is used at the end. 
 
-    dis = &dbg->de_info_reading;
-    res = _dwarf_siblingof_internal(dbg,die,
-        die?die->di_cu_context:dis->de_cu_context,
-        is_info,caller_ret_die,error);
-    return res;
-}
-/*  This is the new form, October 2011.  On calling with 'die' NULL,
+ *  This is the correct form.  On calling with 'die' NULL,
     we cannot tell if this is debug_info or debug_types, so
     we must be informed!. */
 int

@@ -1588,18 +1588,8 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
     The returned Dwarf_Debug contains a copy of *obj
     the callers copy of *obj may be freed whenever the caller
     wishes.
-*/
-int
-dwarf_object_init(Dwarf_Obj_Access_Interface* obj,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg, Dwarf_Debug* ret_dbg,
-    Dwarf_Error* error)
-{
-    return dwarf_object_init_b(obj,errhand,errarg,
-        DW_GROUPNUMBER_ANY,ret_dbg,error);
-}
 
-/*  New March 2017. Enables dealing with DWARF5 split
+    New March 2017. Enables dealing with DWARF5 split
     dwarf more fully.  */
 int
 dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj,
@@ -1993,112 +1983,13 @@ _dwarf_load_section(Dwarf_Debug dbg,
 }
 
 /* This is a hack so clients can verify offsets.
-   Added April 2005 so that debugger can detect broken offsets
+   Added (without so many sections to report)  April 2005
+   so that debugger can detect broken offsets
    (which happened in an IRIX  -64 executable larger than 2GB
     using MIPSpro 7.3.1.3 compilers. A couple .debug_pubnames
     offsets were wrong.).
 */
-int
-dwarf_get_section_max_offsets(Dwarf_Debug dbg,
-    Dwarf_Unsigned * debug_info_size,
-    Dwarf_Unsigned * debug_abbrev_size,
-    Dwarf_Unsigned * debug_line_size,
-    Dwarf_Unsigned * debug_loc_size,
-    Dwarf_Unsigned * debug_aranges_size,
-    Dwarf_Unsigned * debug_macinfo_size,
-    Dwarf_Unsigned * debug_pubnames_size,
-    Dwarf_Unsigned * debug_str_size,
-    Dwarf_Unsigned * debug_frame_size,
-    Dwarf_Unsigned * debug_ranges_size,
-    Dwarf_Unsigned * debug_typenames_size)
-{
-    *debug_info_size = dbg->de_debug_info.dss_size;
-    *debug_abbrev_size = dbg->de_debug_abbrev.dss_size;
-    *debug_line_size = dbg->de_debug_line.dss_size;
-    *debug_loc_size = dbg->de_debug_loc.dss_size;
-    *debug_aranges_size = dbg->de_debug_aranges.dss_size;
-    *debug_macinfo_size = dbg->de_debug_macinfo.dss_size;
-    *debug_pubnames_size = dbg->de_debug_pubnames.dss_size;
-    *debug_str_size = dbg->de_debug_str.dss_size;
-    *debug_frame_size = dbg->de_debug_frame.dss_size;
-    *debug_ranges_size = dbg->de_debug_ranges.dss_size;
-    *debug_typenames_size = dbg->de_debug_typenames.dss_size;
-    return DW_DLV_OK;
-}
-/*  This adds the new types size (new section) to the output data.
-    Oct 27, 2011. */
-int
-dwarf_get_section_max_offsets_b(Dwarf_Debug dbg,
-    Dwarf_Unsigned * debug_info_size,
-    Dwarf_Unsigned * debug_abbrev_size,
-    Dwarf_Unsigned * debug_line_size,
-    Dwarf_Unsigned * debug_loc_size,
-    Dwarf_Unsigned * debug_aranges_size,
-    Dwarf_Unsigned * debug_macinfo_size,
-    Dwarf_Unsigned * debug_pubnames_size,
-    Dwarf_Unsigned * debug_str_size,
-    Dwarf_Unsigned * debug_frame_size,
-    Dwarf_Unsigned * debug_ranges_size,
-    Dwarf_Unsigned * debug_typenames_size,
-    Dwarf_Unsigned * debug_types_size)
-{
-    *debug_info_size = dbg->de_debug_info.dss_size;
-    *debug_abbrev_size = dbg->de_debug_abbrev.dss_size;
-    *debug_line_size = dbg->de_debug_line.dss_size;
-    *debug_loc_size = dbg->de_debug_loc.dss_size;
-    *debug_aranges_size = dbg->de_debug_aranges.dss_size;
-    *debug_macinfo_size = dbg->de_debug_macinfo.dss_size;
-    *debug_pubnames_size = dbg->de_debug_pubnames.dss_size;
-    *debug_str_size = dbg->de_debug_str.dss_size;
-    *debug_frame_size = dbg->de_debug_frame.dss_size;
-    *debug_ranges_size = dbg->de_debug_ranges.dss_size;
-    *debug_typenames_size = dbg->de_debug_typenames.dss_size;
-    *debug_types_size = dbg->de_debug_types.dss_size;
-    return DW_DLV_OK;
-}
-
-/*  Now with sections new to DWARF5 (unofficial list,preliminary) */
-int
-dwarf_get_section_max_offsets_c(Dwarf_Debug dbg,
-    Dwarf_Unsigned * debug_info_size,
-    Dwarf_Unsigned * debug_abbrev_size,
-    Dwarf_Unsigned * debug_line_size,
-    Dwarf_Unsigned * debug_loc_size,
-    Dwarf_Unsigned * debug_aranges_size,
-    Dwarf_Unsigned * debug_macinfo_size,
-    Dwarf_Unsigned * debug_pubnames_size,
-    Dwarf_Unsigned * debug_str_size,
-    Dwarf_Unsigned * debug_frame_size,
-    Dwarf_Unsigned * debug_ranges_size,
-    Dwarf_Unsigned * debug_typenames_size,
-    Dwarf_Unsigned * debug_types_size,
-    Dwarf_Unsigned * debug_macro_size,
-    Dwarf_Unsigned * debug_str_offsets_size,
-    Dwarf_Unsigned * debug_sup_size,
-    Dwarf_Unsigned * debug_cu_index_size,
-    Dwarf_Unsigned * debug_tu_index_size)
-{
-    *debug_info_size = dbg->de_debug_info.dss_size;
-    *debug_abbrev_size = dbg->de_debug_abbrev.dss_size;
-    *debug_line_size = dbg->de_debug_line.dss_size;
-    *debug_loc_size = dbg->de_debug_loc.dss_size;
-    *debug_aranges_size = dbg->de_debug_aranges.dss_size;
-    *debug_macinfo_size = dbg->de_debug_macinfo.dss_size;
-    *debug_pubnames_size = dbg->de_debug_pubnames.dss_size;
-    *debug_str_size = dbg->de_debug_str.dss_size;
-    *debug_frame_size = dbg->de_debug_frame.dss_size;
-    *debug_ranges_size = dbg->de_debug_ranges.dss_size;
-    *debug_typenames_size = dbg->de_debug_typenames.dss_size;
-    *debug_types_size = dbg->de_debug_types.dss_size;
-    *debug_macro_size = dbg->de_debug_macro.dss_size;
-    *debug_str_offsets_size = dbg->de_debug_str_offsets.dss_size;
-    *debug_sup_size = dbg->de_debug_sup.dss_size;
-    *debug_cu_index_size = dbg->de_debug_cu_index.dss_size;
-    *debug_tu_index_size = dbg->de_debug_tu_index.dss_size;
-    return DW_DLV_OK;
-}
-
-/*  Now with final sections new to DWARF5 (final) */
+/*  Now with sections new to DWARF5 */
 int
 dwarf_get_section_max_offsets_d(Dwarf_Debug dbg,
     Dwarf_Unsigned * debug_info_size,
@@ -2122,26 +2013,66 @@ dwarf_get_section_max_offsets_d(Dwarf_Debug dbg,
     Dwarf_Unsigned * debug_loclists_size,
     Dwarf_Unsigned * debug_rnglists_size)
 {
-    *debug_info_size = dbg->de_debug_info.dss_size;
-    *debug_abbrev_size = dbg->de_debug_abbrev.dss_size;
-    *debug_line_size = dbg->de_debug_line.dss_size;
-    *debug_loc_size = dbg->de_debug_loc.dss_size;
-    *debug_aranges_size = dbg->de_debug_aranges.dss_size;
-    *debug_macinfo_size = dbg->de_debug_macinfo.dss_size;
-    *debug_pubnames_size = dbg->de_debug_pubnames.dss_size;
-    *debug_str_size = dbg->de_debug_str.dss_size;
-    *debug_frame_size = dbg->de_debug_frame.dss_size;
-    *debug_ranges_size = dbg->de_debug_ranges.dss_size;
-    *debug_typenames_size = dbg->de_debug_typenames.dss_size;
-    *debug_types_size = dbg->de_debug_types.dss_size;
-    *debug_macro_size = dbg->de_debug_macro.dss_size;
-    *debug_str_offsets_size = dbg->de_debug_str_offsets.dss_size;
-    *debug_sup_size = dbg->de_debug_sup.dss_size;
-    *debug_cu_index_size = dbg->de_debug_cu_index.dss_size;
-    *debug_tu_index_size = dbg->de_debug_tu_index.dss_size;
-    *debug_names_size = dbg->de_debug_names.dss_size;
-    *debug_loclists_size = dbg->de_debug_loclists.dss_size;
-    *debug_rnglists_size = dbg->de_debug_rnglists.dss_size;
+    if (debug_info_size) {
+        *debug_info_size = dbg->de_debug_info.dss_size;
+    }
+    if (debug_abbrev_size) {
+        *debug_abbrev_size = dbg->de_debug_abbrev.dss_size;
+    }
+    if (debug_line_size) {
+        *debug_line_size = dbg->de_debug_line.dss_size;
+    }
+    if (debug_loc_size) {
+        *debug_loc_size = dbg->de_debug_loc.dss_size;
+    }
+    if (debug_aranges_size) {
+        *debug_aranges_size = dbg->de_debug_aranges.dss_size;
+    }
+    if (debug_macinfo_size) {
+        *debug_macinfo_size = dbg->de_debug_macinfo.dss_size;
+    }
+    if (debug_pubnames_size) {
+        *debug_pubnames_size = dbg->de_debug_pubnames.dss_size;
+    }
+    if (debug_str_size) {
+        *debug_str_size = dbg->de_debug_str.dss_size;
+    }
+    if (debug_frame_size) {
+        *debug_frame_size = dbg->de_debug_frame.dss_size;
+    }
+    if (debug_ranges_size) {
+        *debug_ranges_size = dbg->de_debug_ranges.dss_size;
+    }
+    if (debug_typenames_size) {
+        *debug_typenames_size = dbg->de_debug_typenames.dss_size;
+    }
+    if (debug_types_size) {
+        *debug_types_size = dbg->de_debug_types.dss_size;
+    }
+    if (debug_macro_size) {
+        *debug_macro_size = dbg->de_debug_macro.dss_size;
+    }
+    if (debug_str_offsets_size) {
+        *debug_str_offsets_size = dbg->de_debug_str_offsets.dss_size;
+    }
+    if (debug_sup_size) {
+        *debug_sup_size = dbg->de_debug_sup.dss_size;
+    }
+    if (debug_cu_index_size) {
+        *debug_cu_index_size = dbg->de_debug_cu_index.dss_size;
+    }
+    if (debug_tu_index_size) {
+        *debug_tu_index_size = dbg->de_debug_tu_index.dss_size;
+    }
+    if (debug_names_size) {
+        *debug_names_size = dbg->de_debug_names.dss_size;
+    }
+    if (debug_loclists_size) {
+        *debug_loclists_size = dbg->de_debug_loclists.dss_size;
+    }
+    if (debug_rnglists_size) {
+        *debug_rnglists_size = dbg->de_debug_rnglists.dss_size;
+    }
     return DW_DLV_OK;
 }
 
