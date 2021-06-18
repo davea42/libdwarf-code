@@ -66,6 +66,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 #define true 1
 #define false 0
 
+Dwarf_Sig8 zero_type_signature;
 static void
 print_one_frame_reg_col(Dwarf_Debug dbg,
     Dwarf_Die die,
@@ -722,7 +723,9 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
         /* try next sibling */
         prev_child = curdie;
         esb_empty_string(&nestname);
-        chres = dwarf_siblingof(dbg, curdie, &newsibling, err);
+        chres = dwarf_siblingof_b(dbg, curdie, 
+           dwarf_get_die_infotypes_flag(curdie),
+           &newsibling, err);
         if (chres == DW_DLV_ERROR) {
             struct esb_s m;
 
@@ -798,7 +801,15 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     int dres = DW_DLV_OK;
     int chres = DW_DLV_OK;
     struct Addr_Map_Entry *ame = 0;
+    Dwarf_Half length_size = 0;
+    Dwarf_Half extension_size = 0;
+    Dwarf_Sig8 type_signature;
+    Dwarf_Unsigned typeoffset = 0;
+    Dwarf_Half header_cu_type = 0;
+    Dwarf_Bool is_info = TRUE; /* An assumption, but
+        sensible as functions will not be in .debug_types */
 
+    type_signature = zero_type_signature;
     ame = addr_map_find(low_pc,pcMap);
     if (ame && ame->mp_name) {
         esb_append(name,ame->mp_name);
@@ -812,9 +823,17 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     }
     if (*cu_die_for_print_frames == NULL) {
         /* Call depends on dbg->cu_context to know what to do. */
-        cures = dwarf_next_cu_header(dbg, &cu_header_length,
+        cures = dwarf_next_cu_header_d(dbg,
+            is_info,
+            &cu_header_length,
             &version_stamp, &abbrev_offset,
-            &address_size, &next_cu_offset,
+            &address_size, 
+            &length_size,
+            &extension_size,
+            &type_signature,
+            &typeoffset,
+            &next_cu_offset,
+            &header_cu_type,
             err);
         if (cures == DW_DLV_ERROR) {
             /*  If there is a serious error in DIE information
@@ -832,7 +851,8 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             /* loop thru the list again */
             *cu_die_for_print_frames = 0;
         } else {                /* DW_DLV_OK */
-            dres = dwarf_siblingof(dbg, NULL,
+            dres = dwarf_siblingof_b(dbg, NULL,
+                is_info,
                 cu_die_for_print_frames,
                 err);
             if (dres == DW_DLV_ERROR) {
@@ -897,9 +917,15 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     for (;;) {
         Dwarf_Die ldie = 0;
 
-        cures = dwarf_next_cu_header(dbg, &cu_header_length,
+        type_signature = zero_type_signature;
+        cures = dwarf_next_cu_header_d(dbg,
+            is_info, &cu_header_length,
             &version_stamp, &abbrev_offset,
-            &address_size, &next_cu_offset,
+            &address_size, 
+            &length_size,&extension_size, 
+            &type_signature,&typeoffset,
+            &next_cu_offset,
+            &header_cu_type,
             err);
         if (cures != DW_DLV_OK) {
             if (cures == DW_DLV_ERROR) {
@@ -917,7 +943,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             break;
         }
 
-        dres = dwarf_siblingof(dbg, NULL, &ldie, err);
+        dres = dwarf_siblingof_b(dbg,NULL,is_info, &ldie, err);
         if (*cu_die_for_print_frames) {
             dwarf_dealloc(dbg, *cu_die_for_print_frames,DW_DLA_DIE);
             *cu_die_for_print_frames = 0;

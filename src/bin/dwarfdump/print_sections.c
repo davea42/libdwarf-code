@@ -57,30 +57,11 @@ Dwarf_Unsigned
 get_info_max_offset(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned debug_info_size = 0;
-    Dwarf_Unsigned debug_abbrev_size = 0;
-    Dwarf_Unsigned debug_line_size = 0;
-    Dwarf_Unsigned debug_loc_size = 0;
-    Dwarf_Unsigned debug_aranges_size = 0;
-    Dwarf_Unsigned debug_macinfo_size = 0;
-    Dwarf_Unsigned debug_pubnames_size = 0;
-    Dwarf_Unsigned debug_str_size = 0;
-    Dwarf_Unsigned debug_frame_size = 0;
-    Dwarf_Unsigned debug_ranges_size = 0;
-    Dwarf_Unsigned debug_pubtypes_size = 0;
     int res = 0;
 
-    res = dwarf_get_section_max_offsets(dbg,
-        &debug_info_size,
-        &debug_abbrev_size,
-        &debug_line_size,
-        &debug_loc_size,
-        &debug_aranges_size,
-        &debug_macinfo_size,
-        &debug_pubnames_size,
-        &debug_str_size,
-        &debug_frame_size,
-        &debug_ranges_size,
-        &debug_pubtypes_size);
+    res = dwarf_get_section_max_offsets_d(dbg,
+        &debug_info_size,0,0,0,0, 0,0,0,0,0,
+        0,0,0,0,0,  0,0,0,0,0);
     if (res != DW_DLV_OK) {
         return 0;
     }

@@ -433,13 +433,15 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
         ++childcount;
 
         Dwarf_Die tchild = 0;
-        res = dwarf_siblingof(dbg,curchilddie,&tchild,&error);
+        res = dwarf_siblingof_b(dbg,curchilddie,
+            dwarf_get_die_infotypes_flag(curchilddie),
+            &tchild,&error);
         if(res == DW_DLV_NO_ENTRY) {
             break;
         }
         if(res == DW_DLV_ERROR) {
             errprint(error);
-            cerr << "dwarf_siblingof failed " << endl;
+            cerr << "dwarf_siblingof_b failed " << endl;
             exit(1);
         }
         dwarf_dealloc(dbg,curchilddie,DW_DLA_DIE);
@@ -622,16 +624,24 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         Dwarf_Half version_stamp = 0;
         Dwarf_Unsigned abbrev_offset = 0;
         Dwarf_Half address_size = 0;
-        Dwarf_Unsigned next_cu_header = 0;
         Dwarf_Half offset_size = 0;
         Dwarf_Half extension_size = 0;
+        Dwarf_Sig8 type_signature;
+        Dwarf_Unsigned type_offset = 0;
+        Dwarf_Unsigned next_cu_header = 0;
+        Dwarf_Half header_cu_type= 0;
         Dwarf_Die no_die = 0;
         Dwarf_Die cu_die = 0;
         int res = DW_DLV_ERROR;
-        res = dwarf_next_cu_header_b(dbg,&cu_header_length,
+        Dwarf_Bool is_info = TRUE; /* This restricts
+            dwarfgen a bit. For now. */
+
+
+        res = dwarf_next_cu_header_d(dbg,is_info,&cu_header_length,
             &version_stamp, &abbrev_offset, &address_size,
             &offset_size, &extension_size,
-            &next_cu_header, &error);
+            &type_signature,&type_offset,
+            &next_cu_header, &header_cu_type, &error);
         if(res == DW_DLV_ERROR) {
             errprint(error);
             cerr <<"Error in dwarf_next_cu_header"<< endl;
@@ -647,15 +657,16 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 
         //  The CU will have a single sibling (well, it is
         //  not exactly a sibling, but close enough), a cu_die.
-        res = dwarf_siblingof(dbg,no_die,&cu_die,&error);
+        res = dwarf_siblingof_b(dbg,no_die,
+            is_info,&cu_die,&error);
         if(res == DW_DLV_ERROR) {
             errprint(error);
-            cerr <<"Error in dwarf_siblingof on CU die "<< endl;
+            cerr <<"Error in dwarf_siblingof_b on CU die "<< endl;
             exit(1);
         }
         if(res == DW_DLV_NO_ENTRY) {
             /* Impossible case. */
-            cerr <<"no Entry! in dwarf_siblingof on CU die "<< endl;
+            cerr <<"no Entry! in dwarf_siblingof_b on CU die "<< endl;
             exit(1);
         }
         Dwarf_Off macrooffset = 0;

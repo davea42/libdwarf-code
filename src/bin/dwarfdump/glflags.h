@@ -97,6 +97,9 @@ struct section_high_offsets_s {
     Dwarf_Unsigned debug_sup_size;
     Dwarf_Unsigned debug_cu_index_size;
     Dwarf_Unsigned debug_tu_index_size;
+    Dwarf_Unsigned debug_names_size;
+    Dwarf_Unsigned debug_loclists_size;
+    Dwarf_Unsigned debug_rnglists_size;
 };
 
 /* Options to enable debug tracing. */

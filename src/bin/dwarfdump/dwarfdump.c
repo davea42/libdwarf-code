@@ -721,7 +721,7 @@ dbgsetup(Dwarf_Debug dbg,struct dwconf_s *setup_config_file_data)
 static void
 set_global_section_sizes(Dwarf_Debug dbg)
 {
-    dwarf_get_section_max_offsets_c(dbg,
+    dwarf_get_section_max_offsets_d(dbg,
         &glflags.section_high_offsets_global->debug_info_size,
         &glflags.section_high_offsets_global->debug_abbrev_size,
         &glflags.section_high_offsets_global->debug_line_size,
@@ -738,7 +738,11 @@ set_global_section_sizes(Dwarf_Debug dbg)
         &glflags.section_high_offsets_global->debug_str_offsets_size,
         &glflags.section_high_offsets_global->debug_sup_size,
         &glflags.section_high_offsets_global->debug_cu_index_size,
-        &glflags.section_high_offsets_global->debug_tu_index_size);
+        &glflags.section_high_offsets_global->debug_tu_index_size,
+        &glflags.section_high_offsets_global->debug_names_size,
+        &glflags.section_high_offsets_global->debug_loclists_size,
+        &glflags.section_high_offsets_global->debug_rnglists_size);
+
 }
 
 /*  Set limits for Ranges Information.
