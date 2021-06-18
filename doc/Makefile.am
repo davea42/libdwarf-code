@@ -16,9 +16,10 @@ buildproducerpdf:
 	cp libdwarfp.pdf $(top_srcdir)/doc/
 
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
-libdwarfdev_DATA = \
-libdwarf.pdf \
-libdwarfp.pdf
+libdwarfdev_DATA = libdwarf.pdf 
+if HAVE_DWARFGEN
+libdwarfdev_DATA += libdwarfp.pdf
+endif
 
 man_MANS = dwarfdump.1
 
