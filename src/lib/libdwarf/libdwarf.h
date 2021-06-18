@@ -1595,12 +1595,6 @@ int dwarf_object_init_b(Dwarf_Obj_Access_Interface* /*obj*/,
     Dwarf_Debug*  /*dbg*/,
     Dwarf_Error*  /*error*/);
 
-int dwarf_object_init(Dwarf_Obj_Access_Interface* /*obj*/,
-    Dwarf_Handler /*errhand*/,
-    Dwarf_Ptr     /*errarg*/,
-    Dwarf_Debug*  /*dbg*/,
-    Dwarf_Error*  /*error*/);
-
 int dwarf_set_tied_dbg(Dwarf_Debug /*basedbg*/,
     Dwarf_Debug /*tied_dbg*/,
     Dwarf_Error*  /*error*/);
@@ -1658,49 +1652,6 @@ int dwarf_next_cu_header_d(Dwarf_Debug /*dbg*/,
     Dwarf_Half    * /*header_cu_type*/,
     Dwarf_Error*    /*error*/);
 
-/*  Die traversal operations.
-    dwarf_next_cu_header_b traverses debug_info CU headers.
-    Obsolete but supported.
-    */
-int dwarf_next_cu_header_b(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned* /*cu_header_length*/,
-    Dwarf_Half*     /*version_stamp*/,
-    Dwarf_Off*      /*abbrev_offset*/,
-    Dwarf_Half*     /*address_size*/,
-    Dwarf_Half*     /*length_size*/,
-    Dwarf_Half*     /*extension_size*/,
-    Dwarf_Unsigned* /*next_cu_header_offset*/,
-    Dwarf_Error*    /*error*/);
-
-/*  dwarf_next_cu_header_types traverses debug_types CU headers.
-    New in October, 2011. Obsolete but supported May 2015.
-    */
-int dwarf_next_cu_header_c(Dwarf_Debug /*dbg*/,
-    Dwarf_Bool      /*is_info*/,
-    Dwarf_Unsigned* /*cu_header_length*/,
-    Dwarf_Half*     /*version_stamp*/,
-    Dwarf_Off*      /*abbrev_offset*/,
-    Dwarf_Half*     /*address_size*/,
-    Dwarf_Half*     /*length_size*/,
-    Dwarf_Half*     /*extension_size*/,
-    Dwarf_Sig8*     /*type signature*/,
-    Dwarf_Unsigned* /*typeoffset*/,
-    Dwarf_Unsigned* /*next_cu_header_offset*/,
-    Dwarf_Error*    /*error*/);
-/* The following is obsolete, though supported. November 2009. */
-int dwarf_next_cu_header(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned* /*cu_header_length*/,
-    Dwarf_Half*     /*version_stamp*/,
-    Dwarf_Off*      /*abbrev_offset*/,
-    Dwarf_Half*     /*address_size*/,
-    Dwarf_Unsigned* /*next_cu_header_offset*/,
-    Dwarf_Error*    /*error*/);
-
-int dwarf_siblingof(Dwarf_Debug /*dbg*/,
-    Dwarf_Die        /*die*/,
-    Dwarf_Die*       /*return_siblingdie*/,
-    Dwarf_Error*     /*error*/);
-/* dwarf_siblingof_b new October 2011. */
 int dwarf_siblingof_b(Dwarf_Debug /*dbg*/,
     Dwarf_Die        /*die*/,
     Dwarf_Bool       /*is_info*/,
@@ -3786,71 +3737,27 @@ int dwarf_attr_offset(Dwarf_Die /*die*/,
     Added April 2005 so that debugger can detect broken offsets
     (which happened in an IRIX executable larger than 2GB
     with MIPSpro 7.3.1.3 toolchain.).
+    This has 21 arguments, which is...unusual.
 */
-int dwarf_get_section_max_offsets(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned * /*debug_info_size*/,
-    Dwarf_Unsigned * /*debug_abbrev_size*/,
-    Dwarf_Unsigned * /*debug_line_size*/,
-    Dwarf_Unsigned * /*debug_loc_size*/,
-    Dwarf_Unsigned * /*debug_aranges_size*/,
-    Dwarf_Unsigned * /*debug_macinfo_size*/,
-    Dwarf_Unsigned * /*debug_pubnames_size*/,
-    Dwarf_Unsigned * /*debug_str_size*/,
-    Dwarf_Unsigned * /*debug_frame_size*/,
-    Dwarf_Unsigned * /*debug_ranges_size*/,
-    Dwarf_Unsigned * /*debug_pubtypes_size*/);
-
-/*  New October 2011., adds .debug_types section to the sizes
-    returned. */
-int dwarf_get_section_max_offsets_b(Dwarf_Debug /*dbg*/,
-
-    Dwarf_Unsigned * /*debug_info_size*/,
-    Dwarf_Unsigned * /*debug_abbrev_size*/,
-    Dwarf_Unsigned * /*debug_line_size*/,
-    Dwarf_Unsigned * /*debug_loc_size*/,
-    Dwarf_Unsigned * /*debug_aranges_size*/,
-    Dwarf_Unsigned * /*debug_macinfo_size*/,
-    Dwarf_Unsigned * /*debug_pubnames_size*/,
-    Dwarf_Unsigned * /*debug_str_size*/,
-    Dwarf_Unsigned * /*debug_frame_size*/,
-    Dwarf_Unsigned * /*debug_ranges_size*/,
-    Dwarf_Unsigned * /*debug_pubtypes_size*/,
-    Dwarf_Unsigned * /*debug_types_size*/);
-
-int dwarf_get_section_max_offsets_c(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned * /*debug_info_size*/,
-    Dwarf_Unsigned * /*debug_abbrev_size*/,
-    Dwarf_Unsigned * /*debug_line_size*/,
-    Dwarf_Unsigned * /*debug_loc_size*/,
-    Dwarf_Unsigned * /*debug_aranges_size*/,
-    Dwarf_Unsigned * /*debug_macinfo_size*/,
-    Dwarf_Unsigned * /*debug_pubnames_size*/,
-    Dwarf_Unsigned * /*debug_str_size*/,
-    Dwarf_Unsigned * /*debug_frame_size*/,
-    Dwarf_Unsigned * /*debug_ranges_size*/,
-    Dwarf_Unsigned * /*debug_pubtypes_size*/,
-    Dwarf_Unsigned * /*debug_types_size*/,
-    Dwarf_Unsigned * /*debug_macro_size*/,
-    Dwarf_Unsigned * /*debug_str_offsets_size*/,
-    Dwarf_Unsigned * /*debug_sup_size*/,
-    Dwarf_Unsigned * /*debug_cu_index_size*/,
-    Dwarf_Unsigned * /*debug_tu_index_size*/);
 int dwarf_get_section_max_offsets_d(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*debug_info_size*/,
     Dwarf_Unsigned * /*debug_abbrev_size*/,
     Dwarf_Unsigned * /*debug_line_size*/,
     Dwarf_Unsigned * /*debug_loc_size*/,
     Dwarf_Unsigned * /*debug_aranges_size*/,
+
     Dwarf_Unsigned * /*debug_macinfo_size*/,
     Dwarf_Unsigned * /*debug_pubnames_size*/,
     Dwarf_Unsigned * /*debug_str_size*/,
     Dwarf_Unsigned * /*debug_frame_size*/,
     Dwarf_Unsigned * /*debug_ranges_size*/,
+
     Dwarf_Unsigned * /*debug_pubtypes_size*/,
     Dwarf_Unsigned * /*debug_types_size*/,
     Dwarf_Unsigned * /*debug_macro_size*/,
     Dwarf_Unsigned * /*debug_str_offsets_size*/,
     Dwarf_Unsigned * /*debug_sup_size*/,
+
     Dwarf_Unsigned * /*debug_cu_index_size*/,
     Dwarf_Unsigned * /*debug_tu_index_size*/,
     Dwarf_Unsigned * /*debug_names_size*/,

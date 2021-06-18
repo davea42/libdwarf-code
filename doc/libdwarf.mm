@@ -3198,25 +3198,6 @@ and of the object format involved.
 The topic is beyond the scope of
 this document.
 
-.H 3 "dwarf_object_init()"
-.DS
-\f(CWint dwarf_object_init(
-    Dwarf_Obj_Access_Interface* obj,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr     errarg,
-    Dwarf_Debug*  dbg,
-    Dwarf_Error*  error)\fP
-.DE
-The function
-\f(CWint dwarf_object_init()\fP
-is the same as
-\f(CWint dwarf_object_init_b()\fP
-except
-\f(CWint dwarf_object_init()\fP
-is missing the groupnumber argument so
-DWARF5 split dwarf objects cannot be
-fully handled.
-
 .H 3 "dwarf_get_real_section_name()"
 .DS
 \f(CWint dwarf_get_real_section_name( Dwarf_Debug dbg,
@@ -3736,49 +3717,37 @@ void examplesecgroup(Dwarf_Debug dbg)
 .H 2 "Section size operations"
 .P
 These operations are informative but not normally needed.
-.H 3 "dwarf_get_section_max_offsets_b()"
+.H 3 "dwarf_get_section_max_offsets_d()"
 .DS
-\f(CWint dwarf_get_section_max_offsets_b(Dwarf_debug dbg,
-    Dwarf_Unsigned * /*debug_info_size*/,
-    Dwarf_Unsigned * /*debug_abbrev_size*/,
-    Dwarf_Unsigned * /*debug_line_size*/,
-    Dwarf_Unsigned * /*debug_loc_size*/,
-    Dwarf_Unsigned * /*debug_aranges_size*/,
-    Dwarf_Unsigned * /*debug_macinfo_size*/,
-    Dwarf_Unsigned * /*debug_pubnames_size*/,
-    Dwarf_Unsigned * /*debug_str_size*/,
-    Dwarf_Unsigned * /*debug_frame_size*/,
-    Dwarf_Unsigned * /*debug_ranges_size*/,
-    Dwarf_Unsigned * /*debug_pubtypes_size*/,
-    Dwarf_Unsigned * /*debug_types_size*/);
+\f(CWint dwarf_get_section_max_offsets_d(Dwarf_debug dbg,
+    Dwarf_Unsigned * debug_info_size,
+    Dwarf_Unsigned * debug_abbrev_size,
+    Dwarf_Unsigned * debug_line_size,
+    Dwarf_Unsigned * debug_loc_size,
+    Dwarf_Unsigned * debug_aranges_size,
+    Dwarf_Unsigned * debug_macinfo_size,
+    Dwarf_Unsigned * debug_pubnames_size,
+    Dwarf_Unsigned * debug_str_size,
+    Dwarf_Unsigned * debug_frame_size,
+    Dwarf_Unsigned * debug_ranges_size,
+    Dwarf_Unsigned * debug_typenames_size;
+    Dwarf_Unsigned * debug_types_size;
+    Dwarf_Unsigned * debug_macro_size,
+    Dwarf_Unsigned * debug_str_offsets_size,
+    Dwarf_Unsigned * debug_sup_size,
+    Dwarf_Unsigned * debug_cu_index_size,
+    Dwarf_Unsigned * debug_tu_index_size,
+    Dwarf_Unsigned * debug_names_size,
+    Dwarf_Unsigned * debug_loclists_size,
+    Dwarf_Unsigned * debug_rnglists_size);
 .DE
 .P
 The function
 \f(CWdwarf_get_section_max_offsets_b()\fP an open
 Dwarf_Dbg and reports on the section sizes by pushing
 section size values  back through the pointers.
+Null arguments are safe to pass in.
 
-Created in October 2011.
-
-.H 3 "dwarf_get_section_max_offsets()"
-.DS
-\f(CWint dwarf_get_section_max_offsets(Dwarf_debug dbg,
-    Dwarf_Unsigned * /*debug_info_size*/,
-    Dwarf_Unsigned * /*debug_abbrev_size*/,
-    Dwarf_Unsigned * /*debug_line_size*/,
-    Dwarf_Unsigned * /*debug_loc_size*/,
-    Dwarf_Unsigned * /*debug_aranges_size*/,
-    Dwarf_Unsigned * /*debug_macinfo_size*/,
-    Dwarf_Unsigned * /*debug_pubnames_size*/,
-    Dwarf_Unsigned * /*debug_str_size*/,
-    Dwarf_Unsigned * /*debug_frame_size*/,
-    Dwarf_Unsigned * /*debug_ranges_size*/,
-    Dwarf_Unsigned * /*debug_pubtypes_size*/);
-.DE
-.P
-The function is the same as \f(CWdwarf_get_section_max_offsets_b()\fP
-except it is missing the \f(CWdebug_types_size()\fP argument.
-Though obsolete it is still supported.
 
 .H 2 "Printf Callbacks"
 .P
@@ -4011,32 +3980,34 @@ function returns \f(CWDW_DLV_ERROR\fP and sets the
 .DE
 The function
 \f(CWdwarf_next_cu_header_d()\fP operates on
-the either the .debug_info   section
+the either the .debug_info  section
 (if \f(CWis_info\fP is non-zero) or .debug_types
 section
 (if \f(CWis_info\fP is zero).
-It returns \f(CWDW_DLV_ERROR\fP
+Only DWARF4 allows a .debug_types section.
+The function returns \f(CWDW_DLV_ERROR\fP
 if it fails, and
 \f(CWDW_DLV_OK\fP if it succeeds.
+It returns \f(CWDW_DLV_NO_ENTRY\fP when there are no 
+more compilation units in the object file
 .P
 If it succeeds, \f(CW*next_cu_header\fP is set to
 the offset in the .debug_info section of the next
 compilation-unit header if it succeeds.  On reading the last
 compilation-unit header in the .debug_info section it contains
 the size of the .debug_info or debug_types section.
+.P
 Beginning 22 April 2019
 \f(CWnext_cu_header\fP
-will not be used to return the offset
-if 
-\f(CWnext_cu_header\fP
-is null.
-Be cautious using a null argument
-unless you know that only a suitably
-recent version of libdwarf will be used.
-
+and indeed all the arguments
+following 
+\f(CWis_info\fP
+may be passed as NULL (0)
+if one is not interested in the
+value.
 .P
 The next call to
-\f(CWdwarf_next_cu_header_b()\fP returns \f(CWDW_DLV_NO_ENTRY\fP
+\f(CWdwarf_next_cu_header_d()\fP returns \f(CWDW_DLV_NO_ENTRY\fP
 without reading a
 compilation-unit or setting \f(CW*next_cu_header\fP.
 Subsequent calls to \f(CWdwarf_next_cu_header()\fP
@@ -4044,14 +4015,7 @@ repeat the cycle by reading the first compilation-unit and so on.
 .P
 The other
 values returned through pointers are the values in the compilation-unit
-header.  If any of \f(CWcu_header_length\fP, 
-\f(CWversion_stamp\fP,
-\f(CWabbrev_offset\fP, \f(CWaddress_size\fP,
-\f(CWoffset_size\fP, \f(CWextension_size\fP,
-\f(CWsignature\fP, or \f(CWtypeoffset\fP,
-is \f(CWNULL\fP, the
-argument is ignored (meaning it is not an error to provide a
-\f(CWNULL\fP pointer for any or all of these arguments).
+header.
 .P
 \f(CWcu_header_length\fP returns the length in bytes of the compilation
 unit header.
@@ -4121,10 +4085,14 @@ The value returned through the pointer is either
 \f(CWDW_UT_partial\fP
 \f(CWDW_UT_type\fP
 and identifies the header type of this CU.
-In \f(CWDWARF4\fP a \f(CWDW_UT_type\fP
-will be in \f(CW.debug_types\fP, but in
-\f(CWDWARF5\fP these compilation units are in \f(CW.debug_info\fP
-and the Debug Fission (ie Split Dwarf) \f(CW.debug_info.dwo\fP
+In \f(CWDWARF4\fP a 
+\f(CWDW_UT_type\fP
+will be in 
+\f(CW.debug_types\fP, but in
+\f(CWDWARF5\fP these compilation units are in 
+\f(CW.debug_info\fP
+and the Debug Fission (ie Split Dwarf) 
+\f(CW.debug_info.dwo\fP
 sections .
 
 .H 3 "dwarf_next_cu_header_c()"
@@ -4250,7 +4218,7 @@ or \f(CWDW_TAG_type_unit\fP
 tag.
 
 .in +2
-.FG "Example4 dwarf_siblingof()"
+.FG "Example4 dwarf_siblingof_b()"
 .DS
 \f(CW
 void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
@@ -4275,21 +4243,6 @@ void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
 \fP
 .DE
 .in -2
-
-.H 3 "dwarf_siblingof()"
-.DS
-\f(CWint dwarf_siblingof(
-    Dwarf_Debug dbg,
-    Dwarf_Die die,
-    Dwarf_Die *return_sib,
-    Dwarf_Error *error)\fP
-.DE
-.P
-\f(CWint dwarf_siblingof()\fP operates exactly the same as
-\f(CWint dwarf_siblingof_b()\fP, but
-\f(CWint dwarf_siblingof()\fP refers only to .debug_info
-DIEs.
-
 
 .H 3 "dwarf_child()"
 .DS
