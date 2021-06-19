@@ -187,10 +187,12 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         Dwarf_Half     return_address_register_rule = 0;
         Dwarf_Ptr      initial_instructions = 0;
         Dwarf_Unsigned initial_instructions_length = 0;
-        res = dwarf_get_cie_info(cie_data[i], &bytes_in_cie,
+        Dwarf_Half     offset_size = 0;
+        res = dwarf_get_cie_info_b(cie_data[i], &bytes_in_cie,
             &version,&augmentation, &code_alignment_factor,
             &data_alignment_factor,&return_address_register_rule,
             &initial_instructions,&initial_instructions_length,
+            &offset_size,
             &err);
         if(res != DW_DLV_OK) {
             errprint(err);

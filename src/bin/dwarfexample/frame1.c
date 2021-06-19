@@ -259,9 +259,6 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
     return;
 }
 
-
-
-
 /* Simply shows the instructions at hand for this fde. */
 static void
 print_cie_instrs(Dwarf_Cie cie,Dwarf_Error *error)
@@ -275,11 +272,12 @@ print_cie_instrs(Dwarf_Cie cie,Dwarf_Error *error)
     Dwarf_Half return_address_register_rule = 0;
     Dwarf_Ptr instrp = 0;
     Dwarf_Unsigned instr_len = 0;
+    Dwarf_Half offset_size = 0;
 
-    res = dwarf_get_cie_info(cie,&bytes_in_cie,
+    res = dwarf_get_cie_info_b(cie,&bytes_in_cie,
         &version, &augmentation, &code_alignment_factor,
         &data_alignment_factor, &return_address_register_rule,
-        &instrp,&instr_len,error);
+        &instrp,&instr_len,&offset_size,error);
     if(res != DW_DLV_OK) {
         printf("Unable to get cie info!\n");
         exit(1);
