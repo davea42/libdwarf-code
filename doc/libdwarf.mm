@@ -686,6 +686,13 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "June 2021"
+Old interfaces have been removed from the API
+in favor of new ones
+(present in the library for
+years) with improved functionality.
+The new ones will have the same name but
+with a trailing _a or _b or the like.
 .LI "September 2020"
 A new approach (simpler, more uniform)
 to deal with a failure of a dwarf_init*()
@@ -11543,9 +11550,9 @@ the .debug_frame section.
 
 \f(CWdwarf_get_fde_range()\fP returns \f(CWDW_DLV_ERROR\fP on error.
 
-.H 3 "dwarf_get_cie_info()"
+.H 3 "dwarf_get_cie_info_b()"
 .DS
-\f(CWint dwarf_get_cie_info(
+\f(CWint dwarf_get_cie_info_b(
     Dwarf_Cie       cie,
     Dwarf_Unsigned *bytes_in_cie,
     Dwarf_Small    *version,
@@ -11555,9 +11562,11 @@ the .debug_frame section.
     Dwarf_Half     *return_address_register_rule,
     Dwarf_Ptr      *initial_instructions,
     Dwarf_Unsigned *initial_instructions_length,
+    Dwarf_Half     *offset_size,
     Dwarf_Error    *error);\fP
 .DE
-\f(CWdwarf_get_cie_info()\fP is primarily for Internal-level Interface
+\f(CWdwarf_get_cie_info_b()\fP is primarily
+for Internal-level Interface
 consumers.
 If successful,
 it returns
@@ -11615,59 +11624,6 @@ to print the bytes in some fashion.
 The memory pointed to by \f(CWoutinstrs\fP
 must not be changed and there
 is nothing to free.
-
-.H 3 "dwarf_get_fde_info_for_reg()"
-This interface is suitable for DWARF2 but is not
-sufficient for DWARF3.  See 
-\f(CWint dwarf_get_fde_info_for_reg3\fP.
-.DS
-\f(CWint dwarf_get_fde_info_for_reg(
-    Dwarf_Fde fde,
-    Dwarf_Half table_column,
-    Dwarf_Addr pc_requested,
-    Dwarf_Signed *offset_relevant,
-    Dwarf_Signed *register_num,
-    Dwarf_Signed *offset,
-    Dwarf_Addr *row_pc,
-    Dwarf_Error *error);\fP
-.DE
-\f(CWdwarf_get_fde_info_for_reg()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*offset_relevant\fP to
-non-zero if the offset is relevant for the
-row specified by \f(CWpc_requested\fP and column specified by
-\f(CWtable_column\fP, for the FDE specified by \f(CWfde\fP.
-The
-intent is to return the rule for the given pc value and register.
-The location pointed to by \f(CWregister_num\fP is set to the register
-value for the rule.
-The location pointed to by \f(CWoffset\fP
-is set to the offset value for the rule.
-If offset is not relevant for this rule, \f(CW*offset_relevant\fP is
-set to zero.
-Since more than one pc
-value will have rows with identical entries, the user may want to
-know the earliest pc value after which the rules for all the columns
-remained unchanged.
-Recall that in the virtual table that the frame information
-represents there may be one or more table rows with identical data
-(each such table row at a different pc value).
-Given a \f(CWpc_requested\fP which refers to a pc in such a group
-of identical rows,
-the location pointed to by \f(CWrow_pc\fP is set
-to the lowest pc value
-within the group of  identical rows.
-The  value put in \f(CW*register_num\fP any of the
-\f(CWDW_FRAME_*\fP table columns values specified in \f(CWlibdwarf.h\fP
-or \f(CWdwarf.h\fP.
-
-\f(CWdwarf_get_fde_info_for_reg\fP returns \f(CWDW_DLV_ERROR\fP if there is an error.
-
-It is usable with either
-\f(CWdwarf_get_fde_n()\fP or \f(CWdwarf_get_fde_at_pc()\fP.
-
-\f(CWdwarf_get_fde_info_for_reg()\fP is tailored to MIPS, please use
-\f(CWdwarf_get_fde_info_for_reg3()\fP instead for all architectures.
-
 
 .H 3 "dwarf_get_fde_info_for_all_regs()"
 .DS
@@ -11745,7 +11701,7 @@ rule table when using the 'reg3' interfaces (these interfaces
 are strongly preferred over the older 'reg' interfaces).
 It should be at least as large as the
 number of real registers in the ABI which is to be read in
-for the dwarf_get_fde_info_for_reg3() or 
+for the dwarf_get_fde_info_for_reg3_b() or 
 dwarf_get_fde_info_for_all_regs3()
 functions to work properly.
 
@@ -11893,132 +11849,6 @@ the previous value of the default address size  (taken from the
 
 
 
-.H 3 "dwarf_get_fde_info_for_reg3()"
-This interface is suitable for DWARF2 and later.
-It returns the values for a particular real register
-(Not for the CFA virtual register,
-see dwarf_get_fde_info_for_cfa_reg3()
-below).
-If the application is going to retrieve the value for more
-than a few \f(CWtable_column\fP values at this \f(CWpc_requested\fP
-(by calling this function multiple times)
-it is much more efficient to
-call dwarf_get_fde_info_for_all_regs3() (in spite
-of the additional setup that requires of the caller).
-
-.DS
-\f(CWint dwarf_get_fde_info_for_reg3(
-    Dwarf_Fde fde,
-    Dwarf_Half table_column,
-    Dwarf_Addr pc_requested,
-    Dwarf_Small  *value_type,
-    Dwarf_Signed *offset_relevant,
-    Dwarf_Signed *register_num,
-    Dwarf_Signed *offset_or_block_len,
-    Dwarf_Ptr    *block_ptr,
-    Dwarf_Addr   *row_pc,
-    Dwarf_Error  *error);\fP
-.DE
-See also the nearly identical function
-\f(CWdwarf_get_fde_info_for_reg3_b()\fP.
-.P
-\f(CWdwarf_get_fde_info_for_reg3()\fP returns
-\f(CWDW_DLV_OK\fP on success.
-It sets \f(CW*value_type\fP
-to one of  DW_EXPR_OFFSET (0),
-DW_EXPR_VAL_OFFSET(1), DW_EXPR_EXPRESSION(2) or
-DW_EXPR_VAL_EXPRESSION(3).
-On call, \f(CWtable_column\fP must be set to the
-register number of a real register. Not
-the cfa 'register' or DW_FRAME_SAME_VALUE or
-DW_FRAME_UNDEFINED_VALUE.
-
-
-if \f(CW*value_type\fP has the value DW_EXPR_OFFSET (0) then:
-.in +4
-.P
-It sets \f(CW*offset_relevant\fP to
-non-zero if the offset is relevant for the
-row specified by \f(CWpc_requested\fP and column specified by
-\f(CWtable_column\fP or, for the FDE specified by \f(CWfde\fP.
-In this case  the  \f(CW*register_num\fP will be set
-to DW_FRAME_CFA_COL3 (.  This is an offset(N) rule
-as specified in the DWARF3/2 documents.
-.P
-Adding the value of \f(CW*offset_or_block_len\fP
-to the value of the CFA register gives the address
-of a location holding the previous value of
-register \f(CWtable_column\fP.
-
-.P
-If offset is not relevant for this rule, \f(CW*offset_relevant\fP is
-set to zero.  \f(CW*register_num\fP will be set
-to the number of the real register holding the value of
-the \f(CWtable_column\fP register.
-This is the register(R) rule as specified in DWARF3/2 documents.
-.P
-The
-intent is to return the rule for the given pc value and register.
-The location pointed to by \f(CWregister_num\fP is set to the register
-value for the rule.
-The location pointed to by \f(CWoffset\fP
-is set to the offset value for the rule.
-Since more than one pc
-value will have rows with identical entries, the user may want to
-know the earliest pc value after which the rules for all the columns
-remained unchanged.
-Recall that in the virtual table that the frame information
-represents there may be one or more table rows with identical data
-(each such table row at a different pc value).
-Given a \f(CWpc_requested\fP which refers to a pc in such a group
-of identical rows,
-the location pointed to by \f(CWrow_pc\fP is set
-to the lowest pc value
-within the group of  identical rows.
-
-.in -4
-
-.P
-If \f(CW*value_type\fP has the value DW_EXPR_VAL_OFFSET (1) then:
-.in +4
-This will be a val_offset(N) rule as specified in the
-DWARF3/2 documents so  \f(CW*offset_relevant\fP will
-be non zero.
-The calculation is identical to the  DW_EXPR_OFFSET (0)
-calculation with  \f(CW*offset_relevant\fP non-zero,
-but the value  resulting is the actual \f(CWtable_column\fP
-value (rather than the address where the value may be found).
-.in -4
-.P
-If \f(CW*value_type\fP has the value DW_EXPR_EXPRESSION (1) then:
-.in +4
- \f(CW*offset_or_block_len\fP
-is set to the length in bytes of a block of memory
-with a DWARF expression in the block.
-\f(CW*block_ptr\fP is set to point at the block of memory.
-The consumer code should  evaluate the block as
-a DWARF-expression. The result is the address where
-the previous value of the register may be found.
-This is a DWARF3/2 expression(E) rule.
-.in -4
-.P
-If \f(CW*value_type\fP has the value DW_EXPR_VAL_EXPRESSION (1) then:
-.in +4
-The calculation is exactly as for DW_EXPR_EXPRESSION (1)
-but the result of the DWARF-expression evaluation is
-the value of the   \f(CWtable_column\fP (not
-the address of the value).
-This is a DWARF3/2 val_expression(E) rule.
-.in -4
-
-\f(CWdwarf_get_fde_info_for_reg\fP
-returns \f(CWDW_DLV_ERROR\fP if there is an error and
-if there is an error only the \f(CWerror\fP pointer is set, none
-of the other output arguments are touched.
-
-It is usable with either
-\f(CWdwarf_get_fde_n()\fP or \f(CWdwarf_get_fde_at_pc()\fP.
-
 .H 3 "dwarf_get_fde_info_for_reg3_b()"
 This interface is suitable for DWARF2 and later.
 It returns the values for a particular real register
@@ -12048,9 +11878,84 @@ of the additional setup that requires of the caller).
     Dwarf_Error  *error);\fP
 .DE
 .P
-This is identical to
-\f(CWdwarf_get_fde_info_for_reg3()\fP
-except for the new arguments
+if \f(CW*value_type\fP has the value DW_EXPR_OFFSET (0) then:
+.in +4
+.P
+It sets \f(CW*offset_relevant\fP to
+non-zero if the offset is relevant for the
+row specified by \f(CWpc_requested\fP and column specified by
+\f(CWtable_column\fP or, for the FDE specified by \f(CWfde\fP.
+In this case  the  \f(CW*register_num\fP will be set
+to DW_FRAME_CFA_COL3 (.  This is an offset(N) rule
+as specified in the DWARF3/2 documents.
+.P
+Adding the value of \f(CW*offset_or_block_len\fP
+to the value of the CFA register gives the address
+of a location holding the previous value of
+register \f(CWtable_column\fP.
+.P
+If offset is not relevant for this rule, \f(CW*offset_relevant\fP is
+set to zero.  \f(CW*register_num\fP will be set
+to the number of the real register holding the value of
+the \f(CWtable_column\fP register.
+This is the register(R) rule as specified in DWARF3/2 documents.
+.P
+The
+intent is to return the rule for the given pc value and register.
+The location pointed to by \f(CWregister_num\fP is set to the register
+value for the rule.
+The location pointed to by \f(CWoffset\fP
+is set to the offset value for the rule.
+Since more than one pc
+value will have rows with identical entries, the user may want to
+know the earliest pc value after which the rules for all the columns
+remained unchanged.
+Recall that in the virtual table that the frame information
+represents there may be one or more table rows with identical data
+(each such table row at a different pc value).
+Given a \f(CWpc_requested\fP which refers to a pc in such a group
+of identical rows,
+the location pointed to by \f(CWrow_pc\fP is set
+to the lowest pc value
+within the group of  identical rows.
+.in -4
+
+.P
+If \f(CW*value_type\fP has the value DW_EXPR_VAL_OFFSET (1) then:
+.in +4
+This will be a val_offset(N) rule as specified in the
+DWARF3/2 documents so  \f(CW*offset_relevant\fP will
+be non zero.
+.P
+The calculation is identical to the  DW_EXPR_OFFSET (0)
+calculation with  \f(CW*offset_relevant\fP non-zero,
+but the value  resulting is the actual \f(CWtable_column\fP
+value (rather than the address where the value may be found).
+.in -4
+.P
+If \f(CW*value_type\fP has the value DW_EXPR_EXPRESSION (1) then:
+.in +4
+ \f(CW*offset_or_block_len\fP
+is set to the length in bytes of a block of memory
+with a DWARF expression in the block.
+\f(CW*block_ptr\fP is set to point at the block of memory.
+The consumer code should  evaluate the block as
+a DWARF-expression. The result is the address where
+the previous value of the register may be found.
+This is a DWARF3/2 expression(E) rule.
+.in -4
+.P
+If \f(CW*value_type\fP has the value DW_EXPR_VAL_EXPRESSION (1) then:
+.in +4
+The calculation is exactly as for DW_EXPR_EXPRESSION (1)
+but the result of the DWARF-expression evaluation is
+the value of the   \f(CWtable_column\fP (not
+the address of the value).
+This is a DWARF3/2 val_expression(E) rule.
+.in -4
+
+.P
+Arguments
 \f(CWhas_more_rows\fP
 and
 \f(CWsubsequent_pc\fP
