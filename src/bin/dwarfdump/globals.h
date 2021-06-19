@@ -187,7 +187,8 @@ extern void allocate_range_array_info(void);
 extern void release_range_array_info(void);
 extern void record_range_array_info_entry(Dwarf_Off die_off,
     Dwarf_Off range_off);
-extern int check_range_array_info(Dwarf_Debug dbg,Dwarf_Error *);
+extern int check_range_array_info(Dwarf_Debug dbg,
+    Dwarf_Die die, Dwarf_Error *);
 
 int should_skip_this_cu(Dwarf_Debug dbg,Dwarf_Bool *,
     Dwarf_Die cu_die);

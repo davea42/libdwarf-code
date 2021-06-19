@@ -84,9 +84,12 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     int dres = 0;
     int ddres = 0;
     int cudres = 0;
+    Dwarf_Bool is_info = TRUE;
 
-    /*  get die at die_off  */
-    dres = dwarf_offdie(dbg, die_off, &die, err);
+    /*  get die at die_off  For this old section
+        in DWARF only .debug_info could be appropriate,
+        never .debug_types. Hence is_info = TRUE */
+    dres = dwarf_offdie_b(dbg, die_off, is_info, &die, err);
         /*  Some llvm version puts the global die offset into
             pubnames with the result that
             we will get an error here but we just
@@ -127,7 +130,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     /* Get die at offset cu_die_off to check its existence. */
     {
         Dwarf_Die cu_die = NULL;
-        cudres = dwarf_offdie(dbg, cu_die_off, &cu_die, err);
+        cudres = dwarf_offdie_b(dbg, cu_die_off,is_info, &cu_die, err);
         if (cudres != DW_DLV_OK) {
             struct esb_s details;
 
@@ -322,6 +325,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
     Dwarf_Addr elf_max_address = 0;
     Dwarf_Signed i = 0;
     int ares = 0;
+    Dwarf_Bool is_info = TRUE;
 
     ares = get_address_size_and_max(dbg,0,&elf_max_address,err);
     if (ares != DW_DLV_OK) {
@@ -454,7 +458,8 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
 
                 /* Record offset for previous CU */
                 prev_cu_off = cu_die_off;
-                dres = dwarf_offdie(dbg, cu_die_off, &lcudie, err);
+                dres = dwarf_offdie_b(dbg, cu_die_off, 
+                    is_info, &lcudie, err);
                 if (dres != DW_DLV_OK) {
                     struct esb_s msge;
 
@@ -488,7 +493,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
             }
 
             /* get die at die_off */
-            dres = dwarf_offdie(dbg, die_off, &die, err);
+            dres = dwarf_offdie_b(dbg, die_off, is_info, &die, err);
             if (dres != DW_DLV_OK) {
                 struct esb_s msge;
 

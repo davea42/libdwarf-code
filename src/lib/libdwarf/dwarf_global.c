@@ -1010,7 +1010,7 @@ dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug dbg,
     This information makes it possible for a consumer to
     find and print context information for any die.
 
-    Use dwarf_offdie() passing in the offset this returns
+    Use dwarf_offdie_b() passing in the offset this returns
     to get a die pointer to the CU die.  */
 int
 dwarf_CU_dieoffset_given_die(Dwarf_Die die,

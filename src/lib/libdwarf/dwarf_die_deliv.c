@@ -2713,14 +2713,6 @@ dwarf_child(Dwarf_Die die,
     The new _b form works with debug_info or debug_types.
     */
 int
-dwarf_offdie(Dwarf_Debug dbg,
-    Dwarf_Off offset, Dwarf_Die * new_die, Dwarf_Error * error)
-{
-    Dwarf_Bool is_info = true;
-    return dwarf_offdie_b(dbg,offset,is_info,new_die,error);
-}
-
-int
 dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Off offset, Dwarf_Bool is_info,
     Dwarf_Die * new_die, Dwarf_Error * error)

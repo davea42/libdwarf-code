@@ -346,7 +346,8 @@ local_dwarf_decode_s_leb128_chk(unsigned char *leb128,
     If we fail due to error we hide the error. For now.
     Returns DW_DLV_OK or DW_DLV_NO_ENTRY for now. */
 static int
-get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
+get_abstract_origin_funcname(Dwarf_Debug dbg,
+    Dwarf_Die die, Dwarf_Attribute attr,
     struct esb_s *name_out)
 {
     Dwarf_Off off = 0;
@@ -359,6 +360,7 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
     int name_found = 0;
     int res = 0;
     Dwarf_Error err = 0;
+    Dwarf_Bool is_info = dwarf_get_die_infotypes_flag(die);
 
     res = dwarf_global_formref(attr,&off,&err);
     if (res == DW_DLV_ERROR) {
@@ -368,7 +370,7 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
     if (res == DW_DLV_NO_ENTRY) {
         return DW_DLV_NO_ENTRY;
     }
-    dres = dwarf_offdie(dbg,off,&origin_die,&err);
+    dres = dwarf_offdie_b(dbg,off,is_info,&origin_die,&err);
     if (dres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg,err,DW_DLA_ERROR);
         return DW_DLV_NO_ENTRY;
@@ -507,6 +509,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                     /*  Only use this if we have not seen DW_AT_name
                         yet .*/
                     int aores = get_abstract_origin_funcname(dbg,
+                        die,
                         atlist[i], proc_name);
                     if (aores == DW_DLV_OK) {
                         /* FOUND THE NAME */

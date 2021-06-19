@@ -331,8 +331,10 @@ record_range_array_info_entry(Dwarf_Off die_off,Dwarf_Off range_off)
 
 /*  Now that we are at the end of the CU, check the range lists */
 int
-check_range_array_info(Dwarf_Debug dbg,Dwarf_Error * err)
+check_range_array_info(Dwarf_Debug dbg,
+    Dwarf_Die cu_die_in,Dwarf_Error * err)
 {
+    Dwarf_Bool is_info = dwarf_get_die_infotypes_flag(cu_die_in);
     if (range_array && range_array_count) {
         /*  Traverse the range array and for each entry:
             Load the ranges
@@ -357,7 +359,7 @@ check_range_array_info(Dwarf_Debug dbg,Dwarf_Error * err)
             die_off = range_array[index].die_off;
             original_off = range_array[index].range_off;
 
-            res = dwarf_offdie(dbg,die_off,&cu_die,err);
+            res = dwarf_offdie_b(dbg,die_off,is_info,&cu_die,err);
             if (res != DW_DLV_OK) {
                 struct esb_s m;
 

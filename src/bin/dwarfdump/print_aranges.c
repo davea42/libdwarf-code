@@ -188,6 +188,8 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
             Dwarf_Unsigned length = 0;
             Dwarf_Off cu_die_offset = 0;
             Dwarf_Die cu_die = NULL;
+            Dwarf_Bool is_info = TRUE; /* has to be debug_info
+               as this involves addresses. */
 
             aires = dwarf_get_arange_info_b(arange_buf[i],
                 &segment,
@@ -213,7 +215,8 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                 int dres;
 
                 /*  Get basic locations for error reporting */
-                dres = dwarf_offdie(dbg, cu_die_offset,
+                dres = dwarf_offdie_b(dbg, cu_die_offset,
+                    is_info,
                     &cu_die, ga_err);
                 if (dres != DW_DLV_OK) {
                     struct esb_s m;
@@ -223,7 +226,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     }
                     esb_constructor(&m);
                     esb_append_printf_s(&m,
-                        "\nERROR: dwarf_offdie() gets a "
+                        "\nERROR: dwarf_offdie_b() gets a "
                         "return of %s ",
                         failtype);
                     esb_append_printf_i(&m," finding the "

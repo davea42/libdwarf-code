@@ -1295,7 +1295,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     int rares = 0;
                     Dwarf_Error raerr = 0;
 
-                    rares = check_range_array_info(dbg,&raerr);
+                    rares = check_range_array_info(dbg,
+                        cu_die2,&raerr);
                     if (rares == DW_DLV_ERROR) {
                         print_error_and_continue(dbg,
                             "ERROR: range array checks for "
