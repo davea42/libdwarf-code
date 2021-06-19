@@ -647,7 +647,7 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
     }
     dbg = arange->ar_dbg;
     /* This applies to debug_info only, not to debug_types. */
-    /*  Like dwarf_get_arange_info this ensures debug_info loaded:
+    /*  Like dwarf_get_arange_info_b() this ensures debug_info loaded:
         the cu_header is in debug_info and will be used else
         we would not call dwarf_get_arange_cu_header_offset. */
     if (!dbg->de_debug_info.dss_data) {
@@ -660,9 +660,6 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
     return DW_DLV_OK;
 }
 
-
-
-
 /*
     This function takes a Dwarf_Arange, and returns
     true if it is not NULL.  It also stores the start
@@ -672,48 +669,8 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
     returns false on error.
     If cu_die_offset returned ensures .debug_info loaded so
     the cu_die_offset is meaningful.
-*/
-int
-dwarf_get_arange_info(Dwarf_Arange arange,
-    Dwarf_Addr * start,
-    Dwarf_Unsigned * length,
-    Dwarf_Off * cu_die_offset, Dwarf_Error * error)
-{
-    if (arange == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ARANGE_NULL);
-        return DW_DLV_ERROR;
-    }
 
-    if (start != NULL)
-        *start = arange->ar_address;
-    if (length != NULL)
-        *length = arange->ar_length;
-    if (cu_die_offset != NULL) {
-        Dwarf_Debug dbg = arange->ar_dbg;
-        Dwarf_Off headerlen = 0;
-        Dwarf_Off offset = arange->ar_info_offset;
-        int cres = 0;
-
-        /* This applies to debug_info only, not to debug_types. */
-        if (!dbg->de_debug_info.dss_data) {
-            int res = _dwarf_load_debug_info(dbg, error);
-            if (res != DW_DLV_OK) {
-                return res;
-            }
-        }
-
-        cres = _dwarf_length_of_cu_header(dbg, offset,
-            true, &headerlen,error);
-        if (cres != DW_DLV_OK) {
-            return cres;
-        }
-        *cu_die_offset = headerlen + offset;
-    }
-    return DW_DLV_OK;
-}
-
-
-/*  New for DWARF4, entries may have segment information.
+    New for DWARF4, entries may have segment information.
     *segment is only meaningful if *segment_entry_size is non-zero. */
 int
 dwarf_get_arange_info_b(Dwarf_Arange arange,

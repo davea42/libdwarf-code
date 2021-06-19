@@ -2979,16 +2979,6 @@ int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
     Dwarf_Unsigned*  /*initial_instructions_length*/,
     Dwarf_Half*      /*offset_size*/,
     Dwarf_Error*     /*error*/);
-int dwarf_get_cie_info(Dwarf_Cie /*cie*/,
-    Dwarf_Unsigned * /*bytes_in_cie*/,
-    Dwarf_Small*     /*version*/,
-    char        **   /*augmenter*/,
-    Dwarf_Unsigned*  /*code_alignment_factor*/,
-    Dwarf_Signed*    /*data_alignment_factor*/,
-    Dwarf_Half*      /*return_address_register_rule*/,
-    Dwarf_Ptr*       /*initial_instructions*/,
-    Dwarf_Unsigned*  /*initial_instructions_length*/,
-    Dwarf_Error*     /*error*/);
 
 /* dwarf_get_cie_index new September 2009. */
 int dwarf_get_cie_index(
@@ -3013,36 +3003,11 @@ int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
     Dwarf_Addr*      /*row_pc*/,
     Dwarf_Error*     /*error*/);
 
-/*  In this older interface DW_FRAME_CFA_COL is a meaningful
-    column (which does not work well with DWARF3 or
-    non-MIPS architectures). */
-int dwarf_get_fde_info_for_reg(Dwarf_Fde /*fde*/,
-    Dwarf_Half       /*table_column*/,
-    Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Signed*    /*offset_relevant*/,
-    Dwarf_Signed*    /*register*/,
-    Dwarf_Signed*    /*offset*/,
-    Dwarf_Addr*      /*row_pc*/,
-    Dwarf_Error*     /*error*/);
-
-/*  See discussion of dw_value_type, libdwarf.h.
-    Use of DW_FRAME_CFA_COL is not meaningful in this interface.
-    See dwarf_get_fde_info_for_cfa_reg3().  */
-/*  dwarf_get_fde_info_for_reg3 is useful on a single column, but
+/*  See discussion of dw_value_type, libdwarf.h. */
+/*  dwarf_get_fde_info_for_reg3_b() is useful on a single column, but
     it is inefficient to iterate across all table_columns using this
     function.  Instead call dwarf_get_fde_info_for_all_regs3()
     and index into the table it fills in. */
-int dwarf_get_fde_info_for_reg3(Dwarf_Fde /*fde*/,
-    Dwarf_Half       /*table_column*/,
-    Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Small  *   /*value_type*/,
-    Dwarf_Signed *   /*offset_relevant*/,
-    Dwarf_Signed *   /*register*/,
-    Dwarf_Signed *   /*offset_or_block_len*/,
-    Dwarf_Ptr    *   /*block_ptr */,
-    Dwarf_Addr   *   /*row_pc_out*/,
-    Dwarf_Error  *    /*error*/);
-
 int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Half       /*table_column*/,
     Dwarf_Addr       /*pc_requested*/,
@@ -3056,7 +3021,7 @@ int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Addr   *    /* subsequent_pc */,
     Dwarf_Error  *    /*error*/);
 
-/*  Use this or the next function to get the cfa.
+/*  Use this  to get the cfa.
     New function, June 11, 2016*/
 int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Addr       /*pc_requested*/,
@@ -3068,16 +3033,6 @@ int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Addr*      /*row_pc_out*/,
     Dwarf_Bool  *    /* has_more_rows */,
     Dwarf_Addr  *    /* subsequent_pc */,
-    Dwarf_Error*     /*error*/);
-/*  Use this to get the cfa. Or the above function. */
-int dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde /*fde*/,
-    Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Small  *   /*value_type*/,
-    Dwarf_Signed *   /*offset_relevant*/,
-    Dwarf_Signed*    /*register*/,
-    Dwarf_Signed*    /*offset_or_block_len*/,
-    Dwarf_Ptr   *    /*block_ptr */,
-    Dwarf_Addr*      /*row_pc_out*/,
     Dwarf_Error*     /*error*/);
 
 int dwarf_get_fde_for_die(Dwarf_Debug /*dbg*/,
@@ -3131,8 +3086,6 @@ int dwarf_get_aranges_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
-
-
 int dwarf_get_arange(
     Dwarf_Arange*    /*aranges*/,
     Dwarf_Unsigned   /*arange_count*/,
@@ -3153,20 +3106,8 @@ int dwarf_get_arange_cu_header_offset(
 #pragma optional dwarf_get_arange_cu_header_offset
 #endif
 
-/*  DWARF2,3 interface. No longer really adequate (it was never
-    right for segmented address spaces, please switch
-    to using dwarf_get_arange_info_b instead.
-    There is no effective difference between these
-    functions  if the address space
-    of the target is not segmented.  */
-int dwarf_get_arange_info(
-    Dwarf_Arange     /*arange*/,
-    Dwarf_Addr*      /*start*/,
-    Dwarf_Unsigned*  /*length*/,
-    Dwarf_Off*       /*cu_die_offset*/,
-    Dwarf_Error*     /*error*/ );
-
-/*  New for DWARF4, entries may have segment information.
+/*  DWARF2,3,4 interface. 
+    New for DWARF4, entries may have segment information.
     *segment is only meaningful if *segment_entry_size is non-zero. */
 int dwarf_get_arange_info_b(
     Dwarf_Arange     /*arange*/,

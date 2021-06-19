@@ -1709,31 +1709,6 @@ dwarf_get_fde_exception_info(Dwarf_Fde fde,
     Special augmentation data is not returned here.
 */
 int
-dwarf_get_cie_info(Dwarf_Cie cie,
-    Dwarf_Unsigned * bytes_in_cie,
-    Dwarf_Small * ptr_to_version,
-    char **augmenter,
-    Dwarf_Unsigned * code_alignment_factor,
-    Dwarf_Signed * data_alignment_factor,
-    Dwarf_Half * return_address_register,
-    Dwarf_Ptr * initial_instructions,
-    Dwarf_Unsigned * initial_instructions_length,
-    Dwarf_Error * error)
-{
-    Dwarf_Half offset_size = 0;
-    return dwarf_get_cie_info_b(cie,
-        bytes_in_cie,
-        ptr_to_version,
-        augmenter,
-        code_alignment_factor,
-        data_alignment_factor,
-        return_address_register,
-        initial_instructions,
-        initial_instructions_length,
-        &offset_size,
-        error);
-}
-int
 dwarf_get_cie_info_b(Dwarf_Cie cie,
     Dwarf_Unsigned * bytes_in_cie,
     Dwarf_Small * ptr_to_version,
@@ -2059,130 +2034,13 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     return DW_DLV_OK;
 }
 
-/*  Obsolete as of 2006.
-    Gets the register info for a single register at a given PC value
-    for the FDE specified.
-
-    This is the old MIPS interface and should no longer be used.
-    Use dwarf_get_fde_info_for_reg3() instead.
-    It can not handle DWARF3 or later properly as it
-    assumes the CFA is representable as a table column. */
-int
-dwarf_get_fde_info_for_reg(Dwarf_Fde fde,
-    Dwarf_Half table_column,
-    Dwarf_Addr pc_requested,
-    Dwarf_Signed * offset_relevant,
-    Dwarf_Signed * register_num,
-    Dwarf_Signed * offset,
-    Dwarf_Addr * row_pc, Dwarf_Error * error)
-{
-    struct Dwarf_Frame_s fde_table;
-    int res = DW_DLV_ERROR;
-    Dwarf_Debug dbg = 0;
-    int output_table_real_data_size = 0;
-
-    FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
-    output_table_real_data_size = dbg->de_frame_reg_rules_entry_count;
-
-    res = dwarf_initialize_fde_table(dbg, &fde_table,
-        output_table_real_data_size,
-        error);
-    if (res != DW_DLV_OK)
-        return res;
-
-    if (table_column >= output_table_real_data_size) {
-        dwarf_free_fde_table(&fde_table);
-        _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
-        return DW_DLV_ERROR;
-    }
-
-    /*  _dwarf_get_fde_info_for_a_pc_row will perform
-        more sanity checks */
-    res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
-        &fde_table,
-        dbg->de_frame_cfa_col_number,
-        NULL,NULL,error);
-    if (res != DW_DLV_OK) {
-        dwarf_free_fde_table(&fde_table);
-        return res;
-    }
-
-    if (fde_table.fr_reg[table_column].ru_value_type !=
-        DW_EXPR_OFFSET) {
-        /*  The problem here is that this interface cannot deal with
-            other sorts of (newer) dwarf frame values.  Code must
-            use dwarf_get_fde_info_for_reg3() to get these
-            values correctly.  We error rather than return
-            misleading incomplete data. */
-        dwarf_free_fde_table(&fde_table);
-        _dwarf_error(NULL, error,
-            DW_DLE_FRAME_REGISTER_UNREPRESENTABLE);
-        return DW_DLV_ERROR;
-    }
-    if (table_column == dbg->de_frame_cfa_col_number) {
-        if (register_num) {
-            *register_num = fde_table.fr_cfa_rule.ru_register;
-        }
-        if (offset) {
-            *offset = fde_table.fr_cfa_rule.ru_offset_or_block_len;
-        }
-        if (row_pc) {
-            *row_pc = fde_table.fr_loc;
-        }
-        *offset_relevant = fde_table.fr_cfa_rule.ru_is_off;
-
-    } else {
-        if (register_num) {
-            *register_num = fde_table.fr_reg[table_column].
-                ru_register;
-        }
-        if (offset) {
-            *offset = fde_table.fr_reg[table_column].
-                ru_offset_or_block_len;
-        }
-        if (row_pc) {
-            *row_pc = fde_table.fr_loc;
-        }
-
-        *offset_relevant = fde_table.fr_reg[table_column].ru_is_off;
-    }
-    dwarf_free_fde_table(&fde_table);
-    return DW_DLV_OK;
-}
-
 /*  In this interface, table_column of DW_FRAME_CFA_COL
     is not meaningful.
-    Use  dwarf_get_fde_info_for_cfa_reg3() to get the CFA.
+    Use  dwarf_get_fde_info_for_cfa_reg3_b() to get the CFA.
     Call dwarf_set_frame_cfa_value() to set the correct column
     after calling dwarf_init()
     (DW_FRAME_CFA_COL3 is a sensible column to use).
 */
-int
-dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
-    Dwarf_Half table_column,
-    Dwarf_Addr pc_requested,
-    Dwarf_Small * value_type,
-    Dwarf_Signed * offset_relevant,
-    Dwarf_Signed * register_num,
-    Dwarf_Signed * offset_or_block_len,
-    Dwarf_Ptr * block_ptr,
-    Dwarf_Addr * row_pc_out,
-    Dwarf_Error * error)
-{
-    int res = dwarf_get_fde_info_for_reg3_b(fde,
-        table_column, pc_requested, value_type,
-        offset_relevant, register_num,
-        offset_or_block_len,
-        block_ptr,
-        row_pc_out,
-        /*  Not looking for the has_more_rows flag
-            nor for the next pc in the frame data. */
-        NULL,NULL,
-        error);
-    return res;
-}
-
-
 /*  New May 2018.
     If one is tracking the value of a single table
     column through a function, this lets us
@@ -2280,59 +2138,21 @@ dwarf_get_fde_info_for_reg3_b(Dwarf_Fde fde,
 
 }
 
-/*  New 2006.
-    For current DWARF, this is a preferred interface.
-
+/* 
     Compared to dwarf_get_fde_info_for_reg()
     it more correctly deals with the  CFA by not
     making the CFA a column number, which means
     DW_FRAME_CFA_COL3 becomes, like DW_CFA_SAME_VALUE,
     a special value, not something one uses as an index.
 
-    See also dwarf_get_fde_info_for_cfa_reg3_b(), which
-    is slightly preferred.
-    */
-int
-dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
-    Dwarf_Addr pc_requested,
-    Dwarf_Small * value_type,
-    Dwarf_Signed * offset_relevant,
-    Dwarf_Signed * register_num,
-    Dwarf_Signed * offset_or_block_len,
-    Dwarf_Ptr * block_ptr,
-    Dwarf_Addr * row_pc_out,
-    Dwarf_Error * error)
-{
-    Dwarf_Bool has_more_rows = 0;
-    Dwarf_Addr next_pc = 0;
-    int res = 0;
-    res = dwarf_get_fde_info_for_cfa_reg3_b(fde,
-        pc_requested,
-        value_type,
-        offset_relevant,
-        register_num,
-        offset_or_block_len,
-        block_ptr,
-        row_pc_out,
-        &has_more_rows,
-        &next_pc,
-        error);
-    return res;
-}
-
-/*  New June 11,2016.
-    For current DWARF, this is a preferred interface.
-
     Has extra arguments has_more_rows and next_pc
-    (compared to dwarf_get_fde_info_for_cfa_reg3())
     which can be used to more efficiently traverse
     frame data (primarily for dwarfdump and like
     programs).
 
-    Like dwarf_get_fde_info_for_cfa_reg3() it
-    deals with the  CFA by not
+    This deals with the  CFA by not
     making the CFA a column number, which means
-    DW_FRAME_CFA_COL3 becomes, like DW_CFA_SAME_VALUE,
+    DW_FRAME_CFA_COL3 is, like DW_CFA_SAME_VALUE,
     a special value, not something one uses as an index.
 
     Call dwarf_set_frame_cfa_value() to set the correct column
