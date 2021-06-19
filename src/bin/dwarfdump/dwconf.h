@@ -45,19 +45,9 @@ struct dwconf_s {
     char *cf_config_file_path;
     char *cf_abi_name;
 
-    /*  2 for old, 3 for frame interface 3. 2 means use the old
-        mips-abi-oriented frame interface. 3 means use the new
-        DWARF3-capable and configureable-abi interface.
-
-        Now, anyone who revises dwarf.h and libdwarf.h to match their
-        abi-of-interest will still be able to use
-        cf_interface_number 2
-        as before.  But most folks don't update those header
-        files and
-        instead of making *them* configurable we make dwarfdump (and
-        libdwarf) configurable sufficiently to print
-        frame information
-        sensibly. */
+    /*  The interface_number is now only 3, so never tested.
+        It used to allow 2 to test old and now-deleted
+        libdwarf API functions. */
     int cf_interface_number;
 
     /*  The number of table rules , aka columns.
@@ -108,7 +98,6 @@ int find_conf_file_and_read_config(const char *named_file,
     const char *named_abi, char **defaults,
     struct dwconf_s *conf_out);
 void init_conf_file_data(struct dwconf_s *config_file_data);
-void init_mips_conf_file_data(struct dwconf_s *config_file_data);
 
 void print_reg_from_config_data(Dwarf_Unsigned reg,
     struct dwconf_s *config_data);

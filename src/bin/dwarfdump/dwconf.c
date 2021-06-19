@@ -1401,41 +1401,6 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
     return FALSE;
 }
 
-/*  MIPS/IRIX frame register names.
-    For alternate name sets, use dwarfdump.conf or
-    revise dwarf.h and libdwarf.h and this table.
-*/
-static char *regnames[] = {
-    "cfa",
-    "r1/at", "r2/v0", "r3/v1",
-    "r4/a0", "r5/a1", "r6/a2", "r7/a3",
-    "r8/t0", "r9/t1", "r10/t2", "r11/t3",
-    "r12/t4", "r13/t5", "r14/t6", "r15/t7",
-    "r16/s0", "r17/s1", "r18/s2", "r19/s3",
-    "r20/s4", "r21/s5", "r22/s6", "r23/s7",
-    "r24/t8", "r25/t9", "r26/k0", "r27/k1",
-    "r28/gp", "r29/sp", "r30/s8", "r31",
-
-    "$f0", "$f1",
-    "$f2", "$f3",
-    "$f4", "$f5",
-    "$f6", "$f7",
-    "$f8", "$f9",
-    "$f10", "$f11",
-    "$f12", "$f13",
-    "$f14", "$f15",
-    "$f16", "$f17",
-    "$f18", "$f19",
-    "$f20", "$f21",
-    "$f22", "$f23",
-    "$f24", "$f25",
-    "$f26", "$f27",
-    "$f28", "$f29",
-    "$f30", "$f31",
-    "ra", "slk",
-};
-
-
 /*  Naming a few registers makes printing these just
     a little bit faster.
 */
@@ -1466,45 +1431,6 @@ init_conf_file_data(struct dwconf_s *config_file_data)
         sizeof(genericregnames) / sizeof(genericregnames[0]);
     config_file_data->cf_named_regs_table_size = generic_table_count;
     config_file_data->cf_regs_malloced = 0;
-}
-
-/*  These defaults match MIPS/IRIX ABI defaults, but this
-    function is not actually used.
-    For a 'generic' ABI, see -R or init_conf_file_data().
-    To really get the old MIPS, use '-x abi=mips'.
-    For other ABIs, see -x abi=<whatever>
-    to configure dwarfdump (and libdwarf) frame
-    data reporting at runtime.
-*/
-void
-init_mips_conf_file_data(struct dwconf_s *config_file_data)
-{
-    unsigned long base_table_count =
-        sizeof(regnames) / sizeof(regnames[0]);
-
-    memset(config_file_data, 0, sizeof(*config_file_data));
-    /*  Interface 2 is deprecated, but for testing purposes
-        is acceptable. */
-    config_file_data->cf_interface_number = 2;
-    config_file_data->cf_table_entry_count = DW_REG_TABLE_SIZE;
-    config_file_data->cf_initial_rule_value =
-        DW_FRAME_REG_INITIAL_VALUE;
-    config_file_data->cf_cfa_reg = DW_FRAME_CFA_COL;
-    config_file_data->cf_address_size =  0;
-    config_file_data->cf_same_val = DW_FRAME_SAME_VAL;
-    config_file_data->cf_undefined_val = DW_FRAME_UNDEFINED_VAL;
-    config_file_data->cf_regs = regnames;
-    config_file_data->cf_named_regs_table_size = base_table_count;
-    config_file_data->cf_regs_malloced = 0;
-    if (config_file_data->cf_table_entry_count != base_table_count) {
-        printf("dwarfdump: improper base table initialization, "
-            "header files wrong: "
-            "DW_REG_TABLE_SIZE %u != string table size %lu\n",
-            (unsigned) DW_REG_TABLE_SIZE,
-            (unsigned long) base_table_count);
-        exit(1);
-    }
-    return;
 }
 
 /*  A 'generic' ABI. For up to 1200 registers.

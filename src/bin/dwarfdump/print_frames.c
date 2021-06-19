@@ -1248,7 +1248,7 @@ print_one_fde(Dwarf_Debug dbg,
         Dwarf_Addr cur_pc_in_table = 0;
 
         cur_pc_in_table = j;
-        if (config_data->cf_interface_number == 3) {
+        {
             Dwarf_Signed reg = 0;
             Dwarf_Signed offset_relevant = 0;
             Dwarf_Small  value_type = 0;
@@ -1318,9 +1318,11 @@ print_one_fde(Dwarf_Debug dbg,
             Dwarf_Signed offset_or_block_len = 0;
             Dwarf_Signed offset = 0;
             Dwarf_Addr row_pc = 0;
+            Dwarf_Bool has_more_rows = FALSE;
+            Dwarf_Addr subsequent_pc = 0;
 
-            if (config_data->cf_interface_number == 3) {
-                fires = dwarf_get_fde_info_for_reg3(fde,
+            {
+                fires = dwarf_get_fde_info_for_reg3_b(fde,
                     k,
                     cur_pc_in_table,
                     &value_type,
@@ -1328,20 +1330,8 @@ print_one_fde(Dwarf_Debug dbg,
                     &reg,
                     &offset_or_block_len,
                     &block_ptr,
-                    &row_pc, err);
+                    &row_pc, &has_more_rows,&subsequent_pc, err);
                 offset = offset_or_block_len;
-            } else {
-                /*  This interface is deprecated. Is the old
-                    MIPS/DWARF2 interface. */
-                /*  ASSERT: config_data->cf_interface_number == 2 */
-                value_type = DW_EXPR_OFFSET;
-                fires = dwarf_get_fde_info_for_reg(fde,
-                    k,
-                    cur_pc_in_table,
-                    &offset_relevant,
-                    &reg,
-                    &offset, &row_pc,
-                    err);
             }
             if (fires == DW_DLV_ERROR) {
                 printf("\n");
@@ -1524,14 +1514,7 @@ print_one_cie(Dwarf_Debug dbg,
     Dwarf_Off cie_off = 0;
     Dwarf_Half offset_size = 0;
 
-    cires = dwarf_get_offset_size(dbg,&offset_size,err);
-    if ( cires == DW_DLV_ERROR) {
-        glflags.gf_count_major_errors++;
-        printf("ERROR: calling dwarf_get_offset_size() fails\n");
-        return cires;
-    }
-
-    cires = dwarf_get_cie_info(cie,
+    cires = dwarf_get_cie_info_b(cie,
         &cie_length,
         &version,
         &augmenter,
@@ -1539,10 +1522,10 @@ print_one_cie(Dwarf_Debug dbg,
         &data_alignment_factor,
         &return_address_register_rule,
         &initial_instructions,
-        &initial_instructions_length, err);
+        &initial_instructions_length,&offset_size, err);
     if (cires == DW_DLV_ERROR) {
         glflags.gf_count_major_errors++;
-        printf("ERROR: calling dwarf_get_cie_info() fails\n");
+        printf("ERROR: calling dwarf_get_cie_info_b() fails\n");
         return cires;
     }
     if (cires == DW_DLV_NO_ENTRY) {
@@ -2821,9 +2804,6 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
             Would be great if we could tell the caller
             the *next* column used here or something. */
         return;
-    }
-    if (config_data->cf_interface_number == 2) {
-        print_type_title = 0;
     }
     switch (value_type) {
     case DW_EXPR_OFFSET:
