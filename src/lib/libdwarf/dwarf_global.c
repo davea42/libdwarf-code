@@ -962,24 +962,6 @@ dwarf_get_globals_header(Dwarf_Global global,
 */
 
 /* ARGSUSED */
-int
-dwarf_get_cu_die_offset_given_cu_header_offset(Dwarf_Debug dbg,
-    Dwarf_Off in_cu_header_offset,
-    Dwarf_Off * out_cu_die_offset,
-    UNUSEDARG Dwarf_Error * err)
-{
-    Dwarf_Off headerlen = 0;
-    int cres = 0;
-
-    cres = _dwarf_length_of_cu_header(dbg, in_cu_header_offset,true,
-        &headerlen,err);
-    if (cres != DW_DLV_OK) {
-        return cres;
-    }
-    *out_cu_die_offset = in_cu_header_offset + headerlen;
-    return DW_DLV_OK;
-}
-
 /*  The following version new in October 2011, does allow finding
     the offset if one knows whether debug_info or debug_types
     or any .debug_info type including the DWARF5 flavors.
@@ -991,7 +973,7 @@ dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug dbg,
     Dwarf_Off in_cu_header_offset,
     Dwarf_Bool is_info,
     Dwarf_Off * out_cu_die_offset,
-    UNUSEDARG Dwarf_Error * err)
+    Dwarf_Error * err)
 {
     Dwarf_Off headerlen = 0;
     int cres = 0;

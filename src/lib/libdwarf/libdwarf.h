@@ -1730,7 +1730,7 @@ Dwarf_Bool dwarf_addr_form_is_indexed(int form);
     (the passed in DIE can be any DIE).
     This information makes it possible for a consumer to
     find and print CU context information for any die.
-    See also dwarf_get_cu_die_offset_given_cu_header_offset. */
+    See also dwarf_get_cu_die_offset_given_cu_header_offset_b. */
 int dwarf_CU_dieoffset_given_die(Dwarf_Die /*given_die*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
@@ -1917,60 +1917,6 @@ int dwarf_loclist_from_expr_c(Dwarf_Debug /*dbg*/,
 void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c /*loclist_head*/);
 
 /* END: loclist_c interfaces */
-
-
-/*  As of 2015 the preferred interface
-    is dwarf_get_loclist_c
-    and only dwarf_get_loclist_c will work
-    for DWARF5 (and also all earlier versions).  */
-int dwarf_loclist_n(Dwarf_Attribute /*attr*/,
-    Dwarf_Locdesc*** /*llbuf*/,
-    Dwarf_Signed *   /*locCount*/,
-    Dwarf_Error*     /*error*/);
-
-/*  The original interfaces.  Please do not use this. */
-int dwarf_loclist(Dwarf_Attribute /*attr*/,  /* inflexible! */
-    Dwarf_Locdesc**  /*llbuf*/,
-    Dwarf_Signed *   /*locCount*/,
-    Dwarf_Error*     /*error*/);
-
-/*  Extracts a dwarf expression from an expression byte stream.
-    Useful to get expressions from DW_CFA_def_cfa_expression
-    DW_CFA_expression DW_CFA_val_expression expression bytes.
-    27 April 2009: dwarf_loclist_from_expr interface with
-    no addr_size is obsolete but supported,
-    use dwarf_loclist_from_expr_a instead.  */
-int dwarf_loclist_from_expr(Dwarf_Debug /*dbg*/,
-    Dwarf_Ptr      /* expression_in*/,
-    Dwarf_Unsigned /* expression_length*/,
-    Dwarf_Locdesc ** /* llbuf*/,
-    Dwarf_Signed * /*listlen*/,
-    Dwarf_Error *  /* error*/ );
-
-/*  dwarf_loclist_from_expr_a new 27 Apr 2009:
-    added addr_size argument. */
-int dwarf_loclist_from_expr_a(Dwarf_Debug /*dbg*/,
-    Dwarf_Ptr      /*expression_in*/,
-    Dwarf_Unsigned /*expression_length*/,
-    Dwarf_Half     /*addr_size*/,
-    Dwarf_Locdesc ** /*llbuf*/,
-    Dwarf_Signed * /*listlen*/,
-    Dwarf_Error *  /*error*/);
-
-/*  dwarf_loclist_from_expr_b new 13 Nov 2012:
-    added dwarf_version (DWARF version number
-    of the applicable compilation unit)
-    and offset_size arguments. Added for
-    DW_OP_GNU_implicit_pointer. */
-int dwarf_loclist_from_expr_b(Dwarf_Debug /*dbg*/,
-    Dwarf_Ptr      /*expression_in*/ ,
-    Dwarf_Unsigned /*expression_length*/ ,
-    Dwarf_Half     /*addr_size*/ ,
-    Dwarf_Half     /*offset_size*/ ,
-    Dwarf_Small    /*dwarf_version*/ ,
-    Dwarf_Locdesc ** /*llbuf*/ ,
-    Dwarf_Signed * /*listlen*/ ,
-    Dwarf_Error *  /*error*/ );
 
 int dwarf_lowpc(Dwarf_Die /*die*/,
     Dwarf_Addr  *    /*returned_addr*/,
@@ -2649,14 +2595,8 @@ int dwarf_global_die_offset(Dwarf_Global /*global*/,
 
 /*  This returns the CU die global offset if one knows the
     CU header global offset.
-    See also dwarf_CU_dieoffset_given_die(). */
-int dwarf_get_cu_die_offset_given_cu_header_offset(
-    Dwarf_Debug      /*dbg*/,
-    Dwarf_Off        /*in_cu_header_offset*/,
-    Dwarf_Off *  /*out_cu_die_offset*/,
-    Dwarf_Error *    /*err*/);
-
-/*  The _b form is new October 2011. */
+    See also dwarf_CU_dieoffset_given_die().
+    The _b form is new October 2011. */
 int dwarf_get_cu_die_offset_given_cu_header_offset_b(
     Dwarf_Debug      /*dbg*/,
     Dwarf_Off        /*in_cu_header_offset*/,
@@ -2664,10 +2604,6 @@ int dwarf_get_cu_die_offset_given_cu_header_offset_b(
         false use debug_types.*/,
     Dwarf_Off *  /*out_cu_die_offset*/,
     Dwarf_Error *    /*err*/);
-
-#ifdef __sgi /* pragma is sgi MIPS only */
-#pragma optional dwarf_get_cu_die_offset_given_cu_header_offset
-#endif
 
 int dwarf_global_cu_offset(Dwarf_Global /*global*/,
     Dwarf_Off*       /*return_offset*/,
@@ -2888,15 +2824,6 @@ int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Signed   * /*returned_implicit_const*/,
     Dwarf_Off      * /*offset*/,
     Dwarf_Error    * /*error*/);
-
-/*  Obsolete because it cannot return the
-    DW_FORM_implicit_const value. */
-int dwarf_get_abbrev_entry(Dwarf_Abbrev /*abbrev*/,
-    Dwarf_Signed     /*index*/,
-    Dwarf_Half  *    /*returned_attr_num*/,
-    Dwarf_Signed*    /*form*/,
-    Dwarf_Off*       /*offset*/,
-    Dwarf_Error*     /*error*/);
 
 int dwarf_get_string_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
@@ -3772,18 +3699,6 @@ int dwarf_get_rnglists_entry_fields_a(
     Dwarf_Unsigned * /*cooked1*/,
     Dwarf_Unsigned * /*cooked2*/,
     Dwarf_Error *    /*err*/);
-
-/* The following is not complete. DO NOT USE.
-    Use dwarf_get_rnglists_entry_fields_a() instead. */
-int dwarf_get_rnglists_entry_fields(Dwarf_Rnglists_Head /*head*/,
-    Dwarf_Unsigned   /*entrynum*/,
-    unsigned int   * /*entrylen*/,
-    unsigned int   * /*code*/,
-    Dwarf_Unsigned * /*raw1*/,
-    Dwarf_Unsigned * /*raw2*/,
-    Dwarf_Unsigned * /*cooked1*/,
-    Dwarf_Unsigned * /*cooked2*/,
-    Dwarf_Error    * /*error*/);
 
 int dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head );
 

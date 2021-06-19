@@ -319,50 +319,6 @@ dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,
     return DW_DLV_OK;
 }
 
-
-/*  This does not return the implicit const, nor
-    does it return all bits of the uleb attribute
-    nor does it return all bits of the uleb form
-    value.
-    See dwarf_get_abbrev_entry_b().
-*/
-
-int
-dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
-    Dwarf_Signed indx,
-    Dwarf_Half   * returned_attr_num,
-    Dwarf_Signed * returned_form,
-    Dwarf_Off    * returned_offset,
-    Dwarf_Error * error)
-{
-    int res;
-    Dwarf_Unsigned attr = 0;
-    Dwarf_Unsigned form = 0;
-    Dwarf_Signed implicitconst = 0;
-    Dwarf_Unsigned uindex = (Dwarf_Unsigned)indx;
-    Dwarf_Bool filter_outliers = TRUE;
-
-    res = dwarf_get_abbrev_entry_b(abbrev,
-        uindex,
-        filter_outliers,
-        &attr,
-        &form,
-        &implicitconst,
-        returned_offset,
-        error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    /* returned_offset already set by dwarf_get_abbrev_entry_b; */
-    if (returned_attr_num) {
-        *returned_attr_num = (Dwarf_Half)attr;
-    }
-    if (returned_form) {
-        *returned_form = (Dwarf_Signed)form;
-    }
-    return DW_DLV_OK;
-}
-
 /*  If filter_outliers is non-zero then
     the routine will return DW_DLV_ERROR
     if the leb reading generates a number that
@@ -375,7 +331,6 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     have callers examine the return values
     in greater detail than the checking here
     provides.
-
 */
 int
 dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,

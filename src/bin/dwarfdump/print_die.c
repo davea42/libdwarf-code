@@ -5973,10 +5973,8 @@ print_location_list(Dwarf_Debug dbg,
     Dwarf_Error* llerr)
 {
     Dwarf_Locdesc *llbuf = 0;
-    Dwarf_Locdesc **llbufarray = 0; /* Only for older interface. */
     Dwarf_Unsigned no_of_elements = 0;
     Dwarf_Loc_Head_c loclist_head = 0; /* 2015 loclist interface */
-    Dwarf_Unsigned i = 0;
     int            lres = 0;
     unsigned int   llent = 0;
 
@@ -6002,8 +6000,6 @@ print_location_list(Dwarf_Debug dbg,
     Dwarf_Half     version = 2;
     Dwarf_Half     offset_size = 4;
     Dwarf_Small    lkind = DW_LKIND_unknown;
-    /* old and new interfaces differ on signedness.  */
-    Dwarf_Signed   locentry_count = 0;
     Dwarf_Unsigned bytes_total_in_lle = 0;
     Dwarf_Unsigned overall_offset_of_this_context = 0;
     Dwarf_Unsigned total_length_of_this_context = 0;
@@ -6037,7 +6033,7 @@ print_location_list(Dwarf_Debug dbg,
             lres,*llerr);
         return lres;
     }
-    if (version == DWVERSION5 || !glflags.gf_use_old_dwarf_loclist) {
+    {
         /* Preferred interface. Deals with DWARF2,3,4,5. */
         lres = dwarf_get_loclist_c(attr,&loclist_head,
             &no_of_elements,llerr);
@@ -6108,23 +6104,7 @@ print_location_list(Dwarf_Debug dbg,
                 esb_append(details,"\n   ");
             }
         }
-    } else {
-        /*  DWARF2 old loclist. Still used. Ignores
-            DWARF5.  Does not work well with DWARF4,
-            but sort of works there.  */
-        Dwarf_Signed sno = 0;
-        lres = dwarf_loclist_n(attr, &llbufarray, &sno, llerr);
-        if (lres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "ERROR: dwarf_loclist_n fails",
-                lres, *llerr);
-            return lres;
-        } else if (lres == DW_DLV_NO_ENTRY) {
-            return lres;
-        }
-        no_of_elements = sno;
     }
-
     possibly_increase_esb_alloc(details, no_of_elements,100);
     for (llent = 0; llent < no_of_elements; ++llent) {
         Dwarf_Unsigned locdesc_offset = 0;
@@ -6141,7 +6121,7 @@ print_location_list(Dwarf_Debug dbg,
         Dwarf_Small loclist_source = 0;
         int no_ending_newline = FALSE;
 
-        if (!glflags.gf_use_old_dwarf_loclist) {
+        {
             lres = dwarf_get_locdesc_entry_d(loclist_head,
                 llent,
                 &lle_value,
@@ -6162,33 +6142,7 @@ print_location_list(Dwarf_Debug dbg,
             } else if (lres == DW_DLV_NO_ENTRY) {
                 return lres;
             }
-            locentry_count = ulocentry_count;
-        } else {
-            llbuf = llbufarray[llent];
-            rawlowpc = lopc = llbuf->ld_lopc;
-            rawhipc  = hipc = llbuf->ld_hipc;
-            loclist_source = llbuf->ld_from_loclist;
-            if (loclist_source > 1) {
-                printf("ERROR: Attempting to use the original "
-                    " loclist/locexpr code with "
-                    "DW_LKIND_GNU_exp_list "
-                    " or DW_LKIND_loclists is not going to work: "
-                    "loclist_source value %u\n",loclist_source);
-                glflags.gf_count_major_errors++;
-            }
-            expr_section_offset = llbuf->ld_section_offset;
-            locdesc_offset = expr_section_offset -
-                sizeof(Dwarf_Half) - 2 * address_size;
-            locentry_count = llbuf->ld_cents;
-            ulocentry_count = locentry_count;
-            if (lopc == max_address) {
-                lle_value = DW_LLE_base_address;
-            } else if (lopc== 0 && hipc == 0) {
-                lle_value = DW_LLE_end_of_list;
-            } else {
-                lle_value = DW_LLE_start_end;
-            }
-        }
+        } 
         if (loclist_source == DW_LKIND_expression &&
             lle_value != DW_LLE_start_end) {
             printf("ERROR: With DW_LKIND_expression"
@@ -6336,16 +6290,7 @@ print_location_list(Dwarf_Debug dbg,
             esb_append(details,"\n");
         }
     }
-
-    if (!glflags.gf_use_old_dwarf_loclist) {
-        dwarf_loc_head_c_dealloc(loclist_head);
-    } else {
-        for (i = 0; i < no_of_elements; ++i) {
-            dwarf_dealloc(dbg, llbufarray[i]->ld_s, DW_DLA_LOC_BLOCK);
-            dwarf_dealloc(dbg, llbufarray[i], DW_DLA_LOCDESC);
-        }
-        dwarf_dealloc(dbg, llbufarray, DW_DLA_LIST);
-    }
+    dwarf_loc_head_c_dealloc(loclist_head);
     return DW_DLV_OK;
 }
 

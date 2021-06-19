@@ -232,6 +232,9 @@ recent changes.
 
 .H 2 "Items Changed"
 .P
+Many obsolete functions deleted.
+18 June 2021.
+.P
 If dwarf_formudata() encounters a signed form
 it checks the value. If the value is non-negative
 it returns the non-negative value, otherwise
@@ -465,184 +468,8 @@ dwarf_init_path(),dwarf_object_detector_path(),
 and dwarf_object_detector_fd().
 (October 24, 2018)
 .P
-All references to Dwarf_Frame_Op3 have been removed
-as that struct was never created or available.
-The new function dwarf_get_fde_info_for_reg3_b()
-is documented.
-(May 12, 2018)
-.P
-With DWARF5 it became harder to use
-dwarf_srclines_data_b() as DWARF5 changed
-each line table header file table to zero-based
-indexing from one-based (and made the primary
-file index zero).
-So a new function dwarf_srclines_file_indexes()
-returns values that make it easy to step through
-and call dwarf_srclines_data_b() sensibly whether
-the line table is DWARF2,3,4, or 5.
-(March 23, 2018)
-.P
-Added COMDAT support.
-Recent compilers generate COMDAT sections (for some DWARF
-information) routinely so this became important
-recently. The new libdwarf COMDAT support
-extends the groupnumber
-idea as suggested just below.
-(May 17, 2017)
-.P
-Adding dwarf_init_b()
-and dwarf_object_init_b() with a groupnumber
-option added. DWARF5 adds split-dwarf and
-we call original sections like .debug_info
-group one and new sections like .debug_info.dwo
-group two.
-It has not escaped our attention that this
-numbering can be extended to deal with
-Elf COMDAT
-section groups of DWARF information, though
-COMDAT groups are not currently supported.
-(April 02, 2017)
-.P
-Adding support for DWARF5 .debug_loc.dwo
-and split dwarf range tables.
-Added dwarf_get_offset_size().
-(November 08, 2015)
-.P
-Adding support for reading DWARF5 line tables
-and GNU two-level line tables.
-The function dwarf_srclines() still works
-but those using DWARF4 or DWARF5 are
-advised to switch to dwarf_srclines_b().
-dwarf_srclines()
-cannot handle skeleton line tables sensibly
-and a new interface was needed for two-level
-line tables so the new approach satisfies both.
-(October 5,2015)
-.P
-Adding support for Package Files (DWARF5)
-to enable access of address data using DW_FORM_addrx.
-See dwarf_set_tied_dbg().
-(September 13, 2015)
-.P
-Adding some DWARF5 support and improved DWP Package File
-support, using dwarf_next_cu_header_d().
-.P
-Added a note about dwarf_errmsg(): the string pointer
-returned should be considered ephemeral, not a
-string which remains valid permanently.
-User code should print it or copy it before calling
-other libdwarf functions on the specific Dwarf_Debug
-instance.
-(May 15, 2014)
-.P
-Added a printf-callback so libdwarf will not actually print
-to \f(CWstdout\fP.
-Added dwarf_highpc_b()
-so return of a DWARF4 DW_AT_high_pc of class constant
-can be returned properly.
-(August 15 2013)
-.P
-Defined how the new operator DW_OP_GNU_const_type is handled.
-(January 26 2013)
-.P
-Added dwarf_loclist_from_expr_b()
-function which adds arguments of the DWARF version
-(2 for DWARF2, etc) and the offset size
-to the dwarf_loclist_from_expr_a()
-function.  Because the DW_OP_GNU_implicit_pointer
-opcode is defined differently for DWARF2 than for
-later versions.
-(November 2012)
-.P
-Added new functions (some for libdwarf client code)
-and internal logic support for the
-DWARF4 .debug_types section.
-The new functions are
-dwarf_next_cu_header_c(),
-dwarf_siblingof_b(), dwarf_offdie_b(),
-dwarf_get_cu_die_offset_given_cu_header_offset_b(),
-dwarf_get_die_infotypes_flag(),
-dwarf_get_section_max_offsets_b().
-.P
-New functions and logic support additional detailed error reporting
-so that more compiler bugs can be reported sensibly
-by consumer code (as opposed
-to having libdwarf just assume
-things are ok and blindly continuing on
-with erroneous data).
-November 20, 2010
-.P
-It seems impossible to default to both DW_FRAME_CFA_COL
-and DW_FRAME_CFA_COL3 in a single build of libdwarf,
-so the default is now unambiguously DW_FRAME_CFA_COL3
-unless the configure option --enable-oldframecol
-is specified at configure time.
-The function dwarf_set_frame_cfa_value()
-may be used to override the default : using that function gives
-consumer applications full control (its use is highly
-recommended).
-(January 17,2010)
-.P
-Added dwarf_set_reloc_application() and the default
-automatic application of Elf 'rela' relocations
-to DWARF sections (such rela sections appear in .o files, not
-in executables or shared objects, in general).
-The  dwarf_set_reloc_application() routine lets a consumer
-turn off the automatic application of 'rela' relocations
-if desired (it is not clear why anyone would really want to do that,
-but possibly a consumer could write its own relocation application).
-An example application that traverses a set of DIEs
-was added to the new dwarfexample directory (not
-in this libdwarf directory, but in parallel to it).
-(July 10, 2009)
-.P
-Added dwarf_get_TAG_name() (and the FORM AT and so on)
-interface functions so applications can get the string
-of the TAG, Attribute, etc as needed. (June 2009)
-.P
-Added dwarf_get_ranges_a() and dwarf_loclist_from_expr_a()
-functions which add arguments allowing a correct address_size
-when the address_size varies by compilation unit (a varying
-address_size is quite rare as of May 2009).
-(May 2009)
-.P
-Added dwarf_set_frame_same_value(), and
-dwarf_set_frame_undefined_value() to complete
-the set of frame-information functions needed to allow
-an application get all frame information
-returned correctly (meaning that it
-can be correctly interpreted) for all ABIs.
-Documented dwarf_set_frame_cfa_value().
-Corrected spelling to dwarf_set_frame_rule_initial_value().
-(April 2009).
-.P
-Added support for various DWARF3 features, but primarily
-a new frame-information interface tailorable at run-time
-to more than a single ABI.
-See dwarf_set_frame_rule_initial_value(), dwarf_set_frame_rule_table_size(),
-dwarf_set_frame_cfa_value().
-See also dwarf_get_fde_info_for_reg3() and
-dwarf_get_fde_info_for_cfa_reg3().  (April 2006)
-.P
-Added support for DWARF3 .debug_pubtypes section.
-Corrected various leaks (revising dealloc() calls, adding
-new functions) and corrected dwarf_formstring() documentation.
-.P
-Added dwarf_srclines_dealloc() as the previous deallocation
-method documented for data returned by
-dwarf_srclines() was incapable of freeing
-all the allocated storage (14 July 2005).
-.P
-dwarf_nextglob(), dwarf_globname(), and dwarf_globdie() were all changed
-to operate on the items in the .debug_pubnames section.
-.P
-All functions were modified to return solely an error code.
-Data is returned through pointer arguments.
-This makes writing safe and correct library-using-code far easier.
-For justification for this approach, see
-the chapter titled "Candy Machine Interfaces"
-in the book "Writing Solid Code" by
-Steve Maguire.
+.P Older entries removed as no longer
+very relevant
 
 .H 2 "Items Removed"
 .P
@@ -6627,9 +6454,11 @@ is probably not a possible return value, but
 please test for it anyway.
 
 .H 3 "dwarf_loclist_from_expr_c()"
-This is now obsolete, though it works as
-well as ever, so if it works for your object
-codes you may continue to use it.
+This is the recommended current interface.
+It uses the Dwarf_Loc_Head_c opaque
+struct pointer to hold the information 
+for detailed printing using
+\f(CWdwarf_get_locdesc_entry_c()\fP
 .DS
 \f(CW
 int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
@@ -6643,19 +6472,6 @@ int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Error     * error);
 \fP
 .DE
-This interface is not sufficient 
-to work properly as it fails to pass in
-data from the Compilation Unit. 
-The earlier versions
-\f(CWdwarf_loclist_from_expr()\fP,
-\f(CWdwarf_loclist_from_expr_a()\fP,
-and
-\f(CWdwarf_loclist_from_expr_b\fP
-are all similarly deficient.
-These suffice for early DWARF locations
-but cannot work for every kind of
-DWARF5 location list or location.
-.P
 Frame operators such as
 DW_CFA_def_cfa_expression have a location expression
 and the location_expression is accessed with
@@ -6685,7 +6501,7 @@ argument must contain the size of an offset
 in the expression
 (normally 4, sometimes 8).
 The
-\f(CWversion\fP
+\f(CWdwarf_version\fP
 argument must contain the dwarf_version
 of the expression
 (2,3,4, or 5).
@@ -6808,236 +6624,6 @@ to
 zero immediately after the call, as the pointer
 is stale at that point.
 
-.H 3 "dwarf_loclist_n()"
-
-.DS
-\f(CWint dwarf_loclist_n(
-        Dwarf_Attribute attr,
-        Dwarf_Locdesc ***llbuf,
-        Dwarf_Signed  *listlen,
-        Dwarf_Error *error)\fP
-.DE
-This interface cannot handle DWARF5 or Split Dwarf.
-Use  \f(CWdwarf_get_loclist_c()\fP and related functions
-instead (as of November 2015).
-The function \f(CWdwarf_loclist_n()\fP sets \f(CW*llbuf\fP to point to
-an array of \f(CWDwarf_Locdesc\fP pointers corresponding to each of
-the location expressions in a location list, and sets
-\f(CW*listlen\fP to the number
-of elements in the array and
-returns \f(CWDW_DLV_OK\fP if the attribute is
-appropriate.
-.P
-This is the preferred function for Dwarf_Locdesc as
-it is the interface allowing access to an entire
-loclist. (use of \f(CWdwarf_loclist_n()\fP is
-suggested as the better interface, though
-\f(CWdwarf_loclist()\fP is still
-supported.)
-.P
-If the attribute is a reference to a location list
-(DW_FORM_data4 or DW_FORM_data8)
-the location list entries are used to fill
-in all the fields of the \f(CWDwarf_Locdesc\fP(s) returned.
-.P
-If the attribute is a location description
-(DW_FORM_block2 or DW_FORM_block4)
-then some of the \f(CWDwarf_Locdesc\fP values of the single
-\f(CWDwarf_Locdesc\fP record are set to 'sensible'
-but arbitrary values.  Specifically, ld_lopc is set to 0 and
-ld_hipc is set to all-bits-on. And \f(CW*listlen\fP is set to 1.
-.P
-If the attribute is a reference to a location expression
-(DW_FORM_locexper)
-then some of the \f(CWDwarf_Locdesc\fP values of the single
-\f(CWDwarf_Locdesc\fP record are set to 'sensible'
-but arbitrary values.  Specifically, ld_lopc is set to 0 and
-ld_hipc is set to all-bits-on. And \f(CW*listlen\fP is set to 1.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-.P
-\f(CWdwarf_loclist_n()\fP works on \f(CWDW_AT_location\fP,
-\f(CWDW_AT_data_member_location\fP, \f(CWDW_AT_vtable_elem_location\fP,
-\f(CWDW_AT_string_length\fP, \f(CWDW_AT_use_location\fP, and
-\f(CWDW_AT_return_addr\fP attributes.
-.P
-If the attribute is \f(CWDW_AT_data_member_location\fP the value
-may be of class CONSTANT.  \f(CWdwarf_loclist_n()\fP is unable
-to read class CONSTANT, so you need to first determine the
-class using \f(CWdwarf_get_form_class()\fP and if it is
-class CONSTANT call
-\f(CWdwarf_formsdata()\fP or \f(CWdwarf_formudata()\fP
-to get the constant value (you may need to call both as
-DWARF4 does not define the signedness of the constant value).
-.P
-Storage allocated by a successful call of \f(CWdwarf_loclist_n()\fP should
-be deallocated when no longer of interest (see \f(CWdwarf_dealloc()\fP).
-The block of \f(CWDwarf_Loc\fP structs pointed to by the \f(CWld_s\fP
-field of each \f(CWDwarf_Locdesc\fP structure
-should be deallocated with the allocation type
-\f(CWDW_DLA_LOC_BLOCK\fP.
-and  the \f(CWllbuf[]\fP space pointed to should be deallocated with
-allocation type \f(CWDW_DLA_LOCDESC\fP.
-This should be followed by deallocation of the \f(CWllbuf\fP
-using the allocation type \f(CWDW_DLA_LIST\fP.
-.in +2
-.DS
-\f(CW
-void example9(Dwarf_Debug dbg,Dwarf_Attribute someattr)
-{
-    Dwarf_Signed lcount = 0;
-    Dwarf_Locdesc **llbuf = 0;
-    Dwarf_Error error = 0;
-    int lres = 0;
-
-    lres = dwarf_loclist_n(someattr, &llbuf,&lcount,&error);
-    if (lres == DW_DLV_OK) {
-        Dwarf_Signed i = 0;
-        for (i = 0; i < lcount; ++i) {
-            /*  Use llbuf[i]. Both Dwarf_Locdesc and the
-                array of Dwarf_Loc it points to are
-                defined in libdwarf.h: they are
-                not opaque structs. */
-            dwarf_dealloc(dbg, llbuf[i]->ld_s, DW_DLA_LOC_BLOCK);
-            dwarf_dealloc(dbg,llbuf[i], DW_DLA_LOCDESC);
-        }
-        dwarf_dealloc(dbg, llbuf, DW_DLA_LIST);
-    }
-}
-\fP
-.DE
-.in -2
-.P
-
-.H 3 "dwarf_loclist()"
-.DS
-\f(CWint dwarf_loclist(
-        Dwarf_Attribute attr,
-        Dwarf_Locdesc **llbuf,
-        Dwarf_Signed  *listlen,
-        Dwarf_Error *error)\fP
-.DE
-Use  \f(CWdwarf_get_loclist_c()\fP and related functions
-instead (as of November 2015).
-The function \f(CWdwarf_loclist()\fP sets \f(CW*llbuf\fP to point to
-a \f(CWDwarf_Locdesc\fP pointer for the single location expression
-it can return.
-It sets
-\f(CW*listlen\fP to 1.
-and returns \f(CWDW_DLV_OK\fP
-if the attribute is
-appropriate.
-.P
-It is less flexible than \f(CWdwarf_loclist_n()\fP in that
-\f(CWdwarf_loclist()\fP can handle a maximum of one
-location expression, not a full location list.
-If a location-list is present it returns only
-the first location-list entry location description.
-Use \f(CWdwarf_loclist_n()\fP instead.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-\f(CWdwarf_loclist()\fP works on \f(CWDW_AT_location\fP,
-\f(CWDW_AT_data_member_location\fP, \f(CWDW_AT_vtable_elem_location\fP,
-\f(CWDW_AT_string_length\fP, \f(CWDW_AT_use_location\fP, and
-\f(CWDW_AT_return_addr\fP attributes.
-.P
-Storage allocated by a successful call of \f(CWdwarf_loclist()\fP should
-be deallocated when no longer of interest (see \f(CWdwarf_dealloc()\fP).
-The block of \f(CWDwarf_Loc\fP structs pointed to by the \f(CWld_s\fP
-field of each \f(CWDwarf_Locdesc\fP structure
-should be deallocated with the allocation type \f(CWDW_DLA_LOC_BLOCK\fP.
-This should be followed by deallocation of the \f(CWllbuf\fP
-using the allocation type \f(CWDW_DLA_LOCDESC\fP.
-.in +2
-.FG "Examplea dwarf_loclist()"
-.DS
-\f(CW
-void examplea(Dwarf_Debug dbg,Dwarf_Attribute someattr)
-{
-    Dwarf_Signed lcount = 0;
-    Dwarf_Locdesc *llbuf = 0;
-    Dwarf_Error error = 0;
-    int lres = 0;
-
-    lres = dwarf_loclist(someattr, &llbuf,&lcount,&error);
-    if (lres == DW_DLV_OK) {
-        /* lcount is always 1, (and has always been 1) */
-        /* Use llbuf here. */
-
-        dwarf_dealloc(dbg, llbuf->ld_s, DW_DLA_LOC_BLOCK);
-        dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
-    }
-}
-\fP
-.DE
-.in -2
-.P
-
-.H 3 "dwarf_loclist_from_expr()"
-.DS
-\f(CWint dwarf_loclist_from_expr(
-        Dwarf_Debug dbg,
-        Dwarf_Ptr bytes_in,
-        Dwarf_Unsigned bytes_len,
-        Dwarf_Locdesc **llbuf,
-        Dwarf_Signed  *listlen,
-        Dwarf_Error *error)\fP
-.DE
-Use \f(CWdwarf_loclist_from_expr_b()\fP instead.
-This function is obsolete.
-.P
-The function \f(CWdwarf_loclist_from_expr()\fP
-sets \f(CW*llbuf\fP to point to
-a \f(CWDwarf_Locdesc\fP pointer for the single location expression
-which is pointed to by \f(CW*bytes_in\fP (whose length is
-\f(CW*bytes_len\fP).
-It sets
-\f(CW*listlen\fP to 1.
-and returns \f(CWDW_DLV_OK\fP
-if decoding is successful.
-Some sources of bytes of expressions are dwarf expressions
-in frame operations like \f(CWDW_CFA_def_cfa_expression\fP,
-\f(CWDW_CFA_expression\fP, and  \f(CWDW_CFA_val_expression\fP.
-.P
-Any address_size data in the location expression is assumed
-to be the same size as the default address_size for the object
-being read (normally 4 or 8).
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-.P
-Storage allocated by a successful call
-of \f(CWdwarf_loclist_from_expr()\fP should
-be deallocated when no longer of interest (see \f(CWdwarf_dealloc()\fP).
-The block of \f(CWDwarf_Loc\fP structs pointed to by the \f(CWld_s\fP
-field of each \f(CWDwarf_Locdesc\fP structure
-should be deallocated with the allocation type \f(CWDW_DLA_LOC_BLOCK\fP.
-This should be followed by deallocation of the \f(CWllbuf\fP
-using the allocation type \f(CWDW_DLA_LOCDESC\fP.
-.in +2
-.FG "Exampleb dwarf_loclist_from_expr()"
-.DS
-\f(CW
-void exampleb(Dwarf_Debug dbg,Dwarf_Ptr data, Dwarf_Unsigned len)
-{
-    Dwarf_Signed lcount = 0;
-    Dwarf_Locdesc *llbuf = 0;
-    Dwarf_Error error = 0;
-    int lres = 0;
-
-    lres = dwarf_loclist_from_expr(dbg,data,len, &llbuf,&lcount,
-        &error);
-    if (lres == DW_DLV_OK) {
-        /* lcount is always 1 */
-        /* Use llbuf  here.*/
-
-        dwarf_dealloc(dbg, llbuf->ld_s, DW_DLA_LOC_BLOCK);
-        dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
-    }
-}
-\fP
-.DE
-.in -2
-.P
 .H 3 "dwarf_loclist_from_expr_b()"
 .DS
 \f(CWint dwarf_loclist_from_expr_a(
@@ -12511,42 +12097,6 @@ the range of attributes in this abbreviation.
 The function returns 
 \f(CWDW_DLV_ERROR\fP on error and sets
 \f(CW*error\fP to an error value instance.
-
-.H 3 "dwarf_get_abbrev_entry()"
-.DS
-\f(CWint dwarf_get_abbrev_entry(
-    Dwarf_Abbrev abbrev,
-    Dwarf_Signed index,
-    Dwarf_Half   *attr_num,
-    Dwarf_Signed *form,
-    Dwarf_Off *offset,
-    Dwarf_Error *error)\fP
-.DE
-.P
-This function cannot return DW_FORM_implicit_const
-const values.
-When convenient all callers should switch to using
-the 
-\f(CWdwarf_get_abbrev_entry_b()\fP
-function.
-.P
-If successful,
-\f(CWdwarf_get_abbrev_entry()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*attr_num\fP to the attribute code of
-the attribute
-whose index is specified by \f(CWindex\fP in the given abbreviation.
-The index starts at 0.
-The location pointed to by \f(CWform\fP is set
-to the form of the attribute.
-The location pointed to by \f(CWoffset\fP
-is set to the byte offset of the attribute in the abbreviations section.
-.P
-It returns 
-\f(CWDW_DLV_NO_ENTRY\fP if the index specified is outside
-the range of attributes in this abbreviation.
-.P
-It returns 
-\f(CWDW_DLV_ERROR\fP on error.
 
 .H 2 "String Section Operations"
 The .debug_str section contains only strings.  Debuggers need

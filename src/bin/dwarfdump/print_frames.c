@@ -1632,14 +1632,12 @@ print_location_operations(Dwarf_Debug dbg,
     struct esb_s *out_string,
     Dwarf_Error *err)
 {
-    Dwarf_Locdesc *locdescarray = 0;
-    Dwarf_Signed listlen = 0;
     Dwarf_Unsigned ulistlen = 0;
     int res2 = 0;
     Dwarf_Addr baseaddr = 0; /* Really unknown */
     /* See PRINTING_DIES macro in print_die.c */
 
-    if (!glflags.gf_use_old_dwarf_loclist) {
+    {
         Dwarf_Loc_Head_c head = 0;
         Dwarf_Locdesc_c locentry = 0;
         int lres = 0;
@@ -1703,38 +1701,6 @@ print_location_operations(Dwarf_Debug dbg,
         dwarf_loc_head_c_dealloc(head);
         return lres;
     }
-    /* Using older loclist code here */
-    res2 =dwarf_loclist_from_expr_a(dbg,
-        bytes_in,block_len,
-        addr_size,
-        &locdescarray,
-        &listlen,err);
-    if (res2 == DW_DLV_ERROR) {
-        glflags.gf_count_major_errors++;
-        printf("\nERROR: calling dwarf_loclist_from_expr_a()\n");
-        return res2;
-    }
-    if (res2==DW_DLV_NO_ENTRY) {
-        return res2;
-    }
-
-    /* listlen is always 1 */
-    ulistlen = listlen;
-
-    res2 = dwarfdump_print_location_operations(dbg,
-        die,
-        die_indent_level,
-        locdescarray,
-        NULL,
-        0,
-        ulistlen,
-        DW_LKIND_expression,
-        0, /* no die indent*/
-        baseaddr,
-        out_string,err);
-    dwarf_dealloc(dbg, locdescarray->ld_s, DW_DLA_LOC_BLOCK);
-    dwarf_dealloc(dbg, locdescarray, DW_DLA_LOCDESC);
-    return res2;
 }
 
 /*  DW_CFA_nop may be omitted for alignment,

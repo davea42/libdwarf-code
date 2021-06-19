@@ -1176,13 +1176,9 @@ dwarf_rnglists_get_rle_head(
     return DW_DLV_OK;
 }
 
-/*  This version is the only one that can be used properly.
-    The first public version of this did NOT allow
-    any null arguments, but the documentation in
-    libdwarf2.1.mm showed null args. As of 18 Aug 2020
+/*  As of 18 Aug 2020
     this ignores null pointer inputs for the various
-    pointers-returning-values (rle_value_out etc).
-    */
+    pointers-returning-values (rle_value_out etc).  */
 int
 dwarf_get_rnglists_entry_fields_a(
     Dwarf_Rnglists_Head head,
@@ -1223,37 +1219,6 @@ dwarf_get_rnglists_entry_fields_a(
     if (cooked2) {
         *cooked2   = e->rle_cooked2;
     }
-    return DW_DLV_OK;
-}
-
-/*  This is missing a crucial bit,
-    debug_addr_unavailable = e->rle_index_failed,
-    so the results cannot be reliably used.
-    DO NOT USE */
-int
-dwarf_get_rnglists_entry_fields(
-    Dwarf_Rnglists_Head head,
-    Dwarf_Unsigned entrynum,
-    unsigned *entrylen,
-    unsigned *code,
-    Dwarf_Unsigned *raw1,
-    Dwarf_Unsigned *raw2,
-    Dwarf_Unsigned *cooked1,
-    Dwarf_Unsigned *cooked2,
-    Dwarf_Error *err UNUSEDARG)
-{
-    Dwarf_Rnglists_Entry e = 0;
-
-    if (entrynum >= head->rh_count) {
-        return DW_DLV_NO_ENTRY;
-    }
-    e = head->rh_rnglists[entrynum];
-    *entrylen  = e->rle_entrylen;
-    *code      = e->rle_code;
-    *raw1      = e->rle_raw1;
-    *raw2      = e->rle_raw2;
-    *cooked1   = e->rle_cooked1;
-    *cooked2   = e->rle_cooked2;
     return DW_DLV_OK;
 }
 
