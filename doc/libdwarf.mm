@@ -423,13 +423,6 @@ on these functions incorrectly specified that
 null was allowed.
 (April 22,2019)
 .P
-The dwarf_elf_init() and dwarf_elf_init_b()
-are now deprecated as they require the use
-of elf.h and libelf.h and libelf. 
-Use dwarf_init_path()
-or
-dwarf_init_b()
-instead.
 The new non-libelf reader code checks
 elf header values more thoroughly
 than libelf and detects corrupted Elf
@@ -497,7 +490,7 @@ extends the groupnumber
 idea as suggested just below.
 (May 17, 2017)
 .P
-Adding dwarf_init_b() and dwarf_elf_init_b()
+Adding dwarf_init_b()
 and dwarf_object_init_b() with a groupnumber
 option added. DWARF5 adds split-dwarf and
 we call original sections like .debug_info
@@ -2220,7 +2213,6 @@ A
 \f(CWDwarf_Error\fP returned from 
 any
 \f(CWdwarf_init*()\fP
-or \f(CWdwarf_elf_init*()\fP
 should be dealt with
 like any other error.
 We start with an example of
@@ -2824,8 +2816,6 @@ assigned by the library and passed to the error handler.
 .P
 The second argument is a copy of the value passed in to
 \f(CWdwarf_elf_init_b()\fP
-or
-\f(CWdwarf_init()\fP
 as the
 \f(CWerrarg()\fP argument.
 Typically the init function would be passed
@@ -2838,106 +2828,6 @@ an exception could be thrown here.
 Or the application could simply give up and call
 \f(CWexit()\fP
 as in the sample given above.
-
-.H 3 "dwarf_elf_init_b() [deprecated 2019]"
-.DS
-\f(CWint dwarf_elf_init_b(
-    Elf * elf_file_pointer,
-    Dwarf_Unsigned access,
-    unsigned groupnumber,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * dbg,
-    Dwarf_Error *error)\fP
-.DE
-We recommend you change to calling
-\f(CWdwarf_init_b()\fP
-or
-\f(CWdwarf_init_path()\fP
-instead.
-The
-\f(CW
-dwarf_elf_init()
-\fP
-and
-\f(CW
-dwarf_elf_init_b()
-\fP
-interfaces give no benefit
-over the other interfaces
-(other than allowing \f(CWdwarf_get_elf()\fP
-to succeed).
-.P
-The function 
-\f(CWdwarf_elf_init_b()\fP is similar to 
-\f(CWdwarf_init_b()\fP
-but
-an open \f(CWElf *\fP pointer is passed instead of a file
-descriptor so
-\f(CWdwarf_get_elf()\fP
-can succeed.
-.P
-The client is allowed to use the 
-\f(CWElf *\fP pointer
-for its own purposes without restriction during the time the
-\f(CWDwarf_Debug\fP
-is open, except that the client should not  \f(CWelf_end()\fP the
-pointer till after
-\f(CWdwarf_finish\fP is called.
-
-.H 3 "dwarf_elf_init() [deprecated 2019]"
-.DS
-\f(CWint dwarf_elf_init( 
-    Elf * elf_file_pointer,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * dbg,
-    Dwarf_Error *error)\fP
-.DE
-The function 
-\f(CWdwarf_elf_init()\fP is identical to 
-\f(CWdwarf_init[_b]()\fP
-except
-an open \f(CWElf *\fP pointer is passed instead of a file
-descriptor so
-\f(CWdwarf_get_elf()\fP
-can succeed.
-.P
-Code using 
-\f(CWdwarf_elf_init[_b]()\fP
-should be switched to calling
-\f(CWdwarf_init_b()\fP.
-
-.H 3 "dwarf_get_elf()"
-.DS
-\f(CWint dwarf_get_elf(
-    Dwarf_Debug dbg,
-    Elf **      elf,
-    Dwarf_Error *error)\fP
-.DE
-.P
-The function \f(CWdwarf_get_elf()\fP
-is only meaningful if a
-\f(CWdwarf_elf_init[_b]()\fP
-function was used to initialize the pointer 
-\f(CWdbg\fP.
-None of the other dwarf*init*() functions here
-ever use libelf, so
-there is no elf pointer to return through
-the pointer, so
-and the call will return
-\f(CWDW_DLV_NO_ENTRY\fP.
-In addition,
-this function is also not meaningful for an object file
-that is not in the Elf format.
-.P
-When it returns \f(CWDW_DLV_OK\fP,
-the function \f(CWdwarf_get_elf()\fP returns through the
-pointer \f(CWelf\fP the \f(CWElf *\fP handle
-used to access the object represented by the \f(CWDwarf_Debug\fP
-descriptor \f(CWdbg\fP.
-It returns \f(CWDW_DLV_ERROR\fP on error.
 
 .H 3 "dwarf_set_tied_dbg()"
 .DS
@@ -2965,9 +2855,7 @@ The utility function
 is a handy way to know if an address form is
 indexed.
 One does a normal
-\f(CWdwarf_elf_init_b()\fP
-or
-\f(CWdwarf_init()_b\fP
+\f(CWdwarf_init_b()\fP
 on each object and then tie the two together with
 a call  such as:
 .in +2
@@ -2979,7 +2867,7 @@ void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
     Dwarf_Error error = 0;
     int res = 0;
 
-    /*  Do the dwarf_init_b() or dwarf_elf_init_b()
+    /*  Do the dwarf_init_b()
         calls to set
         dbg, tieddbg at this point. Then: */
     res = dwarf_set_tied_dbg(dbg,tieddbg,&error);
@@ -3047,12 +2935,6 @@ associated with the descriptor \f(CWdbg\fP, and invalidates \f(CWdbg\fP.
 It returns \f(CWDW_DLV_ERROR\fP if there is an error during the
 finishing operation.  It returns \f(CWDW_DLV_OK\fP
 for a successful operation.
-
-Because \f(CWint dwarf_init()\fP opens an Elf descriptor
-on its fd and \f(CWdwarf_finish()\fP does not close that
-descriptor, an app should use \f(CWdwarf_get_elf\fP
-and should call \f(CWelf_end\fP with the pointer returned
-through the \f(CWElf**\fP handle created by \f(CWint dwarf_init()\fP.
 
 .H 3 "dwarf_set_stringcheck()"
 .DS
@@ -4404,7 +4286,7 @@ or the specific attribute needed was missing in that die.
 
 .LI
 Arrange to have an error handling function invoked upon detection of an
-error (see \f(CWdwarf_init()\fP).
+error (see \f(CWdwarf_init_b()\fP).
 
 .LI
 Call \f(CWdwarf_attrlist()\fP and iterate through the returned list of
