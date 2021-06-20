@@ -1748,7 +1748,7 @@ int dwarf_die_CU_offset_range(Dwarf_Die /*die*/,
     Dwarf_Off*       /*return_CU_length_bytes*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_attr (Dwarf_Die /*die*/,
+int dwarf_attr(Dwarf_Die /*die*/,
     Dwarf_Half        /*attr*/,
     Dwarf_Attribute * /*returned_attr*/,
     Dwarf_Error*      /*error*/);
@@ -1833,7 +1833,7 @@ int dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head /*head*/,
     a loclist or a locexpr. When the attribute is a locexpr
     a single loclist (created by libdwarf)
     is attached to loclist_head. */
-int dwarf_get_loclist_c (Dwarf_Attribute /*attr*/,
+int dwarf_get_loclist_c(Dwarf_Attribute /*attr*/,
     Dwarf_Loc_Head_c * /*loclist_head*/,
     Dwarf_Unsigned   * /*locCount*/,
     Dwarf_Error      * /*error*/);
@@ -2558,7 +2558,7 @@ int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns
     DW_DLV_OK that is filled in. */
-int dwarf_crc32 (Dwarf_Debug /*dbg*/,unsigned char * /*crcbuf*/,
+int dwarf_crc32(Dwarf_Debug /*dbg*/,unsigned char * /*crcbuf*/,
     Dwarf_Error * /*error*/);
 
 /*  Public interface to the real crc calculation
@@ -3155,10 +3155,7 @@ struct Dwarf_Macro_Details_s {
 
 /*  dwarf_print_lines is for use by dwarfdump: it prints
     line info to stdout.
-    The _dwarf name is obsolete. Use dwarf_ instead.
-    Added extra argnument 2/2009 for better checking.
 */
-int _dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/);
 int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
     int * /*error_count_out */);
 
@@ -3210,37 +3207,9 @@ int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
 void dwarf_check_lineheader(Dwarf_Die /*cu_die*/,
     int * /*errcount_out*/);
 
-/*  dwarf_ld_sort_lines helps SGI IRIX ld
-    rearrange lines in .debug_line in a .o created with a text
-    section per function.
-        -OPT:procedure_reorder=ON
-    where ld-cord (cord(1)ing by ld,
-    not by cord(1)) may have changed the function order.
-    The _dwarf name is obsolete. Use dwarf_ instead.
-*/
-int _dwarf_ld_sort_lines(
-    void *         /*orig_buffer*/,
-    unsigned long  /* buffer_len*/,
-    int            /*is_64_bit*/,
-    int *          /*any_change*/,
-    int *          /*err_code*/);
-int dwarf_ld_sort_lines(
-    void *         /*orig_buffer*/,
-    unsigned long  /*buffer_len*/,
-    int            /*is_64_bit*/,
-    int *          /*any_change*/,
-    int *          /*err_code*/);
-
 /* Used by dwarfdump -v to print fde offsets from debugging
    info.
-   The _dwarf name is obsolete. Use dwarf_ instead.
 */
-int _dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
-    Dwarf_Fde         /*in_fde*/,
-    Dwarf_Off *       /*fde_off*/,
-    Dwarf_Off *       /*cie_off*/,
-    Dwarf_Error *     /*err*/);
-
 int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Fde         /*in_fde*/,
     Dwarf_Off *       /*fde_off*/,
@@ -3249,20 +3218,14 @@ int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
 
 /* Used by dwarfdump -v to print cie offsets from debugging
    info.
-   The _dwarf name is obsolete. Use dwarf_ instead.
 */
 int dwarf_cie_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Cie     /*in_cie*/,
     Dwarf_Off *   /*cie_off */,
     Dwarf_Error * /*err*/);
-int _dwarf_cie_section_offset(Dwarf_Debug /*dbg*/,
-    Dwarf_Cie     /*in_cie*/,
-    Dwarf_Off *   /*cie_off*/,
-    Dwarf_Error * /*err*/);
-
 typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
 
-char *dwarf_find_macro_value_start(char * /*macro_string*/);
+char* dwarf_find_macro_value_start(char * /*macro_string*/);
 
 int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
     Dwarf_Off            /*macro_offset*/,
@@ -3634,15 +3597,6 @@ Dwarf_Half dwarf_set_frame_undefined_value(Dwarf_Debug /*dbg*/,
     greater than zero. */
 Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
     Dwarf_Small /* value */);
-
-/*  As of April 27, 2009, this version with no diepointer is
-    obsolete though supported.  Use dwarf_get_ranges_b() instead. */
-int dwarf_get_ranges(Dwarf_Debug /*dbg*/,
-    Dwarf_Off /*rangesoffset*/,
-    Dwarf_Ranges ** /*rangesbuf*/,
-    Dwarf_Signed * /*listlen*/,
-    Dwarf_Unsigned * /*bytecount*/,
-    Dwarf_Error * /*error*/);
 
 /*  Adds return of the final offset to accommodate
     DWARF4 GNU split-dwarf. Other than for split-dwarf
@@ -4375,41 +4329,31 @@ void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
     Returns the value the flag was before this call. */
 int dwarf_set_de_alloc_flag(int v);
 
-/* Solely looks for debuglink */
-int dwarf_object_detector_path(const char  * /*path*/,
-    char           * /*outpath_buffer*/,
-    unsigned long    /*outpathlen*/,
-    unsigned int   * /*ftype*/,
-    unsigned int   * /*endian*/,
-    unsigned int   * /*offsetsize*/,
-    Dwarf_Unsigned * /*filesize*/,
-    int *  /*errcode*/);
-
-/* Solely looks for debuglink */
 int dwarf_object_detector_path_b(const char  * /*path*/,
-    char         * /*outpath_buffer*/,
-    unsigned long  /*outpathlen*/,
-    char **        /* gl_pathnames*/,
-    unsigned       /* gl_pathcount*/,
-    unsigned int * /*ftype*/,
-    unsigned int * /*endian*/,
-    unsigned int * /*offsetsize*/,
-    Dwarf_Unsigned * /*filesize*/,
-    unsigned char * /*pathsource*/,
+    char         *   /* outpath_buffer*/,
+    unsigned long    /* outpathlen*/,
+    char **          /* gl_pathnames*/,
+    unsigned         /* gl_pathcount*/,
+    unsigned int *   /* ftype*/,
+    unsigned int *   /* endian*/,
+    unsigned int *   /* offsetsize*/,
+    Dwarf_Unsigned * /* filesize*/,
+    unsigned char *  /* pathsource*/,
     int * /*errcode*/);
 
 /* Solely looks for dSYM */
 int dwarf_object_detector_path_dSYM(
-    const char  *path,
-    char *outpath, unsigned long outpath_len,
-    char ** gl_pathnames,
-    unsigned gl_pathcount,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
-    unsigned char *pathsource,
-    int *errcode);
+    const char  * /* path*/,
+    char * /* outpath*/, 
+    unsigned long  /* outpath_len*/,
+    char **  /* gl_pathnames*/,
+    unsigned  /* gl_pathcount*/,
+    unsigned * /* ftype*/,
+    unsigned * /* endian*/,
+    unsigned * /* offsetsize*/,
+    Dwarf_Unsigned  * /* filesize*/,
+    unsigned char * /* pathsource*/,
+    int * /* errcode*/);
 
 
 #define DW_PATHSOURCE_unspecified 0

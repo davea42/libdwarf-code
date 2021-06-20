@@ -272,19 +272,25 @@ getbasename (const char *f)
     return pseparator;
 }
 
-/*  Not a standard function, though part of GNU libc
-    since 2008 (I have never examined the GNU version).  */
-static char *
-dw_stpcpy(char *dest,const char *src)
+/*  Not a standard function. */
+static int
+dw_stpcpy(char *dest,const char *src,char **destend, char *endpoint)
 {
     const char *cp = src;
     char *dp = dest;
 
     for ( ; *cp; ++cp,++dp) {
+        if (dp >= endpoint) {
+            return DW_DLV_ERROR;
+        }
         *dp = *cp;
     }
+    if (dp >= endpoint) {
+        return DW_DLV_ERROR;
+    }
     *dp = 0;
-    return dp;
+    *destend = dp;
+    return DW_DLV_OK;
 }
 
 
@@ -596,9 +602,21 @@ dwarf_object_detector_path_dSYM(
             *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
-        cp = dw_stpcpy(outpath,path);
-        cp = dw_stpcpy(cp,DSYM_SUFFIX);
-        dw_stpcpy(cp,getbasename(path));
+        res = dw_stpcpy(outpath,path,&cp,outpath+outpath_len);
+        if (res == DW_DLV_ERROR) {
+            *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
+            return DW_DLV_ERROR;
+        }
+        res = dw_stpcpy(cp,DSYM_SUFFIX,&cp,outpath+outpath_len);
+        if (res == DW_DLV_ERROR) {
+            *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
+            return DW_DLV_ERROR;
+        }
+        res= dw_stpcpy(cp,getbasename(path),&cp,outpath+outpath_len);
+        if (res == DW_DLV_ERROR) {
+            *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
+            return DW_DLV_ERROR;
+        }
         fd = open(outpath,O_RDONLY|O_BINARY);
         if (fd < 0) {
             outpath[0] = 0;
@@ -861,31 +879,17 @@ _dwarf_debuglink_finder_internal(
 }
 
 int
-dwarf_object_detector_path(const char  *path,
-    char *outpath, unsigned long outpath_len,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
-    int *errcode)
-{
-    unsigned char pathsource = DW_PATHSOURCE_basic;
-    return dwarf_object_detector_path_b(path,
-        outpath,outpath_len,
-        0,0,
-        ftype,endian,offsetsize,filesize,&pathsource,errcode);
-}
-int
 dwarf_object_detector_path_b(
-    const char  *path,
-    char *outpath, unsigned long outpath_len,
-    char ** gl_pathnames,
-    unsigned gl_pathcount,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
-    unsigned char *pathsource,
+    const char  * path,
+    char *        outpath, 
+    unsigned long outpath_len,
+    char **       gl_pathnames,
+    unsigned      gl_pathcount,
+    unsigned *    ftype,
+    unsigned *    endian,
+    unsigned *    offsetsize,
+    Dwarf_Unsigned * filesize,
+    unsigned char *  pathsource,
     int *errcode)
 {
     int fd = -1;
@@ -901,10 +905,10 @@ dwarf_object_detector_path_b(
             close the fd above and open a new one. */
         int debuglink_fd = -1;
         unsigned long dllen = 0;
-
+        char *cp = 0;
         dwarfstring m;
-        dwarfstring_constructor(&m);
 
+        dwarfstring_constructor(&m);
         res = _dwarf_debuglink_finder_internal(
             gl_pathnames,gl_pathcount,
             (char *)path, &m,&debuglink_fd, errcode);
@@ -917,7 +921,11 @@ dwarf_object_detector_path_b(
         }
         if (res == DW_DLV_NO_ENTRY) {
             /*  We did not find an alternative path */
-            strcpy(outpath,path);
+            res = dw_stpcpy(outpath,path,&cp,outpath+outpath_len);
+            if (res != DW_DLV_OK) {
+                *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
+                return DW_DLV_ERROR;
+            }
             lpathsource = DW_PATHSOURCE_basic;
         } else {
             if (debuglink_fd != -1) {
@@ -929,7 +937,12 @@ dwarf_object_detector_path_b(
                 *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
                 return DW_DLV_ERROR;
             }
-            strcpy(outpath,dwarfstring_string(&m));
+            res = dw_stpcpy(outpath,dwarfstring_string(&m),
+                &cp,outpath+outpath_len);
+            if (res != DW_DLV_OK) {
+                *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
+                return DW_DLV_ERROR;
+            }
             lpathsource = DW_PATHSOURCE_debuglink;
         }
         dwarfstring_destructor(&m);
@@ -940,9 +953,8 @@ dwarf_object_detector_path_b(
         fd = open(path,O_RDONLY|O_BINARY);
     }
     if (fd < 0) {
-        lpathsource = DW_PATHSOURCE_unspecified;
         if (pathsource) {
-            *pathsource = lpathsource;
+            *pathsource = DW_PATHSOURCE_unspecified;
         }
         return DW_DLV_NO_ENTRY;
     }

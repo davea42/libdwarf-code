@@ -987,14 +987,6 @@ print_actuals_and_locals(Dwarf_Debug dbg,
     to get that detail without including internal libdwarf
     header information.
     Caller passes in compilation unit DIE.
-    The _dwarf_ version is obsolete (though supported for
-    compatibility).
-    The dwarf_ version is preferred.
-    The functions are intentionally identical: having
-    _dwarf_print_lines call dwarf_print_lines might
-    better emphasize they are intentionally identical, but
-    that seemed slightly silly given how short the functions are.
-    Interface adds error_count (output value) February 2009.
 
     These *print_lines() functions print two-level tables in full
     even when the user is not asking for both (ie, when
@@ -1010,17 +1002,6 @@ dwarf_print_lines(Dwarf_Die die,
     int res = _dwarf_internal_printlines(die,
         error_count,
         only_line_header,error);
-    return res;
-}
-int
-_dwarf_print_lines(Dwarf_Die die, Dwarf_Error * error)
-{
-    int only_line_header = 0;
-    int err_count = 0;
-    int res = _dwarf_internal_printlines(die,
-        &err_count,
-        only_line_header,error);
-    /* No way to get error count back in this interface */
     return res;
 }
 
