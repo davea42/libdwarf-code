@@ -1992,12 +1992,18 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
             unsigned int   endian = 0;
             unsigned int   offsetsize = 0;
             Dwarf_Unsigned filesize = 0;
+            /*  See DW_PATHSOURCE_dsym for what
+                pathsource might be set to in the
+                call below. */
+            unsigned char  pathsource = 0;
             int            errcode  = 0;
 
             printf("  [%u] %s\n",i,sanitized(path));
-            res = dwarf_object_detector_path(path,
-                outpath,outpathlen,&ftype,&endian,&offsetsize,
-                &filesize, &errcode);
+            res = dwarf_object_detector_path_b(path,
+                outpath,outpathlen,
+                0,0,
+                &ftype,&endian,&offsetsize,
+                &filesize, &pathsource, &errcode);
             if (res == DW_DLV_NO_ENTRY) {
                 if (glflags.verbose) {
                     printf(" file above does not exist\n");

@@ -361,9 +361,10 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         printf("%s Path [%2u] %s\n",lprefix,i,pa);
         /*  First, open the file to determine if it exists.
             If not, loop again */
-        res = dwarf_object_detector_path(pa,
-            0,0,&ftype,&endian,&offsetsize,
-            &filesize, &errcode);
+        res = dwarf_object_detector_path_b(pa,
+            0,0,0,0,
+            &ftype,&endian,&offsetsize,
+            &filesize, 0, &errcode);
         if (res == DW_DLV_NO_ENTRY) {
             printf("%s file above does not match/exist.\n",lprefix);
             continue;
