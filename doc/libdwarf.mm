@@ -33,7 +33,7 @@
 .nr Cl 4
 \." set P one lower than desired start of printed page number of real 
 \." content to get pdf and printed numbers to agree.
-.nr P 15 1
+.nr P 0 1
 .SA 1
 .TL
 A Consumer Library Interface to DWARF
@@ -463,10 +463,10 @@ dumped by dwarfdump.
 There are no new options or choices,
 libdwarf and dwarfdump notice which
 kind of object they are processing.
-New functions added to libdwarf.h.in:
-dwarf_init_path(),dwarf_object_detector_path(),
+New functions added to libdwarf.h
+dwarf_init_path_dSYM(),dwarf_object_detector_path_b(),
 and dwarf_object_detector_fd().
-(October 24, 2018)
+(modified June 2021)
 .P
 .P Older entries removed as no longer
 very relevant
@@ -2997,15 +2997,22 @@ and may be of use generally.
 They have no connection to
 any Dwarf_Debug data as you see
 from the arguments passed in.
-.H 3 "dwarf_object_detector_path()"
+.H 3 "dwarf_object_detector_path_b()"
+This returns basic object file information
+and make it possible to resolve
+GNU debuglink paths to a file
+with DWARF.
 .DS
-\f(CWint dwarf_object_detector_path(const char  *path,
-    char *outpath,
+\f(CWint dwarf_object_detector_path_b(const char  *path,
+    char *        outpath,
     unsigned long outpath_len,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    Dwarf_Unsigned  *filesize,
+    char **       gl_pathnames,
+    unsigned      gl_pathcount,
+    unsigned *    ftype,
+    unsigned *    endian,
+    unsigned *    offsetsize,
+    Dwarf_Unsigned * filesize,
+    unsigned char  * pathsource,
     int * errcode);\fP
 .DE
 On success the function returns
@@ -3026,35 +3033,93 @@ a Dwarf_Error is returned through the error pointer.
 and nothing else is done or returned.
 .P
 Now we turn to the arguments.
+.P
+The required arguments are
+\f(CWpath\fP,
+\f(CWftype\fP,
+\f(CWendian\fP,
+\f(CWoffsetsize\fP,
+and 
+\f(CWfilesize\fP.
+All others should be passed as 0
+unless GNU debuglink processing is needed.
+See below.
+.P
 Pass in the name of the object file via
 the
 \f(CWpath\fP
 argument.
 .P
+For
+\f(CWftype\fP,
+\f(CWendian\fP,
+and 
+\f(CWfilesize\fP
+pass pointers.
+\f(CWftype\fP
+will be returned as
+one of the DW_TYPE*
+values (see libdwarf.h).
+\f(CWendian\fP
+will be returned as
+one of the
+DW_ENDIAN* values,
+(see libdwarf.h).
+\f(CWoffsetsize\fP
+will be returned as 32 or
+64 as found in the object
+file header(s).
+The meaning
+of  \f(CWoffsetsize\fP
+may differ
+depending on the particular
+object format.
+\f(CWfilesize\fP
+will be returned as
+the size of the file found
+in bytes.
+.P
+Now we turn to the arguments
+involved in GNU debuglink processing:
+\f(CWoutpath\fP,
+\f(CWoutpath_len\fP,
+\f(CWgl_pathnames\fP,
+\f(CWgl_pathcount\fP, and
+\f(CWpathsource\fP.
+Usually one will pass all these
+as 0 and avoid special processing.
+.P
 To
 \f(CWoutpath\fP
 pass in a pointer big enough to hold the passed-in
 path if that were doubled plus adding 100 characters.
+(that is a rather arbitrary size request,
+a larger value might be better in some circumstances) 
 Then pass that length in the
 \f(CWoutpath_len\fP argument.
 The path will be copied to outpath.
-In the case of certain MacOS dSYM
-object files the final outpath
-of the dSYM file (with MacOS conventional
-directories added) is copied into
-\f(CWoutpath\fP. Where the MacOS
-local directory tree is missing
-or incomplete
-\f(CWoutpath\fP
-will be left as a zero-lengh string.
+If a GNU debuglink file is found
+the path to that file will be copied to
+\f(CWoutpath\fP.
 .P
-To entirely skip the MacOS special treatment
-pass 0 as arguments to
+To 
+\f(CWpathsource\fP
+pass in a pointer to
+an 
+\f(CWunsigned char\fP
+containing the value
+\f(CWDW_PATHSOURCE_basic\fP.
+If a debuglink file is found
 \f(CWoutpath\fP
-and
-\f(CWoutpath_len\fP.
+will be set to the debuglink
+target file and
+\f(CW*pathsource\fP
+will be set to 
+\f(CWDW_PATHSOURCE_debuglink\fP.
+
 .P
-The \f(CWftype\fP
+The
+\f(CWftype\fP
 pointer argument returns
 \f(CWDW_FTYPE_ELF\fP,
 \f(CWDW_FTYPE_MACH_O\fP
@@ -3090,8 +3155,8 @@ If the object file uses 32-bit
 offsets it returns 32, and if
 64-bit offsets it returns 64.
 Each object type uses such values
-but the ways the value is used
-varies.
+but the meanings vary between
+object types.
 .P
 The \f(CWfilesize\fP
 pointer argument returns
@@ -3099,6 +3164,150 @@ the size, in bytes, of the object file.
 This is essentially useless for
 \f(CWDW_FTYPE_ARCHIVE\fP
 files, one thinks.
+.P
+\f(CW
+\fP
+The 
+\f(CWgl_pathnames\fP
+and 
+\f(CWgl_pathcount\fP
+arguments provide a way
+to give the GNU debuglink
+logic additional directories
+beyond the standard location
+to search for object files.
+\f(CWgl_pathnames\fP must,
+if non-zero, point to an array
+of pointers to character strings
+with file paths to search.
+\f(CWgl_pathcount\fP
+must contain the number of such
+paths in the pathname array.
+.P
+The
+\f(CWerrcode\fP
+pointer argument returns
+(if and only if DW_DLV_ERROR is returned
+by the function) an integer error code.
+At this time there is no handy function
+to turn that error code into a string.
+In the libdwarf source you will find that code in
+the DW_DLE_* error list.
+
+.H 3 "dwarf_object_detector_path_dSYM()"
+This returns basic object file data and makes
+it possible to resolve MacOS paths and
+return the path to the MacOS dSYM
+object file with DWARF if one exists.
+.DS
+\f(CWint dwarf_object_detector_path_dSYM(const char  *path,
+    char *        outpath,
+    unsigned long outpath_len,
+    char **       gl_pathnames,
+    unsigned      gl_pathcount,
+    unsigned *    ftype,
+    unsigned *    endian,
+    unsigned *    offsetsize,
+    Dwarf_Unsigned * filesize,
+    unsigned char  * pathsource,
+    int * errcode);\fP
+.DE
+On success the function returns
+\f(CWDW_DLV_OK\fP,
+and returns various data through the
+arguments (described just below).
+This works identically across all supported
+object file types.
+.P
+If
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned there is no such
+file and nothing else is done or returned.
+.P
+If
+\f(CWDW_DLV_ERROR\fP is returned
+a Dwarf_Error is returned through the error pointer.
+and nothing else is done or returned.
+.P
+Now we turn to the arguments.
+.P
+The required arguments are
+\f(CWpath\fP
+\f(CWftype\fP
+\f(CWendian\fP
+\f(CWoffsetsize\fP
+and 
+\f(CWfilesize\fP.
+All others should be passed as 0
+unless MacOS dSYM processing is needed.
+See below.
+.P
+Pass in the name of the object file via
+the
+\f(CWpath\fP
+argument.
+.P
+For
+\f(CWftype\fP,
+\f(CWendian\fP,
+\f(CWoffsetsize\fP,
+and 
+\f(CWfilesize\fP
+pass pointers.
+\f(CWftype\fP
+will be returned as
+one of the DW_TYPE*
+values (see libdwarf.h).
+\f(CWendian\fP
+will be returned as
+one of the
+DW_ENDIAN* values,
+(see libdwarf.h).
+\f(CWfilesize\fP
+will be returned as
+the size of the file found
+in bytes.
+\f(CWoffsetsize\fP
+will be returned as
+the a value of 32 or 64
+as defined by the object format,
+but the meaning may vary
+by object format.
+.P
+Now we turn to the arguments
+involved in MacOS dSYM processing:
+\f(CWoutpath\fP,
+\f(CWoutpath_len\fP,
+\f(CWgl_pathnames\fP,
+\f(CWgl_pathcount\fP, and
+\f(CWpathsource\fP.
+Usually one will pass all these
+as 0 and avoid special processing.
+.P
+.P
+For MacOS dSym processing the
+\f(CWgl_pathnames\fP
+and
+\f(CWgl_pathcount\fP
+are not used, so pass them as 0.
+.P
+To
+\f(CWoutpath\fP
+pass in a pointer big enough to hold the passed-in
+path if that were doubled plus adding 100 characters.
+Then pass that length in the
+\f(CWoutpath_len\fP argument.
+The path will be copied to outpath.
+For MacOS dSYM
+object files the final outpath
+of the dSYM file (with MacOS conventional
+directories added) is copied into
+\f(CWoutpath\fP.
+Where the MacOS
+local directory tree is missing
+or incomplete
+\f(CWoutpath\fP
+will be left as a zero-length string.
 .P
 The \f(CWerrcode\fP
 pointer argument returns
@@ -3108,6 +3317,7 @@ At this time there is no handy function
 to turn that error code into a string.
 In the libdwarf source you will find that code in
 the DW_DLE_* error list.
+
 
 .H 3 "dwarf_object_detector_fd()"
 .DS
