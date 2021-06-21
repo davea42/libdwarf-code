@@ -72,7 +72,6 @@ def xmlize(linea, inhtml, inpre):
 
 
 def paraline(name, linea):
-    inpre = "n"
     out = ""
     if len(linea) < 1:
         out = "<p>" + name + ":" + "</p>"
