@@ -51,7 +51,7 @@ print_static_funcs(Dwarf_Debug dbg,Dwarf_Error*err)
     struct esb_s truename;
     struct esb_s sanitname;
 
-    glflags.current_section_id = DEBUG_STATIC_FUNC;
+    glflags.current_section_id = DEBUG_FUNCNAMES;
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     get_true_section_name(dbg,".debug_funcnames",
         &truename,TRUE);

@@ -421,30 +421,40 @@ Dwarf_Bool cu_data_is_set(void);
 #define dump_linkonce_info          glflags.nTrace[DUMP_LINKONCE_INFO]
 #define dump_visited_info           glflags.nTrace[DUMP_VISITED_INFO]
 
-/* Section IDs */
-#define DEBUG_ABBREV      1
-#define DEBUG_ARANGES     2
-#define DEBUG_FRAME       3
-#define DEBUG_INFO        4
-#define DEBUG_LINE        5
-#define DEBUG_LOC         6
-#define DEBUG_MACINFO     7
-#define DEBUG_PUBNAMES    8
-#define DEBUG_RANGES      9
-#define DEBUG_STATIC_VARS 10
-#define DEBUG_STATIC_FUNC 11
-#define DEBUG_STR         12
-#define DEBUG_WEAKNAMES   13
-#define DEBUG_TYPES       14
-#define DEBUG_GDB_INDEX   15
-#define DEBUG_FRAME_EH_GNU 16
-#define DEBUG_MACRO       17
-#define DEBUG_NAMES       18
-#define DEBUG_RNGLISTS    19
-#define DEBUG_LOCLISTS    20
-#define DEBUG_GNU_PUBNAMES 21
-#define DEBUG_GNU_PUBTYPES 22
-#define DEBUG_SUP         23
+/*  Section IDs. See also libdwarfp/pro_opaque.h DEBUG_INFO etc
+    as we arbitrarily use the same numbering here. 
+    In pro_opaque the numbering matters.
+    Here it helps us record where we are at any instant.
+    It's not necessary they match but seems good to do.
+    Here we have some extra sections not related to
+    relocations so we just add those beginning with 22 */
+#define         DEBUG_INFO      0
+#define         DEBUG_LINE      1
+#define         DEBUG_ABBREV    2
+#define         DEBUG_FRAME     3
+#define         DEBUG_ARANGES   4
+#define         DEBUG_PUBNAMES  5
+#define         DEBUG_FUNCNAMES 6
+#define         DEBUG_TYPENAMES 7
+#define         DEBUG_VARNAMES  8
+#define         DEBUG_WEAKNAMES 9
+#define         DEBUG_MACINFO   10 /* DWARF 2,3,4 only */
+#define         DEBUG_LOC       11
+#define         DEBUG_RANGES    12
+#define         DEBUG_TYPES     13
+#define         DEBUG_PUBTYPES  14
+#define         DEBUG_NAMES     15 /* DWARF5. aka dnames */
+#define         DEBUG_STR       16
+#define         DEBUG_LINE_STR  17
+#define         DEBUG_MACRO     18 /* DWARF 5. */
+#define         DEBUG_LOCLISTS  19 /* DWARF 5. */
+#define         DEBUG_RNGLISTS  20 /* DWARF 5. */
+#define         DEBUG_SUP       21 /* DWARF 5. */
+
+#define         DEBUG_GDB_INDEX    22
+#define         DEBUG_FRAME_EH_GNU 23
+#define         DEBUG_GNU_PUBNAMES 24
+#define         DEBUG_GNU_PUBTYPES 25
 
 /*  Print the information only if unique errors
     is set and it is first time */

@@ -104,9 +104,11 @@ typedef struct Dwarf_P_Per_Sect_String_Attrs_s *
 typedef struct Dwarf_P_Dnames_s *Dwarf_P_Dnames;
 
 /* Defined to get at the elf section numbers and section name
-   indices in symtab for the dwarf sections
-   Must match .rel.* names in _dwarf_rel_section_names
-   exactly.
+   indices in symtab for the dwarf sections.
+   See also dwarfdump/glflags.h which uses the same numbering.
+   In glflags.h the number value and sequence is unimportant.
+   Here the numbers must match .rel.* names in
+   _dwarf_rel_section_names exactly.
 */
 #define         DEBUG_INFO      0
 #define         DEBUG_LINE      1

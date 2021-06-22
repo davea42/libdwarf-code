@@ -49,7 +49,7 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
     char buf[DWARF_SECNAME_BUFFER_SIZE];
     struct esb_s sanitname;
 
-    glflags.current_section_id = DEBUG_STATIC_VARS;
+    glflags.current_section_id = DEBUG_VARNAMES;
 
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     get_true_section_name(dbg,".debug_varnames",
