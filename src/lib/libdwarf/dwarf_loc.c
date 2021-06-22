@@ -1851,7 +1851,11 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
 }
 
 
-/*  New June 2020. */
+/*  New June 2020  Supports all versions of DWARF. 
+    Distinguishes location entry values as in the
+    file directly (raw) from  the computed
+    value (lowpc_out,hipc_out) after
+    applying base values (if any). */
 int
 dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Unsigned   index,
@@ -1895,45 +1899,6 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     *locdesc_offset_out = desc->ld_locdesc_offset;
     return DW_DLV_OK;
 }
-
-/*  Use  dwarf_get_locdesc_entry_d() instead
-    This function is not sufficient for DWARF 5. */
-int
-dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c loclist_head,
-    Dwarf_Unsigned   index,
-    Dwarf_Small    * lle_value_out,
-    Dwarf_Addr     * lowpc_out,
-    Dwarf_Addr     * hipc_out,
-    Dwarf_Unsigned * loclist_count_out,
-
-    /* Returns pointer to the specific locdesc of the index; */
-    Dwarf_Locdesc_c* locdesc_entry_out,
-
-    /* 0,1,2 or 5  DW_LKIND_* */
-    Dwarf_Small    * loclist_source_out,
-    Dwarf_Unsigned * expression_offset_out,
-    Dwarf_Unsigned * locdesc_offset_out,
-    Dwarf_Error    * error)
-{
-    int res = 0;
-    Dwarf_Unsigned cookedlow = 0;
-    Dwarf_Unsigned cookedhigh = 0;
-    Dwarf_Bool debug_addr_unavailable = FALSE;
-
-    res = dwarf_get_locdesc_entry_d(loclist_head,
-        index,lle_value_out,
-        lowpc_out,hipc_out,
-        &debug_addr_unavailable,
-        &cookedlow,&cookedhigh,
-        loclist_count_out,
-        locdesc_entry_out,
-        loclist_source_out,
-        expression_offset_out,
-        locdesc_offset_out,
-        error);
-    return res;
-}
-
 
 int
 dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,

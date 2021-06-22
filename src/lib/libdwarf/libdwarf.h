@@ -1580,15 +1580,8 @@ int dwarf_child(Dwarf_Die /*die*/,
     Dwarf_Die*       /*return_childdie*/,
     Dwarf_Error*     /*error*/);
 
-/*  Finding die given global (not CU-relative) offset.
-    Applies only to debug_info. */
-int dwarf_offdie(Dwarf_Debug /*dbg*/,
-    Dwarf_Off        /*offset*/,
-    Dwarf_Die*       /*return_die*/,
-    Dwarf_Error*     /*error*/);
-
-/*  dwarf_offdie_b new October 2011 */
-/*  Finding die given global (not CU-relative) offset.
+/*  dwarf_offdie_b new October 2011
+    Finding die given global (not CU-relative) offset.
     Applies to debug_info (is_info true) or debug_types
     (is_info false). */
 int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
@@ -1788,6 +1781,12 @@ int dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
     unsigned int  * /*lkind*/,
     Dwarf_Error   * /*error*/);
 
+/*  Cooked value means the values from the location
+    description (raw values) after base values applied.
+    debug_addr_unavailable non-zero means the record from a
+    skeleton unit could not be accessed from
+    the .dwo section or dwp object so the
+    cooked values could not be calculated. */
 int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
     Dwarf_Unsigned    /*index*/,
     /* identifies type of locdesc entry*/
@@ -1795,21 +1794,8 @@ int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
     Dwarf_Unsigned *  /*rawlowpc*/,
     Dwarf_Unsigned *  /*rawhipc*/,
     Dwarf_Bool     *  /*debug_addr_unavailable*/,
-    Dwarf_Addr     *  /*lowpc_out*/,
-    Dwarf_Addr     *  /*hipc_out*/,
-    Dwarf_Unsigned *  /*loclist_count_out*/,
-    Dwarf_Locdesc_c * /*locentry_out*/,
-    Dwarf_Small    *  /*loclist_source_out*/, /* 0,1, or 2 */
-    Dwarf_Unsigned *  /*expression_offset_out*/,
-    Dwarf_Unsigned *  /*locdesc_offset_out*/,
-    Dwarf_Error    *  /*error*/);
-
-int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c /*loclist_head*/,
-    Dwarf_Unsigned    /*index*/,
-    /* identifies type of locdesc entry*/
-    Dwarf_Small    *  /*lle_value_out*/,
-    Dwarf_Addr     *  /*lowpc_out*/,
-    Dwarf_Addr     *  /*hipc_out*/,
+    Dwarf_Addr     *  /*lowpc_out (cooked value) */,
+    Dwarf_Addr     *  /*hipc_out (cooked value) */,
     Dwarf_Unsigned *  /*loclist_count_out*/,
     Dwarf_Locdesc_c * /*locentry_out*/,
     Dwarf_Small    *  /*loclist_source_out*/, /* 0,1, or 2 */
@@ -3124,17 +3110,13 @@ dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
 /*  dwarf_check_lineheader lets dwarfdump get detailed messages
     about some compiler errors we detect.
     We return the count of detected errors through the
-    pointer.
-*/
+    pointer.  */
 int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
     int         * /*errcount_out*/,
     Dwarf_Error * /*error*/);
-void dwarf_check_lineheader(Dwarf_Die /*cu_die*/,
-    int * /*errcount_out*/);
 
 /* Used by dwarfdump -v to print fde offsets from debugging
-   info.
-*/
+   info.  */
 int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Fde         /*in_fde*/,
     Dwarf_Off *       /*fde_off*/,

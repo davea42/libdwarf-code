@@ -1550,28 +1550,6 @@ dwarf_lineaddr(Dwarf_Line line,
     return DW_DLV_OK;
 }
 
-
-/*  Obsolete: do not use this function.
-    December 2011: For reasons lost in the mists of history,
-    this returned -1, not zero (through the pointer
-    ret_lineoff), if the column was zero.
-    That was always bogus, even in DWARF2.
-    It is also bogus that the column value is signed, but
-    it is painful to change the argument type in 2011, so leave it.
-    */
-int
-dwarf_lineoff(Dwarf_Line line,
-    Dwarf_Signed * ret_lineoff, Dwarf_Error * error)
-{
-    if (line == NULL || ret_lineoff == 0) {
-        _dwarf_error(NULL, error, DW_DLE_DWARF_LINE_NULL);
-        return DW_DLV_ERROR;
-    }
-    *ret_lineoff = (
-        (line->li_addr_line.li_l_data.li_column == 0) ?
-            -1 : line->li_addr_line.li_l_data.li_column);
-    return DW_DLV_OK;
-}
 /*  Each 'line' entry has a column-within-line (offset
     within the line) where the
     source text begins.

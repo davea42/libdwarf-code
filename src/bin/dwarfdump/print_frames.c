@@ -1648,6 +1648,9 @@ print_location_operations(Dwarf_Debug dbg,
         Dwarf_Unsigned locdesc_offset = 0;
         Dwarf_Small lle_value = 0;
         Dwarf_Small loclist_source = 0;
+        Dwarf_Addr rawlopc = 0;
+        Dwarf_Addr rawhipc = 0;
+        Dwarf_Bool debug_addr_unavailable = FALSE;
 
         res2 = dwarf_loclist_from_expr_c(dbg,
             bytes_in,block_len,
@@ -1665,9 +1668,11 @@ print_location_operations(Dwarf_Debug dbg,
             printf("\nERROR: calling dwarf_loclist_from_expr_c()");
             return res2;
         }
-        lres = dwarf_get_locdesc_entry_c(head,
+        lres = dwarf_get_locdesc_entry_d(head,
             0, /* Data from 0th LocDesc */
             &lle_value,
+            &rawlopc, &rawhipc,
+            &debug_addr_unavailable,
             &lopc, &hipc,
             &ulocentry_count,
             &locentry,

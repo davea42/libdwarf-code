@@ -1769,15 +1769,15 @@ The caller might code:
 .P
 .DS
 \f(CWDwarf_Line line;
-Dwarf_Signed ret_loff;
+Dwarf_Unsigned ret_loff;
 Dwarf_Error  err;
-int retval = dwarf_lineoff(line,&ret_loff,&err);\fP
+int retval = dwarf_lineoff_b(line,&ret_loff,&err);\fP
 .DE
 for the function defined as
 .P
 .DS
-\f(CWint dwarf_lineoff(Dwarf_Line line,
-    Dwarf_Signed *return_lineoff,
+\f(CWint dwarf_lineoff_b(Dwarf_Line line,
+    Dwarf_Unsigned *return_lineoff,
     Dwarf_Error* err);\fP
 .DE
 and this document refers to the function as
@@ -4190,14 +4190,18 @@ void example5(Dwarf_Die in_die)
     Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_offdie_b()\fP
-returns \f(CWDW_DLV_ERROR\fP and sets the \f(CWerror\fP die on error.
+returns 
+\f(CWDW_DLV_ERROR\fP and sets the 
+\f(CWerror\fP die on error.
 When it succeeds,
 \f(CWdwarf_offdie_b()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_die\fP
+\f(CWDW_DLV_OK\fP and sets
+\f(CW*return_die\fP
 to the
 the \f(CWDwarf_Die\fP
 descriptor of the debugging information entry at \f(CWoffset\fP in
-the section containing debugging information entries i.e the .debug_info
+the section containing debugging information
+entries i.e the .debug_info
 section.
 A return of \f(CWDW_DLV_NO_ENTRY\fP
 means that the \f(CWoffset\fP in the section is of a byte containing
@@ -4208,8 +4212,10 @@ a padding die, or of some random zero byte: this should
 not be returned in normal use.
 .P
 It is the user's
-responsibility to make sure that \f(CWoffset\fP is the start of a valid
-debugging information entry.  The result of passing it an invalid
+responsibility to make sure that 
+\f(CWoffset\fP is the start of a valid
+debugging information entry.
+The result of passing it an invalid
 offset could be chaos.
 .P
 If \f(CWis_info\fP is non-zero the \f(CWoffset\fP must refer
@@ -4250,21 +4256,6 @@ void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
 \fP
 .DE
 .in -2
-
-.H 3 "dwarf_offdie()"
-.DS
-\f(CWint dwarf_offdie(
-    Dwarf_Debug dbg,
-    Dwarf_Off offset,
-    Dwarf_Die *return_die,
-    Dwarf_Error *error)\fP
-.DE
-.P
-The function \f(CWdwarf_offdie()\fP is obsolete, use
-\f(CWdwarf_offdie_b()\fP instead.
-The function is still supported in the library, but only
-references the .debug_info section.
-
 
 .H 3 "dwarf_validate_die_sibling()"
 .DS
@@ -7970,38 +7961,6 @@ with the descriptor \f(CWline\fP.
 It returns \f(CWDW_DLV_ERROR\fP  on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
-.P
-.H 3 "dwarf_lineoff()"
-.DS
-\f(CWint dwarf_lineoff(
-    Dwarf_Line line,
-    Dwarf_Signed   * return_lineoff,
-    Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_lineoff()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_lineoff\fP to
-the column number at which
-the statement represented by \f(CWline\fP begins.
-.P
-It sets \f(CWreturn_lineoff\fP to zero
-if the column number of the statement is not represented
-(meaning the producer library call was given zero
-as the column number).  Zero is the correct value meaning "left edge"
-as defined in the DWARF2/3/4 specification (section 6.2.2).
-.P
-Before December 2011 zero was not returned through
-the  \f(CWreturn_lineoff\fP pointer, -1 was returned through the pointer.
-The reason for this oddity is unclear, lost in history.
-But there is no good reason for -1.
-.P
-The type of  \f(CWreturn_lineoff\fP is a pointer-to-signed, but there
-is no good reason for the value to be signed, the DWARF specification
-does not deal with negative column numbers.  However, changing the
-declaration would cause compilation errors for little benefit, so
-the pointer-to-signed is left unchanged.
-.P
-On error it returns \f(CWDW_DLV_ERROR\fP.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 .H 3 "dwarf_lineoff_b()"
 .DS
 \f(CWint dwarf_lineoff_b(
@@ -8012,15 +7971,36 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 The function
 \f(CWdwarf_lineoff_b()\fP
 returns
-exactly the same as
-\f(CWdwarf_lineoff()\fP
-except the line offset returned
-through
-\f(CWreturn_lineoff()\fP
-is an unsigned value.
-The signed return offset never made much sense
-but was harmless since line lengths are limited
-by most language standards.
+the unsigned column number
+of the declaration
+within the line
+through the pointer
+\f(CWreturn_lineoff()\fP.
+.P
+Per the standard (all versions)
+a column number of zero means
+column unknown.
+Actual columns start
+with 1 (one).
+Any non-zero value comes from the
+attribute 
+\f(CWDW_AT_decl_column\fP
+while zero could be from 
+\f(CWDW_AT_decl_column\fP
+or could mean 
+\f(CWDW_AT_decl_column\fP
+is missing
+(the attribute is very often missing).
+.P
+It returns \f(CWDW_DLV_OK\fP
+unless the 
+\f(CWline\fP
+or
+\f(CWreturn_lineoff()\fP field
+is NULL, in which case it
+returns 
+\f(CWDW_DLV_ERROR\fP and
+sets the error DIE.
 
 .H 3 "dwarf_linesrc()"
 .DS
