@@ -103,10 +103,6 @@ dwarf_init_path_dl(path true_path and globals, dbg1
     functions are used if present, else archives
     cannot be read.
 */
-
-#define DWARF_DBG_ERROR(dbg,errval,retval) \
-    _dwarf_error(dbg, error, errval); return(retval);
-
 static int
 open_a_file(const char * name)
 {
