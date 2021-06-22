@@ -174,10 +174,6 @@ struct elf_header {
     TYP(e_type,2);
     TYP(e_machine,2);
     TYP(e_version,4);
-#ifdef HAVE_CUSTOM_LIBELF
-    /* In the case of custom ELF, use extra space */
-    TYP(e_custom,64);
-#endif /* HAVE_CUSTOM_LIBELF */
 };
 
 /*  Windows. Certain PE objects.
@@ -561,17 +557,6 @@ dwarf_object_detector_fd(int fd,
         *filesize = (size_t)fsize;
         return DW_DLV_OK;
     }
-    /* Check for custom ELF format. */
-#ifdef HAVE_CUSTOM_LIBELF
-    res = elf_is_custom_format(&h,readlen,&fsize,
-        endian,offsetsize,errcode);
-    if (res == DW_DLV_OK) {
-        *ftype = DW_FTYPE_CUSTOM_ELF;
-        *filesize = (size_t)fsize;
-        return res;
-    }
-#endif /* HAVE_CUSTOM_LIBELF */
-
     /* Unknown object format. */
     return DW_DLV_NO_ENTRY;
 }

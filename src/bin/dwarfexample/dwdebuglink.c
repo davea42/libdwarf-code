@@ -166,9 +166,6 @@ print_ftype_message(const char * prefix,
     case DW_FTYPE_PE:
         printf("%s file above is a PE object",prefix);
         return TRUE;
-    case DW_FTYPE_CUSTOM_ELF:
-        printf("%s file above is a custom elf object",prefix);
-        return TRUE;
     case DW_FTYPE_ARCHIVE:
         printf("%s file above is an archive so ignore it.",
             prefix);

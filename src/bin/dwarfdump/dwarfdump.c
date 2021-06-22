@@ -85,12 +85,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 extern int elf_open(const char *name,int mode);
 #endif /* HAVE_ELF_OPEN */
 
-#ifdef HAVE_CUSTOM_LIBELF
-extern int elf_is_custom_format(void *header, size_t headerlen,
-    size_t *size,
-    unsigned *endian, unsigned *offsetsize, int *errcode);
-#endif /* HAVE_CUSTOM_LIBELF */
-
 #define BYTES_PER_INSTRUCTION 4
 
 /*  The type of Bucket. */
@@ -542,9 +536,6 @@ main(int argc, char *argv[])
     /* ======= BEGIN PROCESSING OBJECT FILES BY TYPE ===== */
     if ((ftype == DW_FTYPE_ELF && (glflags.gf_reloc_flag ||
         glflags.gf_header_flag)) ||
-#ifdef HAVE_CUSTOM_LIBELF
-        ftype == DW_FTYPE_CUSTOM_ELF ||
-#endif /* HAVE_CUSTOM_LIBELF */
         ftype == DW_FTYPE_ARCHIVE) {
         fprintf(stderr, "Can't process %s: archives and "
             "printing elf headers not supported in this dwarfdump "
@@ -2024,9 +2015,6 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
                 break;
             case DW_FTYPE_PE:
                 printf("       file above is a PE object");
-                break;
-            case DW_FTYPE_CUSTOM_ELF:
-                printf("       file above is a custom elf object");
                 break;
             case DW_FTYPE_ARCHIVE:
                 if (glflags.verbose) {

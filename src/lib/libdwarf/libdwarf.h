@@ -4252,7 +4252,6 @@ void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
 #define DW_FTYPE_MACH_O     2  /* MacOS. */
 #define DW_FTYPE_PE         3  /* Windows */
 #define DW_FTYPE_ARCHIVE    4  /* unix archive */
-#define DW_FTYPE_CUSTOM_ELF 5  /* Custom ELF format. Ignore this. */
 #endif /* DW_FTYPE_UNKNOWN */
 
 #ifndef DW_ENDIAN_UNKNOWN

@@ -125,14 +125,6 @@ AC_ARG_ENABLE([wall],
    ],
    [enable_wall="no"])
 
-##AC_ARG_ENABLE(havecustomlibelf,AS_HELP_STRING([--enable-havecustomlibelf],
-##       [including a custom libelf library (default is NO)]),
-##        [ AC_DEFINE([HAVE_CUSTOM_LIBELF],[1],
-##           [Define 1 if including a custom libelf library] )
-##           [enable_havecustomlibelf="yes"]
-##        ],
-##        [enable_havecustomlibelf="no"])
-
 ### Default options with respect to host
 
 AC_CANONICAL_HOST

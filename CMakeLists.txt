@@ -315,9 +315,6 @@ else()
   message(STATUS "Compiler warning options... NO")
 endif()
 
-option(HAVE_CUSTOM_LIBELF "Have a custom libelf library (default is NO)" FALSE)
-message(STATUS "Including a custom libelf library... ${HAVE_CUSTOM_LIBELF}")
-
 option(BUILD_DWARFGEN "Build dwarfgen (default is NO)" FALSE)
 message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
 
