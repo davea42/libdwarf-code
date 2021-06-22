@@ -705,8 +705,8 @@ _dwarf_debuglink_finder_newpath(
     int res = 0;
 
     res = dwarf_init_path(path,
-        0,0,
-        DW_DLC_READ, DW_GROUPNUMBER_ANY,
+        0,0,0,
+        DW_GROUPNUMBER_ANY,
         0,0, &dbg,
         0,0,0,&error);
     if (res == DW_DLV_ERROR) {
@@ -795,16 +795,14 @@ _dwarf_debuglink_finder_internal(
     unsigned       buildid_length = 0;
     char        ** paths = 0; /* must be freed */
     unsigned       paths_count = 0;
-    Dwarf_Unsigned laccess = 0;
-    unsigned int   i = 0;
-
+    unsigned       i = 0;
 
     path = path_in;
     /*  This path will work.
         Already know the file is there. */
     res = dwarf_init_path(path,
-        0,0,
-        laccess, DW_GROUPNUMBER_ANY,
+        0,0,0,
+        DW_GROUPNUMBER_ANY,
         0,0, &dbg,
         0,0,0,&error);
     if (res == DW_DLV_ERROR) {

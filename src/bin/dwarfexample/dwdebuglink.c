@@ -245,7 +245,6 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
     char  * path = 0;
     char  * basepath = 0;
     Dwarf_Error error = 0;
-    Dwarf_Unsigned laccess = DW_DLC_READ;
     unsigned int p = 0;
 
     /*  Don't let dwarf_init_path find the debuglink,
@@ -258,8 +257,8 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         printf("%s===Exec-path        : %s\n",prefix,basepath);
     }
     res = dwarf_init_path(path,
-        0,0,
-        laccess, DW_GROUPNUMBER_ANY,
+        0,0,0,
+        DW_GROUPNUMBER_ANY,
         0,0, &dbg,
         0,0,0,&error);
     if (res == DW_DLV_ERROR) {

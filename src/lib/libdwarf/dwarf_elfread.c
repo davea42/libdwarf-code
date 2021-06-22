@@ -168,7 +168,6 @@ _dwarf_elf_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Unsigned access,
     Dwarf_Obj_Access_Interface **binary_interface,
     int *localerrnum);
 
@@ -617,7 +616,6 @@ _dwarf_elf_nlsetup(int fd,
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Unsigned access,
     unsigned groupnumber,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
@@ -630,7 +628,7 @@ _dwarf_elf_nlsetup(int fd,
 
     res = _dwarf_elf_object_access_init(
         fd,
-        ftype,endian,offsetsize,filesize,access,
+        ftype,endian,offsetsize,filesize,
         &binary_interface,
         &localerrnum);
     if (res != DW_DLV_OK) {
@@ -675,7 +673,6 @@ _dwarf_elf_object_access_internals_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Unsigned access UNUSEDARG,
     int *errcode)
 {
     dwarf_elf_object_access_internals_t * intfc = internals;
@@ -805,7 +802,6 @@ _dwarf_elf_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Unsigned access,
     Dwarf_Obj_Access_Interface **binary_interface,
     int *localerrnum)
 {
@@ -824,7 +820,6 @@ _dwarf_elf_object_access_init(
     res = _dwarf_elf_object_access_internals_init(internals,
         fd,
         ftype, endian, offsetsize, filesize,
-        access,
         localerrnum);
     if (res != DW_DLV_OK){
         return res;

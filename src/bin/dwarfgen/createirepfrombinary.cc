@@ -111,9 +111,8 @@ createIrepFromBinary(const std::string &infile,
         exit(1);
     }
     // All reader error handling is via the err argument.
-    int res = dwarf_init_b(fd,
+    int res = dwarf_init_b(fd,0,
         DW_GROUPNUMBER_ANY,
-        DW_DLC_READ,
         0,
         0,
         &dbg,

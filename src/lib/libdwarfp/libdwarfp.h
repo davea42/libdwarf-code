@@ -66,9 +66,6 @@ typedef Dwarf_Unsigned                Dwarf_Tag;
    See the Dwarf_Rel_Type enum relocation indicators.
 */
 
-#define DW_DLC_READ               0 /* Pointless. Ok to use. */
-#define DW_DLC_WRITE              1 /* DO NOT USE */
-#define DW_DLC_RDWR               2 /* DO NOT USE */
 
 /*  64-bit address-size target */
 #define DW_DLC_SIZE_64            0x40000000 /* old spelling */
@@ -108,6 +105,39 @@ typedef Dwarf_Unsigned                Dwarf_Tag;
 #define DW_DLC_TARGET_BIGENDIAN     0x08000000
 #define DW_DLC_TARGET_LITTLEENDIAN  0x00100000
 /* ===== END DW_DLC options LIBDWARFP */
+
+enum Dwarf_Rel_Type {
+    dwarf_drt_none,        /* Should not get to caller */
+    dwarf_drt_data_reloc,  /* Simple normal relocation. */
+    dwarf_drt_segment_rel, /* Special reloc, exceptions. */
+    /* dwarf_drt_first_of_length_pair  and drt_second
+        are for for the  .word end - begin case. */
+    dwarf_drt_first_of_length_pair,
+    dwarf_drt_second_of_length_pair
+};
+typedef struct Dwarf_P_Marker_s * Dwarf_P_Marker;
+struct Dwarf_P_Marker_s {
+    Dwarf_Unsigned ma_marker;
+    Dwarf_Unsigned ma_offset;
+};
+typedef struct Dwarf_Relocation_Data_s  * Dwarf_Relocation_Data;
+struct Dwarf_Relocation_Data_s {
+    unsigned char drd_type;   /* Cast to/from Dwarf_Rel_Type
+        to keep size small in struct. */
+    unsigned char drd_length; /* Length in bytes of data being
+        relocated. 4 for 32bit data,
+        8 for 64bit data. */
+    Dwarf_Unsigned       drd_offset; /* Where the data to reloc is. */
+    Dwarf_Unsigned       drd_symbol_index;
+};
+
+typedef struct Dwarf_P_String_Attr_s  * Dwarf_P_String_Attr;
+struct Dwarf_P_String_Attr_s {
+    /* Offset of string attribute data */
+    Dwarf_Unsigned        sa_offset;
+    Dwarf_Unsigned        sa_nbytes;
+};
+
 
 /* DWARF Producer Interface */
 /*  New form June, 2011. Adds user_data argument. */

@@ -809,7 +809,7 @@ main(int argc, char **argv)
         void *user_data = &global_elfclass;
 
         Dwarf_P_Debug dbg = 0;
-        unsigned long dwbitflags = DW_DLC_WRITE|
+        unsigned long dwbitflags = 
             endian |
             ptrsizeflagbit|
             elfoffsetsizeflagbit|

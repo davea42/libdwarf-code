@@ -492,15 +492,14 @@ main(int argc, char **argv)
             printf("Giving up, cannot open %s\n",filepath);
             exit(1);
         }
-        res = dwarf_init_b(my_init_fd,DW_DLC_READ,
+        res = dwarf_init_b(my_init_fd,0,
             DW_GROUPNUMBER_ANY,
             errhand,errarg,&dbg,errp);
     } else {
         res = dwarf_init_path(filepath,
             macho_real_path,
             MACHO_PATH_LEN,
-            DW_DLC_READ,
-            DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
+            0, DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
             0,0,0,errp);
     }
     if(res != DW_DLV_OK) {

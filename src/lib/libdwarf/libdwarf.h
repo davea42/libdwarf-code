@@ -484,48 +484,6 @@ int dwarf_frame_get_reg_expression(
     Dwarf_Block *block_out);
 
 
-/*  For DW_DLC_SYMBOLIC_RELOCATIONS output to caller
-    v2, adding drd_length: some relocations are 4 and
-    some 8 bytes (pointers are 8, section offsets 4) in
-    some dwarf environments. (MIPS relocations are all one
-    size in any given ABI.) Changing drd_type to an unsigned char
-    to keep struct size down.
-*/
-enum Dwarf_Rel_Type {
-    dwarf_drt_none,        /* Should not get to caller */
-    dwarf_drt_data_reloc,  /* Simple normal relocation. */
-    dwarf_drt_segment_rel, /* Special reloc, exceptions. */
-    /* dwarf_drt_first_of_length_pair  and drt_second
-        are for for the  .word end - begin case. */
-    dwarf_drt_first_of_length_pair,
-    dwarf_drt_second_of_length_pair
-};
-
-typedef struct Dwarf_P_Marker_s * Dwarf_P_Marker;
-struct Dwarf_P_Marker_s {
-    Dwarf_Unsigned ma_marker;
-    Dwarf_Unsigned ma_offset;
-};
-
-typedef struct Dwarf_Relocation_Data_s  * Dwarf_Relocation_Data;
-struct Dwarf_Relocation_Data_s {
-    unsigned char drd_type;   /* Cast to/from Dwarf_Rel_Type
-        to keep size small in struct. */
-    unsigned char drd_length; /* Length in bytes of data being
-        relocated. 4 for 32bit data,
-        8 for 64bit data. */
-    Dwarf_Unsigned       drd_offset; /* Where the data to reloc is. */
-    Dwarf_Unsigned       drd_symbol_index;
-};
-
-typedef struct Dwarf_P_String_Attr_s  * Dwarf_P_String_Attr;
-struct Dwarf_P_String_Attr_s {
-    /* Offset of string attribute data */
-    Dwarf_Unsigned        sa_offset;
-    Dwarf_Unsigned        sa_nbytes;
-};
-
-
 /* Opaque types for Consumer Library. */
 typedef struct Dwarf_Debug_s*      Dwarf_Debug;
 typedef struct Dwarf_Die_s*        Dwarf_Die;
@@ -850,23 +808,6 @@ struct Dwarf_Obj_Access_Interface_s {
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
-
-/*  dwarf_init() 'access' argument values.
-    Used for reading/consuming DWARF, not
-    relevant to the producer portion of libdwarf.
-    None of the following three arguments do anything.
-    The following short set is useless.
-    Only DW_DLC_READ has a documented effect but...
-    it is useless and irrelevant as it means
-    'do the default'.
-    In the 1990's there was an option DW_DLC_MMAP
-    (deleted from libdwarf.h many years ago).
-    The old option libdwarf told IRIX libelf to mmap
-    the object file.
-*/
-#define DW_DLC_READ               0 /* Pointless. Ok to use. */
-#define DW_DLC_WRITE              1 /* DO NOT USE */
-#define DW_DLC_RDWR               2 /* DO NOT USE */
 
 /* dwarf_pcline function, slide arguments
 */
@@ -1489,7 +1430,7 @@ enum Dwarf_Form_Class {
 int dwarf_init_path(const char * /*path*/,
     char *            /*true_path_out_buffer*/,
     unsigned int      /*true_path_bufferlen*/,
-    Dwarf_Unsigned    /*access*/,
+    Dwarf_Unsigned    /*unused, pass 0 */,
     unsigned int      /*groupnumber*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
@@ -1522,7 +1463,7 @@ int dwarf_init_path(const char * /*path*/,
 int dwarf_init_path_dl(const char * /*path*/,
     char *            /*true_path_out_buffer*/,
     unsigned int      /*true_path_bufferlen*/,
-    Dwarf_Unsigned    /*access*/,
+    Dwarf_Unsigned    /*unused, pass 0 */,
     unsigned int      /*groupnumber*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
@@ -1538,7 +1479,7 @@ int dwarf_init_path_dl(const char * /*path*/,
 /*  Initialization based on Unix(etc) open fd */
 /*  New March 2017 */
 int dwarf_init_b(int    /*fd*/,
-    Dwarf_Unsigned    /*access*/,
+    Dwarf_Unsigned    /*unused, pass 0 */,
     unsigned int      /*groupnumber*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
@@ -3197,9 +3138,6 @@ dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
     about some compiler errors we detect.
     We return the count of detected errors through the
     pointer.
-
-    Use dwarf_check_lineheader_b() (new 14 April 2020)
-    in place of dwarf_check_lineheader().
 */
 int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
     int         * /*errcount_out*/,

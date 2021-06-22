@@ -1,3 +1,8 @@
+June 22, 2021.
+If ./configure is absent type
+        sh autogen.sh
+        (you will need to have installed automake and libtool
+        for autogen.sh to work)
 To build libdwarf.a, type
         ./configure
         make
@@ -7,6 +12,10 @@ To build libdwarf.so, type
 To build  both, type
         ./configure --enable-shared 
         make
+
+The DW_DLC_* defines in libdwarf.h have been
+removed. Instead of DW_DLC_READ, just pass 0
+to that 'access' argument of dwarf_init* functions.
 
 April 16, 2017: Some people have had build problems, getting
 errors like:
@@ -80,30 +89,6 @@ do so at configure time, for example:
   ./configure LDFLAGS="-L /var/tmp"
 Or use PRELIBS and/or POSTLIBS at 'make' time similar to the use
 of PREINCS and POSTINCS.
-
-If you are using the old frame interfaces and depend on
-the use of DW_FRAME_CFA_COL you must add  --enable-oldframecol
-to the ./configure options to configure libdwarf.
-See NEWS and libdwarf2.1.mm/pdf .
-
-To generate SGI IRIX 64 bit offsets (in the producer code)
-configure with   --enable-dwarf-format-sgi-irix.
-To configure with only 32bit offsets (aka DWARF2) configure
-with --enable-dwarf-format-strict-32bit.
-By default the producer now generates 32bit offsets by default
-but one can turn on DWARF3 64bit offset generation at runtime by ORing
-DW_DLC_OFFSET_SIZE_64 onto the flags in the call to 
-dwarf_producer_init() (or dwarf_producer_init_b) [when the
-address size is specified as 64 bit].
-
-Mac OSX (June 2010): Since MacOSX does not use elf, there is no elf.h
-header in the headers provided on MacOSX.
-Use a search engine (like google) to find an elf.h you can use.
-  http://www.rockbox.org/tracker/9006?getfile=16683 
-might be useful.
-In addition, the archive (ar) program on MacOSX does not
-automatically generate some data so modify the generated
-Makefile to add -s to the options to ar.
 
 Windows (February 2016): Those wishing to read DWARF2 or 
 later from Windows PE files (using Mingw) should take a look at 
@@ -254,8 +239,3 @@ but will be as time permits.
 -Wcast-align -Wchar-subscripts -Winline 
 -Wnested-externs -Wredundant-decls 
 -Wold-style-definition -Wno-pointer-sign
-
-
-$Source: /home/davea/dwarf/dwarf-working/trunk/libdwarf/README,v $
-$Revision: 1.1 $
-$Date: 2009/11/23 17:15:37 $

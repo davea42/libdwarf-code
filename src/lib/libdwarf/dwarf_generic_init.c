@@ -140,7 +140,7 @@ set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
 int dwarf_init_path(const char *path,
     char            * true_path_out_buffer,
     unsigned          true_path_bufferlen,
-    Dwarf_Unsigned    access,
+    Dwarf_Unsigned    unusedarg,
     unsigned          groupnumber,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
@@ -152,7 +152,7 @@ int dwarf_init_path(const char *path,
 {
     return dwarf_init_path_dl(path,
         true_path_out_buffer,true_path_bufferlen,
-        access,groupnumber,errhand,errarg,ret_dbg,
+        unusedarg, groupnumber,errhand,errarg,ret_dbg,
         0,0,0,
         reserved1,reserved2,reserved3,error);
 }
@@ -197,20 +197,20 @@ final_common_settings(Dwarf_Debug dbg,
     field.
 */
 int dwarf_init_path_dl(const char *path,
-    char                      * true_path_out_buffer,
-    unsigned                    true_path_bufferlen,
-    Dwarf_Unsigned              access,
-    unsigned                    groupnumber,
-    Dwarf_Handler               errhand,
-    Dwarf_Ptr                   errarg,
-    Dwarf_Debug               * ret_dbg,
-    char                      ** dl_path_array,
-    unsigned int                 dl_path_count,
-    unsigned char             * path_source,
-    UNUSEDARG const char      * reserved1,
-    UNUSEDARG Dwarf_Unsigned    reserved2,
-    UNUSEDARG Dwarf_Unsigned  * reserved3,
-    Dwarf_Error               * error)
+    char            * true_path_out_buffer,
+    unsigned        true_path_bufferlen,
+    Dwarf_Unsigned  access UNUSEDARG,
+    unsigned        groupnumber,
+    Dwarf_Handler   errhand,
+    Dwarf_Ptr       errarg,
+    Dwarf_Debug     * ret_dbg,
+    char            ** dl_path_array,
+    unsigned int    dl_path_count,
+    unsigned char   * path_source,
+    const char      * reserved1 UNUSEDARG,
+    Dwarf_Unsigned    reserved2 UNUSEDARG,
+    Dwarf_Unsigned  * reserved3 UNUSEDARG,
+    Dwarf_Error     * error)
 {
     unsigned       ftype = 0;
     unsigned       endian = 0;
@@ -309,7 +309,7 @@ int dwarf_init_path_dl(const char *path,
         res = _dwarf_elf_nlsetup(fd,
             file_path,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,&dbg,error);
+            groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
             return res;
@@ -323,7 +323,7 @@ int dwarf_init_path_dl(const char *path,
         res = _dwarf_macho_setup(fd,
             file_path,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,&dbg,error);
+            groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
             return res;
@@ -337,7 +337,7 @@ int dwarf_init_path_dl(const char *path,
         res = _dwarf_pe_setup(fd,
             file_path,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,&dbg,error);
+            groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
             return res;
@@ -363,12 +363,12 @@ int dwarf_init_path_dl(const char *path,
 */
 int
 dwarf_init_b(int fd,
-    Dwarf_Unsigned access,
-    unsigned  group_number,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg,
-    Dwarf_Error * error)
+    Dwarf_Unsigned  access UNUSEDARG,
+    unsigned        group_number,
+    Dwarf_Handler   errhand,
+    Dwarf_Ptr       errarg,
+    Dwarf_Debug *   ret_dbg,
+    Dwarf_Error *   error)
 {
     unsigned ftype = 0;
     unsigned endian = 0;
@@ -394,7 +394,7 @@ dwarf_init_b(int fd,
 
         res2 = _dwarf_elf_nlsetup(fd,"",
             ftype,endian,offsetsize,filesize,
-            access,group_number,errhand,errarg,ret_dbg,error);
+            group_number,errhand,errarg,ret_dbg,error);
         if (res2 != DW_DLV_OK) {
             return res2;
         }
@@ -406,7 +406,7 @@ dwarf_init_b(int fd,
 
         resm = _dwarf_macho_setup(fd,"",
             ftype,endian,offsetsize,filesize,
-            access,group_number,errhand,errarg,ret_dbg,error);
+            group_number,errhand,errarg,ret_dbg,error);
         if (resm != DW_DLV_OK) {
             return resm;
         }
@@ -420,7 +420,7 @@ dwarf_init_b(int fd,
         resp = _dwarf_pe_setup(fd,
             "",
             ftype,endian,offsetsize,filesize,
-            access,group_number,errhand,errarg,ret_dbg,error);
+            group_number,errhand,errarg,ret_dbg,error);
         if (resp != DW_DLV_OK) {
             return resp;
         }

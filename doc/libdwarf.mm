@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.3 18 June 2021
+.ds vE Rev 4.4 22 June 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -232,6 +232,13 @@ recent changes.
 
 .H 2 "Items Changed"
 .P
+22 June 2021
+The DW_DLC_READ macro (as well
+as the other DW_DLC macros) 
+has been deleted from libdwarf.h.
+To call dwarf_init* functions pass 0 instead
+of DW_DLC_READ.
+.P
 Many obsolete functions deleted.
 18 June 2021.
 .P
@@ -269,22 +276,6 @@ and dwarf_basic_crc32()
 so libdwarf can check
 debuglink/build-id
 CRC values.
-.P
-Clarified the DW_DLC* 
-value meaning here and in
-libdwarf.h.
-In the consumer/reader case
-DW_DLC_READ
-is zero and zero is the only
-meaningful value to pass
-as the 'access' argument
-of dwarf_init_b(and the like)
-consumer/reader
-initialization functions.
-All this has been true for many
-years, it is only now being
-clearly (one hopes) stated.
-(September 28, 2020)
 .P
 Added dwarf_get_ranges_b()
 so clients reading DWARF4 
@@ -2058,7 +2049,6 @@ See just below the example for a further discussion.
 void exampleinitfail(const char *path,
     char *true_pathbuf,
     unsigned tpathlen,
-    unsigned access,
     unsigned groupnumber)
 {
     Dwarf_Handler errhand = 0;
@@ -2071,7 +2061,7 @@ void exampleinitfail(const char *path,
     int res = 0;
 
     res = dwarf_init_path(path,true_pathbuf,
-        tpathlen,access,groupnumber,errhand,
+        tpathlen,0,groupnumber,errhand,
         errarg,&dbg,reserved1,reserved2,
         &reserved3,
         &error);
@@ -2456,6 +2446,14 @@ Pass both as zero if there are
 no debuglink global paths
 other than the default standard
 \f(CW/usr/lib/debug\fP.
+.P
+for the
+\f(CWaccess\fP
+argument pass in 0.
+There is no DW_DLC_READ
+macro now.
+
+
 
 .H 3 "dwarf_init_b()"
 .DS
@@ -2480,16 +2478,11 @@ does not contain DWARF debugging information.
 \f(CWDW_DLV_ERROR\fP is returned if
 an error occurred.
 .P
-The
-\f(CWaccess\fP argument indicates what access is
-allowed for the section.
-The \f(CWDW_DLC_READ\fP macro value
-is zero and
-valid for read access (only read access
-is defined or discussed in this document).
-No value other than zero should be passed
-in to these consumer/reader functions.
-The value passed in is ignored.
+for the
+\f(CWaccess\fP
+argument pass in 0.
+There is no DW_DLC_READ
+macro now.
 .P
 The
 \f(CWgroupnumber\fP argument indicates which group is to
@@ -10848,9 +10841,9 @@ A register + offset(a)(b)
 .LI
 A register(c)(d)
 
-
 .LI
-A marker (DW_FRAME_UNDEFINED_VAL) meaning \fIregister value undefined\fP
+A marker (DW_FRAME_UNDEFINED_VAL) meaning
+\fIregister value undefined\fP
 
 .LI
 A marker (DW_FRAME_SAME_VAL) meaning
