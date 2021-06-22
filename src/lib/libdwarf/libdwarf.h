@@ -468,8 +468,7 @@ typedef struct Dwarf_Regtable3_s {
     If DW_DLV_OK returns the regnum and offset thru the pointers
     (which the consumer must use appropriately).
 */
-int dwarf_frame_get_reg_register(
-    struct Dwarf_Regtable_Entry3_s *reg_in,
+int dwarf_frame_get_reg_register(struct Dwarf_Regtable_Entry3_s,
     Dwarf_Small *offset_relevant,
     Dwarf_Half *regnum_out,
     Dwarf_Signed *offset_out);
@@ -479,8 +478,7 @@ int dwarf_frame_get_reg_register(
     The caller must pass in the address of a valid
     Dwarf_Block (the caller need not initialize it).
 */
-int dwarf_frame_get_reg_expression(
-    struct Dwarf_Regtable_Entry3_s *reg_in,
+int dwarf_frame_get_reg_expression(struct Dwarf_Regtable_Entry3_s,
     Dwarf_Block *block_out);
 
 
@@ -1478,7 +1476,7 @@ int dwarf_init_path_dl(const char * /*path*/,
 
 /*  Initialization based on Unix(etc) open fd */
 /*  New March 2017 */
-int dwarf_init_b(int    /*fd*/,
+int dwarf_init_b(int /*fd*/,
     Dwarf_Unsigned    /*unused, pass 0 */,
     unsigned int      /*groupnumber*/,
     Dwarf_Handler     /*errhand*/,
@@ -1786,8 +1784,7 @@ int dwarf_get_loclist_c(Dwarf_Attribute /*attr*/,
 #define DW_LKIND_unknown     99
 
 /* DWARF2 kind is 2. DWARF3/4 kind is 3, DWARF5 kind is 5 */
-int
-dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
+int dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
     unsigned int  * /*lkind*/,
     Dwarf_Error   * /*error*/);
 
@@ -1821,8 +1818,7 @@ int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c /*loclist_head*/,
     Dwarf_Error    *  /*error*/);
 
 /* New June 2020 for DWARF5 (and all earlier). */
-int
-dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
+int dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
     Dwarf_Unsigned   /*index*/,
     Dwarf_Small    * /*atom_out*/,
     Dwarf_Unsigned * /*operand1*/,
@@ -2071,8 +2067,7 @@ int dwarf_srclines_b(Dwarf_Die /*die*/,
 /*  New October 2015.  Returns line details.
     Works for DWARF2,3,4,5.  If linecount
     returned is zero this is a line table with no lines.*/
-int dwarf_srclines_from_linecontext(
-    Dwarf_Line_Context /*line_context*/,
+int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
     Dwarf_Line  **   /*linebuf*/,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Error  *   /* error*/);
@@ -2082,8 +2077,7 @@ int dwarf_srclines_from_linecontext(
     two-level line tables. A single level table will
     have *linebuf_actuals and *linecount_actuals set
     to 0. */
-int dwarf_srclines_two_level_from_linecontext(
-    Dwarf_Line_Context /*line_context*/,
+int dwarf_srclines_two_level_from_linecontext(Dwarf_Line_Context,
     Dwarf_Line  **   /*linebuf */,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Line  **   /*linebuf_actuals*/,
@@ -2158,14 +2152,14 @@ int dwarf_srclines_files_indexes(Dwarf_Line_Context /*line_context*/,
     With DWARF 5 index starts with 0.
     See dwarf_srclines_files_indexes() which makes
     indexing through the files easy. */
-int dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
-    Dwarf_Signed     index_in,
-    const char **    name,
-    Dwarf_Unsigned * directory_index,
-    Dwarf_Unsigned * last_mod_time,
-    Dwarf_Unsigned * file_length,
-    Dwarf_Form_Data16 ** md5ptr,
-    Dwarf_Error    * error);
+int dwarf_srclines_files_data_b(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Signed     /*index_in*/,
+    const char **    /*name*/,
+    Dwarf_Unsigned * /*directory_index*/,
+    Dwarf_Unsigned * /*last_mod_time*/,
+    Dwarf_Unsigned * /*file_length*/,
+    Dwarf_Form_Data16 ** /*md5ptr*/,
+    Dwarf_Error    * /*error*/);
 
 /*  New October 2015. */
 /*  Unlike dwarf_srcfiles() this returns the raw file table
@@ -2181,15 +2175,15 @@ int dwarf_srclines_files_data(Dwarf_Line_Context /*line_context*/,
 
 /*  New October 2015. */
 /*  Count is the real count of include array entries. */
-int dwarf_srclines_include_dir_count(
-    Dwarf_Line_Context /*line_context*/,
+int dwarf_srclines_include_dir_count(Dwarf_Line_Context
+    /*line_context*/,
     Dwarf_Signed *  /*count*/,
     Dwarf_Error  * /* error*/);
 
 /*  New October 2015. */
 /*  Index starts with 1, last is 'count' */
-int dwarf_srclines_include_dir_data(
-    Dwarf_Line_Context /*line_context*/,
+int dwarf_srclines_include_dir_data( Dwarf_Line_Context
+    /*line_context*/,
     Dwarf_Signed    /*index*/,
     const char **   /*name*/,
     Dwarf_Error   * /* error*/);
@@ -2499,7 +2493,8 @@ int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns
     DW_DLV_OK that is filled in. */
-int dwarf_crc32(Dwarf_Debug /*dbg*/,unsigned char * /*crcbuf*/,
+int dwarf_crc32(Dwarf_Debug /*dbg*/,
+    unsigned char * /*crcbuf*/,
     Dwarf_Error * /*error*/);
 
 /*  Public interface to the real crc calculation
@@ -2538,8 +2533,7 @@ int dwarf_global_die_offset(Dwarf_Global /*global*/,
     CU header global offset.
     See also dwarf_CU_dieoffset_given_die().
     The _b form is new October 2011. */
-int dwarf_get_cu_die_offset_given_cu_header_offset_b(
-    Dwarf_Debug      /*dbg*/,
+int dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug,
     Dwarf_Off        /*in_cu_header_offset*/,
     Dwarf_Bool       /*is_info. True means look in debug_Info,
         false use debug_types.*/,
@@ -2788,8 +2782,7 @@ int dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*error*/);
 
 /*  Consumer op on  gnu .eh_frame info */
-int dwarf_get_fde_list_eh(
-    Dwarf_Debug      /*dbg*/,
+int dwarf_get_fde_list_eh(Dwarf_Debug      /*dbg*/,
     Dwarf_Cie**      /*cie_data*/,
     Dwarf_Signed*    /*cie_element_count*/,
     Dwarf_Fde**      /*fde_data*/,
@@ -2849,8 +2842,7 @@ int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
     Dwarf_Error*     /*error*/);
 
 /* dwarf_get_cie_index new September 2009. */
-int dwarf_get_cie_index(
-    Dwarf_Cie /*cie*/,
+int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
     Dwarf_Signed* /*index*/,
     Dwarf_Error* /*error*/ );
 
@@ -2954,31 +2946,27 @@ int dwarf_get_aranges_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_get_arange(
-    Dwarf_Arange*    /*aranges*/,
+int dwarf_get_arange(Dwarf_Arange*    /*aranges*/,
     Dwarf_Unsigned   /*arange_count*/,
     Dwarf_Addr       /*address*/,
     Dwarf_Arange *   /*returned_arange*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_cu_die_offset(
-    Dwarf_Arange     /*arange*/,
+int dwarf_get_cu_die_offset(Dwarf_Arange     /*arange*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_arange_cu_header_offset(
-    Dwarf_Arange     /*arange*/,
+int dwarf_get_arange_cu_header_offset(Dwarf_Arange     /*arange*/,
     Dwarf_Off*       /*return_cu_header_offset*/,
     Dwarf_Error*     /*error*/);
 #ifdef __sgi /* pragma is sgi MIPS only */
 #pragma optional dwarf_get_arange_cu_header_offset
 #endif
 
-/*  DWARF2,3,4 interface. 
+/*  DWARF2,3,4 interface.
     New for DWARF4, entries may have segment information.
     *segment is only meaningful if *segment_entry_size is non-zero. */
-int dwarf_get_arange_info_b(
-    Dwarf_Arange     /*arange*/,
+int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
     Dwarf_Unsigned*  /*segment*/,
     Dwarf_Unsigned*  /*segment_entry_size*/,
     Dwarf_Addr    *  /*start*/,
@@ -3064,8 +3052,7 @@ int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Half     * /*forms_count*/,
     const char    ** /*macro_string*/,
     Dwarf_Error    * /*error*/);
-int dwarf_get_macro_startend_file(
-    Dwarf_Macro_Context /*macro_context*/,
+int dwarf_get_macro_startend_file(Dwarf_Macro_Context /*context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*line_number*/,
     Dwarf_Unsigned * /*name_index_to_line_tab*/,
@@ -3252,8 +3239,7 @@ int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Error               * /*error*/);
 
 /*    entryindex: 0 to addressarea_list_length-1 */
-int dwarf_gdbindex_addressarea_entry(
-    Dwarf_Gdbindex   /*gdbindexptr*/,
+int dwarf_gdbindex_addressarea_entry(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*low_adddress*/,
     Dwarf_Unsigned * /*high_address*/,
@@ -3265,8 +3251,7 @@ int dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Error               * /*error*/);
 
 /*  entryindex: 0 to symtab_list_length-1 */
-int dwarf_gdbindex_symboltable_entry(
-    Dwarf_Gdbindex   /*gdbindexptr*/,
+int dwarf_gdbindex_symboltable_entry(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*string_offset*/,
     Dwarf_Unsigned * /*cu_vector_offset*/,
@@ -3278,8 +3263,7 @@ int dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex /*gdbindex*/,
     Dwarf_Error    * /*error*/);
 
 
-int dwarf_gdbindex_cuvector_inner_attributes(
-    Dwarf_Gdbindex /*gdbindex*/,
+int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex/*index*/,
     Dwarf_Unsigned   /*cuvector_offset*/,
     Dwarf_Unsigned   /*innerindex*/,
     /* The attr_value is a field of bits. For expanded version
@@ -3287,8 +3271,7 @@ int dwarf_gdbindex_cuvector_inner_attributes(
     Dwarf_Unsigned * /*attr_value*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_gdbindex_cuvector_instance_expand_value(
-    Dwarf_Gdbindex /*gdbindex*/,
+int dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex,
     Dwarf_Unsigned   /*value*/,
     Dwarf_Unsigned * /*cu_index*/,
     Dwarf_Unsigned * /*reserved1*/,
@@ -3571,7 +3554,7 @@ struct Dwarf_Rnglists_Head_s;
 typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
 /*  For DWARF5 DW_AT_ranges: DW_FORM_sec_offset DW_FORM_rnglistx */
-int dwarf_rnglists_get_rle_head(Dwarf_Attribute       /*attr*/,
+int dwarf_rnglists_get_rle_head(Dwarf_Attribute /*attr*/,
     Dwarf_Half            /*theform*/,
     Dwarf_Unsigned        /*index_or_offset_value*/,
     Dwarf_Rnglists_Head * /*head_out*/,
@@ -3580,8 +3563,7 @@ int dwarf_rnglists_get_rle_head(Dwarf_Attribute       /*attr*/,
     Dwarf_Error    *      /*error*/);
 
 /*  Get the rnglist entries details */
-int dwarf_get_rnglists_entry_fields_a(
-    Dwarf_Rnglists_Head /*head*/,
+int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
     Dwarf_Unsigned   /*entrynum*/,
     unsigned       * /*entrylen*/,
     unsigned       * /*rle_value_out*/,
@@ -3592,7 +3574,7 @@ int dwarf_get_rnglists_entry_fields_a(
     Dwarf_Unsigned * /*cooked2*/,
     Dwarf_Error *    /*err*/);
 
-int dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head );
+int dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head);
 
 /*  Loads all the rnglists headers and
     returns DW_DLV_NO_ENTRY if the section
@@ -3686,7 +3668,7 @@ int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
 
     This interface assumes there is no
     segment selector. */
-int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
+int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned  /*entry_offset*/,
     Dwarf_Unsigned * /*entry_kind*/,
     Dwarf_Unsigned * /*entry_operand1*/,
@@ -3699,7 +3681,7 @@ int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
     the pointers. If any missing operands assign
     zero back through tye operand pointers. */
 
-int dwarf_get_rnglist_rle( Dwarf_Debug /*dbg*/,
+int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned /*contextnumber*/,
     Dwarf_Unsigned /*entry_offset*/,
     Dwarf_Unsigned /*endoffset*/,
@@ -3895,8 +3877,7 @@ int dwarf_close_str_offsets_table_access(
 
     On successful call, call dwarf_str_offsets_table_entry()
     to get the individual table values on the now-active table. */
-int dwarf_next_str_offsets_table(
-    Dwarf_Str_Offsets_Table /*table_data*/,
+int dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table,
     Dwarf_Unsigned * /*unit_length*/,
     Dwarf_Unsigned * /*unit_length_offset*/,
     Dwarf_Unsigned * /*table_start_offset*/,
@@ -3908,16 +3889,14 @@ int dwarf_next_str_offsets_table(
 
 /*  Valid index values n:  0 <= n <  table_entry_count
     for the active table */
-int dwarf_str_offsets_value_by_index(
-    Dwarf_Str_Offsets_Table /*table_data*/,
+int dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table,
     Dwarf_Unsigned   /*index_to_entry*/,
     Dwarf_Unsigned * /*entry_value*/,
     Dwarf_Error    * /*error*/);
 
 /*  After all str_offsets read this reports final
     wasted-bytes count. */
-int dwarf_str_offsets_statistics(
-    Dwarf_Str_Offsets_Table /*table_data*/,
+int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table,
     Dwarf_Unsigned * /*wasted_byte_count*/,
     Dwarf_Unsigned * /*table_count*/,
     Dwarf_Error    * /*error*/);
@@ -4074,8 +4053,7 @@ extern int dwarf_get_VIS_name(unsigned int /*val_in*/,
     dwarf_uncompress_integer_block(). No ugly
     cast needed to know if
     dwarf_uncompress_integer_block_a() succeeds or not. */
-int
-dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
+int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned     /*input_length_in_bytes*/,
     void             * /*input_block*/,
     Dwarf_Unsigned   * /*value_count*/,
@@ -4108,33 +4086,32 @@ void * dwarf_uncompress_integer_block(
 /*  Call this passing in return value from
     dwarf_uncompress_integer_block()
     to free the space the decompression allocated. */
-void dwarf_dealloc_uncompressed_block(
-    Dwarf_Debug, void *);
+void dwarf_dealloc_uncompressed_block(Dwarf_Debug, void *);
 
 extern int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class /*fc*/,
     const char ** /*s_out*/);
 
 /* Convert local offset into global offset */
-int dwarf_convert_to_global_offset(Dwarf_Attribute  /*attr*/,
+int dwarf_convert_to_global_offset(Dwarf_Attribute /*attr*/,
     Dwarf_Off        /*offset*/,
     Dwarf_Off*       /*ret_offset*/,
     Dwarf_Error*     /*error*/);
 
 /* Get both offsets (local and global) */
-int dwarf_die_offsets(Dwarf_Die     /*die*/,
+int dwarf_die_offsets(Dwarf_Die /*die*/,
     Dwarf_Off*    /*global_offset*/,
     Dwarf_Off*    /*local_offset*/,
     Dwarf_Error*  /*error*/);
 
 /* Giving a section name, get its size and address */
-int dwarf_get_section_info_by_name(Dwarf_Debug      /*dbg*/,
+int dwarf_get_section_info_by_name(Dwarf_Debug /*dbg*/,
     const char *     /*section_name*/,
     Dwarf_Addr*      /*section_addr*/,
     Dwarf_Unsigned*  /*section_size*/,
     Dwarf_Error*     /*error*/);
 
 /* Giving a section index, get its size and address */
-int dwarf_get_section_info_by_index(Dwarf_Debug      /*dbg*/,
+int dwarf_get_section_info_by_index(Dwarf_Debug /*dbg*/,
     int              /*section_index*/,
     const char **    /*section_name*/,
     Dwarf_Addr*      /*section_addr*/,
@@ -4266,7 +4243,7 @@ void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
     Returns the value the flag was before this call. */
 int dwarf_set_de_alloc_flag(int v);
 
-int dwarf_object_detector_path_b(const char  * /*path*/,
+int dwarf_object_detector_path_b(const char * /*path*/,
     char         *   /* outpath_buffer*/,
     unsigned long    /* outpathlen*/,
     char **          /* gl_pathnames*/,
@@ -4279,19 +4256,17 @@ int dwarf_object_detector_path_b(const char  * /*path*/,
     int * /*errcode*/);
 
 /* Solely looks for dSYM */
-int dwarf_object_detector_path_dSYM(
-    const char  * /* path*/,
-    char * /* outpath*/, 
+int dwarf_object_detector_path_dSYM(const char * /*path*/,
+    char *         /* outpath*/,
     unsigned long  /* outpath_len*/,
-    char **  /* gl_pathnames*/,
-    unsigned  /* gl_pathcount*/,
-    unsigned * /* ftype*/,
-    unsigned * /* endian*/,
-    unsigned * /* offsetsize*/,
+    char **        /* gl_pathnames*/,
+    unsigned       /* gl_pathcount*/,
+    unsigned *     /* ftype*/,
+    unsigned *     /* endian*/,
+    unsigned *     /* offsetsize*/,
     Dwarf_Unsigned  * /* filesize*/,
-    unsigned char * /* pathsource*/,
-    int * /* errcode*/);
-
+    unsigned char *   /* pathsource*/,
+    int *             /* errcode*/);
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
