@@ -53,93 +53,15 @@ else
     exit 
   fi
 fi
-xtractapp=/tmp/bart-extractver.py
-cat >$xtractapp  <<\ENDOFPYTHON
-#!/usr/bin/env python3
-""" read in configure.ac and
-extract the v_maj v_min v_mic
-values into a version number, like 0.1.0
-This assumes no unusal formatting of
-the first few lines of configure.ac
-"""
-import sys
-import os
-mydigitdict = { "0":1, "1":2, "2":3, "3":4, "4":5,
-"5":6, "6":7, "7":8, "8":9, "9":10 }
-def getval(s):
-    wds= s.split()
-    if len(wds) != 2:
-        print("xtract bad string ",s,file=sys.stderr)
-        return False
-    vstr= wds[1]
-    val = 0
-    for i,c in enumerate(vstr):
-        if i == 0:
-            if c != "[":
-                print("xtract bad string not [ ",s,\
-                    file=sys.stderr)
-                return False
-            continue
-        isdig = mydigitdict.get(c,False)
-        if isdig:
-           val = (val)*10 + isdig -1
-           continue
-        if c != ']':
-           print("xtract bad string end not ] ",s,file=sys.stderr)
-           return False
-        return "%1d"%(val)
-    print("xtract found no number ",s,file=sys.stderr)
-    return False
-def extractver(path):
-    maj=False
-    min=False
-    mic=False
-    try:
-      file = open(path,"r")
-    except IOError as message:
-      print("File could not be opened: ",path, message,file=sys.stderr)
-      sys.exit(1)
-    while 1:
-        try:
-            rec = file.readline()
-        except EOFError:
-              break
-        if len(rec) < 1:
-            # eof
-            break
-        if not maj:
-            if rec.find("v_maj") != -1:
-                maj=getval(rec)
-        if not min:
-            if rec.find("v_min") != -1:
-              min=getval(rec)
-        if not mic:
-            if rec.find("v_mic") != -1:
-              mic=getval(rec)
-        if maj and min and mic:
-            file.close()
-            print("%1d.%1d.%1d"%(int(maj),int(min),int(mic)),end='')
-            sys.exit(0)
-    print("Configure file missing values: extractver.py",\
-          file=sys.stderr)
-    sys.exit(1)
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Bad extractver.py input arg",len(sys.argv),\
-        file = sys.stderr)
-    extractver(sys.argv[1])
-ENDOFPYTHON
-
-chmod +x $xtractapp
-v=`$xtractapp configure.ac`
-if [ $? -ne 0 ]
+if [ ! -x ./configure ]
 then
-  echo "Python extracting verson from configure.ac fails"
+  echo "./configure is missing or not executable."
+  echo "Possibly one needs to run autogen.sh?"
+  echo "Giving up"
   exit 1
 fi
-rm $xtractapp
+v=`./configure --version | head -n 1 | cut -f 3 -d " "`
 echo "configure.ac version is v=$v"
-
 if [ x$v = "x" ]
 then
    echo FAIL did not get configure.ac version
