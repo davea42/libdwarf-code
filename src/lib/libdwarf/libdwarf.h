@@ -3588,11 +3588,8 @@ int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     or loclist and uses dwarf_loc_head_c_dealloc() to
     deallocate that memory once one is finished with
     that data. So for most purposes you do not need
-    to use these functions  */
-struct Dwarf_Loclists_Entry_s;
-typedef struct Dwarf_Loclists_Entry_s * Dwarf_Loclists_Entry;
-
-/*  See dwarf_get_loclist_c() to open a Dwarf_Loc_Head_c
+    to use these functions
+    See dwarf_get_loclist_c() to open a Dwarf_Loc_Head_c
     on any type of location list or expression. */
 
 /*  Get the loclists entries details */
