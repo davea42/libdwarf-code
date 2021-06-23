@@ -30,8 +30,7 @@ grep '^exampl' checkexamples.c | cut -b 1-50 |sort
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 
-void 
-example1(Dwarf_Die somedie)
+void example1(Dwarf_Die somedie)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Signed atcount;
@@ -54,8 +53,7 @@ example1(Dwarf_Die somedie)
     }
 }
 
-void 
-example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
+void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
 {
     Dwarf_Error error = 0;
     int res = 0;
@@ -69,8 +67,7 @@ example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
     }
 }
 
-void 
-example3(Dwarf_Debug dbg)
+void example3(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     int res = 0;
@@ -81,8 +78,7 @@ example3(Dwarf_Debug dbg)
 }
 
 
-void 
-examplesecgroup(Dwarf_Debug dbg)
+void examplesecgroup(Dwarf_Debug dbg)
 {
     int res = 0;
     Dwarf_Unsigned  section_count = 0;
@@ -140,8 +136,7 @@ examplesecgroup(Dwarf_Debug dbg)
         Do not free() the strings themselves.*/
     free(sec_names);
 }
-void 
-example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
+void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
 {
     Dwarf_Die return_sib = 0;
     Dwarf_Error error = 0;
@@ -159,8 +154,7 @@ example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
 }
 
 
-void 
-example5(Dwarf_Die in_die)
+void example5(Dwarf_Die in_die)
 {
     Dwarf_Die return_kid = 0;
     Dwarf_Error error = 0;
@@ -179,8 +173,7 @@ example5(Dwarf_Die in_die)
     }
 }
 
-void 
-example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
+void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
 {
     Dwarf_Error error = 0;
     Dwarf_Die return_die = 0;
@@ -202,8 +195,7 @@ example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
     }
 }
 
-void 
-example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
+void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
 {
     int res = 0;
     Dwarf_Off cudieoff = 0;
@@ -228,8 +220,7 @@ example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
 }
 
 
-void 
-example8(Dwarf_Debug dbg, Dwarf_Die somedie)
+void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
 {
     Dwarf_Signed atcount = 0;
     Dwarf_Attribute *atlist = 0;
@@ -249,8 +240,7 @@ example8(Dwarf_Debug dbg, Dwarf_Die somedie)
     }
 }
 
-void 
-exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
+void exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
     Dwarf_Bool is_info)
 {
     Dwarf_Unsigned offcnt = 0;
@@ -271,8 +261,7 @@ exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
 }
 
 
-void 
-example_discr_list(Dwarf_Debug dbg,
+void example_discr_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
     Dwarf_Half attrnum,
@@ -361,8 +350,7 @@ example_discr_list(Dwarf_Debug dbg,
     }
 }
 
-void 
-example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
 {
     Dwarf_Unsigned lcount = 0;
     Dwarf_Loc_Head_c loclist_head = 0;
@@ -452,8 +440,7 @@ example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
     return;
 }
 
-void 
-example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
+void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     Dwarf_Unsigned expr_len,
     Dwarf_Half addr_size,
     Dwarf_Half offset_size,
@@ -578,8 +565,7 @@ examplea(Dwarf_Attribute someattr)
     return meaninglesstotal;
 }
 
-void
-examplec(Dwarf_Die cu_die)
+void examplec(Dwarf_Die cu_die)
 {
     /* EXAMPLE: DWARF5 style access.  */
     Dwarf_Line  *linebuf = 0;
@@ -723,8 +709,7 @@ examplec(Dwarf_Die cu_die)
     }
 }
 
-void 
-exampled(Dwarf_Die somedie)
+void exampled(Dwarf_Die somedie)
 {
     Dwarf_Signed count = 0;
     Dwarf_Line_Context context = 0;
@@ -754,8 +739,7 @@ exampled(Dwarf_Die somedie)
     dwarf_srclines_dealloc_b(context);
 }
 
-void 
-examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
+void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
 {
     Dwarf_Signed count = 0;
     char **srcfiles = 0;
@@ -773,8 +757,7 @@ examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
     }
 }
 
-void 
-examplef(Dwarf_Debug dbg)
+void examplef(Dwarf_Debug dbg)
 {
     Dwarf_Signed count = 0;
     Dwarf_Global *globs = 0;
@@ -793,8 +776,7 @@ examplef(Dwarf_Debug dbg)
 
 
 
-void 
-exampleg(Dwarf_Debug dbg)
+void exampleg(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -811,8 +793,7 @@ exampleg(Dwarf_Debug dbg)
     }
 }
 
-void 
-exampleh(Dwarf_Debug dbg)
+void exampleh(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -830,8 +811,7 @@ exampleh(Dwarf_Debug dbg)
 }
 
 /* example of what not to do. */
-void 
-examplei(Dwarf_Debug dbg)
+void examplei(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -852,8 +832,7 @@ examplei(Dwarf_Debug dbg)
     }
 }
 
-void 
-examplej(Dwarf_Debug dbg)
+void examplej(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -870,8 +849,7 @@ examplej(Dwarf_Debug dbg)
     }
 }
 
-void 
-examplek(Dwarf_Debug dbg)
+void examplek(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Func *funcs = 0;
@@ -890,8 +868,7 @@ examplek(Dwarf_Debug dbg)
     }
 }
 
-void 
-examplel(Dwarf_Debug dbg)
+void examplel(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -908,8 +885,7 @@ examplel(Dwarf_Debug dbg)
     }
 }
 
-void 
-examplem(Dwarf_Debug dbg)
+void examplem(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -928,8 +904,7 @@ examplem(Dwarf_Debug dbg)
     }
 }
 
-void 
-examplen(Dwarf_Debug dbg)
+void examplen(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -946,8 +921,7 @@ examplen(Dwarf_Debug dbg)
 }
 
 
-void 
-exampleo(Dwarf_Debug dbg)
+void exampleo(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -965,8 +939,7 @@ exampleo(Dwarf_Debug dbg)
     }
 }
 
-void 
-exampledebugnames()
+void exampledebugnames()
 {
     /* FIXME need extended example of debugnames use. */
 }
@@ -985,8 +958,7 @@ int has_unchecked_import_in_list(void);
 Dwarf_Unsigned get_next_import_from_list(void);
 void mark_this_offset_as_examined(Dwarf_Unsigned macro_unit_offset);
 void add_offset_to_list(Dwarf_Unsigned offset);
-void 
-examplep5(Dwarf_Die cu_die)
+void examplep5(Dwarf_Die cu_die)
 {
     int lres = 0;
     Dwarf_Unsigned version = 0;
@@ -1125,8 +1097,7 @@ examplep5(Dwarf_Die cu_die)
     }
 }
 void functionusingsigned(Dwarf_Signed s);
-void
-examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
+void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
@@ -1169,8 +1140,7 @@ examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
     }
 }
 
-void 
-exampleq(Dwarf_Debug dbg)
+void exampleq(Dwarf_Debug dbg)
 {
     Dwarf_Cie *cie_data = 0;
     Dwarf_Signed cie_count = 0;
@@ -1188,8 +1158,7 @@ exampleq(Dwarf_Debug dbg)
 }
 
 /* OBSOLETE EXAMPLE */
-void 
-exampleqb(Dwarf_Debug dbg)
+void exampleqb(Dwarf_Debug dbg)
 {
     Dwarf_Cie *cie_data = 0;
     Dwarf_Signed cie_count = 0;
@@ -1216,8 +1185,7 @@ exampleqb(Dwarf_Debug dbg)
 }
 
 
-void 
-exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
+void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
 {
     /*  Given a pc value
         for a function find the FDE and CIE data for
@@ -1257,8 +1225,7 @@ exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
     /* ERROR or NO ENTRY. Do something */
 }
 
-void 
-examples(Dwarf_Debug dbg,Dwarf_Cie cie,
+void examples(Dwarf_Debug dbg,Dwarf_Cie cie,
     Dwarf_Ptr instruction,Dwarf_Unsigned len)
 {
     Dwarf_Signed count = 0;
@@ -1278,8 +1245,7 @@ examples(Dwarf_Debug dbg,Dwarf_Cie cie,
     }
 }
 
-void 
-examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
+void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
 {
     /*  Looping through the dwarf_loc section finding loclists:
         an example.  */
@@ -1312,8 +1278,7 @@ examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     memory leakage to keep the example short.
     dwarf_finish() will deallocate  if we do not
     do so here. */
-void 
-examplestrngoffsets(Dwarf_Debug dbg)
+void examplestrngoffsets(Dwarf_Debug dbg)
 {
     int res = 0;
     Dwarf_Str_Offsets_Table sot = 0;
@@ -1384,8 +1349,7 @@ examplestrngoffsets(Dwarf_Debug dbg)
     sot = 0;
 }
 
-void 
-exampleu(Dwarf_Debug dbg)
+void exampleu(Dwarf_Debug dbg)
 {
     Dwarf_Signed count = 0;
     Dwarf_Arange *arang = 0;
@@ -1404,8 +1368,7 @@ exampleu(Dwarf_Debug dbg)
     }
 }
 void functionusingrange(Dwarf_Ranges *r);
-void 
-examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,Dwarf_Die die)
+void examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,Dwarf_Die die)
 {
     Dwarf_Signed count = 0;
     Dwarf_Off  realoffset = 0;
@@ -1427,8 +1390,7 @@ examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,Dwarf_Die die)
         dwarf_ranges_dealloc(dbg,rangesbuf,count);
     }
 }
-void 
-examplew(Dwarf_Debug dbg)
+void examplew(Dwarf_Debug dbg)
 {
     Dwarf_Gdbindex gindexptr = 0;
     Dwarf_Unsigned version = 0;
@@ -1488,8 +1450,7 @@ examplew(Dwarf_Debug dbg)
         dwarf_gdbindex_free(gindexptr);
     }
 }
-void 
-examplewgdbindex(Dwarf_Gdbindex gdbindex)
+void examplewgdbindex(Dwarf_Gdbindex gdbindex)
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i = 0;
@@ -1517,8 +1478,7 @@ examplewgdbindex(Dwarf_Gdbindex gdbindex)
             with it. */
     }
 }
-void 
-examplex(Dwarf_Gdbindex gdbindex)
+void examplex(Dwarf_Gdbindex gdbindex)
 {
     Dwarf_Unsigned symtab_list_length = 0;
     Dwarf_Unsigned i = 0;
@@ -1582,8 +1542,7 @@ examplex(Dwarf_Gdbindex gdbindex)
     }
 }
 
-void 
-exampley(Dwarf_Debug dbg, const char *type)
+void exampley(Dwarf_Debug dbg, const char *type)
 {
     /* type is "tu" or "cu" */
     int res = 0;
@@ -1616,8 +1575,7 @@ exampley(Dwarf_Debug dbg, const char *type)
     dwarf_xu_header_free(xuhdr);
 }
 
-void 
-examplez( Dwarf_Xu_Index_Header xuhdr,
+void examplez( Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned hash_slots_count)
 {
     /*  hash_slots_count returned by
@@ -1651,8 +1609,7 @@ examplez( Dwarf_Xu_Index_Header xuhdr,
     }
 }
 
-void 
-exampleza(Dwarf_Xu_Index_Header xuhdr,
+void exampleza(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned offsets_count, Dwarf_Unsigned index )
 {
     Dwarf_Error err = 0;
@@ -1686,8 +1643,7 @@ exampleza(Dwarf_Xu_Index_Header xuhdr,
     }
 }
 
-void 
-examplezb(void)
+void examplezb(void)
 {
     const char * out = 0;
     int res = 0;
@@ -1710,8 +1666,7 @@ examplezb(void)
 
 
 
-void 
-exampledebuglink(Dwarf_Debug dbg)
+void exampledebuglink(Dwarf_Debug dbg)
 {
     int      res = 0;
     char    *debuglink_path = 0;
@@ -1934,8 +1889,7 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-void
-exampleinitfail(const char *path,
+void exampleinitfail(const char *path,
     char *true_pathbuf,
     unsigned tpathlen,
     unsigned groupnumber)
