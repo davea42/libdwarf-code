@@ -20,7 +20,7 @@ cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 -I../src/lib/libdwarf checkexamples.c
 
 A useful shell command to make an example list is:
-grep '^exampl' checkexamples.c | cut -b 1-50 |sort
+grep '^void exampl' checkexamples.c | cut -b 1-50 |sort
 */
 
 #include <stdio.h> /* for printf */
