@@ -15,7 +15,7 @@ set_source_group(SOURCES "Source Files" addrmap.c
 	print_lines.c 
     print_llex_codes.c print_origloclist_codes.c 
     print_loclists_codes.c
-    print_locs.c  print_loclists.c
+    print_loclists.c
     print_macro.c print_macinfo.c 
     print_pubnames.c print_ranges.c 
     print_rnglists.c

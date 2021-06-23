@@ -66,7 +66,6 @@ print_llex_codes.c \
 print_origloclist_codes.c \
 print_loclists.c \
 print_loclists_codes.c \
-print_locs.c \
 print_macinfo.c \
 print_macro.c \
 print_pubnames.c \

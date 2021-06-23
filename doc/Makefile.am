@@ -30,6 +30,7 @@ endif
 EXTRA_DIST = \
 mips_extensions.mm \
 mips_extensions.pdf \
+checkexamples.c \
 dwarfdump.1 \
 dwarfgen.1  \
 libdwarf.mm \
