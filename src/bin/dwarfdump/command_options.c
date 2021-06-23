@@ -585,7 +585,6 @@ static const char *usage_long_text[] = {
 "Print Output Limiters",
 "-------------------------------------------------------------------",
 "-u<file> --format-file=<file>  Print only specified file (CU name)",
-"-cg      --format-gcc          Check only GCC compiler objects",
 "-x groupnumber=<n>    ",
 "         --format-group-number=<n> Groupnumber to print",
 "-H<num>  --format-limit=<num>  Limit output to the first <num>",
@@ -597,6 +596,7 @@ static const char *usage_long_text[] = {
 "                               check only compiler objects",
 "                               with 350.1 in the CU name",
 "-cs      --format-snc          Check only SNC compiler objects",
+"-cg      --format-gcc          Check only gcc compiler objects",
 " ",
 "-------------------------------------------------------------------",
 "File Specifications",
@@ -1071,11 +1071,12 @@ void arg_c_multiple_selection(void)
     }
 }
 
-/*  Option '-c' */
+/*  Option '-c' with no other letters. See just above. */
 void arg_print_loc(void)
 {
-    glflags.gf_loc_flag = TRUE;
-    suppress_check_dwarf();
+    printf("The -c option to print .debug_loc (unsafely) is ignored\n");
+    /*  glflags.gf_loc_flag = TRUE;
+        suppress_check_dwarf();  */
 }
 
 /*  Option '-cs' */
@@ -1086,7 +1087,7 @@ void arg_format_snc(void)
     glflags.gf_check_all_compilers = FALSE;
 }
 
-/*  Option '-cg' */
+/*  Option '-cg' --format-gcc */
 void arg_format_gcc(void)
 {
     /* -cg : Check GCC compiler */
@@ -1308,8 +1309,9 @@ void arg_print_gnu_frame(void)
 /*  Option '-g' */
 void arg_format_loc(void)
 {
-    /*info_flag = TRUE;  removed  from -g. Nov 2015 */
-    glflags.gf_use_old_dwarf_loclist = TRUE;
+    /*  info_flag = TRUE;  removed  from -g. Nov 2015
+        Entirely removed the effect of the -g 2021 */
+    glflags.gf_use_old_dwarf_loclist = FALSE;
     suppress_check_dwarf();
 }
 

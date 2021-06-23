@@ -1695,7 +1695,6 @@ print_location_operations(Dwarf_Debug dbg,
         lres = dwarfdump_print_location_operations(dbg,
             die,
             die_indent_level,
-            NULL,
             locentry,
             0, /* index 0: locdesc 0 */
             ulocentry_count,

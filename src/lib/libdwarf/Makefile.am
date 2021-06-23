@@ -168,7 +168,6 @@ ChangeLog2017 \
 ChangeLog2018 \
 ChangeLog2019 \
 ChangeLog2020 \
-checkexamples.c \
 CODINGSTYLE \
 baseline.ltp  \
 dw_elfstructs.h \

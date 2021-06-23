@@ -146,55 +146,6 @@ typedef struct Dwarf_Macro_Context_s * Dwarf_Loc_Macro_Context;
     how to read the leb values properly) */
 typedef struct Dwarf_Dsc_Head_s * Dwarf_Dsc_Head;
 
-/*  Location record. Records up to 2 operand values.
-    Not usable with DWARF5 or DWARF4 with location
-    operator  extensions. */
-typedef struct Dwarf_Loc_s {
-    Dwarf_Small     lr_atom;   /* location operation */
-    Dwarf_Unsigned  lr_number; /* operand */
-    /* for OP_BREGx  and DW_OP_GNU_const_type*/
-    Dwarf_Unsigned  lr_number2;
-    Dwarf_Unsigned  lr_offset; /* offset in locexpr for OP_BRA etc */
-} Dwarf_Loc;
-
-
-/* Location description. DWARF 2,3,4.
-   When this is from a split-dwarf loclist (.debug_loc.dwo)
-   and no tied object is present
-   then ld_lowpc and ld_highpc are actually indices in
-   the .debug_addr section of the tied object).
-   If there is a tied object then these fields are actuall
-   addresses and DW_AT_addr_base in the skeleton CU DIE applies to
-   that .debug_addr.
-
-   Location record. Records up to 2 operand values.
-   Not usable with DWARF5 or DWARF4 with extensions.
-
-   If from DWARF2,3,4 non-split dwarf then things operate as
-   in DWARF2.
-   See dwarf_get_loclist_b() and the other related
-   new functions that
-   avoid using public structures Dwarf_Loc and Dwarf_Locdesc.
-*/
-typedef struct Dwarf_Locdesc_s {
-    /*  Beginning of active range. This is actually an offset
-        of an applicable base address, not a pc value.  */
-    Dwarf_Addr      ld_lopc;
-
-    /*  End of active range. This is actually an offset
-        of an applicable base address, not a pc value.  */
-    Dwarf_Addr      ld_hipc;
-
-    Dwarf_Half      ld_cents;       /* count of location records */
-    Dwarf_Loc*      ld_s;           /* pointer to list of same */
-
-    /*  non-0 if loclist, 1 if non-split (dwarf 2,3,4) */
-    Dwarf_Small     ld_from_loclist;
-
-    Dwarf_Unsigned  ld_section_offset; /* Section (not CU) offset
-        where loc-expr begins*/
-} Dwarf_Locdesc;
-
 /*  First appears in DWARF3, and only ranges entries exist.
     The dwr_addr1/addr2 data is either an offset (DW_RANGES_ENTRY)
     or an address (dwr_addr2 in DW_RANGES_ADDRESS_SELECTION) or

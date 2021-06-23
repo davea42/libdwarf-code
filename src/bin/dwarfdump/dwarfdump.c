@@ -1153,18 +1153,6 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
-    if (glflags.gf_loc_flag) {
-        int locres = 0;
-        Dwarf_Error locerr = 0;
-
-        reset_overall_CU_error_data();
-        locres = print_locs(dbg,&locerr);
-        if (locres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "printing location data had a problem ",
-                locres,locerr);
-        }
-    }
     if (glflags.gf_abbrev_flag) {
         Dwarf_Error err = 0;
         int res = 0;

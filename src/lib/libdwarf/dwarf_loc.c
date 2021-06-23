@@ -438,60 +438,6 @@ context_is_cu_not_tu(Dwarf_CU_Context context,
         DW_CFA_val_expression
     expression_in must point to a valid dwarf expression
 */
-/* Usable to read a single loclist or to read a block of them
-   or to read an entire section's loclists.
-
-   It's BROKEN because it's not safe to read a loclist entry
-   when we do not know the address size (in any object where
-   address size can vary by compilation unit).
-
-   It also does not recognize split dwarf or DWARF4
-   or DWARF5 adequately.
-
-   Use get_locdesc_entry_c() instead.
-*/
-/*ARGSUSED*/ int
-dwarf_get_loclist_entry(Dwarf_Debug dbg,
-    Dwarf_Unsigned offset,
-    Dwarf_Addr * hipc_offset,
-    Dwarf_Addr * lopc_offset,
-    Dwarf_Ptr * data,
-    Dwarf_Unsigned * entry_len,
-    Dwarf_Unsigned * next_entry,
-    Dwarf_Error * error)
-{
-    Dwarf_Block_c b;
-    Dwarf_Addr lowpc = 0;
-    Dwarf_Addr highpc = 0;
-    Dwarf_Half address_size = 0;
-    int res = DW_DLV_ERROR;
-    Dwarf_Half ll_op = 0;
-
-    if (!dbg->de_debug_loc.dss_data) {
-        int secload = _dwarf_load_section(dbg,
-            &dbg->de_debug_loc,error);
-        if (secload != DW_DLV_OK) {
-            return secload;
-        }
-    }
-
-    /*  FIXME: DO NOT USE the call. address_size is not necessarily
-        the same in every frame. */
-    address_size = dbg->de_pointer_size;
-    res = _dwarf_read_loc_section(dbg,
-        &b, &lowpc, &highpc,
-        &ll_op,offset,
-        address_size,DW_LKIND_loclist,error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    *hipc_offset = highpc;
-    *lopc_offset = lowpc;
-    *entry_len = b.bl_len;
-    *data = b.bl_data;
-    *next_entry = b.bl_len + b.bl_section_offset;
-    return DW_DLV_OK;
-}
 
 /* ============== the October 2015 interfaces. */
 int

@@ -103,7 +103,6 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Small lkind,
     int die_indent_level,
-    Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index,
     Dwarf_Bool has_skip_or_branch,
@@ -5335,8 +5334,7 @@ int
 dwarfdump_print_location_operations(Dwarf_Debug dbg,
     Dwarf_Die       die,
     int             die_indent_level,
-    Dwarf_Locdesc * llbuf,    /* Non-zero for old interface. */
-    Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
+    Dwarf_Locdesc_c locdesc,  /* for 2015 interface. */
     Dwarf_Unsigned llent UNUSEDARG, /* Which desc we have . */
     Dwarf_Unsigned  entrycount,
     Dwarf_Small     lkind,
@@ -5352,27 +5350,6 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     struct OpBranchHead_s op_branch_checking;
 
     alloc_skip_branch_array(0,&op_branch_checking);
-    if (llbuf) {
-        Dwarf_Locdesc *locd = 0;
-        locd = llbuf;
-        no_of_ops = llbuf->ld_cents;
-        possibly_increase_esb_alloc(string_out,no_of_ops,100);
-        for (i = 0; i < no_of_ops; i++) {
-            Dwarf_Loc * op = &locd->ld_s[i];
-
-            int res = _dwarf_print_one_expr_op(dbg,die,
-                lkind,
-                die_indent_level,op,NULL,i,
-                has_skip_or_branch,
-                NULL,
-                report_raw,
-                baseaddr,string_out,err);
-            if (res == DW_DLV_ERROR) {
-                return res;
-            }
-        }
-        return DW_DLV_OK;
-    }
     /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
     possibly_increase_esb_alloc(string_out,no_of_ops,100);
@@ -5391,7 +5368,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
         int res = 0;
         res = _dwarf_print_one_expr_op(dbg,die,
             lkind,
-            die_indent_level,NULL,locdesc,i,
+            die_indent_level,locdesc,i,
             has_skip_or_branch,
             &op_branch_checking,
             report_raw,
@@ -5437,7 +5414,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
     Dwarf_Small lkind UNUSEDARG,
     int         die_indent_level,
-    Dwarf_Loc * expr,
     Dwarf_Locdesc_c exprc,
     int         index,
     Dwarf_Bool  has_skip_or_branch,
@@ -5470,12 +5446,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     } else if (index > 0) {
         esb_append(string_out, " ");
     }
-    if (expr) {
-        /* DWARF 2,3,4 style */
-        op = expr->lr_atom;
-        opd1 = expr->lr_number;
-        opd2 = expr->lr_number2;
-    } else {
+    {
         /* DWARF 2,3,4 and DWARF5 style */
         int res = 0;
         res = dwarf_get_location_op_value_d(exprc,
@@ -5972,7 +5943,6 @@ print_location_list(Dwarf_Debug dbg,
     struct esb_s *details,
     Dwarf_Error* llerr)
 {
-    Dwarf_Locdesc *llbuf = 0;
     Dwarf_Unsigned no_of_elements = 0;
     Dwarf_Loc_Head_c loclist_head = 0; /* 2015 loclist interface */
     int            lres = 0;
@@ -6270,7 +6240,6 @@ print_location_list(Dwarf_Debug dbg,
             die_indent_level,
             /*  Either llbuf or locentry non-zero.
                 Not both. */
-            llbuf,
             locentry,
             llent, /* Which loc desc this is */
             ulocentry_count, /* How many ops in this loc desc */

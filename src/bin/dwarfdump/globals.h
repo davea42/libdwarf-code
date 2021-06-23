@@ -155,7 +155,6 @@ extern int print_raw_all_loclists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info,
     Dwarf_Error *);
-extern int print_locs (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_abbrevs (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_strings (Dwarf_Debug dbg,Dwarf_Error *);
 extern int print_aranges (Dwarf_Debug dbg,Dwarf_Error *);
