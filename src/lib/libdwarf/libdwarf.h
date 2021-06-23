@@ -301,58 +301,6 @@ typedef struct Dwarf_Frame_Op_s {
 #define DW_EXPR_EXPRESSION 2
 #define DW_EXPR_VAL_EXPRESSION 3
 
-typedef struct Dwarf_Regtable_Entry_s {
-    /*  For each index i (naming a hardware register
-        with dwarf number i) the following is true and defines
-        the value of that register:
-
-        If dw_regnum is Register DW_FRAME_UNDEFINED_VAL
-            it is not DWARF register number but
-            a place holder indicating the register has
-            no defined value.
-        If dw_regnum is Register DW_FRAME_SAME_VAL
-            it  is not DWARF register number but
-            a place holder indicating the register has the same
-            value in the previous frame.
-
-            DW_FRAME_UNDEFINED_VAL, DW_FRAME_SAME_VAL are
-            only present at libdwarf runtime. Never on disk.
-            DW_FRAME_* Values present on disk are in dwarf.h
-
-        Otherwise: the register number is a DWARF register number
-            (see ABI documents for how this translates to hardware/
-            software register numbers in the machine hardware)
-            and the following applies:
-
-            if dw_value_type == DW_EXPR_OFFSET (the
-                only case for dwarf2):
-                If dw_offset_relevant is non-zero, then
-                    the value is stored at at the address CFA+N where
-                    N is a signed offset.
-                    Rule: Offset(N)
-                If dw_offset_relevant is zero, then the
-                    value of the register
-                    is the value of (DWARF) register
-                    number dw_regnum.
-                    Rule: register(F)
-            Other values of dw_value_type are an error.
-    */
-    Dwarf_Small         dw_offset_relevant;
-
-    /* For DWARF2, always 0 */
-    Dwarf_Small         dw_value_type;
-
-    Dwarf_Half          dw_regnum;
-
-    /*  The data type here should  the larger of Dwarf_Addr
-        and Dwarf_Unsigned and Dwarf_Signed. */
-    Dwarf_Addr          dw_offset;
-} Dwarf_Regtable_Entry;
-
-typedef struct Dwarf_Regtable_s {
-    struct Dwarf_Regtable_Entry_s rules[DW_REG_TABLE_SIZE];
-} Dwarf_Regtable;
-
 /* opaque type. Functional interface shown later. */
 struct Dwarf_Reg_value3_s;
 typedef struct Dwarf_Reg_value3_s Dwarf_Reg_Value3;
@@ -2801,12 +2749,6 @@ int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
 int dwarf_get_fde_instr_bytes(Dwarf_Fde /*fde*/,
     Dwarf_Ptr *      /*outinstrs*/, Dwarf_Unsigned * /*outlen*/,
     Dwarf_Error *    /*error*/);
-
-int dwarf_get_fde_info_for_all_regs(Dwarf_Fde /*fde*/,
-    Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Regtable*  /*reg_table*/,
-    Dwarf_Addr*      /*row_pc*/,
-    Dwarf_Error*     /*error*/);
 
 int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
     Dwarf_Addr       /*pc_requested*/,

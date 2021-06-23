@@ -70,6 +70,9 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
+/* Only used for debugging libdwarf. */
+static void dump_frame_rule(char *msg,
+    struct Dwarf_Reg_Rule_s *reg_rule);
 #endif /* 0 */
 
 
@@ -80,20 +83,9 @@ static int dwarf_initialize_fde_table(Dwarf_Debug dbg,
 static void dwarf_free_fde_table(struct Dwarf_Frame_s *fde_table);
 static void dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
     unsigned first, unsigned last,int initial_value);
-static void dwarf_init_reg_rules_dw(
-    struct Dwarf_Regtable_Entry_s *base,
-    unsigned first, unsigned last,int initial_value);
 static void dwarf_init_reg_rules_dw3(
     struct Dwarf_Regtable_Entry3_s *base,
     unsigned first, unsigned last,int initial_value);
-
-
-#if 0  /* FOR DEBUGGING */
-/* Only used for debugging libdwarf. */
-static void dump_frame_rule(char *msg,
-    struct Dwarf_Reg_Rule_s *reg_rule);
-#endif
-
 
 int
 dwarf_get_frame_section_name(Dwarf_Debug dbg,
@@ -1883,77 +1875,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
 
     It is much better to use dwarf_get_fde_info_for_all_regs3()
     instead of this interface.
-*/
-int
-dwarf_get_fde_info_for_all_regs(Dwarf_Fde fde,
-    Dwarf_Addr pc_requested,
-    Dwarf_Regtable * reg_table,
-    Dwarf_Addr * row_pc,
-    Dwarf_Error * error)
-{
-
-    /* Table size: DW_REG_TABLE_SIZE */
-    struct Dwarf_Frame_s fde_table;
-    Dwarf_Signed i = 0;
-    struct Dwarf_Reg_Rule_s *rule = NULL;
-    struct Dwarf_Regtable_Entry_s *out_rule = NULL;
-    int res = 0;
-    Dwarf_Debug dbg = 0;
-
-    /* For this interface the size is fixed at compile time. */
-    int output_table_real_data_size = DW_REG_TABLE_SIZE;
-
-    FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
-
-    res = dwarf_initialize_fde_table(dbg, &fde_table,
-        output_table_real_data_size,
-        error);
-    if (res != DW_DLV_OK)
-        return res;
-
-    /*  _dwarf_get_fde_info_for_a_pc_row will perform
-        more sanity checks */
-    res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
-        &fde_table, dbg->de_frame_cfa_col_number,NULL,NULL, error);
-    if (res != DW_DLV_OK) {
-        dwarf_free_fde_table(&fde_table);
-        return res;
-    }
-
-    out_rule = &reg_table->rules[0];
-    rule = &fde_table.fr_reg[0];
-    for (i = 0; i < output_table_real_data_size;
-        i++, ++out_rule, ++rule) {
-        out_rule->dw_offset_relevant = rule->ru_is_off;
-        out_rule->dw_value_type = rule->ru_value_type;
-        out_rule->dw_regnum = rule->ru_register;
-        out_rule->dw_offset = rule->ru_offset_or_block_len;
-    }
-    dwarf_init_reg_rules_dw(&reg_table->rules[0],i,DW_REG_TABLE_SIZE,
-        dbg->de_frame_undefined_value_number);
-
-    /*  The test is just in case it's not inside the table.
-        For non-MIPS
-        it could be outside the table and that is just fine, it was
-        really a mistake to put it in the table in 1993.  */
-    /* CONSTCOND */
-    if (dbg->de_frame_cfa_col_number < DW_REG_TABLE_SIZE) {
-        out_rule = &reg_table->rules[dbg->de_frame_cfa_col_number];
-        out_rule->dw_offset_relevant =
-            fde_table.fr_cfa_rule.ru_is_off;
-        out_rule->dw_value_type = fde_table.fr_cfa_rule.ru_value_type;
-        out_rule->dw_regnum = fde_table.fr_cfa_rule.ru_register;
-        out_rule->dw_offset =
-            fde_table.fr_cfa_rule.ru_offset_or_block_len;
-    }
-
-    if (row_pc != NULL)
-        *row_pc = fde_table.fr_loc;
-    dwarf_free_fde_table(&fde_table);
-    return DW_DLV_OK;
-}
-
-/*  A consumer call for efficiently getting the register info
+    A consumer call for efficiently getting the register info
     for all registers in one call.
 
     The output table rules array is size output_table_real_data_size.
@@ -2755,19 +2677,6 @@ dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
         r->ru_register = initial_value;
         r->ru_offset_or_block_len = 0;
         r->ru_block = 0;
-    }
-}
-static void
-dwarf_init_reg_rules_dw(struct Dwarf_Regtable_Entry_s *base,
-    unsigned first, unsigned last,int initial_value)
-{
-    struct Dwarf_Regtable_Entry_s *r = base+first;
-    unsigned i = first;
-    for (; i < last; ++i,++r) {
-        r->dw_offset_relevant = 0;
-        r->dw_value_type = DW_EXPR_OFFSET;
-        r->dw_regnum = initial_value;
-        r->dw_offset = 0;
     }
 }
 static void
