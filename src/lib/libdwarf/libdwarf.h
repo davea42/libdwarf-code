@@ -99,7 +99,7 @@ typedef struct Dwarf_Sig8_s Dwarf_Sig8;
    a frame expression function, and
    also used with DW_FORM_block<> functions.
 */
-typedef struct {
+typedef struct Dwarf_Block_s {
     Dwarf_Unsigned  bl_len;  /* length of block bl_data points at */
     Dwarf_Ptr       bl_data; /* uninterpreted data */
 
@@ -149,7 +149,7 @@ typedef struct Dwarf_Dsc_Head_s * Dwarf_Dsc_Head;
 /*  Location record. Records up to 2 operand values.
     Not usable with DWARF5 or DWARF4 with location
     operator  extensions. */
-typedef struct {
+typedef struct Dwarf_Loc_s {
     Dwarf_Small     lr_atom;   /* location operation */
     Dwarf_Unsigned  lr_number; /* operand */
     /* for OP_BREGx  and DW_OP_GNU_const_type*/
@@ -176,7 +176,7 @@ typedef struct {
    new functions that
    avoid using public structures Dwarf_Loc and Dwarf_Locdesc.
 */
-typedef struct {
+typedef struct Dwarf_Locdesc_s {
     /*  Beginning of active range. This is actually an offset
         of an applicable base address, not a pc value.  */
     Dwarf_Addr      ld_lopc;
@@ -207,7 +207,7 @@ enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
     DW_RANGES_ADDRESS_SELECTION,
     DW_RANGES_END
 };
-typedef struct {
+typedef struct Dwarf_Ranges_s {
     Dwarf_Addr dwr_addr1;
     Dwarf_Addr dwr_addr2;
     enum Dwarf_Ranges_Entry_Type  dwr_type;
@@ -215,7 +215,7 @@ typedef struct {
 
 /* Frame description instructions expanded.
 */
-typedef struct {
+typedef struct Dwarf_Frame_Op_s {
     Dwarf_Small     fp_base_op;
     Dwarf_Small     fp_extended_op;
     Dwarf_Half      fp_register;
@@ -4161,7 +4161,7 @@ int dwarf_decode_signed_leb128(char * /*leb*/,
     Not restricted to a single Dwarf_Debug, it applies
     to the libdwarf the executable is using.
 */
-typedef struct {
+typedef struct Dwarf_Cmdline_Options_s {
     Dwarf_Bool check_verbose_mode;
 } Dwarf_Cmdline_Options;
 extern Dwarf_Cmdline_Options dwarf_cmdline_options;
