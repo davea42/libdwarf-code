@@ -1913,7 +1913,7 @@ Any call to this is typechecked.
 .DS
 .FG "Example_dwarf_dealloc_attribute()"
 \f(CW
-void exampledeallocerror(Dwarf_Attribute attr)
+void exampledeallocattr(Dwarf_Attribute attr)
 {
       dwarf_dealloc_attribute(attr);'
 }
@@ -1937,7 +1937,7 @@ Any call to this is typechecked.
 \f(CW
 void exampledeallocerror(Dwarf_Debug dbg,Dwarf_Error err)
 {
-      dwarf_dealloc_error(dbg,err);'
+      dwarf_dealloc_error(dbg,err);
 }
 \fP
 .DE
@@ -7644,21 +7644,34 @@ when no longer of interest.
 .FG "Exampled dwarf_srclines()"
 .DS
 \f(CW
-void exampled(Dwarf_Debug dbg,Dwarf_Die somedie)
+void exampled(Dwarf_Die somedie)
 {
     Dwarf_Signed count = 0;
+    Dwarf_Line_Context context = 0;
     Dwarf_Line *linebuf = 0;
     Dwarf_Signed i = 0;
     Dwarf_Error error = 0;
+    Dwarf_Line *line;
+    Dwarf_Small table_count =0;
+    Dwarf_Unsigned version = 0;
     int sres = 0;
 
-    sres = dwarf_srclines(somedie, &linebuf,&count, &error);
-    if (sres == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use linebuf[i] */
-        }
-        dwarf_srclines_dealloc(dbg, linebuf, count);
+    sres = dwarf_srclines_b(somedie,
+        &version, &table_count,&context,&error);
+    if (sres != DW_DLV_OK) {
+        return;
     }
+    sres = dwarf_srclines_from_linecontext(context,
+        &linebuf,&count,&error);
+    if (sres != DW_DLV_OK) {
+        dwarf_srclines_dealloc_b(context);
+        return;
+    }
+    line = linebuf;
+    for (i = 0; i < count; ++line) {
+        /* use line */
+    }
+    dwarf_srclines_dealloc_b(context);
 }
 \fP
 .DE
@@ -8487,7 +8500,7 @@ See section 6.1.1 "Lookup by Name" in the dwarf standard.
 .FG "Exampled dwarf_get_pubtypes()"
 .DS
 \f(CW
-Avoid exampleg(Dwarf_Debug dbg)
+void exampleg(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
