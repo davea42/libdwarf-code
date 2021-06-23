@@ -1992,14 +1992,6 @@ int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
 
 /* end attribute query operations. */
 
-/* Start line number operations */
-/* dwarf_srclines  is the original interface from 1993. */
-int dwarf_srclines(Dwarf_Die /*die*/,
-    Dwarf_Line**     /*linebuf*/,
-    Dwarf_Signed *   /*linecount*/,
-    Dwarf_Error*     /*error*/);
-
-
 /*  If we have two-level line tables, this will return the
     logicals table in linebuf and the actuals table in
     linebuf_actuals. For old-style (one-level) tables, it
@@ -2017,21 +2009,6 @@ int dwarf_srclines_two_level(Dwarf_Die /*die*/,
     Dwarf_Line**     /*linebuf_actuals*/,
     Dwarf_Signed *   /*linecount_actuals*/,
     Dwarf_Error*     /*error*/);
-
-/*  dwarf_srclines_dealloc, created July 2005, is the
-    appropriate method for deallocating what dwarf_srclines
-    and dwarf_srclines_two_level return.
-    More complete free than using dwarf_dealloc directly.
-
-    When dwarf_srclines_two_level returns two line tables
-    user code should call dwarf_srclines_dealloc
-    once on each linebuf returned by dwarf_srclines_two_level
-    first on linebuf_actuals and then on linebuf{_logicals}.   */
-
-void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
-    Dwarf_Line*       /*linebuf*/,
-    Dwarf_Signed      /*count */);
-
 
 /*  New October 2015, must be used to deallocating
     what is allocated by dwarf_srclines_b and
@@ -2132,8 +2109,8 @@ int dwarf_srclines_files_indexes(Dwarf_Line_Context /*line_context*/,
     Dwarf_Error   *  /*error*/);
 
 
-/*  New March 2018. Same as dwarf_srclines_files_data,
-    but adds the md5ptr field so cases where DW_LNCT_MD5
+/*  New March 2018.
+    Has the md5ptr field so cases where DW_LNCT_MD5
     is present can return pointer to the MD5 value.
     With DWARF 5 index starts with 0.
     See dwarf_srclines_files_indexes() which makes
@@ -2146,18 +2123,6 @@ int dwarf_srclines_files_data_b(Dwarf_Line_Context /*line_context*/,
     Dwarf_Unsigned * /*file_length*/,
     Dwarf_Form_Data16 ** /*md5ptr*/,
     Dwarf_Error    * /*error*/);
-
-/*  New October 2015. */
-/*  Unlike dwarf_srcfiles() this returns the raw file table
-    strings without the directory being prefixed.
-    Index starts with 1, last is 'count' */
-int dwarf_srclines_files_data(Dwarf_Line_Context /*line_context*/,
-    Dwarf_Signed     /*index*/,
-    const char **    /*name*/,
-    Dwarf_Unsigned * /*directory_index*/,
-    Dwarf_Unsigned * /*last_mod_time*/,
-    Dwarf_Unsigned * /*file_length*/,
-    Dwarf_Error    * /* error*/);
 
 /*  New October 2015. */
 /*  Count is the real count of include array entries. */

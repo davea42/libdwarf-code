@@ -987,31 +987,6 @@ dwarf_get_string_section_name(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-int
-dwarf_srclines(Dwarf_Die die,
-    Dwarf_Line ** linebuf,
-    Dwarf_Signed * linecount, Dwarf_Error * error)
-{
-    Dwarf_Unsigned version = 0;
-    Dwarf_Line_Context line_context = 0;
-    Dwarf_Small    table_count = 0;
-    Dwarf_Bool is_new_interface = false;
-    int res  = _dwarf_internal_srclines(die,
-        is_new_interface,
-        &version,
-        &table_count,
-        &line_context,
-        linebuf,
-        linecount,
-        /* linebuf_actuals */ 0,
-        /*linecount_actuals*/0,
-        /* addrlist= */ false,
-        /* linelist= */ true,
-        error);
-    return res;
-}
-
 int
 dwarf_srclines_two_level(Dwarf_Die die,
     Dwarf_Unsigned * version,
@@ -1240,21 +1215,6 @@ dwarf_srclines_files_count(Dwarf_Line_Context line_context,
         signed interfaces. */
     *count_out = (Dwarf_Signed)line_context->lc_file_entry_count;
     return DW_DLV_OK;
-}
-
-/* New October 2015. */
-int
-dwarf_srclines_files_data(Dwarf_Line_Context line_context,
-    Dwarf_Signed     index_in,
-    const char **    name,
-    Dwarf_Unsigned * directory_index,
-    Dwarf_Unsigned * last_mod_time,
-    Dwarf_Unsigned * file_length,
-    Dwarf_Error    * error)
-{
-    return dwarf_srclines_files_data_b(
-        line_context,index_in,name,directory_index,
-        last_mod_time,file_length,0,error);
 }
 
 
@@ -1821,94 +1781,12 @@ delete_line_context_itself(Dwarf_Line_Context context)
     lc_file_entries).
     So this function, new July 2005, does it.
 
-    As of September 2015 this will now delete either
-    table of a two-level line table.
-    In the two-level case one calls it once each on
-    both the logicals and actuals tables.
-    (in either order, the order is not critical).
-    Once  the  logicals table is dealloced any
-    use of the actuals table will surely result in chaos.
-    Just do the two calls one after the other.
-
-    In the standard single-table case (DWARF 2,3,4)
-    one calls it just once on the
-    linebuf.  Old style dealloc. Should never be used with
-    dwarf_srclines_b(), but if it is there
-    are no bad consequences..
-
     Those using standard DWARF should use
     dwarf_srclines_b() and dwarf_srclines_dealloc_b()
     instead of dwarf_srclines and dwarf_srclines_dealloc()
     as that gives access to various bits of useful information.
-    */
 
-void
-dwarf_srclines_dealloc(Dwarf_Debug dbg, Dwarf_Line * linebuf,
-    Dwarf_Signed count)
-{
-    Dwarf_Signed i = 0;
-    /*  alternate_data_count is a failsafe to prevent
-        duplicate frees when there is inappropriate mixing
-        of new interface and this old routine */
-    Dwarf_Bool alternate_data_count = 0;
-
-    struct Dwarf_Line_Context_s *line_context = 0;
-
-
-    if (!linebuf) {
-        return;
-    }
-    if (count > 0) {
-        /*  All these entries share a single line_context, and
-            for two-levels tables each table gets it too.
-            Hence we will dealloc ONLY if !is_actuals_table
-            so for single and two-level tables the space
-            is deallocated. */
-        line_context = linebuf[0]->li_context;
-        if (line_context && line_context->lc_magic !=
-            DW_CONTEXT_MAGIC ) {
-            /* Something is very wrong. */
-            line_context = 0;
-        } else if (line_context) {
-            if (linebuf == line_context->lc_linebuf_logicals) {
-                line_context->lc_linebuf_logicals = 0;
-                line_context->lc_linecount_logicals = 0;
-                alternate_data_count =
-                    line_context->lc_linecount_actuals;
-                /* Ok to delete logicals */
-            } else if (linebuf == line_context->lc_linebuf_actuals) {
-                /* Ok to delete actuals */
-                line_context->lc_linebuf_actuals = 0;
-                line_context->lc_linecount_actuals = 0;
-                alternate_data_count =
-                    line_context->lc_linecount_logicals;
-            } else {
-                /* Something is wrong very wrong. */
-                return;
-            }
-        }  else {
-            /*  Else: impossible. Unless the caller
-                passed in a bogus linebuf. */
-            line_context = 0;
-        }
-    }
-
-    /*  Here we actually delete a set of lines. */
-    for (i = 0; i < count; ++i) {
-        dwarf_dealloc(dbg, linebuf[i], DW_DLA_LINE);
-    }
-    dwarf_dealloc(dbg, linebuf, DW_DLA_LIST);
-
-    if (line_context && !line_context->lc_new_style_access
-        && !alternate_data_count ) {
-        /*  There is nothing left
-            referencing this line_context. */
-        dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
-    }
-    return;
-}
-
-/*  New October 2015.
+    New October 2015.
     This should be used to deallocate all
     lines data that is
     set up by dwarf_srclines_b().

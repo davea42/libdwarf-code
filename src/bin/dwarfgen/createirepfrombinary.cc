@@ -482,7 +482,11 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
 
     Dwarf_Line * linebuf = 0;
     Dwarf_Signed linecnt = 0;
-    int res2 = dwarf_srclines(in_die,&linebuf,&linecnt, &error);
+    Dwarf_Line_Context linecontext= 0;
+    Dwarf_Unsigned version = 0;
+    Dwarf_Small table_count = 0;
+    int res2 = dwarf_srclines_b(in_die,&version,
+        &table_count,&linecontext,&error);
     if(res2 == DW_DLV_ERROR) {
         errprint(error);
         cerr << "dwarf_srclines failed " << endl;
@@ -490,6 +494,19 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
     } else if (res2 == DW_DLV_NO_ENTRY) {
         // No data.
         cerr << "dwarf_srclines failed NO_ENTRY, crazy "
+            "since srcfiles worked" << endl;
+        exit(1);
+    }
+    res2= dwarf_srclines_from_linecontext(linecontext,
+        &linebuf,&linecnt,&error);
+    if(res2 == DW_DLV_ERROR) {
+        errprint(error);
+        cerr << "dwarf_srclines_from_linecontext failed " << endl;
+        exit(1);
+    } else if (res2 == DW_DLV_NO_ENTRY) {
+        // No data.
+        cerr << "dwarf_srclines_from_linecontext failed NO_ENTRY"  <<
+           " , crazy "
             "since srcfiles worked" << endl;
         exit(1);
     }
@@ -587,7 +604,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
             isa,discriminator);
         lines.push_back(L);
     }
-    dwarf_srclines_dealloc(dbg, linebuf, linecnt);
+    dwarf_srclines_dealloc_b(linecontext);
 }
 
 static bool

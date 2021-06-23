@@ -604,8 +604,7 @@ static const char *usage_long_text[] = {
 "-x abi=<abi>     --file-abi=<abi>      Name abi in dwarfdump.conf",
 "-x name=<path>   --file-name=<path>    Name dwarfdump.conf",
 "-x line5=<val>   --file-line5=<val>    Table DWARF5 new interfaces",
-"                                         where <val> is:",
-"                                           std, s2l, orig or orig2l",
+"                                       where <val> is: std or s2l",
 "-O file=<path>   --file-output=<path>  Name the output file",
 "-x tied=<path>   --file-tied=<path>    Name the Split Dwarf",
 "                                       skeleton object file",
@@ -2323,7 +2322,7 @@ arg_format_groupnumber(void)
     }
 }
 
-/*  Option '-x line5=' */
+/*  Option '-x line5=' --file-line5=<v> */
 static void
 arg_file_line5(void)
 {
@@ -2332,9 +2331,11 @@ arg_file_line5(void)
     } else if (!strcmp(dwoptarg,"s2l")) {
         glflags.gf_line_flag_selection= s2l;
     } else if (!strcmp(dwoptarg,"orig")) {
-        glflags.gf_line_flag_selection= orig;
+        /* drop orig */
+        glflags.gf_line_flag_selection= singledw5;
     } else if (!strcmp(dwoptarg,"orig2l")) {
-        glflags.gf_line_flag_selection= orig2l;
+        /* drop orig2l */
+        glflags.gf_line_flag_selection= s2l;
     } else {
         arg_x_invalid();
     }

@@ -1126,7 +1126,7 @@ it should be freed, using \f(CWdwarf_dealloc()\fP when it is no longer
 of use (read the following documentation for details, as in at least
 one case there is a special routine provided for deallocation
 and \f(CWdwarf_dealloc()\fP is not directly called:
-see \f(CWdwarf_srclines()\fP).
+see \f(CWdwarf_srclines_b()\fP).
 Some functions return a number of instances of an opaque type
 in a block, by means of a pointer to the block
 and a count of the number
@@ -1178,13 +1178,13 @@ or, preferably, call
 Instances of
 \f(CWDwarf_Line\fP type are returned from a successful call
 to the
-\f(CWdwarf_srclines()\fP function, and are used as descriptors for
+\f(CWdwarf_srclines_from_linecontext()\fP function,
+and are used as descriptors for
 queries about source lines.
 The storage pointed to by these descriptors
-should be individually freed, using
-\f(CWdwarf_dealloc()\fP with the
-allocation type
-\f(CWDW_DLA_LINE\fP when no longer needed.
+should be freed using
+\f(CWdwarf_srclines_dealloc_b(line_context,error)\fP.
+when no longer needed.
 
 .DS
 \f(CWtypedef struct Dwarf_Global_s* Dwarf_Global;\fP
@@ -6889,18 +6889,7 @@ For example, if a file is preprocessed by a language translator,
 this could result in translator output showing 2 or more sets of line
 numbers per translated line of output.
 .P
-\f(CW
-\fP
-As of October 2015 there are two sets of overall access
-and release functions.
-The older set of functions is
-\f(CWdwarf_srclines()\fP
-with
-\f(CWdwarf_srclines_dealloc()\fP.
-This set does not handle line table
-headers with no lines.
-.P
-A newer set is
+The current set of line functions is
 \f(CWdwarf_srclines_b()\fP
 with
 \f(CWdwarf_srclines_from_linecontext()\fP
@@ -6913,8 +6902,6 @@ information even if there are no lines
 in a particular compilation unit's line
 table.
 .P
-
-
 
 .H 3 "Get A Set of Lines (including skeleton line tables)"
 This set of functions works on any DWARF version.
@@ -6986,7 +6973,6 @@ See below.
 See
 \f(CW*dwarf_srclines_dealloc_b()\fP
 for examples showing correct use.
-
 
 .H 3 "dwarf_get_line_section_name_from_die()"
 .DS
