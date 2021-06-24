@@ -136,7 +136,6 @@ set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
 int dwarf_init_path(const char *path,
     char            * true_path_out_buffer,
     unsigned          true_path_bufferlen,
-    Dwarf_Unsigned    unusedarg,
     unsigned          groupnumber,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
@@ -148,7 +147,7 @@ int dwarf_init_path(const char *path,
 {
     return dwarf_init_path_dl(path,
         true_path_out_buffer,true_path_bufferlen,
-        unusedarg, groupnumber,errhand,errarg,ret_dbg,
+        groupnumber,errhand,errarg,ret_dbg,
         0,0,0,
         reserved1,reserved2,reserved3,error);
 }
@@ -195,7 +194,6 @@ final_common_settings(Dwarf_Debug dbg,
 int dwarf_init_path_dl(const char *path,
     char            * true_path_out_buffer,
     unsigned        true_path_bufferlen,
-    Dwarf_Unsigned  access UNUSEDARG,
     unsigned        groupnumber,
     Dwarf_Handler   errhand,
     Dwarf_Ptr       errarg,
@@ -359,7 +357,6 @@ int dwarf_init_path_dl(const char *path,
 */
 int
 dwarf_init_b(int fd,
-    Dwarf_Unsigned  access UNUSEDARG,
     unsigned        group_number,
     Dwarf_Handler   errhand,
     Dwarf_Ptr       errarg,

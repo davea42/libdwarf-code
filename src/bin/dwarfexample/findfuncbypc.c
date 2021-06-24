@@ -223,7 +223,7 @@ main(int argc, char **argv)
     filepath = argv[i];
     res = dwarf_init_path(filepath,
         real_path,
-        PATH_LEN,0,
+        PATH_LEN,
         DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
         0,0,0,&error);
     if(res == DW_DLV_ERROR) {

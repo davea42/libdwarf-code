@@ -153,7 +153,7 @@ main(int argc, char **argv)
     if(fd < 0) {
         printf("Failure attempting to open %s\n",filepath);
     }
-    res = dwarf_init_b(fd,0,DW_GROUPNUMBER_ANY,
+    res = dwarf_init_b(fd,DW_GROUPNUMBER_ANY,
         errhand,errarg, &dbg,&error);
     if(res != DW_DLV_OK) {
         printf("Giving up, dwarf_init failed, "

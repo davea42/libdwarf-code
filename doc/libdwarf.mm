@@ -236,8 +236,7 @@ recent changes.
 The DW_DLC_READ macro (as well
 as the other DW_DLC macros) 
 has been deleted from libdwarf.h.
-To call dwarf_init* functions pass 0 instead
-of DW_DLC_READ.
+the access argument has been deleted.
 .P
 Many obsolete functions deleted.
 18 June 2021.
@@ -2061,7 +2060,7 @@ void exampleinitfail(const char *path,
     int res = 0;
 
     res = dwarf_init_path(path,true_pathbuf,
-        tpathlen,0,groupnumber,errhand,
+        tpathlen,groupnumber,errhand,
         errarg,&dbg,reserved1,reserved2,
         &reserved3,
         &error);
@@ -2252,7 +2251,6 @@ as zero.
     const char *      path,
     char *            true_path_out_buffer,
     unsigned          true_path_bufferlen,
-    Dwarf_Unsigned    access,
     unsigned          groupnumber,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
@@ -2410,7 +2408,6 @@ error code.
     const char *      path,
     char *            true_path_out_buffer,
     unsigned          true_path_bufferlen,
-    Dwarf_Unsigned    access,
     unsigned          groupnumber,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
@@ -2457,9 +2454,7 @@ macro now.
 
 .H 3 "dwarf_init_b()"
 .DS
-\f(CWint dwarf_init_b(
-int fd,
-    Dwarf_Unsigned access,
+\f(CWint dwarf_init_b(int fd,
     unsigned group_number,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,

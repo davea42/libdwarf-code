@@ -254,7 +254,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         printf("%s===Exec-path        : %s\n",prefix,basepath);
     }
     res = dwarf_init_path(path,
-        0,0,0,
+        0,0,
         DW_GROUPNUMBER_ANY,
         0,0, &dbg,
         0,0,0,&error);

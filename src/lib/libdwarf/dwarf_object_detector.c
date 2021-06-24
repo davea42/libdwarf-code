@@ -690,7 +690,7 @@ _dwarf_debuglink_finder_newpath(
     int res = 0;
 
     res = dwarf_init_path(path,
-        0,0,0,
+        0,0,
         DW_GROUPNUMBER_ANY,
         0,0, &dbg,
         0,0,0,&error);
@@ -786,7 +786,7 @@ _dwarf_debuglink_finder_internal(
     /*  This path will work.
         Already know the file is there. */
     res = dwarf_init_path(path,
-        0,0,0,
+        0,0,
         DW_GROUPNUMBER_ANY,
         0,0, &dbg,
         0,0,0,&error);

@@ -910,7 +910,7 @@ process_one_file(
             tblen = 0;
         }
         dres = dwarf_init_path_dl(file_name,
-            tb,tblen,0,
+            tb,tblen,
             glflags.group_number,
             NULL, NULL, &dbg,
             glflags.gf_global_debuglink_paths,
@@ -951,7 +951,6 @@ process_one_file(
                 is a tied file */
             dres = dwarf_init_path(tied_file_name,
                 0,0,  /* ignore dSYM & debuglink */
-                0,
                 DW_GROUPNUMBER_BASE,
                 0,0,
                 &dbgtied,
