@@ -37,11 +37,11 @@
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_util.h"
 #include "pro_opaque.h"
 #include "pro_error.h"
 #include "pro_alloc.h"
 #include "pro_line.h"
-#include "dwarf_encode_nm.h"
 
 static int _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     Dwarf_Unsigned file_index,
@@ -323,19 +323,19 @@ dwarf_add_file_decl_a(Dwarf_P_Debug dbg,
         DWARF_P_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
     }
     strcpy((char *) cur->dfe_name, name);
-    res = _dwarf_encode_leb128_nm(dir_idx, &nbytes_idx,
+    res = dwarf_encode_leb128(dir_idx, &nbytes_idx,
         buffidx, sizeof(buffidx));
     if (res != DW_DLV_OK) {
         /* DW_DLV_NO_ENTRY impossible */
         DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
     }
-    res = _dwarf_encode_leb128_nm(time_mod, &nbytes_time,
+    res = dwarf_encode_leb128(time_mod, &nbytes_time,
         bufftime, sizeof(bufftime));
     if (res != DW_DLV_OK) {
         /* DW_DLV_NO_ENTRY impossible */
         DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
     }
-    res = _dwarf_encode_leb128_nm(length, &nbytes_len,
+    res = dwarf_encode_leb128(length, &nbytes_len,
         bufflen, sizeof(bufflen));
     if (res != DW_DLV_OK) {
         /* DW_DLV_NO_ENTRY impossible */

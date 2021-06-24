@@ -39,11 +39,11 @@
 #include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_util.h"
 #include "pro_opaque.h"
 #include "pro_error.h"
 #include "pro_alloc.h"
 #include "pro_expr.h"
-#include "dwarf_encode_nm.h"
 
 #define SIZEOFT16 2
 #define SIZEOFT32 4
@@ -199,7 +199,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     case DW_OP_breg29:
     case DW_OP_breg30:
     case DW_OP_breg31:
-        res = _dwarf_encode_signed_leb128_nm(val1,
+        res = dwarf_encode_signed_leb128(val1,
             &operand_size, encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error,
@@ -210,7 +210,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_regx:
-        res = _dwarf_encode_leb128_nm(val1, &operand_size,
+        res = dwarf_encode_leb128(val1, &operand_size,
             encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error,
@@ -291,7 +291,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_constu:
-        res = _dwarf_encode_leb128_nm(val1,
+        res = dwarf_encode_leb128(val1,
             &operand_size, encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error,
@@ -302,7 +302,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_consts:
-        res = _dwarf_encode_signed_leb128_nm(val1,
+        res = dwarf_encode_signed_leb128(val1,
             &operand_size,
             encode_buffer,
             sizeof(encode_buffer));
@@ -315,7 +315,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_fbreg:
-        res = _dwarf_encode_signed_leb128_nm(val1,
+        res = dwarf_encode_signed_leb128(val1,
             &operand_size,
             encode_buffer,
             sizeof(encode_buffer));
@@ -328,7 +328,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_bregx:
-        res = _dwarf_encode_leb128_nm(val1, &operand_size,
+        res = dwarf_encode_leb128(val1, &operand_size,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
@@ -339,7 +339,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         operand = (Dwarf_Small *) encode_buffer;
         /*  Put this one directly into 'operand' at
             tail of prev value */
-        res = _dwarf_encode_signed_leb128_nm(val2, &operand2_size,
+        res = dwarf_encode_signed_leb128(val2, &operand2_size,
             ((char *) operand) +
             operand_size,
             sizeof(encode_buffer2));
@@ -389,7 +389,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_plus_uconst:
-        res = _dwarf_encode_leb128_nm(val1, &operand_size,
+        res = dwarf_encode_leb128(val1, &operand_size,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
@@ -424,7 +424,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
 
     case DW_OP_piece:
-        res = _dwarf_encode_leb128_nm(val1, &operand_size,
+        res = dwarf_encode_leb128(val1, &operand_size,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
@@ -462,7 +462,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     case DW_OP_call_frame_cfa:  /* DWARF3f */
         break;
     case DW_OP_bit_piece:       /* DWARF3f */
-        res = _dwarf_encode_leb128_nm(val1, &operand_size,
+        res = dwarf_encode_leb128(val1, &operand_size,
             encode_buffer,
             sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
@@ -473,7 +473,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         operand = (Dwarf_Small *) encode_buffer;
         /*  Put this one directly into 'operand'
             at tail of prev value */
-        res = _dwarf_encode_leb128_nm(val2, &operand2_size,
+        res = dwarf_encode_leb128(val2, &operand2_size,
             ((char *) operand) +
             operand_size,
             sizeof(encode_buffer2));

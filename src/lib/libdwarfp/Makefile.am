@@ -19,8 +19,6 @@ pro_die.c \
 pro_die.h \
 pro_dnames.h \
 pro_dnames.c \
-$(top_srcdir)/src/lib/libdwarf/dwarf_encode_nm.c \
-$(top_srcdir)/src/lib/libdwarf/dwarf_encode_nm.h \
 pro_error.c \
 pro_error.h \
 pro_expr.c \
@@ -57,7 +55,7 @@ pro_weaks.c
 libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN)
 libdwarfp_la_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf
 
-libdwarfp_la_LIBADD = @DWARF_LIBS@
+libdwarfp_la_LIBADD = @DWARF_LIBS@ $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 libdwarfp_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 

@@ -30,6 +30,13 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved
 
 */
 
+#include "dwarf_base_types.h"
+
+/*  Bytes needed to encode a number.
+    Not a tight bound, just a reasonable bound.
+*/
+#define ENCODE_SPACE_NEEDED   (2*sizeof(Dwarf_Unsigned))
+
 /*
     Decodes unsigned leb128 encoded numbers.
     Make sure ptr is a pointer to a 1-byte type.

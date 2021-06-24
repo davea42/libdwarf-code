@@ -51,6 +51,7 @@
 #include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_util.h"
 #include "pro_opaque.h"
 #include "pro_error.h"
 #include "pro_util.h"
@@ -62,7 +63,6 @@
 #include "pro_macinfo.h"
 #include "pro_types.h"
 #include "pro_dnames.h"
-#include "dwarf_encode_nm.h"
 
 #ifndef SHN_UNDEF
 #define SHN_UNDEF 0
@@ -762,7 +762,7 @@ pretend_write_uval(Dwarf_Unsigned val,
     int nbytes = 0;
     int res = 0;
 
-    res = _dwarf_encode_leb128_nm(val,
+    res = dwarf_encode_leb128(val,
         &nbytes, buff1,
         sizeof(buff1));
     if (res != DW_DLV_OK) {
@@ -782,7 +782,7 @@ write_sval(Dwarf_Signed val,
     char buff1[ENCODE_SPACE_NEEDED];
     unsigned char *data = 0;
     int nbytes = 0;
-    int res =  _dwarf_encode_signed_leb128_nm(val,
+    int res =  dwarf_encode_signed_leb128(val,
         &nbytes, buff1,
         sizeof(buff1));
     if (res != DW_DLV_OK) {
@@ -806,7 +806,7 @@ append_uval(Dwarf_Unsigned val,
 {
     char buff1[ENCODE_SPACE_NEEDED];
     int nbytes = 0;
-    int res =  _dwarf_encode_leb128_nm(val,
+    int res =  dwarf_encode_leb128(val,
         &nbytes, buff1,
         sizeof(buff1));
     if (res != DW_DLV_OK) {
@@ -828,7 +828,7 @@ write_uval(Dwarf_Unsigned val,
     char buff1[ENCODE_SPACE_NEEDED];
     unsigned char *data = 0;
     int nbytes = 0;
-    int res =  _dwarf_encode_leb128_nm(val,
+    int res =  dwarf_encode_leb128(val,
         &nbytes, buff1,
         sizeof(buff1));
     if (res != DW_DLV_OK) {
@@ -2006,7 +2006,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         int irix_auglen_v0 = 0;
         Dwarf_Half version = curcie->cie_version;
 
-        res = _dwarf_encode_leb128_nm(curcie->cie_code_align,
+        res = dwarf_encode_leb128(curcie->cie_code_align,
             &codeal_bytes,
             buff1, sizeof(buff1));
         if (res != DW_DLV_OK) {
@@ -2025,10 +2025,10 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
             libdwarf consumer consumed all 10 bytes too!
 
             old version res =
-            _dwarf_encode_leb128_nm(curcie->cie_data_align,
+            dwarf_encode_leb128(curcie->cie_data_align,
 
             below is corrected signed version. */
-        res = _dwarf_encode_signed_leb128_nm(
+        res = dwarf_encode_signed_leb128(
             curcie->cie_data_align,
             &data_align_bytes,
             buff2, sizeof(buff2));
@@ -2061,7 +2061,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
 
             /* IRIX specific. */
             augmented_fields_length = 0;
-            res = _dwarf_encode_leb128_nm(augmented_fields_length,
+            res = dwarf_encode_leb128(augmented_fields_length,
                 &irix_auglen_v0, buff3,
                 sizeof(buff3));
             augmented_al = buff3;
@@ -2203,7 +2203,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
             v0_augmentation = 1;
             oet_length = DWARF_32BIT_SIZE;
             /* encode the length of augmented fields. */
-            res = _dwarf_encode_leb128_nm(oet_length,
+            res = dwarf_encode_leb128(oet_length,
                 &afl_length, afl_buff,
                 sizeof(afl_buff));
             if (res != DW_DLV_OK) {
@@ -3113,7 +3113,7 @@ _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
         *data = *(unsigned char *)(dbg->de_debug_sup.ds_filename +i);
     }
 
-    res = _dwarf_encode_leb128_nm(
+    res = dwarf_encode_leb128(
         dbg->de_debug_sup.ds_checksum_len,
         &leblen,
         (char *)data,(int)uleblen);
@@ -3304,7 +3304,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
             So create the bytes of the leb with the
             value and save those bytes in di_abbrev,
             we will emit in Pass 2 (below). */
-        cres = _dwarf_encode_leb128_nm(curabbrev->abb_idx,
+        cres = dwarf_encode_leb128(curabbrev->abb_idx,
             &nbytes,
             buff1, sizeof(buff1));
         if (cres != DW_DLV_OK) {
@@ -3508,7 +3508,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                     char buff1[ENCODE_SPACE_NEEDED];
 
                     res =
-                        _dwarf_encode_leb128_nm(curattr->
+                        dwarf_encode_leb128(curattr->
                             ar_ref_die->
                             di_offset, &nbytesx,
                             buff1,

@@ -117,8 +117,6 @@ dwarf_types.c \
 dwarf_types.h \
 dwarf_util.c \
 dwarf_util.h \
-dwarf_encode_nm.c \
-dwarf_encode_nm.h \
 dwarf_vars.c \
 dwarf_vars.h \
 dwarf_weaks.c \

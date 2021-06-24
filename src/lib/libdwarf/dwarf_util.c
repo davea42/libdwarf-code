@@ -59,7 +59,6 @@
 #include "memcpy_swap.h"
 #include "dwarf_die_deliv.h"
 #include "dwarfstring.h"
-#include "dwarf_encode_nm.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -72,6 +71,11 @@
 #else
 #define NULL_DEVICE_NAME "/dev/null"
 #endif /* _WIN32 */
+
+#define MORE_BYTES      0x80
+#define DATA_MASK       0x7f
+#define DIGIT_WIDTH     7
+#define SIGN_BIT        0x40
 
 /*  The function returned allows dwarfdump and other callers to
     do an endian-sensitive copy-word with a chosen
@@ -1251,20 +1255,75 @@ _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die)
     return addrsize;
 }
 
-/* Encode val as an unsigned LEB128. */
+/*  Encode val as a leb128. This encodes it as an unsigned
+    number. */
+/*  Return DW_DLV_ERROR or DW_DLV_OK.
+    space to write leb number is provided by caller, with caller
+    passing length.
+    number of bytes used returned thru nbytes arg */
 int dwarf_encode_leb128(Dwarf_Unsigned val, int *nbytes,
     char *space, int splen)
 {
-    /* Encode val as an unsigned LEB128. */
-    return _dwarf_encode_leb128_nm(val,nbytes,space,splen);
+    char *a;
+    char *end = space + splen;
+
+    a = space;
+    do {
+        unsigned char uc;
+
+        if (a >= end) {
+            return DW_DLV_ERROR;
+        }
+        uc = val & DATA_MASK;
+        val >>= DIGIT_WIDTH;
+        if (val != 0) {
+            uc |= MORE_BYTES;
+        }
+        *a = uc;
+        a++;
+    } while (val);
+    *nbytes = (int)(a - space);
+    return DW_DLV_OK;
 }
 
-/* Encode val as a signed LEB128. */
-int dwarf_encode_signed_leb128(Dwarf_Signed val, int *nbytes,
+/* return DW_DLV_ERROR or DW_DLV_OK.
+** space to write leb number is provided by caller, with caller
+** passing length.
+** number of bytes used returned thru nbytes arg
+** encodes a signed number.
+*/
+int dwarf_encode_signed_leb128(Dwarf_Signed value, int *nbytes,
     char *space, int splen)
 {
-    /* Encode val as a signed LEB128. */
-    return _dwarf_encode_signed_leb128_nm(val,nbytes,space,splen);
+    char *str;
+    Dwarf_Signed sign = -(value < 0);
+    int more = 1;
+    char *end = space + splen;
+
+    str = space;
+
+    do {
+        unsigned char byte = value & DATA_MASK;
+
+        value >>= DIGIT_WIDTH;
+
+        if (str >= end) {
+            return DW_DLV_ERROR;
+        }
+        /*  Remaining chunks would just contain the sign
+            bit, and this chunk
+            has already captured at least one sign bit.  */
+        if (value == sign &&
+            ((byte & SIGN_BIT) == (sign & SIGN_BIT))) {
+            more = 0;
+        } else {
+            byte |= MORE_BYTES;
+        }
+        *str = byte;
+        str++;
+    } while (more);
+    *nbytes = (int)(str - space);
+    return DW_DLV_OK;
 }
 
 struct  Dwarf_Printf_Callback_Info_s
