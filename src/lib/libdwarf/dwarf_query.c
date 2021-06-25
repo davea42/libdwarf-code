@@ -413,8 +413,8 @@ dwarf_attrlist(Dwarf_Die die,
         Dwarf_Unsigned ignore_this = 0;
         Dwarf_Unsigned len = 0;
 
-        lres = _dwarf_decode_u_leb128_chk(info_ptr,
-            &len,&ignore_this,die_info_end);
+        lres = dwarf_decode_leb128((char *)info_ptr,
+            &len,&ignore_this,(char *)die_info_end);
         if (lres == DW_DLV_ERROR) {
             /* Stepped off the end SKIPping the leb  */
             dwarfstring m;
@@ -678,8 +678,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         Dwarf_Unsigned ignore_this = 0;
         Dwarf_Unsigned len = 0;
 
-        lres = _dwarf_decode_u_leb128_chk(info_ptr,
-            &len,&ignore_this,die_info_end);
+        lres = dwarf_decode_leb128((char *)info_ptr,
+            &len,&ignore_this,(char *)die_info_end);
         if (lres == DW_DLV_ERROR) {
             /* Stepped off the end SKIPping the leb  */
             dwarfstring m;

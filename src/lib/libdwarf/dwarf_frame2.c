@@ -791,8 +791,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,dbg,error,
             section_ptr_end);
         code_alignment_factor = (Dwarf_Unsigned) lreg;
-        res = (Dwarf_Signed) _dwarf_decode_s_leb128_chk(frame_ptr,
-            &leb128_length,&data_alignment_factor,section_ptr_end);
+        res = dwarf_decode_signed_leb128(
+            (char *)frame_ptr,
+            &leb128_length,&data_alignment_factor,
+            (char *)section_ptr_end);
         if (res != DW_DLV_OK) {
             return res;
         }

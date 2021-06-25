@@ -58,14 +58,15 @@ typedef signed short Dwarf_Shalf;
 #define DWARF_32BIT_SIZE 4
 #define DWARF_64BIT_SIZE 8
 
-/*
-    producer:
+/* Safe sizing of encode output buffer (leb bytes). */
+#define ENCODE_SPACE_NEEDED   16
+
+/*  producer:
     This struct is used to hold information about all
     debug* sections. On creating a new section, section
     names and indices are added to this struct
     definition in pro_section.h */
 typedef struct Dwarf_P_Section_Data_s *Dwarf_P_Section_Data;
-
 
 /*
     producer:

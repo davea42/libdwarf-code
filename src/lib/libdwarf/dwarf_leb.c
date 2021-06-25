@@ -34,12 +34,19 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 
+#define MORE_BYTES      0x80
+#define DATA_MASK       0x7f
+#define DIGIT_WIDTH     7
+#define SIGN_BIT        0x40
+
 /*  Note that with 'make check')
     many of the test items
     only make sense if Dwarf_Unsigned (and Dwarf_Signed)
     are 64 bits.  The encode/decode logic should
     be fine whether those types are 64 or 32 bits.
     See runtests.sh */
+
+/* The encode/decode functions here are public */
 
 /*  10 bytes of leb, 7 bits each part of the number, gives
     room for a 64bit number.
@@ -60,12 +67,12 @@
 #define BYTESLEBMAX 24
 #define BITSPERBYTE 8
 
-/* Decode ULEB with checking */
+/* Decode SLEB with checking */
 int
-_dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
+dwarf_decode_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
     Dwarf_Unsigned *outval,
-    Dwarf_Byte_Ptr endptr)
+    char * endptr)
 {
     unsigned       byte        = 0;
     Dwarf_Unsigned word_number = 0;
@@ -167,20 +174,12 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     }
     return DW_DLV_ERROR;
 }
-/* Public Interface: Decode an unsigned LEB128 value. */
-int
-dwarf_decode_leb128(char* leb, Dwarf_Unsigned* leblen,
-    Dwarf_Unsigned* outval, char* endptr)
-{
-    return _dwarf_decode_u_leb128_chk((Dwarf_Small*)leb,
-        leblen, outval,
-        (Dwarf_Small*)endptr);
-}
 
+/* Decode SLEB */
 int
-_dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
+dwarf_decode_signed_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
-    Dwarf_Signed *outval,Dwarf_Byte_Ptr endptr)
+    Dwarf_Signed *outval,char * endptr)
 {
     Dwarf_Unsigned byte  = 0;
     unsigned int b       = 0;
@@ -282,13 +281,66 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
     return DW_DLV_OK;
 }
 
-
-/* Public Interface: Decode a signed LEB128 value. */
-int
-dwarf_decode_signed_leb128(char* leb, Dwarf_Unsigned* leblen,
-    Dwarf_Signed* outval, char* endptr)
+/*  Encode val as a uleb128. This encodes it as an unsigned
+    number. 
+    Return DW_DLV_ERROR or DW_DLV_OK.
+    space to write leb number is provided by caller, with caller
+    passing length.
+    number of bytes used returned thru nbytes arg */
+int dwarf_encode_leb128(Dwarf_Unsigned val, int *nbytes,
+    char *space, int splen)
 {
-    return _dwarf_decode_s_leb128_chk((Dwarf_Small *)leb,
-        leblen, outval,
-        (Dwarf_Small*)endptr);
+    char *a;
+    char *end = space + splen;
+
+    a = space;
+    do {
+        unsigned char uc;
+
+        if (a >= end) {
+            return DW_DLV_ERROR;
+        }
+        uc = val & DATA_MASK;
+        val >>= DIGIT_WIDTH;
+        if (val != 0) {
+            uc |= MORE_BYTES;
+        }
+        *a = uc;
+        a++;
+    } while (val);
+    *nbytes = (int)(a - space);
+    return DW_DLV_OK;
+}
+int dwarf_encode_signed_leb128(Dwarf_Signed value, int *nbytes,
+    char *space, int splen)
+{
+    char *str;
+    Dwarf_Signed sign = -(value < 0);
+    int more = 1;
+    char *end = space + splen;
+
+    str = space;
+
+    do {
+        unsigned char byte = value & DATA_MASK;
+
+        value >>= DIGIT_WIDTH;
+
+        if (str >= end) {
+            return DW_DLV_ERROR;
+        }
+        /*  Remaining chunks would just contain the sign
+            bit, and this chunk
+            has already captured at least one sign bit.  */
+        if (value == sign &&
+            ((byte & SIGN_BIT) == (sign & SIGN_BIT))) {
+            more = 0;
+        } else {
+            byte |= MORE_BYTES;
+        }
+        *str = byte;
+        str++;
+    } while (more);
+    *nbytes = (int)(str - space);
+    return DW_DLV_OK;
 }

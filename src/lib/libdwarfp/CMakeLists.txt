@@ -5,14 +5,12 @@ pro_die.c pro_dnames.c
 pro_error.c pro_expr.c 
 pro_finish.c pro_forms.c pro_funcs.c pro_frame.c 
 pro_init.c pro_line.c pro_reloc.c 
-../../lib/libdwarf/dwarf_encode_nm.c
 pro_reloc_symbolic.c pro_pubnames.c pro_section.c 
 pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
 
 set_source_group(HEADERS "Header Files"
 libdwarfp.h
 pro_alloc.h pro_arange.h pro_die.h 
-../../lib/libdwarf/dwarf_encode_nm.h
 pro_error.h pro_expr.h pro_frame.h 
 pro_incl.h pro_line.h 
 pro_log_extra_flag_strings.c

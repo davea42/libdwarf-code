@@ -32,22 +32,6 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved
 
 #include "dwarf_base_types.h"
 
-/*  Bytes needed to encode a number.
-    Not a tight bound, just a reasonable bound.
-*/
-#define ENCODE_SPACE_NEEDED   (2*sizeof(Dwarf_Unsigned))
-
-/*
-    Decodes unsigned leb128 encoded numbers.
-    Make sure ptr is a pointer to a 1-byte type.
-    In 2003 and earlier this was a hand-inlined
-    version of _dwarf_decode_u_leb128() which did
-    not work correctly if Dwarf_Unsigned was 64 bits.
-
-    April 2016: now uses a reader that is careful.
-    'return' only in case of error
-    else falls through.
-*/
 void
 _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     Dwarf_Unsigned targ, Dwarf_Unsigned sectionlen);
@@ -57,8 +41,8 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Unsigned lu_leblen = 0;                       \
         Dwarf_Unsigned lu_local = 0;                        \
         int lu_res = 0;                                     \
-        lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen, \
-            &lu_local,endptr);                              \
+        lu_res = dwarf_decode_leb128((char *)ptr,&lu_leblen, \
+            &lu_local,(char *)endptr);                              \
         if (lu_res == DW_DLV_ERROR) {                       \
             _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
             return DW_DLV_ERROR;                            \
@@ -73,8 +57,8 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Unsigned lu_leblen = 0;                 \
         Dwarf_Unsigned lu_local = 0;                  \
         int lu_res = 0;                               \
-        lu_res = _dwarf_decode_u_leb128_chk(ptr,      \
-            &lu_leblen,&lu_local,endptr);             \
+        lu_res = dwarf_decode_leb128((char *)ptr,      \
+            &lu_leblen,&lu_local,(char *)endptr);             \
         if (lu_res == DW_DLV_ERROR) {                 \
             _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
             return DW_DLV_ERROR;                      \
@@ -88,7 +72,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     Decodes signed leb128 encoded numbers.
     Make sure ptr is a pointer to a 1-byte type.
     In 2003 and earlier this was a hand-inlined
-    version of _dwarf_decode_s_leb128() which did
+    version of dwarf_decode_leb128() which did
     not work correctly if Dwarf_Unsigned was 64 bits.
 
 */
@@ -97,8 +81,8 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Unsigned uleblen = 0;                   \
         Dwarf_Signed local = 0;                       \
         int lu_res = 0;                               \
-        lu_res = _dwarf_decode_s_leb128_chk(ptr,&uleblen,  \
-            &local,endptr);                                \
+        lu_res = dwarf_decode_signed_leb128((char *)ptr,&uleblen,  \
+            &local,(char *)endptr);                                \
         if (lu_res == DW_DLV_ERROR) {                      \
             _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);\
             return DW_DLV_ERROR;                      \
@@ -112,8 +96,8 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Unsigned lu_leblen = 0;                 \
         Dwarf_Signed lu_local = 0;                    \
         int lu_res = 0;                               \
-        lu_res = _dwarf_decode_s_leb128_chk(ptr,&lu_leblen,\
-            &lu_local,endptr);                             \
+        lu_res = dwarf_decode_signed_leb128((char *)ptr,&lu_leblen,\
+            &lu_local,(char *)endptr);                             \
         if (lu_res == DW_DLV_ERROR) {                      \
             _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);\
             return DW_DLV_ERROR;                      \
@@ -353,21 +337,9 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
         }                                                      \
     } while (0)
 
-
-/*  Fuller checking. Returns DW_DLV_ERROR or DW_DLV_OK
-    Caller must set Dwarf_Error */
-int _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
-    Dwarf_Unsigned * leb128_length,
-    Dwarf_Unsigned *outval,Dwarf_Byte_Ptr endptr);
-
 int _dwarf_format_TAG_err_msg(Dwarf_Debug dbg,
     Dwarf_Unsigned tag,const char *m,
     Dwarf_Error *error);
-
-
-int _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
-    Dwarf_Unsigned * leb128_length,
-    Dwarf_Signed *outval, Dwarf_Byte_Ptr endptr);
 
 int
 _dwarf_get_size_of_val(Dwarf_Debug dbg,

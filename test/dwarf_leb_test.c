@@ -33,9 +33,6 @@
 #include "dwarf_incl.h"
 #include "libdwarf.h"
 #include "dwarf_error.h"
-#include "dwarf_util.h"
-#include "dwarf_encode_nm.h"
-
 
 static void
 printinteresting(void)
@@ -123,7 +120,7 @@ signedtest(unsigned len)
         Dwarf_Unsigned decodelen = 0;
         Dwarf_Signed decodeval = 0;
 
-        res = _dwarf_encode_signed_leb128_nm(
+        res = dwarf_encode_signed_leb128(
             stest[t],&encodelen,bufferspace,BUFFERLEN);
         if (res != DW_DLV_OK) {
             printf("FAIL signed encode "
@@ -158,11 +155,11 @@ signedtest(unsigned len)
                 (unsigned)decodelen,__LINE__);
             ++errcnt;
         }
-        res = _dwarf_decode_s_leb128_chk(
-            (Dwarf_Small *)bufferspace,
+        res = dwarf_decode_signed_leb128(
+            (char *)bufferspace,
             &decodelen,
             &decodeval,
-            (Dwarf_Byte_Ptr)(&bufferspace[BUFFERLEN-1]));
+            (char *)(&bufferspace[BUFFERLEN-1]));
         if (res != DW_DLV_OK) {
             printf("FAIL got DW_DLV_ERRROR signed decode"
                 " index %u "
@@ -200,7 +197,7 @@ unsignedtest(unsigned len)
         Dwarf_Unsigned decodelen = 0;
         Dwarf_Unsigned decodeval = 0;
 
-        res = _dwarf_encode_leb128_nm(
+        res = dwarf_encode_leb128(
             utest[t],&encodelen,bufferspace,BUFFERLEN);
         if (res != DW_DLV_OK) {
             printf("FAIL signed encode index %u val 0x%llx line:%d\n",
@@ -229,11 +226,11 @@ unsignedtest(unsigned len)
             ++errcnt;
         }
 
-        res = _dwarf_decode_u_leb128_chk(
-            (Dwarf_Small *)bufferspace,
+        res = dwarf_decode_leb128(
+            (char *)bufferspace,
             &decodelen,
             &decodeval,
-            (Dwarf_Byte_Ptr)(&bufferspace[BUFFERLEN-1]));
+            (char *)(&bufferspace[BUFFERLEN-1]));
         if (res != DW_DLV_OK) {
             printf("FAIL unsigned decode index %u "
                 "val 0x%llx line:%d\n",
@@ -372,31 +369,31 @@ specialtests(void)
     int res;
 
     vlen = sizeof(v1)/sizeof(char);
-    res = _dwarf_decode_s_leb128_chk(
-        (Dwarf_Small *)v1,
+    res = dwarf_decode_signed_leb128(
+        (char *)v1,
         &decodelen,
         &decodeval,
-        (Dwarf_Byte_Ptr)(&v1[vlen]));
+        (char *)(&v1[vlen]));
     if (res != DW_DLV_ERROR) {
         printf("FAIL unsigned decode special v1  line:%d\n",__LINE__);
         ++errcnt;
     }
-    res = _dwarf_decode_u_leb128_chk(
-        (Dwarf_Small *)v1,
+    res = dwarf_decode_leb128(
+        (char *)v1,
         &decodelen,
         &udecodeval,
-        (Dwarf_Byte_Ptr)(&v1[vlen]));
+        (char *)(&v1[vlen]));
     if (res != DW_DLV_ERROR) {
         printf("FAIL unsigned decode special v1  line:%d\n",__LINE__);
         ++errcnt;
     }
 
     vlen = sizeof(v2)/sizeof(char);
-    res = _dwarf_decode_s_leb128_chk(
-        (Dwarf_Small *)v2,
+    res = dwarf_decode_signed_leb128(
+        (char *)v2,
         &decodelen,
         &decodeval,
-        (Dwarf_Byte_Ptr)(&v2[vlen]));
+        (char *)(&v2[vlen]));
     if (res != DW_DLV_OK) {
         printf("FAIL signed decode special v2  line:%d\n",__LINE__);
         ++errcnt;
@@ -405,22 +402,22 @@ specialtests(void)
         and byte is (or is promoted to) a signed type
         on the following decode you get the wrong value.
         Undefined effect in C leads to error.  */
-    res = _dwarf_decode_u_leb128_chk(
-        (Dwarf_Small *)v2,
+    res = dwarf_decode_leb128(
+        (char *)v2,
         &decodelen,
         &udecodeval,
-        (Dwarf_Byte_Ptr)(&v2[vlen]));
+        (char *)(&v2[vlen]));
     if (res != DW_DLV_OK) {
         printf("FAIL unsigned decode special v2  line:%d\n",__LINE__);
         ++errcnt;
     }
 
     vlen = sizeof(v3)/sizeof(char);
-    res = _dwarf_decode_s_leb128_chk(
-        (Dwarf_Small *)v3,
+    res = dwarf_decode_signed_leb128(
+        (char *)v3,
         &decodelen,
         &decodeval,
-        (Dwarf_Byte_Ptr)(&v3[vlen]));
+        (char *)(&v3[vlen]));
     if (res != DW_DLV_OK) {
         printf("FAIL signed decode special v3  line:%d\n",__LINE__);
         ++errcnt;
@@ -434,11 +431,11 @@ specialtests(void)
     }
 
     vlen = sizeof(v4)/sizeof(char);
-    res = _dwarf_decode_s_leb128_chk(
-        (Dwarf_Small *)v4,
+    res = dwarf_decode_signed_leb128(
+        (char *)v4,
         &decodelen,
         &decodeval,
-        (Dwarf_Byte_Ptr)(&v4[vlen]));
+        (char *)(&v4[vlen]));
     if (res != DW_DLV_OK) {
         printf("FAIL signed decode special v4  line:%d\n",__LINE__);
         ++errcnt;
@@ -453,11 +450,11 @@ specialtests(void)
         ++errcnt;
     }
     vlen = sizeof(v5)/sizeof(char);
-    res = _dwarf_decode_s_leb128_chk(
-        (Dwarf_Small *)v5,
+    res = dwarf_decode_signed_leb128(
+        (char *)v5,
         &decodelen,
         &decodeval,
-        (Dwarf_Byte_Ptr)(&v5[vlen]));
+        (char *)(&v5[vlen]));
     if (res != DW_DLV_OK) {
         printf("FAIL signed decode special v5  line:%d\n",__LINE__);
         ++errcnt;
@@ -478,22 +475,20 @@ specialtests(void)
             (unsigned)vlen,(unsigned)decodelen,__LINE__);
     }
     vlen = sizeof(v6)/sizeof(char);
-    res = _dwarf_decode_s_leb128_chk(
-        (Dwarf_Small *)v6,
+    res = dwarf_decode_signed_leb128((char *)v6,
         &decodelen,
         &decodeval,
-        (Dwarf_Byte_Ptr)(&v6[vlen]));
+        (char *)(&v6[vlen]));
     if (res != DW_DLV_ERROR) {
         printf("FAIL signed decode special v6 "
             "did not get expected error output %d\n",
             __LINE__);
     }
     vlen = sizeof(v7)/sizeof(char);
-    res = _dwarf_decode_u_leb128_chk(
-        (Dwarf_Small *)v7,
+    res = dwarf_decode_leb128((char *)v7,
         &decodelen,
         &udecodeval,
-        (Dwarf_Byte_Ptr)(&v7[vlen]));
+        (char *)(&v7[vlen]));
     if (res == DW_DLV_ERROR) {
         printf("FAIL unsigned decode special v7 "
             "unexpected error output %d\n",
@@ -510,11 +505,10 @@ specialtests(void)
             (unsigned)decodelen,vlen,__LINE__);
     }
     vlen = sizeof(v8)/sizeof(char);
-    res = _dwarf_decode_u_leb128_chk(
-        (Dwarf_Small *)v8,
+    res = dwarf_decode_leb128((char *)v8,
         &decodelen,
         &udecodeval,
-        (Dwarf_Byte_Ptr)(&v8[vlen]));
+        (char *)(&v8[vlen]));
     if (res != DW_DLV_ERROR) {
         printf("FAIL unsigned decode special v8 "
             "unexpected pass expected DW_DLV_ERROR line:%d\n",

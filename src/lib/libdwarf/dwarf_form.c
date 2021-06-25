@@ -169,8 +169,8 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
         Dwarf_Signed value = 0;
         int rres = 0;
 
-        rres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
-            &len, &value,endptr);
+        rres = dwarf_decode_signed_leb128((char *)ptr,
+            &len, &value,(char *)endptr);
         if (rres != DW_DLV_OK) {
             _dwarf_error(NULL, error, DW_DLE_LEB_IMPROPER);
             return DW_DLV_ERROR;
@@ -200,8 +200,8 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
         Dwarf_Unsigned len;
         int sres = 0;
 
-        sres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
-            &len, &num,endptr);
+        sres = dwarf_decode_signed_leb128((char *)ptr,
+            &len, &num,(char *)endptr);
         if (sres != DW_DLV_OK) {
             dwarf_dealloc(dbg,output_block,DW_DLA_STRING);
             _dwarf_error(NULL, error, DW_DLE_LEB_IMPROPER);

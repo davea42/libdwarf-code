@@ -153,8 +153,7 @@ endif()
 if (DO_TESTING)
     set_source_group(TESTLEB "Source Files" 
         ${CMAKE_SOURCE_DIR}/test/dwarf_leb_test.c 
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_leb.c 
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_encode_nm.c )
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_leb.c )
     add_executable(selfleb ${TESTLEB})
     target_compile_options(selfleb PRIVATE 
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
