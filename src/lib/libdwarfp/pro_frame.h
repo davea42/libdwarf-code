@@ -25,10 +25,7 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
-
-
 
 /*
     Largest register value that can be coded into
@@ -46,7 +43,6 @@ struct Dwarf_P_Frame_Pgm_s {
     Dwarf_Unsigned dfp_nbytes; /* number of bytes in args */
     Dwarf_P_Frame_Pgm dfp_next;
 };
-
 
 /*
     This struct has cie related information. Used to gather data
@@ -68,7 +64,6 @@ struct Dwarf_P_Cie_s {
     /* no of init_inst */
     Dwarf_P_Cie cie_next;
 };
-
 
 /* producer fields */
 struct Dwarf_P_Fde_s {

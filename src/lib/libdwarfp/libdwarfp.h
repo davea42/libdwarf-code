@@ -27,7 +27,6 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
 
 #ifndef _LIBDWARFP_H
@@ -65,7 +64,6 @@ typedef Dwarf_Unsigned                Dwarf_Tag;
    itself using the symbolic relocations to do so.
    See the Dwarf_Rel_Type enum relocation indicators.
 */
-
 
 /*  64-bit address-size target */
 #define DW_DLC_SIZE_64            0x40000000 /* old spelling */

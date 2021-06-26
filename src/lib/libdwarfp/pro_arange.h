@@ -24,9 +24,7 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
-
 
 /*
     If ag_end_symbol_index is zero,
@@ -50,5 +48,4 @@ symbol */
     Dwarf_Addr ag_end_symbol_offset; /* known address or for
         symbolic assem output,
         offset of end symbol */
-
 };

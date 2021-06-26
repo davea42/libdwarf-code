@@ -24,9 +24,7 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
-
 
 #ifndef PRO_ALLOC_H
 #define PRO_ALLOC_H
@@ -35,12 +33,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-
 Dwarf_Ptr _dwarf_p_get_alloc(Dwarf_P_Debug, Dwarf_Unsigned);
-
-void dwarf_p_dealloc(Dwarf_Small * ptr); /* DO NOT USE. */
 void _dwarf_p_dealloc(Dwarf_P_Debug,Dwarf_Small * ptr);
-
 void _dwarf_p_dealloc_all(Dwarf_P_Debug dbg);
 
 #ifdef __cplusplus

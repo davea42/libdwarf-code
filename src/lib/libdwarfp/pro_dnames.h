@@ -23,7 +23,6 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
 
 /*  The numbers here are almost all 32 bits.
@@ -59,14 +58,12 @@ struct Dwarf_P_Dnames_sarray_s {
     Dwarf_Sig8 *dne_values;
 };
 
-
 struct Dwarf_P_Dnames_s {
     Dwarf_Small dn_create_section;
     struct Dwarf_P_Dnames_Head_s dn_header;
     struct Dwarf_P_Dnames_uarray_s dn_cunit_offset;
     struct Dwarf_P_Dnames_uarray_s dn_tunit_offset;
     struct Dwarf_P_Dnames_sarray_s dn_sunit_sigs;
-
     struct Dwarf_P_Dnames_uarray_s dn_buckets;
 
     /*  Hashes count applies to string offsets
@@ -78,5 +75,4 @@ struct Dwarf_P_Dnames_s {
     Dwarf_Small *dn_index_entry_pool;
     Dwarf_Small  dn_index_entry_pool_size;
     Dwarf_Small  dn_index_entry_pool_used;
-
 };

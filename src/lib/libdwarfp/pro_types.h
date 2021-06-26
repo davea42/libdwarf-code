@@ -24,12 +24,9 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
 
-
 /* pro_types.h */
-
 
 int _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     enum dwarf_sn_kind entrykind,

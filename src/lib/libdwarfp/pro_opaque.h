@@ -25,7 +25,6 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
 
 #include "libdwarf_private.h"
@@ -52,8 +51,6 @@ typedef signed short Dwarf_Shalf;
     incompatible, increment this number.
     1->2->3 ...  */
 #define  PRO_VERSION_MAGIC 0xdead1
-
-
 #define DWARF_HALF_SIZE 2
 #define DWARF_32BIT_SIZE 4
 #define DWARF_64BIT_SIZE 8

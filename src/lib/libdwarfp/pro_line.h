@@ -26,9 +26,7 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
-
 
 #define DW_LINE_VERSION2   2
 #define DW_LINE_VERSION3   3
@@ -59,8 +57,6 @@
 #define OPCODE_BASE  10 /* DWARF2.  13 in DWARF3, 4, 5  */
 #define MAX_OPCODE   255
 
-
-
 /*  This struct holds file or include_dir
     entries for the statement prologue.
     Defined in pro_line.h */
@@ -79,14 +75,12 @@ struct Dwarf_P_F_Entry_s {
     Dwarf_Unsigned dfe_timestamp;
     unsigned dfe_size;
     unsigned char dfe_md5[16];
-
 };
 
 
 /*
     Struct holding line number information for each of the producer
-    line entries
-*/
+    line entries.  */
 struct Dwarf_P_Line_s {
     /* code address */
     Dwarf_Addr dpl_address;
@@ -119,13 +113,10 @@ struct Dwarf_P_Line_s {
     Dwarf_Ubyte    dpl_epilogue_begin; /* DWARF3 */
     Dwarf_Unsigned dpl_isa;            /* DWARF3 */
     Dwarf_Unsigned dpl_discriminator;  /* DWARF4 */
-
 };
 
 /*
     to initialize state machine registers, definition in
-    pro_line.c
-*/
+    pro_line.c */
 void _dwarf_pro_reg_init(Dwarf_P_Debug dbg,Dwarf_P_Line);
-
 void _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg);

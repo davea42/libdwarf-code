@@ -25,12 +25,7 @@
   Public License along with this program; if not, write the
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
-
 */
-
-
-
-
 
 /* relocation section names */
 extern const char *_dwarf_rel_section_names[];
@@ -42,10 +37,6 @@ extern const char *_dwarf_sectnames[];
     list of relocation structs, and will then be written at as a
     whole into the relocation section. Whether its 32 bit or
     64 bit will be obtained from Dwarf_Debug pointer.  */
-
-
-
-
 
 /* struct stores a chunk of data pertaining to a section */
 struct Dwarf_P_Section_Data_s {
@@ -95,8 +86,6 @@ Dwarf_Small *_dwarf_pro_buffer(Dwarf_P_Debug dbg, int sectno,
         DWARF_P_DBG_ERROR(dbg,DW_DLE_CHUNK_ALLOC,-1); \
     } \
 }
-
-
 
 int _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs,
