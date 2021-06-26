@@ -94,7 +94,7 @@ dwarf_new_die_a(Dwarf_P_Debug dbg,
     res = dwarf_die_link_a(ret_die, parent, child, left, right,
         error);
     if (res != DW_DLV_OK) {
-        _dwarf_p_dealloc(dbg,(Dwarf_Small *)ret_die);
+        _dwarf_p_dealloc((Dwarf_Small *)ret_die);
         ret_die = 0;
     } else {
         *die_out = ret_die;

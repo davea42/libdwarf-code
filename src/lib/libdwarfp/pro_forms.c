@@ -454,19 +454,13 @@ dwarf_compress_integer_block(
     }
 
     if (remain != 0) {
-        _dwarf_p_dealloc(dbg, (unsigned char *)output_block);
+        _dwarf_p_dealloc((unsigned char *)output_block);
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return((Dwarf_P_Attribute)DW_DLV_BADADDR);
     }
 
     *output_length_in_bytes_ptr = output_length_in_bytes;
     return (void*) output_block;
-}
-
-void
-dwarf_dealloc_compressed_block(Dwarf_P_Debug dbg, void * space)
-{
-    _dwarf_p_dealloc(dbg, space);
 }
 
 /*  This is very similar to targ_address but results
@@ -581,7 +575,7 @@ dwarf_add_AT_block_a(
         _dwarf_p_get_alloc(dbg, len_size + block_size);
     if (new_attr->ar_data == NULL) {
         /* free the block we got earlier */
-        _dwarf_p_dealloc(dbg, (unsigned char *) new_attr);
+        _dwarf_p_dealloc((unsigned char *) new_attr);
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }

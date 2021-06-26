@@ -251,7 +251,7 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
             data += lenk;
             p_blk_last = p_blk;
             p_blk = p_blk->rb_next;
-            _dwarf_p_dealloc(dbg, (Dwarf_Small *) p_blk_last);
+            _dwarf_p_dealloc((Dwarf_Small *) p_blk_last);
         }
         /* ASSERT: sum of len copied == total_size */
 

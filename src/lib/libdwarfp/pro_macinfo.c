@@ -446,14 +446,14 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
         memcpy(macinfo_ptr, m_sect->mb_data, m_sect->mb_used_len);
         macinfo_ptr += m_sect->mb_used_len;
         if (m_prev) {
-            _dwarf_p_dealloc(dbg, (Dwarf_Small *) m_prev);
+            _dwarf_p_dealloc((Dwarf_Small *) m_prev);
             m_prev = 0;
         }
         m_prev = m_sect;
     }
     *macinfo_ptr = 0;           /* the type code of 0 as last entry */
     if (m_prev) {
-        _dwarf_p_dealloc(dbg, (Dwarf_Small *) m_prev);
+        _dwarf_p_dealloc((Dwarf_Small *) m_prev);
         m_prev = 0;
     }
 

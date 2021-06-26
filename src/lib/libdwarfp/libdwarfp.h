@@ -564,11 +564,6 @@ int dwarf_die_link_a(
     Dwarf_P_Die     /*right*/,
     Dwarf_Error*    /*error*/);
 
-void dwarf_dealloc_compressed_block(
-    Dwarf_P_Debug,
-    void *
-);
-
 /*  dwarf_compress_integer_block_a( new 11 February 2019.
     Like the earlier version this turns an array of signed
     integers into a block of sleb values (and if the

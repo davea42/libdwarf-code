@@ -119,36 +119,10 @@ _dwarf_p_get_alloc(Dwarf_P_Debug dbg, Dwarf_Unsigned size)
 }
 
 /*
-  This routine is only here in case a caller of an older
-  version of the
-  library is calling this for some reason.
-  This does nothing!
-  No need to remove this block.  In theory the user might be
-  depending on the fact that we used to just 'free' this.
-  In theory they might also be
-  passing a block that they got from libdwarf.  So we don't know if we
-  should try to remove this block from our global list.
-  Safest just to
-  do nothing at this point.
-
-  !!!
-  This function is deprecated!  Don't call it inside
-  libdwarf or outside of it.
-  Does nothing!
-  !!!
-*/
-void
-dwarf_p_dealloc(UNUSEDARG Dwarf_Small * ptr)
-{
-    return;
-}
-
-/*
   The dbg structure is not needed here anymore.
 */
 void
-_dwarf_p_dealloc(UNUSEDARG Dwarf_P_Debug dbg,
-    Dwarf_Small * ptr) /* ARGSUSED */
+_dwarf_p_dealloc(Dwarf_Small * ptr) /* ARGSUSED */
 {
     memory_list_t *lp;
 
@@ -210,7 +184,7 @@ _dwarf_p_dealloc_all(Dwarf_P_Debug dbg)
     while (dbglp != base_dbglp) {
         memory_list_t*next = dbglp->next;
 
-        _dwarf_p_dealloc(dbg, LIST_TO_BLOCK(dbglp));
+        _dwarf_p_dealloc( LIST_TO_BLOCK(dbglp));
         dbglp = next;
     }
     dwarf_tdestroy(dbg->de_debug_str_hashtab,

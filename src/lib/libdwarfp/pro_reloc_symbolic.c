@@ -256,7 +256,7 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 data += len;
                 p_blk_last = p_blk;
                 p_blk = p_blk->rb_next;
-                _dwarf_p_dealloc(dbg, (Dwarf_Small *) p_blk_last);
+                _dwarf_p_dealloc((Dwarf_Small *) p_blk_last);
             } while (p_blk);
             /*  ASSERT: the dangling p_blk list all dealloc'd
                 which is really a no-op, all deallocations
