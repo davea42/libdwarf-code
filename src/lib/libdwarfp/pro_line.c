@@ -90,7 +90,7 @@ _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg)
 {
     dbg->de_line_inits.pi_linetable_version = dbg->de_output_version;
     dbg->de_line_inits.pi_default_is_stmt =
-        /* is false pro_line.h */
+        /* is FALSE pro_line.h */
         DEFAULT_IS_STMT;
     dbg->de_line_inits.pi_minimum_instruction_length =
         /* is 1 or 4 depending on ifdefs in pro_line.h */
@@ -370,7 +370,7 @@ _dwarf_pro_reg_init(Dwarf_P_Debug dbg, Dwarf_P_Line cur_line)
     cur_line->dpl_line = 1;
     cur_line->dpl_column = 0;
     cur_line->dpl_is_stmt = dbg->de_line_inits.pi_default_is_stmt;
-    cur_line->dpl_basic_block = false;
+    cur_line->dpl_basic_block = FALSE;
     cur_line->dpl_next = NULL;
     cur_line->dpl_prologue_end = 0;
     cur_line->dpl_epilogue_begin = 0;

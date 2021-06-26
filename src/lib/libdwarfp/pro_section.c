@@ -1812,8 +1812,8 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
                 sum_bytes += writelen;
                 prevline->dpl_is_stmt = curline->dpl_is_stmt;
             }
-            if (curline->dpl_basic_block == true &&
-                prevline->dpl_basic_block == false) {
+            if (curline->dpl_basic_block == TRUE &&
+                prevline->dpl_basic_block == FALSE) {
                 res = write_ubyte(DW_LNS_set_basic_block,dbg,
                     elfsectno,&writelen,error);
                 if (res != DW_DLV_OK) {
@@ -1883,7 +1883,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
                     return res;
                 }
                 sum_bytes += writelen;
-                prevline->dpl_basic_block = false;
+                prevline->dpl_basic_block = FALSE;
                 prevline->dpl_address = curline->dpl_address;
                 prevline->dpl_line = curline->dpl_line;
             } else {
@@ -1899,7 +1899,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
                         return res;
                     }
                     sum_bytes += writelen;
-                    prevline->dpl_basic_block = false;
+                    prevline->dpl_basic_block = FALSE;
                     prevline->dpl_address = curline->dpl_address;
                 }
                 if (line_adv != 0) {
@@ -1920,7 +1920,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
                         return res;
                     }
                     sum_bytes += writelen;
-                    prevline->dpl_basic_block = false;
+                    prevline->dpl_basic_block = FALSE;
                     prevline->dpl_line = curline->dpl_line;
                 }
             }
@@ -1934,7 +1934,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
                 return res;
             }
             sum_bytes += writelen;
-            prevline->dpl_basic_block = false;
+            prevline->dpl_basic_block = FALSE;
         }
         curline = curline->dpl_next;
     }

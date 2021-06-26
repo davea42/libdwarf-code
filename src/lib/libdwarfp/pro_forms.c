@@ -47,8 +47,6 @@
 #include "pro_die.h"
 #include "pro_expr.h"
 
-#define DW_CU_VERSION5 5
-
 #ifndef R_MIPS_NONE
 #define R_MIPS_NONE 0
 #endif

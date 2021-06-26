@@ -30,8 +30,8 @@
 
 #include "libdwarf_private.h"
 
-#define true                    1
-#define false                   0
+#define TRUE                    1
+#define FALSE                   0
 
 /*  The DISTINGUISHED VALUE is 4 byte value defined by DWARF
     since DWARF3. */
@@ -591,7 +591,7 @@ struct Dwarf_P_Debug_s {
     struct Dwarf_P_Stats_s de_stats;
 };
 
-#define CURRENT_VERSION_STAMP   2
+#define VERSION_STAMP2   2
 
 int _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,

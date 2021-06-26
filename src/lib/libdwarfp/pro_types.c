@@ -228,7 +228,7 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
 
     /* Write the version as 2 bytes. */
     {
-        Dwarf_Half verstamp = CURRENT_VERSION_STAMP;
+        Dwarf_Half verstamp = VERSION_STAMP2;
 
         WRITE_UNALIGNED(dbg, cur_stream_bytes_ptr,
             (const void *) &verstamp,
