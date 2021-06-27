@@ -29,7 +29,6 @@ dwarf_tied.c
 dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
 dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c 
-malloc_check.c 
 crc32.c )
 
 set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h
@@ -61,7 +60,7 @@ dwarf_tsearch.h
 dwarf_str_offsets.h
 dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h 
 dwarf_xu_index.h libdwarf_private.h
-dwarf_macho_loader.h malloc_check.h 
+dwarf_macho_loader.h
 memcpy_swap.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 

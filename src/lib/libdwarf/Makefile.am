@@ -127,8 +127,6 @@ crc32.c \
 libdwarf.h \
 libdwarf_private.h \
 libdwarf_version.h \
-malloc_check.c \
-malloc_check.h \
 memcpy_swap.h 
 
 libdwarf_la_CFLAGS = $(DWARF_CFLAGS_WARN) 
