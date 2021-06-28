@@ -1879,31 +1879,6 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     return DW_DLV_OK;
 }
 
-
-int
-dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
-    Dwarf_Unsigned   index,
-    Dwarf_Small    * atom_out,
-    Dwarf_Unsigned * operand1,
-    Dwarf_Unsigned * operand2,
-    Dwarf_Unsigned * operand3,
-    Dwarf_Unsigned * offset_for_branch,
-    Dwarf_Error*     error)
-{
-    Dwarf_Unsigned raw1 = 0;
-    Dwarf_Unsigned raw2 = 0;
-    Dwarf_Unsigned raw3 = 0;
-    int res = 0;
-
-    res = dwarf_get_location_op_value_d(locdesc,
-        index,atom_out,
-        operand1,operand2,operand3,
-        &raw1,&raw2,&raw3,
-        offset_for_branch,
-        error);
-    return res;
-}
-
 void
 dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
 {

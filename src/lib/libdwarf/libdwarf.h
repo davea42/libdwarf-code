@@ -1384,15 +1384,7 @@ int  dwarf_add_file_path(Dwarf_Debug /*dbg*/,
     const char * /*file_name*/,
     Dwarf_Error*      /*error*/);
 
-/* Undocumented function for memory allocator. */
-void dwarf_print_memory_stats(Dwarf_Debug  /*dbg*/);
-
-int dwarf_get_elf(Dwarf_Debug /*dbg*/,
-    void * /*return_elfptr*/,
-    Dwarf_Error*      /*error*/);
-
 int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
-
 
 /*  NEW March 2017. */
 int dwarf_object_init_b(Dwarf_Obj_Access_Interface* /*obj*/,
@@ -1712,15 +1704,6 @@ int dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
     Dwarf_Unsigned * /*offset_for_branch*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_location_op_value_c(Dwarf_Locdesc_c /*locdesc*/,
-    Dwarf_Unsigned   /*index*/,
-    Dwarf_Small    * /*atom_out*/,
-    Dwarf_Unsigned * /*operand1*/,
-    Dwarf_Unsigned * /*operand2*/,
-    Dwarf_Unsigned * /*operand3*/,
-    Dwarf_Unsigned * /*offset_for_branch*/,
-    Dwarf_Error*     /*error*/);
-
 int dwarf_loclist_from_expr_c(Dwarf_Debug /*dbg*/,
     Dwarf_Ptr      /*expression_in*/,
     Dwarf_Unsigned /*expression_length*/,
@@ -1751,13 +1734,6 @@ int dwarf_highpc_b(Dwarf_Die /*die*/,
     Dwarf_Half  *           /*return_form*/,
     enum Dwarf_Form_Class * /*return_class*/,
     Dwarf_Error *           /*error*/);
-
-/*  This works for DWARF2 and DWARF3 styles of DW_AT_highpc,
-    but not for the DWARF4 class constant forms.
-    If the FORM is of class constant this returns an error */
-int dwarf_highpc(Dwarf_Die /*die*/,
-    Dwarf_Addr  *    /*returned_addr*/,
-    Dwarf_Error*     /*error*/);
 
 /*  New January 2016. */
 int dwarf_dietype_offset(Dwarf_Die /*die*/,
@@ -2584,9 +2560,6 @@ int dwarf_get_abbrev_tag(Dwarf_Abbrev /*abbrev*/,
 int dwarf_get_abbrev_code(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Unsigned*  /*return_code_number*/,
     Dwarf_Error*     /*error*/);
-
-/* See comments in dwarf_abbrev.c. Not an entirely safe function. */
-int dwarf_get_abbrev_count(Dwarf_Debug /*dbg*/);
 
 int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Signed*    /*return_flag*/,
@@ -3883,9 +3856,7 @@ extern int dwarf_get_VIS_name(unsigned int /*val_in*/,
 /*  New February 2019.  On success returns DW_DLV_OK
     and creates an array of Dwarf_Signed values
     from the block of sleb numbers.
-    This interface supercedes
-    dwarf_uncompress_integer_block(). No ugly
-    cast needed to know if
+    No ugly cast needed to know if
     dwarf_uncompress_integer_block_a() succeeds or not. */
 int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned     /*input_length_in_bytes*/,

@@ -811,6 +811,13 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
     }
     res = dwarf_attrlist(die,&attrbuf,&attrcount,errp);
     if(res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            if (!passnullerror) {
+                dwarf_dealloc_error(dbg,error);
+                error = 0;
+                exit(1);
+            }
+        }
         return;
     }
     for(i = 0; i < attrcount ; ++i) {
@@ -840,44 +847,29 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
                 get_addr(attrbuf[i],&highpc);
             }
         }
+        if (res == DW_DLV_ERROR && !passnullerror) {
+            dwarf_dealloc_error(dbg,error);
+            error = 0;
+        } else if (res == DW_DLV_NO_ENTRY) {
+        }
         dwarf_dealloc(dbg,attrbuf[i],DW_DLA_ATTR);
     }
-    /*  Here let's test some alternative interfaces for high and low pc.
-        We only do both dwarf_highpc and dwarf_highpcb_b as
-        an error check. Do not do both yourself. */
+    /*  Here let's test some alternative interfaces for
+        high and low pc. */
     if(checkoptionon){
-        int hres = 0;
         int hresb = 0;
         int lres = 0;
-        Dwarf_Addr althipc = 0;
         Dwarf_Addr hipcoffset = 0;
         Dwarf_Addr althipcb = 0;
         Dwarf_Addr altlopc = 0;
         Dwarf_Half highform = 0;
         enum Dwarf_Form_Class highclass = 0;
 
-        /*  Reusing errp before checking for err here is
-            bogus. FIXME. */
-        /*  Should work for DWARF 2/3 DW_AT_high_pc, and
-            all high_pc where the FORM is DW_FORM_addr
-            Avoid using this interface as of 2013. */
-        hres  = dwarf_highpc(die,&althipc,errp);
-
         /* Should work for all DWARF DW_AT_high_pc.  */
-        hresb = dwarf_highpc_b(die,&althipcb,&highform,&highclass,errp);
-
+        hresb = dwarf_highpc_b(die,&althipcb,&highform,
+            &highclass,errp);
         lres = dwarf_lowpc(die,&altlopc,errp);
         printf("high_pc checking %s ",name);
-
-        if (hres == DW_DLV_OK) {
-            /* present, FORM addr */
-            printf("highpc   0x%" DW_PR_XZEROS DW_PR_DUx " ",
-                althipc);
-        } else if (hres == DW_DLV_ERROR) {
-            printf("dwarf_highpc() error not class address ");
-        } else {
-            /* absent */
-        }
         if(hresb == DW_DLV_OK) {
             /* present, FORM addr or const. */
             if(highform == DW_FORM_addr) {

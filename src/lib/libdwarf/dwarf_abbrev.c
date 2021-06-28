@@ -432,39 +432,3 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     abbrev->dab_next_index = (Dwarf_Unsigned)local_indx ;
     return DW_DLV_OK;
 }
-
-/*  This function is not entirely safe to call.
-    The problem is that the DWARF[234] specification does not insist
-    that bytes in .debug_abbrev that are not referenced by .debug_info
-    or .debug_types need to be initialized to anything specific.
-    Any garbage bytes may cause trouble.  Not all compilers/linkers
-    leave unreferenced garbage bytes in .debug_abbrev, so this may
-    work for most objects.
-    In case of error could return a bogus value, there is
-    no documented way to detect error.
-*/
-int
-dwarf_get_abbrev_count(Dwarf_Debug dbg)
-{
-    Dwarf_Abbrev ab;
-    Dwarf_Unsigned offset = 0;
-    Dwarf_Unsigned length = 0;
-    Dwarf_Unsigned attr_count = 0;
-    Dwarf_Unsigned abbrev_count = 0;
-    int abres = DW_DLV_OK;
-    Dwarf_Error err = 0;
-
-    while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
-        &length, &attr_count,
-        &err)) == DW_DLV_OK) {
-
-        ++abbrev_count;
-        offset += length;
-        dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-    }
-    if (err) {
-        dwarf_dealloc(dbg,err,DW_DLA_ERROR);
-        err = 0;
-    }
-    return abbrev_count;
-}

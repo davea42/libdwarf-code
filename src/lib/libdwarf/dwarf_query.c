@@ -1105,31 +1105,6 @@ dwarf_lowpc(Dwarf_Die die,
 }
 
 
-/*  This works for DWARF2 and DWARF3 but fails for DWARF4
-    DW_AT_high_pc attributes of class constant.
-    It is best to cease using this interface.
-    */
-int
-dwarf_highpc(Dwarf_Die die,
-    Dwarf_Addr * return_addr, Dwarf_Error * error)
-{
-    int res = 0;
-    enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
-    Dwarf_Half form = 0;
-
-    CHECK_DIE(die, DW_DLV_ERROR);
-    res = dwarf_highpc_b(die,return_addr,&form,&class,error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    if (form != DW_FORM_addr) {
-        /* Not the correct form for DWARF2/3 DW_AT_high_pc */
-        Dwarf_Debug dbg = die->di_cu_context->cc_dbg;
-        _dwarf_error(dbg, error, DW_DLE_HIGHPC_WRONG_FORM);
-        return DW_DLV_ERROR;
-    }
-    return DW_DLV_OK;
-}
 
 /*  If the giving 'die' contains the DW_AT_type attribute, it returns
     the offset referenced by the attribute.

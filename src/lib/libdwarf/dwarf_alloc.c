@@ -935,18 +935,6 @@ _dwarf_get_debug(void)
     return (dbg);
 }
 
-/*
-    This function prints out the statistics
-    collected on allocation of memory chunks.
-    No longer used.
-*/
-void
-dwarf_print_memory_stats(Dwarf_Debug dbg UNUSEDARG)
-{
-}
-
-
-
 /*  In the 'rela' relocation case  or in case
     of compressed sections we might have malloc'd
     space (to ensure it is read-write or to decompress it
