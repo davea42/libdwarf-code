@@ -227,15 +227,12 @@ typedef struct Dwarf_Frame_Op_s {
 */
 #define DW_FRAME_SAME_VAL               1035
 
-/* For DWARF3 consumer interfaces, make the CFA a column with no
-   real table number.  This is what should have been done
-   for the DWARF2 interfaces.  This actually works for
-   both DWARF2 and DWARF3, but see the libdwarf documentation
-   on Dwarf_Regtable3 and  dwarf_get_fde_info_for_reg3()
+/* For DWARF3 and later consumer interfaces,
+   make the CFA a column with no real table number.
+   See the libdwarf documentation
+   on Dwarf_Regtable3 and  dwarf_get_fde_info_for_reg3().
    and  dwarf_get_fde_info_for_all_regs3()
-   Do NOT use this with the older dwarf_get_fde_info_for_reg()
-   or dwarf_get_fde_info_for_all_regs() consumer interfaces.
-   Must be higher than any register count for *any* ABI
+   CFA Must be higher than any register count for *any* ABI
    (ensures maximum applicability with minimum effort).
    Ensure this is > DW_REG_TABLE_SIZE (the reg table
    size is changeable at runtime with the *reg3() interfaces,
