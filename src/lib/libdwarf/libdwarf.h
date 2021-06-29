@@ -422,7 +422,7 @@ and dwarf_object_finish()
     So there is no dependence in the
     reader code on the object format and no dependence on libelf.
 
-Projects using  dwarf_init() can ignore
+Projects using  dwarf_init_b() can ignore
 the Dwarf_Obj_Access* structures entirely as all these details
 are completed for you.
 
@@ -1377,10 +1377,6 @@ int dwarf_init_b(int /*fd*/,
     Dwarf_Debug*      /*dbg*/,
     Dwarf_Error*      /*error*/);
 
-int  dwarf_add_file_path(Dwarf_Debug /*dbg*/,
-    const char * /*file_name*/,
-    Dwarf_Error*      /*error*/);
-
 int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
 
 /*  NEW March 2017. */
@@ -1861,24 +1857,6 @@ int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
 
 /* end attribute query operations. */
 
-/*  If we have two-level line tables, this will return the
-    logicals table in linebuf and the actuals table in
-    linebuf_actuals. For old-style (one-level) tables, it
-    will return the single table through linebuf, and the
-    value returned through linecount_actuals will be 0.
-    The actual version number is returned through version.
-    For two-level line tables, the version returned will
-    be 0xf006. This interface can return data from two-level
-    line tables, which are experimental.
-    Most users will not wish to use dwarf_srclines_two_level */
-int dwarf_srclines_two_level(Dwarf_Die /*die*/,
-    Dwarf_Unsigned * /*version*/,
-    Dwarf_Line**     /*linebuf*/,
-    Dwarf_Signed *   /*linecount*/,
-    Dwarf_Line**     /*linebuf_actuals*/,
-    Dwarf_Signed *   /*linecount_actuals*/,
-    Dwarf_Error*     /*error*/);
-
 /*  New October 2015, must be used to deallocating
     what is allocated by dwarf_srclines_b and
     dwarf_srclines_from_linecontext  use.
@@ -1904,11 +1882,22 @@ int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Error  *   /* error*/);
 
-/*  New October 2015.  Returns line details.
+/*  Returns line details.
     Works for DWARF2,3,4,5 and for experimental
     two-level line tables. A single level table will
     have *linebuf_actuals and *linecount_actuals set
     to 0. */
+/*  If we have two-level line tables, this will return the
+    logicals table in linebuf and the actuals table in
+    linebuf_actuals. For old-style (one-level) tables, it
+    will return the single table through linebuf, and the
+    value returned through linecount_actuals will be 0.
+    The actual version number is returned through version.
+    For two-level line tables, the version returned will
+    be 0xf006. This interface can return data from two-level
+    line tables, which are experimental.
+    Most users will not wish to use 
+    dwarf_srclines_two_level_from_linecontext */
 int dwarf_srclines_two_level_from_linecontext(Dwarf_Line_Context,
     Dwarf_Line  **   /*linebuf */,
     Dwarf_Signed *   /*linecount*/,
@@ -1953,17 +1942,6 @@ int dwarf_srclines_subprog_data(Dwarf_Line_Context /*line_context*/,
     const char **    /*name*/,
     Dwarf_Unsigned * /*decl_file*/,
     Dwarf_Unsigned * /*decl_line*/,
-    Dwarf_Error   *  /*error*/);
-
-/*  New October 2015. */
-/*  Count is the real count of files array entries.
-    This remains supported though it is pretty useless for
-    DWARF5.  To process DWARF5 as well
-    as DWARF 2,3,4 (in a uniform fashion)
-    use dwarf_srclines_files_indexes() instead.
-*/
-int dwarf_srclines_files_count(Dwarf_Line_Context /*line_context*/,
-    Dwarf_Signed  *  /*count*/,
     Dwarf_Error   *  /*error*/);
 
 /*  New March 2018. */

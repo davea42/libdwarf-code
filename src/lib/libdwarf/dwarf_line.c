@@ -987,33 +987,6 @@ dwarf_get_string_section_name(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-int
-dwarf_srclines_two_level(Dwarf_Die die,
-    Dwarf_Unsigned * version,
-    Dwarf_Line    ** linebuf,
-    Dwarf_Signed   * linecount,
-    Dwarf_Line    ** linebuf_actuals,
-    Dwarf_Signed   * linecount_actuals,
-    Dwarf_Error    * error)
-{
-    Dwarf_Line_Context line_context = 0;
-    Dwarf_Small table_count = 0;
-    Dwarf_Bool is_new_interface = false;
-    int res  = _dwarf_internal_srclines(die,
-        is_new_interface,
-        version,
-        &table_count,
-        &line_context,
-        linebuf,
-        linecount,
-        linebuf_actuals,
-        linecount_actuals,
-        /* addrlist= */ false,
-        /* linelist= */ true,
-        error);
-    return res;
-}
-
 /* New October 2015. */
 int
 dwarf_srclines_b(Dwarf_Die die,
@@ -1198,25 +1171,6 @@ dwarf_srclines_subprog_data(Dwarf_Line_Context line_context,
     *decl_line = sub->ds_decl_line;
     return DW_DLV_OK;
 }
-
-/*  New October 2015. See also
-    dwarf_srclines_files_indexes() */
-int
-dwarf_srclines_files_count(Dwarf_Line_Context line_context,
-    Dwarf_Signed *count_out,
-    Dwarf_Error *error)
-{
-    if (!line_context ||
-        line_context->lc_magic != DW_CONTEXT_MAGIC) {
-        _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
-        return DW_DLV_ERROR;
-    }
-    /*  Negative values not sensible. Leaving traditional
-        signed interfaces. */
-    *count_out = (Dwarf_Signed)line_context->lc_file_entry_count;
-    return DW_DLV_OK;
-}
-
 
 /* New March 2018 making iteration through file names. */
 int

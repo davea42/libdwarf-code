@@ -9,6 +9,7 @@
 ### with no hint as to what the problem really is..
 
 MAINTAINERCLEANFILES = Makefile.in \
+  getnametest.log getnametest.trs \
   runtestdd.sh.log	     test_linkedtopath.log \
   test_dwarfstring.log	     test_macrocheck.log \
   test_dwgetopt.log	     test_makenametest.log \
@@ -32,13 +33,13 @@ TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb test_sectionbitmaps test_dwarflebtest \
-  test_tied
+  test_tied test_getnametest
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
  test_testesb  test_sectionbitmaps test_dwarflebtest  \
- test_tied
+ test_tied test_getnametest
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
@@ -150,7 +151,12 @@ test_tied_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
-
+test_getnametest_SOURCES = getnametest.c \
+    $(top_srcdir)/src/lib/libdwarf/dwarf_names.c
+test_getnametest_FLAGS = $(RO_CFLAGS_WARN)
+test_getnametest_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf
 
 TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh 
 

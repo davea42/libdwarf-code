@@ -172,6 +172,17 @@ if (DO_TESTING)
     target_compile_options(selftied PRIVATE ${DW_FWALL})
     add_test(NAME selftied COMMAND selftied)
 endif()
+if (DO_TESTING) 
+   set_source_group(TESTNAMES "Source Files"
+        ${CMAKE_SOURCE_DIR}/test/getnametest.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_names.c)
+    add_executable(selftestnames ${TESTNAMES})
+    target_compile_options(selftestnames PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
+    target_compile_options(selftestnames PRIVATE ${DW_FWALL})
+    add_test(NAME selftestnames COMMAND selftestnames)
+
+endif()
 
 if (DO_TESTING) 
    add_custom_target (copyconf ALL

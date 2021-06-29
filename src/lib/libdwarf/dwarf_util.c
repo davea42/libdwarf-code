@@ -1447,23 +1447,6 @@ _dwarf_what_section_are_we(Dwarf_Debug dbg,
     return DW_DLV_NO_ENTRY;
 }
 
-/* New September 2019. */
-int  dwarf_add_file_path(
-    Dwarf_Debug dbg,
-    const char *          file_name,
-    Dwarf_Error* error)
-{
-    if (!dbg || !file_name) {
-        /*  Pretty much a disaster. Caller error. */
-        _dwarf_error(dbg,error,DW_DLE_NULL_ARGS_DWARF_ADD_PATH);
-        return DW_DLV_ERROR;
-    }
-    if (!dbg->de_path) {
-        dbg->de_path = strdup(file_name);
-    }
-    return DW_DLV_OK;
-}
-
 /*  New late April 2020.
     All the crucial macros will surely
     need  to use wrapper code to ensure we do not leak
