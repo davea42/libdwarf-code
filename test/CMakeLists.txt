@@ -173,7 +173,7 @@ if (DO_TESTING)
     add_test(NAME selftied COMMAND selftied)
 endif()
 if (DO_TESTING) 
-   set_source_group(TESTNAMES "Source Files"
+    set_source_group(TESTNAMES "Source Files"
         ${CMAKE_SOURCE_DIR}/test/getnametest.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_names.c)
     add_executable(selftestnames ${TESTNAMES})
@@ -181,11 +181,26 @@ if (DO_TESTING)
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
     target_compile_options(selftestnames PRIVATE ${DW_FWALL})
     add_test(NAME selftestnames COMMAND selftestnames)
+endif()
 
+if (DO_TESTING)
+    set_source_group(OBJACCESS "Source Files"
+        ${CMAKE_SOURCE_DIR}/test/objaccess.c )
+    add_executable(selfobjectaccess ${OBJACCESS})
+    target_compile_options(selfobjectaccess PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
+    target_compile_options(selfobjectaccess PRIVATE ${DW_FWALL})
+    target_link_options(selfobjectaccess PRIVATE 
+        -L${CMAKE_BINARY_DIR}/src/lib/libdwarf )
+    target_link_libraries(selfobjectaccess PRIVATE -ldwarf )
+    if (HAVE_ZLIB)
+        target_link_libraries(selfobjectaccess PRIVATE -lz )
+    endif()
+    add_test(NAME selfobjectaccess COMMAND selfobjectaccess)
 endif()
 
 if (DO_TESTING) 
-   add_custom_target (copyconf ALL
+    add_custom_target (copyconf ALL
        COMMAND ${CMAKE_COMMAND} -E
        copy ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf
           $(CMAKE_BINARY_DIR)/test/dwarfdump.conf )

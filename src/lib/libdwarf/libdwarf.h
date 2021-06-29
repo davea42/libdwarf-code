@@ -1386,18 +1386,17 @@ int dwarf_object_init_b(Dwarf_Obj_Access_Interface* /*obj*/,
     unsigned int  /*groupnumber*/,
     Dwarf_Debug*  /*dbg*/,
     Dwarf_Error*  /*error*/);
+int dwarf_object_finish(Dwarf_Debug /*dbg*/,
+    Dwarf_Error* /*error*/);
 
 int dwarf_set_tied_dbg(Dwarf_Debug /*basedbg*/,
     Dwarf_Debug /*tied_dbg*/,
     Dwarf_Error*  /*error*/);
 
-/*  Likely not very useful.? */
+/*  Likely not very useful. */
 int dwarf_get_tied_dbg(Dwarf_Debug /*dbg*/,
     Dwarf_Debug * /*tieddbg_out*/,
     Dwarf_Error * /*error*/);
-
-int dwarf_object_finish(Dwarf_Debug /*dbg*/,
-    Dwarf_Error* /*error*/);
 
 /*  Returns the version string. Example: "20190922"
     which is in ISO date format. */
@@ -3219,13 +3218,6 @@ int dwarf_set_stringcheck(int /*stringcheck*/);
     ignored by libdwarf (and zero on return).
     Returns previous value.  */
 int dwarf_set_reloc_application(int /*apply*/);
-
-/* Never Implemented */
-Dwarf_Handler dwarf_seterrhand(Dwarf_Debug /*dbg*/,
-    Dwarf_Handler /*errhand*/);
-
-/* Unimplemented */
-Dwarf_Ptr dwarf_seterrarg(Dwarf_Debug /*dbg*/, Dwarf_Ptr /*errarg*/);
 
 void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
     Dwarf_Unsigned /*type*/);

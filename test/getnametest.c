@@ -3,6 +3,7 @@
     for anyone to use in any way.  */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h> /* for exit() */
 #include "dwarf.h"
 #include "libdwarf.h"
 
@@ -152,7 +153,7 @@ int main()
         __LINE__);
     res = dwarf_get_LLEX_name(DW_LLEX_start_end_entry,&name);
     errcount += check_result(res,DW_DLV_OK,name,
-        "DW_LLEX_start_end_eny",
+        "DW_LLEX_start_end_entry",
         __LINE__);
     res = dwarf_get_LLEX_name(5,&name);
     errcount += check_result(res,DW_DLV_NO_ENTRY,name,
@@ -165,11 +166,11 @@ int main()
         __LINE__);
     res = dwarf_get_LNCT_name(DW_LNCT_size,&name);
     errcount += check_result(res,DW_DLV_OK,name,
-        "DW_DW_LNCT_size",
+        "DW_LNCT_size",
         __LINE__);
     res = dwarf_get_LNCT_name(DW_LNCT_MD5,&name);
     errcount += check_result(res,DW_DLV_OK,name,
-        "DW_DW_LNCT_MD5",
+        "DW_LNCT_MD5",
         __LINE__);
     res = dwarf_get_LNCT_name(DW_LNCT_GNU_subprogram_name,&name);
     errcount += check_result(res,DW_DLV_OK,name,
@@ -189,6 +190,7 @@ int main()
 
     if (errcount) {
        printf("FAIL getnametest.c\n");
+       exit(1);
     }
     return 0;
 }

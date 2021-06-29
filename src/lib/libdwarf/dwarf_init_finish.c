@@ -1598,27 +1598,17 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj,
     Dwarf_Debug dbg = 0;
     int setup_result = DW_DLV_OK;
 
+    /*  Initializes  Dwarf_Debug struct and returns
+        a pointer to that empty record. */
     dbg = _dwarf_get_debug();
-    if (dbg == NULL) {
+    if (!dbg) {
         DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
     }
     dbg->de_errhand = errhand;
     dbg->de_errarg = errarg;
     dbg->de_frame_rule_initial_value = DW_FRAME_REG_INITIAL_VALUE;
     dbg->de_frame_reg_rules_entry_count = DW_FRAME_LAST_REG_NUM;
-#ifdef HAVE_OLD_FRAME_CFA_COL
-    /*  DW_FRAME_CFA_COL is really only suitable for
-        old libdwarf frame
-        interfaces and its value of 0 there is only usable where
-        (as in MIPS) register 0 has no value other than 0 so
-        we can use the frame table column 0 for the CFA value
-        (and rely on client software to know when 'register 0'
-        is the cfa and when to just use a value 0 for register 0).
-    */
-    dbg->de_frame_cfa_col_number = DW_FRAME_CFA_COL;
-#else
     dbg->de_frame_cfa_col_number = DW_FRAME_CFA_COL3;
-#endif
     dbg->de_frame_same_value_number = DW_FRAME_SAME_VAL;
     dbg->de_frame_undefined_value_number  = DW_FRAME_UNDEFINED_VAL;
 
@@ -1664,7 +1654,8 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj,
             So use a local status variable for the free.  */
         freeresult = _dwarf_free_all_of_one_debug(dbg);
         dbg = 0;
-        /* DW_DLV_NO_ENTRY not possible in freeresult */
+        /*  DW_DLV_NO_ENTRY possible in freeresult
+            only if dbg is NULL */
         if (freeresult == DW_DLV_ERROR) {
             /*  Use the _dwarf_setup error number.
                 If error is NULL the following will issue

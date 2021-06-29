@@ -9,6 +9,7 @@
 ### with no hint as to what the problem really is..
 
 MAINTAINERCLEANFILES = Makefile.in \
+  objectaccess.log objectaccess.trs \
   getnametest.log getnametest.trs \
   runtestdd.sh.log	     test_linkedtopath.log \
   test_dwarfstring.log	     test_macrocheck.log \
@@ -33,13 +34,13 @@ TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb test_sectionbitmaps test_dwarflebtest \
-  test_tied test_getnametest
+  test_tied test_getnametest test_objectaccess
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
  test_testesb  test_sectionbitmaps test_dwarflebtest  \
- test_tied test_getnametest
+ test_tied test_getnametest test_objectaccess
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
@@ -158,6 +159,13 @@ test_getnametest_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
+test_objectaccess_SOURCES = objaccess.c
+test_objectaccess_FLAGS = $(RO_CFLAGS_WARN)
+test_objectaccess_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf 
+test_objectaccess_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
+
 TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh 
 
 if HAVE_DWARFEXAMPLE
@@ -179,6 +187,7 @@ dummyexecutable.c \
 dummyexecutable.debug \
 dwarf_leb_test.c \
 dwarf_tied_test.c \
+getnametest.c \
 getopttest.c \
 helpertree_test.c \
 makename_test.c \
@@ -187,6 +196,7 @@ dwarfdumpsetup.sh \
 dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
 debuglinktest-a.sh \
 debuglinktest-b.sh \
+objectaccess.c \
 section_bitmaps_test.c \
 test_dwarfstring.c \
 testesb.c \

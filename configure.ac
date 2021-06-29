@@ -49,16 +49,6 @@ AC_ARG_ENABLE([dwarfexample],
    [enable_dwarfexample="no"])
 AM_CONDITIONAL([HAVE_DWARFEXAMPLE], [test "x${enable_dwarfexample}" = "xyes"])
 
-### Solely for checking libdwarf allocation counts,sizes
-### Do not use without a good reason . See lib/libdwarf/dwarf_alloc.c
-AC_ARG_ENABLE(globalallocsums,AS_HELP_STRING([--enable-global-alloc-sums],
-        [Enables some allocation counting in dwarf_alloc.c (default is NO)]),
-        [ AC_DEFINE([HAVE_GLOBAL_ALLOC_SUMS],[1],
-           [Define 1 if want some specialized allocation counting] )
-           [enable_globalallocsums="yes"]
-        ],
-        [enable_globalallocsums="no"])
-
 AC_ARG_ENABLE([sanitize],
    [AS_HELP_STRING([--enable-sanitize],
                    [enable sanitize compiler option @<:@default=no@:>@])],
@@ -69,23 +59,6 @@ AC_ARG_ENABLE([sanitize],
         [enable_sanitize="no"])
    ],
    [enable_sanitize="no"])
-
-AC_ARG_ENABLE([oldframecol],
-   [AS_HELP_STRING([--enable-oldframecol],
-                   [enable old frame columns @<:@default=no@:>@])],
-   [
-    AS_IF(
-        [test "x${enableval}" = "xyes"],
-        [enable_oldframecol="yes"],
-        [enable_oldframecol="no"])
-   ],
-   [enable_oldframecol="no"])
-
-AS_IF(
-    [test "x${enable_oldframecol}" = "xyes"],
-    [AC_DEFINE(
-         [HAVE_OLD_FRAME_CFA_COL], [1],
-         [Set to 1 if old frame columns are enabled.])])
 
 AC_ARG_ENABLE([namestable],
    [AS_HELP_STRING([--enable-namestable],
@@ -460,10 +433,11 @@ AC_SUBST([struct_elf])
 
 ### Checks for compiler characteristics
 
-AC_C_BIGENDIAN([AC_DEFINE([WORDS_BIGENDIAN], [1], [Set to 1 if bigendian build])],,)
-
+AC_C_BIGENDIAN
 AC_SUBST([DWARF_BIGENDIAN],[${ac_cv_c_bigendian}])
-AC_ARG_VAR([DWARF_BIGENDIAN], [big endian yes/no needed for dwarfexample test])
+AC_ARG_VAR([DWARF_BIGENDIAN],
+    [big endian yes/no needed various places])
+
 
 # gcc accepts even totally bogus -Wno flags. Other compilers..no
 # -Wno-long-long suppresses warnings on 'long long'
