@@ -1594,12 +1594,6 @@ or
 This pointer argument
 can be used to relay information between the error
 handler and other routines of the client program.
-A client program can specify or change both the
-error handling function and the pointer argument
-after initialization using
-\f(CWdwarf_seterrhand()\fP
-and
-\f(CWdwarf_seterrarg()\fP.
 When the client error function returns
 libdwarf returns
 \f(CWDW_DLV_ERROR\fP.
