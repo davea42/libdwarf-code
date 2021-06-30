@@ -2318,13 +2318,23 @@ void dwarf_globals_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Global*    /*globals*/,
     Dwarf_Signed     /*number_of_globals*/);
 
+/*  The following four are closely related. */
 int dwarf_globname(Dwarf_Global /*glob*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_global_die_offset(Dwarf_Global /*global*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error *    /*error*/);
+int dwarf_global_cu_offset(Dwarf_Global /*global*/,
+    Dwarf_Off*       /*return_offset, offset of
+        cu header*/,
+    Dwarf_Error*     /*error*/);
+int dwarf_global_name_offsets(Dwarf_Global /*global*/,
+    char   **        /*returned_name*/,
+    Dwarf_Off*       /*die_offset*/,
+    Dwarf_Off*       /*cu_offset, offset of
+        cu die*/,
+    Dwarf_Error*     /*error*/);
 
 /*  This returns the CU die global offset if one knows the
     CU header global offset.
@@ -2337,15 +2347,6 @@ int dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug,
     Dwarf_Off *  /*out_cu_die_offset*/,
     Dwarf_Error *    /*err*/);
 
-int dwarf_global_cu_offset(Dwarf_Global /*global*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
-
-int dwarf_global_name_offsets(Dwarf_Global /*global*/,
-    char   **        /*returned_name*/,
-    Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset*/,
-    Dwarf_Error*     /*error*/);
 
 /*  New February 2019. For more complete dwarfdump printing.
     For each CU represented in .debug_pubnames, etc,
@@ -2370,22 +2371,22 @@ void dwarf_funcs_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Func*      /*funcs*/,
     Dwarf_Signed     /*number_of_funcs*/);
 
+/* The following four are closely related */
 int dwarf_funcname(Dwarf_Func /*func*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_func_die_offset(Dwarf_Func /*func*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_func_cu_offset(Dwarf_Func /*func*/,
-    Dwarf_Off*       /*return_offset*/,
+    Dwarf_Off*       /*return_offset of the
+        cu header*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_func_name_offsets(Dwarf_Func /*func*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset*/,
+    Dwarf_Off*       /*cu_offset of the
+        cu die*/,
     Dwarf_Error*     /*error*/);
 
 /*  jUser-defined type name operations,
@@ -2402,27 +2403,27 @@ void dwarf_types_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Type*      /*types*/,
     Dwarf_Signed     /*number_of_types*/);
 
-
+/*  The fourth gives all the values that the next
+    three combined do. */
 int dwarf_typename(Dwarf_Type /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_type_die_offset(Dwarf_Type /*type*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_type_cu_offset(Dwarf_Type /*type*/,
-    Dwarf_Off*       /*return_offset*/,
+    Dwarf_Off*       /*return_offset is offset of
+        cu_header */,
     Dwarf_Error*     /*error*/);
-
 int dwarf_type_name_offsets(Dwarf_Type    /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset*/,
+    Dwarf_Off*       /*cu_offset is offset of
+        cu_die */,
     Dwarf_Error*     /*error*/);
 
-/* User-defined type name operations, DWARF3  .debug_pubtypes section.
-*/
+/*  User-defined type name operations, DWARF3  .debug_pubtypes
+    section.  */
 int dwarf_get_pubtypes(Dwarf_Debug    /*dbg*/,
     Dwarf_Type**     /*types*/,
     Dwarf_Signed *   /*number_of_types*/,
@@ -2432,22 +2433,25 @@ void dwarf_pubtypes_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Signed     /*number_of_pubtypes*/);
 
 
+/*  The first three present the same information
+    as the fourth here does in one call. 
+    Probably best to use the fourth one and ignore the
+    first three. cu_offsset is cu_header offset. */
 int dwarf_pubtypename(Dwarf_Type /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_pubtype_type_die_offset(Dwarf_Type /*type*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_pubtype_cu_offset(Dwarf_Type /*type*/,
-    Dwarf_Off*       /*return_offset*/,
+    Dwarf_Off*       /*return_offset is offset
+        of cu_header */,
     Dwarf_Error*     /*error*/);
-
 int dwarf_pubtype_name_offsets(Dwarf_Type    /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset*/,
+    Dwarf_Off*       /*cu_offset is offset of
+        cu_die */,
     Dwarf_Error*     /*error*/);
 
 /* File-scope static variable name operations.  */
@@ -2459,23 +2463,22 @@ void dwarf_vars_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Var*       /*vars*/,
     Dwarf_Signed     /*number_of_vars*/);
 
-
+/*  The following four closely related. */
 int dwarf_varname(Dwarf_Var /*var*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_var_die_offset(Dwarf_Var /*var*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_var_cu_offset(Dwarf_Var /*var*/,
-    Dwarf_Off*       /*return_offset*/,
+    Dwarf_Off*       /*return_offset of
+        the cu header*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_var_name_offsets(Dwarf_Var /*var*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset*/,
+    Dwarf_Off*       /*cu_offset of the
+        cu die */,
     Dwarf_Error*     /*error*/);
 
 /* weak name operations.  */
@@ -2487,23 +2490,22 @@ void dwarf_weaks_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Weak*      /*weaks*/,
     Dwarf_Signed     /*number_of_weaks*/);
 
-
+/*  The following four closely related. */
 int dwarf_weakname(Dwarf_Weak /*weak*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_weak_die_offset(Dwarf_Weak /*weak*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_weak_cu_offset(Dwarf_Weak /*weak*/,
-    Dwarf_Off*       /*return_offset*/,
+    Dwarf_Off*       /*return_offset of
+        the CU header */,
     Dwarf_Error*     /*error*/);
-
 int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset*/,
+    Dwarf_Off*       /*cu_offset of
+        the CU die */,
     Dwarf_Error*     /*error*/);
 
 /*  location list section operation.  (.debug_loc access)
@@ -2725,10 +2727,6 @@ int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
     Dwarf_Arange**   /*aranges*/,
     Dwarf_Signed *   /*arange_count*/,
     Dwarf_Error*     /*error*/);
-
-int dwarf_get_ranges_section_name(Dwarf_Debug /*dbg*/,
-    const char ** /*section_name_out*/,
-    Dwarf_Error * /*error*/);
 
 int dwarf_get_aranges_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
@@ -3185,7 +3183,6 @@ int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
 /*  END debugfission dwp .debug_cu_index
     and .debug_tu_index operations. */
 
-
 /*  Utility operations */
 Dwarf_Unsigned dwarf_errno(Dwarf_Error     /*error*/);
 char* dwarf_errmsg(Dwarf_Error    /*error*/);
@@ -3310,10 +3307,12 @@ int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
     Dwarf_Signed *  /*listlen*/,
     Dwarf_Unsigned * /*bytecount*/,
     Dwarf_Error *   /*error*/);
-
 void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);
+int dwarf_get_ranges_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
 
 /* New July 2020 for DWARF5 */
 int dwarf_get_debug_sup(Dwarf_Debug /*dbg*/,
