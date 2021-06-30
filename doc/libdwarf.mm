@@ -4940,20 +4940,28 @@ form is not of class address.
 On success the function
 \f(CWdwarf_dietype_offset()\fP
 returns
-the offset referred to by
+the section global offset referred to by
 \f(CWDW_AT_type\fP
 attribute of
 \f(CWdie\fP.
 .P
 \f(CWDW_DLV_NO_ENTRY\fP
-is returned if the
+is returned
+and 
+\f(CW*return_off\fP
+is set to zero
+if the
 \f(CWdie\fP
 has no
 \f(CWDW_AT_type\fP
 attribute.
 .P
 \f(CWDW_DLV_ERROR\fP
-is returned if an error is
+is returned 
+and 
+\f(CW*return_off\fP
+is set to zero
+if an error is
 detected.
 .P
 This feature was introduced in February 2016.
