@@ -10266,15 +10266,10 @@ dwarf_set_frame_undefined_value(), and
 dwarf_set_frame_rule_initial_value()
 is more flexible
 and will work for many more architectures.
-It is also entirely suitable for use with DWARF2 and DWARF4.
+It is also entirely suitable for use with DWARF2-5.
 The setting of  the 'frame cfa column number'
 defaults to DW_FRAME_CFA_COL3
 and it can be set at runtime with dwarf_set_frame_cfa_value().
-.P
-Mixing use of the DWARF2 interface set with use
-of the new DWARF3 interface set
-on a single open Dwarf_Debug instance is a mistake.
-Do not do it.
 .P
 We will pretend, from here on unless otherwise
 specified, that
@@ -10304,25 +10299,7 @@ A marker (DW_FRAME_SAME_VAL) meaning
 \fIregister value same as in caller\fP
 .LE
 .P
-(a old DWARF2 interface) When  the column is DW_FRAME_CFA_COL:
-the register
-number is a real hardware register, not a reference
-to DW_FRAME_CFA_COL, not  DW_FRAME_UNDEFINED_VAL,
-and not DW_FRAME_SAME_VAL.
-The CFA rule value should be the stack pointer
-plus offset 0 when no other value makes sense.
-A value of DW_FRAME_SAME_VAL would
-be semi-logical, but since the CFA is not a real register,
-not really correct.
-A value of DW_FRAME_UNDEFINED_VAL would imply
-the CFA is undefined  --
-this seems to be a useless notion, as
-the CFA is a means to finding real registers,
-so those real registers should be marked DW_FRAME_UNDEFINED_VAL,
-and the CFA column content (whatever register it
-specifies) becomes unreferenced by anything.
-.P
-(a new April 2006 DWARF2/3 interface): The CFA is
+The CFA is
 separately accessible and not part of the table.
 The 'rule number' for the CFA is a number outside the table.
 So the CFA is a marker, not a register number.
@@ -10348,61 +10325,6 @@ It will not be DW_FRAME_CFA_COL3.
 There is no 'column' for DW_FRAME_UNDEFINED_VAL or DW_FRAME_SAME_VAL.
 Nor for DW_FRAME_CFA_COL3.
 
-Figure \n(aX
-is machine dependent and represents MIPS CPU register
-assignments.  The DW_FRAME_CFA_COL define in dwarf.h
-is historical and really belongs
-in libdwarf.h, not dwarf.h.
-.DS
-.TS
-center box, tab(:);
-lfB lfB lfB
-l c l.
-NAME:value:PURPOSE
-_
-DW_FRAME_CFA_COL:0:column used for CFA
-DW_FRAME_REG1:1:integer register 1
-DW_FRAME_REG2:2:integer register 2
----::obvious names and values here
-DW_FRAME_REG30:30:integer register 30
-DW_FRAME_REG31:31:integer register 31
-DW_FRAME_FREG0:32:floating point register 0
-DW_FRAME_FREG1:33:floating point register 1
----::obvious names and values here
-DW_FRAME_FREG30:62:floating point register 30
-DW_FRAME_FREG31:63:floating point register 31
-DW_FRAME_RA_COL:64:column recording ra
-DW_FRAME_UNDEFINED_VAL:1034:register val undefined
-DW_FRAME_SAME_VAL:1035:register same as in caller
-.TE
-
-.FG "Frame Information Rule Assignments MIPS"
-.DE
-.P
-The following table shows SGI/MIPS specific
-special cell values: these values mean
-that the cell has the value \fIundefined\fP or \fIsame value\fP
-respectively, rather than containing a \fIregister\fP or
-\fIregister+offset\fP.
-It assumes DW_FRAME_CFA_COL is a table rule, which
-is not readily accomplished or even sensible for some architectures.
-.P
-.DS
-.TS
-center box, tab(:);
-lfB lfB lfB
-l c l.
-NAME:value:PURPOSE
-_
-DW_FRAME_UNDEFINED_VAL:1034:means undefined value.
-::Not a column or register value
-DW_FRAME_SAME_VAL:1035:means 'same value' as
-::caller had. Not a column or
-::register value
-DW_FRAME_CFA_COL:0:means register zero is
-::usurped by the CFA column.
-::
-.TE
 .FG "Frame Information Special Values any architecture"
 .DE
 

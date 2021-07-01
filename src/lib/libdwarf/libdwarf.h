@@ -1765,11 +1765,9 @@ int dwarf_hasform(Dwarf_Attribute /*attr*/,
     Dwarf_Half       /*form*/,
     Dwarf_Bool *     /*returned_bool*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_whatform(Dwarf_Attribute /*attr*/,
     Dwarf_Half *     /*returned_final_form*/,
     Dwarf_Error*     /*error*/);
-
 int dwarf_whatform_direct(Dwarf_Attribute /*attr*/,
     Dwarf_Half *     /*returned_initial_form*/,
     Dwarf_Error*     /*error*/);
@@ -1779,8 +1777,7 @@ int dwarf_whatattr(Dwarf_Attribute /*attr*/,
 
 /*
     The following are concerned with the Primary Interface: getting
-    the actual data values. One function per 'kind' of FORM.
-*/
+    the actual data values. One function per 'kind' of FORM.  */
 /*  dwarf_formref returns, thru return_offset, a CU-relative offset
     and does not allow DW_FORM_ref_addr*/
 int dwarf_formref(Dwarf_Attribute /*attr*/,
@@ -2720,22 +2717,19 @@ int dwarf_get_aranges_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_get_arange(Dwarf_Arange*    /*aranges*/,
+int dwarf_get_arange(Dwarf_Arange* /*aranges*/,
     Dwarf_Unsigned   /*arange_count*/,
     Dwarf_Addr       /*address*/,
     Dwarf_Arange *   /*returned_arange*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_cu_die_offset(Dwarf_Arange     /*arange*/,
+int dwarf_get_cu_die_offset(Dwarf_Arange /*arange*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_arange_cu_header_offset(Dwarf_Arange     /*arange*/,
+int dwarf_get_arange_cu_header_offset(Dwarf_Arange /*arange*/,
     Dwarf_Off*       /*return_cu_header_offset*/,
     Dwarf_Error*     /*error*/);
-#ifdef __sgi /* pragma is sgi MIPS only */
-#pragma optional dwarf_get_arange_cu_header_offset
-#endif
 
 /*  DWARF2,3,4 interface.
     New for DWARF4, entries may have segment information.
@@ -3634,10 +3628,7 @@ int dwarf_close_str_offsets_table_access(
     Dwarf_Error             * /*error*/);
 
 /*  Call till it returns DW_DLV_NO_ENTRY (normal end)
-    or DW_DLV_ERROR (error) and stop.
-
-    On successful call, call dwarf_str_offsets_table_entry()
-    to get the individual table values on the now-active table. */
+    or DW_DLV_ERROR (error) and stop. */
 int dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table,
     Dwarf_Unsigned * /*unit_length*/,
     Dwarf_Unsigned * /*unit_length_offset*/,
