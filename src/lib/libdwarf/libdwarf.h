@@ -1996,10 +1996,12 @@ int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
     Dwarf_Error    * /*error*/);
 
 
+int dwarf_get_line_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
 int dwarf_get_line_section_name_from_die(Dwarf_Die /*die*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
-
 
 /*  While 'filecount' is signed, the value
     returned through the pointer is never negative.

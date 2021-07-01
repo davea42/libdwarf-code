@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.5 29 June 2021
+.ds vE Rev 4.6 1 July 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6971,6 +6971,26 @@ See
 \f(CW*dwarf_srclines_dealloc_b()\fP
 for examples showing correct use.
 
+.H 3 "dwarf_get_line_section_name()"
+.DS
+\f(CWint dwarf_get_line_section_name(
+        Dwarf_Debug dbg,
+        const char ** sec_name,
+        Dwarf_Error *error)\fP
+.DE
+\f(CW*dwarf_get_line_section_name()\fP
+retrieves the object file section name of
+the applicable line section.
+Do not free the string whose pointer is returned.
+.P
+If the section does not exist the function returns
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P
+If there is an internal error detected the
+function returns
+\f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
+
 .H 3 "dwarf_get_line_section_name_from_die()"
 .DS
 \f(CWint dwarf_get_line_section_name_from_die(
@@ -6999,7 +7019,7 @@ It is up to the calling application to recognize this
 possibility and deal with it appropriately.
 .P
 If the section does not exist the function returns
-DW_DLV_NO_ENTRY.
+\f(CWDW_DLV_NO_ENTRY\fP.
 .P
 If there is an internal error detected the
 function returns \f(CWDW_DLV_ERROR\fP and sets the

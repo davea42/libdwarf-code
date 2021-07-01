@@ -514,8 +514,7 @@ dwarf_set_tied_dbg(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Unsure of the use-case of this.
-    New September 2015. */
+/*  New September 2015. */
 int
 dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
     UNUSEDARG Dwarf_Error*error)

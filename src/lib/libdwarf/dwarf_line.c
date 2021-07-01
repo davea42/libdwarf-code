@@ -953,6 +953,24 @@ dwarf_get_aranges_section_name(Dwarf_Debug dbg,
     *section_name_out = sec->dss_name;
     return DW_DLV_OK;
 }
+int
+dwarf_get_line_section_name(Dwarf_Debug dbg,
+    const char **section_name_out,
+    Dwarf_Error * error)
+{
+    struct Dwarf_Section_s *sec = 0;
+    if (error != NULL) {
+        *error = NULL;
+    }
+    sec = &dbg->de_debug_line;
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *section_name_out = sec->dss_name;
+    return DW_DLV_OK;
+}
+
 
 int
 dwarf_get_line_section_name_from_die(Dwarf_Die die,
