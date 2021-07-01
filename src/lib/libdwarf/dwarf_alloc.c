@@ -133,15 +133,6 @@ struct Dwarf_Error_s _dwarf_failsafe_error = {
     clean up any per-Dwarf_Debug allocations the
     caller forgot to dealloc. */
 static signed char global_de_alloc_tree_on = 1;
-#ifdef HAVE_GLOBAL_ALLOC_SUMS
-static Dwarf_Unsigned global_allocation_count;
-static Dwarf_Unsigned global_allocation_total;
-static Dwarf_Unsigned global_de_alloc_tree_count;
-static Dwarf_Unsigned global_de_alloc_tree_total;
-static Dwarf_Unsigned global_de_alloc_tree_early_dealloc_count;
-static Dwarf_Unsigned global_de_alloc_tree_early_dealloc_size;
-#endif /* HAVE_GLOBAL_ALLOC_SUMS */
-
 void _dwarf_alloc_tree_counts( Dwarf_Unsigned *allocount UNUSEDARG,
     Dwarf_Unsigned *allosum UNUSEDARG,
     Dwarf_Unsigned *treecount UNUSEDARG,
@@ -152,25 +143,6 @@ void _dwarf_alloc_tree_counts( Dwarf_Unsigned *allocount UNUSEDARG,
     Dwarf_Unsigned *unused2 UNUSEDARG,
     Dwarf_Unsigned *unused3 UNUSEDARG)
 {
-#ifdef HAVE_GLOBAL_ALLOC_SUMS
-    *allocount = global_allocation_count;
-    *allosum =   global_allocation_total;
-    *treecount = global_de_alloc_tree_count;
-    *treesum =   global_de_alloc_tree_total;
-    *earlydealloccount =
-        global_de_alloc_tree_early_dealloc_count;
-    *earlydeallocsize =
-        global_de_alloc_tree_early_dealloc_size;
-    if (unused1) {
-        *unused1 = 0;
-    }
-    if (unused2) {
-        *unused2 = 0;
-    }
-    if (unused3) {
-        *unused3 = 0;
-    }
-#endif /* HAVE_GLOBAL_ALLOC_SUMS */
 }
 
 /*  Defined March 7 2020. Allows a caller to
@@ -602,19 +574,10 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             is unable to free anything the caller
             omitted to dealloc. Normally
             the global flag is non-zero */
-#ifdef HAVE_GLOBAL_ALLOC_SUMS
-        global_allocation_count++;
-        global_allocation_total += size;
-#endif /* HAVE_GLOBAL_ALLOC_SUMS */
-
         /*  As of March 14, 2020 it's
             not necessary to test for alloc type, but instead
             only call tsearch if de_alloc_tree_on. */
         if (global_de_alloc_tree_on) {
-#ifdef HAVE_GLOBAL_ALLOC_SUMS
-            global_de_alloc_tree_total += size;
-            global_de_alloc_tree_count++;
-#endif /* HAVE_GLOBAL_ALLOC_SUMS */
             result = dwarf_tsearch((void *)key,
                 &dbg->de_alloc_tree,simple_compare_function);
             if (!result) {
@@ -889,10 +852,6 @@ dwarf_dealloc(Dwarf_Debug dbg,
 #endif /* DEBUG*/
         return;
     }
-#ifdef HAVE_GLOBAL_ALLOC_SUMS
-    global_de_alloc_tree_early_dealloc_count++;
-    global_de_alloc_tree_early_dealloc_size += r->rd_length;
-#endif /* HAVE_GLOBAL_ALLOC_SUMS */
     if (alloc_instance_basics[type].specialdestructor) {
         alloc_instance_basics[type].specialdestructor(space);
     }
