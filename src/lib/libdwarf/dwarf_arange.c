@@ -560,7 +560,6 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*
     This function takes a pointer to a block
     of Dwarf_Arange's, and a count of the
@@ -568,7 +567,8 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     given address is within the range of an
     address range in the block.  If yes, it
     returns the appropriate Dwarf_Arange.
-    Otherwise, it returns DW_DLV_ERROR.
+    If no, it returns DW_DLV_NO_ENTRY;
+    On error it returns DW_DLV_ERROR.
 */
 int
 dwarf_get_arange(Dwarf_Arange * aranges,
@@ -579,7 +579,7 @@ dwarf_get_arange(Dwarf_Arange * aranges,
     Dwarf_Arange curr_arange = 0;
     Dwarf_Unsigned i = 0;
 
-    if (aranges == NULL) {
+    if (!aranges) {
         _dwarf_error(NULL, error, DW_DLE_ARANGES_NULL);
         return DW_DLV_ERROR;
     }
@@ -592,10 +592,8 @@ dwarf_get_arange(Dwarf_Arange * aranges,
             return DW_DLV_OK;
         }
     }
-
     return DW_DLV_NO_ENTRY;
 }
-
 
 /*
     This function takes an Dwarf_Arange,
@@ -631,7 +629,6 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
             return res;
         }
     }
-
     cres = _dwarf_length_of_cu_header(dbg, offset,
         true, &headerlen,error);
     if (cres != DW_DLV_OK) {

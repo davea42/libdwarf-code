@@ -2080,7 +2080,7 @@ int dwarf_linecontext(Dwarf_Line /*line*/,
     Dwarf_Error*     /*error*/);
 
 /*  Two-level line tables:
-    When reading from a logicals table, dwarf_linesubprogno()
+    When reading from a logicals table, dwarf_line_subprogno()
     returns the index in the subprograms table of the inlined
     subprogram. */
 int dwarf_line_subprogno(Dwarf_Line /*line*/,
@@ -2088,7 +2088,7 @@ int dwarf_line_subprogno(Dwarf_Line /*line*/,
     Dwarf_Error *    /*error*/);
 
 /*  Two-level line tables:
-    When reading from a logicals table, dwarf_linesubprog()
+    When reading from a logicals table, dwarf_line_subprog()
     returns the name of the inlined subprogram, its declaration
     filename, and its declaration line number, if available. */
 int dwarf_line_subprog(Dwarf_Line /*line*/,
@@ -2506,20 +2506,6 @@ int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset of
         the CU die */,
-    Dwarf_Error*     /*error*/);
-
-/*  location list section operation.  (.debug_loc access)
-    DO NOT USE, it cannot deal with
-    recent dwarf or CUs with different
-    address sizes.  Use dwarf_get_locdesc_entry_c() instead.
-*/
-int dwarf_get_loclist_entry(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned   /*offset*/,
-    Dwarf_Addr*      /*hipc*/,
-    Dwarf_Addr*      /*lopc*/,
-    Dwarf_Ptr*       /*data*/,
-    Dwarf_Unsigned*  /*entry_len*/,
-    Dwarf_Unsigned*  /*next_entry*/,
     Dwarf_Error*     /*error*/);
 
 /* abbreviation section operations */
