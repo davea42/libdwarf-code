@@ -1609,7 +1609,6 @@ int dwarf_offset_list(Dwarf_Debug /*dbg*/,
 
 /*  BEGIN: debug_gnu_pubnames/typenames access,
     calling these  Gnu_Index as a general reference.  */
-
 int dwarf_get_gnu_index_head(Dwarf_Debug /*dbg*/,
     /*  The following arg false to select gnu_pubtypes */
     Dwarf_Bool             /*for_gdb_pubnames*/ ,
@@ -1752,15 +1751,15 @@ int dwarf_arrayorder(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*returned_order*/,
     Dwarf_Error*     /*error*/);
 
-/* end of convenience function list */
+/*  End of convenience function list. */
 
-/* this is the main interface to attributes of a DIE */
+/*  This is the main interface to attributes of a DIE. */
 int dwarf_attrlist(Dwarf_Die /*die*/,
     Dwarf_Attribute** /*attrbuf*/,
     Dwarf_Signed   * /*attrcount*/,
     Dwarf_Error*     /*error*/);
 
-/* query operations for attributes */
+/*  Query operations for attributes */
 int dwarf_hasform(Dwarf_Attribute /*attr*/,
     Dwarf_Half       /*form*/,
     Dwarf_Bool *     /*returned_bool*/,
@@ -1844,12 +1843,10 @@ int dwarf_get_debug_str_index(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_index*/,
     Dwarf_Error * /*error*/);
 
-
 int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_exprlen*/,
     Dwarf_Ptr  * /*block_ptr*/,
     Dwarf_Error * /*error*/);
-
 
 /* end attribute query operations. */
 
@@ -3811,7 +3808,7 @@ int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
     Dwarf_Error      * /*error*/);
 
 /*  Call this passing in return value from
-    dwarf_uncompress_integer_block()
+    dwarf_uncompress_integer_block_a()
     to free the space the decompression allocated. */
 void dwarf_dealloc_uncompressed_block(Dwarf_Debug, void *);
 
