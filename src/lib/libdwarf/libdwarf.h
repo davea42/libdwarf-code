@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2018 David Anderson. All rights reserved.
+  Portions Copyright 2008-2021 David Anderson. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
@@ -3830,29 +3830,6 @@ int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   * /*value_count*/,
     Dwarf_Signed    ** /*value_array*/,
     Dwarf_Error      * /*error*/);
-
-/*  Decode an array of signed leb integers (so of course the
-    array is not composed of fixed length values, but is instead
-    a sequence of sleb values).
-    Returns a DW_DLV_BADADDR on error.
-    Otherwise returns a pointer to an array of 32bit integers.
-    The signed argument must be non-zero (the decode
-    assumes sleb integers in the input data) at this time.
-    Size of integer units must be 32 (32 bits each) at this time.
-    Number of bytes in block is a byte count (not array count).
-    Returns number of units in output block (ie, number of elements
-    of the array that the return value points to) thru the
-    argument.  */
-void * dwarf_uncompress_integer_block(
-    Dwarf_Debug,      /*dbg */
-    Dwarf_Bool,       /*signed==true (or unsigned) */
-    Dwarf_Small,      /*size of integer units: 8, 16, 32, 64 */
-    void*,            /*input data */
-    Dwarf_Unsigned,   /*number of bytes in input */
-    Dwarf_Unsigned*,  /*number of units in output block */
-    Dwarf_Error*      /*error */
-);
-
 
 /*  Call this passing in return value from
     dwarf_uncompress_integer_block()
