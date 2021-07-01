@@ -8247,7 +8247,7 @@ in the .debug_info section.
 See section 6.1.1 "Lookup by Name" in the dwarf standard.
 
 .in +2
-.FG "Exampled dwarf_get_globals()"
+.FG "Examplef dwarf_get_globals()"
 .DS
 \f(CW
 void examplef(Dwarf_Debug dbg)
@@ -8265,41 +8265,6 @@ void examplef(Dwarf_Debug dbg)
         }
         dwarf_globals_dealloc(dbg, globs, count);
     }
-}
-\fP
-.DE
-.in -2
-.P
-The following code is deprecated as of July 15, 2005 as it does not
-free all relevant memory.
-This approach  still works as well as it ever did.
-On a successful return from
-\f(CWdwarf_get_globals()\fP, the \f(CWDwarf_Global\fP
-descriptors should be individually
-freed using \f(CWdwarf_dealloc()\fP with the allocation type
-\f(CWDW_DLA_GLOBAL_CONTEXT\fP,
-(or
-\f(CWDW_DLA_GLOBAL\fP, an older name, supported for compatibility)
-followed by the deallocation of the list itself
-with the allocation type \f(CWDW_DLA_LIST\fP when the descriptors are
-no longer of interest.
-
-.in +2
-.DS
-\f(CW
-Dwarf_Signed cnt;
-Dwarf_Global *globs;
-int res;
-
-res = dwarf_get_globals(dbg, &globs,&cnt, &error);
-if (res == DW_DLV_OK) {
-
-        /* OBSOLETE: DO NOT USE to deallocate*/
-        for (i = 0; i < cnt; ++i) {
-                /* use globs[i] */
-                dwarf_dealloc(dbg, globs[i], DW_DLA_GLOBAL_CONTEXT);
-        }
-        dwarf_dealloc(dbg, globs, DW_DLA_LIST);
 }
 \fP
 .DE
@@ -8355,7 +8320,7 @@ by the \f(CWDwarf_Global\fP descriptor, \f(CWglobal\fP.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
-.H 4 "dwarf_get_cu_die_offset_given_cu_header_offset()"
+.H 4 "dwarf_get_cu_die_offset_given_cu_header_offset_b()"
 .DS
 \f(CWint dwarf_get_cu_die_offset_given_cu_header_offset_b(
     Dwarf_Debug dbg,
@@ -8451,13 +8416,13 @@ means this is an uninteresting (Dwarf_Global).
 
 .H 3 "Accelerated Access Pubtypes"
 Section ".debug_pubtypes" is in DWARF3 and DWARF4.
-.P
+The type in calls is 
+\f(CWDwarf_Type\fP.
 These functions operate on the .debug_pubtypes section of the debugging
 information.  The .debug_pubtypes section contains the names of file-scope
 user-defined types, the offsets of the \f(CWDIE\fPs that represent the
 definitions of those types, and the offsets of the compilation-units
 that contain the definitions of those types.
-
 .H 4 "dwarf_get_pubtypes()"
 This is standard DWARF3 and DWARF4. 
 .DS
@@ -8467,56 +8432,17 @@ This is standard DWARF3 and DWARF4.
     Dwarf_Signed *typecount,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_get_pubtypes()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*typecount\fP to
-the count of user-defined
-type names represented in the section containing user-defined type names,
-i.e. .debug_pubtypes.
-It also stores at \f(CW*types\fP,
-a pointer to a list of \f(CWDwarf_Type\fP descriptors, one for each of the
-user-defined type names in the .debug_pubtypes section.
-The returned results are for the entire section.
-It returns \f(CWDW_DLV_NOCOUNT\fP on error.
-It returns \f(CWDW_DLV_NO_ENTRY\fP if
-the .debug_pubtypes section does not exist.
-
-.P
-On a successful
-return from \f(CWdwarf_get_pubtypes()\fP,
-the \f(CWDwarf_Type\fP descriptors should be
-freed using \f(CWdwarf_types_dealloc()\fP.
-\f(CWdwarf_types_dealloc()\fP is used for both
-\f(CWdwarf_get_pubtypes()\fP and \f(CWdwarf_get_types()\fP
-as the data types are the same.
+The function operates as described in
+\f(CWdwarf_get_globals\fP
+dwarf_get_globals
+above.
 .P
 Global type names refer exclusively to names and offsets
 in the .debug_info section.
 See section 6.1.1 "Lookup by Name" in the dwarf standard.
+The Descriptor should be freed using 
+freed using \f(CWdwarf_pubtypes_dealloc()\fP.
 
-
-.in +2
-.FG "Exampled dwarf_get_pubtypes()"
-.DS
-\f(CW
-void exampleg(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Type *types = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
-
-    res = dwarf_get_pubtypes(dbg, &types,&count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use types[i] */
-        }
-        dwarf_types_dealloc(dbg, types, count);
-    }
-}
-\fP
-.DE
-.in -2
 
 .H 4 "dwarf_pubtypename()"
 .DS
@@ -8525,17 +8451,9 @@ void exampleg(Dwarf_Debug dbg)
         char       **return_name,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_pubtypename()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP to
-a pointer to a
-null-terminated string that names
-the user-defined type represented by the
-\f(CWDwarf_Type\fP descriptor, \f(CWtype\fP.
-.P
-The string returned should not be freed.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_globalname()\fP
+above.
 
 .H 4 "dwarf_pubtype_type_die_offset()"
 .DS
@@ -8544,14 +8462,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
         Dwarf_Off  *return_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_pubtype_type_die_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info, of the DIE representing
-the user-defined type that is described by the \f(CWDwarf_Type\fP
-descriptor, \f(CWtype\fP.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_type_die_offset()\fP
+above.
 
 .H 4 "dwarf_pubtype_cu_offset()"
 .DS
@@ -8560,18 +8473,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
         Dwarf_Off  *return_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_pubtype_cu_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info, of the compilation-unit
-header of the compilation-unit that contains the user-defined type
-described by the \f(CWDwarf_Type\fP descriptor, \f(CWtype\fP.
-.P
-The \f(CW*return_offset\fP is set to the
-compilation-unit header offset in .debug_info.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_cu_offset()\fP
+above.
 
 .H 4 "dwarf_pubtype_name_offsets()"
 .DS
@@ -8582,26 +8486,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
         Dwarf_Off *  cu_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_pubtype_name_offsets()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*returned_name\fP to
-a pointer to
-a null-terminated string that gives the name of the user-defined
-type described by the \f(CWDwarf_Type\fP descriptor \f(CWtype\fP.
-It also returns in the locations
-pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, the offsets
-of the DIE representing the
-user-defined type, and the DIE
-representing the compilation-unit containing the
-user-defined type, respectively.
-.P
-The \f(CW*return_offset\fP is set to the
-compilation-unit DIE offset in .debug_info.
-.P
-Thes string returned should not be freed.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-
+The function operates as described in
+\f(CWdwarf_global_name_offsets()\fP
+above.
 
 .H 3 "Accelerated Access Weaknames"
 This section is SGI specific and is not part of standard DWARF.
@@ -8629,45 +8516,11 @@ information.
     Dwarf_Signed *weak_count,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_get_weaks()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*weak_count\fP to
-the count of weak names
-represented in the section containing weak names i.e. .debug_weaknames.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It returns \f(CWDW_DLV_NO_ENTRY\fP if the section does not exist.
-It also stores in \f(CW*weaks\fP, a pointer to
-a list of \f(CWDwarf_Weak\fP descriptors, one for each of the weak names
-in the .debug_weaknames section.
-The returned results are for the entire section.
-.P
-On a successful return from this function,
-the \f(CWDwarf_Weak\fP descriptors should be freed using
-\f(CWdwarf_weaks_dealloc()\fP when the data is no longer of
-interest.  \f(CWdwarf_weaks_dealloc()\fPis new as of July 15, 2005.
-
-.in +2
-.FG "Exampleh dwarf_get_weaks()"
-.DS
-\f(CW
-void exampleh(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Weak *weaks = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
-
-    res = dwarf_get_weaks(dbg, &weaks, &count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use weaks[i] */
-        }
-        dwarf_weaks_dealloc(dbg, weaks, count);
-    }
-}
-\fP
-.DE
-.in -2
+The function operates as described in
+\f(CWdwarf_get_globals\fP
+above.
+Descriptors should be
+freed using \f(CWdwarf_weaks_dealloc()\fP.
 
 .H 4 "dwarf_weakname()"
 .DS
@@ -8676,30 +8529,20 @@ void exampleh(Dwarf_Debug dbg)
     char    ** return_name,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_weakname()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP to
-a pointer to a null-terminated
-string that names the weak name represented by the
-\f(CWDwarf_Weak\fP descriptor, \f(CWweak\fP.
-.P
-The string returned should not be freed.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_globalname\fP
+above.
 
+.H 4 "dwarf_weak_die_offset()"
 .DS
 \f(CWint dwarf_weak_die_offset(
     Dwarf_Weak weak,
     Dwarf_Off  *return_offset,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_weak_die_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to the offset in
-the section containing DIEs, i.e. .debug_info, of the DIE representing
-the weak name that is described by the \f(CWDwarf_Weak\fP descriptor,
-\f(CWweak\fP.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_die_offset\fP
+above.
 
 .H 4 "dwarf_weak_cu_offset()"
 .DS
@@ -8708,15 +8551,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
     Dwarf_Off  *return_offset,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_weak_cu_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to the offset in
-the section containing DIEs, i.e. .debug_info, of the compilation-unit
-header of the compilation-unit that contains the weak name described
-by the \f(CWDwarf_Weak\fP descriptor, \f(CWweak\fP.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-
+The function operates as described in
+\f(CWdwarf_global_cu_offset\fP
+above.
 .H 4 "dwarf_weak_name_offsets()"
 .DS
 \f(CWint dwarf_weak_name_offsets(
@@ -8726,23 +8563,11 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
     Dwarf_Off *cu_offset,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_weak_name_offsets()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*weak_name\fP to
-a pointer to
-a null-terminated string that gives the name of the weak name
-described by the \f(CWDwarf_Weak\fP descriptor \f(CWweak\fP.
-It also returns in the locations
-pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, the offsets
-of the DIE representing the
-weakname, and the DIE
-representing the compilation-unit containing the
-weakname, respectively.
-.P
-The string returned should not be freed.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-.H 3 "Accelerated Access Funcnames"
+The function operates as described in
+\f(CWdwarf_global_name_offsets\fP
+above.
+.H 3
+.H 3 "Accelerated Access Funcnames (static functions)"
 This section is SGI specific and is not part of standard DWARF.
 .P
 These function operate on the .debug_funcnames
@@ -8765,50 +8590,11 @@ those functions.
         Dwarf_Signed *func_count,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_get_funcs()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*func_count\fP to
-the count of static
-function names represented in the section containing static function
-names, i.e. .debug_funcnames.
-It also
-stores, at \f(CW*funcs\fP, a pointer to a list of \f(CWDwarf_Func\fP
-descriptors, one for each of the static functions in the .debug_funcnames
-section.
-The returned results are for the entire section.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It returns \f(CWDW_DLV_NO_ENTRY\fP
-if the .debug_funcnames section does not exist.
-.P
-On a successful return from \f(CWdwarf_get_funcs()\fP,
-the \f(CWDwarf_Func\fP
-descriptors should be freed using \f(CWdwarf_funcs_dealloc()\fP.
-\f(CWdwarf_funcs_dealloc()\fP is new as of July 15, 2005.
-
-.in +2
-.FG "Examplej dwarf_get_funcs()"
-.DS
-\f(CW
-void examplej(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Func *funcs = 0;
-    Dwarf_Signed i = 0;
-    int fres = 0;
-
-    fres = dwarf_get_funcs(dbg, &funcs, &count, &error);
-    if (fres == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use funcs[i] */
-        }
-        dwarf_funcs_dealloc(dbg, funcs, count);
-    }
-}
-\fP
-.DE
-.in -2
-
+The function operates as described in
+\f(CWdwarf_get_globals\fP
+above.
+Descriptors should be
+freed using \f(CWdwarf_funcs_dealloc()\fP.
 .H 4 "dwarf_funcname()"
 .DS
 \f(CWint dwarf_funcname(
@@ -8816,16 +8602,9 @@ void examplej(Dwarf_Debug dbg)
         char **    return_name,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_funcname()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP to
-a pointer to a
-null-terminated string that names the static function represented by the
-\f(CWDwarf_Func\fP descriptor, \f(CWfunc\fP.
-.P
-The string returned should not be freed.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_globalname\fP
+above.
 
 .H 4 "dwarf_func_die_offset()"
 .DS
@@ -8834,15 +8613,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
     Dwarf_Off  *return_offset,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_func_die_offset()\fP, returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info, of the DIE representing
-the static function that is described by the \f(CWDwarf_Func\fP
-descriptor, \f(CWfunc\fP.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_die_offset\fP
+above.
 
 .H 4 "dwarf_func_cu_offset()"
 .DS
@@ -8851,17 +8624,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
     Dwarf_Off  *return_offset,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_func_cu_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info,
-of the compilation-unit
-header of the
-compilation-unit that contains the static function
-described by the \f(CWDwarf_Func\fP descriptor, \f(CWfunc\fP.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_cu_offset\fP
+above.
 
 .H 4 "dwarf_func_name_offsets()"
 .DS
@@ -8872,24 +8637,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
     Dwarf_Off *cu_offset,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_func_name_offsets()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*func_name\fP to
-a pointer to
-a null-terminated string that gives the name of the static
-function described by the 
-\f(CWDwarf_Func\fP descriptor \f(CWfunc\fP.
-It also returns in the locations
-pointed to by \f(CWdie_offset\fP, and
-\f(CWcu_offset\fP, the offset
-of the DIE representing the
-static function, and the DIE
-representing the compilation-unit containing the
-static function, respectively.
-.P
-The string returned should not be freed.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_name_offsets\fP
+above.
 
 .H 3 "Accelerated Access Typenames"
 Section "debug_typenames" is SGI specific
@@ -8916,53 +8666,12 @@ that contain the definitions of those types.
         Dwarf_Signed *typecount,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_get_types()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*typecount\fP to
-the count of user-defined
-type names represented in the section
-containing user-defined type names,
-i.e. .debug_typenames.
-It also stores at \f(CW*types\fP,
-a pointer to a list of
-\f(CWDwarf_Type\fP descriptors, one for each of the
-user-defined type names in the .debug_typenames section.
-The returned results are for the entire section.
-.P
-It returns \f(CWDW_DLV_NOCOUNT\fP on error.
-It returns \f(CWDW_DLV_NO_ENTRY\fP if
-the .debug_typenames section does not exist.
-
-.P
-On a successful
-return from \f(CWdwarf_get_types()\fP,
-the \f(CWDwarf_Type\fP descriptors should be
+The function operates as described in
+\f(CWdwarf_get_globals\fP
+above.
+Descriptors should be
 freed using \f(CWdwarf_types_dealloc()\fP.
-\f(CWdwarf_types_dealloc()\fP is new as of July 15, 2005
-and frees all memory allocated by \f(CWdwarf_get_types()\fP.
 
-.in +2
-.FG "Examplel dwarf_get_types()"
-.DS
-\f(CW
-void examplel(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Type *types = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
-
-    res = dwarf_get_types(dbg, &types,&count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use types[i] */
-        }
-        dwarf_types_dealloc(dbg, types, count);
-    }
-}
-\fP
-.DE
-.in -2
 .H 4 "dwarf_typename()"
 .DS
 \f(CWint dwarf_typename(
@@ -8970,14 +8679,9 @@ void examplel(Dwarf_Debug dbg)
         char       **return_name,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_typename()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP to
-a pointer to a
-null-terminated string that names the user-defined type represented by the
-\f(CWDwarf_Type\fP descriptor, \f(CWtype\fP.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-The string returned should not be freed.
+The function operates as described in
+\f(CWdwarf_globalname\fP
+above.
 
 .H 4 "dwarf_type_die_offset()"
 .DS
@@ -8986,15 +8690,9 @@ The string returned should not be freed.
         Dwarf_Off  *return_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_type_die_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info, of the DIE representing
-the user-defined type that is described by the \f(CWDwarf_Type\fP
-descriptor, \f(CWtype\fP.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_die_offset\fP
+above.
 .H 4 "dwarf_type_cu_offset()"
 .DS
 \f(CWint dwarf_type_cu_offset(
@@ -9002,17 +8700,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
         Dwarf_Off  *return_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_type_cu_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info,
-of the compilation-unit
-header of the compilation-unit that contains the user-defined type
-described by the
-\f(CWDwarf_Type\fP descriptor, \f(CWtype\fP.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_cu_offset\fP
+above.
 
 .H 4 "dwarf_type_name_offsets()"
 .DS
@@ -9023,24 +8713,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
         Dwarf_Off *  cu_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_type_name_offsets()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*returned_name\fP to
-a pointer to
-a null-terminated string that gives the name of the user-defined
-type described by the \f(CWDwarf_Type\fP descriptor \f(CWtype\fP.
-It also returns in the locations
-pointed to by \f(CWdie_offset\fP, and
-\f(CWcu_offset\fP, the offsets
-of the DIE representing the
-user-defined type, and the DIE
-representing the compilation-unit containing the
-user-defined type, respectively.
-.P
-The string returned should not be freed.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-
+The function operates as described in
+\f(CWdwarf_global_name_offsets\fP
+above.
 .H 3 "Accelerated Access varnames"
 This section is SGI specific and is not part of standard DWARF.
 .P
@@ -9062,50 +8737,12 @@ that contain the definitions of those variables.
         Dwarf_Signed *var_count,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_get_vars()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*var_count\fP to
-the count of file-scope
-static variable names represented in the section 
-containing file-scope
-static variable names, i.e. .debug_varnames.
-It also stores, at \f(CW*vars\fP, a pointer to a list of
-\f(CWDwarf_Var\fP descriptors, one for each of the file-scope static
-variable names in the .debug_varnames section.
-The returned results are for the entire section.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It returns
-\f(CWDW_DLV_NO_ENTRY\fP if the .debug_varnames section does
-not exist.
-
-.P
-The following is new as of July 15, 2005.
-On a successful return
-from \f(CWdwarf_get_vars()\fP, the
-\f(CWDwarf_Var\fP descriptors should be
+The function operates as described in
+\f(CWdwarf_get_globals\fP
+above.
+Descriptors should be
 freed using \f(CWdwarf_vars_dealloc()\fP.
 
-.in +2
-.FG "Examplen dwarf_get_vars()"
-.DS
-\f(CW
-void examplen(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Var *vars = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
-    res = dwarf_get_vars(dbg, &vars,&count,&error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use vars[i] */
-        }
-        dwarf_vars_dealloc(dbg, vars, count);
-    }
-}
-\fP
-.DE
-.in -2
 
 .H 4 "dwarf_varname()"
 .DS
@@ -9114,17 +8751,9 @@ void examplen(Dwarf_Debug dbg)
         char **    returned_name,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_varname()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*returned_name\fP to
-a pointer to a
-null-terminated string that names the
-file-scope static variable represented
-by the \f(CWDwarf_Var\fP descriptor, \f(CWvar\fP.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-.P
-The string returned should not be freed.
+The function operates as described in
+\f(CWdwarf_globalname\fP
+above.
 .H 4 "dwarf_var_die_offset()"
 .DS
 \f(CWint dwarf_var_die_offset(
@@ -9132,17 +8761,9 @@ The string returned should not be freed.
         Dwarf_Off   *returned_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_var_die_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*returned_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info,
-of the DIE representing
-the file-scope static variable that is described by the
-\f(CWDwarf_Var\fP
-descriptor, \f(CWvar\fP.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_die_offset\fP
+above.
 
 .H 4 "dwarf_var_cu_offset()"
 .DS
@@ -9151,21 +8772,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
         Dwarf_Off   *returned_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_var_cu_offset()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*returned_offset\fP to
-the offset in
-the section containing DIEs, i.e. .debug_info,
-of the compilation-unit
-header of the compilation-unit that 
-contains the file-scope static
-variable described by the
-\f(CWDwarf_Var\fP descriptor, \f(CWvar\fP.
-.P
-The \f(CW*returned_offset\fP is the offset
-of the CU header in the .debug_info section.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_cu_offset\fP
+above.
 
 .H 4 "dwarf_var_name_offsets()"
 .DS
@@ -9176,24 +8785,9 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
     Dwarf_Off *cu_offset,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_var_name_offsets()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*returned_name\fP to
-a pointer to
-a null-terminated string that gives the name of the file-scope
-static variable described by the \f(CWDwarf_Var\fP descriptor \f(CWvar\fP.
-It also returns in the locations
-pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, the offsets
-of the DIE representing the
-compilation-unit containing the
-file-scope static variable, respectively.
-.P
-The string returned should not be freed.
-.P
-The \f(CW*cu_offset\fP is the offset
-of the CU DIE in the .debug_info section.
-.P
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+The function operates as described in
+\f(CWdwarf_global_name_offsets\fP
+above.
 
 .H 2 "Names Fast Access (DWARF5) .debug_names"
 The section
