@@ -5122,10 +5122,15 @@ When it succeeds,
 \f(CWdwarf_arrayorder()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_order\fP
 a code indicating
-the ordering of the array represented by the descriptor \f(CWdie\fP.
-It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not contain the
+the ordering of the array represented by the descriptor 
+\f(CWdie\fP.
+.P
+It returns \f(CWDW_DLV_NO_ENTRY\fP if 
+\f(CWdie\fP does not contain the
 array order attribute \f(CWDW_AT_ordering\fP.
-It returns \f(CWDW_DLV_ERROR\fP if
+.P
+It returns 
+\f(CWDW_DLV_ERROR\fP if
 an error occurred.
 
 .H 2 "Attribute Queries"
@@ -5571,6 +5576,7 @@ The function \f(CWdwarf_formexprloc()\fP returns
 to the length and bytes of the DW_FORM_exprloc entry
 if the form of the
 attribute is of form \f(CWDW_FORM_experloc\fP.
+.P
 It is an error
 for the form to be anything but \f(CWDW_FORM_exprloc\fP.
 It returns \f(CWDW_DLV_ERROR\fP on error.
