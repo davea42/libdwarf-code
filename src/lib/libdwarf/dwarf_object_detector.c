@@ -692,8 +692,7 @@ _dwarf_debuglink_finder_newpath(
     res = dwarf_init_path(path,
         0,0,
         DW_GROUPNUMBER_ANY,
-        0,0, &dbg,
-        0,0,0,&error);
+        0,0, &dbg,&error);
     if (res == DW_DLV_ERROR) {
         dwarf_dealloc_error(dbg,error);
         error = 0;
@@ -788,8 +787,7 @@ _dwarf_debuglink_finder_internal(
     res = dwarf_init_path(path,
         0,0,
         DW_GROUPNUMBER_ANY,
-        0,0, &dbg,
-        0,0,0,&error);
+        0,0, &dbg, &error);
     if (res == DW_DLV_ERROR) {
         *errcode = dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);

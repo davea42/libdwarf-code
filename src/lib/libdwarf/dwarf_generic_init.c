@@ -152,16 +152,13 @@ int dwarf_init_path(const char *path,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
     Dwarf_Debug     * ret_dbg,
-    const char      * reserved1,
-    Dwarf_Unsigned    reserved2,
-    Dwarf_Unsigned  * reserved3,
     Dwarf_Error     * error)
 {
     return dwarf_init_path_dl(path,
         true_path_out_buffer,true_path_bufferlen,
         groupnumber,errhand,errarg,ret_dbg,
         0,0,0,
-        reserved1,reserved2,reserved3,error);
+        error);
 }
 
 static void
@@ -213,9 +210,6 @@ int dwarf_init_path_dl(const char *path,
     char            ** dl_path_array,
     unsigned int    dl_path_count,
     unsigned char   * path_source,
-    const char      * reserved1 UNUSEDARG,
-    Dwarf_Unsigned    reserved2 UNUSEDARG,
-    Dwarf_Unsigned  * reserved3 UNUSEDARG,
     Dwarf_Error     * error)
 {
     unsigned       ftype = 0;

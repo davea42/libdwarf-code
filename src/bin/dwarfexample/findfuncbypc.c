@@ -224,8 +224,7 @@ main(int argc, char **argv)
     res = dwarf_init_path(filepath,
         real_path,
         PATH_LEN,
-        DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
-        0,0,0,&error);
+        DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,&error);
     if(res == DW_DLV_ERROR) {
         printf("Giving up, cannot do DWARF processing of %s "
             "dwarf err %" DW_PR_DUu " %s\n",

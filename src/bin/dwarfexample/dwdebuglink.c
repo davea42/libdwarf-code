@@ -256,8 +256,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
     res = dwarf_init_path(path,
         0,0,
         DW_GROUPNUMBER_ANY,
-        0,0, &dbg,
-        0,0,0,&error);
+        0,0, &dbg, &error);
     if (res == DW_DLV_ERROR) {
         printf("%sError from libdwarf opening \"%s\":  %s\n",
             prefix, path, dwarf_errmsg(error));

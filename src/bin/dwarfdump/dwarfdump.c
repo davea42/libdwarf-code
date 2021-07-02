@@ -916,7 +916,6 @@ process_one_file(
             glflags.gf_global_debuglink_paths,
             glflags.gf_global_debuglink_count,
             &path_source,
-            0,0,0,
             &onef_err);
     }
     if (dres == DW_DLV_NO_ENTRY) {
@@ -954,7 +953,6 @@ process_one_file(
                 DW_GROUPNUMBER_BASE,
                 0,0,
                 &dbgtied,
-                0,0,0,
                 &onef_err);
             /* path_source = DW_PATHSOURCE_basic; */
         }

@@ -1328,9 +1328,6 @@ int dwarf_init_path(const char * /*path*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
-    const char *      /* reserved1 */,
-    Dwarf_Unsigned    /* reserved2 */,
-    Dwarf_Unsigned  * /* reserved3 */,
     Dwarf_Error*      /*error*/);
 
 /*  New October 2020. Following GNU debuglink to the
@@ -1363,9 +1360,6 @@ int dwarf_init_path_dl(const char * /*path*/,
     char **           /* dl_path array */,
     unsigned int      /* dl_path array size */,
     unsigned char   * /* path_source */,
-    const char      * /* reserved1 */,
-    Dwarf_Unsigned    /* reserved2 */,
-    Dwarf_Unsigned  * /* reserved3 */,
     Dwarf_Error*      /*error*/);
 
 /*  Initialization based on Unix(etc) open fd */

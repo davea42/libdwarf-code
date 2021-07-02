@@ -499,8 +499,7 @@ main(int argc, char **argv)
         res = dwarf_init_path(filepath,
             macho_real_path,
             MACHO_PATH_LEN,
-            DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
-            0,0,0,errp);
+            DW_GROUPNUMBER_ANY,errhand,errarg,&dbg, errp);
     }
     if(res != DW_DLV_OK) {
         printf("Giving up, cannot do DWARF processing %s\n",
