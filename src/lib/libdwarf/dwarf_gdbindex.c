@@ -180,7 +180,8 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     indexptr = (Dwarf_Gdbindex)_dwarf_get_alloc(dbg,
         DW_DLA_GDBINDEX,1);
     if (indexptr == NULL) {
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL: allocating Dwarf_Gdbindex");
         return DW_DLV_ERROR;
     }
 
@@ -531,9 +532,9 @@ dwarf_gdbindex_cuvector_instance_expand_value(
 {
     if (!gdbindexptr || !gdbindexptr->gi_dbg)  {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "The call to "
+            "DW_DLE_DBG_NULL: The call to "
             "dwarf_gdbindex_cuvector_instance_expand_value"
-            " provides no gdb pointer");
+            " provides no dbg pointer");
         return DW_DLV_ERROR;
     }
     *cu_index =    value         & 0xffffff;

@@ -49,13 +49,14 @@
 #include "dwarf_loc.h"
 #include "dwarf_rnglists.h"
 
+/*  ASSERT: dbg,cu_context, and fsd are non-NULL
+    as the caller ensured that. */
 static int
 load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    const char * xu_type UNUSEDARG,
     int fsd_index,
-    Dwarf_Error *error UNUSEDARG)
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned soff_hdroffset = 0;
@@ -65,6 +66,12 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_Unsigned nextset = 0;
     int res = 0;
 
+    if(!fsd) {
+        _dwarf_error_string(dbg, error, DW_DLE_XU_TYPE_ARG_ERROR,
+            "DW_DLE_XU_TYPE_ARG_ERROR: a required argument to"
+            "load_xu_loclists_into_cucontext() is NULL");
+        return DW_DLV_ERROR;
+    }
     size = fsd->pcu_size[fsd_index];
     soff_hdroffset = fsd->pcu_offset[fsd_index];
     soff_size = dbg->de_debug_loclists.dss_size;
@@ -95,6 +102,8 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
 
 /*  ASSERT: cc_str_offsets_base_present FALSE
     ASSERT: cc_str_offsets_header_length_present  FALSE
+    ASSERT: dbg,cu_context, and fsd are non-NULL
+    as the caller ensured that.
     If .debug_cu_index or
     .debug_tu_index is present it might help us find
     the offset for this CU's .debug_str_offsets.
@@ -103,9 +112,8 @@ static int
 load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    const char * xu_type UNUSEDARG,
     int fsd_index,
-    Dwarf_Error *error UNUSEDARG)
+    Dwarf_Error *error )
 {
     Dwarf_Small *soff_secptr = 0;
     Dwarf_Small *soff_hdrptr = 0;
@@ -166,13 +174,14 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
     return DW_DLV_NO_ENTRY;
 }
 
+/*  ASSERT: dbg,cu_context, and fsd are non-NULL
+    as the caller ensured that. */
 static int
 load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    const char * xu_type UNUSEDARG,
     int fsd_index,
-    Dwarf_Error *error UNUSEDARG)
+    Dwarf_Error *error )
 {
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned soff_hdroffset = 0;
@@ -207,13 +216,14 @@ load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  ASSERT: dbg,cu_context, and fsd are non-NULL
+    as the caller ensured that. */
 static int
 load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     struct Dwarf_Debug_Fission_Per_CU_s*fsd,
-    const char * xu_type UNUSEDARG,
     int fsd_index,
-    Dwarf_Error *error UNUSEDARG)
+    Dwarf_Error *error )
 {
     Dwarf_Unsigned size = 0;
     Dwarf_Unsigned soff_hdroffset = 0;
@@ -263,12 +273,17 @@ static const char *keylist[2] = {
 };
 /*  ASSERT: The context has a signature.
 
+    ASSERT: dbg and cu_context are non-NULL
+    as the caller tested them.
+
     _dwarf_make_CU_Context() calls
         finish_up_cu_context_from_cudie() which calls
         us here.
     Then, _dwarf_make_CU_Context() calls
     _dwarf_merge_all_base_attrs_of_cu_die() if there
     is a tied (executable) object known.
+
+    Called by dwarf_die_deliv.c
 */
 int
 _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
@@ -316,22 +331,22 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
             case DW_SECT_LOCLISTS:
                 res = load_xu_loclists_into_cucontext(dbg,
                     cu_context,
-                    fsd,keylist[si],sec_index,error);
+                    fsd,sec_index,error);
                 break;
             case DW_SECT_STR_OFFSETS:
                 res = load_xu_str_offsets_into_cucontext(dbg,
                     cu_context,
-                    fsd,keylist[si],sec_index,error);
+                    fsd,sec_index,error);
                 break;
             case DW_SECT_MACRO:
                 res = load_xu_debug_macro_into_cucontext(dbg,
                     cu_context,
-                    fsd,keylist[si],sec_index,error);
+                    fsd,sec_index,error);
                 break;
             case DW_SECT_RNGLISTS:
                 res = load_xu_rnglists_into_cucontext(dbg,
                     cu_context,
-                    fsd,keylist[si],sec_index,error);
+                    fsd,sec_index,error);
                 break;
             default:
                 res = DW_DLV_OK;

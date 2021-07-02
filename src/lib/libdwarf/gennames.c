@@ -43,6 +43,7 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 #include "dwgetopt.h"
+#include "libdwarf_private.h" /* for DW_VERSION_DATE_STR */
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 
 /*  gennames.c

@@ -9,19 +9,19 @@
 ### with no hint as to what the problem really is..
 
 MAINTAINERCLEANFILES = Makefile.in \
-  objectaccess.log objectaccess.trs \
+  test_objectaccess.log test_objectaccess.trs \
   getnametest.log getnametest.trs \
-  runtestdd.sh.log	     test_linkedtopath.log \
-  test_dwarfstring.log	     test_macrocheck.log \
-  test_dwgetopt.log	     test_makenametest.log \
-  test_extra_flag_strings.log  test_sectionbitmaps.log \
-  test_headersok.log	     test_testesb.log \
+  runtestdd.sh.log	      test_linkedtopath.log \
+  test_dwarfstring.log	      test_macrocheck.log \
+  test_dwgetopt.log	      test_makenametest.log \
+  test_extra_flag_strings.log test_sectionbitmaps.log \
+  test_headersok.log	      test_testesb.log \
   test_helpertree.log  \
-  runtestdd.sh.trs	     test_linkedtopath.trs \
-  test_dwarfstring.trs	     test_macrocheck.trs \
-  test_dwgetopt.trs	     test_makenametest.trs \
+  runtestdd.sh.trs	      test_linkedtopath.trs \
+  test_dwarfstring.trs	      test_macrocheck.trs \
+  test_dwgetopt.trs	      test_makenametest.trs \
   test_extra_flag_strings.trs  test_sectionbitmaps.trs \
-  test_headersok.trs	     test_testesb.trs \
+  test_headersok.trs	      test_testesb.trs \
   test_helpertree.trs \
   junk.debuglink1 junk.debuglink1a \
   junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
@@ -196,7 +196,7 @@ dwarfdumpsetup.sh \
 dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
 debuglinktest-a.sh \
 debuglinktest-b.sh \
-objectaccess.c \
+objaccess.c \
 section_bitmaps_test.c \
 test_dwarfstring.c \
 testesb.c \
