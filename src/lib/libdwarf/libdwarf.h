@@ -2961,7 +2961,6 @@ int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*symbol_table_offset*/,
     Dwarf_Unsigned * /*constant_pool_offset*/,
     Dwarf_Unsigned * /*section_size*/,
-    Dwarf_Unsigned * /*unused_reserved*/,
     const char    ** /*section_name*/,
     Dwarf_Error    * /*error*/);
 
@@ -3029,7 +3028,6 @@ int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex/*index*/,
 int dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex,
     Dwarf_Unsigned   /*value*/,
     Dwarf_Unsigned * /*cu_index*/,
-    Dwarf_Unsigned * /*reserved1*/,
     Dwarf_Unsigned * /*symbol_kind*/,
     Dwarf_Unsigned * /*is_static*/,
     Dwarf_Error    * /*error*/);

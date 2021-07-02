@@ -152,7 +152,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     Dwarf_Unsigned * symbol_table_offset,
     Dwarf_Unsigned * constant_pool_offset,
     Dwarf_Unsigned * section_size,
-    Dwarf_Unsigned * unused_reserved,
     const char    ** section_name,
     Dwarf_Error    * error)
 {
@@ -275,7 +274,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     *symbol_table_offset  = indexptr->gi_symbol_table_offset;
     *constant_pool_offset = indexptr->gi_constant_pool_offset;
     *section_size         = indexptr->gi_section_length;
-    *unused_reserved = 0;
     *section_name  =        dbg->de_debug_gdbindex.dss_name;
     return DW_DLV_OK;
 
@@ -524,16 +522,21 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
 
 int
 dwarf_gdbindex_cuvector_instance_expand_value(
-    Dwarf_Gdbindex gdbindexptr UNUSEDARG,
+    Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned   value,
     Dwarf_Unsigned * cu_index,
-    Dwarf_Unsigned * reserved1,
     Dwarf_Unsigned * symbol_kind,
     Dwarf_Unsigned * is_static,
-    Dwarf_Error * error UNUSEDARG)
+    Dwarf_Error    * error)
 {
+    if (!gdbindexptr || !gdbindexptr->gi_dbg)  {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "The call to "
+            "dwarf_gdbindex_cuvector_instance_expand_value"
+            " provides no gdb pointer");
+        return DW_DLV_ERROR;
+    }
     *cu_index =    value         & 0xffffff;
-    *reserved1 =   (value >> 24) & 0xf;
     *symbol_kind = (value >> 28) & 0x7;
     *is_static =   (value >> 31) & 1;
     return DW_DLV_OK;

@@ -336,7 +336,6 @@ print_symtab_entry(Dwarf_Debug dbg,
     for (ii = 0; ii < cuvec_len; ++ii ) {
         Dwarf_Unsigned attributes = 0;
         Dwarf_Unsigned cu_index = 0;
-        Dwarf_Unsigned reserved1 = 0;
         Dwarf_Unsigned symbol_kind = 0;
         Dwarf_Unsigned is_static = 0;
         struct esb_s   tmp_cuindx;
@@ -352,7 +351,7 @@ print_symtab_entry(Dwarf_Debug dbg,
             return res;
         }
         res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
-            attributes, &cu_index,&reserved1,&symbol_kind,
+            attributes, &cu_index,&symbol_kind,
             &is_static, sym_err);
         if (res != DW_DLV_OK) {
             struct esb_s msg;
@@ -499,7 +498,6 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
     Dwarf_Unsigned symbol_table_offset = 0;
     Dwarf_Unsigned constant_pool_offset = 0;
     Dwarf_Unsigned section_size = 0;
-    Dwarf_Unsigned unused = 0;
     const char *section_name = 0; /* unused */
     Dwarf_Unsigned culist_len = 0;
     int res = 0;
@@ -516,7 +514,6 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
         &symbol_table_offset,
         &constant_pool_offset,
         &section_size,
-        &unused,
         &section_name,
         err);
     if (res == DW_DLV_NO_ENTRY) {
