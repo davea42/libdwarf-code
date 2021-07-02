@@ -7,8 +7,7 @@
 # Do not run this by hand.
 # This is used by scripts/buildstandardsource.sh
 # Builds various names .c and .h needed for libdwarf.
-# Checks that the DW_DLE match up in dwarf_errmsg_list.c
-# and libdwarf.h
+# For DW_DLE checks 'make check' tests that.
 # Expects a trivial config.h (see scripts/baseconfig.h)
 
 d=`pwd`
@@ -32,27 +31,5 @@ then
    echo gennames fail
    exit 1
 fi
-
-$CC dwarf_test_errmsg_list.c  -o errmsg_check
-if [ $? -ne 0 ]
-then
-   echo build errmsgcheck fail
-   exit 1
-fi
-
-# This produces no output. 
-# If it fails it indicates a problem with the 
-# DW_DLE names or strings.
-# If it passes there is no problem.
-grep DW_DLE libdwarf.h >errmsg_check_list
-./errmsg_check -f errmsg_check_list
-if [ $? -ne 0 ]
-then
-   echo errmsg check fail
-   exit 1
-fi
-
 rm -f gennames 
-rm -f errmsg_check_list
-rm -f errmsg_check
 exit 0

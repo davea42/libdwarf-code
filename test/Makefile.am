@@ -23,6 +23,7 @@ MAINTAINERCLEANFILES = Makefile.in \
   test_extra_flag_strings.trs  test_sectionbitmaps.trs \
   test_headersok.trs	      test_testesb.trs \
   test_helpertree.trs \
+  test_errmsglist.trs test_errmsglist.log \
   junk.debuglink1 junk.debuglink1a \
   junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
@@ -34,13 +35,15 @@ TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb test_sectionbitmaps test_dwarflebtest \
-  test_tied test_getnametest test_objectaccess
+  test_tied test_getnametest test_objectaccess \
+  test_errmsglist
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
  test_testesb  test_sectionbitmaps test_dwarflebtest  \
- test_tied test_getnametest test_objectaccess
+ test_tied test_getnametest test_objectaccess \
+ test_errmsglist
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
@@ -166,6 +169,14 @@ test_objectaccess_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf 
 test_objectaccess_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
+# AM_TESTS_ENVIRONMENT used to pass a path to libdwarf.h to
+# test_errmsglist
+test_errmsglist_SOURCES = test_errmsglist.c
+test_errmsglist = $(RO_CFLAGS_WARN)
+test_errmsglist_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf 
+
 TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh 
 
 if HAVE_DWARFEXAMPLE
@@ -174,8 +185,10 @@ endif
 
 ### no dwarfgen tests available.
 
-AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR ; DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)'; export DWCOMPILERFLAGS ;
-
+AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; \
+    export DWTOPSRCDIR ; \
+    DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)';\
+    export DWCOMPILERFLAGS ; 
 
 EXTRA_DIST= \
 buildingdummy.sh \
@@ -199,6 +212,7 @@ debuglinktest-b.sh \
 objaccess.c \
 section_bitmaps_test.c \
 test_dwarfstring.c \
+test_errmsglist.c \
 testesb.c \
 test_extra_flag_strings.c \
 test_headersok.c \

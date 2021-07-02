@@ -167,7 +167,6 @@ CODINGSTYLE \
 baseline.ltp  \
 dw_elfstructs.h \
 dw-linetableheader.txt \
-dwarf_test_errmsg_list.c \
 dwarf_names_new.h \
 dwarf_names_enum.h \
 gennames.c \

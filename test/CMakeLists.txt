@@ -200,6 +200,18 @@ if (DO_TESTING)
 endif()
 
 if (DO_TESTING) 
+    set_source_group(OBJERRMSGLIST "Source Files"
+        ${CMAKE_SOURCE_DIR}/test/test_errmsglist.c )
+    add_executable(selferrmsglist ${OBJERRMSGLIST})
+    target_compile_options(selferrmsglist PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
+    target_compile_options(selferrmsglist PRIVATE ${DW_FWALL})
+    add_test(NAME selferrmsglist COMMAND 
+        selferrmsglist -f
+        "${CMAKE_SOURCE_DIR}/src/lib/libdwarf/libdwarf.h")
+endif()
+
+if (DO_TESTING) 
     add_custom_target (copyconf ALL
        COMMAND ${CMAKE_COMMAND} -E
        copy ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf
