@@ -1545,15 +1545,36 @@ dwarf_bitsize(Dwarf_Die die,
 }
 
 
-/* Size Value >= 0 required. DWARF5 sec5.7.6 */
+/*  Size Value >= 0 required. DWARF5 sec5.7.6 
+    The definition of DW_AT_data_bit_offset
+    (DWARF4, DWARF5) is radically
+    different from DW_AT_bit_offset (DWARF2,
+    DWARF3.  */
 int
 dwarf_bitoffset(Dwarf_Die die,
-    Dwarf_Unsigned * ret_size, Dwarf_Error * error)
+    Dwarf_Half     * attribute,
+    Dwarf_Unsigned * ret_offset, 
+    Dwarf_Error * error)
 {
     Dwarf_Unsigned luns = 0;
-    int res = _dwarf_die_attr_unsigned_constant(die,
-        DW_AT_bit_offset, &luns, error);
-    *ret_size = luns;
+    int res = 0;
+    /* DWARF4,5 case */
+    res = _dwarf_die_attr_unsigned_constant(die,
+        DW_AT_data_bit_offset, &luns, error);
+    if (res == DW_DLV_NO_ENTRY) {
+        /* DWARF2, DWARF3 case. */
+        res = _dwarf_die_attr_unsigned_constant(die,
+            DW_AT_bit_offset, &luns, error);
+        if (res == DW_DLV_OK) {
+            *attribute = DW_AT_bit_offset;
+            *ret_offset = luns;
+            return DW_DLV_OK;
+        }
+    } else if (res == DW_DLV_OK) {
+        *attribute = DW_AT_data_bit_offset;
+        *ret_offset = luns;
+        return DW_DLV_OK;
+    }
     return res;
 }
 

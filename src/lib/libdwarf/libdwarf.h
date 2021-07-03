@@ -1418,8 +1418,6 @@ int dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*uncompressed_length*/,
     Dwarf_Error * /*error*/);
 
-
-
 /*  dwarf_next_cu_header_d traverses debug_types CU headers.
     New in May, 2015.
     */
@@ -1733,7 +1731,13 @@ int dwarf_bitsize(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*returned_size*/,
     Dwarf_Error*     /*error*/);
 
+/*  If the attribute is DW_AT_data_bit_offset
+    (DWARF4, DWARF5) the returned bit offset
+    has one meaning.
+    If the attribute is DW_AT_bit_offset
+    (DWARF2, DWARF3) the meaning is quite different. */
 int dwarf_bitoffset(Dwarf_Die /*die*/,
+    Dwarf_Half     * /*attribute*/,
     Dwarf_Unsigned * /*returned_offset*/,
     Dwarf_Error*     /*error*/);
 
@@ -3021,7 +3025,7 @@ int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex/*index*/,
     Dwarf_Unsigned   /*cuvector_offset*/,
     Dwarf_Unsigned   /*innerindex*/,
     /* The attr_value is a field of bits. For expanded version
-        use  dwarf_gdbindex_cuvector_expand_value() */
+        use  dwarf_gdbindex_cuvector_instance_expand_value() */
     Dwarf_Unsigned * /*attr_value*/,
     Dwarf_Error    * /*error*/);
 
