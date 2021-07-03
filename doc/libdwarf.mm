@@ -4864,7 +4864,6 @@ attribute.
 .P
 It returns \f(CWDW_DLV_ERROR\fP if an error occurred or if the
 form is not of class address.
-
 .H 3 "dwarf_dietype_offset()"
 .DS
 \f(CWint dwarf_dietype_offset(Dwarf_Die /*die*/,
@@ -4878,6 +4877,14 @@ the section global offset referred to by
 \f(CWDW_AT_type\fP
 attribute of
 \f(CWdie\fP.
+The Attribute used is
+\f(CWDW_AT_type\fP
+so unless the form  is
+\f(CWDW_FORM_reg_sig8\fP
+(which is not handled here by libdwarf
+at this time)
+the offset is in
+the same section as 'die'.
 .P
 \f(CWDW_DLV_NO_ENTRY\fP
 is returned
@@ -4899,6 +4906,7 @@ if an error is
 detected.
 .P
 This feature was introduced in February 2016.
+
 
 .H 3 "dwarf_offset_list()"
 .DS
