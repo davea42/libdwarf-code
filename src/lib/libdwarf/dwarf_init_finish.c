@@ -143,25 +143,6 @@ startswith(const char * input, char* ckfor)
     }
     return FALSE;
 }
-#if 0
-static int
-endswith(const char * input, char* ckfor)
-{
-    size_t inlen = strlen(input);
-    size_t endlen = strlen(ckfor);
-    const char * endck = 0;
-
-    if (endlen > inlen) {
-        return FALSE;
-    }
-    endck = input+inlen - endlen;
-
-    if (! strcmp(endck,ckfor) ) {
-        return TRUE;
-    }
-    return FALSE;
-}
-#endif
 
 /*  Unifies the basic duplicate/empty testing and section
     data setting to one place. */
