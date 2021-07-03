@@ -15238,6 +15238,36 @@ lets dwarfdump report better information
 in those cases.
 
 Function new December 19, 2018.
+.H 3 "dwarf_set_stringcheck()"
+.DS
+\f(CWint dwarf_set_stringcheck(int /*check*/))\fP
+.DE
+The function sets the stringcheck value to the
+argument value.  It returns the previous
+value of the stringcheck value.
+.P
+By default all strings looked at by the
+library are checked to be sure they
+are not too long by checking the string
+against a bounded range of memory.
+.P
+The bound can be a section length
+or some other well defined value.
+By passing in a non-zero value
+you are asserting all strings are
+always in-bounds (well-formed)
+and the checks are bypassed.
+.P
+The current global value copied
+into every Dwarf_Debug
+struct created by any dwarf_init_path() etc
+at the time the Dwarf_Debug is created,
+and that Dwarf_Debug setting will affect that
+Dwarf_Debug until it is dwarf_finish()ed..
+.P
+Bypassing the bounds check is normally a
+very bad idea, though it may speed up libdwarf
+a little bit. 
 
 .H 3 "dwarf_get_endian_copy_function()"
 .DS
