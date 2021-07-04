@@ -1911,7 +1911,7 @@ dwarf_die_from_hash_signature(Dwarf_Debug dbg,
 }
 
 static int
-dwarf_ptr_CU_offset(Dwarf_CU_Context cu_context,
+_dwarf_ptr_CU_offset(Dwarf_CU_Context cu_context,
     Dwarf_Byte_Ptr di_ptr,
     Dwarf_Bool is_info,
     Dwarf_Off * cu_off)
@@ -1935,7 +1935,7 @@ void print_ptr_offset(Dwarf_CU_Context cu_context,
     Dwarf_Byte_Ptr di_ptr)
 {
     Dwarf_Off ptr_off;
-    dwarf_ptr_CU_offset(cu_context,di_ptr,&ptr_off);
+    _dwarf_ptr_CU_offset(cu_context,di_ptr,&ptr_off);
     fprintf(stderr," PTR OFF = 0x%" DW_PR_XZEROS DW_PR_DUx,ptr_off);
 }
 #endif
@@ -1991,7 +1991,7 @@ dwarf_validate_die_sibling(Dwarf_Die sibling,Dwarf_Off *offset)
         }
     }
     /* Calculate global offset used for error reporting */
-    dwarf_ptr_CU_offset(sibling->di_cu_context,
+    _dwarf_ptr_CU_offset(sibling->di_cu_context,
         dis->de_last_di_ptr,sibling->di_is_info,offset);
     return DW_DLV_ERROR;
 }
