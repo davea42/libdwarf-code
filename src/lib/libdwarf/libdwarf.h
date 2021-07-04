@@ -1677,7 +1677,7 @@ int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
 /* New June 2020 for DWARF5 (and all earlier). */
 int dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
     Dwarf_Unsigned   /*index*/,
-    Dwarf_Small    * /*atom_out*/,
+    Dwarf_Small    * /*operator_out*/,
     Dwarf_Unsigned * /*operand1*/,
     Dwarf_Unsigned * /*operand2*/,
     Dwarf_Unsigned * /*operand3*/,

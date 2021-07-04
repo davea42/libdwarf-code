@@ -463,43 +463,6 @@ very relevant
 
 .H 2 "Items Removed"
 .P
-Dwarf_Type
-was removed since types are no longer special.
-.P
-dwarf_typeof()
-was removed since types are no longer special.
-.P
-Dwarf_Ellist
-was removed since element lists no longer are a special format.
-.P
-Dwarf_Bounds
-was removed since bounds have been generalized.
-.P
-dwarf_nextdie()
-was replaced by dwarf_next_cu_header() to reflect the
-real way DWARF is organized.
-The dwarf_nextdie() was only useful for getting to compilation
-unit beginnings, so it does not seem harmful to remove it in favor
-of a more direct function.
-.P
-dwarf_childcnt() is removed on grounds
-that no good use was apparent.
-.P
-dwarf_prevline() and dwarf_nextline() were removed on grounds this
-is better left to a debugger to do.
-Similarly, dwarf_dieline() was removed.
-.P
-dwarf_is1stline() was removed as it was not meaningful for the
-revised DWARF line operations.
-.P
-Any libdwarf implementation might well decide to support all the
-removed functionality and to retain the DWARF Version 1 meanings
-of that functionality.
-This would be difficult because the
-original libdwarf draft
-specification used traditional C library interfaces which
-confuse the values returned by successful calls with
-exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
@@ -520,45 +483,6 @@ in favor of new ones (present in the library for
 years) with improved functionality.
 The new ones have the same name but
 with a trailing _a or _b or the like.
-.LI "September 2020"
-A new approach (simpler, more uniform)
-to deal with a failure of a dwarf_init*()
-or dwarf_elf_init*() call is described in 
-Chapter 4.
-Improved support for split dwarf.
-Added dwarf_get_ranges_b().
-.LI "May 2020"
-Adding support for DWARF5
-sections .debug_rnglists and .debug_loclists.
-.LI "March 2020"
-Added dwarf_set_de_alloc_flag()
-so consumers get a little better
-performance from libdwarf.
-At a price. See the description
-a bit later here.
-.LI "January 2019"
-Added support for reading DWARF in PE object files.
-.LI "October 2018"
-Added support for reading MacOS dSYM object files.
-.LI "2017"
-Added support for nearly all of DWARF5.
-.LI "July 2014"
-Added support for the .gdb_index section and
-started support for the .debug_cu_index and .debug_tu_index
-sections.
-.LI "October 2011"
-DWARF4 support for reading .debug_types added.
-.LI "March 93"
-Work on DWARF2 SGI draft begins
-.LI "June 94"
-The function returns are changed to return an error/success code
-only.
-.LI "April 2006"
-Support for DWARF3 consumer operations is close to completion.
-.LI "November 2010"
-Added various new functions and improved error checking.
-.LI "March 2017"
-Adding support for DWARF5 split dwarf.
 .LE
 
 .H 1 "Types Definitions"
@@ -3369,92 +3293,7 @@ so
 is based on observations
 of what compilers generate.
 
-.H 3 "dwarf_sec_group_sizes()"
-.DS
-\f(CW int dwarf_dwarf_sec_group_sizes(
-    Dwarf_Debug dbg,
-    Dwarf_Unsigned * section_count_out,
-    Dwarf_Unsigned * group_count_out,
-    Dwarf_Unsigned * selected_group_out,
-    Dwarf_Unsigned * map_entry_count_out,
-    Dwarf_Error    * error)
-\fP
-.DE
-The function
-may be called on any open
-\f(CWDwarf_Debug\fP.
-It returns
-\f(CWDW_DLV_OK\fP
-on success and returns
-values via the pointer arguments.
-.P
-Once the
-\f(CWDwarf_Debug\fP
-is open the group
-information is set and it will not change
-for the life of this
-\f(CWDwarf_Debug\fP.
-.P
-The
-\f(CW*section_count_out\fP
-is set to the number of sections
-in the object. Many of the sections
-will be irrelevant to
-\f(CWlibdwarf\fP.
-.P
-The
-\f(CW*group_count_out\fP
-is set to the number of groups
-in the object (as
-\f(CWlibdwarf\fP
-counts them).
-An OSO will have exactly one group.
-A DWP object will have exactly one group.
-If is more than one group consumer code
-will likely want to open additional
-\f(CWDwarf_Debug\fP
-objects and request
-relevant information to process the
-DWARF contents.
-An executable or a DWP object will
-always have a
-\f(CW*group_count_out\fP
-of one(1).
-An executable or a shared library
-cannot have any COMDAT section groups
-as the linker will have dealt with them.
-.P
-The
-\f(CW*selected_group_out\fP
-is set to the group number that
-this
-\f(CWDwarf_Debug\fP
-will focus on.
-See
-\f(CWdwarf_sec_group_map()\fP
-for additional details on how
-\f(CW*selected_group_out\fP
-is interpreted.
-.P
-The
-\f(CW*map_entry_count_out\fP
-is set to the number of
-entries in the map.
-See
-\f(CWdwarf_sec_group_map()\fP.
-
-.P
-On failure it returns
-\f(CWDW_DLV_ERROR\fP
-and sets \f(CW*error\fP
-.P
-The initial implementation never returns
-\f(CWDW_DLV_ERROR\fP
-or
-\f(CWDW_DLV_NO_ENTRY\fP
-but callers should allow for that possibility.
-
-.H 3 " dwarf_sec_group_map()"
+.H 3 "dwarf_sec_group_map()"
 .DS
 \f(CW int dwarf_sec_group_map(
     Dwarf_Debug      dbg,
@@ -4840,30 +4679,6 @@ the \f(CWDW_AT_high_pc\fP attribute.
 
 It returns \f(CWDW_DLV_ERROR\fP if an error occurred.
 
-.H 3 "dwarf_highpc()"
-.DS
-\f(CWint dwarf_highpc(
-    Dwarf_Die die,
-    Dwarf_Addr  * return_highpc,
-    Dwarf_Error *error)\fP
-.DE
-The function \f(CWdwarf_highpc()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_highpc\fP
-the high program counter
-value associated with the \f(CWdie\fP descriptor if \f(CWdie\fP
-represents a debugging information entry with the
-\f(CWDW_AT_high_pc attribute\fP and the form is \f(CWDW_FORM_addr\fP
-(meaning the form is of class address).
-.P
-This function is useless for a \f(CWDW_AT_high_pc\fP
-which is encoded as a constant (which was first possible in
-DWARF4).
-.P
-It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have this
-attribute.
-.P
-It returns \f(CWDW_DLV_ERROR\fP if an error occurred or if the
-form is not of class address.
 .H 3 "dwarf_dietype_offset()"
 .DS
 \f(CWint dwarf_dietype_offset(Dwarf_Die /*die*/,
@@ -6188,7 +6003,7 @@ DWARF3, and DWARF4.
 
 .DS
 \f(CW
-int dwarf_get_loclist_c (Dwarf_Attribute attr,
+int dwarf_get_loclist_c(Dwarf_Attribute attr,
    Dwarf_Loc_Head_c * loclist_head,
    Dwarf_Unsigned   * locCount,
    Dwarf_Error      * error);
@@ -6218,7 +6033,7 @@ expression the
 will be set to one).
 At this point one cannot yet tell if it was a location
 list or a location expression (see .
-\f(CWdwarf_get_locdesc_entry_c{}\fP).
+\f(CWdwarf_get_locdesc_entry_d{}\fP).
 .P
 In case of error
 \f(CWDW_DLV_ERROR\fP
@@ -6467,43 +6282,6 @@ is set to an error designation.
 A return of
 \f(CWDW_DLV_NO_ENTRY\fP
 may be possible but is a bit odd.
-
-
-\f(CW
-\fP
-.H 3 "dwarf_get_locdesc_entry_c()"
-This is the same as 
-\f(CWdwarf_get_locdesc_entry_d()\fP
-except that the 
-\f(CWdebug_addr_unavailable\fP
-field
-is missing.
-Earlier versions (starting with
-\f(CWdwarf_get_locdesc_entry()\fP
-exist and work as well
-as they ever did, but we suggest 
-you stop using those earlier
-versions.
-We suggest you switch to using 
-\f(CWdwarf_get_locdesc_entry_d()\fP
-.DS
-\f(CW
-int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c loclist_head,
-   Dwarf_Unsigned    index,
-   Dwarf_Small    *lle_value_out,
-   Dwarf_Addr     *rawval1_out,
-   Dwarf_Addr     *rawval2_out,
-   Dwarf_Addr     *lopc_out,
-   Dwarf_Addr     *hipc_out,
-   Dwarf_Unsigned *loc_expr_op_count_out,
-   Dwarf_Locdesc_c *locentry_out,
-   Dwarf_Small    *loclist_kind,
-   Dwarf_Unsigned *expression_offset_out,
-   Dwarf_Unsigned *locdesc_offset_out,
-   Dwarf_Error    *error);
-\fP
-.DE
-
 
 .H 3 "dwarf_get_loclist_head_kind()"
 .DS
@@ -6769,10 +6547,14 @@ example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         Dwarf_Unsigned opd1 = 0;
         Dwarf_Unsigned opd2 = 0;
         Dwarf_Unsigned opd3 = 0;
+        Dwarf_Unsigned rawop1 = 0;
+        Dwarf_Unsigned rawop2 = 0;
+        Dwarf_Unsigned rawop3 = 0;
         Dwarf_Unsigned offsetforbranch = 0;
 
-        res2 = dwarf_get_location_op_value_c(locentry,
-            i, &op,&opd1,&opd2,&opd3,&offsetforbranch,
+        res2 = dwarf_get_location_op_value_d(locentry,
+            i, &op,&opd1,&opd2,&opd3,
+            &rawop1,&rawop2,&rawop3,&offsetforbranch,
             &error);
         /* Do something with the expression operator and operands */
         if (res2 != DW_DLV_OK) {
@@ -6802,61 +6584,6 @@ to
 zero immediately after the call, as the pointer
 is stale at that point.
 
-.H 3 "dwarf_loclist_from_expr_b()"
-.DS
-\f(CWint dwarf_loclist_from_expr_a(
-        Dwarf_Ptr bytes_in,
-        Dwarf_Unsigned bytes_len,
-        Dwarf_Half addr_size,
-        Dwarf_Half offset_size,
-        Dwarf_Half version_stamp,
-        Dwarf_Locdesc **llbuf,
-        Dwarf_Signed  *listlen,
-        Dwarf_Error *error)\fP
-.DE
-This function is obsolete.
-The function \f(CWdwarf_loclist_from_expr_b()\fP
-is identical to  \f(CWdwarf_loclist_from_expr_a()\fP
-in every way except that the caller passes an additional argument
-\f(CWversion_stamp\fP containing the
-version stamp (2 for DWARF2, etc) of the CU using
-this location expression and an additional argument
-of the offset size of the CU using this location expression.
-The DW_OP_GNU_implicit_pointer operation requires this version
-and offset information to be correctly processed.
-.P
-The \f(CWaddr_size\fP argument (from 27April2009) is needed
-to correctly interpret frame information as different compilation
-units can have different address sizes.
-DWARF4 adds address_size to the CIE header.
-
-.P
-.H 3 "dwarf_loclist_from_expr_a()"
-.DS
-\f(CWint dwarf_loclist_from_expr_a(
-        Dwarf_Ptr bytes_in,
-        Dwarf_Unsigned bytes_len,
-        Dwarf_Half addr_size,
-        Dwarf_Locdesc **llbuf,
-        Dwarf_Signed  *listlen,
-        Dwarf_Error *error)\fP
-.DE
-This function is obsolete.
-Use \f(CWdwarf_loclist_from_expr_b()\fP instead.
-This function is obsolete.
-.P
-The function \f(CWdwarf_loclist_from_expr_a()\fP
-is identical to  \f(CWdwarf_loclist_from_expr()\fP
-in every way except that the caller passes the additional argument
-\f(CWaddr_size\fP containing the address size (normally 4 or 8)
-applying this location expression.
-.P
-The \f(CWaddr_size\fP argument (added 27April2009) is needed
-to correctly interpret frame information as different compilation
-units can have different address sizes.
-DWARF4 adds address_size to the CIE header.
-
-.P
 .H 2 "Line Number Operations"
 These functions are concerned with accessing line number entries,
 mapping debugging information entry objects to their corresponding
@@ -8394,27 +8121,6 @@ and
 functions, though for those functions the data is
 only in .debug_info by definition.
 
-.H 4 "dwarf_get_cu_die_offset_given_cu_header_offset()"
-.DS
-\f(CWint dwarf_get_cu_die_offset_given_cu_header_offset(
-    Dwarf_Debug dbg,
-    Dwarf_Off   in_cu_header_offset,
-    Dwarf_Off * out_cu_die_offset,
-    Dwarf_Error *error)\fP
-.DE
-This function is superseded by
-\f(CWdwarf_get_cu_die_offset_given_cu_header_offset_b()\fP,
-a function which is still supported thought it refers only
-to the .debug_info section.
-.P
-\f(CWdwarf_get_cu_die_offset_given_cu_header_offset()\fP
-added Rev 1.45, June, 2001.
-.P
-This function was declared as 'optional' in libdwarf.h
-on IRIX systems so the _MIPS_SYMBOL_PRESENT
-predicate could be used at run time to determine if the version of
-libdwarf linked into an application has this function.
-
 .H 4 "dwarf_global_name_offsets()"
 .DS
 \f(CWint dwarf_global_name_offsets(
@@ -9072,24 +8778,6 @@ section by index.
 Allows retrieving the abbreviations 
 from a portion of the 
 section by abbrev-code.
-
-.H 3 " dwarf_debugnames_form_by_index()"
-.DS
-\f(CW int dwarf_debugnames_form_by_index(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
-    Dwarf_Unsigned      abbrev_entry_index,
-    Dwarf_Unsigned      abbrev_form_index,
-    Dwarf_Unsigned    * name_attr_index,
-    Dwarf_Unsigned    * form,
-    Dwarf_Unsigned    * number_of_attr_form_entries,
-    Dwarf_Error *       error)
-\fP
-.DE
-Allows retrieving the abbreviations 
-forms
-from a portion of the 
-section by index.
 
 .H 3 " dwarf_debugnames_entrypool()"
 .DS
@@ -10271,7 +9959,7 @@ to the notion of a frame pointer),
 as well as a column for the return address.
 .P
 The new interface set of dwarf_get_fde_info_for_reg3(),
-dwarf_get_fde_info_for_cfa_reg3(),
+dwarf_get_fde_info_for_cfa_reg3_b(),
 dwarf_get_fde_info_for_all_regs3(),
 dwarf_set_frame_rule_table_size(),
 dwarf_set_frame_cfa_value(),
@@ -10315,7 +10003,7 @@ separately accessible and not part of the table.
 The 'rule number' for the CFA is a number outside the table.
 So the CFA is a marker, not a register number.
 See  DW_FRAME_CFA_COL3 in libdwarf.h and
-dwarf_get_fde_info_for_cfa_reg3() and
+dwarf_get_fde_info_for_cfa_reg3_b() and
 dwarf_set_frame_rule_cfa_value().
 .P
 (b) When the column is not DW_FRAME_CFA_COL3, the 'register'
@@ -10815,38 +10503,6 @@ The memory pointed to by \f(CWoutinstrs\fP
 must not be changed and there
 is nothing to free.
 
-.H 3 "dwarf_get_fde_info_for_all_regs()"
-.DS
-\f(CWint dwarf_get_fde_info_for_all_regs(
-    Dwarf_Fde fde,
-    Dwarf_Addr pc_requested,
-    Dwarf_Regtable *reg_table,
-    Dwarf_Addr *row_pc,
-    Dwarf_Error *error);\fP
-.DE
-\f(CWdwarf_get_fde_info_for_all_regs()\fP returns
-\f(CWDW_DLV_OK\fP and sets
-\f(CW*reg_table\fP for the row specified by
-\f(CWpc_requested\fP for the FDE specified by \f(CWfde\fP.
-.P
-The intent is
-to return the rules for decoding all the
-registers, given a pc value.
-\f(CWreg_table\fP is an array of rules,
-one for each register specified in
-\f(CWdwarf.h\fP. The rule for each register contains three items -
-\f(CWdw_regnum\fP which denotes the register value for that rule,
-\f(CWdw_offset\fP which denotes the offset value for that rule and
-\f(CWdw_offset_relevant\fP which is set to zero if
-offset is not relevant
-for that rule. See
-\f(CWdwarf_get_fde_info_for_reg()\fP for a description
-of \f(CWrow_pc\fP.
-.P
-\f(CWdwarf_get_fde_info_for_all_regs\fP returns
-\f(CWDW_DLV_ERROR\fP if there is an error.
-.P
-
 .H 3 "dwarf_fde_section_offset()"
 .DS
 \f(CWint dwarf_fde_section_offset(
@@ -11162,37 +10818,6 @@ The two new arguments may be passed in as NULL
 if their values are not needed by the caller.
 
 
-.H 3 "dwarf_get_fde_info_for_cfa_reg3()"
-.DS
-\f(CWint dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
-    Dwarf_Addr          pc_requested,
-    Dwarf_Small *       value_type,
-    Dwarf_Signed*       offset_relevant,
-    Dwarf_Signed*       register_num,
-    Dwarf_Signed*       offset_or_block_len,
-    Dwarf_Ptr   *       block_ptr ,
-    Dwarf_Addr  *       row_pc_out,
-    Dwarf_Error *       error)\fP
-.DE
-.P
-This is identical to
-\f(CWdwarf_get_fde_info_for_reg3()\fP
-except the returned values are for the CFA rule.
-So register number
-\f(CW*register_num\fP
-will be set
-to a real register, not one of the pseudo registers
-(which are usually
-DW_FRAME_CFA_COL3, DW_FRAME_SAME_VALUE, or
-DW_FRAME_UNDEFINED_VALUE).
-.P
-Applications like dwarfdump
-which access the register rules for every pc
-value in a function may find the following
-function a slight performance improvement
-if the new arguments are used appropriately.
-See \f(CWdwarfdump\fP for an example of use.
-
 .H 3 "dwarf_get_fde_info_for_cfa_reg3_b()"
 .DS
 \f(CWint dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
@@ -11208,30 +10833,18 @@ See \f(CWdwarfdump\fP for an example of use.
     Dwarf_Error *       error)\fP
 .DE
 .P
-This is identical to
-\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP
-except for the new arguments
-\f(CWhas_more_rows\fP
-and
-\f(CWsubsequent_pc\fP
-which allow the caller to
-know if there are more rows in the frame table
-and what the next pc value is.
-The two new arguments may be passed in as NULL
-if their values are not needed by the caller.
-.P
 For a tool just wanting the frame information for a single
 pc_value this interface is no more useful or
 efficient than
-\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP.
+\f(CWdwarf_get_fde_info_for_cfa_reg3_b()\fP.
 .P
 The essential difference is that when using
-\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP
+\f(CWdwarf_get_fde_info_for_cfa_reg3_b()\fP
 for all pc values for a function the caller
 has no idea what is the next pc value that might
 have new frame data and iterating through
 pc values (calling
-\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP on each)
+\f(CWdwarf_get_fde_info_for_cfa_reg3_b()\fP on each)
 is a waste of cpu cycles.
 With
 \f(CWdwarf_get_fde_info_for_cfa_reg3_b()\fP
@@ -12242,20 +11855,6 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 and sets
 \f(CWerror\fP, 
 
-.H 3 "dwarf_get_arange_info()"
-.DS
-\f(CWint dwarf_get_arange_info(
-        Dwarf_Arange arange,
-        Dwarf_Addr *start,
-        Dwarf_Unsigned *length,
-        Dwarf_Off *cu_die_offset,
-        Dwarf_Error *error)\fP
-.DE
-This is the same as 
-\f(CWdwarf_get_arange_info_b()\fP
-except that this earlier function does not
-have a way to return the segment information.
-
 .H 2 "General Low Level Operations"
 This function is low-level and intended for use only
 by programs such as dwarf-dumpers.
@@ -12784,27 +12383,6 @@ At present
 \f(CWDW_DLV_ERROR\fP
 is never returned, but callers
 should not assume that will always be true.
-
-.H 4 "dwarf_get_rnglists_entry_fields()"
-.DS
-\f(CWint dwarf_get_rnglists_entry_fields(
-    Dwarf_Rnglists_Head head,
-    Dwarf_Unsigned entrynum,
-    unsigned *entrylen,
-    unsigned *code,
-    Dwarf_Unsigned *raw1,
-    Dwarf_Unsigned *raw2,
-    Dwarf_Unsigned *cooked1,
-    Dwarf_Unsigned *cooked2,
-    Dwarf_Error    *err)\fP
-.DE
-This the same as
-\f(CWdwarf_get_rnglists_entry_fields_a()\fP
-except this is missing the
-\f(CWdebug_addr_unavailable\fP
-argument so it's impossible for callers to know
-that the cooked values are not calculated.
-Do not use this function.
 
 .H 4 "dwarf_dealloc_rnglists_head()"
 .DS
