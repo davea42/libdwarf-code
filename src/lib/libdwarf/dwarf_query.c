@@ -1119,8 +1119,9 @@ dwarf_lowpc(Dwarf_Die die,
 
 
 
-/*  If the giving 'die' contains the DW_AT_type attribute, it returns
-    the offset referenced by the attribute.
+/*  If 'die' contains the DW_AT_type attribute, it returns
+    the (global) offset referenced by the attribute through
+    the return_off pointer.
     In case of DW_DLV_NO_ENTRY or DW_DLV_ERROR it sets offset zero. */
 int
 dwarf_dietype_offset(Dwarf_Die die,

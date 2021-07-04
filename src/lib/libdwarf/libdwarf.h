@@ -1718,7 +1718,8 @@ int dwarf_highpc_b(Dwarf_Die /*die*/,
     enum Dwarf_Form_Class * /*return_class*/,
     Dwarf_Error *           /*error*/);
 
-/*  New January 2016. */
+/*  If 'die' contains the DW_AT_type attribute,
+    it returns the offset referenced by the attribute. */
 int dwarf_dietype_offset(Dwarf_Die /*die*/,
     Dwarf_Off   * /*return_off*/,
     Dwarf_Error * /*error*/);
@@ -2290,7 +2291,7 @@ int dwarf_crc32(Dwarf_Debug /*dbg*/,
 
 /*  Public interface to the real crc calculation
     just in case some find it useful. */
-unsigned int dwarf_basic_crc32 (const unsigned char * /*buf*/,
+unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
     unsigned long /*len*/, unsigned int /*init*/);
 
 /*  global name space operations (.debug_pubnames access)
@@ -3992,11 +3993,6 @@ int dwarf_object_detector_path_dSYM(const char * /*path*/,
 #define DW_PATHSOURCE_basic     1
 #define DW_PATHSOURCE_dsym      2 /* MacOS dSYM */
 #define DW_PATHSOURCE_debuglink 3 /* GNU debuglink */
-
-/*  Returns the pathsource value set up at init time*/
-int dwarf_get_path_source_type(Dwarf_Debug /* dbg*/,
-    unsigned char * /*path_source*/,
-    Dwarf_Error   * /*error*/);
 
 int dwarf_object_detector_fd(int /*fd*/,
     unsigned int * /*ftype*/,
