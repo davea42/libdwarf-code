@@ -93,7 +93,7 @@ and a copy of the standard.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2019 David Anderson.
+Copyright 2007-2021 David Anderson.
 
 Permission is hereby granted to
 copy or republish or use any or all of this document without
@@ -155,7 +155,11 @@ Refer to the latest
 "\fIDWARF Debugging Information Format\fP"
 from www.dwarfstd.org for a more
 complete description of these entries.
-
+.P
+In June 2021 the document was substantially revised
+to remove obsolete API functions.
+The obsolete functions could not function properly
+with DWARF5.
 .P
 This document adopts all the terms and
 definitions in "\fIDWARF Debugging
@@ -4252,21 +4256,6 @@ The function is a combination of
 in that it returns both the global .debug_info offset and
 the CU-relative offset of the \f(CWdie\fP in a single call.
 
-
-.H 3 "dwarf_ptr_CU_offset()"
-.DS
-\f(CWint dwarf_ptr_CU_offset(
-    Dwarf_CU_Context cu_context,
-    Dwarf_Byte_ptr di_ptr ,
-    Dwarf_Off *cu_off)\fP
-.DE
-Given a valid CU context pointer and a pointer into that CU
-context,
-the function \f(CWdwarf_ptr_CU_offset()\fP returns DW_DLV_OK
-and sets \f(CW*cu_off\fP to the CU-relative (local) offset
-in that CU.
-
-
 .H 3 "dwarf_CU_dieoffset_given_die()"
 .DS
 \f(CWint dwarf_CU_dieoffset_given_die(
@@ -6414,7 +6403,7 @@ This is the recommended current interface.
 It uses the Dwarf_Loc_Head_c opaque
 struct pointer to hold the information 
 for detailed printing using
-\f(CWdwarf_get_locdesc_entry_c()\fP
+\f(CWdwarf_get_locdesc_entry_d()\fP
 .DS
 \f(CW
 int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
@@ -6497,6 +6486,9 @@ example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     Dwarf_Loc_Head_c head = 0;
     Dwarf_Locdesc_c locentry = 0;
     int res2 = 0;
+    Dwarf_Unsigned rawlopc = 0;
+    Dwarf_Unsigned rawhipc = 0;
+    Dwarf_Bool debug_addr_unavailable = FALSE;
     Dwarf_Unsigned lopc = 0;
     Dwarf_Unsigned hipc = 0;
     Dwarf_Unsigned ulistlen = 0;
@@ -6524,9 +6516,11 @@ example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     }
     /*  These are a location expression, not loclist.
         So we just need the 0th entry. */
-    res2 = dwarf_get_locdesc_entry_c(head,
+    res2 = dwarf_get_locdesc_entry_d(head,
         0, /* Data from 0th LocDesc */
         &lle_value,
+        &rawlopc,&rawhipc,
+        &debug_addr_unavailable,
         &lopc, &hipc,
         &ulocentry_count,
         &locentry,
@@ -6623,8 +6617,6 @@ table.
 This set of functions works on any DWARF version.
 DWARF2,3,4,5 and the DWARF4 based experimental
 two-level line tables are all supported.
-What was once done by dwarf_srclines() alone
-is now done with two calls as described here.
 .P
 The interfaces support reading GNU two-level line tables.
 The format of such tables is a topic beyond
@@ -6886,8 +6878,6 @@ void examplec(Dwarf_Die cu_die)
             as such has no lines of code
             but needs data for
             DW_AT_decl_file attributes. */
-        /*...do something, see dwarf_srclines_files_count()
-            etc below. */
 
         dwarf_srclines_dealloc_b(line_context);
         /*  All the memory is released, the line_context
@@ -7108,11 +7098,6 @@ int dwarf_srclines_files_indexes(Dwarf_Line_Context line_context,
 With DWARF5 the base file number index in the
 line table changed from zero (DWARF2,3,4)
 to one (DWARF5).
-Which meant iterating through the valid source file
-indexes became messy if one used the older
-\f(CWdwarf_srclines_files_count()\fP
-function (zero-based and one-based indexing
-being incompatible).
 See Figure  "Examplec dwarf_srclines_b()"
 above
 for use of this function in accessing file names.
@@ -7138,38 +7123,11 @@ pointer.
 \f(CWDW_DLV_NO_ENTRY\fP
 will not be returned.
 
-
-
-.H 3 "dwarf_srclines_files_count()"
-.DS
-\f(CW
-int dwarf_srclines_files_count(Dwarf_Line_Context line_context,
-    Dwarf_Signed  *  count,
-    Dwarf_Error   *  error);
-\fP
-.DE
-On success, the number of files in the files list of
-a line table header will be returned through
-\f(CWcount\fP.
-.P
-In case of error,
-\f(CWDW_DLV_ERROR\fP
-is returned and the error is set through
-the
-\f(CWerror\fP
-pointer.
-\f(CWDW_DLV_NO_ENTRY\fP
-will not be returned.
-
-
 .H 3 "dwarf_srclines_files_data_b()"
 This supplants
 \f(CWdwarf_srclines_files_data()\fP
 as of March 2018
 to allow access to the md5 value in DWARF5.
-The function
-\f(CWdwarf_srclines_files_data()\fP
-continues to be supported.
 .DS
 \f(CW
 int dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
@@ -7219,48 +7177,6 @@ the
 pointer.
 \f(CWDW_DLV_NO_ENTRY\fP
 will not be returned.
-
-
-.H 3 "dwarf_srclines_files_data()"
-This interface was created in October 2015.
-It cannot return the DWARF5 MD5 value.
-See the newer dwarf_srclines_files_data_b().
-.DS
-\f(CW
-int dwarf_srclines_files_data(Dwarf_Line_Context line_context,
-    Dwarf_Signed     index,
-    const char **    name,
-    Dwarf_Unsigned * directory_index,
-    Dwarf_Unsigned * last_mod_time,
-    Dwarf_Unsigned * file_length,
-    Dwarf_Error    * error);
-\fP
-.DE
-On success, data about a single file in
-the files list will be returned through the pointers.
-See DWARF documentation for the meaning of these
-fields.
-\f(CWcount\fP.
-Valid
-\f(CWindex\fP.
-values are 1 through
-\f(CWcount\fP,
-reflecting the way the table is defined by DWARF2,3,4.
-For a dwarf5 line table index values 0...count-1 are legal.
-This is certainly awkward.
-.P
-This returns the raw files data from the
-line table header.
-.P
-In case of error,
-\f(CWDW_DLV_ERROR\fP
-is returned and the error is set through
-the
-\f(CWerror\fP
-pointer.
-\f(CWDW_DLV_NO_ENTRY\fP
-will not be returned.
-
 
 .H 3 "dwarf_srclines_include_dir_count()"
 .DS
@@ -7336,98 +7252,6 @@ int dwarf_srclines_subprog_data(Dwarf_Line_Context line_context,
     Dwarf_Error   *  error);
 \fP
 This is only useful with experimental two-level line tables.
-
-.H 2 "Get A Set of Lines (DWARF2,3,4 style)"
-The function returns information about every source line for a
-particular compilation-unit.
-The compilation-unit is specified
-by the corresponding die.
-It does not support line tables with no lines very well
-nor does it support experimental two-level linetables.
-.H 3 "dwarf_srclines()"
-.DS
-\f(CWint dwarf_srclines(
-    Dwarf_Die die,
-    Dwarf_Line **linebuf,
-    Dwarf_Signed *linecount,
-    Dwarf_Error *error)\fP
-.DE
-This function is not useful for DWARF5 skeleton line tables nor
-for two-level line tables.
-It works for DWARF2,3,4,5 ordinary single line tables.
-The function
-\f(CWdwarf_srclines()\fP places all line number descriptors
-for a single compilation unit into a single block, sets
-\f(CW*linebuf\fP
-to point to that block,
-sets \f(CW*linecount\fP to the number of descriptors in this block
-and returns \f(CWDW_DLV_OK\fP.
-.in +2
-.P
-To get a more detailed view of the contents of a dwarf line
-table header see \f(CWdwarf_srclines_b()\fP and
-the routines that use the Dwarf_Line_Context
-information, such as \f(CWdwarf_srcfiles_comp_dir()\fP,
-\f(CWdwarf_srclines_files_count()\fP,
-\f(CWdwarf_srclines_include_dir_count()\fP
-and similar functions.
-
-.in -2
-
-.P
-The compilation-unit is indicated by the given
-\f(CWdie\fP which must be
-a compilation-unit die.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-On
-successful return, line number information
-should be freed using \f(CWdwarf_srclines_dealloc()\fP
-when no longer of interest.
-.P
-.in +2
-.FG "Exampled dwarf_srclines()"
-.DS
-\f(CW
-void exampled(Dwarf_Die somedie)
-{
-    Dwarf_Signed count = 0;
-    Dwarf_Line_Context context = 0;
-    Dwarf_Line *linebuf = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Error error = 0;
-    Dwarf_Line *line;
-    Dwarf_Small table_count =0;
-    Dwarf_Unsigned version = 0;
-    int sres = 0;
-
-    sres = dwarf_srclines_b(somedie,
-        &version, &table_count,&context,&error);
-    if (sres != DW_DLV_OK) {
-        return;
-    }
-    sres = dwarf_srclines_from_linecontext(context,
-        &linebuf,&count,&error);
-    if (sres != DW_DLV_OK) {
-        dwarf_srclines_dealloc_b(context);
-        return;
-    }
-    line = linebuf;
-    for (i = 0; i < count; ++line) {
-        /* use line */
-    }
-    dwarf_srclines_dealloc_b(context);
-}
-\fP
-.DE
-
-.in -2
-.P
-An alternative using \f(CWdwarf_dealloc()\fP directly
-is no longer (as of 2015) described here. It works as well
-as ever, but it has been obsolete since 2005.
-still works, but does not completely free all data allocated.
-The \f(CWdwarf_srclines_dealloc()\fP routine was created
-to fix the problem of incomplete deallocation.
 
 .H 2 "Get the set of Source File Names"
 The function returns the names of the source
@@ -7590,7 +7414,7 @@ void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
 The following functions can be used on the
 \f(CWDwarf_Line\fP descriptors
 returned by
-\f(CWdwarf_srclines()\fP
+\f(CWdwarf_srclines_b()\fP
 or
 \f(CWdwarf_srclines_from_linecontext()\fP
 to obtain information about the
@@ -10604,71 +10428,6 @@ when initializing rules tables.
 .P
 The function returns
 the previous value of initial value (taken from the
-\f(CWdbg\fP structure).
-
-.H 3 "dwarf_set_frame_cfa_value()"
-This allows consumers to set the number of the CFA register
-for rows in the frame tables.
-is taken from libdwarf.h as
-\f(CWDW_FRAME_CFA_COL3\fP.
-.DS
-\f(CWDwarf_Half
-dwarf_set_frame_rule_cfa_value(Dwarf_Debug dbg,
-         Dwarf_Half value);\fP
-
-.DE
-\f(CWdwarf_set_frame_rule_cfa_value()\fP sets the
-value \f(CWvalue\fP as the  number of the cfa 'register rule'
-for this \f(CWdbg\fP
-when initializing rules tables.
-.P
-The function returns
-the previous value of the pseudo-register (taken from the
-\f(CWdbg\fP structure).
-
-.H 3 "dwarf_set_frame_same_value()"
-This allows consumers to set the number of the pseudo-register
-when DW_CFA_same_value is the operation.  By default it
-is taken from libdwarf.h and is \f(CWDW_FRAME_SAME_VAL\fP.
-Consumer code should set this appropriately, though for
-many architectures \f(CWDW_FRAME_SAME_VAL\fP is an
-appropriate setting.
-.DS
-\f(CWDwarf_Half
-dwarf_set_frame_rule_same_value(Dwarf_Debug dbg,
-         Dwarf_Half value);\fP
-
-.DE
-\f(CWdwarf_set_frame_rule_same_value()\fP sets the
-value \f(CWvalue\fP as the  number of the register
-that is the pseudo-register set by the DW_CFA_same_value
-frame operation.
-.P
-The function returns
-the previous value of the pseudo-register  (taken from the
-\f(CWdbg\fP structure).
-
-
-.H 3 "dwarf_set_frame_undefined_value()"
-This allows consumers to set the number of the pseudo-register
- when DW_CFA_undefined_value is the operation.  By default it
-is taken from libdwarf.h and is \f(CWDW_FRAME_UNDEFINED_VAL\fP.
-Consumer code should set this appropriately, though for
-many architectures \f(CWDW_FRAME_UNDEFINED_VAL\fP is an
-appropriate setting.
-.DS
-\f(CWDwarf_Half
-dwarf_set_frame_rule_undefined_value(Dwarf_Debug dbg,
-         Dwarf_Half value);\fP
-
-.DE
-\f(CWdwarf_set_frame_rule_undefined_value()\fP sets the
-value \f(CWvalue\fP as the  number of the register
-that is the pseudo-register set by the DW_CFA_undefined_value
-frame operation.
-.P
-The function returns
-the previous value of the pseudo-register  (taken from the
 \f(CWdbg\fP structure).
 
 .H 3 "dwarf_set_default_address_size()"
@@ -14529,16 +14288,21 @@ The general form is
     );\fP
 .DE
 .in -2
-
 If the \f(CWvalue\fP passed in is known, the function
 returns \f(CWDW_DLV_OK\fP and places a pointer to the appropriate string
 into  \f(CW*s_out\fP.   The string is in static storage
 and applications must never free the string.
-If the \f(CWvalue\fP is not known, \f(CWDW_DLV_NO_ENTRY\fP is returned
-and \f(CW*s_out\fP is not set.  \f(CWDW_DLV_ERROR\fP is never returned.
+.P
+If the \f(CWvalue\fP is not known,
+\f(CWDW_DLV_NO_ENTRY\fP is returned
+and \f(CW*s_out\fP is not set.
+\f(CWDW_DLV_ERROR\fP is never returned.
 
-\f(CWLibdwarf\fP generates these functions at libdwarf build time
-by reading dwarf.h.
+\f(CWLibdwarf\fP generates these functions
+by reading dwarf.h, processing that the
+maintainers do and the generated source is
+part of the source repository and
+every release.
 
 All these follow this pattern rigidly, so the details of each
 are not repeated for each function.
@@ -14552,7 +14316,6 @@ passing a TAG value code to  \f(CWdwarf_get_ACCESS_name()\fP
 is a coding error which libdwarf will process as if it was
 an accessibility code value.
 Examples of bad and good usage are:
-
 .in +2
 .DS
 .FG "Examplezb dwarf_get_TAG_name()"
@@ -14581,114 +14344,89 @@ void examplezb(void)
 .DE
 .in -2
 
-
-
-
-.H 3 "dwarf_get_ACCESS_name()"
-Returns an accessibility code name  through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_AT_name()"
-Returns an attribute code name  through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_ATE_name()"
-Returns a base type encoding name  through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_ADDR_name()"
-Returns an address type encoding name  through the \f(CWs_out\fP pointer.
-As of this writing only  \f(CWDW_ADDR_none\fP is defined in  \f(CWdwarf.h\fP.
-.H 3 "dwarf_get_ATCF_name()"
-Returns a SUN code flag encoding name  through the \f(CWs_out\fP pointer.
-This code flag is entirely a DWARF extension.
-.H 3 "dwarf_get_CHILDREN_name()"
-Returns a child determination name (which
-is seen in the abbreviations section data) through the \f(CWs_out\fP pointer.
-The only value this recognizes for a 'yes' value is 1.
-As a flag value this is not quite correct (any non-zero value means
-yes) but dealing with this is left up to client code (normally
-compilers really do emit a value of 1 for a flag).
-.H 3 "dwarf_get_children_name()"
-Returns a child determination name through the \f(CWs_out\fP pointer,
-though this version is really a libdwarf artifact.
-The standard function is  \f(CWdwarf_get_CHILDREN_name()\fP
-which appears just above.
-As a flag value this is not quite correct (any non-zero value means
-yes) but dealing with this is left up to client code (normally
-compilers really do emit a value of 1 for a flag).
-.H 3 "dwarf_get_CC_name()"
-Returns  a calling convention case code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_CFA_name()"
-Returns  a call frame information instruction
-name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_DS_name()"
-Returns a decimal sign code name  through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_DSC_name()"
-Returns  a discriminant descriptor code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_EH_name()"
-Returns  a GNU exception header
-code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_END_name()"
-Returns an endian code name  through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_FORM_name()"
-Returns an form code name  through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_FRAME_name()"
-Returns a frame code name  through the \f(CWs_out\fP pointer.
-These are dependent on the particular ABI, so unless the
-\f(CWdwarf.h\fP used to generate libdwarf matches your ABI
-these names are unlikely to be very useful and certainly
-won't be entirely appropriate.
-.H 3 "dwarf_get_ID_name()"
-Returns an identifier case code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_INL_name()"
-Returns an inline code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_LANG_name()"
-Returns a language code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_LLE_name()"
-Returns a split-dwarf loclist code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_LNE_name()"
-Returns  a line table extended
-opcode code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_LNS_name()"
-Returns  a line table standard
-opcode code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_MACINFO_name()"
-Returns  a macro information macinfo
-code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_MACRO_name()"
-Returns  a DWARF5 macro information macro
-code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_OP_name()"
-Returns  a DWARF expression operation
-code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_ORD_name()"
-Returns  an array ordering code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_TAG_name()"
-Returns  a TAG name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_VIRTUALITY_name()"
-Returns  a virtuality code name through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_VIS_name()"
-Returns a visibility code name  through the \f(CWs_out\fP pointer.
-.H 3 "dwarf_get_FORM_CLASS_name()"
-Only different from the others in that it applies to
-an enum value.
-It returns the name (for example 
-DW_FORM_CLASS_REFERENCE)
-through the pointer.
-.in +2
-.DS
-\f(CWint dwarf_get_FORM_CLASS_name(
-    enum Dwarf_Form_Class fc,
-    char **s_out,
-    );\fP
-.DE
-.in -2
-If the enum value is out of the valid range
-it returns
-\f(CWDW_DLV_NO_ENTRY\fP
-and ignores 
-\f(CWs_out\fP.
-.P
-It never returns
-\f(CWDW_DLV_ERROR\fP.
-
-
-
+The function list is
+.BL
+.LI
+int dwarf_get_ADDR_name(unsigned int v,char**out);
+.LI
+int dwarf_get_ATCF_name(unsigned int v,char**out);
+.LI
+int dwarf_get_ADDR_name(unsigned int v,char**out);
+.LI
+int dwarf_get_ATCF_name(unsigned int v,char**out);
+.LI
+int dwarf_get_ATE_name(unsigned int v,char**out);
+.LI
+int dwarf_get_AT_name(unsigned int v,char**out);
+.LI
+int dwarf_get_CC_name(unsigned int v,char**out);
+.LI
+int dwarf_get_CFA_name(unsigned int v,char**out);
+.LI
+int dwarf_get_children_name(unsigned int v,char**out);
+.LI
+int dwarf_get_CHILDREN_name(unsigned int v,char**out);
+.LI
+int dwarf_get_DEFAULTED_name(unsigned int v,char**out);
+.LI
+int dwarf_get_DSC_name(unsigned int v,char**out);
+.LI
+int dwarf_get_DS_name(unsigned int v,char**out);
+.LI
+int dwarf_get_EH_name(unsigned int v,char**out);
+.LI
+int dwarf_get_END_name(unsigned int v,char**out);
+.LI
+int dwarf_get_FORM_name(unsigned int v,char**out);
+.LI
+int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class fc,char**out);
+.LI
+int dwarf_get_FRAME_name(unsigned int v,char**out);
+.LI
+int dwarf_get_GNUIKIND_name(unsigned int v,char**out);
+.LI
+int dwarf_get_GNUIVIS_name(unsigned int v,char**out);
+.LI
+int dwarf_get_ID_name(unsigned int v,char**out);
+.LI
+int dwarf_get_IDX_name(unsigned int v,char**out);
+.LI
+int dwarf_get_INL_name(unsigned int v,char**out);
+.LI
+int dwarf_get_ISA_name(unsigned int v,char**out);
+.LI
+int dwarf_get_LANG_name(unsigned int v,char**out);
+.LI
+int dwarf_get_LLE_name(unsigned int v,char**out);
+.LI
+int dwarf_get_LLEX_name(unsigned int v,char**out);
+.LI
+int dwarf_get_LNCT_name(unsigned int v,char**out);
+.LI
+int dwarf_get_LNE_name(unsigned int v,char**out);
+.LI
+int dwarf_get_LNS_name(unsigned int v,char**out);
+.LI
+int dwarf_get_MACINFO_name(unsigned int v,char**out);
+.LI
+int dwarf_get_MACRO_name(unsigned int v,char**out);
+.LI
+int dwarf_get_OP_name(unsigned int v,char**out);
+.LI
+int dwarf_get_ORD_name(unsigned int v,char**out);
+.LI
+int dwarf_get_RLE_name(unsigned int v,char**out);
+.LI
+int dwarf_get_SECT_name(unsigned int v,char**out);
+.LI
+int dwarf_get_TAG_name(unsigned int v,char**out); 
+.LI
+int dwarf_get_UT_name(unsigned int v,char**out);
+.LI
+int dwarf_get_VIRTUALITY_name(unsigned int v,char**out);
+.LI
+int dwarf_get_VIS_name(unsigned int v,char**out);
+.LE
 
 .H 2 "Section Operations"
 In checking DWARF in linkonce sections for correctness
