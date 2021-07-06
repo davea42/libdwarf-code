@@ -1,5 +1,5 @@
 /*
-  Portions Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2017-2021 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -51,7 +51,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_global.h"
-#include "dwarf_debug_names.h"
+#include "dwarf_debugnames.h"
 #include "dwarfstring.h"
 
 /*  freedabs attempts to do some cleanup in the face
@@ -217,8 +217,8 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
 }
 
 static int
-get_inhdr_cur(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned index_number,
+get_names_table_cur(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned name_index_number,
     struct Dwarf_Dnames_index_header_s **cur,
     Dwarf_Error *error)
 {
@@ -229,11 +229,11 @@ get_inhdr_cur(Dwarf_Dnames_Head dn,
         return DW_DLV_ERROR;
     }
     dbg = dn->dn_dbg;
-    if (index_number >= dn->dn_inhdr_count) {
+    if (name_index_number >= dn->dn_names_table_count) {
         _dwarf_error(dbg, error, DW_DLE_DEBUG_NAMES_BAD_INDEX_ARG);
         return DW_DLV_ERROR;
     }
-    *cur = dn->dn_inhdr_first + index_number;
+    *cur = dn->dn_names_table_first + name_index_number;
     return DW_DLV_OK;
 }
 
@@ -369,6 +369,10 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
+    /*  name_count gives the size of
+        the string-offsets and entry-offsets arrays,
+        and if hashes present, the size of the hashes 
+        array. */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
         &name_count,area_length,error);
@@ -543,19 +547,19 @@ read_a_name_index(Dwarf_Dnames_Head dn,
 #define FAKE_LAST_USED 0xffffffff
 
 static void
-free_inhdr_content(struct Dwarf_Dnames_index_header_s *f)
+free_names_table_content(struct Dwarf_Dnames_index_header_s *f)
 {
     free(f->din_augmentation_string);
     free(f->din_abbrev_list);
 }
 static void
-free_inhdr_list(struct Dwarf_Dnames_index_header_s *f)
+free_names_table_list(struct Dwarf_Dnames_index_header_s *f)
 {
     struct Dwarf_Dnames_index_header_s *tmp = 0;
 
     for ( ; f ; f = tmp) {
         tmp = f->din_next;
-        free_inhdr_content(f);
+        free_names_table_content(f);
         free(f);
     }
 }
@@ -563,7 +567,9 @@ free_inhdr_list(struct Dwarf_Dnames_index_header_s *f)
 /*  There may be one debug index for an entire object file,
     for multiple CUs or there can be individual indexes
     for some CUs.
-    see DWARF5 6.1.1.3 Per_CU versus Per-Module Indexes. */
+    see DWARF5 6.1.1.3 Per_CU versus Per-Module Indexes. 
+    The valid names_index_number (used below)
+    are 0<=names_index_number< dn_count_out */
 int
 dwarf_debugnames_header(Dwarf_Debug dbg,
     Dwarf_Dnames_Head * dn_out,
@@ -576,9 +582,9 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
     Dwarf_Small *start_section = 0;
     Dwarf_Small *end_section = 0;
     Dwarf_Small *curptr = 0;
-    struct Dwarf_Dnames_index_header_s *inhdr_last = 0;
-    struct Dwarf_Dnames_index_header_s *inhdr_first = 0;
-    unsigned inhdr_count = 0;
+    struct Dwarf_Dnames_index_header_s *names_table_last = 0;
+    struct Dwarf_Dnames_index_header_s *names_table_first = 0;
+    unsigned names_table_count = 0;
     int res = 0;
 
     if (!dbg) {
@@ -625,27 +631,28 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
             &index_header,
             error);
         if (res == DW_DLV_ERROR) {
-            free_inhdr_list(inhdr_first);
+            free_names_table_list(names_table_first);
             dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
             /*  Impossible. A bug. Or possibly
                 a bunch of zero pad? */
-            free_inhdr_list(inhdr_first);
+            free_names_table_list(names_table_first);
             dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
             break;
         }
         /* Add the new one to the list. */
-        if (!inhdr_first) {
-            inhdr_count = 1;
-            inhdr_first = index_header;
-            inhdr_last = index_header;
+        if (!names_table_first) {
+            names_table_count = 1;
+            names_table_first = index_header;
+            names_table_last = index_header;
         } else {
-            struct Dwarf_Dnames_index_header_s *tmp = inhdr_last;
-            inhdr_last = index_header;
+            struct Dwarf_Dnames_index_header_s *tmp = 
+                names_table_last;
+            names_table_last = index_header;
             tmp->din_next = index_header;
-            inhdr_count++;
+            names_table_count++;
         }
         usedspace = curptr - curptr_start;
         remaining -= - usedspace;
@@ -653,7 +660,7 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
             /*  No more in here, just padding. Check for zero
                 in padding. */
             if ((curptr +remaining) < end_section) {
-                free_inhdr_list(inhdr_first);
+                free_names_table_list(names_table_first);
                 dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
                 _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_OFF_END);
                 return DW_DLV_ERROR;
@@ -662,7 +669,7 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
                 if (*curptr) {
                     /*  One could argue this is a harmless error,
                         but for now assume it is real corruption. */
-                    free_inhdr_list(inhdr_first);
+                    free_names_table_list(names_table_first);
                     dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
                     _dwarf_error(dbg, error,
                         DW_DLE_DEBUG_NAMES_PAD_NON_ZERO);
@@ -675,12 +682,12 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
         struct Dwarf_Dnames_index_header_s *cur = 0;
         int n = 0;
 
-        dn_header->dn_inhdr_first =
+        dn_header->dn_names_table_first =
             (struct Dwarf_Dnames_index_header_s *)
-            calloc(inhdr_count,
+            calloc(names_table_count,
             sizeof(struct Dwarf_Dnames_index_header_s));
-        if (!dn_header->dn_inhdr_first) {
-            free_inhdr_list(inhdr_first);
+        if (!dn_header->dn_names_table_first) {
+            free_names_table_list(names_table_first);
             dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
             _dwarf_error_string(dbg, error,DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: calloc of a Dwarf_Dnames index"
@@ -688,29 +695,39 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
 
             return DW_DLV_ERROR;
         }
-        for (n = 0,cur = inhdr_first; cur; ++n ) {
+        for (n = 0,cur = names_table_first; cur; ++n ) {
             /*  We are copying these structs so do not
                 free them at this time. */
             struct Dwarf_Dnames_index_header_s *tmp = cur->din_next;
-            dn_header->dn_inhdr_first[n] = *cur;
+            dn_header->dn_names_table_first[n] = *cur;
             cur = tmp;
         }
     }
     *dn_out = dn_header;
-    *dn_count_out = inhdr_count;
+    *dn_count_out = names_table_count;
     return DW_DLV_OK;
 }
+/*  Frees all the space in dn. It's up to you
+    to to "dn = 0;" after the call. */
+void
+dwarf_dealloc_debugnames(Dwarf_Dnames_Head dn)
+{
+    Dwarf_Debug dbg = 0;
+    if (!dn) {
+        return;
+    }
+    dbg = dn->dn_dbg;
+    dwarf_dealloc(dbg,dn,DW_DLA_DNAMES_HEAD);
+}
 
-
+/*  These are the sizes/counts applicable to the entie
+    .debug_names section, numbers from the section 
+    Dwarf_Dnames header. 
+    DWARF5 section 6.1.1.2 Structure of the Name Header. */
 int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned   index_number,
-
-    Dwarf_Unsigned * section_offset,
-    Dwarf_Unsigned * version,     /* 5 */
-    Dwarf_Unsigned * offset_size, /* 4 or 8 */
-
-    /* The counts are entry counts, not bye sizes. */
-    Dwarf_Unsigned * comp_unit_count,
+    Dwarf_Unsigned   name_index_number,
+    /* The counts are entry counts, not byte sizes. */
+    Dwarf_Unsigned * comp_unit_count, 
     Dwarf_Unsigned * local_type_unit_count,
     Dwarf_Unsigned * foreign_type_unit_count,
     Dwarf_Unsigned * bucket_count,
@@ -721,25 +738,14 @@ int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned * abbrev_table_size,
     Dwarf_Unsigned * entry_pool_size,
     Dwarf_Unsigned * augmentation_string_size,
-
     Dwarf_Error *    error)
 {
     struct Dwarf_Dnames_index_header_s *cur = 0;
-    int res = 0;
+    int res;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
-    }
-
-    if (section_offset) {
-        *section_offset = cur->din_section_offset;
-    }
-    if (version) {
-        *version = cur->din_version;
-    }
-    if (offset_size) {
-        *offset_size = cur->din_offset_size;
     }
     if (comp_unit_count) {
         *comp_unit_count = cur->din_comp_unit_count;
@@ -771,9 +777,12 @@ int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
+/* The valid values in 'offset_ number'
+    are 0 to (comp_unit_count-1)
+*/
 int
 dwarf_debugnames_cu_entry(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_index_number,
     Dwarf_Unsigned      offset_number,
     Dwarf_Unsigned    * offset_count,
     Dwarf_Unsigned    * offset,
@@ -783,7 +792,7 @@ dwarf_debugnames_cu_entry(Dwarf_Dnames_Head dn,
     Dwarf_Debug dbg = 0;
     int res;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -814,9 +823,12 @@ dwarf_debugnames_cu_entry(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
+/* The valid values in 'offset_ number'
+    are 0 to (type_unit_count-1)
+*/
 int
 dwarf_debugnames_local_tu_entry(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_index_number,
     Dwarf_Unsigned      offset_number,
     Dwarf_Unsigned    * offset_count,
     Dwarf_Unsigned    * offset,
@@ -826,7 +838,7 @@ dwarf_debugnames_local_tu_entry(Dwarf_Dnames_Head dn,
     Dwarf_Debug dbg = 0;
     int res;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -859,15 +871,13 @@ dwarf_debugnames_local_tu_entry(Dwarf_Dnames_Head dn,
 
 
 
-/*  Here the sig_number ranges from
-    local_type_unit_count to
-    local_type_unit_count+foreign_type_unit_count-1
-    because the foreign indices are a continuation
-    of the local tu indices.
+/*
+    The valid sig_number values are 
+    0 to (foreign_type_unit_count-1)
 */
 int
 dwarf_debugnames_foreign_tu_entry(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_index_number,
     Dwarf_Unsigned      sig_number,
 
     /* these index starting at local_type_unit_count */
@@ -882,7 +892,7 @@ dwarf_debugnames_foreign_tu_entry(Dwarf_Dnames_Head dn,
     unsigned legal_low = 0;
     unsigned legal_high = 0;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -927,7 +937,7 @@ dwarf_debugnames_foreign_tu_entry(Dwarf_Dnames_Head dn,
     If there is no buckets table (bucket_count == 0)
     the hashes part still exists. */
 int dwarf_debugnames_bucket(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_index_number,
     Dwarf_Unsigned      bucket_number,
     Dwarf_Unsigned    * bucket_count,
     Dwarf_Unsigned    * index_of_name_entry,
@@ -937,7 +947,7 @@ int dwarf_debugnames_bucket(Dwarf_Dnames_Head dn,
     Dwarf_Debug dbg = 0;
     int res;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -970,7 +980,7 @@ int dwarf_debugnames_bucket(Dwarf_Dnames_Head dn,
 /*  Access to the .debug_names name table. */
 int
 dwarf_debugnames_name(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_index_number,
     Dwarf_Unsigned      name_entry,
     Dwarf_Unsigned    * names_count,
     Dwarf_Sig8        * signature,
@@ -983,7 +993,7 @@ dwarf_debugnames_name(Dwarf_Dnames_Head dn,
     Dwarf_Debug dbg = 0;
     int res;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1056,7 +1066,7 @@ dwarf_debugnames_name(Dwarf_Dnames_Head dn,
     indexing from 0.  */
 int
 dwarf_debugnames_abbrev_by_index(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned   index_number,
+    Dwarf_Unsigned   name_index_number,
     Dwarf_Unsigned   abbrev_entry,
     Dwarf_Unsigned * abbrev_code,
     Dwarf_Unsigned * tag,
@@ -1074,7 +1084,7 @@ dwarf_debugnames_abbrev_by_index(Dwarf_Dnames_Head dn,
     struct Dwarf_D_Abbrev_s * abbrev = 0;
     int res = 0;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1100,6 +1110,7 @@ dwarf_debugnames_abbrev_by_index(Dwarf_Dnames_Head dn,
     }
     return DW_DLV_OK;
 }
+
 
 static int
 _dwarf_internal_abbrev_by_code(
@@ -1132,10 +1143,14 @@ _dwarf_internal_abbrev_by_code(
 
 }
 
+#if 0
+Because the abbrevs cover multiCUs (usually)
+there is no unique mapping possible.
+
 /* Access the abbrev by abbrev code (instead of index). */
 int
 dwarf_debugnames_abbrev_by_code(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned    index_number,
+    Dwarf_Unsigned    name_index_number,
     Dwarf_Unsigned    abbrev_code,
     Dwarf_Unsigned *  tag,
 
@@ -1150,7 +1165,7 @@ dwarf_debugnames_abbrev_by_code(Dwarf_Dnames_Head dn,
     struct Dwarf_Dnames_index_header_s *cur = 0;
     int res;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1160,11 +1175,12 @@ dwarf_debugnames_abbrev_by_code(Dwarf_Dnames_Head dn,
         number_of_attr_form_entries);
     return res;
 }
+#endif/* 0 */
 
 
 int
 dwarf_debugnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned    index_number,
+    Dwarf_Unsigned    name_index_number,
     Dwarf_Unsigned    abbrev_entry_index,
     Dwarf_Unsigned    abbrev_form_index,
     Dwarf_Unsigned  * name_index_attr,
@@ -1177,7 +1193,7 @@ dwarf_debugnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
     struct abbrev_pair_s *ap = 0;
     int res;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1211,7 +1227,7 @@ dwarf_debugnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
     functions. */
 
 int dwarf_debugnames_entrypool(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_index_number,
     Dwarf_Unsigned      offset_in_entrypool,
     Dwarf_Unsigned       *    abbrev_code,
     Dwarf_Unsigned       *    tag,
@@ -1228,7 +1244,7 @@ int dwarf_debugnames_entrypool(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned abcode = 0;
     Dwarf_Unsigned leblen = 0;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1272,7 +1288,7 @@ int dwarf_debugnames_entrypool(Dwarf_Dnames_Head dn,
     (as formats change over time).
     */
 int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_index_number,
     Dwarf_Unsigned      index_of_abbrev,
     Dwarf_Unsigned      offset_in_entrypool_of_values,
     Dwarf_Unsigned *    array_dw_idx_number,
@@ -1294,7 +1310,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head dn,
     Dwarf_Small * endpool = 0;
     Dwarf_Small * poolptr = 0;
 
-    res = get_inhdr_cur(dn,index_number,&cur,error);
+    res = get_names_table_cur(dn,name_index_number,&cur,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1364,24 +1380,20 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
-
-
-
 /*  Frees any Dwarf_Dnames_Head_s data that is directly
     mallocd. */
 void
 _dwarf_debugnames_destructor(void *m)
 {
     struct Dwarf_Dnames_Head_s *h = (struct Dwarf_Dnames_Head_s *)m;
-
     struct Dwarf_Dnames_index_header_s *cur = 0;
     unsigned n = 0;
 
-    cur = h->dn_inhdr_first;
-    for ( ;n < h->dn_inhdr_count ; ++n,++cur) {
-        free_inhdr_content(cur);
+    cur = h->dn_names_table_first;
+    for ( ;n < h->dn_names_table_count ; ++n,++cur) {
+        free_names_table_content(cur);
     }
-    free(h->dn_inhdr_first);
-    h->dn_inhdr_first = 0;
-    h->dn_inhdr_count = 0;
+    free(h->dn_names_table_first);
+    h->dn_names_table_first = 0;
+    h->dn_names_table_count = 0;
 }

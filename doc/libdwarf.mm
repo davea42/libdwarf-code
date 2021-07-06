@@ -8373,6 +8373,43 @@ and
 \f(CW.debug_pubtypes\fP
 as those older sections were not found to be
 useful in practice.
+.P 
+The intent is that many compilation units
+(likely that of an entire program
+or shared object) will be placed in
+a single name table that will be the
+entire content of .debug_names,
+nothing in
+the DWARF5 standard in sections
+6.1 and 6.1.1 insists there is only
+one name table in the .debug_names
+section.
+.P
+Within a particular name table,
+Each name encoded is a separate row.
+.P
+A name table is a space-efficient encoding of a table 
+of names with columns of
+.BL
+.LI 
+The name (string) of the item (for the row).
+.LI 
+An optional hashed value of the name.
+.LI 
+The string offset (which leads to the name in .debug_str)
+.LI 
+An  index to the entry pool
+.LI 
+The abbreviation code (always non-zero)
+and a zero-terminated
+array of abbreviation
+entries (the same format as in .debug_abbrev).
+.LE
+.P
+The field referred to below (name_table_count_out)
+restricts valid name table numbers to
+0 to (name_table_count_out-1);
+.P
 See also 
 \f(CWNames Fast Access .debug_gnu_pubnames\fP
 .H 3 "dwarf_debugnames_header()"
@@ -8380,7 +8417,7 @@ See also
 \f(CWint dwarf_debugnames_header(
     Dwarf_Debug         dbg,
     Dwarf_Dnames_Head * dn_out,
-    Dwarf_Unsigned    * dn_index_count_out,
+    Dwarf_Unsigned    * name_table_count_out,
     Dwarf_Error *error)\fP
 .DE
 .P
@@ -8398,13 +8435,17 @@ own internal data structures.
 To free space allocated when one has finished
 with these data structures, call
 .DS
-    Debug_Dnames_Head dn /* Assume set somehow */;
-    ...
-    dwarf_dealloc(dbg,dn,DW_DLA_DNAMES_HEAD);
+    dwarf_dealloc_debugnames(dn);
+    dn=0;
 .DE
 which will free up all data
 allocated for
-\f(CWdwarf_debugnames_header()\fP.
+\f(CWdwarf_debugnames_header()\fP
+including all the table data it has 
+allocated and by setting dn to 0(or NULL)
+prevents your code accidentally
+referencing through
+a stale pointer.
 .P
 On success the function returns
 \f(CWDW_DLV_OK\fP
@@ -8415,7 +8456,7 @@ to the Head structure through
 It also returns the count of debugnames
 entry in the debugnames index
 through the
-\f(CWdn_index_count_out\fP
+\f(CWname_table_count_out\fP
 value.
 
 .P
@@ -8432,29 +8473,31 @@ if there is an internal
 error such as data corruption
 in the section.
 
-
 .H 3 " dwarf_debugnames_sizes()"
 .DS
 \f(CW int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned   index_number,
-
-    Dwarf_Unsigned * section_offsets,
-    Dwarf_Unsigned * version,
-    Dwarf_Unsigned * offset_size,
+    Dwarf_Unsigned   name_table_number,
 
     /* The counts are entry counts, not byte sizes. */
     Dwarf_Unsigned * comp_unit_count,
     Dwarf_Unsigned * local_type_unit_count,
     Dwarf_Unsigned * foreign_type_unit_count,
     Dwarf_Unsigned * bucket_count,
+    /*  name_count gives the size of
+        the string_offsets and entry_offsets arrays,
+        and if hashes present, the size of the 
+        hash_table array. */
     Dwarf_Unsigned * name_count,
 
-    /* The following are counted in bytes */
+    /*  The following are all counted in bytes.
+        indextable_overall_length is the
+        length of all the data in the
+        specific name table. */
     Dwarf_Unsigned * indextable_overall_length,
+
     Dwarf_Unsigned * abbrev_table_size,
     Dwarf_Unsigned * entry_pool_size,
     Dwarf_Unsigned * augmentation_string_size,
-
     Dwarf_Error *    error*/)\fP
 .DE
 .P
@@ -8478,9 +8521,8 @@ for the motivation of this function.
 
 .H 3 " dwarf_debugnames_cu_entry()"
 .DS
-\f(CW int dwarf_debugnames_cu_entry(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+\f(CW int dwarf_debugnames_cu_entry(Dwarf_Dnames_Head   dn,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      offset_number,
     Dwarf_Unsigned    * offset_count,
     Dwarf_Unsigned    * offset,
@@ -8491,14 +8533,11 @@ head
 \f(CWdn\fP
 this
 Allows access to fields in 
-cu entry 
-\f(CWindex_number\fP
-from
-a 
-\f(CW.debug_names\fP
-\f(CWDWARF5\fP
-Compilation Unit
-entry.
+name table entry for 
+one or more compilation units
+in a single
+\f(CWname_index_number\fP
+name table.
 .P
 We will not describe the fields in detail
 here.
@@ -8510,9 +8549,8 @@ for the motivation of this function.
 
 .H 3 " dwarf_debugnames_local_tu_entry()"
 .DS
-\f(CW int dwarf_debugnames_local_tu_entry(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+\f(CW int dwarf_debugnames_local_tu_entry(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      offset_number,
     Dwarf_Unsigned    * offset_count,
     Dwarf_Unsigned    * offset,
@@ -8528,7 +8566,7 @@ but referencing type unit fields.
 .DS
 \f(CW int dwarf_debugnames_foreign_tu_entry(
     Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      sig_number,
     Dwarf_Unsigned    * sig_minimum,
     Dwarf_Unsigned    * sig_count,
@@ -8543,7 +8581,7 @@ for foreign type-unit entries.
 .DS
 \f(CW int dwarf_debugnames_bucket(
     Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      bucket_number,
     Dwarf_Unsigned    * bucket_count,
     Dwarf_Unsigned    * index_of_name_entry,
@@ -8574,7 +8612,7 @@ about names and signatures.
 .DS
 \f(CW int dwarf_debugnames_abbrev_by_index(
     Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      abbrev_entry,
     Dwarf_Unsigned    * abbrev_code,
     Dwarf_Unsigned    * tag,
@@ -8587,11 +8625,28 @@ Allows retrieving the abbreviations
 from a portion of the 
 section by index.
 
+.H 3 " dwarf_debugnames_abbrev_form_by_index()"
+.DS
+\f(CW int dwarf_debugnames_abbrev_form_by_index(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      name_table_number,
+    Dwarf_Unsigned      abbrev_entry_index,
+    Dwarf_Unsigned    * name_index_attr,
+    Dwarf_Unsigned    * form,
+    Dwarf_Unsigned    * number_of_attr_form_entries,
+    Dwarf_Error *       error)
+\fP
+.DE
+Allows retrieving the abbreviations
+from a portion of the
+section by index.
+
+
 .H 3 " dwarf_debugnames_abbrev_by_code()"
 .DS
 \f(CW int dwarf_debugnames_abbrev_by_code(
     Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      abbrev_code,
     Dwarf_Unsigned    * tag,
     Dwarf_Unsigned    * index_of_abbrev,
@@ -8607,7 +8662,7 @@ section by abbrev-code.
 .DS
 \f(CW int dwarf_debugnames_entrypool(
     Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      offset_in_entrypool,
     Dwarf_Unsigned    * abbrev_code,
     Dwarf_Unsigned    * tag,
@@ -8625,7 +8680,7 @@ by index and offset.
 .DS
 \f(CW int dwarf_debugnames_entrypool_values(
     Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      index_of_abbrev,
     Dwarf_Unsigned      offset_in_entrypool_of_values,
     Dwarf_Unsigned    * array_dw_idx_number,

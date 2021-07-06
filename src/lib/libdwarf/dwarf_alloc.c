@@ -83,7 +83,7 @@
 #include "dwarf_gnu_index.h"
 #include "dwarf_xu_index.h"
 #include "dwarf_macro5.h"
-#include "dwarf_debug_names.h"
+#include "dwarf_debugnames.h"
 #include "dwarf_rnglists.h"
 #include "dwarf_dsc.h"
 #include "dwarfstring.h"

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2017-2017 David Anderson. All Rights Reserved.
+  Copyright (C) 2017-2021 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -64,6 +64,10 @@ struct Dwarf_Dnames_index_header_s {
     Dwarf_Unsigned din_local_type_unit_count;
     Dwarf_Unsigned din_foreign_type_unit_count;
     Dwarf_Unsigned din_bucket_count;
+    /*  din_name_count gives the size of
+        the din_string_offsets and din_entry_offsets arrays,
+        and if hashes present, the size of the 
+        din_hash_table array. */
     Dwarf_Unsigned din_name_count;
     Dwarf_Unsigned din_abbrev_table_size; /* bytes */
     Dwarf_Unsigned din_entry_pool_size;   /* bytes */
@@ -94,17 +98,22 @@ struct Dwarf_Dnames_index_header_s {
 
 };
 
-
+/*  The assumption  here is that though it is best
+    (surely) to have a single names table
+    in .debug_names,  this structure allows
+    any number of such. Each in a 
+    Dwarf_Dnames_index_header_s (names table header).
+*/
 struct Dwarf_Dnames_Head_s {
     Dwarf_Debug               dn_dbg;
     Dwarf_Small             * dn_section_data;
     Dwarf_Small             * dn_section_end;
     Dwarf_Unsigned            dn_section_size;
-    unsigned                  dn_inhdr_count;
+    unsigned                  dn_names_table_count;
 
-    /*  Becomes an array of these structs, dn_inhdr_count
+    /*  Becomes an array of these structs, dn_names_table_count
         of them. */
-    struct Dwarf_Dnames_index_header_s * dn_inhdr_first;
+    struct Dwarf_Dnames_index_header_s * dn_names_table_first;
 };
 
 void _dwarf_debugnames_destructor(void *m);
