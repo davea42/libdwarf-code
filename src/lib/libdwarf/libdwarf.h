@@ -2110,21 +2110,21 @@ int dwarf_debugnames_header(Dwarf_Debug /*dbg*/,
 /*  Frees all the malloc data associated with dn */
 void dwarf_dealloc_debugnames(Dwarf_Dnames_Head dn);
 
-int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
+int dwarf_debugnames_sizes(Dwarf_Dnames_Head /*dn*/,
     /* The counts are entry counts, not byte sizes. */
-    Dwarf_Unsigned   name_index_count,
-    Dwarf_Unsigned * comp_unit_count,
-    Dwarf_Unsigned * local_type_unit_count,
-    Dwarf_Unsigned * foreign_type_unit_count,
-    Dwarf_Unsigned * bucket_count,
-    Dwarf_Unsigned * name_count,
+    Dwarf_Unsigned   /*name_index_count*/,
+    Dwarf_Unsigned * /*comp_unit_count*/,
+    Dwarf_Unsigned * /*local_type_unit_count*/,
+    Dwarf_Unsigned * /*foreign_type_unit_count*/,
+    Dwarf_Unsigned * /*bucket_count*/,
+    Dwarf_Unsigned * /*name_count*/,
 
     /* The following are counted in bytes */
-    Dwarf_Unsigned * indextable_overall_length,
-    Dwarf_Unsigned * abbrev_table_size,
-    Dwarf_Unsigned * entry_pool_size,
-    Dwarf_Unsigned * augmentation_string_size,
-    Dwarf_Error *    error);
+    Dwarf_Unsigned * /*indextable_overall_length*/,
+    Dwarf_Unsigned * /*abbrev_table_size*/,
+    Dwarf_Unsigned * /*entry_pool_size*/,
+    Dwarf_Unsigned * /*augmentation_string_size*/,
+    Dwarf_Error *    /*error*/);
 
 int dwarf_debugnames_cu_entry(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*name_index_number*/,
@@ -2208,14 +2208,14 @@ int dwarf_debugnames_abbrev_form_by_index(Dwarf_Dnames_Head /*dn*/,
     as one wants to by alternately calling these two
     functions. */
 int dwarf_debugnames_entrypool(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*index_number*/,
-    Dwarf_Unsigned      /*offset_in_entrypool*/,
-    Dwarf_Unsigned *    /*abbrev_code*/,
-    Dwarf_Unsigned *    /*tag*/,
-    Dwarf_Unsigned *    /*value_count*/,
-    Dwarf_Unsigned *    /*index_of_abbrev*/,
-    Dwarf_Unsigned *    /*offset_of_initial_value*/,
-    Dwarf_Error *       /*error*/);
+    Dwarf_Unsigned   /*index_number*/,
+    Dwarf_Unsigned   /*offset_in_entrypool*/,
+    Dwarf_Unsigned * /*abbrev_code*/,
+    Dwarf_Unsigned * /*tag*/,
+    Dwarf_Unsigned * /*value_count*/,
+    Dwarf_Unsigned * /*index_of_abbrev*/,
+    Dwarf_Unsigned * /*offset_of_initial_value*/,
+    Dwarf_Error *    /*error*/);
 
 /*  Caller, knowing array size needed, passes in arrays
     it allocates of for idx, form, offset-size-values,
@@ -2226,17 +2226,17 @@ int dwarf_debugnames_entrypool(Dwarf_Dnames_Head /*dn*/,
     And points via offset_of_next to the next abbrev code.
     */
 int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*index_number*/,
-    Dwarf_Unsigned      /*index_of_abbrev*/,
-    Dwarf_Unsigned      /*offset_in_entrypool_of_values*/,
-    Dwarf_Unsigned *    /*array_dw_idx_number*/,
-    Dwarf_Unsigned *    /*array_form*/,
-    Dwarf_Unsigned *    /*array_of_offsets*/,
-    Dwarf_Sig8     *    /*array_of_signatures*/,
+    Dwarf_Unsigned   /*index_number*/,
+    Dwarf_Unsigned   /*index_of_abbrev*/,
+    Dwarf_Unsigned   /*offset_in_entrypool_of_values*/,
+    Dwarf_Unsigned * /*array_dw_idx_number*/,
+    Dwarf_Unsigned * /*array_form*/,
+    Dwarf_Unsigned * /*array_of_offsets*/,
+    Dwarf_Sig8     * /*array_of_signatures*/,
 
     /*  offset of the next entrypool entry. */
-    Dwarf_Unsigned *    /*offset_of_next_entrypool*/,
-    Dwarf_Error *       /*error*/);
+    Dwarf_Unsigned * /*offset_of_next_entrypool*/,
+    Dwarf_Error *    /*error*/);
 
 
 /* end of .debug_names interfaces. */
