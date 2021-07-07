@@ -1517,8 +1517,13 @@ return
 to the original client call..
 or
 B) with no error handler
-function (see below) libdwarf will print an error
-and call \f(CWabort()\fP.
+function (see below) libdwarf will,
+as of July 2021, 
+return a DW_DLV_ERROR
+to the caller
+and and print a message
+with the word 'libdwarf'
+and error number on stderr.
 .P
 .AL A
 .LI

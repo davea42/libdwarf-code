@@ -378,15 +378,15 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
 /*  If there is no 'error' passed into a dwarf function
     and there is an error, and an error-handler like this
     is passed.  This example simply returns so we
-    test how well that action works.  */
+    test how well that action works.   */
 static void
-simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
+simple_error_handler(Dwarf_Error error,
+    Dwarf_Ptr errarg UNUSEDARG)
 {
-    Dwarf_Unsigned unused =  (Dwarf_Unsigned)(uintptr_t)errarg;
+    Dwarf_Unsigned earg =  (Dwarf_Unsigned)(uintptr_t)errarg;
     printf("\nlibdwarf error detected: 0x%" DW_PR_DUx " %s\n",
-        dwarf_errno(error),dwarf_errmsg(error));
-    printf("libdwarf errarg. Not really used here %" DW_PR_DUu "\n",
-        unused);
+         dwarf_errno(error),dwarf_errmsg(error));
+    printf("libdwarf errarg. %" DW_PR_DUu "\n", earg);
     return;
 }
 

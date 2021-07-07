@@ -1,3 +1,14 @@
+7 July 26, 2021
+  The only abort() in libdwarf has been removed.
+  The abort() was in case a user setup
+  for error handling provided no means to report
+  an error (see errhand and errarg in documentation
+  of dwarf_init_b() etc).
+  As of now the error code simply returns.
+  A DW_DLV_ERROR is returned
+  from the call to libdwarf and a single line
+  message starting with 'libdwarf'
+  is printed, with the error number, to stderr.
 December 26, 2020
   With mm -> pdf the table of contents of libdwarf2.1.pdf
   is at the end of the pdf and difficult to locate.
