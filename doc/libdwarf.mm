@@ -2494,6 +2494,13 @@ other
 \f(CWlibdwarf\fP
 calls.
 .P
+The flag setting is global in libdwarf,
+it is not a per open Dwarf_Debug.
+The call can be made before or after
+opening a Dwarf_Debug, but for 
+maximum time savings call this before
+opening a Dwarf_Debug.
+.P
 By default
 \f(CWlibdwarf\fP keeps track of all its
 internal allocations.
