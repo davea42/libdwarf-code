@@ -371,7 +371,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
     /*  name_count gives the size of
         the string-offsets and entry-offsets arrays,
-        and if hashes present, the size of the hashes 
+        and if hashes present, the size of the hashes
         array. */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
@@ -567,7 +567,7 @@ free_names_table_list(struct Dwarf_Dnames_index_header_s *f)
 /*  There may be one debug index for an entire object file,
     for multiple CUs or there can be individual indexes
     for some CUs.
-    see DWARF5 6.1.1.3 Per_CU versus Per-Module Indexes. 
+    see DWARF5 6.1.1.3 Per_CU versus Per-Module Indexes.
     The valid names_index_number (used below)
     are 0<=names_index_number< dn_count_out */
 int
@@ -648,7 +648,7 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
             names_table_first = index_header;
             names_table_last = index_header;
         } else {
-            struct Dwarf_Dnames_index_header_s *tmp = 
+            struct Dwarf_Dnames_index_header_s *tmp =
                 names_table_last;
             names_table_last = index_header;
             tmp->din_next = index_header;
@@ -721,13 +721,13 @@ dwarf_dealloc_debugnames(Dwarf_Dnames_Head dn)
 }
 
 /*  These are the sizes/counts applicable to the entie
-    .debug_names section, numbers from the section 
-    Dwarf_Dnames header. 
+    .debug_names section, numbers from the section
+    Dwarf_Dnames header.
     DWARF5 section 6.1.1.2 Structure of the Name Header. */
 int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned   name_index_number,
     /* The counts are entry counts, not byte sizes. */
-    Dwarf_Unsigned * comp_unit_count, 
+    Dwarf_Unsigned * comp_unit_count,
     Dwarf_Unsigned * local_type_unit_count,
     Dwarf_Unsigned * foreign_type_unit_count,
     Dwarf_Unsigned * bucket_count,
@@ -872,7 +872,7 @@ dwarf_debugnames_local_tu_entry(Dwarf_Dnames_Head dn,
 
 
 /*
-    The valid sig_number values are 
+    The valid sig_number values are
     0 to (foreign_type_unit_count-1)
 */
 int

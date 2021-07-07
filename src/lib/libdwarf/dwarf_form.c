@@ -1145,7 +1145,7 @@ _dwarf_allow_formudata(unsigned form)
     in the Dwarf_Error is  DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION.
     When that arises, a consumer should call
     dwarf_get_debug_addr_index() and use that on the appropriate
-    .debug_addr section in the executable or another object. 
+    .debug_addr section in the executable or another object.
 
     Since this accept some signed values, callers
     must not assume a DW_DLV_OK means
@@ -1219,14 +1219,13 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         *bytes_read = leblen;
         return DW_DLV_OK;
     }
-   /*  IRIX bug 583450. We do not allow reading
-       sdata from a udata
-       value. Caller can retry, calling sdata */
+    /*  IRIX bug 583450. We do not allow reading
+        sdata from a udata
+        value. Caller can retry, calling sdata */
     default:
         break;
     }
     if (attr) {
- 
         int res = 0;
         Dwarf_Signed s = 0;
         res = dwarf_formsdata(attr,&s,error);

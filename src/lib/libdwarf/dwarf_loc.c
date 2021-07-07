@@ -1810,7 +1810,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
 }
 
 
-/*  New June 2020  Supports all versions of DWARF. 
+/*  New June 2020  Supports all versions of DWARF.
     Distinguishes location entry values as in the
     file directly (raw) from  the computed
     value (lowpc_out,hipc_out) after

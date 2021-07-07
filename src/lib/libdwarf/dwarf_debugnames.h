@@ -66,7 +66,7 @@ struct Dwarf_Dnames_index_header_s {
     Dwarf_Unsigned din_bucket_count;
     /*  din_name_count gives the size of
         the din_string_offsets and din_entry_offsets arrays,
-        and if hashes present, the size of the 
+        and if hashes present, the size of the
         din_hash_table array. */
     Dwarf_Unsigned din_name_count;
     Dwarf_Unsigned din_abbrev_table_size; /* bytes */
@@ -101,7 +101,7 @@ struct Dwarf_Dnames_index_header_s {
 /*  The assumption  here is that though it is best
     (surely) to have a single names table
     in .debug_names,  this structure allows
-    any number of such. Each in a 
+    any number of such. Each in a
     Dwarf_Dnames_index_header_s (names table header).
 */
 struct Dwarf_Dnames_Head_s {

@@ -100,14 +100,13 @@ Dwarf_Bool
 _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 {
     Dwarf_Small firstc = *fname;
-    /*
-     * Not relative path if
-     * - path begins with \\ (UNC path)
-     * - path begins with ?:\, with ? being a letter
-     * - path bagins with \
-     * see
-     * https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#paths
-     */
+    /*  Not relative path if
+        - path begins with \\ (UNC path)
+        - path begins with ?:\, with ? being a letter
+        - path bagins with \
+        see
+        https://docs.microsoft.com/en-us/windows/win32/\
+        fileio/naming-a-file#paths */
     if (!firstc) {
         return FALSE;
     }
@@ -133,10 +132,10 @@ _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
             if (fname[2] == '/') {
                 return TRUE;
             }
-            /*   This is a relative path to the current
-                 directory on the drive named.
-                 Windows has a 'current directory'
-                 with each drive letter in use.  */
+            /*  This is a relative path to the current
+                directory on the drive named.
+                Windows has a 'current directory'
+                with each drive letter in use.  */
         }
     }
     return FALSE;

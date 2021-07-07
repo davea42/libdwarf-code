@@ -1,4 +1,4 @@
-/*  Copyright 2021 David Anderson 
+/*  Copyright 2021 David Anderson
     This trivial set of defines is hereby placed in the public domain
     for all to use.
 */
@@ -31,10 +31,10 @@
 
 #ifndef TRUE
 #define TRUE 1
-#endif  /* TRUE */
+#endif /* TRUE */
 #ifndef FALSE
 #define FALSE 0
-#endif  /* FALSE */
+#endif /* FALSE */
 
 #define DWARF_HALF_SIZE 2
 #define SIZEOFT16 2
@@ -106,4 +106,3 @@
     } while (0)
 #endif
 #endif /* LIBDWARF_PRIVATE_H */
-

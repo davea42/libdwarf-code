@@ -1546,7 +1546,7 @@ dwarf_bitsize(Dwarf_Die die,
 }
 
 
-/*  Size Value >= 0 required. DWARF5 sec5.7.6 
+/*  Size Value >= 0 required. DWARF5 sec5.7.6
     The definition of DW_AT_data_bit_offset
     (DWARF4, DWARF5) is radically
     different from DW_AT_bit_offset (DWARF2,
@@ -1554,7 +1554,7 @@ dwarf_bitsize(Dwarf_Die die,
 int
 dwarf_bitoffset(Dwarf_Die die,
     Dwarf_Half     * attribute,
-    Dwarf_Unsigned * ret_offset, 
+    Dwarf_Unsigned * ret_offset,
     Dwarf_Error * error)
 {
     Dwarf_Unsigned luns = 0;

@@ -357,7 +357,7 @@ int dwarf_init_path_dl(const char *path,
 
 
 /*  New March 2017, this provides for reading
-    object files with multiple elf section groups.  
+    object files with multiple elf section groups.
     If you are unsure about group_number, use
     DW_GROUPNUMBER_ANY  as groupnumber.
 */

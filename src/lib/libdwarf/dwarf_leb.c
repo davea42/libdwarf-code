@@ -295,7 +295,7 @@ dwarf_decode_signed_leb128(char * leb128,
 }
 
 /*  Encode val as a uleb128. This encodes it as an unsigned
-    number. 
+    number.
     Return DW_DLV_ERROR or DW_DLV_OK.
     space to write leb number is provided by caller, with caller
     passing length.

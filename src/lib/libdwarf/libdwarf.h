@@ -1888,7 +1888,7 @@ int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
     For two-level line tables, the version returned will
     be 0xf006. This interface can return data from two-level
     line tables, which are experimental.
-    Most users will not wish to use 
+    Most users will not wish to use
     dwarf_srclines_two_level_from_linecontext */
 int dwarf_srclines_two_level_from_linecontext(Dwarf_Line_Context,
     Dwarf_Line  **   /*linebuf */,
@@ -2094,13 +2094,13 @@ int dwarf_line_subprog(Dwarf_Line /*line*/,
 /* End of line table interfaces. */
 
 /*  .debug_names names table interfaces. DWARF5.
-    By Sections 6.1 and 6.1.1 
+    By Sections 6.1 and 6.1.1
     "a name index is maintained in a separate object
     file section named .debug_names."
     It supercedes .debug_pubnames and .debug_pubtypes,
     which, also were wholeprogram lookup information.
     Nonetheless the following does not assume a single
-    name index in an object file. 
+    name index in an object file.
     "header_count" returns the number of name_indexes.
 */
 int dwarf_debugnames_header(Dwarf_Debug /*dbg*/,
@@ -2427,7 +2427,7 @@ void dwarf_pubtypes_dealloc(Dwarf_Debug /*dbg*/,
 
 
 /*  The first three present the same information
-    as the fourth here does in one call. 
+    as the fourth here does in one call.
     Probably best to use the fourth one and ignore the
     first three. cu_offsset is cu_header offset. */
 int dwarf_pubtypename(Dwarf_Type /*type*/,
@@ -2891,8 +2891,8 @@ int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
     int         * /*errcount_out*/,
     Dwarf_Error * /*error*/);
 
-/* Used by dwarfdump -v to print fde offsets from debugging
-   info.  */
+/*  Used by dwarfdump -v to print fde offsets from debugging
+    info.  */
 int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Fde         /*in_fde*/,
     Dwarf_Off *       /*fde_off*/,

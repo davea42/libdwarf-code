@@ -845,7 +845,7 @@ _dwarf_debuglink_finder_internal(
 int
 dwarf_object_detector_path_b(
     const char  * path,
-    char *        outpath, 
+    char *        outpath,
     unsigned long outpath_len,
     char **       gl_pathnames,
     unsigned      gl_pathcount,
