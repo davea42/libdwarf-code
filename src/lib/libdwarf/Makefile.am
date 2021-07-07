@@ -165,7 +165,6 @@ ChangeLog2019 \
 ChangeLog2020 \
 CODINGSTYLE \
 baseline.ltp  \
-dw_elfstructs.h \
 dw-linetableheader.txt \
 dwarf_names_new.h \
 dwarf_names_enum.h \
