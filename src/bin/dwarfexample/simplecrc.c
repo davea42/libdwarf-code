@@ -64,7 +64,7 @@ simple_test(const char *fname)
         fsize = size_left = lseek(fd,0L,SEEK_END);
         printf("file size %lu (0x%lx)\n",(unsigned long)fsize,
             (unsigned long)fsize);
-        if(fsize   == (off_t)-1) {
+        if (fsize   == (off_t)-1) {
         printf("Fail 22\n");
             exit(1);
         }
@@ -76,7 +76,7 @@ simple_test(const char *fname)
         exit(1);
     }
     lsval  = lseek(fd,0L,SEEK_SET);
-    if(lsval < 0) {
+    if (lsval < 0) {
         printf("Fail 1\n");
         exit(1);
     }
@@ -105,7 +105,7 @@ simple_test(const char *fname)
 int
 main(int argc, char **argv)
 {
-   const char *fname = 0;
+    const char *fname = 0;
 
     fname =    "/usr/lib/debug/.build-id/1c/"
         "2d642ffb01d1894d3c7dba050fcd160580a3e1.debug";
