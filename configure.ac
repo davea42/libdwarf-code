@@ -443,16 +443,17 @@ AC_ARG_VAR([DWARF_BIGENDIAN],
 # -Wno-long-long suppresses warnings on 'long long'
 # -Wno-pedantic-ms-format (which only exists in mingw)
 # suppresses warnings about I64 printf format.
+c_common_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Werror -Wno-long-long"
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
-    [ 
-       cxx_compiler_flags="-Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
+    [
+       cxx_compiler_flags="$c_common_flags -Wno-unused-private-field"
 
-       c_compiler_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs -Werror"
+       c_compiler_flags="$c_common_flags -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs"
     ]
     )
 AS_IF(
-    [ test "x$enable_nonstandardprintf" = "xyes" ],
+    [ test "x$have_win32" = "xyes" ],
     [
        cxx_compiler_flags="$cxx_compiler_flags -Wno-pedantic-ms-format"
 
@@ -624,15 +625,13 @@ echo "  sanitize support.....: ${enable_sanitize}"
 echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
-echo "    old frame column...: ${enable_oldframecol}"
-echo "    names table........: ${enable_namestable}"
+echo "    namestable binary..: ${enable_namestable}"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    elf64_getshdr......: ${have_getshdr}"
 echo "    Elf64_Rela.........: ${have_elf64_rela}"
 echo "    Elf64_Sym..........: ${have_elf64_sym}"
 echo "    Elf spelled........: ${struct_elf}"
 echo "    libelf.............: ${dwarf_with_libelf}"
-echo "    Custom libelf......: ${enable_havecustomlibelf}"
 echo "  dwarfdump............: always"
 echo "    regex..............: ${have_regex}"
 echo "  dwarfgen.............: ${enable_dwarfgen}"
