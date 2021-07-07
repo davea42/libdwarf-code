@@ -64,48 +64,6 @@
 #include "pro_types.h"
 #include "pro_dnames.h"
 
-#ifndef SHN_UNDEF
-#define SHN_UNDEF 0
-#endif /* SHN_UNDEF */
-
-#ifndef SHF_MIPS_NOSTRIP
-/* if this is not defined, we probably don't need it: just use 0 */
-#define SHF_MIPS_NOSTRIP 0
-#endif
-#ifndef R_MIPS_NONE
-#define R_MIPS_NONE 0
-#endif
-
-#ifdef WORDS_BIGENDIAN
-#define ASNOUT(t,s,l)                       \
-    do {                                    \
-        unsigned sbyte = 0;                 \
-        const char *p = 0;                  \
-        if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error,      \
-                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
-            return DW_DLV_ERROR;            \
-        }                                   \
-        sbyte = sizeof(s) - l;              \
-        p = (const char *)(&s);             \
-        dbg->de_copy_word(t,(const void *)(p+sbyte),l);\
-    } while (0)
-#else /* LITTLEENDIAN */
-#define ASNOUT(t,s,l)                       \
-    do {                                    \
-        const char *p = 0;                  \
-        if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error,      \
-                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
-            return DW_DLV_ERROR;            \
-        }                                   \
-        p = (const char *)(&s);             \
-        dbg->de_copy_word(t,(const void *)p,l); \
-    } while (0)
-#endif /* ENDIANNESS */
-
-
-#define SIZEOFT32 4
 
 struct Dwarf_Sort_Abbrev_s {
     Dwarf_Unsigned dsa_attr;
