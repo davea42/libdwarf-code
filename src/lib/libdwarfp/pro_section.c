@@ -3203,13 +3203,12 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 res = dwarf_add_AT_reference_c(dbg,
                     first_child,
                     DW_AT_sibling,
-                    first_child->di_right, 
+                    first_child->di_right,
                     &attr_out,error);
                 if (res != DW_DLV_OK) {
                     /* DW_DLV_NO_ENTRY is impossible. */
                     return res;
                 }
-       
             }
         }
         first_child = first_child->di_right;

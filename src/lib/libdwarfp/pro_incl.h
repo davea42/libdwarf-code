@@ -83,7 +83,7 @@
 
 #ifndef SHT_REL
 #define SHT_REL 9
-#endif  /*SHT_REL */
+#endif /*SHT_REL */
 #ifndef SHN_UNDEF
 #define SHN_UNDEF 0
 #endif /* SHN_UNDEF */

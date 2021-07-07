@@ -724,4 +724,4 @@ int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
 #ifdef __cplusplus
 }
 #endif
-#endif  /* _LIBDWARFP_H */
+#endif /* _LIBDWARFP_H */
