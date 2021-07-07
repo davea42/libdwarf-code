@@ -118,21 +118,6 @@ dumpsizes(int line,Dwarf_Unsigned s,
 }
 #endif
 
-#ifdef WORDS_BIGENDIAN
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        t = 0;                                  \
-        func(&t,&s[0],sizeof(s));               \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-
 static int
 _dwarf_load_elf_section_is_dwarf(const char *sname,
     int *is_rela,int *is_rel)
@@ -1603,14 +1588,6 @@ validate_struct_sizes(
         *errcode = DW_DLE_BAD_TYPE_SIZE;
         return DW_DLV_ERROR;
     }
-    if (sizeof(Elf32_Phdr) != sizeof(dw_elf32_phdr)) {
-        *errcode = DW_DLE_BAD_TYPE_SIZE;
-        return DW_DLV_ERROR;
-    }
-    if (sizeof(Elf64_Phdr) != sizeof(dw_elf64_phdr)) {
-        *errcode = DW_DLE_BAD_TYPE_SIZE;
-        return DW_DLV_ERROR;
-    }
     if (sizeof(Elf32_Rel) != sizeof(dw_elf32_rel)) {
         *errcode = DW_DLE_BAD_TYPE_SIZE;
         return DW_DLV_ERROR;
@@ -1624,14 +1601,6 @@ validate_struct_sizes(
         return DW_DLV_ERROR;
     }
     if (sizeof(Elf64_Rela) != sizeof(dw_elf64_rela)) {
-        *errcode = DW_DLE_BAD_TYPE_SIZE;
-        return DW_DLV_ERROR;
-    }
-    if (sizeof(Elf32_Sym) != sizeof(dw_elf32_sym)) {
-        *errcode = DW_DLE_BAD_TYPE_SIZE;
-        return DW_DLV_ERROR;
-    }
-    if (sizeof(Elf64_Sym) != sizeof(dw_elf64_sym)) {
         *errcode = DW_DLE_BAD_TYPE_SIZE;
         return DW_DLV_ERROR;
     }

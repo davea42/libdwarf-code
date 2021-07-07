@@ -150,23 +150,6 @@ magic_copy(unsigned char *d, unsigned len)
     return v;
 }
 
-
-#ifdef WORDS_BIGENDIAN
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        t = 0;                                  \
-        func(&t,&s[0],sizeof(s));               \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-
-
 #define EI_NIDENT 16
 /* An incomplete elf header, good for 32 and 64bit elf */
 struct elf_header {

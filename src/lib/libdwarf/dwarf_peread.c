@@ -87,9 +87,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define TYP(n,l) char n[l]
 #endif /* TYP */
 
-#ifndef SIZEOFT32
-#define SIZEOFT32 4
-#endif /* SIZEOFT32 */
 #if 0
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
@@ -142,6 +139,7 @@ check_valid_string(char *tab,
     return DW_DLV_ERROR;
 }
 
+#if 0
 #ifdef WORDS_BIGENDIAN
 #define ASNAR(func,t,s)                         \
     do {                                        \
@@ -156,6 +154,7 @@ check_valid_string(char *tab,
         func(&t,&s[0],sizeof(s));               \
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
+#endif
 
 /*  Name_array is 8 byte string, or it is supposed to be
     anyway.  */

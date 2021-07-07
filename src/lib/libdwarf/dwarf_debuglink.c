@@ -79,21 +79,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #define NULL_DEVICE_NAME "/dev/null"
 #endif /* _WIN32 */
 
-#ifdef WORDS_BIGENDIAN
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        t = 0;                                  \
-        func(&t,&s[0],sizeof(s));               \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-
 static int
 extract_buildid(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pbuildid,

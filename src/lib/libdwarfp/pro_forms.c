@@ -47,6 +47,21 @@
 #include "pro_die.h"
 #include "pro_expr.h"
 
+#ifdef WORDS_BIGENDIAN
+#define ASNARD(t,s,l)                   \
+    do {                                    \
+        unsigned tbyte = sizeof(t) - l;     \
+        t = 0;                              \
+        dbg->de_copy_word(((char *)&t)+tbyte ,&s[0],l);\
+    } while (0)
+#else /* LITTLE ENDIAN */
+#define ASNARD(t,s,l)                 \
+    do {                                \
+        t = 0;                          \
+        dbg->de_copy_word(&t,&s[0],l);             \
+    } while (0)
+#endif /* end LITTLE- BIG-ENDIAN */
+
 /*  This function adds an attribute whose value is
     a target address to the given die.  The attribute
     is given the name provided by attr.  The address
@@ -334,7 +349,7 @@ dwarf_compress_integer_block(
         int unit_encoded_size;
         Dwarf_Signed unit = 0;
 
-        ASNAR(unit,inptr,DWARF_32BIT_SIZE);
+        ASNARD(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
         result = dwarf_encode_signed_leb128(
             unit, &unit_encoded_size,
@@ -363,7 +378,7 @@ dwarf_compress_integer_block(
         int unit_encoded_size;
         Dwarf_Signed unit = 0;
 
-        ASNAR(unit,inptr,DWARF_32BIT_SIZE);
+        ASNARD(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
         result = dwarf_encode_signed_leb128(unit,
             &unit_encoded_size,

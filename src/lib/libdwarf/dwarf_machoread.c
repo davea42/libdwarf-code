@@ -110,22 +110,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define TYP(n,l) char n[l]
 #endif /* TYPE */
 
-#ifdef WORDS_BIGENDIAN
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASNAR(func,t,s)                         \
-    do {                                        \
-        t = 0;                                  \
-        func(&t,&s[0],sizeof(s));               \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-
-
 /* MACH-O and dwarf section names */
 static struct macho_sect_names_s {
     char const *ms_moname;

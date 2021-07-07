@@ -167,24 +167,6 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
             sizeof(_ltmp) - length),source, length) ;           \
         dest = (desttype)_ltmp;                                 \
     } while (0)
-
-
-/*
-    This macro sign-extends a variable depending on the length.
-    It fills the bytes between the size of the destination and
-    the length with appropriate padding.
-    This code is ENDIAN DEPENDENT but dependent only
-    on host endianness, not object file endianness.
-    The memcpy args are the issue.
-*/
-#define SIGN_EXTEND(dest, length)                                 \
-    do {                                                          \
-        if (*(Dwarf_Sbyte *)((char *)&dest +                      \
-            sizeof(dest) - length) < 0) {                         \
-            memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff",\
-                sizeof(dest) - length);                           \
-        }                                                         \
-    } while (0)
 #else /* LITTLE ENDIAN */
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source,\
     length,error,endptr)                         \
@@ -209,27 +191,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
             source, length) ;                    \
         dest = (desttype)_ltmp;                   \
     } while (0)
-
-
-/*
-    This macro sign-extends a variable depending on the length.
-    It fills the bytes between the size of the destination and
-    the length with appropriate padding.
-    This code is ENDIAN DEPENDENT but dependent only
-    on host endianness, not object file endianness.
-    The memcpy args are the issue.
-*/
-#define SIGN_EXTEND(dest, length)                               \
-    do {                                                        \
-        if (*(Dwarf_Sbyte *)((char *)&dest + (length-1)) < 0) { \
-            memcpy((char *)&dest+length,                        \
-                "\xff\xff\xff\xff\xff\xff\xff\xff",             \
-                sizeof(dest) - length);                         \
-        }                                                       \
-    } while (0)
-
-#endif /* ! LITTLE_ENDIAN */
-
+#endif
 
 
 /*
