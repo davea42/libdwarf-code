@@ -133,17 +133,6 @@ struct Dwarf_Error_s _dwarf_failsafe_error = {
     clean up any per-Dwarf_Debug allocations the
     caller forgot to dealloc. */
 static signed char global_de_alloc_tree_on = 1;
-void _dwarf_alloc_tree_counts( Dwarf_Unsigned *allocount UNUSEDARG,
-    Dwarf_Unsigned *allosum UNUSEDARG,
-    Dwarf_Unsigned *treecount UNUSEDARG,
-    Dwarf_Unsigned *treesum UNUSEDARG,
-    Dwarf_Unsigned *earlydealloccount UNUSEDARG,
-    Dwarf_Unsigned *earlydeallocsize UNUSEDARG,
-    Dwarf_Unsigned *unused1 UNUSEDARG,
-    Dwarf_Unsigned *unused2 UNUSEDARG,
-    Dwarf_Unsigned *unused3 UNUSEDARG)
-{
-}
 
 /*  Defined March 7 2020. Allows a caller to
     avoid most tracking by the de_alloc_tree hash

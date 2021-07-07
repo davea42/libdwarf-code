@@ -35,19 +35,6 @@ struct Dwarf_Error_s * _dwarf_special_no_dbg_error_malloc(void);
 
 void _dwarf_error_destructor(void *);
 
-/*  Intended for use in memory use investigations.
-    Not a public function. */
-void _dwarf_alloc_tree_counts(Dwarf_Unsigned *allocount,
-    Dwarf_Unsigned *allosum,
-    Dwarf_Unsigned *treecount,
-    Dwarf_Unsigned *treesum,
-    Dwarf_Unsigned *earlydealloccount,
-    Dwarf_Unsigned *earlydeallocsize,
-    Dwarf_Unsigned *unused1,
-    Dwarf_Unsigned *unused2,
-    Dwarf_Unsigned *unused3);
-
-
 /*  ALLOC_AREA_INDEX_TABLE_MAX is the size of the
     struct ial_s index_into_allocated array in dwarf_alloc.c
 */

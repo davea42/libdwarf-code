@@ -3957,7 +3957,7 @@ void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
 #endif /* DW_ENDIAN_UNKNOWN */
 
 /*  Defined March 7 2020. Allows a caller to
-    avoid most tracking by the de_alloc_tree hash
+    avoid tracking by the de_alloc_tree hash
     table if called with v of zero.
     Returns the value the flag was before this call. */
 int dwarf_set_de_alloc_flag(int v);
