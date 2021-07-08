@@ -1,8 +1,7 @@
 /*
-
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2012 David Anderson. All rights reserved.
+  Portions Copyright 2008-2021 David Anderson. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it
@@ -81,3 +80,49 @@
 #define REL64 Elf64_Rel
 #define REL_SEC_PREFIX ".rel"
 #endif
+
+#ifndef SHT_REL
+#define SHT_REL 9
+#endif /*SHT_REL */
+#ifndef SHN_UNDEF
+#define SHN_UNDEF 0
+#endif /* SHN_UNDEF */
+
+#ifndef SHF_MIPS_NOSTRIP
+/* if this is not defined, we probably don't need it: just use 0 */
+#define SHF_MIPS_NOSTRIP 0
+#endif
+#ifndef R_MIPS_NONE
+#define R_MIPS_NONE 0
+#endif
+
+#ifdef WORDS_BIGENDIAN
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        unsigned sbyte = 0;                 \
+        const char *p = 0;                  \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error,      \
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        sbyte = sizeof(s) - l;              \
+        p = (const char *)(&s);             \
+        dbg->de_copy_word(t,(const void *)(p+sbyte),l);\
+    } while (0)
+#else /* LITTLEENDIAN */
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        const char *p = 0;                  \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error,      \
+                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        p = (const char *)(&s);             \
+        dbg->de_copy_word(t,(const void *)p,l); \
+    } while (0)
+#endif /* ENDIANNESS */
+
+/* Indicates no relocation needed. */
+#define NO_ELF_SYM_INDEX        0

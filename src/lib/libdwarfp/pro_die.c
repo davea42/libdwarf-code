@@ -107,7 +107,7 @@ dwarf_new_die_a(Dwarf_P_Debug dbg,
     one of these may be non-null
     This is the original version. Use dwarf_die_link_a()
     instead as that function is easier to use (in checking for error).
-    
+
     New September 2016.
     Error return easier to deal with
     old version. */

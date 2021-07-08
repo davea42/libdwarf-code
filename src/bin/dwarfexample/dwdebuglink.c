@@ -92,7 +92,7 @@ blockmatch(unsigned char *l,
     unsigned length)
 {
     unsigned int i = 0;
-    for( ; i < length; ++i) {
+    for ( ; i < length; ++i) {
         if (l[i] != r[i]) {
             return FALSE;
         }
@@ -203,7 +203,7 @@ match_buildid(const char *prefix,
         }
     } else {
     }
-    if(buildid_length_base != buildid_length_debug) {
+    if (buildid_length_base != buildid_length_debug) {
         printf("%s===buildid length does not match",prefix);
         return DW_DLV_NO_ENTRY;
     }
@@ -397,7 +397,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
 
 static void
 one_file_debuglink(char *path,char **dlpaths,unsigned int dlcount,
-   int no_follow_debuglink)
+    int no_follow_debuglink)
 {
     one_file_debuglink_internal(TRUE,"",dlpaths,dlcount,
         no_follow_debuglink,
@@ -446,7 +446,7 @@ static void free_paths(void)
     if (!gl_pathcount) {
         return;
     }
-    for(i = 0; i < gl_pathcount; ++i) {
+    for (i = 0; i < gl_pathcount; ++i) {
         free(gl_pathnames[i]);
         gl_pathnames[i] = 0;
     }

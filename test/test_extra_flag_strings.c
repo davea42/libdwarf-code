@@ -36,10 +36,10 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
 #include "libdwarf_private.h"
+#include "pro_incl.h"
 #include "pro_opaque.h"
 #include "dwarfstring.h"
 

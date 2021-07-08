@@ -45,39 +45,6 @@
 #include "pro_alloc.h"
 #include "pro_frame.h"
 
-#define SIZEOFT16 2
-#define SIZEOFT32 4
-#define SIZEOFT64 8
-
-#ifdef WORDS_BIGENDIAN
-#define ASNOUT(t,s,l)                       \
-    do {                                    \
-        unsigned sbyte = 0;                 \
-        const char *p = 0;                        \
-        if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error,      \
-                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
-            return DW_DLV_ERROR;            \
-        }                                   \
-        sbyte = sizeof(s) - l;              \
-        p = (const char *)(&s);             \
-        dbg->de_copy_word(t,(const void *)(p+sbyte),l);\
-    } while (0)
-#else /* LITTLEENDIAN */
-#define ASNOUT(t,s,l)                       \
-    do {                                    \
-        const char *p = 0;                  \
-        if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error,      \
-                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
-            return DW_DLV_ERROR;            \
-        }                                   \
-        p = (const char *)(&s);             \
-        dbg->de_copy_word(t,(const void *)p,l);  \
-    } while (0)
-#endif /* ENDIANNESS */
-
-
 static void _dwarf_pro_add_to_fde(Dwarf_P_Fde fde,
     Dwarf_P_Frame_Pgm inst);
 

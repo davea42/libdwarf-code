@@ -78,10 +78,9 @@
     for long so this singleton is only going to cause
     confusion when callers try to save an out-of-memory
     Dwarf_Error pointer.
-    The _dwarf_failsafe_error is intended to
-    be an improvement over an abort() call.
-    The failsafe means we will not abort due to
-    a Dwarf_Error struct creation.
+    If the call provides no way to handle the error
+    the function simply returns, whereas it used
+    (before July 2021) to abort in that case.
 */
 
 /*  The user provides an explanatory string, the error
@@ -194,12 +193,13 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
         dbg->de_errhand(errptr, dbg->de_errarg);
         return;
     }
-    fflush(stdout);
-    fprintf(stdout,
-        "\nNow abort() in libdwarf. "
-        "No error argument or handler available.\n");
-    fflush(stdout);
-    abort();
+    fflush(stderr);
+    fprintf(stderr,
+        "\nlibdwarf is unable to record error %lu "
+        "No error argument or handler available\n",
+        (unsigned long)errval);
+    fflush(stderr);
+    return;
 }
 
 

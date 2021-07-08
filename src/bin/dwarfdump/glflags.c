@@ -339,8 +339,6 @@ init_global_flags(void)
 
     /*  Check errors. */
     glflags.check_error = 0;
-
-    glflags.gf_print_alloc_sums = 0;
 }
 
 void

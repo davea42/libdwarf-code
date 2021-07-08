@@ -2073,7 +2073,7 @@ dwarf_get_fde_info_for_reg3_b(Dwarf_Fde fde,
 
 }
 
-/* 
+/*
     Compared to dwarf_get_fde_info_for_reg()
     it more correctly deals with the  CFA by not
     making the CFA a column number, which means

@@ -286,54 +286,6 @@ void _dwarf_alloc_tree_counts(Dwarf_Unsigned *allocount,
     Dwarf_Unsigned *unused2,
     Dwarf_Unsigned *unused3);
 
-/*  This intended for dwarfdump testing only
-    by the developers.  It's quite odd,
-    really.
-    See regressiontests/scripts/analyzedwalloc.py
-    But handy for some performance analysis. */
-static void
-print_libdwarf_alloc_values(const char *file_name,
-    int argc,char **argv)
-{
-    Dwarf_Unsigned alloct = 0;
-    Dwarf_Unsigned allosum = 0;
-    Dwarf_Unsigned treect = 0;
-    Dwarf_Unsigned treesum = 0;
-    Dwarf_Unsigned earlydelct = 0;
-    Dwarf_Unsigned earlydelsum = 0;
-    FILE *out = 0;
-    int i = 1;
-
-    _dwarf_alloc_tree_counts(&alloct,
-        &allosum,&treect,&treesum,
-        &earlydelct,&earlydelsum,
-        0,0,0);
-
-    out = fopen("libdwallocs","a");
-    if (!out) {
-        return;
-    }
-    fprintf(out,"==== %s ",file_name);
-    for ( ; i < argc; ++i) {
-        fprintf(out," %s",argv[i]);
-    }
-    fprintf(out,"\n");
-    fprintf(out,"%" DW_PR_DSd " ",
-        alloct);
-    fprintf(out,"%" DW_PR_DSd " ",
-        allosum);
-    fprintf(out,"%" DW_PR_DSd " ",
-        treect);
-    fprintf(out,"%" DW_PR_DSd " ",
-        treesum);
-    fprintf(out,"%" DW_PR_DSd " ",
-        earlydelct);
-    fprintf(out,"%" DW_PR_DSd " ",
-        earlydelsum);
-    fprintf(out,"\n");
-    fclose(out);
-}
-
 /*
    Iterate through dwarf and print all info.
 */
@@ -562,9 +514,6 @@ main(int argc, char *argv[])
     free(temp_path_buf);
     temp_path_buf = 0;
     temp_path_buf_len = 0;
-    if (glflags.gf_print_alloc_sums) {
-        print_libdwarf_alloc_values(file_name,argc,argv);
-    }
     /* ======= END PROCESSING OBJECT FILES BY TYPE ===== */
 
     /*  These cleanups only necessary once all

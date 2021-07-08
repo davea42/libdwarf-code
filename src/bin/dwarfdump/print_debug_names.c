@@ -75,6 +75,6 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
             printf("names table %" DW_PR_DUu "\n",dnindex);
         }
     }
-    dwarf_dealloc(dbg,dnhead,DW_DLA_DNAMES_HEAD);
+    dwarf_dealloc_debugnames(dnhead);
     return DW_DLV_OK;
 }

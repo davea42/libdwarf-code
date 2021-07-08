@@ -625,7 +625,7 @@ echo "  sanitize support.....: ${enable_sanitize}"
 echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
-echo "    names table........: ${enable_namestable}"
+echo "    namestable binary..: ${enable_namestable}"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    elf64_getshdr......: ${have_getshdr}"
 echo "    Elf64_Rela.........: ${have_elf64_rela}"

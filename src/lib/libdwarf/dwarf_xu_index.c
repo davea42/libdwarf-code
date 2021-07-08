@@ -89,33 +89,6 @@
 #include "dwarfstring.h"
 
 #define  HASHSIGNATURELEN 8
-#define  LEN32BIT   4
-
-/* The following actually assumes (as used here)
-    that t is 8 bytes (integer) while s is
-    also 8 bytes (Dwarf_Sig8 struct). */
-#ifdef WORDS_BIGENDIAN
-#define ASNAR(t,s,l)                   \
-    do {                                    \
-        unsigned tbyte = sizeof(t) - l;     \
-        if (sizeof(t) < l) {                \
-            _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
-            return DW_DLV_ERROR;             \
-        }                                   \
-        t = 0;                              \
-        dbg->de_copy_word(((char *)&t)+tbyte ,&s[0],l);\
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASNAR(t,s,l)                 \
-    do {                                \
-        t = 0;                          \
-        if (sizeof(t) < l) {            \
-            _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
-            return DW_DLV_ERROR;         \
-        }                               \
-        dbg->de_copy_word(&t,&s[0],l);  \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
 
 /* zerohashkey used as all-zero-bits for comparison. */
 static const Dwarf_Sig8 zerohashkey;
@@ -155,9 +128,9 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
         Dwarf_Unsigned v = 0;
 
         READ_UNALIGNED_CK(dbg,v, Dwarf_Unsigned,
-            data,LEN32BIT,
+            data,SIZEOFT32,
             err,section_end);
-        data += LEN32BIT;
+        data += SIZEOFT32;
         if (v > DW_SECT_RNGLISTS) {
             dwarfstring s;
 
@@ -226,7 +199,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     Dwarf_Unsigned section_offsets_tab_offset = 0;
     Dwarf_Unsigned section_offsets_headerline_offset = 0;
     Dwarf_Unsigned section_sizes_tab_offset = 0;
-    unsigned datalen32 = LEN32BIT;
+    unsigned datalen32 = SIZEOFT32;
     Dwarf_Small *section_end = 0;
 
     if (!strcmp(section_type,"cu") ) {
@@ -514,12 +487,12 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
         return DW_DLV_ERROR;
     }
 
-    indexentry = indextab + (index * LEN32BIT);
+    indexentry = indextab + (index * SIZEOFT32);
     memcpy(hash_value,&hashval,sizeof(hashval));
     READ_UNALIGNED_CK(dbg,indexval,Dwarf_Unsigned, indexentry,
-        LEN32BIT,
+        SIZEOFT32,
         err,section_end);
-    indexentry += LEN32BIT;
+    indexentry += SIZEOFT32;
     if (indexval > xuhdr->gx_units_in_index) {
         _dwarf_error(dbg, err,  DW_DLE_XU_HASH_INDEX_ERROR);
         return DW_DLV_ERROR;
@@ -662,22 +635,22 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     /*  As noted above we have hidden the extra initial
         row from the offsets table so it is just
         0 to U-1. */
-    offsetrow = offsetrow + (row_index*column_count * LEN32BIT);
-    offsetentry = offsetrow + (column_index *  LEN32BIT);
+    offsetrow = offsetrow + (row_index*column_count * SIZEOFT32);
+    offsetentry = offsetrow + (column_index *  SIZEOFT32);
 
-    sizerow = sizerow + (row_index*column_count * LEN32BIT);
-    sizeentry = sizerow + (column_index *  LEN32BIT);
+    sizerow = sizerow + (row_index*column_count * SIZEOFT32);
+    sizeentry = sizerow + (column_index *  SIZEOFT32);
 
     {
         READ_UNALIGNED_CK(dbg,offset,Dwarf_Unsigned,
             offsetentry,
-            LEN32BIT,err,section_end);
-        offsetentry += LEN32BIT;
+            SIZEOFT32,err,section_end);
+        offsetentry += SIZEOFT32;
 
         READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,
             sizeentry,
-            LEN32BIT,err,section_end);
-        sizeentry += LEN32BIT;
+            SIZEOFT32,err,section_end);
+        sizeentry += SIZEOFT32;
     }
     *sec_offset = offset;
     *sec_size =  size;
@@ -736,7 +709,7 @@ _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,
         /* The hash won't work right in this case */
         _dwarf_error(dbg, error, DW_DLE_XU_HASH_ROW_ERROR);
     }
-    ASNAR(key,key_in,sizeof(*key_in));
+    ASNARL(key,key_in,sizeof(*key_in));
     primary_hash = key & mask;
     hashprime =  (((key >>32) &mask) |1);
     while (1) {

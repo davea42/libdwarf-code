@@ -21,8 +21,8 @@ dwarf_debuglink.c \
 dwarf_debuglink.h \
 dwarf_die_deliv.c \
 dwarf_die_deliv.h \
-dwarf_debug_names.c \
-dwarf_debug_names.h \
+dwarf_debugnames.c \
+dwarf_debugnames.h \
 dwarf_debug_sup.c \
 dwarf_dsc.c \
 dwarf_dsc.h \
@@ -165,7 +165,6 @@ ChangeLog2019 \
 ChangeLog2020 \
 CODINGSTYLE \
 baseline.ltp  \
-dw_elfstructs.h \
 dw-linetableheader.txt \
 dwarf_names_new.h \
 dwarf_names_enum.h \

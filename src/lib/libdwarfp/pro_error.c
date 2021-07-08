@@ -85,8 +85,11 @@ _dwarf_p_error(Dwarf_P_Debug dbg,
             _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_Error_s));
         if (errptr == NULL) {
             fprintf(stderr,
-                "Could not allocate Dwarf_Error structure\n");
-            abort();
+                "libdwarf: Out of memory. "
+                "Could not allocate Dwarf_Error structure "
+                "for error number %lu\n",
+                (unsigned long)errval);
+            return;
         }
         errptr->er_errval = (Dwarf_Signed) errval;
         *error = errptr;
@@ -98,13 +101,21 @@ _dwarf_p_error(Dwarf_P_Debug dbg,
             _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_Error_s));
         if (errptr == NULL) {
             fprintf(stderr,
-                "Could not allocate Dwarf_Error structure\n");
-            abort();
+                "libdwarf: Out of memory.. "
+                "Could not allocate Dwarf_Error structure "
+                "for error number %lu\n",
+                (unsigned long)errval);
+            return;
         }
         errptr->er_errval = (Dwarf_Signed) errval;
         dbg->de_errhand(errptr, dbg->de_errarg);
         return;
     }
-
-    abort();
+    /* No way to report. */
+    fprintf(stderr,
+        "libdwarf: "
+        "Could not return any error details for "
+        "error number %lu\n",
+        (unsigned long)errval);
+    return;
 }

@@ -66,7 +66,7 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_Unsigned nextset = 0;
     int res = 0;
 
-    if(!fsd) {
+    if (!fsd) {
         _dwarf_error_string(dbg, error, DW_DLE_XU_TYPE_ARG_ERROR,
             "DW_DLE_XU_TYPE_ARG_ERROR: a required argument to"
             "load_xu_loclists_into_cucontext() is NULL");

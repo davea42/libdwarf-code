@@ -812,8 +812,6 @@ OPT_SHOW_DWARFDUMP_CONF,      /*   --show-dwarfdump-conf     */
 /* Trace                                                     */
 OPT_TRACE,                    /* -# --trace=<num>            */
 
-/* allocation statistics */
-OPT_ALLOC_PRINT_SUMS,         /* --print-alloc-sums */
 OPT_ALLOC_TREE_OFF,           /* --suppress-de-alloc-tree */
 
 OPT_END
@@ -994,8 +992,6 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 /* Trace. */
 {"trace", dwrequired_argument, 0, OPT_TRACE},
 
-/* alloc sums. */
-{"print-alloc-sums", dwno_argument, 0, OPT_ALLOC_PRINT_SUMS},
 {"suppress-de-alloc-tree",dwno_argument,0,OPT_ALLOC_TREE_OFF},
 {0,0,0,0}
 };
@@ -2680,9 +2676,6 @@ set_command_options(int argc, char *argv[])
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
 
-        case OPT_ALLOC_PRINT_SUMS:
-            glflags.gf_print_alloc_sums = TRUE;
-            break;
         case OPT_ALLOC_TREE_OFF:
             /*  Suppress nearly all libdwarf de_alloc_tree
                 record keeping. */
@@ -2695,7 +2688,7 @@ set_command_options(int argc, char *argv[])
 }
 
 /*  This is a hack allowing us to pretend that
-    dwarfdump --print-alloc-sums --suppress-de-alloc-tree foo.o
+    dwarfdump  --suppress-de-alloc-tree foo.o
     has no arguments.  Because the args here really
     are special for use by dwarfdump developers and
     even with these special args we want do_all() to be
@@ -2715,7 +2708,6 @@ static const char *simplestdargs[] ={
 "--verbose",
 "--show-dwarfdump-conf",
 "--verbose-more",
-"--print-alloc-sums",
 "--suppress-de-alloc-tree",
 0
 };

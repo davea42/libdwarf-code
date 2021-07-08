@@ -2294,7 +2294,7 @@ is_cu_tag(int t)
     and the adjacent die is NULL.  Algorithm returns when
     child_depth is 0.
 
-    **NOTE: Do not modify input die, since it is used at the end. 
+    **NOTE: Do not modify input die, since it is used at the end.
 
  *  This is the correct form.  On calling with 'die' NULL,
     we cannot tell if this is debug_info or debug_types, so

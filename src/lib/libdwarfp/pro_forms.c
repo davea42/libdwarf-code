@@ -47,81 +47,20 @@
 #include "pro_die.h"
 #include "pro_expr.h"
 
-#ifndef R_MIPS_NONE
-#define R_MIPS_NONE 0
-#endif
-
-
-/* Indicates no relocation needed. */
-#define NO_ELF_SYM_INDEX        0
-
-
 #ifdef WORDS_BIGENDIAN
-#define ASNAR(t,s,l)                   \
+#define ASNARD(t,s,l)                   \
     do {                                    \
         unsigned tbyte = sizeof(t) - l;     \
         t = 0;                              \
         dbg->de_copy_word(((char *)&t)+tbyte ,&s[0],l);\
     } while (0)
 #else /* LITTLE ENDIAN */
-#define ASNAR(t,s,l)                 \
+#define ASNARD(t,s,l)                 \
     do {                                \
         t = 0;                          \
         dbg->de_copy_word(&t,&s[0],l);             \
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
-
-
-#ifdef WORDS_BIGENDIAN
-#define ASNOUT(t,s,l)                       \
-    do {                                    \
-        unsigned sbyte = 0;                 \
-        char *p = 0;                        \
-        if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error,      \
-                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
-            return DW_DLV_ERROR;            \
-        }                                   \
-        sbyte = sizeof(s) - l;              \
-        p = (const char *)(&s);             \
-        dbg->de_copy_word(t,(const void *)(p+sbyte),l);\
-    } while (0)
-#else /* LITTLEENDIAN */
-#define ASNOUT(t,s,l)                       \
-    do {                                    \
-        const char *p = 0;                  \
-        if (l > sizeof(s)) {                \
-            _dwarf_p_error(dbg, error,      \
-                DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
-            return DW_DLV_ERROR;            \
-        }                                   \
-        p = (const char *)(&s);             \
-        memcpy(t,(const void *)p,l);        \
-        dbg->de_copy_word(t,(const void *)p,l); \
-    } while (0)
-#endif /* ENDIANNESS */
-
-#ifdef WORDS_BIGENDIAN
-#define SIGN_EXTEND(dest, length)                                 \
-    do {                                                          \
-        if (*(Dwarf_Sbyte *)((char *)&dest +                      \
-            sizeof(dest) - length) < 0) {                         \
-            memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff",\
-                sizeof(dest) - length);                           \
-        }                                                         \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define SIGN_EXTEND(dest, length)                               \
-    do {                                                        \
-        if (*(Dwarf_Sbyte *)((char *)&dest + (length-1)) < 0) { \
-            memcpy((char *)&dest+length,                        \
-                "\xff\xff\xff\xff\xff\xff\xff\xff",             \
-                sizeof(dest) - length);                         \
-        }                                                       \
-    } while (0)
-
-#endif /* ! LITTLE_ENDIAN */
-
 
 /*  This function adds an attribute whose value is
     a target address to the given die.  The attribute
@@ -410,7 +349,7 @@ dwarf_compress_integer_block(
         int unit_encoded_size;
         Dwarf_Signed unit = 0;
 
-        ASNAR(unit,inptr,DWARF_32BIT_SIZE);
+        ASNARD(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
         result = dwarf_encode_signed_leb128(
             unit, &unit_encoded_size,
@@ -439,7 +378,7 @@ dwarf_compress_integer_block(
         int unit_encoded_size;
         Dwarf_Signed unit = 0;
 
-        ASNAR(unit,inptr,DWARF_32BIT_SIZE);
+        ASNARD(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
         result = dwarf_encode_signed_leb128(unit,
             &unit_encoded_size,
