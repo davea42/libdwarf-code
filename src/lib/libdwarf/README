@@ -1,25 +1,21 @@
 June 22, 2021.
 If ./configure is absent type
-        sh autogen.sh
-        (you will need to have installed automake and libtool
-        for autogen.sh to work)
+        ./autogen.sh
+        (you will need to have installed autoconf, automake
+        and libtool for autogen.sh to work)
 To build libdwarf.a, type
         ./configure
         make
 To build libdwarf.so, type
-        ./configure --enable-shared --disable-nonshared
+        ./configure --enable-shared --disable-static
         make
 To build  both, type
-        ./configure --enable-shared 
+        ./configure --enable-shared
         make
-
-The DW_DLC_* defines in libdwarf.h have been
-removed. Instead of DW_DLC_READ, just pass 0
-to that 'access' argument of dwarf_init* functions.
 
 April 16, 2017: Some people have had build problems, getting
 errors like:
-"dwarf_elf_access.c:238:21: warning: assignment makes 
+"dwarf_elf_access.c:238:21: warning: assignment makes
 pointer from integer without a cast [enabled by default]
      if ((ehdr_ident = elf_getident(elf, NULL)) == NULL) {"
 That suggests that the libelf headers needed are missing.
@@ -31,17 +27,17 @@ January 30, 2013: libdwarf.h is no longer in the distribution,
 but libdwarf.h.in is identical to libdwarf.h.  'configure'
 copies libdwarf.h.in to libdwarf.h and whether libelf.h defines
 'struct _Elf' or 'struct Elf' configure attempts to create
-libdwarf.h appropriately.  
+libdwarf.h appropriately.
 
 No real install target is provided here, so 'make install' does
-not do much. One can copy either or both of libdwarf.a libdwarf.so 
-to somewhere fairly standard (but intended for software you build)  
+not do much. One can copy either or both of libdwarf.a libdwarf.so
+to somewhere fairly standard (but intended for software you build)
 like '/usr/local/lib'.  Or anywhere else you want to copy it.
 
 To use dwarf or libdwarf, you may want to copy dwarf.h and
 a generated libdwarf.h somewhere convenient
-(possibly /usr/local/include), 
-and you may need to copy the libdwarf to a convenient spot 
+(possibly /usr/local/include),
+and you may need to copy the libdwarf to a convenient spot
 (/usr/local/lib is a traditional place for libraries one builds
 oneself on Unix and Linux).
 This copying is not needed to build dwarfdump.
@@ -78,24 +74,24 @@ as a first step before the normal make.
 If your headers are not in the expected places,
 use the make command line to add flags and include directories.
 For example
-  ./configure  
+  ./configure
   PREINCS="-I /usr/local/share/include" POSTINCS="-I /home/x/include"  make
 PREINCS content is inserted before CFLAGS as make(1) is running.
 POSTINCS content is added after the CFLAGS value.
 
 To set LDFLAGS (which is used when building a .so and
-in building gennames to create some source here), 
+in building gennames to create some source here),
 do so at configure time, for example:
   ./configure LDFLAGS="-L /var/tmp"
 Or use PRELIBS and/or POSTLIBS at 'make' time similar to the use
 of PREINCS and POSTINCS.
 
-Windows (February 2016): Those wishing to read DWARF2 or 
-later from Windows PE files (using Mingw) should take a look at 
+Windows (February 2016): Those wishing to read DWARF2 or
+later from Windows PE files (using Mingw) should take a look at
   https://github.com/jrfonseca/drmingw/tree/master/src/mgwhelp
 which shows simple LGPL code that implements the necessary object
-reading interfaces for PE objects. dwarf_pe.cpp 
-fills out the Dwarf_Obj_Access_Methods 
+reading interfaces for PE objects. dwarf_pe.cpp
+fills out the Dwarf_Obj_Access_Methods
 object interface and opens an object
 (see dwarf_object_init())
 using the PE object access making the full libdwarf API
@@ -103,12 +99,12 @@ available.
 To enable dection of Windows pathnames as full paths
 add --enable-windowspath.  Doing this does mean things like
 A:foo and \anything are treated as full paths (these are
-unlikely path names on a POSIX system but are legal 
+unlikely path names on a POSIX system but are legal
 POSIX partial paths).
 
 Back to Linux/Unix:
 It is possible to request a shared library (libdwarf.so) build with
-	--enable-shared
+        --enable-shared
 To turn off the build of the archive library (libdwarf.a) specify
         --disable-nonshared
 but in this case you must specify --enable-shared or nothing will
@@ -127,15 +123,15 @@ dwarf.h
   to get these exactly right for your architecture.
   DW_FRAME_RA_COL
   DW_FRAME_STATIC_LINK
-  DW_FRAME_CFA_COL 
+  DW_FRAME_CFA_COL
 
 libdwarf.h
   The DW_FRAME_REG_INITIAL_VALUE #define should be set to
   the value appropriate to your architecture. See libdwarf.h
   for details.
 
-  If DW_REG_TABLE_SIZE is not set large enough attempts to 
-  fill in the .debug_frame tables will get an error. 
+  If DW_REG_TABLE_SIZE is not set large enough attempts to
+  fill in the .debug_frame tables will get an error.
   Should be at least as large as DW_FRAME_LAST_REG_NUM.
   If it's too large nothing is harmed (but some extra space taken
   at run time).
@@ -185,7 +181,7 @@ of leb128 on disk is always little-endian).
 
 The .ps files are postscript. So those who cannot deal with mm
 format files but do have a postscript printer (or have
-ghostscript) can print the documents.  
+ghostscript) can print the documents.
 This form was chosen before pdf format existed...
 
 libdwarf2.1.pdf documents a way for a debugger to read dwarf information.
@@ -211,7 +207,7 @@ You will also need libelf (libelf.a and/or libelf.so) and
 libelf.h installed. These are available from GNU repositories
 and from the normal Linux repositories for Linux releases.
 On Ubuntu Linux for example:
-	sudo apt-get install libelf-dev libelf1 
+        sudo apt-get install libelf-dev libelf1
 
 Compiler warnings:
 A few Warnings like:
@@ -226,16 +222,16 @@ As of January 2013 the code compiles with gcc without
 problems with -Wall and -Wsign-compare
 aside from the warnings hinted at above.
 
-The following gcc/clang options 
+The following gcc/clang options
 have not all been tried as of January 2013,
 but will be as time permits.
--Wsystem-headers 
+-Wsystem-headers
 -Wall  -Wsign-compare
--Wno-format-y2k -W 
--Wno-unused-parameter -Wstrict-prototypes 
--Wmissing-prototypes -Wpointer-arith 
--Wreturn-type -Wcast-qual -Wwrite-strings 
--Wswitch -Wshadow -Wunused-parameter 
--Wcast-align -Wchar-subscripts -Winline 
--Wnested-externs -Wredundant-decls 
+-Wno-format-y2k -W
+-Wno-unused-parameter -Wstrict-prototypes
+-Wmissing-prototypes -Wpointer-arith
+-Wreturn-type -Wcast-qual -Wwrite-strings
+-Wswitch -Wshadow -Wunused-parameter
+-Wcast-align -Wchar-subscripts -Winline
+-Wnested-externs -Wredundant-decls
 -Wold-style-definition -Wno-pointer-sign
