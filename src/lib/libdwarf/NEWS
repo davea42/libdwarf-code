@@ -415,7 +415,7 @@ February 18, 2008
   code using the new function-pointer approach as it's implementation.
   Thanks to Josh Fuhs for doing the design and 99% of the work to make
   this happen.
-February 2, 2008
+February 2, 2008 As of 2021 DW_DLC only in libdwarfp
   Now pro_init() defaults to standard DWARF3 generated offset sizes.
   But if a new flag DW_DLC_OFFSET_SIZE_64 or'd into flags passed to
   dwarf_produser_init() or dwarf_producer_init_b, 

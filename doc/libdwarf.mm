@@ -1,4 +1,4 @@
-\." the following line may be removed if the
+." the following line may be removed if the
 \." ff ligature works on your machine
 .lg 0
 \." set up heading formats
@@ -236,14 +236,17 @@ recent changes.
 
 .H 2 "Items Changed"
 .P
+The 'access' argument to
+dwarf_init_b() and
+the other dwarf_init functions
+the DW_DLC_READ macro have been
+deleted entirely. 
+Other unused arguments to the
+dwarf_init_b() (etc) functions
+have been deleted too.
+The argument list to dwarf_bitoffset()
+changed to allow use with DWARF5.
 22 June 2021
-The DW_DLC_READ macro (as well
-as the other DW_DLC macros) 
-has been deleted from libdwarf.h.
-the access argument has been deleted.
-.P
-Many obsolete functions deleted.
-18 June 2021.
 .P
 If dwarf_formudata() encounters a signed form
 it checks the value. If the value is non-negative
@@ -466,6 +469,12 @@ and dwarf_object_detector_fd().
 very relevant
 
 .H 2 "Items Removed"
+Many obsolete functions
+have been removed.
+These functions were
+obsolete as they could
+not properly handle
+DWARF5.
 .P
 
 .H 2 "Revision History"
@@ -2285,18 +2294,6 @@ If those are zero the
 special processing will not occur.
 
 .P
-Pass in zero with the
-\f(CWaccess\fP
-\f(CW
-\fP
-argument.
-The 
-\f(CWDW_DLC_READ\fP
-flag,
-which only ever applied to libelf,
-is zero.
-
-.P
 The
 \f(CWgroupnumber\fP
 argument indicates which group is to
@@ -2389,13 +2386,6 @@ Pass both as zero if there are
 no debuglink global paths
 other than the default standard
 \f(CW/usr/lib/debug\fP.
-.P
-for the
-\f(CWaccess\fP
-argument pass in 0.
-There is no DW_DLC_READ
-macro now.
-
 
 
 .H 3 "dwarf_init_b()"
@@ -2418,12 +2408,6 @@ the open file descriptor \f(CWfd\fP.
 does not contain DWARF debugging information.
 \f(CWDW_DLV_ERROR\fP is returned if
 an error occurred.
-.P
-for the
-\f(CWaccess\fP
-argument pass in 0.
-There is no DW_DLC_READ
-macro now.
 .P
 The
 \f(CWgroupnumber\fP argument indicates which group is to

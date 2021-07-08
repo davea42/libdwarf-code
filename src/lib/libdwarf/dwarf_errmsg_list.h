@@ -72,8 +72,8 @@ const char *_dwarf_errmsgs[] = {
 "DW_DLE_FSTAT_MODE_ERROR (25) The file mode bits do not "
     "indicate that the file being opened via "
     "dwarf_init() is a normal file",
-"DW_DLE_INIT_ACCESS_WRONG (26) A call to dwarf_init had an "
-    "access of other than DW_DLC_READ",
+"DW_DLE_INIT_ACCESS_WRONG (26) A call to dwarf_init failed,"
+    " this error impossible as of July 2021",
 "DW_DLE_ELF_BEGIN_ERROR (27) a call to "
     "elf_begin(... ELF_C_READ_MMAP... ) failed",
 "DW_DLE_ELF_GETEHDR_ERROR (28) a call to "

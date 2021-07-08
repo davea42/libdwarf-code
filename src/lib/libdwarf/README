@@ -13,9 +13,12 @@ To build  both, type
         ./configure --enable-shared 
         make
 
-The DW_DLC_* defines in libdwarf.h have been
-removed. Instead of DW_DLC_READ, just pass 0
-to that 'access' argument of dwarf_init* functions.
+July 8, 2021: The dwarf_init* functions
+had unused and unnecessary arguments.
+These useless arguments have been removed
+from libdwarf. The argument list to dwarf_bitoffset()
+changed so it can be used properly with DWARF5
+and work with earlier DWARF.
 
 April 16, 2017: Some people have had build problems, getting
 errors like:
