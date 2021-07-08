@@ -44,6 +44,11 @@ To build using CMake one might do
 * build: `cmake --build _Release --target dd`
 * (optionally install): `sudo cmake --build _Release --target install`
 
+## CMake Options
+- `BUILD_DWARFEXAMPLE` - builds dwarfexample when `ON`
+- `BUILD_DWARFGEN` - builds dwarfgen when `ON`
+- `LIBDWARF_CRT` - either `MD` or `MT`, by default `MD`. Sets the MSVC runtime used by libdwarf, debug symbols will be used in debug builds.
+
 # for autotools builds, see README
 
 ### Using autotools
@@ -81,4 +86,3 @@ a build and then
   make dist
 
 David Anderson. 
-

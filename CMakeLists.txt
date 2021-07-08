@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.15)
 
 project(libdwarf C CXX)
 
@@ -13,6 +13,19 @@ macro(msvc_posix target)
 	    snprintf=_snprintf)
     endif()
 endmacro()
+
+set(LIBDWARF_CRT "MD" CACHE STRING "Either MT or MD, specifies whether to use the static or dynamic MSVCRT.")
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # Check MSVCRT option and set flags accordingly
+  if (LIBDWARF_CRT STREQUAL "MT")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug, RelWithDebInfo>:Debug>")
+  elseif(LIBDWARF_CRT STREQUAL "MD")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug, RelWithDebInfo>:Debug>DLL")
+  else()
+    message(FATAL_ERROR "LIBDWARF_CRT must be MT or MD")
+  endif()
+endif()
 
 # set target folder on IDE
 macro(set_folder target folder)
