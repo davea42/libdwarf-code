@@ -111,9 +111,7 @@ dwarf_init_path_dl(path true_path and globals, dbg1
     Created September 2018
 
     The init functions here cannot process archives.
-    For archives the libelf-only dwarf_elf_init*()
-    functions are used if present, else archives
-    cannot be read.
+    Archives cannot be read by libdwarf.
 */
 static int
 open_a_file(const char * name)
@@ -121,16 +119,7 @@ open_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int fd = -1;
 
-#if HAVE_ELF_OPEN
-    /*  It is not possible to share file handles
-        between applications or DLLs. Each application has its own
-        file-handle table. For two applications to use the same file
-        using a DLL, they must both open the file individually.
-        Let the 'libelf' dll open and close the file.  */
-    fd = elf_open(name, O_RDONLY | O_BINARY);
-#else
     fd = open(name, O_RDONLY | O_BINARY);
-#endif
     return fd;
 }
 
