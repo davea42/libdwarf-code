@@ -2094,25 +2094,25 @@ int dwarf_line_subprog(Dwarf_Line /*line*/,
 /* End of line table interfaces. */
 
 /*  .debug_names names table interfaces. DWARF5.
-    By Sections 6.1 and 6.1.1
+    By Sections 6.1 and 6.1.1,
     "a name index is maintained in a separate object
     file section named .debug_names."
     It supercedes .debug_pubnames and .debug_pubtypes,
     which, also were wholeprogram lookup information.
     Nonetheless the following does not assume a single
     name index in an object file.
-    "header_count" returns the number of name_indexes.
 */
-int dwarf_debugnames_header(Dwarf_Debug /*dbg*/,
+int dwarf_dnames_header(Dwarf_Debug /*dbg*/,
+    Dwarf_Off           /*starting_offset*/,
     Dwarf_Dnames_Head * /*dn_out*/,
-    Dwarf_Unsigned    * /*name_index_count*/,
+    Dwarf_Off         * /*offset_of_next_table*/,
     Dwarf_Error *       /*error*/);
-/*  Frees all the malloc data associated with dn */
-void dwarf_dealloc_debugnames(Dwarf_Dnames_Head dn);
 
-int dwarf_debugnames_sizes(Dwarf_Dnames_Head /*dn*/,
+/*  Frees all the malloc data associated with dn */
+void dwarf_dealloc_dnames(Dwarf_Dnames_Head dn);
+
+int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
     /* The counts are entry counts, not byte sizes. */
-    Dwarf_Unsigned   /*name_index_count*/,
     Dwarf_Unsigned * /*comp_unit_count*/,
     Dwarf_Unsigned * /*local_type_unit_count*/,
     Dwarf_Unsigned * /*foreign_type_unit_count*/,
@@ -2121,39 +2121,35 @@ int dwarf_debugnames_sizes(Dwarf_Dnames_Head /*dn*/,
 
     /* The following are counted in bytes */
     Dwarf_Unsigned * /*indextable_overall_length*/,
-    Dwarf_Unsigned * /*abbrev_table_size*/,
     Dwarf_Unsigned * /*entry_pool_size*/,
     Dwarf_Unsigned * /*augmentation_string_size*/,
+    char          ** /*augmentation_string*/,
+    Dwarf_Unsigned * /*section_size*/,
+    Dwarf_Half     * /*table_version*/,
     Dwarf_Error *    /*error*/);
 
-int dwarf_debugnames_cu_entry(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*name_index_number*/,
+int dwarf_dnames_cu_entry(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*cu_index_number*/,
     Dwarf_Unsigned    * /*offset_count*/,
     Dwarf_Unsigned    * /*offset*/,
     Dwarf_Error *       /*error*/);
-int dwarf_debugnames_local_tu_entry(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*name_index_number*/,
+int dwarf_dnames_local_tu_entry(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*tu_index_number*/,
     Dwarf_Unsigned    * /*offset_count*/,
     Dwarf_Unsigned    * /*offset*/,
     Dwarf_Error *       /*error*/);
-int dwarf_debugnames_foreign_tu_entry(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*name_index_number*/,
+int dwarf_dnames_foreign_tu_entry(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*forn_index_number*/,
     Dwarf_Unsigned    * /*sig_mininum*/,
     Dwarf_Unsigned    * /*sig_count*/,
     Dwarf_Sig8        * /*signature*/,
     Dwarf_Error *       /*error*/);
-int dwarf_debugnames_bucket(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*name_index_number*/,
+int dwarf_dnames_bucket(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*bucket_number*/,
     Dwarf_Unsigned    * /*bucket_count*/,
     Dwarf_Unsigned    * /*index_of_name_entry*/,
     Dwarf_Error *       /*error*/);
-
-int dwarf_debugnames_name(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*name_index_number*/,
+int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*name_number*/,
     Dwarf_Unsigned    * /*names_count*/,
     Dwarf_Sig8        * /*signature*/,
@@ -2161,8 +2157,7 @@ int dwarf_debugnames_name(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned    * /*offset_in_entrypool*/,
     Dwarf_Error *       /*error*/);
 
-int dwarf_debugnames_abbrev_by_index(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned    /*name_index_number*/,
+int dwarf_dnames_abbrev_by_index(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned    /*abbrev_number*/,
     Dwarf_Unsigned *  /*abbrev_code*/,
     Dwarf_Unsigned *  /*tag*/,
@@ -2179,8 +2174,7 @@ int dwarf_debugnames_abbrev_by_index(Dwarf_Dnames_Head /*dn*/,
 #if 0
 Because the abbrevs cover multiCUs (usually)
 there is no unique mapping possible.
-int dwarf_debugnames_abbrev_by_code(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned    /*name_index_number*/,
+int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned    /*abbrev_code*/,
     Dwarf_Unsigned *  /*tag*/,
 
@@ -2193,8 +2187,7 @@ int dwarf_debugnames_abbrev_by_code(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Error *    /*error*/);
 #endif /* 0 */
 
-int dwarf_debugnames_abbrev_form_by_index(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned   /*index_number*/,
+int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned   /*abbrev_entry_index*/,
     Dwarf_Unsigned   /*abbrev_form_index*/,
     Dwarf_Unsigned * /*name_index_attr*/,
@@ -2203,12 +2196,11 @@ int dwarf_debugnames_abbrev_form_by_index(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Error    * /*error*/);
 
 
-/*  This, combined with dwarf_debugnames_entrypool_values(),
+/*  This, combined with dwarf_dnames_entrypool_values(),
     lets one examine as much or as little of an entrypool
     as one wants to by alternately calling these two
     functions. */
-int dwarf_debugnames_entrypool(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned   /*index_number*/,
+int dwarf_dnames_entrypool(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned   /*offset_in_entrypool*/,
     Dwarf_Unsigned * /*abbrev_code*/,
     Dwarf_Unsigned * /*tag*/,
@@ -2225,8 +2217,7 @@ int dwarf_debugnames_entrypool(Dwarf_Dnames_Head /*dn*/,
     So this returns all the values for the abbrev code.
     And points via offset_of_next to the next abbrev code.
     */
-int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned   /*index_number*/,
+int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned   /*index_of_abbrev*/,
     Dwarf_Unsigned   /*offset_in_entrypool_of_values*/,
     Dwarf_Unsigned * /*array_dw_idx_number*/,
@@ -2237,8 +2228,6 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
     /*  offset of the next entrypool entry. */
     Dwarf_Unsigned * /*offset_of_next_entrypool*/,
     Dwarf_Error *    /*error*/);
-
-
 /* end of .debug_names interfaces. */
 
 /*  New October 2019.  Access to the GNU section named

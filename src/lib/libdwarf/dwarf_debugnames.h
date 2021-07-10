@@ -45,58 +45,8 @@ struct Dwarf_D_Abbrev_s {
 
 
 #define DWARF_DNAMES_VERSION5 5
+#define DWARF_DNAMES_MAGIC  0xabcd
 
-struct Dwarf_Dnames_index_header_s {
-    Dwarf_Debug    din_dbg;
-    struct Dwarf_Dnames_index_header_s *din_next;
-
-    /*  The .debug_names section offset of 1st byte
-        of a header record. */
-    Dwarf_Unsigned din_section_offset;
-
-    /* For offset and pointer sanity calculations. */
-    Dwarf_Small  * din_indextable_data;
-    Dwarf_Unsigned din_indextable_length;
-    unsigned       din_offset_size;
-
-    Dwarf_Unsigned din_version;
-    Dwarf_Unsigned din_comp_unit_count;
-    Dwarf_Unsigned din_local_type_unit_count;
-    Dwarf_Unsigned din_foreign_type_unit_count;
-    Dwarf_Unsigned din_bucket_count;
-    /*  din_name_count gives the size of
-        the din_string_offsets and din_entry_offsets arrays,
-        and if hashes present, the size of the
-        din_hash_table array. */
-    Dwarf_Unsigned din_name_count;
-    Dwarf_Unsigned din_abbrev_table_size; /* bytes */
-    Dwarf_Unsigned din_entry_pool_size;   /* bytes */
-
-    Dwarf_Unsigned din_augmentation_string_size;
-
-    /*  Since we cannot assume the string is NUL
-        terminated we allocate a sufficient
-        string space and NUL terminate the string.
-        The DWARF5 standard does not specify
-        it as null-terminated.  We copy it into
-        calloc area so not 'const'  */
-    char *   din_augmentation_string;
-
-    Dwarf_Small *  din_cu_list;
-    Dwarf_Small *  din_local_tu_list;
-    Dwarf_Small *  din_foreign_tu_list;
-    Dwarf_Small *  din_buckets;
-    Dwarf_Small *  din_hash_table;
-    Dwarf_Small *  din_string_offsets;
-    Dwarf_Small *  din_entry_offsets;
-    Dwarf_Small *  din_abbreviations;
-    Dwarf_Small *  din_entry_pool;
-
-    unsigned       din_abbrev_list_count;
-    /* An array of size din_abbrev_list_count. */
-    struct Dwarf_D_Abbrev_s * din_abbrev_list;
-
-};
 
 /*  The assumption  here is that though it is best
     (surely) to have a single names table
@@ -105,15 +55,58 @@ struct Dwarf_Dnames_index_header_s {
     Dwarf_Dnames_index_header_s (names table header).
 */
 struct Dwarf_Dnames_Head_s {
+    Dwarf_Unsigned            dn_magic;
     Dwarf_Debug               dn_dbg;
     Dwarf_Small             * dn_section_data;
     Dwarf_Small             * dn_section_end;
     Dwarf_Unsigned            dn_section_size;
-    unsigned                  dn_names_table_count;
 
-    /*  Becomes an array of these structs, dn_names_table_count
-        of them. */
-    struct Dwarf_Dnames_index_header_s * dn_names_table_first;
+    /*  The .debug_names section offset of 1st byte
+        of a header record. */
+    Dwarf_Unsigned dn_section_offset;
+
+    /* For offset and pointer sanity calculations. */
+    Dwarf_Small  * dn_indextable_data;
+    Dwarf_Unsigned dn_indextable_length;
+    unsigned       dn_offset_size;
+
+    Dwarf_Unsigned dn_version;
+    Dwarf_Unsigned dn_comp_unit_count;
+    Dwarf_Unsigned dn_local_type_unit_count;
+    Dwarf_Unsigned dn_foreign_type_unit_count;
+    Dwarf_Unsigned dn_bucket_count;
+    /*  dn_name_count gives the size of
+        the dn_string_offsets and dn_entry_offsets arrays,
+        and if hashes present, the size of the
+        dn_hash_table array. */
+    Dwarf_Unsigned dn_name_count;
+    Dwarf_Unsigned dn_abbrev_table_size; /* bytes */
+    Dwarf_Unsigned dn_entry_pool_size;   /* bytes */
+
+    Dwarf_Unsigned dn_augmentation_string_size;
+
+    /*  Since we cannot assume the string is NUL
+        terminated we allocate a sufficient
+        string space and NUL terminate the string.
+        The DWARF5 standard does not specify
+        it as null-terminated.  We copy it into
+        calloc area so not 'const'  */
+    char *   dn_augmentation_string;
+
+    Dwarf_Small *  dn_cu_list;
+    Dwarf_Small *  dn_local_tu_list;
+    Dwarf_Small *  dn_foreign_tu_list;
+    Dwarf_Small *  dn_buckets;
+    Dwarf_Small *  dn_hash_table;
+    Dwarf_Small *  dn_string_offsets;
+    Dwarf_Small *  dn_entry_offsets;
+    Dwarf_Small *  dn_abbreviations;
+    Dwarf_Small *  dn_entry_pool;
+
+    unsigned       dn_abbrev_list_count;
+    /* An array of size dn_abbrev_list_count. */
+    struct Dwarf_D_Abbrev_s * dn_abbrev_list;
+
 };
 
-void _dwarf_debugnames_destructor(void *m);
+void _dwarf_dnames_destructor(void *m);

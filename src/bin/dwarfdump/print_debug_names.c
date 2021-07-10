@@ -31,13 +31,77 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "esb.h"
 #include "esb_using_functions.h"
 
+static int
+print_dname_record(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned offset,
+    Dwarf_Unsigned new_offset,
+    Dwarf_Error *error)
+{
+    int res = 0;
+    Dwarf_Unsigned comp_unit_count = 0;
+    Dwarf_Unsigned local_type_unit_count = 0;
+    Dwarf_Unsigned foreign_type_unit_count = 0;
+    Dwarf_Unsigned bucket_count = 0;
+    Dwarf_Unsigned name_count = 0;
+    Dwarf_Unsigned indextable_length = 0;
+    Dwarf_Unsigned entry_pool_size = 0;
+    Dwarf_Unsigned augmentation_string_size = 0;
+    Dwarf_Unsigned section_size = 0;
+    Dwarf_Half table_version = 0;
+    char * augstring = 0;
+
+    res = dwarf_dnames_sizes(dn,&comp_unit_count,
+        &local_type_unit_count,&foreign_type_unit_count,
+        &bucket_count,
+        &name_count,&indextable_length,
+        &entry_pool_size,&augmentation_string_size,
+        &augstring,
+        &section_size,&table_version,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    printf("Name table offset       : %"
+        DW_PR_XZEROS DW_PR_DUx "\n", 
+        offset);
+    printf("Next name table offset  : %"
+        DW_PR_XZEROS DW_PR_DUx "\n", 
+        new_offset);
+    printf("Section size            : %"
+        DW_PR_XZEROS DW_PR_DUx "\n", 
+        section_size);
+    printf("Table version           : %u\n",
+        table_version);
+    printf("Comp unit count         : %" DW_PR_DUu "\n", 
+        comp_unit_count);
+    printf("Type unit count         : %" DW_PR_DUu "\n", 
+        local_type_unit_count);
+    printf("Foreign Type unit count : %" DW_PR_DUu "\n", 
+        foreign_type_unit_count);
+    printf("Bucket count            : %" DW_PR_DUu "\n", 
+        bucket_count);
+    printf("Name count              : %" DW_PR_DUu "\n", 
+        name_count);
+    printf("Indextable length       : %" DW_PR_DUu "\n", 
+        indextable_length);
+    printf("Augmentation string size: %" DW_PR_DUu "\n", 
+        augmentation_string_size);
+    if (augmentation_string_size > 0) {
+        printf("Augmentation string     : %s\n",
+            sanitized(augstring));
+    }
+    return DW_DLV_OK;
+}
+
 int
 print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Dnames_Head dnhead = 0;
-    Dwarf_Unsigned dn_count = 0;
-    Dwarf_Unsigned dnindex = 0;
+    Dwarf_Unsigned offset = 0;
+    Dwarf_Unsigned new_offset = 0;
     int res = 0;
+    const char * section_name = ".debug_names";
+    struct esb_s truename;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
 
     if (!dbg) {
         printf("ERROR: Cannot print .debug_names, "
@@ -45,36 +109,34 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
         return DW_DLV_NO_ENTRY;
     }
     glflags.current_section_id = DEBUG_NAMES;
+    /* Do nothing if not printing. */
+    if (!glflags.gf_do_print_dwarf) {
+        return DW_DLV_OK;
+    }
 
     /*  Only print anything if we know it has debug names
         present. And for now there is none. FIXME. */
-    res = dwarf_debugnames_header(dbg,&dnhead,&dn_count,error);
+    res = dwarf_dnames_header(dbg,offset,&dnhead,&new_offset,error);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
-    /* Do nothing if not printing. */
-    if (glflags.gf_do_print_dwarf) {
-        const char * section_name = ".debug_names";
-        struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
-
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,section_name,
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,section_name,
             &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
-    }
-    if (glflags.gf_do_print_dwarf) {
-        printf("names tables: %" DW_PR_DUu "\n",dn_count);
-    }
-    for ( ; dnindex < dn_count; ++dnindex) {
-        if (glflags.gf_do_print_dwarf) {
-            printf("names table %" DW_PR_DUu "\n",dnindex);
+    printf("\n%s\n",sanitized(esb_get_string(&truename)));
+    esb_destructor(&truename);
+    while (res == DW_DLV_OK) {
+        res = print_dname_record(dnhead,offset,new_offset,error);
+        if (res != DW_DLV_OK) {
+            dwarf_dealloc_dnames(dnhead);
+            dnhead = 0;
+            return res;
         }
+        offset = new_offset;
+        dwarf_dealloc_dnames(dnhead);
+        dnhead = 0;
+        res = dwarf_dnames_header(dbg,offset,&dnhead,
+            &new_offset,error);
     }
-    dwarf_dealloc_debugnames(dnhead);
-    return DW_DLV_OK;
+    return res;
 }
