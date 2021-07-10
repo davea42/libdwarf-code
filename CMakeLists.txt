@@ -334,20 +334,6 @@ else()
     set(dwarf_namestable "-t")
 endif()
 
-option(HAVE_OLD_FRAME_CFA_COL "Use HAVE_OLD_FRAME_CFA_COL (default is to use new DW_FRAME_CFA_COL3)" FALSE)
-message(STATUS "Checking enable old frame columns... ${HAVE_OLD_FRAME_CFA_COL}")
-
-#  See pro_init(), HAVE_DWARF2_99_EXTENSION also generates
-#  32bit offset dwarf unless DW_DLC_OFFSET_SIZE_64 flag passed to
-#  pro_init.
-option(HAVE_SGI_IRIX_OFFSETS "Force producer to SGI IRIX offset dwarf" FALSE)
-message(STATUS "Checking  producer generates SGI IRIX output... ${HAVE_SGI_IRIX_OFFSETS}")
-
-option(HAVE_STRICT_DWARF2_32BIT_OFFSET "Force producer to generate only DWARF format 32bit" FALSE)
-set(HAVE_DWARF2_99_EXTENSION NOT ${HAVE_STRICT_DWARF2_32BIT_OFFSET})
-message(STATUS "Checking producer generates only 32bit... ${HAVE_STRICT_DWARF2_32BIT_OFFSET}")
-
-
 # This references cmake/FindLibElf.cmake. See cmake documentation.
 find_package(LibElf REQUIRED)
 list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})

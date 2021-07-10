@@ -37,9 +37,6 @@ default build next:
         -DBUILD_DWARFEXAMPLE=OFF \
         -DWALL=OFF \
         -DDO_TESTING=OFF\
-        -DHAVE_OLD_FRAME_CFA_COL=OFF \
-        -DHAVE_SGI_IRIX_OFFSETS=OFF \
-        -DHAVE_STRICT_DWARF2_32BIT_OFFSET=OFF \
         /path/to/code
     make
 
