@@ -36,14 +36,14 @@ TESTS =  test_dwarfstring test_extra_flag_strings \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb test_sectionbitmaps test_dwarflebtest \
   test_tied test_getnametest test_objectaccess \
-  test_errmsglist
+  test_errmsglist test_canonical
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
  test_testesb  test_sectionbitmaps test_dwarflebtest  \
  test_tied test_getnametest test_objectaccess \
- test_errmsglist
+ test_errmsglist test_canonical
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
@@ -175,6 +175,15 @@ test_errmsglist_SOURCES = test_errmsglist.c
 test_errmsglist = $(RO_CFLAGS_WARN)
 test_errmsglist_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/libdwarf 
+
+test_canonical_SOURCES = test_canonical.c \
+    $(top_srcdir)/src/bin/dwarfdump/dwconf.c \
+    $(top_srcdir)/src/bin/dwarfdump/esb.c
+test_canonical_FLAGS = $(RO_CFLAGS_WARN)
+test_canonical_CPPFLAGS = \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \ 
 -I$(top_srcdir)/src/lib/libdwarf 
 
 TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh 

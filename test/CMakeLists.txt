@@ -211,6 +211,19 @@ if (DO_TESTING)
         "${CMAKE_SOURCE_DIR}/src/lib/libdwarf/libdwarf.h")
 endif()
 
+if (DO_TESTING)
+    set_source_group(CANONICALLIST "Source Files"
+        ${CMAKE_SOURCE_DIR}/test/test_canonical.c 
+        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwconf.c
+        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/esb.c)
+    add_executable(selfcanonical ${CANONICALLIST})
+    target_compile_options(selfcanonical PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
+    target_compile_options(selfcanonical PRIVATE ${DW_FWALL})
+    add_test(NAME selfcanonical COMMAND selfcanonical)
+endif()
+
 if (DO_TESTING) 
     add_custom_target (copyconf ALL
        COMMAND ${CMAKE_COMMAND} -E
@@ -221,6 +234,8 @@ if (DO_TESTING)
     set(execpedd "${CMAKE_BINARY_DIR}/src/bin/dwarfdump/dwarfdump")
     add_test(NAME selfdwarfdumppe COMMAND sh -c "${execpedd} -vvv -a ${peobj} |  head -700 | sed 's/last time 0x.*/last time 0x0/' >junk.testoutpe ; diff ${pebase} junk.testoutpe" )
 endif()
+
+
 
 if (DO_TESTING) 
     set(elfobj "${CMAKE_SOURCE_DIR}/test/testuriLE64ELf.obj") 

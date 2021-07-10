@@ -29,6 +29,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include "config.h"
 #include "globals.h"
+#include "dwconf.h"
 #include "sanitized.h"
 #include "esb.h"
 
@@ -281,15 +282,15 @@ find_conf_file_and_read_config(const char *named_file,
     return res;
 }
 
-/* Given path strings, attempt to make a canonical file name:
-   that is, avoid superfluous '/' so that no
+/*  Given path strings, attempt to make a canonical file name:
+    that is, avoid superfluous '/' so that no
     '//' (or worse) is created in the output. The path components
     are to be separated so at least one '/'
     is to appear between the two 'input strings' when
     creating the output.
 */
-static char *
-canonical_append(char *target, unsigned int target_size,
+char *
+_dwarf_canonical_append(char *target, unsigned int target_size,
     const char *first_string, const char *second_string)
 {
     size_t firstlen = strlen(first_string);
@@ -317,75 +318,6 @@ canonical_append(char *target, unsigned int target_size,
     return target;
 }
 
-#ifdef BUILD_FOR_TEST
-#define CANBUF 25
-struct canap_s {
-    char *res_exp;
-    char *first;
-    char *second;
-} canap[] = {
-    {
-    "ab/c", "ab", "c"}, {
-    "ab/c", "ab/", "c"}, {
-    "ab/c", "ab", "/c"}, {
-    "ab/c", "ab////", "/////c"}, {
-    "ab/", "ab", ""}, {
-    "ab/", "ab////", ""}, {
-    "ab/", "ab////", ""}, {
-    "/a", "", "a"}, {
-    0, "/abcdefgbijkl", "pqrstuvwxyzabcd"}, {
-    0, 0, 0}
-};
-static void
-test_canonical_append(void)
-{
-    /* Make buf big, this is test code, so be safe. */
-    char lbuf[1000];
-    unsigned i;
-    unsigned failcount = 0;
-
-    printf("Entry test_canonical_append\n");
-    for (i = 0;; ++i) {
-        char *res = 0;
-
-        if (canap[i].first == 0 && canap[i].second == 0)
-            break;
-
-        res = canonical_append(lbuf, CANBUF, canap[i].first,
-            canap[i].second);
-        if (res == 0) {
-            if (canap[i].res_exp == 0) {
-                /* GOOD */
-                printf("PASS %u\n", i);
-            } else {
-                ++failcount;
-                printf("FAIL: entry %u wrong, expected "
-                    "%s, got NULL\n",
-                    i, canap[i].res_exp);
-            }
-        } else {
-            if (canap[i].res_exp == 0) {
-                ++failcount;
-                printf("FAIL: entry %u wrong, got %s "
-                    "expected NULL\n",
-                    i, res);
-            } else {
-                if (strcmp(res, canap[i].res_exp) == 0) {
-                    printf("PASS %u\n", i);
-                    /* GOOD */
-                } else {
-                    ++failcount;
-                    printf("FAIL: entry %u wrong, "
-                        "expected %s got %s\n",
-                        i, canap[i].res_exp, res);
-                }
-            }
-        }
-    }
-    printf("FAIL count %u\n", failcount);
-
-}
-#endif /* BUILD_FOR_TEST */
 /*  Try to find a file as named and open for read.
     We treat each name as a full name, we are not
     combining separate name and path components.
@@ -407,10 +339,6 @@ find_a_file(const char *named_file,
     const char *lname = named_file;
     const char *type = "r";
     int i = 0;
-
-#ifdef BUILD_FOR_TEST
-    test_canonical_append();
-#endif /* BUILD_FOR_TEST */
 
     if (lname && (strlen(lname) > 0)) {
         /*  Name given, just assume it is fully correct,
@@ -476,8 +404,8 @@ find_a_file(const char *named_file,
             char buf[2000];
             char *homedir = getenv("HOME");
             if (homedir) {
-                char *cp = canonical_append(buf, sizeof(buf),
-                    homedir, lname + 5);
+                char *cp = _dwarf_canonical_append(buf,
+                    sizeof(buf), homedir, lname + 5);
                 if (!cp) {
                     /* OOps, ignore this one. */
                     continue;
