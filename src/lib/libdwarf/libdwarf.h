@@ -2103,8 +2103,11 @@ int dwarf_line_subprog(Dwarf_Line /*line*/,
     name index in an object file.
 */
 int dwarf_dnames_header(Dwarf_Debug /*dbg*/,
+    Dwarf_Off           /*starting_offset*/,
     Dwarf_Dnames_Head * /*dn_out*/,
+    Dwarf_Off         * /*offset_of_next_table*/,
     Dwarf_Error *       /*error*/);
+
 /*  Frees all the malloc data associated with dn */
 void dwarf_dealloc_dnames(Dwarf_Dnames_Head dn);
 
@@ -2118,9 +2121,11 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
 
     /* The following are counted in bytes */
     Dwarf_Unsigned * /*indextable_overall_length*/,
-    Dwarf_Unsigned * /*abbrev_table_size*/,
     Dwarf_Unsigned * /*entry_pool_size*/,
     Dwarf_Unsigned * /*augmentation_string_size*/,
+    char          ** /*augmentation_string*/,
+    Dwarf_Unsigned * /*section_size*/,
+    Dwarf_Half     * /*table_version*/,
     Dwarf_Error *    /*error*/);
 
 int dwarf_dnames_cu_entry(Dwarf_Dnames_Head /*dn*/,

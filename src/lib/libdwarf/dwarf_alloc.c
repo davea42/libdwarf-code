@@ -403,7 +403,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 
     /* 0x3f 63 DW_DLA_DNAMES_HEAD */
     {sizeof(struct Dwarf_Dnames_Head_s),MULTIPLY_NO, 0,
-        _dwarf_debugnames_destructor},
+        _dwarf_dnames_destructor},
 
     /* 0x40 64 DW_DLA_STR_OFFSETS */
     {sizeof(struct Dwarf_Str_Offsets_Table_s),MULTIPLY_NO, 0,0},

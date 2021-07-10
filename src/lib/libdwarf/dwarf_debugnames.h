@@ -45,6 +45,7 @@ struct Dwarf_D_Abbrev_s {
 
 
 #define DWARF_DNAMES_VERSION5 5
+#define DWARF_DNAMES_MAGIC  0xabcd
 
 
 /*  The assumption  here is that though it is best
@@ -54,11 +55,11 @@ struct Dwarf_D_Abbrev_s {
     Dwarf_Dnames_index_header_s (names table header).
 */
 struct Dwarf_Dnames_Head_s {
+    Dwarf_Unsigned            dn_magic;
     Dwarf_Debug               dn_dbg;
     Dwarf_Small             * dn_section_data;
     Dwarf_Small             * dn_section_end;
     Dwarf_Unsigned            dn_section_size;
-    unsigned                  dn_names_table_count;
 
     /*  The .debug_names section offset of 1st byte
         of a header record. */
@@ -108,4 +109,4 @@ struct Dwarf_Dnames_Head_s {
 
 };
 
-void _dwarf_debugnames_destructor(void *m);
+void _dwarf_dnames_destructor(void *m);
