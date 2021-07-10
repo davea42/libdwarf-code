@@ -1367,16 +1367,7 @@ open_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int f = -1;
 
-#if HAVE_ELF_OPEN
-    /*  It is not possible to share file handles
-        between applications or DLLs. Each application has its own
-        file-handle table. For two applications to use the same file
-        using a DLL, they must both open the file individually.
-        Let the 'libelf' dll open and close the file.  */
-    f = elf_open(name, O_RDONLY | O_BINARY);
-#else
     f = open(name, O_RDONLY | O_BINARY);
-#endif
     return f;
 }
 
@@ -1386,17 +1377,8 @@ create_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int f = -1;
 
-#if HAVE_ELF_OPEN
-    /*  It is not possible to share file handles
-        between applications or DLLs. Each application has its own
-        file-handle table. For two applications to use the same file
-        using a DLL, they must both open the file individually.
-        Let the 'libelf' dll to open and close the file.  */
-    f = elf_open(name, O_WRONLY | O_CREAT | O_BINARY);
-#else
     int mode =  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
     f = open(name,O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, mode);
-#endif
     return f;
 }
 
