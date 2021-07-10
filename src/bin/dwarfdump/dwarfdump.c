@@ -81,10 +81,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 # endif
 #endif /* O_BINARY */
 
-#ifdef HAVE_ELF_OPEN
-extern int elf_open(const char *name,int mode);
-#endif /* HAVE_ELF_OPEN */
-
 #define BYTES_PER_INSTRUCTION 4
 
 /*  The type of Bucket. */
@@ -127,20 +123,10 @@ open_a_file(const char * name)
 {
     /* Set to a file number that cannot be legal. */
     int fd = -1;
-
-#if HAVE_ELF_OPEN
-    /*  It is not possible to share file handles
-        between applications or DLLs. Each application has its own
-        file-handle table. For two applications to use the same file
-        using a DLL, they must both open the file individually.
-        Let the 'libelf' dll open and close the file.  */
-    fd = elf_open(name, O_RDONLY | O_BINARY);
-#else
     fd = open(name, O_RDONLY | O_BINARY);
-#endif
     return fd;
-
 }
+
 static void
 close_a_file(int f)
 {
