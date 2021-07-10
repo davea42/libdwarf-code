@@ -61,29 +61,29 @@ print_dname_record(Dwarf_Dnames_Head dn,
         return res;
     }
     printf("Name table offset       : %"
-        DW_PR_XZEROS DW_PR_DUx "\n", 
+        DW_PR_XZEROS DW_PR_DUx "\n",
         offset);
     printf("Next name table offset  : %"
-        DW_PR_XZEROS DW_PR_DUx "\n", 
+        DW_PR_XZEROS DW_PR_DUx "\n",
         new_offset);
     printf("Section size            : %"
-        DW_PR_XZEROS DW_PR_DUx "\n", 
+        DW_PR_XZEROS DW_PR_DUx "\n",
         section_size);
     printf("Table version           : %u\n",
         table_version);
-    printf("Comp unit count         : %" DW_PR_DUu "\n", 
+    printf("Comp unit count         : %" DW_PR_DUu "\n",
         comp_unit_count);
-    printf("Type unit count         : %" DW_PR_DUu "\n", 
+    printf("Type unit count         : %" DW_PR_DUu "\n",
         local_type_unit_count);
-    printf("Foreign Type unit count : %" DW_PR_DUu "\n", 
+    printf("Foreign Type unit count : %" DW_PR_DUu "\n",
         foreign_type_unit_count);
-    printf("Bucket count            : %" DW_PR_DUu "\n", 
+    printf("Bucket count            : %" DW_PR_DUu "\n",
         bucket_count);
-    printf("Name count              : %" DW_PR_DUu "\n", 
+    printf("Name count              : %" DW_PR_DUu "\n",
         name_count);
-    printf("Indextable length       : %" DW_PR_DUu "\n", 
+    printf("Indextable length       : %" DW_PR_DUu "\n",
         indextable_length);
-    printf("Augmentation string size: %" DW_PR_DUu "\n", 
+    printf("Augmentation string size: %" DW_PR_DUu "\n",
         augmentation_string_size);
     if (augmentation_string_size > 0) {
         printf("Augmentation string     : %s\n",
@@ -122,7 +122,7 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     }
     esb_constructor_fixed(&truename,buf,sizeof(buf));
     get_true_section_name(dbg,section_name,
-            &truename,TRUE);
+        &truename,TRUE);
     printf("\n%s\n",sanitized(esb_get_string(&truename)));
     esb_destructor(&truename);
     while (res == DW_DLV_OK) {

@@ -49,7 +49,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*  The hashfunc return is now easily changed with
-    cc "-DDW_TSHASHTYPE=unsigned long" 
+    cc "-DDW_TSHASHTYPE=unsigned long"
     The quotes required here as the example type
     has a space character. */
 #ifndef DW_TSHASHTYPE

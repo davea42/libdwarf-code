@@ -189,7 +189,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
             Dwarf_Off cu_die_offset = 0;
             Dwarf_Die cu_die = NULL;
             Dwarf_Bool is_info = TRUE; /* has to be debug_info
-               as this involves addresses. */
+                as this involves addresses. */
 
             aires = dwarf_get_arange_info_b(arange_buf[i],
                 &segment,

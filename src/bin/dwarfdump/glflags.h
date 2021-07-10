@@ -320,7 +320,7 @@ struct glflags_s {
     /*  Start verbose at zero. verbose can
         be incremented with -v but not decremented. */
     int verbose;
-    int gf_show_dwarfdump_conf;/* Incremented with 
+    int gf_show_dwarfdump_conf;/* Incremented with
         --show-dwarfdump-conf, never decremented */
     Dwarf_Bool dense;
     Dwarf_Bool ellipsis;
@@ -420,7 +420,7 @@ Dwarf_Bool cu_data_is_set(void);
 #define dump_visited_info           glflags.nTrace[DUMP_VISITED_INFO]
 
 /*  Section IDs. See also libdwarfp/pro_opaque.h DEBUG_INFO etc
-    as we arbitrarily use the same numbering here. 
+    as we arbitrarily use the same numbering here.
     In pro_opaque the numbering matters.
     Here it helps us record where we are at any instant.
     It's not necessary they match but seems good to do.

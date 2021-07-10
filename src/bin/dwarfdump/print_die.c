@@ -6112,7 +6112,7 @@ print_location_list(Dwarf_Debug dbg,
             } else if (lres == DW_DLV_NO_ENTRY) {
                 return lres;
             }
-        } 
+        }
         if (loclist_source == DW_LKIND_expression &&
             lle_value != DW_LLE_start_end) {
             printf("ERROR: With DW_LKIND_expression"

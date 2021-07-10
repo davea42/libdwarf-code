@@ -621,9 +621,9 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
         /* try next sibling */
         prev_child = curdie;
         esb_empty_string(&nestname);
-        chres = dwarf_siblingof_b(dbg, curdie, 
-           dwarf_get_die_infotypes_flag(curdie),
-           &newsibling, err);
+        chres = dwarf_siblingof_b(dbg, curdie,
+            dwarf_get_die_infotypes_flag(curdie),
+            &newsibling, err);
         if (chres == DW_DLV_ERROR) {
             struct esb_s m;
 
@@ -725,7 +725,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             is_info,
             &cu_header_length,
             &version_stamp, &abbrev_offset,
-            &address_size, 
+            &address_size,
             &length_size,
             &extension_size,
             &type_signature,
@@ -819,8 +819,8 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         cures = dwarf_next_cu_header_d(dbg,
             is_info, &cu_header_length,
             &version_stamp, &abbrev_offset,
-            &address_size, 
-            &length_size,&extension_size, 
+            &address_size,
+            &length_size,&extension_size,
             &type_signature,&typeoffset,
             &next_cu_offset,
             &header_cu_type,

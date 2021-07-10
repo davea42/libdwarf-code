@@ -458,7 +458,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
 
                 /* Record offset for previous CU */
                 prev_cu_off = cu_die_off;
-                dres = dwarf_offdie_b(dbg, cu_die_off, 
+                dres = dwarf_offdie_b(dbg, cu_die_off,
                     is_info, &lcudie, err);
                 if (dres != DW_DLV_OK) {
                     struct esb_s msge;

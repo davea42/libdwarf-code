@@ -43,7 +43,7 @@ ranges_esb_string_destructor(void)
 /*  Because we do not know what DIE is involved, if the
     object being printed has different address sizes
     in different compilation units this will not work
-    properly: anything could happen. 
+    properly: anything could happen.
     This applies to .debug_ranges, something only used
     in DWARF3 and DWARF4.
 */
