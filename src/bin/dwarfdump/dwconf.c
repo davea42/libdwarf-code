@@ -288,7 +288,6 @@ find_conf_file_and_read_config(const char *named_file,
     is to appear between the two 'input strings' when
     creating the output.
 */
-#if defined(BUILD_FOR_TEST) || !defined(_WIN32)
 static char *
 canonical_append(char *target, unsigned int target_size,
     const char *first_string, const char *second_string)
@@ -317,7 +316,6 @@ canonical_append(char *target, unsigned int target_size,
     strcat(target, second_string);
     return target;
 }
-#endif /* defined(BUILD_FOR_TEST) || !defined(_WIN32) */
 
 #ifdef BUILD_FOR_TEST
 #define CANBUF 25
@@ -426,33 +424,53 @@ find_a_file(const char *named_file,
         }
         return 0;
     }
+
+#ifdef _WIN32
+    /*  Open the configuration file, located
+        in the directory where the tool is loaded from */
+    {
+        static char szPath[MAX_PATH];
+        if (GetModuleFileName(NULL,szPath,MAX_PATH)) {
+            char *pDir = strrchr(szPath,'/');
+            size_t len = 0;
+            if (!pDir) {
+                pDir = strrchr(szPath,'\\');
+                if (!pDir) {
+                    /* No file was found */
+                    goto try_unix_path;
+                }
+            }
+            /* Add the configuration name to the pathname */
+            ++pDir;
+            len = pDir - szPath;
+            safe_strcpy(pDir,sizeof(szPath)-len,
+                        "dwarfdump.conf",14);
+            lname = szPath;
+
+            if (glflags.gf_show_dwarfdump_conf) {
+               if (!lname || !strlen(lname)) {
+                  lname="<Impossible name  string>";
+               }
+               printf("dwarfdump looking for"
+                      " configuration as: \"%s\"\n", lname);
+            }
+
+            fin = fopen(lname, type);
+            if (fin) {
+                *name_used = lname;
+                return fin;
+            }
+            /* No file was found */
+            goto try_unix_path;
+        }
+    }
+
+  try_unix_path:
+#endif
+
     /* No name given, find a default, if we can. */
     for (i = 0; defaults[i]; ++i) {
         lname = defaults[i];
-#ifdef _WIN32
-        /*  Open the configuration file, located
-            in the directory where the tool is loaded from */
-        {
-            static char szPath[MAX_PATH];
-            if (GetModuleFileName(NULL,szPath,MAX_PATH)) {
-                char *pDir = strrchr(szPath,'/');
-                size_t len = 0;
-                if (!pDir) {
-                    pDir = strrchr(szPath,'\\');
-                    if (!pDir) {
-                        /* No file was found */
-                        return 0;
-                    }
-                }
-                /* Add the configuration name to the pathname */
-                ++pDir;
-                len = pDir - szPath;
-                safe_strcpy(pDir,sizeof(szPath)-len,
-                    "dwarfdump.conf",14);
-                lname = szPath;
-            }
-        }
-#else /* non-Win */
         if (strncmp(lname, "HOME/", 5) == 0) {
             /* arbitrary size */
             char buf[2000];
@@ -467,7 +485,6 @@ find_a_file(const char *named_file,
                 lname = makename(buf);
             }
         }
-#endif /* _WIN32 */
         if (glflags.gf_show_dwarfdump_conf) {
             if (!lname || !strlen(lname)) {
                 lname="<Impossible name  string>";
