@@ -291,7 +291,7 @@ main(int argc, char **argv)
             exit(1);
         }
         path=argv[2];
-     } else {
+    } else {
         /* env var should be set with base path of code */
         path = getenv("DWTOPSRCDIR");
         if (!path) {
@@ -303,7 +303,7 @@ main(int argc, char **argv)
         len = strlen(path);
         safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
         safe_strcpy(pathbuf+len,(char *)libpath,
-             sizeof(pathbuf) -len -1,(unsigned)strlen(libpath));
+            sizeof(pathbuf) -len -1,(unsigned)strlen(libpath));
         path = pathbuf;
     }
     check_dle_list(path);

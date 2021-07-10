@@ -40,42 +40,42 @@ static  Dwarf_Obj_Access_Section oursection =
 {0,0,1,".debug_info",0,1,0};
 
 static
-int gsinfo(void* obj UNUSEDARG, 
+int gsinfo(void* obj UNUSEDARG,
     Dwarf_Half section_index,
     Dwarf_Obj_Access_Section* return_section,
     int* error)
 {
-     /*  Here section indexes start at 0. 
-         In Elf the zero index is always empty.
-         See the comments in libdwarf.h:
-         struct Dwarf_Obj_Access_Methods_s */
-     if (section_index == 0) {
-         /* Fake up section data */
-         *return_section = oursection;
-         return DW_DLV_OK;
-     }
-     *error = DW_DLE_INIT_ACCESS_WRONG;
-     return DW_DLV_ERROR;
+    /*  Here section indexes start at 0.
+        In Elf the zero index is always empty.
+        See the comments in libdwarf.h:
+        struct Dwarf_Obj_Access_Methods_s */
+    if (section_index == 0) {
+        /* Fake up section data */
+        *return_section = oursection;
+        return DW_DLV_OK;
+    }
+    *error = DW_DLE_INIT_ACCESS_WRONG;
+    return DW_DLV_ERROR;
 }
 static
 Dwarf_Endianness gborder(void * obj UNUSEDARG)
 {
-     return DW_OBJECT_MSB;
+    return DW_OBJECT_MSB;
 }
 static
 Dwarf_Small glensize(void * obj UNUSEDARG)
 {
-     return 4;
+    return 4;
 }
 static
 Dwarf_Small gptrsize(void * obj UNUSEDARG)
 {
-     return 4;
+    return 4;
 }
 static
 Dwarf_Unsigned gseccount(void* obj UNUSEDARG)
 {
-     return 1;
+    return 1;
 }
 static
 int gloadsec(void * obj UNUSEDARG,
@@ -86,7 +86,7 @@ int gloadsec(void * obj UNUSEDARG,
     *error = 1;
     return DW_DLV_ERROR;
 }
-const Dwarf_Obj_Access_Methods methods= { gsinfo,  
+const Dwarf_Obj_Access_Methods methods= { gsinfo,
     gborder,
     glensize,
     gptrsize,
@@ -136,8 +136,8 @@ int main()
 
 
     if (errcount) {
-       printf("FAIL objectaccess.c\n");
-       exit(1);
+        printf("FAIL objectaccess.c\n");
+        exit(1);
     }
     return 0;
 }

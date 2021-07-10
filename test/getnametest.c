@@ -9,15 +9,15 @@
 
 static const char *
 resname(int res)
-{ 
+{
     if (res == DW_DLV_OK) {
-         return "DW_DLV_OK";
+        return "DW_DLV_OK";
     }
     if (res == DW_DLV_NO_ENTRY) {
-         return "DW_DLV_NO_ENTRY";
+        return "DW_DLV_NO_ENTRY";
     }
     if (res == DW_DLV_ERROR) {
-         return "DW_DLV_ERROR";
+        return "DW_DLV_ERROR";
     }
     return "BOGUS ERROR CODE";
 }
@@ -33,11 +33,11 @@ check_result(int actres, int expres,
             resname(expres),resname(actres),line);
         errcount++;
     }
-    if(expres == DW_DLV_OK) {
+    if (expres == DW_DLV_OK) {
         int err = 0;
         if (actname && expname) {
             if (!strcmp(actname,expname)) {
-               return 0; 
+                return 0;
             }
             err = 1;
         } else {
@@ -184,13 +184,9 @@ int main()
     errcount += check_result(res,DW_DLV_NO_ENTRY,name,
         "unexpected",
         __LINE__);
-
-
-
-
     if (errcount) {
-       printf("FAIL getnametest.c\n");
-       exit(1);
+        printf("FAIL getnametest.c\n");
+        exit(1);
     }
     return 0;
 }
