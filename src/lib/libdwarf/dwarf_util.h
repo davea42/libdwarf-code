@@ -389,8 +389,7 @@ int _dwarf_what_section_are_we(Dwarf_Debug dbg,
     const char **      section_name_out,
     Dwarf_Small    **sec_start_ptr_out,
     Dwarf_Unsigned *sec_len_out,
-    Dwarf_Small    **sec_end_ptr_out,
-    Dwarf_Error *error);
+    Dwarf_Small    **sec_end_ptr_out);
 
 /*  wrappers return either DW_DLV_OK or DW_DLV_ERROR.
     Never DW_DLV_NO_ENTRY. */

@@ -643,7 +643,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     } else {
         res = _dwarf_what_section_are_we(dbg,
             blockdataptr,&section_name,&section_start,
-            &section_size,&section_end,error);
+            &section_size,&section_end);
         if (res != DW_DLV_OK) {
             _dwarf_error(dbg, error,DW_DLE_POINTER_SECTION_UNKNOWN);
             return DW_DLV_ERROR;

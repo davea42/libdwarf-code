@@ -3313,7 +3313,7 @@ int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
     Dwarf_Unsigned * /*cooked2*/,
     Dwarf_Error *    /*err*/);
 
-int dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head);
+void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head);
 
 /*  Loads all the rnglists headers and
     returns DW_DLV_NO_ENTRY if the section

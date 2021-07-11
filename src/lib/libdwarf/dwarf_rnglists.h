@@ -35,6 +35,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
+#define RNGLISTS_MAGIC 0xabcd
+
 /*  Rangelists header for a CU. The
     type is never visible to libdwarf callers  */
 struct Dwarf_Rnglists_Context_s {
@@ -49,6 +51,7 @@ struct Dwarf_Rnglists_Context_s {
 
     /* Many places in in libdwarf this is called length_size. */
     Dwarf_Small     rc_offset_size;
+    unsigned long   rc_magic;
 
     /*  rc_extension_size is zero unless this is standard
         DWARF3 and later 64bit dwarf using the extension mechanism.
@@ -110,6 +113,7 @@ struct Dwarf_Rnglists_Head_s {
     Dwarf_Unsigned        rh_bytes_total;
 
     /*  A global Rnglists Context, */
+    unsigned long         rh_magic;
     Dwarf_CU_Context      rh_context;
     Dwarf_Debug           rh_dbg;
     Dwarf_Rnglists_Context rh_localcontext;

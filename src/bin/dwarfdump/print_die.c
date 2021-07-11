@@ -90,13 +90,11 @@ static int print_die_and_children_internal(Dwarf_Debug dbg,
 static int print_one_die_section(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
     Dwarf_Error *pod_err);
-static int handle_rnglists(Dwarf_Die die,
-    Dwarf_Attribute attrib,
+static int handle_rnglists(Dwarf_Attribute attrib,
     Dwarf_Half theform,
     Dwarf_Unsigned value,
     Dwarf_Unsigned *rle_offset_out,
     struct esb_s *  esbp,
-    int show_form,
     int local_verbose,
     Dwarf_Error *err);
 static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
@@ -3493,13 +3491,11 @@ print_range_attribute(Dwarf_Debug dbg,
         int res = 0;
         Dwarf_Unsigned rleoffset = 0;
 
-        res = handle_rnglists(die,
-            attr_in,
+        res = handle_rnglists( attr_in,
             theform,
             original_off,
             &rleoffset,
             esb_extrap,
-            glflags.show_form_used,
             glflags.verbose,
             raerr);
         if (print_else_name_match) {
@@ -6885,12 +6881,10 @@ check_decl_file_only(char **srcfiles,
 
 static int
 expand_rnglist_entries(
-    Dwarf_Die die UNUSEDARG,
     Dwarf_Rnglists_Head rnglhead,
     Dwarf_Unsigned rnglentriescount,
     Dwarf_Unsigned rnglglobal_offset,
     struct esb_s *  esbp,
-    int show_form UNUSEDARG,
     int local_verbose,
     Dwarf_Error *err)
 {
@@ -6985,13 +6979,11 @@ expand_rnglist_entries(
 
 /* DWARF5 .debug_rnglists[.dwo] only. */
 static int
-handle_rnglists(Dwarf_Die die,
-    Dwarf_Attribute attrib,
+handle_rnglists( Dwarf_Attribute attrib,
     Dwarf_Half theform,
     Dwarf_Unsigned attrval,
     Dwarf_Unsigned *output_rle_set_offset,
     struct esb_s *  esbp,
-    int show_form,
     int local_verbose,
     Dwarf_Error *err)
 {
@@ -7119,11 +7111,11 @@ handle_rnglists(Dwarf_Die die,
             length_of_context);
     }
 
-    res = expand_rnglist_entries(die,rnglhead,
+    res = expand_rnglist_entries(rnglhead,
         count_rnglists_entries,
         global_offset_of_rle_set,
         esbp,
-        show_form,local_verbose,err);
+        local_verbose,err);
     dwarf_dealloc_rnglists_head(rnglhead);
     return res;
 }
