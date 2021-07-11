@@ -158,6 +158,8 @@ AC_SUBST([requirements_libdwarf_pc])
 
 AC_SUBST([DWARFGEN_LIBS])
 AC_ARG_VAR([DWARFGEN_LIBS], [extra linker flags when linking dwarfgen])
+AC_SUBST([DWARF_LIBS])
+AC_ARG_VAR([DWARF_LIBS], [extra linker flags when linking dwarfdump])
 
 ### Checks for header files
 
