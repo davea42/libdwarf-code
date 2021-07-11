@@ -138,12 +138,24 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CC_C_O
 
-###PKG_PROG_PKG_CONFIG Intentionally not using pkg-config
+PKG_PROG_PKG_CONFIG
 
 ### Checks for libraries
 
-AC_SUBST([DWARF_LIBS])
-AC_ARG_VAR([DWARF_LIBS], [linker flags when linking libdwarf])
+requirements_libdwarf_pc=
+PKG_CHECK_MODULES([ZLIB], [zlib],
+    [
+     have_zlib="yes"
+     have_pc_zlib="yes"
+     requirements_libdwarf_pc=zlib
+    ],
+    [
+     have_zlib="no"
+     have_pc_zlib="no"
+    ])
+
+AC_SUBST([requirements_libdwarf_pc])
+
 AC_SUBST([DWARFGEN_LIBS])
 AC_ARG_VAR([DWARFGEN_LIBS], [extra linker flags when linking dwarfgen])
 
@@ -151,25 +163,14 @@ AC_ARG_VAR([DWARFGEN_LIBS], [extra linker flags when linking dwarfgen])
 
 ### MacOS does not have malloc.h
 AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
-### for uintptr_t 
+### for uintptr_t
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h])
 
-requirements_libdwarf_pc=
-requirements_libdwarf_libs=
-
-AC_CHECK_HEADERS([zlib.h])
 AS_IF(
-    [test "x${ac_cv_header_zlib_h}" = "xyes"],
-    [ have_pc_zlib="yes" ; echo "have zlib" ; 
-      DWARF_LIBS="${DWARF_LIBS} -lz" ;
-      requirements_libdwarf_libs=-lz ],
-    [ have_pc_zlib="no" ; echo "no zlib" ])
-
-AC_SUBST([requirements_libdwarf_pc])
-AC_SUBST([requirements_libdwarf_libs])
-
-requirements_libdwarfp_pc=
-requirements_libdwarfp_libs=
+    [test "x${have_zlib}" = "xno"],
+    [AC_CHECK_HEADERS([zlib.h],
+        [have_zlib="yes"],
+        [have_zlib="no"])])
 
 ### for use in casts to uint to avoid 32bit warnings.
 ### Also needed by C++ cstdint
@@ -197,13 +198,13 @@ if test  "$dwarf_with_libelf" = "yes" ; then
   ### if no dwarfgen do not add -lelf
   AS_IF([test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes" ],
     [ dwarf_with_libelf="no"
-      echo "no libelf headers, so no libelf" ],
+      AC_MSG_NOTICE(["no libelf headers, so no libelf"]) ],
     [ AS_IF([ test "x${enable_dwarfgen}" != "xyes" ], 
       [ dwarf_with_libelf="no"
-        echo "dwarfgen not needed, so no libelf"],
+        AC_MSG_NOTICE(["dwarfgen not needed, so no libelf"])],
       [ DWARFGEN_LIBS="${DWARFGEN_LIBS} -ldwarf -lelf"
         dwarf_with_libelf="yes"
-        echo "Allowing use of libelf for dwarfgen."
+        AC_MSG_NOTICE(["Allowing use of libelf for dwarfgen."])
         AC_DEFINE([DWARF_WITH_LIBELF],[1],
           [Set to 1 as we are building dwarfgen with libelf])])
     ])
@@ -497,7 +498,6 @@ AS_IF(
     [
      CFLAGS_save=${CFLAGS}
      CFLAGS="${CFLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -fno-omit-frame-pointer"
-     DWARF_CFLAGS=
      AC_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([[]], [[]])],
          [
@@ -506,8 +506,7 @@ AS_IF(
           LDFLAGS="$LDFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined -fno-omit-frame-pointer"
          ],
          [enable_sanitize="no"])
-     CFLAGS="${CFLAGS_save} ${DWARF_CFLAGS}" 
-     DWARF_CFLAGS=
+     CFLAGS="${CFLAGS_save} ${DWARF_CFLAGS}"
     ])
 
 AC_MSG_CHECKING([whether sanitize options are used])
@@ -548,19 +547,26 @@ AC_SEARCH_LIBS(
 CPPFLAGS=${CPPFLAGS_save}
 LIBS=${LIBS_save}
 
+
+requirements_libdwarf_libs=
 AS_IF(
     [test "x${have_pc_zlib}" = "xno"  -a "x${have_zlib}" = "xyes"],
-    [AC_SEARCH_LIBS([z], [have_zlib="yes"], [have_zlib="no"])])
+    [AC_SEARCH_LIBS(
+        [uncompress], [z],
+        [
+         ZLIB_LIBS="-lz"
+         requirements_libdwarf_libs="-lz"
+        ],
+        [have_zlib="no"])
+    ])
+
+AC_SUBST([requirements_libdwarf_libs])
 
 AS_IF(
-    [test "x${have_pc_zlib}" = "xyes"  -o "x${have_zlib}" = "xyes"],
+    [test "x${have_zlib}" = "xyes"],
     [
-     have_zlib="yes"
      AC_DEFINE([HAVE_ZLIB], [1], [Set to 1 if zlib decompression is available.])
      AC_DEFINE([HAVE_ZLIB_H], [1], [Set to 1 if zlib.h header file is available.])
-    ],
-    [
-     have_zlib="no"
     ])
 
 AC_COMPILE_IFELSE(
@@ -642,6 +648,7 @@ echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS ${c_compiler_flags}"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LIBS.................: $LIBS"
+echo "  DWARF_CFLAGS.........: $DWARF_CFLAGS"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
 echo "  DWARFGEN_LIBS........: $DWARFGEN_LIBS"
 echo

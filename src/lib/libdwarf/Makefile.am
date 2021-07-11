@@ -126,11 +126,11 @@ crc32.c \
 libdwarf.h \
 libdwarf_private.h \
 libdwarf_version.h \
-memcpy_swap.h 
+memcpy_swap.h
 
-libdwarf_la_CFLAGS = $(DWARF_CFLAGS_WARN) 
+libdwarf_la_CFLAGS = @ZLIB_CFLAGS@ $(DWARF_CFLAGS_WARN)
 
-libdwarf_la_LIBADD = @DWARF_LIBS@
+libdwarf_la_LIBADD = @DWARF_LIBS@ @ZLIB_LIBS@
 
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
@@ -140,7 +140,7 @@ $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
 $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 
 libdwarfdevdir = $(datadir)/src/lib/libdwarf/libdwarf-devel
-libdwarfdev_DATA = 
+libdwarfdev_DATA =
 
 EXTRA_DIST = \
 COPYING \
