@@ -531,10 +531,10 @@ int dwarf_load_loclists(Dwarf_Debug dbg,
 
     if (!dbg) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Debug "
-                "argument passed to "
-                "dwarf_load_loclists()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Debug "
+            "argument passed to "
+            "dwarf_load_loclists()");
         return DW_DLV_ERROR;
     }
     if (dbg->de_loclists_context) {
@@ -605,10 +605,10 @@ dwarf_get_loclist_offset_index_value(Dwarf_Debug dbg,
 
     if (!dbg) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Debug "
-                "argument passed to "
-                "dwarf_get_loclist_offset_index_value()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Debug "
+            "argument passed to "
+            "dwarf_get_loclist_offset_index_value()");
         return DW_DLV_ERROR;
     }
 
@@ -621,10 +621,10 @@ dwarf_get_loclist_offset_index_value(Dwarf_Debug dbg,
     con = dbg->de_loclists_context[context_index];
     if (!con || con->lc_magic != LOCLISTS_MAGIC) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "context NULL or not LOCLISTS_MAGIC "
-                "found in "
-                "dwarf_get_loclist_offset_index_value()");
+            "DW_DLE_DBG_NULL"
+            "context NULL or not LOCLISTS_MAGIC "
+            "found in "
+            "dwarf_get_loclist_offset_index_value()");
         return DW_DLV_ERROR;
     }
 
@@ -677,19 +677,19 @@ int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c head,
 
     if (!head) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Loc_Head_c "
-                "argument passed to "
-                "dwarf_get_loclist_head_basics()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Loc_Head_c "
+            "argument passed to "
+            "dwarf_get_loclist_head_basics()");
         return DW_DLV_ERROR;
     }
     if (head->ll_magic != LOCLISTS_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Loc_Head_c "
-                " not set with LOCLISTS_MAGIC in "
-                "argument passed to "
-                "dwarf_get_loclist_head_basics()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Loc_Head_c "
+            " not set with LOCLISTS_MAGIC in "
+            "argument passed to "
+            "dwarf_get_loclist_head_basics()");
         return DW_DLV_ERROR;
     }
     *lkind = head->ll_kind;
@@ -746,10 +746,10 @@ dwarf_get_loclist_context_basics(Dwarf_Debug dbg,
 
     if (!dbg) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Debug "
-                "argument passed to "
-                "dwarf_get_loclist_context_basics()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Debug "
+            "argument passed to "
+            "dwarf_get_loclist_context_basics()");
         return DW_DLV_ERROR;
     }
     if (!dbg->de_loclists_context_count) {
@@ -761,10 +761,10 @@ dwarf_get_loclist_context_basics(Dwarf_Debug dbg,
     con = dbg->de_loclists_context[context_index];
     if (!con || con->lc_magic != LOCLISTS_MAGIC) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "context NULL or not LOCLISTS_MAGIC "
-                "found in "
-                "dwarf_get_loclist_context_basics()");
+            "DW_DLE_DBG_NULL"
+            "context NULL or not LOCLISTS_MAGIC "
+            "found in "
+            "dwarf_get_loclist_context_basics()");
         return DW_DLV_ERROR;
     }
     if (header_offset) {
@@ -833,10 +833,10 @@ int dwarf_get_loclist_lle(Dwarf_Debug dbg,
 
     if (!dbg) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Debug "
-                "argument passed to "
-                "dwarf_get_loclist_lle()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Debug "
+            "argument passed to "
+            "dwarf_get_loclist_lle()");
         return DW_DLV_ERROR;
     }
     if (!dbg->de_loclists_context_count) {
@@ -852,10 +852,10 @@ int dwarf_get_loclist_lle(Dwarf_Debug dbg,
     con = dbg->de_loclists_context[contextnumber];
     if (!con || con->lc_magic != LOCLISTS_MAGIC) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "context NULL or not LOCLISTS_MAGIC "
-                "found in "
-                "dwarf_get_loclist_lle()");
+            "DW_DLE_DBG_NULL"
+            "context NULL or not LOCLISTS_MAGIC "
+            "found in "
+            "dwarf_get_loclist_lle()");
         return DW_DLV_ERROR;
     }
     address_size = con->lc_address_size;
@@ -998,7 +998,7 @@ alloc_rle_and_append_to_list(Dwarf_Debug dbg,
     }
     memset(e,0,sizeof(struct Dwarf_Locdesc_c_s));
     _dwarf_locdesc_c_constructor(dbg,e);
-    e->ld_magic = LOCLISTS_MAGIC; 
+    e->ld_magic = LOCLISTS_MAGIC;
     if (rctx->ll_first) {
         rctx->ll_last->ld_next = e;
         rctx->ll_last = e;
@@ -1279,11 +1279,11 @@ dwarf_get_loclists_entry_fields(
     Dwarf_Locdesc_c e = 0;
     if (!head || head->ll_magic != LOCLISTS_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Loc_Head_c "
-                " not set with LOCLISTS_MAGIC in "
-                "argument passed to "
-                "dwarf_get_loclist_entry_fields()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Loc_Head_c "
+            " not set with LOCLISTS_MAGIC in "
+            "argument passed to "
+            "dwarf_get_loclist_entry_fields()");
         return DW_DLV_ERROR;
     }
 
@@ -1328,19 +1328,19 @@ dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c head)
 {
     Dwarf_Debug dbg =  0;
 
-    if(!head) {
+    if (!head) {
         return;
     }
-    if(head->ll_magic != LOCLISTS_MAGIC) {
+    if (head->ll_magic != LOCLISTS_MAGIC) {
         return;
     }
     dbg = head->ll_dbg;
-    if(!dbg) {
+    if (!dbg) {
         return;
     }
     if (head->ll_first) {
         _dwarf_free_loclists_limited_head_content(head);
-    } 
+    }
     if (head->ll_locdesc) {
         Dwarf_Locdesc_c desc = head->ll_locdesc;
         /*  ASSERT: ll_first and ll_last are NULL */
@@ -1357,7 +1357,7 @@ dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c head)
             }
         }
         /*  It is an array of structs,
-            and the block in each is gone. 
+            and the block in each is gone.
             It will be a simple single free. */
         dwarf_dealloc(dbg,head->ll_locdesc,DW_DLA_LOCDESC_C);
         head->ll_locdesc_count = 0;

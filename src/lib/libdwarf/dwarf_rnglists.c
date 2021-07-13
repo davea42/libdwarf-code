@@ -397,7 +397,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
     }
     curr_chain = head_chain;
     for (i = 0; i < chainlength; ++i) {
-        Dwarf_Rnglists_Context c = 
+        Dwarf_Rnglists_Context c =
             (Dwarf_Rnglists_Context)curr_chain->ch_item;
         fullarray[i] = c;
         curr_chain->ch_item = 0;
@@ -436,10 +436,10 @@ int dwarf_load_rnglists(
 
     if (!dbg) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Debug "
-                "argument passed to "
-                "dwarf_load_rnglists()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Debug "
+            "argument passed to "
+            "dwarf_load_rnglists()");
         return DW_DLV_ERROR;
     }
     if (dbg->de_rnglists_context) {
@@ -513,11 +513,11 @@ dwarf_get_rnglist_offset_index_value(
     Dwarf_Unsigned targetoffset = 0;
 
     if (!dbg) {
-         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL "
-                "NULL dbg "
-                "argument passed to "
-                "dwarf_get_rnglist_offset_index_value()");
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL "
+            "NULL dbg "
+            "argument passed to "
+            "dwarf_get_rnglist_offset_index_value()");
         return DW_DLV_ERROR;
     }
     if (!dbg->de_rnglists_context) {
@@ -532,10 +532,10 @@ dwarf_get_rnglist_offset_index_value(
     }
     con = dbg->de_rnglists_context[context_index];
     if (con->rc_magic != RNGLISTS_MAGIC) {
-         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL "
-                "rnglists context magic wrong "
-                "not RNGLISTS_MAGIC");
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL "
+            "rnglists context magic wrong "
+            "not RNGLISTS_MAGIC");
         return DW_DLV_ERROR;
     }
     if (offsetentry_index >= con->rc_offset_entry_count) {
@@ -584,13 +584,13 @@ int dwarf_get_rnglist_head_basics(
 {
     Dwarf_Rnglists_Context rngcontext = 0;
 
-    if (!head || (!head->rh_dbg) || 
+    if (!head || (!head->rh_dbg) ||
         head->rh_magic != RNGLISTS_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL "
-                "NULL or invalid Dwarf_Rnglists_Head "
-                "argument passed to "
-                "dwarf_get_rnglist_head_basics()");
+            "DW_DLE_DBG_NULL "
+            "NULL or invalid Dwarf_Rnglists_Head "
+            "argument passed to "
+            "dwarf_get_rnglist_head_basics()");
         return DW_DLV_ERROR;
     }
     *rle_count = head->rh_count;
@@ -642,11 +642,11 @@ int dwarf_get_rnglist_context_basics(
 {
     Dwarf_Rnglists_Context con = 0;
     if (!dbg) {
-         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL "
-                "NULL dbg "
-                "argument passed to "
-                "dwarf_get_rnglist_context_basics()");
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL "
+            "NULL dbg "
+            "argument passed to "
+            "dwarf_get_rnglist_context_basics()");
         return DW_DLV_ERROR;
     }
     if (!dbg->de_rnglists_context_count) {
@@ -657,11 +657,11 @@ int dwarf_get_rnglist_context_basics(
     }
     con = dbg->de_rnglists_context[context_index];
     if (con->rc_magic != RNGLISTS_MAGIC) {
-         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL "
-                "rnglists context "
-                "not RNGLISTS_MAGIC "
-                "in dwarf_get_rnglist_context_basics()");
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL "
+            "rnglists context "
+            "not RNGLISTS_MAGIC "
+            "in dwarf_get_rnglist_context_basics()");
         return DW_DLV_ERROR;
     }
     if (header_offset) {
@@ -727,11 +727,11 @@ int dwarf_get_rnglist_rle(
     unsigned address_size = 0;
 
     if (!dbg) {
-         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL "
-                "NULL dbg "
-                "argument passed to "
-                "dwarf_get_rnglist_rle()");
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL "
+            "NULL dbg "
+            "argument passed to "
+            "dwarf_get_rnglist_rle()");
         return DW_DLV_ERROR;
     }
     if (!dbg->de_rnglists_context_count) {
@@ -869,7 +869,7 @@ dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head h)
     dbg = h->rh_dbg;
     h->rh_magic = 0;
     dwarf_dealloc(dbg,h,DW_DLA_RNGLISTS_HEAD);
-    return; 
+    return;
 }
 
 /*  Caller will eventually free as appropriate. */
@@ -1131,7 +1131,7 @@ dwarf_rnglists_get_rle_head(
     Dwarf_Unsigned offset_in_rnglists = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Bool is_rnglistx = FALSE;
-  
+
     if (!attr) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL "
@@ -1293,11 +1293,11 @@ dwarf_get_rnglists_entry_fields_a(
     Dwarf_Rnglists_Entry e = 0;
 
     if (!head || !head->rh_dbg || head->rh_magic != RNGLISTS_MAGIC) {
-        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL, 
-                "DW_DLE_DBG_NULL "
-                "NULL or invalid Dwarf_Rnglists_Head "
-                "argument passed to "
-                "dwarf_get_rnglists_entry_fields_a()");
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL "
+            "NULL or invalid Dwarf_Rnglists_Head "
+            "argument passed to "
+            "dwarf_get_rnglists_entry_fields_a()");
         return DW_DLV_ERROR;
     }
     if (entrynum >= head->rh_count) {

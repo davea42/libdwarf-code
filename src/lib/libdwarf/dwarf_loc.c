@@ -1033,10 +1033,10 @@ dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c ll_header,
 {
     if (!ll_header) {
         _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL: "
-                "NULL Dwarf_Loc_Head_c "
-                "argument passed to "
-                "dwarf_get_loclist_head_kind()");
+            "DW_DLE_DBG_NULL: "
+            "NULL Dwarf_Loc_Head_c "
+            "argument passed to "
+            "dwarf_get_loclist_head_kind()");
         return DW_DLV_ERROR;
     }
     *kind = ll_header->ll_kind;
@@ -1619,10 +1619,10 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
 
     if (!attr) {
         _dwarf_error_string(dbg, error,DW_DLE_ATTR_NULL,
-                "DW_DLE_ATTR_NULL"
-                "NULL Dwarf_Attribute "
-                "argument passed to "
-                "dwarf_get_loclist_c()");
+            "DW_DLE_ATTR_NULL"
+            "NULL Dwarf_Attribute "
+            "argument passed to "
+            "dwarf_get_loclist_c()");
         return DW_DLV_ERROR;
     }
     /* ***** BEGIN CODE ***** */
@@ -1771,10 +1771,10 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
 
     if (!dbg) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "NULL Dwarf_Debug "
-                "argument passed to "
-                "dwarf_loclist_from_expr_c()");
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Debug "
+            "argument passed to "
+            "dwarf_loclist_from_expr_c()");
         return DW_DLV_ERROR;
     }
     llhead = (Dwarf_Loc_Head_c)_dwarf_get_alloc(dbg,
@@ -1864,7 +1864,7 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
     Dwarf_Locdesc_c desc =  0;
     Dwarf_Unsigned  desc_count = 0;
     Dwarf_Debug     dbg = 0;
- 
+
     if (!loclist_head || loclist_head->ll_magic != LOCLISTS_MAGIC) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: "
@@ -1913,11 +1913,11 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     Dwarf_Unsigned max = 0;
 
     if (!locdesc) {
-          _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
-                "DW_DLE_DBG_NULL"
-                "Dwarf_Locdesc_c_Head_c NULL "
-                "in calling "
-                "dwarf_get_location_op_value_d()");
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL"
+            "Dwarf_Locdesc_c_Head_c NULL "
+            "in calling "
+            "dwarf_get_location_op_value_d()");
         return DW_DLV_ERROR;
     }
     max = locdesc->ld_cents;

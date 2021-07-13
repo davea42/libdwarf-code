@@ -248,15 +248,6 @@ read_uword_val(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0
-res = read_a_name_index(dn_header,
-            section_offset,
-            remaining,
-            curptr,
-            &usedspace,
-            dn_header->dn_section_end,
-            error);
-#endif
 static int
 read_a_name_index(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned  section_offset,
@@ -444,7 +435,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
                 }
             }
         }
-       usedspace += augmentation_string_size;
+        usedspace += augmentation_string_size;
     }
     /*  Now we deal with the arrays following the header. */
     dn->dn_cu_list = curptr;
@@ -471,7 +462,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         return DW_DLV_ERROR;
     }
     usedspace += SIZEOFT32* ( comp_unit_count +
-       local_type_unit_count + foreign_type_unit_count);
+        local_type_unit_count + foreign_type_unit_count);
 
     dn->dn_buckets = curptr;
     curptr +=  SIZEOFT32 * bucket_count ;
@@ -599,7 +590,7 @@ dwarf_dnames_header(Dwarf_Debug dbg,
         starting_offset,
         remaining,
         curptr,
-        &usedspace, 
+        &usedspace,
         dn_header->dn_section_end,
         error);
     if (res == DW_DLV_ERROR) {
@@ -998,7 +989,7 @@ dwarf_dnames_abbrev_by_index(Dwarf_Dnames_Head dn,
     Dwarf_Error *error)
 {
     struct Dwarf_D_Abbrev_s * abbrev = 0;
-    
+
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
         _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
@@ -1095,7 +1086,7 @@ dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
 {
     struct Dwarf_D_Abbrev_s * abbrev = 0;
     struct abbrev_pair_s *ap = 0;
-    
+
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
         _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
@@ -1289,5 +1280,5 @@ _dwarf_dnames_destructor(void *m)
     dn->dn_magic = 0;
     free(dn->dn_augmentation_string);
     free(dn->dn_abbrev_list);
-    
+
 }
