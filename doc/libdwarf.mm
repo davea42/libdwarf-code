@@ -541,7 +541,7 @@ typedef unsigned char      Dwarf_Small;
 typedef signed long long   Dwarf_Signed;
 typedef unsigned long long Dwarf_Addr;
 typedef void              *Dwarf_Ptr;
-typedef void   (*Dwarf_Handler)(Dwarf_Error error, Dwarf_Ptr errarg);
+typedef void (*Dwarf_Handler)(Dwarf_Error error, Dwarf_Ptr errarg);
 .DE
 
 .nr aX \n(Fg+1
@@ -1495,9 +1495,7 @@ the next reader call in any thread)
 is considered better than having
 \fIlibdwarf\fP
 call
-\f(CWabort()\fP (as earlier
-\fIlibdwarf\fP
-did).
+\f(CWabort()\fP (as earlier \fIlibdwarf\fP did).
 .P
 We strongly suggest most applications calling
 \fIlibdwarf\fP
@@ -1558,16 +1556,6 @@ handler and other routines of the client program.
 When the client error function returns
 libdwarf returns
 \f(CWDW_DLV_ERROR\fP.
-.P
-If the client passed in a  non-null
-\f(CWerror\fP 
-argument in the libdwarf
-call finding an error, the
-\f(CWdwarf_seterrhand()\fP
-function-invocation mentioned here does 
-not happen.
-
-.P
 .LI
 In the  final case, where
 \fIlibdwarf\fP
@@ -1576,19 +1564,17 @@ to a \f(CWDwarf_Error\fP descriptor,
 and no error handling function was
 provided at initialization,
 \fIlibdwarf\fP functions
-print a short message to
-\f(CWstdout\fP
-and terminate execution with
-\f(CWabort()\fP.
+return
+\f(CWDW_DLV_ERROR\fP
+with while printing a short
+message with the error number
+on stderr.
 .P
 Before March 2016
 \fIlibdwarf\fP
 gave up when there was no error handling
-by
-emitting a short message on
-\f(CWstderr\fP
-and
-calling \f(CWabort(3C)\fP.
+by emitting a short message on
+\f(CWstderr\fP and calling \f(CWabort(3C)\fP.
 .LE
 
 .P
@@ -1608,14 +1594,17 @@ If an \f(CWerrhand\fP argument was provided to
 \f(CWerrhand()\fP passing it the error descriptor and
 the value of the \f(CWerrarg\fP argument provided
 to \f(CWdwarf_init_b()\fP.  If the error handling
-function returns, return \f(CWDW_DLV_ERROR\fP
+function returns, return
+\f(CWDW_DLV_ERROR\fP
 indicating an error condition.
 
 .LI
 If neither  the \f(CWerror\fP argument nor
 an \f(CWerrhand\fP argument was provided
-Terminate program execution by calling
-\f(CWabort(3C)\fP.
+the function which got the error
+simply returns 
+\f(CWDW_DLV_ERROR\fP
+with no indication of what the error is.
 .LE
 .SP
 
@@ -1639,8 +1628,6 @@ uninitialized data causes undefined behavior;
 the return value in such cases is undefined, and
 the function may fail to invoke the caller supplied
 error handler or to return a meaningful error number.
-Implementations also may abort execution for such
-cases.
 
 .P
 Some errors are so inconsequential that it does not
