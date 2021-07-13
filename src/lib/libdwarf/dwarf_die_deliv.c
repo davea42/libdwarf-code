@@ -2744,7 +2744,9 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     struct Dwarf_Section_s * secdp = 0;
 
     if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "in call to dwarf_offdie_b()");
         return DW_DLV_ERROR;
     }
     if (is_info) {

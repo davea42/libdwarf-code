@@ -355,9 +355,6 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         memset(newcontext,0,sizeof(*newcontext));
-#if 0
-printf("dadebug set magic in context %lu\n",(unsigned long)i);
-#endif
         newcontext->rc_magic = RNGLISTS_MAGIC;
         res = _dwarf_internal_read_rnglists_header(dbg,
             chainlength,
@@ -659,9 +656,6 @@ int dwarf_get_rnglist_context_basics(
         return DW_DLV_NO_ENTRY;
     }
     con = dbg->de_rnglists_context[context_index];
-#if 0
-printf("dadebug rnglistcontext number %lu\n",(unsigned long)context_index);
-#endif
     if (con->rc_magic != RNGLISTS_MAGIC) {
          _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
                 "DW_DLE_DBG_NULL "

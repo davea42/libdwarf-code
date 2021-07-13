@@ -67,7 +67,6 @@ static int _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     Dwarf_Half   lkind,
     Dwarf_Error *error);
 
-
 /*  Used to enable sanity checking of these data
     items before we return to caller. */
 int
@@ -112,7 +111,6 @@ _dwarf_lkind_name(unsigned lkind, dwarfstring *m)
 static int
 determine_location_lkind(unsigned int version,
     unsigned int form,
-    UNUSEDARG unsigned int attribute,
     Dwarf_Bool is_dwo)
 {
     switch(form) {
@@ -179,7 +177,6 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
     Dwarf_Half    * lle_val,
     Dwarf_Off       sec_offset,
     Dwarf_Half      address_size,
-    UNUSEDARG unsigned   lkind,
     Dwarf_Error   * error)
 {
     Dwarf_Small *beg = dbg->de_debug_loc.dss_data + sec_offset;
@@ -258,7 +255,7 @@ static int
 _dwarf_get_loclist_lle_count_dwo(Dwarf_Debug dbg,
     Dwarf_Off loclist_offset,
     Dwarf_Half address_size,
-    unsigned lkind,
+    Dwarf_Half lkind,
     int *loclist_count,
     Dwarf_Error * error)
 {
@@ -298,7 +295,6 @@ static int
 _dwarf_get_loclist_lle_count(Dwarf_Debug dbg,
     Dwarf_Off loclist_offset,
     Dwarf_Half address_size,
-    unsigned lkind,
     int *loclist_count,
     Dwarf_Error * error)
 {
@@ -315,7 +311,7 @@ _dwarf_get_loclist_lle_count(Dwarf_Debug dbg,
         int res = _dwarf_read_loc_section(dbg, &b,
             &lowpc, &highpc,
             &lle_val,
-            offset, address_size,lkind,error);
+            offset, address_size,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -788,6 +784,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     res = validate_lle_value(dbg,locdesc,error);
     if (res != DW_DLV_OK) {
         dwarf_dealloc(dbg,block_loc,DW_DLA_LOC_BLOCK_C);
+        locdesc->ld_s = 0;
         return res;
     }
     /*  Leaving the cooked values zero. Filled in later. */
@@ -796,7 +793,6 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     locdesc->ld_index_failed = FALSE;
     return DW_DLV_OK;
 }
-
 
 /* Non-standard DWARF4 dwo loclist */
 static int
@@ -1022,7 +1018,6 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
             DW_DLE_LLE_CODE_UNKNOWN,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
-        _dwarf_error(dbg,error,DW_DLE_LLE_CODE_UNKNOWN);
         return DW_DLV_ERROR;
     }
     }
@@ -1034,8 +1029,16 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
 int
 dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c ll_header,
     unsigned int * kind,
-    UNUSEDARG Dwarf_Error  * error)
+    Dwarf_Error  * error)
 {
+    if (!ll_header) {
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+                "DW_DLE_DBG_NULL: "
+                "NULL Dwarf_Loc_Head_c "
+                "argument passed to "
+                "dwarf_get_loclist_head_kind()");
+        return DW_DLV_ERROR;
+    }
     *kind = ll_header->ll_kind;
     return DW_DLV_OK;
 }
@@ -1069,13 +1072,12 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
         count_res = _dwarf_get_loclist_lle_count_dwo(dbg,
             loclist_offset,
             address_size,
-            llhead->ll_kind,
+            lkind,
             &loclist_count,
             error);
     } else {
         count_res = _dwarf_get_loclist_lle_count(dbg,
             loclist_offset, address_size,
-            llhead->ll_kind,
             &loclist_count,
             error);
     }
@@ -1093,6 +1095,7 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
+    llbuf->ld_magic = LOCLISTS_MAGIC;
     llhead->ll_locdesc = llbuf;
     llhead->ll_locdesc_count = listlen;
     cucontext = llhead->ll_context;
@@ -1124,7 +1127,6 @@ _dwarf_original_loclist_build(Dwarf_Debug dbg,
                 &lle_op,
                 loclist_offset,
                 address_size,
-                lkind,
                 error);
         }
         if (blkres != DW_DLV_OK) {
@@ -1218,9 +1220,11 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
+    llbuf->ld_magic = LOCLISTS_MAGIC;
     llhead->ll_locdesc = llbuf;
-    /* One by definition of a location entry. */
+    /* Count is one by definition of a location entry. */
     llhead->ll_locdesc_count = listlen;
+    llbuf = 0;
 
     /*  An empty location description (block length 0)
         means the code generator emitted no variable,
@@ -1243,7 +1247,10 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         error);
     llhead->ll_bytes_total += loc_blockc.bl_len;
     if (blkres != DW_DLV_OK) {
-        /* low level error already set: let it be passed back */
+        /* low level error already set: let problem be passed back */
+        dwarf_dealloc(dbg,llhead->ll_locdesc,DW_DLA_LOCDESC_C);
+        llhead->ll_locdesc = 0;
+        llhead->ll_locdesc_count = 0;
         return blkres;
     }
     return DW_DLV_OK;
@@ -1598,7 +1605,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     Dwarf_Unsigned   * listlen_out,
     Dwarf_Error      * error)
 {
-    Dwarf_Debug dbg;
+    Dwarf_Debug dbg = 0;
     Dwarf_Half form          = 0;
     Dwarf_Loc_Head_c llhead  = 0;
     Dwarf_CU_Context cucontext = 0;
@@ -1610,6 +1617,14 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     int setup_res            = DW_DLV_ERROR;
     int lkind                = 0;
 
+    if (!attr) {
+        _dwarf_error_string(dbg, error,DW_DLE_ATTR_NULL,
+                "DW_DLE_ATTR_NULL"
+                "NULL Dwarf_Attribute "
+                "argument passed to "
+                "dwarf_get_loclist_c()");
+        return DW_DLV_ERROR;
+    }
     /* ***** BEGIN CODE ***** */
     setup_res = _dwarf_setup_loc(attr, &dbg,&cucontext, &form, error);
     if (setup_res != DW_DLV_OK) {
@@ -1620,7 +1635,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     address_size = cucontext->cc_address_size;
     is_dwo = cucontext->cc_is_dwo;
     lkind = determine_location_lkind(cuversionstamp,
-        form, attrnum, is_dwo);
+        form, is_dwo);
     if (lkind == DW_LKIND_unknown) {
         dwarfstring m;
         const char * formname = "<unknownform>";
@@ -1665,6 +1680,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     llhead->ll_address_size = address_size;
     llhead->ll_offset_size = cucontext->cc_length_size;
     llhead->ll_context = cucontext;
+    llhead->ll_magic = LOCLISTS_MAGIC;
 
     llhead->ll_at_loclists_base_present =
         cucontext->cc_loclists_base_present;
@@ -1753,12 +1769,21 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Small version_stamp = dwarf_version;
     int res = 0;
 
+    if (!dbg) {
+        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
+                "DW_DLE_DBG_NULL"
+                "NULL Dwarf_Debug "
+                "argument passed to "
+                "dwarf_loclist_from_expr_c()");
+        return DW_DLV_ERROR;
+    }
     llhead = (Dwarf_Loc_Head_c)_dwarf_get_alloc(dbg,
         DW_DLA_LOC_HEAD_C, 1);
     if (!llhead) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
+    llhead->ll_magic = LOCLISTS_MAGIC;
     memset(&loc_block,0,sizeof(loc_block));
     loc_block.bl_len = expression_length;
     loc_block.bl_data = expression_in;
@@ -1772,6 +1797,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
+    llbuf->ld_magic = LOCLISTS_MAGIC;
     llhead->ll_locdesc = llbuf;
     llhead->ll_locdesc_count = local_listlen;
     llhead->ll_context = 0; /* Not available! */
@@ -1801,7 +1827,9 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
         error);
     if (res != DW_DLV_OK) {
         /* low level error already set: let it be passed back */
-        dwarf_loc_head_c_dealloc(llhead);
+        dwarf_dealloc(dbg,llbuf,DW_DLA_LOCDESC_C);
+        llhead->ll_locdesc = 0;
+        llhead->ll_locdesc_count = 0;
         return DW_DLV_ERROR;
     }
     *loc_head = llhead;
@@ -1834,9 +1862,18 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
 {
     Dwarf_Locdesc_c descs_base =  0;
     Dwarf_Locdesc_c desc =  0;
-    Dwarf_Unsigned desc_count = 0;
-    Dwarf_Debug dbg;
-
+    Dwarf_Unsigned  desc_count = 0;
+    Dwarf_Debug     dbg = 0;
+ 
+    if (!loclist_head || loclist_head->ll_magic != LOCLISTS_MAGIC) {
+        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "Dwarf_Loc_Head_c NULL or not "
+            "marked LOCLISTS_MAGIC "
+            "in calling "
+            "dwarf_get_locdesc_entry_d()");
+        return DW_DLV_ERROR;
+    }
     desc_count = loclist_head->ll_locdesc_count;
     descs_base  = loclist_head->ll_locdesc;
     dbg = loclist_head->ll_dbg;
@@ -1873,8 +1910,17 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     Dwarf_Error*     error)
 {
     Dwarf_Loc_Expr_Op op = 0;
-    Dwarf_Unsigned max = locdesc->ld_cents;
+    Dwarf_Unsigned max = 0;
 
+    if (!locdesc) {
+          _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+                "DW_DLE_DBG_NULL"
+                "Dwarf_Locdesc_c_Head_c NULL "
+                "in calling "
+                "dwarf_get_location_op_value_d()");
+        return DW_DLV_ERROR;
+    }
+    max = locdesc->ld_cents;
     if (index >= max) {
         Dwarf_Debug dbg = locdesc->ld_loclist_head->ll_dbg;
         _dwarf_error(dbg, error, DW_DLE_LOCLIST_INDEX_ERROR);
@@ -1890,14 +1936,5 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     *rawop3 = op->lr_raw3;
     *offset_for_branch = op->lr_offset;
     return DW_DLV_OK;
-}
-
-void
-dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
-{
-    Dwarf_Debug dbg = loclist_head->ll_dbg;
-    /*  destructor will remove content then free head
-        itself */
-    dwarf_dealloc(dbg,loclist_head,DW_DLA_LOC_HEAD_C);
 }
 /* ============== End of the October 2015 interfaces. */

@@ -31,6 +31,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define LOCLISTS_MAGIC  0xadab4
 
 typedef struct Dwarf_Loc_Chain_s *Dwarf_Loc_Chain;
 struct Dwarf_Loc_Chain_s {
@@ -64,6 +65,7 @@ struct Dwarf_Loclists_Context_s {
     /* Offset of the .debug_loclists header involved. */
     Dwarf_Unsigned  lc_header_offset;
     Dwarf_Unsigned  lc_length;
+    unsigned long   lc_magic;
 
     /* Many places in in libdwarf this is called length_size. */
     Dwarf_Small     lc_offset_size;
@@ -183,6 +185,8 @@ struct Dwarf_Locdesc_c_s {
     /*  Failed means .debug_addr section needed but missing.
         (possibly tied file needed) */
     Dwarf_Bool       ld_index_failed;
+    unsigned long    ld_magic;
+
 
     /*  Beginning of active range. This is actually an offset
         of an applicable base address, not a pc value.  */
@@ -246,6 +250,7 @@ struct Dwarf_Loc_Head_c_s {
     /* DW_LKIND*    */
     Dwarf_Small      ll_kind;
     Dwarf_Debug      ll_dbg;
+    unsigned long    ll_magic;
 
     /*  If ll_kind == DW_LKIND_loclists the following
         pointer is non-null and index is the index
