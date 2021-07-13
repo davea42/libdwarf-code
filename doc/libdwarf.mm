@@ -1575,6 +1575,7 @@ Before March 2016
 gave up when there was no error handling
 by emitting a short message on
 \f(CWstderr\fP and calling \f(CWabort(3C)\fP.
+It no longer aborts.
 .LE
 
 .P
