@@ -35,17 +35,14 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
+#include <stdio.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include "common.h"
 #include "defined_types.h"
 #include "sanitized.h"
-#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
-#include <stdio.h>
-#include "libdwarf_private.h"
-#ifndef BUILD_STANDARD_SOURCE
-/*  Must match libdwarf.h.in declaration. */
-const char * dwarf_package_version(void);
-#endif /* BUILD_STANDARD_SOURCE */
 
 /*#define RELEASE_DATE      "20180416" */
 
@@ -77,7 +74,7 @@ print_version_details(const char * name UNUSEDARG,
         PACKAGE_VERSION);
 #else  /* !_WIN32 */
     if (alwaysprint) {
-#ifdef BUILD_STANDARD_SOURCE
+#ifdef BUILD_NONLIB_SOURCE
         /*  Used by scripts/buildstandardsource.sh */
         printf("%s\n",DW_VERSION_DATE_STR);
 #else

@@ -175,7 +175,7 @@ test_errmsglist_SOURCES = test_errmsglist.c
 test_errmsglist = $(RO_CFLAGS_WARN)
 test_errmsglist_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
--I$(top_srcdir)/src/lib/libdwarf 
+-I$(top_srcdir)/src/lib/libdwarf
 
 test_canonical_SOURCES = test_canonical.c \
     $(top_srcdir)/src/bin/dwarfdump/dwconf.c \
@@ -183,7 +183,7 @@ test_canonical_SOURCES = test_canonical.c \
 test_canonical_FLAGS = $(RO_CFLAGS_WARN)
 test_canonical_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
--I$(top_srcdir)/src/bin/dwarfdump \ 
+-I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf 
 
 TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh 

@@ -30,24 +30,24 @@ set -x
 CC="gcc -g -Wall  -I. -I$libdir "
 EXEXT=.exe
 
-cp $libdir/dwarf_names.c .
-cp $libdir/dwarf_names.h .
-$CC -DTRIVIAL_NAMING   dwarf_names.c common.c \
-dwarf_tsearchbal.c \
-$libdir/dwarf_form_class_names.c \
-dwgetopt.c \
-esb.c \
-makename.c \
-naming.c \
-sanitized.c \
-tag_attr.c \
-glflags.c \
-tag_common.c -o tag_attr_build$EXEXT
-if [ $? -ne 0 ]
-then
-   echo tag_attr_build compile fail
-   exit 1
-fi
+#cp $libdir/dwarf_names.c .
+#cp $libdir/dwarf_names.h .
+#$CC -DTRIVIAL_NAMING   dwarf_names.c common.c \
+#dwarf_tsearchbal.c \
+#$libdir/dwarf_form_class_names.c \
+#dwgetopt.c \
+#esb.c \
+#makename.c \
+#naming.c \
+#sanitized.c \
+#tag_attr.c \
+#glflags.c \
+#tag_common.c -o tag_attr_build$EXEXT
+#if [ $? -ne 0 ]
+#then
+#   echo tag_attr_build compile fail
+#   exit 1
+#fi
 
 $CC  -DTRIVIAL_NAMING  dwarf_names.c common.c \
 dwarf_tsearchbal.c \
@@ -136,28 +136,28 @@ rm -f tmp-tag-tree-build1.tmp
 rm -f tmp-t1.c
 rm -f tmp-t2.c
 
-cp tag_attr.list tmp-t2.c
-$CC -DTRIVIAL_NAMING  -I$libdir -E tmp-t2.c >tmp-tag-attr-build2.tmp
-./tag_attr_build$EXEXT -s -i tmp-tag-attr-build2.tmp -o dwarfdump-ta-table.h
-if [ $? -ne 0 ]
-then
-   echo tag_attr_build 2 FAIL
-   exit 1
-fi
-rm -f tmp-tag-attr-build2.tmp 
-rm -f tmp-t2.c
-rm -f tmp-t3.c
+#cp tag_attr.list tmp-t2.c
+#$CC -DTRIVIAL_NAMING  -I$libdir -E tmp-t2.c >tmp-tag-attr-build2.tmp
+#./tag_attr_build$EXEXT -s -i tmp-tag-attr-build2.tmp -o dwarfdump-ta-table.h
+#if [ $? -ne 0 ]
+#then
+#   echo tag_attr_build 2 FAIL
+#   exit 1
+#fi
+#rm -f tmp-tag-attr-build2.tmp 
+#rm -f tmp-t2.c
+#rm -f tmp-t3.c
 
-cp tag_attr_ext.list tmp-t3.c
-$CC  -I$libdir -DTRIVIAL_NAMING -E tmp-t3.c > tmp-tag-attr-build3.tmp
-./tag_attr_build$EXEXT -e -i tmp-tag-attr-build3.tmp -o dwarfdump-ta-ext-table.h
-if [ $? -ne 0 ]
-then
-   echo tag_attr_build 3 FAIL
-   exit 1
-fi
-rm -f tmp-tag-attr-build3.tmp 
-rm -f tmp-t3.c
+#cp tag_attr_ext.list tmp-t3.c
+#$CC  -I$libdir -DTRIVIAL_NAMING -E tmp-t3.c > tmp-tag-attr-build3.tmp
+#./tag_attr_build$EXEXT -e -i tmp-tag-attr-build3.tmp -o dwarfdump-ta-ext-table.h
+#if [ $? -ne 0 ]
+#then
+#   echo tag_attr_build 3 FAIL
+#   exit 1
+#fi
+#rm -f tmp-tag-attr-build3.tmp 
+#rm -f tmp-t3.c
 
 rm -f tmp-t4.c
 cp tag_tree_ext.list tmp-t4.c

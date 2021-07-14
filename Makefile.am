@@ -18,9 +18,16 @@ SUBDIRS += test
 
 SUBDIRS += doc
 SUBDIRS += src/bin/gennames
+SUBDIRS += src/bin/tag_tree
+SUBDIRS += src/bin/tag_attr
 
+# gennames is only executed with the following
+# for maintainers to update C source that depends
+# on certain (some not C) Files.
 rebuild:
 	make -C src/bin/gennames rebuild
+	make -C src/bin/tag_tree rebuild
+	make -C src/bin/tag_attr rebuild
 doc:
 	make -C doc doc
 
