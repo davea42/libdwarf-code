@@ -48,12 +48,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
-/* Set to 1 if old frame columns are enabled. */
-/* #undef HAVE_OLD_FRAME_CFA_COL */
-
-/* Define to 1 if you have the <sgidefs.h> header file. */
-/* #undef HAVE_SGIDEFS_H */
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
 
