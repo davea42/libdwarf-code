@@ -30,27 +30,7 @@ then
     echo "FAIL src/bin/dwarfdump. Running buildstandardsource.sh from the wrong place"
     exit 1
 fi
-cd src/lib/libdwarf
-if [ $? -ne 0 ]
-then
-    echo "FAIL cd to libdwarf. Running buildstandardsource.sh from the wrong place"
-    exit 1
-fi
-cp $topdir/scripts/baseconfig.h config.h
-sh $topdir/scripts/libbuild.sh
-if [ $? -ne 0 ]
-then
-    echo "FAIL libbuild.sh. "
-    exit 1
-fi
-rm -f config.h
 
-cd $topdir
-if [ $? -ne 0 ]
-then
-    echo "FAIL cd back to top-level"
-    exit 1
-fi
 #Now build the source files needed by dwarfdump builds.
 cd src/bin/dwarfdump
 if [ $? -ne 0 ]

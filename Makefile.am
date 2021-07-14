@@ -17,7 +17,10 @@ endif
 SUBDIRS += test
 
 SUBDIRS += doc
+SUBDIRS += src/bin/gennames
 
+rebuild:
+	make -C src/bin/gennames rebuild
 doc:
 	make -C doc doc
 

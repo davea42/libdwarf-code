@@ -609,6 +609,7 @@ src/lib/libdwarfp/Makefile
 src/bin/dwarfdump/Makefile
 src/bin/dwarfgen/Makefile
 src/bin/dwarfexample/Makefile
+src/bin/gennames/Makefile
 test/Makefile
 doc/Makefile
 libdwarf.pc

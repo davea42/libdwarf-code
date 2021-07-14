@@ -355,7 +355,6 @@ GenerateOneSet(void)
 {
     unsigned u;
     unsigned prev_value = 0;
-    size_t len;
     char *prefix_id = prefix + prefix_root_len;
     unsigned actual_array_count = 0;
 
