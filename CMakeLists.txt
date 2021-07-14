@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.3)
 
 project(libdwarf C CXX)
 
@@ -17,15 +17,55 @@ endmacro()
 set(LIBDWARF_CRT "MD" CACHE STRING "Either MT or MD, specifies whether to use the static or dynamic MSVCRT.")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  # Check MSVCRT option and set flags accordingly
-  if (LIBDWARF_CRT STREQUAL "MT")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug, RelWithDebInfo>:Debug>")
-  elseif(LIBDWARF_CRT STREQUAL "MD")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug, RelWithDebInfo>:Debug>DLL")
+  # Use CMAKE_MSVC_RUNTIME in versions 3.15 and up
+  if (OFF)
+    cmake_policy(SET CMP0091 NEW)
+    if (LIBDWARF_CRT STREQUAL "MT")
+      message(STATUS "Using MT runtime by CMAKE_MSVC_RUNTIME_LIBRARY")
+      set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    elseif(LIBDWARF_CRT STREQUAL "MD")
+    message(STATUS "Using MD runtime by CMAKE_MSVC_RUNTIME_LIBRARY")
+      set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    else()
+      message(FATAL_ERROR "LIBDWARF_CRT must be MT or MD")
+    endif()
+  # Use regexes in versions before 3.15
   else()
-    message(FATAL_ERROR "LIBDWARF_CRT must be MT or MD")
+    if (LIBDWARF_CRT STREQUAL "MT")
+      message(STATUS "Using MT runtime by compile flag replacement")
+      # taken from the CMake FAQ
+      foreach(flag_v 
+      CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG
+      CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL
+      CMAKE_C_FLAGS_RELWITHDEBINFO
+      CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG
+      CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL
+      CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+        if (${flag_v} MATCHES "([\\/\\-]M)D")
+          string(REGEX REPLACE "([\\/\\-]M)D" "\\1T"
+          ${flag_v} "${${flag_v}}")
+        endif()
+      endforeach()
+    elseif(LIBDWARF_CRT STREQUAL "MD")
+      message(STATUS "Using MD runtime by cmake default")
+    else()
+      message(FATAL_ERROR "LIBDWARF_CRT must be MT or MD")
+    endif()
   endif()
 endif()
+
+message("CMake flags are:")
+message("  CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
+message("  CMAKE_C_FLAGS_DEBUG: ${CMAKE_C_FLAGS_DEBUG}")
+message("  CMAKE_C_FLAGS_RELEASE: ${CMAKE_C_FLAGS_RELEASE}")
+message("  CMAKE_C_FLAGS_MINSIZEREL: ${CMAKE_C_FLAGS_MINSIZEREL}")
+message("  CMAKE_C_FLAGS_RELWITHDEBINFO: ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+message("  CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+message("  CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
+message("  CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
+message("  CMAKE_CXX_FLAGS_MINSIZEREL: ${CMAKE_CXX_FLAGS_MINSIZEREL}")
+message("  CMAKE_CXX_FLAGS_RELWITHDEBINFO: ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+
 
 # set target folder on IDE
 macro(set_folder target folder)
