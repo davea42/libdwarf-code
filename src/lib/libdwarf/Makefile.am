@@ -166,8 +166,6 @@ ChangeLog2020 \
 CODINGSTYLE \
 baseline.ltp  \
 dw-linetableheader.txt \
-dwarf_names_new.h \
-dwarf_names_enum.h \
 gennames.c \
 dwgetopt.h \
 dwgetopt.c \
