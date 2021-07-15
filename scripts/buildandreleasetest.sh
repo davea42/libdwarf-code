@@ -136,8 +136,13 @@ $configloc --prefix=$ainstall $libelfopt $nonstdprintf
 chkres $? "FAIL A4a configure fail"
 echo "TEST Section A: initial $ainstall make install"
 make
+# Adding run of the new make choice on 15 July 2021
+make rebuild
+chkres $? "FAIL Section A 4rb make rebuild"
+make doc
+chkres $? "FAIL Section A 4rb make doc"
 make install
-chkres $? "FAIL Secton A 4b make install"
+chkres $? "FAIL Section A 4b make install"
 ls -lR $ainstall
 make dist
 chkres $? "FAIL make dist Section A" 
@@ -160,6 +165,11 @@ $blibsrc/configure --enable-wall --enable-dwarfgen --enable-dwarfexample --prefi
 chkres $? "FAIL configure fail in Section B"
 echo "TEST: In $binstrelbld make install from $blibsrc/configure"
 make
+chkres $? "FAIL make fail in Section B"
+make rebuild
+chkres $? "FAIL make rebuild fail in Section B"
+make doc
+chkres $? "FAIL make doc fail in Section B"
 make install
 chkres $? "FAIL Section B install fail"
 ls -lR $binstrelp
@@ -196,7 +206,11 @@ chkres $? "FAIL be2  configure fail"
 echo "#define WORDS_BIGENDIAN 1" >> config.h
 echo "TEST: Compile In $dbigend make from $blibsrc/configure"
 make
-chkres $? "FAIL be3  Build failed"
+chkres $? "FAIL be3  make: Build failed"
+make rebuild
+chkres $? "FAIL be3  make rebuild: failed"
+make doc
+chkres $? "FAIL be3  make doc: failed"
 echo "  End Section C  $bart"
 ################ End section C
 
@@ -208,6 +222,10 @@ $nonstdprintf
 chkres $? "FAIL C9  $blibsrc/configure"
 make
 chkres $? "FAIL C9  $blibsrc/configure  make"
+make rebuild
+chkres $? "FAIL C9  $blibsrc/configure  make rebuild"
+make doc
+chkres $? "FAIL C9  $blibsrc/configure  make doc"
 echo "  End Section D  $bart"
 ################### End Section D
 ################### Cmake test E
