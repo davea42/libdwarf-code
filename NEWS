@@ -1,3 +1,7 @@
+2021-07-15:
+  libdwarf, dwarfdump, etc all now use a semantic version
+  number rather than a date string. As of today the
+  current version is "0.1.1".
 2021-02-15:
   dwarfdump given -ku now prints brief lists counting
   the uses of every TAG, ATtribute, and FORM,
