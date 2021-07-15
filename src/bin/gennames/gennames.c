@@ -43,8 +43,7 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 #include "dwgetopt.h"
-#include "libdwarf_private.h" /* for DW_VERSION_DATE_STR */
-#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
+#include "libdwarf_private.h"
 
 
 /*  gennames.c
@@ -165,7 +164,7 @@ print_version(const char * name)
     const char *acType = "Release";
 #endif /* _DEBUG */
 
-    printf("%s [%s %s]\n",name,DW_VERSION_DATE_STR,acType);
+    printf("%s [%s %s]\n",name,PACKAGE_VERSION,acType);
 }
 
 
@@ -307,7 +306,7 @@ GenerateInitialFileLines(void)
     /* Generate entries for 'dwarf_names.h' */
     fprintf(f_names_h,"/* Generated routines, do not edit. */\n");
     fprintf(f_names_h,"/* Generated for source version %s */\n",
-        DW_VERSION_DATE_STR);
+        PACKAGE_VERSION);
     fprintf(f_names_h,"\n/* BEGIN FILE */\n\n");
 
     fprintf(f_names_h,"#ifndef DWARF_NAMES_H\n");
@@ -319,7 +318,7 @@ GenerateInitialFileLines(void)
     /* Generate entries for 'dwarf_names.c' */
     fprintf(f_names_c,"/* Generated routines, do not edit. */\n");
     fprintf(f_names_c,"/* Generated for source version %s */\n",
-        DW_VERSION_DATE_STR);
+        PACKAGE_VERSION);
     fprintf(f_names_c,"\n/* BEGIN FILE */\n\n");
     fprintf(f_names_c,"#include \"dwarf.h\"\n\n");
     fprintf(f_names_c,"#include \"libdwarf.h\"\n\n");

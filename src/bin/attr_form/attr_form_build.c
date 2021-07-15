@@ -25,6 +25,7 @@
 
 */
 
+#include "config.h"
 #include "globals.h"
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
@@ -44,7 +45,6 @@
 #define DW_TSHASHTYPE long /* we are not using hash tree */
 #include "dwarf_tsearch.h"
 #include "attr_form.h"
-#include "libdwarf_version.h"
 
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 
@@ -242,7 +242,7 @@ main(int argc, char **argv)
     if (standard_flag) {
         fprintf(fileOut,"/* Generated table, do not edit. */\n");
         fprintf(fileOut,"/* Generated for source version %s */\n",
-            DW_VERSION_DATE_STR );
+            PACKAGE_VERSION);
         fprintf(fileOut,"\n");
         fprintf(fileOut,"%s\n",
             "#ifndef DWARFDUMP_AF_TABLE_H");

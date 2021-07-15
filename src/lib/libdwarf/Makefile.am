@@ -125,7 +125,6 @@ dwarf_xu_index.h \
 crc32.c \
 libdwarf.h \
 libdwarf_private.h \
-libdwarf_version.h \
 memcpy_swap.h
 
 libdwarf_la_CFLAGS = @ZLIB_CFLAGS@ $(DWARF_CFLAGS_WARN)

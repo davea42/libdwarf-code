@@ -63,7 +63,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "attr_form.h"
 #include "print_debug_gnu.h"
 #include "naming.h" /* for get_FORM_name() */
-#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include "command_options.h"
 #include "compiler_info.h"
 

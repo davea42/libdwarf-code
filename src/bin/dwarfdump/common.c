@@ -39,15 +39,11 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include "common.h"
 #include "defined_types.h"
 #include "sanitized.h"
 
-/*#define RELEASE_DATE      "20180416" */
-
 /* PACKAGE_VERSION is from config.h */
-
 /*  The Linux/Unix version does not want a version string to print
     unless -V is on the command line. */
 void
@@ -76,10 +72,10 @@ print_version_details(const char * name UNUSEDARG,
     if (alwaysprint) {
 #ifdef BUILD_NONLIB_SOURCE
         /*  Used by scripts/buildstandardsource.sh */
-        printf("%s\n",DW_VERSION_DATE_STR);
+        printf("%s\n",PACKAGE_VERSION);
 #else
         const char *pv = dwarf_package_version();
-        printf("%s Package Version \"%s\"\n",DW_VERSION_DATE_STR,
+        printf("%s Package Version \"%s\"\n",PACKAGE_VERSION,
             pv);
 #endif
     }

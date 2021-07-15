@@ -27,6 +27,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 
 */
 
+#include "config.h"
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
 #include <errno.h>              /* For errno declaration. */
@@ -43,7 +44,6 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "esb.h"
 #include "tag_common.h"
 #include "dwgetopt.h"
-#include "libdwarf_version.h"
 
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 
@@ -314,7 +314,7 @@ main(int argc, char **argv)
     /*  Generate main header, regardless of contents */
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
     fprintf(fileOut,"/* Generated for source version %s */\n",
-        DW_VERSION_DATE_STR);
+        PACKAGE_VERSION);
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
 #ifdef HAVE_USAGE_TAG_ATTR

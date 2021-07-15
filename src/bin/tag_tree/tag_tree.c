@@ -35,7 +35,6 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include "common.h"
 #include "tag_common.h"
 #include "dwgetopt.h"
-#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 
 unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
     [TAG_TABLE_COLUMN_MAXIMUM];
@@ -281,7 +280,7 @@ main(int argc, char **argv)
     /*  Generate main header, regardless of contents */
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
     fprintf(fileOut,"/* Generated for source version %s */\n",
-        DW_VERSION_DATE_STR );
+        PACKAGE_VERSION );
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
 #ifdef HAVE_USAGE_TAG_ATTR
