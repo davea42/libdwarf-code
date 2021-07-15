@@ -306,7 +306,7 @@ GenerateInitialFileLines(void)
 {
     /* Generate entries for 'dwarf_names.h' */
     fprintf(f_names_h,"/* Generated routines, do not edit. */\n");
-    fprintf(f_names_h,"/* Generated sourcedate %s */\n",
+    fprintf(f_names_h,"/* Generated for source version %s */\n",
         DW_VERSION_DATE_STR);
     fprintf(f_names_h,"\n/* BEGIN FILE */\n\n");
 
@@ -318,7 +318,7 @@ GenerateInitialFileLines(void)
 
     /* Generate entries for 'dwarf_names.c' */
     fprintf(f_names_c,"/* Generated routines, do not edit. */\n");
-    fprintf(f_names_c,"/* Generated sourcedate %s */\n",
+    fprintf(f_names_c,"/* Generated for source version %s */\n",
         DW_VERSION_DATE_STR);
     fprintf(f_names_c,"\n/* BEGIN FILE */\n\n");
     fprintf(f_names_c,"#include \"dwarf.h\"\n\n");

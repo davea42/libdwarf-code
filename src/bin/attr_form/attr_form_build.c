@@ -63,7 +63,6 @@ name of a form-class enum entry
 
 We generate a text list of numbers as a C header file.
 The array there is used
-#include "dwarf_tsearch.h"
 by dwarfdump at runtime if attr/form checking
 is requested.
 The file is named dwarfump/dwarfdump-af-table.h and is intended
@@ -242,7 +241,7 @@ main(int argc, char **argv)
     }
     if (standard_flag) {
         fprintf(fileOut,"/* Generated table, do not edit. */\n");
-        fprintf(fileOut,"/* Generated sourcedate %s */\n",
+        fprintf(fileOut,"/* Generated for source version %s */\n",
             DW_VERSION_DATE_STR );
         fprintf(fileOut,"\n");
         fprintf(fileOut,"%s\n",

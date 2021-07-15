@@ -16,3 +16,14 @@ srcdir=`dirname $0`
 # This is a beginning attempt, FIX. 
 set -e -x
 autoreconf --warnings=all --install --verbose --force
+set +x
+x=`./configure --version | head -n 1 | cut -f 3 -d " "`
+echo "Version is $x"
+
+t=src/lib/libdwarf/libdwarf_version.h
+echo "/*" >$t
+echo "    This date string is hereby put into the public domain." >>$t
+echo "    Copyrighting this is crazy. It's just a version string" >>$t
+echo "    and is modified from time to time." >>$t
+echo "*/" >>$t
+echo "#define DW_VERSION_DATE_STR \" $x \"" >>$t

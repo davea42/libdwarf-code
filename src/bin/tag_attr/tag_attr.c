@@ -313,7 +313,7 @@ main(int argc, char **argv)
 
     /*  Generate main header, regardless of contents */
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
-    fprintf(fileOut,"/* Generated sourcedate %s */\n",
+    fprintf(fileOut,"/* Generated for source version %s */\n",
         DW_VERSION_DATE_STR);
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
