@@ -21,13 +21,18 @@ SUBDIRS += src/bin/gennames
 SUBDIRS += src/bin/tag_tree
 SUBDIRS += src/bin/tag_attr
 
-# gennames is only executed with the following
-# for maintainers to update C source that depends
-# on certain (some not C) Files.
+### rebuild is for maintainers to update C source
+### that depends on certain (C and/or text) Files.
+### Very rarely necessary.
+### Harmless if nothing needed update.
+### Rebuild all source after doing 'make rebuild'
+### Also do 'make check' as it checks correctness
+### of certain libdwarf source files.
 rebuild:
-	make -C src/bin/gennames rebuild
-	make -C src/bin/tag_tree rebuild
-	make -C src/bin/tag_attr rebuild
+	make -C src/bin/gennames  rebuild
+	make -C src/bin/tag_tree  rebuild
+	make -C src/bin/tag_attr  rebuild
+	make -C src/bin/attr_form rebuild
 doc:
 	make -C doc doc
 

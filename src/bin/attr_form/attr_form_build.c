@@ -146,8 +146,8 @@ process_args(int argc, char *argv[])
     }
 }
 
-void *attr_check_dups;
-void
+static void *attr_check_dups;
+static void
 check_for_dup_attr(unsigned attr)
 {
     Three_Key_Entry *e = 0;

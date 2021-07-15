@@ -4,14 +4,14 @@
 MAINTAINERCLEANFILES = Makefile.in
 rebuild: tagtree 
 	cp $(top_srcdir)/src/bin/dwarfdump/tag_tree.list tmp-t2.c
-	$CC -DTRIVIAL_NAMING  -I$libdir -E tmp-t2.c >tmp-tag-tree-build2.tmp
+	$(CC) -DTRIVIAL_NAMING -I$(top_srcdir)/src/lib/libdwarf -E tmp-t2.c >tmp-tag-tree-build2.tmp
 	./tagtree -s -i tmp-tag-tree-build2.tmp -o dwarfdump-tt-table.h
 	cp dwarfdump-tt-table.h $(top_srcdir)/src/bin/dwarfdump/
 	rm -f tmp-tag-tree-build2.tmp
 	rm -f tmp-t2.c
 	rm -f tmp-t3.c
 	cp $(top_srcdir)/src/bin/dwarfdump/tag_tree_ext.list tmp-t3.c
-	$CC  -I$libdir -DTRIVIAL_NAMING -E tmp-t3.c > tmp-tag-tree-build3.tmp
+	$(CC) -DTRIVIAL_NAMING -I$(top_srcdir)/src/lib/libdwarf -E tmp-t3.c > tmp-tag-tree-build3.tmp
 	./tagtree -e -i tmp-tag-tree-build3.tmp -o dwarfdump-tt-ext-table.h
 	cp dwarfdump-tt-ext-table.h $(top_srcdir)/src/bin/dwarfdump/
 	rm -f dwarfdump-tt-ext-table.h

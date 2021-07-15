@@ -612,6 +612,7 @@ src/bin/dwarfexample/Makefile
 src/bin/gennames/Makefile
 src/bin/tag_attr/Makefile
 src/bin/tag_tree/Makefile
+src/bin/attr_form/Makefile
 test/Makefile
 doc/Makefile
 libdwarf.pc
