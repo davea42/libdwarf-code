@@ -1,4 +1,81 @@
 2021-07-15:  David Anderson
+    commit c7036121fb9d47539953daf704f7dc29a3aef274
+
+    Deleted a few new-ish lines related to version number from autogen.sh.
+    We now use PACKAGE_VERSION  from config.h for the version string.
+    So libdwarf_version.h header is deleted.
+            modified:   autogen.sh
+            deleted:    src/lib/libdwarf/libdwarf_version.h
+            modified:   src/lib/libdwarf/Makefile.am
+
+    The PACKAGE_VERSION string has a couple less blank
+    characters than the date string from libdwarf_version.h
+    so regenerating changed the comment line with the version string.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarf_names.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_names.h
+
+    Dropping libdwarf_version.h, using PACKAGE_VERSION from config.h
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/common.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+2021-07-15:  David Anderson
+    commit 12ef9e68b920c228532e7a386cbaa2115edae1fc
+
+    At three different stages we verify make doc
+    and make rebuild can be done.
+    Helping verify that make dist
+    gets everything needed.
+            modified:   scripts/buildandreleasetest.sh
+2021-07-15:  David Anderson
+    commit 275553cba2646bed4aeeecf2535a1ab42012e994
+
+    Neglected bin/attr_form in one place.
+    Mentioned files that no longer exist (oops)
+            modified:   Makefile.am
+
+    Mentioned files that no longer exist (oops)
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/lib/libdwarf/Makefile.am
+2021-07-15:  David Anderson
+    commit 4d812f3ebb3265a2c3a92978bb0ce69208854f9b
+
+    Mentions the move to Semantic Versioning now.
+            modified:   NEWS
+2021-07-15:  David Anderson
+    commit 1507c2be60847925d177beda356740dbc5321665
+
+    This file is no longer used since make rebuild
+    implemented.
+            deleted:    scripts/baseconfig.h
+
+2021-07-15:  David Anderson
+    commit f2f5a0acaa6c01200b28e31c4d0ab4b6ba616c4b
+
+    This script is no longer needed or wanted.
+    autogen.sh updates the libdwarf_version.h
+    with the proper version number string instead
+    of a date.
+            deleted:    scripts/UPDATEDWARFDUMPVERSION.sh
+
+2021-07-15:  David Anderson
+    commit 154a84c5d4bf045d845ad10bf08b21954686f43b
+
+    Bringing ChangeLog up to date from git log.
+    As a result of this all ChangeLog entries for the project
+    wind up in the base 'code' directory ChangeLog.
+            modified:   ChangeLog
+
+2021-07-15:  David Anderson
     commit 93e89df6c68b910780e28113e78535ea3e787eee
 
     Instead of a date string in src/lib/libdwarf/libdwarf_version.h
