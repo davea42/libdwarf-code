@@ -130,14 +130,11 @@ CMakeLists.txt \
 NEWS \
 README \
 CODINGSTYLE \
-attr_form_build.c \
 buildopscounttab.c \
 tag_common.c \
 testdwarfdump.conf \
 $(dwarfdumpdev_DATA) \
 $(dwarfdumpconf_DATA) \
-tag_attr.c \
-tag_tree.c \
 attr_formclass.list \
 attr_formclass_ext.list \
 tag_attr.list \

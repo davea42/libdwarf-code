@@ -166,7 +166,6 @@ ChangeLog2020 \
 CODINGSTYLE \
 baseline.ltp  \
 dw-linetableheader.txt \
-gennames.c \
 dwgetopt.h \
 dwgetopt.c \
 CMakeLists.txt \

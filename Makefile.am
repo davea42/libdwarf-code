@@ -20,6 +20,7 @@ SUBDIRS += doc
 SUBDIRS += src/bin/gennames
 SUBDIRS += src/bin/tag_tree
 SUBDIRS += src/bin/tag_attr
+SUBDIRS += src/bin/attr_form
 
 ### rebuild is for maintainers to update C source
 ### that depends on certain (C and/or text) Files.
@@ -84,18 +85,13 @@ README.md \
 README.cmake \
 libdwarf.pc.in \
 libdwarfp.pc.in \
-scripts/baseconfig.h  \
 scripts/buildandreleasetest.sh \
-scripts/buildstandardsource.sh \
 scripts/run-all-tests.sh \
 scripts/ChangeLog \
 scripts/ChangeLog2018 \
 scripts/ChangeLog2019 \
 scripts/ChangeLog2020 \
 scripts/CLEANUP \
-scripts/ddbuild.sh  \
-scripts/libbuild.sh \
-scripts/UPDATEDWARFDUMPVERSION.sh \
 .travis.yml
 
 # AUTHORS, ChangeLog and COPYING must be present
