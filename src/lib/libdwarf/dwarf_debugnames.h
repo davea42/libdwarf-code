@@ -35,6 +35,7 @@ struct abbrev_pair_s {
     unsigned ap_form;
 };
 
+#if 0
 struct Dwarf_D_Abbrev_s {
     struct Dwarf_D_Abbrev_s * da_next;
     unsigned da_abbrev_code;
@@ -42,7 +43,7 @@ struct Dwarf_D_Abbrev_s {
     unsigned da_pairs_count;
     struct abbrev_pair_s da_pairs[ABB_PAIRS_MAX];
 };
-
+#endif
 
 #define DWARF_DNAMES_VERSION5 5
 #define DWARF_DNAMES_MAGIC  0xabcd
@@ -61,16 +62,17 @@ struct Dwarf_Dnames_Head_s {
     Dwarf_Small             * dn_section_end;
     Dwarf_Unsigned            dn_section_size;
 
-    /*  The .debug_names section offset of 1st byte
-        of a header record. */
+    /*  The .debug_names section offset of 
+        initial byte of a header record. */
     Dwarf_Unsigned dn_section_offset;
 
     /* For offset and pointer sanity calculations. */
     Dwarf_Small  * dn_indextable_data;
     Dwarf_Unsigned dn_indextable_length;
     unsigned       dn_offset_size;
-
     Dwarf_Unsigned dn_version;
+    Dwarf_Small  * dn_indextable_data_end;
+
     Dwarf_Unsigned dn_comp_unit_count;
     Dwarf_Unsigned dn_local_type_unit_count;
     Dwarf_Unsigned dn_foreign_type_unit_count;
@@ -80,7 +82,6 @@ struct Dwarf_Dnames_Head_s {
         and if hashes present, the size of the
         dn_hash_table array. */
     Dwarf_Unsigned dn_name_count;
-    Dwarf_Unsigned dn_abbrev_table_size; /* bytes */
     Dwarf_Unsigned dn_entry_pool_size;   /* bytes */
 
     Dwarf_Unsigned dn_augmentation_string_size;
@@ -92,6 +93,15 @@ struct Dwarf_Dnames_Head_s {
         it as null-terminated.  We copy it into
         calloc area so not 'const'  */
     char *   dn_augmentation_string;
+    /*  The following offsets are table_local offsets. */
+    Dwarf_Unsigned dn_cu_list_offset;
+    Dwarf_Unsigned dn_local_tu_list_offset;
+    Dwarf_Unsigned dn_foreign_tu_list_offset;
+    Dwarf_Unsigned dn_buckets_offset;
+    Dwarf_Unsigned dn_hash_table_offset;
+    Dwarf_Unsigned dn_string_offsets_offset;
+    Dwarf_Unsigned dn_entry_offsets_offset;
+    Dwarf_Unsigned dn_entry_pool_offset;
 
     Dwarf_Small *  dn_cu_list;
     Dwarf_Small *  dn_local_tu_list;
@@ -100,12 +110,14 @@ struct Dwarf_Dnames_Head_s {
     Dwarf_Small *  dn_hash_table;
     Dwarf_Small *  dn_string_offsets;
     Dwarf_Small *  dn_entry_offsets;
-    Dwarf_Small *  dn_abbreviations;
     Dwarf_Small *  dn_entry_pool;
 
-    unsigned       dn_abbrev_list_count;
-    /* An array of size dn_abbrev_list_count. */
-    struct Dwarf_D_Abbrev_s * dn_abbrev_list;
+    /* Array of Dwarf_Dnames_Bucket_s sorted by bucket value */
+    struct Dwarf_Dnames_Bucket_s * dn_bucket_sort;
+    Dwarf_Unsigned b_value;
+    Dwarf_Unsigned b_orig_bucket_index;
+    Dwarf_Unsigned b_sorted_bucket_index;
+};
 
 };
 

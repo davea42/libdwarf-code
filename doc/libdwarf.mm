@@ -8396,72 +8396,87 @@ restricts valid name table numbers to
 .P
 See also 
 \f(CWNames Fast Access .debug_gnu_pubnames\fP
-.H 3 "dwarf_debugnames_header()"
+.H 3 "dwarf_dnames_header()"
 .DS
-\f(CWint dwarf_debugnames_header(
-    Dwarf_Debug         dbg,
+\f(CWint dwarf_dnames_header(Dwarf_Debug         dbg,
+    Dwarf_Off           starting_offset,
     Dwarf_Dnames_Head * dn_out,
-    Dwarf_Unsigned    * name_table_count_out,
-    Dwarf_Error *error)\fP
+    Dwarf_Off         * offset_of_next_table,
+    Dwarf_Error *       error);
+
 .DE
 .P
 The function
 \f(CWdwarf_debugnames_header()\fP
 allocates an opaque data structure used
-in all the other debugnames calls.
+in all the other dnames calls and
+allows access to a single .debug_names
+table. 
+Normally there is only one such table
+in the section, but there could be
+more than one.
 .P
-Many of the function calls here let one
-extract the entire content of the section,
-which is useful if one wishes to dump the
-section or to use its data to create one's
-own internal data structures.
-.P
-To free space allocated when one has finished
-with these data structures, call
-.DS
-    dwarf_dealloc_debugnames(dn);
-    dn=0;
+To access all .debug_names tables
+in the section do
+.DS 
+void examfuncdname(Dwarf_Debug dbg)
+{    
+    Dwarf_Dnames_Head dn = 0;
+    Dwarf_Off starting_offset = 0;
+    Dwarf_Off next_offset = 0;
+    Dwarf_Error error = 0;
+    int res = DW_DLV_OK;
+
+    while (res == DW_DLV_OK ) {
+        res = dwarf_dnames_header(dbg,starting_offset,
+            &dn,&next_offset,&error);
+        if (res == DW_DLV_NO_ENTRY) {
+            /* All processed. */
+            return;
+        }
+        if (res == DW_DLV_ERROR) {
+            /*  corrupt data. give up, or do something
+                with the error record. */
+            return;
+        /* Use the dn record to do dwarf_dnames calls */
+        /* clean up */
+        dwarf_dealloc_debugnames(dn);
+        dn = 0;
+        starting_offset = next_offset;
+    }   
+    return;
+}
 .DE
-which will free up all data
-allocated for
-\f(CWdwarf_debugnames_header()\fP
-including all the table data it has 
-allocated and by setting dn to 0(or NULL)
-prevents your code accidentally
-referencing through
-a stale pointer.
+
 .P
 On success the function returns
 \f(CWDW_DLV_OK\fP
 and returns  a pointer
 to the Head structure through
-\f(CWdn_out\fP.
+\f(CWdn_out\fP and returns the
+section offset of the next
+table.
 .P
-It also returns the count of debugnames
-entry in the debugnames index
-through the
-\f(CWname_table_count_out\fP
-value.
 
 .P
 It returns 
 \f(CWDW_DLV_NO_ENTRY\fP
-if there is no 
+if there is record with that offset in
+the
 \f(CW.debug_names\fP
 section.
-
 .P
 It returns 
 \f(CWDW_DLV_ERROR\fP
 if there is an internal
 error such as data corruption
-in the section.
+in the section and if a Dwarf_Error*
+is passed in returns information on the
+error through that pointer.
 
-.H 3 " dwarf_debugnames_sizes()"
+.H 3 " dwarf_dnames_sizes()"
 .DS
-\f(CW int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned   name_table_number,
-
+\f(CW int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     /* The counts are entry counts, not byte sizes. */
     Dwarf_Unsigned * comp_unit_count,
     Dwarf_Unsigned * local_type_unit_count,
@@ -8479,9 +8494,11 @@ in the section.
         specific name table. */
     Dwarf_Unsigned * indextable_overall_length,
 
-    Dwarf_Unsigned * abbrev_table_size,
-    Dwarf_Unsigned * entry_pool_size,
+    Dwarf_Unsigned * entry_pool_size, /* aka abbrev table*/
     Dwarf_Unsigned * augmentation_string_size,
+    char          ** augmentation_string,
+    Dwarf_Insigned * section_size,
+    Dwarf_Half     * table version,
     Dwarf_Error *    error*/)\fP
 .DE
 .P
@@ -8489,11 +8506,9 @@ Given a properly created
 head
 \f(CWdn\fP
 this
-Allows access to fields a 
+Allows access to fields in a 
 \f(CW.debug_names\fP
-\f(CWDWARF5\fP
-header record
-\f(CWindex_number\fP.
+table.
 .P
 We will not describe the fields in detail
 here.
@@ -8503,11 +8518,10 @@ standard and
 \f(CWdwarfdump\fP
 for the motivation of this function.
 
-.H 3 " dwarf_debugnames_cu_entry()"
+.H 3 " dwarf_dnames_cu_entry()"
 .DS
-\f(CW int dwarf_debugnames_cu_entry(Dwarf_Dnames_Head   dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      offset_number,
+\f(CW int dwarf_dnames_cu_entry(Dwarf_Dnames_Head   dn,
+    Dwarf_Unsigned      cu_index_number,
     Dwarf_Unsigned    * offset_count,
     Dwarf_Unsigned    * offset,
     Dwarf_Error *       error)\fP

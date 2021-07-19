@@ -1198,9 +1198,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_MACRO_VERSION_ERROR             481
 #define DW_DLE_NEGATIVE_SIZE                   482
 #define DW_DLE_UDATA_VALUE_NEGATIVE            483
+#define DW_DLE_DEBUG_NAMES_ERROR               484
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        483
+#define DW_DLE_LAST        484
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -2121,108 +2122,62 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
     char          ** /*augmentation_string*/,
     Dwarf_Unsigned * /*section_size*/,
     Dwarf_Half     * /*table_version*/,
+    Dwarf_Half     * /*offset_size*/,
     Dwarf_Error *    /*error*/);
 
-int dwarf_dnames_cu_entry(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*cu_index_number*/,
-    Dwarf_Unsigned    * /*offset_count*/,
-    Dwarf_Unsigned    * /*offset*/,
-    Dwarf_Error *       /*error*/);
-int dwarf_dnames_local_tu_entry(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*tu_index_number*/,
-    Dwarf_Unsigned    * /*offset_count*/,
-    Dwarf_Unsigned    * /*offset*/,
-    Dwarf_Error *       /*error*/);
-int dwarf_dnames_foreign_tu_entry(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*forn_index_number*/,
-    Dwarf_Unsigned    * /*sig_mininum*/,
-    Dwarf_Unsigned    * /*sig_count*/,
-    Dwarf_Sig8        * /*signature*/,
-    Dwarf_Error *       /*error*/);
+/* get each list entry one at a time */
+int dwarf_dnames_cu_table(Dwarf_Dnames_Head /*dn*/,
+    const char        * /* type ("cu" "tu" "foreign") */
+    /* index number 0 to k-1 or 0 to t-1 or 0 to f-1
+       depending on type. */
+    Dwarf_Unsigned      /*index_number*/,
+    Dwarf_Unsigned    * /*offset (of cu/tu/foreign header)*/,
+    Dwarf_Sig8        * /*sig (filledwith tu signature */
+    Dwarf_Error       * /*error*/);
+
+/* Each bucket, one at a time */
 int dwarf_dnames_bucket(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*bucket_number*/,
-    Dwarf_Unsigned    * /*bucket_count*/,
-    Dwarf_Unsigned    * /*index_of_name_entry*/,
+    Dwarf_Unsigned    * /*index (of name entry*/,
+    Dwarf_Unsigned    * /*indexcount (of name entries in bucket)*/,
     Dwarf_Error *       /*error*/);
+
+/*  Each Name Table entry, one at a time.
+    attr_array is an array of attribute/form
+    pairs. So [0] is an attribute, [1] is
+    its form. And so on. So attr_count returned
+    is always a multiple of two. The last entry
+    is 0,0 ending the list.
+    It is not an error if array_size is zero or
+    small. Check the returned attr_count to
+    know now much of array filled in and
+    if the array you provided is 
+    large enough. Possibly 40 (so 20 attributes)
+    is large enough. */
 int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*name_number*/,
-    Dwarf_Unsigned    * /*names_count*/,
-    Dwarf_Sig8        * /*signature*/,
+    Dwarf_Unsigned      /*name_index*/,
+    Dwarf_Unsigned    * /*bucket_number */,
+    Dwarf_Unsigned    * /*hash value*/,
     Dwarf_Unsigned    * /*offset_to_debug_str*/,
+    char *      const * /*ptrtostr (or null)*/,
     Dwarf_Unsigned    * /*offset_in_entrypool*/,
+    /*  Following fields are from Entry Pool */
+    Dwarf_Unsigned    * /* abbrev_number (from entrypool) */,
+    Dwarf_Half        * /* abbrev_tag (from entrypool) */,
+    Dwarf_Unsigned      /* array_size (of following) */,
+    Dwarf_Half        * /* attr_array
+        (caller provides array space, array need
+        not be initialized) */,
+    Dwarf_Unsigned    * /* attr_count 
+        (attr_array entries used count) */,
     Dwarf_Error *       /*error*/);
 
-int dwarf_dnames_abbrev_by_index(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned    /*abbrev_number*/,
-    Dwarf_Unsigned *  /*abbrev_code*/,
-    Dwarf_Unsigned *  /*tag*/,
+/*  A consumer wanting to use the lookup here
+    to get CU or DIE information without
+    using above calls to read the whole
+    table has not been specified as it's not
+    clear what would be good for that use case. */
 
-    /*  The number of valid abbrev_entry values:
-        0 to number_of_abbrev-1 */
-    Dwarf_Unsigned *  /*number_of_abbrev*/,
-
-    /*  The number of attr/form pairs, not counting
-        the trailing 0,0 pair. */
-    Dwarf_Unsigned * /*number_of_attr_form_entries*/,
-    Dwarf_Error *    /*error*/);
-
-#if 0
-Because the abbrevs cover multiCUs (usually)
-there is no unique mapping possible.
-int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned    /*abbrev_code*/,
-    Dwarf_Unsigned *  /*tag*/,
-
-    /*  The number of this code/tag as an array index. */
-    Dwarf_Unsigned *  /*index_of_abbrev*/,
-
-    /*  The number of attr/form pairs, not counting the trailing
-        0,0 pair. */
-    Dwarf_Unsigned * /*number_of_attr_form_entries*/,
-    Dwarf_Error *    /*error*/);
-#endif /* 0 */
-
-int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned   /*abbrev_entry_index*/,
-    Dwarf_Unsigned   /*abbrev_form_index*/,
-    Dwarf_Unsigned * /*name_index_attr*/,
-    Dwarf_Unsigned * /*form*/,
-    Dwarf_Unsigned * /*number_of_attr_form_entries*/,
-    Dwarf_Error    * /*error*/);
-
-
-/*  This, combined with dwarf_dnames_entrypool_values(),
-    lets one examine as much or as little of an entrypool
-    as one wants to by alternately calling these two
-    functions. */
-int dwarf_dnames_entrypool(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned   /*offset_in_entrypool*/,
-    Dwarf_Unsigned * /*abbrev_code*/,
-    Dwarf_Unsigned * /*tag*/,
-    Dwarf_Unsigned * /*value_count*/,
-    Dwarf_Unsigned * /*index_of_abbrev*/,
-    Dwarf_Unsigned * /*offset_of_initial_value*/,
-    Dwarf_Error *    /*error*/);
-
-/*  Caller, knowing array size needed, passes in arrays
-    it allocates of for idx, form, offset-size-values,
-    and signature values.  Caller must examine idx-number
-    and form to decide, for each array element, whether
-    the offset or the signature contains the value.
-    So this returns all the values for the abbrev code.
-    And points via offset_of_next to the next abbrev code.
-    */
-int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned   /*index_of_abbrev*/,
-    Dwarf_Unsigned   /*offset_in_entrypool_of_values*/,
-    Dwarf_Unsigned * /*array_dw_idx_number*/,
-    Dwarf_Unsigned * /*array_form*/,
-    Dwarf_Unsigned * /*array_of_offsets*/,
-    Dwarf_Sig8     * /*array_of_signatures*/,
-
-    /*  offset of the next entrypool entry. */
-    Dwarf_Unsigned * /*offset_of_next_entrypool*/,
-    Dwarf_Error *    /*error*/);
 /* end of .debug_names interfaces. */
 
 /*  New October 2019.  Access to the GNU section named

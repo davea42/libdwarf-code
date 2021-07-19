@@ -641,6 +641,6 @@ const char *_dwarf_errmsgs[] = {
     "(from DW_FORM_implicit_const) is not appropriate",
 "DW_DLE_UDATA_VALUE_NEGATIVE(483) Reading a negative value from "
     " from dwarf_formudata() is not allowed.",
-
+"DW_DLE_DEBUG_NAMES_ERROR(484) Error reading .debug_names",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

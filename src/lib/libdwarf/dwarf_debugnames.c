@@ -248,6 +248,7 @@ read_uword_val(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  Reading a Name Index header */
 static int
 read_a_name_index(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned  section_offset,
@@ -258,7 +259,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     Dwarf_Error    *error)
 {
     Dwarf_Unsigned area_length = 0;
-    int local_length_size;
+    int offset_size;
     int local_extension_size = 0;
     Dwarf_Small *past_length = 0;
     Dwarf_Small *end_dnames = 0;
@@ -278,22 +279,28 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     Dwarf_Debug dbg = dn->dn_dbg;
 
     READ_AREA_LENGTH_CK(dbg, area_length, Dwarf_Unsigned,
-        curptr, local_length_size,
+        curptr, offset_size,
         local_extension_size,error,
         remaining_space,end_section);
 
     /* curptr now points past the length field */
-    usedspace = local_length_size + local_extension_size;
+    usedspace = offset_size + local_extension_size;
     past_length = curptr;
 
     /* Two stage length test so overflow is caught. */
     if (area_length > remaining_space) {
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
+        _dwarf_error_string(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR
+            "DW_DLE_DEBUG_NAMES_HEADER_ERROR: "
+            "The index table runs off the end of the .debug_names "
+            "section. Corrupt data.");
         return DW_DLV_ERROR;
     }
-    if ((area_length + local_length_size + local_extension_size) >
+    if ((area_length + offset_size + local_extension_size) >
         remaining_space) {
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
+        _dwarf_error_string(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR
+            "DW_DLE_DEBUG_NAMES_HEADER_ERROR: "
+            "The index table runs off the end of the .debug_names "
+            "section... Corrupt data.");
         return DW_DLV_ERROR;
     }
     end_dnames = curptr + area_length;
@@ -364,6 +371,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
     usedspace += SIZEOFT32;
 
+    /*  Entry pool aka abbrev_table */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
         &entry_pool_size,area_length,error);
@@ -386,11 +394,13 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
+    dn->cu_list_offset = usedspace;
 
     dn->dn_dbg = dbg;
     dn->dn_section_offset = section_offset;
     dn->dn_indextable_data = past_length;
     dn->dn_indextable_length = area_length;
+    dn->dn_indextable_data_end = dn->dn_indextable_data + area_length;
     dn->dn_version = version;
     dn->dn_comp_unit_count = comp_unit_count;
     dn->dn_local_type_unit_count = local_type_unit_count ;
@@ -437,33 +447,40 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         }
         usedspace += augmentation_string_size;
     }
+
     /*  Now we deal with the arrays following the header. */
     dn->dn_cu_list = curptr;
-    curptr +=  SIZEOFT32 * comp_unit_count;
+    curptr +=  dn->dn_offset_size * comp_unit_count;
+    dn->dn_cu_list_offset = usedspace; 
     if (curptr > end_dnames) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
+    usedspace += dn->dn_offset_size * comp_unit_count ;
+
     dn->dn_local_tu_list = curptr;
-    curptr +=  SIZEOFT32 *local_type_unit_count;
+    dn->local_tu_list_offset = usedspace;
+    curptr +=  dn->dn_offset_size *local_type_unit_count;
     if (curptr > end_dnames) {
         free(dn->dn_augmentation_string);
         dn->dn_augmentation_string = 0;
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
-
+    usedspace += dn->dn_offset_size* local_type_unit_count;
+   
     dn->dn_foreign_tu_list = curptr;
-    curptr +=  sizeof(Dwarf_Sig8) * foreign_type_unit_count;
+    dn->local_foreign_tu_list_offset = usedspace;
+    curptr += dn->dn_offset_size * foreign_type_unit_count;
+    usedspace += dn->dn_offset_size * foreign_type_unit_count;
     if (curptr > end_dnames) {
         free(dn->dn_augmentation_string);
         dn->dn_augmentation_string = 0;
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
-    usedspace += SIZEOFT32* ( comp_unit_count +
-        local_type_unit_count + foreign_type_unit_count);
 
+    dn->dn_buckets_offset = usedspace;
     dn->dn_buckets = curptr;
     curptr +=  SIZEOFT32 * bucket_count ;
     usedspace += SIZEOFT32 * bucket_count;
@@ -473,7 +490,9 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
+
     dn->dn_hash_table = curptr;
+    dn->dn_hash_table_offset = usedspace;
     curptr +=  sizeof(Dwarf_Sig8) * name_count;
     usedspace += sizeof(Dwarf_Sig8) * name_count;
     if (curptr > end_dnames) {
@@ -484,8 +503,9 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
 
     dn->dn_string_offsets = curptr;
-    curptr +=  DWARF_32BIT_SIZE * name_count;
-    usedspace += DWARF_32BIT_SIZE * name_count;
+    dn->dn_string_offsets_offset = usedspace;
+    curptr +=  dn->dn_offset_size * name_count;
+    usedspace += dn->dn_offset_size * name_count;
     if (curptr > end_dnames) {
         free(dn->dn_augmentation_string);
         dn->dn_augmentation_string = 0;
@@ -494,15 +514,18 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
 
     dn->dn_entry_offsets = curptr;
-    curptr +=  DWARF_32BIT_SIZE * name_count;
-    usedspace += SIZEOFT32 * name_count;
+    dn->dn_entry_offsets_offset = usedspace;
+    curptr +=  dn->dn_offset_size * name_count;
+    usedspace += dn->dn_offset_size * name_count;
     if (curptr > end_dnames) {
         free(dn->dn_augmentation_string);
         dn->dn_augmentation_string = 0;
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
-    dn->dn_abbreviations = curptr;
+
+    dn->dn_dn_entry_pool = curptr;
+    dn->dn_dn_entry_pool_offset = usedspace;
     curptr +=   entry_pool_size;
     usedspace += entry_pool_size;
     if (curptr > end_dnames) {
@@ -512,11 +535,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         return DW_DLV_ERROR;
     }
 
-    dn->dn_entry_pool = curptr;
-    dn->dn_offset_size = local_length_size;
-
-    dn->dn_entry_pool_size = end_dnames - curptr;
-
+    dn->dn_entry_pool_size = dn->dn_section_size - usedspace;
     curptr_in = curptr;
     *usedspace_out = usedspace;
     res = fill_in_abbrevs_table(dn,error);
@@ -555,7 +574,9 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     int              res           = 0;
 
     if (!dbg) {
-        _dwarf_error(dbg, error,DW_DLE_DBG_NULL);
+        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: Dwarf_Debug argument in dwarf_dnames_header()");
+            " call is NULL");
         return DW_DLV_ERROR;
     }
     res = _dwarf_load_section(dbg, &dbg->de_debug_names, error);
@@ -578,7 +599,7 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     if (!dn_header) {
         _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
             "DW_DLE_ALLOC_FAIL: dwarf_get_alloc of "
-            "a Dwarf_Dnames head record failed.");
+            "a Dwarf_Dnames_Head record failed.");
         return DW_DLV_ERROR;
     }
     dn_header->dn_magic = DWARF_DNAMES_MAGIC;
@@ -662,11 +683,13 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     char          ** augmentation_string,
     Dwarf_Unsigned * section_size,
     Dwarf_Half     * table_version,
-
+    Dwarf_Half     * offset_size,
     Dwarf_Error *    error)
 {
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: A call to dwarf_dnames_sizes() "
+            "has a NULL Dwarf_Dnames_Head or an improper one.") 
         return DW_DLV_ERROR;
     }
     if (comp_unit_count) {
@@ -702,255 +725,252 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     if (table_version) {
         *table_version = dn->dn_version;
     }
+    if (offset_size) {
+        *offset_size = dn->dn_offset_size;
+    }
     return DW_DLV_OK;
 }
 
-/* The valid values in 'offset_ number'
-    are 0 to (comp_unit_count-1)
-*/
 int
-dwarf_dnames_cu_entry(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      offset_number,
-    Dwarf_Unsigned    * offset_count,
+dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
+    const char        * type,/* "cu", "tu", or "foreign" */
+    Dwarf_Unsigned      index_number,
     Dwarf_Unsigned    * offset,
-    Dwarf_Error *       error)
+    Dwarf_Sig8        * sig,
+    Dwarf_Error       * error)
 {
     Dwarf_Debug dbg = 0;
+    Dwarf_Unsigned unit_count  0;
+    Dwarf_Unsigned unit_entry_size 0;
+    Dwarf_Small  * unit_ptr = 0;
+    Dwarf_Unsigned unit_offset = 0;
+    Dwarf_Bool sigoffset = FALSE;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
+        _dwarf_error_string(NULL, error,DW_DLE_DEBUG_NAMES_ERROR,
+            "DW_DLE_DEBUG_NAMES_ERROR: "
+            " Dwarf_Dnames_Head is NULL or invalid pointer"
+            "calling dwarf_dnames_cu_table()");
         return DW_DLV_ERROR;
     }
     dbg = dn->dn_dbg;
-    if (offset_number >= dn->dn_comp_unit_count) {
-        if (offset_count) {
-            *offset_count = dn->dn_comp_unit_count;
-        }
+    if (type[0] == 'c') {
+        unit_ptr = dn->dn_cu_list;
+        unit_entry_size = dn->dn_offset_size;
+        unit_count = dn->dn_comp_unit_count;
+        unit_offset = dn->dn_cu_list_offset;
+    } else if (type[0] == 't') {
+        unit_ptr = dn->dn_local_tu_list;
+        unit_entry_size = dn->dn_offset_size;
+        unit_count = dn->dn_local_type_unit_count;
+        unit_offset = dn->dn_local_tu_list_offset;
+    } else if (type[0] == 'f') {
+        unit_ptr = dn->dn_foreign_tu_list;
+        unit_entry_size = sizeof(Dwarf_Sig8);
+        unit_count = dn->dn_foreign_type_unit_count;
+        unit_offset = dn->dn_foreign_tu_list_offset;
+        sigoffset = TRUE;
+    } else {
+        _dwarf_error_string(dbg,error,DW_DLE_DEBUG_NAMES_ERROR,
+            "DW_DLE_DEBUG_NAMES_ERROR: "
+            "type string is not start with cu tu or foreign "
+            "so invalid call to dwarf_dnames_cu_table()");
+        return DW_DLV_ERROR;
+    }
+    if (index_number >= unit_count) {
         return DW_DLV_NO_ENTRY;
     }
-
-
     if (offset) {
+        *offset = unit_offset + index_number*unit_entry_size;
+    }
+
+    if (sig && sigoffset) {
+        Dwarf_Small *ptr = unit_ptr+ offset_number *unit_entry_size;
+        Dwarf_Small *endptr = dn->indextable_data_dne; 
+        /*  ASSERT: ptr < dn->dn_indextable_data_end */
+        memcpy(sig,ptr,sizeof(Dwarf_Sig8));
+    } else if (sig) {
+        /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
-        Dwarf_Small *ptr = dn->dn_cu_list +
-            offset_number *dn->dn_offset_size;
-        Dwarf_Small *endptr = dn->dn_local_tu_list;
+        Dwarf_Small *ptr = unit_ptr+ offset_number *unit_entry_size;
+        Dwarf_Small *endptr = dn->indextable_data_dne; 
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, dn->dn_offset_size,
+            ptr, unit_entry_size,
             error,endptr);
         *offset = offsetval;
     }
-    if (offset_count) {
-        *offset_count = dn->dn_comp_unit_count;
-    }
     return DW_DLV_OK;
 }
 
-/* The valid values in 'offset_ number'
-    are 0 to (type_unit_count-1)
-*/
-int
-dwarf_dnames_local_tu_entry(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      offset_number,
-    Dwarf_Unsigned    * offset_count,
-    Dwarf_Unsigned    * offset,
-    Dwarf_Error *       error)
-{
-    Dwarf_Debug dbg = 0;
-
-    if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
-    dbg = dn->dn_dbg;
-    if (offset_number >= dn->dn_local_type_unit_count) {
-        if (offset_count) {
-            *offset_count = dn->dn_local_type_unit_count;
-        }
-        return DW_DLV_NO_ENTRY;
-    }
-
-
-    if (offset) {
-        Dwarf_Unsigned offsetval = 0;
-        Dwarf_Small *ptr = dn->dn_local_tu_list +
-            offset_number *dn->dn_offset_size;
-        Dwarf_Small *endptr = dn->dn_foreign_tu_list;
-
-        READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, dn->dn_offset_size,
-            error,endptr);
-        *offset = offsetval;
-    }
-    if (offset_count) {
-        *offset_count = dn->dn_local_type_unit_count;
-    }
-    return DW_DLV_OK;
-}
-
-
-
-/*
-    The valid sig_number values are
-    0 to (foreign_type_unit_count-1)
-*/
-int
-dwarf_dnames_foreign_tu_entry(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      sig_number,
-
-    /* these index starting at local_type_unit_count */
-    Dwarf_Unsigned    * sig_minimum,
-    Dwarf_Unsigned    * sig_count,
-    Dwarf_Sig8 *        signature,
-    Dwarf_Error *       error)
-{
-    Dwarf_Debug dbg = 0;
-    unsigned legal_low = 0;
-    unsigned legal_high = 0;
-
-    if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
-    dbg = dn->dn_dbg;
-    legal_low = dn->dn_local_type_unit_count;
-    legal_high = legal_low + dn->dn_foreign_type_unit_count;
-    if (sig_number < legal_low) {
-        _dwarf_error(dbg, error, DW_DLE_DEBUG_NAMES_BAD_INDEX_ARG);
-        return DW_DLV_ERROR;
-    }
-    if (sig_number >= legal_high) {
-        if (sig_minimum) {
-            *sig_minimum = legal_low;
-        }
-        if (sig_count) {
-            *sig_count = dn->dn_foreign_type_unit_count;
-        }
-        return DW_DLV_NO_ENTRY;
-    }
-
-    if (signature) {
-        Dwarf_Small *ptr = dn->dn_foreign_tu_list +
-            sig_number *dn->dn_offset_size;
-        Dwarf_Small *endptr = dn->dn_hash_table;
-        if ((ptr +sizeof(Dwarf_Sig8)) > endptr) {
-            _dwarf_error(dbg,error,DW_DLE_DEBUG_NAMES_BAD_INDEX_ARG);
-            return DW_DLV_ERROR;
-        }
-        memcpy(signature,ptr,sizeof(Dwarf_Sig8));
-    }
-    if (sig_minimum) {
-        *sig_minimum = legal_low;
-    }
-    if (sig_count) {
-        *sig_count = dn->dn_foreign_type_unit_count;
-    }
-    return DW_DLV_OK;
-}
-
-/*  The hash table is composed of the buckets table
-    and the hashes table.
-    If there is no buckets table (bucket_count == 0)
-    the hashes part still exists. */
+/*  Each bucket gives the index of the first of
+    the name entries for the bucket
+    index_of_entry returns the name table entry.
+    indexcount returns the number of name table entries
+    (representing bucket collisions) for this bucket. */
 int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      bucket_number,
-    Dwarf_Unsigned    * bucket_count,
-    Dwarf_Unsigned    * index_of_name_entry,
+    Dwarf_Unsigned    * name_index,
+    Dwarf_Unsigned    * collisioncount,
     Dwarf_Error *       error)
 {
     Dwarf_Debug dbg = 0;
+    Dwarf_Unsigned count = 0; /* equal bucket value */
+    Dwarf_Unsigned i = 0;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
+        _dwarf_error_string(NULL, error,DW_DLE_DEBUG_NAMES_ERROR,
+            "DW_DLE_DEBUG_NAMES_ERROR: "
+            " Dwarf_Dnames_Head is NULL or invalid pointer"
+            "calling dwarf_dnames_bucket()");
         return DW_DLV_ERROR;
     }
     dbg = dn->dn_dbg;
     if (bucket_number >= dn->dn_bucket_count) {
-        if (bucket_count) {
-            *bucket_count = dn->dn_bucket_count;
-        }
         return DW_DLV_NO_ENTRY;
     }
-
-    if (index_of_name_entry) {
+    for (i = bucket_number; i < dn->dn_bucket_count; ++i) {
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = dn->dn_buckets +
             bucket_number * DWARF_32BIT_SIZE;
-        Dwarf_Small *endptr = dn->dn_hash_table;
+        Dwarf_Small *endptr = dn->dn_buckets+ 
+            dn->dn_bucket_count*DWARF_32BIT_SIZE;
+        Dwarf_Unsigned localbucket = bucket_number;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
             ptr, DWARF_32BIT_SIZE,
             error,endptr);
-        *index_of_name_entry = offsetval;
+        if (i == bucket_number) {
+            *name_index = offsetval;
+        }
+        localbucket = offsetval%dn->dn_bucket_count;
+        if (bucket_number != localbucket) { 
+            break;
+        }
+        if (!collisioncount) {
+            break;
+        }
+        ++count;
     }
-    if (bucket_count) {
-        *bucket_count = dn->dn_bucket_count;
+    if (collisioncount) {
+        *collisioncount = count;
     }
     return DW_DLV_OK;
 }
 
-/*  Access to the .debug_names name table. */
+/*  Each Name Table entry, one at a time.
+    It is not an error if array_size is zero or
+    small. Check the returned attr_count to
+    know now much of array filled in and 
+    if the array you provided is
+    large enough. Possibly 40 is
+    sufficient. */
 int
 dwarf_dnames_name(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_entry,
-    Dwarf_Unsigned    * names_count,
-    Dwarf_Sig8        * signature,
+    Dwarf_Unsigned      name_index,
+    Dwarf_Unsigned    * bucket_number,
+    Dwarf_Unsigned    * hash value,
     Dwarf_Unsigned    * offset_to_debug_str,
+    char *      const * ptrtostr,
     Dwarf_Unsigned    * offset_in_entrypool,
+    Dwarf_Unsigned    *  abbrev_number,
+    Dwarf_Half        *  abbrev_tag,
+    Dwarf_Unsigned       array_size,
+    Dwarf_Half        *  attr_array),
+    Dwarf_Unsigned    *  attr_count ,
     Dwarf_Error *       error)
-
 {
     Dwarf_Debug dbg = 0;
+    Dwarf_Unsigned entrypooloffset = 0;
+    Dwarf_Unsigned debugstroffset = 0;
+    Dwarf_Unsigned abbrevnumber = 0;
+    Dwarf_Small * strpointer = 9;
+    Dwarf_Half abbrevtag = 0;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "a call to dwarf_dnames_name() "
+            "Passes in a NULL or uninitialized pointer");
         return DW_DLV_ERROR;
     }
     dbg = dn->dn_dbg;
-    if (name_entry >= dn->dn_name_count) {
+    if (!dbg) {
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "a call to dwarf_dnames_name() "
+            "finds a NULL Dwarf_Debug in a Dwarf_Dnames_Head");
+        return DW_DLV_ERROR;
+    }
+    if (name_index >= dn->dn_name_count) {
         if (names_count) {
             *names_count = dn->dn_bucket_count;
         }
         return DW_DLV_NO_ENTRY;
     }
-
-    if (signature) {
-        Dwarf_Small *ptr = dn->dn_hash_table +
-            name_entry *sizeof(Dwarf_Sig8);
-        Dwarf_Small *endptr = dn->dn_string_offsets;
-        if ((ptr + sizeof(Dwarf_Sig8)) > endptr) {
-            _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_BAD_INDEX_ARG);
-            return DW_DLV_ERROR;
-        }
-        memcpy(signature,ptr,sizeof(Dwarf_Sig8));
-    }
-
-    if (offset_to_debug_str) {
-        Dwarf_Unsigned offsetval = 0;
+    {
         Dwarf_Small *ptr = dn->dn_string_offsets +
-            name_entry * DWARF_32BIT_SIZE;
+            name_entry * dn->dn_offset_size;
         Dwarf_Small *endptr = dn->dn_abbreviations;
 
-        READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, DWARF_32BIT_SIZE,
+        READ_UNALIGNED_CK(dbg, debugstroffset, Dwarf_Unsigned,
+            ptr, dn->dn_offset_size,
             error,endptr);
-        *offset_to_debug_str = offsetval;
+        if (offset_to_debug_str) {
+            *offset_to_debug_str = debugstroffset;
+        }
     }
-    if (offset_in_entrypool) {
-        Dwarf_Unsigned offsetval = 0;
+    {
         Dwarf_Small *ptr = dn->dn_entry_offsets +
-            name_entry * DWARF_32BIT_SIZE;
+            name_entry * dn->dn_offset_size;
         Dwarf_Small *endptr = dn->dn_abbreviations;
+        /* offsets relative to the start of the
+           entry_pool */
 
-        READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, DWARF_32BIT_SIZE,
+        READ_UNALIGNED_CK(dbg, entrypooloffset, Dwarf_Unsigned,
+            ptr, dn->dn_offset_size,
             error,endptr);
-        *offset_in_entrypool = offsetval;
+        if (offset_in_entrypool) {
+            *offset_in_entrypool = entrypooloffset;
+        }
     }
+    /* Get str ptr from .debug_str */
+    {
+        Dwarf_Small *secdataptr = 0;
+        Dwarf_Unsigned secdatalen = 0;
+        Dwarf_Small *secend = 0;
+        int res_s = 0;
 
-    if (names_count) {
-        *names_count = dn->dn_name_count;
+        /* Ensure .debug_str loaded? */
+        secdataptr = (Dwarf_Small *)dbg->de_debug_info.dss_data;
+        secdatalen = dbg->de_debug_info.dss_size;
+        secend = secdataptr+secdatalen;
+        strpointer = secdataptr +debugstroffset;
+        res_s = _dwarf_check_string_valid(dbg,
+            secdataptr,strpointer,secend,
+            DW_DLE_FORM_STRING_BAD_STRING,error);
+        if (res_s != DW_DLV_OK) {
+            return res_s;
+        }
+        if (ptrtostr) {
+            *ptrtostr = strpointer;
+        }
+    }
+    
+    if (hash_value) {
+FIXME
+    }
+    if (bucket_number) {
+FIXME
+    }
+    if (abbrev_number) {
+FIXME
+    }
+    if (abbrev_tag) {
+FIXME
+    }
+    if (attr_array && array_size) {
+FIXME
     }
     return DW_DLV_OK;
 }
