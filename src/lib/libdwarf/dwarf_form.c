@@ -397,6 +397,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 int
 dwarf_formref(Dwarf_Attribute attr,
     Dwarf_Off * ret_offset,
+    Dwarf_Bool * ret_is_info,
     Dwarf_Error * error)
 {
     Dwarf_Debug dbg = 0;
@@ -447,12 +448,26 @@ dwarf_formref(Dwarf_Attribute attr,
         offset = localoffset;
         break;
     }
-    case DW_FORM_ref_sig8:
+    case DW_FORM_ref_sig8: {
+        /*  We need to look for a local reference here.
+            The function we are in is only CU_local
+            offsets returned.
+#if 0
+        Dwarf_Sig8 sig8;
+        memcpy(&sig8,ptr,sizeof(Dwarf_Sig8));
+        res = dwarf_find_die_given_sig8(dbg,
+            &sig8,
+        We could look, then determine if
+        resutling offset is actually local.
+#endif
+        
         /*  We cannot handle this here.
-            The reference is to .debug_types
+            The reference could be to .debug_types
+            or another CU!
             not a .debug_info CU local offset. */
         _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);
         return DW_DLV_ERROR;
+    }
     default: {
         dwarfstring m;
 
@@ -572,6 +587,29 @@ dwarf_formsig8(Dwarf_Attribute attr,
 
 
 
+static int
+find_sig8_target_as_global_offset(Dwarf_Attribute attr, 
+    Dwarf_sig8 *sig8, Dwarf_Error *error)
+
+Dwarf_Die targdie = 0;
+        Dwarf_Die targ_is_info = 0;
+        Dwarf_Bool error_off = FALSE;
+
+        memcpy(&sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
+        res = dwarf_find_die_given_sig8(dbg,
+            &sig8,&targ_die,&targ_is_info,error);
+        if (res != DW_DLV_OK) {
+            if (res == DW_DLV_ERROR) {
+DROP
+            }
+            error_off = TRUE;
+        }
+        if (!error_off) {
+            if (targ_die->di_cu_context == cu_context) {
+               really a local ref
+            } else {
+            }
+
 
 /*  Since this returns section-relative debug_info offsets,
     this can represent all REFERENCE forms correctly
@@ -603,6 +641,19 @@ dwarf_formsig8(Dwarf_Attribute attr,
 int
 dwarf_global_formref(Dwarf_Attribute attr,
     Dwarf_Off * ret_offset, Dwarf_Error * error)
+{
+FIXME
+}
+
+/*  This follows DW_FORM_ref_sig8 so could got
+    to any CU and from debug_info to debug_types
+    (or vice versa?)
+*/
+int
+dwarf_global_formref_b(Dwarf_Attribute attr,
+    Dwarf_Off * ret_offset,
+    Dwarf_Bool * offset_is_info,
+    Dwarf_Error * error)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Unsigned offset = 0;
@@ -754,13 +805,26 @@ dwarf_global_formref(Dwarf_Attribute attr,
             }
         }
         break;
-    case DW_FORM_ref_sig8: /* FIXME */
-        /*  We cannot handle this yet.
-            The reference could be to .debug_types, and
-            this function only returns an offset in
-            .debug_info at this point. */
-        _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);
-        return DW_DLV_ERROR;
+    case DW_FORM_ref_sig8: {
+        int res = 0;
+        Dwarf_Sig8 sig8;
+        Dwarf_Bool t_is_info = TRUE;
+        Dwarf_Unsigned t_offset = 0;
+
+FIXME
+        memcpy(&sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
+        res = find_sig8_target_as_global_offset(attr, 
+            &sig8,&t_is_info,&t_offset,error);
+        if( res != DW_DLV_OK)
+            /*  We cannot handle this yet.
+                The reference could be to .debug_types, and
+                this function only returns an offset in
+                .debug_info at this point. */
+            _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);
+            return DW_DLV_ERROR;
+        }
+        break;
+    }
     default: {
         dwarfstring m;
         int formcode = attr->ar_attribute_form;
