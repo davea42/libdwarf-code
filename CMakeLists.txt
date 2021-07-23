@@ -100,15 +100,13 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 ### Version also appears in configure.ac
-set(VERSION 0.1.0)
+set(VERSION 0.1.1)
 set(PACKAGE_VERSION "\"${VERSION}\"") 
 set(PACKAGE_NAME "libdwarf" )
-###set(VERSION ${PACKAGE_VERSION} )
 set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
 string(REGEX REPLACE "[\"]" "" tarname1 "${PACKAGE_STRING}" )
 string(REGEX REPLACE "[^a-zA-Z0-9_]" "-" tarname "${tarname1}" )
 set(PACKAGE_TARNAME "\"${tarname}\"" )
-###set(PACKAGE_VERSION  "\"${PACKAGE_VERSION}\"")
 
 test_big_endian(isBigEndian)
 if (${isBigEndian})
@@ -137,6 +135,8 @@ check_include_file( "sys/elf_amd64.h" HAVE_SYS_ELF_AMD64_H)
 check_include_file( "sys/elf_sparc.h" HAVE_SYS_ELF_SPARC_H)
 check_include_file( "sys/ia64/elf.h"  HAVE_SYS_IA64_ELF_H )
 
+### cmake provides no way to guarantee uint32_t present.
+### configure does guarantee that.
 if(HAVE_STDINT_H)
   check_c_source_compiles("
   #include <stdint.h>
