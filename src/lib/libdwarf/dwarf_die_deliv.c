@@ -1996,6 +1996,38 @@ dwarf_validate_die_sibling(Dwarf_Die sibling,Dwarf_Off *offset)
     return DW_DLV_ERROR;
 }
 
+void
+_dwarf_fill_in_die_abcom(Dwarf_CU_Context cu_context,
+     Dwarf_Byte_Ptr Die_info_ptr,
+     struct Dwarf_Abbrev_Common_s *abcom)
+{
+    abcom->ac_dbg = cucontext->cc_dbg;
+    abcom->ac_highest_known_code = 
+        cu_context->cc_highest_known_code;
+    abcom->ac_hashtable_base = cu_context->cc_abbrev_hash_table;
+    abcom->ac_last_abbrev_ptr = cu_context->cc_last_abbrev_ptr;
+    abcom->ac_last_abbrev_endptr = 
+        cu_context->cc_last_abbrev_endptr;
+    abcom->ac_abbrev_offset = cu_context->cc_abbrev_offset; 
+    abcom->ac_abbrev_ptr = cu_context->cc_abbrev_ptr; 
+    abcom->ac_end_abbrev_ptr = cu_context->cc_end_abbrev_ptr; 
+    abcom->ac_dwp_offsets = cu_context->ac_dwp_offsets;
+}
+void
+_dwarf_fill_in_die_from_abcom(struct Dwarf_Abbrev_Common_s *abcom,
+    Dwarf_CU_Context cucontext)
+{
+    cu_context->cc_highest_known_code = abcom->ac_highest_known_code;
+    cu_context->cc_hashtable_base =   abcom->ac_hashtable_base;
+    cu_context->cc_last_abbrev_ptr=   abcom->ac_last_abbrev_ptr; 
+    cu_context->cc_last_abbrev_endptr = abcom->ac_last_abbrev_endptr;
+    cu_context->cc_abbrev_offset =    abcom->ac_abbrev_offset  
+    cu_context->cc_abbrev_ptr=        abcom->ac_abbrev_ptr;
+    cu_context->cc_end_abbrev_ptr=    abcom->ac_end_abbrev_ptr; 
+    cu_context->cc_dwp_offsets=       abcom->ac_dwp_offsets;
+}
+
+
 /*  This function does two slightly different things
     depending on the input flag want_AT_sibling.  If
     this flag is true, it checks if the input die has
@@ -2044,6 +2076,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     Dwarf_Byte_Ptr abbrev_end = 0;
     int lres = 0;
     Dwarf_Unsigned highest_code = 0;
+    struct Dwarf_Abbrev_Common_s abcom;
 
     dbg = cu_context->cc_dbg;
     info_ptr = die_info_ptr;
@@ -2054,8 +2087,8 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PTR_NULL);
         return DW_DLV_ERROR;
     }
-
-    lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
+    _dwarf_fill_in_die_abcom(cucontext,die_info_ptr,&abcom);
+    lres = _dwarf_get_abbrev_for_code(&abcom, abbrev_code,
         &abbrev_list,&highest_code,error);
     if (lres == DW_DLV_ERROR) {
         return lres;
@@ -2079,10 +2112,9 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    dbg = cu_context->cc_dbg;
+    _dwarf_fill_in_die_from_abcom(&abcom,cucontext);
 
     *has_die_child = abbrev_list->abl_has_child;
-
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(cu_context);
 
@@ -2337,6 +2369,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     int dieres = 0;
     /* Since die may be NULL, we rely on the input argument. */
     Dwarf_Small *dataptr =  0;
+    struct Dwarf_Abbrev_Common_s abcom;
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -2550,7 +2583,8 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
-    lres = _dwarf_get_abbrev_for_code(ret_die->di_cu_context,
+    _dwarf_fill_in_die_abcom(ret_die->cucontext,&abcom);
+    lres = _dwarf_get_abbrev_for_code(&abcom,
         abbrev_code,
         &ret_die->di_abbrev_list,
         &highest_code,error);
@@ -2576,6 +2610,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
+    _dwarf_fill_in_die_from_abcom(&abcom,ret_die->cucontext);
     if (die == NULL && !is_cu_tag(ret_die->di_abbrev_list->abl_tag)) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_FIRST_DIE_NOT_CU);
@@ -2687,7 +2722,8 @@ dwarf_child(Dwarf_Die die,
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
-    lres = _dwarf_get_abbrev_for_code(die->di_cu_context,
+    _dwarf_fill_in_die_abcom(die->di_cu_context,&abcom);
+    lres = _dwarf_get_abbrev_for_code(&abcode,
         abbrev_code,
         &ret_die->di_abbrev_list,
         &highest_code,error);
@@ -2714,6 +2750,7 @@ dwarf_child(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
+    _dwarf_fill_in_die_from_abcom(&abcom,die->di_cu_context);
     *caller_ret_die = ret_die;
     return DW_DLV_OK;
 }
@@ -2742,6 +2779,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr   die_info_end = 0;
     Dwarf_Unsigned   highest_code = 0;
     struct Dwarf_Section_s * secdp = 0;
+    struct Dwarf_Abbrev_Common_s abcom;
 
     if (dbg == NULL) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
@@ -2820,6 +2858,8 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     die->di_abbrev_code = abbrev_code;
+    
+    _dwarf_fill_in_die_abcom(cucontext,&abcom);
     lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
         &die->di_abbrev_list,
         &highest_code,error);
@@ -2850,6 +2890,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
+    _dwarf_fill_in_die_from_abcom(&abcom,cucontext);
     *new_die = die;
     return DW_DLV_OK;
 }

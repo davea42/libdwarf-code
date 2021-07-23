@@ -342,6 +342,26 @@ struct Dwarf_Hash_Table_Entry_s {
     Dwarf_Abbrev_List at_head;
 };
 
+/*  So one function can read both debug_names abbrevs
+    and debug_abbrev abbrevs. Makes common function
+    possible.  
+    23 July 2021  */ 
+struct Dwarf_Abbrev_Common_s {
+    Dwarf_Debug  ac_dbg;
+    Dwarf_Hash_Table  ac_hashtable_base;
+    Dwarf_Unsigned    ac_highest_known_code;
+    Dwarf_Byte_Ptr    ac_last_abbrev_ptr;
+    Dwarf_Byte_Ptr    ac_last_abbrev_endptr;
+    /* section global offset of relevant abbrev data.
+    Dwarf_Byte_Ptr    ac_abbrev_offset;
+    /*  pointer to the start of abbrevs (section or table) */
+    Dwarf_Byte_Ptr    ac_abbrev_ptr;
+    /*  pointer to end of abbrevs (section or table) */
+    Dwarf_Byte_Ptr    ac_end_abbrev_ptr;
+    /* The following NULL if this is debug_names abbrevs */
+    struct Dwarf_Debug_Fission_Per_CU_s *ac_dwp_offsets;
+};
+
 
 
 int _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,

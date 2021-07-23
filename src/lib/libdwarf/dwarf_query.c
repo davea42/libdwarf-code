@@ -358,9 +358,6 @@ empty_local_attrlist(Dwarf_Debug dbg,
     }
 }
 
-/*  Now we use *_wrapper here,
-    We cannot leak memory.
-*/
 int
 dwarf_attrlist(Dwarf_Die die,
     Dwarf_Attribute ** attrbuf,
@@ -382,6 +379,7 @@ dwarf_attrlist(Dwarf_Die die,
     int lres = 0;
     Dwarf_CU_Context context = 0;
     Dwarf_Unsigned highest_code = 0;
+    struct Dwarf_Abbrev_Common_s abcom;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     context = die->di_cu_context;
@@ -389,6 +387,7 @@ dwarf_attrlist(Dwarf_Die die,
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
 
+    _dwarf_fill_in_die_abcom(context,&abcom);    
     lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
         &abbrev_list,
@@ -415,6 +414,7 @@ dwarf_attrlist(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
+    _dwarf_fill_in_die_from_abcom(&abcom,context);
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
@@ -453,8 +453,6 @@ dwarf_attrlist(Dwarf_Die die,
 
         /*  The DECODE have to be wrapped in functions to
             catch errors before return. */
-        /*DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,
-            dbg,error,abbrev_end); */
         res = _dwarf_leb128_uword_wrapper(dbg,
             &abbrev_ptr,abbrev_end,&attr,error);
         if (res == DW_DLV_ERROR) {
@@ -466,8 +464,6 @@ dwarf_attrlist(Dwarf_Die die,
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
         }
-        /*DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,
-            dbg,error,abbrev_end); */
         res = _dwarf_leb128_uword_wrapper(dbg,
             &abbrev_ptr,abbrev_end,&attr_form,error);
         if (res == DW_DLV_ERROR) {
@@ -523,11 +519,6 @@ dwarf_attrlist(Dwarf_Die die,
                         " no room for the form. Corrupt Dwarf");
                     return DW_DLV_ERROR;
                 }
-
-                /*  DECODE_LEB128_UWORD does info_ptr update
-                    DECODE_LEB128_UWORD_CK(info_ptr, utmp6,
-                        dbg,error,die_info_end);
-                */
                 res = _dwarf_leb128_uword_wrapper(dbg,
                     &info_ptr,die_info_end,&utmp6,error);
                 attr_form = (Dwarf_Half) utmp6;
@@ -655,6 +646,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
 
+    _dwarf_fill_in_die_abcom(context,&abcom);    
     lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
         &abbrev_list,&highest_code,error);
@@ -680,6 +672,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
+    _dwarf_fill_in_die_from_abcom(&abcom,context);
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
