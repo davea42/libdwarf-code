@@ -24,13 +24,16 @@ Copyright 2017-2018 David Anderson. All rights reserved.
   Boston MA 02110-1301, USA.
 
 */
-
+#include "config.h"
 #include "globals.h"
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "naming.h"
 #include "sanitized.h"
 #include "esb.h"
 #include "esb_using_functions.h"
 
+#if 0
 static int
 print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset,
@@ -48,6 +51,7 @@ print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned augmentation_string_size = 0;
     Dwarf_Unsigned section_size = 0;
     Dwarf_Half table_version = 0;
+    Dwarf_Half offset_size = 0;
     char * augstring = 0;
 
     res = dwarf_dnames_sizes(dn,&comp_unit_count,
@@ -56,7 +60,9 @@ print_dname_record(Dwarf_Dnames_Head dn,
         &name_count,&indextable_length,
         &entry_pool_size,&augmentation_string_size,
         &augstring,
-        &section_size,&table_version,error);
+        &section_size,&table_version,
+        &offset_size,
+        error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -140,3 +146,4 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     }
     return res;
 }
+#endif /* 0 */

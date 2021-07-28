@@ -4808,8 +4808,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Off ref_goff = 0;
             int frres = 0;
             int suppress_check = 0;
+            Dwarf_Bool is_info2 = TRUE;
 
-            frres = dwarf_global_formref(attrib, &ref_goff, err);
+            frres = dwarf_global_formref_b(attrib, &ref_goff,
+                &is_info2,err);
             if (frres == DW_DLV_ERROR) {
                 int myerr = dwarf_errno(*err);
                 if (myerr == DW_DLE_REF_SIG8_NOT_HANDLED) {
@@ -4893,7 +4895,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
                 /*  Follow reference chain, looking for
                     self references */
-                frres = dwarf_offdie_b(dbg,ref_goff,is_info,
+                frres = dwarf_offdie_b(dbg,ref_goff,is_info2,
                     &ref_die,err);
                 if (frres == DW_DLV_OK) {
                     Dwarf_Off ref_die_cu_goff = 0;
@@ -4961,22 +4963,23 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
             if (!suppress_check &&
                 glflags.gf_check_forward_decl) {
+                /*  Check the DW_AT_specification
+                    forward references to DIEs.
+                    DWARF4 specifications, section 2.13.2.
+                    They are legal, this just reports how many
+                    are forward decls as 'error' in
+                    the final checks output. */
                 if (attr == DW_AT_specification) {
-                    /*  Check the DW_AT_specification
-                        does not make forward
-                        references to DIEs.
-                        DWARF4 specifications, section 2.13.2,
-                        but really they are legal,
-                        this test is probably wrong. */
+                    /*  Counting DW_AT_specification */
                     DWARF_CHECK_COUNT(forward_decl_result,1);
                     if (ref_goff > die_goff) {
-                        DWARF_CHECK_ERROR2(forward_decl_result,
-                            "Invalid forward reference to DIE: ",
-                            esb_get_string(&valname));
+                        /*  Not an error. Just counting 
+                            the number that are forward
+                            as if it might be a problem. */
+                        DWARF_ERROR_COUNT(forward_decl_result,1);
                     }
                 }
             }
-
             /*  When doing search, if the attribute is
                 DW_AT_specification or
                 DW_AT_abstract_origin, get any name
@@ -5001,7 +5004,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
                 /*  Follow reference chain, looking for
                     the DIE name */
-                srcres = dwarf_offdie_b(dbg,ref_goff,is_info,
+                srcres = dwarf_offdie_b(dbg,ref_goff,is_info2,
                     &ref_die,err);
                 if (srcres == DW_DLV_OK) {
                     /* Get the DIE name */
@@ -7203,7 +7206,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     int wres = 0;
     int dres = 0;
     Dwarf_Half direct_form = 0;
-    Dwarf_Bool is_info = TRUE;
+    Dwarf_Bool is_info = 0;
     struct esb_s esb_expr;
     int esb_expr_alive = FALSE;
 
@@ -7417,7 +7420,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         Dwarf_Off goff = 0; /* Global offset */
 
         /* CU-relative offset returned. */
-        refres = dwarf_formref(attrib, &off, err);
+        refres = dwarf_formref(attrib, &off,
+            &is_info, err);
         if (refres != DW_DLV_OK) {
             struct esb_s msg;
 

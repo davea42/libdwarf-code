@@ -1273,10 +1273,10 @@ process_one_file(
         /* Harmless, though likely not needed here. */
         reset_overall_CU_error_data();
     }
+#if 0
     if (glflags.gf_debug_names_flag) {
         int nres = 0;
         Dwarf_Error err = 0;
-
         reset_overall_CU_error_data();
         nres = print_debug_names(dbg,&err);
         if (nres == DW_DLV_ERROR) {
@@ -1285,6 +1285,7 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,nres,err);
         }
     }
+#endif
 
     /*  Print search results */
     if (glflags.gf_search_print_results && glflags.gf_search_is_on) {

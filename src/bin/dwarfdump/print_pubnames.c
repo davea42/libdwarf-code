@@ -427,7 +427,6 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
             we can print the CU header offset. */
         cures3 = dwarf_global_cu_offset(globbuf[i],
             &global_cu_off, err);
-
         if (cures3 != DW_DLV_OK) {
             struct esb_s msge;
 
