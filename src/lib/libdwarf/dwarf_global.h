@@ -64,6 +64,8 @@ struct Dwarf_Global_Context_s {
 
     /*  offset in pubnames of the  pu header. */
     Dwarf_Off      pu_pub_offset;
+    /*  One past end of the pub entries for this CU. */
+    Dwarf_Byte_Ptr pu_pub_entries_end_ptr;
 
     /*  Offset into .debug_info of the compilation-unit header
         (not DIE) for this set of pubnames. */

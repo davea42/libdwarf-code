@@ -119,6 +119,4 @@ struct Dwarf_Dnames_Head_s {
     Dwarf_Unsigned b_sorted_bucket_index;
 };
 
-};
-
 void _dwarf_dnames_destructor(void *m);

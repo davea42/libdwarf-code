@@ -385,6 +385,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_context->pu_dbg = dbg;
         pubnames_context->pu_pub_offset = pubnames_section_offset;
         pubnames_ptr_past_end_cu = pubnames_like_ptr + length;
+        pubnames_context->pu_pub_entries_end_ptr = 
+            pubnames_ptr_past_end_cu;
 
         if ((pubnames_like_ptr + (DWARF_HALF_SIZE) ) >
             /* A minimum size needed */
@@ -481,7 +483,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             &die_offset_in_cu,
             pubnames_like_ptr,
             pubnames_context->pu_length_size,
-            section_end_ptr,error);
+            pubnames_context->pu_pub_entries_end_ptr,error);
         if (mres != DW_DLV_OK) {
             dealloc_globals_chain(dbg,head_chain);
             if (!pubnames_context_on_list) {
@@ -551,7 +553,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             /*  non-zero die_offset_in_cu already read, so
                 pubnames_like_ptr points to a string.  */
             res = _dwarf_check_string_valid(dbg,section_data_ptr,
-                pubnames_like_ptr,section_end_ptr,
+                pubnames_like_ptr,
+                pubnames_context->pu_pub_entries_end_ptr,
                 DW_DLE_STRING_OFF_END_PUBNAMES_LIKE,error);
             if (res != DW_DLV_OK) {
                 dealloc_globals_chain(dbg,head_chain);
@@ -605,7 +608,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 &die_offset_in_cu,
                 pubnames_like_ptr,
                 pubnames_context->pu_length_size,
-                section_end_ptr,error);
+                pubnames_context->pu_pub_entries_end_ptr,
+                error);
             if (mres != DW_DLV_OK) {
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,

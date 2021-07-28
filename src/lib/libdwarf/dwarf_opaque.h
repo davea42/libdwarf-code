@@ -1105,5 +1105,10 @@ unsigned int  _dwarf_crc32(unsigned int init,
     const unsigned char * buf,
     size_t len);
 
+struct  Dwarf_Abbrev_Common_s;
+void _dwarf_fill_in_abcom_from_context(Dwarf_CU_Context cu_context,
+     struct Dwarf_Abbrev_Common_s *abcom);
+void _dwarf_fill_in_context_from_abcom(struct Dwarf_Abbrev_Common_s *
+     abcom, Dwarf_CU_Context cucontext);
 
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);

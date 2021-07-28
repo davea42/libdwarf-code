@@ -352,10 +352,13 @@ struct Dwarf_Abbrev_Common_s {
     Dwarf_Unsigned    ac_highest_known_code;
     Dwarf_Byte_Ptr    ac_last_abbrev_ptr;
     Dwarf_Byte_Ptr    ac_last_abbrev_endptr;
-    /* section global offset of relevant abbrev data.
-    Dwarf_Byte_Ptr    ac_abbrev_offset;
+    /* section global offset of relevant abbrev data. */
+    Dwarf_Unsigned    ac_abbrev_offset;
     /*  pointer to the start of abbrevs (section or table) */
     Dwarf_Byte_Ptr    ac_abbrev_ptr;
+    /*  pointer to the start of abbrevs section. For global offset
+        in debug_info/types. */
+    Dwarf_Byte_Ptr    ac_abbrev_section_start;
     /*  pointer to end of abbrevs (section or table) */
     Dwarf_Byte_Ptr    ac_end_abbrev_ptr;
     /* The following NULL if this is debug_names abbrevs */
@@ -364,7 +367,7 @@ struct Dwarf_Abbrev_Common_s {
 
 
 
-int _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
+int _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
     Dwarf_Unsigned code,
     Dwarf_Abbrev_List *list_out,
     Dwarf_Unsigned * highest_known_code,

@@ -1778,14 +1778,24 @@ int dwarf_whatattr(Dwarf_Attribute /*attr*/,
     The following are concerned with the Primary Interface: getting
     the actual data values. One function per 'kind' of FORM.  */
 /*  dwarf_formref returns, thru return_offset, a CU-relative offset
+    ( in .debug_info or .debug_types)
     and does not allow DW_FORM_ref_addr*/
 int dwarf_formref(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
+    Dwarf_Bool     * /*is_info*/,
     Dwarf_Error*     /*error*/);
 /*  dwarf_global_formref returns, thru return_offset,
-    a debug_info-relative offset and does allow all reference forms*/
+    a debug_info-relative offset and does allow all reference forms
+    if the output is not a DIE offset then call
+    dwarf_global_formref.  If it is a DIE offset then
+    call dwarf_global_formref_b so you know whether it is
+    in .debug_types or .debug_info. */
 int dwarf_global_formref(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
+    Dwarf_Error*     /*error*/);
+int dwarf_global_formref_b(Dwarf_Attribute /*attr*/,
+    Dwarf_Off*       /*return_offset*/,
+    Dwarf_Bool   *   /*offset_is_info*/,
     Dwarf_Error*     /*error*/);
 
 /*  dwarf_formsig8 returns in the caller-provided 8 byte area
@@ -2127,12 +2137,12 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
 
 /* get each list entry one at a time */
 int dwarf_dnames_cu_table(Dwarf_Dnames_Head /*dn*/,
-    const char        * /* type ("cu" "tu" "foreign") */
-    /* index number 0 to k-1 or 0 to t-1 or 0 to f-1
+    const char        * /*type ("cu" "tu") */,
+    /* index number 0 to k-1 or 0 to t+f-1
        depending on type. */
     Dwarf_Unsigned      /*index_number*/,
-    Dwarf_Unsigned    * /*offset (of cu/tu/foreign header)*/,
-    Dwarf_Sig8        * /*sig (filledwith tu signature */
+    Dwarf_Unsigned    * /*offset (of cu/tu header)*/,
+    Dwarf_Sig8        * /*sig (if signature) */,
     Dwarf_Error       * /*error*/);
 
 /* Each bucket, one at a time */
@@ -2159,7 +2169,7 @@ int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned    * /*bucket_number */,
     Dwarf_Unsigned    * /*hash value*/,
     Dwarf_Unsigned    * /*offset_to_debug_str*/,
-    char *      const * /*ptrtostr (or null)*/,
+    char *            * /*ptrtostr (or null)*/,
     Dwarf_Unsigned    * /*offset_in_entrypool*/,
     /*  Following fields are from Entry Pool */
     Dwarf_Unsigned    * /* abbrev_number (from entrypool) */,

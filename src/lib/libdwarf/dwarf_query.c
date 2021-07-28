@@ -387,8 +387,8 @@ dwarf_attrlist(Dwarf_Die die,
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
 
-    _dwarf_fill_in_die_abcom(context,&abcom);    
-    lres = _dwarf_get_abbrev_for_code(context,
+    _dwarf_fill_in_abcom_from_context(context,&abcom);    
+    lres = _dwarf_get_abbrev_for_code(&abcom,
         die->di_abbrev_list->abl_code,
         &abbrev_list,
         &highest_code,error);
@@ -414,7 +414,7 @@ dwarf_attrlist(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_die_from_abcom(&abcom,context);
+    _dwarf_fill_in_context_from_abcom(&abcom,context);
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
@@ -637,6 +637,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     Dwarf_Debug dbg = 0;
     int lres = 0;
     Dwarf_Unsigned highest_code = 0;
+    struct Dwarf_Abbrev_Common_s abcom;
 
     if (!context) {
         _dwarf_error(NULL,error,DW_DLE_DIE_NO_CU_CONTEXT);
@@ -646,8 +647,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
 
-    _dwarf_fill_in_die_abcom(context,&abcom);    
-    lres = _dwarf_get_abbrev_for_code(context,
+    _dwarf_fill_in_abcom_from_context(context,&abcom);    
+    lres = _dwarf_get_abbrev_for_code(&abcom,
         die->di_abbrev_list->abl_code,
         &abbrev_list,&highest_code,error);
     if (lres == DW_DLV_ERROR) {
@@ -672,7 +673,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_die_from_abcom(&abcom,context);
+    _dwarf_fill_in_context_from_abcom(&abcom,context);
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);

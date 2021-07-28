@@ -34,6 +34,9 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* for uintptr_t */
 #endif
+#ifdef HAVE_STDLIB
+#include <stdlib.h>
+#endif
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
@@ -62,8 +65,8 @@
 static void assign_correct_unit_type(Dwarf_CU_Context cu_context);
 static int find_cu_die_base_fields(Dwarf_Debug dbg,
     Dwarf_CU_Context cucon,
-    Dwarf_Die cudie,
-    Dwarf_Error*    error);
+    Dwarf_Die        cudie,
+    Dwarf_Error     *error);
 
 static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
     Dwarf_Die die,
@@ -78,6 +81,7 @@ static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
     the final DWARF5).
 */
 
+void abort(void);
 static struct Dwarf_Sig8_s dwarfsig8zero;
 
 #if 0
@@ -1116,6 +1120,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 for this CU. */
             case DW_AT_str_offsets_base:{
                 int udres = 0;
+
                 udres = dwarf_global_formref(attr,
                     &cucon->cc_str_offsets_base,
                     error);
@@ -1132,6 +1137,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 applicable to this CU. */
             case DW_AT_loclists_base: {
                 int udres = 0;
+
                 udres = dwarf_global_formref(attr,
                     &cucon->cc_loclists_base,
                     error);
@@ -1149,6 +1155,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             case DW_AT_addr_base:
             case DW_AT_GNU_addr_base: {
                 int udres = 0;
+
                 at_addr_base_attrnum = i;
                 udres = dwarf_global_formref(attr,
                     &cucon->cc_addr_base,
@@ -1190,6 +1197,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
                 }
             case  DW_AT_rnglists_base: {
                 int udres = 0;
+
                 udres = dwarf_global_formref(attr,
                     &cucon->cc_rnglists_base,
                     error);
@@ -1843,7 +1851,7 @@ dwarf_die_from_hash_signature(Dwarf_Debug dbg,
     if (_dwarf_file_has_debug_fission_index(dbg)) {
         /* This is a dwp package file. */
         int fisres = 0;
-        Dwarf_Bool is_info2 = 0;
+        Dwarf_Bool is_info2 = TRUE;
         Dwarf_Off cu_header_off = 0;
         Dwarf_Off cu_size = 0;
         Dwarf_Off cu_die_off = 0;
@@ -1996,12 +2004,44 @@ dwarf_validate_die_sibling(Dwarf_Die sibling,Dwarf_Off *offset)
     return DW_DLV_ERROR;
 }
 
+#if 0
+static void
+print_abcom(const char *msg,
+    struct Dwarf_Abbrev_Common_s *abcom)
+{
+    printf("print Dwarf_Abbrev_Common_s: %s\n",
+        msg);
+    printf("dbg %lx\n",
+        (unsigned long)abcom->ac_dbg);
+    printf("hashtable base %lx\n",
+        (unsigned long)abcom->ac_hashtable_base);
+    printf("highest known code %lu\n",
+        (unsigned long)abcom->ac_highest_known_code);
+    printf("last abbrev ptr %lx\n",
+        (unsigned long)abcom->ac_last_abbrev_ptr);
+    printf("last abbrev endptr %lx\n",
+        (unsigned long)abcom->ac_last_abbrev_endptr);
+    printf("abbrev offset %lx\n",
+        (unsigned long)abcom->ac_abbrev_offset);
+    printf("abbrev ptr %lx\n",
+        (unsigned long)abcom->ac_abbrev_ptr);
+    printf("abbrev section_start %lx\n",
+        (unsigned long)abcom->ac_abbrev_section_start);
+    printf("abbrev end abbrev ptr %lx\n",
+        (unsigned long)abcom->ac_end_abbrev_ptr);
+    printf("ptr to dwp_offsets %lx\n",
+        (unsigned long)abcom->ac_dwp_offsets);
+}
+#endif
+/*   The following pair of functions let us
+     read abbreviations without access to cu_context or
+     DIE. */
 void
-_dwarf_fill_in_die_abcom(Dwarf_CU_Context cu_context,
-     Dwarf_Byte_Ptr Die_info_ptr,
+_dwarf_fill_in_abcom_from_context(Dwarf_CU_Context cu_context,
      struct Dwarf_Abbrev_Common_s *abcom)
 {
-    abcom->ac_dbg = cucontext->cc_dbg;
+    Dwarf_Debug dbg = cu_context->cc_dbg;
+    abcom->ac_dbg = dbg;
     abcom->ac_highest_known_code = 
         cu_context->cc_highest_known_code;
     abcom->ac_hashtable_base = cu_context->cc_abbrev_hash_table;
@@ -2009,22 +2049,23 @@ _dwarf_fill_in_die_abcom(Dwarf_CU_Context cu_context,
     abcom->ac_last_abbrev_endptr = 
         cu_context->cc_last_abbrev_endptr;
     abcom->ac_abbrev_offset = cu_context->cc_abbrev_offset; 
-    abcom->ac_abbrev_ptr = cu_context->cc_abbrev_ptr; 
-    abcom->ac_end_abbrev_ptr = cu_context->cc_end_abbrev_ptr; 
-    abcom->ac_dwp_offsets = cu_context->ac_dwp_offsets;
+    abcom->ac_abbrev_ptr = dbg->de_debug_abbrev.dss_data+
+        abcom->ac_abbrev_offset;
+    abcom->ac_abbrev_section_start =
+        dbg->de_debug_abbrev.dss_data;
+    abcom->ac_end_abbrev_ptr = dbg->de_debug_abbrev.dss_data+
+        dbg->de_debug_abbrev.dss_size;
+    abcom->ac_dwp_offsets = &cu_context->cc_dwp_offsets;
 }
 void
-_dwarf_fill_in_die_from_abcom(struct Dwarf_Abbrev_Common_s *abcom,
-    Dwarf_CU_Context cucontext)
+_dwarf_fill_in_context_from_abcom(struct Dwarf_Abbrev_Common_s *abcom,
+    Dwarf_CU_Context cu_context)
 {
     cu_context->cc_highest_known_code = abcom->ac_highest_known_code;
-    cu_context->cc_hashtable_base =   abcom->ac_hashtable_base;
-    cu_context->cc_last_abbrev_ptr=   abcom->ac_last_abbrev_ptr; 
+    cu_context->cc_abbrev_hash_table  = abcom->ac_hashtable_base;
+    cu_context->cc_last_abbrev_ptr    = abcom->ac_last_abbrev_ptr; 
     cu_context->cc_last_abbrev_endptr = abcom->ac_last_abbrev_endptr;
-    cu_context->cc_abbrev_offset =    abcom->ac_abbrev_offset  
-    cu_context->cc_abbrev_ptr=        abcom->ac_abbrev_ptr;
-    cu_context->cc_end_abbrev_ptr=    abcom->ac_end_abbrev_ptr; 
-    cu_context->cc_dwp_offsets=       abcom->ac_dwp_offsets;
+    cu_context->cc_abbrev_offset      = abcom->ac_abbrev_offset;
 }
 
 
@@ -2087,7 +2128,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PTR_NULL);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_die_abcom(cucontext,die_info_ptr,&abcom);
+    _dwarf_fill_in_abcom_from_context(cu_context,&abcom);
     lres = _dwarf_get_abbrev_for_code(&abcom, abbrev_code,
         &abbrev_list,&highest_code,error);
     if (lres == DW_DLV_ERROR) {
@@ -2112,7 +2153,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_die_from_abcom(&abcom,cucontext);
+    _dwarf_fill_in_context_from_abcom(&abcom,cu_context);
 
     *has_die_child = abbrev_list->abl_has_child;
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
@@ -2583,7 +2624,8 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
-    _dwarf_fill_in_die_abcom(ret_die->cucontext,&abcom);
+    _dwarf_fill_in_abcom_from_context(ret_die->di_cu_context,
+        &abcom);
     lres = _dwarf_get_abbrev_for_code(&abcom,
         abbrev_code,
         &ret_die->di_abbrev_list,
@@ -2610,7 +2652,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_die_from_abcom(&abcom,ret_die->cucontext);
+    _dwarf_fill_in_context_from_abcom(&abcom,ret_die->di_cu_context);
     if (die == NULL && !is_cu_tag(ret_die->di_abbrev_list->abl_tag)) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_FIRST_DIE_NOT_CU);
@@ -2642,6 +2684,7 @@ dwarf_child(Dwarf_Die die,
     Dwarf_CU_Context context = 0;
     int lres = 0;
     Dwarf_Unsigned highest_code = 0;
+    struct Dwarf_Abbrev_Common_s abcom;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
@@ -2722,8 +2765,9 @@ dwarf_child(Dwarf_Die die,
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
-    _dwarf_fill_in_die_abcom(die->di_cu_context,&abcom);
-    lres = _dwarf_get_abbrev_for_code(&abcode,
+    _dwarf_fill_in_abcom_from_context(die->di_cu_context,
+        &abcom);
+    lres = _dwarf_get_abbrev_for_code(&abcom,
         abbrev_code,
         &ret_die->di_abbrev_list,
         &highest_code,error);
@@ -2750,7 +2794,7 @@ dwarf_child(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_die_from_abcom(&abcom,die->di_cu_context);
+    _dwarf_fill_in_context_from_abcom(&abcom,die->di_cu_context);
     *caller_ret_die = ret_die;
     return DW_DLV_OK;
 }
@@ -2859,8 +2903,9 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     }
     die->di_abbrev_code = abbrev_code;
     
-    _dwarf_fill_in_die_abcom(cucontext,&abcom);
-    lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
+    _dwarf_fill_in_abcom_from_context(cu_context,
+        &abcom);
+    lres = _dwarf_get_abbrev_for_code(&abcom, abbrev_code,
         &die->di_abbrev_list,
         &highest_code,error);
     if (lres == DW_DLV_ERROR) {
@@ -2888,9 +2933,13 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             DW_DLE_DIE_ABBREV_LIST_NULL,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
+#if 0
+printf("get_abbrev fail line %d\n",__LINE__); 
+abort();
+#endif
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_die_from_abcom(&abcom,cucontext);
+    _dwarf_fill_in_context_from_abcom(&abcom,cu_context);
     *new_die = die;
     return DW_DLV_OK;
 }
