@@ -466,6 +466,7 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
     targetInputDie_= 0;
     target_die_=  0;
     initSig8();
+    Dwarf_Bool is_info = TRUE;
 
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
@@ -476,7 +477,8 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
         Dwarf_Sig8 val8;
         int res = dwarf_formsig8(interface->attr_,&val8, &error);
         if(res != DW_DLV_OK) {
-            cerr << "Unable to read sig8 reference. Impossible error.\n"
+            cerr << "Unable to read sig8 reference. "
+                "Impossible error.\n"
                 << endl;
             exit(1);
         }
@@ -487,19 +489,23 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
         finalform == DW_FORM_data4 ||
         finalform == DW_FORM_data8) {
         // FIXME there might be a relocation record.
-        int res = dwarf_global_formref(interface->attr_,&val, &error);
+        int res = dwarf_global_formref(interface->attr_,&val,
+            &error);
         if(res != DW_DLV_OK) {
-            cerr << "Unable to read reference. Impossible error.\n" << endl;
+            cerr << "Unable to read reference. "
+               "Impossible error.\n" << endl;
             exit(1);
         }
         setOffset(val);
         return;
     }
-    // Otherwise it is (if a correct FORM for a .debug_info reference)
+    // Otherwise it is (if a correct FORM for a
+    // .debug_info reference)
     // a local CU offset, and we record it as such..
-    int res = dwarf_formref(interface->attr_,&val, &error);
+    int res = dwarf_formref(interface->attr_,&val,&is_info,&error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read reference.. Impossible error. finalform " <<
+        cerr << "Unable to read reference.. "
+            "Impossible error. finalform " <<
             finalform << endl;
         exit(1);
     }
