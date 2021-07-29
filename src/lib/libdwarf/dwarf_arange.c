@@ -110,8 +110,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr arange_end_section = 0;
     /*  Used to chain Dwarf_Aranges structs. */
     Dwarf_Chain curr_chain = NULL;
-    Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
+    Dwarf_Chain *plast = &head_chain;
 
     if (!dbg->de_debug_aranges.dss_size) {
         return DW_DLV_NO_ENTRY;
@@ -340,12 +340,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
 
                 curr_chain->ch_item = arange;
                 curr_chain->ch_itemtype = DW_DLA_ARANGE;
-                if (head_chain == NULL)
-                    head_chain = prev_chain = curr_chain;
-                else {
-                    prev_chain->ch_next = curr_chain;
-                    prev_chain = curr_chain;
-                }
+                (*plast) = curr_chain;
+                plast = &(curr_chain->ch_next);
             }
             /*  The current set of ranges is terminated by
                 range_address 0 and range_length 0, but that
@@ -417,7 +413,6 @@ dwarf_get_aranges(Dwarf_Debug dbg,
 
     /* Used to chain Dwarf_Aranges structs. */
     Dwarf_Chain curr_chain = NULL;
-    Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
     Dwarf_Signed i = 0;
     int res = DW_DLV_ERROR;
@@ -457,15 +452,15 @@ dwarf_get_aranges(Dwarf_Debug dbg,
     /* See also free_aranges_chain() above */
     curr_chain = head_chain;
     for (i = 0; i < arange_count; i++) {
+        Dwarf_Chain prev = 0;
 
         /*  Copies pointers. No dealloc of ch_item, */
         *(arange_block + i) = curr_chain->ch_item;
         curr_chain->ch_item = 0;
-        prev_chain = curr_chain;
+        prev = curr_chain;
         curr_chain = curr_chain->ch_next;
-        dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
+        dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
     }
-
     *aranges = arange_block;
     *returned_count = (arange_count);
     return DW_DLV_OK;
@@ -493,7 +488,6 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
 
     /* Used to chain Dwarf_Aranges structs. */
     Dwarf_Chain curr_chain = NULL;
-    Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
 
     Dwarf_Signed arange_count = 0;
@@ -543,16 +537,17 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     for (i = 0; i < arange_count; i++) {
         Dwarf_Arange ar = curr_chain->ch_item;
         int itemtype = curr_chain->ch_itemtype;
+        Dwarf_Chain prev = 0;
 
         curr_chain->ch_item = 0;
         arange_addrs[i] = ar->ar_address;
         arange_offsets[i] = ar->ar_info_offset;
-        prev_chain = curr_chain;
+        prev = curr_chain;
         curr_chain = curr_chain->ch_next;
         if (ar && itemtype) {
             dwarf_dealloc(dbg, ar, itemtype);
         }
-        dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
+        dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
     }
     *count = arange_count;
     *offsets = arange_offsets;

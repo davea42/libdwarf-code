@@ -245,8 +245,8 @@ dwarf_offset_list(Dwarf_Debug dbg,
     Dwarf_Off *ret_offsets = 0;
 
     Dwarf_Chain_2 curr_chain = 0;
-    Dwarf_Chain_2 prev_chain = 0;
     Dwarf_Chain_2 head_chain = 0;
+    Dwarf_Chain_2 *plast = &head_chain;
 
     *offbuf = NULL;
     *offcnt = 0;
@@ -294,14 +294,8 @@ dwarf_offset_list(Dwarf_Debug dbg,
             /* Put current offset on singly_linked list. */
             curr_chain->ch_item = cur_off;
             ++off_count;
-
-            if (head_chain == NULL) {
-                head_chain = prev_chain = curr_chain;
-            }
-            else {
-                prev_chain->ch_next = curr_chain;
-                prev_chain = curr_chain;
-            }
+            (*plast) = curr_chain;
+            plast = &(curr_chain->ch_next);
         }
 
         /* Process any siblings entries if any */
@@ -333,10 +327,12 @@ dwarf_offset_list(Dwarf_Debug dbg,
         and deallocate the chain. */
     curr_chain = head_chain;
     for (i = 0; i < off_count; i++) {
+        Dwarf_Chain_2 prev =0;
+
         *(ret_offsets + i) = curr_chain->ch_item;
-        prev_chain = curr_chain;
+        prev = curr_chain;
         curr_chain = curr_chain->ch_next;
-        dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN_2);
+        dwarf_dealloc(dbg, prev, DW_DLA_CHAIN_2);
     }
 
     *offbuf = ret_offsets;

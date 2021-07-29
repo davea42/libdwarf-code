@@ -432,8 +432,8 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     Dwarf_Small  * startdata = data;
     Dwarf_Small  * end_data = data +section_size;
     Dwarf_Chain curr_chain = 0;
-    Dwarf_Chain prev_chain = 0;
     Dwarf_Chain head_chain = 0;
+    Dwarf_Chain *plast = &head_chain;
     int res = 0;
     Dwarf_Unsigned chainlength = 0;
     Dwarf_Loclists_Context *fullarray = 0;
@@ -475,12 +475,8 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
         }
         curr_chain->ch_item = newcontext;
         ++chainlength;
-        if (head_chain == NULL) {
-            head_chain = prev_chain = curr_chain;
-        } else {
-            prev_chain->ch_next = curr_chain;
-            prev_chain = curr_chain;
-        }
+        (*plast) = curr_chain;
+        plast = &(curr_chain->ch_next);
         data = startdata+nextoffset;
         offset = nextoffset;
     }
@@ -495,11 +491,12 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     }
     curr_chain = head_chain;
     for (i = 0; i < chainlength; ++i) {
+        Dwarf_Chain prev = 0;
         fullarray[i] = (Dwarf_Loclists_Context)curr_chain->ch_item;
         curr_chain->ch_item = 0;
-        prev_chain = curr_chain;
+        prev = curr_chain;
         curr_chain = curr_chain->ch_next;
-        dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
+        dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
     }
     /*  ASSERT: the chain is entirely dealloc'd
         and the array of pointers points to

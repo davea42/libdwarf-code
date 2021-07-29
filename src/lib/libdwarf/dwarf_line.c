@@ -373,8 +373,8 @@ dwarf_srcfiles(Dwarf_Die die,
 
     /*  Used to chain the file names. */
     Dwarf_Chain curr_chain = NULL;
-    Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
+    Dwarf_Chain * plast = &head_chain;
 
     Dwarf_Half attrform = 0;
     int resattr = DW_DLV_ERROR;
@@ -558,12 +558,8 @@ dwarf_srcfiles(Dwarf_Die die,
                 return DW_DLV_ERROR;
             }
             curr_chain->ch_item = name_out;
-            if (head_chain == NULL) {
-                head_chain = prev_chain = curr_chain;
-            } else {
-                prev_chain->ch_next = curr_chain;
-                prev_chain = curr_chain;
-            }
+            (*plast) = curr_chain;
+            plast = &(curr_chain->ch_next);
         }
     }
     if (!head_chain) {
@@ -592,11 +588,12 @@ dwarf_srcfiles(Dwarf_Die die,
 
     curr_chain = head_chain;
     for (i = 0; i < line_context->lc_file_entry_count; i++) {
+        Dwarf_Chain prev = 0;
         *(ret_files + i) = curr_chain->ch_item;
         curr_chain->ch_item = 0;
-        prev_chain = curr_chain;
+        prev = curr_chain;
         curr_chain = curr_chain->ch_next;
-        dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
+        dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
     }
     /*  Our chain is not recorded in the line_context so
         the line_context destructor will not destroy our

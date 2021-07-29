@@ -91,7 +91,6 @@ dealloc_globals_chain(Dwarf_Debug dbg,
     Dwarf_Chain head_chain)
 {
     Dwarf_Chain curr_chain = 0;
-    Dwarf_Chain prev_chain = 0;
     int chaintype = DW_DLA_CHAIN;
     Dwarf_Global_Context lastcontext = 0;
     Dwarf_Global_Context curcontext = 0;
@@ -100,6 +99,7 @@ dealloc_globals_chain(Dwarf_Debug dbg,
     for (; curr_chain; ) {
         Dwarf_Global item = 0;
         int itemtype = 0;
+        Dwarf_Chain prev = 0;
 
         item = (Dwarf_Global)curr_chain->ch_item;
         itemtype = curr_chain->ch_itemtype;
@@ -109,11 +109,11 @@ dealloc_globals_chain(Dwarf_Debug dbg,
             lastcontext = curcontext;
             dwarf_dealloc(dbg,curcontext,curcontext->pu_alloc_type);
         }
-        prev_chain = curr_chain;
+        prev = curr_chain;
         dwarf_dealloc(dbg, item,itemtype);
-        prev_chain->ch_item = 0;
+        prev->ch_item = 0;
         curr_chain = curr_chain->ch_next;
-        dwarf_dealloc(dbg, prev_chain, chaintype);
+        dwarf_dealloc(dbg, prev, chaintype);
     }
 }
 
@@ -226,8 +226,7 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
     unsigned char   *    glname,
     Dwarf_Unsigned      *global_count,
     Dwarf_Bool          *pubnames_context_on_list,
-    Dwarf_Chain         *prev_chain,
-    Dwarf_Chain         *head_chain,
+    Dwarf_Chain         **plast_chain,
     Dwarf_Error         *error)
 {
     Dwarf_Chain  curr_chain = 0;
@@ -256,12 +255,8 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
     /* Put current global on singly_linked list. */
     curr_chain->ch_item = (Dwarf_Global) global;
     curr_chain->ch_itemtype = global_DLA_code;
-    if (!*head_chain) {
-        *head_chain = *prev_chain = curr_chain;
-    } else {
-        (*prev_chain)->ch_next = curr_chain;
-        *prev_chain = curr_chain;
-    }
+    (**plast_chain) = curr_chain;
+    *plast_chain = &(curr_chain->ch_next);
     *pubnames_context_on_list = TRUE;
     return DW_DLV_OK;
 }
@@ -300,8 +295,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
 
     /*  Used to chain the Dwarf_Global_s structs for
         creating contiguous list of pointers to the structs. */
-    Dwarf_Chain prev_chain = 0;
     Dwarf_Chain head_chain = 0;
+    Dwarf_Chain *plast_chain = &head_chain;
 
     /* Points to contiguous block of Dwarf_Global to be returned. */
     Dwarf_Global *ret_globals = 0;
@@ -526,8 +521,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                     (unsigned char *)"",
                     &global_count,
                     &pubnames_context_on_list,
-                    &prev_chain,
-                    &head_chain,
+                    &plast_chain,
                     error);
                 if (res != DW_DLV_OK) {
                     dealloc_globals_chain(dbg,head_chain);
@@ -576,8 +570,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 glname,
                 &global_count,
                 &pubnames_context_on_list,
-                &prev_chain,
-                &head_chain,
+                &plast_chain,
                 error);
             if (res != DW_DLV_OK) {
                 dealloc_globals_chain(dbg,head_chain);
@@ -679,11 +672,13 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         Dwarf_Chain curr_chain = 0;
         curr_chain = head_chain;
         for (i = 0; i < global_count; i++) {
+            Dwarf_Chain prev = 0;
+
             *(ret_globals + i) = curr_chain->ch_item;
-            prev_chain = curr_chain;
+            prev = curr_chain;
             curr_chain = curr_chain->ch_next;
-            prev_chain->ch_item = 0; /* Not actually necessary. */
-            dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
+            prev->ch_item = 0; /* Not actually necessary. */
+            dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
         }
     }
     *globals = ret_globals;
