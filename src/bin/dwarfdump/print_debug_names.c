@@ -33,7 +33,6 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "esb.h"
 #include "esb_using_functions.h"
 
-#if 0
 static int
 print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset,
@@ -146,4 +145,3 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     }
     return res;
 }
-#endif /* 0 */
