@@ -89,7 +89,6 @@ read_uword_ab(Dwarf_Small **lp,
     return DW_DLV_OK;
 }
 
-
 static int
 fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     Dwarf_Error * error)
@@ -216,7 +215,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     }
     return DW_DLV_OK;
 }
-
+#endif /* 0 */
 static int
 read_uword_val(Dwarf_Debug dbg,
     Dwarf_Small **ptr_in,
@@ -542,12 +541,14 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     dn->dn_entry_pool_size = dn->dn_section_size - usedspace;
     curptr_in = curptr;
     *usedspace_out = usedspace;
+#if 0
     res = fill_in_abbrevs_table(dn,error);
     if (res != DW_DLV_OK) {
         free(dn->dn_augmentation_string);
         dn->dn_augmentation_string = 0;
         return res;
     }
+#endif
     return DW_DLV_OK;
 }
 
@@ -873,15 +874,15 @@ int
 dwarf_dnames_name(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_index UNUSEDARG,
     Dwarf_Unsigned    * bucket_number UNUSEDARG,
-    Dwarf_Unsigned    * hash_value UNUSESARG,
-    Dwarf_Unsigned    * offset_to_debug_str UNUSESARG,
+    Dwarf_Unsigned    * hash_value UNUSEDARG,
+    Dwarf_Unsigned    * offset_to_debug_str UNUSEDARG,
     char *            * ptrtostr,
-    Dwarf_Unsigned    * offset_in_entrypool UNUSESARG,
-    Dwarf_Unsigned    *  abbrev_number UNUSESARG,
-    Dwarf_Half        *  abbrev_tag UNUSESARG,
+    Dwarf_Unsigned    * offset_in_entrypool UNUSEDARG,
+    Dwarf_Unsigned    *  abbrev_number UNUSEDARG,
+    Dwarf_Half        *  abbrev_tag UNUSEDARG,
     Dwarf_Unsigned       array_size,
     Dwarf_Half        *  attr_array,
-    Dwarf_Unsigned    *  attr_count ,
+    Dwarf_Unsigned    *  attr_count UNUSEDARG ,
     Dwarf_Error *       error)
 {
     Dwarf_Debug dbg = 0;
@@ -956,23 +957,21 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         }
     }
     
-#if 0
     if (hash_value) {
-FIXME
+/*FIXME */
     }
     if (bucket_number) {
-FIXME
+/*FIXME */
     }
     if (abbrev_number) {
-FIXME
+/*FIXME */
     }
     if (abbrev_tag) {
-FIXME
+/*FIXME */
     }
     if (attr_array && array_size) {
-FIXME
+/*FIXME */
     }
-#endif
     return DW_DLV_OK;
 }
 
@@ -987,6 +986,7 @@ FIXME
         0
 */
 
+#if 0
 /*  This provides a way to print the abbrev table by
     indexing from 0.  */
 int
@@ -1031,8 +1031,10 @@ dwarf_dnames_abbrev_by_index(Dwarf_Dnames_Head dn,
     }
     return DW_DLV_OK;
 }
+#endif
 
 
+#if 0
 static int
 _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned abbrev_code,
@@ -1062,6 +1064,7 @@ _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
     return DW_DLV_NO_ENTRY;
 
 }
+#endif /* 0 */
 
 #if 0
 Because the abbrevs cover multiCUs (usually)
@@ -1091,6 +1094,7 @@ dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dn,
 #endif/* 0 */
 
 
+#if 0
 int
 dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned    abbrev_entry_index,
@@ -1129,12 +1133,14 @@ dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
     }
     return DW_DLV_OK;
 }
+#endif
 
 /*  This, combined with dwarf_dnames_entrypool_values(),
     lets one examine as much or as little of an entrypool
     as one wants to by alternately calling these two
     functions. */
 
+#if 0
 int dwarf_dnames_entrypool(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      offset_in_entrypool,
     Dwarf_Unsigned       *    abbrev_code,
@@ -1178,8 +1184,10 @@ int dwarf_dnames_entrypool(Dwarf_Dnames_Head dn,
     *abbrev_code = abcode;
     return DW_DLV_OK;
 }
+#endif
 
 
+#if 0
 /*  Caller, knowing array size needed, passes in arrays
     it allocates of for idx, form, offset-size-values,
     and signature values.  Caller must examine idx-number
