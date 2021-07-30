@@ -779,6 +779,23 @@ transform_debug_info(Dwarf_P_Debug dbg,
     }
 }
 static void
+transform_debug_names(Dwarf_P_Debug dbg UNUSEDARG,
+   IRepresentation & irep UNUSEDARG,
+   int cu_of_input_we_output UNUSEDARG)
+{
+#if 0
+    int cu_number = 0;
+    std::list<IRCUdata> &culist = irep.infodata().getCUData();
+    // For now,  just one CU we write (as spoken by Yoda).
+
+    for ( list<IRCUdata>::iterator it = culist.begin();
+        it != culist.end();
+        it++,cu_number++) {
+    }
+#endif
+}
+
+static void
 transform_cie_fde(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     int cu_of_input_we_output UNUSEDARG)
@@ -853,7 +870,8 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             res = dwarf_insert_fde_inst_bytes(dbg,
                 fdeout, ilen, instrs,&err);
             if(res != DW_DLV_OK) {
-                cerr << "Error inserting frame instr block " << j << endl;
+                cerr << "Error inserting frame instr block " <<
+                    j << endl;
                 exit(1);
             }
 
@@ -1141,4 +1159,5 @@ transform_irep_to_dbg(Dwarf_P_Debug dbg,
     transform_cie_fde(dbg,Irep,cu_of_input_we_output);
     transform_macro_info(dbg,Irep,cu_of_input_we_output);
     transform_debug_pubnames_types(dbg,Irep,cu_of_input_we_output);
+    transform_debug_names(dbg,Irep,cu_of_input_we_output);
 }

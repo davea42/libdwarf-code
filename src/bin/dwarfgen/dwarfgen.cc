@@ -352,9 +352,11 @@ public:
 
 vector<SectionFromDwarf> dwsectab;
 
-static ElfSectIndex create_dw_elf(SectionFromDwarf  &ds,unsigned elfclass);
+static ElfSectIndex create_dw_elf(SectionFromDwarf  &ds,
+    unsigned elfclass);
 
-static SectionFromDwarf & FindMySection(const ElfSectIndex & elf_section_index)
+static SectionFromDwarf & FindMySection(
+    const ElfSectIndex & elf_section_index)
 {
     for(unsigned i =0; i < dwsectab.size(); ++i) {
         if(elf_section_index.getSectIndex() !=
@@ -497,6 +499,7 @@ static int CallbackFunc(
     // (copying) ds onto dwsectab!
     dwsectab.push_back(ds);
     // The number returned is elf section, not dwsectab[] index
+
     return createdsec.getSectIndex();
 }
 
@@ -849,7 +852,9 @@ main(int argc, char **argv)
             exit(EXIT_FAILURE);
         }
         if (force_empty_dnames) {
-            res = dwarf_force_debug_names(dbg,&err);
+            /*  Shortly we will fill out a default denames
+                for testing. */
+            res = dwarf_force_dnames(dbg,0,&err);
             if (res != DW_DLV_OK) {
                 cerr << "dwarfgen: "
                     "Failed dwarf_force_debug_names"
