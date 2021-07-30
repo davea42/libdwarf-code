@@ -480,6 +480,7 @@ struct Dwarf_P_Debug_s {
         before disk form */
     Dwarf_P_Dnames de_dnames;
     Dwarf_P_Section_Data de_dnames_sect;
+    Dwarf_Bool     de_force_dnames;
 
     /* macinfo controls. */
     /* first points to beginning of the list during creation */
@@ -541,8 +542,8 @@ struct Dwarf_P_Debug_s {
         symbolic) */
 
     unsigned char de_64bit_extension;/* non-zero if creating 64 bit
-        offsets using dwarf2-99
-        extension proposal */
+        offsets using dwarf3 extension, else using SGI pre-
+        DWARF3 64bit length (unit_length) */
 
     unsigned char de_output_version; /* 2,3,4, or 5. The version
         number of the output. (not necessarily that of each section,

@@ -35,8 +35,10 @@
 typedef Dwarf_Unsigned dn_type;
 
 struct Dwarf_P_Dnames_Head_s {
-    Dwarf_Unsigned dh_unit_length;
+    dn_type dh_unit_length;
     unsigned       dh_version;
+    unsigned       dh_offset_size;
+    dn_type offset;
     dn_type dh_comp_unit_count;
     dn_type dh_local_type_unit_count;
     dn_type dh_foreign_type_unit_count;
@@ -61,10 +63,13 @@ struct Dwarf_P_Dnames_sarray_s {
 struct Dwarf_P_Dnames_s {
     Dwarf_Small dn_create_section;
     struct Dwarf_P_Dnames_Head_s dn_header;
+#if 0
     struct Dwarf_P_Dnames_uarray_s dn_cunit_offset;
     struct Dwarf_P_Dnames_uarray_s dn_tunit_offset;
     struct Dwarf_P_Dnames_sarray_s dn_sunit_sigs;
     struct Dwarf_P_Dnames_uarray_s dn_buckets;
+#endif
+    Dwarf_P_Debug                 dn_dbg;
 
     /*  Hashes count applies to string offsets
         and entry offsets arrays too. */

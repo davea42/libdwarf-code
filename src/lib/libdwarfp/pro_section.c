@@ -177,10 +177,9 @@ struct Dwarf_P_Rel_Head_s {
     struct Dwarf_P_Rel_s *drh_tail;
 };
 
-static int
-_dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
+static int _dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
-static int _dwarf_pro_generate_debug_names(Dwarf_P_Debug dbg,
+static int _dwarf_pro_generate_dnames(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
@@ -324,17 +323,12 @@ dwarf_need_debug_names_section(Dwarf_P_Debug dbg)
     if (!dbg->de_dnames) {
         return FALSE;
     }
-    if (!dbg->de_dnames->dn_create_section) {
-        return FALSE;
-    }
-    return TRUE;
+    return dbg->de_force_dnames;
 }
 
 /*  Convert debug information to  a format such that
     it can be written on disk.
     Called exactly once per execution.
-    This is the interface design used with the consumer
-    interface, so easier for callers to work with.
 */
 int
 dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
@@ -634,7 +628,8 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
         }
     }
     if (dwarf_need_debug_names_section(dbg) == TRUE) {
-        int res = _dwarf_pro_generate_debug_names(dbg,&nbufs, error);
+        int res = _dwarf_pro_generate_dnames(dbg,&nbufs,
+            error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -647,8 +642,8 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
         }
     }
     if (dwarf_need_debug_loclists_section(dbg) == TRUE) {
-        int res = _dwarf_pro_generate_debug_loclists(dbg,&nbufs,
-            error);
+        int res = _dwarf_pro_generate_debug_loclists(dbg,
+            &nbufs, error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -3540,21 +3535,14 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 }
 
 static int
-_dwarf_pro_generate_debug_names(Dwarf_P_Debug dbg,
-    UNUSEDARG Dwarf_Signed *nbufs,
-    Dwarf_Error * error UNUSEDARG)
+_dwarf_pro_generate_dnames(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
+    Dwarf_Error * error)
 {
-#if 0
     int elfsectno_of_debug_names =  dbg->de_elf_sects[DEBUG_NAMES];
-    FIXME: Needs implementation
-    unsigned char *data = 0;
-
-    GET_CHUNK(dbg, elfsectno_of_debug_names, data,
-        dbg->de_debug_names->ds_nbytes,
-        error);
-    memcpy(data,dbg->de_debug_names->ds_data,
-        dbg->de_debug_names->ds_nbytes);
-#endif
+    if (dbg->de_force_dnames) {
+        dwarf_force_dnames(dbg,elfsectno_of_debug_names,error);
+    }
     *nbufs = dbg->de_n_debug_sect;
     return DW_DLV_OK;
 }
@@ -3596,7 +3584,7 @@ _dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
 /*  Get a buffer of section data.
     section_idx is the elf-section number that this data applies to.
     length shows length of returned data
-    This is the September 2016 format. Preferred. */
+*/
 int
 dwarf_get_section_bytes_a(Dwarf_P_Debug dbg,
     UNUSEDARG Dwarf_Signed dwarf_section,
@@ -3682,9 +3670,9 @@ _dwarf_pro_buffer(Dwarf_P_Debug dbg,
             just do one malloc (not two).  */
         unsigned long space = nbytes;
 
-        if (nbytes < CHUNK_SIZE)
+        if (nbytes < CHUNK_SIZE) {
             space = CHUNK_SIZE;
-
+        }
         cursect = (Dwarf_P_Section_Data)
             _dwarf_p_get_alloc(dbg,
                 sizeof(struct Dwarf_P_Section_Data_s)
@@ -3692,7 +3680,6 @@ _dwarf_pro_buffer(Dwarf_P_Debug dbg,
         if (cursect == NULL) {
             return (NULL);
         }
-
         /* _dwarf_p_get_alloc zeroes the space... */
 
         cursect->ds_data = (char *) cursect +

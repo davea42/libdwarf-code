@@ -673,10 +673,11 @@ int dwarf_add_weakname_a(
 
 /*  .debug_names producer functions */
 
-/*  dwarf_force_debug_names forces creation
+/*  dwarf_force_dnames forces creation
     of .debug_names (if DWARF5 being produced)
     even if empty. Only for testing libdwarf. */
-int dwarf_force_debug_names(Dwarf_P_Debug /* dbg */,
+int dwarf_force_dnames(Dwarf_P_Debug /* dbg */,
+    int  /*elfsectno*/,
     Dwarf_Error*     /*error*/);
 
 /*  Other debug_names functions are needed... FIXME */
