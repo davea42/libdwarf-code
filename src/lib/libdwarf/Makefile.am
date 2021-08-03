@@ -163,7 +163,6 @@ ChangeLog2018 \
 ChangeLog2019 \
 ChangeLog2020 \
 CODINGSTYLE \
-baseline.ltp  \
 dw-linetableheader.txt \
 dwgetopt.h \
 dwgetopt.c \
