@@ -1,3 +1,217 @@
+2021-08-03:  David Anderson
+    commit 4a1503eb9853384adba6784db3bb6e040ecf1e3c
+
+    Now prints the .debug_names header(s).
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+    Improved comment
+    Now --force-empty-dnames option does something meaningful.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+
+    Now correctly reads .debug_names header data
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+    Corrected: now has dn_abbrev_table_size
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+
+    Function prototype for dwarf_dnames_sizes() is now correct.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Now has a static setup for creating a real .debug_names
+    section (with fake data). Via the dwarf_force_dnames()
+    function (which is only useful for testing).
+    Not yet possible to create section data via calls.
+            modified:   src/lib/libdwarfp/pro_dnames.c
+
+    Aligned member names in Dwarf_P_Dnames_Head_s.
+            modified:   src/lib/libdwarfp/pro_dnames.h
+
+2021-07-30:  David Anderson
+    commit 517529a3bce248b2e4d7a8a4aebe2e7536ed1eb5
+
+    DO NOT USE (yet).
+    Now the 'force dnames' option actually creates
+    legal but arbitrary .debug_names section content
+    for testing.
+            modified:   src/lib/libdwarfp/libdwarfp.h
+            modified:   src/lib/libdwarfp/pro_dnames.c
+            modified:   src/lib/libdwarfp/pro_dnames.h
+            modified:   src/lib/libdwarfp/pro_opaque.h
+            modified:   src/lib/libdwarfp/pro_section.c
+
+2021-07-30:  David Anderson
+    commit 416652c3e97dfed91a2199212e30da9aac2f2ab3
+
+    DO NOT USE (yet).
+    Basic correction  of use of a debug_names interface
+    use.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2021-07-30:  David Anderson
+    commit 06d4d25a87c4ebdd1a86c3d222660a96bf6ef889
+
+    DO NOT USE THIS (yet)
+    basic creation of a .debug_names section
+    with faked data in libdwarfp.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+
+2021-07-30:  David Anderson
+    commit a228fb5eab9ffb663fc34fd3957cb61216e41ccc
+
+    DO NOT USE (yet).
+    Basic printing of .debug_dnames.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2021-07-28:  David Anderson
+    commit 8884f32b9f302a0d53f2aa4b5fb9c517d445a297
+
+    All these build singly-linked lists for temporary
+    use.  This new version uses simpler logic
+    that does not involve if-else.
+    See Steve Maguire, Writing Solid Code,  Page 126.
+            modified:   dwarf_arange.c
+            modified:   dwarf_global.c
+            modified:   dwarf_line.c
+            modified:   dwarf_loclists.c
+            modified:   dwarf_query.c
+            modified:   dwarf_rnglists.c
+
+2021-07-28:  David Anderson
+    commit fc1b3e910bf98aa728c51bd08342a5e02055ef50
+
+    if 0 the glflags.gf_debug_names_flag code
+    as it is not correct yet.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+    A beginning of some revisions. Ignore this for now.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+    Correcting the use  of dwarf_global_formref()
+    where the reference can be DW_AT_type and DW_FORM_ref_sig8
+    so we understand what section is being targeted by
+    an offset. And can check and report the target die TAG
+    and name (if it has a DW_AT_name).
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Just delete a pointless blank line.
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+2021-07-28:  David Anderson
+    commit 0c5199d6a6ced9fa466d6c7632337ddf3519b1e6
+
+    These two are not ready to be used. Not yet correct.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+
+    Cleaned up spacing in find_cu_die_base_fields()
+    Added _dwarf_fill_in_abcom_from_context() and
+    _dwarf_fill_in_context_from_abcom so that
+    abbreviations reading is no longer directly tied
+    to .debug_abbrev but can now also be used for
+    the abbreviations table in .debug_names.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    More complete handlilng of is_info for DWARF4
+     .debug_info/.debug_types.  Now we use DW_FORM_ref_sig8
+    to refer to .debug_types from .debug_info properly.
+    dwarf_global_formref() and dwarf_global_formref_b()
+    exist as the latter is needed for the offset
+    in .debug_types needs to have the is_info =FALSE
+    to check the reference.
+    Other places needed slightly corrected handling
+    of is_info.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+    Now with a new field, pubnames_context->pu_pub_entries_end_ptr,
+    to provide a sharper 'end of an entries contribution error
+    check' than simply the end of the section.
+            modified:   src/lib/libdwarf/dwarf_global.c
+    Added  Dwarf_Byte_Ptr pu_pub_entries_end_ptr;
+    for the improved checking.
+            modified:   src/lib/libdwarf/dwarf_global.h
+
+    Now with _dwarf_fill_in_context_from_abcom() and
+    _dwarf_fill_in_abcom_from_context() to isolate abbreviation
+    reading from any specific section.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Using _dwarf_fill_in_context_from_abcom() and
+    _dwarf_fill_in_abcom_from_context() to isolate abbreviation
+    reading from any specific section.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Now using internal struct Dwarf_Abbrev_Common_s to
+    isolate abbreviation reading from any specific section.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+    Declares a revised struct Dwarf_Abbrev_Common_s.
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+    dwarf_formref now adds a Dwarf_Bool *is_info argument
+    so we can fully treat DWARF4 debug_info/debug_names
+    properly.
+    This is a change to dwarf_formref() argument list.
+    Added dwarf_global_formref_b() to return an is_info
+    flag along with the offset (for DWARF4
+    section .debug_info or .debug_names that offset applies to)
+    Some dwarf_dnames function prototypes changed, but
+    those are not yet correct, ignore them.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-07-28:  David Anderson
+    commit 81ee54de5c146282fec67dec9375103c1069d61d
+
+    Uses dwarf_formref/dwarf_global_formref correctly,
+    recognizing the is_info argment for DWARF4 debug_info/debug_types.
+    shortened a couple too-long lines.
+            modified:   src/bin/dwarfgen/createirepformfrombinary.cc
+
+2021-07-23:  David Anderson
+    commit bbbca00128b70a25ecb7132c90ee494abad5b692
+
+    DO NOT USE THIS COMMIT YET.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2021-07-23:  David Anderson
+    commit ad4aebecce0c6a8d4fe23f8d3c509754fd04937d
+
+    DO NOT USE THIS COMMIT YET.
+    Preparation for unifying
+    abbreviation reading from .debug_abbrev
+    and .debug_names
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_query.c
+            modified:   dwarf_util.h
+
+2021-07-23:  David Anderson
+    commit 399e023a36da18bd8dbd4f14d9ce2bcc8bd5a6c4
+
+    DO NOT USE THIS COMMIT YET.
+
+    Added comment, no guarantee uint32_t defined.
+            modified:   CMakeLists.txt
+    Now ensures uint32_t defined, needed for DWARF5 hash.
+            modified:   configure.ac
+
+2021-07-19:  David Anderson
+    commit 2e126424e347a66ab9d6d81a9b46692fd93b6c87
+
+    DO NOT USE THIS COMMIT.
+    Now part way to a new set of .debug_names
+    interfaces.
+            modified:   doc/libdwarf.mm
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-07-15:  David Anderson
+    commit 550725b7e0dc9c112a948e8f4b867d5740563519
+
+    Updated with latest git commits
+            modified:   ChangeLog
+
 2021-07-15:  David Anderson
     commit c7036121fb9d47539953daf704f7dc29a3aef274
 
