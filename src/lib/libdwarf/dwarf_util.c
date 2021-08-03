@@ -510,8 +510,6 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_sdata: {
-        /*  Discard the decoded value, we just want the length
-            of the value. */
         UNUSEDARG Dwarf_Signed v = 0;
 
         /*  Discard the decoded value, we just want the length
