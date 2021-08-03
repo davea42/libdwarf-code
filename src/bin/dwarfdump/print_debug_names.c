@@ -45,7 +45,7 @@ print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned foreign_type_unit_count = 0;
     Dwarf_Unsigned bucket_count = 0;
     Dwarf_Unsigned name_count = 0;
-    Dwarf_Unsigned indextable_length = 0;
+    Dwarf_Unsigned abbrev_table_size = 0;
     Dwarf_Unsigned entry_pool_size = 0;
     Dwarf_Unsigned augmentation_string_size = 0;
     Dwarf_Unsigned section_size = 0;
@@ -56,7 +56,7 @@ print_dname_record(Dwarf_Dnames_Head dn,
     res = dwarf_dnames_sizes(dn,&comp_unit_count,
         &local_type_unit_count,&foreign_type_unit_count,
         &bucket_count,
-        &name_count,&indextable_length,
+        &name_count,&abbrev_table_size,
         &entry_pool_size,&augmentation_string_size,
         &augstring,
         &section_size,&table_version,
@@ -65,13 +65,14 @@ print_dname_record(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
-    printf("Name table offset       : %"
+    printf("\n");
+    printf("Name table offset       : 0x%"
         DW_PR_XZEROS DW_PR_DUx "\n",
         offset);
-    printf("Next name table offset  : %"
+    printf("Next name table offset  : 0x%"
         DW_PR_XZEROS DW_PR_DUx "\n",
         new_offset);
-    printf("Section size            : %"
+    printf("Section size            : 0x%"
         DW_PR_XZEROS DW_PR_DUx "\n",
         section_size);
     printf("Table version           : %u\n",
@@ -86,8 +87,10 @@ print_dname_record(Dwarf_Dnames_Head dn,
         bucket_count);
     printf("Name count              : %" DW_PR_DUu "\n",
         name_count);
-    printf("Indextable length       : %" DW_PR_DUu "\n",
-        indextable_length);
+    printf("Abbrev table length     : %" DW_PR_DUu "\n",
+        abbrev_table_size);
+    printf("Entry pool size         : %" DW_PR_DUu "\n",
+        entry_pool_size);
     printf("Augmentation string size: %" DW_PR_DUu "\n",
         augmentation_string_size);
     if (augmentation_string_size > 0) {

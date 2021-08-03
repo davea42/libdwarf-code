@@ -2126,7 +2126,7 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned * /*name_count*/,
 
     /* The following are counted in bytes */
-    Dwarf_Unsigned * /*indextable_overall_length*/,
+    Dwarf_Unsigned * /*abbrev_table_size*/,
     Dwarf_Unsigned * /*entry_pool_size*/,
     Dwarf_Unsigned * /*augmentation_string_size*/,
     char          ** /*augmentation_string*/,

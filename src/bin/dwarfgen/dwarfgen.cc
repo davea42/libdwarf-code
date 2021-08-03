@@ -847,13 +847,12 @@ main(int argc, char **argv)
         res = dwarf_pro_set_default_string_form(dbg,
             cmdoptions.defaultInfoStringForm,&err);
         if(res != DW_DLV_OK) {
-            cerr << "dwarfgen: Failed dwarf_pro_set_default_string_form"
-                << endl;
+            cerr << "dwarfgen: Failed " <<
+                "dwarf_pro_set_default_string_form" << endl;
             exit(EXIT_FAILURE);
         }
         if (force_empty_dnames) {
-            /*  Shortly we will fill out a default denames
-                for testing. */
+            /*  Fills out a default dnames for testing. */
             res = dwarf_force_dnames(dbg,0,&err);
             if (res != DW_DLV_OK) {
                 cerr << "dwarfgen: "

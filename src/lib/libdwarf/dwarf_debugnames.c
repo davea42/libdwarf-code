@@ -249,21 +249,35 @@ read_uword_val(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Reading a Name Index header */
+/*  For now, check using global offset, not pointer */
+#define VALIDATEOFFSET(dnm,used,m)                  \
+    do {                                            \
+        if ((used) >= (dnm)->dn_next_set_offset) {  \
+            _dwarf_error_string(dbg, error,         \
+                DW_DLE_DEBUG_NAMES_HEADER_ERROR,    \
+                "DW_DLE_DEBUG_NAMES_HEADER_ERROR: " \
+                m);                                 \
+            return DW_DLV_ERROR;                    \
+        }                                           \
+    } while(0)
+
+/*  Reading a .debug_names Name Index header */
 static int
-read_a_name_index(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned  section_offset,
+read_a_name_table_header(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned  starting_offset,
     Dwarf_Unsigned  remaining_space,
     Dwarf_Small    *curptr_in,
     Dwarf_Unsigned *usedspace_out,
+    Dwarf_Unsigned *next_offset,
     Dwarf_Small    *end_section,
     Dwarf_Error    *error)
 {
     Dwarf_Unsigned area_length = 0;
+    Dwarf_Unsigned area_max_offset = 0;
+    unsigned initial_length = 0; /*offset_size+local_ext */
     int offset_size;
     int local_extension_size = 0;
-    Dwarf_Small *past_length = 0;
-    Dwarf_Small *end_dnames = 0;
+    Dwarf_Small *end_dnames = 0; /* 1 past local table */
     Dwarf_Half version = 0;
     Dwarf_Half padding = 0;
     Dwarf_Unsigned comp_unit_count = 0;
@@ -271,23 +285,31 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned foreign_type_unit_count = 0;
     Dwarf_Unsigned bucket_count = 0;
     Dwarf_Unsigned name_count = 0;
+    Dwarf_Unsigned abbrev_table_size = 0; /* bytes */
     Dwarf_Unsigned entry_pool_size = 0; /* bytes */
     Dwarf_Unsigned augmentation_string_size = 0; /* bytes */
     Dwarf_Unsigned usedspace = 0;
+    Dwarf_Unsigned totaloffset = 0;
     int res = 0;
-    const char *str_utf8 = 0;
-    Dwarf_Small *curptr = curptr_in;
+    const char *str_utf8 = 0; /* Augmentation string */
+    Dwarf_Small *curptr = 0;
     Dwarf_Debug dbg = dn->dn_dbg;
-
+    
+    curptr = curptr_in;
+    usedspace = 0;
+    totaloffset = starting_offset;
+    /* 1 */
     READ_AREA_LENGTH_CK(dbg, area_length, Dwarf_Unsigned,
         curptr, offset_size,
         local_extension_size,error,
         remaining_space,end_section);
+    initial_length =  offset_size+local_extension_size;
 
     /* curptr now points past the length field */
-    usedspace = offset_size + local_extension_size;
-    past_length = curptr;
-
+    area_max_offset = area_length + initial_length;
+    usedspace = initial_length;
+    totaloffset += initial_length;
+    dn->dn_offset_size = offset_size;
     /* Two stage length test so overflow is caught. */
     if (area_length > remaining_space) {
         _dwarf_error_string(dbg, error,
@@ -297,8 +319,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
             "section. Corrupt data.");
         return DW_DLV_ERROR;
     }
-    if ((area_length + offset_size + local_extension_size) >
-        remaining_space) {
+    if (area_max_offset > remaining_space) {
         _dwarf_error_string(dbg, error,
             DW_DLE_DEBUG_NAMES_HEADER_ERROR,
             "DW_DLE_DEBUG_NAMES_HEADER_ERROR: "
@@ -307,12 +328,19 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         return DW_DLV_ERROR;
     }
     end_dnames = curptr + area_length;
+    dn->dn_unit_length = area_length + local_extension_size;
+    dn->dn_indextable_data_end = end_dnames;
+    dn->dn_next_set_offset = area_length 
+        + initial_length +
+        + starting_offset;
 
+    /* 2 */
     READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
         curptr, DWARF_HALF_SIZE,
         error,end_dnames);
     curptr += DWARF_HALF_SIZE;
-    usedspace = DWARF_HALF_SIZE;
+    usedspace += DWARF_HALF_SIZE;
+    totaloffset += DWARF_HALF_SIZE;
     if (curptr >= end_dnames) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
@@ -321,11 +349,13 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
         return DW_DLV_ERROR;
     }
+    /* 3 */
     READ_UNALIGNED_CK(dbg, padding, Dwarf_Half,
         curptr, DWARF_HALF_SIZE,
         error,end_dnames);
     curptr += DWARF_HALF_SIZE;
-    usedspace = DWARF_HALF_SIZE;
+    usedspace += DWARF_HALF_SIZE;
+    totaloffset += DWARF_HALF_SIZE;
     if (curptr >= end_dnames) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
@@ -334,96 +364,108 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
+    /* 4 */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
-        &comp_unit_count,area_length,error);
+        &comp_unit_count,area_max_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    dn->dn_comp_unit_count = comp_unit_count;
     usedspace += SIZEOFT32;
+    totaloffset +=  SIZEOFT32;
+    /* 5 */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
-        &local_type_unit_count,area_length,error);
+        &local_type_unit_count,area_max_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
     dn->dn_local_type_unit_count = local_type_unit_count;
+    usedspace += SIZEOFT32;
+    totaloffset +=  SIZEOFT32;
+
+    /* 6 */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
-        &foreign_type_unit_count,area_length,error);
+        &foreign_type_unit_count,area_max_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    dn->dn_foreign_type_unit_count = foreign_type_unit_count;
     usedspace += SIZEOFT32;
+    totaloffset += SIZEOFT32;
+    /* 7 */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
-        &bucket_count,area_length,error);
+        &bucket_count,area_max_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    dn->dn_bucket_count = bucket_count;
     usedspace += SIZEOFT32;
+    totaloffset += SIZEOFT32;
     /*  name_count gives the size of
         the string-offsets and entry-offsets arrays,
         and if hashes present, the size of the hashes
         array. */
+    /* 8 */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
-        &name_count,area_length,error);
+        &name_count,area_max_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    dn->dn_name_count = name_count;
     usedspace += SIZEOFT32;
+    totaloffset += SIZEOFT32;
 
-    /*  Entry pool aka abbrev_table */
+    /*  abbrev_table */
+    /* 9 */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
-        &entry_pool_size,area_length,error);
+        &abbrev_table_size,area_max_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
-    dn->dn_entry_pool_size = entry_pool_size;
+    dn->dn_abbrev_table_size = abbrev_table_size;
     usedspace += SIZEOFT32;
+    totaloffset += SIZEOFT32;
+
+    /* 10 */
     res = read_uword_val(dbg, &curptr,
         end_dnames, DW_DLE_DEBUG_NAMES_HEADER_ERROR,
-        &augmentation_string_size,area_length,error);
+        &augmentation_string_size,area_max_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    usedspace += SIZEOFT32;
+    totaloffset += SIZEOFT32;
+
     str_utf8 = (const char *) curptr;
     curptr+= augmentation_string_size;
-    usedspace += SIZEOFT32;
     usedspace += augmentation_string_size;
+    totaloffset += augmentation_string_size;
+    dn->dn_augmentation_string_size = augmentation_string_size;
     if (curptr >= end_dnames) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
-    dn->dn_cu_list_offset = usedspace;
 
-    dn->dn_dbg = dbg;
-    dn->dn_section_offset = section_offset;
-    dn->dn_indextable_data = past_length;
-    dn->dn_indextable_length = area_length;
-    dn->dn_indextable_data_end = dn->dn_indextable_data + area_length;
     dn->dn_version = version;
-    dn->dn_comp_unit_count = comp_unit_count;
-    dn->dn_local_type_unit_count = local_type_unit_count ;
-    dn->dn_foreign_type_unit_count = foreign_type_unit_count ;
-    dn->dn_bucket_count = bucket_count ;
-    dn->dn_name_count = name_count ;
-    dn->dn_entry_pool_size = entry_pool_size;
-    dn->dn_augmentation_string_size =
-        augmentation_string_size;
-    dn->dn_augmentation_string = calloc(1,
-        augmentation_string_size +1);
-    strncpy(dn->dn_augmentation_string,str_utf8,
-        augmentation_string_size);
-
-    {
-        /* This deals with a zero length string too. */
+    dn->dn_abbrev_table_size = abbrev_table_size;
+    if (augmentation_string_size) {
+        /* 11 */
         Dwarf_Unsigned len = augmentation_string_size;
         char *cp = 0;
         char *cpend = 0;
         Dwarf_Bool foundnull = FALSE;
+
+        dn->dn_augmentation_string = calloc(1,
+            augmentation_string_size +1);
+        strncpy(dn->dn_augmentation_string,str_utf8,
+            augmentation_string_size);
+        /* This validates a zero length string too. */
 
         cp = dn->dn_augmentation_string;
         cpend = cp + len;
@@ -442,105 +484,107 @@ read_a_name_index(Dwarf_Dnames_Head dn,
                 the padding. */
             for ( ; cp < cpend; ++cp) {
                 if (*cp) {
-                    _dwarf_error(dbg, error,
-                        DW_DLE_DEBUG_NAMES_PAD_NON_ZERO);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_DEBUG_NAMES_PAD_NON_ZERO,
+                        "DW_DLE_DEBUG_NAMES_PAD_NON_ZERO: "
+                        "padding in augmentation string not zeros");
                     return DW_DLV_ERROR;
                 }
             }
         }
-        usedspace += augmentation_string_size;
     }
 
     /*  Now we deal with the arrays following the header. */
     dn->dn_cu_list = curptr;
+    dn->dn_cu_list_offset = usedspace;
     curptr +=  dn->dn_offset_size * comp_unit_count;
-    dn->dn_cu_list_offset = usedspace; 
-    if (curptr > end_dnames) {
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return DW_DLV_ERROR;
-    }
     usedspace += dn->dn_offset_size * comp_unit_count ;
+    totaloffset += dn->dn_offset_size * comp_unit_count ;
+    VALIDATEOFFSET(dn,totaloffset,"comp_unit array error");
 
     dn->dn_local_tu_list = curptr;
     dn->dn_local_tu_list_offset = usedspace;
     curptr +=  dn->dn_offset_size *local_type_unit_count;
-    if (curptr > end_dnames) {
-        free(dn->dn_augmentation_string);
-        dn->dn_augmentation_string = 0;
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return DW_DLV_ERROR;
-    }
     usedspace += dn->dn_offset_size* local_type_unit_count;
+    totaloffset += dn->dn_offset_size* local_type_unit_count;
+    VALIDATEOFFSET(dn,totaloffset,"local_type__unit array error");
    
     dn->dn_foreign_tu_list = curptr;
     dn->dn_foreign_tu_list_offset = usedspace;
     curptr += dn->dn_offset_size * foreign_type_unit_count;
     usedspace += dn->dn_offset_size * foreign_type_unit_count;
-    if (curptr > end_dnames) {
-        free(dn->dn_augmentation_string);
-        dn->dn_augmentation_string = 0;
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return DW_DLV_ERROR;
-    }
+    totaloffset += dn->dn_offset_size * foreign_type_unit_count;
+    VALIDATEOFFSET(dn,totaloffset,"foreign_type__unit array error");
 
     dn->dn_buckets_offset = usedspace;
     dn->dn_buckets = curptr;
     curptr +=  SIZEOFT32 * bucket_count ;
     usedspace += SIZEOFT32 * bucket_count;
-    if (curptr > end_dnames) {
-        free(dn->dn_augmentation_string);
-        dn->dn_augmentation_string = 0;
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return DW_DLV_ERROR;
-    }
+    totaloffset += SIZEOFT32 * bucket_count;
+    VALIDATEOFFSET(dn,totaloffset," bucket array error");
 
     dn->dn_hash_table = curptr;
     dn->dn_hash_table_offset = usedspace;
-    curptr +=  sizeof(Dwarf_Sig8) * name_count;
-    usedspace += sizeof(Dwarf_Sig8) * name_count;
-    if (curptr > end_dnames) {
-        free(dn->dn_augmentation_string);
-        dn->dn_augmentation_string = 0;
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return DW_DLV_ERROR;
+    if (bucket_count) {
+        curptr +=  sizeof(Dwarf_Sig8) * name_count;
+        usedspace += sizeof(Dwarf_Sig8) * name_count;
+        totaloffset += sizeof(Dwarf_Sig8) * name_count;
     }
+
+    VALIDATEOFFSET(dn,totaloffset,"hashes array error");
 
     dn->dn_string_offsets = curptr;
     dn->dn_string_offsets_offset = usedspace;
     curptr +=  dn->dn_offset_size * name_count;
     usedspace += dn->dn_offset_size * name_count;
-    if (curptr > end_dnames) {
-        free(dn->dn_augmentation_string);
-        dn->dn_augmentation_string = 0;
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return DW_DLV_ERROR;
-    }
+    totaloffset += dn->dn_offset_size * name_count;
+    VALIDATEOFFSET(dn,totaloffset,"string offsets array error");
 
     dn->dn_entry_offsets = curptr;
     dn->dn_entry_offsets_offset = usedspace;
     curptr +=  dn->dn_offset_size * name_count;
     usedspace += dn->dn_offset_size * name_count;
-    if (curptr > end_dnames) {
-        free(dn->dn_augmentation_string);
-        dn->dn_augmentation_string = 0;
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
-        return DW_DLV_ERROR;
-    }
+    totaloffset += dn->dn_offset_size * name_count;
+    VALIDATEOFFSET(dn,totaloffset,"entry offsets array error");
+
+    dn->dn_abbrevs = curptr;
+    dn->dn_abbrevs_offset = totaloffset;
+    VALIDATEOFFSET(dn,totaloffset,"abbrev table error");
+    curptr +=  dn->dn_abbrev_table_size;
+    usedspace +=  dn->dn_abbrev_table_size;
+    totaloffset +=  dn->dn_abbrev_table_size;
+    VALIDATEOFFSET(dn,totaloffset,"abbrev table error");
 
     dn->dn_entry_pool = curptr;
-    dn->dn_entry_pool_offset = usedspace;
-    curptr +=   entry_pool_size;
-    usedspace += entry_pool_size;
-    if (curptr > end_dnames) {
-        free(dn->dn_augmentation_string);
-        dn->dn_augmentation_string = 0;
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
+    dn->dn_entry_pool_offset = totaloffset;
+    if (dn->dn_next_set_offset < totaloffset) {
+        _dwarf_error_string(dbg, error,
+            DW_DLE_DEBUG_NAMES_HEADER_ERROR,
+            "DW_DLE_DEBUG_NAMES_HEADER_ERROR: "
+            "Abbrev total wrong, exceeds "
+            "the room available.");
         return DW_DLV_ERROR;
     }
+    /* Do not count the initial length field here! */
 
-    dn->dn_entry_pool_size = dn->dn_section_size - usedspace;
-    curptr_in = curptr;
+    entry_pool_size = dn->dn_next_set_offset - totaloffset;
+    dn->dn_entry_pool_size = entry_pool_size;
+    curptr +=   entry_pool_size;
+    usedspace += entry_pool_size;
+    totaloffset += entry_pool_size;
+
+    if (totaloffset != dn->dn_next_set_offset)   {
+printf("ERROR final check line %d\n",__LINE__);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_DEBUG_NAMES_HEADER_ERROR,
+            "DW_DLE_DEBUG_NAMES_HEADER_ERROR: "
+            "Final total offset does not match base "
+            "calculation. Logic error.");
+        return DW_DLV_ERROR;
+    }
+         
     *usedspace_out = usedspace;
+    *next_offset = dn->dn_next_set_offset;
 #if 0
     res = fill_in_abbrevs_table(dn,error);
     if (res != DW_DLV_OK) {
@@ -561,7 +605,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     see DWARF5 6.1.1.3 Per_CU versus Per-Module Indexes.
     The initial of these tables starts at offset 0.
     If the starting-offset is too high for the section
-    return DW_DLV_NO_ENTRY*/
+    return DW_DLV_NO_ENTRY */
 int
 dwarf_dnames_header(Dwarf_Debug dbg,
     Dwarf_Off           starting_offset,
@@ -570,9 +614,10 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     Dwarf_Error       * error)
 {
     Dwarf_Unsigned    remaining    = 0;
-    Dwarf_Dnames_Head dn_header    = 0;
+    Dwarf_Dnames_Head dn           = 0;
     Dwarf_Unsigned    section_size = 0;
     Dwarf_Unsigned    usedspace    = 0;
+    Dwarf_Unsigned    next_offset  = 0;
     Dwarf_Small      *start_section= 0;
     Dwarf_Small      *end_section  = 0;
     Dwarf_Small      *curptr       = 0;
@@ -599,44 +644,49 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     start_section = dbg->de_debug_names.dss_data;
     curptr = start_section += starting_offset;
     end_section = start_section + section_size;
-    remaining = section_size - starting_offset;
-    dn_header =  (Dwarf_Dnames_Head)_dwarf_get_alloc(dbg,
+    dn =  (Dwarf_Dnames_Head)_dwarf_get_alloc(dbg,
         DW_DLA_DNAMES_HEAD, 1);
-    if (!dn_header) {
+    if (!dn) {
         _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
             "DW_DLE_ALLOC_FAIL: dwarf_get_alloc of "
             "a Dwarf_Dnames_Head record failed.");
         return DW_DLV_ERROR;
     }
-    dn_header->dn_magic = DWARF_DNAMES_MAGIC;
-    dn_header->dn_section_data = start_section;
-    dn_header->dn_section_size = section_size;
-    dn_header->dn_section_end = start_section + section_size;
-    dn_header->dn_dbg = dbg;
-    res = read_a_name_index(dn_header,
+    dn->dn_magic = DWARF_DNAMES_MAGIC;
+    dn->dn_section_data = start_section;
+    dn->dn_section_size = section_size;
+    dn->dn_section_end = start_section + section_size;
+    dn->dn_dbg = dbg;
+    dn->dn_section_offset = starting_offset;
+    dn->dn_indextable_data = starting_offset + start_section;;
+    remaining = dn->dn_section_size - starting_offset;
+    res = read_a_name_table_header(dn,
         starting_offset,
         remaining,
         curptr,
         &usedspace,
-        dn_header->dn_section_end,
+        &next_offset,
+        dn->dn_section_end,
         error);
     if (res == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
+        dwarf_dealloc_dnames(dn);
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
         /*  Impossible. A bug. Or possibly
             a bunch of zero pad? */
-        dwarf_dealloc_dnames(dn_header);
+        dwarf_dealloc_dnames(dn);
         return res;
     }
-    if (remaining < usedspace) {
-        dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
-        _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_OFF_END);
+    if (usedspace > section_size) {
+        dwarf_dealloc_dnames(dn);
+        _dwarf_error_string(dbg, error,DW_DLE_DEBUG_NAMES_OFF_END,
+            "DW_DLE_DEBUG_NAMES_OFF_END: "
+            " used space > section size");
         return DW_DLV_ERROR;
     }
     remaining -= usedspace;
-    if (remaining < 5) {
+    if (remaining < 15) {
         /*  No more in here, just padding. Check for zero
             in padding. */
         curptr += usedspace;
@@ -644,15 +694,17 @@ dwarf_dnames_header(Dwarf_Debug dbg,
             if (*curptr) {
                 /*  One could argue this is a harmless error,
                     but for now assume it is real corruption. */
-                dwarf_dealloc(dbg,dn_header,DW_DLA_DNAMES_HEAD);
-                _dwarf_error(dbg, error,
-                    DW_DLE_DEBUG_NAMES_PAD_NON_ZERO);
+                dwarf_dealloc(dbg,dn,DW_DLA_DNAMES_HEAD);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_DEBUG_NAMES_PAD_NON_ZERO,
+                    "DW_DLE_DEBUG_NAMES_PAD_NON_ZERO: "
+                    "space at end of valid tables not zeros");
                 return DW_DLV_ERROR;
             }
         }
     }
-    *dn_out = dn_header;
-    *offset_of_next_table = usedspace + starting_offset;
+    *dn_out = dn;
+    *offset_of_next_table = next_offset;
     return DW_DLV_OK;
 }
 /*  Frees all the space in dn. It's up to you
@@ -683,7 +735,7 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned * name_count,
 
     /* The following are counted in bytes */
-    Dwarf_Unsigned * indextable_overall_length,
+    Dwarf_Unsigned * abbrev_table_size,
     Dwarf_Unsigned * entry_pool_size,
     Dwarf_Unsigned * augmentation_string_size,
     char          ** augmentation_string,
@@ -713,14 +765,14 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     if (name_count) {
         *name_count = dn->dn_name_count;
     }
+    if (abbrev_table_size) {
+        *abbrev_table_size = dn->dn_abbrev_table_size;
+    }
     if (entry_pool_size) {
         *entry_pool_size = dn->dn_entry_pool_size;
     }
     if (augmentation_string_size) {
         *augmentation_string_size = dn->dn_augmentation_string_size;
-    }
-    if (indextable_overall_length) {
-        *indextable_overall_length =  dn->dn_indextable_length;
     }
     if (augmentation_string) {
         *augmentation_string = dn->dn_augmentation_string;

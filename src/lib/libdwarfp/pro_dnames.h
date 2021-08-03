@@ -36,17 +36,17 @@ typedef Dwarf_Unsigned dn_type;
 
 struct Dwarf_P_Dnames_Head_s {
     dn_type dh_unit_length;
-    unsigned       dh_version;
-    unsigned       dh_offset_size;
-    dn_type offset;
-    dn_type dh_comp_unit_count;
-    dn_type dh_local_type_unit_count;
-    dn_type dh_foreign_type_unit_count;
-    dn_type dh_bucket_count;
-    dn_type dh_name_count;
-    dn_type dh_abbrev_table_size;
-    dn_type dh_augmentation_string_size;
-    const char *   dh_augmentation_string;
+    unsigned    dh_version;
+    unsigned    dh_offset_size;
+    dn_type     dh_offset;
+    dn_type     dh_comp_unit_count;
+    dn_type     dh_local_type_unit_count;
+    dn_type     dh_foreign_type_unit_count;
+    dn_type     dh_bucket_count;
+    dn_type     dh_name_count;
+    dn_type     dh_abbrev_table_size;
+    dn_type     dh_augmentation_string_size;
+    const char *dh_augmentation_string;
 };
 
 struct Dwarf_P_Dnames_uarray_s {
