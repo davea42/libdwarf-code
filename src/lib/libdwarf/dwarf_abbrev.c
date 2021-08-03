@@ -83,7 +83,6 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
     Dwarf_Unsigned abbrev_count = 0;
     Dwarf_Unsigned attr_name = 0;
     Dwarf_Unsigned attr_form = 0;
-    Dwarf_Unsigned implicit_const UNUSEDARG = 0;
 
     /*  The abbreviations table ends with an entry with a single
         byte of zero for the abbreviation code.
@@ -138,7 +137,10 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         if (attr_form ==  DW_FORM_implicit_const) {
-            /* The value is here, not in a DIE. */
+            Dwarf_Unsigned implicit_const UNUSEDARG = 0;
+
+            /*  The value is here, not in a DIE.  We do
+                nothing with it, but must read past it. */
             DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
                 dbg,error,abbrev_section_end);
         }
