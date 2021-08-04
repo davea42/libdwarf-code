@@ -440,11 +440,9 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_ref_udata: {
-        UNUSEDARG Dwarf_Unsigned v = 0;
-
         /*  Discard the decoded value, we just want the length
             of the value. */
-        DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
+        SKIP_LEB128_LEN_CK(val_ptr,leb128_length,
             dbg,error,section_end_ptr);
         *size_out = leb128_length;
         return DW_DLV_OK;;
@@ -510,11 +508,9 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_sdata: {
-        UNUSEDARG Dwarf_Signed v = 0;
-
         /*  Discard the decoded value, we just want the length
             of the value. */
-        DECODE_LEB128_SWORD_LEN_CK(val_ptr,v,leb128_length,
+        SKIP_LEB128_LEN_CK(val_ptr,leb128_length,
             dbg,error,section_end_ptr);
         *size_out = leb128_length;
         return DW_DLV_OK;
@@ -556,9 +552,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     case DW_FORM_GNU_addr_index:
     case DW_FORM_strx:
     case DW_FORM_GNU_str_index: {
-        UNUSEDARG Dwarf_Unsigned v = 0;
-
-        DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
+        SKIP_LEB128_LEN_CK(val_ptr,leb128_length,
             dbg,error,section_end_ptr);
         *size_out = leb128_length;
         return DW_DLV_OK;
@@ -572,9 +566,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     case DW_FORM_udata: {
         /*  Discard the decoded value, we just want the length
             of the value. */
-        UNUSEDARG Dwarf_Unsigned v = 0;
-
-        DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
+        SKIP_LEB128_LEN_CK(val_ptr,leb128_length,
             dbg,error,section_end_ptr);
         *size_out = leb128_length;
         return DW_DLV_OK;

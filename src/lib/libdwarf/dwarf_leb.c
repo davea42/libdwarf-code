@@ -80,6 +80,39 @@
 #define BYTESLEBMAX 24
 #define BITSPERBYTE 8
 
+/*  When an leb value needs to reveal its length,
+    but the value is not needed  */
+int
+dwarf_skip_leb128(char * leb128,
+    Dwarf_Unsigned * leb128_length,
+    char * endptr)
+{
+    unsigned       byte        = 0;
+    /*  The byte_length value will be a small non-negative integer. */
+    unsigned byte_length       = 1;
+
+    if (leb128 >=endptr) {
+        return DW_DLV_ERROR;
+    }
+    for(;;byte_length++,leb128++) {
+        byte = *leb128;
+        if (leb128 >= endptr) {
+            /*  Off end of available space. */
+            return DW_DLV_ERROR;
+        }
+        if (byte & 0x80) {
+            if (byte_length >=  BYTESLEBMAX)  {
+                /*  Too long. Not sane length. */
+                return DW_DLV_ERROR;
+            }
+            continue;
+        }
+        break;
+    }
+    *leb128_length = byte_length;
+    return DW_DLV_OK;
+
+}
 /* Decode SLEB with checking */
 int
 dwarf_decode_leb128(char * leb128,

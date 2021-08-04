@@ -275,9 +275,6 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     for (count = 0; !done && count < max_count; ++count) {
         unsigned long slen = 0;
 
-        /* Set but not used */
-        UNUSEDARG Dwarf_Unsigned utemp = 0;
-
         uc = *pnext;
         ++pnext;                /* get past the type code */
         switch (uc) {
@@ -286,7 +283,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             /* line, string */
         case DW_MACINFO_vendor_ext:
             /* number, string */
-            DECODE_LEB128_UWORD_CK(pnext,utemp,dbg,error,
+            SKIP_LEB128_CK(pnext,dbg,error,
                 macro_end);
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
@@ -314,7 +311,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             break;
         case DW_MACINFO_start_file:
             /* line, file index */
-            DECODE_LEB128_UWORD_CK(pnext,utemp,dbg,error,
+            SKIP_LEB128_CK(pnext,dbg,error,
                 macro_end);
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
@@ -323,7 +320,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
                 return DW_DLV_ERROR;
             }
-            DECODE_LEB128_UWORD_CK(pnext,utemp,dbg,error,
+            SKIP_LEB128_CK(pnext,dbg,error,
                 macro_end);
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {

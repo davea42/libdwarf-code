@@ -36,15 +36,51 @@ void
 _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     Dwarf_Unsigned targ, Dwarf_Unsigned sectionlen);
 
+#define SKIP_LEB128_CK(ptr,dbg,errptr,endptr) \
+    do {                                                    \
+        Dwarf_Unsigned lu_leblen = 0;                       \
+        int lu_res = 0;                                     \
+        lu_res = dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
+            (char *)endptr);                                \
+        if (lu_res == DW_DLV_ERROR) {                       \
+            _dwarf_error_string(dbg, errptr,                \
+               DW_DLE_LEB_IMPROPER,                         \
+              "DW_DLE_LEB_IMPROPER: skipping leb128"        \
+              " runs past allowed area");                            \
+            return DW_DLV_ERROR;                            \
+        }                                                   \
+        ptr += lu_leblen;                                   \
+    } while (0)
+#define SKIP_LEB128_LEN_CK(ptr,leblen,dbg,errptr,endptr) \
+    do {                                                    \
+        Dwarf_Unsigned lu_leblen = 0;                       \
+        int lu_res = 0;                                     \
+        lu_res = dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
+            (char *)endptr);                                \
+        if (lu_res == DW_DLV_ERROR) {                       \
+            _dwarf_error_string(dbg, errptr,                \
+               DW_DLE_LEB_IMPROPER,                         \
+              "DW_DLE_LEB_IMPROPER: skipping leb128 w/len"  \
+              " runs past allowed area");                            \
+            return DW_DLV_ERROR;                            \
+        }                                                   \
+        ptr += lu_leblen;                                   \
+        leblen = lu_leblen;                                 \
+    } while (0)
+
+
 #define DECODE_LEB128_UWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                                    \
         Dwarf_Unsigned lu_leblen = 0;                       \
         Dwarf_Unsigned lu_local = 0;                        \
         int lu_res = 0;                                     \
-        lu_res = dwarf_decode_leb128((char *)ptr,&lu_leblen, \
-            &lu_local,(char *)endptr);                              \
+        lu_res = dwarf_decode_leb128((char *)ptr,&lu_leblen,\
+            &lu_local,(char *)endptr);                      \
         if (lu_res == DW_DLV_ERROR) {                       \
-            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
+            _dwarf_error_string(dbg, errptr,                \
+               DW_DLE_LEB_IMPROPER,                         \
+              "DW_DLE_LEB_IMPROPER: decode uleb"           \
+              " runs past allowed area");                            \
             return DW_DLV_ERROR;                            \
         }                                                   \
         value = lu_local;                                   \
@@ -57,10 +93,13 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Unsigned lu_leblen = 0;                 \
         Dwarf_Unsigned lu_local = 0;                  \
         int lu_res = 0;                               \
-        lu_res = dwarf_decode_leb128((char *)ptr,      \
-            &lu_leblen,&lu_local,(char *)endptr);             \
+        lu_res = dwarf_decode_leb128((char *)ptr,     \
+            &lu_leblen,&lu_local,(char *)endptr);     \
         if (lu_res == DW_DLV_ERROR) {                 \
-            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
+            _dwarf_error_string(dbg, errptr,          \
+               DW_DLE_LEB_IMPROPER,                   \
+              "DW_DLE_LEB_IMPROPER: decode uleb w/len" \
+              " runs past allowed area");                            \
             return DW_DLV_ERROR;                      \
         }                                             \
         value = lu_local;                             \
@@ -82,9 +121,12 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Signed local = 0;                       \
         int lu_res = 0;                               \
         lu_res = dwarf_decode_signed_leb128((char *)ptr,&uleblen,  \
-            &local,(char *)endptr);                                \
-        if (lu_res == DW_DLV_ERROR) {                      \
-            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);\
+            &local,(char *)endptr);                   \
+        if (lu_res == DW_DLV_ERROR) {                 \
+            _dwarf_error_string(dbg, errptr,          \
+               DW_DLE_LEB_IMPROPER,                   \
+              "DW_DLE_LEB_IMPROPER: decode sleb"      \
+              " runs past allowed area");                            \
             return DW_DLV_ERROR;                      \
         }                                             \
         value = local;                                \
@@ -97,9 +139,12 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Signed lu_local = 0;                    \
         int lu_res = 0;                               \
         lu_res = dwarf_decode_signed_leb128((char *)ptr,&lu_leblen,\
-            &lu_local,(char *)endptr);                             \
-        if (lu_res == DW_DLV_ERROR) {                      \
-            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);\
+            &lu_local,(char *)endptr);                \
+        if (lu_res == DW_DLV_ERROR) {                 \
+            _dwarf_error_string(dbg, errptr,          \
+               DW_DLE_LEB_IMPROPER,                   \
+              "DW_DLE_LEB_IMPROPER: decode sleb w/len " \
+              " runs past allowed area");                            \
             return DW_DLV_ERROR;                      \
         }                                             \
         leblen = lu_leblen;                           \
@@ -120,7 +165,9 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             return(error_ret_value);                             \
         }                                                        \
         if (die->di_cu_context->cc_dbg == NULL) {                \
-            _dwarf_error(NULL, error, DW_DLE_DBG_NULL);          \
+            _dwarf_error_string(NULL, error,                     \
+                DW_DLE_DBG_NULL, "DW_DLW_DBG_NULL: "             \
+                " dbg in cu_context NULL");                      \
             return(error_ret_value);                             \
         }                                                        \
     } while (0)

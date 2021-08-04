@@ -2185,9 +2185,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
             attr_form = (Dwarf_Half) utmp6;
         }
         if (attr_form == DW_FORM_implicit_const) {
-            UNUSEDARG Dwarf_Signed cval = 0;
-
-            DECODE_LEB128_SWORD_CK(abbrev_ptr, cval,dbg,error,
+            SKIP_LEB128_CK(abbrev_ptr,dbg,error,
                 abbrev_end);
         }
 

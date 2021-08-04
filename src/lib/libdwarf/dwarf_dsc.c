@@ -91,22 +91,21 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Unsigned dsc = 0;
             Dwarf_Unsigned low = 0;
             Dwarf_Unsigned high = 0;
-            Dwarf_Unsigned leblen UNUSEDARG = 0;
 
             if (ary && (larraycount >= iarraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
                 return DW_DLV_ERROR;
             }
-            DECODE_LEB128_UWORD_LEN_CK(p,dsc,
-                leblen,dbg,error,endp);
+            DECODE_LEB128_UWORD_CK(p,dsc,
+                dbg,error,endp);
             if (!dsc) {
-                DECODE_LEB128_UWORD_LEN_CK(p,low,
-                    leblen, dbg,error,endp);
+                DECODE_LEB128_UWORD_CK(p,low,
+                    dbg,error,endp);
             } else {
-                DECODE_LEB128_UWORD_LEN_CK(p,low,
-                    leblen, dbg,error,endp);
-                DECODE_LEB128_UWORD_LEN_CK(p,high,
-                    leblen, dbg,error,endp);
+                DECODE_LEB128_UWORD_CK(p,low,
+                    dbg,error,endp);
+                DECODE_LEB128_UWORD_CK(p,high,
+                    dbg,error,endp);
             }
             if (ary) {
                 struct Dwarf_Dsc_Entry_s *arye =

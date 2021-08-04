@@ -129,6 +129,7 @@ signedtest(unsigned len)
     for ( ; t < len; ++t) {
         int res = 0;
         int encodelen = 0;
+        Dwarf_Unsigned skiplen = 0;
         Dwarf_Unsigned decodelen = 0;
         Dwarf_Signed decodeval = 0;
 
@@ -167,6 +168,7 @@ signedtest(unsigned len)
                 (unsigned)decodelen,__LINE__);
             ++errcnt;
         }
+
         res = dwarf_decode_signed_leb128(
             (char *)bufferspace,
             &decodelen,
@@ -192,6 +194,23 @@ signedtest(unsigned len)
                 (unsigned)decodelen,__LINE__);
             ++errcnt;
         }
+        res = dwarf_skip_leb128(bufferspace,
+            &skiplen,(char *)(&bufferspace[BUFFERLEN-1]));
+        if (res != DW_DLV_OK) {
+            printf("FAIL got DW_DLV_ERRROR signed skip"
+                " index %u "
+                "expected val 0x%llx line:%d\n",
+                t,stest[t],__LINE__);
+            ++errcnt;
+        }
+        if (skiplen != decodelen) {
+            printf("FAIL signed skip val index %u val 0x%llx "
+                " encodelen %u decodelen %u   line:%d\n",
+                t,stest[t],(unsigned)encodelen,
+                (unsigned)decodelen,__LINE__);
+            ++errcnt;
+        }
+
     }
     return errcnt;
 }
@@ -206,6 +225,7 @@ unsignedtest(unsigned len)
     for ( ; t < len; ++t) {
         int res = 0;
         int encodelen = 0;
+        Dwarf_Unsigned skiplen = 0;
         Dwarf_Unsigned decodelen = 0;
         Dwarf_Unsigned decodeval = 0;
 
@@ -261,6 +281,23 @@ unsignedtest(unsigned len)
                 t,utest[t],__LINE__);
             ++errcnt;
         }
+        res = dwarf_skip_leb128(bufferspace,
+            &skiplen,(char *)(&bufferspace[BUFFERLEN-1]));
+        if (res != DW_DLV_OK) {
+            printf("FAIL got DW_DLV_ERRROR signed skip"
+                " index %u "
+                "expected val 0x%llx line:%d\n",
+                t,stest[t],__LINE__);
+            ++errcnt;
+        }
+        if (skiplen != decodelen) {
+            printf("FAIL signed skip val index %u val 0x%llx "
+                " encodelen %u decodelen %u   line:%d\n",
+                t,stest[t],(unsigned)encodelen,
+                (unsigned)decodelen,__LINE__);
+            ++errcnt;
+        }
+
     }
     return errcnt;
 }

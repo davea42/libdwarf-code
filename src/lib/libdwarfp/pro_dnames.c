@@ -136,7 +136,7 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
     /* 1 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&datalen,
-       datalen sizeof(datalen) , SIZEOFT32);
+        sizeof(datalen) , SIZEOFT32);
     data += SIZEOFT32; 
     /* 2 */
     WRITE_UNALIGNED(dbg, (void *)data,

@@ -137,11 +137,9 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         if (attr_form ==  DW_FORM_implicit_const) {
-            Dwarf_Unsigned implicit_const UNUSEDARG = 0;
-
             /*  The value is here, not in a DIE.  We do
                 nothing with it, but must read past it. */
-            DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
+            SKIP_LEB128_CK(abbrev_ptr,
                 dbg,error,abbrev_section_end);
         }
         abbrev_count++;

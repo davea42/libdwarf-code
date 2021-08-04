@@ -3853,6 +3853,7 @@ void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
 
 /*  These make the  LEB encoding routines visible to libdwarf
     callers. Added November, 2012. */
+
 int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
     int * /*nbytes*/,
     char * /*space*/,
@@ -3873,6 +3874,10 @@ int dwarf_decode_signed_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     Dwarf_Signed   * /*outval*/,
     char           * /*endptr*/);
+int dwarf_skip_leb128(char * /*leb*/,
+    Dwarf_Unsigned * /*leblen*/,
+    char           * /*endptr*/);
+
 
 /*  Record some application command line options in libdwarf.
     This is not arc/argv processing, just precooked setting

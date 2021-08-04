@@ -730,7 +730,6 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     augt = _dwarf_get_augmentation_type(dbg,
         augmentation, use_gnu_cie_calc);
     if (augt == aug_eh) {
-
         if ((frame_ptr+local_length_size)  >= section_ptr_end) {
             _dwarf_error_string(dbg, error,
                 DW_DLE_DEBUG_FRAME_LENGTH_BAD,
@@ -1854,11 +1853,10 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
 
     if (augtype == aug_gcc_eh_z) {
         /* Has leading 'z'. */
-        Dwarf_Unsigned val UNUSEDARG = 0;
         Dwarf_Unsigned leb128_length = 0;
 
         /* Dwarf_Unsigned eh_value = */
-        DECODE_LEB128_UWORD_LEN_CK(frame_ptr,val,leb128_length,
+        SKIP_LEB128_LEN_CK(frame_ptr,leb128_length,
             dbg,error,section_ptr_end);
         augdata_size += leb128_length;
         suffix = augmentation + 1;
