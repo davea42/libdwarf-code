@@ -296,7 +296,7 @@ then
   chkres $? "FAIL Sec F C11b  cmake in $gcmakdbld"
   make
   chkres $? "FAIL Sec F C11d cmake  make in $gcmakebld"
-  ctest -R self
+  LD_LIBRARY_PATH="$gcmakebld/src/lib/libdwarf:$LD_LIBRARY_PATH" ctest -R self
   chkres $? "FAIL Sec F C11e  ctest -R self in $gcmakebld"
 else
   echo "cmake not installed so Section G not tested."
