@@ -730,8 +730,6 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     augt = _dwarf_get_augmentation_type(dbg,
         augmentation, use_gnu_cie_calc);
     if (augt == aug_eh) {
-        /* REFERENCED *//* Not used in this instance */
-        Dwarf_Unsigned exception_table_addr UNUSEDARG = 0;
 
         if ((frame_ptr+local_length_size)  >= section_ptr_end) {
             _dwarf_error_string(dbg, error,
@@ -741,10 +739,14 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                 "with the CIE incomplete.  Corrupt Dwarf");
             return DW_DLV_ERROR;
         }
+#if 0
+        /* REFERENCED *//* Not used in this instance */
+        Dwarf_Unsigned exception_table_addr UNUSEDARG = 0;
         /* this is per egcs-1.1.2 as on RH 6.0 */
         READ_UNALIGNED_CK(dbg, exception_table_addr,
             Dwarf_Unsigned, frame_ptr, local_length_size,
             error,section_ptr_end);
+#endif
         frame_ptr += local_length_size;
     }
     {

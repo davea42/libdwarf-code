@@ -261,7 +261,6 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
 
     /* how many entries and how much space will they take? */
-
     endloc = (pnext - macro_base);
     if (endloc >= dbg->de_debug_macinfo.dss_size) {
         if (endloc == dbg->de_debug_macinfo.dss_size) {

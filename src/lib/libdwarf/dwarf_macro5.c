@@ -1011,10 +1011,12 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     for (i = 0; i < operand_table_count; ++i) {
         /*  Compiler warning about unused opcode_number
             variable should be ignored. */
-        UNUSEDARG Dwarf_Small opcode_number = 0;
         Dwarf_Unsigned formcount = 0;
+#if 0   /* No need to actually read, just update pointer*/
+        UNUSEDARG Dwarf_Small opcode_number = 0;
         READ_UNALIGNED_CK(dbg,opcode_number,Dwarf_Small,
             macro_data,sizeof(Dwarf_Small),error,endptr);
+#endif
         macro_data += sizeof(Dwarf_Small);
 
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
