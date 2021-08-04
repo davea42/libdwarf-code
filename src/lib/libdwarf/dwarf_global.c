@@ -380,7 +380,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_context->pu_dbg = dbg;
         pubnames_context->pu_pub_offset = pubnames_section_offset;
         pubnames_ptr_past_end_cu = pubnames_like_ptr + length;
-        pubnames_context->pu_pub_entries_end_ptr = 
+        pubnames_context->pu_pub_entries_end_ptr =
             pubnames_ptr_past_end_cu;
 
         if ((pubnames_like_ptr + (DWARF_HALF_SIZE) ) >

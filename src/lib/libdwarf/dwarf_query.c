@@ -383,7 +383,7 @@ dwarf_attrlist(Dwarf_Die die,
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
 
-    _dwarf_fill_in_abcom_from_context(context,&abcom);    
+    _dwarf_fill_in_abcom_from_context(context,&abcom);
     lres = _dwarf_get_abbrev_for_code(&abcom,
         die->di_abbrev_list->abl_code,
         &abbrev_list,
@@ -643,7 +643,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
 
-    _dwarf_fill_in_abcom_from_context(context,&abcom);    
+    _dwarf_fill_in_abcom_from_context(context,&abcom);
     lres = _dwarf_get_abbrev_for_code(&abcom,
         die->di_abbrev_list->abl_code,
         &abbrev_list,&highest_code,error);

@@ -464,7 +464,7 @@ dwarf_formref(Dwarf_Attribute attr,
         We could look, then determine if
         resutling offset is actually local.
 #endif
-        
+
         /*  We cannot handle this here.
             The reference could be to .debug_types
             or another CU!
@@ -597,7 +597,7 @@ dwarf_formsig8(Dwarf_Attribute attr,
     to .debug_types.  So the offset may or may not be
     in the same section if DWARF4. */
 static int
-find_sig8_target_as_global_offset(Dwarf_Attribute attr, 
+find_sig8_target_as_global_offset(Dwarf_Attribute attr,
     Dwarf_Sig8  *sig8,
     Dwarf_Bool  *is_info,
     Dwarf_Off   *targoffset,
@@ -611,7 +611,7 @@ find_sig8_target_as_global_offset(Dwarf_Attribute attr,
     targ_is_info = attr->ar_cu_context->cc_is_info;
     memcpy(sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
     res = dwarf_find_die_given_sig8(attr->ar_dbg,
-            sig8,&targdie,&targ_is_info,error);
+        sig8,&targdie,&targ_is_info,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -673,7 +673,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
 
     res = dwarf_global_formref_b(attr,ret_offset,
         &is_info,error);
-    return res;   
+    return res;
 }
 int
 dwarf_global_formref_b(Dwarf_Attribute attr,
@@ -834,23 +834,23 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
         }
         break;
     case DW_FORM_ref_sig8: {
-        /*   This, in DWARF4, is how 
-             .debug_info refers to .debug_types. */
+        /*  This, in DWARF4, is how
+            .debug_info refers to .debug_types. */
         Dwarf_Sig8 sig8;
         Dwarf_Bool t_is_info = TRUE;
         Dwarf_Unsigned t_offset = 0;
 
         memcpy(&sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
-        res = find_sig8_target_as_global_offset(attr, 
+        res = find_sig8_target_as_global_offset(attr,
             &sig8,&t_is_info,&t_offset,error);
-        if( res == DW_DLV_ERROR) {
+        if (res == DW_DLV_ERROR) {
             _dwarf_error_string(dbg, error,
                 DW_DLE_REF_SIG8_NOT_HANDLED,
                 "DW_DLE_REF_SIG8_NOT_HANDLED: "
                 " problem finding target");
             return DW_DLV_ERROR;
         }
-        if( res == DW_DLV_NO_ENTRY) {
+        if (res == DW_DLV_NO_ENTRY) {
             return res;
         }
         is_info = t_is_info;

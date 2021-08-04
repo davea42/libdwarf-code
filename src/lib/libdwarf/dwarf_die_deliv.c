@@ -2033,22 +2033,22 @@ print_abcom(const char *msg,
         (unsigned long)abcom->ac_dwp_offsets);
 }
 #endif
-/*   The following pair of functions let us
-     read abbreviations without access to cu_context or
-     DIE. */
+/*  The following pair of functions let us
+    read abbreviations without access to cu_context or
+    DIE. */
 void
 _dwarf_fill_in_abcom_from_context(Dwarf_CU_Context cu_context,
-     struct Dwarf_Abbrev_Common_s *abcom)
+    struct Dwarf_Abbrev_Common_s *abcom)
 {
     Dwarf_Debug dbg = cu_context->cc_dbg;
     abcom->ac_dbg = dbg;
-    abcom->ac_highest_known_code = 
+    abcom->ac_highest_known_code =
         cu_context->cc_highest_known_code;
     abcom->ac_hashtable_base = cu_context->cc_abbrev_hash_table;
     abcom->ac_last_abbrev_ptr = cu_context->cc_last_abbrev_ptr;
-    abcom->ac_last_abbrev_endptr = 
+    abcom->ac_last_abbrev_endptr =
         cu_context->cc_last_abbrev_endptr;
-    abcom->ac_abbrev_offset = cu_context->cc_abbrev_offset; 
+    abcom->ac_abbrev_offset = cu_context->cc_abbrev_offset;
     abcom->ac_abbrev_ptr = dbg->de_debug_abbrev.dss_data+
         abcom->ac_abbrev_offset;
     abcom->ac_abbrev_section_start =
@@ -2063,7 +2063,7 @@ _dwarf_fill_in_context_from_abcom(struct Dwarf_Abbrev_Common_s *abcom,
 {
     cu_context->cc_highest_known_code = abcom->ac_highest_known_code;
     cu_context->cc_abbrev_hash_table  = abcom->ac_hashtable_base;
-    cu_context->cc_last_abbrev_ptr    = abcom->ac_last_abbrev_ptr; 
+    cu_context->cc_last_abbrev_ptr    = abcom->ac_last_abbrev_ptr;
     cu_context->cc_last_abbrev_endptr = abcom->ac_last_abbrev_endptr;
     cu_context->cc_abbrev_offset      = abcom->ac_abbrev_offset;
 }
@@ -2900,7 +2900,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     die->di_abbrev_code = abbrev_code;
-    
+
     _dwarf_fill_in_abcom_from_context(cu_context,
         &abcom);
     lres = _dwarf_get_abbrev_for_code(&abcom, abbrev_code,
@@ -2932,7 +2932,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
 #if 0
-printf("get_abbrev fail line %d\n",__LINE__); 
+printf("get_abbrev fail line %d\n",__LINE__);
 abort();
 #endif
         return DW_DLV_ERROR;

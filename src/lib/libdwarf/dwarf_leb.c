@@ -94,7 +94,7 @@ dwarf_skip_leb128(char * leb128,
     if (leb128 >=endptr) {
         return DW_DLV_ERROR;
     }
-    for(;;byte_length++,leb128++) {
+    for (;;byte_length++,leb128++) {
         byte = *leb128;
         if (leb128 >= endptr) {
             /*  Off end of available space. */

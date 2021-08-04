@@ -294,7 +294,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     const char *str_utf8 = 0; /* Augmentation string */
     Dwarf_Small *curptr = 0;
     Dwarf_Debug dbg = dn->dn_dbg;
-    
+
     curptr = curptr_in;
     usedspace = 0;
     totaloffset = starting_offset;
@@ -330,7 +330,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     end_dnames = curptr + area_length;
     dn->dn_unit_length = area_length + local_extension_size;
     dn->dn_indextable_data_end = end_dnames;
-    dn->dn_next_set_offset = area_length 
+    dn->dn_next_set_offset = area_length
         + initial_length +
         + starting_offset;
 
@@ -508,7 +508,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     usedspace += dn->dn_offset_size* local_type_unit_count;
     totaloffset += dn->dn_offset_size* local_type_unit_count;
     VALIDATEOFFSET(dn,totaloffset,"local_type__unit array error");
-   
+
     dn->dn_foreign_tu_list = curptr;
     dn->dn_foreign_tu_list_offset = usedspace;
     curptr += dn->dn_offset_size * foreign_type_unit_count;
@@ -574,7 +574,6 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     totaloffset += entry_pool_size;
 
     if (totaloffset != dn->dn_next_set_offset)   {
-printf("ERROR final check line %d\n",__LINE__);
         _dwarf_error_string(dbg, error,
             DW_DLE_DEBUG_NAMES_HEADER_ERROR,
             "DW_DLE_DEBUG_NAMES_HEADER_ERROR: "
@@ -582,7 +581,7 @@ printf("ERROR final check line %d\n",__LINE__);
             "calculation. Logic error.");
         return DW_DLV_ERROR;
     }
-         
+
     *usedspace_out = usedspace;
     *next_offset = dn->dn_next_set_offset;
 #if 0
@@ -818,7 +817,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         unit_count = dn->dn_comp_unit_count;
         unit_offset = dn->dn_cu_list_offset;
     } else if (type[0] == 't') {
-/* FIXME: not handling foreign type units yet */
+        /* FIXME: not handling foreign type units yet */
         unit_ptr = dn->dn_local_tu_list;
         unit_entry_size = dn->dn_offset_size;
         unit_count = dn->dn_local_type_unit_count +
@@ -841,7 +840,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     if (sig && sigoffset) {
         Dwarf_Small *ptr = unit_ptr + index_number *unit_entry_size;
 #if 0
-        Dwarf_Small *endptr = dn->dn_indextable_data_end; 
+        Dwarf_Small *endptr = dn->dn_indextable_data_end;
 #endif
         /*  ASSERT: ptr < dn->dn_indextable_data_end */
         memcpy(sig,ptr,sizeof(Dwarf_Sig8));
@@ -849,8 +848,8 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = unit_ptr+ index_number *unit_entry_size;
-        Dwarf_Small *endptr = dn->dn_indextable_data_end; 
-        
+        Dwarf_Small *endptr = dn->dn_indextable_data_end;
+
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
             ptr, unit_entry_size,
@@ -890,7 +889,7 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = dn->dn_buckets +
             bucket_number * DWARF_32BIT_SIZE;
-        Dwarf_Small *endptr = dn->dn_buckets+ 
+        Dwarf_Small *endptr = dn->dn_buckets+
             dn->dn_bucket_count*DWARF_32BIT_SIZE;
         Dwarf_Unsigned localbucket = bucket_number;
 
@@ -901,7 +900,7 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
             *name_index = offsetval;
         }
         localbucket = offsetval%dn->dn_bucket_count;
-        if (bucket_number != localbucket) { 
+        if (bucket_number != localbucket) {
             break;
         }
         if (!collisioncount) {
@@ -918,7 +917,7 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
 /*  Each Name Table entry, one at a time.
     It is not an error if array_size is zero or
     small. Check the returned attr_count to
-    know now much of array filled in and 
+    know now much of array filled in and
     if the array you provided is
     large enough. Possibly 40 is
     sufficient. */
@@ -975,8 +974,8 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         Dwarf_Small *ptr = dn->dn_entry_offsets +
             name_entry * dn->dn_offset_size;
         Dwarf_Small *endptr = dn->dn_abbreviations;
-        /* offsets relative to the start of the
-           entry_pool */
+        /*  offsets relative to the start of the
+            entry_pool */
 
         READ_UNALIGNED_CK(dbg, entrypooloffset, Dwarf_Unsigned,
             ptr, dn->dn_offset_size,
@@ -1008,7 +1007,7 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
             *ptrtostr = (char *)strpointer;
         }
     }
-    
+
     if (hash_value) {
 /*FIXME */
     }
