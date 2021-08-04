@@ -67,14 +67,14 @@ static struct Dwarf_P_Dnames_Head_s staticdnames =
 };
 
 /* total length encoded: 6 bytes. */
-unsigned char abbrv[6] = 
+unsigned char abbrv[6] =
 {/* abbrev code*/ 2,
- /* DW_TAG_subprogram */ 0x2e,
+/* DW_TAG_subprogram */ 0x2e,
 /* DW_IDX_compile_unit*/1,
 /* DW_FORM_udata */7,
 /* end abbrev */ 0,0};
 
-unsigned char entry[3] = 
+unsigned char entry[3] =
 { /* abbrev code */2,
 /* Offset of subprogram */0x32,
 /* terminate this abbrev set */0 };
@@ -120,12 +120,12 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
     dn->dn_dbg = dbg;
     dn->dn_create_section = TRUE;
     datalen = 8*4 +
-       /* offset CU */
-       dh->dh_offset_size  +
-       /* str offsets, entry offsets */
-       dh->dh_offset_size *2 +
-       sizeof(abbrv) +
-       sizeof(entry);
+        /* offset CU */
+        dh->dh_offset_size  +
+        /* str offsets, entry offsets */
+        dh->dh_offset_size *2 +
+        sizeof(abbrv) +
+        sizeof(entry);
     withunitlength = datalen + 4;/* 4 byte length, 32 bit offset */
 
     GET_CHUNK(dbg, dbg->de_elf_sects[DEBUG_NAMES],
@@ -137,50 +137,50 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&datalen,
         sizeof(datalen) , SIZEOFT32);
-    data += SIZEOFT32; 
+    data += SIZEOFT32;
     /* 2 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dh->dh_version,
         sizeof(dh->dh_version),
         SIZEOFT16);
-    data += SIZEOFT16; 
+    data += SIZEOFT16;
 
     /* 3 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&zero,sizeof(zero),
-         SIZEOFT16);
-    data += SIZEOFT16; 
+        SIZEOFT16);
+    data += SIZEOFT16;
 
     /* 4 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dh->dh_comp_unit_count,
         sizeof(dh->dh_comp_unit_count),
         SIZEOFT32);
-    data += SIZEOFT32; 
+    data += SIZEOFT32;
     /* 5 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dh->dh_local_type_unit_count,
         sizeof(dh->dh_local_type_unit_count),
         SIZEOFT32);
-    data += SIZEOFT32; 
+    data += SIZEOFT32;
     /* 6 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dh->dh_foreign_type_unit_count,
         sizeof(dh->dh_foreign_type_unit_count),
         SIZEOFT32);
-    data += SIZEOFT32; 
+    data += SIZEOFT32;
     /* 7 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dh->dh_bucket_count,
         sizeof(dh->dh_bucket_count),
         SIZEOFT32);
-    data += SIZEOFT32; 
+    data += SIZEOFT32;
     /* 8 */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dh->dh_name_count,
         sizeof(dh->dh_name_count),
         SIZEOFT32);
-    data += SIZEOFT32; 
+    data += SIZEOFT32;
 
     /* 9 */
     WRITE_UNALIGNED(dbg, (void *)data,
@@ -194,15 +194,15 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
         (const void *)&dh->dh_augmentation_string_size,
         sizeof(dh->dh_augmentation_string_size),
         SIZEOFT32);
-    data += SIZEOFT32; 
+    data += SIZEOFT32;
     if (dh->dh_augmentation_string_size) {
         /* 11 */
         memcpy((void *)data,dh->dh_augmentation_string,
             dh->dh_augmentation_string_size);
         data += dh->dh_augmentation_string_size;
-        bytes = data - startdata; 
+        bytes = data - startdata;
     }
-    bytes = data - startdata; 
+    bytes = data - startdata;
 
     /*  The CU offset table. A single entry */
     WRITE_UNALIGNED(dbg, (void *)data,
@@ -210,7 +210,7 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
         sizeof(stroffsets[0]),
         dh->dh_offset_size);
     data +=  dh->dh_offset_size;
-    bytes = data - startdata; 
+    bytes = data - startdata;
 
 
 
@@ -220,22 +220,22 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
         sizeof(stroffsets[0]),
         dh->dh_offset_size);
     data +=  dh->dh_offset_size;
-    bytes = data - startdata; 
+    bytes = data - startdata;
     /* Now the Entry Offsets (DIE offsets)  array */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dieoffset[0],
         sizeof(dieoffset[0]),
         dh->dh_offset_size);
     data +=  dh->dh_offset_size;
-    bytes = data - startdata; 
+    bytes = data - startdata;
 
     memcpy((void *)data,abbrv,sizeof(abbrv));
     data += sizeof(abbrv);
-    bytes = data - startdata; 
+    bytes = data - startdata;
 
     memcpy((void *)data,entry,sizeof(entry));
     data += sizeof(entry);
-    bytes = data - startdata; 
+    bytes = data - startdata;
     if (bytes != withunitlength) {
         printf("FAIL writing debug_names "
             "bytes written: %lu "
