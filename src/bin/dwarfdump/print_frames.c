@@ -2270,7 +2270,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     /* instp is always 1 byte back, so we need +1
                         when we use it. See the final increment
                         of this for loop. */
-                    res = dwarf_decode_signed_leb128((char *)(instp + 1),
+                    res = dwarf_decode_signed_leb128(
+                        (char *)(instp + 1),
                         &uleblen, &sval2,(char *)endpoint);
                     if (res != DW_DLV_OK) {
                         glflags.gf_count_major_errors++;
@@ -2311,7 +2312,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 off += uleblen;
                 {
                     Dwarf_Signed sval2 = 0;
-                    res = dwarf_decode_signed_leb128((char *)(instp + 1),
+                    res = dwarf_decode_signed_leb128((char *)
+                        (instp + 1),
                         &uleblen, &sval2,(char *)endpoint);
                     if (res != DW_DLV_OK) {
                         glflags.gf_count_major_errors++;
@@ -2338,7 +2340,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         when we use it. See the final increment
                         of this for loop. */
                     Dwarf_Signed sval = 0;
-                    res = dwarf_decode_signed_leb128((char *)(instp + 1),
+                    res = dwarf_decode_signed_leb128((char *)
+                        (instp + 1),
                         &uleblen, &sval,(char *)endpoint);
                     if (res != DW_DLV_OK) {
                         glflags.gf_count_major_errors++;
@@ -2376,7 +2379,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 off += uleblen;
                 {
                     Dwarf_Signed sval2 = 0;
-                    res = dwarf_decode_signed_leb128((char *)(instp + 1),
+                    res = dwarf_decode_signed_leb128((char *)
+                        (instp + 1),
                         &uleblen, &sval2,(char *)endpoint);
                     if (res != DW_DLV_OK) {
                         glflags.gf_count_major_errors++;
@@ -2418,7 +2422,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 off += uleblen;
                 {
                     Dwarf_Signed sval2 = 0;
-                    res = dwarf_decode_signed_leb128((char *)(instp + 1),
+                    res = dwarf_decode_signed_leb128((char *)
+                        (instp + 1),
                         &uleblen, &sval2,(char *)endpoint);
                     if (res != DW_DLV_OK) {
                         glflags.gf_count_major_errors++;

@@ -130,7 +130,8 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     /* Get die at offset cu_die_off to check its existence. */
     {
         Dwarf_Die cu_die = NULL;
-        cudres = dwarf_offdie_b(dbg, cu_die_off,is_info, &cu_die, err);
+        cudres = dwarf_offdie_b(dbg, cu_die_off,is_info,
+            &cu_die, err);
         if (cudres != DW_DLV_OK) {
             struct esb_s details;
 

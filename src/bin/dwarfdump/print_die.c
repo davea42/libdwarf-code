@@ -4973,7 +4973,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     /*  Counting DW_AT_specification */
                     DWARF_CHECK_COUNT(forward_decl_result,1);
                     if (ref_goff > die_goff) {
-                        /*  Not an error. Just counting 
+                        /*  Not an error. Just counting
                             the number that are forward
                             as if it might be a problem. */
                         DWARF_ERROR_COUNT(forward_decl_result,1);

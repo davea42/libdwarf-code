@@ -1070,7 +1070,8 @@ void arg_c_multiple_selection(void)
 /*  Option '-c' with no other letters. See just above. */
 void arg_print_loc(void)
 {
-    printf("The -c option to print .debug_loc (unsafely) is ignored\n");
+    printf("The -c option to print .debug_loc (unsafely) "
+        "is ignored\n");
     /*  glflags.gf_loc_flag = TRUE;
         suppress_check_dwarf();  */
 }
