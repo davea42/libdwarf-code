@@ -27,7 +27,8 @@ findfuncbypc_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 dwdebuglink_SOURCES = dwdebuglink.c
-dwdebuglink_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+dwdebuglink_CPPFLAGS = -DDWARF_BIGENDIAN \
+  -I$(top_srcdir)/src/lib/libdwarf \
   -I$(top_builddir)/libdwarf
 dwdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
 dwdebuglink_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
