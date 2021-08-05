@@ -1,7 +1,9 @@
 Updated 13 June 2021
 Library Documentation is in the doc directory.
-See LIBRARY AND HEADER REQUIREMENTS
-and BUILDING ALL THE TOOLS
+See 
+  BUILD_REQUIREMENTS
+  LIBRARY AND HEADER BUILD REQUIREMENT
+  BUILDING ALL THE TOOLS
 below if you wonder what is required.
 =========
 As of 1 June 2021 we are using semanantic
@@ -58,6 +60,10 @@ BUILDING in UNIX/Linux
 BUILDING in MacOS (tried on Catalina)
     The same as Linux
 ========= End of Standard Builds non-Windows
+
+BUILD REQUIREMENTs
+As of July 2021 configure needs pkg-config installed.
+On Ubuntu linux do 'sudo apt-get install pkg-config'.
 
 LIBRARY AND HEADER REQUIREMENTS
 zlib has to be installed
