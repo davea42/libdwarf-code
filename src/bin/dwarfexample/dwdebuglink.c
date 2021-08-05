@@ -215,7 +215,7 @@ match_buildid(const char *prefix,
     return DW_DLV_OK;
 }
 
-#ifdef DWARF_BIGENDIAN
+#ifdef WORDS_BIGENDIAN
 /*  Trivial hack to adjust for debuglink,
     so we can have littleendian baseline match
     bigendian make check.   */
@@ -233,7 +233,7 @@ swapbytes(unsigned char x[4], int len)
     }
     memcpy(x,y,len);
 }
-#endif /* DWARF_BIGENDIAN */
+#endif /* WORDS_BIGENDIAN */
 
 static int
 one_file_debuglink_internal(int is_outer,const char *prefix,
@@ -347,9 +347,9 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
                 /*  If the system is big endian
                     swap the bytes in lcrc
                     as the test baseline is little-endian. */
-#ifdef DWARF_BIGENDIAN
+#ifdef WORDS_BIGENDIAN
                 swapbytes(lcrc,sizeof(lcrc));
-#endif /* DWARF_BIGENDIAN */
+#endif /* WORDS_BIGENDIAN */
                 crc = &lcrc[0];
             }
         }
