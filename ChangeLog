@@ -1,3 +1,133 @@
+2021-08-04:  David Anderson
+    commit f03c6132d7eabc2012cba9e7e6ae22554d9c3bc5
+
+    Fixed indent and trailing whitespace.
+    A few lines were needlessly long, move characters to
+    following line.
+            modified:   src/bin/dwarfdump/command_options.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+2021-08-04:  David Anderson
+    commit 12b9443c595ffe3ded23830bb689c416f774f23f
+
+    Remove trailing whitespace and a few indent errors.
+            modified:   src/lib/libdwarfp/pro_dnames.c
+
+2021-08-04:  David Anderson
+    commit 4b87d2c89bc970ac782305465bd3becba8abb736
+
+    Fix indents, remove trailing whitespace.
+    Remove one debug printf.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_leb.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2021-08-04:  David Anderson
+    commit b058e47027763a60705892bf0b88e0ca0c602552
+
+    These fix warnings about unused variables.
+
+    DECODE_LEB128_UWORD_LEN_CK->DECODE_LEB128_UWORD_CK
+    as we don't need to have the length, just the value.
+            modified:   src/lib/libdwarf/dwarf_dsc.c
+
+    Here we avoid the need for a local variable we cannot use.
+    Because in some cases we just need to skate
+    by an leb number and update the area pointer,
+    not needing the value in the leb.
+    DECODE_LEB128_UWORD_CK->SKIP_LEB128_CK
+    DECODE_LEB128_SWORD_CK->SKIP_LEB128_CK
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+    The new
+    SKIP_LEB128_LEN_CK used too.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+    New macros SKIP_LEB128_LEN_CK and SKIP_LEB128_CK.
+    And some macros get a more explicit error value
+    via _dwarf_error_string().
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+    NEW LEB FUNCTION:
+    Declare the new function dwarf_skip_leb128
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    NEW LEB FUNCTION:
+    Implement the new dwarf_skip_leb128 function.
+    Faster than actually getting the value when
+    we don't need the value. Works for signed and
+    unsigned leb.
+            modified:   src/lib/libdwarf/dwarf_leb.c
+
+    Adds tests of leb skipping lengths
+            modified:   test/dwarf_leb_test.c
+
+2021-08-04:  David Anderson
+    commit 33b13cdf9168d37ab70672033c490663c383fdd4
+
+    Ensure that, when building only shared libdwarf,
+    that ctest -R can find libdwarf.so (via LD_LIBRARY_PATH)
+    This is in one particular test of cmake here.
+            modified:   scripts/buildandreleasetest.sh
+
+2021-08-03:  David Anderson
+    commit 3ed0a883f8c97b790a6720611fb9ce803936bad6
+
+    Remove a silly blank line.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+    Avoid reading a fixed-length blob of bytes when
+    we do not need to read, just to increment the
+    pointer. Avoiding a complaint about a set-not-used
+    variable. One instance in each of the following.
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+
+2021-08-03:  David Anderson
+    commit 2354269ef56dcd351c8f97a394d063d17ec1ea28
+
+    Two lines of comment appeared twice in a row.
+    Deleted one set.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2021-08-03:  David Anderson
+    commit 8bb89549baff6ec80c2482a5e89679f0bd2593f6
+
+    Moved a variable declaration to where it is needed.
+    The read for an implicit const value is needed
+    (for it all to work) but there is nothing we can
+    do with the value here.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+
+2021-08-03:  David Anderson
+    commit f36570168a65644f43bebbdd74634f0a0431a932
+
+    It's here for anyone attempting to read the code
+    that deals with the line table header versions, an overview.
+    The file now marked as public domain.
+            modified:   src/lib/libdwarf/dw-linetableheader.txt
+
+2021-08-03:  David Anderson
+    commit 690efc97ac26ec01533abf2854bf7b2450f023c4
+
+    baseline.ltp is not used anywhere, so is now deleted.
+            modified:   src/lib/libdwarf/Makefile.am
+            deleted:    src/lib/libdwarf/baseline.ltp
+            deleted:    src/lib/libdwarfp/baseline.ltp
+
+2021-08-03:  David Anderson
+    commit c77e2afa3f3b293fe1e4b23c37585834bfc42570
+
+    ChangeLog
+    Updated with latest commit log data
+
 2021-08-03:  David Anderson
     commit 4a1503eb9853384adba6784db3bb6e040ecf1e3c
 
