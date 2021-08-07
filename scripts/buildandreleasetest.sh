@@ -2,7 +2,10 @@
 # Copyright (C) 2021 David Anderson
 # This test script is in the public domain for use
 # by anyone for any purpose.
-
+# buildandrelease test [--savebart]
+# [--disable-libelf]
+# [--enable-libelf] [--disable-dwarfgen] 
+# [--enable-nonstandardprintf] 
 #  scripts/buildandreleasetest.sh
 #  A script verifying the distribution gets all needed files
 #  for building, including "make check"
@@ -188,7 +191,8 @@ ls -l $brelgz
 echo "Now tar -tf on $arelgz and $brelgz "
 tar -tf $arelgz > $atfout
 tar -tf $brelgz > $btfout
-echo "Now diff the respective -tf output file lists"
+echo "=========================diff make dist content========="
+echo "Now diff the tar tf from $arelgz and $brelgz"
 diff $atfout $btfout
 chkres $? "FAIL second gen tar gz file list does not match first gen"
 echo "  End Section B  $bart"
