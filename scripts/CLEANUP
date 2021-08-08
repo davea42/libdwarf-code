@@ -1,7 +1,7 @@
 #!/bin/bash
 # CLEANUP
 # This is not really needed, as autogen.sh updates
-# what needs to be,
+# what needs to be updated,
 # And if all built in-tree 'make maintainer-clean'
 # does a good job.  But this does a lot towards cleanup. 
 
@@ -26,8 +26,11 @@ l=`pwd`
 #echo "sloc $sloc"
 
 # Won't work unless configure was done.
-# in the source tree. Just ignore failure.
-make maintainer-clean
+# in the source tree.
+if [ -f Makefile ]
+then
+  make maintainer-clean
+fi
 
 # Some unlikely but possible files no one wants:
 
@@ -56,7 +59,7 @@ for i in src/bin/dwarfdump/dwarfdump src/bin/dwarfexample/dwdebuglink \
   test/test_makenametest.trs test/test_sectionbitmaps \
   test/test_sectionbitmaps.log test/test_sectionbitmaps.trs \
   test/test_testesb test/test_testesb.log \
-  test/test_testesb.trs 
+  test/test_testesb.trs test/dwarfdump.conf
 do
   rm -f $i
 done
