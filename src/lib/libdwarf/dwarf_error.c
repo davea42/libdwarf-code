@@ -215,11 +215,10 @@ dwarf_errno(Dwarf_Error error)
 char*
 dwarf_errmsg_by_number(Dwarf_Unsigned errornum )
 {
-    if (errornum >=
-        (Dwarf_Signed)(sizeof(_dwarf_errmsgs) / sizeof(char *))) {
+    if (errornum > DW_DLE_LAST) {
         return "Dwarf_Error value out of range";
     }
-    return ((char *) _dwarf_errmsgs[errornum]);
+    return ((char *) &_dwarf_errmsgs[errornum][0]);
 }
 
 

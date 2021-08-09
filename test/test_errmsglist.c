@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
+Cbopyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
 Portions Copyright (C) 2008-2021 David Anderson.  All Rights Reserved.
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
@@ -29,7 +29,8 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* Usage:  ./test_errmsg_list.c -f /path.../libdwarf.h */
+/* Usage:  ./test_errmsg_list.c 
+   where an env var gives path to source tree */
 
 #include "config.h"
 #include <stdio.h>
@@ -52,6 +53,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_opaque.h"
 #include "dwarf_errmsg_list.h"
 
+/* We don't allow arbitrary DW_DLE line length. */
+#define MAXDEFINELINE 1000
+static char buffer[MAXDEFINELINE];
+static char buffer2[MAXDEFINELINE];
 /* This is just to help localize the error. */
 static void
 printone(int i)
@@ -114,8 +119,6 @@ check_errnum_mismatches(unsigned i)
     return TRUE;
 }
 
-/* We don't allow arbitrary DW_DLE line length. */
-#define MAXDEFINELINE 200
 
 static int
 splmatches(char *base, unsigned baselen,char *test)
@@ -138,7 +141,6 @@ check_dle_list(const char *path)
         #define<space>name<spaces>number<spaces>optional-c-comment
         and we are intentionally quite rigid about it all except
         that the number of spaces before any comment is allowed. */
-    char buffer[MAXDEFINELINE];
     unsigned linenum = 0;
     unsigned cur_dle_line = 0;
     unsigned long prevdefval = 0;
@@ -166,6 +168,8 @@ check_dle_list(const char *path)
             break;
         }
         linelen = strlen(line);
+        line[linelen-1] = 0;
+        --linelen;
         if (linelen >= (unsigned)(MAXDEFINELINE-1)) {
             printf("define line %u is too long!\n",linenum);
             exit(1);
@@ -257,7 +261,167 @@ check_dle_list(const char *path)
     fclose(fin);
 }
 
+static void
+quoted_length(char * line, unsigned *quotedlen)
+{
+    char *cp = line;
+    unsigned pos = 0;
+    unsigned inquotes = FALSE;
+    unsigned inquotepos = 0;
+    unsigned skiprest = FALSE;
+    unsigned qlen = 0;
+
+    for ( ; *cp ; ++cp,++pos) {
+        if (skiprest) {
+            continue;
+        }
+        if ( *cp == '"') {
+            if (inquotes) {
+                qlen = pos - inquotepos;
+                skiprest = TRUE;
+                continue;
+            } else {
+                inquotes = TRUE;
+                inquotepos = pos;
+            }
+        }
+    }
+    if (!inquotes) {
+        *quotedlen = qlen; /* empty, not a line we care about */
+    } else {
+        *quotedlen = qlen +1; /*counting trailing NUL byte */
+    }
+    *quotedlen = qlen +1; /*counting trailing NUL byte */
+    return;
+}
+static char msglenid[] = {"#define DW_MAX_MSG_LEN "};
+
+static void
+read_next_line(FILE *fin,unsigned linenum,unsigned int *quotedlen)
+{
+    char *line = 0;
+    unsigned long linelen = 0;
+    unsigned int qlen2 = 0;
+
+    line = fgets(buffer2,MAXDEFINELINE,fin);
+    if (!line) {
+        printf("inner end file line %u is too long!\n",linenum);
+        exit(1);
+    }
+    linelen = strlen(line);
+    line[linelen-1] = 0;
+    --linelen;
+    if (linelen >= (unsigned long)(MAXDEFINELINE-1)) {
+            printf("inner line %u is too long!\n",linenum);
+            exit(1);
+    }
+    quoted_length(line,&qlen2);
+    *quotedlen = qlen2;
+}
+
+static void
+check_msg_lengths(const char *path)
+{
+    /*  The format should be
+        {"DW_DLE_ ...  "},
+        or a line pair for longer messages
+        {"DW_DLE_ ...  "
+           "   "},
+        and we are intentionally quite rigid about it all. */
+    unsigned linenum = 0;
+    unsigned cur_dle_line = 0;
+    unsigned long total_quoted_bytes = 0;
+    FILE*fin = 0;
+    const char *msglenid =
+      "#define DW_MAX_MSG_LEN ";
+    long length_of_errstrings = 0;
+    int loop_done = FALSE;
+    unsigned long longest_string_length = 0;
+    unsigned long longest_string_line = 0;
+
+    fin = fopen(path, "r");
+    if (!fin) {
+        printf("Unable to open define list to read %s\n",path);
+        exit(1);
+    }
+    for ( ;!loop_done;++linenum) {
+        char *line = 0;
+        unsigned linelen = 0;
+        unsigned quotedlen = 0;
+        unsigned quotedlen2 = 0;
+
+        line = fgets(buffer,MAXDEFINELINE,fin);
+        if (!line) {
+            break;
+        }
+        linelen = strlen(line);
+        line[linelen-1] = 0;
+        --linelen;
+        if (linelen >= (unsigned)(MAXDEFINELINE-1)) {
+            printf("define line %u is too long!\n",linenum);
+            exit(1);
+        }
+        if (!strncmp(line,msglenid,strlen(msglenid))) {
+            const char  *cp = line+strlen(msglenid);
+            length_of_errstrings = atol(cp);
+            continue;
+        }
+        if (strncmp(line,"{\"DW_DLE_",9)) {
+            /* Skip the non- DW_DLE_ lines */
+            continue;
+        }
+        quoted_length(line, &quotedlen);
+        if (line[linelen-1] == '"') {
+           /* continued on next */
+           ++linenum;
+           read_next_line(fin,linenum,&quotedlen2);
+        } else if (line[linelen-1] ==  ',') {
+            /* non-final line */
+            if (line[linelen-2] != '}') {
+                printf("Unexpected Format at comma "
+                    "line %u\n",linenum);
+                exit(1);
+            }
+        } else if (line[linelen-1] ==  '}') {
+            /* Final line */
+            /* ok */
+            loop_done = TRUE;
+        } else {
+             printf("Unexpected Format at end of line %u\n",linenum);
+             exit(1);
+        }
+        if ((quotedlen +quotedlen2) > longest_string_length) {
+            longest_string_length = quotedlen +quotedlen2;
+            longest_string_line = linenum;
+        }
+        total_quoted_bytes += quotedlen +quotedlen2;
+    }
+    {
+        unsigned long arysize = sizeof(_dwarf_errmsgs);
+        unsigned long expsize = (DW_DLE_LAST+1) * DW_MAX_MSG_LEN;
+
+        printf("Longest string length   %lu\n",longest_string_length);
+        printf("Longest string linenum  %lu\n",longest_string_line);
+        printf("Length of quoted areas  %lu\n",total_quoted_bytes);
+        printf("Length of static array  %lu\n",
+          (DW_DLE_LAST+1)*length_of_errstrings);
+        printf("Expected length array   %lu\n",
+              expsize);
+        printf("Sizeof() static array   %lu\n",
+              arysize);
+        if (arysize != expsize) {
+             printf("_dwarf_errmsgs size %lu but "
+                 "expected size is %lu!.  Error",
+                 arysize,expsize);
+             exit(1);
+        }
+    }
+    fclose(fin);
+}
+
+
 char pathbuf[2000];
+char pathbuferrm[2000];
 static void
 safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
 {
@@ -277,37 +441,39 @@ main(int argc, char **argv)
     unsigned arraysize = sizeof(_dwarf_errmsgs) / sizeof(char *);
     unsigned i = 0;
     char *path = 0;
+    char *errpath = 0;
     unsigned len = 0;
     const char *libpath="/src/lib/libdwarf/libdwarf.h";
+    const char *srchdr="/src/lib/libdwarf/dwarf_errmsg_list.h";
     pathbuf[0] = 0;
 
     if (argc > 1) {
-        if (argc != 3) {
-            printf("Expected -f <filename> of libdwarf.h\n");
-            exit(1);
-        }
-        if (strcmp(argv[1],"-f")) {
-            printf("Expected -f\n");
-            exit(1);
-        }
-        path=argv[2];
-    } else {
-        /* env var should be set with base path of code */
-        path = getenv("DWTOPSRCDIR");
-        if (!path) {
+        printf("Expected no arguments!");
+        exit(1);
+    }
+    /* env var should be set with base path of code */
+    path = getenv("DWTOPSRCDIR");
+    if (!path) {
             printf("Expected environment variable "
                 " DWTOPSRCDIR with path of "
-                "base directory (usually called 'code')\n");
+                "base directory of the libdwarf source"
+                " (usually called 'code')\n");
             exit(1);
-        }
-        len = strlen(path);
-        safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
-        safe_strcpy(pathbuf+len,(char *)libpath,
-            sizeof(pathbuf) -len -1,(unsigned)strlen(libpath));
-        path = pathbuf;
     }
+    len = strlen(path);
+    safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
+    safe_strcpy(pathbuf+len,(char *)libpath,
+        sizeof(pathbuf) -len -1,
+        (unsigned)strlen(libpath));
+
+    safe_strcpy(pathbuferrm,path,sizeof(pathbuferrm),len);
+    safe_strcpy(pathbuferrm+len,(char *)srchdr,
+        sizeof(pathbuferrm) -len -1,
+        (unsigned)strlen(srchdr));
+    errpath = pathbuferrm;
     check_dle_list(path);
 
+#if 0
     if (arraysize != (DW_DLE_LAST + 1)) {
         printf("Missing or extra entry in dwarf error strings array"
             " %u expected DW_DLE_LAST+1 %d\n",
@@ -328,12 +494,14 @@ main(int argc, char **argv)
         printone(328);
         exit(1);
     }
+#endif /* 0 */
     for ( i = 0; i <= DW_DLE_LAST; ++i) {
         if (check_errnum_mismatches(i)) {
             printf("mismatch value %d is: %s\n",i,_dwarf_errmsgs[i]);
             exit(1);
         }
     }
+    check_msg_lengths(errpath);
     /* OK. */
     return 0;
 }
