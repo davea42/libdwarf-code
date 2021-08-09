@@ -83,7 +83,7 @@
 /*  When an leb value needs to reveal its length,
     but the value is not needed  */
 int
-dwarf_skip_leb128(char * leb128,
+_dwarf_skip_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
     char * endptr)
 {
