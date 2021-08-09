@@ -3874,10 +3874,6 @@ int dwarf_decode_signed_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     Dwarf_Signed   * /*outval*/,
     char           * /*endptr*/);
-int dwarf_skip_leb128(char * /*leb*/,
-    Dwarf_Unsigned * /*leblen*/,
-    char           * /*endptr*/);
-
 
 /*  Record some application command line options in libdwarf.
     This is not arc/argv processing, just precooked setting

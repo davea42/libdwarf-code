@@ -40,7 +40,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     do {                                                    \
         Dwarf_Unsigned lu_leblen = 0;                       \
         int lu_res = 0;                                     \
-        lu_res = dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
+        lu_res = _dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
             (char *)endptr);                                \
         if (lu_res == DW_DLV_ERROR) {                       \
             _dwarf_error_string(dbg, errptr,                \
@@ -55,7 +55,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     do {                                                    \
         Dwarf_Unsigned lu_leblen = 0;                       \
         int lu_res = 0;                                     \
-        lu_res = dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
+        lu_res = _dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
             (char *)endptr);                                \
         if (lu_res == DW_DLV_ERROR) {                       \
             _dwarf_error_string(dbg, errptr,                \

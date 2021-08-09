@@ -1101,6 +1101,10 @@ int _dwarf_extract_data16(Dwarf_Debug dbg,
     Dwarf_Form_Data16  * returned_val,
     Dwarf_Error *error);
 
+int _dwarf_skip_leb128(char * /*leb*/,
+    Dwarf_Unsigned * /*leblen*/,
+    char           * /*endptr*/);
+
 unsigned int  _dwarf_crc32(unsigned int init,
     const unsigned char * buf,
     size_t len);

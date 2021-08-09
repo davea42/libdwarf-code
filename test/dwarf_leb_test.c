@@ -194,7 +194,7 @@ signedtest(unsigned len)
                 (unsigned)decodelen,__LINE__);
             ++errcnt;
         }
-        res = dwarf_skip_leb128(bufferspace,
+        res = _dwarf_skip_leb128(bufferspace,
             &skiplen,(char *)(&bufferspace[BUFFERLEN-1]));
         if (res != DW_DLV_OK) {
             printf("FAIL got DW_DLV_ERRROR signed skip"
@@ -281,7 +281,7 @@ unsignedtest(unsigned len)
                 t,utest[t],__LINE__);
             ++errcnt;
         }
-        res = dwarf_skip_leb128(bufferspace,
+        res = _dwarf_skip_leb128(bufferspace,
             &skiplen,(char *)(&bufferspace[BUFFERLEN-1]));
         if (res != DW_DLV_OK) {
             printf("FAIL got DW_DLV_ERRROR signed skip"
