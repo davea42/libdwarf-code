@@ -614,6 +614,7 @@ src/bin/gennames/Makefile
 src/bin/tag_attr/Makefile
 src/bin/tag_tree/Makefile
 src/bin/attr_form/Makefile
+src/bin/buildopstab/Makefile
 test/Makefile
 doc/Makefile
 libdwarf.pc

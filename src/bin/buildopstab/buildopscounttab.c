@@ -16,16 +16,13 @@ For use by anyone for any purpose.
 
 #include <stdio.h>
 #include "dwarf.h"
-#include "dwarf_names.h"
+#include "libdwarf.h"
 #include "opscounttab.h"
 struct ops_table_s {
     unsigned char ot_first;
     unsigned char ot_last;
     signed   char ot_opcount;
 };
-/*  Must match libdwarf.h macros */
-#define DW_DLV_OK 0
-#define DW_DLV_ERROR -1
 
 struct ops_table_s optabsource[]= {
 {DW_OP_addr  ,         0                       , 1 },
@@ -64,7 +61,7 @@ struct ops_table_s optabsource[]= {
 {DW_OP_GNU_const_type,          0              , 3},
 {DW_OP_GNU_regval_type,DW_OP_GNU_deref_type    , 2},
 {DW_OP_GNU_convert,    DW_OP_GNU_variable_value, 1},
-{0,0}
+{0,0,0}
 };
 
 int main()

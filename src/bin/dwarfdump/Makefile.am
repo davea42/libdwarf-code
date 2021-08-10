@@ -130,7 +130,6 @@ CMakeLists.txt \
 NEWS \
 README \
 CODINGSTYLE \
-buildopscounttab.c \
 tag_common.c \
 testdwarfdump.conf \
 $(dwarfdumpdev_DATA) \
