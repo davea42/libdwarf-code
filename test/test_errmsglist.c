@@ -1,6 +1,4 @@
 /*
-Cbopyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
-Portions Copyright (C) 2008-2021 David Anderson.  All Rights Reserved.
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
 following conditions are met:
@@ -57,17 +55,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MAXDEFINELINE 1000
 static char buffer[MAXDEFINELINE];
 static char buffer2[MAXDEFINELINE];
-/* This is just to help localize the error. */
-static void
-printone(int i)
-{
-    int arraysize = sizeof(_dwarf_errmsgs) / sizeof(char *);
-    if ( i >= arraysize) {
-        printf("%d is outside the array! Missing something!\n",i);
-    } else {
-        printf("%d is: %s\n",i,_dwarf_errmsgs[i]);
-    }
-}
 
 /* Arbitrary. A much smaller max length value would work. */
 #define MAX_NUM_LENGTH 12
@@ -142,8 +129,8 @@ check_dle_list(const char *path)
         and we are intentionally quite rigid about it all except
         that the number of spaces before any comment is allowed. */
     unsigned linenum = 0;
-    unsigned cur_dle_line = 0;
     unsigned long prevdefval = 0;
+    unsigned cur_dle_line = 0;
     unsigned foundlast = 0;
     unsigned foundlouser = 0;
     FILE*fin = 0;
@@ -168,6 +155,7 @@ check_dle_list(const char *path)
             break;
         }
         linelen = strlen(line);
+        /*  Turn the newline into a NUL */
         line[linelen-1] = 0;
         --linelen;
         if (linelen >= (unsigned)(MAXDEFINELINE-1)) {
@@ -201,6 +189,7 @@ check_dle_list(const char *path)
             }
         }
         /* strtoul skips leading whitespace. */
+        endptr = 0;
         v = strtoul(numstart,&endptr,0);
         /*  This test is a bit odd. But is valid till
             we decide it is inappropriate. */
@@ -216,9 +205,11 @@ check_dle_list(const char *path)
                 " in libdwarf.h.in will cause this.\n");
             exit(1);
         }
-        if (*endptr != ' ' && *endptr != '\n') {
-            printf("define line %u: number value terminates oddly\n",
-                linenum);
+        if (*endptr != ' ' && *endptr != 0) {
+            unsigned char e = *endptr;
+            printf("define line %u: number value terminates oddly "
+                "char: %u 0x%x line %s\n",
+                linenum,e,e,line);
             exit(1);
         }
         if (splmatches(curdefname,curdefname_len,"DW_DLE_LAST")) {
@@ -294,7 +285,6 @@ quoted_length(char * line, unsigned *quotedlen)
     *quotedlen = qlen +1; /*counting trailing NUL byte */
     return;
 }
-static char msglenid[] = {"#define DW_MAX_MSG_LEN "};
 
 static void
 read_next_line(FILE *fin,unsigned linenum,unsigned int *quotedlen)
@@ -329,7 +319,6 @@ check_msg_lengths(const char *path)
            "   "},
         and we are intentionally quite rigid about it all. */
     unsigned linenum = 0;
-    unsigned cur_dle_line = 0;
     unsigned long total_quoted_bytes = 0;
     FILE*fin = 0;
     const char *msglenid =
@@ -438,7 +427,6 @@ safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
 int
 main(int argc, char **argv)
 {
-    unsigned arraysize = sizeof(_dwarf_errmsgs) / sizeof(char *);
     unsigned i = 0;
     char *path = 0;
     char *errpath = 0;
@@ -448,17 +436,24 @@ main(int argc, char **argv)
     pathbuf[0] = 0;
 
     if (argc > 1) {
-        printf("Expected no arguments!");
-        exit(1);
-    }
-    /* env var should be set with base path of code */
-    path = getenv("DWTOPSRCDIR");
-    if (!path) {
+        if (argc != 3) {
+            printf("Expected -f <filename> of base code path\n");
+            exit(1);
+        }
+        if (strcmp(argv[1],"-f")) {
+            printf("Expected -f\n");
+            exit(1);
+        }
+        path=argv[2];
+    } else {
+        /* env var should be set with base path of code */
+        path = getenv("DWTOPSRCDIR");
+        if (!path) {
             printf("Expected environment variable "
                 " DWTOPSRCDIR with path of "
-                "base directory of the libdwarf source"
-                " (usually called 'code')\n");
+                "base directory (usually called 'code')\n");
             exit(1);
+        }
     }
     len = strlen(path);
     safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
@@ -470,31 +465,9 @@ main(int argc, char **argv)
     safe_strcpy(pathbuferrm+len,(char *)srchdr,
         sizeof(pathbuferrm) -len -1,
         (unsigned)strlen(srchdr));
+    path = pathbuf;
     errpath = pathbuferrm;
     check_dle_list(path);
-
-#if 0
-    if (arraysize != (DW_DLE_LAST + 1)) {
-        printf("Missing or extra entry in dwarf error strings array"
-            " %u expected DW_DLE_LAST+1 %d\n",
-            arraysize, DW_DLE_LAST+1);
-        printone(1);
-        printone(100);
-        printone(200);
-        printone(250);
-        printone(260);
-        printone(262);
-        printone(263);
-        printone(264);
-        printone(265);
-        printone(273);
-        printone(274);
-        printone(275);
-        printone(300);
-        printone(328);
-        exit(1);
-    }
-#endif /* 0 */
     for ( i = 0; i <= DW_DLE_LAST; ++i) {
         if (check_errnum_mismatches(i)) {
             printf("mismatch value %d is: %s\n",i,_dwarf_errmsgs[i]);

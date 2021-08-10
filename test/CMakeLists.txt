@@ -207,8 +207,7 @@ if (DO_TESTING)
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
     target_compile_options(selferrmsglist PRIVATE ${DW_FWALL})
     add_test(NAME selferrmsglist COMMAND 
-        selferrmsglist -f
-        "${CMAKE_SOURCE_DIR}/src/lib/libdwarf/libdwarf.h")
+        selferrmsglist -f "${CMAKE_SOURCE_DIR}")
 endif()
 
 if (DO_TESTING)
