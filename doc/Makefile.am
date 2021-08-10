@@ -15,14 +15,7 @@ buildproducerpdf:
 	sh $(top_srcdir)/doc/pdfbld.sh -p
 	cp libdwarfp.pdf $(top_srcdir)/doc/
 
-libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
-libdwarfdev_DATA = libdwarf.pdf 
-if HAVE_DWARFGEN
-libdwarfdev_DATA += libdwarfp.pdf
-endif
-
 man_MANS = dwarfdump.1
-
 if HAVE_DWARFGEN
 man_MANS += dwarfgen.1
 endif

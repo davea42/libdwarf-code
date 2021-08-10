@@ -1,7 +1,7 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
 
-MAINTAINERCLEANFILES = junk.ltp Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 ### libdwarf
 
@@ -138,9 +138,6 @@ libdwarfpkginclude_DATA = \
 $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
 $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 
-libdwarfdevdir = $(datadir)/src/lib/libdwarf/libdwarf-devel
-libdwarfdev_DATA =
-
 EXTRA_DIST = \
 COPYING \
 LGPL.txt \
@@ -170,7 +167,5 @@ CMakeLists.txt \
 cmake/libdwarf-config.cmake \
 NEWS \
 README \
-CODINGSTYLE \
-$(libdwarf_DATA) \
-$(libdwarfdev_DATA)
+CODINGSTYLE 
 

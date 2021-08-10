@@ -77,7 +77,6 @@ done
 
 rm -f	doc/Makefile
 rm -f	doc/Makefile.in
-rm -f	src/lib/libdwarf/junk.ltp
 rm -f	test-driver
 rm -f	test/junk.debuglink1
 rm -f	test/junk.debuglink1a
