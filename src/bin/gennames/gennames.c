@@ -86,6 +86,7 @@ static void WriteFileTrailers(void);
 static void CloseAllFiles(void);
 static void GenerateInitialFileLines(void);
 static void GenerateOneSet(void);
+static void WriteNameDeclarations(void);
 #ifdef TRACE_ARRAY
 static void PrintArray(void);
 #endif /* TRACE_ARRAY */
@@ -220,6 +221,7 @@ main(int argc,char **argv)
     OpenAllFiles();
     GenerateInitialFileLines();
     ParseDefinitionsAndWriteOutput();
+    WriteNameDeclarations();
     WriteFileTrailers();
     CloseAllFiles();
     return 0;
@@ -348,6 +350,60 @@ CloseAllFiles(void)
     fclose(f_names_c);
 }
 
+struct NameEntry {
+    char ne_name[MAX_NAME_LEN];
+};
+
+/*  Sort these by name, then write */
+#define MAX_NAMES 200
+static struct NameEntry nameentries[MAX_NAMES];
+static int  curnameentry;
+
+static int
+CompareName(struct NameEntry *elem1,struct NameEntry *elem2)
+{
+    return  strcmp(elem1->ne_name,elem2->ne_name);
+}
+
+
+/*  Sort into name order for readability of the declarations,
+    then print the declarations. */
+static void
+WriteNameDeclarations(void)
+{
+    int i = 0;
+
+printf(" zero before sort %d %s\n",0,nameentries[0].ne_name);
+    qsort((void *)&nameentries,curnameentry,
+        sizeof(struct NameEntry),(compfn)CompareName);
+    /* Generate entries for 'dwarf_names.h' and libdwarf.h */
+    for ( ; i < curnameentry;++i) {
+printf("after sort %d %s\n",i,nameentries[i].ne_name);
+        fprintf(f_names_h,"int dwarf_get_%s_name"
+            "(unsigned int /*val_in*/,\n",nameentries[i].ne_name);
+        fprintf(f_names_h,"    const char ** /*s_out */);\n");
+    }
+}
+static void
+SaveNameDeclaration(char *prefix_id)
+{
+    unsigned long length = 0;
+
+    if (curnameentry >= MAX_NAMES) {
+        printf("FAIL gennames. Exceeded limit of declarations %d "
+            "when given %s\n",curnameentry,prefix_id);
+        exit(1);
+    }
+    length = strlen(prefix_id);
+    if (length >= MAX_NAME_LEN) {
+        printf("FAIL gennames. Exceeded limit of declaration name length at %ul "
+            "when given %s\n",curnameentry,prefix_id);
+        exit(1);
+    }
+    strcpy(nameentries[curnameentry].ne_name,prefix_id);
+    ++curnameentry;
+}
+
 /* Write the table and code for a common set of names */
 static void
 GenerateOneSet(void)
@@ -374,10 +430,13 @@ GenerateOneSet(void)
     PrintArray();
 #endif /* TRACE_ARRAY */
 
+    SaveNameDeclaration(prefix_id);
+#if 0
     /* Generate entries for 'dwarf_names.h' and libdwarf.h */
-    fprintf(f_names_h,"extern int dwarf_get_%s_name"
+    fprintf(f_names_h,"int dwarf_get_%s_name"
         "(unsigned int /*val_in*/,\n",prefix_id);
     fprintf(f_names_h,"    const char ** /*s_out */);\n");
+#endif
 
     /* Generate code for 'dwarf_names.c' */
     fprintf(f_names_c,"/* ARGSUSED */\n");
