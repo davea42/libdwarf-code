@@ -1,3 +1,142 @@
+2021-08-10:  David Anderson
+    commit 06afce1ad73862c7e73b06583ff7d6ae99b3f86e
+
+    Correcting indents and trailing whitespace.
+            modified:   test/test_errmsglist.c
+
+2021-08-10:  David Anderson
+    commit f340ef8b3af2057bb66915f7935f67a915751154
+
+    Correct indentation and trailing whitespace.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-08-10:  David Anderson
+    commit d82fd189a8885362b870540357eebd623bf22134
+
+    Restore correct ctest -R self for the errmsglist check.
+    Botched it last night.
+            modified:   test/CMakeLists.txt
+            modified:   test/test_errmsglist.c
+
+2021-08-09:  David Anderson
+    commit 422ad97027aabfcd8ebbb83f392ce4612408b71a
+
+    Removing unnecessary .am settings and removing an obsolete CLEANUP entry.
+            modified:   doc/Makefile.am
+            modified:   scripts/CLEANUP
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2021-08-09:  David Anderson
+    commit d7bbc90cfcf42d993669f30d66b40559245aed25
+
+    With the new version 0.1.2
+    regenerated these source files with 'make rebuild', each has
+    comment lines showing the version.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarf_names.h
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_names.h
+
+2021-08-09:  David Anderson
+    commit 3009dd2ed7884b15db63d57449837ddeec764bd0
+
+    More on the renaming of dwarf_skip_leb128 to _dwarf_skip_leb128;
+    the implementation renamed here.
+            modified:   src/lib/libdwarf/dwarf_leb.c
+
+2021-08-09:  David Anderson
+    commit 89ed114bd51c53c6e9f60d08448e9c4a98717cc8
+
+    In 0.1.1 dwarf_skip_leb128 was made public.
+    That was not necessary.
+    All it does (in libdwarf) is let us avoid
+    compiler warnings about unused variables in
+    a few places.
+    It is removed from libdwarf.h
+    It is renamed _dwarf_skip_leb128 in dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_util.h
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   test/dwarf_leb_test.c
+
+2021-08-09:  David Anderson
+    commit 79342e6f7ed03581268d3932ec03b39180cc704e
+
+    The table of nearly 500 error strings is now a simple
+    array, eliminating nearly 500 relocations
+    from DSO startup. It does take 50K space, whereas
+    the real strings are about 24K. But the relocations
+    are a time waster.
+    Shortened a few default error strings that were
+    overly long --- Reducing the string length static dimension
+    by about 13 bytes each entry compared to previous.
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_error.c
+    Added new checks to determine the wasted space and
+    check that the new message content is set up properly.
+    The short report it prints is for maintainers
+    who change these things.
+            modified:   test/test_errmsglist.c
+
+2021-08-09:  David Anderson
+    commit ce659d3b8a0c286e1fcd62957daf03cab223dc03
+
+    Now version 0.1.2
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+
+2021-08-08:  David Anderson
+    commit a9057254877a65896cf6dee4c9071a38e6b933c6
+
+    Now avoids an annoying warning
+    by checking whether Makefile exists
+    before trying 'make maintainer-clean'
+            modified:   scripts/CLEANUP
+
+2021-08-07:  David Anderson
+    commit 81512c3f49491208397f926838d6dbacbf780927
+
+    Changes in commentary, including a usage hint.
+            modified:   scripts/buildandreleasetest.sh
+
+2021-08-05:  David Anderson
+    commit 07affda6b0a89376b4f648d81d742f607e974a16
+
+    src/bin/dwarfexample
+    Revert last commit. It was incorrect.
+            modified:   Makefile.am
+    Fixed to use WORDS_BIGENDIAN properly for the
+    make check test
+            modified:   dwdebuglink.c
+
+2021-08-05:  David Anderson
+    commit 5b579984b0c17c304f2c8a49001aa6e37e925ca7
+
+    This brings DWARF_BIGENDIAN into the build of
+    dwdebuglink so results match a baseline build littleendian
+    on the 32bit crc.
+            modified:   src/bin/dwarfexample/Makefile.am
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+
+2021-08-05:  David Anderson
+    commit 1bdb598a9a2886c82a5d6c9d89f3e4166897fe82
+
+    Mention that pkg-config is needed
+    to build libdwarf as of July 2021
+            modified:   README
+
+2021-08-04:  David Anderson
+    commit 88f8563c10fea31fcbcc67e50f0d4e24cf365b60
+
+    Updated with latest ChangeLog data
+            modified:   ChangeLog
+
 2021-08-04:  David Anderson
     commit f03c6132d7eabc2012cba9e7e6ae22554d9c3bc5
 
