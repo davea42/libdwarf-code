@@ -80,16 +80,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 static int errcount = 0;
 
 /* dummy func we do not need real one */
-int _dwarf_load_section(Dwarf_Debug dbg,
-    struct Dwarf_Section_s *section,
-    Dwarf_Error * error)
+int _dwarf_load_section(Dwarf_Debug dbg UNUSEDARG,
+    struct Dwarf_Section_s * section UNUSEDARG,
+    Dwarf_Error * error UNUSEDARG)
 {
     return DW_DLV_OK;
 }
 
 /* A horrible fake version for these tests */
 void
-_dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
+_dwarf_error(Dwarf_Debug dbg UNUSEDARG,
+    Dwarf_Error * error,
     Dwarf_Signed errval)
 {
     static struct Dwarf_Error_s stuff;
@@ -224,7 +225,7 @@ checkjoin(int expret,int gotret,char*expstr,char*gotstr,
 
 
 static void
-test2(Dwarf_Debug dbg)
+test2(void)
 {
     dwarfstring targ;
     dwarfstring inp;
@@ -493,7 +494,7 @@ int main()
     memset(dbg,0,sizeof(db));
 
     test1(dbg);
-    test2(dbg);
+    test2();
     test3(dbg);
 
     if (errcount) {

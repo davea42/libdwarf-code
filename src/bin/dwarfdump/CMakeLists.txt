@@ -31,7 +31,6 @@ set_source_group(SOURCES "Source Files" addrmap.c
 set_source_group(HEADERS "Header Files" 
   addrmap.h attr_form.h checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
-  dwarf_names.h
   opscounttab.h 
   print_debug_gnu.h
   dwconf_using_functions.h esb_using_functions.h

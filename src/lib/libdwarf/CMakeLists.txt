@@ -49,7 +49,6 @@ dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h
 dwarf_gnu_index.h 
 dwarf_line.h dwarf_loc.h 
 dwarf_machoread.h dwarf_macro.h dwarf_macro5.h 
-dwarf_names.h
 dwarf_object_detector.h dwarf_opaque.h 
 dwarf_pe_descr.h dwarf_peread.h
 dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 

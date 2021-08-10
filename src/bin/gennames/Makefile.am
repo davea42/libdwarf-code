@@ -1,16 +1,14 @@
 ###Copyright (C) 2021 David Anderson <davea42 at linuxmail dot org>
 ###This code is public domain and can be freely used or copied.
 
+# This also creates dwarf_names.h which one should check against
+# libdwarf.h (which has these and much else).
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = dwarf_names.h dwarf_names.c
 rebuild: gennames 
-	cp $(top_srcdir)/src/lib/libdwarf/dwarf.h .
-	./gennames -i . -o .
-	cp dwarf_names.h $(top_srcdir)/src/lib/libdwarf/dwarf_names.h
+	./gennames -o . -i $(top_srcdir)/src/lib/libdwarf
 	cp dwarf_names.c $(top_srcdir)/src/lib/libdwarf/dwarf_names.c
-	cp dwarf_names.h $(top_srcdir)/src/bin/dwarfdump/dwarf_names.h
-	cp dwarf_names.c $(top_srcdir)/src/bin/dwarfdump/dwarf_names.c
-	rm dwarf.h
+	mv dwarf_names.c $(top_srcdir)/src/bin/dwarfdump/dwarf_names.c
 
 noinst_PROGRAMS = gennames
 gennames_SOURCES = gennames.c $(top_srcdir)/src/lib/libdwarf/dwgetopt.c

@@ -131,10 +131,8 @@ static char prefix[200] = "";
 
 static const char *usage[] = {
     "Usage: gennames <options>",
-    "    -i input-table-path",
+    "    -i  <path/src/lib/libdwarf",
     "    -o output-table-path",
-    "    -s use 'switch' in generation",
-    "    -t use 'tables' in generation",
     "",
 };
 
@@ -150,11 +148,9 @@ print_args(int argc, char *argv[])
 }
 
 
-char *program_name = 0;
+static char *program_name = 0;
 static char *input_name = 0;
 static char *output_name = 0;
-static int use_switch = TRUE;
-static int use_tables = FALSE;
 
 static void
 print_version(const char * name)
@@ -188,17 +184,13 @@ process_args(int argc, char *argv[])
 
     program_name = argv[0];
 
-    while ((c = dwgetopt(argc, argv, "i:o:st")) != EOF) {
+    while ((c = dwgetopt(argc, argv, "i:o:")) != EOF) {
         switch (c) {
         case 'i':
             input_name = dwoptarg;
             break;
         case 'o':
             output_name = dwoptarg;
-            break;
-        case 's':
-            use_switch = TRUE;
-            use_tables = FALSE;
             break;
         default:
             usage_error = TRUE;
@@ -276,11 +268,9 @@ open_path(const char *base, const char *file, const char *direction)
         printf("Error opening '%s/%s', name too long\n",base,file);
         exit(1);
     }
-
     strcpy(path_name,base);
     strcat(path_name,"/");
     strcat(path_name,file);
-
     f = fopen(path_name,direction);
     if (!f) {
         printf("Error opening '%s'\n",path_name);
@@ -305,18 +295,6 @@ OpenAllFiles(void)
 static void
 GenerateInitialFileLines(void)
 {
-    /* Generate entries for 'dwarf_names.h' */
-    fprintf(f_names_h,"/* Generated routines, do not edit. */\n");
-    fprintf(f_names_h,"/* Generated for source version %s */\n",
-        PACKAGE_VERSION);
-    fprintf(f_names_h,"\n/* BEGIN FILE */\n\n");
-
-    fprintf(f_names_h,"#ifndef DWARF_NAMES_H\n");
-    fprintf(f_names_h,"#define DWARF_NAMES_H\n\n");
-    fprintf(f_names_h,"#ifdef __cplusplus\n");
-    fprintf(f_names_h,"extern \"C\" {\n");
-    fprintf(f_names_h,"#endif /* __cplusplus */\n\n");
-
     /* Generate entries for 'dwarf_names.c' */
     fprintf(f_names_c,"/* Generated routines, do not edit. */\n");
     fprintf(f_names_c,"/* Generated for source version %s */\n",
@@ -330,14 +308,6 @@ GenerateInitialFileLines(void)
 static void
 WriteFileTrailers(void)
 {
-    /* Generate entries for 'dwarf_names.h' */
-
-    fprintf(f_names_h,"\n#ifdef __cplusplus\n");
-    fprintf(f_names_h,"}\n");
-    fprintf(f_names_h,"#endif /* __cplusplus */\n\n");
-    fprintf(f_names_h,"#endif /* DWARF_NAMES_H */\n");
-    fprintf(f_names_h,"\n/* END FILE */\n");
-
     /* Generate entries for 'dwarf_names.c' */
     fprintf(f_names_c,"\n/* END FILE */\n");
 }
@@ -359,10 +329,46 @@ struct NameEntry {
 static struct NameEntry nameentries[MAX_NAMES];
 static int  curnameentry;
 
+/*  We compare as capitals for sorting purposes.
+    This does not do right by UTF8, but the strings
+    are from in dwarf.h and are plain ASCII.  */
 static int
 CompareName(struct NameEntry *elem1,struct NameEntry *elem2)
 {
-    return  strcmp(elem1->ne_name,elem2->ne_name);
+    char *cpl = elem1->ne_name;
+    char *cpr = elem2->ne_name;
+    for ( ; *cpl && *cpr; ++cpl,++cpr) {
+        unsigned char l = *cpl;
+        unsigned char r = *cpr;
+        unsigned char l1 = 0;
+        unsigned char r1 = 0;
+
+        if (l == r) {
+            continue;
+        }
+        if (l <= 'z' && l >= 'a') {
+            l1 = l - 'a' + 'A';
+            l = l1;
+        }
+        if (r <= 'z' && r >= 'a') {
+            r1 = r -'a'+ 'A';
+            r = r1;
+        }
+        if (l < r) {
+            return -1;
+        }
+        if (l > r) {
+            return 1;
+        }
+        continue;
+    }
+    if (*cpl < *cpr) {
+        return -1;
+    }
+    if (*cpl > *cpr) {
+        return 1;
+    }
+    return 0; /* should NEVER happen */
 }
 
 
@@ -373,12 +379,10 @@ WriteNameDeclarations(void)
 {
     int i = 0;
 
-printf(" zero before sort %d %s\n",0,nameentries[0].ne_name);
     qsort((void *)&nameentries,curnameentry,
         sizeof(struct NameEntry),(compfn)CompareName);
     /* Generate entries for 'dwarf_names.h' and libdwarf.h */
     for ( ; i < curnameentry;++i) {
-printf("after sort %d %s\n",i,nameentries[i].ne_name);
         fprintf(f_names_h,"int dwarf_get_%s_name"
             "(unsigned int /*val_in*/,\n",nameentries[i].ne_name);
         fprintf(f_names_h,"    const char ** /*s_out */);\n");
@@ -431,13 +435,6 @@ GenerateOneSet(void)
 #endif /* TRACE_ARRAY */
 
     SaveNameDeclaration(prefix_id);
-#if 0
-    /* Generate entries for 'dwarf_names.h' and libdwarf.h */
-    fprintf(f_names_h,"int dwarf_get_%s_name"
-        "(unsigned int /*val_in*/,\n",prefix_id);
-    fprintf(f_names_h,"    const char ** /*s_out */);\n");
-#endif
-
     /* Generate code for 'dwarf_names.c' */
     fprintf(f_names_c,"/* ARGSUSED */\n");
     fprintf(f_names_c,"int\n");

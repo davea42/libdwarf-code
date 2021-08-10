@@ -5,7 +5,7 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = 
 rebuild: buildopstab 
 	./buildopstab >opscounttab.c
-        mv opscounttab.c $(top_srcdir)/src/bin/dwarfdump/opscounttab.c
+	mv opscounttab.c $(top_srcdir)/src/bin/dwarfdump/opscounttab.c
 
 noinst_PROGRAMS = buildopstab 
 buildopstab_SOURCES = buildopscounttab.c \
