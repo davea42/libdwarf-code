@@ -733,8 +733,8 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_BADOFF  19 /* Invalid offset */
 #define DW_DLE_EOS     20 /* end of section  */
 #define DW_DLE_ATRUNC  21 /* abbreviations section appears truncated*/
-#define DW_DLE_BADBITC 22 /* Address size passed to dwarf bad*/
-                    /* It is not an allowed size (64 or 32) */
+#define DW_DLE_BADBITC 22 /* Address size passed to dwarf bad,*/
+    /* It is not an allowed size (64 or 32) */
     /* Error codes defined by the current Libdwarf Implementation. */
 #define DW_DLE_DBG_ALLOC                        23
 #define DW_DLE_FSTAT_ERROR                      24
@@ -2138,8 +2138,8 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
 /* get each list entry one at a time */
 int dwarf_dnames_cu_table(Dwarf_Dnames_Head /*dn*/,
     const char        * /*type ("cu" "tu") */,
-    /* index number 0 to k-1 or 0 to t+f-1
-       depending on type. */
+    /*  index number 0 to k-1 or 0 to t+f-1
+        depending on type. */
     Dwarf_Unsigned      /*index_number*/,
     Dwarf_Unsigned    * /*offset (of cu/tu header)*/,
     Dwarf_Sig8        * /*sig (if signature) */,
@@ -2161,7 +2161,7 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head /*dn*/,
     It is not an error if array_size is zero or
     small. Check the returned attr_count to
     know now much of array filled in and
-    if the array you provided is 
+    if the array you provided is
     large enough. Possibly 40 (so 20 attributes)
     is large enough. */
 int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
@@ -2178,7 +2178,7 @@ int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Half        * /* attr_array
         (caller provides array space, array need
         not be initialized) */,
-    Dwarf_Unsigned    * /* attr_count 
+    Dwarf_Unsigned    * /* attr_count
         (attr_array entries used count) */,
     Dwarf_Error *       /*error*/);
 
