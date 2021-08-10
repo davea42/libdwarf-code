@@ -27,8 +27,8 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* Usage:  ./test_errmsg_list.c 
-   where an env var gives path to source tree */
+/*  Usage:  ./test_errmsg_list.c
+    where an env var gives path to source tree */
 
 #include "config.h"
 #include <stdio.h>
@@ -302,8 +302,8 @@ read_next_line(FILE *fin,unsigned linenum,unsigned int *quotedlen)
     line[linelen-1] = 0;
     --linelen;
     if (linelen >= (unsigned long)(MAXDEFINELINE-1)) {
-            printf("inner line %u is too long!\n",linenum);
-            exit(1);
+        printf("inner line %u is too long!\n",linenum);
+        exit(1);
     }
     quoted_length(line,&qlen2);
     *quotedlen = qlen2;
@@ -316,13 +316,12 @@ check_msg_lengths(const char *path)
         {"DW_DLE_ ...  "},
         or a line pair for longer messages
         {"DW_DLE_ ...  "
-           "   "},
+            "   "},
         and we are intentionally quite rigid about it all. */
     unsigned linenum = 0;
     unsigned long total_quoted_bytes = 0;
     FILE*fin = 0;
-    const char *msglenid =
-      "#define DW_MAX_MSG_LEN ";
+    const char *msglenid = "#define DW_MAX_MSG_LEN ";
     long length_of_errstrings = 0;
     int loop_done = FALSE;
     unsigned long longest_string_length = 0;
@@ -361,9 +360,9 @@ check_msg_lengths(const char *path)
         }
         quoted_length(line, &quotedlen);
         if (line[linelen-1] == '"') {
-           /* continued on next */
-           ++linenum;
-           read_next_line(fin,linenum,&quotedlen2);
+            /* continued on next */
+            ++linenum;
+            read_next_line(fin,linenum,&quotedlen2);
         } else if (line[linelen-1] ==  ',') {
             /* non-final line */
             if (line[linelen-2] != '}') {
@@ -376,8 +375,8 @@ check_msg_lengths(const char *path)
             /* ok */
             loop_done = TRUE;
         } else {
-             printf("Unexpected Format at end of line %u\n",linenum);
-             exit(1);
+            printf("Unexpected Format at end of line %u\n",linenum);
+            exit(1);
         }
         if ((quotedlen +quotedlen2) > longest_string_length) {
             longest_string_length = quotedlen +quotedlen2;
@@ -393,24 +392,22 @@ check_msg_lengths(const char *path)
         printf("Longest string linenum  %lu\n",longest_string_line);
         printf("Length of quoted areas  %lu\n",total_quoted_bytes);
         printf("Length of static array  %lu\n",
-          (DW_DLE_LAST+1)*length_of_errstrings);
-        printf("Expected length array   %lu\n",
-              expsize);
-        printf("Sizeof() static array   %lu\n",
-              arysize);
+            (DW_DLE_LAST+1)*length_of_errstrings);
+        printf("Expected length array   %lu\n", expsize);
+        printf("Sizeof() static array   %lu\n", arysize);
         if (arysize != expsize) {
-             printf("_dwarf_errmsgs size %lu but "
-                 "expected size is %lu!.  Error",
-                 arysize,expsize);
-             exit(1);
+            printf("_dwarf_errmsgs size %lu but "
+                "expected size is %lu!.  Error",
+                arysize,expsize);
+            exit(1);
         }
     }
     fclose(fin);
 }
 
 
-char pathbuf[2000];
-char pathbuferrm[2000];
+static char pathbuf[2000];
+static char pathbuferrm[2000];
 static void
 safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
 {
