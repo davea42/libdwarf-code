@@ -383,7 +383,7 @@ WriteNameDeclarations(void)
         sizeof(struct NameEntry),(compfn)CompareName);
     /* Generate entries for 'dwarf_names.h' and libdwarf.h */
     for ( ; i < curnameentry;++i) {
-        fprintf(f_names_h,"int dwarf_get_%s_name"
+        fprintf(f_names_h,"DW_API int dwarf_get_%s_name"
             "(unsigned int /*val_in*/,\n",nameentries[i].ne_name);
         fprintf(f_names_h,"    const char ** /*s_out */);\n");
     }
