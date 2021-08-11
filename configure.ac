@@ -178,7 +178,7 @@ AS_IF(
 ### Also needed by C++ cstdint
 AC_TYPE_UINTPTR_T
 AC_TYPE_INTPTR_T
-AC_TYPE_UINT32_T /* Needed for hash calculation */
+AC_TYPE_UINT32_T dnl Needed for hash calculation
 ### Now we know uintptr_t is either in stdint.h or
 ### is defined in config.h by configure.
 
