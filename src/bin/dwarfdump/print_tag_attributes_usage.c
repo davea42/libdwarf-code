@@ -43,7 +43,6 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "print_frames.h"  /* for print_location_operations() . */
 #include "macrocheck.h"
 #include "helpertree.h"
-#include "opscounttab.h"
 #include "tag_common.h"
 #include "attr_form.h"
 
