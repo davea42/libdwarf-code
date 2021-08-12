@@ -12,7 +12,7 @@ m4_define([lt_cur], [m4_eval(v_maj + v_min)])
 m4_define([lt_rev], [v_mic])
 m4_define([lt_age], [v_min])
 
-### Sets the release name. 
+### Sets the release name.
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
 ###Also SET (VERSION ..) in CMakeLists.txt
 
@@ -126,6 +126,10 @@ AS_IF(
     [lt_cv_deplibs_check_method=pass_all])
 LT_INIT([win32-dll disable-shared static])
 
+AS_IF(
+    [test "x${have_win32}" = "xyes" && test "x${enable_static}" = "xyes"],
+    [AC_MSG_ERROR([Static library is not supported on Windows])])
+
 version_info="lt_cur:lt_rev:lt_age"
 release_info="v_rel"
 AC_SUBST([version_info])
@@ -195,14 +199,14 @@ if test  "$dwarf_with_libelf" = "yes" ; then
   AC_CHECK_HEADERS([sgidefs.h])
   AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
   AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
- 
+
   ### if no libelf.h add no -lelf and turn off
   ### libelf recognition.
   ### if no dwarfgen do not add -lelf
   AS_IF([test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes" ],
     [ dwarf_with_libelf="no"
       AC_MSG_NOTICE(["no libelf headers, so no libelf"]) ],
-    [ AS_IF([ test "x${enable_dwarfgen}" != "xyes" ], 
+    [ AS_IF([ test "x${enable_dwarfgen}" != "xyes" ],
       [ dwarf_with_libelf="no"
         AC_MSG_NOTICE(["dwarfgen not needed, so no libelf"])],
       [ DWARFGEN_LIBS="${DWARFGEN_LIBS} -ldwarf -lelf"
