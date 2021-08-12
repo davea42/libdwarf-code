@@ -352,8 +352,18 @@ int main()
 message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
 
 # libdwarf default-disabled shared
-option(BUILD_SHARED "build shared library libdwarf[p].so and use it if present" FALSE)
-option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
+option(BUILD_SHARED 
+    "build shared library libdwarf[p].so and use it" FALSE)
+if (BUILD_SHARED)
+  option(BUILD_NON_SHARED "build archive library libdwarf[p].a" FALSE)
+  if (BUILD_NON_SHARED) 
+    message(STATUS 
+        "Warning: BUILD_NON_SHARED is turned off, is shared build")  
+    set(BUILD_NON_SHARED FALSE)
+  endif()
+else()
+  option(BUILD_NON_SHARED "build archive library libdwarf[p].a" TRUE)
+endif()
 
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
@@ -423,7 +433,6 @@ endif()
 if ( BUILD_DWARFGEN )
 	if ( DWARF_WITH_LIBELF )
             set(LIBDWARF_INCLUDE_DIR ../libdwarf)
-            message(" dadebug outer inc ${LIBDWARF_INCLUDE_DIR}" )
 	    add_subdirectory(src/lib/libdwarfp)
 	    add_subdirectory(src/bin/dwarfgen)
         else ()

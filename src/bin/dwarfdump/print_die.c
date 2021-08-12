@@ -5388,7 +5388,7 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
 static int
 op_has_no_operands(Dwarf_Small op)
 {
-    return (dwarf_opscounttab[op].oc_opcount == 0);
+    return (_dwarf_opscounttab[op].oc_opcount == 0);
 }
 
 static void

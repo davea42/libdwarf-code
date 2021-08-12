@@ -2,10 +2,10 @@
 ###This code is public domain and can be freely used or copied.
 
 MAINTAINERCLEANFILES = Makefile.in
-CLEANFILES = 
+CLEANFILES = opscounttab.c
 rebuild: buildopstab 
-	./buildopstab >opscounttab.c
-	mv opscounttab.c $(top_srcdir)/src/bin/dwarfdump/opscounttab.c
+	./buildopstab -f $(top_srcdir) >opscounttab.c
+	cp opscounttab.c $(top_srcdir)/src/bin/dwarfdump/opscounttab.c
 
 noinst_PROGRAMS = buildopstab 
 buildopstab_SOURCES = buildopscounttab.c \
