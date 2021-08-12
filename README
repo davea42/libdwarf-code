@@ -29,24 +29,25 @@ gnu-make compatible. The 2018 configure change
 to fully use autoconf/automake requires GNU make
 to build executables.
 
-========= gcc under MinGW on windows
-Under MinGW the gcc CFLAGS 
+========= gcc on windows with MSYS2 + mingw-w64
+Under MinGW the gcc CFLAGS
  -fno-dwarf2-cfi-asm
 has helped some people, though for my MinGW tests
 these are not necessary or appropriate.
 
 We have had success with MinGW without setting CFLAGS with (to
 save space in this example we do not show checking for errors):
-The option --enable-wall is optional.
+The option --enable-wall is optional. Though, static library is
+not supported, only shared library is supported.
 
     #assuming a clean directory.
-    #download a libdwarf-0.1.0.tar.xz (or a later version)
+    #download libdwarf-0.1.2.tar.xz (or a later version)
     tar xf libdwarf-*.tar.xz
     cd libdwarf*
-    $src/configure --enable-wall
+    $ ./configure --enable-shared --disable-static --disable-libelf --enable-wall
     make
     make check
-========= End ofgcc under MinGW on windows
+========= End of gcc on windows with MSYS2 + mingw-w64
 
 ========= Standard Builds non-Windows
 Standard builds are done by configure/make as described below.
