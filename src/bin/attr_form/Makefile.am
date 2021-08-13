@@ -18,7 +18,7 @@ rebuild: attrform
 
 noinst_PROGRAMS = attrform
 attrform_SOURCES = attr_form_build.c \
-$(top_srcdir)/src/bin/dwarfdump/dwarf_names.c \
+$(top_srcdir)/src/lib/libdwarf/dwarf_names.c \
 $(top_srcdir)/src/bin/dwarfdump/common.c \
 $(top_srcdir)/src/lib/libdwarf/dwarf_form_class_names.c \
 $(top_srcdir)/src/bin/dwarfdump/attr_form.c \

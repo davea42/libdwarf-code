@@ -19,7 +19,7 @@ noinst_PROGRAMS = tagattr
 tagattr_SOURCES = tag_attr.c \
 $(top_srcdir)/src/bin/dwarfdump/dwgetopt.c \
 $(top_srcdir)/src/lib/libdwarf/dwarf_form_class_names.c \
-$(top_srcdir)/src/bin/dwarfdump/dwarf_names.c \
+$(top_srcdir)/src/lib/libdwarf/dwarf_names.c \
 $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c \
 $(top_srcdir)/src/bin/dwarfdump/common.c \
 $(top_srcdir)/src/bin/dwarfdump/esb.c \

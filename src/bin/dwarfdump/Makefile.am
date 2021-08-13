@@ -24,7 +24,6 @@ dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
-dwarf_names.c \
 dwarf_tsearchbal.c \
 dwarf_tsearch.h \
 dwconf.c \

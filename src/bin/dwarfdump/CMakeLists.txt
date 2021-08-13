@@ -2,7 +2,6 @@
 set_source_group(SOURCES "Source Files" addrmap.c 
     checkutil.c dwarfdump.c dwconf.c helpertree.c 
 	glflags.c command_options.c compiler_info.c
-    dwarf_names.c
 	macrocheck.c 
     opscounttab.c
     print_abbrevs.c print_aranges.c
