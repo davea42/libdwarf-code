@@ -126,6 +126,8 @@ libdwarf.h \
 libdwarf_private.h \
 memcpy_swap.h
 
+libdwarf_la_CPPFLAGS = -DLIBDWARF_BUILD
+
 libdwarf_la_CFLAGS = @ZLIB_CFLAGS@ $(DWARF_CFLAGS_WARN)
 
 libdwarf_la_LIBADD = @DWARF_LIBS@ @ZLIB_LIBS@

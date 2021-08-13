@@ -30,16 +30,39 @@
 
 */
 
-
 #ifndef _LIBDWARF_H
 #define _LIBDWARF_H
+
+#ifdef DW_API
+#undef DW_API
+#endif /* DW_API */
+
+#if defined(_WIN32) || defined(__CYGWIN__)
+#ifdef LIBDWARF_BUILD
+#define DW_API __declspec(dllexport)
+#else
+#define DW_API __declspec(dllimport)
+#endif /* LIBDWARF_BUILD */
+#elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
+#ifdef PIC
+#define DW_API __global
+#else
+#define DW_API
+#endif /* PIC */
+#elif (defined(__GNUC__) && __GNUC__ >= 4) || defined(__INTEL_COMPILER)
+#ifdef PIC
+#define DW_API __attribute__ ((visibility("default")))
+#else
+#define DW_API
+#endif /* PIC */
+#else
+#define DW_API
+#endif /* _WIN32 || __CYGWIN__ */
+
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-#ifndef DW_API
-#define DW_API
-#endif /* DW_API */
 /*
     libdwarf.h
     $Revision: #9 $ $Date: 2008/01/17 $
@@ -1326,7 +1349,7 @@ enum Dwarf_Form_Class {
     So consider the value put in true_path_out the
     actual file name. reserved1,2,3 should all be passed
     as zero. */
-int dwarf_init_path(const char * /*path*/,
+DW_API int dwarf_init_path(const char * /*path*/,
     char *            /*true_path_out_buffer*/,
     unsigned int      /*true_path_bufferlen*/,
     unsigned int      /*groupnumber*/,
@@ -1355,7 +1378,7 @@ int dwarf_init_path(const char * /*path*/,
     is zero  then the Special MacOS processing will not
     occur either.
     */
-int dwarf_init_path_dl(const char * /*path*/,
+DW_API int dwarf_init_path_dl(const char * /*path*/,
     char *            /*true_path_out_buffer*/,
     unsigned int      /*true_path_bufferlen*/,
     unsigned int      /*groupnumber*/,
@@ -1369,51 +1392,51 @@ int dwarf_init_path_dl(const char * /*path*/,
 
 /*  Initialization based on Unix(etc) open fd */
 /*  New March 2017 */
-int dwarf_init_b(int /*fd*/,
+DW_API int dwarf_init_b(int /*fd*/,
     unsigned int      /*groupnumber*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
+DW_API int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
 
 /*  NEW March 2017. */
-int dwarf_object_init_b(Dwarf_Obj_Access_Interface* /*obj*/,
+DW_API int dwarf_object_init_b(Dwarf_Obj_Access_Interface* /*obj*/,
     Dwarf_Handler /*errhand*/,
     Dwarf_Ptr     /*errarg*/,
     unsigned int  /*groupnumber*/,
     Dwarf_Debug*  /*dbg*/,
     Dwarf_Error*  /*error*/);
-int dwarf_object_finish(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_object_finish(Dwarf_Debug /*dbg*/,
     Dwarf_Error* /*error*/);
 
-int dwarf_set_tied_dbg(Dwarf_Debug /*basedbg*/,
+DW_API int dwarf_set_tied_dbg(Dwarf_Debug /*basedbg*/,
     Dwarf_Debug /*tied_dbg*/,
     Dwarf_Error*  /*error*/);
 
 /*  Likely not very useful. */
-int dwarf_get_tied_dbg(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_tied_dbg(Dwarf_Debug /*dbg*/,
     Dwarf_Debug * /*tieddbg_out*/,
     Dwarf_Error * /*error*/);
 
 /*  Returns the version string. Example: "20190922"
     which is in ISO date format. */
-const char * dwarf_package_version(void);
+DW_API const char * dwarf_package_version(void);
 
 /*  Section name access.  Because sections might
     now end with .dwo or be .zdebug  or might not.
 */
-int dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
     Dwarf_Bool    /*is_info*/,
     const char ** /*sec_name*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_get_die_section_name_b(Dwarf_Die /*die*/,
+DW_API int dwarf_get_die_section_name_b(Dwarf_Die /*die*/,
     const char ** /*sec_name*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
     const char * /*std_section_name*/,
     const char ** /*actual_sec_name_out*/,
     Dwarf_Small * /*marked_compressed*/,  /* .zdebug... */
@@ -1426,7 +1449,7 @@ int dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
 /*  dwarf_next_cu_header_d traverses debug_types CU headers.
     New in May, 2015.
     */
-int dwarf_next_cu_header_d(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_next_cu_header_d(Dwarf_Debug /*dbg*/,
     Dwarf_Bool      /*is_info*/,
     Dwarf_Unsigned* /*cu_header_length*/,
     Dwarf_Half*     /*version_stamp*/,
@@ -1440,20 +1463,20 @@ int dwarf_next_cu_header_d(Dwarf_Debug /*dbg*/,
     Dwarf_Half    * /*header_cu_type*/,
     Dwarf_Error*    /*error*/);
 
-int dwarf_siblingof_b(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_siblingof_b(Dwarf_Debug /*dbg*/,
     Dwarf_Die        /*die*/,
     Dwarf_Bool       /*is_info*/,
     Dwarf_Die*       /*return_siblingdie*/,
     Dwarf_Error*     /*error*/);
 
 /* New 27 April 2015. */
-int dwarf_die_from_hash_signature(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_die_from_hash_signature(Dwarf_Debug /*dbg*/,
     Dwarf_Sig8 *     /*hash_sig*/,
     const char *     /*sig_type: "tu" or "cu"*/,
     Dwarf_Die*       /*returned_CU_die */,
     Dwarf_Error*     /*error*/);
 
-int dwarf_child(Dwarf_Die /*die*/,
+DW_API int dwarf_child(Dwarf_Die /*die*/,
     Dwarf_Die*       /*return_childdie*/,
     Dwarf_Error*     /*error*/);
 
@@ -1461,7 +1484,7 @@ int dwarf_child(Dwarf_Die /*die*/,
     Finding die given global (not CU-relative) offset.
     Applies to debug_info (is_info true) or debug_types
     (is_info false). */
-int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
     Dwarf_Off        /*offset*/,
     Dwarf_Bool       /*is_info*/,
     Dwarf_Die*       /*return_die*/,
@@ -1470,7 +1493,7 @@ int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
 /*  New 4 February 2021. returns DIE and
     is_info flag if it finds the referenced
     DW_UT_split_type or DW_UT_type CU. */
-int dwarf_find_die_given_sig8(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_find_die_given_sig8(Dwarf_Debug /*dbg*/,
     Dwarf_Sig8 * /*ref*/,
     Dwarf_Die  * /*die_out*/,
     Dwarf_Bool * /*is_info*/,
@@ -1480,11 +1503,11 @@ int dwarf_find_die_given_sig8(Dwarf_Debug /*dbg*/,
     Needed so client software knows
     if a DIE is in debug_info or debug_types.
     New October 2011. */
-Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
+DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
 
 /*  New December 2020.  Any Dwarf_Die will work.
     The values returned are about the CU itself, not a DIE. */
-int dwarf_cu_header_basics(Dwarf_Die die,
+DW_API int dwarf_cu_header_basics(Dwarf_Die die,
     Dwarf_Half     * /*version*/,
     Dwarf_Bool     * /*is_info*/,
     Dwarf_Bool     * /*is_dwo*/,
@@ -1499,19 +1522,19 @@ int dwarf_cu_header_basics(Dwarf_Die die,
 /*  New March 2016.
     So we can associate a DIE's abbreviations with the contents
     the abbreviations section. */
-int dwarf_die_abbrev_global_offset(Dwarf_Die /*die*/,
+DW_API int dwarf_die_abbrev_global_offset(Dwarf_Die /*die*/,
     Dwarf_Off       * /*abbrev_offset*/,
     Dwarf_Unsigned  * /*abbrev_count*/,
     Dwarf_Error*      /*error*/);
 
 /*  operations on DIEs */
-int dwarf_tag(Dwarf_Die /*die*/,
+DW_API int dwarf_tag(Dwarf_Die /*die*/,
     Dwarf_Half*      /*return_tag*/,
     Dwarf_Error*     /*error*/);
 
 /*  dwarf_dieoffset returns the global debug_info
     section offset, not the CU relative offset. */
-int dwarf_dieoffset(Dwarf_Die /*die*/,
+DW_API int dwarf_dieoffset(Dwarf_Die /*die*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
@@ -1523,14 +1546,14 @@ int dwarf_dieoffset(Dwarf_Die /*die*/,
     and if not there (because the dbg object is
     a dwo or dwp split dwarf object)
     will look in the tied object if tied is available. */
-int dwarf_debug_addr_index_to_addr(Dwarf_Die /*die*/,
+DW_API int dwarf_debug_addr_index_to_addr(Dwarf_Die /*die*/,
     Dwarf_Unsigned  /*index*/,
     Dwarf_Addr    * /*return_addr*/,
     Dwarf_Error   * /*error*/);
 /*  Reading a CU DIE with DW_AT_low_pc an indexed value
     can be problematic as that interacts with DW_AT_addr_base
     in that DIE. Here is a test readers may find useful */
-Dwarf_Bool dwarf_addr_form_is_indexed(int form);
+DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int form);
 
 
 /*  dwarf_CU_dieoffset_given_die returns
@@ -1540,7 +1563,7 @@ Dwarf_Bool dwarf_addr_form_is_indexed(int form);
     This information makes it possible for a consumer to
     find and print CU context information for any die.
     See also dwarf_get_cu_die_offset_given_cu_header_offset_b. */
-int dwarf_CU_dieoffset_given_die(Dwarf_Die /*given_die*/,
+DW_API int dwarf_CU_dieoffset_given_die(Dwarf_Die /*given_die*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
@@ -1548,35 +1571,35 @@ int dwarf_CU_dieoffset_given_die(Dwarf_Die /*given_die*/,
     not the global debug_info section offset, given
     any DIE in the CU.  See also dwarf_CU_dieoffset_given_die.
     */
-int dwarf_die_CU_offset(Dwarf_Die /*die*/,
+DW_API int dwarf_die_CU_offset(Dwarf_Die /*die*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_die_CU_offset_range(Dwarf_Die /*die*/,
+DW_API int dwarf_die_CU_offset_range(Dwarf_Die /*die*/,
     Dwarf_Off*       /*return_CU_header_offset*/,
     Dwarf_Off*       /*return_CU_length_bytes*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_attr(Dwarf_Die /*die*/,
+DW_API int dwarf_attr(Dwarf_Die /*die*/,
     Dwarf_Half        /*attr*/,
     Dwarf_Attribute * /*returned_attr*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_die_text(Dwarf_Die /*die*/,
+DW_API int dwarf_die_text(Dwarf_Die /*die*/,
     Dwarf_Half    /*attr*/,
     char       ** /*ret_name*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_diename(Dwarf_Die /*die*/,
+DW_API int dwarf_diename(Dwarf_Die /*die*/,
     char   **        /*diename*/,
     Dwarf_Error*     /*error*/);
 
 /* Returns the  abbrev code of the die. Cannot fail. */
-int dwarf_die_abbrev_code(Dwarf_Die /*die */);
+DW_API int dwarf_die_abbrev_code(Dwarf_Die /*die */);
 
 /*  Returns a flag through ab_has_child. Non-zero if
     the DIE has children, zero if it does not.   */
-int dwarf_die_abbrev_children_flag(Dwarf_Die /*die*/,
+DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die /*die*/,
     Dwarf_Half * /*ab_has_child*/);
 
 /*  Validate the sibling DIE. This only makes sense to call
@@ -1587,17 +1610,17 @@ int dwarf_die_abbrev_children_flag(Dwarf_Die /*die*/,
     are in the same place a sibling attribute would identify.
     In case we return DW_DLV_ERROR, the global offset of the last
     DIE traversed by dwarf_child is returned through *offset */
-int dwarf_validate_die_sibling(Dwarf_Die /*sibling*/,
+DW_API int dwarf_validate_die_sibling(Dwarf_Die /*sibling*/,
     Dwarf_Off* /*offset*/);
 
 /* convenience functions, alternative to using dwarf_attrlist */
-int dwarf_hasattr(Dwarf_Die /*die*/,
+DW_API int dwarf_hasattr(Dwarf_Die /*die*/,
     Dwarf_Half   /*attr*/,
     Dwarf_Bool * /*returned_bool*/,
     Dwarf_Error* /*error*/);
 
 /* Returns the children offsets for the given offset */
-int dwarf_offset_list(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_offset_list(Dwarf_Debug /*dbg*/,
     Dwarf_Off         /*offset*/,
     Dwarf_Bool        /*is_info*/,
     Dwarf_Off      ** /*offbuf*/,
@@ -1606,16 +1629,16 @@ int dwarf_offset_list(Dwarf_Debug /*dbg*/,
 
 /*  BEGIN: debug_gnu_pubnames/typenames access,
     calling these  Gnu_Index as a general reference.  */
-int dwarf_get_gnu_index_head(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_gnu_index_head(Dwarf_Debug /*dbg*/,
     /*  The following arg false to select gnu_pubtypes */
     Dwarf_Bool             /*for_gdb_pubnames*/ ,
     Dwarf_Gnu_Index_Head * /*index_head_out*/,
     Dwarf_Unsigned       * /*index_block_count_out*/,
     Dwarf_Error * /*error*/);
 /*  Frees all resources used for the indexes. */
-void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head /*head*/);
+DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head /*head*/);
 
-int dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head /*head*/,
+DW_API int dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head /*head*/,
     Dwarf_Unsigned     /*number*/,
     Dwarf_Unsigned   * /*block_length */,
     Dwarf_Half       * /*version */,
@@ -1624,7 +1647,7 @@ int dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head /*head*/,
     Dwarf_Unsigned   * /*count_of_index_entries*/,
     Dwarf_Error      * /*error*/);
 
-int dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head /*head*/,
+DW_API int dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head /*head*/,
     Dwarf_Unsigned    /*blocknumber*/,
     Dwarf_Unsigned    /*entrynumber*/,
     Dwarf_Unsigned  * /*offset_in_debug_info*/,
@@ -1641,7 +1664,7 @@ int dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head /*head*/,
     a loclist or a locexpr. When the attribute is a locexpr
     a single loclist (created by libdwarf)
     is attached to loclist_head. */
-int dwarf_get_loclist_c(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_get_loclist_c(Dwarf_Attribute /*attr*/,
     Dwarf_Loc_Head_c * /*loclist_head*/,
     Dwarf_Unsigned   * /*locCount*/,
     Dwarf_Error      * /*error*/);
@@ -1653,7 +1676,7 @@ int dwarf_get_loclist_c(Dwarf_Attribute /*attr*/,
 #define DW_LKIND_unknown     99
 
 /* DWARF2 kind is 2. DWARF3/4 kind is 3, DWARF5 kind is 5 */
-int dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
+DW_API int dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
     unsigned int  * /*lkind*/,
     Dwarf_Error   * /*error*/);
 
@@ -1663,7 +1686,7 @@ int dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
     skeleton unit could not be accessed from
     the .dwo section or dwp object so the
     cooked values could not be calculated. */
-int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
+DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
     Dwarf_Unsigned    /*index*/,
     /* identifies type of locdesc entry*/
     Dwarf_Small    *  /*lle_value_out*/,
@@ -1680,7 +1703,7 @@ int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
     Dwarf_Error    *  /*error*/);
 
 /* New June 2020 for DWARF5 (and all earlier). */
-int dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
+DW_API int dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
     Dwarf_Unsigned   /*index*/,
     Dwarf_Small    * /*operator_out*/,
     Dwarf_Unsigned * /*operand1*/,
@@ -1692,7 +1715,7 @@ int dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
     Dwarf_Unsigned * /*offset_for_branch*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_loclist_from_expr_c(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_loclist_from_expr_c(Dwarf_Debug /*dbg*/,
     Dwarf_Ptr      /*expression_in*/,
     Dwarf_Unsigned /*expression_length*/,
     Dwarf_Half     /*address_size*/,
@@ -1704,11 +1727,11 @@ int dwarf_loclist_from_expr_c(Dwarf_Debug /*dbg*/,
 
 /* This frees all memory allocated by the applicable
     dwarf_get_loclist_c */
-void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c /*loclist_head*/);
+DW_API void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c /*loclist_head*/);
 
 /* END: loclist_c interfaces */
 
-int dwarf_lowpc(Dwarf_Die /*die*/,
+DW_API int dwarf_lowpc(Dwarf_Die /*die*/,
     Dwarf_Addr  *    /*returned_addr*/,
     Dwarf_Error*     /*error*/);
 
@@ -1717,7 +1740,7 @@ int dwarf_lowpc(Dwarf_Die /*die*/,
     base address (such as lowpc) of the function.
     This is therefore a required interface for DWARF4
     style DW_AT_highpc.  */
-int dwarf_highpc_b(Dwarf_Die /*die*/,
+DW_API int dwarf_highpc_b(Dwarf_Die /*die*/,
     Dwarf_Addr  *           /*return_value*/,
     Dwarf_Half  *           /*return_form*/,
     enum Dwarf_Form_Class * /*return_class*/,
@@ -1725,15 +1748,15 @@ int dwarf_highpc_b(Dwarf_Die /*die*/,
 
 /*  If 'die' contains the DW_AT_type attribute,
     it returns the offset referenced by the attribute. */
-int dwarf_dietype_offset(Dwarf_Die /*die*/,
+DW_API int dwarf_dietype_offset(Dwarf_Die /*die*/,
     Dwarf_Off   * /*return_off*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_bytesize(Dwarf_Die /*die*/,
+DW_API int dwarf_bytesize(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*returned_size*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_bitsize(Dwarf_Die /*die*/,
+DW_API int dwarf_bitsize(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*returned_size*/,
     Dwarf_Error*     /*error*/);
 
@@ -1742,39 +1765,39 @@ int dwarf_bitsize(Dwarf_Die /*die*/,
     has one meaning.
     If the attribute is DW_AT_bit_offset
     (DWARF2, DWARF3) the meaning is quite different. */
-int dwarf_bitoffset(Dwarf_Die /*die*/,
+DW_API int dwarf_bitoffset(Dwarf_Die /*die*/,
     Dwarf_Half     * /*attribute*/,
     Dwarf_Unsigned * /*returned_offset*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_srclang(Dwarf_Die /*die*/,
+DW_API int dwarf_srclang(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*returned_lang*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_arrayorder(Dwarf_Die /*die*/,
+DW_API int dwarf_arrayorder(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*returned_order*/,
     Dwarf_Error*     /*error*/);
 
 /*  End of convenience function list. */
 
 /*  This is the main interface to attributes of a DIE. */
-int dwarf_attrlist(Dwarf_Die /*die*/,
+DW_API int dwarf_attrlist(Dwarf_Die /*die*/,
     Dwarf_Attribute** /*attrbuf*/,
     Dwarf_Signed   * /*attrcount*/,
     Dwarf_Error*     /*error*/);
 
 /*  Query operations for attributes */
-int dwarf_hasform(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_hasform(Dwarf_Attribute /*attr*/,
     Dwarf_Half       /*form*/,
     Dwarf_Bool *     /*returned_bool*/,
     Dwarf_Error*     /*error*/);
-int dwarf_whatform(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_whatform(Dwarf_Attribute /*attr*/,
     Dwarf_Half *     /*returned_final_form*/,
     Dwarf_Error*     /*error*/);
-int dwarf_whatform_direct(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_whatform_direct(Dwarf_Attribute /*attr*/,
     Dwarf_Half *     /*returned_initial_form*/,
     Dwarf_Error*     /*error*/);
-int dwarf_whatattr(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_whatattr(Dwarf_Attribute /*attr*/,
     Dwarf_Half *     /*returned_attr_num*/,
     Dwarf_Error*     /*error*/);
 
@@ -1784,7 +1807,7 @@ int dwarf_whatattr(Dwarf_Attribute /*attr*/,
 /*  dwarf_formref returns, thru return_offset, a CU-relative offset
     ( in .debug_info or .debug_types)
     and does not allow DW_FORM_ref_addr*/
-int dwarf_formref(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formref(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Bool     * /*is_info*/,
     Dwarf_Error*     /*error*/);
@@ -1794,26 +1817,26 @@ int dwarf_formref(Dwarf_Attribute /*attr*/,
     dwarf_global_formref.  If it is a DIE offset then
     call dwarf_global_formref_b so you know whether it is
     in .debug_types or .debug_info. */
-int dwarf_global_formref(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_global_formref(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-int dwarf_global_formref_b(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_global_formref_b(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Bool   *   /*offset_is_info*/,
     Dwarf_Error*     /*error*/);
 
 /*  dwarf_formsig8 returns in the caller-provided 8 byte area
     the 8 bytes of a DW_FORM_ref_sig8.  Not a string.  */
-int dwarf_formsig8(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formsig8(Dwarf_Attribute /*attr*/,
     Dwarf_Sig8 * /*returned sig bytes*/,
     Dwarf_Error*     /*error*/);
 /*  dwarf_formsig8_const returns in the caller-provided 8 byte area
     the 8 bytes of a form const (DW_FORM_data8).  Not a string.  */
-int dwarf_formsig8_const(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formsig8_const(Dwarf_Attribute /*attr*/,
     Dwarf_Sig8 * /*returned sig bytes*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_formaddr(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formaddr(Dwarf_Attribute /*attr*/,
     Dwarf_Addr   *   /*returned_addr*/,
     Dwarf_Error*     /*error*/);
 
@@ -1821,31 +1844,31 @@ int dwarf_formaddr(Dwarf_Attribute /*attr*/,
     the object with the actual .debug_addr section is
     elsewhere. And so a print application can
     print the index.  New May 2014*/
-int dwarf_get_debug_addr_index(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_get_debug_addr_index(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_index*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_formflag(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formflag(Dwarf_Attribute /*attr*/,
     Dwarf_Bool *     /*returned_bool*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_formdata16(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formdata16(Dwarf_Attribute /*attr*/,
     Dwarf_Form_Data16  * /*returned_val*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_formudata(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formudata(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned  * /*returned_val*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_formsdata(Dwarf_Attribute     /*attr*/,
+DW_API int dwarf_formsdata(Dwarf_Attribute     /*attr*/,
     Dwarf_Signed  *  /*returned_val*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_formblock(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formblock(Dwarf_Attribute /*attr*/,
     Dwarf_Block    ** /*returned_block*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_formstring(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formstring(Dwarf_Attribute /*attr*/,
     char   **        /*returned_string*/,
     Dwarf_Error*     /*error*/);
 
@@ -1853,11 +1876,11 @@ int dwarf_formstring(Dwarf_Attribute /*attr*/,
     get the string index (DW_FORM_strx) and print it.
     A convenience function.
     New May 2014. */
-int dwarf_get_debug_str_index(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_get_debug_str_index(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_index*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_exprlen*/,
     Dwarf_Ptr  * /*block_ptr*/,
     Dwarf_Error * /*error*/);
@@ -1872,7 +1895,7 @@ int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
     interface.
     This interface only reads the line table header, so
     it takes relatively little time.  */
-int dwarf_srclines_b(Dwarf_Die /*die*/,
+DW_API int dwarf_srclines_b(Dwarf_Die /*die*/,
     Dwarf_Unsigned     * /*version_out*/,
     Dwarf_Small        * /*table_count*/,
     Dwarf_Line_Context * /*linecontext*/,
@@ -1884,7 +1907,7 @@ int dwarf_srclines_b(Dwarf_Die /*die*/,
 /*  New October 2015.  Returns line details.
     Works for DWARF2,3,4,5.  If linecount
     returned is zero this is a line table with no lines.*/
-int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
+DW_API int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
     Dwarf_Line  **   /*linebuf*/,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Error  *   /* error*/);
@@ -1905,7 +1928,7 @@ int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
     line tables, which are experimental.
     Most users will not wish to use
     dwarf_srclines_two_level_from_linecontext */
-int dwarf_srclines_two_level_from_linecontext(Dwarf_Line_Context,
+DW_API int dwarf_srclines_two_level_from_linecontext(Dwarf_Line_Context,
     Dwarf_Line  **   /*linebuf */,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Line  **   /*linebuf_actuals*/,
@@ -1917,13 +1940,13 @@ int dwarf_srclines_two_level_from_linecontext(Dwarf_Line_Context,
     and dwarf_srclines_from_linecontext(),
     dwarf_srclines_twolevel_from_linecontext(),
     and dwarf_srclines_b()  allocate.  */
-void dwarf_srclines_dealloc_b(Dwarf_Line_Context /*line_context*/);
+DW_API void dwarf_srclines_dealloc_b(Dwarf_Line_Context /*line_context*/);
 
 /*  New October 2015.
     The offset is in the relevent .debug_line or .debug_line.dwo
     section (and in a split dwarf package file includes)
     the base line table offset). */
-int dwarf_srclines_table_offset(Dwarf_Line_Context /*line_context*/,
+DW_API int dwarf_srclines_table_offset(Dwarf_Line_Context /*line_context*/,
     Dwarf_Unsigned * /*offset*/,
     Dwarf_Error  * /* error*/);
 
@@ -1932,19 +1955,19 @@ int dwarf_srclines_table_offset(Dwarf_Line_Context /*line_context*/,
     section (and in a split dwarf package file includes)
     the base line table offset).  Do not free() the string,
     it is in a dwarf section. */
-int dwarf_srclines_comp_dir(Dwarf_Line_Context /*line_context*/,
+DW_API int dwarf_srclines_comp_dir(Dwarf_Line_Context /*line_context*/,
     const char ** /*compilation_directory*/,
     Dwarf_Error  *  /*error*/);
 
 /*  New October 2015.  Part of the two-level line table extension. */
 /*  Count is the real count of suprogram array entries. */
-int dwarf_srclines_subprog_count(Dwarf_Line_Context /*line_context*/,
+DW_API int dwarf_srclines_subprog_count(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed * /*count*/,
     Dwarf_Error  * /*error*/);
 
 /*  New October 2015. */
 /*  Index starts with 1, last is 'count' */
-int dwarf_srclines_subprog_data(Dwarf_Line_Context /*line_context*/,
+DW_API int dwarf_srclines_subprog_data(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed     /*index*/,
     const char **    /*name*/,
     Dwarf_Unsigned * /*decl_file*/,
@@ -1956,7 +1979,7 @@ int dwarf_srclines_subprog_data(Dwarf_Line_Context /*line_context*/,
     Since DWARF 2,3,4 are zero origin indexes and
     DWARF5 and later are one origin, this function
     replaces dwarf_srclines_files_count(). */
-int dwarf_srclines_files_indexes(Dwarf_Line_Context /*line_context*/,
+DW_API int dwarf_srclines_files_indexes(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed  *  /*baseindex*/,
     Dwarf_Signed  *  /*count*/,
     Dwarf_Signed  *  /*endindex*/,
@@ -1969,7 +1992,7 @@ int dwarf_srclines_files_indexes(Dwarf_Line_Context /*line_context*/,
     With DWARF 5 index starts with 0.
     See dwarf_srclines_files_indexes() which makes
     indexing through the files easy. */
-int dwarf_srclines_files_data_b(Dwarf_Line_Context /*line_context*/,
+DW_API int dwarf_srclines_files_data_b(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed     /*index_in*/,
     const char **    /*name*/,
     Dwarf_Unsigned * /*directory_index*/,
@@ -1980,14 +2003,14 @@ int dwarf_srclines_files_data_b(Dwarf_Line_Context /*line_context*/,
 
 /*  New October 2015. */
 /*  Count is the real count of include array entries. */
-int dwarf_srclines_include_dir_count(Dwarf_Line_Context
+DW_API int dwarf_srclines_include_dir_count(Dwarf_Line_Context
     /*line_context*/,
     Dwarf_Signed *  /*count*/,
     Dwarf_Error  * /* error*/);
 
 /*  New October 2015. */
 /*  Index starts with 1, last is 'count' */
-int dwarf_srclines_include_dir_data( Dwarf_Line_Context
+DW_API int dwarf_srclines_include_dir_data( Dwarf_Line_Context
     /*line_context*/,
     Dwarf_Signed    /*index*/,
     const char **   /*name*/,
@@ -1998,70 +2021,70 @@ int dwarf_srclines_include_dir_data( Dwarf_Line_Context
     in the .debug_lines section and the number of
     actual tables:0 (header with no lines),
     1 (standard table), or 2 (experimental). */
-int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
+DW_API int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
     Dwarf_Unsigned * /*version*/,
     Dwarf_Small    * /*table_count*/,
     Dwarf_Error    * /*error*/);
 
 
-int dwarf_get_line_section_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_line_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
-int dwarf_get_line_section_name_from_die(Dwarf_Die /*die*/,
+DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die /*die*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
 /*  While 'filecount' is signed, the value
     returned through the pointer is never negative.
     Original libdwarf from 199x.  */
-int dwarf_srcfiles(Dwarf_Die /*die*/,
+DW_API int dwarf_srcfiles(Dwarf_Die /*die*/,
     char***          /*srcfiles*/,
     Dwarf_Signed *   /*filecount*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_linebeginstatement(Dwarf_Line /*line*/,
+DW_API int dwarf_linebeginstatement(Dwarf_Line /*line*/,
     Dwarf_Bool  *    /*returned_bool*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_lineendsequence(Dwarf_Line /*line*/,
+DW_API int dwarf_lineendsequence(Dwarf_Line /*line*/,
     Dwarf_Bool  *    /*returned_bool*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_lineno(Dwarf_Line /*line*/,
+DW_API int dwarf_lineno(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_lineno*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_line_srcfileno(Dwarf_Line /*line*/,
+DW_API int dwarf_line_srcfileno(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*ret_fileno*/,
     Dwarf_Error *    /*error*/);
 
 /* Is the line address from DW_LNS_set_address? */
-int dwarf_line_is_addr_set(Dwarf_Line /*line*/,
+DW_API int dwarf_line_is_addr_set(Dwarf_Line /*line*/,
     Dwarf_Bool *     /*is_addr_set*/,
     Dwarf_Error *    /*error*/);
 
-int dwarf_lineaddr(Dwarf_Line /*line*/,
+DW_API int dwarf_lineaddr(Dwarf_Line /*line*/,
     Dwarf_Addr *     /*returned_addr*/,
     Dwarf_Error*     /*error*/);
 
 /*  dwarf_lineoff_b correctly returns an unsigned column number
     through the pointer returned_lineoffset.
     dwarf_lineoff_b() is new in December 2011.  */
-int dwarf_lineoff_b(Dwarf_Line /*line*/,
+DW_API int dwarf_lineoff_b(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_lineoffset*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_linesrc(Dwarf_Line /*line*/,
+DW_API int dwarf_linesrc(Dwarf_Line /*line*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_lineblock(Dwarf_Line /*line*/,
+DW_API int dwarf_lineblock(Dwarf_Line /*line*/,
     Dwarf_Bool  *    /*returned_bool*/,
     Dwarf_Error*     /*error*/);
 
 /*  We gather these into one call as it's likely one
     will want all or none of them.  */
-int dwarf_prologue_end_etc(Dwarf_Line /* line */,
+DW_API int dwarf_prologue_end_etc(Dwarf_Line /* line */,
     Dwarf_Bool  *    /*prologue_end*/,
     Dwarf_Bool  *    /*eplogue_begin*/,
     Dwarf_Unsigned * /* isa */,
@@ -2072,7 +2095,7 @@ int dwarf_prologue_end_etc(Dwarf_Line /* line */,
 /*  Two-level line tables:
     When reading from an actuals table, dwarf_line_logical()
     returns the logical row number for the line. */
-int dwarf_linelogical(Dwarf_Line /*line*/,
+DW_API int dwarf_linelogical(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_logical*/,
     Dwarf_Error*     /*error*/);
 
@@ -2080,7 +2103,7 @@ int dwarf_linelogical(Dwarf_Line /*line*/,
     When reading from a logicals table, dwarf_linecontext()
     returns the logical row number corresponding the the
     calling context for an inlined call. */
-int dwarf_linecontext(Dwarf_Line /*line*/,
+DW_API int dwarf_linecontext(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_context*/,
     Dwarf_Error*     /*error*/);
 
@@ -2088,7 +2111,7 @@ int dwarf_linecontext(Dwarf_Line /*line*/,
     When reading from a logicals table, dwarf_line_subprogno()
     returns the index in the subprograms table of the inlined
     subprogram. */
-int dwarf_line_subprogno(Dwarf_Line /*line*/,
+DW_API int dwarf_line_subprogno(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*ret_subprogno*/,
     Dwarf_Error *    /*error*/);
 
@@ -2096,7 +2119,7 @@ int dwarf_line_subprogno(Dwarf_Line /*line*/,
     When reading from a logicals table, dwarf_line_subprog()
     returns the name of the inlined subprogram, its declaration
     filename, and its declaration line number, if available. */
-int dwarf_line_subprog(Dwarf_Line /*line*/,
+DW_API int dwarf_line_subprog(Dwarf_Line /*line*/,
     char   **        /*returned_subprog_name*/,
     char   **        /*returned_filename*/,
     Dwarf_Unsigned * /*returned_lineno*/,
@@ -2112,16 +2135,16 @@ int dwarf_line_subprog(Dwarf_Line /*line*/,
     Nonetheless the following does not assume a single
     name index in an object file.
 */
-int dwarf_dnames_header(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_dnames_header(Dwarf_Debug /*dbg*/,
     Dwarf_Off           /*starting_offset*/,
     Dwarf_Dnames_Head * /*dn_out*/,
     Dwarf_Off         * /*offset_of_next_table*/,
     Dwarf_Error *       /*error*/);
 
 /*  Frees all the malloc data associated with dn */
-void dwarf_dealloc_dnames(Dwarf_Dnames_Head dn);
+DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dn);
 
-int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
+DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
     /* The counts are entry counts, not byte sizes. */
     Dwarf_Unsigned * /*comp_unit_count*/,
     Dwarf_Unsigned * /*local_type_unit_count*/,
@@ -2140,7 +2163,7 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Error *    /*error*/);
 
 /* get each list entry one at a time */
-int dwarf_dnames_cu_table(Dwarf_Dnames_Head /*dn*/,
+DW_API int dwarf_dnames_cu_table(Dwarf_Dnames_Head /*dn*/,
     const char        * /*type ("cu" "tu") */,
     /*  index number 0 to k-1 or 0 to t+f-1
         depending on type. */
@@ -2150,7 +2173,7 @@ int dwarf_dnames_cu_table(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Error       * /*error*/);
 
 /* Each bucket, one at a time */
-int dwarf_dnames_bucket(Dwarf_Dnames_Head /*dn*/,
+DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*bucket_number*/,
     Dwarf_Unsigned    * /*index (of name entry*/,
     Dwarf_Unsigned    * /*indexcount (of name entries in bucket)*/,
@@ -2168,7 +2191,7 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head /*dn*/,
     if the array you provided is
     large enough. Possibly 40 (so 20 attributes)
     is large enough. */
-int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
+DW_API int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
     Dwarf_Unsigned      /*name_index*/,
     Dwarf_Unsigned    * /*bucket_number */,
     Dwarf_Unsigned    * /*hash value*/,
@@ -2212,7 +2235,7 @@ int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
     additional important details.
 */
 
-int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
     char     **    /*debuglink_path_returned */,
     unsigned char ** /*crc_returned from the debuglink section*/,
     char     **    /*debuglink_fullpath_returned free this*/,
@@ -2228,7 +2251,7 @@ int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
 /*  Only useful inside dwarfexample/dwdebuglink.c
     so we can show all that is going on.
 */
-int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
     const char *pathname,
     Dwarf_Error* /*error*/);
 
@@ -2236,13 +2259,13 @@ int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns
     DW_DLV_OK that is filled in. */
-int dwarf_crc32(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_crc32(Dwarf_Debug /*dbg*/,
     unsigned char * /*crcbuf*/,
     Dwarf_Error * /*error*/);
 
 /*  Public interface to the real crc calculation
     just in case some find it useful. */
-unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
+DW_API unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
     unsigned long /*len*/, unsigned int /*init*/);
 
 /*  global name space operations (.debug_pubnames access)
@@ -2252,30 +2275,30 @@ unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
 /*  New March 2019. Special for dwarfdump.
     Sets a flag in the dbg. Always returns DW_DLV_OK
     and (as of March 2020) never touches error */
-int dwarf_return_empty_pubnames(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_return_empty_pubnames(Dwarf_Debug /*dbg*/,
     int /* flag */,
     Dwarf_Error* /*error*/);
 
-int dwarf_get_globals(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_globals(Dwarf_Debug /*dbg*/,
     Dwarf_Global**   /*globals*/,
     Dwarf_Signed *   /*number_of_globals*/,
     Dwarf_Error*     /*error*/);
-void dwarf_globals_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_globals_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Global*    /*globals*/,
     Dwarf_Signed     /*number_of_globals*/);
 
 /*  The following four are closely related. */
-int dwarf_globname(Dwarf_Global /*glob*/,
+DW_API int dwarf_globname(Dwarf_Global /*glob*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-int dwarf_global_die_offset(Dwarf_Global /*global*/,
+DW_API int dwarf_global_die_offset(Dwarf_Global /*global*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error *    /*error*/);
-int dwarf_global_cu_offset(Dwarf_Global /*global*/,
+DW_API int dwarf_global_cu_offset(Dwarf_Global /*global*/,
     Dwarf_Off*       /*return_offset, offset of
         cu header*/,
     Dwarf_Error*     /*error*/);
-int dwarf_global_name_offsets(Dwarf_Global /*global*/,
+DW_API int dwarf_global_name_offsets(Dwarf_Global /*global*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset, offset of
@@ -2286,7 +2309,7 @@ int dwarf_global_name_offsets(Dwarf_Global /*global*/,
     CU header global offset.
     See also dwarf_CU_dieoffset_given_die().
     The _b form is new October 2011. */
-int dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug,
+DW_API int dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug,
     Dwarf_Off        /*in_cu_header_offset*/,
     Dwarf_Bool       /*is_info. True means look in debug_Info,
         false use debug_types.*/,
@@ -2299,7 +2322,7 @@ int dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug,
     there is a .debug_pubnames header.  For any given
     Dwarf_Global this returns the content of the applicable
     header. */
-int dwarf_get_globals_header(Dwarf_Global /*global*/,
+DW_API int dwarf_get_globals_header(Dwarf_Global /*global*/,
     Dwarf_Off      * /*offset_pub_header*/,
     Dwarf_Unsigned * /*length_size*/,
     Dwarf_Unsigned * /*length_pub*/,
@@ -2309,26 +2332,26 @@ int dwarf_get_globals_header(Dwarf_Global /*global*/,
     Dwarf_Error*   /*error*/);
 
 /* Static function name operations.  */
-int dwarf_get_funcs(Dwarf_Debug    /*dbg*/,
+DW_API int dwarf_get_funcs(Dwarf_Debug    /*dbg*/,
     Dwarf_Func**     /*funcs*/,
     Dwarf_Signed *   /*number_of_funcs*/,
     Dwarf_Error*     /*error*/);
-void dwarf_funcs_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_funcs_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Func*      /*funcs*/,
     Dwarf_Signed     /*number_of_funcs*/);
 
 /* The following four are closely related */
-int dwarf_funcname(Dwarf_Func /*func*/,
+DW_API int dwarf_funcname(Dwarf_Func /*func*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-int dwarf_func_die_offset(Dwarf_Func /*func*/,
+DW_API int dwarf_func_die_offset(Dwarf_Func /*func*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-int dwarf_func_cu_offset(Dwarf_Func /*func*/,
+DW_API int dwarf_func_cu_offset(Dwarf_Func /*func*/,
     Dwarf_Off*       /*return_offset of the
         cu header*/,
     Dwarf_Error*     /*error*/);
-int dwarf_func_name_offsets(Dwarf_Func /*func*/,
+DW_API int dwarf_func_name_offsets(Dwarf_Func /*func*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset of the
@@ -2341,27 +2364,27 @@ int dwarf_func_name_offsets(Dwarf_Func /*func*/,
     Same content as DWARF3 .debug_pubtypes, but
     defined years before .debug_pubtypes was defined.
     SGI IRIX only. */
-int dwarf_get_types(Dwarf_Debug    /*dbg*/,
+DW_API int dwarf_get_types(Dwarf_Debug    /*dbg*/,
     Dwarf_Type**     /*types*/,
     Dwarf_Signed *   /*number_of_types*/,
     Dwarf_Error*     /*error*/);
-void dwarf_types_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_types_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Type*      /*types*/,
     Dwarf_Signed     /*number_of_types*/);
 
 /*  The fourth gives all the values that the next
     three combined do. */
-int dwarf_typename(Dwarf_Type /*type*/,
+DW_API int dwarf_typename(Dwarf_Type /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-int dwarf_type_die_offset(Dwarf_Type /*type*/,
+DW_API int dwarf_type_die_offset(Dwarf_Type /*type*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-int dwarf_type_cu_offset(Dwarf_Type /*type*/,
+DW_API int dwarf_type_cu_offset(Dwarf_Type /*type*/,
     Dwarf_Off*       /*return_offset is offset of
         cu_header */,
     Dwarf_Error*     /*error*/);
-int dwarf_type_name_offsets(Dwarf_Type    /*type*/,
+DW_API int dwarf_type_name_offsets(Dwarf_Type    /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset is offset of
@@ -2370,11 +2393,11 @@ int dwarf_type_name_offsets(Dwarf_Type    /*type*/,
 
 /*  User-defined type name operations, DWARF3  .debug_pubtypes
     section.  */
-int dwarf_get_pubtypes(Dwarf_Debug    /*dbg*/,
+DW_API int dwarf_get_pubtypes(Dwarf_Debug    /*dbg*/,
     Dwarf_Type**     /*types*/,
     Dwarf_Signed *   /*number_of_types*/,
     Dwarf_Error*     /*error*/);
-void dwarf_pubtypes_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_pubtypes_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Type*      /*pubtypes*/,
     Dwarf_Signed     /*number_of_pubtypes*/);
 
@@ -2383,17 +2406,17 @@ void dwarf_pubtypes_dealloc(Dwarf_Debug /*dbg*/,
     as the fourth here does in one call.
     Probably best to use the fourth one and ignore the
     first three. cu_offsset is cu_header offset. */
-int dwarf_pubtypename(Dwarf_Type /*type*/,
+DW_API int dwarf_pubtypename(Dwarf_Type /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-int dwarf_pubtype_type_die_offset(Dwarf_Type /*type*/,
+DW_API int dwarf_pubtype_type_die_offset(Dwarf_Type /*type*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-int dwarf_pubtype_cu_offset(Dwarf_Type /*type*/,
+DW_API int dwarf_pubtype_cu_offset(Dwarf_Type /*type*/,
     Dwarf_Off*       /*return_offset is offset
         of cu_header */,
     Dwarf_Error*     /*error*/);
-int dwarf_pubtype_name_offsets(Dwarf_Type    /*type*/,
+DW_API int dwarf_pubtype_name_offsets(Dwarf_Type    /*type*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset is offset of
@@ -2401,26 +2424,26 @@ int dwarf_pubtype_name_offsets(Dwarf_Type    /*type*/,
     Dwarf_Error*     /*error*/);
 
 /* File-scope static variable name operations.  */
-int dwarf_get_vars(Dwarf_Debug    /*dbg*/,
+DW_API int dwarf_get_vars(Dwarf_Debug    /*dbg*/,
     Dwarf_Var**      /*vars*/,
     Dwarf_Signed *   /*number_of_vars*/,
     Dwarf_Error*     /*error*/);
-void dwarf_vars_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_vars_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Var*       /*vars*/,
     Dwarf_Signed     /*number_of_vars*/);
 
 /*  The following four closely related. */
-int dwarf_varname(Dwarf_Var /*var*/,
+DW_API int dwarf_varname(Dwarf_Var /*var*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-int dwarf_var_die_offset(Dwarf_Var /*var*/,
+DW_API int dwarf_var_die_offset(Dwarf_Var /*var*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-int dwarf_var_cu_offset(Dwarf_Var /*var*/,
+DW_API int dwarf_var_cu_offset(Dwarf_Var /*var*/,
     Dwarf_Off*       /*return_offset of
         the cu header*/,
     Dwarf_Error*     /*error*/);
-int dwarf_var_name_offsets(Dwarf_Var /*var*/,
+DW_API int dwarf_var_name_offsets(Dwarf_Var /*var*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset of the
@@ -2428,26 +2451,26 @@ int dwarf_var_name_offsets(Dwarf_Var /*var*/,
     Dwarf_Error*     /*error*/);
 
 /* weak name operations.  */
-int dwarf_get_weaks(Dwarf_Debug    /*dbg*/,
+DW_API int dwarf_get_weaks(Dwarf_Debug    /*dbg*/,
     Dwarf_Weak**     /*weaks*/,
     Dwarf_Signed *   /*number_of_weaks*/,
     Dwarf_Error*     /*error*/);
-void dwarf_weaks_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_weaks_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Weak*      /*weaks*/,
     Dwarf_Signed     /*number_of_weaks*/);
 
 /*  The following four closely related. */
-int dwarf_weakname(Dwarf_Weak /*weak*/,
+DW_API int dwarf_weakname(Dwarf_Weak /*weak*/,
     char   **        /*returned_name*/,
     Dwarf_Error*     /*error*/);
-int dwarf_weak_die_offset(Dwarf_Weak /*weak*/,
+DW_API int dwarf_weak_die_offset(Dwarf_Weak /*weak*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
-int dwarf_weak_cu_offset(Dwarf_Weak /*weak*/,
+DW_API int dwarf_weak_cu_offset(Dwarf_Weak /*weak*/,
     Dwarf_Off*       /*return_offset of
         the CU header */,
     Dwarf_Error*     /*error*/);
-int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
+DW_API int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     char   **        /*returned_name*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset of
@@ -2455,21 +2478,21 @@ int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     Dwarf_Error*     /*error*/);
 
 /* abbreviation section operations */
-int dwarf_get_abbrev(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_abbrev(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*offset*/,
     Dwarf_Abbrev  *  /*returned_abbrev*/,
     Dwarf_Unsigned*  /*length*/,
     Dwarf_Unsigned*  /*attr_count*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_abbrev_tag(Dwarf_Abbrev /*abbrev*/,
+DW_API int dwarf_get_abbrev_tag(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Half*      /*return_tag_number*/,
     Dwarf_Error*     /*error*/);
-int dwarf_get_abbrev_code(Dwarf_Abbrev /*abbrev*/,
+DW_API int dwarf_get_abbrev_code(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Unsigned*  /*return_code_number*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
+DW_API int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Signed*    /*return_flag*/,
     Dwarf_Error*     /*error*/);
 
@@ -2479,7 +2502,7 @@ int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
     Those doing extra things (like dwarfdump) will
     call with filter_outliers zero to get the raw data
     (effectively); */
-int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
+DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Unsigned   /*indx*/,
     Dwarf_Bool       /*filter_outliers*/,
     Dwarf_Unsigned * /*returned_attr_num*/,
@@ -2488,29 +2511,29 @@ int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Off      * /*offset*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_get_string_section_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_string_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
 /* consumer string section operation */
-int dwarf_get_str(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_str(Dwarf_Debug /*dbg*/,
     Dwarf_Off        /*offset*/,
     char**           /*string*/,
     Dwarf_Signed *   /*strlen_of_string*/,
     Dwarf_Error*     /*error*/);
 
 /* New November 2015 */
-int dwarf_get_frame_section_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_frame_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
 /* New November 2015 */
-int dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
 /*  Consumer op on  gnu .eh_frame info */
-int dwarf_get_fde_list_eh(Dwarf_Debug      /*dbg*/,
+DW_API int dwarf_get_fde_list_eh(Dwarf_Debug      /*dbg*/,
     Dwarf_Cie**      /*cie_data*/,
     Dwarf_Signed*    /*cie_element_count*/,
     Dwarf_Fde**      /*fde_data*/,
@@ -2519,7 +2542,7 @@ int dwarf_get_fde_list_eh(Dwarf_Debug      /*dbg*/,
 
 
 /*  consumer operations on frame info: .debug_frame */
-int dwarf_get_fde_list(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_fde_list(Dwarf_Debug /*dbg*/,
     Dwarf_Cie**      /*cie_data*/,
     Dwarf_Signed*    /*cie_element_count*/,
     Dwarf_Fde**      /*fde_data*/,
@@ -2528,7 +2551,7 @@ int dwarf_get_fde_list(Dwarf_Debug /*dbg*/,
 
 /*  Release storage gotten by dwarf_get_fde_list_eh() or
     dwarf_get_fde_list() */
-void dwarf_fde_cie_list_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_fde_cie_list_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Cie *  /*cie_data*/,
     Dwarf_Signed /*cie_element_count*/,
     Dwarf_Fde *  /*fde_data*/,
@@ -2536,7 +2559,7 @@ void dwarf_fde_cie_list_dealloc(Dwarf_Debug /*dbg*/,
 
 
 
-int dwarf_get_fde_range(Dwarf_Fde /*fde*/,
+DW_API int dwarf_get_fde_range(Dwarf_Fde /*fde*/,
     Dwarf_Addr*      /*low_pc*/,
     Dwarf_Unsigned*  /*func_length*/,
     Dwarf_Ptr*       /*fde_bytes*/,
@@ -2548,16 +2571,16 @@ int dwarf_get_fde_range(Dwarf_Fde /*fde*/,
 
 /*  Useful for IRIX only:  see dwarf_get_cie_augmentation_data()
     dwarf_get_fde_augmentation_data() for GNU .eh_frame. */
-int dwarf_get_fde_exception_info(Dwarf_Fde /*fde*/,
+DW_API int dwarf_get_fde_exception_info(Dwarf_Fde /*fde*/,
     Dwarf_Signed*    /* offset_into_exception_tables */,
     Dwarf_Error*     /*error*/);
 
 
-int dwarf_get_cie_of_fde(Dwarf_Fde /*fde*/,
+DW_API int dwarf_get_cie_of_fde(Dwarf_Fde /*fde*/,
     Dwarf_Cie *      /*cie_returned*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
+DW_API int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
     Dwarf_Unsigned * /*bytes_in_cie*/,
     Dwarf_Small*     /*version*/,
     char        **   /*augmenter*/,
@@ -2570,16 +2593,16 @@ int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
     Dwarf_Error*     /*error*/);
 
 /* dwarf_get_cie_index new September 2009. */
-int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
+DW_API int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
     Dwarf_Signed* /*index*/,
     Dwarf_Error* /*error*/ );
 
 
-int dwarf_get_fde_instr_bytes(Dwarf_Fde /*fde*/,
+DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde /*fde*/,
     Dwarf_Ptr *      /*outinstrs*/, Dwarf_Unsigned * /*outlen*/,
     Dwarf_Error *    /*error*/);
 
-int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
+DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
     Dwarf_Addr       /*pc_requested*/,
     Dwarf_Regtable3* /*reg_table*/,
     Dwarf_Addr*      /*row_pc*/,
@@ -2590,7 +2613,7 @@ int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
     it is inefficient to iterate across all table_columns using this
     function.  Instead call dwarf_get_fde_info_for_all_regs3()
     and index into the table it fills in. */
-int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
+DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Half       /*table_column*/,
     Dwarf_Addr       /*pc_requested*/,
     Dwarf_Small  *   /*value_type*/,
@@ -2605,7 +2628,7 @@ int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
 
 /*  Use this  to get the cfa.
     New function, June 11, 2016*/
-int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde /*fde*/,
+DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Addr       /*pc_requested*/,
     Dwarf_Small  *   /*value_type*/,
     Dwarf_Signed *   /*offset_relevant*/,
@@ -2617,17 +2640,17 @@ int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Addr  *    /* subsequent_pc */,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_fde_for_die(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_fde_for_die(Dwarf_Debug /*dbg*/,
     Dwarf_Die        /*subr_die */,
     Dwarf_Fde  *     /*returned_fde*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_fde_n(Dwarf_Fde* /*fde_data*/,
+DW_API int dwarf_get_fde_n(Dwarf_Fde* /*fde_data*/,
     Dwarf_Unsigned   /*fde_index*/,
     Dwarf_Fde  *     /*returned_fde*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_fde_at_pc(Dwarf_Fde* /*fde_data*/,
+DW_API int dwarf_get_fde_at_pc(Dwarf_Fde* /*fde_data*/,
     Dwarf_Addr       /*pc_of_interest*/,
     Dwarf_Fde  *     /*returned_fde*/,
     Dwarf_Addr*      /*lopc*/,
@@ -2636,18 +2659,18 @@ int dwarf_get_fde_at_pc(Dwarf_Fde* /*fde_data*/,
 
 /*  GNU .eh_frame augmentation information, raw form, see
     Linux Standard Base Core Specification version 3.0 . */
-int dwarf_get_cie_augmentation_data(Dwarf_Cie /* cie*/,
+DW_API int dwarf_get_cie_augmentation_data(Dwarf_Cie /* cie*/,
     Dwarf_Small **   /* augdata */,
     Dwarf_Unsigned * /* augdata_len */,
     Dwarf_Error*     /*error*/);
 /*  GNU .eh_frame augmentation information, raw form, see
     Linux Standard Base Core Specification version 3.0 . */
-int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
+DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
     Dwarf_Small **   /* augdata */,
     Dwarf_Unsigned * /* augdata_len */,
     Dwarf_Error*     /*error*/);
 
-int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
+DW_API int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
     Dwarf_Ptr        /*instruction*/,
     Dwarf_Unsigned   /*i_length*/,
     Dwarf_Frame_Op** /*returned_op_list*/,
@@ -2655,33 +2678,33 @@ int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
     Dwarf_Error*     /*error*/);
 
 /*  Operations on .debug_aranges. */
-int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
     Dwarf_Arange**   /*aranges*/,
     Dwarf_Signed *   /*arange_count*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_aranges_section_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_aranges_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
-int dwarf_get_arange(Dwarf_Arange* /*aranges*/,
+DW_API int dwarf_get_arange(Dwarf_Arange* /*aranges*/,
     Dwarf_Unsigned   /*arange_count*/,
     Dwarf_Addr       /*address*/,
     Dwarf_Arange *   /*returned_arange*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_cu_die_offset(Dwarf_Arange /*arange*/,
+DW_API int dwarf_get_cu_die_offset(Dwarf_Arange /*arange*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_arange_cu_header_offset(Dwarf_Arange /*arange*/,
+DW_API int dwarf_get_arange_cu_header_offset(Dwarf_Arange /*arange*/,
     Dwarf_Off*       /*return_cu_header_offset*/,
     Dwarf_Error*     /*error*/);
 
 /*  DWARF2,3,4 interface.
     New for DWARF4, entries may have segment information.
     *segment is only meaningful if *segment_entry_size is non-zero. */
-int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
+DW_API int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
     Dwarf_Unsigned*  /*segment*/,
     Dwarf_Unsigned*  /*segment_entry_size*/,
     Dwarf_Addr    *  /*start*/,
@@ -2691,7 +2714,7 @@ int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
 
 /*  BEGIN: DWARF5 .debug_macro  interfaces
     NEW November 2015.  */
-int dwarf_get_macro_context(Dwarf_Die /*die*/,
+DW_API int dwarf_get_macro_context(Dwarf_Die /*die*/,
     Dwarf_Unsigned      * /*version_out*/,
     Dwarf_Macro_Context * /*macro_context*/,
     Dwarf_Unsigned      * /*macro_unit_offset_out*/,
@@ -2702,7 +2725,7 @@ int dwarf_get_macro_context(Dwarf_Die /*die*/,
 /*  Just like dwarf_get_macro_context, but instead of using
     DW_AT_macros or DW_AT_GNU_macros to get the offset we just
     take the offset given. */
-int dwarf_get_macro_context_by_offset(Dwarf_Die /*die*/,
+DW_API int dwarf_get_macro_context_by_offset(Dwarf_Die /*die*/,
     Dwarf_Unsigned        /*offset*/,
     Dwarf_Unsigned      * /*version_out*/,
     Dwarf_Macro_Context * /*macro_context*/,
@@ -2713,16 +2736,16 @@ int dwarf_get_macro_context_by_offset(Dwarf_Die /*die*/,
 
 /*  New December 2020. Sometimes its necessary to know
     a context total length including macro 5 header */
-int dwarf_macro_context_total_length(Dwarf_Macro_Context /*head*/,
+DW_API int dwarf_macro_context_total_length(Dwarf_Macro_Context /*head*/,
     Dwarf_Unsigned * /*mac_total_len*/,
     Dwarf_Error    * /*error*/);
 
-void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);
-int dwarf_get_macro_section_name(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);
+DW_API int dwarf_get_macro_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*sec_name_out*/,
     Dwarf_Error * /*err*/);
 
-int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
+DW_API int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
     Dwarf_Half     * /*version*/,
     Dwarf_Unsigned * /*mac_offset*/,
     Dwarf_Unsigned * /*mac_len*/,
@@ -2738,7 +2761,7 @@ int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
 /*  Returns data from the operands table
     in the macro unit header. The last op has
     0 as opcode_number,operand_count and operand_array */
-int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
+DW_API int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
     Dwarf_Half    /*index*/, /* 0 to opcode_count -1 */
     Dwarf_Half  * /*opcode_number*/,
     Dwarf_Half  * /*operand_count*/,
@@ -2751,7 +2774,7 @@ int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
     op_start_section_offset is the section offset of
     the macro operator (which is a single unsigned byte,
     and is followed by the macro operand data). */
-int dwarf_get_macro_op(Dwarf_Macro_Context /*macro_context*/,
+DW_API int dwarf_get_macro_op(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*op_start_section_offset*/,
     Dwarf_Half     * /*macro_operator*/,
@@ -2759,7 +2782,7 @@ int dwarf_get_macro_op(Dwarf_Macro_Context /*macro_context*/,
     const Dwarf_Small **  /*formcode_array*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
+DW_API int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*line_number*/,
     Dwarf_Unsigned * /*index*/,
@@ -2767,13 +2790,13 @@ int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Half     * /*forms_count*/,
     const char    ** /*macro_string*/,
     Dwarf_Error    * /*error*/);
-int dwarf_get_macro_startend_file(Dwarf_Macro_Context /*context*/,
+DW_API int dwarf_get_macro_startend_file(Dwarf_Macro_Context /*context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*line_number*/,
     Dwarf_Unsigned * /*name_index_to_line_tab*/,
     const char    ** /*src_file_name*/,
     Dwarf_Error    * /*error*/);
-int dwarf_get_macro_import(Dwarf_Macro_Context /*macro_context*/,
+DW_API int dwarf_get_macro_import(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*target_offset*/,
     Dwarf_Error    * /*error*/);
@@ -2799,7 +2822,7 @@ struct Dwarf_Macro_Details_s {
 /*  dwarf_print_lines is for use by dwarfdump: it prints
     line info to stdout.
 */
-int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
+DW_API int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
     int * /*error_count_out */);
 
 /*  As of August 2013, dwarf_print_lines() no longer uses printf.
@@ -2831,7 +2854,7 @@ struct Dwarf_Printf_Callback_Info_s {
 
 /*  If called with a NULL newvalues pointer, it simply returns
     the current set of values for this Dwarf_Debug. */
-struct  Dwarf_Printf_Callback_Info_s
+DW_API struct  Dwarf_Printf_Callback_Info_s
 dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
     struct  Dwarf_Printf_Callback_Info_s * /*newvalues*/);
 
@@ -2840,13 +2863,13 @@ dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
     about some compiler errors we detect.
     We return the count of detected errors through the
     pointer.  */
-int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
+DW_API int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
     int         * /*errcount_out*/,
     Dwarf_Error * /*error*/);
 
 /*  Used by dwarfdump -v to print fde offsets from debugging
     info.  */
-int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Fde         /*in_fde*/,
     Dwarf_Off *       /*fde_off*/,
     Dwarf_Off *       /*cie_off*/,
@@ -2855,15 +2878,15 @@ int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
 /* Used by dwarfdump -v to print cie offsets from debugging
    info.
 */
-int dwarf_cie_section_offset(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_cie_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Cie     /*in_cie*/,
     Dwarf_Off *   /*cie_off */,
     Dwarf_Error * /*err*/);
 typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
 
-char* dwarf_find_macro_value_start(char * /*macro_string*/);
+DW_API char* dwarf_find_macro_value_start(char * /*macro_string*/);
 
-int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
     Dwarf_Off            /*macro_offset*/,
     Dwarf_Unsigned       /*maximum_count*/,
     Dwarf_Signed         * /*entry_count*/,
@@ -2872,17 +2895,17 @@ int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
 
 
 /*  dwarf_get_offset_size() New October 2015 */
-int dwarf_get_offset_size(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_offset_size(Dwarf_Debug /*dbg*/,
     Dwarf_Half  *    /*offset_size*/,
     Dwarf_Error *    /*error*/);
-int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
     Dwarf_Half  *    /*addr_size*/,
     Dwarf_Error *    /*error*/);
-int dwarf_get_die_address_size(Dwarf_Die /*die*/,
+DW_API int dwarf_get_die_address_size(Dwarf_Die /*die*/,
     Dwarf_Half  *    /*addr_size*/,
     Dwarf_Error *    /*error*/);
 
-enum Dwarf_Form_Class dwarf_get_form_class(
+DW_API enum Dwarf_Form_Class dwarf_get_form_class(
     Dwarf_Half /* dwversion */,
     Dwarf_Half /* attrnum */,
     Dwarf_Half /*offset_size */,
@@ -2908,7 +2931,7 @@ enum Dwarf_Form_Class dwarf_get_form_class(
 
 /*  Creates a Dwarf_Gdbindex, returning it and
     its values through the pointers. */
-int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
     Dwarf_Gdbindex * /*gdbindexptr*/,
     Dwarf_Unsigned * /*version*/,
     Dwarf_Unsigned * /*cu_list_offset*/,
@@ -2920,23 +2943,23 @@ int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
     const char    ** /*section_name*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_gdbindex_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned       * /*list_length*/,
     Dwarf_Error          * /*error*/);
 
 /*  entryindex: 0 to list_length-1 */
-int dwarf_gdbindex_culist_entry(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_culist_entry(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*cu_offset*/,
     Dwarf_Unsigned * /*cu_length*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned            * /*types_list_length*/,
     Dwarf_Error               * /*error*/);
 
 /*  entryindex: 0 to types_list_length -1 */
-int dwarf_gdbindex_types_culist_entry(
+DW_API int dwarf_gdbindex_types_culist_entry(
     Dwarf_Gdbindex   /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*cu_offset*/,
@@ -2944,36 +2967,36 @@ int dwarf_gdbindex_types_culist_entry(
     Dwarf_Unsigned * /*type_signature*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned            * /*addressarea_list_length*/,
     Dwarf_Error               * /*error*/);
 
 /*    entryindex: 0 to addressarea_list_length-1 */
-int dwarf_gdbindex_addressarea_entry(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_addressarea_entry(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*low_adddress*/,
     Dwarf_Unsigned * /*high_address*/,
     Dwarf_Unsigned * /*cu_index*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned            * /*symtab_list_length*/,
     Dwarf_Error               * /*error*/);
 
 /*  entryindex: 0 to symtab_list_length-1 */
-int dwarf_gdbindex_symboltable_entry(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_symboltable_entry(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*string_offset*/,
     Dwarf_Unsigned * /*cu_vector_offset*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex /*gdbindex*/,
+DW_API int dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex /*gdbindex*/,
     Dwarf_Unsigned   /*cuvector_offset*/,
     Dwarf_Unsigned * /*innercount*/,
     Dwarf_Error    * /*error*/);
 
 
-int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex/*index*/,
+DW_API int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex/*index*/,
     Dwarf_Unsigned   /*cuvector_offset*/,
     Dwarf_Unsigned   /*innerindex*/,
     /* The attr_value is a field of bits. For expanded version
@@ -2981,7 +3004,7 @@ int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex/*index*/,
     Dwarf_Unsigned * /*attr_value*/,
     Dwarf_Error    * /*error*/);
 
-int dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex,
+DW_API int dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex,
     Dwarf_Unsigned   /*value*/,
     Dwarf_Unsigned * /*cu_index*/,
     Dwarf_Unsigned * /*symbol_kind*/,
@@ -2992,19 +3015,19 @@ int dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex,
 /*  The strings in the pool follow (in memory) the cu index
     set and are NUL terminated. */
 
-int dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex /*gdbindexptr*/,
+DW_API int dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*stringoffset*/,
     const char    ** /*string_ptr*/,
     Dwarf_Error   *  /*error*/);
 
-void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
+DW_API void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
 
 /*  END gdbindex/debugfission operations. */
 
 /*  START debugfission dwp .debug_cu_index
     and .debug_tu_index operations. */
 
-int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
     const char *  section_type, /* "tu" or "cu" */
     Dwarf_Xu_Index_Header *     /*xuhdr*/,
     Dwarf_Unsigned *            /*version_number*/,
@@ -3014,7 +3037,7 @@ int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
     const char     **           /*sect_name*/,
     Dwarf_Error *               /*err*/);
 
-int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header /*xuhdr*/,
+DW_API int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header /*xuhdr*/,
     /*  the function returns a pointer to
         the immutable string "tu" or "cu" via this arg.
         Do not free.  */
@@ -3026,7 +3049,7 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Error * /*err*/);
 
 /*  Index values 0 to M-1 are valid. */
-int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
+DW_API int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned     /*index*/,
 
     /*  Returns the hash value. 64  bits.  */
@@ -3037,7 +3060,7 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Error *     /*err*/);
 
 /*  Columns 0 to L-1,  valid. */
-int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header /*xuhdr*/,
+DW_API int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header /*xuhdr*/,
     /* Row index defined to be row zero. */
     Dwarf_Unsigned  /*column_index*/,
     Dwarf_Unsigned* /*DW_SECT_ number*/,
@@ -3045,14 +3068,14 @@ int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Error *   /*err*/);
 
     /* Rows 1 to N col 0 to L-1  are valid */
-int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhdr*/,
+DW_API int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned  /*row_index*/,
     Dwarf_Unsigned  /*column_index*/,
     Dwarf_Unsigned* /*sec_offset*/,
     Dwarf_Unsigned* /*sec_size*/,
     Dwarf_Error *   /*err*/);
 
-void dwarf_xu_header_free(Dwarf_Xu_Index_Header /*xuhdr*/);
+DW_API void dwarf_xu_header_free(Dwarf_Xu_Index_Header /*xuhdr*/);
 
 /*  Defined larger than necessary. This struct, being visible,
     will be difficult to change: binary compatibility. */
@@ -3094,14 +3117,14 @@ typedef struct Dwarf_Debug_Fission_Per_CU_s
     struct Dwarf_Debug_Fission_Per_CU_s before calling this.
     If there is no debugfission data this returns
     DW_DLV_NO_ENTRY (only .dwp objects have debugfission data).  */
-int dwarf_get_debugfission_for_die(Dwarf_Die /* die */,
+DW_API int dwarf_get_debugfission_for_die(Dwarf_Die /* die */,
     Dwarf_Debug_Fission_Per_CU * /* percu_out */,
     Dwarf_Error * /* err */);
 
 /*  Given a key (hash signature)  from a .o,
     find the per-cu information
     for the CU with that key. */
-int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
     Dwarf_Sig8 *                 /*key, hash signature */,
     const char * key_type        /*"cu" or "tu" */,
     Dwarf_Debug_Fission_Per_CU * /*percu_out */,
@@ -3111,10 +3134,10 @@ int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
     and .debug_tu_index operations. */
 
 /*  Utility operations */
-Dwarf_Unsigned dwarf_errno(Dwarf_Error     /*error*/);
-char* dwarf_errmsg(Dwarf_Error    /*error*/);
-char* dwarf_errmsg_by_number(Dwarf_Unsigned /* errornum */);
-void  dwarf_error_creation(Dwarf_Debug /*dbg*/ ,
+DW_API Dwarf_Unsigned dwarf_errno(Dwarf_Error     /*error*/);
+DW_API char* dwarf_errmsg(Dwarf_Error    /*error*/);
+DW_API char* dwarf_errmsg_by_number(Dwarf_Unsigned /* errornum */);
+DW_API void  dwarf_error_creation(Dwarf_Debug /*dbg*/ ,
     Dwarf_Error * /*error*/, char * /*errmsg*/);
 
 
@@ -3126,7 +3149,7 @@ void  dwarf_error_creation(Dwarf_Debug /*dbg*/ ,
     Actual value saved and returned is only 8 bits! Upper bits
     ignored by libdwarf (and zero on return).
     Returns previous value.  */
-int dwarf_set_stringcheck(int /*stringcheck*/);
+DW_API int dwarf_set_stringcheck(int /*stringcheck*/);
 
 /*  'apply' defaults to 1 and means do all
     'rela' relocations on reading in a dwarf object section with
@@ -3141,19 +3164,19 @@ int dwarf_set_stringcheck(int /*stringcheck*/);
     Actual value saved and returned is only 8 bits! Upper bits
     ignored by libdwarf (and zero on return).
     Returns previous value.  */
-int dwarf_set_reloc_application(int /*apply*/);
+DW_API int dwarf_set_reloc_application(int /*apply*/);
 
-void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
+DW_API void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
     Dwarf_Unsigned /*type*/);
 /*  These convenience functions allow type checking at the call,
     whereas dwarf_dealloc itself uses void * so ...
     easy to misuse. */
-void dwarf_dealloc_error(Dwarf_Debug /*dbg*/, Dwarf_Error /*err*/);
-void dwarf_dealloc_die( Dwarf_Die /*die*/);
-void dwarf_dealloc_attribute(Dwarf_Attribute /*attr*/);
+DW_API void dwarf_dealloc_error(Dwarf_Debug /*dbg*/, Dwarf_Error /*err*/);
+DW_API void dwarf_dealloc_die( Dwarf_Die /*die*/);
+DW_API void dwarf_dealloc_attribute(Dwarf_Attribute /*attr*/);
 
 
-int dwarf_attr_offset(Dwarf_Die /*die*/,
+DW_API int dwarf_attr_offset(Dwarf_Die /*die*/,
     Dwarf_Attribute /*attr of above die*/,
     Dwarf_Off     * /*returns offset thru this ptr */,
     Dwarf_Error   * /*error*/);
@@ -3164,7 +3187,7 @@ int dwarf_attr_offset(Dwarf_Die /*die*/,
     with MIPSpro 7.3.1.3 toolchain.).
     This has 21 arguments, which is...unusual.
 */
-int dwarf_get_section_max_offsets_d(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*debug_info_size*/,
     Dwarf_Unsigned * /*debug_abbrev_size*/,
     Dwarf_Unsigned * /*debug_line_size*/,
@@ -3193,7 +3216,7 @@ int dwarf_get_section_max_offsets_d(Dwarf_Debug /*dbg*/,
     by these set routines) of the respective fields. */
 /*  Multiple releases spelled 'initial' as 'inital' .
     The 'inital' spelling should not be used. */
-Dwarf_Half dwarf_set_frame_rule_inital_value(Dwarf_Debug /*dbg*/,
+DW_API Dwarf_Half dwarf_set_frame_rule_inital_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
 /*  Additional interface with correct 'initial' spelling. */
 /*  It is likely you will want to call the following 6 functions
@@ -3205,19 +3228,19 @@ Dwarf_Half dwarf_set_frame_rule_inital_value(Dwarf_Debug /*dbg*/,
     in the distribution would require you re-integrate your
     libdwarf.h changes into the distributed libdwarf.h ...
     so use the following functions instead.*/
-Dwarf_Half dwarf_set_frame_rule_initial_value(Dwarf_Debug /*dbg*/,
+DW_API Dwarf_Half dwarf_set_frame_rule_initial_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
-Dwarf_Half dwarf_set_frame_rule_table_size(Dwarf_Debug /*dbg*/,
+DW_API Dwarf_Half dwarf_set_frame_rule_table_size(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
-Dwarf_Half dwarf_set_frame_cfa_value(Dwarf_Debug /*dbg*/,
+DW_API Dwarf_Half dwarf_set_frame_cfa_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
-Dwarf_Half dwarf_set_frame_same_value(Dwarf_Debug /*dbg*/,
+DW_API Dwarf_Half dwarf_set_frame_same_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
-Dwarf_Half dwarf_set_frame_undefined_value(Dwarf_Debug /*dbg*/,
+DW_API Dwarf_Half dwarf_set_frame_undefined_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
 /*  dwarf_set_default_address_size only sets 'value' if value is
     greater than zero. */
-Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
+DW_API Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
     Dwarf_Small /* value */);
 
 /*  Adds return of the final offset to accommodate
@@ -3226,7 +3249,7 @@ Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
     to be the same as rangesoffset.
     New September 10, 2020.
 */
-int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
     Dwarf_Off       /*rangesoffset*/,
     Dwarf_Die       /*diepointer */,
     Dwarf_Off *     /*realoffset */,
@@ -3234,15 +3257,15 @@ int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
     Dwarf_Signed *  /*listlen*/,
     Dwarf_Unsigned * /*bytecount*/,
     Dwarf_Error *   /*error*/);
-void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);
-int dwarf_get_ranges_section_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_ranges_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
 
 /* New July 2020 for DWARF5 */
-int dwarf_get_debug_sup(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_debug_sup(Dwarf_Debug /*dbg*/,
     Dwarf_Half     * /*version*/,
     Dwarf_Small    * /*is_supplementary*/,
     char          ** /*filename*/,
@@ -3257,7 +3280,7 @@ struct Dwarf_Rnglists_Head_s;
 typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
 /*  For DWARF5 DW_AT_ranges: DW_FORM_sec_offset DW_FORM_rnglistx */
-int dwarf_rnglists_get_rle_head(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_rnglists_get_rle_head(Dwarf_Attribute /*attr*/,
     Dwarf_Half            /*theform*/,
     Dwarf_Unsigned        /*index_or_offset_value*/,
     Dwarf_Rnglists_Head * /*head_out*/,
@@ -3266,7 +3289,7 @@ int dwarf_rnglists_get_rle_head(Dwarf_Attribute /*attr*/,
     Dwarf_Error    *      /*error*/);
 
 /*  Get the rnglist entries details */
-int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
+DW_API int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
     Dwarf_Unsigned   /*entrynum*/,
     unsigned int   * /*entrylen*/,
     unsigned int   * /*rle_value_out*/,
@@ -3277,7 +3300,7 @@ int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
     Dwarf_Unsigned * /*cooked2*/,
     Dwarf_Error *    /*err*/);
 
-void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head);
+DW_API void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head);
 
 /*  Loads all the rnglists headers and
     returns DW_DLV_NO_ENTRY if the section
@@ -3292,7 +3315,7 @@ void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head);
     With DW_DLV_OK it returns the number of
     rnglists headers in the section through
     rnglists_count. */
-int dwarf_load_rnglists(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_load_rnglists(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*rnglists_count*/,
     Dwarf_Error * /*err*/);
 
@@ -3307,7 +3330,7 @@ int dwarf_load_rnglists(Dwarf_Debug /*dbg*/,
     array, and *global_offset_value_out is set
     to the .debug_rnglists section offset of
     the range list. */
-int dwarf_get_rnglist_offset_index_value(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_rnglist_offset_index_value(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*context_index*/,
     Dwarf_Unsigned   /*offsetentry_index*/,
     Dwarf_Unsigned * /*offset_value_out*/,
@@ -3319,7 +3342,7 @@ int dwarf_get_rnglist_offset_index_value(Dwarf_Debug /*dbg*/,
     data generated to look at a specific rangelist
     as returned by  dwarf_rnglists_index_get_rle_head()
     or dwarf_rnglists_offset_get_rle_head. */
-int dwarf_get_rnglist_head_basics(Dwarf_Rnglists_Head /*head*/,
+DW_API int dwarf_get_rnglist_head_basics(Dwarf_Rnglists_Head /*head*/,
     Dwarf_Unsigned * /*rle_count*/,
     Dwarf_Unsigned * /*rnglists_version*/,
     Dwarf_Unsigned * /*rnglists_index_returned*/,
@@ -3344,7 +3367,7 @@ int dwarf_get_rnglist_head_basics(Dwarf_Rnglists_Head /*head*/,
     Returns DW_DLV_NO_ENTRY if index is too high for the table.
     A .debug_rnglists section may contain any number
     of Range List Table Headers with their details.  */
-int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
+DW_API int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned  /*index*/,
     Dwarf_Unsigned * /*header_offset*/,
     Dwarf_Small  *   /*offset_size*/,
@@ -3371,7 +3394,7 @@ int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
 
     This interface assumes there is no
     segment selector. */
-int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned  /*entry_offset*/,
     Dwarf_Unsigned * /*entry_kind*/,
     Dwarf_Unsigned * /*entry_operand1*/,
@@ -3384,7 +3407,7 @@ int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug /*dbg*/,
     the pointers. If any missing operands assign
     zero back through tye operand pointers. */
 
-int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned /*contextnumber*/,
     Dwarf_Unsigned /*entry_offset*/,
     Dwarf_Unsigned /*endoffset*/,
@@ -3407,7 +3430,7 @@ int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     on any type of location list or expression. */
 
 /*  Get the loclists entries details */
-int dwarf_get_loclists_entry_fields(Dwarf_Loc_Head_c /*head*/,
+DW_API int dwarf_get_loclists_entry_fields(Dwarf_Loc_Head_c /*head*/,
     Dwarf_Unsigned   /*entrynum*/,
     unsigned int   * /*entrylen*/,
     unsigned int   * /*code*/,
@@ -3430,7 +3453,7 @@ int dwarf_get_loclists_entry_fields(Dwarf_Loc_Head_c /*head*/,
     With DW_DLV_OK it returns the number of
     loclists headers in the section through
     loclists_count. */
-int dwarf_load_loclists(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_load_loclists(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*loclists_count*/,
     Dwarf_Error * /*err*/);
 
@@ -3445,7 +3468,7 @@ int dwarf_load_loclists(Dwarf_Debug /*dbg*/,
     array, and *global_offset_value_out is set
     to the .debug_loclists section offset of
     the range list. */
-int dwarf_get_loclist_offset_index_value(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_loclist_offset_index_value(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*context_index*/,
     Dwarf_Unsigned   /*offsetentry_index*/,
     Dwarf_Unsigned * /*offset_value_out*/,
@@ -3456,7 +3479,7 @@ int dwarf_get_loclist_offset_index_value(Dwarf_Debug /*dbg*/,
     data generated to look at a specific rangelist
     as returned by  dwarf_loclists_index_get_lle_head()
     or dwarf_loclists_offset_get_lle_head. */
-int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
+DW_API int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
     Dwarf_Small    * /*lkind*/,
     Dwarf_Unsigned * /*lle_count*/,
     Dwarf_Unsigned * /*loclists_version*/,
@@ -3483,7 +3506,7 @@ int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
     Returns DW_DLV_NO_ENTRY if index is too high for the table.
     A .debug_loclists section may contain any number
     of Location  List Table Headers with their details.  */
-int dwarf_get_loclist_context_basics(Dwarf_Debug  /*dbg*/,
+DW_API int dwarf_get_loclist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned  /*index*/,
     Dwarf_Unsigned * /*header_offset*/,
     Dwarf_Small  *   /*offset_size*/,
@@ -3510,7 +3533,7 @@ int dwarf_get_loclist_context_basics(Dwarf_Debug  /*dbg*/,
 
     This interface assumes there is no
     segment selector. */
-int dwarf_get_loclist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
+DW_API int dwarf_get_loclist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned  /*entry_offset*/,
     Dwarf_Unsigned * /*entry_kind*/,
     Dwarf_Unsigned * /*entry_operand1*/,
@@ -3523,7 +3546,7 @@ int dwarf_get_loclist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
     the pointers. If any missing operands assign
     zero back through tye operand pointers. */
 
-int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*contextnumber*/,
     Dwarf_Unsigned   /*entry_offset*/,
     Dwarf_Unsigned   /*endoffset*/,
@@ -3563,18 +3586,18 @@ typedef struct  Dwarf_Str_Offsets_Table_s *  Dwarf_Str_Offsets_Table;
     the table_data pointer if successful.
 
     If there is no such section it returns DW_DLV_NO_ENTRY. */
-int dwarf_open_str_offsets_table_access(Dwarf_Debug  /*dbg*/,
+DW_API int dwarf_open_str_offsets_table_access(Dwarf_Debug  /*dbg*/,
     Dwarf_Str_Offsets_Table * /*table_data*/,
     Dwarf_Error             * /*error*/);
 
 /*  Close access, free table_data. */
-int dwarf_close_str_offsets_table_access(
+DW_API int dwarf_close_str_offsets_table_access(
     Dwarf_Str_Offsets_Table   /*table_data*/,
     Dwarf_Error             * /*error*/);
 
 /*  Call till it returns DW_DLV_NO_ENTRY (normal end)
     or DW_DLV_ERROR (error) and stop. */
-int dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table,
+DW_API int dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table,
     Dwarf_Unsigned * /*unit_length*/,
     Dwarf_Unsigned * /*unit_length_offset*/,
     Dwarf_Unsigned * /*table_start_offset*/,
@@ -3586,14 +3609,14 @@ int dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table,
 
 /*  Valid index values n:  0 <= n <  table_entry_count
     for the active table */
-int dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table,
+DW_API int dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table,
     Dwarf_Unsigned   /*index_to_entry*/,
     Dwarf_Unsigned * /*entry_value*/,
     Dwarf_Error    * /*error*/);
 
 /*  After all str_offsets read this reports final
     wasted-bytes count. */
-int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table,
+DW_API int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table,
     Dwarf_Unsigned * /*wasted_byte_count*/,
     Dwarf_Unsigned * /*table_count*/,
     Dwarf_Error    * /*error*/);
@@ -3631,14 +3654,14 @@ int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table,
     If DW_DLV_NO_ENTRY is returned none of the arguments
     here are touched or used.
     */
-int dwarf_get_harmless_error_list(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_harmless_error_list(Dwarf_Debug /*dbg*/,
     unsigned int   /*count*/,
     const char **  /*errmsg_ptrs_array*/,
     unsigned int * /*newerr_count*/);
 
 /*  Insertion is only for testing the harmless error code, it is not
     necessarily useful otherwise. */
-void dwarf_insert_harmless_error(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_insert_harmless_error(Dwarf_Debug /*dbg*/,
     char * /*newerror*/);
 
 /*  The size of the circular list of strings may be set
@@ -3646,7 +3669,7 @@ void dwarf_insert_harmless_error(Dwarf_Debug /*dbg*/,
     messages are simply dropped.  It returns the previous
     size. If zero passed in the size is unchanged
     and it simply returns the current size  */
-unsigned int dwarf_set_harmless_error_list_size(Dwarf_Debug /*dbg*/,
+DW_API unsigned int dwarf_set_harmless_error_list_size(Dwarf_Debug /*dbg*/,
     unsigned int /*maxcount*/);
 /*  The harmless error strings (if any) are freed when the dbg
     is dwarf_finish()ed. */
@@ -3748,7 +3771,7 @@ DW_API int dwarf_get_VIS_name(unsigned int /*val_in*/,
     from the block of sleb numbers.
     No ugly cast needed to know if
     dwarf_uncompress_integer_block_a() succeeds or not. */
-int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned     /*input_length_in_bytes*/,
     void             * /*input_block*/,
     Dwarf_Unsigned   * /*value_count*/,
@@ -3758,32 +3781,32 @@ int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
 /*  Call this passing in return value from
     dwarf_uncompress_integer_block_a()
     to free the space the decompression allocated. */
-void dwarf_dealloc_uncompressed_block(Dwarf_Debug, void *);
+DW_API void dwarf_dealloc_uncompressed_block(Dwarf_Debug, void *);
 
-extern int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class /*fc*/,
+DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class /*fc*/,
     const char ** /*s_out*/);
 
 /* Convert local offset into global offset */
-int dwarf_convert_to_global_offset(Dwarf_Attribute /*attr*/,
+DW_API int dwarf_convert_to_global_offset(Dwarf_Attribute /*attr*/,
     Dwarf_Off        /*offset*/,
     Dwarf_Off*       /*ret_offset*/,
     Dwarf_Error*     /*error*/);
 
 /* Get both offsets (local and global) */
-int dwarf_die_offsets(Dwarf_Die /*die*/,
+DW_API int dwarf_die_offsets(Dwarf_Die /*die*/,
     Dwarf_Off*    /*global_offset*/,
     Dwarf_Off*    /*local_offset*/,
     Dwarf_Error*  /*error*/);
 
 /* Giving a section name, get its size and address */
-int dwarf_get_section_info_by_name(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_section_info_by_name(Dwarf_Debug /*dbg*/,
     const char *     /*section_name*/,
     Dwarf_Addr*      /*section_addr*/,
     Dwarf_Unsigned*  /*section_size*/,
     Dwarf_Error*     /*error*/);
 
 /* Giving a section index, get its size and address */
-int dwarf_get_section_info_by_index(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_get_section_info_by_index(Dwarf_Debug /*dbg*/,
     int              /*section_index*/,
     const char **    /*section_name*/,
     Dwarf_Addr*      /*section_addr*/,
@@ -3791,16 +3814,16 @@ int dwarf_get_section_info_by_index(Dwarf_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
 
 /*  Get section count, of object file sections. */
-int dwarf_get_section_count(Dwarf_Debug /*dbg*/);
+DW_API int dwarf_get_section_count(Dwarf_Debug /*dbg*/);
 
 /*  Get the version and offset size of a CU context.
     This is useful as a precursor to
     calling dwarf_get_form_class() at times.  */
-int dwarf_get_version_of_die(Dwarf_Die /*die*/,
+DW_API int dwarf_get_version_of_die(Dwarf_Die /*die*/,
     Dwarf_Half * /*version*/,
     Dwarf_Half * /*offset_size*/);
 
-int dwarf_discr_list(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_discr_list(Dwarf_Debug /*dbg*/,
     Dwarf_Small    * /*blockpointer*/,
     Dwarf_Unsigned   /*blocklen*/,
     Dwarf_Dsc_Head * /*dsc_head_out*/,
@@ -3811,7 +3834,7 @@ int dwarf_discr_list(Dwarf_Debug /*dbg*/,
     entry. Callers must know which is the appropriate
     one of the following two interfaces, though both
     will work. */
-int dwarf_discr_entry_u(Dwarf_Dsc_Head /* dsc */,
+DW_API int dwarf_discr_entry_u(Dwarf_Dsc_Head /* dsc */,
     Dwarf_Unsigned   /*entrynum*/,
     Dwarf_Half     * /*out_type*/,
     Dwarf_Unsigned * /*out_discr_low*/,
@@ -3820,7 +3843,7 @@ int dwarf_discr_entry_u(Dwarf_Dsc_Head /* dsc */,
 
 /*  NEW September 2016. Allows easy access to DW_AT_discr_list
     entry. */
-int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
+DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
     Dwarf_Unsigned   /*entrynum*/,
     Dwarf_Half     * /*out_type*/,
     Dwarf_Signed   * /*out_discr_low*/,
@@ -3830,7 +3853,7 @@ int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
 /*  New May 2017.  So users can find out what groups (dwo or COMDAT)
     are in the object and how much to allocate so one can get the
     group-section map data. */
-int dwarf_sec_group_sizes(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_sec_group_sizes(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*section_count_out*/,
     Dwarf_Unsigned * /*group_count_out*/,
     Dwarf_Unsigned * /*selected_group_out*/,
@@ -3843,7 +3866,7 @@ int dwarf_sec_group_sizes(Dwarf_Debug /*dbg*/,
     values and this function fills in the array entries.
     Output ordered by group number and section number.
     */
-int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
+DW_API int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*map_entry_count*/,
     Dwarf_Unsigned * /*group_numbers_array*/,
     Dwarf_Unsigned * /*sec_numbers_array*/,
@@ -3851,18 +3874,18 @@ int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
     Dwarf_Error    * /*error*/);
 
 /*  dwarf_get_endian_copy_function new. December 2019. */
-void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
+DW_API void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
     (void *, const void * /*src*/, unsigned long /*srclen*/);
 
 
 /*  These make the  LEB encoding routines visible to libdwarf
     callers. Added November, 2012. */
 
-int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
+DW_API int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
     int * /*nbytes*/,
     char * /*space*/,
     int /*splen*/);
-int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
+DW_API int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
     int * /*nbytes*/,
     char * /*space*/,
     int /*splen*/);
@@ -3870,11 +3893,11 @@ int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
     caller sets endptr to an address one past the last valid
     address the library should be allowed to
     access. */
-int dwarf_decode_leb128(char * /*leb*/,
+DW_API int dwarf_decode_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     Dwarf_Unsigned * /*outval*/,
     char           * /*endptr*/);
-int dwarf_decode_signed_leb128(char * /*leb*/,
+DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     Dwarf_Signed   * /*outval*/,
     char           * /*endptr*/);
@@ -3890,10 +3913,11 @@ int dwarf_decode_signed_leb128(char * /*leb*/,
 typedef struct Dwarf_Cmdline_Options_s {
     Dwarf_Bool check_verbose_mode;
 } Dwarf_Cmdline_Options;
-extern Dwarf_Cmdline_Options dwarf_cmdline_options;
+
+DW_API extern Dwarf_Cmdline_Options dwarf_cmdline_options;
 
 /* Set libdwarf to reflect some application command line options. */
-void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
+DW_API void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
 
 
 #ifndef DW_FTYPE_UNKNOWN
@@ -3914,9 +3938,9 @@ void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
     avoid tracking by the de_alloc_tree hash
     table if called with v of zero.
     Returns the value the flag was before this call. */
-int dwarf_set_de_alloc_flag(int v);
+DW_API int dwarf_set_de_alloc_flag(int v);
 
-int dwarf_object_detector_path_b(const char * /*path*/,
+DW_API int dwarf_object_detector_path_b(const char * /*path*/,
     char         *   /* outpath_buffer*/,
     unsigned long    /* outpathlen*/,
     char **          /* gl_pathnames*/,
@@ -3929,7 +3953,7 @@ int dwarf_object_detector_path_b(const char * /*path*/,
     int * /*errcode*/);
 
 /* Solely looks for dSYM */
-int dwarf_object_detector_path_dSYM(const char * /*path*/,
+DW_API int dwarf_object_detector_path_dSYM(const char * /*path*/,
     char *         /* outpath*/,
     unsigned long  /* outpath_len*/,
     char **        /* gl_pathnames*/,
@@ -3946,7 +3970,7 @@ int dwarf_object_detector_path_dSYM(const char * /*path*/,
 #define DW_PATHSOURCE_dsym      2 /* MacOS dSYM */
 #define DW_PATHSOURCE_debuglink 3 /* GNU debuglink */
 
-int dwarf_object_detector_fd(int /*fd*/,
+DW_API int dwarf_object_detector_fd(int /*fd*/,
     unsigned int * /*ftype*/,
     unsigned int * /*endian*/,
     unsigned int * /*offsetsize*/,
@@ -3955,5 +3979,5 @@ int dwarf_object_detector_fd(int /*fd*/,
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 #endif /* _LIBDWARF_H */
