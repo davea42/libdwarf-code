@@ -107,7 +107,8 @@ test_makenametest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_makenametest_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/lib/dwarftsearch
 
 test_helpertree_SOURCES = helpertree_test.c \
     $(top_srcdir)/src/bin/dwarfdump/helpertree.c \
@@ -116,7 +117,8 @@ test_helpertree_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_helpertree_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/lib/dwarftsearch
 
 test_macrocheck_SOURCES = \
     $(top_srcdir)/src/bin/dwarfdump/macrocheck.c \
@@ -158,7 +160,8 @@ test_tied_SOURCES = dwarf_tied_test.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c
 test_tied_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_tied_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_getnametest_SOURCES = getnametest.c \

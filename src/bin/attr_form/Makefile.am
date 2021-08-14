@@ -36,5 +36,5 @@ attrform_CPPFLAGS = -DBUILD_NONLIB_SOURCE -DSKIP_AF_CHECK -DTRIVIAL_NAMING \
  -I$(top_builddir) \
  -I$(top_srcdir)/src/bin/dwarfdump  \
  -I$(top_srcdir)/src/lib/libdwarf \
- -I$(top_builddir)/src/lib/libdwarf
+ -I$(top_srcdir)/src/lib/dwarftsearch
 attrform_CFLAGS = $(DWARF_CFLAGS_WARN)
