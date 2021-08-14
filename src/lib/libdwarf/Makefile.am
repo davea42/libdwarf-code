@@ -104,8 +104,6 @@ dwarf_reloc_ppc64.h \
 dwarf_reloc_x86_64.h \
 dwarf_str_offsets.c \
 dwarf_str_offsets.h \
-dwarfstring.c       \
-dwarfstring.h       \
 dwarf_stringsection.c \
 dwarf_tied.c \
 dwarf_tied_decls.h \
@@ -126,11 +124,16 @@ libdwarf.h \
 libdwarf_private.h \
 memcpy_swap.h
 
-libdwarf_la_CPPFLAGS = -DLIBDWARF_BUILD
+libdwarf_la_CPPFLAGS = \
+-DLIBDWARF_BUILD \
+-I$(top_srcdir)/src/lib/dwarfstring
 
 libdwarf_la_CFLAGS = @ZLIB_CFLAGS@ $(DWARF_CFLAGS_WARN)
 
-libdwarf_la_LIBADD = @DWARF_LIBS@ @ZLIB_LIBS@
+libdwarf_la_LIBADD = \
+$(top_builddir)/src/lib/dwarfstring/libdwarfstring.la \
+@DWARF_LIBS@ \
+@ZLIB_LIBS@
 
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
@@ -168,5 +171,4 @@ CMakeLists.txt \
 cmake/libdwarf-config.cmake \
 NEWS \
 README \
-CODINGSTYLE 
-
+CODINGSTYLE

@@ -53,9 +53,14 @@ pro_weaks.c
 
 
 libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN)
-libdwarfp_la_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf
+libdwarfp_la_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/dwarfstring \
+-I$(top_srcdir)/src/lib/libdwarf
 
-libdwarfp_la_LIBADD = @DWARF_LIBS@ $(top_builddir)/src/lib/libdwarf/libdwarf.la
+libdwarfp_la_LIBADD = \
+@DWARF_LIBS@ \
+$(top_builddir)/src/lib/dwarfstring/libdwarfstring.la \
+$(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 libdwarfp_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
@@ -65,15 +70,10 @@ $(top_srcdir)/src/lib/libdwarf/dwarf.h  \
 $(top_srcdir)/src/lib/libdwarfp/libdwarfp.h \
 $(top_srcdir)/src/lib/libdwarf/libdwarf.h
 
-libdwarfpdevdir = $(datadir)/src/lib/libdwarfp/libdwarfp-devel
-libdwarfpdev_DATA = 
-
 EXTRA_DIST = \
 COPYING \
 ChangeLog \
 CMakeLists.txt \
 cmake/libdwarfp-config.cmake \
 NEWS \
-README \
-$(libdwarfp_DATA) \
-$(libdwarfpdev_DATA)
+README

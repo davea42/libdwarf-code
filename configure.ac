@@ -609,6 +609,7 @@ AC_MSG_RESULT([${have_regex}])
 
 AC_CONFIG_FILES([
 Makefile
+src/lib/dwarfstring/Makefile
 src/lib/libdwarf/Makefile
 src/lib/libdwarfp/Makefile
 src/bin/dwarfdump/Makefile
