@@ -46,8 +46,8 @@ check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
  test_errmsglist test_canonical
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.h \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.c
 test_dwarfstring_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
 test_dwarfstring_LDADD = $(top_builddir)/src/lib/dwarfstring/libdwarfstring.la
 
@@ -58,8 +58,8 @@ test_dwarfstring_CPPFLAGS = \
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
    $(top_srcdir)/src/lib/libdwarfp/pro_log_extra_flag_strings.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.h \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.c
 test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -69,8 +69,8 @@ test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 test_extra_flag_strings_LDADD = $(top_builddir)/src/lib/dwarfstring/libdwarfstring.la
 
 test_linkedtopath_SOURCES = test_linkedtopath.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.h \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_debuglink.h \
    $(top_srcdir)/src/lib/libdwarf/dwarf_debuglink.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_error.h
@@ -237,4 +237,4 @@ testobjLE32PE.base \
 testobjLE32PE.exe \
 testobjLE32PE.test.c \
 testuriLE64ELf.base \
-testuriLE64ELf.obj 
+testuriLE64ELf.obj
