@@ -159,7 +159,7 @@ test_dwarflebtest_CPPFLAGS = -DTESTING \
 
 test_tied_SOURCES = dwarf_tied_test.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_tied.c \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c
+    $(top_srcdir)/src/lib/dwarftsearch/dwarf_tsearchhash.c
 test_tied_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_tied_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) \
