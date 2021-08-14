@@ -153,7 +153,7 @@ typedef int (*Dwarf_Callback_Func)(
 /*  Returns DW_DLV_OK or DW_DLV_ERROR and
     if DW_DLV_OK returns the Dwarf_P_Debug
     pointer through the dbg_returned argument. */
-int dwarf_producer_init(
+DW_API int dwarf_producer_init(
     Dwarf_Unsigned        /*flags*/,
     Dwarf_Callback_Func   /*func*/,
     Dwarf_Handler         /*errhand*/,
@@ -168,30 +168,30 @@ int dwarf_producer_init(
 /*  Returns DW_DLV_OK or DW_DLV_ERROR.
     The desired form must be DW_FORM_string (the default)
     or DW_FORM_strp.  */
-int dwarf_pro_set_default_string_form(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_pro_set_default_string_form(Dwarf_P_Debug /*dbg*/,
     int /*desired_form*/,
     Dwarf_Error*     /*error*/);
 
 /*  New September 2016. The preferred interface. */
-int dwarf_transform_to_disk_form_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_transform_to_disk_form_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Signed *   /*nbufs_out*/,
     Dwarf_Error*     /*error*/);
 
 /* New September 2016. Preferred. */
-int dwarf_get_section_bytes_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_get_section_bytes_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Signed     /*dwarf_section*/,
     Dwarf_Signed*    /*elf_section_index*/,
     Dwarf_Unsigned*  /*length*/,
     Dwarf_Ptr     *  /*section_bytes*/,
     Dwarf_Error*     /*error*/);
 
-int  dwarf_get_relocation_info_count(
+DW_API int  dwarf_get_relocation_info_count(
     Dwarf_P_Debug    /*dbg*/,
     Dwarf_Unsigned * /*count_of_relocation_sections*/,
     int *                /*drd_buffer_version*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_get_relocation_info(
+DW_API int dwarf_get_relocation_info(
     Dwarf_P_Debug           /*dbg*/,
     Dwarf_Signed          * /*elf_section_index*/,
     Dwarf_Signed          * /*elf_section_index_link*/,
@@ -206,36 +206,36 @@ int dwarf_get_relocation_info(
 /* Markers are not written  to DWARF2/3/4, they are user
    defined and may be used for any purpose.
 */
-int dwarf_add_die_marker_a(Dwarf_P_Debug dbg,
+DW_API int dwarf_add_die_marker_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
     Dwarf_Unsigned marker,
     Dwarf_Error * error);
 
-int dwarf_get_die_markers_a(
+DW_API int dwarf_get_die_markers_a(
     Dwarf_P_Debug     /*dbg*/,
     Dwarf_P_Marker *  /*marker_list*/,
     Dwarf_Unsigned *  /*marker_count*/,
     Dwarf_Error *     /*error*/);
 
-int dwarf_get_string_attributes_count(Dwarf_P_Debug,
+DW_API int dwarf_get_string_attributes_count(Dwarf_P_Debug,
     Dwarf_Unsigned *,
     int *,
     Dwarf_Error *);
 
-int dwarf_get_string_attributes_info(Dwarf_P_Debug,
+DW_API int dwarf_get_string_attributes_info(Dwarf_P_Debug,
     Dwarf_Signed *,
     Dwarf_Unsigned *,
     Dwarf_P_String_Attr *,
     Dwarf_Error *);
 
-void dwarf_reset_section_bytes(Dwarf_P_Debug /*dbg*/);
+DW_API void dwarf_reset_section_bytes(Dwarf_P_Debug /*dbg*/);
 
 /*  Returns DW_DLV_OK or DW_DLV_ERROR */
-int dwarf_producer_finish_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_producer_finish_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error* /*error*/);
 
 /* New July 2020 for testing DWARF5 */
-int dwarf_add_debug_sup(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_debug_sup(Dwarf_P_Debug /*dbg*/,
     Dwarf_Half      /*version*/,
     Dwarf_Small     /*is_supplementary*/,
     char          * /*filename*/,
@@ -244,7 +244,7 @@ int dwarf_add_debug_sup(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error * /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_targ_address_c(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_targ_address_c(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die         /*ownerdie*/,
     Dwarf_Half          /*attr*/,
     Dwarf_Unsigned      /*pc_value*/,
@@ -253,7 +253,7 @@ int dwarf_add_AT_targ_address_c(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*        /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_block_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_block_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_Small*    /*block_data*/,
@@ -262,7 +262,7 @@ int dwarf_add_AT_block_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_ref_address_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_ref_address_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_Unsigned  /*pc_value*/,
@@ -271,7 +271,7 @@ int dwarf_add_AT_ref_address_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_Unsigned  /*value*/,
@@ -279,7 +279,7 @@ int dwarf_add_AT_unsigned_const_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_signed_const_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_signed_const_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_Signed    /*value*/,
@@ -287,7 +287,7 @@ int dwarf_add_AT_signed_const_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_reference_c(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_reference_c(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_P_Die     /*otherdie*/,
@@ -301,14 +301,14 @@ int dwarf_add_AT_reference_c(Dwarf_P_Debug /*dbg*/,
    for forward-references.
    New 22 October, 2013.
 */
-int dwarf_fixup_AT_reference_die(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_fixup_AT_reference_die(Dwarf_P_Debug /*dbg*/,
     Dwarf_Half    /* attrnum */,
     Dwarf_P_Die   /* sourcedie*/,
     Dwarf_P_Die   /* targetdie*/,
     Dwarf_Error * /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_dataref_a(
+DW_API int dwarf_add_AT_dataref_a(
     Dwarf_P_Debug   /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
@@ -318,14 +318,14 @@ int dwarf_add_AT_dataref_a(
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_const_value_string_a(
+DW_API int dwarf_add_AT_const_value_string_a(
     Dwarf_P_Die /*ownerdie*/,
     char*           /*string_value*/,
     Dwarf_P_Attribute * /*attr_out*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_location_expr_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_location_expr_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_P_Expr    /*loc_expr*/,
@@ -333,7 +333,7 @@ int dwarf_add_AT_location_expr_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  Preferred as of December 2018. */
-int dwarf_add_AT_string_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_string_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     char*           /*string*/,
@@ -341,7 +341,7 @@ int dwarf_add_AT_string_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_flag_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_AT_flag_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Half      /*attr*/,
     Dwarf_Small     /*flag*/,
@@ -349,7 +349,7 @@ int dwarf_add_AT_flag_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_producer_a(Dwarf_P_Die /*ownerdie*/,
+DW_API int dwarf_add_AT_producer_a(Dwarf_P_Die /*ownerdie*/,
     char*           /*producer_string*/,
     Dwarf_P_Attribute * /*attr_out*/,
     Dwarf_Error*    /*error*/);
@@ -358,60 +358,60 @@ int dwarf_add_AT_producer_a(Dwarf_P_Die /*ownerdie*/,
     though it should only be in limited use. DWARF5 only.
     Returns DW_DLV_OK on success, DW_DLV_ERROR on failure.
     Returns the new attribute pointer through *return_attr. */
-int dwarf_add_AT_data16(Dwarf_P_Die /*ownerdie*/,
+DW_API int dwarf_add_AT_data16(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half    /*attrnum*/,
     Dwarf_Form_Data16 * /* pointstovalue */,
     Dwarf_P_Attribute * /* return_attr */,
     Dwarf_Error * /*error*/);
 
 /*  November 2018. DW_AT_implicit const generation. */
-int dwarf_add_AT_implicit_const(Dwarf_P_Die /*ownerdie*/,
+DW_API int dwarf_add_AT_implicit_const(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half /*attrnum*/,
     Dwarf_Signed /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error * /*error*/);
 
 /*  New December 2018. */
-int dwarf_add_AT_any_value_sleb_a(Dwarf_P_Die /*ownerdie*/,
+DW_API int dwarf_add_AT_any_value_sleb_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half    /*attrnum*/,
     Dwarf_Signed  /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error * /*error*/);
 
 /*  Preferred as of December 2018. */
-int dwarf_add_AT_const_value_signedint_a(Dwarf_P_Die /*ownerdie*/,
+DW_API int dwarf_add_AT_const_value_signedint_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Signed    /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die /*ownerdie*/,
+DW_API int dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half      /*attrnum*/,
     Dwarf_Unsigned  /*signed_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error *   /*error*/);
 
 /*  New December 2018.  .Only for DW_AT_const_value. */
-int dwarf_add_AT_const_value_unsignedint_a(
+DW_API int dwarf_add_AT_const_value_unsignedint_a(
     Dwarf_P_Die     /*ownerdie*/,
     Dwarf_Unsigned  /*unsigned_value*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_comp_dir_a(Dwarf_P_Die /*ownerdie*/,
+DW_API int dwarf_add_AT_comp_dir_a(Dwarf_P_Die /*ownerdie*/,
     char*           /*current_working_directory*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_name_a(Dwarf_P_Die    /*die*/,
+DW_API int dwarf_add_AT_name_a(Dwarf_P_Die    /*die*/,
     char*           /*name*/,
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_AT_with_ref_sig8_a(
+DW_API int dwarf_add_AT_with_ref_sig8_a(
     Dwarf_P_Die   /*ownerdie */,
     Dwarf_Half    /*attrnum */,
     const Dwarf_Sig8 *  /*sig8_in*/,
@@ -420,13 +420,13 @@ int dwarf_add_AT_with_ref_sig8_a(
 
 
 /* Producer line creation functions (.debug_line) */
-int dwarf_add_directory_decl_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_directory_decl_a(Dwarf_P_Debug /*dbg*/,
     char*           /*name*/,
     Dwarf_Unsigned * /*index_in_directories*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_file_decl_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_file_decl_a(Dwarf_P_Debug /*dbg*/,
     char*           /*name*/,
     Dwarf_Unsigned  /*dir_index*/,
     Dwarf_Unsigned  /*time_last_modified*/,
@@ -435,7 +435,7 @@ int dwarf_add_file_decl_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_line_entry_c(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_line_entry_c(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned  /*file_index*/,
     Dwarf_Addr      /*code_address*/,
     Dwarf_Unsigned  /*lineno*/,
@@ -449,18 +449,18 @@ int dwarf_add_line_entry_c(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_lne_set_address_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_lne_set_address_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned  /*offset*/,
     Dwarf_Unsigned  /*symbol_index*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_lne_end_sequence_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_lne_end_sequence_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Addr      /*end_address*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_frame_cie_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_add_frame_cie_a(Dwarf_P_Debug /*dbg*/,
     char*           /*augmenter*/,
     Dwarf_Small     /*code_alignment_factor*/,
     Dwarf_Small     /*data_alignment_factor*/,
@@ -471,7 +471,7 @@ int dwarf_add_frame_cie_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_frame_fde_c(
+DW_API int dwarf_add_frame_fde_c(
     Dwarf_P_Debug  /*dbg*/,
     Dwarf_P_Fde    /*fde*/,
     Dwarf_P_Die    /*die*/,
@@ -485,7 +485,7 @@ int dwarf_add_frame_fde_c(
     Dwarf_Error*   /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_frame_info_c(
+DW_API int dwarf_add_frame_info_c(
     Dwarf_P_Debug   /*dbg*/,
     Dwarf_P_Fde     /*fde*/,
     Dwarf_P_Die     /*die*/,
@@ -501,7 +501,7 @@ int dwarf_add_frame_info_c(
     Dwarf_Error*    /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_add_fde_inst_a(
+DW_API int dwarf_add_fde_inst_a(
     Dwarf_P_Fde     /*fde*/,
     Dwarf_Small     /*op*/,
     Dwarf_Unsigned  /*val1*/,
@@ -509,18 +509,18 @@ int dwarf_add_fde_inst_a(
     Dwarf_Error*    /*error*/);
 
 /* New September 17, 2009 */
-int dwarf_insert_fde_inst_bytes(
+DW_API int dwarf_insert_fde_inst_bytes(
     Dwarf_P_Debug  /*dbg*/,
     Dwarf_P_Fde    /*fde*/,
     Dwarf_Unsigned /*len*/,
     Dwarf_Ptr      /*ibytes*/,
     Dwarf_Error*   /*error*/);
 
-int dwarf_new_fde_a(Dwarf_P_Debug    /*dbg*/,
+DW_API int dwarf_new_fde_a(Dwarf_P_Debug    /*dbg*/,
     Dwarf_P_Fde * /*fde_out*/,
     Dwarf_Error* /*error*/);
 
-int dwarf_fde_cfa_offset_a(
+DW_API int dwarf_fde_cfa_offset_a(
     Dwarf_P_Fde     /*fde*/,
     Dwarf_Unsigned  /*register_number*/,
     Dwarf_Signed    /*offset*/,
@@ -529,7 +529,7 @@ int dwarf_fde_cfa_offset_a(
 /*  die creation & addition routines
     dwarf_new_die_a() new September 2016.
     Preferred over dwarf_new_die(). */
-int dwarf_new_die_a(
+DW_API int dwarf_new_die_a(
     Dwarf_P_Debug   /*dbg*/,
     Dwarf_Tag       /*tag*/,
     Dwarf_P_Die     /*parent*/,
@@ -540,7 +540,7 @@ int dwarf_new_die_a(
     Dwarf_Error*    /*error*/);
 
 /* New September 2016. */
-int dwarf_add_die_to_debug_a(
+DW_API int dwarf_add_die_to_debug_a(
     Dwarf_P_Debug   /*dbg*/,
     Dwarf_P_Die     /*die*/,
     Dwarf_Error*    /*error*/);
@@ -549,14 +549,14 @@ int dwarf_add_die_to_debug_a(
 /* Markers are not written  to DWARF2/3/4, they are user
    defined and may be used for any purpose.
 */
-int dwarf_get_die_marker_a(
+DW_API int dwarf_get_die_marker_a(
     Dwarf_P_Debug   /*dbg*/,
     Dwarf_P_Die     /*die*/,
     Dwarf_Unsigned *  /*marker*/,
     Dwarf_Error *   /*error*/);
 
 /*  New September 2016. Preferred version */
-int dwarf_die_link_a(
+DW_API int dwarf_die_link_a(
     Dwarf_P_Die     /*die*/,
     Dwarf_P_Die     /*parent*/,
     Dwarf_P_Die     /*child*/,
@@ -572,8 +572,7 @@ int dwarf_die_link_a(
     on success. Supercedes dwarf_compress_integer_block():
     as no ugly cast needed to know if
     dwarf_compress_integer_block_a() succeeds or not. */
-int
-dwarf_compress_integer_block_a(
+DW_API int dwarf_compress_integer_block_a(
     Dwarf_P_Debug    /*dbg*/,
     Dwarf_Unsigned   /*input_array_length*/,
     Dwarf_Signed   * /*input_array*/,
@@ -581,7 +580,7 @@ dwarf_compress_integer_block_a(
     void          ** /*output_block_returned*/,
     Dwarf_Error    * /*error */);
 /*  The following should be avoided as of February 2019. */
-void * dwarf_compress_integer_block(
+DW_API void * dwarf_compress_integer_block(
     Dwarf_P_Debug,    /*dbg*/
     Dwarf_Bool,       /*signed==true (or unsigned)*/
     Dwarf_Small,      /*size of integer units: 8, 16, 32, 64*/
@@ -592,15 +591,15 @@ void * dwarf_compress_integer_block(
 );
 
 /* Operations to create location expressions. */
-int dwarf_new_expr_a(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_new_expr_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Expr * /*expr_out*/,
     Dwarf_Error* /*error*/);
 
-void dwarf_expr_reset(
+DW_API void dwarf_expr_reset(
     Dwarf_P_Expr      /*expr*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_add_expr_gen_a(
+DW_API int dwarf_add_expr_gen_a(
     Dwarf_P_Expr      /*expr*/,
     Dwarf_Small       /*opcode*/,
     Dwarf_Unsigned    /*val1*/,
@@ -608,25 +607,25 @@ int dwarf_add_expr_gen_a(
     Dwarf_Unsigned  * /*next_byte_offset*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_add_expr_addr_c(
+DW_API int dwarf_add_expr_addr_c(
     Dwarf_P_Expr      /*expr*/,
     Dwarf_Unsigned    /*addr*/,
     Dwarf_Unsigned    /*sym_index*/,
     Dwarf_Unsigned * /*next_byte_offset_out*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_expr_current_offset_a(
+DW_API int dwarf_expr_current_offset_a(
     Dwarf_P_Expr      /*expr*/,
     Dwarf_Unsigned * /*next_byte_offset_out*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_expr_into_block_a(
+DW_API int dwarf_expr_into_block_a(
     Dwarf_P_Expr      /*expr*/,
     Dwarf_Unsigned*   /*length*/,
     Dwarf_Small    ** /*start_address*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_add_arange_c(
+DW_API int dwarf_add_arange_c(
     Dwarf_P_Debug  /*dbg*/,
     Dwarf_Addr     /*begin_address*/,
     Dwarf_Unsigned /*length*/,
@@ -635,37 +634,37 @@ int dwarf_add_arange_c(
     Dwarf_Addr     /*offset_from_end_symbol*/,
     Dwarf_Error *  /*error*/);
 
-int dwarf_add_pubname_a(
+DW_API int dwarf_add_pubname_a(
     Dwarf_P_Debug      /*dbg*/,
     Dwarf_P_Die        /*die*/,
     char*              /*pubname_name*/,
     Dwarf_Error*       /*error*/);
 
-int dwarf_add_pubtype_a(
+DW_API int dwarf_add_pubtype_a(
     Dwarf_P_Debug      /*dbg*/,
     Dwarf_P_Die        /*die*/,
     char*              /*pubtype_name*/,
     Dwarf_Error*       /*error*/);
 
-int dwarf_add_funcname_a(
+DW_API int dwarf_add_funcname_a(
     Dwarf_P_Debug      /*dbg*/,
     Dwarf_P_Die        /*die*/,
     char*              /*func_name*/,
     Dwarf_Error*       /*error*/);
 
-int dwarf_add_typename_a(
+DW_API int dwarf_add_typename_a(
     Dwarf_P_Debug     /*dbg*/,
     Dwarf_P_Die       /*die*/,
     char*             /*type_name*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_add_varname_a(
+DW_API int dwarf_add_varname_a(
     Dwarf_P_Debug     /*dbg*/,
     Dwarf_P_Die       /*die*/,
     char*             /*var_name*/,
     Dwarf_Error*      /*error*/);
 
-int dwarf_add_weakname_a(
+DW_API int dwarf_add_weakname_a(
     Dwarf_P_Debug    /*dbg*/,
     Dwarf_P_Die      /*die*/,
     char*            /*weak_name*/,
@@ -676,7 +675,7 @@ int dwarf_add_weakname_a(
 /*  dwarf_force_dnames forces creation
     of .debug_names (if DWARF5 being produced)
     even if empty. Only for testing libdwarf. */
-int dwarf_force_dnames(Dwarf_P_Debug /* dbg */,
+DW_API int dwarf_force_dnames(Dwarf_P_Debug /* dbg */,
     int  /*elfsectno*/,
     Dwarf_Error*     /*error*/);
 
@@ -688,33 +687,33 @@ int dwarf_force_dnames(Dwarf_P_Debug /* dbg */,
     Functions must be called in right order: the section is output
     In the order these are presented.
 */
-int dwarf_def_macro(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_def_macro(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned   /*line*/,
     char *           /*macname, with (arglist), no space before (*/,
     char *           /*macvalue*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_undef_macro(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_undef_macro(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned   /*line*/,
     char *           /*macname, no arglist, of course*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_start_macro_file(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_start_macro_file(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned   /*fileindex*/,
     Dwarf_Unsigned   /*linenumber*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_end_macro_file(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_end_macro_file(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
 
-int dwarf_vendor_ext(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_vendor_ext(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned   /*constant*/,
     char *           /*string*/,
     Dwarf_Error*     /*error*/);
 
 /* end macinfo producer functions */
 
-int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
+DW_API int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned * /*str_count*/,
     Dwarf_Unsigned * /*str_total_length*/,
     Dwarf_Unsigned * /*count_debug_str*/,

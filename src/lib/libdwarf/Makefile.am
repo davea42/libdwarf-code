@@ -80,6 +80,8 @@ dwarf_macro.c \
 dwarf_macro.h \
 dwarf_macro5.c \
 dwarf_macro5.h \
+dwarf_memcpy_swap.h \
+dwarf_memcpy_swap.c \
 dwarf_names.c \
 dwarf_object_detector.c \
 dwarf_object_detector.h \
@@ -121,8 +123,7 @@ dwarf_xu_index.c \
 dwarf_xu_index.h \
 crc32.c \
 libdwarf.h \
-libdwarf_private.h \
-memcpy_swap.h
+libdwarf_private.h
 
 libdwarf_la_CPPFLAGS = \
 -DLIBDWARF_BUILD \

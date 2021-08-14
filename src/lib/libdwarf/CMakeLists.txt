@@ -18,6 +18,7 @@ dwarf_line.c dwarf_loc.c
 dwarf_loclists.c
 dwarf_locationop_read.c
 dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
+dwarf_memcpy_swap.c
 dwarf_names.c
 dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_peread.c 
@@ -60,7 +61,7 @@ dwarf_str_offsets.h
 dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h 
 dwarf_xu_index.h libdwarf_private.h
 dwarf_macho_loader.h
-memcpy_swap.h)
+dwarf_memcpy_swap.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
     ${CMAKE_SOURCE_DIR}/cmake/config.h.cmake 

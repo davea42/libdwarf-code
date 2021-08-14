@@ -64,7 +64,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "memcpy_swap.h"
+#include "dwarf_memcpy_swap.h"
 #include "dwarf_harmless.h"
 #include "dwarfstring.h"
 

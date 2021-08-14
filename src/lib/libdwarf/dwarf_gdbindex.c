@@ -52,7 +52,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarfstring.h"
-#include "memcpy_swap.h"
+#include "dwarf_memcpy_swap.h"
 #include "dwarf_gdbindex.h"
 
 /*  The dwarf_util macro READ_UNALIGNED

@@ -99,7 +99,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_opaque.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"
-#include "memcpy_swap.h"
+#include "dwarf_memcpy_swap.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_object_detector.h"
 #include "dwarf_elfstructs.h"

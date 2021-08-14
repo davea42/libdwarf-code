@@ -87,7 +87,7 @@ calls
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
-#include "memcpy_swap.h"
+#include "dwarf_memcpy_swap.h"
 #include "dwarf_elfstructs.h"
 #include "dwarf_reading.h"
 #include "dwarf_elf_defines.h"
