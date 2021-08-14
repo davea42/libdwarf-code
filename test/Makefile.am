@@ -46,33 +46,38 @@ check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
  test_errmsglist test_canonical
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.h \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.c
 test_dwarfstring_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
 
 test_dwarfstring_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/dwarfstring \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
    $(top_srcdir)/src/lib/libdwarfp/pro_log_extra_flag_strings.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.h \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.c
 test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/dwarfstring \
 -I$(top_srcdir)/src/lib/libdwarfp \
--I$(top_srcdir)/src/lib/libdwarf 
+-I$(top_srcdir)/src/lib/libdwarf
 
 test_linkedtopath_SOURCES = test_linkedtopath.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.h \
+   $(top_srcdir)/src/lib/dwarfstring/dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_debuglink.h \
    $(top_srcdir)/src/lib/libdwarf/dwarf_debuglink.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_error.h
 test_linkedtopath_CFLAGS =  $(DWARF_CFLAGS_WARN) -DTESTING
 test_linkedtopath_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir) \
+-I$(top_builddir) \
+-I$(top_srcdir)/src/lib/dwarfstring \
+-I$(top_srcdir)/src/lib/libdwarf
 
 # Just ensures the headers usable, no C source errors.
 test_headersok_SOURCES = test_headersok.c \
@@ -233,4 +238,4 @@ testobjLE32PE.base \
 testobjLE32PE.exe \
 testobjLE32PE.test.c \
 testuriLE64ELf.base \
-testuriLE64ELf.obj 
+testuriLE64ELf.obj
