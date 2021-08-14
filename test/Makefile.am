@@ -107,35 +107,39 @@ test_makenametest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_makenametest_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/lib/dwarftsearch
 
 test_helpertree_SOURCES = helpertree_test.c \
     $(top_srcdir)/src/bin/dwarfdump/helpertree.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c 
+    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_helpertree_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_helpertree_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/lib/dwarftsearch
 
 test_macrocheck_SOURCES = \
     $(top_srcdir)/src/bin/dwarfdump/macrocheck.c \
     $(top_srcdir)/src/bin/dwarfdump/esb.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c 
+    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_macrocheck_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_macrocheck_CPPFLAGS =  -DSELFTEST \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/lib/dwarftsearch
 
 test_testesb_SOURCES = testesb.c \
     $(top_srcdir)/src/bin/dwarfdump/esb.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c 
+    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_testesb_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_testesb_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/lib/dwarftsearch
 
 test_sectionbitmaps_SOURCES = section_bitmaps_test.c \
     $(top_srcdir)/src/bin/dwarfdump/section_bitmaps.c
@@ -155,10 +159,11 @@ test_dwarflebtest_CPPFLAGS = -DTESTING \
 
 test_tied_SOURCES = dwarf_tied_test.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_tied.c \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c
+    $(top_srcdir)/src/lib/dwarftsearch/dwarf_tsearchhash.c
 test_tied_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_tied_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_getnametest_SOURCES = getnametest.c \
@@ -172,7 +177,7 @@ test_objectaccess_SOURCES = objaccess.c
 test_objectaccess_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_objectaccess_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
--I$(top_srcdir)/src/lib/libdwarf 
+-I$(top_srcdir)/src/lib/libdwarf
 test_objectaccess_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 # AM_TESTS_ENVIRONMENT used to pass a path to libdwarf.h to
@@ -190,9 +195,9 @@ test_canonical_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_canonical_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf 
+-I$(top_srcdir)/src/lib/libdwarf
 
-TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh 
+TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh
 
 if HAVE_DWARFEXAMPLE
 TESTS += debuglinktest-a.sh debuglinktest-b.sh
@@ -203,7 +208,7 @@ endif
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; \
     export DWTOPSRCDIR ; \
     DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)';\
-    export DWCOMPILERFLAGS ; 
+    export DWCOMPILERFLAGS ;
 
 EXTRA_DIST= \
 buildingdummy.sh \

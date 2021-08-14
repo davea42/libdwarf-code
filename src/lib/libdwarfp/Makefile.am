@@ -56,11 +56,13 @@ libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN)
 libdwarfp_la_CPPFLAGS = \
 -DLIBDWARFP_BUILD \
 -I$(top_srcdir)/src/lib/dwarfstring \
+-I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf
 
 libdwarfp_la_LIBADD = \
 @DWARF_LIBS@ \
 $(top_builddir)/src/lib/dwarfstring/libdwarfstring.la \
+$(top_builddir)/src/lib/dwarftsearch/libdwarftsearch.la \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 libdwarfp_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@

@@ -3,7 +3,7 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-### libdwarfstrin
+### libdwarfstring
 
 noinst_LTLIBRARIES = libdwarfstring.la
 

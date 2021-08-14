@@ -33,10 +33,10 @@ $(top_srcdir)/src/bin/dwarfdump/makename.c \
 $(top_srcdir)/src/bin/dwarfdump/naming.c \
 $(top_srcdir)/src/bin/dwarfdump/glflags.c \
 $(top_srcdir)/src/bin/dwarfdump/sanitized.c \
-$(top_srcdir)/src/bin/dwarfdump/tag_common.c 
+$(top_srcdir)/src/bin/dwarfdump/tag_common.c
 tagtree_CPPFLAGS = -DTRIVIAL_NAMING \
- -DBUILD_NONLIB_SOURCE  \
- -I$(top_srcdir)/src/lib/libdwarf \
- -I$(top_srcdir)/src/bin/dwarfdump \
- -I$(top_builddir)/src/lib/libdwarf
+-DBUILD_NONLIB_SOURCE \
+-I$(top_srcdir)/src/lib/dwarftsearch \
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/bin/dwarfdump
 tagtree_CFLAGS = $(DWARF_CFLAGS_WARN)

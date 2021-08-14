@@ -25,7 +25,6 @@ dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
 dwarf_tsearchbal.c \
-dwarf_tsearch.h \
 dwconf.c \
 dwconf.h \
 dwconf_using_functions.h \
@@ -89,9 +88,10 @@ tag_common.h \
 uri.c \
 uri.h
 
-dwarfdump_CPPFLAGS =  -I$(top_srcdir)/src/lib/libdwarf \
--I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_builddir)/src/lib/libdwarf
+dwarfdump_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/dwarftsearch \
+-I$(top_srcdir)/src/lib/libdwarf \
+-I$(top_srcdir)/src/bin/dwarfdump
 
 dwarfdump_CFLAGS = $(DWARF_CFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfdump" 
 
