@@ -49,9 +49,11 @@ test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
 test_dwarfstring_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
+test_dwarfstring_LDADD = $(top_builddir)/src/lib/dwarfstring/libdwarfstring.la
 
 test_dwarfstring_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/dwarfstring \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
@@ -61,8 +63,10 @@ test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
 test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/lib/dwarfstring \
 -I$(top_srcdir)/src/lib/libdwarfp \
--I$(top_srcdir)/src/lib/libdwarf 
+-I$(top_srcdir)/src/lib/libdwarf
+test_extra_flag_strings_LDADD = $(top_builddir)/src/lib/dwarfstring/libdwarfstring.la
 
 test_linkedtopath_SOURCES = test_linkedtopath.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
