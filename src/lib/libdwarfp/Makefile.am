@@ -51,9 +51,9 @@ pro_util.h \
 pro_vars.c \
 pro_weaks.c
 
-
 libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN)
 libdwarfp_la_CPPFLAGS = \
+-DLIBDWARFP_BUILD \
 -I$(top_srcdir)/src/lib/dwarfstring \
 -I$(top_srcdir)/src/lib/libdwarf
 
