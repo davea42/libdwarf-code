@@ -9,6 +9,7 @@ lib_LTLIBRARIES = libdwarfp.la
 
 libdwarfp_la_SOURCES = \
 $(top_srcdir)/src/lib/libdwarf/dwarf_memcpy_swap.c \
+$(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c \
 libdwarfp.h \
 pro_alloc.c \
 pro_alloc.h \
@@ -56,22 +57,18 @@ libdwarfp_la_CFLAGS = $(DWARF_CFLAGS_WARN)
 libdwarfp_la_CPPFLAGS = \
 -DLIBDWARFP_BUILD \
 -I$(top_srcdir)/src/lib/dwarfstring \
--I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf
 
 libdwarfp_la_LIBADD = \
 @DWARF_LIBS@ \
 $(top_builddir)/src/lib/dwarfstring/libdwarfstring.la \
-$(top_builddir)/src/lib/dwarftsearch/libdwarftsearch.la \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 libdwarfp_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
 libdwarfppkgincludedir = $(pkgincludedir)-@VMAJ@
 libdwarfppkginclude_DATA = \
-$(top_srcdir)/src/lib/libdwarf/dwarf.h  \
-$(top_srcdir)/src/lib/libdwarfp/libdwarfp.h \
-$(top_srcdir)/src/lib/libdwarf/libdwarf.h
+$(top_srcdir)/src/lib/libdwarfp/libdwarfp.h
 
 EXTRA_DIST = \
 COPYING \
