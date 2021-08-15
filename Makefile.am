@@ -5,7 +5,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
 src/lib/dwarfstring \
-src/lib/dwarftsearch \
 src/lib/libdwarf \
 src/bin/dwarfdump
 

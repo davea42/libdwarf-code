@@ -109,6 +109,8 @@ dwarf_str_offsets.h \
 dwarf_stringsection.c \
 dwarf_tied.c \
 dwarf_tied_decls.h \
+dwarf_tsearchhash.c \
+dwarf_tsearch.h \
 dwarf_types.c \
 dwarf_types.h \
 dwarf_util.c \
@@ -125,14 +127,12 @@ libdwarf_private.h
 
 libdwarf_la_CPPFLAGS = \
 -DLIBDWARF_BUILD \
--I$(top_srcdir)/src/lib/dwarfstring \
--I$(top_srcdir)/src/lib/dwarftsearch
+-I$(top_srcdir)/src/lib/dwarfstring
 
 libdwarf_la_CFLAGS = @ZLIB_CFLAGS@ $(DWARF_CFLAGS_WARN)
 
 libdwarf_la_LIBADD = \
 $(top_builddir)/src/lib/dwarfstring/libdwarfstring.la \
-$(top_builddir)/src/lib/dwarftsearch/libdwarftsearch.la \
 @DWARF_LIBS@ \
 @ZLIB_LIBS@
 
