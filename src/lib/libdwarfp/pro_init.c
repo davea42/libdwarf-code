@@ -46,7 +46,7 @@
 #include "pro_error.h"
 #include "pro_alloc.h"
 #include "pro_line.h"
-#include "memcpy_swap.h"
+#include "dwarf_memcpy_swap.h"
 #include "pro_section.h"        /* for MAGIC_SECT_NO */
 #include "pro_reloc_symbolic.h"
 #include "pro_reloc_stream.h"
