@@ -59,7 +59,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* _WIN32 */
 
 #include "config.h"
-#include "libdwarf_private.h"
 #ifdef HAVE_STDLIB_H
 #include "stdlib.h" /* for free() */
 #endif /* HAVE_STDLIB_H */
@@ -67,11 +66,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
 #include <stdio.h> /* for printf */
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "dwarf_tsearch.h"
 
 /*  This must match the types and print options
     found in libdwarf.h.  */
 #define Dwarf_Unsigned unsigned long long
-#include "dwarf_tsearch.h"
 
 #define IMPLEMENTD15 1
 

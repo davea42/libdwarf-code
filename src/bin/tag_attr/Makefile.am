@@ -18,8 +18,6 @@ rebuild: tagattr
 noinst_PROGRAMS = tagattr
 tagattr_SOURCES = tag_attr.c \
 $(top_srcdir)/src/bin/dwarfdump/dwgetopt.c \
-$(top_srcdir)/src/lib/libdwarf/dwarf_form_class_names.c \
-$(top_srcdir)/src/lib/libdwarf/dwarf_names.c \
 $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c \
 $(top_srcdir)/src/bin/dwarfdump/common.c \
 $(top_srcdir)/src/bin/dwarfdump/esb.c \
@@ -30,9 +28,9 @@ $(top_srcdir)/src/bin/dwarfdump/glflags.c \
 $(top_srcdir)/src/bin/dwarfdump/tag_common.c
 tagattr_CPPFLAGS = -DTRIVIAL_NAMING \
 -DBUILD_NONLIB_SOURCE \
--I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf \
 -I$(top_srcdir)/src/bin/dwarfdump
 tagattr_CFLAGS = $(DWARF_CFLAGS_WARN)
+tagattr_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 

@@ -24,6 +24,7 @@ dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
+dwarf_tsearch.h \
 dwarf_tsearchbal.c \
 dwconf.c \
 dwconf.h \
@@ -89,7 +90,6 @@ uri.c \
 uri.h
 
 dwarfdump_CPPFLAGS = \
--I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf \
 -I$(top_srcdir)/src/bin/dwarfdump
 

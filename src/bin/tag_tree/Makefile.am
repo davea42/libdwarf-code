@@ -2,7 +2,7 @@
 ###This code is public domain and can be freely used or copied.
 
 MAINTAINERCLEANFILES = Makefile.in
-rebuild: tagtree 
+rebuild: tagtree
 	cp $(top_srcdir)/src/bin/dwarfdump/tag_tree.list tmp-t2.c
 	$(CC) -DTRIVIAL_NAMING -I$(top_srcdir)/src/lib/libdwarf -E tmp-t2.c >tmp-tag-tree-build2.tmp
 	./tagtree -s -i tmp-tag-tree-build2.tmp -o dwarfdump-tt-table.h
@@ -23,10 +23,8 @@ rebuild: tagtree
 
 noinst_PROGRAMS = tagtree
 tagtree_SOURCES = tag_tree.c \
-$(top_srcdir)/src/lib/libdwarf/dwarf_names.c \
 $(top_srcdir)/src/bin/dwarfdump/common.c \
 $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c \
-$(top_srcdir)/src/lib/libdwarf/dwarf_form_class_names.c \
 $(top_srcdir)/src/bin/dwarfdump/dwgetopt.c \
 $(top_srcdir)/src/bin/dwarfdump/esb.c \
 $(top_srcdir)/src/bin/dwarfdump/makename.c \
@@ -36,7 +34,7 @@ $(top_srcdir)/src/bin/dwarfdump/sanitized.c \
 $(top_srcdir)/src/bin/dwarfdump/tag_common.c
 tagtree_CPPFLAGS = -DTRIVIAL_NAMING \
 -DBUILD_NONLIB_SOURCE \
--I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf \
 -I$(top_srcdir)/src/bin/dwarfdump
 tagtree_CFLAGS = $(DWARF_CFLAGS_WARN)
+tagtree_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
