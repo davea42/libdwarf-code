@@ -25,6 +25,7 @@ config.status
 depcomp
 install-sh
 libdwarf.pc
+libdwarfp.pc
 libtool
 ltmain.sh
 m4/libtool.m4
@@ -41,3 +42,4 @@ autom4te.cache/
 .libs/
 test/*.log
 test/*.trs
+test/dwarfdump.conf
