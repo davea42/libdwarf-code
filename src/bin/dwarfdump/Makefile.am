@@ -89,7 +89,6 @@ uri.c \
 uri.h
 
 dwarfdump_CPPFLAGS = \
--I$(top_srcdir)/src/lib/dwarftsearch \
 -I$(top_srcdir)/src/lib/libdwarf \
 -I$(top_srcdir)/src/bin/dwarfdump
 
