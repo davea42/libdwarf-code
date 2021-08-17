@@ -31,7 +31,7 @@
  * just CCL code now.
  * 
  * Use the actual CCL code in the CLO
- * section of pmatch. No need for a recursive
+ * section of ematch. No need for a recursive
  * pmatch call.
  * 
  * Use a bitmap table to set char bits in an
@@ -181,9 +181,16 @@
  *    compile:    BOT 1 CHR f CHR o CLO ANY END EOT 1 CHR - REF 1 END
  *    matches:    foo-foo fo-fo fob-fob foobar-foobar ...
  */
-
 #include "dd_regex.h"
+#include <stdio.h>
 #include <stdlib.h>
+
+#ifndef DW_DLV_OK 
+#define DW_DLV_OK 0
+#define DW_DLV_ERROR   -1
+#define DW_DLV_NO_ENTRY 1
+#endif /* DW_DLV_OK */
+
 
 #define MAXNFA  1024
 #define MAXTAG  10
@@ -243,35 +250,38 @@ chset(CHAR c)
     bittab[(CHAR) ((c) & BLKIND) >> 3] |= bitarr[(c) & BITIND];
 }
 
-#define badpat(x)    (*nfa = END, x)
+#define badpat    (*nfa = END)
 #define store(x)    *mp++ = x
  
-char *     
+int
 dd_re_comp(char *pat)
 {
-    register char *p;               /* pattern pointer   */
-    register CHAR *mp=nfa;          /* nfa pointer       */
-    register CHAR *lp;              /* saved pointer..   */
-    register CHAR *sp=nfa;          /* another one..     */
-
-    register int tagi = 0;          /* tag stack index   */
-    register int tagc = 1;          /* actual tag count  */
-
-    register int n;
-    register CHAR mask;        /* xor mask -CCL/NCL */
-    int c1, c2;
+    char *p  = 0;           /* pattern pointer   */
+    CHAR *mp = nfa;
+    CHAR *lp = 0;          /* saved pointer..   */
+    CHAR *sp = nfa;      /* another one..     */
+    int tagi = 0;          /* tag stack index   */
+    int tagc = 1;          /* actual tag count  */
+    int n    = 0;
+    CHAR mask = 0;        /* xor mask -CCL/NCL */
+    int c1   = 0;
+    int c2   = 0;
         
-    if (!pat || !*pat)
-        if (sta)
-            return 0;
-        else
-            return badpat("No previous regular expression");
+    if (!pat || !*pat) {
+        if (sta) {
+            return DW_DLV_NO_ENTRY;
+        } else {
+            badpat;
+            printf("Regular expression has "
+                "no previous regular expression\n");
+            return DW_DLV_ERROR;
+        }
+    }
     sta = NOP;
 
     for (p = pat; *p; p++) {
         lp = mp;
         switch(*p) {
-
         case '.':               /* match any char..  */
             store(ANY);
             break;
@@ -286,9 +296,9 @@ dd_re_comp(char *pat)
             break;
 
         case '$':               /* match endofline.. */
-            if (!*(p+1))
+            if (!*(p+1)) {
                 store(EOL);
-            else {
+            } else {
                 store(CHR);
                 store(*p);
             }
@@ -300,14 +310,15 @@ dd_re_comp(char *pat)
             if (*++p == '^') {
                 mask = 0377;    
                 p++;
-            }
-            else
+            } else {
                 mask = 0;
-
-            if (*p == '-')        /* real dash */
+            }
+            if (*p == '-')  {       /* real dash */
                 chset(*p++);
-            if (*p == ']')        /* real brac */
+            }
+            if (*p == ']') {       /* real brac */
                 chset(*p++);
+            }
             while (*p && *p != ']') {
                 if (*p == '-' && *(p+1) && *(p+1) != ']') {
                     p++;
@@ -321,25 +332,33 @@ dd_re_comp(char *pat)
                     p++;
                     chset(*p++);
                 }
-#endif
-                else
+#endif /* EXTEND */
+                else {
                     chset(*p++);
+                }
             }
-            if (!*p)
-                return badpat("Missing ]");
+            if (!*p) {
+                badpat;
+                printf("Regular expression missing ]\n");
+                return DW_DLV_ERROR;
+            }
 
-            for (n = 0; n < BITBLK; bittab[n++] = (char) 0)
+            for (n = 0; n < BITBLK; bittab[n++] = (char) 0) {
                 store(mask ^ bittab[n]);
-    
+            }
             break;
 
         case '*':               /* match 0 or more.. */
         case '+':               /* match 1 or more.. */
-            if (p == pat)
-                return badpat("Empty closure");
+            if (p == pat) {
+                badpat;
+                printf("Regular expression has empty * + closure\n");
+                return DW_DLV_ERROR;
+            }
             lp = sp;        /* previous opcode */
-            if (*lp == CLO)        /* equivalence..   */
+            if (*lp == CLO)  {      /* equivalence..   */
                 break;
+            }
             switch(*lp) {
 
             case BOL:
@@ -348,20 +367,25 @@ dd_re_comp(char *pat)
             case BOW:
             case EOW:
             case REF:
-                return badpat("Illegal closure");
+                badpat;
+                printf("Regular expression has illegal "
+                    "* + closure\n");
+                return DW_DLV_ERROR;
             default:
                 break;
             }
 
-            if (*p == '+')
+            if (*p == '+') {
                 for (sp = mp; lp < sp; lp++)
                     store(*lp);
+            }
 
             store(END);
             store(END);
             sp = mp;
-            while (--mp > lp)
+            while (--mp > lp) {
                 *mp = mp[-1];
+            }
             store(CLO);
             mp = sp;
             break;
@@ -375,25 +399,39 @@ dd_re_comp(char *pat)
                     store(BOT);
                     store(tagc++);
                 }
-                else
-                    return badpat("Too many \\(\\) pairs");
+                else {
+                    badpat;
+                    printf("Regular expression has "
+                        "too many \\(\\) pairs\n");
+                }
                 break;
             case ')':
-                if (*sp == BOT)
-                    return badpat("Null pattern inside \\(\\)");
+                if (*sp == BOT) {
+                    badpat;
+                    printf("Regular expression has "
+                        "null pattern inside \\(\\)\n");
+                    return DW_DLV_ERROR;
+                }
                 if (tagi > 0) {
                     store(EOT);
                     store(tagstk[tagi--]);
+                } else {
+                    badpat;
+                    printf("Regular expression has "
+                        "unmatched \\)\n");
+                    return DW_DLV_ERROR;
                 }
-                else
-                    return badpat("Unmatched \\)");
                 break;
             case '<':
                 store(BOW);
                 break;
             case '>':
-                if (*sp == BOW)
-                    return badpat("Null pattern inside \\<\\>");
+                if (*sp == BOW) {
+                    badpat;
+                    printf("Regular expression has "
+                        "null pattern inside \\<\\>\n");
+                    return DW_DLV_ERROR;
+                }
                 store(EOW);
                 break;
             case '1':
@@ -407,13 +445,19 @@ dd_re_comp(char *pat)
             case '9':
                 n = *p-'0';
                 if (tagi > 0 && tagstk[tagi] == n)
-                    return badpat("Cyclical reference");
+                    badpat;
+                    printf("Regular expression has "
+                        "Cyclical reference\n");
+                    return DW_DLV_ERROR;
                 if (tagc > n) {
                     store(REF);
                     store(n);
+                } else {
+                    badpat;
+                    printf("Regular expression has "
+                        "undetermined reference");;
+                    return DW_DLV_ERROR;
                 }
-                else
-                    return badpat("Undetermined reference");
                 break;
 #ifdef EXTEND
             case 'b':
@@ -436,7 +480,7 @@ dd_re_comp(char *pat)
                 store(CHR);
                 store('\t');
                 break;
-#endif
+#endif /* EXTEND */
             default:
                 store(CHR);
                 store(*p);
@@ -450,18 +494,22 @@ dd_re_comp(char *pat)
         }
         sp = lp;
     }
-    if (tagi > 0)
-        return badpat("Unmatched \\(");
+    if (tagi > 0) {
+        badpat;
+        printf("Regular expression has "
+            "unmatched \\(\n");
+        return DW_DLV_ERROR;
+    }
     store(END);
     sta = OKP;
-    return 0;
+    return DW_DLV_OK;
 }
 
 
 static char *bol;
 static char *bopat[MAXTAG];
 static char *eopat[MAXTAG];
-static int pmatch(char *, CHAR *,char *str_out);
+static int dd_pmatch(char *, CHAR *,char **str_out);
 
 /*
  * re_exec:
@@ -483,18 +531,18 @@ static int pmatch(char *, CHAR *,char *str_out);
  *    to the beginning and the end of the matched fragment,
  *    respectively.
  *
+ *    return DW_DLV_OK, DW_DLV_NO_ENTRY or DW_DLV_ERROR
  */
 
 int
 dd_re_exec(char *lp)
 {
-    register CHAR c;
-    register char *ep = 0;
-    register CHAR *ap = nfa;
-        int res = 0;
+    CHAR c   = 0;
+    char *ep = 0;
+    CHAR *ap = nfa;
+    int res  = 0;
 
     bol = lp;
-
     bopat[0] = 0;
     bopat[1] = 0;
     bopat[2] = 0;
@@ -507,50 +555,58 @@ dd_re_exec(char *lp)
     bopat[9] = 0;
 
     switch(*ap) {
-
     case BOL:            /* anchored: match from BOL only */
-        res = pmatch(lp,ap,&ep);
-                if (res != DW_DLV_OK) {
-                    return res;
-                }
+        res = dd_pmatch(lp,ap,&ep);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
         break;
     case CHR:            /* ordinary char: locate it fast */
         c = *(ap+1);
-        while (*lp && *lp != c)
+        while (*lp && *lp != c) {
             lp++;
-        if (!*lp)        /* if EOS, fail, else fall thru. */
-            return 0;
+        }
+        if (!*lp) {      /* if EOS, fail, else fall thru. */
+            return DW_DLV_NO_ENTRY;
+        }
     default:            /* regular matching all the way. */
 #ifdef OLD
         while (*lp) {
-            res =  pmatch(lp,ap,&ep)))
-            if (res != DW_DLV_OK) {
+            res =  dd_pmatch(lp,ap,&ep)))
+            if (res == DW_DLV_ERROR) {
+                return res;
+            }
+            if (res == DW_DLV_OK) {
                 break;
-                        }
+            }
             lp++;
         }
 #else    /* match null string */
         do {
-            res = = pmatch(lp,ap,&ep);
-            if ((ep = pmatch(lp,ap)))
+            res = dd_pmatch(lp,ap,&ep);
+            if (res == DW_DLV_ERROR) {
+                return res;
+            }
+            if (res == DW_DLV_OK) {
                 break;
+            }
             lp++;
         } while (*lp);
 #endif /* OLD */
         break;
     case END:            /* munged automaton. fail always */
-        return 0;
+        return DW_DLV_ERROR;
     }
-    if (!ep)
-        return 0;
-
+    if (res != DW_DLV_OK) {
+        return res;
+    }
     bopat[0] = lp;
     eopat[0] = ep;
-    return 1;
+    return DW_DLV_OK;
 }
 
 /* 
- * pmatch: internal routine for the hard part
+ * dd_pmatch: internal routine for the hard part
  *
  *     This code is partly snarfed from an early grep written by
  *    David Conroy. The backref and tag stuff, and various other
@@ -616,28 +672,33 @@ static CHAR chrtyp[MAXCHR] = {
  * skip values for CLO XXX to skip past the closure
  */
 
-#define ANYSKIP    2     /* [CLO] ANY END ...         */
+#define ANYSKIP    2    /* [CLO] ANY END ...         */
 #define CHRSKIP    3    /* [CLO] CHR chr END ...     */
-#define CCLSKIP 18    /* [CLO] CCL 16bytes END ... */
+#define CCLSKIP   18    /* [CLO] CCL 16bytes END ... */
 
 static int
-pmatch(char *lp, CHAR *ap,char **end_ptr)
+dd_pmatch(char *lp, CHAR *ap,char **end_ptr)
 {
-    register int op, c, n;
-    register char *e;        /* extra pointer for CLO */
-    register char *bp;        /* beginning of subpat.. */
-    register char *ep;        /* ending of subpat..     */
-    char *are;            /* to save the line ptr. */
+    int op    = 0; 
+    int c    = 0;
+    int n    = 0;
+    char *e  = 0;    /* extra pointer for CLO */
+    char *bp = 0;   /* beginning of subpat.. */
+    char *ep = 0;   /* ending of subpat..     */
+    char *are = 0;           /* to save the line ptr. */
+    int res  = 0;
 
     while ((op = *ap++) != END) {
         switch(op) {
         case CHR:
-            if (*lp++ != *ap++)
+            if (*lp++ != *ap++) {
                 return DW_DLV_NO_ENTRY;
+            }
             break;
         case ANY:
-            if (!*lp++)
+            if (!*lp++) {
                 return DW_DLV_NO_ENTRY;
+            }
             break;
         case CCL:
             c = *lp++;
@@ -646,12 +707,14 @@ pmatch(char *lp, CHAR *ap,char **end_ptr)
             ap += BITBLK;
             break;
         case BOL:
-            if (lp != bol)
+            if (lp != bol) {
                 return DW_DLV_NO_ENTRY;
+            }
             break;
         case EOL:
-            if (*lp)
+            if (*lp) {
                 return DW_DLV_NO_ENTRY;
+            }
             break;
         case BOT:
             bopat[*ap++] = lp;
@@ -660,20 +723,24 @@ pmatch(char *lp, CHAR *ap,char **end_ptr)
             eopat[*ap++] = lp;
             break;
         case BOW:
-            if (lp!=bol && iswordc(lp[-1]) || !iswordc(*lp))
+            if (lp!=bol && iswordc(lp[-1]) || !iswordc(*lp)) {
                 return DW_DLV_NO_ENTRY;
+            }
             break;
         case EOW:
-            if (lp==bol || !iswordc(lp[-1]) || iswordc(*lp))
+            if (lp==bol || !iswordc(lp[-1]) || iswordc(*lp)) {
                 return DW_DLV_NO_ENTRY;
+            }
             break;
         case REF:
             n = *ap++;
             bp = bopat[n];
             ep = eopat[n];
-            while (bp < ep)
-                if (*bp++ != *lp++)
+            while (bp < ep) {
+                if (*bp++ != *lp++) {
                     return DW_DLV_NO_ENTRY;
+                }
+            }
             break;
         case CLO:
             are = lp;
@@ -696,29 +763,39 @@ pmatch(char *lp, CHAR *ap,char **end_ptr)
                 n = CCLSKIP;
                 break;
             default:
-                                return DW_DLV_ERROR;
-                /*re_fail("closure: bad nfa.", *ap);*/
+                badpat;
+                printf("Regular expression has illegal "
+                    "closure: bad nfa\n");
+                return DW_DLV_ERROR;
             }
 
             ap += n;
 
             while (lp >= are) {
-                if (e = pmatch(lp, ap))
-                                        *end_ptr = e;
-                    return DW_DLV_OK; 
+                res = dd_pmatch(lp, ap,&e);
+                if (res != DW_DLV_ERROR) {
+                   return res;
+                }
+                if (res == DW_DLV_OK) {
+                    *end_ptr = e;
+                    return res; 
+                }
                 --lp;
             }
-            return 0;
+            return DW_DLV_NO_ENTRY;
         default:
-                        return DW_DLV_ERROR;
-            /* re_fail("re_exec: bad nfa.", op);
-            return 0;
+            badpat;
+            printf("Regular expression has illegal "
+                "dd_re_exec: bad nfa.\n");
+            return DW_DLV_ERROR;
         }
     }
-    return lp;
+    *end_ptr = lp;
+    return DW_DLV_OK;
 }
 
-#if 0 /* dwarfdump does not require the following */
+/* dwarfdump does not require the following */
+#if 0
 /*
  * re_modw:
  *    add new characters into the word table to change re_exec's
