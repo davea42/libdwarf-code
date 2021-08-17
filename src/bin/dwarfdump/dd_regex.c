@@ -186,9 +186,9 @@
 #include <stdlib.h>
 
 #ifndef DW_DLV_OK 
-#define DW_DLV_OK 0
-#define DW_DLV_ERROR   -1
-#define DW_DLV_NO_ENTRY 1
+#define DW_DLV_NO_ENTRY -1
+#define DW_DLV_OK        0
+#define DW_DLV_ERROR     1
 #endif /* DW_DLV_OK */
 
 
@@ -205,8 +205,8 @@
 #define EOL     5
 #define BOT     6
 #define EOT     7
-#define BOW    8
-#define EOW    9
+#define BOW     8
+#define EOW     9
 #define REF     10
 #define CLO     11
 
@@ -254,9 +254,9 @@ chset(CHAR c)
 #define store(x)    *mp++ = x
  
 int
-dd_re_comp(char *pat)
+dd_re_comp(const char *pat)
 {
-    char *p  = 0;           /* pattern pointer   */
+    const char *p  = 0;           /* pattern pointer   */
     CHAR *mp = nfa;
     CHAR *lp = 0;          /* saved pointer..   */
     CHAR *sp = nfa;      /* another one..     */
@@ -271,6 +271,7 @@ dd_re_comp(char *pat)
         if (sta) {
             return DW_DLV_NO_ENTRY;
         } else {
+            /* Seems impossible to get here */
             badpat;
             printf("Regular expression has "
                 "no previous regular expression\n");
@@ -339,7 +340,7 @@ dd_re_comp(char *pat)
             }
             if (!*p) {
                 badpat;
-                printf("Regular expression missing ]\n");
+                printf("Regular expression %s missing ]\n",pat);
                 return DW_DLV_ERROR;
             }
 
@@ -352,7 +353,8 @@ dd_re_comp(char *pat)
         case '+':               /* match 1 or more.. */
             if (p == pat) {
                 badpat;
-                printf("Regular expression has empty * + closure\n");
+                printf("Regular expression %s has empty * +  "
+                    "Closure\n",pat);
                 return DW_DLV_ERROR;
             }
             lp = sp;        /* previous opcode */
@@ -368,8 +370,8 @@ dd_re_comp(char *pat)
             case EOW:
             case REF:
                 badpat;
-                printf("Regular expression has illegal "
-                    "* + closure\n");
+                printf("Regular expression %s has illegal "
+                    "* + closure\n",pat);
                 return DW_DLV_ERROR;
             default:
                 break;
@@ -401,8 +403,8 @@ dd_re_comp(char *pat)
                 }
                 else {
                     badpat;
-                    printf("Regular expression has "
-                        "too many \\(\\) pairs\n");
+                    printf("Regular expression %s has "
+                        "too many \\(\\) pairs\n",pat);
                 }
                 break;
             case ')':
@@ -509,7 +511,7 @@ dd_re_comp(char *pat)
 static char *bol;
 static char *bopat[MAXTAG];
 static char *eopat[MAXTAG];
-static int dd_pmatch(char *, CHAR *,char **str_out);
+static int dd_pmatch(const char *, CHAR *,char **str_out);
 
 /*
  * re_exec:
@@ -595,6 +597,9 @@ dd_re_exec(char *lp)
 #endif /* OLD */
         break;
     case END:            /* munged automaton. fail always */
+        badpat;
+        printf("Error in in regex automaton. "
+            "END out of place\n");
         return DW_DLV_ERROR;
     }
     if (res != DW_DLV_OK) {
@@ -677,7 +682,7 @@ static CHAR chrtyp[MAXCHR] = {
 #define CCLSKIP   18    /* [CLO] CCL 16bytes END ... */
 
 static int
-dd_pmatch(char *lp, CHAR *ap,char **end_ptr)
+dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
 {
     int op    = 0; 
     int c    = 0;
@@ -717,10 +722,10 @@ dd_pmatch(char *lp, CHAR *ap,char **end_ptr)
             }
             break;
         case BOT:
-            bopat[*ap++] = lp;
+            bopat[*ap++] = (char *)lp;
             break;
         case EOT:
-            eopat[*ap++] = lp;
+            eopat[*ap++] = (char *)lp;
             break;
         case BOW:
             if (lp!=bol && iswordc(lp[-1]) || !iswordc(*lp)) {
@@ -743,7 +748,7 @@ dd_pmatch(char *lp, CHAR *ap,char **end_ptr)
             }
             break;
         case CLO:
-            are = lp;
+            are = (char *)lp;
             switch(*ap) {
 
             case ANY:
@@ -790,7 +795,7 @@ dd_pmatch(char *lp, CHAR *ap,char **end_ptr)
             return DW_DLV_ERROR;
         }
     }
-    *end_ptr = lp;
+    *end_ptr = (char *)lp;
     return DW_DLV_OK;
 }
 
