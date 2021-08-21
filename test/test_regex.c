@@ -189,7 +189,7 @@ int main()
     testx("(+)",DW_DLV_OK,"x((()",DW_DLV_OK,__LINE__);
     testx("yy+(",DW_DLV_OK,"yyy(",DW_DLV_OK,__LINE__);
     testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123",DW_DLV_OK,__LINE__);
-    testx("a\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\(\(\()))))))))))))))))))))",DW_DLV_ERROR,"yxxffi123",DW_DLV_NO_ENTRY,__LINE__);
+    testx("a\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\()))))))))))))))))))))",DW_DLV_ERROR,"yxxffi123",DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx]+[0-9]*a",DW_DLV_OK,"yxxff123a",DW_DLV_OK,__LINE__);
     testx("[fx]+[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
     testx("[fx]+[0-9]+",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);

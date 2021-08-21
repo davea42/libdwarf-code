@@ -312,11 +312,6 @@ struct glflags_s {
     const char *search_regex_text;
     int search_occurrences;
 
-    /* -S option: the compiled_regex */
-#ifdef HAVE_REGEX
-    regex_t *search_re;
-#endif
-
     /*  Start verbose at zero. verbose can
         be incremented with -v but not decremented. */
     int verbose;

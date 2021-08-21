@@ -38,6 +38,7 @@
 #include "section_bitmaps.h"
 #include "command_options.h"
 #include "compiler_info.h"
+#include "dd_regex.h"
 
 static const char *remove_quotes_pair(const char *text);
 static char *special_program_name(char *n);
@@ -399,10 +400,8 @@ static void arg_search_any(void);
 static void arg_search_any_count(void);
 static void arg_search_match(void);
 static void arg_search_match_count(void);
-#ifdef HAVE_REGEX
 static void arg_search_regex(void);
 static void arg_search_regex_count(void);
-#endif /* HAVE_REGEX */
 static void arg_search_count(void);
 static void arg_search_invalid(void);
 
@@ -630,12 +629,10 @@ static const char *usage_long_text[] = {
 "-S match=<text>  --search-match=<text>     Search matching <text>",
 "-Svmatch=<text>  --search-match-count<text> print number of",
 "                                           occurrences",
-#ifdef HAVE_REGEX
-"-S regex=<text>  --search-regex=<text>     Use regular expression",
-"                                           matching",
+"-S regex=<text>  --search-regex=<text>     Use Posix Basic regular",
+"                               expression matching",
 "-Svregex=<text>  --search-regex-count<text> print number of",
 "                                            occurrences",
-#endif /* HAVE_REGEX */
 "                             only one -S option allowed, any= and",
 "                             regex= only usable if the functions",
 "                             required are found at configure time",
@@ -796,11 +793,9 @@ OPT_SEARCH_MATCH_COUNT,
 OPT_SEARCH_PRINT_CHILDREN, /* -Wc --search-print-children */
 OPT_SEARCH_PRINT_PARENT, /* -Wp --search-print-parent    */
 OPT_SEARCH_PRINT_TREE,        /* -W  --search-print-tree  */
-#ifdef HAVE_REGEX
 OPT_SEARCH_REGEX,       /* -S regex=<text> --search-regex=<text> */
 OPT_SEARCH_REGEX_COUNT,
     /* -Svregex=<text> --search-regex-count<text>*/
-#endif /* HAVE_REGEX */
 
 /* Help & Version                                            */
 OPT_HELP,                     /* -h  --help                  */
@@ -975,11 +970,9 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
     OPT_SEARCH_PRINT_PARENT  },
 {"search-print-tree",     dwno_argument,  0,
     OPT_SEARCH_PRINT_TREE    },
-#ifdef HAVE_REGEX
 {"search-regex",          dwrequired_argument, 0, OPT_SEARCH_REGEX },
 {"search-regex-count",    dwrequired_argument, 0,
     OPT_SEARCH_REGEX_COUNT   },
-#endif /* HAVE_REGEX */
 
 
 /* Help & Version. */
@@ -1969,12 +1962,10 @@ void arg_S_multiple_selection(void)
         dwoptarg = &dwoptarg[4];
         arg_search_any();
     }
-#ifdef HAVE_REGEX
     else if (strncmp(dwoptarg,"regex=",6) == 0) {
         dwoptarg = &dwoptarg[6];
         arg_search_regex();
     }
-#endif /* HAVE_REGEX */
     else {
         arg_search_invalid();
     }
@@ -2091,23 +2082,24 @@ void arg_search_match_count(void)
     arg_search_match();
 }
 
-#ifdef HAVE_REGEX
 /*  Option '-S regex=' */
 void arg_search_regex(void)
 {
     const char *tempstr = 0;
     const char *ctx = arg_option > OPT_BEGIN ?
         "--search-regex=" : "-S regex=";
+    int res = 0;
 
+    /* The compiled regex occupies a static area */
     /* -S regex=<regular expression> */
     glflags.gf_search_is_on = TRUE;
     glflags.search_regex_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_regex_text);
     glflags.search_regex_text = do_uri_translation(tempstr,ctx);
     if (strlen(glflags.search_regex_text) > 0) {
-        if (regcomp(glflags.search_re,
-            glflags.search_regex_text,
-            REG_EXTENDED)) {
+        res = dd_re_comp(glflags.search_regex_text);
+        
+        if (res != DW_DLV_OK) {
             fprintf(stderr,
                 "regcomp: unable to compile "
                 " search regular expression %s\n",
@@ -2124,7 +2116,6 @@ void arg_search_regex_count(void)
     arg_search_count();
     arg_search_regex();
 }
-#endif /* HAVE_REGEX */
 
 /*  Option '-Sv' */
 void arg_search_count(void)
@@ -2661,11 +2652,9 @@ set_command_options(int argc, char *argv[])
         case OPT_SEARCH_PRINT_PARENT:   arg_search_print_parent();
             break;
         case OPT_SEARCH_PRINT_TREE:     arg_search_print_tree();break;
-#ifdef HAVE_REGEX
         case OPT_SEARCH_REGEX:          arg_search_regex();break;
         case OPT_SEARCH_REGEX_COUNT:    arg_search_regex_count();
             break;
-#endif /* HAVE_REGEX */
 
         /* Help & Version. */
         case OPT_HELP:          arg_help();          break;

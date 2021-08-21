@@ -34,10 +34,6 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 #include "esb.h"                /* For flexible string buffer. */
 #include "dwconf.h"
 
-#ifdef HAVE_REGEX
-regex_t _search_re;
-#endif
-
 #ifdef TRIVIAL_NAMING  /* For scripts/buildstandardsource.sh */
 struct glflags_s glflags;
 void
@@ -272,10 +268,6 @@ init_global_flags(void)
     glflags.search_match_text = 0;
     glflags.search_regex_text = 0;
     glflags.search_occurrences = 0;
-
-#ifdef HAVE_REGEX
-    glflags.search_re = &_search_re;
-#endif
 
     /*  Start verbose at zero. verbose can
         be incremented with -v but not decremented. */

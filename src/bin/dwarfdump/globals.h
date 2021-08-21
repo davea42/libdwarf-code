@@ -56,9 +56,6 @@ extern "C" {
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#ifdef HAVE_REGEX
-#include <regex.h>
-#endif
 #include "checkutil.h"
 #include "defined_types.h"
 #include "glflags.h"

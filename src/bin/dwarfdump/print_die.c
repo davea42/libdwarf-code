@@ -46,6 +46,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "opscounttab.h"
 #include "tag_common.h"
 #include "attr_form.h"
+#include "dd_regex.h"
 
 /*  OpBranchHead_s gives us nice type-checking
     in calls. */
@@ -3584,6 +3585,7 @@ have_a_search_match(const char *valname,const char *atname)
     char matchbuf[100]; /* not ESB_FIXED_ALLOC_SIZE ? */
     struct esb_s esb_match;
     char *s2;
+    int res = 0;
 
     esb_constructor_fixed(&esb_match,matchbuf,sizeof(matchbuf));
     trim_quotes(valname,&esb_match);
@@ -3604,16 +3606,18 @@ have_a_search_match(const char *valname,const char *atname)
             return TRUE;
         }
     }
-#ifdef HAVE_REGEX
     if (glflags.search_regex_text) {
-        if (!regexec(glflags.search_re,s2,0,NULL,0) ||
-            !regexec(glflags.search_re,atname,0,NULL,0)) {
-
+        res = dd_re_exec((char *)s2);
+        if (res == DW_DLV_OK) {
+            esb_destructor(&esb_match);
+            return TRUE;
+        }
+        res = dd_re_exec((char *)atname);
+        if (res == DW_DLV_OK) {
             esb_destructor(&esb_match);
             return TRUE;
         }
     }
-#endif
     esb_destructor(&esb_match);
     return FALSE;
 }

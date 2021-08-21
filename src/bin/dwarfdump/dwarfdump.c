@@ -503,11 +503,6 @@ main(int argc, char *argv[])
 
     /*  These cleanups only necessary once all
         objects processed. */
-#ifdef HAVE_REGEX
-    if (glflags.search_regex_text) {
-        regfree(glflags.search_re);
-    }
-#endif
     /*  In case of a serious DWARF error
         we  try to get here, we try not
         to  exit(1) by using print_error() */

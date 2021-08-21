@@ -291,20 +291,6 @@ check_c_source_compiles([=[
   }]=] HAVE_STDAFX_H)
 #message(STATUS "Checking have windows stdafx.h... ${HAVE_STDAFX_H}")
 
-check_c_source_compiles([=[
-  #include <sys/types.h>
-  #include <regex.h> 
-  int main()
-  {
-      int i; 
-      regex_t r;
-      int cflags = REG_EXTENDED;
-      const char *s = "abc";
-      i = regcomp(&r,s,cflags);
-      regfree(&r);
-      return 0;
-  } ]=]  HAVE_REGEX)
-
 set(CMAKE_REQUIRED_LIBRARIES z)
 check_c_source_compiles( [=[
   #include "zlib.h"

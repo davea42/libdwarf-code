@@ -263,7 +263,6 @@ chset(CHAR c)
 static void
 resetbittab(void)
 {
-     int i = 0;
      int j = 0;
      for (j = 0; j < BITBLK; ++j) {
          bittab[j] = 0;
@@ -595,7 +594,9 @@ dd_re_exec(char *lp)
         if (!*lp) {      /* if EOS, fail, else fall thru. */
             return DW_DLV_NO_ENTRY;
         }
-    default:            /* regular matching all the way. */
+        goto regmatch; /* GO TO avoids a fall-through warning from gcc */
+    default:    {        /* regular matching all the way. */
+        regmatch:
 #ifdef OLD
         while (*lp) {
             res =  dd_pmatch(lp,ap,&ep)))
@@ -620,6 +621,7 @@ dd_re_exec(char *lp)
         } while (*lp);
 #endif /* OLD */
         break;
+    }
     case END:            /* munged automaton. fail always */
         badpat;
         printf("Error in in regex automaton. "
@@ -755,12 +757,12 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
             eopat[*ap++] = (char *)lp;
             break;
         case BOW:
-            if (lp!=bol && iswordc(lp[-1]) || !iswordc(*lp)) {
+            if ((lp!=bol && iswordc(lp[-1])) || !iswordc(*lp)) {
                 return DW_DLV_NO_ENTRY;
             }
             break;
         case EOW:
-            if (lp==bol || !iswordc(lp[-1]) || iswordc(*lp)) {
+            if ((lp==bol || !iswordc(lp[-1])) || iswordc(*lp)) {
                 return DW_DLV_NO_ENTRY;
             }
             break;

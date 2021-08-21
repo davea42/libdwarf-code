@@ -225,9 +225,9 @@ endif()
 
 if (DO_TESTING)
     set_source_group(REGEXLIST "Source Files"
-        ${CMAKE_SOURCE_DIR}/test/test_regex.c.c 
+        ${CMAKE_SOURCE_DIR}/test/test_regex.c 
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_regex.c)
-    add_executable(selfregex ${CANONICALLIST})
+    add_executable(selfregex ${REGEXLIST})
     target_compile_options(selfregex PRIVATE
         "-I$(CMAKE_BINARY_DIR)"
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"

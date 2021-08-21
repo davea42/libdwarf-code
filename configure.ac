@@ -576,35 +576,6 @@ AS_IF(
      AC_DEFINE([HAVE_ZLIB_H], [1], [Set to 1 if zlib.h header file is available.])
     ])
 
-AC_COMPILE_IFELSE(
-    [AC_LANG_PROGRAM(
-         [[
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
-#ifdef HAVE_REGEX_H
-# include <regex.h>
-#endif
-         ]],
-         [[
-int i;
-regex_t r;
-int cflags = REG_EXTENDED;
-const char *s = "abc";
-i = regcomp(&r,s,cflags);
-regfree(&r);
-         ]])
-    ],
-    [
-     AC_DEFINE([HAVE_REGEX], [1], [Set to 1 if regex is usable.])
-     have_regex="yes"
-    ],
-    [have_regex="no"])
-
-AC_MSG_CHECKING([for regex library])
-AC_MSG_RESULT([${have_regex}])
-
-
 ### Checks for system services
 
 AC_CONFIG_FILES([
