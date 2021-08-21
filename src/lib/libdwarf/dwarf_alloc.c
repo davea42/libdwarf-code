@@ -482,7 +482,7 @@ simple_compare_function(const void *l, const void *r)
 
     This function cannot be used to allocate a
     Dwarf_Debug_s struct.  */
-
+/* coverity[+alloc] */
 char *
 _dwarf_get_alloc(Dwarf_Debug dbg,
     Dwarf_Small alloc_type, Dwarf_Unsigned count)
@@ -698,6 +698,7 @@ dwarf_dealloc_attribute(Dwarf_Attribute attr)
     below.
 
 */
+/* coverity[+free : arg-1] */
 void
 dwarf_dealloc(Dwarf_Debug dbg,
     Dwarf_Ptr space, Dwarf_Unsigned alloc_type)
