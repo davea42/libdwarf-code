@@ -36,14 +36,14 @@ TESTS =  test_dwarfstring test_extra_flag_strings \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb test_sectionbitmaps test_dwarflebtest \
   test_tied test_getnametest test_objectaccess \
-  test_errmsglist test_canonical
+  test_errmsglist test_canonical test_regex
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
  test_testesb  test_sectionbitmaps test_dwarflebtest  \
  test_tied test_getnametest test_objectaccess \
- test_errmsglist test_canonical
+ test_errmsglist test_canonical test_regex
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
@@ -185,6 +185,14 @@ test_canonical_SOURCES = test_canonical.c \
     $(top_srcdir)/src/bin/dwarfdump/esb.c
 test_canonical_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_canonical_CPPFLAGS = \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
+
+test_regex_SOURCES = test_regex.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_regex.c 
+test_regex_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_regex_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf

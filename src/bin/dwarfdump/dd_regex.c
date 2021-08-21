@@ -26,7 +26,7 @@
  *
  * Revision 1.2  88/08/28  15:36:04  oz
  * Use a complement bitmap to represent NCL.
- * This removes the need to have seperate 
+ * This removes the need to have seperate
  * code in the pmatch case block - it is 
  * just CCL code now.
  * 
@@ -181,11 +181,17 @@
  *    compile:    BOT 1 CHR f CHR o CLO ANY END EOT 1 CHR - REF 1 END
  *    matches:    foo-foo fo-fo fob-fob foobar-foobar ...
  */
-#include "dd_regex.h"
+#include "config.h"
 #include <stdio.h>
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
+#include "dwarf.h"
+#include "libdwarf.h" /* for DW_DLV_ names */
+#include "dd_regex.h"
 
 #ifndef DW_DLV_OK 
+/*  Makes testing easier */
 #define DW_DLV_NO_ENTRY -1
 #define DW_DLV_OK        0
 #define DW_DLV_ERROR     1
@@ -200,13 +206,13 @@
 
 #define CHR     1
 #define ANY     2
-#define CCL     3
-#define BOL     4
-#define EOL     5
-#define BOT     6
-#define EOT     7
-#define BOW     8
-#define EOW     9
+#define CCL     3 /* character class [ */
+#define BOL     4 /* beginning of line, ^ */
+#define EOL     5 /* end of line, 5 */
+#define BOT     6 /* beginning of tag, ( */
+#define EOT     7 /* end of tag, ) */
+#define BOW     8 /* nonstandard beginning of ? < */
+#define EOW     9 /* nonstandard end  of ? > */
 #define REF     10
 #define CLO     11
 
@@ -217,6 +223,7 @@
  * They are for readability only.
  */
 #define MAXCHR    128
+#define BITTABMAX 4
 #define CHRBIT    8
 #define BITBLK    MAXCHR/CHRBIT
 #define BLKIND    0170
@@ -230,18 +237,18 @@ typedef char CHAR;
 typedef unsigned char CHAR;
 #endif
 
-static int  tagstk[MAXTAG];             /* subpat tag stack..*/
-static CHAR nfa[MAXNFA];        /* automaton..       */
-static int  sta = NOP;                   /* status of lastpat */
+static int  tagstk[MAXTAG];  /* subpat tag stack..*/
+static CHAR nfa[MAXNFA];     /* automaton..       */
+static int  sta = NOP;       /* status of lastpat */
 
-static CHAR bittab[BITBLK];        /* bit table for CCL */
+static CHAR bittab[BITBLK];  /* bit table for CCL */
                     /* pre-set bits...   */
 static CHAR bitarr[] = {1,2,4,8,16,32,64,128};
 
 
 #ifdef DEBUG
 static void nfadump(CHAR *);
-void symbolic(char *);
+static void symbolic(char *);
 #endif
 
 static void
@@ -252,6 +259,16 @@ chset(CHAR c)
 
 #define badpat    (*nfa = END)
 #define store(x)    *mp++ = x
+
+static void
+resetbittab(void)
+{
+     int i = 0;
+     int j = 0;
+     for (j = 0; j < BITBLK; ++j) {
+         bittab[j] = 0;
+     }
+}
  
 int
 dd_re_comp(const char *pat)
@@ -266,7 +283,8 @@ dd_re_comp(const char *pat)
     CHAR mask = 0;        /* xor mask -CCL/NCL */
     int c1   = 0;
     int c2   = 0;
-        
+
+    resetbittab();
     if (!pat || !*pat) {
         if (sta) {
             return DW_DLV_NO_ENTRY;
@@ -307,7 +325,6 @@ dd_re_comp(const char *pat)
 
         case '[':               /* match char class..*/
             store(CCL);
-
             if (*++p == '^') {
                 mask = 0377;    
                 p++;
@@ -343,10 +360,12 @@ dd_re_comp(const char *pat)
                 printf("Regular expression %s missing ]\n",pat);
                 return DW_DLV_ERROR;
             }
-
-            for (n = 0; n < BITBLK; bittab[n++] = (char) 0) {
+            /* Storing the bitmask into nfa  */
+            for (n = 0; n < BITBLK; bittab[n++] =
+                (char) 0) {
                 store(mask ^ bittab[n]);
             }
+            resetbittab();
             break;
 
         case '*':               /* match 0 or more.. */
@@ -404,7 +423,9 @@ dd_re_comp(const char *pat)
                 else {
                     badpat;
                     printf("Regular expression %s has "
-                        "too many \\(\\) pairs\n",pat);
+                        "too many \\(\\) pairs (%d)\n",pat,
+                        tagc);
+                    return DW_DLV_ERROR;
                 }
                 break;
             case ')':
@@ -504,6 +525,9 @@ dd_re_comp(const char *pat)
     }
     store(END);
     sta = OKP;
+#ifdef DEBUG
+    nfadump(nfa);
+#endif /* DEBUG */
     return DW_DLV_OK;
 }
 
@@ -607,6 +631,7 @@ dd_re_exec(char *lp)
     }
     bopat[0] = lp;
     eopat[0] = ep;
+
     return DW_DLV_OK;
 }
 
@@ -707,8 +732,10 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
             break;
         case CCL:
             c = *lp++;
-            if (!isinset(ap,c))
+            if (!isinset(ap,c)) {
                 return DW_DLV_NO_ENTRY;
+            }
+
             ap += BITBLK;
             break;
         case BOL:
@@ -750,21 +777,23 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
         case CLO:
             are = (char *)lp;
             switch(*ap) {
-
             case ANY:
-                while (*lp)
+                while (*lp) {
                     lp++;
+                }
                 n = ANYSKIP;
                 break;
             case CHR:
                 c = *(ap+1);
-                while (*lp && c == *lp)
+                while (*lp && c == *lp) {
                     lp++;
+                }
                 n = CHRSKIP;
                 break;
             case CCL:
-                while ((c = *lp) && isinset(ap+1,c))
+                while ((c = *lp) && isinset(ap+1,c)) {
                     lp++;
+                }
                 n = CCLSKIP;
                 break;
             default:
@@ -773,18 +802,17 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
                     "closure: bad nfa\n");
                 return DW_DLV_ERROR;
             }
-
             ap += n;
-
             while (lp >= are) {
                 res = dd_pmatch(lp, ap,&e);
-                if (res != DW_DLV_ERROR) {
+                if (res == DW_DLV_ERROR) {
                    return res;
                 }
                 if (res == DW_DLV_OK) {
                     *end_ptr = e;
                     return res; 
                 }
+                /* NO_ENTRY so far */
                 --lp;
             }
             return DW_DLV_NO_ENTRY;
@@ -799,95 +827,11 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
     return DW_DLV_OK;
 }
 
-/* dwarfdump does not require the following */
-#if 0
-/*
- * re_modw:
- *    add new characters into the word table to change re_exec's
- *    understanding of what a word should look like. Note that we
- *    only accept additions into the word definition.
- *
- *    If the string parameter is 0 or null string, the table is
- *    reset back to the default containing A-Z a-z 0-9 _. [We use
- *    the compact bitset representation for the default table]
- */
-
-static CHAR deftab[16] = {    
-    0, 0, 0, 0, 0, 0, 0377, 003, 0376, 0377, 0377, 0207,  
-    0376, 0377, 0377, 007 
-}; 
-
-void
-re_modw(char *s)
-{
-    register int i;
-
-    if (!s || !*s) {
-        for (i = 0; i < MAXCHR; i++)
-            if (!isinset(deftab,i))
-                iswordc(i) = 0;
-    }
-    else
-        while(*s)
-            iswordc(*s++) = 1;
-}
-
-/*
- * re_subs:
- *    substitute the matched portions of the src in dst.
- *
- *    &    substitute the entire matched pattern.
- *
- *    \digit    substitute a subpattern, with the given    tag number.
- *        Tags are numbered from 1 to 9. If the particular
- *        tagged subpattern does not exist, null is substituted.
- */
-int
-re_subs(char *src, char *dst)
-{
-    register char c;
-    register int  pin;
-    register char *bp;
-    register char *ep;
-
-    if (!*src || !bopat[0])
-        return 0;
-
-    while (c = *src++) {
-        switch(c) {
-
-        case '&':
-            pin = 0;
-            break;
-
-        case '\\':
-            c = *src++;
-            if (c >= '0' && c <= '9') {
-                pin = c - '0';
-                break;
-            }
-            
-        default:
-            *dst++ = c;
-            continue;
-        }
-
-        if ((bp = bopat[pin]) && (ep = eopat[pin])) {
-            while (*bp && bp < ep)
-                *dst++ = *bp++;
-            if (bp < ep)
-                return 0;
-        }
-    }
-    *dst = (char) 0;
-    return 1;
-}
-#endif /* 0 */
-            
 #ifdef DEBUG
 /*
  * symbolic - produce a symbolic dump of the nfa
  */
+static void
 symbolic(char *s) 
 {
     printf("pattern: %s\n", s);
@@ -895,7 +839,7 @@ symbolic(char *s)
     nfadump(nfa);
 }
 
-static    
+static void   
 nfadump(CHAR *ap)
 {
     register int n;

@@ -223,6 +223,19 @@ if (DO_TESTING)
     add_test(NAME selfcanonical COMMAND selfcanonical)
 endif()
 
+if (DO_TESTING)
+    set_source_group(REGEXLIST "Source Files"
+        ${CMAKE_SOURCE_DIR}/test/test_regex.c.c 
+        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_regex.c)
+    add_executable(selfregex ${CANONICALLIST})
+    target_compile_options(selfregex PRIVATE
+        "-I$(CMAKE_BINARY_DIR)"
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
+    target_compile_options(selfregex PRIVATE ${DW_FWALL})
+    add_test(NAME selfregex COMMAND selfregex)
+endif()
+
 if (DO_TESTING) 
     add_custom_target (copyconf ALL
        COMMAND ${CMAKE_COMMAND} -E
