@@ -39,12 +39,13 @@
  * 
  * Interfaces:
  *      re_comp:        compile a regular expression into a NFA.
- *
+ *                      Only ASCII characters allowed in this call.
  *            char *re_comp(s)
  *            char *s;
  *
  *      re_exec:        execute the NFA to match a pattern.
- *
+ *                      ASCII and also 8 bit characters allowed,
+ *                      including UTF-9 and iso_8859.
  *            int re_exec(s)
  *            char *s;
  *
@@ -188,6 +189,7 @@
 #endif /* HAVE_STDLIB_H */
 #include "dwarf.h"
 #include "libdwarf.h" /* for DW_DLV_ names */
+#include "libdwarf_private.h" /* TRUE/FALSE */
 #include "dd_regex.h"
 
 #ifndef DW_DLV_OK 
@@ -201,9 +203,11 @@
 #define MAXNFA  1024
 #define MAXTAG  10
 
+/* status (sta) flags */
 #define OKP     1
 #define NOP     0
 
+/* nfa values */
 #define CHR     1
 #define ANY     2
 #define CCL     3 /* character class [ */
@@ -216,26 +220,46 @@
 #define REF     10
 #define CLO     11
 
-#define END     0
+#define END     12
+
+if DEBUG
+static int recurlevel = 0;
+#define RECURLEVEL(x) recurlevel += (x)
+#else
+#define RECURLEVEL(x)
+#endif
+static const char *naming(int i)
+{
+    if (i > 12) {
+        return "";
+    }
+    switch(i) {
+    case 0: return "zero";
+    case 1: return "CHR";
+    case 2: return "ANY";
+    case 3: return "CCL";
+    case 4: return "BOL";
+    case 5: return "EOL";
+    case 6: return "BOT";
+    case 7: return "EOT";
+    case 10: return "REF";
+    case 11: return "CLO";
+    case 12: return "END";
+    }
+    return "";
+}
 
 /*
  * The following defines are not meant to be changeable.
  * They are for readability only.
  */
 #define MAXCHR    128
-#define BITTABMAX 4
 #define CHRBIT    8
 #define BITBLK    MAXCHR/CHRBIT
 #define BLKIND    0170
 #define BITIND    07
 
-#define ASCIIB    0177
-
-#ifdef NO_UCHAR
-typedef char CHAR;
-#else
 typedef unsigned char CHAR;
-#endif
 
 static int  tagstk[MAXTAG];  /* subpat tag stack..*/
 static CHAR nfa[MAXNFA];     /* automaton..       */
@@ -248,25 +272,52 @@ static CHAR bitarr[] = {1,2,4,8,16,32,64,128};
 
 #ifdef DEBUG
 static void nfadump(CHAR *);
-static void symbolic(char *);
+static void symbolic(const char *);
 #endif
 
 static void
 chset(CHAR c)
 {
-    bittab[(CHAR) ((c) & BLKIND) >> 3] |= bitarr[(c) & BITIND];
+    CHAR blk = 0;
+    CHAR ind = 0;
+    CHAR bi = 0;
+
+    blk = ((c) & BLKIND) >> 3;
+    bi = (c) & BITIND;
+    ind = bitarr[bi];
+    bittab[blk] |= ind;
 }
 
 #define badpat    (*nfa = END)
-#define store(x)    *mp++ = x
+/*  Stores into nfa */
+#define store(x) {  *mp++ = (x) ;\
+printf("dadebug store 0x%x %s at 0x%lx\n",(x),naming(x),(unsigned long)(mp-1));}
 
 static void
-resetbittab(void)
+resetfornewpattern(void)
 {
      int j = 0;
      for (j = 0; j < BITBLK; ++j) {
          bittab[j] = 0;
      }
+     for (j = 0; j < MAXTAG; ++j) {
+         tagstk[j] =0;
+     }
+     for (j = 0; j < MAXNFA; ++j) {
+         nfa[j] =0;
+     }
+}
+
+static int
+all_ascii (const char *pat)
+{
+    const unsigned char *cp = (const unsigned char*)pat;
+    for( ; *cp; ++cp) {
+        if (*cp >= 0x7f) {
+            return FALSE;
+        }
+    }
+    return TRUE;
 }
  
 int
@@ -283,7 +334,10 @@ dd_re_comp(const char *pat)
     int c1   = 0;
     int c2   = 0;
 
-    resetbittab();
+    if (!all_ascii(pat)) {
+        return DW_DLV_ERROR;
+    }
+    resetfornewpattern();
     if (!pat || !*pat) {
         if (sta) {
             return DW_DLV_NO_ENTRY;
@@ -299,15 +353,16 @@ dd_re_comp(const char *pat)
 
     for (p = pat; *p; p++) {
         lp = mp;
+printf("dadebug switch pattern %c mp 0x%lx sp 0x%lx lp 0x%lx\n",*p,(unsigned long)mp,(unsigned long)sp,(unsigned long)lp);
         switch(*p) {
         case '.':               /* match any char..  */
             store(ANY);
             break;
 
         case '^':               /* match beginning.. */
-            if (p == pat)
+            if (p == pat) {
                 store(BOL);
-            else {
+            } else {
                 store(CHR);
                 store(*p);
             }
@@ -325,7 +380,7 @@ dd_re_comp(const char *pat)
         case '[':               /* match char class..*/
             store(CCL);
             if (*++p == '^') {
-                mask = 0377;    
+                mask = 0377;
                 p++;
             } else {
                 mask = 0;
@@ -336,13 +391,14 @@ dd_re_comp(const char *pat)
             if (*p == ']') {       /* real brac */
                 chset(*p++);
             }
-            while (*p && *p != ']') {
+            while (*p && (*p != ']')) {
                 if (*p == '-' && *(p+1) && *(p+1) != ']') {
                     p++;
                     c1 = *(p-2) + 1;
                     c2 = *p++;
-                    while (c1 <= c2)
+                    while (c1 <= c2) {
                         chset((CHAR)c1++);
+                    }
                 }
 #ifdef EXTEND
                 else if (*p == '\\' && *(p+1)) {
@@ -360,11 +416,13 @@ dd_re_comp(const char *pat)
                 return DW_DLV_ERROR;
             }
             /* Storing the bitmask into nfa  */
-            for (n = 0; n < BITBLK; bittab[n++] =
-                (char) 0) {
-                store(mask ^ bittab[n]);
+            for (n = 0; n < BITBLK; n++) {
+printf("dadebug CCL val %d\n",n);
+                CHAR maskval = mask ^ bittab[n];
+                store(maskval);
+                bittab[n] = 0;
             }
-            resetbittab();
+printf("dadebug CCL END line %d\n",__LINE__);
             break;
 
         case '*':               /* match 0 or more.. */
@@ -377,6 +435,7 @@ dd_re_comp(const char *pat)
             }
             lp = sp;        /* previous opcode */
             if (*lp == CLO)  {      /* equivalence..   */
+printf("dadebug break on CLO line %d\n",__LINE__);
                 break;
             }
             switch(*lp) {
@@ -384,8 +443,11 @@ dd_re_comp(const char *pat)
             case BOL:
             case BOT:
             case EOT:
+
+#ifdef  ROBPIKEextension  
             case BOW:
             case EOW:
+#endif
             case REF:
                 badpat;
                 printf("Regular expression %s has illegal "
@@ -396,28 +458,32 @@ dd_re_comp(const char *pat)
             }
 
             if (*p == '+') {
-                for (sp = mp; lp < sp; lp++)
+                int i = 0;
+                for (sp = mp; lp < sp; lp++) {
+printf("dadebug store another set entry (%d) for closure\n",i++);
                     store(*lp);
+                }
             }
-
             store(END);
             store(END);
+printf("dadebug mp to sp \n");
             sp = mp;
             while (--mp > lp) {
                 *mp = mp[-1];
             }
             store(CLO);
+printf("dadebug restore mp, done with * - closure \n");
             mp = sp;
             break;
 
         case '\\':              /* tags, backrefs .. */
             switch(*++p) {
-
             case '(':
                 if (tagc < MAXTAG) {
                     tagstk[++tagi] = tagc;
                     store(BOT);
-                    store(tagc++);
+                    store(tagc);
+                    ++tagc;
                 }
                 else {
                     badpat;
@@ -436,7 +502,8 @@ dd_re_comp(const char *pat)
                 }
                 if (tagi > 0) {
                     store(EOT);
-                    store(tagstk[tagi--]);
+                    store(tagstk[tagi]);
+                    tagi--;
                 } else {
                     badpat;
                     printf("Regular expression has "
@@ -444,6 +511,8 @@ dd_re_comp(const char *pat)
                     return DW_DLV_ERROR;
                 }
                 break;
+#ifdef  ROBPIKEextension  
+            This matches an expression to the beginning of a word.
             case '<':
                 store(BOW);
                 break;
@@ -456,6 +525,7 @@ dd_re_comp(const char *pat)
                 }
                 store(EOW);
                 break;
+#endif  /* ROBPIKEextension  */
             case '1':
             case '2':
             case '3':
@@ -514,6 +584,7 @@ dd_re_comp(const char *pat)
             store(*p);
             break;
         }
+printf("dadebug end switch pattern %c mp 0x%lx sp 0x%lx lp 0x%lx\n",*p,(unsigned long)mp,(unsigned long)sp,(unsigned long)lp);
         sp = lp;
     }
     if (tagi > 0) {
@@ -522,10 +593,11 @@ dd_re_comp(const char *pat)
             "unmatched \\(\n");
         return DW_DLV_ERROR;
     }
+printf("dadebug store END line %d\n",__LINE__);
     store(END);
     sta = OKP;
 #ifdef DEBUG
-    nfadump(nfa);
+    symbolic(pat);
 #endif /* DEBUG */
     return DW_DLV_OK;
 }
@@ -579,16 +651,20 @@ dd_re_exec(char *lp)
     bopat[8] = 0;
     bopat[9] = 0;
 
+printf("dadebug re_exec entry line %d\n",__LINE__);
     switch(*ap) {
     case BOL:            /* anchored: match from BOL only */
+        RECURLEVEL(1);
         res = dd_pmatch(lp,ap,&ep);
+        RECURLEVEL(-1);
+printf("dadebug dd_pmatch ret %d now recurlev %d line %d\n",res,recurlevel__LINE__);
         if (res != DW_DLV_OK) {
             return res;
         }
         break;
     case CHR:            /* ordinary char: locate it fast */
         c = *(ap+1);
-        while (*lp && *lp != c) {
+        while (*lp && (*lp != c)) {
             lp++;
         }
         if (!*lp) {      /* if EOS, fail, else fall thru. */
@@ -597,29 +673,27 @@ dd_re_exec(char *lp)
         goto regmatch; /* GO TO avoids a fall-through warning from gcc */
     default:    {        /* regular matching all the way. */
         regmatch:
-#ifdef OLD
-        while (*lp) {
-            res =  dd_pmatch(lp,ap,&ep)))
-            if (res == DW_DLV_ERROR) {
-                return res;
-            }
-            if (res == DW_DLV_OK) {
-                break;
-            }
-            lp++;
-        }
-#else    /* match null string */
         do {
+printf("dadebug now  dd_pmatch lp 0x%lx ap  0x%lx *lp 0x%x %c ret %d line %d\n",(unsigned long)lp,(unsigned long)ap,*lp,*lp,res,__LINE__);
+            RECURLEVEl(1);
             res = dd_pmatch(lp,ap,&ep);
+            RECURLEVEl(-1);
+printf("dadebug dd_pmatch ret %d bow recurlev %d line %d\n",res,recurlevel,__LINE__);
             if (res == DW_DLV_ERROR) {
+printf("dadebug exec ret DW_DLV_ERROR line %d\n",__LINE__);
                 return res;
             }
             if (res == DW_DLV_OK) {
+printf("dadebug exec want DW_DLV_OK line %d\n",__LINE__);
                 break;
             }
             lp++;
         } while (*lp);
-#endif /* OLD */
+printf("dadebug exec ret %d line %d\n",res,__LINE__);
+        if (res == DW_DLV_NO_ENTRY) {
+             /* Never found */
+             return res;
+        }
         break;
     }
     case END:            /* munged automaton. fail always */
@@ -627,13 +701,9 @@ dd_re_exec(char *lp)
         printf("Error in in regex automaton. "
             "END out of place\n");
         return DW_DLV_ERROR;
-    }
-    if (res != DW_DLV_OK) {
-        return res;
-    }
+    } /* end switch on *ap */
     bopat[0] = lp;
     eopat[0] = ep;
-
     return DW_DLV_OK;
 }
 
@@ -678,8 +748,13 @@ dd_re_exec(char *lp)
  * is not in the bitset form, since we may wish to extend it in the
  * future for other character classifications. 
  *
- *    TRUE for 0-9 A-Z a-z _
+ *    TRUE for 0-9 A-Z a-z _ and to support things
+ *    like iso-8859-1 and UTF8 all the bytes with the upper
+ *    bit on are allowed too. We cannot handle UTF-8
+ *    multi-byte codes in dw_re_comp call, but can in a de_re_exec
+ *    call.
  */
+#ifdef  ROBPIKEextension  
 static CHAR chrtyp[MAXCHR] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -693,12 +768,14 @@ static CHAR chrtyp[MAXCHR] = {
     1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-    1, 1, 1, 0, 0, 0, 0, 0
+    1, 1, 1, 1, 1, 1, 0, 0,
 };
 
-#define inascii(x)    (0177&(x))
-#define iswordc(x)     chrtyp[inascii(x)]
-#define isinset(x,y)     ((x)[((y)&BLKIND)>>3] & bitarr[(y)&BITIND])
+#define inascii(x)    (0177&(x)) 
+#define iswordc(x)    chrtyp[inascii(x)]
+#endif /*  ROBPIKEextension */
+
+#define isinset(x,y)  ((x)[((y)&BLKIND)>>3] & bitarr[(y)&BITIND])
 
 /*
  * skip values for CLO XXX to skip past the closure
@@ -706,7 +783,7 @@ static CHAR chrtyp[MAXCHR] = {
 
 #define ANYSKIP    2    /* [CLO] ANY END ...         */
 #define CHRSKIP    3    /* [CLO] CHR chr END ...     */
-#define CCLSKIP   18    /* [CLO] CCL 16bytes END ... */
+#define CCLSKIP   18    /* [CLO] CCL 32bytes END ... */
 
 static int
 dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
@@ -714,41 +791,54 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
     int op    = 0; 
     int c    = 0;
     int n    = 0;
-    char *e  = 0;    /* extra pointer for CLO */
     char *bp = 0;   /* beginning of subpat.. */
     char *ep = 0;   /* ending of subpat..     */
-    char *are = 0;           /* to save the line ptr. */
+    char *are = 0;  /* to save the line ptr. */
+    char *e  = 0;    /* extra pointer for CLO */
     int res  = 0;
 
+printf("dadebug dd_pmatch lp 0x%lx ap 0x%lx recurlevel line %d\n",(unsigned long)lp,(unsigned long)ap,recurlevel,__LINE__);
     while ((op = *ap++) != END) {
+printf("dadebug dd_pmatch lp 0x%lx 0x%x %c op 0x%x %c %s ap 0x%lx line %d\n",(unsigned long)lp,*lp,*lp,op,op,naming(op),(unsigned long)ap,__LINE__);
+if (*lp == 'i') {
+    printf("dadebug at i line %d\n",__LINE__);
+}
         switch(op) {
         case CHR:
             if (*lp++ != *ap++) {
+printf("dadebug NO ENTRY line %d\n",__LINE__);
                 return DW_DLV_NO_ENTRY;
             }
+printf("dadebug MATCH line %d\n",__LINE__);
             break;
         case ANY:
             if (!*lp++) {
                 return DW_DLV_NO_ENTRY;
             }
+printf("dadebug ANY MATCH line %d\n",__LINE__);
             break;
         case CCL:
             c = *lp++;
+printf("dadebug check for char 0x%x %c in CCL line %d\n",c,c,__LINE__);
             if (!isinset(ap,c)) {
+printf("dadebug NO ENTRY line %d\n",__LINE__);
                 return DW_DLV_NO_ENTRY;
             }
 
+printf("dadebug CCL MATCH passed: line %d\n",__LINE__);
             ap += BITBLK;
             break;
         case BOL:
             if (lp != bol) {
                 return DW_DLV_NO_ENTRY;
             }
+printf("dadebug BOL MATCH line %d\n",__LINE__);
             break;
         case EOL:
             if (*lp) {
                 return DW_DLV_NO_ENTRY;
             }
+printf("dadebug EOL MATCH line %d\n",__LINE__);
             break;
         case BOT:
             bopat[*ap++] = (char *)lp;
@@ -756,16 +846,18 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
         case EOT:
             eopat[*ap++] = (char *)lp;
             break;
+#ifdef  ROBPIKEextension  
         case BOW:
             if ((lp!=bol && iswordc(lp[-1])) || !iswordc(*lp)) {
                 return DW_DLV_NO_ENTRY;
             }
             break;
         case EOW:
-            if ((lp==bol || !iswordc(lp[-1])) || iswordc(*lp)) {
+            if (lp==bol || !iswordc(lp[-1]) || iswordc(*lp)) {
                 return DW_DLV_NO_ENTRY;
             }
             break;
+#endif /* ROBPIKEextension */
         case REF:
             n = *ap++;
             bp = bopat[n];
@@ -774,12 +866,16 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
                 if (*bp++ != *lp++) {
                     return DW_DLV_NO_ENTRY;
                 }
+printf("dadebug MATCH line %d\n",__LINE__);
             }
+printf("dadebug MATCH line %d\n",__LINE__);
             break;
         case CLO:
             are = (char *)lp;
+printf("dadebug CLO inner type 0x%x %c %s line %d\n",*ap,*ap,naming(*ap),__LINE__);
             switch(*ap) {
             case ANY:
+printf("dadebug now CLO/ANY MATCH c 0x%x %c %s line %d\n",c,c,naming(c),__LINE__);
                 while (*lp) {
                     lp++;
                 }
@@ -787,13 +883,18 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
                 break;
             case CHR:
                 c = *(ap+1);
-                while (*lp && c == *lp) {
+printf("dadebug now CLO/CHR MATCH c 0x%x %c %s *lp 0x%x %c line %d\n",c,c,naming(c),*lp,*lp,__LINE__);
+                while (*lp && c != END && c == *lp) {
+printf("dadebug MATCH c 0x%x %c %s line %d\n",c,c,naming(c),__LINE__);
                     lp++;
                 }
                 n = CHRSKIP;
                 break;
             case CCL:
-                while ((c = *lp) && isinset(ap+1,c)) {
+printf("dadebug now CLO/CCL MATCH c 0x%x %c %s lp 0x%lx %c line %d\n",c,c,naming(c),
+(unsigned long)lp,*lp,__LINE__);
+                while ((c = *lp) && isinset(ap,c)) {
+printf("dadebug MATCH c 0x%x %c lp 0x%lx %c line %d\n",c,c,(unsigned long)lp,*lp,__LINE__);
                     lp++;
                 }
                 n = CCLSKIP;
@@ -805,18 +906,27 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
                 return DW_DLV_ERROR;
             }
             ap += n;
+            /*  We likely are past where this CLO applied
+                so back up so lp points into the CLO/CCL we are finished with. */
             while (lp >= are) {
+printf("dadebug RECURSE INTO dd_pmatch, find matching lp 0x%lx *lp %c.line %d\n",(unsigned long) lp,*lp,__LINE__);
+                RECURLEVEL(1);
                 res = dd_pmatch(lp, ap,&e);
+                RECURLEVEL(-1);
+printf("dadebug END RECURSION dd_pmatch res %d line %d\n",res,__LINE__);
                 if (res == DW_DLV_ERROR) {
                    return res;
                 }
                 if (res == DW_DLV_OK) {
+printf("dadebug DW_DLV_OK line %d\n",__LINE__);
                     *end_ptr = e;
                     return res; 
                 }
                 /* NO_ENTRY so far */
                 --lp;
+printf("dadebug NO ENTRY backup one character lp now 0x%lx %c line %d\n",(unsigned long)lp,*lp,__LINE__);
             }
+printf("dadebug NO ENTRY line %d\n",__LINE__);
             return DW_DLV_NO_ENTRY;
         default:
             badpat;
@@ -825,6 +935,7 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
             return DW_DLV_ERROR;
         }
     }
+printf("dadebug OK end ptr set 0x%lx line %d\n",(unsigned long)lp,__LINE__);
     *end_ptr = (char *)lp;
     return DW_DLV_OK;
 }
@@ -834,7 +945,7 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
  * symbolic - produce a symbolic dump of the nfa
  */
 static void
-symbolic(char *s) 
+symbolic(const char *s) 
 {
     printf("pattern: %s\n", s);
     printf("nfacode:\n");
@@ -846,7 +957,8 @@ nfadump(CHAR *ap)
 {
     register int n;
 
-    while (*ap != END)
+    while (*ap != END) {
+printf("dadebug next nfa 0x%lx\n",(unsigned long)ap);
         switch(*ap++) {
         case CLO:
             printf("CLOSURE");
@@ -863,6 +975,7 @@ nfadump(CHAR *ap)
                 break;
             }
             ap += n;
+printf("dadebug end CLOSURE next nfa 0x%lx\n",(unsigned long)ap);
             break;
         case CHR:
             printf("\tCHR %c\n",*ap++);
@@ -882,12 +995,14 @@ nfadump(CHAR *ap)
         case EOT:
             printf("EOT: %d\n",*ap++);
             break;
+#ifdef  ROBPIKEextension  
         case BOW:
             printf("BOW\n");
             break;
         case EOW:
             printf("EOW\n");
             break;
+#endif
         case REF:
             printf("REF: %d\n",*ap++);
             break;
@@ -895,18 +1010,22 @@ nfadump(CHAR *ap)
             printf("\tCCL [");
             for (n = 0; n < MAXCHR; n++)
                 if (isinset(ap,(CHAR)n)) {
-                    if (n < ' ')
+                    if (n < ' ') {
                         printf("^%c", n ^ 0x040);
-                    else
+                    } else {
                         printf("%c", n);
+                    }
                 }
-            printf("]\n");
+            printf("] \n");
             ap += BITBLK;
+printf("dadebug CCL next nfa 0x%lx\n",(unsigned long)ap);
             break;
         default:
             printf("bad nfa. opcode %o\n", ap[-1]);
             exit(1);
             break;
         }
+    }
+    printf("dadebug nfa end at 0x%lx\n",(unsigned long)ap);
 }
 #endif  /* DEBUG */

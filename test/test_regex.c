@@ -37,110 +37,6 @@ checkres(int res, const char *func,
      return;
 }
 
-
-static void
-test1(void)
-{
-    int res = 0;
-    const char *comp = ".*";
-    const char *check = "abc";
-
-    printf("Test1 exp %s str %s,line %d\n",comp,check,__LINE__);
-    res = dd_re_comp((char *)comp);
-    checkres(res,"dd_re_comp",comp,check,DW_DLV_OK,__LINE__);
-    if (res) {
-        return;
-    }
-    res = dd_re_exec((char *)check);
-    checkres(res,"dd_re_exec",comp,check,DW_DLV_OK,__LINE__);
-}
-static void
-test2(void)
-{
-    int res = 0;
-    const char *comp = "abc";
-    const char *check = "ab";
-
-    printf("Test2 exp %s str %s,line %d\n",comp,check,__LINE__);
-    res = dd_re_comp((char *)comp);
-    checkres(res,"dd_re_comp",comp,check,DW_DLV_OK,__LINE__);
-    if (res) {
-        return;
-    }
-    res = dd_re_exec((char *)check);
-    checkres(res,"dd_re_exec",comp,check,DW_DLV_NO_ENTRY,__LINE__);
-}
-
-static void
-test3(void)
-{
-    int res = 0;
-    const char *comp = "a[xy]j";
-    const char *check = "ab";
-
-    printf("Test3 exp %s str %s,line %d\n",comp,check,__LINE__);
-    res = dd_re_comp((char *)comp);
-    checkres(res,"dd_re_comp",comp,check,DW_DLV_OK,__LINE__);
-    if (res) {
-        return;
-    }
-    res = dd_re_exec((char *)check);
-    checkres(res,"dd_re_exec",comp,check,DW_DLV_NO_ENTRY,__LINE__);
-}
-static void
-test4(void)
-{
-    int res = 0;
-    /* expect all OK */
-    const char *comp = "a[xy]j";
-    const char *check = "ayj";
-
-    printf("Test4 exp %s str %s,line %d\n",comp,check,__LINE__);
-    res = dd_re_comp((char *)comp);
-    checkres(res,"dd_re_comp",comp,check,DW_DLV_OK,__LINE__);
-    if (res) { 
-        return;
-    }
-    res = dd_re_exec((char *)check);
-    checkres(res,"dd_re_exec",comp,check,DW_DLV_OK,__LINE__);
-}
-
-static void
-test5(void)
-{
-    int res = 0;
-    /* pattern ok, check string does not match */
-    const char *comp = "a[xy]j";
-    const char *check = "afj";
-
-    printf("Test5 exp %s str %s,line %d\n",comp,check,__LINE__);
-    res = dd_re_comp((char *)comp);
-    checkres(res,"dd_re_comp",comp,check,DW_DLV_OK,__LINE__);
-    if (res) {
-        return;
-    }
-    res = dd_re_exec((char *)check);
-    checkres(res,"dd_re_exec",comp,check,DW_DLV_NO_ENTRY,__LINE__);
-}
-
-static void
-test6(void)
-{
-    int res = 0;
-    /* incomplete pattern */
-    const char *comp = "a[xyj";
-    const char *check = "afj";
-
-    printf("Test6 exp %s str %s,line %d\n",comp,check,__LINE__);
-    res = dd_re_comp((char *)comp);
-    checkres(res,"dd_re_comp",comp,check,DW_DLV_ERROR,__LINE__);
-    if (res) {
-        return;
-    }
-    res = dd_re_exec((char *)check);
-    checkres(res,"dd_re_exec",comp,check,DW_DLV_NO_ENTRY,__LINE__);
-}
-
 /* Simpler testing */
 static void
 testx(const char *expr,
@@ -150,6 +46,10 @@ testx(const char *expr,
     int line)
 {
     int res = 0;
+    if (!expr || !check) {
+        printf("Null expression or string. Considered pass.\n");
+        return;
+    }
 
     printf("Test exp %s str %s,line %d\n",expr,check,line);
     res = dd_re_comp((char *)expr);
@@ -165,13 +65,22 @@ testx(const char *expr,
 
 int main()
 {
+    testx("[fx]*[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
+#if 0
+    testx("[fx][0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
+    testx("[fx]+[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
+    testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
 
-    test1();
-    test2();
-    test3();
-    test4();
-    test5();
-    test6();
+    testx(".*",DW_DLV_OK,  "abc",DW_DLV_OK,__LINE__);
+    testx("abc",DW_DLV_OK, "ab",DW_DLV_NO_ENTRY,__LINE__);
+    testx("a[^xy]j",DW_DLV_OK,"ab",DW_DLV_NO_ENTRY,__LINE__);
+    testx("a[^xy]j",DW_DLV_OK,"abj",DW_DLV_OK,__LINE__);
+    testx("a[xy]j",DW_DLV_OK,"ab",DW_DLV_NO_ENTRY,__LINE__);
+    testx( "a[xy]j",DW_DLV_OK,"ayj",DW_DLV_OK,__LINE__);
+
+    testx("a[xy]j",DW_DLV_OK,"afj",DW_DLV_NO_ENTRY,__LINE__);
+    testx("a[xyj",DW_DLV_ERROR,"afj",DW_DLV_NO_ENTRY,__LINE__);
+
     /*  A trailing] with no preceeding [ is not
         an error */
     testx("axy]j",DW_DLV_OK,"abc",DW_DLV_NO_ENTRY,__LINE__);
@@ -191,12 +100,13 @@ int main()
     testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123",DW_DLV_OK,__LINE__);
     testx("a\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\()))))))))))))))))))))",DW_DLV_ERROR,"yxxffi123",DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx]+[0-9]*a",DW_DLV_OK,"yxxff123a",DW_DLV_OK,__LINE__);
-    testx("[fx]+[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
-    testx("[fx]+[0-9]+",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
+    testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
+
     testx("[fx]+",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
     testx("[fx]+i[0-9]+",DW_DLV_OK,"yxxffi123",DW_DLV_OK,__LINE__);
     testx("a[fx]+b[cd]",DW_DLV_OK,"afffbdddy",DW_DLV_OK,__LINE__);
     testx("a[fx]+b[cd]",DW_DLV_OK,"afffdddy",DW_DLV_NO_ENTRY,__LINE__);
+#endif
     if (errcount > 0) {
         printf("FAIL test_regex\n");
         return 1;
