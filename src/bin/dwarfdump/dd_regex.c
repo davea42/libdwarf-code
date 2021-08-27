@@ -622,7 +622,10 @@ printf("dadebug store END line %d\n",__LINE__);
 static char *bol;
 static char *bopat[MAXTAG];
 static char *eopat[MAXTAG];
-static int dd_pmatch(const char *, CHAR *,char **str_out);
+static int dd_pmatch(const char *expp, 
+    CHAR *nfaptr,
+    char **expp_out,
+    CHAR **nfaptr_out);
 
 /*
  * re_exec:
@@ -654,6 +657,7 @@ dd_re_exec(char *lp)
     char *ep = 0;
     CHAR *ap = nfa;
     int res  = 0;
+    CHAR *movedap = 0;
 
     bol = lp;
     bopat[0] = 0;
@@ -666,12 +670,14 @@ dd_re_exec(char *lp)
     bopat[7] = 0;
     bopat[8] = 0;
     bopat[9] = 0;
+    
 
 printf("dadebug re_exec entry line %d\n",__LINE__);
     switch(*ap) {
     case BOL:            /* anchored: match from BOL only */
         RECURLEVEL(1);
-        res = dd_pmatch(lp,ap,&ep);
+        /* ALL the real work done at level 1 */
+        res = dd_pmatch(lp,ap,&ep,&movedap);
         RECURLEVEL(-1);
 printf("dadebug dd_pmatch ret %d now recurlev %d line %d\n",res,recurlevel,__LINE__);
         if (res != DW_DLV_OK) {
@@ -686,14 +692,22 @@ printf("dadebug dd_pmatch ret %d now recurlev %d line %d\n",res,recurlevel,__LIN
         if (!*lp) {      /* if EOS, fail, else fall thru. */
             return DW_DLV_NO_ENTRY;
         }
+        /* Skip to next ap */
+        ap += 2;
+        lp++;
         goto regmatch; /* GO TO avoids a fall-through warning from gcc */
     default:    {        /* regular matching all the way. */
         regmatch:
         do {
 printf("dadebug now  dd_pmatch lp 0x%lx ap  0x%lx *lp 0x%x %s ret %d recurlevel %d line %d\n",(unsigned long)lp,(unsigned long)ap,*lp,pachar(*lp),res,recurlevel,__LINE__);
             RECURLEVEL(1);
-            res = dd_pmatch(lp,ap,&ep);
+            /* ALL the real work done at level 1 */
+            res = dd_pmatch(lp,ap,&ep,&movedap);
             RECURLEVEL(-1);
+            if (movedap) {
+                ap = movedap;
+                movedap = 0;
+            }
 printf("dadebug dd_pmatch ret %d now recurlev %d line %d\n",res,recurlevel,__LINE__);
             if (res == DW_DLV_ERROR) {
 printf("dadebug exec ret DW_DLV_ERROR line %d\n",__LINE__);
@@ -703,7 +717,20 @@ printf("dadebug exec ret DW_DLV_ERROR line %d\n",__LINE__);
 printf("dadebug exec want DW_DLV_OK line %d\n",__LINE__);
                 break;
             }
-            lp++;
+            if (movedap ) {
+                ap = movedap;
+printf("dadebug now ap moved to 0x%lx line %d\n",(unsigned long)ap,__LINE__);
+                movedap = 0;
+            }
+            if (ap == nfa) {
+            /* Skipping entries not matching before an expression */
+printf("dadebug SKIP lp 0x%lx ap 0x%lx *lp 0x%x %s ret %d recurlevel %d line %d\n",(unsigned long)lp,(unsigned long)ap,*lp,pachar(*lp),res,recurlevel,__LINE__);
+                lp++;
+            }  else {
+printf("dadebug NOSKIP lp 0x%lx ap 0x%lx *lp 0x%x %s ret %d recurlevel %d line %d\n",(unsigned long)lp,(unsigned long)ap,*lp,pachar(*lp),res,recurlevel,__LINE__);
+                return DW_DLV_NO_ENTRY;
+            }
+printf("dadebug dd_pmatch post skip lp 0x%lx ap  0x%lx *lp 0x%x %s ret %d recurlevel %d line %d\n",(unsigned long)lp,(unsigned long)ap,*lp,pachar(*lp),res,recurlevel,__LINE__);
         } while (*lp);
 printf("dadebug exec ret %d line %d\n",res,__LINE__);
         if (res == DW_DLV_NO_ENTRY) {
@@ -802,7 +829,8 @@ static CHAR chrtyp[MAXCHR] = {
 #define CCLSKIP   18    /* [CLO] CCL 32bytes END ... */
 
 static int
-dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
+dd_pmatch(const char *lp, CHAR *ap,char **movedlp,
+    CHAR **movedap)
 {
     int op    = 0; 
     int c    = 0;
@@ -812,20 +840,27 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr)
     char *are = 0;  /* to save the line ptr. */
     char *e  = 0;    /* extra pointer for CLO */
     int res  = 0;
+    CHAR *movedaplocal = 0;
 
 printf("dadebug dd_pmatch lp 0x%lx ap 0x%lx recurlevel %d line %d\n",(unsigned long)lp,(unsigned long)ap,recurlevel,__LINE__);
-    while ((op = *ap++) != END) {
+    while ((op = *ap) != END) {
 printf("dadebug dd_pmatch lp 0x%lx 0x%x %s op 0x%x  %s ap 0x%lx line %d\n",
 (unsigned long)lp,(*lp),pachar(*lp),op,naming(op),(unsigned long)ap,__LINE__);
+        ap++;
 if (*lp == 'i') {
 printf("dadebug at i recurlevel %d line %d\n",recurlevel,__LINE__);
 }
         switch(op) {
         case CHR:
-            if (*lp++ != *ap++) {
+            if (*lp != *ap) {
 printf("dadebug CHR NO ENTRY line %d\n",__LINE__);
                 return DW_DLV_NO_ENTRY;
             }
+printf("dadebug CHR match line %d\n",__LINE__);
+            lp++;
+            ap++;
+printf("dadebug CHR lp char now %s line %d\n",pachar(*lp),__LINE__);
+            *movedap = ap;
 printf("dadebug CHR MATCH line %d\n",__LINE__);
             break;
         case ANY:
@@ -834,6 +869,7 @@ printf("dadebug ANY MATCH now fail line %d\n",__LINE__);
                 return DW_DLV_NO_ENTRY;
             }
 printf("dadebug ANY MATCH line %d\n",__LINE__);
+            *movedap = ap;
             break;
         case CCL:
             c = *lp++;
@@ -844,6 +880,7 @@ printf("dadebug CCL NO ENTRY line %d\n",__LINE__);
             }
 printf("dadebug CCL MATCH passed: line %d\n",__LINE__);
             ap += BITBLK;
+            *movedap = ap;
             break;
         case BOL:
             if (lp != bol) {
@@ -883,9 +920,9 @@ printf("dadebug EOL MATCH line %d\n",__LINE__);
                 if (*bp++ != *lp++) {
                     return DW_DLV_NO_ENTRY;
                 }
-printf("dadebug MATCH line %d\n",__LINE__);
+printf("dadebug REF MATCH line %d\n",__LINE__);
             }
-printf("dadebug MATCH line %d\n",__LINE__);
+printf("dadebug REF MATCH line %d\n",__LINE__);
             break;
         case CLO:
             are = (char *)lp;
@@ -928,28 +965,39 @@ printf("dadebug MATCH c 0x%x %s lp 0x%lx %s line %d\n",c,pachar(c),
 printf("dadebug old ap 0x%lx curlevel %d char at 0x%lx %s line %d\n",(unsigned long)ap,recurlevel,(unsigned long)lp,pachar(*lp),__LINE__);
             ap += n;
 printf("dadebug new ap 0x%lx curlevel %d char at 0x%lx %s line %d\n",(unsigned long)ap,recurlevel,(unsigned long)lp,pachar(*lp),__LINE__);
-            /*  We likely are past where this CLO applied
-                so back up so lp points into the CLO/CCL we are finished with. */
-            while (lp >= are) {
+            if (lp > are) {
 printf("dadebug ARE RECURSE INTO dd_pmatch, find matching lp 0x%lx *lp %s.line %d\n",(unsigned long) lp,pachar(*lp),__LINE__);
                 RECURLEVEL(1);
-                res = dd_pmatch(lp, ap,&e);
+                res = dd_pmatch(lp, ap,movedlp,&movedaplocal);
 printf("dadebug ARE END RECURSION of level %d dd_pmatch res %d line %d\n",recurlevel,res,__LINE__);
                 RECURLEVEL(-1);
 printf("dadebug ARE RECURSION now %d dd_pmatch  line %d\n",recurlevel,__LINE__);
                 if (res == DW_DLV_ERROR) {
                    return res;
                 }
+                if (res == DW_DLV_NO_ENTRY) {
+                   if (movedaplocal) {
+                       ap = movedaplocal;
+                       *movedap = ap;
+                       movedaplocal = 0;
+                   }
+                   return res;
+                }
                 if (res == DW_DLV_OK) {
-                    *end_ptr = e;
+printf("dadebug ARE RECURSION OK %d dd_pmatch line %d\n",recurlevel,__LINE__);
+                    *movedlp = e;
                     return res; 
                 }
 #if 0
                 If the failure is on a CHR or CCL it is too late. 
-#endif
                 /* NO_ENTRY so far */
                 --lp;
-printf("dadebug ARE NO ENTRY backup one character lp now 0x%lx %s line %d\n",(unsigned long)lp,pachar(*lp),__LINE__);
+#endif
+            }
+printf("dadebug ARE NO ENTRY backup one character lp now 0x%lx %s apchar %s line %d\n",(unsigned long)lp,pachar(*lp),naming(*ap),__LINE__);
+            if (!*lp && !*(ap+1)) {
+printf("dadebug OK at end line %d\n",__LINE__);
+                return DW_DLV_OK;
             }
 printf("dadebug NO ENTRY line %d\n",__LINE__);
             return DW_DLV_NO_ENTRY;
@@ -961,7 +1009,7 @@ printf("dadebug NO ENTRY line %d\n",__LINE__);
         }
     }
 printf("dadebug OK end ptr set 0x%lx line %d\n",(unsigned long)lp,__LINE__);
-    *end_ptr = (char *)lp;
+    *movedlp = (char *)lp;
     return DW_DLV_OK;
 }
 

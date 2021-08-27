@@ -27,10 +27,10 @@ checkres(int res, const char *func,
     const char *test,int expres,int line)
 {
      if (res != expres) {
-         printf("FAIL %s re %s input %s got %s exp %s line %d\n",
-             func,re,test,
-             ename(res), 
-             ename(expres), 
+         printf("FAIL re %s input %s %s=%s exp %s line %d\n",
+             re,test,
+             func,
+             ename(res), ename(expres), 
              line);
          ++errcount;
      }
@@ -50,8 +50,8 @@ testx(const char *expr,
         printf("Null expression or string. Considered pass.\n");
         return;
     }
-
-    printf("Test exp %s str %s,line %d\n",expr,check,line);
+    printf("Test %s %s expect=%s expect=%s line %d\n",
+        expr,check,ename(expv1),ename(intexpv2),line);
     res = dd_re_comp((char *)expr);
     checkres(res,"dd_re_comp",expr,check,expv1,line);
     if (res) {
@@ -66,7 +66,7 @@ testx(const char *expr,
 int main()
 {
     testx("[fx]*[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
-#if 0
+#if 1
     testx("[fx][0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx]+[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
@@ -108,7 +108,7 @@ int main()
     testx("a[fx]+b[cd]",DW_DLV_OK,"afffdddy",DW_DLV_NO_ENTRY,__LINE__);
 #endif
     if (errcount > 0) {
-        printf("FAIL test_regex\n");
+        printf("FAIL test_regex errcount %d\n",errcount);
         return 1;
     }
     return 0;
