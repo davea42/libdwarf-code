@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.6 1 July 2021
+.ds vE Rev 4.7 27 August 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6075,8 +6075,9 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                     opres = dwarf_get_location_op_value_d(
                         locdesc_entry,
                         j,&op,
+                        &opd1, &opd2,&opd3,
                         &raw1,&raw2,&raw3,
-                        &opd1, &opd2,&opd3,&offsetforbranch,
+                        &offsetforbranch,
                         &error);
                     if (opres == DW_DLV_OK) {
                         /* Do something with the operators.
