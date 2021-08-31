@@ -681,6 +681,11 @@ with the command-line parser applicable (bash, sh, ...)
 or getopt(), as well as using URI to deal with searching
 for strings in non-ASCII such as French, (etc)
 or the now-nearly-universal UTF8.
+The regex implementation only allows ASCII in the expression
+and the expression only handles basic regular expressions,
+which are like Posix Basic Regular Expressions (PBRE), but the
+() grouping construct in PBRE seems unnecessary
+here so we suggest not using () grouping
 
 These are particularly useful when the amount of
 DWARF information output by -i is multiple

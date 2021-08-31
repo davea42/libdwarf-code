@@ -66,10 +66,16 @@ testx(const char *expr,
 int main()
 {
     testx("[fx]*[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
-#if 1
+    testx("[fx]*[0-9]+",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx][0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx]+[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
+#if 0
+    testx("u.*leb",DW_DLV_OK,"local_dwarf_decode_u_leb128",DW_DLV_OK,__LINE__);
+    testx("u.*leb",DW_DLV_OK,"uleblen",DW_DLV_OK,__LINE__);
+    testx("u.leb",DW_DLV_OK,"local_dwarf_decode_u_leb128",DW_DLV_OK,__LINE__);
+    testx("uleb",DW_DLV_OK,"uleblen",DW_DLV_OK,__LINE__);
+
 
     testx(".*",DW_DLV_OK,  "abc",DW_DLV_OK,__LINE__);
     testx("abc",DW_DLV_OK, "ab",DW_DLV_NO_ENTRY,__LINE__);

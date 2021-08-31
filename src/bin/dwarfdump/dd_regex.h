@@ -19,6 +19,6 @@
 #define DD_REGEX_H
 
 int dd_re_comp(const char *);
-int dd_re_exec(char *);
+int dd_re_exec(const char *);
 
 #endif /* DD_REGEX_H */
