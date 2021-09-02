@@ -1,3 +1,589 @@
+2021-09-02:  David Anderson
+    commit 7c2a53f2854892f891c1872cf64e56a2bcc8b951
+
+    A fully functioning regex that does Posix Basic Regular
+    Expression matching is now built into dwarfdump.
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dd_regex.h
+    This does a fairly large set of testcases
+    in make check (and for cmake too).
+            modified:   test/test_regex.c
+
+2021-08-31:  David Anderson
+    commit 8dc87d5b997f529b80884a6e306687ab402b8463
+
+    Minor tweak of the incomplete dd_regex.c code.
+    DO NOT USE -Sregex as it does not yet work.
+    and 'make check' fails its regex changes.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2021-08-31:  David Anderson
+    commit 08fa32841bade1ceea9492b1aea05932d1b7559d
+Merge: b4fd80f4 0a98801c
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+    README.md now has improved MarkDown markings.
+
+2021-08-31:  David Anderson
+    commit 0a98801c08ed3d2c6a198205fcc40c0ae1711a0f
+Merge: 6615a59f 50f7563f
+
+    Merge pull request #47 from vtorri/vtorri_readme
+
+    Use markdown features for README.md
+
+2021-08-31:  David Anderson
+    commit b4fd80f411d81767c83f5544ed01444a25886d81
+
+    DO NOT USE THIS COMMIT.
+    Incomplete.
+
+    Modified the doc of -Sregex
+            modified:   doc/dwarfdump.1
+    New version, writing t. Not from the
+    internet.
+            modified:   src/bin/dwarfdump/dd_regex.c
+    Modified declaration.
+            modified:   src/bin/dwarfdump/dd_regex.h
+    Added new tests
+            modified:   test/test_regex.c
+
+2021-08-27:  David Anderson
+    commit c81ad1b4bd924847770c575677eed3134c8b83ae
+
+    Version 4.7 27 August 2021.
+    The example code for dwarf_get_location_op_value_d()
+    mixed up the arguments opd<n> vs raw<n>
+    which was quite bad as the compiler could not help
+    anyone find the mistake. Fixed in the document.
+            modified:   libdwarf.mm
+            modified:   libdwarf.pdf
+
+2021-08-27:  David Anderson
+    commit 37fa82942e4b9b66de6358410b1335cfa7fa182d
+
+    DO NOT USE THIS COMMIT.  Works better
+    but full of debug lines.
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   test/test_regex.c
+
+2021-08-26:  David Anderson
+    commit 0be9ce8cac5963f30c547404b785c947e0570b02
+
+    DO NOT USE THIS COMMIT.
+    Bug not fixed.
+            modified:   dd_regex.c
+
+2021-08-26:  David Anderson
+    commit c67defd3a9d8eb62bcdef58e7a5afa1b4d4d0494
+
+    DO NOT USE THIS COMMIT.
+    A work in progress.
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   test/test_regex.c
+
+2021-08-26:  Vincent Torri
+    commit 50f7563f9553677382486ee1846f3493bed6ccd8
+
+    Use markdown features for README.md
+
+            modified:   README.md
+
+2021-08-21:  David Anderson
+    commit 06928e93bac0cedc65ffb9028efaaa54bd7d0a02
+
+    DO NOT USE THIS COMMIT.
+    the dd_regex.c is only 7-bit char safe.
+
+    Otherwise it works well. Added a new test
+    for regex in test/
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/command_options.c
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/glflags.c
+            modified:   src/bin/dwarfdump/glflags.h
+            modified:   src/bin/dwarfdump/globals.h
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   test/CMakeLists.txt
+            modified:   test/test_regex.c
+
+2021-08-21:  David Anderson
+    commit e41891bc7ac83f006c32ad7b88b1fc6c12c066a8
+
+    Brings a public domain regex into dwarfdump
+    DO NOT USE THIS COMMIT.
+    It only does 7-bit ascii and still used libc regex
+    if present.
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/test_regex.c
+
+2021-08-21:  David Anderson
+    commit 174ae601217b1f5ebed218acffcf0ab66d9d32ae
+
+    added hints (comments for coverity scan )
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2021-08-17:  David Anderson
+    commit 847264b71dd7a23a9d46629391f23985616596db
+
+    DO NOT USE THIS COMMIT
+    The source and test are now in the intended form
+    with dwarfdump-like (libdwarf-like) arguments
+    and return values.
+    Basically works, but... corner cases
+    perhaps not working as expected.
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dd_regex.h
+            new file:   test/test_regex.c
+
+2021-08-17:  David Anderson
+    commit 22ff6e700d2bcf8c31ec16c79ba79d1604cb1a0f
+
+    dwarfdump files now compile with new
+    function declarations.
+            modified:   dd_regex.c
+            modified:   dd_regex.h
+
+2021-08-17:  David Anderson
+    commit 302d672243a0b9a8af8dd1982829d231d18f4a2f
+
+    DO NOT USE THIS COMMIT.  revising interfaces
+    and reformatting lines in progress.
+            modified:   dd_regex.c
+            modified:   dd_regex.h
+
+2021-08-17:  David Anderson
+    commit 931ab9da63a372badda2137fcafc7137ae4a57e3
+
+    Initial public domain source of code that
+    does Posix Basic Regular Expressions.
+    So all dwarfdump users have such available
+    for dwarfdump -S  (--search-match) options.
+            new file:   src/bin/dwarfdump/dd_regex.c
+            new file:   src/bin/dwarfdump/dd_regex.h
+
+2021-08-16:  David Anderson
+    commit 6615a59f9ce5c5bf6dea7a466887e8cf8de757b3
+Merge: 3134aac9 cad88ab6
+
+    Merge pull request #46 from vtorri/vtorri_ignore1
+
+    ignore libdwarfp.pc and a conf file in test/
+
+2021-08-15:  David Anderson
+    commit 3134aac902ac4e1bedbd7db18808684cc590ef74
+
+    Revoking a change I made a few days ago
+    that prevented building shared and non-shared
+    in one run.
+            modified:   CMakeLists.txt
+
+2021-08-15:  Vincent Torri
+    commit cad88ab653f90dbee9172a3316ca0b107c5935b0
+
+    ignore libdwarfp.pc and a conf file in test/
+
+            modified:   .gitignore
+
+2021-08-15:  David Anderson
+    commit 138f2242444eef3a142f9e43b8244d2bed3ff09f
+Merge: 6ac2df5c d2922d0e
+
+    Merge pull request #45 from vtorri/vtorri_tsearch3
+
+    Revert work about string and tsearch
+
+2021-08-15:  Vincent Torri
+    commit d2922d0ecbbc3ebd617c3ce44c3fbc934443c8c0
+
+    missing dwarf_tsearch in dwarfdump
+
+2021-08-15:  Vincent Torri
+    commit 1e264d34f5f0e94426fc16df9277e28cdc7aa1ef
+
+    fix paths in tied test
+
+2021-08-15:  Vincent Torri
+    commit bd73e7a29a3475c44113a6e78516fbe23a46c32c
+
+    fix paths in wqtests
+
+2021-08-15:  Vincent Torri
+    commit 220e69ff415f316017bb584b197c8f74b20b86da
+
+    Revert work about string and tsearch
+
+            modified:   Makefile.am
+            modified:   configure.ac
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/buildopstab/Makefile.am
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dwarf_tsearchbal.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_tree/Makefile.am
+            deleted:    src/lib/dwarfstring/Makefile.am
+            deleted:    src/lib/dwarftsearch/Makefile.am
+            modified:   src/lib/libdwarf/Makefile.am
+            renamed:    src/lib/dwarftsearch/dwarf_tsearch.h -> src/lib/libdwarf/dwarf_tsearch.h
+            renamed:    src/lib/dwarftsearch/dwarf_tsearchhash.c -> src/lib/libdwarf/dwarf_tsearchhash.c
+            renamed:    src/lib/dwarfstring/dwarfstring.c -> src/lib/libdwarf/dwarfstring.c
+            renamed:    src/lib/dwarfstring/dwarfstring.h -> src/lib/libdwarf/dwarfstring.h
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2021-08-15:  David Anderson
+    commit 6ac2df5c0ef9fb2f04c3ce66e1fe91a3a1c446b0
+Merge: 7b4882ec f4e32822
+
+    Merge pull request #42 from vtorri/master
+
+    Fix undefined references in libdwarfp
+
+2021-08-15:  Vincent Torri
+    commit f4e32822338ac65e20d26e3ef4a5db6f315e711f
+
+    Fix undefined references in libdwarfp
+
+            deleted:    src/lib/libdwarfp/memcpy_swap.h
+            modified:   src/lib/libdwarfp/Makefile.am
+            modified:   src/lib/libdwarfp/pro_init.c
+
+2021-08-14:  David Anderson
+    commit 7b4882ecff8d11bdb2a73f5ebb9f737bd7c66655
+Merge: 68ba24f5 de4b7f95
+
+    Merge pull request #41 from vtorri/master
+
+    Move dwarftsearch code to its own static library.
+
+2021-08-14:  Vincent Torri
+    commit de4b7f95c3754f733bdf380dd9e713e80abfea5b
+
+    fix dwarf_tsearchhash.c location in tied test
+
+2021-08-14:  Vincent Torri
+    commit 2bd8e9d0a00ed119008bdc454ff3e0245387630a
+
+    fix include search path for macrocheck test
+
+2021-08-14:  Vincent Torri
+    commit 70a98028015cf83a85c4beffc4dd47fc94edc2c4
+
+    fix include search path for tagattr
+
+2021-08-14:  Vincent Torri
+    commit 6a26e1766712d72a2523d5a147b4c68b77688336
+
+    fix include search path for tagtree
+
+2021-08-14:  Vincent Torri
+    commit 1e2018835970f22ac79fb6e9968d501f210d17dd
+
+    Move dwarftsearch code to its own static library.
+
+            deleted:    src/bin/dwarfdump/dwarf_tsearch.h
+            new file:   src/lib/dwarftsearch/Makefile.am
+            renamed:    src/lib/libdwarf/dwarf_tsearch.h -> src/lib/dwarftsearch/dwarf_tsearch.h
+            renamed:    src/lib/libdwarf/dwarf_tsearchhash.c -> src/lib/dwarftsearch/dwarf_tsearchhash.c
+            modified:   Makefile.am
+            modified:   configure.ac
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/lib/dwarfstring/Makefile.am
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarfp/Makefile.am
+            modified:   test/Makefile.am
+
+2021-08-14:  David Anderson
+    commit 68ba24f5b70c194fb0ebd4c4a16853498707b5f6
+Merge: e60419bc 82691c24
+
+    Merge pull request #40 from vtorri/vtorri_dwpapi
+
+    The API macro in libdwarfp must different from the one in libwarf on Windows
+
+2021-08-14:  Vincent Torri
+    commit 82691c24956ba9cc283a63b5e216ca927364c65f
+
+    libdwarfp: the API macro in libdwarfp must different from the one in
+    libwarf on Windows
+
+            modified:   src/lib/libdwarfp/Makefile.am
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+2021-08-14:  David Anderson
+    commit e60419bc12d28154b55a3c9722d3e864bb556ec7
+
+    Now the _swap_ small private functions are separated
+    from dwarf_util.c and the includes ref the new name.
+    Linux shared libs not buildable with -fvisibility
+    at this point. But the new
+    dwarf_memcpy_swap.c,h help get to a workable sharedbuild.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            new file:   src/lib/libdwarf/dwarf_memcpy_swap.c
+            renamed:    src/lib/libdwarf/memcpy_swap.h -> src/lib/libdwarf/dwarf_memcpy_swap.h
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+    This now has DW_API so -fvisibility=hidden
+    is possible (but not yet ready).
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+2021-08-14:  David Anderson
+    commit 0d11fab68b65097c7d6665cacb8b3b70c7c401ab
+Merge: a68b92e9 8c0c0119
+
+    Merge pull request #38 from vtorri/vtorri_dwarfstring
+
+    Move dwarfstring code to its own static library.
+
+2021-08-14:  Vincent Torri
+    commit 8c0c01198aa80e40b0c87333cbbac00b82b62674
+
+    fix missing dwarfstring preprocessor flag
+
+2021-08-14:  Vincent Torri
+    commit a546e65fe01c071cb5022cc9838797fe988032d9
+
+    fix dwarfstring paths
+
+2021-08-14:  Vincent Torri
+    commit e1a9952d68c4d0f4d16c364576eedab483c54810
+
+    add missing code in test/
+
+2021-08-14:  Vincent Torri
+    commit 27e0383900d4a58f11d3fd57a57a63a8daa2f970
+
+    Move dwarfstring code to its own static library.
+    It is used in libdwwarf and libdwarfp.
+
+            new file:   src/lib/dwarfstring/Makefile.am
+            renamed:    src/lib/libdwarf/dwarfstring.c -> src/lib/dwarfstring/dwarfstring.c
+            renamed:    src/lib/libdwarf/dwarfstring.h -> src/lib/dwarfstring/dwarfstring.h
+            modified:   Makefile.am
+            modified:   configure.ac
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2021-08-13:  David Anderson
+    commit a68b92e9da0862fed9720047b28e93d08ee6f22a
+
+    removes dwarfdump/dwarf_names.c from the build.
+    Leaving libdwarf/dwarf_names.c (which gets
+    built into libdwarf and is generated from dwarf.h).
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/gennames/Makefile.am
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_tree/Makefile.am
+
+2021-08-13:  David Anderson
+    commit b230199ca75e5864bc95dad34ea0ff4e3c135064
+Merge: 97415e4a 80a0f395
+
+    Merge pull request #37 from vtorri/vtorri_api
+
+    Add DW_API to explicitly set public symbols
+
+2021-08-13:  Vincent Torri
+    commit 80a0f39597bbcf4d978db05a5f52dc11924f49a5
+
+    Add DW_API to explicitly set public symbols
+
+    This allow less collision symbols, detect errors,
+    optimisations during link, etc..
+
+    On Windows, here are some numbers :
+
+    Libraries both compiled with -O2
+
+    without DW_API : 584815 bytes
+    with DW_API :    578671 bytes
+
+    1.05% gain (size)
+
+    after stripping :
+
+    without DW_API : 453120 bytes 506 symbols
+    with DW_API :    446976 bytes 338 symbols
+
+    1.35% gain (size)
+
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-08-12:  David Anderson
+    commit 97415e4a681dcd4fc64636ab93073764afd325c6
+Merge: fe40a21c 65f71b04
+
+    Merge pull request #36 from vtorri/vtorri_README
+
+    configure.ac: throw an error on Windows if a static library is requested
+
+2021-08-12:  David Anderson
+    commit fe40a21c0211f35ed44e30acb58b552932545427
+
+    If shared-library build requested no archive library
+    is built (used to build both on request).
+            modified:   CMakeLists.txt
+
+    Alterations to build opscounttab.c properly.
+            modified:   src/bin/buildopstab/Makefile.am
+
+    Now does more checking and adds a useful
+    comment in the output opscounttab.c where
+    we have a DW_OP with two spellings (which are extensions,
+    not standard DW_OP instances).
+    Reads dwarf.h to be sure the fast-access table
+    has all the named DW_OP in dwarf.h present in the
+    generated source..
+    Now includes config.h.
+    data is static not malloc-d.
+            modified:   src/bin/buildopstab/buildopscounttab.c
+
+    Now with the better messages.
+            modified:   src/bin/dwarfdump/opscounttab.c
+
+    The externally-visible table is now _dwarf_opscounttab
+    as it is not supposed to be visible or used outside the library.
+            modified:   src/bin/dwarfdump/opscounttab.h
+
+    dwarf_opscounttab->_dwarf_opscounttab
+            modified:   src/bin/dwarfdump/print_die.c
+
+2021-08-12:  David Anderson
+    commit 70439c708101b37f5ba010002152bcee9ed23358
+
+    Removed #include "opscounttab.h", it is not necessary.
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+2021-08-12:  Vincent Torri
+    commit 65f71b0445cda470ae9aab40657abc4361547459
+
+    README: update documention for Windows with MSYS2 + mingw-w64
+
+            modified:   README
+
+2021-08-12:  Vincent Torri
+    commit 83c0ae15fb96ab5ce30270fd9d215d4438e70539
+
+    configure.ac: throw an error
+
+            modified:   configure.ac
+
+2021-08-11:  David Anderson
+    commit be443a7357d100b3d5498f2a71163dc44104140b
+Merge: 1a0ed719 559edece
+
+    Merge pull request #34 from vtorri/vtorri_cfg
+
+    Replace C comments in configure.ac with valid comment
+
+2021-08-10:  David Anderson
+    commit 1a0ed71976828c64d29429f70f1cfd6aeeccd506
+
+    Added DW_API on the set of function declarations
+            modified:   src/bin/gennames/gennames.c
+    replace the existing list dwarf_get_AT_name etc
+    with the one gennames.c generates.
+    Added
+    near the beginning of libdwarf.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-08-11:  Vincent Torri
+    commit 559edecea67b5c0fb4977889a265d85b062dab03
+
+    Replace C comments in configure.ac with valid comment
+            modified:   configure.ac
+
+2021-08-10:  David Anderson
+    commit c5143f8e5433bdfcfea694770c7616789daf7abb
+
+    These are no longer #include-d anywhere. The content
+    is always in  libdwarf.h
+            deleted:    src/bin/dwarfdump/dwarf_names.h
+            deleted:    src/lib/libdwarf/dwarf_names.h
+
+    Removed all references to dwarf_names.h except
+    in a single CLEANFILES
+    Ensured that the compiler warning options are passed
+    to all the test files (there were typos in that Makefile.am)
+            modified:   src/bin/buildopstab/Makefile.am
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/gennames/Makefile.am
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   test/Makefile.am
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
+    Removed obsolete options and unused variables.
+    We sort the output function names dwarf_names.h by character
+    compares, where lowercase is elevated to uppercase
+    for the comparison, which
+    achieves a better look in the output.
+    The dwarf_names.h is a candidate to replace the
+    list of these protypes in libdwarf.h
+            modified:   src/bin/gennames/gennames.c
+
+    Removed unused argument. Where Argument required
+    but unused (when faking something in libdwarf
+    so the test program will link) marked as UNUSEDARG to silence
+    warning.
+            modified:   test/test_linkedtopath.c
+
+2021-08-10:  David Anderson
+    commit 0f8edbd7d7fa00dba2d47af49cbd137ddc9fb242
+
+    This source is not part of dwarfdump. Moved to its
+    own directory. Slightly changed so we avoid using dwarf_names.h
+    as we get the same data from libdwarf.h
+    The program generates a fresh opcountstab.c for dwarfdump.
+    Used by 'make rebuild'
+            renamed:    src/bin/dwarfdump/buildopscounttab.c -> src/bin/buildopstab/buildopscounttab.c
+
+    Adding in buildopstab as a target directory
+            modified:   Makefile.am
+            modified:   configure.ac
+
+    Builds buildopstab and, with 'make rebuild' it recreates
+    opscounttab.c and moves it to src/bin/dwarfdump.
+            new file:   src/bin/buildopstab/Makefile.am
+
+    Now avoids naming dwarf_names.h and buildopscounttab.c
+            modified:   src/bin/dwarfdump/Makefile.am
+
+    These two will disappear shortly.
+            modified:   src/bin/dwarfdump/dwarf_names.h
+            modified:   src/lib/libdwarf/dwarf_names.h
+
+2021-08-10:  David Anderson
+    commit f69f5e1f4631997f5b10a0aaadfa3f2457f6cf9f
+
+    Now prints the list of function declarations
+    in the desired order and without the extern keyword.
+            modified:   src/bin/gennames/gennames.c
+
+2021-08-10:  David Anderson
+    commit 53d4a8d5856f3454ba08e4439ecb9c5a2e662db1
+
+    Bring this up to date with git log.
+            modified:   ChangeLog
+
 2021-08-10:  David Anderson
     commit 06afce1ad73862c7e73b06583ff7d6ae99b3f86e
 
