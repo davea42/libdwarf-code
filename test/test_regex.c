@@ -61,19 +61,41 @@ testx(const char *expr,
     checkres(res,"dd_re_exec",expr,check,intexpv2,line);
 }
 
-
-
-int main()
+int
+main()
 {
-    testx("[fx]*[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
-    testx("[fx]*[0-9]+",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
-    testx("[fx][0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
-    testx("[fx]+[0-9]",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
+    testx("u.leb",DW_DLV_OK,"local_dwarf_decode_u",
+        DW_DLV_NO_ENTRY,__LINE__);
+    testx("u.*leb",DW_DLV_OK,"local_dwarf_decode_u",
+        DW_DLV_NO_ENTRY,__LINE__);
+    testx("x+",DW_DLV_OK,"x",DW_DLV_OK,__LINE__);
+    testx("x*",DW_DLV_OK,"x",DW_DLV_OK,__LINE__);
+    testx("x+",DW_DLV_OK,"xx",DW_DLV_OK,__LINE__);
+    testx("[fx]*j[0-9]",DW_DLV_OK,"yxxffi123a",
+        DW_DLV_NO_ENTRY,__LINE__);
+    testx("[fx]*[0-9]",DW_DLV_OK,"yxxffi123a",
+        DW_DLV_NO_ENTRY,__LINE__);
+    testx("sim",DW_DLV_OK,"simple",DW_DLV_OK,__LINE__);
+    testx("simple",DW_DLV_OK,"sim",DW_DLV_NO_ENTRY,__LINE__);
+    testx("sim",DW_DLV_OK,"sim",DW_DLV_OK,__LINE__);
+    testx("^X.*k$",DW_DLV_OK,"X12345k",DW_DLV_OK,__LINE__);
+    testx("X*Y+ijk",DW_DLV_OK,"yxxffi123a",DW_DLV_NO_ENTRY,__LINE__);
+    testx("[fx]+i[^0-9a-eA-E]*",DW_DLV_OK,"yxxffiKM",
+        DW_DLV_OK,__LINE__);
+    testx("[fx]+i[^0-9]*",DW_DLV_OK,"yxxffixyza",DW_DLV_OK,__LINE__);
+    testx("[fx]*[0-9]",DW_DLV_OK,"yxxff123a",DW_DLV_OK,__LINE__);
+    testx("[fx]*[0-9]+",DW_DLV_OK,"yxxffi123a",
+        DW_DLV_NO_ENTRY,__LINE__);
+    testx("[fx][0-9]",DW_DLV_OK,"yxxffi123a",
+        DW_DLV_NO_ENTRY,__LINE__);
+    testx("[fx]+[0-9]",DW_DLV_OK,"yxxffi123a",
+        DW_DLV_NO_ENTRY,__LINE__);
     testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
-#if 0
-    testx("u.*leb",DW_DLV_OK,"local_dwarf_decode_u_leb128",DW_DLV_OK,__LINE__);
+    testx("u.*leb",DW_DLV_OK,"local_dwarf_decode_u_leb128",
+        DW_DLV_OK,__LINE__);
     testx("u.*leb",DW_DLV_OK,"uleblen",DW_DLV_OK,__LINE__);
-    testx("u.leb",DW_DLV_OK,"local_dwarf_decode_u_leb128",DW_DLV_OK,__LINE__);
+    testx("u.leb",DW_DLV_OK,"local_dwarf_decode_u_leb128",
+        DW_DLV_OK,__LINE__);
     testx("uleb",DW_DLV_OK,"uleblen",DW_DLV_OK,__LINE__);
 
 
@@ -85,7 +107,7 @@ int main()
     testx( "a[xy]j",DW_DLV_OK,"ayj",DW_DLV_OK,__LINE__);
 
     testx("a[xy]j",DW_DLV_OK,"afj",DW_DLV_NO_ENTRY,__LINE__);
-    testx("a[xyj",DW_DLV_ERROR,"afj",DW_DLV_NO_ENTRY,__LINE__);
+    testx("a[xyj",DW_DLV_ERROR,"afj",DW_DLV_ERROR,__LINE__);
 
     /*  A trailing] with no preceeding [ is not
         an error */
@@ -98,24 +120,30 @@ int main()
     testx("^ax",DW_DLV_OK,"axfoob",DW_DLV_OK,__LINE__);
     testx(0,DW_DLV_NO_ENTRY,"axfoob",DW_DLV_OK,__LINE__);
     testx("",DW_DLV_NO_ENTRY,"axfoob",DW_DLV_OK,__LINE__);
-    testx("+",DW_DLV_ERROR,"axfoob",DW_DLV_OK,__LINE__);
+    testx("+",DW_DLV_ERROR,"axfoob",DW_DLV_NO_ENTRY,__LINE__);
     testx("(+",DW_DLV_OK,"axfoob",DW_DLV_NO_ENTRY,__LINE__);
     testx("(+",DW_DLV_OK,"((",DW_DLV_OK,__LINE__);
     testx("(+)",DW_DLV_OK,"x((()",DW_DLV_OK,__LINE__);
     testx("yy+(",DW_DLV_OK,"yyy(",DW_DLV_OK,__LINE__);
     testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123",DW_DLV_OK,__LINE__);
-    testx("a\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\()))))))))))))))))))))",DW_DLV_ERROR,"yxxffi123",DW_DLV_NO_ENTRY,__LINE__);
+    testx("a\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\(\\"
+        "(\\(\\()))))))))))))))))))))",DW_DLV_OK,"yxxffi123",
+        DW_DLV_NO_ENTRY,__LINE__); /* () not special, no groups
+        or references to same allowed. */
     testx("[fx]+[0-9]*a",DW_DLV_OK,"yxxff123a",DW_DLV_OK,__LINE__);
     testx("[fx]+i[0-9]*",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
 
     testx("[fx]+",DW_DLV_OK,"yxxffi123a",DW_DLV_OK,__LINE__);
     testx("[fx]+i[0-9]+",DW_DLV_OK,"yxxffi123",DW_DLV_OK,__LINE__);
     testx("a[fx]+b[cd]",DW_DLV_OK,"afffbdddy",DW_DLV_OK,__LINE__);
-    testx("a[fx]+b[cd]",DW_DLV_OK,"afffdddy",DW_DLV_NO_ENTRY,__LINE__);
+    testx("a[fx]+b[cd]",DW_DLV_OK,"afffdddy",
+        DW_DLV_NO_ENTRY,__LINE__);
+#if 0
 #endif
     if (errcount > 0) {
-        printf("FAIL test_regex errcount %d\n",errcount);
+        printf("\n\nFAIL test_regex errcount %d\n",errcount);
         return 1;
     }
+    printf("PASS  test_regex\n");
     return 0;
 }

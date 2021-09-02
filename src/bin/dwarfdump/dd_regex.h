@@ -12,6 +12,7 @@
     in software tools books, and Conroy's grep. They are NOT derived
     from licensed/restricted software.
 
+    [comment by DavidAnderson]
     We are skipping the replacement function, which
     dwarfdump does not require.
 */
@@ -19,6 +20,6 @@
 #define DD_REGEX_H
 
 int dd_re_comp(const char *);
-int dd_re_exec(const char *);
+int dd_re_exec(char *);
 
 #endif /* DD_REGEX_H */

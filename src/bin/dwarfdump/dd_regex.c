@@ -1,624 +1,795 @@
-/*  Copyright (c) 2021 David Anderson
-
-*/
-
 /*
-    Encouraged to write my own by the work of
-    Ozan S. Yigit (oz),Dept. of Computer Science,
-    York University (Canada). His code is...very clever...
-    and dense, not my style. 
-    He placed is work in the Public Domain.
-*/
-
-/* the input data, exp_in. All characters restricted to ASCII.
-^ starting postion in exp_in
-. position in exp_in
-[ ]  BBK...EBK matching single character(s) in []
-[^] BBK...EBK matching single character(s) not in []
-    not contained in brackets
-$   matches end of line.
-*   matches previous zero or mor times.
-+   matches previous one or more times.
-*/
+ * regex - Regular expression pattern matching  and replacement
+ *
+ * By:  Ozan S. Yigit (oz)
+ *      Dept. of Computer Science
+ *      York University
+ *
+ * These routines are the PUBLIC DOMAIN equivalents of regex
+ * routines as found in 4.nBSD UN*X, with minor extensions.
+ *
+ * These routines are derived from various implementations found
+ * in software tools books, and Conroy's grep. They are NOT derived
+ * from licensed/restricted software.
+ * For more interesting/academic/complicated implementations,
+ * see Henry Spencer's regexp routines, or GNU Emacs pattern
+ * matching module.
+ *
+ * Modification history:
+ *
+ * $Log: regex.c,v $
+ * Revision 1.4  1991/10/17  03:56:42  oz
+ * miscellaneous changes, small cleanups etc.
+ *
+ * Revision 1.3  1989/04/01  14:18:09  oz
+ * Change all references to a dfa: this is actually an nfa.
+ *
+ * Revision 1.2  88/08/28  15:36:04  oz
+ * Use a complement bitmap to represent NCL.
+ * This removes the need to have seperate
+ * code in the pmatch case block - it is 
+ * just CCL code now.
+ * 
+ * Use the actual CCL code in the CLO
+ * section of ematch. No need for a recursive
+ * pmatch call.
+ * 
+ * Use a bitmap table to set char bits in an
+ * 8-bit chunk.
+ * 
+ * Interfaces:
+ *      re_comp:        compile a regular expression into a NFA.
+ *
+ *            char *re_comp(s)
+ *            char *s;
+ *
+ *      re_exec:        execute the NFA to match a pattern.
+ *
+ *            int re_exec(s)
+ *            char *s;
+ *
+ *    re_modw        change re_exec's understanding of what a "word"
+ *            looks like (for \< and \>) by adding into the
+ *            hidden word-syntax table.
+ *
+ *            void re_modw(s)
+ *            char *s;
+ *
+ *      re_subs:    substitute the matched portions in a new string.
+ *
+ *            int re_subs(src, dst)
+ *            char *src;
+ *            char *dst;
+ *
+ *    re_fail:    failure routine for re_exec.
+ *
+ *            void re_fail(msg, op)
+ *            char *msg;
+ *            char op;
+ *  
+ * Regular Expressions:
+ *
+ *      [1]     char    matches itself, unless it is a special
+ *                      character (metachar): . \ [ ] * + ^ $
+ *
+ *      [2]     .       matches any character.
+ *
+ *      [3]     \       matches the character following it, except
+ *            when followed by a left or right round bracket,
+ *            a digit 1 to 9 or a left or right angle bracket. 
+ *            (see [7], [8] and [9])
+ *            It is used as an escape character for all 
+ *            other meta-characters, and itself. When used
+ *            in a set ([4]), it is treated as an ordinary
+ *            character.
+ *
+ *      [4]     [set]   matches one of the characters in the set.
+ *                      If the first character in the set is "^",
+ *                      it matches a character NOT in the set, i.e. 
+ *            complements the set. A shorthand S-E is 
+ *            used to specify a set of characters S upto 
+ *            E, inclusive. The special characters "]" and 
+ *            "-" have no special meaning if they appear 
+ *            as the first chars in the set.
+ *                      examples:        match:
+ *
+ *                              [a-z]    any lowercase alpha
+ *
+ *                              [^]-]    any char except ] and -
+ *
+ *                              [^A-Z]   any char except uppercase
+ *                                       alpha
+ *
+ *                              [a-zA-Z] any alpha
+ *
+ *      [5]     *       any regular expression form [1] to [4], followed by
+ *                      closure char (*) matches zero or more matches of
+ *                      that form.
+ *
+ *      [6]     +       same as [5], except it matches one or more.
+ *
+ *      [7]             a regular expression in the form [1] to [10], enclosed
+ *                      as \(form\) matches what form matches. The enclosure
+ *                      creates a set of tags, used for [8] and for
+ *                      pattern substution. The tagged forms are numbered
+ *            starting from 1.
+ *
+ *      [8]             a \ followed by a digit 1 to 9 matches whatever a
+ *                      previously tagged regular expression ([7]) matched.
+ *
+ *    [9]    \<    a regular expression starting with a \< construct
+ *        \>    and/or ending with a \> construct, restricts the
+ *            pattern matching to the beginning of a word, and/or
+ *            the end of a word. A word is defined to be a character
+ *            string beginning and/or ending with the characters
+ *            A-Z a-z 0-9 and _. It must also be preceded and/or
+ *            followed by any character outside those mentioned.
+ *
+ *      [10]            a composite regular expression xy where x and y
+ *                      are in the form [1] to [10] matches the longest
+ *                      match of x followed by a match for y.
+ *
+ *      [11]    ^    a regular expression starting with a ^ character
+ *        $    and/or ending with a $ character, restricts the
+ *                      pattern matching to the beginning of the line,
+ *                      or the end of line. [anchors] Elsewhere in the
+ *            pattern, ^ and $ are treated as ordinary characters.
+ *
+ *
+ * Acknowledgements:
+ *
+ *    HCR's Hugh Redelmeier has been most helpful in various
+ *    stages of development. He convinced me to include BOW
+ *    and EOW constructs, originally invented by Rob Pike at
+ *    the University of Toronto.
+ *
+ * References:
+ *              Software tools            Kernighan & Plauger
+ *              Software tools in Pascal        Kernighan & Plauger
+ *              Grep [rsx-11 C dist]            David Conroy
+ *        ed - text editor        Un*x Programmer's Manual
+ *        Advanced editing on Un*x    B. W. Kernighan
+ *        RegExp routines            Henry Spencer
+ *
+ * Notes:
+ *
+ *    This implementation uses a bit-set representation for character
+ *    classes for speed and compactness. Each character is represented 
+ *    by one bit in a 128-bit block. Thus, CCL always takes a 
+ *    constant 16 bytes in the internal nfa, and re_exec does a single
+ *    bit comparison to locate the character in the set.
+ *
+ * Examples:
+ *
+ *    pattern:    foo*.*
+ *    compile:    CHR f CHR o CLO CHR o END CLO ANY END END
+ *    matches:    fo foo fooo foobar fobar foxx ...
+ *
+ *    pattern:    fo[ob]a[rz]    
+ *    compile:    CHR f CHR o CCL bitset CHR a CCL bitset END
+ *    matches:    fobar fooar fobaz fooaz
+ *
+ *    pattern:    foo\\+
+ *    compile:    CHR f CHR o CHR o CHR \ CLO CHR \ END END
+ *    matches:    foo\ foo\\ foo\\\  ...
+ *
+ *    pattern:    \(foo\)[1-3]\1    (same as foo[1-3]foo)
+ *    compile:    BOT 1 CHR f CHR o CHR o EOT 1 CCL bitset REF 1 END
+ *    matches:    foo1foo foo2foo foo3foo
+ *
+ *    pattern:    \(fo.*\)-\1
+ *    compile:    BOT 1 CHR f CHR o CLO ANY END EOT 1 CHR - REF 1 END
+ *    matches:    foo-foo fo-fo fob-fob foobar-foobar ...
+ */
 #include "config.h"
 #include <stdio.h>
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#include "dd_regex.h"
 #include "dwarf.h"
-#include "libdwarf.h" /* for DW_DLV names */
-#include "libdwarf_private.h" /* for TRUE FALSE */
+#include "libdwarf.h" /* for DW_DLV_ names */
+#include "dd_regex.h"
 
-#define DEBUG 1
+/*  This version corrects two bugs (see 'code by davea'
+    below). 
+    Compared to the original source:
+    Regular expression grouping with ()
+    is ignored and word checking is ignored.
+    Except when using ^ or $ in the regex
+    we find any matching substring.
+    David Anderson.  2 September 2021.
+*/
 
-#define ERROR  0  /* Never should be used */
-#define BOL  1  /*^*/
-#define EOL  2  /*$*/
-#define BBK  3  /*[*/
-#define EBK  4  /*]*/
-#define CLO  5  /* match prev 0 or more times */
-#define CLE  6  /* end of CLO */
-#define ANY  7  /* match any char */
-#define CHR  8  /* match a single char char */
-#define MAXPREDEF 8
-/* No need to have + the emitted automaton eliminates that,
-    creating [x] CLO [x] */
+#ifndef DW_DLV_OK 
+/*  Makes testing easier */
+#define DW_DLV_NO_ENTRY -1
+#define DW_DLV_OK        0
+#define DW_DLV_ERROR     1
+#endif /* DW_DLV_OK */
 
-#define MAXBUF 1024
 
-typedef unsigned char UC;
+#define MAXNFA  2048
 
-static UC re_in[MAXBUF+2];
+#define OKP     1
+#define NOP     0
 
-/* The created automaton.  The +2 enables savestrcpy. */
-static UC   fa[MAXBUF+2];
-static int  facount = 0;
+#define CHR     1
+#define ANY     2
+#define CCL     3 /* character class [ */
+#define BOL     4 /* beginning of line, ^ */
+#define EOL     5 /* end of line, 5 */
+#define REF     10
+#define CLO     11
 
-/* Building automaton */
-static UC   tmpfaa[MAXBUF+2];
-static int  tmpfaacount = 0;
-static UC   tmpfab[MAXBUF+2];
-static int  tmpfabcount = 0;
-#define isascii(c) ((c) >= ' ' && (c) < 0x7f)
+#define END     0
+#define MAXPREDEF 11
 
-/* These defines mean not having to use tests
-on every store to return ERROR. */
-#define STORE(c)                \
-do {                            \
-    if (facount < MAXBUF) {  \
-        fa[facount] = c;     \
-        ++facount;           \
-printf("dadebug facount %d %u  line %d\n",facount,c,__LINE__); \
-    } else {                    \
-        return DW_DLV_ERROR;    \
-    }                           \
-} while (0)
-#define STORETMP(c)             \
-do {                            \
-    if (tmpfaacount < MAXBUF) {  \
-        tmpfaa[tmpfaacount] = c;     \
-        ++tmpfaacount;           \
-printf("dadebug tmpfaacount %d %u line %d\n",tmpfaacount,c,__LINE__); \
-    } else {                    \
-printf("dadebug ERROR line %d\n",__LINE__); \
-        return DW_DLV_ERROR;    \
-    }                           \
-} while (0)
-#define STORETMPB(c)            \
-do {                            \
-    if (tmpfabcount < MAXBUF) { \
-        tmpfab[tmpfabcount] = c;    \
-printf("dadebug tmpfabcount %d %u line %d\n",tmpfabcount,c,__LINE__); \
-        ++tmpfabcount;          \
-    } else {                    \
-        return DW_DLV_ERROR;    \
-    }                           \
-} while (0)
+/*
+ * The following defines are not meant to be changeable.
+ * They are for readability only.
+ */
+#define MAXCHR    128
+#define CHRBIT    8
+#define BITBLK    MAXCHR/CHRBIT
+#define BLKIND    0170
+#define BITIND    07
 
-static char *
-naming(UC c)
+#define ASCIIB    0177
+
+#ifdef NO_UCHAR
+typedef char CHAR;
+#else
+typedef unsigned char CHAR;
+#endif
+
+static CHAR nfa[MAXNFA];     /* automaton..       */
+static int  sta = NOP;       /* status of lastpat */
+
+static CHAR bittab[BITBLK];  /* bit table for CCL */
+                    /* pre-set bits...   */
+static CHAR bitarr[] = {1,2,4,8,16,32,64,128};
+
+
+#ifdef DEBUG
+static void nfadump(CHAR *);
+static void symbolic(char *);
+#endif
+
+static void
+chset(CHAR c)
 {
+    bittab[(CHAR) ((c) & BLKIND) >> 3] |= bitarr[(c) & BITIND];
+}
+
+#define badpat    (*nfa = END)
+#define store(x)    *mp++ = x
+
+static void
+resetbittab(void)
+{
+     int j = 0;
+     for (j = 0; j < BITBLK; ++j) {
+         bittab[j] = 0;
+     }
+     for (j = 0; j < MAXNFA; ++j) {
+         nfa[j] = 0;
+     }
+     sta = NOP;
+}
+ 
+int
+dd_re_comp(const char *pat)
+{
+    const char *p  = 0;           /* pattern pointer   */
+    CHAR *mp = nfa;
+    CHAR *lp = 0;          /* saved pointer..   */
+    CHAR *sp = nfa;      /* another one..     */
+    int n    = 0;
+    CHAR mask = 0;        /* xor mask -CCL/NCL */
+    int c1   = 0;
+    int c2   = 0;
+
+    resetbittab();
+    if (!pat || !*pat) {
+        printf("Empty or NULL not a valid regular expression\n");
+        return DW_DLV_NO_ENTRY;
+    }
+
+    for (p = pat; *p; p++) {
+        lp = mp;
+        switch(*p) {
+        case '.':               /* match any char..  */
+            store(ANY);
+            break;
+
+        case '^':               /* match beginning.. */
+            if (p == pat)
+                store(BOL);
+            else {
+                store(CHR);
+                store(*p);
+            }
+            break;
+
+        case '$':               /* match endofline.. */
+            if (!*(p+1)) {
+                store(EOL);
+            } else {
+                store(CHR);
+                store(*p);
+            }
+            break;
+
+        case '[':               /* match char class..*/
+            store(CCL);
+            if (*++p == '^') {
+                mask = 0377;    
+                p++;
+            } else {
+                mask = 0;
+            }
+            if (*p == '-')  {       /* real dash */
+                chset(*p++);
+            }
+            if (*p == ']') {       /* real brac */
+                chset(*p++);
+            }
+            while (*p && *p != ']') {
+                if (*p == '-' && *(p+1) && *(p+1) != ']') {
+                    p++;
+                    c1 = *(p-2) + 1;
+                    c2 = *p++;
+                    while (c1 <= c2)
+                        chset((CHAR)c1++);
+                }
+#ifdef EXTEND
+                else if (*p == '\\' && *(p+1)) {
+                    p++;
+                    chset(*p++);
+                }
+#endif /* EXTEND */
+                else {
+                    chset(*p++);
+                }
+            }
+            if (!*p) {
+                badpat;
+                printf("Regular expression %s missing ]\n",pat);
+                return DW_DLV_ERROR;
+            }
+            /* Storing the bitmask into nfa  */
+            for (n = 0; n < BITBLK; bittab[n++] =
+                (char) 0) {
+                store(mask ^ bittab[n]);
+            }
+            break;
+
+        case '*':               /* match 0 or more.. */
+        case '+':               /* match 1 or more.. */
+            if (p == pat) {
+                badpat;
+                printf("Regular expression %s has empty * +  "
+                    "Closure\n",pat);
+                return DW_DLV_ERROR;
+            }
+            lp = sp;        /* previous opcode */
+            if (*lp == CLO)  {      /* equivalence..   */
+                break;
+            }
+            switch(*lp) {
+
+            case BOL:
+            case REF:
+                badpat;
+                printf("Regular expression %s has illegal "
+                    "* + closure\n",pat);
+                return DW_DLV_ERROR;
+            default:
+                break;
+            }
+
+            if (*p == '+') {
+                for (sp = mp; lp < sp; lp++)
+                    store(*lp);
+            }
+
+            store(END);
+            store(END);
+            sp = mp;
+            while (--mp > lp) {
+                *mp = mp[-1];
+            }
+            store(CLO);
+            mp = sp;
+            break;
+
+        case '\\':              /* tags, backrefs .. */
+            ++p;
+            store(CHR);
+            store(*p);
+            break;
+        default :               /* an ordinary char  */
+            store(CHR);
+            store(*p);
+            break;
+        }
+        sp = lp;
+    }
+    store(END);
+    sta = OKP;
+#ifdef DEBUG
+    symbolic("Final nfa");
+#endif /* DEBUG */
+    return DW_DLV_OK;
+}
+
+
+static char *bol;
+static int dd_pmatch(const char *, CHAR *,char **str_out,
+    int level);
+
+/*
+ * re_exec:
+ *     execute nfa to find a match.
+ *
+ *    special cases: (nfa[0])    
+ *        BOL
+ *            Match only once, starting from the
+ *            beginning.
+ *        CHR
+ *            First locate the character without
+ *            calling pmatch, and if found, call
+ *            pmatch for the remaining string.
+ *        END
+ *            re_comp failed, poor luser did not
+ *            check for it. Fail fast.
+ *
+ *    If a match is found, bopat[0] and eopat[0] are set
+ *    to the beginning and the end of the matched fragment,
+ *    respectively.
+ *
+ *    return DW_DLV_OK, DW_DLV_NO_ENTRY or DW_DLV_ERROR
+ */
+
+int
+dd_re_exec(char *lp)
+{
+    CHAR c   = 0;
+    char *ep = 0;
+    CHAR *ap = nfa;
+    int res  = 0;
+    int level = 0;
+
+    bol = lp;
+
+    switch(*ap) {
+    case BOL:            /* anchored: match from BOL only */
+        res = dd_pmatch(lp,ap,&ep,level);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        break;
+    case CHR:            /* ordinary char: locate it fast */
+        c = *(ap+1);
+        while (*lp && *lp != c) {
+            lp++;
+        }
+        if (!*lp) {      /* if EOS, fail, else fall thru. */
+            return DW_DLV_NO_ENTRY;
+        }
+        goto regmatch; /* GO TO avoids a fall-through warning from gcc */
+    default:    {        /* regular matching all the way. */
+        regmatch:
+        do {
+            res = dd_pmatch(lp,ap,&ep,level);
+            if (res == DW_DLV_ERROR) {
+                return res;
+            }
+            if (res == DW_DLV_OK) {
+                break;
+            }
+            lp++;
+        } while (*lp);
+        break;
+    }
+    case END:            /* munged automaton. fail always */
+        badpat;
+        printf("Error in in regex automaton. "
+            "END out of place\n");
+        return DW_DLV_ERROR;
+    }
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    return DW_DLV_OK;
+}
+
+/* 
+ * dd_pmatch: internal routine for the hard part
+ *
+ *     This code is partly snarfed from an early grep written by
+ *    David Conroy. The backref and tag stuff, and various other
+ *    innovations are by oz.
+ *
+ *    special case optimizations: (nfa[n], nfa[n+1])
+ *        CLO ANY
+ *            We KNOW .* will match everything upto the
+ *            end of line. Thus, directly go to the end of
+ *            line, without recursive pmatch calls. As in
+ *            the other closure cases, the remaining pattern
+ *            must be matched by moving backwards on the
+ *            string recursively, to find a match for xy
+ *            (x is ".*" and y is the remaining pattern)
+ *            where the match satisfies the LONGEST match for
+ *            x followed by a match for y.
+ *        CLO CHR
+ *            We can again scan the string forward for the
+ *            single char and at the point of failure, we
+ *            execute the remaining nfa recursively, same as
+ *            above.
+ *
+ *    At the end of a successful match, bopat[n] and eopat[n]
+ *    are set to the beginning and end of subpatterns matched
+ *    by tagged expressions (n = 1 to 9).    
+ *
+ *      returns DW_DLV_OK for a match, and sets the ep pointer
+ *          to point into the input at the next char to check
+ *      DW_DLV_NO_ENTRY for a non-match
+ *      DW_DLV_NO_ERROR for an internal error
+ */
+
+/*
+ * character classification table for word boundary operators BOW
+ * and EOW. the reason for not using ctype macros is that we can
+ * let the user add into our own table. see re_modw. This table
+ * is not in the bitset form, since we may wish to extend it in the
+ * future for other character classifications. 
+ *
+ *    TRUE for 0-9 A-Z a-z _
+ */
+#ifdef DEBUG
+static char *
+naming(CHAR c)
+{
+#define CHR     1
+#define ANY     2
+#define CCL     3 /* character class [ */
+#define BOL     4 /* beginning of line, ^ */
+#define EOL     5 /* end of line, 5 */
+#define BOT     6 /* beginning of tag, ( */
+#define EOT     7 /* end of tag, ) */
+#define BOW     8 /* nonstandard beginning of ? < */
+#define EOW     9 /* nonstandard end  of ? > */
+
     static int use1;
     /*  Two result arrays so we can allow naming called twice
-        in one printf. Turns any UC into a useful string.
+        in one printf. Turns any UCHAR into a useful string.
         Array index must match the #define value for each name.*/
     static char nam1[10];
     static char nam2[10];
     static char * n[] = {
-    "ERROR",
+    "END(0)",
+    "CHR",
+    "ANY",
+    "CCL",
     "BOL",
     "EOL",
-    "BBK",
-    "EBK",
+    "BOT",
+    "EOT",
+    "BOW",
+    "EOW",
+    "REF",
     "CLO",
-    "CLE",
-    "ANY",
-    "CHR"
+    "bogus",
     };
     char *outtab= 0;
 
     if (use1) {
-        outtab = nam1; 
+        outtab = nam1;
     } else {
-        outtab = nam2; 
+        outtab = nam2;
     }
     outtab[0] = 0;
     if (c && c <= MAXPREDEF) {
         strcpy(outtab,n[c]);
     } else {
-        sprintf(outtab,"0x%x\n",c);
+        sprintf(outtab,"0x%x",c);
     }
     use1 = !use1;
     return outtab;
 }
+#define iswordc(x)     chrtyp[inascii(x)]
+#define inascii(x)    (0177&(x))
+#endif
+#define isinset(x,y)     ((x)[((y)&BLKIND)>>3] & bitarr[(y)&BITIND])
 
-const char *prefix = "    ";
-#ifdef DEBUG
-static void
-fadump(UC *au, int len,const char *name,int line)
+/*
+ * skip values for CLO XXX to skip past the closure
+ */
+
+#define ANYSKIP    2    /* [CLO] ANY END ...         */
+#define CHRSKIP    3    /* [CLO] CHR chr END ...     */
+#define CCLSKIP   18    /* [CLO] CCL 16bytes END ... */
+
+static int
+dd_pmatch(const char *lp, CHAR *ap,char **end_ptr,
+    int level)
 {
-    int i = 0;
+    int op    = 0; 
+    int c    = 0;
+    int n    = 0;
+    char *e  = 0;    /* extra pointer for CLO */
+    int res  = 0;
 
-    printf("Dump of %d %s finite automaton line %d\n",
-        len,name,line);
-    for ( ; i < len; ++i) {
-        UC c = au[i];
-        printf("[%2d] ",i);
-        switch(c) {
-        case ANY:
-            printf("%s",prefix);
-            printf("ANY");
-            break;
+    while ((op = *ap) != END) {
+        ap++;
+        switch(op) {
         case CHR:
-            printf("%s",prefix);
-            printf("CHR ");
-            ++i;
-            c = au[i];
-            printf("%c",c);
+            if (*lp++ != *ap++) {
+                return DW_DLV_NO_ENTRY;
+            }
             break;
-        case BBK: {
-            int j = 0;
-            UC  count = 0;
-            printf("%s",prefix);
-            printf("BBK [");
-            ++i;
-            count = au[i];
-            printf(" (count: %u) ",count);
-            ++i;
-            c = au[i];
-            while(c != EBK) {
-                printf("%c",c);
-                ++j;
-                ++i;
-                c = au[i];
+        case ANY:
+            if (!*lp++) {
+                return DW_DLV_NO_ENTRY;
             }
-            if (j != count) {
-                printf("ERROR, internal error BBK/EBK count j %d count %d\n",
-                    j,count);
+            break;
+        case CCL:
+            c = *lp++;
+            if (!isinset(ap,c)) {
+                return DW_DLV_NO_ENTRY;
             }
-            printf(" ] EBK");
-            }
+
+            ap += BITBLK;
             break;
         case BOL:
-            printf("%s",prefix);
-            printf("BOL ^");
-            break; 
+            if (lp != bol) {
+                return DW_DLV_NO_ENTRY;
+            }
+            break;
         case EOL:
-            printf("%s",prefix);
-            printf("EOL $ ");
-            break; 
+            if (*lp) {
+                return DW_DLV_NO_ENTRY;
+            }
+            break;
         case CLO: {
-            UC ci  = 0;
-
-            ++i;
-            ci = au[i]; 
-            switch(ci) {
+            char *are = (char *)lp;
+            switch(*ap) {
             case ANY:
-                printf("%s","CLO ");
-                printf("ANY");
-                ++i;
-                ci = au[i];
-                if (ci != CLE) {
-                    printf(" unexpectd: 0x%x %s",ci,naming(ci));
-                } else {
-                    printf(" CLE");
+                while (*lp) {
+                    lp++;
                 }
+                n = ANYSKIP;
                 break;
             case CHR:
-                printf("%s","CLO ");
-                printf("CHR ");
-                ++i;
-                ci = au[i];
-                printf("%c",ci);
-                ++i;
-                ci = au[i];
-                if (ci != CLE) {
-                    printf(" unexpectd: 0x%x %s",ci,naming(ci));
-                } else {
-                    printf(" CLE");
+                c = *(ap+1);
+                while (*lp && c == *lp) {
+                    lp++;
                 }
+                n = CHRSKIP;
                 break;
-            case BBK: {
-                int j = 0;
-                UC count = 0;
-
-                printf("%s","CLO ");
-                printf("BBK [");
-                ++i;
-                count = au[i];
-                printf(" (count: %u) ",count);
-                ++i;
-                ci = au[i];
-                for(  ;ci != EBK;  ++i,++j,ci=au[i]) {
-                    printf("%c",ci);
+            case CCL:
+                while ((c = *lp) && isinset(ap+1,c)) {
+                    lp++;
                 }
-                if (j != count) {
-                    printf("ERROR, internal error BBK/EBK count j %d count %d\n",
-                       j,count);
-                }
-                printf(" ] EBK");
-                ++i;
-                ci = au[i];
-                if (ci != CLE) {
-                    printf(" unexpectd: 0x%x %s",ci,naming(ci));
-                } else {
-                    printf(" CLE");
-                }
-                }
+                n = CCLSKIP;
                 break;
             default:
-                printf("Error unexpected  element CLO at byte %d\n",i);
-                return;
-            } /* end switch */
-            } /* end CLO */
-            break;
-        case CLE: {
-            printf("%s CLE (out of place!) ",prefix);
-            break;
+                badpat;
+                printf("Regular expression has illegal "
+                    "closure: bad nfa\n");
+                return DW_DLV_ERROR;
             }
-        default:
-            if (!isascii(c)) {
-                printf("%s 0x%x %s",prefix,c,naming(c));
-            } else {
-                printf("%s 0x%x %c",prefix,c,c);
-            }
-            break;
-        } /* end switch */
-        printf("\n");
-    } /* End for loop */
-}
+            ap += n;
+#if 0
+printf("dadebug lp 0x%lx 0x%x "
+" ap 0x%lx %s"
+"line %d\n",
+(unsigned long)lp,*lp,
+(unsigned long)ap,naming(*ap),
+__LINE__);
 #endif
-
-static int
-safestrcpy(UC *targ,int targlen,UC *src, int srclen)
-{
-    int u = 0;
-    UC *in = src;
-    UC *out = targ;
-    for ( ; ; ++u,++in,++out) {
-        if (u < srclen && u < targlen) {
-            *out = *in;
-            continue;
-        }
-        break;
-    }
-    /*  This is only relevant for the string copy, not for
-        other uses. But harmless everywhere as we never
-        step backwards in creating fa's. and our targets
-        a a couple bytes bigger than MAXBUF */
-    *out = 0;
-    return u;
-}
-static void
-resetfornewpattern(void)
-{
-    unsigned u = 0;
-    for (; u < MAXBUF; ++u) {
-        fa[u]     = 0;
-        tmpfaa[u] = 0;
-        tmpfab[u] = 0;
-    }
-    facount = 0;
-    tmpfaacount = 0;
-    tmpfabcount = 0;
-}
-
-static int
-all_ascii (const char *pat)
-{
-    UC c = 0;
-    const unsigned char *cp = (const unsigned char*)pat;
-
-    for( ; *cp; ++cp) {
-        c = *cp;
-        if (!isascii(c)) {
-            return FALSE;
-        }
-    }
-    return TRUE;
-}
-
-static int
-inset(UC cx,UC *known,int kcount)
-{
-    int i = 0;
-    for(i = 0; i < kcount; ++i) {
-        if (cx == known[i]) {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
-static void
-copytmptofinal(char x)
-{
-    if (!tmpfaacount) {
-printf("Empty tmpfaa\n");
-        return;
-    }
-printf("dadebug facount %d line %d\n",facount,__LINE__);
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-    facount += safestrcpy(fa+facount,MAXBUF-facount,
-        tmpfaa,tmpfaacount);
-printf("dadebug facount %d line %d\n",facount,__LINE__);
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-    if (x == 'e') {
-        tmpfaacount = 0;
-        tmpfaa[0] = 0;
-    } 
-printf("dadebug facount %d line %d\n",facount,__LINE__);
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-}
-
-static void
-copytmpabtotmpaa(void)
-{
-    if (!tmpfabcount) {
-        return;
-    }
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-printf("dadebug tmpfabcount %d line %d\n",tmpfabcount,__LINE__);
-    tmpfaacount += safestrcpy(tmpfaa+tmpfaacount,MAXBUF-tmpfaacount,
-        tmpfab,tmpfabcount);
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-    tmpfabcount = 0;
-    tmpfab[0] = 0;
-}
-
-static void
-emptytmp(void)
-{
-    tmpfaacount = 0;
-    tmpfaa[0] = 0;
-    tmpfabcount = 0;
-    tmpfab[0] = 0;
-}
-
-/*  *pat points to '[' */
-static int
-fill_in_bracket_chars(UC *pat,int *absorbcount)
-{
-    int count = 0;
-    int negate_all= FALSE;
-    UC *cp = pat;
-    int insequence=FALSE;
-    UC lastchar = 0;
-
-
-    /* Passing over the [ */
-    ++count;
-    tmpfabcount = 0;
-    for ( cp = pat+1; *cp; ++cp,++count) { 
-        UC c = *cp;
-        if ( c == '^' && count == 1) {
-            negate_all = TRUE;
-            continue;
-        }
-        if (c == ']') {
-            if (insequence) {
-                return DW_DLV_ERROR;
+            /*  [code by davea] 
+                Empty closure is fine for early accept iff
+                it is the end of the regex too. */
+            if ((lp == are) && !*lp && !*ap) {
+                return DW_DLV_OK;
             }
-            if (!tmpfabcount) {
-                return DW_DLV_ERROR;
+            /*  [code by davea] loop only
+                if something matched */
+            if (lp > are) {
+                while (lp >= are) {
+                    res = dd_pmatch(lp, ap,&e,level+1);
+                    if (res == DW_DLV_ERROR) {
+                       return res;
+                    }
+                    if (res == DW_DLV_OK) {
+                        *end_ptr = e;
+                        return res; 
+                    }
+                    /* NO_ENTRY so far */
+                    --lp;
+                }
             }
-            break;
-        }
-        if (insequence) {
-           UC cb = lastchar +1;
-           if (cb > lastchar) {
-               for ( ; cb <= c; ++cb) {
-                    STORETMPB(cb);
-               }
-            } else {
-                return DW_DLV_ERROR;
             }
-            insequence = FALSE;
-            continue;
+            return DW_DLV_NO_ENTRY;
+        default:
+            badpat;
+            printf("Regular expression has illegal "
+                "dd_re_exec: bad nfa.\n");
+            return DW_DLV_ERROR;
         }
-        if (c == '-') {
-printf("dadebug insequence now, line %d\n",__LINE__);
-             insequence = TRUE;
-             continue;
-        }
-        STORETMPB(c);
-        lastchar = c;
     }
-    if (*cp != ']') {
-        return DW_DLV_ERROR;
-    }
-    if (!negate_all) {
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-printf("dadebug tmpfabcount %d line %d\n",tmpfabcount,__LINE__);
-        STORETMP(BBK);
-        STORETMP(tmpfabcount);
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-printf("dadebug tmpfabcount %d line %d\n",tmpfabcount,__LINE__);
-fadump(tmpfab,tmpfabcount," in [] tmpfab ",__LINE__);
-        copytmpabtotmpaa();
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-printf("dadebug tmpfabcount %d line %d\n",tmpfabcount,__LINE__);
-        STORETMP(EBK);
-        *absorbcount = count;
-fadump(tmpfaa,tmpfaacount," in [] tmpfaa ",__LINE__);
-printf("dadebug count in pat %d line %d\n",count,__LINE__);
-printf("dadebug tmpfaacount %d line %d\n",tmpfaacount,__LINE__);
-printf("dadebug tmpfabcount %d line %d\n",tmpfabcount,__LINE__);
-        return DW_DLV_OK;
-    }
-    {
-        UC tmpfac[MAXBUF];
-        int tmpfaccount = 0;
-        int i = 0;
-        UC cx = 0;
-
-
-        STORETMP(BBK);
-        for (cx = ' '; cx > 0x7f; ++cx) {
-           if (inset(cx,tmpfab,tmpfabcount)) {
-               continue;
-           }
-           tmpfac[tmpfaccount] = cx;
-           ++tmpfaccount;
-        }
-        STORETMP(tmpfaccount);
-        for(i = 0; i < tmpfaccount; ++i) {
-            STORETMP(tmpfac[i]);
-        }
-        tmpfabcount = 0;
-        tmpfab[0] = 0;
-        STORETMP(EBK);
-    }
-    *absorbcount = count;
+    *end_ptr = (char *)lp;
     return DW_DLV_OK;
 }
-static int
-previsCLOANY(void)
-{
-    if (facount < 2) {
-        return FALSE;
-    }
-    if (fa[facount-1] != ANY) {
-        return FALSE;
-    }
-    if (fa[facount-2] != CLO) {
-        return FALSE;
-    }
-    return TRUE;
-}
-static void
-trimfinals(void)
-{
-    int changed=TRUE;
-    while(facount > 0 && changed) {
-        changed = FALSE;
-        if (facount > 1 && previsCLOANY()) {
-            changed = TRUE;
-            facount -= 2;
-            continue;
-        }
-        if (facount == 1) {
-            if (fa[0] == EOL) {
-                facount = 0;
-            }
-        }
-        if (facount == 1) {
-            if (fa[0] == BOL) {
-                facount = 0;
-            }
-        }
-    }
-}
 
-int
-dd_re_comp(const char *re_arg)
-{
-    UC *pat = 0;
-    if (!all_ascii(re_arg)) {
-        return DW_DLV_ERROR;
-    }
-    if (!re_arg || !re_arg[0]) {
-        return DW_DLV_ERROR;
-    }
-    safestrcpy(re_in,MAXBUF,(UC *)re_arg,strlen(re_arg));
-    resetfornewpattern();
-    for(pat = re_in; *pat; ++pat) { 
-        UC pchar = *pat;
-printf("dadebug pattern char %c pat 0x%lx\n",pchar,(unsigned long)pat);
-        switch(pchar) {
-        case '.':
-            copytmptofinal('e');
-            if (!previsCLOANY()) {
-                STORETMP(ANY);
-fadump(tmpfaa,tmpfaacount,"tmpfaa",__LINE__);
-            } else {
-printf("Dadebug emptytmp line dup CLO ANY %d\n",__LINE__);
-                emptytmp();
-            }
-            break;
-        case '^':
-            if (pat != re_in) {
-                /* Oops must be at start */ 
-                return DW_DLV_ERROR;
-            }
-            STORE(BOL);
-            break;
-        case '$':
-            if (*(pat+1)) {
-                /* Oops must be at end */ 
-                return DW_DLV_ERROR;
-            }
-            copytmptofinal('e');
-            STORE(EOL);
-            break;
-        case '[': {
-            int bbkcount = 0;
-            int res = 0;
-            copytmptofinal('e');
-            res = fill_in_bracket_chars(pat,&bbkcount);
-            if (res != DW_DLV_OK) {
-                return res;
-            }
-            pat += bbkcount;
-printf("dadebug bbkcount %d pat 0x%lx %s %d\n",bbkcount,(unsigned long)pat,naming(*pat),__LINE__);
-            }
-            break;
-        case '*':
-            if (!tmpfaacount) {
-                return DW_DLV_ERROR;
-            }
-fadump(tmpfaa,tmpfaacount,"tmpfaa in * for *closure ",__LINE__);
-            if ((tmpfaacount != 1  ||
-               tmpfaa[0] != ANY) ||
-               !previsCLOANY()) {
-               STORE(CLO);
-               copytmptofinal('e');
-               STORE(CLE);
-fadump(tmpfaa,tmpfaacount,"tmpfaa for *closure",__LINE__);
-fadump(fa,facount,"fa for *closure",__LINE__);
-            } else {
-printf("Dadebug emptytmp line DUP CLO ANY %d\n",__LINE__);
-                emptytmp();
-            }
-            break;
-        case '+':
-            if (!tmpfaacount) {
-                return DW_DLV_ERROR;
-            }
-            if ((tmpfaacount != 1  ||  
-                tmpfaa[0] != ANY) ||
-                !previsCLOANY()) {
-                copytmptofinal('k');
-                STORE(CLO);
-                copytmptofinal('e');
-                STORE(CLE);
-            } else {
-printf("Dadebug emptytmp line DUP CLO ANY %d\n",__LINE__);
-                emptytmp();
-            }
-            break;
-        default:
-            STORETMP(CHR);
-            STORETMP(pchar);
-            break;
-        }
-    }
-fadump(fa,facount,"befoe finaltmp",__LINE__);
-    copytmptofinal('e');
-fadump(fa,facount,"post final tmp",__LINE__);
-    trimfinals(); 
 #ifdef DEBUG
-    fadump(fa,facount,"Full fa",__LINE__);
-#endif
-    if (!facount) {
-        return DW_DLV_ERROR;
-    }
-    return DW_DLV_OK;
+/*
+ * symbolic - produce a symbolic dump of the nfa
+ */
+static void
+symbolic(char *s) 
+{
+    printf("pattern: %s\n", s);
+    printf("nfacode:\n");
+    nfadump(nfa);
 }
 
-int
-dd_re_exec(const char * x UNUSEDARG )
+static void   
+nfadump(CHAR *ap)
 {
-    return DW_DLV_ERROR;
+    register int n;
+
+    while (*ap != END)
+        switch(*ap++) {
+        case CLO:
+            printf("CLOSURE");
+            nfadump(ap);
+            switch(*ap) {
+            case CHR:
+                n = CHRSKIP;
+                break;
+            case ANY:
+                n = ANYSKIP;
+                break;
+            case CCL:
+                n = CCLSKIP;
+                break;
+            }
+            ap += n;
+            break;
+        case CHR:
+            printf("\tCHR %c\n",*ap++);
+            break;
+        case ANY:
+            printf("\tANY .\n");
+            break;
+        case BOL:
+            printf("\tBOL -\n");
+            break;
+        case EOL:
+            printf("\tEOL -\n");
+            break;
+        case CCL:
+            printf("\tCCL [");
+            for (n = 0; n < MAXCHR; n++)
+                if (isinset(ap,(CHAR)n)) {
+                    if (n < ' ')
+                        printf("^%c", n ^ 0x040);
+                    else
+                        printf("%c", n);
+                }
+            printf("]\n");
+            ap += BITBLK;
+            break;
+        default:
+            printf("bad nfa. opcode %o\n", ap[-1]);
+            exit(1);
+            break;
+        }
 }
+#endif  /* DEBUG */
