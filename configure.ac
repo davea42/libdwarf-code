@@ -60,6 +60,7 @@ AC_ARG_ENABLE([sanitize],
    ],
    [enable_sanitize="no"])
 
+
 AC_ARG_ENABLE([namestable],
    [AS_HELP_STRING([--enable-namestable],
                    [enable name string functions implemented as binary search (default is with C switch) @<:@default=no@:>@])],
@@ -519,6 +520,21 @@ AS_IF(
 AC_MSG_CHECKING([whether sanitize options are used])
 AC_MSG_RESULT([${enable_sanitize}])
 
+# -fvisibility
+AS_IF(
+    [test "x${enable_shared}" = "xyes" && test "x${have_win32}" = "xno"],
+    [
+     CFLAGS_save=${CFLAGS}
+     CFLAGS="${CFLAGS} -fvisibility=hidden -fno-omit-frame-pointer"
+     AC_COMPILE_IFELSE(
+         [AC_LANG_PROGRAM([[]], [[]])],
+         [
+          DWARF_CFLAGS="$DWARF_CFLAGS -fvisibility=hidden -fno-omit-frame-pointer"
+          LDFLAGS="$LDFLAGS -fvisibility=hidden -fno-omit-frame-pointer"
+         ],
+         [AC_MSG_NOTICE([Option -fvisibility is ignored. Not supported.])])
+     CFLAGS="${CFLAGS_save} ${DWARF_CFLAGS}"
+    ])
 
 ### Checks for linker characteristics
 
