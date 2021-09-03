@@ -321,6 +321,9 @@ dwarf_get_TAG_name (unsigned int val,
     case DW_TAG_ALTIUM_rom:
         *s_out = "DW_TAG_ALTIUM_rom";
         return DW_DLV_OK;
+    case DW_TAG_LLVM_annotation:
+        *s_out = "DW_TAG_LLVM_annotation";
+        return DW_DLV_OK;
     case DW_TAG_ghs_namespace:
         *s_out = "DW_TAG_ghs_namespace";
         return DW_DLV_OK;
