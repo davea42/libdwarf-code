@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011-2020 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2020  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -29,44 +29,34 @@
 */
 
 #include "config.h"
+#include "libdwarf_private.h"
 #include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
-#endif
+#endif /*  HAVE_ELFACCESS_H */
+#ifdef HAVE_STDDEF_H
 #include <stddef.h>
-#include "libdwarf_private.h"
-#include "pro_incl.h"
+#endif /* HAVE_STDDEF_H */
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_section.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
 
+/*
+    This function adds another weak name to the
+    list of weak names for the given Dwarf_P_Debug.
+*/
 int
-dwarf_add_pubname_a(Dwarf_P_Debug dbg,
+dwarf_add_weakname_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
-    char *pubname_name, Dwarf_Error * error)
+    char *weak_name, Dwarf_Error * error)
 {
     int res = 0;
 
-    res = _dwarf_add_simple_name_entry(dbg, die,
-        pubname_name,
-        dwarf_snk_pubname, error);
-    return res;
-}
-
-int
-dwarf_add_pubtype_a(Dwarf_P_Debug dbg,
-    Dwarf_P_Die die,
-    char *pubtype_name,
-    Dwarf_Error * error)
-{
-    int res = 0;
-
-    res =    _dwarf_add_simple_name_entry(dbg, die, pubtype_name,
-        dwarf_snk_pubtype, error);
+    res = _dwarf_add_simple_name_entry(dbg, die, weak_name,
+        dwarf_snk_weakname, error);
     return res;
 }

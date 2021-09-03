@@ -30,16 +30,16 @@
 
 #include "config.h"
 #include "libdwarf_private.h"
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
 
 /*  This routine deallocates all memory, and does some
     finishing up.  New September 2016. */

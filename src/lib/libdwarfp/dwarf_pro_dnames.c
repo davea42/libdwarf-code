@@ -38,17 +38,17 @@
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #endif /* HAVE_ELFACCESS_H */
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
-#include "pro_arange.h"
-#include "pro_section.h"
-#include "pro_reloc.h"
-#include "pro_dnames.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_arange.h"
+#include "dwarf_pro_section.h"
+#include "dwarf_pro_reloc.h"
+#include "dwarf_pro_dnames.h"
 
 static struct Dwarf_P_Dnames_Head_s staticdnames =
 {

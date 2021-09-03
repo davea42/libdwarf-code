@@ -37,15 +37,15 @@
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #endif
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif /* HAVE_STDDEF_H */
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_section.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_section.h"
 
 /*
     This function adds another variable name to the

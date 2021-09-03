@@ -1,5 +1,7 @@
 /*
-  Copyright 2020 David Anderson. All Rights Reserved.
+
+  Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011-2020 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -27,44 +29,44 @@
 */
 
 #include "config.h"
-#include "libdwarf_private.h"
 #include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#include "pro_incl.h"
+#ifdef HAVE_ELFACCESS_H
+#include <elfaccess.h>
+#endif
 #include <stddef.h>
+#include "libdwarf_private.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_section.h"
 
 int
-dwarf_add_debug_sup(Dwarf_P_Debug dbg,
-    Dwarf_Half      version,
-    Dwarf_Small     is_supplementary,
-    char          * filename,
-    Dwarf_Unsigned  checksum_len,
-    Dwarf_Small   * checksum,
+dwarf_add_pubname_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Die die,
+    char *pubname_name, Dwarf_Error * error)
+{
+    int res = 0;
+
+    res = _dwarf_add_simple_name_entry(dbg, die,
+        pubname_name,
+        dwarf_snk_pubname, error);
+    return res;
+}
+
+int
+dwarf_add_pubtype_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Die die,
+    char *pubtype_name,
     Dwarf_Error * error)
 {
-    dbg->de_debug_sup.ds_version = version;
-    dbg->de_debug_sup.ds_is_supplementary = is_supplementary;
-    dbg->de_debug_sup.ds_filename = strdup(filename);
-    dbg->de_debug_sup.ds_checksum_len = checksum_len;
-    dbg->de_debug_sup.ds_checksum = malloc(checksum_len);
-    if (!dbg->de_debug_sup.ds_checksum) {
-        free(dbg->de_debug_sup.ds_filename);
-        dbg->de_debug_sup.ds_filename = 0;
-        dbg->de_debug_sup.ds_version = 0;
-        dbg->de_debug_sup.ds_checksum_len = 0;
-        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return DW_DLV_ERROR;
-    }
-    memcpy(dbg->de_debug_sup.ds_checksum,checksum,checksum_len);
-    return DW_DLV_OK;
+    int res = 0;
+
+    res =    _dwarf_add_simple_name_entry(dbg, die, pubtype_name,
+        dwarf_snk_pubtype, error);
+    return res;
 }

@@ -46,15 +46,15 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 #include <stddef.h>
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_util.h"
-#include "pro_alloc.h"
-#include "pro_die.h"
-#include "pro_section.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_util.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_die.h"
+#include "dwarf_pro_section.h"
 #include "dwarf_tsearch.h"
 
 #ifndef R_MIPS_NONE

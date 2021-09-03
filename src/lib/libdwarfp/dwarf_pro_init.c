@@ -39,17 +39,17 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
-#include "pro_line.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_line.h"
 #include "dwarf_memcpy_swap.h"
-#include "pro_section.h"        /* for MAGIC_SECT_NO */
-#include "pro_reloc_symbolic.h"
-#include "pro_reloc_stream.h"
+#include "dwarf_pro_section.h"        /* for MAGIC_SECT_NO */
+#include "dwarf_pro_reloc_symbolic.h"
+#include "dwarf_pro_reloc_stream.h"
 #include "dwarf_tsearch.h"
 #include "dwarf_string.h"
 

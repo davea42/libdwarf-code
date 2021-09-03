@@ -48,21 +48,21 @@
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif /* HAVE_STDDEF_H */
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
 #include "dwarf_util.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_util.h"
-#include "pro_alloc.h"
-#include "pro_section.h"
-#include "pro_line.h"
-#include "pro_frame.h"
-#include "pro_die.h"
-#include "pro_macinfo.h"
-#include "pro_types.h"
-#include "pro_dnames.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_util.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_section.h"
+#include "dwarf_pro_line.h"
+#include "dwarf_pro_frame.h"
+#include "dwarf_pro_die.h"
+#include "dwarf_pro_macinfo.h"
+#include "dwarf_pro_types.h"
+#include "dwarf_pro_dnames.h"
 
 
 struct Dwarf_Sort_Abbrev_s {

@@ -33,15 +33,15 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarfp.h"
 #include "dwarf_util.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
-#include "pro_line.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_line.h"
 
 static int _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     Dwarf_Unsigned file_index,

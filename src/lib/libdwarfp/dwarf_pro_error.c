@@ -41,13 +41,13 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit(), C89 malloc */
 #endif /* HAVE_STDLIB_H */
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
 
 
 extern char *_dwarf_errmsgs[];

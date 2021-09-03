@@ -55,7 +55,7 @@ test_dwarfstring_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
-   $(top_srcdir)/src/lib/libdwarfp/pro_log_extra_flag_strings.c \
+   $(top_srcdir)/src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_string.h \
    $(top_srcdir)/src/lib/libdwarf/dwarf_string.c
 test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)

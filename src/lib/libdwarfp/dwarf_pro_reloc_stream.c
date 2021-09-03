@@ -45,15 +45,15 @@
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif /* HAVE_STDDEF_H */
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
-#include "pro_section.h"
-#include "pro_reloc.h"
-#include "pro_reloc_stream.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_section.h"
+#include "dwarf_pro_reloc.h"
+#include "dwarf_pro_reloc_stream.h"
 
 /*  Return DW_DLV_ERROR on malloc error or reltarget_length error.
     Return DW_DLV_OK otherwise */

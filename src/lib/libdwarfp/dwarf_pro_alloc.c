@@ -29,12 +29,12 @@
 */
 
 #include "config.h"
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "pro_opaque.h"
-#include "pro_alloc.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_alloc.h"
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */

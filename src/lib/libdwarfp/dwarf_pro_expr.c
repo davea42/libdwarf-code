@@ -36,14 +36,14 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
 #include "dwarf_util.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
-#include "pro_expr.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_expr.h"
 
 #define SIZEOFT16 2
 #define SIZEOFT32 4

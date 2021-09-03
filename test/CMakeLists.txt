@@ -14,7 +14,7 @@ endif()
 if (DO_TESTING)
     set_source_group(TESTEXTRASTRING "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_extra_flag_strings.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarfp/pro_log_extra_flag_strings.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h)
     add_executable(selftestextrastring ${TESTEXTRASTRING})

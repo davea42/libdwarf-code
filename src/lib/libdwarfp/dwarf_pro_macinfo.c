@@ -34,15 +34,15 @@
 #endif /* HAVE_STRING_H */
 #include <stddef.h>
 #include "libdwarf_private.h"
-#include "pro_incl.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"
 #include "dwarf_util.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_alloc.h"
-#include "pro_section.h"
-#include "pro_macinfo.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_error.h"
+#include "dwarf_pro_alloc.h"
+#include "dwarf_pro_section.h"
+#include "dwarf_pro_macinfo.h"
 
 /*  I don't much like the error strings this generates, since
     like the rest of libdwarf they are simple strings with
