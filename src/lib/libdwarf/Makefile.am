@@ -16,6 +16,7 @@ dwarf_alloc.h \
 dwarf_arange.c \
 dwarf_arange.h \
 dwarf_base_types.h \
+dwarf_crc.c \
 dwarf_crc32.c \
 dwarf_debuglink.c \
 dwarf_debuglink.h \
@@ -123,7 +124,6 @@ dwarf_weaks.c \
 dwarf_weaks.h \
 dwarf_xu_index.c \
 dwarf_xu_index.h \
-crc32.c \
 libdwarf.h \
 libdwarf_private.h
 
@@ -163,8 +163,8 @@ ChangeLog2019 \
 ChangeLog2020 \
 CODINGSTYLE \
 dw-linetableheader.txt \
-dwgetopt.h \
-dwgetopt.c \
+dwarf_getopt.h \
+dwarf_getopt.c \
 CMakeLists.txt \
 cmake/libdwarf-config.cmake \
 NEWS \

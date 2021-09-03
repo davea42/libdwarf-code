@@ -90,7 +90,7 @@
 #endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> //open
 #include "general.h"
-#include "dwgetopt.h"
+#include "dwarf_getopt.h"
 #ifdef HAVE_LIBELF_H
 //  gelf.h is a GNU-only elf header, so not using it.
 #include "libelf.h"

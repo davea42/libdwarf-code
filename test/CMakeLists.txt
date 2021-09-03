@@ -63,8 +63,8 @@ endif()
 if (DO_TESTING)
     set_source_group(GETOPTEST_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/getopttest.c
-      ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwgetopt.h
-      ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwgetopt.c)
+      ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_getopt.h
+      ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_getopt.c)
     add_executable(selfgetopttest ${GETOPTEST_SOURCES})
     target_compile_options(selfgetopttest PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"

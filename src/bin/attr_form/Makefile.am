@@ -21,7 +21,7 @@ attrform_SOURCES = attr_form_build.c \
 $(top_srcdir)/src/bin/dwarfdump/common.c \
 $(top_srcdir)/src/bin/dwarfdump/attr_form.c \
 $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c \
-$(top_srcdir)/src/bin/dwarfdump/dwgetopt.c \
+$(top_srcdir)/src/bin/dwarfdump/dwarf_getopt.c \
 $(top_srcdir)/src/bin/dwarfdump/esb.c \
 $(top_srcdir)/src/bin/dwarfdump/makename.c \
 $(top_srcdir)/src/bin/dwarfdump/naming.c \

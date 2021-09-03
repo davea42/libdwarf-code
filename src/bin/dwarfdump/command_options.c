@@ -27,7 +27,7 @@
 
 #include "globals.h"
 #include "dwconf.h"
-#include "dwgetopt.h"
+#include "dwarf_getopt.h"
 
 #include "common.h"
 #include "makename.h"

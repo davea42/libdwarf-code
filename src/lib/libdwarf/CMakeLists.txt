@@ -1,5 +1,5 @@
 set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
-dwarf_alloc.c dwarf_crc32.c dwarf_arange.c 
+dwarf_alloc.c dwarf_crc.c dwarf_crc32.c dwarf_arange.c 
 dwarf_debug_sup.c
 dwarf_debuglink.c dwarf_die_deliv.c 
 dwarf_debugnames.c dwarf_dsc.c
@@ -29,8 +29,8 @@ dwarf_stringsection.c
 dwarf_tied.c 
 dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
-dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c 
-crc32.c )
+dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c
+dwarf_print_lines.c )
 
 set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h
 dwarf_alloc.h dwarf_arange.h dwarf_base_types.h 

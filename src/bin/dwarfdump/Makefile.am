@@ -31,8 +31,8 @@ dwarf_tsearchbal.c \
 dwconf.c \
 dwconf.h \
 dwconf_using_functions.h \
-dwgetopt.c \
-dwgetopt.h \
+dwarf_getopt.c \
+dwarf_getopt.h \
 esb.c \
 esb.h \
 esb_using_functions.h \

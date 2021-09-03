@@ -89,8 +89,8 @@ test_headersok_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 test_dwgetopt_SOURCES = getopttest.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwgetopt.h \
-    $(top_srcdir)/src/bin/dwarfdump/dwgetopt.c
+    $(top_srcdir)/src/bin/dwarfdump/dwarf_getopt.h \
+    $(top_srcdir)/src/bin/dwarfdump/dwarf_getopt.c
 test_dwgetopt_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_dwgetopt_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \

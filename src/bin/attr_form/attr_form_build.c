@@ -41,7 +41,7 @@
 #include "common.h"
 #include "esb.h"
 #include "tag_common.h"
-#include "dwgetopt.h"
+#include "dwarf_getopt.h"
 #define DW_TSHASHTYPE long /* we are not using hash tree */
 #include "dwarf_tsearch.h"
 #include "attr_form.h"
