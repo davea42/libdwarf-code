@@ -166,21 +166,6 @@ extern "C" {
 #define DW_TAG_GNU_call_site                    0x4109 /* GNU */
 #define DW_TAG_GNU_call_site_parameter          0x410a /* GNU */
 
-/* ALTIUM extensions */
-    /* DSP-C/Starcore __circ qualifier */
-#define DW_TAG_ALTIUM_circ_type         0x5101 /* ALTIUM */
-    /* Starcore __mwa_circ qualifier */
-#define DW_TAG_ALTIUM_mwa_circ_type     0x5102 /* ALTIUM */
-    /* Starcore __rev_carry qualifier */
-#define DW_TAG_ALTIUM_rev_carry_type    0x5103 /* ALTIUM */
-    /* M16 __rom qualifier */
-#define DW_TAG_ALTIUM_rom               0x5111 /* ALTIUM */
-
-/* The following 3 are extensions to support UPC */
-#define DW_TAG_upc_shared_type          0x8765 /* UPC */
-#define DW_TAG_upc_strict_type          0x8766 /* UPC */
-#define DW_TAG_upc_relaxed_type         0x8767 /* UPC */
-
 /* The following are SUN extensions */
 #define DW_TAG_SUN_function_template    0x4201 /* SUN */
 #define DW_TAG_SUN_class_template       0x4202 /* SUN */
@@ -197,11 +182,28 @@ extern "C" {
 #define DW_TAG_SUN_fortran_vax_structure 0x420d /* SUN */
 #define DW_TAG_SUN_hi                   0x42ff /* SUN */
 
+/* ALTIUM extensions */
+    /* DSP-C/Starcore __circ qualifier */
+#define DW_TAG_ALTIUM_circ_type         0x5101 /* ALTIUM */
+    /* Starcore __mwa_circ qualifier */
+#define DW_TAG_ALTIUM_mwa_circ_type     0x5102 /* ALTIUM */
+    /* Starcore __rev_carry qualifier */
+#define DW_TAG_ALTIUM_rev_carry_type    0x5103 /* ALTIUM */
+    /* M16 __rom qualifier */
+#define DW_TAG_ALTIUM_rom               0x5111 /* ALTIUM */
+
+#define DW_TAG_LLVM_annotation          0x6000 /* September 2021*/
+
 /* GHS C */
 #define DW_TAG_ghs_namespace            0x8004
 #define DW_TAG_ghs_using_namespace      0x8005
 #define DW_TAG_ghs_using_declaration    0x8006
 #define DW_TAG_ghs_template_templ_param 0x8007
+
+/* The following 3 are extensions to support UPC */
+#define DW_TAG_upc_shared_type          0x8765 /* UPC */
+#define DW_TAG_upc_strict_type          0x8766 /* UPC */
+#define DW_TAG_upc_relaxed_type         0x8767 /* UPC */
 
 /* PGI (STMicroelectronics) extensions. */
 #define DW_TAG_PGI_kanji_type           0xa000 /* PGI */
