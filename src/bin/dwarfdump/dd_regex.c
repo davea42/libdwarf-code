@@ -189,8 +189,6 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#include "dwarf.h"
-#include "libdwarf.h" /* for DW_DLV_ names */
 #include "dd_regex.h"
 
 /*  This version corrects two bugs (see 'code by davea'
@@ -204,7 +202,8 @@
 */
 
 #ifndef DW_DLV_OK 
-/*  Makes testing easier */
+/*  Makes testing easier, these 
+    must match libdwarf.h definitions */
 #define DW_DLV_NO_ENTRY -1
 #define DW_DLV_OK        0
 #define DW_DLV_ERROR     1
@@ -692,27 +691,29 @@ printf("dadebug lp 0x%lx 0x%x "
 (unsigned long)ap,naming(*ap),
 __LINE__);
 #endif
-            /*  [code by davea] 
-                Empty closure is fine for early accept iff
-                it is the end of the regex too. */
-            if ((lp == are) && !*lp && !*ap) {
-                return DW_DLV_OK;
+            if (lp == are) { 
+                /*  [code by davea] 
+                    Empty closure is fine for early accept iff
+                    it is the end of the regex too. Else
+                    this is a NO_ENTRY */
+                if(!*lp && !*ap) {
+                    return DW_DLV_OK;
+                }
+                return DW_DLV_NO_ENTRY;
             }
             /*  [code by davea] loop only
                 if something matched */
-            if (lp > are) {
-                while (lp >= are) {
-                    res = dd_pmatch(lp, ap,&e,level+1);
-                    if (res == DW_DLV_ERROR) {
-                       return res;
-                    }
-                    if (res == DW_DLV_OK) {
-                        *end_ptr = e;
-                        return res; 
-                    }
-                    /* NO_ENTRY so far */
-                    --lp;
+            while (lp >= are) {
+                res = dd_pmatch(lp, ap,&e,level+1);
+                if (res == DW_DLV_ERROR) {
+                   return res;
                 }
+                if (res == DW_DLV_OK) {
+                    *end_ptr = e;
+                    return res; 
+                }
+                /* NO_ENTRY so far */
+                --lp;
             }
             }
             return DW_DLV_NO_ENTRY;
