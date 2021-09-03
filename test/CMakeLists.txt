@@ -189,10 +189,9 @@ if (DO_TESTING)
     add_executable(selfobjectaccess ${OBJACCESS})
     target_compile_options(selfobjectaccess PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
-    target_compile_options(selfobjectaccess PRIVATE ${DW_FWALL})
-    target_link_options(selfobjectaccess PRIVATE 
-        -L${CMAKE_BINARY_DIR}/src/lib/libdwarf )
-    target_link_libraries(selfobjectaccess PRIVATE -ldwarf )
+    target_compile_options(selfobjectaccess PRIVATE ${DW_FWALL} )
+    target_link_libraries(selfobjectaccess PRIVATE
+        -L${CMAKE_BINARY_DIR}/src/lib/libdwarf  -ldwarf )
     if (HAVE_ZLIB)
         target_link_libraries(selfobjectaccess PRIVATE -lz )
     endif()
