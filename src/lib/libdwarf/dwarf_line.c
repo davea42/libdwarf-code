@@ -52,7 +52,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_line.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #include "dwarf_debuglink.h"
 
 /* Line Register Set initial conditions. */

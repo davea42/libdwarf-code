@@ -49,7 +49,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 struct ranges_entry {
     struct ranges_entry *next;

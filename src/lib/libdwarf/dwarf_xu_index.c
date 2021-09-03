@@ -86,7 +86,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_xu_index.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #define  HASHSIGNATURELEN 8
 

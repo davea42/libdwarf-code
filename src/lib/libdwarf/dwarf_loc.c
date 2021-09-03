@@ -54,7 +54,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_loc.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 static int _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     Dwarf_Block_c * return_block,

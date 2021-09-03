@@ -10,7 +10,7 @@ lib_LTLIBRARIES = libdwarfp.la
 libdwarfp_la_SOURCES = \
 $(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c \
 $(top_srcdir)/src/lib/libdwarf/dwarf_memcpy_swap.c \
-$(top_srcdir)/src/lib/libdwarf/dwarfstring.c \
+$(top_srcdir)/src/lib/libdwarf/dwarf_string.c \
 libdwarfp.h \
 pro_alloc.c \
 pro_alloc.h \

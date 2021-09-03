@@ -51,7 +51,7 @@
 #include "dwarf_util.h"
 #include "dwarf_global.h"
 #include "dwarf_debugnames.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #if 0
 /*  freedabs attempts to do some cleanup in the face

@@ -55,7 +55,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_str_offsets.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #include "dwarf_die_deliv.h"
 
 /* These are sanity checks, not 'rules'. */

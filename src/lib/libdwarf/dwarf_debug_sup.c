@@ -56,7 +56,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_global.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 static void
 get_sup_fields(Dwarf_Debug dbg,

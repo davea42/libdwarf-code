@@ -66,7 +66,7 @@
 #include "dwarf_util.h"
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_harmless.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #ifdef HAVE_ZLIB_H
 #include "zlib.h"

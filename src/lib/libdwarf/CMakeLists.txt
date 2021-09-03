@@ -24,7 +24,7 @@ dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_peread.c 
 dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c 
 dwarf_rnglists.c
-dwarfstring.h dwarfstring.c
+dwarf_string.h dwarf_string.c
 dwarf_stringsection.c
 dwarf_tied.c 
 dwarf_str_offsets.c

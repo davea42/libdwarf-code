@@ -46,7 +46,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 /*  This is used to print a .debug_abbrev section without
     knowing about the DIEs that use the abbrevs.

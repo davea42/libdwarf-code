@@ -47,7 +47,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #include "dwarf_global.h"
 
 #ifdef __sgi  /* __sgi should only be defined for IRIX/MIPS. */

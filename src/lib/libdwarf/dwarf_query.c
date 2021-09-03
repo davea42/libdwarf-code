@@ -49,7 +49,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_die_deliv.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     Dwarf_Half attr,

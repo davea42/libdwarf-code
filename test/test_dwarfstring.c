@@ -33,7 +33,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>  /* for printf */
 #include <stdlib.h>
 #include <string.h>
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #ifndef TRUE
 #define TRUE 1
 #endif /* TRUE */

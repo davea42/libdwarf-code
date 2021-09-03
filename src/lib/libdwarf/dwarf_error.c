@@ -54,7 +54,7 @@
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #include "dwarf_error.h"
 
 #undef DEBUG

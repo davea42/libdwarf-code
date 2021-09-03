@@ -43,7 +43,7 @@
 #include "dwarf.h"
 #include "libdwarfp.h"
 #include "pro_opaque.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 
 

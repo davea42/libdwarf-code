@@ -86,7 +86,7 @@
 #include "dwarf_debugnames.h"
 #include "dwarf_rnglists.h"
 #include "dwarf_dsc.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #include "dwarf_str_offsets.h"
 
 /* if DEBUG is defined a lot of stdout is generated here. */

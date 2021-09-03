@@ -44,7 +44,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #include "dwarf_str_offsets.h"
 #include "dwarf_loc.h"
 #include "dwarf_rnglists.h"

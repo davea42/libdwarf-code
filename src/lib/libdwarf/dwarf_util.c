@@ -71,7 +71,7 @@
 #include "dwarf_abbrev.h"
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_die_deliv.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0

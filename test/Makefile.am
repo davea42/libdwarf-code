@@ -46,8 +46,8 @@ check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
  test_errmsglist test_canonical test_regex
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
+   $(top_srcdir)/src/lib/libdwarf/dwarf_string.h \
+   $(top_srcdir)/src/lib/libdwarf/dwarf_string.c
 test_dwarfstring_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
 
 test_dwarfstring_CPPFLAGS = \
@@ -56,8 +56,8 @@ test_dwarfstring_CPPFLAGS = \
 
 test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
    $(top_srcdir)/src/lib/libdwarfp/pro_log_extra_flag_strings.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c
+   $(top_srcdir)/src/lib/libdwarf/dwarf_string.h \
+   $(top_srcdir)/src/lib/libdwarf/dwarf_string.c
 test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN) $(DWARF_CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -65,8 +65,8 @@ test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_linkedtopath_SOURCES = test_linkedtopath.c \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.h \
-   $(top_srcdir)/src/lib/libdwarf/dwarfstring.c \
+   $(top_srcdir)/src/lib/libdwarf/dwarf_string.h \
+   $(top_srcdir)/src/lib/libdwarf/dwarf_string.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_debuglink.h \
    $(top_srcdir)/src/lib/libdwarf/dwarf_debuglink.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_error.h

@@ -55,7 +55,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_gnu_index.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #if 0
 static void

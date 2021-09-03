@@ -3,8 +3,8 @@ set(SELFTEST "-DSELFTEST")
 if (DO_TESTING)
     set_source_group(TESTSTRING "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_dwarfstring.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.h)
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h)
     add_executable(selfteststring ${TESTSTRING})
     target_compile_options(selfteststring PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
@@ -15,8 +15,8 @@ if (DO_TESTING)
     set_source_group(TESTEXTRASTRING "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_extra_flag_strings.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarfp/pro_log_extra_flag_strings.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.h)
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h)
     add_executable(selftestextrastring ${TESTEXTRASTRING})
     target_compile_options(selftestextrastring PRIVATE "-DTESTING" )
     target_compile_options(selftestextrastring PRIVATE
@@ -29,8 +29,8 @@ endif()
 if (DO_TESTING)
     set_source_group(TESTLINKEDTOPATH "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_linkedtopath.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarfstring.h
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.h
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_error.h)

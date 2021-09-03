@@ -51,7 +51,7 @@
 #include "pro_reloc_symbolic.h"
 #include "pro_reloc_stream.h"
 #include "dwarf_tsearch.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #define IS_64BITPTR(dbg) ((dbg)->de_flags & DW_DLC_POINTER64 ? 1 : 0)
 #define ISA_IA64(dbg) ((dbg)->de_flags & DW_DLC_ISA_IA64 ? 1 : 0)

@@ -64,7 +64,7 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_object_detector.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0

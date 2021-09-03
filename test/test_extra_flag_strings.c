@@ -41,7 +41,7 @@
 #include "libdwarf_private.h"
 #include "pro_incl.h"
 #include "pro_opaque.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 static int errcount;
 

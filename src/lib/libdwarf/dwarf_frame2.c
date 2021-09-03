@@ -58,7 +58,7 @@
 #include "dwarf_util.h"
 #include "dwarf_frame.h"
 #include "dwarf_arange.h" /* using Arange as a way to build a list */
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 /*  For a little information about .eh_frame see
     https://stackoverflow.com/questions/14091231/

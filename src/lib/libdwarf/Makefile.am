@@ -107,8 +107,8 @@ dwarf_reloc_ppc64.h \
 dwarf_reloc_x86_64.h \
 dwarf_str_offsets.c \
 dwarf_str_offsets.h \
-dwarfstring.c       \
-dwarfstring.h       \
+dwarf_string.c       \
+dwarf_string.h       \
 dwarf_stringsection.c \
 dwarf_tied.c \
 dwarf_tied_decls.h \

@@ -49,7 +49,7 @@
 #include "dwarf_util.h"
 #include "dwarf_arange.h"
 #include "dwarf_global.h"  /* for _dwarf_fixup_* */
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 static void
 free_aranges_chain(Dwarf_Debug dbg, Dwarf_Chain head)

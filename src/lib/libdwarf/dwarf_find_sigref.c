@@ -51,7 +51,7 @@ Floor, Boston MA 02110-1301, USA.
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 static int
 _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,

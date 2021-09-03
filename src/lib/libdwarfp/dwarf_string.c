@@ -57,7 +57,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
 #include "libdwarf_private.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 /*  m must be a string, like  "DWARFSTRINGERR..."  for this to work */
 #define DWSERR(m) dwarfstring_append_length(data,m,sizeof(m)-1)

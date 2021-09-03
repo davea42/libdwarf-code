@@ -54,7 +54,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_macro5.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 #define MC_SENTINAL  0xada
 

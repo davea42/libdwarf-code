@@ -51,7 +51,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_loc.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 /*  Richard Henderson, on DW_OP_GNU_encoded_addr:
     The operand is an absolute address.

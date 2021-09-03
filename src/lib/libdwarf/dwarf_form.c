@@ -46,12 +46,12 @@
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_die_deliv.h"
 #include "dwarf_str_offsets.h"
-#include "dwarfstring.h"
+#include "dwarf_string.h"
 
 /*  It is necessary at times to cause errors of this sort
     in determining what we really have.  So best to avoid
