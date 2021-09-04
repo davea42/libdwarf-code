@@ -37,7 +37,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "helpertree.h"
 #include "tag_common.h"
 

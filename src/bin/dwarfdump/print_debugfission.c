@@ -29,7 +29,7 @@
 #include "naming.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "print_sections.h"
 
 #define TRUE 1

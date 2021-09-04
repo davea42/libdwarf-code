@@ -37,7 +37,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include  "print_debug_gnu.h"
 
 #define TRUE 1

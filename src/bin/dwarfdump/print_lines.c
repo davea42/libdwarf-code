@@ -32,8 +32,8 @@ Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
 #include "naming.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-#include "sanitized.h"
-#include "uri.h"
+#include "dd_sanitized.h"
+#include "dd_uri.h"
 #include <ctype.h>
 #include <time.h>
 

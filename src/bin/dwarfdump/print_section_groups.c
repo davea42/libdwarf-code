@@ -26,7 +26,7 @@ Copyright (C) 2017-2017  David Anderson. All rights reserved.
 */
 
 #include "globals.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "naming.h"
 
 /*  Two purposes here related to COMDAT:

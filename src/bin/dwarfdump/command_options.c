@@ -31,9 +31,9 @@
 
 #include "common.h"
 #include "makename.h"
-#include "uri.h"
+#include "dd_uri.h"
 #include "esb.h"                /* For flexible string buffer. */
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "tag_common.h"
 #include "section_bitmaps.h"
 #include "command_options.h"

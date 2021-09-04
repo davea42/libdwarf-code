@@ -31,7 +31,7 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 #include "globals.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 static struct esb_s esb_string;
 

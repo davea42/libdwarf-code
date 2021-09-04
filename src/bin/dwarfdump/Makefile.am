@@ -81,15 +81,15 @@ print_strings.c \
 print_tag_attributes_usage.c \
 print_types.c \
 print_weaknames.c \
-sanitized.c \
-sanitized.h \
+dd_sanitized.c \
+dd_sanitized.h \
 section_bitmaps.c \
 section_bitmaps.h \
 strstrnocase.c \
 true_section_name.c \
 tag_common.h \
-uri.c \
-uri.h
+dd_uri.c \
+dd_uri.h
 
 dwarfdump_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/libdwarf \

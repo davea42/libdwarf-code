@@ -28,7 +28,7 @@ Copyright 2018-2019 David Anderson. All rights reserved.
 #include "naming.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 /* print data in .debug_str_offsets.
    There is no guarantee this will work because

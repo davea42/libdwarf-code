@@ -30,7 +30,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "config.h"
 #include "globals.h"
 #include "dwconf.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "esb.h"
 
 /* Windows specific header files */

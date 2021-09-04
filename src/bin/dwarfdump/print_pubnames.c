@@ -33,7 +33,7 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 #include "esb.h"
 #include "esb_using_functions.h"
 #include "print_sections.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 /*  This unifies the code for some error checks to
     avoid code duplication.

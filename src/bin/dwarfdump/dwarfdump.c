@@ -57,7 +57,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "helpertree.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "tag_common.h"
 #include "addrmap.h"
 #include "attr_form.h"

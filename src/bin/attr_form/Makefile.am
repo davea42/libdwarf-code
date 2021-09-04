@@ -26,7 +26,7 @@ $(top_srcdir)/src/bin/dwarfdump/esb.c \
 $(top_srcdir)/src/bin/dwarfdump/makename.c \
 $(top_srcdir)/src/bin/dwarfdump/naming.c \
 $(top_srcdir)/src/bin/dwarfdump/glflags.c \
-$(top_srcdir)/src/bin/dwarfdump/sanitized.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
 $(top_srcdir)/src/bin/dwarfdump/tag_common.c
 ### In the following dwarfdump before libdwarf
 ### is essential to avoid _dwarf_tsearch link error.

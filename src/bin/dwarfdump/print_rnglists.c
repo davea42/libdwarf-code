@@ -39,7 +39,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #include "globals.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 static void
 print_sec_name(Dwarf_Debug dbg)

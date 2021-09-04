@@ -29,7 +29,7 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "naming.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "esb.h"
 #include "esb_using_functions.h"
 

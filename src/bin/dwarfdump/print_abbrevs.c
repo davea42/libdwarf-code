@@ -35,7 +35,7 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 #include "globals.h"
 #include "naming.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "esb.h"
 #include "esb_using_functions.h"
 

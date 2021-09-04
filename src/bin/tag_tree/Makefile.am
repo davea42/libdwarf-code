@@ -30,7 +30,7 @@ $(top_srcdir)/src/bin/dwarfdump/esb.c \
 $(top_srcdir)/src/bin/dwarfdump/makename.c \
 $(top_srcdir)/src/bin/dwarfdump/naming.c \
 $(top_srcdir)/src/bin/dwarfdump/glflags.c \
-$(top_srcdir)/src/bin/dwarfdump/sanitized.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
 $(top_srcdir)/src/bin/dwarfdump/tag_common.c
 tagtree_CPPFLAGS = -DTRIVIAL_NAMING \
 -DBUILD_NONLIB_SOURCE \

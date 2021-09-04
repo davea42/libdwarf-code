@@ -41,7 +41,7 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 #include "libdwarf_private.h"
 #include "common.h"
 #include "defined_types.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 /* PACKAGE_VERSION is from config.h */
 /*  The Linux/Unix version does not want a version string to print

@@ -29,7 +29,7 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 #include "globals.h"
 #include "esb.h"
 #include "glflags.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 /*  This does a uri-style conversion of control characters.
     So  SOH prints as %01 for example.

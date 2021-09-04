@@ -44,7 +44,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 #include "dwconf_using_functions.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 #include "addrmap.h"
 #include "naming.h"
 

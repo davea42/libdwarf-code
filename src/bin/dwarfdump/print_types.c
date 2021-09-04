@@ -34,7 +34,7 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 #include "esb_using_functions.h"
 #include "print_sections.h"
 #include "print_frames.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 /* Get all the data in .debug_typenames or debug_pubtypes. */
 int

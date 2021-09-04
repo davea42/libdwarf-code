@@ -26,7 +26,7 @@
 
 #include "globals.h"
 #include "makename.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 #include "command_options.h"
 #include "compiler_info.h"

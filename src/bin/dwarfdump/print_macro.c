@@ -33,12 +33,12 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "naming.h"
 #include "esb.h"
 #include "esb_using_functions.h"
-#include "uri.h"
+#include "dd_uri.h"
 #include "makename.h"
 #include "dwarf_tsearch.h"
 #include "print_sections.h"
 #include "macrocheck.h"
-#include "sanitized.h"
+#include "dd_sanitized.h"
 
 #define TRUE  1
 #define FALSE 0
