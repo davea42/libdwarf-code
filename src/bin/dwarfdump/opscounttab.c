@@ -226,7 +226,8 @@ struct dwarf_opscounttab_s _dwarf_opscounttab[] = {
 {/* unused                     0xdd*/ -1},
 {/* unused                     0xde*/ -1},
 {/* unused                     0xdf*/ -1},
-{/* DW_OP_GNU_push_tls_address 0xe0*/ 0} /* alt spelling DW_OP_HP_unknown */,
+{/* DW_OP_GNU_push_tls_address 0xe0*/ 0},
+    /* above has alt spelling DW_OP_HP_unknown */
 {/* DW_OP_HP_is_value          0xe1*/ 1},
 {/* DW_OP_HP_fltconst4         0xe2*/ 1},
 {/* DW_OP_HP_fltconst8         0xe3*/ 1},
@@ -242,7 +243,8 @@ struct dwarf_opscounttab_s _dwarf_opscounttab[] = {
 {/* DW_OP_WASM_location        0xed*/ 1},
 {/* DW_OP_WASM_location_int    0xee*/ 1},
 {/* unused                     0xef*/ -1},
-{/* DW_OP_GNU_uninit           0xf0*/ 0} /* alt spelling DW_OP_APPLE_uninit */,
+{/* DW_OP_GNU_uninit           0xf0*/ 0},
+    /* above has alt spelling DW_OP_APPLE_uninit */
 {/* DW_OP_GNU_encoded_addr     0xf1*/ 1},
 {/* DW_OP_GNU_implicit_pointer 0xf2*/ 1},
 {/* DW_OP_GNU_entry_value      0xf3*/ 2},

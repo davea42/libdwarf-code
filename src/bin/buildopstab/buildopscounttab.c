@@ -86,9 +86,9 @@ static struct ops_table_s optabsource[]= {
 {DW_OP_reinterpret /* 0xa9*/,         0, 1},
 {DW_OP_GNU_push_tls_address /*0xe0*/, 0, 0},
 {DW_OP_HP_unknown /* 0xe0*/,          0, 0},
-{DW_OP_HP_is_value /* 0xe1*/,         0, 1},       
+{DW_OP_HP_is_value /* 0xe1*/,         0, 1},
 
-{DW_OP_HP_fltconst4 /* 0xe2*/ ,       0, 1}, 
+{DW_OP_HP_fltconst4 /* 0xe2*/ ,       0, 1},
 
 {DW_OP_HP_fltconst8 /* 0xe3*/ ,       0, 1},
 {DW_OP_HP_mod_range /* 0xe4*/,        0, 2},
@@ -108,9 +108,9 @@ static struct ops_table_s optabsource[]= {
 {DW_OP_GNU_deref_type /*0xf6*/,       0, 2},/*2 is correct*/
 {DW_OP_GNU_convert /*0xf7*/,          0, 1},/*1 is correct*/
 {DW_OP_PGI_omp_thread_num /*0xf8*/,   0, 0},/*just pushes*/
-{DW_OP_GNU_reinterpret/* 0xf9*/,      0, 1},/*1 is correct*/  
-{DW_OP_GNU_parameter_ref/* 0xfa*/,    0, 1},/*1 is correct*/   
-{DW_OP_GNU_addr_index/* 0xfb*/,       0, 1},/*1 is correct.Fission*/  
+{DW_OP_GNU_reinterpret/* 0xf9*/,      0, 1},/*1 is correct*/
+{DW_OP_GNU_parameter_ref/* 0xfa*/,    0, 1},/*1 is correct*/
+{DW_OP_GNU_addr_index/* 0xfb*/,       0, 1},/*1 is correct.Fission*/
 {DW_OP_GNU_const_index/* 0xfc*/,      0, 1},/*1 is correct.Fission*/
 {DW_OP_GNU_variable_value/* 0xfd*/,   0, 1},/* GNU 2017*/
 {0,0,0}
@@ -154,7 +154,7 @@ validate_name(char *name,unsigned long v,unsigned int linenum)
             v,count,s, name);
         if (dups_used >= OPS_USED_DUPS) {
             printf("Too many dups, increast table size\n");
-            exit(1); 
+            exit(1);
         }
         dups[dups_used].dt_val = v;
         safe_strcpy(dups[dups_used].dt_name1,name,
@@ -179,7 +179,7 @@ validate_op_listed(char *curdefname,unsigned long v,
     struct ops_table_s * ops = optabsource ;
     unsigned int i = 0;
 
-    for(i = 0; ; ++i,++ops) {
+    for (i = 0; ; ++i,++ops) {
         unsigned int j = 0;
         if (!ops->ot_first &&
             !ops->ot_last &&
@@ -200,8 +200,9 @@ validate_op_listed(char *curdefname,unsigned long v,
             }
         }
     }
-    printf("Failed to find %s val %lu at dwarf.h line %u in inoptabsource\n",
-       curdefname,v, linenum);
+    printf("Failed to find %s val %lu at dwarf.h "
+        "line %u in inoptabsource\n",
+        curdefname,v, linenum);
     exit(1);
 }
 
@@ -273,7 +274,7 @@ check_if_optabsource_complete(char *path)
             continue;
         }
         /*  Skip spaces. */
-        for  ( ; *numstart == ' '; ++numstart) { }
+        for ( ; *numstart == ' '; ++numstart) { }
         endptr = 0;
         v = strtoul(numstart,&endptr,0);
         if (v > 0xff) {
@@ -297,7 +298,8 @@ check_if_optabsource_complete(char *path)
             exit(1);
         }
         if (!v) {
-            printf("define line %u: DW_OP number value zero unreasonable.\n",
+            printf("define line %u: DW_OP number value "
+                "zero unreasonable.\n",
                 linenum);
             exit(1);
         }
@@ -398,16 +400,16 @@ int main(int argc, char**argv)
                 return 1; /* effectively exit(1) */
             }
             lastop = f;
-            
-            printf("{/* %-26s 0x%02x*/ %d}",opn,f,c);
+
+            printf("{/* %-26s 0x%02x*/ %d},\n",opn,f,c);
             {
                 char *dup = 0;
                 if (havedup(f,&dup)) {
-                    printf(" /* alt spelling %s */",
+                    printf("    /* above has alt spelling %s */",
                         dup);
+                    printf("\n");
                 }
-            }   
-            printf(",\n");
+            }
             ++outindex;
         } else {
             int j = f;
@@ -419,19 +421,20 @@ int main(int argc, char**argv)
                     return 1; /* effectively exit(1); */
                 }
                 printf("{/* %-26s 0x%2x*/ %d}",opn,j,c);
+                printf(",\n");
                 {
                     /*  Should NOT happen, dups should
                         be singleton entries */
                     char *dup = 0;
                     if (havedup(j,&dup)) {
-                        printf(" /* alt spelling %s */",
+                        printf("    /* above has alt spelling %s */",
                             dup);
+                        printf("\n");
                         fprintf(stderr," FAIL an entry "
                             " in a list has dup. Fix table");
                         exit(1);
                     }
                 }
-                printf(",\n");
                 ++outindex;
                 lastop = j;
             }
