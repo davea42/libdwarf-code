@@ -26,15 +26,15 @@ checkres(int res, const char *func,
     const char *re,
     const char *test,int expres,int line)
 {
-     if (res != expres) {
-         printf("FAIL re %s input %s %s=%s exp %s line %d\n",
-             re,test,
-             func,
-             ename(res), ename(expres), 
-             line);
-         ++errcount;
-     }
-     return;
+    if (res != expres) {
+        printf("FAIL re %s input %s %s=%s exp %s line %d\n",
+            re,test,
+            func,
+            ename(res), ename(expres),
+            line);
+        ++errcount;
+    }
+    return;
 }
 
 /* Simpler testing */
