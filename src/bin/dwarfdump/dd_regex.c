@@ -488,7 +488,7 @@ dd_re_exec(char *lp)
 
     TRUE for 0-9 A-Z a-z _
 */
-#ifdef DEBUG
+#if 0 /* For debugging only */
 static char *
 naming(CHAR c)
 {
@@ -592,7 +592,7 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr,
             }
             break;
         case CLO: {
-            char *are = (char *)lp;
+            const char *are = lp;
             switch(*ap) {
             case ANY:
                 while (*lp) {
@@ -620,26 +620,17 @@ dd_pmatch(const char *lp, CHAR *ap,char **end_ptr,
                 return DW_DLV_ERROR;
             }
             ap += n;
-#if 0
-printf("dadebug lp 0x%lx 0x%x "
-" ap 0x%lx %s"
-"line %d\n",
-(unsigned long)lp,*lp,
-(unsigned long)ap,naming(*ap),
-__LINE__);
-#endif
             if (lp == are) {
                 /*  [code by davea]
                     Empty closure is fine for early accept iff
                     it is the end of the regex too. Else
                     this is a NO_ENTRY */
                 if (!*lp && !*ap) {
+                    /* early accept. Nothing left to check. */
                     return DW_DLV_OK;
                 }
                 return DW_DLV_NO_ENTRY;
             }
-            /*  [code by davea] loop only
-                if something matched */
             while (lp >= are) {
                 res = dd_pmatch(lp, ap,&e,level+1);
                 if (res == DW_DLV_ERROR) {
