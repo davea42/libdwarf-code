@@ -2098,7 +2098,7 @@ void arg_search_regex(void)
     glflags.search_regex_text = do_uri_translation(tempstr,ctx);
     if (strlen(glflags.search_regex_text) > 0) {
         res = dd_re_comp(glflags.search_regex_text);
-        
+
         if (res != DW_DLV_OK) {
             fprintf(stderr,
                 "regcomp: unable to compile "

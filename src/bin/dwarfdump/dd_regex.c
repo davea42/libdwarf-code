@@ -1,186 +1,129 @@
 /*
- * regex - Regular expression pattern matching  and replacement
- *
- * By:  Ozan S. Yigit (oz)
- *      Dept. of Computer Science
- *      York University
- *
- * These routines are the PUBLIC DOMAIN equivalents of regex
- * routines as found in 4.nBSD UN*X, with minor extensions.
- *
- * These routines are derived from various implementations found
- * in software tools books, and Conroy's grep. They are NOT derived
- * from licensed/restricted software.
- * For more interesting/academic/complicated implementations,
- * see Henry Spencer's regexp routines, or GNU Emacs pattern
- * matching module.
- *
- * Modification history:
- *
- * $Log: regex.c,v $
- * Revision 1.4  1991/10/17  03:56:42  oz
- * miscellaneous changes, small cleanups etc.
- *
- * Revision 1.3  1989/04/01  14:18:09  oz
- * Change all references to a dfa: this is actually an nfa.
- *
- * Revision 1.2  88/08/28  15:36:04  oz
- * Use a complement bitmap to represent NCL.
- * This removes the need to have seperate
- * code in the pmatch case block - it is 
- * just CCL code now.
- * 
- * Use the actual CCL code in the CLO
- * section of ematch. No need for a recursive
- * pmatch call.
- * 
- * Use a bitmap table to set char bits in an
- * 8-bit chunk.
- * 
- * Interfaces:
- *      re_comp:        compile a regular expression into a NFA.
- *
- *            char *re_comp(s)
- *            char *s;
- *
- *      re_exec:        execute the NFA to match a pattern.
- *
- *            int re_exec(s)
- *            char *s;
- *
- *    re_modw        change re_exec's understanding of what a "word"
- *            looks like (for \< and \>) by adding into the
- *            hidden word-syntax table.
- *
- *            void re_modw(s)
- *            char *s;
- *
- *      re_subs:    substitute the matched portions in a new string.
- *
- *            int re_subs(src, dst)
- *            char *src;
- *            char *dst;
- *
- *    re_fail:    failure routine for re_exec.
- *
- *            void re_fail(msg, op)
- *            char *msg;
- *            char op;
- *  
- * Regular Expressions:
- *
- *      [1]     char    matches itself, unless it is a special
- *                      character (metachar): . \ [ ] * + ^ $
- *
- *      [2]     .       matches any character.
- *
- *      [3]     \       matches the character following it, except
- *            when followed by a left or right round bracket,
- *            a digit 1 to 9 or a left or right angle bracket. 
- *            (see [7], [8] and [9])
- *            It is used as an escape character for all 
- *            other meta-characters, and itself. When used
- *            in a set ([4]), it is treated as an ordinary
- *            character.
- *
- *      [4]     [set]   matches one of the characters in the set.
- *                      If the first character in the set is "^",
- *                      it matches a character NOT in the set, i.e. 
- *            complements the set. A shorthand S-E is 
- *            used to specify a set of characters S upto 
- *            E, inclusive. The special characters "]" and 
- *            "-" have no special meaning if they appear 
- *            as the first chars in the set.
- *                      examples:        match:
- *
- *                              [a-z]    any lowercase alpha
- *
- *                              [^]-]    any char except ] and -
- *
- *                              [^A-Z]   any char except uppercase
- *                                       alpha
- *
- *                              [a-zA-Z] any alpha
- *
- *      [5]     *       any regular expression form [1] to [4], followed by
- *                      closure char (*) matches zero or more matches of
- *                      that form.
- *
- *      [6]     +       same as [5], except it matches one or more.
- *
- *      [7]             a regular expression in the form [1] to [10], enclosed
- *                      as \(form\) matches what form matches. The enclosure
- *                      creates a set of tags, used for [8] and for
- *                      pattern substution. The tagged forms are numbered
- *            starting from 1.
- *
- *      [8]             a \ followed by a digit 1 to 9 matches whatever a
- *                      previously tagged regular expression ([7]) matched.
- *
- *    [9]    \<    a regular expression starting with a \< construct
- *        \>    and/or ending with a \> construct, restricts the
- *            pattern matching to the beginning of a word, and/or
- *            the end of a word. A word is defined to be a character
- *            string beginning and/or ending with the characters
- *            A-Z a-z 0-9 and _. It must also be preceded and/or
- *            followed by any character outside those mentioned.
- *
- *      [10]            a composite regular expression xy where x and y
- *                      are in the form [1] to [10] matches the longest
- *                      match of x followed by a match for y.
- *
- *      [11]    ^    a regular expression starting with a ^ character
- *        $    and/or ending with a $ character, restricts the
- *                      pattern matching to the beginning of the line,
- *                      or the end of line. [anchors] Elsewhere in the
- *            pattern, ^ and $ are treated as ordinary characters.
- *
- *
- * Acknowledgements:
- *
- *    HCR's Hugh Redelmeier has been most helpful in various
- *    stages of development. He convinced me to include BOW
- *    and EOW constructs, originally invented by Rob Pike at
- *    the University of Toronto.
- *
- * References:
- *              Software tools            Kernighan & Plauger
- *              Software tools in Pascal        Kernighan & Plauger
- *              Grep [rsx-11 C dist]            David Conroy
- *        ed - text editor        Un*x Programmer's Manual
- *        Advanced editing on Un*x    B. W. Kernighan
- *        RegExp routines            Henry Spencer
- *
- * Notes:
- *
- *    This implementation uses a bit-set representation for character
- *    classes for speed and compactness. Each character is represented 
- *    by one bit in a 128-bit block. Thus, CCL always takes a 
- *    constant 16 bytes in the internal nfa, and re_exec does a single
- *    bit comparison to locate the character in the set.
- *
- * Examples:
- *
- *    pattern:    foo*.*
- *    compile:    CHR f CHR o CLO CHR o END CLO ANY END END
- *    matches:    fo foo fooo foobar fobar foxx ...
- *
- *    pattern:    fo[ob]a[rz]    
- *    compile:    CHR f CHR o CCL bitset CHR a CCL bitset END
- *    matches:    fobar fooar fobaz fooaz
- *
- *    pattern:    foo\\+
- *    compile:    CHR f CHR o CHR o CHR \ CLO CHR \ END END
- *    matches:    foo\ foo\\ foo\\\  ...
- *
- *    pattern:    \(foo\)[1-3]\1    (same as foo[1-3]foo)
- *    compile:    BOT 1 CHR f CHR o CHR o EOT 1 CCL bitset REF 1 END
- *    matches:    foo1foo foo2foo foo3foo
- *
- *    pattern:    \(fo.*\)-\1
- *    compile:    BOT 1 CHR f CHR o CLO ANY END EOT 1 CHR - REF 1 END
- *    matches:    foo-foo fo-fo fob-fob foobar-foobar ...
- */
+    regex - Regular expression pattern matching  and replacement
+
+    By: Ozan S. Yigit (oz)
+        Dept. of Computer Science
+        York University
+
+    These routines are the PUBLIC DOMAIN equivalents of regex
+    routines as found in 4.nBSD UN*X, with minor extensions.
+
+    These routines are derived from various implementations found
+    in software tools books, and Conroy's grep. They are NOT derived
+    from licensed/restricted software.
+    For more interesting/academic/complicated implementations,
+    see Henry Spencer's regexp routines, or GNU Emacs pattern
+    matching module.
+
+    Modification history:
+
+    $Log: regex.c,v $
+    Revision 1.4  1991/10/17  03:56:42  oz
+    miscellaneous changes, small cleanups etc.
+
+    Revision 1.3  1989/04/01  14:18:09  oz
+    Change all references to a dfa: this is actually an nfa.
+
+    Revision 1.2  88/08/28  15:36:04  oz
+    Use a complement bitmap to represent NCL.
+    This removes the need to have seperate
+    code in the pmatch case block - it is
+    just CCL code now.
+
+    Use the actual CCL code in the CLO
+    section of ematch. No need for a recursive
+    pmatch call.
+
+    Use a bitmap table to set char bits in an
+    8-bit chunk.
+
+    Interfaces:
+        re_comp:        compile a regular expression into a NFA.
+            char *re_comp(s)
+            char *s;
+        re_exec:        execute the NFA to match a pattern.
+            int re_exec(s)
+            char *s;
+    Regular Expressions:
+        [1] char    matches itself, unless it is a special
+            character (metachar): . \ [ ] * + ^ $
+        [2] . matches any character.
+        [3] \ matches the character following it.
+            It is used as an escape character for all
+            other meta-characters, and itself. When used
+            in a set ([4]), it is treated as an ordinary
+            character.
+        [4] [set]   matches one of the characters in the set.
+            If the first character in the set is "^",
+            it matches a character NOT in the set, i.e.
+            complements the set. A shorthand S-E is
+            used to specify a set of characters S upto
+            E, inclusive. The special characters "]" and
+            "-" have no special meaning if they appear
+            as the first chars in the set.
+            examples:        match:
+            [a-z]    any lowercase alpha
+            [^]-]    any char except ] and -
+            [^A-Z]   any char except uppercase alpha
+            [a-zA-Z] any alpha
+        [5]  *  any regular expression form [1] to [4], followed by
+            closure char (*) matches zero or more matches of
+            that form.
+        [6]  +  same as [5], except it matches one or more.
+        [10] a composite regular expression xy where x and y
+            are in the form [1] to [10] matches the longest
+            match of x followed by a match for y.
+        [11] ^    a regular expression starting with a ^ character
+            $    and/or ending with a $ character, restricts the
+            pattern matching to the beginning of the line,
+            or the end of line. [anchors] Elsewhere in the
+            pattern, ^ and $ are treated as ordinary characters.
+
+    Acknowledgements:
+
+    HCR's Hugh Redelmeier has been most helpful in various
+    stages of development. He convinced me to include BOW
+    and EOW constructs, originally invented by Rob Pike at
+    the University of Toronto.
+
+    References:
+        Software tools            Kernighan & Plauger
+        Software tools in Pascal        Kernighan & Plauger
+        Grep [rsx-11 C dist]            David Conroy
+        ed - text editor        Un*x Programmer's Manual
+        Advanced editing on Un*x    B. W. Kernighan
+        RegExp routines            Henry Spencer
+
+    Notes:
+
+    This implementation uses a bit-set representation for character
+    classes for speed and compactness. Each character is represented
+    by one bit in a 128-bit block. Thus, CCL always takes a
+    constant 16 bytes in the internal nfa, and re_exec does a single
+    bit comparison to locate the character in the set.
+
+    Examples:
+
+    pattern:    foo*.*
+    compile:    CHR f CHR o CLO CHR o END CLO ANY END END
+    matches:    fo foo fooo foobar fobar foxx ...
+
+    pattern:    fo[ob]a[rz]
+    compile:    CHR f CHR o CCL bitset CHR a CCL bitset END
+    matches:    fobar fooar fobaz fooaz
+
+    pattern:    foo\\+
+    compile:    CHR f CHR o CHR o CHR \ CLO CHR \ END END
+    matches:    foo\ foo\\ foo\\\  ...
+
+    pattern:    \(foo\)[1-3]\1    (same as foo[1-3]foo)
+    compile:    BOT 1 CHR f CHR o CHR o EOT 1 CCL bitset REF 1 END
+    matches:    foo1foo foo2foo foo3foo
+
+    pattern:    \(fo.*\)-\1
+    compile:    BOT 1 CHR f CHR o CLO ANY END EOT 1 CHR - REF 1 END
+    matches:    foo-foo fo-fo fob-fob foobar-foobar ...
+*/
 #include "config.h"
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
@@ -192,7 +135,7 @@
 #include "dd_regex.h"
 
 /*  This version corrects two bugs (see 'code by davea'
-    below). 
+    below).
     Compared to the original source:
     Regular expression grouping with ()
     is ignored and word checking is ignored.
@@ -201,8 +144,8 @@
     David Anderson.  2 September 2021.
 */
 
-#ifndef DW_DLV_OK 
-/*  Makes testing easier, these 
+#ifndef DW_DLV_OK
+/*  Makes testing easier, these
     must match libdwarf.h definitions */
 #define DW_DLV_NO_ENTRY -1
 #define DW_DLV_OK        0
@@ -227,9 +170,9 @@
 #define MAXPREDEF 11
 
 /*
- * The following defines are not meant to be changeable.
- * They are for readability only.
- */
+    The following defines are not meant to be changeable.
+    They are for readability only.
+*/
 #define MAXCHR    128
 #define CHRBIT    8
 #define BITBLK    MAXCHR/CHRBIT
@@ -248,7 +191,7 @@ static CHAR nfa[MAXNFA];     /* automaton..       */
 static int  sta = NOP;       /* status of lastpat */
 
 static CHAR bittab[BITBLK];  /* bit table for CCL */
-                    /* pre-set bits...   */
+/* pre-set bits...   */
 static CHAR bitarr[] = {1,2,4,8,16,32,64,128};
 
 
@@ -264,21 +207,21 @@ chset(CHAR c)
 }
 
 #define badpat    (*nfa = END)
-#define store(x)    *mp++ = x
+#define store(x)  *mp++ = x
 
 static void
 resetbittab(void)
 {
-     int j = 0;
-     for (j = 0; j < BITBLK; ++j) {
-         bittab[j] = 0;
-     }
-     for (j = 0; j < MAXNFA; ++j) {
-         nfa[j] = 0;
-     }
-     sta = NOP;
+    int j = 0;
+    for (j = 0; j < BITBLK; ++j) {
+        bittab[j] = 0;
+    }
+    for (j = 0; j < MAXNFA; ++j) {
+        nfa[j] = 0;
+    }
+    sta = NOP;
 }
- 
+
 int
 dd_re_comp(const char *pat)
 {
@@ -325,7 +268,7 @@ dd_re_comp(const char *pat)
         case '[':               /* match char class..*/
             store(CCL);
             if (*++p == '^') {
-                mask = 0377;    
+                mask = 0377;
                 p++;
             } else {
                 mask = 0;
@@ -431,27 +374,22 @@ static int dd_pmatch(const char *, CHAR *,char **str_out,
     int level);
 
 /*
- * re_exec:
- *     execute nfa to find a match.
- *
- *    special cases: (nfa[0])    
- *        BOL
- *            Match only once, starting from the
- *            beginning.
- *        CHR
- *            First locate the character without
- *            calling pmatch, and if found, call
- *            pmatch for the remaining string.
- *        END
- *            re_comp failed, poor luser did not
- *            check for it. Fail fast.
- *
- *    If a match is found, bopat[0] and eopat[0] are set
- *    to the beginning and the end of the matched fragment,
- *    respectively.
- *
- *    return DW_DLV_OK, DW_DLV_NO_ENTRY or DW_DLV_ERROR
- */
+   re_exec:
+    execute nfa to find a match.
+    special cases: (nfa[0])
+        BOL Match only once, starting from the
+            beginning.
+        CHR First locate the character without
+            calling pmatch, and if found, call
+            pmatch for the remaining string.
+        END re_comp failed, poor luser did not
+            check for it. Fail fast.
+    If a match is found, bopat[0] and eopat[0] are set
+    to the beginning and the end of the matched fragment,
+    respectively.
+
+    return DW_DLV_OK, DW_DLV_NO_ENTRY or DW_DLV_ERROR
+*/
 
 int
 dd_re_exec(char *lp)
@@ -479,7 +417,8 @@ dd_re_exec(char *lp)
         if (!*lp) {      /* if EOS, fail, else fall thru. */
             return DW_DLV_NO_ENTRY;
         }
-        goto regmatch; /* GO TO avoids a fall-through warning from gcc */
+        goto regmatch; /* GO TO avoids a fall-through
+            warning from gcc */
     default:    {        /* regular matching all the way. */
         regmatch:
         do {
@@ -506,49 +445,49 @@ dd_re_exec(char *lp)
     return DW_DLV_OK;
 }
 
-/* 
- * dd_pmatch: internal routine for the hard part
- *
- *     This code is partly snarfed from an early grep written by
- *    David Conroy. The backref and tag stuff, and various other
- *    innovations are by oz.
- *
- *    special case optimizations: (nfa[n], nfa[n+1])
- *        CLO ANY
- *            We KNOW .* will match everything upto the
- *            end of line. Thus, directly go to the end of
- *            line, without recursive pmatch calls. As in
- *            the other closure cases, the remaining pattern
- *            must be matched by moving backwards on the
- *            string recursively, to find a match for xy
- *            (x is ".*" and y is the remaining pattern)
- *            where the match satisfies the LONGEST match for
- *            x followed by a match for y.
- *        CLO CHR
- *            We can again scan the string forward for the
- *            single char and at the point of failure, we
- *            execute the remaining nfa recursively, same as
- *            above.
- *
- *    At the end of a successful match, bopat[n] and eopat[n]
- *    are set to the beginning and end of subpatterns matched
- *    by tagged expressions (n = 1 to 9).    
- *
- *      returns DW_DLV_OK for a match, and sets the ep pointer
- *          to point into the input at the next char to check
- *      DW_DLV_NO_ENTRY for a non-match
- *      DW_DLV_NO_ERROR for an internal error
- */
+/*
+    dd_pmatch: internal routine for the hard part
+
+    This code is partly snarfed from an early grep written by
+    David Conroy. The backref and tag stuff, and various other
+    innovations are by oz.
+
+    special case optimizations: (nfa[n], nfa[n+1])
+        CLO ANY
+            We KNOW .* will match everything upto the
+            end of line. Thus, directly go to the end of
+            line, without recursive pmatch calls. As in
+            the other closure cases, the remaining pattern
+            must be matched by moving backwards on the
+            string recursively, to find a match for xy
+            (x is ".*" and y is the remaining pattern)
+            where the match satisfies the LONGEST match for
+            x followed by a match for y.
+        CLO CHR
+            We can again scan the string forward for the
+            single char and at the point of failure, we
+            execute the remaining nfa recursively, same as
+            above.
+
+    At the end of a successful match, bopat[n] and eopat[n]
+    are set to the beginning and end of subpatterns matched
+    by tagged expressions (n = 1 to 9).
+
+        returns DW_DLV_OK for a match, and sets the ep pointer
+            to point into the input at the next char to check
+        DW_DLV_NO_ENTRY for a non-match
+        DW_DLV_NO_ERROR for an internal error
+*/
 
 /*
- * character classification table for word boundary operators BOW
- * and EOW. the reason for not using ctype macros is that we can
- * let the user add into our own table. see re_modw. This table
- * is not in the bitset form, since we may wish to extend it in the
- * future for other character classifications. 
- *
- *    TRUE for 0-9 A-Z a-z _
- */
+    character classification table for word boundary operators BOW
+    and EOW. the reason for not using ctype macros is that we can
+    let the user add into our own table. see re_modw. This table
+    is not in the bitset form, since we may wish to extend it in the
+    future for other character classifications.
+
+    TRUE for 0-9 A-Z a-z _
+*/
 #ifdef DEBUG
 static char *
 naming(CHAR c)
@@ -605,9 +544,7 @@ naming(CHAR c)
 #endif
 #define isinset(x,y)     ((x)[((y)&BLKIND)>>3] & bitarr[(y)&BITIND])
 
-/*
- * skip values for CLO XXX to skip past the closure
- */
+/* skip values for CLO XXX to skip past the closure */
 
 #define ANYSKIP    2    /* [CLO] ANY END ...         */
 #define CHRSKIP    3    /* [CLO] CHR chr END ...     */
@@ -617,7 +554,7 @@ static int
 dd_pmatch(const char *lp, CHAR *ap,char **end_ptr,
     int level)
 {
-    int op    = 0; 
+    int op    = 0;
     int c    = 0;
     int n    = 0;
     char *e  = 0;    /* extra pointer for CLO */
@@ -691,12 +628,12 @@ printf("dadebug lp 0x%lx 0x%x "
 (unsigned long)ap,naming(*ap),
 __LINE__);
 #endif
-            if (lp == are) { 
-                /*  [code by davea] 
+            if (lp == are) {
+                /*  [code by davea]
                     Empty closure is fine for early accept iff
                     it is the end of the regex too. Else
                     this is a NO_ENTRY */
-                if(!*lp && !*ap) {
+                if (!*lp && !*ap) {
                     return DW_DLV_OK;
                 }
                 return DW_DLV_NO_ENTRY;
@@ -706,11 +643,11 @@ __LINE__);
             while (lp >= are) {
                 res = dd_pmatch(lp, ap,&e,level+1);
                 if (res == DW_DLV_ERROR) {
-                   return res;
+                    return res;
                 }
                 if (res == DW_DLV_OK) {
                     *end_ptr = e;
-                    return res; 
+                    return res;
                 }
                 /* NO_ENTRY so far */
                 --lp;
@@ -729,18 +666,16 @@ __LINE__);
 }
 
 #ifdef DEBUG
-/*
- * symbolic - produce a symbolic dump of the nfa
- */
+/*  symbolic - produce a symbolic dump of the nfa */
 static void
-symbolic(char *s) 
+symbolic(char *s)
 {
     printf("pattern: %s\n", s);
     printf("nfacode:\n");
     nfadump(nfa);
 }
 
-static void   
+static void
 nfadump(CHAR *ap)
 {
     register int n;
@@ -793,4 +728,4 @@ nfadump(CHAR *ap)
             break;
         }
 }
-#endif  /* DEBUG */
+#endif /* DEBUG */
