@@ -1,4 +1,4 @@
-# Copyright 2021 David Anderson
+# Copyright 2021 David Anerson
 # This Makefile.am is hereby placed in the public domain
 ### Any error in thie file will lead to:
 ### error: Something went wrong bootstrapping makefile fragments
@@ -24,6 +24,7 @@ MAINTAINERCLEANFILES = Makefile.in \
   test_headersok.trs	      test_testesb.trs \
   test_helpertree.trs \
   test_errmsglist.trs test_errmsglist.log \
+  junk.jitreader.new \
   junk.debuglink1 junk.debuglink1a \
   junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
@@ -35,14 +36,14 @@ TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb test_sectionbitmaps test_dwarflebtest \
-  test_tied test_getnametest test_objectaccess \
-  test_errmsglist test_canonical test_regex
+  test_tied test_getnametest \
+  test_errmsglist test_canonical test_regex 
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
  test_testesb  test_sectionbitmaps test_dwarflebtest  \
- test_tied test_getnametest test_objectaccess \
+ test_tied test_getnametest \
  test_errmsglist test_canonical test_regex
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
@@ -165,13 +166,6 @@ test_getnametest_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_objectaccess_SOURCES = objaccess.c
-test_objectaccess_CFLAGS = $(DWARF_CFLAGS_WARN)
-test_objectaccess_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) \
--I$(top_srcdir)/src/lib/libdwarf
-test_objectaccess_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
-
 # AM_TESTS_ENVIRONMENT used to pass a path to libdwarf.h to
 # test_errmsglist
 test_errmsglist_SOURCES = test_errmsglist.c
@@ -197,10 +191,12 @@ test_regex_CPPFLAGS = \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
+
 TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh
 
 if HAVE_DWARFEXAMPLE
 TESTS += debuglinktest-a.sh debuglinktest-b.sh
+TESTS += jitreaderdiff.sh
 endif
 
 ### no dwarfgen tests available.
@@ -229,7 +225,8 @@ dwarfdumpsetup.sh \
 dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
 debuglinktest-a.sh \
 debuglinktest-b.sh \
-objaccess.c \
+jitreaderdiff.sh \
+jitreader.base \
 section_bitmaps_test.c \
 test_dwarfstring.c \
 test_errmsglist.c \

@@ -183,19 +183,9 @@ if (DO_TESTING)
     add_test(NAME selftestnames COMMAND selftestnames)
 endif()
 
-if (DO_TESTING)
-    set_source_group(OBJACCESS "Source Files"
-        ${CMAKE_SOURCE_DIR}/test/objaccess.c )
-    add_executable(selfobjectaccess ${OBJACCESS})
-    target_compile_options(selfobjectaccess PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
-    target_compile_options(selfobjectaccess PRIVATE ${DW_FWALL} )
-    target_link_libraries(selfobjectaccess PRIVATE
-        -L${CMAKE_BINARY_DIR}/src/lib/libdwarf  -ldwarf )
-    if (HAVE_ZLIB)
-        target_link_libraries(selfobjectaccess PRIVATE -lz )
-    endif()
-    add_test(NAME selfobjectaccess COMMAND selfobjectaccess)
+if (DO_TESTING AND BUILD_DWARFEXAMPLE)
+    set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/jitreader")
+    add_test(NAME selfjitreader COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/jitreaderdiff.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}")
 endif()
 
 if (DO_TESTING) 

@@ -408,9 +408,7 @@ struct Dwarf_Section_s {
     unsigned dss_number;
 
     /*  These are elf flags and non-elf object should
-        just leave these fields zero. Which is essentially
-        automatic as they are not in
-        Dwarf_Obj_Access_Section_s.  */
+        just leave these fields zero.  */
     Dwarf_Unsigned  dss_flags;
     Dwarf_Unsigned  dss_addralign;
 
@@ -555,7 +553,7 @@ struct Dwarf_Debug_s {
         are hidden in this structure.
         We get a pointer, callers control the lifetime of the
         structure and contents. */
-    struct Dwarf_Obj_Access_Interface_s *de_obj_file;
+    struct Dwarf_Obj_Access_Interface_a_s *de_obj_file;
 
     Dwarf_Handler de_errhand;
     Dwarf_Ptr de_errarg;
@@ -997,19 +995,6 @@ int _dwarf_extract_local_debug_str_string_given_offset(
 
 int _dwarf_file_name_is_full_path(Dwarf_Small  *fname);
 
-/*  This is an elf-only extension to
-    get SHF_COMPRESSED flag from sh_flags.
-    if pointer not set (which is normal for non-elf objects)
-    it is fine.  */
-typedef int (*_dwarf_get_elf_flags_func_ptr_type)(
-    void* obj_in,
-    Dwarf_Half section_index,
-    Dwarf_Unsigned *flags_out,
-    Dwarf_Unsigned *addralign_out,
-    int *error);
-extern _dwarf_get_elf_flags_func_ptr_type
-    _dwarf_get_elf_flags_func_ptr;
-
 /* This is libelf access to Elf object. */
 extern int _dwarf_elf_setup(int fd,
     char *true_path_out_buffer,
@@ -1035,7 +1020,7 @@ _dwarf_elf_nlsetup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
 void _dwarf_destruct_elf_nlaccess(
-    struct Dwarf_Obj_Access_Interface_s *aip);
+    struct Dwarf_Obj_Access_Interface_a_s *aip);
 
 extern int _dwarf_macho_setup(int fd,
     char *true_path,
@@ -1048,7 +1033,7 @@ extern int _dwarf_macho_setup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
 void _dwarf_destruct_macho_access(
-    struct Dwarf_Obj_Access_Interface_s *aip);
+    struct Dwarf_Obj_Access_Interface_a_s *aip);
 
 extern int _dwarf_pe_setup(int fd,
     char *path,
@@ -1061,7 +1046,7 @@ extern int _dwarf_pe_setup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
 void _dwarf_destruct_pe_access(
-    struct Dwarf_Obj_Access_Interface_s *aip);
+    struct Dwarf_Obj_Access_Interface_a_s *aip);
 
 void _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
     Dwarf_Error *error,

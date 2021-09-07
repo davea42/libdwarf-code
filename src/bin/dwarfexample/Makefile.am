@@ -2,7 +2,8 @@
 ###This code is public domain and can be freely used or copied.
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = simplereader frame1 findfuncbypc dwdebuglink
+bin_PROGRAMS = simplereader frame1 findfuncbypc \
+    dwdebuglink  jitreader
 dwarfbigend=@DWARF_BIGENDIAN@
 
 simplereader_SOURCES = simplereader.c
@@ -32,6 +33,13 @@ dwdebuglink_CPPFLAGS = \
   -I$(top_builddir)/libdwarf
 dwdebuglink_CFLAGS = $(DWARF_CFLAGS_WARN)
 dwdebuglink_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
+jitreader_SOURCES = jitreader.c
+jitreader_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+  -I$(top_builddir)/src/lib/libdwarf
+jitreader_CFLAGS = $(DWARF_CFLAGS_WARN)
+jitreader_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 EXTRA_DIST = \

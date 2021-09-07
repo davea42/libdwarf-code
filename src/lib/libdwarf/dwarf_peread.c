@@ -109,7 +109,7 @@ static int _dwarf_pe_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Obj_Access_Interface **binary_interface,
+    Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum);
 
 static unsigned long
@@ -220,6 +220,14 @@ pe_get_length_size (void *obj)
     return pep->pe_offsetsize/8;
 }
 
+static Dwarf_Unsigned
+pe_get_file_size (void *obj)
+{
+    dwarf_pe_object_access_internals_t *pep =
+        (dwarf_pe_object_access_internals_t*)(obj);
+    return pep->pe_filesize;
+}
+
 static Dwarf_Small
 pe_get_pointer_size (void *obj)
 {
@@ -240,7 +248,7 @@ pe_get_section_count (void *obj)
 static int
 pe_get_section_info (void *obj,
     Dwarf_Half section_index,
-    Dwarf_Obj_Access_Section *return_section,
+    Dwarf_Obj_Access_Section_a *return_section,
     int *error UNUSEDARG)
 {
     dwarf_pe_object_access_internals_t *pep =
@@ -250,17 +258,20 @@ pe_get_section_info (void *obj,
     if (section_index < pep->pe_section_count) {
         struct dwarf_pe_generic_image_section_header *sp = 0;
         sp = pep->pe_sectionptr + section_index;
-        return_section->addr = pep->pe_OptionalHeader.ImageBase +
+        return_section->as_name = sp->dwarfsectname;
+        return_section->as_type = 0;
+        return_section->as_flags = 0;
+        return_section->as_addr = pep->pe_OptionalHeader.ImageBase +
             sp->VirtualAddress;
-        return_section->type = 0;
+        return_section->as_offset = 0;
         /*  SizeOfRawData can be rounded or truncated,
             use VirtualSize for the real analog of Elf
             section size. */
-        return_section->size = sp->VirtualSize;
-        return_section->name = sp->dwarfsectname;
-        return_section->link = 0;
-        return_section->info = 0;
-        return_section->entrysize = 0;
+        return_section->as_size = sp->VirtualSize;
+        return_section->as_link = 0;
+        return_section->as_info = 0;
+        return_section->as_addralign = 0;
+        return_section->as_entrysize = 0;
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -412,7 +423,7 @@ pe_load_section (void *obj, Dwarf_Half section_index,
 
 void
 _dwarf_destruct_pe_access(
-    struct Dwarf_Obj_Access_Interface_s *aip)
+    struct Dwarf_Obj_Access_Interface_a_s *aip)
 {
     dwarf_pe_object_access_internals_t *pep = 0;
     Dwarf_Unsigned i = 0;
@@ -420,7 +431,7 @@ _dwarf_destruct_pe_access(
     if (!aip) {
         return;
     }
-    pep = (dwarf_pe_object_access_internals_t*)(aip->object);
+    pep = (dwarf_pe_object_access_internals_t*)(aip->ai_object);
     if (pep->pe_destruct_close_fd && pep->pe_fd !=-1) {
         close(pep->pe_fd);
         pep->pe_fd = -1;
@@ -774,7 +785,7 @@ _dwarf_pe_setup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error)
 {
-    Dwarf_Obj_Access_Interface *binary_interface = 0;
+    Dwarf_Obj_Access_Interface_a *binary_interface = 0;
     dwarf_pe_object_access_internals_t *pep = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
@@ -799,16 +810,17 @@ _dwarf_pe_setup(int fd,
         _dwarf_destruct_pe_access(binary_interface);
         return res;
     }
-    pep = binary_interface->object;
+    pep = binary_interface->ai_object;
     pep->pe_path = strdup(true_path);
     return res;
 }
 
-static Dwarf_Obj_Access_Methods pe_methods = {
+static Dwarf_Obj_Access_Methods_a pe_methods = {
     pe_get_section_info,
     pe_get_byte_order,
     pe_get_length_size,
     pe_get_pointer_size,
+    pe_get_file_size,
     pe_get_section_count,
     pe_load_section,
     0 /* ignore pe relocations. */
@@ -826,19 +838,19 @@ _dwarf_pe_object_access_internals_init(
     int *errcode)
 {
     dwarf_pe_object_access_internals_t * intfc = internals;
-    struct Dwarf_Obj_Access_Interface_s *localdoas = 0;
+    struct Dwarf_Obj_Access_Interface_a_s *localdoas = 0;
     int res = 0;
 
     /*  Must malloc as _dwarf_destruct_pe_access()
         forces that due to other uses. */
-    localdoas = (struct Dwarf_Obj_Access_Interface_s *)
-        malloc(sizeof(struct Dwarf_Obj_Access_Interface_s));
+    localdoas = (struct Dwarf_Obj_Access_Interface_a_s *)
+        malloc(sizeof(struct Dwarf_Obj_Access_Interface_a_s));
     if (!localdoas) {
         free(internals);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    memset(localdoas,0,sizeof(struct Dwarf_Obj_Access_Interface_s));
+    memset(localdoas,0,sizeof(struct Dwarf_Obj_Access_Interface_a_s));
     intfc->pe_ident[0]    = 'P';
     intfc->pe_ident[1]    = '1';
     intfc->pe_fd          = fd;
@@ -868,8 +880,8 @@ _dwarf_pe_object_access_internals_init(
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_pe_sections(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas->object = intfc;
-        localdoas->methods = 0;
+        localdoas->ai_object = intfc;
+        localdoas->ai_methods = 0;
         _dwarf_destruct_pe_access(localdoas);
         localdoas = 0;
         return res;
@@ -887,13 +899,13 @@ _dwarf_pe_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Obj_Access_Interface **binary_interface,
+    Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum)
 {
 
     int res = 0;
     dwarf_pe_object_access_internals_t *internals = 0;
-    Dwarf_Obj_Access_Interface *intfc = 0;
+    Dwarf_Obj_Access_Interface_a *intfc = 0;
 
     internals = malloc(sizeof(dwarf_pe_object_access_internals_t));
     if (!internals) {
@@ -911,7 +923,7 @@ _dwarf_pe_object_access_init(
         return DW_DLV_ERROR;
     }
 
-    intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
+    intfc = malloc(sizeof(Dwarf_Obj_Access_Interface_a));
     if (!intfc) {
         /* Impossible case, we hope. Give up. */
         free(internals);
@@ -919,8 +931,8 @@ _dwarf_pe_object_access_init(
         return DW_DLV_ERROR;
     }
     /* Initialize the interface struct */
-    intfc->object = internals;
-    intfc->methods = &pe_methods;
+    intfc->ai_object = internals;
+    intfc->ai_methods = &pe_methods;
     *binary_interface = intfc;
     return DW_DLV_OK;
 }

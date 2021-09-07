@@ -100,10 +100,6 @@
 #define SHF_COMPRESSED (1 << 11)
 #endif
 
-/*  Global definition of the function pointer type, typedef
-    in dwarf_opaque.h */
-_dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;
-
 /* This static is copied to the dbg on dbg init
    so that the static need not be referenced at
    run time, preserving better locality of
@@ -149,7 +145,7 @@ startswith(const char * input, char* ckfor)
 static int
 get_basic_section_data(Dwarf_Debug dbg,
     struct Dwarf_Section_s *secdata,
-    struct Dwarf_Obj_Access_Section_s *doas,
+    struct Dwarf_Obj_Access_Section_a_s *doas,
     Dwarf_Half section_index,
     unsigned group_number,
     Dwarf_Error* error,
@@ -165,7 +161,7 @@ get_basic_section_data(Dwarf_Debug dbg,
     if (secdata->dss_index != 0) {
         DWARF_DBG_ERROR(dbg, duperr, DW_DLV_ERROR);
     }
-    if (doas->size == 0) {
+    if (doas->as_size == 0) {
         /*  As of 2018 it seems impossible to detect
             (via dwarfdump) whether emptyerr has any
             practical effect, whether TRUE or FALSE.  */
@@ -177,56 +173,31 @@ get_basic_section_data(Dwarf_Debug dbg,
         DWARF_DBG_ERROR(dbg, emptyerr, DW_DLV_ERROR);
     }
     secdata->dss_index = section_index;
-    secdata->dss_size = doas->size;
+    secdata->dss_size  = doas->as_size;
     secdata->dss_group_number = group_number;
-    secdata->dss_addr = doas->addr;
-    secdata->dss_link = doas->link;
-    secdata->dss_entrysize = doas->entrysize;
-    if (_dwarf_get_elf_flags_func_ptr) {
-        /*  We do this so we do not need to update the public struct
-            Dwarf_Obj_Access_Section_s and thereby cause
-            binary and source incompatibility. */
-        Dwarf_Unsigned flags = 0;
-        Dwarf_Unsigned addralign = 0;
-        int res = 0;
-        int interr = 0;
-        struct Dwarf_Obj_Access_Interface_s *o = 0;
-
-        o = dbg->de_obj_file;
-        res = _dwarf_get_elf_flags_func_ptr(
-            o->object, section_index,
-            &flags,&addralign,
-            &interr);
-        if (res == DW_DLV_ERROR) {
-            /*  Should never get here. */
-            DWARF_DBG_ERROR(dbg, interr, DW_DLV_ERROR);
-        }
-        if (res == DW_DLV_NO_ENTRY) {
-            return res;
-        }
-        secdata->dss_flags = flags;
-        secdata->dss_addralign = addralign;
-        if (flags & SHF_COMPRESSED) {
+    secdata->dss_addr  = doas->as_addr;
+    secdata->dss_link  = doas->as_link;
+    secdata->dss_flags = doas->as_flags;
+    if (secdata->dss_flags & SHF_COMPRESSED) {
             secdata->dss_shf_compressed = TRUE;
-        }
-        /*  We are not looking at section bytes so we
-            do not know if the first 4 bytes are ZLIB */
     }
+    secdata->dss_entrysize = doas->as_entrysize;
+    secdata->dss_addralign = doas->as_addralign;
     return DW_DLV_OK;
 }
 
 
 static void
 add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
-    struct Dwarf_Obj_Access_Section_s *doas,
+    struct Dwarf_Obj_Access_Section_a_s *doas,
     Dwarf_Half section_index,int is_rela)
 {
     secdata->dss_reloc_index = section_index;
-    secdata->dss_reloc_size = doas->size;
-    secdata->dss_reloc_entrysize = doas->entrysize;
-    secdata->dss_reloc_addr = doas->addr;
-    secdata->dss_reloc_symtab = doas->link;
-    secdata->dss_reloc_link = doas->link;
+    secdata->dss_reloc_size = doas->as_size;
+    secdata->dss_reloc_entrysize = doas->as_entrysize;
+    secdata->dss_reloc_addr = doas->as_addr;
+    secdata->dss_reloc_symtab = doas->as_link;
+    secdata->dss_reloc_link = doas->as_link;
     secdata->dss_is_rela = is_rela;
 }
 
@@ -928,11 +899,11 @@ this_section_dwarf_relevant(const char *scn_name,
     version of COMDAT. */
 static int
 insert_sht_list_in_group_map(Dwarf_Debug dbg,
-    struct Dwarf_Obj_Access_Section_s *doas,
+    struct Dwarf_Obj_Access_Section_a_s *doas,
     unsigned comdat_group_number,
     unsigned section_number,
     Dwarf_Unsigned section_count,
-    struct Dwarf_Obj_Access_Interface_s * obj,
+    struct Dwarf_Obj_Access_Interface_a_s * obj,
     unsigned *did_add_map,
     Dwarf_Error *error)
 {
@@ -942,11 +913,11 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     Dwarf_Small*  secend = 0;
 
     memset(&secdata,0,sizeof(secdata));
-    secdata.dss_size = doas->size;
-    secdata.dss_entrysize = doas->entrysize;
+    secdata.dss_size =      doas->as_size;
+    secdata.dss_entrysize = doas->as_entrysize;
     secdata.dss_group_number = 1; /* arbitrary. */
-    secdata.dss_index = section_number;
-    secdata.dss_name = ".group";
+    secdata.dss_index     = section_number;
+    secdata.dss_name      = ".group";
     secdata.dss_standard_name = ".group";
     secdata.dss_number = section_number;
     secdata.dss_ignore_reloc_group_sec = TRUE;
@@ -962,7 +933,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
     }
-    if (doas->entrysize != 4) {
+    if (doas->as_entrysize != 4) {
         if (secdata.dss_data_was_malloc) {
             free(secdata.dss_data);
             secdata.dss_data = 0;
@@ -978,7 +949,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     secend = data + secdata.dss_size;
     {
         unsigned i = 1;
-        unsigned count = doas->size/doas->entrysize;
+        unsigned count = doas->as_size/doas->as_entrysize;
         Dwarf_Unsigned  fval = 0;
 
         /*  The fields treatments with  regard
@@ -1015,7 +986,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
 
-        data = data + doas->entrysize;
+        data = data + doas->as_entrysize;
         for (i = 1 ; i < count ; ++i) {
             Dwarf_Unsigned  val = 0;
 
@@ -1056,13 +1027,14 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             {
                 /*  Ensure this group entry DWARF relevant before
                     adding to group map */
-                struct Dwarf_Obj_Access_Section_s doasx;
+                struct Dwarf_Obj_Access_Section_a_s doasx;
                 int resx = DW_DLV_ERROR;
                 int err = 0;
                 int is_rela = FALSE;
 
                 memset(&doasx,0,sizeof(doasx));
-                resx = obj->methods->get_section_info(obj->object,
+                resx = obj->ai_methods->
+                    om_get_section_info(obj->ai_object,
                     val,
                     &doasx, &err);
                 if (resx == DW_DLV_NO_ENTRY){
@@ -1076,15 +1048,15 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     _dwarf_error(dbg,error,err);
                     return resx;
                 }
-                if (!this_section_dwarf_relevant(doasx.name,
-                    doasx.type,&is_rela) ) {
+                if (!this_section_dwarf_relevant(doasx.as_name,
+                    doasx.as_type,&is_rela) ) {
                     continue;
                 }
                 data += DWARF_32BIT_SIZE;
                 *did_add_map = TRUE;
                 res = _dwarf_insert_in_group_map(dbg,
                     comdat_group_number,val,
-                    doasx.name,
+                    doasx.as_name,
                     error);
                 if (res != DW_DLV_OK) {
                     if (secdata.dss_data_was_malloc) {
@@ -1130,7 +1102,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
 
 static int
 determine_target_group(Dwarf_Unsigned section_count,
-    struct Dwarf_Obj_Access_Interface_s * obj,
+    struct Dwarf_Obj_Access_Interface_a_s * obj,
     unsigned *group_number_out,
     Dwarf_Debug dbg,
     Dwarf_Error *error)
@@ -1152,7 +1124,7 @@ determine_target_group(Dwarf_Unsigned section_count,
     for (obj_section_index = 0; obj_section_index < section_count;
         ++obj_section_index) {
 
-        struct Dwarf_Obj_Access_Section_s doas;
+        struct Dwarf_Obj_Access_Section_a_s doas;
         int res = DW_DLV_ERROR;
         int err = 0;
         const char *scn_name = 0;
@@ -1161,7 +1133,7 @@ determine_target_group(Dwarf_Unsigned section_count,
         int is_rela = FALSE;
 
         memset(&doas,0,sizeof(doas));
-        res = obj->methods->get_section_info(obj->object,
+        res = obj->ai_methods->om_get_section_info(obj->ai_object,
             obj_section_index,
             &doas, &err);
         if (res == DW_DLV_NO_ENTRY){
@@ -1171,7 +1143,7 @@ determine_target_group(Dwarf_Unsigned section_count,
             return res;
         }
 
-        if (doas.type == SHT_GROUP) {
+        if (doas.as_type == SHT_GROUP) {
             /*  See assumptions in function comment above. */
             unsigned did_add_map = 0;
             /*  Add to our map. Here we
@@ -1195,8 +1167,8 @@ determine_target_group(Dwarf_Unsigned section_count,
             }
             continue;
         }
-        scn_name = doas.name;
-        if (!this_section_dwarf_relevant(scn_name,doas.type,
+        scn_name = doas.as_name;
+        if (!this_section_dwarf_relevant(scn_name,doas.as_type,
             &is_rela) ) {
             continue;
         }
@@ -1230,7 +1202,7 @@ determine_target_group(Dwarf_Unsigned section_count,
                 groupnumber = DW_GROUPNUMBER_BASE;
             }
         }
-        if (is_a_relx_section(scn_name,doas.type,&is_rela)) {
+        if (is_a_relx_section(scn_name,doas.as_type,&is_rela)) {
             continue;
         }
 
@@ -1282,7 +1254,7 @@ static int
 _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 {
     const char *scn_name = 0;
-    struct Dwarf_Obj_Access_Interface_s * obj = 0;
+    struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
     int resn = 0;
     struct Dwarf_Section_s **sections = 0;
     Dwarf_Endianness endianness;
@@ -1297,7 +1269,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     dbg->de_same_endian = 1;
     dbg->de_copy_word = _dwarf_memcpy_noswap_bytes;
     obj = dbg->de_obj_file;
-    endianness = obj->methods->get_byte_order(obj->object);
+    endianness = obj->ai_methods->om_get_byte_order(obj->ai_object);
     /* Then adjust any changes we need. */
 #ifdef WORDS_BIGENDIAN
     dbg->de_big_endian_object = 1;
@@ -1316,13 +1288,15 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 #endif /* !WORDS_BIGENDIAN */
 
 
-    /*  The following de_length_size is Not Too Significant. Only used
-        one calculation, and an approximate one at that. */
-    dbg->de_length_size = obj->methods->get_length_size(obj->object);
+    /*  The following de_length_size is Not Too Significant.
+        Only used one calculation, and an approximate one
+        at that. */
+    dbg->de_length_size = obj->ai_methods->
+        om_get_length_size(obj->ai_object);
     dbg->de_pointer_size =
-        obj->methods->get_pointer_size(obj->object);
-
-    section_count = obj->methods->get_section_count(obj->object);
+        obj->ai_methods->om_get_pointer_size(obj->ai_object);
+    section_count = obj->ai_methods->
+        om_get_section_count(obj->ai_object);
     resn = determine_target_group(section_count,obj,
         &default_group_number,dbg,error);
     if (resn == DW_DLV_ERROR) {
@@ -1361,7 +1335,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     for (obj_section_index = 0; obj_section_index < section_count;
         ++obj_section_index) {
 
-        struct Dwarf_Obj_Access_Section_s doas;
+        struct Dwarf_Obj_Access_Section_a_s doas;
         int res = DW_DLV_ERROR;
         int err = 0;
         unsigned groupnumber = 0;
@@ -1380,7 +1354,8 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             /* fall through, a BASE or DWO group, possibly */
         }
         memset(&doas,0,sizeof(doas));
-        res = obj->methods->get_section_info(obj->object,
+
+        res = obj->ai_methods->om_get_section_info(obj->ai_object,
             obj_section_index,
             &doas, &err);
         if (res == DW_DLV_NO_ENTRY){
@@ -1390,7 +1365,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             free(sections);
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
-        scn_name = doas.name;
+        scn_name = doas.as_name;
         if (!groupnumber) {
             /* This finds dwo sections, group 2 */
             res = _dwarf_dwo_groupnumber_given_name(scn_name,
@@ -1400,11 +1375,11 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 groupnumber = DW_GROUPNUMBER_BASE;
             }
         }
-        if (!this_section_dwarf_relevant(scn_name,doas.type,
+        if (!this_section_dwarf_relevant(scn_name,doas.as_type,
             &is_rela) ) {
             continue;
         }
-        if (!is_a_relx_section(scn_name,doas.type,&is_rela)
+        if (!is_a_relx_section(scn_name,doas.as_type,&is_rela)
             && !is_a_special_section_semi_dwarf(scn_name)) {
             /*  We do these actions only for group-related
                 sections.  Do for .debug_info etc,
@@ -1484,11 +1459,12 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                     is a RELA one and the 'sh_info'
                     refers to a debug section, add the
                     relocation data. */
-                if (is_a_relx_section(scn_name,doas.type,&is_rela)) {
-                    if ( doas.info < section_count) {
-                        if (sections[doas.info]) {
+                if (is_a_relx_section(scn_name,doas.as_type,
+                    &is_rela)) {
+                    if ( doas.as_info < section_count) {
+                        if (sections[doas.as_info]) {
                             add_relx_data_to_secdata(
-                                sections[doas.info],
+                                sections[doas.as_info],
                                 &doas,
                                 obj_section_index,is_rela);
                         }
@@ -1573,8 +1549,8 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 
 /*
-    Use a Dwarf_Obj_Access_Interface to kick things off. All other
-    init routines eventually use this one.
+    Use a Dwarf_Obj_Access_Interface to kick things off.
+    All other init routines eventually use this one.
     The returned Dwarf_Debug contains a copy of *obj
     the callers copy of *obj may be freed whenever the caller
     wishes.
@@ -1582,7 +1558,7 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
     New March 2017. Enables dealing with DWARF5 split
     dwarf more fully.  */
 int
-dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj,
+dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     unsigned groupnumber,
@@ -1607,6 +1583,8 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj,
     dbg->de_frame_undefined_value_number  = DW_FRAME_UNDEFINED_VAL;
 
     dbg->de_obj_file = obj;
+    dbg->de_filesize = obj->ai_methods->
+        om_get_filesize(obj->ai_object);
     dbg->de_groupnumber = groupnumber;
     setup_result = _dwarf_setup(dbg, error);
     if (setup_result == DW_DLV_OK) {
@@ -1877,7 +1855,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
 {
     int res  = DW_DLV_ERROR;
     int err = 0;
-    struct Dwarf_Obj_Access_Interface_s *o = 0;
+    struct Dwarf_Obj_Access_Interface_a_s *o = 0;
 
     /* check to see if the section is already loaded */
     if (section->dss_data !=  NULL) {
@@ -1896,8 +1874,8 @@ _dwarf_load_section(Dwarf_Debug dbg,
         There is also a convention for 'bss' that that section
         and its like sections have no data but do have a size.
         That is never true of DWARF sections */
-    res = o->methods->load_section(
-        o->object, section->dss_index,
+    res = o->ai_methods->om_load_section(
+        o->ai_object, section->dss_index,
         &section->dss_data, &err);
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
@@ -1951,11 +1929,11 @@ _dwarf_load_section(Dwarf_Debug dbg,
     if (section->dss_reloc_size == 0) {
         return res;
     }
-    if (!o->methods->relocate_a_section) {
+    if (!o->ai_methods->om_relocate_a_section) {
         return res;
     }
     /*apply relocations */
-    res = o->methods->relocate_a_section( o->object,
+    res = o->ai_methods->om_relocate_a_section(o->ai_object,
         section->dss_index, dbg, &err);
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, err, res);
@@ -2065,8 +2043,8 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_size,
     Dwarf_Error * error)
 {
-    struct Dwarf_Obj_Access_Section_s doas;
-    struct Dwarf_Obj_Access_Interface_s * obj = 0;
+    struct Dwarf_Obj_Access_Section_a_s doas;
+    struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
     Dwarf_Unsigned section_count = 0;
     Dwarf_Half section_index = 0;
 
@@ -2078,26 +2056,27 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
 
-    section_count = obj->methods->get_section_count(obj->object);
+    section_count = obj->ai_methods->
+        om_get_section_count(obj->ai_object);
 
     /*  We can skip index 0 when considering ELF files, but not other
         object types. */
     for (section_index = 0; section_index < section_count;
         ++section_index) {
         int err = 0;
-        int res = obj->methods->get_section_info(obj->object,
+        int res = obj->ai_methods->
+            om_get_section_info(obj->ai_object,
             section_index, &doas, &err);
         if (res == DW_DLV_ERROR) {
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
-        if (!strcmp(section_name,doas.name)) {
-            *section_addr = doas.addr;
-            *section_size = doas.size;
+        if (!strcmp(section_name,doas.as_name)) {
+            *section_addr = doas.as_addr;
+            *section_size = doas.as_size;
             return DW_DLV_OK;
         }
     }
-
     return DW_DLV_NO_ENTRY;
 }
 
@@ -2119,20 +2098,21 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
         dwarf_get_section_count(dbg)) {
         int res = 0;
         int err = 0;
-        struct Dwarf_Obj_Access_Section_s doas;
-        struct Dwarf_Obj_Access_Interface_s * obj = dbg->de_obj_file;
+        struct Dwarf_Obj_Access_Section_a_s doas;
+        struct Dwarf_Obj_Access_Interface_a_s * obj =
+            dbg->de_obj_file;
         if (NULL == obj) {
             return DW_DLV_NO_ENTRY;
         }
-        res = obj->methods->get_section_info(obj->object,
+        res = obj->ai_methods->om_get_section_info(obj->ai_object,
             section_index, &doas, &err);
         if (res == DW_DLV_ERROR){
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
-        *section_addr = doas.addr;
-        *section_size = doas.size;
-        *section_name = doas.name;
+        *section_addr = doas.as_addr;
+        *section_size = doas.as_size;
+        *section_name = doas.as_name;
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -2142,12 +2122,12 @@ dwarf_get_section_info_by_index(Dwarf_Debug dbg,
 int
 dwarf_get_section_count(Dwarf_Debug dbg)
 {
-    struct Dwarf_Obj_Access_Interface_s * obj = dbg->de_obj_file;
+    struct Dwarf_Obj_Access_Interface_a_s * obj = dbg->de_obj_file;
     if (NULL == obj) {
         /*  -1  */
         return DW_DLV_NO_ENTRY;
     }
-    return obj->methods->get_section_count(obj->object);
+    return obj->ai_methods->om_get_section_count(obj->ai_object);
 }
 
 Dwarf_Cmdline_Options dwarf_cmdline_options = {

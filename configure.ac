@@ -582,7 +582,6 @@ AS_IF(
         ],
         [have_zlib="no"])
     ])
-
 AC_SUBST([requirements_libdwarf_libs])
 
 AS_IF(
@@ -647,6 +646,7 @@ echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS ${c_compiler_flags}"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LIBS.................: $LIBS"
+echo "  ZLIB_LIBS............: $ZLIB_LIBS"
 echo "  DWARF_CFLAGS.........: $DWARF_CFLAGS"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
 echo "  DWARFGEN_LIBS........: $DWARFGEN_LIBS"

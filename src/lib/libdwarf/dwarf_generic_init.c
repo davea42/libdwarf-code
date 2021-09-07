@@ -438,7 +438,7 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         /*  The initial character of a valid
             dbg->de_obj_file->object struct is a letter:
             E, F, M, or P */
-        char otype  = *(char *)(dbg->de_obj_file->object);
+        char otype  = *(char *)(dbg->de_obj_file->ai_object);
 
         switch(otype) {
         case 'E':

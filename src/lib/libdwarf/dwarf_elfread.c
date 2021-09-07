@@ -151,8 +151,9 @@ _dwarf_elf_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Obj_Access_Interface **binary_interface,
+    Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum);
+
 
 
 static Dwarf_Endianness elf_get_nolibelf_byte_order (void *obj)
@@ -178,6 +179,13 @@ static Dwarf_Small elf_get_nolibelf_pointer_size (void *obj)
     return elf->f_pointersize/8;
 }
 
+static Dwarf_Unsigned elf_get_nolibelf_file_size(void *obj)
+{
+    dwarf_elf_object_access_internals_t *elf =
+        (dwarf_elf_object_access_internals_t*)(obj);
+    return elf->f_filesize;
+}
+
 
 static Dwarf_Unsigned elf_get_nolibelf_section_count (void *obj)
 {
@@ -186,9 +194,9 @@ static Dwarf_Unsigned elf_get_nolibelf_section_count (void *obj)
     return elf->f_loc_shdr.g_count;
 }
 
-static int elf_get_nolibelf_section_info (void *obj,
+static int elf_get_nolibelf_section_info(void *obj,
     Dwarf_Half section_index,
-    Dwarf_Obj_Access_Section *return_section,
+    Dwarf_Obj_Access_Section_a *return_section,
     int *error UNUSEDARG)
 {
     dwarf_elf_object_access_internals_t *elf =
@@ -199,13 +207,15 @@ static int elf_get_nolibelf_section_info (void *obj,
         struct generic_shdr *sp = 0;
 
         sp = elf->f_shdr + section_index;
-        return_section->addr      = sp->gh_addr;
-        return_section->type      = sp->gh_type;
-        return_section->size      = sp->gh_size;
-        return_section->name      = sp->gh_namestring;
-        return_section->link      = sp->gh_link;
-        return_section->info      = sp->gh_info;
-        return_section->entrysize = sp->gh_entsize;
+        return_section->as_addr      = sp->gh_addr;
+        return_section->as_type      = sp->gh_type;
+        return_section->as_size      = sp->gh_size;
+        return_section->as_name      = sp->gh_namestring;
+        return_section->as_link      = sp->gh_link;
+        return_section->as_info      = sp->gh_info;
+        return_section->as_flags     = sp->gh_flags;
+        return_section->as_entrysize = sp->gh_entsize;
+        return_section->as_offset    = sp->gh_offset;
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -260,33 +270,6 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
     }
     return DW_DLV_NO_ENTRY;
 }
-
-static int
-_dwarf_get_elf_flags_func_nl(
-    void* obj_in,
-    Dwarf_Half section_index,
-    Dwarf_Unsigned *flags_out,
-    Dwarf_Unsigned *addralign_out,
-    int *error)
-{
-    dwarf_elf_object_access_internals_t *ep = 0;
-    struct generic_shdr *shp = 0;
-
-    ep = (dwarf_elf_object_access_internals_t *)obj_in;
-    if (section_index == 0) {
-        /*  Nothing to do. Empty section */
-        return DW_DLV_OK;
-    }
-    if (section_index >= ep->f_loc_shdr.g_count) {
-        *error = DW_DLE_SECTION_INDEX_BAD;
-        return DW_DLV_ERROR;
-    }
-    shp = ep->f_shdr + section_index;
-    *flags_out = shp->gh_flags;
-    *addralign_out = shp->gh_addralign;
-    return DW_DLV_OK;
-}
-
 
 #define MATCH_REL_SEC(i_,s_,r_)  \
 if (i_ == s_.dss_index) { \
@@ -551,14 +534,14 @@ elf_relocations_nolibelf(void* obj_in,
 
 void
 _dwarf_destruct_elf_nlaccess(
-    struct Dwarf_Obj_Access_Interface_s *aip)
+    struct Dwarf_Obj_Access_Interface_a_s *aip)
 {
     dwarf_elf_object_access_internals_t *ep = 0;
     struct generic_shdr *shp = 0;
     Dwarf_Unsigned shcount = 0;
     Dwarf_Unsigned i = 0;
 
-    ep = (dwarf_elf_object_access_internals_t *)aip->object;
+    ep = (dwarf_elf_object_access_internals_t *)aip->ai_object;
     free(ep->f_ehdr);
     shp = ep->f_shdr;
     shcount = ep->f_loc_shdr.g_count;
@@ -604,7 +587,7 @@ _dwarf_elf_nlsetup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error)
 {
-    Dwarf_Obj_Access_Interface *binary_interface = 0;
+    Dwarf_Obj_Access_Interface_a *binary_interface = 0;
     dwarf_elf_object_access_internals_t *intfc = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
@@ -629,7 +612,7 @@ _dwarf_elf_nlsetup(int fd,
         _dwarf_destruct_elf_nlaccess(binary_interface);
         return res;
     }
-    intfc = binary_interface->object;
+    intfc = binary_interface->ai_object;
     intfc->f_path = strdup(true_path);
     return res;
 }
@@ -637,11 +620,12 @@ _dwarf_elf_nlsetup(int fd,
 /*  dwarf_elf_access method table for use with non-libelf.
     See also the methods table in dwarf_elf_access.c for libelf.
 */
-static Dwarf_Obj_Access_Methods const elf_nlmethods = {
+static Dwarf_Obj_Access_Methods_a const elf_nlmethods = {
     elf_get_nolibelf_section_info,
     elf_get_nolibelf_byte_order,
     elf_get_nolibelf_length_size,
     elf_get_nolibelf_pointer_size,
+    elf_get_nolibelf_file_size,
     elf_get_nolibelf_section_count,
     elf_load_nolibelf_section,
     elf_relocations_nolibelf
@@ -660,19 +644,19 @@ _dwarf_elf_object_access_internals_init(
 {
     dwarf_elf_object_access_internals_t * intfc = internals;
     Dwarf_Unsigned i  = 0;
-    struct Dwarf_Obj_Access_Interface_s *localdoas;
+    struct Dwarf_Obj_Access_Interface_a_s *localdoas;
     int res = 0;
 
     /*  Must malloc as _dwarf_destruct_elf_access()
         forces that due to other uses. */
-    localdoas = (struct Dwarf_Obj_Access_Interface_s *)
-        malloc(sizeof(struct Dwarf_Obj_Access_Interface_s));
+    localdoas = (struct Dwarf_Obj_Access_Interface_a_s *)
+        malloc(sizeof(struct Dwarf_Obj_Access_Interface_a_s));
     if (!localdoas) {
         free(internals);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    memset(localdoas,0,sizeof(struct Dwarf_Obj_Access_Interface_s));
+    memset(localdoas,0,sizeof(struct Dwarf_Obj_Access_Interface_a_s));
     /*  E is used with libelf. F with this elf reader. */
     intfc->f_ident[0]    = 'F';
     intfc->f_ident[1]    = '1';
@@ -701,12 +685,11 @@ _dwarf_elf_object_access_internals_init(
         intfc->f_endian = DW_OBJECT_MSB;
     }
 #endif /* LITTLE- BIG-ENDIAN */
-    _dwarf_get_elf_flags_func_ptr = _dwarf_get_elf_flags_func_nl;
     /*  The following sets f_machine. */
     res = _dwarf_load_elf_header(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas->object = intfc;
-        localdoas->methods = 0;
+        localdoas->ai_object = intfc;
+        localdoas->ai_methods = 0;
         _dwarf_destruct_elf_nlaccess(localdoas);
         localdoas = 0;
         return res;
@@ -714,8 +697,8 @@ _dwarf_elf_object_access_internals_init(
     /* Not loading progheaders */
     res = _dwarf_load_elf_sectheaders(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas->object = intfc;
-        localdoas->methods = 0;
+        localdoas->ai_object = intfc;
+        localdoas->ai_methods = 0;
         _dwarf_destruct_elf_nlaccess(localdoas);
         localdoas = 0;
         return res;
@@ -723,16 +706,16 @@ _dwarf_elf_object_access_internals_init(
     /* We are not looking at symbol strings for now. */
     res = _dwarf_load_elf_symstr(intfc,errcode);
     if (res == DW_DLV_ERROR) {
-        localdoas->object = intfc;
-        localdoas->methods = 0;
+        localdoas->ai_object = intfc;
+        localdoas->ai_methods = 0;
         _dwarf_destruct_elf_nlaccess(localdoas);
         localdoas = 0;
         return res;
     }
     res  = _dwarf_load_elf_symtab_symbols(intfc,errcode);
     if (res == DW_DLV_ERROR) {
-        localdoas->object = intfc;
-        localdoas->methods = 0;
+        localdoas->ai_object = intfc;
+        localdoas->ai_methods = 0;
         _dwarf_destruct_elf_nlaccess(localdoas);
         localdoas = 0;
         return res;
@@ -765,8 +748,8 @@ _dwarf_elf_object_access_internals_init(
             FIXME */
         res = _dwarf_load_elf_relx(intfc,i,localrel,errcode);
         if (res == DW_DLV_ERROR) {
-            localdoas->object = intfc;
-            localdoas->methods = 0;
+            localdoas->ai_object = intfc;
+            localdoas->ai_methods = 0;
             _dwarf_destruct_elf_nlaccess(localdoas);
             localdoas = 0;
             return res;
@@ -785,13 +768,13 @@ _dwarf_elf_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Obj_Access_Interface **binary_interface,
+    Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum)
 {
 
     int res = 0;
     dwarf_elf_object_access_internals_t *internals = 0;
-    Dwarf_Obj_Access_Interface *intfc = 0;
+    Dwarf_Obj_Access_Interface_a *intfc = 0;
 
     internals = malloc(sizeof(dwarf_elf_object_access_internals_t));
     if (!internals) {
@@ -808,7 +791,7 @@ _dwarf_elf_object_access_init(
         return res;
     }
 
-    intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
+    intfc = malloc(sizeof(Dwarf_Obj_Access_Interface_a));
     if (!intfc) {
         /* Impossible case, we hope. Give up. */
         free(internals);
@@ -816,8 +799,8 @@ _dwarf_elf_object_access_init(
         return DW_DLV_ERROR;
     }
     /* Initialize the interface struct */
-    intfc->object = internals;
-    intfc->methods = &elf_nlmethods;
+    intfc->ai_object = internals;
+    intfc->ai_methods = &elf_nlmethods;
     *binary_interface = intfc;
     return DW_DLV_OK;
 }

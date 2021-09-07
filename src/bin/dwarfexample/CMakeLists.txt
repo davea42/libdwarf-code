@@ -33,3 +33,18 @@ set_folder(dwdebuglink src/bin/dwarfexample)
 target_compile_definitions(dwdebuglink PRIVATE CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib)
 target_compile_options(dwdebuglink PRIVATE ${DW_FWALL})
 target_link_libraries(dwdebuglink PRIVATE ${dwarf-target} ${DW_FZLIB})
+
+set_source_group(JITREADER_HEADERS "Header Files"
+    ../../lib/libdwarf/libdwarf_private.h
+    ../../lib/libdwarf/libdwarf.h
+    ../../lib/libdwarf/dwarf.h)
+
+set_source_group(JITREADER_SOURCES "Source Files" jitreader.c)
+add_executable(jitreader ${JITREADER_SOURCES} 
+    ${JITREADER_HEADERS} ${CONFIGURATION_FILES})
+set_folder(jitreader src/bin/dwarfexample)
+target_compile_definitions(jitreader PRIVATE
+    CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib)
+target_compile_options(jitreader PRIVATE ${DW_FWALL})
+target_link_libraries(jitreader PRIVATE
+    ${dwarf-target} ${DW_FZLIB})

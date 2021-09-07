@@ -138,7 +138,7 @@ _dwarf_macho_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Obj_Access_Interface **binary_interface,
+    Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum);
 
 
@@ -164,7 +164,12 @@ static Dwarf_Small macho_get_pointer_size (void *obj)
         (dwarf_macho_object_access_internals_t*)(obj);
     return macho->mo_pointersize/8;
 }
-
+static Dwarf_Unsigned macho_get_file_size (void *obj)
+{
+    dwarf_macho_object_access_internals_t *macho =
+        (dwarf_macho_object_access_internals_t*)(obj);
+    return macho->mo_filesize;
+}
 
 static Dwarf_Unsigned macho_get_section_count (void *obj)
 {
@@ -175,7 +180,7 @@ static Dwarf_Unsigned macho_get_section_count (void *obj)
 
 static int macho_get_section_info (void *obj,
     Dwarf_Half section_index,
-    Dwarf_Obj_Access_Section *return_section,
+    Dwarf_Obj_Access_Section_a *return_section,
     UNUSEDARG int *error)
 {
     dwarf_macho_object_access_internals_t *macho =
@@ -186,13 +191,16 @@ static int macho_get_section_info (void *obj,
         struct generic_macho_section *sp = 0;
 
         sp = macho->mo_dwarf_sections + section_index;
-        return_section->addr = 0;
-        return_section->type = 0;
-        return_section->size = sp->size;
-        return_section->name = sp->dwarfsectname;
-        return_section->link = 0;
-        return_section->info = 0;
-        return_section->entrysize = 0;
+        return_section->as_name  = sp->dwarfsectname;
+        return_section->as_type  = 0;
+        return_section->as_flags = 0;
+        return_section->as_addr  = 0;
+        return_section->as_offset = 0;
+        return_section->as_size  = sp->size;
+        return_section->as_link  = 0;
+        return_section->as_info  = 0;
+        return_section->as_addralign = 0;
+        return_section->as_entrysize = 0;
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
@@ -245,7 +253,7 @@ macho_load_section (void *obj, Dwarf_Half section_index,
 
 void
 _dwarf_destruct_macho_access(
-    struct Dwarf_Obj_Access_Interface_s *aip)
+    struct Dwarf_Obj_Access_Interface_a_s *aip)
 {
     dwarf_macho_object_access_internals_t *mp = 0;
     Dwarf_Unsigned i = 0;
@@ -253,7 +261,7 @@ _dwarf_destruct_macho_access(
     if (!aip) {
         return;
     }
-    mp = (dwarf_macho_object_access_internals_t *)aip->object;
+    mp = (dwarf_macho_object_access_internals_t *)aip->ai_object;
     if (mp->mo_destruct_close_fd) {
         close(mp->mo_fd);
         mp->mo_fd = -1;
@@ -773,7 +781,7 @@ _dwarf_macho_setup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error)
 {
-    Dwarf_Obj_Access_Interface *binary_interface = 0;
+    Dwarf_Obj_Access_Interface_a *binary_interface = 0;
     dwarf_macho_object_access_internals_t *intfc = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
@@ -798,17 +806,18 @@ _dwarf_macho_setup(int fd,
         _dwarf_destruct_macho_access(binary_interface);
         return res;
     }
-    intfc = binary_interface->object;
+    intfc = binary_interface->ai_object;
     intfc->mo_path = strdup(true_path);
     return res;
 }
 
 
-static Dwarf_Obj_Access_Methods const macho_methods = {
+static Dwarf_Obj_Access_Methods_a const macho_methods = {
     macho_get_section_info,
     macho_get_byte_order,
     macho_get_length_size,
     macho_get_pointer_size,
+    macho_get_file_size,
     macho_get_section_count,
     macho_load_section,
     /*  We do not do macho relocations.
@@ -830,19 +839,19 @@ _dwarf_macho_object_access_internals_init(
     dwarf_macho_object_access_internals_t * intfc = internals;
     Dwarf_Unsigned i  = 0;
     struct generic_macho_section *sp = 0;
-    struct Dwarf_Obj_Access_Interface_s *localdoas;
+    struct Dwarf_Obj_Access_Interface_a_s *localdoas;
     int res = 0;
 
     /*  Must malloc as _dwarf_destruct_macho_access()
         forces that due to other uses. */
-    localdoas = (struct Dwarf_Obj_Access_Interface_s *)
-        malloc(sizeof(struct Dwarf_Obj_Access_Interface_s));
+    localdoas = (struct Dwarf_Obj_Access_Interface_a_s *)
+        malloc(sizeof(struct Dwarf_Obj_Access_Interface_a_s));
     if (!localdoas) {
         free(internals);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    memset(localdoas,0,sizeof(struct Dwarf_Obj_Access_Interface_s));
+    memset(localdoas,0,sizeof(struct Dwarf_Obj_Access_Interface_a_s));
     intfc->mo_ident[0]    = 'M';
     intfc->mo_ident[1]    = '1';
     intfc->mo_fd          = fd;
@@ -871,16 +880,16 @@ _dwarf_macho_object_access_internals_init(
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_macho_header(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas->object = intfc;
-        localdoas->methods = 0;
+        localdoas->ai_object = intfc;
+        localdoas->ai_methods = 0;
         _dwarf_destruct_macho_access(localdoas);
         return res;
     }
     /* Load sections */
     res = dwarf_load_macho_commands(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas->methods = 0;
-        localdoas->object = intfc;
+        localdoas->ai_object = intfc;
+        localdoas->ai_methods = 0;
         _dwarf_destruct_macho_access(localdoas);
         return res;
     }
@@ -908,13 +917,13 @@ _dwarf_macho_object_access_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Obj_Access_Interface **binary_interface,
+    Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum)
 {
 
     int res = 0;
     dwarf_macho_object_access_internals_t *internals = 0;
-    Dwarf_Obj_Access_Interface *intfc = 0;
+    Dwarf_Obj_Access_Interface_a *intfc = 0;
 
     internals = malloc(sizeof(dwarf_macho_object_access_internals_t));
     if (!internals) {
@@ -932,7 +941,7 @@ _dwarf_macho_object_access_init(
         return DW_DLV_ERROR;
     }
 
-    intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
+    intfc = malloc(sizeof(Dwarf_Obj_Access_Interface_a));
     if (!intfc) {
         /* Impossible case, we hope. Give up. */
         free(internals);
@@ -940,8 +949,8 @@ _dwarf_macho_object_access_init(
         return DW_DLV_ERROR;
     }
     /* Initialize the interface struct */
-    intfc->object = internals;
-    intfc->methods = &macho_methods;
+    intfc->ai_object = internals;
+    intfc->ai_methods = &macho_methods;
     *binary_interface = intfc;
     return DW_DLV_OK;
 }
