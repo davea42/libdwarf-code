@@ -35,7 +35,15 @@
 
     This gives an example of enabling all of libdwarf's
     functions without actually having the DWARF information
-    in a file.
+    in a file.  (If you have a file in some odd format
+    you can use this approach to have libdwarf access
+    the format for DWARF data and work normally without
+    ever exposing the format to libdwarf.)
+
+    None of the structures defined here in this source
+    (or any source using this feature)
+    are ever known to libdwarf. they are totally
+    private to your code.
 */
 
 /* Some valid DWARF2 data */
