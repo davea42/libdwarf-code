@@ -1,3 +1,360 @@
+StartCommit: 7c2a53f2854892f891c1872cf64e56a2bcc8b951
+2021-09-06:  David Anderson
+    commit 3ceff448fe685005a97b001f2c637ac6211f87eb
+
+    More comments on why this matters.
+            modified:   jitreader.c
+
+2021-09-06:  David Anderson
+    commit fc20d24541507dd12ce5efcace7443c09202d9a7
+
+    Version now 0.2.0
+    to reflect the *Obj_Access* struct changes.
+            modified:   configure.ac
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2021-09-06:  David Anderson
+    commit 2403367525e0de88b611e4281689c43a4d6037cb
+
+    Squashed commit of the following:
+
+    commit 4d82551c527eeb827992f0bada2c85dac7f3faa0
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Mon Sep 6 17:30:31 2021 -0700
+
+        In updating the handling of SHF_COMPRESSED
+        one line got accidentally lost.
+        So now restored (very slightly differently).
+            modified:   dwarf_init_finish.c
+
+    commit 1a2ae9024d175a909ea19a4a1e421cf2b3dc9b79
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Mon Sep 6 16:24:04 2021 -0700
+
+        Now cmake sees the new jitreader and runs
+        jitreaderdiff.sh to ensure it works.
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   test/CMakeLists.txt
+
+    commit c32b8ad6574e071fa02a4d2b5e73c0e740f82adf
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Mon Sep 6 15:35:12 2021 -0700
+
+        Now prints something of the CU DIE it reads.
+            modified:   src/bin/dwarfexample/jitreader.c
+
+        Updated baseline.
+            modified:   test/jitreader.base
+
+    commit 33a621fa57d023fea1fb7895f07a49b9cb30b7c3
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Mon Sep 6 14:12:39 2021 -0700
+
+        Now shows ZLIB flags if any needed and present.
+            modified:   configure.ac
+
+        Now builds jitreader.c
+            modified:   src/bin/dwarfexample/Makefile.am
+        Now runs jitreader.sh to ensure jitreader is working.
+            modified:   test/Makefile.am
+
+    commit f7c1426b5fc1b8ee67bd405d02710f69b5d6b3af
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Mon Sep 6 14:08:54 2021 -0700
+
+        Major incompatible change for a very small
+        and unusual use-case.
+        Ordinary libdwarf use or just
+
+        Now
+        struct Dwarf_Obj_Access_Interface_a_s
+        struct Dwarf_Obj_Access_Methods_a_s
+        struct Dwarf_Obj_Access_Section_a_s
+        have all the fields they should have had all along,
+        but the member names have appropriate 2-letter prefixes
+        to make it easy to quickly find uses of the members.
+        This only affects those applications reading dwarf
+        from memory (meaning, there is no file existing to read).
+        This is typical for just-in-time (jit) compilers.
+                modified:   src/lib/libdwarf/libdwarf.h
+
+        Now we have a worked out example demonstrating the
+        abilility to use data in memory as DWARF infomation.
+                renamed:    jitreader.c -> ../src/bin/dwarfexample/jitreader.c
+
+        The following were modified to match up with the
+        new names, as libdwarf actually uses, internally,
+        the data in the above-named structs.
+                modified:   src/lib/libdwarf/dwarf_elfread.c
+                modified:   ./src/lib/libdwarf/dwarf_init_finish.c
+                modified:   ./src/lib/libdwarf/dwarf_machoread.c
+                modified:   ./src/lib/libdwarf/dwarf_opaque.h
+                modified:   ./src/lib/libdwarf/dwarf_peread.c
+
+        New
+                new file:   test/jitreader.base
+                new file:   test/jitreaderdiff.sh
+
+    commit 05b85bc60f0ed9b28088604008a3b5efb1103b6c
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Mon Sep 6 10:53:19 2021 -0700
+
+        Renamed the test case to provide a better idea
+        as to what the test shows: accessing all of libdwarf
+        where the DWARF information is not in a file at all,
+        or is in a special file format which is
+        not Elf or PE or MacOS.
+
+            modified:   test/Makefile.am
+            new file:   test/jitreader.c
+            deleted:    test/objaccess.c
+
+    commit a10fa8fe5172a2b34bfff163499e48ae7884c761
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Sat Sep 4 16:47:02 2021 -0700
+
+        Added filesize to the access function pointer list, making
+        it possible to correctly deal with file sizes Where it
+        was not previously possible in libdwarf.
+
+        For callers passing a path or reading via an fd all this
+        is invisible.
+
+        For people wishing to use dwarf_object_init_b() on DWARF
+        which is in memory (possibly something never on disk) or
+        in a special file format this change makes it possible to
+        have libdwarf work properly and safely.
+
+        struct Dwarf_Obj_Access_Interface_a_s is similar to the
+        previous struct name, but the members of the struct are
+        ai_object and ai_methods, making it easier to grep for
+        the usage.
+
+        struct Dwarf_Obj_Access_Methods_a_s is similar to the old
+        struct name but it adds a new method om_get_filesize. And
+        all member names prefixed with om_ so the fields can be
+        found with grep easily.  And the order of the values in
+        the struct changed slightly.
+
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-04:  David Anderson
+    commit 5593a44b4182db596fb2da87f563a7992a4f985f
+
+    buildopscounttab.c and the table it builds,
+    opscounttab.c, had lines longer than the
+    codingstyle calls for.
+
+    Fixed
+            modified:   src/bin/buildopstab/buildopscounttab.c
+    Regenerated.
+            modified:   src/bin/dwarfdump/opscounttab.c
+
+2021-09-04:  David Anderson
+    commit c316dffb261d411f6fb908951a5bd0f633ffbcd1
+
+    Renaming dwarfdump source to have a preceding
+    dd_ which means lots of trivial changes.
+            renamed:    src/bin/dwarfdump/sanitized.c -> src/bin/dwarfdump/dd_sanitized.c
+            renamed:    src/bin/dwarfdump/sanitized.h -> src/bin/dwarfdump/dd_sanitized.h
+            renamed:    src/bin/dwarfdump/uri.c -> src/bin/dwarfdump/dd_uri.c
+            renamed:    src/bin/dwarfdump/uri.h -> src/bin/dwarfdump/dd_uri.h
+
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_tree/Makefile.am
+
+    Many files had include of one or the other of
+    the two headers. Fixed the include to have dd_
+    with a tiny sed script. Not listing all the files here.
+
+2021-09-04:  David Anderson
+    commit 6bafd7de063944e69cbeeabf518a6fe59ef6c7d0
+
+    Tidying the new source just before 'while (lp >= are)'
+    and ensuring it builds with and without -DDEBUG
+            modified:   src/bin/dwarfdump/dd_regex.c
+    The change here has no effect on results, which
+    remain correct.
+
+2021-09-03:  David Anderson
+    commit bdf75cf094ed2c6077e89716a1ab3f4c2302fe08
+
+    Fixed indents, trailing whitespace.
+            modified:   test_regex.c
+
+2021-09-03:  David Anderson
+    commit 3d51b25bc52d0091945ad72562e340f438d371ef
+
+    Remove trailing whitespace.
+            modified:   command_options.c
+
+    Modified to follow the libdwarf coding standard,
+    here meaning all indents are multiple of 4 with
+    no trailing whitespace.
+            modified:   dd_regex.c
+            modified:   dd_regex.h
+
+2021-09-03:  David Anderson
+    commit 4270418b0f6ad3eb201c3953ceeeb17e09d93dcb
+
+    A small revision to make the code slightly clearer.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+2021-09-03:  David Anderson
+    commit ee98aefb1c51e9dc2b654c783217dad765323e2d
+
+    Now, with --enable-shared the shared library
+    uses gcc -visibility=hidden (if your non-Windows compiler
+    supports it) to reduce the size of the elf .dynsym
+    section.  For libdwarf, this reduces the
+    external symbol count from 542 to 373, a 32 percent
+    savings in symbols to be read/relocated
+    in loading libdwarf.so
+
+    Windows builds already supported Windows
+    facilities with the same effect.
+            modified:   configure.ac
+
+2021-09-03:  David Anderson
+    commit d1f5ea7a91a8d66e35f1574633bb58fe45d69f83
+
+    Renamed all the libdwarfp  source file names
+    to start with dwarf_pro_
+    Not showing the renamings here.
+
+    Then adjustments were made to get it to build.
+    As listed here.
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+            modified:   src/lib/libdwarfp/Makefile.am
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/test_extra_flag_strings.c
+
+2021-09-03:  David Anderson
+    commit 973fbfdf87fa709fb336d157c4b5aebdb7d26532
+
+    dwarfstring.h renamed dwarf_string.h
+    dwarfstring.c renamed dwarf_string.c
+    Now all source files in src/lib/libdwarf have a file name
+    beginning with dwarf_ to make library
+    source recognition easier.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_debug_sup.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_error.c
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+            modified:   src/lib/libdwarf/dwarf_fission_to_cu.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            renamed:    src/lib/libdwarf/dwarfstring.c -> src/lib/libdwarf/dwarf_string.c
+            renamed:    src/lib/libdwarf/dwarfstring.h -> src/lib/libdwarf/dwarf_string.h
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+            modified:   src/lib/libdwarfp/Makefile.am
+            renamed:    src/lib/libdwarfp/dwarfstring.c -> src/lib/libdwarfp/dwarf_string.c
+            modified:   src/lib/libdwarfp/pro_init.c
+            modified:   src/lib/libdwarfp/pro_log_extra_flag_strings.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/test_dwarfstring.c
+            modified:   test/test_extra_flag_strings.c
+            modified:   test/test_linkedtopath.c
+
+2021-09-03:  David Anderson
+    commit 69af3e507e90a6689f04a982482c9e4e2d2cfcbc
+
+    This is renaming of dwgetopt.[hc] and crc32.c
+    to have dwarf_ prefix for anyone seeing
+    libdwarf in a stack trace.
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/command_options.c
+            renamed:    src/bin/dwarfdump/dwgetopt.c -> src/bin/dwarfdump/dwarf_getopt.c
+            renamed:    src/bin/dwarfdump/dwgetopt.h -> src/bin/dwarfdump/dwarf_getopt.h
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+            modified:   src/bin/dwarfgen/Makefile.am
+            renamed:    src/bin/dwarfgen/dwgetopt.c -> src/bin/dwarfgen/dwarf_getopt.c
+            renamed:    src/bin/dwarfgen/dwgetopt.h -> src/bin/dwarfgen/dwarf_getopt.h
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/gennames/Makefile.am
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            renamed:    src/lib/libdwarf/crc32.c -> src/lib/libdwarf/dwarf_crc.c
+            renamed:    src/lib/libdwarf/dwgetopt.c -> src/lib/libdwarf/dwarf_getopt.c
+            renamed:    src/lib/libdwarf/dwgetopt.h -> src/lib/libdwarf/dwarf_getopt.h
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/getopttest.c
+
+2021-09-02:  David Anderson
+    commit ec5f180a27421cc4ef3cc6f22a962eb6ae961ff7
+
+    make rebuild
+    added the new LLVM TAG.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2021-09-02:  David Anderson
+    commit 56ef9f8ae5acd2e87fc139e797605f1ab7e2a98f
+
+    Added new DW_TAG_LLVM_annotation
+    and resorted TAG entries to be in numeric order.
+            modified:   src/lib/libdwarf/dwarf.h
+
+2021-09-02:  David Anderson
+    commit ef07a37a68a0c9a85ad90d6538e7abaaa2918901
+
+    Modified so it works with 3.10 cmake too.
+            modified:   test/CMakeLists.txt
+
+2021-09-02:  David Anderson
+    commit eebf2237f2696348cb4e897b9f49e98fc441a361
+
+    Latest changes from git log
+    incorporated
+            modified:   ChangeLog
+
 2021-09-02:  David Anderson
     commit 7c2a53f2854892f891c1872cf64e56a2bcc8b951
 

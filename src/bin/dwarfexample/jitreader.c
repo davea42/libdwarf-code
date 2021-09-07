@@ -27,7 +27,7 @@
 
 /*  This demonstates processing DWARF
     from in_memory data.  For simplicity
-    we are using a static dataset.
+    in this example we are using static arrays.
 
     The motivation is from JIT compiling, where
     at runtime of some application, it generates
@@ -42,8 +42,12 @@
 
     None of the structures defined here in this source
     (or any source using this feature)
-    are ever known to libdwarf. they are totally
+    are ever known to libdwarf. They are totally
     private to your code.
+    The code you write (like this example) you compile
+    separate from libdwarf. You never place your code
+    into libdwarf, you just link your code into
+    your application and link against libdwarf.
 */
 
 /* Some valid DWARF2 data */
