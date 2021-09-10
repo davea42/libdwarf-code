@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.7 27 August 2021
+.ds vE Rev 4.8 10 September 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2973,8 +2973,8 @@ values (see libdwarf.h).
 \f(CWendian\fP
 will be returned as
 one of the
-DW_ENDIAN* values,
-(see libdwarf.h).
+DW_END_ values,
+(see dwarf.h).
 \f(CWoffsetsize\fP
 will be returned as 32 or
 64 as found in the object
@@ -3048,14 +3048,10 @@ archive.
 .P
 The \f(CWendian\fP
 pointer argument returns
-\f(CWDW_ENDIAN_BIG\fP,
-\f(CWDW_ENDIAN_LITTLE\fP
-,
-\f(CWDW_ENDIAN_SAME\fP
-,
-\f(CWDW_ENDIAN_OPPOSITE\fP
+\f(CWDW_END_big\fP,
+\f(CWDW_END_little\fP,
 or
-\f(CWDW_ENDIAN_UNKNOWN\fP
+\f(CWDW_END_unknown\fP
 to the caller.
 .P
 The \f(CWoffsetsize\fP
@@ -3073,7 +3069,7 @@ pointer argument returns
 the size, in bytes, of the object file.
 This is essentially useless for
 \f(CWDW_FTYPE_ARCHIVE\fP
-files, one thinks.
+files.
 .P
 \f(CW
 \fP
@@ -3171,8 +3167,8 @@ values (see libdwarf.h).
 \f(CWendian\fP
 will be returned as
 one of the
-DW_ENDIAN* values,
-(see libdwarf.h).
+DW_END_* values,
+(see dwarf.h).
 \f(CWfilesize\fP
 will be returned as
 the size of the file found

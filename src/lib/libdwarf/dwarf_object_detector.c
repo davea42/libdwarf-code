@@ -299,10 +299,10 @@ fill_in_elf_fields(struct elf_header *h,
     }
     switch(h->e_ident[EI_DATA]) {
     case ELFDATA2LSB:
-        locendian = DW_ENDIAN_LITTLE;
+        locendian = DW_END_little;
         break;
     case ELFDATA2MSB:
-        locendian = DW_ENDIAN_BIG;
+        locendian = DW_END_big;
         break;
     default:
         *errcode = DW_DLE_ELF_ENDIAN_BAD;
@@ -374,7 +374,7 @@ is_pe_object(int fd,
 #else  /* LITTLE ENDIAN */
         word_swap =  _dwarf_memcpy_swap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
-        locendian = DW_ENDIAN_BIG;
+        locendian = DW_END_big;
     } else if (dos_sig == IMAGE_DOS_REVSIGNATURE_dw) {
         /* raw load, so  intrepet a match the other way. */
         /* LITTLE ENDIAN */
@@ -383,7 +383,7 @@ is_pe_object(int fd,
 #else  /* LITTLE ENDIAN */
         word_swap = _dwarf_memcpy_noswap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
-        locendian = DW_ENDIAN_LITTLE;
+        locendian = DW_END_little;
     } else {
         /* Not dos header not a PE file we recognize */
         *errcode = DW_DLE_FILE_WRONG_TYPE;
@@ -456,16 +456,16 @@ is_mach_o_magic(struct elf_header *h,
         Mach-o magic field. */
     magicval = magic_copy(h->e_ident,4);
     if (magicval == MH_MAGIC) {
-        locendian = DW_ENDIAN_BIG;
+        locendian = DW_END_big;
         locoffsetsize = 32;
     } else if (magicval == MH_CIGAM) {
-        locendian = DW_ENDIAN_LITTLE;
+        locendian = DW_END_little;
         locoffsetsize = 32;
     }else if (magicval == MH_MAGIC_64) {
-        locendian = DW_ENDIAN_BIG;
+        locendian = DW_END_big;
         locoffsetsize = 64;
     } else if (magicval == MH_CIGAM_64) {
-        locendian = DW_ENDIAN_LITTLE;
+        locendian = DW_END_little;
         locoffsetsize = 64;
     } else {
         return FALSE;

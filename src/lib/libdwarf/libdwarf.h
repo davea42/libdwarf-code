@@ -3948,7 +3948,7 @@ DW_API extern Dwarf_Cmdline_Options dwarf_cmdline_options;
 /* Set libdwarf to reflect some application command line options. */
 DW_API void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
 
-
+/* Used by dwarf_object_detector_path() */
 #ifndef DW_FTYPE_UNKNOWN
 #define DW_FTYPE_UNKNOWN    0
 #define DW_FTYPE_ELF        1  /* Unix/Linux/etc */
@@ -3957,11 +3957,6 @@ DW_API void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
 #define DW_FTYPE_ARCHIVE    4  /* unix archive */
 #endif /* DW_FTYPE_UNKNOWN */
 
-#ifndef DW_ENDIAN_UNKNOWN
-#define DW_ENDIAN_UNKNOWN  0
-#define DW_ENDIAN_BIG      1
-#define DW_ENDIAN_LITTLE   2
-#endif /* DW_ENDIAN_UNKNOWN */
 
 /*  Defined March 7 2020. Allows a caller to
     avoid tracking by the de_alloc_tree hash

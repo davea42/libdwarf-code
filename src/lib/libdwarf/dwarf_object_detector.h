@@ -57,12 +57,6 @@ extern "C" {
 #define DW_FTYPE_ARCHIVE 4  /* unix archive */
 #endif /* DW_FTYPE_UNKNOWN */
 
-#ifndef DW_ENDIAN_UNKNOWN
-#define DW_ENDIAN_UNKNOWN 0
-#define DW_ENDIAN_BIG     1
-#define DW_ENDIAN_LITTLE  2
-#endif /* DW_ENDIAN_UNKNOWN */
-
 /*  offsetsize refers to the object-file-format.
     Elf 32 or macho-32 or PE 32, for example.
     Not to DWARF offset sizes.  */

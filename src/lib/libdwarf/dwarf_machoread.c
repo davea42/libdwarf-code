@@ -94,6 +94,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
+#include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
@@ -862,7 +863,7 @@ _dwarf_macho_object_access_internals_init(
     intfc->mo_ftype       = ftype;
 
 #ifdef WORDS_BIGENDIAN
-    if (endian == DW_ENDIAN_LITTLE ) {
+    if (endian == DW_END_little ) {
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;
         intfc->mo_endian = DW_OBJECT_LSB;
     } else {
@@ -870,7 +871,7 @@ _dwarf_macho_object_access_internals_init(
         intfc->mo_endian = DW_OBJECT_MSB;
     }
 #else  /* LITTLE ENDIAN */
-    if (endian == DW_ENDIAN_LITTLE ) {
+    if (endian == DW_END_little ) {
         intfc->mo_copy_word = _dwarf_memcpy_noswap_bytes;
         intfc->mo_endian = DW_OBJECT_LSB;
     } else {
