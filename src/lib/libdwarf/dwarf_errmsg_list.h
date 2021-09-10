@@ -108,15 +108,17 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
     "elf_getdata() failed"},
 {"DW_DLE_DEBUG_PUBNAMES_DUPLICATE (43) Only one .debug_pubnames  "
     "section is allowed"},
-{"DW_DLE_DEBUG_PUBNAMES_NULL (44) .debug_pubnames section present but "
-    "elf_getdata() failed"},
+{"DW_DLE_DEBUG_PUBNAMES_NULL (44) .debug_pubnames section "
+    "present but elf_getdata() failed"},
 {"DW_DLE_DEBUG_STR_DUPLICATE (45)  Only one .debug_str  "
     "section is allowed"},
 {"DW_DLE_DEBUG_STR_NULL (46) .debug_str section present but "
     "elf_getdata() failed"},
 {"DW_DLE_CU_LENGTH_ERROR (47) Corrupted DWARF or corrupted object"},
-{"DW_DLE_VERSION_STAMP_ERROR (48) Corrupted DWARF or corrupted object"},
-{"DW_DLE_ABBREV_OFFSET_ERROR (49) Corrupted DWARF or corrupted object"},
+{"DW_DLE_VERSION_STAMP_ERROR (48) Corrupted DWARF "
+    "or corrupted object"},
+{"DW_DLE_ABBREV_OFFSET_ERROR (49) Corrupted DWARF or "
+    "corrupted object"},
 {"DW_DLE_ADDRESS_SIZE_ERROR (50) size too large"},
 {"DW_DLE_DEBUG_INFO_PTR_NULL (51)"},
 {"DW_DLE_DIE_NULL (52)"},
@@ -375,7 +377,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_NEXT_DIE_LOW_ERROR(284) corrupted DIE tree"},
 {"DW_DLE_CU_UT_TYPE_ERROR(285) bad DW_UT_* value, corrupt DWARF5"},
 {"DW_DLE_NO_SUCH_SIGNATURE_FOUND(286) CU signature not in the index"},
-{"DW_DLE_SIGNATURE_SECTION_NUMBER_WRONG(287) libdwarf software error"},
+{"DW_DLE_SIGNATURE_SECTION_NUMBER_WRONG(287) "
+    "libdwarf software error"},
 {"DW_DLE_ATTR_FORM_NOT_DATA8(288) wanted an 8 byte signature"},
 {"DW_DLE_SIG_TYPE_WRONG_STRING (289) expected tu or cu"},
 {"DW_DLE_MISSING_REQUIRED_TU_OFFSET_HASH(290) is a "
@@ -410,14 +413,16 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
     "as zlib missing"},
 {"DW_DLE_ZDEBUG_INPUT_FORMAT_ODD(315)"},
 {"DW_DLE_ZLIB_BUF_ERROR (316) Z_BUF_ERROR buffer size small"},
-{"DW_DLE_ZLIB_DATA_ERROR (317) Z_DATA_ERROR compressed data corrupted"},
+{"DW_DLE_ZLIB_DATA_ERROR (317) Z_DATA_ERROR compressed "
+    "data corrupted"},
 {"DW_DLE_MACRO_OFFSET_BAD (318)"},
 {"DW_DLE_MACRO_OPCODE_BAD (319)"},
 {"DW_DLE_MACRO_OPCODE_FORM_BAD (320)"},
 {"DW_DLE_UNKNOWN_FORM (321) Possibly corrupt DWARF data"},
 {"DW_DLE_BAD_MACRO_HEADER_POINTER(322)"},
 {"DW_DLE_BAD_MACRO_INDEX(323)"},
-{"DW_DLE_MACRO_OP_UNHANDLED(324) Possibly an implementation extension"},
+{"DW_DLE_MACRO_OP_UNHANDLED(324) Possibly an implementation "
+    "extension"},
 {"DW_DLE_MACRO_PAST_END(325)"},
 {"DW_DLE_LINE_STRP_OFFSET_BAD(326)"},
 {"DW_DLE_STRING_FORM_IMPROPER(327) An internal libdwarf logic error"},
@@ -451,7 +456,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_DEBUGSTR_ERROR(351) problem generating .debug_str section"},
 {"DW_DLE_DEBUGSTR_UNEXPECTED_REL(352) string relocation "
     "will be wrong."},
-{"DW_DLE_DISCR_ARRAY_ERROR(353) Internal error in dwarf_discr_list()"},
+{"DW_DLE_DISCR_ARRAY_ERROR(353) Internal error in "
+    "dwarf_discr_list()"},
 {"DW_DLE_LEB_OUT_ERROR(354) Insufficient buffer to turn "
     "integer to leb"},
 {"DW_DLE_SIBLING_LIST_IMPROPER(355) Runs off end of section. "

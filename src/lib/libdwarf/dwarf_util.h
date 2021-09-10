@@ -40,13 +40,13 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     do {                                                    \
         Dwarf_Unsigned lu_leblen = 0;                       \
         int lu_res = 0;                                     \
-        lu_res = _dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
+        lu_res = _dwarf_skip_leb128((char *)ptr,&lu_leblen, \
             (char *)endptr);                                \
         if (lu_res == DW_DLV_ERROR) {                       \
             _dwarf_error_string(dbg, errptr,                \
-               DW_DLE_LEB_IMPROPER,                         \
-              "DW_DLE_LEB_IMPROPER: skipping leb128"        \
-              " runs past allowed area");                            \
+                DW_DLE_LEB_IMPROPER,                        \
+                "DW_DLE_LEB_IMPROPER: skipping leb128"      \
+                " runs past allowed area");                 \
             return DW_DLV_ERROR;                            \
         }                                                   \
         ptr += lu_leblen;                                   \
@@ -55,13 +55,13 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
     do {                                                    \
         Dwarf_Unsigned lu_leblen = 0;                       \
         int lu_res = 0;                                     \
-        lu_res = _dwarf_skip_leb128((char *)ptr,&lu_leblen,  \
+        lu_res = _dwarf_skip_leb128((char *)ptr,&lu_leblen, \
             (char *)endptr);                                \
         if (lu_res == DW_DLV_ERROR) {                       \
             _dwarf_error_string(dbg, errptr,                \
-               DW_DLE_LEB_IMPROPER,                         \
-              "DW_DLE_LEB_IMPROPER: skipping leb128 w/len"  \
-              " runs past allowed area");                            \
+                DW_DLE_LEB_IMPROPER,                        \
+                "DW_DLE_LEB_IMPROPER: skipping leb128 w/len" \
+                " runs past allowed area");                 \
             return DW_DLV_ERROR;                            \
         }                                                   \
         ptr += lu_leblen;                                   \
@@ -78,9 +78,9 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             &lu_local,(char *)endptr);                      \
         if (lu_res == DW_DLV_ERROR) {                       \
             _dwarf_error_string(dbg, errptr,                \
-               DW_DLE_LEB_IMPROPER,                         \
-              "DW_DLE_LEB_IMPROPER: decode uleb"           \
-              " runs past allowed area");                            \
+                DW_DLE_LEB_IMPROPER,                        \
+                "DW_DLE_LEB_IMPROPER: decode uleb"          \
+                " runs past allowed area");                 \
             return DW_DLV_ERROR;                            \
         }                                                   \
         value = lu_local;                                   \
@@ -97,9 +97,9 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             &lu_leblen,&lu_local,(char *)endptr);     \
         if (lu_res == DW_DLV_ERROR) {                 \
             _dwarf_error_string(dbg, errptr,          \
-               DW_DLE_LEB_IMPROPER,                   \
-              "DW_DLE_LEB_IMPROPER: decode uleb w/len" \
-              " runs past allowed area");                            \
+                DW_DLE_LEB_IMPROPER,                  \
+                "DW_DLE_LEB_IMPROPER: decode uleb w/len" \
+                " runs past allowed area");           \
             return DW_DLV_ERROR;                      \
         }                                             \
         value = lu_local;                             \
@@ -120,13 +120,13 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         Dwarf_Unsigned uleblen = 0;                   \
         Dwarf_Signed local = 0;                       \
         int lu_res = 0;                               \
-        lu_res = dwarf_decode_signed_leb128((char *)ptr,&uleblen,  \
+        lu_res = dwarf_decode_signed_leb128((char *)ptr,&uleblen, \
             &local,(char *)endptr);                   \
         if (lu_res == DW_DLV_ERROR) {                 \
             _dwarf_error_string(dbg, errptr,          \
-               DW_DLE_LEB_IMPROPER,                   \
-              "DW_DLE_LEB_IMPROPER: decode sleb"      \
-              " runs past allowed area");                            \
+                DW_DLE_LEB_IMPROPER,                  \
+                "DW_DLE_LEB_IMPROPER: decode sleb"    \
+                " runs past allowed area");           \
             return DW_DLV_ERROR;                      \
         }                                             \
         value = local;                                \
@@ -142,9 +142,9 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             &lu_local,(char *)endptr);                \
         if (lu_res == DW_DLV_ERROR) {                 \
             _dwarf_error_string(dbg, errptr,          \
-               DW_DLE_LEB_IMPROPER,                   \
-              "DW_DLE_LEB_IMPROPER: decode sleb w/len " \
-              " runs past allowed area");                            \
+                DW_DLE_LEB_IMPROPER,                     \
+                "DW_DLE_LEB_IMPROPER: decode sleb w/len " \
+                " runs past allowed area");               \
             return DW_DLV_ERROR;                      \
         }                                             \
         leblen = lu_leblen;                           \
@@ -391,8 +391,8 @@ struct Dwarf_Hash_Table_Entry_s {
 
 /*  So one function can read both debug_names abbrevs
     and debug_abbrev abbrevs. Makes common function
-    possible.  
-    23 July 2021  */ 
+    possible.
+    23 July 2021  */
 struct Dwarf_Abbrev_Common_s {
     Dwarf_Debug  ac_dbg;
     Dwarf_Hash_Table  ac_hashtable_base;

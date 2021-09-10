@@ -179,7 +179,7 @@ get_basic_section_data(Dwarf_Debug dbg,
     secdata->dss_link  = doas->as_link;
     secdata->dss_flags = doas->as_flags;
     if (secdata->dss_flags & SHF_COMPRESSED) {
-            secdata->dss_shf_compressed = TRUE;
+        secdata->dss_shf_compressed = TRUE;
     }
     secdata->dss_entrysize = doas->as_entrysize;
     secdata->dss_addralign = doas->as_addralign;
