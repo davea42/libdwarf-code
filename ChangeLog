@@ -1,3 +1,68 @@
+2021-09-10:  David Anderson
+    commit 85134d41493f7a236f8680a09a44ec8b25000885
+
+    Shortening lines, fixing indents, and removing
+    trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_memcpy_swap.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_util.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-10:  David Anderson
+    commit 6bf6fd8f88bb445b4682c439ebab10e62c5d9a2e
+
+    Dropping #define DW_ENDIAN_BIG and DW_ENDIAN_LITTLE
+    as they just duplicate dwarf.h DW_END_big DW_END_little (with
+    the same integer values).
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Now documents DW_END_big/little instead of DW_ENDIAN*
+    Removed incorrect doc of DW_ENDIAN_SAME/OPPOSITE,
+    those were never meaningful.
+            modified:   doc/libdwarf.mm  Now version 4.8
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+    Add include "dwarf.h" and use DW_END_big/little from dwarf.h
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+    Delete def of DW_ENDIAN*, no longer used.
+            modified:   src/lib/libdwarf/dwarf_object_detector.h
+
+2021-09-10:  David Anderson
+    commit 990fe5e78150ffa2a7270312403b83d30669ec9d
+
+    Use DW_OBJECT_LSB, not DW_ENDIAN_LITTLE!
+    Also fixed trailing whitespace and bad indents.
+            modified:   jitreader.c
+
+2021-09-09:  David Anderson
+    commit ca7afc32c6e625333c26677cd987b0bc86bc0ce4
+
+    Updated version to 0.2.0 to match configure.ac.
+    Using a python script now to avoid forgetting
+    update of one or the other place the version is recorded.
+            modified:   CMakeLists.txt
+
+2021-09-07:  David Anderson
+    commit 12a3f940b23a5ba815acbc04889ca698cef25ad1
+
+    Removed spurious line.
+            modified:   ChangeLog
+
+2021-09-07:  David Anderson
+    commit 5f860e5945578c0af48ccd8321382aeb187efb7b
+
+    Updates with gitlog data.
+            modified:   ChangeLog
+    Minor commentary changes(hoping for clarity).
+            modified:   src/bin/dwarfexample/jitreader.c
+
 2021-09-06:  David Anderson
     commit 3ceff448fe685005a97b001f2c637ac6211f87eb
 
