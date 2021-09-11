@@ -12,7 +12,6 @@
         libdwarf/.libs/libdwarf.a -lelf -lz
 */
 
-
 #include <stdio.h>
 #include <stdlib.h> /* for exit(), C89 malloc */
 #include <unistd.h> /* for close */

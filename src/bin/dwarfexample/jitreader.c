@@ -94,7 +94,6 @@ Dwarf_Small strbytes[] = {
 0x00, };
 int strbyteslen = sizeof(strbytes);
 
-
 /*  An internals_t , data used elsewhere but
     not directly visible elsewhere. One needs to have one
     of these but  maybe the content here too little
@@ -227,7 +226,6 @@ const Dwarf_Obj_Access_Methods_a methods = {
     };
 struct Dwarf_Obj_Access_Interface_a_s interface =
 { &base_internals,&methods };
-
 
 static const Dwarf_Sig8 zerosignature;
 static int
@@ -401,7 +399,6 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
         }
         exit(1);
     }
-
 
     return DW_DLV_OK;
 }

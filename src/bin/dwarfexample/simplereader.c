@@ -390,7 +390,6 @@ simple_error_handler(Dwarf_Error error,
     return;
 }
 
-
 int
 main(int argc, char **argv)
 {
@@ -638,7 +637,6 @@ read_cu_list(Dwarf_Debug dbg)
     Dwarf_Error error;
     int cu_number = 0;
     Dwarf_Error *errp  = 0;
-
 
     for (;;++cu_number) {
         Dwarf_Die no_die = 0;
@@ -912,8 +910,6 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
         }
         printf("\n");
 
-
-
     }
     if (namesoptionon && (filenum || linenum)) {
         printf("<%3d> file: %" DW_PR_DUu " %s  line %"
@@ -1005,7 +1001,6 @@ print_single_string(Dwarf_Debug dbg, Dwarf_Die die,Dwarf_Half attrnum)
     return;
 }
 
-
 static void
 print_name_strings_attr(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Attribute attr)
@@ -1059,8 +1054,6 @@ printnamestrings(Dwarf_Debug dbg, Dwarf_Die die)
     dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
 
 }
-
-
 
 static void
 print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,

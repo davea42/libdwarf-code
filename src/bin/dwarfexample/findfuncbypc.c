@@ -11,7 +11,6 @@
     It does to a bit of error checking as a help in ensuring
     that some code works properly... for error checks.
 
-
     To use, try
         make
         ./findfuncbypc --pc=0x10000 ./findfuncbypc
@@ -107,7 +106,6 @@ struct target_data_s {
 #define NOT_THIS_CU 10
 #define IN_THIS_CU 11
 #define FOUND_SUBPROG 12
-
 
 #define TRUE 1
 #define FALSE 0
@@ -295,7 +293,6 @@ target_data_destructor( struct target_data_s *td)
         td->td_subprog_srcfile = 0;
     }
 }
-
 
 static void
 print_target_info( Dwarf_Debug dbg UNUSEDARG,
@@ -1090,7 +1087,6 @@ check_subprog_details(Dwarf_Debug dbg,
     }
     return finalres;
 }
-
 
 static int
 check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,

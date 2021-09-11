@@ -55,7 +55,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* For open() */
 #endif /* HAVE_SYS_TYPES_H */
@@ -92,7 +91,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-
 
 static void read_frame_data(Dwarf_Debug dbg,const char *sec);
 static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
@@ -204,7 +202,6 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
     int res = DW_DLV_ERROR;
     Dwarf_Signed fdenum = 0;
 
-
     /*  If you wish to read .eh_frame data, use
         dwarf_get_fde_list_eh() instead.
         Get debug_frame with dwarf_get_fde_list. */
@@ -284,7 +281,6 @@ print_cie_instrs(Dwarf_Cie cie,Dwarf_Error *error)
     }
 }
 
-
 /*  This was written with DWARF2 Dwarf_Frame_Op!
     FIXME need dwarf_expand_frame_instructions_b() */
 static void
@@ -320,8 +316,6 @@ print_frame_instrs(Dwarf_Frame_Op *frame_op_array,
         printf("\n");
     }
 }
-
-
 
 static void
 print_fde_col(Dwarf_Signed k,
@@ -418,7 +412,6 @@ print_fde_col(Dwarf_Signed k,
     printf("%s", "> ");
     printf("\n");
 }
-
 
 /*  In dwarfdump we use
     dwarf_get_fde_info_for_cfa_reg3_b() to get subsequent pc
@@ -531,7 +524,6 @@ print_fde_selected_regs( Dwarf_Fde fde)
     }
 }
 
-
 /* Just prints the instructions in the fde. */
 static void
 print_fde_instrs(Dwarf_Debug dbg,
@@ -554,8 +546,6 @@ print_fde_instrs(Dwarf_Debug dbg,
     Dwarf_Frame_Op * frame_op_array = 0;
     Dwarf_Signed frame_op_count = 0;
     Dwarf_Cie cie = 0;
-
-
 
     res = dwarf_get_fde_range(fde,&lowpc,&func_length,&fde_bytes,
         &fde_byte_length,&cie_offset,&cie_index,&fde_offset,error);
@@ -728,6 +718,5 @@ print_regtable(Dwarf_Regtable3 *tab3)
         snprintf(rn,sizeof(rn),"reg %d",r);
         print_one_regentry(rn,tab3->rt3_rules+r);
     }
-
 
 }

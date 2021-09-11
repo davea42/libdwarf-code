@@ -30,7 +30,6 @@
     for more information.
 */
 
-
 #include "config.h"
 #include <stdio.h>
 /* Windows specific header files */
@@ -176,8 +175,6 @@ print_ftype_message(const char * prefix,
     }
     return FALSE;
 }
-
-
 
 /*  The debug version we expect not to have debuglink,
     checking here if buildid matches.
