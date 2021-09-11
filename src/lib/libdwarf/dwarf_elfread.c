@@ -157,7 +157,7 @@ _dwarf_elf_object_access_init(
 
 
 
-static Dwarf_Endianness elf_get_nolibelf_byte_order (void *obj)
+static Dwarf_Small elf_get_nolibelf_byte_order (void *obj)
 {
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
@@ -672,18 +672,18 @@ _dwarf_elf_object_access_internals_init(
 #ifdef WORDS_BIGENDIAN
     if (endian == DW_END_little ) {
         intfc->f_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->f_endian = DW_OBJECT_LSB;
+        intfc->f_endian = DW_END_little;
     } else {
         intfc->f_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->f_endian = DW_OBJECT_MSB;
+        intfc->f_endian = DW_END_big;
     }
 #else  /* LITTLE ENDIAN */
     if (endian == DW_END_little ) {
         intfc->f_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->f_endian = DW_OBJECT_LSB;
+        intfc->f_endian = DW_END_little;
     } else {
         intfc->f_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->f_endian = DW_OBJECT_MSB;
+        intfc->f_endian = DW_END_big;
     }
 #endif /* LITTLE- BIG-ENDIAN */
     /*  The following sets f_machine. */

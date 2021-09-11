@@ -120,7 +120,7 @@ static struct sectiondata_s sectiondata[SECCOUNT] = {
 
 typedef struct special_filedata_s {
     int            f_is_64bit;
-    Dwarf_Endianness f_object_endian;
+    Dwarf_Small    f_object_endian;
     unsigned       f_pointersize;
     unsigned       f_offsetsize;
     Dwarf_Unsigned f_filesize;
@@ -128,12 +128,13 @@ typedef struct special_filedata_s {
     struct sectiondata_s * f_sectarray;
 } special_filedata_internals_t;
 
-/*  Do not use DW_ENDIAN_LITTLE here, use DW_OBJECT_LSB.
+/*  Use DW_END_little.
     Libdwarf finally sets the file-format-specific
-    Dwarf_Endianness field to a DW_OBJECT_LSB or MSB value.
+    f_object_endianness field to a DW_END_little or
+    DW_END_big (see dwarf.h).
     Here we must do that ourselves. */
 static special_filedata_internals_t base_internals =
-{ FALSE,DW_OBJECT_LSB,32,32,200,SECCOUNT, sectiondata };
+{ FALSE,DW_END_little,32,32,200,SECCOUNT, sectiondata };
 
 static
 int gsinfo(void* obj,
@@ -161,8 +162,8 @@ int gsinfo(void* obj,
     return_section->as_entrysize = 1;
     return DW_DLV_OK;
 }
-static
-Dwarf_Endianness gborder(void * obj)
+static Dwarf_Small
+gborder(void * obj)
 {
     special_filedata_internals_t *internals =
         (special_filedata_internals_t *)(obj);

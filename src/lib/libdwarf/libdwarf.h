@@ -510,13 +510,6 @@ struct Dwarf_Obj_Access_Section_a_s {
     Dwarf_Unsigned as_entrysize;
 };
 
-/*  Returned by the get_endianness function in
-    Dwarf_Obj_Access_Methods_s. */
-typedef enum {
-    DW_OBJECT_MSB,
-    DW_OBJECT_LSB
-} Dwarf_Endianness;
-
 /*  struct Dwarf_Obj_Access_Methods_a_s:
     The functions we need to access object data
     from libdwarf are declared here.
@@ -568,7 +561,7 @@ typedef enum {
 
     Get whether the object file represented by
     this interface is big-endian
-    (DW_OBJECT_MSB) or little endian (DW_OBJECT_LSB).
+    (DW_END_big) or little endian (DW_END_little).
 
     Parameters
     obj - Equivalent to 'this' in OO languages.
@@ -661,7 +654,7 @@ struct Dwarf_Obj_Access_Methods_a_s {
         Dwarf_Half section_index,
         Dwarf_Obj_Access_Section_a* return_section,
         int* error);
-    Dwarf_Endianness (*om_get_byte_order)(void* obj);
+    Dwarf_Small      (*om_get_byte_order)(void* obj);
     Dwarf_Small      (*om_get_length_size)(void* obj);
     Dwarf_Small      (*om_get_pointer_size)(void* obj);
     Dwarf_Unsigned   (*om_get_filesize)(void* obj);

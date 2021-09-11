@@ -204,7 +204,7 @@ pe_section_name_get(dwarf_pe_object_access_internals_t *pep,
 }
 
 
-static Dwarf_Endianness
+static Dwarf_Small
 pe_get_byte_order (void *obj)
 {
     dwarf_pe_object_access_internals_t *pep =
@@ -608,7 +608,7 @@ dwarf_load_pe_sections(
 #else  /* LITTLE ENDIAN */
         word_swap = _dwarf_memcpy_swap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
-        locendian = DW_OBJECT_MSB;
+        locendian = DW_END_big;
     } else if (dos_sig == IMAGE_DOS_REVSIGNATURE_dw) {
         /* raw load, so  intrepet a match the other way. */
         /* LITTLE ENDIAN */
@@ -617,7 +617,7 @@ dwarf_load_pe_sections(
 #else  /* LITTLE ENDIAN */
         word_swap = _dwarf_memcpy_noswap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
-        locendian = DW_OBJECT_LSB;
+        locendian = DW_END_little;
     } else {
         /* Not dos header not a PE file we recognize */
         *errcode = DW_DLE_FILE_WRONG_TYPE;
@@ -865,18 +865,18 @@ _dwarf_pe_object_access_internals_init(
 #ifdef WORDS_BIGENDIAN
     if (endian == DW_END_little) {
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->pe_endian = DW_OBJECT_LSB;
+        intfc->pe_endian = DW_END_little;
     } else {
         intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->pe_endian = DW_OBJECT_MSB;
+        intfc->pe_endian = DW_END_big;
     }
 #else  /* LITTLE ENDIAN */
     if (endian == DW_END_little) {
         intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->pe_endian = DW_OBJECT_LSB;
+        intfc->pe_endian = DW_END_little;
     } else {
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->pe_endian = DW_OBJECT_MSB;
+        intfc->pe_endian = DW_END_big;
     }
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_pe_sections(intfc,errcode);

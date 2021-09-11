@@ -143,7 +143,7 @@ _dwarf_macho_object_access_init(
     int *localerrnum);
 
 
-static Dwarf_Endianness macho_get_byte_order (void *obj)
+static Dwarf_Small macho_get_byte_order (void *obj)
 {
     dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
@@ -865,18 +865,18 @@ _dwarf_macho_object_access_internals_init(
 #ifdef WORDS_BIGENDIAN
     if (endian == DW_END_little ) {
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->mo_endian = DW_OBJECT_LSB;
+        intfc->mo_endian = DW_END_little;
     } else {
         intfc->mo_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->mo_endian = DW_OBJECT_MSB;
+        intfc->mo_endian = DW_END_big;
     }
 #else  /* LITTLE ENDIAN */
     if (endian == DW_END_little ) {
         intfc->mo_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->mo_endian = DW_OBJECT_LSB;
+        intfc->mo_endian = DW_END_little;
     } else {
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->mo_endian = DW_OBJECT_MSB;
+        intfc->mo_endian = DW_END_big;
     }
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_macho_header(intfc,errcode);

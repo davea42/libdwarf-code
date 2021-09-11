@@ -1257,7 +1257,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
     int resn = 0;
     struct Dwarf_Section_s **sections = 0;
-    Dwarf_Endianness endianness;
+    Dwarf_Small            endianness = 0;
     Dwarf_Unsigned section_count = 0;
     unsigned default_group_number = 0;
     unsigned foundDwarf = FALSE;
@@ -1273,14 +1273,14 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     /* Then adjust any changes we need. */
 #ifdef WORDS_BIGENDIAN
     dbg->de_big_endian_object = 1;
-    if (endianness == DW_OBJECT_LSB ) {
+    if (endianness == DW_END_little) {
         dbg->de_same_endian = 0;
         dbg->de_big_endian_object = 0;
         dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
     }
 #else /* little endian */
     dbg->de_big_endian_object = 0;
-    if (endianness == DW_OBJECT_MSB ) {
+    if (endianness == DW_END_big ) {
         dbg->de_same_endian = 0;
         dbg->de_big_endian_object = 1;
         dbg->de_copy_word = _dwarf_memcpy_swap_bytes;

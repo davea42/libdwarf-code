@@ -872,7 +872,7 @@ generic_rel_from_rela64(
     Dwarf_Unsigned size = gsh->gh_size;
     Dwarf_Unsigned size2 = 0;
     Dwarf_Unsigned i = 0;
-    int objlittleendian = (ep->f_endian == DW_OBJECT_LSB);
+    int objlittleendian = (ep->f_endian == DW_END_little);
     int ismips64 = (ep->f_machine == EM_MIPS);
     int issparcv9 = (ep->f_machine == EM_SPARCV9);
 
@@ -951,7 +951,7 @@ generic_rel_from_rel64(
     Dwarf_Unsigned size = gsh->gh_size;
     Dwarf_Unsigned size2 = 0;
     Dwarf_Unsigned i = 0;
-    int objlittleendian = (ep->f_endian == DW_OBJECT_LSB);
+    int objlittleendian = (ep->f_endian == DW_END_little);
     int ismips64 = (ep->f_machine == EM_MIPS);
     int issparcv9 = (ep->f_machine == EM_SPARCV9);
 
