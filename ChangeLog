@@ -1,3 +1,91 @@
+2021-09-11:  David Anderson
+    commit cccee303f33b8c4dcccaaae236a5922c467eaa77
+
+        Each instance of multiple blank lines
+        reduced to a single blank line.
+            modified:   buildopstab/buildopscounttab.c
+            modified:   gennames/gennames.c
+            modified:   tag_attr/tag_attr.c
+            modified:   tag_tree/tag_tree.c
+
+2021-09-11:  David Anderson
+    commit c55271af36006f2e7ee4bbe4750f3b417b01e0f1
+
+        Each instance of multiple blank lines
+        reduced to a single blank line.
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/simplecrc.c
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2021-09-11:  David Anderson
+    commit 7a1d69baa69ea4982b6cfc8de55463a57d7a662b
+
+    Each instance of multiple blank lines
+    reduced to a single blank line.
+            modified:   dwarf_leb_test.c
+            modified:   dwarf_tied_test.c
+            modified:   getnametest.c
+            modified:   getopttest.c
+            modified:   makename_test.c
+            modified:   test_canonical.c
+            modified:   test_dwarfstring.c
+            modified:   test_errmsglist.c
+            modified:   test_extra_flag_strings.c
+            modified:   test_linkedtopath.c
+            modified:   test_regex.c
+            modified:   testesb.c
+
+2021-09-11:  David Anderson
+    commit eb499fc7c60aa9e350f311c8df199d22632d7a59
+
+    A new script (not part of libdwarf)
+    now turns a sequence of blank lines
+    into a single blank line.
+    Eventually this will be applied everwhere to .c and .h files.
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_die_deliv.h
+            modified:   src/lib/libdwarf/dwarf_dsc.h
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-10:  David Anderson
+    commit c91317981ea93a820cc881f12852b770ffc45730
+
+    No longer defines DW_OBJ_LSB or DW_OBJ_MSB
+    or the type Dwarf_Endian.
+
+    No longer defines DW_ENDIAN_BIG DW_ENDIAN_LITTLE
+    Use DW_END_big and DW_END_little from dwarf.h.
+
+    Using three different name sets was an accident of history.
+    Instead, now using DW_END_big and DW_END_little from dwarf.h
+    (These  were introduced in DWARF3.)
+    The ranges of endian fit in a Dwarf_Small.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    There is no actual compatibility issue for library
+    users as all the uses are in dwarfdump and libdwarf.
+    Plus a single use in jitreader.c
+
+    The required places updated to use DW_END_big/little:
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_machoread.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-10:  David Anderson
+    commit 83438dbbe4991fb333fd0c6f9924513f4744244e
+
+    Added the recent git log entries.
+            modified:   ChangeLog
+
 2021-09-10:  David Anderson
     commit 85134d41493f7a236f8680a09a44ec8b25000885
 
