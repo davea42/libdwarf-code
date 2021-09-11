@@ -28,9 +28,6 @@ Portions Copyright (C) 2008-2011  David Anderson. All Rights Reserved.
 
 */
 
-
-
-
 /*
     This struct holds information about an abbreviation.
     It is put in the hash table for abbreviations for

@@ -108,7 +108,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_elf_rel_detector.h"
 #include "dwarf_elfread.h"
 
-
 #ifndef TYP
 #define TYP(n,l) char n[l]
 #endif /* TYPE */
@@ -155,8 +154,6 @@ _dwarf_elf_object_access_init(
     Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum);
 
-
-
 static Dwarf_Small elf_get_nolibelf_byte_order (void *obj)
 {
     dwarf_elf_object_access_internals_t *elf =
@@ -164,14 +161,12 @@ static Dwarf_Small elf_get_nolibelf_byte_order (void *obj)
     return elf->f_endian;
 }
 
-
 static Dwarf_Small elf_get_nolibelf_length_size (void *obj)
 {
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
     return elf->f_offsetsize/8;
 }
-
 
 static Dwarf_Small elf_get_nolibelf_pointer_size (void *obj)
 {
@@ -187,7 +182,6 @@ static Dwarf_Unsigned elf_get_nolibelf_file_size(void *obj)
     return elf->f_filesize;
 }
 
-
 static Dwarf_Unsigned elf_get_nolibelf_section_count (void *obj)
 {
     dwarf_elf_object_access_internals_t *elf =
@@ -202,7 +196,6 @@ static int elf_get_nolibelf_section_info(void *obj,
 {
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
-
 
     if (section_index < elf->f_loc_shdr.g_count) {
         struct generic_shdr *sp = 0;
@@ -332,7 +325,6 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
     return DW_DLV_ERROR;
 }
 
-
 /*  Returns DW_DLV_OK if it works, else DW_DLV_ERROR.
     The caller may decide to ignore the errors or report them. */
 static int
@@ -413,8 +405,6 @@ update_entry(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
-
 
 /*  Somewhat arbitrarily, we attempt to apply all the
     relocations we can
@@ -574,7 +564,6 @@ _dwarf_destruct_elf_nlaccess(
     free(ep);
     free(aip);
 }
-
 
 int
 _dwarf_elf_nlsetup(int fd,
@@ -760,7 +749,6 @@ _dwarf_elf_object_access_internals_init(
     localdoas = 0;
     return DW_DLV_OK;
 }
-
 
 static int
 _dwarf_elf_object_access_init(

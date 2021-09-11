@@ -56,5 +56,4 @@ struct Dwarf_Dsc_Head_s {
     struct Dwarf_Dsc_Entry_s *dsh_array;
 };
 
-
 void _dwarf_dsc_destructor(void *m);
