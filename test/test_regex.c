@@ -98,7 +98,6 @@ main()
         DW_DLV_OK,__LINE__);
     testx("uleb",DW_DLV_OK,"uleblen",DW_DLV_OK,__LINE__);
 
-
     testx(".*",DW_DLV_OK,  "abc",DW_DLV_OK,__LINE__);
     testx("abc",DW_DLV_OK, "ab",DW_DLV_NO_ENTRY,__LINE__);
     testx("a[^xy]j",DW_DLV_OK,"ab",DW_DLV_NO_ENTRY,__LINE__);

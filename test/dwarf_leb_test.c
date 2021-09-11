@@ -27,7 +27,6 @@
 
 */
 
-
 #include "config.h"
 #include <stdio.h>
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -100,7 +99,6 @@ static Dwarf_Unsigned utest[] = {
 0xffffffffffffffff
 };
 
-
 #if 0 /* FOR DEBUGGING */
 static void
 dump_encoded(char *space,int len)
@@ -115,9 +113,7 @@ dump_encoded(char *space,int len)
 }
 #endif
 
-
 #define BUFFERLEN 100
-
 
 static unsigned
 signedtest(unsigned len)
@@ -325,7 +321,6 @@ static unsigned char v3[] = {
 0x80, 0x80, 0x80,
 0x41 };
 
-
 /*  This warning with --enable-sanitize is fixed
     as of November 11, 2016 when decoding test v4.
     dwarf_leb.c: runtime error: negation of
@@ -374,8 +369,6 @@ Simlarly, but without any padding bytes:
     first 4 gets the sign bit set
 */
 
-
-
 /*  Error, too long  due to the non-zero past any valid
     Dwarf_Signed*/
 static unsigned char v6[] = {
@@ -405,7 +398,6 @@ static unsigned char v8[] = {
 0x80, 0x80, 0x80, 0x80,
 0x80
 };
-
 
 static unsigned
 specialtests(void)

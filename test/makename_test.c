@@ -79,7 +79,6 @@ int main()
     char *e4= 0;
     int errct = 0;
 
-
     e1 = makename(samples[0]);
     e2 = makename(samples[1]);
     e3 = makename(samples[2]);

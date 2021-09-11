@@ -4,7 +4,6 @@
   This trivial test program is hereby placed in the public domain.
 */
 
-
 #include "config.h"
 #include <stdio.h>
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -46,7 +45,6 @@ char * makename(const char *x )
 {
     return (char *)x;
 }
-
 
 #define CANBUF 25
 static struct canap_s {

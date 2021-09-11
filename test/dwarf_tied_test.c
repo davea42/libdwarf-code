@@ -110,8 +110,6 @@ _dwarf_next_cu_header_internal(
     return DW_DLV_NO_ENTRY;
 }
 
-
-
 static struct Dwarf_Tied_Entry_s *
 makeentry(unsigned long instance, unsigned ct)
 {
@@ -181,7 +179,6 @@ delone(void**tree,unsigned long instance, unsigned ct)
 {
     struct Dwarf_Tied_Entry_s * entry = 0;
     void *r = 0;
-
 
     entry = makeentry(instance, ct);
     r = dwarf_tfind(entry,(void *const*)tree,

@@ -143,8 +143,6 @@ _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
     return DW_DLV_ERROR;
 }
 
-
-
 static void
 check_svalid(int expret,int gotret,int experr,int goterr,int line,
     char *filename_in)
@@ -172,7 +170,6 @@ test1(Dwarf_Debug dbg)
     int res = 0;
     char *end = testbuffer +100;
     Dwarf_Error error = 0;
-
 
     testbuffer[0] = 0;
     strcpy(testbuffer,msg);
@@ -222,7 +219,6 @@ checkjoin(int expret,int gotret,char*expstr,char*gotstr,
             expstr,gotstr,line,filename_in);
     }
 }
-
 
 static void
 test2(void)
@@ -305,11 +301,9 @@ test2(void)
     checkjoin(DW_DLV_OK,res,"/",dwarfstring_string(&targ),
         __LINE__,__FILE__);
 
-
     dwarfstring_destructor(&targ);
     dwarfstring_destructor(&inp);
 }
-
 
 static void
 checklinkedto(int expret,int gotret,
@@ -343,7 +337,6 @@ printpaths(unsigned count,char **array,dwarfstring *fullpath)
         printf("    [%2d] \"%s\"\n",i,s);
     }
     printf("\n");
-
 
 }
 

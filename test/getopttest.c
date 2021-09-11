@@ -38,7 +38,6 @@ dwgetoptresetfortestingonly(void)
     dwoptarg   = 0;
 }
 
-
 static int turnprintable(int c)
 {
     if ( c >= 0x20 && c <= 0x7f) {
@@ -46,8 +45,6 @@ static int turnprintable(int c)
     }
     return '.';
 }
-
-
 
 static void
 printcheckargs(
@@ -208,7 +205,6 @@ test3(void)
     return 0;
 }
 
-
 static int
 test2(void)
 {
@@ -306,7 +302,6 @@ ltest1(void)
         chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest1.7",__LINE__);
         break;
 
-
     default:
         printf("FAIL ltest1 unexpected ct %d in ltest1\n",ct);
         exit(1);
@@ -372,7 +367,6 @@ ltest2(void)
         chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest27",__LINE__);
         break;
 
-
     default:
         printf("FAIL ltest1 unexpected ct %d in ltest2\n",ct);
         exit(1);
@@ -387,7 +381,6 @@ ltest2(void)
     printf("PASS getopt ltest2\n");
     return 0;
 }
-
 
 static int
 test1(void)
@@ -657,7 +650,6 @@ test9(void)
     return 0;
 }
 
-
 static int
 test10(void)
 {
@@ -725,8 +717,6 @@ test10(void)
     printf("PASS getopt test10\n");
     return 0;
 }
-
-
 
 int main(int argc, const char **argv)
 {

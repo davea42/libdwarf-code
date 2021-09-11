@@ -411,7 +411,6 @@ test6(void)
     check_string("from _i",(char *)expstr,d,__LINE__);
     dwarfstring_destructor(&g);
 
-
     dwarfstring_constructor(&g);
     dwarfstring_append_printf_i(&g,"%s",12);
     d = dwarfstring_string(&g);
@@ -502,7 +501,6 @@ test6(void)
     dwarfstring_destructor(&g);
     return 0;
 }
-
 
 int main()
 {

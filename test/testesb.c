@@ -61,8 +61,6 @@ validate_esb(int instance,
     }
 }
 
-
-
 int main()
 {
 #ifdef _WIN32
@@ -140,10 +138,7 @@ int main()
         validate_esb(212,&d5,14,18,"aaa    -33 bbb",__LINE__);
         esb_destructor(&d5);
 
-
-
     }
-
 
     {
         struct esb_s d;
@@ -320,9 +315,6 @@ int main()
         validate_esb(25,&d5,15,16,"aaa -200011 bbb",__LINE__);
         esb_destructor(&d5);
 
-
-
-
         u = 0x80000000;
         u = 0x8000000000000000;
         i = u;
@@ -395,8 +387,6 @@ int main()
         esb_destructor(&d5);
 
     }
-
-
 
 #ifdef _WIN32
     /* Close the null device used during formatting printing */

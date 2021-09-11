@@ -106,7 +106,6 @@ check_errnum_mismatches(unsigned i)
     return TRUE;
 }
 
-
 static int
 splmatches(char *base, unsigned baselen,char *test)
 {
@@ -404,7 +403,6 @@ check_msg_lengths(const char *path)
     }
     fclose(fin);
 }
-
 
 static char pathbuf[2000];
 static char pathbuferrm[2000];

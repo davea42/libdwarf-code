@@ -51,7 +51,6 @@ check_result(int actres, int expres,
     return errcount;
 }
 
-
 int main()
 {
     int res = 0;
