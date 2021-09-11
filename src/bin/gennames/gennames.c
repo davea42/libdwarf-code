@@ -45,7 +45,6 @@
 #include "dwarf_getopt.h"
 #include "libdwarf_private.h"
 
-
 /*  gennames.c
     Prints routines to return constant name for the associated value
     (such as the TAG name string for a particular tag).
@@ -147,7 +146,6 @@ print_args(int argc, char *argv[])
     printf("\n");
 }
 
-
 static char *program_name = 0;
 static char *input_name = 0;
 static char *output_name = 0;
@@ -164,7 +162,6 @@ print_version(const char * name)
     printf("%s [%s %s]\n",name,PACKAGE_VERSION,acType);
 }
 
-
 static void
 print_usage_message(const char *options[])
 {
@@ -173,7 +170,6 @@ print_usage_message(const char *options[])
         printf("%s\n",options[index]);
     }
 }
-
 
 /* process arguments */
 static void
@@ -371,7 +367,6 @@ CompareName(struct NameEntry *elem1,struct NameEntry *elem2)
     return 0; /* should NEVER happen */
 }
 
-
 /*  Sort into name order for readability of the declarations,
     then print the declarations. */
 static void
@@ -500,7 +495,6 @@ safe_strncpy(char *out, unsigned out_len,
     }
     strncpy(out,in,in_len);
 }
-
 
 /* Parse the 'dwarf.h' file and generate the tables */
 static void

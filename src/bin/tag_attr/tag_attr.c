@@ -60,7 +60,6 @@ value of a standard attribute that follows that tag
 0xffffffff
 ...
 
-
 The generated tag_attr_combination_table
 is used and generated quite differently
 for standard than for extended tags.
@@ -200,7 +199,6 @@ check_unused_combo(unsigned toprow,unsigned topcol)
     }
 
 }
-
 
 static void
 validate_row_col(const char *position,

@@ -208,7 +208,6 @@ validate_row_col(const char *position,
     return;
 }
 
-
 int
 main(int argc, char **argv)
 {

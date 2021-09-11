@@ -206,9 +206,6 @@ validate_op_listed(char *curdefname,unsigned long v,
     exit(1);
 }
 
-
-
-
 static void
 check_if_optabsource_complete(char *path)
 {
