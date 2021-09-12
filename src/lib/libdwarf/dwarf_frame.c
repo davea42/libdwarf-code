@@ -1562,7 +1562,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         what we are to do with this entry. */
     memset(&prefix_c, 0, sizeof(prefix_c));
     memset(&prefix, 0, sizeof(prefix));
-    res = dwarf_read_cie_fde_prefix(dbg, fde_ptr,
+    res = _dwarf_read_cie_fde_prefix(dbg, fde_ptr,
         dbg->de_debug_frame.dss_data,
         dbg->de_debug_frame.dss_index,
         dbg->de_debug_frame.dss_size,
@@ -1578,7 +1578,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     cie_id = prefix.cf_cie_id;
     /*  Pass NULL, not section pointer, for 3rd argument.
         de_debug_frame.dss_data has no eh_frame relevance. */
-    res = dwarf_create_fde_from_after_start(dbg, &prefix,
+    res = _dwarf_create_fde_from_after_start(dbg, &prefix,
         fde_start_ptr,
         fde_ptr,
         fde_end_ptr,
@@ -1594,7 +1594,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
 
     /* now read the cie corresponding to the fde */
     cie_ptr = new_fde->fd_section_ptr + cie_id;
-    res = dwarf_read_cie_fde_prefix(dbg, cie_ptr,
+    res = _dwarf_read_cie_fde_prefix(dbg, cie_ptr,
         dbg->de_debug_frame.dss_data,
         dbg->de_debug_frame.dss_index,
         dbg->de_debug_frame.dss_size,
@@ -1614,7 +1614,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
 
         /*  Pass NULL, not section pointer, for 3rd argument.
             de_debug_frame.dss_data has no eh_frame relevance. */
-        res2 = dwarf_create_cie_from_after_start(dbg,
+        res2 = _dwarf_create_cie_from_after_start(dbg,
             &prefix_c,
             fde_start_ptr,
             cie_ptr,

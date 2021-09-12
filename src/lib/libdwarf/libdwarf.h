@@ -380,24 +380,6 @@ typedef struct Dwarf_Regtable3_s {
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;
 
-/*  Use for DW_EPXR_STANDARD., DW_EXPR_VAL_OFFSET.
-    Returns DW_DLV_OK if the value is available.
-    If DW_DLV_OK returns the regnum and offset thru the pointers
-    (which the consumer must use appropriately).
-*/
-int dwarf_frame_get_reg_register(struct Dwarf_Regtable_Entry3_s,
-    Dwarf_Small *offset_relevant,
-    Dwarf_Half *regnum_out,
-    Dwarf_Signed *offset_out);
-
-/*  Use for DW_EXPR_EXPRESSION, DW_EXPR_VAL_EXPRESSION.
-    Returns DW_DLV_OK if the value is available.
-    The caller must pass in the address of a valid
-    Dwarf_Block (the caller need not initialize it).
-*/
-int dwarf_frame_get_reg_expression(struct Dwarf_Regtable_Entry3_s,
-    Dwarf_Block *block_out);
-
 /* Opaque types for Consumer Library. */
 typedef struct Dwarf_Debug_s*      Dwarf_Debug;
 typedef struct Dwarf_Die_s*        Dwarf_Die;
@@ -430,15 +412,16 @@ typedef void  (*Dwarf_Handler)(Dwarf_Error /*error*/,
 
 /* Begin libdwarf Object File Interface declarations.
 
+
 As of February 2008 there are multiple dwarf_reader object access
 initialization methods available:
 None of them use libelf as of June 2021.
 An object-file and library agnostic dwarf_object_init_b()
 and dwarf_object_finish()
-    which allow the coder to provide object access routines
-    abstracting away the elf interface.
-    So there is no dependence in the
-    reader code on the object format and no dependence on libelf.
+which allow the coder to provide object access routines
+abstracting away the elf interface.
+So there is no dependence in the
+reader code on the object format and no dependence on libelf.
 
 Projects using  dwarf_init_b() can ignore
 the Dwarf_Obj_Access* structures entirely as all these details

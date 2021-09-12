@@ -433,7 +433,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Error * error);
 
 
-int dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
+int _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     Dwarf_Small *frame_ptr_in,
     Dwarf_Small *section_ptr_in,
     Dwarf_Unsigned section_index_in,
@@ -441,7 +441,7 @@ int dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     struct cie_fde_prefix_s *prefix_out,
     Dwarf_Error *error);
 
-int dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
+int _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     struct cie_fde_prefix_s *  prefix,
     Dwarf_Small *section_pointer,
     Dwarf_Small *frame_ptr,
@@ -451,7 +451,7 @@ int dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     Dwarf_Fde *fde_ptr_out,
     Dwarf_Error *error);
 
-int dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
+int _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     struct cie_fde_prefix_s *prefix,
     Dwarf_Small* section_pointer,
     Dwarf_Small* frame_ptr,
