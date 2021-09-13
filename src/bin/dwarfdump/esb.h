@@ -104,11 +104,9 @@ void esb_appendn(struct esb_s *data,
 /* Always returns an empty string or a non-empty string. Never 0. */
 char * esb_get_string(struct esb_s *data);
 
-
 /*  Sets esb_used_bytes to zero. The string is not freed and
     esb_allocated_size is unchanged.  */
 void esb_empty_string(struct esb_s *data);
-
 
 /*  Return esb_used_bytes. */
 size_t esb_string_len(struct esb_s *data);
@@ -127,7 +125,6 @@ void esb_force_allocation(struct esb_s *data, size_t minlen);
 
 /*  The string is freed, contents of *data set to zeroes. */
 void esb_destructor(struct esb_s *data);
-
 
 /*  To get all paths in the code tested, this sets the
     allocation/reallocation to the given value,

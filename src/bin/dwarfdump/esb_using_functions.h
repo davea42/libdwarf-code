@@ -74,7 +74,6 @@ void get_true_section_name(Dwarf_Debug dbg,
     struct esb_s *name_out,
     Dwarf_Bool add_compr);
 
-
 #ifdef __cplusplus
 }
 #endif

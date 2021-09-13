@@ -42,7 +42,6 @@ extern struct Helpertree_Base_s helpertree_offsets_base_info;
 /* For .debug_types. */
 extern struct Helpertree_Base_s helpertree_offsets_base_types;
 
-
 struct Helpertree_Map_Entry_s {
     /*  Key is offset. It will be a section-global offset so
         applicable across an entire executable/object section. */

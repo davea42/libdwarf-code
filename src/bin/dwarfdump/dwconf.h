@@ -41,7 +41,6 @@ extern "C" {
 char * _dwarf_canonical_append(char *target, unsigned int target_size,
     const char *first_string, const char *second_string);
 
-
 /*  Declarations helping configure the frame reader.
     We are not allowing negative register numbers.
     Which could be  allowed if necessary with a little work. */
@@ -95,7 +94,6 @@ struct dwconf_s {
     unsigned cf_address_size;
 };
 
-
 /*  Returns DW_DLV_OK if works.
     Returns DW_DLV_ERROR if cannot do what is asked. */
 int find_conf_file_and_read_config(const char *named_file,
@@ -107,7 +105,6 @@ void print_reg_from_config_data(Dwarf_Unsigned reg,
     struct dwconf_s *config_data);
 
 void free_all_dwconf(struct dwconf_s *config_data);
-
 
 void init_generic_config_1200_regs(struct dwconf_s *conf);
 

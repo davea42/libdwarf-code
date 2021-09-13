@@ -170,7 +170,6 @@ int print_all_abbrevs_for_cu(Dwarf_Debug dbg,
     Dwarf_Unsigned *abbrev_num_out,
     Dwarf_Error    *error);
 
-
 int print_all_pubnames_style_records(Dwarf_Debug dbg,
     const char * linetitle,
     const char * section_true_name,
@@ -277,7 +276,6 @@ int print_attributes_encoding(Dwarf_Debug dbg,Dwarf_Error *);
 int print_tag_attributes_usage(void);
 void record_tag_usage(int tag);
 void reset_usage_rate_tag_trees(void);
-
 
 int  print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *);
 void update_section_flags_per_groups(Dwarf_Debug dbg);

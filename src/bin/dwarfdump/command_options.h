@@ -37,7 +37,6 @@ const char *do_uri_translation(const char *s,const char *context);
 void uri_data_constructor(void);
 void uri_data_destructor(void);
 
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

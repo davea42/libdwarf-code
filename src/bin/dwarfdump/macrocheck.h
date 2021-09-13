@@ -80,7 +80,6 @@ extern unsigned macfile_stack_next_to_use;
 extern unsigned macfile_stack[MACFILE_STACK_DEPTH_MAX+1];
 extern unsigned macfile_stack_max_seen;
 
-
 #define MACRO_IMPORT_STACK_DEPTH 20 /* Arbitrary. Make bigger? */
 extern Dwarf_Unsigned macro_import_stack[MACRO_IMPORT_STACK_DEPTH +1];
 extern unsigned macro_import_stack_next_to_use;

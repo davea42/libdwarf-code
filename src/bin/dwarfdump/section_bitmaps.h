@@ -75,8 +75,6 @@ extern struct section_map_s  map_sectnames[] ;
 
 #define DW_HDR_ARRAY_SIZE            32
 
-
-
 /* Debug section names to be included in printing */
 #define DW_SECTNAME_DEBUG_INFO       ".debug_info"
 #define DW_SECTNAME_DEBUG_INFO_DWO   ".debug_info.dwo"
@@ -172,7 +170,6 @@ extern struct section_map_s  map_sectnames[] ;
 #define DW_SECTNAME_REL_DEBUG_MACINFO  ".rel.debug_macinfo"
 #define DW_SECTNAME_REL_DEBUG_MACRO    ".rel.debug_macro"
 #define DW_SECTNAME_REL_DEBUG_NAMES    ".rel.debug_names"
-
 
 Dwarf_Bool section_name_is_debug_and_wanted(const char *section_name);
 unsigned section_bitmap_array_size(void);
