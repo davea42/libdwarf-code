@@ -5534,7 +5534,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 off = off + targ;
                 if (off < 0 ) {
                     esb_append_printf_i(string_out,
-                        " <ERROR. branch/skip target erronous %d>",
+                        " <ERROR. branch/skip target erroneous %d>",
                         off);
                     glflags.gf_count_major_errors++;
                 } else {
