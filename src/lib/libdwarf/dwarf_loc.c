@@ -107,7 +107,6 @@ _dwarf_lkind_name(unsigned lkind, dwarfstring *m)
         lkind);
 }
 
-
 static int
 determine_location_lkind(unsigned int version,
     unsigned int form,
@@ -202,7 +201,6 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
         return DW_DLV_ERROR;
     }
-
 
     READ_UNALIGNED_CK(dbg, start_addr, Dwarf_Addr, beg, address_size,
         error,loc_section_end);
@@ -300,7 +298,6 @@ _dwarf_get_loclist_lle_count(Dwarf_Debug dbg,
 {
     int count = 0;
     Dwarf_Off offset = loclist_offset;
-
 
     for (;;) {
         Dwarf_Block_c b;
@@ -434,7 +431,6 @@ context_is_cu_not_tu(Dwarf_CU_Context context,
     *r = TRUE;
     return DW_DLV_OK;
 }
-
 
 /*  Handles only a location expression.
     It returns the location expression as a loclist with
@@ -1025,7 +1021,6 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c ll_header,
     unsigned int * kind,
@@ -1400,7 +1395,6 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
                 llc->ld_highpc = targaddr;
             }
 
-
             break;
             }
         default:{
@@ -1423,7 +1417,6 @@ cook_gnu_loclist_contents(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
 
 /* DWARF5 */
 static int
@@ -1836,7 +1829,6 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     *listlen = local_listlen;
     return DW_DLV_OK;
 }
-
 
 /*  New June 2020  Supports all versions of DWARF.
     Distinguishes location entry values as in the

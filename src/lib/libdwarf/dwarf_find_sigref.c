@@ -154,8 +154,6 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
     return DW_DLV_NO_ENTRY;
 }
 
-
-
 /*  We will search to find a CU with the indicated signature
     The attribute leading us here is often
     We are looking for a DW_UT_split_type or DW_UT_type

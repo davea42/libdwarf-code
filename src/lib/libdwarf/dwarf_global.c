@@ -336,7 +336,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             after the 0 as padding and ignore them. */
         Dwarf_Small *pubnames_ptr_past_end_cu = 0;
 
-
         pubnames_context_on_list = FALSE;
         pubnames_context = (Dwarf_Global_Context)
             _dwarf_get_alloc(dbg, context_DLA_code, 1);
@@ -686,7 +685,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  Given a pubnames entry (or other like section entry)
     return thru the ret_name pointer
     a pointer to the string which is the entry name.  */
@@ -703,7 +701,6 @@ dwarf_globname(Dwarf_Global glob,
     *ret_name = (char *) (glob->gl_name);
     return DW_DLV_OK;
 }
-
 
 /*  Given a pubnames entry (or other like section entry)
     return thru the ret_off pointer the
@@ -785,7 +782,6 @@ build_off_end_msg(Dwarf_Unsigned offval,
         "Corrupt Dwarf.",(char *)msg);
     return;
 }
-
 
 /*
   Give back the pubnames entry (or any other like section)
@@ -901,7 +897,6 @@ dwarf_global_name_offsets(Dwarf_Global global,
     return DW_DLV_OK;
 }
 
-
 /*  New February 2019 from better dwarfdump printing
     of debug_pubnames and pubtypes.
     For ao the Dwarf_Global records in one pubnames
@@ -955,7 +950,6 @@ dwarf_get_globals_header(Dwarf_Global global,
     }
     return DW_DLV_OK;
 }
-
 
 /*  We have the offset to a CU header.
     Return thru outFileOffset the offset of the CU DIE.

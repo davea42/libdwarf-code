@@ -137,7 +137,6 @@ dwarf_dieoffset(Dwarf_Die die,
     return DW_DLV_OK;
 }
 
-
 /*  This function returns the offset of
     the die relative to the start of its
     compilation-unit rather than .debug_info.
@@ -213,8 +212,6 @@ dwarf_die_CU_offset_range(Dwarf_Die die,
         + cu_context->cc_extension_size;
     return DW_DLV_OK;
 }
-
-
 
 int
 dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
@@ -415,7 +412,6 @@ dwarf_attrlist(Dwarf_Die die,
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
 
-
     info_ptr = die->di_debug_ptr;
     {
         /* SKIP_LEB128 */
@@ -597,7 +593,6 @@ dwarf_attrlist(Dwarf_Die die,
     *attrcnt = attr_count;
     return DW_DLV_OK;
 }
-
 
 /*
     This function takes a die, and an attr, and returns
@@ -1005,7 +1000,6 @@ dwarf_debug_addr_index_to_addr(Dwarf_Die die,
     Dwarf_CU_Context context = 0;
     int res = 0;
 
-
     CHECK_DIE(die, DW_DLV_ERROR);
     context = die->di_cu_context;
     dbg = context->cc_dbg;
@@ -1107,8 +1101,6 @@ dwarf_lowpc(Dwarf_Die die,
     return DW_DLV_OK;
 }
 
-
-
 /*  If 'die' contains the DW_AT_type attribute, it returns
     the (global) offset referenced by the attribute through
     the return_off pointer.
@@ -1204,7 +1196,6 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 int
 _dwarf_get_string_base_attr_value(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_CU_Context context,
@@ -1223,7 +1214,6 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg UNUSEDARG,
     and returns it through abase_out. If we cannot find the value
     it is a serious error in the DWARF.
     */
-
 
 /*  This works for all versions of DWARF.
     This is the preferred interface, cease using dwarf_highpc.
@@ -1479,7 +1469,6 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
         *return_val = v;
         return DW_DLV_OK;
 
-
     }
     case DW_FORM_implicit_const: {
         if (implicit_const_value < (Dwarf_Signed)0) {
@@ -1507,7 +1496,6 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     }
 }
 
-
 /*  Size Value >= 0 is not specified in DWARF5, but
     a negative value is surely not meaningful. */
 int
@@ -1521,7 +1509,6 @@ dwarf_bytesize(Dwarf_Die die,
     return res;
 }
 
-
 /*  Size Value >= 0 is not specified in DWARF5, but
     a negative value is not meaningful. */
 int
@@ -1534,7 +1521,6 @@ dwarf_bitsize(Dwarf_Die die,
     *ret_size = luns;
     return res;
 }
-
 
 /*  Size Value >= 0 required. DWARF5 sec5.7.6
     The definition of DW_AT_data_bit_offset
@@ -1569,7 +1555,6 @@ dwarf_bitoffset(Dwarf_Die die,
     return res;
 }
 
-
 /*  Refer section 3.1, page 21 in Dwarf Definition.
     Language codes are always non-negative
     and specified in the DWARF standard*/
@@ -1583,7 +1568,6 @@ dwarf_srclang(Dwarf_Die die,
     *ret_size = luns;
     return res;
 }
-
 
 /*  Refer section 5.4, page 37 in Dwarf Definition.
     array order values are always non-negative
@@ -1823,7 +1807,6 @@ dwarf_get_form_class(
     case  DW_FORM_ref8:        return DW_FORM_CLASS_REFERENCE;
     case  DW_FORM_ref_udata:   return DW_FORM_CLASS_REFERENCE;
     case  DW_FORM_ref_sig8:    return DW_FORM_CLASS_REFERENCE;
-
 
     case  DW_FORM_flag:         return DW_FORM_CLASS_FLAG;
     case  DW_FORM_flag_present: return DW_FORM_CLASS_FLAG;

@@ -135,7 +135,6 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 }
 #endif
 
-
 static unsigned long
 magic_copy(unsigned char *d, unsigned len)
 {
@@ -210,7 +209,6 @@ struct dos_header {
 #define IMAGE_FILE_MACHINE_IA64_dw  0x200
 #define IMAGE_FILE_MACHINE_AMD64_dw 0x8664
 
-
 struct pe_image_file_header {
     TYP(im_machine,2);
     TYP(im_sectioncount,2);
@@ -220,7 +218,6 @@ struct pe_image_file_header {
 };
 
 /* ===== END pe structures */
-
 
 /*  For following MacOS file naming convention */
 static const char *
@@ -271,8 +268,6 @@ dw_stpcpy(char *dest,const char *src,char **destend, char *endpoint)
     *destend = dp;
     return DW_DLV_OK;
 }
-
-
 
 /* This started like Elf, so check initial fields. */
 static int

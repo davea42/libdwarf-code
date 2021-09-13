@@ -80,7 +80,6 @@
     } while (0)
 #endif
 
-
 struct gi_fileheader_s {
     char gfs [4][6];
 };
@@ -278,9 +277,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     *section_name  =        dbg->de_debug_gdbindex.dss_name;
     return DW_DLV_OK;
 
-
 }
-
 
 int
 dwarf_gdbindex_culist_array(Dwarf_Gdbindex gdbindexptr,
@@ -520,7 +517,6 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_gdbindex_cuvector_instance_expand_value(
     Dwarf_Gdbindex gdbindexptr,
@@ -542,7 +538,6 @@ dwarf_gdbindex_cuvector_instance_expand_value(
     *is_static =   (value >> 31) & 1;
     return DW_DLV_OK;
 }
-
 
 /*  The strings in the pool follow (in memory) the cu index
     set and are NUL terminated. */
@@ -620,9 +615,6 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
     *string_ptr = (const char *)stringitself;
     return DW_DLV_OK;
 }
-
-
-
 
 void
 dwarf_gdbindex_free(Dwarf_Gdbindex indexptr)

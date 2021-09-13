@@ -145,8 +145,6 @@ int dwarf_set_de_alloc_flag(int v)
     return ov;
 }
 
-
-
 void
 _dwarf_error_destructor(void *m)
 {
@@ -179,7 +177,6 @@ struct reserve_data_s {
     unsigned short rd_type;
 };
 #define DW_RESERVE sizeof(struct reserve_size_s)
-
 
 static const
 struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
@@ -620,7 +617,6 @@ string_is_in_debug_section(Dwarf_Debug dbg,void * space)
     return FALSE;
 }
 
-
 /*  These wrappers for dwarf_dealloc enable type-checking
     at call points. */
 void
@@ -654,7 +650,6 @@ dwarf_dealloc_die( Dwarf_Die die)
     dbg = context->cc_dbg;
     dwarf_dealloc(dbg,die,DW_DLA_DIE);
 }
-
 
 void
 dwarf_dealloc_attribute(Dwarf_Attribute attr)

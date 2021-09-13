@@ -68,7 +68,6 @@ if (!m || m->mc_sentinel != MC_SENTINAL) {  \
     return DW_DLV_ERROR;                    \
 }
 
-
 /*  Section 6.3: Macro Information:
     Each macro unit ends with an entry
     containing an opcode of 0. */
@@ -105,15 +104,12 @@ struct Dwarf_Macro_Forms_s dw5formsarray[] = {
     {DW_MACRO_undef_strx,2,dwarf_udata_strx_form},
 };
 
-
-
 /* Represents DWARF 5 macro info */
 /* .debug_macro predefined, in order by value  */
 static const struct Dwarf_Macro_OperationsList_s
     dwarf_default_macro_opslist = {
 13, dw5formsarray
 };
-
 
 static int _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned offset,
@@ -323,7 +319,6 @@ is_defundef(unsigned op)
 }
 #endif /* FOR DEBUGGING */
 
-
 /*  On first call (for this macro_context),
     build_ops_array is FALSE. On second,
     it is TRUE and we know the count so we allocate and fill in
@@ -486,7 +481,6 @@ dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
     return DW_DLV_OK;
 }
 
-
 /*  Here a DW_DLV_NO_ENTRY return means the macro operator
     is not a def/undef operator. */
 int
@@ -593,7 +587,6 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         DECODE_LEB128_UWORD_CK(mdata_copy,stringindex,
             dbg, error,endptr);
         /* mdata_copy is for call below */
-
 
         *index = stringindex;
         *forms_count = lformscount;
@@ -759,7 +752,6 @@ construct_at_path_from_parts(Dwarf_Macro_Context mc)
         mc->mc_at_comp_dir,mc->mc_at_name);
     return mc->mc_file_path;
 }
-
 
 int
 dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
@@ -1151,7 +1143,6 @@ drop_srcfiles(Dwarf_Debug dbg,char ** srcfiles,
     dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
 }
 
-
 static int
 _dwarf_internal_macro_context(Dwarf_Die die,
     Dwarf_Bool        offset_specified,
@@ -1345,7 +1336,6 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     macro_header = macro_offset + section_base;
     macro_data = macro_header;
     section_end = section_base +section_size;
-
 
     macro_context = (Dwarf_Macro_Context)
         _dwarf_get_alloc(dbg,DW_DLA_MACRO_CONTEXT,1);

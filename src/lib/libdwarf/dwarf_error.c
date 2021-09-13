@@ -107,7 +107,6 @@ dwarf_error_creation(Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
 }
 
-
 void
 _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval)
@@ -150,7 +149,6 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
                     (unsigned long)errptr,
                     __LINE__,__FILE__);
 #endif /* DEBUG */
-
 
             } else {
                 errptr->er_static_alloc = DE_MALLOC;
@@ -202,7 +200,6 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     return;
 }
 
-
 Dwarf_Unsigned
 dwarf_errno(Dwarf_Error error)
 {
@@ -220,7 +217,6 @@ dwarf_errmsg_by_number(Dwarf_Unsigned errornum )
     }
     return ((char *) &_dwarf_errmsgs[errornum][0]);
 }
-
 
 /*
 */

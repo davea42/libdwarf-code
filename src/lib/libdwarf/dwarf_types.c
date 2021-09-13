@@ -62,7 +62,6 @@ dwarf_get_types(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
 
-
     return _dwarf_internal_get_pubnames_like_data(dbg,
         ".debug_typenames",
         dbg->de_debug_typenames.dss_data,
@@ -90,7 +89,6 @@ dwarf_types_dealloc(Dwarf_Debug dbg, Dwarf_Type * dwgl,
     return;
 }
 
-
 int
 dwarf_typename(Dwarf_Type type_in,
     char **ret_name,
@@ -107,7 +105,6 @@ dwarf_typename(Dwarf_Type type_in,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_type_die_offset(Dwarf_Type type_in,
     Dwarf_Off * ret_offset, Dwarf_Error * error)
@@ -117,7 +114,6 @@ dwarf_type_die_offset(Dwarf_Type type_in,
     return dwarf_global_die_offset(type, ret_offset, error);
 }
 
-
 int
 dwarf_type_cu_offset(Dwarf_Type type_in,
     Dwarf_Off * ret_offset, Dwarf_Error * error)
@@ -126,7 +122,6 @@ dwarf_type_cu_offset(Dwarf_Type type_in,
 
     return dwarf_global_cu_offset(type, ret_offset, error);
 }
-
 
 int
 dwarf_type_name_offsets(Dwarf_Type type_in,

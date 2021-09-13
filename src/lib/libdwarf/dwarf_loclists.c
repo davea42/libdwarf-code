@@ -414,7 +414,6 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  We return a pointer to an array of contexts
     (not context pointers through *cxt if
     we succeed and are returning DW_DLV_OK.
@@ -505,8 +504,6 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     *count = chainlength;
     return DW_DLV_OK;
 }
-
-
 
 /*  Used by dwarfdump to print raw loclists data.
     Loads all the .debug_loclists[.dwo]  headers and
@@ -866,7 +863,6 @@ int dwarf_get_loclist_lle(Dwarf_Debug dbg,
         error);
     return res;
 }
-
 
 static int
 _dwarf_which_loclists_context(Dwarf_Debug dbg,
@@ -1258,7 +1254,6 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
 
 int
 dwarf_get_loclists_entry_fields(

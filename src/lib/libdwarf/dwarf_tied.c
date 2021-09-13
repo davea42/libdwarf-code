@@ -82,7 +82,6 @@ _dwarf_tied_make_entry(Dwarf_Sig8 *key, Dwarf_CU_Context val)
     return e;
 }
 
-
 /*  Tied data Key is Dwarf_Sig8.
     A hash needed because we are using a hash search
     here. Would not be needed for the other tree searchs
@@ -117,7 +116,6 @@ _dwarf_tied_compare_function(const void *l, const void *r)
     return 0;
 }
 
-
 void
 _dwarf_tied_destroy_free_node(void*nodep)
 {
@@ -125,7 +123,6 @@ _dwarf_tied_destroy_free_node(void*nodep)
     free(enp);
     return;
 }
-
 
 /*  This presumes only we are reading the debug_info
     CUs from tieddbg. That is a reasonable
@@ -172,7 +169,6 @@ _dwarf_loop_reading_debug_info_for_cu(
         Dwarf_Sig8 signature;
         Dwarf_Bool has_signature = FALSE;
         Dwarf_Unsigned typeoffset = 0;
-
 
         memset(&signature,0,sizeof(signature));
         sres = _dwarf_next_cu_header_internal(tieddbg,
@@ -225,7 +221,6 @@ _dwarf_loop_reading_debug_info_for_cu(
         Pretend ok.  Caller will check for success. */
     return DW_DLV_OK;
 }
-
 
 /* If out of memory just return DW_DLV_NO_ENTRY.
 */

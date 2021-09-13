@@ -56,7 +56,6 @@ struct ranges_entry {
     Dwarf_Ranges cur;
 };
 
-
 static void
 free_allocated_ranges( struct ranges_entry *base)
 {

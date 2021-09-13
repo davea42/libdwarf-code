@@ -88,7 +88,6 @@ dwarf_vars_dealloc(Dwarf_Debug dbg, Dwarf_Var * dwgl,
     return;
 }
 
-
 int
 dwarf_varname(Dwarf_Var var_in,
     char **ret_varname,
@@ -105,7 +104,6 @@ dwarf_varname(Dwarf_Var var_in,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_var_die_offset(Dwarf_Var var_in,
     Dwarf_Off * returned_offset, Dwarf_Error * error)
@@ -116,7 +114,6 @@ dwarf_var_die_offset(Dwarf_Var var_in,
 
 }
 
-
 int
 dwarf_var_cu_offset(Dwarf_Var var_in,
     Dwarf_Off * returned_offset, Dwarf_Error * error)
@@ -125,7 +122,6 @@ dwarf_var_cu_offset(Dwarf_Var var_in,
 
     return dwarf_global_cu_offset(var, returned_offset, error);
 }
-
 
 int
 dwarf_var_name_offsets(Dwarf_Var var_in,

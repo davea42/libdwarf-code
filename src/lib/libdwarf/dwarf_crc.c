@@ -25,7 +25,6 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
-
 #include <config.h>
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t */

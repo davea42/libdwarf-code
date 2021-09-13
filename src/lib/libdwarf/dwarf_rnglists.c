@@ -74,8 +74,6 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 }
 #endif /* 0 */
 
-
-
 /*  Used in case of error reading the
     rnglists headers (not referring to Dwarf_Rnglists_Head
     here), to clean up. */
@@ -316,7 +314,6 @@ _dwarf_internal_read_rnglists_header(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  We return a pointer to an array of contexts
     (not context pointers) through *cxt if
     we succeed and are returning DW_DLV_OK.
@@ -409,8 +406,6 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
     *count = chainlength;
     return DW_DLV_OK;
 }
-
-
 
 /*  Used by dwarfdump to print raw rnglists data.
     Loads all the .debug_rnglists[.dwo]  headers and
@@ -754,7 +749,6 @@ int dwarf_get_rnglist_rle(
     return res;
 }
 
-
 static int
 _dwarf_which_rnglists_context(Dwarf_Debug dbg,
     Dwarf_CU_Context ctx,
@@ -920,7 +914,6 @@ build_array_of_rle(Dwarf_Debug dbg,
     Dwarf_Bool foundbaseaddr        = FALSE;
     int done = FALSE;
     Dwarf_Bool no_debug_addr_available = FALSE;
-
 
     if (rctx->rh_cu_base_address_present) {
         /*  The CU DIE had DW_AT_low_pc

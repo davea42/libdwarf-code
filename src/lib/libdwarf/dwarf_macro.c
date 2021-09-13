@@ -53,7 +53,6 @@
 #include "dwarf_util.h"
 #include "dwarf_macro.h"
 
-
 #define LEFTPAREN '('
 #define RIGHTPAREN ')'
 #define SPACE ' '
@@ -93,7 +92,6 @@ dwarf_find_macro_value_start(char *str)
     return lcp;
 
 }
-
 
 /*
    Try to keep fileindex correct in every Macro_Details
@@ -258,7 +256,6 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     if (maximum_count == 0) {
         max_count = ULONG_MAX;
     }
-
 
     /* how many entries and how much space will they take? */
     endloc = (pnext - macro_base);

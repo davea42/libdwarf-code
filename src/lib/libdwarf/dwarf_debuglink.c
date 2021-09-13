@@ -428,7 +428,6 @@ _dwarf_construct_linkedto_path(
             dwarfstring_string(&joind.js_tmp2));
     }
 
-
     /* Creating a real basename. No slashes. */
     dwarfstring_append(&joind.js_basenamesimple,
         depath+dirnamelen);
@@ -653,7 +652,6 @@ extract_debuglink(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  The definition of .note.gnu.buildid contents (also
     used for other GNU .note.gnu.  sections too. */
 struct buildid_s {
@@ -846,7 +844,6 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
     unsigned    glpath_count_out = 0;
     const char **glpaths = 0;
     const char * path1 = 0;
-
 
     glpath_count_in = dbg->de_gnu_global_path_count;
     glpath_count_out = glpath_count_in+1;

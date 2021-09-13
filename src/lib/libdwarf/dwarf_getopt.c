@@ -86,9 +86,7 @@ dwgetoptresetfortestingonly(void)
 }
 #endif /* FOR DEBUGGING ONLY */
 
-
 static const char *place = EMSG;/* option letter processing */
-
 
 /*  Post Condition:
     if return FALSE then *argerr is set false. */
@@ -150,8 +148,6 @@ dwoptnamematches(
         return TRUE;
     }
 }
-
-
 
 /*  dwgetopt_long
     A reimplementation of  a portion of

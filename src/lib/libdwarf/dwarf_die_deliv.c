@@ -99,7 +99,6 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 }
 #endif
 
-
 /*  New October 2011.  Enables client code to know if
     it is a debug_info or debug_types context. */
 Dwarf_Bool
@@ -216,7 +215,6 @@ is_unknown_UT_value(int ut)
     return TRUE;
 }
 
-
 /*  ASSERT: whichone is a DW_SECT* macro value. */
 Dwarf_Unsigned
 _dwarf_get_dwp_extra_offset(struct Dwarf_Debug_Fission_Per_CU_s* dwp,
@@ -230,7 +228,6 @@ _dwarf_get_dwp_extra_offset(struct Dwarf_Debug_Fission_Per_CU_s* dwp,
     *size = dwp->pcu_size[whichone];
     return sectoff;
 }
-
 
 /*  _dwarf_get_fission_addition_die returns DW_DLV_OK etc.
 */
@@ -405,8 +402,6 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-
-
     /* We are ignoring this. Can get it from DWARF5. */
     cu_context->cc_segment_selector_size = 0;
     *bytes_read_out = (dataptr - data_start);
@@ -460,7 +455,6 @@ read_info_area_length_and_check(Dwarf_Debug dbg,
     *max_cu_global_offset_out = max_cu_global_offset;
     return DW_DLV_OK;
 }
-
 
 /*  In DWARF4  GNU dwp there is a problem.
     We cannot read the CU die  and it's
@@ -928,8 +922,6 @@ reloc_incomplete(int res,Dwarf_Error err)
     return FALSE;
 }
 
-
-
 /*  Returns offset of next compilation-unit thru next_cu_offset
     pointer.
     It sequentially moves from one
@@ -971,7 +963,6 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
     return res;
 }
 
-
 static void
 local_attrlist_dealloc(Dwarf_Debug dbg,
     Dwarf_Signed atcount,
@@ -984,8 +975,6 @@ local_attrlist_dealloc(Dwarf_Debug dbg,
     }
     dwarf_dealloc(dbg,alist,DW_DLA_LIST);
 }
-
-
 
 /*
     For a DWP/DWO the base fields
@@ -1323,7 +1312,6 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     int version = cu_context->cc_version_stamp;
     Dwarf_Sig8 signaturedata;
     int res = 0;
-
 
     signaturedata = dwarfsig8zero;
     signaturedata = cu_context->cc_signature;
@@ -1794,7 +1782,6 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         From  dwo_id in a skeleton CU header (DW_UT_skeleton).
         From a DW_FORM_ref_sig8 ("tu" case).
 
-
     If "tu" request,  the CU_die
     of of the type unit.
     Works on either a dwp package file or a dwo object.
@@ -1948,7 +1935,6 @@ void print_ptr_offset(Dwarf_CU_Context cu_context,
 }
 #endif
 
-
 /*  Validate the sibling DIE. This only makes sense to call
     if the sibling's DIEs have been travsersed and
     dwarf_child() called on each,
@@ -2067,7 +2053,6 @@ _dwarf_fill_in_context_from_abcom(struct Dwarf_Abbrev_Common_s *abcom,
     cu_context->cc_last_abbrev_endptr = abcom->ac_last_abbrev_endptr;
     cu_context->cc_abbrev_offset      = abcom->ac_abbrev_offset;
 }
-
 
 /*  This function does two slightly different things
     depending on the input flag want_AT_sibling.  If
@@ -2661,7 +2646,6 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_child(Dwarf_Die die,
     Dwarf_Die * caller_ret_die,
@@ -2965,7 +2949,6 @@ dwarf_die_abbrev_global_offset(Dwarf_Die die,
     *abbrev_count = dal->abl_count;
     return DW_DLV_OK;
 }
-
 
 /*  New August 2018.
     Because some real compressed sections

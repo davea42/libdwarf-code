@@ -85,7 +85,6 @@ grp_make_entry(unsigned section, unsigned group,const char *name)
     return e;
 }
 
-
 static DW_TSHASHTYPE
 grp_data_hashfunc(const void *keyp)
 {
@@ -187,9 +186,6 @@ _dwarf_section_get_target_group_from_map(Dwarf_Debug dbg,
     return DW_DLV_NO_ENTRY;
 }
 
-
-
-
 /*  New May 2017.  So users can find out what groups (dwo or COMDAT)
     are in the object and how much to allocate so one can get the
     group-section map data. */
@@ -209,14 +205,12 @@ int dwarf_sec_group_sizes(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 static Dwarf_Unsigned map_reccount = 0;
 static struct temp_map_struc_s {
     Dwarf_Unsigned section;
     Dwarf_Unsigned group;
     const char *name;
 } *temp_map_data;
-
 
 static void
 grp_walk_map(const void *nodep,
@@ -368,7 +362,6 @@ grp_walk_for_name(const void *nodep,
         }
     }
 }
-
 
 /* returns TRUE or FALSE */
 int

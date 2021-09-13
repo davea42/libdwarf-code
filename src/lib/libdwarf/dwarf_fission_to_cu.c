@@ -266,7 +266,6 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 static const char *keylist[2] = {
 "cu",
 "tu"

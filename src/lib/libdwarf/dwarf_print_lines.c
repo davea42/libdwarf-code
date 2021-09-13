@@ -225,9 +225,7 @@ print_line_detail(
     dwarfstring_destructor(&m1);
 }
 
-
 #include "dwarf_line_table_reader_common.h"
-
 
 static void
 print_include_directory_details(Dwarf_Debug dbg,
@@ -595,7 +593,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
     Dwarf_Half address_size = 0;
     Dwarf_Unsigned fission_offset = 0;
     unsigned line_version = 0;
-
 
     /* The Dwarf_Debug this die belongs to. */
     Dwarf_Debug dbg = 0;
@@ -991,8 +988,6 @@ print_actuals_and_locals(Dwarf_Debug dbg,
     dwarf_srclines_dealloc_b(line_context);
     return DW_DLV_OK;
 }
-
-
 
 /*  This is support for dwarfdump: making it possible
     for clients wanting line detail info on stdout

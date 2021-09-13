@@ -317,7 +317,6 @@ report_bogus_stmt_list_form(Dwarf_Debug dbg,
     dwarfstring_destructor(&f);
 }
 
-
 /*  Although source files is supposed to return the
     source files in the compilation-unit, it does
     not look for any in the statement program.  In
@@ -801,7 +800,6 @@ _dwarf_internal_srclines(Dwarf_Die die,
         }
     }
 
-
     if (line_ptr_actuals == 0) {
         /* ASSERT: lc_table_count == 1 or lc_table_count == 0 */
         int err_count_out = 0;
@@ -967,7 +965,6 @@ dwarf_get_line_section_name(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_get_line_section_name_from_die(Dwarf_Die die,
     const char **section_name_out,
@@ -1055,7 +1052,6 @@ dwarf_srclines_b(Dwarf_Die die,
     return res;
 }
 
-
 /* New October 2015. */
 int
 dwarf_srclines_from_linecontext(Dwarf_Line_Context line_context,
@@ -1103,7 +1099,6 @@ dwarf_srclines_two_level_from_linecontext(
     return DW_DLV_OK;
 }
 
-
 /* New October 2015. */
 int
 dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
@@ -1146,9 +1141,6 @@ int dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
         (const char *)line_context->lc_compilation_directory;
     return DW_DLV_OK;
 }
-
-
-
 
 /* New October 2015. */
 int
@@ -1238,7 +1230,6 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
     Dwarf_Signed index = index_in;
     int res = 0;
 
-
     if (!line_context || line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
         return DW_DLV_ERROR;
@@ -1290,9 +1281,6 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
     }
     return DW_DLV_OK;
 }
-
-
-
 
 /* New October 2015. */
 int
@@ -1363,8 +1351,6 @@ dwarf_srclines_version(Dwarf_Line_Context line_context,
     return DW_DLV_OK;
 }
 
-
-
 /*  Every line table entry (except DW_DLE_end_sequence,
     which is returned using dwarf_lineendsequence())
     potentially has the begin-statement
@@ -1408,7 +1394,6 @@ dwarf_lineendsequence(Dwarf_Line line,
     *return_bool = (line->li_addr_line.li_l_data.li_end_sequence);
     return DW_DLV_OK;
 }
-
 
 /*  Each 'line' entry has a line-number.
     If the entry is a DW_LNE_end_sequence the line-number is
@@ -1514,7 +1499,6 @@ dwarf_lineoff_b(Dwarf_Line line,
     *ret_lineoff = line->li_addr_line.li_l_data.li_column;
     return DW_DLV_OK;
 }
-
 
 static int
 dwarf_filename(Dwarf_Line_Context context,
@@ -1721,7 +1705,6 @@ static void
 delete_line_context_itself(Dwarf_Line_Context context)
 {
 
-
     Dwarf_Debug dbg = 0;
     Dwarf_File_Entry fe = 0;
 
@@ -1904,7 +1887,6 @@ _dwarf_report_bad_lnct( Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
     dwarfstring_destructor(&f2);
 }
-
 
 static void
 report_ltype_form_issue(Dwarf_Debug dbg,
@@ -2137,7 +2119,6 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
-
 void
 _dwarf_update_chain_list( Dwarf_Chain chain_line,
     Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain)
@@ -2195,7 +2176,6 @@ _dwarf_add_to_files_list(Dwarf_Line_Context context,
     }
     return DW_DLV_OK;
 }
-
 
 int
 _dwarf_line_context_constructor(Dwarf_Debug dbg, void *m)

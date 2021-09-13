@@ -90,8 +90,6 @@ dwarf_weaks_dealloc(Dwarf_Debug dbg, Dwarf_Weak * dwgl,
     return;
 }
 
-
-
 int
 dwarf_weakname(Dwarf_Weak weak_in,
     char **ret_name,
@@ -107,7 +105,6 @@ dwarf_weakname(Dwarf_Weak weak_in,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_weak_die_offset(Dwarf_Weak weak_in,
     Dwarf_Off * weak_off, Dwarf_Error * error)
@@ -117,7 +114,6 @@ dwarf_weak_die_offset(Dwarf_Weak weak_in,
     return dwarf_global_die_offset(weak, weak_off, error);
 }
 
-
 int
 dwarf_weak_cu_offset(Dwarf_Weak weak_in,
     Dwarf_Off * weak_off, Dwarf_Error * error)
@@ -126,7 +122,6 @@ dwarf_weak_cu_offset(Dwarf_Weak weak_in,
 
     return dwarf_global_cu_offset(weak, weak_off, error);
 }
-
 
 int
 dwarf_weak_name_offsets(Dwarf_Weak weak_in,

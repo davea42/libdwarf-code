@@ -133,7 +133,6 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         Dwarf_Small *end_this_arange = 0;
         int res = 0;
 
-
         header_ptr = arange_ptr;
         if (header_ptr >= arange_end_section) {
             free_aranges_chain(dbg,head_chain);

@@ -51,8 +51,6 @@
     slot unused (at least).   So a user request for
     N slots really gives the user N usable slots.  */
 
-
-
 #include "config.h"
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -78,7 +76,6 @@
 #endif /* HAVE_MALLOC_H */
 #include "dwarf_frame.h"
 #include "dwarf_harmless.h"
-
 
 /*  The pointers returned here through errmsg_ptrs_array
     become invalidated by any call to libdwarf. Any call.

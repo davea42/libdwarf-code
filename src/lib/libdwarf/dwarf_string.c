@@ -260,7 +260,6 @@ _dwarfstring_append_zeros(dwarfstring *data, size_t l)
     return res;
 }
 
-
 int dwarfstring_append_printf_s(dwarfstring *data,
     char *format,char *s)
 {

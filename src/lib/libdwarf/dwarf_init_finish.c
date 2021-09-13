@@ -186,7 +186,6 @@ get_basic_section_data(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 static void
 add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
     struct Dwarf_Obj_Access_Section_a_s *doas,
@@ -200,8 +199,6 @@ add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
     secdata->dss_reloc_link = doas->as_link;
     secdata->dss_is_rela = is_rela;
 }
-
-
 
 /*  Used to add the specific information for a debug related section
     Called on each section of interest by section name.
@@ -259,7 +256,6 @@ add_debug_section_info(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
-
 #if 0
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
@@ -286,7 +282,6 @@ all_sig8_bits_zero(Dwarf_Sig8 *val)
     return TRUE;
 }
 #endif
-
 
 /* Return DW_DLV_OK etc. */
 static int
@@ -571,7 +566,6 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         TRUE,err);
     /*  ".debug_macinfo.dwo" is not allowed.  */
 
-
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_macro",
         group_number,
@@ -730,7 +724,6 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     that must be treated like an addend: the compiler did not
     bother to backpatch the DWARF information for these.
 */
-
 
 /*  These help us ignore some sections that are
     irrelevant to libdwarf.  Maybe should use a hash
@@ -1075,8 +1068,6 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 /*  Split dwarf CUs can be in an object with non-split
     or split may be in a separate object.
     If all in one object the default is to deal with group_number
@@ -1188,7 +1179,6 @@ determine_target_group(Dwarf_Unsigned section_count,
             /* Normal non-COMDAT. groupnumber is zero.  */
         }
 
-
         /* BUILDING_MAP.  See also BUILDING_SECTIONS, SETUP_SECTION */
         if (!groupnumber) {
             res =_dwarf_dwo_groupnumber_given_name(scn_name,
@@ -1248,8 +1238,6 @@ determine_target_group(Dwarf_Unsigned section_count,
     return DW_DLV_OK;
 }
 
-
-
 static int
 _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 {
@@ -1286,7 +1274,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         dbg->de_copy_word = _dwarf_memcpy_swap_bytes;
     }
 #endif /* !WORDS_BIGENDIAN */
-
 
     /*  The following de_length_size is Not Too Significant.
         Only used one calculation, and an approximate one
@@ -1844,7 +1831,6 @@ do_decompress_zlib(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 #endif /* HAVE_ZLIB */
-
 
 /*  Load the ELF section with the specified index and set its
     dss_data pointer to the memory where it was loaded.  */

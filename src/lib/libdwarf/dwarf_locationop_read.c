@@ -109,7 +109,6 @@ read_encoded_addr(Dwarf_Small *loc_ptr,
     return DW_DLV_OK;
 }
 
-
 /*  Return DW_DLV_NO_ENTRY when at the end of
     the ops for this block (a single Dwarf_Loccesc
     and multiple Dwarf_Locs will eventually result

@@ -175,7 +175,6 @@ _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
         break;
 #endif /* EM_PPC64 */
 
-
 #if defined(EM_PPC) && defined (R_PPC_ADDR32)
     case EM_PPC:
         r = (0

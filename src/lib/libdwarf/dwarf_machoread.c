@@ -142,7 +142,6 @@ _dwarf_macho_object_access_init(
     Dwarf_Obj_Access_Interface_a **binary_interface,
     int *localerrnum);
 
-
 static Dwarf_Small macho_get_byte_order (void *obj)
 {
     dwarf_macho_object_access_internals_t *macho =
@@ -150,14 +149,12 @@ static Dwarf_Small macho_get_byte_order (void *obj)
     return macho->mo_endian;
 }
 
-
 static Dwarf_Small macho_get_length_size (void *obj)
 {
     dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
     return macho->mo_offsetsize/8;
 }
-
 
 static Dwarf_Small macho_get_pointer_size (void *obj)
 {
@@ -186,7 +183,6 @@ static int macho_get_section_info (void *obj,
 {
     dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
-
 
     if (section_index < macho->mo_dwarf_sectioncount) {
         struct generic_macho_section *sp = 0;
@@ -376,7 +372,6 @@ dwarf_load_macho_header(dwarf_macho_object_access_internals_t *mfp,
     }
     return res;
 }
-
 
 static int
 load_segment_command_content32(
@@ -812,7 +807,6 @@ _dwarf_macho_setup(int fd,
     return res;
 }
 
-
 static Dwarf_Obj_Access_Methods_a const macho_methods = {
     macho_get_section_info,
     macho_get_byte_order,
@@ -909,7 +903,6 @@ _dwarf_macho_object_access_internals_init(
     free(localdoas);
     return DW_DLV_OK;
 }
-
 
 static int
 _dwarf_macho_object_access_init(

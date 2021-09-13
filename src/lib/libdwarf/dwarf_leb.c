@@ -27,7 +27,6 @@
 
 */
 
-
 #include "config.h"
 #include <stdio.h>
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)

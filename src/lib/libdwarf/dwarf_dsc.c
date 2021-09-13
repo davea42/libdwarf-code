@@ -169,7 +169,6 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 int dwarf_discr_list(Dwarf_Debug dbg,
     Dwarf_Small    * blockpointer,
     Dwarf_Unsigned   blocklen,

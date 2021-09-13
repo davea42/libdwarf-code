@@ -151,7 +151,6 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  Read in a cu or tu section and
     return overview information.
 
@@ -423,8 +422,6 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header xuhdr,
     /*  the function returns a pointer to
         the immutable string "tu" or "cu" via
@@ -502,7 +499,6 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     return DW_DLV_OK;
 }
 
-
 static const char * dwp_secnames[] = {
 "No name for zero",
 "DW_SECT_INFO"        /* 1 */ /*".debug_info.dwo"*/,
@@ -552,7 +548,6 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     *name =  dwp_secnames[sec_num];
     return DW_DLV_OK;
 }
-
 
 /*  Rows 0 to U-1
     col 0 to L-1
@@ -656,7 +651,6 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     *sec_size =  size;
     return DW_DLV_OK;
 }
-
 
 static int
 _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,

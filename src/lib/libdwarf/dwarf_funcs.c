@@ -62,7 +62,6 @@ dwarf_get_funcs(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
 
-
     return _dwarf_internal_get_pubnames_like_data(dbg,
         ".debug_funcnames",
         dbg->de_debug_funcnames.dss_data,
@@ -93,8 +92,6 @@ dwarf_funcs_dealloc(Dwarf_Debug dbg, Dwarf_Func * dwgl,
     return;
 }
 
-
-
 int
 dwarf_funcname(Dwarf_Func func_in,
     char **ret_name,
@@ -120,7 +117,6 @@ dwarf_func_die_offset(Dwarf_Func func_in,
     return dwarf_global_die_offset(func, return_offset, error);
 }
 
-
 int
 dwarf_func_cu_offset(Dwarf_Func func_in,
     Dwarf_Off * return_offset, Dwarf_Error * error)
@@ -129,7 +125,6 @@ dwarf_func_cu_offset(Dwarf_Func func_in,
 
     return dwarf_global_cu_offset(func, return_offset, error);
 }
-
 
 int
 dwarf_func_name_offsets(Dwarf_Func func_in,

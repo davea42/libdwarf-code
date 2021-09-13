@@ -29,7 +29,6 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-
 /*  This file reads the parts of a Windows PE
     file appropriate to reading DWARF debugging data.
 */
@@ -102,7 +101,6 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     printf("\n");
 }
 #endif
-
 
 static int _dwarf_pe_object_access_init(
     int  fd,
@@ -203,7 +201,6 @@ pe_section_name_get(dwarf_pe_object_access_internals_t *pep,
     return DW_DLV_OK;
 }
 
-
 static Dwarf_Small
 pe_get_byte_order (void *obj)
 {
@@ -211,7 +208,6 @@ pe_get_byte_order (void *obj)
         (dwarf_pe_object_access_internals_t*)(obj);
     return pep->pe_endian;
 }
-
 
 static Dwarf_Small
 pe_get_length_size (void *obj)
@@ -237,7 +233,6 @@ pe_get_pointer_size (void *obj)
     return pep->pe_pointersize/8;
 }
 
-
 static Dwarf_Unsigned
 pe_get_section_count (void *obj)
 {
@@ -254,7 +249,6 @@ pe_get_section_info (void *obj,
 {
     dwarf_pe_object_access_internals_t *pep =
         (dwarf_pe_object_access_internals_t*)(obj);
-
 
     if (section_index < pep->pe_section_count) {
         struct dwarf_pe_generic_image_section_header *sp = 0;
@@ -277,7 +271,6 @@ pe_get_section_info (void *obj,
     }
     return DW_DLV_NO_ENTRY;
 }
-
 
 static int
 load_optional_header32(dwarf_pe_object_access_internals_t *pep,
@@ -463,7 +456,6 @@ _dwarf_destruct_pe_access(
     return;
 }
 
-
 static int
 dwarf_pe_load_dwarf_section_headers(
     dwarf_pe_object_access_internals_t *pep,int *errcode)
@@ -570,7 +562,6 @@ dwarf_pe_load_dwarf_section_headers(
     }
     return DW_DLV_OK;
 }
-
 
 static int
 dwarf_load_pe_sections(
@@ -891,7 +882,6 @@ _dwarf_pe_object_access_internals_init(
     localdoas = 0;
     return DW_DLV_OK;
 }
-
 
 static int
 _dwarf_pe_object_access_init(

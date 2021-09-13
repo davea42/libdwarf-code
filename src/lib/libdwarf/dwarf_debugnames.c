@@ -597,7 +597,6 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
 
 #define FAKE_LAST_USED 0xffffffff
 
-
 /*  There may be one debug index for an entire object file,
     for multiple CUs or there can be individual indexes
     for some CUs.
@@ -850,7 +849,6 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         Dwarf_Small *ptr = unit_ptr+ index_number *unit_entry_size;
         Dwarf_Small *endptr = dn->dn_indextable_data_end;
 
-
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
             ptr, unit_entry_size,
             error,endptr);
@@ -1084,7 +1082,6 @@ dwarf_dnames_abbrev_by_index(Dwarf_Dnames_Head dn,
 }
 #endif
 
-
 #if 0
 static int
 _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
@@ -1143,7 +1140,6 @@ dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dn,
     return res;
 }
 #endif/* 0 */
-
 
 #if 0
 int
@@ -1236,7 +1232,6 @@ int dwarf_dnames_entrypool(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 #endif
-
 
 #if 0
 /*  Caller, knowing array size needed, passes in arrays

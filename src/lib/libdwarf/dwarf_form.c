@@ -253,7 +253,6 @@ dwarf_dealloc_uncompressed_block(Dwarf_Debug dbg, void * space)
     dwarf_dealloc(dbg, space, DW_DLA_STRING);
 }
 
-
 int
 dwarf_whatform(Dwarf_Attribute attr,
     Dwarf_Half * return_form, Dwarf_Error * error)
@@ -268,7 +267,6 @@ dwarf_whatform(Dwarf_Attribute attr,
     *return_form = attr->ar_attribute_form;
     return DW_DLV_OK;
 }
-
 
 /*
     This function is analogous to dwarf_whatform.
@@ -289,7 +287,6 @@ dwarf_whatattr(Dwarf_Attribute attr,
     *return_attr = (attr->ar_attribute);
     return DW_DLV_OK;
 }
-
 
 /*  Convert an offset within the local CU into a section-relative
     debug_info (or debug_types) offset.
@@ -357,7 +354,6 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-
 /*  A global offset cannot be returned by this interface:
     see dwarf_global_formref().
 
@@ -394,7 +390,6 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     DW_FORM_GNU_str_index
     are not references to .debug_info/.debug_types,
     so they are not allowed here. */
-
 
 int
 dwarf_formref(Dwarf_Attribute attr,
@@ -590,8 +585,6 @@ dwarf_formsig8(Dwarf_Attribute attr,
     return res;
 }
 
-
-
 /*  This finds a target via a sig8 and if
     DWARF4 is likely finding a reference from .debug_info
     to .debug_types.  So the offset may or may not be
@@ -624,7 +617,6 @@ find_sig8_target_as_global_offset(Dwarf_Attribute attr,
     dwarf_dealloc_die(targdie);
     return DW_DLV_OK;
 }
-
 
 /*  Since this returns section-relative debug_info offsets,
     this can represent all REFERENCE forms correctly
@@ -1042,7 +1034,6 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
     return indxres;
 }
 
-
 int
 _dwarf_extract_data16(Dwarf_Debug dbg,
     Dwarf_Small *data,
@@ -1178,7 +1169,6 @@ dwarf_formaddr(Dwarf_Attribute attr,
     return DW_DLV_ERROR;
 }
 
-
 int
 dwarf_formflag(Dwarf_Attribute attr,
     Dwarf_Bool * ret_bool, Dwarf_Error * error)
@@ -1248,7 +1238,6 @@ _dwarf_allow_formudata(unsigned form)
     If DW_FORM_sdata, then signed. Else unknown sign or
     is unsigned.
 */
-
 
 int
 _dwarf_formudata_internal(Dwarf_Debug dbg,
@@ -1367,7 +1356,6 @@ dwarf_formudata(Dwarf_Attribute attr,
         &bytes_read, error);
     return res;
 }
-
 
 int
 dwarf_formsdata(Dwarf_Attribute attr,
@@ -1945,7 +1933,6 @@ dwarf_formstring(Dwarf_Attribute attr,
     return res;
 }
 
-
 int
 _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     Dwarf_Unsigned offset,
@@ -2005,9 +1992,6 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     *return_str = (char *) (tieddbg->de_debug_str.dss_data + offset);
     return DW_DLV_OK;
 }
-
-
-
 
 int
 dwarf_formexprloc(Dwarf_Attribute attr,

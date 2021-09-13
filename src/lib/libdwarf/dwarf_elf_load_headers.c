@@ -50,7 +50,6 @@ calls
             or    calls generic_rel_from_rel64(ep,gsh,relp,grel...
 */
 
-
 #include "config.h"
 #include <stdio.h>
 #ifdef HAVE_STRING_H
@@ -153,7 +152,6 @@ _dwarf_load_elf_section_is_dwarf(const char *sname,
     }
     return FALSE;
 }
-
 
 static int
 is_empty_section(Dwarf_Unsigned type)
@@ -276,9 +274,6 @@ dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t* ep,
     return DW_DLV_OK;
 }
 
-
-
-
 static int
 generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     struct generic_ehdr *ehdr, dw_elf32_ehdr *e,
@@ -344,7 +339,6 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     ep->f_loc_ehdr.g_totalsize = sizeof(dw_elf64_ehdr);
     return DW_DLV_OK;
 }
-
 
 #if 0 /* not used */
 static int
@@ -601,8 +595,6 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
     return DW_DLV_OK;
 }
 
-
-
 static int
 dwarf_generic_elf_load_symbols32(
     dwarf_elf_object_access_internals_t *ep,
@@ -665,7 +657,6 @@ dwarf_generic_elf_load_symbols32(
     free(orig_psym);
     return DW_DLV_OK;
 }
-
 
 static int
 dwarf_generic_elf_load_symbols64(
@@ -1077,7 +1068,6 @@ _dwarf_load_elf_symstr(
     return DW_DLV_OK;
 }
 
-
 static int
 _dwarf_elf_load_sectstrings(
     dwarf_elf_object_access_internals_t *ep,
@@ -1132,7 +1122,6 @@ elf_load_sectheaders32(
     Dwarf_Unsigned generic_count = 0;
     int res = 0;
 
-
     if (count == 0) {
         return DW_DLV_NO_ENTRY;
     }
@@ -1168,7 +1157,6 @@ elf_load_sectheaders64(
     Dwarf_Unsigned generic_count = 0;
     int res = 0;
 
-
     if (count == 0) {
         return DW_DLV_NO_ENTRY;
     }
@@ -1194,7 +1182,6 @@ elf_load_sectheaders64(
     }
     return DW_DLV_OK;
 }
-
 
 static int
 _dwarf_elf_load_a_relx_batch(
@@ -1360,7 +1347,6 @@ _dwarf_elf_load_a_relx_batch(
     return res;
 }
 
-
 /*  Is this rel/rela section related to dwarf at all?
     set oksecnum zero if not. Else set targ secnum.
     Never returns DW_DLV_NO_ENTRY. */
@@ -1514,7 +1500,6 @@ _dwarf_elf_load_sect_namestring(
     return DW_DLV_OK;
 }
 
-
 static int
 elf_load_elf_header32(
     dwarf_elf_object_access_internals_t *ep,int *errcode)
@@ -1658,7 +1643,6 @@ validate_links(
     }
     return DW_DLV_OK;
 }
-
 
 static int
 string_endswith(const char *n,const char *q)
@@ -1838,7 +1822,6 @@ read_gs_section_group(
         Check the relocations of all SHF_GROUP section
         FIXME: algorithm needed.
 
-
     If SHT_GROUP and SHF_GROUP this is GNU groups.
     If no SHT_GROUP and have SHF_GROUP this is
     arm cc groups and we must use relocation information
@@ -1976,7 +1959,6 @@ _dwarf_elf_find_sym_sections(
     }
     return DW_DLV_OK;
 }
-
 
 int
 _dwarf_load_elf_sectheaders(

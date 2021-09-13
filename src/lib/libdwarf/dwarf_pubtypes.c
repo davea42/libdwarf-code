@@ -93,8 +93,6 @@ dwarf_pubtypes_dealloc(Dwarf_Debug dbg, Dwarf_Type * dwgl,
     return;
 }
 
-
-
 int
 dwarf_pubtypename(Dwarf_Type type_in, char **ret_name,
     Dwarf_Error * error)
@@ -108,7 +106,6 @@ dwarf_pubtypename(Dwarf_Type type_in, char **ret_name,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_pubtype_type_die_offset(Dwarf_Type type_in,
     Dwarf_Off * ret_offset,
@@ -119,7 +116,6 @@ dwarf_pubtype_type_die_offset(Dwarf_Type type_in,
     return dwarf_global_die_offset(type, ret_offset, error);
 }
 
-
 int
 dwarf_pubtype_cu_offset(Dwarf_Type type_in,
     Dwarf_Off * ret_offset, Dwarf_Error * error)
@@ -129,7 +125,6 @@ dwarf_pubtype_cu_offset(Dwarf_Type type_in,
     return dwarf_global_cu_offset(type, ret_offset, error);
 
 }
-
 
 int
 dwarf_pubtype_name_offsets(Dwarf_Type type_in,

@@ -54,7 +54,6 @@
     dwarf_get_abbrev() and,
     in dwarf_util.c,  _dwarf_get_abbrev_for_code()
 
-
     When we have a simple .o
     there is at least a hope of iterating through
     the abbrevs meaningfully without knowing
@@ -195,12 +194,10 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-
     *abbr_count = 0;
     if (length) {
         *length = 1;
     }
-
 
     abbrev_ptr = dbg->de_debug_abbrev.dss_data + offset;
     abbrev_section_end =
@@ -316,7 +313,6 @@ dwarf_get_abbrev_tag(Dwarf_Abbrev abbrev,
     *returned_tag = abbrev->dab_tag;
     return DW_DLV_OK;
 }
-
 
 int
 dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,

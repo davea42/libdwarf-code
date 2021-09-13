@@ -142,7 +142,6 @@ dwarf_close_str_offsets_table_access(
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table sot,
     Dwarf_Unsigned index,
@@ -164,7 +163,6 @@ dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table sot,
     *stroffset = val;
     return DW_DLV_OK;
 }
-
 
 /* The minimum possible area .debug_str_offsets header . */
 #define MIN_HEADER_LENGTH  8

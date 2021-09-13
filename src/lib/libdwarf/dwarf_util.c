@@ -125,7 +125,6 @@ dwarf_get_endian_copy_function(Dwarf_Debug dbg)
     return 0;
 }
 
-
 Dwarf_Bool
 _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
 {
@@ -148,7 +147,6 @@ _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg)
     }
     return FALSE;
 }
-
 
 Dwarf_Bool
 _dwarf_file_has_debug_fission_index(Dwarf_Debug dbg)
@@ -182,8 +180,6 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
 }
-
-
 
 int
 _dwarf_internal_get_die_comp_dir(Dwarf_Die die,
@@ -242,7 +238,6 @@ _dwarf_internal_get_die_comp_dir(Dwarf_Die die,
     return resattr;
 }
 
-
 /*  Given a form, and a pointer to the bytes encoding
     a value of that form, val_ptr, this function returns
     the length, in bytes, of a value of that form.
@@ -276,7 +271,6 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     default:
         _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
         return DW_DLV_ERROR;
-
 
     case 0:  return DW_DLV_OK;
 
@@ -928,7 +922,6 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
     return DW_DLV_NO_ENTRY;
 }
 
-
 /*
     We check that:
         areaptr <= strptr.
@@ -970,7 +963,6 @@ _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
     return DW_DLV_ERROR;
 }
 
-
 /*  Return non-zero if the start/end are not valid for the
     die's section.
     If pastend matches the dss_data+dss_size then
@@ -1004,7 +996,6 @@ _dwarf_reference_outside_section(Dwarf_Die die,
     }
     return 0;
 }
-
 
 /*  This calculation used to be sprinkled all over.
     Now brought to one place.
@@ -1271,8 +1262,6 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
     return oldval;
 }
 
-
-
 /* No varargs required */
 int
 _dwarf_printf(Dwarf_Debug dbg,
@@ -1346,7 +1335,6 @@ do {                                 \
         return DW_DLV_OK;            \
     }                                \
 } while (0)
-
 
 /* So we can know a section end even when we do not
     have the section info apriori  It's only
