@@ -1,3 +1,80 @@
+2021-09-13:  David Anderson
+    commit e7cb3d7c880d5ec304646eb29356986b1b7d3447
+
+    A small tool now notices instances of multiple
+    blank lines and eliminates all but one of them.
+    Also notices something like
+             }
+
+        }
+    (with the blank line between) and drops that empty pointless blank line.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-13:  David Anderson
+    commit 7fc73b9a8bb1a50a003f9ecf1fc31e4ecd6fe813
+
+    All the earlier dwarfgen/ChangeLog20xx
+    were left off by 'make dist'
+    and now they apprear properly.
+            modified:   src/bin/dwarfgen/Makefile.am
+
+2021-09-13:  David Anderson
+    commit 43bdde11b898abcc8c338a48959728d2f38b6162
+
+    -" <ERROR. branch/skip target erronous %d>",
+    +" <ERROR. branch/skip target erroneous %d>",
+            modified:   src/bin/dwarfdump/print_die.c
+
+2021-09-13:  David Anderson
+    commit 58920809a408eeac18afb1ca14fa5ba545120ae7
+
+    A recent update changed things.  make dist
+    was now causing test/dummyexecutable to be rebuilt
+    from test/dummyexecutable.c.  That was not intended.
+    So renamed dummyexecutable.c so make cannot make
+    the connection or try to rebuild dummyexecutable.
+
+    This simple change just makes what is going on slightly
+    clearer with respect to the two object sections involved.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    This file should not be in libdwarfp, libdwarfp gets the
+    content from libdwarf source.
+            deleted:    src/lib/libdwarfp/dwarf_string.c
+
+    Added an exit 0 so even if run the script does nothing. As intended!
+    It is really documentation and should not be run.
+            modified:   test/buildingdummy.sh
+            renamed:    test/dummyexecutable.c -> test/dummysourceignore
+
+    The makefile reflects the name changes so the files get into
+    the make dist output.
+            modified:   test/Makefile.am
+
+2021-09-12:  David Anderson
+    commit b70c815780a8658592e76ffdcf5c9f8d8284084a
+
+    Modified libdwarf-internal function names
+    to have a leading _dwarf_
+            modified:   dwarf_frame.c
+            modified:   dwarf_frame.h
+            modified:   dwarf_frame2.c
+
+    Deleted dwarf_frame_get_reg_register() and
+    dwarf_frame_get_reg_expression() as they
+    no longer exist and did not work for recent dwarf.
+            modified:   libdwarf.h
+
+2021-09-11:  David Anderson
+    commit cb86f35166a71eae445715cca9249a18b133745f
+
+    Updated with files changed due to recent
+    deletion of some blank lines.
+            modified:   ChangeLog
+
 2021-09-11:  David Anderson
     commit cccee303f33b8c4dcccaaae236a5922c467eaa77
 
