@@ -126,7 +126,6 @@ _dwarf_gnu_aug_encodings(Dwarf_Debug dbg, char *augmentation,
     Dwarf_Addr * gnu_pers_addr_out,
     Dwarf_Error *error);
 
-
 static int _dwarf_read_encoded_ptr(Dwarf_Debug dbg,
     Dwarf_Small * section_pointer,
     Dwarf_Small * input_field,
@@ -136,8 +135,6 @@ static int _dwarf_read_encoded_ptr(Dwarf_Debug dbg,
     Dwarf_Unsigned * addr,
     Dwarf_Small ** input_field_out,
     Dwarf_Error *error);
-
-
 
 /*  Called by qsort to compare FDE entries.
     Consumer code expects the array of FDE pointers to be
@@ -259,7 +256,6 @@ validate_length(Dwarf_Debug dbg,
     return;
 }
 
-
 #if 0 /* FOR DEBUGGING */
 /* For debugging only. */
 static void
@@ -328,8 +324,6 @@ get_cieptr_given_offset(Dwarf_Unsigned cie_id_value,
     return cieptr;
 }
 
-
-
 /*  Internal function called from various places to create
     lists of CIEs and FDEs.  Not directly called
     by consumer code */
@@ -348,8 +342,6 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     Dwarf_Small *frame_ptr = section_ptr;
     Dwarf_Small *section_ptr_end = section_ptr + section_length;
 
-
-
     /*  New_cie points to the Cie being read, and head_cie_ptr and
         cur_cie_ptr are used for chaining them up in sequence.
         In case cie's are reused aggressively we need tail_cie_ptr
@@ -366,7 +358,6 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         Dwarf_Cie structures.
     */
     Dwarf_Cie *cie_list_ptr = 0;
-
 
     /*  New_fde points to the Fde being created, and head_fde_ptr and
         cur_fde_ptr are used to chain them up. */
@@ -605,7 +596,6 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         cur_fde_ptr = cur_fde_ptr->fd_next;
     }
 
-
     /* Return arguments. */
     *cie_data = cie_list_ptr;
     *cie_element_count = cie_count;
@@ -675,7 +665,6 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     unsigned char gnu_fde_begin_encoding = 0;
     int res = 0;
     Dwarf_Small version = 0;
-
 
     enum Dwarf_augmentation_type augt = aug_unknown;
 
@@ -1027,7 +1016,6 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
 }
 
-
 /*  Internal function, not called by consumer code.
     'prefix' has accumulated the info up thru the cie-id
     and now we consume the rest and build a Dwarf_Fde_s structure.
@@ -1135,7 +1123,6 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
                 }
             }
         }
-
     } else {
         if ((frame_ptr + 2*address_size) > section_ptr_end) {
             _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
@@ -1418,7 +1405,6 @@ _dwarf_find_existing_cie_ptr(Dwarf_Small * cie_ptr,
     return DW_DLV_NO_ENTRY;
 }
 
-
 /*  We have a valid cie_ptr_val that has not been
     turned into an internal Cie yet. Do so now.
     Returns DW_DLV_OK or DW_DLV_ERROR, never
@@ -1482,7 +1468,6 @@ _dwarf_create_cie_from_start(Dwarf_Debug dbg,
     return res;
 
 }
-
 
 /*  This is for gnu eh frames, the 'z' case.
     We find the letter involved
@@ -1879,7 +1864,6 @@ _dwarf_get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
     *size_of_augmentation_data = augdata_size;
     return DW_DLV_OK;
 }
-
 
 /* To properly release all spaced used.
    Earlier approaches (before July 15, 2005)

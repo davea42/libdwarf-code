@@ -68,7 +68,6 @@
         return DW_DLV_ERROR;                         \
     } } while (0)
 
-
 #define MIN(a,b)  (((a) < (b))? a:b)
 
 #if 0 /* FOR DEBUGGING */
@@ -87,7 +86,6 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 static void dump_frame_rule(char *msg,
     struct Dwarf_Reg_Rule_s *reg_rule);
 #endif /* 0 */
-
 
 static int dwarf_initialize_fde_table(Dwarf_Debug dbg,
     struct Dwarf_Frame_s *fde_table,
@@ -153,7 +151,6 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
     without the corresponding Cie.  However, when an Fde frame instr
     sequence is being expanded there must be a valid Cie
     with a pointer to an initial table row.
-
 
     If successful, returns DW_DLV_OK
         And sets returned_count thru the pointer
@@ -1194,7 +1191,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
             /* END DWARF3 new ops. */
 
-
 #ifdef DW_CFA_GNU_window_save
         case DW_CFA_GNU_window_save:
             {
@@ -1397,7 +1393,6 @@ _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
     return DW_DLV_OK;
 }
 
-
 /* Trivial consumer function.
 */
 int
@@ -1467,8 +1462,6 @@ dwarf_get_fde_list_eh(Dwarf_Debug dbg,
     return res;
 }
 
-
-
 /*  For standard dwarf .debug_frame
     cie_id is -1  in a cie, and
     is the section offset in the .debug_frame section
@@ -1499,7 +1492,6 @@ dwarf_get_fde_list(Dwarf_Debug dbg,
         error);
     return res;
 }
-
 
 /*  Only works on dwarf sections, not eh_frame
     because based on DW_AT_MIPS_fde.
@@ -1556,7 +1548,6 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     fde_start_ptr = dbg->de_debug_frame.dss_data;
     fde_ptr = fde_start_ptr + fde_offset;
     fde_end_ptr = fde_start_ptr + dbg->de_debug_frame.dss_size;
-
 
     /*  First read in the 'common prefix' to figure out
         what we are to do with this entry. */
@@ -1705,8 +1696,6 @@ dwarf_get_fde_exception_info(Dwarf_Fde fde,
         fde->fd_offset_into_exception_tables;
     return DW_DLV_OK;
 }
-
-
 
 /*  A consumer code function.
     Given a CIE pointer, return the normal CIE data thru
@@ -2151,8 +2140,6 @@ dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
     return DW_DLV_OK;
 }
 
-
-
 /*  Return pointer to the instructions in the dwarf fde.  */
 int
 dwarf_get_fde_instr_bytes(Dwarf_Fde inFde, Dwarf_Ptr * outinstraddr,
@@ -2209,7 +2196,6 @@ dwarf_get_fde_n(Dwarf_Fde * fde_data,
     *returned_fde = (*(fde_data + fde_index));
     return DW_DLV_OK;
 }
-
 
 /*  Lopc and hipc are extensions to the interface to
     return the range of addresses that are described
@@ -2273,7 +2259,6 @@ dwarf_get_fde_at_pc(Dwarf_Fde * fde_data,
     return DW_DLV_NO_ENTRY;
 }
 
-
 /*  Expands a single frame instruction block
     from a specific cie
     into a n array of Dwarf_Frame_Op-s.
@@ -2334,7 +2319,6 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
     *returned_op_count = instr_count;
     return DW_DLV_OK;
 }
-
 
 /*  Used by dwarfdump -v to print offsets, for debugging
     dwarf info.
@@ -2438,7 +2422,6 @@ dwarf_get_cie_augmentation_data(Dwarf_Cie cie,
     return DW_DLV_OK;
 }
 
-
 /*  Returns  a pointer to target-specific augmentation data
     thru augdata
     and returns the length of the data thru augdata_len.
@@ -2481,7 +2464,6 @@ dwarf_get_fde_augmentation_data(Dwarf_Fde fde,
     *augdata_len = fde->fd_gnu_eh_augmentation_len;
     return DW_DLV_OK;
 }
-
 
 #if 0  /* FOR DEBUGGING */
 /* Used solely for debugging libdwarf. */
@@ -2646,7 +2628,6 @@ dwarf_free_fde_table(struct Dwarf_Frame_s *fde_table)
     fde_table->fr_reg_count = 0;
     fde_table->fr_reg = 0;
 }
-
 
 /*  Return DW_DLV_OK if we succeed. else return DW_DLV_ERROR.
 */

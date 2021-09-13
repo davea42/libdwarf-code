@@ -28,8 +28,6 @@ Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
 
 */
 
-
-
 /*  The dwarf 2.0 standard dictates that only the following
     fields can be read when an unexpected augmentation string
     (in the cie) is encountered: CIE length, CIE_id, version and
@@ -62,7 +60,6 @@ Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
     Handling of cie augmentation strings is necessarly a heuristic.
     See dwarf_frame.c for the currently known augmentation strings.
 
-
     ---START SGI-ONLY COMMENT:
     SGI-IRIX versions of cie or fde  were intended
     to use "z1", "z2" as the
@@ -76,7 +73,6 @@ Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
     into the "_MIPS_eh_region", which describes
     the IRIX CC exception handling tables.
     ---END SGI-ONLY COMMENT
-
 
     GNU .eh_frame has an augmentation string of z[RLP]* (gcc 3.4)
     The similarity to IRIX 'z' (and proposed but never
@@ -217,7 +213,6 @@ enum Dwarf_augmentation_type {
     aug_past_last
 };
 
-
 /*
     This structure contains all the pertinent info for a Cie. Most
     of the fields are taken straight from the definition of a Cie.
@@ -261,7 +256,6 @@ struct Dwarf_Cie_s {
     /*  If 'P' augmentation present, is handler addr. Else
         is zero. */
     Dwarf_Addr     ci_gnu_personality_handler_addr;
-
 
     /*  In creating list of cie's (which will become an array)
         record the position so fde can get it on fde creation. */
@@ -321,7 +315,6 @@ struct Dwarf_Fde_s {
         present:  is address of the
         Language Specific Data Area (LSDA). If not 'L" is zero. */
 
-
     /* The following 3 are about the Elf section the FDEs come from.*/
     Dwarf_Small * fd_section_ptr;
     Dwarf_Unsigned fd_section_length;
@@ -340,7 +333,6 @@ struct Dwarf_Fde_s {
     Dwarf_Bool    fd_have_fde_tab;
 
 };
-
 
 int
 _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
@@ -376,8 +368,6 @@ int _dwarf_cie_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Off *   /*cie_off */,
     Dwarf_Error * /*err*/);
 
-
-
 int _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
     int version,
     Dwarf_Debug dbg,
@@ -385,7 +375,6 @@ int _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
     unsigned long *size,
     Dwarf_Unsigned *return_address_register,
     Dwarf_Error *error);
-
 
 /*  Temporary recording of crucial cie/fde prefix data.
     Vastly simplifies some argument lists.  */
@@ -432,7 +421,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Addr  * subsequent_pc,
     Dwarf_Error * error);
 
-
 int _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     Dwarf_Small *frame_ptr_in,
     Dwarf_Small *section_ptr_in,
@@ -460,7 +448,6 @@ int _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     int use_gnu_cie_calc,
     Dwarf_Cie *cie_ptr_out,
         Dwarf_Error *error);
-
 
 int _dwarf_frame_constructor(Dwarf_Debug dbg,void * );
 void _dwarf_frame_destructor (void *);

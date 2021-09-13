@@ -412,7 +412,6 @@ typedef void  (*Dwarf_Handler)(Dwarf_Error /*error*/,
 
 /* Begin libdwarf Object File Interface declarations.
 
-
 As of February 2008 there are multiple dwarf_reader object access
 initialization methods available:
 None of them use libelf as of June 2021.
