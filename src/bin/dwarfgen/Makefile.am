@@ -45,4 +45,14 @@ CMakeLists.txt \
 NEWS \
 README \
 $(dwarfgen_DATA) \
+ChangeLog2011 \
+ChangeLog2012 \
+ChangeLog2013 \
+ChangeLog2014 \
+ChangeLog2015 \
+ChangeLog2016 \
+ChangeLog2017 \
+ChangeLog2018 \
+ChangeLog2019 \
+ChangeLog2020 \
 dwarf-generator.txt 
