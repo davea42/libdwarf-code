@@ -265,7 +265,6 @@ update_compiler_target(const char *producer_name)
             (gcc_compiler && glflags.gf_check_gcc_compiler) ;
     }
 
-
     /* Check for already detected compiler */
     for (index = 1; index <= compilers_detected_count; ++index) {
         const char *name = compilers_detected[index].name;

@@ -241,7 +241,6 @@ print_globals_header(
         info_length);
 }
 
-
 /* Get all the data in .debug_pubnames */
 int
 print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)

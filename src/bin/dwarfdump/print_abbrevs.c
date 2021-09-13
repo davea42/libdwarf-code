@@ -44,7 +44,6 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 #define TRUE  1
 #define FALSE 0
 
-
 /* The following relevent for one specific Linker. */
 #define SNLINKER_MAX_ATTRIB_COUNT  16
 /*  a warning limit which is arbitrary but
@@ -519,7 +518,6 @@ print_abbrevs(Dwarf_Debug dbg,Dwarf_Error* paerr)
         *paerr = 0;
     }
 
-
     for (loopct = 0; ; ++loopct) {
         tres = print_all_abbrevs_for_cu(dbg,offset,
             abbrev_num,&length,&abbrev_num_ret,paerr);
@@ -536,7 +534,6 @@ print_abbrevs(Dwarf_Debug dbg,Dwarf_Error* paerr)
         abbrev_num = abbrev_num_ret;
     }
 }
-
 
 /*  Abbreviations array info for checking  abbrev tags.
     The [zero] entry is not used.
@@ -708,7 +705,6 @@ check_reused_code(Dwarf_Unsigned abbrev_code,
         }
     }
 }
-
 
 /* Calculate the number of abbreviations for the
    current CU and set up basic abbreviations array info,

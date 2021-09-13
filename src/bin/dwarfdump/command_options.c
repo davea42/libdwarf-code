@@ -974,7 +974,6 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"search-regex-count",    dwrequired_argument, 0,
     OPT_SEARCH_REGEX_COUNT   },
 
-
 /* Help & Version. */
 {"help",          dwno_argument, 0, OPT_HELP         },
 {"verbose",       dwno_argument, 0, OPT_VERBOSE      },
@@ -2015,7 +2014,6 @@ insert_debuglink_path(char *p)
     return DW_DLV_OK;
 }
 
-
 /*  Option --add-debuglink-path=<text> */
 void arg_add_debuglink_path(void)
 {
@@ -2032,7 +2030,6 @@ void arg_add_debuglink_path(void)
     }
     arg_debuglink_path_invalid();
 }
-
 
 /*  Option '-S any=' */
 void arg_search_any(void)

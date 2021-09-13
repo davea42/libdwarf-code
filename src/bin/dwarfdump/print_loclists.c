@@ -269,8 +269,6 @@ print_entire_loclist(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 int
 print_raw_all_loclists(Dwarf_Debug dbg,
     Dwarf_Error *error)

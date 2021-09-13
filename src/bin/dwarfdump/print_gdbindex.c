@@ -222,7 +222,6 @@ print_addressarea(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 const char *kind_list[] = {
     "unknown(0)  ",
     "type(1)     ",
@@ -262,9 +261,6 @@ get_cu_index_string(struct esb_s *out,
     esb_append_printf_u(out, "(T%4" DW_PR_DUu ")",type_index);
     return;
 }
-
-
-
 
 static int
 print_symtab_entry(Dwarf_Debug dbg,
@@ -484,9 +480,6 @@ print_symboltable(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
-
 int
 print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
 {
@@ -555,7 +548,6 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
     printf("  section size        : "
         "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
         section_size);
-
 
     res = print_culist_array(dbg,gdbindex,&culist_len,err);
     if (res != DW_DLV_OK) {

@@ -37,7 +37,6 @@
 #include "addrmap.h"
 #include "dwarf_tsearch.h"
 
-
 static struct Addr_Map_Entry *
 addr_map_create_entry(Dwarf_Unsigned k,char *name)
 {
@@ -120,7 +119,6 @@ addr_map_find(Dwarf_Unsigned addr,void **tree1)
     addr_map_free_func(e);
     return re;
 }
-
 
 void
 addr_map_destroy(void *map)

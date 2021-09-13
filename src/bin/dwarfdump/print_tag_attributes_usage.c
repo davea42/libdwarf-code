@@ -61,7 +61,6 @@ record_tag_usage(int tag)
 }
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-
 #include "dwarfdump-ta-table.h"
 #include "dwarfdump-ta-ext-table.h"
 

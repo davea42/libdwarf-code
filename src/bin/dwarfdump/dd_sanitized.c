@@ -100,7 +100,6 @@ we turn all non-ASCII to %xx below.
 
 static struct esb_s localesb = {0,0,0,0,0};
 
-
 /*  do_sanity_insert() and no_questionable_chars()
     absolutely must have the same idea of
     questionable characters.  Be Careful.  */

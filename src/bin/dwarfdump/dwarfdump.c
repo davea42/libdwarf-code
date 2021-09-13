@@ -584,7 +584,6 @@ printf_callback_for_libdwarf(void *userdata UNUSEDARG,
     printf("%s",sanitized(data));
 }
 
-
 int
 get_address_size_and_max(Dwarf_Debug dbg,
     Dwarf_Half * size,
@@ -606,7 +605,6 @@ get_address_size_and_max(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
 
 /* dbg is often null when dbgtied was passed in. */
 static void
@@ -1467,7 +1465,6 @@ simple_err_only_return_action(int res,const char *msg)
     printf("%s %s\n",msg,etype);
     return res;
 }
-
 
 /* ARGSUSED */
 static void

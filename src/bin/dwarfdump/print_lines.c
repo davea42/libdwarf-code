@@ -48,7 +48,6 @@ Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
 
 #define DW_LINE_VERSION5 5
 
-
 static void
 print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
 {

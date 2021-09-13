@@ -187,7 +187,6 @@ build_attr_form_base_tree(int*errnum)
     return DW_DLV_OK;
 }
 
-
 /*  The standard main tree for attr_form data.
     Starting out as a simple global variable.
     In general, pass &threekey_attr_form_base
@@ -272,7 +271,6 @@ check_attr_formclass_combination(Dwarf_Debug dbg,
     }
 }
 #endif /* SKIP_AF_CHECK  */
-
 
 void
 record_attr_form_use(
@@ -419,9 +417,6 @@ qsortcountattr(const void * e1in, const void * e2in)
     return 0;
 }
 
-
-
-
 void
 print_attr_form_usage(int pd_dwarf_names_print_on_error)
 {
@@ -551,7 +546,6 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
     }
     printf(localformat, (unsigned)(j+1),
         "Sum found:",localsum,100.0);
-
 
     /* Re-using the following two */
     curform = 0;

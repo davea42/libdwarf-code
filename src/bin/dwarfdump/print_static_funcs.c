@@ -35,7 +35,6 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 #include "print_frames.h"
 #include "dd_sanitized.h"
 
-
 /* Get all the data in .debug_funcnames
    An SGI extension.
    (For a long time, erroneously called .debug_static_funcs here).

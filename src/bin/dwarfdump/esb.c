@@ -269,9 +269,7 @@ esb_append(struct esb_s *data, const char * in_string)
     }
 }
 
-
 /*  Always returns an empty string or a non-empty string. Never 0. */
-
 
 char*
 esb_get_string(struct esb_s *data)
@@ -281,7 +279,6 @@ esb_get_string(struct esb_s *data)
     }
     return data->esb_string;
 }
-
 
 /*  Sets esb_used_bytes to zero. The string is not freed and
     esb_allocated_size is unchanged.  */
@@ -294,7 +291,6 @@ esb_empty_string(struct esb_s *data)
     data->esb_used_bytes = 0;
     data->esb_string[0] = 0;
 }
-
 
 /*  Return esb_used_bytes. */
 size_t
@@ -327,7 +323,6 @@ esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen)
     data->esb_fixed = 1;
 }
 
-
 /*  The string is freed, contents of *data set to zeros. */
 void
 esb_destructor(struct esb_s *data)
@@ -346,7 +341,6 @@ esb_destructor(struct esb_s *data)
     }
     esb_constructor(data);
 }
-
 
 /*  To get all paths in the code tested, this sets the
     initial allocation/reallocation file-static

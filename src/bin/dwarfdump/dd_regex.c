@@ -152,7 +152,6 @@
 #define DW_DLV_ERROR     1
 #endif /* DW_DLV_OK */
 
-
 #define MAXNFA  2048
 
 #define OKP     1
@@ -193,7 +192,6 @@ static int  sta = NOP;       /* status of lastpat */
 static CHAR bittab[BITBLK];  /* bit table for CCL */
 /* pre-set bits...   */
 static CHAR bitarr[] = {1,2,4,8,16,32,64,128};
-
 
 #ifdef DEBUG
 static void nfadump(CHAR *);
@@ -367,7 +365,6 @@ dd_re_comp(const char *pat)
 #endif /* DEBUG */
     return DW_DLV_OK;
 }
-
 
 static char *bol;
 static int dd_pmatch(const char *, CHAR *,char **str_out,

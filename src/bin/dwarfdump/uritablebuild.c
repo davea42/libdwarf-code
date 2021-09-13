@@ -124,7 +124,6 @@ print_entry(int c)
     printf("1, /* 0x%02x */\n",c);
 }
 
-
 int
 main()
 {

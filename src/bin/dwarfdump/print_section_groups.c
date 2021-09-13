@@ -171,7 +171,6 @@ groups_restore_subsidiary_flags(void)
 #endif
 }
 
-
 /*  NEW May 2017.
     Has a side effect of using the local table set up by
     print_section_groups_data() and then frees the

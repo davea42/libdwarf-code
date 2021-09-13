@@ -406,9 +406,6 @@ translate_from_uri(const char * input, struct esb_s* out)
     }
 }
 
-
-
-
 #ifdef TEST
 
 unsigned int errcnt = 0;
@@ -427,7 +424,6 @@ mytestfrom(const char * in,const char *expected,int testnum)
     esb_destructor(&out);
 }
 
-
 static void
 mytest(char *in,char *expected,int testnum)
 {
@@ -441,7 +437,6 @@ mytest(char *in,char *expected,int testnum)
     }
     esb_destructor(&out);
 }
-
 
 int
 main()

@@ -53,7 +53,6 @@ strcmp_for_macdef_tdel( const void *l,const void *r)
     return strcmp(ls,rs);
 }
 
-
 /*  Extensible array, of pointers to file records .  */
 #define MACFILE_ARRAY_START_LEN 100
 unsigned macfile_array_len;
@@ -62,7 +61,6 @@ unsigned macfile_array_next_to_use;
     records with the file name string appended, so
     not all the same length.   */
 macfile_entry ** macfile_array;
-
 
 static int macdef_tree_compare_func(const void *l, const void *r);
 static void macdef_tree_insert(char *key,
@@ -124,9 +122,6 @@ destroy_macro_globals(void)
     macfile_stack_next_to_use = 0;
 }
 
-
-
-
 static int
 print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
     char **dwarf_srcfiles,
@@ -141,7 +136,6 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
     unsigned fileno,
     int level,
     Dwarf_Error *err);
-
 
 static const char *nonameavail = "<no-name-available>";
 static const char *nofileseenyet =
@@ -459,7 +453,6 @@ expand_array_file_if_required(void)
         macfile_array = newar;
     }
 }
-
 
 static void
 add_array_file_entry(unsigned k,
@@ -1384,7 +1377,6 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     return res;
 }
 
-
 static int
 macdef_tree_compare_func(const void *l, const void *r)
 {
@@ -1578,7 +1570,6 @@ print_macdef_warn(unsigned i, macdef_entry *m,unsigned warncount)
     printf("  %s",m->md_defined?"defined":"undefined");
     printf("\n");
 }
-
 
 /*  Check the macdefundef tree for the unusual
     Check the macfile_stack for leftovers.

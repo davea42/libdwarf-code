@@ -139,8 +139,6 @@ helpertree_find(Dwarf_Unsigned offset,struct Helpertree_Base_s *base)
     return re;
 }
 
-
-
 void
 helpertree_clear_statistics(struct Helpertree_Base_s *base)
 {

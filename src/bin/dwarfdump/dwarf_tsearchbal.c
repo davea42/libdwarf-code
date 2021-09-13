@@ -51,7 +51,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     balance factor of the pointed-to subtrees (-1,0, or 1).
     And we always know if we are adding or deleting a node.
 
-
 */
 
 #ifdef _WIN32
@@ -399,7 +398,6 @@ tsearch_inner_do_insert(const void *key,
     return q;
 }
 
-
 /*  Algorithm A of Knuth 6.2.3, balanced tree.
     key is pointer to a user data area containing the key
     and possibly more.
@@ -586,7 +584,6 @@ dwarf_tsearch(const void *key, void **headin,
     return (void *)&(r->keyptr);
 }
 
-
 /* Search without insert. */
 void *
 dwarf_tfind(const void *key, void *const*rootp,
@@ -612,9 +609,6 @@ dwarf_tfind(const void *key, void *const*rootp,
     }
     return NULL;
 }
-
-
-
 
 /*  Used for an array of records used in the deletion code.
     k == 0 for the special head node which is never matched by
@@ -989,7 +983,6 @@ dwarf_twalk_inner(struct ts_entry *p,
     }
     action((const void *)(&(p->keyptr)),dwarf_endorder,level);
 }
-
 
 void
 dwarf_twalk(const void *rootp,

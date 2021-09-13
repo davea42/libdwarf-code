@@ -29,7 +29,6 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
 /*  SGI has moved from the Crittenden Lane address.  */
 
-
 #include "globals.h"
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */

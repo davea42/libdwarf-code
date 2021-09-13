@@ -484,7 +484,6 @@ ensure_has_no_more_tokens(char *cp,
     return TRUE;
 }
 
-
 /*  There may be many  beginabi: lines in a dwarfdump.conf file,
     find the one we want and return its file offset.
 */
@@ -665,7 +664,6 @@ parsebeginabi(char *cp, const char *fname, const char *abiname,
     size_t abinamelen = strlen(abiname);
     struct token_s tok;
 
-
     cp = cp + clen + 1;
     cp = skipwhite(cp);
     get_token(cp, &tok);
@@ -746,8 +744,6 @@ make_a_number(char *cmd, const char *filename, unsigned long
     }
     *val_out = val;
     return TRUE;
-
-
 
 }
 
@@ -880,7 +876,6 @@ parsecfa_reg(char *cp, const char *fname, unsigned long lineno,
     return res;
 }
 
-
 /* We are guaranteed it's an initial_reg_value: command,
    parse it and put the reg value where it will be remembered.
 */
@@ -983,8 +978,6 @@ parseundefined_val_reg(char *cp, const char *fname,
     return res;
 }
 
-
-
 /* We are guaranteed it's a table size command, parse it
     and record the table size.
 */
@@ -1053,7 +1046,6 @@ parseaddress_size(char *cp, const char *fname, unsigned long lineno,
     return res;
 }
 
-
 /*  We are guaranteed it's an endabi: command, parse it and
     check we have the right abi.
 */
@@ -1065,7 +1057,6 @@ parseendabi(char *cp, const char *fname,
     size_t clen = comtab->namelen;
     struct token_s tok;
     int res = 0;
-
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tok);
@@ -1097,9 +1088,6 @@ parseincludeabi(char *cp, const char *fname, unsigned long lineno,
     res = ensure_has_no_more_tokens(cp, fname, lineno);
     return res;
 }
-
-
-
 
 /*  Return TRUE if we succeeded and filed in *out.
     Return FALSE if we failed (and fill in nothing).
@@ -1135,7 +1123,6 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             fname, lineno);
         return FALSE;
     }
-
 
     if (first_time_done == 0) {
         finish_comtable_setup();

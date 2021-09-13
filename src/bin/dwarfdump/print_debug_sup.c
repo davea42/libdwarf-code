@@ -42,7 +42,6 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #define TRUE 1
 #define FALSE 0
 
-
 int
 print_debug_sup(Dwarf_Debug dbg,
     Dwarf_Error *error)

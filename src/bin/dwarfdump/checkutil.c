@@ -30,7 +30,6 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
    These simple list-processing functions are in support
    of checking DWARF for compiler-errors of various sorts.
 
-
 */
 
 #include "globals.h" /* It includes config.h  */

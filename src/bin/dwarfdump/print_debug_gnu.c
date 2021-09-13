@@ -53,7 +53,6 @@ char *ikind_types[8] = {
     "unknown6",
     "unknown7" };
 
-
 static int
 print_block_entries(
     Dwarf_Debug dbg UNUSEDARG,
@@ -66,7 +65,6 @@ print_block_entries(
 {
     Dwarf_Unsigned i = 0;
     int res = 0;
-
 
     printf("    [   ] offset     Kind        Name\n");
 
@@ -257,7 +255,6 @@ print_selected_attributes(Dwarf_Debug dbg,
         esb_destructor(&m);
     }
 }
-
 
 static int
 print_die_basics(Dwarf_Debug dbg,

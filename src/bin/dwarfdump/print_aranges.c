@@ -37,7 +37,6 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 #include "print_sections.h"
 
-
 static int
 do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     Dwarf_Off cu_die_offset,Dwarf_Bool first_cu,
@@ -50,7 +49,6 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     /*  .debug_types has no address ranges, only .debug_info[.dwo]
         has them.*/
     int is_info = 1;
-
 
     dres = dwarf_get_arange_cu_header_offset(
         arange_buf[i],&cuhdroff,err);

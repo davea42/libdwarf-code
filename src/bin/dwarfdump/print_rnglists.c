@@ -245,8 +245,6 @@ print_entire_rangeslist(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 /* For printing the raw rangelist data from .debug_rnglists */
 int
 print_raw_all_rnglists(Dwarf_Debug dbg,

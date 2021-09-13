@@ -111,8 +111,6 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     struct esb_s *string_out,
     Dwarf_Error *err);
 
-
-
 static int get_form_values(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     Dwarf_Half * theform, Dwarf_Half * directform,Dwarf_Error *err);
 static void show_form_itself(int show_form,int verbose,
@@ -238,7 +236,6 @@ print_indent_prefix(int prespaces,int indent,int postspaces)
     }
 }
 
-
 struct die_stack_data_s {
     Dwarf_Die die_;
     /*  sibling_die_globaloffset_ is set while processing the DIE.
@@ -260,7 +257,6 @@ static struct die_stack_data_s die_stack[DIE_STACK_SIZE];
 #define EMPTY_DIE_STACK_ENTRY(i) { die_stack[i] = empty_stack_entry; }
 #define SET_DIE_STACK_SIBLING(x) {                          \
     die_stack[die_stack_indent_level].sibling_die_globaloffset_ = x; }
-
 
 static void
 report_die_stack_error(Dwarf_Debug dbg, Dwarf_Error *err)
@@ -512,7 +508,6 @@ dealloc_all_srcfiles(Dwarf_Debug dbg,
     dwarf_dealloc(dbg,srcfiles, DW_DLA_LIST);
 }
 
-
 /*  Higher stack level numbers must have a smaller sibling
     offset than lower or else the sibling offsets are wrong.
     Stack entries with sibling_die_globaloffset_ 0 must be
@@ -625,7 +620,6 @@ form_refers_local_info(Dwarf_Half form)
     return TRUE;
 }
 
-
 /* process each compilation unit in .debug_info */
 int
 print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info,
@@ -700,7 +694,6 @@ print_cu_hdr_cudie(Dwarf_Debug dbg UNUSEDARG,
         (Dwarf_Unsigned)(overall_offset - offset));
     printf(":\n");
 }
-
 
 static  void
 print_cu_hdr_std(Dwarf_Unsigned cu_header_length,
@@ -884,7 +877,6 @@ empty_signature(const Dwarf_Sig8 *sigp)
     }
     return TRUE;
 }
-
 
 static int
 print_macinfo_for_cu(
@@ -1939,7 +1931,6 @@ dealloc_local_atlist(Dwarf_Debug dbg,
     dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
 }
 
-
 /* Print one die on error and verbose or non check mode */
 #define PRINTING_DIES (glflags.gf_do_print_dwarf || \
     (glflags.gf_record_dwarf_error && \
@@ -2381,7 +2372,6 @@ dd_get_integer_and_name(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned uval = 0;
 
-
     int vres = dwarf_formudata(attrib, &uval, err);
     /* if it is not formudata, lets check further */
     DROP_ERROR_INSTANCE(dbg,vres,*err);
@@ -2436,9 +2426,6 @@ dd_get_integer_and_name(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
-
-
 
 /*  Called for DW_AT_SUN_func_offsets
     We need a 32-bit signed number here.
@@ -2529,7 +2516,6 @@ get_rangelist_type_descr(Dwarf_Ranges *r)
     /* Impossible. */
     return "Unknown";
 }
-
 
 /*  The string produced here will need to be passed
     through sanitized() before actually printing.
@@ -3035,7 +3021,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         /* ok */
     }
 
-
     switch (attr) {
     case DW_AT_specification:
     case DW_AT_abstract_origin:
@@ -3191,7 +3176,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
 /*  Traverse one DIE in order to detect
     self references to DIES.
-
 
     This fails to deal with changing CUs via global
     references so srcfiles and cnt
@@ -3622,7 +3606,6 @@ have_a_search_match(const char *valname,const char *atname)
     return FALSE;
 }
 
-
 /*  Use our local die_stack to try to determine
     signedness of the DW_AT_discr_list
     LEB numbers.   Returns -1 if we know
@@ -3818,7 +3801,6 @@ print_location_description(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /* This was inside print_attribute() */
 static void
 check_attr_tag_combination(Dwarf_Debug dbg,
@@ -3867,7 +3849,6 @@ remark_wrong_string_format(Dwarf_Half attr,
     return;
 #undef VSFBUFSZ
 }
-
 
 static int
 print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
@@ -5294,7 +5275,6 @@ dealloc_skip_branch_array(struct OpBranchHead_s *op_branch_checking)
     }
 }
 
-
 static Dwarf_Bool
 op_is_skip_or_branch(Dwarf_Debug dbg,
     Dwarf_Locdesc_c exprc,
@@ -5331,7 +5311,6 @@ op_is_skip_or_branch(Dwarf_Debug dbg,
     }
     return FALSE;
 }
-
 
 int
 dwarfdump_print_location_operations(Dwarf_Debug dbg,
@@ -5387,7 +5366,6 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     dealloc_skip_branch_array(&op_branch_checking);
     return DW_DLV_OK;
 }
-
 
 static int
 op_has_no_operands(Dwarf_Small op)
@@ -6988,8 +6966,6 @@ expand_rnglist_entries(
     return DW_DLV_OK;
 }
 
-
-
 /* DWARF5 .debug_rnglists[.dwo] only. */
 static int
 handle_rnglists( Dwarf_Attribute attrib,
@@ -8206,7 +8182,6 @@ format_sig8_string(Dwarf_Sig8*data, struct esb_s *out)
             (unsigned char)(data->signature[i]));
     }
 }
-
 
 static int
 get_form_values( Dwarf_Debug dbg UNUSEDARG,

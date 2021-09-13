@@ -116,7 +116,6 @@ dealloc_local_atlist(Dwarf_Debug dbg,
     dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
 }
 
-
 /*  Executing this for a reporting side effect,
     PRINT_CU_INFO() in dwarfdump.c. */
 static void
@@ -1154,7 +1153,6 @@ print_one_fde(Dwarf_Debug dbg,
             Dwarf_Bool   has_more_rows = 0;
             Dwarf_Addr   subsequent_pc = 0;
 
-
             int fires = dwarf_get_fde_info_for_cfa_reg3_b(fde,
                 j,
                 &value_type,
@@ -1382,7 +1380,6 @@ print_one_fde(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
 
 /*  Print a cie.  Gather the print logic here so the
     control logic deciding what to print
@@ -1620,7 +1617,6 @@ lastop_pointless(int op)
     return false;
 }
 
-
 /*  iregion_start, iregion_end are the overall
     block of fde/cie instructions.
     idata, idata end are the area next to be read
@@ -1663,7 +1659,6 @@ check_finstr_addrs(unsigned char *iregionstart,
     }
     return DW_DLV_OK;
 }
-
 
 /*  Print the frame instructions in detail
     for a glob of instructions.
@@ -2280,7 +2275,6 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         return;
                     }
 
-
                     instp += uleblen;
                     remaining_len -= uleblen;
                     off += uleblen;
@@ -2540,9 +2534,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     off += block_len;
                 }
 
-
                 break;
-
 
             /* Only in Metaware. Unknown meaning. */
             case DW_CFA_METAWARE_info: {

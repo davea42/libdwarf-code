@@ -48,7 +48,6 @@
         out of global and into something per-open-dbg.
 */
 
-
 #include "globals.h"
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
@@ -76,9 +75,6 @@ unsigned macfile_stack_next_to_use = 0;
 unsigned macfile_stack[MACFILE_STACK_DEPTH_MAX+1];
 unsigned macfile_stack_max_seen;
 
-
-
-
 void *  macro_check_tree;   /* DWARF5 macros */
 void *  macinfo_check_tree; /* DWARF 2,3,4 macros */
 void *  macdefundeftree;    /* DWARF5 macros */
@@ -96,7 +92,6 @@ static Dwarf_Unsigned macro_count_recs(void **base);
 int failcount = 0;
 struct glflags_s glflags;
 #endif /* SELFTEST */
-
 
 static struct Macrocheck_Map_Entry_s *
 macrocheck_map_create_entry(Dwarf_Unsigned offset,
@@ -307,7 +302,6 @@ mark_macro_offset_printed(void **base, Dwarf_Unsigned offset)
     }
 }
 
-
 static struct Macrocheck_Map_Entry_s **mac_as_array = 0;
 static unsigned mac_as_array_next = 0;
 static void
@@ -370,7 +364,6 @@ warnprimeandsecond(struct Macrocheck_Map_Entry_s *r)
         r->mp_refcount_secondary,
         r->mp_refcount_secondary);
 }
-
 
 int
 print_macrocheck_statistics(const char *name,void **tsbase,
@@ -627,7 +620,6 @@ macro_import_stack_cleanout(void)
 {
     macro_import_stack_next_to_use = 0;
 }
-
 
 #ifdef SELFTEST
 int
