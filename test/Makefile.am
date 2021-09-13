@@ -206,13 +206,15 @@ AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; \
     DWCOMPILERFLAGS='$(DWARF_CFLAGS_WARN)';\
     export DWCOMPILERFLAGS ;
 
+### dummysource ignore is to be kept, but not used. 
+### See buildingdummy.sh which is also not to be used.
 EXTRA_DIST= \
 buildingdummy.sh \
 CMakeLists.txt \
 debuglink2.base \
 debuglink.base \
 dummyexecutable \
-dummyexecutable.c \
+dummysourceignore \
 dummyexecutable.debug \
 dwarf_leb_test.c \
 dwarf_tied_test.c \

@@ -609,7 +609,6 @@ _dwarf_construct_linkedto_path(
     destruct_js(&joind);
     return DW_DLV_OK;
 }
-
 static int
 extract_debuglink(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pdebuglink,
@@ -627,10 +626,7 @@ extract_debuglink(Dwarf_Debug dbg,
     Dwarf_Unsigned secsize = 0;
 
     if (!pdebuglink->dss_data) {
-        res = _dwarf_load_section(dbg, pdebuglink,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
+        return DW_DLV_NO_ENTRY;
     }
     secsize = pdebuglink->dss_size;
     ptr = pdebuglink->dss_data;
@@ -687,10 +683,7 @@ extract_buildid(Dwarf_Debug dbg,
     Dwarf_Unsigned secsize = 0;
 
     if (!pbuildid->dss_data) {
-        res = _dwarf_load_section(dbg, pbuildid,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
+        return DW_DLV_NO_ENTRY;
     }
     secsize = pbuildid->dss_size;
     ptr = pbuildid->dss_data;
@@ -767,15 +760,19 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pdebuglink = 0;
     struct Dwarf_Section_s * pbuildid = 0;
 
-    if (!dbg) {
-        _dwarf_error(dbg,error,DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
     if (dbg->de_gnu_debuglink.dss_size) {
         pdebuglink = &dbg->de_gnu_debuglink;
+        res = _dwarf_load_section(dbg, pdebuglink,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
     }
     if (dbg->de_note_gnu_buildid.dss_size) {
         pbuildid = &dbg->de_note_gnu_buildid;
+        res = _dwarf_load_section(dbg, pbuildid,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
     }
     if (!pdebuglink && !pbuildid) {
         return DW_DLV_NO_ENTRY;

@@ -5,7 +5,10 @@
 # It's currently not useable for automated regression testing
 # without more work to make it independent of source/build
 # location.
+# so do not run this.
+exit 1
 d=dummyexecutable
+mv dummysourceignore $d.c
 cc -g $d.c -o $d
 objcopy --only-keep-debug  $d $d.debug
 objcopy --strip-debug      $d
