@@ -66,7 +66,6 @@ int dwarfstring_constructor_static(struct dwarfstring_s *g,
 void dwarfstring_destructor(struct dwarfstring_s *g);
 int dwarfstring_reset(struct dwarfstring_s *g);
 
-
 int dwarfstring_append(struct dwarfstring_s *g,char *str);
 
 /*  When one wants the first 'len' characters of str

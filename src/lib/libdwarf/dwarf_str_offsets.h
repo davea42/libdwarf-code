@@ -29,7 +29,6 @@
 
 */
 
-
 struct  Dwarf_Str_Offsets_Table_s {
     /*  pointers are to dwarf-memory valid till Dwarf_Debug
         is closed..  None are to be deallocated. */
@@ -75,6 +74,5 @@ int
 _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     Dwarf_Error *error);
-
 
 #endif /* DWARF_STR_OFFSETS_H */

@@ -30,8 +30,6 @@ Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
 
 */
 
-
-
 /*  libelf) object access for the generic
     object file interface */
 
@@ -45,6 +43,5 @@ void
 dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface*  obj );
 
 /* End ELF object access for the generic object file interface */
-
 
 #endif

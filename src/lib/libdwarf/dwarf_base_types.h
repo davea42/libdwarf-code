@@ -68,8 +68,6 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
 /* .debug_loc (and .dwo) First header version number is  DWARF5. */
 #define DW_LOC_VERSION5   5
 
-
-
 /* .debug_names new in DWARF5. */
 #define DW_NAMES_VERSION5   5
 
@@ -80,7 +78,6 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
 
 /* .debug_ranges gets a version number in header in DWARF5. */
 #define DW_RANGES_VERSION5 5
-
 
 /* .debug_str_offsets (and .dwo) new in DWARF5. */
 #define DW_STR_OFFSETS_VERSION5   5
@@ -93,10 +90,6 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
 #define DW_CU_INDEX_VERSION5 5
 /* .debug_tu_index new in DWARF5. */
 #define DW_TU_INDEX_VERSION5 5
-
-
-
-
 
 /*  These are allocation type codes for structs that
     are internal to the Libdwarf Consumer library.  */
@@ -137,6 +130,5 @@ typedef struct Dwarf_File_Entry_s *Dwarf_File_Entry;
 typedef struct Dwarf_CU_Context_s *Dwarf_CU_Context;
 typedef struct Dwarf_Hash_Table_s *Dwarf_Hash_Table;
 typedef struct Dwarf_Hash_Table_Entry_s *Dwarf_Hash_Table_Entry;
-
 
 typedef struct Dwarf_Alloc_Hdr_s *Dwarf_Alloc_Hdr;

@@ -37,7 +37,6 @@
 #define EM_AARCH64 183  /* Arm 64 */
 #endif
 
-
 /* Include the definitions only in the case of Windows */
 #ifdef _WIN32
 /* Relocation types for ARM */

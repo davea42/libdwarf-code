@@ -51,7 +51,6 @@ extern "C" {
 #endif /* HAVE_LIBELF_LIBELF_H */
 #endif /* HAVE_LIBELF_H */
 
-
 /* Standard Elf section types. */
 #ifndef SHT_NULL
 #define SHT_NULL 0
@@ -163,7 +162,6 @@ extern "C" {
 #define PF_MASKPROC     0xf0000000
 #endif
 
-
 #ifndef ET_NONE
 #define ET_NONE          0
 #endif
@@ -194,7 +192,6 @@ extern "C" {
 #ifndef ET_HIPROC
 #define ET_HIPROC        0xffff
 #endif
-
 
 #ifndef EM_NONE
 #define EM_NONE          0
@@ -965,7 +962,6 @@ extern "C" {
 #ifndef ELFOSABI_STANDALONE
 #define ELFOSABI_STANDALONE 255
 #endif
-
 
 /* for the producer code. */
 #ifndef R_MIPS_NONE

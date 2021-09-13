@@ -68,7 +68,6 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         leblen = lu_leblen;                                 \
     } while (0)
 
-
 #define DECODE_LEB128_UWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                                    \
         Dwarf_Unsigned lu_leblen = 0;                       \
@@ -172,7 +171,6 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         }                                                        \
     } while (0)
 
-
 /*
    Reads 'source' for 'length' bytes from unaligned addr.
 
@@ -239,7 +237,6 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
         dest = (desttype)_ltmp;                   \
     } while (0)
 #endif
-
 
 /*
     READ_AREA LENGTH reads the length (the older way
@@ -412,14 +409,11 @@ struct Dwarf_Abbrev_Common_s {
     struct Dwarf_Debug_Fission_Per_CU_s *ac_dwp_offsets;
 };
 
-
-
 int _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
     Dwarf_Unsigned code,
     Dwarf_Abbrev_List *list_out,
     Dwarf_Unsigned * highest_known_code,
     Dwarf_Error *error);
-
 
 /* return 1 if string ends before 'endptr' else
 ** return 0 meaning string is not properly terminated.
@@ -491,7 +485,5 @@ _dwarf_leb128_sword_wrapper(Dwarf_Debug dbg,
     Dwarf_Small * endptr,
     Dwarf_Signed *out_value,
     Dwarf_Error * error);
-
-
 
 #endif /* DWARF_UTIL_H */

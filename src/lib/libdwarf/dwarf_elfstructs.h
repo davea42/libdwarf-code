@@ -176,7 +176,6 @@ typedef struct
     TYP(r_addend,8); /* signed */
 } dw_elf64_rela;
 
-
 typedef struct {
     TYP(st_name,4);
     TYP(st_value,4);
@@ -195,7 +194,6 @@ typedef struct {
     TYP(st_size,8);
 } dw_elf64_sym;
 
-
 typedef struct
 {
     TYP(d_tag,4); /* signed */
@@ -207,7 +205,6 @@ typedef struct
     TYP(d_tag,8); /* signed */
     TYP(d_val,8); /* Union in original */
 } dw_elf64_dyn;
-
 
 #ifdef __cplusplus
 }

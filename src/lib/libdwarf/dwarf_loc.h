@@ -103,8 +103,6 @@ struct Dwarf_Loclists_Context_s {
     Dwarf_Small    *lc_endaddr;
 };
 
-
-
 /*  Contains info on an uninterpreted block of data,
     the data is DWARF location expression operators.  */
 struct Dwarf_Block_c_s {
@@ -186,7 +184,6 @@ struct Dwarf_Locdesc_c_s {
         (possibly tied file needed) */
     Dwarf_Bool       ld_index_failed;
     unsigned long    ld_magic;
-
 
     /*  Beginning of active range. This is actually an offset
         of an applicable base address, not a pc value.  */

@@ -27,9 +27,6 @@
 
 */
 
-
-
-
 /*  In a given CU, one of these is (eventually) set up
     for every abbreviation we need to find (and for all
     those earlier in the abbreviations for that CU).

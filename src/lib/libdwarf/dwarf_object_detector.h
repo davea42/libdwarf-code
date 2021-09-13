@@ -36,7 +36,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-
 /*  Declares the interface function.
     outpath is a place you provide, of a length outpath_len
     you consider reasonable,

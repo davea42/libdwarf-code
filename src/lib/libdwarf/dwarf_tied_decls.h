@@ -27,8 +27,6 @@
 
 */
 
-
-
 #define HASHSEARCH
 
 #ifdef HASHSEARCH
@@ -37,7 +35,6 @@
 #else
 #define INITTREE(x,y)
 #endif /* HASHSEARCH */
-
 
 /*  Contexts are in a list in a dbg and
     do not move once established.

@@ -530,7 +530,6 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 return DW_DLV_ERROR;
             }
 
-
             currfile->fi_time_last_mod = lastmod;
             currfile->fi_time_last_mod_present = TRUE;
 
@@ -1144,7 +1143,6 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  Read one line table program. For two-level line tables, this
     function is called once for each table. */
 static int
@@ -1190,7 +1188,6 @@ read_line_table_program(Dwarf_Debug dbg,
     /*  This is the length of an extended opcode instr.  */
     Dwarf_Unsigned instr_length = 0;
 
-
     /*  Used to chain together pointers to line table entries that are
         later used to create a block of Dwarf_Line entries. */
     Dwarf_Chain chain_line = NULL;
@@ -1203,7 +1200,6 @@ read_line_table_program(Dwarf_Debug dbg,
 
     /*  Mark a line record as being DW_LNS_set_address */
     Dwarf_Bool is_addr_set = false;
-
 
     /*  Initialize the one state machine variable that depends on the
         prefix.  */
@@ -1271,7 +1267,6 @@ read_line_table_program(Dwarf_Debug dbg,
                     }
                     return DW_DLV_ERROR;
                 }
-
 
 #ifdef PRINTING_DETAILS
                 {
@@ -1524,8 +1519,6 @@ read_line_table_program(Dwarf_Debug dbg,
                     return DW_DLV_ERROR;
                 }
 
-
-
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);
                 dwarfstring_append_printf_i(&mb,
@@ -1726,7 +1719,6 @@ read_line_table_program(Dwarf_Debug dbg,
                     Dwarf_Unsigned localoff =
                         (line_ptr >= section_start)?
                         (line_ptr - section_start):0xfffffff;
-
 
                     dwarfstring_constructor(&g);
                     dwarfstring_append_printf_u(&g,
@@ -1975,7 +1967,6 @@ read_line_table_program(Dwarf_Debug dbg,
                     }
                     return DW_DLV_ERROR;
                 }
-
 
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);

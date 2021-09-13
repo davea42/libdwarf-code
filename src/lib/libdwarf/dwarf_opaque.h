@@ -107,7 +107,6 @@ struct Dwarf_Attribute_s {
     Dwarf_Attribute ar_next;
 };
 
-
 /*
     This structure provides the context for a compilation unit.
     Thus, it contains the Dwarf_Debug, cc_dbg, that this cu
@@ -293,7 +292,6 @@ struct Dwarf_CU_Context_s {
     /*  Global section offset to the bytes of the CU die for this CU.
         Set when the CU die is accessed by dwarf_siblingof_b(). */
     Dwarf_Unsigned cc_cu_die_global_sec_offset;
-
 
     Dwarf_Byte_Ptr   cc_last_abbrev_ptr;
     Dwarf_Byte_Ptr   cc_last_abbrev_endptr;
@@ -494,7 +492,6 @@ struct Dwarf_dbg_sect_s {
 */
 #define DWARF_MAX_DEBUG_SECTIONS 50
 #define DWARFSTRING_ALLOC_SIZE   200
-
 
 /*  All the Dwarf_Debug tied-file info in one place.  */
 struct Dwarf_Tied_Data_s {
@@ -796,7 +793,6 @@ struct Dwarf_Chain_o {
 #define DISTINGUISHED_VALUE_ARRAY(x)  char x[4] = \
     { 0xff,0xff,0xff,0xff }
 
-
 int _dwarf_ignorethissection(const char *scn_name);
 
 /*  We don't load the sections until they are needed.
@@ -836,7 +832,6 @@ int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
     Dwarf_Unsigned *str_sect_offset_out,
     Dwarf_Error *error);
-
 
 int _dwarf_look_in_local_and_tied_by_index(
     Dwarf_Debug dbg,
@@ -883,7 +878,6 @@ int _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     Dwarf_Unsigned addrindex,
     Dwarf_Addr *addr_out,
     Dwarf_Error *error);
-
 
 int _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
     Dwarf_Unsigned* offset, Dwarf_Unsigned*size,
@@ -1052,7 +1046,6 @@ void _dwarf_create_address_size_dwarf_error(Dwarf_Debug dbg,
     Dwarf_Error *error,
     Dwarf_Unsigned addrsize,
     int errcode,const char *errname);
-
 
 extern Dwarf_Bool _dwarf_allow_formudata(unsigned form);
 extern int _dwarf_formudata_internal(Dwarf_Debug dbg,

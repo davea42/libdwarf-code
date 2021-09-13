@@ -36,7 +36,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-
 /*  Use this for .rel. too. */
 struct generic_rela {
     Dwarf_Unsigned gr_offset;

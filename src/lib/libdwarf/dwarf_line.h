@@ -28,8 +28,6 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
 */
 
-
-
 #define DW_EXTENDED_OPCODE   0
 
 /*
@@ -44,7 +42,6 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
     It is entirely arbitrary, and 100 is surely too small if
     someone was inserting strings in the opcode. */
 #define DW_LNE_LEN_MAX   100
-
 
 /*
     This structure is used to build a list of all the
@@ -97,7 +94,6 @@ struct Dwarf_Subprog_Entry_s {
 };
 
 typedef struct Dwarf_Subprog_Entry_s *Dwarf_Subprog_Entry;
-
 
 struct Dwarf_Unsigned_Pair_s {
     Dwarf_Unsigned  up_first;
@@ -270,8 +266,6 @@ struct Dwarf_Line_Context_s {
     Dwarf_Unsigned lc_linecount_actuals;
 };
 
-
-
 /*  The line table set of registers.
     The state machine state variables.
     Using names from the DWARF documentation
@@ -298,8 +292,6 @@ void _dwarf_set_line_table_regs_default_values(
     Dwarf_Line_Registers regs,
     unsigned lineversion,
     Dwarf_Bool is_stmt);
-
-
 
 /*
     This structure defines a row of the line table.
@@ -372,7 +364,6 @@ struct Dwarf_Line_s {
     */
     Dwarf_Bool li_is_actuals_table;
 };
-
 
 int _dwarf_line_address_offsets(Dwarf_Debug dbg,
     Dwarf_Die die,
@@ -490,7 +481,6 @@ void _dwarf_report_bad_lnct( Dwarf_Debug dbg,
     int dlecode,
     const char * dlename,
     Dwarf_Error *err);
-
 
 void _dwarf_update_chain_list( Dwarf_Chain chain_line,
     Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain);

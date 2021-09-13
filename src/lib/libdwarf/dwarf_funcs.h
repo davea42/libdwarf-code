@@ -26,10 +26,6 @@ Copyright (C) 2000, 2004 Silicon Graphics, Inc.  All Rights Reserved.
 
 */
 
-
-
-
 typedef struct Dwarf_Func_Context_s *Dwarf_Func_Context;
-
 
 /* struct  never completed: see dwarf_global.h */

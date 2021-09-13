@@ -43,7 +43,6 @@ extern "C" {
 #define TYP(n,l) char n[l]
 #endif /* TYPE */
 
-
 /*  Data types
     see https://msdn.microsoft.com/en-us/library/\
     windows/desktop/aa383751(v=vs.85).aspx */
@@ -183,7 +182,6 @@ typedef struct
     IMAGE_OPTIONAL_HEADER32_dw OptionalHeader;
 } IMAGE_NT_HEADERS32_dw, *PIMAGE_NT_HEADERS32_dw;
 
-
 /*  IMAGE_SECTION_HEADER_dw
     see:
     https://msdn.microsoft.com/en-us/library/windows/\
@@ -255,6 +253,5 @@ typedef struct
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
 
 #endif /* DWARF_PE_DESCR_H */

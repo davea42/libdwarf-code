@@ -75,7 +75,6 @@
 #define R_386_IRELATIVE    42
 #define R_386_NUM          43
 
-
 /*  Keep this the last entry.  */
 #define R_X86_64_NUM             39
 #endif /* _WIN32 */

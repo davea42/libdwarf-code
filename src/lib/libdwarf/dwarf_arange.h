@@ -28,8 +28,6 @@ Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
 
 */
 
-
-
 /*  This structure is used to read an arange into. */
 struct Dwarf_Arange_s {
 
@@ -43,7 +41,6 @@ struct Dwarf_Arange_s {
     /* Length of the arange. */
     Dwarf_Unsigned ar_length;
 
-
     /*  Offset into .debug_info of the start of the compilation-unit
         containing this set of aranges.
         Applies only to .debug_info, not .debug_types. */
@@ -54,8 +51,6 @@ struct Dwarf_Arange_s {
 
     Dwarf_Half ar_segment_selector_size;
 };
-
-
 
 int
 _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,

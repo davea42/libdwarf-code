@@ -29,14 +29,11 @@
 
 */
 
-
-
 /*  The following is based on
     The gdb online documentation at
     https://gcc.gnu.org/wiki/DebugFissionDWP
     and the draft DWARF5 standard.
 */
-
 
 struct Dwarf_Xu_Index_Header_s {
     Dwarf_Debug      gx_dbg;

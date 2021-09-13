@@ -102,7 +102,6 @@ struct Dwarf_Rnglists_Entry_s {
     Dwarf_Rnglists_Entry rle_next;
 };
 
-
 struct Dwarf_Rnglists_Head_s {
     Dwarf_Rnglists_Entry *rh_rnglists;
     /*  rh_last and rh_first used during build-up.

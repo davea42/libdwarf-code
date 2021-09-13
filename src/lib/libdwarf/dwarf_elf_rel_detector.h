@@ -36,7 +36,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-
 unsigned _dwarf_is_32bit_abs_reloc(unsigned int type,
     unsigned machine);
 unsigned _dwarf_is_64bit_abs_reloc(unsigned int type,

@@ -28,9 +28,6 @@
 
 */
 
-
-
-
 typedef struct Dwarf_Global_Context_s *Dwarf_Global_Context;
 
 /*
@@ -78,7 +75,6 @@ struct Dwarf_Global_Context_s {
 
     Dwarf_Debug pu_dbg;
 };
-
 
 /* This struct contains information for a single pubname. */
 struct Dwarf_Global_s {

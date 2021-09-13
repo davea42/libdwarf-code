@@ -94,7 +94,6 @@ struct generic_macho_section {
     Dwarf_Small*  loaded_data;
 };
 
-
 /*  ident[0] == 'M' means this is a macho header.
     ident[1] will be 1 indicating version 1.
     Other bytes in ident not defined, should be zero. */

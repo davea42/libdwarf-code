@@ -147,6 +147,5 @@ struct Dwarf_Macro_Context_s {
     Dwarf_CU_Context mc_cu_context;
 };
 
-
 int _dwarf_macro_constructor(Dwarf_Debug dbg, void *m);
 void _dwarf_macro_destructor(void *m);

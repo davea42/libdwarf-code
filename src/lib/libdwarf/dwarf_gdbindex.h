@@ -27,14 +27,11 @@
 
 */
 
-
-
 /*  The following is based on
     The gdb online documentation at
     https://sourceware.org/gdb/onlinedocs/gdb/
     Appendix J, ".gdb_index section format".
 */
-
 
 /*  These are the two types .gdb_index uses.
     the offset_type (32 bits) and other fields
