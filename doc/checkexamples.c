@@ -77,7 +77,6 @@ void example3(Dwarf_Debug dbg)
     }
 }
 
-
 void examplesecgroup(Dwarf_Debug dbg)
 {
     int res = 0;
@@ -90,7 +89,6 @@ void examplesecgroup(Dwarf_Debug dbg)
     const char **   sec_names = 0;
     Dwarf_Error     error = 0;
     Dwarf_Unsigned  i = 0;
-
 
     res = dwarf_sec_group_sizes(dbg,&section_count,
         &group_count,&selected_group, &group_map_entry_count,
@@ -152,7 +150,6 @@ void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
         return_sib = 0;
     }
 }
-
 
 void example5(Dwarf_Die in_die)
 {
@@ -219,7 +216,6 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
     */
 }
 
-
 void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
 {
     Dwarf_Signed atcount = 0;
@@ -259,7 +255,6 @@ void exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
         dwarf_dealloc(dbg, offbuf, DW_DLA_LIST);
     }
 }
-
 
 void example_discr_list(Dwarf_Debug dbg,
     Dwarf_Die die,
@@ -382,7 +377,7 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                 &lle_value,
                 &rawval1,&rawval2,
                 &debug_addr_unavailable,
-                &lopc,&hipc, 
+                &lopc,&hipc,
                 &loclist_expr_op_count,
                 &locdesc_entry,
                 &loclist_lkind,
@@ -410,12 +405,12 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                         &opd1, &opd2,&opd3,&offsetforbranch,
                         &error);
                     if (opres == DW_DLV_OK) {
-                        /* Do something with the operators.
-                           Usually you want to use opd1,2,3
-                           as appropriate. Calculations
-                           involving base addresses etc
-                           have already been incorporated
-                           in opd1,2,3.  */
+                        /*  Do something with the operators.
+                            Usually you want to use opd1,2,3
+                            as appropriate. Calculations
+                            involving base addresses etc
+                            have already been incorporated
+                            in opd1,2,3.  */
                     } else {
                         dwarf_dealloc_error(dbg,error);
                         dwarf_loc_head_c_dealloc(loclist_head);
@@ -479,7 +474,7 @@ void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         So we just need the 0th entry. */
     res2 = dwarf_get_locdesc_entry_d(head,
         0, /* Data from 0th because it is a loc expr,
-           there is no list */
+            there is no list */
         &lle_value,
         &rawlopc, &rawhipc, &debug_addr_unavail, &lopc, &hipc,
         &ulocentry_count, &locentry,
@@ -544,29 +539,29 @@ examplea(Dwarf_Attribute someattr)
         return 0;
     }
     for (i=0 ; ;++i) {
-         lres = dwarf_get_locdesc_entry_d(loclisthead,i,
-             &lle_value,&rawlowpc,&rawhipc,&debug_addr_unavailable,
-             &lowpc,&hipc,
-             &loclist_count, &locentry,
-             &loclist_source_out, &expression_offset,&locdesc_offset,
-             &error);
-         if (lres == DW_DLV_ERROR) {
-             dwarf_loc_head_c_dealloc(loclisthead); 
-             return 0;
-         }
-         if (lres == DW_DLV_NO_ENTRY) {
-             /* done */
-             break;
-         }
-         /* Do something with the values. We fake to avoid
-             compiler complaints about unused args.*/
-         meaninglesstotal += lle_value + rawlowpc+
-             rawhipc+(int)debug_addr_unavailable +
-             lowpc+ hipc+loclist_count+loclist_source_out+
-             expression_offset+locdesc_offset;
-            
+        lres = dwarf_get_locdesc_entry_d(loclisthead,i,
+            &lle_value,&rawlowpc,&rawhipc,&debug_addr_unavailable,
+            &lowpc,&hipc,
+            &loclist_count, &locentry,
+            &loclist_source_out, &expression_offset,&locdesc_offset,
+            &error);
+        if (lres == DW_DLV_ERROR) {
+            dwarf_loc_head_c_dealloc(loclisthead);
+            return 0;
+        }
+        if (lres == DW_DLV_NO_ENTRY) {
+            /* done */
+            break;
+        }
+        /* Do something with the values. We fake to avoid
+            compiler complaints about unused args.*/
+        meaninglesstotal += lle_value + rawlowpc+
+            rawhipc+(int)debug_addr_unavailable +
+            lowpc+ hipc+loclist_count+loclist_source_out+
+            expression_offset+locdesc_offset;
+
     }
-    dwarf_loc_head_c_dealloc(loclisthead); 
+    dwarf_loc_head_c_dealloc(loclisthead);
     return meaninglesstotal;
 }
 
@@ -639,7 +634,6 @@ void examplec(Dwarf_Die cu_die)
             }
             /* do something */
         }
-
 
         /*  For this case where we have a line table we will likely
             wish to get the line details: */
@@ -726,7 +720,7 @@ void exampled(Dwarf_Die somedie)
     Dwarf_Unsigned version = 0;
     int sres = 0;
 
-    sres = dwarf_srclines_b(somedie, 
+    sres = dwarf_srclines_b(somedie,
         &version, &table_count,&context,&error);
     if (sres != DW_DLV_OK) {
         return;
@@ -778,8 +772,6 @@ void examplef(Dwarf_Debug dbg)
         dwarf_globals_dealloc(dbg, globs, count);
     }
 }
-
-
 
 void exampleg(Dwarf_Debug dbg)
 {
@@ -925,7 +917,6 @@ void examplen(Dwarf_Debug dbg)
     }
 }
 
-
 void exampleo(Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
@@ -948,8 +939,6 @@ void exampledebugnames()
 {
     /* FIXME need extended example of debugnames use. */
 }
-
-
 
 /*  This builds an list or some other data structure
     (not defined) to give an import somewhere to list
@@ -1188,7 +1177,6 @@ void exampleqb(Dwarf_Debug dbg)
         dwarf_dealloc(dbg, fde_data, DW_DLA_LIST);
     }
 }
-
 
 void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
 {
@@ -1647,8 +1635,6 @@ void examplezb(void)
     }
 }
 
-
-
 void exampledebuglink(Dwarf_Debug dbg)
 {
     int      res = 0;
@@ -1777,7 +1763,6 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
                     col = 0;
                 }
             }
-
         }
         {
             Dwarf_Unsigned curoffset = offset_of_first_rangeentry;
