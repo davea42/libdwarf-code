@@ -596,6 +596,8 @@ print_fde_instrs(Dwarf_Debug dbg,
         exit(1);
     }
 
+    /*  dwarf_expand_frame_instructions() only handles
+        DWARF2 frames properly. To be replaced. */
     res = dwarf_expand_frame_instructions(cie,
         outinstrs,instrslen,&frame_op_array,
         &frame_op_count,error);

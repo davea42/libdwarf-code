@@ -49,7 +49,8 @@
 #else
 #define DW_API
 #endif /* PIC */
-#elif (defined(__GNUC__) && __GNUC__ >= 4) || defined(__INTEL_COMPILER)
+#elif (defined(__GNUC__) && __GNUC__ >= 4) || \
+    defined(__INTEL_COMPILER)
 #ifdef PIC
 #define DW_API __attribute__ ((visibility("default")))
 #else
@@ -186,7 +187,11 @@ typedef struct Dwarf_Ranges_s {
     enum Dwarf_Ranges_Entry_Type  dwr_type;
 } Dwarf_Ranges;
 
-/* Frame description instructions expanded.
+/*  Frame description instructions expanded.
+    This is obsolete, it only handles DWARF2.
+    Used with dwarf_expand_frame_instructions().
+    Will be dropped for a different approach
+    during 2021.
 */
 typedef struct Dwarf_Frame_Op_s {
     Dwarf_Small     fp_base_op;
@@ -2583,6 +2588,8 @@ DW_API int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
     Dwarf_Signed* /*index*/,
     Dwarf_Error* /*error*/ );
 
+/*  Used with dwarf_expand_frame_instructions() but
+    see that function's comments above. */
 DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde /*fde*/,
     Dwarf_Ptr *      /*outinstrs*/, Dwarf_Unsigned * /*outlen*/,
     Dwarf_Error *    /*error*/);
@@ -2655,6 +2662,9 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
     Dwarf_Unsigned * /* augdata_len */,
     Dwarf_Error*     /*error*/);
 
+/*  This is obsolete, it only handles DWARF2
+    Used with dwarf_get_fde_instr_bytes(). To be replaced
+    soon.  */
 DW_API int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
     Dwarf_Ptr        /*instruction*/,
     Dwarf_Unsigned   /*i_length*/,
@@ -2984,8 +2994,8 @@ DW_API int dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex /*gdbindex*/,
     Dwarf_Unsigned * /*innercount*/,
     Dwarf_Error    * /*error*/);
 
-DW_API int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex
-    /*index*/,
+DW_API int dwarf_gdbindex_cuvector_inner_attributes(
+    Dwarf_Gdbindex /*index*/,
     Dwarf_Unsigned   /*cuvector_offset*/,
     Dwarf_Unsigned   /*innerindex*/,
     /* The attr_value is a field of bits. For expanded version
