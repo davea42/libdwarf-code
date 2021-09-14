@@ -357,7 +357,8 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
     Dwarf_Error error = 0;
     int lres = 0;
 
-    lres = dwarf_get_loclist_c(someattr,&loclist_head,&lcount,&error);
+    lres = dwarf_get_loclist_c(someattr,&loclist_head,
+        &lcount,&error);
     if (lres == DW_DLV_OK) {
         Dwarf_Unsigned i = 0;
 
@@ -497,10 +498,14 @@ void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         Dwarf_Unsigned opd1 = 0;
         Dwarf_Unsigned opd2 = 0;
         Dwarf_Unsigned opd3 = 0;
+        Dwarf_Unsigned rawop1 = 0;
+        Dwarf_Unsigned rawop2 = 0;
+        Dwarf_Unsigned rawop3 = 0;
         Dwarf_Unsigned offsetforbranch = 0;
 
-        res2 = dwarf_get_location_op_value_c(locentry,
-            i, &op,&opd1,&opd2,&opd3,&offsetforbranch,
+        res2 = dwarf_get_location_op_value_d(locentry,
+            i, &op,&opd1,&opd2,&opd3,
+            &rawop1,&rawop2,&rawop3,&offsetforbranch,
             &error);
         /* Do something with the expression operator and operands */
         if (res2 != DW_DLV_OK) {
@@ -1225,15 +1230,24 @@ void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
     /* ERROR or NO ENTRY. Do something */
 }
 
-void examples(Dwarf_Debug dbg,Dwarf_Cie cie,
-    Dwarf_Ptr instruction,Dwarf_Unsigned len)
+/*  This example only works correctly for DWARF2 object data.*/
+void examples(Dwarf_Debug dbg,
+    Dwarf_Fde fde, Dwarf_Cie cie)
 {
     Dwarf_Signed count = 0;
     Dwarf_Frame_Op *frameops = 0;
     Dwarf_Error error = 0;
+    Dwarf_Ptr instruction = 0;
+    Dwarf_Unsigned len = 0;
     int res = 0;
 
+    res = dwarf_get_fde_instr_bytes(fde,&instruction,&len,
+        &error);
+    if (res != DW_DLV_OK) {
+        return;
+    }
     res = dwarf_expand_frame_instructions(cie,instruction,len,
+
         &frameops,&count, &error);
     if (res == DW_DLV_OK) {
         Dwarf_Signed i = 0;
@@ -1242,35 +1256,6 @@ void examples(Dwarf_Debug dbg,Dwarf_Cie cie,
             /* use frameops[i] */
         }
         dwarf_dealloc(dbg, frameops, DW_DLA_FRAME_BLOCK);
-    }
-}
-
-void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
-{
-    /*  Looping through the dwarf_loc section finding loclists:
-        an example.  */
-    int res;
-    Dwarf_Unsigned next_entry = 0;
-    Dwarf_Addr hipc_off = 0;
-    Dwarf_Addr lowpc_off = 0;
-    Dwarf_Ptr data = 0;
-    Dwarf_Unsigned entry_len = 0;
-    Dwarf_Error err = 0;
-
-    for (;;) {
-        res = dwarf_get_loclist_entry(dbg,offset,&hipc_off,
-            &lowpc_off, &data, &entry_len,&next_entry,&err);
-        if (res == DW_DLV_OK) {
-            /* A valid entry. */
-            offset = next_entry;
-            continue;
-        } else if (res ==DW_DLV_NO_ENTRY) {
-            /* Done! */
-            break;
-        } else {
-            /* Error! */
-            break;
-        }
     }
 }
 
@@ -1400,7 +1385,6 @@ void examplew(Dwarf_Debug dbg)
     Dwarf_Unsigned symbol_table_offset = 0;
     Dwarf_Unsigned constant_pool_offset = 0;
     Dwarf_Unsigned section_size = 0;
-    Dwarf_Unsigned reserved = 0;
     Dwarf_Error error = 0;
     const char * section_name = 0;
     int res = 0;
@@ -1408,7 +1392,7 @@ void examplew(Dwarf_Debug dbg)
         &version,&cu_list_offset, &types_cu_list_offset,
         &address_area_offset,&symbol_table_offset,
         &constant_pool_offset, &section_size,
-        &reserved,&section_name,&error);
+        &section_name,&error);
     if (res == DW_DLV_NO_ENTRY) {
         return;
     } else if (res == DW_DLV_ERROR) {
@@ -1517,7 +1501,6 @@ void examplex(Dwarf_Gdbindex gdbindex)
         for (ii = 0; ii < cuvec_len; ++ii ) {
             Dwarf_Unsigned attributes = 0;
             Dwarf_Unsigned cu_index = 0;
-            Dwarf_Unsigned reserved1 = 0;
             Dwarf_Unsigned symbol_kind = 0;
             Dwarf_Unsigned is_static = 0;
             int res2 = 0;
@@ -1531,7 +1514,7 @@ void examplex(Dwarf_Gdbindex gdbindex)
             /*  'attributes' is a value with various internal
                 fields so we expand the fields. */
             res2 = dwarf_gdbindex_cuvector_instance_expand_value(
-                gdbindex, attributes, &cu_index,&reserved1,
+                gdbindex, attributes, &cu_index,
                 &symbol_kind, &is_static,
                 &err);
             if (res2 != DW_DLV_OK) {
@@ -1898,16 +1881,11 @@ void exampleinitfail(const char *path,
     Dwarf_Ptr errarg = 0;
     Dwarf_Error error = 0;
     Dwarf_Debug dbg = 0;
-    const char *reserved1 = 0;
-    Dwarf_Unsigned reserved2 = 0;
-    Dwarf_Unsigned reserved3 = 0;
     int res = 0;
 
     res = dwarf_init_path(path,true_pathbuf,
-        tpathlen,0,groupnumber,errhand,
-        errarg,&dbg,reserved1,reserved2,
-        &reserved3,
-        &error);
+        tpathlen,groupnumber,errhand,
+        errarg,&dbg, &error);
     /*  Preferred version */
     if (res == DW_DLV_ERROR) {
         /* Valid call even though dbg is null! */
