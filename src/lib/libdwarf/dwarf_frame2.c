@@ -558,15 +558,18 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             _dwarf_get_alloc(dbg, DW_DLA_LIST, cie_count);
     } else {
         if (fde_count > 0) {
-            _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
+            _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+                head_cie_ptr);
             _dwarf_error(dbg, error, DW_DLE_ORPHAN_FDE);
             return DW_DLV_ERROR;
         }
-        _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
+        _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+            head_cie_ptr);
         return DW_DLV_NO_ENTRY;
     }
     if (cie_list_ptr == NULL) {
-        _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
+        _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
+            head_cie_ptr);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -864,7 +867,8 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
 
-        err = _dwarf_get_gcc_eh_augmentation(dbg, frame_ptr, &increment,
+        err = _dwarf_get_gcc_eh_augmentation(dbg, frame_ptr,
+            &increment,
             augt,
             section_ptr_end,
             (char *) augmentation,error);
@@ -999,6 +1003,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     new_cie->ci_cie_end = new_cie->ci_cie_start + new_cie->ci_length +
         new_cie->ci_length_size+ new_cie->ci_extension_size;
     if ( new_cie->ci_cie_end > section_ptr_end) {
+        dwarf_dealloc(dbg,new_cie,DW_DLA_CIE);
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
         return DW_DLV_ERROR;
     }
@@ -1236,6 +1241,7 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         prefix->cf_local_extension_size;
     if ( new_fde->fd_fde_end > section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+        dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
         return DW_DLV_ERROR;
     }
 
@@ -1828,7 +1834,8 @@ _dwarf_get_augmentation_type(Dwarf_Debug dbg UNUSEDARG,
 */
 /* ARGSUSED */
 static int
-_dwarf_get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
+_dwarf_get_gcc_eh_augmentation(Dwarf_Debug dbg,
+    Dwarf_Small * frame_ptr,
     unsigned long *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
     Dwarf_Small * section_ptr_end,

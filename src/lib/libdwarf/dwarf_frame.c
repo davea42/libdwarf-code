@@ -1591,10 +1591,15 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         dbg->de_debug_frame.dss_size,
         &prefix_c, error);
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
+        new_fde = 0;
         return res;
     }
-    if (res == DW_DLV_NO_ENTRY)
+    if (res == DW_DLV_NO_ENTRY) {
+        dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
+        new_fde = 0;
         return res;
+    }
 
     cie_ptr = prefix_c.cf_addr_after_prefix;
     cie_id = prefix_c.cf_cie_id;
@@ -1625,7 +1630,6 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_NO_CIE_FOR_FDE);
         return DW_DLV_ERROR;
     }
-
     *ret_fde = new_fde;
     return DW_DLV_OK;
 }

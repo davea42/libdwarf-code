@@ -389,7 +389,6 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
                 "no CU die\n");
             return res;
         }
-        exit(1);
     }
     res = print_one_die(cu_die,level,error);
     if (res != DW_DLV_OK) {

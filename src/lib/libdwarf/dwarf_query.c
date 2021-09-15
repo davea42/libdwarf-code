@@ -259,8 +259,9 @@ dwarf_offset_list(Dwarf_Debug dbg,
     if (DW_DLV_ERROR == res || DW_DLV_NO_ENTRY == res) {
         return res;
     }
-
+    dwarf_dealloc_die(die);
     cur_die = child;
+    child = 0;
     for (;;) {
         if (DW_DLV_OK == res) {
             int dres = 0;
@@ -276,6 +277,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
                 /*  Just leave cur_off as zero. */
                 /* dwarf_dealloc(dbg,*error,DW_DLA_ERROR); */
                 /* *error = NULL; */
+                dwarf_dealloc_die(cur_die);
                 return DW_DLV_ERROR;
             } else { /* DW_DLV_NO_ENTRY */
                 /* Impossible, dwarf_dieoffset never returns this */
@@ -284,6 +286,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
             curr_chain = (Dwarf_Chain_2)_dwarf_get_alloc(
                 dbg,DW_DLA_CHAIN_2,1);
             if (curr_chain == NULL) {
+                dwarf_dealloc_die(cur_die);
                 _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                 return DW_DLV_ERROR;
             }
@@ -298,6 +301,9 @@ dwarf_offset_list(Dwarf_Debug dbg,
         /* Process any siblings entries if any */
         sib_die = 0;
         res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,error);
+        if (cur_die != die) {
+            dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
+        }
         if (DW_DLV_ERROR == res) {
             return res;
         }
@@ -306,9 +312,6 @@ dwarf_offset_list(Dwarf_Debug dbg,
             break;
         }
         /* res == DW_DLV_OK */
-        if (cur_die != die) {
-            dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
-        }
         cur_die = sib_die;
     }
 
@@ -331,10 +334,8 @@ dwarf_offset_list(Dwarf_Debug dbg,
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, prev, DW_DLA_CHAIN_2);
     }
-
     *offbuf = ret_offsets;
     *offcnt = off_count;
-
     return DW_DLV_OK;
 }
 

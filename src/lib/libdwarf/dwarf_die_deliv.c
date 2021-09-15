@@ -1667,7 +1667,6 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         what is here is damaged. */
                     return resd;
                 }
-
             }
         }
     }

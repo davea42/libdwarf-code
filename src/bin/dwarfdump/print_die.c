@@ -1728,6 +1728,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     return tagres;
                 }
             } else if (abtres == DW_DLV_ERROR) {
+                dwarf_dealloc_die(child);
                 glflags.gf_count_major_errors++;
                 printf("ERROR: Unable to read die children "
                     "flag.\n");
@@ -2471,9 +2472,11 @@ struct esb_s*esbp)
             "DW_AT_SUN_func_offsets cannot uncompress data\n",
             0,fblkerr);
         DROP_ERROR_INSTANCE(dbg,fres,fblkerr);
+        dwarf_dealloc_uncompressed_block(dbg, array);
         return;
     }
     if (array_len == 0) {
+        dwarf_dealloc_uncompressed_block(dbg, array);
         print_error_and_continue(dbg,
             "DW_AT_SUN_func_offsets has no data (array"
             " length is zero), something badly"
@@ -4898,6 +4901,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         } else {
                             esb_destructor(&valname);
                             esb_destructor(&esb_extra);
+                            dwarf_dealloc_die(ref_die);
                             return fresb;
                         }
                     }
@@ -7498,7 +7502,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 /*  At present no way to create a Dwarf_Error
                     inside dwarfdump. */
             }
-
         }
 
         /*  Do references inside <> to distinguish them ** from
@@ -7593,8 +7596,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                             }
                             break;
                         }
-                        dwarf_dealloc_die(die_for_check);
-                        die_for_check = 0;
                     } else {
                         DWARF_CHECK_ERROR(type_offset_result,
                             "DW_AT_type offset does not exist");
@@ -7602,6 +7603,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     }
                 }
             }
+            dwarf_dealloc_die(die_for_check);
+            die_for_check = 0;
         }
         }
         break;

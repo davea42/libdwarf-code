@@ -177,6 +177,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type,
             res = dwarf_get_xu_section_names(xuhdr,
                 n,&sect_num,&name,err);
             if (res == DW_DLV_ERROR) {
+                dwarf_xu_header_free(xuhdr);
                 return res;
             } if (res == DW_DLV_NO_ENTRY) {
                 printf("  [%u] unused\n",n);

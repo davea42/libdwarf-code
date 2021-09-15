@@ -412,7 +412,6 @@ print_symtab_entry(Dwarf_Debug dbg,
                 " static 0x%"    DW_PR_XZEROS DW_PR_DUx "\n",
                 ii,attributes,cu_index,symbol_kind,is_static);
         }
-
     }
     return DW_DLV_OK;
 }

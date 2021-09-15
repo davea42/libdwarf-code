@@ -137,8 +137,8 @@ check_last_line_of_table(Dwarf_Addr   pc,
             esb_destructor(&cm);
         }
     }
-
 }
+
 static int
 process_line_table(Dwarf_Debug dbg,
     const char *sec_name,

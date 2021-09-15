@@ -494,7 +494,6 @@ print_file_entry_details(Dwarf_Debug dbg,
         print_just_file_entry_details(dbg,line_context);
         dwarfstring_destructor(&m5);
     }
-
 }
 
 static void

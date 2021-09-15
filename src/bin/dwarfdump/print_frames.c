@@ -2526,6 +2526,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                                 " %" DW_PR_DUu " bytes.\n" ,
                                 block_len);
                             printf("Error: %s\n",dwarf_errmsg(cerr));
+                            dwarf_dealloc_error(dbg,cerr);
+                            cerr = 0;
                         }
                         esb_destructor(&exprstring);
                     }

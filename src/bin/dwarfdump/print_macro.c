@@ -1054,6 +1054,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
     lres = dwarf_macro_context_total_length(macro_context,
         &context_total_byte_len,err);
     if (lres != DW_DLV_OK) {
+        dwarf_dealloc_macro_context(macro_context);
         return lres;
     }
     add_macro_import(&macro_check_tree,
@@ -1063,6 +1064,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         context_total_byte_len);
     lres = macro_import_stack_push(offset);
     if (lres == DW_DLV_ERROR) {
+        dwarf_dealloc_macro_context(macro_context);
         /* message printed. Give up. */
         return DW_DLV_NO_ENTRY;
     }
@@ -1327,11 +1329,11 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         mark_macro_offset_printed(&macro_check_tree,offset);
     }
     lres = macro_import_stack_pop();
+    dwarf_dealloc_macro_context(macro_context);
+    macro_context = 0;
     if (lres != DW_DLV_OK) {
         return DW_DLV_NO_ENTRY;
     }
-    dwarf_dealloc_macro_context(macro_context);
-    macro_context = 0;
     return DW_DLV_OK;
 }
 int

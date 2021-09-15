@@ -1876,6 +1876,9 @@ dwarf_formstring(Dwarf_Attribute attr,
             }
             if (error) {
                 *error = alterr;
+            } else {
+                dwarf_dealloc_error(dbg,alterr);
+                alterr = 0;
             }
             return res;
         }

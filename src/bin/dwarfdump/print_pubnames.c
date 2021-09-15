@@ -555,7 +555,6 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
             }
             glflags.gf_record_dwarf_error = FALSE;
         }
-
     }
     return DW_DLV_OK;
 }

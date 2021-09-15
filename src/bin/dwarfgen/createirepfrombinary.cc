@@ -274,6 +274,10 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
             mvec.push_back(ir);
         }
     }
+    if (res == DW_DLV_ERROR) {
+         dwarf_dealloc_error(dbg,error);
+         error = 0;
+    }
     dwarf_dealloc(dbg, md, DW_DLA_STRING);
 }
 

@@ -706,7 +706,7 @@ _dwarf_debuglink_finder_newpath(
             paths = 0;
             free(debuglinkfullpath);
             dwarf_dealloc_error(dbg,error);
-            dwarf_finish(dbg,&error);
+            res = dwarf_finish(dbg,&error);
             /*  Cannot match the crc_in, give up. */
             return DW_DLV_NO_ENTRY;
         } else if (res == DW_DLV_OK) {
@@ -724,10 +724,18 @@ _dwarf_debuglink_finder_newpath(
         dwarfstring_append(m,path);
         *fd_out = dbg->de_fd;
         dbg->de_owns_fd = FALSE;
-        dwarf_finish(dbg,&error);
+        res = dwarf_finish(dbg,&error);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,error);
+            error = 0;
+        }
         return DW_DLV_OK;
     }
-    dwarf_finish(dbg,&error);
+    res = dwarf_finish(dbg,&error);
+    if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,error);
+        error = 0;
+    }
     return DW_DLV_NO_ENTRY;
 }
 

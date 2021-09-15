@@ -1213,7 +1213,6 @@ process_one_file(
                 "printing SGI static funcs had a problem.",sres,err);
             DROP_ERROR_INSTANCE(dbg,sres,err);
         }
-
     }
     if (glflags.gf_static_var_flag) {
         int sres = 0;
@@ -2043,9 +2042,11 @@ build_linkonce_info(Dwarf_Debug dbg)
                     break;
                 }
             }
+        } else if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,error);
+            error = 0;
         }
     }
-
     if (dump_linkonce_info) {
         PrintBucketGroup(glflags.pLinkonceInfo,TRUE);
     }
