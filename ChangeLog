@@ -1,3 +1,135 @@
+2021-09-14:  David Anderson
+    commit 400cf6d49ce2ade160932a1d35f0c0fd6bd404c7
+
+    Fixed indents and removed some blank lines.
+            modified:   checkexamples.c
+
+2021-09-14:  David Anderson
+    commit bbf84c5d3282d60d08b5e9ae7b80ba733a0a2fa5
+
+    Added comments pointing out the
+    future removal of Dwarf_Frame_Op.
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-14:  David Anderson
+    commit c46ec30d52b82a23356be9c065871574f87aa23e
+
+    Corrected the examples to match current interfaces.
+            modified:   doc/checkexamples.c
+
+2021-09-13:  David Anderson
+    commit 9474d46e3f10ef9c073d5d04c11934f5dc61a9d4
+
+    Each group of blank lines is now a single line.
+
+            modified:   command_options.h dwarf_getopt.h dwconf.h
+    esb.h esb_using_functions.h globals.h helpertree.h macrocheck.h
+    section_bitmaps.h tag_common.h
+
+2021-09-13:  David Anderson
+    commit be6b995a732bb2245a38e2430a90e163fa6044b0
+
+    modified:   dwarf_abbrev.c      dwarf_alloc.c dwarf_arange.c
+    dwarf_crc.c dwarf_crc32.c dwarf_debuglink.c dwarf_debugnames.c dwarf_die_deliv.c
+    dwarf_dsc.c dwarf_elf_load_headers.c dwarf_elf_rel_detector.c dwarf_error.c
+    dwarf_find_sigref.c dwarf_fission_to_cu.c dwarf_form.c dwarf_funcs.c
+    dwarf_gdbindex.c dwarf_generic_init.c dwarf_getopt.c dwarf_global.c dwarf_groups.c
+    dwarf_harmless.c dwarf_init_finish.c dwarf_leb.c dwarf_line.c dwarf_loc.c
+    dwarf_locationop_read.c dwarf_loclists.c dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
+    dwarf_object_detector.c dwarf_peread.c dwarf_print_lines.c dwarf_pubtypes.c
+    dwarf_query.c dwarf_ranges.c dwarf_rnglists.c dwarf_str_offsets.c
+    dwarf_string.c dwarf_tied.c dwarf_tsearchhash.c dwarf_types.c
+    dwarf_util.c dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c
+
+2021-09-13:  David Anderson
+    commit 1d8b38f2ec29db066db0a3ef2abf1ef7e77648f1
+
+    With a tool, reduced each block of
+    blank lines into a single blank line.
+            modified:   dwarf_abbrev.h
+            modified:   dwarf_arange.h
+            modified:   dwarf_base_types.h
+            modified:   dwarf_elf_access.h
+            modified:   dwarf_elf_defines.h
+            modified:   dwarf_elf_rel_detector.h
+            modified:   dwarf_elfread.h
+            modified:   dwarf_elfstructs.h
+            modified:   dwarf_errmsg_list.h
+            modified:   dwarf_funcs.h
+            modified:   dwarf_gdbindex.h
+            modified:   dwarf_getopt.h
+            modified:   dwarf_global.h
+            modified:   dwarf_harmless.h
+            modified:   dwarf_line.h
+            modified:   dwarf_line_table_reader_common.h
+            modified:   dwarf_loc.h
+            modified:   dwarf_macho_loader.h
+            modified:   dwarf_machoread.h
+            modified:   dwarf_macro.h
+            modified:   dwarf_macro5.h
+            modified:   dwarf_object_detector.h
+            modified:   dwarf_opaque.h
+            modified:   dwarf_pe_descr.h
+            modified:   dwarf_peread.h
+            modified:   dwarf_reloc_386.h
+            modified:   dwarf_reloc_arm.h
+            modified:   dwarf_rnglists.h
+            modified:   dwarf_str_offsets.h
+            modified:   dwarf_string.h
+            modified:   dwarf_tied_decls.h
+            modified:   dwarf_types.h
+            modified:   dwarf_util.h
+            modified:   dwarf_xu_index.h
+
+2021-09-13:  David Anderson
+    commit fac853118888900786220c20d10776adb99749c4
+
+    Using a tool, changed each grouping of
+    blank lines into a single blank line.
+            modified:   addrmap.c
+            modified:   attr_form.c
+            modified:   checkutil.c
+            modified:   command_options.c
+            modified:   compiler_info.c
+            modified:   dd_regex.c
+            modified:   dd_sanitized.c
+            modified:   dd_uri.c
+            modified:   dwarf_getopt.c
+            modified:   dwarf_tsearchbal.c
+            modified:   dwarfdump.c
+            modified:   dwconf.c
+            modified:   esb.c
+            modified:   helpertree.c
+            modified:   macrocheck.c
+            modified:   naming.c
+            modified:   print_abbrevs.c
+            modified:   print_aranges.c
+            modified:   print_debug_gnu.c
+            modified:   print_debug_sup.c
+            modified:   print_die.c
+            modified:   print_frames.c
+            modified:   print_gdbindex.c
+            modified:   print_hipc_lopc_attr.c
+            modified:   print_lines.c
+            modified:   print_llex_codes.c
+            modified:   print_loclists.c
+            modified:   print_loclists_codes.c
+            modified:   print_macro.c
+            modified:   print_origloclist_codes.c
+            modified:   print_pubnames.c
+            modified:   print_rnglists.c
+            modified:   print_section_groups.c
+            modified:   print_static_funcs.c
+            modified:   print_tag_attributes_usage.c
+            modified:   uritablebuild.c
+
+2021-09-13:  David Anderson
+    commit 0cba1da28412ca57f7b234ab3545761b0f008861
+
+    Now with recent updates.
+            modified:   ChangeLog
+
 2021-09-13:  David Anderson
     commit e7cb3d7c880d5ec304646eb29356986b1b7d3447
 
