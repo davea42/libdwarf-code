@@ -640,7 +640,6 @@ print_macro_ops(Dwarf_Debug dbg,
         if (lres != DW_DLV_OK) {
             struct esb_s m;
 
-            dwarf_dealloc_macro_context(mcontext);
             esb_constructor(&m);
             if (lres == DW_DLV_ERROR) {
                 esb_append(&m,
@@ -1233,9 +1232,9 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     }
                     if (lres == DW_DLV_ERROR) {
                         struct esb_s m;
+
                         dwarf_dealloc_macro_context(macro_context);
                         esb_constructor(&m);
-
                         esb_append_printf_u(&m,
                             "ERROR: dwarf_macro_operands_table()"
                             " returns ERROR for index %u ",

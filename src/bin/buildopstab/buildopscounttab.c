@@ -302,6 +302,7 @@ check_if_optabsource_complete(char *path)
         }
         validate_op_listed(curdefname,v,linenum);
     }
+    fclose(fin);
 }
 
 static int

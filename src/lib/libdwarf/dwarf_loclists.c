@@ -360,17 +360,6 @@ _dwarf_internal_read_loclists_header(Dwarf_Debug dbg,
 
     READ_UNALIGNED_CK(dbg,address_size,unsigned,data,
         SIZEOFT8,error,end_data);
-    if (version != DW_CU_VERSION5) {
-        dwarfstring m;
-        dwarfstring_constructor(&m);
-        dwarfstring_append_printf_u(&m,
-            "DW_DLE_VERSION_STAMP_ERROR: The version should be 5 "
-            "but we find %u instead.",version);
-        _dwarf_error_string(dbg,error,DW_DLE_VERSION_STAMP_ERROR,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
-    }
     if (address_size != 4 && address_size != 8 &&
         address_size != 2) {
         dwarfstring m;

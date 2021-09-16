@@ -1536,8 +1536,10 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     /* why is this formsdata? FIX */
     sdatares = dwarf_formsdata(attr, &signdval, error);
     if (sdatares != DW_DLV_OK) {
+        dwarf_dealloc_attribute(attr);
         return sdatares;
     }
+    dwarf_dealloc_attribute(attr);
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_frame,error);
     if (res != DW_DLV_OK) {

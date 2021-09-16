@@ -552,6 +552,7 @@ dwarf_srcfiles(Dwarf_Die die,
             curr_chain =
                 (Dwarf_Chain) _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
             if (curr_chain == NULL) {
+                dwarf_dealloc(dbg,name_out,DW_DLA_STRING);
                 dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
                 _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                 return DW_DLV_ERROR;

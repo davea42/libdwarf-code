@@ -2747,6 +2747,8 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                         " DW_EXPR_VAL_EXPRESSION block of length "
                         " %" DW_PR_DSd " bytes.\n" ,offset);
                     printf("Error: %s\n",dwarf_errmsg(cerr));
+                    dwarf_dealloc_error(dbg,cerr);
+                    cerr = 0;
                 }
                 esb_destructor(&exprstring);
             }

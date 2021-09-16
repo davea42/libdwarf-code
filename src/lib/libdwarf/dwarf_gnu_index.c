@@ -154,8 +154,11 @@ load_pub_section(Dwarf_Debug dbg,
     int res;
 
     get_pubxx_fields(dbg,for_gnu_pubnames,&sec,0,0,0);
-    res = _dwarf_load_section(dbg,sec,error);
-    return res;
+    if (sec) {
+        res = _dwarf_load_section(dbg,sec,error);
+        return res;
+    }
+    return DW_DLV_NO_ENTRY;
 }
 
 static int

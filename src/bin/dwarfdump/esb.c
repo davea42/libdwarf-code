@@ -948,7 +948,8 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
 /*  Get a copy of the internal data buffer.
     It is up to the code calling this
     to free() the string using the
-    pointer returned here. */
+    pointer returned here. 
+    Returns NULL if copy not possible. */
 char*
 esb_get_copy(struct esb_s *data)
 {
@@ -958,6 +959,9 @@ esb_get_copy(struct esb_s *data)
     size_t len = data->esb_used_bytes+1;
     if (len) {
         copy = (char*)malloc(len);
+        if (!copy) {
+            return NULL;
+        }
 #ifdef MALLOC_COUNT
         ++malloc_count;
         malloc_size += len+1;

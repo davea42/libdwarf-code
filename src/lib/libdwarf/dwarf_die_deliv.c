@@ -1310,11 +1310,8 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     int version = cu_context->cc_version_stamp;
-    Dwarf_Sig8 signaturedata;
+    Dwarf_Sig8 signaturedata = cu_context->cc_signature;
     int res = 0;
-
-    signaturedata = dwarfsig8zero;
-    signaturedata = cu_context->cc_signature;
 
     /*  Loads and initializes the dwarf .debug_cu_index
         and .debug_tu_index split dwarf package
@@ -2714,7 +2711,7 @@ dwarf_child(Dwarf_Die die,
     }
 
     ret_die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
-    if (ret_die == NULL) {
+    if (!ret_die) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -2722,8 +2719,15 @@ dwarf_child(Dwarf_Die die,
     ret_die->di_cu_context = die->di_cu_context;
     ret_die->di_is_info = die->di_is_info;
 
+    res =  _dwarf_leb128_uword_wrapper(dbg,&die_info_ptr,
+        die_info_end, &utmp,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+#if 0
     DECODE_LEB128_UWORD_CK(die_info_ptr, utmp,
         dbg,error,die_info_end);
+#endif
     abbrev_code = (Dwarf_Unsigned) utmp;
 
     dis->de_last_di_ptr = die_info_ptr;

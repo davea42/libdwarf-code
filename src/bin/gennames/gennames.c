@@ -556,6 +556,10 @@ ParseDefinitionsAndWriteOutput(void)
                 "group_array size of %d",ARRAY_SIZE);
             exit(1);
         }
+        if (!second_underscore) {
+            printf("Line has no underscore %s\n",line_in);
+            continue;
+        }
 
         /* Move past the second underscore */
         ++second_underscore;

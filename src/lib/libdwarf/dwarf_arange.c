@@ -332,6 +332,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 curr_chain = (Dwarf_Chain)
                     _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                 if (curr_chain == NULL) {
+                    dwarf_dealloc(dbg,arange,DW_DLA_ARANGE);
                     free_aranges_chain(dbg,head_chain);
                     _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                     return DW_DLV_ERROR;

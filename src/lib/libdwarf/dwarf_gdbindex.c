@@ -215,6 +215,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         sizeof(gdbindex_64),
         git_std,error);
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,indexptr,DW_DLA_GDBINDEX);
         return res;
     }
     res = set_base(dbg,&indexptr->gi_typesculisthdr,
@@ -226,6 +227,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         sizeof(gdbindex_64),
         git_std,error);
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,indexptr,DW_DLA_GDBINDEX);
         return res;
     }
     res = set_base(dbg,&indexptr->gi_addressareahdr,
@@ -237,6 +239,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         sizeof(gdbindex_64),
         git_address,error);
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,indexptr,DW_DLA_GDBINDEX);
         return res;
     }
     res = set_base(dbg,&indexptr->gi_symboltablehdr,
@@ -248,6 +251,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         DWARF_32BIT_SIZE,
         git_std,error);
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,indexptr,DW_DLA_GDBINDEX);
         return res;
     }
     res = set_base(dbg,&indexptr->gi_cuvectorhdr,
@@ -260,6 +264,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         DWARF_32BIT_SIZE,
         git_cuvec,error);
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,indexptr,DW_DLA_GDBINDEX);
         return res;
     }
 
@@ -561,7 +566,7 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
             "The gdbindex pointer to "
             "dwarf_gdbindex_string_by_offset()"
             " is NULL");
-        _dwarf_error_string(gdbindexptr->gi_dbg, error,
+        _dwarf_error_string(NULL, error,
             DW_DLE_GDB_INDEX_INDEX_ERROR,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);

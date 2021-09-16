@@ -610,6 +610,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     Dwarf_Loc_Chain new_loc = NULL;
     Dwarf_Loc_Chain prev_loc = NULL;
     Dwarf_Loc_Chain head_loc = NULL;
+    Dwarf_Loc_Chain *plast = &head_loc;
 
     Dwarf_Unsigned  op_count = 0;
 
@@ -662,6 +663,7 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
             &temp_loc,
             error);
         if (res == DW_DLV_ERROR) {
+            _dwarf_free_op_chain(dbg,head_loc);
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
@@ -688,12 +690,8 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         new_loc->lc_number2 = temp_loc.lr_number2;
         new_loc->lc_number3 = temp_loc.lr_number3;
         new_loc->lc_offset  = temp_loc.lr_offset;
-        if (head_loc == NULL)
-            head_loc = prev_loc = new_loc;
-        else {
-            prev_loc->lc_next = new_loc;
-            prev_loc = new_loc;
-        }
+        *plast = new_loc;
+        plast= &(new_loc->lc_next);
         offset = nextoffset;
     }
     block_loc =

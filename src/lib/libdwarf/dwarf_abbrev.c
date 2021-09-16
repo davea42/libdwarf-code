@@ -202,10 +202,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     abbrev_ptr = dbg->de_debug_abbrev.dss_data + offset;
     abbrev_section_end =
         dbg->de_debug_abbrev.dss_data + dbg->de_debug_abbrev.dss_size;
-#if 0
-    DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
-        dbg,error,abbrev_section_end);
-#endif
     res = _dwarf_leb128_uword_wrapper(dbg,&abbrev_ptr,
         abbrev_section_end,&utmp,error);
     if (res == DW_DLV_ERROR) {
@@ -222,10 +218,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
 
-#if 0
-    DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
-        dbg,error,abbrev_section_end);
-#endif
     res = _dwarf_leb128_uword_wrapper(dbg,&abbrev_ptr,
         abbrev_section_end,&utmp,error);
     if (res == DW_DLV_ERROR) {
@@ -233,6 +225,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         return res;
     }
     if (utmp > DW_TAG_hi_user) {
+        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
         return _dwarf_format_TAG_err_msg(dbg,
             utmp,"DW_DLE_TAG_CORRUPT",
             error);
@@ -240,8 +233,8 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_tag = utmp;
     if (abbrev_ptr >= abbrev_section_end) {
         dwarfstring m;
-        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
 
+        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_ABBREV_DECODE_ERROR: Ran off the end "

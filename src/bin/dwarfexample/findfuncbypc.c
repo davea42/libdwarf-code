@@ -937,7 +937,6 @@ get_name_from_abstract_origin(Dwarf_Debug dbg,
     Dwarf_Error *errp)
 {
     int res = 0;
-
     Dwarf_Die abrootdie = 0;
     Dwarf_Attribute ab_attr = 0;
     Dwarf_Off ab_offset = 0;
@@ -949,6 +948,7 @@ get_name_from_abstract_origin(Dwarf_Debug dbg,
 
     res = dwarf_global_formref(ab_attr,&ab_offset,errp);
     if (res != DW_DLV_OK) {
+        dwarf_dealloc(dbg,ab_attr,DW_DLA_ATTR);
         return res;
     }
 
@@ -957,8 +957,7 @@ get_name_from_abstract_origin(Dwarf_Debug dbg,
         return res;
     }
     res = dwarf_diename(abrootdie,name,errp);
-    if (res == DW_DLV_OK) {
-    }
+    dwarf_dealloc_die(abrootdie);
     return res;
 }
 

@@ -292,7 +292,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                     if (cures3 != DW_DLV_OK) {
                         struct esb_s m;
                         const char *failtype = "no-entry";
-                        if (dres == DW_DLV_ERROR) {
+                        if (cures3 == DW_DLV_ERROR) {
                             failtype = "error";
                         }
                         esb_constructor(&m);

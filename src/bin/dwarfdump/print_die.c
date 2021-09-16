@@ -841,9 +841,8 @@ get_macinfo_offset(Dwarf_Debug dbg,
         "ERROR: dwarf_global_formref on DW_AT_macro_info failed",
             vres, *macerr);
         return vres;
-    } else if (vres == DW_DLV_OK) {
-        dwarf_dealloc_attribute(attrib);
     }
+    dwarf_dealloc_attribute(attrib);
     return vres;
 }
 
@@ -1549,8 +1548,10 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 Dwarf_Half tag_child = 0;
                 int pres = 0;
                 int cres = 0;
+#if 0
                 const char *ctagname = "<child tag invalid>";
                 const char *ptagname = "<parent tag invalid>";
+#endif
 
                 pres = dwarf_tag(die_stack[
                     die_stack_indent_level - 1].die_,
@@ -1571,21 +1572,20 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     /* Process specific TAGs. */
                     tag_specific_globals_setup(dbg,tag_child,
                         die_stack_indent_level);
-                    if (cres != DW_DLV_OK || pres != DW_DLV_OK) {
-                        if (cres == DW_DLV_OK) {
-                            ctagname = get_TAG_name(tag_child,
-                                pd_dwarf_names_print_on_error);
-                        }
-                        if (pres == DW_DLV_OK) {
-                            ptagname = get_TAG_name(tag_parent,
-                                pd_dwarf_names_print_on_error);
-                        }
+#if 0
+                    {
+                        ctagname = get_TAG_name(tag_child,
+                            pd_dwarf_names_print_on_error);
+                        ptagname = get_TAG_name(tag_parent,
+                            pd_dwarf_names_print_on_error);
                         DWARF_CHECK_ERROR3(tag_tree_result,
                             ptagname,
                             ctagname,
                             "Tag-tree relation is "
                             "not standard..");
-                    } else if (legal_tag_tree_combination(
+                    } 
+#endif
+                    if (legal_tag_tree_combination(
                         tag_parent, tag_child)) {
                         /* OK */
                     } else {
@@ -2482,6 +2482,7 @@ struct esb_s*esbp)
             " length is zero), something badly"
             " wrong",
             DW_DLV_OK,fblkerr);
+        dwarf_dealloc(dbg,tempb,DW_DLA_BLOCK);
         return;
     }
 
@@ -3417,6 +3418,7 @@ print_range_attribute(Dwarf_Debug dbg,
                 dores = dwarf_die_offsets(die,&die_glb_offset,
                     &die_off,raerr);
                 if (dores == DW_DLV_ERROR) {
+                    dwarf_ranges_dealloc(dbg,rangeset,rangecount);
                     return dores;
                 }
                 if (dores == DW_DLV_OK) {
@@ -4923,6 +4925,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         print_error_and_continue(dbg,
                             esb_get_string(&m),
                             frres,*err);
+                        dwarf_dealloc_die(ref_die);
                         esb_destructor(&m);
                         esb_destructor(&valname);
                         esb_destructor(&esb_extra);
