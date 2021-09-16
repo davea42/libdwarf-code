@@ -1817,10 +1817,10 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
         error);
     if (res != DW_DLV_OK) {
         /* low level error already set: let it be passed back */
-        dwarf_loc_head_c_dealloc(llhead);
         dwarf_dealloc(dbg,llbuf,DW_DLA_LOCDESC_C);
         llhead->ll_locdesc = 0;
         llhead->ll_locdesc_count = 0;
+        dwarf_loc_head_c_dealloc(llhead);
         return DW_DLV_ERROR;
     }
     *loc_head = llhead;

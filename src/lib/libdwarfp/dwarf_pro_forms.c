@@ -476,11 +476,6 @@ dwarf_add_AT_block_a(
     case DW_AT_data_location:
         is_exprloc_related = TRUE;
     }
-    if (dbg == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return DW_DLV_ERROR;
-    }
-
     if (ownerdie == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return DW_DLV_ERROR;

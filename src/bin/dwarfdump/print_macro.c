@@ -247,10 +247,10 @@ add_def_undef(unsigned opnum,
             &macdefundeftree);
         meb = macdef_tree_find(keystr,&macdefundeftree);
         if (!meb) {
-            free(keystr);
             printf("ERROR: Unable to find key \"%s\" "
                 "in macdef tree though just created.\n",
                 sanitized(keystr));
+            free(keystr);
             return;
         }
         if (isdef) {
