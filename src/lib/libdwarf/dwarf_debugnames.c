@@ -800,7 +800,9 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned unit_entry_size = 0;
     Dwarf_Small  * unit_ptr        = 0;
     Dwarf_Unsigned unit_offset     = 0;
+#if 0
     Dwarf_Bool sigoffset           = FALSE;
+#endif
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DEBUG_NAMES_ERROR,
@@ -816,11 +818,13 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         unit_count = dn->dn_comp_unit_count;
         unit_offset = dn->dn_cu_list_offset;
     } else if (type[0] == 't') {
-        /* FIXME: not handling foreign type units yet */
+        /* FIXME: not handling foreign type units yet 
+           types and foreign-types are logically considered
+           a sort-of single array.  */
         unit_ptr = dn->dn_local_tu_list;
         unit_entry_size = dn->dn_offset_size;
         unit_count = dn->dn_local_type_unit_count +
-            dn->dn_foreign_type_unit_count;;
+            dn->dn_foreign_type_unit_count;
         unit_offset = dn->dn_local_tu_list_offset;
     } else {
         _dwarf_error_string(dbg,error,DW_DLE_DEBUG_NAMES_ERROR,
@@ -836,14 +840,14 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         *offset = unit_offset + index_number*unit_entry_size;
     }
 
+#if 0
     if (sig && sigoffset) {
         Dwarf_Small *ptr = unit_ptr + index_number *unit_entry_size;
-#if 0
-        Dwarf_Small *endptr = dn->dn_indextable_data_end;
-#endif
         /*  ASSERT: ptr < dn->dn_indextable_data_end */
         memcpy(sig,ptr,sizeof(Dwarf_Sig8));
-    } else if (sig) {
+    } else 
+#endif
+    if (sig) {
         /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = unit_ptr+ index_number *unit_entry_size;

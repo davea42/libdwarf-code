@@ -589,6 +589,7 @@ dwarf_object_detector_path_dSYM(
         res = dwarf_object_detector_fd(fd,
             ftype,endian,offsetsize,filesize,errcode);
         if (res != DW_DLV_OK) {
+            close(fd);
             return res;
         }
         close(fd);
@@ -689,11 +690,11 @@ _dwarf_debuglink_finder_newpath(
     if (res == DW_DLV_ERROR) {
         *errcode = dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);
-        dwarf_finish(dbg,&error);
+        dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;
     } else if (res == DW_DLV_NO_ENTRY) {
         /*  There is no debuglink section */
-        dwarf_finish(dbg,&error);
+        dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;
     }
 
@@ -706,7 +707,7 @@ _dwarf_debuglink_finder_newpath(
             paths = 0;
             free(debuglinkfullpath);
             dwarf_dealloc_error(dbg,error);
-            res = dwarf_finish(dbg,&error);
+            dwarf_finish(dbg);
             /*  Cannot match the crc_in, give up. */
             return DW_DLV_NO_ENTRY;
         } else if (res == DW_DLV_OK) {
@@ -724,18 +725,14 @@ _dwarf_debuglink_finder_newpath(
         dwarfstring_append(m,path);
         *fd_out = dbg->de_fd;
         dbg->de_owns_fd = FALSE;
-        res = dwarf_finish(dbg,&error);
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc_error(dbg,error);
-            error = 0;
-        }
+        dwarf_finish(dbg);
         return DW_DLV_OK;
     }
-    res = dwarf_finish(dbg,&error);
     if (res == DW_DLV_ERROR) {
-        dwarf_dealloc_error(dbg,error);
-        error = 0;
+         dwarf_dealloc_error(dbg,error);
+         error = 0;
     }
+    dwarf_finish(dbg);
     return DW_DLV_NO_ENTRY;
 }
 
@@ -792,7 +789,7 @@ _dwarf_debuglink_finder_internal(
         if (res != DW_DLV_OK){
             *errcode = dwarf_errno(error);
             dwarf_dealloc_error(dbg,error);
-            dwarf_finish(dbg,&error);
+            dwarf_finish(dbg);
             return res;
         }
     }
@@ -805,11 +802,11 @@ _dwarf_debuglink_finder_internal(
     if (res == DW_DLV_ERROR) {
         *errcode = dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);
-        dwarf_finish(dbg,&error);
+        dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;
     } else if (res == DW_DLV_NO_ENTRY) {
         /*  There is no debuglink section */
-        dwarf_finish(dbg,&error);
+        dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;
     }
     for (i =0; i < paths_count; ++i) {
@@ -832,7 +829,7 @@ _dwarf_debuglink_finder_internal(
             free(debuglinkfullpath);
             free(paths);
             paths = 0;
-            dwarf_finish(dbg,&error);
+            dwarf_finish(dbg);
             return DW_DLV_OK;
         }
         *errcode = 0;
@@ -841,7 +838,7 @@ _dwarf_debuglink_finder_internal(
     free(debuglinkfullpath);
     free(paths);
     paths = 0;
-    dwarf_finish(dbg,&error);
+    dwarf_finish(dbg);
     return DW_DLV_NO_ENTRY;
 }
 

@@ -529,6 +529,8 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     arange_offsets = (Dwarf_Off *)
         _dwarf_get_alloc(dbg, DW_DLA_ADDR, arange_count);
     if (arange_offsets == NULL) {
+        free_aranges_chain(dbg,head_chain);
+        dwarf_dealloc(dbg,arange_addrs,DW_DLA_ADDR);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -539,12 +541,17 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
         int itemtype = curr_chain->ch_itemtype;
         Dwarf_Chain prev = 0;
 
+        if (!ar) {
+            arange_addrs[i] = 0;
+            arange_offsets[i] = 0;
+            continue;
+        }
         curr_chain->ch_item = 0;
         arange_addrs[i] = ar->ar_address;
         arange_offsets[i] = ar->ar_info_offset;
         prev = curr_chain;
         curr_chain = curr_chain->ch_next;
-        if (ar && itemtype) {
+        if (itemtype) {
             dwarf_dealloc(dbg, ar, itemtype);
         }
         dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);

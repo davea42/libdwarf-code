@@ -73,22 +73,33 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             dbg,cuhdroff,is_info,&cudieoff2,err);
         if (dres == DW_DLV_OK) {
             /* Get the CU offset for easy error reporting */
-            dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+            int res2=0;
+
+            res2 = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
                 &glflags.DIE_offset,err);
-            glflags.DIE_CU_overall_offset =
-                glflags.DIE_overall_offset;
-            glflags.DIE_CU_offset = glflags.DIE_offset;
-            DWARF_CHECK_COUNT(aranges_result,1);
-            if (cu_die_offset != cudieoff2) {
-                printf("Error, cu_die offsets mismatch,  0x%"
-                    DW_PR_DUx " != 0x%" DW_PR_DUx
-                    " from arange data",
-                    cu_die_offset,cudieoff2);
-                DWARF_CHECK_ERROR(aranges_result,
-                    " dwarf_get_cu_die_offset_given_cu..."
-                    " gets wrong offset");
+            if (res2 == DW_DLV_OK) {
+                glflags.DIE_CU_overall_offset =
+                    glflags.DIE_overall_offset;
+                glflags.DIE_CU_offset = glflags.DIE_offset;
+                DWARF_CHECK_COUNT(aranges_result,1);
+                if (cu_die_offset != cudieoff2) {
+                    printf("Error, cu_die offsets mismatch,  0x%"
+                        DW_PR_DUx " != 0x%" DW_PR_DUx
+                        " from arange data",
+                        cu_die_offset,cudieoff2);
+                    DWARF_CHECK_ERROR(aranges_result,
+                        " dwarf_get_cu_die_offset_given_cu..."
+                        " gets wrong offset");
+                }
+            } else {
+                /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
+                print_error_and_continue(dbg,
+                    "ERROR from arange checking offsets "
+                    "dwarf_die_offsets... fails",
+                    dres, *err);
             }
         } else {
+            /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
             print_error_and_continue(dbg,
                 "ERROR from arange checking "
                 "dwarf_get_cu_die_offset_given... fails",
@@ -96,6 +107,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             return dres;
         }
     } else {
+        /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
         print_error_and_continue(dbg,
             "ERROR: from arange checking "
             "dwarf_get_arange_cu_header_offset fails",
@@ -117,6 +129,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 " gets wrong offset");
         }
     } else {
+        /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
         print_error_and_continue(dbg,
             "ERROR: from arange checking "
             "dwarf_get_cu_die_offset fails",
@@ -246,6 +259,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
                         &should_skip,cu_die);
                     if (should_skip) {
                         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
+                        continue;
                     }
                 }
                 /*  Get producer name for this CU and update

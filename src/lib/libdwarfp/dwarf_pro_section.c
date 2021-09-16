@@ -3004,6 +3004,7 @@ sort_die_attrs(Dwarf_P_Debug dbg,Dwarf_P_Die die,
         abcompare);
     res = verify_ab_no_dups(sortab,attrcount);
     if (res != DW_DLV_OK) {
+        free(sortab);
         DWARF_P_DBG_ERROR(dbg, DW_DLE_DUP_ATTR_ON_DIE, DW_DLV_ERROR);
     }
     ap = sortab;

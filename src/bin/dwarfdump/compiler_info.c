@@ -199,6 +199,12 @@ add_cu_name_compiler_target(char *name)
     cu_last = pCompiler->cu_last;
     /* Record current cu name */
     nc = (a_name_chain *)malloc(sizeof(a_name_chain));
+    if (!nc) {
+        fprintf(stderr,"Out of memory "
+            "allocating compiler target %s "
+            "(not saved)\n",name);
+        return;
+    }
     nc->item = makename(name);
     nc->next = NULL;
     if (cu_last) {

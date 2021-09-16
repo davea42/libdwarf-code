@@ -1652,8 +1652,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
 
     Aside from certain categories.  */
 int
-dwarf_object_finish(Dwarf_Debug dbg,
-    UNUSEDARG Dwarf_Error * error)
+dwarf_object_finish(Dwarf_Debug dbg)
 {
     int res = 0;
 

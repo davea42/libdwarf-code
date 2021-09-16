@@ -314,12 +314,12 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
             prefix, path, dwarf_errmsg(error));
         dwarf_dealloc_error(dbg,error);
         error = 0;
-        dwarf_finish(dbg,&error);
+        dwarf_finish(dbg);
         return res;
     } else if (res == DW_DLV_NO_ENTRY) {
         printf("%sThere is no %s or %s section in \"%s\"\n",
             prefix,dlname,buildidname,path);
-        res = dwarf_finish(dbg,&error);
+        dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;
     }
     if (doprintdebuglink && crc) {
@@ -414,7 +414,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
     }
     free(paths);
     free(debuglinkfullpath);
-    dwarf_finish(dbg,&error);
+    dwarf_finish(dbg);
     return DW_DLV_OK;
 }
 

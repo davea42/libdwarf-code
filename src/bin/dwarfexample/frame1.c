@@ -144,12 +144,13 @@ main(int argc, char **argv)
     } else if (curopt == (argc-1)) {
         filepath = argv[curopt];
         fd = open(filepath,O_RDONLY|O_BINARY);
+        if (fd < 0) {
+            printf("Unable to open %s, giving up.\n",filepath);
+            exit(1);
+        }
     } else {
         printf("Too many args, giving up. \n");
         exit(1);
-    }
-    if (fd < 0) {
-        printf("Failure attempting to open %s\n",filepath);
     }
     res = dwarf_init_b(fd,DW_GROUPNUMBER_ANY,
         errhand,errarg, &dbg,&error);
@@ -183,7 +184,7 @@ main(int argc, char **argv)
 
     read_frame_data(dbg,".debug_frame");
     read_frame_data(dbg,".eh_frame");
-    res = dwarf_finish(dbg,&error);
+    res = dwarf_finish(dbg);
     if (res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
     }

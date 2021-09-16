@@ -411,6 +411,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
         section_offsets_headerline_offset,
         num_secs,error);
     if (res != DW_DLV_OK) {
+        dwarf_dealloc(dbg,indexptr,DW_DLA_XU_INDEX);
         return res;
     }
     *xuptr             =     indexptr;

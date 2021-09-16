@@ -1629,6 +1629,8 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         }
         new_fde->fd_cie = new_cie;
     } else {
+        dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);
+        new_fde = 0;
         _dwarf_error(dbg, error, DW_DLE_NO_CIE_FOR_FDE);
         return DW_DLV_ERROR;
     }

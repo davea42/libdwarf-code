@@ -247,6 +247,7 @@ add_def_undef(unsigned opnum,
             &macdefundeftree);
         meb = macdef_tree_find(keystr,&macdefundeftree);
         if (!meb) {
+            free(keystr);
             printf("ERROR: Unable to find key \"%s\" "
                 "in macdef tree though just created.\n",
                 sanitized(keystr));
@@ -442,7 +443,7 @@ expand_array_file_if_required(void)
             glflags.gf_count_major_errors++;
             return;
         }
-        if (oldlen) {
+        if (oldlen && macfile_array) {
             memcpy(newar,macfile_array,
                 oldlen*sizeof(macfile_entry *));
             free(macfile_array);
@@ -546,7 +547,7 @@ add_to_file_stack(unsigned k,
 }
 
 static void
-print_source_intro(Dwarf_Die cu_die)
+print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
 {
     Dwarf_Off off = 0;
     int ores = 0;
@@ -562,12 +563,19 @@ print_source_intro(Dwarf_Die cu_die)
         if (lres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
             sec_name = ".debug_info";
         }
+        if (lres == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,err);
+            err = 0;
+        }
         printf("Macro data from CU-DIE at %s offset 0x%"
             DW_PR_XZEROS DW_PR_DUx ":\n",
             sanitized(sec_name),
             (Dwarf_Unsigned) off);
     } else {
         printf("Macro data (for the CU-DIE at unknown location):\n");
+    }
+    if (ores == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,err);
     }
 }
 
@@ -578,7 +586,7 @@ derive_error_message(Dwarf_Debug dbg, unsigned k,
     int  res,Dwarf_Error *err,
     const char *operator_string)
 {
-    const char *name = 0;
+    const char *name = "";
     struct esb_s m;
 
     dwarf_get_MACRO_name(macro_operator,&name);
@@ -1082,7 +1090,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 " 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                 sanitized(esb_get_string(&truename)),
                 macro_unit_offset);
-            print_source_intro(cu_die);
+            print_source_intro(dbg,cu_die);
         } else {
             printf("\n%s: Macro info for imported macro unit "
                 "at macro Offset "

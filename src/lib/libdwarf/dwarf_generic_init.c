@@ -205,7 +205,7 @@ int dwarf_init_path_dl(const char *path,
     unsigned       endian = 0;
     unsigned       offsetsize = 0;
     Dwarf_Unsigned filesize = 0;
-    int res =  DW_DLV_NO_ENTRY;
+    int res =  DW_DLV_ERROR;
     int errcode = 0;
     int fd = -1;
     Dwarf_Debug dbg = 0;
@@ -241,7 +241,6 @@ int dwarf_init_path_dl(const char *path,
                 errcode = 0;
             }
         }
-    } else {
     }
     if (res != DW_DLV_OK) {
         res = dwarf_object_detector_path_b(path,
@@ -258,7 +257,7 @@ int dwarf_init_path_dl(const char *path,
         }
     }
     if (res != DW_DLV_OK) {
-        /*  So as a last resurt in case
+        /*  So as a last resort in case
             of data corruption in the object.
             Lets try without
             investigating debuglink  or dSYM. */
@@ -278,9 +277,9 @@ int dwarf_init_path_dl(const char *path,
         return res;
     }
     /*  ASSERT: lpath_source != DW_PATHSOURCE_unspecified  */
-    if (lpath_source != DW_PATHSOURCE_basic  ) {
+    if (lpath_source != DW_PATHSOURCE_basic &&
+        true_path_out_buffer && *true_path_out_buffer) {
         /* MacOS dSYM or GNU debuglink */
-
         file_path = true_path_out_buffer;
         fd = open_a_file(true_path_out_buffer);
     } else {
@@ -428,7 +427,7 @@ dwarf_init_b(int fd,
     or the -b() form was used to init 'dbg'.
 */
 int
-dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
+dwarf_finish(Dwarf_Debug dbg)
 {
     if (!dbg) {
         return DW_DLV_OK;
@@ -469,7 +468,7 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         It never returns DW_DLV_ERROR.
         Not all code uses libdwarf exactly as we do
         hence the free() there. */
-    return dwarf_object_finish(dbg, error);
+    return dwarf_object_finish(dbg);
 }
 
 /*

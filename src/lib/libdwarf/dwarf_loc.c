@@ -1175,7 +1175,6 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
         blkres = dwarf_formexprloc(attr,&loc_blockc.bl_len,
             &loc_blockc.bl_data,error);
         if (blkres != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
             return blkres;
         }
         loc_blockc.bl_kind = llhead->ll_kind;
@@ -1818,6 +1817,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
         error);
     if (res != DW_DLV_OK) {
         /* low level error already set: let it be passed back */
+        dwarf_loc_head_c_dealloc(llhead);
         dwarf_dealloc(dbg,llbuf,DW_DLA_LOCDESC_C);
         llhead->ll_locdesc = 0;
         llhead->ll_locdesc_count = 0;

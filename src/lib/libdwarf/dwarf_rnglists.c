@@ -350,6 +350,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             free(newcontext);
             free_rnglists_chain(dbg,head_chain);
+            return res;
         }
         newcontext->rc_magic = RNGLISTS_MAGIC;
         curr_chain = (Dwarf_Chain)

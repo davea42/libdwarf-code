@@ -456,7 +456,12 @@ dwarf_add_AT_block_a(
     int len_size = 0;
     char * attrdata = 0;
     Dwarf_Bool is_exprloc_related = FALSE;
-    Dwarf_Half out_version = dbg->de_output_version;
+    Dwarf_Half out_version = 0;
+    if (dbg == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
+        return DW_DLV_ERROR;
+    }
+    out_version = dbg->de_output_version;
 
     switch (attr) {
     case DW_AT_location:
@@ -759,30 +764,26 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
     Dwarf_Unsigned block_size = 0;
     char *block_dest_ptr = 0;
     int do_len_as_int = 0;
-    int dwarf_version = dbg->de_output_version;
+    int dwarf_version = 0;
     Dwarf_Bool is_exprloc_related = FALSE;
-
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
     }
-
+    dwarf_version = dbg->de_output_version;
     if (ownerdie == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return DW_DLV_ERROR;
     }
-
     if (loc_expr == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_EXPR_NULL);
         return DW_DLV_ERROR;
     }
-
     if (loc_expr->ex_dbg != dbg) {
         _dwarf_p_error(dbg, error, DW_DLE_LOC_EXPR_BAD);
         return DW_DLV_ERROR;
     }
     block_size = loc_expr->ex_next_byte_offset;
-
     switch (attr) {
     case DW_AT_location:
     case DW_AT_use_location:

@@ -76,6 +76,9 @@ load_sup(Dwarf_Debug dbg,
     int res;
 
     get_sup_fields(dbg,&sec);
+    if (!sec) {
+        return DW_DLV_NO_ENTRY;
+    }
     res = _dwarf_load_section(dbg,sec,error);
     return res;
 }

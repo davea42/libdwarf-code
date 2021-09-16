@@ -88,8 +88,7 @@ class DbgInAutoCloser {
 public:
     DbgInAutoCloser(Dwarf_Debug dbg,int fd): dbg_(dbg),fd_(fd) {};
     ~DbgInAutoCloser() {
-        Dwarf_Error err = 0;
-        dwarf_finish(dbg_,&err);
+        dwarf_finish(dbg_);
         close(fd_);
     };
 private:

@@ -237,7 +237,7 @@ main(int argc, char **argv)
     }
     res = look_for_our_target(dbg,&target_data,&error);
     target_data_destructor(&target_data);
-    res = dwarf_finish(dbg,&error);
+    res = dwarf_finish(dbg);
     if (res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
     }
@@ -486,10 +486,16 @@ read_line_data(Dwarf_Debug dbg UNUSEDARG,
 
             sres = dwarf_lineno(linebuf[i],&lineno,errp);
             if (sres == DW_DLV_ERROR) {
+                if (prev_linesrcfile) {
+                    dwarf_dealloc(dbg,prev_linesrcfile,DW_DLA_STRING);
+                }
                 return sres;
             }
             sres = dwarf_line_srcfileno(linebuf[i],&filenum,errp);
             if (sres == DW_DLV_ERROR) {
+                if (prev_linesrcfile) {
+                    dwarf_dealloc(dbg,prev_linesrcfile,DW_DLA_STRING);
+                }
                 return sres;
             }
             if (filenum) {
@@ -497,6 +503,9 @@ read_line_data(Dwarf_Debug dbg UNUSEDARG,
             }
             sres = dwarf_lineaddr(linebuf[i],&lineaddr,errp);
             if (sres == DW_DLV_ERROR) {
+                if (prev_linesrcfile) {
+                    dwarf_dealloc(dbg,prev_linesrcfile,DW_DLA_STRING);
+                }
                 return sres;
             }
             sres = dwarf_linesrc(linebuf[i],&linesrcfile,errp);
@@ -528,7 +537,6 @@ read_line_data(Dwarf_Debug dbg UNUSEDARG,
         td->td_subprog_srcfile = prev_linesrcfile;
         dwarf_srclines_dealloc_b(line_context);
         return DW_DLV_OK;
-
     }
     return DW_DLV_ERROR;
 #if 0
@@ -728,7 +736,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
                 return res2;
             }
             else if (res2 == IN_THIS_CU) {
-                /* fall thru */
+              /* fall thru */
             }
             else if (res2 == NOT_THIS_CU) {
                 return res2;
@@ -952,6 +960,7 @@ get_name_from_abstract_origin(Dwarf_Debug dbg,
         return res;
     }
 
+    dwarf_dealloc(dbg,ab_attr,DW_DLA_ATTR);
     res = dwarf_offdie_b(dbg,ab_offset,is_info,&abrootdie,errp) ;
     if (res != DW_DLV_OK) {
         return res;

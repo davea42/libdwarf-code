@@ -430,9 +430,7 @@ int main()
         printf("FAIL printing, res %d line %d\n",res,__LINE__);
         exit(1);
     }
-
-    dwarf_object_finish(dbg,&error);
-
+    dwarf_object_finish(dbg);
     if (fail) {
         printf("FAIL objectaccess.c\n");
         exit(1);

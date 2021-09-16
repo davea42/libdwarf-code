@@ -408,8 +408,17 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             /* line, string */
         case DW_MACINFO_vendor_ext:
             /* number, string */
+            res = _dwarf_leb128_uword_wrapper(dbg,&pnext,
+                macro_end,&v1,error);
+#if 0
             DECODE_LEB128_UWORD_CK(pnext,v1,dbg,error,
                 macro_end);
+#endif
+            if (res != DW_DLV_OK) {
+                free_macro_stack(dbg,&msdata);
+                dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
+                return res;
+            }
             pdmd->dmd_lineno = v1;
 
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
@@ -442,8 +451,17 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             break;
         case DW_MACINFO_start_file:
             /* Line, file index */
+#if 0
             DECODE_LEB128_UWORD_CK(pnext,v1,dbg,error,
                 macro_end);
+#endif
+            res = _dwarf_leb128_uword_wrapper(dbg,&pnext,
+                macro_end,&v1,error);
+            if (res != DW_DLV_OK) {
+                free_macro_stack(dbg,&msdata);
+                dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
+                return res;
+            }
             pdmd->dmd_lineno = v1;
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
@@ -453,8 +471,16 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                     DW_DLE_DEBUG_MACRO_INCONSISTENT);
                 return DW_DLV_ERROR;
             }
+#if 0
             DECODE_LEB128_UWORD_CK(pnext,v1,dbg,error,
                 macro_end);
+#endif
+            res = _dwarf_leb128_uword_wrapper(dbg,&pnext,macro_end,&v1,error);
+            if (res != DW_DLV_OK) {
+                free_macro_stack(dbg,&msdata);
+                dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
+                return res;
+            }
             pdmd->dmd_fileindex = v1;
             (void) _dwarf_macro_stack_push_index(dbg, fileindex,
                 &msdata);

@@ -752,10 +752,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
             &clow,&csize,&err);
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc_error(dbg,err);
-            if (ct == ORIGLKLYTEXTINDEX) {
-                return DW_DLV_NO_ENTRY;
-            }
-            continue;
+            return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
             if (ct == ORIGLKLYTEXTINDEX) {
@@ -1393,7 +1390,7 @@ process_one_file(
 
     /*  Could finish dbg first. Either order ok. */
     if (dbgtied) {
-        dres = dwarf_finish(dbgtied,&onef_err);
+        dres = dwarf_finish(dbgtied);
         if (dres != DW_DLV_OK) {
             print_error_and_continue(dbg,
                 "dwarf_finish failed on tied dbg", dres, onef_err);
@@ -1402,7 +1399,7 @@ process_one_file(
         dbgtied = 0;
     }
     groups_restore_subsidiary_flags();
-    dres = dwarf_finish(dbg, &onef_err);
+    dres = dwarf_finish(dbg);
     if (dres != DW_DLV_OK) {
         print_error_and_continue(dbg,
             "dwarf_finish failed", dres, onef_err);
@@ -1515,11 +1512,10 @@ print_error(Dwarf_Debug dbg,
     print_error_maybe_continue(dbg,msg,dwarf_ret_val,lerr,FALSE);
     glflags.gf_count_major_errors++;
     if (dwarf_ret_val == DW_DLV_ERROR) {
-        Dwarf_Error ignored_err = 0;
         /*  If dbg was never initialized
             this still cleans up the Error data. */
         DROP_ERROR_INSTANCE(dbg,dwarf_ret_val,lerr);
-        dwarf_finish(dbg, &ignored_err);
+        dwarf_finish(dbg);
         check_for_major_errors();
         check_for_notes();
     }

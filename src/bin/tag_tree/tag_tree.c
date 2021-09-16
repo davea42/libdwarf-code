@@ -333,6 +333,10 @@ main(int argc, char **argv)
 #ifdef HAVE_USAGE_TAG_ATTR
         /* Check if we have duplicated tags */
         if (standard_flag) {
+            if (tag >= DW_TAG_last) {
+                bad_line_input(
+                    "tag value exceeds standard table size");
+            }
             if (tag_parents[tag]) {
                 bad_line_input("tag 0x%02x already defined",tag);
             }

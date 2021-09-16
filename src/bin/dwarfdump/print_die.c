@@ -1723,9 +1723,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     print_error_and_continue(dbg,
                         "Unable to read die tag!",
                         tagres,tagerr);
-                    /*  tagerr is unrelated to *error
-                        but leaving *error NULL should be ok. */
-                    return tagres;
+                    dwarf_dealloc_error(dbg,tagerr);
+                    return DW_DLV_NO_ENTRY;
                 }
             } else if (abtres == DW_DLV_ERROR) {
                 dwarf_dealloc_die(child);

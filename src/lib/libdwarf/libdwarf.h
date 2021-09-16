@@ -1396,7 +1396,7 @@ DW_API int dwarf_init_b(int /*fd*/,
     Dwarf_Debug*      /*dbg*/,
     Dwarf_Error*      /*error*/);
 
-DW_API int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
+DW_API int dwarf_finish(Dwarf_Debug /*dbg*/);
 
 /*  NEW March 2017. */
 DW_API int dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* /*obj*/,
@@ -1405,8 +1405,7 @@ DW_API int dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* /*obj*/,
     unsigned int  /*groupnumber*/,
     Dwarf_Debug*  /*dbg*/,
     Dwarf_Error*  /*error*/);
-DW_API int dwarf_object_finish(Dwarf_Debug /*dbg*/,
-    Dwarf_Error* /*error*/);
+DW_API int dwarf_object_finish(Dwarf_Debug /*dbg*/);
 
 DW_API int dwarf_set_tied_dbg(Dwarf_Debug /*basedbg*/,
     Dwarf_Debug /*tied_dbg*/,

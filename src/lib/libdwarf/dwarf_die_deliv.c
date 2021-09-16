@@ -2722,6 +2722,7 @@ dwarf_child(Dwarf_Die die,
     res =  _dwarf_leb128_uword_wrapper(dbg,&die_info_ptr,
         die_info_end, &utmp,error);
     if (res != DW_DLV_OK) {
+        dwarf_dealloc_die(ret_die);
         return res;
     }
 #if 0

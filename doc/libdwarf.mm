@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.8 10 September 2021
+.ds vE Rev 4.9 21 September 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -479,6 +479,15 @@ DWARF5.
 
 .H 2 "Revision History"
 .VL 15
+.LI "September 2021"
+The pointless error argument to
+dwarf_finish() has been eliminated.
+The function will never return
+DW_DLV_ERROR so the return
+value is pretty much meaningless. 
+If the DwarfDebug passed in is NULL
+it returns DW_DLV_NO_ENTRY,
+which is useless.
 .LI "June 2021"
 The functions for initializing,
 dwarf_init_path(),
@@ -2671,16 +2680,20 @@ It never returns
 
 .H 3 "dwarf_finish()"
 .DS
-\f(CWint dwarf_finish(
-    Dwarf_Debug dbg,
-    Dwarf_Error *error)\fP
+\f(CWint dwarf_finish(Dwarf_Debug dbg)\fP
 .DE
 The function
 releases all \fILibdwarf\fP internal resources
 associated with the descriptor \f(CWdbg\fP, and invalidates \f(CWdbg\fP.
-It returns \f(CWDW_DLV_ERROR\fP if there is an error during the
-finishing operation.  It returns \f(CWDW_DLV_OK\fP
+It returns \f(CWDW_DLV_OK\fP
 for a successful operation.
+It returns \f(CWDW_DLV_NO_ENTRY\fP
+if the passed in argument is NULL.
+
+Before version 0.2.0, September 2021, there
+was an error argument passed in, which
+was pointless as DW_DLV_ERROR was never
+returned by the function.
 
 .H 3 "dwarf_set_stringcheck()"
 .DS
