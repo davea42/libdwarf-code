@@ -391,6 +391,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
         endloc = (pnext - macro_base);
         if (endloc > dbg->de_debug_macinfo.dss_size) {
+            dwarf_dealloc(dbg,return_data,DW_DLA_STRING);
             free_macro_stack(dbg,&msdata);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_LENGTH_BAD);
             return DW_DLV_ERROR;
@@ -423,6 +424,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
+                dwarf_dealloc(dbg,return_data,DW_DLA_STRING);
                 free_macro_stack(dbg,&msdata);
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 _dwarf_error(dbg, error,
@@ -433,6 +435,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 macro_base,pnext,macro_end,
                 DW_DLE_MACINFO_STRING_BAD,error);
             if (res != DW_DLV_OK) {
+                dwarf_dealloc(dbg,return_data,DW_DLA_STRING);
                 return res;
             }
             slen = strlen((char *) pnext) + 1;

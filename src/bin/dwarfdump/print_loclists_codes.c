@@ -161,7 +161,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
             that might cause base address to be invalid. */
         if (debug_addr_unavailable) {
             esb_append_printf_u(esbp,
-                "<DW_LLE_startx_length 0x%"
+                "<DW_LLE_offset_pair 0x%"
                 DW_PR_XZEROS DW_PR_DUx
                 ,rawlopc);
             esb_append_printf_u(esbp,

@@ -687,6 +687,7 @@ dwarf_get_gnu_index_block_entry(Dwarf_Gnu_Index_Head head,
         _dwarf_error_string(0,error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: in "
             "dwarf_get_gnu_index_block_entry");
+        return DW_DLV_ERROR;
     }
     if (blocknumber >= head->gi_blockcount) {
         return DW_DLV_NO_ENTRY;

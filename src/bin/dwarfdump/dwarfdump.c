@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
+Portions Copyright (C) 2007-2021 David Anderson. All Rights Reserved.
 Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
 Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -1338,14 +1338,15 @@ process_one_file(
     /*  prints nothing unless section .gnu_debuglink is present.
         Lets print for a few critical sections.  */
     if (glflags.gf_gnu_debuglink_flag) {
-        int lres = 0;
+        int lresdl = 0;
         Dwarf_Error err = 0;
 
-        lres = print_gnu_debuglink(dbg,&err);
-        if (lres == DW_DLV_ERROR) {
+        lresdl = print_gnu_debuglink(dbg,&err);
+        if (lresdl == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
-                "print gnu_debuglink data failed", lres, err);
-            DROP_ERROR_INSTANCE(dbg,lres,err);
+                "print gnu_debuglink data failed", lresdl, err);
+            DROP_ERROR_INSTANCE(dbg,lresdl,err);
+            err = 0;
         }
     }
     if (glflags.gf_debug_gnu_flag) {
@@ -1357,6 +1358,7 @@ process_one_file(
             print_error_and_continue(dbg,
                 "print .debug_gnu* section failed", lres, err);
             DROP_ERROR_INSTANCE(dbg,lres,err);
+            err = 0;
         }
     }
     if (glflags.gf_debug_sup_flag) {

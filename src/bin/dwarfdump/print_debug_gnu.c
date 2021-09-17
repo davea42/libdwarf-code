@@ -177,7 +177,7 @@ print_selected_attributes(Dwarf_Debug dbg,
         /* ok, this attribute is present */
         atname = get_AT_name(attrid,FALSE);
         res = dwarf_whatform(attr,&form,error);
-        if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
             error_report(res,"dwarf_whatform() problem: ",error);
             dwarf_dealloc_error(dbg,*error);
             dwarf_dealloc_attribute(attr);

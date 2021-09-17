@@ -4693,13 +4693,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return pres;
         }
-        if (fc != DW_FORM_CLASS_STRING) {
-            remark_wrong_string_format(attr,theform,fc);
-            esb_destructor(&lesb);
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return DW_DLV_NO_ENTRY;
-        }
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&lesb));
         esb_destructor(&lesb);

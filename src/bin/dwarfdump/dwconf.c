@@ -1248,7 +1248,6 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
                     fname, lineno,
                     conf_internal->initial_reg_value_lineno);
             }
-            if (!inourabi) break;
             conf_internal->undefined_val_reg_lineno = lineno;
             parseundefined_val_reg(line, fname,
                 lineno, conf_internal, comtabp);

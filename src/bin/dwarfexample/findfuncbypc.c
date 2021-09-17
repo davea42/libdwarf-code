@@ -699,19 +699,18 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         printf("Error in die access , level %d \n",in_level);
         exit(1);
     }
-    else if (res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
-    else if ( res == NOT_THIS_CU) {
+    if (res == NOT_THIS_CU) {
         return res;
     }
-    else if ( res == IN_THIS_CU) {
+    if (res == IN_THIS_CU) {
         /*  Fall through to examine details. */
-    }
-    else if ( res == FOUND_SUBPROG) {
+    } else if (res == FOUND_SUBPROG) {
         return res;
     } else {
-        /* DW_DLV_OK */
+        /*  ASSERT: res == DW_DLV_OK */
         /*  Fall through to examine details. */
     }
 
@@ -1022,77 +1021,79 @@ check_subprog_details(Dwarf_Debug dbg,
         }
     }
     {
-    Dwarf_Signed i = 0;
-    Dwarf_Signed atcount = 0;
-    Dwarf_Attribute *atlist = 0;
-
-    res = dwarf_attrlist(die,&atlist,&atcount,errp);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    for (i = 0; i < atcount ; ++i) {
-        Dwarf_Half atr = 0;
-        Dwarf_Attribute attrib =  atlist[i];
-
-        res = dwarf_whatattr(attrib,&atr,errp);
+        Dwarf_Signed i = 0;
+        Dwarf_Signed atcount = 0;
+        Dwarf_Attribute *atlist = 0;
+    
+        res = dwarf_attrlist(die,&atlist,&atcount,errp);
         if (res != DW_DLV_OK) {
-            /* Something is very wrong here.*/
-            if (td->td_print_details) {
-                printf("dwarf_whatattr returns bad errcode %d\n",
-                    res);
-            }
             return res;
         }
-        if (atr == DW_AT_ranges) {
-            int res2 = 0;
-            Dwarf_Off ret_offset = 0;
-            int has_low_hi = FALSE;
-            Dwarf_Addr low = 0;
-            Dwarf_Addr high = 0;
-
-            res2 = dwarf_global_formref(attrib,
-                &ret_offset,errp);
-            if (res2 != DW_DLV_OK) {
-                return res2;
-            }
-            td->td_ranges_offset = ret_offset +
-                td->td_cu_ranges_base;
-            res = check_subprog_ranges_for_match(dbg,
-                is_info,
-                die,
-                level,
-                td,
-                &has_low_hi,
-                &low,
-                &high,
-                errp);
-            if (res == DW_DLV_OK) {
-                continue;
-            } else if (res == DW_DLV_OK) {
-                continue;
-            } else if (res == DW_DLV_NO_ENTRY) {
-                continue;
-            } else if (res == FOUND_SUBPROG) {
-                td->td_subprog_lowpc = lowpc;
-                td->td_subprog_highpc = highpc;
-                td->td_subprog_haslowhighpc = has_low_hi;
-                finalres = FOUND_SUBPROG;
-                continue;
-            } else {
+        for (i = 0; i < atcount ; ++i) {
+            Dwarf_Half atr = 0;
+            Dwarf_Attribute attrib =  atlist[i];
+    
+            res = dwarf_whatattr(attrib,&atr,errp);
+            if (res != DW_DLV_OK) {
+                /* Something is very wrong here.*/
+                if (td->td_print_details) {
+                    printf("dwarf_whatattr returns bad errcode %d\n",
+                        res);
+                }
                 return res;
             }
-        } else if (atr == DW_AT_decl_file ) {
-            int res3 = 0;
-            Dwarf_Unsigned file_index = 0;
-            res3 = dwarf_formudata(attrib,&file_index,errp);
-            if (res3 != DW_DLV_OK) {
-                return res3;
+            if (atr == DW_AT_ranges) {
+                int res2 = 0;
+                int res4 = 0;
+                Dwarf_Off ret_offset = 0;
+                int has_low_hi = FALSE;
+                Dwarf_Addr low = 0;
+                Dwarf_Addr high = 0;
+    
+                res2 = dwarf_global_formref(attrib,
+                    &ret_offset,errp);
+                if (res2 != DW_DLV_OK) {
+                    return res2;
+                }
+                td->td_ranges_offset = ret_offset +
+                    td->td_cu_ranges_base;
+                res4 = check_subprog_ranges_for_match(dbg,
+                    is_info,
+                    die,
+                    level,
+                    td,
+                    &has_low_hi,
+                    &low,
+                    &high,
+                    errp);
+                if (res4 == DW_DLV_OK) {
+                    continue;
+                } 
+                if (res4 == DW_DLV_NO_ENTRY) {
+                    continue;
+                } 
+                if (res4 == FOUND_SUBPROG) {
+                    td->td_subprog_lowpc = lowpc;
+                    td->td_subprog_highpc = highpc;
+                    td->td_subprog_haslowhighpc = has_low_hi;
+                    finalres = FOUND_SUBPROG;
+                    continue;
+                } 
+                /* ASSERT: res4 == DW_DLV_ERROR; */
+                return res4;
+            } else if (atr == DW_AT_decl_file ) {
+                int res5 = 0;
+                Dwarf_Unsigned file_index = 0;
+    
+                res5 = dwarf_formudata(attrib,&file_index,errp);
+                if (res5 != DW_DLV_OK) {
+                    return res5;
+                }
+                td->td_subprog_fileindex = file_index;
             }
-            td->td_subprog_fileindex = file_index;
+            dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
         }
-        dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
-    }
-    dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
+        dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
     }
     return finalres;
 }
@@ -1103,8 +1104,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
     struct target_data_s *td,Dwarf_Error *errp)
 {
     int res = 0;
-    int resb = 0;
-    int finalres = 0;
+    int finalres = DW_DLV_NO_ENTRY;
     int have_pc_range = FALSE;
     Dwarf_Addr lowpc = 0;
     Dwarf_Addr highpc = 0;
@@ -1115,7 +1115,6 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
         level,
         &have_pc_range,
         &lowpc,&highpc,errp);
-
     if (res == DW_DLV_OK) {
         if (have_pc_range) {
             if (td->td_target_pc < lowpc ||
@@ -1130,64 +1129,65 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
             }
         }
     }
-    finalres = IN_THIS_CU;
+    finalres = res;
     {
-    Dwarf_Signed atcount = 0;
-    Dwarf_Attribute *atlist = 0;
-    Dwarf_Signed j = 0;
-
-    res = dwarf_attrlist(die,&atlist,&atcount,errp);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    for (j = 0; j < atcount ; ++j) {
-        Dwarf_Half atr = 0;
-        Dwarf_Attribute attrib =  atlist[j];
-
-        resb = dwarf_whatattr(attrib,&atr,errp);
-        if (resb != DW_DLV_OK) {
-            /* Something is very wrong here.*/
-            printf("dwarf_whatattr returns bad errcode %d, "
-                "serious error somewhere.\n",
-                res);
-            return resb;
+        Dwarf_Signed atcount = 0;
+        Dwarf_Attribute *atlist = 0;
+        Dwarf_Signed j = 0;
+        int alres = 0;
+    
+        alres = dwarf_attrlist(die,&atlist,&atcount,errp);
+        if (alres != DW_DLV_OK) {
+            return alres;
         }
-
-        if (atr == DW_AT_name) {
-            char *name = 0;
-            resb = dwarf_formstring(attrib,&name,errp);
-            if (resb == DW_DLV_OK) {
-                td->td_cu_name = name;
-            }
-        } else if (atr == DW_AT_comp_dir) {
-            char *name = 0;
-            resb = dwarf_formstring(attrib,&name,errp);
-            if (resb == DW_DLV_OK) {
-                td->td_cu_comp_dir = name;
-            }
-        } else if (atr == DW_AT_rnglists_base ||
-            atr == DW_AT_GNU_ranges_base) {
-            Dwarf_Off rbase = 0;
-
-            resb = dwarf_global_formref(attrib,&rbase,errp);
+        for (j = 0; j < atcount ; ++j) {
+            Dwarf_Half atr = 0;
+            Dwarf_Attribute attrib =  atlist[j];
+            int resb = 0;
+    
+            resb = dwarf_whatattr(attrib,&atr,errp);
             if (resb != DW_DLV_OK) {
+                /* Something is very wrong here.*/
+                printf("dwarf_whatattr returns bad errcode %d, "
+                    "serious error somewhere.\n",
+                    res);
                 return resb;
             }
-            td->td_cu_ranges_base = rbase;
-        } else if (atr == DW_AT_ranges) {
-            /* we have actual ranges. */
-            Dwarf_Off rbase = 0;
-
-            resb = dwarf_global_formref(attrib,&rbase,errp);
-            if (resb != DW_DLV_OK) {
-                return resb;
+            if (atr == DW_AT_name) {
+                char *name = 0;
+                resb = dwarf_formstring(attrib,&name,errp);
+                if (resb == DW_DLV_OK) {
+                    td->td_cu_name = name;
+                }
+            } else if (atr == DW_AT_comp_dir) {
+                char *name = 0;
+                resb = dwarf_formstring(attrib,&name,errp);
+                if (resb == DW_DLV_OK) {
+                    td->td_cu_comp_dir = name;
+                }
+            } else if (atr == DW_AT_rnglists_base ||
+                atr == DW_AT_GNU_ranges_base) {
+                Dwarf_Off rbase = 0;
+    
+                resb = dwarf_global_formref(attrib,&rbase,errp);
+                if (resb != DW_DLV_OK) {
+                    return resb;
+                }
+                td->td_cu_ranges_base = rbase;
+            } else if (atr == DW_AT_ranges) {
+                /* we have actual ranges. */
+                Dwarf_Off rbase = 0;
+    
+                resb = dwarf_global_formref(attrib,&rbase,errp);
+                if (resb != DW_DLV_OK) {
+                    return resb;
+                }
+                real_ranges_offset = rbase;
+                rdone = TRUE;
             }
-            real_ranges_offset = rbase;
-            rdone = TRUE;
+            dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
         }
-        dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
-    }
-    dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
+        dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
     }
     if (rdone) {
         /*  We can do get ranges now as we already saw

@@ -649,8 +649,7 @@ _dwarf_debuglink_finder_newpath(
     unsigned       buildid_len_in,
     unsigned char *buildid_in,
     dwarfstring    *m,
-    int * fd_out,
-    int * errcode)
+    int * fd_out)
 {
     unsigned char  lcrc[4];
     char          *debuglinkpath = 0; /* must be freed */
@@ -689,13 +688,16 @@ _dwarf_debuglink_finder_newpath(
         &buildid, &buildid_length,
         &paths, &paths_count, &error);
     if (res == DW_DLV_ERROR) {
-        *errcode = dwarf_errno(error);
         dwarf_dealloc_error(dbg,error);
         dwarf_finish(dbg);
+        error = 0;
+        dbg = 0;
         return DW_DLV_NO_ENTRY;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         /*  There is no debuglink section */
         dwarf_finish(dbg);
+        dbg = 0;
         return DW_DLV_NO_ENTRY;
     }
 
@@ -709,9 +711,12 @@ _dwarf_debuglink_finder_newpath(
             free(debuglinkfullpath);
             dwarf_dealloc_error(dbg,error);
             dwarf_finish(dbg);
+            error = 0;
+            dbg = 0;
             /*  Cannot match the crc_in, give up. */
             return DW_DLV_NO_ENTRY;
-        } else if (res == DW_DLV_OK) {
+        } 
+        if (res == DW_DLV_OK) {
             crc = &lcrc[0];
         }
     }
@@ -727,6 +732,7 @@ _dwarf_debuglink_finder_newpath(
         *fd_out = dbg->de_fd;
         dbg->de_owns_fd = FALSE;
         dwarf_finish(dbg);
+        dbg = 0;
         return DW_DLV_OK;
     }
     dwarf_finish(dbg);
@@ -784,8 +790,11 @@ _dwarf_debuglink_finder_internal(
         res = dwarf_add_debuglink_global_path(dbg,
             lpath, &error);
         if (res != DW_DLV_OK){
-            *errcode = dwarf_errno(error);
-            dwarf_dealloc_error(dbg,error);
+            if (res == DW_DLV_ERROR) {
+                *errcode = dwarf_errno(error);
+                dwarf_dealloc_error(dbg,error);
+                error = 0;
+            }
             dwarf_finish(dbg);
             return res;
         }
@@ -819,9 +828,10 @@ _dwarf_debuglink_finder_internal(
             continue;
         }
         close(pfd);
+        /* ASSERT: never returns DW_DLV_ERROR */
         res = _dwarf_debuglink_finder_newpath(
             pa,crc,buildid_length, buildid,
-            m,fd_out,errcode);
+            m,fd_out);
         if (res == DW_DLV_OK) {
             free(debuglinkfullpath);
             free(paths);

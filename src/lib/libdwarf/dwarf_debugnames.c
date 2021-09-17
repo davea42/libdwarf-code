@@ -856,7 +856,9 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
             ptr, unit_entry_size,
             error,endptr);
-        *offset = offsetval;
+        if (offset) {
+            *offset = offsetval;
+        }
     }
     return DW_DLV_OK;
 }
