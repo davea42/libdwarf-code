@@ -455,10 +455,11 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
         curr_chain = (Dwarf_Chain)
             _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
         if (curr_chain == NULL) {
-            free_loclists_chain(dbg,head_chain);
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: allocating Loclists_Context"
                 " chain entry");
+            free_loclists_chain(dbg,head_chain);
+            free(newcontext);
             return DW_DLV_ERROR;
         }
         curr_chain->ch_item = newcontext;

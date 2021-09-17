@@ -2296,7 +2296,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                         esb_get_string(&m),
                         aresb,*err);
                     esb_destructor(&m);
-                    DROP_ERROR_INSTANCE(dbg,aresb,*err)
+                    DROP_ERROR_INSTANCE(dbg,aresb,*err);
                 }
                 if (print_else_name_match == FALSE &&
                     attr_match_localb) {
@@ -6343,6 +6343,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     res = dwarf_dieoffset(die,&diegoffset,&error);
     if (res == DW_DLV_ERROR) {
         /* esb_append(esbp,"<helper dieoffset FAIL >"); */
+        dwarf_dealloc_error(dbg,error);
         return 0;
     } else if (res == DW_DLV_NO_ENTRY) {
         /* We don't know sign. */
@@ -6365,6 +6366,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         /*bracket_hex("<helper dwarf_attr FAIL ",
             diegoffset,">",esbp); */
+        dwarf_dealloc_error(dbg,error);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
     } else if (res == DW_DLV_NO_ENTRY) {
@@ -6403,6 +6405,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         /*bracket_hex( "<helper dwarf_offdie_b  FAIL ",
             diegoffset,">",esbp); */
+        dwarf_dealloc_error(dbg,error);
         helpertree_add_entry(diegoffset, 0,helperbase);
         helpertree_add_entry(typedieoffset, 0,helperbase);
         return 0;
@@ -6417,6 +6420,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         /*bracket_hex( "<helper dwarf_attr typedie  FAIL",
             diegoffset,">",esbp); */
+        dwarf_dealloc_error(dbg,error);
         dwarf_dealloc_die(typedie);
         helpertree_add_entry(diegoffset, 0,helperbase);
         helpertree_add_entry(typedieoffset, 0,helperbase);

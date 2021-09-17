@@ -521,6 +521,7 @@ read_line_data(Dwarf_Debug dbg UNUSEDARG,
                 td->td_subprog_lineaddr = prev_lineaddr;
                 td->td_subprog_lineno = prev_lineno;
                 td->td_subprog_srcfile = prev_linesrcfile;
+                dwarf_dealloc(dbg,linesrcfile,DW_DLA_STRING);
                 return DW_DLV_OK;
             }
             prev_lineaddr = lineaddr;

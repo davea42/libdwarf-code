@@ -614,32 +614,32 @@ blockmatch(unsigned char *l,
 
 /*  The debug version we expect not to have debuglink,
     checking here if buildid matches.
-    Never returns DW_DLV_ERROR. */
-static int
+    Returns TRUE or FALSE  */
+static Dwarf_Bool
 match_buildid(
-    unsigned char *crc_base,
+    unsigned char *  crc_base,
     unsigned         buildid_length_base,
-    unsigned  char  * buildid_base,
+    unsigned  char  *buildid_base,
     /*  *_base is executable info while
         *_debug is the debug object. */
-    unsigned char  * crc_debug,
-    unsigned  buildid_length_debug,
+    unsigned char  *crc_debug,
+    unsigned        buildid_length_debug,
     unsigned  char *buildid_debug)
 {
     if (crc_debug && crc_base) {
         /* crc available for both */
         if (!blockmatch(crc_debug,crc_base,4)) {
-            return DW_DLV_NO_ENTRY;
+            return FALSE;
         }
     }
     if (buildid_length_base != buildid_length_debug) {
-        return DW_DLV_NO_ENTRY;
+        return FALSE;
     }
     if (!blockmatch(buildid_base,buildid_debug,
         buildid_length_base)) {
-        return DW_DLV_NO_ENTRY;
+        return FALSE;
     }
-    return DW_DLV_OK;
+    return TRUE;
 }
 
 static int
@@ -666,6 +666,7 @@ _dwarf_debuglink_finder_newpath(
     Dwarf_Debug dbg = 0;
     Dwarf_Error error = 0;
     char *path = path_in;
+    Dwarf_Bool didmatch = FALSE;
     int res = 0;
 
     res = dwarf_init_path(path,
@@ -715,22 +716,18 @@ _dwarf_debuglink_finder_newpath(
         }
     }
     free(debuglinkfullpath);
-    res = match_buildid(
+    didmatch = match_buildid(
         /* This is the executable */
         crc_in,buildid_len_in,buildid_in,
         /* pass in local so we can calculate the missing crc */
         /* following is the target, ie, debug */
         crc,buildid_length,buildid);
-    if (res == DW_DLV_OK) {
+    if (didmatch) {
         dwarfstring_append(m,path);
         *fd_out = dbg->de_fd;
         dbg->de_owns_fd = FALSE;
         dwarf_finish(dbg);
         return DW_DLV_OK;
-    }
-    if (res == DW_DLV_ERROR) {
-         dwarf_dealloc_error(dbg,error);
-         error = 0;
     }
     dwarf_finish(dbg);
     return DW_DLV_NO_ENTRY;

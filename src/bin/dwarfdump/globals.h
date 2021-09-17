@@ -67,17 +67,17 @@ extern "C" {
     Using *err when err is correct will
     be caught by the compiler.  You are warned. */
 #define DROP_ERROR_INSTANCE(d,r,e)        \
+do {                                      \
     if ((r) == DW_DLV_ERROR) {            \
         if (e) {                          \
             dwarf_dealloc_error((d),(e)); \
             (e) = 0;                      \
-        }                                 \
-    } else  { if ((r) != DW_DLV_OK &&     \
-        (r) != DW_DLV_NO_ENTRY) {         \
+        } else {                          \
             report_caller_error_drop_error((r), \
-            __LINE__,__FILE__);           \
+                __LINE__,__FILE__);       \
         }                                 \
-    }
+    }                                     \
+} while(0)
 
 /*  Version 5 returns DW_AT_decl_file differently
     than earlier versions */

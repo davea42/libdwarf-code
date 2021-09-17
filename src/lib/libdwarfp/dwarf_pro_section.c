@@ -2703,15 +2703,17 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
             ap->dsa_implicitvalue = curattr->ar_implicit_const;
             ap->dsa_attrp = 0;
         }
-
-        qsort(sortab,attrcount,sizeof(struct Dwarf_Sort_Abbrev_s),
-            abcompare);
         ap = sortab;
-        k = 0;
-        res = verify_ab_no_dups(sortab,attrcount);
-        if (res != DW_DLV_OK) {
-            DWARF_P_DBG_ERROR(dbg,DW_DLE_DUP_ATTR_ON_DIE,
-                DW_DLV_ERROR);
+        if (attrcount > 1) {
+            qsort(ap,attrcount,sizeof(struct Dwarf_Sort_Abbrev_s),
+                abcompare);
+            k = 0;
+            res = verify_ab_no_dups(sortab,attrcount);
+            if (res != DW_DLV_OK) {
+                free(sortab);
+                DWARF_P_DBG_ERROR(dbg,DW_DLE_DUP_ATTR_ON_DIE,
+                    DW_DLV_ERROR);
+            }
         }
         for ( ; k < attrcount; ++k,++ap) {
             attrs[k] = ap->dsa_attr;
