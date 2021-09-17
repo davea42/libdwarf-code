@@ -1824,12 +1824,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 return pdacres;
             }
             child = 0;
-        } else if (cdres == DW_DLV_ERROR) {
-            dwarf_dealloc_die(child);
-            if (in_die != in_die_in) {
-                dwarf_dealloc_die(in_die);
-            }
-            return cdres;
         }
         /* Stop the display of all children */
         if (glflags.gf_display_children_tree &&
@@ -4543,12 +4537,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&esb_extra);
             return tres;
         }
-        if (fc != DW_FORM_CLASS_STRING) {
-            remark_wrong_string_format(attr,theform,fc);
-            esb_destructor(&valname);
-            esb_destructor(&esb_extra);
-            return DW_DLV_NO_ENTRY;
-        }
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&templatenamestr));
         esb_destructor(&templatenamestr);
@@ -7190,8 +7178,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     int dres = 0;
     Dwarf_Half direct_form = 0;
     Dwarf_Bool is_info = 0;
-    struct esb_s esb_expr;
-    int esb_expr_alive = FALSE;
 
     is_info = dwarf_get_die_infotypes_flag(die);
     /*  Dwarf_whatform gets the real form, DW_FORM_indir is
@@ -8165,12 +8151,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     } /* end switch on theform */
     show_form_itself(show_form,local_verbose,theform,
         direct_form,esbp);
-    if (esb_expr_alive) {
-        /*  So the expr ops follow the FORM of the attribute
-            if indeed FORMs shown. */
-        esb_append(esbp,esb_get_string(&esb_expr));
-        esb_destructor(&esb_expr);
-    }
     return DW_DLV_OK;
 }
 

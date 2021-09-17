@@ -673,6 +673,7 @@ _dwarf_debuglink_finder_newpath(
         DW_GROUPNUMBER_ANY,
         0,0, &dbg,&error);
     if (res == DW_DLV_ERROR) {
+        /* ASSERT:  dbg is NULL as init failed */
         dwarf_dealloc_error(dbg,error);
         error = 0;
         return DW_DLV_NO_ENTRY;
@@ -700,13 +701,14 @@ _dwarf_debuglink_finder_newpath(
         dbg = 0;
         return DW_DLV_NO_ENTRY;
     }
-
     free(paths);
     paths = 0;
+
     memset(&lcrc[0],0,sizeof(lcrc));
     if (crc_in && !crc) {
-        res = dwarf_crc32(dbg,lcrc,&error);
-        if (res == DW_DLV_ERROR) {
+        int res1 = 0;
+        res1 = dwarf_crc32(dbg,lcrc,&error);
+        if (res1 == DW_DLV_ERROR) {
             paths = 0;
             free(debuglinkfullpath);
             dwarf_dealloc_error(dbg,error);
@@ -716,17 +718,23 @@ _dwarf_debuglink_finder_newpath(
             /*  Cannot match the crc_in, give up. */
             return DW_DLV_NO_ENTRY;
         } 
-        if (res == DW_DLV_OK) {
+        if (res1 == DW_DLV_OK) {
             crc = &lcrc[0];
         }
     }
     free(debuglinkfullpath);
     didmatch = match_buildid(
-        /* This is the executable */
+        /* This is about the executable */
         crc_in,buildid_len_in,buildid_in,
         /* pass in local so we can calculate the missing crc */
         /* following is the target, ie, debug */
         crc,buildid_length,buildid);
+    if (error) {
+        /*  This should never happen. It would mean
+            error was set without DW_DLV_ERROR */
+        dwarf_dealloc_error(dbg,error);
+        error = 0;
+    }
     if (didmatch) {
         dwarfstring_append(m,path);
         *fd_out = dbg->de_fd;

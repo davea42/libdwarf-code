@@ -2036,8 +2036,11 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     *section_addr = 0;
     *section_size = 0;
 
+    if (!dbg) {
+        DWARF_DBG_ERROR(dbg,DW_DLE_DBG_NULL, DW_DLV_ERROR);
+    }
     obj = dbg->de_obj_file;
-    if (NULL == obj) {
+    if (!obj) {
         return DW_DLV_NO_ENTRY;
     }
 
@@ -2048,14 +2051,18 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
         object types. */
     for (section_index = 0; section_index < section_count;
         ++section_index) {
-        int err = 0;
+        int errnum = 0;
+
         int res = obj->ai_methods->
             om_get_section_info(obj->ai_object,
-            section_index, &doas, &err);
+            section_index, &doas, &errnum);
         if (res == DW_DLV_ERROR) {
-            DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
+            DWARF_DBG_ERROR(dbg, errnum, DW_DLV_ERROR);
         }
-
+        if (res == DW_DLV_NO_ENTRY) {
+            /* This should be impossible */
+            continue;
+        }
         if (!strcmp(section_name,doas.as_name)) {
             *section_addr = doas.as_addr;
             *section_size = doas.as_size;

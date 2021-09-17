@@ -424,7 +424,6 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
-                dwarf_dealloc(dbg,return_data,DW_DLA_STRING);
                 free_macro_stack(dbg,&msdata);
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
                 _dwarf_error(dbg, error,

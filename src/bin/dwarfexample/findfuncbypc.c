@@ -509,6 +509,12 @@ read_line_data(Dwarf_Debug dbg UNUSEDARG,
                 return sres;
             }
             sres = dwarf_linesrc(linebuf[i],&linesrcfile,errp);
+            if (sres == DW_DLV_ERROR) {
+                if (prev_linesrcfile) {
+                    dwarf_dealloc(dbg,prev_linesrcfile,DW_DLA_STRING);
+                }
+                return sres;
+            }
             if (td->td_print_details) {
                 printf("  [%" DW_PR_DSd "] "
                     " address 0x%" DW_PR_DUx

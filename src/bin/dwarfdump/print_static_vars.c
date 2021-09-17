@@ -76,7 +76,8 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
         esb_destructor(&sanitname);
         dwarf_return_empty_pubnames(dbg,0,err);
         return res;
-    } else {
+    } 
+    {
         int pres = 0;
         int printed = FALSE;
 
@@ -100,7 +101,4 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
         dwarf_vars_dealloc(dbg, globbuf, count);
         return pres;
     }
-    dwarf_return_empty_pubnames(dbg,0,err);
-    esb_destructor(&sanitname);
-    return DW_DLV_OK;
 }   /* print_static_vars */

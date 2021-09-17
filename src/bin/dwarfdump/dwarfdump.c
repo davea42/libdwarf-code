@@ -768,11 +768,10 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
         if (ct == ORIGLKLYTEXTINDEX) {
             basesize = csize;
             baselow  = clow;
-            baseend = csize+clow;
         }
         ++lnindex;
     }
-    if (lnindex == 0) {
+    if (!lnindex) {
         return DW_DLV_NO_ENTRY;
     }
     if (lnindex == 1) {
@@ -1799,7 +1798,7 @@ print_secname(Dwarf_Debug dbg,const char *secname)
 /*  We'll check for errors when checking.
     print only if printing (as opposed to checking). */
 static int
-print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
+print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *error)
 {
     int         res = 0;
     char *      name = 0;
@@ -1823,10 +1822,11 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *err)
         &buildidbyteptr, &buildidlength,
         &paths_array,  /* free this */
         &paths_array_length,
-        err);
+        error);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
-    } else if (res == DW_DLV_ERROR) {
+    } 
+    if (res == DW_DLV_ERROR) {
         print_secname(dbg,".gnu_debuglink");
         return res;
     }
