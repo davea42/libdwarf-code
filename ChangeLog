@@ -1,3 +1,169 @@
+2021-09-18:  David Anderson
+    commit b2c32100d6c3a7abaa10614f401c3c4cab1077e7
+
+    more fixes for problems coverity scan detected.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfgen/createirepformfrombinary.cc
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/bin/dwarfgen/irepattrtodbg.cc
+            modified:   src/bin/dwarfgen/irepdie.h
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2021-09-17:  David Anderson
+    commit 695305f59372312d645e9afd8592dd79a6d0f0d5
+
+    Fixes all but a few coverity CIDs. I think.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2021-09-17:  David Anderson
+    commit d39fd532ec3ad2cc0f15e3358fd537148b61bed1
+
+    Applied corrections for Coverity CID
+    140104 238474 238481 238483 238485 238486 238487 238493 238494
+    238503 238509 238510
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/dwconf.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2021-09-16:  David Anderson
+    commit 6539d22b58f1b7859989113f8c6e9c6cd62721db
+
+    Fixes for coverity scan id: 240132, 240130,240131,238512
+    238473 238474 238475 238476 238513
+            modified:   src/bin/dwarfdump/globals.h
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+
+2021-09-16:  David Anderson
+    commit 41c5018988fe818d16025bd21dcb46d263a8ae5b
+
+    Fix coverity CID 238512
+            modified:   dwarf_rnglists.c
+
+2021-09-16:  David Anderson
+    commit 4eb3994fa3b31c8831840736b07278ec630351ca
+
+    Fix coverity CID 240132 240131 240130
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+
+2021-09-16:  David Anderson
+    commit 4e742546b6584f4688f8db66776cd6351ecd007a
+
+    Small but important incompatibility:
+    dwarf_finish(Dwarf_Debug dbg);
+    removes the useless and misleading
+    Dwarf_Error, which was the second argument.
+    That argument was not used!
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Addresses 20+ coverity-scan-detected errors and
+    removes the second argument to dwarf_finish().
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+            modified:   src/bin/dwarfdump/compiler_info.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_debug_sup.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+
+2021-09-15:  David Anderson
+    commit 578b6d75fe1ed07654fdead76963fc871198c7c7
+
+    More fixes to things coverity scan detected.
+            modified:   src/bin/buildopstab/buildopscounttab.c
+            modified:   src/bin/dwarfdump/esb.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2021-09-15:  David Anderson
+    commit 457d18129ee133a463f083d4be75029677c441ab
+
+    Coverity scan found 18 issues.
+
+    This should fix all of them.
+    All but one represented a possible memory leak
+    in an error condition.   One is a possible
+    duplicate free.
+    A few instances here of removing unneeded blank lines
+    and fixing too-long lines.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2021-09-14:  David Anderson
+    commit a78495363a6a16a35df005586eddae60df9b1457
+
+    Now with recent git log data.
+            modified:   ChangeLog
+
 2021-09-14:  David Anderson
     commit 400cf6d49ce2ade160932a1d35f0c0fd6bd404c7
 
