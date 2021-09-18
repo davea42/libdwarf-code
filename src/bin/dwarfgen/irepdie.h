@@ -222,26 +222,30 @@ public:
         macrodata_offset_(0),
         has_linedata_(false),
         linedata_offset_(0),
-        cudie_offset_(0)
+        cudie_offset_(0),
+        dwarf32bit_(0)
         {};
+
     IRCUdata(Dwarf_Unsigned len,Dwarf_Half version,
         Dwarf_Unsigned abbrev_offset,
         Dwarf_Half addr_size,
         Dwarf_Half length_size,
         Dwarf_Half extension_size,
         Dwarf_Unsigned next_cu_header UNUSEDARG):
-            cu_header_length_(len),
-            abbrev_offset_(abbrev_offset),
-            next_cu_header_offset_(addr_size),
-            version_stamp_(version),
-            address_size_(addr_size),
-            length_size_(length_size),
-            extension_size_(extension_size),
-            has_macrodata_(false),
-            macrodata_offset_(0),
-            has_linedata_(false),
-            linedata_offset_(0),
-            cudie_offset_(0) {};
+
+        cu_header_length_(len),
+        abbrev_offset_(abbrev_offset),
+        next_cu_header_offset_(addr_size),
+        version_stamp_(version),
+        address_size_(addr_size),
+        length_size_(length_size),
+        extension_size_(extension_size),
+        has_macrodata_(false),
+        macrodata_offset_(0),
+        has_linedata_(false),
+        linedata_offset_(0),
+        cudie_offset_(0) ,
+        dwarf32bit_(0){};
     ~IRCUdata() { };
     bool hasMacroData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
         *offset_out = macrodata_offset_;
@@ -324,11 +328,9 @@ private:
     bool has_linedata_;
     Dwarf_Unsigned linedata_offset_;
     Dwarf_Unsigned cudie_offset_;
-    IRCULineData      cu_lines_;
-
-    // If true, is 32bit dwarf,else 64bit. Gives the size of a reference.
     bool dwarf32bit_;
-
+    IRCULineData      cu_lines_;
+    // If true, is 32bit dwarf,else 64bit. Gives the size of a reference.
     IRDie   cudie_;
 
     // Refers to cu-local offsets in the input CU and which DIE

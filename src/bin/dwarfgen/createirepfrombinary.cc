@@ -203,11 +203,15 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             code_alignment_factor,
             data_alignment_factor,return_address_register_rule,
             initial_instructions,initial_instructions_length);
+        irep.framedata().insert_cie(cie);
+#if 0
         if (have_standard_frame) {
             irep.framedata().insert_cie(cie);
-        } else {
+        } 
+        else {
             irep.ehframedata().insert_cie(cie);
         }
+#endif
     }
     for(Dwarf_Signed i =0; i < fde_count; ++i) {
         Dwarf_Addr low_pc = 0;
@@ -572,6 +576,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
         Dwarf_Bool basic_block = 0;
         lres = dwarf_lineblock(li,&basic_block,&error);
         if (lres != DW_DLV_OK) {
+            dwarf_dealloc(dbg,linesrctmp,DW_DLA_STRING);
             cerr << "dwarf_lineblock failed. " << endl;
             exit(1);
         }
@@ -579,6 +584,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
         Dwarf_Bool end_sequence = 0;
         lres = dwarf_lineendsequence(li,&end_sequence,&error);
         if (lres != DW_DLV_OK) {
+            dwarf_dealloc(dbg,linesrctmp,DW_DLA_STRING);
             cerr << "dwarf_lineendsequence failed. " << endl;
             exit(1);
         }
@@ -606,6 +612,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
             prologue_end,epilogue_begin,
             isa,discriminator);
         lines.push_back(L);
+        dwarf_dealloc(dbg,linesrctmp,DW_DLA_STRING);
     }
     dwarf_srclines_dealloc_b(linecontext);
 }
@@ -627,6 +634,7 @@ getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
             offset_out = offset;
         }
     }
+    dwarf_dealloc_attribute(attr);
     return foundit;
 }
 

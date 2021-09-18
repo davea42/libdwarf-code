@@ -2020,6 +2020,7 @@ dwarf_get_section_max_offsets_d(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+const struct Dwarf_Obj_Access_Section_a_s zerodoas;
 /*  Given a section name, get its size and address */
 int
 dwarf_get_section_info_by_name(Dwarf_Debug dbg,
@@ -2028,22 +2029,34 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     Dwarf_Unsigned *section_size,
     Dwarf_Error * error)
 {
-    struct Dwarf_Obj_Access_Section_a_s doas;
     struct Dwarf_Obj_Access_Interface_a_s * obj = 0;
     Dwarf_Unsigned section_count = 0;
     Dwarf_Half section_index = 0;
+    struct Dwarf_Obj_Access_Section_a_s doas;
 
     *section_addr = 0;
     *section_size = 0;
 
     if (!dbg) {
-        DWARF_DBG_ERROR(dbg,DW_DLE_DBG_NULL, DW_DLV_ERROR);
+        _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: null dbg passed to "
+            "dwarf_get_section_info_by_name");
+        return DW_DLV_ERROR;
+    }
+    if (!section_name) {
+        _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: null section_name pointer "
+            "passed to "
+            "dwarf_get_section_info_by_name");
+        return DW_DLV_ERROR;
+    }
+    if (!section_name[0]) {
+        return DW_DLV_NO_ENTRY;
     }
     obj = dbg->de_obj_file;
     if (!obj) {
         return DW_DLV_NO_ENTRY;
     }
-
     section_count = obj->ai_methods->
         om_get_section_count(obj->ai_object);
 
@@ -2052,8 +2065,10 @@ dwarf_get_section_info_by_name(Dwarf_Debug dbg,
     for (section_index = 0; section_index < section_count;
         ++section_index) {
         int errnum = 0;
+        int res = 0;
 
-        int res = obj->ai_methods->
+        doas = zerodoas;
+        res = obj->ai_methods->
             om_get_section_info(obj->ai_object,
             section_index, &doas, &errnum);
         if (res == DW_DLV_ERROR) {

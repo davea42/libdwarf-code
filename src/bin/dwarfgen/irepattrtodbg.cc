@@ -163,6 +163,12 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     case DW_FORM_CLASS_CONSTANT:
         {
         IRFormConstant *f = dynamic_cast<IRFormConstant *>(form_a);
+        if (!f) {
+            cerr << "ERROR Impossible DW_FORM_CLASS_CONSTANT cast fails"
+                ", attrnum "
+                <<attrnum << endl;
+            break;
+        }
         Dwarf_Half formv = f->getFinalForm();
         // FIXME: Handle form indirect
         IRFormConstant::Signedness sn = f->getSignedness();

@@ -755,9 +755,6 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-            if (ct == ORIGLKLYTEXTINDEX) {
-                return DW_DLV_NO_ENTRY;
-            }
             continue;
         }
         ln->name = name;

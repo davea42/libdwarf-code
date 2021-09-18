@@ -400,6 +400,7 @@ IRFormLinePtr::IRFormLinePtr(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_LINEPTR;
 
 }
 IRFormMacPtr::IRFormMacPtr(IRFormInterface * interface)

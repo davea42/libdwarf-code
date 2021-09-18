@@ -193,6 +193,13 @@ addSkipBranchOps(Dwarf_P_Debug dbg,
             }
             IRForm*f = attr.getFormData();
             IRFormBlock *f2 = dynamic_cast<IRFormBlock *>(f);
+            if (!f2) {
+                cerr << "ERROR Impossible IRFormBlock cast fails"
+                    ", attrnum "
+                    <<attrnum << endl;
+                break;
+            }
+
             std::vector<unsigned char> vec= f2->getBlockData();
             Dwarf_Block bl;
             int res = createskipbranchblock(dbg,bl);
@@ -248,6 +255,12 @@ specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
             }
             IRForm*f = attr.getFormData();
             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+            if (!f2) {
+                cerr << "ERROR Impossible IRFormAddress  cast fails"
+                    ", attrnum "
+                    <<attrnum << endl;
+                break;
+            }
             hipcval = f2->getAddress();
             foundhipc = true;
             continue;
@@ -258,6 +271,13 @@ specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
             }
             IRForm*f = attr.getFormData();
             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+            if (!f2) {
+                cerr << "ERROR Impossible IRFormAddress cast Fails"
+                    ", attrnum "
+                    <<attrnum << endl;
+                break;
+            }
+
             lopcval = f2->getAddress();
             foundlopc = true;
             continue;
@@ -430,6 +450,7 @@ addSUNfuncoffsets(Dwarf_P_Debug dbg ,
     int res = dwarf_compress_integer_block_a(dbg,
         5,signar, &block_len,&block_ptr,&error);
     if (res == DW_DLV_ERROR) {
+        delete f;
         cerr << " FAIL: Unable to generate via "   <<
             "dwarf_compress_integer_block_a: err " <<
             dwarf_errmsg(error) << endl;
