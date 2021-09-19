@@ -1,4 +1,34 @@
 2021-09-18:  David Anderson
+    commit dc49ecba7486ac33bd161ec4fb8b14b4cc46ad1d
+
+    With these changes, coverity scan finds no defects
+    in the libdwarf source.
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/lib/libdwarf/dwarf_debug_sup.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+2021-09-18:  David Anderson
+    commit a7ea4f95c665e11068044bbce0f15765dd535e98
+
+    Now making this up to date with git log.
+            modified:   ChangeLog
+
+    At this point the two remaining issues
+    coverity scan detects are
+      CID 238474 memory leak on an error, and
+      it is not clear to me where the leak is.
+      coverity reports all the details but..
+      the source looks correct.
+
+      CID 206732 coverity determines that a loop
+      cannot possibly result in a count of 0,
+      though such seems possible.
+
+    One assumes one is just missing something in each
+    case.  Continuing to look.
+
+2021-09-18:  David Anderson
     commit b2c32100d6c3a7abaa10614f401c3c4cab1077e7
 
     more fixes for problems coverity scan detected.
