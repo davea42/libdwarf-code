@@ -149,7 +149,7 @@ A usable interface is not yet available.
 
 If one has DWARF bytes in memory or in a
 kind of file system libdwarf cannot understand
-on should use 
+one should use 
 
     dwarf_object_init_b()
     ...call libdwarf functions...
