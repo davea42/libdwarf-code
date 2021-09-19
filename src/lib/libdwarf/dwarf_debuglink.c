@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019-2020, David Anderson
+Copyright (c) 2019-2021, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -80,7 +80,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #endif /* _WIN32 */
 
 static int
-extract_buildid(Dwarf_Debug dbg,
+_dwarf_extract_buildid(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pbuildid,
     unsigned        *type_returned,
     char           **owner_name_returned,
@@ -609,7 +609,7 @@ _dwarf_construct_linkedto_path(
     return DW_DLV_OK;
 }
 static int
-extract_debuglink(Dwarf_Debug dbg,
+_dwarf_extract_debuglink(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pdebuglink,
     char ** name_returned,  /* static storage, do not free */
     unsigned char ** crc_returned,   /* 32bit crc , do not free */
@@ -662,7 +662,7 @@ struct buildid_s {
 };
 
 static int
-extract_buildid(Dwarf_Debug dbg,
+_dwarf_extract_buildid(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pbuildid,
     unsigned       * type_returned,
     char           **owner_name_returned,
@@ -712,7 +712,7 @@ extract_buildid(Dwarf_Debug dbg,
     }
     if ((strlen(bu->bu_owner) +1) != namesize) {
         _dwarf_error(dbg,error, DW_DLE_CORRUPT_GNU_DEBUGID_STRING);
-        return res;
+        return DW_DLV_ERROR;
     }
 
     finalsize = sizeof(struct buildid_s)-1 + namesize + descrsize;
@@ -750,10 +750,8 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     Dwarf_Error* error)
 {
     dwarfstring debuglink_fullpath;
-    int linkres = DW_DLV_ERROR;
     int res = DW_DLV_ERROR;
     char * pathname = 0;
-    int buildidres = 0;
     int errcode = 0;
     struct Dwarf_Section_s * pdebuglink = 0;
     struct Dwarf_Section_s * pbuildid = 0;
@@ -776,7 +774,9 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     if (pdebuglink) {
-        linkres = extract_debuglink(dbg,
+        int linkres = 0;
+
+        linkres = _dwarf_extract_debuglink(dbg,
             pdebuglink,
             debuglink_path_returned,
             crc_returned,
@@ -786,7 +786,8 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
         }
     }
     if (pbuildid) {
-        buildidres = extract_buildid(dbg,
+        int buildidres = 0;
+        buildidres = _dwarf_extract_buildid(dbg,
             pbuildid,
             buildid_type_returned,
             buildid_owner_name_returned,

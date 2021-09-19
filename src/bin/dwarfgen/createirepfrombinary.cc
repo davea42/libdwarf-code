@@ -147,7 +147,9 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
     Dwarf_Signed  cie_count = 0;
     Dwarf_Fde * fde_data = 0;
     Dwarf_Signed  fde_count = 0;
+#if 0
     bool have_standard_frame = true;
+#endif
     int res = dwarf_get_fde_list(dbg,
         &cie_data,
         &cie_count,
@@ -241,11 +243,14 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             exit(1);
         }
         fde.get_fde_instrs_into_ir(instr_in,instr_len);
+        irep.framedata().insert_fde(fde);
+#if 0
         if (have_standard_frame) {
             irep.framedata().insert_fde(fde);
         } else {
             irep.ehframedata().insert_fde(fde);
         }
+#endif
     }
     dwarf_fde_cie_list_dealloc(dbg,cie_data,cie_count,
         fde_data,fde_count);

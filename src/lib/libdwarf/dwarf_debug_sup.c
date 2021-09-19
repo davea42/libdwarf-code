@@ -128,6 +128,9 @@ dwarf_get_debug_sup(Dwarf_Debug dbg,
         &version,
         data,DWARF_HALF_SIZE,
         enddata,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
     data+= DWARF_HALF_SIZE;
     if ((data+4) > enddata) {
         dwarfstring m;
