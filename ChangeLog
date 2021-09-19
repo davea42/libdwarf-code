@@ -1,3 +1,34 @@
+2021-09-19:  David Anderson
+    commit 6b7fd93356a1a58275f4014437508eda9aa0272c
+
+    The 'namestable' options have no
+    effect any longer, so they have
+    been deleted.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+
+2021-09-19:  David Anderson
+    commit 876c1edbbc6b29d9cd5e6a00372e65c82939e82c
+
+    Updated comments in the Changes section.
+            modified:   libdwarf.mm Rev 4.10
+            modified:   libdwarf.pdf Regenerated
+
+2021-09-19:  David Anderson
+    commit dfd515afe38c8d48764b34d1040a8720a6e9fb8e
+
+    Revised the documentation.
+    README.md is available on
+    www.prevanders.net/libdwarfreadme.html
+            modified:   README
+            modified:   README.md
+
+2021-09-18:  David Anderson
+    commit 0db97085c7c15d52c811e1fe43fda9f67e5769b8
+
+            modified:   ChangeLog
+    As of now, coverityscan finds no problems.
+
 2021-09-18:  David Anderson
     commit dc49ecba7486ac33bd161ec4fb8b14b4cc46ad1d
 
