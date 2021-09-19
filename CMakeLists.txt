@@ -365,15 +365,6 @@ option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
 message(STATUS "Building api tests   ... ${DOTESTS}")
 ### end what was configure.cmake
 
-#  This changes the gennames option from -s  to -t
-#  though in  2019 builds we no longer run gennames.
-option(NAMES_TABLE "string functions implemented as binary search (default is with C switch)" TRUE)
-if(NAMES_TABLE)
-    set(dwarf_namestable "-s")
-else()
-    set(dwarf_namestable "-t")
-endif()
-
 # This references cmake/FindLibElf.cmake. See cmake documentation.
 find_package(LibElf REQUIRED)
 list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})

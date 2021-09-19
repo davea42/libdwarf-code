@@ -60,27 +60,9 @@ AC_ARG_ENABLE([sanitize],
    ],
    [enable_sanitize="no"])
 
-
-AC_ARG_ENABLE([namestable],
-   [AS_HELP_STRING([--enable-namestable],
-                   [enable name string functions implemented as binary search (default is with C switch) @<:@default=no@:>@])],
-   [
-    AS_IF(
-        [test "x${enableval}" = "xyes"],
-        [enable_namestable="yes"],
-        [enable_namestable="no"])
-   ],
-   [enable_namestable="no"])
-
-
-AS_IF(
-    [test "x${enable_namestable}" = "xyes"],
-    [AC_SUBST([dwarf_namestable], [-s])],
-    [AC_SUBST([dwarf_namestable], [-t])])
-
 AC_ARG_ENABLE([libelf],
    [AS_HELP_STRING([--disable-libelf],
-     [disable use of libelf (default is enable) @<:@default=yes@:>@])],
+     [disable use of libelf (default is enable (libdwarf does not use libelf)) @<:@default=yes@:>@])],
    [ AS_IF(
         [test "x${enableval}" = "xyes"],
         [dwarf_with_libelf="yes"],
@@ -629,7 +611,6 @@ echo "  sanitize support.....: ${enable_sanitize}"
 echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
-echo "    namestable binary..: ${enable_namestable}"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    elf64_getshdr......: ${have_getshdr}"
 echo "    Elf64_Rela.........: ${have_elf64_rela}"
