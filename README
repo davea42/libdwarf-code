@@ -1,9 +1,12 @@
-Updated 13 June 2021
+Updated 19 September 2021 
+for release libdwarf-0.2.0
+
 Library Documentation is in the doc directory.
 See 
   BUILD_REQUIREMENTS
   LIBRARY AND HEADER BUILD REQUIREMENT
   BUILDING ALL THE TOOLS
+  INCOMPATIBILITIES
 below if you wonder what is required.
 =========
 As of 1 June 2021 we are using semanantic
@@ -230,6 +233,42 @@ To create a release file on Linux do:
 will generate a libdwarf-<n>.<n>.<n>.tar.xz file with the files
 needed in a release
 
-See the configure.ac v_maj,v_min,v_mic for the version in use.
+See the configure.ac v_maj,v_min,v_mic
+or CMakeLists.txt VERSION for the version in use.
+
+INCOMPATIBILITIES
+
+Comparing libdwarf-0.2.0 to libdwarf-20210528
+there are significant changes in interfaces.
+
+Many functions that only supported
+DWARF before DWARF5 have been dropped
+in favor of functions that support all
+DWARF versions through DWARF5.
+The later versions add a _a_
+(or _b_ or _c_ or _d_)
+to the end of the function name.
+In nearly all cases the libdwarf-0.2.0 interface
+was already available in libdwarf-20210528
+along with older interfaces that only
+worked with earlier DWARF.
+
+Specific functions whose argument lists changed:
+Some arguments to
+dwarf_init_b(),
+dwarf_init_path(),
+dwarf_init_path_dl(),
+dwarf_object_init_b(), and
+dwarf_finish()
+have been removed, they were unused and unnecessary.
+The argument list to dwarf_bitoffset()
+changed to allow use with DWARF5.
+
+The function dwarf_expand_frame_instructions()
+and the Dwarf_Frame_Op structure
+are still present but will be dropped
+since they only work with DWARF2.
+A usable interface is not yet available.
+
 
 David Anderson.
