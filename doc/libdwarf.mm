@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.9 21 September 2021
+.ds vE Rev 4.10 19 September 2021
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -236,17 +236,32 @@ recent changes.
 
 .H 2 "Items Changed"
 .P
-The 'access' argument to
-dwarf_init_b() and
-the other dwarf_init functions
-the DW_DLC_READ macro have been
-deleted entirely. 
-Other unused arguments to the
-dwarf_init_b() (etc) functions
-have been deleted too.
+Comparing libdwarf-0.2.0, released 20 September 2021, to the last
+non-semantic-version libdwarf-20210528 the differences
+are significant.
+Some arguments to
+dwarf_init_b(),
+dwarf_init_path(),
+dwarf_init_path_dl(),
+dwarf_object_init_b(), and
+dwarf_finish()
+have been removed, they were
+unused and unnecessary.
 The argument list to dwarf_bitoffset()
 changed to allow use with DWARF5.
-22 June 2021
+Many functions that only supported
+DWARF before DWARF5 have been dropped
+in favor of functions that support all
+DWARF versions through DWARF5.
+The later versions add a _a_
+(or _b_ or _c_ or _d_)
+to the end of the function name.
+In nearly all cases the current interface
+was already available in libdwarf-20210528
+along with earlier interfaces that worked
+with earlier DWARF.
+
+19 September 2021
 .P
 If dwarf_formudata() encounters a signed form
 it checks the value. If the value is non-negative
