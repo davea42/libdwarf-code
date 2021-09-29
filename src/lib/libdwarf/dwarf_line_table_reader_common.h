@@ -2059,7 +2059,6 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
                 break;
             } /* End switch (opcode) */
-
         } else if (type == LOP_EXTENDED) {
             Dwarf_Unsigned utmp3 = 0;
             Dwarf_Small ext_opcode = 0;

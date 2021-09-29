@@ -185,7 +185,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         Dwarf_Unsigned code_alignment_factor = 0;
         Dwarf_Signed   data_alignment_factor = 0;
         Dwarf_Half     return_address_register_rule = 0;
-        Dwarf_Ptr      initial_instructions = 0;
+        Dwarf_Small   *initial_instructions = 0;
         Dwarf_Unsigned initial_instructions_length = 0;
         Dwarf_Half     offset_size = 0;
         res = dwarf_get_cie_info_b(cie_data[i], &bytes_in_cie,
@@ -216,13 +216,13 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 #endif
     }
     for(Dwarf_Signed i =0; i < fde_count; ++i) {
-        Dwarf_Addr low_pc = 0;
+        Dwarf_Addr        low_pc = 0;
         Dwarf_Unsigned    func_length = 0;
-        Dwarf_Ptr         fde_bytes = 0;
+        Dwarf_Small      *fde_bytes = 0;
         Dwarf_Unsigned    fde_byte_length = 0;
-        Dwarf_Off   cie_offset = 0;
-        Dwarf_Signed     cie_index = 0;
-        Dwarf_Off      fde_offset = 0;
+        Dwarf_Off         cie_offset = 0;
+        Dwarf_Signed      cie_index = 0;
+        Dwarf_Off         fde_offset = 0;
         res = dwarf_get_fde_range(fde_data[i], &low_pc,
             &func_length,&fde_bytes, &fde_byte_length,
             &cie_offset,&cie_index,
@@ -234,7 +234,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         }
         IRFde fde(low_pc,func_length,fde_bytes,fde_byte_length,
             cie_offset, cie_index,fde_offset);
-        Dwarf_Ptr instr_in = 0;
+        Dwarf_Small   *instr_in = 0;
         Dwarf_Unsigned instr_len = 0;
         res = dwarf_get_fde_instr_bytes(fde_data[i],
             &instr_in, &instr_len, &err);

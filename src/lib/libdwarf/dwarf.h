@@ -1300,9 +1300,8 @@ most-likely-useful name. */
 #define DW_CFA_advance_loc        0x40
 #define DW_CFA_offset             0x80
 #define DW_CFA_restore            0xc0
-#define DW_CFA_extended           0
-
 #define DW_CFA_nop              0x00
+#define DW_CFA_extended            0
 #define DW_CFA_set_loc          0x01
 #define DW_CFA_advance_loc1     0x02
 #define DW_CFA_advance_loc2     0x03

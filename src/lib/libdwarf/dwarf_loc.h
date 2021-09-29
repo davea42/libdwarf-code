@@ -111,7 +111,7 @@ struct Dwarf_Block_c_s {
 
     /*  Uninterpreted data, location expressions,
         DW_OP_reg31 etc */
-    Dwarf_Ptr       bl_data;
+    Dwarf_Byte_Ptr       bl_data;
 
     /*  DW_LKIND, see libdwarf.h.in  */
     Dwarf_Small     bl_kind;

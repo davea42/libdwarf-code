@@ -1172,8 +1172,10 @@ _dwarf_original_expression_build(Dwarf_Debug dbg,
 
     memset(&loc_blockc,0,sizeof(loc_blockc));
     if (form == DW_FORM_exprloc) {
+        /*  A bit ugly. dwarf_formexprloc should use a
+            Dwarf_Block argument. */
         blkres = dwarf_formexprloc(attr,&loc_blockc.bl_len,
-            &loc_blockc.bl_data,error);
+            (Dwarf_Ptr)&loc_blockc.bl_data,error);
         if (blkres != DW_DLV_OK) {
             return blkres;
         }

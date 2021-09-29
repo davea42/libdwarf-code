@@ -120,10 +120,11 @@ struct Dwarf_Sig8_s  {
 };
 typedef struct Dwarf_Sig8_s Dwarf_Sig8;
 
-/* Contains info on an uninterpreted block of data
+/* Refers to on an uninterpreted block of data
    Used with certain location information functions,
-   a frame expression function, and
-   also used with DW_FORM_block<> functions.
+   a frame expression function, expanded
+   frame instructions, and
+   DW_FORM_block<> functions.
 */
 typedef struct Dwarf_Block_s {
     Dwarf_Unsigned  bl_len;  /* length of block bl_data points at */
@@ -169,6 +170,12 @@ typedef struct Dwarf_Macro_Context_s * Dwarf_Loc_Macro_Context;
     how to read the leb values properly) */
 typedef struct Dwarf_Dsc_Head_s * Dwarf_Dsc_Head;
 
+/* Used with expanded frame instructions. */
+struct Dwarf_Frame_Instr_Head_s;
+struct Dwarf_Frame_Instr_s;
+typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
+typedef struct Dwarf_Frame_Instr_s * Dwarf_Frame_Instr;
+
 /*  First appears in DWARF3, and only ranges entries exist.
     The dwr_addr1/addr2 data is either an offset (DW_RANGES_ENTRY)
     or an address (dwr_addr2 in DW_RANGES_ADDRESS_SELECTION) or
@@ -186,24 +193,6 @@ typedef struct Dwarf_Ranges_s {
     Dwarf_Addr dwr_addr2;
     enum Dwarf_Ranges_Entry_Type  dwr_type;
 } Dwarf_Ranges;
-
-/*  Frame description instructions expanded.
-    This is obsolete, it only handles DWARF2.
-    Used with dwarf_expand_frame_instructions().
-    Will be dropped for a different approach
-    during 2021.
-*/
-typedef struct Dwarf_Frame_Op_s {
-    Dwarf_Small     fp_base_op;
-    Dwarf_Small     fp_extended_op;
-    Dwarf_Half      fp_register;
-
-    /*  Value may be signed, depends on op.
-        Any applicable data_alignment_factor has
-        not been applied, this is the  raw offset. */
-    Dwarf_Unsigned  fp_offset;
-    Dwarf_Off       fp_instr_offset;
-} Dwarf_Frame_Op; /* DWARF2 */
 
 /*  ***IMPORTANT NOTE, TARGET DEPENDENCY ****
     DW_REG_TABLE_SIZE must be at least as large as
@@ -270,10 +259,12 @@ typedef struct Dwarf_Frame_Op_s {
 #define DW_FRAME_CFA_COL3               1436
 
 /* The following are all needed to evaluate DWARF3 register rules.
+   These have nothing to do simply printing
+   frame instructions.
 */
-#define DW_EXPR_OFFSET 0  /* DWARF2 only sees this. */
-#define DW_EXPR_VAL_OFFSET 1
-#define DW_EXPR_EXPRESSION 2
+#define DW_EXPR_OFFSET         0 /* offset is from CFA reg */
+#define DW_EXPR_VAL_OFFSET     1
+#define DW_EXPR_EXPRESSION     2
 #define DW_EXPR_VAL_EXPRESSION 3
 
 /* opaque type. Functional interface shown later. */
@@ -353,10 +344,10 @@ typedef struct Dwarf_Regtable_Entry3_s {
     Dwarf_Small         dw_offset_relevant;
     Dwarf_Small         dw_value_type;
     Dwarf_Half          dw_regnum;
-    Dwarf_Unsigned      dw_offset_or_block_len;
-    Dwarf_Ptr           dw_block_ptr;
-
-}Dwarf_Regtable_Entry3;
+    Dwarf_Unsigned      dw_offset;
+    Dwarf_Unsigned      dw_args_size; /* Not dealt with.  */
+    Dwarf_Block         dw_block;
+} Dwarf_Regtable_Entry3;
 
 /*  For the DWARF3 version, moved the DW_FRAME_CFA_COL
     out of the array and into its own struct.
@@ -367,7 +358,7 @@ typedef struct Dwarf_Regtable_Entry3_s {
     setting CFA).  With MIPS it just happened to be easy to use
     DW_FRAME_CFA_COL (it was wrong conceptually but it was easy...).
 
-    rt3_rules and rt3_reg_table_size must be filled in before
+    7t3_rules and rt3_reg_table_size must be filled in before
     calling libdwarf.  Filled in with a pointer to an array
     (pointer and array  set up by the calling application)
     of rt3_reg_table_size Dwarf_Regtable_Entry3_s structs.
@@ -694,14 +685,12 @@ struct Dwarf_Obj_Access_Interface_a_s {
 #define DW_DLA_LINEBUF         0x10  /* Dwarf_Line* (not used) */
 #define DW_DLA_ARANGE          0x11  /* Dwarf_Arange */
 #define DW_DLA_ABBREV          0x12  /* Dwarf_Abbrev */
-#define DW_DLA_FRAME_OP        0x13  /* Dwarf_Frame_Op */
+#define DW_DLA_FRAME_INSTR_HEAD   0x13  /* Dwarf_Frame_Instr_Head */
 #define DW_DLA_CIE             0x14  /* Dwarf_Cie */
 #define DW_DLA_FDE             0x15  /* Dwarf_Fde */
 #define DW_DLA_LOC_BLOCK       0x16  /* Dwarf_Loc */
 
-/* Dwarf_Frame Block (not used) */
-#define DW_DLA_FRAME_BLOCK     0x17
-
+#define DW_DLA_FRAME_OP        0x17 /* Dwarf_Frame_Op (not used) */
 #define DW_DLA_FUNC            0x18  /* Dwarf_Func */
 #define DW_DLA_TYPENAME        0x19  /* Dwarf_Type */
 #define DW_DLA_VAR             0x1a  /* Dwarf_Var */
@@ -1225,9 +1214,10 @@ struct Dwarf_Obj_Access_Interface_a_s {
 #define DW_DLE_NEGATIVE_SIZE                   482
 #define DW_DLE_UDATA_VALUE_NEGATIVE            483
 #define DW_DLE_DEBUG_NAMES_ERROR               484
+#define DW_DLE_CFA_INSTRUCTION_ERROR           485
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        484
+#define DW_DLE_LAST        485
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -2553,7 +2543,7 @@ DW_API void dwarf_fde_cie_list_dealloc(Dwarf_Debug /*dbg*/,
 DW_API int dwarf_get_fde_range(Dwarf_Fde /*fde*/,
     Dwarf_Addr*      /*low_pc*/,
     Dwarf_Unsigned*  /*func_length*/,
-    Dwarf_Ptr*       /*fde_bytes*/,
+    Dwarf_Small    **/*fde_bytes*/,
     Dwarf_Unsigned*  /*fde_byte_length*/,
     Dwarf_Off*       /*cie_offset*/,
     Dwarf_Signed*    /*cie_index*/,
@@ -2577,7 +2567,7 @@ DW_API int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
     Dwarf_Unsigned*  /*code_alignment_factor*/,
     Dwarf_Signed*    /*data_alignment_factor*/,
     Dwarf_Half*      /*return_address_register_rule*/,
-    Dwarf_Ptr*       /*initial_instructions*/,
+    Dwarf_Small   ** /*initial_instructions*/,
     Dwarf_Unsigned*  /*initial_instructions_length*/,
     Dwarf_Half*      /*offset_size*/,
     Dwarf_Error*     /*error*/);
@@ -2590,8 +2580,9 @@ DW_API int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
 /*  Used with dwarf_expand_frame_instructions() but
     see that function's comments above. */
 DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde /*fde*/,
-    Dwarf_Ptr *      /*outinstrs*/, Dwarf_Unsigned * /*outlen*/,
-    Dwarf_Error *    /*error*/);
+    Dwarf_Small    ** /*outinstrs*/,
+    Dwarf_Unsigned * /*outlen*/,
+    Dwarf_Error    * /*error*/);
 
 DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
     Dwarf_Addr       /*pc_requested*/,
@@ -2607,25 +2598,25 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
 DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Half       /*table_column*/,
     Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Small  *   /*value_type*/,
-    Dwarf_Signed *   /*offset_relevant*/,
-    Dwarf_Signed *    /*register*/,
-    Dwarf_Signed *    /*offset_or_block_len*/,
-    Dwarf_Ptr    *    /*block_ptr */,
-    Dwarf_Addr   *    /*row_pc_out*/,
-    Dwarf_Bool   *    /* has_more_rows */,
-    Dwarf_Addr   *    /* subsequent_pc */,
-    Dwarf_Error  *    /*error*/);
+    Dwarf_Small    * /*value_type*/,
+    Dwarf_Unsigned * /*offset_relevant*/,
+    Dwarf_Unsigned * /*register*/,
+    Dwarf_Unsigned * /*offset */,
+    Dwarf_Block  *   /*block_content */,
+    Dwarf_Addr   *   /*row_pc_out*/,
+    Dwarf_Bool   *   /*has_more_rows */,
+    Dwarf_Addr   *   /* subsequent_pc */,
+    Dwarf_Error  *   /*error*/);
 
 /*  Use this  to get the cfa.
     New function, June 11, 2016*/
 DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Addr       /*pc_requested*/,
     Dwarf_Small  *   /*value_type*/,
-    Dwarf_Signed *   /*offset_relevant*/,
-    Dwarf_Signed*    /*register*/,
-    Dwarf_Signed*    /*offset_or_block_len*/,
-    Dwarf_Ptr   *    /*block_ptr */,
+    Dwarf_Unsigned *   /*offset_relevant*/,
+    Dwarf_Unsigned*    /*register*/,
+    Dwarf_Unsigned*    /*offset */,
+    Dwarf_Block   *  /*block*/,
     Dwarf_Addr*      /*row_pc_out*/,
     Dwarf_Bool  *    /* has_more_rows */,
     Dwarf_Addr  *    /* subsequent_pc */,
@@ -2661,15 +2652,36 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
     Dwarf_Unsigned * /* augdata_len */,
     Dwarf_Error*     /*error*/);
 
-/*  This is obsolete, it only handles DWARF2
-    Used with dwarf_get_fde_instr_bytes(). To be replaced
-    soon.  */
+/*  Called for CIE initial instructions and
+    FDE instructions.
+    Call dwarf_get_fde_instr_bytes() or
+    dwarf_get_cie_info_b() to get the instruction bytes
+    and instructions byte count you wish to expand.  */
 DW_API int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
-    Dwarf_Ptr        /*instruction*/,
-    Dwarf_Unsigned   /*i_length*/,
-    Dwarf_Frame_Op** /*returned_op_list*/,
-    Dwarf_Signed*    /*op_count*/,
-    Dwarf_Error*     /*error*/);
+    Dwarf_Small     */*instructionspointer*/,
+    Dwarf_Unsigned   /*insts_length_in_bytes */,
+    Dwarf_Frame_Instr_Head * /*returned_instr_head*/,
+    Dwarf_Unsigned  * /*returned_instr_count*/,
+    Dwarf_Error     * /*error*/);
+/*  Fields_description means a sequence of up to three
+    letters including u,s,r,c,d,b, terminated by NUL byte.
+    It is a string but we test individual bytes instead
+    of using string compares. Do not free any of the
+    returned values. */
+DW_API int dwarf_get_frame_instruction(Dwarf_Frame_Instr_Head,
+    Dwarf_Unsigned     /*instr_index*/,
+    Dwarf_Unsigned  *  /*instr_offset_in_instrs */,
+    Dwarf_Small     *  /*cfa_operation*/,
+    const char      ** /*fields_description*/,
+    Dwarf_Unsigned  *  /* u0 */,
+    Dwarf_Unsigned  *  /* u1 */,
+    Dwarf_Signed    *  /* s0 */,
+    Dwarf_Signed    *  /* s1 */,
+    Dwarf_Unsigned  *  /* code_alignment_factor */,
+    Dwarf_Signed    *  /* data_alignment_factor */,
+    Dwarf_Block     *  /* expression_block */,
+    Dwarf_Error     * /*error*/);
+DW_API void dwarf_frame_instr_head_dealloc(Dwarf_Frame_Instr_Head);
 
 /*  Operations on .debug_aranges. */
 DW_API int dwarf_get_aranges(Dwarf_Debug /*dbg*/,

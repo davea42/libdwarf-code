@@ -986,6 +986,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     new_cie->ci_cie_instr_start = frame_ptr;
+
     new_cie->ci_dbg = dbg;
     new_cie->ci_augmentation_type = augt;
     new_cie->ci_gnu_eh_augmentation_len = cie_aug_data_len;
@@ -1015,10 +1016,8 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         new_cie->ci_length_size, new_cie->ci_extension_size,
         new_cie->ci_section_ptr,
         new_cie->ci_cie_start,"cie");
-
     *cie_ptr_out = new_cie;
     return DW_DLV_OK;
-
 }
 
 /*  Internal function, not called by consumer code.

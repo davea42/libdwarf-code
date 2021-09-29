@@ -3132,11 +3132,11 @@ dwarf_get_CFA_name (unsigned int val,
     const char ** s_out)
 {
     switch (val) {
-    case DW_CFA_extended:
-        *s_out = "DW_CFA_extended";
+    case DW_CFA_nop:
+        *s_out = "DW_CFA_nop";
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
-        0x0. DW_CFA_nop */
+        0x0. DW_CFA_extended */
     case DW_CFA_set_loc:
         *s_out = "DW_CFA_set_loc";
         return DW_DLV_OK;

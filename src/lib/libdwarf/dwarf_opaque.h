@@ -840,18 +840,6 @@ int _dwarf_look_in_local_and_tied_by_index(
     Dwarf_Addr *return_addr,
     Dwarf_Error *error);
 
-#if 0
-/*  Never implemented. */
-int _dwarf_get_base_and_size_given_signature(
-    Dwarf_CU_Context *context,
-    Dwarf_Sig8 *signature_in,
-    /* xu_sect_index means DW_SECT_info etc. */
-    Dwarf_Unsigned xu_sect_index,
-    Dwarf_Unsigned *base_out,
-    Dwarf_Unsigned *size_out,
-    Dwarf_Error *err);
-#endif
-
 Dwarf_Bool _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg);
 Dwarf_Bool _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg);
 Dwarf_Bool _dwarf_file_has_debug_fission_index(Dwarf_Debug dbg);

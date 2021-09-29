@@ -239,8 +239,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x12 18 DW_DLA_ABBREV */
     {sizeof(struct Dwarf_Abbrev_s),MULTIPLY_NO,  0, 0},
 
-    /* 0x13 19 DW_DLA_FRAME_OP */
-    {sizeof(Dwarf_Frame_Op),MULTIPLY_NO,  0, 0} ,
+    /* 0x13 19 DW_DLA_FRAME_INSTR_HEAD */
+    {sizeof(struct Dwarf_Frame_Instr_Head_s),MULTIPLY_NO,  0,
+        _dwarf_frame_instr_destructor} ,
 
     /* 0x14  20 DW_DLA_CIE */
     {sizeof(struct Dwarf_Cie_s),MULTIPLY_NO,  0, 0},
@@ -252,8 +253,8 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x16 DW_DLA_LOC_BLOCK */
     {1 /*sizeof(Dwarf_Loc)*/,MULTIPLY_CT, 0, 0},
 
-    /* 0x17 DW_DLA_FRAME_BLOCK */
-    {sizeof(Dwarf_Frame_Op),MULTIPLY_CT, 0, 0},
+    /* 0x17 DW_DLA_FRAME_OP  UNUSED  */
+    {sizeof(int),MULTIPLY_NO, 0, 0},
 
     /* 0x18 DW_DLA_FUNC UNUSED */
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},

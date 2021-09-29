@@ -694,7 +694,7 @@ _dwarf_debuglink_finder_newpath(
         error = 0;
         dbg = 0;
         return DW_DLV_NO_ENTRY;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         /*  There is no debuglink section */
         dwarf_finish(dbg);
@@ -717,7 +717,7 @@ _dwarf_debuglink_finder_newpath(
             dbg = 0;
             /*  Cannot match the crc_in, give up. */
             return DW_DLV_NO_ENTRY;
-        } 
+        }
         if (res1 == DW_DLV_OK) {
             crc = &lcrc[0];
         }

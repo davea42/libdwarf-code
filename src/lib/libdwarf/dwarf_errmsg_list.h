@@ -648,6 +648,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
     "(from DW_FORM_implicit_const) is not appropriate"},
 {"DW_DLE_UDATA_VALUE_NEGATIVE(483) Reading a negative value from "
     "dwarf_formudata() is not allowed."},
-{"DW_DLE_DEBUG_NAMES_ERROR(484) Error reading .debug_names"}
+{"DW_DLE_DEBUG_NAMES_ERROR(484) Error reading .debug_names"},
+{"DW_DLE_CFA_INSTRUCTION_ERROR(485) Error accessing "
+    "frame instructions"}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

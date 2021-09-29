@@ -1,7 +1,6 @@
 /*
-
 Copyright (C) 2000, 2004, 2006 Silicon Graphics, Inc.  All Rights Reserved.
-Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
+Portions Copyright (C) 2021 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -98,6 +97,46 @@ Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
 #define DW_FRAME_INSTR_OPCODE_SHIFT 6
 #define DW_FRAME_INSTR_OFFSET_MASK  0x3f
 
+/*  Frame description instructions expanded.
+    Accessed via a function.
+*/
+struct Dwarf_Frame_Instr_s {
+    /*  fp_op, if a base op, has the low 6 bits set zero here */
+    Dwarf_Small     fi_op;
+    /*  fp_instr_offset is within instructions */
+    Dwarf_Unsigned  fi_instr_offset;
+    Dwarf_Unsigned  fi_offset; /* frame offset */
+    /*  A string like "u","r", or "rsd" denoting the field
+        meanings. See the entire list of possibilities.
+        Never free. */
+    const char     *fi_fields;
+
+    /*  letter r and u both use u struct elements. */
+    Dwarf_Unsigned  fi_u0;
+    Dwarf_Unsigned  fi_u1;
+    Dwarf_Signed    fi_s0;
+    Dwarf_Signed    fi_s1;
+    Dwarf_Unsigned  fi_code_align_factor;
+    Dwarf_Signed    fi_data_align_factor;
+
+    Dwarf_Block     fi_expr;
+    /*  Used to prepare a list, which
+        is then turned into array and this zeroed. */
+    struct Dwarf_Frame_Instr_s *fi_next;
+};
+typedef struct Dwarf_Frame_Instr_s * Dwarf_Frame_Instr;
+
+struct Dwarf_Frame_Instr_Head_s {
+    /*  fp_op, if a base op, has the low 6 bits set zero here */
+    Dwarf_Debug     fh_dbg;
+    Dwarf_Cie       fh_cie;
+
+    /* array of pointers to Dwarf_Frame_Instr_s */
+    Dwarf_Frame_Instr *fh_array;
+    Dwarf_Unsigned     fh_array_count;
+};
+typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
+
 /*
     This struct denotes the rule for a register in a row of
     the frame table.  In other words, it is one element of
@@ -114,32 +153,32 @@ struct Dwarf_Reg_Rule_s {
         given by the sum of register contents plus offset to get the
         value'. whereas the latter
         means 'the value is in the register'.
+    */
+    Dwarf_Sbyte ru_is_offset;
 
-        The 'register' numbers are either real registers (ie, table
-        columns defined as real registers) or defined entries that are
-        not really hardware registers, such as DW_FRAME_SAME_VAL or
-        DW_FRAME_CFA_COL.  */
-    Dwarf_Sbyte ru_is_off;
-
-    /*  DW_EXPR_OFFSET (0, DWARF2)
-        DW_EXPR_VAL_OFFSET 1 (dwarf2/3)
-        DW_EXPR_EXPRESSION 2  (dwarf2/3)
+    /*  This has to do with evaluating register
+        instructions, not with printing frame instruction.
+        DW_EXPR_OFFSET         0 ( DWARF2)
+        DW_EXPR_VAL_OFFSET     1 (dwarf2/3)
+        DW_EXPR_EXPRESSION     2 (dwarf2/3)
         DW_EXPR_VAL_EXPRESSION 3 (dwarf2/3)
-        See dwarf_frame.h. */
+        DW_EXPR_ARGS_SIZE  4     (GNU)
+    */
     Dwarf_Sbyte ru_value_type;
 
-    /* Register involved in this rule. */
+    /*  Register involved in this rule, real or non-real-register.
+        ru_value_type is DW_EXPR_OFFSET or DW_EXPR_VAL_OFFSET.
+    */
     Dwarf_Half ru_register;
 
-    /*  Offset to add to register, if indicated by ru_is_offset
-        and if DW_EXPR_OFFSET or DW_EXPR_VAL_OFFSET.
-        If DW_EXPR_EXPRESSION or DW_EXPR_VAL_EXPRESSION
-        this is DW_FORM_block block-length, not offset. */
-    Dwarf_Unsigned ru_offset_or_block_len;
+    /*  Offset to add to register, if indicated by ru_is_offset.
+        ru_value_type is DW_EXPR_OFFSET */
+    Dwarf_Unsigned ru_offset;
+    Dwarf_Unsigned ru_args_size; /* DW_CFA_GNU_args_size */
+    /*  If ru_value_type is DW_EXPR_EXPRESSION
+        or DW_EXPR_VAL_EXPRESSION this is filled in. */
+    Dwarf_Block    ru_block;
 
-    /*  For DW_EXPR_EXPRESSION DW_EXPR_VAL_EXPRESSION these is set,
-        else 0. */
-    Dwarf_Small *ru_block;
 };
 
 typedef struct Dwarf_Frame_s *Dwarf_Frame;
@@ -166,14 +205,6 @@ struct Dwarf_Frame_s {
     struct Dwarf_Reg_Rule_s *fr_reg;
 
     Dwarf_Frame fr_next;
-};
-
-typedef struct Dwarf_Frame_Op_List_s *Dwarf_Frame_Op_List;
-
-/* This is used to chain together Dwarf_Frame_Op structures. */
-struct Dwarf_Frame_Op_List_s {
-    Dwarf_Frame_Op *fl_frame_instr;
-    Dwarf_Frame_Op_List fl_next;
 };
 
 /* See dwarf_frame.c for the heuristics used to set the
@@ -225,8 +256,8 @@ enum Dwarf_augmentation_type {
 struct Dwarf_Cie_s {
     Dwarf_Unsigned ci_length;
     char *ci_augmentation;
-    Dwarf_Small ci_code_alignment_factor;
-    Dwarf_Sbyte ci_data_alignment_factor;
+    Dwarf_Unsigned ci_code_alignment_factor;
+    Dwarf_Signed   ci_data_alignment_factor;
     Dwarf_Small ci_return_address_register;
     Dwarf_Small *ci_cie_start;
     Dwarf_Small *ci_cie_instr_start;
@@ -406,7 +437,6 @@ struct cie_fde_prefix_s {
 
 int
 _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
-    Dwarf_Frame_Op ** ret_frame_instr,
     Dwarf_Bool search_pc,
     Dwarf_Addr search_pc_val,
     Dwarf_Addr initial_loc,
@@ -416,10 +446,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Cie cie,
     Dwarf_Debug dbg,
     Dwarf_Half reg_num_of_cfa,
-    Dwarf_Signed * returned_count,
-    Dwarf_Bool  * has_more_rows,
-    Dwarf_Addr  * subsequent_pc,
-    Dwarf_Error * error);
+    Dwarf_Bool * has_more_rows,
+    Dwarf_Addr * subsequent_pc,
+    Dwarf_Frame_Instr_Head *ret_frame_instr_head,
+    Dwarf_Unsigned * returned_frame_instr_count,
+    Dwarf_Error *error);
 
 int _dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     Dwarf_Small *frame_ptr_in,
@@ -452,3 +483,4 @@ int _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 int _dwarf_frame_constructor(Dwarf_Debug dbg,void * );
 void _dwarf_frame_destructor (void *);
 void _dwarf_fde_destructor (void *);
+void _dwarf_frame_instr_destructor(void *);

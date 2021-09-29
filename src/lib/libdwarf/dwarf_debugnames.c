@@ -818,9 +818,9 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         unit_count = dn->dn_comp_unit_count;
         unit_offset = dn->dn_cu_list_offset;
     } else if (type[0] == 't') {
-        /* FIXME: not handling foreign type units yet 
-           types and foreign-types are logically considered
-           a sort-of single array.  */
+        /*  FIXME: not handling foreign type units yet
+            types and foreign-types are logically considered
+            a sort-of single array.  */
         unit_ptr = dn->dn_local_tu_list;
         unit_entry_size = dn->dn_offset_size;
         unit_count = dn->dn_local_type_unit_count +
@@ -845,7 +845,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         Dwarf_Small *ptr = unit_ptr + index_number *unit_entry_size;
         /*  ASSERT: ptr < dn->dn_indextable_data_end */
         memcpy(sig,ptr,sizeof(Dwarf_Sig8));
-    } else 
+    } else
 #endif
     if (sig) {
         /* CU or TU ref */

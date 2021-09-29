@@ -78,15 +78,19 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     Dwarf_Half version,
     struct dwconf_s *config_data,
     Dwarf_Signed offset_relevant,
-    Dwarf_Signed offset, Dwarf_Ptr block_ptr);
+    Dwarf_Signed offset,
+    Dwarf_Block * block_ptr);
 
 static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
+    Dwarf_Frame_Instr_Head instr_head,
+    Dwarf_Unsigned instr_array_len,
     Dwarf_Die die,
-    Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
     Dwarf_Signed data_alignment_factor,
-    int code_alignment_factor, Dwarf_Half addr_size,
-    Dwarf_Half offset_size, Dwarf_Half version,
+    Dwarf_Unsigned code_alignment_factor,
+    Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
     struct dwconf_s *config_data);
 
 /*  A strcpy which ensures NUL terminated string
@@ -926,6 +930,8 @@ valid_fde_content(Dwarf_Small * fde_start,
     return true;
 }
 
+static const Dwarf_Block blockzero;
+
 /*  Gather the fde print logic here so the control logic
     determining what FDE to print is clearer.  */
 static int
@@ -949,7 +955,7 @@ print_one_fde(Dwarf_Debug dbg,
     Dwarf_Addr low_pc = 0;
     Dwarf_Unsigned func_length = 0;
     Dwarf_Addr end_func_addr = 0;
-    Dwarf_Ptr fde_bytes = NULL;
+    Dwarf_Small *fde_bytes = NULL;
     Dwarf_Unsigned fde_bytes_length = 0;
     Dwarf_Off cie_offset = 0;
     Dwarf_Signed cie_index = 0;
@@ -1143,28 +1149,29 @@ print_one_fde(Dwarf_Debug dbg,
 
         cur_pc_in_table = j;
         {
-            Dwarf_Signed reg = 0;
-            Dwarf_Signed offset_relevant = 0;
+            Dwarf_Unsigned reg = 0;
+            Dwarf_Unsigned offset_relevant = 0;
             Dwarf_Small  value_type = 0;
-            Dwarf_Signed offset_or_block_len = 0;
-            Dwarf_Signed offset = 0;
-            Dwarf_Ptr    block_ptr = 0;
+            Dwarf_Unsigned offset = 0;
+            Dwarf_Block block;
             Dwarf_Addr   row_pc = 0;
             Dwarf_Bool   has_more_rows = 0;
             Dwarf_Addr   subsequent_pc = 0;
+            int fires = 0;
 
-            int fires = dwarf_get_fde_info_for_cfa_reg3_b(fde,
+            block = blockzero;
+            fires = dwarf_get_fde_info_for_cfa_reg3_b(fde,
                 j,
                 &value_type,
                 &offset_relevant,
                 &reg,
-                &offset_or_block_len,
-                &block_ptr,
+                &offset,
+                &block,
                 &row_pc,
                 &has_more_rows,
                 &subsequent_pc,
                 err);
-            offset = offset_or_block_len;
+            offset = offset;
             if (fires == DW_DLV_ERROR) {
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: on getting fde details for "
@@ -1200,20 +1207,20 @@ print_one_fde(Dwarf_Debug dbg,
                 address_size,
                 offset_size,version,
                 config_data,
-                offset_relevant, offset, block_ptr);
+                offset_relevant, offset, &block);
         }
         for (k = 0; k < config_data->cf_table_entry_count; k++) {
-            Dwarf_Signed reg = 0;
-            Dwarf_Signed offset_relevant = 0;
+            Dwarf_Unsigned reg = 0;
+            Dwarf_Unsigned offset_relevant = 0;
             int fires = 0;
             Dwarf_Small value_type = 0;
-            Dwarf_Ptr block_ptr = 0;
-            Dwarf_Signed offset_or_block_len = 0;
-            Dwarf_Signed offset = 0;
+            Dwarf_Block block;
+            Dwarf_Unsigned offset = 0;
             Dwarf_Addr row_pc = 0;
             Dwarf_Bool has_more_rows = FALSE;
             Dwarf_Addr subsequent_pc = 0;
 
+            block = blockzero;
             {
                 fires = dwarf_get_fde_info_for_reg3_b(fde,
                     k,
@@ -1221,10 +1228,10 @@ print_one_fde(Dwarf_Debug dbg,
                     &value_type,
                     &offset_relevant,
                     &reg,
-                    &offset_or_block_len,
-                    &block_ptr,
+                    &offset,
+                    &block,
                     &row_pc, &has_more_rows,&subsequent_pc, err);
-                offset = offset_or_block_len;
+                offset = offset;
             }
             if (fires == DW_DLV_ERROR) {
                 printf("\n");
@@ -1261,7 +1268,7 @@ print_one_fde(Dwarf_Debug dbg,
                 address_size,
                 offset_size,version,
                 config_data,
-                offset_relevant, offset, block_ptr);
+                offset_relevant, offset, &block);
         }
         if (printed_intro_addr) {
             printf("\n");
@@ -1271,15 +1278,13 @@ print_one_fde(Dwarf_Debug dbg,
     if (glflags.verbose > 1) {
         Dwarf_Off fde_off = 0;
         Dwarf_Off cie_off = 0;
+        int fderes = 0;
 
-        /*  Get the fde instructions and print them in raw form, just
-            like cie instructions */
-        Dwarf_Ptr instrs = 0;
-        Dwarf_Unsigned ilen = 0;
-        int res = 0;
+        /*  Get the fde instructions and print them in
+            raw form. */
+        Dwarf_Small * fde_instrs = 0;
+        Dwarf_Unsigned fdeinstrslen = 0;
 
-        res = dwarf_get_fde_instr_bytes(fde, &instrs, &ilen, err);
-        /* res will be checked below. */
         offres = dwarf_fde_section_offset(dbg, fde, &fde_off,
             &cie_off, err);
         if (offres == DW_DLV_ERROR) {
@@ -1288,7 +1293,16 @@ print_one_fde(Dwarf_Debug dbg,
                 " of this fde\n");
             return offres;
         }
-        if (offres == DW_DLV_OK) {
+        if (offres == DW_DLV_NO_ENTRY) {
+            printf("\nERROR:  Impossible, no fde offset or "
+                " cie offset for "
+                "fde index "
+                "%" DW_PR_DUu "?\n",
+                fde_index);
+            glflags.gf_count_major_errors++;
+            return offres;
+        }
+        {
             /* Do not print if in check mode */
             if (glflags.gf_do_print_dwarf) {
                 printf(" fde section offset %" DW_PR_DUu
@@ -1301,25 +1315,26 @@ print_one_fde(Dwarf_Debug dbg,
                     (Dwarf_Unsigned) cie_off);
             }
         }
-        if (res == DW_DLV_ERROR) {
-            /* DW_DLV_ERROR */
-            printf("\nERROR:  on getting fde instruction bytes "
-                "for fde index "
-                "%" DW_PR_DUu "?\n",
-                fde_index);
+        fderes = dwarf_get_fde_instr_bytes(fde,
+            &fde_instrs,&fdeinstrslen,err);
+        if (fderes == DW_DLV_ERROR) {
+            printf("\nERROR:  getting fde instructions "
+                " failed %s \n",dwarf_errmsg(*err));
             glflags.gf_count_major_errors++;
-            return res;
+            return offres;
         }
-
-        if (res == DW_DLV_OK) {
+        /*  fdeinstrslen will be zero if DW_DLV_NO_ENTRY. */
+        {
             int cires = 0;
+            Dwarf_Frame_Instr_Head ihead = 0;
+            Dwarf_Unsigned         iarraycount = 0;
             Dwarf_Unsigned cie_length = 0;
             Dwarf_Small cie_version = 0;
             char* augmenter = 0;
             Dwarf_Unsigned code_alignment_factor = 0;
             Dwarf_Signed data_alignment_factor = 0;
             Dwarf_Half return_address_register_rule = 0;
-            Dwarf_Ptr initial_instructions = 0;
+            Dwarf_Small * initial_instructions = 0;
             Dwarf_Unsigned initial_instructions_length = 0;
             Dwarf_Half cie_offset_size = 0;
 
@@ -1331,10 +1346,6 @@ print_one_fde(Dwarf_Debug dbg,
                     cie_index, fde_index,
                     cie_element_count);
                 return DW_DLV_NO_ENTRY;
-            }
-            cires = dwarf_get_offset_size(dbg,&cie_offset_size,err);
-            if ( cires != DW_DLV_OK) {
-                return res;
             }
             cires = dwarf_get_cie_info_b(cie_data[cie_index],
                 &cie_length,
@@ -1355,31 +1366,55 @@ print_one_fde(Dwarf_Debug dbg,
                 return cires;
             }
             if (cires == DW_DLV_NO_ENTRY) {
-                ; /* ? */
-            } else {
-                /* Do not print if in check mode */
-                if (glflags.gf_do_print_dwarf) {
-                    print_frame_inst_bytes(dbg,
-                        *cu_die_for_print_frames,
-                        instrs,
-                        (Dwarf_Signed) ilen,
-                        data_alignment_factor,
-                        (int) code_alignment_factor,
-                        address_size,
-                        cie_offset_size,
-                        cie_version, config_data);
-                }
+                /*  Impossible. Do nothing. */
+                glflags.gf_count_major_errors++;
+                    printf("\nERROR: Impossible: no cie info  for "
+                    "cie index %" DW_PR_DUu "?\n", cie_index);
+                return cires;
             }
-        } else if (res == DW_DLV_NO_ENTRY) {
-            glflags.gf_count_major_errors++;
-            printf("ERROR: Impossible: no instr bytes for fde index %"
-                DW_PR_DUu "?\n",
-                fde_index);
-            glflags.gf_count_major_errors++;
+            if (glflags.gf_do_print_dwarf) {
+                int res = 0;
+
+                res = dwarf_expand_frame_instructions(
+                    cie_data[cie_index],
+                    fde_instrs,
+                    fdeinstrslen,
+                    &ihead,
+                    &iarraycount,
+                    err);
+                if (res == DW_DLV_ERROR) {
+                    glflags.gf_count_major_errors++;
+                    printf("\nERROR: fail expanding  instructions %"
+                        DW_PR_DSd
+                        " with fde index %" DW_PR_DUu "!\n",
+                        cie_index, fde_index);
+                    printf("%s\n",dwarf_errmsg(*err));
+                    return res;
+                }
+                if (res == DW_DLV_NO_ENTRY) {
+                    glflags.gf_count_major_errors++;
+                        printf("\nERROR: Impossible: no entry "
+                        "expanding instructions  for "
+                        "cie index %" DW_PR_DUu "?\n", cie_index);
+                    return res;
+                }
+
+                /* Do not print if in check mode */
+                print_frame_inst_bytes(dbg,
+                    ihead,
+                    iarraycount,
+                    *cu_die_for_print_frames,
+                    data_alignment_factor,
+                    code_alignment_factor,
+                    address_size,
+                    cie_offset_size,
+                    cie_version, config_data);
+                dwarf_frame_instr_head_dealloc(ihead);
+            }
         }
     }
     return DW_DLV_OK;
-}
+}  /* end: print_one_fde */
 
 /*  Print a cie.  Gather the print logic here so the
     control logic deciding what to print
@@ -1401,8 +1436,8 @@ print_one_cie(Dwarf_Debug dbg,
     Dwarf_Unsigned code_alignment_factor = 0;
     Dwarf_Signed data_alignment_factor = 0;
     Dwarf_Half return_address_register_rule = 0;
-    Dwarf_Ptr initial_instructions = 0;
-    Dwarf_Unsigned initial_instructions_length = 0;
+    Dwarf_Small *cie_initial_instructions = 0;
+    Dwarf_Unsigned cie_initial_instructions_length = 0;
     Dwarf_Off cie_off = 0;
     Dwarf_Half offset_size = 0;
 
@@ -1413,8 +1448,8 @@ print_one_cie(Dwarf_Debug dbg,
         &code_alignment_factor,
         &data_alignment_factor,
         &return_address_register_rule,
-        &initial_instructions,
-        &initial_instructions_length,&offset_size, err);
+        &cie_initial_instructions,
+        &cie_initial_instructions_length,&offset_size, err);
     if (cires == DW_DLV_ERROR) {
         glflags.gf_count_major_errors++;
         printf("ERROR: calling dwarf_get_cie_info_b() fails\n");
@@ -1486,37 +1521,66 @@ print_one_cie(Dwarf_Debug dbg,
                 printf("\nERROR: calling "
                     "dwarf_get_cie_augmentation_data()"
                     " fails.\n");
+                printf("%s\n",dwarf_errmsg(*err));
                 return ares;
             }
         }
 
         /* Do not print if in check mode */
         if (glflags.gf_do_print_dwarf) {
+            Dwarf_Frame_Instr_Head ihead = 0;
+            Dwarf_Unsigned         iarraycount = 0;
+            int res = 0;
+
             printf("  bytes of initial instructions %"
                 DW_PR_DUu "\n",
-                initial_instructions_length);
+                cie_initial_instructions_length);
             printf("  cie length                    %" DW_PR_DUu
                 "\n", cie_length);
             /*  For better layout */
             printf("  initial instructions\n");
+            res = dwarf_expand_frame_instructions(
+                cie,
+                cie_initial_instructions,
+                cie_initial_instructions_length,
+                &ihead,
+                &iarraycount,
+                err);
+            if (res == DW_DLV_ERROR) {
+                glflags.gf_count_major_errors++;
+                printf("\nERROR: fail expanding  cie index %"
+                    DW_PR_DUu " instructions\n",
+                    cie_index);
+                printf("%s\n",dwarf_errmsg(*err));
+                return res;
+            }
+            if (res == DW_DLV_NO_ENTRY) {
+                glflags.gf_count_major_errors++;
+                    printf("\nERROR: Impossible: no entry "
+                    "expanding instructions  for "
+                    "cie index %"DW_PR_DUu "?\n", cie_index);
+                return res;
+            }
+
             print_frame_inst_bytes(dbg,
+                ihead,
+                iarraycount,
                 die,
-                initial_instructions,
-                (Dwarf_Signed) initial_instructions_length,
                 data_alignment_factor,
-                (int) code_alignment_factor,
+                code_alignment_factor,
                 address_size,
                 offset_size,version,config_data);
+            dwarf_frame_instr_head_dealloc(ihead);
         }
     }
     return DW_DLV_OK;
-}
+} /* end: print_one_cie */
 
 int
 print_location_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
     int die_indent_level,
-    Dwarf_Ptr bytes_in,
+    Dwarf_Small *bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
     Dwarf_Half offset_size,
@@ -1617,6 +1681,7 @@ lastop_pointless(int op)
     return false;
 }
 
+#if 0
 /*  iregion_start, iregion_end are the overall
     block of fde/cie instructions.
     idata, idata end are the area next to be read
@@ -1659,6 +1724,55 @@ check_finstr_addrs(unsigned char *iregionstart,
     }
     return DW_DLV_OK;
 }
+#endif
+
+static char exprstr_buf[1000];
+static int
+print_expression( Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Block *expression_block,
+    Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
+    int version)
+{
+    struct esb_s exprstring;
+    Dwarf_Error cerr = 0;
+    int gres = 0;
+
+    esb_constructor_fixed(&exprstring,
+        exprstr_buf, sizeof(exprstr_buf));
+    gres = print_location_operations(dbg,
+        die,
+        /* indent */ 1,
+        expression_block->bl_data,
+        expression_block->bl_len,
+        addr_size, offset_size,version,
+        &exprstring,&cerr);
+    if ( gres == DW_DLV_OK) {
+        printf("    %s\n",
+        sanitized(esb_get_string(&exprstring)));
+    } else if (gres == DW_DLV_NO_ENTRY) {
+        glflags.gf_count_major_errors++;
+        printf("\nERROR: Unable to get string "
+            "from"
+            " expression block "
+            "of length "
+            " %" DW_PR_DUu " bytes.\n",
+            expression_block->bl_len);
+    } else {
+        glflags.gf_count_major_errors++;
+        printf("\nERROR: No  string from"
+            " expression block "
+            "of length "
+            " %" DW_PR_DSd " bytes.\n",
+            expression_block->bl_len);
+        printf("Error: %s\n",dwarf_errmsg(cerr));
+        dwarf_dealloc(dbg,cerr,DW_DLA_ERROR);
+        cerr = 0;
+    }
+    esb_destructor(&exprstring);
+    return DW_DLV_OK;
+}
 
 /*  Print the frame instructions in detail
     for a glob of instructions.
@@ -1669,958 +1783,190 @@ check_finstr_addrs(unsigned char *iregionstart,
 */
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
+    Dwarf_Frame_Instr_Head instr_head,
+    Dwarf_Unsigned instr_array_len,
     Dwarf_Die die,
-    Dwarf_Ptr cie_init_inst,
-    Dwarf_Signed len_in,
     Dwarf_Signed data_alignment_factor,
-    int code_alignment_factor, Dwarf_Half addr_size,
-    Dwarf_Half offset_size,Dwarf_Half version,
+    Dwarf_Unsigned code_alignment_factor,
+    Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
     struct dwconf_s *config_data)
 {
-    unsigned char *instp = (unsigned char *) cie_init_inst;
-    unsigned char *startpoint = instp;
-    Dwarf_Unsigned uval = 0;
-    Dwarf_Unsigned uval2 = 0;
-    Dwarf_Unsigned uleblen = 0;
-    unsigned int off = 0;
-    unsigned int loff = 0;
-    unsigned u16 = 0;
-    unsigned int u32 = 0;
-    Dwarf_Unsigned u64 = 0;
-    int res = 0;
-    Dwarf_Small *endpoint = 0;
-    Dwarf_Signed remaining_len = 0;
-    int lastop = 0;
-    char exprstr_buf[200];
-    void (*copy_word) (void *, const void *, unsigned long) = 0;
+    Dwarf_Error error;
+    Dwarf_Half lastop;
+    Dwarf_Unsigned i = 0;
 
-    copy_word = dwarf_get_endian_copy_function(dbg);
-    if (!copy_word) {
-        glflags.gf_count_major_errors++;
-        printf("\nERROR: Unable to print frame instruction bytes. "
-            "Missing the word-copy function\n");
+    if (instr_array_len == 0) {
         return;
     }
-    if (len_in <= 0) {
+    if (!instr_head) {
+        /*  Impossible */
         return;
     }
-    remaining_len = len_in;
-    endpoint = instp + remaining_len;
-    for (; remaining_len > 0;) {
-        unsigned char ibyte = 0;
-        int top = 0;
-        int bottom = 0;
-        int delta = 0;
-        int reg = 0;
+    for ( ; i < instr_array_len; ++i) {
+        int res = 0;
+        Dwarf_Unsigned  instr_offset_in_instrs = 0;
+        Dwarf_Small     cfa_operation = 0;
+        const char     *fields= 0;
+        Dwarf_Unsigned  u0 = 0;
+        Dwarf_Unsigned  u1 = 0;
+        Dwarf_Signed    s0 = 0;
+        Dwarf_Signed    s1 = 0;
+        Dwarf_Block     expression_block;
+        const char     *op_name = 0;
 
-        if (check_finstr_addrs(startpoint,instp,instp+1,endpoint,
-            "start next instruction") != DW_DLV_OK) {
+        if (!i) {
+            printf("  [  ] offset name                 operands\n");
+        }
+        res = dwarf_get_frame_instruction(instr_head,
+            i,&instr_offset_in_instrs, &cfa_operation,
+            &fields, &u0,&u1,&s0,&s1,
+            0,0, /* These alignment factors passed to us. */
+            &expression_block,&error);
+        if (res != DW_DLV_OK) {
+            if (res == DW_DLV_ERROR) {
+                dwarf_dealloc_error(dbg,error);
+                error = 0;
+            }
             return;
         }
-        ibyte = *instp;
-        top = ibyte & 0xc0;
-        bottom = ibyte & 0x3f;
-
-        lastop = top;
-        switch (top) {
-        case DW_CFA_advance_loc:
-            delta = ibyte & 0x3f;
-            printf("  %2u DW_CFA_advance_loc %d", off,
-                (int) (delta * code_alignment_factor));
-            if (glflags.verbose) {
-                printf("  (%d * %d)", (int) delta,
-                    (int) code_alignment_factor);
+        lastop = cfa_operation;
+        res = dwarf_get_CFA_name(cfa_operation,&op_name);
+        if (res == DW_DLV_NO_ENTRY) {
+            op_name = "InstrOpUnknown";
+        }
+        printf("  [%2" DW_PR_DUu "]  %2" DW_PR_DUu " %-23s ",i,
+            instr_offset_in_instrs,op_name);
+        switch(fields[0]) {
+        case 'u': {
+            if (!fields[1]) {
+                printf("%" DW_PR_DUu "\n",u0);
+                break;
             }
-            printf("\n");
-            break;
-        case DW_CFA_offset:
-            loff = off;
-            reg = ibyte & 0x3f;
-            res = dwarf_decode_leb128((char *)(instp + 1),&uleblen,
-                &uval,(char *)endpoint);
-            if (res != DW_DLV_OK) {
-                glflags.gf_count_major_errors++;
-                printf("\nERROR: reading leb in DW_CFA_offset\n");
-                return;
-            }
-            instp += uleblen;
-            remaining_len -= uleblen;
-            off += uleblen;
-            printf("  %2u DW_CFA_offset ", loff);
-            printreg(reg, config_data);
-            printf(" %" DW_PR_DSd , (Dwarf_Signed)
-                (((Dwarf_Signed) uval) * data_alignment_factor));
-            if (glflags.verbose) {
-                printf("  (%" DW_PR_DUu " * %" DW_PR_DSd ")", uval,
-                    data_alignment_factor);
-            }
-            printf("\n");
-            break;
-
-        case DW_CFA_restore:
-            reg = ibyte & 0x3f;
-            printf("  %2u DW_CFA_restore ", off);
-            printreg(reg, config_data);
-            printf("\n");
-            break;
-
-        default:
-            loff = off;
-
-            lastop = top;
-            switch (bottom) {
-            case DW_CFA_set_loc:
-                /* operand is address, so need address size */
-                /* which will be 4 or 8. */
-                if (check_finstr_addrs(startpoint,
-                    instp+1, instp+addr_size+1,
-                    endpoint,
-                    "DW_CFA_set_loc") != DW_DLV_OK) {
-                    return;
-                }
-                switch (addr_size) {
-                case 4:
-                    {
-                        Dwarf_Unsigned v32 = 0;
-                        char b32[4];
-
-                        memcpy(b32,instp+1,4);
-                        ASNAR(copy_word,v32, b32);
-                        uval = v32;
-                    }
-                    break;
-                case 8:
-                    {
-                        Dwarf_Unsigned v64 = 0;
-                        char b64[8];
-
-                        memcpy(b64,instp+1,8);
-                        ASNAR(copy_word,v64, b64);
-                        uval = v64;
-                    }
-                    break;
-                default:
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: Unexpected address size %d in "
-                        "DW_CFA_set_loc!\n",
-                        addr_size);
-                    uval = 0;
-                }
-
-                instp += addr_size;
-                remaining_len -= (Dwarf_Signed) addr_size;
-                off += addr_size;
-                printf("  %2u DW_CFA_set_loc %" DW_PR_DUu "\n",
-                    loff,  uval);
-                break;
-            case DW_CFA_advance_loc1:
-                if (check_finstr_addrs(startpoint,
-                    instp+1, instp+2,
-                    endpoint,
-                    "DW_CFA_advance_loc1") != DW_DLV_OK) {
-                    return;
-                }
-                delta = (unsigned char) *(instp + 1);
-                uval2 = delta;
-                instp += 1;
-                remaining_len -= 1;
-                off += 1;
-                printf("  %2u DW_CFA_advance_loc1 %" DW_PR_DUu "\n",
-                    loff, uval2);
-                break;
-            case DW_CFA_advance_loc2:
-                if (check_finstr_addrs(startpoint,
-                    instp+1, instp+3,
-                    endpoint,
-                    "DW_CFA_advance_loc2") != DW_DLV_OK) {
-                    return;
-                }
-                {
-                    char u2[2];
-                    memcpy(u2,instp+1,2);
-                    ASNAR(copy_word,u16,u2);
-                }
-                uval2 = u16;
-                instp += 2;
-                remaining_len -= 2;
-                off += 2;
-                printf("  %2u DW_CFA_advance_loc2 %" DW_PR_DUu "\n",
-                    loff,  uval2);
-                break;
-            case DW_CFA_advance_loc4:
-                if (check_finstr_addrs(startpoint,
-                    instp+1, instp+5,
-                    endpoint,
-                    "DW_CFA_advance_loc4") != DW_DLV_OK) {
-                    return;
-                }
-                {
-                    char u4[4];
-                    memcpy(u4,instp+1,4);
-                    ASNAR(copy_word,u32,u4);
-                }
-                uval2 = u32;
-                instp += 4;
-                remaining_len -= 4;
-                off += 4;
-                printf("  %2u DW_CFA_advance_loc4 %" DW_PR_DUu "\n",
-                    loff, uval2);
-                break;
-            case DW_CFA_MIPS_advance_loc8:
-                if (check_finstr_addrs(startpoint,
-                    instp+1, instp+9,
-                    endpoint,
-                    "DW_CFA_MIPS_advance_loc8") != DW_DLV_OK) {
-                    return;
-                }
-                {
-                    char u8[8];
-                    memcpy(u8,instp+1,8);
-                    ASNAR(copy_word,u64,u8);
-                }
-                uval2 = u64;
-                instp += 8;
-                remaining_len -= 8;
-                off += 8;
-                printf("  %2u DW_CFA_MIPS_advance_loc8 %"
-                    DW_PR_DUu "\n",
-                    loff,  uval2);
-                break;
-            case DW_CFA_offset_extended:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_offset_extended\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval2,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_offset_extended\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_offset_extended ", loff);
-                printreg(uval, config_data);
-                printf(" %" DW_PR_DSd ,
-                    (Dwarf_Signed) (((Dwarf_Signed) uval2) *
-                        data_alignment_factor));
+            if (fields[1] == 'c') {
+                Dwarf_Unsigned final =
+                    u0*code_alignment_factor;
+                printf("%" DW_PR_DUu ,final);
                 if (glflags.verbose) {
-                    printf("  (%" DW_PR_DUu " * %d)",  uval2,
-                        (int) data_alignment_factor);
+                    printf("  (%" DW_PR_DUu " * %" DW_PR_DUu
+                        ")",
+                        u0,code_alignment_factor);
+
                 }
                 printf("\n");
-                break;
-
-            case DW_CFA_restore_extended:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_restore_extended\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_restore_extended ", loff);
-                printreg(uval, config_data);
-                printf("\n");
-                break;
-            case DW_CFA_undefined:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_undefined\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_undefined ", loff);
-                printreg( uval, config_data);
-                printf("\n");
-                break;
-            case DW_CFA_same_value:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_undefined\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_same_value ", loff);
-                printreg(uval, config_data);
-                printf("\n");
-                break;
-            case DW_CFA_register:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_register\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval2,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_register\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_register ", loff);
-                printreg(uval, config_data);
-                printf(" = ");
-                printreg(uval2, config_data);
-                printf("\n");
-                break;
-            case DW_CFA_remember_state:
-                printf("  %2u DW_CFA_remember_state\n", loff);
-                break;
-            case DW_CFA_restore_state:
-                printf("  %2u DW_CFA_restore_state\n", loff);
-                break;
-            case DW_CFA_def_cfa:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_def_cfa\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen, &uval2, (char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_def_cfa\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_def_cfa ", loff);
-                printreg( uval, config_data);
-                printf(" %" DW_PR_DUu , uval2);
-                printf("\n");
-                break;
-            case DW_CFA_def_cfa_register:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_def_cfa_register\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_def_cfa_register ", loff);
-                printreg(uval, config_data);
-                printf("\n");
-                break;
-            case DW_CFA_def_cfa_offset:
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_def_cfa_offset\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                printf("  %2u DW_CFA_def_cfa_offset %" DW_PR_DUu
-                    "\n",
-                    loff, uval);
-                break;
-
-            case DW_CFA_nop:
-                printf("  %2u DW_CFA_nop\n", loff);
-                break;
-
-            case DW_CFA_def_cfa_expression:     /* DWARF3 */
-                {
-                    Dwarf_Unsigned block_len = 0;
-                    res = dwarf_decode_leb128((char *)(instp + 1),
-                        &uleblen,&block_len,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_def_cfa_expression\n");
-                        return;
-                    }
-
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf("  %2u DW_CFA_def_cfa_expression expr "
-                        "block len %"
-                        DW_PR_DUu "\n",
-                        loff,
-                        block_len);
-                    if (remaining_len < 0 ||
-                        block_len > (Dwarf_Unsigned)remaining_len) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: expression length %"
-                            DW_PR_DUu
-                            " too large for section."
-                            " DW_CFA_def_cfa_expression.\n",
-                            block_len);
-                        return;
-                    }
-                    if (check_finstr_addrs(startpoint,
-                        instp+1, instp+block_len+1,
-                        endpoint,
-                        "DW_CFA_def_cfa_expression") != DW_DLV_OK) {
-                        return;
-                    }
-                    dump_block("    ", (char *) instp+1,
-                        (Dwarf_Signed) block_len);
-                    printf("\n");
-                    if (glflags.verbose) {
-                        struct esb_s exprstring;
-                        Dwarf_Error cerr = 0;
-                        int gres = 0;
-
-                        esb_constructor_fixed(&exprstring,
-                            exprstr_buf, sizeof(exprstr_buf));
-                        gres = print_location_operations(dbg,
-                            die,
-                            /* indent */ 1,
-                            instp+1,block_len,addr_size,
-                            offset_size,version,
-                            &exprstring,&cerr);
-                        if ( gres == DW_DLV_OK) {
-                            printf("    %s\n",
-                            sanitized(esb_get_string(&exprstring)));
-                        } else if (gres == DW_DLV_NO_ENTRY) {
-                            glflags.gf_count_major_errors++;
-                            printf("\nERROR: Unable to get string "
-                                "from"
-                                " DW_CFA_def_cfa_expression block "
-                                "of length "
-                                " %" DW_PR_DUu " bytes.\n",
-                                block_len);
-                        } else {
-                            glflags.gf_count_major_errors++;
-                            printf("\nERROR: No  string from"
-                                " DW_CFA_def_cfa_expression block "
-                                "of length "
-                                " %" DW_PR_DSd " bytes.\n",
-                                block_len);
-                            printf("Error: %s\n",dwarf_errmsg(cerr));
-                            dwarf_dealloc(dbg,cerr,DW_DLA_ERROR);
-                            cerr = 0;
-                        }
-                        esb_destructor(&exprstring);
-                    }
-                    instp += block_len;
-                    remaining_len -= block_len;
-                    off += block_len;
-                }
-                break;
-            case DW_CFA_expression:      /* DWARF3 */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_expression\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                {
-                    /*  instp is always 1 byte back, so we need +1
-                        when we use it. See the final increment
-                        of this for loop. */
-                    Dwarf_Unsigned block_len = 0;
-                    res = dwarf_decode_leb128((char *)(instp + 1),
-                        &uleblen,&block_len,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_expression\n");
-                        return;
-                    }
-
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf
-                        ("  %2u DW_CFA_expression %" DW_PR_DUu
-                        " expr block len %" DW_PR_DUu "\n",
-                        loff,  uval,
-                        block_len);
-                    if (remaining_len < 0 ||
-                        block_len > (Dwarf_Unsigned)remaining_len) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: expression length %"
-                            DW_PR_DUu " too long for section. "
-                            "DW_CFA_expression\n",
-                            block_len);
-                        return;
-                    }
-                    if (check_finstr_addrs(startpoint,
-                        instp+1, instp+block_len+1,
-                        endpoint,
-                        "DW_CFA_expression") != DW_DLV_OK) {
-                        return;
-                    }
-                    dump_block("    ", (char *) instp+1,
-                        (Dwarf_Signed) block_len);
-                    printf("\n");
-                    if (glflags.verbose) {
-                        struct esb_s exprstring;
-                        int gres = 0;
-                        Dwarf_Error cerr = 0;
-
-                        esb_constructor_fixed(&exprstring,
-                            exprstr_buf,
-                            sizeof(exprstr_buf));
-                        gres = print_location_operations(dbg,
-                            die,
-                            /* indent */ 1,
-                            instp+1,block_len,addr_size,
-                            offset_size,version,
-                            &exprstring,&cerr);
-                        if ( gres == DW_DLV_OK) {
-                            printf("    %s\n",
-                                sanitized(
-                                esb_get_string(&exprstring)));
-                        } else if (gres == DW_DLV_NO_ENTRY) {
-                            glflags.gf_count_major_errors++;
-                            printf("\nERROR: Unable to get "
-                                "string from"
-                                " DW_CFA_cfa_expression block "
-                                "of length "
-                                " %" DW_PR_DUu " bytes.\n",
-                                block_len);
-                        } else { /* DW_DLV_ERROR */
-                            glflags.gf_count_major_errors++;
-                            printf("\nERROR: No  string from"
-                                " DW_CFA_cfa_expression block "
-                                "of length "
-                                " %" DW_PR_DUu " bytes.\n",
-                                block_len);
-                            printf("Error: %s\n",dwarf_errmsg(cerr));
-                            dwarf_dealloc(dbg,cerr, DW_DLA_ERROR);
-                        }
-                        printf("    %s\n",sanitized(
-                            esb_get_string(&exprstring)));
-                        esb_destructor(&exprstring);
-                    }
-                    instp += block_len;
-                    remaining_len -= block_len;
-                    off += block_len;
-                }
-                break;
-            case DW_CFA_offset_extended_sf: /* DWARF3 */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_offset_extended_sf\n");
-                    return;
-                }
-
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                {
-                    Dwarf_Signed sval2 = 0;
-                    /* instp is always 1 byte back, so we need +1
-                        when we use it. See the final increment
-                        of this for loop. */
-                    res = dwarf_decode_signed_leb128(
-                        (char *)(instp + 1),
-                        &uleblen, &sval2,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_offset_extended_sf\n");
-                        return;
-                    }
-
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf("  %2u DW_CFA_offset_extended_sf ", loff);
-                    printreg(uval, config_data);
-                    printf(" %" DW_PR_DSd , (Dwarf_Signed)
-                        ((sval2) * data_alignment_factor));
-                    if (glflags.verbose) {
-                        printf("  (%" DW_PR_DSd " * %d)", sval2,
-                            (int) data_alignment_factor);
-                    }
-                }
-                printf("\n");
-                break;
-            case DW_CFA_def_cfa_sf:     /* DWARF3 */
-                /*  instp is always 1 byte back, so we need +1
-                    when we use it. See the final increment
-                    of this for loop. */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_def_cfa_sf\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                {
-                    Dwarf_Signed sval2 = 0;
-                    res = dwarf_decode_signed_leb128((char *)
-                        (instp + 1),
-                        &uleblen, &sval2,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_def_cfa_sf\n");
-                        return;
-                    }
-
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf("  %2u DW_CFA_def_cfa_sf ", loff);
-                    printreg(uval, config_data);
-                    printf(" %" DW_PR_DSd , sval2);
-                    printf(" (*data alignment factor=>%"
-                        DW_PR_DSd ")",
-                        (Dwarf_Signed)(sval2*data_alignment_factor));
-                }
-                printf("\n");
-                break;
-            case DW_CFA_def_cfa_offset_sf:      /* DWARF3 */
-                {
-                    /*  instp is always 1 byte back, so we need +1
-                        when we use it. See the final increment
-                        of this for loop. */
-                    Dwarf_Signed sval = 0;
-                    res = dwarf_decode_signed_leb128((char *)
-                        (instp + 1),
-                        &uleblen, &sval,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_def_cfa_sf\n");
-                        return;
-                    }
-
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf("  %2u DW_CFA_def_cfa_offset_sf %"
-                        DW_PR_DSd " (*data alignment factor=> %"
-                        DW_PR_DSd ")\n",
-                        loff, sval,
-                        (Dwarf_Signed)(data_alignment_factor*sval));
-
-                }
-                break;
-            case DW_CFA_val_offset:     /* DWARF3 */
-                /*  instp is always 1 byte back, so we need +1
-                    when we use it. See the final increment
-                    of this for loop. */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_val_offset\n");
-                    return;
-                }
-
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                {
-                    Dwarf_Signed sval2 = 0;
-                    res = dwarf_decode_signed_leb128((char *)
-                        (instp + 1),
-                        &uleblen, &sval2,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_val_offset\n");
-                        return;
-                    }
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf("  %2u DW_CFA_val_offset ", loff);
-                    printreg(uval, config_data);
-                    printf(" %" DW_PR_DSd ,
-                        (Dwarf_Signed) (sval2 *
-                            data_alignment_factor));
-                    if (glflags.verbose) {
-                        printf("  (%" DW_PR_DSd " * %d)",
-                            (Dwarf_Signed) sval2,
-                            (int) data_alignment_factor);
-                    }
-                }
-                printf("\n");
-
-                break;
-            case DW_CFA_val_offset_sf:  /* DWARF3 */
-                /*  instp is always 1 byte back, so we need +1
-                    when we use it. See the final increment
-                    of this for loop. */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_val_offset_sf\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                {
-                    Dwarf_Signed sval2 = 0;
-                    res = dwarf_decode_signed_leb128((char *)
-                        (instp + 1),
-                        &uleblen, &sval2,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_val_offset\n");
-                        return;
-                    }
-
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf("  %2u DW_CFA_val_offset_sf ", loff);
-                    printreg(uval, config_data);
-                    printf(" %" DW_PR_DSd ,(Dwarf_Signed)
-                        (sval2 * data_alignment_factor));
-                    if (glflags.verbose) {
-                        printf("  (%" DW_PR_DSd " * %d)", sval2,
-                            (int) data_alignment_factor);
-                    }
-                }
-                printf("\n");
-
-                break;
-            case DW_CFA_val_expression: /* DWARF3 */
-                /*  instp is always 1 byte back, so we need +1
-                    when we use it. See the final increment
-                    of this for loop. */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&uval,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_val_expression\n");
-                    return;
-                }
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                {
-                    Dwarf_Unsigned block_len = 0;
-                    res = dwarf_decode_leb128((char *)(instp + 1),
-                        &uleblen,&block_len,(char *)endpoint);
-                    if (res != DW_DLV_OK) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: reading leb in "
-                            "DW_CFA_val_expression\n");
-                        return;
-                    }
-
-                    instp += uleblen;
-                    remaining_len -= uleblen;
-                    off += uleblen;
-                    printf
-                        ("  %2u DW_CFA_val_expression %" DW_PR_DUu
-                        " expr block len %" DW_PR_DUu "\n",
-                        loff,  uval,
-                        block_len);
-                    if (remaining_len <  0 ||
-                        block_len > (Dwarf_Unsigned)remaining_len) {
-                        glflags.gf_count_major_errors++;
-                        printf("\nERROR: expression length %"
-                            DW_PR_DUu " too large for section. "
-                            "DW_CFA_val_expression.\n",
-                            block_len);
-                        return;
-                    }
-                    if (check_finstr_addrs(startpoint,
-                        instp+1, instp+block_len+1,
-                        endpoint,
-                        "DW_CFA_val_expression") != DW_DLV_OK) {
-                        return;
-                    }
-                    dump_block("    ", (char *) instp+1,
-                        (Dwarf_Signed) block_len);
-                    printf("\n");
-                    if (glflags.verbose) {
-                        struct esb_s exprstring;
-                        int pres = 0;
-                        Dwarf_Error cerr = 0;
-
-                        esb_constructor_fixed(&exprstring,
-                            exprstr_buf,
-                            sizeof(exprstr_buf));
-                        pres = print_location_operations(dbg,
-                            die,
-                            /* indent */ 1,
-                            instp+1,block_len,addr_size,
-                            offset_size,version,
-                            &exprstring,&cerr);
-                        if ( pres == DW_DLV_OK) {
-                            printf("    %s\n", sanitized(
-                                esb_get_string(&exprstring)));
-                        } else if (pres == DW_DLV_NO_ENTRY) {
-                            glflags.gf_count_major_errors++;
-                            printf("\nERROR: Unable to get string "
-                                "from"
-                                " DW_CFA_def_cfa_val_expression "
-                                "block of length "
-                                " %" DW_PR_DUu " bytes.\n",
-                                block_len);
-                        } else {
-                            glflags.gf_count_major_errors++;
-                            printf("\nERROR: No  string from"
-                                " DW_CFA_def_cfa_val_expression "
-                                "block of length "
-                                " %" DW_PR_DUu " bytes.\n" ,
-                                block_len);
-                            printf("Error: %s\n",dwarf_errmsg(cerr));
-                            dwarf_dealloc_error(dbg,cerr);
-                            cerr = 0;
-                        }
-                        esb_destructor(&exprstring);
-                    }
-                    instp += block_len;
-                    remaining_len -= block_len;
-                    off += block_len;
-                }
-
-                break;
-
-            /* Only in Metaware. Unknown meaning. */
-            case DW_CFA_METAWARE_info: {
-                Dwarf_Unsigned val = 0;
-
-                /*  instp is always 1 byte back, so we need +1
-                    when we use it. See the final increment
-                    of this for loop. */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&val,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_METAWARE_info\n");
-                    return;
-                }
-                printf("  %2u DW_CFA_METAWARE_info value: %"
-                    DW_PR_DUu "\n",
-                    loff, val);
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                }
-                break;
-#ifdef DW_CFA_GNU_window_save
-            case DW_CFA_GNU_window_save:{
-                /*  no information: this just tells unwinder to
-                    restore the window registers from the previous
-                    frame's window save area */
-                printf("  %2u DW_CFA_GNU_window_save \n", loff);
-                }
-                break;
-#endif
-#ifdef DW_CFA_GNU_negative_offset_extended
-            case DW_CFA_GNU_negative_offset_extended:{
-                printf("  %2u DW_CFA_GNU_negative_offset_extended \n",
-                    loff);
-                }
-                break;
-#endif
-#ifdef  DW_CFA_GNU_args_size
-                /*  single uleb128 is the current arg area size in
-                    bytes. no register exists yet to save this in */
-            case DW_CFA_GNU_args_size:{
-                Dwarf_Unsigned lreg = 0;
-
-                /*  instp is always 1 byte back, so we need +1
-                    when we use it. See the final increment
-                    of this for loop. */
-                res = dwarf_decode_leb128((char *)(instp + 1),
-                    &uleblen,&lreg,(char *)endpoint);
-                if (res != DW_DLV_OK) {
-                    glflags.gf_count_major_errors++;
-                    printf("\nERROR: reading leb in "
-                        "DW_CFA_GNU_args_size\n");
-                    return;
-                }
-                printf("  %2u DW_CFA_GNU_args_size arg size: %"
-                    DW_PR_DUu "\n",
-                    loff, lreg);
-                instp += uleblen;
-                remaining_len -= uleblen;
-                off += uleblen;
-                }
-                break;
-#endif
-
-            default:
-                printf(" %u Unexpected op 0x%x: \n",
-                    loff, (unsigned int) bottom);
-                remaining_len = 0;
                 break;
             }
         }
-        instp++;
-        remaining_len--;
-        off++;
-        if ( remaining_len < 0) {
-            glflags.gf_count_major_errors++;
-            printf("\nERROR: reading frame instructions, "
-                "remaining length negative: %"
-                DW_PR_DSd "\n",remaining_len);
-            return;
+        break;
+        case 'r': {
+            if (!fields[1]) {
+                printreg(u0,config_data);
+                printf("\n");
+                break;
+            }
+            if (fields[1] == 'u') {
+                if (!fields[2]) {
+                    printreg(u0,config_data);
+                    printf(" %" DW_PR_DUu ,u1);
+                    printf("\n");
+                    break;
+                }
+                if (fields[2] == 'd') {
+                    Dwarf_Signed final =
+                        (Dwarf_Signed)u1 *
+                        data_alignment_factor;
+                    printreg(u0,config_data);
+                    printf(" %" DW_PR_DSd ,final);
+                    if (glflags.verbose) {
+                        printf("  (%" DW_PR_DUu " * %" DW_PR_DSd
+                            ")",
+                            u1,data_alignment_factor);
+                    }
+                    printf("\n");
+                    break;
+                }
+            }
+            if (fields[1] == 'r') {
+                printreg(u0,config_data);
+                printf(" ");
+                printreg(u1,config_data);
+                printf("\n");
+                break;
+            }
+            if (fields[1] == 's') {
+                if (fields[2] == 'd') {
+                    Dwarf_Signed final = s1 * data_alignment_factor;
+                    printreg(u0,config_data);
+                    printf(" %" DW_PR_DSd , final);
+                    if (glflags.verbose) {
+                        printf("  (%" DW_PR_DSd " * %" DW_PR_DSd
+                            ")",
+                            s1,data_alignment_factor);
+                    }
+                    printf("\n");
+                    break;
+                }
+            }
+            if (fields[1] == 'b') {
+                /* rb */
+                printreg(u0,config_data);
+                printf(" expr block len %" DW_PR_DUu "\n",
+                    expression_block.bl_len);
+                dump_block("    ", expression_block.bl_data,
+                    (Dwarf_Signed) expression_block.bl_len);
+                printf("\n");
+                if (glflags.verbose) {
+                    print_expression(dbg,die,&expression_block,
+                        addr_size,offset_size,
+                        version);
+                }
+                break;
+            }
         }
+        break;
+        case 's': {
+            if (fields[1] == 'd') {
+                Dwarf_Signed final = s0*data_alignment_factor;
+
+                printf(" %" DW_PR_DSd ,final);
+                if (glflags.verbose) {
+                    printf("  (%" DW_PR_DSd " * %" DW_PR_DSd
+                        ")",
+                        s0,data_alignment_factor);
+                }
+                printf("\n");
+                break;
+            }
+        }
+        break;
+        case 'b': {
+            if (!fields[1]) {
+                printf(" expr block len %" DW_PR_DUu "\n",
+                    expression_block.bl_len);
+                dump_block("    ", expression_block.bl_data,
+                    (Dwarf_Signed) expression_block.bl_len);
+                printf("\n");
+                if (glflags.verbose) {
+                    print_expression(dbg,die,&expression_block,
+                        addr_size,offset_size,
+                        version);
+                }
+                break;
+            }
+        }
+        break;
+        case 0:
+            printf("\n");
+        break;
+        default:
+            printf("UNKNOWN FIELD 0x%x\n",fields[0]);
+        }
+#if 0
+        glflags.gf_count_major_errors++;
+        printf("\nERROR: Unexpected frame instruction string"
+            " \"%s\" not understood.\n",fields);
+#endif
     }
     if (lastop_pointless(lastop)) {
         printf(
@@ -2653,7 +1999,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     struct dwconf_s *config_data,
     Dwarf_Signed offset_relevant,
     Dwarf_Signed offset,
-    Dwarf_Ptr block_ptr)
+    Dwarf_Block *block)
 {
     char *type_title = "";
     int print_type_title = 1;
@@ -2706,7 +2052,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
         printreg(rule_id, config_data);
         printf("=");
         /*  Here 'offset' is actually block length. */
-        printf("expr-block-len=%" DW_PR_DSd , offset);
+        printf("expr-block-len=%" DW_PR_DUu , block->bl_len);
         if (print_type_title) {
             printf("> ");
         }
@@ -2716,7 +2062,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
             printf("bytes:");
             /*  The data being dumped comes direct from
                 libdwarf so libdwarf validated it. */
-            dump_block("", block_ptr, offset);
+            dump_block("", block->bl_data, block->bl_len);
             printf("> ");
             if (glflags.verbose) {
                 struct esb_s exprstring;
@@ -2730,7 +2076,8 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 gres = print_location_operations(dbg,
                     die,
                     /* indent */ 1,
-                    block_ptr,offset,addr_size,
+                    block->bl_data, block->bl_len,
+                    addr_size,
                     offset_size,version,
                     &exprstring,&cerr);
                 if ( gres == DW_DLV_OK) {
