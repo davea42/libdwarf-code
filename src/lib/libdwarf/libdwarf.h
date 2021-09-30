@@ -3690,7 +3690,7 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
 /*  The harmless error strings (if any) are freed when the dbg
     is dwarf_finish()ed. */
 
-/*  When the val_in is known these dwarf_get_TAG_name (etc)
+/*  When the val_in is known these, for example, dwarf_get_TAG_name 
     functions return the string corresponding to the val_in passed in
     through the pointer s_out and the value returned is DW_DLV_OK.
     The strings are in static storage

@@ -8432,7 +8432,7 @@ See also
 .DE
 .P
 The function
-\f(CWdwarf_debugnames_header()\fP
+\f(CWdwarf_dnames_header()\fP
 allocates an opaque data structure used
 in all the other dnames calls and
 allows access to a single .debug_names
@@ -8465,7 +8465,7 @@ void examfuncdname(Dwarf_Debug dbg)
             return;
         /* Use the dn record to do dwarf_dnames calls */
         /* clean up */
-        dwarf_dealloc_debugnames(dn);
+        dwarf_dealloc_dnames(dn);
         dn = 0;
         starting_offset = next_offset;
     }   
@@ -8570,9 +8570,9 @@ standard and
 \f(CWdwarfdump\fP
 for the motivation of this function.
 
-.H 3 " dwarf_debugnames_local_tu_entry()"
+.H 3 " dwarf_dnames_local_tu_entry()"
 .DS
-\f(CW int dwarf_debugnames_local_tu_entry(Dwarf_Dnames_Head dn,
+\f(CW int dwarf_dnames_local_tu_entry(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      offset_number,
     Dwarf_Unsigned    * offset_count,
@@ -8582,12 +8582,12 @@ for the motivation of this function.
 .DE
 .P
 The same as
-\f(CWdwarf_debugnames_cu_entry()\fP
+\f(CWdwarf_dnames_cu_entry()\fP
 but referencing type unit fields.
 
-.H 3 " dwarf_debugnames_foreign_tu_entry()"
+.H 3 " dwarf_dnames_foreign_tu_entry()"
 .DS
-\f(CW int dwarf_debugnames_foreign_tu_entry(
+\f(CW int dwarf_dnames_foreign_tu_entry(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      sig_number,
@@ -8600,9 +8600,9 @@ but referencing type unit fields.
 Allows retrieving the data
 for foreign type-unit entries.
 
-.H 3 " dwarf_debugnames_bucket()"
+.H 3 " dwarf_dnames_bucket()"
 .DS
-\f(CW int dwarf_debugnames_bucket(
+\f(CW int dwarf_dnames_bucket(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      bucket_number,
@@ -8614,9 +8614,9 @@ for foreign type-unit entries.
 Allows retrieving the data
 for hash buckets.
 
-.H 3 " dwarf_debugnames_name()"
+.H 3 " dwarf_dnames_name()"
 .DS
-\f(CW int dwarf_debugnames_bucket(
+\f(CW int dwarf_dnames_bucket(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      index_number,
     Dwarf_Unsigned      name_entry,
@@ -8631,9 +8631,9 @@ Allows retrieving the data
 about names and signatures.
 
 
-.H 3 " dwarf_debugnames_abbrev_by_index()"
+.H 3 " dwarf_dnames_abbrev_by_index()"
 .DS
-\f(CW int dwarf_debugnames_abbrev_by_index(
+\f(CW int dwarf_dnames_abbrev_by_index(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      abbrev_entry,
@@ -8648,9 +8648,9 @@ Allows retrieving the abbreviations
 from a portion of the 
 section by index.
 
-.H 3 " dwarf_debugnames_abbrev_form_by_index()"
+.H 3 " dwarf_dnames_abbrev_form_by_index()"
 .DS
-\f(CW int dwarf_debugnames_abbrev_form_by_index(
+\f(CW int dwarf_dnames_abbrev_form_by_index(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      abbrev_entry_index,
@@ -8665,9 +8665,9 @@ from a portion of the
 section by index.
 
 
-.H 3 " dwarf_debugnames_abbrev_by_code()"
+.H 3 " dwarf_dnames_abbrev_by_code()"
 .DS
-\f(CW int dwarf_debugnames_abbrev_by_code(
+\f(CW int dwarf_dnames_abbrev_by_code(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      abbrev_code,
@@ -8681,9 +8681,9 @@ Allows retrieving the abbreviations
 from a portion of the 
 section by abbrev-code.
 
-.H 3 " dwarf_debugnames_entrypool()"
+.H 3 " dwarf_dnames_entrypool()"
 .DS
-\f(CW int dwarf_debugnames_entrypool(
+\f(CW int dwarf_dnames_entrypool(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      offset_in_entrypool,
@@ -8699,9 +8699,9 @@ Allows retrieving the
 data from a portion of the entrypool
 by index and offset.
 
-.H 3 " dwarf_debugnames_entrypool_values()"
+.H 3 " dwarf_dnames_entrypool_values()"
 .DS
-\f(CW int dwarf_debugnames_entrypool_values(
+\f(CW int dwarf_dnames_entrypool_values(
     Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_table_number,
     Dwarf_Unsigned      index_of_abbrev,
@@ -13685,7 +13685,7 @@ The function was added October 2020.
 
 .H 3 "dwarf_basic_crc32()"
 .DS
-\f(CWunsigned int dwarf_crc32(const unsigned char *buf,
+\f(CWunsigned int dwarf_basic_crc32(const unsigned char *buf,
     int len,
     unsigned int init);
 \fP
