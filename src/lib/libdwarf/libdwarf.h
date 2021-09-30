@@ -183,6 +183,9 @@ typedef struct Dwarf_Frame_Instr_s * Dwarf_Frame_Instr;
     For DWARF5 each table starts with a header
     followed by range list entries defined
     as here.
+    Dwarf_Ranges* apply to DWARF2,3, and 4.
+    Not to DWARF5 (the data is different and
+    in a new DWARF5 section).
 */
 enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
     DW_RANGES_ADDRESS_SELECTION,
@@ -2812,7 +2815,10 @@ DW_API int dwarf_get_macro_import(Dwarf_Macro_Context
 
 /*  END: DWARF5 .debug_macro interfaces. */
 
-/* consumer .debug_macinfo information interface.
+/*  consumer .debug_macinfo information interface.
+    This applies only to DWARF2,3, and4.
+    DWARF5 .debug_macro has its own function interface
+    and does not use this struct.
 */
 struct Dwarf_Macro_Details_s {
     Dwarf_Off    dmd_offset; /* offset, in the section,
