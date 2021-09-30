@@ -1,3 +1,133 @@
+2021-09-29:  David Anderson
+    commit e7db94d38ad26c254b82273c66214dd0b493861b
+
+    Now version 0.3.0 with API compatibilities
+    in .debug_frame data and new functions.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+
+2021-09-29:  David Anderson
+    commit d3ba444c4e4891545552590d9d36c2049197678e
+
+    API change here for frame (and especially
+    for frame instructions)
+    Extensive use of Dwarf_Block where it adds clarity.
+    Removed bit-reading of frame instructions as
+    thats no longer necessary, the new
+    function dwarf_get_frame_instruction() does
+    that for us.
+            modified:   src/bin/dwarfdump/print_frames.c
+
+    One internal pointer changed from Dwarf_Ptr
+    to Dwarf_Small * for easier use and better type checking.
+            modified:   src/bin/dwarfdump/print_frames.h
+
+    frame1.c is now using the revised and new frame interfaces.
+            modified:   src/bin/dwarfexample/frame1.c
+    createirepfrombinary.cc is doing so too now.
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+
+    Rearranged DW_CFA_nop DW_CFA_extended so the nop
+    version is what is printed, not the artificial
+    DW_CFA_extended (both are 0).
+            modified:   src/lib/libdwarf/dwarf.h
+    DW_DLA_FRAME_OP replaced by DW_DLA_FRAME_INSTR_HEAD
+    and DW_DLA_FRAME_BLOCK has been dropped.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+    Fixed a comment and pointless whitespace.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+    Added DW_DLE_CFA_INSTRUCTION_ERROR(485)
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+
+    Dropped the Dwarf_Frame_Op support.
+    Now with some internal args Dwarf_Unsigned where
+    Dwarf_Signed made no sense.
+            modified:   src/lib/libdwarf/dwarf_frame.c
+    Dwarf_Frame_Instr_s and Dwarf_Frame_Op_List_s
+    (not visible to library callers) created.
+    Now with some args Dwarf_Unsigned where
+    Dwarf_Signed made no sense.
+            modified:   src/lib/libdwarf/dwarf_frame.h
+    Now with some args Dwarf_Unsigned where
+    Dwarf_Signed made no sense.
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+
+    Removed a useless blank line.
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+    Fixed indents, trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_loc.c
+
+    A Dwarf_Block field is no Dwarf_Byte_Ptr,
+    identical to Dwarf_Small *
+            modified:   src/lib/libdwarf/dwarf_loc.h
+
+    Removed #if 0 #endif short sequences.
+            modified:   src/lib/libdwarf/dwarf_macro.c
+
+    'make rebuild' altered this so DW_CFA_nop can
+    be returned as a cfa name string.
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+    Removed a #if 0 endif declaration of code never
+    written.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Removed Dwarf_Frame_Op_s. It only ever worked
+    for DWARF2.
+    New opaque structs Dwarf_Frame_Instr_Head_s
+    and Dwarf_Frame_Instr_s make possible
+    easy and improved access to .debug_frame/.eh_frame
+    DW_CFA instructions.
+    Removed DW_DLA_FRAME_OP and added
+    DW_DLA_FRAME_INSTR_HEAD.
+    Added DW_DLE_CFA_INSTRUCTION_ERROR.
+    dwarf_get_cie_info_b() and
+    dwarf_get_fde_range()  and
+    dwarf_get_fde_instr_bytes(()
+    now use  Dwarf_Small *
+    instead of Dwarf_Ptr as thats easier to use
+    and slightly safer for type checking..
+    Effectively unsigned char * instead of void *
+
+    dwarf_get_fde_info_for_reg3_b()
+    dwarf_get_fde_info_for_cfa_reg3_b()
+    uses Dwarf_Small * and also Dwarf_Signed
+    arguments changed to Dwarf_Unsigned to accurately
+    represent the meaning. Adds a Dwarf_Block
+    replacing a pointer/length pair of arguments,
+
+    dwarf_expand_frame_instructions()
+    arguments much changed to allow
+    access to frame instructions that
+    handle *all* frame instructions,
+    not just DWARF2
+
+    dwarf_get_frame_instruction()
+    dwarf_frame_instr_head_dealloc()
+    are new to enable correct printing of
+    frame instructions without decoding the
+    instruction bits.
+    making the argumente clearer.
+
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-19:  David Anderson
+    commit 1c3cce658c068a165d57afd4954f504592c390dc
+
+    Corrected spelling error.
+            modified:   README.md
+
+2021-09-19:  David Anderson
+    commit 6f90b971b5847d4bf543e9c866e12817af136249
+
+    Now has the latest git log data.
+            modified:   ChangeLog
+
 2021-09-19:  David Anderson
     commit 6b7fd93356a1a58275f4014437508eda9aa0272c
 
