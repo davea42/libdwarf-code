@@ -910,6 +910,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 &nonfactoredoffset,error);
             if (adres != DW_DLV_OK) {
                 FREELOCALMALLOC;
+                return adres;
             }
             if (need_augmentation) {
                 SER(DW_DLE_DF_NO_CIE_AUGMENTATION);
