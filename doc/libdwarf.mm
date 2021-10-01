@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.10 19 September 2021
+.ds vE Rev 4.11 01 October 2021  0.3.0
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -143,6 +143,7 @@ the recommendations in the chapter
 titled "Candy Machine Interfaces"
 of "Writing Solid Code", a book by
 Steve Maguire (published by Microsoft Press).
+
 .H 2 "Definitions"
 DWARF debugging information entries (DIEs)
 are the segments of information
@@ -230,24 +231,67 @@ The miscellaneous interface is just what is left over: the
 error handler functions.
 
 .P
-The following is a brief mention of the changes in this
-libdwarf from the libdwarf draft for DWARF Version 1 and
-recent changes.
+The following is a brief mention of the changes in
+libdwarf from the final non-semantic-version
+libdwarf: libdwarf 20210528
 
 .H 2 "Items Changed"
+Comparing libdwarf-0.3.0 to libdwarf-0.2.0
 .P
-Comparing libdwarf-0.2.0, released 20 September 2021, to the last
-non-semantic-version libdwarf-20210528 the differences
-are significant.
+The Dwarf_Block structure 
+bl_data field is now type
+Dwarf_Byte_Ptr (identical
+to Dwarf_Small *) replacing
+Dwarf_Ptr (void *)
+to improve type checking.
+Other instances of Dwarf_Ptr in public
+functions where altered similarly.
+.P
+\f(CWdwarf_get_fde_info_for_reg3_b()\fP
+and
+\f(CWdwarf_get_fde_info_for_cfa_reg3_b()\fP
+Dwarf_Signed arguments that have always
+been unsigned by definition are now 
+changed to type Dwarf_Unsigned.
+.P
+\f(CWdwarf_expand_frame_instructions()\fP
+arguments changed to make it possible
+to return actual frame instruction contents
+in a useful way.
+\f(CWdwarf_get_frame_instruction()\fP
+is new and it
+returns details of an instruction.
+.P
+\f(CWdwarf_frame_instr_head_dealloc()\fP
+deallocs (frees) the data in 
+the Dwarf_Frame_Instr_Head record
+created by
+\f(CWdwarf_expand_frame_instructions().\fP
+.P
+The Dwarf_Frame_Op type has been deleted,
+it only worked for DWARF2. 
+.P
+The pointless error argument to
+dwarf_finish() has been eliminated.
+The function will never return
+DW_DLV_ERROR so the return
+value is pretty much meaningless. 
+If the DwarfDebug passed in is NULL 
+it returns DW_DLV_NO_ENTRY,
+which is useless.
+.P
+Comparing libdwarf-0.2.0 to libdwarf-20210528.
+.P
 Some arguments to
-dwarf_init_b(),
-dwarf_init_path(),
-dwarf_init_path_dl(),
-dwarf_object_init_b(), and
-dwarf_finish()
+\f(CWdwarf_init_b()\fP,
+\f(CWdwarf_init_path()\fP,
+\f(CWdwarf_init_path_dl()\fP,
+\f(CWdwarf_object_init_b()\fP, and
+\f(CWdwarf_finish()\fP
 have been removed, they were
 unused and unnecessary.
-The argument list to dwarf_bitoffset()
+The argument list to 
+\f(CWdwarf_bitoffset()\fP
 changed to allow use with DWARF5.
 Many functions that only supported
 DWARF before DWARF5 have been dropped
@@ -260,263 +304,53 @@ In nearly all cases the current interface
 was already available in libdwarf-20210528
 along with earlier interfaces that worked
 with earlier DWARF.
-
-19 September 2021
 .P
-If dwarf_formudata() encounters a signed form
+If
+\f(CWdwarf_formudata()\fP
+encounters a signed form
 it checks the value. If the value is non-negative
 it returns the non-negative value, otherwise
 it returns an error.
-This means success calling dwarf_formudata()
+This means success calling 
+\f(CWdwarf_formudata()\fP
 does not prove the form is not DW_FORM_sdata.
-15 June 2021
 .P
-Added dwarf_get_FORM_CLASS_name()
-so library uses can print a form
-class value usefully.
-2 February 2021.
-.P
-Added dwarf_decode_leb128() and dwarf_decode_signed_leb128()
-so library users can access these library-internal functions.
-.P
-Added dwarf_macro_context_total_length()
-because callers of dwarf_get_macro_context[_by_offset]()
-sometimes want to know the length of ops  + header.
-.P
-The description of dwarf_srcfiles()
-now reflects the difference
-in line table handling between
-DWARF5  and other line table versions.
-If using dwarf_srcfiles() do
-read its documentation here
-(Section 6.14, page 117 in this
-version).
-.P
-Added functions dwarf_crc32()
-and dwarf_basic_crc32()
-so libdwarf can check
-debuglink/build-id
-CRC values.
-.P
-Added dwarf_get_ranges_b()
-so clients reading DWARF4 
-split dwarf (a GNU extension)
-can get the final offset of the ranges.
-(September 10, 2020)
-.P
-All the 
-dwarf_init*() and
-dwarf_elf_init*() calls 
-have always been able to return
-DW_DLV_ERROR with a Dwarf_Error
-pointer returned too.
-We now update the advice on
-dealing with this situation,
-unifying with the rest of
-libdwarf errors.
-(September 9, 2020)
-.P
-The documentation of dwarf_init_path()
-was basically correct but omitted
-meaningful mention of the dbg argument
-and a little wrongly described the error argument
-(July 22, 2020);
-.P
-Added dwarf_get_debug_sup() to retrived the DWARF5
-section .debug_sup content.
-(July 13, 2020);
-.P
-Added new functions for 
-reading .debug_gnu_pubtypes
-and .debug_gnu_pubnames.
- dwarf_get_gnu_index_head()
-dwarf_gnu_index_dealloc
-dwarf_get_gnu_index_block()
-dwarf_get_gnu_index_block_entry()
-(July 9, 2020);
-.P
-Added new functions for full .debug_loclists
-access:
-dwarf_get_locdesc_entry_d(),
-dwarf_get_loclist_head_basics(),
-dwarf_get_loclist_head_kind(), and
-dwarf_loc_head_c_dealloc().
-For accessing certain DWARF5 new location
-operators (for example DW_OP_const_type)
-as well as all other operators we add
-dwarf_get_location_op_value_d().
-Added functions allowing simple reporting
-of .debug_loclists without involving
-other sections:
-dwarf_load_loclists(),
-dwarf_get_loclist_context_basics(),
-dwarf_get_loclist_lle(),
-dwarf_get_loclist_offset_index_value(),
-and
-dwarf_get_loclist_raw_entry_detail().
-(June 10, 2020);
-.P
-Added new functions for full .debug_rnglists support
-and fixed issues with DWARF5 .debug_addr
-index FORMs.
-New functions for general use:
-dwarf_addr_form_is_indexed(),
-dwarf_get_rnglists_entry_fields_a(),
-dwarf_rnglists_get_rle_head(),
-dwarf_dealloc_rnglists_head(),
-New functions for a complete listing
-of the .debug_rnglists section. 
-dwarf_load_rnglists(),
-dwarf_get_rnglist_offset_index_value(),
-dwarf_get_rnglist_context(),
-dwarf_get_rnglist_head_basics(),
-dwarf_get_rnglist_context_basics(),
-dwarf_get_rnglist_rle().
-Also added new functions
-dwarf_dealloc_die(), dwarf_dealloc_error(),
-and dwarf_dealloc_attribute() to provide
-type-safe calls for deallocation of the
-specific data types.
-(May 20, 2020)
-.P
-What was historically called 'length_size' in
-libdwarf and dwarfdump is actually the size of
-an offset (4 or 8 in DWARF2,3,4 and 5).
-For readability all instances of 'length_size'
-are being converted, as time permits,
-to 'offset_size'.
-(May 1, 2020)
-.P
-Added a new function dwarf_set_de_alloc_flag()
-which allows turning-off of libdwarf-internal
-allocation tracking to improve libdwarf
-performance a few percent (which only
-really matters with giant DWARF sections).
-The downside of turning off the flag is
-consumer code must do all the dwarf_dealloc()
-calls itself to avoid memory leaks.
-(March 14, 2020)
-
-.P
-Corrected the documentation of dwarf_diename:
-It was never appropriate to use dwarf_dealloc
-on the string pointer returned but
-Up till now this document said such
-a call was required.
-(March 14, 2020)
-.P
-Now we document here
-that if one uses
-dwarf_init_b() or dwarf_init_path()
-that the function dwarf_get_elf() 
-cannot succeed as there is no longer
-any Elf pointer (from libelf)
-to return.
-(November 26, 2019)
-.P
-New function  
-dwarf_gnu_debuglink()
-allow callers to access fields that
-GNU compilers create and use to link an
-executable to its separate
-DWARF debugging content object file.
-(September 9, 2019, updated October 2019)
-.P
-dwarf_next_cu_header_d() (and the other earlier
-versions of this) now allow a null
-in place of a pointer for next_cu_offset.
-dwarf_hipc_b() now allows a null
-in place of the return_form and/or
-return_class arguments.
-Unless you know a sufficiently recent
-libdwarf is to be used it is not safe to
-pass those arguments as null pointers.
-This allowance of null is because
-we've become aware that the relevant
-NetBSD man pages 
-on these functions incorrectly specified that
-null was allowed.
-(April 22,2019)
-.P
-The new non-libelf reader code checks
-elf header values more thoroughly
-than libelf and detects corrupted Elf
-earlier and in more cases than libelf.
-Since the reports of elf corruption
-from libdwarf/dwarfdump
-are not detailed we suggest
-one use an object dumper to
-check the object file in question.
-Two useful 
-object dumpers are GNU readelf (part
-of GNU binutils) and readelfobj
-(part of the readelfobj project
-on sourceforge.net).
-readelfobj uses essentially the same
-algorithms as libdwarf does and
-should report something meaningful.
-(April 20,2019)
-.P
-Added support for MacOS dSYM objects and
-PE object files as well as an initialization
-function allowing a path instead of a
-Posix/Unix fd or a libelf Elf*.
-(January 2019)
-.P
-Added a libdwarf interface dwarf_errmsg_by_number()
-so that places in the code that can have errors but
-do not want the Dwarf_Error complexities
-can report more details than just an error number.
-(December 19, 2018)
-.P
-Now Mach-o dSYM files containing dwarf
-are readable by libdwarf and their DWARF
-dumped by dwarfdump.
-There are no new options or choices,
-libdwarf and dwarfdump notice which
-kind of object they are processing.
-New functions added to libdwarf.h
-dwarf_init_path_dSYM(),dwarf_object_detector_path_b(),
-and dwarf_object_detector_fd().
-(modified June 2021)
-.P
-.P Older entries removed as no longer
-very relevant
+The 
+\f(CWdwarf_bitoffset()\fP
+function adds an argument as
+the bit offset in DWARF4&5 is
+defined differently than that in earlier DWARF
+and callers need to know which
+definition applies.
 
 .H 2 "Items Removed"
+September 2021.
+Version libdwarf-0.2.0
 Many obsolete functions
 have been removed.
 These functions were
 obsolete as they could
 not properly handle
-DWARF5.
-.P
+some features of DWARF.
 
 .H 2 "Revision History"
-.VL 15
+.BL
 .LI "September 2021"
-The pointless error argument to
-dwarf_finish() has been eliminated.
-The function will never return
-DW_DLV_ERROR so the return
-value is pretty much meaningless. 
-If the DwarfDebug passed in is NULL
-it returns DW_DLV_NO_ENTRY,
-which is useless.
+Version libdwarf-0.3.0 
+should be the last major revision
+for quite a long time.
+
 .LI "June 2021"
+Version libdwarf-0.1.1 
 The functions for initializing,
-dwarf_init_path(),
-dwarf_init_path_dl(), and
-dwarf_init_b()
+dwarf_init_path() etc
+and other init functions were changed
 no longer have unused/unnecessary
 arguments so users must
 change their code.
-The dwarf_bitoffset()
-function adds an argument as
-the bit offset in DWARF4&5 is
-defined differently than that in earlier DWARF.
-Old interfaces have been removed from the API
-in favor of new ones (present in the library for
+Many interfaces have been removed from the API
+in favor of new ones (most
+of the new ones have been present in the library for
 years) with improved functionality.
 The new ones have the same name but
 with a trailing _a or _b or the like.
@@ -610,12 +444,20 @@ Dwarf_Handler:4|8:4|8:Pointer to
 .H 2 "Aggregate Types"
 The following aggregate types are defined by
 \fIlibdwarf.h\fP:
-\f(CWDwarf_Loc\fP,
-\f(CWDwarf_Locdesc\fP,
+\f(CWDwarf_Locdesc_c\fP,
 \f(CWDwarf_Block\fP,
-\f(CWDwarf_Frame_Op\fP.
-\f(CWDwarf_Regtable\fP.
-\f(CWDwarf_Regtable3\fP.
+\f(CWDwarf_Regtable3\fP,
+\f(CWDwarf_Regtable_Entry3\fP,
+\f(CWDwarf_Form_data16\fP,
+\f(CWDwarf_Ranges\fP,
+\f(CWDwarf_Sig8\fP,
+\f(CWDwarf_Obj_Access_Section_a_s\fP,
+\f(CWDwarf_Obj_Access_Methods_a_s\fP,
+\f(CWDwarf_Obj_Access_Interface_a_s\fP,
+\f(CWDwarf_Macro_Details_s\fP,
+\f(CWDwarf_Printf_Callback_Info_s\fP,
+\f(CWDwarf_Debug_Fission_Per_CU_s\fP,
+\f(CWDwarf_Cmdline_Options\fP,
 While most of \f(CWlibdwarf\fP acts on or returns simple values or
 opaque pointer types, this small set of structures seems useful.
 Yet, at the same time, these public structures are inflexible
@@ -623,157 +465,41 @@ as any change in format or content
 breaks binary (and possibly source in some cases)
 compatibility.
 
-.H 3 "Location Record"
-The \f(CWDwarf_Loc\fP
-type identifies a single atom of a location description
-or a location expression.
-This is obsolete and should not be used,
-though it works adequately for DWARF2.
-.DS
-\f(CWtypedef struct {
-    Dwarf_Small        lr_atom;
-    Dwarf_Unsigned     lr_number;
-    Dwarf_Unsigned     lr_number2;
-    Dwarf_Unsigned     lr_offset;
-} Dwarf_Loc;\fP
-.DE
-
-The \f(CWlr_atom\fP
-identifies the atom corresponding to the 
-\f(CWDW_OP_*\fP
-definition in \fIdwarf.h\fP
-and it represents the operation to be performed
-in order to locate the item in question.
-
-.P
-The \f(CWlr_number\fP field is the operand
-to be used in the calculation
-specified by the \f(CWlr_atom\fP
- field; not all atoms use this field.
-Some atom operations imply signed numbers
-so it is necessary to cast
-this to a 
-\f(CWDwarf_Signed\fP type for those operations.
-
-.P
-The 
-\f(CWlr_number2\fP
-field is the second operand specified by the
-\f(CWlr_atom\fP field; only 
-\f(CWDW_OP_BREGX\fP has this field.  Some
-atom operations imply signed numbers so
-it may be necessary to cast
-this to a 
-\f(CWDwarf_Signed\fP type for those operations.
-.P
-For a 
-\f(CWDW_OP_implicit_value\fP operator the
-\f(CWlr_number2\fP
-field is a pointer to the bytes of the value.
-The field pointed to
-is \f(CWlr_number\fP bytes long.
-There is no explicit terminator.
-Do not attempt to 
-\f(CWfree\fP the bytes which 
-\f(CWlr_number2\fP
-points at and do not alter those bytes. The pointer value
-remains valid till the open Dwarf_Debug is closed.
-This is a rather ugly use of a host integer to hold a pointer.
-You will normally have to do a 'cast' operation to use the value.
-.P
-For a 
-\f(CWDW_OP_GNU_const_type\fP operator the 
-\f(CWlr_number2\fP
-field is a pointer to a block with an initial
-unsigned byte giving the number of bytes
-following, followed immediately that number of const
-value bytes.
-There is no explicit terminator.
-Do not attempt to
-\f(CWfree\fP the bytes which 
-\f(CWlr_number2\fP
-points at and do not alter those bytes.
-The pointer value
-remains valid till the open Dwarf_Debug is closed.
-This is a rather ugly use of a host integer to hold a pointer.
-You will normally have to do 
-a 'cast' operation to use the value.
-.P
-The 
-\f(CWlr_offset\fP field is the byte offset
-(within the block the
-location record came from) 
-of the atom specified by the \f(CWlr_atom\fP
-field.  This is set on all atoms.
-This is useful for operations
-\f(CWDW_OP_SKIP\fP and 
-\f(CWDW_OP_BRA\fP.
-
-.H 3 "Location Description"
-This is obsolete and should not be used,
-though it works ok for DWARF2..
-The
-\f(CWDwarf_Locdesc\fP type represents an ordered list of
-\f(CWDwarf_Loc\fP records used in the calculation to locate
-an item.  Note that in many cases, the location can only be
-calculated at runtime of the associated program.
-
-.DS
-\f(CWtypedef struct {
-    Dwarf_Addr        ld_lopc;
-    Dwarf_Addr        ld_hipc;
-    Dwarf_Unsigned    ld_cents;
-    Dwarf_Loc*        ld_s;
-} Dwarf_Locdesc;\fP
-.DE
-
-The 
-\f(CWld_lopc\fP and 
-\f(CWld_hipc\fP fields provide an address range for
-which this location descriptor is valid.
-Both of these fields are set to
-\fIzero\fP if the location descriptor is
-valid throughout the scope of the
-item it is associated with.
-These addresses are virtual memory addresses,
-not offsets-from-something.
-The virtual memory addresses do not account
-for dso movement (none of the pc values from
-libdwarf do that, it is up to
-the consumer to do that).
-
-.P
-The \f(CWld_cents\fP field contains a count
-of the number of 
-\f(CWDwarf_Loc\fP
-entries pointed to by the 
-\f(CWld_s\fP field.
-
-.P
-The 
 \f(CWld_s\fP field points to an array of 
 \f(CWDwarf_Loc\fP records.
 
 .H 3 "Data Block"
 .SP
-This is obsolete and should not be used,
-though it works ok for DWARF2.
 The \f(CWDwarf_Block\fP type is 
-used to contain the value of an attribute
-whose form is either 
+used to contain the value of something
+describing a block of bytes.
+The FORM whose form is sometimes
 \f(CWDW_FORM_block1\fP,
 \f(CWDW_FORM_block2\fP,
 \f(CWDW_FORM_block4\fP, 
 \f(CWDW_FORM_block8\fP,
-or \f(CWDW_FORM_block\fP.
-Its intended use is to deliver the 
-value for an attribute of any of these
-forms.
+or
+\f(CWDW_FORM_block\fP.
+In the case it holds a location expression
+\f(CWbl_from_loclist\fP and
+\f(CWbl_section_offset\fP
+may be set.
+.P
+In some cases its
+intended use is to just
+provide a single field 
+value for a block of data
+(such as a Dwarf_Expression
+in a set of Frame instructions)
+so 
+\f(CWbl_from_loclist\fP and
+\f(CWbl_section_offset\fP
+will be zero.
 
 .DS
 \f(CWtypedef struct {
     Dwarf_Unsigned  bl_len;
-    Dwarf_Ptr       bl_data;
+    Dwarf_Small *   bl_data;
     Dwarf_Small     bl_from_loclist;
     Dwarf_Unsigned  bl_section_offset;
 } Dwarf_Block;\fP
@@ -783,144 +509,11 @@ forms.
 The \f(CWbl_len\fP field contains the length in
 bytes of the data pointed
 to by the \f(CWbl_data\fP field.
-
 .P
 The \f(CWbl_data\fP field contains a pointer
 to the uninterpreted data.
-Since we use  a
-\f(CWDwarf_Ptr\fP here one must copy the pointer to
-some other type (typically an \f(CWunsigned char
-*\fP) so one can add increments to index through
-the data.
 The data pointed to by \f(CWbl_data\fP
 is not necessarily at any useful alignment.
-
-.H 3 "Frame Operation Codes: DWARF 2"
-This interface is adequate for DWARF2 but
-not entirely suitable for DWARF3 or later.
-A new (functional) interface is needed.
-This DWARF2 interface is not sufficient
-but at present is the only available interface.
-.P
-See also the section "Low Level Frame Operations" below.
-.P
-The DWARF2 \f(CWDwarf_Frame_Op\fP type is
-used to contain the data of a single
-instruction of an instruction-sequence of
-low-level information from the
-section containing frame information.
-This is ordinarily used by
-Internal-level Consumers trying to print everything in detail.
-
-.DS
-\f(CWtypedef struct {
-    Dwarf_Small  fp_base_op;
-    Dwarf_Small  fp_extended_op;
-    Dwarf_Half   fp_register;
-    Dwarf_Signed fp_offset;
-    Dwarf_Offset fp_instr_offset;
-} Dwarf_Frame_Op;
-.DE
-
-\f(CWfp_base_op\fP is the 2-bit basic op code.
-\f(CWfp_extended_op\fP is
-the 6-bit extended opcode (if
-\f(CWfp_base_op\fP indicated there was an
-extended op code) and is zero otherwise.
-.P
-\f(CWfp_register\fP
-is any (or the first) register value as defined
-in the \f(CWCall frame instruction encodings\fP
-in the \f(CWdwarf\fP document
-(in DWARF3 see Figure 40,in DWARF5 see table 7.29).
-If not used with the operation it is 0.
-.P
-\f(CWfp_offset\fP
-is the address, delta, offset, or second register as defined
-in the
-\f(CWCall frame instruction encodings\fP
-documentation.
-If this is an \f(CWaddress\fP then the value should be cast to
-\f(CW(Dwarf_Addr)\fP before being used.
-
-In any implementation this field *must* be as large as the
-largest of Dwarf_Ptr, Dwarf_Signed, and Dwarf_Addr
-for this to work properly.
-If not used with the op it is 0.
-If the fp_extended_op is
-\f(CWDW_CFA_def_cfa\fP
-or
-\f(CWDW_CFA_val_expression\fP
-or
-\f(CWDW_CFA_expression\fP
-then
-\f(CWfp_offset\fP
-is a pointer to an expression block in the in-memory
-copy of the frame section.
-.P
-\f(CWfp_instr_offset\fP is the byte_offset (within the instruction
-stream of the frame instructions) of this operation.  It starts at 0
-for a given frame descriptor.
-
-.H 3 "Frame Regtable: DWARF 2"
-This interface is adequate for DWARF2
-and MIPS but not for DWARF3 or later.
-A separate and preferred interface usable for DWARF3 and for DWARF2
-is described below.
-See also the section "Low Level Frame Operations" below.
-.P
-The \f(CWDwarf_Regtable\fP type is used to contain the
-register-restore information for all registers at a given
-PC value.
-Normally used by debuggers.
-If you wish to default to this interface and to the use
-of DW_FRAME_CFA_COL, specify --enable_oldframecol
-at libdwarf configure time.
-Or add a call dwarf_set_frame_cfa_value(dbg,DW_FRAME_CFA_COL)
-after your dwarf_init_b() call, this call replaces the
-default libdwarf-compile-time value with DW_FRAME_CFA_COL.
-.DS
-/* DW_REG_TABLE_SIZE must reflect the number of registers
- *(DW_FRAME_LAST_REG_NUM) as defined in dwarf.h
- */
-#define DW_REG_TABLE_SIZE  <fill in size here, 66 for MIPS/IRIX>
-\f(CWtypedef struct {
-    struct {
-        Dwarf_Small         dw_offset_relevant;
-        Dwarf_Half          dw_regnum;
-        Dwarf_Addr          dw_offset;
-    }                       rules[DW_REG_TABLE_SIZE];
-} Dwarf_Regtable;\fP
-.DE
-.P
-The array is indexed by register number.
-The field values for each index are described next.
-For clarity we describe the field values for index rules[M]
-(M being any legal array element index).
-.P
-\f(CWdw_offset_relevant\fP is non-zero to indicate the
-\f(CWdw_offset\fP
-field is meaningful.
-If zero then the
-\f(CWdw_offset\fP is zero
-and should be ignored.
-.P
-\f(CWdw_regnum \fPis the register number applicable.
-If \f(CWdw_offset_relevant\fP is zero, then this is the register
-number of the register containing the value for register M.
-If \f(CWdw_offset_relevant\fP is non-zero, then this is
-the register number of the register to use as a base (M may be
-DW_FRAME_CFA_COL, for example) and the \f(CWdw_offset\fP
-value applies.
-The value of register M is therefore
-the value of register \f(CWdw_regnum\fP.
-.P
-\f(CWdw_offset\fP should be ignored if
-\f(CWdw_offset_relevant\fP is zero.
-If \f(CWdw_offset_relevant\fP is non-zero, then
-the consumer code should add the value to
-the value of the register \f(CWdw_regnum\fP to produce the
-value.
 
 .H 3 "Frame Operation Codes: DWARF 3 (for DWARF2 and later )"
 This interface was intended
@@ -928,7 +521,7 @@ to be  adequate for DWARF3 and for DWARF2 (and DWARF4)
 but was never implemented.
 
 
-.H 3 "Frame Regtable: DWARF 3 (for DWARF2 and later)"
+.H 3 "Frame Regtable3:  DWARF2 and later"
 This interface is adequate for DWARF2 and later versions.
 It is new in libdwarf as of April 2006.
 The default configure of libdwarf
@@ -1227,12 +820,14 @@ for \f(CWlibdwarf\fP to store this descriptor for
 the user to obtain more information about the error.
 The storage pointed to by this descriptor should
 be freed, using
-\f(CWdwarf_dealloc()\fP with the
-allocation type
-\f(CWDW_DLA_ERROR\fP when no longer
-needed or, preferably,
-call
-\f(CWdwarf_dealloc_error()\fP instead.
+\f(CWdwarf_dealloc_error()\fP.
+See functions
+\f(CWdwarf_errno()\fP
+and
+\f(CWdwarf_errmsg()\fP
+which give access to the useful
+data about an error.
+
 
 .DS
 \f(CWtypedef struct Dwarf_Attribute_s* Dwarf_Attribute;\fP
@@ -1388,8 +983,10 @@ functions to print Unicode strings appropriately.
 All ASCII characters in the strings will print properly
 whether printed as wide characters or not.
 The methods to convert UTF-8 strings so they will print
-correctly for all  such strings
-is beyond the scope of this document.
+correctly for all such strings
+is beyond the scope of this document, but
+dwarfdump does such conversions when printing
+strings.
 .P
 If UTF-8 is not specified then one is probably safe
 in assuming the strings are iso_8859-15 and normal
@@ -1499,7 +1096,6 @@ int example_codeb{Dwarf_Debug dbg, const char **sec_name,
 \fP
 .DE
 .in -2
-
 
 .P
 In the rare case where the malloc arena is exhausted when
