@@ -1218,32 +1218,55 @@ void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
     /* ERROR or NO ENTRY. Do something */
 }
 
-/*  This example only works correctly for DWARF2 object data.*/
-void examples(Dwarf_Debug dbg,
-    Dwarf_Fde fde, Dwarf_Cie cie)
+void examples(Dwarf_Cie cie,
+    Dwarf_Ptr instruction,Dwarf_Unsigned len)
 {
-    Dwarf_Signed count = 0;
-    Dwarf_Frame_Op *frameops = 0;
-    Dwarf_Error error = 0;
-    Dwarf_Ptr instruction = 0;
-    Dwarf_Unsigned len = 0;
+    Dwarf_Frame_Instr_Head head = 0;
+    Dwarf_Unsigned         count = 0;
+    Dwarf_Error            error = 0;
     int res = 0;
 
-    res = dwarf_get_fde_instr_bytes(fde,&instruction,&len,
-        &error);
-    if (res != DW_DLV_OK) {
-        return;
-    }
     res = dwarf_expand_frame_instructions(cie,instruction,len,
-
-        &frameops,&count, &error);
+        &head,&count, &error);
     if (res == DW_DLV_OK) {
-        Dwarf_Signed i = 0;
+        Dwarf_Unsigned i = 0;
 
         for (i = 0; i < count; ++i) {
-            /* use frameops[i] */
+            Dwarf_Unsigned  instr_offset_in_instrs = 0;
+            Dwarf_Small     cfa_operation          = 0;
+            const char     *fields_description     = 0;
+            Dwarf_Unsigned  u0 = 0;
+            Dwarf_Unsigned  u1 = 0;
+            Dwarf_Signed    s0 = 0;
+            Dwarf_Signed    s1 = 0;
+            Dwarf_Unsigned  code_alignment_factor = 0;
+            Dwarf_Signed    data_alignment_factor = 0;
+            Dwarf_Block     expression_block;
+            const char *    op_name = 0;
+
+            memset(&expression_block,0,sizeof(expression_block));
+            res = dwarf_get_frame_instruction(head,i,
+                &instr_offset_in_instrs,&cfa_operation,
+                &fields_description,&u0,&u1,
+                &s0,&s1,
+                &code_alignment_factor,
+                &data_alignment_factor, 
+                &expression_block,&error);
+            if (res == DW_DLV_OK) {
+                res = dwarf_get_CFA_name(cfa_operation,
+                   &op_name);
+                if (res != DW_DLV_OK) {
+                   op_name = "unknown op";
+                }
+                printf("Instr %2lu %-22s %s\n",
+                   (unsigned long)i,
+                   op_name,
+                   fields_description);
+                /* do something with the various data
+                   as guided by the fields_desctiption. */
+            }
         }
-        dwarf_dealloc(dbg, frameops, DW_DLA_FRAME_BLOCK);
+        dwarf_frame_instr_head_dealloc(head);
     }
 }
 
