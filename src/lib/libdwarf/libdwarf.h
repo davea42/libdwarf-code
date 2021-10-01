@@ -320,7 +320,7 @@ typedef struct Dwarf_Regtable_Entry3_s {
                 CFA+N where N is a signed offset.
                 dw_regnum is the cfa register rule which means
                 one ignores dw_regnum and uses the CFA appropriately.
-                So dw_offset_or_block_len is a signed value, really,
+                So dw_offset is a signed value, really,
                 and must be printed/evaluated as such.
                 Rule: Offset(N)
             If dw_offset_relevant is zero, then the
@@ -338,17 +338,17 @@ typedef struct Dwarf_Regtable_Entry3_s {
             computed by evaluating the DWARF expression E.
             Rule: expression(E)
             The expression E byte stream is pointed to by
-            dw_block_ptr.
+            block.bl_data.
             The expression length in bytes is given by
-            dw_offset_or_block_len.
+            block.bl_len.
         If dw_value_type  == DW_EXPR_VAL_EXPRESSION
             The value of the register is the value
             computed by evaluating the DWARF expression E.
             Rule: val_expression(E)
             The expression E byte stream is pointed to
-            by dw_block_ptr.
+            by block.bl_data.
             The expression length in bytes is given by
-            dw_offset_or_block_len.
+            block.bl_len.
         Other values of dw_value_type are an error.
 */
     Dwarf_Small         dw_offset_relevant;
@@ -2965,19 +2965,22 @@ typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
 DW_API char* dwarf_find_macro_value_start(char * /*macro_string*/);
 
 DW_API int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
-    Dwarf_Off            /*macro_offset*/,
-    Dwarf_Unsigned       /*maximum_count*/,
+    Dwarf_Off              /*macro_offset*/,
+    Dwarf_Unsigned         /*maximum_count*/,
     Dwarf_Signed         * /*entry_count*/,
     Dwarf_Macro_Details ** /*details*/,
-    Dwarf_Error *        /*err*/);
+    Dwarf_Error *          /*err*/);
 
-/*  dwarf_get_offset_size() New October 2015 */
+/*  These two get the offset or address size as defined
+    by the object format (not by DWARF).
 DW_API int dwarf_get_offset_size(Dwarf_Debug /*dbg*/,
     Dwarf_Half  *    /*offset_size*/,
     Dwarf_Error *    /*error*/);
 DW_API int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
     Dwarf_Half  *    /*addr_size*/,
     Dwarf_Error *    /*error*/);
+
+/*  This gets the address size as defined for the DIE */
 DW_API int dwarf_get_die_address_size(Dwarf_Die /*die*/,
     Dwarf_Half  *    /*addr_size*/,
     Dwarf_Error *    /*error*/);

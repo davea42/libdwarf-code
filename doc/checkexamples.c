@@ -1,4 +1,4 @@
-/*  The following are in libdwarf2.1.mm
+*  The following are in libdwarf2.1.mm
     to verify there are no silly typographical errors
     in that document.
 
@@ -1263,7 +1263,7 @@ void examples(Dwarf_Cie cie,
                    op_name,
                    fields_description);
                 /* do something with the various data
-                   as guided by the fields_desctiption. */
+                   as guided by the fields_description. */
             }
         }
         dwarf_frame_instr_head_dealloc(head);

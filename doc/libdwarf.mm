@@ -247,6 +247,12 @@ to improve type checking.
 Other instances of Dwarf_Ptr in public
 functions where altered similarly.
 .P
+\f(CWstruct Dwarf_Regtable_Entry3_s\fP
+member
+fields changed slightly (one member is a
+Dwarf_Block) to make it easier
+to read and understand.
+.P
 \f(CWdwarf_get_fde_info_for_reg3_b()\fP
 and
 \f(CWdwarf_get_fde_info_for_cfa_reg3_b()\fP
@@ -534,13 +540,17 @@ The \f(CWDwarf_Regtable3\fP type is used to contain the
 register-restore information for all registers at a given
 PC value.
 Normally used by debuggers.
+A couple of the struct members
+changed for version 0.3.0
+so they are easier to understand.
 .DS
 \f(CWtypedef struct Dwarf_Regtable_Entry3_s {
     Dwarf_Small         dw_offset_relevant;
     Dwarf_Small         dw_value_type;
     Dwarf_Half          dw_regnum;
-    Dwarf_Unsigned      dw_offset_or_block_len;
-    Dwarf_Ptr           dw_block_ptr;
+    Dwarf_Unsigned      dw_offset;
+    Dwarf_Unsigned      dw_args_size; /* Not dealt with.*/
+    Dwarf_Block         dw_block;
 }Dwarf_Regtable_Entry3;
 
 typedef struct Dwarf_Regtable3_s {
@@ -618,9 +628,9 @@ If \f(CWdw_value_type\fP is DW_EXPR_EXPRESSION (2) then
 this is the the expression(E) rule of the DWARF3 document.
 .P
 .in +4
-\f(CWdw_offset_or_block_len\fP is the length in bytes of
-the in-memory block  pointed at by \f(CWdw_block_ptr\fP.
-\f(CWdw_block_ptr\fP is a DWARF expression.
+\f(CWblock.bl_len\fP is the length in bytes of
+the in-memory block  pointed at by \f(CWblock.bl_data\fP
+and the dwarf expression is pointed-to by \f(CWblock_.bl_data\fP.
 Evaluate that expression and the result is the address
 where the previous value of register M is found.
 .in -4
@@ -629,9 +639,8 @@ If \f(CWdw_value_type\fP is DW_EXPR_VAL_EXPRESSION (3) then
 this is the the val_expression(E) rule of the DWARF3 spec.
 .P
 .in +4
-\f(CWdw_offset_or_block_len\fP is the length in bytes of
-the in-memory block  pointed at by \f(CWdw_block_ptr\fP.
-\f(CWdw_block_ptr\fP is a DWARF expression.
+\f(CWblock.bl_len\fP is the length in bytes of
+the in-memory block  pointed at by \f(CWblock.bl_data\fP.
 Evaluate that expression and the result is the
 previous value of register M.
 .in -4
@@ -1617,15 +1626,11 @@ void exampleinitfail(const char *path,
     Dwarf_Ptr errarg = 0;
     Dwarf_Error error = 0;
     Dwarf_Debug dbg = 0;
-    const char *reserved1 = 0;
-    Dwarf_Unsigned reserved2 = 0;
-    Dwarf_Unsigned reserved3 = 0;
     int res = 0;
 
     res = dwarf_init_path(path,true_pathbuf,
         tpathlen,groupnumber,errhand,
-        errarg,&dbg,reserved1,reserved2,
-        &reserved3,
+        errarg,&dbg,
         &error);
     /*  Preferred version */
     if (res == DW_DLV_ERROR) {
@@ -1818,9 +1823,6 @@ as zero.
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
     Dwarf_Debug*      dbg,
-    const char *      reserved1,
-    Dwarf_Unsigned  * reserved2,
-    Dwarf_Unsigned  * reserved3,
     Dwarf_Error*    *  error);
 .DE
 On success the function returns
@@ -1939,13 +1941,6 @@ argument is passed as an argument to the
 \f(CWdbg\fP
 is used to return an initialized Dwarf_Debug pointer.
 .P
-\f(CWreserved1\fP,
-\f(CWreserved2\fP,
-and
-\f(CWreserved3\fP
-are currently unused, pass 0
-in to all three.
-.P
 Pass in a pointer
 to a Dwarf_Error to the
 \f(CWerror\fP
@@ -1962,12 +1957,10 @@ error code.
     unsigned          groupnumber,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
-    char           ** global_paths,
-    unsigned int      global_paths_count
     Dwarf_Debug*      dbg,
-    const char *      reserved1,
-    Dwarf_Unsigned  * reserved2,
-    Dwarf_Unsigned  * reserved3,
+    char           ** gl_path_array,
+    unsigned int      global_paths_count,
+    unsigned char   * path_source,
     Dwarf_Error*    *  error);
 \fP
 .DE
@@ -1982,7 +1975,7 @@ target file with DWARF information.
 \f(CWglobal_paths\fP
 allows you to specify such paths.
 Pass in
-\f(CWglobal_paths\fP
+\f(CWglobal_path_array\fP
 as a pointer to an array of 
 pointer-to-char, each
 pointing to a global path string.
@@ -1994,6 +1987,27 @@ Pass both as zero if there are
 no debuglink global paths
 other than the default standard
 \f(CW/usr/lib/debug\fP.
+.P
+\f(CWpath_source\fP
+is a pointer to a flag 
+set to one of
+\f(CWDW_PATHSOURCE_unspecified\fP,
+or
+\f(CWDW_PATHSOURCE_basic\fP,
+or
+\f(CWDW_PATHSOURCE_dsym\fP,
+or
+\f(CWDW_PATHSOURCE_debuglink.\fP
+by the call.
+It tells the caller 
+what sort of file was opened,
+respectively no object, ordinary object,
+a MacOS DSYM object,or a GNU debuglink
+object.
+In the third and fourth case the
+\f(CWtrue_path_out_buffer\fP
+contains the file path actually opened.
+
 
 
 .H 3 "dwarf_init_b()"
@@ -2055,17 +2069,6 @@ used as an argument to any system calls by the client
 until after \f(CWdwarf_finish()\fP is called.  The
 seek position of the file associated with \f(CWfd\fP
 is undefined upon return of \f(CWdwarf_init_b()\fP.
-.P
-Historical Note:
-With SGI IRIX, by default it was allowed that
-the app \f(CWclose()\fP \f(CWfd\fP immediately
-after calling \f(CWdwarf_init_b()\fP, but that
-is not  a portable approach (that it worked was an
-accidental side effect of the fact that SGI IRIX used
-\f(CWELF_C_READ_MMAP\fP in its hidden internals)
-The portable approach is to
-consider that \f(CWfd\fP must be left open till after
-the corresponding dwarf_finish() call has returned.
 .P
 Since \f(CWdwarf_init_b()\fP uses the same error
 handling processing as other \fIlibdwarf\fP functions
@@ -2301,11 +2304,6 @@ for a successful operation.
 It returns \f(CWDW_DLV_NO_ENTRY\fP
 if the passed in argument is NULL.
 
-Before version 0.2.0, September 2021, there
-was an error argument passed in, which
-was pointless as DW_DLV_ERROR was never
-returned by the function.
-
 .H 3 "dwarf_set_stringcheck()"
 .DS
 \f(CWint dwarf_set_stringcheck(
@@ -2384,12 +2382,16 @@ are off by default.
 .DE
 The function
 enables access to non-Elf object files
+or even in-memory data
 by allowing the caller to
 then provide
 function pointers to code (user-written,
 not part of libdwarf)  that will
 look, to libdwarf, as if libdwarf was
 reading Elf.
+For a fully worked-out example
+see the source code in 
+\fIsrc/bin/dwarfexample/jitreader.c\fP .
 .P
 See
 \f(CWint dwarf_init_b()\fP
@@ -2400,19 +2402,6 @@ is a set of function pointers
 and describing how to access non-Elf
 files is beyond the scope of this document.
 .P
-As a hint, note that the source files with
-dwarf_elf_init_file_ownership() (dwarf_original_elf_init.c)
-and
-dwarf_elf_object_access_init() (dwarf_elf_access.c)
-are the only sources that would need replacement
-for a different object format.
-The replacement would need to emulate certain
-conventions of Elf objects, (mainly that
-section index
-0 is an empty section) but the rest of
-libdwarf uses what these two source files set up
-without knowing how to operate on Elf.
-
 .P
 Writing the functions needed to support
 non-Elf will require study of Elf
@@ -4829,12 +4818,13 @@ and and the value is non-negative (if the form is DW_FORM_sdata
 for example,
 but the value is non-negative,
 the non-negative value is returned). 
-
+.P
 If the data is definitely a signed type,
 the form will be DW_FORM_sdata.
-
+.P
 It is an
-error for the form to not belong to this class
+error for the form to not belong to class
+\f(CWCONSTANT\fP
 or (in case the FORM is a signed form) for the
 value to be negative.
 It returns \f(CWDW_DLV_ERROR\fP on error.
@@ -4989,7 +4979,7 @@ class for a form.
 .P
 The \f(CWdwversion\fP passed in shall be the dwarf version
 of the compilation unit involved (2 for DWARF2, 3 for
-DWARF3, 4 for DWARF 4).
+DWARF3, 4 for DWARF 4, 5 for DWARF5).
 The \f(CWattrnum\fP passed in shall be the attribute
 number of the attribute involved (for example, \f(CWDW_AT_name\fP ).
 The \f(CWoffset_size\fP passed in shall be the
@@ -9456,18 +9446,6 @@ and a column for the canonical frame address (CFA, which corresponds
 to the notion of a frame pointer),
 as well as a column for the return address.
 .P
-The new interface set of dwarf_get_fde_info_for_reg3(),
-dwarf_get_fde_info_for_cfa_reg3_b(),
-dwarf_get_fde_info_for_all_regs3(),
-dwarf_set_frame_rule_table_size(),
-dwarf_set_frame_cfa_value(),
-dwarf_set_frame_same_value(),
-dwarf_set_frame_undefined_value(), and
-dwarf_set_frame_rule_initial_value()
-is more flexible
-and will work, one hopes, for all 
-architectures in use.
-.P
 We say that
 DW_FRAME_CFA_COL3, DW_FRAME_UNDEFINED_VAL,
 and DW_FRAME_SAME_VAL are synthetic column numbers,
@@ -10150,10 +10128,10 @@ of the additional setup that requires of the caller).
     Dwarf_Half table_column,
     Dwarf_Addr pc_requested,
     Dwarf_Small  *value_type,
-    Dwarf_Signed *offset_relevant,
-    Dwarf_Signed *register_num,
-    Dwarf_Signed *offset_or_block_len,
-    Dwarf_Ptr    *block_ptr,
+    Dwarf_Unsigned *offset_relevant,
+    Dwarf_Unsigned *register_num,
+    Dwarf_Unsigned *offset,
+    Dwarf_Block  *block_content,
     Dwarf_Addr   *row_pc,
     Dwarf_Bool   *has_more_rows,
     Dwarf_Addr   *subsequent_pc,
@@ -10171,7 +10149,7 @@ In this case  the  \f(CW*register_num\fP will be set
 to DW_FRAME_CFA_COL3 (.  This is an offset(N) rule
 as specified in the DWARF3/2 documents.
 .P
-Adding the value of \f(CW*offset_or_block_len\fP
+Adding the value of \f(CW*offset\fP
 to the value of the CFA register gives the address
 of a location holding the previous value of
 register \f(CWtable_column\fP.
@@ -10218,10 +10196,10 @@ value (rather than the address where the value may be found).
 .P
 If \f(CW*value_type\fP has the value DW_EXPR_EXPRESSION (1) then:
 .in +4
- \f(CW*offset_or_block_len\fP
-is set to the length in bytes of a block of memory
-with a DWARF expression in the block.
-\f(CW*block_ptr\fP is set to point at the block of memory.
+ \f(CW*block\fP
+is set contain the to the length in bytes of a block of memory
+with a DWARF expression in the block and a pointer to
+the block of memory..
 The consumer code should  evaluate the block as
 a DWARF-expression. The result is the address where
 the previous value of the register may be found.
@@ -10256,10 +10234,10 @@ if their values are not needed by the caller.
 \f(CWint dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
     Dwarf_Addr          pc_requested,
     Dwarf_Small *       value_type,
-    Dwarf_Signed*       offset_relevant,
-    Dwarf_Signed*       register_num,
-    Dwarf_Signed*       offset_or_block_len,
-    Dwarf_Ptr   *       block_ptr ,
+    Dwarf_Unsigned*     offset_relevant,
+    Dwarf_Unsigned*     register_num,
+    Dwarf_Unsigned*     offset,
+    Dwarf_Block   *     block ,
     Dwarf_Addr  *       row_pc_out,
     Dwarf_Bool  *       has_more_rows,
     Dwarf_Addr  *       subsequent_pc,
@@ -10417,56 +10395,73 @@ the block of
         Dwarf_Cie cie,
         Dwarf_Ptr instruction,
         Dwarf_Unsigned i_length,
-        Dwarf_Frame_Op **returned_op_list,
-        Dwarf_Signed   * returned_op_count,
+        Dwarf_Frame_Instr_Head * /*head*/,
+        Dwarf_Unsigned  * /*instr_count*/,
         Dwarf_Error *error);\fP
 .DE
 \f(CWdwarf_expand_frame_instructions()\fP is a High-level interface
-function which expands a frame instruction byte stream into an
-array of \f(CWDwarf_Frame_Op\fP structures.
+function which expands a frame instruction byte stream into
+internal data attached to the
+\f(CWhead\fP pointer passed back.
+
 To indicate success, it returns \f(CWDW_DLV_OK\fP.
-The address where
-the byte stream begins is specified by \f(CWinstruction\fP, and
-the length of the byte stream is specified by \f(CWi_length\fP.
-The location pointed to by \f(CWreturned_op_list\fP is set to
-point to a table of
-\f(CWreturned_op_count\fP
-pointers to \f(CWDwarf_Frame_Op\fP which
-contain the frame instructions in the byte stream.
-It returns \f(CWDW_DLV_ERROR\fP on error.
-It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-After a successful return, the
-array of structures should be freed using
-\f(CWdwarf_dealloc()\fP with the allocation type
-\f(CWDW_DLA_FRAME_BLOCK\fP
-(when they are no longer of interest).
-.P
-Not all CIEs have the same address-size, so it is crucial
-that a CIE pointer to the frame's CIE be passed in.
 
 .in +2
 .FG "Examples dwarf_expand_frame_instructions()"
 .DS
 \f(CW
-void examples(Dwarf_Debug dbg,Dwarf_Cie cie,
+void examples(Dwarf_Cie cie,
     Dwarf_Ptr instruction,Dwarf_Unsigned len)
 {
-    Dwarf_Signed count = 0;
-    Dwarf_Frame_Op *frameops = 0;
-    Dwarf_Error error = 0;
+    Dwarf_Frame_Instr_Head head = 0;
+    Dwarf_Unsigned         count = 0;
+    Dwarf_Error            error = 0;
     int res = 0;
 
     res = dwarf_expand_frame_instructions(cie,instruction,len,
-        &frameops,&count, &error);
+        &head,&count, &error);
     if (res == DW_DLV_OK) {
-        Dwarf_Signed i = 0;
+        Dwarf_Unsigned i = 0;
 
         for (i = 0; i < count; ++i) {
-            /* use frameops[i] */
+            Dwarf_Unsigned  instr_offset_in_instrs = 0;
+            Dwarf_Small     cfa_operation          = 0;
+            const char     *fields_description     = 0;
+            Dwarf_Unsigned  u0 = 0;
+            Dwarf_Unsigned  u1 = 0;
+            Dwarf_Signed    s0 = 0;
+            Dwarf_Signed    s1 = 0;
+            Dwarf_Unsigned  code_alignment_factor = 0;
+            Dwarf_Signed    data_alignment_factor = 0;
+            Dwarf_Block     expression_block;
+            const char *    op_name = 0;
+
+            memset(&expression_block,0,sizeof(expression_block));
+            res = dwarf_get_frame_instruction(head,i,
+                &instr_offset_in_instrs,&cfa_operation,
+                &fields_description,&u0,&u1,
+                &s0,&s1,
+                &code_alignment_factor,
+                &data_alignment_factor, 
+                &expression_block,&error);
+            if (res == DW_DLV_OK) {
+                res = dwarf_get_CFA_name(cfa_operation,
+                   &op_name);
+                if (res != DW_DLV_OK) {
+                   op_name = "unknown op";
+                }
+                printf("Instr %2lu %-22s %s\n",
+                   (unsigned long)i,
+                   op_name,
+                   fields_description);
+                /* do something with the various data
+                   as guided by the fields_description. */
+            }
         }
-        dwarf_dealloc(dbg, frameops, DW_DLA_FRAME_BLOCK);
+        dwarf_frame_instr_head_dealloc(head);
     }
 }
+
 \fP
 .DE
 .in -2
