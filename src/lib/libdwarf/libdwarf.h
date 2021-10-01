@@ -64,6 +64,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/*! @file */
 /*
     libdwarf.h
     $Revision: #9 $ $Date: 2008/01/17 $
@@ -84,6 +85,12 @@ extern "C" {
 
 */
 
+/*! @brief Basic libdwarf datatypes.
+
+    These are the datatyps universally used within libdwarf
+    and in libdwarf calls.
+    
+*/
 typedef unsigned long long Dwarf_Unsigned;
 typedef signed   long long Dwarf_Signed;
 typedef unsigned long long Dwarf_Off;
@@ -2580,8 +2587,10 @@ DW_API int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
     Dwarf_Signed* /*index*/,
     Dwarf_Error* /*error*/ );
 
-/*  Used with dwarf_expand_frame_instructions() but
-    see that function's comments above. */
+/*!  
+    @brief Used with dwarf_expand_frame_instructions() but
+    see that function's comments above.
+*/
 DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde /*fde*/,
     Dwarf_Small    ** /*outinstrs*/,
     Dwarf_Unsigned * /*outlen*/,
@@ -2655,23 +2664,69 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
     Dwarf_Unsigned * /* augdata_len */,
     Dwarf_Error*     /*error*/);
 
-/*  Called for CIE initial instructions and
+/*!  
+    @brief Expands CIE or FDE instructions for detailed examination.
+    Called for CIE initial instructions and
     FDE instructions.
     Call dwarf_get_fde_instr_bytes() or
     dwarf_get_cie_info_b() to get the instruction bytes
-    and instructions byte count you wish to expand.  */
+    and instructions byte count you wish to expand.
+    @param cie The cie relevant to the instructions. 
+    @param instructionspointer points to the instructions
+    @param length_in_bytes byte length of the instruction sequence
+    @param head pointer is set to the address of an allocated header
+    @param instr_count The numer of inststructions in the byte stream
+    @param error Error return details
+    @return On success returns DW_DLV_OK
+*/
 DW_API int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
     Dwarf_Small     */*instructionspointer*/,
-    Dwarf_Unsigned   /*insts_length_in_bytes */,
-    Dwarf_Frame_Instr_Head * /*returned_instr_head*/,
-    Dwarf_Unsigned  * /*returned_instr_count*/,
+    Dwarf_Unsigned   /*length_in_bytes */,
+    Dwarf_Frame_Instr_Head * /*head*/,
+    Dwarf_Unsigned  * /*instr_count*/,
     Dwarf_Error     * /*error*/);
-/*  Fields_description means a sequence of up to three
+
+/*!  
+    @brief Returns information about a single instruction
+    Fields_description means a sequence of up to three
     letters including u,s,r,c,d,b, terminated by NUL byte.
     It is a string but we test individual bytes instead
     of using string compares. Do not free any of the
-    returned values. */
-DW_API int dwarf_get_frame_instruction(Dwarf_Frame_Instr_Head,
+    returned values.
+    @param head A head record 
+    @param instr_index index 0 < i < instr_count
+    @param cfa_operation Set to a DW_CFA opcode.
+    @param fields Set to a string. Do not free.
+    @param u0 May be set to an unsigned value
+    @param u1 May be set to an unsigned value
+    @param s0 May be set to a signed value
+    @param s1 May be set to a signed value 
+    @param code_alignment_factor May be set by the call
+    @param data_alignment_factor May be set by the call
+    @param expression_block Pass in a pointer to a block
+    @return On success returns DW_DLV_OK
+
+    frame expressions have a variety of formats
+    and content. The fields parameter contains
+    a short string with some set of the letters
+    s,u,r,d,c,b which enables determining exactly
+    which values the call sets.
+    Some examples:
+    A @c s in fields[0] means s0 is a signed number.
+
+    A @c b somewhere in fields means the expression block
+    passed in has been filled in.
+
+    A @c r in fields[1] means u1 is set to a register number.
+
+    A @c d in fields means data_alignment_factor is set
+
+    A @c c in fields means code_alignment_factor is set
+    There are just nine strings possible and together they
+    describe all possible frame instructions.
+*/
+DW_API int dwarf_get_frame_instruction(
+    Dwarf_Frame_Instr_Head /* head*/,      
     Dwarf_Unsigned     /*instr_index*/,
     Dwarf_Unsigned  *  /*instr_offset_in_instrs */,
     Dwarf_Small     *  /*cfa_operation*/,
@@ -2684,6 +2739,15 @@ DW_API int dwarf_get_frame_instruction(Dwarf_Frame_Instr_Head,
     Dwarf_Signed    *  /* data_alignment_factor */,
     Dwarf_Block     *  /* expression_block */,
     Dwarf_Error     * /*error*/);
+
+/*!
+    @brief Deallocates the data in head
+    @param head A head pointer.
+    
+    Frees all data created by dwarf_expand_frame_instructions()
+    and makes the head pointer stale. The caller should
+    set it to NULL.
+*/
 DW_API void dwarf_frame_instr_head_dealloc(Dwarf_Frame_Instr_Head);
 
 /*  Operations on .debug_aranges. */
