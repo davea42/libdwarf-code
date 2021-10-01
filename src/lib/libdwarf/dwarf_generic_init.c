@@ -186,7 +186,7 @@ final_common_settings(Dwarf_Debug dbg,
     If none of the above found, it copies path into true_path
     and returns DW_DLV_OK, we know the name is good;
 
-    The fd is owned by libdwarf and is in the created dbg->de_fd
+    The pathn_fd is owned by libdwarf and is in the created dbg->de_fd
     field.
 */
 int dwarf_init_path_dl(const char *path,
@@ -283,7 +283,7 @@ int dwarf_init_path_dl(const char *path,
         file_path = true_path_out_buffer;
         fd = open_a_file(true_path_out_buffer);
     } else {
-        /*  ASSERT: pathlsource = DW_PATHSOURCE_basic */
+        /*  ASSERT: lpath_source = DW_PATHSOURCE_basic */
         file_path = (char *)path;
         fd = open_a_file(path);
     }
