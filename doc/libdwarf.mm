@@ -4652,15 +4652,39 @@ the function sets \f(CW*return_offset\fP to the invalid
 offset (which allows the caller to print a more
 detailed error message).
 .P
-See also \f(CWdwarf_global_formref_b\fP below.
+
+.H 3 "dwarf_global_formref()"
+.DS
+\f(CWint dwarf_global_formref(
+    Dwarf_Attribute attr,
+    Dwarf_Off     *return_offset,
+    Dwarf_Error *error)\fP
+.DE
+For DWARF4 this function does not suffice since
+the returned offset might be in .debug_info
+or in .debug_types.
+In particular the
+\f(CWDW_FORM_ref_sig8\fP
+signature in the DWARF4
+case will normally refer from .debug_info
+to .debug_types.
+See the
+\f(CWoffset_is_info\fP
+returned value
+of
+\f(CWdwarf_global_formref_b\fP below,
+that value is essential for fully reading DWARF4.
+.P
+Otherwise is the same as 
+\f(CWdwarf_global_formref_b()\fP.
 
 
 .H 3 "dwarf_global_formref_b()"
 .DS
-FIXME
 \f(CWint dwarf_global_formref_b(
     Dwarf_Attribute attr,
     Dwarf_Off     *return_offset,
+    Dwarf_Bool * offset_is_info,
     Dwarf_Error *error)\fP
 .DE
 When it succeeds,
@@ -4677,6 +4701,19 @@ belongs to the
 \f(CWDW_FORM_sec_offset\fP.
 It is an error for the form to
 not belong to one of the reference classes.
+.P
+It returns
+\f(CWDW_DLV_NO_ENTRY\fP
+if
+it wants to resolve a Dwarf_Sig8 signature
+but the target type cannot be located.
+.P
+In DWARF4 the target type might be 
+in .debug_types, and in that case
+\f(CW_offset_is_info\fP
+is set
+FALSE.
+.P
 It returns \f(CWDW_DLV_ERROR\fP on error.
 See also \f(CWdwarf_formref\fP above.
 .P
@@ -7818,6 +7855,14 @@ The function operates as described in
 \f(CWdwarf_global_name_offsets()\fP
 above.
 
+.H 4 "dwarf_pubtypes_dealloc()"
+.DS
+\f(CWvoid dwarf_pubtypes_dealloc(Dwarf_Type * type,
+    Dwarf_Signed number_of_types)\fP
+.DE
+Deallocs (frees) all memory allocated by
+\f(CWdwarf_get_pubtypes()\fP.
+
 .H 3 "Accelerated Access Weaknames"
 This section is SGI specific and is not part of standard DWARF.
 .P
@@ -7849,6 +7894,15 @@ The function operates as described in
 above.
 Descriptors should be
 freed using \f(CWdwarf_weaks_dealloc()\fP.
+
+.H 4 "dwarf_weaks_dealloc()"
+.DS
+\f(CWvoid dwarf_weaks_dealloc(Dwarf_Type * weaks,
+    Dwarf_Signed number_of_types)\fP
+.DE
+Deallocs (frees) all memory allocated by
+\f(CWdwarf_get_weaks()\fP.
+
 
 .H 4 "dwarf_weakname()"
 .DS
@@ -7936,8 +7990,8 @@ above.
 .H 4 "dwarf_funcs_dealloc()"
 .DS
 \f(CWvoid dwarf_funcs_dealloc(Dwarf_Debug dbg,
-        Dwarf_Func func,
-        Dwarf_Signed count,
+        Dwarf_Func *func,
+        Dwarf_Signed func_count,
         Dwarf_Error *error)\fP
 .DE
 This is the dealloc (free) function for
@@ -8055,6 +8109,14 @@ above.
 The function operates as described in
 \f(CWdwarf_global_name_offsets\fP
 above.
+.H 4 "dwarf_types_dealloc()"
+.DS
+\f(CWvoid dwarf_types_dealloc(Dwarf_Type *type,
+    Dwarf_Signed number_of_types)\fP
+.DE
+Deallocs (frees) all memory allocated by
+\f(CWdwarf_get_types()\fP.
+
 .H 3 "Accelerated Access varnames"
 This section is SGI specific and is not part of standard DWARF.
 .P
@@ -8067,6 +8129,8 @@ static variables, the offsets of the
 definitions of those variables, and 
 the offsets of the compilation-units
 that contain the definitions of those variables.
+
+
 
 .H 4 "dwarf_get_vars()"
 .DS
@@ -8081,6 +8145,15 @@ The function operates as described in
 above.
 Descriptors should be
 freed using \f(CWdwarf_vars_dealloc()\fP.
+
+.H 4 "dwarf_vars_dealloc()"
+.DS
+\f(CWvoid dwarf_vars_dealloc(Dwarf_Var  *vars,
+    Dwarf_Signed number_of_vars)\fP
+.DE
+Deallocs (frees) all memory allocated by
+\f(CWdwarf_get_vars()\fP.
+
 
 
 .H 4 "dwarf_varname()"
@@ -9878,7 +9951,7 @@ It returns \f(CWDW_DLV_OK\fP on a successful return.
 .P
 On successful return, structures pointed to by a
 descriptor should be freed using
-\f(CWdwarf_fde_cie_list_dealloc()\fP.
+\f(CWdwarf_dealloc_fde_cie_list()\fP.
 This dealloc approach is new as of July 15, 2005.
 
 .in +2
@@ -9897,7 +9970,7 @@ void exampleq(Dwarf_Debug dbg)
     fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
         &fde_data,&fde_count,&error);
     if (fres == DW_DLV_OK) {
-        dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+        dwarf_dealloc_fde_cie_list(dbg, cie_data, cie_count,
             fde_data,fde_count);
     }
 }
@@ -9905,44 +9978,21 @@ void exampleq(Dwarf_Debug dbg)
 .DE
 .in -2
 
-
-.P
-The following code is deprecated as of July 15, 2005 as it does not
-free all relevant memory.
-This approach  still works as well as it ever did.
-.in +2
-.FG "Exampleqb dwarf_get_fde_list() obsolete"
+.H 3 "dwarf_dealloc_fde_cie_list()"
 .DS
-\f(CW
-/* OBSOLETE EXAMPLE */
-void exampleqb(Dwarf_Debug dbg)
-{
-    Dwarf_Cie *cie_data = 0;
-    Dwarf_Signed cie_count = 0;
-    Dwarf_Fde *fde_data = 0;
-    Dwarf_Signed fde_count = 0;
-    Dwarf_Error error = 0;
-    Dwarf_Signed i = 0;
-    int fres = 0;
-
-    fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
-        &fde_data,&fde_count,&error);
-    if (fres == DW_DLV_OK) {
-        for (i = 0; i < cie_count; ++i) {
-            /* use cie[i] */
-            dwarf_dealloc(dbg, cie_data[i], DW_DLA_CIE);
-        }
-        for (i = 0; i < fde_count; ++i) {
-            /* use fde[i] */
-            dwarf_dealloc(dbg, fde_data[i], DW_DLA_FDE);
-        }
-        dwarf_dealloc(dbg, cie_data, DW_DLA_LIST);
-        dwarf_dealloc(dbg, fde_data, DW_DLA_LIST);
-    }
-}
-\fP
+\f(CWvoid dwarf_dealloc_fde_cie_list(
+        Dwarf_Debug dbg,
+        Dwarf_Cie *cie_data,
+        Dwarf_Signed cie_element_count,
+        Dwarf_Fde *fde_data,
+        Dwarf_Signed fde_element_count);
 .DE
-.in -2
+\f(CWdwarf_dealloc_fde_cie_list()\fP
+frees memory allocated by a call to
+\f(CWdwarf_get_fde_list_eh()\fP
+or
+\f(CWdwarf_get_fde_list()\fP.
+
 
 .P
 .H 3 "dwarf_get_fde_list_eh()"
@@ -9955,7 +10005,8 @@ void exampleqb(Dwarf_Debug dbg)
         Dwarf_Signed *fde_element_count,
         Dwarf_Error *error);\fP
 .DE
-\f(CWdwarf_get_fde_list_eh()\fP is identical to
+\f(CWdwarf_get_fde_list_eh()\fP
+is identical to
 \f(CWdwarf_get_fde_list()\fP except that
 \f(CWdwarf_get_fde_list_eh()\fP reads the GNU gcc
 section named .eh_frame (C++ exception handling information).
@@ -9977,7 +10028,7 @@ It returns \f(CWDW_DLV_OK\fP on a successful return.
 .P
 On successful return, structures pointed to by a
 descriptor should be freed using
-\f(CWdwarf_fde_cie_list_dealloc()\fP.
+\f(CWdwarf_dealloc_fde_cie_list()\fP.
 This dealloc approach is new as of July 15, 2005.
 
 .in +2
@@ -10019,7 +10070,7 @@ void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
                     about the fde and cie applicable. */
             }
         }
-        dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+        dwarf_dealloc_fde_cie_list(dbg, cie_data, cie_count,
             fde_data,fde_count);
     }
     /* ERROR or NO ENTRY. Do something */
@@ -10718,36 +10769,110 @@ void examples(Dwarf_Cie cie,
 \fP
 .DE
 .in -2
-.H 3 "dwarf_expand_frame_instructions()"
+.H 3 "dwarf_get_frame_instruction()"
 .DS
 \f(CWint dwarf_get_frame_instruction(
-        Dwarf_Frame_Instr_Head head,
-FIXME
-        Dwarf_Cie cie,
-        Dwarf_Ptr instruction,
-        Dwarf_Unsigned i_length,
-        Dwarf_Frame_Instr_Head * /*head*/,
-        Dwarf_Unsigned  * /*instr_count*/,
-        Dwarf_Error *error);\fP
+    Dwarf_Frame_Instr_Head head,
+    Dwarf_Unsigned    instr_index,
+    Dwarf_Unsigned  * instr_offset_in_instrs,
+    Dwarf_Small     * cfa_operation,
+    const char     ** fields,
+    Dwarf_Unsigned  * u0,
+    Dwarf_Unsigned  * u1,
+    Dwarf_Signed    * s0,
+    Dwarf_Signed    * s1,
+    Dwarf_Unsigned  * code_alignment_factor,
+    Dwarf_Signed    * data_alignment_factor,
+    Dwarf_Block     * expression_block,
+    Dwarf_Error     * error)
+\fP
 .DE
-FIXME
-fields = "";
-fields = "b";
-fields = "r";
-fields = "rb";
-fields = "rr";
-fields = "rsd";
-fields = "ru";
-fields = "rud";
-fields = "sd";
-fields = "u";
-fields = "uc";
+\f(CW
+\fP
+This function reports the details of a single
+DW_CFA_ instruction.
+The
+\f(CWinstr_index\fP
+input must be less than
+\f(CWreturned_instr_count\fP
+which was reported by the call to
+\f(CWdwarf_expand_frame_instructions()\fP
+which created 
+\f(CWhead\fP.
+.P
+If
+\f(CWinstr_index\fP is >= 
+\f(CWreturned_instr_count\fP
+the function returns 
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P
+On error it returns
+\f(CWDW_DLV_ERROR\fP
+and returns error details
+in
+\f(CW*error\fP.
 
+.P
+With the details presented
+one can fully understand
+what the instructions mean,
+though to reproduce the calculations
+of a runtime evaluation
+in some cases there may be
+augmentation data that affects
+the interpretation.
+Such agumentation data is not Standard DWARF
+and is not further mentioned here.
+.P
+See the DWARF5 standard
+for details on doing the calculations.
+See also
+\f(CWsrc/bin/dwarfexample/frame1.c\fP
+and
+\f(CWsrc/bin/dwarfdump/print_frames.c\fP
+.P
+The
+fields
+pointer returned is
+the key to understand what the following fields
+contain.
+This approach was chosen as there are quite
+a few CFA instructions, but only
+eleven different formats.
+So several of the keys apply to multiple
+DW_CFA instruction codes.
+.P
+
+.DS
+\f(CW
+fields      return fields set
+""          No fields in the instruction
+"b"         b=expression_block
+"r"         u0=the register number
+"rb"        u0=register number, b=expression_block
+"rr"        u0 and u1, register numbers
+"rsd"       u1=register,s1 value, data_alignment_factor.
+"ru"        u0=register u1=value
+"rud"       u0=register,u1=value, data_alignment_factor.
+"sd"        s0=value,data_alignment_factor
+"u"         u0=value
+"uc"        u0=value,code_alignment_factor
+\fP
+.DE
+.P
+
+
+.P
+See 
+\f(CWdwarf_expand_frame_instructions()\fP
+above for an example of use.
 .H 3 "dwarf_dealloc_frame_instr_head()"
 .DS
 \f(CWvoid dealloc_frame_instr_head( Dwarf_Frame_Instr_Head head);\fP
 .DE
-FIXME
+This deallocs(frees) all space associated
+with
+\f(CWhead]fP.
 
 .H 3 "dwarf_get_fde_exception_info()"
 .DS
@@ -12642,16 +12767,16 @@ void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
             /* Use cur. */
             functionusingrange(cur);
         }
-        dwarf_ranges_dealloc(dbg,ranges,count);
+        dwarf_dealloc_ranges(dbg,ranges,count);
     }
 }
 \fP
 .DE
 .in -2
 
-.H 3 "dwarf_ranges_dealloc()"
+.H 3 "dwarf_dealloc_ranges()"
 .DS
-\f(CWint dwarf_ranges_dealloc(
+\f(CWint dwarf_dealloc_ranges(
     Dwarf_Debug dbg,
     Dwarf_Ranges *ranges,
     Dwarf_Signed  range_count,

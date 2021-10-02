@@ -1811,8 +1811,9 @@ DW_API int dwarf_formref(Dwarf_Attribute /*attr*/,
     a debug_info-relative offset and does allow all reference forms
     if the output is not a DIE offset then call
     dwarf_global_formref.  If it is a DIE offset then
-    call dwarf_global_formref_b so you know whether it is
-    in .debug_types or .debug_info. */
+    call dwarf_global_formref_b instead so you know whether it is
+    in .debug_types or .debug_info.
+*/
 DW_API int dwarf_global_formref(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
