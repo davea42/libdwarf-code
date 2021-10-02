@@ -2733,13 +2733,6 @@ dwarf_set_frame_rule_initial_value(Dwarf_Debug dbg, Dwarf_Half value)
     return orig;
 }
 
-/* The following spelling for backwards compatibility. */
-Dwarf_Half
-dwarf_set_frame_rule_inital_value(Dwarf_Debug dbg, Dwarf_Half value)
-{
-    return dwarf_set_frame_rule_initial_value(dbg,value);
-}
-
 /*  This allows consumers to set the array size of the  reg rules
     table so that
     an ISA/ABI specific value can be used, dynamically,

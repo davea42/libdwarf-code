@@ -2652,13 +2652,15 @@ DW_API int dwarf_get_fde_at_pc(Dwarf_Fde* /*fde_data*/,
     Dwarf_Addr*      /*hipc*/,
     Dwarf_Error*     /*error*/);
 
-/*  GNU .eh_frame augmentation information, raw form, see
+/*  GNU .eh_frame augmentation information, 
+    raw form, see
     Linux Standard Base Core Specification version 3.0 . */
 DW_API int dwarf_get_cie_augmentation_data(Dwarf_Cie /* cie*/,
     Dwarf_Small **   /* augdata */,
     Dwarf_Unsigned * /* augdata_len */,
     Dwarf_Error*     /*error*/);
-/*  GNU .eh_frame augmentation information, raw form, see
+/*  GNU .eh_frame augmentation information,
+    raw form, see
     Linux Standard Base Core Specification version 3.0 . */
 DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
     Dwarf_Small **   /* augdata */,
@@ -2905,7 +2907,7 @@ struct Dwarf_Macro_Details_s {
 DW_API int dwarf_print_lines(Dwarf_Die /*die*/,Dwarf_Error * /*er*/,
     int * /*error_count_out */);
 
-/*  As of August 2013, dwarf_print_lines() no longer uses printf.
+/*  As of August 2013, dwarf_print_lines() does not use printf.
     Instead it calls back to the application using a function
     pointer once per line-to-print.  The lines passed back
     already have any needed
@@ -3298,10 +3300,6 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug /*dbg*/,
 
 /*  The 'set' calls here return the original (before any change
     by these set routines) of the respective fields. */
-/*  Multiple releases spelled 'initial' as 'inital' .
-    The 'inital' spelling should not be used. */
-DW_API Dwarf_Half dwarf_set_frame_rule_inital_value(Dwarf_Debug,
-    Dwarf_Half /*value*/);
 /*  Additional interface with correct 'initial' spelling. */
 /*  It is likely you will want to call the following 6 functions
     before accessing any frame information.  All are useful
@@ -3464,32 +3462,10 @@ DW_API int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned * /*offset_past_last_rangeentry*/,
     Dwarf_Error *    /*err*/);
 
-/*  entry offset is offset_of_first_rangeentry.
-    Stop when the returned *next_entry_offset
-    is == offset_past_last_rangentry (from
-    dwarf_get_rnglist_context_plus).
-    This only makes sense within those ranges.
-    This retrieves raw detail from the section,
-    no base values or anything are added.
-    So this returns raw individual entries
-    for a single rnglist header, meaning a
-    a single Dwarf_Rnglists_Context.
-
-    This interface assumes there is no
-    segment selector. */
-DW_API int dwarf_get_rnglist_raw_entry_detail(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned  /*entry_offset*/,
-    Dwarf_Unsigned * /*entry_kind*/,
-    Dwarf_Unsigned * /*entry_operand1*/,
-    Dwarf_Unsigned * /*entry_operand2*/,
-    Dwarf_Unsigned *  /*next_entry_offset*/,
-    Dwarf_Error * /*err*/);
-
 /*  If no error, returns DW_DLV_OK and sets
     the entry length,kind, and operands through
     the pointers. If any missing operands assign
     zero back through tye operand pointers. */
-
 DW_API int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned /*contextnumber*/,
     Dwarf_Unsigned /*entry_offset*/,
@@ -3511,17 +3487,6 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     to use these functions
     See dwarf_get_loclist_c() to open a Dwarf_Loc_Head_c
     on any type of location list or expression. */
-
-/*  Get the loclists entries details */
-DW_API int dwarf_get_loclists_entry_fields(Dwarf_Loc_Head_c /*head*/,
-    Dwarf_Unsigned   /*entrynum*/,
-    unsigned int   * /*entrylen*/,
-    unsigned int   * /*code*/,
-    Dwarf_Unsigned * /*raw1*/,
-    Dwarf_Unsigned * /*raw2*/,
-    Dwarf_Unsigned * /*cooked1*/,
-    Dwarf_Unsigned * /*cooked2*/,
-    Dwarf_Error    * /*error*/);
 
 /*  Loads all the loclists headers and
     returns DW_DLV_NO_ENTRY if the section
@@ -3559,7 +3524,7 @@ DW_API int dwarf_get_loclist_offset_index_value(Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*error*/);
 
 /*  Used by dwarfdump to print basic data from the
-    data generated to look at a specific rangelist
+    data generated to look at a specific loclist
     as returned by  dwarf_loclists_index_get_lle_head()
     or dwarf_loclists_offset_get_lle_head. */
 DW_API int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
@@ -3603,31 +3568,6 @@ DW_API int dwarf_get_loclist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned * /*offset_past_last_locentry*/,
     Dwarf_Error *    /*err*/);
 
-/*  entry offset is offset_of_first_locentry.
-    Stop when the returned *next_entry_offset
-    is == offset_past_last_locentry (from
-    dwarf_get_loclist_context_plus).
-    This only makes sense within those ranges.
-    This retrieves raw detail from the section,
-    no base values or anything are added.
-    So this returns raw individual entries
-    for a single loclist header, meaning a
-    a single Dwarf_Loclists_Context.
-
-    This interface assumes there is no
-    segment selector. */
-DW_API int dwarf_get_loclist_raw_entry_detail(Dwarf_Debug  /*dbg*/,
-    Dwarf_Unsigned  /*entry_offset*/,
-    Dwarf_Unsigned * /*entry_kind*/,
-    Dwarf_Unsigned * /*entry_operand1*/,
-    Dwarf_Unsigned * /*entry_operand2*/,
-    Dwarf_Unsigned *  /*next_entry_offset*/,
-    Dwarf_Error * /*err*/);
-
-/*  If no error, returns DW_DLV_OK and sets
-    the entry length,kind, and operands through
-    the pointers. If any missing operands assign
-    zero back through tye operand pointers. */
 
 DW_API int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*contextnumber*/,
