@@ -1878,7 +1878,7 @@ _dwarf_get_gcc_eh_augmentation(Dwarf_Debug dbg,
    This is directly called by consumer code.
 */
 void
-dwarf_fde_cie_list_dealloc(Dwarf_Debug dbg,
+dwarf_dealloc_fde_cie_list(Dwarf_Debug dbg,
     Dwarf_Cie * cie_data,
     Dwarf_Signed cie_element_count,
     Dwarf_Fde * fde_data,

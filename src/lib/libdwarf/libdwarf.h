@@ -2544,7 +2544,7 @@ DW_API int dwarf_get_fde_list(Dwarf_Debug /*dbg*/,
 
 /*  Release storage gotten by dwarf_get_fde_list_eh() or
     dwarf_get_fde_list() */
-DW_API void dwarf_fde_cie_list_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_dealloc_fde_cie_list(Dwarf_Debug /*dbg*/,
     Dwarf_Cie *  /*cie_data*/,
     Dwarf_Signed /*cie_element_count*/,
     Dwarf_Fde *  /*fde_data*/,
@@ -2748,7 +2748,7 @@ DW_API int dwarf_get_frame_instruction(
     and makes the head pointer stale. The caller should
     set it to NULL.
 */
-DW_API void dwarf_frame_instr_head_dealloc(Dwarf_Frame_Instr_Head);
+DW_API void dwarf_dealloc_frame_instr_head(Dwarf_Frame_Instr_Head);
 
 /*  Operations on .debug_aranges. */
 DW_API int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
@@ -3340,7 +3340,7 @@ DW_API int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
     Dwarf_Signed *  /*listlen*/,
     Dwarf_Unsigned * /*bytecount*/,
     Dwarf_Error *   /*error*/);
-DW_API void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
+DW_API void dwarf_dealloc_ranges(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);
 DW_API int dwarf_get_ranges_section_name(Dwarf_Debug /*dbg*/,

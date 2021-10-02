@@ -2898,7 +2898,7 @@ _dwarf_frame_instr_destructor(void *f)
     head->fh_array_count = 0;
 }
 void
-dwarf_frame_instr_head_dealloc(Dwarf_Frame_Instr_Head h)
+dwarf_dealloc_frame_instr_head(Dwarf_Frame_Instr_Head h)
 {
     dwarf_dealloc(h->fh_dbg,h,DW_DLA_FRAME_INSTR_HEAD);
 }
