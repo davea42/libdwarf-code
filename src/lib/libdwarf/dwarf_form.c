@@ -539,9 +539,8 @@ _dwarf_formsig8_internal(Dwarf_Attribute attr,
         return res;
     }
 
-    if (attr->ar_attribute_form != formexpected ) {
-        _dwarf_error(dbg, error, formerrnum);
-        return DW_DLV_ERROR;
+    if (attr->ar_attribute_form != formexpected) {
+        return DW_NO_ENTRY;
     }
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);

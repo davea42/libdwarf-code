@@ -238,6 +238,23 @@ libdwarf: libdwarf 20210528
 .H 2 "Items Changed"
 Comparing libdwarf-0.3.0 to libdwarf-0.2.0
 .P
+dwarf_formsig8() and 
+dwarf_formsig8_const() return
+DW_DLV_NO_ENTRY if the attribute
+passed in does not have the
+required DW_FORM.
+.P
+Renamed for consistency in naming:
+dwarf_fde_cie_list_dealloc()
+to  dwarf_dealloc_fde_cie_list()
+    
+dwarf_frame_instr_head_dealloc()
+to dwarf_dealloc_frame_instr_head()
+    
+dwarf_ranges_dealloc()
+to dwarf_dealloc_ranges()
+
+.P
 The Dwarf_Block structure 
 bl_data field is now type
 Dwarf_Byte_Ptr (identical
@@ -268,7 +285,7 @@ in a useful way.
 is new and it
 returns details of an instruction.
 .P
-\f(CWdwarf_frame_instr_head_dealloc()\fP
+\f(CWdwarf_dealloc_frame_instr_head()\fP
 deallocs (frees) the data in 
 the Dwarf_Frame_Instr_Head record
 created by
@@ -4593,6 +4610,21 @@ to the attribute code
 represented by the \f(CWDwarf_Attribute\fP descriptor \f(CWattr\fP.
 It returns  \f(CWDW_DLV_ERROR\fP  on error.
 
+.H 3 "dwarf_attr_offset()"
+.DS
+\f(CWint dwarf_attr_offset(
+    Dwarf_Attribute attr,
+    Dwarf_Off       *return_offset,
+    Dwarf_Error *error)\fP
+.DE
+When it succeeds,
+\f(CWdwarf_attr_offset()\fP returns
+\f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP
+to the section offset of the offset
+represented by the \f(CWDwarf_Attribute\fP descriptor
+\f(CWattr\fP.
+It returns  \f(CWDW_DLV_ERROR\fP  on error.
+
 .H 3 "dwarf_formref()"
 .DS
 \f(CWint dwarf_formref(
@@ -4619,13 +4651,14 @@ for error \f(CWDW_DLE_ATTR_FORM_OFFSET_BAD\fP
 the function sets \f(CW*return_offset\fP to the invalid
 offset (which allows the caller to print a more
 detailed error message).
+.P
+See also \f(CWdwarf_global_formref_b\fP below.
 
-See also \f(CWdwarf_global_formref\fP below.
 
-
-.H 3 "dwarf_global_formref()"
+.H 3 "dwarf_global_formref_b()"
 .DS
-\f(CWint dwarf_global_formref(
+FIXME
+\f(CWint dwarf_global_formref_b(
     Dwarf_Attribute attr,
     Dwarf_Off     *return_offset,
     Dwarf_Error *error)\fP
@@ -4859,7 +4892,8 @@ attribute referenced is smaller than the size of the
 type, its value is sign extended.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 
-Never returns \f(CWDW_DLV_NO_ENTRY\fP.
+Never returns 
+\f(CWDW_DLV_NO_ENTRY\fP.
 
 For DWARF2 and DWARF3,
 \f(CWDW_FORM_data4\fP and
@@ -4867,6 +4901,23 @@ For DWARF2 and DWARF3,
 are possibly class \f(CWCONSTANT\fP,
 and for DWARF4 and later they
 are definitely class \f(CWCONSTANT\fP.
+
+.H 3 "dwarf_formdata16()"
+.DS
+\f(CWint dwarf_formdata16(Dwarf_Attribute attr,
+    Dwarf_Form_data16 * return_value,
+    Dwarf_Error *error)\fP
+.DE
+\f(CW
+\fP
+This enables access to a 
+\f(CWDW_FORM_data16\fP
+value.
+The FORM appeared in DWARF5.
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP and stores
+the bytes in the struct.
 
 .H 3 "dwarf_formblock()"
 .DS
@@ -4924,17 +4975,44 @@ after a call to \f(CWdwarf_finish\fP.
         Dwarf_Sig8  * return_sig8,
         Dwarf_Error *   error)\fP
 .DE
+Use with an attribute form \f(CWDW_FORM_data8\fP.
+The function \f(CWdwarf_formsig8()\fP returns
+\f(CWDW_DLV_OK\fP and copies the 8 byte signature
+to a \f(CWDwarf_Sig8\fP structure provided by the caller
+if the form of the
+attribute is of form \f(CWDW_FORM_data8\fP
+( a member of the \f(CWREFERENCE\fP class).
+Before DWARF4 this was the only FORM that could be
+used for an 8-byte signature.
+Modern DWARF should use \f(CWDW_FORM_ref_sig8\fP
+instead.
+.P
+It returns DW_DLV_NO_ENTRY if the attribute form is not
+\f(CWDW_FORM_data8\fP.
+.P
+It returns \f(CWDW_DLV_ERROR\fP on error.
+
+.H 3 "dwarf_formsig8_const()"
+Use with an attribute form \f(CWDW_FORM_ref_sig8\fP.
+.DS
+\f(CWint dwarf_formsig8_const(
+        Dwarf_Attribute attr,
+        Dwarf_Sig8  * return_sig8,
+        Dwarf_Error *   error)\fP
+.DE
 The function \f(CWdwarf_formsig8()\fP returns
 \f(CWDW_DLV_OK\fP and copies the 8 byte signature
 to a \f(CWDwarf_Sig8\fP structure provided by the caller
 if the form of the
 attribute is of form \f(CWDW_FORM_ref_sig8\fP
 ( a member of the \f(CWREFERENCE\fP class).
-It is an error
-for the form to be anything but \f(CWDW_FORM_ref_sig8\fP.
-It returns \f(CWDW_DLV_ERROR\fP on error.
 .P
-This form is used to refer to a type unit.
+\f(CWDW_FORM_ref_sig8\fP first appears in DWARF4.
+.P
+It returns DW_DLV_NO_ENTRY if the attribute form is not
+\f(CWDW_FORM_ref_sig8\fP.
+.P
+It returns \f(CWDW_DLV_ERROR\fP on error.
 
 .H 3 "dwarf_formexprloc()"
 .DS
@@ -4960,6 +5038,54 @@ of the location expression.
 On success the value set through the
 \f(CWblock_ptr\fP pointer is a pointer to
 the bytes of the location expression itself.
+
+.H 3 "dwarf_uncompress_integer_block_a()"
+.DS
+\f(CWint dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
+    Dwarf_Unsigned     input_length_in_bytes,
+    void             * input_block,
+    Dwarf_Unsigned   * value_count,
+    Dwarf_Signed    ** value_array,
+    Dwarf_Error      * error)\fP
+.DE
+This was contributed around 2007 for Sun Sparc
+but it is not clear any existing compiler does
+the sort of compression it assumes.
+Logically it is a block of integers, each
+having been converted
+to signed leb values.
+So this function expands the block to
+an array of Dwarf_Signed it allocates
+(value_array), with value_count
+entries,
+and returns
+\f(CWDW_DLV_OK\fP.
+\f(CW\fP
+.P
+The attribute with a compressed block value is
+\f(CWDW_AT_SUN_func_offsets\fP
+and the form is
+\f(CWDW_FORM_block\fP.
+.P
+It returns
+\f(CWDW_DLV_ERROR\fP on error.
+.P
+It never returns
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P
+Use dwarf_dealloc_uncompressed_block()
+(below) to dealloc(free) the space
+allocated.
+
+
+.H 3 "dwarf_dealloc_uncompressed_block()"
+.DS
+\f(CWint dwarf_dealloc_uncompressed_block(Dwarf_Debug dbg,
+    void *space)\fP
+.DE
+Frees (deallocs) a block that
+\f(CWdwarf_uncompress_integer_block_a()\fP
+returned.
 
 .H 3 "dwarf_get_form_class()"
 .DS
@@ -6294,8 +6420,42 @@ If the section does not exist the function returns
 .P
 If there is an internal error detected the
 function returns
-\f(CWDW_DLV_ERROR\fP and sets the
+\f(CWDW_DLV_ERROR\fP
+and sets the
 \f(CW*error\fP pointer.
+
+.H 3 "dwarf_check_lineheader_b()"
+.DS
+\f(CWint dwarf_check_lineheader_b(
+        Dwarf_Die die,
+        int *err_count_out,
+        Dwarf_Error *error)\fP
+.DE
+The function checks  for some
+line table errors on success
+reports a
+count of those noticed via
+\f(CWerr_count_out\fP.
+This finds a subset of the errors
+dwarfdump reports on when
+dwarfdump prints or checks
+the line table(s).
+.P
+If it completes normally it returns
+\f(CWDW_DLV_OK\fP
+even if it noted and counted errors.
+.P
+In some circumstances it might return
+\f(CWDW_DLV_ERROR\fP
+and report
+that single error via the
+\f(CWerror\fP
+argument.
+.P
+No details of an errors
+found and recorded in
+\f(CWrr_count_out\fP
+will be available.
 
 .H 3 "dwarf_get_line_section_name_from_die()"
 .DS
@@ -7773,6 +7933,17 @@ freed using \f(CWdwarf_funcs_dealloc()\fP.
 The function operates as described in
 \f(CWdwarf_globalname\fP
 above.
+.H 4 "dwarf_funcs_dealloc()"
+.DS
+\f(CWvoid dwarf_funcs_dealloc(Dwarf_Debug dbg,
+        Dwarf_Func func,
+        Dwarf_Signed count,
+        Dwarf_Error *error)\fP
+.DE
+This is the dealloc (free) function for
+the Dwarf_Func * array returned, on
+success,  by
+\f(CWdwarf_get_funcs\fP
 
 .H 4 "dwarf_func_die_offset()"
 .DS
@@ -8303,6 +8474,83 @@ Allows retrieving detailed
 data from a portion of the entrypool
 by index and offset.
 
+.H 3 " dwarf_dnames_cu_table()"
+.DS
+\f(CW int dwarf_dnames_cu_table(
+    Dwarf_Dnames_Head dn,
+    const char *type, /* "cu" or "tu" */
+    Dwarf_Unsigned    index_number,
+    Dwarf_Unsigned    offset,
+    Dwarf_Sig8       *signature,
+    Dwarf_Error *       error)
+\fP
+.DE
+The count limits mentioned here are returned by
+the function
+\f(CWdwarf_dnames_sizes()\fP.
+.P
+The "tu" category spans both the
+local and foreign type units.
+The lower values
+of
+\f(CWindex_number\fP
+(less than
+local_type_unit_count) are local type units (offset is retured)
+while the upper values (index number < 
+(local_type_unit_count + foreign_type_unit_count))
+are 
+\f(CWforeign type units\fP
+(
+\f(CWsignature\fP
+is returned).
+.P
+The "cu" category only returns
+an
+\f(CWoffset\fP.
+\f(CWindex_number\fP
+must be less than
+comp_unit_count.
+.P
+If
+\f(CWindex_number\fP
+is outside the valid range
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned.
+.P
+In case of error
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned.
+
+.H 3 " dwarf_dnames_name()"
+\f(CW
+\fP
+.DS
+\f(CW int dwarf_dnames_name(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      name_index UNUSEDARG,
+    Dwarf_Unsigned    * bucket_number UNUSEDARG,
+    Dwarf_Unsigned    * hash_value UNUSEDARG,
+    Dwarf_Unsigned    * offset_to_debug_str UNUSEDARG,
+    char *            * ptrtostr,
+    Dwarf_Unsigned    * offset_in_entrypool UNUSEDARG,
+    Dwarf_Unsigned    *  abbrev_number UNUSEDARG,
+    Dwarf_Half        *  abbrev_tag UNUSEDARG,
+    Dwarf_Unsigned       array_size,
+    Dwarf_Half        *  attr_array,
+    Dwarf_Unsigned    *  attr_count UNUSEDARG ,
+    Dwarf_Error *       error)
+\fP
+.DE
+This is supposed to present each effective 
+Name Table entry with essentailly all its data.
+The implementation details of the table
+are hidden.
+The function is, as yet, incomplete. 
+FIXME dwarf_dnames_name()
+Currently only the attribute array data is
+returned, meaning the function is
+unusable..
+
 .H 2 "Names Fast Access .debug_gnu_pubnames"
 The sections
 \f(CW.debug_gnu_pubnames\fP
@@ -8341,8 +8589,6 @@ in subsequent data access.
 Free the memory associated with this
 by calling
 \f(CWdwarf_gnu_index_dealloc(head)\fP.
-\f(CW
-\fP
 
 .P
 The field 
@@ -10404,7 +10650,15 @@ function which expands a frame instruction byte stream into
 internal data attached to the
 \f(CWhead\fP pointer passed back.
 
-To indicate success, it returns \f(CWDW_DLV_OK\fP.
+.P
+On error it returns 
+\f(CWDW_DLV_ERROR\fP.
+.P
+To indicate success, it returns
+\f(CWDW_DLV_OK\fP.
+.P
+It does not return
+\f(CWDW_DLV_NO_ENTRY\fP.
 
 .in +2
 .FG "Examples dwarf_expand_frame_instructions()"
@@ -10458,13 +10712,43 @@ void examples(Dwarf_Cie cie,
                    as guided by the fields_description. */
             }
         }
-        dwarf_frame_instr_head_dealloc(head);
+        dwarf_dealloc_frame_instr_head(head);
     }
 }
-
 \fP
 .DE
 .in -2
+.H 3 "dwarf_expand_frame_instructions()"
+.DS
+\f(CWint dwarf_get_frame_instruction(
+        Dwarf_Frame_Instr_Head head,
+FIXME
+        Dwarf_Cie cie,
+        Dwarf_Ptr instruction,
+        Dwarf_Unsigned i_length,
+        Dwarf_Frame_Instr_Head * /*head*/,
+        Dwarf_Unsigned  * /*instr_count*/,
+        Dwarf_Error *error);\fP
+.DE
+FIXME
+fields = "";
+fields = "b";
+fields = "r";
+fields = "rb";
+fields = "rr";
+fields = "rsd";
+fields = "ru";
+fields = "rud";
+fields = "sd";
+fields = "u";
+fields = "uc";
+
+.H 3 "dwarf_dealloc_frame_instr_head()"
+.DS
+\f(CWvoid dealloc_frame_instr_head( Dwarf_Frame_Instr_Head head);\fP
+.DE
+FIXME
+
 .H 3 "dwarf_get_fde_exception_info()"
 .DS
 \f(CWint dwarf_get_fde_exception_info(
@@ -11285,7 +11569,7 @@ and sets
 
 .H 2 "General Low Level Operations"
 This function is low-level and intended for use only
-by programs such as dwarf-dumpers.
+by programs such as dwarfdump.
 
 .H 3 "dwarf_get_offset_size()"
 .DS
