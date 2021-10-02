@@ -7558,11 +7558,11 @@ necessary.
 .H 3 "dwarf_prologue_end_etc()"
 .DS
 \f(CWint dwarf_prologue_end_etc(Dwarf_Line  line,
-        Dwarf_Bool  *    prologue_end,
-        Dwarf_Bool  *    epilogue_begin,
-        Dwarf_Unsigned * isa,
-        Dwarf_Unsigned * discriminator,
-        Dwarf_Error *    error)\fP
+    Dwarf_Bool  *    prologue_end,
+    Dwarf_Bool  *    epilogue_begin,
+    Dwarf_Unsigned * isa,
+    Dwarf_Unsigned * discriminator,
+    Dwarf_Error *    error)\fP
 .DE
 The function
 \f(CWdwarf_prologue_end_etc()\fP returns
@@ -7578,6 +7578,44 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 This function is new in December 2011.
+
+.H 3 "dwarf_linecontext()"
+.DS
+\f(CWint dwarf_linecontext(Dwarf_Line  line,
+    Dwarf_Unsigned  *returned_row,
+    Dwarf_Error *    error)\fP
+.DE
+This is for experimental twolevel line tables
+access and is not part of standard DWARF.
+.H 3 "dwarf_linelogical()"
+.DS
+\f(CWint dwarf_linelogical(Dwarf_Line  line,
+    Dwarf_Unsigned  *returned_row,
+    Dwarf_Error *    error)\fP
+.DE
+This is for experimental twolevel line tables
+access and is not part of standard DWARF.
+.H 3 "dwarf_line_subprogno()"
+.DS
+\f(CWint dwarf_line_subprogno(Dwarf_Line  line,
+    Dwarf_Unsigned  *returned_row,
+    Dwarf_Error *    error)\fP
+.DE
+This is for experimental twolevel line tables
+access and is not part of standard DWARF.
+.H 3 "dwarf_line_subprog()"
+.DS
+\f(CWint dwarf_line_subprog(Dwarf_Line  line,
+    char ** returned_subprog_name,
+    char ** returned_filename,
+    Dwarf_Unsigned *returned_lineno,
+    Dwarf_Error *    error)\fP
+        Dwarf_Unsigned  *returned_row,
+        Dwarf_Error *    error)\fP
+.DE
+This is for experimental twolevel line tables
+access and is not part of standard DWARF.
+
 
 
 .H 2 "Accelerated Access By Name operations"
