@@ -1,3 +1,146 @@
+2021-10-02:  David Anderson
+    commit 85b53096a0ba7f5fbe66d6c73b8e6d8bdb1c6743
+
+    All functions in libdwarf.h are now documented.
+            modified:   libdwarf.mm
+            modified:   libdwarf.pdf
+
+2021-10-02:  David Anderson
+    commit a4d0f96f8efffaa017cd0bb40800dde6f0e54233
+
+    Deleted dwarf_set_frame_rule_inital_value() as that was
+    a spelling error in the 1990's, and the correct
+    spelling is
+            dwarf_set_frame_rule_initial_value(
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+    Declarations:
+    Deleted dwarf_get_rnglist_raw_entry_detail()
+    and     dwarf_get_loclists_entry_fields()
+    as those functions never existed.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-10-02:  David Anderson
+    commit d4d333467e6552316f2949377b5088ba1ed2cbb7
+
+    Nearly all functions documented. Four left undoc.
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+
+2021-10-02:  David Anderson
+    commit f16252cc9aab96da0687e86aaa0e49dcfd3207bb
+
+    Several functions documented.
+    About 19 left to document.
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+    Improved a comment
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-10-02:  David Anderson
+    commit 70225545c82f613679d147ae2f58b162c3d31bf6
+
+    Documented more of the public interfaces.
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+
+    Now dwarf_formsig8() and dwarf_formsig8_const()
+    return DW_DLV_NO_ENTRY if the data is
+    not the desired FORM.
+    They previously returned DW_DLV_ERROR, which
+    was not helpful.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2021-10-02:  David Anderson
+    commit 8a31576fbceccca6dec16350dbb50bca0931b1bf
+
+    renaming for dealloc function naming consistency
+    (but various dealloc functions left unchanged)
+
+    -void dwarf_fde_cie_list_dealloc(Dwarf_Debug /*dbg*/,
+    +void dwarf_dealloc_fde_cie_list(Dwarf_Debug /*dbg*/,
+
+    -void dwarf_frame_instr_head_dealloc(Dwarf_Frame_Instr_Head);
+    +void dwarf_dealloc_frame_instr_head(Dwarf_Frame_Instr_Head);
+
+    -void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
+    +void dwarf_dealloc_ranges(Dwarf_Debug /*dbg*/,
+
+            modified:   dwarf_frame.c
+            modified:   dwarf_frame2.c
+            modified:   dwarf_ranges.c
+            modified:   libdwarf.h
+
+2021-10-01:  David Anderson
+    commit 8549d4fd75b1feff0a067c72307c8e0ec25ca296
+
+    Now the frame instruction example is updated.
+            modified:   doc/checkexamples.c
+
+    Document the frame-related fields and functions.
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+    Corrected comments to reflect current member fields.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-10-01:  David Anderson
+    commit 14befdaeed1da49f2801487afe624b0ead5ee0df
+
+    Corrected the text of a comment.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+2021-10-01:  David Anderson
+    commit 901b3e923d1e99d4fd218f7de5f634b51ba6ec78
+
+    Correcting examples, frame instructions.
+            modified:   checkexamples.c
+
+2021-10-01:  David Anderson
+    commit d999f35950b2507653dd5687a6e86108566ad83a
+
+    Basic updates reflecting recent changes. Version 4.11
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf Regenerated.
+
+2021-10-01:  David Anderson
+    commit ee4adfd8ad3044fb0dd5b9dd3db30170b9fd0bf3
+
+    Changes for doxygen, just trying out a few doxygen
+    comment arrangements. Has no effect on uses of the file.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-30:  David Anderson
+    commit 5b2b4d09ad818ff9fdbf5b098d9b617c237e86c8
+
+    Corrected: debugnames -> dnames
+            modified:   doc/libdwarf.mm
+
+    Changed comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-09-30:  David Anderson
+    commit 11ccd0abe2a2dba92d92f585359d2d22b283a2a4
+
+    Coverity scan found two problems,
+    a missing return caused both.
+    added:
+             return adres;
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2021-09-30:  David Anderson
+    commit 0b2193c039074ad483618a58a9f7c1d6f5cab75c
+
+    Commentary about struct Dwarf_Macro_Details_s
+    and struct Dwarf_Ranges_s.
+    These structs apply to DWARF2,3, and 4 only.
+            modified:   libdwarf.h
+
+2021-09-29:  David Anderson
+    commit 659c74dff7f0d5879cce40ae9aaf340bc8a3d4a1
+
+    Up to date with latest git log data.
+            modified:   ChangeLog
+
 2021-09-29:  David Anderson
     commit e7db94d38ad26c254b82273c66214dd0b493861b
 
