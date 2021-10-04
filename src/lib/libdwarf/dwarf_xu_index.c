@@ -106,7 +106,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif
+#endif /*0*/
 
 /*  Precondition: headerline_offset + N*32 is within
     the section. */

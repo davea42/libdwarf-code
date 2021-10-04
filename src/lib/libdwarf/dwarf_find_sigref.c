@@ -128,7 +128,7 @@ _dwarf_find_CU_Context_given_sig(Dwarf_Debug dbg,
             if (lres == DW_DLV_NO_ENTRY) {
                 continue;
             }
-#endif
+#endif /*0*/
             lres = _dwarf_create_a_new_cu_context_record_on_list(
                 dbg, dis,is_info,section_size,new_cu_offset,
                 &cu_context,error);

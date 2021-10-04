@@ -937,7 +937,7 @@ check_subprog_ranges_for_match(Dwarf_Debug dbg,
             exit(1);
         }
     }
-    dwarf_ranges_dealloc(dbg,ranges,ranges_count);
+    dwarf_dealloc_ranges(dbg,ranges,ranges_count);
     return res;
 }
 
@@ -1249,7 +1249,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
                 exit(1);
             }
         }
-        dwarf_ranges_dealloc(dbg,ranges,ranges_count);
+        dwarf_dealloc_ranges(dbg,ranges,ranges_count);
     }
     return finalres;
 #if 0

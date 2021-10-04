@@ -1409,7 +1409,7 @@ print_one_fde(Dwarf_Debug dbg,
                     address_size,
                     cie_offset_size,
                     cie_version, config_data);
-                dwarf_frame_instr_head_dealloc(ihead);
+                dwarf_dealloc_frame_instr_head(ihead);
             }
         }
     }
@@ -1570,7 +1570,7 @@ print_one_cie(Dwarf_Debug dbg,
                 code_alignment_factor,
                 address_size,
                 offset_size,version,config_data);
-            dwarf_frame_instr_head_dealloc(ihead);
+            dwarf_dealloc_frame_instr_head(ihead);
         }
     }
     return DW_DLV_OK;
@@ -2356,7 +2356,7 @@ print_frames(Dwarf_Debug dbg,
         /* Do not print any frame info if in check mode */
         if (glflags.gf_check_frames) {
             if (fres == DW_DLV_OK) {
-                dwarf_fde_cie_list_dealloc(dbg, cie_data,
+                dwarf_dealloc_fde_cie_list(dbg, cie_data,
                     cie_element_count,
                     fde_data, fde_element_count);
             }
@@ -2407,7 +2407,7 @@ print_frames(Dwarf_Debug dbg,
                 *err = 0;
             }
             /*  Here we do the free. Not earlier. */
-            dwarf_fde_cie_list_dealloc(dbg, cie_data,
+            dwarf_dealloc_fde_cie_list(dbg, cie_data,
                 cie_element_count,
                 fde_data, fde_element_count);
         } /*  End inner scope, not a loop */

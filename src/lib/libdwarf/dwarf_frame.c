@@ -86,7 +86,7 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 /* Only used for debugging libdwarf. */
 static void dump_frame_rule(char *msg,
     struct Dwarf_Reg_Rule_s *reg_rule);
-#endif /* 0 */
+#endif /*0*/
 
 static int dwarf_initialize_fde_table(Dwarf_Debug dbg,
     struct Dwarf_Frame_s *fde_table,
@@ -239,7 +239,7 @@ printlist(Dwarf_Frame_Instr x)
     }
     printf("=========== done cur list of ptrs\n");
 }
-#endif
+#endif /*0*/
 
 int
 _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
@@ -2714,7 +2714,7 @@ dump_frame_rule(char *msg, struct Dwarf_Reg_Rule_s *reg_rule)
         (Dwarf_Unsigned) reg_rule->ru_block);
     return;
 }
-#endif
+#endif /*0*/
 
 /*  This allows consumers to set the 'initial value' so that
     an ISA/ABI specific default can be used, dynamically,

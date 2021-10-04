@@ -3411,7 +3411,7 @@ print_range_attribute(Dwarf_Debug dbg,
                 dores = dwarf_die_offsets(die,&die_glb_offset,
                     &die_off,raerr);
                 if (dores == DW_DLV_ERROR) {
-                    dwarf_ranges_dealloc(dbg,rangeset,rangecount);
+                    dwarf_dealloc_ranges(dbg,rangeset,rangecount);
                     return dores;
                 }
                 if (dores == DW_DLV_OK) {
@@ -3427,7 +3427,7 @@ print_range_attribute(Dwarf_Debug dbg,
                     rangeset,rangecount,bytecount,
                     esb_extrap);
             }
-            dwarf_ranges_dealloc(dbg,rangeset,rangecount);
+            dwarf_dealloc_ranges(dbg,rangeset,rangecount);
         } else if (rres == DW_DLV_ERROR) {
             if ( glflags.gf_suppress_checking_on_dwp) {
                 /* Ignore checks */

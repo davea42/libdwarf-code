@@ -82,7 +82,7 @@ static unsigned long primes[] =
 {
 #if 0 /* for testing only */
 5,11, 17,23, 31, 47, 53,
-#endif
+#endif /*0*/
 79,
 1009,
 5591,

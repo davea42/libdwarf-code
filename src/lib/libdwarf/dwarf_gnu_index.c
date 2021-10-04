@@ -100,7 +100,7 @@ dump_block(const char *msg,int bn, int lno,
     printf("entries  array   : 0x%lx\n",
         (unsigned long)b->ib_entryarray);
 }
-#endif
+#endif /*0*/
 /*  We could use dwarf_get_real_section_name()
     to determine the real name (perhaps ending in .dwo)
     but for now we just use the standard name here. */
@@ -350,7 +350,7 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned blockindex = 0;
     Dwarf_Unsigned blockoffset = 0;
     Dwarf_Unsigned listoffset = 0;
-#endif
+#endif /*0*/
     Dwarf_Small    * endptr = 0;
     Dwarf_Small    * curptr = 0;
     Dwarf_Small    * baseptr = 0;

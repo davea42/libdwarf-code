@@ -97,7 +97,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif
+#endif /*0*/
 
 /*  New October 2011.  Enables client code to know if
     it is a debug_info or debug_types context. */
@@ -1667,7 +1667,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             }
         }
     }
-#endif /* 0 */
+#endif /*0*/
     if (!dis->de_cu_context) {
         /*  We are leaving new_offset zero. We are at the
             start of a section. */
@@ -1929,7 +1929,7 @@ void print_ptr_offset(Dwarf_CU_Context cu_context,
     _dwarf_ptr_CU_offset(cu_context,di_ptr,&ptr_off);
     fprintf(stderr," PTR OFF = 0x%" DW_PR_XZEROS DW_PR_DUx,ptr_off);
 }
-#endif
+#endif /*0*/
 
 /*  Validate the sibling DIE. This only makes sense to call
     if the sibling's DIEs have been travsersed and
@@ -2014,7 +2014,7 @@ print_abcom(const char *msg,
     printf("ptr to dwp_offsets %lx\n",
         (unsigned long)abcom->ac_dwp_offsets);
 }
-#endif
+#endif /*0*/
 /*  The following pair of functions let us
     read abbreviations without access to cu_context or
     DIE. */
@@ -2725,10 +2725,6 @@ dwarf_child(Dwarf_Die die,
         dwarf_dealloc_die(ret_die);
         return res;
     }
-#if 0
-    DECODE_LEB128_UWORD_CK(die_info_ptr, utmp,
-        dbg,error,die_info_end);
-#endif
     abbrev_code = (Dwarf_Unsigned) utmp;
 
     dis->de_last_di_ptr = die_info_ptr;
@@ -2919,10 +2915,6 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             DW_DLE_DIE_ABBREV_LIST_NULL,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
-#if 0
-printf("get_abbrev fail line %d\n",__LINE__);
-abort();
-#endif
         return DW_DLV_ERROR;
     }
     _dwarf_fill_in_context_from_abcom(&abcom,cu_context);

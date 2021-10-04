@@ -81,7 +81,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif
+#endif /*0*/
 
 /* This is normally reliable.
 But not always.

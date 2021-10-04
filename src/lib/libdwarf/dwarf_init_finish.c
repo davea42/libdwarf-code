@@ -281,7 +281,7 @@ all_sig8_bits_zero(Dwarf_Sig8 *val)
     }
     return TRUE;
 }
-#endif
+#endif /*0*/
 
 /* Return DW_DLV_OK etc. */
 static int

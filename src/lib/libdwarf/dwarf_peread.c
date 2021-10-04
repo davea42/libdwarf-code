@@ -100,7 +100,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif
+#endif /*0*/
 
 static int _dwarf_pe_object_access_init(
     int  fd,
@@ -153,7 +153,7 @@ check_valid_string(char *tab,
         func(&t,&s[0],sizeof(s));               \
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
-#endif
+#endif /*0*/
 
 /*  Name_array is 8 byte string, or it is supposed to be
     anyway.  */

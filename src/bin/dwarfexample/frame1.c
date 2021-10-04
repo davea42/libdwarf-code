@@ -238,7 +238,7 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
     }
 
     /* Done with the data. */
-    dwarf_fde_cie_list_dealloc(dbg,cie_data,cie_element_count,
+    dwarf_dealloc_fde_cie_list(dbg,cie_data,cie_element_count,
         fde_data, fde_element_count);
     return;
 }
@@ -730,7 +730,7 @@ print_fde_instrs(Dwarf_Debug dbg,
         print_frame_instrs(dbg,frame_instr_head,
             frame_instr_count, error);
     
-        dwarf_frame_instr_head_dealloc(frame_instr_head);
+        dwarf_dealloc_frame_instr_head(frame_instr_head);
     }
     free(tab3.rt3_rules);
 }

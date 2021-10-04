@@ -654,7 +654,7 @@ trimleadingzeros(char *ptr,unsigned digits,unsigned keepcount)
     }
     return trimoff;
 }
-#endif /* 0 */
+#endif /*0*/
 
 /*  With gcc version 5.4.0 20160609  a version using
     const char *formatp instead of format[next]

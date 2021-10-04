@@ -809,7 +809,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
             _dwarf_error_destructor(ep);
             free(space);
             return;
-#endif
+#endif /*0*/
         }
         /* Was normal alloc, use normal dealloc. */
         /* DW_DLA_ERROR has a specialdestructor */

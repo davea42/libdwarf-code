@@ -458,7 +458,7 @@ dwarf_formref(Dwarf_Attribute attr,
             &sig8,
         We could look, then determine if
         resutling offset is actually local.
-#endif
+#endif /*0*/
 
         /*  We cannot handle this here.
             The reference could be to .debug_types
@@ -525,7 +525,6 @@ dwarf_formref(Dwarf_Attribute attr,
 static int
 _dwarf_formsig8_internal(Dwarf_Attribute attr,
     int formexpected,
-    int formerrnum,
     Dwarf_Sig8 * returned_sig_bytes,
     Dwarf_Error*     error)
 {
@@ -540,7 +539,7 @@ _dwarf_formsig8_internal(Dwarf_Attribute attr,
     }
 
     if (attr->ar_attribute_form != formexpected) {
-        return DW_NO_ENTRY;
+        return DW_DLV_NO_ENTRY;
     }
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
@@ -561,7 +560,6 @@ dwarf_formsig8_const(Dwarf_Attribute attr,
     Dwarf_Error* error)
 {
     int res  =_dwarf_formsig8_internal(attr, DW_FORM_data8,
-        DW_DLE_ATTR_FORM_NOT_DATA8,
         returned_sig_bytes,error);
     return res;
 }
@@ -579,7 +577,6 @@ dwarf_formsig8(Dwarf_Attribute attr,
     Dwarf_Error* error)
 {
     int res  = _dwarf_formsig8_internal(attr, DW_FORM_ref_sig8,
-        DW_DLE_BAD_REF_SIG8_FORM,
         returned_sig_bytes,error);
     return res;
 }

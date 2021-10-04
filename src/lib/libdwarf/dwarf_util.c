@@ -114,7 +114,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif
+#endif /*0*/
 
 endian_funcp_type
 dwarf_get_endian_copy_function(Dwarf_Debug dbg)
@@ -678,7 +678,7 @@ print_abcom(const char *msg,
     printf("ptr to dwp_offsets %lx\n",
         (unsigned long)abcom->ac_dwp_offsets);
 }
-#endif
+#endif /*0*/
 
 /*  This function returns a pointer to a Dwarf_Abbrev_List_s
     struct for the abbrev with the given code.  It puts the

@@ -84,7 +84,7 @@ dwgetoptresetfortestingonly(void)
     dwoptreset = 0;
     dwoptarg   = 0;
 }
-#endif /* FOR DEBUGGING ONLY */
+#endif /*0*/
 
 static const char *place = EMSG;/* option letter processing */
 

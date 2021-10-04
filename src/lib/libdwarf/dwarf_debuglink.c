@@ -341,7 +341,7 @@ dump_bytes(const char *msg,unsigned char * start, unsigned len)
     }
     printf("\n");
 }
-#endif
+#endif /*0*/
 
 /*  If the compiler or the builder of the object file
     being read has made a mistake it is possible

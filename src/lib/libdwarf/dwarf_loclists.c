@@ -72,7 +72,7 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif /* 0 */
+#endif /*0*/
 
 /*  Used in case of error reading the
     loclists headers (not referring to Dwarf_Loc_Head_c
@@ -1245,6 +1245,7 @@ _dwarf_loclists_fill_in_lle_head(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+#if 0
 int
 dwarf_get_loclists_entry_fields(
     Dwarf_Loc_Head_c head,
@@ -1281,6 +1282,7 @@ dwarf_get_loclists_entry_fields(
     *cooked2   = e->ld_highpc;
     return DW_DLV_OK;
 }
+#endif /*0*/
 
 static void
 _dwarf_free_loclists_limited_head_content(Dwarf_Loc_Head_c head)

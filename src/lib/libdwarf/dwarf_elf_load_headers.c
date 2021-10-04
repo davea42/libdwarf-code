@@ -115,7 +115,7 @@ dumpsizes(int line,Dwarf_Unsigned s,
         "sum 0x%llx line %d \n",
         s,o,fsz,tlen,line);
 }
-#endif
+#endif /*0*/
 
 static int
 _dwarf_load_elf_section_is_dwarf(const char *sname,
@@ -189,7 +189,7 @@ dwarf_construct_elf_access_path(const char *path,
     *mp = mymp;
     return res;
 }
-#endif /* 0 */
+#endif /*0*/
 
 /* Here path is not essential. Pass in with "" if unknown. */
 int
@@ -462,7 +462,7 @@ generic_phdr_from_phdr64(dwarf_elf_object_access_internals_t* ep,
     ep->f_loc_phdr.g_totalsize = sizeof(dw_elf64_phdr)*count;
     return DW_DLV_OK;
 }
-#endif /* not used */
+#endif /*0*/
 
 static int
 generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
@@ -788,7 +788,7 @@ dwarf_load_elf_dynsym_symbols(
     }
     return res;
 }
-#endif /* 0 */
+#endif /*0*/
 
 int
 _dwarf_load_elf_symtab_symbols(
@@ -1019,7 +1019,7 @@ dwarf_load_elf_dynstr(
         }
     return DW_DLV_OK;
 }
-#endif /* 0 */
+#endif /*0*/
 
 int
 _dwarf_load_elf_symstr(
@@ -1951,7 +1951,7 @@ _dwarf_elf_find_sym_sections(
     if (res!= DW_DLV_OK) {
         return res;
     }
-#endif /* 0 */
+#endif /*0*/
     res = validate_links(ep,ep->f_symtab_sect_index,
         ep->f_symtab_sect_strings_sect_index,errcode);
     if (res!= DW_DLV_OK) {

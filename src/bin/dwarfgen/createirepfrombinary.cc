@@ -252,7 +252,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         }
 #endif
     }
-    dwarf_fde_cie_list_dealloc(dbg,cie_data,cie_count,
+    dwarf_dealloc_fde_cie_list(dbg,cie_data,cie_count,
         fde_data,fde_count);
 }
 

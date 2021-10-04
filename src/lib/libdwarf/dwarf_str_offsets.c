@@ -77,7 +77,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif
+#endif /*0*/
 
 int
 dwarf_open_str_offsets_table_access(Dwarf_Debug dbg,

@@ -72,7 +72,7 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif /* 0 */
+#endif /*0*/
 
 /*  Used in case of error reading the
     rnglists headers (not referring to Dwarf_Rnglists_Head

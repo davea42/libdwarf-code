@@ -65,7 +65,7 @@ freedabs(struct Dwarf_Abbrev_s *dab)
         free(dab);
     }
 }
-#endif /* 0 */
+#endif /*0*/
 #if 0
 /*  Encapsulates DECODE_LEB128_UWORD_CK
     so the caller can free resources
@@ -215,7 +215,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     }
     return DW_DLV_OK;
 }
-#endif /* 0 */
+#endif /*0*/
 static int
 read_uword_val(Dwarf_Debug dbg,
     Dwarf_Small **ptr_in,
@@ -591,7 +591,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
         dn->dn_augmentation_string = 0;
         return res;
     }
-#endif
+#endif /*0*/
     return DW_DLV_OK;
 }
 
@@ -802,7 +802,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned unit_offset     = 0;
 #if 0
     Dwarf_Bool sigoffset           = FALSE;
-#endif
+#endif /*0*/
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DEBUG_NAMES_ERROR,
@@ -846,7 +846,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         /*  ASSERT: ptr < dn->dn_indextable_data_end */
         memcpy(sig,ptr,sizeof(Dwarf_Sig8));
     } else
-#endif
+#endif /*0*/
     if (sig) {
         /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
@@ -988,7 +988,7 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
             *offset_in_entrypool = entrypooloffset;
         }
     }
-#endif
+#endif /*0*/
     /* Get str ptr from .debug_str */
     {
         Dwarf_Small *secdataptr = 0;
@@ -1086,7 +1086,7 @@ dwarf_dnames_abbrev_by_index(Dwarf_Dnames_Head dn,
     }
     return DW_DLV_OK;
 }
-#endif
+#endif /*0*/
 
 #if 0
 static int
@@ -1118,7 +1118,7 @@ _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
     return DW_DLV_NO_ENTRY;
 
 }
-#endif /* 0 */
+#endif /*0*/
 
 #if 0
 Because the abbrevs cover multiCUs (usually)
@@ -1145,7 +1145,7 @@ dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dn,
         number_of_attr_form_entries);
     return res;
 }
-#endif/* 0 */
+#endif /*0*/
 
 #if 0
 int
@@ -1186,7 +1186,7 @@ dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
     }
     return DW_DLV_OK;
 }
-#endif
+#endif /*0*/
 
 /*  This, combined with dwarf_dnames_entrypool_values(),
     lets one examine as much or as little of an entrypool
@@ -1237,7 +1237,7 @@ int dwarf_dnames_entrypool(Dwarf_Dnames_Head dn,
     *abbrev_code = abcode;
     return DW_DLV_OK;
 }
-#endif
+#endif /*0*/
 
 #if 0
 /*  Caller, knowing array size needed, passes in arrays
@@ -1343,7 +1343,7 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
     *offset_of_next_entrypool = pooloffset;
     return DW_DLV_OK;
 }
-#endif /* 0 */
+#endif /*0*/
 
 /*  Frees any Dwarf_Dnames_Head_s data that is directly
     mallocd. */

@@ -1,14 +1,16 @@
-*  The following are in libdwarf2.1.mm
+/*
+    This file contains what user code should be,
+    hence the code typed here is
+    PUBLIC DOMAIN.
+
+    The following are in libdwarf.mm
     to verify there are no silly typographical errors
     in that document.
 
     These should not be built routinely nor
     should it ever be executed.
 
-    The code here is what user code should be,
-    hence the code typed here is
-    PUBLIC DOMAIN.
-    This file is not part of libdwarf and appears
+    This file appears
     in the doc directory.
 
     compile with
@@ -1146,7 +1148,7 @@ void exampleq(Dwarf_Debug dbg)
     fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
         &fde_data,&fde_count,&error);
     if (fres == DW_DLV_OK) {
-        dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+        dwarf_dealloc_fde_cie_list(dbg, cie_data, cie_count,
             fde_data,fde_count);
     }
 }
@@ -1212,7 +1214,7 @@ void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
                     about the fde and cie applicable. */
             }
         }
-        dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+        dwarf_dealloc_fde_cie_list(dbg, cie_data, cie_count,
             fde_data,fde_count);
     }
     /* ERROR or NO ENTRY. Do something */
@@ -1250,23 +1252,23 @@ void examples(Dwarf_Cie cie,
                 &fields_description,&u0,&u1,
                 &s0,&s1,
                 &code_alignment_factor,
-                &data_alignment_factor, 
+                &data_alignment_factor,
                 &expression_block,&error);
             if (res == DW_DLV_OK) {
                 res = dwarf_get_CFA_name(cfa_operation,
-                   &op_name);
+                    &op_name);
                 if (res != DW_DLV_OK) {
-                   op_name = "unknown op";
+                    op_name = "unknown op";
                 }
                 printf("Instr %2lu %-22s %s\n",
-                   (unsigned long)i,
-                   op_name,
-                   fields_description);
-                /* do something with the various data
-                   as guided by the fields_description. */
+                    (unsigned long)i,
+                    op_name,
+                    fields_description);
+                /*  Do something with the various data
+                    as guided by the fields_description. */
             }
         }
-        dwarf_frame_instr_head_dealloc(head);
+        dwarf_dealloc_frame_instr_head(head);
     }
 }
 
@@ -1383,7 +1385,7 @@ void examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,Dwarf_Die die)
             /* Use cur. */
             functionusingrange(cur);
         }
-        dwarf_ranges_dealloc(dbg,rangesbuf,count);
+        dwarf_dealloc_ranges(dbg,rangesbuf,count);
     }
 }
 void examplew(Dwarf_Debug dbg)

@@ -2975,7 +2975,7 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
     Dwarf_Error *          /*err*/);
 
 /*  These two get the offset or address size as defined
-    by the object format (not by DWARF).
+    by the object format (not by DWARF). */
 DW_API int dwarf_get_offset_size(Dwarf_Debug /*dbg*/,
     Dwarf_Half  *    /*offset_size*/,
     Dwarf_Error *    /*error*/);
