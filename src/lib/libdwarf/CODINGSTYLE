@@ -1,7 +1,25 @@
+Updated 2021-10-09
+
 This document is a brief description of the main
 coding style conventions in libdwarf.   Many of them
 will be obvious from the code, but over time some
 accidental diffences crept in.
+
+Namespace: Avoid conflicting with other libraries
+or with user code.  Anything publicly visible
+in headers or in the library (.a or .so or .dll)
+must have only certain prefixes to names
+visible in dwarf.h or libdwarf.h or 
+a library a user links in (.a or .so or .dll).
+Prefixes are:
+DW_  (this is from the DWARF Standard and dwarf.h)
+Dwarf_  (for types)
+dwarf_  (for functions)
+_dwarf_ (for non-static functions in the library but not
+        for user code to call, so far this has worked
+        acceptably). For a .so or .dll current builds
+        (meaning September 2021 and later)
+        ensure such names are invisible to callers.
 
 Code should be indented in multiples of 4 spaces, and
 tabs should not be used to indent the source code.
@@ -20,12 +38,6 @@ Admittedly having both camel caps
 and an underbar is an unusual convention, but it is
 the way the coding was begun in the early 1990's and
 we should remain consistent now.
-
-All user-referenceable data and functions 
-and user_visible types should begin with DW_ or
-dwarf_.  Non-static libdwarf global data and functions
-should begin with _dwarf (a somewhat questionable
-approach, but workable).
 
 Function names should be all lower case with underbars
 for readability.
@@ -47,7 +59,7 @@ structure members should have a struct-specific
 an underbar). That makes it much
 easier to grep for uses of members.
 
-Try to keep lines under 80 characters in length.
+Try to keep lines under 71 characters in length.
 
 Ensure every if() has {} to enclose the actions.
 
