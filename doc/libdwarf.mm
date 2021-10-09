@@ -2540,11 +2540,13 @@ in the source tree) at the
 build time of the library.
 A pointer to a static string is returned by this
 function.
-The format is standard ISO date format. 
+For releases after September 2021
+the format is a semantic-version value
+like  "0.3.0".
+For releases before September 2021
+the format is standard ISO date format. 
 For example "20180718".
-It's not entirely clear how this actually helps.
-But there is a request for this and we provide it
-as of 23 October 2019.
+This function was added in October 2019.
 
 .H 2 "Object Type Detectors"
 These are used by
