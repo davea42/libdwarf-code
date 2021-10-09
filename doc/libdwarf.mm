@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.11 01 October 2021  0.3.0
+.ds vE Rev 4.12 09 October 2021  0.3.0
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -3221,7 +3221,8 @@ are ignored by libdwarf and space is malloc'd as needed.
 The field \f(CWdp_reserved\fP is ignored, it is reserved for
 future use.
 .P
-When the structure is returned by \f(CWdwarf_register_printf_callback()\fP
+When the structure is returned by 
+\f(CWdwarf_register_printf_callback()\fP
 the values of the fields before the
 \f(CWdwarf_register_printf_callback()\fP call are returned.
 
@@ -8522,62 +8523,6 @@ standard and
 \f(CWdwarfdump\fP
 for the motivation of this function.
 
-.H 3 " dwarf_dnames_cu_entry()"
-.DS
-\f(CW int dwarf_dnames_cu_entry(Dwarf_Dnames_Head   dn,
-    Dwarf_Unsigned      cu_index_number,
-    Dwarf_Unsigned    * offset_count,
-    Dwarf_Unsigned    * offset,
-    Dwarf_Error *       error)\fP
-.DE
-Given a properly created
-head
-\f(CWdn\fP
-this
-Allows access to fields in 
-name table entry for 
-one or more compilation units
-in a single
-\f(CWname_index_number\fP
-name table.
-.P
-We will not describe the fields in detail
-here.
-See the
-\f(CWDWARF5\fP
-standard and
-\f(CWdwarfdump\fP
-for the motivation of this function.
-
-.H 3 " dwarf_dnames_local_tu_entry()"
-.DS
-\f(CW int dwarf_dnames_local_tu_entry(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      offset_number,
-    Dwarf_Unsigned    * offset_count,
-    Dwarf_Unsigned    * offset,
-    Dwarf_Error *       error)
-\fP
-.DE
-.P
-The same as
-\f(CWdwarf_dnames_cu_entry()\fP
-but referencing type unit fields.
-
-.H 3 " dwarf_dnames_foreign_tu_entry()"
-.DS
-\f(CW int dwarf_dnames_foreign_tu_entry(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      sig_number,
-    Dwarf_Unsigned    * sig_minimum,
-    Dwarf_Unsigned    * sig_count,
-    Dwarf_Sig8        * signature,
-    Dwarf_Error *       error)
-\fP
-.DE
-Allows retrieving the data
-for foreign type-unit entries.
 
 .H 3 " dwarf_dnames_bucket()"
 .DS
@@ -8608,93 +8553,6 @@ for hash buckets.
 .DE
 Allows retrieving the data
 about names and signatures.
-
-
-.H 3 " dwarf_dnames_abbrev_by_index()"
-.DS
-\f(CW int dwarf_dnames_abbrev_by_index(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      abbrev_entry,
-    Dwarf_Unsigned    * abbrev_code,
-    Dwarf_Unsigned    * tag,
-    Dwarf_Unsigned    * number_of_abbrev,
-    Dwarf_Unsigned    * number_of_attr_form_entries,
-    Dwarf_Error *       error)
-\fP
-.DE
-Allows retrieving the abbreviations 
-from a portion of the 
-section by index.
-
-.H 3 " dwarf_dnames_abbrev_form_by_index()"
-.DS
-\f(CW int dwarf_dnames_abbrev_form_by_index(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      abbrev_entry_index,
-    Dwarf_Unsigned    * name_index_attr,
-    Dwarf_Unsigned    * form,
-    Dwarf_Unsigned    * number_of_attr_form_entries,
-    Dwarf_Error *       error)
-\fP
-.DE
-Allows retrieving the abbreviations
-from a portion of the
-section by index.
-
-
-.H 3 " dwarf_dnames_abbrev_by_code()"
-.DS
-\f(CW int dwarf_dnames_abbrev_by_code(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      abbrev_code,
-    Dwarf_Unsigned    * tag,
-    Dwarf_Unsigned    * index_of_abbrev,
-    Dwarf_Unsigned    * index_of_attr_form_entries,
-    Dwarf_Error *       error)
-\fP
-.DE
-Allows retrieving the abbreviations 
-from a portion of the 
-section by abbrev-code.
-
-.H 3 " dwarf_dnames_entrypool()"
-.DS
-\f(CW int dwarf_dnames_entrypool(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      offset_in_entrypool,
-    Dwarf_Unsigned    * abbrev_code,
-    Dwarf_Unsigned    * tag,
-    Dwarf_Unsigned    * value_count,
-    Dwarf_Unsigned    * index_of_abbrev,
-    Dwarf_Unsigned    * offset_of_initial_value,
-    Dwarf_Error *       error)
-\fP
-.DE
-Allows retrieving the 
-data from a portion of the entrypool
-by index and offset.
-
-.H 3 " dwarf_dnames_entrypool_values()"
-.DS
-\f(CW int dwarf_dnames_entrypool_values(
-    Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_table_number,
-    Dwarf_Unsigned      index_of_abbrev,
-    Dwarf_Unsigned      offset_in_entrypool_of_values,
-    Dwarf_Unsigned    * array_dw_idx_number,
-    Dwarf_Unsigned    * array_form,
-    Dwarf_Unsigned    * array_of_offsets,
-    Dwarf_Sig8        * array_of_signatures,
-    Dwarf_Error *       error)
-\fP
-.DE
-Allows retrieving detailed 
-data from a portion of the entrypool
-by index and offset.
 
 .H 3 " dwarf_dnames_cu_table()"
 .DS
