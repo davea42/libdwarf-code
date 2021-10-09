@@ -1416,7 +1416,10 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug /*dbg*/,
     Dwarf_Debug * /*tieddbg_out*/,
     Dwarf_Error * /*error*/);
 
-/*  Returns the version string. Example: "20190922"
+/*  Returns the version string. Example: "0.3.0"
+    which is a Semantic Version identifier.
+    Before September 2021 the version string was
+    a date, for example "20210528",
     which is in ISO date format. */
 DW_API const char * dwarf_package_version(void);
 
