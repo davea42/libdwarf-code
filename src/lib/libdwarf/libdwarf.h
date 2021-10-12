@@ -85,7 +85,7 @@ extern "C" {
 */
 
 /* Sematic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION_MACRO 0
+#define DW_LIBDWARF_VERSION_MAJOR 0
 #define DW_LIBDWARF_VERSION_MINOR 3
 #define DW_LIBDWARF_VERSION_MICRO 0
 #define DW_LIBDWARF_VERSION "0.3.0"

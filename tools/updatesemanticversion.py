@@ -62,7 +62,7 @@ def extractverac(l, prefix):
     ver = vwds[0]
     return ver
 
-lha = '''#define DW_LIBDWARF_VERSION_MACRO '''
+lha = '''#define DW_LIBDWARF_VERSION_MAJOR '''
 lhb = '''#define DW_LIBDWARF_VERSION_MINOR '''
 lhc = '''#define DW_LIBDWARF_VERSION_MICRO '''
 lhv = '''#define DW_LIBDWARF_VERSION '''
