@@ -28,84 +28,58 @@ def deriveversions(sver):
         return (False, 0, 0, 0)
     return (True, ma, min, mic)
 
+
+ha = '''#define DW_LIBDWARF_VERSION_MAJOR '''
+hb = '''#define DW_LIBDWARF_VERSION_MINOR '''
+hc = '''#define DW_LIBDWARF_VERSION_MICRO '''
+hv = '''#define DW_LIBDWARF_VERSION '''
+def updatelhstring(lcount,l, sver, maj, min, mic):
+   if  l.startswith(ha):
+       l2 = ha + maj + "\n" 
+       return l2,int(lcount)+1
+   if  l.startswith(hb):
+       l2 = hb + min + "\n" 
+       return l2,int(lcount)+1
+   if  l.startswith(hc):
+       l2 = hc + mic + "\n" 
+       return l2,int(lcount)+1
+   if  l.startswith(hv):
+       l2 = ''.join([hv,'"',sver,'"\n'])
+       return l2,int(lcount)+1
+   return l,lcount
+
 # set(VERSION 0.2.0)
+begincm = "set(VERSION "
+def updatecmstring(cmcount,l,sver, maj, min, mic):
+   if l.startswith(begincm):
+       l2 = ''.join([begincm,sver,')\n'])
+       return l2,int(cmcount)+1
+   return l,cmcount
+
 # m4_define([v_maj], [0])
 # m4_define([v_min], [2])
 # m4_define([v_mic], [0])
-
-def extractvercm(l):
-    wds = l.rstrip().split(" ")
-    if not len(wds) == 2:
-        print("Something wrong, cmake version not findable", l)
-        sys.exit(1)
-    v = wds[1]
-    vwds = v.split(")")
-    ver = vwds[0]
-    return ver
-
-
-def bracketval(s):
-    s2 = "".join(["[", s, "]"])
-    return s2
-
-
-def updatecmversion(l, ver):
-    curver = extractvercm(l)
-    if curver != ver:
-        return (curver, ver)
-    return False, False
-
-
-def extractverac(l, prefix):
-    vend = l.replace(prefix, "", 1)
-    vwds = vend.split("]")
-    ver = vwds[0]
-    return ver
-
-lha = '''#define DW_LIBDWARF_VERSION_MAJOR '''
-lhb = '''#define DW_LIBDWARF_VERSION_MINOR '''
-lhc = '''#define DW_LIBDWARF_VERSION_MICRO '''
-lhv = '''#define DW_LIBDWARF_VERSION '''
-def updatelhstring(l, sver, maj, min, mic):
-    if  l.startswith(lha):
-        l2 = lha + maj + "\n" 
-        return l2
-    if  l.startswith(lhb):
-        l2 = lhb + min + "\n" 
-        return l2
-    if  l.startswith(lhc):
-        l2 = lhc + mic + "\n" 
-        return l2
-    if  l.startswith(lhv):
-        l2 = ''.join([lhv,'"',sver,'"\n'])
-        return l2
-    return l
-
-
-def updateacversion(l, prefix, maj, min, mic):
-    curver = extractverac(l, prefix)
-    n = "mic"
-    if maj:
-        n = "maj"
-        ver = maj
-    elif min:
-        n = "min"
-        ver = min
-    else:
-        ver = mic
-    if curver != ver:
-        return (bracketval(curver), bracketval(ver))
-    return False, False
+ma = "m4_define([v_maj], ["
+mn = "m4_define([v_min], ["
+mc = "m4_define([v_mic], ["
+def updateacversion(account,l, sver, maj, min, mic):
+    if l.startswith(ma):
+       l2 = ''.join([ma,maj,"])\n"])
+       return l2,int(account) +1
+    if l.startswith(mn):
+       l2 = ''.join([mn,min,"])\n"])
+       return l2,int(account) +1
+    if l.startswith(mc):
+       l2 = ''.join([mc,mic,"])\n"])
+       return l2,int(account) +1
+    return l,int(account)
 
 
 #  type is "ac" or "cm"
 def updatefile(fname, type, sver, maj, min, mic):
-    begincm = "set(VERSION "
-    ma = "m4_define([v_maj], ["
-    mn = "m4_define([v_min], ["
-    mc = "m4_define([v_mic], ["
     foundcm = 0
     foundac = 0
+    foundlh = 0
     print("Processing", fname, " type", type, " newver", sver)
     try:
         fin = open(fname, "r")
@@ -117,62 +91,30 @@ def updatefile(fname, type, sver, maj, min, mic):
     outdata = []
     for i, l in enumerate(content):
         if type == "cm":
-            if l.startswith(begincm):
-                foundcm += 1
-                print("Found CM version line", i, "current line", l)
-                (cur, newv) = updatecmversion(l, sver)
-                print("dadebug CM cur,newv", cur, newv)
-                if cur:
-                    s = l.replace(cur, newv, 1)
-                    outdata += [s]
-                else:
-                    outdata += [l]
-                continue
-            outdata += [l]
+            lx,foundcm = updatecmstring(foundcm,l, sver,\
+                maj, min, mic)
+            outdata += [lx]
             continue
         elif type == "lh":
-            lx = updatelhstring(l, sver, maj, min, mic)
+            lx,foundlh = updatelhstring(foundlh,l, sver,\
+                maj, min, mic)
             outdata += [lx]
-        else:
-            if l.startswith(ma):
-                foundac += 1
-                print("Found major in line", i, "current line", l[0:25])
-                (cur, newv) = updateacversion(l, ma, maj, False, False)
-                if cur:
-                    s = l.replace(cur, newv, 1)
-                    print("updated major in line", i, "current line", l[0:25])
-                    outdata += [s]
-                else:
-                    outdata += [l]
-                continue
-            if l.startswith(mn):
-                foundac += 1
-                print("Found minor in line", i, "current line", l[0:25])
-                (cur, newv) = updateacversion(l, mn, False, min, False)
-                if cur:
-                    s = l.replace(cur, newv, 1)
-                    print("updated minor in line", i, "current line", l[0:25])
-                    outdata += [s]
-                else:
-                    outdata += [l]
-                continue
-            if l.startswith(mc):
-                foundac += 1
-                print("Found micro in line", i, "current line", l[0:25])
-                (cur, newv) = updateacversion(l, mc, False, False, mic)
-                if cur:
-                    s = l.replace(cur, newv, 1)
-                    print("updated micro in line", i, "current line", l[0:25])
-                    outdata += [s]
-                else:
-                    outdata += [l]
-                continue
-            outdata += [l]
+            continue
+        elif type == "ac":
+            lx,foundac = updateacversion(foundac,l,\
+                sver, maj, min, mic)
+            outdata += [lx]
+            continue
+        print("Unknown type of file! Give up!",type);
+        sys.exit(1)
     if type == "cm" and not foundcm:
         print("Something wrong, did not find", fname, "  version line")
         sys.exit(1)
     if type == "ac" and not foundac == 3:
         print("Something wrong, did not find configure.ac", "version lines")
+        sys.exit(1)
+    if type == "lh" and not foundlh == 4:
+        print("Something wrong, did not find libdwarf.h", "version lines")
         sys.exit(1)
     try:
         fo = open(fname, "w")
@@ -183,11 +125,6 @@ def updatefile(fname, type, sver, maj, min, mic):
         print(l, end="", file=fo)
     fo.close()
 
-
-# set(VERSION 0.2.0)
-# m4_define([v_maj], [0])
-# m4_define([v_min], [2])
-# m4_define([v_mic], [0])
 expecteddirs = ["bugxml", "cmake", "doc", "m4", "scripts", "src", "test"]
 
 
