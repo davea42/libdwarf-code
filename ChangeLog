@@ -1,4 +1,18 @@
 2021-10-12:  David Anderson
+    commit 15de42b79eba2797cbf283419a537e2727a1adf9
+
+    Correcting spelling mistake
+    DW_LIBDWARF_VERSION_MAJOR (not _MACRO)
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   tools/updatesemanticversion.py
+
+2021-10-12:  David Anderson
+    commit 15f563a466e83518839f77da3ea3c991f60db40c
+
+    Now recent updates shown in ChangeLog
+            modified:   ChangeLog
+
+2021-10-12:  David Anderson
     commit ed67c88518bc7dc3374d7bd2e8c49c68b8935709
 
             new file:   tools/README
