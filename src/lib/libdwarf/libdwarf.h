@@ -82,8 +82,13 @@ extern "C" {
     Function declarations are written on a single line each here
     so one can use grep  to each declaration in its entirety.
     The declarations are a little harder to read this way, but...
-
 */
+
+/* Sematic Version identity for this libdwarf.h */
+#define DW_LIBDWARF_VERSION_MACRO 0
+#define DW_LIBDWARF_VERSION_MINOR 3
+#define DW_LIBDWARF_VERSION_MICRO 0
+#define DW_LIBDWARF_VERSION "0.3.0"
 
 /*! @brief Basic libdwarf datatypes.
 
