@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 # Update current package semantic version.
+# 2021 David Anderson
+# This python3 script is hereby placed in the Public Domain
+# for anyone to use in any way.
 
 import os
 import sys
 
-
 def usage():
-    print("Example of use: updatesemanticversion 0.2.0")
+    print("Example of use:")
+    print("  python3 tools/updatesemanticversion.py 0.2.0")
     print("Then git push as appropriate")
     sys.exit(0)
-
 
 def deriveversions(sver):
     nums = sver.split(".")
@@ -26,12 +28,10 @@ def deriveversions(sver):
         return (False, 0, 0, 0)
     return (True, ma, min, mic)
 
-
 # set(VERSION 0.2.0)
 # m4_define([v_maj], [0])
 # m4_define([v_min], [2])
 # m4_define([v_mic], [0])
-
 
 def extractvercm(l):
     wds = l.rstrip().split(" ")
@@ -61,6 +61,25 @@ def extractverac(l, prefix):
     vwds = vend.split("]")
     ver = vwds[0]
     return ver
+
+lha = '''#define DW_LIBDWARF_VERSION_MACRO '''
+lhb = '''#define DW_LIBDWARF_VERSION_MINOR '''
+lhc = '''#define DW_LIBDWARF_VERSION_MICRO '''
+lhv = '''#define DW_LIBDWARF_VERSION '''
+def updatelhstring(l, sver, maj, min, mic):
+    if  l.startswith(lha):
+        l2 = lha + maj + "\n" 
+        return l2
+    if  l.startswith(lhb):
+        l2 = lhb + min + "\n" 
+        return l2
+    if  l.startswith(lhc):
+        l2 = lhc + mic + "\n" 
+        return l2
+    if  l.startswith(lhv):
+        l2 = ''.join([lhv,'"',sver,'"\n'])
+        return l2
+    return l
 
 
 def updateacversion(l, prefix, maj, min, mic):
@@ -111,6 +130,9 @@ def updatefile(fname, type, sver, maj, min, mic):
                 continue
             outdata += [l]
             continue
+        elif type == "lh":
+            lx = updatelhstring(l, sver, maj, min, mic)
+            outdata += [lx]
         else:
             if l.startswith(ma):
                 foundac += 1
@@ -191,4 +213,5 @@ if __name__ == "__main__":
             sys.exit(1)
     updatefile("configure.ac", "ac", sver, maj, min, mic)
     updatefile("CMakeLists.txt", "cm", sver, maj, min, mic)
+    updatefile("src/lib/libdwarf/libdwarf.h", "lh", sver, maj, min, mic)
     print("Updated: done.")
