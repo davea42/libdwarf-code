@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.12 09 October 2021  0.3.0
+.ds vE Rev 4.14 12 October 2021  0.3.0
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2547,6 +2547,19 @@ For releases before September 2021
 the format is standard ISO date format. 
 For example "20180718".
 This function was added in October 2019.
+.P
+As of October 2021 there are some macros
+now in libdwarf.h with version information
+about this libdwarf.h.
+.P
+\f(CWDW_LIBDWARF_VERSION\fP
+whose value is a string like "0.3.0".
+\f(CWDW_LIBDWARF_VERSION_MAJOR\fP
+whose value is an integer such as 0.
+\f(CWDW_LIBDWARF_VERSION_MINOR\fP,
+whose value is an integer such as 3.
+\f(CWDW_LIBDWARF_VERSION_MICRO\fP
+whose value is an integer such as 0.
 
 .H 2 "Object Type Detectors"
 These are used by
