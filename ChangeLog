@@ -1,3 +1,140 @@
+2021-10-12:  David Anderson
+    commit ed67c88518bc7dc3374d7bd2e8c49c68b8935709
+
+            new file:   tools/README
+    Now a working update that ensures the various places
+    with semantic versions are all set equivalently.
+            modified:   tools/updatesemanticversion.py
+
+2021-10-11:  David Anderson
+    commit 957442d1059130b96713b255d3b29ddd90e1a512
+
+    Now, for the first time,
+    DW_LIBDWARF_VERSION_MACRO
+    DW_LIBDWARF_VERSION_MINOR
+    DW_LIBDWARF_VERSION_MICRO
+    and
+    DW_LIBDWARF_VERSION
+    are #defined.
+    These have the Semantic version number.
+    At present
+    Macro is 0
+    minor is 3
+    Micro is 0
+    DW_LIBDWARF_VERSION
+    is defined as "0.3.0"
+
+    These are the version defined in libdwarf.h
+    when one includes it.
+    No earlier libdwarf.h defined any of these.
+
+    The function dwarf_package_version(),
+    on the other hand, returns a string
+    with the PACKAGE_VERSION visible
+    in configure.ac and CMakeLists.txt
+    at the time the library was compiled
+
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-10-11:  David Anderson
+    commit 7635c57217080bf38e71216b9aa8491a7afce3be
+
+    A tool in tools directory to make
+    updating semantic version numbers
+    simple ... for the various places they go.
+            new file:   updatesemanticversion.py
+
+2021-10-09:  David Anderson
+    commit 536b25173574787f2336ee120c7e3c92a610cbe6
+
+    Now shows the original date format
+    (such has "20210528") returned
+    by dwarf_package_version() as well as the
+    semantic-version date format (such
+    as "0.3.0")  Still document version 4.12
+            modified:   ../../../doc/libdwarf.mm
+            modified:   ../../../doc/libdwarf.pdf
+
+2021-10-09:  David Anderson
+    commit fef16930a3de105f25f2370e3fae652934071f99
+
+    Now the get_package_version() function documentation
+    shows both semantic-version and date-based
+    (a form used before September 2021) version
+    strings that may be returned.
+
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-10-09:  David Anderson
+    commit 68084419107ca2c9b6cb062bcce9fbd8b4165067
+
+    Clarified and puts more emphasis on
+    the way in which libdwarf tries to
+    restrict the initial letters of public names
+    to a small set.
+            modified:   src/lib/libdwarf/CODINGSTYLE
+
+2021-10-09:  David Anderson
+    commit 433f3bd86f3b00809767c08fb64d52ccbdc425d5
+
+    functions in .debug_names that are not yet
+    implemented have been removed.  Now version 4.12.
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+
+2021-10-03:  David Anderson
+    commit 98927ddcaf31387f9df2ad9e747dc2310bfb32a4
+
+    trivial updates to match libdwarf.h
+    renamings of the last day or so.
+    Sorry this was not done yesterday.
+            modified:   doc/checkexamples.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_find_sigref.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_getopt.c
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+            modified:   src/lib/libdwarf/dwarf_str_offsets.c
+            modified:   src/lib/libdwarf/dwarf_string.c
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-10-03:  David Anderson
+    commit 2c1432151073120bec37b80716897cd5a55eb934
+
+    Updated with new version in comment
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+2021-10-02:  David Anderson
+    commit 019b1906911b41d5639ec8f2192b95e071933e88
+
+    Changelog now has latest git log lines.
+            modified:   ChangeLog
+
 2021-10-02:  David Anderson
     commit 85b53096a0ba7f5fbe66d6c73b8e6d8bdb1c6743
 
