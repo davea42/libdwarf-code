@@ -2589,13 +2589,23 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             esb_append_printf_u(stringbuf," 0x%"
                 DW_PR_XZEROS  DW_PR_DUx ">",r->dwr_addr2);
         } else {
+            /*  See DWARF5 page 53, line 17 
+                the addresses match so nothing is there and
+                the address itself is irrelevant. */
+            Dwarf_Bool emptyrange = (r->dwr_type == DW_RANGES_ENTRY
+                && r->dwr_addr1 == r->dwr_addr2);
+
             esb_append_printf_i(stringbuf,"   [%2" DW_PR_DSd,i);
             esb_append_printf_s(stringbuf,"] %-14s",type);
             esb_append_printf_u(stringbuf," 0x%"
                 DW_PR_XZEROS  DW_PR_DUx,
                 r->dwr_addr1);
             esb_append_printf_u(stringbuf,
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx "\n",r->dwr_addr2);
+                " 0x%" DW_PR_XZEROS  DW_PR_DUx ,r->dwr_addr2);
+            if (emptyrange) {
+                esb_append(stringbuf," (empty range)");
+            }
+            esb_append(stringbuf,"\n");
         }
     }
     esb_destructor(&truename);
