@@ -1,3 +1,46 @@
+2021-10-22:  David Anderson
+    commit d307e3417041ca9498be6df6d9bbc98fc94fd759
+
+    When in .debug_ranges the beginning == ending address,
+    print "(empty range)" at the end of the range line
+    to remind the reader this is not a range, but is
+    a placeholder for a range that was deleted by
+    the compiler or linker when the object was created.
+    See DWARF4 standard page 39, non-normative text.
+
+            modified:   src/bin/dwarfdump/print_die.c
+
+2021-10-18:  David Anderson
+    commit ab88ad8cb76ab4e6ab21f30b50771bcbb7ed14e0
+
+    If uintptr_t is defined in stdint.h
+    at configure time we need to include
+    stdint.h here for uintptr_t,
+    which was done correctly everywhere else
+    for uintptr_t.
+            modified:   dwarf_pro_dnames.c
+
+2021-10-12:  David Anderson
+    commit 9e7fce0d22910b6374bea89a2937faa670368c3f
+
+    Added words about libdwarf.h macros
+    DW_LIBDWARF_VERSION etc in the
+    documentation of dwarf_package_version().
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+
+2021-10-12:  David Anderson
+    commit 02863428a46d75a098a2b40e47aaeb46db889e89
+
+    Simplified the code. Easier to understand.
+            modified:   tools/updatesemanticversion.py
+
+2021-10-12:  David Anderson
+    commit c2055a025bfdd6568c24a030d8aeef6021ebcae0
+
+    Adding in new gitlog entry
+            modified:   ChangeLog
+
 2021-10-12:  David Anderson
     commit 15de42b79eba2797cbf283419a537e2727a1adf9
 
