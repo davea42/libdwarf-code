@@ -45,7 +45,7 @@ struct ops_table_s {
 
 /*  the ops are 8 bits max */
 #define OPS_USED_SIZE    256
-#define OPS_USED_DUPS    3
+#define OPS_USED_DUPS    20
 static int ops_used_table[OPS_USED_SIZE];
 struct dups_tab_s {
     int dt_val;
@@ -86,15 +86,32 @@ static struct ops_table_s optabsource[]= {
 {DW_OP_reinterpret /* 0xa9*/,         0, 1},
 {DW_OP_GNU_push_tls_address /*0xe0*/, 0, 0},
 {DW_OP_HP_unknown /* 0xe0*/,          0, 0},
+{DW_OP_LLVM_form_aspace_address /* 0xe1*/,  0, 0},
 {DW_OP_HP_is_value /* 0xe1*/,         0, 1},
 
+{DW_OP_LLVM_push_lane /* 0xe2*/,      0, 0},
 {DW_OP_HP_fltconst4 /* 0xe2*/ ,       0, 1},
 
+{DW_OP_LLVM_offset /* 0xe3*/ ,        0, 0},
 {DW_OP_HP_fltconst8 /* 0xe3*/ ,       0, 1},
+
+{DW_OP_LLVM_offset_uconst /* 0xe4*/,  0, 1},
 {DW_OP_HP_mod_range /* 0xe4*/,        0, 2},
+
+{DW_OP_LLVM_bit_offset /* 0xe5*/,      0, 0},
 {DW_OP_HP_unmod_range /* 0xe5*/,      0, 2},
+
+{DW_OP_LLVM_call_frame_entry_reg /* 0xe6*/, 0, 1},
 {DW_OP_HP_tls /* 0xe6*/,              0, 0},
-{DW_OP_INTEL_bit_piece /* 0xed*/,     0, 2},
+
+{DW_OP_LLVM_undefined /* 0xe7*/,      0, 0},
+{DW_OP_LLVM_aspace_bregx /* 0xe8*/,   0, 2},
+{DW_OP_INTEL_bit_piece /* 0xe8*/,     0, 2},
+{DW_OP_LLVM_aspace_implicit_pointer /* 0xe9*/,   0, 2},
+{DW_OP_LLVM_piece_end /* 0xea*/,      0, 0},
+{DW_OP_LLVM_extend /* 0xeb*/,         0, 2},
+{DW_OP_LLVM_select_bit_piece /* 0xec*/, 0, 2},
+
 {DW_OP_WASM_location /* 0xed*/,       0, 1},
 {DW_OP_WASM_location_int /* 0xee*/,   0, 1},
 
@@ -200,7 +217,7 @@ validate_op_listed(char *curdefname,unsigned long v,
             }
         }
     }
-    printf("Failed to find %s val %lu at dwarf.h "
+    printf("Failed to find %s val 0x%lu at dwarf.h "
         "line %u in inoptabsource\n",
         curdefname,v, linenum);
     exit(1);

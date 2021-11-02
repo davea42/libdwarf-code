@@ -228,18 +228,25 @@ struct dwarf_opscounttab_s _dwarf_opscounttab[] = {
 {/* unused                     0xdf*/ -1},
 {/* DW_OP_GNU_push_tls_address 0xe0*/ 0},
     /* above has alt spelling DW_OP_HP_unknown */
-{/* DW_OP_HP_is_value          0xe1*/ 1},
-{/* DW_OP_HP_fltconst4         0xe2*/ 1},
-{/* DW_OP_HP_fltconst8         0xe3*/ 1},
-{/* DW_OP_HP_mod_range         0xe4*/ 2},
-{/* DW_OP_HP_unmod_range       0xe5*/ 2},
-{/* DW_OP_HP_tls               0xe6*/ 0},
-{/* unused                     0xe7*/ -1},
-{/* DW_OP_INTEL_bit_piece      0xe8*/ 2},
-{/* unused                     0xe9*/ -1},
-{/* unused                     0xea*/ -1},
-{/* unused                     0xeb*/ -1},
-{/* unused                     0xec*/ -1},
+{/* DW_OP_LLVM_form_aspace_address 0xe1*/ 0},
+    /* above has alt spelling DW_OP_HP_is_value */
+{/* DW_OP_LLVM_push_lane       0xe2*/ 0},
+    /* above has alt spelling DW_OP_HP_fltconst4 */
+{/* DW_OP_LLVM_offset          0xe3*/ 0},
+    /* above has alt spelling DW_OP_HP_fltconst8 */
+{/* DW_OP_LLVM_offset_uconst   0xe4*/ 1},
+    /* above has alt spelling DW_OP_HP_mod_range */
+{/* DW_OP_LLVM_bit_offset      0xe5*/ 0},
+    /* above has alt spelling DW_OP_HP_unmod_range */
+{/* DW_OP_LLVM_call_frame_entry_reg 0xe6*/ 1},
+    /* above has alt spelling DW_OP_HP_tls */
+{/* DW_OP_LLVM_undefined       0xe7*/ 0},
+{/* DW_OP_LLVM_aspace_bregx    0xe8*/ 2},
+    /* above has alt spelling DW_OP_INTEL_bit_piece */
+{/* DW_OP_LLVM_aspace_implicit_pointer 0xe9*/ 2},
+{/* DW_OP_LLVM_piece_end       0xea*/ 0},
+{/* DW_OP_LLVM_extend          0xeb*/ 2},
+{/* DW_OP_LLVM_select_bit_piece 0xec*/ 2},
 {/* DW_OP_WASM_location        0xed*/ 1},
 {/* DW_OP_WASM_location_int    0xee*/ 1},
 {/* unused                     0xef*/ -1},

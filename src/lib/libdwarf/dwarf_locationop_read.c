@@ -778,6 +778,53 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         }
         break;
     }
+    /*  See https://www.llvm.org/docs/
+        AMDGPUDwarfExtensionsForHeterogeneousDebugging.html */
+    case DW_OP_LLVM_form_aspace_address:
+    case DW_OP_LLVM_push_lane:
+    case DW_OP_LLVM_offset:
+    case DW_OP_LLVM_bit_offset:
+    case DW_OP_LLVM_undefined:
+    case DW_OP_LLVM_piece_end:
+        /* no operands on these */
+        break;
+    case DW_OP_LLVM_offset_uconst: /*uleb operand*/
+    case DW_OP_LLVM_call_frame_entry_reg: /*uleb operand*/
+        DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand1,leb128_length,
+           dbg,error,section_end);
+        offset = offset + leb128_length;
+        break;
+    
+    case DW_OP_LLVM_aspace_implicit_pointer:
+        READ_UNALIGNED_CK(dbg, operand1, Dwarf_Unsigned, loc_ptr,
+            offset_size,error,section_end);
+        loc_ptr = loc_ptr + offset_size;
+        if (loc_ptr > section_end) {
+            _dwarf_error_string(dbg,error,
+                DW_DLE_LOCEXPR_OFF_SECTION_END,
+                "DW_DLE_LOCEXPR_OFF_SECTION_END: Error reading "
+                "DW_OP_LLVM_aspace_implicit_pointer.");
+            return DW_DLV_ERROR;
+        }
+
+        DECODE_LEB128_SWORD_LEN_CK(loc_ptr, operand2,leb128_length,
+           dbg,error,section_end);
+        offset = offset + leb128_length;
+        break;
+
+    case DW_OP_LLVM_aspace_bregx:
+    case DW_OP_LLVM_extend:
+    case DW_OP_LLVM_select_bit_piece:
+        DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand1,leb128_length,
+           dbg,error,section_end);
+        offset = offset + leb128_length;
+
+        DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand2,leb128_length,
+           dbg,error,section_end);
+        offset = offset + leb128_length;
+        break;
+ 
+ 
     default: {
         dwarfstring m;
         const char *atomname = 0;

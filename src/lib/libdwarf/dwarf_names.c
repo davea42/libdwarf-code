@@ -1997,26 +1997,55 @@ dwarf_get_OP_name (unsigned int val,
         0xe0. DW_OP_lo_user */
     /*  Skipping alternate spelling of value
         0xe0. DW_OP_HP_unknown */
-    case DW_OP_HP_is_value:
-        *s_out = "DW_OP_HP_is_value";
+    case DW_OP_LLVM_form_aspace_address:
+        *s_out = "DW_OP_LLVM_form_aspace_address";
         return DW_DLV_OK;
-    case DW_OP_HP_fltconst4:
-        *s_out = "DW_OP_HP_fltconst4";
+    /*  Skipping alternate spelling of value
+        0xe1. DW_OP_HP_is_value */
+    case DW_OP_LLVM_push_lane:
+        *s_out = "DW_OP_LLVM_push_lane";
         return DW_DLV_OK;
-    case DW_OP_HP_fltconst8:
-        *s_out = "DW_OP_HP_fltconst8";
+    /*  Skipping alternate spelling of value
+        0xe2. DW_OP_HP_fltconst4 */
+    case DW_OP_LLVM_offset:
+        *s_out = "DW_OP_LLVM_offset";
         return DW_DLV_OK;
-    case DW_OP_HP_mod_range:
-        *s_out = "DW_OP_HP_mod_range";
+    /*  Skipping alternate spelling of value
+        0xe3. DW_OP_HP_fltconst8 */
+    case DW_OP_LLVM_offset_uconst:
+        *s_out = "DW_OP_LLVM_offset_uconst";
         return DW_DLV_OK;
-    case DW_OP_HP_unmod_range:
-        *s_out = "DW_OP_HP_unmod_range";
+    /*  Skipping alternate spelling of value
+        0xe4. DW_OP_HP_mod_range */
+    case DW_OP_LLVM_bit_offset:
+        *s_out = "DW_OP_LLVM_bit_offset";
         return DW_DLV_OK;
-    case DW_OP_HP_tls:
-        *s_out = "DW_OP_HP_tls";
+    /*  Skipping alternate spelling of value
+        0xe5. DW_OP_HP_unmod_range */
+    case DW_OP_LLVM_call_frame_entry_reg:
+        *s_out = "DW_OP_LLVM_call_frame_entry_reg";
         return DW_DLV_OK;
-    case DW_OP_INTEL_bit_piece:
-        *s_out = "DW_OP_INTEL_bit_piece";
+    /*  Skipping alternate spelling of value
+        0xe6. DW_OP_HP_tls */
+    case DW_OP_LLVM_undefined:
+        *s_out = "DW_OP_LLVM_undefined";
+        return DW_DLV_OK;
+    case DW_OP_LLVM_aspace_bregx:
+        *s_out = "DW_OP_LLVM_aspace_bregx";
+        return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0xe8. DW_OP_INTEL_bit_piece */
+    case DW_OP_LLVM_aspace_implicit_pointer:
+        *s_out = "DW_OP_LLVM_aspace_implicit_pointer";
+        return DW_DLV_OK;
+    case DW_OP_LLVM_piece_end:
+        *s_out = "DW_OP_LLVM_piece_end";
+        return DW_DLV_OK;
+    case DW_OP_LLVM_extend:
+        *s_out = "DW_OP_LLVM_extend";
+        return DW_DLV_OK;
+    case DW_OP_LLVM_select_bit_piece:
+        *s_out = "DW_OP_LLVM_select_bit_piece";
         return DW_DLV_OK;
     case DW_OP_WASM_location:
         *s_out = "DW_OP_WASM_location";

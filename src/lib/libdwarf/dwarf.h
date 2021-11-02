@@ -873,20 +873,19 @@ extern "C" {
 most-likely-useful name. */
 #define DW_OP_lo_user                   0xe0
 
-#define DW_OP_GNU_uninit                0xf0 /* GNU */
-#define DW_OP_GNU_encoded_addr          0xf1 /* GNU */
-#define DW_OP_GNU_implicit_pointer      0xf2 /* GNU */
-#define DW_OP_GNU_entry_value           0xf3 /* GNU */
-#define DW_OP_GNU_const_type            0xf4 /* GNU */
-#define DW_OP_GNU_regval_type           0xf5 /* GNU */
-#define DW_OP_GNU_deref_type            0xf6 /* GNU */
-#define DW_OP_GNU_convert               0xf7 /* GNU */
-#define DW_OP_GNU_reinterpret           0xf9 /* GNU */
-#define DW_OP_GNU_parameter_ref         0xfa /* GNU */
-#define DW_OP_GNU_addr_index            0xfb /* GNU Fission */
-#define DW_OP_GNU_const_index           0xfc /* GNU Fission */
-#define DW_OP_GNU_variable_value        0xfd /* GNU 2017 */
-
+    /* LLVM  extensions. */
+#define DW_OP_LLVM_form_aspace_address  0xe1 
+#define DW_OP_LLVM_push_lane            0xe2 
+#define DW_OP_LLVM_offset               0xe3 
+#define DW_OP_LLVM_offset_uconst        0xe4 
+#define DW_OP_LLVM_bit_offset           0xe5
+#define DW_OP_LLVM_call_frame_entry_reg 0xe6 
+#define DW_OP_LLVM_undefined            0xe7   
+#define DW_OP_LLVM_aspace_bregx         0xe8
+#define DW_OP_LLVM_aspace_implicit_pointer 0xe9 
+#define DW_OP_LLVM_piece_end            0xea 
+#define DW_OP_LLVM_extend               0xeb 
+#define DW_OP_LLVM_select_bit_piece     0xec
     /* HP extensions. */
 #define DW_OP_HP_unknown                0xe0 /* HP conflict: GNU */
 #define DW_OP_HP_is_value               0xe1 /* HP */
@@ -899,8 +898,22 @@ most-likely-useful name. */
 /* Intel: made obsolete by DW_OP_bit_piece above. */
 #define DW_OP_INTEL_bit_piece           0xe8
 
+
 /* Apple extension. */
+#define DW_OP_GNU_uninit                0xf0 /* GNU */
 #define DW_OP_APPLE_uninit              0xf0 /* Apple */
+#define DW_OP_GNU_encoded_addr          0xf1 /* GNU */
+#define DW_OP_GNU_implicit_pointer      0xf2 /* GNU */
+#define DW_OP_GNU_entry_value           0xf3 /* GNU */
+#define DW_OP_GNU_const_type            0xf4 /* GNU */
+#define DW_OP_GNU_regval_type           0xf5 /* GNU */
+#define DW_OP_GNU_deref_type            0xf6 /* GNU */
+#define DW_OP_GNU_convert               0xf7 /* GNU */
+#define DW_OP_GNU_reinterpret           0xf9 /* GNU */
+#define DW_OP_GNU_parameter_ref         0xfa /* GNU */
+#define DW_OP_GNU_addr_index            0xfb /* GNU Fission */
+#define DW_OP_GNU_const_index           0xfc /* GNU Fission */
+#define DW_OP_GNU_variable_value        0xfd /* GNU 2017 */
 #define DW_OP_PGI_omp_thread_num   0xf8 /* PGI (STMicroelectronics) */
 
 #define DW_OP_hi_user                   0xff
