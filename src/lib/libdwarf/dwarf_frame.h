@@ -114,6 +114,7 @@ struct Dwarf_Frame_Instr_s {
     /*  letter r and u both use u struct elements. */
     Dwarf_Unsigned  fi_u0;
     Dwarf_Unsigned  fi_u1;
+    Dwarf_Unsigned  fi_u2; /* LLVM extension */
     Dwarf_Signed    fi_s0;
     Dwarf_Signed    fi_s1;
     Dwarf_Unsigned  fi_code_align_factor;

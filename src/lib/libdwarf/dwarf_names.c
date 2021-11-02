@@ -1441,6 +1441,21 @@ dwarf_get_AT_name (unsigned int val,
         return DW_DLV_OK;
     /*  Skipping alternate spelling of value
         0x3e03. DW_AT_LLVM_apinotes */
+    case DW_AT_LLVM_active_lane:
+        *s_out = "DW_AT_LLVM_active_lane";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_augmentation:
+        *s_out = "DW_AT_LLVM_augmentation";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_lanes:
+        *s_out = "DW_AT_LLVM_lanes";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_lane_pc:
+        *s_out = "DW_AT_LLVM_lane_pc";
+        return DW_DLV_OK;
+    case DW_AT_LLVM_vector_size:
+        *s_out = "DW_AT_LLVM_vector_size";
+        return DW_DLV_OK;
     case DW_AT_APPLE_optimized:
         *s_out = "DW_AT_APPLE_optimized";
         return DW_DLV_OK;
@@ -2941,6 +2956,9 @@ dwarf_get_LNCT_name (unsigned int val,
     case DW_LNCT_LLVM_source:
         *s_out = "DW_LNCT_LLVM_source";
         return DW_DLV_OK;
+    case DW_LNCT_LLVM_is_MD5:
+        *s_out = "DW_LNCT_LLVM_is_MD5";
+        return DW_DLV_OK;
     case DW_LNCT_hi_user:
         *s_out = "DW_LNCT_hi_user";
         return DW_DLV_OK;
@@ -3250,6 +3268,12 @@ dwarf_get_CFA_name (unsigned int val,
         return DW_DLV_OK;
     case DW_CFA_GNU_negative_offset_extended:
         *s_out = "DW_CFA_GNU_negative_offset_extended";
+        return DW_DLV_OK;
+    case DW_CFA_LLVM_def_aspace_cfa:
+        *s_out = "DW_CFA_LLVM_def_aspace_cfa";
+        return DW_DLV_OK;
+    case DW_CFA_LLVM_def_aspace_cfa_sf:
+        *s_out = "DW_CFA_LLVM_def_aspace_cfa_sf";
         return DW_DLV_OK;
     case DW_CFA_METAWARE_info:
         *s_out = "DW_CFA_METAWARE_info";

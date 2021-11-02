@@ -673,11 +673,17 @@ extern "C" {
 #define DW_AT_BORLAND_closure                   0x3b31
 
 #define DW_AT_LLVM_include_path                 0x3e00
-#define DW_AT_LLVM_config_macros                 0x3e01
-#define DW_AT_LLVM_sysroot                 0x3e02
-#define DW_AT_LLVM_tag_offset                 0x3e03
+#define DW_AT_LLVM_config_macros                0x3e01
+#define DW_AT_LLVM_sysroot                      0x3e02
+#define DW_AT_LLVM_tag_offset                   0x3e03
 /*  LLVM intends to use 0x3e04 - 0x3e06 */
 #define DW_AT_LLVM_apinotes                     0x3e03
+/*  Next 6 are for Hetrogenous debugging */
+#define DW_AT_LLVM_active_lane                  0x3e08
+#define DW_AT_LLVM_augmentation                 0x3e09
+#define DW_AT_LLVM_lanes                        0x3e0a
+#define DW_AT_LLVM_lane_pc                      0x3e0b
+#define DW_AT_LLVM_vector_size                  0x3e0c
 
 #define DW_AT_APPLE_optimized                   0x3fe1
 #define DW_AT_APPLE_flags                       0x3fe2
@@ -1226,6 +1232,7 @@ most-likely-useful name. */
 #define DW_LNCT_GNU_decl_line           0x8
 #define DW_LNCT_lo_user                 0x2000 /* DWARF5 */
 #define DW_LNCT_LLVM_source             0x2001
+#define DW_LNCT_LLVM_is_MD5             0x2002
 #define DW_LNCT_hi_user                 0x3fff /* DWARF5 */
 
 /* Line number standard opcode name. */
@@ -1348,6 +1355,8 @@ most-likely-useful name. */
 #define DW_CFA_AARCH64_negate_ra_state       0x2d
 #define DW_CFA_GNU_args_size                 0x2e /* GNU */
 #define DW_CFA_GNU_negative_offset_extended  0x2f /* GNU */
+#define DW_CFA_LLVM_def_aspace_cfa           0x30
+#define DW_CFA_LLVM_def_aspace_cfa_sf        0x31
 
 /*  Metaware if HC is augmentation, apparently meaning High C
     and the op has a single uleb operand.

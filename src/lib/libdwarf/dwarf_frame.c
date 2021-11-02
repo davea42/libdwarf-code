@@ -1389,6 +1389,76 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         }
         break;
 #endif
+        case DW_CFA_LLVM_def_aspace_cfa: {
+            Dwarf_Unsigned lreg = 0; 
+            Dwarf_Unsigned offset = 0; 
+            Dwarf_Unsigned addrspace = 0;
+            int adres = 0;
+
+            adres = _dwarf_leb128_uword_wrapper(dbg,
+                &instr_ptr,final_instr_ptr,
+                &lreg,error);
+            if (adres != DW_DLV_OK) {
+                FREELOCALMALLOC;
+                return adres;
+            }
+            ERROR_IF_REG_NUM_TOO_HIGH(lreg, reg_count);
+            adres = _dwarf_leb128_uword_wrapper(dbg,
+                &instr_ptr,final_instr_ptr,
+                &offset,error);
+            if (adres != DW_DLV_OK) {
+                FREELOCALMALLOC;
+                return adres;
+            }
+            adres = _dwarf_leb128_uword_wrapper(dbg,
+                &instr_ptr,final_instr_ptr,
+                &addrspace,error);
+            if (adres != DW_DLV_OK) {
+                FREELOCALMALLOC;
+                return adres;
+            }
+            if (make_instr) {
+                dfi->fi_u0 = lreg;
+                dfi->fi_u1 = offset;
+                dfi->fi_u2 = addrspace;
+            }
+        }
+        break;
+        case DW_CFA_LLVM_def_aspace_cfa_sf: {
+            Dwarf_Unsigned lreg = 0;
+            Dwarf_Signed offset = 0;
+            Dwarf_Unsigned addrspace = 0;
+            int adres = 0;
+
+            adres = _dwarf_leb128_uword_wrapper(dbg,
+                &instr_ptr,final_instr_ptr,
+                &lreg,error);
+            if (adres != DW_DLV_OK) {
+                FREELOCALMALLOC;
+                return adres;
+            }
+            ERROR_IF_REG_NUM_TOO_HIGH(lreg, reg_count);
+            adres = _dwarf_leb128_sword_wrapper(dbg,
+                &instr_ptr,final_instr_ptr,
+                &offset,error);
+            if (adres != DW_DLV_OK) {
+                FREELOCALMALLOC;
+                return adres;
+            }
+            adres = _dwarf_leb128_uword_wrapper(dbg,
+                &instr_ptr,final_instr_ptr,
+                &addrspace,error);
+            if (adres != DW_DLV_OK) {
+                FREELOCALMALLOC;
+                return adres;
+            }
+            if (make_instr) {
+                dfi->fi_u0 = lreg;
+                dfi->fi_s1 = offset;
+                dfi->fi_u2 = addrspace;
+            }
+        }
+        break;
         default: {
             /*  ERROR, we have an opcode we know nothing
                 about. Memory leak here, but an error
