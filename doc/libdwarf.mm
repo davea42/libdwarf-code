@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.14 12 October 2021  0.3.0
+.ds vE Rev 4.15 3 November 2021  0.3.1
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -10873,6 +10873,10 @@ void examples(Dwarf_Cie cie,
 .DE
 .in -2
 .H 3 "dwarf_get_frame_instruction()"
+This works fully for all DWARF frames except
+those from the LLVM compiler, which
+can return a DW_DLV_CFA instruction with
+three operands instead of two.
 .DS
 \f(CWint dwarf_get_frame_instruction(
     Dwarf_Frame_Instr_Head head,
@@ -10890,10 +10894,37 @@ void examples(Dwarf_Cie cie,
     Dwarf_Error     * error)
 \fP
 .DE
+It has the same argument list as the following
+except the following has an additional argument
+for the 
+DW_CFA_LLVM_def_aspace_cfa
+and
+DW_CFA_LLVM_def_aspace_cfa_sf
+hetrogenous debugging
+address-space value (the u2 value below).
+\fP
+
+.H 3 "dwarf_get_frame_instruction_a()"
+.DS
+\f(CWint dwarf_get_frame_instruction_a(
+    Dwarf_Frame_Instr_Head head,
+    Dwarf_Unsigned    instr_index,
+    Dwarf_Unsigned  * instr_offset_in_instrs,
+    Dwarf_Small     * cfa_operation,
+    const char     ** fields,
+    Dwarf_Unsigned  * u0,
+    Dwarf_Unsigned  * u1,
+    Dwarf_Unsigned  * u2,
+    Dwarf_Signed    * s0,
+    Dwarf_Signed    * s1,
+    Dwarf_Unsigned  * code_alignment_factor,
+    Dwarf_Signed    * data_alignment_factor,
+    Dwarf_Block     * expression_block,
+    Dwarf_Error     * error)
+\fP
+.DE
 \f(CW
 \fP
-This function reports the details of a single
-DW_CFA_ instruction.
 The
 \f(CWinstr_index\fP
 input must be less than
@@ -10945,6 +10976,12 @@ eleven different formats.
 So several of the keys apply to multiple
 DW_CFA instruction codes.
 .P
+The "rua" and "rsa" strings apply only to
+DW_CFA_LLVM_def_aspace_cfa 
+and
+DW_CFA_LLVM_def_aspace_cfa_sf 
+respectively.
+.P
 
 .DS
 \f(CW
@@ -10956,6 +10993,8 @@ fields      return fields set
 "rr"        u0 and u1, register numbers
 "rsd"       u1=register,s1 value, data_alignment_factor.
 "ru"        u0=register u1=value
+"rua"       u0=register u1=value u2=address_space_id
+"rsa"       u0=register s1=value u2=address_space_id
 "rud"       u0=register,u1=value, data_alignment_factor.
 "sd"        s0=value,data_alignment_factor
 "u"         u0=value

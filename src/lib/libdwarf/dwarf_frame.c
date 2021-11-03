@@ -1419,7 +1419,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             if (make_instr) {
                 /*  FIXME need a code for addrspace */
-                dfi->fi_fields = "ru";
+                dfi->fi_fields = "rua";
                 dfi->fi_u0 = lreg;
                 dfi->fi_u1 = offset;
                 dfi->fi_u2 = addrspace;
@@ -1456,7 +1456,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             if (make_instr) {
                 /* FIXME need a code for addrspace */
-                dfi->fi_fields = "rs";
+                dfi->fi_fields = "rsa";
                 dfi->fi_u0 = lreg;
                 dfi->fi_s1 = offset;
                 dfi->fi_u2 = addrspace;
@@ -2556,7 +2556,10 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
     return DW_DLV_OK;
 }
 
-/*  Call to access  a single CFA frame instruction.  */
+/*  Call to access  a single CFA frame instruction.  
+    The 2021 DW_CFA_LLVM addition for hetrogenous
+    debugging has a third field,  an address space
+    value.  */
 int
 dwarf_get_frame_instruction(Dwarf_Frame_Instr_Head head,
     Dwarf_Unsigned    instr_index,
@@ -2565,6 +2568,38 @@ dwarf_get_frame_instruction(Dwarf_Frame_Instr_Head head,
     const char     ** fields_description,
     Dwarf_Unsigned  * u0,
     Dwarf_Unsigned  * u1,
+    Dwarf_Signed    * s0,
+    Dwarf_Signed    * s1,
+    Dwarf_Unsigned  * code_alignment_factor,
+    Dwarf_Signed    * data_alignment_factor,
+    Dwarf_Block     * expression_block,
+    Dwarf_Error     * error)
+{
+    Dwarf_Unsigned aspace = 0;
+    return dwarf_get_frame_instruction_a(head,
+        instr_index,
+        instr_offset_in_instrs,
+        cfa_operation,
+        fields_description,
+        u0,
+        u1,
+        & aspace,
+        s0,
+        s1,
+        code_alignment_factor,
+        data_alignment_factor,
+        expression_block,
+        error);
+}
+int
+dwarf_get_frame_instruction_a(Dwarf_Frame_Instr_Head head,
+    Dwarf_Unsigned    instr_index,
+    Dwarf_Unsigned  * instr_offset_in_instrs,
+    Dwarf_Small     * cfa_operation,
+    const char     ** fields_description,
+    Dwarf_Unsigned  * u0,
+    Dwarf_Unsigned  * u1,
+    Dwarf_Unsigned  * u2,
     Dwarf_Signed    * s0,
     Dwarf_Signed    * s1,
     Dwarf_Unsigned  * code_alignment_factor,
@@ -2603,6 +2638,7 @@ dwarf_get_frame_instruction(Dwarf_Frame_Instr_Head head,
     *fields_description = ip->fi_fields;
     *u0 = ip->fi_u0;
     *u1 = ip->fi_u1;
+    *u2 = ip->fi_u2;
     *s0 = ip->fi_s0;
     *s1 = ip->fi_s1;
     /*  These next two might be known to caller already,

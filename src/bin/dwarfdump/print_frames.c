@@ -1811,6 +1811,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         const char     *fields= 0;
         Dwarf_Unsigned  u0 = 0;
         Dwarf_Unsigned  u1 = 0;
+        Dwarf_Unsigned  u2 = 0;
         Dwarf_Signed    s0 = 0;
         Dwarf_Signed    s1 = 0;
         Dwarf_Block     expression_block;
@@ -1819,9 +1820,9 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         if (!i) {
             printf("  [  ] offset name                 operands\n");
         }
-        res = dwarf_get_frame_instruction(instr_head,
+        res = dwarf_get_frame_instruction_a(instr_head,
             i,&instr_offset_in_instrs, &cfa_operation,
-            &fields, &u0,&u1,&s0,&s1,
+            &fields, &u0,&u1,&u2,&s0,&s1,
             0,0, /* These alignment factors passed to us. */
             &expression_block,&error);
         if (res != DW_DLV_OK) {
@@ -1886,6 +1887,15 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printf("\n");
                     break;
                 }
+                if (fields[2] == 'a') {
+                    printreg(u0,config_data);
+                    printf(" %" DW_PR_DUu ,u1);
+                    printf("  (%" DW_PR_DUu ", addrspace  %"
+                        DW_PR_DUu ")",
+                        u1,u2);
+                    printf("\n");
+                    break;
+                }
             }
             if (fields[1] == 'r') {
                 printreg(u0,config_data);
@@ -1907,6 +1917,16 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printf("\n");
                     break;
                 }
+                if (fields[2] == 'a') {
+                    printreg(u0,config_data);
+                    printf(" %" DW_PR_DSd ,s1);
+                    printf("  (%" DW_PR_DSd ", addrspace  %"
+                        DW_PR_DUu ")",
+                        s1,u2);
+                    printf("\n");
+                    break;
+                }
+
             }
             if (fields[1] == 'b') {
                 /* rb */

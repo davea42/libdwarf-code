@@ -87,8 +87,8 @@ extern "C" {
 /* Sematic Version identity for this libdwarf.h */
 #define DW_LIBDWARF_VERSION_MAJOR 0
 #define DW_LIBDWARF_VERSION_MINOR 3
-#define DW_LIBDWARF_VERSION_MICRO 0
-#define DW_LIBDWARF_VERSION "0.3.0"
+#define DW_LIBDWARF_VERSION_MICRO 1
+#define DW_LIBDWARF_VERSION "0.3.1"
 
 /*! @brief Basic libdwarf datatypes.
 
@@ -2730,6 +2730,9 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
 
     A @c r in fields[1] means u1 is set to a register number.
 
+    A @c a in fields[2] means u2 is an address-space
+    identifier.
+
     A @c d in fields means data_alignment_factor is set
 
     A @c c in fields means code_alignment_factor is set
@@ -2744,6 +2747,21 @@ DW_API int dwarf_get_frame_instruction(
     const char      ** /*fields_description*/,
     Dwarf_Unsigned  *  /* u0 */,
     Dwarf_Unsigned  *  /* u1 */,
+    Dwarf_Signed    *  /* s0 */,
+    Dwarf_Signed    *  /* s1 */,
+    Dwarf_Unsigned  *  /* code_alignment_factor */,
+    Dwarf_Signed    *  /* data_alignment_factor */,
+    Dwarf_Block     *  /* expression_block */,
+    Dwarf_Error     * /*error*/);
+DW_API int dwarf_get_frame_instruction_a(
+    Dwarf_Frame_Instr_Head /* head*/,      
+    Dwarf_Unsigned     /*instr_index*/,
+    Dwarf_Unsigned  *  /*instr_offset_in_instrs */,
+    Dwarf_Small     *  /*cfa_operation*/,
+    const char      ** /*fields_description*/,
+    Dwarf_Unsigned  *  /* u0 */,
+    Dwarf_Unsigned  *  /* u1 */,
+    Dwarf_Unsigned  *  /* u2 */,
     Dwarf_Signed    *  /* s0 */,
     Dwarf_Signed    *  /* s1 */,
     Dwarf_Unsigned  *  /* code_alignment_factor */,
