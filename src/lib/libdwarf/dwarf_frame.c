@@ -1418,6 +1418,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             if (make_instr) {
+                /*  FIXME need a code for addrspace */
+                dfi->fi_fields = "ru";
                 dfi->fi_u0 = lreg;
                 dfi->fi_u1 = offset;
                 dfi->fi_u2 = addrspace;
@@ -1453,6 +1455,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             if (make_instr) {
+                /* FIXME need a code for addrspace */
+                dfi->fi_fields = "rs";
                 dfi->fi_u0 = lreg;
                 dfi->fi_s1 = offset;
                 dfi->fi_u2 = addrspace;
