@@ -1,3 +1,149 @@
+2021-11-04:  David Anderson
+    commit b40f7e291216e771185f62292dd6304b5a662926
+
+    Enhanced the check for corrupt object file
+    for ossfuzz40663
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2021-11-04:  David Anderson
+    commit 3c8151acf0ff408c11d2b4680e73dd5085ba3cdd
+
+    Adding field fuzzer: to record the
+    id the fuzzer assigned.
+            modified:   bugxml/bugrecord.py
+            modified:   bugxml/data.template
+            modified:   bugxml/data.txt
+            modified:   bugxml/readbugs.py
+
+2021-11-04:  David Anderson
+    commit 8ac5923bcce9a8b57a4aa8d5820024064b4f9e41
+
+    Fixing ClusterFuzz issue 40663
+    Adding a new error code DW_DLE_MACHO_CORRUPT_HEADER
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Ensure the errcode from
+    dwarf_init_path_dl gets turned into a Dwarf_Error
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+    Now checks the command count and sizeofcmds for
+    basic sanity, catching badly corrupt objects..
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2021-11-04:  David Anderson
+    commit eb6a3535595fcb3529b8690aa5725bafe1293230
+
+    Now reports a correct error if in process_one_file()
+    detects an error, cleans up the error,
+    and returns DW_DLV_NO_ENTRY
+    a corrupt mach-o object file was previously not
+    properly reported.
+            modified:   dwarfdump.c
+
+2021-11-04:  David Anderson
+    commit 71764671216985fe7df2546a73d67566f11e5209
+
+    Now emphasizes that dwarf_get_frame_instruction() is fine
+    unless you want frame details for a Heterogenous
+    Debugging object file (and in that case
+    you know you need it).
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+
+    Corrected the handling of the new frame instruction
+    DW_CFA_LLVM_def_aspace_cfa_sf.
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+
+2021-11-03:  David Anderson
+    commit 6910ffb1bc3f79f944ec6da14f17ac7377340043
+
+    Trivial changes attempting to eliminate
+    groff complaints building the pdf.
+    It reads better, but the complaints
+    are not fixed.
+            modified:   libdwarf.mm
+            modified:   libdwarf.pdf
+
+2021-11-03:  David Anderson
+    commit ec885f887ad2a805630141b2f0c682af26f0e470
+
+    Document the new function
+    dwarf_get_frame_instruction_a()
+    (identical to dwarf_get_frame_instruction()
+    except adding one new argument).
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+
+    Now with support for DW_CFA_LLVM_def_aspace_cfa[_sf]
+            modified:   src/bin/dwarfdump/print_frames.c
+
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-11-03:  David Anderson
+    commit 3ea3c44ee1b815e0d7558a57b8d218a78f568882
+
+    Regenerated with version 0.3.1 as
+    LLVM adds DW_CFA_LLVM_def_aspace_cfa[_sf]
+    which requires the existence of a new function
+    to get the third value (all previous CFA
+    operators had a maxmum of 2 values).
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+
+2021-11-03:  David Anderson
+    commit 79d6e012d7c4655b05a1670f1392780778e5f633
+
+    Now returns the string representing
+    the new DW_CFA_LLVM, though dwarfdump
+    cannot get all three values yet,
+    as the new third value is not
+    visible to dwarfdump.
+            modified:   dwarf_frame.c
+
+2021-11-02:  David Anderson
+    commit 719af6996fdcf7de8bd2274692cd7582c0c87bec
+
+    New LLVM DW_OP_LLVM and DW_CFA_LLVM names.
+            modified:   dwarf.h
+
+    Implement the new CFA names.
+            modified:   dwarf_frame.c
+            modified:   dwarf_frame.h
+    Regeneratd with the new names.
+            modified:   dwarf_names.c
+
+2021-11-02:  David Anderson
+    commit 90777138b0113693fe1692bea368d7f8b0c81ba8
+
+    Now creates opscounttab.c with the new fields
+            modified:   src/bin/buildopstab/buildopscounttab.c
+
+    Regenerated
+            modified:   src/bin/dwarfdump/opscounttab.c
+
+    Added new DW_OP_LLVM ops.
+            modified:   src/lib/libdwarf/dwarf.h
+
+    Handle the new ops.
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+    Regenerated
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2021-10-23:  David Anderson
+    commit 10e2df5169e57624c53eb2e319e24462c5d61471
+
+    Adding in latest git log entries.
+            modified:   ChangeLog
+
 2021-10-22:  David Anderson
     commit d307e3417041ca9498be6df6d9bbc98fc94fd759
 
