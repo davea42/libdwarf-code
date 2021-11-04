@@ -583,8 +583,8 @@ The field values for each index are described next.
 For clarity we describe the field values for index rules[M]
 (M being any legal array element index).
 (DW_FRAME_CFA_COL3  DW_FRAME_SAME_VAL, DW_FRAME_UNDEFINED_VAL
-are not legal array indexes, nor is any index < 0 or >=
-rt3_reg_table_size);
+are not legal array indexes, nor is any 
+index < 0 or >= rt3_reg_table_size);
 The caller  of routines using this
 struct must create data space for rt3_reg_table_size entries
 of struct Dwarf_Regtable_Entry3_s and arrange that
@@ -5720,7 +5720,6 @@ Pass in
 \f(CWcontext_index\fP
 exactly as the same field passed to
 \f(CWdwarf_get_loclist_context_basics()\fP.
-
 .P
 Pass in
 \f(CWoffset_entry_index\fP
@@ -5730,11 +5729,11 @@ from
 \f(CWdwarf_get_loclist_context_basics()\fP,
 meaning for that
 \f(CWcontext_index\fP
-an
-\f(CWoffset_entry_index\fP >=0
-and < 
+assuming
+\f(CWoffset_entry_index\fP greater than
+or equal to zero 
+and less than 
 \f(CWoffset_entry_count\fP.
-
 .P
 Pass in
 \f(CWoffset_entry_count\fP
@@ -10900,9 +10899,14 @@ for the
 DW_CFA_LLVM_def_aspace_cfa
 and
 DW_CFA_LLVM_def_aspace_cfa_sf
-hetrogenous debugging
+heterogenous debugging
 address-space value (the u2 value below).
-\fP
+.P
+It is fine to stay with this interface
+function unless you think
+the object files you work with
+are generating recent LLVM compiler 
+Heterogenous Debugging output.
 
 .H 3 "dwarf_get_frame_instruction_a()"
 .DS
@@ -10935,7 +10939,7 @@ which created
 \f(CWhead\fP.
 .P
 If
-\f(CWinstr_index\fP is >= 
+\f(CWinstr_index\fP is greater than
 \f(CWreturned_instr_count\fP
 the function returns 
 \f(CWDW_DLV_NO_ENTRY\fP.
@@ -12605,7 +12609,7 @@ sets
 to the value in the Range List Table
 offset array, 
 and sets
-\f(CW* global_offset_value_out\fP
+*\f(CWglobal_offset_value_out\fP
 to the section offset (in
 \f(CW.debug_addr\fP)
 of the offset value.
@@ -12623,11 +12627,11 @@ from
 \f(CWdwarf_get_rnglist_context_basics()\fP,
 meaning for that
 \f(CWcontext_index\fP
-an
-\f(CWoffset_entry_index\fP >=0
-and < 
+that
+\f(CWoffset_entry_index\fP is greater
+than or equal to zero and
+less than
 \f(CWoffset_entry_count\fP.
-
 .P
 Pass in
 \f(CWoffset_entry_count\fP
@@ -12645,7 +12649,6 @@ might be returned
 and
 \f(CW*error\fP
 set to the error details.
-
 
 .H 4 "dwarf_get_rnglist_rle()"
 .DS
