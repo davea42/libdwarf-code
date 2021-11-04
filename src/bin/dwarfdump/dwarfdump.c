@@ -824,7 +824,7 @@ process_one_file(
             if those find nothing then the original. */
         char *tb = temp_path_buf;
         unsigned tblen = temp_path_buf_len;
-        title = "dwarf_init_path_dl fails exit dwarfdump";
+        title = "dwarf_init_path_dl fails.";
         if (glflags.gf_no_follow_debuglink) {
             tb = 0;
             tblen = 0;
@@ -849,11 +849,11 @@ process_one_file(
         return dres;
     }
     if (dres == DW_DLV_ERROR) {
-        /* Prints error, cleans up Dwarf_Error data. Never returns*/
+        /* Prints error, cleans up Dwarf_Error data. */
         print_error_and_continue(dbg,
             title,dres,onef_err);
         DROP_ERROR_INSTANCE(dbg,dres,onef_err);
-        return DW_DLV_ERROR;
+        return DW_DLV_NO_ENTRY;
     }
     if (path_source == DW_PATHSOURCE_dsym) {
         printf("Filename by dSYM is %s\n",
