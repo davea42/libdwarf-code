@@ -109,6 +109,7 @@ class bugrecord:
     def __init__(self, dwid):
         self._id = dwid.strip()
         self._cve = ""
+        self._fuzzer = ""
         self._datereported = ""
         self._reportedby = ""
         self._vulnerability = []
@@ -124,7 +125,11 @@ class bugrecord:
             print("Duplicate cve ", self._cve, pubid)
             sys.exit(1)
         self._cve = pubid.strip()
-
+    def setfuzzer(self, id):
+        if self._fuzzer != "":
+            print("Duplicate fuzzer ", self._fuzzer, id)
+            sys.exit(1)
+        self._fuzzer = id.strip()
     def setdatereported(self, rep):
         if self._datereported != "":
             print("Duplicate datereported ", self._datereported, rep)
@@ -194,6 +199,7 @@ class bugrecord:
         print("")
         print("id:", self._id)
         print("cve:", self._cve)
+        print("fuzzer:", self._fuzzer)
         print("datereported:", self._datereported)
         print("reportedby:", self._reportedby)
         self.plist("vulnerability:", self._vulnerability)
@@ -216,6 +222,11 @@ class bugrecord:
         s, inp = xmlize(self._cve, "y", inpre)
         t = paraline("cve", s)
         txt += [t]
+
+        s, inp = xmlize(self._fuzzer, "y", inpre)
+        t = paraline("fuzzer", s)
+        txt += [t]
+
 
         s, inp = xmlize(self._datereported, "y", inpre)
         t = paraline("datereported", s)
@@ -289,6 +300,10 @@ class bugrecord:
 
         s, inpre = xmlize(self._cve, "n", inpre)
         t = self.paraxml("<cve>", s, "</cve>")
+        txt += [t]
+
+        s, inpre = xmlize(self._fuzzer, "n", inpre)
+        t = self.paraxml("<fuzzer>", s, "</fuzzer>")
         txt += [t]
 
         s, inpre = xmlize(self._datereported, "n", inpre)

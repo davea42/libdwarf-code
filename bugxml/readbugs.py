@@ -121,6 +121,12 @@ def readbugs(iname):
             text = []
             s4 = "".join(fldval)
             bugrec.setcve(s4)
+        elif fldname == "fuzzer:":
+            closeouttext(bugrec, intext, text, linecount),
+            intext = ""
+            text = []
+            s4 = "".join(fldval)
+            bugrec.setfuzzer(s4)
         elif fldname == "datereported:":
             closeouttext(bugrec, intext, text, linecount),
             intext = ""
