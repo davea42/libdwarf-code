@@ -650,6 +650,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
     "dwarf_formudata() is not allowed."},
 {"DW_DLE_DEBUG_NAMES_ERROR(484) Error reading .debug_names"},
 {"DW_DLE_CFA_INSTRUCTION_ERROR(485) Error accessing "
-    "frame instructions"}
+    "frame instructions"},
+{"DW_DLE_MACHO_CORRUPT_HEADER(486) Incorrect header content."
+    " Corrupt DWARF"}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

@@ -268,12 +268,12 @@ int dwarf_init_path_dl(const char *path,
             &ftype,&endian,&offsetsize,&filesize,
             &lpath_source,
             &errcode);
-        if (res == DW_DLV_ERROR) {
-            errcode = 0;
-        }
     }
     if (res != DW_DLV_OK) {
         /* impossible. The last above *had* to work */
+        if (res == DW_DLV_ERROR) {
+            _dwarf_error(NULL, error, errcode);
+        }
         return res;
     }
     /*  ASSERT: lpath_source != DW_PATHSOURCE_unspecified  */

@@ -1230,9 +1230,10 @@ struct Dwarf_Obj_Access_Interface_a_s {
 #define DW_DLE_UDATA_VALUE_NEGATIVE            483
 #define DW_DLE_DEBUG_NAMES_ERROR               484
 #define DW_DLE_CFA_INSTRUCTION_ERROR           485
+#define DW_DLE_MACHO_CORRUPT_HEADER            486
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        485
+#define DW_DLE_LAST        486
 
 #define DW_DLE_LO_USER     0x10000
 
