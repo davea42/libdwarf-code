@@ -1914,19 +1914,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                             ")",
                             s1,data_alignment_factor);
                     }
+                    if (fields[3] == 'a') {
+                        printf(", addrspace  %" DW_PR_DUu, u2);
+                    }
                     printf("\n");
                     break;
                 }
-                if (fields[2] == 'a') {
-                    printreg(u0,config_data);
-                    printf(" %" DW_PR_DSd ,s1);
-                    printf("  (%" DW_PR_DSd ", addrspace  %"
-                        DW_PR_DUu ")",
-                        s1,u2);
-                    printf("\n");
-                    break;
-                }
-
             }
             if (fields[1] == 'b') {
                 /* rb */

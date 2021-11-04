@@ -1418,7 +1418,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             if (make_instr) {
-                /*  FIXME need a code for addrspace */
                 dfi->fi_fields = "rua";
                 dfi->fi_u0 = lreg;
                 dfi->fi_u1 = offset;
@@ -1455,11 +1454,12 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 return adres;
             }
             if (make_instr) {
-                /* FIXME need a code for addrspace */
-                dfi->fi_fields = "rsa";
+                dfi->fi_fields = "rsda";
                 dfi->fi_u0 = lreg;
                 dfi->fi_s1 = offset;
                 dfi->fi_u2 = addrspace;
+                dfi->fi_data_align_factor =
+                    data_alignment_factor;
             }
         }
         break;

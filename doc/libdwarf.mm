@@ -10876,6 +10876,11 @@ This works fully for all DWARF frames except
 those from the LLVM compiler, which
 can return a DW_DLV_CFA instruction with
 three operands instead of two.
+\f(CWdwarf_get_frame_instruction_a()\fP
+is the leading edge of debugging,
+so it is likely
+\f(CWdwarf_get_frame_instruction()\fP
+is right for you.
 .DS
 \f(CWint dwarf_get_frame_instruction(
     Dwarf_Frame_Instr_Head head,
@@ -10989,20 +10994,20 @@ respectively.
 
 .DS
 \f(CW
-fields      return fields set
-""          No fields in the instruction
-"b"         b=expression_block
-"r"         u0=the register number
-"rb"        u0=register number, b=expression_block
-"rr"        u0 and u1, register numbers
-"rsd"       u1=register,s1 value, data_alignment_factor.
-"ru"        u0=register u1=value
-"rua"       u0=register u1=value u2=address_space_id
-"rsa"       u0=register s1=value u2=address_space_id
-"rud"       u0=register,u1=value, data_alignment_factor.
-"sd"        s0=value,data_alignment_factor
-"u"         u0=value
-"uc"        u0=value,code_alignment_factor
+fields  return fields set
+""      No fields in the instruction
+"b"     b=expression_block
+"r"     u0=the register number
+"rb"    u0=register number, b=expression_block
+"rr"    u0 and u1, register numbers
+"rsd"   u1=register,s1 value, data_alignment_factor.
+"ru"    u0=register u1=value
+"rua"   u0=register u1=value u2=address_space_id
+"rsda"  u0=register s1=value,data_alignment_factor, u2=address_space_id
+"rud"   u0=register,u1=value, data_alignment_factor.
+"sd"    s0=value,data_alignment_factor
+"u"     u0=value
+"uc"    u0=value,code_alignment_factor
 \fP
 .DE
 .P
