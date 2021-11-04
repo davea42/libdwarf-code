@@ -320,7 +320,8 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp,
     mfp->mo_header.reserved = 0;
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
     if (mfp->mo_command_count >= mfp->mo_filesize ||
-        mfp->mo_header.sizeofcmds >= mfp->mo_filesize) {
+        mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
+        mfp->mo_command_count >= mfp->mo_header.sizeofcmds) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
@@ -359,7 +360,8 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     ASNAR(mfp->mo_copy_word,mfp->mo_header.reserved,mh64.reserved);
     mfp->mo_command_count = (unsigned int)mfp->mo_header.ncmds;
     if (mfp->mo_command_count >= mfp->mo_filesize ||
-        mfp->mo_header.sizeofcmds >= mfp->mo_filesize) {
+        mfp->mo_header.sizeofcmds >= mfp->mo_filesize ||
+        mfp->mo_command_count >= mfp->mo_header.sizeofcmds) {
         *errcode = DW_DLE_MACHO_CORRUPT_HEADER;
         return DW_DLV_ERROR;
     }
