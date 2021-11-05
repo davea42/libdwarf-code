@@ -1,4 +1,23 @@
 
+id: DW202111-002
+cve: 
+fuzzer: oss-fuzz-40669
+datereported: 2021-11-03
+reportedby: David Korczynski
+vulnerability: Corrupted MachO object can crash caller.b
+product: libdwarf
+description:  Two fields in the MachO file header
+  were not checked for sanity so nonsense large values
+  could lead to excessive malloc and or a caller
+  segmentation violation. Fixed by DW202111-001.
+datefixed: 2021-11-04
+references: regressiontests/ossfuzz40669/clusterfuzz-testcase-minimized-fuzz_init_path-5399726397194240
+gitfixid: b40f7e291216e771185f62292dd6304b5a662926 
+tarrelease:
+endrec: DW202111-002
+
+
+
 id: DW202111-001
 cve: 
 fuzzer: oss-fuzz-40663
