@@ -56,6 +56,17 @@ def updatecmstring(cmcount,l,sver, maj, min, mic):
        return l2,int(cmcount)+1
    return l,cmcount
 
+mm = ".ds vE Rev "
+def updatemmversion(mmcount,l,sver):
+    if l.startswith(mm):
+        wds = l.split()
+        if len(wds) != 8:
+           return l,mmcount
+        wb = ' '.join(wds[0:7])
+        l2 = ' '.join([wb,sver,"\n"])
+        return l2,int(mmcount+1)
+    return l,mmcount
+
 # m4_define([v_maj], [0])
 # m4_define([v_min], [2])
 # m4_define([v_mic], [0])
@@ -80,6 +91,7 @@ def updatefile(fname, type, sver, maj, min, mic):
     foundcm = 0
     foundac = 0
     foundlh = 0
+    foundmm = 0
     print("Processing", fname, " type", type, " newver", sver)
     try:
         fin = open(fname, "r")
@@ -105,10 +117,20 @@ def updatefile(fname, type, sver, maj, min, mic):
                 sver, maj, min, mic)
             outdata += [lx]
             continue
+        elif type == "mm":
+            lx,foundmm = updatemmversion(foundmm,l,\
+                sver)
+            outdata += [lx]
+            continue
         print("Unknown type of file! Give up!",type);
         sys.exit(1)
+    if type == "mm" and not foundmm:
+        print("Something wrong, did not find", fname, \
+            "  version line in mm")
+        sys.exit(1)
     if type == "cm" and not foundcm:
-        print("Something wrong, did not find", fname, "  version line")
+        print("Something wrong, did not find", fname, \
+            "  version line in CMakeLists.txt")
         sys.exit(1)
     if type == "ac" and not foundac == 3:
         print("Something wrong, did not find configure.ac", "version lines")
@@ -151,4 +173,6 @@ if __name__ == "__main__":
     updatefile("configure.ac", "ac", sver, maj, min, mic)
     updatefile("CMakeLists.txt", "cm", sver, maj, min, mic)
     updatefile("src/lib/libdwarf/libdwarf.h", "lh", sver, maj, min, mic)
+    updatefile("doc/libdwarf.mm", "mm", sver, maj, min, mic)
+    updatefile("doc/libdwarfp.mm", "mm", sver, maj, min, mic)
     print("Updated: done.")
