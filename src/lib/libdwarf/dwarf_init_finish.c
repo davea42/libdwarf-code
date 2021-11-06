@@ -1555,6 +1555,13 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
     Dwarf_Debug dbg = 0;
     int setup_result = DW_DLV_OK;
 
+    if (!ret_dbg) {
+        DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,
+            DW_DLV_ERROR);
+    }
+    /*  Non-null *ret_dbg will cause problems dealing with
+        DW_DLV_ERROR */
+    *ret_dbg = 0;
     /*  Initializes  Dwarf_Debug struct and returns
         a pointer to that empty record. */
     dbg = _dwarf_get_debug();

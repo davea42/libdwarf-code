@@ -1,4 +1,4 @@
-." the following line may be removed if the
+.b" the following line may be removed if the
 \." ff ligature works on your machine
 .lg 0
 \." set up heading formats
@@ -1662,13 +1662,19 @@ void exampleinitfail(const char *path,
     Dwarf_Debug dbg = 0;
     int res = 0;
 
+    /*  While initializing dbg to NULL as above
+        is good practice, the initial call here
+        will set it to zero as the DW_DLV_ERROR 
+        case here requires a valid dbg. */
     res = dwarf_init_path(path,true_pathbuf,
         tpathlen,groupnumber,errhand,
         errarg,&dbg,
         &error);
     /*  Preferred version */
     if (res == DW_DLV_ERROR) {
-        /* Valid call even though dbg is null! */
+        /*  But here if dbg was non-NULL
+            the dwarf_dealloc will segfault. */
+        /* Valid call if dbg is null! */
         dwarf_dealloc(dbg,error,DW_DLA_ERROR);
         /*  Simpler newer form in
             this comment, but use the
@@ -1976,7 +1982,9 @@ argument is passed as an argument to the
 is used to return an initialized Dwarf_Debug pointer,
 so it must be a pointer to a Dwarf_Debug.
 The passed-in pointer-to Dwarf_Debug is not checked in any way
-and what it points to need not be NULL.
+but the pointed-to value should be NULL
+(see the example 
+"exampleinitfail").
 On successful call the pointed-to value
 is set to point to a newly created
 struct Dwarf_Debug_s and any previous value
@@ -2073,7 +2081,9 @@ the open file descriptor \f(CWfd\fP.
 is used to return an initialized Dwarf_Debug pointer,
 so it must be a pointer to a Dwarf_Debug.
 The passed-in pointer-to Dwarf_Debug is not checked in any way
-and what it points to need not be NULL.
+but the pointed-to value should be NULL
+(see the example 
+"exampleinitfail").
 On successful call the pointed-to value
 is set to point to a newly created
 struct Dwarf_Debug_s and any previous value

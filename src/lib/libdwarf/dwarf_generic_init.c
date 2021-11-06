@@ -189,7 +189,8 @@ final_common_settings(Dwarf_Debug dbg,
     The pathn_fd is owned by libdwarf and is in the created dbg->de_fd
     field.
 */
-int dwarf_init_path_dl(const char *path,
+int 
+dwarf_init_path_dl(const char *path,
     char            * true_path_out_buffer,
     unsigned        true_path_bufferlen,
     unsigned        groupnumber,
@@ -216,6 +217,9 @@ int dwarf_init_path_dl(const char *path,
         DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,
             DW_DLV_ERROR);
     }
+    /*  Non-null *ret_dbg will cause problems dealing with
+        DW_DLV_ERROR */
+    *ret_dbg = 0;
     if (!path) {
         /* Oops. Null path */
         _dwarf_error_string(NULL,
@@ -366,6 +370,9 @@ dwarf_init_b(int fd,
     if (!ret_dbg) {
         DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
     }
+    /*  Non-null *ret_dbg will cause problems dealing with
+        DW_DLV_ERROR */
+    *ret_dbg = 0;
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {
