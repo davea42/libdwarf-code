@@ -27,22 +27,6 @@ gitfixid:
 tarrelease:
 endrec: DW202111-007
 
-id: DW202111-006
-cve:
-fuzzer: oss-fuzz-40732-ignore-mistyped-number
-datereported: 2021-11-03
-reportedby: David Korczynski
-vulnerability:
-product: libdwarf
-description:
-datefixed:
-references:
-gitfixid:
-tarrelease:
-endrec: DW202111-006
-
-
-
 id: DW202111-005
 cve: 
 fuzzer: oss-fuzz-40674
@@ -79,12 +63,15 @@ datereported: 2021-11-03
 reportedby: David Korczynski
 vulnerability: Direct-leak in _dwarf_get_debug
 product: libdwarf
-description: Given previous fixes I find myself unable to
-  reproduce a problem.  Running dwarfdump with and without valgrind.
+description: The test code is calling a libdwarf-internal
+  function (which is against the rules, only libdwarf
+  function names beginning with dwarf_ are callable.
+  When building libdwarf as an archive there is no
+  means to enforce this rule)
+  The testcase is broken.
 datefixed: 2021-11-05
 references: regressiontests/oss40671/clusterfuzz-testcase-fuzz_init_path-5455557297831936
   regressiontests/oss40671/clusterfuzz-testcase-minimized-fuzz_init_path-5455557297831936
-
 gitfixid: b40f7e291216e771185f62292dd6304b5a662926
 tarrelease:
 endrec: DW202111-003
