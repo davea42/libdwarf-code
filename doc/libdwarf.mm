@@ -358,6 +358,10 @@ some features of DWARF.
 
 .H 2 "Revision History"
 .BL
+.LI "November 2021 0.3.1"
+Minor changes including a new
+section in this document called
+"Private vs Public Function".
 .LI "September 2021"
 Version libdwarf-0.3.0 
 should be the last major revision
