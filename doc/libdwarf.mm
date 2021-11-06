@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.15 3 November 2021 0.3.1 
+.ds vE Rev 4.16 6 November 2021 0.3.1 
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -490,6 +490,23 @@ compatibility.
 
 \f(CWld_s\fP field points to an array of 
 \f(CWDwarf_Loc\fP records.
+
+.H 3 "Private vs Public Functions"
+All functions in the library
+spelled with an initial "dwarf_"
+are public functions.
+All functions spelled with an
+initial "_dwarf_"
+are private to the library and
+should never be directly called
+by your code.
+If any function name in the library
+(aside from file-static functions)
+starts with anything other
+than these two strings it is
+a bug in the library and
+we would like to hear of it
+and correct the source.
 
 .H 3 "Data Block"
 .SP
@@ -1956,7 +1973,15 @@ argument is passed as an argument to the
 \f(CWerrhand\fP function.
 .P
 \f(CWdbg\fP
-is used to return an initialized Dwarf_Debug pointer.
+is used to return an initialized Dwarf_Debug pointer,
+so it must be a pointer to a Dwarf_Debug.
+The passed-in pointer-to Dwarf_Debug is not checked in any way
+and what it points to need not be NULL.
+On successful call the pointed-to value
+is set to point to a newly created
+struct Dwarf_Debug_s and any previous value
+there is overwritten.
+
 .P
 Pass in a pointer
 to a Dwarf_Error to the
@@ -2043,6 +2068,17 @@ the function \f(CWdwarf_init_b()\fP returns through
 that represents a handle for accessing
 debugging records associated with
 the open file descriptor \f(CWfd\fP.
+.P
+\f(CWdbg\fP
+is used to return an initialized Dwarf_Debug pointer,
+so it must be a pointer to a Dwarf_Debug.
+The passed-in pointer-to Dwarf_Debug is not checked in any way
+and what it points to need not be NULL.
+On successful call the pointed-to value
+is set to point to a newly created
+struct Dwarf_Debug_s and any previous value
+there is overwritten.
+.P
 \f(CWDW_DLV_NO_ENTRY\fP is returned if the object
 does not contain DWARF debugging information.
 \f(CWDW_DLV_ERROR\fP is returned if
