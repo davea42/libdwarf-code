@@ -1,18 +1,113 @@
 
+id: DW202111-008
+cve:
+fuzzer: oss-fuzz-40731
+datereported: 2021-11-03
+reportedby: David Korczynski
+vulnerability: Out-of-memory in fuzz_init_binary
+product: libdwarf
+description: Verified as fixed by oss-fuzz
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec: DW202111-008
+
+id: DW202111-007
+cve:
+fuzzer: oss-fuzz-40673
+datereported: 2021-11-03
+reportedby: David Korczynski
+vulnerability:  Null-dereference READ in dwarf_object_init_b
+product: libdwarf
+description: Verified as fixed by oss-fuzz
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec: DW202111-007
+
+id: DW202111-006
+cve:
+fuzzer: oss-fuzz-40732-ignore-mistyped-number
+datereported: 2021-11-03
+reportedby: David Korczynski
+vulnerability:
+product: libdwarf
+description:
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec: DW202111-006
+
+
+
+id: DW202111-005
+cve: 
+fuzzer: oss-fuzz-40674
+datereported: 2021-11-03
+reportedby: David Korczynski
+vulnerability: Heap-buffer-overflow in _dwarf_elf_setup_all_section_groups
+product: libdwarf
+description: 
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202111-005
+
+id: DW202111-004
+cve: 
+fuzzer: oss-fuzz-40673
+datereported: 2021-11-03
+reportedby: David Korczynski
+vulnerability: Null-dereference READ in dwarf_object_init_b 
+product: libdwarf
+description: 
+ Verified as fixed by oss-fuzz 2021-11-03
+datefixed: 2021-11-05
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW202111-004
+
+id: DW202111-003
+cve: 
+fuzzer: oss-fuzz-40671
+datereported: 2021-11-03
+reportedby: David Korczynski
+vulnerability: Direct-leak in _dwarf_get_debug
+product: libdwarf
+description: Given previous fixes I find myself unable to
+  reproduce a problem.  Running dwarfdump with and without valgrind.
+datefixed: 2021-11-05
+references: regressiontests/oss40671/clusterfuzz-testcase-fuzz_init_path-5455557297831936
+  regressiontests/oss40671/clusterfuzz-testcase-minimized-fuzz_init_path-5455557297831936
+
+gitfixid: b40f7e291216e771185f62292dd6304b5a662926
+tarrelease:
+endrec: DW202111-003
+
+
 id: DW202111-002
 cve: 
 fuzzer: oss-fuzz-40669
 datereported: 2021-11-03
 reportedby: David Korczynski
-vulnerability: Corrupted MachO object can crash caller.b
+vulnerability: Out-of-memory in fuzz_init_path
 product: libdwarf
-description:  Two fields in the MachO file header
+description:  
+  Corrupted MachO object can crash caller.b
+  Two fields in the MachO file header
   were not checked for sanity so nonsense large values
   could lead to excessive malloc and or a caller
   segmentation violation. Fixed by DW202111-001.
+  Verified as fixed by oss-fuzz
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40669/clusterfuzz-testcase-minimized-fuzz_init_path-5399726397194240
-gitfixid: b40f7e291216e771185f62292dd6304b5a662926 
+  regressiontests/clusterfuzz-testcase-fuzz_init_path-5399726397194240
+gitfixid: b40f7e291216e771185f62292dd6304b5a662926
 tarrelease:
 endrec: DW202111-002
 
@@ -23,12 +118,14 @@ cve:
 fuzzer: oss-fuzz-40663
 datereported: 2021-11-03
 reportedby: David Korczynski
-vulnerability: Corrupted MachO object can crash caller
+vulnerability: Timeout in fuzz_init_path
 product: libdwarf
-description:  Two fields in the MachO file header
+description:  Corrupted MachO object can crash caller
+  Two fields in the MachO file header
   were not checked for sanity so nonsense large values
   could lead to excessive malloc and or a caller
   segmentation violation.
+  Verified by oss-fuzz as fixed.
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40663/clusterfuzz-testcase-minimized-fuzz_init_path-6122542432124928
 gitfixid: b40f7e291216e771185f62292dd6304b5a662926 

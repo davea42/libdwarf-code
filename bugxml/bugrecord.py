@@ -227,7 +227,6 @@ class bugrecord:
         t = paraline("fuzzer", s)
         txt += [t]
 
-
         s, inp = xmlize(self._datereported, "y", inpre)
         t = paraline("datereported", s)
         txt += [t]
