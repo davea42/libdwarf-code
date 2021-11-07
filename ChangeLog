@@ -1,3 +1,99 @@
+2021-11-07:  David Anderson
+    commit 5e636b1e9e20fadd034ed96475833d44c18c5749
+
+    Now version 4.17
+    All example code is now presented
+    in the same formatting style
+    and all examples are allocated figure names and numbers.
+            modified:   libdwarf.mm
+    regenerated.
+            modified:   libdwarf.pdf
+
+2021-11-06:  David Anderson
+    commit 30132d513f7566097bf3a9ccd2e093e3fe076f86
+
+    Removed a mistaken new entry.
+            modified:   data.txt
+
+2021-11-06:  David Anderson
+    commit a8c5534343ba861bcb8416927d49c177f50b7017
+
+    Now with a new document section
+    titled "Private vs Public Functions".
+            modified:   libdwarf.mm
+            modified:   libdwarf.pdf
+
+2021-11-06:  David Anderson
+    commit f23c74a0820a65add86256c985561aac11c28852
+
+    Refinded the wording on the ret_dbg
+    argument to dwarf_init_path() etc.
+        modified:   doc/libdwarf.mm
+            modified:   doc/libdwarf.pdf
+
+    Made calls to dwarf_init_path() etc
+    safer by removing an accidental trap
+    for folks passing in a non-null dbg pointer
+    through ret_dbg argument.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2021-11-06:  David Anderson
+    commit 65b3214e5c11f7af11482d6874284f1831c0fd00
+
+    Fixing an issue with xml generation.
+            modified:   bugxml/bugrecord.py
+    Minor updates
+            modified:   bugxml/data.txt
+
+2021-11-06:  David Anderson
+    commit f69bd9d47836e670d725d789dd361d33e78ce716
+
+    Now Rev 4.16 6 November 2021.
+    Added a new document section "Private vs Public Functions"
+    to make it clear only functions beginning
+    with "dwarf_" are public and callable.
+
+    If libdwarf built as an archive it is up to callers
+    to not violate this rule.
+
+    If libdwarf built as a shared object (.so or .dll)
+    the build arranges that only the public functions
+    can be called (using gcc/clang -fvisibility
+    where applicable).
+        modified:   doc/libdwarf.mm
+    Regenerated.
+        modified:   doc/libdwarf.pdf
+
+2021-11-05:  David Anderson
+    commit 98bd6d99d52a0895daf353f6fd25061bc5a1a5a9
+
+    Added DW202111-002
+            modified:   data.txt
+
+2021-11-04:  David Anderson
+    commit 09ded6dd0c70e9db859529be1a4635e316693ef0
+
+    Now finds the semantic version in the .mm files
+    and updates it
+            modified:   tools/updatesemanticversion.py
+
+    Now both have the semantic version.
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarfp.mm
+
+    Regenerated
+            modified:   doc/libdwarf.pdf
+            modified:   doc/libdwarfp.pdf
+
+2021-11-04:  David Anderson
+    commit 9e3c6a8ec7127a116a19473bf8e30cc0a55ac604
+
+    Updated ChangeLog with git data.
+    Completed updating the web bugxml data.
+            modified:   ChangeLog
+            modified:   bugxml/data.txt
+
 2021-11-04:  David Anderson
     commit b40f7e291216e771185f62292dd6304b5a662926
 
