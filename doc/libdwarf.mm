@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.16 6 November 2021 0.3.1 
+.ds vE Rev 4.17 7 November 2021 0.3.1 
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -47,14 +47,6 @@ information, and other DWARF2/3/4/5 information).
 .P
 There are a few sections which are SGI-specific (those
 are clearly identified in the document).
-.P
-Starting December 2020 we rearrange the pdf that
-GNU groff -mm gives us (mm is not exceptionally flexible)
-using tools pdftotext, pdfseparate, and pdfunite from
-the poppler-utils package for debian/ubuntu.
-We hope the new arrangement with the table of contents following
-this page followed by the library documentation itself
-makes the document easier to navigate.
 .P
 \*(vE
 
@@ -499,11 +491,14 @@ compatibility.
 All functions in the library
 spelled with an initial "dwarf_"
 are public functions.
+The function prototypes are in libdwarf.h
+.P
 All functions spelled with an
 initial "_dwarf_"
 are private to the library and
 should never be directly called
 by your code.
+.P
 If any function name in the library
 (aside from file-static functions)
 starts with anything other
@@ -1084,9 +1079,13 @@ incomplete examples.
 The very few functions not following this
 general call/return plan are specifically
 documented.
+.P
 .in +2
+.FG "Example_codea general DIE outline"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 int example_codea{Dwarf_Debug dbg,Dwarf_Die indie,
     int is_info, Dwarf_Die *sibdie, Dwarf_Error *err)
 {
@@ -1116,13 +1115,17 @@ int example_codea{Dwarf_Debug dbg,Dwarf_Die indie,
 \fP
 .DE
 .in -2
+
 .P
 In a case where it is ok to suppress the error as
-being unimporant, this is an outline, not 
+being unimporant, the following is an outline, not 
 a useful function.
 .in +2
+.FG "Example_codeb get die section name"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 int example_codeb{Dwarf_Debug dbg, const char **sec_name,
     int is_info)
 {
@@ -1376,13 +1379,19 @@ traditional for UN*X library documentation), not
 from the point of view of the user of the library.
 The caller might code:
 .P
+
+.in +2
+.FG "Example calling dwarf_lineoff_b"
 .DS
-\f(CWDwarf_Line line;
+\f(CW
+Dwarf_Line line;
 Dwarf_Unsigned ret_loff;
 Dwarf_Error  err;
-int retval = dwarf_lineoff_b(line,&ret_loff,&err);\fP
+int retval = dwarf_lineoff_b(line,&ret_loff,&err);
+\fP
 .DE
-for the function defined as
+.in -2
+
 .P
 .DS
 \f(CWint dwarf_lineoff_b(Dwarf_Line line,
@@ -1478,6 +1487,8 @@ The use of this form remains fully supported,
 .DS
 .FG "Example_dwarf_dealloc()"
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampledealloc(Dwarf_Debug dbg,Dwarf_Die somedie)
 {
       dwarf_dealloc(dbg,somedie,DW_DLA_DIE);
@@ -1498,6 +1509,8 @@ Any call to this is typechecked.
 .DS
 .FG "Example_dwarf_dealloc_die()"
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampledeallocdie(Dwarf_Die somedie)
 {
       dwarf_dealloc_die(somedie);
@@ -1513,15 +1526,13 @@ These arise from calls from
 \f(CWdwarf_attrlist()\fP
 Any call to this is typechecked.
 .P
-.DS
-\f(CWvoid dwarf_dealloc_error(Dwarf_Debug dbg,
-    Dwarf_Die mydie);\fP
-.DE
 
 .in +2
 .DS
 .FG "Example_dwarf_dealloc_attribute()"
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampledeallocattr(Dwarf_Attribute attr)
 {
       dwarf_dealloc_attribute(attr);'
@@ -1544,6 +1555,8 @@ Any call to this is typechecked.
 .DS
 .FG "Example_dwarf_dealloc_error()"
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampledeallocerror(Dwarf_Debug dbg,Dwarf_Error err)
 {
       dwarf_dealloc_error(dbg,err);
@@ -1602,6 +1615,8 @@ routine that returns a list:
 .DS
 .FG "Example1 dwarf_attrlist()"
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example1(Dwarf_Debug dbg,Dwarf_Die somedie)
 {
     Dwarf_Signed atcount = 0;
@@ -1654,7 +1669,11 @@ how to deal with this class of errors.
 See just below the example for a further discussion.
 
 .in +2
+.FG "exampleintfail errors returned from init calls"
 .DS
+\f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampleinitfail(const char *path,
     char *true_pathbuf,
     unsigned tpathlen,
@@ -1710,9 +1729,12 @@ void exampleinitfail(const char *path,
         }
     }
 }
+\fP
 .DE
 .in -2
 
+The following is a historical note.
+.in +2
 .P 
 If your application needs to be absolutely
 sure not even
@@ -1739,9 +1761,10 @@ to a more recent libdwarf
 will then make a few bytes leak quite
 possible until the application is changed
 to use the dwarf_dealloc call.
+.in -2
 
 .H 3 "Error DW_DLA error free types"
-The codes that identify the storage pointed to in calls to
+Some of the codes that identify the storage pointed to in calls to
 .nr aX \n(Fg+1
 \f(CWdwarf_dealloc()\fP are described in figure \n(aX.
 .DS
@@ -1754,37 +1777,26 @@ _
 DW_DLA_STRING           :     char*
 DW_DLA_LOC              :     Dwarf_Loc
 DW_DLA_LOCDESC          :     Dwarf_Locdesc
-DW_DLA_ELLIST           :     Dwarf_Ellist (not used)
-DW_DLA_BOUNDS           :     Dwarf_Bounds (not used)
 DW_DLA_BLOCK            :     Dwarf_Block
-DW_DLA_DEBUG            :     Dwarf_Debug (do not use)
 DW_DLA_DIE              :     Dwarf_Die
 DW_DLA_LINE             :     Dwarf_Line
 DW_DLA_ATTR             :     Dwarf_Attribute
-DW_DLA_TYPE             :     Dwarf_Type  (not used)
-DW_DLA_SUBSCR           :     Dwarf_Subscr (not used)
 DW_DLA_GLOBAL           :     Dwarf_Global
 DW_DLA_ERROR            :     Dwarf_Error
 DW_DLA_LIST             :     a list of opaque descriptors
-DW_DLA_LINEBUF          :     Dwarf_Line* (not used)
 DW_DLA_ARANGE           :     Dwarf_Arange
 DW_DLA_ABBREV           :     Dwarf_Abbrev
 DW_DLA_FRAME_OP         :     Dwarf_Frame_Op
 DW_DLA_CIE              :     Dwarf_Cie
 DW_DLA_FDE              :     Dwarf_Fde
 DW_DLA_LOC_BLOCK        :     Dwarf_Loc Block
-DW_DLA_FRAME_BLOCK      :     Dwarf_Frame Block (not used)
-DW_DLA_FUNC             :     Dwarf_Func
 DW_DLA_TYPENAME         :     Dwarf_Type
-DW_DLA_VAR              :     Dwarf_Var
-DW_DLA_WEAK             :     Dwarf_Weak
 DW_DLA_ADDR             :     Dwarf_Addr
 DW_DLA_RANGES           :     Dwarf_Ranges
 DW_DLA_GNU_INDEX_HEAD   :     .debug_gnu_type/pubnames 
 DW_DLA_RNGLISTS_HEAD    :     .debug_rnglists
 DW_DLA_DGBINDEX         :     Dwarf_Gdbindex
 DW_DLA_XU_INDEX         :     Dwarf_Xu_Index_Header
-DW_DLA_LOC_BLOCK_C      :     Dwarf_Loc_c
 DW_DLA_LOCDESC_C        :     Dwarf_Locdesc_c
 DW_DLA_LOC_HEAD_C       :     Dwarf_Loc_Head_c
 DW_DLA_MACRO_CONTEXT    :     Dwarf_Macro_Context
@@ -1792,7 +1804,7 @@ DW_DLA_DSC_HEAD         :     Dwarf_Dsc_Head
 DW_DLA_DNAMES_HEAD      :     Dwarf_Dnames_Head
 DW_DLA_STR_OFFSETS      :     Dwarf_Str_Offsets_Table
 .TE
-.FG "Allocation/Deallocation Identifiers"
+.FG "Some Allocation/Deallocation Identifiers"
 .DE
 
 .P
@@ -2234,15 +2246,22 @@ may be passed to
 \f(CWdwarf_elf_init_b()\fP
 or
 \f(CWdwarf_init_b()\fP.
+.P
+.in +2
+.FG "simple_error_handler"
 .DS
-\f(CWstatic void
+\f(CW
+static void
 simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
 {
     printf("libdwarf error: %d  %s\\n",
         dwarf_errno(error), dwarf_errmsg(error));
     exit(1);
-}\fP
+}
+\fP
 .DE
+.in -2 
+
 .P
 This will only be called if an error is detected inside libdwarf
 and the
@@ -2294,10 +2313,13 @@ One does a normal
 \f(CWdwarf_init_b()\fP
 on each object and then tie the two together with
 a call  such as:
+
 .in +2
 .DS
 .FG "Example2 dwarf_set_died_dbg()"
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
 {
     Dwarf_Error error = 0;
@@ -2319,23 +2341,6 @@ When done with both dbg and tieddbg
 do the normal finishing operations on both
 in any order.
 
-It is possible to undo the tieing operation with
-.in +2
-.FG "Example3 dwarf_set_tied_dbg() obsolete"
-.DS
-\f(CW
-void example3(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    int res = 0;
-    res = dwarf_set_tied_dbg(dbg,NULL,&error);
-    if (res != DW_DLV_OK) {
-        /* Something went wrong*/
-    }
-}
-\fP
-.DE
-.in -2
 .P
 It is not necessary to undo the tieing operation
 before finishing on the dbg and tieddbg.
@@ -3080,6 +3085,8 @@ Here is an example of use of these functions.
 .in +2
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplesecgroup(Dwarf_Debug dbg)
 {
     int res = 0;
@@ -3220,16 +3227,16 @@ function registered to libdwarf, which
 is described next.
 .
 It returns 
-f(CDW_DLV_NO_ENTRY\fP
+\f(CWDW_DLV_NO_ENTRY\fP
 if the
-f(CDwarf_Die\fP
+\f(CWDwarf_Die\fP
 passed in has no 
-f(CDW_AT_stmt_list\fP
+\f(CWDW_AT_stmt_list\fP
 attribute.
 .P
 If there is a serious error (such
 as corrupt DWARF) it may return
-f(CDW_DLV_ERROR\fP.
+\f(CWDW_DLV_ERROR\fP.
 
 .H 3 "dwarf_register_printf_callback"
 .DS
@@ -3303,21 +3310,27 @@ Any application using the callbacks needs to use the function
 the above function prototype from libdwarf.h.
 
 .H 3 "Example of printf callback use in a C++ application using libdwarf"
+.in +2
 .DS
-\f(CWstruct Dwarf_Printf_Callback_Info_s printfcallbackdata;
-    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
-    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
-    dwarf_register_printf_callback(dbg,&printfcallbackdata);
+\f(CW
+struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
 
-Assuming the user implements something
-like the following function in her application:
+memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
+dwarf_register_printf_callback(dbg,&printfcallbackdata);
+
+// Assuming the user implements something
+// like the following function in her application:
 
 void
 printf_callback_for_libdwarf(void *userdata,const char *data)
 {
      cout << data;
 }
+\fP
 .DE
+.in -2
+
 .P
 It is crucial that the user's callback function copies or
 prints the data immediately. Once the user callback
@@ -3596,6 +3609,8 @@ tag.
 .FG "Example4 dwarf_siblingof_b()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
 {
     Dwarf_Die return_sib = 0;
@@ -3642,6 +3657,8 @@ The function
 .FG "Example5 dwarf_child()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example5(Dwarf_Die in_die)
 {
     Dwarf_Die return_kid = 0;
@@ -3716,6 +3733,8 @@ are incorrect.
 .FG "Example6 dwarf_offdie_b()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
 {
     Dwarf_Error error = 0;
@@ -4008,6 +4027,8 @@ does some reasonable printing).
 .FG "Example7 dwarf_CU_dieoffset_given_die()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
 {
     int res = 0;
@@ -4278,6 +4299,8 @@ Freeing the attrlist:
 .FG "Example8 dwarf_attrlist() free"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
 {
     Dwarf_Signed atcount = 0;
@@ -4502,6 +4525,8 @@ Freeing the offset_list is done as follows.:
 .FG "Exampleoffset_list dwarf_offset_list() free"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
     Dwarf_Bool is_info)
 {
@@ -5350,7 +5375,12 @@ is no longer needed, call
 to free all the space
 related to this.
 
+.in +2
+.FG "Exampleoffset_list dwarf_offset_list() free"
 .DS
+\f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example_discr_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
@@ -5441,7 +5471,9 @@ void example_discr_list(Dwarf_Debug dbg,
         }
     }
 }
+\fP
 .DE
+.in -2
 
 .H 3 "dwarf_discr_entry_u()"
 .DS
@@ -5555,6 +5587,8 @@ an example using all the following calls.
 .FG "Example Raw Loclist"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 int example_raw_loclist(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Unsigned count = 0;
@@ -5929,8 +5963,12 @@ is set to an error designation.
 A return of
 \f(CWDW_DLV_NO_ENTRY\fP
 may be possible but is a bit odd.
+.in +2
+.FG "Exampleloclist DWARF5"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
 {
     Dwarf_Unsigned lcount = 0;
@@ -6024,10 +6062,10 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
 }
 \fP
 .DE
+.in -2
 .H 3 "dwarf_get_locdesc_entry_d()"
-Earlier versions of this work with earlier
-versions of DWARF. This works with all
-DWARF from DWARF2 on.
+This works with all versions of DWARF
+from DWARF2 on.
 .DS
 \f(CW
 int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*loclist_head*/,
@@ -6409,7 +6447,10 @@ is probably impossible, but
 callers should assume it is possible.
 No return arguments are set in this case.
 
+.in +2
+.FG "Example_locexprc reading a location expression"
 .DS
+\f(CW
 void
 example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     Dwarf_Unsigned expr_len,
@@ -6492,7 +6533,10 @@ example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     }
     dwarf_loc_head_c_dealloc(head);
 }
+\fP
 .DE
+.in -2
+
 .H 3 "dwarf_loc_head_c_dealloc()"
 .DS
 void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head);
@@ -6815,6 +6859,8 @@ be to stale memory.
 .FG "Examplec dwarf_srclines_b()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplec(Dwarf_Die cu_die)
 {
     /* EXAMPLE: DWARF5 style access.  */
@@ -7358,6 +7404,8 @@ if there is no line information).
 .FG "Exampled dwarf_srcfiles()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
 {
     Dwarf_Signed count = 0;
@@ -7378,6 +7426,7 @@ void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
 \fP
 .DE
 .in -2
+
 .H 2 "Get Information About a Single Line Table Line"
 The following functions can be used on the
 \f(CWDwarf_Line\fP descriptors
@@ -7841,6 +7890,8 @@ See section 6.1.1 "Lookup by Name" in the dwarf standard.
 .FG "Examplef dwarf_get_globals()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplef(Dwarf_Debug dbg)
 {
     Dwarf_Signed count = 0;
@@ -8487,7 +8538,10 @@ more than one.
 .P
 To access all .debug_names tables
 in the section do
+.in +2
+.FG "Example reading .debug_names section"
 .DS 
+\f(CW
 void examfuncdname(Dwarf_Debug dbg)
 {    
     Dwarf_Dnames_Head dn = 0;
@@ -8507,6 +8561,7 @@ void examfuncdname(Dwarf_Debug dbg)
             /*  corrupt data. give up, or do something
                 with the error record. */
             return;
+        }
         /* Use the dn record to do dwarf_dnames calls */
         /* clean up */
         dwarf_dealloc_dnames(dn);
@@ -8515,7 +8570,9 @@ void examfuncdname(Dwarf_Debug dbg)
     }   
     return;
 }
+\fP
 .DE
+.in -2
 
 .P
 On success the function returns
@@ -9084,6 +9141,8 @@ or
     mark_this_offset_as_examined(macro_unit_offset);
     add_offset_to_list(offset);
 */
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
 {
     int lres = 0;
@@ -9803,6 +9862,8 @@ no macro information.
 .FG "Examplep2 dwarf_get_macro_details()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
 {
     Dwarf_Error error = 0;
@@ -10051,6 +10112,8 @@ This dealloc approach is new as of July 15, 2005.
 .FG "Exampleq dwarf_get_fde_list()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampleq(Dwarf_Debug dbg)
 {
     Dwarf_Cie *cie_data = 0;
@@ -10128,6 +10191,8 @@ This dealloc approach is new as of July 15, 2005.
 .FG "Exampler dwarf_get_fde_list_eh()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
 {
     /*  Given a pc value
@@ -10867,6 +10932,8 @@ It does not return
 .FG "Examples dwarf_expand_frame_instructions()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examples(Dwarf_Cie cie,
     Dwarf_Ptr instruction,Dwarf_Unsigned len)
 {
@@ -10921,6 +10988,7 @@ void examples(Dwarf_Cie cie,
 \fP
 .DE
 .in -2
+
 .H 3 "dwarf_get_frame_instruction()"
 This works fully for all DWARF frames except
 those from the LLVM compiler, which
@@ -11397,6 +11465,8 @@ for bugs in the section.
 .FG "examplestringoffsets dwarf_open_str_offsets_table_access() etc"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplestringoffsets(Dwarf_Debug dbg)
 {
     int res = 0;
@@ -11754,6 +11824,8 @@ and verifies they make sense.
 .FG "Exampleu dwarf_get_aranges()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampleu(Dwarf_Debug dbg)
 {
     Dwarf_Signed count = 0;
@@ -12147,6 +12219,8 @@ Here is an example using the functions described below:
 .DS
 .FG "Example .debug_rnglist for attribute"
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 int example_rnglist_for_attribute(Dwarf_Attribute attr,
     Dwarf_Unsigned attrvalue,Dwarf_Error *error)
 {
@@ -12453,11 +12527,12 @@ makes these calls.
 Here is
 an example using all the following calls.
 
-example_rngl
 .in +2
 .FG "Examplev dwarf_rnglists)"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Unsigned count = 0;
@@ -12950,6 +13025,8 @@ section or if
 .FG "Examplev dwarf_get_ranges_b()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
 {
     Dwarf_Signed count = 0;
@@ -13093,6 +13170,8 @@ example makes it rather too long).
 .FG "Examplew dwarf_get_gdbindex_header()"
 .DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplew(Dwarf_Debug dbg
 {
     Dwarf_Gdbindex gindexptr = 0;
@@ -13156,10 +13235,6 @@ void examplew(Dwarf_Debug dbg
 \fP
 .DE
 .in -2
-
-
-
-
 
 .H 3 "dwarf_gdbindex_culist_array()"
 .DS
@@ -13307,9 +13382,13 @@ through the pointers.
 .P
 Given an open Dwarf_Gdbindex one uses the function as follows:
 .P
-.DS
+
+.in +2
 .FG "Examplewgdbindex dwarf_gdbindex_addressarea()"
+.DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplewgdbindex(Dwarf_Gdbindex gdbindex)
 {
     Dwarf_Unsigned list_len = 0;
@@ -13340,7 +13419,7 @@ void examplewgdbindex(Dwarf_Gdbindex gdbindex)
 }
 \fP
 .DE
-
+.in -2
 
 .H 3 "dwarf_gdbindex_symboltable_array()"
 .DS
@@ -13371,9 +13450,13 @@ Given a valid Dwarf_Gdbindex pointer, one can access the entire
 symbol table as follows (using 'return' here to indicate
 we are giving up due to a problem while keeping the
 example code fairly short):
-.DS
+
+.in +2
 .FG "Examplex dwarf_gdbindex_symboltable_array()"
+.DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplex(Dwarf_Gdbindex gdbindex)
 {
     Dwarf_Unsigned symtab_list_length = 0;
@@ -13435,6 +13518,7 @@ void examplex(Dwarf_Gdbindex gdbindex)
 }
 \fP
 .DE
+.in -2
 
 .H 3 "dwarf_gdbindex_symboltable_entry()"
 .DS
@@ -13732,10 +13816,13 @@ and that is set by libdwarf as
 \f(CWpaths_returned[0]\fP.
 
 .P
-An example of calling this function follows
-.DS
+.in +2
 .FG "Example debuglink ()"
-\f(CWvoid exampledebuglink(Dwarf_Debug dbg)
+.DS
+\f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
+void exampledebuglink(Dwarf_Debug dbg)
 {
     int      res = 0;
     char    *debuglink_path = 0;
@@ -13813,6 +13900,7 @@ An example of calling this function follows
 }
 \fP
 .DE
+.in -2
 
 .H 3 "dwarf_add_debuglink_global_path()"
 .DS
@@ -14258,9 +14346,12 @@ and this is not considered an error.
 .P
 An example of initializing and disposing
 of a \f(CWDwarf_Xu_Index_Header\fP follows.
-.DS
+.in +2
 .FG "Exampley dwarf_get_xu_index_header()"
+.DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampley(Dwarf_Debug dbg, const char *type)
 {
     /* type is "tu" or "cu" */
@@ -14295,6 +14386,8 @@ void exampley(Dwarf_Debug dbg, const char *type)
 }
 \fP
 .DE
+.in -2
+
 .H 3 "dwarf_get_xu_index_section_type()"
 .DS
 int dwarf_get_xu_index_section_type(
@@ -14379,9 +14472,12 @@ the function \f(CWdwarf_get_xu_section_offset()\fP
 as the \f(CWrow_index\fP.
 .P
 An example of use follows.
-.DS
+.in +2
 .FG "Examplez dwarf_get_xu_hash_entry()"
+.DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplez( Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned hash_slots_count)
 {
@@ -14418,9 +14514,8 @@ void examplez( Dwarf_Xu_Index_Header xuhdr,
     }
 }
 \fP
-
 .DE
-
+.in -2
 
 .H 3 "dwarf_get_xu_section_names()"
 .DS
@@ -14514,9 +14609,14 @@ An example of use of
 and
 \f(CWdwarf_get_xu_section_offset()\fP
 follows.
-.DS
+
+
+.in +2
 .FG "Exampleza dwarf_get_xu_section_names()"
+.DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void exampleza(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned offsets_count, Dwarf_Unsigned index )
 {
@@ -14550,7 +14650,9 @@ void exampleza(Dwarf_Xu_Index_Header xuhdr,
             Use the values.*/
     }
 }
+\fP
 .DE
+.in -2
 
 .H 2 "TAG ATTR etc names as strings"
 These functions turn a value into a string.
@@ -14594,10 +14696,13 @@ passing a TAG value code to  \f(CWdwarf_get_ACCESS_name()\fP
 is a coding error which libdwarf will process as if it was
 an accessibility code value.
 Examples of bad and good usage are:
+
 .in +2
-.DS
 .FG "Examplezb dwarf_get_TAG_name()"
+.DS
 \f(CW
+#include "dwarf.h"
+#include "libdwarf.h"
 void examplezb(void)
 {
     const char * out = 0;
@@ -14800,7 +14905,7 @@ null-terminated error message string
 corresponding to the error specified by
 \f(CWerror\fP.
 The string
-should not be deallocated using \f(CWdwarf_dealloc()\fP.
+should not be  deallocated or freed.
 
 The string should be considered to be a temporary string.
 That is, the returned pointer may become stale if you do
@@ -14827,7 +14932,7 @@ null-terminated error message string
 corresponding to the error number specified by
 \f(CWerrcode\fP.
 The string
-should not be deallocated or freed.
+should not be  deallocated or freed.
 If the 
 \f(CWerrcode\fP
 is too large for the table of static error strings
@@ -15105,9 +15210,13 @@ DW_DLE_LINE_SET_ADDR_ERROR
 .DE
 
 This list of errors is not complete;
-additional errors have been added.
-Some of the above errors may be unused.
-Errors may not have the same meaning in different releases.
+additional errors have been added
+in almost every release.
+Some of the errors may be unused.
+Error numbers are not recycled, so
+all older error numbers are still in the
+table.
+
 Since most error codes are returned from only one  place
 (or a very small number of places) in the source
 it is normally very useful to simply search the
@@ -15115,7 +15224,8 @@ it is normally very useful to simply search the
 out where a particular error code is generated.
 See 
 \f(CWlibdwarf/dwarf_errmsg_list.h\fP
-for the complete message set with short descriptions.
+for the complete message set with
+default descriptions.
 
 .H 3 "dwarf_dealloc()"
 .DS
@@ -15228,6 +15338,9 @@ Since the regression tests are large
 and you won't otherwise need them
 a copy of alloctrack.py follows so
 you need not clone the test code.
+.P
+.in +2
+.FG "Extracting regressiontests failures. Python3"
 .DS
 \f(CW
 #!/usr/bin/env python3
@@ -15242,78 +15355,79 @@ you need not clone the test code.
 import sys
 import os
 
-def trackallocs(fi,valdict):
-  line = 0
-  while True:
-    line = int(line)+1
-    try:
-      recf = fi.readline()
-    except EOFError:
-      break
-    if len(recf) < 1:
-      # eof
-      break
-    rec = recf.strip()
-    if rec.find("ALLOC") != -1:
-    if rec.find("libdwarfdetector ALLOC ret 0x") != -1:
-      wds = rec.split()
-      off = wds[3]
-      if off in valdict:
-         (allo,deallo) = valdict[off]
-         if int(allo) == 0:
-            r = (1,deallo)
-            valdict[off] = r
-         else:
-            print("Duplicate use of ",off,"line",line)
-            r =(int(allo)+1,deallo)
-            valdict[off] = r
-      else:
-         allo = 1
-         deallo = 0
-         r=(allo,deallo)
-         valdict[off] = r
-      continue
+def trackallocs(fi, valdict):
+    line = 0
+    while True:
+        line = int(line) + 1
+        try:
+            recf = fi.readline()
+        except EOFError:
+            break
+        if len(recf) < 1:
+            # eof
+            break
+        rec = recf.strip()
+        if rec.find("libdwarfdetector ALLOC ret 0x") != -1:
+            wds = rec.split()
+            off = wds[3]
+            if off in valdict:
+                (allo, deallo) = valdict[off]
+                if int(allo) == 0:
+                    r = (1, deallo)
+                    valdict[off] = r
+                else:
+                    print("Duplicate use of ", off, "line", line)
+                    r = (int(allo) + 1, deallo)
+                    valdict[off] = r
+            else:
+                allo = 1
+                deallo = 0
+                r = (allo, deallo)
+                valdict[off] = r
+            continue
 
-    if rec.find("libdwarfdetector DEALLOC ret 0x") != -1:
-      wds = rec.split()
-      off = wds[3]
-      if off in valdict:
-         (allo,deallo) = valdict[off]
-         if int(deallo) == 0:
-            r = (allo,1)
-            valdict[off] = r
-         else:
-            print("Duplicate use of ",off,"line",line)
-            r = (allo,int(deallo)+1)
-            valdict[off] =  r
-      else:
-         allo = 0
-         deallo = 1
-         r=(allo,deallo)
-         valdict[off] = r
-      continue 
+        if rec.find("libdwarfdetector DEALLOC ret 0x") != -1:
+            wds = rec.split()
+            off = wds[3]
+            if off in valdict:
+                (allo, deallo) = valdict[off]
+                if int(deallo) == 0:
+                    r = (allo, 1)
+                    valdict[off] = r
+                else:
+                    print("Duplicate use of ", off, "line", line)
+                    r = (allo, int(deallo) + 1)
+                    valdict[off] = r
+            else:
+                allo = 0
+                deallo = 1
+                r = (allo, deallo)
+                valdict[off] = r
+            continue
 
-if __name__ == '__main__':
-  if len(sys.argv) > 1:
-    fname = sys.argv[1]
-    try:
-      file = open(fname,"r")
-    except IOError as message:
-      print("File could not be opened: ", fname, " ", message)
-      sys.exit(1)
-  else:
-    file = sys.stdin
 
-  vals = {}
-  trackallocs(file,vals)
-  for s in vals:
-    (allo,deallo) = vals[s]
-    if int(allo) != int(deallo):
-       print("Mismatch on ",s," a vs d: ",allo,deallo)
-    if int(allo) >  1:
-       print("Reuse of ",s," a vs d: ",allo,deallo)
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        fname = sys.argv[1]
+        try:
+            file = open(fname, "r")
+        except IOError as message:
+            print("File could not be opened: ", fname, " ", message)
+            sys.exit(1)
+    else:
+        file = sys.stdin
+
+    vals = {}
+    trackallocs(file, vals)
+    for s in vals:
+        (allo, deallo) = vals[s]
+        if int(allo) != int(deallo):
+            print("Mismatch on ", s, " a vs d: ", allo, deallo)
+        if int(allo) > 1:
+            print("Reuse of ", s, " a vs d: ", allo, deallo)
 \fP
 .DE
+.in -2
 
 .SK
 .S
