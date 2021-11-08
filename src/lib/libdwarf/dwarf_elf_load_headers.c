@@ -1684,7 +1684,11 @@ elf_flagmatches(Dwarf_Unsigned flagsword,Dwarf_Unsigned flag)
     return FALSE;
 }
 
-/*  For SHT_GROUP sections. */
+/*  For SHT_GROUP sections. 
+    A group section starts with a 32bit flag
+    word with value 1. 
+    32bit section numbers of the sections
+    in the group follow the flag field. */
 static int
 read_gs_section_group(
     dwarf_elf_object_access_internals_t *ep,
@@ -1725,7 +1729,7 @@ read_gs_section_group(
             return DW_DLV_ERROR;
         }
         count = seclen/psh->gh_entsize;
-        if (count > ep->f_loc_shdr.g_count) {
+        if (count >= ep->f_loc_shdr.g_count) {
             /* Impossible */
             free(data);
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
@@ -1771,12 +1775,12 @@ read_gs_section_group(
                 return DW_DLV_ERROR;
             }
             grouparray[i] = gseca;
-            if (gseca > ep->f_loc_shdr.g_count) {
+            if (gseca >= ep->f_loc_shdr.g_count) {
                 /*  Might be confused endianness by
                     the compiler generating the SHT_GROUP.
                     This is pretty horrible. */
 
-                if (gsecb > ep->f_loc_shdr.g_count) {
+                if (gsecb >= ep->f_loc_shdr.g_count) {
                     *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
                     free(data);
                     free(grouparray);
