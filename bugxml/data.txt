@@ -24,12 +24,11 @@ datereported: 2021-11-03
 reportedby: David Korczynski
 vulnerability: Out-of-memory in fuzz_init_binary
 product: libdwarf
-description: Verified as fixed by oss-fuzz
-  The testcase has illegal libdwarf call
-  and improper include statements.
-datefixed:
-references:
-gitfixid:
+description: The fuzzed macho64 object has corrupted
+  headers.
+datefixed: 2021-11-07
+references: regressiontests/ossfuzz40731/clusterfuzz-testcase-fuzz_init_binary-5983147574034432
+gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease:
 endrec: DW202111-008
 
