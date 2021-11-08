@@ -1,4 +1,22 @@
 
+id: DW202111-009
+cve:
+fuzzer: oss-fuzz-40729
+datereported: 2021-11-05
+reportedby: David Korczynski
+vulnerability: Timeout - fuzz_init_binary
+product: libdwarf
+description: 
+  The object file (macho 64 bit) has some
+  header fuzzing that was not caught reading
+  the object until the macho reader
+  tried a gigantic malloc..
+datefixed: 2021-11-07
+references: regressiontests/ossfuzz40729/clusterfuzz-testcase-minimized-fuzz_init_binary-4791627277795328
+gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
+tarrelease:
+endrec: DW202111-009
+
 id: DW202111-008
 cve:
 fuzzer: oss-fuzz-40731
@@ -7,6 +25,8 @@ reportedby: David Korczynski
 vulnerability: Out-of-memory in fuzz_init_binary
 product: libdwarf
 description: Verified as fixed by oss-fuzz
+  The testcase has illegal libdwarf call
+  and improper include statements.
 datefixed:
 references:
 gitfixid:
@@ -21,6 +41,8 @@ reportedby: David Korczynski
 vulnerability:  Null-dereference READ in dwarf_object_init_b
 product: libdwarf
 description: Verified as fixed by oss-fuzz
+  The testcase has illegal libdwarf call
+  and improper include statements.
 datefixed:
 references:
 gitfixid:
@@ -34,7 +56,8 @@ datereported: 2021-11-03
 reportedby: David Korczynski
 vulnerability: Heap-buffer-overflow in _dwarf_elf_setup_all_section_groups
 product: libdwarf
-description: 
+description: The testcase has illegal libdwarf call
+  and improper include statements.
 datefixed: 
 references: 
 gitfixid: 
@@ -49,7 +72,9 @@ reportedby: David Korczynski
 vulnerability: Null-dereference READ in dwarf_object_init_b 
 product: libdwarf
 description: 
- Verified as fixed by oss-fuzz 2021-11-03
+  Verified as fixed by oss-fuzz 2021-11-03
+  The testcase has illegal libdwarf call
+  and improper include statements.
 datefixed: 2021-11-05
 references: 
 gitfixid: 
@@ -68,7 +93,6 @@ description: The test code is calling a libdwarf-internal
   function names beginning with dwarf_ are callable.
   When building libdwarf as an archive there is no
   means to enforce this rule)
-  The testcase is broken.
 datefixed: 2021-11-05
 references: regressiontests/oss40671/clusterfuzz-testcase-fuzz_init_path-5455557297831936
   regressiontests/oss40671/clusterfuzz-testcase-minimized-fuzz_init_path-5455557297831936
@@ -91,6 +115,8 @@ description:
   could lead to excessive malloc and or a caller
   segmentation violation. Fixed by DW202111-001.
   Verified as fixed by oss-fuzz
+  The testcase has illegal libdwarf call
+  and improper include statements.
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40669/clusterfuzz-testcase-minimized-fuzz_init_path-5399726397194240
   regressiontests/clusterfuzz-testcase-fuzz_init_path-5399726397194240
@@ -113,6 +139,8 @@ description:  Corrupted MachO object can crash caller
   could lead to excessive malloc and or a caller
   segmentation violation.
   Verified by oss-fuzz as fixed.
+  The testcase has illegal libdwarf call
+  and improper include statements.
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40663/clusterfuzz-testcase-minimized-fuzz_init_path-6122542432124928
 gitfixid: b40f7e291216e771185f62292dd6304b5a662926 
