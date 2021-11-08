@@ -1,3 +1,55 @@
+
+id: DW202111-013
+cve:
+fuzzer: oss-fuzz-40802
+datereported: 2021-11-07
+reportedby: David Korczynski
+vulnerability: Null-dereference READ in dwarf_object_init_b
+product: libdwarf
+description: A corrupted object. Libdwarf detects it quickly now.
+datefixed: 2021-11-07
+references: regressiontests/ossfuzz40802/ clusterfuzz-testcase-fuzz_init_binary-5538015955517440.fuzz
+  regressiontests/ossfuzz40802/clusterfuzz-testcase-minimized-fuzz_init_binary-5538015955517440.fuzz
+
+gitfixid: 
+tarrelease:
+endrec: DW202111-013
+
+
+
+id: DW202111-012
+cve:
+fuzzer: oss-fuzz-40801
+datereported: 2021-11-07
+reportedby: David Korczynski
+vulnerability:  Timeout in fuzz_init_path
+product: libdwarf
+description: A corrupted object. libdwarf detects it quickly now.
+datefixed: 2021-11-07
+references: regressiontests/ossfuzz801/clusterfuzz-testcase-fuzz_init_path-5443517279764480
+  regressiontests/ossfuzz40801/clusterfuzz-testcase-minimized-fuzz_init_path-5443517279764480
+gitfixid: 
+tarrelease:
+endrec: DW202111-012
+
+
+id: DW202111-011
+cve:
+fuzzer: oss-fuzz-40799
+datereported: 2021-11-02
+reportedby: David Korczynski
+vulnerability: Out-of-memory in fuzz_init_path
+product: libdwarf
+description: 
+datefixed: 2021-11-07
+references: regressiontests/ossfuzz40799/clusterfuzz-testcase-fuzz_init_path-5245778948390912
+  regressiontests/ossfuzz40799/clusterfuzz-testcase-minimized-fuzz_init_path-5245778948390912
+gitfixid: 
+tarrelease:
+endrec: DW202111-011
+
+
+
 id: DW202111-010
 cve:
 fuzzer: oss-fuzz-40627
@@ -26,6 +78,8 @@ description:
   header fuzzing that was not caught reading
   the object until the macho reader
   tried a gigantic malloc..
+  Now the library code catches the error before malloc and
+  returns an error code.
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40729/clusterfuzz-testcase-minimized-fuzz_init_binary-4791627277795328
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
@@ -40,27 +94,13 @@ reportedby: David Korczynski
 vulnerability: Out-of-memory in fuzz_init_binary
 product: libdwarf
 description: The fuzzed macho64 object has corrupted
-  headers.
+  headers. The library notices and reports an error.
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40731/clusterfuzz-testcase-fuzz_init_binary-5983147574034432
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease:
 endrec: DW202111-008
 
-id: DW202111-007
-cve:
-fuzzer: oss-fuzz-40673
-datereported: 2021-11-03
-reportedby: David Korczynski
-vulnerability:  Null-dereference READ in dwarf_object_init_b
-product: libdwarf
-description: Verified as fixed by oss-fuzz
-  The Macho headers are corrupted and that is now reported.
-datefixed: 2021-11-07
-references:
-gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
-tarrelease:
-endrec: DW202111-007
 
 id: DW202111-005
 cve: 
@@ -126,8 +166,6 @@ description:
   could lead to excessive malloc and or a caller
   segmentation violation. Fixed by DW202111-001.
   Verified as fixed by oss-fuzz
-  The testcase has illegal libdwarf call
-  and improper include statements.
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40669/clusterfuzz-testcase-minimized-fuzz_init_path-5399726397194240
   regressiontests/clusterfuzz-testcase-fuzz_init_path-5399726397194240
