@@ -693,6 +693,48 @@ gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-001
 
+id: DW201611-008
+cve: CVE-2016-10254
+datereported: 2016-11-4
+reportedby: Agostino Sarubbo
+vulnerability: Crash libelf reading fuzzed object.
+product: libdwarf
+description: This is a weakness in libelf checking.
+  Testing that current libdwarf deals with it properly,
+  though it was never a bug in libdwarf.
+  The CVE mentions libdwarf.
+  <pre>
+  blogs.gentoo.org/ago/2016/11/04/elfutils-memory-allocation-failure-in-allocate_elf-common-h/
+  www.openwall.com/lists/oss-security/2017/03/22/2 
+  </pre>
+datefixed: 
+references: regressiontests/sarubbo-b/00011-elfutils-memalloc-allocate_elf 
+gitfixid:
+tarrelease:
+endrec: DW201611-008
+
+id: DW201611-007
+cve: CVE-2016-10255
+datereported: 2016-11-4
+reportedby: Agostino Sarubbo
+vulnerability: Crash libelf reading fuzzed object.
+product: libdwarf
+description: This is a weakness in libelf checking.
+  Testing that current libdwarf deals with it properly,
+  though it was never a bug in libdwarf.
+  The CVE mentions libdwarf.
+  <pre>
+  bugzilla.redhat.com/show_bug.cgi?id=1387584 
+  www.openwall.com/lists/oss-security/2017/03/22/1 
+  blogs.gentoo.org/ago/2016/11/04/elfutils-memory-allocation-failure-in-__libelf_set_rawdata_wrlock-elf_getdata-c/ 
+  </pre>
+datefixed:
+references: regressiontests/sarubbo-a/00031-elfutils-memalloc-__libelf_set_rawdata_wrlock
+gitfixid:
+tarrelease:
+endrec: DW201611-007
+
+  
 
 id: DW201611-006
 cve: CVE-2016-9480
@@ -1707,4 +1749,68 @@ references: regressiontests/xqx-b/aw.elf
 gitfixid: d9d40e4d802e626065ce37ff384dd69c43bc499
 tarrelease:
 endrec: DW201601-002
+
+id: DW201512-001
+cve: CVE-2015-8750
+datereported: 20151226
+reportedby: Qixue Xiao (xqx)
+vulnerability:  Null pointer dereference in libdwarf
+product: libdwarf
+description: libdwarf 20151114 and earlier allows remote
+  attackers to cause a denial of service (NULL pointer 
+  dereference and crash) via a debug_abbrev 
+  section marked NOBITS in an ELF file.
+  <pre>
+  bugzilla.redhat.com/show_bug.cgi?id=1294264
+  www.openwall.com/lists/oss-security/2016/01/07/11
+  </pre>
+datefixed: 
+references: regressiontests/xqx-c/awbug6.elf
+gitfixid: 
+tarrelease:
+endrec: DW201512-001
+
+id: DW201512-002
+cve: CVE-2015-8538
+datereported: 20151214
+reportedby: Adam Maris
+vulnerability:  Out-of-bounds read in dwarf_leb.c
+product: libdwarf
+description: libdwarf 20151114 and earlier allows remote
+  attackers to cause a denial of service (NULL pointer 
+  dereference and crash) via a debug_abbrev 
+  section marked NOBITS in an ELF file.
+  The CVE report mentions a reproducer object file
+  but such is not present.
+  <pre>
+  bugzilla.redhat.com/show_bug.cgi?id=1291299 
+  www.openwall.com/lists/oss-security/2015/12/10/3 
+  </pre>
+datefixed: 
+references:
+gitfixid: 
+tarrelease:
+endrec: DW201512-002
+
+
+id: DW201412-001
+cve: CVE-2014-9482
+datereported: 20141231
+reportedby: Adam Maris
+vulnerability: Use after free vulnerability in Dwarfdump
+product: dwarfdump
+description: The use-after-free has no attached testcase
+  anywhere.
+  <pre>
+  bugzilla.redhat.com/show_bug.cgi?id=1177758
+  www.openwall.com/lists/oss-security/2014/12/31/3 
+  www.openwall.com/lists/oss-security/2015/01/03/14
+  </pre>
+datefixed:
+references: 
+gitfixid:
+tarrelease:
+endrec: DW201412-001
+
+
 
