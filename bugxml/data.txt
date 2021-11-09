@@ -1,4 +1,18 @@
 
+id: DW201907-001
+cve: CVE-2019-14249
+fuzzer:
+datereported: 2019-07-23
+reportedby: unknown
+vulnerability: Denial of service with zero size section group
+product: libdwarf
+description: dwarf_elf_load_headers.c in libdwarf before 2019-07-05 allows attackers to cause a denial of service (division by zero) via an ELF file with a zero-size section group (SHT_GROUP), as demonstrated by dwarfdump. 
+datefixed: 2019-07-05
+references: 
+gitfixid: cb7198abde46c2ae29957ad460da6886eaa606ba
+tarrelease:
+endrec: DW201907-001
+
 id: DW202111-013
 cve:
 fuzzer: oss-fuzz-40802
@@ -740,7 +754,7 @@ endrec:
 
 
 id: DW201611-005
-cve:
+cve: CVE-2016-9558
 datereported: 2016-11-11
 reportedby: Agostino Sarubbo
 vulnerability: negation of -9223372036854775808 cannot be represented in type 
@@ -756,7 +770,7 @@ tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201611-004
-cve:
+cve: CVE-2016-9275
 datereported: 2016-11-02
 reportedby: Agostino Sarubbo
 vulnerability: Heap overflow in dwarf_skim_forms()
@@ -764,14 +778,15 @@ product: libdwarf
 description: If a non-terminated string 
   in a DWARF5 macro section 
   ends a section it can result in accessing memory not
-  in the application.   dwarf_macro5.c(in _dwarf_skim_forms()).
+  in the application (out of bounds read).
+  dwarf_macro5.c(in _dwarf_skim_forms()).
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00027-libdwarf-heapoverflow-_dwarf_skim_forms
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 endrec:
 
 id: DW201611-003
-cve:
+cve: CVE-2016-9276
 datereported: 2016-11-02
 reportedby: Agostino Sarubbo
 vulnerability: Bad aranges length leads to overflow and bad pointer
@@ -842,8 +857,26 @@ datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00024-libdwarf-memalloc-do_decompress_zlib
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 tarrelease: libdwarf-20170416.tar.gz 
-endrec:
+endrec: DW201611-001
 
+
+id: DW201610-001
+cve: CVE-2016-8681
+datereported: 2016-10-02
+reportedby: ago
+vulnerability: Out of bounds read
+product: libdwarf
+description: The _dwarf_get_abbrev_for_code function in
+  dwarf_util.c in libdwarf 20161001 and earlier allows remote 
+  attackers to cause a denial of service (out-of-bounds read) 
+  by calling the dwarfdump command on a crafted file. 
+  bugzilla.redhat.com/show_bug.cgi?id=1385690
+  www.securityfocus.com/bid/93592
+datefixed: 2016-10-04
+references: 
+gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
+tarrelease: libdwarf-20170416.tar.gz
+endrec: DW201610-001
 
 
 
