@@ -960,16 +960,7 @@ description: The _dwarf_get_abbrev_for_code function in
 datefixed: 2016-10-04
 references: 
 gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
-endrec: DW201610-002
-
-
-
-datefixed: 2016-10-04
-references: 
-gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
-tarrelease: libdwarf-20170416.tar.gz
 endrec: DW201610-001
-
 
 
 id: DW201609-004
@@ -1663,7 +1654,7 @@ gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
-id: DW201605-006
+id: DW201605-020
 cve: CVE-2016-5027
 datereported: 20160425
 reportedby: Yue Liu,lieanu
@@ -1688,7 +1679,7 @@ datefixed:
 references: 
 gitfixid: 
 tarrelease: 
-endrec: DW201605-006
+endrec: DW201605-020
 
 id: DW201601-001
 cve: CVE-2016-2091
