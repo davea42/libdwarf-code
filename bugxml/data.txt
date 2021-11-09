@@ -362,7 +362,7 @@ endrec: DW201711-001
 
 
 id: DW201709-001
-cve:
+cve: 
 datereported: 2017-09-19
 reportedby: Agostino Sarubbo
 vulnerability: Incorrect abbrev section could crash caller.
@@ -694,9 +694,6 @@ tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-001
 
 
-
-
-
 id: DW201611-006
 cve: CVE-2016-9480
 datereported: 2016-11-14
@@ -859,19 +856,72 @@ gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 tarrelease: libdwarf-20170416.tar.gz 
 endrec: DW201611-001
 
-
-id: DW201610-001
-cve: CVE-2016-8681
+id: DW201610-003
+cve: CVE-2016-8679
 datereported: 2016-10-02
-reportedby: ago
+reportedby: agostino
+vulnerability: dwarf_get_size_of_val out of bounds read
+product: libdwarf
+description: The _dwarf_get_size_of_val function in 
+  libdwarf/dwarf_util.c in Libdwarf before 20161124 
+  allows remote attackers to cause a denial of service 
+  (out-of-bounds read) by calling the dwarfdump command 
+  on a crafted file. 
+  <pre>
+  www.securityfocus.com/bid/93601
+  blogs.gentoo.org/ago/2016/10/06/libdwarf-heap-based-
+  buffer-overflow-in-_dwarf_get_size_of_val-dwarf_util-c/
+  </pre>
+datefixed: 2016-10-04
+references:
+gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
+endrec: DW201610-003
+
+id: DW201610-002
+cve: CVE-2016-8680
+datereported: 2016-10-02
+reportedby: agostino
 vulnerability: Out of bounds read
 product: libdwarf
 description: The _dwarf_get_abbrev_for_code function in
   dwarf_util.c in libdwarf 20161001 and earlier allows remote 
   attackers to cause a denial of service (out-of-bounds read) 
   by calling the dwarfdump command on a crafted file. 
+  <pre>
   bugzilla.redhat.com/show_bug.cgi?id=1385690
   www.securityfocus.com/bid/93592
+  Duplicate of CVE-2016-8681
+  </pre>
+datefixed: 2016-10-04
+references: 
+gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
+endrec: DW201610-002
+
+
+
+
+id: DW201610-001
+cve: CVE-2016-8681
+datereported: 2016-10-02
+reportedby: agostino
+vulnerability: Out of bounds read
+product: libdwarf
+description: The _dwarf_get_abbrev_for_code function in
+  dwarf_util.c in libdwarf 20161001 and earlier allows remote 
+  attackers to cause a denial of service (out-of-bounds read) 
+  by calling the dwarfdump command on a crafted file. 
+  <pre>
+  bugzilla.redhat.com/show_bug.cgi?id=1385690
+  www.securityfocus.com/bid/93592
+  Duplicate of CVE-2016-8680
+  </pre>
+datefixed: 2016-10-04
+references: 
+gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
+endrec: DW201610-002
+
+
+
 datefixed: 2016-10-04
 references: 
 gitfixid: efe48cad0693d6994d9a7b561e1c3833b073a624
@@ -881,7 +931,7 @@ endrec: DW201610-001
 
 
 id: DW201609-004
-cve: 
+cve: CVE-2016-7510 
 datereported: 20160917
 reportedby: Puzzor
 vulnerability: libdwarf 20160613 Out-of-Bounds read
@@ -1570,4 +1620,91 @@ references: regressiontests/liu/null02.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: libdwarf-20160507.tar.gz
 endrec:
+
+id: DW201605-006
+cve: CVE-2016-5027
+datereported: 20160425
+reportedby: Yue Liu,lieanu
+vulnerability: NULL dereference in  _dwarf_decode_s_leb128
+product: libdwarf
+description: dwarf_form.c in libdwarf 20160115 allows
+  remote attackers to cause a denial of service (crash) 
+  via a crafted elf file
+  Apparently no crafted object file presented.
+  However the code fix is presented in the report
+  at openwall.com.
+  Discovered the CVE November 2021
+  To attack the code just pass the argument
+  Dwarf_Word * leb128_length as a NULL pointer (that is allowed). 
+  The code was fixed in dwarf_leb.c on 2016-04-27 20:00:06.
+  <pre>
+  bugzilla.redhat.com/show_bug.cgi?id=1330237
+  www.openwall.com/lists/oss-security/2016/05/24/1
+  www.openwall.com/lists/oss-security/2016/05/25/1
+  </pre>
+datefixed:  
+references: 
+gitfixid: 
+tarrelease: 
+endrec: DW201605-006
+
+id: DW201601-001
+cve: CVE-2016-2091
+datereported: 20160112
+reportedby: Qixue Xiao
+vulnerability: Out of bound read in  dwarf_read_cie_fde_prefix()
+product: libdwarf
+description: Crashes the calling program. Requires
+  a crafted object file.  
+  <pre>
+  *** DWARF CHECK: DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE
+  len=0x00000010, len size=0x00000004, extn size=0x00000000, totl
+  length=0x00000014, addr size=0x00000008, mod=0x00000004 must be zero
+  in cie, offset 0x00000000. ***
+  7   ==53495== Invalid read of size 2
+  1 ==53495==    at 0x4C2F7E0: memcpy@@GLIBC_2.14 (in
+  /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+  2 ==53495==    by 0x43287F: dwarf_read_cie_fde_prefix (dwarf_frame2.c:934)
+  3 ==53495==    by 0x431305: _dwarf_get_fde_list_internal (dwarf_frame2.c:268)
+  4 ==53495==    by 0x42EB5F: dwarf_get_fde_list_eh (dwarf_frame.c:1101)
+  5 ==53495==    by 0x41BABE: print_frames (print_frames.c:1835)
+  6 ==53495==    by 0x40485B: process_one_file (dwarfdump.c:1323)
+  7 ==53495==    by 0x403529: main (dwarfdump.c:630)
+  www.openwall.com/lists/oss-security/2016/01/19/3
+  www.openwall.com/lists/oss-security/2016/05/28/8
+  </pre>
+datefixed: 20160121
+references: regressiontests/xqx-b/awbug5.elf
+gitfixid: d9d40e4d802e626065ce37ff384dd69c43bc499
+tarrelease:
+endrec: DW201601-001
+
+id: DW201601-002
+cve: CVE-2016-2050
+datereported: 20160119
+reportedby: Qixue Xiao
+vulnerability: Out of bound write in get_abbrev_array_info
+product: libdwarf
+description: Crashes the calling program. Requires
+  a crafted object file.
+  <pre>
+  valgrind ./dwarfdump -ka aw.elf
+  ==5358== Memcheck, a memory error detector
+  ==5358== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
+  ==5358== Using Valgrind-3.10.1 and LibVEX; rerun with -h for copyright info
+  ==5358== Command: ../../llvm-codes/dwarf-20151114/dwarfdump/dwarfdump -ka aw.elf
+  ==5358==
+  ==5358== Invalid write of size 8
+  ==5358==    at 0x40DA25: get_abbrev_array_info (in
+  /home/xqx/test/libdwarf-test/llvm-codes/dwarf-20151114/dwarfdump/dwarfdump)
+  ==5358==    by 0x40FD92: print_one_die_section (in
+  /home/xqx/test/libdwarf-test/llvm-codes/dwarf-20151114/dwarfdump/dwarfdump)
+  www.openwall.com/lists/oss-security/2016/01/19/9 
+  www.openwall.com/lists/oss-security/2016/01/25/3
+  </pre>
+datefixed: 20160121
+references: regressiontests/xqx-b/aw.elf
+gitfixid: d9d40e4d802e626065ce37ff384dd69c43bc499
+tarrelease:
+endrec: DW201601-002
 
