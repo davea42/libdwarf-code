@@ -216,15 +216,16 @@ def write_all_lines(file, txt):
     for t in txt:
         write_line(file, t)
 
-
 def generatehtml(list2, name):
     try:
         file = open(name, "w")
     except IOError as message:
         print("failed to open ", name, message)
         sys.exit(1)
-    for b in list2:
-        txt = b.generate_html()
+    write_line(file,"<p> Record count: %d </p>"%(len(list2))) 
+    for i,b in enumerate(list2):
+        num = int(i) +1
+        txt = b.generate_html(num)
         write_all_lines(file, txt)
     write_line(file, "</body>")
     write_line(file, "</html>")

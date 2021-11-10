@@ -210,9 +210,10 @@ class bugrecord:
         print("gitfixid:", self._gitfixid)
         print("tarrelease:", self._tarrelease)
 
-    def generate_html(self):
+    def generate_html(self,num):
         s5 = "".join(self._id)
-        t = "".join(['<h3 id="', s5, '">', self._id, "</h3>"])
+        idhead = ''.join([str(num),") ",self._id])
+        t = "".join(['<h3 id="',s5, '">',idhead, "</h3>"])
         txt = [t]
 
         inpre = "n"
