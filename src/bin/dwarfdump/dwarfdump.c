@@ -1822,7 +1822,7 @@ print_gnu_debuglink(Dwarf_Debug dbg, Dwarf_Error *error)
         error);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
-    } 
+    }
     if (res == DW_DLV_ERROR) {
         print_secname(dbg,".gnu_debuglink");
         return res;

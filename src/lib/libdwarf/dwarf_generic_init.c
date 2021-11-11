@@ -189,7 +189,7 @@ final_common_settings(Dwarf_Debug dbg,
     The pathn_fd is owned by libdwarf and is in the created dbg->de_fd
     field.
 */
-int 
+int
 dwarf_init_path_dl(const char *path,
     char            * true_path_out_buffer,
     unsigned        true_path_bufferlen,

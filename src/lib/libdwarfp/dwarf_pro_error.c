@@ -49,7 +49,6 @@
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"
 
-
 extern char *_dwarf_errmsgs[];
 
 /*

@@ -1390,8 +1390,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         break;
 #endif
         case DW_CFA_LLVM_def_aspace_cfa: {
-            Dwarf_Unsigned lreg = 0; 
-            Dwarf_Unsigned offset = 0; 
+            Dwarf_Unsigned lreg = 0;
+            Dwarf_Unsigned offset = 0;
             Dwarf_Unsigned addrspace = 0;
             int adres = 0;
 
@@ -2556,7 +2556,7 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
     return DW_DLV_OK;
 }
 
-/*  Call to access  a single CFA frame instruction.  
+/*  Call to access  a single CFA frame instruction.
     The 2021 DW_CFA_LLVM addition for hetrogenous
     debugging has a third field,  an address space
     value.  */

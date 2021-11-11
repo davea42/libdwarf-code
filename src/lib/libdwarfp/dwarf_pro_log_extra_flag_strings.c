@@ -45,9 +45,6 @@
 #include "dwarf_pro_opaque.h"
 #include "dwarf_string.h"
 
-
-
-
 /*  in the producer_init extras string.
     Handles hex and decimal. Not octal.
     Used a very small number of times, so performance

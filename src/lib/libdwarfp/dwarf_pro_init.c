@@ -87,7 +87,6 @@ struct isa_relocs_s {
 #define R_PPC64_REL32     R_PPC_REL32
 #define R_PPC64_REL64     44
 
-
 static struct isa_relocs_s isa_relocs[] = {
 {"irix",  R_MIPS_32,R_MIPS_64,R_MIPS_SCN_DISP},
 {"mips",  R_MIPS_32,R_MIPS_64,0},
@@ -102,7 +101,6 @@ static struct isa_relocs_s isa_relocs[] = {
 /*  The last entry MUST be all zeros. */
 {0,0,0,0}
 };
-
 
 static int common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags,
     const char *abiname, const char *dwarf_version,
@@ -276,7 +274,6 @@ key_simple_string_hashfunc(const void *keyp)
     return _dwarf_string_hashfunc(str);
 }
 
-
 static int
 common_init(Dwarf_P_Debug dbg,
     Dwarf_Unsigned flags,
@@ -295,7 +292,6 @@ common_init(Dwarf_P_Debug dbg,
     dbg->de_debug_line_str = &init_sect_debug_line_str;
     dbg->de_current_active_section = &init_sect;
     dbg->de_flags = flags;
-
 
     /* DW_DLC_POINTER32 assumed. */
     dbg->de_pointer_size = 4;

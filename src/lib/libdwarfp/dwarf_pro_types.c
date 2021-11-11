@@ -96,7 +96,6 @@ _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-
     nameentry = (Dwarf_P_Simple_nameentry)
         _dwarf_p_get_alloc(dbg,
             sizeof(struct Dwarf_P_Simple_nameentry_s));
@@ -130,8 +129,6 @@ _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 /*
     _dwarf_transform_simplename_to_disk writes
     ".rel.debug_pubnames",
@@ -150,7 +147,6 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Error * error)
 {
 
-
     /* Used to fill in 0. */
     const Dwarf_Signed big_zero = 0;
 
@@ -166,12 +162,10 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Unsigned stream_bytes_count;
     Dwarf_Unsigned adjusted_length; /* count excluding length field */
 
-
     int uword_size = dbg->de_dwarf_offset_size;
     int extension_size = dbg->de_64bit_extension ? 4 : 0;
 
     Dwarf_P_Simple_name_header hdr;
-
 
     /* ***** BEGIN CODE ***** */
 
@@ -195,8 +189,6 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
         DWARF_HALF_SIZE +    /* Size of version field. */
         uword_size +            /* Size of .debug_info offset. */
         uword_size;             /* Size of .debug_names. */
-
-
 
     nameentry_original = hdr->sn_head;
     /* add in the content size */
@@ -264,7 +256,6 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
         (const void *) &debug_info_size,
         sizeof(debug_info_size), uword_size);
     cur_stream_bytes_ptr += uword_size;
-
 
     for (nameentry = nameentry_original;
         nameentry != NULL; nameentry = nameentry->sne_next) {

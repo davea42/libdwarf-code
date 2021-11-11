@@ -151,7 +151,6 @@ dwarf_add_AT_ref_address_a(Dwarf_P_Debug dbg,
     return res;
 }
 
-
 /* Make sure attribute types are checked before entering here. */
 static int
 local_add_AT_address_a(Dwarf_P_Debug dbg,
@@ -529,7 +528,6 @@ dwarf_add_AT_block_a(
     *attr_out = new_attr;
     return DW_DLV_OK;
 }
-
 
 /*
     This function adds attributes whose value
@@ -982,7 +980,6 @@ dwarf_add_AT_exprloc(Dwarf_P_Debug dbg,
 }
 #endif /* 0 */
 
-
 /*  This function adds attributes of reference class.
     The references here are local CU references,
     not DW_FORM_ref_addr.
@@ -1180,7 +1177,6 @@ dwarf_add_AT_flag_a(Dwarf_P_Debug dbg,
     *attr_out = new_attr;
     return DW_DLV_OK;
 }
-
 
 int
 dwarf_add_AT_string_a(Dwarf_P_Debug dbg,

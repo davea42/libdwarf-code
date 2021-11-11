@@ -1583,7 +1583,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                             ctagname,
                             "Tag-tree relation is "
                             "not standard..");
-                    } 
+                    }
 #endif
                     if (legal_tag_tree_combination(
                         tag_parent, tag_child)) {
@@ -2589,7 +2589,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
             esb_append_printf_u(stringbuf," 0x%"
                 DW_PR_XZEROS  DW_PR_DUx ">",r->dwr_addr2);
         } else {
-            /*  See DWARF5 page 53, line 17 
+            /*  See DWARF5 page 53, line 17
                 the addresses match so nothing is there and
                 the address itself is irrelevant. */
             Dwarf_Bool emptyrange = (r->dwr_type == DW_RANGES_ENTRY

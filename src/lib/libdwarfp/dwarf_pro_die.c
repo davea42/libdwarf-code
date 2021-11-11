@@ -209,7 +209,6 @@ dwarf_add_die_marker_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 int
 dwarf_get_die_marker_a(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
@@ -223,7 +222,6 @@ dwarf_get_die_marker_a(Dwarf_P_Debug dbg,
     *marker = die->di_marker;
     return DW_DLV_ERROR;
 }
-
 
 /*---------------------------------------------------------
     This function adds a die to dbg struct. It should
@@ -604,7 +602,6 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
 
 }
 
-
 /*------------------------------------------------------------------
     Add AT_name attribute to die
 --------------------------------------------------------------------*/
@@ -641,7 +638,6 @@ dwarf_add_AT_name_a(Dwarf_P_Die die, char *name,
     *newattr_out = new_attr;
     return DW_DLV_OK;
 }
-
 
 /*--------------------------------------------------------------------
     Add AT_comp_dir attribute to die
@@ -680,7 +676,6 @@ dwarf_add_AT_comp_dir_a(Dwarf_P_Die ownerdie,
     *attr_out = new_attr;
     return DW_DLV_OK;
 }
-
 
 int
 _dwarf_pro_add_AT_fde(Dwarf_P_Debug dbg,
@@ -763,7 +758,6 @@ _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
 
     return DW_DLV_OK;
 }
-
 
 /*  Updates the list of attributes on this Dwarf_P_Die
 */

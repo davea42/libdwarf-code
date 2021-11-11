@@ -119,7 +119,6 @@ _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg)
     dbg->de_line_inits.pi_segment_size = 0;
 }
 
-
 /*  Ask to emit DW_LNE_set_address opcode explicitly. Used by be
     to emit start of a new .text section, or to force a relocated
     address into debug line information entry. */
@@ -139,7 +138,6 @@ dwarf_lne_set_address_a(Dwarf_P_Debug dbg,
     Dwarf_Bool     isprolend  = 0;
     Dwarf_Unsigned isa = 0;
     Dwarf_Unsigned discriminator = 0;
-
 
     opc = DW_LNE_set_address;
     retval = _dwarf_pro_add_line_entry(dbg, file_index, offs,
@@ -358,7 +356,6 @@ dwarf_add_file_decl_a(Dwarf_P_Debug dbg,
     *file_entry_count_out = dbg->de_n_file_entries;
     return DW_DLV_OK;
 }
-
 
 /*  Initialize a row of the matrix for line numbers, meaning
     initialize the struct corresponding to it */

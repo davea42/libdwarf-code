@@ -742,7 +742,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
                 return res2;
             }
             else if (res2 == IN_THIS_CU) {
-              /* fall thru */
+                /* fall thru */
             }
             else if (res2 == NOT_THIS_CU) {
                 return res2;
@@ -1030,7 +1030,7 @@ check_subprog_details(Dwarf_Debug dbg,
         Dwarf_Signed i = 0;
         Dwarf_Signed atcount = 0;
         Dwarf_Attribute *atlist = 0;
-    
+
         res = dwarf_attrlist(die,&atlist,&atcount,errp);
         if (res != DW_DLV_OK) {
             return res;
@@ -1038,7 +1038,7 @@ check_subprog_details(Dwarf_Debug dbg,
         for (i = 0; i < atcount ; ++i) {
             Dwarf_Half atr = 0;
             Dwarf_Attribute attrib =  atlist[i];
-    
+
             res = dwarf_whatattr(attrib,&atr,errp);
             if (res != DW_DLV_OK) {
                 /* Something is very wrong here.*/
@@ -1055,7 +1055,7 @@ check_subprog_details(Dwarf_Debug dbg,
                 int has_low_hi = FALSE;
                 Dwarf_Addr low = 0;
                 Dwarf_Addr high = 0;
-    
+
                 res2 = dwarf_global_formref(attrib,
                     &ret_offset,errp);
                 if (res2 != DW_DLV_OK) {
@@ -1074,23 +1074,23 @@ check_subprog_details(Dwarf_Debug dbg,
                     errp);
                 if (res4 == DW_DLV_OK) {
                     continue;
-                } 
+                }
                 if (res4 == DW_DLV_NO_ENTRY) {
                     continue;
-                } 
+                }
                 if (res4 == FOUND_SUBPROG) {
                     td->td_subprog_lowpc = lowpc;
                     td->td_subprog_highpc = highpc;
                     td->td_subprog_haslowhighpc = has_low_hi;
                     finalres = FOUND_SUBPROG;
                     continue;
-                } 
+                }
                 /* ASSERT: res4 == DW_DLV_ERROR; */
                 return res4;
             } else if (atr == DW_AT_decl_file ) {
                 int res5 = 0;
                 Dwarf_Unsigned file_index = 0;
-    
+
                 res5 = dwarf_formudata(attrib,&file_index,errp);
                 if (res5 != DW_DLV_OK) {
                     return res5;
@@ -1141,7 +1141,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
         Dwarf_Attribute *atlist = 0;
         Dwarf_Signed j = 0;
         int alres = 0;
-    
+
         alres = dwarf_attrlist(die,&atlist,&atcount,errp);
         if (alres != DW_DLV_OK) {
             return alres;
@@ -1150,7 +1150,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
             Dwarf_Half atr = 0;
             Dwarf_Attribute attrib =  atlist[j];
             int resb = 0;
-    
+
             resb = dwarf_whatattr(attrib,&atr,errp);
             if (resb != DW_DLV_OK) {
                 /* Something is very wrong here.*/
@@ -1174,7 +1174,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
             } else if (atr == DW_AT_rnglists_base ||
                 atr == DW_AT_GNU_ranges_base) {
                 Dwarf_Off rbase = 0;
-    
+
                 resb = dwarf_global_formref(attrib,&rbase,errp);
                 if (resb != DW_DLV_OK) {
                     return resb;
@@ -1183,7 +1183,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
             } else if (atr == DW_AT_ranges) {
                 /* we have actual ranges. */
                 Dwarf_Off rbase = 0;
-    
+
                 resb = dwarf_global_formref(attrib,&rbase,errp);
                 if (resb != DW_DLV_OK) {
                     return resb;

@@ -348,12 +348,14 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
         fissionsec = ".debug_tu_index";
     }
     printf("  %-19s = %s\n","Fission section",fissionsec);
-    printf("  %-19s = 0x%"  DW_PR_XZEROS DW_PR_DUx "\n","Fission index ",
+    printf("  %-19s = 0x%"  DW_PR_XZEROS DW_PR_DUx "\n",
+        "Fission index ",
         fsd->pcu_index);
     format_sig8_string(&fsd->pcu_hash,str_buf,sizeof(str_buf));
     printf("  %-19s = %s\n","Fission hash",str_buf);
     /* 0 is always unused. Skip it. */
-    printf("  %-19s = %s\n","Fission entries","offset     size        DW_SECTn");
+    printf("  %-19s = %s\n","Fission entries","offset     "
+        "size        DW_SECTn");
     for ( i = 1; i < DW_FISSION_SECT_COUNT; ++i)  {
         const char *nstring = 0;
         Dwarf_Unsigned off = 0;
@@ -561,7 +563,6 @@ main(int argc, char **argv)
             printf("tuhash DW_DLV_ERROR %s\n",
                 errp?dwarf_errmsg(error):"error!");
         }
-
     }
     if (cufissionhash) {
         Dwarf_Debug_Fission_Per_CU  fisdata;
@@ -660,7 +661,8 @@ read_cu_list(Dwarf_Debug dbg)
             &typeoffset, &next_cu_header,
             &header_cu_type,errp);
         if (res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):"An error next cu her";
+            char *em = errp?dwarf_errmsg(error):
+                "An error next cu her";
             printf("Error in dwarf_next_cu_header: %s\n",em);
             exit(1);
         }
@@ -913,7 +915,8 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
     }
     if (namesoptionon && (filenum || linenum)) {
         printf("<%3d> file: %" DW_PR_DUu " %s  line %"
-            DW_PR_DUu "\n",level,filenum,filename?filename:"",linenum);
+            DW_PR_DUu "\n",level,filenum,filename?filename:"",
+            linenum);
     }
     if (namesoptionon && lowpc) {
         printf("<%3d> low_pc : 0x%" DW_PR_DUx  "\n",
@@ -947,7 +950,8 @@ print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
     if (res != DW_DLV_OK) {
         return;
     }
-    sf->srcfilesres = dwarf_srcfiles(die,&sf->srcfiles,&sf->srcfilescount,
+    sf->srcfilesres = dwarf_srcfiles(die,&sf->srcfiles,
+        &sf->srcfilescount,
         &error);
     for (i = 0; i < attrcount ; ++i) {
         Dwarf_Half aform;
@@ -957,7 +961,7 @@ print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
                 char *name = 0;
                 res = dwarf_formstring(attrbuf[i],&name,errp);
                 if (res == DW_DLV_OK) {
-                    printf(    "<%3d> compilation directory : \"%s\"\n",
+                    printf("<%3d> compilation directory : \"%s\"\n",
                         level,name);
                 }
             }
@@ -987,7 +991,8 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
 }
 
 static void
-print_single_string(Dwarf_Debug dbg, Dwarf_Die die,Dwarf_Half attrnum)
+print_single_string(Dwarf_Debug dbg, Dwarf_Die die,
+    Dwarf_Half attrnum)
 {
     int res = 0;
     Dwarf_Error error = 0;
@@ -1116,7 +1121,8 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     if (namesoptionon ||checkoptionon) {
         if ( tag == DW_TAG_subprogram) {
             if (namesoptionon) {
-                printf(    "<%3d> subprogram            : \"%s\"\n",level,name);
+                printf("<%3d> subprogram            : \"%s\"\n",
+                    level,name);
             }
             print_subprog(dbg,print_me,level,sf,name);
         }
@@ -1125,11 +1131,13 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
             tag == DW_TAG_type_unit)) {
 
             resetsrcfiles(dbg,sf);
-            printf(    "<%3d> source file           : \"%s\"\n",level,name);
+            printf("<%3d> source file           : \"%s\"\n",
+                level,name);
             print_comp_dir(dbg,print_me,level,sf);
         }
     } else {
-        printf("<%d> tag: %d %s  name: \"%s\"",level,tag,tagname,name);
+        printf("<%d> tag: %d %s  name: \"%s\"",level,tag,
+            tagname,name);
         if (formname) {
             printf(" FORM 0x%x \"%s\"",formnum, formname);
         }
@@ -1164,12 +1172,14 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
             res = dwarf_get_debugfission_for_die(print_me,
                 &percu,errp);
             if (res == DW_DLV_ERROR) {
-                printf("FAIL: Error in dwarf_get_debugfission_for_die %d\n",
+                printf("FAIL: Error in "
+                    "dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
                 exit(1);
             }
             if (res == DW_DLV_NO_ENTRY) {
-                printf("FAIL: no-entry in dwarf_get_debugfission_for_die %d\n",
+                printf("FAIL: no-entry in "
+                    "dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
                 exit(1);
             }

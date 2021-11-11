@@ -197,7 +197,6 @@ check_unused_combo(unsigned toprow,unsigned topcol)
         printf("Giving up\n");
         exit(1);
     }
-
 }
 
 static void

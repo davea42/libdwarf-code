@@ -49,7 +49,6 @@
 #include "dwarf_pro_section.h"
 #include "dwarf_pro_reloc.h"
 
-
 #define SIZEOFT32 4
 
 /*  This function adds another address range
@@ -95,7 +94,6 @@ dwarf_add_arange_c(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 int
 _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error)
@@ -131,7 +129,6 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Half version = 2;
     int res = 0;
 
-
     /* ***** BEGIN CODE ***** */
 
     /* Size of the .debug_aranges section header. */
@@ -149,7 +146,6 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     remainder = arange_num_bytes % (2 * upointer_size);
     if (remainder != 0)
         arange_num_bytes += (2 * upointer_size) - remainder;
-
 
     /* Add the bytes for the actual address ranges. */
     arange_num_bytes += upointer_size * 2 *
@@ -186,7 +182,6 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
             sizeof(verstamp), DWARF_HALF_SIZE);
         arange_ptr += DWARF_HALF_SIZE;
     }
-
 
     /* Write the .debug_info offset.  This is always 0. */
     WRITE_UNALIGNED(dbg, (void *) arange_ptr,
@@ -242,10 +237,6 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
         ranges to twice the address size. */
     if (remainder != 0)
         arange_ptr += (2 * upointer_size) - remainder;
-
-
-
-
 
     /*  The arange address, length are pointer-size
         fields of the target machine. */

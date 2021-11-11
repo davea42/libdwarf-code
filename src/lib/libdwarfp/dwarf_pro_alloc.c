@@ -77,7 +77,6 @@
 #define BLOCK_TO_LIST(blk) \
     ((memory_list_t*) (((char*)blk) - sizeof(memory_list_t)))
 
-
 /*
   dbg should be NULL only when allocating dbg itself.  In that
   case we initialize it to an empty circular doubly-linked list.
@@ -154,13 +153,11 @@ _dwarf_p_dealloc(Dwarf_Small * ptr) /* ARGSUSED */
     free((void*)lp);
 }
 
-
 static void
 _dwarf_str_hashtab_freenode(void * nodep)
 {
     free(nodep);
 }
-
 
 /*
   This routine deallocates all the nodes on the dbg list,

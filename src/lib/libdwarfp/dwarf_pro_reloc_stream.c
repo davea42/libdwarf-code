@@ -77,7 +77,6 @@ _dwarf_pro_reloc_name_stream64(
     if (res != DW_DLV_OK)
         return res;
 
-
     if (type == dwarf_drt_data_reloc) {
         if (reltarget_length == dbg->de_dwarf_offset_size) {
             rel_type = dbg->de_offset_reloc;
@@ -145,8 +144,6 @@ _dwarf_pro_reloc_name_stream32(Dwarf_P_Debug dbg, int base_sec_index,
     /* get a slot, fill in the slot entry */
 }
 
-
-
 /*  Return DW_DLV_OK.
     Never can really do anything: lengths cannot
     be represented as end-start in a stream.  */
@@ -162,7 +159,6 @@ _dwarf_pro_reloc_length_stream(UNUSEDARG Dwarf_P_Debug dbg,
     /* get a slot, fill in the slot entry */
     return DW_DLV_OK;
 }
-
 
 /*  Ensure each stream is a single buffer and
     add that single buffer to the set of stream buffers.
@@ -230,7 +226,6 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
                     _dwarf_p_error(dbg, error, DW_DLE_ELF_SECT_ERR);
                     return DW_DLV_ERROR;
                 }
-
             }
             prb->pr_sect_num_of_reloc_sect = rel_section_index;
             sec_index = rel_section_index;

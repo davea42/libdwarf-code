@@ -791,10 +791,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     case DW_OP_LLVM_offset_uconst: /*uleb operand*/
     case DW_OP_LLVM_call_frame_entry_reg: /*uleb operand*/
         DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand1,leb128_length,
-           dbg,error,section_end);
+            dbg,error,section_end);
         offset = offset + leb128_length;
         break;
-    
+
     case DW_OP_LLVM_aspace_implicit_pointer:
         READ_UNALIGNED_CK(dbg, operand1, Dwarf_Unsigned, loc_ptr,
             offset_size,error,section_end);
@@ -808,7 +808,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         }
 
         DECODE_LEB128_SWORD_LEN_CK(loc_ptr, operand2,leb128_length,
-           dbg,error,section_end);
+            dbg,error,section_end);
         offset = offset + leb128_length;
         break;
 
@@ -816,15 +816,14 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     case DW_OP_LLVM_extend:
     case DW_OP_LLVM_select_bit_piece:
         DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand1,leb128_length,
-           dbg,error,section_end);
+            dbg,error,section_end);
         offset = offset + leb128_length;
 
         DECODE_LEB128_UWORD_LEN_CK(loc_ptr, operand2,leb128_length,
-           dbg,error,section_end);
+            dbg,error,section_end);
         offset = offset + leb128_length;
         break;
- 
- 
+
     default: {
         dwarfstring m;
         const char *atomname = 0;

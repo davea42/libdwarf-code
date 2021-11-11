@@ -215,8 +215,6 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
     data +=  dh->dh_offset_size;
     bytes = data - startdata;
 
-
-
     /* Now the string offsets table */
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&stroffsets[0],

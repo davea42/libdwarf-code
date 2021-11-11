@@ -75,7 +75,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             /* Get the CU offset for easy error reporting */
             int res2=0;
 
-            res2 = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+            res2 = dwarf_die_offsets(cu_die,
+                &glflags.DIE_overall_offset,
                 &glflags.DIE_offset,err);
             if (res2 == DW_DLV_OK) {
                 glflags.DIE_CU_overall_offset =

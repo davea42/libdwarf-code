@@ -75,8 +75,6 @@ _dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 /*  Return DW_DLV_ERROR on malloc error.
     Return DW_DLV_OK otherwise */
 int
@@ -191,7 +189,6 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
             }
             p_reloc->pr_sect_num_of_reloc_sect = rel_section_index;
         }
-
 
         /*  If pr_block_count 0 or 1 then the blocks are
             an array (with 0 or 1 entries) so we'll just

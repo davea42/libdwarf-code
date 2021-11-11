@@ -64,14 +64,12 @@
 #include "dwarf_pro_types.h"
 #include "dwarf_pro_dnames.h"
 
-
 struct Dwarf_Sort_Abbrev_s {
     Dwarf_Unsigned dsa_attr;
     Dwarf_Unsigned dsa_form;
     Dwarf_Signed dsa_implicitvalue;
     Dwarf_P_Attribute dsa_attrp;
 };
-
 
 /* Must match up with pro_section.h defines of DEBUG_INFO etc
 and sectnames (below).  REL_SEC_PREFIX is either ".rel" or ".rela"
@@ -141,9 +139,6 @@ const char *_dwarf_sectnames[] = {
     ".debug_sup",               /* new in DWARF5 */
 };
 
-
-
-
 static const Dwarf_Ubyte std_opcode_len[] = { 0, /* DW_LNS_copy */
     1,                          /* DW_LNS_advance_pc */
     1,                          /* DW_LNS_advance_line */
@@ -191,7 +186,6 @@ static int _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugsup(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
-
 
 #if 0
 static void
@@ -241,7 +235,6 @@ print_curabbrev(const char *where,
 }
 #endif
 
-
 /* These macros used as return value for _dwarf_pro_get_opc. */
 #define         OPC_INCS_ZERO           -1
 #define         OPC_OUT_OF_RANGE        -2
@@ -279,8 +272,6 @@ _dwarf_pro_get_opc(
     }
     return LINE_OUT_OF_RANGE;
 }
-
-
 
 /*  OFFSET_PLUS_EXTENSION_SIZE is the size of the
     'length' field in total.
@@ -554,8 +545,6 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
         }
     }
 
-
-
     if (dbg->de_arange) {
         int res = _dwarf_transform_arange_to_disk(dbg,&nbufs, error);
         if (res == DW_DLV_ERROR) {
@@ -770,7 +759,6 @@ append_uval(Dwarf_Unsigned val,
     return DW_DLV_OK;
 }
 
-
 static int
 write_uval(Dwarf_Unsigned val,
     Dwarf_P_Debug dbg,
@@ -792,7 +780,6 @@ write_uval(Dwarf_Unsigned val,
     *uval_len_out = nbytes;
     return DW_DLV_OK;
 }
-
 
 static unsigned
 write_opcode_uval(int opcode,
@@ -1288,7 +1275,6 @@ calculate_size_of_line_header4(Dwarf_P_Debug dbg,
     *prolog_size_out = prolog_size;
     return DW_DLV_OK;
 }
-
 
 /* Generate debug_line section
    Dwarf2, dwarf3 headers are the same (DW3 acknowledges 64bit).
@@ -2080,7 +2066,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
             data += sizeof(Dwarf_Ubyte);
         }
 
-
         memcpy((void *) data, (const void *) code_al, codeal_bytes);
         data += codeal_bytes;
 
@@ -2227,7 +2212,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         pad2 = (int) PADDING(fde_length, address_size);
         fde_length += pad2;
 
-
         /* write out fde */
         GET_CHUNK(dbg, elfsectno, data, fde_length +
             OFFSET_PLUS_EXTENSION_SIZE,
@@ -2345,7 +2329,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         cur_off += fde_length + offset_size;
         curfde = curfde->fde_next;
     }
-
 
     *nbufs =  dbg->de_n_debug_sect;
     return DW_DLV_OK;
@@ -2496,7 +2479,6 @@ dwarf_get_string_attributes_info(Dwarf_P_Debug dbg,
     }
     return DW_DLV_NO_ENTRY;
 }
-
 
 static int
 has_sibling_die_already(Dwarf_P_Die d)
@@ -2838,7 +2820,6 @@ generate_debuginfo_header_5(Dwarf_P_Debug dbg,
     int cu_header_size = 0;
     Dwarf_Unsigned du = 0;
     Dwarf_Small *abbr_off_ptr = 0;
-
 
     /*  write cu header. abbrev_offset used to
         generate relocation record below */
@@ -3354,7 +3335,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 curdie = curdie->di_right;
             }
         }
-
     } /* end while (curdie != NULL), the per-die loop */
 
     res = marker_init(dbg, marker_count);
@@ -3523,7 +3503,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     du = die_off - OFFSET_PLUS_EXTENSION_SIZE;
     WRITE_UNALIGNED(dbg, (void *) abbr_off_ptr,
         (const void *) &du, sizeof(du), offset_size);
-
 
     data = 0;                   /* Emphasize not usable now */
 

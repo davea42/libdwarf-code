@@ -44,7 +44,6 @@
 #include "dwarf_pro_alloc.h"
 #include "dwarf_pro_reloc.h"
 
-
 /*  Do initial alloc of newslots slots.
     Fails only if malloc fails.
 
@@ -97,7 +96,6 @@ _dwarf_pro_pre_alloc_specific_reloc_slots(Dwarf_P_Debug dbg,
     prel->pr_block_count = 1;
     return DW_DLV_OK;
 }
-
 
 /*Do alloc of slots.
   Fails only if malloc fails.

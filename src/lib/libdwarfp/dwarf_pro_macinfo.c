@@ -131,8 +131,6 @@ libdwarf_compose_begin(Dwarf_P_Debug dbg, int code,
     return DW_DLV_OK;
 }
 
-
-
 static void
 libdwarf_compose_add_string(Dwarf_P_Debug dbg,
     const char *string,
@@ -194,8 +192,6 @@ libdwarf_compose_complete(Dwarf_P_Debug dbg, int *compose_error_type)
     curblk->mb_used_len = dbg->de_compose_used_len;
     return DW_DLV_OK;
 }
-
-
 
 int
 dwarf_def_macro(Dwarf_P_Debug dbg,
@@ -404,8 +400,6 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 int
 _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs,
@@ -420,11 +414,9 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
     /* Fills in the .debug_macinfo buffer. */
     Dwarf_Small *macinfo_ptr;
 
-
     /* Used to scan the section data buffers. */
     struct dw_macinfo_block_s *m_prev;
     struct dw_macinfo_block_s *m_sect;
-
 
     /* Get the size of the debug_macinfo data */
     mac_num_bytes = 0;

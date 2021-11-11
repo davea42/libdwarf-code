@@ -98,7 +98,6 @@ dump_block(char *prefix, Dwarf_Small *data, Dwarf_Unsigned len)
     }
 }
 
-
 /*  Don't really want getopt here. yet.
     so hand do options. */
 
@@ -268,7 +267,6 @@ print_cie_instrs(Dwarf_Cie cie,Dwarf_Error *error)
     }
 }
 
-
 static void
 print_fde_col(Dwarf_Signed k,
     Dwarf_Addr   jsave,
@@ -429,7 +427,8 @@ print_fde_selected_regs( Dwarf_Fde fde)
     high_addr = low_pc + func_length;
     /*  Could check has_more_rows here instead of high_addr,
         If we initialized has_more_rows to 1 above. */
-    for (jsave = low_pc ; next_jsave < high_addr; jsave = next_jsave) {
+    for (jsave = low_pc ; next_jsave < high_addr;
+        jsave = next_jsave) {
         next_jsave = jsave+1;
         printf("\n");
         for (k = 0; k < selected_cols_count ; ++k ) {
@@ -521,15 +520,15 @@ print_frame_instrs(Dwarf_Debug dbg,
             break;
         }
         dwarf_get_CFA_name(cfa_operation,&op_name);
-        printf("[%2" DW_PR_DUu "]  %" DW_PR_DUu " %s ",i, 
-           instr_offset_in_instrs,op_name);
+        printf("[%2" DW_PR_DUu "]  %" DW_PR_DUu " %s ",i,
+            instr_offset_in_instrs,op_name);
         switch(fields[0]) {
         case 'u': {
             if (!fields[1]) {
                 printf("%" DW_PR_DUu "\n",u0);
             }
             if (fields[1] == 'c') {
-                 Dwarf_Unsigned final =
+                Dwarf_Unsigned final =
                     u0*code_alignment_factor;
                 printf("%" DW_PR_DUu ,final);
 #if 0
@@ -556,8 +555,8 @@ print_frame_instrs(Dwarf_Debug dbg,
                 }
                 if (fields[2] == 'd') {
                     Dwarf_Signed final =
-                         (Dwarf_Signed)u0 *
-                         data_alignment_factor;
+                        (Dwarf_Signed)u0 *
+                        data_alignment_factor;
                     printf("%" DW_PR_DUu ,final);
                     printf("\n");
                 }
@@ -642,7 +641,6 @@ print_frame_instrs(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
 
 /* Just prints the instructions in the fde. */
 static void
@@ -729,7 +727,7 @@ print_fde_instrs(Dwarf_Debug dbg,
         printf("Frame op count: %" DW_PR_DUu "\n",frame_instr_count);
         print_frame_instrs(dbg,frame_instr_head,
             frame_instr_count, error);
-    
+
         dwarf_dealloc_frame_instr_head(frame_instr_head);
     }
     free(tab3.rt3_rules);
@@ -846,5 +844,4 @@ print_regtable(Dwarf_Regtable3 *tab3)
         snprintf(rn,sizeof(rn),"reg %d",r);
         print_one_regentry(rn,tab3->rt3_rules+r);
     }
-
 }

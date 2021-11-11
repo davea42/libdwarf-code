@@ -114,7 +114,6 @@ dwarf_add_frame_cie_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  This functions adds a fde struct to the debug pointer. Its in the
     form of a linked list.
     die: subprogram/function die corresponding to this fde
@@ -249,8 +248,6 @@ dwarf_insert_fde_inst_bytes(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 /* Create a new fde. */
 int
 dwarf_new_fde_a(Dwarf_P_Debug dbg,
@@ -269,7 +266,6 @@ dwarf_new_fde_a(Dwarf_P_Debug dbg,
     *fde_out = fde;
     return DW_DLV_OK;
 }
-
 
 /*  Add a cfe_offset instruction to the fde passed in. */
 
@@ -363,7 +359,6 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
         a value to a signed leb number. */
     int signed_second = 0;
     int signed_first = 0;
-
 
     buff1[0] = 0;
     buff2[0] = 0;
@@ -566,7 +561,6 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
     _dwarf_pro_add_to_fde(fde, curinst);
     return DW_DLV_OK;
 }
-
 
 /*  Instructions are added to an fde in the form of a linked
     list. This function manages the linked list. */

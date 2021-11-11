@@ -395,7 +395,8 @@ SaveNameDeclaration(char *prefix_id)
     }
     length = strlen(prefix_id);
     if (length >= MAX_NAME_LEN) {
-        printf("FAIL gennames. Exceeded limit of declaration name length at %ul "
+        printf("FAIL gennames. Exceeded limit of declaration "
+            "name length at %ul "
             "when given %s\n",curnameentry,prefix_id);
         exit(1);
     }

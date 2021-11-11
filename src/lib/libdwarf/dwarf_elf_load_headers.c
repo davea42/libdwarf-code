@@ -1684,9 +1684,9 @@ elf_flagmatches(Dwarf_Unsigned flagsword,Dwarf_Unsigned flag)
     return FALSE;
 }
 
-/*  For SHT_GROUP sections. 
+/*  For SHT_GROUP sections.
     A group section starts with a 32bit flag
-    word with value 1. 
+    word with value 1.
     32bit section numbers of the sections
     in the group follow the flag field. */
 static int

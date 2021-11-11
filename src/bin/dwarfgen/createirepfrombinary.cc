@@ -2,26 +2,35 @@
   Copyright (C) 2010-2018 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
+  modification, are permitted provided that the following
+  conditions are met:
   * Redistributions of source code must retain the above copyright
     notice, this list of conditions and the following disclaimer.
   * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
+    notice, this list of conditions and the following
+    disclaimer in the
+    documentation and/or other materials provided with the
+    distribution.
   * Neither the name of the example nor the
-    names of its contributors may be used to endorse or promote products
-    derived from this software without specific prior written permission.
+    names of its contributors may be used to endorse or
+    promote products
+    derived from this software without specific prior
+    written permission.
 
-  THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
-  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL David Anderson BE LIABLE FOR ANY
-  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+  BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL David Anderson BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+  OF SUCH DAMAGE.
 
 */
 
@@ -69,9 +78,12 @@ using std::vector;
 using std::list;
 using std::map;
 
-static void readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
-static void readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
-static void readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
+static void readFrameDataFromBinary(Dwarf_Debug dbg,
+    IRepresentation & irep);
+static void readMacroDataFromBinary(Dwarf_Debug dbg,
+    IRepresentation & irep);
+static void readCUDataFromBinary(Dwarf_Debug dbg,
+    IRepresentation & irep);
 static void readGlobals(Dwarf_Debug dbg, IRepresentation & irep);
 
 /*  Use a generic call to open the file, due to issues with Windows */
@@ -81,7 +93,8 @@ extern void close_a_file(int f);
 
 static void errprint(Dwarf_Error err)
 {
-    cerr << "Error num: " << dwarf_errno(err) << " " << dwarf_errmsg(err) << endl;
+    cerr << "Error num: " << dwarf_errno(err) <<
+        " " << dwarf_errmsg(err) << endl;
 }
 
 class DbgInAutoCloser {
@@ -96,15 +109,14 @@ private:
     int fd_;
 };
 
-
 void
 createIrepFromBinary(const std::string &infile,
-   IRepresentation & irep)
+    IRepresentation & irep)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Error err;
     int fd = open_a_file(infile.c_str());
-    if(fd < 0 ) {
+    if (fd < 0 ) {
         cerr << "Unable to open " << infile <<
             " for reading." << endl;
         exit(1);
@@ -116,12 +128,12 @@ createIrepFromBinary(const std::string &infile,
         0,
         &dbg,
         &err);
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         close_a_file(fd);
         cerr << "Error init-ing " << infile <<
             " for reading. dwarf_init_b(). Not object file." << endl;
         exit(1);
-    } else if(res == DW_DLV_ERROR) {
+    } else if (res == DW_DLV_ERROR) {
         close_a_file(fd);
         cerr << "Error init-ing " << infile <<
             " for reading. dwarf_init_b() failed. "
@@ -156,7 +168,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         &fde_data,
         &fde_count,
         &err);
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         // No frame data we are dealing with.
 #if 0
         res = dwarf_get_fde_list_eh(dbg,
@@ -165,7 +177,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             &fde_data,
             &fde_count,
             &err);
-        if(res == DW_DLV_NO_ENTRY) {
+        if (res == DW_DLV_NO_ENTRY) {
             // No frame data.
             return;
         }
@@ -173,12 +185,12 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 #endif /* 0 */
         return;
     }
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         cerr << "Error reading frame data " << endl;
         exit(1);
     }
 
-    for(Dwarf_Signed i =0; i < cie_count; ++i) {
+    for (Dwarf_Signed i =0; i < cie_count; ++i) {
         Dwarf_Unsigned bytes_in_cie = 0;
         Dwarf_Small    version = 0;
         char *         augmentation = 0;
@@ -194,9 +206,10 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             &initial_instructions,&initial_instructions_length,
             &offset_size,
             &err);
-        if(res != DW_DLV_OK) {
+        if (res != DW_DLV_OK) {
             errprint(err);
-            cerr << "Error reading frame data cie index " << i << endl;
+            cerr << "Error reading frame data cie index "
+                << i << endl;
             exit(1);
         }
         // Index in cie_data must match index in ciedata_, here
@@ -209,13 +222,13 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 #if 0
         if (have_standard_frame) {
             irep.framedata().insert_cie(cie);
-        } 
+        }
         else {
             irep.ehframedata().insert_cie(cie);
         }
 #endif
     }
-    for(Dwarf_Signed i =0; i < fde_count; ++i) {
+    for (Dwarf_Signed i =0; i < fde_count; ++i) {
         Dwarf_Addr        low_pc = 0;
         Dwarf_Unsigned    func_length = 0;
         Dwarf_Small      *fde_bytes = 0;
@@ -228,8 +241,9 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             &cie_offset,&cie_index,
             &fde_offset,
             &err);
-        if(res != DW_DLV_OK) {
-            cerr << "Error reading frame data fde index " << i << endl;
+        if (res != DW_DLV_OK) {
+            cerr << "Error reading frame data fde index "
+                << i << endl;
             exit(1);
         }
         IRFde fde(low_pc,func_length,fde_bytes,fde_byte_length,
@@ -238,8 +252,9 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         Dwarf_Unsigned instr_len = 0;
         res = dwarf_get_fde_instr_bytes(fde_data[i],
             &instr_in, &instr_len, &err);
-        if(res != DW_DLV_OK) {
-            cerr << "Error reading frame data fde instructions " << i << endl;
+        if (res != DW_DLV_OK) {
+            cerr << "Error reading frame data fde instructions "
+                << i << endl;
             exit(1);
         }
         fde.get_fde_instrs_into_ir(instr_in,instr_len);
@@ -256,7 +271,6 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         fde_data,fde_count);
 }
 
-
 static void
 readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
     Dwarf_Unsigned macrodataoffset,IRCUdata &cu)
@@ -269,13 +283,13 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
     Dwarf_Macro_Details *md = 0;
     int res = dwarf_get_macro_details(dbg,macrodataoffset,
         maxcount, &mcount, &md, &error);
-    if(res == DW_DLV_OK) {
+    if (res == DW_DLV_OK) {
         IRMacro &macrodata = irep.macrodata();
         vector<IRMacroRecord> mvec = macrodata.getMacroVec();
         mvec.reserve(mcount);
         Dwarf_Unsigned dieoffset = cu.baseDie().getGlobalOffset();
         Dwarf_Macro_Details *mdp = md;
-        for(int i = 0; i < mcount; ++i, mdp++ ) {
+        for (int i = 0; i < mcount; ++i, mdp++ ) {
             IRMacroRecord ir(dieoffset,mdp->dmd_offset,
                 mdp->dmd_type, mdp->dmd_lineno,
                 mdp->dmd_fileindex, mdp->dmd_macro?mdp->dmd_macro:"");
@@ -283,8 +297,8 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
         }
     }
     if (res == DW_DLV_ERROR) {
-         dwarf_dealloc_error(dbg,error);
-         error = 0;
+        dwarf_dealloc_error(dbg,error);
+        error = 0;
     }
     dwarf_dealloc(dbg, md, DW_DLA_STRING);
 }
@@ -298,19 +312,19 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     Dwarf_Half finalform = 0;
     Dwarf_Half initialform = 0;
     int res = dwarf_whatattr(attr,&attrnum,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         errprint(error);
         cerr << "Unable to get attr number " << endl;
         exit(1);
     }
     res = dwarf_whatform(attr,&finalform,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         errprint(error);
         cerr << "Unable to get attr form " << endl;
         exit(1);
     }
     res = dwarf_whatform_direct(attr,&initialform,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         errprint(error);
         cerr << "Unable to get attr direct form " << endl;
         exit(1);
@@ -337,28 +351,27 @@ get_basic_die_data(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Half tagval = 0;
     Dwarf_Error error = 0;
     int res = dwarf_tag(indie,&tagval,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         errprint(error);
         cerr << "Unable to get die tag "<< endl;
         exit(1);
     }
     Dwarf_Off goff = 0;
     res = dwarf_dieoffset(indie,&goff,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         errprint(error);
         cerr << "Unable to get die offset "<< endl;
         exit(1);
     }
     Dwarf_Off localoff = 0;
     res = dwarf_die_CU_offset(indie,&localoff,&error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         errprint(error);
         cerr << "Unable to get cu die offset "<< endl;
         exit(1);
     }
     irdie.setBaseData(tagval,goff,localoff);
 }
-
 
 static void
 get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
@@ -372,10 +385,10 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     std::list<IRAttr> &attrlist = irdie.getAttributes();
     int res = dwarf_attrlist(in_die, &atlist,&atcnt,&error);
     std::map<unsigned,unsigned> attrmap;
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         return;
     }
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         errprint(error);
         cerr << "dwarf_attrlist failed " << endl;
         exit(1);
@@ -422,17 +435,17 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
     Dwarf_Die curchilddie = 0;
     Dwarf_Error error = 0;
     int res = dwarf_child(in_die,&curchilddie,&error);
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         return;
     }
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         errprint(error);
         cerr << "dwarf_child failed " << endl;
         exit(1);
     }
     //std::list<IRDie> & childlist =  irdie.getChildren();
     int childcount = 0;
-    for(;;) {
+    for (;;) {
         IRDie child;
         get_basic_die_data(dbg,curchilddie,child);
         irdie.addChild(child);
@@ -449,10 +462,10 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
         res = dwarf_siblingof_b(dbg,curchilddie,
             dwarf_get_die_infotypes_flag(curchilddie),
             &tchild,&error);
-        if(res == DW_DLV_NO_ENTRY) {
+        if (res == DW_DLV_NO_ENTRY) {
             break;
         }
-        if(res == DW_DLV_ERROR) {
+        if (res == DW_DLV_ERROR) {
             errprint(error);
             cerr << "dwarf_siblingof_b failed " << endl;
             exit(1);
@@ -474,7 +487,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
     Dwarf_Signed srccount = 0;
     IRCULineData&culinesdata =  ircudata.getCULines();
     int res = dwarf_srcfiles(in_die,&srcfiles, &srccount,&error);
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         errprint(error);
         cerr << "dwarf_srcfiles failed " << endl;
         exit(1);
@@ -499,7 +512,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
     Dwarf_Small table_count = 0;
     int res2 = dwarf_srclines_b(in_die,&version,
         &table_count,&linecontext,&error);
-    if(res2 == DW_DLV_ERROR) {
+    if (res2 == DW_DLV_ERROR) {
         errprint(error);
         cerr << "dwarf_srclines failed " << endl;
         exit(1);
@@ -511,20 +524,20 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
     }
     res2= dwarf_srclines_from_linecontext(linecontext,
         &linebuf,&linecnt,&error);
-    if(res2 == DW_DLV_ERROR) {
+    if (res2 == DW_DLV_ERROR) {
         errprint(error);
         cerr << "dwarf_srclines_from_linecontext failed " << endl;
         exit(1);
     } else if (res2 == DW_DLV_NO_ENTRY) {
         // No data.
         cerr << "dwarf_srclines_from_linecontext failed NO_ENTRY"  <<
-           " , crazy "
+            " , crazy "
             "since srcfiles worked" << endl;
         exit(1);
     }
 
     std::vector<IRCULine> &lines = culinesdata.get_cu_lines();
-    for(Dwarf_Signed j = 0; j < linecnt ; ++j ) {
+    for (Dwarf_Signed j = 0; j < linecnt ; ++j ) {
         Dwarf_Line li = linebuf[j];
         int lres;
 
@@ -569,7 +582,6 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
         // simply the 'file' path represented by the
         // file number (fileno).
         std::string linesrc(linesrctmp);
-
 
         Dwarf_Bool is_stmt = 0;
         lres = dwarf_linebeginstatement(li,&is_stmt,&error);
@@ -632,9 +644,9 @@ getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
     int res = dwarf_attr(cu_die,attrnumber,&attr, &error);
     bool foundit = false;
 
-    if(res == DW_DLV_OK) {
+    if (res == DW_DLV_OK) {
         res = dwarf_global_formref(attr,&offset,&error);
-        if(res == DW_DLV_OK) {
+        if (res == DW_DLV_OK) {
             foundit = true;
             offset_out = offset;
         }
@@ -653,7 +665,7 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
     int cu_number = 0;
     std::list<IRCUdata> &culist = irep.infodata().getCUData();
 
-    for(;;++cu_number) {
+    for (;;++cu_number) {
         Dwarf_Unsigned cu_header_length = 0;
         Dwarf_Half version_stamp = 0;
         Dwarf_Unsigned abbrev_offset = 0;
@@ -670,18 +682,17 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         Dwarf_Bool is_info = TRUE; /* This restricts
             dwarfgen a bit. For now. */
 
-
         res = dwarf_next_cu_header_d(dbg,is_info,&cu_header_length,
             &version_stamp, &abbrev_offset, &address_size,
             &offset_size, &extension_size,
             &type_signature,&type_offset,
             &next_cu_header, &header_cu_type, &error);
-        if(res == DW_DLV_ERROR) {
+        if (res == DW_DLV_ERROR) {
             errprint(error);
             cerr <<"Error in dwarf_next_cu_header"<< endl;
             exit(1);
         }
-        if(res == DW_DLV_NO_ENTRY) {
+        if (res == DW_DLV_NO_ENTRY) {
             /* Done. */
             return;
         }
@@ -693,32 +704,35 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         //  not exactly a sibling, but close enough), a cu_die.
         res = dwarf_siblingof_b(dbg,no_die,
             is_info,&cu_die,&error);
-        if(res == DW_DLV_ERROR) {
+        if (res == DW_DLV_ERROR) {
             errprint(error);
             cerr <<"Error in dwarf_siblingof_b on CU die "<< endl;
             exit(1);
         }
-        if(res == DW_DLV_NO_ENTRY) {
+        if (res == DW_DLV_NO_ENTRY) {
             /* Impossible case. */
             cerr <<"no Entry! in dwarf_siblingof_b on CU die "<< endl;
             exit(1);
         }
         Dwarf_Off macrooffset = 0;
-        bool foundmsect = getToplevelOffsetAttr(cu_die,DW_AT_macro_info,
+        bool foundmsect = getToplevelOffsetAttr(cu_die,
+            DW_AT_macro_info,
             macrooffset);
         Dwarf_Off linesoffset = 0;
-        bool foundlines = getToplevelOffsetAttr(cu_die,DW_AT_stmt_list,
+        bool foundlines = getToplevelOffsetAttr(cu_die,
+            DW_AT_stmt_list,
             linesoffset);
         Dwarf_Off dieoff = 0;
         res = dwarf_dieoffset(cu_die,&dieoff,&error);
-        if(res != DW_DLV_OK) {
-            cerr << "Unable to get cu die offset for macro infomation "<< endl;
+        if (res != DW_DLV_OK) {
+            cerr << "Unable to get cu die offset for macro "
+                "infomation "<< endl;
             exit(1);
         }
-        if(foundmsect) {
+        if (foundmsect) {
             cudata.setMacroData(macrooffset,dieoff);
         }
-        if(foundlines) {
+        if (foundlines) {
             cudata.setLineData(linesoffset,dieoff);
         }
         culist.push_back(cudata);
@@ -753,11 +767,11 @@ readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
     list<IRCUdata>  &cudata = irep.infodata().getCUData();
     list<IRCUdata>::iterator it = cudata.begin();
     int ct = 0;
-    for( ; it != cudata.end(); ++it,++ct) {
+    for ( ; it != cudata.end(); ++it,++ct) {
         Dwarf_Unsigned macrooffset = 0;
         Dwarf_Unsigned cudieoffset = 0;
         bool foundmsect = it->hasMacroData(&macrooffset,&cudieoffset);
-        if(foundmsect) {
+        if (foundmsect) {
             readCUMacroDataFromBinary(dbg, irep, macrooffset,*it);
         }
     }
@@ -775,7 +789,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
     IRPubsData  &pubdata = irep.pubnamedata();
 
     res = dwarf_get_globals(dbg, &globs,&cnt, &error);
-    if(res == DW_DLV_OK) {
+    if (res == DW_DLV_OK) {
         std::list<IRPub> &pubnames = pubdata.getPubnames();
         for (Dwarf_Signed i = 0; i < cnt; ++i) {
             Dwarf_Global g = globs[i];
@@ -786,7 +800,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
             Dwarf_Off cuoff = 0;
             res = dwarf_global_name_offsets(g,&name,
                 &dieoff,&cuoff,&error);
-            if( res == DW_DLV_OK) {
+            if ( res == DW_DLV_OK) {
                 IRPub p(name,dieoff,cuoff);
                 dwarf_dealloc(dbg,name,DW_DLA_STRING);
                 pubnames.push_back(p);
@@ -798,7 +812,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
         exit(1);
     }
     res = dwarf_get_pubtypes(dbg, &types,&cnt, &error);
-    if(res == DW_DLV_OK) {
+    if (res == DW_DLV_OK) {
         std::list<IRPub> &pubtypes = pubdata.getPubtypes();
         for (Dwarf_Signed i = 0; i < cnt; ++i) {
             Dwarf_Type g = types[i];
@@ -809,7 +823,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
             Dwarf_Off cuoff = 0;
             res = dwarf_pubtype_name_offsets(g,&name,
                 &dieoff,&cuoff,&error);
-            if( res == DW_DLV_OK) {
+            if ( res == DW_DLV_OK) {
                 IRPub p(name,dieoff,cuoff);
                 dwarf_dealloc(dbg,name,DW_DLA_STRING);
                 pubtypes.push_back(p);
@@ -820,8 +834,4 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
         cerr << "dwarf_get_globals failed" << endl;
         exit(1);
     }
-
-
-
-
 }

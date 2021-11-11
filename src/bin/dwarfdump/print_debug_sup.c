@@ -76,7 +76,7 @@ print_debug_sup(Dwarf_Debug dbg,
         *error = 0;
         esb_destructor(&truename);
         return DW_DLV_OK;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         esb_destructor(&truename);
         return res;
