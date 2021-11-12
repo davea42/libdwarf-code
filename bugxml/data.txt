@@ -78,7 +78,7 @@ description: A corrupted object. libdwarf detects it quickly now.
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz801/clusterfuzz-testcase-fuzz_init_path-5443517279764480
   regressiontests/ossfuzz40801/clusterfuzz-testcase-minimized-fuzz_init_path-5443517279764480
-gitfixid: 
+gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease:
 endrec: DW202111-012
 
@@ -94,7 +94,7 @@ description:
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40799/clusterfuzz-testcase-fuzz_init_path-5245778948390912
   regressiontests/ossfuzz40799/clusterfuzz-testcase-minimized-fuzz_init_path-5245778948390912
-gitfixid: 
+gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
 tarrelease:
 endrec: DW202111-011
 
