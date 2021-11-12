@@ -1,7 +1,6 @@
 /*
-
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2021 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it
@@ -917,6 +916,8 @@ reloc_incomplete(int res,Dwarf_Error err)
     case DW_DLE_SEEK_OFF_END:
     case DW_DLE_RELOC_INVALID:
     case DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD:
+    case DW_DLE_ELF_RELOC_SECTION_ERROR:
+    case DW_DLE_RELOCATION_SECTION_SIZE_ERROR:
         return TRUE;
     }
     return FALSE;

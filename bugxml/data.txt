@@ -1,4 +1,40 @@
 
+
+id: DW202111-015
+cve:
+fuzzer: oss-fuzz-40896
+datereported: 2021-11-10
+reportedby: David Korczynski
+vulnerability: Out-of-memory in fuzz_init_path
+product: libdwarf
+description: A corrupted object.
+  Several Elf section sizes and section offsets are larger than
+  the file size.
+datefixed: 2021-11-12
+references: regressiontests/ossfuzz40896/clusterfuzz-testcase-fuzz_init_path-5337872492789760
+  regressiontests/ossfuzz40896/clusterfuzz-testcase-minimized-fuzz_init_path-5337872492789760
+gitfixid:
+tarrelease:
+endrec: DW202111-015
+
+
+id: DW202111-014
+cve:
+fuzzer: oss-fuzz-40895
+datereported: 2021-11-10
+reportedby: David Korczynski
+vulnerability: Out-of-memory in fuzz_init_binary
+product: libdwarf
+description: A corrupted object.
+  Some Elf section sizes are larger than the file size.
+datefixed: 2021-11-12
+references: regressiontests/ossfuzz40895/clusterfuzz-testcase-fuzz_init_binary-4805508242997248
+  regressiontests/ossfuzz40895/clusterfuzz-testcase-minimized-fuzz_init_binary-4805508242997248
+gitfixid:
+tarrelease:
+endrec: DW202111-014
+
+
 id: DW201907-001
 cve: CVE-2019-14249
 fuzzer:

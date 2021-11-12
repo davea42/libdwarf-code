@@ -497,8 +497,8 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
     res = RRMOA(ep->f_fd,psh,offset,count*entsize,
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {
-        free(psh);
-        free(gshdr);
+        free(orig_psh);
+        free(orig_gshdr);
         return res;
     }
     for (i = 0; i < count;
@@ -514,6 +514,15 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
         ASNAR(ep->f_copy_word,gshdr->gh_info,psh->sh_info);
         ASNAR(ep->f_copy_word,gshdr->gh_addralign,psh->sh_addralign);
         ASNAR(ep->f_copy_word,gshdr->gh_entsize,psh->sh_entsize);
+#if 0
+        if (gshdr->gh_size >= ep->f_filesize &&
+           gshdr->gh_type != SHT_NOBITS) {
+           free(orig_psh);
+           free(orig_gshdr);
+           *errcode = DW_DLE_SECTION_SIZE_ERROR;
+           return DW_DLV_ERROR;
+        }
+#endif
         if (gshdr->gh_type == SHT_REL || gshdr->gh_type == SHT_RELA){
             gshdr->gh_reloc_target_secnum = gshdr->gh_info;
         }
@@ -562,8 +571,8 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
     res = RRMOA(ep->f_fd,psh,offset,count*entsize,
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {
-        free(psh);
-        free(gshdr);
+        free(orig_psh);
+        free(orig_gshdr);
         return res;
     }
     for ( i = 0; i < count;
@@ -579,6 +588,15 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
         ASNAR(ep->f_copy_word,gshdr->gh_info,psh->sh_info);
         ASNAR(ep->f_copy_word,gshdr->gh_addralign,psh->sh_addralign);
         ASNAR(ep->f_copy_word,gshdr->gh_entsize,psh->sh_entsize);
+#if 0
+        if (gshdr->gh_size >= ep->f_filesize &&
+           gshdr->gh_type != SHT_NOBITS) {
+           free(orig_psh);
+           free(orig_gshdr);
+           *errcode = DW_DLE_SECTION_SIZE_ERROR;
+           return DW_DLV_ERROR;
+        }
+#endif
         if (gshdr->gh_type == SHT_REL ||
             gshdr->gh_type == SHT_RELA){
             gshdr->gh_reloc_target_secnum = gshdr->gh_info;
@@ -614,7 +632,11 @@ dwarf_generic_elf_load_symbols32(
     ecount = (long)(size/sizeof(dw_elf32_sym));
     size2 = ecount * sizeof(dw_elf32_sym);
     if (size != size2) {
-        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
+        return DW_DLV_ERROR;
+    }
+    if (size >= ep->f_filesize ) {
+        *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
     psym = calloc(ecount,sizeof(dw_elf32_sym));
@@ -677,7 +699,11 @@ dwarf_generic_elf_load_symbols64(
     ecount = (long)(size/sizeof(dw_elf64_sym));
     size2 = ecount * sizeof(dw_elf64_sym);
     if (size != size2) {
-        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
+        return DW_DLV_ERROR;
+    }
+    if (size >= ep->f_filesize ) {
+        *errcode = DW_DLE_SYMBOL_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
     psym = calloc(ecount,sizeof(dw_elf64_sym));
@@ -835,8 +861,12 @@ generic_rel_from_rela32(
 
     ecount = size/sizeof(dw_elf32_rela);
     size2 = ecount * sizeof(dw_elf32_rela);
+    if (size >= ep->f_filesize) {
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
+        return  DW_DLV_ERROR;
+    }
     if (size != size2) {
-        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
         return  DW_DLV_ERROR;
     }
     for ( i = 0; i < ecount; ++i,++relp,++grel) {
@@ -869,8 +899,12 @@ generic_rel_from_rela64(
 
     ecount = size/sizeof(dw_elf64_rela);
     size2 = ecount * sizeof(dw_elf64_rela);
+    if (size >= ep->f_filesize) {
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
+        return  DW_DLV_ERROR;
+    }
     if (size != size2) {
-        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
         return  DW_DLV_ERROR;
     }
     for ( i = 0; i < ecount; ++i,++relp,++grel) {
@@ -916,8 +950,12 @@ generic_rel_from_rel32(
 
     ecount = size/sizeof(dw_elf32_rel);
     size2 = ecount * sizeof(dw_elf32_rel);
+    if (size >= ep->f_filesize) {
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
+        return  DW_DLV_ERROR;
+    }
     if (size != size2) {
-        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
         return  DW_DLV_ERROR;
     }
     for ( i = 0; i < ecount; ++i,++relp,++grel) {
@@ -948,8 +986,12 @@ generic_rel_from_rel64(
 
     ecount = size/sizeof(dw_elf64_rel);
     size2 = ecount * sizeof(dw_elf64_rel);
+    if (size >= ep->f_filesize) {
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
+        return DW_DLV_ERROR;
+    }
     if (size != size2) {
-        *errcode = DW_DLE_SECTION_SIZE_ERROR;
+        *errcode = DW_DLE_RELOCATION_SECTION_SIZE_ERROR;
         return DW_DLV_ERROR;
     }
     for ( i = 0; i < ecount; ++i,++relp,++grel) {
@@ -1089,7 +1131,7 @@ _dwarf_elf_load_sectstrings(
         *errcode = DW_DLE_ELF_STRING_SECTION_MISSING;
         return DW_DLV_ERROR;
     }
-    if (secoffset    >=    ep->f_filesize ||
+    if (secoffset >= ep->f_filesize ||
         psh->gh_size > ep->f_filesize ||
         (secoffset + psh->gh_size) >
             ep->f_filesize) {
@@ -1706,8 +1748,13 @@ read_gs_section_group(
         char dblock[4];
         Dwarf_Unsigned va = 0;
         Dwarf_Unsigned count = 0;
+        Dwarf_Unsigned groupmallocsize = 0;
         int foundone = 0;
 
+        if (seclen >= ep->f_filesize) {
+            *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+            return DW_DLV_ERROR;
+        }
         if (seclen < DWARF_32BIT_SIZE) {
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
             return DW_DLV_ERROR;
@@ -1741,7 +1788,13 @@ read_gs_section_group(
             free(data);
             return res;
         }
-        grouparray = malloc(count * sizeof(Dwarf_Unsigned));
+        groupmallocsize = count * sizeof(Dwarf_Unsigned);
+        if (groupmallocsize >= ep->f_filesize) {
+            free(data);
+            *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+            return DW_DLV_ERROR;
+        }
+        grouparray = malloc(groupmallocsize);
         if (!grouparray) {
             free(data);
             *errcode = DW_DLE_ALLOC_FAIL;
