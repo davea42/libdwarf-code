@@ -1,3 +1,146 @@
+2021-11-12:  David Anderson
+    commit b7a119dc07c502c1334bcbf8dd04ca0e4d5f6ab6
+
+    Start of new bug entries. oss-fuzz-40895
+    oss-fuzz-40896
+            modified:   ../../../bugxml/data.txt
+
+    Fixes oss-fuzz-40896 oss-fuzz-40895, which
+    involved corrupted Elf object files.
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_elf_load_headers.c
+            modified:   dwarf_errmsg_list.h
+            modified:   libdwarf.h
+
+2021-11-10:  David Anderson
+    commit 00c21b50764440a20545aa89da0f73c5ad365245
+
+    Fixed indents, trailing whitespace and
+    other things in the libdwarf
+    codingstyle.txt document.
+    No change in logic or message content.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/esb.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/bin/dwarfgen/createirepformfrombinary.cc
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/bin/dwarfgen/dwarf_getopt.c
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/dwarfgen/irepattrtodbg.cc
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+            modified:   src/lib/libdwarfp/dwarf_pro_alloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_arange.c
+            modified:   src/lib/libdwarfp/dwarf_pro_die.c
+            modified:   src/lib/libdwarfp/dwarf_pro_dnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_error.c
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+            modified:   src/lib/libdwarfp/dwarf_pro_frame.c
+            modified:   src/lib/libdwarfp/dwarf_pro_init.c
+            modified:   src/lib/libdwarfp/dwarf_pro_line.c
+            modified:   src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
+            modified:   src/lib/libdwarfp/dwarf_pro_macinfo.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_stream.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_symbolic.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+            modified:   src/lib/libdwarfp/dwarf_pro_types.c
+
+2021-11-10:  David Anderson
+    commit 50f94dac7c890c8f7504c407e746585caa522b94
+
+    Now in html it counts the records (N) and shows
+    the number (1-N) in each record title.
+            modified:   bugrecord.py
+            modified:   readbugs.py
+
+2021-11-09:  David Anderson
+    commit c361a7eb576dbaad2b5d826d3651433c66f10d3c
+
+    a duplicated DW20....id and one now is a later id..
+            modified:   data.txt
+
+2021-11-09:  David Anderson
+    commit b5d43716e20d54b5308a7aacff846346dee3389a
+
+    All know data on CVE has been incorporated.
+            modified:   data.txt
+
+2021-11-09:  David Anderson
+    commit 834c4557ce37074d71ca38494f8ba7952e000fbe
+
+    More CVE updates from the past.
+            modified:   data.txt
+
+2021-11-09:  David Anderson
+    commit c4a3315025b3e1e86aed10195be9957adf1e2218
+
+    Working through CVE list, adding data here.
+            modified:   data.txt
+
+2021-11-08:  David Anderson
+    commit 9770b2cc4812857022a8e147bdfe1f102adba382
+
+    Polishing the records on oss-fuzz tests.
+            modified:   bugxml/data.txt
+
+    Copyright accidentally slighly mangled. Fixed.
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+
+2021-11-08:  David Anderson
+    commit cd021a1311572d4f9bb37b0b808685a5ed84bcc3
+
+    Working toward complete reporting of the oss-fuzz
+    reports.
+            modified:   bugxml/data.txt
+
+    Corrected a test for a section group section-reference
+    so it catches a section number just one too big.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+
+2021-11-07:  David Anderson
+    commit 732c3509ffaa4b1aa70458c2ad568f55c6ae8e32
+
+    Updating info on oss-fuzz-40731.
+            modified:   bugxml/data.txt
+
+2021-11-07:  David Anderson
+    commit eeec32b6f674efa8eacc72c656fc9a2f44f8e482
+
+    Logging fix to oss-fuzz-40729
+            modified:   data.txt
+
+2021-11-07:  David Anderson
+    commit 94dece3ce0f030d06da442a103bd6a5301410b25
+
+    oss-fuzz 40729. The test object is MachO 64
+    and corrupted header records were not being detected.
+    Two new error codes added so the error values more
+    meaningful: DW_DLE_MACHO_CORRUPT_COMMAND
+    DW_DLE_MACHO_CORRUPT_SECTIONDETAILS
+
+            modified:   dwarf_errmsg_list.h
+            modified:   dwarf_machoread.c
+            modified:   libdwarf.h
+
+2021-11-07:  David Anderson
+    commit 477aedeebeb0d694dfc44d6bbf20fd58a5facb69
+
+    All new git log contents prepended here.
+            modified:   ChangeLog
+
 2021-11-07:  David Anderson
     commit 5e636b1e9e20fadd034ed96475833d44c18c5749
 

@@ -13,7 +13,7 @@ description: A corrupted object.
 datefixed: 2021-11-12
 references: regressiontests/ossfuzz40896/clusterfuzz-testcase-fuzz_init_path-5337872492789760
   regressiontests/ossfuzz40896/clusterfuzz-testcase-minimized-fuzz_init_path-5337872492789760
-gitfixid:
+gitfixid: b7a119dc07c502c1334bcbf8dd04ca0e4d5f6ab6
 tarrelease:
 endrec: DW202111-015
 
@@ -30,7 +30,7 @@ description: A corrupted object.
 datefixed: 2021-11-12
 references: regressiontests/ossfuzz40895/clusterfuzz-testcase-fuzz_init_binary-4805508242997248
   regressiontests/ossfuzz40895/clusterfuzz-testcase-minimized-fuzz_init_binary-4805508242997248
-gitfixid:
+gitfixid: b7a119dc07c502c1334bcbf8dd04ca0e4d5f6ab6
 tarrelease:
 endrec: DW202111-014
 
