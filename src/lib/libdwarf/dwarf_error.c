@@ -193,9 +193,9 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     }
     fflush(stderr);
     fprintf(stderr,
-        "\nlibdwarf is unable to record error %lu "
+        "\nlibdwarf is unable to record error %s "
         "No error argument or handler available\n",
-        (unsigned long)errval);
+        dwarf_errmsg_by_number(errval));
     fflush(stderr);
     return;
 }
