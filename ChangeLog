@@ -1,3 +1,45 @@
+2021-11-19:  David Anderson
+    commit adf4dae25b39039f1821b095688c00f3010e1d37
+
+    This is intended to fix oss-fuzz-40802 though
+    one cannot be sure till its tested using
+    clang 14.0 to build libdwarf.
+    Heavily revised dwarf_object_init_b() for greater
+    clarity and precision.
+            modified:   dwarf_init_finish.c
+
+2021-11-15:  David Anderson
+    commit b4ef1850a66940b70596e3db6ca3cbf7da47cd6a
+
+    The emergency printf (which usually means
+    bad behavior by libdwarf callers)
+    now reports the name and number of the
+    detected error instead of just
+    the error number. On stderr.
+
+    Except in one emergency case the library returns errors.
+    But sometimes it has no way to do so.
+            modified:   dwarf_error.c
+
+2021-11-12:  David Anderson
+    commit 9c1d59c8ece7174e63475de65c7bdbe07089569d
+
+    Adding gitfixid: to
+    oss-fuzz-40801
+    oss-fuzz-40799
+    reports.
+            modified:   data.txt
+
+2021-11-12:  David Anderson
+    commit 1bb2cae0ed9c9dbbb88b84dd5e0506b34a007dc1
+
+    Updated from git log
+            modified:   ChangeLog
+
+    Documented git version with fixes to
+    oss-fuzz-40895 oss-fuzz-40896
+            modified:   bugxml/data.txt
+
 2021-11-12:  David Anderson
     commit b7a119dc07c502c1334bcbf8dd04ca0e4d5f6ab6
 
