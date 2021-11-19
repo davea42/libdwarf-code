@@ -1600,6 +1600,22 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         }
     }
     if (setup_result == DW_DLV_NO_ENTRY) {
+        int freenoentry = _dwarf_free_all_of_one_debug(dbg);
+        dbg = 0;
+        if (freenoentry == DW_DLV_ERROR) {
+            dwarfstring msg;
+
+            dwarfstring_constructor(&msg);
+            /*  Use the _dwarf_setup error number.
+                If error is NULL the following will issue
+                a message on stderr, as without
+                dbg there is no error-handler function.
+                */
+            _dwarf_error_string(dbg,error,DW_DLE_DBG_ALLOC,
+                dwarfstring_string(&msg));
+            dwarfstring_destructor(&msg);
+            return DW_DLV_ERROR;
+        }
         return setup_result;
     }
     /*  An error of some sort. Report it as well as
