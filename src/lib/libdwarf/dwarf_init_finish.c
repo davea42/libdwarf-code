@@ -1591,8 +1591,22 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
             /*  Something is very wrong. */
             setup_result = fission_result;
         }
+        if (setup_result == DW_DLV_OK) {
+            dwarf_harmless_init(&dbg->de_harmless_errors,
+                DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE);
+            *ret_dbg = dbg;
+            /*  This is the normal return. */
+            return setup_result;
+        }
     }
-    if (setup_result != DW_DLV_OK) {
+    if (setup_result == DW_DLV_NO_ENTRY) {
+        return setup_result;
+    }
+    /*  An error of some sort. Report it as well as
+        possible.
+        ASSERT: setup_result == DW_DLV_ERROR
+        here  */
+    {
         int freeresult = 0;
         int myerr = 0;
         dwarfstring msg;
@@ -1606,7 +1620,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
             But error might be NULL and the init call
             error-handler function might be set.
         */
-        if ( (setup_result == DW_DLV_ERROR) && *error ) {
+        if (error && (*error)) {
             /*  Preserve our _dwarf_setup error number, but
                 this does not apply if error NULL. */
             myerr = dwarf_errno(*error);
@@ -1625,7 +1639,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         if (freeresult == DW_DLV_ERROR) {
             /*  Use the _dwarf_setup error number.
                 If error is NULL the following will issue
-                a message on stderr and abort(), as without
+                a message on stderr, as without
                 dbg there is no error-handler function.
                 */
             _dwarf_error_string(dbg,error,DW_DLE_DBG_ALLOC,
@@ -1633,22 +1647,16 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
             dwarfstring_destructor(&msg);
             return DW_DLV_ERROR;
         }
-        if (setup_result == DW_DLV_ERROR) {
-            /*  Use the _dwarf_setup error number.
-                If error is NULL the following will issue
-                a message on stderr and abort(), as without
-                dbg there is no error-handler function.
-                */
-            _dwarf_error_string(dbg,error,myerr,
-                dwarfstring_string(&msg));
-        }
+        /*  Use the _dwarf_setup error number.
+            If error is NULL the following will issue
+            a message on stderr, as without
+            dbg there is no error-handler function.
+            */
+        _dwarf_error_string(dbg,error,myerr,
+            dwarfstring_string(&msg));
         dwarfstring_destructor(&msg);
-        return setup_result;
     }
-    dwarf_harmless_init(&dbg->de_harmless_errors,
-        DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE);
-    *ret_dbg = dbg;
-    return DW_DLV_OK;
+    return setup_result;
 }
 
 /*  A finish routine that is completely unaware of ELF.
