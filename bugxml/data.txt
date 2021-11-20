@@ -56,12 +56,15 @@ datereported: 2021-11-07
 reportedby: David Korczynski
 vulnerability: Null-dereference READ in dwarf_object_init_b
 product: libdwarf
-description: A corrupted object. Libdwarf detects it quickly now.
-datefixed: 2021-11-07
+description: A corrupted object. 
+  The error handling code in  dwarf_object_init_b
+  was not properly dealing with a NULL pointer
+  Dwarf_Error *errp in the test code.
+datefixed: 2021-11-19
 references: regressiontests/ossfuzz40802/ clusterfuzz-testcase-fuzz_init_binary-5538015955517440.fuzz
   regressiontests/ossfuzz40802/clusterfuzz-testcase-minimized-fuzz_init_binary-5538015955517440.fuzz
 
-gitfixid: 
+gitfixid: adf4dae25b39039f1821b095688c00f3010e1d37
 tarrelease:
 endrec: DW202111-013
 
