@@ -10,7 +10,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 4.17 7 November 2021 0.3.1 
+.ds vE Rev 4.18 20 November 2021 0.3.1 
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1042,10 +1042,73 @@ Such can cause bad effects if simply printed to a device
 (such as a terminal).
 
 .H 1 "Error Handling"
+When 
+\fIlibdwarf\fP
+was originally designed the best way to deal
+with errors was not entirely clear.
+So the authors provided three approaches.
+.AL 1
+.LI
+Passing a non-null
+\f(CWDwarf_Error*\fP
+appropriately in all calls
+as that gives
+library callers full control.
+In this case pass 
+\f(CWDwarf_Handler\fP
+as NULL(0).
+From a call reporting an error
+\f(CWDwarf_Error\fP
+has an error
+number and an explanatory error string
+and the function return value is 
+\f(CWDW_DLV_ERROR\fP.
+Callers can take whatever action is
+appropriate.
+.LI
+Passing a non-null
+\f(CWDwarf_Handler\fP
+function pointer at initialization call
+and otherwise passing NULL(0) as 
+\f(CWDwarf_Error*\fP.
+Each error encountered calls the error handler
+with a 
+\f(CWDwarf_Error\fP with
+error details and the
+\f(CWDwarf_Ptr errarg\fP passed
+into the initialization call.
+The error handler
+can exit() or return.
+If it returns
+the calling program will see a 
+\f(CWDW_DLV_ERROR\fP.
+returned
+but have no way to know what the error is.
+For small applications having the handler
+print a message (with error details) and
+call exit() might suffice.
+.LI
+Ignoring errors by
+passing NULL for
+\f(CWDwarf_Error*\fP.
+and
+\f(CWDwarf_Handler\fP
+is a really bad idea
+as any error will
+be impossible to deal with.
+The failing call will return 
+\f(CWDW_DLV_ERROR*\fP
+but there is no way to know what the error is.
+Just continuing is surely going to lead
+to problems very soon.
+.LE
+
+.P
 The method for detection and disposition of 
 error conditions that arise
 during access of debugging information via 
-\fIlibdwarf\fP is consistent
+\fIlibdwarf\fP
+is consistent
 across all
 \fIlibdwarf\fP
 functions that are capable of producing an
