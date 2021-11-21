@@ -374,6 +374,10 @@ pe_load_section (void *obj, Dwarf_Half section_index,
         if (!sp->VirtualSize) {
             return DW_DLV_NO_ENTRY;
         }
+        if (sp->VirtualSize >= pep->pe_filesize) {
+            *error = DW_DLE_PE_SECTION_SIZE_ERROR; 
+            return DW_DLV_ERROR;
+        }
         read_length = sp->SizeOfRawData;
         if (sp->VirtualSize < read_length) {
             /* Don't read padding that wasn't allocated in memory */
@@ -535,6 +539,10 @@ dwarf_pe_load_dwarf_section_headers(
         sec_outp->SecHeaderOffset = cur_offset;
         ASNAR(pep->pe_copy_word,sec_outp->VirtualSize,
             filesect.Misc.VirtualSize);
+        if (sec_outp->VirtualSize >= pep->pe_filesize) {
+            *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
+            return DW_DLV_ERROR;
+        }
         ASNAR(pep->pe_copy_word,sec_outp->VirtualAddress,
             filesect.VirtualAddress);
         ASNAR(pep->pe_copy_word,sec_outp->SizeOfRawData,

@@ -660,6 +660,8 @@ static const char _dwarf_errmsgs[DW_DLE_LAST+1][DW_MAX_MSG_LEN] = {
 {"DW_DLE_RELOCATION_SECTION_SIZE_ERROR(489) Corrupt Elf. "
     "Reloc section size impossible."},
 {"DW_DLE_SYMBOL_SECTION_SIZE_ERROR(490) Corrupt Elf. "
-    "Symbols section size bad"}
+    "Symbols section size bad"},
+{"DW_DLE_PE_SECTION_SIZE_ERROR(491) Corrupt PE object. "
+    "Section size too large."}
 };
 #endif /* DWARF_ERRMSG_LIST_H */

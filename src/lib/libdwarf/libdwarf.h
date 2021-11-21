@@ -1235,9 +1235,10 @@ struct Dwarf_Obj_Access_Interface_a_s {
 #define DW_DLE_MACHO_CORRUPT_SECTIONDETAILS    488
 #define DW_DLE_RELOCATION_SECTION_SIZE_ERROR   489
 #define DW_DLE_SYMBOL_SECTION_SIZE_ERROR       490
+#define DW_DLE_PE_SECTION_SIZE_ERROR           491
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        490
+#define DW_DLE_LAST        491
 
 #define DW_DLE_LO_USER     0x10000
 
