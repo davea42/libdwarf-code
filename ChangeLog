@@ -1,3 +1,63 @@
+2021-11-21:  David Anderson
+    commit 874f6ba514e10ae3df72dfb6b7b549509208d054
+
+    Now with gitfixid for ossfuzz41240.
+            modified:   bugxml/data.txt
+
+2021-11-21:  David Anderson
+    commit a120c808234060c3c9b1872ab9a059aa1ac70b1d
+
+    This is a fix for the fuzz attack
+    oss-fuzz-41240.
+    Declaring an ERROR if
+    the VirtualSize field value is >=
+    the object file size.
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-11-20:  David Anderson
+    commit 6aff30a67168cf1d89ddc58eb13dc9c70fa2301e
+
+    Corrected the dates to all be
+    iso extended form (example: 2020-01-02)
+            modified:   data.txt
+
+2021-11-20:  David Anderson
+    commit 4efcd47f599233e8254736f66d4fbe05c2435d88
+
+         version: 4.18 20 November 2021 0.3.1
+        This adds some introductory material
+        on Error Handling.
+            modified:   doc/libdwarf.mm
+
+        regenerated
+            modified:   doc/libdwarf.pdf
+
+2021-11-20:  David Anderson
+    commit 259cb5fa805f2854a507fe6c33453d187fd6b917
+
+    oss-fuzz 40802 is now fixed and the
+    fix commit id and fix date are filled in.
+            modified:   bugxml/data.txt
+
+2021-11-19:  David Anderson
+    commit 6a6567a7c439cbd5fe97001e129ee84c1ac9903d
+
+    Previous commit...not good.
+    This repairs the damage while keeping the
+    dwarf_object_init_b code in the clearer
+    style.
+
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2021-11-19:  David Anderson
+    commit 19f0864f40b8a3155b2920014e32f40017da7013
+
+    Now reflects latest change for oss-fuzz-40802
+    testcase.
+            modified:   ChangeLog
+
 2021-11-19:  David Anderson
     commit adf4dae25b39039f1821b095688c00f3010e1d37
 
