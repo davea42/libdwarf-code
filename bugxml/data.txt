@@ -1,4 +1,23 @@
 
+id: DW202111-016
+cve:
+fuzzer: oss-fuzz-41240
+datereported: 2021-11-20
+reportedby: David Korczynski
+vulnerability: Out-of-memory in fuzz_init_path
+product: libdwarf
+description: A corrupted object.
+  The PE object section header for
+  section .gnu_debuglink is corrupted. A very
+  large number is in the VirtualSize field.
+  Attempting a malloc for the section could
+  succeed or might fail, resulting in
+  Denial Of Service.
+datefixed: 2021-11-21
+references: regressiontests/ ossfuzz41240/clusterfuzz-testcase-minimized-fuzz_init_path-5929343686148096
+gitfixid: a120c808234060c3c9b1872ab9a059aa1ac70b1d 
+tarrelease:
+endrec: DW202111-016
 
 id: DW202111-015
 cve:
@@ -16,7 +35,6 @@ references: regressiontests/ossfuzz40896/clusterfuzz-testcase-fuzz_init_path-533
 gitfixid: b7a119dc07c502c1334bcbf8dd04ca0e4d5f6ab6
 tarrelease:
 endrec: DW202111-015
-
 
 id: DW202111-014
 cve:
@@ -336,7 +354,7 @@ description: A carefully crafted object with an
 datefixed: 2018-01-29
 references: sarubbo-11/testcase{1,2,3,4,5}.bin
 gitfixid:  7af0ecddfafed88446969cbf8c888356ad485d99
-tarrelease: 2018-01-29
+tarrelease: libdwarf-20180129.tar.gz
 endrec: DW201801-001
 
 
