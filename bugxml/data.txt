@@ -13,6 +13,9 @@ description: A corrupted object.
   Attempting a malloc for the section could
   succeed or might fail, resulting in
   Denial Of Service.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=41240
+  </pre>
 datefixed: 2021-11-21
 references: regressiontests/ ossfuzz41240/clusterfuzz-testcase-minimized-fuzz_init_path-5929343686148096
 gitfixid: a120c808234060c3c9b1872ab9a059aa1ac70b1d 
@@ -29,6 +32,9 @@ product: libdwarf
 description: A corrupted object.
   Several Elf section sizes and section offsets are larger than
   the file size.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40896
+  </pre>
 datefixed: 2021-11-12
 references: regressiontests/ossfuzz40896/clusterfuzz-testcase-fuzz_init_path-5337872492789760
   regressiontests/ossfuzz40896/clusterfuzz-testcase-minimized-fuzz_init_path-5337872492789760
@@ -45,6 +51,9 @@ vulnerability: Out-of-memory in fuzz_init_binary
 product: libdwarf
 description: A corrupted object.
   Some Elf section sizes are larger than the file size.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40895
+  </pre>
 datefixed: 2021-11-12
 references: regressiontests/ossfuzz40895/clusterfuzz-testcase-fuzz_init_binary-4805508242997248
   regressiontests/ossfuzz40895/clusterfuzz-testcase-minimized-fuzz_init_binary-4805508242997248
@@ -78,6 +87,9 @@ description: A corrupted object.
   The error handling code in  dwarf_object_init_b
   was not properly dealing with a NULL pointer
   Dwarf_Error *errp in the test code.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40802
+  </pre>
 datefixed: 2021-11-19
 references: regressiontests/ossfuzz40802/ clusterfuzz-testcase-fuzz_init_binary-5538015955517440.fuzz
   regressiontests/ossfuzz40802/clusterfuzz-testcase-minimized-fuzz_init_binary-5538015955517440.fuzz
@@ -96,6 +108,9 @@ reportedby: David Korczynski
 vulnerability:  Timeout in fuzz_init_path
 product: libdwarf
 description: A corrupted object. libdwarf detects it quickly now.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40801
+  </pre>
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz801/clusterfuzz-testcase-fuzz_init_path-5443517279764480
   regressiontests/ossfuzz40801/clusterfuzz-testcase-minimized-fuzz_init_path-5443517279764480
@@ -115,6 +130,9 @@ description: A corrupted object.
   Gigantic section sizes or offsets were provoking
   a large malloc.  Now these are detected and
   no malloc is attempted (an error is returned).
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40799
+  </pre>
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40799/clusterfuzz-testcase-fuzz_init_path-5245778948390912
   regressiontests/ossfuzz40799/clusterfuzz-testcase-minimized-fuzz_init_path-5245778948390912
@@ -133,6 +151,9 @@ vulnerability: Abrt in _dwarf_error_string
 product: libdwarf
 description: The Elf object file has some corruption. The
   read now stops with an error.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40627
+  </pre>
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40627/clusterfuzz-testcase-fuzz_init_path-5186858573758464
   regressiontests/ossfuzz40627/clusterfuzz-testcase-minimized-fuzz_init_path-5186858573758464
@@ -153,6 +174,9 @@ description: The object file (macho 64 bit) has some
   tried a gigantic malloc..
   Now the library code catches the error before malloc and
   returns an error code.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40729
+  </pre>
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40729/clusterfuzz-testcase-minimized-fuzz_init_binary-4791627277795328
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
@@ -168,6 +192,9 @@ vulnerability: Out-of-memory in fuzz_init_binary
 product: libdwarf
 description: The fuzzed macho64 object has corrupted
   headers. The library notices and reports an error.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40731
+  </pre>
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40731/clusterfuzz-testcase-fuzz_init_binary-5983147574034432
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
@@ -183,6 +210,10 @@ reportedby: David Korczynski
 vulnerability: Heap-buffer-overflow in _dwarf_elf_setup_all_section_groups
 product: libdwarf
 description:  Object file has corrupt section group information.
+  Results in buffer overflow.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40674#c6
+  </pre>
 datefixed: 2021-11-07
 references: regressiontests/ossfuzz40674/clusterfuzz-testcase-minimized-fuzz_init_path-6557751518560256
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
@@ -199,6 +230,9 @@ product: libdwarf
 description: The macho object has corrupted headers
   and now mentions that and stops.
   Verified as fixed by oss-fuzz 2021-11-03
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40673
+  </pre>
 datefixed: 2021-11-05
 references: regressiontests/ossfuzz40673/clusterfuzz-testcase-minimized-fuzz_init_path-6240961391362048.fuzz 
 gitfixid: 94dece3ce0f030d06da442a103bd6a5301410b25
@@ -218,6 +252,9 @@ description: The test code is calling a libdwarf-internal
   When building libdwarf as an archive there is no
   means to enforce this rule)
   doc/libdwarf.mm/pdf now documents this rule.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40671
+  </pre>
 datefixed: 2021-11-05
 references: regressiontests/oss40671/clusterfuzz-testcase-fuzz_init_path-5455557297831936
   regressiontests/oss40671/clusterfuzz-testcase-minimized-fuzz_init_path-5455557297831936
@@ -239,6 +276,9 @@ description:  Corrupted MachO object can crash caller.b
   could lead to excessive malloc and or a caller
   segmentation violation. Fixed by DW202111-001.
   Verified as fixed by oss-fuzz
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40669
+  </pre>
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40669/clusterfuzz-testcase-minimized-fuzz_init_path-5399726397194240
   regressiontests/clusterfuzz-testcase-fuzz_init_path-5399726397194240
@@ -263,6 +303,9 @@ description:  Corrupted MachO object can crash caller
   Verified by oss-fuzz as fixed.
   The testcase has illegal libdwarf call
   and improper include statements.
+  <pre>
+  https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=40663
+  </pre>
 datefixed: 2021-11-04
 references: regressiontests/ossfuzz40663/clusterfuzz-testcase-minimized-fuzz_init_path-6122542432124928
 gitfixid: b40f7e291216e771185f62292dd6304b5a662926 
@@ -271,7 +314,7 @@ endrec: DW202111-001
 
 
 id: DW202010-003
-cve: a cve id requested 29 Oct 2020
+cve: CVE-202-28163
 datereported: 2020-10-27
 reportedby: Casper Sun
 vulnerability: Passing null to %s due to corrupt line table header.
@@ -292,7 +335,7 @@ endrec: DW202010-003
 
 
 id: DW202010-002
-cve: a cve id requested 29 Oct 2020
+cve: CVE-2020-28162
 datereported: 2020-10-27
 reportedby: Casper Sun
 vulnerability: A very deep DIE tree can corrupt random data.  
@@ -317,7 +360,7 @@ tarrelease:
 endrec: DW202010-002
 
 id: DW202010-001
-cve: waiting for cve id to be granted
+cve: CVE-2020-27545
 datereported: 2020-10-10
 reportedby: Casper Sun
 vulnerability: A carefully corrupted line table can crash calling app
@@ -332,6 +375,11 @@ description: A carefully crafted object with an
   so an invalid dereference could occur.
   Now the test code is correct and the error
   is detected resulting in a normal error return.
+  <pre>
+  This should be visible after redhat makes it public.
+  Filed on bugzilla.redhat 22 November 2021.
+  bugzilla.redhat.com/show_bug.cgi?id=2025694
+  </pre>
 datefixed: 2020-10-17
 references: regressiontests/c-sun/poc
 gitfixid:  95f634808c01f1c61bbec56ed2395af997f397ea
