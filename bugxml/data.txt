@@ -314,7 +314,7 @@ endrec: DW202111-001
 
 
 id: DW202010-003
-cve: CVE-202-28163
+cve: CVE-2020-28163
 datereported: 2020-10-27
 reportedby: Casper Sun
 vulnerability: Passing null to %s due to corrupt line table header.
@@ -327,6 +327,12 @@ description: If a DWARF5 line table header has an invalid
   we provide a fixed string of <no file name>
   and for the form code we print the value and <unknown form>
   so there are no unpredictable effects.
+  <pre>
+  
+  This should be visible after redhat makes it public.
+  Filed on bugzilla.redhat 23 November 2021.
+  bugzilla.redhat.com/show_bug.cgi?id=2026000
+  </pre>
 datefixed: 2020-10-28
 references: regressiontests/c-sun2/nullpointer
 gitfixid: faf99408e3f9f706fc3809dd400e831f989778d3 
@@ -338,7 +344,7 @@ id: DW202010-002
 cve: CVE-2020-28162
 datereported: 2020-10-27
 reportedby: Casper Sun
-vulnerability: A very deep DIE tree can corrupt random data.  
+vulnerability: dwarfdump crashes if the nest of C scopes is too deep
 product: dwarfdump
 description: An object file where the DIEs depth of
   nesting exceeds the limit of 800 levels
@@ -353,6 +359,11 @@ description: An object file where the DIEs depth of
   is detected resulting in a normal error return.
   Additional places where this could occur were
   identified and the proper test added.
+  <pre>
+  Unable to enter in bugzilla.redhat.com
+  so CVE can be completed by Fedora (as CNA)
+  as dwarfdump is not part of Fedora
+  </pre>
 datefixed: 2020-10-28
 references: regressiontests/c-sun2/globaloverflow
 gitfixid: a7fa8edd640b74daf8e7a442dcec96640875b4fb 
