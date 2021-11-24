@@ -1577,7 +1577,7 @@ print_one_cie(Dwarf_Debug dbg,
 } /* end: print_one_cie */
 
 int
-print_location_operations(Dwarf_Debug dbg,
+print_expression_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
     int die_indent_level,
     Dwarf_Small *bytes_in,
@@ -1648,7 +1648,7 @@ print_location_operations(Dwarf_Debug dbg,
         }
         /*  ASSERT: loclist_source == DW_LKIND_expression  */
         /*  ASSERT: lle_value == DW_LLE_start_end  */
-        lres = dwarfdump_print_location_operations(dbg,
+        lres = dwarfdump_print_expression_operations(dbg,
             die,
             die_indent_level,
             locentry,
@@ -1741,7 +1741,7 @@ print_expression( Dwarf_Debug dbg,
 
     esb_constructor_fixed(&exprstring,
         exprstr_buf, sizeof(exprstr_buf));
-    gres = print_location_operations(dbg,
+    gres = print_expression_operations(dbg,
         die,
         /* indent */ 1,
         expression_block->bl_data,
@@ -2086,7 +2086,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 esb_constructor_fixed(&exprstring,local_buf,
                     sizeof(local_buf));
                 /*  Here 'offset' is actually block length. */
-                gres = print_location_operations(dbg,
+                gres = print_expression_operations(dbg,
                     die,
                     /* indent */ 1,
                     block->bl_data, block->bl_len,

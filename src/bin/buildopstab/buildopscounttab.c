@@ -41,6 +41,7 @@ struct ops_table_s {
     unsigned char ot_first;
     unsigned char ot_last;
     signed   char ot_opcount;
+    signed   char ot_stackchange;
 };
 
 /*  the ops are 8 bits max */
@@ -54,83 +55,98 @@ struct dups_tab_s {
 int dups_used = 0;
 
 static struct ops_table_s optabsource[]= {
-{DW_OP_addr  ,         0               , 1 },
-{DW_OP_deref  ,        0               , 0 },
-{DW_OP_const1u,        DW_OP_consts    , 1},
-{DW_OP_dup,            DW_OP_over      , 0},
-{DW_OP_pick,           0               , 1},
-{DW_OP_swap,           DW_OP_plus      , 0},
-{DW_OP_plus_uconst,    0               , 1},
-{DW_OP_shl,            DW_OP_xor       , 0},
-{DW_OP_bra ,           0               , 1},
-{DW_OP_eq,             DW_OP_ne        , 0},
-{DW_OP_skip,           0               , 1},
-{DW_OP_lit0  ,         DW_OP_lit31     , 0},
-{DW_OP_reg0  ,         DW_OP_reg31     , 0},
-{DW_OP_breg0 ,         DW_OP_breg31    , 1},
-{DW_OP_regx  ,         DW_OP_fbreg     , 1},
-{DW_OP_bregx,                         0, 2},
-{DW_OP_piece,          DW_OP_xderef_size       , 1},
-{DW_OP_nop  ,          DW_OP_push_object_address ,0},
-{DW_OP_call2,          DW_OP_call_ref          , 1},
-{DW_OP_form_tls_address, DW_OP_call_frame_cfa  , 0},
-{DW_OP_bit_piece,      DW_OP_implicit_value    , 2},
-{DW_OP_stack_value,                   0, 0},
-{DW_OP_implicit_pointer,              0, 2},
-{DW_OP_addrx,          DW_OP_constx    , 1},
-{DW_OP_entry_value,                   0, 2},
-{DW_OP_const_type,                    0, 3},
-{DW_OP_regval_type, DW_OP_deref_type   , 2},
-{DW_OP_xderef_type,                   0, 0},
-{DW_OP_convert /*0xa8*/,              0, 1},
-{DW_OP_reinterpret /* 0xa9*/,         0, 1},
-{DW_OP_GNU_push_tls_address /*0xe0*/, 0, 0},
-{DW_OP_HP_unknown /* 0xe0*/,          0, 0},
-{DW_OP_LLVM_form_aspace_address /* 0xe1*/,  0, 0},
-{DW_OP_HP_is_value /* 0xe1*/,         0, 1},
+{DW_OP_addr  ,         0               , 1, 1 },
+{DW_OP_deref  ,        0               , 0, 0 },
+{DW_OP_const1u,        DW_OP_consts    , 1, 1},
+{DW_OP_dup,            DW_OP_over      , 0, 1},
+{DW_OP_pick,           0               , 1, 1},
+{DW_OP_swap,           0               , 0, 0},
+{DW_OP_rot,            0               , 0, 0},
+{DW_OP_xderef,         0               , 0, -1},
+{DW_OP_abs,            0               , 0, 0},
+{DW_OP_and,            DW_OP_mul       , 0, -1},
+{DW_OP_neg,            DW_OP_not       , 0, 0},
+{DW_OP_or,             DW_OP_plus      , 0, -1},
+{DW_OP_plus_uconst,    0               , 1, 0},
 
-{DW_OP_LLVM_push_lane /* 0xe2*/,      0, 0},
-{DW_OP_HP_fltconst4 /* 0xe2*/ ,       0, 1},
+{DW_OP_shl,            DW_OP_xor       , 0, -1},
+{DW_OP_bra ,           0               , 1, -1},
+{DW_OP_eq,             DW_OP_ne        , 0, -1},
+{DW_OP_skip,           0               , 1, 0},
+{DW_OP_lit0  ,         DW_OP_lit31     , 0, 1},
+{DW_OP_reg0  ,         DW_OP_reg31     , 0, 0},
+{DW_OP_breg0 ,         DW_OP_breg31    , 1, 1},
+{DW_OP_regx  ,         DW_OP_fbreg     , 1, 0},
+{DW_OP_bregx,          0               , 2, 1},
+{DW_OP_piece,          0               , 1, 0},
+{DW_OP_deref_size,     0               , 1, 0},
+{DW_OP_xderef_size,    0               , 1, -1},
+{DW_OP_nop,            0               , 0, 0},          
+{DW_OP_push_object_address ,0          , 0, 1},
+/*  The called expr may change the stack, 
+    but not the call itself*/
+{DW_OP_call2,          DW_OP_call_ref          , 1, 0},
 
-{DW_OP_LLVM_offset /* 0xe3*/ ,        0, 0},
-{DW_OP_HP_fltconst8 /* 0xe3*/ ,       0, 1},
+{DW_OP_form_tls_address,0              , 0, 0},
+{DW_OP_call_frame_cfa  ,0              , 0, 1},
+{DW_OP_bit_piece,       0              , 2, 0},
+{DW_OP_implicit_value,  0              , 2, 0},
+{DW_OP_stack_value,     0              , 0, 0},
+{DW_OP_implicit_pointer,0              , 2, 0},
+{DW_OP_addrx,          DW_OP_constx    , 1, 1},
+{DW_OP_entry_value,                   0, 2, 1},
+{DW_OP_const_type,                    0, 3, 1},
+{DW_OP_regval_type, DW_OP_deref_type   , 2, 1},
+{DW_OP_xderef_type,                   0, 0, -1},
+{DW_OP_convert /*0xa8*/,              0, 1, 0},
+{DW_OP_reinterpret /* 0xa9*/,         0, 1, 0},
+{DW_OP_GNU_push_tls_address /*0xe0*/, 0, 0, 1},
+{DW_OP_HP_unknown /* 0xe0*/,          0, 0, 0},
+{DW_OP_LLVM_form_aspace_address /* 0xe1*/,  0, 0, 1},
+{DW_OP_HP_is_value /* 0xe1*/,         0, 1, 1},
 
-{DW_OP_LLVM_offset_uconst /* 0xe4*/,  0, 1},
-{DW_OP_HP_mod_range /* 0xe4*/,        0, 2},
+{DW_OP_LLVM_push_lane /* 0xe2*/,      0, 0, 1},
+{DW_OP_HP_fltconst4 /* 0xe2*/ ,       0, 1, 1},
 
-{DW_OP_LLVM_bit_offset /* 0xe5*/,      0, 0},
-{DW_OP_HP_unmod_range /* 0xe5*/,      0, 2},
+{DW_OP_LLVM_offset /* 0xe3*/ ,        0, 0, 0},
+{DW_OP_HP_fltconst8 /* 0xe3*/ ,       0, 1, 0},
 
-{DW_OP_LLVM_call_frame_entry_reg /* 0xe6*/, 0, 1},
-{DW_OP_HP_tls /* 0xe6*/,              0, 0},
+{DW_OP_LLVM_offset_uconst /* 0xe4*/,  0, 1, 0},
+{DW_OP_HP_mod_range /* 0xe4*/,        0, 2, 0},
 
-{DW_OP_LLVM_undefined /* 0xe7*/,      0, 0},
-{DW_OP_LLVM_aspace_bregx /* 0xe8*/,   0, 2},
-{DW_OP_INTEL_bit_piece /* 0xe8*/,     0, 2},
-{DW_OP_LLVM_aspace_implicit_pointer /* 0xe9*/,   0, 2},
-{DW_OP_LLVM_piece_end /* 0xea*/,      0, 0},
-{DW_OP_LLVM_extend /* 0xeb*/,         0, 2},
-{DW_OP_LLVM_select_bit_piece /* 0xec*/, 0, 2},
+{DW_OP_LLVM_bit_offset /* 0xe5*/,      0, 0, 0},
+{DW_OP_HP_unmod_range /* 0xe5*/,      0, 2, 0},
 
-{DW_OP_WASM_location /* 0xed*/,       0, 1},
-{DW_OP_WASM_location_int /* 0xee*/,   0, 1},
+{DW_OP_LLVM_call_frame_entry_reg /* 0xe6*/, 0, 1, 0},
+{DW_OP_HP_tls /* 0xe6*/,              0, 0, 0},
 
-{DW_OP_GNU_uninit /* 0xf0*/,          0, 0},/*unknown opcount*/
-{DW_OP_APPLE_uninit /* 0xf0*/,        0, 1},
-{DW_OP_GNU_encoded_addr /*0xf1*/,     0, 1},/*1 is correct*/
-{DW_OP_GNU_implicit_pointer /*0xf2*/, 0, 1},/*1 is correct*/
-{DW_OP_GNU_entry_value /*0xf3*/,      0, 2},/*2 is correct*/
-{DW_OP_GNU_const_type /*0xf4 */,      0, 3},/*3 is correct*/
-{DW_OP_GNU_regval_type /* 0xf5*/,     0, 2},/*2 is correct*/
-{DW_OP_GNU_deref_type /*0xf6*/,       0, 2},/*2 is correct*/
-{DW_OP_GNU_convert /*0xf7*/,          0, 1},/*1 is correct*/
-{DW_OP_PGI_omp_thread_num /*0xf8*/,   0, 0},/*just pushes*/
-{DW_OP_GNU_reinterpret/* 0xf9*/,      0, 1},/*1 is correct*/
-{DW_OP_GNU_parameter_ref/* 0xfa*/,    0, 1},/*1 is correct*/
-{DW_OP_GNU_addr_index/* 0xfb*/,       0, 1},/*1 is correct.Fission*/
-{DW_OP_GNU_const_index/* 0xfc*/,      0, 1},/*1 is correct.Fission*/
-{DW_OP_GNU_variable_value/* 0xfd*/,   0, 1},/* GNU 2017*/
-{0,0,0}
+{DW_OP_LLVM_undefined /* 0xe7*/,      0, 0, 0},
+{DW_OP_LLVM_aspace_bregx /* 0xe8*/,   0, 2, 0},
+{DW_OP_INTEL_bit_piece /* 0xe8*/,     0, 2, 0},
+{DW_OP_LLVM_aspace_implicit_pointer /* 0xe9*/,   0, 2, 0},
+{DW_OP_LLVM_piece_end /* 0xea*/,      0, 0, 0},
+{DW_OP_LLVM_extend /* 0xeb*/,         0, 2, 0},
+
+{DW_OP_LLVM_select_bit_piece /* 0xec*/, 0, 2, 0},
+{DW_OP_WASM_location /* 0xed*/,       0, 1, 1},
+{DW_OP_WASM_location_int /* 0xee*/,   0, 1, 1},
+
+{DW_OP_GNU_uninit /* 0xf0*/,          0, 0, 0},/*unknown opcount*/
+{DW_OP_APPLE_uninit /* 0xf0*/,        0, 1, 0},
+{DW_OP_GNU_encoded_addr /*0xf1*/,     0, 1, 1},/*1 op is correct*/
+{DW_OP_GNU_implicit_pointer /*0xf2*/, 0, 1, 1},/*1 op is correct*/
+{DW_OP_GNU_entry_value /*0xf3*/,      0, 2, 1},/*2 op is correct*/
+{DW_OP_GNU_const_type /*0xf4 */,      0, 3,1},/*3 is correct*/
+{DW_OP_GNU_regval_type /* 0xf5*/,     0, 2,1},/*2 is correct*/
+{DW_OP_GNU_deref_type /*0xf6*/,       0, 2,1},/*2 is correct*/
+{DW_OP_GNU_convert /*0xf7*/,          0, 1,0},/*1 is correct*/
+{DW_OP_PGI_omp_thread_num /*0xf8*/,   0, 0,1},/*just pushes*/
+{DW_OP_GNU_reinterpret/* 0xf9*/,      0, 1,0},/*1 is correct*/
+{DW_OP_GNU_parameter_ref/* 0xfa*/,    0, 1,1},/*1 is correct*/
+{DW_OP_GNU_addr_index/* 0xfb*/,       0, 1,1},/*1 is correct.Fission*/
+{DW_OP_GNU_const_index/* 0xfc*/,      0, 1,1},/*1 is correct.Fission*/
+{DW_OP_GNU_variable_value/* 0xfd*/,   0, 1,1},/* GNU 2017*/
+{0,0,0,0}
 };
 
 static void
@@ -385,6 +401,7 @@ int main(int argc, char**argv)
     printf("struct dwarf_opscounttab_s _dwarf_opscounttab[] = {\n");
     for ( ;  ; ++inindex) {
         const char *opn = 0;
+        int sc = 0;
 
         op = &optabsource[inindex];
         f = op->ot_first;
@@ -403,8 +420,10 @@ int main(int argc, char**argv)
         }
         l = op->ot_last;
         c = op->ot_opcount;
+        sc = op->ot_stackchange;
+
         while (f > outindex) {
-            printf("{/* %-26s 0x%02x*/ %d},\n","unused",outindex,-1);
+            printf("{/* %-26s 0x%02x*/ %d, 0},\n","unused",outindex,-1);
             ++outindex;
         }
         if (!l) {
@@ -416,7 +435,7 @@ int main(int argc, char**argv)
             }
             lastop = f;
 
-            printf("{/* %-26s 0x%02x*/ %d},\n",opn,f,c);
+            printf("{/* %-26s 0x%02x*/ %d, %d},\n",opn,f,c,sc);
             {
                 char *dup = 0;
                 if (havedup(f,&dup)) {
@@ -435,7 +454,7 @@ int main(int argc, char**argv)
                         f);
                     return 1; /* effectively exit(1); */
                 }
-                printf("{/* %-26s 0x%2x*/ %d}",opn,j,c);
+                printf("{/* %-26s 0x%2x*/ %d, %d}",opn,j,c,sc);
                 printf(",\n");
                 {
                     /*  Should NOT happen, dups should
@@ -456,7 +475,7 @@ int main(int argc, char**argv)
         }
     }
     while (outindex < DWOPS_ARRAY_SIZE) {
-        printf("{/* %-26s 0x%02x*/ %d},\n","unused",outindex,-1);
+        printf("{/* %-26s 0x%02x*/ %d, 0},\n","unused",outindex,-1);
         ++outindex;
     }
     printf("};\n");

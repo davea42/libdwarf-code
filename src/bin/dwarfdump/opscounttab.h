@@ -10,6 +10,7 @@ For use by anyone for any purpose.
 
 struct dwarf_opscounttab_s {
     signed   char oc_opcount;
+    signed   char oc_stackchange;
 };
 
 #define DWOPS_ARRAY_SIZE 256

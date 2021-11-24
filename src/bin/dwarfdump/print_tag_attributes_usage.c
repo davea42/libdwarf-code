@@ -40,7 +40,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
 #include "dd_sanitized.h"
-#include "print_frames.h"  /* for print_location_operations() . */
+#include "print_frames.h"  /* for print_expression_operations() . */
 #include "macrocheck.h"
 #include "helpertree.h"
 #include "tag_common.h"

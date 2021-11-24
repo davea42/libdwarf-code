@@ -40,7 +40,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
 #include "dd_sanitized.h"
-#include "print_frames.h"  /* for print_location_operations() . */
+#include "print_frames.h"  /* for print_expression_operations() . */
 #include "macrocheck.h"
 #include "helpertree.h"
 #include "opscounttab.h"
@@ -107,6 +107,9 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Bool has_skip_or_branch,
     struct OpBranchHead_s *oparray,
     Dwarf_Bool report_raw, /* non-zero reports cooked values */
+    int *stackchange,
+    Dwarf_Signed *branchdistance,
+    int *zerostackdepth,
     Dwarf_Addr baseaddr,
     struct esb_s *string_out,
     Dwarf_Error *err);
@@ -5310,7 +5313,7 @@ op_is_skip_or_branch(Dwarf_Debug dbg,
 }
 
 int
-dwarfdump_print_location_operations(Dwarf_Debug dbg,
+dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     Dwarf_Die       die,
     int             die_indent_level,
     Dwarf_Locdesc_c locdesc,  /* for 2015 interface. */
@@ -5327,6 +5330,9 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     Dwarf_Bool report_raw = TRUE;
     Dwarf_Bool has_skip_or_branch = FALSE;
     struct OpBranchHead_s op_branch_checking;
+    int stackdepth = 0;
+    int maxstackdepth = 0;
+    int op_loop_count = 0;
 
     alloc_skip_branch_array(0,&op_branch_checking);
     /* ASSERT: locs != NULL */
@@ -5345,17 +5351,62 @@ dwarfdump_print_location_operations(Dwarf_Debug dbg,
     }
     for (i = 0; i < no_of_ops; i++) {
         int res = 0;
+        Dwarf_Signed branchdistance = 0;
+        int zerostackdepth = FALSE;
+        int stackchange = 0;
+
         res = _dwarf_print_one_expr_op(dbg,die,
             lkind,
             die_indent_level,locdesc,i,
             has_skip_or_branch,
             &op_branch_checking,
             report_raw,
+            &stackchange,
+            &branchdistance,
+            &zerostackdepth,
             baseaddr,string_out,err);
         if (res == DW_DLV_ERROR) {
             dealloc_skip_branch_array(&op_branch_checking);
             return res;
         }
+        if (branchdistance < 0) {
+            op_loop_count++;
+        }
+        if (zerostackdepth) {
+            /*  This is a DW_OP_piece kind of operation,
+                so stack is conceptually separate per piece. */
+            stackdepth = 0;
+        } else {
+            stackdepth = stackdepth + stackchange;
+            if (stackdepth > maxstackdepth) {
+                maxstackdepth = stackdepth;
+            }
+        }
+    }
+    if (glflags.verbose &&
+        !glflags.dense &&
+        ((maxstackdepth > 1) ||  op_loop_count)) {
+        int indentprespaces = standard_indent();
+        int indentpostspaces = 6;
+        esb_append(string_out,"\n");
+        append_indent_prefix(string_out,indentprespaces,
+            die_indent_level,indentpostspaces);
+
+        esb_append_printf_i(string_out,
+            "DW_OPs= %d ",no_of_ops);
+        esb_append_printf_i(string_out,
+            "maxstackdepth= %d",maxstackdepth);
+        esb_append_printf_i(string_out,
+            " endingstackdepth= %d",stackdepth);
+        if (op_loop_count) {
+            /*  When DW_OP_bra/skip has us loop back
+                to an earlier DW_OPs. */
+            esb_append_printf_i(string_out,
+                " loopcount= %d",op_loop_count);
+        }
+        esb_append(string_out,"\n");
+        append_indent_prefix(string_out,indentprespaces,
+            die_indent_level,indentpostspaces);
     }
     if (has_skip_or_branch) {
         check_skip_branch_offsets(&op_branch_checking,string_out);
@@ -5397,6 +5448,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Bool  has_skip_or_branch,
     struct OpBranchHead_s *oparray,
     Dwarf_Bool  report_raw,
+    int   *stackchange,
+    Dwarf_Signed *branchdistance,
+    int   * zerostackdepth,
     Dwarf_Addr baseaddr UNUSEDARG,
     struct esb_s *string_out,
     Dwarf_Error *err)
@@ -5468,6 +5522,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         echecking->offset =  offsetforbranch;
     }
     esb_append(string_out, op_name);
+    *stackchange =  _dwarf_opscounttab[op].oc_stackchange;
     if (op_has_no_operands(op)) {
         /* Nothing to add. */
     } else if (op >= DW_OP_breg0 && op <= DW_OP_breg31) {
@@ -5496,17 +5551,18 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
 #endif
             break;
         case DW_OP_skip:
-        case DW_OP_bra:
+        case DW_OP_bra: {
+            Dwarf_Signed as_signed = (Dwarf_Signed)opd1;
             esb_append(string_out," ");
-            formx_signed(opd1,string_out);
+            formx_signed(as_signed,string_out);
+            *branchdistance = as_signed;
             if (showblockoffsets) {
-                Dwarf_Signed targ = (Dwarf_Signed)opd1;
                 /*  offsetforbranch is the op offset,
                     and we need the the value 1 past
                     the bytes in the DW_OP */
                 Dwarf_Signed off  = offsetforbranch +2+1;
 
-                off = off + targ;
+                off = off + as_signed;
                 if (off < 0 ) {
                     esb_append_printf_i(string_out,
                         " <ERROR. branch/skip target erroneous %d>",
@@ -5520,6 +5576,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 if (echecking) {
                     echecking->target_offset = off;
                 }
+            }
             }
             break;
         case DW_OP_GNU_addr_index: /* unsigned val */
@@ -5537,6 +5594,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_piece:
         case DW_OP_deref_size:
         case DW_OP_xderef_size:
+            if (op == DW_OP_piece) {
+                *zerostackdepth = TRUE;
+            }
             esb_append_printf_u(string_out,
                 " %" DW_PR_DUu , opd1);
 #if 0 /* FIX */
@@ -5578,6 +5638,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             }
             break;
         case DW_OP_bit_piece:
+            *zerostackdepth = TRUE;
             bracket_hex(" ",opd1,"",string_out);
             bracket_hex(" offset ",opd2,"",string_out);
             break;
@@ -6218,7 +6279,7 @@ print_location_list(Dwarf_Debug dbg,
                     &bError);
             }
         }
-        lres = dwarfdump_print_location_operations(dbg,
+        lres = dwarfdump_print_expression_operations(dbg,
             die,
             die_indent_level,
             /*  Either llbuf or locentry non-zero.

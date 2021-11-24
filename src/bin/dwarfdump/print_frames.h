@@ -40,7 +40,7 @@ int print_one_cie(Dwarf_Debug dbg,
     Dwarf_Half address_size,
     struct dwconf_s *config_data,
     Dwarf_Error *err);
-int print_location_operations(Dwarf_Debug dbg,
+int print_expression_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
     int die_indent_level,
     Dwarf_Small * bytes_in,

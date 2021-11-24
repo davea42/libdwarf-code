@@ -57,7 +57,7 @@ int get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
 void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
 
-int dwarfdump_print_location_operations(Dwarf_Debug dbg,
+int dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
     int die_indent_level,
     Dwarf_Locdesc_c  locs, /* 2015 interface */
