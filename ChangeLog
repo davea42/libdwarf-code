@@ -1,3 +1,58 @@
+2021-11-24:  David Anderson
+    commit 29a39c12bb818c552b1575b28ebef1a8c4089b04
+
+    Now builds a new opscounttab which has the change in
+    the size of the expression stack for each DW_OP.
+    To enable the print_die.c changes.
+        modified:   src/bin/buildopstab/buildopscounttab.c
+        modified:   src/bin/dwarfdump/opscounttab.c (regenerated)
+        modified:   src/bin/dwarfdump/opscounttab.h (new field added)
+
+    Unless the expression is trivial
+    printing expressions (DW_OP_swap etc)
+    -v -i now adds a line like
+      DW_OPs= 13 maxstackdepth= 4 endingstackdepth= 3
+    at the end of the list of DW_OP expression operations
+    as a shorthand for the instructions and their
+    use of an expression stack.
+    If there are expression loops It adds
+      loopcount= <n>
+    to the end of the line (counting the
+    instances of a DW_OP_bra or DW_OP_skip
+    in a negative direction).
+        modified:   src/bin/dwarfdump/print_die.c
+
+    The old names of these functions were a bit
+    misleading. They are for all expressions.
+    dwarfdump_print_location_operations ->
+      dwarfdump_print_expression_operations
+    print_location_operations ->
+      print_expression_operations
+        modified:   src/bin/dwarfdump/esb_using_functions.h
+        modified:   src/bin/dwarfdump/print_frames.c
+        modified:   src/bin/dwarfdump/print_frames.h
+        modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+        modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+2021-11-23:  David Anderson
+    commit f3e04e9414fb7ffa10265e2dbca56d2ecb9ada29
+
+    Minor tweaks to the vulerabilitie from 2020
+            modified:   bugxml/data.txt
+
+2021-11-22:  David Anderson
+    commit 145d3f6af7314dfb6642cd08eb6b0e0ab0bb0524
+
+    Now with oss.chromium.org references shown
+    where appropriate.
+            modified:   data.txt
+
+2021-11-21:  David Anderson
+    commit 9e31d015a40fa1363f9dbf5de1eba8210b72b171
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2021-11-21:  David Anderson
     commit 874f6ba514e10ae3df72dfb6b7b549509208d054
 
