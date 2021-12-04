@@ -9,6 +9,5 @@ srcdir=`dirname $0`
     echo "or get the source tarball at ftp://ftp.gnu.org/pub/gnu/"
     exit 1
 }
-# This is a beginning attempt.
 set -e -x
 autoreconf --warnings=all --install --verbose --force
