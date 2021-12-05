@@ -1600,22 +1600,10 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         }
     }
     if (setup_result == DW_DLV_NO_ENTRY) {
-        int freenoentry = _dwarf_free_all_of_one_debug(dbg);
+        _dwarf_free_all_of_one_debug(dbg);
         dbg = 0;
-        if (freenoentry == DW_DLV_ERROR) {
-            dwarfstring msg;
-
-            dwarfstring_constructor(&msg);
-            /*  Use the _dwarf_setup error number.
-                If error is NULL the following will issue
-                a message on stderr, as without
-                dbg there is no error-handler function.
-                */
-            _dwarf_error_string(dbg,error,DW_DLE_DBG_ALLOC,
-                dwarfstring_string(&msg));
-            dwarfstring_destructor(&msg);
-            return DW_DLV_ERROR;
-        }
+        /*  ASSERT: _dwarf_free_all_of_one_debug() never returns
+            DW_DLV_ERROR */
         return setup_result;
     }
     /*  An error of some sort. Report it as well as
@@ -1623,7 +1611,6 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         ASSERT: setup_result == DW_DLV_ERROR
         here  */
     {
-        int freeresult = 0;
         int myerr = 0;
         dwarfstring msg;
 
@@ -1648,29 +1635,19 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
         /*  The status we want to return  here is of _dwarf_setup,
             not of the  _dwarf_free_all_of_one_debug(dbg) call.
             So use a local status variable for the free.  */
-        freeresult = _dwarf_free_all_of_one_debug(dbg);
+        _dwarf_free_all_of_one_debug(dbg);
         dbg = 0;
-        /*  DW_DLV_NO_ENTRY possible in freeresult
-            only if dbg is NULL */
-        if (freeresult == DW_DLV_ERROR) {
+        if (myerr) {
             /*  Use the _dwarf_setup error number.
                 If error is NULL the following will issue
                 a message on stderr, as without
                 dbg there is no error-handler function.
                 */
-            _dwarf_error_string(dbg,error,DW_DLE_DBG_ALLOC,
+            _dwarf_error_string(dbg,error,myerr,
                 dwarfstring_string(&msg));
             dwarfstring_destructor(&msg);
-            return DW_DLV_ERROR;
-        }
-        /*  Use the _dwarf_setup error number.
-            If error is NULL the following will issue
-            a message on stderr, as without
-            dbg there is no error-handler function.
-            */
-        _dwarf_error_string(dbg,error,myerr,
-            dwarfstring_string(&msg));
-        dwarfstring_destructor(&msg);
+        } /* else return quietly, a serious error
+            was already reported. */
     }
     return setup_result;
 }
