@@ -1,3 +1,73 @@
+2021-12-05:  David Anderson
+    commit a1707f52c49b42723c14e6dc222d9d7b43f54a62
+
+    Removing reference to a no-longer-present
+    directory.
+            modified:   COPYING
+
+2021-12-05:  David Anderson
+    commit 919f5bb5d1fc74112ea7131c63cb39e71f2934db
+
+    Updated, adding Vincent Torri
+            modified:   AUTHORS
+
+2021-12-05:  David Anderson
+    commit fe4f0b56d60f7602cf691936ac5c8cfed1d600cd
+
+    Now the comments mention the release
+    in the post 0.3.1 source, that is, 0.3.2.
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2021-12-05:  David Anderson
+    commit 62ea8b2e4df05287ce2908ab490904edd0074f6e
+
+    Fixed some out of date comments to mention latest
+    release, 0.3.1
+            modified:   README
+            modified:   README.md
+
+2021-12-05:  David Anderson
+    commit 93941b990628af67318d0ad1eb315f2bba6968b0
+
+    When an object file is severely corrupt the library
+    would sometimes emit a strange final  error
+    DW_DLE_Error (0)
+    following a more normal looking error.
+    Now the strange one  is suppressed.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2021-12-05:  David Anderson
+    commit de95d35f8b9c582fc481cb8f0abce413e4b7d58a
+
+    Update version 0.3.1 -> 0.3.2
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarfp.mm
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-12-04:  David Anderson
+    commit af059043c3c475362072c70b385fce1306eb05dd
+
+    Now these have identical content and
+    an updated target version 0.3.1.
+            modified:   README
+            modified:   README.md
+
+    Removing a comment line.
+            modified:   autogen.sh
+
+2021-11-24:  David Anderson
+    commit 5ac807035df091290279097ad6a81c154106ce7e
+
+    Git log for recent updates prepended.
+            modified:   ChangeLog
+
 2021-11-24:  David Anderson
     commit 29a39c12bb818c552b1575b28ebef1a8c4089b04
 

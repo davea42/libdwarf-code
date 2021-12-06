@@ -28,7 +28,7 @@ do
        fout=libdwarfp.pdf
        echo "Build libdwarf consumer pdf for $src"
        shift ;;
-    *)  echo "Giving up: unknown argument use argument -a or -c or -p"
+    *)  echo "Giving up: unknown argument use argument -c or -p"
        exit 1 ;;
   esac
 done
