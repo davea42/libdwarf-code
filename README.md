@@ -3,7 +3,7 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
 
 # This is libdwarf README.md
 
-Updated 04 December 2021
+Updated 05 December 2021
 For release libdwarf-0.3.1
 
 ## BUILDING from a libdwarf<name>.tar.xz
@@ -19,9 +19,9 @@ recommended practice.
     rm -rf /tmp/build
     mkdir /tmp/build
     cd /tmp
-    tar xf <path to>/libdwarf-0.2.0.tar.xz
+    tar xf <path to>/libdwarf-0.3.1.tar.xz
     cd  /tmp/build
-    /tmp/libdwarf-0.2.0/configure
+    /tmp/libdwarf-0.3.1/configure
     make
     make check
 
@@ -31,7 +31,7 @@ README.cmake has details on the available cmake options.
 
 Just like configure, except instead of configure do:
 
-    cmake  /tmp/libdwarf-0.2.0
+    cmake  /tmp/libdwarf-0.3.1
     make
     ctest -R self
 
@@ -104,7 +104,7 @@ a build and then
 
 # INCOMPATIBILITIES. Changes to interfaces
 
-Comparing libdwarf-0.2.0 to libdwarf-20210528
+Comparing libdwarf-0.3.1 to libdwarf-20210528
 (the final non-semantic-version release)
 there are significant changes. 
 
@@ -115,7 +115,7 @@ DWARF versions through DWARF5.
 The later versions add a 
 `_a_` (or `_b_` or `_c_` or `_d_`)
 to the end of the function name.
-In nearly all cases the libdwarf-0.2.0 interface
+In most cases the libdwarf-0.3.1 interface
 was already available in libdwarf-20210528 
 along with older interfaces that only
 worked with earlier DWARF.
@@ -130,20 +130,19 @@ Some arguments were removed from
     dwarf_finish()
  
 the arguments were unused and/or unnecessary.
+
 The argument list to 
 
     dwarf_bitoffset()
 
-changed to allow use with DWARF5.
+changed to allow use with DWARF2 through DWARF5.
 
-libdwarf.h still has
-
-    dwarf_expand_frame_instructions()
-    struct Dwarf_Frame_Op_s
-
-but these will be dropped
-since they only work with DWARF2.
-A usable interface is not yet available.
+The functions allowing access to DW_OP_*
+frame operators was rather useless 
+in libdwarf-20210528 and the
+libdwarf-0.3.1 functions allowing
+one to interpret frame instructions in detail
+(relatively easily) are a big improvment.
 
 ## Reading DWARF from memory 
 
