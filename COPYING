@@ -12,9 +12,5 @@ dwarfdump/GPL.txt a
 The source code in the dwarfgen directory has
 the two-clause BSD copyright.  See dwarfgen/COPYING
 
-The source code in the dwarfexample has the
+The source code in the dwarfexample directory has the
 two-clause BSD copyright. 
-
-The source code in the tsearch directory has the
-two-clause BSD copyright. 
-
