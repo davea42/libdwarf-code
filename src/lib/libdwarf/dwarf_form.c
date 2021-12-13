@@ -457,9 +457,9 @@ dwarf_formref(Dwarf_Attribute attr,
         Dwarf_Sig8 sig8;
         memcpy(&sig8,ptr,sizeof(Dwarf_Sig8));
         res = dwarf_find_die_given_sig8(dbg,
-            &sig8,
+            &sig8, ...
         We could look, then determine if
-        resutling offset is actually local.
+        resulting offset is actually local.
 #endif /*0*/
 
         /*  We cannot handle this here.
@@ -1659,7 +1659,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
                 if (res == DW_DLV_ERROR) {
                     dwarf_dealloc_error(dbg,*error);
                     *error = 0;
-                }
+                } else {}
             }
         }
     }
@@ -1964,7 +1964,8 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
         _dwarf_error(dbg,error,lerrno);
         return res;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     if (offset >= tieddbg->de_debug_str.dss_size) {
@@ -1990,7 +1991,8 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
         _dwarf_error(dbg,error,lerrno);
         return res;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     *return_str = (char *) (tieddbg->de_debug_str.dss_data + offset);

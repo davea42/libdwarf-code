@@ -66,17 +66,17 @@
     do {                                             \
         BIGGEST_UINT _ltmp = 0;                      \
         _dwarf_memcpy_swap_bytes((((char *)(&_ltmp)) \
-            + sizeof(_ltmp) - length),               \
-            source, length) ;                        \
-        dest = (desttype)_ltmp;                      \
+            + sizeof(_ltmp) - (length)),             \
+            (source), (length)) ;                    \
+        (dest) = (desttype)_ltmp;                    \
     } while (0)
 #else /* little-endian on this host */
 #define READ_GDBINDEX(dest,desttype, source, length) \
     do {                                             \
         BIGGEST_UINT _ltmp = 0;                      \
         memcpy(((char *)(&_ltmp)) ,                  \
-            source, length) ;                        \
-        dest = (desttype)_ltmp;                      \
+            (source), (length)) ;                    \
+        (dest) = (desttype)_ltmp;                    \
     } while (0)
 #endif
 
