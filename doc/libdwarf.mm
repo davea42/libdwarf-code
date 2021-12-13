@@ -4788,8 +4788,11 @@ When it succeeds,
 to the attribute form code of
 the attribute represented by the \f(CWDwarf_Attribute\fP descriptor
 \f(CWattr\fP.
+.P
 It returns  \f(CWDW_DLV_ERROR\fP  on error.
-
+.P
+It never returns  \f(CWDW_DLV_NO_ENTRY\fP.
+.P
 An attribute using DW_FORM_indirect effectively has two forms.
 This function returns the 'final' form for \f(CWDW_FORM_indirect\fP,
 not the \f(CWDW_FORM_indirect\fP itself. This function is
@@ -4808,7 +4811,11 @@ When it succeeds,
 to the attribute form code of
 the attribute represented by the \f(CWDwarf_Attribute\fP descriptor
 \f(CWattr\fP.
+.P
 It returns  \f(CWDW_DLV_ERROR\fP  on error.
+.P
+It never returns  \f(CWDW_DLV_NO_ENTRY\fP.
+.P
 An attribute using \f(CWDW_FORM_indirect\fP effectively
 has two forms.
 This returns the form 'directly' in the initial form field.
