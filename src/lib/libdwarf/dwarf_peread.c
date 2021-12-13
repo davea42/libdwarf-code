@@ -84,7 +84,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DOS_HEADER_LEN 64
 
 #ifndef TYP
-#define TYP(n,l) char n[l]
+#define TYP(n,l) char (n)[(l)]
 #endif /* TYP */
 
 #if 0
@@ -143,14 +143,14 @@ check_valid_string(char *tab,
 #define ASNAR(func,t,s)                         \
     do {                                        \
         unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
+        (t) = 0;                                  \
+        (func)(((char *)&(t))+tbyte ,&(s)[0],sizeof(s));  \
     } while (0)
 #else /* LITTLE ENDIAN */
 #define ASNAR(func,t,s)                         \
     do {                                        \
-        t = 0;                                  \
-        func(&t,&s[0],sizeof(s));               \
+        (t) = 0;                                  \
+        (func)(&(t),&(s)[0],sizeof(s));               \
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
 #endif /*0*/

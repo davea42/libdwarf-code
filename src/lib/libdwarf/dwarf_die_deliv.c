@@ -189,7 +189,7 @@ dwarf_get_debugfission_for_die(Dwarf_Die die,
         if (!_dwarf_file_has_debug_fission_cu_index(dbg)) {
             return DW_DLV_NO_ENTRY;
         }
-    }
+    } else { /* Fall through*/ }
     percu = &context->cc_dwp_offsets;
     if (!percu->pcu_type) {
         return DW_DLV_NO_ENTRY;
@@ -511,7 +511,8 @@ fill_in_dwp_offsets_if_present(Dwarf_Debug dbg,
             error);
         if (resdf == DW_DLV_ERROR) {
             return resdf;
-        } else if (resdf == DW_DLV_NO_ENTRY) {
+        } 
+        if (resdf == DW_DLV_NO_ENTRY) {
             _dwarf_error_string(dbg, error,
                 DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH,
                 "DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH: "
@@ -529,7 +530,8 @@ fill_in_dwp_offsets_if_present(Dwarf_Debug dbg,
             error);
         if (resdf == DW_DLV_ERROR) {
             return resdf;
-        } else if (resdf == DW_DLV_NO_ENTRY) {
+        } 
+        if (resdf == DW_DLV_NO_ENTRY) {
             _dwarf_error_string(dbg, error,
                 DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH,
                 "DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH: "
@@ -580,7 +582,8 @@ finish_cu_context_via_cudie_inner(
                 cudie = 0;
                 cu_context->cc_cu_die_has_children = FALSE;
                 return DW_DLV_OK;
-            } else if (resdwob == DW_DLV_ERROR) {
+            } 
+            if (resdwob == DW_DLV_ERROR) {
                 /*  Not applicable or an error */
                 dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
                 cudie = 0;

@@ -50,16 +50,16 @@
 #define STR_OFFSETS_MAGIC 0x2feed2
 
 #define VALIDATE_SOT(xsot)                                \
-    if (!xsot) {                                          \
+    if (!(xsot)) {                                          \
         _dwarf_error(NULL,error,DW_DLE_STR_OFFSETS_NULLARGUMENT);\
         return DW_DLV_ERROR;                              \
     }                                                     \
-    if (!xsot->so_dbg) {                                  \
+    if (!(xsot)->so_dbg) {                                \
         _dwarf_error(NULL,error,DW_DLE_STR_OFFSETS_NULL_DBG);\
         return DW_DLV_ERROR;                              \
     }                                                     \
-    if (xsot->so_magic_value !=  STR_OFFSETS_MAGIC) {     \
-        _dwarf_error(xsot->so_dbg,error,                  \
+    if ((xsot)->so_magic_value !=  STR_OFFSETS_MAGIC) {   \
+        _dwarf_error((xsot)->so_dbg,error,                \
         DW_DLE_STR_OFFSETS_NO_MAGIC);                     \
         return DW_DLV_ERROR;                              \
     }

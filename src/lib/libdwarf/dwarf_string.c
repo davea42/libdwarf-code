@@ -292,6 +292,7 @@ int dwarfstring_append_printf_s(dwarfstring *data,
     }
     if (prefixlen) {
         dwarfstring_append_length(data,format,prefixlen);
+        /*  Fall through whether return value TRUE or FALSE */
     }
     if (format[next] != '%') {
         /*   No % operator found, we are done */
@@ -336,6 +337,7 @@ int dwarfstring_append_printf_s(dwarfstring *data,
     if (leftjustify) {
 
         dwarfstring_append_length(data,s,stringlen);
+        /*  Ignore return value */
         if (fixedlen) {
             size_t trailingspaces = fixedlen - stringlen;
 
@@ -346,6 +348,7 @@ int dwarfstring_append_printf_s(dwarfstring *data,
             /*  This lets us have fixedlen < stringlen by
                 taking all the chars from s*/
             dwarfstring_append_length(data,s,stringlen);
+            /*  Ignore return value, just keep going */
         } else {
             if (fixedlen) {
                 size_t leadingspaces = fixedlen - stringlen;
@@ -355,7 +358,10 @@ int dwarfstring_append_printf_s(dwarfstring *data,
                     dwarfstring_append_length(data," ",1);
                 }
             }
-            dwarfstring_append_length(data,s,stringlen);
+            res = dwarfstring_append_length(data,s,stringlen);
+            if (res == FALSE) {
+                return res;
+            }
         }
     }
     if (!format[next]) {
@@ -591,7 +597,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
                 --digptr;
                 digcharlen++;
                 *digptr = '+';
-            }
+            } else { /* Fall through */ } 
         }
         if (fixedlen > 0) {
             if (fixedlen <= digcharlen) {

@@ -179,7 +179,8 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
         error);
     if (res == DW_DLV_ERROR) {
         return res;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         /* data is in a.out, not dwp */
         localdbg = dbg->de_tied_data.td_tied_object;
         if (!localdbg) {
@@ -190,7 +191,8 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
         if (res == DW_DLV_ERROR) {
             _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
             return res;
-        } else if (res == DW_DLV_NO_ENTRY) {
+        } 
+        if (res == DW_DLV_NO_ENTRY) {
             return res;
         }
         rangeslocal = FALSE;
@@ -334,10 +336,8 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
     *rangesbuf = ranges_data_out;
     *listlen = entry_count;
     for (copyindex = 0; curre && (copyindex < entry_count);
-        ++copyindex,++ranges_data_out) {
-
+        ++copyindex,++ranges_data_out,curre=curre->next) {
         *ranges_data_out = curre->cur;
-        curre = curre->next;
     }
     /* ASSERT: curre == NULL */
     free_allocated_ranges(base);

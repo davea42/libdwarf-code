@@ -682,7 +682,8 @@ _dwarf_internal_printlines(Dwarf_Die die,
         cres = dwarf_formstring(comp_dir_attr, &cdir, error);
         if (cres == DW_DLV_ERROR) {
             return cres;
-        } else if (cres == DW_DLV_OK) {
+        } 
+        if (cres == DW_DLV_OK) {
             comp_dir = (Dwarf_Small *) cdir;
         }
     }

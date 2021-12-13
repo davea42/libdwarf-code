@@ -377,10 +377,11 @@ dwarf_init_b(int fd,
         &endian,&offsetsize,&filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
-    } else if (res == DW_DLV_ERROR) {
+    } 
+    if (res == DW_DLV_ERROR) {
+        /* This macro does a return. */
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     }
-
     switch(ftype) {
     case DW_FTYPE_ELF: {
         int res2 = 0;

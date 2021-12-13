@@ -108,7 +108,8 @@ _dwarf_tied_compare_function(const void *l, const void *r)
     for ( ;lcp < lcpend; ++lcp,++rcp) {
         if (*lcp < *rcp) {
             return -1;
-        } else  if (*lcp > *rcp) {
+        } 
+        if (*lcp > *rcp) {
             return 1;
         }
     }

@@ -327,7 +327,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
     Dwarf_Rnglists_Context *fullarray = 0;
     Dwarf_Unsigned i = 0;
 
-    for (i = 0 ; data < end_data ; ++i) {
+    for (i = 0 ; data < end_data ; ++i,data = startdata+nextoffset) {
         Dwarf_Rnglists_Context newcontext = 0;
 
         /* sizeof the context struct, not sizeof a pointer */
@@ -367,7 +367,6 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
         ++chainlength;
         (*plast) = curr_chain;
         plast = &(curr_chain->ch_next);
-        data = startdata+nextoffset;
         offset = nextoffset;
     }
     fullarray= (Dwarf_Rnglists_Context *)malloc(
@@ -653,7 +652,7 @@ int dwarf_get_rnglist_context_basics(
     if (offset_size) {
         *offset_size = con->rc_offset_size;
     }
-    if (offset_size) {
+    if (extension_size) {
         *extension_size = con->rc_extension_size;
     }
     if (version) {

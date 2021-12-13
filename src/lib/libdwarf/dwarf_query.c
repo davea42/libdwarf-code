@@ -1149,7 +1149,8 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         /* Associate the error with dbg, not tieddbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
-    } else if ( res == DW_DLV_NO_ENTRY) {
+    } 
+    if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }
     if (!context->cc_low_pc_present) {
@@ -1373,10 +1374,10 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         /* Associate the error with dbg, not tieddbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
-    } else if ( res == DW_DLV_NO_ENTRY) {
+    } 
+    if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }
-
     res = _dwarf_extract_address_from_debug_addr(tieddbg,
         tiedcontext,
         index,
@@ -1386,7 +1387,8 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         /* Associate the error with dbg, not tidedbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
-    } else if ( res == DW_DLV_NO_ENTRY) {
+    } 
+    if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }
     *addr_out = local_addr;
@@ -1552,7 +1554,7 @@ dwarf_bitoffset(Dwarf_Die die,
         *attribute = DW_AT_data_bit_offset;
         *ret_offset = luns;
         return DW_DLV_OK;
-    }
+    } else { /* fall to return */ }
     return res;
 }
 
@@ -1706,6 +1708,7 @@ dw_get_special_offset(Dwarf_Half attrnum,
         return DW_FORM_CLASS_REFERENCE;
     case DW_AT_MIPS_fde: /* SGI/IRIX extension */
         return DW_FORM_CLASS_FRAMEPTR;
+    default: break;
     }
     return DW_FORM_CLASS_UNKNOWN;
 }
@@ -1731,6 +1734,7 @@ block_means_locexpr(Dwarf_Half attr)
     case DW_AT_use_location:
     case DW_AT_vtable_elem_location:
         return TRUE;
+    default: break;
     }
     return FALSE;
 }
