@@ -109,7 +109,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_elfread.h"
 
 #ifndef TYP
-#define TYP(n,l) char n[l]
+#define TYP(n,l) char (n)[(l)]
 #endif /* TYPE */
 
 #ifdef WORDS_BIGENDIAN
@@ -117,30 +117,30 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     do {                                             \
         Dwarf_Unsigned _ltmp = 0;                    \
         dbg->de_copy_word( (((char *)(&_ltmp)) +     \
-            sizeof(_ltmp) - length),source, length); \
+            sizeof(_ltmp) - length),(source),(length)); \
         dest = _ltmp;                                \
     } while (0)
 
 #define WRITE_UNALIGNED_LOCAL(dbg,dest,source, srclength,len_out) \
-    {                                             \
-        dbg->de_copy_word(dest,                   \
-            ((char *)source) +srclength-len_out,  \
-            len_out) ;                            \
+    {                                         \
+        dbg->de_copy_word((dest),             \
+            ((char *)(source)) +(srclength)-(len_out),  \
+            (len_out)) ;                        \
     }
 #else /* LITTLE ENDIAN */
 #define READ_UNALIGNED_SAFE(dbg,dest, source, srclength) \
     do  {                                     \
         Dwarf_Unsigned _ltmp = 0;             \
         dbg->de_copy_word( (char *)(&_ltmp),  \
-            source, srclength) ;              \
+            (source), (srclength)) ;          \
         dest = _ltmp;                         \
     } while (0)
 
 #define WRITE_UNALIGNED_LOCAL(dbg,dest,source, srclength,len_out) \
     {                               \
         dbg->de_copy_word( (dest) , \
-            ((char *)source) ,      \
-            len_out) ;              \
+            ((char *)(source)) ,    \
+            (len_out)) ;            \
     }
 #endif /* *-ENDIAN */
 
@@ -266,8 +266,8 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
 }
 
 #define MATCH_REL_SEC(i_,s_,r_)  \
-if (i_ == s_.dss_index) { \
-    *r_ = &s_;            \
+if ((i_) == (s_).dss_index) { \
+    *(r_) = &(s_);            \
     return DW_DLV_OK;    \
 }
 

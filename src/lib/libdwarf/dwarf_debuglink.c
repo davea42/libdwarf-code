@@ -826,6 +826,8 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
         }
     } else if (paths_count_returned) {
         *paths_count_returned = 0;
+    } else {
+        /* nothing special to do */
     }
     dwarfstring_destructor(&debuglink_fullpath);
     return DW_DLV_OK;

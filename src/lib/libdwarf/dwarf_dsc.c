@@ -78,13 +78,13 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             /* Internal botch calling this static function. */
             _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
             return DW_DLV_ERROR;
-        }
+        } else {}
     } else {
         if (!iarraycount) {
             /* Internal botch calling this static function. */
             _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
             return DW_DLV_ERROR;
-        }
+        } else {}
     }
     if (dounsigned) {
         while (p < endp)  {

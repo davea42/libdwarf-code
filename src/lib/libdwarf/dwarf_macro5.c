@@ -284,7 +284,7 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
 
 #if 0 /* FOR DEBUGGING */
 static void
-dump_bytes(Dwarf_Small * start, long len)
+dump_bytes_x(Dwarf_Small * start, long len)
 {
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;

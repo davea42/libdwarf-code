@@ -86,7 +86,8 @@ generate_form_error(Dwarf_Debug dbg,
 }
 
 /*  This code was repeated many times, now it
-    is all in one place. */
+    is all in one place. 
+    Never returns DW_DLV_NO_ENTRY  */
 static int
 get_attr_dbg(Dwarf_Debug *dbg,
     Dwarf_CU_Context * cu_context,
@@ -253,6 +254,7 @@ dwarf_dealloc_uncompressed_block(Dwarf_Debug dbg, void * space)
     dwarf_dealloc(dbg, space, DW_DLA_STRING);
 }
 
+/*  Never returns DW_DLV_NO_ENTRY */
 int
 dwarf_whatform(Dwarf_Attribute attr,
     Dwarf_Half * return_form, Dwarf_Error * error)
@@ -1107,6 +1109,7 @@ dwarf_addr_form_is_indexed(int form)
     case DW_FORM_addrx4:
     case DW_FORM_GNU_addr_index:
         return TRUE;
+    default: break;
     }
     return FALSE;
 }
@@ -1217,7 +1220,9 @@ _dwarf_allow_formudata(unsigned form)
     case DW_FORM_udata:
     case DW_FORM_loclistx:
     case DW_FORM_rnglistx:
-    return TRUE;
+        return TRUE;
+    default:
+        break;
     }
     return FALSE;
 }

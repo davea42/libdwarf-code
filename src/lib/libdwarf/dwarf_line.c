@@ -2114,6 +2114,7 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
         *return_val = val;
         *line_ptr = lp + DWARF_64BIT_SIZE;
         return DW_DLV_OK;
+    default: break;
     }
     report_ltype_form_issue(dbg, ltype,
         form,splmsg,error);

@@ -1208,6 +1208,7 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     case aug_unknown:
         _dwarf_error(dbg, error, DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
         return DW_DLV_ERROR;
+    default: break;
     }                           /* End switch on augmentation type */
     if ( frame_ptr > section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);

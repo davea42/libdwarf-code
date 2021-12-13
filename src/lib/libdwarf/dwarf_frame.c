@@ -69,7 +69,7 @@
         return DW_DLV_ERROR;                         \
     } } while (0)
 
-#define MIN(a,b)  (((a) < (b))? a:b)
+#define MIN(a,b)  (((a) < (b))? (a):(b))
 
 #if 0 /* FOR DEBUGGING */
 static void

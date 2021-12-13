@@ -228,6 +228,7 @@ _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine)
     case  EM_QUALCOMM_DSP6:
         r = (type == R_QUALCOMM_REL32);
         break;
+    default: break;
     }
     return r;
 }
@@ -361,7 +362,7 @@ _dwarf_is_64bit_abs_reloc(unsigned int type, unsigned machine)
             );
         break;
 #endif /* EM_AARCH64 */
-
+    default: break;
     }
     return r;
 }

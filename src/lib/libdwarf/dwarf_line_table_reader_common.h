@@ -1430,7 +1430,6 @@ read_line_table_program(Dwarf_Debug dbg,
 #endif /* PRINTING_DETAILS */
 
             switch (opcode) {
-
             case DW_LNS_copy:{
 
 #ifdef PRINTING_DETAILS
@@ -2058,6 +2057,12 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
                 }
                 break;
+            default: 
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_LINE_TABLE_BAD,
+                    "DW_DLE_LINE_TABLE_BAD: "
+                    "Impossible standard line table operator");
+                return DW_DLV_ERROR;
             } /* End switch (opcode) */
         } else if (type == LOP_EXTENDED) {
             Dwarf_Unsigned utmp3 = 0;

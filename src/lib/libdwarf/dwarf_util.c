@@ -785,10 +785,9 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
     entry_cur  = entry_base + hash_num;
 
     /* Determine if the 'code' is the list of synonyms already. */
-    for (hash_abbrev_entry = entry_cur->at_head;
-        hash_abbrev_entry != NULL &&
-        hash_abbrev_entry->abl_code != code;
-        hash_abbrev_entry = hash_abbrev_entry->abl_next);
+    hash_abbrev_entry = entry_cur->at_head;
+    for ( ; hash_abbrev_entry && hash_abbrev_entry->abl_code != code;
+        hash_abbrev_entry = hash_abbrev_entry->abl_next) {}
     if (hash_abbrev_entry) {
         /*  This returns a pointer to an abbrev
             list entry, not the list itself. */

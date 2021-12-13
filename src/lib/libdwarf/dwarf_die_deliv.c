@@ -210,6 +210,8 @@ is_unknown_UT_value(int ut)
     case DW_UT_split_compile:
     case DW_UT_split_type:
         return FALSE;
+    default:
+        break;
     }
     return TRUE;
 }
@@ -919,6 +921,7 @@ reloc_incomplete(int res,Dwarf_Error err)
     case DW_DLE_ELF_RELOC_SECTION_ERROR:
     case DW_DLE_RELOCATION_SECTION_SIZE_ERROR:
         return TRUE;
+    default: break;
     }
     return FALSE;
 }
@@ -1046,6 +1049,8 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             case DW_FORM_strx3:
             case DW_FORM_strx4:
                 cucon->cc_at_strx_present = TRUE;
+            default:
+                break;
             }
             switch(attrnum) {
             case DW_AT_dwo_id:

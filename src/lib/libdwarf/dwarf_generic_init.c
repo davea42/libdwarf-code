@@ -420,6 +420,7 @@ dwarf_init_b(int fd,
         set_global_paths_init(*ret_dbg,error);
         return resp;
         }
+    default: break;
     }
     DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     return res;
