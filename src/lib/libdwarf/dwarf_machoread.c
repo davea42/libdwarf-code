@@ -105,10 +105,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_detector.h"
 #include "dwarf_macho_loader.h"
 
-#ifndef TYP
-#define TYP(n,l) char n[l]
-#endif /* TYPE */
-
 /* MACH-O and dwarf section names */
 static struct macho_sect_names_s {
     char const *ms_moname;
@@ -550,7 +546,7 @@ dwarf_macho_load_segment_commands(
             res = load_segment_command_content64(mfp,mmp,msp,
                 i,errcode);
             ++msp;
-        }
+        } else { /* fall through, not a command of interest */ }
         if (res != DW_DLV_OK) {
             return res;
         }

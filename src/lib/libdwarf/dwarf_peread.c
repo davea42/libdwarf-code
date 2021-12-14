@@ -83,10 +83,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define DOS_HEADER_LEN 64
 
-#ifndef TYP
-#define TYP(n,l) char (n)[(l)]
-#endif /* TYP */
-
 #if 0
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)

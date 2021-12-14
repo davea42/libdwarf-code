@@ -524,7 +524,8 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                 _dwarf_dealloc_fde_cie_list_internal(head_fde_ptr,
                     head_cie_ptr);
                 return resf;
-            } else if (resf == DW_DLV_NO_ENTRY) {
+            } 
+            if (resf == DW_DLV_NO_ENTRY) {
                 /* impossible. */
                 return resf;
             }

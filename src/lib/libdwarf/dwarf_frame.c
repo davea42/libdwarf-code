@@ -1827,7 +1827,8 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         &new_fde, error);
     if (res == DW_DLV_ERROR) {
         return res;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     /* DW_DLV_OK */
@@ -1867,13 +1868,10 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
             /* cie_count= */ 0,
             /* use_gnu_cie_calc= */
             0, &new_cie, error);
-        if (res2 == DW_DLV_ERROR) {
+        if (res2 != DW_DLV_OK) {
             dwarf_dealloc(dbg, new_fde, DW_DLA_FDE);
             return res;
-        } else if (res2 == DW_DLV_NO_ENTRY) {
-            dwarf_dealloc(dbg, new_fde, DW_DLA_FDE);
-            return res;
-        }
+        } 
         new_fde->fd_cie = new_cie;
     } else {
         dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);

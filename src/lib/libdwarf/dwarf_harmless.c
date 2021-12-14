@@ -104,13 +104,13 @@ int dwarf_get_harmless_error_list(Dwarf_Debug dbg,
         if (dhp->dh_next_to_use != dhp->dh_first) {
             unsigned i = 0;
             unsigned cur = dhp->dh_first;
-            for (i = 0;  cur != dhp->dh_next_to_use; ++i) {
+            for (i = 0;  cur != dhp->dh_next_to_use; 
+                ++i, cur = (cur +1) % dhp->dh_maxcount) {
                 if (i >= count ) {
                     /* All output spaces are used. */
                     break;
                 }
                 errmsg_ptrs_array[i] = dhp->dh_errors[cur];
-                cur = (cur +1) % dhp->dh_maxcount;
             }
             errmsg_ptrs_array[i] = 0;
         }

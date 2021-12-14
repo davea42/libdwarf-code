@@ -59,9 +59,9 @@
 #define MC_SENTINAL  0xada
 
 #define CHECKNULLCONTEXT(m,d,e)             \
-if (!m || m->mc_sentinel != MC_SENTINAL) {  \
-    if (m) { d = (m)->mc_dbg;  }            \
-    _dwarf_error_string(d, e,               \
+if (!(m) || (m)->mc_sentinel != MC_SENTINAL) {  \
+    if (m) { (d) = (m)->mc_dbg;  }            \
+    _dwarf_error_string((d), (e),               \
         DW_DLE_BAD_MACRO_HEADER_POINTER,    \
         "DW_DLE_BAD_MACRO_HEADER_POINTER "  \
         " NULL header or corrupt header");    \
@@ -314,6 +314,7 @@ is_defundef(unsigned op)
     case DW_MACRO_define_sup:
     case DW_MACRO_undef_sup:
         return TRUE;
+    default: break;
     }
     return FALSE;
 }
@@ -920,6 +921,7 @@ valid_macro_form(Dwarf_Half form)
     case DW_FORM_strp:
     case DW_FORM_strx:
         return TRUE;
+    default: break;
     }
     return FALSE;
 }

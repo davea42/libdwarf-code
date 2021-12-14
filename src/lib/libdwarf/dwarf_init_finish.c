@@ -338,7 +338,7 @@ set_up_section(Dwarf_Debug dbg,
             namesmatch = TRUE;
     } else if (!strcmp(secname,targname)) {
         namesmatch = TRUE;
-    }
+    } else { /*  Fall to next statement */ }
 #undef ZPREFIXLEN
 #undef DPREFIXLEN
 #undef SECNAMEMAX
@@ -372,13 +372,13 @@ set_up_section(Dwarf_Debug dbg,
 #define SET_UP_SECTION(mdbg,mname,mtarg,mgrp,minfo,me1,me2,mdw,mer) \
     {                                           \
     int lerr = 0;                               \
-    lerr =  set_up_section(mdbg,                \
-        mname,  /* actual section name */       \
-        mtarg,    /* std section name */        \
+    lerr =  set_up_section((mdbg),              \
+        (mname),  /* actual section name */     \
+        (mtarg),    /* std section name */      \
         /* scn_number from macro use context */ \
-        scn_number,mtarg,mgrp,                  \
-        minfo,                                  \
-        me1,me2,mdw,mer);                       \
+        scn_number,(mtarg),(mgrp),              \
+        (minfo),                                \
+        (me1),(me2),(mdw),(mer));               \
     if (lerr != DW_DLV_NO_ENTRY) {              \
         return lerr;                            \
     }    /* else fall through. */               \
@@ -1033,7 +1033,8 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 if (resx == DW_DLV_NO_ENTRY){
                     /*  Should we really ignore this? */
                     continue;
-                } else if (resx == DW_DLV_ERROR){
+                } 
+                if (resx == DW_DLV_ERROR){
                     if (secdata.dss_data_was_malloc) {
                         free(secdata.dss_data);
                         secdata.dss_data = 0;
@@ -1129,7 +1130,8 @@ determine_target_group(Dwarf_Unsigned section_count,
             &doas, &err);
         if (res == DW_DLV_NO_ENTRY){
             return res;
-        } else if (res == DW_DLV_ERROR){
+        } 
+        if (res == DW_DLV_ERROR){
             _dwarf_error(dbg, error,err);
             return res;
         }
@@ -1214,7 +1216,7 @@ determine_target_group(Dwarf_Unsigned section_count,
                 found_group_one++;
             } else if (groupnumber == 2) {
                 found_group_two++;
-            }
+            } else { /* fall through to continue */ }
             continue;
         }
     }
@@ -1348,7 +1350,8 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         if (res == DW_DLV_NO_ENTRY){
             free(sections);
             return res;
-        } else if (res == DW_DLV_ERROR){
+        } 
+        if (res == DW_DLV_ERROR){
             free(sections);
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
@@ -1403,7 +1406,8 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 free(sections);
                 DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION,
                     DW_DLV_ERROR);
-            } else if (res == DW_DLV_ERROR) {
+            } 
+            if (res == DW_DLV_ERROR) {
                 free(sections);
                 DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
             }

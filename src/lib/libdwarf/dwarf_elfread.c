@@ -113,19 +113,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* TYPE */
 
 #ifdef WORDS_BIGENDIAN
-#define READ_UNALIGNED_SAFE(dbg,dest, source, length) \
-    do {                                             \
-        Dwarf_Unsigned _ltmp = 0;                    \
-        dbg->de_copy_word( (((char *)(&_ltmp)) +     \
+#define READ_UNALIGNED_SAFE(dbg,dest, source, length)  \
+    do {                                               \
+        Dwarf_Unsigned _ltmp = 0;                      \
+        (dbg)->de_copy_word( (((char *)(&_ltmp)) +     \
             sizeof(_ltmp) - length),(source),(length)); \
-        dest = _ltmp;                                \
+        dest = _ltmp;                                  \
     } while (0)
 
 #define WRITE_UNALIGNED_LOCAL(dbg,dest,source, srclength,len_out) \
-    {                                         \
-        dbg->de_copy_word((dest),             \
+    {                                           \
+        (dbg)->de_copy_word((dest),             \
             ((char *)(source)) +(srclength)-(len_out),  \
-            (len_out)) ;                        \
+            (len_out)) ;                         \
     }
 #else /* LITTLE ENDIAN */
 #define READ_UNALIGNED_SAFE(dbg,dest, source, srclength) \

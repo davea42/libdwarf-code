@@ -101,6 +101,7 @@ _dwarf_lkind_name(unsigned lkind, dwarfstring *m)
     case DW_LKIND_unknown:
         dwarfstring_append(m,"DW_LKIND_unknown");
         return;
+    default: break;
     }
     dwarfstring_append_printf_u(m,
         "<DW_LKIND location kind is unknown and has value %u>.",
@@ -541,6 +542,7 @@ validate_lle_value(Dwarf_Debug dbg,
         case DW_LLE_start_end:
         case DW_LLE_start_length:
             return DW_DLV_OK;
+        default: break;
         }
         dwarfstring_constructor(&m);
 
@@ -565,6 +567,7 @@ validate_lle_value(Dwarf_Debug dbg,
     case DW_LLEX_start_length_entry:
     case DW_LLEX_offset_pair_entry:
         return DW_DLV_OK;
+    default: break; /* ERROR */
     }
     {
         dwarfstring_constructor(&m);

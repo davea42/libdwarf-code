@@ -1935,7 +1935,8 @@ void print_ptr_offset(Dwarf_CU_Context cu_context,
     Dwarf_Byte_Ptr di_ptr)
 {
     Dwarf_Off ptr_off;
-    _dwarf_ptr_CU_offset(cu_context,di_ptr,&ptr_off);
+    _dwarf_ptr_CU_offset(cu_context,di_ptr,
+       di_ptr->di_is_info,&ptr_off);
     fprintf(stderr," PTR OFF = 0x%" DW_PR_XZEROS DW_PR_DUx,ptr_off);
 }
 #endif /*0*/

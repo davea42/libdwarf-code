@@ -103,7 +103,7 @@ dwarf_get_FORM_CLASS_name (enum Dwarf_Form_Class fc,
     case DW_FORM_CLASS_STROFFSETSPTR:
         *s_out = "DW_FORM_CLASS_STROFFSETSPTR";
         return DW_DLV_OK;
-
+    default: break;
     }
     return DW_DLV_NO_ENTRY;
 }

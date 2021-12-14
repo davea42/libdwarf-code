@@ -84,7 +84,7 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
     unused bytes so reading lengths from the real structs
     works for each variable.  */
 
-#define TYP(n,l) char n[l]
+#define TYP(n,l) char (n)[(l)]
 #define SIZEOFT32 4
 
 #define DW_DLV_NO_ENTRY -1

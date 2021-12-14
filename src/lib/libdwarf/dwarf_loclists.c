@@ -427,7 +427,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     Dwarf_Loclists_Context *fullarray = 0;
     Dwarf_Unsigned i = 0;
 
-    for ( ; data < end_data ; ) {
+    for ( ; data < end_data ; data = startdata+nextoffset) {
         Dwarf_Loclists_Context newcontext = 0;
 
         /* sizeof the context struct, not sizeof a pointer */
@@ -466,7 +466,6 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
         ++chainlength;
         (*plast) = curr_chain;
         plast = &(curr_chain->ch_next);
-        data = startdata+nextoffset;
         offset = nextoffset;
     }
     fullarray= (Dwarf_Loclists_Context *)malloc(
@@ -757,7 +756,7 @@ dwarf_get_loclist_context_basics(Dwarf_Debug dbg,
     if (offset_size) {
         *offset_size = con->lc_offset_size;
     }
-    if (offset_size) {
+    if (extension_size) {
         *extension_size = con->lc_extension_size;
     }
     if (version) {

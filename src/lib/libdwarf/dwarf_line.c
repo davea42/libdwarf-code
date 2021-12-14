@@ -243,7 +243,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
         } else if (dirno > 0 && fe->fi_dir_index > 0) {
             include_dir_offset = 1;
             need_dir = TRUE;
-        }
+        } else { /* ok, fall through. */ }
         if (need_dir) {
             char *inc_dir_name =
                 (char *)line_context->lc_include_directories[
@@ -1545,9 +1545,12 @@ dwarf_filename(Dwarf_Line_Context context,
             linetab_version == EXPERIMENTAL_LINE_TABLES_VERSION) {
             if (!fileno) {
                 return DW_DLV_NO_ENTRY;
+            } else { 
+                /* else ok */
             }
-            /* else ok */
-        }  /* else DW_LINE_VERSION5 so file index 0 is fine */
+        }  else { 
+            /* DW_LINE_VERSION5 so file index 0 is fine */
+        }
     }
 
     file_entry = context->lc_file_entries;
