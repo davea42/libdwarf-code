@@ -1667,7 +1667,9 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
             " attempting to determine if this CU should"
             " be skipped.",
             fres, skperr);
-    } /* else DW_DLV_NO_ENTRY */
+    } else  { 
+        /* DW_DLV_NO_ENTRY, nothing to print */ 
+    }
     dwarf_dealloc_attribute(attrib);
     *should_skip = FALSE;
     return fres;
@@ -2110,6 +2112,7 @@ tag_specific_globals_setup(Dwarf_Debug dbg,
             glflags.need_PU_valid_code = TRUE;
         }
         break;
+    default: break;
     }
 }
 

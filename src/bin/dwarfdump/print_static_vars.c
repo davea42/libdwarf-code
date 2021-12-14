@@ -71,7 +71,8 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
         esb_destructor(&sanitname);
         dwarf_return_empty_pubnames(dbg,0,err);
         return res;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         /* no static vars */
         esb_destructor(&sanitname);
         dwarf_return_empty_pubnames(dbg,0,err);

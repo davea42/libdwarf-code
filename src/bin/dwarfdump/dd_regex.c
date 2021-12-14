@@ -205,7 +205,7 @@ chset(CHAR c)
 }
 
 #define badpat    (*nfa = END)
-#define store(x)  *mp++ = x
+#define store(x)  *mp++ = (x)
 
 static void
 resetbittab(void)
@@ -683,6 +683,7 @@ nfadump(CHAR *ap)
             case CCL:
                 n = CCLSKIP;
                 break;
+            default: break;
             }
             ap += n;
             break;

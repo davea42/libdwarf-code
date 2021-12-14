@@ -47,7 +47,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
 /* Is this a PU has been invalidated by the SN Systems linker? */
 #define IsInvalidCode(low,high) \
-    ((low == max_address) || (low == 0 && high == 0))
+    (((low) == max_address) || ((low) == 0 && (high) == 0))
 
 /*  Most types of CU can have highpc and/or lowpc.
     DW_TAG_type_unit will not. */

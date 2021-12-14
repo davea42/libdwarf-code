@@ -516,6 +516,8 @@ print_abbrevs(Dwarf_Debug dbg,Dwarf_Error* paerr)
     } else if (abres == DW_DLV_ERROR) {
         dwarf_dealloc_error(dbg,*paerr);
         *paerr = 0;
+    } else {
+        /* DW_DLV_NO_ENTRY, fall through, nothing to discard */
     }
 
     for (loopct = 0; ; ++loopct) {

@@ -253,13 +253,16 @@ struct die_stack_data_s {
 static struct die_stack_data_s empty_stack_entry;
 #define DIE_STACK_SIZE 800
 static struct die_stack_data_s die_stack[DIE_STACK_SIZE];
-#define SET_DIE_STACK_ENTRY(i,x,o) { die_stack[i].die_ = x; \
-    die_stack[i].cu_die_offset_ = o;                        \
-    die_stack[i].sibling_die_globaloffset_ = 0;             \
-    die_stack[i].already_printed_ = FALSE; }
-#define EMPTY_DIE_STACK_ENTRY(i) { die_stack[i] = empty_stack_entry; }
-#define SET_DIE_STACK_SIBLING(x) {                          \
-    die_stack[die_stack_indent_level].sibling_die_globaloffset_ = x; }
+#define SET_DIE_STACK_ENTRY(i,x,o)                \
+    { die_stack[(i)].die_ = (x);                  \
+    die_stack[(i)].cu_die_offset_ = o;            \
+    die_stack[(i)].sibling_die_globaloffset_ = 0; \
+    die_stack[(i)].already_printed_ = FALSE; }
+#define EMPTY_DIE_STACK_ENTRY(i)     \
+    { die_stack[(i)] = empty_stack_entry; }
+#define SET_DIE_STACK_SIBLING(x) {     \
+    die_stack[die_stack_indent_level]. \
+    sibling_die_globaloffset_ = (x); }
 
 static void
 report_die_stack_error(Dwarf_Debug dbg, Dwarf_Error *err)
@@ -459,7 +462,7 @@ check_die_expr_op_basic_data(Dwarf_Debug dbg,Dwarf_Die die,
                 dwarf_errmsg(err));
             dwarf_dealloc_error(dbg,err);
             err = 0;
-        } /* Else no entry */
+        } else { /* Else no entry */ }
     }
     dwarf_dealloc_die(other_die);
 }
@@ -619,6 +622,7 @@ form_refers_local_info(Dwarf_Half form)
             section and cannot be checked
             as if they did. */
         return FALSE;
+    default: break;
     }
     return TRUE;
 }
@@ -834,7 +838,8 @@ get_macinfo_offset(Dwarf_Debug dbg,
             " failed",
             ares,*macerr);
         return ares;
-    } else if (ares == DW_DLV_NO_ENTRY) {
+    } 
+    if (ares == DW_DLV_NO_ENTRY) {
         return ares;
     }
     vres = dwarf_global_formref(attrib,offset,macerr);
@@ -2201,7 +2206,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             "ERROR: A call to dwarf_attrlist failed. "
             " Impossible error.", atres,*err);
         return atres;
-    } else if (atres == DW_DLV_NO_ENTRY) {
+    } 
+    if (atres == DW_DLV_NO_ENTRY) {
         /* indicates there are no attrs.  It is not an error. */
         atcnt = 0;
     }
@@ -2512,6 +2518,7 @@ get_rangelist_type_descr(Dwarf_Ranges *r)
     case DW_RANGES_ENTRY:             return "range entry";
     case DW_RANGES_ADDRESS_SELECTION: return "addr selection";
     case DW_RANGES_END:               return "range end";
+    default: break;
     }
     /* Impossible. */
     return "Unknown";
@@ -2911,7 +2918,8 @@ print_sig8_target(Dwarf_Debug dbg,
             res, *err);
         dwarf_dealloc_die(targdie);
         return res;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         append_useful_die_name(dbg,targdie,
             srcfiles,srcfiles_cnt,valname,err);
     }
@@ -3101,7 +3109,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_destructor(&valname);
                 return res;
             }
-        } else if (res == DW_DLV_NO_ENTRY) {
+        } 
+        if (res == DW_DLV_NO_ENTRY) {
             return res;
         }
         /* Gives die offset in section. */
@@ -6200,6 +6209,7 @@ print_location_list(Dwarf_Debug dbg,
                         " with %ld entries follows>",
                         no_of_elements);
                     break;
+                default: break;
                 }
             }
             esb_append_printf_i(details, "\n   [%2d]",llent);
@@ -6421,7 +6431,8 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         dwarf_dealloc_error(dbg,error);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         /* We don't know sign. */
         /*bracket_hex( "<helper dwarf_attr no entry ",
             diegoffset,">",esbp); */
@@ -6435,7 +6446,8 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         dwarf_dealloc_attribute(attr);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         /*esb_append(esbp,"helper NO ENTRY  FAIL ");
         bracket_hex( "<helper global_formreff NO ENTRY" ,
             diegoffset,">",esbp); */
@@ -6477,7 +6489,8 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         helpertree_add_entry(diegoffset, 0,helperbase);
         helpertree_add_entry(typedieoffset, 0,helperbase);
         return 0;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         /*bracket_hex( "<helper dwarf_attr typedie  NO ENTRY",
             diegoffset,">",esbp);*/
         dwarf_dealloc_die(typedie);
@@ -6485,7 +6498,6 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         helpertree_add_entry(typedieoffset, 0,helperbase);
         return 0;
     }
-
     res = dd_get_integer_and_name(dbg,
         encodingattr,
         &tempud,
@@ -7261,7 +7273,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             "dwarf_whatform cannot Find Attr Form",
             fres, *err);
         return fres;
-    } else if (fres == DW_DLV_NO_ENTRY) {
+    } 
+    if (fres == DW_DLV_NO_ENTRY) {
         return fres;
     }
     /*  dwarf_whatform_direct gets the 'direct' form, so if

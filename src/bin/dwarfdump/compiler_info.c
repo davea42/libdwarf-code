@@ -334,7 +334,8 @@ qsort_compare_compiler(const void *elem1,const void *elem2)
 
     if (cnt1 < cnt2) {
         return 1;
-    } else if (cnt1 > cnt2) {
+    } 
+    if (cnt1 > cnt2) {
         return -1;
     }
     /* When error counts match, sort on name. */

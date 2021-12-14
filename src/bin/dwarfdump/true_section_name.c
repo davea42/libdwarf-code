@@ -83,7 +83,8 @@ void get_true_section_name(Dwarf_Debug dbg,
             }
         }
         return;
-    } else if (cres == DW_DLV_NO_ENTRY) {
+    } 
+    if (cres == DW_DLV_NO_ENTRY) {
         esb_append(name_out,stdname);
         return;
     }
