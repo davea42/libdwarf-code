@@ -1,3 +1,194 @@
+2021-12-14:  David Anderson
+    commit 1b15d2766506a28e47b59d882086f939cd7ab3d0
+
+    Using () around uses of the arguments inside macros
+    with arguments.
+    Fixing cobra complaints with missing else clause
+    where that makes sense.
+            modified:   ../../lib/libdwarf/dwarf_elfstructs.h
+            modified:   ../../lib/libdwarf/dwarf_global.h
+            modified:   ../../lib/libdwarf/dwarf_line.h
+            modified:   ../../lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   ../../lib/libdwarf/dwarf_macho_loader.h
+            modified:   ../../lib/libdwarf/dwarf_opaque.h
+            modified:   ../../lib/libdwarf/dwarf_pe_descr.h
+            modified:   ../../lib/libdwarf/dwarf_tied_decls.h
+            modified:   ../../lib/libdwarf/dwarf_util.h
+            modified:   ../../lib/libdwarf/libdwarf_private.h
+
+2021-12-14:  David Anderson
+    commit 4d5566123c687e1f962af0f6ad14c45fc198c48a
+
+    Correcting macros so arguments have () around
+    argument use inside the macro definition.
+    Added default: break; to switch statements
+    for clarity to the reader.
+    Slight modifications of some DW_DLV_ERROR tests
+    for greater clarity.
+
+    This eliminates all the .c warnings cobra emits
+    that I think should be eliminated.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_form_class_names.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2021-12-14:  David Anderson
+    commit 6881dc7f9a6bf89ef4a0a1484a6b4193642045f8
+
+    Regenerated with the default: break; in each switch().
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2021-12-14:  David Anderson
+    commit ae61bd5195410f00ccc5a9d3828d18144f95a4b5
+
+    In all the switch() statements we generate here
+    add a default: break;
+    to avoid cobra warnings and clarify for the reader
+    that the code is intentional as written..
+            modified:   src/bin/gennames/gennames.c
+
+2021-12-13:  David Anderson
+    commit 1ff4e2d7c0e79ad0579e73fe7cdec716c9fcf80d
+
+    Clearing up some things cobra noted.
+
+    Simplifying by unnesting if where nesting was silly
+    (Involving DW_DLV_ERROR DW_DLV_NO_ENTRY).
+    Ensuring macros have use of the arguments in ()
+    Adding default: break; in switch statements
+    without a default.
+    Putting for loop control variable updates in the
+    third part of the for rather than in the body.
+
+    modified:   src/lib/libdwarf/dwarf_die_deliv.c
+    modified:   src/lib/libdwarf/dwarf_generic_init.c
+    modified:   src/lib/libdwarf/dwarf_peread.c
+    modified:   src/lib/libdwarf/dwarf_print_lines.c
+    modified:   src/lib/libdwarf/dwarf_query.c
+    modified:   src/lib/libdwarf/dwarf_ranges.c
+    modified:   src/lib/libdwarf/dwarf_str_offsets.c
+    modified:   src/lib/libdwarf/dwarf_string.c
+    modified:   src/lib/libdwarf/dwarf_tied.c
+
+    The above plus noted the dereference of extension_size
+    was preceded by testing offset_size in
+    internal_load_rnglists_contexts(). Fixed.
+    modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2021-12-13:  David Anderson
+    commit d8595aebd4255189c56299aa1571e71b0eebd798
+
+    Minor changes for clarity
+    in the tests for DW_DLV_ERROR, DW_DLV_NO_ENTRY.
+            modified:   dwarf_form.c
+
+    Macros now () around each use of names
+    in the macro argument list
+            modified:   dwarf_gdbindex.c
+
+2021-12-13:  David Anderson
+    commit 3d6feccf7ca772268495d9dd18d3496ed92898ca
+
+    Now in the interals of macros we refer to
+    the incoming name in () as is best practice.
+    However, when a macro here calls *another* macro here
+    those references must not have a () wrapper.
+            modified:   dwarf_util.h
+
+2021-12-13:  David Anderson
+    commit 801575b4b7d7ece387a8294e59c4458254f4f2de
+
+    Alter the macro definitions so that the arguments
+    have () at the point of use in the macro.
+    A well known best-practice.
+            modified:   libdwarf_private.h
+
+2021-12-13:  David Anderson
+    commit f44fb8eba6472223d6a7973e8ce9fa1949bc0333
+
+    Deleted macro ASNAR definitions, they
+    are not used in this file.
+            modified:   src/bin/dwarfdump/print_frames.c
+
+2021-12-12:  David Anderson
+    commit c5956804b41f3d54a0980f0959d04b0db5160606
+
+    Clarify update to 12 December date and regenerate.
+    modified:   libdwarf.mm
+    modified:   libdwarf.pdf
+
+    There is no logic change here. Just changes to avoid
+    common errors.
+
+    Add empty else {} to clarify intent.
+        modified:   src/lib/libdwarf/dwarf_debuglink.c
+    Add default: break; to clarify entent where there
+    was no default specified in a switch()
+        modified:   src/lib/libdwarf/dwarf_die_deliv.c
+    Add empty else {} to clarify intent.
+        modified:   src/lib/libdwarf/dwarf_dsc.c
+
+    Add default: break; to clarify entent where there
+    was no default specified in a switch()
+        modified:   src/lib/libdwarf/dwarf_elf_rel_detector.c
+    Add () where macro arguments used in the macro
+    go guarantee no surprises.
+        modified:   src/lib/libdwarf/dwarf_elfread.c
+        modified:   src/lib/libdwarf/dwarf_error.h
+
+    Clarify functions that never return DW_DLV_NO_ENTRY.
+        modified:   src/lib/libdwarf/dwarf_form.c
+
+    Add () where macro arguments used in the macro
+        modified:   src/lib/libdwarf/dwarf_frame.c
+        modified:   src/lib/libdwarf/dwarf_reading.h
+        modified:   src/lib/libdwarf/dwarf_string.c
+
+    Add default: break; to clarify entent where there
+    was no default specified in a switch()
+        modified:   src/lib/libdwarf/dwarf_frame2.c
+        modified:   src/lib/libdwarf/dwarf_generic_init.c
+        modified:   src/lib/libdwarf/dwarf_line.c
+        modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+
+    Renamed static dump_bytes.Is #if 0, so not important.
+        modified:   src/lib/libdwarf/dwarf_macro5.c
+
+    Moved the loop initializer out  to before loop
+    to clarify intent.
+        modified:   src/lib/libdwarf/dwarf_util.c
+
+2021-12-12:  David Anderson
+    commit 5538965c68fdf0a4a7f383dceeb6c3670cf0e3f1
+
+    Clarify return values of some functions.
+            modified:   doc/libdwarf.mm
+
+2021-12-06:  David Anderson
+    commit 9f63003df053dacbaa72f799a9690d4047de52ef
+
+    Bringing up to date from git log
+            modified:   ChangeLog
+
+    Regenerated (with new release id 0.3.2)
+            modified:   doc/libdwarf.pdf
+            modified:   doc/libdwarfp.pdf
+
+    Fixed a typo in usage message.
+            modified:   doc/pdfbld.sh
+
 2021-12-05:  David Anderson
     commit a1707f52c49b42723c14e6dc222d9d7b43f54a62
 
