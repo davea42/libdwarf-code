@@ -46,7 +46,7 @@
     do {                                        \
         unsigned tbyte = sizeof(t) - sizeof(s); \
         (t) = 0;                                \
-        (func)(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
+        (func)(((char *)&(t))+tbyte ,&(s)[0],sizeof(s));  \
     } while (0)
 #else /* LITTLE ENDIAN */
 #define ASNAR(func,t,s)                         \

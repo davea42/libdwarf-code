@@ -790,7 +790,7 @@ struct Dwarf_Chain_o {
     since DWARF3. */
 #define DISTINGUISHED_VALUE  0xffffffff
 #define DISTINGUISHED_VALUE_OFFSET_SIZE 8
-#define DISTINGUISHED_VALUE_ARRAY(x)  char x[4] = \
+#define DISTINGUISHED_VALUE_ARRAY(x)  char (x)[4] = \
     { 0xff,0xff,0xff,0xff }
 
 int _dwarf_ignorethissection(const char *scn_name);

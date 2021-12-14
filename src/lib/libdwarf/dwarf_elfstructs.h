@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 #ifndef TYP
-#define TYP(n,l) char n[l]
+#define TYP(n,l) char (n)[(l)]
 #endif
 
 typedef struct

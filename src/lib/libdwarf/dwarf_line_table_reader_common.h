@@ -2580,6 +2580,15 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
                 break;
             } /* End switch. */
+        } else { 
+            /* ASSERT: impossible, see the macro definition */  
+            _dwarf_free_chain_entries(dbg,head_chain,
+                line_count);
+            _dwarf_error_string(dbg,error,
+                DW_DLE_LINE_TABLE_BAD,
+                "DW_DLE_LINE_TABLE_BAD: Actually is "
+                "an impossible type from WHAT_IS_CODE");
+            return DW_DLV_ERROR;
         }
     }
     block_line = (Dwarf_Line *)

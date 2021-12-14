@@ -40,7 +40,7 @@ extern "C" {
 #define IMAGE_NT_SIGNATURE_dw     0x00004550
 
 #ifndef TYP
-#define TYP(n,l) char n[l]
+#define TYP(n,l) char (n)[(l)]
 #endif /* TYPE */
 
 /*  Data types

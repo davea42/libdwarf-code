@@ -394,20 +394,22 @@ int _dwarf_internal_srclines(Dwarf_Die die,
     planned for in the  design of .debug_line)
     is too tricky to recode this several times and keep
     it right.
+
 */
 #define LOP_EXTENDED 1
 #define LOP_DISCARD  2
 #define LOP_STANDARD 3
 #define LOP_SPECIAL  4
 
+/* ASSERT: sets type to one of the above 4. Never anything else. */
 #define WHAT_IS_OPCODE(type,opcode,base,opcode_length,\
 line_ptr,highest_std) \
     if ((opcode) < (base)) {                             \
         /*  we know we must treat as a standard op       \
             or a special case. */                        \
         if ((opcode) == DW_EXTENDED_OPCODE) {            \
-            type = LOP_EXTENDED;                         \
-        } else if ((highest_std+1) >= (base)) {        \
+            (type) = LOP_EXTENDED;                         \
+        } else if (((highest_std)+1) >= (base)) {        \
             /*  == Standard case: compile of             \
                 dwarf_line.c and object                  \
                 have same standard op codes set.         \
@@ -420,7 +422,7 @@ line_ptr,highest_std) \
                 object standard ops.                     \
                 The new standard op codes will not       \
                 appear in the object. */                 \
-            type = LOP_STANDARD;                         \
+            (type) = LOP_STANDARD;                         \
         } else  {                                        \
             /* These are standard opcodes in the object  \
             ** that were not defined  in the header      \
@@ -429,11 +431,11 @@ line_ptr,highest_std) \
             ** out-of-date dwarf reader to read newer    \
             ** line table data transparently.            \
             */                                           \
-            type = LOP_DISCARD;                          \
+            (type) = LOP_DISCARD;                          \
         }                                                \
     } else {                                             \
         /* Is  a special op code. */                     \
-        type =  LOP_SPECIAL;                             \
+        (type) =  LOP_SPECIAL;                             \
     }
 
 /*  The following is from  the dwarf definition of 'ubyte'

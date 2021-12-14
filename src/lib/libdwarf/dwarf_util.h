@@ -103,7 +103,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
         }                                             \
         (value) = lu_local;                           \
         (ptr) += lu_leblen;                           \
-        leblen = lu_leblen;                           \
+        (leblen) = lu_leblen;                           \
     } while (0)
 
 /*
@@ -211,7 +211,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                 "Read would end past the end of section"); \
             return DW_DLV_ERROR;             \
         }                                    \
-        dbg->de_copy_word( (((char *)(&_ltmp)) +      \
+        (dbg)->de_copy_word( (((char *)(&_ltmp)) +      \
             sizeof(_ltmp) - (length)),(source), (length)) ; \
         (dest) = (desttype)_ltmp;              \
     } while (0)
@@ -235,7 +235,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                 "Read would end past the end of section");\
             return DW_DLV_ERROR;                 \
         }                                        \
-        dbg->de_copy_word((char *)(&_ltmp),      \
+        (dbg)->de_copy_word((char *)(&_ltmp),      \
             (source), (length)) ;                \
         (dest) = (desttype)_ltmp;                \
     } while (0)
@@ -314,11 +314,11 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                     /* IRIX 64 bit, big endian.  This test */  \
                     /* is not a truly precise test, a precise test*/ \
                     /* would check if the target was IRIX.  */ \
-                    READ_UNALIGNED_CK(r_dbg,w_target,      \
+                    READ_UNALIGNED_CK(r_dbg, w_target ,      \
                         r_targtype,                          \
                         rw_src_data_p,                       \
                         DISTINGUISHED_VALUE_OFFSET_SIZE,       \
-                        w_error,r_endptr);                 \
+                        (w_error),(r_endptr));                 \
                     if ((w_target) > (r_sectionlen)) {         \
                         _dwarf_create_area_len_error((r_dbg),  \
                             (w_error),                         \

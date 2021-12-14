@@ -31,7 +31,7 @@
 
 #ifdef HASHSEARCH
 /* Only needed for hash based search in a tsearch style. */
-#define INITTREE(x,y) x = dwarf_initialize_search_hash(&(x),(y),0)
+#define INITTREE(x,y) (x) = dwarf_initialize_search_hash(&(x),(y),0)
 #else
 #define INITTREE(x,y)
 #endif /* HASHSEARCH */
