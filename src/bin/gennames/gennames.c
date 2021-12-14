@@ -463,7 +463,8 @@ GenerateOneSet(void)
         ++actual_array_count;
     }
 
-    /* Closing entries for 'dwarf_names_enum.h' */
+    /* Closing entries for 'dwarf_names.h' */
+    fprintf(f_names_c,"    default: break;\n");
     fprintf(f_names_c,"    }\n");
     fprintf(f_names_c,"    return DW_DLV_NO_ENTRY;\n");
     fprintf(f_names_c,"}\n");
