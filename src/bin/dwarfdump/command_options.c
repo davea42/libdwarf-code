@@ -176,7 +176,7 @@ remove_quotes_pair(const char *text)
         if (p[len - 1] == quote) {
             char *altered = calloc(1,len+1);
             const char *str2 = 0;
-            strcpy(altered,p+1);
+            strncpy(altered,p+1,len);
             altered[len - 2] = '\0';
             str2 =  makename(altered);
             free(altered);

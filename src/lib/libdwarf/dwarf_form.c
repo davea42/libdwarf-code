@@ -86,7 +86,7 @@ generate_form_error(Dwarf_Debug dbg,
 }
 
 /*  This code was repeated many times, now it
-    is all in one place. 
+    is all in one place.
     Never returns DW_DLV_NO_ENTRY  */
 static int
 get_attr_dbg(Dwarf_Debug *dbg,
@@ -1964,7 +1964,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
         _dwarf_error(dbg,error,lerrno);
         return res;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
@@ -1991,7 +1991,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
         _dwarf_error(dbg,error,lerrno);
         return res;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }

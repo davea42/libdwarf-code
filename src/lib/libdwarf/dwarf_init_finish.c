@@ -1033,7 +1033,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 if (resx == DW_DLV_NO_ENTRY){
                     /*  Should we really ignore this? */
                     continue;
-                } 
+                }
                 if (resx == DW_DLV_ERROR){
                     if (secdata.dss_data_was_malloc) {
                         free(secdata.dss_data);
@@ -1130,7 +1130,7 @@ determine_target_group(Dwarf_Unsigned section_count,
             &doas, &err);
         if (res == DW_DLV_NO_ENTRY){
             return res;
-        } 
+        }
         if (res == DW_DLV_ERROR){
             _dwarf_error(dbg, error,err);
             return res;
@@ -1350,7 +1350,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         if (res == DW_DLV_NO_ENTRY){
             free(sections);
             return res;
-        } 
+        }
         if (res == DW_DLV_ERROR){
             free(sections);
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
@@ -1406,7 +1406,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 free(sections);
                 DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION,
                     DW_DLV_ERROR);
-            } 
+            }
             if (res == DW_DLV_ERROR) {
                 free(sections);
                 DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);

@@ -82,6 +82,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #define BYTES_PER_INSTRUCTION 4
 
+#define LOCAL_PTR_ARY_COUNT 50
+
 /*  The type of Bucket. */
 #define KIND_RANGES_INFO       1
 #define KIND_SECTIONS_INFO     2
@@ -521,7 +523,6 @@ main(int argc, char *argv[])
 void
 print_any_harmless_errors(Dwarf_Debug dbg)
 {
-#define LOCAL_PTR_ARY_COUNT 50
     /*  We do not need to initialize the local array,
         libdwarf does it. */
     const char *buf[LOCAL_PTR_ARY_COUNT];
@@ -1667,8 +1668,8 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
             " attempting to determine if this CU should"
             " be skipped.",
             fres, skperr);
-    } else  { 
-        /* DW_DLV_NO_ENTRY, nothing to print */ 
+    } else  {
+        /* DW_DLV_NO_ENTRY, nothing to print */
     }
     dwarf_dealloc_attribute(attrib);
     *should_skip = FALSE;

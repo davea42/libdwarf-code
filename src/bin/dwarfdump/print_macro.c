@@ -465,9 +465,11 @@ add_array_file_entry(unsigned k,
     const char   * macro_string)
 {
     size_t namelen = strlen(macro_string) +1;
-    unsigned alloclen = sizeof(macfile_entry) + namelen;
     unsigned stroff = sizeof(macfile_entry);
     macfile_entry *m = 0;
+    /*  Room for the string, its NUL, and the entry struct
+        fields. */
+    unsigned alloclen = sizeof(macfile_entry) + namelen;
 
     expand_array_file_if_required();
     m = (macfile_entry*) calloc(1,alloclen);
@@ -482,7 +484,7 @@ add_array_file_entry(unsigned k,
     m->ms_macro_unit_offset = macro_unit_offset;
     m->ms_array_number = macfile_array_next_to_use;
     m->ms_filename = (char *)m + stroff;
-    strcpy(m->ms_filename,macro_string);
+    strncpy(m->ms_filename,macro_string,namelen);
     macfile_array[macfile_array_next_to_use] = m;
     macfile_stack[macfile_stack_next_to_use] =
         macfile_array_next_to_use;
@@ -1452,7 +1454,7 @@ macdef_tree_create_entry(char *key,
     }
     keyspace = sizeof(macdef_entry) + (char *)me;
     me->md_key = keyspace;
-    strcpy(me->md_key,key);
+    safe_strcpy(me->md_key,klen,key,klen-1);
     me->md_operatornum = opnum;
     /*  We will set md_define, md_undefined,
         and the md_defcount and md_undefcount
@@ -1465,7 +1467,7 @@ macdef_tree_create_entry(char *key,
     me->md_macro_unit_offset = macro_unit_offset;
     me->md_string = keyspace + klen;
     me->md_file_array_entry = macfile_array_next_to_use-1;
-    strcpy(me->md_string,string);
+    safe_strcpy(me->md_string,slen,string,slen-1);
     return me;
 }
 

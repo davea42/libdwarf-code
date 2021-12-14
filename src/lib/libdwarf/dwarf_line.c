@@ -1545,10 +1545,10 @@ dwarf_filename(Dwarf_Line_Context context,
             linetab_version == EXPERIMENTAL_LINE_TABLES_VERSION) {
             if (!fileno) {
                 return DW_DLV_NO_ENTRY;
-            } else { 
+            } else {
                 /* else ok */
             }
-        }  else { 
+        }  else {
             /* DW_LINE_VERSION5 so file index 0 is fine */
         }
     }

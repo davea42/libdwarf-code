@@ -175,8 +175,8 @@ build_attr_form_base_tree(int*errnum)
         return DW_DLV_OK;
     }
     for (tab = &attr_formclass_table[0]; ; tab++) {
-        if ((!tab->attr) && 
-            (!tab->formclass) && 
+        if ((!tab->attr) &&
+            (!tab->formclass) &&
             (!tab->section)) {
             /* Done */
             break;

@@ -511,7 +511,7 @@ fill_in_dwp_offsets_if_present(Dwarf_Debug dbg,
             error);
         if (resdf == DW_DLV_ERROR) {
             return resdf;
-        } 
+        }
         if (resdf == DW_DLV_NO_ENTRY) {
             _dwarf_error_string(dbg, error,
                 DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH,
@@ -530,7 +530,7 @@ fill_in_dwp_offsets_if_present(Dwarf_Debug dbg,
             error);
         if (resdf == DW_DLV_ERROR) {
             return resdf;
-        } 
+        }
         if (resdf == DW_DLV_NO_ENTRY) {
             _dwarf_error_string(dbg, error,
                 DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH,
@@ -582,7 +582,7 @@ finish_cu_context_via_cudie_inner(
                 cudie = 0;
                 cu_context->cc_cu_die_has_children = FALSE;
                 return DW_DLV_OK;
-            } 
+            }
             if (resdwob == DW_DLV_ERROR) {
                 /*  Not applicable or an error */
                 dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
@@ -1936,7 +1936,7 @@ void print_ptr_offset(Dwarf_CU_Context cu_context,
 {
     Dwarf_Off ptr_off;
     _dwarf_ptr_CU_offset(cu_context,di_ptr,
-       di_ptr->di_is_info,&ptr_off);
+        di_ptr->di_is_info,&ptr_off);
     fprintf(stderr," PTR OFF = 0x%" DW_PR_XZEROS DW_PR_DUx,ptr_off);
 }
 #endif /*0*/

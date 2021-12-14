@@ -371,7 +371,7 @@ pe_load_section (void *obj, Dwarf_Half section_index,
             return DW_DLV_NO_ENTRY;
         }
         if (sp->VirtualSize >= pep->pe_filesize) {
-            *error = DW_DLE_PE_SECTION_SIZE_ERROR; 
+            *error = DW_DLE_PE_SECTION_SIZE_ERROR;
             return DW_DLV_ERROR;
         }
         read_length = sp->SizeOfRawData;

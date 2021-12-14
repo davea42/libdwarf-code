@@ -78,17 +78,21 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Half version,
     struct dwconf_s *config_data);
 
-/*  A strcpy which ensures NUL terminated string
+/*  An strcpy which ensures NUL terminated string
     and never overruns the output.
+    inlen is strlen() size of in_s
+    outlen is buffer and has to have space
+    for the NUL in in_s to avoid truncation.
 */
 void
-safe_strcpy(char *out, long outlen, const char *in, long inlen)
+safe_strcpy(char *out, long outlen, const char *in_s, long inlen)
 {
-    if (inlen >= (outlen - 1)) {
-        strncpy(out, in, outlen - 1);
+    long full_inlen = inlen+1;
+    if (full_inlen >= outlen) {
+        strncpy(out, in_s, outlen - 1);
         out[outlen - 1] = 0;
     } else {
-        strcpy(out, in);
+        strncpy(out, in_s,full_inlen);
     }
 }
 

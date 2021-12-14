@@ -2057,7 +2057,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
                 }
                 break;
-            default: 
+            default:
                 _dwarf_error_string(dbg, error,
                     DW_DLE_LINE_TABLE_BAD,
                     "DW_DLE_LINE_TABLE_BAD: "
@@ -2580,8 +2580,8 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
                 break;
             } /* End switch. */
-        } else { 
-            /* ASSERT: impossible, see the macro definition */  
+        } else {
+            /* ASSERT: impossible, see the macro definition */
             _dwarf_free_chain_entries(dbg,head_chain,
                 line_count);
             _dwarf_error_string(dbg,error,

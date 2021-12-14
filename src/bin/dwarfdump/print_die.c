@@ -48,6 +48,9 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "attr_form.h"
 #include "dd_regex.h"
 
+#define VSFBUFSZ 200
+#define IMPLICIT_VALUE_PRINT_MAX 12
+#define DIE_STACK_SIZE 800
 /*  OpBranchHead_s gives us nice type-checking
     in calls. */
 struct OpBranchEntry_s {
@@ -251,7 +254,6 @@ struct die_stack_data_s {
     Dwarf_Bool already_printed_;
 };
 static struct die_stack_data_s empty_stack_entry;
-#define DIE_STACK_SIZE 800
 static struct die_stack_data_s die_stack[DIE_STACK_SIZE];
 #define SET_DIE_STACK_ENTRY(i,x,o)                \
     { die_stack[(i)].die_ = (x);                  \
@@ -838,7 +840,7 @@ get_macinfo_offset(Dwarf_Debug dbg,
             " failed",
             ares,*macerr);
         return ares;
-    } 
+    }
     if (ares == DW_DLV_NO_ENTRY) {
         return ares;
     }
@@ -2206,7 +2208,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             "ERROR: A call to dwarf_attrlist failed. "
             " Impossible error.", atres,*err);
         return atres;
-    } 
+    }
     if (atres == DW_DLV_NO_ENTRY) {
         /* indicates there are no attrs.  It is not an error. */
         atcnt = 0;
@@ -2918,7 +2920,7 @@ print_sig8_target(Dwarf_Debug dbg,
             res, *err);
         dwarf_dealloc_die(targdie);
         return res;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         append_useful_die_name(dbg,targdie,
             srcfiles,srcfiles_cnt,valname,err);
@@ -3109,7 +3111,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 esb_destructor(&valname);
                 return res;
             }
-        } 
+        }
         if (res == DW_DLV_NO_ENTRY) {
             return res;
         }
@@ -3851,9 +3853,10 @@ remark_wrong_string_format(Dwarf_Half attr,
     Dwarf_Half theform,
     enum Dwarf_Form_Class fc UNUSEDARG)
 {
-#define VSFBUFSZ 200
     char buf[VSFBUFSZ+1];
     struct esb_s m;
+
+    buf[0] = 0;
     esb_constructor_fixed(&m,buf,VSFBUFSZ);
     esb_append_printf_s(&m,
         "ERROR: Cannot print the value of "
@@ -3867,7 +3870,6 @@ remark_wrong_string_format(Dwarf_Half attr,
         esb_get_string(&m));
     esb_destructor(&m);
     return;
-#undef VSFBUFSZ
 }
 
 static int
@@ -5653,7 +5655,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             break;
         case DW_OP_implicit_value:
             {
-#define IMPLICIT_VALUE_PRINT_MAX 12
                 unsigned int print_len = 0;
                 bracket_hex(" ",opd1,"",string_out);
                 /*  The other operand is a block of opd1 bytes. */
@@ -5662,7 +5663,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 if (print_len > IMPLICIT_VALUE_PRINT_MAX) {
                     print_len = IMPLICIT_VALUE_PRINT_MAX;
                 }
-#undef IMPLICIT_VALUE_PRINT_MAX
                 {
                     const unsigned char *bp = 0;
                     /*  This is a really ugly cast, a way
@@ -6431,7 +6431,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         dwarf_dealloc_error(dbg,error);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         /* We don't know sign. */
         /*bracket_hex( "<helper dwarf_attr no entry ",
@@ -6446,7 +6446,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         dwarf_dealloc_attribute(attr);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         /*esb_append(esbp,"helper NO ENTRY  FAIL ");
         bracket_hex( "<helper global_formreff NO ENTRY" ,
@@ -6489,7 +6489,7 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         helpertree_add_entry(diegoffset, 0,helperbase);
         helpertree_add_entry(typedieoffset, 0,helperbase);
         return 0;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         /*bracket_hex( "<helper dwarf_attr typedie  NO ENTRY",
             diegoffset,">",esbp);*/
@@ -7273,7 +7273,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             "dwarf_whatform cannot Find Attr Form",
             fres, *err);
         return fres;
-    } 
+    }
     if (fres == DW_DLV_NO_ENTRY) {
         return fres;
     }

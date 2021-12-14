@@ -40,9 +40,6 @@ extern "C" {
 int _dwarf_object_read_random(int fd,char *buf,off_t loc,
     size_t size,off_t filesize,int *errc);
 
-void  _dwarf_safe_strcpy(char *out, long outlen,
-    const char *in, long inlen);
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

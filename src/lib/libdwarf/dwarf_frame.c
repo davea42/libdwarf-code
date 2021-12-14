@@ -1827,7 +1827,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         &new_fde, error);
     if (res == DW_DLV_ERROR) {
         return res;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
@@ -1871,7 +1871,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
         if (res2 != DW_DLV_OK) {
             dwarf_dealloc(dbg, new_fde, DW_DLA_FDE);
             return res;
-        } 
+        }
         new_fde->fd_cie = new_cie;
     } else {
         dwarf_dealloc(dbg,new_fde,DW_DLA_FDE);

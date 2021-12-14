@@ -880,17 +880,17 @@ most-likely-useful name. */
 #define DW_OP_lo_user                   0xe0
 
     /* LLVM  extensions. */
-#define DW_OP_LLVM_form_aspace_address  0xe1 
-#define DW_OP_LLVM_push_lane            0xe2 
-#define DW_OP_LLVM_offset               0xe3 
-#define DW_OP_LLVM_offset_uconst        0xe4 
+#define DW_OP_LLVM_form_aspace_address  0xe1
+#define DW_OP_LLVM_push_lane            0xe2
+#define DW_OP_LLVM_offset               0xe3
+#define DW_OP_LLVM_offset_uconst        0xe4
 #define DW_OP_LLVM_bit_offset           0xe5
-#define DW_OP_LLVM_call_frame_entry_reg 0xe6 
-#define DW_OP_LLVM_undefined            0xe7   
+#define DW_OP_LLVM_call_frame_entry_reg 0xe6
+#define DW_OP_LLVM_undefined            0xe7
 #define DW_OP_LLVM_aspace_bregx         0xe8
-#define DW_OP_LLVM_aspace_implicit_pointer 0xe9 
-#define DW_OP_LLVM_piece_end            0xea 
-#define DW_OP_LLVM_extend               0xeb 
+#define DW_OP_LLVM_aspace_implicit_pointer 0xe9
+#define DW_OP_LLVM_piece_end            0xea
+#define DW_OP_LLVM_extend               0xeb
 #define DW_OP_LLVM_select_bit_piece     0xec
     /* HP extensions. */
 #define DW_OP_HP_unknown                0xe0 /* HP conflict: GNU */
@@ -903,7 +903,6 @@ most-likely-useful name. */
 
 /* Intel: made obsolete by DW_OP_bit_piece above. */
 #define DW_OP_INTEL_bit_piece           0xe8
-
 
 /* Apple extension. */
 #define DW_OP_GNU_uninit                0xf0 /* GNU */

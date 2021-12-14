@@ -516,13 +516,13 @@ generic_shdr_from_shdr32(dwarf_elf_object_access_internals_t *ep,
         ASNAR(ep->f_copy_word,gshdr->gh_entsize,psh->sh_entsize);
 #if 0
         if (gshdr->gh_size >= ep->f_filesize &&
-           gshdr->gh_type != SHT_NOBITS) {
-           free(orig_psh);
-           free(orig_gshdr);
-           *errcode = DW_DLE_SECTION_SIZE_ERROR;
-           return DW_DLV_ERROR;
+            gshdr->gh_type != SHT_NOBITS) {
+            free(orig_psh);
+            free(orig_gshdr);
+            *errcode = DW_DLE_SECTION_SIZE_ERROR;
+            return DW_DLV_ERROR;
         }
-#endif
+#endif /* 0 */
         if (gshdr->gh_type == SHT_REL || gshdr->gh_type == SHT_RELA){
             gshdr->gh_reloc_target_secnum = gshdr->gh_info;
         }
@@ -590,11 +590,11 @@ generic_shdr_from_shdr64(dwarf_elf_object_access_internals_t *ep,
         ASNAR(ep->f_copy_word,gshdr->gh_entsize,psh->sh_entsize);
 #if 0
         if (gshdr->gh_size >= ep->f_filesize &&
-           gshdr->gh_type != SHT_NOBITS) {
-           free(orig_psh);
-           free(orig_gshdr);
-           *errcode = DW_DLE_SECTION_SIZE_ERROR;
-           return DW_DLV_ERROR;
+            gshdr->gh_type != SHT_NOBITS) {
+            free(orig_psh);
+            free(orig_gshdr);
+            *errcode = DW_DLE_SECTION_SIZE_ERROR;
+            return DW_DLV_ERROR;
         }
 #endif
         if (gshdr->gh_type == SHT_REL ||

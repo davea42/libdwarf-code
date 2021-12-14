@@ -94,7 +94,7 @@ extern "C" {
 
     These are the datatyps universally used within libdwarf
     and in libdwarf calls.
-    
+
 */
 typedef unsigned long long Dwarf_Unsigned;
 typedef signed   long long Dwarf_Signed;
@@ -2602,7 +2602,7 @@ DW_API int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
     Dwarf_Signed* /*index*/,
     Dwarf_Error* /*error*/ );
 
-/*!  
+/*!
     @brief Used with dwarf_expand_frame_instructions() but
     see that function's comments above.
 */
@@ -2666,7 +2666,7 @@ DW_API int dwarf_get_fde_at_pc(Dwarf_Fde* /*fde_data*/,
     Dwarf_Addr*      /*hipc*/,
     Dwarf_Error*     /*error*/);
 
-/*  GNU .eh_frame augmentation information, 
+/*  GNU .eh_frame augmentation information,
     raw form, see
     Linux Standard Base Core Specification version 3.0 . */
 DW_API int dwarf_get_cie_augmentation_data(Dwarf_Cie /* cie*/,
@@ -2681,14 +2681,14 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
     Dwarf_Unsigned * /* augdata_len */,
     Dwarf_Error*     /*error*/);
 
-/*!  
+/*!
     @brief Expands CIE or FDE instructions for detailed examination.
     Called for CIE initial instructions and
     FDE instructions.
     Call dwarf_get_fde_instr_bytes() or
     dwarf_get_cie_info_b() to get the instruction bytes
     and instructions byte count you wish to expand.
-    @param cie The cie relevant to the instructions. 
+    @param cie The cie relevant to the instructions.
     @param instructionspointer points to the instructions
     @param length_in_bytes byte length of the instruction sequence
     @param head pointer is set to the address of an allocated header
@@ -2703,21 +2703,21 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
     Dwarf_Unsigned  * /*instr_count*/,
     Dwarf_Error     * /*error*/);
 
-/*!  
+/*!
     @brief Returns information about a single instruction
     Fields_description means a sequence of up to three
     letters including u,s,r,c,d,b, terminated by NUL byte.
     It is a string but we test individual bytes instead
     of using string compares. Do not free any of the
     returned values.
-    @param head A head record 
+    @param head A head record
     @param instr_index index 0 < i < instr_count
     @param cfa_operation Set to a DW_CFA opcode.
     @param fields Set to a string. Do not free.
     @param u0 May be set to an unsigned value
     @param u1 May be set to an unsigned value
     @param s0 May be set to a signed value
-    @param s1 May be set to a signed value 
+    @param s1 May be set to a signed value
     @param code_alignment_factor May be set by the call
     @param data_alignment_factor May be set by the call
     @param expression_block Pass in a pointer to a block
@@ -2746,7 +2746,7 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie /*cie*/,
     describe all possible frame instructions.
 */
 DW_API int dwarf_get_frame_instruction(
-    Dwarf_Frame_Instr_Head /* head*/,      
+    Dwarf_Frame_Instr_Head /* head*/,
     Dwarf_Unsigned     /*instr_index*/,
     Dwarf_Unsigned  *  /*instr_offset_in_instrs */,
     Dwarf_Small     *  /*cfa_operation*/,
@@ -2760,7 +2760,7 @@ DW_API int dwarf_get_frame_instruction(
     Dwarf_Block     *  /* expression_block */,
     Dwarf_Error     * /*error*/);
 DW_API int dwarf_get_frame_instruction_a(
-    Dwarf_Frame_Instr_Head /* head*/,      
+    Dwarf_Frame_Instr_Head /* head*/,
     Dwarf_Unsigned     /*instr_index*/,
     Dwarf_Unsigned  *  /*instr_offset_in_instrs */,
     Dwarf_Small     *  /*cfa_operation*/,
@@ -2778,7 +2778,7 @@ DW_API int dwarf_get_frame_instruction_a(
 /*!
     @brief Deallocates the data in head
     @param head A head pointer.
-    
+
     Frees all data created by dwarf_expand_frame_instructions()
     and makes the head pointer stale. The caller should
     set it to NULL.
@@ -3600,7 +3600,6 @@ DW_API int dwarf_get_loclist_context_basics(Dwarf_Debug  /*dbg*/,
     Dwarf_Unsigned * /*offset_past_last_locentry*/,
     Dwarf_Error *    /*err*/);
 
-
 DW_API int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*contextnumber*/,
     Dwarf_Unsigned   /*entry_offset*/,
@@ -3730,7 +3729,7 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
 /*  The harmless error strings (if any) are freed when the dbg
     is dwarf_finish()ed. */
 
-/*  When the val_in is known these, for example, dwarf_get_TAG_name 
+/*  When the val_in is known these, for example, dwarf_get_TAG_name
     functions return the string corresponding to the val_in passed in
     through the pointer s_out and the value returned is DW_DLV_OK.
     The strings are in static storage

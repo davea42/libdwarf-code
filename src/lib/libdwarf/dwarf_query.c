@@ -1149,7 +1149,7 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
         /* Associate the error with dbg, not tieddbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
-    } 
+    }
     if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }
@@ -1374,7 +1374,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         /* Associate the error with dbg, not tieddbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
-    } 
+    }
     if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }
@@ -1387,7 +1387,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         /* Associate the error with dbg, not tidedbg */
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
-    } 
+    }
     if ( res == DW_DLV_NO_ENTRY) {
         return res;
     }

@@ -597,7 +597,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
                 --digptr;
                 digcharlen++;
                 *digptr = '+';
-            } else { /* Fall through */ } 
+            } else { /* Fall through */ }
         }
         if (fixedlen > 0) {
             if (fixedlen <= digcharlen) {

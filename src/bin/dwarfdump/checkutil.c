@@ -39,6 +39,9 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 #endif /* HAVE_STDINT_H */
 #include "esb.h"
 
+/* Guessing a sensible length for max section name.  */
+#define SECTION_NAME_LEN 2048
+
 /* Private function */
 static void DumpFullBucketGroup(Bucket_Group *pBucketGroup);
 static int FindDataIndexInBucket(Bucket_Group *pBucketGroup,
@@ -573,7 +576,6 @@ ProcessBucketGroup(Bucket_Group *pBucketGroup,
 Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     const char *name,Dwarf_Addr lopc,Dwarf_Addr hipc)
 {
-#define SECTION_NAME_LEN 2048 /* Guessing a sensible length */
     static char section_name[SECTION_NAME_LEN];
     Bucket_Data *pBucketData = 0;
     /*  Since text is quite uniformly just this name,

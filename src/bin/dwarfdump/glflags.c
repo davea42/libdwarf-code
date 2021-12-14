@@ -36,14 +36,20 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 
 #ifdef TRIVIAL_NAMING  /* For scripts/buildstandardsource.sh */
 struct glflags_s glflags;
+
+/*  Required: inlen must be the length of in_s as 
+    from strlen. So the NUL terminator not counted.
+    If inlen is larger than the actual in_s that is not
+    harmful as strncpy stops copying at a NUL byte. */
 void
-safe_strcpy(char *out, long outlen, const char *in, long inlen)
+safe_strcpy(char *out, long outlen, const char *in_s, long inlen)
 {
-    if (inlen >= (outlen - 1)) {
-        strncpy(out, in, outlen - 1);
+    long withnull = inlen+1;
+    if (withnull >= outlen) {
+        strncpy(out, in_s, outlen - 1);
         out[outlen - 1] = 0;
     } else {
-        strcpy(out, in);
+        strncpy(out, in_s,inlen+1);
     }
 }
 #endif /*TRIVIAL_NAMING*/

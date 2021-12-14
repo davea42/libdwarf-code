@@ -85,8 +85,8 @@ dwarf_find_macro_value_start(char *str)
                 return lcp + 1;
             }
             break;
-        default: 
-            break; 
+        default:
+            break;
         }
     }
     /*  Never found value: returns pointer to the 0 byte at end of

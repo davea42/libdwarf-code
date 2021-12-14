@@ -529,7 +529,7 @@ naming(CHAR c)
     }
     outtab[0] = 0;
     if (c && c <= MAXPREDEF) {
-        strcpy(outtab,n[c]);
+        strncpy(outtab,n[c],sizeof(name1));
     } else {
         sprintf(outtab,"0x%x",c);
     }
