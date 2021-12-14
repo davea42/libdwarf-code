@@ -65,10 +65,9 @@ ReleaseBucketGroup(Bucket_Group *pBucketGroup)
     Bucket *pNext = 0;
 
     assert(pBucketGroup);
-    for (pBucket = pBucketGroup->pHead; pBucket; ) {
+    for (pBucket = pBucketGroup->pHead; pBucket; pBucket = pNext ) {
         pNext = pBucket->pNext;
         free(pBucket);
-        pBucket = pNext;
     }
     pBucketGroup->pHead = NULL;
     pBucketGroup->pTail = NULL;
@@ -109,7 +108,7 @@ void PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull)
                     ", Last = 0x%08" DW_PR_DUx "\n",
                 pBucketGroup->pFirst->key,pBucketGroup->pLast->key);
                 ProcessBucketGroup(pBucketGroup,PrintBucketData);
-            }
+            } else { /* Nothing to print */ }
         }
     }
 }

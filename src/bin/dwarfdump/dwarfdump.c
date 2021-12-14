@@ -862,7 +862,7 @@ process_one_file(
         printf("Filename by debuglink is %s\n",
             sanitized(temp_path_buf));
         glflags.gf_gnu_debuglink_flag = TRUE;
-    }
+    } else { /* Nothing to print yet. */ }
     if (tied_file_name && strlen(tied_file_name)) {
         {
             /*  The tied file we define as group 1, BASE.
@@ -1539,21 +1539,22 @@ static Dwarf_Bool
 is_a_string_form(int sf)
 {
     switch(sf){
-        case DW_FORM_string:
-        case DW_FORM_GNU_strp_alt:
-        case DW_FORM_strp_sup:
-        case DW_FORM_GNU_str_index:
-        case DW_FORM_strx:
-        case DW_FORM_strx1:
-        case DW_FORM_strx2:
-        case DW_FORM_strx3:
-        case DW_FORM_strx4:
-        case DW_FORM_strp:
-        case DW_FORM_line_strp:
-            /*  There is some hope we can actually get
-                the string itself, depending on
-                other factors */
-            return TRUE;
+    case DW_FORM_string:
+    case DW_FORM_GNU_strp_alt:
+    case DW_FORM_strp_sup:
+    case DW_FORM_GNU_str_index:
+    case DW_FORM_strx:
+    case DW_FORM_strx1:
+    case DW_FORM_strx2:
+    case DW_FORM_strx3:
+    case DW_FORM_strx4:
+    case DW_FORM_strp:
+    case DW_FORM_line_strp:
+        /*  There is some hope we can actually get
+            the string itself, depending on
+            other factors */
+        return TRUE;
+    default: break;
     }
     /* Nope. No string is possible */
     return FALSE;

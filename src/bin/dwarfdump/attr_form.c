@@ -175,7 +175,9 @@ build_attr_form_base_tree(int*errnum)
         return DW_DLV_OK;
     }
     for (tab = &attr_formclass_table[0]; ; tab++) {
-        if (!tab->attr && !tab->formclass && !tab->section) {
+        if ((!tab->attr) && 
+            (!tab->formclass) && 
+            (!tab->section)) {
             /* Done */
             break;
         }
@@ -267,7 +269,7 @@ check_attr_formclass_combination(Dwarf_Debug dbg,
             DWARF_CHECK_ERROR3(attr_formclass_result,tagname,
                 formclassname,
                 "check the attr-formclass combination");
-        }
+        } else { /* Nothing to do. */ }
     }
 }
 #endif /* SKIP_AF_CHECK  */
@@ -295,7 +297,7 @@ record_attr_form_use(
     Three_Key_Entry *e =  0;
     Three_Key_Entry *re =  0;
     void *ret =  0;
-    Dwarf_Small std_or_exten = AF_STD;
+    Dwarf_Small std_or_exten = 0;
     int res = 0;
 
     if (attr >= DW_AT_lo_user) {
@@ -304,6 +306,8 @@ record_attr_form_use(
         /*  There is no lo_user code for FORMs,
             they really are limited. */
         std_or_exten = AF_EXTEN;
+    } else {
+        std_or_exten = AF_STD;
     }
 #ifndef SKIP_AF_CHECK
     check_attr_formclass_combination(dbg,
