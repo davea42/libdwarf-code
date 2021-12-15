@@ -1,4 +1,115 @@
 2021-12-14:  David Anderson
+    commit 7f84ab9a1df3d70e3e3b400bd697439d5ef0ff13
+
+    All instances of strcpy calls have been
+    replaced by _safe_strcpy
+            modified:   src/bin/dwarfdump/print_frames.c
+
+    All instances of strcpy calls have been
+    replaced by _dwarf_safe_strcpy
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_global.h
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2021-12-14:  David Anderson
+    commit b1f5486b54093afe31fb221ad20c9c431a9ec05e
+
+    Now with TRIVIAL_NAMES flag set it uses the latest
+    safe_strcpy() source from dwarfdump
+    No more strcpy here at all.
+            modified:   src/bin/dwarfdump/glflags.c
+
+2021-12-14:  David Anderson
+    commit fb762a7089906f75ca3201021cbaca86268d5765
+
+    Removing trailing whitespace in everything below.
+    Fixing a small number of indentation errors.
+
+    Removing all use of strcpy() from dwarfdump
+            modified:   src/bin/dwarfdump/attr_form.c
+            modified:   src/bin/dwarfdump/checkutil.c
+            modified:   src/bin/dwarfdump/command_options.c
+            modified:   src/bin/dwarfdump/compiler_info.c
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/glflags.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfdump/true_section_name.c
+
+    Just the whitespace/indent fixes
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_global.h
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_print_lines.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarf/dwarf_string.c
+            modified:   src/lib/libdwarf/dwarf_tied.c
+        modified:   src/lib/libdwarf/libdwarf.h
+
+2021-12-14:  David Anderson
+    commit a3daaaf0de40c03ba4bdefbe8e76ddc4b9fd665e
+
+    Ensuring macro definitions using their args put ()
+    arount each use.
+    Add default:break where appropriate.
+    Simplify checks for DW_DLV_ERROR/NO_ENTRY where
+    appropriate.
+            modified:   ../../bin/dwarfdump/compiler_info.c
+            modified:   ../../bin/dwarfdump/dd_regex.c
+            modified:   ../../bin/dwarfdump/dwarfdump.c
+            modified:   ../../bin/dwarfdump/print_abbrevs.c
+            modified:   ../../bin/dwarfdump/print_die.c
+            modified:   ../../bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   ../../bin/dwarfdump/print_static_vars.c
+            modified:   ../../bin/dwarfdump/true_section_name.c
+
+2021-12-14:  David Anderson
+    commit f1fb333b4329cccd73ae12bbe359f99ac577a8c1
+
+    Small changes to harden the code as recommended
+    by cobra. No change in logic, just improving readability.
+            modified:   src/bin/dwarfdump/attr_form.c
+            modified:   src/bin/dwarfdump/checkutil.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2021-12-14:  David Anderson
+    commit 21b156df60a96c1a7a70f279791669b9d5967695
+
+    Now updates dwarf_names in both dwarfdump and
+    libdwarf directories.  Was a bug not to do that.
+            modified:   src/bin/gennames/Makefile.am
+
+    Regenerated.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+
+2021-12-14:  David Anderson
+    commit 0ac94309cce195b3bf4810aedf35b572d3874369
+
+    Bringing ChangeLog up to date with git log.
+            modified:   ChangeLog
+
+2021-12-14:  David Anderson
     commit 1b15d2766506a28e47b59d882086f939cd7ab3d0
 
     Using () around uses of the arguments inside macros
