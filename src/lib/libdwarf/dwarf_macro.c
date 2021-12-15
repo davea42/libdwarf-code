@@ -214,6 +214,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     unsigned long str_space = 0;
     int done = 0;
     unsigned long space_needed = 0;
+    unsigned long space_used = 0;
     unsigned long string_offset = 0;
     Dwarf_Small *return_data = 0;
     Dwarf_Small *pdata = 0;
@@ -370,6 +371,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
     /* extra 2 not really needed */
     space_needed = string_offset + str_space + 2;
+    space_used = 0;
     return_data = pdata = (Dwarf_Small *)_dwarf_get_alloc(
         dbg, DW_DLA_STRING, space_needed);
     latest_str_loc = pdata + string_offset;
@@ -436,9 +438,13 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return res;
             }
             slen = strlen((char *) pnext) + 1;
-            strcpy((char *) latest_str_loc, (char *) pnext);
+
+            _dwarf_safe_strcpy((char *)latest_str_loc,
+               space_needed - space_used,
+               (const char *)pnext,slen-1);
             pdmd->dmd_macro = (char *) latest_str_loc;
             latest_str_loc += slen;
+            space_used +=slen;
             pnext += slen;
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {

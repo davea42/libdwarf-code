@@ -92,7 +92,16 @@ safe_strcpy(char *out, long outlen, const char *in_s, long inlen)
         strncpy(out, in_s, outlen - 1);
         out[outlen - 1] = 0;
     } else {
-        strncpy(out, in_s,full_inlen);
+        /*  Iff outlen is very large
+            strncpy is very wasteful. */
+        char *cpo = out;
+        const char *cpi= in_s;
+        const char *cpiend = in_s +inlen;
+
+        for ( ; *cpi && cpi < cpiend ; ++cpo, ++cpi) {
+             *cpo = *cpi;
+        }
+        *cpo = 0;
     }
 }
 

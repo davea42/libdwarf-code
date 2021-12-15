@@ -1070,6 +1070,9 @@ int _dwarf_extract_data16(Dwarf_Debug dbg,
 int _dwarf_skip_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     char           * /*endptr*/);
+void  _dwarf_safe_strcpy(char *out, long outlen,
+    const char *in, long inlen);
+
 
 unsigned int  _dwarf_crc32(unsigned int init,
     const unsigned char * buf,

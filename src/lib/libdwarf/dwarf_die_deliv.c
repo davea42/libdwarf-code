@@ -1534,13 +1534,17 @@ _dwarf_load_die_containing_section(Dwarf_Debug dbg,
             prefixlen = strlen(msgprefix);
             totallen = prefixlen + strlen(dwerrmsg);
             if ( totallen >= sizeof(msg_buf)) {
+                const char *m= "Error:corrupted dwarf message table!";
                 /*  Impossible unless something corrupted.
                     Provide a shorter dwerrmsg*/
-                strcpy(msg_buf,
-                    "Error:corrupted dwarf message table!");
+                _dwarf_safe_strcpy(msg_buf,sizeof(msg_buf),
+                    m,strlen(m));
             } else {
-                strcpy(msg_buf,msgprefix);
-                strcpy(msg_buf+prefixlen,dwerrmsg);
+                _dwarf_safe_strcpy(msg_buf,sizeof(msg_buf),
+                    msgprefix,prefixlen);
+                _dwarf_safe_strcpy(msg_buf +prefixlen,
+                    sizeof(msg_buf)-prefixlen,
+                    dwerrmsg,strlen(dwerrmsg));
             }
             dwarf_insert_harmless_error(dbg,msg_buf);
             /*  Fall thru to use the newly loaded section.
@@ -1650,11 +1654,18 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                     if ( totallen >= sizeof(msg_buf)) {
                         /*  Impossible unless something corrupted.
                             Provide a shorter dwerrmsg*/
-                        strcpy(msg_buf,
+                        const char * m=
                             "Error:corrupted dwarf message table!");
+                        _dwarf_safe_strcpy(msg_buf,
+                            sizeof(msg_buf),
+                            m,strlen(m));
                     } else {
-                        strcpy(msg_buf,msgprefix);
-                        strcpy(msg_buf+prefixlen,dwerrmsg);
+                        _dwarf_safe_strcpy,strcpy(msg_buf,
+                            sizeof(msg_buf),msgprefix,
+                            prefixlen);
+                        _dwarf_safe_strcpy(msg_buf+prefixlen,
+                            sizeof(msg_buf)-prefixlen,
+                            dwerrmsg,strlen(dwerrmsg));
                     }
                     dwarf_insert_harmless_error(dbg,msg_buf);
                     /*  Fall thru to use the newly loaded section.
@@ -2974,15 +2985,18 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     unsigned i = 0;
-    char tbuf[50];
+    char tbuf[100];
     unsigned std_sec_name_len = strlen(std_section_name);
 
     tbuf[0] = 0;
     /*  std_section_name never has the .dwo on the end,
         so allow for that and allow one (arbitrarily) more. */
     if ((std_sec_name_len + 5) < sizeof(tbuf)) {
-        strcpy(tbuf,std_section_name);
-        strcpy(tbuf+std_sec_name_len,".dwo");
+        _dwarf_safe_strcpy(tbuf,sizeof(tbuf),
+            std_section_name,std_sec_name_len); 
+        _dwarf_safe_strcpy(tbuf+std_sec_name_len,
+            sizeof(tbuf)-std_sec_name_len,
+            ".dwo",4);
     }
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);

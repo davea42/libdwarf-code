@@ -1126,7 +1126,7 @@ translate_srcfiles_to_srcfiles2(char **srcfiles,
         if (!newstr) {
             return DW_DLV_ERROR;
         }
-        strcpy(newstr,ostr);
+        _dwarf_safe_strcpy(newstr,slen+1,ostr,slen);
         srcfiles2[i] = newstr;
     }
     return DW_DLV_OK;

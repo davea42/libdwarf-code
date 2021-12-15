@@ -60,6 +60,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_global.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -596,9 +597,12 @@ _dwarf_construct_linkedto_path(
             char **iptr = (char **)((char *)resultfullstring +
                 setptrindex*sizeof(void *));
             char *sptr = (char*)resultfullstring + setstrindex;
+            char *msg = dwarfstring_string(&cur->dl_string);
+            unsigned long slen = dwarfstring_strlen(&cur->dl_string);
 
-            strcpy(sptr,dwarfstring_string(&cur->dl_string));
-            setstrindex += dwarfstring_strlen(&cur->dl_string)+1;
+            _dwarf_safe_strcpy(sptr,totalareasize - setstrindex,
+                msg,slen);
+            setstrindex += slen +1;
             *iptr = sptr;
         }
         *paths_out = resultfullstring;

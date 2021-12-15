@@ -183,6 +183,9 @@ create_fullest_file_path(Dwarf_Debug dbg,
     }
     if (_dwarf_file_name_is_full_path((Dwarf_Small *)file_name)) {
         char *tmp = 0;
+        char * mstr = 0;
+        unsigned long mlen = 0;
+
         dwarfstring_constructor_static(&targ,
             targbuf,sizeof(targbuf));
         dwarfstring_constructor_static(&nxt,
@@ -190,10 +193,12 @@ create_fullest_file_path(Dwarf_Debug dbg,
 
         dwarfstring_append(&nxt,file_name);
         _dwarf_pathjoinl(&targ,&nxt);
+        mstr= dwarfstring_string(&targ);
+        mlen = dwarfstring_strlen(&targ) +1;
         tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
-            dwarfstring_strlen(&targ)+1);
+            mlen);
         if (tmp) {
-            strcpy(tmp,dwarfstring_string(&targ));
+            _dwarf_safe_strcpy(tmp,mlen, mstr,mlen-1);
             *name_ptr_out = tmp;
             dwarfstring_destructor(&targ);
             dwarfstring_destructor(&nxt);
@@ -270,17 +275,21 @@ create_fullest_file_path(Dwarf_Debug dbg,
             }
             _dwarf_pathjoinl(&targ,&filename);
         }
-        full_name = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
-            dwarfstring_strlen(&targ) +1);
-        if (!full_name) {
-            dwarfstring_destructor(&targ);
-            dwarfstring_destructor(&incdir);
-            dwarfstring_destructor(&compdir);
-            dwarfstring_destructor(&filename);
-            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return DW_DLV_ERROR;
+        {
+            char *mname = dwarfstring_string(&targ);
+            unsigned long mlen = dwarfstring_strlen(&targ)+1;
+            full_name = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
+                mlen);
+            if (!full_name) {
+                dwarfstring_destructor(&targ);
+                dwarfstring_destructor(&incdir);
+                dwarfstring_destructor(&compdir);
+                dwarfstring_destructor(&filename);
+                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+                return DW_DLV_ERROR;
+            }
+            _dwarf_safe_strcpy(full_name,mlen,mname,mlen-1);
         }
-        strcpy(full_name,dwarfstring_string(&targ));
         *name_ptr_out = full_name;
         dwarfstring_destructor(&targ);
         dwarfstring_destructor(&incdir);

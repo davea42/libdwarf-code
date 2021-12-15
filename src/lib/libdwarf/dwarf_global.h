@@ -107,10 +107,6 @@ int _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
 void _dwarf_internal_globals_dealloc( Dwarf_Debug dbg,
     Dwarf_Global *dwgl, Dwarf_Signed count);
 
-void  _dwarf_safe_strcpy(char *out, long outlen,
-    const char *in, long inlen);
-
-
 #ifdef __sgi  /* __sgi should only be defined for IRIX/MIPS. */
 void _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,
     Dwarf_Unsigned *varp,
