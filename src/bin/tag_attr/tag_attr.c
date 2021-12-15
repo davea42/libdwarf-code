@@ -44,6 +44,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "esb.h"
 #include "tag_common.h"
 #include "dwarf_getopt.h"
+#include "dd_safe_strcpy.h"
 
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 

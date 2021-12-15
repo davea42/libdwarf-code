@@ -47,6 +47,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 #include "dd_sanitized.h"
 #include "addrmap.h"
 #include "naming.h"
+#include "dd_safe_strcpy.h"
 
 #define true 1
 #define false 0
@@ -77,33 +78,6 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Half offset_size,
     Dwarf_Half version,
     struct dwconf_s *config_data);
-
-/*  An strcpy which ensures NUL terminated string
-    and never overruns the output.
-    inlen is strlen() size of in_s
-    outlen is buffer and has to have space
-    for the NUL in in_s to avoid truncation.
-*/
-void
-safe_strcpy(char *out, long outlen, const char *in_s, long inlen)
-{
-    long full_inlen = inlen+1;
-    if (full_inlen >= outlen) {
-        strncpy(out, in_s, outlen - 1);
-        out[outlen - 1] = 0;
-    } else {
-        /*  Iff outlen is very large
-            strncpy is very wasteful. */
-        char *cpo = out;
-        const char *cpi= in_s;
-        const char *cpiend = in_s +inlen;
-
-        for ( ; *cpi && cpi < cpiend ; ++cpo, ++cpi) {
-             *cpo = *cpi;
-        }
-        *cpo = 0;
-    }
-}
 
 static void
 dealloc_local_atlist(Dwarf_Debug dbg,
@@ -217,11 +191,11 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
             if (esb_string_len(&namestr)) {
                 name = esb_get_string(&namestr);
                 if (attr == DW_AT_name) {
-                    safe_strcpy(glflags.CU_name,sizeof(
-                        glflags.CU_name),name,
-                        strlen(name));
+                    dd_safe_strcpy(glflags.CU_name,
+                        sizeof( glflags.CU_name),
+                        name, strlen(name));
                 } else {
-                    safe_strcpy(glflags.CU_producer,
+                    dd_safe_strcpy(glflags.CU_producer,
                         sizeof(glflags.CU_producer),
                         name,strlen(name));
                 }

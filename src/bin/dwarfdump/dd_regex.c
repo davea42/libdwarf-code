@@ -529,9 +529,9 @@ naming(CHAR c)
     }
     outtab[0] = 0;
     if (c && c <= MAXPREDEF) {
-        strncpy(outtab,n[c],sizeof(name1));
+        strncpy(outtab,n[c],sizeof(name1)); /* debugging only */
     } else {
-        sprintf(outtab,"0x%x",c);
+        sprintf(outtab,"0x%x",c); /* debugging only */
     }
     use1 = !use1;
     return outtab;

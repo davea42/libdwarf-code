@@ -20,6 +20,8 @@ compiler_info.h \
 defined_types.h \
 dd_regex.c \
 dd_regex.h \
+dd_safe_strcpy.h \
+dd_safe_strcpy.c \
 dwarfdump.c \
 dwarfdump-af-table.h\
 dwarfdump-tt-table.h\

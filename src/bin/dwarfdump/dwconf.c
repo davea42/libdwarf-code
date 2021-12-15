@@ -32,6 +32,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dwconf.h"
 #include "dd_sanitized.h"
 #include "esb.h"
+#include "dd_safe_strcpy.h"
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -294,10 +295,11 @@ _dwarf_canonical_append(char *target, unsigned int target_size,
     const char *first_string, const char *second_string)
 {
     size_t firstlen = strlen(first_string);
+    size_t totallen = firstlen + strlen(second_string) + 1 + 1;
 
     /*  +1 +1: Leave room for added "/" and final NUL, though that is
         overkill, as we drop a NUL byte too. */
-    if ((firstlen + strlen(second_string) + 1 + 1) >= target_size) {
+    if (totallen >= target_size) {
         /* Not enough space. */
         return NULL;
     }
@@ -308,13 +310,13 @@ _dwarf_canonical_append(char *target, unsigned int target_size,
     }
     target[0] = 0;
     if (firstlen > 0) {
-        strncpy(target, first_string, firstlen);
-        target[firstlen + 1] = 0;
+        dd_safe_strcpy(target,target_size,first_string, firstlen);
     }
     target[firstlen] = '/';
     firstlen++;
     target[firstlen] = 0;
-    strcat(target, second_string);
+    dd_safe_strcpy(target+firstlen, target_size-firstlen,
+        second_string,strlen(second_string));
     return target;
 }
 
@@ -371,7 +373,7 @@ find_a_file(const char *named_file,
             /* Add the configuration name to the pathname */
             ++pDir;
             len = pDir - szPath;
-            safe_strcpy(pDir,sizeof(szPath)-len,
+            dd_safe_strcpy(pDir,sizeof(szPath)-len,
                 "dwarfdump.conf",14);
             lname = szPath;
 

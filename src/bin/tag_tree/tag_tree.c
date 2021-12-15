@@ -35,6 +35,7 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include "common.h"
 #include "tag_common.h"
 #include "dwarf_getopt.h"
+#include "dd_safe_strcpy.h"
 
 unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
     [TAG_TABLE_COLUMN_MAXIMUM];

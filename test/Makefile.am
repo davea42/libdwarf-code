@@ -181,6 +181,8 @@ test_errmsglist_CPPFLAGS = -DTESTING \
 
 test_canonical_SOURCES = test_canonical.c \
     $(top_srcdir)/src/bin/dwarfdump/dwconf.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.h \
     $(top_srcdir)/src/bin/dwarfdump/esb.c
 test_canonical_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_canonical_CPPFLAGS = \

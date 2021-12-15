@@ -258,7 +258,6 @@ extern int print_debugfission_index(Dwarf_Debug dbg,
     const char *type, Dwarf_Error *);
 
 void clean_up_die_esb(void);
-void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 int print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     char **srcfiles,

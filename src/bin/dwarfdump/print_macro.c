@@ -39,6 +39,7 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "print_sections.h"
 #include "macrocheck.h"
 #include "dd_sanitized.h"
+#include "dd_safe_strcpy.h"
 
 #define TRUE  1
 #define FALSE 0
@@ -484,7 +485,7 @@ add_array_file_entry(unsigned k,
     m->ms_macro_unit_offset = macro_unit_offset;
     m->ms_array_number = macfile_array_next_to_use;
     m->ms_filename = (char *)m + stroff;
-    strncpy(m->ms_filename,macro_string,namelen);
+    dd_safe_strcpy(m->ms_filename,namelen,macro_string,namelen-1);
     macfile_array[macfile_array_next_to_use] = m;
     macfile_stack[macfile_stack_next_to_use] =
         macfile_array_next_to_use;
@@ -1454,7 +1455,7 @@ macdef_tree_create_entry(char *key,
     }
     keyspace = sizeof(macdef_entry) + (char *)me;
     me->md_key = keyspace;
-    safe_strcpy(me->md_key,klen,key,klen-1);
+    dd_safe_strcpy(me->md_key,klen,key,klen-1);
     me->md_operatornum = opnum;
     /*  We will set md_define, md_undefined,
         and the md_defcount and md_undefcount
@@ -1467,7 +1468,7 @@ macdef_tree_create_entry(char *key,
     me->md_macro_unit_offset = macro_unit_offset;
     me->md_string = keyspace + klen;
     me->md_file_array_entry = macfile_array_next_to_use-1;
-    safe_strcpy(me->md_string,slen,string,slen-1);
+    dd_safe_strcpy(me->md_string,slen,string,slen-1);
     return me;
 }
 

@@ -39,6 +39,7 @@
 #include "command_options.h"
 #include "compiler_info.h"
 #include "dd_regex.h"
+#include "dd_safe_strcpy.h"
 
 static const char *remove_quotes_pair(const char *text);
 static char *special_program_name(char *n);
@@ -155,9 +156,9 @@ remove_quotes_pair(const char *text)
     static char double_quote = '\"';
     char quote = 0;
     const char *p = text;
-    int len = strlen(text);
+    int textlen = strlen(text);
 
-    if (len < 2) {
+    if (textlen < 2) {
         return p;
     }
 
@@ -173,11 +174,14 @@ remove_quotes_pair(const char *text)
         }
     }
     {
-        if (p[len - 1] == quote) {
-            char *altered = calloc(1,len+1);
+        if (p[textlen - 1] == quote) {
+            char *altered = calloc(1,textlen+1);
             const char *str2 = 0;
-            strncpy(altered,p+1,len);
-            altered[len - 2] = '\0';
+
+            /*  Here we delete the leading and trailing quote chars.
+                Start at p-1. String is to be orig textlen - 2
+                bytes long */
+            dd_safe_strcpy(altered,textlen+1,p+1,textlen-2);
             str2 =  makename(altered);
             free(altered);
             return str2;

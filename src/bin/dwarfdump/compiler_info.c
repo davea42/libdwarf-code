@@ -27,6 +27,7 @@
 #include "globals.h"
 #include "makename.h"
 #include "dd_sanitized.h"
+#include "dd_safe_strcpy.h"
 
 #include "command_options.h"
 #include "compiler_info.h"
@@ -240,7 +241,7 @@ update_compiler_target(const char *producer_name)
     Dwarf_Bool cFound = FALSE;
     int index = 0;
 
-    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
+    dd_safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
         producer_name,
         strlen(producer_name));
     current_cu_is_checked_compiler = FALSE;

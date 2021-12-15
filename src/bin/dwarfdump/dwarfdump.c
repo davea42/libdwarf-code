@@ -65,6 +65,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "naming.h" /* for get_FORM_name() */
 #include "command_options.h"
 #include "compiler_info.h"
+#include "dd_safe_strcpy.h"
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -2153,14 +2154,14 @@ void PRINT_CU_INFO(void)
         loff,goff);
     /* We used to print leftover and incorrect values at times. */
     if (glflags.need_CU_high_address) {
-        safe_strcpy(hbuf,sizeof(hbuf),"unknown   ",10);
+        dd_safe_strcpy(hbuf,sizeof(hbuf),"unknown   ",10);
     } else {
         /* safe, hbuf is large enough. */
         sprintf(hbuf,
             "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_high_address);
     }
     if (glflags.need_CU_base_address) {
-        safe_strcpy(lbuf,sizeof(lbuf),"unknown   ",10);
+        dd_safe_strcpy(lbuf,sizeof(lbuf),"unknown   ",10);
     } else {
         /* safe, lbuf is large enough. */
         sprintf(lbuf,

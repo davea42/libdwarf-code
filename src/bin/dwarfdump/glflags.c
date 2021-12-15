@@ -33,35 +33,11 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 
 #include "esb.h"                /* For flexible string buffer. */
 #include "dwconf.h"
+#include "dd_safe_strcpy.h"
 
 #ifdef TRIVIAL_NAMING  /* for make rebuild */
 struct glflags_s glflags;
 
-/*  Required: inlen must be the length of in_s as 
-    from strlen. So the NUL terminator not counted.
-    */
-void
-safe_strcpy(char *out,
-    long outlen,
-    const char *in_s,
-    long inlen)
-{
-    if (inlen >= (outlen - 1)) {
-        strncpy(out, in_s, outlen);
-        out[outlen - 1] = 0;
-    } else {
-        /*  Iff outlen is very large
-            strncpy is very wasteful. */
-        char *cpo = out;
-        const char *cpi= in_s;
-        const char *cpiend = in_s +inlen;
-
-        for ( ; *cpi && cpi < cpiend ; ++cpo, ++cpi) {
-             *cpo = *cpi;
-        }
-        *cpo = 0;
-    }
-}
 #endif /*TRIVIAL_NAMING*/
 
 static struct section_high_offsets_s _section_high_offsets_global;
@@ -398,9 +374,9 @@ static const char * default_cu_producer = "<unknown>";
 void
 reset_overall_CU_error_data(void)
 {
-    safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),
+    dd_safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),
         default_cu_producer,strlen(default_cu_producer));
-    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
+    dd_safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
         default_cu_producer,strlen(default_cu_producer));
     glflags.DIE_offset = 0;
     glflags.DIE_overall_offset = 0;

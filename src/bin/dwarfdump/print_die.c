@@ -47,6 +47,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "tag_common.h"
 #include "attr_form.h"
 #include "dd_regex.h"
+#include "dd_safe_strcpy.h"
 
 #define VSFBUFSZ 200
 #define IMPLICIT_VALUE_PRINT_MAX 12
@@ -4527,7 +4528,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 notice and report 'odd' identifiers.
                 Used in the SNC LinkOnce feature. */
             name = esb_get_string(&lesb);
-            safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
+            dd_safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
                 name,strlen(name));
             esb_destructor(&lesb);
         }
@@ -4637,7 +4638,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 return vres;
             }
             name = esb_get_string(&lesb);
-            safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
+            dd_safe_strcpy(glflags.PU_name,sizeof(glflags.PU_name),
                 name, strlen(name));
             esb_destructor(&lesb);
         }
@@ -4669,7 +4670,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 return sres;
             }
 
-            safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),
+            dd_safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),
                 esb_get_string(&lesb),esb_string_len(&lesb));
             glflags.need_CU_name = FALSE;
             esb_destructor(&lesb);
@@ -5068,7 +5069,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     return found;
                 }
                 if (found == DW_DLV_OK) {
-                    safe_strcpy(glflags.PU_name,
+                    dd_safe_strcpy(glflags.PU_name,
                         sizeof(glflags.PU_name),
                         esb_get_string(&pn),
                         esb_string_len(&pn));

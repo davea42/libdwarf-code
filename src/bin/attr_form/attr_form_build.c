@@ -45,6 +45,7 @@
 #define DW_TSHASHTYPE long /* we are not using hash tree */
 #include "dwarf_tsearch.h"
 #include "attr_form.h"
+#include "dd_safe_strcpy.h"
 
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 

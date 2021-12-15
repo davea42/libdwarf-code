@@ -44,6 +44,7 @@
 #endif /* HAVE_STRING_H */
 #include "dwarf_getopt.h"
 #include "libdwarf_private.h"
+#include "dwarf_safe_strcpy.h"
 
 /*  gennames.c
     Prints routines to return constant name for the associated value
@@ -258,15 +259,19 @@ open_path(const char *base, const char *file, const char *direction)
     static char path_name[BUFSIZ];
 
     /* 2 == space for / and NUL */
-    size_t netlen = strlen(file) +strlen(base) + 2;
+    size_t baselen = strlen(base) +1;
+    size_t filelen = strlen(file) +1;
+    size_t netlen = baselen + filelen;
 
     if (netlen >= BUFSIZ) {
         printf("Error opening '%s/%s', name too long\n",base,file);
         exit(1);
     }
-    strcpy(path_name,base);
-    strcat(path_name,"/");
-    strcat(path_name,file);
+    _dwarf_safe_strcpy(path_name,BUFSIZ,base,baselen-1);
+    _dwarf_safe_strcpy(path_name+baselen,BUFSIZ -baselen,
+        "\\",1);
+    _dwarf_safe_strcpy(path_name+baselen+1,BUFSIZ -baselen -1,
+        file,filelen-1);
     f = fopen(path_name,direction);
     if (!f) {
         printf("Error opening '%s'\n",path_name);
@@ -484,20 +489,6 @@ is_skippable_line(char *pLine)
     return empty;
 }
 
-static void
-safe_strncpy(char *out, unsigned out_len,
-    char *in,unsigned in_len)
-{
-    if (in_len >= out_len) {
-        fprintf(stderr,"Impossible input line from dwarf.h. "
-            "Giving up. \n");
-        fprintf(stderr,"Length %u is too large, limited to %u.\n",
-            in_len,out_len);
-        exit(1);
-    }
-    strncpy(out,in,in_len);
-}
-
 /* Parse the 'dwarf.h' file and generate the tables */
 static void
 ParseDefinitionsAndWriteOutput(void)
@@ -539,8 +530,8 @@ ParseDefinitionsAndWriteOutput(void)
 
         second_underscore = strchr(name + prefix_root_len,'_');
         prefix_len = (int)(second_underscore - name);
-        safe_strncpy(new_prefix,sizeof(new_prefix),name,prefix_len);
-        new_prefix[prefix_len] = 0;
+        _dwarf_safe_strcpy(new_prefix,sizeof(new_prefix),
+            name,prefix_len);
 
         /* Check for new prefix set */
         if (strcmp(prefix,new_prefix)) {
@@ -549,7 +540,8 @@ ParseDefinitionsAndWriteOutput(void)
                 GenerateOneSet();
             }
             pending = TRUE;
-            strcpy(prefix,new_prefix);
+            _dwarf_safe_strcpy(prefix,sizeof(prefix),
+                new_prefix,strlen(new_prefix));
         }
 
         /* Be sure we have a valid entry */
@@ -577,7 +569,8 @@ ParseDefinitionsAndWriteOutput(void)
                     second_underscore,MAX_NAME_LEN);
                 exit(1);
             }
-            strcpy(group_array[array_count].name,second_underscore);
+            _dwarf_safe_strcpy(group_array[array_count].name,
+                 MAX_NAME_LEN,second_underscore,strlen(second_underscore));
             group_array[array_count].value = v;
             group_array[array_count].original_position = array_count;
             ++array_count;
