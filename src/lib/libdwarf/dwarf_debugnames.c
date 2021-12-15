@@ -45,6 +45,7 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -463,7 +464,8 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
 
         dn->dn_augmentation_string = calloc(1,
             augmentation_string_size +1);
-        strncpy(dn->dn_augmentation_string,str_utf8,
+        _dwarf_safe_strcpy(dn->dn_augmentation_string,
+            augmentation_string_size +1,str_utf8,
             augmentation_string_size);
         /* This validates a zero length string too. */
 

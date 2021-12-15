@@ -95,6 +95,8 @@ dwarf_peread.h \
 dwarf_print_lines.c \
 dwarf_pubtypes.c \
 dwarf_query.c \
+dwarf_safe_strcpy.c \
+dwarf_safe_strcpy.h \
 dwarf_ranges.c \
 dwarf_rnglists.c \
 dwarf_rnglists.h \

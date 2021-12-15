@@ -96,6 +96,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"
@@ -407,8 +408,9 @@ load_segment_command_content32(
     }
     ASNAR(mfp->mo_copy_word,msp->cmd,sc.cmd);
     ASNAR(mfp->mo_copy_word,msp->cmdsize,sc.cmdsize);
-    strncpy(msp->segname,sc.segname,16);
-    msp->segname[15] =0;
+    _dwarf_safe_strcpy(msp->segname,
+        sizeof(msp->segname),
+        sc.segname,sizeof(sc.segname));
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -472,8 +474,8 @@ load_segment_command_content64(
     }
     ASNAR(mfp->mo_copy_word,msp->cmd,sc.cmd);
     ASNAR(mfp->mo_copy_word,msp->cmdsize,sc.cmdsize);
-    strncpy(msp->segname,sc.segname,16);
-    msp->segname[16] =0;
+    _dwarf_safe_strcpy(msp->segname,sizeof(msp->segname),
+        sc.segname,sizeof(sc.segname));
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -615,10 +617,12 @@ dwarf_macho_load_dwarf_section_details32(
         if (res != DW_DLV_OK) {
             return res;
         }
-        strncpy(secs->sectname,mosec.sectname,16);
-        secs->sectname[16] = 0;
-        strncpy(secs->segname,mosec.segname,16);
-        secs->segname[16] = 0;
+        _dwarf_safe_strcpy(secs->sectname,
+            sizeof(secs->sectname),
+            mosec.sectname,sizeof(mosec.sectname));
+        _dwarf_safe_strcpy(secs->segname,
+            sizeof(secs->segname),
+            mosec.segname,sizeof(mosec.segname));
         ASNAR(mfp->mo_copy_word,secs->addr,mosec.addr);
         ASNAR(mfp->mo_copy_word,secs->size,mosec.size);
         ASNAR(mfp->mo_copy_word,secs->offset,mosec.offset);
@@ -703,10 +707,12 @@ dwarf_macho_load_dwarf_section_details64(
         if (res != DW_DLV_OK) {
             return res;
         }
-        strncpy(secs->sectname,mosec.sectname,16);
-        secs->sectname[16] = 0;
-        strncpy(secs->segname,mosec.segname,16);
-        secs->segname[16] = 0;
+        _dwarf_safe_strcpy(secs->sectname,
+            sizeof(secs->sectname),
+            mosec.sectname,sizeof(mosec.sectname));
+        _dwarf_safe_strcpy(secs->segname,
+            sizeof(secs->segname),
+            mosec.segname,sizeof(mosec.segname));
         ASNAR(mfp->mo_copy_word,secs->addr,mosec.addr);
         ASNAR(mfp->mo_copy_word,secs->size,mosec.size);
         ASNAR(mfp->mo_copy_word,secs->offset,mosec.offset);

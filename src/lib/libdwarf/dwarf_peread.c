@@ -72,6 +72,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_memcpy_swap.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
@@ -513,9 +514,11 @@ dwarf_pe_load_dwarf_section_headers(
         /*  The following is safe. filesect.Name is
             IMAGE_SIZEOF_SHORT_NAME bytes long and may
             not (not sure) have a NUL terminator. */
-        strncpy(safe_name,filesect.Name,IMAGE_SIZEOF_SHORT_NAME);
+        _dwarf_safe_strcpy(safe_name,
+            sizeof(safe_name),
+            filesect.Name,
+            IMAGE_SIZEOF_SHORT_NAME);
         /*  Then add NUL terminator. */
-        safe_name[IMAGE_SIZEOF_SHORT_NAME] = 0;
         sec_outp->name = strdup(safe_name);
 
         res = pe_section_name_get(pep,

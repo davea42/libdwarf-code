@@ -49,6 +49,7 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -2993,7 +2994,7 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
         so allow for that and allow one (arbitrarily) more. */
     if ((std_sec_name_len + 5) < sizeof(tbuf)) {
         _dwarf_safe_strcpy(tbuf,sizeof(tbuf),
-            std_section_name,std_sec_name_len); 
+            std_section_name,std_sec_name_len);
         _dwarf_safe_strcpy(tbuf+std_sec_name_len,
             sizeof(tbuf)-std_sec_name_len,
             ".dwo",4);

@@ -55,11 +55,12 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#include "dwarf.h" 
-#include "libdwarf.h" 
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_object_read_common.h"
 
 /*  Neither off_t nor ssize_t is in C90.
@@ -99,27 +100,4 @@ _dwarf_object_read_random(int fd, char *buf, off_t loc,
         return DW_DLV_ERROR;
     }
     return DW_DLV_OK;
-}
-
-void
-_dwarf_safe_strcpy(char *out, 
-    long outlen, 
-    const char *in_s, 
-    long inlen)
-{
-    if (inlen >= (outlen - 1)) {
-        strncpy(out, in_s, outlen);
-        out[outlen - 1] = 0;
-    } else {
-        /*  Iff outlen is very large
-            strncpy is very wasteful. */
-        char *cpo = out;
-        const char *cpi= in_s;
-        const char *cpiend = in_s +inlen;
-
-        for ( ; *cpi && cpi < cpiend ; ++cpo, ++cpi) {
-             *cpo = *cpi;
-        }
-        *cpo = 0;
-    }
 }

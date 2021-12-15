@@ -49,6 +49,7 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"

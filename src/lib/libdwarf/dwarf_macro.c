@@ -47,6 +47,7 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -440,8 +441,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             slen = strlen((char *) pnext) + 1;
 
             _dwarf_safe_strcpy((char *)latest_str_loc,
-               space_needed - space_used,
-               (const char *)pnext,slen-1);
+                space_needed - space_used,
+                (const char *)pnext,slen-1);
             pdmd->dmd_macro = (char *) latest_str_loc;
             latest_str_loc += slen;
             space_used +=slen;

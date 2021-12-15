@@ -65,6 +65,7 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
@@ -121,18 +122,6 @@ int dwarf_get_harmless_error_list(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  strncpy does not null-terminate, this does it. */
-static void
-safe_strncpy(char *targ, char *src, unsigned spaceavail)
-{
-    unsigned goodcount = spaceavail-1;
-    if (spaceavail < 1) {
-        return; /* impossible */
-    }
-    strncpy(targ,src,goodcount);
-    targ[goodcount] = 0;
-}
-
 /*  Insertion made public is only for testing the harmless error code,
     it is not necessarily useful for libdwarf client code aside
     from code testing libdwarf. */
@@ -148,8 +137,10 @@ void dwarf_insert_harmless_error(Dwarf_Debug dbg,
         return;
     }
     msgspace = dhp->dh_errors[cur];
-    safe_strncpy(msgspace, newerror,
-        DW_HARMLESS_ERROR_MSG_STRING_SIZE);
+    _dwarf_safe_strcpy(msgspace,
+        DW_HARMLESS_ERROR_MSG_STRING_SIZE,
+        newerror,
+        strlen(newerror));
     next = (cur+1) % dhp->dh_maxcount;
     dhp->dh_errs_count++;
     dhp->dh_next_to_use = next;
