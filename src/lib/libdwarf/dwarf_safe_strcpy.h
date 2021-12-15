@@ -29,19 +29,19 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef DD_SAFE_STRCPY_H
-#define DD_SAFE_STRCPY_H
+#ifndef DWARF_SAFE_STRCPY_H
+#define DWARF_SAFE_STRCPY_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-
-void _dwarf_safe_strcpy(char *out, unsigned long outlen, 
+/*  The pointer arguments are required to be non-null.
+    If outlen is zero nothing will be written to out. */
+void _dwarf_safe_strcpy(char *out, unsigned long outlen,
     const char *in, unsigned long inlen);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* DD_SAFE_STRCPY_H */
-
+#endif /* DWARF_SAFE_STRCPY_H */

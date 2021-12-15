@@ -33,7 +33,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #include "dwarf_safe_strcpy.h"
 
-
 /*  An strcpy/strncpy which ensures NUL terminated string
     and never overruns the output.
     inlen is strlen() size of in_s
@@ -57,12 +56,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     all the unused bytes is wasteful (hence we do not
     do that here).
 
+    If an input is only partly copied due to limited
+    target space this may destroy the
+    correctness of a multi-byte-string (UTF-8).
+    Note that this will not harm dwarfdump as
+    dwarfdump 'sanitizes' all printf output
+    in a uri-style. So it only prints true ASCII characters
+    in the printable range.
+
     The pointer arguments are required to be non-null.
 */
 void
-_dwarf_safe_strcpy(char *out, 
-    unsigned long outlen, 
-    const char *in_s, 
+_dwarf_safe_strcpy(char *out,
+    unsigned long outlen,
+    const char *in_s,
     unsigned long inlen)
 {
     unsigned long full_inlen = inlen+1;
@@ -89,7 +96,3 @@ _dwarf_safe_strcpy(char *out,
     }
     *cpo = 0;
 }
-
-
-
-

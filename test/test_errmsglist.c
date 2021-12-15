@@ -48,6 +48,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_errmsg_list.h"
 
@@ -407,15 +408,15 @@ check_msg_lengths(const char *path)
 static char pathbuf[2000];
 static char pathbuferrm[2000];
 static void
-safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
+local_safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
 {
     if (srclen > targlen) {
         printf("Target name does not fit in buffer.\n"
-            "In test_errmsg_list.c increas buffer size "
+            "In test_errmsg_list.c increase buffer size "
             " from %u \n",(unsigned int)sizeof(pathbuf));
         exit(1);
     }
-    strcpy(targ,src);
+    _dwarf_safe_strcpy(targ,targlen,src,srclen); 
 }
 
 /*   ./test_errmsg_list.c -f /path.../libdwarf.h */
@@ -451,13 +452,13 @@ main(int argc, char **argv)
         }
     }
     len = strlen(path);
-    safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
-    safe_strcpy(pathbuf+len,(char *)libpath,
+    local_safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
+    local_safe_strcpy(pathbuf+len,(char *)libpath,
         sizeof(pathbuf) -len -1,
         (unsigned)strlen(libpath));
 
-    safe_strcpy(pathbuferrm,path,sizeof(pathbuferrm),len);
-    safe_strcpy(pathbuferrm+len,(char *)srchdr,
+    local_safe_strcpy(pathbuferrm,path,sizeof(pathbuferrm),len);
+    local_safe_strcpy(pathbuferrm+len,(char *)srchdr,
         sizeof(pathbuferrm) -len -1,
         (unsigned)strlen(srchdr));
     path = pathbuf;

@@ -70,6 +70,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dwarf_base_types.h"
+#include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -172,7 +173,7 @@ test1(Dwarf_Debug dbg)
     Dwarf_Error error = 0;
 
     testbuffer[0] = 0;
-    strcpy(testbuffer,msg);
+    _dwarf_safe_strcpy(testbuffer,sizeof(testbuffer),msg,strlen(msg));
     /* The error value is arbitrary, not realistic. */
     res = _dwarf_check_string_valid(dbg,
         area,str,
