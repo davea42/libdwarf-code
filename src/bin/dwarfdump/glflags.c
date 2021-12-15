@@ -34,22 +34,32 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 #include "esb.h"                /* For flexible string buffer. */
 #include "dwconf.h"
 
-#ifdef TRIVIAL_NAMING  /* For scripts/buildstandardsource.sh */
+#ifdef TRIVIAL_NAMING  /* for make rebuild */
 struct glflags_s glflags;
 
 /*  Required: inlen must be the length of in_s as 
     from strlen. So the NUL terminator not counted.
-    If inlen is larger than the actual in_s that is not
-    harmful as strncpy stops copying at a NUL byte. */
+    */
 void
-safe_strcpy(char *out, long outlen, const char *in_s, long inlen)
+safe_strcpy(char *out,
+    long outlen,
+    const char *in_s,
+    long inlen)
 {
-    long withnull = inlen+1;
-    if (withnull >= outlen) {
-        strncpy(out, in_s, outlen - 1);
+    if (inlen >= (outlen - 1)) {
+        strncpy(out, in_s, outlen);
         out[outlen - 1] = 0;
     } else {
-        strncpy(out, in_s,inlen+1);
+        /*  Iff outlen is very large
+            strncpy is very wasteful. */
+        char *cpo = out;
+        const char *cpi= in_s;
+        const char *cpiend = in_s +inlen;
+
+        for ( ; *cpi && cpi < cpiend ; ++cpo, ++cpi) {
+             *cpo = *cpi;
+        }
+        *cpo = 0;
     }
 }
 #endif /*TRIVIAL_NAMING*/
