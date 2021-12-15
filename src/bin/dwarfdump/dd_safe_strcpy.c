@@ -42,14 +42,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     So typically outlen == (inlen+1).
 
     If outlen is 0 it quietly returns.
-    If outlen is 1 it assigns a NUL byte.
-    ISO C 9899:1990 specifies that if outlen has extra space
-    that the function zeroes the extra bytes.
-    And if outlen is too small no NUL byte is written
-    to out.
-
+    If outlen is 1 it assigns a NUL byte to  *out and returns.
     If outlen > 0 then this function always writes
     a trailing NUL byte.
+
+        ISO C 9899:1990 specifies that if outlen has extra space
+        that the function zeroes the extra bytes.
+        And if outlen is too small no NUL byte is written
+        to out.
+
+    This function writes only one NUL byte, the rest of
+    the 'out' buffer is untouched. Sometimes our callers
+    do not have a narrow bound to outlen, so zeroing
+    all the unused bytes is wasteful (hence we do not
+    do that here).
+
+    The pointer arguments are required to be non-null.
 */
 void
 dd_safe_strcpy(char *out, 
