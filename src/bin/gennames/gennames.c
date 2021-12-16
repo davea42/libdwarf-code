@@ -267,10 +267,11 @@ open_path(const char *base, const char *file, const char *direction)
         printf("Error opening '%s/%s', name too long\n",base,file);
         exit(1);
     }
-    _dwarf_safe_strcpy(path_name,BUFSIZ,base,baselen-1);
-    _dwarf_safe_strcpy(path_name+baselen,BUFSIZ -baselen,
-        "\\",1);
-    _dwarf_safe_strcpy(path_name+baselen+1,BUFSIZ -baselen -1,
+    _dwarf_safe_strcpy(path_name,BUFSIZ,
+        base,baselen-1);
+    _dwarf_safe_strcpy(path_name+baselen-1,BUFSIZ -baselen,
+        "/",1);
+    _dwarf_safe_strcpy(path_name+baselen,BUFSIZ -baselen -1,
         file,filelen-1);
     f = fopen(path_name,direction);
     if (!f) {
