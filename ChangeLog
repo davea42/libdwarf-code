@@ -1,3 +1,101 @@
+2021-12-15:  David Anderson
+    commit 2161cbe6b3d775dbb51f3a2b1c55000b8c961d34
+
+    Now this one correct using _dwarf_safe_strcpy
+    instead of strcat.
+            modified:   gennames.c
+
+2021-12-15:  David Anderson
+    commit 248f171fa5420deb60e03f3a7623c9596e79f899
+
+    Removing all dwarfdump and tests of strcpy and strncpy
+    in favor of dd_safe_strcpy.
+    DO NOT USE THIS COMMIT.
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/command_options.c
+            modified:   src/bin/dwarfdump/compiler_info.c
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/dwconf.c
+            modified:   src/bin/dwarfdump/glflags.c
+            modified:   src/bin/dwarfdump/globals.h
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/gennames/Makefile.am
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   test/Makefile.am
+
+2021-12-15:  David Anderson
+    commit ed0be6942d79def1b7466369b4ae199346e946a2
+
+    Now with dwarf_safe_strcpy.[ch]
+            modified:   src/lib/libdwarf/Makefile.am
+
+    All uses of strcpy and strncpy replaced with calls
+    to _dwarf_safe_strcpy().  Much better fit with
+    what we do in libdwarf.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_read_common.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+
+2021-12-15:  David Anderson
+    commit 0456103f5dbe5255b564bdf6d1562ac0ef686bf5
+
+    Working version, safely replacing strcpy and strncpy.
+            modified:   src/lib/libdwarf/dwarf_safe_strcpy.c
+            modified:   src/lib/libdwarf/dwarf_safe_strcpy.h
+
+    Added access to dwarf_safe_strcpy.[ch] for test_safe_strcpy.c
+            modified:   test/Makefile.am
+    Added access to dwarf_safe_strcpy.[h]
+            modified:   test/test_errmsglist.c
+            modified:   test/test_linkedtopath.c
+
+    New test for _dwarf_safe_strcpy function
+            new file:   test/test_safe_strcpy.c
+
+2021-12-15:  David Anderson
+    commit 489fde55cc5a081b3b2229569e1a37d19a582ed1
+
+    Not used yet. Soon to be used.
+            new file:   dwarf_safe_strcpy.c
+            new file:   dwarf_safe_strcpy.h
+
+2021-12-15:  David Anderson
+    commit 544971b70a3daf87c313489e3bb69aef4639a8db
+
+    Refined the comments.
+            modified:   dd_safe_strcpy.c
+
+2021-12-15:  David Anderson
+    commit a5f8a1d8d9d5367d41c76b423afe733df38653ea
+
+    Replacing the old safe_strcpy shortly.
+    This is not yet in use.
+            new file:   dd_safe_strcpy.c
+            new file:   dd_safe_strcpy.h
+
+2021-12-14:  David Anderson
+    commit 52c8d9f512abb5c5b5d0b3314eb5b61a64cb67a3
+
+    ChangeLog updated from git log
+            modified:   ChangeLog
+
 2021-12-14:  David Anderson
     commit 7f84ab9a1df3d70e3e3b400bd697439d5ef0ff13
 
