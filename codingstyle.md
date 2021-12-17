@@ -64,7 +64,7 @@ a left parenthesis.
 The tab character must never appear.
 
 ### Braces
-Most of the code in cairo uses bracing in the style of K&R:
+Most of the code in libdwarf uses bracing in the style of K&R:
 
     if (condition) {
         do_this();
