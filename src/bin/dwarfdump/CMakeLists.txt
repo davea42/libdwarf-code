@@ -1,6 +1,7 @@
 
 set_source_group(SOURCES "Source Files" addrmap.c 
-    checkutil.c dd_regex.c dwarfdump.c dwconf.c helpertree.c 
+    checkutil.c dd_regex.c dd_safe_strcpy.c
+    dwarfdump.c dwconf.c helpertree.c 
     glflags.c command_options.c compiler_info.c
     macrocheck.c 
     opscounttab.c
@@ -28,7 +29,8 @@ set_source_group(SOURCES "Source Files" addrmap.c
     naming.c common.c esb.c dwarf_tsearchbal.c)
 	
 set_source_group(HEADERS "Header Files" 
-  addrmap.h attr_form.h checkutil.h common.h dd_regex.h dwconf.h
+  addrmap.h attr_form.h checkutil.h common.h dd_regex.h
+  dd_safe_strcpy.h dwconf.h
   command_options.h compiler_info.h
   opscounttab.h 
   print_debug_gnu.h

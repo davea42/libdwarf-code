@@ -24,6 +24,7 @@ dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_peread.c 
 dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c 
 dwarf_rnglists.c
+dwarf_safe_strcpy.c
 dwarf_string.h dwarf_string.c
 dwarf_stringsection.c
 dwarf_tied.c 
@@ -55,6 +56,7 @@ dwarf_pe_descr.h dwarf_peread.h
 dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 
 dwarf_reloc_ppc.h dwarf_reloc_ppc64.h dwarf_reloc_x86_64.h 
 dwarf_rnglists.h
+dwarf_safe_strcpy.h
 dwarf_tied_decls.h 
 dwarf_tsearch.h 
 dwarf_str_offsets.h

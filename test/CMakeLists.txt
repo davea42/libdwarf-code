@@ -29,6 +29,8 @@ endif()
 if (DO_TESTING)
     set_source_group(TESTLINKEDTOPATH "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_linkedtopath.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.h
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.h
@@ -190,7 +192,8 @@ endif()
 
 if (DO_TESTING) 
     set_source_group(OBJERRMSGLIST "Source Files"
-        ${CMAKE_SOURCE_DIR}/test/test_errmsglist.c )
+        ${CMAKE_SOURCE_DIR}/test/test_errmsglist.c 
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c)
     add_executable(selferrmsglist ${OBJERRMSGLIST})
     target_compile_options(selferrmsglist PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
@@ -202,6 +205,7 @@ endif()
 if (DO_TESTING)
     set_source_group(CANONICALLIST "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_canonical.c 
+        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_safe_strcpy.c
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwconf.c
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/esb.c)
     add_executable(selfcanonical ${CANONICALLIST})
@@ -210,6 +214,18 @@ if (DO_TESTING)
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
     target_compile_options(selfcanonical PRIVATE ${DW_FWALL})
     add_test(NAME selfcanonical COMMAND selfcanonical)
+endif()
+
+if (DO_TESTING)
+    set_source_group(SAFESTRCPYLIST "Source Files"
+        ${CMAKE_SOURCE_DIR}/test/test_safe_strcpy.c 
+        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_safe_strcpy.c)
+    add_executable(selfteststrcpy ${SAFESTRCPYLIST})
+    target_compile_options(selfteststrcpy PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf" )
+    target_compile_options(selfteststrcpy PRIVATE ${DW_FWALL})
+    add_test(NAME selfteststrcpy COMMAND selfteststrcpy)
 endif()
 
 if (DO_TESTING)
