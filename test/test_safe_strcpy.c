@@ -16,10 +16,10 @@
 
 
 
-int
+static int
 test1(char *buf,unsigned blen,
     const char *inp, unsigned ilen,
-    char *result,const char *expres,
+    const char *expres,
     int line)
 {
     _dwarf_safe_strcpy(buf,blen,inp,ilen);
@@ -41,20 +41,20 @@ test_safe_strcpy(void)
     printf("Entry test_safe_strcpy\n");
  
     memset(buf,1,sizeof(buf)); 
-    failcount += test1(buf,4,"abc",3,buf,"abc",__LINE__);
+    failcount += test1(buf,4,"abc",3,"abc",__LINE__);
     memset(buf,1,sizeof(buf)); 
-    failcount += test1(buf,3,"abc",3,buf,"ab",__LINE__);
+    failcount += test1(buf,3,"abc",3,"ab",__LINE__);
     memset(buf,1,sizeof(buf)); 
-    failcount += test1(buf,4,"abcde",5,buf,"abc",__LINE__);
+    failcount += test1(buf,4,"abcde",5,"abc",__LINE__);
     memset(buf,'z',sizeof(buf)); 
     buf[1] = 0;
-    failcount += test1(buf,0,"abcde",5,buf,"z",__LINE__);
+    failcount += test1(buf,0,"abcde",5,"z",__LINE__);
     memset(buf,'z',sizeof(buf)); 
-    failcount += test1(buf,1,"abcde",5,buf,"",__LINE__);
+    failcount += test1(buf,1,"abcde",5,"",__LINE__);
     memset(buf,'z',sizeof(buf)); 
-    failcount += test1(buf,1,"",5,buf,"",__LINE__);
+    failcount += test1(buf,1,"",5,"",__LINE__);
     memset(buf,'z',sizeof(buf)); 
-    failcount += test1(buf,1,"vv",2,buf,"",__LINE__);
+    failcount += test1(buf,1,"vv",2,"",__LINE__);
     return failcount;
 }
 
