@@ -112,7 +112,7 @@ _dwarf_skip_leb128(char * leb128,
     return DW_DLV_OK;
 
 }
-/* Decode SLEB with checking */
+/* Decode ULEB with checking */
 int
 dwarf_decode_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
@@ -172,8 +172,7 @@ dwarf_decode_leb128(char * leb128,
                 maybe some padding high-end byte zeroes
                 that we can ignore. */
             if (!b) {
-                ++byte_length;
-                if (byte_length > BYTESLEBMAX) {
+                if (byte_length >= BYTESLEBMAX) {
                     /*  Erroneous input.  */
                     if (leb128_length) {
                         *leb128_length = BYTESLEBMAX;
@@ -184,9 +183,16 @@ dwarf_decode_leb128(char * leb128,
                 /*  shift cannot overflow as
                     BYTESLEBMAX is not a large value */
                 shift += 7;
-                if (leb128 >=endptr) {
+                if (leb128 >=endptr ) {
+                    if (leb128 == endptr && !byte) {
+                        /* Meaning zero bits a padding byte */
+                        *leb128_length = byte_length;
+                        *outval = number;
+                        return DW_DLV_OK;
+                    }
                     return DW_DLV_ERROR;
                 }
+                ++byte_length;
                 byte = *leb128;
                 continue;
             }
@@ -212,15 +218,17 @@ dwarf_decode_leb128(char * leb128,
             break;
         }
         ++leb128;
-        if (leb128 >=endptr) {
+        if (leb128 >= endptr) {
+printf("dadebug ERROR line %d %s\n",__LINE__,__FILE__);
             return DW_DLV_ERROR;
         }
         byte = *leb128;
     }
+printf("dadebug ERROR line %d %s\n",__LINE__,__FILE__);
     return DW_DLV_ERROR;
 }
 
-/* Decode SLEB */
+/* Decode SLEB with checking */
 int
 dwarf_decode_signed_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
@@ -270,7 +278,7 @@ dwarf_decode_signed_leb128(char * leb128,
                 /*  shift cannot overflow as
                     BYTESLEBMAX is not a large value */
                 shift += 7;
-                if (leb128 >=endptr) {
+                if (leb128 >= endptr) {
                     return DW_DLV_ERROR;
                 }
                 byte = *leb128;
