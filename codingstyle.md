@@ -320,7 +320,7 @@ Any situation requiring a lookup table should use one
 or the other tsearch functions. The practical ones are
 dwarf\_tsearchhash.c and dwarf\_tsearchbal.c.  dwarfdump and
 libdwarf each use one of them and only one of them.  See the
-tsearch directory to see the full set available.
+libdwarf-tsearch project to see the full set available.
 
 These use the traditional UNIX tsearch arguments and return
 values even though those are not good designs by current
