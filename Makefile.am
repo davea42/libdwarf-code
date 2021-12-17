@@ -80,7 +80,7 @@ ChangeLog2019 \
 ChangeLog2020 \
 cmake \
 CMakeLists.txt \
-codingstyle.txt \
+codingstyle.md \
 cmake/config.h.cmake \
 README \
 README.md \
