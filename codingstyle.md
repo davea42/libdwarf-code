@@ -53,7 +53,8 @@ sourceforge.net, dicheck-da, detects all instances of tabs,
 improper indentation and line-ending whitespace.
 
 Similarly, for is to have a single space after the r followed by 
-a left_paren.
+a left parenthesis.
+
     for (v; condition; v2) {
         do_something();
     }
@@ -277,14 +278,19 @@ function before using goto.
 
 
 Never do:
+
     if ((foo = malloc (sizeof (foo_t)))) {
+
 or
+
     if (foo = malloc (sizeof (foo_t))) {
 
 as the reader has to think carefully about it, 
 whereas
+
     foo = malloc (sizeof (foo_t));
     if (foo) {
+
 is more transparent (in some sense) and 
 makes it easier to stop( in debugger) or
 add a printf in case this is a point where
@@ -295,12 +301,12 @@ Also see "Managing nested blocks" just above.
 
 ### Macro Tests Commented
 
-#ifdef SOME_MACRO
-#else /* !SOME_MACRO */ 
-#endif /* !SOME_MACRO */
+    #ifdef SOME_MACRO
+    #else /* !SOME_MACRO */ 
+    #endif /* !SOME_MACRO */
 
-#ifdef OTHER_MACRO
-#endif /* OTHER_MACRO */
+    #ifdef OTHER_MACRO
+    #endif /* OTHER_MACRO */
 
 The comments add clarity when one is not familiar with code in
 the area but are not required if the #else #endif are within a
@@ -312,7 +318,7 @@ There is nothing wrong with adding them everywhere.
 
 Any situation requiring a lookup table should use one
 or the other tsearch functions. The practical ones are
-dwarf_tsearchhash.c and dwarf_tsearchbal.c.  dwarfdump and
+dwarf\_tsearchhash.c and dwarf\_tsearchbal.c.  dwarfdump and
 libdwarf each use one of them and only one of them.  See the
 tsearch directory to see the full set available.
 
@@ -330,7 +336,7 @@ standard interfaces.
 
 In libdwarf we are careful to name things visible to callers
 (and in libdwarf.h) starting with with dwarf (for public stuff)
-or _dwarf (for functions in the library not intended for
+or \_dwarf (for functions in the library not intended for
 public use.  Structs begin with Dwarf.  Macros begin with DW
 (dwarf.h is full of those!).
 
@@ -340,13 +346,13 @@ In general, be wary of performing any arithmetic operations
 in an argument to malloc.  You should explicitly check for
 integer overflow yourself in any more complex situations.
 
-In libdwarf most allocations use _dwarf_alloc() instead of
+In libdwarf most allocations use \_dwarf\_alloc() instead of
 malloc.  And the tables of valid types (which are predefined
 in libdwarf) allow for constructor/destructor functions.
-The _dwarf_alloc() code keeps a record of what is allocated
-so a careless user can simply call dwarf_finish() at the end
+The \_dwarf\_alloc() code keeps a record of what is allocated
+so a careless user can simply call dwarf\_finish() at the end
 and all the allocated data will be freed that was not already
-freed via  user calls to dwarf_dealloc().
+freed via  user calls to dwarf\_dealloc().
 
 ### Checking For Overflow
 
@@ -383,9 +389,9 @@ with the vi command "!}fmt -64"...without the quotes.
 
 ### Never use strcpy strcat strncpy
 
-dwarfdump has dd_safe_strcpy().
+dwarfdump has dd\_safe\_strcpy().
 
-libdwarf has _dwarf_safe_strcpy().
+libdwarf has \_dwarf\_safe\_strcpy().
 
 These functions eliminate the need for the three traditional
 string functions strcpy, strcat, strncpy and do exactly what
