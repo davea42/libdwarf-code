@@ -22,7 +22,7 @@ add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 set_folder(dwarfgen src/bin/dwarfgen)
 
 target_compile_options(dwarfgen PRIVATE ${DW_FWALLXX})
-message( "dadebug dg current src dir ${CMAKE_CURRENT_SOURCE_DIR}" )
+message("Current cmake src dir ${CMAKE_CURRENT_SOURCE_DIR}")
 target_include_directories(dwarfgen PRIVATE 
    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/libdwarf
    ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/libdwarfp)

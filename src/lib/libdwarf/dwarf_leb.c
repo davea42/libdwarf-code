@@ -219,12 +219,10 @@ dwarf_decode_leb128(char * leb128,
         }
         ++leb128;
         if (leb128 >= endptr) {
-printf("dadebug ERROR line %d %s\n",__LINE__,__FILE__);
             return DW_DLV_ERROR;
         }
         byte = *leb128;
     }
-printf("dadebug ERROR line %d %s\n",__LINE__,__FILE__);
     return DW_DLV_ERROR;
 }
 
