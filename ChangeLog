@@ -1,3 +1,114 @@
+2021-12-18:  David Anderson
+    commit 7b702f45602b4b7a8513c0f421af5476e54c7448
+
+    Minor changes based on observations
+    Cobra made about the source.
+    No change in what libdwarf does.
+            modified:   dwarf_debugnames.c
+            modified:   dwarf_form.c
+            modified:   dwarf_frame.c
+            modified:   dwarf_macro.c
+            modified:   dwarf_object_detector.c
+            modified:   dwarf_peread.c
+
+    Here, also noticed a pointless local variable
+    and memcpy into and then out of to the real target.
+    Removed the unneeded lines.
+            modified:   dwarf_xu_index.c
+
+2021-12-18:  David Anderson
+    commit 57ad9b599e4d0f662ca262f0c0804fbc3d325357
+
+    More information now.
+            modified:   codingstyle.md
+
+2021-12-18:  David Anderson
+    commit 8081ae04e0d437c80c8720f6c59ab60813fbb2ad
+
+    Added commentary.
+            modified:   src/lib/libdwarf/dwarf_leb.c
+    Now tests more corner cases where more bits
+    presented than fit in 64bits. Signed and unsigned.
+            modified:   test/dwarf_leb_test.c
+
+2021-12-17:  David Anderson
+    commit f180f6003164b67613369765a2eaba04b0d83f5a
+
+    Fixed reference to tsearch directory
+    for the other tsearch versions available. It's
+    now in a separate project.
+            modified:   codingstyle.md
+
+2021-12-17:  David Anderson
+    commit b1b95f91ab6dc9503401dd9a8272c5459ec2d92d
+
+    Accidental leftover of a term removed.
+            modified:   codingstyle.md
+
+2021-12-17:  David Anderson
+    commit 3286355c73ccdfa2ff726b1097a0f3a3ef443ea9
+
+    Refined the text to make it look better.
+            modified:   codingstyle.md
+
+2021-12-17:  David Anderson
+    commit 297cc6c1ee35268f3cf395a116816a78fa9a1cf5
+
+    Changed a debug message to just be informative.
+            modified:   dwarfgen/CMakeLists.txt
+    Removed leftover debug printf lines.
+            modified:   ../lib/libdwarf/dwarf_leb.c
+
+2021-12-17:  David Anderson
+    commit 6949228a8f3e7072969135ae7264e08ef06189c3
+
+    Now with the dwarf_safe_strcpy.c and dd_safestrcpy.c
+    files listed.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
+    New test for safe_strcpy to match the configure test set.
+            modified:   test/CMakeLists.txt
+
+2021-12-17:  David Anderson
+    commit 15b7443b40164e2fcb2d127ed4b28b1060906364
+
+    Fixed typos in the test program.
+            modified:   test/test_safe_strcpy.c
+
+2021-12-17:  David Anderson
+    commit bf7a17372b6f6d1bcf39e290dd14979cd6f2bdce
+
+    Added new tests that showed errors in decoding
+    leb or sleb with padding.
+            modified:   test/dwarf_leb_test.c
+    Corrected leb sleb decoding
+            modified:   src/lib/libdwarf/dwarf_leb.c
+
+2021-12-17:  David Anderson
+    commit 54eec9c3cf737c644a4b4431e68ccdca38509b42
+
+    codingstyle.txt renamed and revised as codingstyle.md
+            modified:   Makefile.am
+
+2021-12-17:  David Anderson
+    commit 270a178cf523690f77b6221136074b1d84d4939c
+
+    Now we do not need this. See the codingstyle.md
+            deleted:    codingstyle.txt
+
+2021-12-17:  David Anderson
+    commit b0202c0c688a4babe8ceb24668a4660625fbf7d5
+
+    Moving to md for the comments
+            new file:   codingstyle.md
+
+2021-12-15:  David Anderson
+    commit 6375d89a48c22c7a9525fecb48bd90b19427ba93
+
+    Bringing ChangeLog to have latest git log data.
+            modified:   ChangeLog
+
 2021-12-15:  David Anderson
     commit 2161cbe6b3d775dbb51f3a2b1c55000b8c961d34
 
