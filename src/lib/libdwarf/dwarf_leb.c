@@ -112,7 +112,7 @@ _dwarf_skip_leb128(char * leb128,
     return DW_DLV_OK;
 
 }
-/* Decode ULEB with checking */
+/*  Decode ULEB with checking. */
 int
 dwarf_decode_leb128(char * leb128,
     Dwarf_Unsigned * leb128_length,
@@ -257,7 +257,6 @@ dwarf_decode_signed_leb128(char * leb128,
                 maybe some padding high-end byte zeroes
                 that we can ignore (but notice sign bit
                 from the last usable byte). */
-
             sign =  b & 0x40;
             if (!byte || byte == 0x40) {
                 /*  The value is complete. */
@@ -286,8 +285,7 @@ dwarf_decode_signed_leb128(char * leb128,
                 byte content */
             return DW_DLV_ERROR;
         }
-        /*  This bit of the last (most-significant
-            useful) byte indicates sign */
+        /*  This bit of the last byte indicates sign */
         sign =  b & 0x40;
         number |= ((Dwarf_Unsigned)b) << shift;
         shift += 7;
@@ -337,7 +335,9 @@ dwarf_decode_signed_leb128(char * leb128,
     Return DW_DLV_ERROR or DW_DLV_OK.
     space to write leb number is provided by caller, with caller
     passing length.
-    number of bytes used returned thru nbytes arg */
+    number of bytes used returned thru nbytes arg.
+    This never emits padding, it emits the minimum
+    number of bytes that can hold the value. */
 int dwarf_encode_leb128(Dwarf_Unsigned val, int *nbytes,
     char *space, int splen)
 {
@@ -362,6 +362,10 @@ int dwarf_encode_leb128(Dwarf_Unsigned val, int *nbytes,
     *nbytes = (int)(a - space);
     return DW_DLV_OK;
 }
+
+/*  This never emits padding at the end, so it
+    says nothing about what such would look like
+    for a negative value. */
 int dwarf_encode_signed_leb128(Dwarf_Signed value, int *nbytes,
     char *space, int splen)
 {

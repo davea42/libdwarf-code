@@ -108,7 +108,7 @@ dump_encoded(char *space,int len)
 {
     int t;
 
-    printf("encode len %d: ",len);
+    printf("encode len %2d: ",len);
     for ( t = 0; t < len; ++t) {
         printf("%02x",space[t] & 0xff);
     }
@@ -119,7 +119,7 @@ dump_encoded(char *space,int len)
 static void
 printsigned(Dwarf_Signed v, char *buf, int buflen, int line)
 {
-    printf("Signed val %8lld 0x%08llx (line %3d) ",
+    printf("Signed val   %20lld 0x%16llx (line %3d) ",
         v,(Dwarf_Unsigned)v,
         line);
     dump_encoded(buf,buflen);
@@ -127,8 +127,8 @@ printsigned(Dwarf_Signed v, char *buf, int buflen, int line)
 static void
 printunsigned(Dwarf_Unsigned v, char *buf, int buflen, int line)
 {
-    printf("Unsigned val %8llu 0x%08llx "
-        "(line %3d)  ",
+    printf("Unsigned val %20llu 0x%16llx "
+        "(line %3d) ",
         v,v,line);
     dump_encoded(buf,buflen);
 }
@@ -452,6 +452,52 @@ static unsigned char v8[] = {
 0x80
 };
 
+static unsigned char v62[] = {
+0xff, 0x80, 0x80, 0x80,
+0x80, 0x80, 0x80, 0x80, /* 56 bits so far */
+0x3f          /* 62 bits */
+};
+static unsigned char v63[] = {
+0xff, 0x80, 0x80, 0x80,
+0x80, 0x80, 0x80, 0x80, /* 56 bits so far */
+0x7f         /* 63 bits */
+};
+
+static unsigned char v64[] = {
+0xff, 0x80, 0x80, 0x80,
+0x80, 0x80, 0x80, 0x80, /* 56 bits so far */
+0xff,                   /* 63 bits so far */
+0x01         /* 64 bits */
+};
+
+static unsigned char v65[] = {
+0xff, 0x80, 0x80, 0x80,
+0x80, 0x80, 0x80, 0x80, /* 56 bits so far */
+0xff,                   /* 63 bits so far */
+0x03         /* 65 bits, only one of the last 2 bits counts */
+};
+
+static unsigned char v63s[] = {
+0xff, 0x80, 0x80, 0x80,
+0x80, 0x80, 0x80, 0x80, /* 56 bits so far */
+0xff,0x40  /* 63 bits and sign */
+};
+
+static unsigned char v64s[] = {
+0xff, 0x80, 0x80, 0x80,
+0x80, 0x80, 0x80, 0x80, /* 56 bits so far */
+0xff,                   /* 63 bits so far */
+0x40         /* 64 bits */
+};
+
+static unsigned char v65s[] = {
+0xff, 0x80, 0x80, 0x80,
+0x80, 0x80, 0x80, 0x80, /* 56 bits so far */
+0xff,                   /* 63 bits so far */
+0x43         /* 65 bits, the two low bits here are dropped */
+};
+
+
 static unsigned
 specialtests(void)
 {
@@ -694,6 +740,202 @@ specialtests(void)
     return errcnt;
 }
 
+static int
+testatmaxlimit(void)
+{
+    unsigned errcnt = 0;
+    unsigned vlen = 0;
+    Dwarf_Unsigned decodelen = 0;
+    Dwarf_Unsigned udecodeval = 0;
+    Dwarf_Signed sdecodeval = 0;
+    int res = 0;
+
+    vlen = sizeof(v62);
+    res = dwarf_decode_leb128((char *)v62,
+        &decodelen,
+        &udecodeval,
+        (char *)(&v62[vlen]));
+    if (res == DW_DLV_ERROR) {
+        printf("FAIL unsigned decode special v62 "
+            "unexpected error output %d\n",
+            __LINE__);
+        ++errcnt;
+    }
+    printunsigned(udecodeval,(char *)v62 , vlen, __LINE__);
+    if (udecodeval != 4539628424389460095ULL) {
+        printf("FAIL unsigned decode special v62 value check got %llu "
+            "vs expected %u  line:%d\n",
+            udecodeval,1,__LINE__);
+        ++errcnt;
+    }
+    if (vlen != decodelen) {
+        printf("FAIL unsigned decode special v62 decode len got %u "
+            "vs expected %u  line:%d\n",
+            (unsigned)decodelen,vlen,__LINE__);
+        ++errcnt;
+    }
+    vlen = sizeof(v63);
+    res = dwarf_decode_leb128((char *)v63,
+        &decodelen,
+        &udecodeval,
+        (char *)(&v63[vlen]));
+    if (res == DW_DLV_ERROR) {
+        printf("FAIL unsigned decode special v63 "
+            "unexpected error output %d\n",
+            __LINE__);
+        ++errcnt;
+    }
+    printunsigned(udecodeval,(char *)v63 , vlen, __LINE__);
+    if (udecodeval != 9151314442816847999ULL) {
+        printf("FAIL unsigned decode special v63 value check got %llu "
+            "vs expected %u  line:%d\n",
+            udecodeval,1,__LINE__);
+        ++errcnt;
+    }
+    if (vlen != decodelen) {
+        printf("FAIL unsigned decode special v63 decode len got %u "
+            "vs expected %u  line:%d\n",
+            (unsigned)decodelen,vlen,__LINE__);
+        ++errcnt;
+    }
+
+    vlen = sizeof(v64);
+    res = dwarf_decode_leb128((char *)v64,
+        &decodelen,
+        &udecodeval,
+        (char *)(&v64[vlen]));
+    if (res == DW_DLV_ERROR) {
+        printf("FAIL unsigned decode special v64 "
+            "unexpected error output %d\n",
+            __LINE__);
+        ++errcnt;
+    }
+    printunsigned(udecodeval,(char *)v64 , vlen, __LINE__);
+    if (udecodeval != 18374686479671623807ULL) {
+        printf("FAIL unsigned decode special v64 value check got %llu "
+            "vs expected %u  line:%d\n",
+            udecodeval,1,__LINE__);
+        ++errcnt;
+    }
+    if (vlen != decodelen) {
+        printf("FAIL unsigned decode special v64 decode len got %u "
+            "vs expected %u  line:%d\n",
+            (unsigned)decodelen,vlen,__LINE__);
+        ++errcnt;
+    }
+
+    /*  Here we discard a bit from v65, the most significant has
+        nowhere to go and we presently do not call that an error. */
+    vlen = sizeof(v65);
+    res = dwarf_decode_leb128((char *)v65,
+        &decodelen,
+        &udecodeval,
+        (char *)(&v65[vlen]));
+    if (res == DW_DLV_ERROR) {
+        printf("FAIL unsigned decode special v65 "
+            "unexpected error output %d\n",
+            __LINE__);
+        ++errcnt;
+    }
+    printunsigned(udecodeval,(char *)v65 , vlen, __LINE__);
+    if (udecodeval != 18374686479671623807ULL) {
+        printf("FAIL unsigned decode special v65 value check got %llu "
+            "vs expected %u  line:%d\n",
+            udecodeval,1,__LINE__);
+        ++errcnt;
+    }
+    if (vlen != decodelen) {
+        printf("FAIL unsigned decode special v65 decode len got %u "
+            "vs expected %u  line:%d\n",
+            (unsigned)decodelen,vlen,__LINE__);
+        ++errcnt;
+    }
+
+    vlen = sizeof(v63s);
+    res = dwarf_decode_signed_leb128((char *)v63s,
+        &decodelen,
+        &sdecodeval,
+        (char *)(&v63s[vlen]));
+    if (res == DW_DLV_ERROR) {
+        printf("FAIL signed decode special v63s "
+            "unexpected error output %d\n",
+            __LINE__);
+        ++errcnt;
+    }
+    printsigned(sdecodeval,(char *)v63s , vlen, __LINE__);
+    if (sdecodeval != -72057594037927809) {
+        printf("FAIL signed decode special v63s value check got %llu "
+            "vs expected %u  line:%d\n",
+            udecodeval,1,__LINE__);
+        ++errcnt;
+    }
+    if (vlen != decodelen) {
+        printf("FAIL signed decode special v63s decode len got %u "
+            "vs expected %u  line:%d\n",
+            (unsigned)decodelen,vlen,__LINE__);
+        ++errcnt;
+    }
+
+
+    /*  Here we discard a bit from v65, the most significant has
+        nowhere to go and we presently do not call that an error. */
+    vlen = sizeof(v64s);
+    res = dwarf_decode_signed_leb128((char *)v64s,
+        &decodelen,
+        &sdecodeval,
+        (char *)(&v64s[vlen]));
+    if (res == DW_DLV_ERROR) {
+        printf("FAIL signed decode special v64s "
+            "unexpected error output %d\n",
+            __LINE__);
+        ++errcnt;
+    }
+    printsigned(sdecodeval,(char *)v64s , vlen, __LINE__);
+    if (sdecodeval != -72057594037927809) {
+        printf("FAIL signed decode special v64s value check got %llu "
+            "vs expected %u  line:%d\n",
+            udecodeval,1,__LINE__);
+        ++errcnt;
+    }
+    if (vlen != decodelen) {
+        printf("FAIL signed decode special v64s decode len got %u "
+            "vs expected %u  line:%d\n",
+            (unsigned)decodelen,vlen,__LINE__);
+        ++errcnt;
+    }
+
+    /*  Here we discard bits from v65s, the most significant pair has
+        nowhere to go and we presently do not call that an error. */
+    vlen = sizeof(v65s);
+    res = dwarf_decode_signed_leb128((char *)v65s,
+        &decodelen,
+        &sdecodeval,
+        (char *)(&v65s[vlen]));
+    if (res == DW_DLV_ERROR) {
+        printf("FAIL signed decode special v65s "
+            "unexpected error output %d\n",
+            __LINE__);
+        ++errcnt;
+    }
+    printsigned(sdecodeval,(char *)v65s , vlen, __LINE__);
+    if (sdecodeval != -72057594037927809) {
+        printf("FAIL signed decode special v65s value check got %llu "
+            "vs expected %u  line:%d\n",
+            udecodeval,1,__LINE__);
+        ++errcnt;
+    }
+    if (vlen != decodelen) {
+        printf("FAIL signed decode special v65s decode len got %u "
+            "vs expected %u  line:%d\n",
+            (unsigned)decodelen,vlen,__LINE__);
+        ++errcnt;
+    }
+
+
+
+    return errcnt; 
+}
+
 int main(void)
 {
     unsigned slen = sizeof(stest)/sizeof(Dwarf_Signed);
@@ -706,6 +948,8 @@ int main(void)
     errs += unsignedtest(ulen);
 
     errs += specialtests();
+
+    errs += testatmaxlimit();
 
     if (errs) {
         printf("FAIL. leb encode/decode errors\n");
