@@ -163,7 +163,6 @@ struct Dwarf_P_String_Attr_s {
     Dwarf_Unsigned        sa_nbytes;
 };
 
-
 /* DWARF Producer Interface */
 /*  New form June, 2011. Adds user_data argument. */
 typedef int (*Dwarf_Callback_Func)(
@@ -445,7 +444,6 @@ DWP_API int dwarf_add_AT_with_ref_sig8_a(
     Dwarf_P_Attribute * /*outattr*/,
     Dwarf_Error * /*error*/);
 
-
 /* Producer line creation functions (.debug_line) */
 DWP_API int dwarf_add_directory_decl_a(Dwarf_P_Debug /*dbg*/,
     char*           /*name*/,
@@ -571,7 +569,6 @@ DWP_API int dwarf_add_die_to_debug_a(
     Dwarf_P_Debug   /*dbg*/,
     Dwarf_P_Die     /*die*/,
     Dwarf_Error*    /*error*/);
-
 
 /* Markers are not written  to DWARF2/3/4, they are user
    defined and may be used for any purpose.

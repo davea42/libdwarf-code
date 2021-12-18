@@ -208,7 +208,6 @@ struct Dwarf_P_Die_s {
     Dwarf_Unsigned di_marker;   /* used to attach symbols to dies */
 };
 
-
 /* producer fields */
 struct Dwarf_P_Attribute_s {
     Dwarf_Half ar_attribute; /* Attribute Value. */
@@ -259,8 +258,6 @@ enum dwarf_sn_kind { dwarf_snk_pubname,  /* .debug_pubnames */
     dwarf_snk_pubtype,   /* .debug_pubtypes */
     dwarf_snk_entrycount /* this one must be last */
 };
-
-
 
 /* The calls to add a varname etc use a list of
    these as the list.

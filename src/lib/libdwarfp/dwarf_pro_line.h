@@ -77,7 +77,6 @@ struct Dwarf_P_F_Entry_s {
     unsigned char dfe_md5[16];
 };
 
-
 /*
     Struct holding line number information for each of the producer
     line entries.  */
