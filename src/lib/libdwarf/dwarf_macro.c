@@ -151,7 +151,7 @@ _dwarf_macro_stack_push_index(Dwarf_Debug dbg, Dwarf_Signed indx,
         }
         if (ms->st_base) {
             memcpy(newbase, ms->st_base,
-                ms->st_next_to_use * sizeof(Dwarf_Signed));
+                ms->st_next_to_use * sizeof(*newbase));
             dwarf_dealloc(dbg, ms->st_base, DW_DLA_STRING);
         }
         ms->st_base = newbase;

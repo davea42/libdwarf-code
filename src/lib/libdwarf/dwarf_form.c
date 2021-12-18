@@ -552,7 +552,7 @@ _dwarf_formsig8_internal(Dwarf_Attribute attr,
     }
 
     memcpy(returned_sig_bytes, attr->ar_debug_ptr,
-        sizeof(Dwarf_Sig8));
+        sizeof(*returned_sig_bytes));
     return DW_DLV_OK;
 }
 
@@ -600,7 +600,7 @@ find_sig8_target_as_global_offset(Dwarf_Attribute attr,
     int res = 0;
 
     targ_is_info = attr->ar_cu_context->cc_is_info;
-    memcpy(sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
+    memcpy(sig8,attr->ar_debug_ptr,sizeof(*sig8));
     res = dwarf_find_die_given_sig8(attr->ar_dbg,
         sig8,&targdie,&targ_is_info,error);
     if (res != DW_DLV_OK) {
@@ -1048,7 +1048,7 @@ _dwarf_extract_data16(Dwarf_Debug dbg,
         _dwarf_error(dbg, error,DW_DLE_DATA16_OUTSIDE_SECTION);
         return DW_DLV_ERROR;
     }
-    memcpy(returned_val, data, sizeof(Dwarf_Form_Data16));
+    memcpy(returned_val, data, sizeof(*returned_val));
     return DW_DLV_OK;
 
 }

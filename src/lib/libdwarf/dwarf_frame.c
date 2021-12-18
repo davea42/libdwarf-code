@@ -275,11 +275,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 /* SER === SIMPLE_ERROR_RETURN */
 #define SER(code)                     \
         FREELOCALMALLOC;              \
-        _dwarf_error(dbg,error,code); \
+        _dwarf_error(dbg,error,(code)); \
         return DW_DLV_ERROR
 #define SERSTRING(code,m)             \
         FREELOCALMALLOC;              \
-        _dwarf_error_string(dbg,error,code,m); \
+        _dwarf_error_string(dbg,error,(code),m); \
         return DW_DLV_ERROR
 /*  m must be a quoted string */
 #define SERINST(m)                    \

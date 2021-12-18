@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2014-2020 David Anderson. All Rights Reserved.
+  Copyright (C) 2014-2021 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it
   and/or modify it under the terms of version 2.1 of the
@@ -456,37 +456,32 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
         xuhdr->gx_index_table_offset;
     Dwarf_Small *indexentry = 0;
     Dwarf_Small *hashentry = 0;
-    Dwarf_Sig8 hashval;
     Dwarf_Unsigned indexval = 0;
     Dwarf_Small *section_end = xuhdr->gx_section_data +
         xuhdr->gx_section_length;
 
-    hashval  = zerohashkey;
-    if (xuhdr->gx_slots_in_hash > 0) {
-        if (index >= xuhdr->gx_slots_in_hash) {
-            dwarfstring m;
-
-            dwarfstring_constructor(&m);
-            dwarfstring_append_printf_u(&m,
-                "DW_DLE_XU_HASH_ROW_ERROR the index passed in, "
-                " %u, is greater than the number of slots "
-                " in the hash table.",index);
-            _dwarf_error_string(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR,
-                dwarfstring_string(&m));
-            dwarfstring_destructor(&m);
-            return DW_DLV_ERROR;
-        }
-        hashentry = hashtab + (index * HASHSIGNATURELEN);
-        memcpy(&hashval,hashentry,sizeof(hashval));
-    } else {
+    if (!xuhdr->gx_slots_in_hash) {
         _dwarf_error_string(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR,
             "DW_DLE_XU_HASH_ROW_ERROR the number of slots is zero"
             " which seems wrong.");
         return DW_DLV_ERROR;
     }
+    if (index >= xuhdr->gx_slots_in_hash) {
+        dwarfstring m;
 
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_XU_HASH_ROW_ERROR the index passed in, "
+            " %u, is greater than the number of slots "
+            " in the hash table.",index);
+        _dwarf_error_string(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    hashentry = hashtab + (index * HASHSIGNATURELEN);
+    memcpy(hash_value,hashentry,HASHSIGNATURELEN);
     indexentry = indextab + (index * SIZEOFT32);
-    memcpy(hash_value,&hashval,sizeof(hashval));
     READ_UNALIGNED_CK(dbg,indexval,Dwarf_Unsigned, indexentry,
         SIZEOFT32,
         err,section_end);
@@ -495,7 +490,6 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
         _dwarf_error(dbg, err,  DW_DLE_XU_HASH_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
-
     *index_to_sections = indexval;
     return DW_DLV_OK;
 }

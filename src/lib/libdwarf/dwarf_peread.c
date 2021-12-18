@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020, David Anderson All rights reserved.
+Copyright (c) 2020-2021, David Anderson All rights reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
@@ -157,6 +157,9 @@ check_valid_string(char *tab,
 static int
 pe_section_name_get(dwarf_pe_object_access_internals_t *pep,
     const char *name_array,
+
+    /* The name strlen */
+    unsigned long size_name,
     const char ** name_out,
     int *errcode)
 {
@@ -167,8 +170,9 @@ pe_section_name_get(dwarf_pe_object_access_internals_t *pep,
         char temp_array[9];
         int res = 0;
 
-        memcpy(temp_array,name_array+1,7);
-        temp_array[7] = 0;
+        /*  The value is an integer after the /, and we want the value */
+        _dwarf_safe_strcpy(temp_array,sizeof(temp_array),
+            name_array+1,size_name-1);
         v = atoi(temp_array);
         if (v < 0) {
             *errcode = DW_DLE_STRING_OFFSET_BAD;
@@ -189,7 +193,6 @@ pe_section_name_get(dwarf_pe_object_access_internals_t *pep,
             *errcode = DW_DLE_STRING_OFFSET_BAD;
             return DW_DLV_ERROR;
         }
-
         s = pep->pe_string_table +u;
         *name_out = s;
         return DW_DLV_OK;
@@ -518,11 +521,11 @@ dwarf_pe_load_dwarf_section_headers(
             sizeof(safe_name),
             filesect.Name,
             IMAGE_SIZEOF_SHORT_NAME);
-        /*  Then add NUL terminator. */
+        /* Have NUL terminator now. */
         sec_outp->name = strdup(safe_name);
 
         res = pe_section_name_get(pep,
-            safe_name,&expname,errcode);
+            safe_name,strlen(safe_name),&expname,errcode);
         if (res != DW_DLV_OK) {
             return res;
         }

@@ -276,7 +276,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned area_length = 0;
     Dwarf_Unsigned area_max_offset = 0;
     unsigned initial_length = 0; /*offset_size+local_ext */
-    int offset_size;
+    int offset_size = 0;
     int local_extension_size = 0;
     Dwarf_Small *end_dnames = 0; /* 1 past local table */
     Dwarf_Half version = 0;
@@ -846,8 +846,8 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     if (sig && sigoffset) {
         Dwarf_Small *ptr = unit_ptr + index_number *unit_entry_size;
         /*  ASSERT: ptr < dn->dn_indextable_data_end */
-        memcpy(sig,ptr,sizeof(Dwarf_Sig8));
-    } else
+        memcpy(sig,ptr,sizeof(*sig));
+    } else {}
 #endif /*0*/
     if (sig) {
         /* CU or TU ref */
