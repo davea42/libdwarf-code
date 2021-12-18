@@ -133,6 +133,7 @@
 #include <string.h>
 #endif /* HAVE_STRING_H */
 #include "dd_regex.h"
+#include "dd_safe_strcpy.h"
 
 /*  This version corrects two bugs (see 'code by davea'
     below).
@@ -529,7 +530,7 @@ naming(CHAR c)
     }
     outtab[0] = 0;
     if (c && c <= MAXPREDEF) {
-        strncpy(outtab,n[c],sizeof(name1)); /* debugging only */
+        dd_safe_strcpy(outtab,sizeof(nam1),n[c],strlen(n[c]));
     } else {
         sprintf(outtab,"0x%x",c); /* debugging only */
     }
@@ -666,7 +667,7 @@ symbolic(char *s)
 static void
 nfadump(CHAR *ap)
 {
-    register int n;
+    register int n = 0;
 
     while (*ap != END)
         switch(*ap++) {

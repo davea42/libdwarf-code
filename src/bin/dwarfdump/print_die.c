@@ -1758,6 +1758,16 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             int cores = dwarf_dieoffset(child,
                 &child_overall_offset, err);
 
+            if (cores == DW_DLV_ERROR) {
+                print_error_and_continue(dbg,
+                    "Finding a DIE offset (dwarf_dieoffset())"
+                    "failed.",cores,*err);
+                dwarf_dealloc_die(child);
+                if (in_die != in_die_in) {
+                    dwarf_dealloc_die(in_die);
+                }
+                return cores;
+            }
             if (cores == DW_DLV_OK) {
                 Dwarf_Off parent_sib_val =
                     get_die_stack_sibling();
@@ -1801,15 +1811,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     }
                     return DW_DLV_ERROR;
                 }
-            } else if (cores == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
-                    "Finding a DIE offset (dwarf_dieoffset())"
-                    "failed.",cores,*err);
-                dwarf_dealloc_die(child);
-                if (in_die != in_die_in) {
-                    dwarf_dealloc_die(in_die);
-                }
-                return cores;
             }
             if ((1+die_stack_indent_level) >= DIE_STACK_SIZE ) {
                 report_die_stack_error(dbg,err);
@@ -3191,6 +3192,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         }
         break;
+    default: break;
     } /* End switch. */
     esb_destructor(&valname);
     return DW_DLV_OK;
