@@ -25,6 +25,7 @@ are clearly marked with a comment of /* Yuck! */. Please
 don't submit code for libdwarf that looks like any of these.
 
 Section list:
+
     Indentation
     Tab characters
     Braces
@@ -32,6 +33,7 @@ Section list:
     Struct Format and Content
     Managing nested blocks
     Test or Loop with Side Effect
+    Switch statements
     Macro Tests Commented
     Lookup Tables
     Memory allocation
@@ -298,6 +300,32 @@ things might be going wrong somehow.
 
 Also see "Managing nested blocks" just above.
 
+### Switch statements
+
+We use the following indent practice:
+
+    switch(x) {
+    case a: { 
+        /*  Define&use local variables,  do something */
+    }
+    case b: 
+        /*  Do something, no new local variable
+            needed. */
+        break;
+    ...
+    default: /* do something or break*/
+    }
+
+The default case is used everywhere (instead
+of being omitted when it could be omitted)
+to satisfy a Cobra rule. One thinks
+consistency reads well.
+
+dwarf_names.c (for example) is full of functions
+where all known values do a return on each case:
+and there the last entry is default: break;
+followed outside the switch by the return for
+the error case.
 
 ### Macro Tests Commented
 
@@ -320,7 +348,7 @@ Any situation requiring a lookup table should use one
 or the other tsearch functions. The practical ones are
 dwarf\_tsearchhash.c and dwarf\_tsearchbal.c.  dwarfdump and
 libdwarf each use one of them and only one of them.  See the
-libdwarf-tsearch project to see the full set available.
+tsearch-code project to see the full set available.
 
 These use the traditional UNIX tsearch arguments and return
 values even though those are not good designs by current
