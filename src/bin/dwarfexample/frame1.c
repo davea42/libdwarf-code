@@ -824,6 +824,7 @@ print_one_regentry(const char *prefix,
         /* printf(" block-ptr  0x%" DW_PR_DUx " ",
             (Dwarf_Unsigned)entry->dw_block.bl_data); */
         break;
+    default: break;
     }
     printf("\n");
 }

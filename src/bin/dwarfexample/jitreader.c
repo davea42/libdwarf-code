@@ -243,6 +243,7 @@ isformstring(Dwarf_Half form)
     case DW_FORM_strx3:         return TRUE;
     case DW_FORM_strx4:         return TRUE;
     case DW_FORM_strp:          return TRUE;
+    default: break;
     };
     return FALSE;
 }

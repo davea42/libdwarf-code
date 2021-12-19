@@ -857,7 +857,6 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
         if (res == DW_DLV_ERROR && !passnullerror) {
             dwarf_dealloc_error(dbg,error);
             error = 0;
-        } else if (res == DW_DLV_NO_ENTRY) {
         }
         dwarf_dealloc(dbg,attrbuf[i],DW_DLA_ATTR);
     }

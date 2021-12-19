@@ -316,7 +316,8 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         error = 0;
         dwarf_finish(dbg);
         return res;
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } 
+    if (res == DW_DLV_NO_ENTRY) {
         printf("%sThere is no %s or %s section in \"%s\"\n",
             prefix,dlname,buildidname,path);
         dwarf_finish(dbg);

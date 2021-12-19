@@ -222,7 +222,8 @@ validate_op_listed(char *curdefname,unsigned long v,
         if (v == ops->ot_first) {
             validate_name(curdefname,v,linenum);
             return;
-        } else if (ops->ot_last && v == ops->ot_last) {
+        } 
+        if (ops->ot_last && v == ops->ot_last) {
             validate_name(curdefname,v,linenum);
             return;
         }

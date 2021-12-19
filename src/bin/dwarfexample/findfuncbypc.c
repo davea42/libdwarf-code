@@ -1252,30 +1252,6 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
         dwarf_dealloc_ranges(dbg,ranges,ranges_count);
     }
     return finalres;
-#if 0
-    /* dwarf pdf page 101 */
-    sf->srcfilesres = dwarf_srcfiles(die,&sf->srcfiles,
-        &sf->srcfilescount,
-        errp);
-    if (sf->srcfilesres == DW_DLV_ERROR) {
-    }
-
-    /* see pdf, page 95 */
-    res2 = dwarf_srclines_comp_dir(linecontext,
-
-    /* see pdf, page 92 */
-    res2 = dwarf_srclines_b(die,&version,&table_count,
-        &linecontext,errp);
-    /* see dwarf_srclines_dealloc_b()  page 91*/
-    res2 = dwarf_srclines_from_linecontext(linecontext,
-        &linebuf,&linecount,errp);
-
-    /* files_indexes are page 96 */
-    int dwarf_srclines_files_indexes(linecontext,
-        &baseindex,
-        &filescount,&endindex,errp);
-
-#endif /* 0 */
 }
 
 static int
