@@ -103,16 +103,16 @@ extern "C" {
 #define DW_TAG_namelist                 0x2b
         /*  Early releases of this header had the following
             misspelled with a trailing 's' */
-#define DW_TAG_namelist_item            0x2c /* DWARF3/2 spelling */
-#define DW_TAG_namelist_items           0x2c /*SGI misspelling/typo*/
+#define DW_TAG_namelist_item            0x2c /* DWARF2 spelling*/
+#define DW_TAG_namelist_items           0x2c /* SGI misspelling/typo*/
 #define DW_TAG_packed_type              0x2d
 #define DW_TAG_subprogram               0x2e
         /*  The DWARF2 document had two spellings of the following
             two TAGs, DWARF3 specifies the longer spelling. */
 #define DW_TAG_template_type_parameter  0x2f /* DWARF3/2 spelling*/
-#define DW_TAG_template_type_param      0x2f /* DWARF2   spelling*/
-#define DW_TAG_template_value_parameter 0x30 /* DWARF3/2 spelling*/
-#define DW_TAG_template_value_param     0x30 /* DWARF2   spelling*/
+#define DW_TAG_template_type_param      0x2f /* DWARF2 internally inconsistent*/
+#define DW_TAG_template_value_parameter 0x30 /* DWARF all versions*/
+#define DW_TAG_template_value_param     0x30 /* SGI misspelling/typo*/
 #define DW_TAG_thrown_type              0x31
 #define DW_TAG_try_block                0x32
 #define DW_TAG_variant_part             0x33
