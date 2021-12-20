@@ -32,7 +32,7 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 #include <limits.h>
 
 #include "dd_esb.h"                /* For flexible string buffer. */
-#include "dwconf.h"
+#include "dd_dwconf.h"
 #include "dd_safe_strcpy.h"
 
 #ifdef TRIVIAL_NAMING  /* for make rebuild */

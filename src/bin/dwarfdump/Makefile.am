@@ -17,7 +17,7 @@ dd_common.c \
 dd_common.h \
 dd_compiler_info.c \
 dd_compiler_info.h \
-defined_types.h \
+dd_defined_types.h \
 dd_regex.c \
 dd_regex.h \
 dd_safe_strcpy.h \
@@ -30,9 +30,9 @@ dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
 dwarf_tsearch.h \
 dwarf_tsearchbal.c \
-dwconf.c \
-dwconf.h \
-dwconf_using_functions.h \
+dd_dwconf.c \
+dd_dwconf.h \
+dd_dwconf_using_functions.h \
 dwarf_getopt.c \
 dwarf_getopt.h \
 dd_esb.c \

@@ -26,7 +26,7 @@
 */
 
 #include "globals.h"
-#include "dwconf.h"
+#include "dd_dwconf.h"
 #include "dwarf_getopt.h"
 
 #include "dd_common.h"

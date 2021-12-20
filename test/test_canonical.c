@@ -17,12 +17,7 @@
 #endif
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "dwconf.h"
-#if 0
-#include "dwarf_base_types.h"
-#include "dwarf_opaque.h"
-#include "dwarf_error.h"
-#endif
+#include "dd_dwconf.h"
 
 /*  Fake glflags and functions we do not
     use in the test so dwconf.c compiles */

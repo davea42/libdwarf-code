@@ -1,7 +1,7 @@
 
 set_source_group(SOURCES "Source Files" dd_addrmap.c 
     dd_checkutil.c dd_common.c dd_regex.c dd_safe_strcpy.c
-    dwarfdump.c dwconf.c helpertree.c 
+    dwarfdump.c dd_dwconf.c helpertree.c 
     glflags.c dd_command_options.c dd_compiler_info.c
     macrocheck.c 
     opscounttab.c
@@ -30,16 +30,16 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
 	
 set_source_group(HEADERS "Header Files" 
   dd_addrmap.h dd_attr_form.h dd_checkutil.h dd_common.h dd_regex.h
-  dd_safe_strcpy.h dwconf.h
+  dd_safe_strcpy.h dd_dwconf.h
   dd_command_options.h dd_compiler_info.h
   opscounttab.h 
   print_debug_gnu.h
-  dwconf_using_functions.h dd_esb_using_functions.h
+  dd_dwconf_using_functions.h dd_esb_using_functions.h
   dwarfdump-af-table.h
   dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 
   dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
   dwarf_getopt.h dd_esb.h glflags.h globals.h
-  macrocheck.h defined_types.h
+  macrocheck.h dd_defined_types.h
   dd_sanitized.h
   makename.h dwarf_tsearch.h print_frames.h 
   section_bitmaps.h dd_uri.h

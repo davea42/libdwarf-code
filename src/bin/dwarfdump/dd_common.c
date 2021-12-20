@@ -40,7 +40,7 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_common.h"
-#include "defined_types.h"
+#include "dd_defined_types.h"
 #include "dd_sanitized.h"
 
 /* PACKAGE_VERSION is from config.h */

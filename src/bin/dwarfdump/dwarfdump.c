@@ -51,8 +51,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include "makename.h"
 #include "macrocheck.h"
-#include "dwconf.h"
-#include "dwconf_using_functions.h"
+#include "dd_dwconf.h"
+#include "dd_dwconf_using_functions.h"
 #include "dd_common.h"
 #include "helpertree.h"
 #include "dd_esb.h"                /* For flexible string buffer. */

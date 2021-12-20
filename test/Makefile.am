@@ -180,7 +180,7 @@ test_errmsglist_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_canonical_SOURCES = test_canonical.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwconf.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_dwconf.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.h \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c
