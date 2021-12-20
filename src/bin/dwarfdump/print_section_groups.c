@@ -27,7 +27,7 @@ Copyright (C) 2017-2017  David Anderson. All rights reserved.
 
 #include "globals.h"
 #include "dd_sanitized.h"
-#include "naming.h"
+#include "dd_naming.h"
 
 /*  Two purposes here related to COMDAT:
     A)  get and print the data on sections and groups.

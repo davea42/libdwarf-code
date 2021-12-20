@@ -28,9 +28,8 @@
 #include "globals.h"
 #include "dd_dwconf.h"
 #include "dwarf_getopt.h"
-
 #include "dd_common.h"
-#include "makename.h"
+#include "dd_makename.h"
 #include "dd_uri.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_sanitized.h"

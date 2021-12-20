@@ -102,7 +102,7 @@ test_dwgetopt_CPPFLAGS =  -DTESTING \
 
 test_makenametest_SOURCES = makename_test.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
-    $(top_srcdir)/src/bin/dwarfdump/makename.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_makename.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_makenametest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_makenametest_CPPFLAGS =  -DTESTING \

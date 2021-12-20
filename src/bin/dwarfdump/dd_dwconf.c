@@ -28,12 +28,12 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 */
 
 #include "config.h"
+#include <ctype.h>
 #include "globals.h"
 #include "dd_dwconf.h"
 #include "dd_sanitized.h"
 #include "dd_esb.h"
 #include "dd_safe_strcpy.h"
-#include <ctype.h>
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -47,7 +47,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "globals.h"
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "makename.h"
+#include "dd_makename.h"
 
 /* The nesting level is arbitrary,  2 should suffice.
    But at least this prevents an infinite loop.

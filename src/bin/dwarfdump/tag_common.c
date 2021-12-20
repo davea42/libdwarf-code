@@ -35,7 +35,7 @@ Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
 #include <ctype.h>    /*  For isspace() declaration */
 
 #include "globals.h"
-#include "naming.h"
+#include "dd_naming.h"
 #include "tag_common.h"
 
 static int linecount = 0;

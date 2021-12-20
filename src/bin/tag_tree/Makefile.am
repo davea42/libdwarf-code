@@ -27,8 +27,8 @@ $(top_srcdir)/src/bin/dwarfdump/dd_common.c \
 $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c \
 $(top_srcdir)/src/bin/dwarfdump/dwarf_getopt.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
-$(top_srcdir)/src/bin/dwarfdump/makename.c \
-$(top_srcdir)/src/bin/dwarfdump/naming.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_makename.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_naming.c \
 $(top_srcdir)/src/bin/dwarfdump/glflags.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \

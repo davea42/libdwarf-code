@@ -79,7 +79,7 @@ if (DO_TESTING)
     set_source_group(MAKENAME_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/makename_test.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/makename.c
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_makename.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
     add_executable(selfmakename ${MAKENAME_SOURCES})
     target_compile_options(selfmakename PRIVATE ${DW_FWALL})

@@ -50,7 +50,7 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
 #include "dwarf_tsearch.h"
-#include "makename.h"
+#include "dd_makename.h"
 #include "globals.h"
 
 #if defined(__WIN32) &&  (!defined(__GNUC__) && !defined(__clang__))

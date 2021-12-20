@@ -45,10 +45,10 @@ helpertree.c \
 helpertree.h \
 macrocheck.c \
 macrocheck.h \
-makename.c \
-makename.h \
-naming.c \
-naming.h \
+dd_makename.c \
+dd_makename.h \
+dd_naming.c \
+dd_naming.h \
 opscounttab.c \
 opscounttab.h \
 print_abbrevs.c \

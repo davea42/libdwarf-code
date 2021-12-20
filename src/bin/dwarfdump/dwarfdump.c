@@ -49,7 +49,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <unistd.h> /* for dup2() */
 #endif /* _WIN32 */
 
-#include "makename.h"
+#include "dd_makename.h"
 #include "macrocheck.h"
 #include "dd_dwconf.h"
 #include "dd_dwconf_using_functions.h"
@@ -62,7 +62,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_addrmap.h"
 #include "dd_attr_form.h"
 #include "print_debug_gnu.h"
-#include "naming.h" /* for get_FORM_name() */
+#include "dd_naming.h" /* for get_FORM_name() */
 #include "dd_command_options.h"
 #include "dd_compiler_info.h"
 #include "dd_safe_strcpy.h"

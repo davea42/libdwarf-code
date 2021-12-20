@@ -34,7 +34,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "naming.h"
+#include "dd_naming.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"

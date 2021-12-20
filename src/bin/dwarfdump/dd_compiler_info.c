@@ -25,7 +25,7 @@
 */
 
 #include "globals.h"
-#include "makename.h"
+#include "dd_makename.h"
 #include "dd_sanitized.h"
 #include "dd_safe_strcpy.h"
 
