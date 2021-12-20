@@ -63,8 +63,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_attr_form.h"
 #include "print_debug_gnu.h"
 #include "naming.h" /* for get_FORM_name() */
-#include "command_options.h"
-#include "compiler_info.h"
+#include "dd_command_options.h"
+#include "dd_compiler_info.h"
 #include "dd_safe_strcpy.h"
 
 #ifndef O_RDONLY

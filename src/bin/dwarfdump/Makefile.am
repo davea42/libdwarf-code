@@ -11,12 +11,12 @@ dd_attr_form.h \
 dd_attr_form.c \
 dd_checkutil.c \
 dd_checkutil.h \
-command_options.c \
-command_options.h \
+dd_command_options.c \
+dd_command_options.h \
 dd_common.c \
 dd_common.h \
-compiler_info.c \
-compiler_info.h \
+dd_compiler_info.c \
+dd_compiler_info.h \
 defined_types.h \
 dd_regex.c \
 dd_regex.h \

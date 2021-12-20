@@ -36,8 +36,8 @@
 #include "dd_sanitized.h"
 #include "tag_common.h"
 #include "section_bitmaps.h"
-#include "command_options.h"
-#include "compiler_info.h"
+#include "dd_command_options.h"
+#include "dd_compiler_info.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
 

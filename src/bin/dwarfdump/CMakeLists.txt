@@ -2,7 +2,7 @@
 set_source_group(SOURCES "Source Files" dd_addrmap.c 
     dd_checkutil.c dd_common.c dd_regex.c dd_safe_strcpy.c
     dwarfdump.c dwconf.c helpertree.c 
-    glflags.c command_options.c compiler_info.c
+    glflags.c dd_command_options.c dd_compiler_info.c
     macrocheck.c 
     opscounttab.c
     print_abbrevs.c print_aranges.c
@@ -31,7 +31,7 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
 set_source_group(HEADERS "Header Files" 
   dd_addrmap.h dd_attr_form.h dd_checkutil.h dd_common.h dd_regex.h
   dd_safe_strcpy.h dwconf.h
-  command_options.h compiler_info.h
+  dd_command_options.h dd_compiler_info.h
   opscounttab.h 
   print_debug_gnu.h
   dwconf_using_functions.h dd_esb_using_functions.h

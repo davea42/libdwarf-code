@@ -29,8 +29,8 @@
 #include "dd_sanitized.h"
 #include "dd_safe_strcpy.h"
 
-#include "command_options.h"
-#include "compiler_info.h"
+#include "dd_command_options.h"
+#include "dd_compiler_info.h"
 
 /* Record compilers  whose CU names have been seen.
    Full CU names recorded here, though only a portion
