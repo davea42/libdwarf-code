@@ -34,7 +34,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "addrmap.h"
+#include "dd_addrmap.h"
 #include "dwarf_tsearch.h"
 
 static struct Addr_Map_Entry *

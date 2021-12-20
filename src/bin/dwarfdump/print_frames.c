@@ -45,7 +45,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-#include "addrmap.h"
+#include "dd_addrmap.h"
 #include "naming.h"
 #include "dd_safe_strcpy.h"
 

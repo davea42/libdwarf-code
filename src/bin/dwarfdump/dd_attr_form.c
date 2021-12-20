@@ -28,7 +28,7 @@
 #define DW_TSHASHTYPE long /* this type not needed */
 #include "dwarf_tsearch.h"
 #include "naming.h"
-#include "attr_form.h"
+#include "dd_attr_form.h"
 #include "dwarfdump-af-table.h"
 
 const Three_Key_Entry threekeyzero;

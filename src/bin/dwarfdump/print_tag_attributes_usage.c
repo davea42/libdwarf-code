@@ -44,7 +44,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "macrocheck.h"
 #include "helpertree.h"
 #include "tag_common.h"
-#include "attr_form.h"
+#include "dd_attr_form.h"
 
 static int pd_dwarf_names_print_on_error = 1;
 

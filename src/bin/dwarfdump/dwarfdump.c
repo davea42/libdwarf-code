@@ -59,8 +59,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 #include "tag_common.h"
-#include "addrmap.h"
-#include "attr_form.h"
+#include "dd_addrmap.h"
+#include "dd_attr_form.h"
 #include "print_debug_gnu.h"
 #include "naming.h" /* for get_FORM_name() */
 #include "command_options.h"

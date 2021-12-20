@@ -5,10 +5,10 @@ MAINTAINERCLEANFILES = Makefile.in
 bin_PROGRAMS = dwarfdump
 
 dwarfdump_SOURCES = \
-addrmap.c \
-addrmap.h \
-attr_form.h \
-attr_form.c \
+dd_addrmap.c \
+dd_addrmap.h \
+dd_attr_form.h \
+dd_attr_form.c \
 dd_checkutil.c \
 dd_checkutil.h \
 command_options.c \
