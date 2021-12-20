@@ -387,6 +387,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 
     DW_FORM_addrx
     DW_FORM_strx
+    DW_FORM_LLVM_addrx_offset
     DW_FORM_rnglistx
     DW_FORM_GNU_addr_index
     DW_FORM_GNU_str_index
@@ -893,6 +894,17 @@ _dwarf_get_addr_index_itself(int theform,
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
     switch(theform){
+    case DW_FORM_LLVM_addrx_offset: {
+        Dwarf_Unsigned tmp = 0;
+        Dwarf_Unsigned tmp2 = 0;
+        DECODE_LEB128_UWORD_CK(info_ptr,tmp,
+            dbg,error,section_end);
+        READ_UNALIGNED_CK(dbg, tmp2, Dwarf_Unsigned,
+            info_ptr, SIZEOFT32,
+            error,section_end);
+        index = (tmp<<32) | tmp2;
+        break;
+    }
     case DW_FORM_GNU_addr_index:
     case DW_FORM_addrx:
         DECODE_LEB128_UWORD_CK(info_ptr,index,
@@ -954,7 +966,7 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
 }
 
 static int
-dw_read_index_val_itself(Dwarf_Debug dbg,
+dw_read_str_index_val_itself(Dwarf_Debug dbg,
     unsigned theform,
     Dwarf_Small *info_ptr,
     Dwarf_Small *section_end,
@@ -1023,7 +1035,7 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
         _dwarf_calculate_info_section_end_ptr(cu_context);
     info_ptr = attr->ar_debug_ptr;
 
-    indxres = dw_read_index_val_itself(dbg, theform, info_ptr,
+    indxres = dw_read_str_index_val_itself(dbg, theform, info_ptr,
         section_end, &index,error);
     if (indxres == DW_DLV_OK) {
         *return_index = index;
@@ -1097,7 +1109,8 @@ dwarf_formdata16(Dwarf_Attribute attr,
 }
 
 /*  The *addrx are DWARF5 standard.
-    The GNU form is non-standard gcc DWARF4 */
+    The GNU form is non-standard gcc DWARF4 
+    The LLVM form is the newest. */
 Dwarf_Bool
 dwarf_addr_form_is_indexed(int form)
 {
@@ -1108,6 +1121,7 @@ dwarf_addr_form_is_indexed(int form)
     case DW_FORM_addrx3:
     case DW_FORM_addrx4:
     case DW_FORM_GNU_addr_index:
+    case DW_FORM_LLVM_addrx_offset:
         return TRUE;
     default: break;
     }
@@ -1614,7 +1628,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     sof_start = dbg->de_debug_str_offsets.dss_data;
     sof_len = dbg->de_debug_str_offsets.dss_size;
     sof_end = sof_start+sof_len;
-    idxres = dw_read_index_val_itself(dbg,
+    idxres = dw_read_str_index_val_itself(dbg,
         attrform,data_ptr,end_data_ptr,&index_to_offset_entry,error);
     if ( idxres != DW_DLV_OK) {
         return idxres;

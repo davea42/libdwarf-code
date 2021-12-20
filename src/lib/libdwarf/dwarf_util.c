@@ -260,18 +260,6 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Unsigned ret_value = 0;
 
     switch (form) {
-
-    /*  When we encounter a FORM here that
-        we know about but forgot to enter here,
-        we had better not just continue.
-        Usually means we forgot to update this function
-        when implementing form handling of a new FORM.
-        Disaster results from using a bogus value,
-        so generate error. */
-    default:
-        _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
-        return DW_DLV_ERROR;
-
     case 0:  return DW_DLV_OK;
 
     case DW_FORM_GNU_ref_alt:
@@ -557,6 +545,11 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = v_length_size;
         return DW_DLV_OK;
 
+    case DW_FORM_LLVM_addrx_offset:
+        SKIP_LEB128_LEN_CK(val_ptr,leb128_length,
+            dbg,error,section_end_ptr);
+        *size_out = leb128_length + SIZEOFT32;
+        return DW_DLV_OK;
     case DW_FORM_udata: {
         /*  Discard the decoded value, we just want the length
             of the value. */
@@ -565,7 +558,17 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = leb128_length;
         return DW_DLV_OK;
     }
+    default: break;
     }
+    /*  When we encounter a FORM here that
+        we know about but forgot to enter here,
+        we had better not just continue.
+        Usually means we forgot to update this function
+        when implementing form handling of a new FORM.
+        Disaster results from using a bogus value,
+        so generate error. */
+    _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
+    return DW_DLV_ERROR;
 }
 
 /*  We allow an arbitrary number of HT_MULTIPLE entries

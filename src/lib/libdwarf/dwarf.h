@@ -279,6 +279,8 @@ extern "C" {
 /* GNU extension. Offset in .debug_str of another object file. */
 #define DW_FORM_GNU_strp_alt 0x1f21
 
+#define DW_FORM_LLVM_addrx_offset       0x2001
+
 #define DW_AT_sibling                           0x01
 #define DW_AT_location                          0x02
 #define DW_AT_name                              0x03
@@ -474,12 +476,12 @@ extern "C" {
 #define DW_AT_HP_all_variables_modifiable       0x2019 /* HP */
 #define DW_AT_HP_linkage_name                   0x201a /* HP */
 #define DW_AT_HP_prof_flags                     0x201b /* HP */
-#define DW_AT_HP_unit_name                      0x201f
-#define DW_AT_HP_unit_size                      0x2020
-#define DW_AT_HP_widened_byte_size              0x2021
-#define DW_AT_HP_definition_points              0x2022
-#define DW_AT_HP_default_location               0x2023
-#define DW_AT_HP_is_result_param                0x2029
+#define DW_AT_HP_unit_name                      0x201f /* HP */
+#define DW_AT_HP_unit_size                      0x2020 /* HP */
+#define DW_AT_HP_widened_byte_size              0x2021 /* HP */
+#define DW_AT_HP_definition_points              0x2022 /* HP */
+#define DW_AT_HP_default_location               0x2023 /* HP */
+#define DW_AT_HP_is_result_param                0x2029 /* HP */
 
 #define DW_AT_CPQ_discontig_ranges              0x2001 /* COMPAQ/HP */
 #define DW_AT_CPQ_semantic_events               0x2002 /* COMPAQ/HP */
@@ -488,7 +490,7 @@ extern "C" {
 #define DW_AT_CPQ_prologue_length               0x2005 /* COMPAQ/HP */
 
 /*  From GHS C GreenHills ghs.com */
-#define DW_AT_ghs_mangled    0x2007  /* conflict MIPS */
+#define DW_AT_ghs_mangled                       0x2007  /* conflict MIPS */
 #define DW_AT_ghs_rsm                           0x2083
 #define DW_AT_ghs_frsm                          0x2085
 #define DW_AT_ghs_frames                        0x2086
@@ -557,7 +559,7 @@ extern "C" {
 #define DW_AT_GNU_entry_view                    0x2138 /* GNU */
 
 /* See https://gcc.gnu.org/wiki/DW_AT_GNU_bias */
-#define DW_AT_GNU_bias          0x2305
+#define DW_AT_GNU_bias                          0x2305
 
 /* Sun extensions */
 #define DW_AT_SUN_template                      0x2201 /* SUN */
@@ -677,7 +679,7 @@ extern "C" {
 #define DW_AT_LLVM_sysroot                      0x3e02
 #define DW_AT_LLVM_tag_offset                   0x3e03
 /*  LLVM intends to use 0x3e04 - 0x3e06 */
-#define DW_AT_LLVM_apinotes                     0x3e03
+#define DW_AT_LLVM_apinotes                     0x3e07
 /*  Next 6 are for Hetrogenous debugging */
 #define DW_AT_LLVM_active_lane                  0x3e08
 #define DW_AT_LLVM_augmentation                 0x3e09
@@ -966,7 +968,7 @@ most-likely-useful name. */
 #define DW_ATE_SUN_interval_float     0x91
 
 /* Obsolete: See DW_ATE_imaginary_float */
-#define DW_ATE_SUN_imaginary_float    0x92
+#define DW_ATE_SUN_imaginary_float    0x92 /* Really SUN 0x86 ? */
 
 #define DW_ATE_hi_user                0xff
 
@@ -980,7 +982,9 @@ most-likely-useful name. */
 #define DW_IDX_die_offset           0x3      /* DWARF5 */
 #define DW_IDX_parent               0x4      /* DWARF5 */
 #define DW_IDX_type_hash            0x5      /* DWARF5 */
+#define DW_IDX_GNU_internal         0x2000
 #define DW_IDX_lo_user              0x2000   /* DWARF5 */
+#define DW_IDX_GNU_external         0x2001  
 #define DW_IDX_hi_user              0x0fff   /* DWARF5 */
 
 /*  These with not-quite-the-same-names were used in DWARF4
@@ -1142,8 +1146,10 @@ most-likely-useful name. */
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
 #define DW_LANG_Upc                     0x8765 /* UPC, use
                                         DW_LANG_UPC instead. */
+#define DW_LANG_GOOGLE_RenderScript     0x8001
 /* ALTIUM extension */
 #define DW_LANG_ALTIUM_Assembler        0x9101  /* ALTIUM */
+#define DW_LANG_BORLAND_Delphi          0xb000  
 
 /* Sun extensions */
 #define DW_LANG_SUN_Assembler           0x9001 /* SUN */

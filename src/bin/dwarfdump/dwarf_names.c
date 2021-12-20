@@ -536,6 +536,9 @@ dwarf_get_FORM_name (unsigned int val,
     case DW_FORM_GNU_strp_alt:
         *s_out = "DW_FORM_GNU_strp_alt";
         return DW_DLV_OK;
+    case DW_FORM_LLVM_addrx_offset:
+        *s_out = "DW_FORM_LLVM_addrx_offset";
+        return DW_DLV_OK;
     default: break;
     }
     return DW_DLV_NO_ENTRY;
@@ -1442,8 +1445,9 @@ dwarf_get_AT_name (unsigned int val,
     case DW_AT_LLVM_tag_offset:
         *s_out = "DW_AT_LLVM_tag_offset";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x3e03. DW_AT_LLVM_apinotes */
+    case DW_AT_LLVM_apinotes:
+        *s_out = "DW_AT_LLVM_apinotes";
+        return DW_DLV_OK;
     case DW_AT_LLVM_active_lane:
         *s_out = "DW_AT_LLVM_active_lane";
         return DW_DLV_OK;
@@ -2266,8 +2270,13 @@ dwarf_get_IDX_name (unsigned int val,
     case DW_IDX_hi_user:
         *s_out = "DW_IDX_hi_user";
         return DW_DLV_OK;
-    case DW_IDX_lo_user:
-        *s_out = "DW_IDX_lo_user";
+    case DW_IDX_GNU_internal:
+        *s_out = "DW_IDX_GNU_internal";
+        return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x2000. DW_IDX_lo_user */
+    case DW_IDX_GNU_external:
+        *s_out = "DW_IDX_GNU_external";
         return DW_DLV_OK;
     default: break;
     }
@@ -2748,6 +2757,8 @@ dwarf_get_LANG_name (unsigned int val,
     case DW_LANG_Mips_Assembler:
         *s_out = "DW_LANG_Mips_Assembler";
         return DW_DLV_OK;
+    /*  Skipping alternate spelling of value
+        0x8001. DW_LANG_GOOGLE_RenderScript */
     case DW_LANG_Upc:
         *s_out = "DW_LANG_Upc";
         return DW_DLV_OK;
@@ -2756,6 +2767,9 @@ dwarf_get_LANG_name (unsigned int val,
         return DW_DLV_OK;
     case DW_LANG_ALTIUM_Assembler:
         *s_out = "DW_LANG_ALTIUM_Assembler";
+        return DW_DLV_OK;
+    case DW_LANG_BORLAND_Delphi:
+        *s_out = "DW_LANG_BORLAND_Delphi";
         return DW_DLV_OK;
     case DW_LANG_hi_user:
         *s_out = "DW_LANG_hi_user";
