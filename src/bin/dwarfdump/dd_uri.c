@@ -27,7 +27,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 */
 
 #include "globals.h"
-#include "esb.h"
+#include "dd_esb.h"
 #include "dd_uri.h"
 #include <stdio.h>
 #include <ctype.h>

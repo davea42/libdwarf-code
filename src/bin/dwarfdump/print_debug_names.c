@@ -30,8 +30,8 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "libdwarf.h"
 #include "naming.h"
 #include "dd_sanitized.h"
-#include "esb.h"
-#include "esb_using_functions.h"
+#include "dd_esb.h"
+#include "dd_esb_using_functions.h"
 
 static int
 print_dname_record(Dwarf_Dnames_Head dn,

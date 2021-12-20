@@ -53,10 +53,10 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "macrocheck.h"
 #include "dwconf.h"
 #include "dwconf_using_functions.h"
-#include "common.h"
+#include "dd_common.h"
 #include "helpertree.h"
-#include "esb.h"                /* For flexible string buffer. */
-#include "esb_using_functions.h"
+#include "dd_esb.h"                /* For flexible string buffer. */
+#include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 #include "tag_common.h"
 #include "addrmap.h"

@@ -78,7 +78,7 @@ endif()
 if (DO_TESTING)
     set_source_group(MAKENAME_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/makename_test.c
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/esb.c
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/makename.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
     add_executable(selfmakename ${MAKENAME_SOURCES})
@@ -108,7 +108,7 @@ endif()
 if (DO_TESTING)
     set_source_group(SELFMC_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/macrocheck.c
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/esb.c 
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c 
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
     add_executable(selfmacrocheck ${SELFMC_SOURCES} )
     target_compile_options(selfmacrocheck PRIVATE ${SELFTEST} )
@@ -124,7 +124,7 @@ endif()
 if (DO_TESTING)
     set_source_group(TESTESB_SOURCES "Source Files"
        ${CMAKE_SOURCE_DIR}/test/testesb.c
-       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/esb.c
+       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
     add_executable(selftestesb ${TESTESB_SOURCES})
     target_compile_options(selftestesb PRIVATE
@@ -207,7 +207,7 @@ if (DO_TESTING)
         ${CMAKE_SOURCE_DIR}/test/test_canonical.c 
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_safe_strcpy.c
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwconf.c
-        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/esb.c)
+        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c)
     add_executable(selfcanonical ${CANONICALLIST})
     target_compile_options(selfcanonical PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"

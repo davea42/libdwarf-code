@@ -56,7 +56,7 @@ extern "C" {
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "checkutil.h"
+#include "dd_checkutil.h"
 #include "defined_types.h"
 #include "glflags.h"
 

@@ -27,8 +27,8 @@
 /* SGI has moved from the Crittenden Lane address.  */
 
 #include "globals.h"
-#include "esb.h"
-#include "esb_using_functions.h"
+#include "dd_esb.h"
+#include "dd_esb_using_functions.h"
 
 void get_true_section_name(Dwarf_Debug dbg,
     const char *standard_name,

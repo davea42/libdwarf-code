@@ -27,13 +27,13 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 */
 
 /*  testesb.c
-    testing esb.c
+    testing dd_esb.c
 
 */
 
 #include "config.h"
 #include "libdwarf_private.h"
-#include "esb.h"
+#include "dd_esb.h"
 #define TRUE 1
 
 static int failcount = 0;

@@ -40,8 +40,8 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "globals.h"
 #include <dwarf.h>
 #include "libdwarf.h"
-#include "common.h"
-#include "esb.h"
+#include "dd_common.h"
+#include "dd_esb.h"
 #include "tag_common.h"
 #include "dwarf_getopt.h"
 #include "dd_safe_strcpy.h"

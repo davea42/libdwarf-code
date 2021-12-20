@@ -34,7 +34,7 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 #include "libdwarf.h"
 #include "makename.h"
 #include "naming.h"
-#include "esb.h"
+#include "dd_esb.h"
 
 #ifndef TRIVIAL_NAMING
 static const char *

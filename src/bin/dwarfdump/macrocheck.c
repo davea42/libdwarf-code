@@ -54,7 +54,7 @@
 #endif /* HAVE_STDINT_H */
 #include "dwarf_tsearch.h"
 #include "macrocheck.h"
-#include "esb.h"
+#include "dd_esb.h"
 
 #define TRUE 1
 #define FALSE 0

@@ -38,8 +38,8 @@
 #endif /* HAVE_STDLIB_H */
 #include <dwarf.h>
 #include "libdwarf.h"
-#include "common.h"
-#include "esb.h"
+#include "dd_common.h"
+#include "dd_esb.h"
 #include "tag_common.h"
 #include "dwarf_getopt.h"
 #define DW_TSHASHTYPE long /* we are not using hash tree */

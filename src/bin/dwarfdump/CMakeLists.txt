@@ -1,6 +1,6 @@
 
 set_source_group(SOURCES "Source Files" addrmap.c 
-    checkutil.c dd_regex.c dd_safe_strcpy.c
+    dd_checkutil.c dd_common.c dd_regex.c dd_safe_strcpy.c
     dwarfdump.c dwconf.c helpertree.c 
     glflags.c command_options.c compiler_info.c
     macrocheck.c 
@@ -26,19 +26,19 @@ set_source_group(SOURCES "Source Files" addrmap.c
     print_weaknames.c  
     dd_sanitized.c section_bitmaps.c strstrnocase.c 
     true_section_name.c dd_uri.c dwarf_getopt.c makename.c 
-    naming.c common.c esb.c dwarf_tsearchbal.c)
+    naming.c dd_esb.c dwarf_tsearchbal.c)
 	
 set_source_group(HEADERS "Header Files" 
-  addrmap.h attr_form.h checkutil.h common.h dd_regex.h
+  addrmap.h attr_form.h dd_checkutil.h dd_common.h dd_regex.h
   dd_safe_strcpy.h dwconf.h
   command_options.h compiler_info.h
   opscounttab.h 
   print_debug_gnu.h
-  dwconf_using_functions.h esb_using_functions.h
+  dwconf_using_functions.h dd_esb_using_functions.h
   dwarfdump-af-table.h
   dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 
   dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
-  dwarf_getopt.h esb.h glflags.h globals.h
+  dwarf_getopt.h dd_esb.h glflags.h globals.h
   macrocheck.h defined_types.h
   dd_sanitized.h
   makename.h dwarf_tsearch.h print_frames.h 

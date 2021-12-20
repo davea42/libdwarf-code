@@ -45,7 +45,7 @@
 #endif /* _WIN32 */
 #include "config.h"
 #include <stdarg.h>
-#include "esb.h"
+#include "dd_esb.h"
 #define TRUE 1
 
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,

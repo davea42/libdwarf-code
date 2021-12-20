@@ -29,10 +29,10 @@
 #include "dwconf.h"
 #include "dwarf_getopt.h"
 
-#include "common.h"
+#include "dd_common.h"
 #include "makename.h"
 #include "dd_uri.h"
-#include "esb.h"                /* For flexible string buffer. */
+#include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_sanitized.h"
 #include "tag_common.h"
 #include "section_bitmaps.h"

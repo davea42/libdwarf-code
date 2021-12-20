@@ -31,8 +31,8 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
 #include "naming.h"
-#include "esb.h"
-#include "esb_using_functions.h"
+#include "dd_esb.h"
+#include "dd_esb_using_functions.h"
 #include "dd_uri.h"
 #include "makename.h"
 #include "dwarf_tsearch.h"

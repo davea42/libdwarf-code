@@ -26,8 +26,8 @@ Copyright 2018-2019 David Anderson. All rights reserved.
 
 #include "globals.h"
 #include "naming.h"
-#include "esb.h"
-#include "esb_using_functions.h"
+#include "dd_esb.h"
+#include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 
 /* print data in .debug_str_offsets.

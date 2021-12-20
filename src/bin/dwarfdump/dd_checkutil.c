@@ -37,7 +37,7 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "esb.h"
+#include "dd_esb.h"
 
 /* Guessing a sensible length for max section name.  */
 #define SECTION_NAME_LEN 2048

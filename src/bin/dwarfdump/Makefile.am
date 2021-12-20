@@ -9,12 +9,12 @@ addrmap.c \
 addrmap.h \
 attr_form.h \
 attr_form.c \
-checkutil.c \
-checkutil.h \
+dd_checkutil.c \
+dd_checkutil.h \
 command_options.c \
 command_options.h \
-common.c \
-common.h \
+dd_common.c \
+dd_common.h \
 compiler_info.c \
 compiler_info.h \
 defined_types.h \
@@ -35,8 +35,8 @@ dwconf.h \
 dwconf_using_functions.h \
 dwarf_getopt.c \
 dwarf_getopt.h \
-esb.c \
-esb.h \
+dd_esb.c \
+dd_esb.h \
 esb_using_functions.h \
 glflags.c \
 glflags.h \

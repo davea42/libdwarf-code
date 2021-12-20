@@ -31,7 +31,7 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
 #include "globals.h"
 #include <limits.h>
 
-#include "esb.h"                /* For flexible string buffer. */
+#include "dd_esb.h"                /* For flexible string buffer. */
 #include "dwconf.h"
 #include "dd_safe_strcpy.h"
 

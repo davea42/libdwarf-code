@@ -32,7 +32,7 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include "common.h"
+#include "dd_common.h"
 #include "tag_common.h"
 #include "dwarf_getopt.h"
 #include "dd_safe_strcpy.h"

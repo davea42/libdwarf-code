@@ -101,7 +101,7 @@ test_dwgetopt_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump
 
 test_makenametest_SOURCES = makename_test.c \
-    $(top_srcdir)/src/bin/dwarfdump/esb.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/makename.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_makenametest_CFLAGS = $(DWARF_CFLAGS_WARN)
@@ -121,7 +121,7 @@ test_helpertree_CPPFLAGS =  -DTESTING \
 
 test_macrocheck_SOURCES = \
     $(top_srcdir)/src/bin/dwarfdump/macrocheck.c \
-    $(top_srcdir)/src/bin/dwarfdump/esb.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_macrocheck_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_macrocheck_CPPFLAGS =  -DSELFTEST \
@@ -130,7 +130,7 @@ test_macrocheck_CPPFLAGS =  -DSELFTEST \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_testesb_SOURCES = testesb.c \
-    $(top_srcdir)/src/bin/dwarfdump/esb.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
 test_testesb_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_testesb_CPPFLAGS = -DTESTING \
@@ -183,7 +183,7 @@ test_canonical_SOURCES = test_canonical.c \
     $(top_srcdir)/src/bin/dwarfdump/dwconf.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.h \
-    $(top_srcdir)/src/bin/dwarfdump/esb.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_esb.c
 test_canonical_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_canonical_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
