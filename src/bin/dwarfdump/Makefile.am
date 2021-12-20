@@ -37,7 +37,7 @@ dwarf_getopt.c \
 dwarf_getopt.h \
 dd_esb.c \
 dd_esb.h \
-esb_using_functions.h \
+dd_esb_using_functions.h \
 glflags.c \
 glflags.h \
 globals.h \
