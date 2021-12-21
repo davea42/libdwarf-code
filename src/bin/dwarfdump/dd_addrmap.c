@@ -29,7 +29,7 @@
 /*  If memory full  we do not exit, we just keep going as if
     all were well. */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include <stdio.h>
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */

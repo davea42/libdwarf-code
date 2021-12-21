@@ -38,9 +38,9 @@ dd_getopt.h \
 dd_esb.c \
 dd_esb.h \
 dd_esb_using_functions.h \
-glflags.c \
-glflags.h \
-globals.h \
+dd_glflags.c \
+dd_glflags.h \
+dd_globals.h \
 dd_helpertree.c \
 dd_helpertree.h \
 dd_macrocheck.c \

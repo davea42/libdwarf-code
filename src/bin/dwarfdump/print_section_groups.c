@@ -25,7 +25,7 @@ Copyright (C) 2017-2017  David Anderson. All rights reserved.
 
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include "dd_sanitized.h"
 #include "dd_naming.h"
 

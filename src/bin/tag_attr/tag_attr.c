@@ -37,7 +37,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>             /* For exit() declaration etc. */
 #endif /* HAVE_STDLIB_H */
-#include "globals.h"
+#include "dd_globals.h"
 #include <dwarf.h>
 #include "libdwarf.h"
 #include "dd_common.h"

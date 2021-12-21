@@ -28,7 +28,7 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"
 #include "print_sections.h"

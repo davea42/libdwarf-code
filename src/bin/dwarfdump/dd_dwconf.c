@@ -29,7 +29,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include "config.h"
 #include <ctype.h>
-#include "globals.h"
+#include "dd_globals.h"
 #include "dd_dwconf.h"
 #include "dd_sanitized.h"
 #include "dd_esb.h"
@@ -44,7 +44,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <windows.h>
 #endif /* _WIN32 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_makename.h"

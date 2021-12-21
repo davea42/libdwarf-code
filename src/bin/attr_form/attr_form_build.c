@@ -26,7 +26,7 @@
 */
 
 #include "config.h"
-#include "globals.h"
+#include "dd_globals.h"
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
 #include <errno.h>              /* For errno declaration. */

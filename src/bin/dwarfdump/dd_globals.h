@@ -58,7 +58,7 @@ extern "C" {
 #include "libdwarf_private.h"
 #include "dd_checkutil.h"
 #include "dd_defined_types.h"
-#include "glflags.h"
+#include "dd_glflags.h"
 
 /*  Used to avoid leakage when we hide errors.
     Use carefully: doing err when you mean

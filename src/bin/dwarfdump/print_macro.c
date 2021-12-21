@@ -24,7 +24,7 @@ Copyright 2015-2020 David Anderson. All rights reserved.
   Boston MA 02110-1301, USA.
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include <ctype.h>
 #include <time.h>
 #ifdef HAVE_STDINT_H

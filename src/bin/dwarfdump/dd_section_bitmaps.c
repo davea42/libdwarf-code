@@ -25,7 +25,7 @@ Copyright (C) 2017-2018 David Anderson. All Rights Reserved.
 
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 /*  dd_section_bitmaps.h and .c actually involved  bits,
     bit shifting, and bit masks,
     but now the 'maps' are simple byte arrays.

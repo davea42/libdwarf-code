@@ -22,6 +22,7 @@ SUBDIRS += src/bin/tag_tree
 SUBDIRS += src/bin/tag_attr
 SUBDIRS += src/bin/attr_form
 SUBDIRS += src/bin/buildopstab
+SUBDIRS += src/bin/builduritable
 
 ### rebuild is for maintainers to update C source
 ### that depends on certain (C and/or text) Files.

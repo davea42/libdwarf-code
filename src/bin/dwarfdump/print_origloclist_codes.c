@@ -32,7 +32,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
     Floor, Boston, MA 02110-1301, USA.  SGI has moved from
     the Crittenden Lane address.  */
 
-#include "globals.h"
+#include "dd_globals.h"
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */

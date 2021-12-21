@@ -27,7 +27,7 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include <errno.h>              /* For errno declaration. */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

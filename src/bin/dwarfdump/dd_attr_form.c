@@ -24,7 +24,7 @@
   Boston MA 02110-1301, USA.
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #define DW_TSHASHTYPE long /* this type not needed */
 #include "dd_tsearch.h"
 #include "dd_naming.h"

@@ -54,7 +54,7 @@ strstrnocase.c
 */
 #include <ctype.h>
 #include <stdio.h>
-#include "globals.h"
+#include "dd_globals.h"
 
 Dwarf_Bool
 is_strstrnocase(const char * container, const char * contained)

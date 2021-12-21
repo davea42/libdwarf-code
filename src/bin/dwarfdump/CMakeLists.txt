@@ -2,7 +2,7 @@
 set_source_group(SOURCES "Source Files" dd_addrmap.c 
     dd_checkutil.c dd_common.c dd_regex.c dd_safe_strcpy.c
     dwarfdump.c dd_dwconf.c dd_helpertree.c 
-    glflags.c dd_command_options.c dd_compiler_info.c
+    dd_glflags.c dd_command_options.c dd_compiler_info.c
     dd_macrocheck.c 
     dd_opscounttab.c
     print_abbrevs.c print_aranges.c
@@ -39,7 +39,7 @@ set_source_group(HEADERS "Header Files"
   dwarfdump-af-table.h
   dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 
   dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
-  dd_getopt.h dd_esb.h glflags.h globals.h
+  dd_getopt.h dd_esb.h dd_glflags.h dd_globals.h
   dd_macrocheck.h dd_defined_types.h
   dd_sanitized.h
   dd_naming.h dd_makename.h dd_tsearch.h print_frames.h 

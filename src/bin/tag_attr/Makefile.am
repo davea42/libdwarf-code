@@ -24,7 +24,7 @@ $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_makename.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_naming.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
-$(top_srcdir)/src/bin/dwarfdump/glflags.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_glflags.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_tag_common.c
 tagattr_CPPFLAGS = -DTRIVIAL_NAMING \

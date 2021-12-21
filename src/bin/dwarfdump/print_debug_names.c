@@ -25,7 +25,7 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 
 */
 #include "config.h"
-#include "globals.h"
+#include "dd_globals.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_naming.h"

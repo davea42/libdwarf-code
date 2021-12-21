@@ -30,7 +30,7 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 */
 
 /*  To print .debug_sup */
-#include "globals.h"
+#include "dd_globals.h"
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */

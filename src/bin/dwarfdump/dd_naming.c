@@ -29,7 +29,7 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 /* SGI has moved from the Crittenden Lane address.  */
 
 /* dd_naming.c */
-#include "globals.h"
+#include "dd_globals.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_makename.h"

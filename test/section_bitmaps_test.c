@@ -25,7 +25,7 @@
 
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 /*  section_bitmaps.h and .c actually involved  bits,
     bit shifting, and bit masks,
     but now the 'maps' are simple byte arrays.

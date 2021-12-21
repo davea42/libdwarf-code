@@ -28,7 +28,7 @@ Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
   Boston MA 02110-1301, USA.
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"

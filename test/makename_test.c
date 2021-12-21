@@ -51,7 +51,7 @@ Portions Copyright(C) David Anderson 2016. All Rights reserved.
 #endif /* HAVE_STDINT_H */
 #include "dwarf_tsearch.h"
 #include "dd_makename.h"
-#include "globals.h"
+#include "dd_globals.h"
 
 #if defined(__WIN32) &&  (!defined(__GNUC__) && !defined(__clang__))
 #pragma warning(disable:4996)    /* Warning when migrated to VS2010 */

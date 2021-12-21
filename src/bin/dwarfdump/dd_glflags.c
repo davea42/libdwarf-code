@@ -28,7 +28,7 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
     global struct as it has been hard to know how many there
     were or what they were all for. */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include <limits.h>
 
 #include "dd_esb.h"                /* For flexible string buffer. */

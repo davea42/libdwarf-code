@@ -33,7 +33,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
-#include "globals.h"
+#include "dd_globals.h"
 /* for 'open' */
 #ifdef SYS_TYPES_H
 #include <sys/types.h>

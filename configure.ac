@@ -587,6 +587,7 @@ src/bin/tag_attr/Makefile
 src/bin/tag_tree/Makefile
 src/bin/attr_form/Makefile
 src/bin/buildopstab/Makefile
+src/bin/builduritable/Makefile
 test/Makefile
 doc/Makefile
 libdwarf.pc

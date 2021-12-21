@@ -38,7 +38,7 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
     in doing a better job when the tsearch functions (part of
     POSIX) are available.  */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include "print_frames.h"
 #include "dd_dwconf.h"
 #include "dd_dwconf_using_functions.h"

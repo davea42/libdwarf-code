@@ -32,7 +32,7 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 
 */
 
-#include "globals.h" /* It includes config.h  */
+#include "dd_globals.h" /* It includes config.h  */
 #include <assert.h>
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */

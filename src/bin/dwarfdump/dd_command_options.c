@@ -25,7 +25,7 @@
 
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include "dd_dwconf.h"
 #include "dd_getopt.h"
 #include "dd_common.h"

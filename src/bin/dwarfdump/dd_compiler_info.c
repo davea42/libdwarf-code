@@ -24,7 +24,7 @@
   Boston MA 02110-1301, USA.
 */
 
-#include "globals.h"
+#include "dd_globals.h"
 #include "dd_makename.h"
 #include "dd_sanitized.h"
 #include "dd_safe_strcpy.h"
