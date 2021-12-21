@@ -50,11 +50,11 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #endif /* _WIN32 */
 
 #include "dd_makename.h"
-#include "macrocheck.h"
+#include "dd_macrocheck.h"
 #include "dd_dwconf.h"
 #include "dd_dwconf_using_functions.h"
 #include "dd_common.h"
-#include "helpertree.h"
+#include "dd_helpertree.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"

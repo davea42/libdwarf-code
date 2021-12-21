@@ -111,7 +111,7 @@ test_makenametest_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_helpertree_SOURCES = helpertree_test.c \
-    $(top_srcdir)/src/bin/dwarfdump/helpertree.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_helpertree.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_helpertree_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_helpertree_CPPFLAGS =  -DTESTING \
@@ -120,7 +120,7 @@ test_helpertree_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_macrocheck_SOURCES = \
-    $(top_srcdir)/src/bin/dwarfdump/macrocheck.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_macrocheck.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_macrocheck_CFLAGS = $(DWARF_CFLAGS_WARN)

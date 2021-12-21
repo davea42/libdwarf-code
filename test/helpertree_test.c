@@ -30,7 +30,7 @@
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
 #include "dwarf_tsearch.h"
-#include "helpertree.h"
+#include "dd_helpertree.h"
 
 #define TRUE 1
 #define FALSE 0

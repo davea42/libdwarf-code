@@ -30,7 +30,7 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 #include "globals.h"
 #include "dd_naming.h"
-#include "macrocheck.h"
+#include "dd_macrocheck.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"

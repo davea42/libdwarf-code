@@ -41,8 +41,8 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 #include "print_frames.h"  /* for print_expression_operations() . */
-#include "macrocheck.h"
-#include "helpertree.h"
+#include "dd_macrocheck.h"
+#include "dd_helpertree.h"
 #include "dd_tag_common.h"
 
 /* Is this a PU has been invalidated by the SN Systems linker? */

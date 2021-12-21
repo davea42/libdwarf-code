@@ -1,5 +1,5 @@
 /*  Generated expression ops table, do not edit. */
-#include "opscounttab.h"
+#include "dd_opscounttab.h"
 
 struct dwarf_opscounttab_s _dwarf_opscounttab[] = {
 {/* unused                     0x00*/ -1, 0},

@@ -95,7 +95,7 @@ endif()
 if (DO_TESTING)
     set_source_group(HELPERTREE_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/helpertree_test.c
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/helpertree.c
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_helpertree.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfhelpertree ${HELPERTREE_SOURCES})
     target_compile_options(selfhelpertree PRIVATE ${DW_FWALL})
@@ -109,7 +109,7 @@ if (DO_TESTING)
 endif()
 if (DO_TESTING)
     set_source_group(SELFMC_SOURCES "Source Files"
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/macrocheck.c
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_macrocheck.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c 
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfmacrocheck ${SELFMC_SOURCES} )

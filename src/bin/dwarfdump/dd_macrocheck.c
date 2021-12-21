@@ -53,7 +53,7 @@
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
 #include "dd_tsearch.h"
-#include "macrocheck.h"
+#include "dd_macrocheck.h"
 #include "dd_esb.h"
 
 #define TRUE 1

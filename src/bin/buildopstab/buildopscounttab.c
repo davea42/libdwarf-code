@@ -30,7 +30,7 @@ For use by anyone for any purpose.
 #include "dwarf.h"
 #include "libdwarf_private.h"
 #include "libdwarf.h"
-#include "opscounttab.h"
+#include "dd_opscounttab.h"
 
 #define MAXDEFINELINE 1000
 static char *input_name = 0;
@@ -397,7 +397,7 @@ int main(int argc, char**argv)
 
     printf("/*  Generated expression ops table, "
         "do not edit. */\n");
-    printf("#include \"opscounttab.h\"\n");
+    printf("#include \"dd_opscounttab.h\"\n");
     printf("\n");
     printf("struct dwarf_opscounttab_s _dwarf_opscounttab[] = {\n");
     for ( ;  ; ++inindex) {
