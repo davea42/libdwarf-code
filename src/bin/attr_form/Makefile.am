@@ -28,7 +28,7 @@ $(top_srcdir)/src/bin/dwarfdump/dd_naming.c \
 $(top_srcdir)/src/bin/dwarfdump/glflags.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
-$(top_srcdir)/src/bin/dwarfdump/tag_common.c
+$(top_srcdir)/src/bin/dwarfdump/dd_tag_common.c
 ### In the following dwarfdump before libdwarf
 ### is essential to avoid _dwarf_tsearch link error.
 attrform_CPPFLAGS = -DBUILD_NONLIB_SOURCE -DSKIP_AF_CHECK -DTRIVIAL_NAMING \

@@ -36,7 +36,7 @@ Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
 
 #include "globals.h"
 #include "dd_naming.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 
 static int linecount = 0;
 static char line_in[MAX_LINE_SIZE];

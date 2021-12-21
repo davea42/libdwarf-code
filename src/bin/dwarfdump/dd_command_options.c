@@ -33,8 +33,8 @@
 #include "dd_uri.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_sanitized.h"
-#include "tag_common.h"
-#include "section_bitmaps.h"
+#include "dd_tag_common.h"
+#include "dd_section_bitmaps.h"
 #include "dd_command_options.h"
 #include "dd_compiler_info.h"
 #include "dd_regex.h"

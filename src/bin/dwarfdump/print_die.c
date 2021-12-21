@@ -44,7 +44,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "macrocheck.h"
 #include "helpertree.h"
 #include "opscounttab.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 #include "dd_attr_form.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"

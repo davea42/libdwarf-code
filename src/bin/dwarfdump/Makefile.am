@@ -85,11 +85,11 @@ print_types.c \
 print_weaknames.c \
 dd_sanitized.c \
 dd_sanitized.h \
-section_bitmaps.c \
-section_bitmaps.h \
-strstrnocase.c \
-true_section_name.c \
-tag_common.h \
+dd_section_bitmaps.c \
+dd_section_bitmaps.h \
+dd_strstrnocase.c \
+dd_true_section_name.c \
+dd_tag_common.h \
 dd_uri.c \
 dd_uri.h
 
@@ -108,6 +108,8 @@ dwarfdumpconf_DATA = dwarfdump.conf
 
 ### The tests go elsewhere.
 EXTRA_DIST = \
+dd_tag_common.c \
+dd_uritablebuild.c \
 $(man_MANS) \
 COPYING \
 DWARFDUMPCOPYRIGHT \
@@ -132,7 +134,6 @@ CMakeLists.txt \
 NEWS \
 README \
 CODINGSTYLE \
-tag_common.c \
 testdwarfdump.conf \
 $(dwarfdumpdev_DATA) \
 $(dwarfdumpconf_DATA) \
@@ -141,5 +142,4 @@ attr_formclass_ext.list \
 tag_attr.list \
 tag_attr_ext.list \
 tag_tree.list \
-tag_tree_ext.list \
-uritablebuild.c
+tag_tree_ext.list 

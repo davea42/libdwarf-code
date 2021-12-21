@@ -31,7 +31,7 @@
     but now the 'maps' are simple byte arrays.
     See reloc_map and section_map in command_options.c */
 
-#include "section_bitmaps.h"
+#include "dd_section_bitmaps.h"
 
 int main()
 {

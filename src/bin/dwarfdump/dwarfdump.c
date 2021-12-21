@@ -58,7 +58,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 #include "dd_addrmap.h"
 #include "dd_attr_form.h"
 #include "print_debug_gnu.h"

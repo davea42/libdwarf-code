@@ -38,7 +38,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 #include "helpertree.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 
 /*  Prints locentry descriptsions for
     DWARF5 DW_LKIND_loclists */

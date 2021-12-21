@@ -43,7 +43,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "print_frames.h"  /* for print_expression_operations() . */
 #include "macrocheck.h"
 #include "helpertree.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 #include "dd_attr_form.h"
 
 static int pd_dwarf_names_print_on_error = 1;

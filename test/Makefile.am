@@ -139,7 +139,7 @@ test_testesb_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarf
 
 test_sectionbitmaps_SOURCES = section_bitmaps_test.c \
-    $(top_srcdir)/src/bin/dwarfdump/section_bitmaps.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_section_bitmaps.c
 test_sectionbitmaps_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \

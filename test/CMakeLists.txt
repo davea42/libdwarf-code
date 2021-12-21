@@ -142,7 +142,7 @@ if (DO_TESTING)
 endif()
 if (DO_TESTING)
     set_source_group(SECTIONBITMAPS_SOURCES "Source Files"
-        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/section_bitmaps.c
+        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_section_bitmaps.c
         ${CMAKE_SOURCE_DIR}/test/section_bitmaps_test.c )
     add_executable(selfsectionbitmaps ${SECTIONBITMAPS_SOURCES})
     target_compile_options(selfsectionbitmaps PRIVATE

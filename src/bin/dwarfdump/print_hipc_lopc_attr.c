@@ -43,7 +43,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 #include "print_frames.h"  /* for print_expression_operations() . */
 #include "macrocheck.h"
 #include "helpertree.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 
 /* Is this a PU has been invalidated by the SN Systems linker? */
 #define IsInvalidCode(low,high) \

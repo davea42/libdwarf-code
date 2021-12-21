@@ -40,7 +40,7 @@
 #include "libdwarf.h"
 #include "dd_common.h"
 #include "dd_esb.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 #include "dd_getopt.h"
 #define DW_TSHASHTYPE long /* we are not using hash tree */
 #include "dd_tsearch.h"

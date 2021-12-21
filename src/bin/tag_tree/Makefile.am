@@ -32,7 +32,7 @@ $(top_srcdir)/src/bin/dwarfdump/dd_naming.c \
 $(top_srcdir)/src/bin/dwarfdump/glflags.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_safe_strcpy.c \
-$(top_srcdir)/src/bin/dwarfdump/tag_common.c
+$(top_srcdir)/src/bin/dwarfdump/dd_tag_common.c
 tagtree_CPPFLAGS = -DTRIVIAL_NAMING \
 -DBUILD_NONLIB_SOURCE \
 -I$(top_srcdir)/src/lib/libdwarf \

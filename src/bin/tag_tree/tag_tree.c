@@ -33,7 +33,7 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include <unistd.h>
 #endif
 #include "dd_common.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 #include "dd_getopt.h"
 #include "dd_safe_strcpy.h"
 

@@ -26,12 +26,12 @@ Copyright (C) 2017-2018 David Anderson. All Rights Reserved.
 */
 
 #include "globals.h"
-/*  section_bitmaps.h and .c actually involved  bits,
+/*  dd_section_bitmaps.h and .c actually involved  bits,
     bit shifting, and bit masks,
     but now the 'maps' are simple byte arrays.
     See reloc_map and section_map in command_options.c */
 
-#include "section_bitmaps.h"
+#include "dd_section_bitmaps.h"
 
 struct section_map_s
 map_sectnames[DW_HDR_ARRAY_SIZE] = {
@@ -69,7 +69,7 @@ map_sectnames[DW_HDR_ARRAY_SIZE] = {
     {"Elf Header",                      DW_HDR_HEADER},
 };
 
-/*  See section_bitmaps.c, .h Control section header
+/*  See dd_section_bitmaps.c, .h Control section header
     printing. (not DWARF printing)  */
 static char reloc_map[DW_SECTION_REL_ARRAY_SIZE];
 static char section_map[DW_HDR_ARRAY_SIZE];

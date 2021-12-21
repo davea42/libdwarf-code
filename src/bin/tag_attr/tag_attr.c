@@ -42,7 +42,7 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "libdwarf.h"
 #include "dd_common.h"
 #include "dd_esb.h"
-#include "tag_common.h"
+#include "dd_tag_common.h"
 #include "dd_getopt.h"
 #include "dd_safe_strcpy.h"
 
