@@ -65,10 +65,11 @@ endif()
 if (DO_TESTING)
     set_source_group(GETOPTEST_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/getopttest.c
-      ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_getopt.h
-      ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_getopt.c)
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.h
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.c)
     add_executable(selfgetopttest ${GETOPTEST_SOURCES})
     target_compile_options(selfgetopttest PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selfgetopttest PRIVATE ${DW_FWALL})
@@ -80,10 +81,11 @@ if (DO_TESTING)
       ${CMAKE_SOURCE_DIR}/test/makename_test.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_makename.c
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfmakename ${MAKENAME_SOURCES})
     target_compile_options(selfmakename PRIVATE ${DW_FWALL})
     target_compile_options(selfmakename PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selfmakename PRIVATE
@@ -94,7 +96,7 @@ if (DO_TESTING)
     set_source_group(HELPERTREE_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/helpertree_test.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/helpertree.c
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfhelpertree ${HELPERTREE_SOURCES})
     target_compile_options(selfhelpertree PRIVATE ${DW_FWALL})
     target_compile_options(selfhelpertree PRIVATE
@@ -109,11 +111,12 @@ if (DO_TESTING)
     set_source_group(SELFMC_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/macrocheck.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c 
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfmacrocheck ${SELFMC_SOURCES} )
     target_compile_options(selfmacrocheck PRIVATE ${SELFTEST} )
     target_compile_options(selfmacrocheck PRIVATE ${DW_FWALL})
     target_compile_options(selfmacrocheck PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
     target_compile_options(selfmacrocheck PRIVATE 
@@ -125,7 +128,7 @@ if (DO_TESTING)
     set_source_group(TESTESB_SOURCES "Source Files"
        ${CMAKE_SOURCE_DIR}/test/testesb.c
        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
-       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarf_tsearchbal.c)
+       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selftestesb ${TESTESB_SOURCES})
     target_compile_options(selftestesb PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")

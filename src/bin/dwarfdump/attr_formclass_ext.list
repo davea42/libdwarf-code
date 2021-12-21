@@ -47,14 +47,9 @@ DW_AT_src_coords
 0xffffffff
 DW_AT_mac_info
 
-
 /*  DW_AT_UPC_theads_scaled would be better, but...   */
 0xffffffff
 DW_AT_upc_threads_scaled
-
-
-
-
 
 0xffffffff
 DW_AT_ALTIUM_loclist

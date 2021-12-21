@@ -165,8 +165,6 @@ ChangeLog2019 \
 ChangeLog2020 \
 CODINGSTYLE \
 dw-linetableheader.txt \
-dwarf_getopt.h \
-dwarf_getopt.c \
 CMakeLists.txt \
 cmake/libdwarf-config.cmake \
 NEWS \

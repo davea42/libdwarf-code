@@ -67,7 +67,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h> /* for printf */
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dwarf_tsearch.h"
+#include "dd_tsearch.h"
 
 /*  This must match the types and print options
     found in libdwarf.h.  */

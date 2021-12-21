@@ -27,7 +27,7 @@
 
 #include "globals.h"
 #include "dd_dwconf.h"
-#include "dwarf_getopt.h"
+#include "dd_getopt.h"
 #include "dd_common.h"
 #include "dd_makename.h"
 #include "dd_uri.h"

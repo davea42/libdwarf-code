@@ -1,4 +1,4 @@
-# Copyright 2021 David Anerson
+# Copyright 2021 David Anderson
 # This Makefile.am is hereby placed in the public domain
 ### Any error in thie file will lead to:
 ### error: Something went wrong bootstrapping makefile fragments
@@ -93,8 +93,8 @@ test_headersok_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 test_dwgetopt_SOURCES = getopttest.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_getopt.h \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_getopt.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_getopt.h \
+    $(top_srcdir)/src/bin/dwarfdump/dd_getopt.c
 test_dwgetopt_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_dwgetopt_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -103,7 +103,7 @@ test_dwgetopt_CPPFLAGS =  -DTESTING \
 test_makenametest_SOURCES = makename_test.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_makename.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_makenametest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_makenametest_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -112,7 +112,7 @@ test_makenametest_CPPFLAGS =  -DTESTING \
 
 test_helpertree_SOURCES = helpertree_test.c \
     $(top_srcdir)/src/bin/dwarfdump/helpertree.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_helpertree_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_helpertree_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -122,7 +122,7 @@ test_helpertree_CPPFLAGS =  -DTESTING \
 test_macrocheck_SOURCES = \
     $(top_srcdir)/src/bin/dwarfdump/macrocheck.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_macrocheck_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_macrocheck_CPPFLAGS =  -DSELFTEST \
 -I$(top_srcdir) -I$(top_builddir) \
@@ -131,7 +131,7 @@ test_macrocheck_CPPFLAGS =  -DSELFTEST \
 
 test_testesb_SOURCES = testesb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
-    $(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c
+    $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_testesb_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_testesb_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \

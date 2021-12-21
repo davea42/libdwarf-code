@@ -1,4 +1,10 @@
 #!/bin/sh
+# Copyright (C) 2021 David Anderson
+# This script is hereby placed in the Public Domain
+# for anyone to use in any way for any purpose.
+#
+# For running out of source tree DWTOPSRCDIR must
+# be set on entry.
 #
 if [ x$DWTOPSRCDIR = "x" ]
 then

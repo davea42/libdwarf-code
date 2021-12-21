@@ -40,7 +40,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     libc implementations or code using libc
     implementations, we change all the names.
 */
-
 /*  The hashfunc return is now easily changed with
     cc "-DDW_TSHASHTYPE=unsigned long"
     The quotes required here as the example type
@@ -60,6 +59,17 @@ typedef enum
     dwarf_leaf
 }
 DW_VISIT;
+
+/*  We rename these so there is no conflict with another version
+    of the tsearch sources, such as is used in dwarfdump. */
+#define dwarf_tsearch  dd_tsearch
+#define dwarf_tfind    dd_tfind
+#define dwarf_tdelete  dd_tdelete
+#define dwarf_twalk    dd_twalk
+#define dwarf_tdestroy dd_tdestroy
+#define dwarf_tdump    dd_tdump
+#define dwarf_initialize_search_hash dd_initialize_search_hash
+
 
 /* void * return values are actually
    void **key so you must dereference these

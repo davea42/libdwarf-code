@@ -1,9 +1,17 @@
 #!/bin/sh
+# Copyright (C) 2021 David Anderson
+# This script is hereby placed in the Public Domain
+# for anyone to use in any way for any purpose.
 #
+# For running out of source tree DWTOPSRCDIR must
+# be set on entry.
+echo $top_srcdir $top_blddir $DWTOPSRCDIR
 if [ x$DWTOPSRCDIR = "x" ]
 then
+  # Running from the source tree
   t=$top_blddir
 else
+  # Running outside of source tree (the usual case)
   t=$DWTOPSRCDIR
 fi
 . $t/test/dwarfdumpsetup.sh

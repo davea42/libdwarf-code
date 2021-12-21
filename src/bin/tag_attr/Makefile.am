@@ -17,8 +17,8 @@ rebuild: tagattr
 
 noinst_PROGRAMS = tagattr
 tagattr_SOURCES = tag_attr.c \
-$(top_srcdir)/src/bin/dwarfdump/dwarf_getopt.c \
-$(top_srcdir)/src/bin/dwarfdump/dwarf_tsearchbal.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_getopt.c \
+$(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_common.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
 $(top_srcdir)/src/bin/dwarfdump/dd_makename.c \

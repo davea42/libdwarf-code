@@ -958,7 +958,6 @@ process_one_file(
             linkonce is an SNR thing, we*/
         build_linkonce_info(dbg);
     }
-
     if (glflags.gf_section_groups_flag) {
         int res = 0;
         Dwarf_Error err = 0;
@@ -976,7 +975,6 @@ process_one_file(
             want to print. */
         update_section_flags_per_groups(dbg);
     }
-
     reset_overall_CU_error_data();
     if (glflags.gf_info_flag || glflags.gf_line_flag ||
         glflags.gf_types_flag ||

@@ -42,7 +42,7 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#include "dwarf_getopt.h"
+#include "dd_getopt.h"
 #include "libdwarf_private.h"
 #include "dwarf_safe_strcpy.h"
 

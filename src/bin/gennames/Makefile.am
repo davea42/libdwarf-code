@@ -12,9 +12,11 @@ rebuild: gennames
 
 noinst_PROGRAMS = gennames
 gennames_SOURCES = gennames.c \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_getopt.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_getopt.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_safe_strcpy.c
-gennames_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+gennames_CPPFLAGS = \
+  -I$(top_srcdir)/src/bin/dwarfdump \
+  -I$(top_srcdir)/src/lib/libdwarf \
   -I$(top_builddir)/src/lib/libdwarf
 gennames_CFLAGS = $(DWARF_CFLAGS_WARN)
 

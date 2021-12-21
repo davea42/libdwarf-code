@@ -29,7 +29,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
-#include "dwarf_tsearch.h"
+#include "dd_tsearch.h"
 #include "helpertree.h"
 
 #define TRUE 1

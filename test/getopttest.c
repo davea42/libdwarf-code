@@ -23,7 +23,7 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
 #endif /* HAVE_STDLIB_H */
-#include "dwarf_getopt.h" /* for dwgetopt */
+#include "dd_getopt.h" /* for dwgetopt in dwarfdump */
 char *argv1[20];
 
 /*  Use for testing dwgetopt only.

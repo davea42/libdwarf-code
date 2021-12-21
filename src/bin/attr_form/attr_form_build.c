@@ -41,9 +41,9 @@
 #include "dd_common.h"
 #include "dd_esb.h"
 #include "tag_common.h"
-#include "dwarf_getopt.h"
+#include "dd_getopt.h"
 #define DW_TSHASHTYPE long /* we are not using hash tree */
-#include "dwarf_tsearch.h"
+#include "dd_tsearch.h"
 #include "dd_attr_form.h"
 #include "dd_safe_strcpy.h"
 

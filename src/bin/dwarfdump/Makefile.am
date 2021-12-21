@@ -28,13 +28,13 @@ dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
-dwarf_tsearch.h \
-dwarf_tsearchbal.c \
+dd_tsearch.h \
+dd_tsearchbal.c \
 dd_dwconf.c \
 dd_dwconf.h \
 dd_dwconf_using_functions.h \
-dwarf_getopt.c \
-dwarf_getopt.h \
+dd_getopt.c \
+dd_getopt.h \
 dd_esb.c \
 dd_esb.h \
 dd_esb_using_functions.h \

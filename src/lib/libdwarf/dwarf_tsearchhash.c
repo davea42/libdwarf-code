@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2019, David Anderson
+/* Copyright (c) 2013-2021, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with

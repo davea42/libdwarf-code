@@ -1,7 +1,7 @@
 set_source_group(SOURCES "Source Files" createirepformfrombinary.cc
     createirepfrombinary.cc
     dwarfgen.cc irepattrtodbg.cc ireptodbg.cc
-    ../../lib/libdwarf/dwarf_getopt.c)
+    dg_getopt.c)
     
 set_source_group(HEADERS "Header Files" createirepfrombinary.h
     general.h irepattrtodbg.h 
@@ -9,7 +9,7 @@ set_source_group(HEADERS "Header Files" createirepfrombinary.h
     irepline.h irepmacro.h ireppubnames.h 
     irepresentation.h ireptodbg.h strtabdata.h
     ../../lib/libdwarf/libdwarf_private.h
-    ../../lib/libdwarf/dwarf_getopt.h
+    dg_getopt.h
     ../../lib/libdwarf/dwarf.h
     ../../lib/libdwarfp/libdwarfp.h)
 

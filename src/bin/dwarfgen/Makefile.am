@@ -21,12 +21,13 @@ ireppubnames.h \
 irepresentation.h \
 ireptodbg.cc \
 ireptodbg.h \
-dwarf_getopt.c \
-dwarf_getopt.h \
+dg_getopt.c \
+dg_getopt.h \
 strtabdata.h
 
 # dwarfdump here is so we find dwarf_getopt.h
 dwarfgen_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarfp \
+-I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf \
 -I$(top_builddir)/src/lib/libdwarf \
 -I$(top_builddir)/src/lib/libdwarfp

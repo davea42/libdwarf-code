@@ -57,7 +57,7 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
 #endif /* HAVE_STDLIB_H */
-#include "dwarf_getopt.h"
+#include "dd_getopt.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))
 

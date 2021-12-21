@@ -1,6 +1,6 @@
 #ifndef DWARF_TSEARCH_H
 #define DWARF_TSEARCH_H
-/* Copyright (c) 2013-2019, David Anderson
+/* Copyright (c) 2013-2021, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -29,7 +29,6 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 */
 
 /*  The following interfaces follow tsearch (See the Single
