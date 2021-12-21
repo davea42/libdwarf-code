@@ -1,3 +1,437 @@
+2021-12-21:  David Anderson
+    commit 67ca2c685feddf4c200bb03cfb9292c6d1518b00
+
+    This completes, for now, the dwarfdump source file renaming.
+    No function names were changed
+    (aside from tsearch, using #define in dd_tsearch.h)
+    And there is no logic change.
+
+            modified:   Makefile.am
+            modified:   configure.ac
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+
+            new file:   src/bin/builduritable/Makefile.am
+            renamed:    src/bin/dwarfdump/dd_uritablebuild.c -> src/bin/builduritable/uritablebuild.c
+            renamed:    src/bin/dwarfdump/glflags.c -> src/bin/dwarfdump/dd_glflags.c
+            renamed:    src/bin/dwarfdump/glflags.h -> src/bin/dwarfdump/dd_glflags.h
+            renamed:    src/bin/dwarfdump/globals.h -> src/bin/dwarfdump/dd_globals.h
+
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dd_addrmap.c
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_helpertree.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/dd_makename.c
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dd_section_bitmaps.c
+            modified:   src/bin/dwarfdump/dd_strstrnocase.c
+            modified:   src/bin/dwarfdump/dd_tag_common.c
+            modified:   src/bin/dwarfdump/dd_true_section_name.c
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+            modified:   src/bin/dwarfdump/print_section_groups.c
+            modified:   src/bin/dwarfdump/print_sections.c
+            modified:   src/bin/dwarfdump/print_static_funcs.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfdump/print_str_offsets.c
+            modified:   src/bin/dwarfdump/print_strings.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   src/bin/dwarfdump/print_types.c
+            modified:   src/bin/dwarfdump/print_weaknames.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   test/helpertree_test.c
+            modified:   test/makename_test.c
+            modified:   test/section_bitmaps_test.c
+
+2021-12-21:  David Anderson
+    commit 8ba6d77c77bfcb5646b7d97035c29e93e2e17e96
+
+    Renaming for name consistency in dwarfdump.
+            renamed:    src/bin/dwarfdump/helpertree.c -> src/bin/dwarfdump/dd_helpertree.c
+            renamed:    src/bin/dwarfdump/helpertree.h -> src/bin/dwarfdump/dd_helpertree.h
+            renamed:    src/bin/dwarfdump/macrocheck.c -> src/bin/dwarfdump/dd_macrocheck.c
+            renamed:    src/bin/dwarfdump/macrocheck.h -> src/bin/dwarfdump/dd_macrocheck.h
+            renamed:    src/bin/dwarfdump/opscounttab.c -> src/bin/dwarfdump/dd_opscounttab.c
+            renamed:    src/bin/dwarfdump/opscounttab.h -> src/bin/dwarfdump/dd_opscounttab.h
+
+    Minor changes required as a result:
+            modified:   src/bin/buildopstab/Makefile.am
+            modified:   src/bin/buildopstab/buildopscounttab.c
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/helpertree_test.c
+
+2021-12-21:  David Anderson
+    commit bafcb2da90236352f9303dfbc1ffc9bed72f60fe
+
+    Renamings forcing the other changes .
+            renamed:    src/bin/dwarfdump/section_bitmaps.c -> src/bin/dwarfdump/dd_section_bitmaps.c
+            renamed:    src/bin/dwarfdump/section_bitmaps.h -> src/bin/dwarfdump/dd_section_bitmaps.h
+            renamed:    src/bin/dwarfdump/strstrnocase.c -> src/bin/dwarfdump/dd_strstrnocase.c
+            renamed:    src/bin/dwarfdump/tag_common.c -> src/bin/dwarfdump/dd_tag_common.c
+            renamed:    src/bin/dwarfdump/tag_common.h -> src/bin/dwarfdump/dd_tag_common.h
+            renamed:    src/bin/dwarfdump/true_section_name.c -> src/bin/dwarfdump/dd_true_section_name.c
+            renamed:    src/bin/dwarfdump/uritablebuild.c -> src/bin/dwarfdump/dd_uritablebuild.c
+
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/section_bitmaps_test.c
+
+2021-12-21:  David Anderson
+    commit f31940c5ad21d9c58a390fb36f9679a9595bb11a
+
+    File Renaming for naming consistency and clarity.
+            renamed:    src/bin/dwarfdump/dwarf_getopt.c -> src/bin/dwarfdump/dd_getopt.c
+            renamed:    src/bin/dwarfdump/dwarf_getopt.h -> src/bin/dwarfdump/dd_getopt.h
+            modified:   src/bin/dwarfdump/dd_makename.c
+            renamed:    src/bin/dwarfdump/dwarf_tsearch.h -> src/bin/dwarfdump/dd_tsearch.h
+            renamed:    src/bin/dwarfdump/dwarf_tsearchbal.c -> src/bin/dwarfdump/dd_tsearchbal.c
+            renamed:    src/bin/dwarfgen/dwarf_getopt.c -> src/bin/dwarfgen/dg_getopt.c
+            renamed:    src/bin/dwarfgen/dwarf_getopt.h -> src/bin/dwarfgen/dg_getopt.h
+
+    These next two do not belong in libdwarf.
+            deleted:    src/lib/libdwarf/dwarf_getopt.c
+            deleted:    src/lib/libdwarf/dwarf_getopt.h
+
+    Renaming things leads to lots of places that
+    need a tiny modification.
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/attr_formclass_ext.list
+            modified:   src/bin/dwarfdump/dd_addrmap.c
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/helpertree.c
+            modified:   src/bin/dwarfdump/macrocheck.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+            modified:   src/bin/dwarfgen/Makefile.am
+
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/gennames/Makefile.am
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   src/lib/libdwarf/Makefile.am
+
+            modified:   src/lib/libdwarf/dwarf_tsearch.h
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/dwarfdumpLinux.sh
+            modified:   test/dwarfdumpMacos.sh
+            modified:   test/dwarfdumpPE.sh
+            modified:   test/dwarfdumpsetup.sh
+            modified:   test/getopttest.c
+
+2021-12-20:  David Anderson
+    commit 4e030c5f159849348acfd8328ccdfc69b539c020
+
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+
+    More renaming and altering use names.
+            renamed:    src/bin/dwarfdump/makename.c -> src/bin/dwarfdump/dd_makename.c
+            renamed:    src/bin/dwarfdump/makename.h -> src/bin/dwarfdump/dd_makename.h
+            renamed:    src/bin/dwarfdump/naming.c -> src/bin/dwarfdump/dd_naming.c
+            renamed:    src/bin/dwarfdump/naming.h -> src/bin/dwarfdump/dd_naming.h
+
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_section_groups.c
+            modified:   src/bin/dwarfdump/print_sections.c
+            modified:   src/bin/dwarfdump/print_static_funcs.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfdump/print_str_offsets.c
+            modified:   src/bin/dwarfdump/print_strings.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   src/bin/dwarfdump/print_types.c
+            modified:   src/bin/dwarfdump/print_weaknames.c
+            modified:   src/bin/dwarfdump/tag_common.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/makename_test.c
+
+2021-12-20:  David Anderson
+    commit 61c5addad4eda58cad5cd5d7100f01f62b25305e
+
+    A fix because make dist was broken by renaming.
+            modified:   src/bin/dwarfdump/Makefile.am
+
+2021-12-20:  David Anderson
+    commit d080afc3f86cb254d39b4efd694359b14a0480f6
+
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_common.c
+
+    Another set of file names prefixed with dd_
+            renamed:    src/bin/dwarfdump/defined_types.h -> src/bin/dwarfdump/dd_defined_types.h
+            renamed:    src/bin/dwarfdump/dwconf.c -> src/bin/dwarfdump/dd_dwconf.c
+            renamed:    src/bin/dwarfdump/dwconf.h -> src/bin/dwarfdump/dd_dwconf.h
+            renamed:    src/bin/dwarfdump/dwconf_using_functions.h -> src/bin/dwarfdump/dd_dwconf_using_functions.h
+
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/glflags.c
+            modified:   src/bin/dwarfdump/globals.h
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/test_canonical.c
+
+2021-12-20:  David Anderson
+    commit 1fb7c5ac8c433af0768a644797786918717d26fe
+
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+
+    File renaming for consistency forces the changes.
+            renamed:    src/bin/dwarfdump/command_options.c -> src/bin/dwarfdump/dd_command_options.c
+            renamed:    src/bin/dwarfdump/command_options.h -> src/bin/dwarfdump/dd_command_options.h
+            renamed:    src/bin/dwarfdump/compiler_info.c -> src/bin/dwarfdump/dd_compiler_info.c
+            renamed:    src/bin/dwarfdump/compiler_info.h -> src/bin/dwarfdump/dd_compiler_info.h
+
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2021-12-20:  David Anderson
+    commit 09df54da594e7d7922826c1681c4204c5670cf5e
+
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+
+    The renaming for consistency forces the other changes
+            renamed:    src/bin/dwarfdump/addrmap.c -> src/bin/dwarfdump/dd_addrmap.c
+            renamed:    src/bin/dwarfdump/addrmap.h -> src/bin/dwarfdump/dd_addrmap.h
+            renamed:    src/bin/dwarfdump/attr_form.c -> src/bin/dwarfdump/dd_attr_form.c
+            renamed:    src/bin/dwarfdump/attr_form.h -> src/bin/dwarfdump/dd_attr_form.h
+
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+2021-12-20:  David Anderson
+    commit d5dd38fac03ae74422893228d0ec11f6db6cea87
+
+    Beginning wholesale renaming of dwarfdump source file]
+    names to begin with dd_
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/command_options.c
+
+    The renaming forces many changes.
+            renamed:    src/bin/dwarfdump/checkutil.c -> src/bin/dwarfdump/dd_checkutil.c
+            renamed:    src/bin/dwarfdump/checkutil.h -> src/bin/dwarfdump/dd_checkutil.h
+            renamed:    src/bin/dwarfdump/common.c -> src/bin/dwarfdump/dd_common.c
+            renamed:    src/bin/dwarfdump/common.h -> src/bin/dwarfdump/dd_common.h
+            renamed:    src/bin/dwarfdump/esb.c -> src/bin/dwarfdump/dd_esb.c
+            renamed:    src/bin/dwarfdump/esb.h -> src/bin/dwarfdump/dd_esb.h
+            renamed:    src/bin/dwarfdump/esb_using_functions.h -> src/bin/dwarfdump/dd_esb_using_functions.h
+
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/dwconf.c
+            modified:   src/bin/dwarfdump/glflags.c
+            modified:   src/bin/dwarfdump/globals.h
+            modified:   src/bin/dwarfdump/macrocheck.c
+            modified:   src/bin/dwarfdump/naming.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+            modified:   src/bin/dwarfdump/print_sections.c
+            modified:   src/bin/dwarfdump/print_static_funcs.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfdump/print_str_offsets.c
+            modified:   src/bin/dwarfdump/print_strings.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   src/bin/dwarfdump/print_types.c
+            modified:   src/bin/dwarfdump/print_weaknames.c
+            modified:   src/bin/dwarfdump/true_section_name.c
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/testesb.c
+
+2021-12-20:  David Anderson
+    commit 31467f0faa0ac37d2b84609fc4e29b8fcb7d73ba
+
+    copyright year to 2021.
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2021-12-20:  David Anderson
+    commit 9e59de10790ba8b449eadcf4c8effdfbfed31976
+
+    Regenerated with new LLVM content
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+    Some new LANG codes.  Minor formatting improvements.
+            modified:   src/lib/libdwarf/dwarf.h
+
+    Now handling DW_FORM_LLVM_addrx_offset.
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2021-12-19:  David Anderson
+    commit 9cd3621d9250ede5ba259695adb336ab1f252029
+
+    Corrected commentary on DW_TAG_template* defines.
+            modified:   dwarf.h
+
+2021-12-18:  David Anderson
+    commit a281874a55a149fd678194348492af5b8d3a13c5
+
+    Cobra noticed some possible issues, so here
+    we simplify the logic and add the
+    default: case to switches.
+            modified:   src/bin/buildopstab/buildopscounttab.c
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/simplereader.c
+
+    Removed some if 0 dead code from here.
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+
+2021-12-18:  David Anderson
+    commit 448e9fbcde0a504324cfdc712036e17b7d309aa7
+
+    Removing trailing whitespace and eliminating
+    duplicated blank lines.
+            modified:   src/lib/libdwarfp/dwarf_pro_frame.h
+            modified:   src/lib/libdwarfp/dwarf_pro_line.h
+            modified:   src/lib/libdwarfp/dwarf_pro_opaque.h
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+2021-12-18:  David Anderson
+    commit b8efa9f750d381c456de97bd976324da1c0e469c
+
+    Eliminating an strncpy, initializing local variable.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+    Moved error handling up a few lines, clarifying
+    the logic, but not changing the logic.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2021-12-18:  David Anderson
+    commit fb277879ee4cf6155d0776a106cab76948d2f834
+
+    latest git log entries now in ChangeLog
+            modified:   ChangeLog
+
 2021-12-18:  David Anderson
     commit 7b702f45602b4b7a8513c0f421af5476e54c7448
 
