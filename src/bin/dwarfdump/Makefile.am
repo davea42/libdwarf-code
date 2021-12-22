@@ -108,8 +108,6 @@ dwarfdumpconf_DATA = dwarfdump.conf
 
 ### The tests go elsewhere.
 EXTRA_DIST = \
-dd_tag_common.c \
-dd_uritablebuild.c \
 $(man_MANS) \
 COPYING \
 DWARFDUMPCOPYRIGHT \
@@ -134,12 +132,5 @@ CMakeLists.txt \
 NEWS \
 README \
 CODINGSTYLE \
-testdwarfdump.conf \
 $(dwarfdumpdev_DATA) \
-$(dwarfdumpconf_DATA) \
-attr_formclass.list \
-attr_formclass_ext.list \
-tag_attr.list \
-tag_attr_ext.list \
-tag_tree.list \
-tag_tree_ext.list 
+$(dwarfdumpconf_DATA) 
