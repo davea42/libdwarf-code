@@ -24,6 +24,8 @@ examples that you should imitate. The few negative examples
 are clearly marked with a comment of /* Yuck! */. Please
 don't submit code for libdwarf that looks like any of these.
 
+Also see the src/lib/libdwarf/CODINGSTYLE document.
+
 Section list:
 
     Indentation
@@ -40,6 +42,7 @@ Section list:
     Checking For Overflow
     Dwarfdump Flags Data
     Never use strcpy strcat strncpy
+    Static data and functions
     Tools that help
 
 
@@ -63,7 +66,8 @@ a left parenthesis.
 
 ### Tab characters
 
-The tab character must never appear.
+The tab character must never appear except in
+a printf string.
 
 ### Braces
 Most of the code in libdwarf uses bracing in the style of K&R:
@@ -126,6 +130,10 @@ with blank lines:
         ...
     };
 
+Having both CamelCase in names and _ in the names
+is perhaps unusual, but it's been that way
+in the libdwarf source a very long time,
+so we sitck with it in most cases.
 
 Never use a space before a function-call left parenthesis
 or a macro-call left parenthesis. 
@@ -163,7 +171,6 @@ function definitions  in libdwarf should always take the following form:
 
 And in dwarfdump, etc, the code tends to follow this form
 too (but far from always).
-
 
 Function prototypes inside libdwarf headers 
 (as opposed to .c files)
@@ -227,7 +234,6 @@ field in the code (with grep).
         unsigned ns_z; 
     };
 
-
 ### Managing nested blocks
 
 Long blocks that are deeply nested make the code very hard
@@ -269,7 +275,6 @@ a pattern of handling exceptional cases early and returning:
 	
     return DW_DLV_OK;
 
-
 The return statement is often the best thing to use in a
 pattern like this. If it's not available due to additional
 nesting above which require some cleanup after the current
@@ -277,7 +282,6 @@ block, then consider splitting the current block into a new
 function before using goto.
 
 ### Test or Loop with Side Effect
-
 
 Never do:
 
@@ -404,7 +408,6 @@ values without duplicating the error-code-setting.
 
 ### Dwarfdump Flags Data
 
-
 Dwarfdump has a large number of options and nearly all  the
 option  values are recorded as fields in a single global
 structure  glflags (see dwarfdump.c).  Option data not in that
@@ -425,7 +428,19 @@ These functions eliminate the need for the three traditional
 string functions strcpy, strcat, strncpy and do exactly what
 is needed safely while doing nothing extra.
 
+### Static data and functions
 
+Any  data or function not referenced outside the
+defining source file should be declared 'static'.
+
+In the libdwarf library itself static data is
+not appropriate in general.
+Because multiple Dwarf_Debug
+may be open at the same time in a single
+program (dwarfdump or user code).
+
+Function names should be all lower case with underbars
+with the goal that statements and comments 'read well'.
 
 ### Tools that help
 
@@ -454,8 +469,10 @@ The primary commands used (in a source directory) are
 
     cobra -f basic *.h
     cobra -f basic *.c
-    cwe   *.h
-    cwe   *.c
     cobra -terse -f stats *.[ch]
     cobra -terse -f metrics *.[ch]
-
+    # The cwe command generates lots of spurious output as they
+    # check things we do not care much about.
+    # But some of it has been useful.
+    cwe   *.h
+    cwe   *.c
