@@ -1,3 +1,43 @@
+2021-12-22:  David Anderson
+    commit 3ce7a354202027e9403c3fc9681a16982eb47074
+
+    Updated and improved consistency between these two.
+            modified:   codingstyle.md
+            modified:   src/bin/dwarfdump/CODINGSTYLE
+
+2021-12-22:  David Anderson
+    commit c8477173ad85bd58e3d5712d9f33e188aafb1bcb
+
+    Now all the text tables used to generate .h and .c files
+    are with the C code generating .c and .h.  Moved out of
+    the dwarfdump directory.
+
+            modified:   src/bin/attr_form/Makefile.am
+            renamed:    src/bin/dwarfdump/attr_formclass.list -> src/bin/attr_form/attr_formclass.list
+            renamed:    src/bin/dwarfdump/attr_formclass_ext.list -> src/bin/attr_form/attr_formclass_ext.list
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/tag_attr/Makefile.am
+            renamed:    src/bin/dwarfdump/tag_attr.list -> src/bin/tag_attr/tag_attr.list
+            renamed:    src/bin/dwarfdump/tag_attr_ext.list -> src/bin/tag_attr/tag_attr_ext.list
+            modified:   src/bin/tag_tree/Makefile.am
+            renamed:    src/bin/dwarfdump/dd_tag_common.c -> src/bin/tag_tree/tag_common.c
+            renamed:    src/bin/dwarfdump/tag_tree.list -> src/bin/tag_tree/tag_tree.list
+            renamed:    src/bin/dwarfdump/tag_tree_ext.list -> src/bin/tag_tree/tag_tree_ext.list
+
+2021-12-22:  David Anderson
+    commit 2c542eaf7d13899d62afed57ec6d0cf88492aebf
+
+    This is kep in the regressiontests content,
+    we have no need for it here in code.
+            deleted:    src/bin/dwarfdump/testdwarfdump.conf
+
+2021-12-21:  David Anderson
+    commit e7b9082f29b4edefbb4a2d2853a348b525791973
+
+    ChangeLog now brought up to date with source file renaming
+    in dwarfdump.
+            modified:   ChangeLog
+
 2021-12-21:  David Anderson
     commit 67ca2c685feddf4c200bb03cfb9292c6d1518b00
 
