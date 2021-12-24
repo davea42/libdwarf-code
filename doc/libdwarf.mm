@@ -8283,7 +8283,6 @@ above.
 The function operates as described in
 \f(CWdwarf_global_name_offsets\fP
 above.
-.H 3
 .H 3 "Accelerated Access Funcnames (static functions)"
 This section is SGI specific and is not part of standard DWARF.
 .P
@@ -8670,7 +8669,7 @@ in the section and if a Dwarf_Error*
 is passed in returns information on the
 error through that pointer.
 
-.H 3 " dwarf_dnames_sizes()"
+.H 3 "dwarf_dnames_sizes()"
 .DS
 \f(CW int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     /* The counts are entry counts, not byte sizes. */
@@ -8715,7 +8714,7 @@ standard and
 for the motivation of this function.
 
 
-.H 3 " dwarf_dnames_bucket()"
+.H 3 "dwarf_dnames_bucket()"
 .DS
 \f(CW int dwarf_dnames_bucket(
     Dwarf_Dnames_Head dn,
@@ -8729,7 +8728,7 @@ for the motivation of this function.
 Allows retrieving the data
 for hash buckets.
 
-.H 3 " dwarf_dnames_name()"
+.H 3 "dwarf_dnames_name()"
 .DS
 \f(CW int dwarf_dnames_bucket(
     Dwarf_Dnames_Head dn,
@@ -8745,7 +8744,7 @@ for hash buckets.
 Allows retrieving the data
 about names and signatures.
 
-.H 3 " dwarf_dnames_cu_table()"
+.H 3 "dwarf_dnames_cu_table()"
 .DS
 \f(CW int dwarf_dnames_cu_table(
     Dwarf_Dnames_Head dn,
