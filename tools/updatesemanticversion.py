@@ -7,11 +7,13 @@
 import os
 import sys
 
+
 def usage():
     print("Example of use:")
     print("  python3 tools/updatesemanticversion.py 0.2.0")
     print("Then git push as appropriate")
     sys.exit(0)
+
 
 def deriveversions(sver):
     nums = sver.split(".")
@@ -29,43 +31,52 @@ def deriveversions(sver):
     return (True, ma, min, mic)
 
 
-ha = '''#define DW_LIBDWARF_VERSION_MAJOR '''
-hb = '''#define DW_LIBDWARF_VERSION_MINOR '''
-hc = '''#define DW_LIBDWARF_VERSION_MICRO '''
-hv = '''#define DW_LIBDWARF_VERSION '''
-def updatelhstring(lcount,l, sver, maj, min, mic):
-   if  l.startswith(ha):
-       l2 = ha + maj + "\n" 
-       return l2,int(lcount)+1
-   if  l.startswith(hb):
-       l2 = hb + min + "\n" 
-       return l2,int(lcount)+1
-   if  l.startswith(hc):
-       l2 = hc + mic + "\n" 
-       return l2,int(lcount)+1
-   if  l.startswith(hv):
-       l2 = ''.join([hv,'"',sver,'"\n'])
-       return l2,int(lcount)+1
-   return l,lcount
+ha = """#define DW_LIBDWARF_VERSION_MAJOR """
+hb = """#define DW_LIBDWARF_VERSION_MINOR """
+hc = """#define DW_LIBDWARF_VERSION_MICRO """
+hv = """#define DW_LIBDWARF_VERSION """
+
+
+def updatelhstring(lcount, l, sver, maj, min, mic):
+    if l.startswith(ha):
+        l2 = ha + maj + "\n"
+        return l2, int(lcount) + 1
+    if l.startswith(hb):
+        l2 = hb + min + "\n"
+        return l2, int(lcount) + 1
+    if l.startswith(hc):
+        l2 = hc + mic + "\n"
+        return l2, int(lcount) + 1
+    if l.startswith(hv):
+        l2 = "".join([hv, '"', sver, '"\n'])
+        return l2, int(lcount) + 1
+    return l, lcount
+
 
 # set(VERSION 0.2.0)
 begincm = "set(VERSION "
-def updatecmstring(cmcount,l,sver, maj, min, mic):
-   if l.startswith(begincm):
-       l2 = ''.join([begincm,sver,')\n'])
-       return l2,int(cmcount)+1
-   return l,cmcount
+
+
+def updatecmstring(cmcount, l, sver, maj, min, mic):
+    if l.startswith(begincm):
+        l2 = "".join([begincm, sver, ")\n"])
+        return l2, int(cmcount) + 1
+    return l, cmcount
+
 
 mm = ".ds vE Rev "
-def updatemmversion(mmcount,l,sver):
+
+
+def updatemmversion(mmcount, l, sver):
     if l.startswith(mm):
         wds = l.split()
         if len(wds) != 8:
-           return l,mmcount
-        wb = ' '.join(wds[0:7])
-        l2 = ' '.join([wb,sver,"\n"])
-        return l2,int(mmcount+1)
-    return l,mmcount
+            return l, mmcount
+        wb = " ".join(wds[0:7])
+        l2 = " ".join([wb, sver, "\n"])
+        return l2, int(mmcount + 1)
+    return l, mmcount
+
 
 # m4_define([v_maj], [0])
 # m4_define([v_min], [2])
@@ -73,17 +84,19 @@ def updatemmversion(mmcount,l,sver):
 ma = "m4_define([v_maj], ["
 mn = "m4_define([v_min], ["
 mc = "m4_define([v_mic], ["
-def updateacversion(account,l, sver, maj, min, mic):
+
+
+def updateacversion(account, l, sver, maj, min, mic):
     if l.startswith(ma):
-       l2 = ''.join([ma,maj,"])\n"])
-       return l2,int(account) +1
+        l2 = "".join([ma, maj, "])\n"])
+        return l2, int(account) + 1
     if l.startswith(mn):
-       l2 = ''.join([mn,min,"])\n"])
-       return l2,int(account) +1
+        l2 = "".join([mn, min, "])\n"])
+        return l2, int(account) + 1
     if l.startswith(mc):
-       l2 = ''.join([mc,mic,"])\n"])
-       return l2,int(account) +1
-    return l,int(account)
+        l2 = "".join([mc, mic, "])\n"])
+        return l2, int(account) + 1
+    return l, int(account)
 
 
 #  type is "ac" or "cm"
@@ -103,34 +116,30 @@ def updatefile(fname, type, sver, maj, min, mic):
     outdata = []
     for i, l in enumerate(content):
         if type == "cm":
-            lx,foundcm = updatecmstring(foundcm,l, sver,\
-                maj, min, mic)
+            lx, foundcm = updatecmstring(foundcm, l, sver, maj, min, mic)
             outdata += [lx]
             continue
         elif type == "lh":
-            lx,foundlh = updatelhstring(foundlh,l, sver,\
-                maj, min, mic)
+            lx, foundlh = updatelhstring(foundlh, l, sver, maj, min, mic)
             outdata += [lx]
             continue
         elif type == "ac":
-            lx,foundac = updateacversion(foundac,l,\
-                sver, maj, min, mic)
+            lx, foundac = updateacversion(foundac, l, sver, maj, min, mic)
             outdata += [lx]
             continue
         elif type == "mm":
-            lx,foundmm = updatemmversion(foundmm,l,\
-                sver)
+            lx, foundmm = updatemmversion(foundmm, l, sver)
             outdata += [lx]
             continue
-        print("Unknown type of file! Give up!",type);
+        print("Unknown type of file! Give up!", type)
         sys.exit(1)
     if type == "mm" and not foundmm:
-        print("Something wrong, did not find", fname, \
-            "  version line in mm")
+        print("Something wrong, did not find", fname, "  version line in mm")
         sys.exit(1)
     if type == "cm" and not foundcm:
-        print("Something wrong, did not find", fname, \
-            "  version line in CMakeLists.txt")
+        print(
+            "Something wrong, did not find", fname, "  version line in CMakeLists.txt"
+        )
         sys.exit(1)
     if type == "ac" and not foundac == 3:
         print("Something wrong, did not find configure.ac", "version lines")
@@ -146,6 +155,7 @@ def updatefile(fname, type, sver, maj, min, mic):
     for i, l in enumerate(outdata):
         print(l, end="", file=fo)
     fo.close()
+
 
 expecteddirs = ["bugxml", "cmake", "doc", "m4", "scripts", "src", "test"]
 
