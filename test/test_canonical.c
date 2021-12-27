@@ -19,30 +19,6 @@
 #include "libdwarf.h"
 #include "dd_canonical_append.h"
 
-#if 0
-/*  Fake glflags and functions we do not
-    use in the test so dwconf.c compiles */
-char * makename(const char *x );
-const char * sanitized(const char *s);
-void sanitized_string_destructor(void);
-struct glflags_s {
-    int gf_show_dwarfdump_conf;
-    int gf_expr_ops_joined;
-};
-struct glflags_s glflags;
-void sanitized_string_destructor(void)
-{
-}
-const char * sanitized(const char *s)
-{
-    return s;
-}
-char * makename(const char *x )
-{
-    return (char *)x;
-}
-#endif
-
 #define CANBUF 25
 static struct canap_s {
     char *res_exp;
