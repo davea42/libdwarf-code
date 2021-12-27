@@ -38,9 +38,6 @@ extern "C" {
 #define FOUND_ERROR     3
 #define FOUND_DONE      4
 
-char * _dwarf_canonical_append(char *target, unsigned int target_size,
-    const char *first_string, const char *second_string);
-
 /*  Declarations helping configure the frame reader.
     We are not allowing negative register numbers.
     Which could be  allowed if necessary with a little work. */

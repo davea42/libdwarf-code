@@ -209,7 +209,7 @@ if (DO_TESTING)
     set_source_group(CANONICALLIST "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_canonical.c 
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_safe_strcpy.c
-        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_dwconf.c
+        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_canonical_append.c
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c)
     add_executable(selfcanonical ${CANONICALLIST})
     target_compile_options(selfcanonical PRIVATE

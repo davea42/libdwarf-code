@@ -17,8 +17,9 @@
 #endif
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "dd_dwconf.h"
+#include "dd_canonical_append.h"
 
+#if 0
 /*  Fake glflags and functions we do not
     use in the test so dwconf.c compiles */
 char * makename(const char *x );
@@ -40,6 +41,7 @@ char * makename(const char *x )
 {
     return (char *)x;
 }
+#endif
 
 #define CANBUF 25
 static struct canap_s {

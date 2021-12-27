@@ -9,6 +9,8 @@ dd_addrmap.c \
 dd_addrmap.h \
 dd_attr_form.h \
 dd_attr_form.c \
+dd_canonical_append.h \
+dd_canonical_append.c \
 dd_checkutil.c \
 dd_checkutil.h \
 dd_command_options.c \

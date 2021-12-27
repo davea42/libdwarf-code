@@ -7,6 +7,7 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
     dd_opscounttab.c
     print_abbrevs.c print_aranges.c
     dd_attr_form.c
+    dd_canonical_append.c
     print_debugfission.c print_die.c 
     print_debug_gnu.c
     print_debug_names.c  print_debug_sup.c
@@ -36,6 +37,7 @@ set_source_group(HEADERS "Header Files"
   print_debug_gnu.h
   dd_dwconf_using_functions.h dd_esb_using_functions.h
   dd_helpertree.h
+  dd_canonical_append.h
   dwarfdump-af-table.h
   dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 
   dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
