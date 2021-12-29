@@ -1143,7 +1143,6 @@ print_one_fde(Dwarf_Debug dbg,
                 &has_more_rows,
                 &subsequent_pc,
                 err);
-            offset = offset;
             if (fires == DW_DLV_ERROR) {
                 glflags.gf_count_major_errors++;
                 printf("\nERROR: on getting fde details for "
@@ -1203,7 +1202,6 @@ print_one_fde(Dwarf_Debug dbg,
                     &offset,
                     &block,
                     &row_pc, &has_more_rows,&subsequent_pc, err);
-                offset = offset;
             }
             if (fires == DW_DLV_ERROR) {
                 printf("\n");
