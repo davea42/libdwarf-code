@@ -1,31 +1,19 @@
 /*  Copyright (c) 2021 David Anderson
     This test code is hereby placed in the public domain
     for anyone to use in any way.  */
-#include "config.h"
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h> /* for free(). */
-#endif /* HAVE_STDLIB_H */
+#include <stdlib.h> /* for exit() */
 #include <stdio.h> /* For debugging. */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
-#include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dwarf_base_types.h"
-#include "dwarf_opaque.h"
-#include "dwarf_error.h"
 
-/*  This demonstates processing DWARF
+/*! @file jitreader.c
+    @defgroup jitreader Jitreader Demonstrating DWARF without a file.
+
+    @code
+Omitting the #includes for brevity in the doxygen output.
+*/
+/*
+    This demonstates processing DWARF
     from in_memory data.  For simplicity
     in this example we are using static arrays.
 
@@ -49,9 +37,11 @@
     into libdwarf, you just link your code into
     your application and link against libdwarf.
 */
+#define TRUE 1
+#define FALSE 0
 
 /* Some valid DWARF2 data */
-Dwarf_Small abbrevbytes[] = {
+static Dwarf_Small abbrevbytes[] = {
 0x01, 0x11, 0x01, 0x25, 0x0e, 0x13, 0x0b, 0x03, 0x08, 0x1b,
 0x0e, 0x11, 0x01, 0x12, 0x01, 0x10, 0x06, 0x00, 0x00, 0x02,
 0x2e, 0x01, 0x3f, 0x0c, 0x03, 0x08, 0x3a, 0x0b, 0x3b, 0x0b,
@@ -60,8 +50,7 @@ Dwarf_Small abbrevbytes[] = {
 0x03, 0x08, 0x3a, 0x0b, 0x3b, 0x0b, 0x39, 0x0b, 0x49, 0x13,
 0x02, 0x0a, 0x00, 0x00, 0x04, 0x24, 0x00, 0x0b, 0x0b, 0x3e,
 0x0b, 0x03, 0x08, 0x00, 0x00, 0x00, };
-int abbrevbyteslen = sizeof(abbrevbytes);
-Dwarf_Small infobytes[] = {
+static Dwarf_Small infobytes[] = {
 0x60, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x74, 0x2e, 0x63,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -72,8 +61,7 @@ Dwarf_Small infobytes[] = {
 0x00, 0x00, 0x00, 0x01, 0x5c, 0x00, 0x00, 0x00, 0x03, 0x69,
 0x00, 0x01, 0x03, 0x08, 0x5c, 0x00, 0x00, 0x00, 0x02, 0x91,
 0x6c, 0x00, 0x04, 0x04, 0x05, 0x69, 0x6e, 0x74, 0x00, 0x00, };
-int infobyteslen = sizeof(infobytes);
-Dwarf_Small strbytes[] = {
+static Dwarf_Small strbytes[] = {
 0x47, 0x4e, 0x55, 0x20, 0x43, 0x31, 0x37, 0x20, 0x39, 0x2e,
 0x33, 0x2e, 0x30, 0x20, 0x2d, 0x6d, 0x74, 0x75, 0x6e, 0x65,
 0x3d, 0x67, 0x65, 0x6e, 0x65, 0x72, 0x69, 0x63, 0x20, 0x2d,
@@ -92,7 +80,6 @@ Dwarf_Small strbytes[] = {
 0x6e, 0x00, 0x2f, 0x76, 0x61, 0x72, 0x2f, 0x74, 0x6d, 0x70,
 0x2f, 0x74, 0x69, 0x6e, 0x79, 0x64, 0x77, 0x61, 0x72, 0x66,
 0x00, };
-int strbyteslen = sizeof(strbytes);
 
 /*  An internals_t , data used elsewhere but
     not directly visible elsewhere. One needs to have one
@@ -139,12 +126,13 @@ static
 int gsinfo(void* obj,
     Dwarf_Half section_index,
     Dwarf_Obj_Access_Section_a* return_section,
-    int* error UNUSEDARG)
+    int* error )
 {
     special_filedata_internals_t *internals =
         (special_filedata_internals_t *)(obj);
     struct sectiondata_s *finfo = 0;
 
+    *error = 0; /* No error. Avoids unused arg */
     if (section_index >= SECCOUNT) {
         return DW_DLV_NO_ENTRY;
     }
@@ -201,11 +189,13 @@ static
 int gloadsec(void * obj,
     Dwarf_Half secindex,
     Dwarf_Small**rdata,
-    int *error UNUSEDARG)
+    int *error)
 {
     special_filedata_internals_t *internals =
         (special_filedata_internals_t *)(obj);
     struct sectiondata_s *secp = 0;
+
+    *error = 0; /* No Error, avoids compiler warning */
     if (secindex >= internals->f_sectioncount) {
         return DW_DLV_NO_ENTRY;
     }
@@ -370,13 +360,13 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
         }
         exit(1);
     }
-    printf("CU header length..........0x%" DW_PR_DUx "\n",
-        cu_header_length);
+    printf("CU header length..........0x%lx\n",
+        (unsigned long)cu_header_length);
     printf("Version stamp.............%d\n",version_stamp);
     printf("Address size .............%d\n",address_size);
     printf("Offset size...............%d\n",length_size);
-    printf("Next cu header offset.....0x%" DW_PR_DUx "\n",
-        next_cu_header_offset);
+    printf("Next cu header offset.....0x%lx\n",
+        (unsigned long)next_cu_header_offset);
 
     res = dwarf_siblingof_b(dbg, NULL,is_info, &cu_die, error);
     if (res != DW_DLV_OK) {
@@ -438,3 +428,4 @@ int main()
     }
     return 0;
 }
+/*! @endcode */
