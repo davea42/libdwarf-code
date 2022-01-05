@@ -79,6 +79,9 @@ do {                                      \
     }                                     \
 } while(0)
 
+/*  Used in very few places here. */
+#define DW_DLV_BADOFFSET   (~(Dwarf_Off)0)
+
 /*  Version 5 returns DW_AT_decl_file differently
     than earlier versions */
 #define DWVERSION4  4

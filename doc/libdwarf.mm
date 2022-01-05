@@ -1732,12 +1732,12 @@ how to deal with this class of errors.
 See just below the example for a further discussion.
 
 .in +2
-.FG "exampleintfail errors returned from init calls"
+.FG "exampleinit initialization call"
 .DS
 \f(CW
 #include "dwarf.h"
 #include "libdwarf.h"
-void exampleinitfail(const char *path,
+void exampleinit(const char *path,
     char *true_pathbuf,
     unsigned tpathlen,
     unsigned groupnumber)
@@ -1756,41 +1756,21 @@ void exampleinitfail(const char *path,
         tpathlen,groupnumber,errhand,
         errarg,&dbg,
         &error);
-    /*  Preferred version */
     if (res == DW_DLV_ERROR) {
-        /*  But here if dbg was non-NULL
-            the dwarf_dealloc will segfault. */
         /* Valid call if dbg is null! */
-        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
-        /*  Simpler newer form in
-            this comment, but use the
-            older form above for compatibility
-            with older libdwarf.
-            dwarf_dealloc_error(dbg,error);
-            With libdwarf before September 2020
-            these dealloc calls will leave
-            a few bytes allocated.
-        */
-        /*  The orginal recommendation to call
-            free(error) in this case is still
-            valid though it will not necessarily
-            free every byte allocated with
-            September 2020 and later libdwarf. */ 
+        dwarf_dealloc_error(dbg,error);
+        return;
     }
-    /*  Horrible messy alternative, best effort
-        if dwarf_package_version exists
-        (function created in October 2019
-        package version 20191106). */
-    if (res == DW_DLV_ERROR) {
-        const char *ver = dwarf_package_version();
-        int cmpres = 0;
-        cmpres = strcmp(ver,"20200822");
-        if (cmpres > 0) {
-            dwarf_dealloc_error(dbg,error);
-        } else {
-            free(error);
-        }
+    if (res == DW_DLV_NO_ENTRY) {
+        /* Nothing we can do */
+        return;
     }
+    if (true_pathbuf && tpathlen) {
+        printf("The file we actually opened is %s\n",
+            true_pathbuf);
+    }
+    /*  Call libdwarf functions here */
+    dwarf_finish(dbg);
 }
 \fP
 .DE
@@ -2063,7 +2043,7 @@ so it must be a pointer to a Dwarf_Debug.
 The passed-in pointer-to Dwarf_Debug is not checked in any way
 but the pointed-to value should be NULL
 (see the example 
-"exampleinitfail").
+"exampleinit").
 On successful call the pointed-to value
 is set to point to a newly created
 struct Dwarf_Debug_s and any previous value
@@ -2162,7 +2142,7 @@ so it must be a pointer to a Dwarf_Debug.
 The passed-in pointer-to Dwarf_Debug is not checked in any way
 but the pointed-to value should be NULL
 (see the example 
-"exampleinitfail").
+"exampleinit").
 On successful call the pointed-to value
 is set to point to a newly created
 struct Dwarf_Debug_s and any previous value

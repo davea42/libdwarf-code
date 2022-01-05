@@ -1,0 +1,34 @@
+
+/**
+ * @mainpage A Consumer Library Interface to DWARF
+ * @author David Anderson
+ * @date 2021-12-26
+ *
+ * @section dw_intro Introduction
+ *
+ * This document describes an interface to @e libdwarf, a library of
+ * functions to provide access to DWARF debugging information records,
+ * DWARF line number information, DWARF address range and global
+ * names information, weak names information, DWARF frame description
+ * information, DWARF static function names, DWARF static variables,
+ * and DWARF type information.
+ *
+ * The document has long mentioned the "Unix International Programming
+ * Languages Special Interest Group" (PLSIG), under whose auspices the
+ * DWARF committee was formed around 1991. "Unix International" was
+ * disbanded in the 1990s and no longer exists.
+ *
+ * The DWARF committee published DWARF2 July 27, 1993.
+ *
+ * In the mid 1990s this document and the library it describes (which
+ * the committee never endorsed, having decided not to endorse or
+ * approve any particular library interface) was made available on the
+ * internet by Silicon Graphics, Inc.
+ *
+ * In 2005 the DWARF committee began an affiliation with
+ * FreeStandards.org. In 2007 FreeStandards.org merged with The Linux
+ * Foundation. The DWARF committee dropped its affiliation with
+ * FreeStandards.org in 2007 and established the dwarfstd.org
+ * website. See "http://www.dwarfstd.org" for current information on
+ * standardization activities and a copy of the standard.
+ */

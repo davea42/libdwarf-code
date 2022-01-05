@@ -1,19 +1,12 @@
-/*
-    This file contains what user code should be,
-    hence the code typed here is
-    PUBLIC DOMAIN.
+/*! @file checkexamples.c
+    @page checkexamples.c
+    checkexamples.c contains what user code should be,
+    hence the code typed here is PUBLIC DOMAIN.
 
-    The following are in libdwarf.mm
-    to verify there are no silly typographical errors
-    in that document.
-
-    These should not be built routinely nor
+    It need not be compiled routinely nor
     should it ever be executed.
 
-    This file appears
-    in the doc directory.
-
-    compile with
+    To verify syntatic correctness compile with
 
 cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized \
@@ -21,9 +14,11 @@ cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 -Wmissing-parameter-type -Wnested-externs \
 -I../src/lib/libdwarf checkexamples.c
 
-A useful shell command to make an example list is:
+A useful shell command to make a nearly-complete
+example list is:
 grep '^void exampl' checkexamples.c | cut -b 1-50 |sort
 */
+
 
 #include <stdio.h> /* for printf */
 #include <stdlib.h> /* for free() */
@@ -32,52 +27,218 @@ grep '^void exampl' checkexamples.c | cut -b 1-50 |sort
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 
-void example1(Dwarf_Die somedie)
+/*! @defgroup exampleinit
+    @brief exampleinit
+    
+    An example calling  dwarf_init_path() and dwarf_finish()
+    @param path
+    Path to an object we wish to open.
+    @param groupnumber
+    @code
+*/
+void exampleinit(const char *path, unsigned groupnumber)
+{
+    static char * true_pathbuf[FILENAME_MAX]; 
+    unsigned tpathlen = FILENAME_MAX;
+    Dwarf_Handler errhand = 0;
+    Dwarf_Ptr errarg = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Debug dbg = 0;
+    int res = 0;
+
+    res = dwarf_init_path(path,true_pathbuf,
+        tpathlen,groupnumber,errhand,
+        errarg,&dbg, &error);
+    if (res == DW_DLV_ERROR) {
+        /* Valid call even though dbg is null! */
+        dwarf_dealloc_error(dbg,error);
+        return;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        /*  Nothing we can do */
+        return;
+    }
+    printf("The file we actually opened is %s\n",
+        true_pathbuf);
+    /* Call libdwarf functions here */
+    dwarf_finish(dbg);
+}
+/*! @endcode */
+
+/*! @defgroup exampleinit_dl
+    @brief  Example calling the debuglink init.
+
+    In case GNU debuglink data is followed the true_pathbuf
+    content will not match path.
+    The path actually used is copied to true_path_out.
+    In the case of MacOS dSYM the true_path_out
+    may not match path.
+    If debuglink missing from the Elf executable
+    or shared-object (ie, it is a normal
+    object!) or unusable by libdwarf or
+    true_path_buffer len is zero or true_path_out_buffer
+    is zero libdwarf accepts the path given as the object
+    to report on, no debuglink or dSYM processing will be used.
+
+    @sa https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+
+    An example calling  dwarf_init_path_dl() and dwarf_finish()
+    @code
+*/
+void exampleinit_dl(const char *path, unsigned groupnumber)
+{
+    static char * true_pathbuf[FILENAME_MAX]; 
+    static char **glpath[3] = {
+         "/usr/local/debug",
+         "/usr/local/private/debug",
+         "/usr/local/libdwarfdd/debug"
+    };
+    unsigned tpathlen = FILENAME_MAX;
+    Dwarf_Handler errhand = 0;
+    Dwarf_Ptr errarg = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Debug dbg = 0;
+    int res = 0;
+
+    res = dwarf_init_path_dl(path,true_pathbuf,
+        tpathlen,groupnumber,errhand,
+        errarg,&dbg,
+        glpath,
+        3,
+        &error);
+    if (res == DW_DLV_ERROR) {
+        /* Valid call even though dbg is null! */
+        dwarf_dealloc_error(dbg,error);
+        return;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        /*  Nothing we can do */
+        return;
+    }
+    {
+        printf("The file we actually opened is %s\n",
+            true_pathbuf);
+    }
+    /* Call libdwarf functions here */
+    dwarf_finish(dbg);
+}
+/*! @endcode */
+
+
+/*!  @defgroup example1
+     @brief example1  Showing dwarf_attrlist()
+
+     @code 
+*/
+int example1(Dwarf_Die somedie,Dwarf_Error *error)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Signed atcount;
     Dwarf_Attribute *atlist;
-    Dwarf_Error error = 0;
     Dwarf_Signed i = 0;
     int errv;
 
-    errv = dwarf_attrlist(somedie, &atlist,&atcount, &error);
-    if (errv == DW_DLV_OK) {
-        for (i = 0; i < atcount; ++i) {
-            /* use atlist[i] */
-            dwarf_dealloc_attribute(atlist[i]);
-            /*  This original form still works.
-            dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
-            */
-            atlist[i] = 0;
+    errv = dwarf_attrlist(somedie, &atlist,&atcount, error);
+    if (errv != DW_DLV_OK) {
+        return errv;
+    }
+    for (i = 0; i < atcount; ++i) {
+        Dwarf_Half attrnum = 0;
+        const char *attrname = 0;
+
+        /*  use atlist[i], likely calling
+            libdwarf functions and likely
+            returning DW_DLV_ERROR if
+            what you call gets DW_DLV_ERROR */
+        errv = dwarf_whatattr(atlist[i],&attrnum,error);
+        if (errv != DW_DLV_OK) {
+            /* Something really bad happened. */
+            return errv; 
         }
-        dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+        dwarf_get_AT_name(attrnum,&attrname);
+        printf("Attribute[%ld], value %u name %s\n", 
+            (long int)i,attrnum,attrname);
+        dwarf_dealloc_attribute(atlist[i]);
+        atlist[i] = 0;
     }
+    dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+    return DW_DLV_OK;
 }
+/*! @endcode */
 
-void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
+/*! @defgroup example2
+    @brief example2  Attaching a tied dbg
+
+    By convention, open the base Dwarf_Debug using
+    a dwarf_init call.  Then open
+    the executable as the tied object.
+    Then call dwarf_set_tied_dbg()
+    so the library can look for relevant data
+    in the tied-dbg (the executable).
+
+    With split dwarf your libdwarf calls after
+    than the initial open
+    are done against the base Dwarf_Dbg and
+    libdwarf automatically looks in the open tied dbg
+    when and as appropriate.
+    the tied-dbg can be detached too, see
+    example3 link, though you must call
+    dwarf_finish() on the detached dw_tied_dbg,
+    the library will not do that for you..
+
+    @param tieddbg
+    @param error
+    @return
+    Returns whatever DW_DLV appropriate
+    to the caller to deal with.
+    @code 
+*/
+int example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg,
+    Dwarf_Error *error)
 {
-    Dwarf_Error error = 0;
     int res = 0;
 
-    /*  Do the dwarf_init_b() or dwarf_elf_init_b()
-        calls to set
-        dbg, tieddbg at this point. Then: */
-    res = dwarf_set_tied_dbg(dbg,tieddbg,&error);
-    if (res != DW_DLV_OK) {
-        /* Something went wrong*/
-    }
+    /*  The caller should have opened dbg
+        on the debug shared object/dwp,
+        an object with DWARF, but no executable
+        code. 
+        And it should have opened tieddbg on the 
+        runnable shared object or executable. */
+    res = dwarf_set_tied_dbg(dbg,tieddbg,error);
+    /*  Let your caller (who initialized the dbg
+        values) deal with doing dwarf_finish()
+    */
+    return res; 
+    
 }
+/*! @endcode */
 
-void example3(Dwarf_Debug dbg)
+/*! @defgroup example3 
+    @brief example3  Detaching a tied dbg
+
+    With split dwarf your libdwarf calls after
+    than the initial open
+    are done against the base Dwarf_Dbg and
+    libdwarf automatically looks in the open tied dbg
+    when and as appropriate.
+    the tied-dbg can be detached too, see
+    example3 link, though you must call
+    dwarf_finish() on the detached dw_tied_dbg,
+    the library will not do that for you..
+
+    @code 
+*/
+int example3(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Error error = 0;
     int res = 0;
-    res = dwarf_set_tied_dbg(dbg,NULL,&error);
+    res = dwarf_set_tied_dbg(dbg,NULL,error);
     if (res != DW_DLV_OK) {
         /* Something went wrong*/
+        return res;
     }
+    return res;
 }
+/*! @endcode */
 
 void examplesecgroup(Dwarf_Debug dbg)
 {
@@ -1882,47 +2043,3 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-void exampleinitfail(const char *path,
-    char *true_pathbuf,
-    unsigned tpathlen,
-    unsigned groupnumber)
-{
-    Dwarf_Handler errhand = 0;
-    Dwarf_Ptr errarg = 0;
-    Dwarf_Error error = 0;
-    Dwarf_Debug dbg = 0;
-    int res = 0;
-
-    res = dwarf_init_path(path,true_pathbuf,
-        tpathlen,groupnumber,errhand,
-        errarg,&dbg, &error);
-    /*  Preferred version */
-    if (res == DW_DLV_ERROR) {
-        /* Valid call even though dbg is null! */
-        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
-        /*  Simpler newer form shown in
-            this comment, but use the
-            older form above for compatibility
-            with older libdwarf.
-            dwarf_dealloc_error(dbg,error);
-            With libdwarf before September 2020
-            these dealloc calls will leave
-            a few bytes allocated.
-        */
-        return;
-    }
-    /*  Horrible messy alternative, best effort
-        if dwarf_package_version exists
-        (function created in October 2019
-        package version 20191106). */
-    if (res == DW_DLV_ERROR) {
-        const char *ver = dwarf_package_version();
-        int cmpres = 0;
-        cmpres = strcmp(ver,"20200822");
-        if (cmpres > 0) {
-            dwarf_dealloc_error(dbg,error);
-        } else {
-            free(error);
-        }
-    }
-}

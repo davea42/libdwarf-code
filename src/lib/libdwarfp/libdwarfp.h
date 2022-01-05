@@ -603,17 +603,6 @@ DWP_API int dwarf_compress_integer_block_a(
     Dwarf_Unsigned * /*output_block_len*/,
     void          ** /*output_block_returned*/,
     Dwarf_Error    * /*error */);
-/*  The following should be avoided as of February 2019. */
-DWP_API void * dwarf_compress_integer_block(
-    Dwarf_P_Debug,    /*dbg*/
-    Dwarf_Bool,       /*signed==true (or unsigned)*/
-    Dwarf_Small,      /*size of integer units: 8, 16, 32, 64*/
-    void*,            /*data*/
-    Dwarf_Unsigned,   /*number of elements*/
-    Dwarf_Unsigned*,  /*number of bytes in output block*/
-    Dwarf_Error*      /*error*/
-);
-
 /* Operations to create location expressions. */
 DWP_API int dwarf_new_expr_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Expr * /*expr_out*/,
