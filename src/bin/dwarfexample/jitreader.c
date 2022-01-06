@@ -395,7 +395,7 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
 
 /*  testing interfaces useful for embedding
     libdwarf inside another program or library. */
-int main()
+int main(void)
 {
     int res = 0;
     Dwarf_Debug dbg = 0;
