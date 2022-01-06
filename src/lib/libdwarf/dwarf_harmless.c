@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2020 David Anderson. All Rights Reserved.
+  Copyright (C) 2010-2022 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it
