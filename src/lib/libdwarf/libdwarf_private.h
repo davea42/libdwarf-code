@@ -1,6 +1,6 @@
-/*  Copyright 2021 David Anderson
+/*  Copyright 2022 David Anderson
     This trivial set of defines is hereby placed in the public domain
-    for all to use.
+    for all to use without restriction.
 */
 /* To enable printing with printf regardless of the
    actual underlying data type, we define the DW_PR_xxx macros.
