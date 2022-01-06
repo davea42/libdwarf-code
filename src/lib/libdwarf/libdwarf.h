@@ -157,9 +157,8 @@ extern "C" {
     a single struct.  */
 #define DW_FISSION_SECT_COUNT 12
 
-/*! @defgroup basicdatatypes Basic Datatypes Group
+/*! @defgroup basicdatatypes Basic Library Datatypes Group
     @{
-
     @typedef Dwarf_Unsigned
     The basic unsigned data type.
     Intended to be an unsigned 64bit value.
@@ -181,7 +180,7 @@ extern "C" {
     A TRUE(non-zero)/FALSE(zero) data item.
     @typedef Dwarf_Ptr
     A generic pointer type. It uses void *
-    so it cannot be added-to or subtracted from.
+    so it cannot be added-to or subtracted-from.
     @typedef Dwarf_Small
     Used for small unsigned integers and
     used as Dwarf_Small* for pointers and
@@ -908,6 +907,11 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
 
 /*! @defgroup dwdla  DW_DLA #define values
+   
+    These identify the various allocate/dealloc
+    types.  The allocation happens within libdwarf,
+    and the deallocation is usually done by
+    user code. 
     @{
 */
 #define DW_DLA_STRING          0x01  /* char* */
@@ -960,6 +964,12 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 /*! @} */
 
 /*! @defgroup dwdle  DW_DLE #define Error Numbers
+
+    These identify the various error codes that have been
+    used.  Not all of them are still use.
+    We do not recycle obsolete codes into new uses.
+    The codes 1 through 22 are historic and it is
+    unlikely they are used anywhere in the library.
     @{
 */
 /* libdwarf error numbers */
@@ -1459,7 +1469,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_SYMBOL_SECTION_SIZE_ERROR       490
 #define DW_DLE_PE_SECTION_SIZE_ERROR           491
 
-    /* LAST MUST EQUAL LAST ERROR NUMBER */
+/*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
 #define DW_DLE_LAST        491
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
