@@ -1613,7 +1613,8 @@ DW_API int dwarf_init_path_dl(const char * dw_path,
     In case return is DW_DLV_ERROR
     dw_error is set to point to
     the error details.
-    @return DW_DLV_OK etc.
+    @return
+    DW_DLV_OK etc.
 */
 DW_API int dwarf_init_b(int dw_fd,
     unsigned int      dw_groupnumber,
@@ -1632,7 +1633,6 @@ DW_API int dwarf_init_b(int dw_fd,
     May return DW_DLV_NO_ENTRY
     but no further information is available.
     Normally returns DW_DLV_OK.
-
 */
 DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
 
@@ -1787,29 +1787,104 @@ DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
     Dwarf_Half    * dw_header_cu_type,
     Dwarf_Error*    dw_error);
 
-DW_API int dwarf_siblingof_b(Dwarf_Debug /*dbg*/,
-    Dwarf_Die        /*die*/,
-    Dwarf_Bool       /*is_info*/,
-    Dwarf_Die*       /*return_siblingdie*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Retrieve the first DIE or the next sibling.
 
-/*  Any Dwarf_Die will work.
-    The values returned are about the CU itself, not a DIE. */
-DW_API int dwarf_cu_header_basics(Dwarf_Die die,
-    Dwarf_Half     * /*version*/,
-    Dwarf_Bool     * /*is_info*/,
-    Dwarf_Bool     * /*is_dwo*/,
-    Dwarf_Half     * /*offset_size*/,
-    Dwarf_Half     * /*address_size*/,
-    Dwarf_Half     * /*extension_size*/,
-    Dwarf_Sig8    ** /*signature*/,
-    Dwarf_Off      * /*offset_of_length*/,
-    Dwarf_Unsigned * /*total_byte_length*/,
-    Dwarf_Error    * /*error*/);
+    @param dw_dbg
+    The Dwarf_Debug one is operating on.
+    @param dw_die
+    Immediately after calling dwarf_next_cu_header_d
+    pass in NULL to retrieve the CU DIE.
+    Or pass in a known DIE and this will retrieve
+    the next sibling in the chain.
+    @param dw_is_info
+    Pass TRUE or FALSE to match the applicable
+    dwarf_next_cu_header_d call.
+    @param dw_return_siblingdie
+    The DIE returned through the pointer.
+    @param dw_error
+    The usual error information, if any.
+    @return
+    Returns DW_DLV_OK etc.
 
-DW_API int dwarf_child(Dwarf_Die /*die*/,
-    Dwarf_Die*       /*return_childdie*/,
-    Dwarf_Error*     /*error*/);
+    @see dwarf_get_die_infotypes
+*/
+DW_API int dwarf_siblingof_b(Dwarf_Debug dw_dbg,
+    Dwarf_Die        dw_die,
+    Dwarf_Bool       dw_is_info,
+    Dwarf_Die*       dw_return_siblingdie,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Some CU-relative facts.
+
+    Any Dwarf_Die will work.
+    The values returned through the pointers
+    are about the CU for a DIE
+    @param dw_die
+    Some open Dwarf_Die.
+    @param dw_version
+    Returns the DWARF version: 2,4,5, or 5
+    @param dw_is_info
+    Returns non-zero if the CU is .debug_info.
+    Returns zero if the CU is .debug_types (DWARF4).
+    @param dw_is_dwo
+    Returns ton-zero if the CU is a dwo/dwp object and
+    zero if it is a standard object.
+    @param dw_offset_size
+    Returns offset size, 4 and 8 are possible.
+    @param dw_address_size
+    Almost always returns 4 or 8. Could be 2
+    in unusual circumstances.
+    @param dw_extension_size
+    The sum of dw_offset_size and dw_extension_size
+    are the count of the initial bytes of the CU.
+    Standard lengths are 4 and 12.
+    For 1990's SGI objects the length could be 8.
+    @param dw_signature
+    Returns a pointer to an 8 byte signature.
+    @param dw_offset_of_length
+    Returns the section offset of the initial
+    byte of the CU.
+    @param dw_total_byte_length
+    Returns the total length of the CU including
+    the length field and the content of the CU.
+    @param dw_error
+    The usual Dwarf_Error*.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+
+DW_API int dwarf_cu_header_basics(Dwarf_Die dw_die,
+    Dwarf_Half     * dw_version,
+    Dwarf_Bool     * dw_is_info,
+    Dwarf_Bool     * dw_is_dwo,
+    Dwarf_Half     * dw_offset_size,
+    Dwarf_Half     * dw_address_size,
+    Dwarf_Half     * dw_extension_size,
+    Dwarf_Sig8    ** dw_signature,
+    Dwarf_Off      * dw_offset_of_length,
+    Dwarf_Unsigned * dw_total_byte_length,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Get the child DIE, if any.
+    The child may be the first of a list of
+    sibling DIEs.
+
+    @param dw_die
+    We will return the first child of this DIE.
+    @param dw_return_childdie
+    Returns the first child through the pointer.
+    For subsequent dies siblings of the first, use
+    dwarf_siblingof_b().
+    @param dw_error
+    The usual Dwarf_Error*.
+    @return
+    Returns DW_DLV_OK etc. Returns DW_DLV_NO_ENTRY
+    if dw_die has no children.
+*/
+
+DW_API int dwarf_child(Dwarf_Die dw_die,
+    Dwarf_Die*    dw_return_childdie,
+    Dwarf_Error*  dw_error);
 
 /*! @brief  Deallocate (free) a DIE.
     @param dw_die
@@ -1817,37 +1892,101 @@ DW_API int dwarf_child(Dwarf_Die /*die*/,
 */
 DW_API void dwarf_dealloc_die( Dwarf_Die dw_die);
 
-DW_API int dwarf_die_from_hash_signature(Dwarf_Debug /*dbg*/,
-    Dwarf_Sig8 *     /*hash_sig*/,
-    const char *     /*sig_type: "tu" or "cu"*/,
-    Dwarf_Die*       /*returned_CU_die */,
-    Dwarf_Error*     /*error*/);
+/*! @brief Given a has signature, retrieve the applicable CU die
 
-/*! @brief
-    Finding die given global (not CU-relative) offset.
-    Applies to debug_info (is_info true) or debug_types
-    (is_info false).
+    @param dw_dbg
+    @param dw_hash_sig
+    A pointer to an 8 byte signature to be looked up.
+    in .debug_names.
+    @param dw_sig_type
+    Valid type requests are "cu" and "tu"
+    @param dw_returned_CU_die
+    Returnes the found CU DIE if one is found.
+    @param dw_error
+    The usual Dwarf_Error*.
+    @return
+    DW_DLV_OK means dw_returned_CU_die was set.
+    DW_DLV_NO_ENTRY means  the signature could
+    not be found.
 */
-DW_API int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
-    Dwarf_Off        /*offset*/,
-    Dwarf_Bool       /*is_info*/,
-    Dwarf_Die*       /*return_die*/,
-    Dwarf_Error*     /*error*/);
+DW_API int dwarf_die_from_hash_signature(Dwarf_Debug dw_dbg,
+    Dwarf_Sig8 *  dw_hash_sig,
+    const char *  dw_sig_type,
+    Dwarf_Die*    dw_returned_CU_die,
+    Dwarf_Error*  dw_error);
 
-/*  New 4 February 2021. returns DIE and
+/*! @brief Finding die given global (not CU-relative) offset.
+
+    This works whether or not the target section
+    has had  dwarf_next_cu_header_d() applied,
+    the CU the offset exists in has
+    been seen at all, or the target offset is one
+    libdwarf has seen before.
+
+    @param dw_dbg
+    The applicable Dwarf_Debug
+    @param dw_offset
+    The global offset of the DIE in the appropriate
+    section.
+    @param dw_is_info
+    Pass TRUE if the target is .debug_info, else
+    pass FALSE if the target is .debug_types.
+    @param dw_return_die
+    On  success this returns a DIE pointer to
+    the found DIE.
+    @param dw_error
+    The usual Dwarf_Error*.
+    @return
+    DW_DLV_OK means dw_returned_die was found
+    DW_DLV_NO_ENTRY is only possible if the offset
+    is to a null DIE, and that is very unusual.
+    Otherwise expect DW_DLV_ERROR.
+
+*/
+DW_API int dwarf_offdie_b(Dwarf_Debug dw_dbg,
+    Dwarf_Off        dw_offset,
+    Dwarf_Bool       dw_is_info,
+    Dwarf_Die*       dw_return_die,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Retrieves a DIE from a DW_UT_split_type
+    or DW_UT_type CU.
+
+returns DIE and
     is_info flag if it finds the referenced
-    DW_UT_split_type or DW_UT_type CU. */
-DW_API int dwarf_find_die_given_sig8(Dwarf_Debug /*dbg*/,
-    Dwarf_Sig8 * /*ref*/,
-    Dwarf_Die  * /*die_out*/,
-    Dwarf_Bool * /*is_info*/,
-    Dwarf_Error * /*error*/);
+    DW_UT_split_type or DW_UT_type CU.
 
-/*  Returns the is_info flag.
-    Needed so client software knows
-    if a DIE is in debug_info or debug_types.
+    @param dw_dbg
+    The applicable Dwarf_Debug
+    @param dw_ref
+    A pointer to a Dwarf_Sig8 struct whose
+    content defines what is being searched for.
+    @param dw_die_out
+    If found, this returns the found DIE itself.
+    @param dw_is_info
+    If found, this returns section (.debug_is_info
+    or .debug_is_types).
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
 */
-DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
+DW_API int dwarf_find_die_given_sig8(Dwarf_Debug dw_dbg,
+    Dwarf_Sig8 * dw_ref,
+    Dwarf_Die  * dw_die_out,
+    Dwarf_Bool * dw_is_info,
+    Dwarf_Error* dw_error);
+
+/*! @brief Returns the is_info flag.
+
+    So client software knows if a DIE is in debug_info or debug_types.
+    @param dw_die
+    The DIE being queried.
+    @return
+    If non-zero the flag means the DIE is in .debug_info.
+    Otherwise it means the DIE is in .debug_types.
+*/
+DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
 /*! @} */
 
 /*! @defgroup dieentry Debugging Information Entry (DIE) Access
