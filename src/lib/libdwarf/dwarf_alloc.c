@@ -996,7 +996,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     malloc_section_free(&dbg->de_debug_tu_index);
     malloc_section_free(&dbg->de_debug_loclists);
     malloc_section_free(&dbg->de_debug_rnglists);
-    dwarf_harmless_cleanout(&dbg->de_harmless_errors);
+    _dwarf_harmless_cleanout(&dbg->de_harmless_errors);
 
     _dwarf_dealloc_rnglists_context(dbg);
     _dwarf_dealloc_loclists_context(dbg);

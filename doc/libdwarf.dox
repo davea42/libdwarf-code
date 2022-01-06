@@ -72,7 +72,9 @@
     Some functions cannot possibly return some of these
     three values. As defined later for each function.
 
-    B) The alternative (not recommended) approach is
+    With this approach the 
+
+    B) An alternative (not recommended) approach is
     to simply pass NULL to the error argument.
     @code
     int res = dwarf_tag(die,DW_TAG_compile_unit,NULL);
@@ -90,6 +92,7 @@
 
     That is the whole picture. The library never
     calls exit() under any circumstances.
+
     
     @subsection dw_errorinit Error Handling at initialization
 
@@ -107,22 +110,49 @@
     If you use the suggested A) approach
     just pass NULL to both those arguments.
 
+    Note that dw_errarg is a pointer so one could
+    create a struct with data of interest and use
+    that pointer as the dw_errarg.
+    Or one could put an integer in there or simply NULL,
+    it just depends what you want to do in the
+    Dwarf_Handler function you write.
+
     If you wish to provide a dw_errhand, define a function
-    such as
+    (this first example is not a good choice)
     @code
-    void my_dw_errhandler(Dwarf_Error error,Dwarf_Ptr ptr)
+    void bad_dw_errhandler(Dwarf_Error error,Dwarf_Ptr ptr)
     {
-        printf("ERROR Crashing on %lx due to error %lx %s\n",
+        printf("ERROR Exit on %lx due to error 0x%lx %s\n",
             (unsigned long)ptr,
             (unsigned long)dwarf_errno(error),
             dwarf_errmsg(error));
         exit(1)
     } 
     @endcode
-    and pass my_dw_errhandler (as a function pointer,
+    and pass bad_dw_errhandler (as a function pointer,
     no parentheses 
     The Dwarf_Ptr argument is the value you passed in as dw_errarg,
     and can be anything.
+    By doing an exit() you guarantee that your application
+    abruptly stops.  This is only acceptible to toy
+    or practice programs.
+
+    A better dw_errhand function is
+    @code
+    void my_dw_errhandler(Dwarf_Error error,Dwarf_Ptr ptr)
+    {
+        /*  Clearly one could write to a log file or do
+            whatever the application finds useful. */
+        printf("ERROR on %lx due to error 0x%lx %s\n",
+            (unsigned long)ptr,
+            (unsigned long)dwarf_errno(error),
+            dwarf_errmsg(error));
+    } 
+    @endcode
+    because it returns.  The DW_DLV_ERROR code
+    is returned from libdwarf and your code
+    can do what it likes with the error situation.
+    
 
     @code
     Dwarf_Ptr x = address of some struct I want in the errhandler;
@@ -177,7 +207,6 @@
     @endcode
 
     That's all there is to it.
-
 
 */
 

@@ -1596,7 +1596,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
             setup_result = fission_result;
         }
         if (setup_result == DW_DLV_OK) {
-            dwarf_harmless_init(&dbg->de_harmless_errors,
+            _dwarf_harmless_init(&dbg->de_harmless_errors,
                 DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE);
             *ret_dbg = dbg;
             /*  This is the normal return. */

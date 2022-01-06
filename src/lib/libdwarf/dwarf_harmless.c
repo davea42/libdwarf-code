@@ -78,6 +78,9 @@
 #include "dwarf_frame.h"
 #include "dwarf_harmless.h"
 
+/*  Not user configurable. */
+#define DW_HARMLESS_ERROR_MSG_STRING_SIZE 300
+
 /*  The pointers returned here through errmsg_ptrs_array
     become invalidated by any call to libdwarf. Any call.
 */
@@ -173,7 +176,7 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
             struct Dwarf_Harmless_s oldarray = *dhp;
             /*  Do not double increment the max, the init() func
                 increments it too. */
-            dwarf_harmless_init(dhp,maxcount-1);
+            _dwarf_harmless_init(dhp,maxcount-1);
             if (oldarray.dh_next_to_use != oldarray.dh_first) {
                 unsigned i = 0;
                 for (i = oldarray.dh_first;
@@ -186,7 +189,7 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
                     dhp->dh_errs_count = oldarray.dh_errs_count;
                 }
             }
-            dwarf_harmless_cleanout(&oldarray);
+            _dwarf_harmless_cleanout(&oldarray);
         }
     }
     return prevcount-1;
@@ -195,7 +198,7 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
 /*  Only callable from within libdwarf (as a practical matter)
 */
 void
-dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
+_dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
 {
     unsigned i = 0;
     memset(dhp,0,sizeof(*dhp));
@@ -223,7 +226,7 @@ dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
 }
 
 void
-dwarf_harmless_cleanout(struct Dwarf_Harmless_s *dhp)
+_dwarf_harmless_cleanout(struct Dwarf_Harmless_s *dhp)
 {
     unsigned i = 0;
     if (!dhp->dh_errors) {
