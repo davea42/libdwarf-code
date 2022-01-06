@@ -109,8 +109,8 @@ extern "C" {
 #define DW_TAG_subprogram               0x2e
         /*  The DWARF2 document had two spellings of the following
             two TAGs, DWARF3 specifies the longer spelling. */
-#define DW_TAG_template_type_parameter  0x2f /* DWARF3/2 spelling*/
-#define DW_TAG_template_type_param      0x2f /* DWARF2 internally inconsistent*/
+#define DW_TAG_template_type_parameter  0x2f /* DWARF3-5 spelling*/
+#define DW_TAG_template_type_param      0x2f /* DWARF2 inconsistent*/
 #define DW_TAG_template_value_parameter 0x30 /* DWARF all versions*/
 #define DW_TAG_template_value_param     0x30 /* SGI misspelling/typo*/
 #define DW_TAG_thrown_type              0x31
@@ -490,7 +490,7 @@ extern "C" {
 #define DW_AT_CPQ_prologue_length               0x2005 /* COMPAQ/HP */
 
 /*  From GHS C GreenHills ghs.com */
-#define DW_AT_ghs_mangled                       0x2007  /* conflict MIPS */
+#define DW_AT_ghs_mangled                   0x2007 /* conflict MIPS */
 #define DW_AT_ghs_rsm                           0x2083
 #define DW_AT_ghs_frsm                          0x2085
 #define DW_AT_ghs_frames                        0x2086
@@ -984,7 +984,7 @@ most-likely-useful name. */
 #define DW_IDX_type_hash            0x5      /* DWARF5 */
 #define DW_IDX_GNU_internal         0x2000
 #define DW_IDX_lo_user              0x2000   /* DWARF5 */
-#define DW_IDX_GNU_external         0x2001  
+#define DW_IDX_GNU_external         0x2001
 #define DW_IDX_hi_user              0x0fff   /* DWARF5 */
 
 /*  These with not-quite-the-same-names were used in DWARF4
@@ -1149,7 +1149,7 @@ most-likely-useful name. */
 #define DW_LANG_GOOGLE_RenderScript     0x8001
 /* ALTIUM extension */
 #define DW_LANG_ALTIUM_Assembler        0x9101  /* ALTIUM */
-#define DW_LANG_BORLAND_Delphi          0xb000  
+#define DW_LANG_BORLAND_Delphi          0xb000
 
 /* Sun extensions */
 #define DW_LANG_SUN_Assembler           0x9001 /* SUN */

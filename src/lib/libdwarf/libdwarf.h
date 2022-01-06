@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2021 David Anderson. All rights reserved.
+  Portions Copyright 2008-2022 David Anderson. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
@@ -392,7 +392,7 @@ typedef struct Dwarf_Ranges_s {
 
 /*! @} endgroup allstructs */
 
-/*! @defgroup framedefines Default frame values
+/*! @defgroup framedefines Default frame #define values
     @{
 */
 /*  Special values for offset_into_exception_table field
@@ -864,21 +864,7 @@ struct Dwarf_Obj_Access_Methods_a_s {
 /*  struct Dwarf_Obj_Access_Interface_a_s is allocated
     and deallocated by your code when you are using
     the libdwarf Object File Interface
-    [dwarf_object_init_b() and dwarf_object_finish()] directly.
-    dwarf_object_finish() does not free
-    struct Dwarf_Obj_Access_Interface_s or its content.
-    (libdwarf does record a pointer to this struct: you must
-    ensure that pointer remains valid for as long as
-    a libdwarf instance is open (meaning
-    after dwarf_init_b() and before dwarf_finish())).
-
-    dwarf_init_path_dl() or dwarf_init_path() take care
-    of these details for you. The member
-    names prefixed with ai_ for clarity 4 September 2021.
-
-    ai_object is a void* as it hides the data the
-    object access routines
-    need (which varies by and object format).
+    [dwarf_object_init_b() directly.
 */
 struct Dwarf_Obj_Access_Interface_a_s {
     void*                             ai_object;
@@ -887,7 +873,7 @@ struct Dwarf_Obj_Access_Interface_a_s {
 
 /*! @} endgroup allstructs */
 
-/*! @defgroup DLA allocation defines
+/*! @defgroup dwdla  DW_DLA #define values
     @{
 */
 #define DW_DLA_STRING          0x01  /* char* */
@@ -939,7 +925,7 @@ struct Dwarf_Obj_Access_Interface_a_s {
 #define DW_DLA_STR_OFFSETS     0x40
 /*! @} */
 
-/*! @defgroup Error Numbers, DW_DLE
+/*! @defgroup dwdle  DW_DLE #define Error Numbers
     @{
 */
 /* libdwarf error numbers */
@@ -1444,7 +1430,7 @@ struct Dwarf_Obj_Access_Interface_a_s {
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
-/*! @section initfinish Initialization and finish (close) operations */
+/*! @section initfinish Initialization And Finish Operations */
 
 /*! @defgroup initfunctions Libdwarf Initialization Functions
     @{
@@ -1618,26 +1604,20 @@ DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
 
 /*! @brief Used to access DWARF information in memory
     or in an object format unknown to libdwarf.
-    See src/bin/dwarfexample/jitreader.c for a way
-    to use this.
+
+    @see jitreader
 
     @param dw_obj
     A data structure filled out by the caller so libdwarf
     can access DWARF data not in a supported object file format.
     @param dw_errhand
-    Pass in NULL unless one wishes libdwarf to call
-    this error handling function (which you must write)
-    instead of passing meaningfull values to the
-    dw_error argument.
+    Pass in NULL normally.
     @param dw_errarg
-    If dw_errorhand is non-null, then this value
-    (a pointer or integer that means something
-    to you) is passed to the dw_errhand function
-    in case that is helpful to you.
+    Pass in NULL normally.
     @param dw_groupnumber
     The value passed in should be DW_GROUPNUMBER_ANY
     unless one wishes to other than a standard
-    group.
+    group (quite unlikely for this interface).
     @param dw_dbg
     On success, *dw_dbg is set to a pointer to
     a new Dwarf_Debug structure to be used in
@@ -1646,7 +1626,8 @@ DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
     In case return is DW_DLV_ERROR
     dw_error is set to point to
     the error details.
-    @return DW_DLV_OK etc.
+    @return
+    The usual value: DW_DLV_OK etc.
 */
 DW_API int dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* dw_obj,
     Dwarf_Handler dw_errhand,
@@ -1657,11 +1638,16 @@ DW_API int dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* dw_obj,
 
 /*! @brief Used to close the object_init dw_dbg.
 
+    Close the dw_dbg opened by dwarf_object_init_b().
+
     @param dw_dbg
     Must be an open Dwarf_Debug opened by
     dwarf_object_init_b().
     The init call dw_obj data is not freed
     by the call to dwarf_object_finish.
+    @return
+    The return value DW_DLV_OK etc is pretty useless, there
+    is not much you can do with it.
 */
 DW_API int dwarf_object_finish(Dwarf_Debug dw_dbg);
 
@@ -1700,7 +1686,7 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Dwarf_Error * dw_error);
 /*! @}
 */
-/*! @defgroup compilationunit Compilation Unit (CU) access
+/*! @defgroup compilationunit Compilation Unit (CU) Access
     @{
 */
 /*! @brief Returns information on the next CU header.
@@ -1830,7 +1816,7 @@ DW_API int dwarf_find_die_given_sig8(Dwarf_Debug /*dbg*/,
 DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
 /*! @} */
 
-/*! @defgroup dieentry Debugging Information Entry (DIE) access
+/*! @defgroup dieentry Debugging Information Entry (DIE) Access
     This is the main interface to attributes of a DIE.
     @{
 */
@@ -2017,7 +2003,7 @@ DW_API int dwarf_arrayorder(Dwarf_Die /*die*/,
     Dwarf_Error*     /*error*/);
 
 /*! @} */
-/*! @defgroup attrform Attribute and Attribute-Form details
+/*! @defgroup attrform Attribute and Attribute-Form Details
     @{
 */
 /*! @brief Gets the full list of attributes
@@ -2181,7 +2167,7 @@ DW_API void dwarf_dealloc_attribute(Dwarf_Attribute /*attr*/);
 
 /*! @} */
 
-/*! @defgroup discriminant Decoding a discriminant list
+/*! @defgroup discriminant Decoding a Discriminant List
 
     Given a block containing a discriminant list
     the following functions enable decoding the block.
@@ -2217,7 +2203,7 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
 
 /*! @} */
 
-/*! @defgroup linetable Line Table for a CU
+/*! @defgroup linetable Line Table For a CU
     @{
 */
 
@@ -2481,14 +2467,13 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     struct  Dwarf_Printf_Callback_Info_s * /*newvalues*/);
 
 /*! @} */
-/*! @defgroup ranges .debug_ranges DWARF3, DWARF4
+/*! @defgroup ranges Ranges .debug_ranges DWARF3, DWARF4
     @{
 */
 /*  Adds return of the final offset to accommodate
     DWARF4 GNU split-dwarf. Other than for split-dwarf
     the realoffset will be set by the function
     to be the same as rangesoffset.
-    New September 10, 2020.
 */
 DW_API int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
     Dwarf_Off       /*rangesoffset*/,
@@ -2502,7 +2487,7 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);
 /*! @} */
-/*! @defgroup rnglists .debug_rnglists DWARF5
+/*! @defgroup rnglists Rnglists .debug_rnglists DWARF5
     @{
 */
 
@@ -2798,7 +2783,7 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*err*/);
 /*! @} */
 
-/*! @defgroup macro Macro debug_macro DWARF5 data access
+/*! @defgroup macro Macro .debug_macro DWARF5 data access
     @{
 */
 
@@ -2895,7 +2880,7 @@ DW_API int dwarf_get_macro_import(Dwarf_Macro_Context
     Dwarf_Error    * /*error*/);
 
 /*! @} */
-/*! @defgroup macinfo Macro debug_macinfo DWARF2-4 data access
+/*! @defgroup macinfo Macrinfo .debug_macinfo DWARF2-4 data access
     @{
 */
 DW_API char* dwarf_find_macro_value_start(char * /*macro_string*/);
@@ -2909,7 +2894,7 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
 
 /*! @} */
 
-/*! @defgroup frame .debug_frame and .eh_frame access
+/*! @defgroup frame Frame .debug_frame and .eh_frame Access
     @{
 */
 /*  Consumer op on  gnu .eh_frame info */
@@ -3240,7 +3225,7 @@ DW_API Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
     Dwarf_Small /* value */);
 /*! @} */
 
-/*! @defgroup abbrev .debug_abbrev section details
+/*! @defgroup abbrev Abbreviations .debug_abbrev Section Details
     @{
 */
 /* abbreviation section operations */
@@ -3278,7 +3263,7 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Error    * /*error*/);
 
 /*! @} */
-/*! @defgroup string .debug_str section details
+/*! @defgroup string String Section .debug_str Details
     @{
 */
 /* consumer string section operation */
@@ -3289,7 +3274,7 @@ DW_API int dwarf_get_str(Dwarf_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
 
 /*! @} */
-/*! @defgroup string .debug_str_offsets section details
+/*! @defgroup string Str_offsets section .debug_str_offsets details
     @{
 */
 /*  Allows applications to print the .debug_str_offsets
@@ -3358,7 +3343,7 @@ DW_API int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table,
     Dwarf_Error    * /*error*/);
 
 /*! @} */
-/*! @defgroup dwarferror Dwarf_Error functions
+/*! @defgroup dwarferror Dwarf_Error Functions
     These functions aid in understanding errors
     when a function returns DW_DLV_ERROR.
     @{
@@ -3414,7 +3399,7 @@ DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
     Dwarf_Error dw_error);
 /*! @} */
 
-/*! @defgroup dwarfdealloc dwarf_dealloc generic function
+/*! @defgroup dwarfdealloc Generic dwarf_dealloc Function
     @{
 */
 /*! @brief The generic dealloc (free) function.
@@ -3443,7 +3428,7 @@ DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
 DW_API void dwarf_dealloc(Dwarf_Debug dw_dbg,
     void* dw_space, Dwarf_Unsigned dw_type);
 /*! @} */
-/*! @defgroup debugsup Access to the .debug_sup section.
+/*! @defgroup debugsup Access to Section .debug_sup
     @{
 */
 /* For DWARF5 */
@@ -3456,7 +3441,7 @@ DW_API int dwarf_get_debug_sup(Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*error*/);
 /*! @} */
 
-/*! @defgroup debugnames .debug_names fast access DWARF5
+/*! @defgroup debugnames Access to .debug_names Fast Access DWARF5
     @{
 */
 /*  .debug_names names table interfaces. DWARF5.
@@ -3552,7 +3537,7 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
 
 /*! @} */
 
-/*! @defgroup aranges .debug_aranges fast access
+/*! @defgroup aranges Access to .debug_aranges Fast Access
     @{ */
 DW_API int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
     Dwarf_Arange**   /*aranges*/,
@@ -3585,7 +3570,7 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
     Dwarf_Error   *  /*error*/ );
 /*! @} */
 
-/*! @defgroup pubnames .debug_pubnames, typenames and more fast access
+/*! @defgroup pubnames Access to .debug_pubnames plus. Fast Access
     @{ */
 
 /*  global name space operations (.debug_pubnames access)
@@ -3785,10 +3770,10 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     Dwarf_Error*     /*error*/);
 /*! @} */
 
-/*! @defgroup gnupubnames GNU defined .debug_gnu_pubnames/typenames fast access
+/*! @defgroup gnupubnames Access GNU .debug_gnu_pubnames Fast Access
     @{
 */
-/*  BEGIN: debug_gnu_pubnames/typenames access,
+/*  BEGIN: .debug_gnu_pubnames .debug_gnu_typenames access,
     calling these  Gnu_Index as a general reference.  */
 DW_API int dwarf_get_gnu_index_head(Dwarf_Debug /*dbg*/,
     /*  The following arg false to select gnu_pubtypes */
@@ -3822,7 +3807,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
 
 /*! @} */
 
-/*! @defgroup gnudebuglink GNU defined .gnu_debuglink and build-id.
+/*! @defgroup gnudebuglink Access GNU .gnu_debuglink, build-id.
     When DWARF is separate from a normal shared object.
     Has nothing to do with split-dwarf/debug-fission.
     @{
@@ -3880,7 +3865,7 @@ DW_API unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
     unsigned long /*len*/, unsigned int /*init*/);
 /*! @} */
 
-/*! @defgroup gdbindex Gdb Index fast access to .dwo or .dwp
+/*! @defgroup gdbindex Gdb Index Fast Access to .dwo or .dwp
     If .gdb_index present in an executable then
     the content here helps quickly find their way
     into the .dwo or .dwp .debug_cu_index or .debug_tu_index
@@ -4004,7 +3989,7 @@ DW_API void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
 
 /*! @} */
 
-/*! @defgroup splitdwarf  Split Dwarf (debug fission) fast access
+/*! @defgroup splitdwarf  Split Dwarf (Debug Fission) Fast Access
     @{
 */
 /*  START debugfission dwp .debug_cu_index
@@ -4180,7 +4165,7 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
 /*  The harmless error strings (if any) are freed when the dbg
     is dwarf_finish()ed. */
 
-/*! @defgroup Naming Names (TAG AT etc)
+/*! @defgroup Naming Names TAG AT etc as strings 
     @{
 */
 /*  When the val_in is known these, for example, dwarf_get_TAG_name
@@ -4279,7 +4264,7 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class /*fc*/,
     const char ** /*s_out*/);
 /*! @} */
 
-/*! @defgroup objectsections Object Sections data
+/*! @defgroup objectsections Object Sections Data
     @{
 */
 /*  Section name access.  Because sections might
@@ -4404,7 +4389,7 @@ DW_API int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
     Dwarf_Error    * /*error*/);
 /*! @} */
 
-/*! @defgroup leb LEB encode and decode
+/*! @defgroup leb LEB Encode and Decode
     @{
 */
 DW_API int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
@@ -4429,7 +4414,7 @@ DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
     char           * /*endptr*/);
 /*! @} */
 
-/*! @defgroup miscellaneous Miscellaneous functions
+/*! @defgroup miscellaneous Miscellaneous Functions
     @{
 */
 /*  Returns the version string. Example: "0.3.0"
@@ -4498,7 +4483,7 @@ DW_API int dwarf_set_de_alloc_flag(int dw_v);
 /*! @}
 */
 
-/*! @defgroup objectdetector Determine object type of a file
+/*! @defgroup objectdetector Determine Object Type of a File
     @{
 */
 DW_API int dwarf_object_detector_path_b(const char * /*path*/,
