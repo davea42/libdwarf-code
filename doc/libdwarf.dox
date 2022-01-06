@@ -1,34 +1,184 @@
 
-/**
- * @mainpage A Consumer Library Interface to DWARF
- * @author David Anderson
- * @date 2021-12-26
- *
- * @section dw_intro Introduction
- *
- * This document describes an interface to @e libdwarf, a library of
- * functions to provide access to DWARF debugging information records,
- * DWARF line number information, DWARF address range and global
- * names information, weak names information, DWARF frame description
- * information, DWARF static function names, DWARF static variables,
- * and DWARF type information.
- *
- * The document has long mentioned the "Unix International Programming
- * Languages Special Interest Group" (PLSIG), under whose auspices the
- * DWARF committee was formed around 1991. "Unix International" was
- * disbanded in the 1990s and no longer exists.
- *
- * The DWARF committee published DWARF2 July 27, 1993.
- *
- * In the mid 1990s this document and the library it describes (which
- * the committee never endorsed, having decided not to endorse or
- * approve any particular library interface) was made available on the
- * internet by Silicon Graphics, Inc.
- *
- * In 2005 the DWARF committee began an affiliation with
- * FreeStandards.org. In 2007 FreeStandards.org merged with The Linux
- * Foundation. The DWARF committee dropped its affiliation with
- * FreeStandards.org in 2007 and established the dwarfstd.org
- * website. See "http://www.dwarfstd.org" for current information on
- * standardization activities and a copy of the standard.
- */
+/*!
+    @mainpage A Consumer Library Interface to DWARF
+    @author David Anderson
+    @date 2022-01-05
+ 
+    @section dw_intro Introduction
+
+    This document describes an interface to @e libdwarf, a library of
+    functions to provide access to DWARF debugging information
+    records,
+    DWARF line number information, DWARF address range and global
+    names information, weak names information, DWARF frame
+    description
+    information, DWARF static function names, DWARF static variables,
+    and DWARF type information.
+ 
+    The document has long mentioned the "Unix International
+    Programming
+    Languages Special Interest Group" (PLSIG), under whose
+    auspices the
+    DWARF committee was formed around 1991. "Unix International" was
+    disbanded in the 1990s and no longer exists.
+ 
+    The DWARF committee published DWARF2 July 27, 1993.
+ 
+    In the mid 1990s this document and the library it describes
+    (which
+    the committee never endorsed, having decided not to endorse or
+    approve any particular library interface)
+    was made available on the
+    internet by Silicon Graphics, Inc.
+ 
+    In 2005 the DWARF committee began an affiliation with
+    FreeStandards.org. In 2007 FreeStandards.org merged with The Linux
+    Foundation. The DWARF committee dropped its affiliation with
+    FreeStandards.org in 2007 and established the dwarfstd.org
+    website. See "http://www.dwarfstd.org" for current information on
+    standardization activities and a copy of the standard.
+ 
+    @section dw_error Error Handling in libdwarf
+    Essentially every libdwarf call could involve dealing
+    with an error (possibly data corruption in
+    the object file).  Here we explain the two main
+    approaces the library provides (though we think
+    only one of them is truly appropriate except
+    in toy programs).
+
+    A) The suggested approach is to  define a Dwarf_Error
+    @code
+    Dwarf_Error error = 0;
+    @endcode
+    Then, in ever call where there is a Dwarf_Error argument
+    pass its address
+    @code
+    int res = dwarf_tag(die,DW_TAG_compile_unit,&error);
+    @endcode
+
+    The possible return values to res are, in general:
+    @code
+    DW_DLV_OK
+    DW_DLV_NO_ENTRY
+    DW_DLV_ERROR
+    @endcode
+  
+    If DW_DLV_ERROR is returned then error is set
+    (by the library) to a pointer to important
+    details about the
+    error.  If DW_DLV_NO_ENTRY or DW_DLV_OK is
+    returned the error argument is ignored by the library.
+
+    Some functions cannot possibly return some of these
+    three values. As defined later for each function.
+
+    B) The alternative (not recommended) approach is
+    to simply pass NULL to the error argument.
+    @code
+    int res = dwarf_tag(die,DW_TAG_compile_unit,NULL);
+    @endcode
+
+    If your initialization provided an 'errhand'
+    function pointer argument (see below) the
+    library will call errhand if an error is encountered.
+    (Your errhand function could simply exit if you so choose.)
+
+    The the library will then return DW_DLV_ERROR, though
+    you will have no way to identify what the error was.
+    Could be a malloc fail or data corruption or an
+    invalid argument to the call, or something else.
+
+    That is the whole picture. The library never
+    calls exit() under any circumstances.
+    
+    @subsection dw_errorinit Error Handling at initialization
+
+    Each initialization call (for example)
+    @code
+    dwarf_init_path(args...)
+    @endcode
+    has two arguments that appear nowhere
+    else in the library.
+    @code
+    Dwarf_Handler dw_errhand
+    Dwarf_Ptr dw_errarg
+    @endcode
+
+    If you use the suggested A) approach
+    just pass NULL to both those arguments.
+
+    If you wish to provide a dw_errhand, define a function
+    such as
+    @code
+    void my_dw_errhandler(Dwarf_Error error,Dwarf_Ptr ptr)
+    {
+        printf("ERROR Crashing on %lx due to error %lx %s\n",
+            (unsigned long)ptr,
+            (unsigned long)dwarf_errno(error),
+            dwarf_errmsg(error));
+        exit(1)
+    } 
+    @endcode
+    and pass my_dw_errhandler (as a function pointer,
+    no parentheses 
+    The Dwarf_Ptr argument is the value you passed in as dw_errarg,
+    and can be anything.
+
+    @code
+    Dwarf_Ptr x = address of some struct I want in the errhandler;
+    res = dwarf_init_path(...,my_dw_errhandler,x,... );
+    if (res == ...)
+    @endcode
+    If you do not wish to provide a dw_errhand, just pass
+    both arguments as NULL.
+
+    @subsection dw_errorcall Error Handling Everywhere
+
+    So let us examine a case where anything could happen.
+    And here we are taking the recommeded  method
+    of using a non-null dwarf_Error*:
+
+    @code
+    int func(Dwarf_Dbg dbg,Dwarf_Die die, Dwarf_Error* error) {
+        res = dwarf_sibingof_b(die,&newdie,error);
+    ...
+    }
+    @endcode
+
+    If res == DW_DLV_OK, then newdie is a DIE pointer
+    and when appropriate we should do dwarf_dealloc_die(newdie)
+    
+    If res == DW_DLV_NO_ENTRY, then newdie is not set
+    and there is no error. In this case it means
+    die was the last of a siblinglist. The exact meaning
+    of course depends on the call.
+
+    If res == DW_DLV_ERROR then something really bad
+    happened. The only way to know what is to examine
+    the *error as in
+    @code
+    int ev = dwarf_errno(*error);
+    or
+    char * msg  = dwarf_errmsg(*error);
+    or both and report that somehow.
+    @endcode
+    
+    If it's a decently large program then
+    you want to free any local memory
+    and return res. If a small and unimportant
+    program print something and exit.
+
+    If you want to discard the error report then
+    @code
+        dwarf_dealloc_error(dbg,*error);
+        *error = 0;
+        return DW_DLV_OK;
+        /* or DW_DLV_NO_ENTRY */
+    @endcode
+
+    That's all there is to it.
+
+
+*/
+
+
