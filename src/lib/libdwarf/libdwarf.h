@@ -2112,44 +2112,140 @@ DW_API int dwarf_CU_dieoffset_given_die(Dwarf_Die dw_die,
     Dwarf_Off*       dw_return_offset,
     Dwarf_Error*     dw_error);
 
-/*  This returns the CU die global offset if one knows the
+/*! @brief Returns the CU DIE section offset given CU header offset
+
+    Returns the CU die global offset if one knows the
     CU header global offset.
-    See also dwarf_CU_dieoffset_given_die().
-    The _b form is new October 2011. */
+    @see dwarf_CU_dieoffset_given_die
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_in_cu_header_offset
+    The CU header offset.
+    @param dw_is_info
+    If TRUE the CU header offset is in .debug_info.
+    Otherwise the CU header offset is in .debug_types.
+    @param dw_out_cu_die_offset
+    The CU DIE offset returned through this pointer.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
 DW_API int dwarf_get_cu_die_offset_given_cu_header_offset_b(
-    Dwarf_Debug      /*dbg*/,
-    Dwarf_Off        /*in_cu_header_offset*/,
-    Dwarf_Bool       /*is_info. True means look in debug_Info,
-        false use debug_types.*/,
-    Dwarf_Off *  /*out_cu_die_offset*/,
-    Dwarf_Error *    /*err*/);
+    Dwarf_Debug  dw_dbg,
+    Dwarf_Off    dw_in_cu_header_offset,
+    Dwarf_Bool   dw_is_info,
+    Dwarf_Off *  dw_out_cu_die_offset,
+    Dwarf_Error *dw_err);
 
-/*  dwarf_die_CU_offset returns the CU relative offset
-    not the global debug_info section offset, given
-    any DIE in the CU.  See also dwarf_CU_dieoffset_given_die.
-    */
-DW_API int dwarf_die_CU_offset(Dwarf_Die /*die*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
+/*! @briev returns the CU relative offset of the DIE.
 
-DW_API int dwarf_die_CU_offset_range(Dwarf_Die /*die*/,
-    Dwarf_Off*       /*return_CU_header_offset*/,
-    Dwarf_Off*       /*return_CU_length_bytes*/,
-    Dwarf_Error*     /*error*/);
+    @see dwarf_CU_dieoffset_given_die
 
-DW_API int dwarf_attr(Dwarf_Die /*die*/,
-    Dwarf_Half        /*attr*/,
-    Dwarf_Attribute * /*returned_attr*/,
-    Dwarf_Error*      /*error*/);
+    @param dw_die
+    The DIE being queried.
+    @param dw_return_offset
+    Returns the CU relative offset of this DIE.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_die_CU_offset(Dwarf_Die dw_die,
+    Dwarf_Off*       dw_return_offset,
+    Dwarf_Error*     dw_error);
 
-DW_API int dwarf_die_text(Dwarf_Die /*die*/,
-    Dwarf_Half    /*attr*/,
-    char       ** /*ret_name*/,
-    Dwarf_Error * /*error*/);
+/*! @brief Returns the offset length of the entire CU of a DIE.
+    @param dw_die
+    The DIE being queried.
+    @param dw_return_CU_header_offset
+    On success returns the section offset of the CU
+    this DIE is in.
+    @param dw_return_CU_length_bytes
+    On success returns the CU length of the CU
+    this DIE is in, including the CU length, header,
+    and all DIEs.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_die_CU_offset_range(Dwarf_Die dw_die,
+    Dwarf_Off*   dw_return_CU_header_offset,
+    Dwarf_Off*   dw_return_CU_length_bytes,
+    Dwarf_Error* dw_error);
 
-DW_API int dwarf_diename(Dwarf_Die /*die*/,
-    char   **        /*diename*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Given DIE and attribute number return a Dwarf_attribute
+
+    Returns DW_DLV_NO_ENTRY if the DIE has no attribute dw_attrnum.
+   
+    @param dw_die
+    The DIE of interest.
+    @param dw_attrnum
+    An attribute number, for example DW_AT_name.
+    @param dw_returned_attr
+    On success a Dwarf_Attribute pointer is returned
+    and it should eventually be deallocated.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+
+*/
+DW_API int dwarf_attr(Dwarf_Die dw_die,
+    Dwarf_Half        dw_attrnum,
+    Dwarf_Attribute * dw_returned_attr,
+    Dwarf_Error*      dw_error);
+
+/*! @brief Given DIE and attribute number return a string
+
+    Returns DW_DLV_NO_ENTRY if the DIE has no attribute dw_attrnum.
+   
+    @param dw_die
+    The DIE of interest.
+    @param dw_attrnum
+    An attribute number, for example DW_AT_name.
+    @param dw_ret_name
+    On success a pointer to the string
+    is returned. 
+    Do not free the string.
+    Many attributes allow various forms that directly or
+    indirectly contain strings and this
+    follows all of them to their string.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+
+*/
+DW_API int dwarf_die_text(Dwarf_Die dw_die,
+    Dwarf_Half    dw_attrnum,
+    char       ** dw_ret_name,
+    Dwarf_Error * dw_error);
+
+/*! @brief Return the string from a DW_AT_name attribute
+
+    Returns DW_DLV_NO_ENTRY if the DIE has no attribute
+    DW_AT_name
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_diename
+    On success a pointer to the string
+    is returned. 
+    Do not free the string.
+    Various forms directly or
+    indirectly contain strings and this
+    follows all of them to their string.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_diename(Dwarf_Die dw_die,
+    char   **        dw_diename,
+    Dwarf_Error*     dw_error);
 
 /* Returns the  abbrev code of the die. Cannot fail. */
 DW_API int dwarf_die_abbrev_code(Dwarf_Die /*die */);
