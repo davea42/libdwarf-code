@@ -2060,33 +2060,58 @@ DW_API int dwarf_dieoffset(Dwarf_Die dw_die,
     Dwarf_Off*       dw_return_offset,
     Dwarf_Error*     dw_error);
 
-/*! @brief  
-    The DIE here can be any DIE in the relevant CU.
-    index is an index into .debug_addr.
-    This will look first for .debug_addr
-    in the dbg object DIE
-    and if not there (because the dbg object is
-    a dwo or dwp split dwarf object)
-    will look in the tied object if tied is available. */
-DW_API int dwarf_debug_addr_index_to_addr(Dwarf_Die /*die*/,
-    Dwarf_Unsigned  /*index*/,
-    Dwarf_Addr    * /*return_addr*/,
-    Dwarf_Error   * /*error*/);
-/*  Reading a CU DIE with DW_AT_low_pc an indexed value
-    can be problematic as that interacts with DW_AT_addr_base
-    in that DIE. Here is a test readers may find useful */
-DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int form);
+/*! @brief Extract address given address index. DWARF5 
 
-/*  dwarf_CU_dieoffset_given_die returns
+    @param dw_die
+    The DIE of interest
+    @param dw_index
+    An index into .debug_addr.  This will look first for
+    .debug_addr in the dbg object DIE and if not there
+    will look in the tied object if that is available.
+    @param dw_return_adddr
+    On success the address is returned through the pointer.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_debug_addr_index_to_addr(Dwarf_Die dw_die,
+    Dwarf_Unsigned  dw_index,
+    Dwarf_Addr    * dw_return_addr,
+    Dwarf_Error   * dw_error);
+
+/*! @brief Informs if a DW_FORM is an indexed form 
+
+    Reading a CU DIE with DW_AT_low_pc an indexed value can
+    be problematic as several different FORMs are indexed.
+    Some in DWARF5 others being extensions to DWARF4
+    and DWARF5. Indexed forms interact with DW_AT_addr_base
+    in a DIE making this a very relevant distinction.
+*/
+DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int dw_form);
+
+/*! @brief Returns the CU DIE offset given any DIE
+
+    Returns
     the global debug_info section offset of the CU die
-    that is the CU containing the given_die
+    in the CU containing the given_die
     (the passed in DIE can be any DIE).
-    This information makes it possible for a consumer to
-    find and print CU context information for any die.
-    See also dwarf_get_cu_die_offset_given_cu_header_offset_b. */
-DW_API int dwarf_CU_dieoffset_given_die(Dwarf_Die /*given_die*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
+
+    @see dwarf_get_cu_die_offset_given_cu_header_offset_b
+
+    @param dw_die
+    The die being queried.
+    @param dw_return_offset
+    Returns the section offset of the CU DIE for dw_die.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_CU_dieoffset_given_die(Dwarf_Die dw_die,
+    Dwarf_Off*       dw_return_offset,
+    Dwarf_Error*     dw_error);
+
 /*  This returns the CU die global offset if one knows the
     CU header global offset.
     See also dwarf_CU_dieoffset_given_die().
