@@ -2004,25 +2004,63 @@ DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
     @{
 */
 
-/*  So we can associate a DIE's abbreviations with the contents
-    the abbreviations section. */
-DW_API int dwarf_die_abbrev_global_offset(Dwarf_Die /*die*/,
-    Dwarf_Off       * /*abbrev_offset*/,
-    Dwarf_Unsigned  * /*abbrev_count*/,
-    Dwarf_Error*      /*error*/);
+/*! @brief  
+    So we can associate a DIE's abbreviations with the contents
+    the abbreviations section.
+    Useful for detailed printing and analysis of
+    abbreviations
 
-/*  operations on DIEs */
-DW_API int dwarf_tag(Dwarf_Die /*die*/,
-    Dwarf_Half*      /*return_tag*/,
-    Dwarf_Error*     /*error*/);
+    @param dw_die
+    The DIE of interest
+    @param dw_abbrev_offset
+    On success is set to the global offset
+    in the .debug_abbrev section of the abbreviations
+    for the DIE.
+    @param dw_abbrev_count
+    On success is set to the count of abbreviations
+    in the .debug_abbrev section of the abbreviations
+    for the DIE.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_die_abbrev_global_offset(Dwarf_Die dw_die,
+    Dwarf_Off       * dw_abbrev_offset,
+    Dwarf_Unsigned  * dw_abbrev_count,
+    Dwarf_Error*      dw_error);
 
-/*  dwarf_dieoffset returns the global debug_info
-    section offset, not the CU relative offset. */
-DW_API int dwarf_dieoffset(Dwarf_Die /*die*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief  Get TAG value of DIE. 
+    @param dw_die
+    The DIE of interest
+    @param dw_return_tag
+    On success, set to the DW_TAG value of the DIE.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_tag(Dwarf_Die dw_die,
+    Dwarf_Half*      dw_return_tag,
+    Dwarf_Error*     dw_error);
 
-/*  NEW October 2015. DWARF5.
+/*! @brief Returns the global section offset of the DIE.
+
+    @param dw_die
+    The DIE of interest
+    @param dw_return_offset
+    On success the offset refers to the section of the DIE
+    itself, which may be .debug_offset or .debug_types.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_dieoffset(Dwarf_Die dw_die,
+    Dwarf_Off*       dw_return_offset,
+    Dwarf_Error*     dw_error);
+
+/*! @brief  
     The DIE here can be any DIE in the relevant CU.
     index is an index into .debug_addr.
     This will look first for .debug_addr
