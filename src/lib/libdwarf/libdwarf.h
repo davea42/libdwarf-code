@@ -2279,20 +2279,13 @@ DW_API int dwarf_die_abbrev_code(Dwarf_Die dw_die);
 DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
     Dwarf_Half * dw_ab_has_child);
 
-/*  !brief Validate a sibling DIE.
+/*!  @brief Validate a sibling DIE.
 
-    To be documented.
-
-    There is no Dwarf_Error argument here, 
-    it does not report any errors it finds..
-
-    @param dw_sibling
-    A Dwarf_Die
-    @param dw_offset
-    A DIE offset is returned through the pointer.
-    @return
-    Returns DW_DLV_OK if it validates.
-    Otherwise returns DW_DLV_ERROR.
+    This is used by dwarfdump (when
+    dwarfdump is checking for valid DWARF but
+    it depends on the caller to have done a lot
+    of precise setup. Ignore it. It has to change.
+    FIXME
 */
 DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     Dwarf_Off* dw_offset);
