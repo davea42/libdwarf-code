@@ -2590,19 +2590,87 @@ DW_API int dwarf_attrlist(Dwarf_Die dw_die,
     Dwarf_Signed   * dw_attrcount,
     Dwarf_Error*     dw_error);
 
-DW_API int dwarf_hasform(Dwarf_Attribute /*attr*/,
-    Dwarf_Half       /*form*/,
-    Dwarf_Bool *     /*returned_bool*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_whatform(Dwarf_Attribute /*attr*/,
-    Dwarf_Half *     /*returned_final_form*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_whatform_direct(Dwarf_Attribute /*attr*/,
-    Dwarf_Half *     /*returned_initial_form*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_whatattr(Dwarf_Attribute /*attr*/,
-    Dwarf_Half *     /*returned_attr_num*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Sets TRUE of a Dwarf_Attribute has the indicated FORM 
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_form
+    The DW_FORM you are asking about, DW_FORM_strp for example.
+    @param dw_returned_bool
+    On success, sets the value to TRUE or FALSE.
+    @param dw_error
+    A place to return error details.
+    @return
+    Returns DW_DLV_OK and sets dw_returned_bool.
+    If attribute is passed in NULL or
+    the attribute is badly broken 
+    the call returns DW_DLV_ERROR.
+    Never returns DW_DLV_NO_ENTRY;
+*/
+DW_API int dwarf_hasform(Dwarf_Attribute dw_attr,
+    Dwarf_Half       dw_form,
+    Dwarf_Bool *     dw_returned_bool,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Returns the form of the Dwarf_Attribute
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_final_form
+    The form of the item is returned
+    through the pointer. If the base form is DW_FORM_indirect
+    the function resolves the final form and 
+    returns that final form.
+    @param dw_error
+    A place to return error details.
+    @return
+    Returns DW_DLV_OK and sets dw_returned_final_form
+    If attribute is passed in NULL or
+    the attribute is badly broken 
+    the call returns DW_DLV_ERROR.
+    Never returns DW_DLV_NO_ENTRY;
+*/
+DW_API int dwarf_whatform(Dwarf_Attribute dw_attr,
+    Dwarf_Half *     dw_returned_final_form,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Returns the initial form of the Dwarf_Attribute
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_initial_form
+    The form of the item is returned
+    through the pointer. If the base form is DW_FORM_indirect
+    the value set is DW_FORM_indirect.
+    @param dw_error
+    A place to return error details.
+    @return
+    Returns DW_DLV_OK and sets dw_returned_initial_form.
+    If attribute is passed in NULL or
+    the attribute is badly broken 
+    the call returns DW_DLV_ERROR.
+    Never returns DW_DLV_NO_ENTRY;
+*/
+DW_API int dwarf_whatform_direct(Dwarf_Attribute dw_attr,
+    Dwarf_Half *     dw_returned_initial_form,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Returns the attribute number of the Dwarf_Attribute
+    @param dw_attr   
+    The Dwarf_Attribute of interest.
+    @param dw_returned_attrnum
+    The attribute number of the attribute is returned
+    through the pointer. For example, DW_AT_name
+    @param dw_error
+    A place to return error details.
+    @return
+    Returns DW_DLV_OK and sets dw_returned_attrnum
+    If attribute is passed in NULL or
+    the attribute is badly broken
+    the call returns DW_DLV_ERROR.
+    Never returns DW_DLV_NO_ENTRY;
+*/
+DW_API int dwarf_whatattr(Dwarf_Attribute dw_attr,
+    Dwarf_Half *     dw_returned_attrnum,
+    Dwarf_Error*     dw_error);
 
 /*
     The following are concerned with the Primary Interface: getting
