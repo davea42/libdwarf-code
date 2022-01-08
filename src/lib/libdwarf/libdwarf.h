@@ -291,7 +291,8 @@ typedef struct Dwarf_Form_Data16_s {
     Used for signatures where ever they appear.
     It is not a string, it
     is 8 bytes of a signature one would use to find
-    a type unit. See dwarf_formsig8()
+    a type unit. 
+    @see dwarf_formsig8
 */
 struct Dwarf_Sig8_s  {
     char signature[8];
@@ -2701,37 +2702,124 @@ DW_API int dwarf_formref(Dwarf_Attribute dw_attr,
     Dwarf_Bool * dw_is_info,
     Dwarf_Error* dw_error);
 
+/*! @brief Return the section-relative offset of a Dwarf_Attribute
 
-/*  dwarf_global_formref returns, thru return_offset,
-    a debug_info-relative offset and does allow all reference forms
-    if the output is not a DIE offset then call
-    dwarf_global_formref.  If it is a DIE offset then
-    call dwarf_global_formref_b instead so you know whether it is
-    in .debug_types or .debug_info.
+    The target section of the returned offset can be in
+    various sections depending on the FORM. 
+    Only a DW_FORM_ref_sig8 can change the returned offset of
+    a .debug_info die via a lookup into .debug_types
+    by changing dw_offset_is_info to FALSE (DWARF4).
+
+    The caller must determine the target section from 
+    the FORM. 
+    
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_return_offset
+    Returns the CU-relative offset through the pointer.
+    @param dw_offset_is_info
+    For references to DIEs this informs whether the target
+    DIE (the target the offset refers to) is in .debug_info
+    or .debug_types.  For non-DIE targets this field
+    is not meaningful. Refer to the attribute FORM to determin
+    the target section of the offset.
+    @param dw_error
+    A place to return error details.
+    @return
+    Returns DW_DLV_OK and sets dw_return_offset
+    and dw_offset_is_info.
+    If attribute is passed in NULL or
+    the attribute is badly broken or
+    the FORM of this attribute is not one of the
+    many reference types the call returns DW_DLV_ERROR.
+    Never returns DW_DLV_NO_ENTRY;
 */
-DW_API int dwarf_global_formref(Dwarf_Attribute /*attr*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
+DW_API int dwarf_global_formref_b(Dwarf_Attribute dw_attr,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Bool * dw_offset_is_info,
+    Dwarf_Error* dw_error);
 
-DW_API int dwarf_global_formref_b(Dwarf_Attribute /*attr*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Bool   *   /*offset_is_info*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Same as dwarf_global_formref_b except...  
 
-/*  dwarf_formsig8 returns in the caller-provided 8 byte area
-    the 8 bytes of a DW_FORM_ref_sig8.  Not a string.  */
-DW_API int dwarf_formsig8(Dwarf_Attribute /*attr*/,
-    Dwarf_Sig8 * /*returned sig bytes*/,
-    Dwarf_Error*     /*error*/);
-/*  dwarf_formsig8_const returns in the caller-provided 8 byte area
-    the 8 bytes of a form const (DW_FORM_data8).  Not a string.  */
-DW_API int dwarf_formsig8_const(Dwarf_Attribute /*attr*/,
-    Dwarf_Sig8 * /*returned sig bytes*/,
-    Dwarf_Error*     /*error*/);
+    @see  dwarf_global_formref_b
 
-DW_API int dwarf_formaddr(Dwarf_Attribute /*attr*/,
-    Dwarf_Addr   *   /*returned_addr*/,
-    Dwarf_Error*     /*error*/);
+    This is the same, except there is no
+    dw_offset_is_info pointer so in the case of
+    DWARF4 and DW_FORM_ref_sig8 it is not
+    possible to determine which section the offset
+    applies to!
+*/
+DW_API int dwarf_global_formref(Dwarf_Attribute dw_attr,
+    Dwarf_Off*       dw_return_offset,
+    Dwarf_Error*     dw_error);
+
+
+/*! @brief Return an 8 byte reference form for DW_FORM_ref_sig8
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_sig_bytes
+    On success returns DW_DLV_OK and copies the 8 bytes
+    into dw_returned_sig_bytes.
+    @param dw_error
+    A place to return error details.
+    @return
+    On success returns DW_DLV_OK and copies the 8 bytes
+    into dw_returned_sig_bytes.
+    If attribute is passed in NULL or
+    the attribute is badly broken 
+    the call returns DW_DLV_ERROR.
+    If the dw_attr has a form other than DW_FORM_ref_sig8
+    the function returns DW_DLV_NO_ENTRY
+*/
+DW_API int dwarf_formsig8(Dwarf_Attribute dw_attr,
+    Dwarf_Sig8 * dw_returned_sig_bytes,
+    Dwarf_Error* dw_error);
+
+/*! @brief Return an 8 byte reference form for DW_FORM_data8
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_sig_bytes
+    On success Returns DW_DLV_OK and copies the 8 bytes
+    into dw_returned_sig_bytes.
+    @param dw_error
+    A place to return error details.
+    @return
+    On success returns DW_DLV_OK and copies the 8 bytes
+    into dw_returned_sig_bytes.
+    If attribute is passed in NULL or
+    the attribute is badly broken
+    the call returns DW_DLV_ERROR.
+    If the dw_attr has a form other than DW_FORM_data8
+    the function returns DW_DLV_NO_ENTRY
+*/
+DW_API int dwarf_formsig8_const(Dwarf_Attribute dw_attr,
+    Dwarf_Sig8 * dw_returned_sig_bytes,
+    Dwarf_Error* dw_error);
+
+/*! @brief Return the address when the attribute has form address.
+
+    There are several address forms, some of them indexed.
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_addr
+    On success this set through the pointer to
+    the address in the attribute.
+    @param dw_error
+    A place to return error details.
+    @return
+    On success returns DW_DLV_OK sets dw_returned_addr .
+    If attribute is passed in NULL or
+    the attribute is badly broken
+    or the address cannot be retrieved
+    the call returns DW_DLV_ERROR.
+    Never returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_formaddr(Dwarf_Attribute dw_attr,
+    Dwarf_Addr * dw_returned_addr,
+    Dwarf_Error* dw_error);
 
 /*  Part of DebugFission.  So a consumer can get the index when
     the object with the actual .debug_addr section is
