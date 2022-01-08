@@ -2068,7 +2068,7 @@ DW_API int dwarf_dieoffset(Dwarf_Die dw_die,
     An index into .debug_addr.  This will look first for
     .debug_addr in the dbg object DIE and if not there
     will look in the tied object if that is available.
-    @param dw_return_adddr
+    @param dw_return_addr
     On success the address is returned through the pointer.
     @param dw_error
     The usual error detail return pointer.
@@ -2137,7 +2137,7 @@ DW_API int dwarf_get_cu_die_offset_given_cu_header_offset_b(
     Dwarf_Off    dw_in_cu_header_offset,
     Dwarf_Bool   dw_is_info,
     Dwarf_Off *  dw_out_cu_die_offset,
-    Dwarf_Error *dw_err);
+    Dwarf_Error *dw_error);
 
 /*! @briev returns the CU relative offset of the DIE.
 
