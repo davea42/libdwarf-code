@@ -2285,7 +2285,7 @@ DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
     dwarfdump is checking for valid DWARF but
     it depends on the caller to have done a lot
     of precise setup. Ignore it. It has to change.
-    FIXME
+    REPLACEME
 */
 DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     Dwarf_Off* dw_offset);
@@ -2452,19 +2452,54 @@ DW_API int dwarf_highpc_b(Dwarf_Die dw_die,
     enum Dwarf_Form_Class * dw_return_class,
     Dwarf_Error *           dw_error);
 
-/*  If 'die' contains the DW_AT_type attribute,
-    it returns the offset referenced by the attribute. */
-DW_API int dwarf_dietype_offset(Dwarf_Die /*die*/,
-    Dwarf_Off   * /*return_off*/,
-    Dwarf_Error * /*error*/);
+/*! @brief Returns the offset from the DW_AT_type attribute
 
-DW_API int dwarf_bytesize(Dwarf_Die /*die*/,
-    Dwarf_Unsigned * /*returned_size*/,
-    Dwarf_Error*     /*error*/);
+    The offset returned is is a global offset of a type DIE.
+    If this CU is DWARF4 the offset would be in
+    .debug_types, otherwise it is in .debug_info.
 
-DW_API int dwarf_bitsize(Dwarf_Die /*die*/,
-    Dwarf_Unsigned * /*returned_size*/,
-    Dwarf_Error*     /*error*/);
+    @param dw_die
+    The DIE of interest.
+    @param dw_return_offset
+    If successful, returns the offset through the pointer.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_dietype_offset(Dwarf_Die dw_die,
+    Dwarf_Off   * dw_return_offset,
+    Dwarf_Error * dw_error);
+
+/*! @brief Returns the value of the attribute  DW_AT_byte_size
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_returned_size
+    If successful, returns the size through the pointer.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_bytesize(Dwarf_Die dw_die,
+    Dwarf_Unsigned * dw_returned_size,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Returns the value of the attribute  DW_AT_bitsize
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_returned_size
+    If successful, returns the size through the pointer.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_bitsize(Dwarf_Die dw_die,
+    Dwarf_Unsigned * dw_returned_size,
+    Dwarf_Error*     dw_error);
 
 /*  If the attribute is DW_AT_data_bit_offset
     (DWARF4, DWARF5) the returned bit offset
