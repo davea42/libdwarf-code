@@ -1477,6 +1477,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 /*! @section initfinish Initialization And Finish Operations */
 
 /*! @defgroup initfunctions Libdwarf Initialization Functions
+    Opening and closing libdwarf on object files.
     @{
 */
 
@@ -1730,7 +1731,8 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Dwarf_Error * dw_error);
 /*! @}
 */
-/*! @defgroup compilationunit Compilation Unit (CU) Access
+/*! @defgroup compilationunit CU Data-Compilation Unit (CU) Access
+    Access to each CU sequentially.
     @{
 */
 /*! @brief Returns information on the next CU header.
@@ -1999,7 +2001,7 @@ DW_API int dwarf_find_die_given_sig8(Dwarf_Debug dw_dbg,
 DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
 /*! @} */
 
-/*! @defgroup dieentry Debugging Information Entry (DIE) Access
+/*! @defgroup dieentry CU Data-Debugging Information Entry (DIE) Access
     This is the main interface to attributes of a DIE.
     @{
 */
@@ -2559,7 +2561,8 @@ DW_API int dwarf_arrayorder(Dwarf_Die dw_die,
     Dwarf_Error*     dw_error);
 
 /*! @} */
-/*! @defgroup attrform Attribute and Attribute-Form Details
+/*! @defgroup attrform CU Data-Attribute and Attribute-Form Details
+    Access to the details of DIEs
     @{
 */
 /*! @brief Gets the full list of attributes
@@ -2721,14 +2724,9 @@ DW_API int dwarf_convert_to_global_offset(Dwarf_Attribute /*attr*/,
     Dwarf_Error*     /*error*/);
 DW_API void dwarf_dealloc_attribute(Dwarf_Attribute /*attr*/);
 
-/*! @} */
-
-/*! @defgroup discriminant Decoding a Discriminant List
-
+/*
     Given a block containing a discriminant list
     the following functions enable decoding the block.
-
-    @{
 */
 DW_API int dwarf_discr_list(Dwarf_Debug /*dbg*/,
     Dwarf_Small    * /*blockpointer*/,
@@ -2759,7 +2757,8 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
 
 /*! @} */
 
-/*! @defgroup linetable Line Table For a CU
+/*! @defgroup linetable CU Data-Line Table For a CU
+    Access to all the line table details.
     @{
 */
 
@@ -3069,7 +3068,7 @@ DW_API int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
     Dwarf_Unsigned * /*cooked2*/,
     Dwarf_Error *    /*err*/);
 
-DW_API void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head);
+DW_API void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head dw_head);
 
 /*  Loads all the rnglists headers and
     returns DW_DLV_NO_ENTRY if the section
@@ -3782,6 +3781,7 @@ DW_API Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
 /*! @} */
 
 /*! @defgroup abbrev Abbreviations .debug_abbrev Section Details
+    Allows reading .debug_abbrev independently
     @{
 */
 /* abbreviation section operations */
@@ -3820,6 +3820,7 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
 
 /*! @} */
 /*! @defgroup string String Section .debug_str Details
+    Shows just the section content in detail
     @{
 */
 /* consumer string section operation */
@@ -3831,6 +3832,7 @@ DW_API int dwarf_get_str(Dwarf_Debug /*dbg*/,
 
 /*! @} */
 /*! @defgroup str_offsets Str_offsets section .debug_str_offsets details
+    Shows just the section content in detail
     @{
 */
 /*  Allows applications to print the .debug_str_offsets
@@ -3900,8 +3902,7 @@ DW_API int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table,
 
 /*! @} */
 /*! @defgroup dwarferror Dwarf_Error Functions
-    These functions aid in understanding errors
-    when a function returns DW_DLV_ERROR.
+    These functions aid in understanding handling.
     @{
 */
 /*! @brief What DW_DLE code does the error have?
@@ -3956,15 +3957,27 @@ DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
 /*! @} */
 
 /*! @defgroup dwarfdealloc Generic dwarf_dealloc Function
+    Works for nearly all dealloc needed.
+
+    For easier to use versions see the following
+    @see dwarf_dealloc_attribute @see dwarf_dealloc_die
+    @see dwarf_dealloc_dnames @see dwarf_dealloc_error
+    @see dwarf_dealloc_fde_cie_list @see dwarf_dealloc_frame_instr_head
+    @see dwarf_dealloc_macro_context @see dwarf_dealloc_ranges
+    @see dwarf_dealloc_rnglists_head @see dwarf_dealloc_uncompressed_block
+    @see dwarf_funcs_dealloc @see dwarf_globals_dealloc
+    @see dwarf_gnu_index_dealloc @see dwarf_loc_head_c_dealloc
+    @see dwarf_pubtypes_dealloc @see dwarf_srclines_dealloc_b
+    @see dwarf_types_dealloc @see dwarf_vars_dealloc
+    @see dwarf_weaks_dealloc
+
     @{
 */
 /*! @brief The generic dealloc (free) function.
     It requires you know the correct DW_DLA value
-    to pass in.
-
-    Many convenience functions are easier to use
-    than this, such as dwarf_dealloc_die(),
-    dwarf_dealloc_attribute() etc.
+    to pass in, and in a few cases such is
+    not provided. The functions doing allocations
+    tell you which dealloc to use.
 
     @param dw_dbg
     Must be a valid open Dwarf_Debug.
