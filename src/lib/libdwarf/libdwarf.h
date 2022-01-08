@@ -3957,7 +3957,7 @@ DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
 /*! @} */
 
 /*! @defgroup dwarfdealloc Generic dwarf_dealloc Function
-    Works for nearly all dealloc needed.
+    Works for most dealloc needed.
 
     For easier to use versions see the following
     @see dwarf_dealloc_attribute @see dwarf_dealloc_die
