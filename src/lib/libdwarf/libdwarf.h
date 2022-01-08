@@ -532,7 +532,7 @@ typedef struct Dwarf_Dnames_Head_s      *Dwarf_Dnames_Head;
 typedef void  (*Dwarf_Handler)(Dwarf_Error dw_error,
     Dwarf_Ptr dw_errarg);
 
-/*! @struct Dwarf_Macro_Details_s macro information interface.
+/*! @struct Dwarf_Macro_Details_s
 
     This applies to DWARF2, DWARF3, and DWARF4
     compilation units.
@@ -2139,7 +2139,7 @@ DW_API int dwarf_get_cu_die_offset_given_cu_header_offset_b(
     Dwarf_Off *  dw_out_cu_die_offset,
     Dwarf_Error *dw_error);
 
-/*! @briev returns the CU relative offset of the DIE.
+/*! @brief returns the CU relative offset of the DIE.
 
     @see dwarf_CU_dieoffset_given_die
 
@@ -2344,7 +2344,10 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     The usual error detail return pointer.
     @return
     Returns DW_DLV_OK etc.
-    DW_DLV_NO_ENTRY means there are no children of the DIE.
+    DW_DLV_NO_ENTRY means there are no children of the DIE,
+    hence no list of child offsets.
+
+    @see exampleoffsetlist
 */
 DW_API int dwarf_offset_list(Dwarf_Debug dw_dbg,
     Dwarf_Off         dw_offset,
@@ -2353,37 +2356,108 @@ DW_API int dwarf_offset_list(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned *  dw_offcount,
     Dwarf_Error    *  dw_error);
 
-/*  This gets the address size as defined for the DIE */
-DW_API int dwarf_get_die_address_size(Dwarf_Die /*die*/,
-    Dwarf_Half  *    /*addr_size*/,
-    Dwarf_Error *    /*error*/);
+/*! @brief Get the address size applying to a DIE
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_addr_size
+    On success, returns the address size that applies
+    to dw_die. Normally 4 or 8.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_die_address_size(Dwarf_Die dw_die,
+    Dwarf_Half  * dw_addr_size,
+    Dwarf_Error * dw_error);
 
 /* Get both offsets (local and global) */
-DW_API int dwarf_die_offsets(Dwarf_Die /*die*/,
-    Dwarf_Off*    /*global_offset*/,
-    Dwarf_Off*    /*local_offset*/,
-    Dwarf_Error*  /*error*/);
-/*  Get the version and offset size of a CU context.
-    This is useful as a precursor to
-    calling dwarf_get_form_class() at times.  */
-DW_API int dwarf_get_version_of_die(Dwarf_Die /*die*/,
-    Dwarf_Half * /*version*/,
-    Dwarf_Half * /*offset_size*/);
+/*! @brief Return section and CU-local offsets of a DIE
+    @param dw_die
+    The DIE of interest.
+    @param dw_global_offset
+    On success returns the offset of the DIE in
+    its section.
+    @param dw_local_offset
+    On success returns the offset of the DIE within
+    its CU.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_die_offsets(Dwarf_Die dw_die,
+    Dwarf_Off*    dw_global_offset,
+    Dwarf_Off*    dw_local_offset,
+    Dwarf_Error*  dw_error);
 
-DW_API int dwarf_lowpc(Dwarf_Die /*die*/,
-    Dwarf_Addr  *    /*returned_addr*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Get the version and offset size
+
+    The values returned apply to the CU this DIE
+    belongs to.
+    This is useful as preparation for calling
+    dwarf_get_form_class
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_version
+    Returns the version of the CU this DIE is contained in.
+    Standard version numbers are 2 through 5.
+    @param dw_offset_size
+    Returns the offset_size (4 or 8) of the CU
+    this DIE is contained in.
+*/
+DW_API int dwarf_get_version_of_die(Dwarf_Die dw_die,
+    Dwarf_Half * dw_version,
+    Dwarf_Half * dw_offset_size);
+
+/*! @brief Returns the DW_AT_low_pc  value
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_returned_addr
+    On success returns, through the pointer,
+    the address DW_AT_low_pc defines.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+
+*/
+DW_API int dwarf_lowpc(Dwarf_Die dw_die,
+    Dwarf_Addr * dw_returned_addr,
+    Dwarf_Error* dw_error);
 
 /*  When the highpc attribute is of class  'constant'
     it is not an address, it is an offset from the
     base address (such as lowpc) of the function.
     This is therefore a required interface for DWARF4
     style DW_AT_highpc.  */
-DW_API int dwarf_highpc_b(Dwarf_Die /*die*/,
-    Dwarf_Addr  *           /*return_value*/,
-    Dwarf_Half  *           /*return_form*/,
-    enum Dwarf_Form_Class * /*return_class*/,
-    Dwarf_Error *           /*error*/);
+
+/*! @brief Returns the DW_AT_hipc  address value
+
+    Calculating the high pc involves several elements
+    which we don't describe here. See the DWARF5 standard.
+    This is accessing the DW_AT_high_pc attribute.
+    @param dw_die
+    The DIE of interest.
+    @param dw_return_addr
+    On success returns the  high-pc address for this DIE.
+    @param dw_return_form
+    On success returns the actual FORM for this attribute.
+    @param dw_return_class
+    On success returns the FORM CLASS for this attribute.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_highpc_b(Dwarf_Die dw_die,
+    Dwarf_Addr  *           dw_return_addr,
+    Dwarf_Half  *           dw_return_form,
+    enum Dwarf_Form_Class * dw_return_class,
+    Dwarf_Error *           dw_error);
 
 /*  If 'die' contains the DW_AT_type attribute,
     it returns the offset referenced by the attribute. */
@@ -3689,7 +3763,7 @@ DW_API int dwarf_get_str(Dwarf_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
 
 /*! @} */
-/*! @defgroup string Str_offsets section .debug_str_offsets details
+/*! @defgroup str_offsets Str_offsets section .debug_str_offsets details
     @{
 */
 /*  Allows applications to print the .debug_str_offsets

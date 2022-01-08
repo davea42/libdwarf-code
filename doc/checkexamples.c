@@ -27,7 +27,7 @@ grep '^void exampl' checkexamples.c | cut -b 1-50 |sort
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 
-/*! @defgroup exampleinit
+/*! @defgroup exampleinit Example of dwarf_init_path
     @brief exampleinit
     
     An example calling  dwarf_init_path() and dwarf_finish()
@@ -65,8 +65,8 @@ void exampleinit(const char *path, unsigned groupnumber)
 }
 /*! @endcode */
 
-/*! @defgroup exampleinit_dl
-    @brief  Example calling the debuglink init.
+/*! @defgroup exampleinit_dl Example of dwarf_init_path_dl
+    @brief Example calling the debuglink init.
 
     In case GNU debuglink data is followed the true_pathbuf
     content will not match path.
@@ -123,8 +123,8 @@ int exampleinit_dl(const char *path, unsigned groupnumber,
 /*! @endcode */
 
 
-/*!  @defgroup example1
-     @brief example1  Showing dwarf_attrlist()
+/*!  @defgroup example1 Example of dwarf_attrlist
+     @brief Showing dwarf_attrlist()
 
      @code 
 */
@@ -164,8 +164,8 @@ int example1(Dwarf_Die somedie,Dwarf_Error *error)
 }
 /*! @endcode */
 
-/*! @defgroup example2
-    @brief example2  Attaching a tied dbg
+/*! @defgroup example2 Attaching a tied dbg
+    @brief Attaching a tied dbg
 
     By convention, open the base Dwarf_Debug using
     a dwarf_init call.  Then open
@@ -211,8 +211,8 @@ int example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg,
 }
 /*! @endcode */
 
-/*! @defgroup example3 
-    @brief example3  Detaching a tied dbg
+/*! @defgroup example3 Detaching a tied dbg
+    @brief Detaching a tied dbg
 
     With split dwarf your libdwarf calls after
     than the initial open
@@ -398,8 +398,8 @@ int example8(Dwarf_Debug dbg, Dwarf_Die somedie, Dwarf_Error *error)
     return DW_DLV_OK;
 }
 
-/*! @defgroup exampleoffset
-    @brief exampleoffset Using dwarf_offset_list
+/*! @defgroup exampleoffsetlist Example using dwarf_offset_list
+    @brief Using dwarf_offset_list
 
     An example calling  dwarf_offset_list
     @param dbg
@@ -407,7 +407,7 @@ int example8(Dwarf_Debug dbg, Dwarf_Die somedie, Dwarf_Error *error)
     @param error
     @return
     Returns DW_DLV_OK etc
-
+    @code
 */
 int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
     Dwarf_Bool is_info,Dwarf_Error * error)
@@ -430,14 +430,15 @@ int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
     dwarf_dealloc(dbg, offbuf, DW_DLA_LIST);
     return DW_DLV_OK;
 }
+/*@ @endcode */
 
-void example_discr_list(Dwarf_Debug dbg,
+int example_discr_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
     Dwarf_Half attrnum,
     Dwarf_Bool isunsigned,
     Dwarf_Half theform,
-    Dwarf_Error *err)
+    Dwarf_Error *error)
 {
     /*  The example here assumes that
         attribute attr is a DW_AT_discr_list.
@@ -452,7 +453,7 @@ void example_discr_list(Dwarf_Debug dbg,
     wres = dwarf_get_version_of_die(die,&version,&offset_size);
     if (wres != DW_DLV_OK) {
         /* FAIL */
-        return;
+        return wres;
     }
     fc = dwarf_get_form_class(version,attrnum,offset_size,theform);
     if (fc == DW_FORM_CLASS_BLOCK) {
@@ -468,16 +469,16 @@ void example_discr_list(Dwarf_Debug dbg,
             sres = dwarf_discr_list(dbg,
                 (Dwarf_Small *)tempb->bl_data,
                 tempb->bl_len,
-                &h,&arraycount,err);
+                &h,&arraycount,error);
             if (sres == DW_DLV_NO_ENTRY) {
                 /* Nothing here. */
                 dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
-                return;
+                return sres;
             }
             if (sres == DW_DLV_ERROR) {
                 /* FAIL . */
                 dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
-                return;
+                return sres ;
             }
             for (u = 0; u < arraycount; u++) {
                 int u2res = 0;
@@ -498,13 +499,13 @@ void example_discr_list(Dwarf_Debug dbg,
                     /* Something wrong */
                     dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
                     dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
-                    return;
+                    return u2res ;
                 }
                 if (u2res == DW_DLV_NO_ENTRY) {
                     /* Impossible. u < arraycount. */
                     dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
                     dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
-                    return;
+                    return u2res;
                 }
                 /*  Do something with dtype, and whichever
                     of ulow, uhigh,dlow,dhigh got set.
@@ -518,6 +519,7 @@ void example_discr_list(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
         }
     }
+    return DW_DLV_OK
 }
 
 void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
