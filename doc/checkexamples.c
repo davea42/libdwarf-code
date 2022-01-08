@@ -38,7 +38,7 @@ grep '^void exampl' checkexamples.c | cut -b 1-50 |sort
 */
 void exampleinit(const char *path, unsigned groupnumber)
 {
-    static char * true_pathbuf[FILENAME_MAX]; 
+    static char true_pathbuf[FILENAME_MAX]; 
     unsigned tpathlen = FILENAME_MAX;
     Dwarf_Handler errhand = 0;
     Dwarf_Ptr errarg = 0;
@@ -85,10 +85,11 @@ void exampleinit(const char *path, unsigned groupnumber)
     An example calling  dwarf_init_path_dl() and dwarf_finish()
     @code
 */
-void exampleinit_dl(const char *path, unsigned groupnumber)
+int exampleinit_dl(const char *path, unsigned groupnumber,
+    Dwarf_Error *error)
 {
-    static char * true_pathbuf[FILENAME_MAX]; 
-    static char **glpath[3] = {
+    static char true_pathbuf[FILENAME_MAX]; 
+    static const char *glpath[3] = {
          "/usr/local/debug",
          "/usr/local/private/debug",
          "/usr/local/libdwarfdd/debug"
@@ -96,31 +97,28 @@ void exampleinit_dl(const char *path, unsigned groupnumber)
     unsigned tpathlen = FILENAME_MAX;
     Dwarf_Handler errhand = 0;
     Dwarf_Ptr errarg = 0;
-    Dwarf_Error error = 0;
     Dwarf_Debug dbg = 0;
     int res = 0;
+    unsigned char path_source = 0;
 
     res = dwarf_init_path_dl(path,true_pathbuf,
         tpathlen,groupnumber,errhand,
         errarg,&dbg,
-        glpath,
+        (char **)glpath,
         3,
-        &error);
+        &path_source,
+        error);
     if (res == DW_DLV_ERROR) {
-        /* Valid call even though dbg is null! */
-        dwarf_dealloc_error(dbg,error);
-        return;
+        return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
-        /*  Nothing we can do */
-        return;
+        return res;
     }
-    {
-        printf("The file we actually opened is %s\n",
-            true_pathbuf);
-    }
+    printf("The file we actually opened is %s\n",
+        true_pathbuf);
     /* Call libdwarf functions here */
     dwarf_finish(dbg);
+    return DW_DLV_OK;
 }
 /*! @endcode */
 
@@ -379,44 +377,58 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
     */
 }
 
-void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
+/* See also example1, which is more complete */
+int example8(Dwarf_Debug dbg, Dwarf_Die somedie, Dwarf_Error *error)
 {
     Dwarf_Signed atcount = 0;
     Dwarf_Attribute *atlist = 0;
-    Dwarf_Error error = 0;
     int errv = 0;
+    Dwarf_Signed i = 0;
 
-    errv = dwarf_attrlist(somedie, &atlist,&atcount, &error);
-    if (errv == DW_DLV_OK) {
-        Dwarf_Signed i = 0;
-
-        for (i = 0; i < atcount; ++i) {
-            /* use atlist[i] */
-            dwarf_dealloc_attribute(atlist[i]);
-            atlist[i] = 0;
-        }
-        dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+    errv = dwarf_attrlist(somedie, &atlist,&atcount, error);
+    if (errv != DW_DLV_OK) {
+        return errv;
     }
+    for (i = 0; i < atcount; ++i) {
+        /* use atlist[i] */
+        dwarf_dealloc_attribute(atlist[i]);
+        atlist[i] = 0;
+    }
+    dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+    return DW_DLV_OK;
 }
 
-void exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
-    Dwarf_Bool is_info)
+/*! @defgroup exampleoffset
+    @brief exampleoffset Using dwarf_offset_list
+
+    An example calling  dwarf_offset_list
+    @param dbg
+    @param dieoffset
+    @param error
+    @return
+    Returns DW_DLV_OK etc
+
+*/
+int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
+    Dwarf_Bool is_info,Dwarf_Error * error)
 {
     Dwarf_Unsigned offcnt = 0;
     Dwarf_Off *offbuf = 0;
-    Dwarf_Error error = 0;
     int errv = 0;
+    Dwarf_Unsigned i = 0;
 
     errv = dwarf_offset_list(dbg,dieoffset, is_info,
-        &offbuf,&offcnt, &error);
-    if (errv == DW_DLV_OK) {
-        Dwarf_Unsigned i = 0;
-
-        for (i = 0; i < offcnt; ++i) {
-            /* use offbuf[i] */
-        }
-        dwarf_dealloc(dbg, offbuf, DW_DLA_LIST);
+        &offbuf,&offcnt, error);
+    if (errv != DW_DLV_OK) {
+        return errv;
     }
+    for (i = 0; i < offcnt; ++i) {
+        /* use offbuf[i] */
+        /*  No need to free the offbuf entry, it
+            is just an offset value. */
+    }
+    dwarf_dealloc(dbg, offbuf, DW_DLA_LIST);
+    return DW_DLV_OK;
 }
 
 void example_discr_list(Dwarf_Debug dbg,

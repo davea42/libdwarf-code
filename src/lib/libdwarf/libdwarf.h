@@ -2247,8 +2247,21 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
     char   **        dw_diename,
     Dwarf_Error*     dw_error);
 
-/* Returns the  abbrev code of the die. Cannot fail. */
-DW_API int dwarf_die_abbrev_code(Dwarf_Die /*die */);
+/*! @ brief Return the DIE abbrev code
+
+    The Abbrev code for a DIE is an integer assigned
+    by the compiler within a particular CU.
+    For .debug_names abbreviations the
+    situration is different.
+
+    Returns the  abbrev code of the die. Cannot fail.
+
+    @param dw_die
+    The DIE of interest.
+    @return
+    The abbrev code. of the DIE.
+*/
+DW_API int dwarf_die_abbrev_code(Dwarf_Die dw_die);
 
 /*! @brief Returns TRUE if the DIE has children
 
@@ -2307,13 +2320,38 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     Dwarf_Bool * dw_returned_bool,
     Dwarf_Error* dw_error);
 
-/* Returns the children offsets for the given offset */
-DW_API int dwarf_offset_list(Dwarf_Debug /*dbg*/,
-    Dwarf_Off         /*offset*/,
-    Dwarf_Bool        /*is_info*/,
-    Dwarf_Off      ** /*offbuf*/,
-    Dwarf_Unsigned *  /*offcnt*/,
-    Dwarf_Error    *  /*error*/);
+/*! @brief Returns an array of DIE children offsets
+
+    Given a DIE offset and dw_is_info,
+    returns an array of DIE offsets of the childred
+    of DIE.
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_offset
+    A DIE offset.
+    @param dw_is_info
+    If TRUE says to use the offset in .debug_info.
+    Else .debug_types.
+    @param dw_offbuf
+    A pointer to an array of offsets is returned
+    through the pointer.
+    @param dw_offcount
+    The number of elements in offbuf.
+    IF the DIE has no children it could
+    be zero, in which case offbuf
+    and dw_offcount are not touched.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    DW_DLV_NO_ENTRY means there are no children of the DIE.
+*/
+DW_API int dwarf_offset_list(Dwarf_Debug dw_dbg,
+    Dwarf_Off         dw_offset,
+    Dwarf_Bool        dw_is_info,
+    Dwarf_Off      ** dw_offbuf,
+    Dwarf_Unsigned *  dw_offcount,
+    Dwarf_Error    *  dw_error);
 
 /*  This gets the address size as defined for the DIE */
 DW_API int dwarf_get_die_address_size(Dwarf_Die /*die*/,
