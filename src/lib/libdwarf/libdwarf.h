@@ -2501,23 +2501,62 @@ DW_API int dwarf_bitsize(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_size,
     Dwarf_Error*     dw_error);
 
-/*  If the attribute is DW_AT_data_bit_offset
+/*! @brief Returns the bit offset attribute of a DIE
+
+    If the attribute is DW_AT_data_bit_offset
     (DWARF4, DWARF5) the returned bit offset
     has one meaning.
     If the attribute is DW_AT_bit_offset
-    (DWARF2, DWARF3) the meaning is quite different. */
-DW_API int dwarf_bitoffset(Dwarf_Die /*die*/,
-    Dwarf_Half     * /*attribute*/,
-    Dwarf_Unsigned * /*returned_offset*/,
-    Dwarf_Error*     /*error*/);
+    (DWARF2, DWARF3) the meaning is quite different.
+  
+    @param dw_die
+    The DIE of interest.
+    @param dw_attrnum
+    If successful, returns the number of the attribute
+    (DW_AT_data_bit_offset or DW_AT_bit_offset)
+    @param dw_returned_offset
+    If successful, returns the bit offset value.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_bitoffset(Dwarf_Die dw_die,
+    Dwarf_Half     * dw_attrnum,
+    Dwarf_Unsigned * dw_returned_offset,
+    Dwarf_Error*     dw_error);
+/*! @brief Returns the value of the DW_AT_language attribute.
 
-DW_API int dwarf_srclang(Dwarf_Die /*die*/,
-    Dwarf_Unsigned * /*returned_lang*/,
-    Dwarf_Error*     /*error*/);
+    The DIE should be a CU DIE.
+    @param dw_die
+    The DIE of interest.
+    @param dw_returned_lang
+    On success returns the language code (normally
+    only found on a CU DIE). For example DW_LANG_C
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_srclang(Dwarf_Die dw_die,
+    Dwarf_Unsigned * dw_returned_lang,
+    Dwarf_Error    * dw_error);
 
-DW_API int dwarf_arrayorder(Dwarf_Die /*die*/,
-    Dwarf_Unsigned * /*returned_order*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Returns the value of the DW_AT_ordering attribute.
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_returned_order
+    On success returns the ordering value.
+    For example DW_ORD_row_major
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_arrayorder(Dwarf_Die dw_die,
+    Dwarf_Unsigned * dw_returned_order,
+    Dwarf_Error*     dw_error);
 
 /*! @} */
 /*! @defgroup attrform Attribute and Attribute-Form Details
