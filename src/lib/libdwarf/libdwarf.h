@@ -2250,27 +2250,62 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
 /* Returns the  abbrev code of the die. Cannot fail. */
 DW_API int dwarf_die_abbrev_code(Dwarf_Die /*die */);
 
-/*  Returns a flag through ab_has_child. Non-zero if
-    the DIE has children, zero if it does not.   */
-DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die /*die*/,
-    Dwarf_Half * /*ab_has_child*/);
+/*! @brief Returns TRUE if the DIE has children
 
-/*  Validate the sibling DIE. This only makes sense to call
-    if the sibling's DIEs have been travsersed and
-    dwarf_child called on each,
-    so that the last DIE dwarf_child saw was the last.
-    Essentially ensuring that (after such traversal) that we
-    are in the same place a sibling attribute would identify.
-    In case we return DW_DLV_ERROR, the global offset of the last
-    DIE traversed by dwarf_child is returned through *offset */
-DW_API int dwarf_validate_die_sibling(Dwarf_Die /*sibling*/,
-    Dwarf_Off* /*offset*/);
+    @param dw_die
+    A DIE.
+    @param dw_ab_has_child
+    Sets TRUE though the pointer if the DIE 
+    has children.
+    Otherwise sets FALSE.
+    @return
+    Returns TRUE if the DIE has a child DIE.
+    Else returns FALSE.
+
+*/
+DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
+    Dwarf_Half * dw_ab_has_child);
+
+/*  !brief Validate a sibling DIE.
+
+    To be documented.
+
+    There is no Dwarf_Error argument here, 
+    it does not report any errors it finds..
+
+    @param dw_sibling
+    A Dwarf_Die
+    @param dw_offset
+    A DIE offset is returned through the pointer.
+    @return
+    Returns DW_DLV_OK if it validates.
+    Otherwise returns DW_DLV_ERROR.
+*/
+DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
+    Dwarf_Off* dw_offset);
 
 /* convenience functions, alternative to using dwarf_attrlist */
-DW_API int dwarf_hasattr(Dwarf_Die /*die*/,
-    Dwarf_Half   /*attr*/,
-    Dwarf_Bool * /*returned_bool*/,
-    Dwarf_Error* /*error*/);
+
+/*! @brief Tells whether a DIE has a particular attribute.
+
+    @param dw_die
+    The DIE of interest.
+    @param dw_attrnum
+    The attribute number we are asking about,
+    DW_AT_name for example.
+    @param dw_returned_bool
+    On success is set TRUE if dw_die has
+    dw_attrnum.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+
+*/
+DW_API int dwarf_hasattr(Dwarf_Die dw_die,
+    Dwarf_Half   dw_attrnum,
+    Dwarf_Bool * dw_returned_bool,
+    Dwarf_Error* dw_error);
 
 /* Returns the children offsets for the given offset */
 DW_API int dwarf_offset_list(Dwarf_Debug /*dbg*/,
