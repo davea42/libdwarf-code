@@ -2587,8 +2587,8 @@ DW_API int dwarf_arrayorder(Dwarf_Die dw_die,
 */
 DW_API int dwarf_attrlist(Dwarf_Die dw_die,
     Dwarf_Attribute** dw_attrbuf,
-    Dwarf_Signed   * dw_attrcount,
-    Dwarf_Error*     dw_error);
+    Dwarf_Signed * dw_attrcount,
+    Dwarf_Error*   dw_error);
 
 /*! @brief Sets TRUE of a Dwarf_Attribute has the indicated FORM 
     @param dw_attr
@@ -2607,9 +2607,9 @@ DW_API int dwarf_attrlist(Dwarf_Die dw_die,
     Never returns DW_DLV_NO_ENTRY;
 */
 DW_API int dwarf_hasform(Dwarf_Attribute dw_attr,
-    Dwarf_Half       dw_form,
-    Dwarf_Bool *     dw_returned_bool,
-    Dwarf_Error*     dw_error);
+    Dwarf_Half   dw_form,
+    Dwarf_Bool * dw_returned_bool,
+    Dwarf_Error* dw_error);
 
 /*! @brief Returns the form of the Dwarf_Attribute
 
@@ -2630,8 +2630,8 @@ DW_API int dwarf_hasform(Dwarf_Attribute dw_attr,
     Never returns DW_DLV_NO_ENTRY;
 */
 DW_API int dwarf_whatform(Dwarf_Attribute dw_attr,
-    Dwarf_Half *     dw_returned_final_form,
-    Dwarf_Error*     dw_error);
+    Dwarf_Half * dw_returned_final_form,
+    Dwarf_Error* dw_error);
 
 /*! @brief Returns the initial form of the Dwarf_Attribute
     @param dw_attr
@@ -2650,8 +2650,8 @@ DW_API int dwarf_whatform(Dwarf_Attribute dw_attr,
     Never returns DW_DLV_NO_ENTRY;
 */
 DW_API int dwarf_whatform_direct(Dwarf_Attribute dw_attr,
-    Dwarf_Half *     dw_returned_initial_form,
-    Dwarf_Error*     dw_error);
+    Dwarf_Half * dw_returned_initial_form,
+    Dwarf_Error* dw_error);
 
 /*! @brief Returns the attribute number of the Dwarf_Attribute
     @param dw_attr   
@@ -2669,19 +2669,39 @@ DW_API int dwarf_whatform_direct(Dwarf_Attribute dw_attr,
     Never returns DW_DLV_NO_ENTRY;
 */
 DW_API int dwarf_whatattr(Dwarf_Attribute dw_attr,
-    Dwarf_Half *     dw_returned_attrnum,
-    Dwarf_Error*     dw_error);
+    Dwarf_Half * dw_returned_attrnum,
+    Dwarf_Error* dw_error);
 
-/*
-    The following are concerned with the Primary Interface: getting
-    the actual data values. One function per 'kind' of FORM.  */
-/*  dwarf_formref returns, thru return_offset, a CU-relative offset
-    ( in .debug_info or .debug_types)
-    and does not allow DW_FORM_ref_addr*/
-DW_API int dwarf_formref(Dwarf_Attribute /*attr*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Bool     * /*is_info*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Retrieve the CU-relative offset of a reference
+
+    The DW_FORM of the attribute must be one of a small set
+    of local reference forms: DW_FORM_ref<n> or
+    DW_FORM_udata.
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_return_offset
+    Returns the CU-relative offset through the pointer.
+    @param dw_is_info
+    Returns a flag through the pointer. TRUE if the
+    offset is in .debug_info, FALSE if it is in .debug_types
+    @param dw_error
+    A place to return error details.
+    @return
+    Returns DW_DLV_OK and sets dw_returned_attrnum
+    If attribute is passed in NULL or
+    the attribute is badly broken or
+    the FORM of this attribute is not one of the small
+    set of local references
+    the call returns DW_DLV_ERROR.
+    Never returns DW_DLV_NO_ENTRY;
+*/
+DW_API int dwarf_formref(Dwarf_Attribute dw_attr,
+    Dwarf_Off*   dw_return_offset,
+    Dwarf_Bool * dw_is_info,
+    Dwarf_Error* dw_error);
+
+
 /*  dwarf_global_formref returns, thru return_offset,
     a debug_info-relative offset and does allow all reference forms
     if the output is not a DIE offset then call
@@ -2692,6 +2712,7 @@ DW_API int dwarf_formref(Dwarf_Attribute /*attr*/,
 DW_API int dwarf_global_formref(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
+
 DW_API int dwarf_global_formref_b(Dwarf_Attribute /*attr*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Bool   *   /*offset_is_info*/,
