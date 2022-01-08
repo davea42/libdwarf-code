@@ -1,3 +1,375 @@
-2021-12-22:  David Anderson
-    A placeholder to start 2022 ChangeLog
-    commit 3ce7a354202027e9403c3fc9681a16982eb47074
+2022-01-08:  David Anderson
+    commit 7f03bdff67a60ece7f2619e99b6f4cde229b2545
+
+    One comment line changed.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-08:  David Anderson
+    commit 394651d0b98c656636262383748344c9642a7722
+
+    Changed the defgroup title a few places for
+    greater clarity.
+            modified:   libdwarf.h
+
+2022-01-08:  David Anderson
+    commit 0822f7a3d6f830045702f0b36a9a1f08cc1f5af4
+
+    Now withy first set of functions on DIEs doxygen-d.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-08:  David Anderson
+    commit 946daf8cb4df7f84118aa22ba7b97f36c82add2f
+
+    Doxygen comments on a few functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-08:  David Anderson
+    commit 2812e9b0c089dc34d6807db40bac564b68982f52
+
+    Correcting the comments on a function one should not call.
+    dwarf_validate_die_sibling()
+    (though dwarfdump calls it).
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-08:  David Anderson
+    commit a498289724ae3890431b59a98943b662a00a5c22
+
+    Corrected examples and doxy data
+            modified:   doc/checkexamples.c
+    Added doxy data for some functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-07:  David Anderson
+    commit 297c54a84d7db421be7e383947123a174d3549be
+
+    Corrected typos in two parameter names.
+            modified:   ../src/lib/libdwarf/libdwarf.h
+
+2022-01-07:  David Anderson
+    commit 3daaa621b0c94501a0f9d03bd11b7adf70ebf77b
+
+    Corrected mistakes and made some examples
+    more generally appropriate in return values.
+            modified:   doc/checkexamples.c
+    More doxygen added
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-07:  David Anderson
+    commit d27df7ce1cb6a657af628a87266d33c2584218a0
+
+    A couple more functions documented doxygen.
+            modified:   ../src/lib/libdwarf/libdwarf.h
+
+2022-01-07:  David Anderson
+    commit f2cfde15b38d5ad51c15ee9552cf7513f7db6b0d
+
+    Some more functions have doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-07:  David Anderson
+    commit 28b5e558883c0e4556ed99bdbc8670b243b140d9
+
+    More functions with doxygen input
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-07:  David Anderson
+    commit e8120831f89f06a08c8c37e1038c2e9127cc400e
+
+    Doxygen update on 3 functions
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-06:  David Anderson
+    commit 84eb2075cd0543d48c07132f839892947b2bd86d
+
+    Small improvements to the doxygen content.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-06:  David Anderson
+    commit f51f44d223b3d9c9d707084a8d319c2aeafe9c68
+
+    Additional doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-06:  David Anderson
+    commit 907168815ff2eae6206d25d394198c9e80d7d6d4
+
+    Update copyright year.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_harmless.h
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2022-01-06:  David Anderson
+    commit f802ba7f3ce74a785f36962e73a82a6e2150b112
+
+    Improve the wording on error handling
+            modified:   doc/libdwarf.dox
+
+    Renaming non-public functions
+    dwarf_harmless_cleanout -> _dwarf_harmless_cleanout
+    dwarf_harmless_init -> _dwarf_harmless_init
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_harmless.h
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+    Moved some lines around for a more consistent
+    look.
+    Removed DW_HARMLESS_ERROR_MSG_STRING_SIZE as
+    client code has no use for it.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-05:  David Anderson
+    commit f6a951f009d853d1b1ef1de34af00924eb867c2f
+
+    Completed the Error handling description.
+            modified:   libdwarf.dox
+
+2022-01-05:  David Anderson
+    commit 47e0357e26c748921767995294d3a4cd0cf4759d
+
+    Only the base directory has ChangeLog now, the others
+    relegated to history.
+            renamed:    scripts/ChangeLog -> scripts/ChangeLog2021
+            renamed:    src/bin/dwarfdump/ChangeLog -> src/bin/dwarfdump/ChangeLog2021
+            renamed:    src/bin/dwarfexample/ChangeLog -> src/bin/dwarfexample/ChangeLog2021
+            renamed:    src/bin/dwarfgen/ChangeLog -> src/bin/dwarfgen/ChangeLog2021
+            renamed:    src/lib/libdwarf/ChangeLog -> src/lib/libdwarf/ChangeLog2021
+            renamed:    src/lib/libdwarfp/ChangeLog -> src/lib/libdwarfp/ChangeLog2021
+
+2022-01-05:  David Anderson
+    commit b1d510f891fee8c1cc81548cf3dfb0df187835a0
+
+    ChangeLog is for 2022 now.
+            modified:   ChangeLog
+            new file:   ChangeLog2021
+    Now showing libdwarf.h #defines instead of hiding them.
+    Works well with doxygen groups.
+            modified:   doc/Doxyfile
+
+    main() now main(void) per standard
+            modified:   src/bin/dwarfexample/jitreader.c
+
+2022-01-05:  David Anderson
+    commit 1d8564c693381e800afc3d1cde3418a71f4fce6d
+
+    Update copyright.
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+2022-01-05:  David Anderson
+    commit 2ad8ffe22a440c045b0197d7d02844b7059e4eff
+
+    Cleaning up line length, trailing whitespace,
+    and doxygen group naming.
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-05:  David Anderson
+    commit 00e5a6550aa2cf4db69fb7003dd4e74dbc01c522
+
+    No longer refers to anything but public headers.
+    Simpler.
+            modified:   src/bin/dwarfexample/jitreader.c
+
+2022-01-05:  David Anderson
+    commit a9c3585ac91197534163d3c55b900a657007142e
+
+    Squashed commit of the following:
+
+    commit 6d78aeb0ba3c4239c9103227e6b8c172e100168a
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Wed Jan 5 09:18:23 2022 -0800
+
+        The init_dl() function
+        much better documented.
+        Focusing longer text
+        in checkexamples,
+        removing from libdwarf.h
+        proper.
+            modified:   doc/checkexamples.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit 3430711d147aed4587fd356b1a4e4e28cf2839bc
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 16:43:38 2022 -0800
+
+        One more blank line.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit b3174e213d6f607d0ec1a80fbe2744a5f6d9af15
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 16:09:02 2022 -0800
+
+        Now in groups
+            modified:   doc/checkexamples.c
+        Final reorganization steps.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit e5fe596d678682a0d593ab78c787bd428ffe897f
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 15:41:29 2022 -0800
+
+        More movements of functions, small items.
+            modified:   libdwarf.h
+
+    commit 2d0fae72c710a36dcd6cbb21c628ef9b5ffe556e
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 15:20:54 2022 -0800
+
+        Moving two functions to the group they
+        should be in.
+            modified:   libdwarf.h
+
+    commit 29ec78ab1fe54d40720bae5dacde7094bd976958
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 15:16:13 2022 -0800
+
+        Now gnu_pubnames/pubtypes have a defgroup
+            modified:   libdwarf.h
+
+    commit 689c98c9a38312aea3dec57d8b48beeaca03074c
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 15:10:11 2022 -0800
+
+        Now .debug_pubnames .debug_pubtypes and the others
+        in this format in a group.
+            modified:   libdwarf.h
+
+    commit 4dad4395d673e6578beb4802c9bbf7d3f79d6feb
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 14:59:45 2022 -0800
+
+        Now .debug_aranges access in  a defgroup
+            modified:   libdwarf.h
+
+    commit 96b91edb66158e45d8f4636b3730c6c300189aa2
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 14:46:48 2022 -0800
+
+         Now .debug_names in a defgroup
+            modified:   libdwarf.h
+
+    commit 9acb599a067479c11b83fb8ab18ec401a9474c56
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 14:39:05 2022 -0800
+
+        Frame section names stuff all together
+            modified:   libdwarf.h
+
+    commit e88cf083b0659fa3b397a2d76e9295b4ee4b8eb5
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 13:47:16 2022 -0800
+
+        The dwarf_get_TAG etc funcs in a group now.
+            modified:   libdwarf.h
+
+    commit 94f43001e3b907eb840dc9fcc47c46431c2e9835
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 11:13:52 2022 -0800
+
+        deleted duplicated lines
+            modified:   libdwarf.h
+
+    commit ef696175ae405f8c948c818c321890d0ad9b33f3
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 11:07:53 2022 -0800
+
+        Major block of functions moved,
+        attribute-related.
+            modified:   libdwarf.h
+
+    commit cceffe5d7605dacd691bc289f7096a837c171937
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 10:27:00 2022 -0800
+
+        Now defines DW_DLV_BADOFFSET, used in dwarfdump.
+            modified:   src/bin/dwarfdump/dd_globals.h
+
+        Deleted unused defines and moved some defines.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit 55e3f25be8fd0c38c06dbb767105ff17b1c7a38e
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 10:21:22 2022 -0800
+
+        Deleted dwarf_compress_integer_block()
+        as it was meant to be removed earlier.
+        No code in libdwarfp uses DW_DLV_NOCOUNT,
+        DW_DLV_BADADDR or DW_DLV_BADOFFSET.
+        None of this could have been useful in any case,
+        it dealt with non-standard integer block compression.
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+            modified:   src/lib/libdwarfp/dwarf_pro_line.c
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+    commit 123a4bc9528a7534cc37dd7621a918d15d96b95a
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Tue Jan 4 09:48:03 2022 -0800
+
+        Tiny changes.
+            modified:   doc/checkexamples.c
+        Toward a better organization
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit e442fb9a6676bed0203e3fe83a922c2daf3d1fa0
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Sun Jan 2 11:25:21 2022 -0800
+
+        Many functions moved to a more
+        pleasing order.
+            modified:   libdwarf.h
+
+    commit 94038eb06094d26b0a7843506adf924137ce5916
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Sun Jan 2 10:42:29 2022 -0800
+
+        A part of the doxygen input
+            new file:   doc/libdwarf.dox
+        Many functions and types moved toward the target
+        rearrangement.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit 6dfa13d33638b2343f5bffef627d1625f102c2e6
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Sun Jan 2 07:23:29 2022 -0800
+
+        Turned off sorting by name
+            modified:   doc/Doxyfile
+        Now with some doxygen information
+            modified:   doc/checkexamples.c
+        Fixing a reference to checkexamples.c
+            modified:   doc/libdwarf.mm
+        Many functions moved around to make a sensible
+        organization (as opposed to semi-random).
+        Some doxygen comments added.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit 09dc2de3f1de72197b76373fe09a15769972a6f0
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Fri Dec 31 07:18:36 2021 -0800
+
+        Turned off sorting, want the ordering to be
+        as in libdwarf.h
+            modified:   doc/Doxyfile
+        Now with doxygen comments initiated.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    commit 8d60a7e39406733bbed28cb4511cb6cef579118f
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Sun Dec 26 14:54:06 2021 -0800
+
+        Small changes.
+            modified:   ../src/lib/libdwarf/libdwarf.h
+
+    commit b7864fc2b51a655863a0a59c5b70128e7b4145bb
+    Author: David Anderson <davea42@linuxmail.org>
+    Date:   Sun Dec 26 14:18:27 2021 -0800
+
+        This is just a start with doxygen.
+            new file:   Doxyfile
+        Found some typedefs and a struct here
+        that are no longer used anywere, so removed
+        from libdwarf.h
+        Plus adding doxygen commands.
+            modified:   ../src/lib/libdwarf/libdwarf.h
+

@@ -1,3 +1,94 @@
+
+2021-12-29:  David Anderson
+    commit 907225d2f3d1785db07e254aeb7389fc36f54ae1
+
+    offset = offset;
+    appeared at around lines 1146 and 1205
+    and recent clang warns about them.
+    Lines deleted.
+            modified:   src/bin/dwarfdump/print_frames.c
+
+2021-12-26:  David Anderson
+    commit 130db599f5b4843a110527b72db0c6cab917f9bc
+
+    Removed the 'if 0' code that was
+    once necessary.
+    We do not include dd_dwconf.[ch] in
+    test_canonical.c
+            modified:   test/test_canonical.c
+
+2021-12-26:  David Anderson
+    commit f7dfb630603ca4baf1e3c3b0b9e10566c306b795
+
+    Updated by 'make rebuild' to get the new
+    version: 0.3.3
+            modified:   ../src/bin/dwarfdump/dwarf_names.c
+            modified:   ../src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   ../src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   ../src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   ../src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   ../src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   ../src/lib/libdwarf/dwarf_names.c
+
+2021-12-26:  David Anderson
+    commit fbcdc9ec5b3a88d30e29c25d1c219cf6c8d73741
+
+    Now with version 0.3.3
+            modified:   libdwarf.pdf
+            modified:   libdwarfp.pdf
+
+2021-12-26:  David Anderson
+    commit 194c1e882260a18900c95acb1738a67c2d2c2e7a
+
+    Updated version to 0.3.3
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarfp.mm
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2021-12-26:  David Anderson
+    commit 9d13137e5ebc96e2e06de82e32752db4173fb845
+
+    Now reference the new dd_canonical_append.[ch]
+        modified:   src/bin/dwarfdump/CMakeLists.txt
+        modified:   src/bin/dwarfdump/Makefile.am
+
+    Separated _dwarf_canonical_append from dd_dwconf.[ch]
+    into dd_canonical_append.[ch]
+        new file:   src/bin/dwarfdump/dd_canonical_append.c
+        new file:   src/bin/dwarfdump/dd_canonical_append.h
+
+    Removed _dwarf_canonical_append
+        modified:   src/bin/dwarfdump/dd_dwconf.c
+        modified:   src/bin/dwarfdump/dd_dwconf.h
+
+    Now uses dd_canonical_append.c,.h, not dd_dwconf.c,.h
+        modified:   test/CMakeLists.txt
+            modified:   test/test_canonical.c
+
+2021-12-26:  David Anderson
+    commit b7848e06bc4f84a90bbb0377aa320f956afc2d52
+
+    Reformatted with black, a python reformatter
+            modified:   updatesemanticversion.py
+
+2021-12-24:  David Anderson
+    commit f5477b747cd1c650ca933d2d1f17d623cc0cf3fc
+
+    Trivial typo corrections.
+            modified:   libdwarf.mm
+
+2021-12-22:  David Anderson
+    commit 89966beb45ef36bc393e184162470db58f8ddcb3
+
+    Up todate with git log
+            modified:   ChangeLog
+
+2021-12-22:  David Anderson
+    A placeholder to start 2022 ChangeLog
+    commit 3ce7a354202027e9403c3fc9681a16982eb47074
+
 2021-12-22:  David Anderson
     commit 3ce7a354202027e9403c3fc9681a16982eb47074
 
