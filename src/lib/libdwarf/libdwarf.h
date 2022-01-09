@@ -2757,7 +2757,7 @@ DW_API int dwarf_global_formref(Dwarf_Attribute dw_attr,
 
     @param dw_attr
     The Dwarf_Attribute of interest.
-    @param dw_sig_bytes
+    @param dw_returned_sig_bytes
     On success returns DW_DLV_OK and copies the 8 bytes
     into dw_returned_sig_bytes.
     @param dw_error
@@ -2779,7 +2779,7 @@ DW_API int dwarf_formsig8(Dwarf_Attribute dw_attr,
 
     @param dw_attr
     The Dwarf_Attribute of interest.
-    @param dw_sig_bytes
+    @param dw_returned_sig_bytes
     On success Returns DW_DLV_OK and copies the 8 bytes
     into dw_returned_sig_bytes.
     @param dw_error
@@ -3166,15 +3166,33 @@ DW_API int dwarf_line_subprog(Dwarf_Line /*line*/,
     char   **        /*returned_filename*/,
     Dwarf_Unsigned * /*returned_lineno*/,
     Dwarf_Error *    /*error*/);
-/*  dwarf_check_lineheader lets dwarfdump get detailed messages
-    about some compiler errors we detect.
-    We return the count of detected errors through the
-    pointer.  */
-DW_API int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
-    int         * /*errcount_out*/,
-    Dwarf_Error * /*error*/);
 
-/*  dwarf_print_lines() prints line information
+/*! @brief
+    Lets the caller get detailed messages
+    about some compiler errors we detect.
+    Calls back, the caller should do something
+    with the messages (likely just print them).
+    The lines passed back already have newlines.
+    @see dwarf_check_lineheader
+    @see Dwarf_Printf_Callback_Info_s 
+
+    @param dw_cu_die
+    The CU DIE of interest
+    @param dw_error
+    If DW_DLV_ERROR this shows one error encountered.
+    @param dw_errcount_out
+    Returns the count of detected errors through the pointer.
+    @return
+    DW_DLV_OK etc.
+*/
+DW_API int dwarf_check_lineheader_b(Dwarf_Die dw_cu_die,
+    int         * dw_errcount_out,
+    Dwarf_Error * dw_error);
+
+/*! @brief Print line information in great detail.
+
+    dwarf_print_lines lets the caller
+    prints line information
     for a CU in great detail.
     Does not use printf.
     Instead it calls back to the application using a function
@@ -3185,33 +3203,61 @@ DW_API int dwarf_check_lineheader_b(Dwarf_Die /*cu_die*/,
     Failing to call the dwarf_register_printf_callback()
     function will prevent the lines from being passed back
     but such omission is not an error.
+    the same function, but focused on checking for errors
+    is
+    @see dwarf_check_lineheader_b
+    @see Dwarf_Printf_Callback_Info_s 
 
-    The return value is the previous set of callback values.
+    @param dw_cu_die
+    The CU DIE of interest
+    @param dw_error
+    @param dw_errorcount_out
+    @return
+    DW_DLV_OK etc.
+
 */
-DW_API int dwarf_print_lines(Dwarf_Die /*die*/,Dwarf_Error * /*er*/,
-    int * /*error_count_out */);
+DW_API int dwarf_print_lines(Dwarf_Die dw_cu_die,
+    Dwarf_Error * dw_error,
+    int * dw_errorcount_out);
 
-/*  If called with a NULL newvalues pointer, it simply returns
-    the current set of values for this Dwarf_Debug. */
+/*! @brief For line details this records callback details
+
+    For the structure you must fill in:
+    @see Dwarf_Printf_Callback_Info_s 
+  
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_callbackinfo
+    If non-NULL pass in a pointer to your
+    instance of struct Dwarf_Printf_Callback_Info_s
+    with all the fields filled in.
+    @return
+    If dw_callbackinfo NULL it returns a copy
+    of the current Dwarf_Printf_Callback_Info_s for dw_dbg.
+    Otherwise it returns the previous contents of the
+    struct.
+*/
 DW_API struct  Dwarf_Printf_Callback_Info_s
-    dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
-    struct  Dwarf_Printf_Callback_Info_s * /*newvalues*/);
+    dwarf_register_printf_callback(Dwarf_Debug dw_dbg,
+    struct Dwarf_Printf_Callback_Info_s * dw_callbackinfo);
 
 /*! @} */
 /*! @defgroup ranges CU Data-Ranges data DW_AT_ranges
     In DWARF3 and DWARF4 the DW_AT_ranges attribute
     provides an offset into the .debug_ranges section.
-    DW_FORM_rnglistx or a 
 
     @see Dwarf_Ranges
 
-    These functions provide access to that section.
+    DWARF3 and DWARF4.  
+    DW_AT_ranges with an unsigned constant FORM (DWARF3)
+    or DW_FORM_sec_offset(DWARF4).
+
     @{
 */
 /*! @brief Access to code ranges from a CU or just
     reading through the raw .debug_ranges section.
-    
-    DWARF3 and DWARF4.  
+
+
     Adds return of the dw_realoffset to accommodate
     DWARF4 GNU split-dwarf, where the ranges could
     be in the tieddbg (meaning the real executable, a.out, not
@@ -3243,7 +3289,6 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     applying to the returned array. This makes possible
     just marching through the section by offset.
     @param dw_error
-    @param dw_error
     The usual error detail return pointer.
     @return
     Returns DW_DLV_OK etc.
@@ -3256,6 +3301,7 @@ DW_API int dwarf_get_ranges_b(Dwarf_Debug dw_dbg,
     Dwarf_Signed *   dw_rangecount,
     Dwarf_Unsigned * dw_bytecount,
     Dwarf_Error *    dw_error);
+
 /*! @brief dealloc the array dw_rangesbuf
 
     @param dw_dbg
@@ -3271,18 +3317,22 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
 /*! @} */
 
 /*! @defgroup rnglists CU Data Rnglists .debug_rnglists DWARF5
+    
+    DWARF5
+    DW_FORM_rnglistx
+    DW_AT_ranges with DW_FORM_sec_offset (DWARF5)
     @{
 */
 
 /*  For DWARF5 DW_AT_ranges:
     DW_FORM_sec_offset DW_FORM_rnglistx */
-DW_API int dwarf_rnglists_get_rle_head(Dwarf_Attribute /*attr*/,
-    Dwarf_Half            /*theform*/,
-    Dwarf_Unsigned        /*index_or_offset_value*/,
-    Dwarf_Rnglists_Head * /*head_out*/,
-    Dwarf_Unsigned *      /*count_of_entries_in_head*/,
-    Dwarf_Unsigned *      /*global_offset_of_rle_set*/,
-    Dwarf_Error    *      /*error*/);
+DW_API int dwarf_rnglists_get_rle_head(Dwarf_Attribute dw_attr,
+    Dwarf_Half            dw_theform,
+    Dwarf_Unsigned        dw_index_or_offset_value,
+    Dwarf_Rnglists_Head * dw_head_out,
+    Dwarf_Unsigned *      dw_count_of_entries_in_head,
+    Dwarf_Unsigned *      dw_global_offset_of_rle_set,
+    Dwarf_Error    *      dw_error);
 
 /*  Get the rnglist entries details */
 DW_API int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
