@@ -2951,22 +2951,63 @@ DW_API int dwarf_formblock(Dwarf_Attribute dw_attr,
     Dwarf_Block ** dw_returned_block,
     Dwarf_Error*   dw_error);
 
-DW_API int dwarf_formstring(Dwarf_Attribute /*attr*/,
-    char   **        /*returned_string*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Returns a pointer to a string.
 
-/*  DebugFission.  So a DWARF print application can
-    get the string index (DW_FORM_strx) and print it.
-    A convenience function.
-    New May 2014. */
-DW_API int dwarf_get_debug_str_index(Dwarf_Attribute /*attr*/,
-    Dwarf_Unsigned * /*return_index*/,
-    Dwarf_Error * /*error*/);
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_string
+    Puts a pointer to a string in the DWARF information
+    if the FORM of the attribute is some sort of string FORM.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_formstring(Dwarf_Attribute dw_attr,
+    char   **        dw_returned_string,
+    Dwarf_Error*     dw_error);
 
-DW_API int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
-    Dwarf_Unsigned * /*return_exprlen*/,
-    Dwarf_Ptr  * /*block_ptr*/,
-    Dwarf_Error * /*error*/);
+/*! @brief Returns a string index
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_return_index
+    If the form is a string index form (for example
+    DW_FORM_strx) the string index value is
+    returned via the pointer.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+    If the attribute form is not one of the string index
+    forms it returns DW_DLV_ERROR and sets dw_error to point
+    to the error details.
+*/
+DW_API int dwarf_get_debug_str_index(Dwarf_Attribute dw_attr,
+    Dwarf_Unsigned * dw_return_index,
+    Dwarf_Error *    dw_error);
+
+/*! @brief Returns a pointer-to and length-of a block of data.
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_return_exprlen
+    Returns the length in bytes of the block
+    if it succeeds.
+    @param dw_block_ptr
+    Returns a pointer to the first byte of the block
+    of data if it succeeds.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+    If the attribute form is not DW_FORM_exprloc
+    it returns DW_DLV_ERROR and sets dw_error to point
+    to the error details.
+*/
+DW_API int dwarf_formexprloc(Dwarf_Attribute dw_attr,
+    Dwarf_Unsigned * dw_return_exprlen*/,
+    Dwarf_Ptr      * dw_block_ptr*/,
+    Dwarf_Error    * dw_error*/);
 
 DW_API enum Dwarf_Form_Class dwarf_get_form_class(
     Dwarf_Half /* dwversion */,
