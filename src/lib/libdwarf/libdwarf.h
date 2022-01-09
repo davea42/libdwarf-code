@@ -4605,63 +4605,6 @@ DW_API int dwarf_get_gnu_index_block_entry(
 
 /*! @} */
 
-/*! @defgroup gnudebuglink Access GNU .gnu_debuglink, build-id.
-    When DWARF is separate from a normal shared object.
-    Has nothing to do with split-dwarf/debug-fission.
-    @{
-*/
-
-/*  New October 2019.  Access to the GNU section named
-    .gnu_debuglink  and/or the section .note.gnu.build-id.
-    See
-    https://sourceware.org/gdb/onlinedocs/gdb/
-        Separate-Debug-Files.html
-
-    If no debuglink then name_returned,crc_returned and
-    debuglink_path_returned will get set 0 through the pointers.
-
-    If no .note.gnu.build-id then  buildid_length_returned,
-    and buildid_returned will be set 0 through the pointers.
-
-    Caller frees space returned by debuglink_fullpath_returned.
-
-    See libdwarf2.1.mm revision 3.13 or later for
-    additional important details.
-*/
-
-DW_API int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
-    char     **    /*debuglink_path_returned */,
-    unsigned char ** /*crc_returned from the debuglink section*/,
-    char     **    /*debuglink_fullpath_returned free this*/,
-    unsigned int * /*debuglink_path_count_returned */,
-    unsigned int * /*buildid_type_returned */,
-    char     **    /*buildid_owner_name_returned*/,
-    unsigned char ** /*buildid_returned*/,
-    unsigned int * /*buildid_length_returned*/,
-    char     ***   /*paths_returned*/,
-    unsigned int * /*paths_length_returned*/,
-    Dwarf_Error*   /*error*/);
-
-/*  Only useful inside dwarfexample/dwdebuglink.c
-    so we can show all that is going on.
-*/
-DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
-    const char *pathname,
-    Dwarf_Error* /*error*/);
-
-/*  crc32 used for debuglink crc calculation.
-    Caller passes pointer to array of 4 unsigned char
-    provided by the caller and if this returns
-    DW_DLV_OK that is filled in. */
-DW_API int dwarf_crc32(Dwarf_Debug /*dbg*/,
-    unsigned char * /*crcbuf*/,
-    Dwarf_Error * /*error*/);
-
-/*  Public interface to the real crc calculation
-    just in case some find it useful. */
-DW_API unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
-    unsigned long /*len*/, unsigned int /*init*/);
-/*! @} */
 
 /*! @defgroup gdbindex Fast Access-Gdb Index into .dwo or .dwp
     If .gdb_index present in an executable then
@@ -4872,6 +4815,63 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
 
 /*! @} */
 
+/*! @defgroup gnudebuglink Access GNU .gnu_debuglink, build-id.
+    When DWARF is separate from a normal shared object.
+    Has nothing to do with split-dwarf/debug-fission.
+    @{
+*/
+
+/*  New October 2019.  Access to the GNU section named
+    .gnu_debuglink  and/or the section .note.gnu.build-id.
+    See
+    https://sourceware.org/gdb/onlinedocs/gdb/
+        Separate-Debug-Files.html
+
+    If no debuglink then name_returned,crc_returned and
+    debuglink_path_returned will get set 0 through the pointers.
+
+    If no .note.gnu.build-id then  buildid_length_returned,
+    and buildid_returned will be set 0 through the pointers.
+
+    Caller frees space returned by debuglink_fullpath_returned.
+
+    See libdwarf2.1.mm revision 3.13 or later for
+    additional important details.
+*/
+
+DW_API int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
+    char     **    /*debuglink_path_returned */,
+    unsigned char ** /*crc_returned from the debuglink section*/,
+    char     **    /*debuglink_fullpath_returned free this*/,
+    unsigned int * /*debuglink_path_count_returned */,
+    unsigned int * /*buildid_type_returned */,
+    char     **    /*buildid_owner_name_returned*/,
+    unsigned char ** /*buildid_returned*/,
+    unsigned int * /*buildid_length_returned*/,
+    char     ***   /*paths_returned*/,
+    unsigned int * /*paths_length_returned*/,
+    Dwarf_Error*   /*error*/);
+
+/*  Only useful inside dwarfexample/dwdebuglink.c
+    so we can show all that is going on.
+*/
+DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
+    const char *pathname,
+    Dwarf_Error* /*error*/);
+
+/*  crc32 used for debuglink crc calculation.
+    Caller passes pointer to array of 4 unsigned char
+    provided by the caller and if this returns
+    DW_DLV_OK that is filled in. */
+DW_API int dwarf_crc32(Dwarf_Debug /*dbg*/,
+    unsigned char * /*crcbuf*/,
+    Dwarf_Error * /*error*/);
+
+/*  Public interface to the real crc calculation
+    just in case some find it useful. */
+DW_API unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
+    unsigned long /*len*/, unsigned int /*init*/);
+/*! @} */
 /*! @defgroup harmless Harmless Error recording
 
     The harmless error list is a circular buffer of
