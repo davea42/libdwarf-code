@@ -2820,29 +2820,103 @@ DW_API int dwarf_formaddr(Dwarf_Attribute dw_attr,
     Dwarf_Addr * dw_returned_addr,
     Dwarf_Error* dw_error);
 
-/*  Part of DebugFission.  So a consumer can get the index when
+/*! @brief Get the addr index of a Dwarf_Attribute
+
+    So a consumer can get the index when
     the object with the actual .debug_addr section is
-    elsewhere. And so a print application can
-    print the index.  New May 2014*/
-DW_API int dwarf_get_debug_addr_index(Dwarf_Attribute /*attr*/,
-    Dwarf_Unsigned * /*return_index*/,
-    Dwarf_Error * /*error*/);
+    elsewhere (Debug Fission). Or if the caller just wants the index.
+    Only call it when you know it should does have an index
+    address FORM such as DW_FORM_addrx1 or one of the GNU
+    address index forms.
 
-DW_API int dwarf_formflag(Dwarf_Attribute /*attr*/,
-    Dwarf_Bool *     /*returned_bool*/,
-    Dwarf_Error*     /*error*/);
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_return_index
+    If successful it returns the index
+    through the pointer.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds. Never returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_debug_addr_index(Dwarf_Attribute dw_attr,
+    Dwarf_Unsigned * dw_return_index,
+    Dwarf_Error *    dw_error);
 
-DW_API int dwarf_formdata16(Dwarf_Attribute /*attr*/,
-    Dwarf_Form_Data16  * /*returned_val*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Return the flag value of a flag form.
 
-DW_API int dwarf_formudata(Dwarf_Attribute /*attr*/,
-    Dwarf_Unsigned  * /*returned_val*/,
-    Dwarf_Error*     /*error*/);
+    It is an error if the FORM is not a flag form.
 
-DW_API int dwarf_formsdata(Dwarf_Attribute     /*attr*/,
-    Dwarf_Signed  *  /*returned_val*/,
-    Dwarf_Error*     /*error*/);
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_bool
+    Returns either TRUE or FALSE through the pointer.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds. Never returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_formflag(Dwarf_Attribute dw_attr,
+    Dwarf_Bool *     dw_returned_bool,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Return an unsigned value 
+
+    The form can be an unsigned or signed integral type
+    but if it is a signed type the value must be non-negative.
+    It is an error otherwise.
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_val
+    On success returns the unsigned value through the pointer.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds. Never returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_formudata(Dwarf_Attribute dw_attr,
+    Dwarf_Unsigned * dw_returned_val,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Return a signed value
+
+    The form  must be a signed integral type.
+    It is an error otherwise.
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_val
+    On success returns the signed value through the pointer.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds. Never returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_formsdata(Dwarf_Attribute dw_attr,
+    Dwarf_Signed  * dw_returned_val,
+    Dwarf_Error*    dw_error);
+
+/*! @brief Return a 16 byte Dwarf_Form_Data16 value.
+
+    We just store the bytes in a struct, we have no
+    16 byte integer type.
+    It is an error if the FORM is not DW_FORM_data16
+    @see Dwarf_Form_Data16
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_val
+    Copies the 16 byte value into the pointed
+    to area.
+    @param dw_error
+    The usual error pointer.                    
+    @return
+    DW_DLV_OK if it succeeds. Never returns DW_DLV_NO_ENTRY. 
+*/ 
+DW_API int dwarf_formdata16(Dwarf_Attribute dw_attr,
+    Dwarf_Form_Data16 * dw_returned_val,
+    Dwarf_Error*        dw_error);
 
 DW_API int dwarf_formblock(Dwarf_Attribute /*attr*/,
     Dwarf_Block    ** /*returned_block*/,
