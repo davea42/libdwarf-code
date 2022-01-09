@@ -432,6 +432,39 @@ int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
 }
 /*! @endcode */
 
+/*! @defgroup explainformblock Documenting Form_Block
+    @brief Documents Form_Block content
+
+    Used with certain location information functions,
+    a frame expression function, expanded
+    frame instructions, and
+    DW_FORM_block<> functions and more.
+
+    @see dwarf_formblock
+    @see Dwarf_Block_s
+
+    @code
+*/
+struct Dwarf_Block_s {
+    /* length of block bl_data points at */
+    Dwarf_Unsigned  bl_len;
+
+    Dwarf_Ptr       bl_data; /* uninterpreted data */
+
+    /*  See libdwarf.h DW_LKIND, defaults to
+        DW_LKIND_expression and except in certain
+        location expressions the field is ignored.  */
+    Dwarf_Small     bl_from_loclist;
+
+    /* Section (not CU) offset which 'data' comes from. */
+    Dwarf_Unsigned  bl_section_offset;
+};
+/*! @endcode */
+
+ 
+
+*/
+
 /*! @defgroup examplediscrlist Example using 
     @brief Using dwarf_offset_list
 

@@ -294,57 +294,40 @@ typedef struct Dwarf_Form_Data16_s {
     a type unit. 
     @see dwarf_formsig8
 */
-struct Dwarf_Sig8_s  {
+typedef struct Dwarf_Sig8_s  {
     char signature[8];
-};
-typedef struct Dwarf_Sig8_s Dwarf_Sig8;
+} Dwarf_Sig8;
 
 /*! @typedef Dwarf_Block 
+
+    Used to hold uninterpreted blocks of data.
     bl_data refers to on an uninterpreted block of data
     Used with certain location information functions,
     a frame expression function, expanded
     frame instructions, and
-    DW_FORM_block<> functions.
+    DW_FORM_block functions.
 
     @see dwarf_formblock
-    @see Dwarf_Block_s
+    @see explainformblock
    
 */
-/*! @struct Dwarf_Block_s
-
-    bl_data refers to on an uninterpreted block of data
-
-    bl_len is the length in bytes of the bl_data.
-
-    Used with certain location information functions,
-    a frame expression function, expanded
-    frame instructions, and
-    DW_FORM_block<> functions.
-  
-    bl_from_loclist  defaults to DW_LKIND_expression
-    but only referred to in reference to location expressions.
-
-    bl_section_offset is set to the section offset of
-    the data block (usually in .debug_info). 
-*/
 typedef struct Dwarf_Block_s {
-    Dwarf_Unsigned  bl_len;  /* length of block bl_data points at */
-    Dwarf_Ptr       bl_data; /* uninterpreted data */
-
-    /*  See libdwarf.h DW_LKIND*  */
+    Dwarf_Unsigned  bl_len; 
+    Dwarf_Ptr       bl_data;
     Dwarf_Small     bl_from_loclist;
-
-    /* Section (not CU) offset which 'data' comes from. */
     Dwarf_Unsigned  bl_section_offset;
 } Dwarf_Block;
 
-/*  This provides access to Dwarf_Locdesc_c, a single
-    location description */
+/*! @typedef Dwarf_Locdesc_c
+    Provides access to Dwarf_Locdesc_c, a single
+    location description
+*/
 typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 
-/*  This provides access to Dwarf_Locdesc_c, a single
-    location list entry (or for a locexpr, the fake
-    Loc_Head for the locexpr) */
+/*! @typedef Dwarf_Loc_Head_c
+    provides access to any sort of location description
+    for DWARF2,3,4, or 5.
+*/
 typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 
 /*  This provides access to data from sections
@@ -367,6 +350,11 @@ typedef struct Dwarf_Dsc_Head_s * Dwarf_Dsc_Head;
 */
 typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
 
+/*! @typedef dwarf_printf_callback_function_type
+
+    Used as a function pointer to a user-written
+    callback function.
+*/
 typedef void (* dwarf_printf_callback_function_type)
     (void * /*user_pointer*/, const char * /*linecontent*/);
 
@@ -378,6 +366,7 @@ struct Dwarf_Printf_Callback_Info_s {
     int                           dp_buffer_user_provided;
     void *                        dp_reserved;
 };
+
 /*! @typedef Dwarf_Cmdline_Options.
 
     check_verbose_mode defaults to FALSE.
