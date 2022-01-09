@@ -384,8 +384,7 @@ typedef struct Dwarf_Str_Offsets_Table_s *  Dwarf_Str_Offsets_Table;
 /*! @typedef Dwarf_Ranges
     Details of of non-contiguous address ranges
     of DIEs for DWARF2, DWARF3, and DWARF4.
-    Sufficient for older dwarf, but
-
+    Sufficient for older dwarf.
 */
 typedef struct Dwarf_Ranges_s {
     Dwarf_Addr dwr_addr1;
@@ -3199,27 +3198,79 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     struct  Dwarf_Printf_Callback_Info_s * /*newvalues*/);
 
 /*! @} */
-/*! @defgroup ranges Ranges .debug_ranges DWARF3, DWARF4
+/*! @defgroup ranges CU Data-Ranges data DW_AT_ranges
+    In DWARF3 and DWARF4 the DW_AT_ranges attribute
+    provides an offset into the .debug_ranges section.
+    DW_FORM_rnglistx or a 
+
+    @see Dwarf_Ranges
+
+    These functions provide access to that section.
     @{
 */
-/*  Adds return of the final offset to accommodate
-    DWARF4 GNU split-dwarf. Other than for split-dwarf
-    the realoffset will be set by the function
-    to be the same as rangesoffset.
+/*! @brief Access to code ranges from a CU or just
+    reading through the raw .debug_ranges section.
+    
+    DWARF3 and DWARF4.  
+    Adds return of the dw_realoffset to accommodate
+    DWARF4 GNU split-dwarf, where the ranges could
+    be in the tieddbg (meaning the real executable, a.out, not
+    in a dwp). DWARF4 split-dwarf is an extension, not
+    standard DWARF4.
+
+    If printing all entries in the section pass
+    in an initial dw_rangesoffset of zero and dw_die of NULL.
+    Then increment dw_rangesoffset by dw_bytecount and call
+    again to get the next batch of ranges.
+    With a specific option dwarfdump can do this.
+    This not a normal thing to do!
+
+    @param dw_dbg
+    The Dwarf_Debug of interest
+    @param dw_rangesoffset
+    The offset to read from in the section.
+    @param dw_die
+    Pass in the DIE whose DW_AT_ranges brought us to ranges.
+    @param dw_return_realoffset
+    The actual offset in the section actually read.
+    In a tieddbg this
+    @param dw_rangesbuf
+    A pointer to an array of structs is returned here.
+    @param dw_rangecount
+    The count of structs in the array is returned here.
+    @param dw_bytecount
+    The number of bytes in the .debug_ranges section
+    applying to the returned array. This makes possible
+    just marching through the section by offset.
+    @param dw_error
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
 */
-DW_API int dwarf_get_ranges_b(Dwarf_Debug /*dbg*/,
-    Dwarf_Off       /*rangesoffset*/,
-    Dwarf_Die       /*diepointer */,
-    Dwarf_Off *     /*realoffset */,
-    Dwarf_Ranges ** /*rangesbuf*/,
-    Dwarf_Signed *  /*listlen*/,
-    Dwarf_Unsigned * /*bytecount*/,
-    Dwarf_Error *   /*error*/);
-DW_API void dwarf_dealloc_ranges(Dwarf_Debug /*dbg*/,
-    Dwarf_Ranges * /*rangesbuf*/,
-    Dwarf_Signed /*rangecount*/);
+DW_API int dwarf_get_ranges_b(Dwarf_Debug dw_dbg,
+    Dwarf_Off        dw_rangesoffset,
+    Dwarf_Die        dw_die,
+    Dwarf_Off *      dw_return_realoffset,
+    Dwarf_Ranges **  dw_rangesbuf,
+    Dwarf_Signed *   dw_rangecount,
+    Dwarf_Unsigned * dw_bytecount,
+    Dwarf_Error *    dw_error);
+/*! @brief dealloc the array dw_rangesbuf
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_rangesbuf
+    The dw_rangesbuf pointer returned by dwarf_get_ranges_b
+    @param dw_rangecount
+    The dw_rangecount returned by dwarf_get_ranges_b
+*/
+DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
+    Dwarf_Ranges * dw_rangesbuf,
+    Dwarf_Signed   dw_rangecount);
 /*! @} */
-/*! @defgroup rnglists Rnglists .debug_rnglists DWARF5
+
+/*! @defgroup rnglists CU Data Rnglists .debug_rnglists DWARF5
     @{
 */
 
@@ -3339,7 +3390,7 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*entry_operand2*/,
     Dwarf_Error * /*err*/);
 /*! @} */
-/*! @defgroup locations Data Locations DWARF2-DWARF5
+/*! @defgroup locations CU Data- Data Locations DWARF2-DWARF5
     @{
 */
 /*  BEGIN: loclist_c interfaces
@@ -3515,7 +3566,7 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*err*/);
 /*! @} */
 
-/*! @defgroup macro Macro .debug_macro DWARF5 data access
+/*! @defgroup macro CU Data-Macro .debug_macro DWARF5 data access
     @{
 */
 
@@ -3612,9 +3663,10 @@ DW_API int dwarf_get_macro_import(Dwarf_Macro_Context
     Dwarf_Error    * /*error*/);
 
 /*! @} */
-/*! @defgroup macinfo Macrinfo .debug_macinfo DWARF2-4 data access
+/*! @defgroup macinfo CU Data-Macinfo .debug_macinfo DWARF2-4 data access
     @{
 */
+
 DW_API char* dwarf_find_macro_value_start(char * /*macro_string*/);
 
 DW_API int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
@@ -4187,7 +4239,7 @@ DW_API int dwarf_get_debug_sup(Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*error*/);
 /*! @} */
 
-/*! @defgroup debugnames Access to .debug_names Fast Access DWARF5
+/*! @defgroup debugnames Fast Access-Access to .debug_names DWARF5
     @{
 */
 /*  .debug_names names table interfaces. DWARF5.
@@ -4283,7 +4335,7 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
 
 /*! @} */
 
-/*! @defgroup aranges Access to .debug_aranges Fast Access
+/*! @defgroup aranges Fast Access-Access to .debug_aranges
     @{ */
 DW_API int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
     Dwarf_Arange**   /*aranges*/,
@@ -4316,7 +4368,7 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
     Dwarf_Error   *  /*error*/ );
 /*! @} */
 
-/*! @defgroup pubnames Access to .debug_pubnames plus. Fast Access
+/*! @defgroup pubnames Fast Access-Access to .debug_pubnames and more.
     @{ */
 
 /*  global name space operations (.debug_pubnames access)
@@ -4516,7 +4568,7 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
     Dwarf_Error*     /*error*/);
 /*! @} */
 
-/*! @defgroup gnupubnames Access GNU .debug_gnu_pubnames Fast Access
+/*! @defgroup gnupubnames Fast Access-Access GNU .debug_gnu_pubnames
     @{
 */
 /*  BEGIN: .debug_gnu_pubnames .debug_gnu_typenames access,
@@ -4611,11 +4663,14 @@ DW_API unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
     unsigned long /*len*/, unsigned int /*init*/);
 /*! @} */
 
-/*! @defgroup gdbindex Gdb Index Fast Access to .dwo or .dwp
+/*! @defgroup gdbindex Fast Access-Gdb Index into .dwo or .dwp
     If .gdb_index present in an executable then
     the content here helps quickly find their way
-    into the .dwo or .dwp .debug_cu_index or .debug_tu_index
-    split dwarf sections.
+    into the .dwo or .dwp .debug_cu_index or
+    .debug_tu_index split dwarf sections.
+
+    This is a section created for and used by the GNU gdb
+    debugger.  Not part of standard DWARF. 
     @{
 */
 
@@ -4735,7 +4790,7 @@ DW_API void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
 
 /*! @} */
 
-/*! @defgroup splitdwarf  Split Dwarf (Debug Fission) Fast Access
+/*! @defgroup splitdwarf Fast Access-Split Dwarf (Debug Fission)
     @{
 */
 /*  START debugfission dwp .debug_cu_index
