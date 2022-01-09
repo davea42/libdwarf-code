@@ -430,8 +430,40 @@ int exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
     dwarf_dealloc(dbg, offbuf, DW_DLA_LIST);
     return DW_DLV_OK;
 }
-/*@ @endcode */
+/*! @endcode */
 
+/*! @defgroup examplediscrlist Example using 
+    @brief Using dwarf_offset_list
+
+    An example calling  dwarf_get_form_class,
+    dwarf_discr_list, and dwarf_formblock.
+    and the dwarf_deallocs applicable.
+
+    @see dwarf_discr_list
+    @see dwarf_get_form_class
+    @see dwarf_formblock
+
+    @param dw_dbg
+    The applicable Dwarf_Debug
+    @param dw_die
+    The applicable Dwarf_Die
+    @param dw_attr
+    The applicable Dwarf_Attribute
+    @param dw_attrnum,
+    The attribute number passed in to shorten
+    this example a bit.
+    @param dw_isunsigned,
+    The attribute number passed in to shorten
+    this example a bit.
+    @param dw_theform,
+    The form number passed in to shorten
+    this example a bit.
+    @param dw_error
+    The usual error pointer.
+    @return
+    Returns DW_DLV_OK etc
+    @code
+*/
 int example_discr_list(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attr,
@@ -521,6 +553,7 @@ int example_discr_list(Dwarf_Debug dbg,
     }
     return DW_DLV_OK
 }
+/*! @endcode */
 
 void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
 {

@@ -299,11 +299,33 @@ struct Dwarf_Sig8_s  {
 };
 typedef struct Dwarf_Sig8_s Dwarf_Sig8;
 
-/* Refers to on an uninterpreted block of data
-   Used with certain location information functions,
-   a frame expression function, expanded
-   frame instructions, and
-   DW_FORM_block<> functions.
+/*! @typedef Dwarf_Block 
+    bl_data refers to on an uninterpreted block of data
+    Used with certain location information functions,
+    a frame expression function, expanded
+    frame instructions, and
+    DW_FORM_block<> functions.
+
+    @see dwarf_formblock
+    @see Dwarf_Block_s
+   
+*/
+/*! @struct Dwarf_Block_s
+
+    bl_data refers to on an uninterpreted block of data
+
+    bl_len is the length in bytes of the bl_data.
+
+    Used with certain location information functions,
+    a frame expression function, expanded
+    frame instructions, and
+    DW_FORM_block<> functions.
+  
+    bl_from_loclist  defaults to DW_LKIND_expression
+    but only referred to in reference to location expressions.
+
+    bl_section_offset is set to the section offset of
+    the data block (usually in .debug_info). 
 */
 typedef struct Dwarf_Block_s {
     Dwarf_Unsigned  bl_len;  /* length of block bl_data points at */
@@ -2918,9 +2940,27 @@ DW_API int dwarf_formdata16(Dwarf_Attribute dw_attr,
     Dwarf_Form_Data16 * dw_returned_val,
     Dwarf_Error*        dw_error);
 
-DW_API int dwarf_formblock(Dwarf_Attribute /*attr*/,
-    Dwarf_Block    ** /*returned_block*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Returns an allocated filled-in Form_Block through the pointer
+
+    It is an error if the DW_FORM in the attribute is not a
+    block form. DW_FORM_block2 is an example of a block form.
+
+    @see Dwarf_Block
+    @see examplediscrlist
+
+    @param dw_attr
+    The Dwarf_Attribute of interest.
+    @param dw_returned_block
+    Allocates a Dwarf_Block and returns
+    a pointer to the filled-in block.
+    @param dw_error
+    The usual error pointer.                    
+    @return
+    DW_DLV_OK if it succeeds. Never returns DW_DLV_NO_ENTRY. 
+*/
+DW_API int dwarf_formblock(Dwarf_Attribute dw_attr,
+    Dwarf_Block ** dw_returned_block,
+    Dwarf_Error*   dw_error);
 
 DW_API int dwarf_formstring(Dwarf_Attribute /*attr*/,
     char   **        /*returned_string*/,
