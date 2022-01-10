@@ -3005,37 +3005,78 @@ DW_API int dwarf_get_debug_str_index(Dwarf_Attribute dw_attr,
     to the error details.
 */
 DW_API int dwarf_formexprloc(Dwarf_Attribute dw_attr,
-    Dwarf_Unsigned * dw_return_exprlen*/,
-    Dwarf_Ptr      * dw_block_ptr*/,
-    Dwarf_Error    * dw_error*/);
+    Dwarf_Unsigned * dw_return_exprlen,
+    Dwarf_Ptr      * dw_block_ptr,
+    Dwarf_Error    * dw_error);
 
+/*! @brief Returns the FORM_CLASS applicable.
+    Four pieces of information are necessary
+    to get the correct FORM_CLASS.
+
+    @param dw_version
+    The CU's DWARF version. Standard numbers are 2,3,4, or 5.
+    @param dw_attrnum
+    For example DW_AT_name
+    @param dw_offset_size 
+    The offset size applicable to the compilation unit
+    relevant to the attribute and form.
+    @param dw_form
+    The FORM number, for example DW_FORM_data4
+    @return
+    Returns a form class, for example DW_FORM_CLASS_CONSTANT.
+    The FORM_CLASS names are mentioned (for example
+    as 'address' in Table 2.3 of DWARF5) but
+    are not assigned formal names & numbers in the standard.
+*/
 DW_API enum Dwarf_Form_Class dwarf_get_form_class(
-    Dwarf_Half /* dwversion */,
-    Dwarf_Half /* attrnum */,
-    Dwarf_Half /*offset_size */,
-    Dwarf_Half /*form*/);
+    Dwarf_Half dw_version,
+    Dwarf_Half dw_attrnum,
+    Dwarf_Half dw_offset_size,
+    Dwarf_Half dw_form);
 
-DW_API int dwarf_attr_offset(Dwarf_Die /*die*/,
-    Dwarf_Attribute /*attr of above die*/,
-    Dwarf_Off     * /*returns offset thru this ptr */,
-    Dwarf_Error   * /*error*/);
+/*! @brief Returns the offset of an attribute in its section
 
-/*  On success returns DW_DLV_OK
-    and creates an array of Dwarf_Signed values
-    from the block of sleb numbers.
-    No ugly cast needed to know if
-    dwarf_uncompress_integer_block_a() succeeds or not. */
-DW_API int dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned     /*input_length_in_bytes*/,
-    void             * /*input_block*/,
-    Dwarf_Unsigned   * /*value_count*/,
-    Dwarf_Signed    ** /*value_array*/,
-    Dwarf_Error      * /*error*/);
+    @param dw_die
+    The DIE of interest.
+    @param dw_attr
+    A Dwarf_Attribute of interest in this DIE
+    @param dw_return_offset
+    The offset is in .debug_info if the DIE is there.
+    The offset is in .debug_types if the DIE is there.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds. 
+    DW_DLV_NO_ENTRY is impossible.
+*/
+DW_API int dwarf_attr_offset(Dwarf_Die dw_die,
+    Dwarf_Attribute dw_attr,
+    Dwarf_Off     * dw_return_offset,
+    Dwarf_Error   * dw_error);
 
-/*  Call this passing in return value from
-    dwarf_uncompress_integer_block_a()
-    to free the space the decompression allocated. */
-DW_API void dwarf_dealloc_uncompressed_block(Dwarf_Debug, void *);
+/*! @brief Uncompress a block of sleb numbers
+    It's not much of a compression so not much
+    of an uncompression.
+    Developed by Sun Microsystems and it is unclear if it
+    was ever used. 
+    @see dwarf_dealloc_uncompressed_block
+*/
+DW_API int dwarf_uncompress_integer_block_a(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned   dw_input_length_in_bytes,
+    void           * dw_input_block,
+    Dwarf_Unsigned * dw_value_count,
+    Dwarf_Signed  ** dw_value_array,
+    Dwarf_Error    * dw_error);
+
+/*! @brief dealloc what dwarf_uncompress_integer_block_a allocated
+    @param dw_dbg
+    The Dwarf_Debug of interest
+    @param dw_value_array
+    The array was called an array of Dwarf_Signed.
+    We dealloc all of it without needing dw_value_count.
+*/
+DW_API void dwarf_dealloc_uncompressed_block(Dwarf_Debug dw_dbg,
+    void *dw_value_array);
 
 /* Convert local offset into global offset */
 DW_API int dwarf_convert_to_global_offset(Dwarf_Attribute /*attr*/,
