@@ -2,9 +2,15 @@
 /*!
     @mainpage A Consumer Library Interface to DWARF
     @author David Anderson
-    @date 2022-01-05
+    @date 2022-01-12
  
+    @section justadraft THIS IS A DRAFT
+
+    THIS DOCUMENT IS AN EARLY AND INCOMPLETE DRAFT!
+    SUGGESTIONS FOR IMPROVEMENT ARE WELCOME.
+
     @section dw_intro Introduction
+
 
     This document describes an interface to @e libdwarf, a library of
     functions to provide access to DWARF debugging information
