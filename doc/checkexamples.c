@@ -466,10 +466,10 @@ Dwarf_Unsigned  bl_section_offset;
 
 */
 
-/*! @defgroup examplediscrlist Example using 
-    @brief Using dwarf_offset_list
+/*! @defgroup examplediscrlist Example using dwarf_discr_list
+    @brief Using dwarf_discr_list and dwarf_formblock
 
-    An example calling  dwarf_get_form_class,
+    An example calling dwarf_get_form_class,
     dwarf_discr_list, and dwarf_formblock.
     and the dwarf_deallocs applicable.
 

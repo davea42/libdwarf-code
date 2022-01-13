@@ -3078,43 +3078,113 @@ DW_API int dwarf_uncompress_integer_block_a(Dwarf_Debug dw_dbg,
 DW_API void dwarf_dealloc_uncompressed_block(Dwarf_Debug dw_dbg,
     void *dw_value_array);
 
-/* Convert local offset into global offset */
-DW_API int dwarf_convert_to_global_offset(Dwarf_Attribute /*attr*/,
-    Dwarf_Off        /*offset*/,
-    Dwarf_Off*       /*ret_offset*/,
-    Dwarf_Error*     /*error*/);
-DW_API void dwarf_dealloc_attribute(Dwarf_Attribute /*attr*/);
-
-/*
-    Given a block containing a discriminant list
-    the following functions enable decoding the block.
+/*! @brief Convert local offset to global offset
+ 
+    Uses the DW_FORM of the attribute to determine
+    if the dw_offset is local, and if so, adds
+    the CU base offset to adjust dw_offset.
+    
+    @param dw_attr
+    The attribute the local offset was extracted from.
+    @param dw_offset
+    The global offset of the attribute.
+    @param dw_return_offset
+    The returned section (global) offset.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+    Returns DW_DLV_ERROR if the dw_attr form is not
+    an offset form (for example, DW_FORM_ref_udata).
 */
-DW_API int dwarf_discr_list(Dwarf_Debug /*dbg*/,
-    Dwarf_Small    * /*blockpointer*/,
-    Dwarf_Unsigned   /*blocklen*/,
-    Dwarf_Dsc_Head * /*dsc_head_out*/,
-    Dwarf_Unsigned * /*dsc_array_length_out*/,
-    Dwarf_Error    * /*error*/);
+DW_API int dwarf_convert_to_global_offset(Dwarf_Attribute dw_attr,
+    Dwarf_Off    dw_offset,
+    Dwarf_Off*   dw_return_offset,
+    Dwarf_Error* dw_error);
 
-/*  Access to a DW_AT_discr_list
-    unsigned entry. Callers must know which is the appropriate
-    one of the following two interfaces, though both
-    will work. */
-DW_API int dwarf_discr_entry_u(Dwarf_Dsc_Head /* dsc */,
-    Dwarf_Unsigned   /*entrynum*/,
-    Dwarf_Half     * /*out_type*/,
-    Dwarf_Unsigned * /*out_discr_low*/,
-    Dwarf_Unsigned * /*out_discr_high*/,
-    Dwarf_Error    * /*error*/);
+/*! @brief Dealloc a Dwarf_Attribute
+    When this call returns the dw_attr is a stale pointer.
+    @param dw_attr
+    The attribute to dealloc.
+*/
+DW_API void dwarf_dealloc_attribute(Dwarf_Attribute dw_attr);
 
-/*  Access to a DW_AT_discr_list
-    signed entry. */
-DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
-    Dwarf_Unsigned   /*entrynum*/,
-    Dwarf_Half     * /*out_type*/,
-    Dwarf_Signed   * /*out_discr_low*/,
-    Dwarf_Signed   * /*out_discr_high*/,
-    Dwarf_Error    * /*error*/);
+/*! @brief Returns an array of discriminant values.
+
+    This applies if a DW_TAG_variant has one of the
+    DW_FORM_block forms. 
+    @see dwarf_formblock
+
+    For an example of use and dealloc:
+    @see examplediscrlist
+
+    @param dw_dbg
+    The applicable Dwarf_Debug
+    @param dw_blockpointer
+    The  bl_data value from a Dwarf_Block.
+    @param dw_blocklen
+    The  bl_len value from a Dwarf_Block.
+    @param dw_dsc_head_out
+    On success returns a pointer to an array
+    of discriminant values in an opaque struct.
+    @param dw_dsc_array_length_out
+    On success returns the number of entries
+    in the dw_dsc_head_out array.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_discr_list(Dwarf_Debug dw_dbg,
+    Dwarf_Small    * dw_blockpointer,
+    Dwarf_Unsigned   dw_blocklen,
+    Dwarf_Dsc_Head * dw_dsc_head_out,
+    Dwarf_Unsigned * dw_dsc_array_length_out,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Access a single unsigned discriminant list entry
+
+    It is up to the caller to know whether the discriminant
+    values are signed or unsigned (therefore to know
+    whether this or dwarf_discr_entry_s.
+    should be called)
+
+    @param dw_dsc
+    The Dwarf_Dsc_Head applicable.
+    @param dw_entrynum
+    Valid values are zero to dw_dsc_array_length_out-1
+    @param dw_out_type
+    On success is set to either DW_DSC_label  or
+    DW_DSC_range through the pointer.   
+    @param dw_out_discr_low
+    On success set to
+    the lowest in this discriminant range
+    @param dw_out_discr_high
+    On success set to
+    the highest in this discriminant range
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_discr_entry_u(Dwarf_Dsc_Head dw_dsc,
+    Dwarf_Unsigned   dw_entrynum,
+    Dwarf_Half     * dw_out_type,
+    Dwarf_Unsigned * dw_out_discr_low,
+    Dwarf_Unsigned * dw_out_discr_high,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Access to a single signed discriminant list entry
+    
+    The same as dwarf_discr_entry_u except here the values
+    are signed.
+*/
+DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
+    Dwarf_Unsigned   dw_entrynum,
+    Dwarf_Half     * dw_out_type,
+    Dwarf_Signed   * dw_out_discr_low,
+    Dwarf_Signed   * dw_out_discr_high,
+    Dwarf_Error    * dw_error);
 
 /*! @} */
 

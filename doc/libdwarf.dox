@@ -2,9 +2,9 @@
 /*!
     @mainpage A Consumer Library Interface to DWARF
     @author David Anderson
-    @date 2022-01-12
+    @date 2022-01-13
  
-    @section justadraft THIS IS A DRAFT
+    @section draft THIS IS A DRAFT
 
     THIS DOCUMENT IS AN EARLY AND INCOMPLETE DRAFT!
     SUGGESTIONS FOR IMPROVEMENT ARE WELCOME.
@@ -43,6 +43,14 @@
     FreeStandards.org in 2007 and established the dwarfstd.org
     website. See "http://www.dwarfstd.org" for current information on
     standardization activities and a copy of the standard.
+
+    @section dw_threadsafety Thread Safety
+
+    Libdwarf can safely open multiple Dwarf_Debug
+    pointers simultaneously but all such Dwarf_Debug
+    pointers must be opened within the same thread.
+    And all libdwarf calls must be made from within
+    that single (same) thread.
  
     @section dw_error Error Handling in libdwarf
     Essentially every libdwarf call could involve dealing
