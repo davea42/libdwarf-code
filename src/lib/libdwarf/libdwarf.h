@@ -3192,23 +3192,56 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     Access to all the line table details.
     @{
 */
+/*! @brief Initialize Dwarf_Line_Context for line table access
 
-DW_API int dwarf_srclines_b(Dwarf_Die /*die*/,
-    Dwarf_Unsigned     * /*version_out*/,
-    Dwarf_Small        * /*table_count*/,
-    Dwarf_Line_Context * /*linecontext*/,
-    Dwarf_Error        * /*error*/);
+    The call to start things off.
 
-/*  Functions passing in a Dwarf_Line_Context  are only
-    available if dwarf_srclines_b() was used to access
-    line table information.  */
-/*  New October 2015.  Returns line details.
-    Works for DWARF2,3,4,5.  If linecount
-    returned is zero this is a line table with no lines.*/
-DW_API int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
-    Dwarf_Line  **   /*linebuf*/,
-    Dwarf_Signed *   /*linecount*/,
-    Dwarf_Error  *   /* error*/);
+    @param
+    The Compilation Unit (CU) DIE of interest.
+    @param dw_version_out
+    The DWARF Line Table version number (Standard: 2,3,4, or 5)
+    Version 0xf006 is an experimental (two-level) line table.
+    @param dw_table_count
+    Zero or one means this is a normal DWARF line table.
+    Two means this is an experimental two-level line table.
+    @param dw_linecontext
+    On success sets the pointer to point to an opaque structure
+    usable for further queries.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_srclines_b(Dwarf_Die dw_die,
+    Dwarf_Unsigned     * dw_version_out,
+    Dwarf_Small        * dw_table_count,
+    Dwarf_Line_Context * dw_linecontext,
+    Dwarf_Error        * dw_error);
+
+
+/*! @brief Access source lines from line context
+
+
+    @param dw_linecontext
+    The line context of interest.
+    @param dw_linebuf
+    On success returns
+    an array of pointers to Dwarf_Line.
+    @param dw_linecount
+    On success returns the count of entries
+    int dw_linebuf.
+    If dw_linecount is returned as zero this is
+    a line table with no lines.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_srclines_from_linecontext(
+    Dwarf_Line_Context dw_linecontext,
+    Dwarf_Line  **   dw_linebuf,
+    Dwarf_Signed *   dw_linecount,
+    Dwarf_Error  *   dw_error);
 
 /*  Returns line details.
     Works for DWARF2,3,4,5 and for experimental
@@ -3227,19 +3260,26 @@ DW_API int dwarf_srclines_from_linecontext(Dwarf_Line_Context,
     Most users will not wish to use
     dwarf_srclines_two_level_from_linecontext */
 DW_API int dwarf_srclines_two_level_from_linecontext(
-    Dwarf_Line_Context,
-    Dwarf_Line  **   /*linebuf */,
-    Dwarf_Signed *   /*linecount*/,
-    Dwarf_Line  **   /*linebuf_actuals*/,
-    Dwarf_Signed *   /*linecount_actuals*/,
-    Dwarf_Error  *   /* error*/);
+    Dwarf_Line_Context dw_context,
+    Dwarf_Line  **   dw_linebuf ,
+    Dwarf_Signed *   dw_linecount,
+    Dwarf_Line  **   dw_linebuf_actuals,
+    Dwarf_Signed *   dw_linecount_actuals,
+    Dwarf_Error  *   dw_error);
 
 /*  dwarf_srclines_dealloc_b(), created October 2015, is the
     appropriate method for deallocating everything
     and dwarf_srclines_from_linecontext(),
     dwarf_srclines_twolevel_from_linecontext(),
     and dwarf_srclines_b()  allocate.  */
-DW_API void dwarf_srclines_dealloc_b(Dwarf_Line_Context /*context*/);
+/*! @brief Dealloc the memory allocated by dwarf_srclines_b
+
+    @param dw_context
+    The context to be deallocd (freed).
+    On return the pointer is stale and
+    calling applications should zero the pointer.
+*/
+DW_API void dwarf_srclines_dealloc_b(Dwarf_Line_Context dw_context);
 
 /*  New October 2015.
     The offset is in the relevent .debug_line or .debug_line.dwo
