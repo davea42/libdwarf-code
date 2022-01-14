@@ -3260,7 +3260,7 @@ DW_API int dwarf_srclines_b(Dwarf_Die dw_cudie,
     an array of pointers to Dwarf_Line.
     @param dw_linecount
     On success returns the count of entries
-    int dw_linebuf.
+    in dw_linebuf.
     If dw_linecount is returned as zero this is
     a line table with no lines.
     @param dw_error
@@ -3270,9 +3270,9 @@ DW_API int dwarf_srclines_b(Dwarf_Die dw_cudie,
 */
 DW_API int dwarf_srclines_from_linecontext(
     Dwarf_Line_Context dw_linecontext,
-    Dwarf_Line  **   dw_linebuf,
-    Dwarf_Signed *   dw_linecount,
-    Dwarf_Error  *   dw_error);
+    Dwarf_Line  ** dw_linebuf,
+    Dwarf_Signed * dw_linecount,
+    Dwarf_Error  * dw_error);
 
 /*! @brief  Returns line table counts and data
 
@@ -3562,7 +3562,7 @@ DW_API int dwarf_srclines_version(Dwarf_Line_Context dw_line_context,
 
 /*! @brief Read Line beginstatement register
 
-    @see linetableregisters
+    @link linetableregisters Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3581,7 +3581,8 @@ DW_API int dwarf_linebeginstatement(Dwarf_Line dw_line,
 
 /*! @brief Read Line endsequence register flag
 
-    @see linetableregisters
+    @link linetableregisters Link to Line Table Registers @endlink
+
     @param dw_line
     The Dwarf_Line of interest.
     @param dw_returned_bool
@@ -3599,7 +3600,8 @@ DW_API int dwarf_lineendsequence(Dwarf_Line dw_line,
 
 /*! @brief Read Line line register
 
-    @see linetableregisters
+    @link linetableregisters Link to Line Table Registers @endlink
+
     @param dw_line
     The Dwarf_Line of interest.
     @param dw_returned_linenum
@@ -3616,7 +3618,8 @@ DW_API int dwarf_lineno(Dwarf_Line dw_line,
 
 /*! @brief Read Line file register
 
-    @see linetableregisters
+    @link linetableregisters Link to Line Table Registers @endlink
+
     @param dw_line
     The Dwarf_Line of interest.
     @param dw_returned_filenum
@@ -3649,7 +3652,8 @@ DW_API int dwarf_line_is_addr_set(Dwarf_Line dw_line,
     Dwarf_Error * dw_error);
 
 /*! @brief Returns the address of the Dwarf_Line
-    @see linetableregisters
+
+    @link linetableregisters Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3666,7 +3670,8 @@ DW_API int dwarf_lineaddr(Dwarf_Line dw_line,
     Dwarf_Error*     dw_error);
 
 /*! @brief Returns a column number through the pointer
-    @see linetableregisters
+
+    @link linetableregisters Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3684,7 +3689,7 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
 
 /*! @brief Return the file name applicable to the Dwarf_Line
 
-    @see linetableregisters
+    @link linetableregisters Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3705,7 +3710,8 @@ DW_API int dwarf_linesrc(Dwarf_Line dw_line,
 
 /*! @brief Returns the basic_block line register.
     
-    @see linetableregisters
+    @link linetableregisters Link to Line Table Registers @endlink
+
     @param dw_line
     The Dwarf_Line of interest.
     @param dw_returned_bool
@@ -3722,12 +3728,35 @@ DW_API int dwarf_lineblock(Dwarf_Line dw_line,
 
 /*  We gather these into one call as it's likely one
     will want all or none of them.  */
-DW_API int dwarf_prologue_end_etc(Dwarf_Line /* line */,
-    Dwarf_Bool  *    /*prologue_end*/,
-    Dwarf_Bool  *    /*eplogue_begin*/,
-    Dwarf_Unsigned * /* isa */,
-    Dwarf_Unsigned * /* discriminator */,
-    Dwarf_Error *    /*error*/);
+/*! @brief Returns various line table registers in one call
+
+    @link linetableregisters Link to Line Table Registers @endlink
+
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_prologue_end
+    On success it sets the flag to TRUE or FALSE
+    from the prologue_end register in the line table.
+    @param dw_epilogue_begin
+    On success it sets the flag to TRUE or FALSE
+    from the epilogue_begin register in the line table.
+    @param dw_isa
+    On success it sets the value to the value of
+    from the isa register in the line table.
+    @param dw_discriminator
+    On success it sets the value to the value of
+    from the discriminator register in the line table.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_prologue_end_etc(Dwarf_Line dw_line,
+    Dwarf_Bool  *    dw_prologue_end,
+    Dwarf_Bool  *    dw_epilogue_begin,
+    Dwarf_Unsigned * dw_isa,
+    Dwarf_Unsigned * dw_discriminator,
+    Dwarf_Error *    dw_error);
 /* End line table operations */
 
 /*  Two-level line tables:

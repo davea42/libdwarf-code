@@ -221,12 +221,13 @@
     @endcode
 
     That's all there is to it.
+ 
 
     @subsection linetableregisters Line Table Registers
 
-    Please refer to the DWARF5 Standard for details
-    on the following.
+    Line Table Registers
 
+    Please refer to the DWARF5 Standard for details.
     The line table registers are named in Section
     6.2.2 State Machine Registers and are
     not much changed from DWARF2.
