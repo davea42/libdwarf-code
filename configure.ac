@@ -179,7 +179,6 @@ CPPFLAGS_save=${CPPFLAGS}
 ### we set $dwarf_with_libelf above.
 
 if test  "$dwarf_with_libelf" = "yes" ; then
-  AC_CHECK_HEADERS([sgidefs.h])
   AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
   AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
 
