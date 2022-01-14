@@ -809,7 +809,22 @@ examplea(Dwarf_Attribute someattr)
     return meaninglesstotal;
 }
 
-void examplec(Dwarf_Die cu_die)
+/*! @defgroup examplec Example of dwarf_srclines_b etc
+    @brief examplesrclines
+
+    An example calling dwarf_srclines_b
+    dwarf_srclines_dealloc_b
+    dwarf_srclines_from_linecontext
+    dwarf_srclines_files_indexes
+    dwarf_srclines_files_data_b
+    dwarf_srclines_two_level_from_linecontext
+
+    @param path
+    Path to an object we wish to open.
+    @param groupnumber
+    @code
+*/
+int examplec(Dwarf_Die cu_die Dwarf_Error *error)
 {
     /* EXAMPLE: DWARF5 style access.  */
     Dwarf_Line  *linebuf = 0;
@@ -830,7 +845,7 @@ void examplec(Dwarf_Die cu_die)
         /*  Handle the DW_DLV_NO_ENTRY  or DW_DLV_ERROR
             No memory was allocated so there nothing
             to dealloc. */
-        return;
+        return sres;
     }
     if (table_count == 0) {
         /*  A line table with no actual lines.  */
@@ -857,7 +872,7 @@ void examplec(Dwarf_Die cu_die)
             &baseindex,&file_count,&endindex,&err);
         if (sres != DW_DLV_OK) {
             /* Something badly wrong! */
-            return;
+            return sres;
         }
         /*  Works for DWARF2,3,4 (one-based index)
             and DWARF5 (zero-based index) */
@@ -874,7 +889,7 @@ void examplec(Dwarf_Die cu_die)
                 &md5data,&err);
             if (vres != DW_DLV_OK) {
                 /* something very wrong. */
-                return;
+                return vres;
             }
             /* do something */
         }
@@ -887,7 +902,7 @@ void examplec(Dwarf_Die cu_die)
         if (sres != DW_DLV_OK) {
             /* Error. Clean up the context information. */
             dwarf_srclines_dealloc_b(line_context);
-            return;
+            return sres;
         }
         /* The lines are normal line table lines. */
         for (i = 0; i < linecount; ++i) {
@@ -950,7 +965,9 @@ void examplec(Dwarf_Die cu_die)
             linecount_actuals = 0;
         }
     }
+    return DW_DLV_OK;
 }
+/*! @endcode */
 
 void exampled(Dwarf_Die somedie)
 {

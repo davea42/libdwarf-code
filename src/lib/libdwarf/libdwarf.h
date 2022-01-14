@@ -3194,9 +3194,10 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 */
 /*! @brief Initialize Dwarf_Line_Context for line table access
 
-    The call to start things off.
+    Returns Dwarf_Line_Context pointer, needed for
+    access to line table data.
 
-    @param
+    @param dw_cudie
     The Compilation Unit (CU) DIE of interest.
     @param dw_version_out
     The DWARF Line Table version number (Standard: 2,3,4, or 5)
@@ -3212,7 +3213,7 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     @return
     DW_DLV_OK if it succeeds.
 */
-DW_API int dwarf_srclines_b(Dwarf_Die dw_die,
+DW_API int dwarf_srclines_b(Dwarf_Die dw_cudie,
     Dwarf_Unsigned     * dw_version_out,
     Dwarf_Small        * dw_table_count,
     Dwarf_Line_Context * dw_linecontext,
@@ -3221,6 +3222,8 @@ DW_API int dwarf_srclines_b(Dwarf_Die dw_die,
 
 /*! @brief Access source lines from line context
 
+    The access to Dwarf_Line data from
+    a Dwarf_Line_Context on a standard line table. 
 
     @param dw_linecontext
     The line context of interest.
@@ -3243,22 +3246,22 @@ DW_API int dwarf_srclines_from_linecontext(
     Dwarf_Signed *   dw_linecount,
     Dwarf_Error  *   dw_error);
 
-/*  Returns line details.
+/*! @brief  Returns line table counts and data
+
     Works for DWARF2,3,4,5 and for experimental
     two-level line tables. A single level table will
     have *linebuf_actuals and *linecount_actuals set
-    to 0. */
-/*  If we have two-level line tables, this will return the
-    logicals table in linebuf and the actuals table in
-    linebuf_actuals. For old-style (one-level) tables, it
-    will return the single table through linebuf, and the
-    value returned through linecount_actuals will be 0.
-    The actual version number is returned through version.
-    For two-level line tables, the version returned will
-    be 0xf006. This interface can return data from two-level
-    line tables, which are experimental.
-    Most users will not wish to use
-    dwarf_srclines_two_level_from_linecontext */
+    to 0.
+
+    Two-level line tables are non-standard and not 
+    documented further.
+    For standard (one-level) tables, it
+    will return the single table through dw_linebuf, and the
+    value returned through dw_linecount_actuals will be 0.
+
+    People not using these two-level tables 
+    should dwarf_srclines_from_linecontext instead.
+*/
 DW_API int dwarf_srclines_two_level_from_linecontext(
     Dwarf_Line_Context dw_context,
     Dwarf_Line  **   dw_linebuf ,
@@ -3267,36 +3270,54 @@ DW_API int dwarf_srclines_two_level_from_linecontext(
     Dwarf_Signed *   dw_linecount_actuals,
     Dwarf_Error  *   dw_error);
 
-/*  dwarf_srclines_dealloc_b(), created October 2015, is the
-    appropriate method for deallocating everything
-    and dwarf_srclines_from_linecontext(),
-    dwarf_srclines_twolevel_from_linecontext(),
-    and dwarf_srclines_b()  allocate.  */
 /*! @brief Dealloc the memory allocated by dwarf_srclines_b
+
+    The way to deallocate (free) a Dwarf_Line_Context
 
     @param dw_context
     The context to be deallocd (freed).
-    On return the pointer is stale and
+    On return the pointer passed in is stale and
     calling applications should zero the pointer.
 */
 DW_API void dwarf_srclines_dealloc_b(Dwarf_Line_Context dw_context);
 
-/*  New October 2015.
-    The offset is in the relevent .debug_line or .debug_line.dwo
-    section (and in a split dwarf package file includes)
-    the base line table offset). */
-DW_API int dwarf_srclines_table_offset(Dwarf_Line_Context /*context*/,
-    Dwarf_Unsigned * /*offset*/,
-    Dwarf_Error  * /* error*/);
+/*! @brief Srclines table offset
 
-/*  New October 2015. */
-/*  Compilation Directory name for the current CU.
-    section (and in a split dwarf package file includes)
-    the base line table offset).  Do not free() the string,
-    it is in a dwarf section. */
-DW_API int dwarf_srclines_comp_dir(Dwarf_Line_Context /*context*/,
-    const char ** /*compilation_directory*/,
-    Dwarf_Error  *  /*error*/);
+    The offset is in the relevent .debug_line or .debug_line.dwo
+    section (and in a split dwarf package file includes
+    the base line table offset).
+
+    @param dw_context
+    @param dw_offset
+    On success returns the section offset of the
+    dw_context. 
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_srclines_table_offset(Dwarf_Line_Context dw_context,
+    Dwarf_Unsigned * dw_offset,
+    Dwarf_Error  * dw_error);
+
+/*! @brief Compilation Directory name for the CU
+             
+    Do not free() or dealloc the string,
+    it is in a dwarf section.
+
+    @param dw_context
+    The Line Context of interest.
+    @param dw_compilation_directory
+    On success returns a pointer to a string
+    identifying the compilation directory of the CU.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_srclines_comp_dir(Dwarf_Line_Context dw_context,
+    const char ** dw_compilation_directory,
+    Dwarf_Error * dw_error);
 
 /*  New October 2015.  Part of the two-level line table extension. */
 /*  Count is the real count of suprogram array entries. */
@@ -3313,38 +3334,40 @@ DW_API int dwarf_srclines_subprog_data(Dwarf_Line_Context /*context*/,
     Dwarf_Unsigned * /*decl_line*/,
     Dwarf_Error   *  /*error*/);
 
-/*  New March 2018. */
-/*  Count is the real count of files array entries.
+/*! @brief yyyyyy
+    Count is the real count of files array entries.
     Since DWARF 2,3,4 are zero origin indexes and
     DWARF5 and later are one origin, this function
-    replaces dwarf_srclines_files_count(). */
+    replaces dwarf_srclines_files_count().
+*/
 DW_API int dwarf_srclines_files_indexes(Dwarf_Line_Context /*contxt*/,
     Dwarf_Signed  *  /*baseindex*/,
     Dwarf_Signed  *  /*count*/,
     Dwarf_Signed  *  /*endindex*/,
     Dwarf_Error   *  /*error*/);
 
-/*  New March 2018.
+/*! @brief  xxxxx
     Has the md5ptr field so cases where DW_LNCT_MD5
     is present can return pointer to the MD5 value.
     With DWARF 5 index starts with 0.
     See dwarf_srclines_files_indexes() which makes
-    indexing through the files easy. */
-DW_API int dwarf_srclines_files_data_b(Dwarf_Line_Context /*context*/,
-    Dwarf_Signed     /*index_in*/,
-    const char **    /*name*/,
-    Dwarf_Unsigned * /*directory_index*/,
-    Dwarf_Unsigned * /*last_mod_time*/,
-    Dwarf_Unsigned * /*file_length*/,
-    Dwarf_Form_Data16 ** /*md5ptr*/,
-    Dwarf_Error    * /*error*/);
+    indexing through the files easy.
+*/
+DW_API int dwarf_srclines_files_data_b(Dwarf_Line_Context dw_context,
+    Dwarf_Signed     dw_index_in,
+    const char **    dw_name,
+    Dwarf_Unsigned * dw_directory_index,
+    Dwarf_Unsigned * dw_last_mod_time,
+    Dwarf_Unsigned * dw_file_length,
+    Dwarf_Form_Data16 ** dw_md5ptr,
+    Dwarf_Error    * dw_error);
 
 /*  New October 2015. */
 /*  Count is the real count of include array entries. */
-DW_API int dwarf_srclines_include_dir_count(Dwarf_Line_Context
-    /*line_context*/,
-    Dwarf_Signed *  /*count*/,
-    Dwarf_Error  * /* error*/);
+DW_API int dwarf_srclines_include_dir_count(
+    Dwarf_Line_Context dw_line_context,
+    Dwarf_Signed * dw_count,
+    Dwarf_Error  * dw_error);
 
 /*  New October 2015. */
 /*  Index starts with 1, last is 'count' */
