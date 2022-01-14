@@ -3759,33 +3759,41 @@ DW_API int dwarf_prologue_end_etc(Dwarf_Line dw_line,
     Dwarf_Error *    dw_error);
 /* End line table operations */
 
-/*  Two-level line tables:
+/*! @brief Experimental Two-level logical Row Number
+    Experimental two level line tables. Not explained here.
     When reading from an actuals table, dwarf_line_logical()
-    returns the logical row number for the line. */
-DW_API int dwarf_linelogical(Dwarf_Line /*line*/,
-    Dwarf_Unsigned * /*returned_logical*/,
-    Dwarf_Error*     /*error*/);
+    returns the logical row number for the line.
+*/
+DW_API int dwarf_linelogical(Dwarf_Line dw_line,
+    Dwarf_Unsigned * dw_returned_logical,
+    Dwarf_Error*     dw_error);
 
-/*  Two-level line tables:
+/*! @brief Experimental Two-level line tables call contexts
+    Experimental two level line tables. Not explained here.
     When reading from a logicals table, dwarf_linecontext()
     returns the logical row number corresponding the the
-    calling context for an inlined call. */
-DW_API int dwarf_linecontext(Dwarf_Line /*line*/,
-    Dwarf_Unsigned * /*returned_context*/,
-    Dwarf_Error*     /*error*/);
+    calling context for an inlined call. 
+*/
+DW_API int dwarf_linecontext(Dwarf_Line dw_line,
+    Dwarf_Unsigned * dw_returned_context,
+    Dwarf_Error*     dw_error);
 
-/*  Two-level line tables:
+/*! @brief  Two-level line tables get subprogam number
+    Experimental two level line tables. Not explained here.
     When reading from a logicals table, dwarf_line_subprogno()
     returns the index in the subprograms table of the inlined
-    subprogram. */
+    subprogram.
+*/
 DW_API int dwarf_line_subprogno(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*ret_subprogno*/,
     Dwarf_Error *    /*error*/);
 
-/*  Two-level line tables:
+/*! @brief Two-level line tables get subprog, file, line
+    Experimental two level line tables. Not explained here.
     When reading from a logicals table, dwarf_line_subprog()
     returns the name of the inlined subprogram, its declaration
-    filename, and its declaration line number, if available. */
+    filename, and its declaration line number, if available.
+*/
 DW_API int dwarf_line_subprog(Dwarf_Line /*line*/,
     char   **        /*returned_subprog_name*/,
     char   **        /*returned_filename*/,
@@ -3798,6 +3806,7 @@ DW_API int dwarf_line_subprog(Dwarf_Line /*line*/,
     Calls back, the caller should do something
     with the messages (likely just print them).
     The lines passed back already have newlines.
+
     @see dwarf_check_lineheader
     @see Dwarf_Printf_Callback_Info_s 
 
