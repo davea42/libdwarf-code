@@ -3560,45 +3560,165 @@ DW_API int dwarf_srclines_version(Dwarf_Line_Context dw_line_context,
     Dwarf_Small    * dw_table_count,
     Dwarf_Error    * dw_error);
 
-DW_API int dwarf_linebeginstatement(Dwarf_Line /*line*/,
-    Dwarf_Bool  *    /*returned_bool*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Read Line beginstatement register
 
-DW_API int dwarf_lineendsequence(Dwarf_Line /*line*/,
-    Dwarf_Bool  *    /*returned_bool*/,
-    Dwarf_Error*     /*error*/);
+    @see linetableregisters
 
-DW_API int dwarf_lineno(Dwarf_Line /*line*/,
-    Dwarf_Unsigned * /*returned_lineno*/,
-    Dwarf_Error*     /*error*/);
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_bool
+    On success it sets the value TRUE (if the dw_line
+    has the is_stmt register set) and FALSE if is_stmt
+    is not set.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_linebeginstatement(Dwarf_Line dw_line,
+    Dwarf_Bool  * dw_returned_bool,
+    Dwarf_Error * dw_error);
 
-DW_API int dwarf_line_srcfileno(Dwarf_Line /*line*/,
-    Dwarf_Unsigned * /*ret_fileno*/,
-    Dwarf_Error *    /*error*/);
+/*! @brief Read Line endsequence register flag
 
-/* Is the line address from DW_LNS_set_address? */
-DW_API int dwarf_line_is_addr_set(Dwarf_Line /*line*/,
-    Dwarf_Bool *     /*is_addr_set*/,
-    Dwarf_Error *    /*error*/);
+    @see linetableregisters
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_bool
+    On success it sets the value TRUE (if the dw_line
+    has the end_sequence register set) and FALSE if end_sequence
+    is not set.
+    @param dw_error 
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_lineendsequence(Dwarf_Line dw_line,
+    Dwarf_Bool  * dw_returned_bool,
+    Dwarf_Error * dw_error);
 
-DW_API int dwarf_lineaddr(Dwarf_Line /*line*/,
-    Dwarf_Addr *     /*returned_addr*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Read Line line register
 
-/*  dwarf_lineoff_b correctly returns an unsigned column number
-    through the pointer returned_lineoffset.
-    dwarf_lineoff_b() is new in December 2011.  */
-DW_API int dwarf_lineoff_b(Dwarf_Line /*line*/,
-    Dwarf_Unsigned * /*returned_lineoffset*/,
-    Dwarf_Error*     /*error*/);
+    @see linetableregisters
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_linenum
+    On success it sets the value to the line number
+    from the Dwarf_Line line register
+    @param dw_error 
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_lineno(Dwarf_Line dw_line,
+    Dwarf_Unsigned * dw_returned_linenum,
+    Dwarf_Error    * dw_error);
 
-DW_API int dwarf_linesrc(Dwarf_Line /*line*/,
-    char   **        /*returned_name*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Read Line file register
 
-DW_API int dwarf_lineblock(Dwarf_Line /*line*/,
-    Dwarf_Bool  *    /*returned_bool*/,
-    Dwarf_Error*     /*error*/);
+    @see linetableregisters
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_filenum
+    On success it sets the value to the file number
+    from the Dwarf_Line file register
+    @param dw_error 
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_line_srcfileno(Dwarf_Line dw_line,
+    Dwarf_Unsigned * dw_returned_filenum,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Is the Dwarf_Line address from DW_LNS_set_address?
+    This is not a line register, but it is a flag set
+    by the library in each Dwarf_Line, and it
+    is derived from reading the line table.
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_is_addr_set
+    On success it sets the flag to TRUE or FALSE.
+    @param dw_error 
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_line_is_addr_set(Dwarf_Line dw_line,
+    Dwarf_Bool  * dw_is_addr_set,
+    Dwarf_Error * dw_error);
+
+/*! @brief Returns the address of the Dwarf_Line
+    @see linetableregisters
+
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_addr
+    On success it sets the value to the value of
+    the address register in the Dwarf_Line.
+    @param dw_error 
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/  
+DW_API int dwarf_lineaddr(Dwarf_Line dw_line,
+    Dwarf_Addr *     dw_returned_addr,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Returns a column number through the pointer
+    @see linetableregisters
+
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_lineoffset
+    On success it sets the value to the column
+    register from the Dwarf_Line.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
+    Dwarf_Unsigned * dw_returned_lineoffset,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Return the file name applicable to the Dwarf_Line
+
+    @see linetableregisters
+
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_name
+    On success it reads the file register and finds
+    the source file name from the line table header
+    and returns a pointer to that file name string
+    through the pointer.
+    @param dw_error
+    The usual error pointer.
+    Do not dealloc or free the string.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_linesrc(Dwarf_Line dw_line,
+    char      ** dw_returned_name,
+    Dwarf_Error* dw_error);
+
+/*! @brief Returns the basic_block line register.
+    
+    @see linetableregisters
+    @param dw_line
+    The Dwarf_Line of interest.
+    @param dw_returned_bool
+    On success it sets the flag to TRUE or FALSE
+    from the basic_block register in the line table.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_lineblock(Dwarf_Line dw_line,
+    Dwarf_Bool  *    dw_returned_bool,
+    Dwarf_Error*     dw_error);
 
 /*  We gather these into one call as it's likely one
     will want all or none of them.  */
