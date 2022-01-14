@@ -50,12 +50,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* open(), off_t, size_t, ssize_t */
 #endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h> /* getcwd */
-#endif /* HAVE_UNISTD_H */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#if defined _WIN32
+#include <direct.h> /* getcwd */
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* getcwd */
+#endif /* _WIN32 */
 #include "libdwarf_private.h"
 #include "dwarf.h"
 #include "libdwarf.h"
