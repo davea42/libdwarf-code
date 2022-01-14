@@ -459,12 +459,11 @@ Dwarf_Small     bl_from_loclist;
 
     Section offset of what bl_data points to
 Dwarf_Unsigned  bl_section_offset;
-
-@endcode */
+    @endcode
+*/
 
  
 
-*/
 
 /*! @defgroup examplediscrlist Example using dwarf_discr_list
     @brief Using dwarf_discr_list and dwarf_formblock
@@ -525,7 +524,7 @@ int example_discr_list(Dwarf_Debug dbg,
     if (fc == DW_FORM_CLASS_BLOCK) {
         int fres = 0;
         Dwarf_Block *tempb = 0;
-        fres = dwarf_formblock(attr, &tempb, err);
+        fres = dwarf_formblock(attr, &tempb, error);
         if (fres == DW_DLV_OK) {
             Dwarf_Dsc_Head h = 0;
             Dwarf_Unsigned u = 0;
@@ -556,10 +555,10 @@ int example_discr_list(Dwarf_Debug dbg,
 
                 if (isunsigned) {
                     u2res = dwarf_discr_entry_u(h,u,
-                        &dtype,&ulow,&uhigh,err);
+                        &dtype,&ulow,&uhigh,error);
                 } else {
                     u2res = dwarf_discr_entry_s(h,u,
-                        &dtype,&dlow,&dhigh,err);
+                        &dtype,&dlow,&dhigh,error);
                 }
                 if (u2res == DW_DLV_ERROR) {
                     /* Something wrong */
@@ -585,7 +584,7 @@ int example_discr_list(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
         }
     }
-    return DW_DLV_OK
+    return DW_DLV_OK;
 }
 /*! @endcode */
 
@@ -824,7 +823,7 @@ examplea(Dwarf_Attribute someattr)
     @param groupnumber
     @code
 */
-int examplec(Dwarf_Die cu_die Dwarf_Error *error)
+int examplec(Dwarf_Die cu_die,Dwarf_Error *error)
 {
     /* EXAMPLE: DWARF5 style access.  */
     Dwarf_Line  *linebuf = 0;
@@ -834,13 +833,12 @@ int examplec(Dwarf_Die cu_die Dwarf_Error *error)
     Dwarf_Line_Context line_context = 0;
     Dwarf_Small  table_count = 0;
     Dwarf_Unsigned lineversion = 0;
-    Dwarf_Error err = 0;
     int sres = 0;
     /* ... */
     /*  we use 'return' here to signify we can do nothing more
         at this point in the code. */
     sres = dwarf_srclines_b(cu_die,&lineversion,
-        &table_count,&line_context,&err);
+        &table_count,&line_context,error);
     if (sres != DW_DLV_OK) {
         /*  Handle the DW_DLV_NO_ENTRY  or DW_DLV_ERROR
             No memory was allocated so there nothing
@@ -869,7 +867,7 @@ int examplec(Dwarf_Die cu_die Dwarf_Error *error)
         /*  First let us index through all the files listed
             in the line table header. */
         sres = dwarf_srclines_files_indexes(line_context,
-            &baseindex,&file_count,&endindex,&err);
+            &baseindex,&file_count,&endindex,error);
         if (sres != DW_DLV_OK) {
             /* Something badly wrong! */
             return sres;
@@ -886,7 +884,7 @@ int examplec(Dwarf_Die cu_die Dwarf_Error *error)
 
             vres = dwarf_srclines_files_data_b(line_context,i,
                 &name,&dirindex, &modtime,&flength,
-                &md5data,&err);
+                &md5data,error);
             if (vres != DW_DLV_OK) {
                 /* something very wrong. */
                 return vres;
@@ -898,7 +896,7 @@ int examplec(Dwarf_Die cu_die Dwarf_Error *error)
             wish to get the line details: */
         sres = dwarf_srclines_from_linecontext(line_context,
             &linebuf,&linecount,
-            &err);
+            error);
         if (sres != DW_DLV_OK) {
             /* Error. Clean up the context information. */
             dwarf_srclines_dealloc_b(line_context);
@@ -929,7 +927,7 @@ int examplec(Dwarf_Die cu_die Dwarf_Error *error)
         sres = dwarf_srclines_two_level_from_linecontext(line_context,
             &linebuf,&linecount,
             &linebuf_actuals,&linecount_actuals,
-            &err);
+            error);
         if (sres == DW_DLV_OK) {
             for (i = 0; i < linecount; ++i) {
                 /*  use linebuf[i], these are the 'logicals'
@@ -969,53 +967,65 @@ int examplec(Dwarf_Die cu_die Dwarf_Error *error)
 }
 /*! @endcode */
 
-void exampled(Dwarf_Die somedie)
+/*! @defgroup exampled Example of dwarf_srclines_b use
+    @see dwarf_srclines_b
+    @see dwarf_srclines_from_linecontext
+    @see dwarf_srclines_dealloc_b
+    @code
+*/
+int exampled(Dwarf_Die somedie,Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
     Dwarf_Line_Context context = 0;
     Dwarf_Line *linebuf = 0;
     Dwarf_Signed i = 0;
-    Dwarf_Error error = 0;
     Dwarf_Line *line;
     Dwarf_Small table_count =0;
     Dwarf_Unsigned version = 0;
     int sres = 0;
 
     sres = dwarf_srclines_b(somedie,
-        &version, &table_count,&context,&error);
+        &version, &table_count,&context,error);
     if (sres != DW_DLV_OK) {
-        return;
+        return sres;
     }
     sres = dwarf_srclines_from_linecontext(context,
-        &linebuf,&count,&error);
+        &linebuf,&count,error);
     if (sres != DW_DLV_OK) {
         dwarf_srclines_dealloc_b(context);
-        return;
+        return sres;
     }
     line = linebuf;
     for (i = 0; i < count; ++line) {
         /* use line */
     }
     dwarf_srclines_dealloc_b(context);
+    return DW_DLV_OK;
 }
+/*! @endcode */
 
-void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
+/*! @defgroup examplee Example of dwarf_srcfiles use
+    @code
+*/
+int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
     char **srcfiles = 0;
     Dwarf_Signed i = 0;
-    Dwarf_Error error = 0;
     int res = 0;
 
-    res = dwarf_srcfiles(somedie, &srcfiles,&count,&error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use srcfiles[i] */
-            dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
-        }
-        dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+    res = dwarf_srcfiles(somedie, &srcfiles,&count,error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
+    for (i = 0; i < count; ++i) {
+            /* use srcfiles[i] */
+        dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+    }
+    dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+    return DW_DLV_OK;
 }
+/*! @endcode */
 
 void examplef(Dwarf_Debug dbg)
 {

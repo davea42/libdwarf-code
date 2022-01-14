@@ -3192,6 +3192,34 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     Access to all the line table details.
     @{
 */
+
+/*! @brief The list of source files from the line table header
+
+    @param dw_cu_die
+    The CU DIE in this CU.
+    @param dw_srcfiles
+    On success allocates an array of pointers to strings
+    and for each such, computes the fullest path possible
+    given the CU die data for each file name listed
+    in the line table header.
+    @param dw_filecount
+    On success returns the number of entries
+    in the array of pointers to strings.
+    The number returned is non-negative.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+    If there is no .debug_line[.dwo] returns DW_DLV_NO_ENTRY.
+ 
+    @see examplee
+
+*/
+DW_API int dwarf_srcfiles(Dwarf_Die dw_cu_die,
+    char       *** dw_srcfiles,
+    Dwarf_Signed * dw_filecount,
+    Dwarf_Error  * dw_error);
+
 /*! @brief Initialize Dwarf_Line_Context for line table access
 
     Returns Dwarf_Line_Context pointer, needed for
@@ -3319,88 +3347,216 @@ DW_API int dwarf_srclines_comp_dir(Dwarf_Line_Context dw_context,
     const char ** dw_compilation_directory,
     Dwarf_Error * dw_error);
 
-/*  New October 2015.  Part of the two-level line table extension. */
-/*  Count is the real count of suprogram array entries. */
-DW_API int dwarf_srclines_subprog_count(Dwarf_Line_Context /*contxt*/,
-    Dwarf_Signed * /*count*/,
-    Dwarf_Error  * /*error*/);
+/*! @brief subprog count: Part of the two-level line table extension.
+    
+    A non-standard table.
+    The actual meaning of subprog count left undefined here.
 
-/*  New October 2015. */
-/*  Index starts with 1, last is 'count' */
-DW_API int dwarf_srclines_subprog_data(Dwarf_Line_Context /*context*/,
-    Dwarf_Signed     /*index*/,
-    const char **    /*name*/,
-    Dwarf_Unsigned * /*decl_file*/,
-    Dwarf_Unsigned * /*decl_line*/,
-    Dwarf_Error   *  /*error*/);
+    @param dw_context
+    The Dwarf_Line_Context of interest.
+    @param dw_count
+    On success returns the two-level line table subprogram
+    array size in this line context.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_srclines_subprog_count(Dwarf_Line_Context dw_context,
+    Dwarf_Signed * dw_count,
+    Dwarf_Error  * dw_error);
 
-/*! @brief yyyyyy
+/*! @brief Retrieve data from the line table subprog array
+    
+    A non-standard table. Not defined here.
+    @param dw_context
+    The Dwarf_Line_Context of interest.
+    @param dw_index
+    The item to retrieve. Valid indexes are 1 through dw_count.
+    @param dw_name
+    On success returns a pointer to the subprog name.
+    @param dw_decl_file
+    On success returns a file number through the pointer.
+    @param dw_decl_line
+    On success returns a line number through the pointer.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/   
+DW_API int dwarf_srclines_subprog_data(Dwarf_Line_Context dw_context,
+    Dwarf_Signed     dw_index,
+    const char    ** dw_name,
+    Dwarf_Unsigned * dw_decl_file,
+    Dwarf_Unsigned * dw_decl_line,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Returns values easing indexing line table file numbers.
     Count is the real count of files array entries.
     Since DWARF 2,3,4 are zero origin indexes and
     DWARF5 and later are one origin, this function
     replaces dwarf_srclines_files_count().
-*/
-DW_API int dwarf_srclines_files_indexes(Dwarf_Line_Context /*contxt*/,
-    Dwarf_Signed  *  /*baseindex*/,
-    Dwarf_Signed  *  /*count*/,
-    Dwarf_Signed  *  /*endindex*/,
-    Dwarf_Error   *  /*error*/);
+    @param dw_context
+    The line context of interest.
+    @param dw_baseindex
+    On success returns the base index of valid file indexes.
+    With DWARF2,3,4 the value is 1. With DWARF5 the
+    value is 0.
+    @param dw_count
+    On success returns the real count of entries.
+    @param dw_endindex
+    On success returns  value such that
+    callers should index as dw_baseindex through 
+    dw_endindex-1.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
 
-/*! @brief  xxxxx
+    @see examplec
+*/
+DW_API int dwarf_srclines_files_indexes(
+    Dwarf_Line_Context dw_context,
+    Dwarf_Signed * dw_baseindex,
+    Dwarf_Signed * dw_count,
+    Dwarf_Signed * dw_endindex,
+    Dwarf_Error  * dw_error);
+
+/*! @brief  Access data for each line table file.
+
     Has the md5ptr field so cases where DW_LNCT_MD5
     is present can return pointer to the MD5 value.
     With DWARF 5 index starts with 0.
-    See dwarf_srclines_files_indexes() which makes
+    dwarf_srclines_files_indexes makes
     indexing through the files easy.
-*/
-DW_API int dwarf_srclines_files_data_b(Dwarf_Line_Context dw_context,
-    Dwarf_Signed     dw_index_in,
-    const char **    dw_name,
-    Dwarf_Unsigned * dw_directory_index,
-    Dwarf_Unsigned * dw_last_mod_time,
-    Dwarf_Unsigned * dw_file_length,
-    Dwarf_Form_Data16 ** dw_md5ptr,
-    Dwarf_Error    * dw_error);
 
-/*  New October 2015. */
-/*  Count is the real count of include array entries. */
+    @see dwarf_srclines_files_indexes
+    @see examplec
+    
+
+    @param dw_context
+    The line context of interest.
+    @param dw_index_in
+    The entry of interest.
+    Callers should index as dw_baseindex through 
+    dw_endindex-1.
+    @param dw_name
+    If dw_name non-null
+    on success returns
+    The file name in the line table header
+    throught the pointer.
+    @param dw_directory_index
+    If dw_directory_index non-null
+    on success returns
+    the directory number in the line table header
+    through the pointer.
+    @param dw_last_mod_time
+    If dw_last_mod_time non-null
+    on success returns
+    the directory last modification date/time
+    through the pointer.
+    @param dw_file_length
+    If dw_file_length non-null
+    on success returns
+    the file length recorded in the line table 
+    through the pointer.
+    @param dw_md5ptr
+    If dw_md5ptr non-null
+    on success returns
+    a pointer to the 16byte MD5 hash
+    of the file
+    through the pointer.
+    If there is no md5 value present it returns 0 through
+    the pointer.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+
+    @see examplec
+*/
+DW_API int dwarf_srclines_files_data_b(
+    Dwarf_Line_Context   dw_context,
+    Dwarf_Signed         dw_index_in,
+    const char        ** dw_name,
+    Dwarf_Unsigned     * dw_directory_index,
+    Dwarf_Unsigned     * dw_last_mod_time,
+    Dwarf_Unsigned     * dw_file_length,
+    Dwarf_Form_Data16 ** dw_md5ptr,
+    Dwarf_Error        * dw_error);
+
+/*! @brief Returns the number of include directories in the Line Table
+
+    @param dw_line_context
+    The line context of interest.
+    @param dw_count
+    On success returns the count of directories.
+    How to use this depends on the line table version number.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+  
+    @see dwarf_srclines_include_dir_data
+*/
 DW_API int dwarf_srclines_include_dir_count(
     Dwarf_Line_Context dw_line_context,
     Dwarf_Signed * dw_count,
     Dwarf_Error  * dw_error);
 
-/*  New October 2015. */
-/*  Index starts with 1, last is 'count' */
-DW_API int dwarf_srclines_include_dir_data( Dwarf_Line_Context
-    /*line_context*/,
-    Dwarf_Signed    /*index*/,
-    const char **   /*name*/,
-    Dwarf_Error   * /* error*/);
+/*! @brief Returns the include directories in the Line Table
 
-/*  New October 2015. */
-/*  The DWARF version number of this compile-unit
-    in the .debug_lines section and the number of
+    If the line table is version 2,3, or 4, the
+    valid indexes are 1 through dw_count.
+
+    If the line table is version 5 the
+    valid indexes are 0 through dw_count-1.
+
+    @param dw_line_context
+    The line context of interest.
+    @param dw_index
+    On success returns the count of directories.
+    How to use this depends on the line table version number.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+
+    @see dwarf_srclines_include_dir_count
+*/
+
+DW_API int dwarf_srclines_include_dir_data(
+    Dwarf_Line_Context dw_line_context,
+    Dwarf_Signed    dw_index,
+    const char **   dw_name,
+    Dwarf_Error   * dw_error);
+
+/*! @brief  The DWARF version number of this compile-unit
+    The .debug_lines[.dwo] t
     actual tables:0 (header with no lines),
-    1 (standard table), or 2 (experimental). */
-DW_API int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
-    Dwarf_Unsigned * /*version*/,
-    Dwarf_Small    * /*table_count*/,
-    Dwarf_Error    * /*error*/);
+    1 (standard table), or 2 (experimental).
 
-DW_API int dwarf_get_line_section_name(Dwarf_Debug /*dbg*/,
-    const char ** /*section_name_out*/,
-    Dwarf_Error * /*error*/);
-DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die /*die*/,
-    const char ** /*section_name_out*/,
-    Dwarf_Error * /*error*/);
-
-/*  While 'filecount' is signed, the value
-    returned through the pointer is never negative.
-    Original libdwarf from 199x.  */
-DW_API int dwarf_srcfiles(Dwarf_Die /*die*/,
-    char***          /*srcfiles*/,
-    Dwarf_Signed *   /*filecount*/,
-    Dwarf_Error*     /*error*/);
+    @param dw_line_context
+    The Line Context of interest.
+    @param dw_version
+    On success, returns
+    the line table version through the pointer.
+    @param dw_table_count
+    On success, returns
+    the tablecount through the pointer.
+    If the table count is zero the line table is a header
+    with no lines.  If the table count is 1 this is a standard
+    line table.  If the table count is this is an experimental
+    two-level line table.
+    @param dw_error
+    The usual error pointer.
+    @return
+    DW_DLV_OK if it succeeds.
+*/
+DW_API int dwarf_srclines_version(Dwarf_Line_Context dw_line_context,
+    Dwarf_Unsigned * dw_version,
+    Dwarf_Small    * dw_table_count,
+    Dwarf_Error    * dw_error);
 
 DW_API int dwarf_linebeginstatement(Dwarf_Line /*line*/,
     Dwarf_Bool  *    /*returned_bool*/,
@@ -5479,6 +5635,14 @@ DW_API int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
 DW_API int dwarf_get_string_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,
     Dwarf_Error * /*error*/);
+
+DW_API int dwarf_get_line_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
+DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die /*die*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
+
 
 /* Giving a section name, get its size and address */
 DW_API int dwarf_get_section_info_by_name(Dwarf_Debug /*dbg*/,

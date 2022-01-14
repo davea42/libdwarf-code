@@ -1220,7 +1220,6 @@ dwarf_srclines_files_indexes(Dwarf_Line_Context line_context,
     return DW_DLV_OK;
 }
 
-/* New March 2018 adding DWARF5 data. */
 int
 dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
     Dwarf_Signed     index_in,
@@ -2182,8 +2181,8 @@ _dwarf_add_to_files_list(Dwarf_Line_Context context,
         for DWARF2,3,4 vs DWARF5 */
     if (version == DW_LINE_VERSION5) {
         context->lc_file_entry_baseindex = 0;
-        context->lc_file_entry_endindex =
-        context->lc_file_entry_count;
+        context->lc_file_entry_endindex = 
+            context->lc_file_entry_count;
     } else {
         context->lc_file_entry_baseindex = 1;
         context->lc_file_entry_endindex =
