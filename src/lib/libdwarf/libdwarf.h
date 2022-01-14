@@ -3506,17 +3506,19 @@ DW_API int dwarf_srclines_include_dir_count(
 
 /*! @brief Returns the include directories in the Line Table
 
-    If the line table is version 2,3, or 4, the
-    valid indexes are 1 through dw_count.
-
-    If the line table is version 5 the
-    valid indexes are 0 through dw_count-1.
 
     @param dw_line_context
     The line context of interest.
     @param dw_index
-    On success returns the count of directories.
-    How to use this depends on the line table version number.
+    Pass in an index to the line context list of include
+    directories. 
+    If the line table is version 2,3, or 4, the
+    valid indexes are 1 through dw_count.
+    If the line table is version 5 the
+    valid indexes are 0 through dw_count-1.
+    @param dw_name
+    On success it returns a pointer to a directory name.
+    Do not free/deallocate the string.
     @param dw_error
     The usual error pointer.
     @return
