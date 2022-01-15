@@ -1,3 +1,214 @@
+2022-01-15:  David Anderson
+    commit fbba7b0075718e8b761c8a433bc502035142d605
+
+    make dist requires these files be present.
+            new file:   doc/ChangeLog
+            new file:   scripts/ChangeLog
+            new file:   src/bin/attr_form/ChangeLog
+            new file:   src/bin/buildopstab/ChangeLog
+            new file:   src/bin/builduritable/ChangeLog
+            new file:   src/bin/dwarfdump/ChangeLog
+            new file:   src/bin/dwarfexample/ChangeLog
+            new file:   src/bin/dwarfgen/ChangeLog
+            new file:   src/bin/gennames/ChangeLog
+            new file:   src/bin/tag_attr/ChangeLog
+            new file:   src/bin/tag_tree/ChangeLog
+            new file:   src/lib/libdwarf/ChangeLog
+            new file:   src/lib/libdwarfp/ChangeLog
+            new file:   test/ChangeLog
+
+2022-01-14:  David Anderson
+    commit 0c3cb985b5b5173919df5c0ad8e8d20a9797ac45
+
+    Now does  doxygen doc of some use in the
+    Like Tables interfaces.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-14:  David Anderson
+    commit 5b2e350a7f8c5466c34f8282154f2fb9662f81a0
+
+    Now working links to line table
+    registers list
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-14:  David Anderson
+    commit 2cb6ea3dd22b890ebca7da2b5d926429d2476d90
+
+    Made a reference point for line table registers
+    to refer to.
+            modified:   doc/libdwarf.dox
+    Line Table functions now with doxygen.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-14:  David Anderson
+    commit 33e4d5b0d274721a993f0bcfa2d924261acf942a
+
+    Correct erroneous doxygen comments
+    line table include directories.
+            modified:   libdwarf.h
+
+2022-01-14:  David Anderson
+    commit b4b2ed0ce79305c95a0e261cf4d53cd3d104d316
+
+    Fixed examples added a defgroup for doxygen
+            modified:   doc/checkexamples.c
+    Removed a pointless comment.
+            modified:   src/lib/libdwarf/dwarf_line.c
+    Seven functions now described for doxygen.
+    A couple functions moved to the group they belong in:
+    the section group.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-14:  David Anderson
+    commit be03cf75d0f5d59a47a5d521390e3cd97f7e13e0
+Merge: f5710dde 9ccd32ac
+
+    Merge pull request #54 from vtorri/vtorri_sgi
+
+    remove the check of the unused sgidefs.h header file
+
+2022-01-14:  Vincent Torri
+    commit 9ccd32ac60551c0c91efba87906f605903c5e898
+
+    remove the check of the unused sgidefs.h header file
+
+            modified:   configure.ac
+
+2022-01-13:  David Anderson
+    commit f5710ddee5884887206f43611c24f4b03847698e
+Merge: cdf7867b 81d0e378
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    vtorri update to debuglink.c for windows
+
+2022-01-13:  David Anderson
+    commit 81d0e3782a20e868279bac677e85444387fe1ab2
+Merge: 30c838ab f843484c
+
+    Merge pull request #53 from vtorri/vtorri_unistd
+
+    Include direct.h on Windows to declare getcwd()
+
+2022-01-13:  David Anderson
+    commit cdf7867b294e277ad260b68e8f9fff62582a5499
+
+     Changes to be committed:
+    Refined the example to follow proper practice.
+            modified:   doc/checkexamples.c
+    Several Dwarf_Line_Context functions now with doxygen data
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-13:  Vincent Torri
+    commit f843484c29a8875154dc95eaac07bb9e858cc56c
+
+    Include direct.h on Windows to declare getcwd()
+
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+2022-01-13:  David Anderson
+    commit 30c838aba40da0e21e63a1084008a655bd3f8fe8
+
+    Fix botch preventing compiles.
+            modified:   libdwarf.h
+
+2022-01-13:  David Anderson
+    commit a1e47bfd803c3ef49a47a4bcc7fdf13e4820ddb2
+
+    Fixing doxygen comments.
+            modified:   doc/checkexamples.c
+    Adding wording about threading.
+            modified:   doc/libdwarf.dox
+    Adding doxygen comments
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-12:  David Anderson
+    commit bcc2d4999d2c9093fc672b57dae8953a68865438
+
+    Now with a loud notification this is a draft.
+            modified:   libdwarf.dox
+
+2022-01-09:  David Anderson
+    commit 5dd64ffcf4636e57a4e34f919f44d64b9c74a242
+
+    More functions with doxygen.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-09:  David Anderson
+    commit 801e7ae7cce755170960053da8253ff7b91898eb
+
+    Refined examples.
+            modified:   doc/checkexamples.c
+    Addtional functions have doxygen.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-09:  David Anderson
+    commit 3e136d554b8026e1fb12e9642ece348cdf1ce061
+
+    Added new documentation here
+            modified:   ../../../doc/checkexamples.c
+    Doxygen minor changes
+            modified:   libdwarf.h
+
+2022-01-09:  David Anderson
+    commit 2fbd53d049610d7d646871efeaaeeb78a03b007a
+
+    More functions with doxygen comments
+            modified:   ../../../doc/checkexamples.c
+            modified:   libdwarf.h
+
+2022-01-09:  David Anderson
+    commit 7b8934640dab15c9090675f5443a82d4e564811d
+
+    Several functions now with doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-09:  David Anderson
+    commit e04d3d5ce127235924195ba571c7df9cebeb723f
+
+    Added doxygen comments.
+            modified:   libdwarf.h
+
+2022-01-09:  David Anderson
+    commit 5d22f2ef063c8fac25e384edcfd4f95ca4723f2a
+
+    Moved one defgroup down so the
+    collection of fast access groups
+    are together.
+            modified:   libdwarf.h
+
+2022-01-09:  David Anderson
+    commit fa47785c1931262536aa09384b68e9c64722f21f
+
+    Adding doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-08:  David Anderson
+    commit fdb6a15d6b2711188d4f35a899ce86bfac942aa2
+
+    A few more functions doxygened
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-08:  David Anderson
+    commit d72ce4954d52339fa4091ee036a6a2463283d0a1
+
+    One new doxygen set. Some minor adjustments.
+            modified:   libdwarf.h
+
+2022-01-08:  David Anderson
+    commit df52327a7e766d2295abcbd3ba8be3de2114dc26
+
+    Doxygen comments added for several attribute functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-08:  David Anderson
+    commit 1c86068a9fb583c9dd116bc0267c03a9610fec05
+
+    Now end ChangeLog2021  and new ChangeLog
+    properly up to date and correct.
+            modified:   ChangeLog
+            modified:   ChangeLog2021
+
 2022-01-08:  David Anderson
     commit 7f03bdff67a60ece7f2619e99b6f4cde229b2545
 
