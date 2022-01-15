@@ -197,183 +197,7 @@ if test  "$dwarf_with_libelf" = "yes" ; then
         AC_DEFINE([DWARF_WITH_LIBELF],[1],
           [Set to 1 as we are building dwarfgen with libelf])])
     ])
-### begin checking for Elf structs
-# Elf64_Rela in elf.h
-AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM(
-         [[
-#ifdef HAVE_ELF_H
-# include <elf.h>
-#endif
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#endif
-#ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-#endif
-         ]],
-         [[
-Elf64_Rela p;
-p.r_offset = 1;
-         ]])
-    ],
-    [
-     AC_DEFINE([HAVE_ELF64_RELA], [1], [Set to 1 if Elf64_Rela defined in elf.h.])
-     have_elf64_rela="yes"
-    ],
-    [have_elf64_rela="no"])
 
-AS_IF(
-    [test "x${have_elf64_rela}" = "xno"],
-    [
-     CPPFLAGS_save=${CPPFLAGS}
-     CPPFLAGS="${CPPFLAGS} -D__LIBELF64"
-     AC_LINK_IFELSE(
-         [AC_LANG_PROGRAM(
-              [[
-#ifdef HAVE_ELF_H
-# include <elf.h>
-#endif
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#endif
-#ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-#endif
-              ]],
-              [[
-Elf64_Rela p;
-p.r_offset = 1;
-              ]])
-         ],
-         [
-          AC_DEFINE([HAVE_ELF64_RELA], [1], [Set to 1 if Elf64_Rela defined in elf.h.])
-          have_elf64_rela="yes"
-         ],
-         [have_elf64_rela="no"])
-     CPPFLAGS=${CPPFLAGS_save}
-    ])
-
-AC_MSG_CHECKING([for Elf64_Rela in elf.h])
-AC_MSG_RESULT([${have_elf64_rela}])
-# Elf64_Rel in elf.h
-AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM(
-         [[
-#ifdef HAVE_ELF_H
-# include <elf.h>
-#endif
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#endif
-#ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-#endif
-         ]],
-         [[
-Elf64_Rel p;
-p.r_info = 1;
-         ]])
-    ],
-    [
-     AC_DEFINE([HAVE_ELF64_R_INFO], [1], [Set to 1 if Elf64_Rel structure as r_info field.])
-     have_elf64_rel="yes"
-    ],
-    [have_elf64_rel="no"])
-
-AS_IF(
-    [test "x${have_elf64_rel}" = "xno"],
-    [
-     CPPFLAGS_save=${CPPFLAGS}
-     CPPFLAGS="${CPPFLAGS} -D__LIBELF64"
-     AC_LINK_IFELSE(
-         [AC_LANG_PROGRAM(
-              [[
-#ifdef HAVE_ELF_H
-# include <elf.h>
-#endif
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#endif
-
-#ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-#endif
-              ]],
-              [[
-Elf64_Rel p;
-p.r_info = 1;
-              ]])
-         ],
-         [
-          AC_DEFINE([HAVE_ELF64_R_INFO], [1], [Set to 1 if Elf64_Rel structure as r_info field.])
-          have_elf64_rel="yes"
-         ],
-         [have_elf64_rel="no"])
-     CPPFLAGS=${CPPFLAGS_save}
-    ])
-
-AC_MSG_CHECKING([for Elf64_Rel in elf.h])
-AC_MSG_RESULT([${have_elf64_rel}])
-
-# Elf64_Sym in elf.h
-AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM(
-         [[
-#ifdef HAVE_ELF_H
-# include <elf.h>
-#endif
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#endif
-#ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-#endif
-         ]],
-         [[
-Elf64_Sym p;
-p.st_info = 1;
-         ]])
-    ],
-    [
-     AC_DEFINE([HAVE_ELF64_SYM], [1], [Set to 1 if Elf64_Sym defined in elf.h.])
-     have_elf64_sym="yes"
-    ],
-    [have_elf64_sym="no"])
-
-AS_IF(
-    [test "x${have_elf64_sym}" = "xno"],
-    [
-     CPPFLAGS_save=${CPPFLAGS}
-     CPPFLAGS="${CPPFLAGS} -D__LIBELF64"
-     AC_LINK_IFELSE(
-         [AC_LANG_PROGRAM(
-              [[
-#ifdef HAVE_ELF_H
-# include <elf.h>
-#endif
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#endif
-#ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-#endif
-              ]],
-              [[
-Elf64_Sym p;
-p.st_info = 1;
-              ]])
-         ],
-         [
-          AC_DEFINE([HAVE_ELF64_SYM], [1], [Set to 1 if Elf64_Sym defined in elf.h.])
-          have_elf64_sym="yes"
-         ],
-         [have_elf64_sym="no"])
-     CPPFLAGS=${CPPFLAGS_save}
-    ])
-
-AC_MSG_CHECKING([for Elf64_Sym in elf.h])
-AC_MSG_RESULT([${have_elf64_sym}])
 ### end checking for Elf structs
 ### Checks for Elf structures
 # test if struct _Elf is used instead of struct Elf
@@ -412,9 +236,6 @@ else
   ### --disable-libelf
   have_struct__elf="no"
   struct_elf="struct Elf"
-  have_elf64_rela="no"
-  have_elf64_rel="no"
-  have_elf64_sym="no"
 fi
 AC_SUBST([struct_elf])
 
@@ -613,8 +434,6 @@ echo
 echo "  libdwarf.............: always"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    elf64_getshdr......: ${have_getshdr}"
-echo "    Elf64_Rela.........: ${have_elf64_rela}"
-echo "    Elf64_Sym..........: ${have_elf64_sym}"
 echo "    Elf spelled........: ${struct_elf}"
 echo "    libelf.............: ${dwarf_with_libelf}"
 echo "  dwarfdump............: always"
