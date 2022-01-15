@@ -1,4 +1,46 @@
 2022-01-15:  David Anderson
+    commit 989a86283e6767a01dd69872f2bc40b0c27ee37c
+
+    More functions with doxygen.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-15:  David Anderson
+    commit db3f28a0c531d25c33af5b9f9d9acbdcf5458650
+    Merge: dcf32335 710b0e5d
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Merge of configure/cmake stuff.
+
+2022-01-15:  David Anderson
+    commit 710b0e5d2387468791f1b660813ac9318553a088
+    Merge: 28120f0c 1bb32429
+
+    Merge pull request #56 from vtorri/vtorri_checks
+
+    remove tests related to Elf64_Rela, Elf64_Rel and Elf64_Sym
+
+2022-01-15:  Vincent Torri
+    commit 1bb3242996087dff144c0812a7cafd80d155cc26
+
+    remove output related to removed tests
+
+2022-01-15:  Vincent Torri
+    commit 5e943441d0ba9f0d8f2e265e94d8420bd45530d2
+
+    Remove useless checks of Elf64_Rela, Elf64_Rel and Elf64_Sym structures
+    Also remove unused HAVE_LIBELF_OFF64_OK in cmake file
+
+            modified:   CMakeLists.txt
+            modified:   cmake/config.h.cmake
+            modified:   configure.ac
+
+2022-01-15:  David Anderson
+    commit dcf3233577c1272a760027ede512603acd5daf3a
+
+    Now with latest git log content.
+            modified:   ChangeLog
+
+2022-01-15:  David Anderson
     commit 28120f0c707d7bba44d399d867822c9995310353
 
     Fixing trailing white space
