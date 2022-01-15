@@ -130,10 +130,6 @@ check_include_file( "libelf.h"        HAVE_LIBELF_H   )
 check_include_file( "libelf/libelf.h" HAVE_LIBELF_LIBELF_H) 
 check_include_file( "alloca.h"        HAVE_ALLOCA_H   )
 check_include_file( "elfaccess.h"     HAVE_ELFACCESS_H)
-check_include_file( "sys/elf_386.h"   HAVE_SYS_ELF_386_H  )
-check_include_file( "sys/elf_amd64.h" HAVE_SYS_ELF_AMD64_H)
-check_include_file( "sys/elf_sparc.h" HAVE_SYS_ELF_SPARC_H)
-check_include_file( "sys/ia64/elf.h"  HAVE_SYS_IA64_ELF_H )
 
 ### cmake provides no way to guarantee uint32_t present.
 ### configure does guarantee that.
