@@ -3944,14 +3944,41 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
 
 /*! @defgroup rnglists CU Data Rnglists .debug_rnglists DWARF5
 
-    DWARF5
+    Used in DWARF5.
     DW_FORM_rnglistx
-    DW_AT_ranges with DW_FORM_sec_offset (DWARF5)
+    DW_AT_ranges with DW_FORM_sec_offset
     @{
 */
 
-/*  For DWARF5 DW_AT_ranges:
-    DW_FORM_sec_offset DW_FORM_rnglistx */
+/*! @brief Get Access to DWARF5 rnglists
+
+    Opens a Dwarf_Rnglists_Head to access a set of
+    DWARF5 rangelists .debug_rnglists
+    DW_FORM_sec_offset DW_FORM_rnglistx
+    (DW_AT_ranges in DWARF5).
+
+    @param dw_attr
+    The attribute referring to .debug_rnglists
+    @param dw_theform
+    The form number.
+    @param dw_index_or_offset_value
+    If the form is an index, pass it here.
+    If the form is an offset, pass that here.
+    @param dw_head_out
+    On success creates a record owning the
+    rnglists data for this attribute.
+    @param dw_count_of_entries_in_head
+    On success this is set to the number of
+    entry in the rnglists for this attribute.
+    @param dw_global_offset_of_rle_set
+    On success set to the global offset of the rnglists
+    in the rnglists section.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+
+*/
 DW_API int dwarf_rnglists_get_rle_head(Dwarf_Attribute dw_attr,
     Dwarf_Half            dw_theform,
     Dwarf_Unsigned        dw_index_or_offset_value,
@@ -3960,111 +3987,203 @@ DW_API int dwarf_rnglists_get_rle_head(Dwarf_Attribute dw_attr,
     Dwarf_Unsigned *      dw_global_offset_of_rle_set,
     Dwarf_Error    *      dw_error);
 
-/*  Get the rnglist entries details */
-DW_API int dwarf_get_rnglists_entry_fields_a(Dwarf_Rnglists_Head,
-    Dwarf_Unsigned   /*entrynum*/,
-    unsigned int   * /*entrylen*/,
-    unsigned int   * /*rle_value_out*/,
-    Dwarf_Unsigned * /*raw1*/,
-    Dwarf_Unsigned * /*raw2*/,
-    Dwarf_Bool     * /*debug_addr_unavailable*/,
-    Dwarf_Unsigned * /*cooked1*/,
-    Dwarf_Unsigned * /*cooked2*/,
-    Dwarf_Error *    /*err*/);
+/*! @brief access rnglist entry details.
 
+    @param dw_head
+    The Dwarf_Rnglists_Head of interest.
+    @param dw_entrynum
+    Valid values are 0 through dw_count_of_entries_in_head-1.
+    @param dw_entrylen
+    On success returns
+    the length in bytes of this individual entry.
+    @param dw_rle_value_out
+    On success returns
+    the RLE value of the entry, such as DW_RLE_startx_endx.
+    This determines which of dw_raw1 and dw_raw2
+    contain meaningful data.
+    @param dw_raw1
+    On success returns
+    a value directly recorded in the rangelist entry
+    if that applies to this rle.
+    @param dw_raw2
+    On success returns
+    a value directly recorded in the rangelist entry
+    if that applies to this rle.
+    @param dw_debug_addr_unavailable
+    On success returns a flag.
+    If the .debug_addr section is required but absent or
+    unavailable the flag is set to TRUE.
+    Otherwise sets the flag FALSE.
+    @param dw_cooked1
+    On success returns (if appropriate) the
+    dw_raw1 value turned into a valid address.
+    @param dw_cooked2
+    On success returns (if appropriate) the
+    dw_raw2 value turned into a valid address.
+    Ignore the value if dw_debug_addr_unavailable is set.
+    @param dw_error
+    The usual error detail return pointer.
+    Ignore the value if dw_debug_addr_unavailable is set.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_rnglists_entry_fields_a(
+    Dwarf_Rnglists_Head dw_head,
+    Dwarf_Unsigned   dw_entrynum,
+    unsigned int   * dw_entrylen,
+    unsigned int   * dw_rle_value_out,
+    Dwarf_Unsigned * dw_raw1,
+    Dwarf_Unsigned * dw_raw2,
+    Dwarf_Bool     * dw_debug_addr_unavailable,
+    Dwarf_Unsigned * dw_cooked1,
+    Dwarf_Unsigned * dw_cooked2,
+    Dwarf_Error *    dw_error);
+
+/*! @brief Dealloc a Dwarf_Rnglists_Head
+
+    @param dw_head
+    dealloc all the memory associated with dw_head.
+    The caller should then immediately set
+    the pointer to zero/NULL as it is stale.
+*/
 DW_API void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head dw_head);
 
-/*  Loads all the rnglists headers and
+/*! @brief Loads all .debug_rnglists headers.
+
+    Loads all the rnglists headers and
     returns DW_DLV_NO_ENTRY if the section
     is missing or empty.
-    Intended to be done quite early and
-    it is automatically
-    done if .debug_info is loaded.
+    Intended to be done quite early.
+    It is automatically done if anything
+    needing CU or DIE information is called,
+    so it is not necessary for you to call this
+    in any normal situation.
+
     Doing it more than once is never necessary
     or harmful. There is no deallocation call
     made visible, deallocation happens
-    when dwarf_finish() is called.
-    With DW_DLV_OK it returns the number of
+    when dwarf_finish is called.
+
+    @param dw_dbg
+    @param dw_rnglists_count
+    On success it returns the number of
     rnglists headers in the section through
-    rnglists_count. */
-DW_API int dwarf_load_rnglists(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned * /*rnglists_count*/,
-    Dwarf_Error * /*err*/);
+    dw_rnglists_count.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If the section does not exist the function returns
+    DW_DLV_OK.
+*/
+DW_API int dwarf_load_rnglists(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned * dw_rnglists_count,
+    Dwarf_Error    * dw_error);
 
-/*  Retrieve the offset from the context-index'th
-    rangelists context  and the offsetentry_index
-    element of the array of offsets.
-    If an index is too large to be correct
-    this returns DW_DLV_NO_ENTRY.
-    If all is correct it returns DW_DLV_OK and
-    sets *offset_value_out to the offset of
-    the range list from the base of the offset
-    array, and *global_offset_value_out is set
-    to the .debug_rnglists section offset of
-    the range list. */
-DW_API int dwarf_get_rnglist_offset_index_value(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned   /*context_index*/,
-    Dwarf_Unsigned   /*offsetentry_index*/,
-    Dwarf_Unsigned * /*offset_value_out*/,
-    Dwarf_Unsigned * /*global_offset_value_out*/,
-    Dwarf_Error * /*error*/);
+/*! @brief Retrieve the section offset of a rnglist.
 
-/*  Used by dwarfdump to print basic data from the
-    data generated to look at a specific rangelist
-    as returned by  dwarf_rnglists_index_get_rle_head()
-    or dwarf_rnglists_offset_get_rle_head. */
-DW_API int dwarf_get_rnglist_head_basics(Dwarf_Rnglists_Head /*head*/,
-    Dwarf_Unsigned * /*rle_count*/,
-    Dwarf_Unsigned * /*rnglists_version*/,
-    Dwarf_Unsigned * /*rnglists_index_returned*/,
-    Dwarf_Unsigned * /*bytes_total_in_rle*/,
-    Dwarf_Half     * /*offset_size*/,
-    Dwarf_Half     * /*address_size*/,
-    Dwarf_Half     * /*segment_selector_size*/,
-    Dwarf_Unsigned * /*overall offset_of_this_context*/,
-    Dwarf_Unsigned * /*total_length of this context*/,
-    Dwarf_Unsigned * /*offset_table_offset*/,
-    Dwarf_Unsigned * /*offset_table_entrycount*/,
-    Dwarf_Bool     * /*rnglists_base_present*/,
-    Dwarf_Unsigned * /*rnglists_base*/,
-    Dwarf_Bool     * /*rnglists_base_address_present*/,
-    Dwarf_Unsigned * /*rnglists_base_address*/,
-    Dwarf_Bool     * /*rnglists_debug_addr_base_present*/,
-    Dwarf_Unsigned * /*rnglists_debug_addr_base*/,
-    Dwarf_Error    * /*error*/);
+    Can be used to access raw rnglist data.
+    Not used by most callers.
+    See DWARF5 Section 7.28 Range List Table Page 242
 
-/*  Enables printing of details about the Range List Table
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_context_index
+    Begin this at zero.
+    @param dw_offsetentry_index
+    Begin this at zero.
+    @param dw_offset_value_out
+    On success returns the rangelist entry
+    offset within the rangelist set.
+    @param dw_global_offset_value_out
+    On success returns the rangelist entry
+    offset within rnglist section.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If there are no rnglists at all, or
+    if one of the above index values is too high
+    to be valid it returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_rnglist_offset_index_value(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned   dw_context_index,
+    Dwarf_Unsigned   dw_offsetentry_index,
+    Dwarf_Unsigned * dw_offset_value_out,
+    Dwarf_Unsigned * dw_global_offset_value_out,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Access to internal data on rangelists.
+
+    Returns detailed data from a Dwarf_Rnglists_Head
+    Since this is primarily internal data we don't
+    describe the details of the returned fields here.
+*/
+DW_API int dwarf_get_rnglist_head_basics(Dwarf_Rnglists_Head dw_head,
+    Dwarf_Unsigned * dw_rle_count,
+    Dwarf_Unsigned * dw_rnglists_version,
+    Dwarf_Unsigned * dw_rnglists_index_returned,
+    Dwarf_Unsigned * dw_bytes_total_in_rle,
+    Dwarf_Half     * dw_offset_size,
+    Dwarf_Half     * dw_address_size,
+    Dwarf_Half     * dw_segment_selector_size,
+    Dwarf_Unsigned * dw_overall_offset_of_this_context,
+    Dwarf_Unsigned * dw_total_length_of_this_context,
+    Dwarf_Unsigned * dw_offset_table_offset,
+    Dwarf_Unsigned * dw_offset_table_entrycount,
+    Dwarf_Bool     * dw_rnglists_base_present,
+    Dwarf_Unsigned * dw_rnglists_base,
+    Dwarf_Bool     * dw_rnglists_base_address_present,
+    Dwarf_Unsigned * dw_rnglists_base_address,
+    Dwarf_Bool     * dw_rnglists_debug_addr_base_present,
+    Dwarf_Unsigned * dw_rnglists_debug_addr_base,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Access to rnglists header data
+
+    This returns, independent of any DIEs or CUs
+    information on the .debug_rnglists headers
+    present in the section.
+
+    We do not document the details here.
+    See the DWARF5 standard.
+
+    Enables printing of details about the Range List Table
     Headers, one header per call. Index starting at 0.
     Returns DW_DLV_NO_ENTRY if index is too high for the table.
     A .debug_rnglists section may contain any number
-    of Range List Table Headers with their details.  */
-DW_API int dwarf_get_rnglist_context_basics(Dwarf_Debug  /*dbg*/,
-    Dwarf_Unsigned  /*index*/,
-    Dwarf_Unsigned * /*header_offset*/,
-    Dwarf_Small  *   /*offset_size*/,
-    Dwarf_Small  *   /*extension_size*/,
-    unsigned int *   /*version*/, /* 5 */
-    Dwarf_Small  *   /*address_size*/,
-    Dwarf_Small  *   /*segment_selector_size*/,
-    Dwarf_Unsigned * /*offset_entry_count*/,
-    Dwarf_Unsigned * /*offset_of_offset_array*/,
-    Dwarf_Unsigned * /*offset_of_first_rangeentry*/,
-    Dwarf_Unsigned * /*offset_past_last_rangeentry*/,
-    Dwarf_Error *    /*err*/);
+    of Range List Table Headers with their details.
+*/
+DW_API int dwarf_get_rnglist_context_basics(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned   dw_index,
+    Dwarf_Unsigned * dw_header_offset,
+    Dwarf_Small  *   dw_offset_size,
+    Dwarf_Small  *   dw_extension_size,
+    unsigned int *   dw_version,
+    Dwarf_Small  *   dw_address_size,
+    Dwarf_Small  *   dw_segment_selector_size,
+    Dwarf_Unsigned * dw_offset_entry_count,
+    Dwarf_Unsigned * dw_offset_of_offset_array,
+    Dwarf_Unsigned * dw_offset_of_first_rangeentry,
+    Dwarf_Unsigned * dw_offset_past_last_rangeentry,
+    Dwarf_Error *    dw_error);
 
-/*  If no error, returns DW_DLV_OK and sets
-    the entry length,kind, and operands through
-    the pointers. If any missing operands assign
-    zero back through tye operand pointers. */
-DW_API int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned /*contextnumber*/,
-    Dwarf_Unsigned /*entry_offset*/,
-    Dwarf_Unsigned /*endoffset*/,
-    unsigned int   * /*entrylen*/,
-    unsigned int   * /*entry_kind*/,
-    Dwarf_Unsigned * /*entry_operand1*/,
-    Dwarf_Unsigned * /*entry_operand2*/,
-    Dwarf_Error * /*err*/);
+/*! @brief Access to raw rnglists range data
+
+    Describes the actual raw data recorded in a particular
+    range entry.
+
+    We do not describe all these fields for now.
+*/
+DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned dw_contextnumber,
+    Dwarf_Unsigned dw_entry_offset,
+    Dwarf_Unsigned dw_endoffset,
+    unsigned int   * dw_entrylen,
+    unsigned int   * dw_entry_kind,
+    Dwarf_Unsigned * dw_entry_operand1,
+    Dwarf_Unsigned * dw_entry_operand2,
+    Dwarf_Error    * dw_error);
 /*! @} */
 /*! @defgroup locations CU Data- Data Locations DWARF2-DWARF5
     @{
@@ -4074,11 +4193,12 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug /*dbg*/,
     This works for any attribute that identifies
     a loclist or a locexpr. When the attribute is a locexpr
     a single loclist (created by libdwarf)
-    is attached to loclist_head. */
-DW_API int dwarf_get_loclist_c(Dwarf_Attribute /*attr*/,
-    Dwarf_Loc_Head_c * /*loclist_head*/,
-    Dwarf_Unsigned   * /*locCount*/,
-    Dwarf_Error      * /*error*/);
+    is attached to loclist_head.
+*/
+DW_API int dwarf_get_loclist_c(Dwarf_Attribute dw_attr,
+    Dwarf_Loc_Head_c * dw_loclist_head,
+    Dwarf_Unsigned   * dw_locCount,
+    Dwarf_Error      * dw_error);
 
 #define DW_LKIND_expression   0 /* DWARF2,3,4*/
 #define DW_LKIND_loclist      1 /* DWARF 2,3,4 */
@@ -4686,20 +4806,24 @@ DW_API Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
 /*! @} */
 
 /*! @defgroup abbrev Abbreviations .debug_abbrev Section Details
-    Allows reading .debug_abbrev independently or
-    as referenced from a CU.
+    Allows reading .debug_abbrev independently of CUs or DIEs.
 
     @link  independentsections About Reading Independently. @endlink
     @{
 */
 /*! @brief Reading Abbreviation Data
 
+    Normally you never need to call these functions.
+    Calls that involve DIEs do all this for you
+    behind the scenes in the library.
+
     This reads the data for a single abbrev code
     starting at dw_offset.
     Essentially, opening access to an abbreviation entry.
 
-    Normally the offset will come from the Compilation Unit
-    Header debug_abbrev_offset field.
+    When libdwarf itself reads abbreviations  to
+    access DIEs the offset comes
+    from the Compilation Unit Header debug_abbrev_offset field.
     @see dwarf_next_cu_header_d
 
     @param dw_dbg
