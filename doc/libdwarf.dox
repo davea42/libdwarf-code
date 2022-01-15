@@ -252,6 +252,44 @@
     isa
     discriminator
     @endcode
+
+    @subsection independentsections Reading Special Sections Independently
+
+    Reading a partiular set of special sections
+
+    DWARF defines (in each version of DWARF)
+    sections which have a somewhat special
+    character.  
+    These are referenced from compilation units
+    and other places and the Standard does not
+    forbid blocks of random bytes at the start or end
+    or between the areas
+    referenced from elsewhere.
+
+    Sometimes compilers (or linkers) leave trash
+    behind as a result of optimizations.
+    If there is a lot of space wasted that way it is
+    quality of implementation issue.
+    But usually the wasted space, if any, is small.
+
+    Compiler writers or others may be interested in looking
+    at these sections indepently so libdwarf provides
+    functions
+    that allow reading the sections without reference
+    to what references them.  
+
+    @link abbrev Abbreviations can be read independently @endlink
+
+    Those functions allow starting at byte 0 of the section
+    and provide a length so you can calulate the next
+    section offset to call or refer to.
+
+    Usually that works fine.
+    But if there is some random data somewhere
+    outside of referenced areas the reader function
+    may fail, reteurning DW_DLV_ERROR. 
+    Such an error is neither a compiler bug nor a libdwarf bug.
+
 */
 
 
