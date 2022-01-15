@@ -1,4 +1,25 @@
 2022-01-15:  David Anderson
+    commit a485e75134d1fa171753bdd8edea7a20522bf209
+
+    recent fixes to configure.
+            modified:   ChangeLog
+
+2022-01-15:  David Anderson
+    commit 80baad5e09082051234cba4807fcfd0ba2f79009
+    Merge: fbba7b00 ce9ec60f
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Removing unused cruft from configure.ac CMakeLists.txt
+
+2022-01-15:  David Anderson
+    commit ce9ec60f90642a25675ecd5d36aea15d2c46f78d
+    Merge: 0c3cb985 b04ffc0a
+
+    Merge pull request #55 from vtorri/vtorri_elf
+
+    remove checks of useless header files
+
+2022-01-15:  David Anderson
     commit fbba7b0075718e8b761c8a433bc502035142d605
 
     make dist requires these files be present.
