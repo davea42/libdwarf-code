@@ -219,48 +219,14 @@ if (DWARF_WITH_LIBELF)
   message(STATUS "checking using HAVE_ELF_H ... ${HAVE_ELF_H}")
   message(STATUS "checking using elf header ... ${HAVE_LOCATION_OF_LIBELFHEADER}")
   message(STATUS "checking using libelf header ... ${JUST_LIBELF}")
-  check_c_source_compiles("
-  #include ${HAVE_LOCATION_OF_LIBELFHEADER}
-  int main()      
-  {
-      Elf64_Rel *p; int i; i = p->r_info;
-      return 0;
-  }" HAVE_ELF64_R_INFO)
 
-  check_c_source_compiles("
-  #include  ${HAVE_LOCATION_OF_LIBELFHEADER}
-  int main()
-  {
-      Elf64_Rela p; p.r_offset = 1;
-      return 0;
-  }" HAVE_ELF64_RELA)
-    
-  check_c_source_compiles("
-  #include ${HAVE_LOCATION_OF_LIBELFHEADER}
-  int main()
-  {
-      Elf64_Sym p; p.st_info = 1;
-      return 0;
-  }" HAVE_ELF64_SYM)
-  check_c_source_compiles("
+check_c_source_compiles("
   #include ${HAVE_LOCATION_OF_LIBELFHEADER}
   int main()
   {
       int p; p = 0;
       return 0;
   }" HAVE_RAW_LIBELF_OK)
-
-  # This is attempting do determine that with GNU_SOURCE
-  # we have off64_t. The autoconf version is not attemping
-  # to set HAVE_LIBELF_OFF64_OK at present. 
-  check_c_source_compiles("
-  #define _GNU_SOURCE 1
-  #include ${JUST_LIBELF}
-  int main()
-  { 
-      off64_t  p; p = 0;
-      return 0;
-  }"  HAVE_LIBELF_OFF64_OK)
 else()
 endif()
 check_c_source_runs("
