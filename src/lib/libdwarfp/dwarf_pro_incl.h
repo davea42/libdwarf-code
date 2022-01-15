@@ -46,10 +46,6 @@
 #endif /* HAVE_ELF_H or HAVE_LIBELF*H */
 #endif /* DWARF_WITH_LIBELF */
 
-#if defined(sun)
-#include <sys/elf_SPARC.h>
-#include <sys/elf_386.h>
-#endif
 #undef DWARF_WITH_LIBELF
 
 /* The target address is given: the place in the source integer

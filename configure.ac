@@ -180,7 +180,7 @@ CPPFLAGS_save=${CPPFLAGS}
 
 if test  "$dwarf_with_libelf" = "yes" ; then
   AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
-  AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
+  AC_CHECK_HEADERS([elf.h elfaccess.h])
 
   ### if no libelf.h add no -lelf and turn off
   ### libelf recognition.

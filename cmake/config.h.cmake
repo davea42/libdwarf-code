@@ -90,18 +90,6 @@
 /* Define to 1 if you have the <string.h> header file. */
 #cmakedefine HAVE_STRING_H 1
 
-/* Define to 1 if you have the <sys/elf_386.h> header file. */
-#cmakedefine HAVE_SYS_ELF_386_H 1
-
-/* Define to 1 if you have the <sys/elf_amd64.h> header file. */
-#cmakedefine HAVE_SYS_ELF_AMD64_H 1
-
-/* Define to 1 if you have the <sys/elf_SPARC.h> header file. */
-#cmakedefine HAVE_SYS_ELF_SPARC_H 1
-
-/* Define to 1 if you have the <sys/ia64/elf.h> header file. */
-#cmakedefine HAVE_SYS_IA64_ELF_H 1
-
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H 1
 
