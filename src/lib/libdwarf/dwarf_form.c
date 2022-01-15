@@ -1109,7 +1109,7 @@ dwarf_formdata16(Dwarf_Attribute attr,
 }
 
 /*  The *addrx are DWARF5 standard.
-    The GNU form is non-standard gcc DWARF4 
+    The GNU form is non-standard gcc DWARF4
     The LLVM form is the newest. */
 Dwarf_Bool
 dwarf_addr_form_is_indexed(int form)

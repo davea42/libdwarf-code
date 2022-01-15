@@ -819,7 +819,7 @@ _dwarf_debuglink_finder_internal(
         dwarf_dealloc_error(dbg,error);
         dwarf_finish(dbg);
         return DW_DLV_NO_ENTRY;
-    } 
+    }
     if (res == DW_DLV_NO_ENTRY) {
         /*  There is no debuglink section */
         dwarf_finish(dbg);

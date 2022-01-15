@@ -287,7 +287,6 @@ dwarf_get_abbrev_code(Dwarf_Abbrev abbrev,
         _dwarf_error(NULL, error, DW_DLE_DWARF_ABBREV_NULL);
         return DW_DLV_ERROR;
     }
-
     *returned_code = abbrev->dab_code;
     return DW_DLV_OK;
 }

@@ -2181,7 +2181,7 @@ _dwarf_add_to_files_list(Dwarf_Line_Context context,
         for DWARF2,3,4 vs DWARF5 */
     if (version == DW_LINE_VERSION5) {
         context->lc_file_entry_baseindex = 0;
-        context->lc_file_entry_endindex = 
+        context->lc_file_entry_endindex =
             context->lc_file_entry_count;
     } else {
         context->lc_file_entry_baseindex = 1;
