@@ -236,9 +236,6 @@ else
   ### --disable-libelf
   have_struct__elf="no"
   struct_elf="struct Elf"
-  have_elf64_rela="no"
-  have_elf64_rel="no"
-  have_elf64_sym="no"
 fi
 AC_SUBST([struct_elf])
 
@@ -437,8 +434,6 @@ echo
 echo "  libdwarf.............: always"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    elf64_getshdr......: ${have_getshdr}"
-echo "    Elf64_Rela.........: ${have_elf64_rela}"
-echo "    Elf64_Sym..........: ${have_elf64_sym}"
 echo "    Elf spelled........: ${struct_elf}"
 echo "    libelf.............: ${dwarf_with_libelf}"
 echo "  dwarfdump............: always"
