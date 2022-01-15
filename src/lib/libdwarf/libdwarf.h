@@ -2260,12 +2260,12 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
     char   **        dw_diename,
     Dwarf_Error*     dw_error);
 
-/*! @ brief Return the DIE abbrev code
+/*! @brief Return the DIE abbrev code
 
     The Abbrev code for a DIE is an integer assigned
     by the compiler within a particular CU.
     For .debug_names abbreviations the
-    situration is different.
+    situation is different.
 
     Returns the  abbrev code of the die. Cannot fail.
 
@@ -4694,42 +4694,145 @@ DW_API Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
 /*! @} */
 
 /*! @defgroup abbrev Abbreviations .debug_abbrev Section Details
-    Allows reading .debug_abbrev independently
+    Allows reading .debug_abbrev independently or
+    as referenced from a CU.
+
+    @link  independentsections About Reading Independently. @endlink
     @{
 */
-/* abbreviation section operations */
-DW_API int dwarf_get_abbrev(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned   /*offset*/,
-    Dwarf_Abbrev  *  /*returned_abbrev*/,
-    Dwarf_Unsigned*  /*length*/,
-    Dwarf_Unsigned*  /*attr_count*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Reading Abbreviation Data 
 
-DW_API int dwarf_get_abbrev_tag(Dwarf_Abbrev /*abbrev*/,
-    Dwarf_Half*      /*return_tag_number*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_get_abbrev_code(Dwarf_Abbrev /*abbrev*/,
-    Dwarf_Unsigned*  /*return_code_number*/,
-    Dwarf_Error*     /*error*/);
+    This reads the data for a single abbrev code
+    starting at dw_offset.
+    Essentially, opening access to an abbreviation entry.
 
-DW_API int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
-    Dwarf_Signed*    /*return_flag*/,
-    Dwarf_Error*     /*error*/);
+    Normally the offset will come from the Compilation Unit
+    Header debug_abbrev_offset field. 
+    @see dwarf_next_cu_header_d
 
-/*  New August 2019.
-    Most uses will call with filter_outliers non-zero.
-    In that case impossible values return DW_DLV_ERROR.
-    Those doing extra things (like dwarfdump) will
-    call with filter_outliers zero to get the raw data
-    (effectively); */
-DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev /*abbrev*/,
-    Dwarf_Unsigned   /*indx*/,
-    Dwarf_Bool       /*filter_outliers*/,
-    Dwarf_Unsigned * /*returned_attr_num*/,
-    Dwarf_Unsigned * /*returned_form*/,
-    Dwarf_Signed   * /*returned_implicit_const*/,
-    Dwarf_Off      * /*offset*/,
-    Dwarf_Error    * /*error*/);
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_offset
+    Pass in the offset where a Debug_Abbrev starts.
+    @param dw_returned_abbrev
+    On success, sets a pointer to a Dwarf_Abbrev
+    through the pointer to allow further access.
+    @param dw_length
+    On success, returns the length of the entire abbreviation
+    block (bytes), useful to calculate the next offset
+    if reading the section independently
+    of any compilation unit.
+    @param dw_attr_count
+    On success, returns the number of attributes in this
+    abbreviation entry.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    If the abbreviation is a single zero byte it is
+    a null abbreviation. DW_DLV_OK is returned.
+
+    Close the abbrev by calling
+    dwarf_dealloc(dbg,*dw_returned_abbrev, DW_DLA_ABBREV)
+*/
+DW_API int dwarf_get_abbrev(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned  dw_offset,
+    Dwarf_Abbrev  * dw_returned_abbrev,
+    Dwarf_Unsigned* dw_length,
+    Dwarf_Unsigned* dw_attr_count,
+    Dwarf_Error*    dw_error);
+
+/*! @brief Get abbreviation tag
+
+    @param dw_abbrev
+    The Dwarf_Abbrev of interest.
+    @param dw_return_tag_number
+    Returns the tag value, for example DW_TAG_compile_unit.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_abbrev_tag(Dwarf_Abbrev dw_abbrev,
+    Dwarf_Half*  dw_return_tag_number,
+    Dwarf_Error* dw_error);
+
+/*! @brief Get Abbreviation Code
+
+    @param dw_abbrev
+    The Dwarf_Abbrev of interest.
+    @param dw_return_code_number
+    Returns the code for this abbreviation, a number
+    assigned to the abbreviation and unique within
+    the applicable CU.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_abbrev_code(Dwarf_Abbrev dw_abbrev,
+    Dwarf_Unsigned* dw_return_code_number,
+    Dwarf_Error*    dw_error);
+
+/*! @brief Get Abbrev Children Flag
+
+    @param dw_abbrev
+    The Dwarf_Abbrev of interest.
+    @param dw_return_flag
+    On success returns the flag TRUE (greater than zero) if the DIE
+    referencing the abbreviation has children,
+    else returns FALSE (zero).
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_abbrev_children_flag(Dwarf_Abbrev dw_abbrev,
+    Dwarf_Signed*    dw_return_flag,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Get Abbrev Entry Details  
+
+
+    Most will will call with filter_outliers non-zero.
+    
+    @param dw_abbrev
+    The Dwarf_Abbrev of interest.
+    @param dw_indx
+    Valid dw_index values are 0 through dw_attr_count-1
+    @param dw_filter_outliers
+    Pass non-zero (TRUE) so the function will check for unreasonable
+    abbreviation content and return DW_DLV_ERROR if such found. 
+    If zero (FALSE) passed in
+    even a nonsensical attribute number and/or unknown DW_FORM
+    are allowed (used by dwarfdump to report the issue(s)).
+    @param dw_returned_attr_num
+    On success returns the attribute number, such as DW_AT_name
+    @param dw_returned_form
+    On success returns the attribute FORM, such as DW_FORM_udata
+    @param dw_returned_implicit_const
+    On success, if the dw_returned_form is DW_FORM_implicit_const
+    then dw_returned_implicit_const is the implicit const value,
+    but if not implicit const the return value is zero..
+    @param dw_offset
+    On success returns the offset of the start of this attr/form
+    pair in the abbreviation section.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    If the abbreviation code for this Dwarf_Abbrev is 0
+    it is a null abbreviation, the dw_indx is ignored,
+    and the function returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev dw_abbrev,
+    Dwarf_Unsigned   dw_indx,
+    Dwarf_Bool       dw_filter_outliers,
+    Dwarf_Unsigned * dw_returned_attr_num,
+    Dwarf_Unsigned * dw_returned_form,
+    Dwarf_Signed   * dw_returned_implicit_const,
+    Dwarf_Off      * dw_offset,
+    Dwarf_Error    * dw_error);
 
 /*! @} */
 /*! @defgroup string String Section .debug_str Details
