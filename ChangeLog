@@ -1,4 +1,39 @@
 2022-01-15:  David Anderson
+    commit 28120f0c707d7bba44d399d867822c9995310353
+
+    Fixing trailing white space
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2022-01-15:  David Anderson
+    commit dce675ea8a83c679525d6a4ea2c51ef10f30980b
+
+    Added an overview of sections like .debug_abbrev
+    where we have functions allowing access without
+    any reference to any CU.
+            modified:   doc/libdwarf.dox
+
+2022-01-15:  David Anderson
+    commit 389a1b1ee589b14091a7cfc5e22c9d6dd33bccce
+
+    Fixing over-long lines and trailing whitespace.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-15:  David Anderson
+    commit 6ac9988c9c85a1891546a745f91949a0b954e55c
+
+    Doxygen added for abbreviations access.
+            modified:   libdwarf.h
+
+2022-01-15:  David Anderson
+    commit 5b7755f8c1c1b094786d7e5ee98341a4c27211e2
+
+    Updated to reveal merges.
+            modified:   ChangeLog
+
+2022-01-15:  David Anderson
     commit a485e75134d1fa171753bdd8edea7a20522bf209
 
     recent fixes to configure.
