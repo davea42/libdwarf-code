@@ -5133,110 +5133,206 @@ DW_API void dwarf_dealloc(Dwarf_Debug dw_dbg,
 /*! @defgroup debugsup Access to Section .debug_sup
     @{
 */
-/* For DWARF5 */
-DW_API int dwarf_get_debug_sup(Dwarf_Debug /*dbg*/,
-    Dwarf_Half     * /*version*/,
-    Dwarf_Small    * /*is_supplementary*/,
-    char          ** /*filename*/,
-    Dwarf_Unsigned * /*checksum_len*/,
-    Dwarf_Small   ** /*checksum*/,
-    Dwarf_Error * /*error*/);
+/*! @brief Returns basic .debug_sup section header data
+
+    This returns basic data from the header
+    of a .debug_sup section.
+    See DWARF5 Section 7.3.6,
+    "DWARF Supplementary Object Files"
+
+    Other sections present should be normal
+    DWARF5, so normal libdwarf calls should work.
+    We have no existing examples on hand, so
+    it is hard to know what really works.
+    
+    If there is no such section it returns
+    DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_debug_sup(Dwarf_Debug dw_dbg,
+    Dwarf_Half     * dw_version,
+    Dwarf_Small    * dw_is_supplementary,
+    char          ** dw_filename,
+    Dwarf_Unsigned * dw_checksum_len,
+    Dwarf_Small   ** dw_checksum,
+    Dwarf_Error    * dw_error);
 /*! @} */
 
 /*! @defgroup debugnames Fast Access-Access to .debug_names DWARF5
     @{
+
+    The section is new in DWARF5  supercedes .debug_pubnames and
+    .debug_pubtypes in DWARF2, DWARF3, and DWARF4.
+
+    The code is incomplete . We have no examples
+    produced by a compiler as yet.
+
+    The existing functions provide a detailed reporting
+    of the content and structure of the table, they
+    are not intended to be used to search the table.
+
+    A new function (more than one?) would be needed for convenient
+    searching.
 */
-/*  .debug_names names table interfaces. DWARF5.
-    By Sections 6.1 and 6.1.1,
-    "a name index is maintained in a separate object
-    file section named .debug_names."
-    It supercedes .debug_pubnames and .debug_pubtypes,
-    which, also were wholeprogram lookup information.
-    Nonetheless the following does not assume a single
-    name index in an object file.
+/*! @brief Open access to a .debug_names table
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_starting_offset
+    Read this section starting at offset zero.
+    @param dw_dn
+    On success returns a pointer to a set of data
+    allowing access to the table.
+    @param dw_offset_of_next_table
+    On success returns
+    Offset just past the end of the the opened table.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    If there is no such table or if dw_starting_offset
+    is past the end of the section it returns
+    DW_DLV_NO_ENTRY.
 */
-DW_API int dwarf_dnames_header(Dwarf_Debug /*dbg*/,
-    Dwarf_Off           /*starting_offset*/,
-    Dwarf_Dnames_Head * /*dn_out*/,
-    Dwarf_Off         * /*offset_of_next_table*/,
-    Dwarf_Error *       /*error*/);
+DW_API int dwarf_dnames_header(Dwarf_Debug dw_dbg,
+    Dwarf_Off           dw_starting_offset,
+    Dwarf_Dnames_Head * dw_dn,
+    Dwarf_Off         * dw_offset_of_next_table,
+    Dwarf_Error *       dw_error);
 
-/*  Frees all the malloc data associated with dn */
-DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dn);
+/*! @brief  Frees all the malloc data associated with dw_dn 
+    @param dw_dn
+    A Dwarf_Dnames_Head pointer.
+    Callers should zero the pointer passed in
+    as soon as possible after this returns
+    as the pointer is then stale.
+*/
+DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
 
-DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head /*dn*/,
-    /* The counts are entry counts, not byte sizes. */
-    Dwarf_Unsigned * /*comp_unit_count*/,
-    Dwarf_Unsigned * /*local_type_unit_count*/,
-    Dwarf_Unsigned * /*foreign_type_unit_count*/,
-    Dwarf_Unsigned * /*bucket_count*/,
-    Dwarf_Unsigned * /*name_count*/,
+/*! @brief Sizes and counts from the debug names table
 
+    We do not describe these returned values.
+    
+    See DWARF5 section 6.1.1 "Lookup By Name"
+    particularly the graph page 139.
+    dw_comp_unit_count is K(k),
+    dw_local_type_unit_count is T(t), and
+    dw_foreign_type_unit_count is F(f).
+*/
+DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned * dw_comp_unit_count, 
+    Dwarf_Unsigned * dw_local_type_unit_count,
+    Dwarf_Unsigned * dw_foreign_type_unit_count,
+    Dwarf_Unsigned * dw_bucket_count,
+    Dwarf_Unsigned * dw_name_count,
     /* The following are counted in bytes */
-    Dwarf_Unsigned * /*abbrev_table_size*/,
-    Dwarf_Unsigned * /*entry_pool_size*/,
-    Dwarf_Unsigned * /*augmentation_string_size*/,
-    char          ** /*augmentation_string*/,
-    Dwarf_Unsigned * /*section_size*/,
-    Dwarf_Half     * /*table_version*/,
-    Dwarf_Half     * /*offset_size*/,
-    Dwarf_Error *    /*error*/);
+    Dwarf_Unsigned * dw_abbrev_table_size,
+    Dwarf_Unsigned * dw_entry_pool_size,
+    Dwarf_Unsigned * dw_augmentation_string_size,
+    char          ** dw_augmentation_string,
+    Dwarf_Unsigned * dw_section_size,
+    Dwarf_Half     * dw_table_version,
+    Dwarf_Half     * dw_offset_size,
+    Dwarf_Error *    dw_error);
 
-/* get each list entry one at a time */
-DW_API int dwarf_dnames_cu_table(Dwarf_Dnames_Head /*dn*/,
-    const char        * /*type ("cu" "tu") */,
-    /*  index number 0 to k-1 or 0 to t+f-1
-        depending on type. */
-    Dwarf_Unsigned      /*index_number*/,
-    Dwarf_Unsigned    * /*offset (of cu/tu header)*/,
-    Dwarf_Sig8        * /*sig (if signature) */,
-    Dwarf_Error       * /*error*/);
+/*! @brief each debug names list entry one at a time
+    @param dw_dn
+    The table of interest.
+    @param dw_type
+    Pass in the type, "cu" or "tu"
+    @param dw_index_number
+    For "cu" index range is 0 through K-1
+    For "tu" index range is 0 through T+F-1
+    @param dw_offset
+    Section offset of the target CU
+    Zero if it cannot be determined.
+    @param dw_sig
+    the Dwarf_Sig8 is filled in wht a signature
+    if the TU index is T through T+F-1
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_dnames_cu_table(Dwarf_Dnames_Head dw_dn,
+    const char        * dw_type,
+    Dwarf_Unsigned      dw_index_number,
+    Dwarf_Unsigned    * dw_offset,
+    Dwarf_Sig8        * dw_sig,
+    Dwarf_Error       * dw_error);
 
-/* Each bucket, one at a time */
-DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*bucket_number*/,
-    Dwarf_Unsigned    * /*index (of name entry*/,
-    Dwarf_Unsigned    * /*indexcount (of name entries in bucket)*/,
-    Dwarf_Error *       /*error*/);
+/*! @brief access to bucket contents. 
+    @param dw_dn
+    The Dwarf_Dnames_Head of interest.
+    @param dw_bucket_number
+    Pass in a bucket number
+    Bucket numbers start at 0.
+    @param dw_index
+    On success returns the index of
+    the appropriate name entry.
+    @param dw_indexcount
+    On success returns the number of 
+    name entries in the bucket.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    An out of range dw_index_number gets a return
+    if DW_DLV_NO_ENTRY
+*/
+DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned      dw_bucket_number,
+    Dwarf_Unsigned    * dw_index,
+    Dwarf_Unsigned    * dw_indexcount,
+    Dwarf_Error *       dw_error);
 
-/*  Each Name Table entry, one at a time.
-    attr_array is an array of attribute/form
-    pairs. So [0] is an attribute, [1] is
-    its form. And so on. So attr_count returned
-    is always a multiple of two. The last entry
-    is 0,0 ending the list.
-    It is not an error if array_size is zero or
-    small. Check the returned attr_count to
-    know now much of array filled in and
-    if the array you provided is
-    large enough. Possibly 40 (so 20 attributes)
-    is large enough. */
-DW_API int dwarf_dnames_name(Dwarf_Dnames_Head /*dn*/,
-    Dwarf_Unsigned      /*name_index*/,
-    Dwarf_Unsigned    * /*bucket_number */,
-    Dwarf_Unsigned    * /*hash value*/,
-    Dwarf_Unsigned    * /*offset_to_debug_str*/,
-    char *            * /*ptrtostr (or null)*/,
-    Dwarf_Unsigned    * /*offset_in_entrypool*/,
-    /*  Following fields are from Entry Pool */
-    Dwarf_Unsigned    * /* abbrev_number (from entrypool) */,
-    Dwarf_Half        * /* abbrev_tag (from entrypool) */,
-    Dwarf_Unsigned      /* array_size (of following) */,
-    Dwarf_Half        * /* attr_array
-        (caller provides array space, array need
-        not be initialized) */,
-    Dwarf_Unsigned    * /* attr_count
-        (attr_array entries used count) */,
-    Dwarf_Error *       /*error*/);
-
-/*  A consumer wanting to use the lookup here
-    to get CU or DIE information without
-    using above calls to read the whole
-    table has not been specified as it's not
-    clear what would be good for that use case. */
-
-/* end of .debug_names interfaces. */
-
+/*! @brief retrieve a name table entry   
+    @param dw_dn
+    The table of interest.
+    @param dw_name_index
+    Pass in the desired index, start at zero.
+    @param dw_bucket_number
+    On success returns a bucket number.
+    @param dw_hash_value
+    The hash value
+    @param dw_offset_to_debug_str
+    The offset to the .debug_str section string.
+    @param dw_ptrtostr
+    if dw_ptrtostr non-null returns a pointer to
+    the applicable string here.
+    @param dw_offset_in_entrypool
+    Returns the offset in the entrypool
+    @param dw_abbrev_number
+    Returned from entrypool
+    @param dw_abbrev_tag
+    Returned from entrypool abbrev data
+    @param dw_array_size
+    Size of array you provide (even number).
+    Possibly 20 to 40 suffices for pracical purposes.
+    @param dw_attr_array
+    Array you provide, for attribute numbers, form numbers.
+    (function will initialize it).
+    As initialized the last pair will be 0,0
+    @param dw_attr_count
+    Array entries needed. Might be larger than
+    dw_array_size, meaning not all entries could
+    be returned in your array.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned      dw_name_index,
+    Dwarf_Unsigned    * dw_bucket_number,
+    Dwarf_Unsigned    * dw_hash_value,
+    Dwarf_Unsigned    * dw_offset_to_debug_str,
+    char *            * dw_ptrtostr,
+    Dwarf_Unsigned    * dw_offset_in_entrypool,
+    Dwarf_Unsigned    * dw_abbrev_number,
+    Dwarf_Half        * dw_abbrev_tag,
+    Dwarf_Unsigned      dw_array_size,
+    Dwarf_Half        * dw_attr_array,
+    Dwarf_Unsigned    * dw_attr_count,
+    Dwarf_Error *       dw_error);
 /*! @} */
 
 /*! @defgroup aranges Fast Access-Access to .debug_aranges
