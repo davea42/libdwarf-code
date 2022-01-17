@@ -1926,9 +1926,9 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     *operand1 = op->lr_number;
     *operand2 = op->lr_number2;
     *operand3 = op->lr_number3;
-    *rawop1 = op->lr_raw1;
-    *rawop2 = op->lr_raw2;
-    *rawop3 = op->lr_raw3;
+    *rawop1 =   op->lr_raw1;
+    *rawop2 =   op->lr_raw2;
+    *rawop3 =   op->lr_raw3;
     *offset_for_branch = op->lr_offset;
     return DW_DLV_OK;
 }

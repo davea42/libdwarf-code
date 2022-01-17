@@ -4188,73 +4188,203 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
 /*! @defgroup locations CU Data- Data Locations DWARF2-DWARF5
     @{
 */
-/*  BEGIN: loclist_c interfaces
-    DWARF 2,3,4
-    This works for any attribute that identifies
-    a loclist or a locexpr. When the attribute is a locexpr
-    a single loclist (created by libdwarf)
-    is attached to loclist_head.
+/*! @brief Location Lists and Expressions
+
+    @param dw_attr
+    The attribute must refer to a location expression
+    or a location list, so must be DW_FORM_block,
+    DW_FORM_exprloc, or a loclist reference form..
+    @param dw_loclist_head
+    On success returns a pointer to the created
+    loclist head record.
+    @param dw_locentry_count
+    On success returns the count of records.
+    For an expression it will be one. 
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
 */
 DW_API int dwarf_get_loclist_c(Dwarf_Attribute dw_attr,
     Dwarf_Loc_Head_c * dw_loclist_head,
-    Dwarf_Unsigned   * dw_locCount,
+    Dwarf_Unsigned   * dw_locentry_count,
     Dwarf_Error      * dw_error);
 
-#define DW_LKIND_expression   0 /* DWARF2,3,4*/
+#define DW_LKIND_expression   0 /* DWARF2,3,4,5 */
 #define DW_LKIND_loclist      1 /* DWARF 2,3,4 */
 #define DW_LKIND_GNU_exp_list 2 /* GNU DWARF4 .dwo extension */
 #define DW_LKIND_loclists     5 /* DWARF5 loclists */
 #define DW_LKIND_unknown     99
 
-/* DWARF2 kind is 2. DWARF3/4 kind is 3, DWARF5 kind is 5 */
-DW_API int dwarf_get_loclist_head_kind(Dwarf_Loc_Head_c /*ll_header*/,
-    unsigned int  * /*lkind*/,
-    Dwarf_Error   * /*error*/);
+/*! @brief Know what kind of location data it is
 
-/*  Cooked value means the values from the location
-    description (raw values) after base values applied.
+    @param dw_loclist_head
+    Pass in a loclist head pointer.
+    @param dw_lkind
+    On success returns the loclist kind
+    through the pointer. For example DW_LKIND_expression.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_loclist_head_kind(
+    Dwarf_Loc_Head_c dw_loclist_head,
+    unsigned int  * dw_lkind,
+    Dwarf_Error   * dw_error);
+
+/*! @brief Retrieve the details of a location expression
+
+    Cooked value means the addresses from the location
+    description after base values applied, so they
+    are actual addresses.
     debug_addr_unavailable non-zero means the record from a
-    skeleton unit could not be accessed from
+    Split Dwarf skeleton unit could not be accessed from
     the .dwo section or dwp object so the
-    cooked values could not be calculated. */
-DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c /*head*/,
-    Dwarf_Unsigned    /*index*/,
-    /* identifies type of locdesc entry*/
-    Dwarf_Small    *  /*lle_value_out*/,
-    Dwarf_Unsigned *  /*rawlowpc*/,
-    Dwarf_Unsigned *  /*rawhipc*/,
-    Dwarf_Bool     *  /*debug_addr_unavailable*/,
-    Dwarf_Addr     *  /*lowpc_out (cooked value) */,
-    Dwarf_Addr     *  /*hipc_out (cooked value) */,
-    Dwarf_Unsigned *  /*loclist_count_out*/,
-    Dwarf_Locdesc_c * /*locentry_out*/,
-    Dwarf_Small    *  /*loclist_source_out*/, /* 0,1, or 2 */
-    Dwarf_Unsigned *  /*expression_offset_out*/,
-    Dwarf_Unsigned *  /*locdesc_offset_out*/,
-    Dwarf_Error    *  /*error*/);
+    cooked values could not be calculated.
 
-/* New June 2020 for DWARF5 (and all earlier). */
-DW_API int dwarf_get_location_op_value_d(Dwarf_Locdesc_c /*locdesc*/,
-    Dwarf_Unsigned   /*index*/,
-    Dwarf_Small    * /*operator_out*/,
-    Dwarf_Unsigned * /*operand1*/,
-    Dwarf_Unsigned * /*operand2*/,
-    Dwarf_Unsigned * /*operand3*/,
-    Dwarf_Unsigned * /*rawop1*/,
-    Dwarf_Unsigned * /*rawop2*/,
-    Dwarf_Unsigned * /*rawop3*/,
-    Dwarf_Unsigned * /*offset_for_branch*/,
-    Dwarf_Error*     /*error*/);
+    @param dw_loclist_head
+    A loclist head pointer.
+    @param dw_index
+    Pass in an index value less than dw_locentry_count .
+    @param dw_lle_value_out
+    On success returns the DW_LLE value applicable, such
+    as DW_LLE_start_end .
+    @param dw_rawlowpc
+    On success returns the first operand in the expression
+    (if the expression has an operand).
+    @param dw_rawhipc
+    On success returns the second operand in the expression.
+    (if the expression has a second operand).
+    @param dw_debug_addr_unavailable
+    On success returns FALSE if the data required to calculate
+    dw_lowpc_cooked or dw_hipc_cooked was present
+    or TRUE if some required
+    data was missing (for example in split dwarf). 
+    @param dw_lowpc_cooked
+    On success and if dw_debug_addr_unavailable FALSE
+    returns the true low address.
+    @param dw_hipc_cooked
+    On success and if dw_debug_addr_unavailable FALSE
+    returns the true high address.
+    @param dw_locexpr_op_count_out
+    On success returns the count of operations
+    in the expression.
+    @param dw_locentry_out
+    On success returns a pointer to a specific location
+    description.
+    @param dw_loclist_source_out
+    On success returns the applicable DW_LKIND value.
+    @param dw_expression_offset_out
+    On success returns the offset of the expression
+    in the applicable section.
+    @param dw_locdesc_offset_out
+    On return sets the offset to the location description
+    offset (if that is meaningful) or zero for
+    simple location expressions.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c dw_loclist_head,
+    Dwarf_Unsigned    dw_index,
+    Dwarf_Small    *  dw_lle_value_out,
+    Dwarf_Unsigned *  dw_rawlowpc,
+    Dwarf_Unsigned *  dw_rawhipc,
+    Dwarf_Bool     *  dw_debug_addr_unavailable,
+    Dwarf_Addr     *  dw_lowpc_cooked,
+    Dwarf_Addr     *  dw_hipc_cooked,
+    Dwarf_Unsigned *  dw_locexpr_op_count_out,
+    Dwarf_Locdesc_c * dw_locentry_out,
+    Dwarf_Small    *  dw_loclist_source_out,
+    Dwarf_Unsigned *  dw_expression_offset_out,
+    Dwarf_Unsigned *  dw_locdesc_offset_out,
+    Dwarf_Error    *  dw_error);
 
-DW_API int dwarf_loclist_from_expr_c(Dwarf_Debug /*dbg*/,
-    Dwarf_Ptr      /*expression_in*/,
-    Dwarf_Unsigned /*expression_length*/,
-    Dwarf_Half     /*address_size*/,
-    Dwarf_Half     /*offset_size*/,
-    Dwarf_Small    /*dwarf_version*/,
-    Dwarf_Loc_Head_c* /*loc_head*/,
-    Dwarf_Unsigned  * /*listlen*/,
-    Dwarf_Error     * /*error*/);
+/*! @brief Get the raw values from a single location operation 
+
+    Some of the following (DW_raw?) appear completly
+    pointless - a mistake.
+
+    @param dw_locdesc   
+    Pass in a valid Dwarf_Locdesc_c.
+    @param dw_index   
+    Pass in the operator index. zero through 
+    dw_locexpr_op_count_out-1.
+    @param dw_operator_out   
+    On success returns the DW_OP operator, such as DW_OP_plus .
+    @param dw_operand1
+    On success returns the value of the operand or zero.
+    @param dw_operand2  
+    On success returns the value of the operand or zero.
+    @param dw_operand3  
+    On success returns the value of the operand or zero.
+    @param dw_rawop1 
+    Identical to dw_operand1
+    @param dw_rawop2 
+    Identical to dw_operand2
+    @param dw_rawop3 
+    Identical to dw_operand3
+    @param dw_offset_for_branch 
+    On success returns
+    The byte offset of the operator within the
+    entire expression.  Useful for checking the correctness
+    of operators that branch..
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_location_op_value_d(Dwarf_Locdesc_c dw_locdesc,
+    Dwarf_Unsigned   dw_index,
+    Dwarf_Small    * dw_operator_out,
+    Dwarf_Unsigned * dw_operand1,
+    Dwarf_Unsigned * dw_operand2,
+    Dwarf_Unsigned * dw_operand3,
+    Dwarf_Unsigned * dw_rawop1,
+    Dwarf_Unsigned * dw_rawop2,
+    Dwarf_Unsigned * dw_rawop3,
+    Dwarf_Unsigned * dw_offset_for_branch,
+    Dwarf_Error*     dw_error);
+/*! @brief Generate a Dwarf_Loc_Head_c from an expression block
+
+    Useful if you have an expression block (from somewhere),
+    do not have a Dwarf_Attribute available,
+    and wish to deal with the expression.
+
+    @param dw_dbg
+    The applicable Dwarf_Debug
+    @param dw_expression_in
+    Pass in a pointer to the expression bytes.
+    @param dw_expression_length
+    Pass in the length, in bytes, of the expression.
+    @param dw_address_size
+    Pass in the applicable address_size.
+    @param dw_offset_size
+    Pass in the applicable offset size.
+    @param dw_dwarf_version
+    Pass in the applicable dwarf version.
+    @param dw_loc_head
+    On success returns a pointer to a dwarf location
+    head record for use in getting to the details
+    of the expression.
+    @param dw_listlen
+    On success, sets the listlen to one.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_loclist_from_expr_c(Dwarf_Debug dw_dbg,
+    Dwarf_Ptr      dw_expression_in,
+    Dwarf_Unsigned dw_expression_length,
+    Dwarf_Half     dw_address_size,
+    Dwarf_Half     dw_offset_size,
+    Dwarf_Small    dw_dwarf_version,
+    Dwarf_Loc_Head_c* dw_loc_head,
+    Dwarf_Unsigned  * dw_listlen,
+    Dwarf_Error     * dw_error);
 
 /*! @brief frees all memory allocated for Dwarf_Loc_Head_c
     @param dw_head
@@ -4286,80 +4416,140 @@ DW_API void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c dw_head);
     With DW_DLV_OK it returns the number of
     loclists headers in the section through
     loclists_count. */
-DW_API int dwarf_load_loclists(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned * /*loclists_count*/,
-    Dwarf_Error * /*err*/);
+/*! @brief Load Loclists
 
-/*  Retrieve the offset from the context-index'th
-    loclists context  and the offsetentry_index
-    element of the array of offsets.
-    If an index is too large to be correct
-    this returns DW_DLV_NO_ENTRY.
-    If all is correct it returns DW_DLV_OK and
-    sets *offset_value_out to the offset of
-    the range list from the base of the offset
-    array, and *global_offset_value_out is set
-    to the .debug_loclists section offset of
-    the range list. */
-DW_API int dwarf_get_loclist_offset_index_value(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned   /*context_index*/,
-    Dwarf_Unsigned   /*offsetentry_index*/,
-    Dwarf_Unsigned * /*offset_value_out*/,
-    Dwarf_Unsigned * /*global_offset_value_out*/,
-    Dwarf_Error * /*error*/);
+    This loads .debug_loclists (DWARF5).
+    It is unlikely you have a reason to use this function.
+    If CUs or DIES  have been referenced in any way
+    loading is already done. A duplicate loading
+    attempt returns DW_DLV_OK immediately, returning
+    dw_loclists_count filled in and does nothing else.
 
-/*  Used by dwarfdump to print basic data from the
+    @param dw_dbg
+    The applicable Dwarf_Debug.
+    @param dw_loclists_count
+    On success, returns the number of
+    DWARF5 loclists contexts in the section,
+    whether this is the first or a duplicate
+    load.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK if it loaded successfully
+    or if it is a duplicate load.
+    If no .debug_loclists
+    present returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_load_loclists(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned * dw_loclists_count,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Return certain loclists offsets
+
+    Useful with the DWARF5 .debug_loclists section.
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_context_index
+    Pass in the loclists context index.
+    @param dw_offsetentry_index
+    Pass in the offset array index.
+    @param dw_offset_value_out
+    On success returns the offset value at
+    offset table[dw_offsetentry_index],
+    an offset local to this context.
+    @param dw_global_offset_value_out
+    On success returns the same offset value
+    but with the offset of the table added in
+    to form a section offset.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If one of the indexes passed in is out of range
+    it returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_loclist_offset_index_value(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned   dw_context_index,
+    Dwarf_Unsigned   dw_offsetentry_index,
+    Dwarf_Unsigned * dw_offset_value_out,
+    Dwarf_Unsigned * dw_global_offset_value_out,
+    Dwarf_Error    * dw_error);
+
+/*! @brief  Return basic data about a loclists head 
+
+    Used by dwarfdump to print basic data from the
     data generated to look at a specific loclist
-    as returned by  dwarf_loclists_index_get_lle_head()
-    or dwarf_loclists_offset_get_lle_head. */
-DW_API int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c /*head*/,
-    Dwarf_Small    * /*lkind*/,
-    Dwarf_Unsigned * /*lle_count*/,
-    Dwarf_Unsigned * /*loclists_version*/,
-    Dwarf_Unsigned * /*loclists_index_returned*/,
-    Dwarf_Unsigned * /*bytes_total_in_rle*/,
-    Dwarf_Half     * /*offset_size*/,
-    Dwarf_Half     * /*address_size*/,
-    Dwarf_Half     * /*segment_selector_size*/,
-    Dwarf_Unsigned * /*overall offset_of_this_context*/,
-    Dwarf_Unsigned * /*total_length of this context*/,
-    Dwarf_Unsigned * /*offset_table_offset*/,
-    Dwarf_Unsigned * /*offset_table_entrycount*/,
-    Dwarf_Bool     * /*loclists_base_present*/,
-    Dwarf_Unsigned * /*loclists_base*/,
-    Dwarf_Bool     * /*loclists_base_address_present*/,
-    Dwarf_Unsigned * /*loclists_base_address*/,
-    Dwarf_Bool     * /*loclists_debug_addr_base_present*/,
-    Dwarf_Unsigned * /*loclists_debug_addr_base*/,
-    Dwarf_Unsigned * /*offset_this_lle_area*/,
-    Dwarf_Error    * /*error*/);
+    context as returned by  
+    dwarf_loclists_index_get_lle_head()
+    or
+    dwarf_loclists_offset_get_lle_head.
+    Here we know there was a Dwarf_Attribute so
+    additional things are known as compared to calling
+    dwarf_get_loclist_context_basics
+    See DWARF5 Section 7.20 Location List Table
+    page 243.
+*/
+DW_API int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c dw_head,
+    Dwarf_Small    * dw_lkind,
+    Dwarf_Unsigned * dw_lle_count,
+    Dwarf_Unsigned * dw_loclists_version,
+    Dwarf_Unsigned * dw_loclists_index_returned,
+    Dwarf_Unsigned * dw_bytes_total_in_rle,
+    Dwarf_Half     * dw_offset_size,
+    Dwarf_Half     * dw_address_size,
+    Dwarf_Half     * dw_segment_selector_size,
+    Dwarf_Unsigned * dw_overall_offset_of_this_context,
+    Dwarf_Unsigned * dw_total_length_of_this_context,
+    Dwarf_Unsigned * dw_offset_table_offset,
+    Dwarf_Unsigned * dw_offset_table_entrycount,
+    Dwarf_Bool     * dw_loclists_base_present,
+    Dwarf_Unsigned * dw_loclists_base,
+    Dwarf_Bool     * dw_loclists_base_address_present,
+    Dwarf_Unsigned * dw_loclists_base_address,
+    Dwarf_Bool     * dw_loclists_debug_addr_base_present,
+    Dwarf_Unsigned * dw_loclists_debug_addr_base,
+    Dwarf_Unsigned * dw_offset_this_lle_area,
+    Dwarf_Error    * dw_error);
 
-DW_API int dwarf_get_loclist_context_basics(Dwarf_Debug  /*dbg*/,
-    Dwarf_Unsigned  /*index*/,
-    Dwarf_Unsigned * /*header_offset*/,
-    Dwarf_Small  *   /*offset_size*/,
-    Dwarf_Small  *   /*extension_size*/,
-    unsigned int *   /*version*/, /* 5 */
-    Dwarf_Small  *   /*address_size*/,
-    Dwarf_Small  *   /*segment_selector_size*/,
-    Dwarf_Unsigned * /*offset_entry_count*/,
-    Dwarf_Unsigned * /*offset_of_offset_array*/,
-    Dwarf_Unsigned * /*offset_of_first_locentry*/,
-    Dwarf_Unsigned * /*offset_past_last_locentry*/,
-    Dwarf_Error *    /*err*/);
+/*! @brief  Return basic data about a loclists context 
 
-DW_API int dwarf_get_loclist_lle( Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned   /*contextnumber*/,
-    Dwarf_Unsigned   /*entry_offset*/,
-    Dwarf_Unsigned   /*endoffset*/,
-    unsigned int *   /*entrylen*/,
-    unsigned int *   /*entry_kind*/,
-    Dwarf_Unsigned * /*entry_operand1*/,
-    Dwarf_Unsigned * /*entry_operand2*/,
-    Dwarf_Unsigned * /*expr_ops_blocksize*/,
-    Dwarf_Unsigned * /*expr_ops_offset*/,
-    Dwarf_Small   ** /*expr_opsdata*/,
-    Dwarf_Error * /*err*/);
+    Some of the same values as from 
+    dwarf_get_loclist_head_basics
+    but here without any dependence on data
+    drived from a CU context.
+    Useful to print raw loclist data.
+*/
+DW_API int dwarf_get_loclist_context_basics(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned   dw_index,
+    Dwarf_Unsigned * dw_header_offset,
+    Dwarf_Small    * dw_offset_size,
+    Dwarf_Small    * dw_extension_size,
+    unsigned int   * dw_version,
+    Dwarf_Small    * dw_address_size,
+    Dwarf_Small    * dw_segment_selector_size,
+    Dwarf_Unsigned * dw_offset_entry_count,
+    Dwarf_Unsigned * dw_offset_of_offset_array,
+    Dwarf_Unsigned * dw_offset_of_first_locentry,
+    Dwarf_Unsigned * dw_offset_past_last_locentry,
+    Dwarf_Error    * dw_error);
+
+/*! @brief  Return basic data about a loclists context entry
+
+    Useful to print raw loclist data.
+*/
+DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned   dw_contextnumber,
+    Dwarf_Unsigned   dw_entry_offset,
+    Dwarf_Unsigned   dw_endoffset,
+    unsigned int   * dw_entrylen,
+    unsigned int   * dw_entry_kind,
+    Dwarf_Unsigned * dw_entry_operand1,
+    Dwarf_Unsigned * dw_entry_operand2,
+    Dwarf_Unsigned * dw_expr_ops_blocksize,
+    Dwarf_Unsigned * dw_expr_ops_offset,
+    Dwarf_Small   ** dw_expr_opsdata,
+    Dwarf_Error    * dw_error);
 /*! @} */
 
 /*! @defgroup macro CU Data-Macro .debug_macro DWARF5 data access

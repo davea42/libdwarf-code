@@ -136,14 +136,13 @@ typedef struct Dwarf_Block_c_s Dwarf_Block_c;
 */
 typedef struct Dwarf_Loc_Expr_Op_s *Dwarf_Loc_Expr_Op;
 struct Dwarf_Loc_Expr_Op_s {
-    Dwarf_Small     lr_atom;        /* Location operation */
+    Dwarf_Small     lr_atom;    /* Location operation */
 
-    /*  Operands exactly as in DWARF. */
     Dwarf_Unsigned  lr_raw1;
     Dwarf_Unsigned  lr_raw2;
     Dwarf_Unsigned  lr_raw3;
 
-    Dwarf_Unsigned  lr_number;      /* First operand */
+    Dwarf_Unsigned  lr_number;  /* First operand */
 
     /*  Second operand.
         For OP_bregx, OP_bit_piece, OP_[GNU_]const_type,
@@ -160,10 +159,10 @@ struct Dwarf_Loc_Expr_Op_s {
         store the value here instead*/
     Dwarf_Unsigned  lr_number3;
 
-    /*  The number assigned. 0 to the number-of-ops - 1 in
+    /*  The number assigned. 0 to the number-of-ops-1 in
         the expression we are expanding. */
     Dwarf_Unsigned  lr_opnumber;
-    Dwarf_Unsigned  lr_offset; /* offset  for OP_BRA etc */
+    Dwarf_Unsigned  lr_offset;     /* offset  for OP_BRA etc */
     Dwarf_Loc_Expr_Op     lr_next; /* When a list is useful.*/
 };
 
