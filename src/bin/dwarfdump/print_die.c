@@ -475,7 +475,7 @@ check_die_expr_op_basic_data(Dwarf_Debug dbg,Dwarf_Die die,
     offset in the stack.  Or 0 if we have none known.
 */
 static Dwarf_Off
-get_die_stack_sibling()
+get_die_stack_sibling(void)
 {
     int i = die_stack_indent_level;
     for ( ; i >=0 ; --i)
@@ -585,7 +585,7 @@ append_local_prefix(struct esb_s *esbp)
     esb_append(esbp,"\n      ");
 }
 static int
-print_as_info_or_by_cuname()
+print_as_info_or_by_cuname(void)
 {
     return (glflags.gf_info_flag || glflags.gf_types_flag
         || glflags.gf_cu_name_flag);
