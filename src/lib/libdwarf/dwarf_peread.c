@@ -170,7 +170,8 @@ pe_section_name_get(dwarf_pe_object_access_internals_t *pep,
         char temp_array[9];
         int res = 0;
 
-        /*  The value is an integer after the /, and we want the value */
+        /*  The value is an integer after the /,
+            and we want the value */
         _dwarf_safe_strcpy(temp_array,sizeof(temp_array),
             name_array+1,size_name-1);
         v = atoi(temp_array);

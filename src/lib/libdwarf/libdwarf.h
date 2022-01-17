@@ -4199,7 +4199,7 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
     loclist head record.
     @param dw_locentry_count
     On success returns the count of records.
-    For an expression it will be one. 
+    For an expression it will be one.
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -4260,7 +4260,7 @@ DW_API int dwarf_get_loclist_head_kind(
     On success returns FALSE if the data required to calculate
     dw_lowpc_cooked or dw_hipc_cooked was present
     or TRUE if some required
-    data was missing (for example in split dwarf). 
+    data was missing (for example in split dwarf).
     @param dw_lowpc_cooked
     On success and if dw_debug_addr_unavailable FALSE
     returns the true low address.
@@ -4302,31 +4302,31 @@ DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c dw_loclist_head,
     Dwarf_Unsigned *  dw_locdesc_offset_out,
     Dwarf_Error    *  dw_error);
 
-/*! @brief Get the raw values from a single location operation 
+/*! @brief Get the raw values from a single location operation
 
     Some of the following (DW_raw?) appear completly
     pointless - a mistake.
 
-    @param dw_locdesc   
+    @param dw_locdesc
     Pass in a valid Dwarf_Locdesc_c.
-    @param dw_index   
-    Pass in the operator index. zero through 
+    @param dw_index
+    Pass in the operator index. zero through
     dw_locexpr_op_count_out-1.
-    @param dw_operator_out   
+    @param dw_operator_out
     On success returns the DW_OP operator, such as DW_OP_plus .
     @param dw_operand1
     On success returns the value of the operand or zero.
-    @param dw_operand2  
+    @param dw_operand2
     On success returns the value of the operand or zero.
-    @param dw_operand3  
+    @param dw_operand3
     On success returns the value of the operand or zero.
-    @param dw_rawop1 
+    @param dw_rawop1
     Identical to dw_operand1
-    @param dw_rawop2 
+    @param dw_rawop2
     Identical to dw_operand2
-    @param dw_rawop3 
+    @param dw_rawop3
     Identical to dw_operand3
-    @param dw_offset_for_branch 
+    @param dw_offset_for_branch
     On success returns
     The byte offset of the operator within the
     entire expression.  Useful for checking the correctness
@@ -4476,11 +4476,11 @@ DW_API int dwarf_get_loclist_offset_index_value(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_global_offset_value_out,
     Dwarf_Error    * dw_error);
 
-/*! @brief  Return basic data about a loclists head 
+/*! @brief  Return basic data about a loclists head
 
     Used by dwarfdump to print basic data from the
     data generated to look at a specific loclist
-    context as returned by  
+    context as returned by
     dwarf_loclists_index_get_lle_head()
     or
     dwarf_loclists_offset_get_lle_head.
@@ -4512,9 +4512,9 @@ DW_API int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c dw_head,
     Dwarf_Unsigned * dw_offset_this_lle_area,
     Dwarf_Error    * dw_error);
 
-/*! @brief  Return basic data about a loclists context 
+/*! @brief  Return basic data about a loclists context
 
-    Some of the same values as from 
+    Some of the same values as from
     dwarf_get_loclist_head_basics
     but here without any dependence on data
     drived from a CU context.
@@ -5334,7 +5334,7 @@ DW_API void dwarf_dealloc(Dwarf_Debug dw_dbg,
     DWARF5, so normal libdwarf calls should work.
     We have no existing examples on hand, so
     it is hard to know what really works.
-    
+
     If there is no such section it returns
     DW_DLV_NO_ENTRY.
 */
@@ -5388,7 +5388,7 @@ DW_API int dwarf_dnames_header(Dwarf_Debug dw_dbg,
     Dwarf_Off         * dw_offset_of_next_table,
     Dwarf_Error *       dw_error);
 
-/*! @brief  Frees all the malloc data associated with dw_dn 
+/*! @brief  Frees all the malloc data associated with dw_dn
     @param dw_dn
     A Dwarf_Dnames_Head pointer.
     Callers should zero the pointer passed in
@@ -5400,7 +5400,7 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
 /*! @brief Sizes and counts from the debug names table
 
     We do not describe these returned values.
-    
+
     See DWARF5 section 6.1.1 "Lookup By Name"
     particularly the graph page 139.
     dw_comp_unit_count is K(k),
@@ -5408,7 +5408,7 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
     dw_foreign_type_unit_count is F(f).
 */
 DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head dw_dn,
-    Dwarf_Unsigned * dw_comp_unit_count, 
+    Dwarf_Unsigned * dw_comp_unit_count,
     Dwarf_Unsigned * dw_local_type_unit_count,
     Dwarf_Unsigned * dw_foreign_type_unit_count,
     Dwarf_Unsigned * dw_bucket_count,
@@ -5449,7 +5449,7 @@ DW_API int dwarf_dnames_cu_table(Dwarf_Dnames_Head dw_dn,
     Dwarf_Sig8        * dw_sig,
     Dwarf_Error       * dw_error);
 
-/*! @brief access to bucket contents. 
+/*! @brief access to bucket contents.
     @param dw_dn
     The Dwarf_Dnames_Head of interest.
     @param dw_bucket_number
@@ -5459,7 +5459,7 @@ DW_API int dwarf_dnames_cu_table(Dwarf_Dnames_Head dw_dn,
     On success returns the index of
     the appropriate name entry.
     @param dw_indexcount
-    On success returns the number of 
+    On success returns the number of
     name entries in the bucket.
     @param dw_error
     On error dw_error is set to point to the error details.
@@ -5474,7 +5474,7 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned    * dw_indexcount,
     Dwarf_Error *       dw_error);
 
-/*! @brief retrieve a name table entry   
+/*! @brief retrieve a name table entry
     @param dw_dn
     The table of interest.
     @param dw_name_index
