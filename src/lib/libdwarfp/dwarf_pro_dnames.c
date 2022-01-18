@@ -38,9 +38,6 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit(), C89 malloc */
 #endif /* HAVE_STDLIB_H */
-#ifdef HAVE_ELFACCESS_H
-#include <elfaccess.h>
-#endif /* HAVE_ELFACCESS_H */
 #include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"

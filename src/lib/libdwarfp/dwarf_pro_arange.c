@@ -35,9 +35,6 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#ifdef HAVE_ELFACCESS_H
-#include <elfaccess.h>
-#endif
 #include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"

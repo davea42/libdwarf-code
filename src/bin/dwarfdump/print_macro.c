@@ -107,7 +107,7 @@ macdef_tree_destroy_inner( void *tree)
     dwarf_tdestroy(tree,macdef_free_func);
 }
 static void
-destroy_macdef_tree()
+destroy_macdef_tree(void)
 {
     macdef_tree_destroy_inner(macdefundeftree);
     macdefundeftree = 0;
