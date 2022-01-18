@@ -518,8 +518,9 @@ typedef struct Dwarf_Debug_s*      Dwarf_Debug;
 typedef struct Dwarf_Die_s*        Dwarf_Die;
 typedef struct Dwarf_Line_s*       Dwarf_Line;
 typedef struct Dwarf_Global_s*     Dwarf_Global;
-typedef struct Dwarf_Func_s*       Dwarf_Func;
 typedef struct Dwarf_Type_s*       Dwarf_Type;
+/* The next three are SGI extensions not used elsewhere. */
+typedef struct Dwarf_Func_s*       Dwarf_Func;
 typedef struct Dwarf_Var_s*        Dwarf_Var;
 typedef struct Dwarf_Weak_s*       Dwarf_Weak;
 typedef struct Dwarf_Error_s*      Dwarf_Error;
@@ -4553,114 +4554,347 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
 /*! @} */
 
 /*! @defgroup macro CU Data-Macro .debug_macro DWARF5 data access
+
+    @link examplep5 An example reading .debug_macro @endlink
     @{
 */
 
-/*  BEGIN: DWARF5 .debug_macro  interfaces
-    NEW November 2015.  */
-DW_API int dwarf_get_macro_context(Dwarf_Die /*die*/,
-    Dwarf_Unsigned      * /*version_out*/,
-    Dwarf_Macro_Context * /*macro_context*/,
-    Dwarf_Unsigned      * /*macro_unit_offset_out*/,
-    Dwarf_Unsigned      * /*macro_ops_count_out*/,
-    Dwarf_Unsigned      * /*macro_ops_data_length_out*/,
-    Dwarf_Error         * /*error*/);
+/*! @brief DWARF5 .debug_macro access via Dwarf_Die
 
-/*  Just like dwarf_get_macro_context, but instead of using
-    DW_AT_macros or DW_AT_GNU_macros to get the offset we just
-    take the offset given. */
-DW_API int dwarf_get_macro_context_by_offset(Dwarf_Die /*die*/,
-    Dwarf_Unsigned        /*offset*/,
-    Dwarf_Unsigned      * /*version_out*/,
-    Dwarf_Macro_Context * /*macro_context*/,
-    Dwarf_Unsigned      * /*macro_ops_count_out*/,
-    Dwarf_Unsigned      * /*macro_ops_data_length*/,
-    Dwarf_Error         * /*error*/);
+    @param dw_die
+    The CU DIE of interest.
+    @param dw_version_out
+    On success returns the macro context version (5)
+    @param dw_macro_context
+    On success returns a pointer to a macro context
+    which allows access to the context content.
+    @param dw_macro_unit_offset_out
+    On success returns the offset of the macro context.
+    @param dw_macro_ops_count_out
+    On success returns the number of macro operations
+    in the context.
+    @param dw_macro_ops_data_length_out
+    On success returns the length in bytes of the
+    operations in the context.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If no .debug_macro section exists for the
+    CU it returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_macro_context(Dwarf_Die dw_die,
+    Dwarf_Unsigned      * dw_version_out,
+    Dwarf_Macro_Context * dw_macro_context,
+    Dwarf_Unsigned      * dw_macro_unit_offset_out,
+    Dwarf_Unsigned      * dw_macro_ops_count_out,
+    Dwarf_Unsigned      * dw_macro_ops_data_length_out,
+    Dwarf_Error         * dw_error);
+
+/*! @brief DWARF5 .debug_macro access via Dwarf_Die and an offset
+
+    @param dw_die
+    The CU DIE of interest.
+    @param dw_offset
+    The offset in the section to begin reading.
+    @param dw_version_out
+    On success returns the macro context version (5)
+    @param dw_macro_context
+    On success returns a pointer to a macro context
+    which allows access to the context content.
+    @param dw_macro_ops_count_out
+    On success returns the number of macro operations
+    in the context.
+    @param dw_macro_ops_data_length
+    On success returns the length in bytes of the
+    macro context, starting at the offset of the first
+    byte of the context.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If no .debug_macro section exists for the
+    CU it returns DW_DLV_NO_ENTRY.
+    If the dw_offset is outside the section it
+    returns DW_DLV_ERROR.
+*/
+DW_API int dwarf_get_macro_context_by_offset(Dwarf_Die dw_die,
+    Dwarf_Unsigned        dw_offset,
+    Dwarf_Unsigned      * dw_version_out,
+    Dwarf_Macro_Context * dw_macro_context,
+    Dwarf_Unsigned      * dw_macro_ops_count_out,
+    Dwarf_Unsigned      * dw_macro_ops_data_length,
+    Dwarf_Error         * dw_error);
 
 /*  New December 2020. Sometimes its necessary to know
     a context total length including macro 5 header */
-DW_API int dwarf_macro_context_total_length(Dwarf_Macro_Context
-    /* head*/,
-    Dwarf_Unsigned * /*mac_total_len*/,
-    Dwarf_Error    * /*error*/);
+/*! @brief Return a macro context total length
 
-DW_API void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);
-DW_API int dwarf_get_macro_section_name(Dwarf_Debug /*dbg*/,
-    const char ** /*sec_name_out*/,
-    Dwarf_Error * /*err*/);
-
-DW_API int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
-    Dwarf_Half     * /*version*/,
-    Dwarf_Unsigned * /*mac_offset*/,
-    Dwarf_Unsigned * /*mac_len*/,
-    Dwarf_Unsigned * /*mac_header_len*/,
-    unsigned int   * /*flags*/,
-    Dwarf_Bool     * /*has_line_offset*/,
-    Dwarf_Unsigned * /*line_offset*/,
-    Dwarf_Bool     * /*has_offset_size_64*/,
-    Dwarf_Bool     * /*has_operands_table*/,
-    Dwarf_Half     * /*opcode_count*/,
-    Dwarf_Error    * /*error*/);
-
-/*  Returns data from the operands table
-    in the macro unit header. The last op has
-    0 as opcode_number,operand_count and operand_array */
-DW_API int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
-    Dwarf_Half    /*index*/, /* 0 to opcode_count -1 */
-    Dwarf_Half  * /*opcode_number*/,
-    Dwarf_Half  * /*operand_count*/,
-    const Dwarf_Small ** /*operand_array*/,
-    Dwarf_Error * /*error*/);
-
-/*  Access to the macro operations, 0 to macro_ops_count_out-1
-    Where the last of these will have macro_operator 0 (which appears
-    in the ops data and means end-of-ops).
-    op_start_section_offset is the section offset of
-    the macro operator (which is a single unsigned byte,
-    and is followed by the macro operand data). */
-DW_API int dwarf_get_macro_op(Dwarf_Macro_Context /*macro_context*/,
-    Dwarf_Unsigned   /*op_number*/,
-    Dwarf_Unsigned * /*op_start_section_offset*/,
-    Dwarf_Half     * /*macro_operator*/,
-    Dwarf_Half     * /*forms_count*/,
-    const Dwarf_Small **  /*formcode_array*/,
-    Dwarf_Error    * /*error*/);
-
-DW_API int dwarf_get_macro_defundef(Dwarf_Macro_Context
-    /*macro_context*/,
-    Dwarf_Unsigned   /*op_number*/,
-    Dwarf_Unsigned * /*line_number*/,
-    Dwarf_Unsigned * /*index*/,
-    Dwarf_Unsigned * /*offset*/,
-    Dwarf_Half     * /*forms_count*/,
-    const char    ** /*macro_string*/,
-    Dwarf_Error    * /*error*/);
-DW_API int dwarf_get_macro_startend_file(Dwarf_Macro_Context
-    /*context*/,
-    Dwarf_Unsigned   /*op_number*/,
-    Dwarf_Unsigned * /*line_number*/,
-    Dwarf_Unsigned * /*name_index_to_line_tab*/,
-    const char    ** /*src_file_name*/,
-    Dwarf_Error    * /*error*/);
-DW_API int dwarf_get_macro_import(Dwarf_Macro_Context
-    /*macro_context*/,
-    Dwarf_Unsigned   /*op_number*/,
-    Dwarf_Unsigned * /*target_offset*/,
-    Dwarf_Error    * /*error*/);
-
-/*! @} */
-/*! @defgroup macinfo CU Data-Macinfo DWARF2-4 data access
-    @{
+    @param dw_context
+    A pointer to the macro context of interest.
+    @param dw_mac_total_len
+    On success returns the length in bytes of
+    the macro context.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
 */
+DW_API int dwarf_macro_context_total_length(
+    Dwarf_Macro_Context dw_context,
+    Dwarf_Unsigned * dw_mac_total_len,
+    Dwarf_Error    * dw_error);
 
-DW_API char* dwarf_find_macro_value_start(char * /*macro_string*/);
+/*! @brief Dealloc a macro context
 
-DW_API int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
-    Dwarf_Off              /*macro_offset*/,
-    Dwarf_Unsigned         /*maximum_count*/,
-    Dwarf_Signed         * /*entry_count*/,
-    Dwarf_Macro_Details ** /*details*/,
-    Dwarf_Error *          /*err*/);
+    @param dw_mc
+    A pointer to the macro context of interest.
+    On return the caller should zero the pointer
+    as the pointer is then stale.
+*/
+DW_API void dwarf_dealloc_macro_context(Dwarf_Macro_Context dw_mc);
+
+/*! @brief Access the internal details of a Dwarf_Macro_Context
+
+    Not described in detail here. See DWARF5 Standard
+    Section 6.3.1 Macro Information Header page 166.
+*/
+DW_API int dwarf_macro_context_head(Dwarf_Macro_Context dw_mc,
+    Dwarf_Half     * dw_version,
+    Dwarf_Unsigned * dw_mac_offset,
+    Dwarf_Unsigned * dw_mac_len,
+    Dwarf_Unsigned * dw_mac_header_len,
+    unsigned int   * dw_flags,
+    Dwarf_Bool     * dw_has_line_offset,
+    Dwarf_Unsigned * dw_line_offset,
+    Dwarf_Bool     * dw_has_offset_size_64,
+    Dwarf_Bool     * dw_has_operands_table,
+    Dwarf_Half     * dw_opcode_count,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Access to the details of the opcode operands table
+
+    Not of much interest to most libdwarf users.
+
+    @param dw_mc
+    The macro context of interest.
+    @param dw_index
+    The opcode operands table index. 0 through dw_opcode_count-1.
+    @param dw_opcode_number
+    On success returns the opcode number in the table.
+    @param dw_operand_count
+    On success returns the number of forms
+    for that dw_index.
+    @param dw_operand_array
+    On success returns the array of op operand
+    forms
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+
+*/
+DW_API int dwarf_macro_operands_table(Dwarf_Macro_Context dw_mc,
+    Dwarf_Half           dw_index, /* 0 to opcode_count -1 */
+    Dwarf_Half         * dw_opcode_number,
+    Dwarf_Half         * dw_operand_count,
+    const Dwarf_Small ** dw_operand_array,
+    Dwarf_Error        * dw_error);
+
+/*! @brief Access macro operation details of a single operation
+
+    Useful for printing basic data about the operation.
+
+    @param dw_macro_context
+    The macro context of interest.
+    @param dw_op_number
+    valid values are 0 through dw_macro_ops_count_out-1.
+    @param dw_op_start_section_offset
+    On success returns the section offset of this
+    operator.
+    @param dw_macro_operator
+    On success returns the the macro operator itself,
+    for example DW_MACRO_define.
+    @param dw_forms_count
+    On success returns the numer of forms in the formcode array.
+    @param dw_formcode_array
+    On success returns a pointer to the formcode array
+    of operand forms.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_macro_op(Dwarf_Macro_Context dw_macro_context,
+    Dwarf_Unsigned       dw_op_number,
+    Dwarf_Unsigned     * dw_op_start_section_offset,
+    Dwarf_Half         * dw_macro_operator,
+    Dwarf_Half         * dw_forms_count,
+    const Dwarf_Small ** dw_formcode_array,
+    Dwarf_Error        * dw_error);
+
+/*! @brief Get Macro defundef
+
+    To extract the value portion of a macro define:
+    @see dwarf_find_macro_value_start
+
+    @param dw_macro_context
+    The macro context of interest.
+    @param dw_op_number
+    valid values are 0 through dw_macro_ops_count_out-1.
+    The op number must be for a def/undef.
+    @param dw_line_number
+    The line number in the user source for this define/undef
+    @param dw_index
+    On success if the macro is an strx form
+    the value returned
+    is the string index in the record,
+    otherwise zero is returned.
+    @param dw_offset
+    On success if the macro is an strp or sup form the value
+    returned is the string offset in the appropriate section,
+    otherwise zero is returned.
+    @param dw_forms_count
+    On success the value 2 is returned.
+    @param dw_macro_string
+    On success a pointer to a null-terminated
+    string is returned.
+    Do not dealloc or free this string.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    It is an error if operator dw_op_number is not a
+    DW_MACRO_define, DW_MACRO_undef, DW_MACRO_define_strp
+    DW_MACRO_undef_strp, DW_MACRO_undef_sup,
+    DW_MACRO_undef_sup,
+    DW_MACRO_define_strx, or DW_MACRO_undef_strx,
+*/
+DW_API int dwarf_get_macro_defundef(
+    Dwarf_Macro_Context dw_macro_context,
+    Dwarf_Unsigned   dw_op_number,
+    Dwarf_Unsigned * dw_line_number,
+    Dwarf_Unsigned * dw_index,
+    Dwarf_Unsigned * dw_offset,
+    Dwarf_Half     * dw_forms_count,
+    const char    ** dw_macro_string,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Get Macro start end
+
+    @param dw_macro_context
+    The macro context of interest.
+    @param dw_op_number
+    Valid values are 0 through dw_macro_ops_count_out-1.
+    The op number must be for a start/end.
+    @param dw_line_number
+    If end_file nothing is returned here.
+    If start_file on success returns the line number
+    of the source line of the include direcive.
+    @param dw_name_index_to_line_tab
+    If end_file nothing is returned here.
+    If start_file on success returns the file name
+    index in the line table file names table.
+    @param dw_src_file_name
+    If end_file nothing is returned here.
+    If start_file on success returns a pointer to
+    the null-terminated source file name.
+    Do not free or dealloc this string.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    It is an error if the operator is not
+    DW_MACRO_start_file or DW_MACRO_end_file.
+*/
+DW_API int dwarf_get_macro_startend_file(
+    Dwarf_Macro_Context dw_macro_context,
+    Dwarf_Unsigned   dw_op_number,
+    Dwarf_Unsigned * dw_line_number,
+    Dwarf_Unsigned * dw_name_index_to_line_tab,
+    const char    ** dw_src_file_name,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Get Macro import
+
+    @param dw_macro_context
+    The macro context of interest.
+    @param dw_op_number
+    Valid values are 0 through dw_macro_ops_count_out-1.
+    @param dw_target_offset
+    Returns the offset in the imported section.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    It is an error if the operator is not
+    DW_MACRO_import or DW_MACRO_import_sup.
+*/
+DW_API int dwarf_get_macro_import(
+    Dwarf_Macro_Context dw_macro_context,
+    Dwarf_Unsigned   dw_op_number,
+    Dwarf_Unsigned * dw_target_offset,
+    Dwarf_Error    * dw_error);
+/*! @} */
+
+/*! @defgroup macinfo CU Data-Macinfo DWARF2-4 data access
+
+    Reading the .debug_macinfo section.
+
+    The section is rarely used since it takes a lot
+    of disk space. DWARF5 has much more compact
+    macro data (in  section .debug_macro).
+
+    For an example see
+    @link examplep2 An example reading .debug_macinfo @endlink
+
+    @{
+
+*/
+/*! @brief returns a pointer to the value part of a macro
+
+    This function Works for all versions, DWARF2-DWARF5
+
+    @param dw_macro_string
+    The macro string passed in should be properly formatted
+    with a name, a space, and then the value portion (whether
+    a function-like macro or not function-like).
+    @returns
+    On success it returns a pointer to the value portion
+    of the macro.  On failure it returns a pointer
+    to a NUL byte (so a zero-length string).
+*/
+DW_API char* dwarf_find_macro_value_start(char * dw_macro_string);
+
+/*! @brief Getting .debug_macinfo macro details.
+
+    @link examplep2 An example calling this function @endlink
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_macro_offset
+    The offset in the section you wish to start from.
+    @param dw_maximum_count
+    Pass in a count to ensure we will not allocate
+    an excessive amount (guarding against a
+
+    @param dw_entry_count
+    On success returns a count of the macro operations
+    in a CU macro set.
+    @param dw_details
+    On success returns a pointer to an array of
+    struct DW_Macro_Details_s .
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
+    Dwarf_Off              dw_macro_offset,
+    Dwarf_Unsigned         dw_maximum_count,
+    Dwarf_Signed         * dw_entry_count,
+    Dwarf_Macro_Details ** dw_details,
+    Dwarf_Error *          dw_error);
 
 /*! @} */
 
@@ -6263,6 +6497,10 @@ DW_API int dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
 DW_API int dwarf_get_die_section_name_b(Dwarf_Die /*die*/,
     const char ** /*sec_name*/,
     Dwarf_Error * /*error*/);
+
+DW_API int dwarf_get_macro_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*sec_name_out*/,
+    Dwarf_Error * /*err*/);
 
 DW_API int dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
     const char * /*std_section_name*/,
