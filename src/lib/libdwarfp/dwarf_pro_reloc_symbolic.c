@@ -36,7 +36,6 @@
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif /* HAVE_STDDEF_H */
-/*#include <elfaccess.h> */
 #include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"

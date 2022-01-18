@@ -32,13 +32,9 @@
 #ifdef DWARF_WITH_LIBELF
 #include "libdwarf_private.h"
 #include <stdio.h>
-#ifdef HAVE_ELFACCESS_H
-#include <elfaccess.h>
-#else
 /* Set r_info  as defined by ELF generic ABI */
 #define Set_REL32_info(r,s,t) ((r).r_info = ELF32_R_INFO(s,t))
 #define Set_REL64_info(r,s,t) ((r).r_info = ELF64_R_INFO(s,t))
-#endif
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */

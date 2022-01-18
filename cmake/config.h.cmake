@@ -33,9 +33,6 @@
 /* Set to 1 if the elf64_getshdr function is in libelf. */
 #cmakedefine HAVE_ELF64_GETSHDR 1
 
-/* Define to 1 if you have the <elfaccess.h> header file. */
-#cmakedefine HAVE_ELFACCESS_H 1
-
 /* Define to 1 if you have the <elf.h> header file. */
 #cmakedefine HAVE_ELF_H 1
 
