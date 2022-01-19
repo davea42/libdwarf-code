@@ -13,10 +13,6 @@ cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
 -Wno-long-long -Wshadow -Wbad-function-cast \
 -Wmissing-parameter-type -Wnested-externs \
 -I../src/lib/libdwarf checkexamples.c
-
-A useful shell command to make a nearly-complete
-example list is:
-grep '^void exampl' checkexamples.c | cut -b 1-50 |sort
 */
 
 #include <stdio.h> /* for printf */
@@ -24,7 +20,9 @@ grep '^void exampl' checkexamples.c | cut -b 1-50 |sort
 #include <string.h> /* for memcmp() */
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "libdwarf_private.h"
+
+#define TRUE  1
+#define FALSE 0
 
 /*! @defgroup exampleinit Example of dwarf_init_path
     @brief exampleinit
