@@ -303,7 +303,7 @@ release_range_array_info()
 
 /*  Clear out values from previous CU */
 static void
-reset_range_array_info()
+reset_range_array_info(void)
 {
     if (range_array) {
         memset((void *)range_array,0,
