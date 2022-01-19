@@ -1763,9 +1763,9 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Half version,
     struct dwconf_s *config_data)
 {
-    Dwarf_Error error;
-    Dwarf_Half lastop;
-    Dwarf_Unsigned i = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Half lastop = 0;
+    Dwarf_Unsigned i  = 0;
 
     if (instr_array_len == 0) {
         return;
