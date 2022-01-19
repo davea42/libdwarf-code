@@ -34,6 +34,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* free() malloc() */
+#include <string.h> /* memcpy() memset() strcmp() strdup() strlen() */
 
 #if defined _WIN32
 #ifdef HAVE_STDAFX_H

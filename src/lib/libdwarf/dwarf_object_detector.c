@@ -29,36 +29,28 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h> /* open() */
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h> /* O_RDONLY */
-#ifdef _WIN32
-#include <windows.h>
-#include <io.h> /* lseek(), read(), close() */
-typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* lseek(), read(), close() */
-#endif /* _WIN32 */
-#ifdef HAVE_STRING_H
-#include <string.h> /* memcpy, strcpy */
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h> /* for free() */
-#endif /*HAVE_STDLIB_H */
+#include <config.h>
 
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include <stdlib.h> /* free() */
+#include <stdio.h>  /* SEEK_END SEEK_SET */
+#include <string.h> /* memset() strlen() */
+
+#ifdef _WIN32
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#include "libdwarf_private.h"
+#include <io.h> /* lseek() off_t ssize_t */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* lseek() off_t */
+#endif /* _WIN32 */
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> /* open() O_RDONLY */
+#endif /* HAVE_FCNTL_H */
+
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_memcpy_swap.h"

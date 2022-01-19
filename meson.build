@@ -82,6 +82,7 @@ config_dir = [include_directories('.')]
 # configuration
 
 header_checks = [
+  'fcntl.h',
   'inttypes.h',
   'malloc.h',
   'stdint.h',

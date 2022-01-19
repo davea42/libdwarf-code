@@ -28,7 +28,6 @@
 #include <config.h>
 
 #include <stddef.h> /* size_t */
-/* on Windows, SEEK_END and SEEK_SET are defined in stdio.h */
 #include <stdio.h>  /* SEEK_END SEEK_SET */
 #include <stdlib.h> /* free() malloc() */
 #include <string.h> /* memcpy() */
@@ -39,7 +38,7 @@
 #endif /* HAVE_STDAFX_H */
 #include <io.h> /* lseek() off_t ssize_t */
 #elif defined HAVE_UNISTD_H
-#include <unistd.h>
+#include <unistd.h> /* lseek() off_t */
 #endif /* _WIN32 */
 
 #include "dwarf.h"

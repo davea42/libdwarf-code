@@ -29,9 +29,10 @@
 
 #include <config.h>
 
-#include <stdio.h>   /* printf() */
-#include <stdlib.h>  /* calloc() free() */
-#include <string.h>  /* memcpy() memset() */
+#include <stddef.h> /* uintptr_t */
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* calloc() free() */
+#include <string.h> /* memcpy() memset() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"

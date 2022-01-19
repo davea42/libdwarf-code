@@ -63,6 +63,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* free() malloc() */
+#include <string.h> /* memset() strdup() strncmp() */
 
 #ifdef _WIN32
 #ifdef HAVE_STDAFX_H

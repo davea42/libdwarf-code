@@ -34,26 +34,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _CRT_SECURE_NO_WARNINGS
 #endif /* _WIN32 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STRING_H
-#include <string.h> /* memcpy */
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef _WIN32
-#include <windows.h>
-#include <io.h> /* lseek(), read(), close() */
-typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* lseek(), read(), close() */
-#endif /* _WIN32 */
+#include <config.h>
 
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include <stddef.h> /* size_t */
+#include <stdio.h>  /* SEEK_END SEEK_SET */
+
+#ifdef _WIN32
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#include <io.h> /* off_t */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* off_t */
+#endif /* _WIN32*/
 
 #include "dwarf.h"
 #include "libdwarf.h"
