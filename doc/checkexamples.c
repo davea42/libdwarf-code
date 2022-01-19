@@ -1430,22 +1430,29 @@ int examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off,
 }
 /*! @endcode */
 
-void exampleq(Dwarf_Debug dbg)
+/*! @defgroup exampleq Example of opening fde, cie lists.
+    @brief exampleq Opening FDE and CIE lists
+
+    @code */
+int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Cie *cie_data = 0;
     Dwarf_Signed cie_count = 0;
     Dwarf_Fde *fde_data = 0;
     Dwarf_Signed fde_count = 0;
-    Dwarf_Error error = 0;
     int fres = 0;
 
     fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
-        &fde_data,&fde_count,&error);
-    if (fres == DW_DLV_OK) {
-        dwarf_dealloc_fde_cie_list(dbg, cie_data, cie_count,
-            fde_data,fde_count);
+        &fde_data,&fde_count,error);
+    if (fres != DW_DLV_OK) {
+        return fres;
     }
+    /*  Do something with the lists*/
+    dwarf_dealloc_fde_cie_list(dbg, cie_data, cie_count,
+            fde_data,fde_count);
+    return fres;
 }
+/*! @endcode */
 
 /* OBSOLETE EXAMPLE */
 void exampleqb(Dwarf_Debug dbg)

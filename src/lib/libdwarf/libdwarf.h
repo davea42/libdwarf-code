@@ -4901,49 +4901,139 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
 /*! @defgroup frame Frame .debug_frame and .eh_frame Access
     @{
 */
-/*  Consumer op on  gnu .eh_frame info */
-DW_API int dwarf_get_fde_list_eh(Dwarf_Debug      /*dbg*/,
-    Dwarf_Cie**      /*cie_data*/,
-    Dwarf_Signed*    /*cie_element_count*/,
-    Dwarf_Fde**      /*fde_data*/,
-    Dwarf_Signed*    /*fde_element_count*/,
-    Dwarf_Error*     /*error*/);
 
-/*  consumer operations on frame info: .debug_frame */
-DW_API int dwarf_get_fde_list(Dwarf_Debug /*dbg*/,
-    Dwarf_Cie**      /*cie_data*/,
-    Dwarf_Signed*    /*cie_element_count*/,
-    Dwarf_Fde**      /*fde_data*/,
-    Dwarf_Signed*    /*fde_element_count*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Get lists of .debug_frame FDEs and CIEs
 
-/*  Release storage gotten by dwarf_get_fde_list_eh() or
-    dwarf_get_fde_list() */
-DW_API void dwarf_dealloc_fde_cie_list(Dwarf_Debug /*dbg*/,
-    Dwarf_Cie *  /*cie_data*/,
-    Dwarf_Signed /*cie_element_count*/,
-    Dwarf_Fde *  /*fde_data*/,
-    Dwarf_Signed /*fde_element_count*/);
+    For an example see
+    @link exampleq Example getting FDE CIE lists @endlink
+    
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_cie_data
+    On success
+    returns a pointer to an array of pointers to CIE data.
+    @param dw_cie_element_count
+    On success returns a count of the number of elements
+    in the dw_cie_data array.
+    @param dw_fde_data
+    On success
+    returns a pointer to an array of pointers to FDE data.
+    @param dw_fde_element_count
+    On success returns a count of the number of elements
+    in the dw_fde_data array.
+    On success
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_fde_list(Dwarf_Debug dw_dbg,
+    Dwarf_Cie**      dw_cie_data,
+    Dwarf_Signed*    dw_cie_element_count,
+    Dwarf_Fde**      dw_fde_data,
+    Dwarf_Signed*    dw_fde_element_count,
+    Dwarf_Error*     dw_error);
+/*! @brief Get lists of .eh_frame FDEs and CIEs
 
-DW_API int dwarf_get_fde_range(Dwarf_Fde /*fde*/,
-    Dwarf_Addr*      /*low_pc*/,
-    Dwarf_Unsigned*  /*func_length*/,
-    Dwarf_Small    **/*fde_bytes*/,
-    Dwarf_Unsigned*  /*fde_byte_length*/,
-    Dwarf_Off*       /*cie_offset*/,
-    Dwarf_Signed*    /*cie_index*/,
-    Dwarf_Off*       /*fde_offset*/,
-    Dwarf_Error*     /*error*/);
+    The arguments are identical to the previous
+    function, the difference is the section read.
+    The GNU-defined .eh_frame section is very similar to
+    .debug_frame but has unique features that
+    matter when following a stack trace.
+    @see dwarf_get_fde_list
+*/
+DW_API int dwarf_get_fde_list_eh(Dwarf_Debug dw_dbg,
+    Dwarf_Cie**      dw_cie_data,
+    Dwarf_Signed*    dw_cie_element_count,
+    Dwarf_Fde**      dw_fde_data,
+    Dwarf_Signed*    dw_fde_element_count,
+    Dwarf_Error*     dw_error);
 
-/*  Useful for IRIX only:  see dwarf_get_cie_augmentation_data()
-    dwarf_get_fde_augmentation_data() for GNU .eh_frame. */
-DW_API int dwarf_get_fde_exception_info(Dwarf_Fde /*fde*/,
-    Dwarf_Signed*    /* offset_into_exception_tables */,
-    Dwarf_Error*     /*error*/);
+/*! @brief Release storage associated with FDE and CIE arrays
 
-DW_API int dwarf_get_cie_of_fde(Dwarf_Fde /*fde*/,
-    Dwarf_Cie *      /*cie_returned*/,
-    Dwarf_Error*     /*error*/);
+    Applies to .eh_frame and .debug_frame
+    lists.
+
+    @param dw_dbg
+    The Dwarf_Debug used in the list setup.
+    @param dw_cie_data
+    As returned from the list setup call.
+    @param dw_cie_element_count
+    @param dw_fde_data
+    As returned from the list setup call.
+    @param dw_fde_element_count
+    As returned from the list setup call.
+
+    On return the pointers passed in dw_cie_data
+    and dw_fde_data should be zeroed by the
+    caller as they are then stale pointers.
+*/
+DW_API void dwarf_dealloc_fde_cie_list(Dwarf_Debug dw_dbg,
+    Dwarf_Cie *  dw_cie_data,
+    Dwarf_Signed dw_cie_element_count,
+    Dwarf_Fde *  dw_fde_data,
+    Dwarf_Signed dw_fde_element_count);
+
+/*! @brief Returns the FDE data for a single FDE
+
+    @param dw_fde
+    The FDE of interest.
+    @param dw_low_pc
+    On success
+    returns the low pc value for the function involved.
+    @param dw_func_length
+    On success returns the length of the function
+    code in bytes.
+    @param dw_fde_bytes
+    On success 
+    returns a pointer to the bytes of the FDE.
+    @param dw_fde_byte_length
+    On success returns the length of the 
+    dw_fde_bytes area.
+    @param dw_cie_offset
+    On success returns the section offset of the associated CIE. 
+    @param dw_cie_index
+    On success returns the CIE index of the associated CIE.
+    @param dw_fde_offset
+    On success returns the section offset of this FDE.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_fde_range(Dwarf_Fde dw_fde,
+    Dwarf_Addr*      dw_low_pc,
+    Dwarf_Unsigned*  dw_func_length,
+    Dwarf_Small    **dw_fde_bytes,
+    Dwarf_Unsigned*  dw_fde_byte_length,
+    Dwarf_Off*       dw_cie_offset,
+    Dwarf_Signed*    dw_cie_index,
+    Dwarf_Off*       dw_fde_offset,
+    Dwarf_Error*     dw_error);
+
+/*! @brief IRIX only access to C++ destructor tables
+
+    This applies only to IRIX C++ destructor information
+    which was never documented and is unlikely to be of interest.
+*/
+DW_API int dwarf_get_fde_exception_info(Dwarf_Fde dw_fde,
+    Dwarf_Signed*    dw_offset_into_exception_tables,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Given FDE get CIE
+
+    @param dw_fde
+    The FDE of interest.
+    @param dw_cie_returned
+    On success returns a pointer to the applicable CIE.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_cie_of_fde(Dwarf_Fde dw_fde,
+    Dwarf_Cie *      dw_cie_returned,
+    Dwarf_Error*     dw_error);
 
 DW_API int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
     Dwarf_Unsigned * /*bytes_in_cie*/,
