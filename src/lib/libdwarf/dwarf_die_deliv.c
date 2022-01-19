@@ -28,26 +28,17 @@
 
 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* for uintptr_t */
-#endif
-#ifdef HAVE_STDLIB
-#include <stdlib.h>
-#endif
+#include <config.h>
+
+#include <string.h> /* memcmp() memcpy() memset() strcmp() strlen() */
+
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
-#include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#include "libdwarf_private.h"
+
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"

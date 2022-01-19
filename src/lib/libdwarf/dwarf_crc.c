@@ -26,18 +26,12 @@
 */
 
 #include <config.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif /* HAVE_STDDEF_H */
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif /* HAVE_STDINT_H */
-#include "libdwarf_private.h"
+
+#include <stddef.h> /* size_t */
+
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h" /* For the function prototype */
 

@@ -25,48 +25,26 @@
    Fifth Floor, Boston MA 02110-1301, USA.
 */
 
-#include "config.h"
+#include <config.h>
 
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h> /* for free() */
-#endif /* HAVE_STDLIB_H */
-
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* off_t ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h>
+#include <stddef.h> /* size_t */
+/* on Windows, SEEK_END and SEEK_SET are defined in stdio.h */
+#include <stdio.h>  /* SEEK_END SEEK_SET */
+#include <stdlib.h> /* free() malloc() */
+#include <string.h> /* memcpy() */
 
 #ifdef _WIN32
-#include <windows.h>
-/*  Want to have SEEK_CUR and SEEK_SET defined. */
-#include <io.h>
-typedef SSIZE_T ssize_t; /* Windows does not have POSIX ssize_t */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+#include <io.h> /* lseek() off_t ssize_t */
 #elif defined HAVE_UNISTD_H
 #include <unistd.h>
 #endif /* _WIN32 */
 
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
-#include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#include "libdwarf_private.h"
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
