@@ -120,14 +120,13 @@ foreach t : [ 'uint64_t', 'uintptr_t', 'intptr_t' ]
   endif
 endforeach
 
+have_libelf = false
 if get_option('libelf') == true
-  have_libelf = true
   header_elf_checks = [ 'libelf.h', 'libelf/libelf.h' ]
   foreach header : header_elf_checks
     if cc.has_header(header)
       config_h.set10('HAVE_'+header.underscorify().to_upper(), true)
-    else
-      have_libelf = false
+      have_libelf = true
     endif
   endforeach
   if have_libelf == true
@@ -138,8 +137,6 @@ if get_option('libelf') == true
       elf_lib = cc.find_library('elf', required : false)
     endif
   endif
-else
-  have_libelf = false
 endif
 
 subdir('src/lib/libdwarf')
@@ -175,8 +172,12 @@ configure_file(
 # output
 
 summary({'OS': host_os,
-         'zlib': zlib_dep.found() ? 'yes' : 'no',
+         'BuildOS-BigEndian': host_machine.endian() == 'big' ? 'yes' : 'no',
         }, section: 'Configuration Options Summary:')
+
+summary({'zlib': zlib_dep.found() ? 'yes' : 'no',
+         'libelf': have_libelf ? 'yes' : 'no',
+        }, section: 'libdwarf:')
 
 summary({'prefix': dir_prefix,
          'bindir': dir_bin,

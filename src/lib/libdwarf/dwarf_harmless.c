@@ -54,15 +54,12 @@
 #include <config.h>
 
 #include <stddef.h>  /* size_t */
+#include <stdlib.h>  /* free() malloc() */
 #include <string.h>  /* memcpy() strcpy() strlen() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
 
 #include "dwarf.h"
 #include "libdwarf.h"
