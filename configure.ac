@@ -198,49 +198,6 @@ if test  "$dwarf_with_libelf" = "yes" ; then
           [Set to 1 as we are building dwarfgen with libelf])])
     ])
 
-### end checking for Elf structs
-### Checks for Elf structures
-# test if struct _Elf is used instead of struct Elf
-AC_COMPILE_IFELSE(
-    [AC_LANG_PROGRAM(
-         [[
-#ifdef HAVE_LIBELF_H
-# include <libelf.h>
-#endif
-#ifdef HAVE_LIBELF_LIBELF_H
-# include <libelf/libelf.h>
-#endif
-/* This must be at global scope */
-struct _Elf;
-typedef struct _Elf Elf;
-         ]],
-         [[
-struct _Elf *a = 0;
-         ]])
-    ],
-    [
-     have_struct__elf="yes"
-     struct_elf="struct _Elf"
-    ],
-    [
-     have_struct__elf="no"
-     struct_elf="struct Elf"
-    ])
-
-AC_MSG_CHECKING([whether struct _Elf is used])
-AC_MSG_RESULT([${have_struct__elf}])
-AC_MSG_CHECKING([whether struct _Elf is used])
-AC_MSG_RESULT([${have_struct__elf}])
-else
-  ### end where dwarf_with_libelf == "no" via
-  ### --disable-libelf
-  have_struct__elf="no"
-  struct_elf="struct Elf"
-fi
-AC_SUBST([struct_elf])
-
-
-
 
 ### Checks for compiler characteristics
 
@@ -434,10 +391,8 @@ echo
 echo "  libdwarf.............: always"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    elf64_getshdr......: ${have_getshdr}"
-echo "    Elf spelled........: ${struct_elf}"
 echo "    libelf.............: ${dwarf_with_libelf}"
 echo "  dwarfdump............: always"
-echo "    regex..............: ${have_regex}"
 echo "  dwarfgen.............: ${enable_dwarfgen}"
 echo "  dwarfexample.........: ${enable_dwarfexample}"
 echo
