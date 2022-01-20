@@ -66,10 +66,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h> /* uintptr_t */
 #endif /* HAVE_STDINT_H */
 
+#include "libdwarf.h"
 #include "libdwarf_private.h"
-/*  This must match the types and print options
-    found in libdwarf.h.  */
-#define Dwarf_Unsigned unsigned long long
 #include "dwarf_tsearch.h"
 
 /*  A table of primes used to size  and resize the hash table.
