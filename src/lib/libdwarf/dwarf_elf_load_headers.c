@@ -50,40 +50,25 @@ calls
             or    calls generic_rel_from_rel64(ep,gsh,relp,grel...
 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STRING_H
-#include <string.h> /* For memcpy etc */
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#include <stddef.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>   /* for open() */
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h>   /* for open() */
-#ifdef _WIN32
-#include <io.h> /* lseek(), read(), close() */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* lseek(), read(), close() */
-#endif /* _WIN32 */
+#include <config.h>
+
+#include <stddef.h> /* size_t */
+#include <stdlib.h> /* calloc() free() malloc() */
+#include <string.h> /* memcpy() strcmp() strdup() strlen() strncmp() */
 
 /* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#ifdef _WIN32
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#include <io.h> /* close() off_t */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* close() */
+#endif /* _WIN32 */
 
-#include "libdwarf_private.h"
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_memcpy_swap.h"

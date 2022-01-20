@@ -31,33 +31,23 @@
     grep DW_DLA dwarf_alloc.c | grep 0x
 */
 
-#include "config.h"
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#include <stdio.h>
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
+#include <config.h>
+
+#include <stdio.h>  /* fclose() */
+#include <stdlib.h> /* malloc() free() */
+#include <string.h> /* memset() */
+
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
-#include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#include "libdwarf_private.h"
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
+
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"

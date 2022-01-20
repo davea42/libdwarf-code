@@ -116,9 +116,6 @@ endif()
 check_include_file( "sys/types.h"     HAVE_SYS_TYPES_H) 
 check_include_file( "sys/stat.h"      HAVE_SYS_STAT_H ) 
 check_include_file( "inttypes.h"      HAVE_INTTYPES_H   ) 
-check_include_file( "stddef.h"        HAVE_STDDEF_H   ) 
-check_include_file( "stdlib.h"        HAVE_STDLIB_H   ) 
-check_include_file( "string.h"        HAVE_STRING_H   ) 
 check_include_file( "memory.h"        HAVE_MEMORY_H   ) 
 check_include_file( "strings.h"       HAVE_STRINGS_H  ) 
 check_include_file( "stdint.h"        HAVE_STDINT_H   )
@@ -128,7 +125,6 @@ check_include_file( "stdafx.h"        HAVE_STDAFX_H   )
 check_include_file( "elf.h"           HAVE_ELF_H      ) 
 check_include_file( "libelf.h"        HAVE_LIBELF_H   ) 
 check_include_file( "libelf/libelf.h" HAVE_LIBELF_LIBELF_H) 
-check_include_file( "alloca.h"        HAVE_ALLOCA_H   )
 
 ### cmake provides no way to guarantee uint32_t present.
 ### configure does guarantee that.

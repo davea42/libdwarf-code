@@ -7,19 +7,8 @@
    */
 #cmakedefine CRAY_STACKSEG_END 1
 
-
-/* Define to 1 if using `alloca.c'. */
-#cmakedefine C_ALLOCA 1
-
 /* Set to 1 as we are building with libelf */
 #cmakedefine DWARF_WITH_LIBELF
-
-/* Define to 1 if you have `alloca', as a function or macro. */
-#cmakedefine HAVE_ALLOCA 1
-
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
-#cmakedefine HAVE_ALLOCA_H 1
 
 /* Define 1 if including a custom libelf library */
 #cmakedefine HAVE_CUSTOM_LIBELF 1
@@ -51,32 +40,17 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
 
-/* Set to 1 if regex is usable. */
-#cmakedefine HAVE_REGEX 1
-
 /* Set to 1 if big endian . */
 #cmakedefine WORDS_BIGENDIAN 1
-
-/* Define to 1 if you have the <regex.h> header file. */
-#cmakedefine HAVE_REGEX_H 1
 
 /* Define to 1 if you have the <sgidefs.h> header file. */
 #cmakedefine HAVE_SGIDEFS_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine HAVE_STDDEF_H 1
-
-/* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine HAVE_STDINT_H 1
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-#cmakedefine HAVE_STDLIB_H 1
 
 /* Define to 1 if you have the <strings.h> header file. */
 #cmakedefine HAVE_STRINGS_H 1
-
-/* Define to 1 if you have the <string.h> header file. */
-#cmakedefine HAVE_STRING_H 1
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine HAVE_SYS_STAT_H 1

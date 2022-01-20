@@ -61,36 +61,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _CRT_SECURE_NO_WARNINGS
 #endif /* _WIN32 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h> /* open() */
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h> /* open() */
-#include <time.h>
-#ifdef _WIN32
-#include <io.h> /* lseek(), read(), close() */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* lseek(), read(), close() */
-#endif /* _WIN32 */
+#include <config.h>
 
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include <stdlib.h> /* calloc() free() malloc() */
+#include <string.h> /* memcpy() memset() strcmp() strdup() */
+
+#ifdef _WIN32
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#include <io.h> /* close() */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* close() */
+#endif /* _WIN32 */
 
 #include "dwarf.h"
 #include "libdwarf.h"

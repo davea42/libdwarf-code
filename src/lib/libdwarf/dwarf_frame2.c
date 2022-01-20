@@ -31,26 +31,22 @@
 /*  This  implements _dwarf_get_fde_list_internal()
     and related helper functions for reading cie/fde data.  */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* for uintptr_t */
-#endif /* HAVE_STDINT_H */
+#include <config.h>
+
+#include <stdlib.h> /* qsort() */
+#include <string.h> /* memcpy() memset() strcmp() strncmp() strlen() */
+
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
-#include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#include "libdwarf_private.h"
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
+
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"

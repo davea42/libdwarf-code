@@ -61,42 +61,28 @@ dwarf_init_path_dl(path true_path and globals, dbg1
                                 else return NO_ENTRY
 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
+#include <config.h>
+
+#include <stddef.h> /* size_t */
+#include <stdlib.h> /* free() */
+#include <string.h> /* strdup() */
+
 #ifdef _WIN32
-#include <io.h>
-#elif defined HAVE_UNISTD_H
-#include <unistd.h>
-#endif /* _WIN32 */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
-#include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#include "libdwarf_private.h"
+#include <io.h> /* close() open() */
+#elif defined HAVE_UNISTD_H
+#include <unistd.h> /* close() */
+#endif /* _WIN32 */
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> /* open() O_RDONLY */
+#endif /* HAVE_FCNTL_H */
+
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"

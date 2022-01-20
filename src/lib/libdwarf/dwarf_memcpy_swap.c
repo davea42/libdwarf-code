@@ -28,13 +28,12 @@
   Floor, Boston MA 02110-1301, USA.
 
 */
-#include "config.h"
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif /* HAVE_STDDEF_H */
-#ifdef HAVE_STRING_H
-#include <string.h> /* for memcpy */
-#endif /* HAVE_STRING_H */
+
+#include <config.h>
+
+#include <stddef.h> /* size_t */
+#include <string.h> /* memcpy() */
+
 #include "dwarf_memcpy_swap.h"
 
 /*
