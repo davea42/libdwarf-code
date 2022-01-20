@@ -4904,6 +4904,9 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
 
 /*! @brief Get lists of .debug_frame FDEs and CIEs
 
+    See DWARF5 Section 6.4 Call Frame Information,
+    page 171.
+
     For an example see
     @link exampleq Example getting FDE CIE lists @endlink
     
@@ -5035,69 +5038,195 @@ DW_API int dwarf_get_cie_of_fde(Dwarf_Fde dw_fde,
     Dwarf_Cie *      dw_cie_returned,
     Dwarf_Error*     dw_error);
 
-DW_API int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
-    Dwarf_Unsigned * /*bytes_in_cie*/,
-    Dwarf_Small*     /*version*/,
-    char        **   /*augmenter*/,
-    Dwarf_Unsigned*  /*code_alignment_factor*/,
-    Dwarf_Signed*    /*data_alignment_factor*/,
-    Dwarf_Half*      /*return_address_register_rule*/,
-    Dwarf_Small   ** /*initial_instructions*/,
-    Dwarf_Unsigned*  /*initial_instructions_length*/,
-    Dwarf_Half*      /*offset_size*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Given a CIE get access to its content
 
-/* dwarf_get_cie_index new September 2009. */
-DW_API int dwarf_get_cie_index(Dwarf_Cie /*cie*/,
-    Dwarf_Signed* /*index*/,
-    Dwarf_Error* /*error*/ );
 
-/*!
-    @brief Used with dwarf_expand_frame_instructions() but
-    see that function's comments above.
+    @param dw_cie
+    Pass in the CIE of interest.
+    @param dw_bytes_in_cie
+    On success, returns the length of the CIE in bytes.
+    @param dw_version
+    On success, returns the CIE version number.
+    @param dw_augmenter
+    On success, returns a pointer to the augmentation
+    string (which could be the empty string).
+    @param dw_code_alignment_factor
+    On success, returns a the code_alignment_factor
+    used to interpret CIE/FDE operations.
+    @param dw_data_alignment_factor
+    On success, returns a the data_alignment_factor
+    used to interpret CIE/FDE operations.
+    @param dw_return_address_register_rule
+    On success, returns a register number of the
+    return address register.
+    @param dw_initial_instructions
+    On success, returns a pointer to the bytes
+    of initial_instructions in the CIE.
+    @param dw_initial_instructions_length
+    On success, returns the length in bytes of
+    the initial_instructions.
+    @param dw_offset_size
+    On success, returns the offset_size within this CIE.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
 */
-DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde /*fde*/,
-    Dwarf_Small    ** /*outinstrs*/,
-    Dwarf_Unsigned * /*outlen*/,
-    Dwarf_Error    * /*error*/);
+DW_API int dwarf_get_cie_info_b(Dwarf_Cie dw_cie,
+    Dwarf_Unsigned * dw_bytes_in_cie,
+    Dwarf_Small*     dw_version,
+    char          ** dw_augmenter,
+    Dwarf_Unsigned*  dw_code_alignment_factor,
+    Dwarf_Signed*    dw_data_alignment_factor,
+    Dwarf_Half*      dw_return_address_register_rule,
+    Dwarf_Small   ** dw_initial_instructions,
+    Dwarf_Unsigned*  dw_initial_instructions_length,
+    Dwarf_Half*      dw_offset_size,
+    Dwarf_Error*     dw_error);
 
-DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde /*fde*/,
-    Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Regtable3* /*reg_table*/,
-    Dwarf_Addr*      /*row_pc*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Returns CIE index given CIE
+
+    @param dw_cie
+    Pass in the CIE of interest.
+    @param dw_index
+    On success, returns the index (the position
+    of the CIE in the CIE pointer array).
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_cie_index(Dwarf_Cie dw_cie,
+    Dwarf_Signed* dw_index,
+    Dwarf_Error * dw_error);
+
+/*! @brief Returns length and pointer to access frame instructions.
+
+    @see dwarf_expand_frame_instructions
+
+    @param dw_fde
+    Pass in the FDE of interest.
+    @param dw_outinstrs
+    On success returns a pointer to the FDE instruction byte
+    stream.
+    @param dw_outlen
+    On success returns the length of the dw_outinstrs byte
+    stream.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
+    Dwarf_Small   ** dw_outinstrs,
+    Dwarf_Unsigned * dw_outlen,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Return information on frame registers at a given pc value
+
+    An FDE at a given pc (code address) 
+
+    @param dw_fde
+    Pass in the FDE of interest.
+    @param dw_pc_requested
+    Pass in a pc (code) address inside that FDE. 
+    @param dw_reg_table
+    On success, returns a pointer to a struct
+    given the frame state.
+    @param dw_row_pc
+    On success returns the address of the row of
+    frame data which may be a few counts off of
+    the pc requested.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK if the dw_pc_requested is in the
+    FDE passed in and there is some applicable row
+    in the table.
+
+*/
+DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
+    Dwarf_Addr       dw_pc_requested,
+    Dwarf_Regtable3* dw_reg_table,
+    Dwarf_Addr*      dw_row_pc,
+    Dwarf_Error*     dw_error);
 
 /*  See discussion of dw_value_type, libdwarf.h. */
-/*  dwarf_get_fde_info_for_reg3_b() is useful on a single column, but
-    it is inefficient to iterate across all table_columns using this
-    function.  Instead call dwarf_get_fde_info_for_all_regs3()
-    and index into the table it fills in. */
-DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
-    Dwarf_Half       /*table_column*/,
-    Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Small    * /*value_type*/,
-    Dwarf_Unsigned * /*offset_relevant*/,
-    Dwarf_Unsigned * /*register*/,
-    Dwarf_Unsigned * /*offset */,
-    Dwarf_Block  *   /*block_content */,
-    Dwarf_Addr   *   /*row_pc_out*/,
-    Dwarf_Bool   *   /*has_more_rows */,
-    Dwarf_Addr   *   /* subsequent_pc */,
-    Dwarf_Error  *   /*error*/);
+/*! @brief Returns details about a particular pc and register.
 
-/*  Use this  to get the cfa.
-    New function, June 11, 2016*/
-DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde /*fde*/,
-    Dwarf_Addr       /*pc_requested*/,
-    Dwarf_Small  *   /*value_type*/,
-    Dwarf_Unsigned *   /*offset_relevant*/,
-    Dwarf_Unsigned*    /*register*/,
-    Dwarf_Unsigned*    /*offset */,
-    Dwarf_Block   *  /*block*/,
-    Dwarf_Addr*      /*row_pc_out*/,
-    Dwarf_Bool  *    /* has_more_rows */,
-    Dwarf_Addr  *    /* subsequent_pc */,
-    Dwarf_Error*     /*error*/);
+    It is inefficient to iterate across all table_columns (registers)
+    using this function.
+    Instead call dwarf_get_fde_info_for_all_regs3()
+    and index into the table it fills in.
+
+    @param dw_fde
+    Pass in the FDE of interest.
+    @param dw_table_column
+    Pass in the table_column, column numbers in the table
+    are 0 through the number_of_registers-1.
+    @param dw_pc_requested
+    Pass in the pc of interest within dw_fde.
+    @param dw_value_type
+    On success returns the value type, a DW_EXPR value.
+    For example DW_EXPR_EXPRESSION
+    @param dw_offset_relevant
+    On success returns FALSE if the offset value is
+    irrelevant, otherwise TRUE.
+    @param dw_register
+    On success returns a register number.
+    @param dw_offset
+    On success returns a register offset value.
+    @param dw_block_content
+    On success returns a pointer to a block. 
+    For example, for DW_EXPR_EXPRESSION the block
+    gives access to the expression bytes.
+    @param dw_row_pc_out
+    On success returns the address of the actual pc
+    for this register at this pc.
+    @param dw_has_more_rows
+    On success returns FALSE if there are no more rows,
+    otherwise returns TRUE.
+    @param dw_subsequent_pc
+    On success this returns the address of the next pc
+    for which there is a register row, making access
+    to all the rows in sequence much more efficient
+    than just adding 1 to a pc value.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK if the dw_pc_requested is in the
+    FDE passed in and there is a row for the pc
+    in the table.
+*/
+DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
+    Dwarf_Half       dw_table_column,
+    Dwarf_Addr       dw_pc_requested,
+    Dwarf_Small    * dw_value_type,
+    Dwarf_Unsigned * dw_offset_relevant,
+    Dwarf_Unsigned * dw_register,
+    Dwarf_Unsigned * dw_offset,
+    Dwarf_Block    * dw_block_content,
+    Dwarf_Addr     * dw_row_pc_out,
+    Dwarf_Bool     * dw_has_more_rows,
+    Dwarf_Addr     * dw_subsequent_pc,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Get the value of the CFA for a particular pc value
+
+   
+
+*/
+DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
+    Dwarf_Addr      dw_pc_requested,
+    Dwarf_Small   * dw_value_type,
+    Dwarf_Unsigned* dw_offset_relevant,
+    Dwarf_Unsigned* dw_register,
+    Dwarf_Unsigned* dw_offset,
+    Dwarf_Block   * dw_block,
+    Dwarf_Addr    * dw_row_pc_out,
+    Dwarf_Bool    * dw_has_more_rows,
+    Dwarf_Addr    * dw_subsequent_pc,
+    Dwarf_Error   * dw_error);
 
 DW_API int dwarf_get_fde_for_die(Dwarf_Debug /*dbg*/,
     Dwarf_Die        /*subr_die */,

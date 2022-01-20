@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2021 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2022 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it
@@ -2112,28 +2112,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
 /*  A consumer call for efficiently getting the register info
     for all registers in one call.
 
-    The output table rules array is size DW_REG_TABLE_SIZE.
-    The frame info  rules array in fde_table is of size
-    DW_REG_TABLE_SIZE too.
-
-    This interface  really only works well with MIPS/IRIX
-    where DW_FRAME_CFA_COL is zero (in that case it's safe).
-
-    It is also restricted to the case  where
-    DW_REG_TABLE_SIZE == DW_FRAME_LAST_REG_NUM  ==
-    dbg->de_frame_reg_rules_entry_count (true for MIPS/IRIX).
-    If this condition is not met calling this routine can result in
-    incorrect output or in memory corruption.
-
-    It is much better to use dwarf_get_fde_info_for_all_regs3()
-    instead of this interface.
-    A consumer call for efficiently getting the register info
-    for all registers in one call.
-
-    The output table rules array is size output_table_real_data_size.
-    (normally  DW_REG_TABLE_SIZE).
-    The frame info  rules array in fde_table is normally of size
-    DW_FRAME_LAST_REG_NUM.  */
+*/
 int
 dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
