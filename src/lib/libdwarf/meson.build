@@ -129,6 +129,8 @@ zlib_dep = dependency('zlib', method: 'pkg-config', required: false)
 libdwarf_deps = []
 if zlib_dep.found() == true
   libdwarf_deps += zlib_dep
+  config_h.set10('HAVE_ZLIB', true)
+  config_h.set10('HAVE_ZLIB_H', true)
 endif
 
 libdwarf_lib = library('libdwarf', libdwarf_src,
