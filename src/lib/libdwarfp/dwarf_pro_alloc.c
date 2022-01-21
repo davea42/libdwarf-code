@@ -31,26 +31,22 @@
 #include "config.h"
 #include "dwarf_pro_incl.h"
 #include <stddef.h>
-#include "dwarf.h"
-#include "libdwarfp.h"
-#include "dwarf_pro_opaque.h"
-#include "dwarf_pro_alloc.h"
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_MALLOC_H
 /* Useful include for some Windows compilers. */
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif /* HAVE_STRING_H */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif /* HAVE_INTTYPES_H */
+#include "dwarf.h"
+#include "libdwarfp.h"
+#include "dwarf_pro_opaque.h"
+#include "dwarf_pro_alloc.h"
 #include "dwarf_tsearch.h"
 
 /*  When each block is allocated, there is a two-word structure

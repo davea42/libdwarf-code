@@ -35,12 +35,8 @@
 /* Set r_info  as defined by ELF generic ABI */
 #define Set_REL32_info(r,s,t) ((r).r_info = ELF32_R_INFO(s,t))
 #define Set_REL64_info(r,s,t) ((r).r_info = ELF64_R_INFO(s,t))
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDDEF_H
 #include <stddef.h>
-#endif /* HAVE_STDDEF_H */
 #include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"

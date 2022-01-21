@@ -32,9 +32,7 @@
 #include "libdwarf_private.h"
 #include <stdio.h>
 
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif /* HAVE_STRING_H */
 #include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"

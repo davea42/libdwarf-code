@@ -32,9 +32,7 @@
 #include "config.h"
 #include "libdwarf_private.h"
 #include <stdio.h>
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit(), C89 malloc */
-#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_MALLOC_H
 /* Useful include for some Windows compilers. */
 #include <malloc.h>
@@ -42,9 +40,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif /* HAVE_STRING_H */
 #include <stddef.h>
 #include "dwarf_pro_incl.h"
 #include "dwarf.h"

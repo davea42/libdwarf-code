@@ -51,12 +51,8 @@
 
 #include "config.h"
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h> /* for strchr etc */
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
-#endif /* HAVE_STDLIB_H */
 #include "dg_getopt.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))

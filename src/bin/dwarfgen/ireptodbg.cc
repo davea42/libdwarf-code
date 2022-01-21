@@ -45,9 +45,7 @@
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
-#endif /* HAVE_STDLIB_H */
 #include <iostream>
 #include <string>
 #include <list>

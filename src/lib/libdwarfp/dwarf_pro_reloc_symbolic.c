@@ -30,12 +30,8 @@
 #include "config.h"
 #include "libdwarf_private.h"
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDDEF_H
 #include <stddef.h>
-#endif /* HAVE_STDDEF_H */
 #include "dwarf_pro_incl.h"
 #include "dwarf.h"
 #include "libdwarfp.h"

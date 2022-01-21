@@ -29,15 +29,11 @@
 #include "config.h"
 #include "libdwarf_private.h"
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif /* HAVE_STRING_H */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uintptr_t, else configure generates.*/
 #endif /* HAVE_STDINT_H */
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit(), C89 malloc */
-#endif /* HAVE_STDLIB_H */
 #include "dwarf_pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"

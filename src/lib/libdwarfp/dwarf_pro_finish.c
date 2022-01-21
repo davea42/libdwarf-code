@@ -31,9 +31,7 @@
 #include "config.h"
 #include "libdwarf_private.h"
 #include "dwarf_pro_incl.h"
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
 #include <stddef.h>
 #include "dwarf.h"
 #include "libdwarfp.h"
