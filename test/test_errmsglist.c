@@ -32,15 +32,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
 #include <stdio.h>
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>  /* For exit(), strtoul() declaration etc. */
-#endif
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
 #include <string.h>  /* strcpy() strlen() */
-#endif
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif

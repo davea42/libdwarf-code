@@ -153,7 +153,7 @@ AC_ARG_VAR([DWARF_LIBS], [extra linker flags when linking dwarfdump])
 ### MacOS does not have malloc.h
 AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
 ### for uintptr_t
-AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h])
+AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h fcntl.h])
 
 AS_IF(
     [test "x${have_zlib}" = "xno"],
@@ -197,7 +197,7 @@ if test  "$dwarf_with_libelf" = "yes" ; then
         AC_DEFINE([DWARF_WITH_LIBELF],[1],
           [Set to 1 as we are building dwarfgen with libelf])])
     ])
-
+fi
 
 ### Checks for compiler characteristics
 

@@ -124,6 +124,7 @@ check_include_file( "sgidefs.h"       HAVE_SGIDEFS_H  )
 check_include_file( "stdafx.h"        HAVE_STDAFX_H   )
 check_include_file( "elf.h"           HAVE_ELF_H      ) 
 check_include_file( "libelf.h"        HAVE_LIBELF_H   ) 
+check_include_file( "fcntl.h"         HAVE_FCNTL_H   ) 
 check_include_file( "libelf/libelf.h" HAVE_LIBELF_LIBELF_H) 
 
 ### cmake provides no way to guarantee uint32_t present.

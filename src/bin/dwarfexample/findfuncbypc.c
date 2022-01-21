@@ -28,9 +28,7 @@
 #include <sys/stat.h>  /* For open() */
 #endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h>     /* For open() */
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
-#endif /* HAVE_STDLIB_H */
 #ifdef _WIN32
 #include <io.h> /* for close() */
 #elif defined HAVE_UNISTD_H
@@ -38,9 +36,7 @@
 #endif /* _WIN32 */
 #include <stdio.h>
 #include <errno.h>
-#ifdef HAVE_STRING_H
 #include <string.h> /* for strchr etc */
-#endif /* HAVE_STRING_H */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */

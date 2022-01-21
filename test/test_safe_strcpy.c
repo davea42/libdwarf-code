@@ -6,9 +6,7 @@
 
 #include "config.h"
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h>  /* strcpy() strlen() */
-#endif
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif

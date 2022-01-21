@@ -32,9 +32,7 @@
 #include "config.h"
 #include "libdwarf_private.h"
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#endif /* HAVE_STRING_H */
 #include <stddef.h>
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */

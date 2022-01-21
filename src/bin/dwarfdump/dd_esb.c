@@ -44,6 +44,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif /* _WIN32 */
 #include "config.h"
+#include <string.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include "dd_esb.h"
 #define TRUE 1

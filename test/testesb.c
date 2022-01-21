@@ -32,6 +32,8 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 */
 
 #include "config.h"
+#include <stdlib.h>
+#include <string.h>
 #include "libdwarf_private.h"
 #include "dd_esb.h"
 #define TRUE 1

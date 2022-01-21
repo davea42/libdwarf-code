@@ -36,9 +36,7 @@
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit(), C89 malloc */
-#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* for close */
 #endif /* HAVE_UNISTD_H */
@@ -49,9 +47,7 @@
 /* Useful include for some Windows compilers. */
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
-#ifdef HAVE_STRING_H
 #include <string.h> /* for memset */
-#endif /* HAVE_STRING_H */
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"

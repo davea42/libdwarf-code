@@ -41,6 +41,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #ifdef SYS_STAT_H
 #include <sys/stat.h>
 #endif /* SYS_STAT_H */
+#include <stdlib.h> /* for exit() */
+#include <string.h> /* for strrchr */
 #include <fcntl.h>
 #include <limits.h>
 #ifdef _WIN32

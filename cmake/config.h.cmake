@@ -31,6 +31,9 @@
 /* Define to 1 if you have the <libelf.h> header file. */
 #cmakedefine HAVE_LIBELF_H 1
 
+/* Define to 1 if you have the <fcntl.h> header file. */
+#cmakedefine HAVE_FCNTL_H 1
+
 /* Define to 1 if you have the <libelf/libelf.h> header file. */
 #cmakedefine HAVE_LIBELF_LIBELF_H 1
 

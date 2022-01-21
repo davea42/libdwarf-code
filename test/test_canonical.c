@@ -9,12 +9,8 @@
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
 #include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
 #include <stddef.h>
-#endif
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_canonical_append.h"

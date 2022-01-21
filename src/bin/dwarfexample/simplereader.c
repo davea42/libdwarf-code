@@ -110,9 +110,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/stat.h>  /* For open() */
 #endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h>     /* For open() */
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
-#endif /* HAVE_STDLIB_H */
 #ifdef _WIN32
 #include <io.h> /* for close() */
 #elif defined HAVE_UNISTD_H
