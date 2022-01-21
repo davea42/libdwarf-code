@@ -90,14 +90,16 @@ extern "C" {
 */
 
 /* Sematic Version identity for this libdwarf.h */
+#define DW_LIBDWARF_VERSION "0.3.3"
 #define DW_LIBDWARF_VERSION_MAJOR 0
 #define DW_LIBDWARF_VERSION_MINOR 3
 #define DW_LIBDWARF_VERSION_MICRO 3
-#define DW_LIBDWARF_VERSION "0.3.3"
+
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
 #define DW_PATHSOURCE_dsym      2 /* MacOS dSYM */
 #define DW_PATHSOURCE_debuglink 3 /* GNU debuglink */
+
 #ifndef DW_FTYPE_UNKNOWN
 #define DW_FTYPE_UNKNOWN    0
 #define DW_FTYPE_ELF        1  /* Unix/Linux/etc */
@@ -129,19 +131,27 @@ extern "C" {
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0  "z"
 
+/*  FRAME special values */
+/*  The following 3 are assigned numbers, but
+    are only present at run time.
+    Must not conflict with DW_FRAME values in dwarf.h */
 /*  Taken as meaning 'undefined value', this is not
-    a column or register number.
-    Only present at libdwarf runtime. Never on disk.
-    DW_FRAME_* Values present on disk are in dwarf.h
-*/
-#define DW_FRAME_UNDEFINED_VAL          1034
-
-/*  Taken as meaning 'same value' as caller had, not a column
-    or register number
-    Only present at libdwarf runtime. Never on disk.
-    DW_FRAME_* Values present on disk are in dwarf.h
-*/
-#define DW_FRAME_SAME_VAL               1035
+    a column or register number.  */
+#ifndef DW_FRAME_UNDEFINED_VAL
+#define DW_FRAME_UNDEFINED_VAL          12288
+#endif
+/*  Taken as meaning 'same value' as caller had, 
+    not a column or register number */
+#ifndef DW_FRAME_SAME_VAL
+#define DW_FRAME_SAME_VAL               12289
+#endif
+/*  DW_FRAME_CFA_COL is assigned a virtual table position
+    but is accessed via CFA specific calls.  */
+#ifndef DW_FRAME_CFA_COL
+#define DW_FRAME_CFA_COL                12290
+#endif
+#define DW_FRAME_CFA_COL3 DW_FRAME_CFA_COL /*compatibiliity name*/
+/*  END FRAME special values */
 
 /* dwarf_pcline function, slide arguments
 */
@@ -417,11 +427,11 @@ typedef struct Dwarf_Ranges_s {
             value in the previous frame.
 
             DW_FRAME_UNDEFINED_VAL, DW_FRAME_SAME_VAL and
-            DW_FRAME_CFA_COL3 are only present at libdwarf runtime.
+            DW_FRAME_CFA_COL are only present at libdwarf runtime.
             Never on disk.
             DW_FRAME_* Values present on disk are in dwarf.h
             Because DW_FRAME_SAME_VAL and DW_FRAME_UNDEFINED_VAL
-            and DW_FRAME_CFA_COL3 are definable at runtime
+            and DW_FRAME_CFA_COL are definable at runtime
             consider the names symbolic in this comment,
             not absolute.
 
@@ -432,7 +442,7 @@ typedef struct Dwarf_Ranges_s {
 
         In a cfa-defining entry (rt3_cfa_rule) the regnum is the
         CFA 'register number'. Which is some 'normal' register,
-        not DW_FRAME_CFA_COL3, nor DW_FRAME_SAME_VAL, nor
+        not DW_FRAME_CFA_COL, nor DW_FRAME_SAME_VAL, nor
         DW_FRAME_UNDEFINED_VAL.
 
         If dw_value_type == DW_EXPR_OFFSET (the only
@@ -844,19 +854,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 /*  ***IMPORTANT NOTE, TARGET DEPENDENCY ****
     DW_REG_TABLE_SIZE must be at least as large as
     the number of registers
-    (DW_FRAME_LAST_REG_NUM) as defined in dwarf.h
-    Preferably identical to DW_FRAME_LAST_REG_NUM.
-    Ensure [0-DW_REG_TABLE_SIZE] does not overlap
-    DW_FRAME_UNDEFINED_VAL or DW_FRAME_SAME_VAL.
-    Also ensure DW_FRAME_REG_INITIAL_VALUE is set to what
-    is appropriate to your cpu.
-    For various CPUs  DW_FRAME_UNDEFINED_VAL is correct
-    as the value for DW_FRAME_REG_INITIAL_VALUE.
-
-    For consumer apps, this can be set dynamically: see
-    dwarf_set_frame_rule_table_size(); */
+    DW_FRAME_LAST_REG_NUM as defined in dwarf.h
+*/
 #ifndef DW_REG_TABLE_SIZE
-#define DW_REG_TABLE_SIZE  66
+#define DW_REG_TABLE_SIZE  DW_FRAME_LAST_REG_NUM
 #endif
 
 /* For MIPS, DW_FRAME_SAME_VAL is the correct default value
@@ -867,43 +868,6 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #ifndef DW_FRAME_REG_INITIAL_VALUE
 #define DW_FRAME_REG_INITIAL_VALUE DW_FRAME_SAME_VAL
 #endif
-
-/* Taken as meaning 'undefined value', this is not
-   a column or register number.
-   Only present at libdwarf runtime in the consumer
-   interfaces. Never on disk.
-   DW_FRAME_* Values present on disk are in dwarf.h
-   Ensure this is > DW_REG_TABLE_SIZE (the reg table
-   size is changeable at runtime with the *reg3() interfaces,
-   and this value must be greater than the reg table size).
-*/
-#define DW_FRAME_UNDEFINED_VAL          1034
-
-/* Taken as meaning 'same value' as caller had, not a column
-   or register number.
-   Only present at libdwarf runtime in the consumer
-   interfaces. Never on disk.
-   DW_FRAME_* Values present on disk are in dwarf.h
-   Ensure this is > DW_REG_TABLE_SIZE (the reg table
-   size is changeable at runtime with the *reg3() interfaces,
-   and this value must be greater than the reg table size).
-*/
-#define DW_FRAME_SAME_VAL               1035
-
-/* For DWARF3 and later consumer interfaces,
-   make the CFA a column with no real table number.
-   See the libdwarf documentation
-   on Dwarf_Regtable3 and  dwarf_get_fde_info_for_reg3().
-   and  dwarf_get_fde_info_for_all_regs3()
-   CFA Must be higher than any register count for *any* ABI
-   (ensures maximum applicability with minimum effort).
-   Ensure this is > DW_REG_TABLE_SIZE (the reg table
-   size is changeable at runtime with the *reg3() interfaces,
-   and this value must be greater than the reg table size).
-   Only present at libdwarf runtime in the consumer
-   interfaces. Never on disk.
-*/
-#define DW_FRAME_CFA_COL3               1436
 
 /* The following are all needed to evaluate DWARF3 register rules.
    These have nothing to do simply printing
@@ -4909,6 +4873,9 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
 
     For an example see
     @link exampleq Example getting FDE CIE lists @endlink
+
+    The FDE array returned through dw_fde_data
+    is sorted low-to-high  by the lowest-pc in each FDE.
     
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -5213,7 +5180,11 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
 
 /*! @brief Get the value of the CFA for a particular pc value
 
-   
+    @see dwarf_get_fde_info_for_reg3_b  
+
+    This has essentially the same return values but
+    it refers to the CFA (which is not part of the register
+    table)
 
 */
 DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
@@ -5228,40 +5199,114 @@ DW_API int dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde dw_fde,
     Dwarf_Addr    * dw_subsequent_pc,
     Dwarf_Error   * dw_error);
 
-DW_API int dwarf_get_fde_for_die(Dwarf_Debug /*dbg*/,
-    Dwarf_Die        /*subr_die */,
-    Dwarf_Fde  *     /*returned_fde*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Get the fde given DW_AT_MIPS_fde in a DIE.
 
-DW_API int dwarf_get_fde_n(Dwarf_Fde* /*fde_data*/,
-    Dwarf_Unsigned   /*fde_index*/,
-    Dwarf_Fde  *     /*returned_fde*/,
-    Dwarf_Error*     /*error*/);
+    This is essentially useless as only SGI compilers
+    from the 1990's had  DW_AT_MIPS_fde in the CU DIE.
+*/
+DW_API int dwarf_get_fde_for_die(Dwarf_Debug dw_dbg,
+    Dwarf_Die        dw_subr_die,
+    Dwarf_Fde  *     dw_returned_fde,
+    Dwarf_Error*     dw_error);
 
-DW_API int dwarf_get_fde_at_pc(Dwarf_Fde* /*fde_data*/,
-    Dwarf_Addr       /*pc_of_interest*/,
-    Dwarf_Fde  *     /*returned_fde*/,
-    Dwarf_Addr*      /*lopc*/,
-    Dwarf_Addr*      /*hipc*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Retrieve an FDE from an FDE table
 
-/*  GNU .eh_frame augmentation information,
-    raw form, see
-    Linux Standard Base Core Specification version 3.0 . */
-DW_API int dwarf_get_cie_augmentation_data(Dwarf_Cie /* cie*/,
-    Dwarf_Small **   /* augdata */,
-    Dwarf_Unsigned * /* augdata_len */,
-    Dwarf_Error*     /*error*/);
-/*  GNU .eh_frame augmentation information,
-    raw form, see
-    Linux Standard Base Core Specification version 3.0 . */
-DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
-    Dwarf_Small **   /* augdata */,
-    Dwarf_Unsigned * /* augdata_len */,
-    Dwarf_Error*     /*error*/);
+    This is just like indexing into the FDE array
+    but with extra checking of the pointer and
+    index. 
+    @see dwarf_get_fde_list 
+*/
+DW_API int dwarf_get_fde_n(Dwarf_Fde* dw_fde_data,
+    Dwarf_Unsigned   dw_fde_index,
+    Dwarf_Fde      * dw_returned_fde,
+    Dwarf_Error    * dw_error);
 
-/*!
-    @brief Expands CIE or FDE instructions for detailed examination.
+/*! @brief Retrieve an FDE given a pc
+
+    Using binary search this finds the FDE
+    that contains this dw_pc_of_interest
+    That works because libdwarf ensures the
+    array of FDEs is sorted by the low-pc
+    @see dwarf_get_fde_list 
+
+    @param dw_fde_data 
+    Pass in a pointer an array of fde pointers.
+    @param dw_pc_of_interest 
+    The pc value of interest.
+    @param dw_returned_fde 
+    On success a pointer to the applicable FDE
+    is set through the pointer.
+    @param dw_lopc 
+    On success a pointer to the low pc in dw_returned_fde
+    is set through the pointer.
+    @param dw_hipc 
+    On success a pointer to the high pc (one past
+    the actual last byte address) in dw_returned_fde
+    is set through the pointer.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK if the dw_pc_of_interest found
+    in some FDE in the array.
+    If no FDE is found containing dw_pc_of_interest
+    DW_DLV_NO_ENTRY is returned.
+*/
+DW_API int dwarf_get_fde_at_pc(Dwarf_Fde* dw_fde_data,
+    Dwarf_Addr   dw_pc_of_interest,
+    Dwarf_Fde  * dw_returned_fde,
+    Dwarf_Addr * dw_lopc,
+    Dwarf_Addr * dw_hipc,
+    Dwarf_Error* dw_error);
+
+/*! @brief Return .eh_frame CIE augmentation data.
+
+    GNU .eh_frame CIE augmentation information.
+    See Linux Standard Base Core Specification version 3.0 .
+    @see https://gcc.gnu.org/legacy-ml/gcc/2003-12/msg01168.html
+
+    @param dw_cie
+    The CIE of interest.
+    @param dw_augdata
+    On success returns a pointer to the augmentation data.
+    @param dw_augdata_len
+    On success returns the length in bytes of the augmentation data.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If the augmentation data length is zero it
+    returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_cie_augmentation_data(Dwarf_Cie dw_cie,
+    Dwarf_Small   ** dw_augdata,
+    Dwarf_Unsigned * dw_augdata_len,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Return .eh_frame FDE augmentation data.
+
+    GNU .eh_frame FDE augmentation information.
+    See Linux Standard Base Core Specification version 3.0 .
+    @see https://gcc.gnu.org/legacy-ml/gcc/2003-12/msg01168.html
+
+    @param dw_fde
+    The FDE of interest.
+    @param dw_augdata
+    On success returns a pointer to the augmentation data.
+    @param dw_augdata_len
+    On success returns the length in bytes of the augmentation data.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If the augmentation data length is zero it
+    returns DW_DLV_NO_ENTRY.
+*/
+DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde dw_fde,
+    Dwarf_Small   ** dw_augdata,
+    Dwarf_Unsigned * dw_augdata_len,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Expands CIE or FDE instructions for detailed examination.
     Called for CIE initial instructions and
     FDE instructions.
     Call dwarf_get_fde_instr_bytes() or
@@ -5279,7 +5324,8 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde /* fde*/,
     Returns the numer of inststructions in the byte stream
     @param dw_error
     Error return details
-    @return On success returns DW_DLV_OK
+    @return
+    On success returns DW_DLV_OK
 */
 DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
     Dwarf_Small     * dw_instructionspointer,
@@ -5404,21 +5450,47 @@ DW_API int dwarf_get_frame_instruction_a(
 */
 DW_API void dwarf_dealloc_frame_instr_head(Dwarf_Frame_Instr_Head
     dw_head);
-/*  Used by dwarfdump -v to print fde offsets from debugging
-    info.  */
-DW_API int dwarf_fde_section_offset(Dwarf_Debug /*dbg*/,
-    Dwarf_Fde         /*in_fde*/,
-    Dwarf_Off *       /*fde_off*/,
-    Dwarf_Off *       /*cie_off*/,
-    Dwarf_Error *     /*err*/);
 
-/* Used by dwarfdump -v to print cie offsets from debugging
-   info.
+/*! @brief  Use to print fde and cie offsets from debugging info.
+
+    @param dw_dbg
+    The Dwarf_Debug of interest
+    @param dw_in_fde
+    Pass in the FDE of interest.
+    @param dw_fde_off
+    On success returns the section offset of the FDE.
+    @param dw_cie_off
+    On success returns the section offset of the CIE.
+    @param dw_error
+    Error return details
+    @return
+    Returns DW_DLV_OK etc.
+
 */
-DW_API int dwarf_cie_section_offset(Dwarf_Debug /*dbg*/,
-    Dwarf_Cie     /*in_cie*/,
-    Dwarf_Off *   /*cie_off */,
-    Dwarf_Error * /*err*/);
+DW_API int dwarf_fde_section_offset(Dwarf_Debug dw_dbg,
+    Dwarf_Fde     dw_in_fde,
+    Dwarf_Off   * dw_fde_off,
+    Dwarf_Off   * dw_cie_off,
+    Dwarf_Error * dw_error);
+
+/*! @brief  Use to print cie offsets from debugging info.
+
+    @param dw_dbg
+    The Dwarf_Debug of interest
+    @param dw_in_cie
+    Pass in the CIE of interest.
+    @param dw_cie_off
+    On success returns the section offset of the CIE.
+    @param dw_error
+    Error return details
+    @return
+    Returns DW_DLV_OK etc.
+
+*/
+DW_API int dwarf_cie_section_offset(Dwarf_Debug dw_dbg,
+    Dwarf_Cie     dw_in_cie,
+    Dwarf_Off   * dw_cie_off,
+    Dwarf_Error * dw_error);
 
 /*  The 'set' calls here return the original (before any change
     by these set routines) of the respective fields. */
@@ -5440,12 +5512,9 @@ DW_API Dwarf_Half dwarf_set_frame_cfa_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
 DW_API Dwarf_Half dwarf_set_frame_same_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
-DW_API Dwarf_Half dwarf_set_frame_undefined_value(Dwarf_Debug /*dbg*/,
-    Dwarf_Half /*value*/);
-/*  dwarf_set_default_address_size only sets 'value' if value is
-    greater than zero. */
-DW_API Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/,
-    Dwarf_Small /* value */);
+DW_API Dwarf_Half dwarf_set_frame_undefined_value(
+    Dwarf_Debug dw_dbg,
+    Dwarf_Half  dw_value);
 /*! @} */
 
 /*! @defgroup abbrev Abbreviations .debug_abbrev Section Details
@@ -6866,36 +6935,59 @@ DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
 /*! @defgroup miscellaneous Miscellaneous Functions
     @{
 */
-/*  Returns the version string. Example: "0.3.0"
-    which is a Semantic Version identifier.
+/*! @brief Returns the version string in the library. 
+
+    An example: "0.3.0" which is a Semantic Version identifier.
     Before September 2021 the version string was
     a date, for example "20210528",
-    which is in ISO date format. */
+    which is in ISO date format.
+    See DW_LIBDWARF_VERSION DW_LIBDWARF_VERSION_MAJOR
+    DW_LIBDWARF_VERSION_MINOR DW_LIBDWARF_VERSION_MICRO 
+    @return
+    The Package Version built into libdwarf.so or libdwarf.a
+*/
 DW_API const char * dwarf_package_version(void);
-/*  stringcheck zero is default and means do all
-    string length validity checks.
-    Call with parameter value 1 to turn off many such checks (and
-    increase performance).
-    Call with zero for safest running.
-    Actual value saved and returned is only 8 bits! Upper bits
-    ignored by libdwarf (and zero on return).
-    Returns previous value.  */
-DW_API int dwarf_set_stringcheck(int /*stringcheck*/);
 
-/*  'apply' defaults to 1 and means do all
-    'rela' relocations on reading in a dwarf object section with
-    such relocations.
-    Call with parameter value 0 to turn off application of
-    such relocations.
-    Since the static linker leaves 'bogus' data in object sections
-    with a 'rela' relocation section such data cannot be read
-    sensibly without processing the relocations.  Such relocations
-    do not exist in executables and shared objects (.so), the
-    relocations only exist in plain .o relocatable object files.
-    Actual value saved and returned is only 8 bits! Upper bits
-    ignored by libdwarf (and zero on return).
-    Returns previous value.  */
-DW_API int dwarf_set_reloc_application(int /*apply*/);
+
+/*! @brief  Turn off libdwarf checks of strings.
+
+    Zero is  the default and means do all
+    string length validity checks.
+    It applies to all Dwarf_Debug open and
+    all opened later in this library instance.
+
+    @param dw_stringcheck
+    Pass in a small non-zero value to turn off
+    all libdwarf string validity checks. It speeds
+    up libdwarf, but...is dangerous and voids
+    all promises the library will not segfault.
+    @return
+    Returns the previous value of this flag.
+*/
+DW_API int dwarf_set_stringcheck(int dw_stringcheck);
+
+/*! @brief Set libdwarf response to *.rela relocations
+
+    dw_apply defaults to 1 and means apply all
+    '.rela' relocations on reading in a dwarf object
+    section of such relocations.
+    Best to just ignore this function
+    It applies to all Dwarf_Debug open and
+    all opened later in this library instance.
+
+    @param dw_apply
+    Pass in a zero to turn off reading and applying of
+    *.rela relocations, which will likely break reading
+    of .o object files but probably will not break reading
+    executables or shared objects.
+    Pass in non zero (it is really just an 8 bit value,
+    so use a small value) to turn off inspecting .rela
+    sections.
+    @return
+    Returns the previous value of the apply flag.
+
+*/
+DW_API int dwarf_set_reloc_application(int dw_apply);
 
 /*  dwarf_get_endian_copy_function new. December 2019. */
 DW_API void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
@@ -6904,30 +6996,68 @@ DW_API void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
 /*  A global flag in libdwarf. Applies to all Dwarf_Debug */
 DW_API extern Dwarf_Cmdline_Options dwarf_cmdline_options;
 
-/*! @brief Tell libdwarf add verbosity
-    By default the flag is zero.
-    If non-zero and there is an error when reading
-    a line table header
-    create a detailed string
-    and use the printf callback so the
-    client code an print it save it.
+/*! @brief Tell libdwarf to add verbosity to Line Header errors
+    By default the flag in the struct argument
+    is zero.
+    dwarfdump uses this when -v used on dwarfdump.
+
+    @see dwarf_register_printf_callback
+
+    @param dw_dd_options
+    The structure has one flag, and if
+    the flag is nonzero and there is an error
+    in reading a line table header
+    the function passes back detail error messages
+    via dwarf_register_printf_callback.
 */
 DW_API void dwarf_record_cmdline_options(
-    Dwarf_Cmdline_Options dd_options);
+    Dwarf_Cmdline_Options dw_dd_options);
 
 /*!  @brief Eliminate libdwarf tracking of allocations
     Independent of any Dwarf_Debug and applicable
     to all whenever the setting is changed.
     Defaults to non-zero.
-    If zero applied libdwarf will run somewhat faster.
-    If zero is applied then library memory allocations
+
+    @param dw_v
+    If zero passed in libdwarf will run somewhat faster
+    and  library memory allocations
     will not all be tracked and dwarf_finish() will
     be unable to free/dealloc some things.
     User code can do the necessary deallocs
     (as documented), but the normal guarantee
     that libdwarf will clean up is revoked.
+    If non-zero passed in libdwarf will resume or
+    continue tracking allocations
+    @return
+    Returns the previous version of the flag.
 */
 DW_API int dwarf_set_de_alloc_flag(int dw_v);
+
+/*! @brief Set the address size on a Dwarf_Debug
+
+    DWARF information CUs and other
+    section DWARF headers define a CU-specific
+    address size, but this Dwarf_Debug value
+    is used when other address size information
+    does not exist, for example in a DWARF2
+    CIE or FDE.
+ 
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_value
+    Sets the address size for the Dwarf_Debug to a
+    non-zero value. The default address size
+    is derived from headers in the object file.
+    Values larger than the size of Dwarf_Addr
+    are not set.
+    If zero passed the default is not changed.
+    @return
+    Returns the last set address size.
+*/
+DW_API Dwarf_Small dwarf_set_default_address_size(
+    Dwarf_Debug dw_dbg,
+    Dwarf_Small dw_value);
+
 
 /*! @}
 */

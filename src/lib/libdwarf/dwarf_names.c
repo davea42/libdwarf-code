@@ -3402,15 +3402,15 @@ dwarf_get_FRAME_name (unsigned int val,
     const char ** s_out)
 {
     switch (val) {
-    case DW_FRAME_CFA_COL:
-        *s_out = "DW_FRAME_CFA_COL";
+    case DW_FRAME_LAST_REG_NUM:
+        *s_out = "DW_FRAME_LAST_REG_NUM";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x0. DW_FRAME_LAST_REG_NUM */
     /*  Skipping alternate spelling of value
         0x0. DW_FRAME_RA_COL */
     /*  Skipping alternate spelling of value
         0x0. DW_FRAME_STATIC_LINK */
+    /*  Skipping alternate spelling of value
+        0x0. DW_FRAME_CFA_COL */
     case DW_FRAME_REG1:
         *s_out = "DW_FRAME_REG1";
         return DW_DLV_OK;
