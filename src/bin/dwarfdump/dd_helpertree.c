@@ -29,7 +29,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 #include "dd_helpertree.h"
 
 #define TRUE 1

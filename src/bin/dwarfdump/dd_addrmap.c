@@ -41,7 +41,7 @@
 #include <stdint.h> /* For uintptr_t */
 #endif
 #include "dd_addrmap.h"
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 
 static struct Addr_Map_Entry *
 addr_map_create_entry(Dwarf_Unsigned k,char *name)

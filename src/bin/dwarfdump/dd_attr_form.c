@@ -25,8 +25,7 @@
 */
 
 #include "dd_globals.h"
-#define DW_TSHASHTYPE long /* this type not needed */
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 #include "dd_naming.h"
 #include "dd_attr_form.h"
 #include "dwarfdump-af-table.h"

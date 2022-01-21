@@ -44,7 +44,7 @@ set_source_group(HEADERS "Header Files"
   dd_getopt.h dd_esb.h dd_glflags.h dd_globals.h
   dd_macrocheck.h dd_defined_types.h
   dd_sanitized.h
-  dd_naming.h dd_makename.h dd_tsearch.h print_frames.h 
+  dd_naming.h dd_makename.h dd_tsearchbal.h print_frames.h 
   dd_section_bitmaps.h dd_uri.h
   ../../lib/libdwarf/libdwarf_private.h)
 

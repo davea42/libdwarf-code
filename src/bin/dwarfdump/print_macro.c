@@ -35,7 +35,7 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "dd_esb_using_functions.h"
 #include "dd_uri.h"
 #include "dd_makename.h"
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 #include "print_sections.h"
 #include "dd_macrocheck.h"
 #include "dd_sanitized.h"

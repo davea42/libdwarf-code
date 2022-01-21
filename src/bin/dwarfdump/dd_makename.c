@@ -49,7 +49,7 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 #include "dd_makename.h"
 #include "dd_globals.h"
 

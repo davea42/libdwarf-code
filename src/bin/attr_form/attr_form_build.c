@@ -42,8 +42,7 @@
 #include "dd_esb.h"
 #include "dd_tag_common.h"
 #include "dd_getopt.h"
-#define DW_TSHASHTYPE long /* we are not using hash tree */
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 #include "dd_attr_form.h"
 #include "dd_safe_strcpy.h"
 

@@ -30,7 +30,7 @@ dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
-dd_tsearch.h \
+dd_tsearchbal.h \
 dd_tsearchbal.c \
 dd_dwconf.c \
 dd_dwconf.h \

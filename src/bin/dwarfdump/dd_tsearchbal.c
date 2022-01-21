@@ -65,7 +65,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h> /* for printf */
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 
 /*  This must match the types and print options
     found in libdwarf.h.  */
@@ -112,15 +112,6 @@ static void printlevel(int level)
         putchar(' ');
         ++shownlen;
     }
-}
-
-/* Not needed for this set of functions. */
-void *
-dwarf_initialize_search_hash( void **treeptr,
-    DW_TSHASHTYPE(*hashfunc)(const void *key) UNUSEDARG,
-    unsigned long size_estimate UNUSEDARG)
-{
-    return *treeptr;
 }
 
 /* For debugging, mainly.

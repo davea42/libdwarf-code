@@ -40,13 +40,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     libc implementations or code using libc
     implementations, we change all the names.
 */
-/*  The hashfunc return is now easily changed with
-    cc "-DDW_TSHASHTYPE=unsigned long"
-    The quotes required here as the example type
-    has a space character. */
-#ifndef DW_TSHASHTYPE
-#define DW_TSHASHTYPE uintptr_t
-#endif
 
 /*  The DW_VISIT values passed back to you through
     the callback function in dwarf_twalk();
@@ -111,10 +104,4 @@ void dwarf_tdestroy(void * /*root*/,
 void dwarf_tdump(const void*root,
     char *(* /*keyprint*/)(const void *),
     const char *msg);
-
-/*  Returns NULL  and does nothing
-    unless the implemenation used uses a hash tree. */
-void * dwarf_initialize_search_hash( void **treeptr,
-    DW_TSHASHTYPE (*hashfunc)(const void *key),
-    unsigned long size_estimate);
 #endif /* DWARF_TSEARCH_H */

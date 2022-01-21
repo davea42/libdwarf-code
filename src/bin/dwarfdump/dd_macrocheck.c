@@ -52,7 +52,7 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
-#include "dd_tsearch.h"
+#include "dd_tsearchbal.h"
 #include "dd_macrocheck.h"
 #include "dd_esb.h"
 
