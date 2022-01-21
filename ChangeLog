@@ -1,3 +1,281 @@
+2022-01-20:  David Anderson
+    commit de3fe09c864cef1262e73e3243c87e651cb7b5fc
+
+    Removed use of HAVE_STDLIB_H and HAVE_STRING_H
+    and HAVE_STDDEF_H everwhere as these are in
+    c90 and we assume c90.
+    the dwarf_names.c changes are about removing irrelevant
+    (and unusable) DWARF_FRAME names in dwarf.h.
+    DW_FRAME_RA_COL DW_FRAME_STATIC_LINK DW_FRAME_CFA_COL
+    which had to do with SGI/IRIX use and are not used
+    anywhere in libdwarf or libdwarfp.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfgen/createirepformfrombinary.cc
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/bin/dwarfgen/dg_getopt.c
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/dwarfgen/irepattrtodbg.cc
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarfp/dwarf_pro_alloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_arange.c
+            modified:   src/lib/libdwarfp/dwarf_pro_debug_sup.c
+            modified:   src/lib/libdwarfp/dwarf_pro_die.c
+            modified:   src/lib/libdwarfp/dwarf_pro_dnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_error.c
+            modified:   src/lib/libdwarfp/dwarf_pro_finish.c
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+            modified:   src/lib/libdwarfp/dwarf_pro_frame.c
+            modified:   src/lib/libdwarfp/dwarf_pro_funcs.c
+            modified:   src/lib/libdwarfp/dwarf_pro_init.c
+            modified:   src/lib/libdwarfp/dwarf_pro_line.c
+            modified:   src/lib/libdwarfp/dwarf_pro_macinfo.c
+            modified:   src/lib/libdwarfp/dwarf_pro_pubnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_stream.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_symbolic.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+            modified:   src/lib/libdwarfp/dwarf_pro_types.c
+            modified:   src/lib/libdwarfp/dwarf_pro_vars.c
+            modified:   src/lib/libdwarfp/dwarf_pro_weaks.c
+
+2022-01-20:  David Anderson
+    commit 43bbf81f2af827ce7b7504658e4438de055c4528
+
+    Trivial issues with configure.
+            modified:   configure.ac
+
+    Lots of places still had #ifdef HAVE_STDLIB_H
+    which was a problem for cmake.
+    And we do not need HAVE_STDLIB_H or HAVE_STRING_H
+    or HAVE_STDDEF_H any longer, they are standard
+    C90.
+            modified:   CMakeLists.txt
+            modified:   cmake/config.h.cmake
+
+            modified:   src/bin/dwarfdump/dd_addrmap.c
+            modified:   src/bin/dwarfdump/dd_canonical_append.c
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_getopt.c
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/bin/dwarfdump/dd_helpertree.c
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
+            modified:   test/dwarf_tied_test.c
+            modified:   test/getopttest.c
+            modified:   test/test_canonical.c
+            modified:   test/test_errmsglist.c
+            modified:   test/test_safe_strcpy.c
+            modified:   test/testesb.c
+
+2022-01-20:  David Anderson
+    commit 0bab1913e563be7174ff0e012572ff7f394d2909
+
+            modified:   src/bin/dwarfdump/dwarf_names.c
+    Removed  pointless DW_FRAME OPS (just a couple)
+    which changed dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+    More doxygen work.
+    Removed a couple inapproprate DW_FRAME:
+    DW_FRAME_ operations and made
+    DW_FRAME_CFA_COL and DW_FRAME_CFA_COL3 the same value.
+
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-20:  David Anderson
+    commit f2716b01f74f3ec215f4e4f0955d428577f40499
+    Merge: 0aa057f9 ab955f7f
+
+    Merge pull request #61 from vtorri/vtorri_meson
+
+    add meson build system for libdwarf only
+
+2022-01-20:  Vincent Torri
+    commit ab955f7ff264f17a623cb2651e5e266272ed4cc5
+
+    add zlib macro in config.h when detected
+
+2022-01-20:  Vincent Torri
+    commit 728b7ccec1e252ec0cc55d93ad108ccf52825958
+
+    remove check of struct _Elf
+
+2022-01-20:  Vincent Torri
+    commit 3de43f2887c4bac3ca9129992337f87209f55fa2
+
+    remove useless macros
+
+2022-01-20:  Vincent Torri
+    commit 1d10e2b1ccb3e2a8d3ef317a857e112ec20a3802
+
+    meson - fifth step
+
+2022-01-20:  Vincent Torri
+    commit 840ab86dba6bdb0ad5975c03ecd26ad2c4053ea4
+
+    meson - fourth step
+
+2022-01-19:  David Anderson
+    commit 0aa057f9bbc90178f95b63e7f3d0950a5baddb1b
+
+    Deleted obsolete comments.
+    Updated copyright year
+            modified:   src/lib/libdwarf/dwarf_frame.c
+    Added doxygen comments for frame reading.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-19:  David Anderson
+    commit 796782ab9632246a16434ba7441db5f4588165bd
+
+    Now the frame example is set up for doxygen
+            modified:   doc/checkexamples.c
+    Adding doxygen comments for frame operations.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-20:  Vincent Torri
+    commit af8ae0981422b761bede5baf084301985fa73ae3
+
+    meson - third step
+
+2022-01-19:  Vincent Torri
+    commit f7c032a949e91f3559e2f97b9c6acb928586270a
+
+    meson - second step
+
+2022-01-19:  Vincent Torri
+    commit 147cb92e16cbc19ef9bd1b5d74256f7885d67dff
+
+    Add meson build system - first step
+
+2022-01-19:  David Anderson
+    commit 421040cb4e78636ee894e08c76a0849c64b1aa66
+
+    removed the inclusion of libdwarf_private.h,
+    that was not necessary.
+    Added #define of TRUE and FALSE as those
+    used in the examples for clarity.
+            modified:   doc/checkexamples.c
+
+2022-01-19:  David Anderson
+    commit cc3a60411a305a5d7c0313354bf06ce0f743fb09
+
+    dwarfdump:
+            modified:   print_frames.c
+    a couple simple local variables were
+    not initialized. Now they are.
+
+2022-01-19:  David Anderson
+    commit 68f19d39485dd9c7404386d4f04d3a24f2fb9fe2
+    Merge: 82873ae3 19e62905
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+2022-01-19:  David Anderson
+    commit 19e62905a8e6cb2500c03b842e72280a94361e53
+    Merge: 34c0a37e d12c3238
+
+    Merge pull request #59 from vtorri/vtorri_prototype2
+
+    Fix one more "function declaration isn't a prototype" warning in
+
+2022-01-18:  David Anderson
+    commit 82873ae3940e63f9b70626425e0b58fe8f523312
+
+    Examples improved for reading macro sections
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+    New doxygen for reading macro sections.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-18:  David Anderson
+    commit 218abadcfe6cdb9711a3ce9c6267a7abd995d8f7
+
+    Updated copyright year
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+
+2022-01-18:  Vincent Torri
+    commit d12c3238323c7ca01e59fe7ccc0b3bca06725152
+
+    Fix one more "function declaration isn't a prototype" warning in
+    dwarfdump
+
+         modified:   ../src/bin/dwarfdump/print_ranges.c
+
+2022-01-18:  David Anderson
+    commit 34c0a37e16aa07c689ae0adb7eff6909ed93d044
+    Merge: 66a582ec dfb28de7
+
+    Merge pull request #58 from vtorri/vtorri_elfaccess
+
+    Fix "function declaration isn't a prototype" warning
+
+2022-01-18:  Vincent Torri
+    commit dfb28de7273af7265ff68367b55770658ebc3193
+
+    Remove useless elfaccess.h header file
+
+            modified:   CMakeLists.txt
+            modified:   cmake/config.h.cmake
+            modified:   configure.ac
+            modified:   src/lib/libdwarfp/dwarf_pro_arange.c
+            modified:   src/lib/libdwarfp/dwarf_pro_dnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_funcs.c
+            modified:   src/lib/libdwarfp/dwarf_pro_pubnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_stream.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_symbolic.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+            modified:   src/lib/libdwarfp/dwarf_pro_types.c
+            modified:   src/lib/libdwarfp/dwarf_pro_vars.c
+            modified:   src/lib/libdwarfp/dwarf_pro_weaks.c
+
+2022-01-17:  David Anderson
+    commit 66a582ec334fb83cab6b7309683d6512774be114
+
+    Fixed a too-long comment.
+            modified:   src/lib/libdwarf/dwarf_peread.c
+    Removed trailing whitespace.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-17:  David Anderson
+    commit c2f5490affcb460b207eaf210961c79c3f92d5d0
+
+    Dated today
+            modified:   doc/libdwarf.dox
+    Aligned some assignments
+            modified:   src/lib/libdwarf/dwarf_loc.c
+    Eliminated a bit of useless commentary
+            modified:   src/lib/libdwarf/dwarf_loc.h
+    Added doxygen comments to the loclists functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-17:  Vincent Torri
+    commit bc871159daad5544a0bba8d187de81e9351ffdec
+
+    Fix "function declaration isn't a prototype" warning
+
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2022-01-16:  David Anderson
+    commit 5bb2b169521765c9f671255e674cbed15e5bc688
+
+    The .debug_names section initial doc.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-15:  David Anderson
+    commit 06b94f187a57265fb887a662da10cef33a9b263e
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2022-01-15:  David Anderson
     commit 989a86283e6767a01dd69872f2bc40b0c27ee37c
 
