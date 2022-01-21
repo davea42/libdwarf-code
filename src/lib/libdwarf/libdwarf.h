@@ -5492,26 +5492,67 @@ DW_API int dwarf_cie_section_offset(Dwarf_Debug dw_dbg,
     Dwarf_Off   * dw_cie_off,
     Dwarf_Error * dw_error);
 
-/*  The 'set' calls here return the original (before any change
-    by these set routines) of the respective fields. */
-/*  Additional interface with correct 'initial' spelling. */
-/*  It is likely you will want to call the following 6 functions
-    before accessing any frame information.  All are useful
-    to tailor handling of pseudo-registers needed to turn
-    frame operation references into simpler forms and to
-    reflect ABI specific data.  Of course altering libdwarf.h
-    and dwarf.h allow the same capabilities, but header changes
-    in the distribution would require you re-integrate your
-    libdwarf.h changes into the distributed libdwarf.h ...
-    so use the following functions instead.*/
-DW_API Dwarf_Half dwarf_set_frame_rule_initial_value(Dwarf_Debug,
-    Dwarf_Half /*value*/);
-DW_API Dwarf_Half dwarf_set_frame_rule_table_size(Dwarf_Debug,
-    Dwarf_Half /*value*/);
-DW_API Dwarf_Half dwarf_set_frame_cfa_value(Dwarf_Debug /*dbg*/,
-    Dwarf_Half /*value*/);
-DW_API Dwarf_Half dwarf_set_frame_same_value(Dwarf_Debug /*dbg*/,
-    Dwarf_Half /*value*/);
+
+/*! @brief Frame Rule Table Size
+    @link frameregs Invariants for setting frame registers @endlink
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_value
+    Pass in the value to record for the library to use.
+    @return
+    Returns the previous value.
+*/
+DW_API Dwarf_Half dwarf_set_frame_rule_table_size(
+    Dwarf_Debug dw_dbg,
+    Dwarf_Half  dw_value);
+/*! @brief Frame Rule Initial Value
+    
+    @link frameregs Invariants for setting frame registers @endlink
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_value
+    Pass in the value to record for the library to use.
+    @return
+    Returns the previous value.
+*/
+DW_API Dwarf_Half dwarf_set_frame_rule_initial_value(
+    Dwarf_Debug dw_dbg,
+    Dwarf_Half  dw_value);
+/*! @brief Frame CFA Column 
+    @link frameregs Invariants for setting frame registers @endlink
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_value
+    Pass in the value to record for the library to use.
+    @return
+    Returns the previous value.
+*/
+DW_API Dwarf_Half dwarf_set_frame_cfa_value(
+    Dwarf_Debug dw_dbg,
+    Dwarf_Half  dw_value);
+
+/*! @brief Frame Same Value Default
+    @link frameregs Invariants for setting frame registers @endlink
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_value
+    Pass in the value to record for the library to use.
+    @return
+    Returns the previous value.
+*/
+DW_API Dwarf_Half dwarf_set_frame_same_value(
+    Dwarf_Debug dw_dbg,
+    Dwarf_Half  dw_value);
+/*! @brief Frame Undefined Value Default
+    @link frameregs Invariants for setting frame registers @endlink
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_value
+    Pass in the value to record for the library to use.
+    @return
+    Returns the previous value.
+*/
 DW_API Dwarf_Half dwarf_set_frame_undefined_value(
     Dwarf_Debug dw_dbg,
     Dwarf_Half  dw_value);
