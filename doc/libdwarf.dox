@@ -282,6 +282,8 @@
 
     @link string Strings can be read independently @endlink
 
+    @link str_offsets String Offsets can be read independently @endlink
+
     Those functions allow starting at byte 0 of the section
     and provide a length so you can calulate the next
     section offset to call or refer to.
@@ -313,6 +315,14 @@
 
     Here are the five values.
 
+    @b Table_Size: This sets the number of columns
+        in the theoretical table.  It starts at 
+        DW_FRAME_LAST_REG_NUM which defaults to 188. 
+        This is the only value you
+        might need to change, given the defaults
+        of the others are set reasonably large by
+        default.
+
     @b Undefined_Value: A register number that means
        the register value is undefined. For example due
        to a call clobbering the register.
@@ -321,27 +331,25 @@
 
     @b Same_Value: A register number that means
         the register value is the same as the value
-        at the call. Nothing clobbered it.
+        at the call. Nothing can have clobbered it.
         DW_FRAME_SAME_VAL defaults to 12289.
         There no such column in the table.
 
     @b Initial_Value:    The value must be either
         DW_FRAME_UNDEFINED_VAL or DW_FRAME_SAME_VAL to represent
         how most registers are to be thought of at a function call.
+        This is a property of the ABI and instruction set.
         Specific frame instructions in the CIE or FDE
-        can override this for exceptional registers.
+        will override this for registers not matching
+        this value.
 
     @b CFA_Column:       A number for the CFA.
         Defined so we can use a register number
         to refer to it.
         DW_FRAME_CFA_COL defaults to 12290.
-        There no such column in the table, it
-        is referred to specially.
-
-    @b Table_Size: This sets the number of columns
-        in the theoretical table. 
-        It starts at
-        DW_FRAME_LAST_REG_NUM which defaults to 188. 
+        There no such column in the table.
+        See libdwarf.h struct member rt3_cfa_rule
+        or function dwarf_get_fde_info_for_cfa_reg3_b .
 
     A set of functions allow these to be changed
     at runtime. The set should be called (if
@@ -356,17 +364,14 @@
 
     REQUIRED:
     @code
+       Table_Size      > the number of registers in the ABI.
        Undefined_Value != Same_Value
-       CFA_Column != Undefined_value
-       CFA_Column != Same_value
-       Initial_Value == Same_Value ||
+       CFA_Column      != Undefined_value
+       CFA_Column      != Same_value
+       Initial_Value   == Same_Value ||
            (Initial_Value == Undefined_value)
        Undefined_Value > Table_Size
-       Same_Value > Table_Size
-       CFA_Column > Table_Size
-       Table_Size > the number of registers
-           in the ABI.
+       Same_Value      > Table_Size
+       CFA_Column      > Table_Size
     @endcode
 */
-
-

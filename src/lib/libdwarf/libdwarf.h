@@ -5737,7 +5737,11 @@ DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
 
 /*! @} */
 /*! @defgroup str_offsets Str_Offsets section details
-    Shows just the section content in detail
+    Shows just the section content in detail.
+    Most library users will never call these,
+    as references to this is handled by the code
+    accessing some Dwarf_Attribute.
+    @link independentsections Reading The Str_Offsets @endlink 
     @{
 */
 /*  Allows applications to print the .debug_str_offsets
@@ -5756,11 +5760,17 @@ DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
     DW_DLV_ERROR  if such garbage exists.
 */
 
-/*  Allocates a struct Dwarf_Str_Offsets_Table_s for the section
-    and returns DW_DLV_OK and sets a pointer to the struct through
-    the table_data pointer if successful.
+/*! @brief  Allocates a access to a .debug_str_ofrfsets table
 
+    @param dw_dbg
+    Pass in the Dwarf_Debug of interest.
+    @param dw_table_data
+    On success returns a pointer to an opaque structure
+    for use in further calls.
+    @param dw_error
+    On error dw_error is set to point to the error details.
     @return
+    DW_DLV_OK etc.
     If there is no .debug_str_offsets section it returns
     DW_DLV_NO_ENTRY
 */
@@ -5768,42 +5778,112 @@ DW_API int dwarf_open_str_offsets_table_access(Dwarf_Debug dw_dbg,
     Dwarf_Str_Offsets_Table * dw_table_data,
     Dwarf_Error             * dw_error);
 
-/*  Close access, free table_data. */
+/*! @brief  Close str_offsets access, free table_data.
+ 
+    @param dw_table_data
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    DW_DLV_OK etc.
+    If there is no .debug_str_offsets section it returns
+    DW_DLV_NO_ENTRY
+    If it returns DW_DLV_ERROR there is nothing you can do
+    except reportthe error and, optionally,
+    call dwarf_dealloc_error to dealloc the error content
+    (and then set the dw_error to NULL as after the dealloc
+    the pointer is stale).. 
+*/
 DW_API int dwarf_close_str_offsets_table_access(
     Dwarf_Str_Offsets_Table  dw_table_data,
     Dwarf_Error            * dw_error);
 
-/*! @brief call this to iterate through the
-    offsets table(s).
-    Call till it returns DW_DLV_NO_ENTRY (normal end)
-    or DW_DLV_ERROR (error) and stop.
+/*! @brief Iterate through the offsets tables
+
+    Access to the tables starts at offset zero.
+    The library progresses through the next table
+    automatically, keeping track internally to 
+    know where it is.
+
+    @param dw_table_data
+    Pass in an open Dwarf_Str_Offsets_Table.
+    @param dw_unit_length
+    On success returns a table unit_length field
+    @param dw_unit_length_offset
+    On success returns the section offset of the unit_length field.
+    @param dw_table_start_offset
+    On success returns the section offset of the array
+    of table entries.
+    @param dw_entry_size
+    On success returns the entry size (4 or 8)
+    @param dw_version
+    On success returns the value in the version field 5.
+    @param dw_padding
+    On success returns the zero value in the padding field.
+    @param dw_table_value_count
+    On success returns the number of table entries, each
+    of size dw_entry_size, in the table.
+    @param dw_error
+    On error dw_error is set to point to the error details.
     @return
+    DW_DLV_OK
     Returns DW_DLV_NO_ENTRY if there are no more entries.
 */
-DW_API int dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table
-    dw_table_data,
-    Dwarf_Unsigned * /*unit_length*/,
-    Dwarf_Unsigned * /*unit_length_offset*/,
-    Dwarf_Unsigned * /*table_start_offset*/,
-    Dwarf_Half     * /*entry_size*/,
-    Dwarf_Half     * /*version*/,
-    Dwarf_Half     * /*padding*/,
-    Dwarf_Unsigned * /*table_value_count*/,
-    Dwarf_Error    * /*error*/);
+DW_API int dwarf_next_str_offsets_table(
+    Dwarf_Str_Offsets_Table dw_table_data,
+    Dwarf_Unsigned * dw_unit_length,
+    Dwarf_Unsigned * dw_unit_length_offset,
+    Dwarf_Unsigned * dw_table_start_offset,
+    Dwarf_Half     * dw_entry_size,
+    Dwarf_Half     * dw_version,
+    Dwarf_Half     * dw_padding,
+    Dwarf_Unsigned * dw_table_value_count,
+    Dwarf_Error    * dw_error);
 
-/*  Valid index values n:  0 <= n <  table_entry_count
-    for the active table */
-DW_API int dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table,
-    Dwarf_Unsigned   /*index_to_entry*/,
-    Dwarf_Unsigned * /*entry_value*/,
-    Dwarf_Error    * /*error*/);
+/*! @brief Access to an individual str offsets table entry
 
-/*  After all str_offsets read this reports final
-    wasted-bytes count. */
-DW_API int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table,
-    Dwarf_Unsigned * /*wasted_byte_count*/,
-    Dwarf_Unsigned * /*table_count*/,
-    Dwarf_Error    * /*error*/);
+    @param dw_table_data 
+    Pass in the open table pointer.
+    @param dw_index_to_entry
+    Pass in the entry number, 0 through dw_table_value_count-1
+    for the active table
+    @param dw_entry_value
+    On success returns the value in that table entry,
+    an offset into a string table.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    DW_DLV_OK
+    Returns DW_DLV_ERROR if dw_index_to_entry is
+    out of the correct range.
+*/
+DW_API int dwarf_str_offsets_value_by_index(
+    Dwarf_Str_Offsets_Table dw_table_data,
+    Dwarf_Unsigned   dw_index_to_entry,
+    Dwarf_Unsigned * dw_entry_value,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Reports final wasted-bytes count
+    
+    Reports the number of tables seen so far.
+    Not very interesting.
+
+    @param dw_table_data 
+    Pass in the open table pointer.
+    @param dw_wasted_byte_count
+    Always returns 0 at present.
+    @param dw_table_count 
+    On success returns the total number of tables seen
+    so far in the section.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    DW_DLV_OK etc.
+*/
+DW_API int dwarf_str_offsets_statistics(
+    Dwarf_Str_Offsets_Table dw_table_data,
+    Dwarf_Unsigned * dw_wasted_byte_count,
+    Dwarf_Unsigned * dw_table_count,
+    Dwarf_Error    * dw_error);
 
 /*! @} */
 /*! @defgroup dwarferror Dwarf_Error Functions
