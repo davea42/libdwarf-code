@@ -5762,6 +5762,8 @@ DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
 
 /*! @brief  Allocates a access to a .debug_str_ofrfsets table
 
+    @see examplestrngoffsets
+
     @param dw_dbg
     Pass in the Dwarf_Debug of interest.
     @param dw_table_data
@@ -5779,6 +5781,8 @@ DW_API int dwarf_open_str_offsets_table_access(Dwarf_Debug dw_dbg,
     Dwarf_Error             * dw_error);
 
 /*! @brief  Close str_offsets access, free table_data.
+
+    @see examplestrngoffsets
  
     @param dw_table_data
     @param dw_error
@@ -5799,6 +5803,8 @@ DW_API int dwarf_close_str_offsets_table_access(
 
 /*! @brief Iterate through the offsets tables
 
+    @see examplestrngoffsets
+ 
     Access to the tables starts at offset zero.
     The library progresses through the next table
     automatically, keeping track internally to 
@@ -5841,6 +5847,8 @@ DW_API int dwarf_next_str_offsets_table(
 
 /*! @brief Access to an individual str offsets table entry
 
+    @see examplestrngoffsets
+ 
     @param dw_table_data 
     Pass in the open table pointer.
     @param dw_index_to_entry
@@ -6189,30 +6197,55 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     Dwarf_Error *       dw_error);
 /*! @} */
 
-/*! @defgroup aranges Fast Access-Access to .debug_aranges
-    @{ */
-DW_API int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
-    Dwarf_Arange**   /*aranges*/,
-    Dwarf_Signed *   /*arange_count*/,
-    Dwarf_Error*     /*error*/);
+/*! @defgroup aranges Fast Access-Access to a CU given a code address
+    @{
+*/
+/*! @brief Get access to CUs given code addresses
 
-DW_API int dwarf_get_arange(Dwarf_Arange* /*aranges*/,
-    Dwarf_Unsigned   /*arange_count*/,
-    Dwarf_Addr       /*address*/,
-    Dwarf_Arange *   /*returned_arange*/,
-    Dwarf_Error*     /*error*/);
+    This intended as a fast-access to tie code addresses
+    to CU dies. The data is in the .debug_aranges section.
+    which may appear in DWARF2,3,4, or DWARF5.
+    
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_aranges
+    On success returns a pointer tied to aranges data.
+    @param dw_arange_count
+    On success returns a count of the number of entries
+    in the arange data.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    Returns DW_DLV_NO_ENTRY if there is no such section.
+*/
+DW_API int dwarf_get_aranges(Dwarf_Debug dw_dbg,
+    Dwarf_Arange**   dw_aranges,
+    Dwarf_Signed *   dw_arange_count,
+    Dwarf_Error*     dw_error);
 
+/*! @
+*/
+DW_API int dwarf_get_arange(Dwarf_Arange* dw_aranges,
+    Dwarf_Unsigned   dw_arange_count,
+    Dwarf_Addr       dw_address,
+    Dwarf_Arange *   dw_returned_arange,
+    Dwarf_Error*     dw_error);
+
+/*! @
+*/
 DW_API int dwarf_get_cu_die_offset(Dwarf_Arange /*arange*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
+/*! @
+*/
 DW_API int dwarf_get_arange_cu_header_offset(Dwarf_Arange /*arange*/,
     Dwarf_Off*       /*return_cu_header_offset*/,
     Dwarf_Error*     /*error*/);
 
-/*  DWARF2,3,4 interface.
-    New for DWARF4, entries may have segment information.
-    *segment is only meaningful if *segment_entry_size is non-zero. */
+/*  
+*/
 DW_API int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
     Dwarf_Unsigned*  /*segment*/,
     Dwarf_Unsigned*  /*segment_entry_size*/,

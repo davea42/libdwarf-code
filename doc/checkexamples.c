@@ -1573,26 +1573,35 @@ void examples(Dwarf_Cie cie,
     }
 }
 
-/*  We'll do in one function and not worry about
-    memory leakage to keep the example short.
-    dwarf_finish() will deallocate  if we do not
-    do so here. */
-void examplestrngoffsets(Dwarf_Debug dbg)
+/*! @defgroup examplestrngoffsets Example of string offsets access
+    @brief examplestrngoffsets
+
+    An example accessing the string offsets section
+    @param dbg
+    The Dwarf_Debug of interest.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    DW_DLV_OK etc.
+
+    @code
+*/
+int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     int res = 0;
     Dwarf_Str_Offsets_Table sot = 0;
     Dwarf_Unsigned wasted_byte_count = 0;
     Dwarf_Unsigned table_count = 0;
-    Dwarf_Error error = 0;
+    Dwarf_Error closeerror = 0;
 
-    res = dwarf_open_str_offsets_table_access(dbg, &sot,&error);
+    res = dwarf_open_str_offsets_table_access(dbg, &sot,error);
     if (res == DW_DLV_NO_ENTRY) {
         /* No such table */
-        return;
+        return res;
     }
     if (res == DW_DLV_ERROR) {
         /* Something is very wrong. Print the error? */
-        return;
+        return res;
     }
     for (;;) {
         Dwarf_Unsigned unit_length =0;
@@ -1609,14 +1618,17 @@ void examplestrngoffsets(Dwarf_Debug dbg)
             &unit_length, &unit_length_offset,
             &table_start_offset,
             &entry_size,&version,&padding,
-            &table_value_count,&error);
+            &table_value_count,error);
         if (res == DW_DLV_NO_ENTRY) {
             /* We have dealt with all tables */
+            
             break;
         }
         if (res == DW_DLV_ERROR) {
             /* Something badly wrong. Do something. */
-            return;
+            dwarf_close_str_offsets_table_access(sot,&closeerror);
+            dwarf_dealloc_error(dbg,closeerror);
+            return res;
         }
         /*  One could call dwarf_str_offsets_statistics to
             get the wasted bytes so far, but we do not do that
@@ -1625,10 +1637,12 @@ void examplestrngoffsets(Dwarf_Debug dbg)
             returned just above. */
         for (i=0; i < table_value_count; ++i) {
             res = dwarf_str_offsets_value_by_index(sot,i,
-                &table_entry_value,&error);
+                &table_entry_value,error);
             if (res != DW_DLV_OK) {
                 /* Something is badly wrong. Do something. */
-                return;
+                dwarf_close_str_offsets_table_access(sot,&closeerror);
+                dwarf_dealloc_error(dbg,closeerror);
+                return res;
             }
             /*  Do something with the table_entry_value
                 at this index. Maybe just print it.
@@ -1636,17 +1650,18 @@ void examplestrngoffsets(Dwarf_Debug dbg)
         }
     }
     res = dwarf_str_offsets_statistics(sot,&wasted_byte_count,
-        &table_count,&error);
-    if (res == DW_DLV_OK) {
-        /*  The wasted byte count is set. Print it or something.
-            One hopes zero bytes are wasted.
-            Print the table count if one is interested. */
+        &table_count,error);
+    if (res != DW_DLV_OK) {
+        dwarf_close_str_offsets_table_access(sot,&closeerror);
+        dwarf_dealloc_error(dbg,closeerror);
+        return res;
     }
-    res = dwarf_close_str_offsets_table_access(sot,&error);
-    /*  There is little point in checking the return value
-        as little can be done about any error. */
+    res = dwarf_close_str_offsets_table_access(sot,error);
+    /*  little can be done about any error. */
     sot = 0;
+    return res;
 }
+/* @endcode */
 
 void exampleu(Dwarf_Debug dbg)
 {
