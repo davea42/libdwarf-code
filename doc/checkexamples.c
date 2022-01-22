@@ -1663,24 +1663,71 @@ int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /* @endcode */
 
-void exampleu(Dwarf_Debug dbg)
-{
-    Dwarf_Signed count = 0;
-    Dwarf_Arange *arang = 0;
-    int res = 0;
-    Dwarf_Error error = 0;
+/*! @defgroup exampleu Example of aranges access
+    @brief exampleu
 
-    res = dwarf_get_aranges(dbg, &arang,&count, &error);
+    An example accessing the .debug_aranges
+    section. Looking all the aranges entries.
+    This example is not searching for anything.
+
+    @param dbg
+    The Dwarf_Debug of interest.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    DW_DLV_OK etc.
+
+    @code
+*/
+static void cleanupbadarange(Dwarf_Debug dbg,
+    Dwarf_Arange *arange,
+    Dwarf_Signed i, Dwarf_Signed count)
+{
+    Dwarf_Signed k = i;
+    for ( ; k < count; ++k) {
+        dwarf_dealloc(dbg,arange[k] , DW_DLA_ARANGE);
+        arange[k] = 0;
+    }
+}
+int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
+{
+    /*  It is a historical accident that the count is signed.
+        No negative count is possible. */
+    Dwarf_Signed count = 0;
+    Dwarf_Arange *arange = 0;
+    int res = 0;
+
+    res = dwarf_get_aranges(dbg, &arange,&count, error);
     if (res == DW_DLV_OK) {
         Dwarf_Signed i = 0;
 
         for (i = 0; i < count; ++i) {
-            /* use arang[i] */
-            dwarf_dealloc(dbg, arang[i], DW_DLA_ARANGE);
+            Dwarf_Arange ara = arange[i];
+            Dwarf_Unsigned segment = 0;
+            Dwarf_Unsigned segment_entry_size = 0;
+            Dwarf_Addr start = 0;
+            Dwarf_Unsigned length = 0;
+            Dwarf_Off  cu_die_offset = 0;
+
+            res = dwarf_get_arange_info_b(ara, 
+               &segment,&segment_entry_size,
+               &start, &length,
+               &cu_die_offset,error);
+            if (res != DW_DLV_OK) {
+               cleanupbadarange(dbg,arange,i,count);
+               dwarf_dealloc(dbg, arange, DW_DLA_LIST);
+               return res;
+            } 
+            /*  Do something with ara */
+            dwarf_dealloc(dbg, ara, DW_DLA_ARANGE);
+            arange[i] = 0;
         }
-        dwarf_dealloc(dbg, arang, DW_DLA_LIST);
+        dwarf_dealloc(dbg, arange, DW_DLA_LIST);
     }
+    return res;
 }
+/*! @endcode */
+
 void functionusingrange(Dwarf_Ranges *r);
 void examplev(Dwarf_Debug dbg,Dwarf_Off rangesoffset,Dwarf_Die die)
 {

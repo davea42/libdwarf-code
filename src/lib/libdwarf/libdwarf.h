@@ -6205,14 +6205,16 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     This intended as a fast-access to tie code addresses
     to CU dies. The data is in the .debug_aranges section.
     which may appear in DWARF2,3,4, or DWARF5.
+
+    @see exampleu
     
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_aranges
-    On success returns a pointer tied to aranges data.
+    On success returns a pointer to an array
+    of Dwarf_Arange pointers.
     @param dw_arange_count
-    On success returns a count of the number of entries
-    in the arange data.
+    On success returns a count of the length of the array.
     @param dw_error
     On error dw_error is set to point to the error details.
     @return
@@ -6224,7 +6226,24 @@ DW_API int dwarf_get_aranges(Dwarf_Debug dw_dbg,
     Dwarf_Signed *   dw_arange_count,
     Dwarf_Error*     dw_error);
 
-/*! @
+/*! @brief Find a range given a code address
+
+    @param dw_aranges
+    Pass in a pointer to the first entry in the aranges array
+    of pointers.
+    @param dw_arange_count
+    Pass in the dw_arange_count, the count for the array.
+    @param dw_address
+    Pass in the code address of interest.
+    @param dw_returned_arange
+    On success, returns the particular arange that
+    holds that address.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    Returns DW_DLV_NO_ENTRY if there is no such code
+    address present in the section.
 */
 DW_API int dwarf_get_arange(Dwarf_Arange* dw_aranges,
     Dwarf_Unsigned   dw_arange_count,
@@ -6232,27 +6251,70 @@ DW_API int dwarf_get_arange(Dwarf_Arange* dw_aranges,
     Dwarf_Arange *   dw_returned_arange,
     Dwarf_Error*     dw_error);
 
-/*! @
-*/
-DW_API int dwarf_get_cu_die_offset(Dwarf_Arange /*arange*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief Given an arange return its CU DIE offset.
 
-/*! @
+    @param dw_arange 
+    The specific arange of interest.
+    @param dw_return_offset 
+    The CU DIE offset (in .debug_info) applicable
+    to this arange..
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
 */
-DW_API int dwarf_get_arange_cu_header_offset(Dwarf_Arange /*arange*/,
-    Dwarf_Off*       /*return_cu_header_offset*/,
-    Dwarf_Error*     /*error*/);
+DW_API int dwarf_get_cu_die_offset(Dwarf_Arange dw_arange,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
 
-/*  
+/*! @brief Given an arange return its CU header offset.
+
+    @param dw_arange
+    The specific arange of interest.
+    @param dw_return_cu_header_offset
+    The CU header offset (in .debug_info) applicable
+    to this arange.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
 */
-DW_API int dwarf_get_arange_info_b(Dwarf_Arange     /*arange*/,
-    Dwarf_Unsigned*  /*segment*/,
-    Dwarf_Unsigned*  /*segment_entry_size*/,
-    Dwarf_Addr    *  /*start*/,
-    Dwarf_Unsigned*  /*length*/,
-    Dwarf_Off     *  /*cu_die_offset*/,
-    Dwarf_Error   *  /*error*/ );
+DW_API int dwarf_get_arange_cu_header_offset(Dwarf_Arange dw_arange,
+    Dwarf_Off  * dw_return_cu_header_offset,
+    Dwarf_Error* dw_error);
+
+/*! @brief Get the data in an arange entry. 
+
+    @param dw_arange
+    The specific arange of interest.
+    @param dw_segment
+    On success and if segment_entry_size is non-zero
+    this returns the segment number
+    from the arange.
+    @param dw_segment_entry_size
+    On success returns the segment entry size
+    from the arange.
+    @param dw_start
+    On success returns the low address this arange
+    refers to.
+    @param dw_length
+    On success returns the length, in bytes of the
+    code area this arange refers to.
+    @param dw_cu_die_offset
+    On success returns the .debug_info section offset
+    the arange refers to.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
+    Dwarf_Unsigned*  dw_segment,
+    Dwarf_Unsigned*  dw_segment_entry_size,
+    Dwarf_Addr    *  dw_start,
+    Dwarf_Unsigned*  dw_length,
+    Dwarf_Off     *  dw_cu_die_offset,
+    Dwarf_Error   *  dw_error );
 /*! @} */
 
 /*! @defgroup pubnames Fast Access-Access to .debug_pubnames and more.
