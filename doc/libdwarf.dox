@@ -2,7 +2,7 @@
 /*!
     @mainpage A Consumer Library Interface to DWARF
     @author David Anderson
-    @date 2022-01-18 
+    @date 2022-01-21 
  
     @section draft THIS IS A DRAFT
 
@@ -313,32 +313,32 @@
 
     Here are the five values.
 
-    Undefined_Value:  A register number that means
+    @b Undefined_Value: A register number that means
        the register value is undefined. For example due
        to a call clobbering the register.
        DW_FRAME_UNDEFINED_VAL defaults to  12288.
        There no such column in the table.
 
-    Same_Value:        A register number that means
+    @b Same_Value: A register number that means
         the register value is the same as the value
         at the call. Nothing clobbered it.
         DW_FRAME_SAME_VAL defaults to 12289.
-       There no such column in the table.
+        There no such column in the table.
 
-    Initial_Value:    The value must be either
+    @b Initial_Value:    The value must be either
         DW_FRAME_UNDEFINED_VAL or DW_FRAME_SAME_VAL to represent
         how most registers are to be thought of at a function call.
         Specific frame instructions in the CIE or FDE
         can override this for exceptional registers.
 
-    CFA_Column:       A number for the CFA.
+    @b CFA_Column:       A number for the CFA.
         Defined so we can use a register number
         to refer to it.
         DW_FRAME_CFA_COL defaults to 12290.
         There no such column in the table, it
         is referred to specially.
 
-    Table_Size: This sets the number of columns
+    @b Table_Size: This sets the number of columns
         in the theoretical table. 
         It starts at
         DW_FRAME_LAST_REG_NUM which defaults to 188. 
