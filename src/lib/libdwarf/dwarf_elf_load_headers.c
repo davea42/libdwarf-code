@@ -54,7 +54,8 @@ calls
 
 #include <stddef.h> /* size_t */
 #include <stdlib.h> /* calloc() free() malloc() */
-#include <string.h> /* memcpy() strcmp() strdup() strlen() strncmp() */
+#include <string.h> /* memcpy() strcmp() strdup()
+    strlen() strncmp() */
 
 /* Windows specific header files */
 #ifdef _WIN32

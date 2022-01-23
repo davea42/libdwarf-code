@@ -727,13 +727,7 @@ dwarf_global_die_offset(Dwarf_Global global,
     return thru the ret_off pointer the
     offset of the compilation unit header of the
     compilation unit the global is part of.
-
-    In early versions of this, the value returned was
-    the offset of the compilation unit die, and
-    other cu-local die offsets were faked so adding this to
-    such a cu-local offset got a true section offset.
-    Now things do as they say (adding *cu_header_offset to
-    a cu-local offset gets the section offset).  */
+*/
 int
 dwarf_global_cu_offset(Dwarf_Global global,
     Dwarf_Off * cu_header_offset,
@@ -745,16 +739,11 @@ dwarf_global_cu_offset(Dwarf_Global global,
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_NULL);
         return DW_DLV_ERROR;
     }
-
     con = global->gl_context;
-
     if (con == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_CONTEXT_NULL);
         return DW_DLV_ERROR;
     }
-
-    /*  In early libdwarf, this incorrectly returned the offset of the
-        CU DIE. Now correctly returns the header offset. */
     *cu_header_offset = con->pu_offset_of_cu_header;
 
     return DW_DLV_OK;

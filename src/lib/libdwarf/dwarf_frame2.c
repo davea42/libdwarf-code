@@ -34,7 +34,8 @@
 #include <config.h>
 
 #include <stdlib.h> /* qsort() */
-#include <string.h> /* memcpy() memset() strcmp() strncmp() strlen() */
+#include <string.h> /* memcpy() memset() strcmp()
+    strncmp() strlen() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
