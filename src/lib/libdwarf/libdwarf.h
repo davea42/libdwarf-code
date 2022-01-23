@@ -6600,9 +6600,14 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
     Dwarf_Off  * dw_cu_offset,
     Dwarf_Error* dw_error);
 /*! @brief A flag for dwarfdump on pubnames, pubtypes etc.
+
     Sets a flag in the dbg. Always returns DW_DLV_OK
     and never touches error. The error argument should
-    be deleted. Applies to all the sections of this sort.
+    be deleted. Applies to all the sections of this kind:
+    pubnames, pubtypes, funcs, typenames,vars, weaks.
+    Ensures empty content (meaning no
+    offset/name tuples) for a CU shows up rather than
+    being suppressed. 
 
     @link dw_pubnames Pubnames and Pubtypes overview @endlink
 
@@ -6614,7 +6619,6 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
     Unused,
     @return
     Returns DW_DLV_OK. Always.
-
 */
 DW_API int dwarf_return_empty_pubnames(Dwarf_Debug dw_dbg,
     int          dw_flag,
@@ -6879,6 +6883,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
     .gnu_debuglink  and/or the section .note.gnu.build-id.
 
     @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+
     @see exampledebuglink
 
     If no debuglink then name_returned,crc_returned and

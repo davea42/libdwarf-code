@@ -2014,7 +2014,12 @@ void examplezb(void)
     }
 }
 
-/* @brief exampledebuglink An example useing debuglink
+/*! @defgroup exampledebuglink Example using GNU debuglink
+    @brief exampledebuglink Showing dwarf_add_debuglink_global_path
+
+    An example using both dwarf_add_debuglink_global_path
+    and dwarf_gnu_debuglink .
+    @code
 */
 int exampledebuglink(Dwarf_Debug dbg, Dwarf_Error* error)
 {
@@ -2089,6 +2094,8 @@ int exampledebuglink(Dwarf_Debug dbg, Dwarf_Error* error)
     free(paths);
     return DW_DLV_OK;
 }
+/*! @endcode */
+
 int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Unsigned count = 0;
