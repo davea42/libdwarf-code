@@ -1024,7 +1024,7 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 /*! @defgroup examplef Example of dwarf_get_globals use
     @code
 */
-int examplef(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
+int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
     Dwarf_Global *globs = 0;
@@ -1038,7 +1038,7 @@ int examplef(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
     for (i = 0; i < count; ++i) {
         /* use globs[i] */
         char *name = 0;
-        res = dwarf_get_globname(globs[i],&name,error);
+        res = dwarf_globname(globs[i],&name,error);
         if (res != DW_DLV_OK) {
             dwarf_globals_dealloc(dbg,globs,count);
             return res;
@@ -1048,15 +1048,14 @@ int examplef(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
     return DW_DLV_OK;
 }
 
-void exampleg(Dwarf_Debug dbg)
+int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 {
-    Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
     Dwarf_Type *types = 0;
     Dwarf_Signed i = 0;
     int res = 0;
 
-    res = dwarf_get_pubtypes(dbg, &types,&count, &error);
+    res = dwarf_get_pubtypes(dbg, &types,&count, error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -2035,7 +2034,9 @@ void examplezb(void)
     }
 }
 
-void exampledebuglink(Dwarf_Debug dbg)
+/* @brief exampledebuglink An example useing debuglink
+*/
+int exampledebuglink(Dwarf_Debug dbg, Dwarf_Error* error)
 {
     int      res = 0;
     char    *debuglink_path = 0;
@@ -2048,7 +2049,6 @@ void exampledebuglink(Dwarf_Debug dbg)
     unsigned buildid_length = 0;
     char **  paths = 0;
     unsigned paths_count = 0;
-    Dwarf_Error error = 0;
     unsigned i = 0;
 
     /*  This is just an example if one knows
@@ -2056,10 +2056,10 @@ void exampledebuglink(Dwarf_Debug dbg)
         may be. "/usr/lib/debug" is automatically
         set. */
     res = dwarf_add_debuglink_global_path(dbg,
-        "/some/path/debug",&error);
+        "/some/path/debug",error);
     if (res != DW_DLV_OK) {
-        /*  Something is wrong, but we'll ignore that
-            here. */
+        /*  Something is wrong*/
+        return res;
     }
     res = dwarf_gnu_debuglink(dbg,
         &debuglink_path,
@@ -2072,15 +2072,14 @@ void exampledebuglink(Dwarf_Debug dbg)
         &buildid_length,
         &paths,
         &paths_count,
-        &error);
+        error);
     if (res == DW_DLV_ERROR) {
-        /* Do something with the error */
-        return;
+        return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
         /*  No such sections as .note.gnu.build-id
             or .gnu_debuglink  */
-        return;
+        return res;
     }
     if (debuglink_fullpath_strlen) {
         printf("debuglink     path: %s\n",debuglink_path);
@@ -2108,7 +2107,7 @@ void exampledebuglink(Dwarf_Debug dbg)
     }
     free(debuglink_fullpath);
     free(paths);
-    return;
+    return DW_DLV_OK;
 }
 int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
 {
