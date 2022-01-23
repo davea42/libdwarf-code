@@ -140,7 +140,7 @@ extern "C" {
 #ifndef DW_FRAME_UNDEFINED_VAL
 #define DW_FRAME_UNDEFINED_VAL          12288
 #endif
-/*  Taken as meaning 'same value' as caller had, 
+/*  Taken as meaning 'same value' as caller had,
     not a column or register number */
 #ifndef DW_FRAME_SAME_VAL
 #define DW_FRAME_SAME_VAL               12289
@@ -4519,7 +4519,7 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
 
 /*! @defgroup macro CU Data-Macro .debug_macro DWARF5 data access
 
-    @link examplep5 An example reading .debug_macro @endlink
+    @see examplep5 An example reading .debug_macro
     @{
 */
 
@@ -4810,7 +4810,7 @@ DW_API int dwarf_get_macro_import(
     macro data (in  section .debug_macro).
 
     For an example see
-    @link examplep2 An example reading .debug_macinfo @endlink
+    @see examplep2 An example reading .debug_macinfo
 
     @{
 
@@ -4876,7 +4876,7 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
 
     The FDE array returned through dw_fde_data
     is sorted low-to-high  by the lowest-pc in each FDE.
-    
+
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_cie_data
@@ -4955,13 +4955,13 @@ DW_API void dwarf_dealloc_fde_cie_list(Dwarf_Debug dw_dbg,
     On success returns the length of the function
     code in bytes.
     @param dw_fde_bytes
-    On success 
+    On success
     returns a pointer to the bytes of the FDE.
     @param dw_fde_byte_length
-    On success returns the length of the 
+    On success returns the length of the
     dw_fde_bytes area.
     @param dw_cie_offset
-    On success returns the section offset of the associated CIE. 
+    On success returns the section offset of the associated CIE.
     @param dw_cie_index
     On success returns the CIE index of the associated CIE.
     @param dw_fde_offset
@@ -5006,7 +5006,6 @@ DW_API int dwarf_get_cie_of_fde(Dwarf_Fde dw_fde,
     Dwarf_Error*     dw_error);
 
 /*! @brief Given a CIE get access to its content
-
 
     @param dw_cie
     Pass in the CIE of interest.
@@ -5091,12 +5090,12 @@ DW_API int dwarf_get_fde_instr_bytes(Dwarf_Fde dw_fde,
 
 /*! @brief Return information on frame registers at a given pc value
 
-    An FDE at a given pc (code address) 
+    An FDE at a given pc (code address)
 
     @param dw_fde
     Pass in the FDE of interest.
     @param dw_pc_requested
-    Pass in a pc (code) address inside that FDE. 
+    Pass in a pc (code) address inside that FDE.
     @param dw_reg_table
     On success, returns a pointer to a struct
     given the frame state.
@@ -5144,7 +5143,7 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     @param dw_offset
     On success returns a register offset value.
     @param dw_block_content
-    On success returns a pointer to a block. 
+    On success returns a pointer to a block.
     For example, for DW_EXPR_EXPRESSION the block
     gives access to the expression bytes.
     @param dw_row_pc_out
@@ -5180,7 +5179,7 @@ DW_API int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde dw_fde,
 
 /*! @brief Get the value of the CFA for a particular pc value
 
-    @see dwarf_get_fde_info_for_reg3_b  
+    @see dwarf_get_fde_info_for_reg3_b
 
     This has essentially the same return values but
     it refers to the CFA (which is not part of the register
@@ -5213,8 +5212,8 @@ DW_API int dwarf_get_fde_for_die(Dwarf_Debug dw_dbg,
 
     This is just like indexing into the FDE array
     but with extra checking of the pointer and
-    index. 
-    @see dwarf_get_fde_list 
+    index.
+    @see dwarf_get_fde_list
 */
 DW_API int dwarf_get_fde_n(Dwarf_Fde* dw_fde_data,
     Dwarf_Unsigned   dw_fde_index,
@@ -5227,19 +5226,19 @@ DW_API int dwarf_get_fde_n(Dwarf_Fde* dw_fde_data,
     that contains this dw_pc_of_interest
     That works because libdwarf ensures the
     array of FDEs is sorted by the low-pc
-    @see dwarf_get_fde_list 
+    @see dwarf_get_fde_list
 
-    @param dw_fde_data 
+    @param dw_fde_data
     Pass in a pointer an array of fde pointers.
-    @param dw_pc_of_interest 
+    @param dw_pc_of_interest
     The pc value of interest.
-    @param dw_returned_fde 
+    @param dw_returned_fde
     On success a pointer to the applicable FDE
     is set through the pointer.
-    @param dw_lopc 
+    @param dw_lopc
     On success a pointer to the low pc in dw_returned_fde
     is set through the pointer.
-    @param dw_hipc 
+    @param dw_hipc
     On success a pointer to the high pc (one past
     the actual last byte address) in dw_returned_fde
     is set through the pointer.
@@ -5492,7 +5491,6 @@ DW_API int dwarf_cie_section_offset(Dwarf_Debug dw_dbg,
     Dwarf_Off   * dw_cie_off,
     Dwarf_Error * dw_error);
 
-
 /*! @brief Frame Rule Table Size
     @link frameregs Invariants for setting frame registers @endlink
     @param dw_dbg
@@ -5506,7 +5504,7 @@ DW_API Dwarf_Half dwarf_set_frame_rule_table_size(
     Dwarf_Debug dw_dbg,
     Dwarf_Half  dw_value);
 /*! @brief Frame Rule Initial Value
-    
+
     @link frameregs Invariants for setting frame registers @endlink
 
     @param dw_dbg
@@ -5519,7 +5517,7 @@ DW_API Dwarf_Half dwarf_set_frame_rule_table_size(
 DW_API Dwarf_Half dwarf_set_frame_rule_initial_value(
     Dwarf_Debug dw_dbg,
     Dwarf_Half  dw_value);
-/*! @brief Frame CFA Column 
+/*! @brief Frame CFA Column
     @link frameregs Invariants for setting frame registers @endlink
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -5709,15 +5707,15 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev dw_abbrev,
 */
 /*! @brief Reading From a String Section
 
-    @link independentsections Reading The String Section @endlink 
- 
-    @param dw_dbg  
+    @link independentsections Reading The String Section @endlink
+
+    @param dw_dbg
     The Dwarf_Debug whose .debug_str section we want to access.
-    @param dw_offset  
+    @param dw_offset
     Pass in a a string offset. Start at 0, and
     for the next call pass in dw_offset
     plus dw_strlen_of_string plus 1.
-    @param dw_string  
+    @param dw_string
     On success returns a pointer to a string from offset
     dw_offset. Never dealloc or free this string.
     @param dw_strlen_of_string
@@ -5741,7 +5739,7 @@ DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
     Most library users will never call these,
     as references to this is handled by the code
     accessing some Dwarf_Attribute.
-    @link independentsections Reading The Str_Offsets @endlink 
+    @link independentsections Reading The Str_Offsets @endlink
     @{
 */
 /*  Allows applications to print the .debug_str_offsets
@@ -5783,7 +5781,7 @@ DW_API int dwarf_open_str_offsets_table_access(Dwarf_Debug dw_dbg,
 /*! @brief  Close str_offsets access, free table_data.
 
     @see examplestrngoffsets
- 
+
     @param dw_table_data
     @param dw_error
     On error dw_error is set to point to the error details.
@@ -5795,7 +5793,7 @@ DW_API int dwarf_open_str_offsets_table_access(Dwarf_Debug dw_dbg,
     except reportthe error and, optionally,
     call dwarf_dealloc_error to dealloc the error content
     (and then set the dw_error to NULL as after the dealloc
-    the pointer is stale).. 
+    the pointer is stale)..
 */
 DW_API int dwarf_close_str_offsets_table_access(
     Dwarf_Str_Offsets_Table  dw_table_data,
@@ -5804,10 +5802,10 @@ DW_API int dwarf_close_str_offsets_table_access(
 /*! @brief Iterate through the offsets tables
 
     @see examplestrngoffsets
- 
+
     Access to the tables starts at offset zero.
     The library progresses through the next table
-    automatically, keeping track internally to 
+    automatically, keeping track internally to
     know where it is.
 
     @param dw_table_data
@@ -5848,8 +5846,8 @@ DW_API int dwarf_next_str_offsets_table(
 /*! @brief Access to an individual str offsets table entry
 
     @see examplestrngoffsets
- 
-    @param dw_table_data 
+
+    @param dw_table_data
     Pass in the open table pointer.
     @param dw_index_to_entry
     Pass in the entry number, 0 through dw_table_value_count-1
@@ -5871,15 +5869,15 @@ DW_API int dwarf_str_offsets_value_by_index(
     Dwarf_Error    * dw_error);
 
 /*! @brief Reports final wasted-bytes count
-    
+
     Reports the number of tables seen so far.
     Not very interesting.
 
-    @param dw_table_data 
+    @param dw_table_data
     Pass in the open table pointer.
     @param dw_wasted_byte_count
     Always returns 0 at present.
-    @param dw_table_count 
+    @param dw_table_count
     On success returns the total number of tables seen
     so far in the section.
     @param dw_error
@@ -6207,7 +6205,7 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     which may appear in DWARF2,3,4, or DWARF5.
 
     @see exampleu
-    
+
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_aranges
@@ -6253,9 +6251,9 @@ DW_API int dwarf_get_arange(Dwarf_Arange* dw_aranges,
 
 /*! @brief Given an arange return its CU DIE offset.
 
-    @param dw_arange 
+    @param dw_arange
     The specific arange of interest.
-    @param dw_return_offset 
+    @param dw_return_offset
     The CU DIE offset (in .debug_info) applicable
     to this arange..
     @param dw_error
@@ -6283,7 +6281,7 @@ DW_API int dwarf_get_arange_cu_header_offset(Dwarf_Arange dw_arange,
     Dwarf_Off  * dw_return_cu_header_offset,
     Dwarf_Error* dw_error);
 
-/*! @brief Get the data in an arange entry. 
+/*! @brief Get the data in an arange entry.
 
     @param dw_arange
     The specific arange of interest.
@@ -6318,203 +6316,310 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
 /*! @} */
 
 /*! @defgroup pubnames Fast Access-Access to .debug_pubnames and more.
-    @{ */
 
-/*  global name space operations (.debug_pubnames access)
-    The pubnames and similar sections are rarely used. Few compilers
-    emit them. They are DWARF 2,3,4 only., not DWARF 5.  */
+    @link dw_pubnames Pubnames and Pubtypes overview @endlink
 
-/*  New March 2019. Special for dwarfdump.
-    Sets a flag in the dbg. Always returns DW_DLV_OK
-    and never touches error */
-DW_API int dwarf_return_empty_pubnames(Dwarf_Debug /*dbg*/,
-    int /* flag */,
-    Dwarf_Error* /*error*/);
+    These functions each read one of a set of sections designed
+    for fast access by name, but they are not always emitted as
+    they each have somewhat limited and inflexible
+    capabilities. So you may not see many of these.
 
-DW_API int dwarf_get_globals(Dwarf_Debug /*dbg*/,
-    Dwarf_Global**   /*globals*/,
-    Dwarf_Signed *   /*number_of_globals*/,
-    Dwarf_Error*     /*error*/);
+    All have the same set of functions with a name
+    reflecting the specific object section involved.
+    Only the first, of type Dwarf_Global, is documented
+    here in full detail as the others do the same jobs
+    just each for their applicable object section..
 
-DW_API void dwarf_globals_dealloc(Dwarf_Debug /*dbg*/,
-    Dwarf_Global*    /*globals*/,
-    Dwarf_Signed     /*number_of_globals*/);
+    @{
+*/
 
-/*  The following four are closely related. */
-DW_API int dwarf_globname(Dwarf_Global /*glob*/,
-    char   **        /*returned_name*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_global_die_offset(Dwarf_Global /*global*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error *    /*error*/);
-DW_API int dwarf_global_cu_offset(Dwarf_Global /*global*/,
-    Dwarf_Off*       /*return_offset, offset of cu header*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_global_name_offsets(Dwarf_Global /*global*/,
-    char   **        /*returned_name*/,
-    Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset, offset of
-        cu die*/,
-    Dwarf_Error*     /*error*/);
+/*! @brief  global name space operations, .debug_pubnames access
 
-/*  New February 2019. For more complete dwarfdump printing.
+    This section is defined in DWARF2, DWARF3, and DWARF4.
+
+    @see examplef
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_globals
+    On success returns an array of pointers to opaque
+    structs..
+    @param dw_number_of_globals
+    On success returns the number of entries in the array.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    Returns DW_DLV_NO_ENTRY if the section is not present.
+*/
+DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
+    Dwarf_Global** dw_globals,
+    Dwarf_Signed * dw_number_of_globals,
+    Dwarf_Error  * dw_error);
+
+/*! @brief Dealloc the Dwarf_Globals data
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_globals
+    The globals array data to dealloc (free).
+    @param dw_number_of_globals
+    The number of entries in the array.
+*/
+DW_API void dwarf_globals_dealloc(Dwarf_Debug dw_dbg,
+    Dwarf_Global* dw_globals,
+    Dwarf_Signed  dw_number_of_globals);
+
+/*! @brief return the name of a global data item
+
+    @param dw_global
+    The Dwarf_Debug of interest.
+    @param dw_returned_name
+    On success a pointer to the name (a null-terminated
+    string) is returned.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_globname(Dwarf_Global dw_global,
+    char      ** dw_returned_name,
+    Dwarf_Error* dw_error);
+
+/*! @brief return the DIE offset of a global data item
+
+    @param dw_global
+    The Dwarf_Debug of interest.
+    @param dw_return_offset
+    On success a the section-global DIE offset of a
+    data item is returned.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_global_die_offset(Dwarf_Global dw_global,
+    Dwarf_Off   * dw_return_offset,
+    Dwarf_Error * dw_error);
+
+/*! @brief return the CU header data of a global data item
+
+    @param dw_global
+    The Dwarf_Debug of interest.
+    @param dw_return_offset
+    On success a the section-global offset of
+    a CU header is returned.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_global_cu_offset(Dwarf_Global dw_global,
+    Dwarf_Off*       dw_return_offset,
+    Dwarf_Error*     dw_error);
+
+/*! @brief return the name and offsets of a global entry.
+
+    @param dw_global
+    The Dwarf_Debug of interest.
+    @param dw_returned_name
+    On success a pointer to the name (a null-terminated
+    string) is returned.
+    @param dw_die_offset
+    On success a the section-global DIE offset of
+    the global with the name.
+    @param dw_cu_offset
+    On success a the section-global offset of
+    a CU header is returned.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+*/
+DW_API int dwarf_global_name_offsets(Dwarf_Global dw_global,
+    char   **        dw_returned_name,
+    Dwarf_Off*       dw_die_offset,
+    Dwarf_Off*       dw_cu_offset,
+    Dwarf_Error*     dw_error);
+
+/*! @brief  For more complete globals printing.
     For each CU represented in .debug_pubnames, etc,
     there is a .debug_pubnames header.  For any given
     Dwarf_Global this returns the content of the applicable
     header. */
-DW_API int dwarf_get_globals_header(Dwarf_Global /*global*/,
-    Dwarf_Off      * /*offset_pub_header*/,
-    Dwarf_Unsigned * /*length_size*/,
-    Dwarf_Unsigned * /*length_pub*/,
-    Dwarf_Unsigned * /*version*/,
-    Dwarf_Unsigned * /*header_info_offset*/,
-    Dwarf_Unsigned * /*info_length*/,
-    Dwarf_Error*   /*error*/);
+DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
+    Dwarf_Off      * dw_offset_pub_header,
+    Dwarf_Unsigned * dw_length_size,
+    Dwarf_Unsigned * dw_length_pub,
+    Dwarf_Unsigned * dw_version,
+    Dwarf_Unsigned * dw_header_info_offset,
+    Dwarf_Unsigned * dw_info_length,
+    Dwarf_Error    * dw_error);
 
-/* Static function name operations.  */
-DW_API int dwarf_get_funcs(Dwarf_Debug    /*dbg*/,
-    Dwarf_Func**     /*funcs*/,
-    Dwarf_Signed *   /*number_of_funcs*/,
-    Dwarf_Error*     /*error*/);
-DW_API void dwarf_funcs_dealloc(Dwarf_Debug /*dbg*/,
-    Dwarf_Func*      /*funcs*/,
-    Dwarf_Signed     /*number_of_funcs*/);
+/*! @brief  Access to DWARF3, DWARF4 .debug_pubtypes section.
 
-/* The following four are closely related */
-DW_API int dwarf_funcname(Dwarf_Func /*func*/,
-    char   **        /*returned_name*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_func_die_offset(Dwarf_Func /*func*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_func_cu_offset(Dwarf_Func /*func*/,
-    Dwarf_Off*       /*return_offset of the
-        cu header*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_func_name_offsets(Dwarf_Func /*func*/,
-    char   **        /*returned_name*/,
-    Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset of the
-        cu die*/,
-    Dwarf_Error*     /*error*/);
+    @link dw_pubnames Pubnames and Pubtypes overview @endlink
+*/
 
-/*  jUser-defined type name operations,
-    SGI IRIX .debug_typenames section.
+DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
+    Dwarf_Type  ** dw_types,
+    Dwarf_Signed * dw_number_of_types,
+    Dwarf_Error  * dw_error);
+DW_API void dwarf_pubtypes_dealloc(Dwarf_Debug dw_dbg,
+    Dwarf_Type   * dw_pubtypes,
+    Dwarf_Signed   dw_number_of_pubtypes);
 
-    Same content as DWARF3 .debug_pubtypes, but
-    defined years before .debug_pubtypes was defined.
-    SGI IRIX only. */
-DW_API int dwarf_get_types(Dwarf_Debug    /*dbg*/,
-    Dwarf_Type**     /*types*/,
-    Dwarf_Signed *   /*number_of_types*/,
-    Dwarf_Error*     /*error*/);
-DW_API void dwarf_types_dealloc(Dwarf_Debug /*dbg*/,
-    Dwarf_Type*      /*types*/,
-    Dwarf_Signed     /*number_of_types*/);
+DW_API int dwarf_pubtypename(Dwarf_Type dw_type,
+    char      ** dw_returned_name,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_pubtype_type_die_offset(Dwarf_Type dw_type,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_pubtype_cu_offset(Dwarf_Type dw_type,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_pubtype_name_offsets(Dwarf_Type dw_type,
+    char      ** dw_returned_name,
+    Dwarf_Off  * dw_die_offset,
+    Dwarf_Off  * dw_cu_offset,
+    Dwarf_Error* dw_error);
+
+/*! @brief  Access to SGI/IRIX .debug_funcs section.
+    Static function names and offsets.
+    @link dw_pubnames Pubnames and Pubtypes overview @endlink
+*/
+DW_API int dwarf_get_funcs(Dwarf_Debug dw_dbg,
+    Dwarf_Func  ** dw_funcs,
+    Dwarf_Signed * dw_number_of_funcs,
+    Dwarf_Error*   dw_error);
+DW_API void dwarf_funcs_dealloc(Dwarf_Debug dw_dbg,
+    Dwarf_Func  * dw_funcs,
+    Dwarf_Signed  dw_number_of_funcs);
+
+DW_API int dwarf_funcname(Dwarf_Func dw_func,
+    char      ** dw_returned_name,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_func_die_offset(Dwarf_Func dw_func,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_func_cu_offset(Dwarf_Func dw_func,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_func_name_offsets(Dwarf_Func dw_func,
+    char      ** dw_returned_name,
+    Dwarf_Off  * dw_die_offset,
+    Dwarf_Off  * dw_cu_offset,
+    Dwarf_Error* dw_error);
+
+/*! @brief  Access to SGI/IRIC .debug_types section.
+    Static types names and offsets.
+    @link dw_pubnames Pubnames and Pubtypes overview @endlink
+*/
+DW_API int dwarf_get_types(Dwarf_Debug dw_dbg,
+    Dwarf_Type  ** dw_types,
+    Dwarf_Signed * dw_number_of_types,
+    Dwarf_Error  * dw_error);
+DW_API void dwarf_types_dealloc(Dwarf_Debug dw_dbg,
+    Dwarf_Type   * dw_types,
+    Dwarf_Signed   dw_number_of_types);
 
 /*  The fourth gives all the values that the next
-    three combined do. */
-DW_API int dwarf_typename(Dwarf_Type /*type*/,
-    char   **        /*returned_name*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_type_die_offset(Dwarf_Type /*type*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_type_cu_offset(Dwarf_Type /*type*/,
-    Dwarf_Off*       /*return_offset is offset of
-        cu_header */,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_type_name_offsets(Dwarf_Type    /*type*/,
-    char   **        /*returned_name*/,
-    Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset is offset of
-        cu_die */,
-    Dwarf_Error*     /*error*/);
+    three combined do.
+*/
+DW_API int dwarf_typename(Dwarf_Type dw_type,
+    char      ** dw_returned_name,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_type_die_offset(Dwarf_Type dw_type,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_type_cu_offset(Dwarf_Type dw_type,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_type_name_offsets(Dwarf_Type dw_type,
+    char      ** dw_returned_name,
+    Dwarf_Off  * dw_die_offset,
+    Dwarf_Off  * dw_cu_offset,
+    Dwarf_Error* dw_error);
 
-/*  User-defined type name operations, DWARF3  .debug_pubtypes
-    section.  */
-DW_API int dwarf_get_pubtypes(Dwarf_Debug    /*dbg*/,
-    Dwarf_Type**     /*types*/,
-    Dwarf_Signed *   /*number_of_types*/,
-    Dwarf_Error*     /*error*/);
-DW_API void dwarf_pubtypes_dealloc(Dwarf_Debug /*dbg*/,
-    Dwarf_Type*      /*pubtypes*/,
-    Dwarf_Signed     /*number_of_pubtypes*/);
+/*! @brief  Access to SGI/IRIC .debug_vars section.
+    File-scope static variable names
+    @link dw_pubnames Pubnames and Pubtypes overview @endlink
+*/
+DW_API int dwarf_get_vars(Dwarf_Debug dw_dbg,
+    Dwarf_Var  ** dw_vars,
+    Dwarf_Signed* dw_number_of_vars,
+    Dwarf_Error * dw_error);
+DW_API void dwarf_vars_dealloc(Dwarf_Debug dw_dbg,
+    Dwarf_Var   * dw_vars,
+    Dwarf_Signed  dw_number_of_vars);
 
-/*  The first three present the same information
-    as the fourth here does in one call.
-    Probably best to use the fourth one and ignore the
-    first three. cu_offsset is cu_header offset. */
-DW_API int dwarf_pubtypename(Dwarf_Type /*type*/,
-    char   **        /*returned_name*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_pubtype_type_die_offset(Dwarf_Type /*type*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_pubtype_cu_offset(Dwarf_Type /*type*/,
-    Dwarf_Off*       /*return_offset is offset
-        of cu_header */,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_pubtype_name_offsets(Dwarf_Type    /*type*/,
-    char   **        /*returned_name*/,
-    Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset is offset of
-        cu_die */,
-    Dwarf_Error*     /*error*/);
+DW_API int dwarf_varname(Dwarf_Var dw_var,
+    char      ** dw_returned_name,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_var_die_offset(Dwarf_Var dw_var,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_var_cu_offset(Dwarf_Var dw_var,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_var_name_offsets(Dwarf_Var dw_var,
+    char      ** dw_returned_name,
+    Dwarf_Off  * dw_die_offset,
+    Dwarf_Off  * dw_cu_offset,
+    Dwarf_Error* dw_error);
 
-/* File-scope static variable name operations.  */
-DW_API int dwarf_get_vars(Dwarf_Debug    /*dbg*/,
-    Dwarf_Var**      /*vars*/,
-    Dwarf_Signed *   /*number_of_vars*/,
-    Dwarf_Error*     /*error*/);
-DW_API void dwarf_vars_dealloc(Dwarf_Debug /*dbg*/,
-    Dwarf_Var*       /*vars*/,
-    Dwarf_Signed     /*number_of_vars*/);
+/*! @brief  Access to SGI/IRIC .debug_weaks section.
 
-/*  The following four closely related. */
-DW_API int dwarf_varname(Dwarf_Var /*var*/,
-    char   **        /*returned_name*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_var_die_offset(Dwarf_Var /*var*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_var_cu_offset(Dwarf_Var /*var*/,
-    Dwarf_Off*       /*return_offset of
-        the cu header*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_var_name_offsets(Dwarf_Var /*var*/,
-    char   **        /*returned_name*/,
-    Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset of the
-        cu die */,
-    Dwarf_Error*     /*error*/);
+    Lists weak symbols. Weak symbols are an
+    Elf Object Format feature.
 
-/* weak name operations.  */
-DW_API int dwarf_get_weaks(Dwarf_Debug    /*dbg*/,
-    Dwarf_Weak**     /*weaks*/,
-    Dwarf_Signed *   /*number_of_weaks*/,
-    Dwarf_Error*     /*error*/);
-DW_API void dwarf_weaks_dealloc(Dwarf_Debug /*dbg*/,
-    Dwarf_Weak*      /*weaks*/,
-    Dwarf_Signed     /*number_of_weaks*/);
+    @link dw_pubnames Pubnames and Pubtypes overview @endlink
 
-/*  The following four closely related. */
-DW_API int dwarf_weakname(Dwarf_Weak /*weak*/,
-    char   **        /*returned_name*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_weak_die_offset(Dwarf_Weak /*weak*/,
-    Dwarf_Off*       /*return_offset*/,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_weak_cu_offset(Dwarf_Weak /*weak*/,
-    Dwarf_Off*       /*return_offset of
-        the CU header */,
-    Dwarf_Error*     /*error*/);
-DW_API int dwarf_weak_name_offsets(Dwarf_Weak    /*weak*/,
-    char   **        /*returned_name*/,
-    Dwarf_Off*       /*die_offset*/,
-    Dwarf_Off*       /*cu_offset of
-        the CU die */,
-    Dwarf_Error*     /*error*/);
+    @see https://en.wikipedia.org/wiki/Weak_symbol
+*/
+DW_API int dwarf_get_weaks(Dwarf_Debug dw_dbg,
+    Dwarf_Weak  ** dw_weaks,
+    Dwarf_Signed * dw_number_of_weaks,
+    Dwarf_Error  * dw_error);
+DW_API void dwarf_weaks_dealloc(Dwarf_Debug dw_dbg,
+    Dwarf_Weak   * dw_weaks,
+    Dwarf_Signed   dw_number_of_weaks);
+
+DW_API int dwarf_weakname(Dwarf_Weak dw_weak,
+    char      ** dw_returned_name,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_weak_die_offset(Dwarf_Weak dw_weak,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_weak_cu_offset(Dwarf_Weak dw_weak,
+    Dwarf_Off  * dw_return_offset,
+    Dwarf_Error* dw_error);
+DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
+    char      ** dw_returned_name,
+    Dwarf_Off  * dw_die_offset,
+    Dwarf_Off  * dw_cu_offset,
+    Dwarf_Error* dw_error);
+/*! @brief A flag for dwarfdump on pubnames, pubtypes etc.
+    Sets a flag in the dbg. Always returns DW_DLV_OK
+    and never touches error. The error argument should
+    be deleted. Applies to all the sections of this sort.
+
+    @link dw_pubnames Pubnames and Pubtypes overview @endlink
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_flag
+    Must be the value one.
+    @param dw_error
+    Unused,
+    @return
+    Returns DW_DLV_OK. Always.
+
+*/
+DW_API int dwarf_return_empty_pubnames(Dwarf_Debug dw_dbg,
+    int          dw_flag,
+    Dwarf_Error* dw_error);
+
 /*! @} */
 
 /*! @defgroup gnupubnames Fast Access-Access GNU .debug_gnu_pubnames
@@ -7172,19 +7277,18 @@ DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
 /*! @defgroup miscellaneous Miscellaneous Functions
     @{
 */
-/*! @brief Returns the version string in the library. 
+/*! @brief Returns the version string in the library.
 
     An example: "0.3.0" which is a Semantic Version identifier.
     Before September 2021 the version string was
     a date, for example "20210528",
     which is in ISO date format.
     See DW_LIBDWARF_VERSION DW_LIBDWARF_VERSION_MAJOR
-    DW_LIBDWARF_VERSION_MINOR DW_LIBDWARF_VERSION_MICRO 
+    DW_LIBDWARF_VERSION_MINOR DW_LIBDWARF_VERSION_MICRO
     @return
     The Package Version built into libdwarf.so or libdwarf.a
 */
 DW_API const char * dwarf_package_version(void);
-
 
 /*! @brief  Turn off libdwarf checks of strings.
 
@@ -7278,7 +7382,7 @@ DW_API int dwarf_set_de_alloc_flag(int dw_v);
     is used when other address size information
     does not exist, for example in a DWARF2
     CIE or FDE.
- 
+
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_value
@@ -7294,7 +7398,6 @@ DW_API int dwarf_set_de_alloc_flag(int dw_v);
 DW_API Dwarf_Small dwarf_set_default_address_size(
     Dwarf_Debug dw_dbg,
     Dwarf_Small dw_value);
-
 
 /*! @}
 */

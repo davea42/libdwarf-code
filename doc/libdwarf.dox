@@ -374,4 +374,40 @@
        Same_Value      > Table_Size
        CFA_Column      > Table_Size
     @endcode
+
+    @section dw_pubnames .debug_pubnames etc DWARF2-DWARF4 
+
+    Each section consists of a header for a specific 
+    compilation unit (CU) followed by an a set of tuples,
+    each tuple consisting of an offset of a compilation unit
+    followed by a null-terminated namestring. The tuple set is ended
+    by a 0,0 pair. Then followed with the data for the next
+    CU and so on.
+
+    The function set provided for each such section
+    allows one to print all the section data as it literally
+    appears in the section (with headers and
+    tuples) or to treat it as a single array with CU data
+    columns.
+
+    Each has a set of 6 functions. 
+  
+    @code
+     Section         typename      Standard      main function
+    .debug_pubnames  Dwarf_Global  DWARF2-DWARF4 dwarf_get_globals
+    .debug_pubtypes  Dwarf_Type    DWARF3,DWARF4 dwarf_get_pubtypes
+    @endcode
+
+    The following four were defined in SGI/IRIX compilers
+    in the 1990s but never part of the DWARF standard.
+    
+    It not likely you will encounter these.
+
+    @code
+    .debug_funcs      Dwarf_Func   None          dwarf_get_funcs
+    .debug_typenames  Dwarf_Type   None          dwarf_get_types
+    .debug_vars       Dwarf_Var    None          dwarf_get_vars
+    .debug_weaks      Dwarf_Weak   None          dwarf_get_weaks
+    @endcode
+
 */

@@ -1021,21 +1021,31 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 }
 /*! @endcode */
 
-void examplef(Dwarf_Debug dbg)
+/*! @defgroup examplef Example of dwarf_get_globals use
+    @code
+*/
+int examplef(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
     Dwarf_Global *globs = 0;
     Dwarf_Signed i = 0;
-    Dwarf_Error  error = 0;
     int res = 0;
 
-    res = dwarf_get_globals(dbg, &globs,&count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use globs[i] */
-        }
-        dwarf_globals_dealloc(dbg, globs, count);
+    res = dwarf_get_globals(dbg, &globs,&count, error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
+    for (i = 0; i < count; ++i) {
+        /* use globs[i] */
+        char *name = 0;
+        res = dwarf_get_globname(globs[i],&name,error);
+        if (res != DW_DLV_OK) {
+            dwarf_globals_dealloc(dbg,globs,count);
+            return res;
+        }
+    }
+    dwarf_globals_dealloc(dbg, globs, count);
+    return DW_DLV_OK;
 }
 
 void exampleg(Dwarf_Debug dbg)
@@ -1047,12 +1057,14 @@ void exampleg(Dwarf_Debug dbg)
     int res = 0;
 
     res = dwarf_get_pubtypes(dbg, &types,&count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use types[i] */
-        }
-        dwarf_types_dealloc(dbg, types, count);
+    if (res != DW_DLV_OK) {
+        return res;
     }
+    for (i = 0; i < count; ++i) {
+        /* use types[i] */
+    }
+    dwarf_types_dealloc(dbg, types, count);
+    return DW_DLV_OK;
 }
 
 void exampleh(Dwarf_Debug dbg)
@@ -1449,7 +1461,7 @@ int exampleq(Dwarf_Debug dbg,Dwarf_Error *error)
     }
     /*  Do something with the lists*/
     dwarf_dealloc_fde_cie_list(dbg, cie_data, cie_count,
-            fde_data,fde_count);
+        fde_data,fde_count);
     return fres;
 }
 /*! @endcode */
@@ -1621,7 +1633,7 @@ int examplestrngoffsets(Dwarf_Debug dbg,Dwarf_Error *error)
             &table_value_count,error);
         if (res == DW_DLV_NO_ENTRY) {
             /* We have dealt with all tables */
-            
+
             break;
         }
         if (res == DW_DLV_ERROR) {
@@ -1709,15 +1721,15 @@ int exampleu(Dwarf_Debug dbg,Dwarf_Error *error)
             Dwarf_Unsigned length = 0;
             Dwarf_Off  cu_die_offset = 0;
 
-            res = dwarf_get_arange_info_b(ara, 
-               &segment,&segment_entry_size,
-               &start, &length,
-               &cu_die_offset,error);
+            res = dwarf_get_arange_info_b(ara,
+                &segment,&segment_entry_size,
+                &start, &length,
+                &cu_die_offset,error);
             if (res != DW_DLV_OK) {
-               cleanupbadarange(dbg,arange,i,count);
-               dwarf_dealloc(dbg, arange, DW_DLA_LIST);
-               return res;
-            } 
+                cleanupbadarange(dbg,arange,i,count);
+                dwarf_dealloc(dbg, arange, DW_DLA_LIST);
+                return res;
+            }
             /*  Do something with ara */
             dwarf_dealloc(dbg, ara, DW_DLA_ARANGE);
             arange[i] = 0;
