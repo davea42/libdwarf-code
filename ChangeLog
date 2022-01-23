@@ -1,3 +1,101 @@
+2022-01-23:  David Anderson
+    commit 68f20b4e563a8353ae19d3acf171abd704380e45
+
+    the .debug_pubnames and like sections and functions
+    are now documented. Actually documenting just one
+    as the rest, aside from section name and details
+    of the function name have identical arguments
+    and identical effect.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-23:  David Anderson
+    commit 124c79a52959d78901f21eb96daff71113ea7356
+
+    removing unwanted white space
+    and fixing a couple too-long lines.
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+2022-01-22:  David Anderson
+    commit 9ba99807ad02b9245266ec284e0908d1ae6417bb
+
+    Now a better example of looking at .debug_aranges.
+            modified:   doc/checkexamples.c
+    Now the aranges functions set up with doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-22:  David Anderson
+    commit 5b8b1561ade90ede1e9b692531edfc491132da76
+
+    Now an example of use of the str_offsets section
+    linked to the functions.
+            modified:   doc/checkexamples.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-22:  David Anderson
+    commit 958cf1241ee9b97b83ee5a6def48a888dcb4850e
+
+    Improvements in Frame table description
+    Now mentions the .debug_str_offsets section
+    is one whose internals can be read.
+            modified:   doc/libdwarf.dox
+    Doxygen comments for .debug_str_offsets[.dwo]
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-21:  David Anderson
+    commit a05d75f8c2503158045b4444ce36f60c135dd400
+
+    The special frame registers section was
+    hard to read. made 5 words bold.
+            modified:   libdwarf.dox
+
+2022-01-21:  David Anderson
+    commit f48f081ced1df09d96cb3d668c1fa8372af2bbf7
+
+    doxygen doc on directly reading a .debug_str section.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-21:  David Anderson
+    commit ec720c5bb4fa4d031771ae51fb69c787b9489882
+
+    Doxygen comments added.
+    Details given on the required invariants
+    if changing the defaults.
+    See dwarf_set_frame_rule_table_size () etc.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-21:  David Anderson
+    commit 4a173bd0535d3e05cffd91916fc31243a3d60c86
+
+    Renaming for clarity and consistency.
+    Removing all reference to DW_TSHASHTYPE as it does
+    not apply to balanced search.
+            renamed:    dwarfdump/dd_tsearch.h -> dwarfdump/dd_tsearchbal.h
+
+    Changed all references to the header to the new name.
+            modified:   attr_form/attr_form_build.c
+            modified:   dwarfdump/CMakeLists.txt
+            modified:   dwarfdump/Makefile.am
+            modified:   dwarfdump/dd_addrmap.c
+            modified:   dwarfdump/dd_attr_form.c
+            modified:   dwarfdump/dd_helpertree.c
+            modified:   dwarfdump/dd_macrocheck.c
+            modified:   dwarfdump/dd_makename.c
+            modified:   dwarfdump/dd_tsearchbal.c
+            modified:   dwarfdump/meson.build
+            modified:   dwarfdump/print_macro.c
+
+2022-01-20:  David Anderson
+    commit 2306f2078905fc9b89e7966b281c5d76687cce9e
+
+    Bring ChangeLog up to date from git log.
+            modified:   ChangeLog
+
 2022-01-20:  David Anderson
     commit de3fe09c864cef1262e73e3243c87e651cb7b5fc
 
