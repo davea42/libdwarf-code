@@ -1066,60 +1066,40 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
     return DW_DLV_OK;
 }
 
-void exampleh(Dwarf_Debug dbg)
+int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
     Dwarf_Weak *weaks = 0;
     Dwarf_Signed i = 0;
     int res = 0;
 
-    res = dwarf_get_weaks(dbg, &weaks, &count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use weaks[i] */
-        }
-        dwarf_weaks_dealloc(dbg, weaks, count);
+    res = dwarf_get_weaks(dbg, &weaks, &count, error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
+    for (i = 0; i < count; ++i) {
+        /* use weaks[i] */
+    }
+    dwarf_weaks_dealloc(dbg, weaks, count);
+    return DW_DLV_OK;
 }
 
-/* example of what not to do. */
-void examplei(Dwarf_Debug dbg)
+int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 {
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Weak *weaks = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
-
-    /* Obsolete, see exampleh instead */
-    res = dwarf_get_weaks(dbg, &weaks, &count, &error);
-    if (res == DW_DLV_OK) {
-        /*  OBSOLETE: do not use dealloc for this.
-            See above */
-        for (i = 0; i < count; ++i) {
-            /* use weaks[i] */
-            dwarf_dealloc(dbg, weaks[i], DW_DLA_WEAK);
-        }
-        dwarf_dealloc(dbg, weaks, DW_DLA_LIST);
-    }
-}
-
-void examplej(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
     Dwarf_Func *funcs = 0;
     Dwarf_Signed i = 0;
     int fres = 0;
 
-    fres = dwarf_get_funcs(dbg, &funcs, &count, &error);
-    if (fres == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use funcs[i] */
-        }
-        dwarf_funcs_dealloc(dbg, funcs, count);
+    fres = dwarf_get_funcs(dbg, &funcs, &count, error);
+    if (fres != DW_DLV_OK) {
+        return fres;
     }
+    for (i = 0; i < count; ++i) {
+        /* use funcs[i] */
+    }
+    dwarf_funcs_dealloc(dbg, funcs, count);
+    return DW_DLV_OK;
 }
 
 void examplek(Dwarf_Debug dbg)

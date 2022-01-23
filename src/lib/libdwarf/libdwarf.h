@@ -6874,11 +6874,12 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
     @{
 */
 
-/*  New October 2019.  Access to the GNU section named
+/*! @brief Find a separated DWARF object file
+
     .gnu_debuglink  and/or the section .note.gnu.build-id.
-    See
-    https://sourceware.org/gdb/onlinedocs/gdb/
-        Separate-Debug-Files.html
+
+    @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+    @see exampledebuglink
 
     If no debuglink then name_returned,crc_returned and
     debuglink_path_returned will get set 0 through the pointers.
@@ -6887,11 +6888,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
     and buildid_returned will be set 0 through the pointers.
 
     Caller frees space returned by debuglink_fullpath_returned.
-
-    See libdwarf2.1.mm revision 3.13 or later for
-    additional important details.
 */
-
 DW_API int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
     char     **    /*debuglink_path_returned */,
     unsigned char ** /*crc_returned from the debuglink section*/,
