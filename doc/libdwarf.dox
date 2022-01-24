@@ -1,13 +1,24 @@
 /*!
     @mainpage A Consumer Library Interface to DWARF
     @author David Anderson
-    @date 2022-01-23 
+    @date 2022-01-24 
  
     @section draft THIS IS A DRAFT
 
-    THIS DOCUMENT IS AN EARLY AND INCOMPLETE DRAFT!
+    THIS DOCUMENT IS AN INCOMPLETE DRAFT!
     SUGGESTIONS FOR IMPROVEMENT ARE WELCOME.
 
+    Your thoughts a couple of specific things would be helpful.
+
+    A) Are the section and subsection titles on Main Page
+    meaningful to you?
+
+    B) Are the titles on the Modules page  meaningful to you?
+    meaningful to you?
+
+    Anything else you find misleading or confusing?
+    Thanks in advance for any suggestions.
+ 
     @section dw_intro Introduction
 
 
@@ -55,7 +66,7 @@
     Essentially every libdwarf call could involve dealing
     with an error (possibly data corruption in
     the object file).  Here we explain the two main
-    approaces the library provides (though we think
+    approaches the library provides (though we think
     only one of them is truly appropriate except
     in toy programs).
 
@@ -147,7 +158,7 @@
     The Dwarf_Ptr argument is the value you passed in as dw_errarg,
     and can be anything.
     By doing an exit() you guarantee that your application
-    abruptly stops.  This is only acceptible to toy
+    abruptly stops.  This is only acceptable to toy
     or practice programs.
 
     A better dw_errhand function is
@@ -183,8 +194,14 @@
 
     @code
     int func(Dwarf_Dbg dbg,Dwarf_Die die, Dwarf_Error* error) {
-        res = dwarf_sibingof_b(die,&newdie,error);
-    ...
+        Dwarf_Die newdie = 0;
+        res = dwarf_siblingof_b(die,&newdie,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        /*  Do something with newdie. */
+        dwarf_dealloc_die(newdie);
+        newdie = 0; 
     }
     @endcode
 
@@ -272,7 +289,7 @@
     But usually the wasted space, if any, is small.
 
     Compiler writers or others may be interested in looking
-    at these sections indepently so libdwarf provides
+    at these sections independently so libdwarf provides
     functions
     that allow reading the sections without reference
     to what references them.  
@@ -284,13 +301,13 @@
     @link str_offsets String Offsets can be read independently @endlink
 
     Those functions allow starting at byte 0 of the section
-    and provide a length so you can calulate the next
+    and provide a length so you can calculate the next
     section offset to call or refer to.
 
     Usually that works fine.
     But if there is some random data somewhere
     outside of referenced areas the reader function
-    may fail, reteurning DW_DLV_ERROR. 
+    may fail, returning DW_DLV_ERROR. 
     Such an error is neither a compiler bug nor a libdwarf bug.
 
     @subsection frameregs Special Frame Registers

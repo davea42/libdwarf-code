@@ -6662,19 +6662,17 @@ DW_API int dwarf_get_gnu_index_block_entry(
 /*! @} */
 
 /*! @defgroup gdbindex Fast Access-Gdb Index into .dwo or .dwp
-    If .gdb_index present in an executable then
-    the content here helps quickly find their way
-    into the .dwo or .dwp .debug_cu_index or
-    .debug_tu_index split dwarf sections.
+
+    Section .gdb_index 
 
     This is a section created for and used by the GNU gdb
     debugger.  Not part of standard DWARF.
-    @{
-*/
 
-/*  .gdb_index section operations.
-    A GDB extension. Completely different than
-    .debug_gnu_pubnames or .debug_gnu_pubtypes sections.
+    Version 8 built by gdb, so type entries are ok as is.
+    Version 7 built by the 'gold' linker and type index
+    entries for a CU must be derived othewise, the
+    type index is not correct... ? FIXME
+
     The section is in some executables and if present
     is used to quickly map an address or name to
     a skeleton CU or TU.  If present then there are
@@ -6682,50 +6680,136 @@ DW_API int dwarf_get_gnu_index_block_entry(
     debugging possible (up to user code to
     find it/them and deal with them).
 
-    Version 8 built by gdb, so type entries are ok as is.
-    Version 7 built by the 'gold' linker and type index
-    entries for a CU must be derived othewise, the
-    type index is not correct... ? FIXME
-    */
+    The function set here makes it possible to
+    print the section content in detail, it is
+    not a search engine.
 
-/*  Creates a Dwarf_Gdbindex, returning it and
-    its values through the pointers. */
-DW_API int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
-    Dwarf_Gdbindex * /*gdbindexptr*/,
-    Dwarf_Unsigned * /*version*/,
-    Dwarf_Unsigned * /*cu_list_offset*/,
-    Dwarf_Unsigned * /*types_cu_list_offset*/,
-    Dwarf_Unsigned * /*address_area_offset*/,
-    Dwarf_Unsigned * /*symbol_table_offset*/,
-    Dwarf_Unsigned * /*constant_pool_offset*/,
-    Dwarf_Unsigned * /*section_size*/,
-    const char    ** /*section_name*/,
-    Dwarf_Error    * /*error*/);
+    @{
+*/
+/*! @brief Open access to the .gdb_index section.
 
-DW_API int dwarf_gdbindex_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Unsigned       * /*list_length*/,
-    Dwarf_Error          * /*error*/);
+    The section is a single table one thinks.
 
-/*  entryindex: 0 to list_length-1 */
-DW_API int dwarf_gdbindex_culist_entry(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Unsigned   /*entryindex*/,
-    Dwarf_Unsigned * /*cu_offset*/,
-    Dwarf_Unsigned * /*cu_length*/,
-    Dwarf_Error    * /*error*/);
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_gdbindexptr
+    On success returns a pointer to make access
+    to table details possible.
+    @param dw_version
+    On success returns the table version.
+    @param dw_cu_list_offset
+    On success returns the offset of the cu_list
+    in the section.
+    @param dw_types_cu_list_offset
+    On success returns the offset of the types cu_list
+    in the section.
+    @param dw_address_area_offset
+    On success returns the area pool offset.
+    @param dw_symbol_table_offset
+    On success returns the symbol table offset.
+    @param dw_constant_pool_offset
+    On success returns the constant pool offset.
+    @param dw_section_size
+    On success returns section size.
+    @param dw_section_name
+    On success returns section name.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+    Returns DW_DLV_NO_ENTRY if the section is absent.
+*/
+DW_API int dwarf_gdbindex_header(Dwarf_Debug dw_dbg,
+    Dwarf_Gdbindex * dw_gdbindexptr,
+    Dwarf_Unsigned * dw_version,
+    Dwarf_Unsigned * dw_cu_list_offset,
+    Dwarf_Unsigned * dw_types_cu_list_offset,
+    Dwarf_Unsigned * dw_address_area_offset,
+    Dwarf_Unsigned * dw_symbol_table_offset,
+    Dwarf_Unsigned * dw_constant_pool_offset,
+    Dwarf_Unsigned * dw_section_size,
+    const char    ** dw_section_name,
+    Dwarf_Error    * dw_error);
 
-DW_API int dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex
-    /*ndexptr*/,
-    Dwarf_Unsigned            * /*types_list_length*/,
-    Dwarf_Error               * /*error*/);
+/*! @brief Returns the culist array length
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_list_length
+    On success returns the array length of the cu list.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gdbindex_culist_array(
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned * dw_list_length,
+    Dwarf_Error    * dw_error);
+
+/*! @brief For a CU entry in the list return the offset and length
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_entryindex
+    Pass in a number from 0 through dw_list_length-1.
+    @param dw_cu_offset
+    On success returns the CU offet for this list entry.
+    @param dw_cu_length
+    On success returns the CU length(in bytes)
+    for this list entry.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gdbindex_culist_entry(
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned   dw_entryindex,
+    Dwarf_Unsigned * dw_cu_offset,
+    Dwarf_Unsigned * dw_cu_length,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Returns the types culist array length
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_types_list_length
+    On success returns the array length of the
+    types cu list.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gdbindex_types_culist_array(
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned * dw_types_list_length,
+    Dwarf_Error    * dw_error);
 
 /*  entryindex: 0 to types_list_length -1 */
+/*! @brief For a types CU entry in the list
+    returns the offset and length
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_types_entryindex
+    Pass in a number from 0 through dw_list_length-1.
+    @param dw_cu_offset
+    On success returns the types CU offet for this list entry.
+    @param dw_tu_offset
+    On success returns the tu offet for this list entry.
+    @param dw_type_signature
+    On success returns the type unit offset for this
+    entry if the type has a signature.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
 DW_API int dwarf_gdbindex_types_culist_entry(
-    Dwarf_Gdbindex   /*gdbindexptr*/,
-    Dwarf_Unsigned   /*entryindex*/,
-    Dwarf_Unsigned * /*cu_offset*/,
-    Dwarf_Unsigned * /*tu_offset*/,
-    Dwarf_Unsigned * /*type_signature*/,
-    Dwarf_Error    * /*error*/);
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned   dw_types_entryindex,
+    Dwarf_Unsigned * dw_cu_offset,
+    Dwarf_Unsigned * dw_tu_offset,
+    Dwarf_Unsigned * dw_type_signature,
+    Dwarf_Error    * dw_error);
 
 DW_API int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned            * /*addressarea_list_length*/,
