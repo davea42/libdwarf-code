@@ -1,3 +1,50 @@
+2022-01-24:  David Anderson
+    commit fd4e1fd4f67f55a52b0495a27f4b64ed8a257e6b
+
+    Added a sort after tar -tf because in Freebsd 13
+    64bit tar sometimes reports files in a different order.
+    Causing a misleading miscompare.
+    So we sort the output of tar -tf so if the lists
+    are the same we pass.
+            modified:   scripts/buildandreleasetest.sh
+
+    Fixed spelling mistakes in comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-23:  David Anderson
+    commit 17e7fb2fffa3e6653781e74881afd1615d08397b
+
+    Cleaned up examples
+            modified:   doc/checkexamples.c
+    Changed date of the document to today
+            modified:   doc/libdwarf.dox
+
+2022-01-23:  David Anderson
+    commit 44b1189ccf810ab3b092814a7063ddffb7a7a75e
+
+    Refining the wording about GNU debuglink.
+            modified:   doc/checkexamples.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-23:  David Anderson
+    commit 416d9dac0c3c8bf63c872cc73e180b93490a212d
+
+    Correcting/updating debuglink doc and example
+            modified:   doc/checkexamples.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-23:  David Anderson
+    commit 9a03c0ec3f471bc5c3a35e2b412fe3819c0ebe5d
+
+    Fixed some typos in the examples.
+            modified:   checkexamples.c
+
+2022-01-23:  David Anderson
+    commit 07fdd70942a1ee4187ba5dfdcc7124ef7fe5f2df
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2022-01-23:  David Anderson
     commit 68f20b4e563a8353ae19d3acf171abd704380e45
 
