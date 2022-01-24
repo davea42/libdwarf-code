@@ -1047,7 +1047,11 @@ int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
     dwarf_globals_dealloc(dbg, globs, count);
     return DW_DLV_OK;
 }
+/*! @endcode */
 
+/*! @defgroup exampleg Example of dwarf_get_pubtypes use
+    @code
+*/
 int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
@@ -1065,7 +1069,11 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
     dwarf_types_dealloc(dbg, types, count);
     return DW_DLV_OK;
 }
+/*! @endcode */
 
+/*! @defgroup exampleh Example of dwarf_get_weaks use
+    @code
+*/
 int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
@@ -1083,7 +1091,11 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
     dwarf_weaks_dealloc(dbg, weaks, count);
     return DW_DLV_OK;
 }
+/*! @endcode */
 
+/*! @defgroup examplej Example of dwarf_get_funcs use
+    @code
+*/
 int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 {
     Dwarf_Signed count = 0;
@@ -1101,94 +1113,46 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
     dwarf_funcs_dealloc(dbg, funcs, count);
     return DW_DLV_OK;
 }
+/*! @endcode */
 
-void examplek(Dwarf_Debug dbg)
+/*! @defgroup examplel Example of dwarf_get_types use
+    @code
+*/
+int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 {
-    Dwarf_Error error = 0;
-    Dwarf_Func *funcs = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Signed i = 0;
-    int fres = 0;
-
-    fres = dwarf_get_funcs(dbg, &funcs,&count, &error);
-    if (fres == DW_DLV_OK) {
-        /* OBSOLETE: see dwarf_funcs_dealloc() above */
-        for (i = 0; i < count; ++i) {
-            /* use funcs[i] */
-            dwarf_dealloc(dbg, funcs[i], DW_DLA_FUNC);
-        }
-        dwarf_dealloc(dbg, funcs, DW_DLA_LIST);
-    }
-}
-
-void examplel(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
     Dwarf_Type *types = 0;
     Dwarf_Signed i = 0;
     int res = 0;
 
-    res = dwarf_get_types(dbg, &types,&count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use types[i] */
-        }
-        dwarf_types_dealloc(dbg, types, count);
+    res = dwarf_get_types(dbg, &types,&count, error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
-}
-
-void examplem(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Type *types = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
-
-    /*  OBSOLETE: see dwarf_types_dealloc() above */
-    res = dwarf_get_types(dbg, &types,&count, &error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
+    for (i = 0; i < count; ++i) {
             /* use types[i] */
-            dwarf_dealloc(dbg, types[i], DW_DLA_TYPENAME);
-        }
-        dwarf_dealloc(dbg, types, DW_DLA_LIST);
     }
+    dwarf_types_dealloc(dbg, types, count);
+    return DW_DLV_OK;
 }
+/*! @endcode */
 
-void examplen(Dwarf_Debug dbg)
+int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Error error = 0;
     Dwarf_Signed count = 0;
     Dwarf_Var *vars = 0;
     Dwarf_Signed i = 0;
     int res = 0;
-    res = dwarf_get_vars(dbg, &vars,&count,&error);
-    if (res == DW_DLV_OK) {
-        for (i = 0; i < count; ++i) {
-            /* use vars[i] */
-        }
-        dwarf_vars_dealloc(dbg, vars, count);
-    }
-}
 
-void exampleo(Dwarf_Debug dbg)
-{
-    Dwarf_Error error = 0;
-    Dwarf_Signed count = 0;
-    Dwarf_Var *vars = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
-    res = dwarf_get_vars(dbg, &vars,&count,&error);
-    if (res == DW_DLV_OK) {
-        /* DO NOT USE: see dwarf_vars_dealloc() above */
-        for (i = 0; i < count; ++i) {
-            /* use vars[i] */
-            dwarf_dealloc(dbg, vars[i], DW_DLA_VAR);
-        }
-        dwarf_dealloc(dbg, vars, DW_DLA_LIST);
+    res = dwarf_get_vars(dbg, &vars,&count,error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
+    for (i = 0; i < count; ++i) {
+        /* use vars[i] */
+    }
+    dwarf_vars_dealloc(dbg, vars, count);
+    return DW_DLV_OK;
 }
 
 void exampledebugnames()
