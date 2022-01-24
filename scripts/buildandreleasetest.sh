@@ -189,8 +189,9 @@ ls -l $brelgz
 # gzip does not build diffs quite identically to the byte.
 # Lots of diffs, So we do tar tf to get the file name list. 
 echo "Now tar -tf on $arelgz and $brelgz "
-tar -tf $arelgz > $atfout
-tar -tf $brelgz > $btfout
+# Sort as freebsd64 manages a distinct order at times.
+tar -tf $arelgz | sort > $atfout
+tar -tf $brelgz | sort > $btfout
 echo "=========================diff make dist content========="
 echo "Now diff the tar tf from $arelgz and $brelgz"
 diff $atfout $btfout
