@@ -25,6 +25,10 @@
   Free Software Foundation, Inc., 51 Franklin Street - Fifth
   Floor, Boston MA 02110-1301, USA.
 */
+/* see
+https://sourceware.org/gdb/onlinedocs/gdb/\
+Index-Section-Format.html#Index-Section-Format
+*/
 
 #include <config.h>
 

@@ -6668,6 +6668,8 @@ DW_API int dwarf_get_gnu_index_block_entry(
     This is a section created for and used by the GNU gdb
     debugger.  Not part of standard DWARF.
 
+    @see https://sourceware.org/gdb/onlinedocs/gdb/Index-Section-Format.html#Index-Section-Format
+
     Version 8 built by gdb, so type entries are ok as is.
     Version 7 built by the 'gold' linker and type index
     entries for a CU must be derived othewise, the
