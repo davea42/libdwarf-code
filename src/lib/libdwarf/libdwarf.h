@@ -6879,6 +6879,7 @@ DW_API int dwarf_gdbindex_symboltable_array(
     Dwarf_Gdbindex   dw_gdbindexptr,
     Dwarf_Unsigned * dw_symtab_list_length,
     Dwarf_Error    * dw_error);
+
 /*! @brief Access individual symtab entry
 
     @param dw_gdbindexptr
@@ -6889,7 +6890,7 @@ DW_API int dwarf_gdbindex_symboltable_array(
     @param dw_string_offset
     On success returns the string offset in the
     appropriate string section.
-    @param
+    @param dw_cu_vector_offset
     On success returns the CU vector offset.
     @param dw_error
     The usual pointer to return error details.
@@ -6904,6 +6905,7 @@ DW_API int dwarf_gdbindex_symboltable_entry(
     Dwarf_Error    * dw_error);
 
 /*! @brief Get access to a cuvector
+
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_cuvector_offset
@@ -6918,7 +6920,7 @@ DW_API int dwarf_gdbindex_symboltable_entry(
 
 */
 DW_API int dwarf_gdbindex_cuvector_length(
-    Dwarf_Gdbindex   dw_gdbindex,
+    Dwarf_Gdbindex   dw_gdbindexptr,
     Dwarf_Unsigned   dw_cuvector_offset,
     Dwarf_Unsigned * dw_innercount,
     Dwarf_Error    * dw_error);
@@ -6940,19 +6942,19 @@ DW_API int dwarf_gdbindex_cuvector_length(
     Returns DW_DLV_OK etc.
 */
 DW_API int dwarf_gdbindex_cuvector_inner_attributes(
-    Dwarf_Gdbindex   dw_gdbindex,
-    Dwarf_Unsigned   dw_cuvector_offset,
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned   dw_cuvector_offset_in,
     Dwarf_Unsigned   dw_innerindex,
     Dwarf_Unsigned * dw_attr_value,
     Dwarf_Error    * dw_error);
 
 DW_API int dwarf_gdbindex_cuvector_instance_expand_value(
-    Dwarf_Gdbindex,
-    Dwarf_Unsigned   /*value*/,
-    Dwarf_Unsigned * /*cu_index*/,
-    Dwarf_Unsigned * /*symbol_kind*/,
-    Dwarf_Unsigned * /*is_static*/,
-    Dwarf_Error    * /*error*/);
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned   dw_value,
+    Dwarf_Unsigned * dw_cu_index,
+    Dwarf_Unsigned * dw_symbol_kind,
+    Dwarf_Unsigned * dw_is_static,
+    Dwarf_Error    * dw_error);
 
 /*  The strings in the pool follow (in memory) the cu index
     set and are NUL terminated. */
