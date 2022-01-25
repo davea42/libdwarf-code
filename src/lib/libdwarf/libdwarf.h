@@ -6671,7 +6671,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
 
 /*! @} */
 
-/*! @defgroup gdbindex Fast Access-Gdb Index into .dwo or .dwp
+/*! @defgroup gdbindex Fast Access-Gdb Index
 
     Section .gdb_index 
 
@@ -6685,7 +6685,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
     Version 8 built by gdb, so type entries are ok as is.
     Version 7 built by the 'gold' linker and type index
     entries for a CU must be derived othewise, the
-    type index is not correct... ? Earlier versions
+    type index is not correct...  Earlier versions
     cannot be read correctly by the functions here. 
 
     The functions here make it possible to
@@ -6879,28 +6879,72 @@ DW_API int dwarf_gdbindex_symboltable_array(
     Dwarf_Gdbindex   dw_gdbindexptr,
     Dwarf_Unsigned * dw_symtab_list_length,
     Dwarf_Error    * dw_error);
+/*! @brief Access individual symtab entry
 
-/*  entryindex: 0 to symtab_list_length-1 */
-DW_API int dwarf_gdbindex_symboltable_entry(Dwarf_Gdbindex
-    /*gdbindexptr*/,
-    Dwarf_Unsigned   /*entryindex*/,
-    Dwarf_Unsigned * /*string_offset*/,
-    Dwarf_Unsigned * /*cu_vector_offset*/,
-    Dwarf_Error    * /*error*/);
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_entryindex
+    Pass in a valid index in the range 0 through 
+    dw_symtab_list_length-1
+    @param dw_string_offset
+    On success returns the string offset in the
+    appropriate string section.
+    @param
+    On success returns the CU vector offset.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gdbindex_symboltable_entry(
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned   dw_entryindex,
+    Dwarf_Unsigned * dw_string_offset,
+    Dwarf_Unsigned * dw_cu_vector_offset,
+    Dwarf_Error    * dw_error);
 
-DW_API int dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex /*gdbindex*/,
-    Dwarf_Unsigned   /*cuvector_offset*/,
-    Dwarf_Unsigned * /*innercount*/,
-    Dwarf_Error    * /*error*/);
+/*! @brief Get access to a cuvector
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_cuvector_offset
+    Pass in the offset, dw_cu_vector_offset.
+    @param dw_innercount
+    On success returns the number of CUs in
+    the cuvector instance array.
+    @param dw_error
+    The usual pointer to return error details.
+    @return 
+    Returns DW_DLV_OK etc.
 
+*/
+DW_API int dwarf_gdbindex_cuvector_length(
+    Dwarf_Gdbindex   dw_gdbindex,
+    Dwarf_Unsigned   dw_cuvector_offset,
+    Dwarf_Unsigned * dw_innercount,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Get access to a cuvector
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_cuvector_offset_in
+    Pass in the value of dw_cuvector_offset
+    @param dw_innerindex
+    Pass in the index of the CU vector in, from 0
+    through dw_innercount-1.
+    @param dw_attr_value
+    On success returns a field of bits. To expand the bits
+    call dwarf_gdbindex_cuvector_instance_expand_value.
+    @param dw_error
+    The usual pointer to return error details.
+    @return 
+    Returns DW_DLV_OK etc.
+*/
 DW_API int dwarf_gdbindex_cuvector_inner_attributes(
-    Dwarf_Gdbindex /*index*/,
-    Dwarf_Unsigned   /*cuvector_offset*/,
-    Dwarf_Unsigned   /*innerindex*/,
-    /* The attr_value is a field of bits. For expanded version
-        use  dwarf_gdbindex_cuvector_instance_expand_value() */
-    Dwarf_Unsigned * /*attr_value*/,
-    Dwarf_Error    * /*error*/);
+    Dwarf_Gdbindex   dw_gdbindex,
+    Dwarf_Unsigned   dw_cuvector_offset,
+    Dwarf_Unsigned   dw_innerindex,
+    Dwarf_Unsigned * dw_attr_value,
+    Dwarf_Error    * dw_error);
 
 DW_API int dwarf_gdbindex_cuvector_instance_expand_value(
     Dwarf_Gdbindex,
