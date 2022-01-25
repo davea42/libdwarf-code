@@ -26,7 +26,20 @@ Public License along with this program; if not, write the
 Free Software Foundation, Inc., 51 Franklin Street - Fifth
 Floor, Boston MA 02110-1301, USA.
 */
-/* Latest update 2021-02-23 with DW_AT_ghs_* entries. */
+
+/*! @file */
+/*! @page dwarf.h
+    dwarf.h contains all the identifiers
+    such as DW_TAG_compile_unit etc from the
+    various versions of the DWARF Standard
+    beginning with DWARF2 and containing 
+    all later Dwarf Standard identifiers.
+
+    In addition, it contains all user-defined
+    identifiers that we have been able to find.
+
+    All identifiers here are C defines with the prefix "DW_" .
+*/
 
 #ifndef __DWARF_H
 #define __DWARF_H
@@ -954,15 +967,23 @@ most-likely-useful name. */
 /* Shown here to help dwarfdump build script. */
 #define DW_ATE_ALTIUM_accum           0x81 /* ALTIUM __accum type */
 
-/* HP Floating point extensions. */
+/* HP extensions. */
 #define DW_ATE_HP_float80             0x80 /* (80 bit). HP */
-
 #define DW_ATE_HP_complex_float80     0x81 /* Complex (80 bit). HP  */
 #define DW_ATE_HP_float128            0x82 /* (128 bit). HP */
 #define DW_ATE_HP_complex_float128    0x83 /* Complex (128 bit). HP */
 #define DW_ATE_HP_floathpintel        0x84 /* (82 bit IA64). HP */
 #define DW_ATE_HP_imaginary_float80   0x85 /* HP */
 #define DW_ATE_HP_imaginary_float128  0x86 /* HP */
+#define DW_ATE_HP_VAX_float           0x88 /* F or G floating.  */
+#define DW_ATE_HP_VAX_float_d         0x89 /* D floating.  */
+#define DW_ATE_HP_packed_decimal      0x8a /* Cobol.  */
+#define DW_ATE_HP_zoned_decimal       0x8b /* Cobol.  */
+#define DW_ATE_HP_edited              0x8c /* Cobol.  */
+#define DW_ATE_HP_signed_fixed        0x8d /* Cobol.  */
+#define DW_ATE_HP_unsigned_fixed      0x8e /* Cobol.  */
+#define DW_ATE_HP_VAX_complex_float   0x8f /* F or G floating complex.  */
+#define DW_ATE_HP_VAX_complex_float_d 0x90 /* D floating complex.  */
 
 /* Sun extensions */
 #define DW_ATE_SUN_interval_float     0x91

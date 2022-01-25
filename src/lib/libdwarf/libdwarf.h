@@ -29,6 +29,20 @@
   Floor, Boston MA 02110-1301, USA.
 
 */
+/*! @file*/
+/*! @page libdwarf.h
+    @tableofcontents
+    libdwarf.h contains all the type declarations
+    and function function declarations
+    needed to use the library.  It is essential
+    that coders include dwarf.h before
+    including libdwarf.h.
+
+    All identifiers here in the public namespace begin with
+    DW_ or Dwarf_ or dwarf_ .
+    All function argument names declared here begin with dw_ .
+*/
+
 
 #ifndef _LIBDWARF_H
 #define _LIBDWARF_H
@@ -64,10 +78,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/*! @file */
-/*! @page libdwarf.h
-    @tableofcontents
-*/
 /*
     libdwarf.h
     $Revision: #9 $ $Date: 2008/01/17 $
@@ -6666,25 +6676,21 @@ DW_API int dwarf_get_gnu_index_block_entry(
     Section .gdb_index 
 
     This is a section created for and used by the GNU gdb
-    debugger.  Not part of standard DWARF.
+    debugger to access DWARF information.
+
+    Not part of standard DWARF.
 
     @see https://sourceware.org/gdb/onlinedocs/gdb/Index-Section-Format.html#Index-Section-Format
 
     Version 8 built by gdb, so type entries are ok as is.
     Version 7 built by the 'gold' linker and type index
     entries for a CU must be derived othewise, the
-    type index is not correct... ? FIXME
+    type index is not correct... ? Earlier versions
+    cannot be read correctly by the functions here. 
 
-    The section is in some executables and if present
-    is used to quickly map an address or name to
-    a skeleton CU or TU.  If present then there are
-    .dwo or .dwp files somewhere to make detailed
-    debugging possible (up to user code to
-    find it/them and deal with them).
-
-    The function set here makes it possible to
-    print the section content in detail, it is
-    not a search engine.
+    The functions here make it possible to
+    print the section content in detail, there
+    is no search function here.
 
     @{
 */
@@ -6789,6 +6795,7 @@ DW_API int dwarf_gdbindex_types_culist_array(
 /*  entryindex: 0 to types_list_length -1 */
 /*! @brief For a types CU entry in the list
     returns the offset and length
+
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_types_entryindex
@@ -6813,23 +6820,65 @@ DW_API int dwarf_gdbindex_types_culist_entry(
     Dwarf_Unsigned * dw_type_signature,
     Dwarf_Error    * dw_error);
 
-DW_API int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Unsigned            * /*addressarea_list_length*/,
-    Dwarf_Error               * /*error*/);
+/*! @brief Get access to gdbindex address area
 
-/*    entryindex: 0 to addressarea_list_length-1 */
-DW_API int dwarf_gdbindex_addressarea_entry(Dwarf_Gdbindex
-    /*gdbindexptr*/,
-    Dwarf_Unsigned   /*entryindex*/,
-    Dwarf_Unsigned * /*low_adddress*/,
-    Dwarf_Unsigned * /*high_address*/,
-    Dwarf_Unsigned * /*cu_index*/,
-    Dwarf_Error    * /*error*/);
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_addressarea_list_length
+    On success returns the number of entries in the
+    addressarea.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gdbindex_addressarea(
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned * dw_addressarea_list_length,
+    Dwarf_Error    * dw_error);
 
-DW_API int dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex
-    /*gdbindexptr*/,
-    Dwarf_Unsigned            * /*symtab_list_length*/,
-    Dwarf_Error               * /*error*/);
+/*! @brief Get an address area value 
+
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_entryindex
+    Pass in an index, 0 through dw_addressarea_list_length-1.
+    addressarea.
+    @param dw_low_address
+    On success returns the low address for the entry.
+    @param dw_high_address
+    On success returns the high address for the entry.
+    @param dw_cu_index
+    On success returns the index to the cu for the entry.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gdbindex_addressarea_entry(
+    Dwarf_Gdbindex dw_gdbindexptr,
+    Dwarf_Unsigned   dw_entryindex,
+    Dwarf_Unsigned * dw_low_address,
+    Dwarf_Unsigned * dw_high_address,
+    Dwarf_Unsigned * dw_cu_index,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Get access to the symboltable array 
+
+    @param dw_gdbindexptr
+    Pass in the Dwarf_Gdbindex pointer of interest.
+    @param dw_symtab_list_length
+    On success returns the number of entries in the
+    symbol table
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gdbindex_symboltable_array(
+    Dwarf_Gdbindex   dw_gdbindexptr,
+    Dwarf_Unsigned * dw_symtab_list_length,
+    Dwarf_Error    * dw_error);
 
 /*  entryindex: 0 to symtab_list_length-1 */
 DW_API int dwarf_gdbindex_symboltable_entry(Dwarf_Gdbindex
