@@ -426,4 +426,57 @@
     .debug_weaks      Dwarf_Weak   None          dwarf_get_weaks
     @endcode
 
+    @section Reading DWARF with no object file present
+
+    This most commonly happens with just-in-time
+    compilation, and someone working on the code
+    wants do debug this on-the-fly code.
+    
+    The code generator must generate standard DWARF, but
+    Using some libdwarf features the code generator
+    does not have to write an object file at all.
+
+    In addition, if one writes to a very non-standard
+    sort of object file libdwarf can deal with that too,
+    if one does a little extra work.
+
+    @see jitbreader
+
+    Used in the get_section interface function
+    in Dwarf_Obj_Access_Section_a_s.  Since libdwarf
+    depends on standard DWARF section names an object
+    format that has no such names (but has some
+    method of setting up 'sections equivalents')
+    must arrange to return standard DWARF section
+    names in the 'name' field.  libdwarf does
+    not free the strings in 'name'.
+    For non-elf many of the fields should be zero.
+
+    @struct Dwarf_Obj_Access_Methods_a_s:
+    The functions we need to access object data
+    from libdwarf are declared here.
+
+    In these function pointer declarations
+    'void *obj' is intended to be a pointer (the object field in
+    Dwarf_Obj_Access_Interface_s)
+    that hides the library-specific and object-specific
+    data that makes
+    it possible to handle multiple object formats
+    and multiple libraries.
+    It's not required that one handles multiple such
+    in a single libdwarf
+    archive/shared-library (but not ruled out either).
+    See  dwarf_elf_object_access_internals_t and dwarf_elf_access.c
+    for an example.
+
+    Usually the struct is statically defined
+    and the function pointers are set at
+    compile time.
+
+    The om_get_filesize member is new September 4, 2021.
+    Its position is NOT at the end of the list.
+    The member names all now have om_ prefix.
+
+
+
 */
