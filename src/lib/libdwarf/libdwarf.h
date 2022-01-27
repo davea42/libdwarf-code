@@ -650,6 +650,11 @@ struct Dwarf_Macro_Details_s {
 */
 typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
+typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
+typedef struct Dwarf_Debug_Fission_Per_CU_s
+    Dwarf_Debug_Fission_Per_CU;
+
+/* ===== BEGIN Obj_Access data ===== */
 /*! @typedef Dwarf_Obj_Access_Interface_a
     Used for access to and settint up special data
     allowing access to DWARF even with no object
@@ -666,10 +671,6 @@ typedef struct Dwarf_Obj_Access_Interface_a_s
 typedef struct Dwarf_Obj_Access_Methods_a_s
     Dwarf_Obj_Access_Methods_a;
 
-typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
-typedef struct Dwarf_Debug_Fission_Per_CU_s
-    Dwarf_Debug_Fission_Per_CU;
-
 /*! @typedef Dwarf_Obj_Access_Section_a
     Used for access to and settint up special data
     allowing access to DWARF even with no object
@@ -678,35 +679,15 @@ typedef struct Dwarf_Debug_Fission_Per_CU_s
 typedef struct Dwarf_Obj_Access_Section_a_s
     Dwarf_Obj_Access_Section_a;
 struct Dwarf_Obj_Access_Section_a_s {
-    /*  Having an accurate section name makes
-        debugging of libdwarf easier.
-        and is essential to find the .debug_ sections.  */
     const char*    as_name;
     Dwarf_Unsigned as_type;
     Dwarf_Unsigned as_flags;
-    /*  addr is the virtual address of the first byte of
-        the section data.  Usually zero when the address
-        makes no sense for a given section. */
     Dwarf_Addr     as_addr;
-    Dwarf_Unsigned as_offset; /* file offset of section */
-
-    /* Size in bytes of the section. */
+    Dwarf_Unsigned as_offset; 
     Dwarf_Unsigned as_size;
-
-    /*  Set link to zero if it is meaningless.  If non-zero
-        it should be a link to a rela section or from symtab
-        to strtab.  In Elf it is sh_link. */
     Dwarf_Unsigned as_link;
-
-    /*  The section header index of the section to which the
-        relocation applies. In Elf it is sh_info. */
     Dwarf_Unsigned as_info;
-
     Dwarf_Unsigned as_addralign;
-    /*  Elf sections that are tables have a non-zero entrysize so
-        the count of entries can be calculated even without
-        the right structure definition. If your object format
-        does not have this data leave this zero. */
     Dwarf_Unsigned as_entrysize;
 };
 
@@ -714,141 +695,7 @@ struct Dwarf_Obj_Access_Section_a_s {
     The functions we need to access object data
     from libdwarf are declared here.
 
-    In these function pointer declarations
-    'void *obj' is intended to be a pointer (the object field in
-    Dwarf_Obj_Access_Interface_s)
-    that hides the library-specific and object-specific
-    data that makes
-    it possible to handle multiple object formats
-    and multiple libraries.
-    It's not required that one handles multiple such
-    in a single libdwarf
-    archive/shared-library (but not ruled out either).
-    See  dwarf_elf_object_access_internals_t and dwarf_elf_access.c
-    for an example.
-
-    Usually the struct is statically defined
-    and the function pointers are set at
-    compile time.
-
-    The om_get_filesize member is new September 4, 2021.
-    Its position is NOT at the end of the list.
-    The member names all now have om_ prefix.
 */
-/*
-    om_get_section_info
-
-    Get address, size, and name info about a section.
-
-    Parameters
-    section_index - Zero-based index.
-    return_section - Pointer to a structure in which
-        section info will be placed.   Caller must
-        provide a valid pointer to a
-        structure area.  The structure's contents
-        will be overwritten
-        by the call to get_section_info.
-    error - A pointer to an integer in which an error
-        code may be stored.
-
-    Return
-    DW_DLV_OK - Everything ok.
-    DW_DLV_ERROR - Error occurred. Use 'error' to determine the
-        libdwarf defined error.
-    DW_DLV_NO_ENTRY - No such section.  */
-/*
-    om_get_byte_order
-
-    Get whether the object file represented by
-    this interface is big-endian
-    (DW_END_big) or little endian (DW_END_little).
-
-    Parameters
-    obj - Equivalent to 'this' in OO languages.
-
-    Return
-    Endianness of object. Cannot fail.  */
-/*
-    om_get_length_size
-
-    Get the size of a length field in the underlying object file.
-    libdwarf currently supports * 4 and 8 byte sizes, but may
-    support larger in the future.
-    Perhaps the return type should be an enumeration?
-
-    Parameters
-    obj - Equivalent to 'this' in OO languages.
-
-    Return
-    Size of length. Cannot fail.  */
-/*
-    om_get_pointer_size
-
-    Get the size of a pointer field in the underlying object file.
-    libdwarf currently supports  4 and 8 byte sizes.
-    Perhaps the return type should be an enumeration?
-
-    Return
-    Size of pointer. Cannot fail.  */
-/*
-    om_get_filesize
-
-    Returns a value that is a sanity check on
-    offsets libdwarf reads.  Must be larger than any section size
-    libdwarf might read.  It need not be a tight bound.
-    In dwarf_init_path() etc libdwarf uses the object file
-    size as the value.
-
-    Return
-    A value at least as large as any section libdwarf
-    might read.  */
-/*
-    om_get_section_count
-
-    Get the number of sections in the object file.
-
-    Parameters
-
-    Return
-    Number of sections */
-/*
-    om_load_section
-
-    Get a pointer to an array of bytes that
-    represent the section.
-
-    Parameters
-    section_index - Zero-based index.
-    return_data - The address of a pointer to
-        which the section data block
-        will be assigned.
-    error - Pointer to an integer for returning
-        libdwarf-defined error numbers.
-
-    Return
-    DW_DLV_OK - No error.
-    DW_DLV_ERROR - Error. Use 'error' to indicate
-        a libdwarf-defined error number.
-    DW_DLV_NO_ENTRY - No such section.  */
-/*
-    om_relocate_a_section
-    If relocations are not supported leave this pointer NULL.
-
-    Get a pointer to an array of bytes that represent
-    the section.
-
-    Parameters
-    section_index - Zero-based index of the
-        section to be relocated.
-    error - Pointer to an integer for returning libdwarf-defined
-        error numbers.
-
-    Return
-    DW_DLV_OK - No error.
-    DW_DLV_ERROR - Error. Use 'error' to indicate
-        a libdwarf-defined
-        error number.
-    DW_DLV_NO_ENTRY - No such section.  */
 struct Dwarf_Obj_Access_Methods_a_s {
     int    (*om_get_section_info)(void* obj,
         Dwarf_Half section_index,
@@ -868,16 +715,11 @@ struct Dwarf_Obj_Access_Methods_a_s {
         Dwarf_Debug dbg,
         int* error);
 };
-
-/*  struct Dwarf_Obj_Access_Interface_a_s is allocated
-    and deallocated by your code when you are using
-    the libdwarf Object File Interface
-    [dwarf_object_init_b() directly.
-*/
 struct Dwarf_Obj_Access_Interface_a_s {
     void*                             ai_object;
     const Dwarf_Obj_Access_Methods_a *ai_methods;
 };
+/* ===== END Obj_Access data ===== */
 
 /*  User code must allocate this struct, zero it,
     and pass a pointer to it

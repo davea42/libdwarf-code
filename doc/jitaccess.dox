@@ -1,0 +1,150 @@
+/*!
+    @page JIT and special case DWARF
+
+    @section Reading DWARF with no object file present
+
+    This most commonly happens with just-in-time
+    compilation, and someone working on the code
+    wants do debug this on-the-fly code in a situation
+    where nothing can be written to disc, but DWARF
+    can be constructed in memory.
+
+    For a simple example of this
+    @see jitreader
+
+    But the libdwarf feature can be used in a wide variety of ways.
+
+    For example, the DWARF data could be kept
+    in simple files of bytes on the internet.
+    Or on the local net. Or if files can
+    be written locally each section could be kept
+    in a simple stream of bytes in the local
+    file system.
+
+    Another example is a non-standard file system,
+    or file format, with the intent of obfuscating
+    the file or the DWARF.
+    
+    For this to work the code generator must generate standard DWARF.
+
+    Overall the idea is a simple one: You write
+    a small handful of functions and supply
+    function pointers and code implementing the
+    functions.  These are part of your application
+    or library, not part of libdwarf.
+
+    You set up a little bit of data with that code 
+    (all described below)
+    and then you have essentially written the
+    dwarf_init_path equivalent and you can access
+    compilation units, line tables etc and
+    the standard libdwarf function calls simply work.
+
+    Data you need to create involves these types.
+    What follows describes how to fill them in
+    and how to make them work for you.
+
+    @code
+    typedef struct Dwarf_Obj_Access_Interface_a_s 
+        Dwarf_Obj_Access_Interface_a;
+    struct Dwarf_Obj_Access_Interface_a_s {
+        void*                             ai_object;
+        const Dwarf_Obj_Access_Methods_a *ai_methods;
+    };
+
+    typedef struct Dwarf_Obj_Access_Methods_a_s
+        Dwarf_Obj_Access_Methods_a
+    struct Dwarf_Obj_Access_Methods_a_s {
+        int    (*om_get_section_info)(void* obj,
+            Dwarf_Half section_index,
+            Dwarf_Obj_Access_Section_a* return_section,
+            int* error);
+        Dwarf_Small      (*om_get_byte_order)(void* obj);
+        Dwarf_Small      (*om_get_length_size)(void* obj);
+        Dwarf_Small      (*om_get_pointer_size)(void* obj);
+        Dwarf_Unsigned   (*om_get_filesize)(void* obj);
+    
+        Dwarf_Unsigned   (*om_get_section_count)(void* obj);
+        int              (*om_load_section)(void* obj,
+            Dwarf_Half section_index,
+            Dwarf_Small** return_data, int* error);
+        int              (*om_relocate_a_section)(void* obj,
+            Dwarf_Half section_index,
+            Dwarf_Debug dbg,
+            int* error);
+    };
+
+    typedef struct Dwarf_Obj_Access_Section_a_s
+        Dwarf_Obj_Access_Section_a
+    struct Dwarf_Obj_Access_Section_a_s {
+        const char*    as_name;
+        Dwarf_Unsigned as_type;
+        Dwarf_Unsigned as_flags;
+        Dwarf_Addr     as_addr;
+        Dwarf_Unsigned as_offset;
+        Dwarf_Unsigned as_size;
+        Dwarf_Unsigned as_link;
+        Dwarf_Unsigned as_info;
+        Dwarf_Unsigned as_addralign;
+        Dwarf_Unsigned as_entrysize;
+    };
+    @endcode
+
+    @b Dwarf_Obj_Access_Section_a:
+    Your implementation of a @b om_get_section_info
+    must simply fill in a few fields (leaving most zero)
+    for libdwarf. The fields here are standard Elf,
+    but for most you can just use the value zero.
+    We assume here you will not be doing relocations
+    at runtime.
+  
+    @b as_name: Here you set a section name via the pointer.
+    The section names must be names as defined in the DWARF
+    standard, so if such do not appear in your data
+    you have to create the strings yourself.
+
+    @b as_type: Just fill in zero.
+
+    @b as_flags: Just fill in zero.
+
+    @b as_addr: Fill in the address, in local memory,
+    where the bytes of the section are.
+
+    @b as_offset: Just fill in zero.
+ 
+    @b as_size: Fill in the size, in bytes,
+    of the section you are telling libdwarf about.
+
+    @b as_link: Just fill in zero.
+
+    @b as_info: Just fill in zero.
+
+    @b as_addralign:Just fill in zero.
+
+    @b as_entrysize: Just fill in one.
+
+    @struct Dwarf_Obj_Access_Methods_a_s:
+    The functions we need to access object data
+    from libdwarf are declared here.
+
+    In these function pointer declarations
+    'void *obj' is intended to be a pointer (the object field in
+    Dwarf_Obj_Access_Interface_s)
+    that hides the library-specific and object-specific
+    data that makes
+    it possible to handle multiple object formats
+    and multiple libraries.
+    It's not required that one handles multiple such
+    in a single libdwarf
+    archive/shared-library (but not ruled out either).
+    See  dwarf_elf_object_access_internals_t and dwarf_elf_access.c
+    for an example.
+
+    Usually the struct is statically defined
+    and the function pointers are set at
+    compile time.
+
+    The om_get_filesize member is new September 4, 2021.
+    Its position is NOT at the end of the list.
+    The member names all now have om_ prefix.
+*/
