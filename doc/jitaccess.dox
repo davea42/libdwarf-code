@@ -1,5 +1,5 @@
 /*!
-    @page JIT and special case DWARF
+    @page jitpage JIT and special case DWARF
 
     @section Reading DWARF with no object file present
 
