@@ -25,10 +25,16 @@
 
 */
 
-#include "dd_globals.h"
+#include "config.h"
+#include <stdio.h>
+#include <string.h> /* for strchr etc */
+#include <stdlib.h> /* for exit() */
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "dd_globals.h"
 #include "dwarf_tsearch.h"
 #include "dd_helpertree.h"
 

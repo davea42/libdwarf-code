@@ -24,13 +24,16 @@
   Boston MA 02110-1301, USA.
 
 */
-
+#include "config.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
 /*  section_bitmaps.h and .c actually involved  bits,
     bit shifting, and bit masks,
     but now the 'maps' are simple byte arrays.
     See reloc_map and section_map in command_options.c */
-
 #include "dd_section_bitmaps.h"
 
 int main()

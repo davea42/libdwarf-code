@@ -40,15 +40,13 @@ Portions Copyright(C) David Anderson 2016. All Rights reserved.
 
 #include "config.h"
 #include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h> /* for strchr etc */
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for exit() */
-#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dwarf_tsearch.h"
 #include "dd_makename.h"
 #include "dd_globals.h"
