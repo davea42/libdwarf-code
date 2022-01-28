@@ -26,18 +26,18 @@
 */
 
 #include "config.h"
-#include "dd_globals.h"
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
+#include <string.h> 
 #include <errno.h>              /* For errno declaration. */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif /* HAVE_UNISTD_ */
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>             /* For exit() declaration etc. */
-#endif /* HAVE_STDLIB_H */
-#include <dwarf.h>
+#include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_esb.h"
 #include "dd_tag_common.h"

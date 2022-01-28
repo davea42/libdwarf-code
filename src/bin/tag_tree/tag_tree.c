@@ -27,11 +27,18 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 
 */
 
-#include "dd_globals.h"
+#include <config.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <errno.h>              /* For errno declaration. */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_tag_common.h"
 #include "dd_getopt.h"

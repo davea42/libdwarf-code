@@ -30,16 +30,16 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "config.h"
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
-#include <errno.h>              /* For errno declaration. */
+#include <stdlib.h>   /* For exit() declaration etc. */
+#include <string.h> 
+#include <errno.h>    /* For errno declaration. */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif /* HAVE_UNISTD_ */
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>             /* For exit() declaration etc. */
-#endif /* HAVE_STDLIB_H */
-#include "dd_globals.h"
-#include <dwarf.h>
+#include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h" /* UNUSEDARG */
+#include "dd_globals.h"
 #include "dd_common.h"
 #include "dd_esb.h"
 #include "dd_tag_common.h"
