@@ -27,11 +27,16 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 
 */
 
+#include <config.h>
+
+#include <stdio.h>  /* EOF FILE fclose() fopen() fprintf() printf() */
+#include <stdlib.h> /* exit() */
+#include <string.h> /* memset() strdup() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
-#include <errno.h>              /* For errno declaration. */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include "dd_common.h"
 #include "dd_tag_common.h"
 #include "dd_getopt.h"

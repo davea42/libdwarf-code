@@ -27,13 +27,17 @@ Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
 
 */
 
-#include <dwarf.h>
-#include <stdio.h>
-#include <stdarg.h>   /* For va_start va_arg va_list */
-#include <stdlib.h>/* For exit() declaration etc. */
-#include <errno.h>/* For errno declaration. */
-#include <ctype.h>    /*  For isspace() declaration */
+#include <config.h>
 
+#include <ctype.h>  /* isspace() */
+#include <stdarg.h> /* va_end() va_list va_start() */
+#include <stdio.h>  /* FILE stderr fprintf() vfprintf() */
+#include <stdlib.h> /* exit() */
+#include <string.h> /* strlen() strncmp() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_tag_common.h"
