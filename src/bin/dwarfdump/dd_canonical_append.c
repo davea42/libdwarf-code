@@ -27,9 +27,11 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 */
 
-#include "config.h"
-#include <string.h> /* for strchr strlen etc */
-#include <stddef.h> /* for size_t*/
+#include <config.h>
+
+#include <stddef.h> /* NULL size_t */
+#include <string.h> /* strlen() */
+
 #include "dd_canonical_append.h"
 #include "dd_safe_strcpy.h"
 /*  Given path strings, attempt to make a canonical file name:

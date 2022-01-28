@@ -25,6 +25,18 @@
 
 */
 
+#include <config.h>
+
+#include <stdlib.h> /* atoi() calloc() exit() free() malloc() strtol() */
+#include <string.h> /* strcmp() strdup() strlen() */
+
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
 #include "dd_dwconf.h"
 #include "dd_getopt.h"

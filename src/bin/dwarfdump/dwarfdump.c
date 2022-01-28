@@ -33,24 +33,32 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
-#include "dd_globals.h"
-/* for 'open' */
-#ifdef SYS_TYPES_H
-#include <sys/types.h>
-#endif /* SYS_TYPES_H */
-#ifdef SYS_STAT_H
-#include <sys/stat.h>
-#endif /* SYS_STAT_H */
-#include <stdlib.h> /* for exit() */
-#include <string.h> /* for strrchr */
-#include <fcntl.h>
-#include <limits.h>
+
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <stdio.h>  /* stdout stderr fprintf() printf() sprintf() */
+#include <stdlib.h> /* exit() free() malloc() qsort() realloc() */
+#include <string.h> /* memset() strcmp() stricmp() strlen() strrchr() strstr() */
+
+/* Windows specific header files */
 #ifdef _WIN32
-#include <io.h> /* for dup2() */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+#include <io.h> /* close() dup2() */
 #elif defined HAVE_UNISTD_H
-#include <unistd.h> /* for dup2() */
+#include <unistd.h> /* close() dup2() */
 #endif /* _WIN32 */
 
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> /* O_RDONLY open() */
+#endif /* HAVE_FCNTL_H */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "dd_globals.h"
 #include "dd_makename.h"
 #include "dd_macrocheck.h"
 #include "dd_dwconf.h"

@@ -32,18 +32,26 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 
 */
 
-#include "dd_globals.h" /* It includes config.h  */
-#include <assert.h>
-#include <string.h> /* For strcmp */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif
-#include <stdlib.h> /* For malloc */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
+#include <config.h>
 
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* calloc() free() */
+#include <assert.h> /* assert() */
+#include <string.h> /* strcmp() */
+
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "dd_globals.h"
 #include "dd_esb.h"
 
 /* Guessing a sensible length for max section name.  */

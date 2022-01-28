@@ -25,10 +25,14 @@
 
 */
 
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <stdlib.h> /* calloc() free() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif
 #include "dd_tsearchbal.h"
 #include "dd_helpertree.h"
 

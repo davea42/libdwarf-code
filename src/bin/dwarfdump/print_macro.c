@@ -24,12 +24,15 @@ Copyright 2015-2020 David Anderson. All rights reserved.
   Boston MA 02110-1301, USA.
 */
 
+#include <config.h>
+
+#include <stdlib.h> /* calloc() free() */
+#include <string.h> /* memcpy() strcmp() strdup() strlen() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
-#include <ctype.h>
-#include <time.h>
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
 #include "dd_naming.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
@@ -40,9 +43,6 @@ Copyright 2015-2020 David Anderson. All rights reserved.
 #include "dd_macrocheck.h"
 #include "dd_sanitized.h"
 #include "dd_safe_strcpy.h"
-
-#define TRUE  1
-#define FALSE 0
 
 /*  See the comments at the beginning of macrocheck.c */
 

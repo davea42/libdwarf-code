@@ -38,27 +38,17 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
 
 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STRING_H
-#include <string.h> /* for strchr etc */
-#endif /* HAVE_STRING_H */
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h> /* for exit() */
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif /* HAVE_STDINT_H */
+#include <config.h>
+
+#include <stdlib.h> /* free() */
+#include <string.h> /* strcmp() strdup() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+#include "dd_globals.h"
 #include "dd_tsearchbal.h"
 #include "dd_makename.h"
-#include "dd_globals.h"
-
-#if defined(__WIN32) &&  (!defined(__GNUC__) && !defined(__clang__))
-#pragma warning(disable:4996)    /* Warning when migrated to VS2010 */
-#endif /* _WIN32 */
-
-#define TRUE 1
-#define FALSE 0
 
 static void * makename_data;
 #define VALTYPE char *

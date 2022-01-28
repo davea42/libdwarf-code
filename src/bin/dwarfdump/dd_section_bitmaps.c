@@ -25,6 +25,12 @@ Copyright (C) 2017-2018 David Anderson. All Rights Reserved.
 
 */
 
+#include <config.h>
+
+#include <string.h> /* strcmp() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
 /*  dd_section_bitmaps.h and .c actually involved  bits,
     bit shifting, and bit masks,

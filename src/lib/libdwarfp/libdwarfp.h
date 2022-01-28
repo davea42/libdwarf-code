@@ -43,13 +43,13 @@
 #define DWP_API __declspec(dllimport)
 #endif /* LIBDWARF_BUILD */
 #elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
-#ifdef PIC
+#if defined(PIC) || defined(__PIC__)
 #define DWP_API __global
 #else
 #define DWP_API
 #endif /* PIC */
 #elif (defined(__GNUC__) && __GNUC__ >= 4) || defined(__INTEL_COMPILER)
-#ifdef PIC
+#if defined(PIC) || defined(__PIC__)
 #define DWP_API __attribute__ ((visibility("default")))
 #else
 #define DWP_API

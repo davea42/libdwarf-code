@@ -41,8 +41,11 @@ sys_sun = sun.contains(host_machine.system())
 # compiler
 
 cc = meson.get_compiler('c')
+cpp = meson.get_compiler('cpp')
 
 dev_cflags = []
+dev_cppflags = []
+
 dev_cflags_try = [
   '-Wpointer-arith',
   '-Wmissing-declarations',
@@ -70,10 +73,12 @@ foreach cf: dev_cflags_try
   if cc.has_argument(cf)
     dev_cflags += cf
   endif
+  if get_option('dwarfgen') == true
+    if cpp.has_argument(cf)
+      dev_cppflags += cf
+    endif
+  endif
 endforeach
-
-add_project_arguments(dev_cflags, language: 'c')
-add_project_arguments(dev_cflags, language: 'cpp')
 
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
 
@@ -133,14 +138,17 @@ if get_option('libelf') == true
     if cc.has_header('elf.h')
       config_h.set10('HAVE_ELF_H', true)
     endif
-    if get_option('dwarfgen') == true
-      elf_lib = cc.find_library('elf', required : false)
-    endif
   endif
 endif
 
 subdir('src/lib/libdwarf')
-#subdir('src/bin/dwarfdump')
+subdir('src/bin/dwarfdump')
+have_libdwarfp = false
+if have_libelf == true and get_option('dwarfgen') == true
+  subdir('src/lib/libdwarfp')
+  subdir('src/bin/dwarfgen')
+  have_libdwarfp = true
+endif
 
 # Use config_h after all subdirs have set values
 
@@ -171,13 +179,22 @@ configure_file(
 
 # output
 
+libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
+
+libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
+if have_libdwarfp
+  libdwarfp_output += ' (elf64_getehdr: ' + (have_getehdr ? 'yes' : 'no')
+  libdwarfp_output += ', elf64_getshdr: ' + (have_getshdr ? 'yes' : 'no') + ')'
+endif
+
 summary({'OS': host_os,
          'BuildOS-BigEndian': host_machine.endian() == 'big' ? 'yes' : 'no',
+         'libelf support': have_libelf ? 'yes' : 'no',
+         'libdwarf': libdwarf_output,
+         'dwarfdump': 'always',
+         'libdwarfp': libdwarfp_output,
+         'dwarfgen': have_libdwarfp ? 'yes' : 'no',
         }, section: 'Configuration Options Summary:')
-
-summary({'zlib': zlib_dep.found() ? 'yes' : 'no',
-         'libelf': have_libelf ? 'yes' : 'no',
-        }, section: 'libdwarf:')
 
 summary({'prefix': dir_prefix,
          'bindir': dir_bin,

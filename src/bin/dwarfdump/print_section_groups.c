@@ -25,6 +25,14 @@ Copyright (C) 2017-2017  David Anderson. All rights reserved.
 
 */
 
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* calloc() free() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_sanitized.h"
 #include "dd_naming.h"

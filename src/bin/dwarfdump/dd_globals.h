@@ -32,29 +32,12 @@ Portions Copyright 2012-2018 SN Systems Ltd. All rights reserved.
 extern "C" {
 #endif
 
-#include "config.h"
+#include "dd_defined_types.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 
 #define DWARF_SECNAME_BUFFER_SIZE 50
 #define ESB_FIXED_ALLOC_SIZE 300
-#include <stdio.h>
-#include <stdlib.h> /* for exit(), C89 malloc */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#include <string.h> /* for strchr etc */
-
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-
-#include "dwarf.h"
-#include "libdwarf.h"
-#include "libdwarf_private.h"
-#include "dd_checkutil.h"
-#include "dd_defined_types.h"
-#include "dd_glflags.h"
 
 /*  Used to avoid leakage when we hide errors.
     Use carefully: doing err when you mean

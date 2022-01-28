@@ -28,9 +28,14 @@ Copyright (C) 2017-2020 David Anderson. All Rights Reserved.
     global struct as it has been hard to know how many there
     were or what they were all for. */
 
-#include "dd_globals.h"
-#include <limits.h>
+#include <config.h>
 
+#include <limits.h> /* INT_MAX */
+#include <string.h> /* strcmp() strlen() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "dd_globals.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_dwconf.h"
 #include "dd_safe_strcpy.h"

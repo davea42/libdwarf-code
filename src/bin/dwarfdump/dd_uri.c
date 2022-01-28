@@ -26,11 +26,13 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 */
 
+#include <config.h>
+
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
 #include "dd_esb.h"
 #include "dd_uri.h"
-#include <stdio.h>
-#include <ctype.h>
 
 /* dwarfdump_ctype table. See uritablebuild.c */
 static char dwarfdump_ctype_table[256] = {

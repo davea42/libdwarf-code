@@ -52,8 +52,13 @@ the ugly casts.
 strstrnocase.c
 
 */
-#include <ctype.h>
-#include <stdio.h>
+
+#include <config.h>
+
+#include <ctype.h> /* tolower() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
 
 Dwarf_Bool

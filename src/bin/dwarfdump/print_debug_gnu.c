@@ -30,18 +30,18 @@ Copyright (C) 2020 David Anderson. All Rights Reserved.
 */
 
 /*  To print .debug_gnu_pubnames, .debug_gnu_typenames */
+
+#include <config.h>
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
 #include "dd_naming.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
-#include  "print_debug_gnu.h"
-
-#define TRUE 1
-#define FALSE 0
+#include "print_debug_gnu.h"
 
 char *ikind_types[8] = {
     "none",

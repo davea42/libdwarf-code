@@ -28,6 +28,13 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 */
 
+#include <config.h>
+
+#include <string.h> /* memset() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_macrocheck.h"
@@ -37,9 +44,6 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 
 #include "print_sections.h"
 #include "print_frames.h"
-
-#define TRUE 1
-#define FALSE 0
 
 struct macro_counts_s {
     long mc_start_file;

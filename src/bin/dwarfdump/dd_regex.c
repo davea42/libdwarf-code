@@ -124,14 +124,10 @@
     compile:    BOT 1 CHR f CHR o CLO ANY END EOT 1 CHR - REF 1 END
     matches:    foo-foo fo-fo fob-fob foobar-foobar ...
 */
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
+#include <config.h>
+
+#include <stdio.h> /* printf() */
+
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
 

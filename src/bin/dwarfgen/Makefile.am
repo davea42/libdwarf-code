@@ -32,8 +32,6 @@ dwarfgen_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarfp \
 -I$(top_builddir)/src/lib/libdwarf \
 -I$(top_builddir)/src/lib/libdwarfp
 
-dwarfgen_CXXFLAGS = $(DWARF_CXXFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfgen"
-
 dwarfgen_LDADD = \
 $(top_builddir)/src/lib/libdwarfp/libdwarfp.la \
 $(top_builddir)/src/lib/libdwarf/libdwarf.la \
