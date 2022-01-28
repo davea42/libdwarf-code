@@ -29,10 +29,12 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 
 /* SGI has moved from the Crittenden Lane address.  */
 
+#include <config.h>
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
 #include "dd_naming.h"
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_esb_using_functions.h"

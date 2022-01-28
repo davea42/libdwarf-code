@@ -24,6 +24,11 @@ Copyright 2018-2019 David Anderson. All rights reserved.
   Boston MA 02110-1301, USA.
 */
 
+#include <config.h>
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"

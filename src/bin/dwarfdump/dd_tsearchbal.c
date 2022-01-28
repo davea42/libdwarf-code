@@ -57,19 +57,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _CRT_SECURE_NO_WARNINGS
 #endif /* _WIN32 */
 
-#include "config.h"
-#include "stdlib.h" /* for free() */
+#include <config.h>
+
+#include <stdio.h>  /* fprintf() printf() sprintf() */
+#include <stddef.h> /* NULL size_t */
+#include <stdlib.h> /* calloc() free() malloc() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
+#include <stdint.h> /* uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include <stdio.h> /* for printf */
+
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_tsearchbal.h"
-
-/*  This must match the types and print options
-    found in libdwarf.h.  */
-#define Dwarf_Unsigned unsigned long long
 
 #define IMPLEMENTD15 1
 

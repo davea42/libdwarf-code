@@ -25,7 +25,10 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 
 */
 
-/*  Definitions for TRUE, FALSE, etc. */
+#include <config.h>
+
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
 #include "dd_esb.h"
 #include "dd_glflags.h"

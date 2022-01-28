@@ -28,6 +28,11 @@ Portions Copyright 2008-2012 David Anderson. All rights reserved.
 
 */
 
+#include <config.h>
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"

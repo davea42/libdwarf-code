@@ -38,8 +38,15 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
     in doing a better job when the tsearch functions (part of
     POSIX) are available.  */
 
+#include <config.h>
+
+#include <stdlib.h> /* exit() */
+#include <string.h> /* strlen() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
-#include "print_frames.h"
 #include "dd_dwconf.h"
 #include "dd_dwconf_using_functions.h"
 #include "dd_esb.h"
@@ -48,9 +55,10 @@ Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
 #include "dd_addrmap.h"
 #include "dd_naming.h"
 #include "dd_safe_strcpy.h"
+#include "print_frames.h"
 
-#define true 1
-#define false 0
+#define TRUE 1
+#define FALSE 0
 
 Dwarf_Sig8 zero_type_signature;
 static void
@@ -273,7 +281,7 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,
                 sres = dwarf_formstring(atlist[i], &tempsl, &err);
                 if (sres == DW_DLV_OK) {
                     esb_append(name_out,tempsl);
-                    name_found = true;
+                    name_found = TRUE;
                     break;
                 }
             }
@@ -316,7 +324,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
     int funcpcfound = 0;
     int funcres = DW_DLV_OK;
     int funcnamefound = 0;
-    int loop_ok = true;
+    int loop_ok = TRUE;
 
     if (pcMap) {
         struct Addr_Map_Entry *ame = 0;
@@ -432,11 +440,11 @@ get_proc_name_by_die(Dwarf_Debug dbg,
                     funcpcfound = 0;
                     low_pc_for_die = 0;
                     /* low_pc_for_die = ~low_pc; ??? */
-                    loop_ok = false;
+                    loop_ok = FALSE;
                     /* ensure no match */
                 } else if (dres == DW_DLV_NO_ENTRY) {
                     funcpcfound = 0;
-                    loop_ok = false;
+                    loop_ok = FALSE;
                 }
                 break;
             default:
@@ -878,7 +886,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 }
 
 /*  Attempting to take care of overflows so we
-    only accept good as true. */
+    only accept good as TRUE. */
 static Dwarf_Bool
 valid_fde_content(Dwarf_Small * fde_start,
     Dwarf_Unsigned fde_length,
@@ -890,16 +898,16 @@ valid_fde_content(Dwarf_Small * fde_start,
 
     if (data_ptr < fde_start ||
         data_ptr >= fde_end) {
-        return false;
+        return FALSE;
     }
     data_end = data_ptr + data_ptr_length;
     if ( data_end < fde_start || data_end < data_ptr) {
-        return false;
+        return FALSE;
     }
     if ( data_end  >= fde_end) {
-        return false;
+        return FALSE;
     }
-    return true;
+    return TRUE;
 }
 
 static const Dwarf_Block blockzero;
@@ -1645,10 +1653,10 @@ lastop_pointless(int op)
         op == DW_CFA_advance_loc2 ||
         op == DW_CFA_advance_loc1 ||
         op == DW_CFA_set_loc) {
-        return true;
+        return TRUE;
     }
     /* The last op is hopefully useful. */
-    return false;
+    return FALSE;
 }
 
 #if 0
@@ -1955,7 +1963,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         printf(
             " Warning: Final FDE operator is useless "
             "but not an error. %s\n",
-            get_CFA_name(lastop,true));
+            get_CFA_name(lastop,TRUE));
     }
 }
 
@@ -2127,7 +2135,7 @@ print_all_fdes(Dwarf_Debug dbg,
         }
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,stdsecname,
-            &truename,true);
+            &truename,TRUE);
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);
         printf("\nfde:\n");

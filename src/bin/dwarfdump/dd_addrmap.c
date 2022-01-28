@@ -29,17 +29,20 @@
 /*  If memory full  we do not exit, we just keep going as if
     all were well. */
 
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <stdlib.h> /* free() malloc() */
+#include <string.h> /* strdup() */
+
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
+#include "dwarf.h"
+#include "libdwarf.h"
 #include "dd_globals.h"
-#include <stdio.h>
-#include <stdlib.h> /* For malloc */
-#include <string.h> /* For strdup */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif
 #include "dd_addrmap.h"
 #include "dd_tsearchbal.h"
 

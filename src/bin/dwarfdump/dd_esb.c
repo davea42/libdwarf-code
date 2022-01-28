@@ -43,12 +43,14 @@
 #ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
 #endif /* _WIN32 */
-#include "config.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
+
+#include <config.h>
+
+#include <stdarg.h> /* va_end() va_start() */
+#include <stdlib.h> /* exit() free() malloc() realloc() */
+#include <string.h> /* memcpy() memset() strlen() */
+
 #include "dd_esb.h"
-#define TRUE 1
 
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,
     the NUL is accounted for in init_esb_string

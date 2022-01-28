@@ -29,13 +29,15 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 
 /* These do little except on Windows */
 
-#include "config.h"
+#include <config.h>
+
+#include <stdio.h> /* printf() */
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-#include <stdio.h>
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"

@@ -48,16 +48,18 @@
         out of global and into something per-open-dbg.
 */
 
+#include <config.h>
+
+#include <stdlib.h> /* calloc() free() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif /* HAVE_STDINT_H */
 #include "dd_tsearchbal.h"
 #include "dd_macrocheck.h"
 #include "dd_esb.h"
 
-#define TRUE 1
-#define FALSE 0
 /*  WARNING: the tree walk functions will, if presented **tree
     when *tree is wanted, simply find nothing. No error,
     just bad results. So when a walk produces nothing

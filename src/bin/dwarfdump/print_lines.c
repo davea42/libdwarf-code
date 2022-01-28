@@ -28,14 +28,20 @@ Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
   Boston MA 02110-1301, USA.
 */
 
+#include <config.h>
+
+#include <string.h> /* strcmp() strlen() */
+#include <time.h>   /* ctime() */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dd_naming.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 #include "dd_sanitized.h"
 #include "dd_uri.h"
-#include <ctype.h>
-#include <time.h>
 
 #include "print_sections.h"
 

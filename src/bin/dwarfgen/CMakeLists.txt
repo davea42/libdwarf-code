@@ -39,6 +39,4 @@ install(TARGETS dwarfgen DESTINATION
 	LIBRARY DESTINATION ${LIBDIR}
 	ARCHIVE DESTINATION ${LIBDIR})
 
-#install(FILES dwarfgen.conf DESTINATION lib)
-
 #install(FILES dwarfgen.1 DESTINATION share/man/man1)
