@@ -698,22 +698,22 @@ struct Dwarf_Obj_Access_Section_a_s {
 */
 struct Dwarf_Obj_Access_Methods_a_s {
     int    (*om_get_section_info)(void* obj,
-        Dwarf_Half section_index,
+        Dwarf_Half                  section_index,
         Dwarf_Obj_Access_Section_a* return_section,
-        int* error);
+        int                       * error);
     Dwarf_Small      (*om_get_byte_order)(void* obj);
     Dwarf_Small      (*om_get_length_size)(void* obj);
     Dwarf_Small      (*om_get_pointer_size)(void* obj);
     Dwarf_Unsigned   (*om_get_filesize)(void* obj);
-
     Dwarf_Unsigned   (*om_get_section_count)(void* obj);
     int              (*om_load_section)(void* obj,
-        Dwarf_Half section_index,
-        Dwarf_Small** return_data, int* error);
+        Dwarf_Half    section_index,
+        Dwarf_Small** return_data,
+        int         * error);
     int              (*om_relocate_a_section)(void* obj,
-        Dwarf_Half section_index,
+        Dwarf_Half  section_index,
         Dwarf_Debug dbg,
-        int* error);
+        int       * error);
 };
 struct Dwarf_Obj_Access_Interface_a_s {
     void*                             ai_object;
@@ -1546,6 +1546,8 @@ DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
     or in an object format unknown to libdwarf.
 
     @see jitreader
+
+    and see: @link noobject Reading DWARF not in an object file @endlink
 
     @param dw_obj
     A data structure filled out by the caller so libdwarf
