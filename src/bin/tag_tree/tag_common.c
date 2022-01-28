@@ -35,7 +35,6 @@ Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
 #include <string.h>
 #include <errno.h>/* For errno declaration. */
 #include <ctype.h>    /*  For isspace() declaration */
-
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "dd_globals.h"
