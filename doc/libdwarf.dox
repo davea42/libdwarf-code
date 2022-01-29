@@ -372,7 +372,7 @@
     at runtime. The set should be called (if
     needed) immediately after initializing a Dwarf_Debug
     and before any other calls on that Dwarf_Debug.
-    If just one value (for exampole, Table_Size)
+    If just one value (for example, Table_Size)
     needs altering, then just call that single function.
 
     For the library accessing frame data to work properly

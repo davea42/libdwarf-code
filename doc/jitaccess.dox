@@ -156,7 +156,7 @@
     The fields here are standard Elf,
     and for most you can just fill in the value zero.
     For section index zero as_name should be set to
-    an empty string (see bleow about section index numbers).
+    an empty string (see below about section index numbers).
   
     @b as_name: Here you set a section name via the pointer.
     The section names must be names as defined in the DWARF
@@ -358,7 +358,7 @@
     Leave this pointer NULL.
     If relocations are required it is probably simpler
     for you do to them yourself n your
-    implemenation of @b om_load_section .
+    implementation of @b om_load_section .
     Any relocations this function pointer
     is to use must be in standard Elf
     relocation (32 or 64 bit) form and must be
