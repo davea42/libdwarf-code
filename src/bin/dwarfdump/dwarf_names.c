@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated for source version 0.3.3 */
+/* Generated for source version 0.3.4 */
 
 /* BEGIN FILE */
 
@@ -2213,6 +2213,33 @@ dwarf_get_ATE_name (unsigned int val,
         return DW_DLV_OK;
     case DW_ATE_HP_imaginary_float128:
         *s_out = "DW_ATE_HP_imaginary_float128";
+        return DW_DLV_OK;
+    case DW_ATE_HP_VAX_float:
+        *s_out = "DW_ATE_HP_VAX_float";
+        return DW_DLV_OK;
+    case DW_ATE_HP_VAX_float_d:
+        *s_out = "DW_ATE_HP_VAX_float_d";
+        return DW_DLV_OK;
+    case DW_ATE_HP_packed_decimal:
+        *s_out = "DW_ATE_HP_packed_decimal";
+        return DW_DLV_OK;
+    case DW_ATE_HP_zoned_decimal:
+        *s_out = "DW_ATE_HP_zoned_decimal";
+        return DW_DLV_OK;
+    case DW_ATE_HP_edited:
+        *s_out = "DW_ATE_HP_edited";
+        return DW_DLV_OK;
+    case DW_ATE_HP_signed_fixed:
+        *s_out = "DW_ATE_HP_signed_fixed";
+        return DW_DLV_OK;
+    case DW_ATE_HP_unsigned_fixed:
+        *s_out = "DW_ATE_HP_unsigned_fixed";
+        return DW_DLV_OK;
+    case DW_ATE_HP_VAX_complex_float:
+        *s_out = "DW_ATE_HP_VAX_complex_float";
+        return DW_DLV_OK;
+    case DW_ATE_HP_VAX_complex_float_d:
+        *s_out = "DW_ATE_HP_VAX_complex_float_d";
         return DW_DLV_OK;
     case DW_ATE_SUN_interval_float:
         *s_out = "DW_ATE_SUN_interval_float";
