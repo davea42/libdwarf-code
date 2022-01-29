@@ -31,10 +31,21 @@ def deriveversions(sver):
     return (True, ma, min, mic)
 
 
+hmeson="  version: '1.99.0'"
+hmmes ="  version: '"
+hmmee = "'"
+def updatemesonversion(lcount, l, sver, maj, min, mic):
+    if l.startswith(hmmes):
+       s = hmmes,sver,hmmee
+       return s, int(lcount)+1
+    return l,lcount
+
 ha = """#define DW_LIBDWARF_VERSION_MAJOR """
 hb = """#define DW_LIBDWARF_VERSION_MINOR """
 hc = """#define DW_LIBDWARF_VERSION_MICRO """
 hv = """#define DW_LIBDWARF_VERSION """
+
+
 
 
 def updatelhstring(lcount, l, sver, maj, min, mic):
@@ -105,6 +116,7 @@ def updatefile(fname, type, sver, maj, min, mic):
     foundac = 0
     foundlh = 0
     foundmm = 0
+    foundmmeson = 0
     print("Processing", fname, " type", type, " newver", sver)
     try:
         fin = open(fname, "r")
@@ -125,6 +137,11 @@ def updatefile(fname, type, sver, maj, min, mic):
             continue
         elif type == "ac":
             lx, foundac = updateacversion(foundac, l, sver, maj, min, mic)
+            outdata += [lx]
+            continue
+        elif type == "mmeson":
+            lx, foundac = updatemesonversion(foundmmeson, l, sver,\
+                 maj, min, mic)
             outdata += [lx]
             continue
         elif type == "mm":
@@ -185,4 +202,4 @@ if __name__ == "__main__":
     updatefile("src/lib/libdwarf/libdwarf.h", "lh", sver, maj, min, mic)
     updatefile("doc/libdwarf.mm", "mm", sver, maj, min, mic)
     updatefile("doc/libdwarfp.mm", "mm", sver, maj, min, mic)
-    print("Updated: done.")
+    updatefile("meson.build", "mmeson", sver, maj, min, mic)
