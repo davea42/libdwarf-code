@@ -405,7 +405,7 @@ typedef struct Dwarf_Cmdline_Options_s {
 
 /*! @typedef Dwarf_Str_Offsets_Table
     Provides an access to the .debug_str_offsets
-    section indepenently of other DWARF sections.
+    section independently of other DWARF sections.
     Mainly of use in examining the .debug_str_offsets
     section content for problems.
 */
@@ -4603,7 +4603,7 @@ DW_API int dwarf_macro_operands_table(Dwarf_Macro_Context dw_mc,
     On success returns the the macro operator itself,
     for example DW_MACRO_define.
     @param dw_forms_count
-    On success returns the numer of forms in the formcode array.
+    On success returns the number of forms in the formcode array.
     @param dw_formcode_array
     On success returns a pointer to the formcode array
     of operand forms.
@@ -5243,7 +5243,7 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde dw_fde,
     @param dw_head
     The address of an allocated dw_head
     @param dw_instr_count
-    Returns the numer of inststructions in the byte stream
+    Returns the number of instructions in the byte stream
     @param dw_error
     Error return details
     @return
@@ -6435,7 +6435,7 @@ DW_API int dwarf_func_name_offsets(Dwarf_Func dw_func,
     Dwarf_Off  * dw_cu_offset,
     Dwarf_Error* dw_error);
 
-/*! @brief  Access to SGI/IRIC .debug_types section.
+/*! @brief  Access to SGI/IRIX .debug_types section.
     Static types names and offsets.
     @link dw_pubnames Pubnames and Pubtypes overview @endlink
 */
@@ -6600,7 +6600,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
 
     Version 8 built by gdb, so type entries are ok as is.
     Version 7 built by the 'gold' linker and type index
-    entries for a CU must be derived othewise, the
+    entries for a CU must be derived otherwise, the
     type index is not correct...  Earlier versions
     cannot be read correctly by the functions here.
 
