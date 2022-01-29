@@ -186,7 +186,7 @@ validate_name(char *name,unsigned long v,unsigned int linenum)
         fprintf(stderr,"Op 0x%lx used %d times. %s and now %s\n",
             v,count,s, name);
         if (dups_used >= OPS_USED_DUPS) {
-            printf("Too many dups, increast table size\n");
+            printf("Too many dups, increase table size\n");
             exit(1);
         }
         dups[dups_used].dt_val = v;
@@ -235,7 +235,7 @@ validate_op_listed(char *curdefname,unsigned long v,
         }
     }
     printf("Failed to find %s val 0x%lu at dwarf.h "
-        "line %u in inoptabsource\n",
+        "line %u in optabsource\n",
         curdefname,v, linenum);
     exit(1);
 }
