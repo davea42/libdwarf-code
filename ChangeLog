@@ -1,3 +1,285 @@
+2022-01-29:  David Anderson
+    commit 1c45ce768634c6135a01de9b37f15edbeec1438d
+
+    Fix trailing whitespace and some too-long lines.
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-29:  David Anderson
+    commit 6edc9c60b16f0bb23dd9ac14df0401dfb2d97dff
+
+    Eliminate trailing white space
+    blank line at end and fix indents.
+            modified:   src/bin/buildopstab/buildopscounttab.c
+            modified:   src/bin/dwarfdump/dd_canonical_append.c
+            modified:   src/bin/dwarfdump/dd_canonical_append.h
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_opscounttab.h
+            modified:   src/bin/dwarfdump/dd_safe_strcpy.c
+            modified:   src/bin/dwarfdump/dd_safe_strcpy.h
+            modified:   src/bin/dwarfdump/dd_tsearchbal.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/gennames/gennames.c
+
+2022-01-29:  David Anderson
+    commit 9293a336e1197cb89a33748f2b96bd81e8421f2a
+
+    Version now 0.3.4
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2022-01-29:  David Anderson
+    commit 6ae38e5f8477aa08ca967688ba8d081708d7c55e
+
+    Corrected two misspelled words in printf output.
+            modified:   src/bin/buildopstab/buildopscounttab.c
+
+2022-01-29:  David Anderson
+    commit 963a2d71df17a062d89515849e64e96e36bd9def
+    Merge: 6ee163a0 98bc5cff
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+2022-01-29:  David Anderson
+    commit 98bc5cff1a47f995743b29aab1518ccaf00ab434
+    Merge: 1e8f3b54 f7d7b866
+
+    Merge pull request #66 from vtorri/bin_headers
+
+    Add meson build for attr_form, tag_attr and tag_tree binaries
+
+2022-01-29:  Vincent Torri
+    commit f7d7b8669a1cc8c2ec6e246baf4e876ab9d1bc0a
+
+    Add meson build for attr_form, tag_attr and tag_tree binaries
+    also clean header files order
+
+            new file:   src/bin/attr_form/meson.build
+            new file:   src/bin/tag_attr/meson.build
+            new file:   src/bin/tag_tree/meson.build
+            modified:   meson.build
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+
+2022-01-28:  David Anderson
+    commit 6ee163a0946b368a8f7cc0f48a0cb1b15f7af997
+
+    Now with semantic version 0.3.4
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.mm
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Now updates the semantic version in meson.build too
+            modified:   tools/updatesemanticversion.py
+
+2022-01-28:  David Anderson
+    commit 20ac4e0526cae7d3ff37c81af4fe6e70480ec7ff
+    Merge: 1e8f3b54 a36d7b4c
+
+    Merge branch 'doxy'
+
+    Merging doxyfile updates. No .c updates,
+    just libdwarf.h and doc/* files
+
+2022-01-28:  David Anderson
+    commit 1e8f3b54aa7a7a6781072d1fd7c6216b746ed3cf
+
+    More minor include changes to
+    get make check to work.
+            modified:   test/helpertree_test.c
+            modified:   test/makename_test.c
+            modified:   test/section_bitmaps_test.c
+
+2022-01-28:  David Anderson
+    commit d56bd7a112bdec8f5e969743eb20f81bfcbcf2f3
+
+    Trivial include change.
+            modified:   ../tag_tree/tag_common.c
+
+2022-01-28:  David Anderson
+    commit 9fd9731804298bc25b93e4cbaaa7a90b7cd021e3
+
+    Fixing a few missing includes, like string.h,
+    and moving include of dd_globals.h
+            modified:   attr_form/attr_form_build.c
+            modified:   tag_attr/tag_attr.c
+            modified:   tag_tree/tag_common.c
+            modified:   tag_tree/tag_tree.c
+
+2022-01-28:  David Anderson
+    commit 0cabb9873e6482e24a0921cae99c7ff6730475b0
+    Merge: 3eb217a7 9b50bbd4
+
+    Merge pull request #62 from vtorri/master
+
+    Add meson files to libdwarfp and dwarfgen
+
+2022-01-28:  David Anderson
+    commit a36d7b4c280a8e4a3cecb2991201021d698b7715
+
+    Now with full documentation of dwarf_object_init_b,
+    and dwarf_object_finish()
+    nearly all of it outside libdwarf.h now.
+            modified:   doc/jitaccess.dox
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-28:  Vincent Torri
+    commit 9b50bbd4ec125fb87170b4ae54d6c1acb96979cd
+
+    Add meson files to libdwarfp and dwarfgen
+    rearrange header files in dwarfdump
+
+            new file:   src/bin/dwarfgen/meson.build
+            new file:   src/lib/libdwarfp/meson.build
+
+            modified:   meson.build
+            modified:   src/bin/dwarfdump/dd_addrmap.c
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_canonical_append.c
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_common.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_esb.h
+            modified:   src/bin/dwarfdump/dd_getopt.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/bin/dwarfdump/dd_helpertree.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/dd_makename.c
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dd_safe_strcpy.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/dd_section_bitmaps.c
+            modified:   src/bin/dwarfdump/dd_strstrnocase.c
+            modified:   src/bin/dwarfdump/dd_true_section_name.c
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/meson.build
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_aranges.c
+            modified:   src/bin/dwarfdump/print_debug_gnu.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_debug_sup.c
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_macinfo.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_ranges.c
+            modified:   src/bin/dwarfdump/print_rnglists.c
+            modified:   src/bin/dwarfdump/print_section_groups.c
+            modified:   src/bin/dwarfdump/print_sections.c
+            modified:   src/bin/dwarfdump/print_static_funcs.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfdump/print_str_offsets.c
+            modified:   src/bin/dwarfdump/print_strings.c
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+            modified:   src/bin/dwarfdump/print_types.c
+            modified:   src/bin/dwarfdump/print_weaknames.c
+            modified:   src/bin/dwarfgen/CMakeLists.txt
+            modified:   src/bin/dwarfgen/Makefile.am
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   src/lib/libdwarf/meson.build
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+2022-01-27:  David Anderson
+    commit 4679fd24f9ac32ed6fbda99f340120287a208833
+
+    trivial mod.
+            modified:   jitaccess.dox
+
+2022-01-27:  David Anderson
+    commit 950191ee32de943a6cd609f315a980e634b184e3
+
+    Separating jit DWARF access comments from libdwarf.h
+    and creating jitaccess.dox, a new doxygen page containing it.
+            modified:   doc/Doxyfile
+            new file:   doc/jitaccess.dox
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-25:  David Anderson
+    commit cfa1d7f378a6777a2c6a54b113ff299160395665
+
+    Moving most jitreader/Object_Access to .dox out of libdwarf.h
+            modified:   doc/libdwarf.dox
+    Added new doxygen.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-25:  David Anderson
+    commit 12c3720b440fac30e89774ef2dbf0b34cc99b8b9
+
+    A couple typos in the comments for doxygen fixed.
+            modified:   ../src/lib/libdwarf/libdwarf.h
+
+2022-01-25:  David Anderson
+    commit a6b01c5ab7e9aa6f5e0c0e0faeba515e1f99f433
+
+    Doxygen comments added for some gdbindex functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-25:  David Anderson
+    commit 55af202fe636b3ae69dadf16d0caa5b0607f4dc4
+
+    Updated so each has a doxygen @ file and a few
+    overview words doxygen will show.
+            modified:   src/lib/libdwarf/dwarf.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-25:  David Anderson
+    commit e75f70c3002de723aff3952a1156b64b94af11fb
+
+    Now includes dwarf.h too
+            modified:   doc/Doxyfile
+
+2022-01-24:  David Anderson
+    commit 3790f5a52ef0bccc0105a723fca8708f3baa5399
+
+    Adding links to the gdbindex section format.
+            modified:   dwarf_gdbindex.c
+            modified:   libdwarf.h
+
+2022-01-24:  David Anderson
+    commit 583d12b330db74f172d21e12584531404c70495a
+
+    doxygen comments added for the .gdb_index section
+    access functions.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-24:  David Anderson
+    commit 3eb217a7a4461a5df7ed0bdd03aba2bfa1846e72
+
+    Updating from current git log.
+            modified:   ChangeLog
+
 2022-01-24:  David Anderson
     commit fd4e1fd4f67f55a52b0495a27f4b64ed8a257e6b
 
