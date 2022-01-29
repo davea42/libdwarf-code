@@ -39,7 +39,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include <stddef.h> /* NULL */
 #include <stdio.h>  /* stdout stderr fprintf() printf() sprintf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() realloc() */
-#include <string.h> /* memset() strcmp() stricmp() strlen() strrchr() strstr() */
+#include <string.h> /* memset() strcmp() stricmp()
+    strlen() strrchr() strstr() */
 
 /* Windows specific header files */
 #ifdef _WIN32

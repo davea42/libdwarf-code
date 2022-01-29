@@ -29,7 +29,8 @@
 #include <stddef.h> /* NULL */
 #include <stdio.h>  /* stdout fprintf() printf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() */
-#include <string.h> /* memset() strcmp() stricmp() strlen() strncmp() */
+#include <string.h> /* memset() strcmp() stricmp()
+    strlen() strncmp() */
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)

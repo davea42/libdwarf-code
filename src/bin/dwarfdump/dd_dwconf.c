@@ -31,7 +31,8 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include <ctype.h>  /* isspace() */
 #include <stdlib.h> /* exit() free() getenv() realloc() strtoul() */
-#include <string.h> /* memset() strcmp() strlen() strncmp() strrchr()*/
+#include <string.h> /* memset() strcmp() strlen()
+    strncmp() strrchr()*/
 
 /* Windows specific header files */
 #ifdef _WIN32

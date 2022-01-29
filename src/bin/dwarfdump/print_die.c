@@ -35,7 +35,8 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include <config.h>
 
 #include <stdlib.h> /* calloc() free() */
-#include <string.h> /* memcmp() memset() strchr() strcmp() strlen() strncmp() */
+#include <string.h> /* memcmp() memset() strchr() strcmp()
+    strlen() strncmp() */
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uintptr_t */

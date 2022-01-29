@@ -571,7 +571,8 @@ ParseDefinitionsAndWriteOutput(void)
                 exit(1);
             }
             _dwarf_safe_strcpy(group_array[array_count].name,
-                 MAX_NAME_LEN,second_underscore,strlen(second_underscore));
+                MAX_NAME_LEN,second_underscore,
+                strlen(second_underscore));
             group_array[array_count].value = v;
             group_array[array_count].original_position = array_count;
             ++array_count;

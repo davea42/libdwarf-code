@@ -81,9 +81,9 @@ static struct ops_table_s optabsource[]= {
 {DW_OP_piece,          0               , 1, 0},
 {DW_OP_deref_size,     0               , 1, 0},
 {DW_OP_xderef_size,    0               , 1, -1},
-{DW_OP_nop,            0               , 0, 0},          
+{DW_OP_nop,            0               , 0, 0},
 {DW_OP_push_object_address ,0          , 0, 1},
-/*  The called expr may change the stack, 
+/*  The called expr may change the stack,
     but not the call itself*/
 {DW_OP_call2,          DW_OP_call_ref          , 1, 0},
 
@@ -222,7 +222,7 @@ validate_op_listed(char *curdefname,unsigned long v,
         if (v == ops->ot_first) {
             validate_name(curdefname,v,linenum);
             return;
-        } 
+        }
         if (ops->ot_last && v == ops->ot_last) {
             validate_name(curdefname,v,linenum);
             return;
@@ -424,7 +424,8 @@ int main(int argc, char**argv)
         sc = op->ot_stackchange;
 
         while (f > outindex) {
-            printf("{/* %-26s 0x%02x*/ %d, 0},\n","unused",outindex,-1);
+            printf("{/* %-26s 0x%02x*/ %d, 0},\n","unused",
+                outindex,-1);
             ++outindex;
         }
         if (!l) {

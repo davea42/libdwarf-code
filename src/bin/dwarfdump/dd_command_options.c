@@ -27,7 +27,8 @@
 
 #include <config.h>
 
-#include <stdlib.h> /* atoi() calloc() exit() free() malloc() strtol() */
+#include <stdlib.h> /* atoi() calloc() exit() free()
+    malloc() strtol() */
 #include <string.h> /* strcmp() strdup() strlen() */
 
 /* Windows specific header files */

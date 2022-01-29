@@ -70,4 +70,3 @@ _dwarf_canonical_append(char *target, unsigned int target_size,
         second_string,strlen(second_string));
     return target;
 }
-

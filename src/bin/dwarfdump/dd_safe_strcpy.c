@@ -34,7 +34,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "dd_safe_strcpy.h"
 
-
 /*  An strcpy/strncpy which ensures NUL terminated string
     and never overruns the output.
     inlen is strlen() size of in_s
@@ -61,9 +60,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     The pointer arguments are required to be non-null.
 */
 void
-dd_safe_strcpy(char *out, 
-    unsigned long outlen, 
-    const char *in_s, 
+dd_safe_strcpy(char *out,
+    unsigned long outlen,
+    const char *in_s,
     unsigned long inlen)
 {
     unsigned long full_inlen = inlen+1;
@@ -90,7 +89,3 @@ dd_safe_strcpy(char *out,
     }
     *cpo = 0;
 }
-
-
-
-

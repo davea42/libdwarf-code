@@ -63,7 +63,6 @@ DW_VISIT;
 #define dwarf_tdump    dd_tdump
 #define dwarf_initialize_search_hash dd_initialize_search_hash
 
-
 /* void * return values are actually
    void **key so you must dereference these
    once to get a key you passed in.
