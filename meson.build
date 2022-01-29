@@ -149,6 +149,9 @@ if have_libelf == true and get_option('dwarfgen') == true
   subdir('src/bin/dwarfgen')
   have_libdwarfp = true
 endif
+subdir('src/bin/attr_form')
+subdir('src/bin/tag_attr')
+subdir('src/bin/tag_tree')
 
 # Use config_h after all subdirs have set values
 
