@@ -1,0 +1,382 @@
+/*!
+    @page jitpage JIT and special case DWARF
+
+    @section noobject Reading DWARF not in an object file
+
+    If the DWARF you work with is in standard object
+    files (Elf, PE, MacOS) then you can ignore
+    this section entirely. All that this section
+    describes is used, but it's already done for
+    you in functions in the library: @see dwarf_init_path
+    @link dwarf_init_path_dl @endlink @see dwarf_init_b and
+    @see dwarf_finish .
+
+    This section describes how to use calls
+    @see dwarf_object_init_b @see dwarf_object_finish .
+
+    These functions are useful if someone is doing
+    just-in-time
+    compilation, and someone working on the code
+    wants to debug this on-the-fly code in a situation
+    where nothing can be written to disc, but DWARF
+    can be constructed in memory.
+
+    For a simple example of this with DWARF in
+    local arrays
+    @see jitreader
+
+    But the libdwarf feature can be useful in a variety of
+    circumstances.
+
+    For example, the DWARF data were kept
+    in simple files of bytes on the internet.
+    Or on the local net. Or if files can
+    be written locally each section could be kept
+    in a simple stream of bytes in the local
+    file system.
+
+    Another example is a non-standard file system,
+    or file format, with the intent of obfuscating
+    the file or the DWARF.
+    
+    For this to work the code generator must generate standard DWARF.
+
+    Overall the idea is a simple one: You write
+    a small handful of functions and supply
+    function pointers and code implementing the
+    functions.  These are part of your application
+    or library, not part of libdwarf.
+    Your code accesses the data in whatever way
+    applies and you write code that provides
+    the interfaces so standard libdwarf can access
+    your DWARF content.
+
+    You set up a little bit of data with that code 
+    (described below)
+    and then you have essentially written the
+    dwarf_init_path equivalent and you can access
+    compilation units, line tables etc and
+    the standard libdwarf function calls simply work.
+
+    Data you need to create involves the following types.
+    What follows describes how to fill them in
+    and how to make them work for you.
+
+    @code
+    typedef struct Dwarf_Obj_Access_Interface_a_s 
+        Dwarf_Obj_Access_Interface_a;
+    struct Dwarf_Obj_Access_Interface_a_s {
+        void                             *ai_object;
+        const Dwarf_Obj_Access_Methods_a *ai_methods;
+    };
+
+    typedef struct Dwarf_Obj_Access_Methods_a_s
+        Dwarf_Obj_Access_Methods_a
+    struct Dwarf_Obj_Access_Methods_a_s {
+        int    (*om_get_section_info)(void* obj,
+            Dwarf_Half                  section_index,
+            Dwarf_Obj_Access_Section_a* return_section,
+            int                       * error);
+        Dwarf_Small      (*om_get_byte_order)(void* obj);
+        Dwarf_Small      (*om_get_length_size)(void* obj);
+        Dwarf_Small      (*om_get_pointer_size)(void* obj);
+        Dwarf_Unsigned   (*om_get_filesize)(void* obj);
+        Dwarf_Unsigned   (*om_get_section_count)(void* obj);
+        int              (*om_load_section)(void* obj,
+            Dwarf_Half    section_index,
+            Dwarf_Small** return_data,
+            int         * error);
+        int              (*om_relocate_a_section)(void* obj,
+            Dwarf_Half  section_index,
+            Dwarf_Debug dbg,
+            int        *error);
+    };
+
+    typedef struct Dwarf_Obj_Access_Section_a_s
+        Dwarf_Obj_Access_Section_a
+    struct Dwarf_Obj_Access_Section_a_s {
+        const char*    as_name;
+        Dwarf_Unsigned as_type;
+        Dwarf_Unsigned as_flags;
+        Dwarf_Addr     as_addr;
+        Dwarf_Unsigned as_offset;
+        Dwarf_Unsigned as_size;
+        Dwarf_Unsigned as_link;
+        Dwarf_Unsigned as_info;
+        Dwarf_Unsigned as_addralign;
+        Dwarf_Unsigned as_entrysize;
+    };
+    @endcode
+
+    @subsection objaccessinterface Describing the Interface
+
+    @b struct struct Dwarf_Obj_Access_Interface_a_s
+
+    Your code must create and fill in this struct's two
+    pointer members.  Libdwarf needs these to access
+    your DWARF data.
+    You pass a pointer to this filled-in struct
+    to @b dwarf_object_init_b.  When it is time
+    to conclude all access to the created Dwarf_Debug
+    call @b dwarf_object_finish .
+    Any allocations you made in setting these things up
+    you must then free after calling @b dwarf_object_finish .
+
+    @b ai_object
+
+    Allocate a local struct (libdwarf will not
+    touch this struct and will not know
+    anything of its contents). You will need one
+    of these for each Dwarf_Debug you open.
+    Put a pointer to this into ai_object.
+    Then fill in all the data you need to access information
+    you will pass back via the ai_methods functions.
+    In the description of the methods functions
+    described later here, this pointer
+    is named @b obj .
+    
+
+    @b ai_methods
+
+    Usually you allocate a static structure
+    and fill it in with function pointers
+    (to functions you write).
+    Then put a pointer to the static structure
+    into this field.
+
+    @subsection objaccesssection Describing A Section
+
+    @b Dwarf_Obj_Access_Section_a:
+
+    The set of fields here is a set that is sufficient
+    to describe a single object section to libdwarf.
+    Your implementation of a @b om_get_section_info
+    must simply fill in a few fields (leaving most zero)
+    for libdwarf for the section indexed.
+    The fields here are standard Elf,
+    and for most you can just fill in the value zero.
+    For section index zero as_name should be set to
+    an empty string (see bleow about section index numbers).
+  
+    @b as_name: Here you set a section name via the pointer.
+    The section names must be names as defined in the DWARF
+    standard, so if such do not appear in your data
+    you have to create the strings yourself.
+
+    @b as_type: Just fill in zero.
+
+    @b as_flags: Just fill in zero.
+
+    @b as_addr: Fill in the address, in local memory,
+    where the bytes of the section are.
+
+    @b as_offset: Just fill in zero.
+ 
+    @b as_size: Fill in the size, in bytes,
+    of the section you are telling libdwarf about.
+
+    @b as_link: Just fill in zero.
+
+    @b as_info: Just fill in zero.
+
+    @b as_addralign:Just fill in zero.
+
+    @b as_entrysize: Just fill in one.
+
+ 
+    @subsection objaccessmethods Function Pointers
+
+    @b struct Dwarf_Obj_Access_Methods_a_s:
+
+    The functions libdwarf needs to access object data
+    are declared here.
+    Usually the struct is statically defined
+    and the function pointers are set at
+    compile time.
+    You must implement these functions based on
+    your knowledge of how the actual data is
+    represented and where to get it.
+
+    Each has a first-parameter of @b obj
+    which is a struct you define to hold data you need
+    to implement this set of functions. You refer to
+    it
+    When libdwarf calls your set of functions (these
+    described now) it passes the ai_object pointer
+    you provided to these functions as @b obj parameter .
+
+    This is the final part of your work for libdwarf. 
+    In the source file with your code you will be
+    allocating data, making a provision for
+    an array (real or conceptual) for per-section data,
+    and returning values libdwarf needs.
+    Note that the section array should include
+    an index zero with all zero field values.
+    That means interesting fields start with index one.
+    This special case of index zero
+    Elf is required and matches the standard Elf object format.
+
+    Notice that the @b error argument, where applicable,
+    is an int* .  Error codes passed back are DW_DLE codes
+    and @b dwarf_errmsg_by_number may be used (by your
+    code) to get the standard error string for that error.
+
+    @b om_get_section_info
+
+    @code
+    Get address, size, and name info about a section.
+
+    Parameters
+    obj            -  Your data
+    section_index  - Zero-based index.
+    return_section - Pointer to a structure in which
+        section info will be placed.   Caller must
+        provide a valid pointer to a structure area. 
+        The structure's contents will be overwritten
+        by the call to get_section_info.
+    error          - A pointer to an integer in which an error
+        code may be stored.
+
+    Return
+    DW_DLV_OK       - Everything ok.
+    DW_DLV_ERROR    - Error occurred. Use 'error' to determine the
+        libdwarf defined error.
+    DW_DLV_NO_ENTRY - No such section. 
+    @endcode
+
+    @b om_get_byte_order
+
+    This retrieves data you put into your @b ai_object
+    struct that you filled out.
+
+    @code
+    Get from your @b ai_object whether the object
+    file represented by this interface is big-endian
+    (DW_END_big) or little endian (DW_END_little).
+
+    Parameters
+    obj  -  Your data
+
+    Return
+    Endianness of object, DW_END_big or DW_END_little.
+    @endcode
+
+    @b om_get_length_size
+
+    This retrieves data you put into your @b ai_object
+    struct that you filled out.
+
+    @code
+    Get the size of a length field in the underlying object file.
+    libdwarf currently supports * 4 and 8 byte sizes, but may
+    support larger in the future.
+    Perhaps the return type should be an enumeration?
+
+    Parameters
+    obj  -  Your data
+
+    Return
+    Size of length. Cannot fail.
+    @endcode
+
+    @b om_get_pointer_size
+
+    This retrieves data you put into your @b ai_object
+    struct that you filled out.
+
+    @code
+    Get the size of a pointer field in the underlying object file.
+    libdwarf currently supports  4 and 8 byte sizes.
+    Perhaps the return type should be an enumeration?
+
+    Return
+    Size of pointer. Cannot fail.  */
+    @endcode
+
+    @b om_get_filesize
+
+    This retrieves data you put into your @b ai_object
+    struct that you filled out.
+    
+    @code
+    Parameters
+    obj  -  Your data
+
+    Return
+    Must return a value at least as large as any section libdwarf
+    might read.  Returns a value that is a sanity check on
+    offsets libdwarf reads for this DWARF set.  It need not be
+    a tight bound.
+    @endcode
+
+    @b om_get_section_count
+
+    This retrieves data you put into your @b ai_object
+    struct that you filled out.
+
+    @code
+    Get the number of sections in the object file, including
+    the index zero section with no content.
+
+    Parameters
+    obj  -  Your data
+
+    Return
+    Number of sections.
+    @endcode
+
+    @b om_load_section
+
+    This retrieves data you put into your @b ai_object
+    struct that you filled out.
+
+    Get a pointer to an array of bytes that
+    are the section content.
+
+    @code
+    Get a pointer to an array of bytes that
+    represent the section.
+
+    Parameters
+    obj           -  Your data
+    section_index - Zero-based section index.
+    return_data   - Place the address of this section
+        content into  *return_data .
+    error         - Pointer to an integer for returning
+        libdwarf-defined error numbers.
+
+    Return
+    DW_DLV_OK       - No error.
+    DW_DLV_ERROR    - Error. Use 'error' to indicate
+        a libdwarf-defined error number.
+    DW_DLV_NO_ENTRY - No such section.  */
+    @endcode
+
+    @b om_relocate_a_section
+
+    @code 
+    Leave this pointer NULL.
+    If relocations are required it is probably simpler
+    for you do to them yourself n your
+    implemenation of @b om_load_section .
+    Any relocations this function pointer
+    is to use must be in standard Elf
+    relocation (32 or 64 bit) form and must be
+    in an appropriately named Elf relocation section.
+
+    Parameters
+    obj  -  Your data
+    section_index - Zero-based index of the
+        section to be relocated.
+    error - Pointer to an integer for returning libdwarf-defined
+        error numbers.
+
+    Return
+    DW_DLV_OK - No error.
+    DW_DLV_ERROR - Error. Use 'error' to indicate
+        a libdwarf-defined
+        error number.
+    DW_DLV_NO_ENTRY - No such section.  
+    @endcode
+
+*/
