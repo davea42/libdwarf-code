@@ -27,15 +27,11 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 
 */
 
-#include "config.h"
-#include <stdio.h>
-#include <stdarg.h>   /* For va_start va_arg va_list */
-#include <stdlib.h>   /* For exit() declaration etc. */
-#include <string.h> 
-#include <errno.h>    /* For errno declaration. */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif /* HAVE_UNISTD_ */
+#include <config.h>
+
+#include <stdlib.h> /* exit() */
+#include <string.h> /* memset() */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h" /* UNUSEDARG */

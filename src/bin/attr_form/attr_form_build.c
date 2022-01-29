@@ -25,15 +25,10 @@
 
 */
 
-#include "config.h"
-#include <stdio.h>
-#include <stdarg.h>   /* For va_start va_arg va_list */
-#include <string.h> 
-#include <errno.h>              /* For errno declaration. */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif /* HAVE_UNISTD_ */
-#include <stdlib.h>             /* For exit() declaration etc. */
+#include <config.h>
+
+#include <stdlib.h> /* exit() */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
