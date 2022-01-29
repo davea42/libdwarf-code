@@ -693,7 +693,7 @@ extern "C" {
 #define DW_AT_LLVM_tag_offset                   0x3e03
 /*  LLVM intends to use 0x3e04 - 0x3e06 */
 #define DW_AT_LLVM_apinotes                     0x3e07
-/*  Next 6 are for Hetrogenous debugging */
+/*  Next 6 are for Heterogeneous debugging */
 #define DW_AT_LLVM_active_lane                  0x3e08
 #define DW_AT_LLVM_augmentation                 0x3e09
 #define DW_AT_LLVM_lanes                        0x3e0a
