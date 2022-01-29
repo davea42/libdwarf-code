@@ -3,8 +3,8 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
 
 # This is libdwarf README.md
 
-Updated 05 December 2021
-For release libdwarf-0.3.1
+Updated 29 January 2022
+For release libdwarf-0.3.3
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
@@ -19,9 +19,9 @@ recommended practice.
     rm -rf /tmp/build
     mkdir /tmp/build
     cd /tmp
-    tar xf <path to>/libdwarf-0.3.1.tar.xz
+    tar xf <path to>/libdwarf-0.3.3.tar.xz
     cd  /tmp/build
-    /tmp/libdwarf-0.3.1/configure
+    /tmp/libdwarf-0.3.3/configure
     make
     make check
 
@@ -31,7 +31,7 @@ README.cmake has details on the available cmake options.
 
 Just like configure, except instead of configure do:
 
-    cmake  /tmp/libdwarf-0.3.1
+    cmake  /tmp/libdwarf-0.3.3
     make
     ctest -R self
 

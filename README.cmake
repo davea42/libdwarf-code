@@ -1,10 +1,10 @@
 Created 26 April 2019 
-Updated 6 June 2021
+Updated 29 January 2022
 
 Now we are using a new source structure and using semantic
 versioning for tar.xz names (earlier we used tar.gz).
 The assumption is that you usually download an appropriate
-libdwarf-0.1.0.tar.gz (or a later one)
+libdwarf-0.3.3.tar.gz (or a later one)
 You may find README or README.md useful to read.
 
 ============================
