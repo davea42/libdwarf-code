@@ -48,7 +48,7 @@ Copyright 2016-2018 David Anderson. All rights reserved.
 
     Only call this in a printf or sprintf, and
     only call it once in any single printf/sprintf.
-    Othewise you will get bogus results and confusion. */
+    Otherwise you will get bogus results and confusion. */
 
 /* ASCII control codes:
 We leave newline as is, NUL is end of string,

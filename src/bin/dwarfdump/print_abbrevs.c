@@ -864,7 +864,7 @@ validate_abbrev_code(Dwarf_Debug dbg UNUSEDARG,
                     "Number of attributes exceeds sanity check");
                 esb_destructor(&ar);
             } else {
-                /*  These apply only to one compiliation environment,
+                /*  These apply only to one compilation environment,
                     and are not generally applicable.  */
                 struct esb_s ar;
                 esb_constructor_fixed(&ar,buf,sizeof(buf));

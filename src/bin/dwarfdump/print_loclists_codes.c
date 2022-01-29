@@ -42,7 +42,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 #include "dd_helpertree.h"
 #include "dd_tag_common.h"
 
-/*  Prints locentry descriptsions for
+/*  Prints locentry descriptions for
     DWARF5 DW_LKIND_loclists */
 
 int

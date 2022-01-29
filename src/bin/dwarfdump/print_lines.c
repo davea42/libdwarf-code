@@ -340,7 +340,7 @@ process_line_table(Dwarf_Debug dbg,
                 } else {
                     /*  At this point may be we are dealing with
                         a linkonce symbol. The problem we have here
-                        is we have consumed the deug_info section
+                        is we have consumed the .debug_info section
                         and we are dealing just with the records
                         from the .debug_line, so no PU_name is
                         available and no high_pc.

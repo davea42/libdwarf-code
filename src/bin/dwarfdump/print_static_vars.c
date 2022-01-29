@@ -41,8 +41,7 @@ Portions Copyright 2008-2011 David Anderson. All rights reserved.
 #include "dd_sanitized.h"
 
 /*  Get all the data in .debug_varnames
-    (an SGI extension)
-    For a long time erroneously called .debug_static_vars bere. */
+    (an SGI extension) */
 int
 print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
 {
