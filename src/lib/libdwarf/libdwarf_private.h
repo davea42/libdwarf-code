@@ -60,9 +60,8 @@
     that t is 8 bytes (integer) while s is
     also 8 bytes (Dwarf_Sig8 struct).
     Just slightly different from the ASNAR generally
-    used in libdwarf. Unusuable in
-    libdwarfp because of _dwarf_error()
-    here.  */
+    used in libdwarf. Unusable in
+    libdwarfp because of _dwarf_error() here.  */
 #ifdef WORDS_BIGENDIAN
 #define ASNARL(t,s,l)                     \
     do {                                  \

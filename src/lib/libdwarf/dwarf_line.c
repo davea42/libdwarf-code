@@ -1240,7 +1240,7 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
         return DW_DLV_ERROR;
     }
 
-    /*  Special accomodation of the special gnu experimental
+    /*  Special accommodation of the special gnu experimental
         version number (a high number) so we cannot just
         say '5 or greater'. This is awkward, but at least
         if there is a version 6 or later it still allows

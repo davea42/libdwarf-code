@@ -101,7 +101,7 @@ read_unaligned_addr_check(Dwarf_Debug dbg,
     of the overall object, not the address_size of the context. */
 #define MAX_ADDR ((address_size == 8)? \
     0xffffffffffffffffULL:0xffffffff)
-/*  New 10 September 2020 to accomodate the
+/*  New 10 September 2020 to accommodate the
     GNU extension of DWARF4 split-dwarf.
     The actual_offset field is set by the function
     to the actual final offset of the ranges

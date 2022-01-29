@@ -172,7 +172,7 @@ struct Dwarf_Line_Context_s {
     Dwarf_Small *lc_opcode_length_table; /* all versions */
 
     /*  The number to treat as standard ops. This is a special
-        accomodation of gcc using the new standard opcodes but not
+        accommodation of gcc using the new standard opcodes but not
         updating the version number.
         It's legal dwarf2, but much better
         for the user to understand as dwarf3 when 'it looks ok'. */

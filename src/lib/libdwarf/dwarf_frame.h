@@ -56,7 +56,7 @@ Portions Copyright (C) 2021 David Anderson. All Rights Reserved.
     the augmented fields (not including the size of
     "length_of_augmented_fields" itself).
 
-    Handling of cie augmentation strings is necessarly a heuristic.
+    Handling of cie augmentation strings is necessarily a heuristic.
     See dwarf_frame.c for the currently known augmentation strings.
 
     ---START SGI-ONLY COMMENT:

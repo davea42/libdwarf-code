@@ -283,7 +283,7 @@ set_up_section(Dwarf_Debug dbg,
     int duperr,int emptyerr,int have_dwarf,
     int *err)
 {
-    /*  Here accomodate the .debug or .zdebug version, (and of
+    /*  Here accommodate the .debug or .zdebug version, (and of
         course non- .debug too, but those never zlib) .
         SECNAMEMAX should be a little bigger than any section
         name we care about as possibly compressed, which
