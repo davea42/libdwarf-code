@@ -28,13 +28,13 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 */
 
 #include <config.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>              /* For errno declaration. */
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+
+#include <ctype.h>  /* isspace() */
+#include <stdarg.h> /* va_end() va_list va_start() */
+#include <stdio.h>  /* FILE stderr fprintf() vfprintf() */
+#include <stdlib.h> /* exit() */
+#include <string.h> /* strlen() strncmp() */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
