@@ -32,7 +32,7 @@ Floor, Boston MA 02110-1301, USA.
     dwarf.h contains all the identifiers
     such as DW_TAG_compile_unit etc from the
     various versions of the DWARF Standard
-    beginning with DWARF2 and containing 
+    beginning with DWARF2 and containing
     all later Dwarf Standard identifiers.
 
     In addition, it contains all user-defined
@@ -982,7 +982,7 @@ most-likely-useful name. */
 #define DW_ATE_HP_edited              0x8c /* Cobol.  */
 #define DW_ATE_HP_signed_fixed        0x8d /* Cobol.  */
 #define DW_ATE_HP_unsigned_fixed      0x8e /* Cobol.  */
-#define DW_ATE_HP_VAX_complex_float   0x8f /* F or G floating complex.  */
+#define DW_ATE_HP_VAX_complex_float   0x8f /* ForG floating complex.*/
 #define DW_ATE_HP_VAX_complex_float_d 0x90 /* D floating complex.  */
 
 /* Sun extensions */

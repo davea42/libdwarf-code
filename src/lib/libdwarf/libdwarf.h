@@ -43,7 +43,6 @@
     All function argument names declared here begin with dw_ .
 */
 
-
 #ifndef _LIBDWARF_H
 #define _LIBDWARF_H
 
@@ -594,7 +593,7 @@ typedef struct Dwarf_Cie_s*        Dwarf_Cie;
 typedef struct Dwarf_Arange_s*     Dwarf_Arange;
 /*! @typedef Dwarf_Gdbindex
     Used to reference .gdb_index section data
-    which is a fast-access section by and for gdb.    
+    which is a fast-access section by and for gdb.
 */
 typedef struct Dwarf_Gdbindex_s*   Dwarf_Gdbindex;
 /*! @typedef Dwarf_Xu_Index_Header
@@ -604,7 +603,7 @@ typedef struct Dwarf_Gdbindex_s*   Dwarf_Gdbindex;
 */
 typedef struct Dwarf_Xu_Index_Header_s  *Dwarf_Xu_Index_Header;
 /*! @typedef Dwarf_Line_Context
-    Used as the general reference line data (.debug_line). 
+    Used as the general reference line data (.debug_line).
 */
 typedef struct Dwarf_Line_Context_s     *Dwarf_Line_Context;
 
@@ -659,7 +658,7 @@ typedef struct Dwarf_Debug_Fission_Per_CU_s
     Used for access to and settint up special data
     allowing access to DWARF even with no object
     files present
-*/ 
+*/
 typedef struct Dwarf_Obj_Access_Interface_a_s
     Dwarf_Obj_Access_Interface_a;
 
@@ -667,7 +666,7 @@ typedef struct Dwarf_Obj_Access_Interface_a_s
     Used for access to and settint up special data
     allowing access to DWARF even with no object
     files present
-*/ 
+*/
 typedef struct Dwarf_Obj_Access_Methods_a_s
     Dwarf_Obj_Access_Methods_a;
 
@@ -683,7 +682,7 @@ struct Dwarf_Obj_Access_Section_a_s {
     Dwarf_Unsigned as_type;
     Dwarf_Unsigned as_flags;
     Dwarf_Addr     as_addr;
-    Dwarf_Unsigned as_offset; 
+    Dwarf_Unsigned as_offset;
     Dwarf_Unsigned as_size;
     Dwarf_Unsigned as_link;
     Dwarf_Unsigned as_info;
@@ -1547,7 +1546,7 @@ DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
 
     @see jitreader
 
-    and see: @link noobject Reading DWARF not in an object file @endlink
+    and see: @link noobject Reading DWARF not in object file @endlink
 
     @param dw_obj
     A data structure filled out by the caller so libdwarf
@@ -6532,7 +6531,7 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
     pubnames, pubtypes, funcs, typenames,vars, weaks.
     Ensures empty content (meaning no
     offset/name tuples) for a CU shows up rather than
-    being suppressed. 
+    being suppressed.
 
     @link dw_pubnames Pubnames and Pubtypes overview @endlink
 
@@ -6590,7 +6589,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
 
 /*! @defgroup gdbindex Fast Access-Gdb Index
 
-    Section .gdb_index 
+    Section .gdb_index
 
     This is a section created for and used by the GNU gdb
     debugger to access DWARF information.
@@ -6603,7 +6602,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
     Version 7 built by the 'gold' linker and type index
     entries for a CU must be derived othewise, the
     type index is not correct...  Earlier versions
-    cannot be read correctly by the functions here. 
+    cannot be read correctly by the functions here.
 
     The functions here make it possible to
     print the section content in detail, there
@@ -6763,7 +6762,7 @@ DW_API int dwarf_gdbindex_addressarea(
     Dwarf_Unsigned * dw_addressarea_list_length,
     Dwarf_Error    * dw_error);
 
-/*! @brief Get an address area value 
+/*! @brief Get an address area value
 
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
@@ -6789,7 +6788,7 @@ DW_API int dwarf_gdbindex_addressarea_entry(
     Dwarf_Unsigned * dw_cu_index,
     Dwarf_Error    * dw_error);
 
-/*! @brief Get access to the symboltable array 
+/*! @brief Get access to the symboltable array
 
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
@@ -6811,7 +6810,7 @@ DW_API int dwarf_gdbindex_symboltable_array(
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_entryindex
-    Pass in a valid index in the range 0 through 
+    Pass in a valid index in the range 0 through
     dw_symtab_list_length-1
     @param dw_string_offset
     On success returns the string offset in the
@@ -6841,7 +6840,7 @@ DW_API int dwarf_gdbindex_symboltable_entry(
     the cuvector instance array.
     @param dw_error
     The usual pointer to return error details.
-    @return 
+    @return
     Returns DW_DLV_OK etc.
 
 */
@@ -6864,7 +6863,7 @@ DW_API int dwarf_gdbindex_cuvector_length(
     call dwarf_gdbindex_cuvector_instance_expand_value.
     @param dw_error
     The usual pointer to return error details.
-    @return 
+    @return
     Returns DW_DLV_OK etc.
 */
 DW_API int dwarf_gdbindex_cuvector_inner_attributes(
@@ -6879,12 +6878,12 @@ DW_API int dwarf_gdbindex_cuvector_inner_attributes(
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_field_value
-    Pass in the dw_field_value returned by 
+    Pass in the dw_field_value returned by
     dwarf_gdbindex_cuvector_inner_attributes.
     @param dw_cu_index
     On success returns the CU index from the dw_field_value
     @param dw_symbol_kind
-    On success returns the symbol kind (see 
+    On success returns the symbol kind (see
     the sourceware page. Kinds are TYPE, VARIABLE,
     or FUNCTION.
     @param dw_is_static
@@ -6893,7 +6892,7 @@ DW_API int dwarf_gdbindex_cuvector_inner_attributes(
     it returns non-zero and the symbol is global.
     @param dw_error
     The usual pointer to return error details.
-    @return 
+    @return
     Returns DW_DLV_OK etc.
 */
 DW_API int dwarf_gdbindex_cuvector_instance_expand_value(
@@ -6904,7 +6903,7 @@ DW_API int dwarf_gdbindex_cuvector_instance_expand_value(
     Dwarf_Unsigned * dw_is_static,
     Dwarf_Error    * dw_error);
 
-/*! @brief Retrieve a symbol name from the index data.  
+/*! @brief Retrieve a symbol name from the index data.
 
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
@@ -6916,7 +6915,7 @@ DW_API int dwarf_gdbindex_cuvector_instance_expand_value(
     string.
     @param dw_error
     The usual pointer to return error details.
-    @return 
+    @return
     Returns DW_DLV_OK etc.
 */
 DW_API int dwarf_gdbindex_string_by_offset(
@@ -6929,7 +6928,7 @@ DW_API int dwarf_gdbindex_string_by_offset(
 /*! @defgroup splitdwarf Fast Access-Split Dwarf (Debug Fission)
     @{
 */
-/*! @brief Access a .debug_cu_index or dw_tu_index  section  
+/*! @brief Access a .debug_cu_index or dw_tu_index  section
 
     These sections are in a DWARF5 package file, a file normally
     named with the .dwo or .dwp extension..
@@ -6959,7 +6958,7 @@ DW_API int dwarf_gdbindex_string_by_offset(
     Do not free/dealloc the returned pointer.
     @param dw_error
     The usual pointer to return error details.
-    @return 
+    @return
     Returns DW_DLV_OK etc.
     Returns DW_DLV_NO_ENTRY if the section requested
     is not present.
@@ -6975,7 +6974,7 @@ DW_API int dwarf_get_xu_index_header(Dwarf_Debug dw_dbg,
     Dwarf_Error           * dw_error);
 
 /*! @brief Dealloc (free) memory associated with dw_xuhdr.
-   
+
     Should be named dwarf_dealloc_xuhdr instead.
     @param dw_xuhdr
     Dealloc (free) all associated memory.
@@ -6994,7 +6993,7 @@ DW_API void dwarf_xu_header_free(Dwarf_Xu_Index_Header dw_xuhdr);
     in the object file. Do not free.
     @param dw_error
     The usual pointer to return error details.
-    @return 
+    @return
     Returns DW_DLV_OK etc.
 */
 DW_API int dwarf_get_xu_index_section_type(
@@ -7029,7 +7028,6 @@ DW_API int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhd*/,
     Dwarf_Unsigned* /*sec_offset*/,
     Dwarf_Unsigned* /*sec_size*/,
     Dwarf_Error *   /*err*/);
-
 
 /*  For any Dwarf_Die in a compilation unit, return
     the debug fission table data through
