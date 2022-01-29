@@ -184,7 +184,7 @@ dwarf_initialize_search_hash( void **treeptr,
 
     base = *(struct hs_base **)treeptr;
     if (base) {
-        /* initalized already. */
+        /* initialized already. */
         return base ;
     }
     base = calloc(sizeof(struct hs_base),1);

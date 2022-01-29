@@ -58,7 +58,7 @@ dwarf_basic_crc32 (const unsigned char *buf,
 /*  Returns DW_DLV_OK DW_DLV_NO_ENTRY or DW_DLV_ERROR
     crc32 used for debuglink crc calculation.
     Caller passes pointer to an
-    uninitalized array of 4 unsigned char
+    uninitialized array of 4 unsigned char
     and if this returns DW_DLV_OK that is filled in.
     The crc is calculated based on reading
     the entire current open
