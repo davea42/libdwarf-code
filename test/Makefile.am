@@ -9,7 +9,6 @@
 ### with no hint as to what the problem really is..
 
 MAINTAINERCLEANFILES = Makefile.in \
-  dwarfdump.conf \
   test_objectaccess.log test_objectaccess.trs \
   getnametest.log getnametest.trs \
   runtestdd.sh.log	      test_linkedtopath.log \
@@ -31,7 +30,10 @@ MAINTAINERCLEANFILES = Makefile.in \
   junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
 
-CLEANFILES =
+CLEANFILES = dwarfdump.conf junk.debuglink1   junk.debuglink1b \
+  junk.debuglink1sed2  junk.debuglink2a \
+  junk.debuglink1a  junk.debuglink1sed1  junk.debuglink2 \
+  junk.debuglink2b
 EXTRA_DIS  =
 
 TESTS =  test_dwarfstring test_extra_flag_strings \
