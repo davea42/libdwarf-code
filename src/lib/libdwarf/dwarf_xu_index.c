@@ -503,7 +503,7 @@ static const char * dwp_secnames[] = {
 };
 
 /*  Row 0 of the Table of Section Offsets,
-    columns 0 to L-1,  are the section id's,
+    columns 0 to N-1,  are the section id's,
     and names, such as DW_SECT_INFO (ie, 1)  */
 int
 dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,

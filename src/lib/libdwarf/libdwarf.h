@@ -6946,13 +6946,13 @@ DW_API int dwarf_gdbindex_string_by_offset(
     On success returns five.
     @param dw_section_count
     On success returns the number of entries
-    in the table of section counts. Referred to as N.
+    in the table of section counts. Referred to as @b N.
     @param dw_units_count
     On success returns the number of compilation units or
-    type units in the index. Referred to as U.
+    type units in the index. Referred to as @b U.
     @param dw_hash_slots_count
     On success returns the number of slots in the hash table.
-    Referred to as S.
+    Referred to as @b S.
     @param dw_sect_name
     On success returns a pointer to the name of the section.
     Do not free/dealloc the returned pointer.
@@ -6985,6 +6985,7 @@ DW_API void dwarf_xu_header_free(Dwarf_Xu_Index_Header dw_xuhdr);
 
 /*! @brief Return basic information about a Dwarf_Xu_Index_Header
     @param dw_xuhdr
+    Pass in an open header pointer.
     @param dw_typename
     On success returns a pointer to
     the immutable string "tu" or "cu".  Do not free.
@@ -7002,53 +7003,135 @@ DW_API int dwarf_get_xu_index_section_type(
     const char ** dw_sectionname,
     Dwarf_Error * dw_error);
 
-/*  Index values 0 to M-1 are valid. */
-DW_API int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
-    Dwarf_Unsigned     /*index*/,
+/*! @brief Get a Hash Entry 
 
-    /*  Returns the hash value. 64  bits.  */
-    Dwarf_Sig8 *      /*hash_value*/,
-
-    /* returns the index into rows of offset/size tables. */
-    Dwarf_Unsigned *  /*index_to_sections*/,
-    Dwarf_Error *     /*err*/);
+    @param dw_xuhdr
+    Pass in an open header pointer.
+    @param dw_index
+    Pass in the index of the entry you wish.
+    Valid index values are 0 through @b S-1.
+    @param dw_hash_value
+    Pass in a pointer to a Dwarf_Sig8.
+    On success the hash struct is filled in with
+    the 8 byte hash value.
+    @param dw_index_to_sections
+    On success returns the offset/size table
+    index for this hash entry.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+    
+*/  
+DW_API int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header dw_xuhdr,
+    Dwarf_Unsigned   dw_index,
+    Dwarf_Sig8     * dw_hash_value,
+    Dwarf_Unsigned * dw_index_to_sections,
+    Dwarf_Error    * dw_error);
 
 /*  Columns 0 to L-1,  valid. */
-DW_API int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header /*xuhdr*/,
-    /* Row index defined to be row zero. */
-    Dwarf_Unsigned  /*column_index*/,
-    Dwarf_Unsigned* /*DW_SECT_ number*/,
-    const char **   /*DW_SECT_ name*/,
-    Dwarf_Error *   /*err*/);
+/*! @brief get DW_SECT value for a column.
+    @param dw_xuhdr
+    Pass in an open header pointer.
+    @param dw_column_index
+    The section names are in row zero of the
+    table so we do not mention the row number at all.
+    Pass in the column of the entry you wish.
+    Valid dw_column_index values are 0 through @b N-1.
+    @param dw_SECT_number
+    On success returns DW_SECT_INFO or other section
+    id as appears in dw_column_index.
+    @param dw_SECT_name
+    On success returns a pointer to the string for
+    with the section name.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header dw_xuhdr,
+    Dwarf_Unsigned  dw_column_index,
+    Dwarf_Unsigned* dw_SECT_number,
+    const char   ** dw_SECT_name,
+    Dwarf_Error   * dw_error);
 
-    /* Rows 1 to N col 0 to L-1  are valid */
-DW_API int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhd*/,
-    Dwarf_Unsigned  /*row_index*/,
-    Dwarf_Unsigned  /*column_index*/,
-    Dwarf_Unsigned* /*sec_offset*/,
-    Dwarf_Unsigned* /*sec_size*/,
-    Dwarf_Error *   /*err*/);
+/*! @brief Get row data (section data) for a row and column
 
-/*  For any Dwarf_Die in a compilation unit, return
-    the debug fission table data through
-    percu_out.   Usually applications
+    @param dw_xuhdr
+    Pass in an open header pointer.
+    @param dw_row_index
+    Pass in a row number , 1 through @b U
+    @param dw_column_index
+    Pass in a column number , 0 through @b N-1
+    @param dw_sec_offset
+    On success returns the section offset of
+    the section whose name dwarf_get_xu_section_names
+    returns.
+    @param dw_sec_size
+    On success returns the section size of
+    the section whose name dwarf_get_xu_section_names
+    returns.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/  
+DW_API int dwarf_get_xu_section_offset(
+    Dwarf_Xu_Index_Header dw_xuhdr,
+    Dwarf_Unsigned  dw_row_index,
+    Dwarf_Unsigned  dw_column_index,
+    Dwarf_Unsigned* dw_sec_offset,
+    Dwarf_Unsigned* dw_sec_size,
+    Dwarf_Error   * dw_error);
+
+/*! @brief Get debugfission data for a Dwarf_Die
+
+    For any Dwarf_Die in a compilation unit, return
+    the debug fission table data through dw_percu_out.   
+    Usually applications
     will pass in the CU die.
     Calling code should zero all of the
     struct Dwarf_Debug_Fission_Per_CU_s before calling this.
     If there is no debugfission data this returns
-    DW_DLV_NO_ENTRY (only .dwp objects have debugfission data).  */
-DW_API int dwarf_get_debugfission_for_die(Dwarf_Die /* die */,
-    Dwarf_Debug_Fission_Per_CU * /* percu_out */,
-    Dwarf_Error * /* err */);
+    DW_DLV_NO_ENTRY (only .dwp objects have debugfission data)
+    @param dw_die
+    Pass in a Dwarf_Die pointer, Usually pass in a CU DIE
+    pointer.
+    @param dw_percu_out
+    Pass in a pointer to a zeroed structure.
+    On success the function fills in the structure.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_debugfission_for_die(Dwarf_Die dw_die,
+    Dwarf_Debug_Fission_Per_CU * dw_percu_out,
+    Dwarf_Error                * dw_error);
 
-/*  Given a key (hash signature)  from a .o,
-    find the per-cu information
-    for the CU with that key. */
-DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
-    Dwarf_Sig8 *                 /*key, hash signature */,
-    const char * key_type        /*"cu" or "tu" */,
-    Dwarf_Debug_Fission_Per_CU * /*percu_out */,
-    Dwarf_Error *                /*err */);
+
+/*! @brief  Given a hash signature find per-cu Fission data
+
+    @param dw_dbg
+    Pass in the Dwarf_Debug of interest.
+    @param dw_hash_sig
+    Pass in a pointer to a Dwarf_Sig8 containing
+    a hash value of interest.
+    @param dw_cu_type
+    Pass in the type, a string. Either "cu" or "tu".
+    @param dw_percu_out
+    Pass in a pointer to a zeroed structure.
+    On success the function fills in the structure.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
+    Dwarf_Sig8                 * dw_hash_sig,
+    const char                 * dw_cu_type,
+    Dwarf_Debug_Fission_Per_CU * dw_percu_out,
+    Dwarf_Error                * dw_error);
 
 /*  END debugfission dwp .debug_cu_index
     and .debug_tu_index operations. */
