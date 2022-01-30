@@ -52,6 +52,7 @@ then
   echo "To update , mv  $tx $b"
   exit $r
 fi
+rm -f dwarfdump.conf
 rm -f $tx
 rm -f $tx.diff
 exit 0

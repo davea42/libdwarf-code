@@ -9,6 +9,7 @@
 ### with no hint as to what the problem really is..
 
 MAINTAINERCLEANFILES = Makefile.in \
+  dwarfdump.conf \
   test_objectaccess.log test_objectaccess.trs \
   getnametest.log getnametest.trs \
   runtestdd.sh.log	      test_linkedtopath.log \
