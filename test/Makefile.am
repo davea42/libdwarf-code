@@ -30,11 +30,11 @@ MAINTAINERCLEANFILES = Makefile.in \
   junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
 
-CLEANFILES = dwarfdump.conf junk.debuglink1   junk.debuglink1b \
-  junk.debuglink1sed2  junk.debuglink2a \
-  junk.debuglink1a  junk.debuglink1sed1  junk.debuglink2 \
-  junk.debuglink2b
-EXTRA_DIS  =
+clean-local:
+	rm -f junk.*
+	rm -f dwarfdump.conf
+
+EXTRA_DIST =
 
 TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_headersok test_dwgetopt \
