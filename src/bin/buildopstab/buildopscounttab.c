@@ -19,17 +19,15 @@ For use by anyone for any purpose.
 
 */
 
-#include "config.h"
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>  /* For exit(), strtoul() declaration etc. */
-#endif
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
+#include <config.h>
+
+#include <stdio.h>  /* FILE fclose() fopen() fprintf() printf() */
+#include <stdlib.h> /* exit() getenv() */
+#include <string.h> /* strcmp() strcpy() strncmp() strlen() */
+
 #include "dwarf.h"
-#include "libdwarf_private.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_opscounttab.h"
 
 #define MAXDEFINELINE 1000

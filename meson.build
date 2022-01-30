@@ -1,5 +1,6 @@
 project('libdwarf', ['c','cpp'],
-("  version: '", '0.3.1', "'")  default_options : ['buildtype=plain', 'warning_level=3', 'werror=true'],
+  version: '1.99.0',
+  default_options : ['buildtype=debugoptimized', 'warning_level=3', 'werror=true'],
   meson_version : '>=0.53'
 )
 
@@ -149,6 +150,9 @@ if have_libelf == true and get_option('dwarfgen') == true
   have_libdwarfp = true
 endif
 subdir('src/bin/attr_form')
+subdir('src/bin/buildopstab')
+subdir('src/bin/builduritable')
+subdir('src/bin/gennames')
 subdir('src/bin/tag_attr')
 subdir('src/bin/tag_tree')
 
