@@ -7374,8 +7374,17 @@ DW_API unsigned int dwarf_set_harmless_error_list_size(
     Dwarf_Debug  dw_dbg,
     unsigned int dw_maxcount);
 
-/*  Insertion is only for testing the harmless error code, it is not
-    useful otherwise. */
+/*! @brief Harmless Error Insertion is only for testing
+
+    Useful for testing the harmless error mechanism.
+
+    @param dw_dbg
+    Pass in an open Dwarf_Debug
+    @param dw_newerror
+    Pass in a string whose content the function
+    inserts as a harmless error (which
+    dwarf_get_harmless_error_list will retrieve.
+*/
 DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     char * dw_newerror);
 /*! @} */
