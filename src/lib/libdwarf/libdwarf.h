@@ -7148,6 +7148,9 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
 
     .gnu_debuglink  and/or the section .note.gnu.build-id.
 
+    Unless something is odd and you want to know details
+    of the two sections you will not need this function.
+
     @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
 
     @see exampledebuglink
@@ -7158,41 +7161,136 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     If no .note.gnu.build-id then  buildid_length_returned,
     and buildid_returned will be set 0 through the pointers.
 
+    In most cases output arguments can be passed as zero
+    and the function will simply not return data through
+    such arguments. Useful if you only care about some
+    of the data potentially returned.
+
     Caller frees space returned by debuglink_fullpath_returned.
-*/
-DW_API int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
-    char     **    /*debuglink_path_returned */,
-    unsigned char ** /*crc_returned from the debuglink section*/,
-    char     **    /*debuglink_fullpath_returned free this*/,
-    unsigned int * /*debuglink_path_count_returned */,
-    unsigned int * /*buildid_type_returned */,
-    char     **    /*buildid_owner_name_returned*/,
-    unsigned char ** /*buildid_returned*/,
-    unsigned int * /*buildid_length_returned*/,
-    char     ***   /*paths_returned*/,
-    unsigned int * /*paths_length_returned*/,
-    Dwarf_Error*   /*error*/);
 
-/*  Only useful inside dwarfexample/dwdebuglink.c
+    @param dw_dbg 
+    The Dwarf_Debug of interest.
+    @param dw_debuglink_path_returned 
+    On success returns a pointer to 
+    a path in the debuglink section. Do not free!
+    @param dw_crc_returned
+    On success returns a pointer to a 4 byte area
+    through the pointer.
+    @param dw_debuglink_fullpath_returned
+    On success returns a pointer to a full path
+    computed from debuglink data of
+    a correct path to a file with DWARF sections. Free this string
+    when no longer of interest.
+    @param dw_debuglink_path_length_returned
+    On success returns the strlen() of 
+    dw_debuglink_fullpath_returned .
+
+    @param dw_buildid_type_returned
+    On success returns a pointer to integer with
+    a type code. See the buildid definition.
+    @param dw_buildid_owner_name_returned
+    On success returns a pointer to the owner
+    name from the buildid section. Do not free this.
+    @param dw_buildid_returned
+    On success returns a pointer to a sequence of bytes
+    containing the buildid.
+    @param dw_buildid_length_returned
+    On success this is set to the length of the
+    set of bytes pointed to by dw_buildid_returned .
+    @param dw_paths_returned
+    On success returns a pointer to an array of
+    pointers to strings, each  with a global path.
+    It actually points to an array of pointers
+    followed by a blob of strings, and freeing
+    all of that just means calling free(dw_paths_returned).
+    @param dw_paths_length_returned
+    On success returns the length of the array of string
+    pointers dw_paths_returned points at.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_gnu_debuglink(Dwarf_Debug dw_dbg,
+    char          ** dw_debuglink_path_returned,
+    unsigned char ** dw_crc_returned,
+    char          ** dw_debuglink_fullpath_returned,
+    unsigned int   * dw_debuglink_path_length_returned,
+    unsigned int   * dw_buildid_type_returned,
+    char          ** dw_buildid_owner_name_returned,
+    unsigned char ** dw_buildid_returned,
+    unsigned int   * dw_buildid_length_returned,
+    char         *** dw_paths_returned,
+    unsigned int   * dw_paths_length_returned,
+    Dwarf_Error*     dw_error);
+
+/*! @brief Adding debuglink global paths  
+
+    Only really inside dwarfexample/dwdebuglink.c
     so we can show all that is going on.
+    The following has the explanation for how debuglink
+    and global paths interact.
+    @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+    
+    @param dw_dbg
+    Pass in the Dwarf_Debug of interest.
+    @param dw_pathname
+    Pass in a pathname to add to the list of global paths
+    used by debuglink.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
 */
-DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
-    const char *pathname,
-    Dwarf_Error* /*error*/);
+DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
+    const char * dw_pathname,
+    Dwarf_Error* dw_error);
 
-/*  crc32 used for debuglink crc calculation.
+/*! @brief  crc32 used for debuglink crc calculation.
+
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns
-    DW_DLV_OK that is filled in. */
-DW_API int dwarf_crc32(Dwarf_Debug /*dbg*/,
-    unsigned char * /*crcbuf*/,
-    Dwarf_Error * /*error*/);
+    DW_DLV_OK that is filled in. 
 
-/*  Public interface to the real crc calculation
-    just in case some find it useful. */
-DW_API unsigned int dwarf_basic_crc32(const unsigned char * /*buf*/,
-    unsigned long /*len*/, unsigned int /*init*/);
+    @param dw_dbg
+    Pass in an open dw_dbg.  When you attempted
+    to open it, and it succeded then pass the
+    it via the Dwarf_Debug
+    The function reads the file into memory
+    and performs a crc calculation.
+    @param dw_crcbuf
+    Pass in a pointer to  a 4 byte area to hold
+    the returned crc, on success the function
+    puts the 4 bytes there.
+    @param dw_error
+    The usual pointer to return error details.
+    @return
+    Returns DW_DLV_OK etc.
+*/
+DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
+    unsigned char * dw_crcbuf,
+    Dwarf_Error   * dw_error);
+
+/*! @brief  Public interface to the real crc calculation
+
+    It is unlikely this is useful.
+    
+    @param dw_buf
+    Pass in a pointer to some bytes on which the
+    crc calculation as done in debuglink is to be done.
+    @param dw_len
+    Pass in the length in bytes of dw_buf.
+    @param dw_init
+    Pass in the initial 32 bit value, zero is the right choice.
+    @return
+    Returns an int (assumed 32 bits int!)
+    with the calculated crc.
+*/
+DW_API unsigned int dwarf_basic_crc32(const unsigned char * dw_buf,
+    unsigned long dw_len, 
+    unsigned int  dw_init);
 /*! @} */
+
 /*! @defgroup harmless Harmless Error recording
 
     The harmless error list is a circular buffer of
