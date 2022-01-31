@@ -7622,33 +7622,111 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
 /*! @} */
 
 /*! @defgroup objectsections Object Sections Data
+
+    Section name access.  Because names sections
+    such as .debug_info might
+    end with .dwo or be .zdebug  or might not.
+
+    For non-Elf the name reported will be as if
+    it were Elf sections. For example, not the names
+    MacOS puts in its object sections (which
+    the MacOS reader translates).
+
+    The simple calls will not be documented in full detail here.
+    
     @{
 */
-/*  Section name access.  Because sections might
-    now end with .dwo or be .zdebug  or might not.
+/*! @brief get the real name a DIE section.
+
+    @b dw_is_info
+
+    @param dw_dbg 
+    The Dwarf_Debug of interest
+    @param dw_is_info 
+    We do not pass in a DIE, so we have to
+    pass in TRUE for for .debug_info, or if
+    DWARF4 .debug_types pass in FALSE.
+    @param dw_sec_name
+    On success returns a pointer to the actual
+    section name in the object file.
+    Do not free the string.
+    @param dw_error
+    The usual error argument to report error details.
+    @return
+    DW_DLV_OK etc.
 */
-DW_API int dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
-    Dwarf_Bool    /*is_info*/,
-    const char ** /*sec_name*/,
-    Dwarf_Error * /*error*/);
+DW_API int dwarf_get_die_section_name(Dwarf_Debug dw_dbg,
+    Dwarf_Bool    dw_is_info,
+    const char ** dw_sec_name,
+    Dwarf_Error * dw_error);
 
-DW_API int dwarf_get_die_section_name_b(Dwarf_Die /*die*/,
-    const char ** /*sec_name*/,
-    Dwarf_Error * /*error*/);
+/*! @brief get the real name of a DIE section.
+   
+    The same as @b dwarf_get_die_section_name
+    except we have a DIE so do not need @b dw_is_info
+    as a argument.
+*/
+DW_API int dwarf_get_die_section_name_b(Dwarf_Die dw_die,
+    const char ** dw_sec_name,
+    Dwarf_Error * dw_error);
 
-DW_API int dwarf_get_macro_section_name(Dwarf_Debug /*dbg*/,
-    const char ** /*sec_name_out*/,
-    Dwarf_Error * /*err*/);
+/*! @brief get the real name of a .debug_macro section.
+*/
+DW_API int dwarf_get_macro_section_name(Dwarf_Debug dw_dbg,
+    const char ** dw_sec_name_out,
+    Dwarf_Error * dw_err);
 
-DW_API int dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
-    const char * /*std_section_name*/,
-    const char ** /*actual_sec_name_out*/,
-    Dwarf_Small * /*marked_compressed*/,  /* .zdebug... */
-    Dwarf_Small * /*marked_zlib_compressed */, /* ZLIB string */
-    Dwarf_Small * /*marked_shf_compressed*/, /* SHF_COMPRESSED */
-    Dwarf_Unsigned * /*compressed_length*/,
-    Dwarf_Unsigned * /*uncompressed_length*/,
-    Dwarf_Error * /*error*/);
+/*! @brief get the real name of a section.
+
+     If the object has section groups only the
+     sections in the group in dw_dbg will be
+     found.
+
+     Whether .zdebug or ZLIB or SHF_COMPRESSED
+     is the marker there is just one uncompress
+     algorithm (zlib) for all three cases.
+
+     @param dw_dbg
+     The Dwarf_Debug of interest.
+     @param dw_std_section_name
+     Pass in a standard section name, such as
+     .debug_info or .debug_info.dwo .
+     @param dw_actual_sec_name_out
+     On success returns the actual section name
+     from the object file.
+     @param dw_marked_zcompressed
+     On success returns TRUE if the original section name
+     ends in .zdebug
+     @param dw_marked_zlib_compressed
+     On success returns TRUE if the section has the ZLIB
+     string at the front of the section.
+     @param dw_marked_shf_compressed
+     On success returns TRUE if the section flag
+     (Elf SHF_COMPRESSED) is marked as compressed.
+     @param dw_compressed_length
+     On success if the section was compressed
+     it returns the original section length
+     in the object file.
+     @param dw_uncompressed_length
+     On success if the section was compressed this
+     returns the uncompressed length of the object section.
+     @param dw_error
+     On error returns the error usual details.
+     @return
+     The usual DW_DLV_OK etc.
+     If the section is not relevant to this Dwarf_Debug
+     or is not in the object file at all, returns 
+     DW_DLV_NO_ENTRY
+*/
+DW_API int dwarf_get_real_section_name(Dwarf_Debug dw_dbg,
+    const char     * dw_std_section_name,
+    const char    ** dw_actual_sec_name_out,
+    Dwarf_Small    * dw_marked_zcompressed,
+    Dwarf_Small    * dw_marked_zlib_compressed,
+    Dwarf_Small    * dw_marked_shf_compressed,
+    Dwarf_Unsigned * dw_compressed_length,
+    Dwarf_Unsigned * dw_uncompressed_length,
+    Dwarf_Error    * dw_error);
 
 DW_API int dwarf_get_frame_section_name(Dwarf_Debug /*dbg*/,
     const char ** /*section_name_out*/,

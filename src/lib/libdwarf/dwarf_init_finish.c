@@ -1717,14 +1717,6 @@ do_decompress_zlib(Dwarf_Debug dbg,
             unsigned int type; followed by pad if following are 64bit!
             size-of-target-address size
             size-of-target-address
-
-            If we read using libelf libelf knows about
-            SHF_COMPRESSED and if the object and the
-            running libelf do not match endianness
-            libelf already transformed the two fields
-            we care about to host endianness so
-            the READ_UNALIGNED is just wrong.
-            Just noticed this issue November 2020.
         */
         Dwarf_Small *ptr    = (Dwarf_Small *)src;
         Dwarf_Unsigned type = 0;
@@ -1788,6 +1780,7 @@ do_decompress_zlib(Dwarf_Debug dbg,
     if (!dest) {
         DWARF_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
     }
+    /*  uncompress is a zlib function. */
     res = uncompress(dest,&destlen,src,srclen);
     if (res == Z_BUF_ERROR) {
         free(dest);
