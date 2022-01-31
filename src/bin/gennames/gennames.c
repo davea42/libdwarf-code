@@ -28,22 +28,21 @@
 */
 /*   Used by scripts/libbuild.sh. Not in libdwarf itself. */
 
-#include "config.h"
+#include <config.h>
+
 #ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
 #endif /* _WIN32 */
 
-#include <stdio.h>
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif /* HAVE_STDLIB_H */
-#include <errno.h>   /* For errno declaration. */
-#include <ctype.h>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif /* HAVE_STRING_H */
-#include "dd_getopt.h"
+#include <stddef.h> /* NULL size_t */
+#include <ctype.h>  /* isspace() */
+#include <errno.h>  /* errno */
+#include <stdio.h>  /* fgets() fprintf() printf() sscanf() */
+#include <stdlib.h> /* exit() qsort() strtoul() */
+#include <string.h> /* strchr() strcmp() strcpy() strlen() strncmp() */
+
 #include "libdwarf_private.h"
+#include "dd_getopt.h"
 #include "dwarf_safe_strcpy.h"
 
 /*  gennames.c

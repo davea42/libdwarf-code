@@ -27,8 +27,8 @@
 
 */
 
-#include <stdio.h>
-#include <ctype.h>
+#include <ctype.h> /* isalnum() isspace() */
+#include <stdio.h> /* printf() */
 
 /* Generates a table which identifies a few dangerous characters.
    Ones one does not want to appear in output.
@@ -125,7 +125,7 @@ print_entry(int c)
 }
 
 int
-main()
+main(int argc, char *argv[])
 {
     int i = 0;
     printf("/* dwarfdump_ctype table */\n");
@@ -134,4 +134,9 @@ main()
         print_entry(i);
     }
     printf("};\n");
+
+    return 0;
+
+    (void)argc;
+    (void)argv;
 }
