@@ -7389,103 +7389,236 @@ DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     char * dw_newerror);
 /*! @} */
 
-/*! @defgroup Naming Names DW_TAG AT etc as strings
+/*! @defgroup Naming Names DW_TAG_member etc as strings
+
+    Given a value you know is one of a particular
+    name category in DWARF2 or later, call the
+    appropriate function and on finding the name it
+    returns DW_DLV_OK and sets the
+    identifier for the value through a pointer.
+    On success
+    these functions return the string corresponding
+    to @b dw_val_in passed in
+    through the pointer @b dw_s_out and the value
+    returned is DW_DLV_OK.
+
+    The strings are in static storage and must not be freed.
+
+    If DW_DLV_NO_ENTRY is returned the @b dw_val_in is not known and
+    @b *s_out is not set. This is unusual. 
+
+    DW_DLV_ERROR is never returned.
+
+    Here is an example of correct use.
+
+    @code
+    char *name = 0;
+    int res = dwarf_get_AT_name(DW_AT_member,&name);
+    if (res == DW_DLV_OK) {
+        Here name points to "DW_AT_member"
+    } else {
+        Here name is left NULL.
+    }
+    @endcode
+
     @{
 */
-/*  When the val_in is known these, for example, dwarf_get_TAG_name
-    functions return the string corresponding to the val_in passed in
-    through the pointer s_out and the value returned is DW_DLV_OK.
-    The strings are in static storage
-    and must not be freed.
-    If DW_DLV_NO_ENTRY is returned the val_in is not known and
-    *s_out is not set.  DW_DLV_ERROR is never returned.*/
+/*! @brief dwarf_get_ACCESS_name
+*/
+DW_API int dwarf_get_ACCESS_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_ADDR_name
+*/
+DW_API int dwarf_get_ADDR_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_AT_name
+*/
+DW_API int dwarf_get_AT_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_AT_name
+*/
+DW_API int dwarf_get_ATCF_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_ATE_name
+*/
+DW_API int dwarf_get_ATE_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_CC_name
+*/
+DW_API int dwarf_get_CC_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_CFA_name
+*/
+DW_API int dwarf_get_CFA_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_children_namea - historic misspelling.
+*/
+DW_API int dwarf_get_children_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_CHILDREN_name
+*/
+DW_API int dwarf_get_CHILDREN_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_DEFAULTED_name
+*/
+DW_API int dwarf_get_DEFAULTED_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_DS_name
+*/
+DW_API int dwarf_get_DS_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_DSC_name
+*/
+DW_API int dwarf_get_DSC_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_GNUIKIND_name - libdwarf invention 
 
-/* The following copied from a generated dwarf_names.h */
+    So we can report things GNU extensions sensibly.
+*/
+DW_API int dwarf_get_GNUIKIND_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_EH_name
 
-/*  dwarf_get_LLEX_name is for a GNU extension.
-    Not defined by the GNU folks nor a DWARF standard
-    but it seemed essential. */
-/* BEGIN FILE */
-DW_API int dwarf_get_ACCESS_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_ADDR_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_AT_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_ATCF_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_ATE_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_CC_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_CFA_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_children_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_CHILDREN_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_DEFAULTED_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_DS_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_DSC_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_EH_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_END_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_FORM_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_FRAME_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_GNUIKIND_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_GNUIVIS_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_ID_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_IDX_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_INL_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_ISA_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_LANG_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_LLE_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_LLEX_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_LNCT_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_LNE_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_LNS_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_MACINFO_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_MACRO_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_OP_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_ORD_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_RLE_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_SECT_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_TAG_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_UT_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_VIRTUALITY_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-DW_API int dwarf_get_VIS_name(unsigned int /*val_in*/,
-    const char ** /*s_out */);
-/* END FILE */
+    So we can report this GNU extension sensibly. 
+*/
+DW_API int dwarf_get_EH_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_END_name
+*/
+DW_API int dwarf_get_END_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_FORM_name
+*/
+DW_API int dwarf_get_FORM_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief This is a set of register names
+  
+    The set of register names is unlikely
+    to match your register set, but perhaps
+    this is better than no name.
+*/
+DW_API int dwarf_get_FRAME_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_GNUIKIND_name - a libdwarf invention
 
-DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class /*fc*/,
-    const char ** /*s_out*/);
+    So we report a GNU extension sensibly.
+*/
+DW_API int dwarf_get_GNUIKIND_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_GNUIKIND_name
+
+    So we report a GNU extension sensibly.
+*/
+DW_API int dwarf_get_GNUIKIND_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_GNUIVIS_name - a libdwarf invention
+
+    So we report a GNU extension sensibly.
+*/
+DW_API int dwarf_get_GNUIVIS_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+
+/*! @brief dwarf_get_ID_name
+*/
+DW_API int dwarf_get_ID_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_IDX_name
+*/
+DW_API int dwarf_get_IDX_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_INL_name
+*/
+DW_API int dwarf_get_INL_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_ISA_name
+*/
+DW_API int dwarf_get_ISA_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_LANG_name
+*/
+DW_API int dwarf_get_LANG_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_LLE_name
+*/
+DW_API int dwarf_get_LLE_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_LLEX_name - a GNU extension.
+
+    The name is a libdwarf invention for the GNU extension.
+    So we report a GNU extension sensibly.
+*/
+DW_API int dwarf_get_LLEX_name(unsigned int dw_val_in,
+    const char ** dw_s_out );
+
+/*! @brief dwarf_get_LNCT_name
+*/
+DW_API int dwarf_get_LNCT_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_LNE_name
+*/
+DW_API int dwarf_get_LNE_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_LNS_name
+*/
+DW_API int dwarf_get_LNS_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_MACINFO_name
+    
+    Used in DWARF2-DWARF4
+*/
+DW_API int dwarf_get_MACINFO_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_MACRO_name
+    
+    Used in DWARF5
+*/
+DW_API int dwarf_get_MACRO_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_OP_name
+*/
+DW_API int dwarf_get_OP_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_ORD_name
+*/
+DW_API int dwarf_get_ORD_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_RLE_name
+*/
+DW_API int dwarf_get_RLE_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_SECT_name
+*/
+DW_API int dwarf_get_SECT_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_TAG_name
+*/
+DW_API int dwarf_get_TAG_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_UT_name
+*/
+DW_API int dwarf_get_UT_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_VIRTUALITY_name
+*/
+DW_API int dwarf_get_VIRTUALITY_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+/*! @brief dwarf_get_VIS_name
+*/
+DW_API int dwarf_get_VIS_name(unsigned int dw_val_in,
+    const char ** dw_s_out);
+
+/*! @brief dwarf_get_FORM_CLASS_name is for a libdwarf
+    extension.
+    Not defined by the DWARF standard
+    though the concept is defined in the standard.
+    It seemed essential to invent it for libdwarf
+    to report correctly.
+
+    See DWARF5 Table 2.3, Classes of Attribute Value page 23. 
+    Earlier DWARF versions have a similar table.
+*/
+DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
+    const char ** dw_s_out);
 /*! @} */
 
 /*! @defgroup objectsections Object Sections Data
