@@ -1732,28 +1732,12 @@ do_decompress_zlib(Dwarf_Debug dbg,
         /* Dwarf_Unsigned addralign = 0; */
         unsigned fldsize    = dbg->de_pointer_size;
         unsigned structsize = 3* fldsize;
-        if (dbg->de_using_libelf) {
-            unsigned offset = 0;
-            unsigned offsetb = 0;
-#ifdef WORDS_BIGENDIAN
-            offset = sizeof(type) - DWARF_32BIT_SIZE;
-            offsetb = sizeof(type) - fldsize;
-#else /* LITTLE_ENDIAN */
-            offset = 0;
-            offsetb = 0;
-#endif /* !BIG_ENDIAM */
-            memcpy(((char*)&type)+offset,ptr,(size_t)
-                DWARF_32BIT_SIZE);
-            ptr += fldsize;
-            memcpy(((char*)&size)+offsetb,ptr,(size_t)fldsize);
-        } else {
-            READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,ptr,
-                DWARF_32BIT_SIZE,
-                error,endsection);
-            ptr += fldsize;
-            READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,ptr,fldsize,
-                error,endsection);
-        }
+        READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,ptr,
+            DWARF_32BIT_SIZE,
+            error,endsection);
+        ptr += fldsize;
+        READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,ptr,fldsize,
+            error,endsection);
         if (type != ELFCOMPRESS_ZLIB) {
             DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
                 DW_DLV_ERROR);

@@ -565,7 +565,6 @@ struct Dwarf_Debug_s {
     char de_owns_fd;
     /* DW_PATHSOURCE_BASIC or MACOS or DEBUGLINK */
     unsigned char de_path_source;
-    unsigned char de_using_libelf;
     /*  de_path is only set automatically if dwarf_init_path()
         was used to initialize things.
         Used with the .gnu_debuglink section. */
