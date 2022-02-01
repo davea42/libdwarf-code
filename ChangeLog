@@ -1,3 +1,173 @@
+2022-01-31:  David Anderson
+    commit fd7bf02c1abd79b61db75496d7f947ae25a0d281
+
+    Removed obsolete comments.
+            modified:   ../src/lib/libdwarf/dwarf_init_finish.c
+    Adding doxygen comments about getting the real section
+    name.
+            modified:   ../src/lib/libdwarf/libdwarf.h
+
+2022-01-31:  David Anderson
+    commit 87c1d56b7874b1fa97c29878b6ec1dc495fe2a8b
+
+    Since de_using_libelf is never set we remove
+    the if and the code applicable to de_using_libelf.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+    The field de_using_libelf is an obsolete field now.
+    Deleted it.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2022-01-31:  David Anderson
+    commit 6fd19c19826c3984e25716d3d9127c9c4bca7104
+
+    doxygen documentation of dwarf_get_TAG_name etc.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-30:  David Anderson
+    commit 651388ef33b0e64b1e9a95ce3880afbe50b74cb1
+    Merge: 3fe530ac 027c5718
+
+    Merge pull request #68 from vtorri/vtorri_last_bin
+
+    Add meson support for the last binaries
+
+2022-01-30:  Vincent Torri
+    commit 027c5718a31f298bb047b18ed7817215db55c5e1
+
+    Add meson support for the last binaries
+
+            new file:   src/bin/buildopstab/meson.build
+            new file:   src/bin/builduritable/meson.build
+            new file:   src/bin/gennames/meson.build
+            modified:   README.md
+            modified:   meson.build
+            modified:   src/bin/buildopstab/buildopscounttab.c
+            modified:   src/bin/builduritable/uritablebuild.c
+            modified:   src/bin/gennames/gennames.c
+
+2022-01-30:  David Anderson
+    commit 3fe530ac33702c7ce23e05f87b97e08139f9829a
+
+    Added dwarfdump.conf to MAINTAINERCLEANFILES
+    as that just makes sense.
+            modified:   test/Makefile.am
+    These explicitly copy dwarfdump.conf
+    individually and now, on success they remove it.
+            modified:   test/dwarfdumpLinux.sh
+            modified:   test/dwarfdumpMacos.sh
+            modified:   test/dwarfdumpPE.sh
+
+2022-01-30:  David Anderson
+    commit 4b64c1a7bbc602528cd94b7c20a7e8029a3e83f3
+
+    A different approach, clean-local:
+    to clean up.
+            modified:   test/Makefile.am
+
+2022-01-30:  David Anderson
+    commit 7fdceea11756fc147f47339c4bd22c229214ab0a
+
+    Now cleaning up temp files from the test.
+            modified:   test/Makefile.am
+
+2022-01-30:  David Anderson
+    commit 51e9d1a26b807d4c3ae16d78065591dd75246c90
+
+    A cleanup of dwarfdump.conf leftover after test
+            modified:   test/Makefile.am
+
+2022-01-30:  David Anderson
+    commit 5c2820332f459962c3ad56486bc5b6092fc3c899
+
+    Create c-cpp.yml
+
+2022-01-29:  David Anderson
+    commit 24753cb5658c5325d4b31363ac69fe75a65f190f
+
+    Now the harmless_error functions are explained
+    by doxygen.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-29:  David Anderson
+    commit 1a5ca50f18170f51aa8bf7210b2b14075c148ee4
+
+    Doxygen doc of the crc functions debuglink needs.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-29:  David Anderson
+    commit 74cd9167e9242d058d33e009a06965b9bdb68bf8
+
+    Correct a comment.
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+    Added doxygen for .debug_tu_index .debug_cu_index.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-29:  David Anderson
+    commit 01ce650766b8846f0f7c691238a41d59ca1dfa75
+
+    Updated to reflect latest release.
+            modified:   README
+            modified:   README.cmake
+            modified:   README.md
+
+2022-01-29:  David Anderson
+    commit 4c44a4c19e2a7879da1ed6e1eec49c03bca00101
+
+    Corrected a variety of spelling errors in
+    comments.
+            modified:   src/bin/dwarfdump/ChangeLog2016
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_lines.c
+            modified:   src/bin/dwarfdump/print_llex_codes.c
+            modified:   src/bin/dwarfdump/print_loclists_codes.c
+            modified:   src/bin/dwarfdump/print_origloclist_codes.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+
+2022-01-29:  David Anderson
+    commit 288b3d567e584d8860b335fe12a04120f3e07fea
+
+    Correct a spelling error in a comment: initalized -> initialized
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+
+2022-01-29:  David Anderson
+    commit 9ecea55c15ede6264be5eef0413f2881d5cfaae4
+
+    Correct spelling errors in comments.
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line.h
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+2022-01-29:  David Anderson
+    commit 35dd6258ddf969c86ccdbb5dbdf863484317ea84
+
+    Correcting spelling errors in comments.
+            modified:   libdwarf.h
+
+2022-01-29:  David Anderson
+    commit 029a317dde807cef290aba0048ff572bb556baa2
+
+    Corrected a spelling error, now Heterogeneous.
+            modified:   dwarf.h
+
+2022-01-29:  David Anderson
+    commit deb80914e4648a2ba829d32ba3c419a9ac5e2e1f
+
+    Corrected three spelling errors.
+            modified:   jitaccess.dox
+            modified:   libdwarf.dox
+
+2022-01-29:  David Anderson
+    commit 96f45a8b5ab09d7596b1363b79ecf45b2062427f
+
+    Update with latest entries from git log.
+            modified:   ChangeLog
+
 2022-01-29:  David Anderson
     commit 1c45ce768634c6135a01de9b37f15edbeec1438d
 
