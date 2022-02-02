@@ -20,7 +20,7 @@
     Anything else you find misleading or confusing?
     Thanks in advance for any suggestions.
  
-    @section dw_intro Introduction
+    @section dwsec_intro Introduction
 
 
     This document describes an interface to @e libdwarf, a library of
@@ -55,7 +55,7 @@
     website. See "http://www.dwarfstd.org" for current information on
     standardization activities and a copy of the standard.
 
-    @section dw_threadsafety Thread Safety
+    @section dwsec_threadsafety Thread Safety
 
     Libdwarf can safely open multiple Dwarf_Debug
     pointers simultaneously but all such Dwarf_Debug
@@ -63,7 +63,7 @@
     And all libdwarf calls must be made from within
     that single (same) thread.
  
-    @section dw_error Error Handling in libdwarf
+    @section dwsec_error Error Handling in libdwarf
     Essentially every libdwarf call could involve dealing
     with an error (possibly data corruption in
     the object file).  Here we explain the two main
@@ -240,7 +240,7 @@
     That's all there is to it.
  
 
-    @subsection linetableregisters Line Table Registers
+    @subsection dwsec_linetableregisters Line Table Registers
 
     Line Table Registers
 
@@ -270,7 +270,7 @@
     discriminator
     @endcode
 
-    @subsection independentsections Reading Special Sections Independently
+    @subsection dwsec_independentsections Reading Special Sections Independently
 
     Reading a particular set of special sections
 
@@ -392,7 +392,7 @@
        CFA_Column      > Table_Size
     @endcode
 
-    @section dw_pubnames .debug_pubnames etc DWARF2-DWARF4 
+    @section dwsec_pubnames .debug_pubnames etc DWARF2-DWARF4 
 
     Each section consists of a header for a specific 
     compilation unit (CU) followed by an a set of tuples,
@@ -426,9 +426,8 @@
     .debug_vars       Dwarf_Var    None          dwarf_get_vars
     .debug_weaks      Dwarf_Weak   None          dwarf_get_weaks
     @endcode
-*/
 
-    @section Reading DWARF with no object file present
+    @section dwsec_noobj Reading DWARF with no object file present
 
     This most commonly happens with just-in-time
     compilation, and someone working on the code
@@ -550,7 +549,7 @@
 
     @b as_entrysize: Just fill in one.
 
-    @struct Dwarf_Obj_Access_Methods_a_s:
+    @b Dwarf_Obj_Access_Methods_a_s:
     The functions we need to access object data
     from libdwarf are declared here.
 
@@ -574,4 +573,89 @@
     The om_get_filesize member is new September 4, 2021.
     Its position is NOT at the end of the list.
     The member names all now have om_ prefix.
+
+    @section dwsec_sectiongroup Section Groups. Debug Fission. COMDAT groups
+
+    A simple executable or shared object is unlikely
+    to have any section groups, and in that case
+    what follows is irrelevant and unimportant.
+
+    COMDAT groups enable compilers and linkers
+    to work together to eliminate blocks
+    of duplicate DWARF and duplicate CODE.
+
+    Debug Fission allows compilers and linkers
+    to separate large amounts of DWARF from 
+    the executable, shrinking disk space
+    needed in the executable while allowing
+    full debugging (which also applies to shared objects).
+
+    See the DWARF5 Standard, Section E.1
+    Using Compilation Units    page 364.
+
+    To name such groups (defined later here) we add
+    the following defines to libdwarf.h (the standard
+    does not specify how to do any of this).
+
+    @code
+    /*  These support opening DWARF5 split dwarf objects and
+        Elf SHT_GROUP blocks of DWARF sections. */
+    #define DW_GROUPNUMBER_ANY  0
+    #define DW_GROUPNUMBER_BASE 1
+    #define DW_GROUPNUMBER_DWO  2
+    @endcode
+
+    The DW_GROUPNUMBER_  are used in libdwarf functions
+    dwarf_init_path(), dwarf_init_path_dl() and
+    dwarf_init_b().  In all those cases unless
+    you know there is any complexity in your object file,
+    pass in DW_GROUPNUMBER_ANY.
+
+    If an object file is (essentially) all
+    DW_GROUPNUMBER_BASE or DW_GROUPNUMBER_DWO
+    libdwarf will notice that and turn
+    DW_GROUPNUMBER_ANY into the appropriate
+    groupnumber.
+
+    If an object file has multiple groups
+    libdwarf will default to one of the groups
+    and will not reveal contents of the others.
+    One must pass in another groupnumber
+    to dwarf_init_path etc to get libdwarf to
+    access that group.
+
+    For information on groups  "dwarfdump -i"
+    on an object file will show all section group
+    information @b unless the object file is a simple
+    standard object with no .dwo sections and no
+    COMDAT groups (in which case the output will
+    be silent on groups). Look for <b> Section Groups data </b>
+    in the dwarfdump output.
+    The groups information will be appearing very early
+    in the dwarfdump output.
+
+    Sections that are part of an Elf COMDAT GROUP
+    are asigned a group number > 2.
+    There can be many such COMDAT groups in an object file
+    (but none in an executable or shared object).
+    Each such COMDAT group will have a small set of
+    sections in it and each section in such a group
+    will be assigned the same group number by libdwarf.
+
+    Sections that are in a .dwp .dwo object file
+    are assigned to DW_GROUPNUMBER_DWO,
+
+    Sections not part of a .dwp package file
+    or a.dwo section, or a COMDAT
+    group are assigned DW_GROUPNUMBER_BASE.
+
+    At least one compiler relies on relocations
+    to identify COMDAT groups, but do not document
+    this publically so we ignore such.
+
+    Popular compilers and tools are using such sections. There
+    is no detailed documentation that
+    we can find (so far)
+    on how the COMDAT section groups are used, so libdwarf is
+    based on observations of what compilers generate.
 */
