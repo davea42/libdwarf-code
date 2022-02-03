@@ -2,14 +2,14 @@
     @mainpage A Consumer Library Interface to DWARF
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-01-28 
+    @date 2022-02-01 
  
     @section draft THIS IS A DRAFT
 
     THIS DOCUMENT IS AN INCOMPLETE DRAFT!
     SUGGESTIONS FOR IMPROVEMENT ARE WELCOME.
 
-    Your thoughts a couple of specific things would be helpful.
+    Your thoughts on the document?
 
     A) Are the section and subsection titles on Main Page
     meaningful to you?
@@ -19,6 +19,8 @@
 
     Anything else you find misleading or confusing?
     Thanks in advance for any suggestions.
+
+    @tableofcontents html:2
  
     @section dwsec_intro Introduction
 
@@ -240,7 +242,7 @@
     That's all there is to it.
  
 
-    @subsection dwsec_linetableregisters Line Table Registers
+    @section dwsec_linetableregisters Line Table Registers
 
     Line Table Registers
 
@@ -270,7 +272,7 @@
     discriminator
     @endcode
 
-    @subsection dwsec_independentsections Reading Special Sections Independently
+    @section dwsec_independentsections Reading Special Sections Independently
 
     Reading a particular set of special sections
 
@@ -311,7 +313,7 @@
     may fail, returning DW_DLV_ERROR. 
     Such an error is neither a compiler bug nor a libdwarf bug.
 
-    @subsection frameregs Special Frame Registers
+    @section frameregs Special Frame Registers
 
     In dealing with .debug_frame or .eh_frame
     there are a few related values that must be set
@@ -658,4 +660,21 @@
     we can find (so far)
     on how the COMDAT section groups are used, so libdwarf is
     based on observations of what compilers generate.
+
+    @section dwsec_changes Recent Changes
+
+    We list these with newest first.
+
+    <b>Changes 0.3.3 to 0.3.4</b>
+    Added support for the meson build system
+    Removed an unused field from libdwarf/dwarf_opaque.h
+    Updated includes libdwarfp source files.
+    Improved doxygen documentation of libdwarf.
+
+    <b>Changes 20210528 to 0.3.3 (28 January 2022) </b>
+    There were major revisions in going from date versioning
+    to Semantic Versioning.  Many functions were deleted and
+    various functions changed their list of arguments.
+    Many many filenames changed.  Include lists were
+    simplified.
 */

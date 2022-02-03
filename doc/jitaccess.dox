@@ -1,6 +1,8 @@
 /*!
     @page jitpage JIT and special case DWARF
 
+    @tableofcontents html 2
+
     @section noobject Reading DWARF not in an object file
 
     If the DWARF you work with is in standard object

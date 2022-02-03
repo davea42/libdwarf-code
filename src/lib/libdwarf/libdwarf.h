@@ -7909,7 +7909,14 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_debug_names_size,
     Dwarf_Unsigned * dw_debug_loclists_size,
     Dwarf_Unsigned * dw_debug_rnglists_size);
+/*! @} */
 
+/*! @defgroup secgroups Section Groups Objectfile Data
+
+    @link dwsec_sectiongroup Section Groups Overview @endlink
+
+    @{
+*/
 /*! @brief Get Section Groups data counts   
 
     Allows callers to find out what groups (dwo or COMDAT)
