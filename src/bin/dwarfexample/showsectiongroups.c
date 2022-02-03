@@ -20,7 +20,7 @@
 char trueoutpath[2000];
 
 static int
-one_file_show_groups(char  *path_in)
+one_file_show_groups(char  *path_in, int chosengroup)
 {
     int              res = 0;
     Dwarf_Debug      dbg = 0;
@@ -35,12 +35,9 @@ one_file_show_groups(char  *path_in)
     const char    ** sec_names_array = 0;
 
     path =  path_in;
-    /*  Here we let libdwarf decide on the groupnumber that
-        is the default one of interest,
-        hence DW_GROUPNUMBER_ANY */
     res = dwarf_init_path(path,
         0,0,
-        DW_GROUPNUMBER_ANY,
+        chosengroup,
         0,0, &dbg, &error);
     if (res == DW_DLV_ERROR) {
         printf("Error from libdwarf opening \"%s\":  %s\n",
@@ -149,19 +146,40 @@ one_file_show_groups(char  *path_in)
     return DW_DLV_OK;
 }
 
+/*  Does not return */
+static void 
+usage(void)
+{
+    printf("Usage: showsectiongroups [-group <n>] "
+        "<objectfile> ...\n");
+    printf("Usage: group defaults to zero (DW_GROUPNUMBER ANY)\n");
+    exit(1);
+}
 int
 main(int argc, char **argv)
 {
     int res = 0;
     int i = 1;
+    int chosengroup = DW_GROUPNUMBER_ANY;
 
     if (argc < 2) {
-        printf("Usage: showsectiongroups <objectfile> ...\n");
+        usage();
         return 0;
     }
     for ( ; i < argc; ++i) {
         char *arg = argv[i];
-        res = one_file_show_groups(arg);
+        if (!strcmp(arg,"-group")) {
+            i++;
+            if(i >= argc) {
+                usage();
+            }
+            arg = argv[i];
+            chosengroup = atoi(arg);
+            /*  We are ignoring errors to simplify
+                this source. Use strtol, carefully,
+                in real code. */
+        }
+        res = one_file_show_groups(arg,chosengroup);
         printf("=======done with %s, status %s\n",arg,
            (res == DW_DLV_OK)?"DW_DLV_OK":
            (res == DW_DLV_ERROR)?"DW_DLV_ERROR":
