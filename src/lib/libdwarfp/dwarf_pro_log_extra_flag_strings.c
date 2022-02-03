@@ -31,6 +31,7 @@
 
 #include <config.h>
 
+#include <stdio.h>  /* printf() for tests */
 #include <string.h> /* strcmp() */
 
 #include "dwarf.h"
