@@ -619,6 +619,9 @@
     DW_GROUPNUMBER_ANY into the appropriate
     groupnumber.
 
+    To see section groups usage, see
+    src/bin/dwarfexample/showsectiongroups.c
+
     If an object file has multiple groups
     libdwarf will default to one of the groups
     and will not reveal contents of the others.
