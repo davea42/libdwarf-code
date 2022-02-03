@@ -1,21 +1,21 @@
 /*  Copyright (c) 2021 David Anderson
     This test code is hereby placed in the public domain
     for anyone to use in any way.  */
-#include <stdlib.h> /* for exit() */
-#include <stdio.h> /* For debugging. */
-#include "dwarf.h"
-#include "libdwarf.h"
 
 /*! @file jitreader.c
     @defgroup jitreader Jitreader Demonstrating DWARF without a file.
 
     @code
-Omitting the #includes for brevity in the doxygen output.
 */
+#include <stdlib.h> /* for exit() */
+#include <stdio.h> /* For debugging. */
+#include "dwarf.h"
+#include "libdwarf.h"
 /*
     This demonstates processing DWARF
     from in_memory data.  For simplicity
     in this example we are using static arrays.
+    The C source is src/bin/dwarfexample/jitreader.c
 
     The motivation is from JIT compiling, where
     at runtime of some application, it generates
