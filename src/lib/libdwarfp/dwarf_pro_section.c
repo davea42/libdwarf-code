@@ -29,20 +29,15 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#include <stddef.h>
-#include "dwarf_pro_incl.h"
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <stdlib.h> /* free() malloc() qsort() */
+#include <string.h> /* memcpy() strcmp() strcpy() strlen() */
+
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "dwarf_util.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_util.h"

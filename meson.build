@@ -137,6 +137,9 @@ if get_option('libelf') == true
   if have_libelf == true
     if cc.has_header('elf.h')
       config_h.set10('HAVE_ELF_H', true)
+      if get_option('dwarfgen') == true
+        config_h.set10('DWARF_WITH_LIBELF', true)
+      endif
     endif
   endif
 endif

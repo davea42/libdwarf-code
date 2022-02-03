@@ -29,22 +29,19 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <stdlib.h> /* for exit(), C89 malloc */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <stdlib.h> /* calloc() free() */
+#include <string.h> /* memcpy() strcmp() strcpy() strlen() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
-#include <string.h>
-#include <stddef.h>
-#include "dwarf_pro_incl.h"
+#include <stdint.h> /* uintptr_t */
+#endif
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_util.h"

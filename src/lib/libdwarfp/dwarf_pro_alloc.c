@@ -28,23 +28,18 @@
 
 */
 
-#include "config.h"
-#include "dwarf_pro_incl.h"
-#include <stddef.h>
-#include <stdlib.h>
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
-#include <string.h>
+#include <config.h>
+
+#include <stdlib.h> /* free() malloc() */
+#include <string.h> /* memset() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif /* HAVE_INTTYPES_H */
+#include <stdint.h> /* uintptr_t */
+#endif
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_alloc.h"
 #include "dwarf_tsearch.h"

@@ -28,15 +28,13 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
+#include <config.h>
 
-#include <string.h>
-#include "dwarf_pro_incl.h"
-#include <stddef.h>
+#include <stddef.h> /* NULL */
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

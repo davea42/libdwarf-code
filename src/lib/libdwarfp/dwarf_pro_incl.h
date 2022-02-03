@@ -28,26 +28,6 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-
-#ifdef DWARF_WITH_LIBELF
-#ifdef HAVE_ELF_H /* does includes of elf.h libelf.h here. */
-#include <elf.h>
-#elif defined(HAVE_LIBELF_H)
-/*  On one platform without elf.h this gets Elf32_Rel
-    type defined (a required type). */
-#include <libelf.h>
-/* Consider the other known directory too */
-#elif defined(HAVE_LIBELF_LIBELF_H)
-#include <libelf/libelf.h>
-#endif /* HAVE_ELF_H or HAVE_LIBELF*H */
-#endif /* DWARF_WITH_LIBELF */
-
-#undef DWARF_WITH_LIBELF
-
 /* The target address is given: the place in the source integer
    is to be determined.
 */
