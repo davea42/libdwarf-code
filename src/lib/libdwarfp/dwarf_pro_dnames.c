@@ -26,18 +26,19 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <stdio.h>  /* printf() */
+#include <string.h> /* memcpy() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h> /* uintptr_t, else configure generates.*/
-#endif /* HAVE_STDINT_H */
-#include <stdlib.h> /* for exit(), C89 malloc */
-#include "dwarf_pro_incl.h"
-#include <stddef.h>
+#include <stdint.h> /* uintptr_t */
+#endif
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

@@ -29,16 +29,17 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
-#include <stddef.h>
-#include "dwarf_pro_incl.h"
+#include <config.h>
+
+#include <limits.h> /* INT_MAX and al. */
+#include <stddef.h> /* NULL */
+#include <string.h> /* memcpy() */
+
 #include "dwarf.h"
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
 #include "libdwarfp.h"
-#include "dwarf_util.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

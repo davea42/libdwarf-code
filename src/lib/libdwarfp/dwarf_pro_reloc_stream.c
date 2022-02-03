@@ -28,24 +28,35 @@
 
 */
 
-#include "config.h"
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <string.h> /* memcpy() */
+
 #ifdef DWARF_WITH_LIBELF
-#include "libdwarf_private.h"
-#include <stdio.h>
-/* Set r_info  as defined by ELF generic ABI */
-#define Set_REL32_info(r,s,t) ((r).r_info = ELF32_R_INFO(s,t))
-#define Set_REL64_info(r,s,t) ((r).r_info = ELF64_R_INFO(s,t))
-#include <string.h>
-#include <stddef.h>
-#include "dwarf_pro_incl.h"
+#ifdef HAVE_LIBELF_H
+#include <libelf.h>
+#endif /* HAVE_LIBELF_H */
+#ifdef HAVE_LIBELF_LIBELF_H
+#include <libelf/libelf.h>
+#endif /* HAVE_LIBELF_LIBELF_H */
+#ifdef HAVE_ELF_H /* does includes of elf.h libelf.h here. */
+#include <elf.h>
+#endif /* HAVE_ELF_H */
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"
 #include "dwarf_pro_section.h"
 #include "dwarf_pro_reloc.h"
 #include "dwarf_pro_reloc_stream.h"
+
+/* Set r_info  as defined by ELF generic ABI */
+#define Set_REL32_info(r,s,t) ((r).r_info = ELF32_R_INFO(s,t))
+#define Set_REL64_info(r,s,t) ((r).r_info = ELF64_R_INFO(s,t))
 
 /*  Return DW_DLV_ERROR on malloc error or reltarget_length error.
     Return DW_DLV_OK otherwise */

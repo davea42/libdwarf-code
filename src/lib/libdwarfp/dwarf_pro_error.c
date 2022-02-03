@@ -28,21 +28,14 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
+#include <config.h>
 
-#include <stdio.h>
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif /* HAVE_SYS_STAT_H */
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* open(), off_t, size_t, ssize_t */
-#endif /* HAVE_SYS_TYPES_H */
-#include <stdlib.h> /* for exit(), C89 malloc */
-#include "dwarf_pro_incl.h"
-#include <stddef.h>
+#include <stddef.h> /* NULL */
+#include <stdio.h>  /* stderr fprintf() */
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

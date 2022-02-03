@@ -29,17 +29,30 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <string.h> /* memset() strcmp() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
-#include "dwarf_pro_incl.h"
+#include <stdint.h> /* uintptr_t */
+#endif
+
+#ifdef DWARF_WITH_LIBELF
+#ifdef HAVE_LIBELF_H
+#include <libelf.h>
+#endif /* HAVE_LIBELF_H */
+#ifdef HAVE_LIBELF_LIBELF_H
+#include <libelf/libelf.h>
+#endif /* HAVE_LIBELF_LIBELF_H */
+#ifdef HAVE_ELF_H /* does includes of elf.h libelf.h here. */
+#include <elf.h>
+#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

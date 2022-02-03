@@ -28,18 +28,14 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
-#include "dwarf_pro_incl.h"
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <string.h> /* memcpy() */
+
 #include "dwarf.h"
 #include "libdwarfp.h"
-#include "dwarf_util.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

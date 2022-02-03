@@ -26,15 +26,14 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "dwarf_pro_incl.h"
-#include <stddef.h>
+#include <config.h>
+
+#include <stdlib.h> /* free() malloc() */
+#include <string.h> /* memcpy() strdup() */
+
 #include "dwarf.h"
 #include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_pro_error.h"
 #include "dwarf_pro_alloc.h"

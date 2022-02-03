@@ -28,11 +28,8 @@
 
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
+#include <config.h>
+
 #include "dwarf.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_opaque.h"

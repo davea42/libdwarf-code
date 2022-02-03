@@ -29,19 +29,15 @@
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "config.h"
-#include "libdwarf_private.h"
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
-#include "dwarf_pro_incl.h"
+#include <config.h>
+
+#include <string.h> /* strcmp() */
+
 #include "dwarf.h"
-#include "libdwarfp.h"
-#include "dwarf_pro_opaque.h"
 #include "dwarf_string.h"
+#include "libdwarfp.h"
+#include "dwarf_pro_incl.h"
+#include "dwarf_pro_opaque.h"
 
 /*  in the producer_init extras string.
     Handles hex and decimal. Not octal.
