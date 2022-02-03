@@ -6,6 +6,7 @@ dwarf_pro_error.c dwarf_pro_expr.c
 dwarf_pro_finish.c dwarf_pro_forms.c
 dwarf_pro_funcs.c dwarf_pro_frame.c 
 dwarf_pro_init.c dwarf_pro_line.c dwarf_pro_reloc.c 
+dwarf_pro_reloc_stream.c 
 dwarf_pro_reloc_symbolic.c dwarf_pro_pubnames.c 
 dwarf_pro_section.c 
 dwarf_pro_types.c dwarf_pro_vars.c dwarf_pro_macinfo.c
@@ -18,7 +19,8 @@ dwarf_pro_error.h dwarf_pro_expr.h dwarf_pro_frame.h
 dwarf_pro_incl.h dwarf_pro_line.h 
 dwarf_pro_log_extra_flag_strings.c
 dwarf_pro_macinfo.h dwarf_pro_opaque.h 
-dwarf_pro_reloc.h dwarf_pro_reloc_stream.h
+dwarf_pro_reloc.h
+dwarf_pro_reloc_stream.h
 dwarf_pro_reloc_symbolic.h 
 dwarf_pro_section.h dwarf_pro_types.h dwarf_pro_util.h)
 
