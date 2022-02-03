@@ -3,7 +3,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 bin_PROGRAMS = simplereader frame1 findfuncbypc \
-    dwdebuglink  jitreader
+    dwdebuglink  jitreader showsectiongroups
 dwarfbigend=@DWARF_BIGENDIAN@
 
 simplereader_SOURCES = simplereader.c
@@ -40,6 +40,13 @@ jitreader_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
   -I$(top_builddir)/src/lib/libdwarf
 jitreader_CFLAGS = $(DWARF_CFLAGS_WARN)
 jitreader_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
+showsectiongroups_SOURCES = showsectiongroups.c
+showsectiongroups_CPPFLAGS = -I$(top_srcdir)/src/lib/libdwarf \
+  -I$(top_builddir)/src/lib/libdwarf
+showsectiongroups_CFLAGS = $(DWARF_CFLAGS_WARN)
+showsectiongroups_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
 EXTRA_DIST = \

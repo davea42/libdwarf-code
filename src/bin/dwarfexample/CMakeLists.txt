@@ -48,3 +48,14 @@ target_compile_definitions(jitreader PRIVATE
 target_compile_options(jitreader PRIVATE ${DW_FWALL})
 target_link_libraries(jitreader PRIVATE
     ${dwarf-target} ${DW_FZLIB})
+
+set_source_group(SHOWSECTIONGROUPS_SOURCES "Source Files"
+     showsectiongroups.c)
+add_executable(showsectiongroups ${SHOWSECTIONGROUPS_SOURCES} 
+    ${SHOWSECTIONGROUPS_HEADERS} ${CONFIGURATION_FILES})
+set_folder(jitreader src/bin/dwarfexample)
+target_compile_definitions(showsectiongroups PRIVATE
+    CONFPREFIX={CMAKE_INSTALL_PREFIX}/lib)
+target_compile_options(showsectiongroups PRIVATE ${DW_FWALL})
+target_link_libraries(showsectiongroups PRIVATE
+    ${dwarf-target} ${DW_FZLIB})
