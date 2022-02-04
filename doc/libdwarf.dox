@@ -619,7 +619,8 @@
     DW_GROUPNUMBER_ANY into the appropriate
     groupnumber.
 
-    To see section groups usage, see
+    To see section groups usage, see the example
+    source:
     src/bin/dwarfexample/showsectiongroups.c
 
     If an object file has multiple groups
@@ -673,6 +674,9 @@
     Removed an unused field from libdwarf/dwarf_opaque.h
     Updated includes libdwarfp source files.
     Improved doxygen documentation of libdwarf.
+    Added src/bin/dwarfexample/showsectiongroups.c so
+    it is easy to see what groups are present in an
+    object without all the other dwarfdump output.
 
     <b>Changes 20210528 to 0.3.3 (28 January 2022) </b>
     There were major revisions in going from date versioning

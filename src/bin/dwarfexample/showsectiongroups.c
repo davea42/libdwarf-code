@@ -20,7 +20,9 @@
 char trueoutpath[2000];
 
 static int
-one_file_show_groups(char  *path_in, int chosengroup)
+one_file_show_groups(char  *path_in, 
+    char *shortpath,
+    int chosengroup)
 {
     int              res = 0;
     Dwarf_Debug      dbg = 0;
@@ -41,14 +43,14 @@ one_file_show_groups(char  *path_in, int chosengroup)
         0,0, &dbg, &error);
     if (res == DW_DLV_ERROR) {
         printf("Error from libdwarf opening \"%s\":  %s\n",
-             path, dwarf_errmsg(error));
+             shortpath, dwarf_errmsg(error));
         dwarf_dealloc_error(dbg,error);
         error = 0;
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
         printf("There is no such file as \"%s\"\n",
-            path);
+            shortpath);
         return DW_DLV_NO_ENTRY;
     }
 
@@ -58,7 +60,7 @@ one_file_show_groups(char  *path_in, int chosengroup)
     if (res == DW_DLV_ERROR) {
         printf("Error from libdwarf getting group "
             "sizes \"%s\":  %s\n",
-            path, dwarf_errmsg(error));
+            shortpath, dwarf_errmsg(error));
         dwarf_dealloc_error(dbg,error);
         error = 0;
         dwarf_finish(dbg);
@@ -66,11 +68,13 @@ one_file_show_groups(char  *path_in, int chosengroup)
     }
     if (res == DW_DLV_NO_ENTRY) {
         printf("Impossible. libdwarf claims no groups from %s\n",
-             path);
+             shortpath);
         dwarf_finish(dbg);
         return res;
     }
     printf("Group Map data sizes\n");
+    printf("  requested group : %4lu\n",
+        (unsigned long)chosengroup);
     printf("  section count   : %4lu\n",
         (unsigned long)section_count);
     printf("  group count     : %4lu\n",
@@ -116,7 +120,7 @@ one_file_show_groups(char  *path_in, int chosengroup)
         free(group_numbers_array);
         printf("Error from libdwarf getting group detals "
             "sizes \"%s\":  %s\n",
-            path, dwarf_errmsg(error));
+            shortpath, dwarf_errmsg(error));
         dwarf_dealloc_error(dbg,error);
         error = 0;
         dwarf_finish(dbg);
@@ -127,7 +131,7 @@ one_file_show_groups(char  *path_in, int chosengroup)
         free(sec_numbers_array);
         free(group_numbers_array);
         printf("Impossible. libdwarf claims details from %s\n",
-             path);
+             shortpath);
         dwarf_finish(dbg);
         return res;
     }
@@ -155,12 +159,45 @@ usage(void)
     printf("Usage: group defaults to zero (DW_GROUPNUMBER ANY)\n");
     exit(1);
 }
+
+/*  This trimming of the file path makes libdwarf regression
+    testing easier by arranging baseline output
+    not show the full path. */
+static void
+trimpathprefix(char *out,unsigned int outlen, char *in)
+{
+    char *cpo  = out;
+    char *cpi  = in;
+    char *suffix = 0;
+    unsigned int lencopied = 0;
+    for(  ; *cpi ; ++cpi) {
+        if (*cpi == '/') {
+            suffix= cpi+1;
+        }
+    }
+    if (suffix) { 
+        cpi = suffix;
+    }
+    lencopied = 0;
+    for(  ; lencopied < outlen; ++cpo,++cpi)
+    {
+         *cpo = *cpi;
+         if (! *cpi) {
+             return;
+         }
+         ++lencopied;
+    }
+    printf("FAIL copy file name: not terminated \n");
+    exit(1);
+}
+
 int
 main(int argc, char **argv)
 {
     int res = 0;
     int i = 1;
     int chosengroup = DW_GROUPNUMBER_ANY;
+    static char reportingpath[16000];
 
     if (argc < 2) {
         usage();
@@ -178,9 +215,12 @@ main(int argc, char **argv)
             /*  We are ignoring errors to simplify
                 this source. Use strtol, carefully,
                 in real code. */
+            continue;
         }
-        res = one_file_show_groups(arg,chosengroup);
-        printf("=======done with %s, status %s\n",arg,
+        trimpathprefix(reportingpath,sizeof(reportingpath),arg); 
+        res = one_file_show_groups(arg,
+            reportingpath,chosengroup);
+        printf("=======done with %s, status %s\n",reportingpath,
            (res == DW_DLV_OK)?"DW_DLV_OK":
            (res == DW_DLV_ERROR)?"DW_DLV_ERROR":
            "DW_DLV_NO_ENTRY");
