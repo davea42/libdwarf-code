@@ -4,7 +4,13 @@
 
     The C source is src/bin/dwarfexample/showsectiongroups.c
 */
+/*! @file showsectiongroups.c
+    @defgroup showsecgroups A simple report on section groups.
 
+    @code
+
+    The C source is src/bin/dwarfexample/showsectiongroups.c
+*/
 #include "config.h"
 #include <stdio.h>
 #include <string.h> /* for memset */
@@ -228,3 +234,4 @@ main(int argc, char **argv)
     }
     return 0;
 }
+/*! @endcode*/

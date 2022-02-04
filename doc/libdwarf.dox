@@ -613,22 +613,72 @@
     you know there is any complexity in your object file,
     pass in DW_GROUPNUMBER_ANY.
 
-    If an object file is (essentially) all
-    DW_GROUPNUMBER_BASE or DW_GROUPNUMBER_DWO
-    libdwarf will notice that and turn
-    DW_GROUPNUMBER_ANY into the appropriate
-    groupnumber.
-
     To see section groups usage, see the example
     source:
-    src/bin/dwarfexample/showsectiongroups.c
+    @see showsecgroups
+
+    The function interface declarations:
+
+    @see dwarf_sec_group_sizes
+    @see dwarf_sec_group_map
 
     If an object file has multiple groups
-    libdwarf will default to one of the groups
-    and will not reveal contents of the others.
+    libdwarf will not reveal contents of the other
+    groups.
     One must pass in another groupnumber
-    to dwarf_init_path etc to get libdwarf to
+    to dwarf_init_path, meaning init
+    a new Dwarf_Debug,  to get libdwarf to
     access that group.
+
+    When opening a Dwarf_Debug the following applies:
+ 
+    If DW_GROUPNUMBER_ANY is passed in libdwarf will
+    choose either of DW_GROUPNUMBER_BASE(1) or
+    DW_GROUPNUMBER_DWO (2) depending on the object
+    content. If both groups one and two are in the
+    object libdwarf will chose DW_GROUPNUMBER_BASE.
+
+    If DW_GROUPNUMBER_BASE is passed in libdwarf
+    will choose it if non-split DWARF is in the object, else
+    the init call will return DW_DLV_NO_ENTRY.
+
+    If DW_GROUPNUMBER_DWO is passed in libdwarf
+    will choose it if .dwo sections are in the object, else
+    the init will call return DW_DLV_NO_ENTRY.
+
+    If a groupnumber greater than two is passed in
+    libdwarf simply accepts it, whether any sections
+    corresponding to that groupnumber exist or not.
+
+    For information on groups  "dwarfdump -i"
+    on an object file will show all section group
+    information @b unless the object file is a simple
+    standard object with no .dwo sections and no
+    COMDAT groups (in which case the output will
+    be silent on groups). Look for <b> Section Groups data </b>
+    in the dwarfdump output.
+    The groups information will be appearing very early
+    in the dwarfdump output.
+
+    Sections that are part of an Elf COMDAT GROUP
+    are asigned a group number > 2.
+    There can be many such COMDAT groups in an object file
+    (but none in an executable or shared object).
+    Each such COMDAT group will have a small set of
+    sections in it and each section in such a group
+    will be assigned the same group number by libdwarf.
+
+    Sections that are in a .dwp .dwo object file
+    are assigned to DW_GROUPNUMBER_DWO,
+
+    Sections not part of a .dwp package file
+    or a.dwo section, or a COMDAT
+    group are assigned DW_GROUPNUMBER_BASE.
+
+    At least one compiler relies on relocations
+    to identify COMDAT groups, but do not document
+    this publically so we ignore such.
+
 
     For information on groups  "dwarfdump -i"
     on an object file will show all section group
