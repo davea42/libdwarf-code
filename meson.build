@@ -158,6 +158,7 @@ subdir('src/bin/builduritable')
 subdir('src/bin/gennames')
 subdir('src/bin/tag_attr')
 subdir('src/bin/tag_tree')
+subdir('doc')
 
 # Use config_h after all subdirs have set values
 
