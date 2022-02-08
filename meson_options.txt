@@ -10,3 +10,9 @@ option('dwarfgen',
   value : false,
   description : 'enable dwarfgen compilation'
 )
+
+option('doc',
+  type : 'boolean',
+  value : false,
+  description : 'build and install Doxygen documentation'
+)

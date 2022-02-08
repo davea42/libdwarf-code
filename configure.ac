@@ -81,6 +81,17 @@ AC_ARG_ENABLE([wall],
    ],
    [enable_wall="no"])
 
+AC_ARG_ENABLE([doc],
+   [AS_HELP_STRING([--enable-doc],
+                   [build and install Doxygen documentation @<:@default=no@:>@])],
+   [
+    AS_IF(
+        [test "x${enableval}" = "xyes"],
+        [enable_doc="yes"],
+        [enable_doc="no"])
+   ],
+   [enable_doc="no"])
+
 ### Default options with respect to host
 
 AC_CANONICAL_HOST
@@ -126,6 +137,19 @@ AC_PROG_CXX
 AC_PROG_CC_C_O
 
 PKG_PROG_PKG_CONFIG
+
+AC_ARG_VAR([DOXYGEN], [Doxygen documentation generation program])
+AS_IF(
+    [test "x${enable_doc}" = "xyes"],
+    [
+     AC_CHECK_PROGS([DOXYGEN], [doxygen], [no])
+     AS_IF(
+         [test "x${DOXYGEN}" = "xno"],
+         [enable_doc="no" ],
+         [enable_doc="yes"])
+    ],
+    [enable_doc="no"])
+AM_CONDITIONAL([HAVE_DOC], [test "x${enable_doc}" = "xyes"])
 
 ### Checks for libraries
 
@@ -386,6 +410,7 @@ echo "  static library.......: ${enable_static}"
 echo
 echo "  zlib support.........: ${have_zlib}"
 echo "  sanitize support.....: ${enable_sanitize}"
+echo "  documentation........: ${enable_doc}"
 echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
