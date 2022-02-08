@@ -8,7 +8,8 @@
 
     To verify syntatic correctness compile with
 
-cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
+cc -c -Wall -O0 -Wpointer-arith  \
+-Wdeclaration-after-statement \
 -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized \
 -Wno-long-long -Wshadow -Wbad-function-cast \
 -Wmissing-parameter-type -Wnested-externs \
@@ -235,6 +236,23 @@ int example3(Dwarf_Debug dbg,Dwarf_Error *error)
 }
 /*! @endcode */
 
+/*! @defgroup examplesecgroup Examing Section Group data
+    @brief Accessing Section Group data
+
+    With split dwarf your libdwarf calls after
+    than the initial open
+    are done against the base Dwarf_Dbg and
+    libdwarf automatically looks in the open tied dbg
+    when and as appropriate.
+    the tied-dbg can be detached too, see
+    example3 link, though you must call
+    dwarf_finish() on the detached dw_tied_dbg,
+    the library will not do that for you..
+
+    Section groups apply to Elf COMDAT groups too.
+
+    @code
+*/
 void examplesecgroup(Dwarf_Debug dbg)
 {
     int res = 0;
@@ -281,34 +299,61 @@ void examplesecgroup(Dwarf_Debug dbg)
         group_nums,sec_nums,sec_names,&error);
     if (res != DW_DLV_OK) {
         /* FAIL. Something badly wrong. */
+        free(sec_names);
+        free(group_nums);
+        free(sec_nums);
     }
     for ( i = 0; i < group_map_entry_count; ++i) {
         /*  Now do something with
             group_nums[i],sec_nums[i],sec_names[i] */
     }
-    free(group_nums);
-    free(sec_nums);
     /*  The strings are in Elf data.
         Do not free() the strings themselves.*/
     free(sec_names);
+    free(group_nums);
+    free(sec_nums);
 }
-void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
+/*! @endcode */
+
+/*! @defgroup example4 Example dwarf_siblingofb call
+    @brief Accessing a DIE sibling.
+
+    Access to each DIE on a sibling list
+
+    @code
+*/
+int example4(Dwarf_Debug dbg,Dwarf_Die in_die,
+    Dwarf_Bool is_info,
+    Dwarf_Error *error)
 {
     Dwarf_Die return_sib = 0;
-    Dwarf_Error error = 0;
     int res = 0;
 
     /* in_die might be NULL or a valid Dwarf_Die */
-    res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, &error);
+    res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, error);
     if (res == DW_DLV_OK) {
         /* Use return_sib here. */
         dwarf_dealloc_die(return_sib);
         /*  return_sib is no longer usable for anything, we
             ensure we do not use it accidentally with: */
         return_sib = 0;
+        return res;
     }
+    return res;
 }
+/*! @endcode */
 
+/*! @defgroup example5 Example dwarf_child call
+    @brief Accessing a DIE child
+
+    If the DIE has children (for example
+    inner scopes in a function or members of
+    a struct) this retrieves the DIE which
+    appears first.  The child itself
+    may be  of its own sibling chain.
+
+    @code
+*/
 void example5(Dwarf_Die in_die)
 {
     Dwarf_Die return_kid = 0;
@@ -327,52 +372,65 @@ void example5(Dwarf_Die in_die)
         return_kid = 0;
     }
 }
+/*! @endcode */
 
-void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
+/*! @defgroup example6 Example dwarf_offdie_b call
+    @brief Accessing a DIE by its offset
+
+    @code
+*/
+int example6(Dwarf_Debug dbg,Dwarf_Off die_offset,
+    Dwarf_Bool is_info,
+    Dwarf_Error *error)
 {
-    Dwarf_Error error = 0;
     Dwarf_Die return_die = 0;
     int res = 0;
 
-    res = dwarf_offdie_b(dbg,die_offset,is_info,&return_die, &error);
-    if (res == DW_DLV_OK) {
-        /* Use return_die here. */
-        dwarf_dealloc_die(return_die);
-        /*  The original form still works:
-            dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
-        */
-        /*  return_die is no longer usable for anything, we
-            ensure we do not use it accidentally with: */
-        return_die = 0;
-    } else {
+    res = dwarf_offdie_b(dbg,die_offset,is_info,&return_die, error);
+    if (res != DW_DLV_OK) {
         /*  res could be NO ENTRY or ERROR, so no
             dealloc necessary.  */
+        return res;
     }
+    /* Use return_die here. */
+    dwarf_dealloc_die(return_die);
+    /*  return_die is no longer usable for anything, we
+        ensure we do not use it accidentally 
+        though a bit silly here given the return_die
+        goes out of scope... */
+    return_die = 0;
+    return res;
 }
+/*! @endcode */
 
-void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
+/*! @defgroup example7 Example dwarf_offset_given_die
+    @brief Finding the section offset of a CU DIE and the DIE
+
+    @code
+*/
+int example7(Dwarf_Debug dbg, Dwarf_Die in_die,
+    Dwarf_Bool    is_info,
+    Dwarf_Error * error)
 {
     int res = 0;
     Dwarf_Off cudieoff = 0;
     Dwarf_Die cudie = 0;
-    Dwarf_Error error = 0;
 
-    res = dwarf_CU_dieoffset_given_die(in_die,&cudieoff,&error);
+    res = dwarf_CU_dieoffset_given_die(in_die,&cudieoff,error);
     if (res != DW_DLV_OK) {
         /*  FAIL */
-        return;
+        return res;
     }
-    res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&error);
+    res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,error);
     if (res != DW_DLV_OK) {
         /* FAIL */
-        return;
+        return res;
     }
     /* do something with cu_die */
     dwarf_dealloc_die(cudie);
-    /*  The original form still works.
-        dwarf_dealloc(dbg,cudie, DW_DLA_DIE);
-    */
+    return res;
 }
+/*! @endcode */
 
 /* See also example1, which is more complete */
 int example8(Dwarf_Debug dbg, Dwarf_Die somedie, Dwarf_Error *error)
@@ -582,15 +640,20 @@ int example_discr_list(Dwarf_Debug dbg,
 }
 /*! @endcode */
 
-void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+/*! @defgroup example_loclistcv5
+    @brief Get access to DWARF5 loclist entries given Attribute
+
+    @code
+*/
+int example_loclistcv5(Dwarf_Attribute someattr,
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned lcount = 0;
     Dwarf_Loc_Head_c loclist_head = 0;
-    Dwarf_Error error = 0;
     int lres = 0;
 
     lres = dwarf_get_loclist_c(someattr,&loclist_head,
-        &lcount,&error);
+        &lcount,error);
     if (lres == DW_DLV_OK) {
         Dwarf_Unsigned i = 0;
 
@@ -620,7 +683,7 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                 &loclist_lkind,
                 &expression_offset,
                 &locdesc_offset,
-                &error);
+                error);
             if (lres == DW_DLV_OK) {
                 Dwarf_Unsigned j = 0;
                 int opres = 0;
@@ -640,7 +703,7 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                         j,&op,
                         &raw1,&raw2,&raw3,
                         &opd1, &opd2,&opd3,&offsetforbranch,
-                        &error);
+                        error);
                     if (opres == DW_DLV_OK) {
                         /*  Do something with the operators.
                             Usually you want to use opd1,2,3
@@ -649,35 +712,37 @@ void example_loclistcv5(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                             have already been incorporated
                             in opd1,2,3.  */
                     } else {
-                        dwarf_dealloc_error(dbg,error);
                         dwarf_loc_head_c_dealloc(loclist_head);
                         /*Something is wrong. */
-                        return;
+                        return opres;
                     }
                 }
             } else {
                 /* Something is wrong. Do something. */
                 dwarf_loc_head_c_dealloc(loclist_head);
-                dwarf_dealloc_error(dbg,error);
-                return;
+                return lres;
             }
         }
     }
     /*  Always call dwarf_loc_head_c_dealloc()
         to free all the memory associated with loclist_head.  */
-    if (error) {
-        dwarf_dealloc_error(dbg,error);
-    }
     dwarf_loc_head_c_dealloc(loclist_head);
     loclist_head = 0;
-    return;
+    return lres;
 }
+/*! @endcode */
 
-void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
+/*! @defgroup example_locexprc
+    @brief Getting the details of a location expression
+
+    @code
+*/
+int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     Dwarf_Unsigned expr_len,
     Dwarf_Half addr_size,
     Dwarf_Half offset_size,
-    Dwarf_Half version)
+    Dwarf_Half version,
+    Dwarf_Error*error)
 {
     Dwarf_Loc_Head_c head = 0;
     Dwarf_Locdesc_c locentry = 0;
@@ -694,7 +759,6 @@ void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
     Dwarf_Small lle_value = 0;
     Dwarf_Small loclist_source = 0;
     Dwarf_Unsigned i = 0;
-    Dwarf_Error error = 0;
 
     res2 = dwarf_loclist_from_expr_c(dbg,
         expr_bytes,expr_len,
@@ -703,9 +767,9 @@ void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         version,
         &head,
         &ulistlen,
-        &error);
+        error);
     if (res2 != DW_DLV_OK) {
-        return;
+        return res2;
     }
     /*  These are a location expression, not loclist.
         So we just need the 0th entry. */
@@ -716,13 +780,13 @@ void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         &rawlopc, &rawhipc, &debug_addr_unavail, &lopc, &hipc,
         &ulocentry_count, &locentry,
         &loclist_source, &section_offset, &locdesc_offset,
-        &error);
+        error);
     if (res2 == DW_DLV_ERROR) {
         dwarf_loc_head_c_dealloc(head);
-        return;
+        return res2;
     } else if (res2 == DW_DLV_NO_ENTRY) {
         dwarf_loc_head_c_dealloc(head);
-        return;
+        return res2;
     }
     /*  ASSERT: ulistlen == 1 */
     for (i = 0; i < ulocentry_count;++i) {
@@ -738,15 +802,17 @@ void example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         res2 = dwarf_get_location_op_value_d(locentry,
             i, &op,&opd1,&opd2,&opd3,
             &rawop1,&rawop2,&rawop3,&offsetforbranch,
-            &error);
+            error);
         /* Do something with the expression operator and operands */
         if (res2 != DW_DLV_OK) {
             dwarf_loc_head_c_dealloc(head);
-            return;
+            return res2;
         }
     }
     dwarf_loc_head_c_dealloc(head);
+    return DW_DLV_OK;
 }
+/*! @endcode */
 
 /* examplea */
 Dwarf_Unsigned
@@ -2060,10 +2126,17 @@ int exampledebuglink(Dwarf_Debug dbg, Dwarf_Error* error)
 }
 /*! @endcode */
 
+/*! @defgroup example_raw_rnglist Example accessing rnglist
+    @brief example_raw_rnglist Showing access to rnglist
+
+    This is accessing DWARF5 .debug_rnglists.
+
+    @code
+*/
 int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Unsigned count = 0;
-    int res = 0;
+    int            res = 0;
     Dwarf_Unsigned i = 0;
 
     res = dwarf_load_rnglists(dbg,&count,error);
@@ -2117,7 +2190,7 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
         {
             Dwarf_Unsigned curoffset = offset_of_first_rangeentry;
             Dwarf_Unsigned endoffset = offset_past_last_rangeentry;
-            int rese = 0;
+            int            rese = 0;
             Dwarf_Unsigned ct = 0;
 
             for ( ; curoffset < endoffset; ++ct ) {
@@ -2142,6 +2215,15 @@ int example_raw_rnglist(Dwarf_Debug dbg,Dwarf_Error *error)
     }
     return DW_DLV_OK;
 }
+/*! @endcode */
+
+/*! @defgroup example_rnglist_for_attribute Example accessing rnglist
+    @brief example_rnglist_for_attribute Showing access to rnglist
+
+    This is accessing DWARF5 .debug_rnglists.
+
+    @code
+*/
 int example_rnglist_for_attribute(Dwarf_Attribute attr,
     Dwarf_Unsigned attrvalue,Dwarf_Error *error)
 {
@@ -2206,3 +2288,4 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     dwarf_dealloc_rnglists_head(rnglhead);
     return DW_DLV_OK;
 }
+/*! @endcode */

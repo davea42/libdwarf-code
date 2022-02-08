@@ -1714,6 +1714,7 @@ DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
     @return
     Returns DW_DLV_OK etc.
 
+    @see example4
     @see dwarf_get_die_infotypes
 */
 DW_API int dwarf_siblingof_b(Dwarf_Debug dw_dbg,
@@ -1788,6 +1789,8 @@ DW_API int dwarf_cu_header_basics(Dwarf_Die dw_die,
     @return
     Returns DW_DLV_OK etc. Returns DW_DLV_NO_ENTRY
     if dw_die has no children.
+
+    @see example5
 */
 
 DW_API int dwarf_child(Dwarf_Die dw_die,
@@ -1831,6 +1834,7 @@ DW_API int dwarf_die_from_hash_signature(Dwarf_Debug dw_dbg,
     been seen at all, or the target offset is one
     libdwarf has seen before.
 
+
     @param dw_dbg
     The applicable Dwarf_Debug
     @param dw_offset
@@ -1849,6 +1853,8 @@ DW_API int dwarf_die_from_hash_signature(Dwarf_Debug dw_dbg,
     DW_DLV_NO_ENTRY is only possible if the offset
     is to a null DIE, and that is very unusual.
     Otherwise expect DW_DLV_ERROR.
+
+    @see example6
 
 */
 DW_API int dwarf_offdie_b(Dwarf_Debug dw_dbg,
@@ -1996,6 +2002,7 @@ DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int dw_form);
     (the passed in DIE can be any DIE).
 
     @see dwarf_get_cu_die_offset_given_cu_header_offset_b
+    @see example7
 
     @param dw_die
     The die being queried.
@@ -3845,6 +3852,8 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     DW_FORM_sec_offset DW_FORM_rnglistx
     (DW_AT_ranges in DWARF5).
 
+    @see example_rnglist_for_attribute
+
     @param dw_attr
     The attribute referring to .debug_rnglists
     @param dw_theform
@@ -3876,6 +3885,8 @@ DW_API int dwarf_rnglists_get_rle_head(Dwarf_Attribute dw_attr,
     Dwarf_Error    *      dw_error);
 
 /*! @brief access rnglist entry details.
+
+    @see example_rnglist_for_attribute
 
     @param dw_head
     The Dwarf_Rnglists_Head of interest.
@@ -3946,6 +3957,8 @@ DW_API void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head dw_head);
     needing CU or DIE information is called,
     so it is not necessary for you to call this
     in any normal situation.
+
+    @see example_raw_rnglist
 
     Doing it more than once is never necessary
     or harmful. There is no deallocation call
@@ -4061,7 +4074,9 @@ DW_API int dwarf_get_rnglist_context_basics(Dwarf_Debug dw_dbg,
     Describes the actual raw data recorded in a particular
     range entry.
 
-    We do not describe all these fields for now.
+    We do not describe all these fields for now, the
+    raw values are mostly useful for people debugging
+    compiler-generated DWARF.
 */
 DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned dw_contextnumber,
@@ -4078,6 +4093,7 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
 */
 /*! @brief Location Lists and Expressions
 
+    @see example_loclistcv5
     @param dw_attr
     The attribute must refer to a location expression
     or a location list, so must be DW_FORM_block,
@@ -4240,6 +4256,8 @@ DW_API int dwarf_get_location_op_value_d(Dwarf_Locdesc_c dw_locdesc,
     Useful if you have an expression block (from somewhere),
     do not have a Dwarf_Attribute available,
     and wish to deal with the expression.
+
+    @see example_locexprc
 
     @param dw_dbg
     The applicable Dwarf_Debug

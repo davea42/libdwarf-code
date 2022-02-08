@@ -617,6 +617,8 @@
     source:
     @see showsecgroups
 
+    @see examplesecgroup
+
     The function interface declarations:
 
     @see dwarf_sec_group_sizes
