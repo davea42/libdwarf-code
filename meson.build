@@ -204,6 +204,7 @@ summary({'OS': host_os,
          'dwarfdump': 'always',
          'libdwarfp': libdwarfp_output,
          'dwarfgen': have_libdwarfp ? 'yes' : 'no',
+         'documentation': have_doc,
         }, section: 'Configuration Options Summary:')
 
 summary({'prefix': dir_prefix,
