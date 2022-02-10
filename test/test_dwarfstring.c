@@ -502,7 +502,7 @@ test6(void)
     return 0;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     test1();
     test2();
@@ -514,4 +514,7 @@ int main()
         exit(1);
     }
     exit(0);
+
+    (void)argc;
+    (void)argv;
 }

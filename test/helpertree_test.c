@@ -50,7 +50,7 @@
 */
 
 struct Helpertree_Base_s testbase;
-int main()
+int main(int argc, char *argv[])
 {
     struct  Helpertree_Map_Entry_s *re = 0;
     int failcount = 0;
@@ -88,4 +88,7 @@ int main()
     }
     printf("PASS helpertree\n");
     return 0;
+
+    (void)argc;
+    (void)argv;
 }

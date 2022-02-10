@@ -69,7 +69,7 @@ char *samples[]  = {
 0
 };
 
-int main()
+int main(int argc, char *argv[])
 {
     char *e1 = 0;
     char *e2= 0;
@@ -99,4 +99,7 @@ int main()
     }
     printf("PASS makename test\n");
     return 0;
+
+    (void)argc;
+    (void)argv;
 }
