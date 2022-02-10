@@ -2245,7 +2245,7 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     DW_DLV_NO_ENTRY means there are no children of the DIE,
     hence no list of child offsets.
 
-    @see exampleoffsetlist
+    @see exampleoffset_list
 */
 DW_API int dwarf_offset_list(Dwarf_Debug dw_dbg,
     Dwarf_Off         dw_offset,
@@ -2486,7 +2486,10 @@ DW_API int dwarf_arrayorder(Dwarf_Die dw_die,
     If it returns DW_DLV_ERROR and dw_error is non-null
     it creates an Dwarf_Error and places it in this argument.
     Usually returns DW_DLV_OK.
+
     @see example1
+
+    @see example8
 */
 DW_API int dwarf_attrlist(Dwarf_Die dw_die,
     Dwarf_Attribute** dw_attrbuf,
@@ -3115,6 +3118,8 @@ DW_API int dwarf_srcfiles(Dwarf_Die dw_cu_die,
 
     Returns Dwarf_Line_Context pointer, needed for
     access to line table data.
+
+    @see exampled
 
     @param dw_cudie
     The Compilation Unit (CU) DIE of interest.
@@ -3792,6 +3797,8 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     With a specific option dwarfdump can do this.
     This not a normal thing to do!
 
+    @see examplev
+
     @param dw_dbg
     The Dwarf_Debug of interest
     @param dw_rangesoffset
@@ -4094,6 +4101,9 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
 /*! @brief Location Lists and Expressions
 
     @see example_loclistcv5
+
+    @see examplea
+
     @param dw_attr
     The attribute must refer to a location expression
     or a location list, so must be DW_FORM_block,
@@ -4466,6 +4476,8 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
 
 /*! @brief DWARF5 .debug_macro access via Dwarf_Die
 
+    @see examplep5
+
     @param dw_die
     The CU DIE of interest.
     @param dw_version_out
@@ -4774,6 +4786,8 @@ DW_API char* dwarf_find_macro_value_start(char * dw_macro_string);
 /*! @brief Getting .debug_macinfo macro details.
 
     @link examplep2 An example calling this function @endlink
+    
+    @see examplep2
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -4812,8 +4826,7 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
     See DWARF5 Section 6.4 Call Frame Information,
     page 171.
 
-    For an example see
-    @link exampleq Example getting FDE CIE lists @endlink
+    @see exampleq
 
     The FDE array returned through dw_fde_data
     is sorted low-to-high  by the lowest-pc in each FDE.
@@ -5010,6 +5023,7 @@ DW_API int dwarf_get_cie_index(Dwarf_Cie dw_cie,
 /*! @brief Returns length and pointer to access frame instructions.
 
     @see dwarf_expand_frame_instructions
+    @see examples
 
     @param dw_fde
     Pass in the FDE of interest.
@@ -5252,6 +5266,9 @@ DW_API int dwarf_get_fde_augmentation_data(Dwarf_Fde dw_fde,
     Call dwarf_get_fde_instr_bytes() or
     dwarf_get_cie_info_b() to get the initial instruction bytes
     and instructions byte count you wish to expand.
+
+    @see examples
+
     @param dw_cie
     The cie relevant to the instructions.
     @param dw_instructionspointer
@@ -5281,6 +5298,9 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
     It is a string but we test individual bytes instead
     of using string compares. Do not free any of the
     returned values.
+
+    @see examples
+
     @param dw_head
     A head record
     @param dw_instr_index
@@ -6401,6 +6421,8 @@ DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
 /*! @brief  Access to DWARF3, DWARF4 .debug_pubtypes section.
 
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
+
+    @see exampleg
 */
 
 DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
@@ -6428,7 +6450,10 @@ DW_API int dwarf_pubtype_name_offsets(Dwarf_Type dw_type,
 
 /*! @brief  Access to SGI/IRIX .debug_funcs section.
     Static function names and offsets.
+
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
+
+    @see examplej
 */
 DW_API int dwarf_get_funcs(Dwarf_Debug dw_dbg,
     Dwarf_Func  ** dw_funcs,
@@ -6456,6 +6481,8 @@ DW_API int dwarf_func_name_offsets(Dwarf_Func dw_func,
 /*! @brief  Access to SGI/IRIX .debug_types section.
     Static types names and offsets.
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
+
+    @see examplel
 */
 DW_API int dwarf_get_types(Dwarf_Debug dw_dbg,
     Dwarf_Type  ** dw_types,
@@ -6486,6 +6513,8 @@ DW_API int dwarf_type_name_offsets(Dwarf_Type dw_type,
 /*! @brief  Access to SGI/IRIC .debug_vars section.
     File-scope static variable names
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
+
+    @see examplen
 */
 DW_API int dwarf_get_vars(Dwarf_Debug dw_dbg,
     Dwarf_Var  ** dw_vars,
@@ -6517,7 +6546,10 @@ DW_API int dwarf_var_name_offsets(Dwarf_Var dw_var,
 
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
+    @see exampleh
+
     @see https://en.wikipedia.org/wiki/Weak_symbol
+
 */
 DW_API int dwarf_get_weaks(Dwarf_Debug dw_dbg,
     Dwarf_Weak  ** dw_weaks,
@@ -6631,6 +6663,8 @@ DW_API int dwarf_get_gnu_index_block_entry(
 /*! @brief Open access to the .gdb_index section.
 
     The section is a single table one thinks.
+
+    @see examplew
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -6765,6 +6799,8 @@ DW_API int dwarf_gdbindex_types_culist_entry(
 
 /*! @brief Get access to gdbindex address area
 
+    @see examplewgdbindex
+
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_addressarea_list_length
@@ -6848,6 +6884,8 @@ DW_API int dwarf_gdbindex_symboltable_entry(
     Dwarf_Error    * dw_error);
 
 /*! @brief Get access to a cuvector
+
+    @see examplex
 
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
@@ -7023,6 +7061,9 @@ DW_API int dwarf_get_xu_index_section_type(
 
 /*! @brief Get a Hash Entry 
 
+
+    @see examplez/x
+
     @param dw_xuhdr
     Pass in an open header pointer.
     @param dw_index
@@ -7049,6 +7090,9 @@ DW_API int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header dw_xuhdr,
 
 /*  Columns 0 to L-1,  valid. */
 /*! @brief get DW_SECT value for a column.
+
+    @see exampleza
+
     @param dw_xuhdr
     Pass in an open header pointer.
     @param dw_column_index
@@ -7427,17 +7471,7 @@ DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
 
     DW_DLV_ERROR is never returned.
 
-    Here is an example of correct use.
-
-    @code
-    char *name = 0;
-    int res = dwarf_get_AT_name(DW_AT_member,&name);
-    if (res == DW_DLV_OK) {
-        Here name points to "DW_AT_member"
-    } else {
-        Here name is left NULL.
-    }
-    @endcode
+    @see examplezb
 
     @{
 */
