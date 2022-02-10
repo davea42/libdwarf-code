@@ -479,7 +479,7 @@ test3(Dwarf_Debug dbg)
     dwarfstring_destructor(&linkstring_fullpath);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     Dwarf_Debug dbg = 0;
     struct Dwarf_Debug_s db;
@@ -495,4 +495,7 @@ int main()
         return 1;
     }
     return 0;
+
+    (void)argc;
+    (void)argv;
 }
