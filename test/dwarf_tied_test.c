@@ -194,7 +194,7 @@ delone(void**tree,unsigned long instance, unsigned ct)
 
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     void *tied_data = 0;
     unsigned u = 0;
@@ -215,4 +215,7 @@ int main()
     }
     printf("PASS tsearch works for Dwarf_Tied_Entry_s.\n");
     return 0;
+
+    (void)argc;
+    (void)argv;
 }

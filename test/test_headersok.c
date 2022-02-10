@@ -9,7 +9,7 @@
 
 /*  The assignments and tests are to avoid compiler warnings
     with -Wall */
-int main()
+int main(int argc, char *argv[])
 {
     const char *y = reloc_type_names_PPC64[0];
     if (!y) {
@@ -40,4 +40,7 @@ int main()
         return 1;
     }
     return 0;
+
+    (void)argc;
+    (void)argv;
 }

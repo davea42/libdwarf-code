@@ -51,7 +51,7 @@ check_result(int actres, int expres,
     return errcount;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     int res = 0;
     int errcount = 0;
@@ -188,4 +188,7 @@ int main()
         exit(1);
     }
     return 0;
+
+    (void)argc;
+    (void)argv;
 }

@@ -36,7 +36,7 @@
     See reloc_map and section_map in command_options.c */
 #include "dd_section_bitmaps.h"
 
-int main()
+int main(int argc, char *argv[])
 {
     unsigned i = 1;
 
@@ -68,4 +68,7 @@ int main()
     }
     printf("PASS section maps\n");
     return 0;
+
+    (void)argc;
+    (void)argv;
 }

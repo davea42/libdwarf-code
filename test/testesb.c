@@ -63,7 +63,7 @@ validate_esb(int instance,
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 #ifdef _WIN32
     /* Open the null device used during formatting printing */
@@ -400,4 +400,7 @@ int main()
     }
     printf("PASS esb test\n");
     exit(0);
+
+    (void)argc;
+    (void)argv;
 }
