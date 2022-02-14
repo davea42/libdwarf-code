@@ -63,7 +63,7 @@ tests = [
   ],
   [
    'test_safe_strcpy.c',
-   '../src/bin/dwarfdump/dd_safe_strcpy.c',
+   '../src/lib/libdwarf/dwarf_safe_strcpy.c',
   ],
   [
    'test_regex.c',

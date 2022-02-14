@@ -62,7 +62,7 @@ testx(const char *expr,
 }
 
 int
-main()
+main(int argc, char *argv[])
 {
     testx("u.leb",DW_DLV_OK,"local_dwarf_decode_u",
         DW_DLV_NO_ENTRY,__LINE__);
@@ -145,4 +145,7 @@ main()
     }
     printf("PASS  test_regex\n");
     return 0;
+
+    (void)argc;
+    (void)argv;
 }
