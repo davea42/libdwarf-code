@@ -1,3 +1,278 @@
+2022-02-14:  David Anderson
+    commit 84d0a968658c3646a542ebec688056e380375378
+
+    Mostly making meson build in a random far away
+    directory work properly.
+    CHanged the search for include directories
+    from -I../dwarfdump (etc)  to  harmless -I'.'
+    and
+    +localinclude = include_directories('../dwarfdump')
+    and
+    -  include_directories : config_dir,
+    +  include_directories : [config_dir, localinclude],
+
+            modified:   src/bin/attr_form/meson.build
+            modified:   src/bin/buildopstab/meson.build
+            modified:   src/bin/gennames/meson.build
+            modified:   src/bin/tag_attr/meson.build
+            modified:   src/bin/tag_tree/meson.build
+
+    Just added small comment
+            modified:   src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
+
+    Now joins other places and uses "libdwarf.h" in the include stmt.
+            modified:   src/lib/libdwarfp/libdwarfp.h
+            modified:   test/meson.build
+
+    Deleted pointless blank line.
+            modified:   test/test_linkedtopath.c
+
+    Now int main(void) as simpler way to have valid main prototype.
+    Deleted if 0 ... endif pair with nothing in it.
+            modified:   test/test_regex.c
+
+    Deleted extra blank lines.
+            modified:   test/test_safe_strcpy.c
+
+2022-02-14:  David Anderson
+    commit b83bcf6111a2fdade3fcd49f233dcc8a7d055edf
+    Merge: ef5a839d ff79942b
+
+    Merge pull request #73 from vtorri/master
+
+    fix tests compilation with meson
+
+2022-02-12:  Vincent Torri
+    commit ff79942bfed5a3dfbff75d96c616f2ccb6529754
+
+    fix tests compilation with meson
+
+            modified:   test/meson.build
+            modified:   test/test_linkedtopath.c
+            modified:   test/test_regex.c
+
+2022-02-10:  David Anderson
+    commit ef5a839d8d9e258f5a3ba8bf17ad9bbd7956128f
+
+    Correcteting the example source and adding doxygen
+    comments so it shows up in doxygen output.
+            modified:   doc/checkexamples.c
+    Updated date
+            modified:   doc/libdwarf.dox
+    Now with all available examples
+    (meaning checkexamples.c code) referenced in doxygen
+    output.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-02-10:  David Anderson
+    commit 1b225518b5286b90ac7cace55edf887585f7e7d3
+    Merge: 0a28232a fe5f9f35
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Merging meson with added testing.
+
+2022-02-10:  David Anderson
+    commit fe5f9f35b9b7f1573472170dfe315e924c099887
+    Merge: 5ccaf65e 18eff97c
+
+    Merge pull request #72 from vtorri/master
+
+    Add initial meson test support
+
+2022-02-10:  Vincent Torri
+    commit 18eff97c11ca201f159727f9f21ade2d3f5ddd9b
+
+    Add initial meson test support
+
+            new file:   test/meson.build
+            modified:   meson.build
+            modified:   test/dwarf_tied_test.c
+            modified:   test/getnametest.c
+            modified:   test/getopttest.c
+            modified:   test/helpertree_test.c
+            modified:   test/makename_test.c
+            modified:   test/section_bitmaps_test.c
+            modified:   test/test_dwarfstring.c
+            modified:   test/test_extra_flag_strings.c
+            modified:   test/test_headersok.c
+            modified:   test/test_linkedtopath.c
+            modified:   test/testesb.c
+
+2022-02-09:  David Anderson
+    commit 0a28232a8baab8b965c5ccd0909f33a4c1405bdc
+
+    Updated date and version number
+
+2022-02-08:  David Anderson
+    commit 625220d05cf52bf03b98abc1fdd09772461b48c6
+
+    More examples  of use, data locations and more.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-02-08:  David Anderson
+    commit 5ccaf65e403a7f220a8471a41e312e2d284089f0
+    Merge: f3ebe9e5 f92425ea
+
+    Merge pull request #71 from vtorri/vtorri_doc
+
+    Add Doxygen support for autotools and meson
+
+2022-02-08:  Vincent Torri
+    commit f92425ea51f92fe4112a613844dd8a11059998b3
+
+    Add Doxygen support for autotools and meson
+
+            modified:   configure.ac
+            modified:   doc/Makefile.am
+            modified:   doc/meson.build
+            modified:   meson.build
+            modified:   meson_options.txt
+
+2022-02-05:  David Anderson
+    commit f3ebe9e51d198a5d1eb161d894fa48d6ab6b0f4d
+    Merge: 67ea802c 5be0ddf3
+
+    Merge pull request #70 from vtorri/vtorri_man
+
+    install man pages
+
+2022-02-05:  Vincent Torri
+    commit 5be0ddf3770997815aed3961900aec4297ed1f8a
+
+    install man pages
+
+            new file:   doc/meson.build
+            modified:   meson.build
+
+2022-02-04:  David Anderson
+    commit 67ea802cdc8e1d448bac4bc8affd569877f01b09
+
+    Much improved doc of section groups handling.
+            modified:   doc/Doxyfile
+            modified:   doc/libdwarf.dox
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+
+2022-02-04:  David Anderson
+    commit 2fd9d252a60e920451483a1d0ca6f57d35df558b
+
+    Added words about the new section groups example.
+    dwarfexample/showsectiongroups.c
+            modified:   doc/libdwarf.dox
+    A new example making it easy to see section
+    group information in an object file.
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+
+2022-02-03:  David Anderson
+    commit a61e4036ed64b9686cb73b33510fc5efa9c7da61
+
+    Updated date, added version
+            modified:   libdwarf.dox
+
+2022-02-03:  David Anderson
+    commit ad8d49dcffe8cf217c79eaa5e6413823194d3c8f
+
+    Mentions src/bin/dwarfexample/showsectiongroups.c
+            modified:   doc/libdwarf.dox
+
+2022-02-03:  David Anderson
+    commit a9e0ea38e9fcbc69c9472e484905844dcd261e27
+
+    Now with section groups documentation.
+            modified:   doc/jitaccess.dox
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-02-03:  David Anderson
+    commit f62b71b0aa3415cd338cb3926ebe25f004cb443f
+
+    Now lets user choose the target group number.
+    Try showsectiongroups with no arguments.
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+
+2022-02-03:  David Anderson
+    commit 78cf3249628332b05343d091f54b1c87f1aa15ac
+
+    Add, in the initial comment, the libdwarf source path.
+            modified:   src/bin/dwarfexample/jitreader.c
+
+2022-02-03:  David Anderson
+    commit e41e4c2e947c88104c4f63caf04008e1cea15d04
+
+    Adding a new example, to show section groups.
+            modified:   src/bin/dwarfexample/CMakeLists.txt
+            modified:   src/bin/dwarfexample/Makefile.am
+            new file:   src/bin/dwarfexample/showsectiongroups.c
+
+2022-02-03:  David Anderson
+    commit 131348938d53053a276c42a80630f704e20ab0f5
+
+            modified:   src/lib/libdwarfp/CMakeLists.txt
+    Somehow dwarf_pro_reloc_stream.c vanished from the
+    source list.   Added back in so libdwarfp is
+    complete.
+
+2022-02-03:  David Anderson
+    commit c1fb754e6f67755ad546e1e4feacc33d64000ec1
+    Merge: 97481fc7 7a8dc82f
+
+    Merge pull request #69 from vtorri/vtorri_libdwarfp
+
+    reorder and simplify libdwarfp header files
+
+2022-02-03:  Vincent Torri
+    commit 7a8dc82f17a2fad20dbbaec07a651ea8008b572e
+
+    include stdio.h for tests
+
+2022-02-03:  Vincent Torri
+    commit 7bcd33f00db6127adbcd057ffc21705c3f3d8ad0
+
+    reorder and simplify libdwarfp header files
+
+            modified:   meson.build
+            modified:   src/lib/libdwarfp/dwarf_pro_alloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_arange.c
+            modified:   src/lib/libdwarfp/dwarf_pro_debug_sup.c
+            modified:   src/lib/libdwarfp/dwarf_pro_die.c
+            modified:   src/lib/libdwarfp/dwarf_pro_dnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_error.c
+            modified:   src/lib/libdwarfp/dwarf_pro_expr.c
+            modified:   src/lib/libdwarfp/dwarf_pro_finish.c
+            modified:   src/lib/libdwarfp/dwarf_pro_forms.c
+            modified:   src/lib/libdwarfp/dwarf_pro_frame.c
+            modified:   src/lib/libdwarfp/dwarf_pro_funcs.c
+            modified:   src/lib/libdwarfp/dwarf_pro_incl.h
+            modified:   src/lib/libdwarfp/dwarf_pro_init.c
+            modified:   src/lib/libdwarfp/dwarf_pro_line.c
+            modified:   src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
+            modified:   src/lib/libdwarfp/dwarf_pro_macinfo.c
+            modified:   src/lib/libdwarfp/dwarf_pro_pubnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_stream.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_symbolic.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+            modified:   src/lib/libdwarfp/dwarf_pro_types.c
+            modified:   src/lib/libdwarfp/dwarf_pro_vars.c
+            modified:   src/lib/libdwarfp/dwarf_pro_weaks.c
+
+2022-02-01:  David Anderson
+    commit 97481fc7b01b4065bed4ab1609c7902b7e0db259
+
+    New doxygen comments on COMDAT and .dwo section
+    (section groups)
+            modified:   doc/libdwarf.dox
+    Possibly...all functions documented in doxygen
+    comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-01-31:  David Anderson
+    commit b0016255666bcec03abcfd9d20312bdaa2d12d6b
+
+    Bringing up to date with git log
+            modified:   ChangeLog
+
 2022-01-31:  David Anderson
     commit fd7bf02c1abd79b61db75496d7f947ae25a0d281
 
