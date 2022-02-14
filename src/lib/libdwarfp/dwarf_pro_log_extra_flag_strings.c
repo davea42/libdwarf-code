@@ -36,7 +36,7 @@
 
 #include "dwarf.h"
 #include "dwarf_string.h"
-#include "libdwarfp.h"
+#include "libdwarfp.h" /* includes libdwarf.h */
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 

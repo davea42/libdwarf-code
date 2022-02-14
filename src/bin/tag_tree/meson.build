@@ -16,12 +16,13 @@ tag_tree_src = [
 tag_tree_args = [
   '-DTRIVIAL_NAMING',
   '-DBUILD_NONLIB_SOURCE',
-  '-I../src/bin/dwarfdump'
 ]
+
+localinclude = include_directories('../dwarfdump')
 
 executable('tag_tree', tag_tree_src,
   c_args : [ dev_cflags, libdwarf_args, tag_tree_args ],
   dependencies : libdwarf,
-  include_directories : config_dir,
+  include_directories : [config_dir,localinclude],
   install : false
 )

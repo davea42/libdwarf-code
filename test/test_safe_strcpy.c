@@ -12,8 +12,6 @@
 #endif
 #include "dwarf_safe_strcpy.h"
 
-
-
 static int
 test1(char *buf,unsigned blen,
     const char *inp, unsigned ilen,

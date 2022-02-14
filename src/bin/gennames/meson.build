@@ -4,9 +4,10 @@ gennames_src = [
   'gennames.c'
 ]
 
+localinclude = include_directories('../dwarfdump')
 executable('gennames', gennames_src,
-  c_args : [ dev_cflags, libdwarf_args, '-I../src/bin/dwarfdump' ],
+  c_args : [ dev_cflags, libdwarf_args, '-I.' ],
   dependencies : libdwarf,
-  include_directories : config_dir,
+  include_directories : [ config_dir, localinclude],
   install : false
 )

@@ -62,7 +62,7 @@ testx(const char *expr,
 }
 
 int
-main(int argc, char *argv[])
+main(void)
 {
     testx("u.leb",DW_DLV_OK,"local_dwarf_decode_u",
         DW_DLV_NO_ENTRY,__LINE__);
@@ -137,15 +137,10 @@ main(int argc, char *argv[])
     testx("a[fx]+b[cd]",DW_DLV_OK,"afffbdddy",DW_DLV_OK,__LINE__);
     testx("a[fx]+b[cd]",DW_DLV_OK,"afffdddy",
         DW_DLV_NO_ENTRY,__LINE__);
-#if 0
-#endif
     if (errcount > 0) {
         printf("\n\nFAIL test_regex errcount %d\n",errcount);
         return 1;
     }
     printf("PASS  test_regex\n");
     return 0;
-
-    (void)argc;
-    (void)argv;
 }
