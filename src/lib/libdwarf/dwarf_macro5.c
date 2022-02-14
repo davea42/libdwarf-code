@@ -47,10 +47,10 @@
 #include "dwarf_macro5.h"
 #include "dwarf_string.h"
 
-#define MC_SENTINAL  0xada
+#define MC_SENTINEL  0xada
 
 #define CHECKNULLCONTEXT(m,d,e)             \
-if (!(m) || (m)->mc_sentinel != MC_SENTINAL) {  \
+if (!(m) || (m)->mc_sentinel != MC_SENTINEL) {  \
     if (m) { (d) = (m)->mc_dbg;  }            \
     _dwarf_error_string((d), (e),               \
         DW_DLE_BAD_MACRO_HEADER_POINTER,    \
@@ -1624,7 +1624,7 @@ _dwarf_macro_constructor(Dwarf_Debug dbg, void *m)
     /* Nothing to do, the space is zeroed out */
     Dwarf_Macro_Context mc= (Dwarf_Macro_Context)m;
     /* Arbitrary sentinel. For debugging. */
-    mc->mc_sentinel = MC_SENTINAL;
+    mc->mc_sentinel = MC_SENTINEL;
     mc->mc_dbg = dbg;
     return DW_DLV_OK;
 }
