@@ -6,9 +6,9 @@ MAINTAINERCLEANFILES = Makefile.in
 doc: buildconsumerpdf buildproducerpdf
 # These pdf builds are to be undertaken only on request.
 buildconsumerpdf:
-	cp $(top_srcdir)/doc/libdwarf.mm .
-	sh $(top_srcdir)/doc/pdfbld.sh -c
-	cp libdwarf.pdf $(top_srcdir)/doc/
+	doxygen $(top_srcdir)/doc/Doxyfile
+	cd latex ; make
+	cp latex/refman.pdf $(top_srcdir)/doc/libdwarf.pdf 
 
 buildproducerpdf:
 	cp $(top_srcdir)/doc/libdwarfp.mm .
@@ -49,7 +49,6 @@ mips_extensions.pdf \
 checkexamples.c \
 dwarfdump.1 \
 dwarfgen.1  \
-libdwarf.mm \
 libdwarf.pdf \
 libdwarfp.mm \
 libdwarfp.pdf \
