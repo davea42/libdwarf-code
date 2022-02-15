@@ -35,20 +35,25 @@ Just like configure, except instead of configure do:
     cmake  /tmp/libdwarf-0.3.4
     make
     ctest -R self
+
 ### meson build
 
 This will be revised, but this should work
-Instead of configure, do
+
+For the simplest example:
+
+    meson /tmp/libdwarf-0.3.4
+    ninja -j8
+
+For a faster build with install
 
     prefx=/tmp/installtargetmeson
     export CFLAGS="-g -pipe"
     export CXXFLAGS="-g -pipe"
     meson /tmp/libdwarf-0.3.4  \
       --prefix=$prefx \
-      --buildtype=plain \
       --default-library shared
-    ninja -j8
-    # Or ninja -j8 install
+    ninja -j8 install
 
 ## BUILDING from a git clone of the source tree with configure
 
@@ -76,8 +81,7 @@ do:
 
 It's always recommended to do cmake builds in a clean directory.
 See also README.cmake
-Start just as in the above configure steps by running
-autogen.sh, then instead of configure do:
+Instead of configure do:
 
     cmake  /path/to/code
     make

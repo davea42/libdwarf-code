@@ -36,7 +36,7 @@ hmmes ="  version: '"
 hmmee = "'"
 def updatemesonversion(lcount, l, sver, maj, min, mic):
     if l.startswith(hmmes):
-       s = hmmes,sver,hmmee
+       s = ''.join([hmmes,sver,hmmee,",\n"])
        return s, int(lcount)+1
     return l,lcount
 
