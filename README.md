@@ -37,18 +37,18 @@ Just like configure, except instead of configure do:
     ctest -R self
 ### meson build
 
-  This will be revised, but this should work
-  Instead of configure, do
+This will be revised, but this should work
+Instead of configure, do
 
-  prefx=/tmp/installtargetmeson
-  export CFLAGS="-g -pipe"
-  export CXXFLAGS="-g -pipe"
-  meson /tmp/libdwarf-0.3.4  \
+    prefx=/tmp/installtargetmeson
+    export CFLAGS="-g -pipe"
+    export CXXFLAGS="-g -pipe"
+    meson /tmp/libdwarf-0.3.4  \
       --prefix=$prefx \
       --buildtype=plain \
       --default-library shared
-  ninja -j8
-  # Or ninja -j8 install
+    ninja -j8
+    # Or ninja -j8 install
 
 ## BUILDING from a git clone of the source tree with configure
 
