@@ -4,8 +4,8 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
 
 # This is libdwarf README.md
 
-Updated 29 January 2022
-For release libdwarf-0.3.3
+Updated 24 February 2022
+For release libdwarf-0.3.4
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
@@ -20,9 +20,9 @@ recommended practice.
     rm -rf /tmp/build
     mkdir /tmp/build
     cd /tmp
-    tar xf <path to>/libdwarf-0.3.3.tar.xz
+    tar xf <path to>/libdwarf-0.3.4.tar.xz
     cd  /tmp/build
-    /tmp/libdwarf-0.3.3/configure
+    /tmp/libdwarf-0.3.4/configure
     make
     make check
 
@@ -32,9 +32,23 @@ README.cmake has details on the available cmake options.
 
 Just like configure, except instead of configure do:
 
-    cmake  /tmp/libdwarf-0.3.3
+    cmake  /tmp/libdwarf-0.3.4
     make
     ctest -R self
+### meson build
+
+  This will be revised, but this should work
+  Instead of configure, do
+
+  prefx=/tmp/installtargetmeson
+  export CFLAGS="-g -pipe"
+  export CXXFLAGS="-g -pipe"
+  meson /tmp/libdwarf-0.3.4  \
+      --prefix=$prefx \
+      --buildtype=plain \
+      --default-library shared
+  ninja -j8
+  # Or ninja -j8 install
 
 ## BUILDING from a git clone of the source tree with configure
 
