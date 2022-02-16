@@ -200,6 +200,6 @@ if __name__ == "__main__":
     updatefile("configure.ac", "ac", sver, maj, min, mic)
     updatefile("CMakeLists.txt", "cm", sver, maj, min, mic)
     updatefile("src/lib/libdwarf/libdwarf.h", "lh", sver, maj, min, mic)
-    updatefile("doc/libdwarf.mm", "mm", sver, maj, min, mic)
+    #updatefile("doc/libdwarf.mm", "mm", sver, maj, min, mic)
     updatefile("doc/libdwarfp.mm", "mm", sver, maj, min, mic)
     updatefile("meson.build", "mmeson", sver, maj, min, mic)
