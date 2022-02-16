@@ -1,3 +1,80 @@
+2022-02-16:  David Anderson
+    commit b693bf3f2826b129cfd41d184744411815f42dd4
+
+    File was never distributed, and now is unused.
+            deleted:    doc/ChangesToLibdwarf.pdf
+
+    Now builds libdwarf.pdf from the doxygen data
+            modified:   doc/Makefile.am
+            modified:   doc/libdwarf.pdf
+            modified:   doc/libdwarfp.pdf
+            modified:   doc/pdfbld.sh
+
+2022-02-16:  David Anderson
+    commit 3538839bb713e483d992f217693d8db44089260b
+
+    We no longer use libdwarf.mm
+            deleted:    doc/libdwarf.mm
+
+    No longer updates version in libdwarf.mm
+            modified:   tools/updatesemanticversion.py
+
+2022-02-15:  David Anderson
+    commit c4ace46963d86d3e24d95ac6755563987cd6fb28
+
+    Upldate meson
+            modified:   README
+            modified:   README.md
+
+    Corrected version
+            modified:   meson.build
+
+    Now correctly updates the version in the meson
+    build.
+            modified:   tools/updatesemanticversion.py
+
+2022-02-14:  David Anderson
+    commit e76ff528c3927c6a8d7a115a029c694f000e5156
+
+    README is identical to README.md
+            modified:   README
+
+2022-02-14:  David Anderson
+    commit a71d4ccb214ee508a6b9962725ce968ff869cde5
+
+            modified:   README.md
+
+2022-02-14:  David Anderson
+    commit d179cb4b06ff9982f42afb2e436e80bb5508a201
+
+    Adding a meson build script (first cut,
+    it will change a bit)
+            modified:   README
+            modified:   README.md
+
+2022-02-14:  David Anderson
+    commit 305cfb2aaa05a48d6a239a30adce4ff452a30854
+
+    Small change for doxygen. Not the final word.
+            modified:   Makefile.am
+    Tweaked wording a bit.
+            modified:   libdwarf.dox
+    regenerated.
+            modified:   libdwarf.pdf
+
+2022-02-14:  David Anderson
+    commit ecb7db0181ee1d8376cec2a57f510b950c913305
+
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+     MC_SENTINAL -> MC_SENTINEL
+    Private to this one source file.
+
+2022-02-14:  David Anderson
+    commit cfe1198f456fc581cfd442a4ca1db337cc5d35c0
+
+    Bringing in January git log, bringing up to date
+            modified:   ChangeLog
+
 2022-02-14:  David Anderson
     commit 84d0a968658c3646a542ebec688056e380375378
 
