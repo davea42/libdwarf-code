@@ -3,17 +3,17 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
+### This is meant to be run in the doc directory itself.
+### Not to be run from anywhere but in the source tree.
+
 doc: buildconsumerpdf buildproducerpdf
 # These pdf builds are to be undertaken only on request.
 buildconsumerpdf:
-	doxygen $(top_srcdir)/doc/Doxyfile
-	cd latex ; make
-	cp latex/refman.pdf $(top_srcdir)/doc/libdwarf.pdf 
+	sh $(top_srcdir)/doc/pdfbld.sh -c
 
 buildproducerpdf:
-	cp $(top_srcdir)/doc/libdwarfp.mm .
+	rm libdwarfp.pdf
 	sh $(top_srcdir)/doc/pdfbld.sh -p
-	cp libdwarfp.pdf $(top_srcdir)/doc/
 
 man_MANS = dwarfdump.1
 if HAVE_DWARFGEN

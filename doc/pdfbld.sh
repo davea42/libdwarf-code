@@ -6,6 +6,14 @@
 # and should never change, so we do not build or
 # install mips_extensions.pdf
 
+here=`pwd`
+
+#if [ ! "$(top_srcdir)/doc" = "$here" ] 
+#then
+#  echo "Run doc/make doc only in $(top_srcdir)/doc"
+#  echo "Give up as we are in $here"
+#  exit 1
+#fi
 c="n"
 p="n"
 if [ $# -lt 1 ]
@@ -13,6 +21,7 @@ then
   echo "Usage: pdfbld.sh [-c] [-p]"
   echo "where: -c formats libdwarf.pdf"
   echo "where: -p formats libdwarfp.pdf"
+  echo "where: Run it only in the doc source directory"
   exit 1
 fi
 for i in $*
@@ -20,8 +29,6 @@ do
   case $i in
     -c) c="y"
        echo "Build libdwarf consumer pdf for $src"
-       fin=libdwarf.mm
-       fout=libdwarf.pdf
        shift ;;
     -p) p="y"
        fin=libdwarfp.mm
@@ -32,6 +39,35 @@ do
        exit 1 ;;
   esac
 done
+
+ckres() {
+  if [ $1 -eq 0 ]
+  then
+    return 0
+  fi
+  echo "FAIL $2"
+  exit 1
+}
+
+if [ $c = "y" ]
+then
+  doxygen
+  ckres $? "doxygen FAIL "
+  cd latex 
+  ckres $? "cd to latex dir FAIL "
+  make
+  ckres $? "make latex fail"
+  cd ..
+  ckres $? "cd .. FAIL "
+  cp latex/refman.pdf libdwarf.pdf 
+  ckres $? "Copy refman.pdf FAIL"
+fi
+
+if [ ! $p = "y" ]
+then
+  exit 0
+fi
+
 src=$1
 echo "Build pdf for $src"
 
