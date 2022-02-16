@@ -52,15 +52,15 @@ ckres() {
 if [ $c = "y" ]
 then
   doxygen
-  ckres $? "doxygen FAIL "
+  ckres $? "doc doxygen FAIL "
   cd latex 
-  ckres $? "cd to latex dir FAIL "
+  ckres $? "doc cd to latex dir FAIL "
   make
-  ckres $? "make latex fail"
+  ckres $? "doc make latex fail"
   cd ..
-  ckres $? "cd .. FAIL "
+  ckres $? "doc cd .. FAIL "
   cp latex/refman.pdf libdwarf.pdf 
-  ckres $? "Copy refman.pdf FAIL"
+  ckres $? "doc copy latex/refman.pdf libdwarf.pdf FAIL"
 fi
 
 if [ ! $p = "y" ]
