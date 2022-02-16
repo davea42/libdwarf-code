@@ -1,4 +1,49 @@
 2022-02-16:  David Anderson
+    commit 8c82fb83d9bff92e3222aef0c43db3188215b560
+    Merge: 4054f253 bbc4aa69
+
+    Merge branch 'Snork2-master'
+
+    Improved error messages
+            modified:   pdfbld.sh
+
+2022-02-16:  David Anderson
+    commit 4054f253e98a5f3e0e2535bf170e498a94810ed1
+    Merge: 893ecdb4 f9b9e30e
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Improving PE size checks
+
+2022-02-16:  David Anderson
+    commit f9b9e30e8b395fca84c47a1f3b963fb2041a6772
+    Merge: b693bf3f c389702a
+
+    Merge pull request #74 from Snork2/master
+
+    Replacing Windows PE section size sanity check.
+
+2022-02-16:  David Anderson
+    commit bbc4aa69423564f5a5802f7958674e078ecbedaf
+    Merge: 893ecdb4 c389702a
+
+    Merge branch 'master' of https://github.com/Snork2/libdwarf-code into Snork2-master
+    checking it davea
+
+2022-02-16:  David Anderson
+    commit 893ecdb48200c2f8165d5d184dae03800d7517ee
+
+    Now with latest from git log
+            modified:   ChangeLog
+
+2022-02-16:  snork2
+    commit c389702a205e77299a33747655d6f9acec08e962
+
+    Replacing Windows PE section size sanity check.
+
+    Removed in-memory size check, and replaced in with in-file size check.
+    Checking in-memory section size can trigger false positive result with large .bss sections.
+
+2022-02-16:  David Anderson
     commit b693bf3f2826b129cfd41d184744411815f42dd4
 
     File was never distributed, and now is unused.
