@@ -338,6 +338,49 @@ load_optional_header64(dwarf_pe_object_access_internals_t *pep,
     return DW_DLV_OK;
 }
 
+static char *boringname[] = {
+".text",
+".bss",
+".data",
+".rdata",
+0
+};
+
+static int
+in_name_list(char * name)
+{
+    int i = 0;
+   
+    if (!name) {
+        return FALSE;
+    }
+    for ( ; ; ++i) {
+        if (!boringname[i]) {
+            break;
+        }
+        if (!strcmp(name,boringname[i])) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+static int
+is_irrelevant_section(char * name, 
+    Dwarf_Unsigned virtsz)
+{
+    int res = FALSE;
+
+    res = in_name_list(name);
+    if (res) {
+        return TRUE;
+    }
+    if (!virtsz) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
 static int
 pe_load_section (void *obj, Dwarf_Half section_index,
     Dwarf_Small **return_data, int *error)
@@ -490,6 +533,7 @@ dwarf_pe_load_dwarf_section_headers(
         IMAGE_SECTION_HEADER_dw filesect;
         char        safe_name[IMAGE_SIZEOF_SHORT_NAME +1];
         const char *expname = 0;
+        int irrelevant = 0;
 
         res =  _dwarf_object_read_random(pep->pe_fd,
             (char *)&filesect,(off_t)cur_offset,
@@ -530,9 +574,37 @@ dwarf_pe_load_dwarf_section_headers(
             filesect.VirtualAddress);
         ASNAR(pep->pe_copy_word,sec_outp->SizeOfRawData,
             filesect.SizeOfRawData);
-        if (sec_outp->SizeOfRawData >= pep->pe_filesize) {
-            *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
-            return DW_DLV_ERROR;
+        irrelevant = is_irrelevant_section(sec_outp->dwarfsectname,
+            sec_outp->VirtualSize);
+        if (irrelevant) {
+            sec_outp->VirtualSize = 0;
+            sec_outp->SizeOfRawData = 0;
+        }else{
+            /*  A Heuristic, allowing large virtual size
+                but not unlimited as we will malloc it
+                later, as Virtualsize. */
+            Dwarf_Unsigned limit = 100*pep->pe_filesize;
+            if (limit < pep->pe_filesize) {
+                /* An overflow. Bad. */ 
+                *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
+                return DW_DLV_ERROR;
+            }
+            if (sec_outp->VirtualSize > 
+                ((Dwarf_Unsigned)200*
+                (Dwarf_Unsigned)1000*
+                (Dwarf_Unsigned)1000)) {
+                /* Likely totally unreasonable. 
+                   the hard limit written this way
+                   simply for clarity. 
+                   Hard to know what to set it to. */ 
+                *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
+                return DW_DLV_ERROR;
+            }
+            if (sec_outp->VirtualSize > limit) {
+                /* Likely totally unreasonable. Bad. */ 
+                *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
+                return DW_DLV_ERROR;
+            }
         }
         ASNAR(pep->pe_copy_word,sec_outp->PointerToRawData,
             filesect.PointerToRawData);
