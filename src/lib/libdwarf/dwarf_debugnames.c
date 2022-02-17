@@ -30,7 +30,7 @@
 #include <config.h>
 
 #include <stdlib.h> /* calloc() free() */
-
+#include <stdio.h>
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
@@ -47,6 +47,21 @@
 #include "dwarf_global.h"
 #include "dwarf_debugnames.h"
 #include "dwarf_string.h"
+
+#if 0
+static void
+dump_bytes(char * msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+
+    printf("%s(%ld bytes):",msg,len);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
+#endif /*0*/
 
 #if 0
 /*  freedabs attempts to do some cleanup in the face
@@ -478,6 +493,9 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
         } else {
             /*  Ensure that there is no corruption in
                 the padding. */
+#if 0
+            dump_bytes("Padding ck 1 dadebug",(Dwarf_Small *)cp,cpend-cp);
+#endif
             for ( ; cp < cpend; ++cp) {
                 if (*cp) {
                     _dwarf_error_string(dbg, error,
@@ -680,11 +698,17 @@ dwarf_dnames_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     remaining -= usedspace;
-    if (remaining < 15) {
-        /*  No more in here, just padding. Check for zero
+    if (remaining && remaining < 15) {
+        /*  No more content in here, just padding. Check for zero
             in padding. */
+#if 0
+        printf("dadebug remaining %lu\n",(unsigned long)remaining);
+#endif
         curptr += usedspace;
         for ( ; curptr < end_section; ++curptr) {
+#if 0
+            dump_bytes("Padding ck 2 dadebug",(Dwarf_Small*)curptr,remaining);
+#endif
             if (*curptr) {
                 /*  One could argue this is a harmless error,
                     but for now assume it is real corruption. */

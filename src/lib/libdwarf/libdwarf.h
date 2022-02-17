@@ -6067,7 +6067,7 @@ DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head dw_dn,
     Section offset of the target CU
     Zero if it cannot be determined.
     @param dw_sig
-    the Dwarf_Sig8 is filled in wht a signature
+    the Dwarf_Sig8 is filled in with a signature
     if the TU index is T through T+F-1
     @param dw_error
     On error dw_error is set to point to the error details.

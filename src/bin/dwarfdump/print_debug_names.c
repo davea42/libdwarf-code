@@ -36,6 +36,77 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 
+const static Dwarf_Sig8 zerosig;
+static int
+print_cu_table(Dwarf_Dnames_Head dn,
+    const char *type,
+    Dwarf_Unsigned offsets_count,
+    Dwarf_Unsigned signature_count,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned i = 0;
+    int res = 0;
+    Dwarf_Bool formtu = FALSE;
+    Dwarf_Unsigned totalcount = offsets_count+
+        signature_count;
+    
+    if (type[0] == 't' && type[1] == 'u' &&
+        type[2] == 0) {
+        formtu = TRUE;
+        
+    } else if (type[0] == 'c' && type[1] == 'u' &&
+        type[2] == 0) {
+        formtu = FALSE;
+    } else {
+        printf("ERROR: Calling print_cu_table with type"
+            "%s is invalid. Must be tu or cu ."
+            "Not printing this cu table set\n",
+            type);
+        glflags.gf_count_major_errors++;
+        return DW_DLV_NO_ENTRY;
+    }
+
+    printf("  %s Table with %" DW_PR_DUu " entries\n",
+        type,totalcount);
+    for ( ; i < totalcount; ++i) {
+        Dwarf_Unsigned offset = 0;
+        Dwarf_Sig8     signature;
+
+        signature = zerosig;
+        res = dwarf_dnames_cu_table(dn, type,i,
+            &offset, &signature,error);
+        if(res == DW_DLV_ERROR) {
+            return res;
+        }
+        if (i < offsets_count) {
+            printf("  [%4" DW_PR_DUu "] ",i);
+            printf("Offset   :  0x%" 
+                DW_PR_XZEROS DW_PR_DUx "\n",
+                offset);
+        } else if (i < totalcount) {
+            static char sigarea[32];
+            struct esb_s sig8str;
+
+            esb_constructor_fixed(&sig8str,sigarea,sizeof(sigarea));
+            format_sig8_string(&signature,&sig8str);
+            printf("  [%4" DW_PR_DUu "] "
+                "(Foreign Type index %4" DW_PR_DUu ") "
+                ,i, totalcount - offsets_count);
+            printf("Signature:  %s\n",esb_get_string(&sig8str));
+            esb_destructor(&sig8str);
+        } else {
+            printf("ERROR: Calling print_cu_table type"
+                "%s  has invalid index:"
+                " Index %" DW_PR_DUu 
+                " Totalcount %" DW_PR_DUu "\n",
+                type,i,totalcount);
+            glflags.gf_count_major_errors++;
+            return DW_DLV_NO_ENTRY;
+        }
+    }
+    return DW_DLV_OK;
+}
+
 static int
 print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset,
@@ -99,6 +170,15 @@ print_dname_record(Dwarf_Dnames_Head dn,
     if (augmentation_string_size > 0) {
         printf("Augmentation string     : %s\n",
             sanitized(augstring));
+    }
+    res = print_cu_table(dn,"cu",comp_unit_count,0,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    res = print_cu_table(dn,"tu",local_type_unit_count,
+        foreign_type_unit_count,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
     }
     return DW_DLV_OK;
 }
