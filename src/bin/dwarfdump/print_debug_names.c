@@ -46,17 +46,17 @@ print_cu_table(Dwarf_Dnames_Head dn,
 {
     Dwarf_Unsigned i = 0;
     int res = 0;
-    Dwarf_Bool formtu = FALSE;
+    /* Dwarf_Bool formtu = FALSE; */
     Dwarf_Unsigned totalcount = offsets_count+
         signature_count;
     
     if (type[0] == 't' && type[1] == 'u' &&
         type[2] == 0) {
-        formtu = TRUE;
+        /* formtu = TRUE; */
         
     } else if (type[0] == 'c' && type[1] == 'u' &&
         type[2] == 0) {
-        formtu = FALSE;
+        /* formtu = FALSE; */
     } else {
         printf("ERROR: Calling print_cu_table with type"
             "%s is invalid. Must be tu or cu ."
