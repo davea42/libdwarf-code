@@ -36,7 +36,7 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 
-const static Dwarf_Sig8 zerosig;
+static const Dwarf_Sig8 zerosig;
 static int
 print_cu_table(Dwarf_Dnames_Head dn,
     const char *type,
