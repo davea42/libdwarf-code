@@ -46,17 +46,17 @@ print_cu_table(Dwarf_Dnames_Head dn,
 {
     Dwarf_Unsigned i = 0;
     int res = 0;
-    /* Dwarf_Bool formtu = FALSE; */
+    Dwarf_Bool formtu = FALSE;
     Dwarf_Unsigned totalcount = offsets_count+
         signature_count;
-    
+
     if (type[0] == 't' && type[1] == 'u' &&
         type[2] == 0) {
-        /* formtu = TRUE; */
-        
+        formtu = TRUE;
+
     } else if (type[0] == 'c' && type[1] == 'u' &&
         type[2] == 0) {
-        /* formtu = FALSE; */
+        formtu = FALSE;
     } else {
         printf("ERROR: Calling print_cu_table with type"
             "%s is invalid. Must be tu or cu ."
@@ -65,9 +65,15 @@ print_cu_table(Dwarf_Dnames_Head dn,
         glflags.gf_count_major_errors++;
         return DW_DLV_NO_ENTRY;
     }
-
-    printf("  %s Table with %" DW_PR_DUu " entries\n",
-        type,totalcount);
+    if (formtu) {
+        printf("  %s List. Entry count: %" DW_PR_DUu
+        " (local tu list %" DW_PR_DUu
+        ",foreign tu list %" DW_PR_DUu
+        ")\n",type,totalcount,offsets_count,signature_count);
+    } else {
+        printf("  %s List. Entry count: %" DW_PR_DUu "\n",
+            type,totalcount);
+    }
     for ( ; i < totalcount; ++i) {
         Dwarf_Unsigned offset = 0;
         Dwarf_Sig8     signature;
@@ -75,12 +81,12 @@ print_cu_table(Dwarf_Dnames_Head dn,
         signature = zerosig;
         res = dwarf_dnames_cu_table(dn, type,i,
             &offset, &signature,error);
-        if(res == DW_DLV_ERROR) {
+        if (res == DW_DLV_ERROR) {
             return res;
         }
         if (i < offsets_count) {
             printf("  [%4" DW_PR_DUu "] ",i);
-            printf("Offset   :  0x%" 
+            printf("Offset   :  0x%"
                 DW_PR_XZEROS DW_PR_DUx "\n",
                 offset);
         } else if (i < totalcount) {
@@ -97,7 +103,7 @@ print_cu_table(Dwarf_Dnames_Head dn,
         } else {
             printf("ERROR: Calling print_cu_table type"
                 "%s  has invalid index:"
-                " Index %" DW_PR_DUu 
+                " Index %" DW_PR_DUu
                 " Totalcount %" DW_PR_DUu "\n",
                 type,i,totalcount);
             glflags.gf_count_major_errors++;
