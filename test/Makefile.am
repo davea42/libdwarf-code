@@ -16,13 +16,13 @@ MAINTAINERCLEANFILES = Makefile.in \
   test_dwarfstring.log	      test_macrocheck.log \
   test_dwgetopt.log	      test_makenametest.log \
   test_extra_flag_strings.log test_sectionbitmaps.log \
-  test_headersok.log	      test_testesb.log \
+  test_testesb.log \
   test_helpertree.log  \
   runtestdd.sh.trs	      test_linkedtopath.trs \
   test_dwarfstring.trs	      test_macrocheck.trs \
   test_dwgetopt.trs	      test_makenametest.trs \
   test_extra_flag_strings.trs  test_sectionbitmaps.trs \
-  test_headersok.trs	      test_testesb.trs \
+  test_testesb.trs \
   test_safestrcpy.trs         test_safestrcpy.log \
   test_helpertree.trs \
   test_errmsglist.trs test_errmsglist.log \
@@ -38,14 +38,14 @@ clean-local:
 EXTRA_DIST =
 
 TESTS =  test_dwarfstring test_extra_flag_strings \
-  test_linkedtopath test_headersok test_dwgetopt \
+  test_linkedtopath test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
   test_testesb test_sectionbitmaps test_dwarflebtest \
   test_tied test_getnametest \
   test_errmsglist test_canonical test_safestrcpy test_regex 
 
 check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
-  test_linkedtopath test_headersok test_dwgetopt \
+  test_linkedtopath test_dwgetopt \
  test_makenametest test_helpertree test_macrocheck \
  test_testesb  test_sectionbitmaps test_dwarflebtest  \
  test_tied test_getnametest \
@@ -83,18 +83,6 @@ test_linkedtopath_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
-
-# Just ensures the headers usable, no C source errors.
-test_headersok_SOURCES = test_headersok.c \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_reloc_386.h  \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_reloc_mips.h  \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_reloc_ppc.h   \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_reloc_arm.h    \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_reloc_ppc64.h  \
-    $(top_srcdir)/src/lib/libdwarf/dwarf_reloc_x86_64.h
-test_headersok_CFLAGS = $(DWARF_CFLAGS_WARN)
-test_headersok_CPPFLAGS = -DTESTING \
--I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src/lib/libdwarf
 
 test_dwgetopt_SOURCES = getopttest.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_getopt.h \
