@@ -475,11 +475,11 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             augmentation_string_size +1);
         _dwarf_safe_strcpy(dn->dn_augmentation_string,
             augmentation_string_size +1,str_utf8,
-            augmentation_string_size);
+            len);
         /* This validates a zero length string too. */
 
         cp = dn->dn_augmentation_string;
-        cpend = cp + len;
+        cpend = cp + len+1;
         for ( ; cp<cpend; ++cp) {
             if (!*cp) {
                 foundnull = TRUE;
@@ -487,8 +487,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             }
         }
         if (!foundnull) {
-            /*  Force a NUL terminator in the extra byte
-                we calloc-d. */
+            /*  Impossible  */
             cp[len] = 0;
         } else {
             /*  Ensure that there is no corruption in

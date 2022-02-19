@@ -117,9 +117,10 @@ ecmakebld=$bart/e-cmakebld
 fcmakebld=$bart/f-cmakebld
 gcmakebld=$bart/g-cmakebld
 hcmakebld=$bart/h-cmakebld
+imesonbld=$bart/i-mesonbld
 mdirs $bart $abld $ainstall $binstrelp $binstrelbld $crelbld
 mdirs $cinstrelp $dbigend $ecmakebld $fcmakebld $gcmakebld
-mdirs $hcmakebld
+mdirs $hcmakebld $imesonbld
 relset=$bart/a-gzfilelist
 atfout=$bart/a-tarftout
 btfout=$bart/b-tarftout
@@ -336,6 +337,29 @@ fi
 echo " End Section H  $bart (ls output follows)"
 ls  $bart
 ############ End Section H
+
+################### Cmake test I
+safecd $imesonbld "FAIL C13 Section I cd"
+havecmake=n
+which meson >/dev/null
+if [ $? -eq 0 ]
+then
+  havemeson=y
+  echo "We have meson and can test it."
+else
+  echo "We do NOT have meson, cannot test it."
+fi
+if [ $havemeson = "y" ]
+then
+  echo "TEST: Now meson from source dir $blibsrc/ in build dir $imesonbld"
+  meson $genoptb -Dtests
+else
+  echo "meson not installed so Section I not tested."
+fi
+echo " End Section I  $bart (ls output follows)"
+ls  $bart
+############ End Section I
+
 
 
 echo "PASS scripts/buildandreleasetest.sh"

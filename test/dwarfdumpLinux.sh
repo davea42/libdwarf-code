@@ -20,6 +20,7 @@ f=$top_srcdir/test/testuriLE64ELf.obj
 b=$top_srcdir/test/testuriLE64ELf.base
 testbin=$top_blddir/test
 tx=$testbin/junk.testuriLE64ELf.base
+rm -f $tx
 echo "start  dwarfdumpLinux.sh sanity check on $f"
 echo "Run: $dd -a -vvv  $f | head -n $textlim"
 $dd -vvv -a $f | head -n $textlim > $tx

@@ -18,6 +18,7 @@ f=$top_srcdir/test/test-mach-o-32.dSYM
 b=$top_srcdir/test/test-mach-o-32.base
 testbin=$top_blddir/test
 tx=$testbin/junk.test-mach-o-32.base
+rm -f $tx
 echo "start dwarfdumpMacos.sh dwarfdump sanity check on $f"
 echo "Run: $dd -a -vvv  $f | head -n $textlim"
 $dd -a -vvv $f | head -n $textlim > $tx

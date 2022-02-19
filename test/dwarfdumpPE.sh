@@ -18,6 +18,7 @@ f=$top_srcdir/test/testobjLE32PE.exe
 b=$top_srcdir/test/testobjLE32PE.base
 testbin=$top_blddir/test
 tx=$testbin/junk.testobjLE32PE.base
+rm -f $tx
 echo "start  dwarfdumpPE.sh sanity check on pe $f"
 echo "Run: $dd -vvv -a  $f | head -n $textlim"
 $dd -vvv -a $f | head -n $textlim > $tx
