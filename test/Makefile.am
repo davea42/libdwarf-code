@@ -241,7 +241,6 @@ test_dwarfstring.c \
 test_errmsglist.c \
 testesb.c \
 test_extra_flag_strings.c \
-test_headersok.c \
 test_linkedtopath.c \
 test-mach-o-32.base \
 test-mach-o-32.dSYM \
