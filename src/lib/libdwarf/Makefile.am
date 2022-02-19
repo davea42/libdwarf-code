@@ -34,14 +34,6 @@ dwarf_elfread.c \
 dwarf_elfread.h \
 dwarf_elf_rel_detector.c \
 dwarf_elf_rel_detector.h \
-dwarf_elf_reloc_386.h \
-dwarf_elf_reloc_aarch64.h \
-dwarf_elf_reloc_arm.h \
-dwarf_elf_reloc_mips.h \
-dwarf_elf_reloc_ppc64.h \
-dwarf_elf_reloc_ppc.h \
-dwarf_elf_reloc_sparc.h \
-dwarf_elf_reloc_x86_64.h \
 dwarf_elfstructs.h \
 dwarf_errmsg_list.h \
 dwarf_error.c \
@@ -101,12 +93,6 @@ dwarf_ranges.c \
 dwarf_rnglists.c \
 dwarf_rnglists.h \
 dwarf_reading.h \
-dwarf_reloc_386.h \
-dwarf_reloc_arm.h \
-dwarf_reloc_mips.h \
-dwarf_reloc_ppc.h \
-dwarf_reloc_ppc64.h \
-dwarf_reloc_x86_64.h \
 dwarf_str_offsets.c \
 dwarf_str_offsets.h \
 dwarf_string.c       \

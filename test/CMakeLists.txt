@@ -46,23 +46,6 @@ if (DO_TESTING)
 endif()
 
 if (DO_TESTING)
-    set_source_group(TESTHEADERSOK "Source Files"
-        ${CMAKE_SOURCE_DIR}/test/test_headersok.c.c
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_reloc_386.h
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_reloc_mips.h
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_reloc_ppc.h 
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_reloc_arm.h
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_reloc_ppc64.h.h
-        ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_reloc_x86_64.h)
-    add_executable(selftest_headersok ${TESTEXTRASTRING})
-    target_compile_options(selftest_headersok PRIVATE "-DTESTING" )
-    target_compile_options(selftest_headersok PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
-    target_compile_options(selftest_headersok PRIVATE ${DW_FWALL})
-    add_test(NAME selftest_headersok COMMAND selftest_headersok)
-endif()
-if (DO_TESTING)
     set_source_group(GETOPTEST_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/getopttest.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.h

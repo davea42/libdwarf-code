@@ -16,9 +16,6 @@ tests = [
    '../src/lib/libdwarf/dwarf_debuglink.c',
   ],
   [
-   'test_headersok.c'
-  ],
-  [
    'getopttest.c',
    '../src/bin/dwarfdump/dd_getopt.c'
   ],
