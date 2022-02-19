@@ -36,7 +36,7 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 
-static const Dwarf_Sig8 zerosig;
+const static Dwarf_Sig8 zerosig;
 static int
 print_cu_table(Dwarf_Dnames_Head dn,
     const char *type,
@@ -49,11 +49,11 @@ print_cu_table(Dwarf_Dnames_Head dn,
     Dwarf_Bool formtu = FALSE;
     Dwarf_Unsigned totalcount = offsets_count+
         signature_count;
-
+    
     if (type[0] == 't' && type[1] == 'u' &&
         type[2] == 0) {
         formtu = TRUE;
-
+        
     } else if (type[0] == 'c' && type[1] == 'u' &&
         type[2] == 0) {
         formtu = FALSE;
@@ -80,7 +80,7 @@ print_cu_table(Dwarf_Dnames_Head dn,
         }
         if (i < offsets_count) {
             printf("  [%4" DW_PR_DUu "] ",i);
-            printf("Offset   :  0x%"
+            printf("Offset   :  0x%" 
                 DW_PR_XZEROS DW_PR_DUx "\n",
                 offset);
         } else if (i < totalcount) {
@@ -97,7 +97,7 @@ print_cu_table(Dwarf_Dnames_Head dn,
         } else {
             printf("ERROR: Calling print_cu_table type"
                 "%s  has invalid index:"
-                " Index %" DW_PR_DUu
+                " Index %" DW_PR_DUu 
                 " Totalcount %" DW_PR_DUu "\n",
                 type,i,totalcount);
             glflags.gf_count_major_errors++;
