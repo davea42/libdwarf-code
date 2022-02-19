@@ -18,7 +18,8 @@ if (DO_TESTING)
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_string.h)
     add_executable(selftestextrastring ${TESTEXTRASTRING})
-    target_compile_options(selftestextrastring PRIVATE "-DTESTING" )
+    target_compile_options(selftestextrastring PRIVATE 
+         "-DTESTING -DLIBDWARF_BUILD" )
     target_compile_options(selftestextrastring PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
@@ -37,7 +38,8 @@ if (DO_TESTING)
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_debuglink.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_error.h)
     add_executable(selftest_linkedtopath ${TESTEXTRASTRING})
-    target_compile_options(selftest_linkedtopath PRIVATE "-DTESTING" )
+    target_compile_options(selftest_linkedtopath PRIVATE 
+        "-DTESTING -DLIBDWARF_BUILD" )
     target_compile_options(selftest_linkedtopath PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
