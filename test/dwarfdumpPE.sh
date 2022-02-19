@@ -18,6 +18,7 @@ f=$top_srcdir/test/testobjLE32PE.exe
 b=$top_srcdir/test/testobjLE32PE.base
 testbin=$top_blddir/test
 tx=$testbin/junk.testobjLE32PE.base
+tx2=$testbin/junk2.testobjLE32PE.base
 rm -f $tx
 echo "start  dwarfdumpPE.sh sanity check on pe $f"
 echo "Run: $dd -vvv -a  $f | head -n $textlim"
@@ -32,14 +33,17 @@ fi
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
-  droptwoifwin $tx
+  droptwoifwin $tx $tx2
 fi
 echo "if update required, mv $tx $b"
-fixlasttime $tx
+fixlasttime $tx $tx2
 which dos2unix
 if [ $? -eq 0 ]
 then
-  dos2unix $tx
+  dos2unix -n $tx $tx2
+  chkres $? "FAILdwarfdumpPE.sh dos2unix"
+  mv $tx2 $tx
+  chkres $? "FAILdwarfdumpPE.sh mv %tx2 $tx"
 fi
 diff $b $tx > $tx.diff 
 r=$?

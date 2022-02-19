@@ -20,6 +20,7 @@ f=$top_srcdir/test/testuriLE64ELf.obj
 b=$top_srcdir/test/testuriLE64ELf.base
 testbin=$top_blddir/test
 tx=$testbin/junk.testuriLE64ELf.base
+tx2=$testbin/junk2.testuriLE64ELf.base
 rm -f $tx
 echo "start  dwarfdumpLinux.sh sanity check on $f"
 echo "Run: $dd -a -vvv  $f | head -n $textlim"
@@ -34,10 +35,10 @@ fi
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
-  droptwoifwin $tx
+  droptwoifwin $tx $tx2
 fi
 echo "if update required, mv $tx $b"
-fixlasttime $tx
+fixlasttime $tx $tx2
 which dos2unix
 if [ $? -eq 0 ]
 then

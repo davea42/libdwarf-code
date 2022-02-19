@@ -18,6 +18,7 @@ f=$top_srcdir/test/test-mach-o-32.dSYM
 b=$top_srcdir/test/test-mach-o-32.base
 testbin=$top_blddir/test
 tx=$testbin/junk.test-mach-o-32.base
+tx2=$testbin/junk2.test-mach-o-32.base
 rm -f $tx
 echo "start dwarfdumpMacos.sh dwarfdump sanity check on $f"
 echo "Run: $dd -a -vvv  $f | head -n $textlim"
@@ -32,10 +33,10 @@ fi
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
-  droptwoifwin $tx
+  droptwoifwin $tx $tx2
 fi
 echo "if update required, mv $tx $b"
-fixlasttime $tx
+fixlasttime $tx $tx2
 which dos2unix
 if [ $? -eq 0 ]
 then

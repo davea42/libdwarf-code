@@ -51,19 +51,19 @@ dd=$top_blddir/src/bin/dwarfdump/dwarfdump
 # as compared to non-windows dwarfdump
 droptwoifwin() {
 i=$1
+t=$2
 l=`wc -l < $i`
 if [ $l -gt 2 ]
 then
   l=`expr $l - 2`
-  tail -$l <$i >junk.tmp
-  cp junk.tmp $i
-  rm -f junk.tmp
+  tail -$l <$i >$t
+  mv $t $i
 fi
 }
 fixlasttime() {
   i=$1
-  sed 's/last time 0x.*/last time 0x0/' <$i >junk.tmp
-  cp junk.tmp $i
-  rm -f junk.tmp
+  t=$2
+  sed 's/last time 0x.*/last time 0x0/' <$i >$t
+  mv $t $i
 }
 
