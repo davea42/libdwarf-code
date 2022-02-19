@@ -105,7 +105,7 @@ _dwarf_next_cu_header_internal(
 }
 
 static struct Dwarf_Tied_Entry_s *
-makeentry(unsigned long instance, unsigned ct)
+makeentry(Dwarf_Unsigned instance, unsigned ct)
 {
     Dwarf_Sig8 s8;
     Dwarf_CU_Context context = 0;
@@ -126,7 +126,7 @@ makeentry(unsigned long instance, unsigned ct)
 }
 
 static int
-insone(void**tree,unsigned long instance, unsigned ct)
+insone(void**tree,Dwarf_Unsigned instance, unsigned ct)
 {
     struct Dwarf_Tied_Entry_s * entry = 0;
     void *retval = 0;
@@ -169,7 +169,7 @@ insone(void**tree,unsigned long instance, unsigned ct)
 }
 
 static int
-delone(void**tree,unsigned long instance, unsigned ct)
+delone(void**tree,Dwarf_Unsigned instance, unsigned ct)
 {
     struct Dwarf_Tied_Entry_s * entry = 0;
     void *r = 0;
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     INITTREE(tied_data,_dwarf_tied_data_hashfunc);
     for ( ; testdata[u].action; ++u) {
         char action = testdata[u].action;
-        unsigned long v = testdata[u].val;
+        Dwarf_Unsigned v = testdata[u].val;
         if (action == 'a') {
             insone(&tied_data,v,u);
         } else if (action == 'd') {
