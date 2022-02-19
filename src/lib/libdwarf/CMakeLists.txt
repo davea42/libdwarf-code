@@ -39,12 +39,6 @@ dwarf_debuglink.h dwarf_die_deliv.h
 dwarf_debugnames.h dwarf_dsc.h 
 dwarf_elf_access.h dwarf_elf_defines.h dwarf_elfread.h 
 dwarf_elf_rel_detector.h 
-dwarf_elf_reloc_386.h dwarf_elf_reloc_aarch64.h 
-dwarf_elf_reloc_arm.h dwarf_elf_reloc_mips.h 
-dwarf_elf_reloc_ppc64.h 
-dwarf_elf_reloc_ppc.h 
-dwarf_elf_reloc_sparc.h 
-dwarf_elf_reloc_x86_64.h 
 dwarf_elfstructs.h 
 dwarf_error.h dwarf_frame.h 
 dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h 
@@ -53,8 +47,7 @@ dwarf_line.h dwarf_loc.h
 dwarf_machoread.h dwarf_macro.h dwarf_macro5.h 
 dwarf_object_detector.h dwarf_opaque.h 
 dwarf_pe_descr.h dwarf_peread.h
-dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 
-dwarf_reloc_ppc.h dwarf_reloc_ppc64.h dwarf_reloc_x86_64.h 
+dwarf_reading.h
 dwarf_rnglists.h
 dwarf_safe_strcpy.h
 dwarf_tied_decls.h 
