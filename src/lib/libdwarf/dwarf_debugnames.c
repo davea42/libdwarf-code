@@ -474,8 +474,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
         dn->dn_augmentation_string = calloc(1,
             augmentation_string_size +1);
         _dwarf_safe_strcpy(dn->dn_augmentation_string,
-            augmentation_string_size +1,str_utf8,
-            len);
+            len +1,str_utf8, len);
         /* This validates a zero length string too. */
 
         cp = dn->dn_augmentation_string;
@@ -733,6 +732,7 @@ dwarf_dealloc_dnames(Dwarf_Dnames_Head dn)
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
         return;
     }
+    free(dn->dn_augmentation_string);
     dbg = dn->dn_dbg;
     dn->dn_magic = 0;
     dwarf_dealloc(dbg,dn,DW_DLA_DNAMES_HEAD);
