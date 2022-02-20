@@ -1,0 +1,30 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install meson / ninja
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+        pip3 install --upgrade pip
+        pip3 install meson --user
+    - name: Install doxygen
+      run: |
+        sudo apt install doxygen
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        meson .. -Ddoc
+        ninja
