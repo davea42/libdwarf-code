@@ -6,7 +6,7 @@ MAINTAINERCLEANFILES = Makefile.in
 ### This is meant to be run in the doc directory itself.
 ### Not to be run from anywhere but in the source tree.
 
-doc: buildconsumerpdf buildproducerpdf
+doc: doxygen buildconsumerpdf buildproducerpdf
 # These pdf builds are to be undertaken only on request.
 buildconsumerpdf:
 	sh $(top_srcdir)/doc/pdfbld.sh -c
