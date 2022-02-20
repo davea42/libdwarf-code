@@ -340,19 +340,36 @@ ls  $bart
 
 ################### Cmake test I
 safecd $imesonbld "FAIL C13 Section I cd"
-havecmake=n
+havemeson=n
+haveninja=n
 which meson >/dev/null
 if [ $? -eq 0 ]
 then
   havemeson=y
   echo "We have meson and can test it."
+  which ninja >/dev/null
+  if [ $? -eq 0 ]
+  then
+    haveninja=y
+  else
+    echo "We do NOT have ninja, cannot test it."
+  fi
 else
-  echo "We do NOT have meson, cannot test it."
+  echo "We do NOT have meson, cannot test it or ninja."
 fi
 if [ $havemeson = "y" ]
 then
   echo "TEST: Now meson from source dir $blibsrc/ in build dir $imesonbld"
-  meson $genoptb -Dtests
+  meson $wd -Dtest=on
+  if [ $haveninja = "y" ]
+  then
+    ninja -j8
+    chkres $? " FAIL C13 ninja -j8"
+    ninja test
+    chkres $? " FAIL C13 ninja test"
+  else
+    echo "Skipping ninja, it is not installed"
+  fi
 else
   echo "meson not installed so Section I not tested."
 fi
