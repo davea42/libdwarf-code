@@ -46,15 +46,17 @@ For the simplest example:
     meson /tmp/libdwarf-0.3.4
     ninja -j8
 
-For a faster build with install
+For a faster build with install and sanity tests:
 
     prefx=/tmp/installtargetmeson
     export CFLAGS="-g -pipe"
     export CXXFLAGS="-g -pipe"
     meson /tmp/libdwarf-0.3.4  \
+      -Dtest=on \
       --prefix=$prefx \
       --default-library shared
     ninja -j8 install
+    ninja test
 
 ## BUILDING from a git clone of the source tree with configure
 
