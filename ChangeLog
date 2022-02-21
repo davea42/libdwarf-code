@@ -1,3 +1,239 @@
+2022-02-20:  David Anderson
+    commit dd967d4e2c700b3f5bdefb8a515e587a66412661
+
+    This fixes a coverity scan warning.
+
+    Removing argv and argc from declaration of main.
+    int main(void)
+    is specifically valid by the C90 standard section 5.1.2.2.1
+
+            modified:   src/bin/builduritable/uritablebuild.c
+
+2022-02-20:  David Anderson
+    commit 2a5f5f80db296999a79e7a4bfe10a914a64c60b8
+
+    Now does doxygen before building the pdfs.
+            modified:   doc/Makefile.am
+
+    Removed some test wording. Now ready
+    for release.
+            modified:   doc/libdwarf.dox
+    regenerated
+            modified:   doc/libdwarf.pdf
+
+2022-02-20:  David Anderson
+    commit a1fa90b53277cc5d68d3ac72edd99d8dd758b9c1
+
+    Now meson build also  does 'ninja test'
+            modified:   scripts/buildandreleasetest.sh
+
+2022-02-20:  David Anderson
+    commit c032334997410674486504a7f08da1c1620f433a
+
+    Added words about meson build
+            modified:   README
+            modified:   README.md
+
+2022-02-20:  David Anderson
+    commit 8e534a95aa4dce4d6a55f70f4721fe7f9263071e
+    Merge: 2b31510d 7f427f44
+
+    Merge pull request #79 from vtorri/vtorri_ci_meson
+
+    add continuous integration for meson
+
+2022-02-20:  Vincent Torri
+    commit 7f427f445afcc73dab4df1da2f8494d729317d97
+
+    add badge for meson ci
+
+2022-02-20:  Vincent Torri
+    commit 4ce27aa8efffc4aeb30ef568e136483f56ba1de6
+
+    fir ci name
+
+2022-02-20:  Vincent Torri
+    commit ee8a159fd00fe8d5ffaff5c822e0e7e764f59a49
+
+    fix option value
+
+2022-02-20:  Vincent Torri
+    commit 8e1108113cc3fc29117b96bad6a355b85705a8a4
+
+    add ci for meson
+
+2022-02-19:  David Anderson
+    commit 2b31510d7d7ee448522865da1fd389d61c175842
+
+    To match up with test/meson.build
+            modified:   test/CMakeLists.txt
+
+2022-02-19:  David Anderson
+    commit 7c8c80e7d7c25b531c760736c775dc205f1ab94e
+    Merge: a8c37adb 62a12bb9
+
+    Merge pull request #78 from vtorri/vtorri_test_api
+
+    Fix link of test binaries on Windows
+
+2022-02-19:  Vincent Torri
+    commit 62a12bb905a66ad6130a813361441a40423dc0ae
+
+    Fix link of test binaries on Windows
+
+            modified:   ../test/meson.build
+
+2022-02-19:  David Anderson
+    commit a8c37adb12d8b862fc2ccbf87d5e02174241ef39
+
+    Not sure this suffices, but at least pointer-to
+    will fit in Dwarf_Unsigned.
+            modified:   test/dwarf_tied_test.c
+
+2022-02-19:  David Anderson
+    commit d4662df3cf46f3aff1cd90da5fd96a0199767f39
+    Merge: 7552759f 42d949b4
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Removing useless reloc files.
+
+2022-02-19:  David Anderson
+    commit 42d949b4a46f07f9d12beb08a8c893c171961de9
+    Merge: ffb2453f 922b64b8
+
+    Merge pull request #76 from vtorri/vtorri_reloc2
+
+    Remove useless reloc files
+
+2022-02-19:  David Anderson
+    commit 7552759fef90fd04efb7d35b2499e38c424edad2
+
+    Due to a small mistake in these scripts
+    make -j8
+    (or any j<n>  greater than 1)
+    would fail with really strange errors.
+    Fixed.
+            modified:   dwarfdumpLinux.sh
+            modified:   dwarfdumpMacos.sh
+            modified:   dwarfdumpPE.sh
+            modified:   dwarfdumpsetup.sh
+
+2022-02-19:  Vincent Torri
+    commit 922b64b8693498fc0a5cb1c70eabab673e2a87f1
+
+    removetest_headersoc.c from Makefile.am too
+
+2022-02-19:  Vincent Torri
+    commit 00d03246ab219091d8c89782ec98d0abf269210c
+
+    Remove useless reloc files
+
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_386.h
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_aarch64.h
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_arm.h
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_mips.h
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_ppc.h
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_ppc64.h
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_sparc.h
+            deleted:    src/lib/libdwarf/dwarf_elf_reloc_x86_64.h
+            deleted:    src/lib/libdwarf/dwarf_reloc_386.h
+            deleted:    src/lib/libdwarf/dwarf_reloc_arm.h
+            deleted:    src/lib/libdwarf/dwarf_reloc_mips.h
+            deleted:    src/lib/libdwarf/dwarf_reloc_ppc.h
+            deleted:    src/lib/libdwarf/dwarf_reloc_ppc64.h
+            deleted:    src/lib/libdwarf/dwarf_reloc_x86_64.h
+            deleted:    test/test_headersok.c
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+
+2022-02-19:  David Anderson
+    commit 1d9ff1c320880daf79560041e8331760162a3937
+
+    Use the short local name
+    for the augmentation_string_size,
+    not the long spelling. Simpler
+    to use the short name consistently
+    instead of mixing the usage.
+            modified:   dwarf_debugnames.c
+
+2022-02-19:  David Anderson
+    commit ffb2453ff63e9e01c82344f67a522e0176c4b70a
+
+    Spelling correction
+            modified:   doc/libdwarf.dox
+
+    Added meson build
+            modified:   scripts/buildandreleasetest.sh
+
+    Fixed the NUL byte code, (one line).
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+    Enhanced each test by an (actually superfluous)
+    rm -f.
+            modified:   test/dwarfdumpLinux.sh
+            modified:   test/dwarfdumpMacos.sh
+            modified:   test/dwarfdumpPE.sh
+
+2022-02-18:  David Anderson
+    commit e4996685372aa2d1dcf3a8912f06e4766c39d12e
+
+    Now prints a bit more of the .debug_names section
+    content.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-02-18:  David Anderson
+    commit 6a3ab22a4550927963b42d719a418ebe58a2124a
+
+    Fixing the tableofcontents command
+            modified:   libdwarf.dox
+    Regenerated
+            modified:   libdwarf.pdf
+
+2022-02-18:  David Anderson
+    commit 78576330a29181572e4b3b8fb0e825c89ac06832
+
+    Fixed two warnings.
+            modified:   print_debug_names.c
+
+2022-02-18:  David Anderson
+    commit c908b27658aa6913cad1a53f16cfadc9236ab062
+
+    Fixed unused local var formtu warning.
+            modified:   print_debug_names.c
+
+2022-02-17:  David Anderson
+    commit 0b9d4d0292def591e2619fc3f6e29becb9fc1c7a
+
+    Now prints cu/tu table.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+    Couple lines of debug inside #if 0
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+    Fixed a misspelling in a doxygen comment.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-02-17:  David Anderson
+    commit adb94559b060f37d95ebdec96cc6c74a4303d83b
+
+    Revised the handling of PE SizeOfRawData
+    and VirtualSize object section fields
+    so it skips processing sections it knows
+    are irrelevant to dwarf.
+    The way VirtualSize is used means it is
+    impossible to write a precise size bound
+    so we added a couple heuristics
+    to prevent corrupted objects from
+    causing crashes.
+            modified:   dwarf_peread.c
+
+2022-02-16:  David Anderson
+    commit 7b5d7cf0ba6c2118b4d1a51f6ca2b4b8d4195086
+
+    Updated with latest git log entries
+            modified:   ChangeLog
+
 2022-02-16:  David Anderson
     commit 8c82fb83d9bff92e3222aef0c43db3188215b560
     Merge: 4054f253 bbc4aa69
