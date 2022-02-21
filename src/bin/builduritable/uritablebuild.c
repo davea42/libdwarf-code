@@ -125,7 +125,7 @@ print_entry(int c)
 }
 
 int
-main(int argc, char *argv[])
+main(void)
 {
     int i = 0;
     printf("/* dwarfdump_ctype table */\n");
@@ -136,7 +136,4 @@ main(int argc, char *argv[])
     printf("};\n");
 
     return 0;
-
-    (void)argc;
-    (void)argv;
 }
