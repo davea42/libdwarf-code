@@ -1,4 +1,19 @@
 2022-02-22:  David Anderson
+    commit ffecad750da5ebb572680f4b3155bddaac538369
+
+    A compiler warned of two local variables with no
+    initializer and with -enable-werror the warnings
+    broke the build.
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+            modified:   src/bin/dwarfdump/print_die.c
+
+2022-02-22:  David Anderson
+    commit 961a276fab7a8409c0b375055f36c843d6b1f25e
+
+    To match recent commits
+            modified:   ChangeLog
+
+2022-02-22:  David Anderson
     commit 10c455b9a94a7da5ca22df8e7b8ed59ddd5d4506
 
     In a comment remove a -lelf
