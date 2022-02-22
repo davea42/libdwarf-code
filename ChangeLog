@@ -1,3 +1,32 @@
+2022-02-22:  David Anderson
+    commit 10c455b9a94a7da5ca22df8e7b8ed59ddd5d4506
+
+    In a comment remove a -lelf
+    as that is irrelevant now (for this code).
+            modified:   simplecrc.c
+
+2022-02-22:  David Anderson
+    commit ba03f108e88a7b53014ed1f78a7667039224bb4b
+    Merge: 944bae54 cc08ad1e
+
+    Merge pull request #80 from vtorri/vtorri_dumpbytes
+
+    remove dump_bytes() from simplecrc.c and dwarf_object_detector.c
+
+2022-02-22:  Vincent Torri
+    commit cc08ad1e5b6b6b00657a48545633efac0d1b0906
+
+    remove dump_bytes() from simplecrc.c and dwarf_object_detector.c
+
+            modified:   src/bin/dwarfexample/simplecrc.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2022-02-20:  David Anderson
+    commit 944bae54e3c123e72457528721258334a1b0e723
+
+    Brought this up to date with git log
+            modified:   ChangeLog
+
 2022-02-20:  David Anderson
     commit dd967d4e2c700b3f5bdefb8a515e587a66412661
 
