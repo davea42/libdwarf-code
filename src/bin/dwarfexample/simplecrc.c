@@ -9,7 +9,7 @@
     In a build directory compile something like this:
 
     cc -Ilibdwarf $HOME/dwarf/code/dwarfexample/simplecrc.c \
-        libdwarf/.libs/libdwarf.a -lelf -lz
+        libdwarf/.libs/libdwarf.a -lz
 */
 
 #include <stdio.h>
