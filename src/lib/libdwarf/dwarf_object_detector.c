@@ -108,25 +108,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MH_CIGAM_64 0xcffaedfe
 #endif /*  MH_MAGIC_64 */
 
-#if TESTING
-static void
-dump_bytes(char * msg,Dwarf_Small * start, long len)
-{
-    Dwarf_Small *end = start + len;
-    Dwarf_Small *cur = start;
-    if (!start) {
-        printf("%s ptr null, ignore. \n",msg);
-        return;
-    }
-
-    printf("%s 0x%lx ",msg,(unsigned long)start);
-    for (; cur < end; cur++) {
-        printf("%02x ", *cur);
-    }
-    printf("\n");
-}
-#endif
-
 static unsigned long
 magic_copy(unsigned char *d, unsigned len)
 {
