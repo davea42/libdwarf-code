@@ -24,23 +24,6 @@
 #include "libdwarf.h"
 
 static void
-dump_bytes(char * msg,Dwarf_Small * start, long len)
-{
-    Dwarf_Small *end = start + len;
-    Dwarf_Small *cur = start;
-    if (!start) {
-        printf("%s ptr null, ignore. \n",msg);
-        return;
-    }
-
-    printf("%s ",msg);
-    for (; cur < end; cur++) {
-        printf("%02x ", *cur);
-    }
-    printf("\n");
-}
-
-static void
 simple_test(const char *fname)
 {
     int fd = 0;
@@ -97,8 +80,6 @@ simple_test(const char *fname)
         tcrc = dwarf_basic_crc32(readbuf,readlen,init);
         init = tcrc;
     }
-    /*  endianness issues?  */
-    dump_bytes("crc: ",(unsigned char *)&tcrc,4);
 }
 
 int
