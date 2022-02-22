@@ -1881,7 +1881,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             glflags.gf_check_di_gaps &&
             checking_this_compiler()) {
 
-            Dwarf_Off glb_off;
+            Dwarf_Off glb_off = 0;
             DWARF_CHECK_COUNT(di_gaps_result,1);
             if (dwarf_validate_die_sibling(sibling,&glb_off) ==
                 DW_DLV_ERROR) {
