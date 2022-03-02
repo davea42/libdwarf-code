@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "0.3.4"
+#define DW_LIBDWARF_VERSION "0.3.5"
 #define DW_LIBDWARF_VERSION_MAJOR 0
 #define DW_LIBDWARF_VERSION_MINOR 3
-#define DW_LIBDWARF_VERSION_MICRO 4
+#define DW_LIBDWARF_VERSION_MICRO 5
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1

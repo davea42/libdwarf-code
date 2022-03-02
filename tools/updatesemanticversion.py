@@ -77,7 +77,21 @@ def updatecmstring(cmcount, l, sver, maj, min, mic):
 
 mm = ".ds vE Rev "
 
-
+#libdwarf.dox
+#    @date 2022-02-23 v0.3.4
+doxdate = "    @date "
+doxd2   = "    @date"
+def updatedoxversion(doxcount, l, sver):
+    if l.startswith(doxdate):
+        wds = l.split()
+        if len(wds) < 3:
+            return l, doxcount
+        if not wds[0] == "@date":
+            return l, doxcount
+        vnow = ''.join(["v",sver,"\n"])
+        l2 = " ".join([doxd2,wds[1],vnow])
+        return l2, int(doxcount + 1)
+    return l, doxcount
 def updatemmversion(mmcount, l, sver):
     if l.startswith(mm):
         wds = l.split()
@@ -116,6 +130,7 @@ def updatefile(fname, type, sver, maj, min, mic):
     foundac = 0
     foundlh = 0
     foundmm = 0
+    founddox = 0
     foundmmeson = 0
     print("Processing", fname, " type", type, " newver", sver)
     try:
@@ -142,6 +157,10 @@ def updatefile(fname, type, sver, maj, min, mic):
         elif type == "mmeson":
             lx, foundac = updatemesonversion(foundmmeson, l, sver,\
                  maj, min, mic)
+            outdata += [lx]
+            continue
+        elif type == "dox":
+            lx, foundmm = updatedoxversion(founddox, l, sver)
             outdata += [lx]
             continue
         elif type == "mm":
@@ -200,6 +219,6 @@ if __name__ == "__main__":
     updatefile("configure.ac", "ac", sver, maj, min, mic)
     updatefile("CMakeLists.txt", "cm", sver, maj, min, mic)
     updatefile("src/lib/libdwarf/libdwarf.h", "lh", sver, maj, min, mic)
-    #updatefile("doc/libdwarf.mm", "mm", sver, maj, min, mic)
+    updatefile("doc/libdwarf.dox", "dox", sver, maj, min, mic)
     updatefile("doc/libdwarfp.mm", "mm", sver, maj, min, mic)
     updatefile("meson.build", "mmeson", sver, maj, min, mic)
