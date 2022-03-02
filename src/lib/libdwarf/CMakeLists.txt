@@ -65,7 +65,7 @@ set_source_group(CONFIGURATION_FILES "Configuration Files"
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
 list(APPEND DWARF_LIBS ${LIBELF_LIBRARIES})
-if(UNIX)
+if (DW_FZLIB)
     list(APPEND DWARF_LIBS z)
 endif()
 foreach(i RANGE ${targetCount})
@@ -77,7 +77,8 @@ foreach(i RANGE ${targetCount})
 	set_folder(${target} src/lib/libdwarf)
 	target_include_directories(${target} PUBLIC 
             ${LIBELF_INCLUDE_DIRS})
-        target_compile_options(${target} PRIVATE ${DW_FWALL})
+    target_compile_options(${target} PRIVATE -DLIBDWARF_BUILD
+            ${DW_FWALL})
 	msvc_posix(${target})
 
 	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES})
@@ -94,7 +95,7 @@ foreach(i RANGE ${targetCount})
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
 # The install has to be here, not in
-# ../CMakeLists.txt  to make install work properly
+# another CMakeLists.txt  to make install work properly
 # for cmake before cmake 3.13. This also works
 # for newer cmake.
 add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
