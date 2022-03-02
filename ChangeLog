@@ -1,3 +1,17 @@
+2022-02-23:  David Anderson
+    commit 8c56a98e99ae367e57b02a5d7f7dab01add878e9
+
+    Now says For Release on date line.
+            modified:   ../libdwarf.dox
+    Regenerated
+            modified:   ../libdwarf.pdf
+
+2022-02-22:  David Anderson
+    commit 5a033c458d1aae3539aa37825dabc6a650f493e6
+
+    Updated with today's initializer fix.
+            modified:   ChangeLog
+
 2022-02-22:  David Anderson
     commit ffecad750da5ebb572680f4b3155bddaac538369
 
