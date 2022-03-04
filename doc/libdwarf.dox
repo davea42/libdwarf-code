@@ -731,6 +731,13 @@
     dwarf_gdbindex_free() renamed to dwarf_dealloc_gdbindex().
     dwarf_loc_head_c_dealloc renamed to dwarf_dealloc_loc_head_c().
 
+    dwarf_get_location_op_value_d() renamed to
+    dwarf_get_location_op_value_c(), and 3 pointless
+    arguments removed. The dwarf_get_location_op_value_d
+    version and the three arguments were added for DWARF5
+    in libdwarf-20210528 but the change was a mistake.
+    Now reverted to the previous version.
+
     <b>Changes 0.3.3 to 0.3.4</b>
     Replaced the groff -mm based libdwarf.pdf
     with a libdwarf.pdf

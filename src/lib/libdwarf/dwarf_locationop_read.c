@@ -860,13 +860,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     curr_loc->lr_atom = atom;
-    curr_loc->lr_raw1 =  operand1;
     curr_loc->lr_number =  operand1;
-    curr_loc->lr_raw2 =  operand2;
     curr_loc->lr_number2 = operand2;
     /*  lr_number 3 is a pointer to a value iff DW_OP_const or
         DW_OP_GNU_const_type */
-    curr_loc->lr_raw3 = operand3;
     curr_loc->lr_number3 = operand3;
     *nextoffset_out = offset;
     return DW_DLV_OK;

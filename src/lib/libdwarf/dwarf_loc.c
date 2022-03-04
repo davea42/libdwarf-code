@@ -677,9 +677,6 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
         /* Copying all the fields. DWARF 2,3,4,5. */
         new_loc->lc_atom    = temp_loc.lr_atom;
         new_loc->lc_opnumber= temp_loc.lr_opnumber;
-        new_loc->lc_raw1    = temp_loc.lr_number;
-        new_loc->lc_raw2    = temp_loc.lr_number2;
-        new_loc->lc_raw3    = temp_loc.lr_number3;
         new_loc->lc_number  = temp_loc.lr_number;
         new_loc->lc_number2 = temp_loc.lr_number2;
         new_loc->lc_number3 = temp_loc.lr_number3;
@@ -707,9 +704,6 @@ _dwarf_fill_in_locdesc_op_c(Dwarf_Debug dbg,
     for (i = 0; i < op_count; i++) {
         /* Copying only the fields needed by DWARF 2,3,4 */
         (block_loc + i)->lr_atom = new_loc->lc_atom;
-        (block_loc + i)->lr_raw1 = new_loc->lc_raw1;
-        (block_loc + i)->lr_raw2 = new_loc->lc_raw2;
-        (block_loc + i)->lr_raw3 = new_loc->lc_raw3;
         (block_loc + i)->lr_number = new_loc->lc_number;
         (block_loc + i)->lr_number2 = new_loc->lc_number2;
         (block_loc + i)->lr_number3 = new_loc->lc_number3;
@@ -1883,15 +1877,12 @@ dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c loclist_head,
 }
 
 int
-dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
+dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
     Dwarf_Unsigned   index,
     Dwarf_Small    * atom_out,
     Dwarf_Unsigned * operand1,
     Dwarf_Unsigned * operand2,
     Dwarf_Unsigned * operand3,
-    Dwarf_Unsigned * rawop1,
-    Dwarf_Unsigned * rawop2,
-    Dwarf_Unsigned * rawop3,
     Dwarf_Unsigned * offset_for_branch,
     Dwarf_Error*     error)
 {
@@ -1903,7 +1894,7 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
             "DW_DLE_DBG_NULL"
             "Dwarf_Locdesc_c_Head_c NULL "
             "in calling "
-            "dwarf_get_location_op_value_d()");
+            "dwarf_get_location_op_value_c()");
         return DW_DLV_ERROR;
     }
     max = locdesc->ld_cents;
@@ -1917,9 +1908,6 @@ dwarf_get_location_op_value_d(Dwarf_Locdesc_c locdesc,
     *operand1 = op->lr_number;
     *operand2 = op->lr_number2;
     *operand3 = op->lr_number3;
-    *rawop1 =   op->lr_raw1;
-    *rawop2 =   op->lr_raw2;
-    *rawop3 =   op->lr_raw3;
     *offset_for_branch = op->lr_offset;
     return DW_DLV_OK;
 }

@@ -36,9 +36,6 @@ extern "C" {
 typedef struct Dwarf_Loc_Chain_s *Dwarf_Loc_Chain;
 struct Dwarf_Loc_Chain_s {
     Dwarf_Small lc_atom;
-    Dwarf_Unsigned lc_raw1;
-    Dwarf_Unsigned lc_raw2;
-    Dwarf_Unsigned lc_raw3;
     Dwarf_Unsigned lc_number;
     Dwarf_Unsigned lc_number2;
     Dwarf_Unsigned lc_number3;

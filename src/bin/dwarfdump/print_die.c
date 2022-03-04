@@ -120,7 +120,6 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     int index,
     Dwarf_Bool has_skip_or_branch,
     struct OpBranchHead_s *oparray,
-    Dwarf_Bool report_raw, /* non-zero reports cooked values */
     int *stackchange,
     Dwarf_Signed *branchdistance,
     int *zerostackdepth,
@@ -1569,10 +1568,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 Dwarf_Half tag_child = 0;
                 int pres = 0;
                 int cres = 0;
-#if 0
-                const char *ctagname = "<child tag invalid>";
-                const char *ptagname = "<parent tag invalid>";
-#endif
 
                 pres = dwarf_tag(die_stack[
                     die_stack_indent_level - 1].die_,
@@ -5309,16 +5304,12 @@ op_is_skip_or_branch(Dwarf_Debug dbg,
     Dwarf_Unsigned opd1 = 0;
     Dwarf_Unsigned opd2 = 0;
     Dwarf_Unsigned opd3 = 0;
-    Dwarf_Unsigned raw1 = 0;
-    Dwarf_Unsigned raw2 = 0;
-    Dwarf_Unsigned raw3 = 0;
     Dwarf_Unsigned offsetforbranch = 0;
     int res = 0;
 
-    res = dwarf_get_location_op_value_d(exprc,
+    res = dwarf_get_location_op_value_c(exprc,
         index,
         &op,&opd1,&opd2,&opd3,
-        &raw1,&raw2,&raw3,
         &offsetforbranch,
         err);
     if (res != DW_DLV_OK) {
@@ -5351,7 +5342,6 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
 {
     Dwarf_Half no_of_ops = 0;
     unsigned i = 0;
-    Dwarf_Bool report_raw = TRUE;
     Dwarf_Bool has_skip_or_branch = FALSE;
     struct OpBranchHead_s op_branch_checking;
     int stackdepth = 0;
@@ -5384,7 +5374,6 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
             die_indent_level,locdesc,i,
             has_skip_or_branch,
             &op_branch_checking,
-            report_raw,
             &stackchange,
             &branchdistance,
             &zerostackdepth,
@@ -5471,7 +5460,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     int         index,
     Dwarf_Bool  has_skip_or_branch,
     struct OpBranchHead_s *oparray,
-    Dwarf_Bool  report_raw,
     int   *stackchange,
     Dwarf_Signed *branchdistance,
     int   * zerostackdepth,
@@ -5483,9 +5471,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Unsigned opd1 = 0;
     Dwarf_Unsigned opd2 = 0;
     Dwarf_Unsigned opd3 = 0;
-    Dwarf_Unsigned raw1 = 0;
-    Dwarf_Unsigned raw2 = 0;
-    Dwarf_Unsigned raw3 = 0;
     Dwarf_Unsigned offsetforbranch = 0;
     const char * op_name = 0;
     int indentprespaces = 0;
@@ -5505,10 +5490,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     {
         /* DWARF 2,3,4 and DWARF5 style */
         int res = 0;
-        res = dwarf_get_location_op_value_d(exprc,
+        res = dwarf_get_location_op_value_c(exprc,
             index,
             &op,&opd1,&opd2,&opd3,
-            &raw1,&raw2,&raw3,
             &offsetforbranch,
             err);
         if (res != DW_DLV_OK) {
@@ -5517,11 +5501,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                 "did not get a value!",
                 res,*err);
             return res;
-        }
-        if (report_raw) {
-            opd1 = raw1;
-            opd2 = raw2;
-            opd3 = raw3;
         }
     }
     op_name = get_OP_name(op,pd_dwarf_names_print_on_error);

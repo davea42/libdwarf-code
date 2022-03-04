@@ -4251,15 +4251,12 @@ DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c dw_loclist_head,
     @return
     Returns DW_DLV_OK etc.
 */
-DW_API int dwarf_get_location_op_value_d(Dwarf_Locdesc_c dw_locdesc,
+DW_API int dwarf_get_location_op_value_c(Dwarf_Locdesc_c dw_locdesc,
     Dwarf_Unsigned   dw_index,
     Dwarf_Small    * dw_operator_out,
     Dwarf_Unsigned * dw_operand1,
     Dwarf_Unsigned * dw_operand2,
     Dwarf_Unsigned * dw_operand3,
-    Dwarf_Unsigned * dw_rawop1,
-    Dwarf_Unsigned * dw_rawop2,
-    Dwarf_Unsigned * dw_rawop3,
     Dwarf_Unsigned * dw_offset_for_branch,
     Dwarf_Error*     dw_error);
 /*! @brief Generate a Dwarf_Loc_Head_c from an expression block
@@ -6111,6 +6108,11 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     Dwarf_Error *       dw_error);
 
 /*! @brief retrieve a name table entry
+
+    For now, ignore this function as it
+    does almost none of that the description
+    promises. Most arguments are ignored.
+    
     @param dw_dn
     The table of interest.
     @param dw_name_index

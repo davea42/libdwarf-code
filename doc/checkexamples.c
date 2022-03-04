@@ -704,19 +704,15 @@ int example_loclistcv5(Dwarf_Attribute someattr,
                 Dwarf_Small op = 0;
 
                 for (j = 0; j < loclist_expr_op_count; ++j) {
-                    Dwarf_Unsigned raw1 = 0;
-                    Dwarf_Unsigned raw2 = 0;
-                    Dwarf_Unsigned raw3 = 0;
                     Dwarf_Unsigned opd1 = 0;
                     Dwarf_Unsigned opd2 = 0;
                     Dwarf_Unsigned opd3 = 0;
                     Dwarf_Unsigned offsetforbranch = 0;
 
-                    opres = dwarf_get_location_op_value_d(
-                        locdesc_entry,
-                        j,&op,
-                        &raw1,&raw2,&raw3,
-                        &opd1, &opd2,&opd3,&offsetforbranch,
+                    opres = dwarf_get_location_op_value_c(
+                        locdesc_entry, j,&op,
+                        &opd1,&opd2,&opd3,
+                        &offsetforbranch,
                         error);
                     if (opres == DW_DLV_OK) {
                         /*  Do something with the operators.
@@ -808,14 +804,11 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         Dwarf_Unsigned opd1 = 0;
         Dwarf_Unsigned opd2 = 0;
         Dwarf_Unsigned opd3 = 0;
-        Dwarf_Unsigned rawop1 = 0;
-        Dwarf_Unsigned rawop2 = 0;
-        Dwarf_Unsigned rawop3 = 0;
         Dwarf_Unsigned offsetforbranch = 0;
 
-        res2 = dwarf_get_location_op_value_d(locentry,
+        res2 = dwarf_get_location_op_value_c(locentry,
             i, &op,&opd1,&opd2,&opd3,
-            &rawop1,&rawop2,&rawop3,&offsetforbranch,
+            &offsetforbranch,
             error);
         /* Do something with the expression operator and operands */
         if (res2 != DW_DLV_OK) {
