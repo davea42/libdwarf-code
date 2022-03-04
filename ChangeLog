@@ -1,3 +1,122 @@
+2022-03-04:  David Anderson
+    commit f78b8580cb49573c1a2ca69d623cf00b7b141b23
+
+    Revert dwarf_get_location_op_value_d() to
+    dwarf_get_location_op_value_c()
+    as the older version does all that is useful.
+    The three arguments missing from
+    dwarf_get_location_op_value_c() turned out
+    to be useless.
+
+    The newer (and now removed) dwarf_get_location_op_value_d()
+    was added 2020-06-09.
+
+    Documenting the change.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+
+    Implementing the change.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loc.h
+            modified:   src/lib/libdwarf/dwarf_locationop_read.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-04:  David Anderson
+    commit 29d7fdf0d5620daab5700fdc5a6e9bf08c90bab6
+
+    Made the return value comments
+     on dwarf_hasattr() more detailed and specific.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-04:  David Anderson
+    commit ae8b32cde96cd545a256665cae9939f017911c63
+
+    dwarf_xu_header_free() renamed to dwarf_dealloc_xu_header().
+    dwarf_gdbindex_free() renamed to dwarf_dealloc_gdbindex().
+    dwarf_loc_head_c_dealloc renamed to dwarf_dealloc_loc_head_c().
+
+    For consistency with all the other dealloc functions.
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+            modified:   src/bin/dwarfdump/print_debugfission.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-04:  David Anderson
+    commit b2e1497670c89bb7d77c82f92e832b65ab5ad766
+
+    Regenerate with  version 0.4.0
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+    Update the dwarf_return_empty_pubnames() calls, now
+    omitting the unused Dwarf_Error argument.
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/bin/dwarfdump/print_static_funcs.c
+            modified:   src/bin/dwarfdump/print_static_vars.c
+            modified:   src/bin/dwarfdump/print_types.c
+            modified:   src/bin/dwarfdump/print_weaknames.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+2022-03-04:  David Anderson
+    commit 5ae8e00a468923a370bdcb3e1532b02c5d17e0e4
+
+    Now version 0.4.0 as we change a small number of API
+    items.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+    Change version and also remove unused third (Dwarf_Error)
+    argument from dwarf_return_empty_pubnames()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-02:  David Anderson
+    commit d4f01e3ad8314633940714ef7b6cb0038991f4d6
+
+    Now each has version based on 0.3.5 ,
+    updated from 0.3.4.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Now this updates libdwarf.dox too.
+            modified:   tools/updatesemanticversion.py
+
+2022-03-02:  David Anderson
+    commit 304e13b0c213e4766a9c866835078e86a0982f14
+
+    Now with final changes listed (nothing important)
+    for the 0.3.4 release)
+            modified:   ChangeLog
+
+2022-03-02:  David Anderson
+    commit fe1de8bed00c492a4e6294c04d0b266c7e5725f3
+
+    Two changes for cmake builds of libdwarf on Windows.
+    Issues #82 and #83 on github.
+    One ensures -DLIBDWARF_BUILD is passed to the compiler and one
+    ensures we use DW_FZLIB to add zlib to the list of
+    things to link in (when it exists).
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
 2022-02-23:  David Anderson
     commit 8c56a98e99ae367e57b02a5d7f7dab01add878e9
 
