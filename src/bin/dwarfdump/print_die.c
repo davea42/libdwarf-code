@@ -6091,7 +6091,7 @@ print_location_list(Dwarf_Debug dbg,
             &loclists_debug_addr_base,
             &loclists_offset_lle_set,llerr);
         if (lres != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(loclist_head);
+            dwarf_dealloc_loc_head_c(loclist_head);
             return lres;
         }
         version = lle_version;
@@ -6170,10 +6170,10 @@ print_location_list(Dwarf_Debug dbg,
                 print_error_and_continue(dbg,
                     "ERROR: dwarf_get_locdesc_entry_c fails",
                     lres, *llerr);
-                dwarf_loc_head_c_dealloc(loclist_head);
+                dwarf_dealloc_loc_head_c(loclist_head);
                 return lres;
             } else if (lres == DW_DLV_NO_ENTRY) {
-                dwarf_loc_head_c_dealloc(loclist_head);
+                dwarf_dealloc_loc_head_c(loclist_head);
                 return lres;
             }
         }
@@ -6247,12 +6247,12 @@ print_location_list(Dwarf_Debug dbg,
 
             res = dwarf_tag(die,&tag,llerr);
             if (res != DW_DLV_OK) {
-                dwarf_loc_head_c_dealloc(loclist_head);
+                dwarf_dealloc_loc_head_c(loclist_head);
                 return res;
             }
             res = dwarf_whatattr(attr,&attrnum,llerr);
             if (res != DW_DLV_OK) {
-                dwarf_loc_head_c_dealloc(loclist_head);
+                dwarf_dealloc_loc_head_c(loclist_head);
                 return res;
             }
             attrname = get_AT_name(attrnum,FALSE);
@@ -6315,7 +6315,7 @@ print_location_list(Dwarf_Debug dbg,
             base_address,
             details,llerr);
         if (lres == DW_DLV_ERROR) {
-            dwarf_loc_head_c_dealloc(loclist_head);
+            dwarf_dealloc_loc_head_c(loclist_head);
             return lres;
         }
     }
@@ -6327,7 +6327,7 @@ print_location_list(Dwarf_Debug dbg,
             esb_append(details,"\n");
         }
     }
-    dwarf_loc_head_c_dealloc(loclist_head);
+    dwarf_dealloc_loc_head_c(loclist_head);
     return DW_DLV_OK;
 }
 

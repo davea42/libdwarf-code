@@ -1683,13 +1683,13 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         /* Here we have a loclist to deal with. */
         ores = context_is_cu_not_tu(cucontext,&is_cu);
         if (ores != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
+            dwarf_dealloc_loc_head_c(llhead);
             return setup_res;
         }
         ores = _dwarf_original_loclist_build(dbg,
             llhead, attr, error);
         if (ores != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
+            dwarf_dealloc_loc_head_c(llhead);
             return ores;
         }
         if (lkind == DW_LKIND_loclist) {
@@ -1699,7 +1699,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             ores = cook_gnu_loclist_contents(dbg,llhead,error);
         }
         if (ores != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
+            dwarf_dealloc_loc_head_c(llhead);
             return ores;
         }
     } else if (lkind == DW_LKIND_expression) {
@@ -1708,7 +1708,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         eres = _dwarf_original_expression_build(dbg,
             llhead, attr, error);
         if (eres != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
+            dwarf_dealloc_loc_head_c(llhead);
             return eres;
         }
     } else if (lkind == DW_LKIND_loclists) {
@@ -1718,12 +1718,12 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         leres = _dwarf_loclists_fill_in_lle_head(dbg,
             attr,llhead,error);
         if (leres != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
+            dwarf_dealloc_loc_head_c(llhead);
             return leres;
         }
         leres = cook_loclists_contents(dbg,llhead,error);
         if (leres != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(llhead);
+            dwarf_dealloc_loc_head_c(llhead);
             return leres;
         }
     } /* ASSERT else impossible */
@@ -1779,7 +1779,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     llbuf = (Dwarf_Locdesc_c)
         _dwarf_get_alloc(dbg, DW_DLA_LOCDESC_C, local_listlen);
     if (!llbuf) {
-        dwarf_loc_head_c_dealloc(llhead);
+        dwarf_dealloc_loc_head_c(llhead);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -1816,7 +1816,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
         dwarf_dealloc(dbg,llbuf,DW_DLA_LOCDESC_C);
         llhead->ll_locdesc = 0;
         llhead->ll_locdesc_count = 0;
-        dwarf_loc_head_c_dealloc(llhead);
+        dwarf_dealloc_loc_head_c(llhead);
         return DW_DLV_ERROR;
     }
     *loc_head = llhead;

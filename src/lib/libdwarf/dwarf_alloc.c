@@ -943,11 +943,11 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         that are not things the user can otherwise request.
         Housecleaning.  */
     if (dbg->de_cu_hashindex_data) {
-        dwarf_xu_header_free(dbg->de_cu_hashindex_data);
+        dwarf_dealloc_xu_header(dbg->de_cu_hashindex_data);
         dbg->de_cu_hashindex_data = 0;
     }
     if (dbg->de_tu_hashindex_data) {
-        dwarf_xu_header_free(dbg->de_tu_hashindex_data);
+        dwarf_dealloc_xu_header(dbg->de_tu_hashindex_data);
         dbg->de_tu_hashindex_data = 0;
     }
     if (dbg->de_printf_callback_null_device_handle) {

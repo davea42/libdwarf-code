@@ -727,6 +727,9 @@
     Removed the unused Dwarf_Error argument from 
     dwarf_return_empty_pubnames() as the function can only
     return DW_DLV_OK.
+    dwarf_xu_header_free() renamed to dwarf_dealloc_xu_header().
+    dwarf_gdbindex_free() renamed to dwarf_dealloc_gdbindex().
+    dwarf_loc_head_c_dealloc renamed to dwarf_dealloc_loc_head_c().
 
     <b>Changes 0.3.3 to 0.3.4</b>
     Replaced the groff -mm based libdwarf.pdf

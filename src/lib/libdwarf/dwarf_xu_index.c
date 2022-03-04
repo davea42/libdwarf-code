@@ -153,7 +153,7 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
     dwarf_init*() calls
     dwarf_get_xu_index_header() when
     the object file is opened and
-    dwarf_xu_header_free() is called
+    dwarf_dealloc_xu_header() is called
     by dwarf_finish(), there is
     no need for users to do this.
 
@@ -161,7 +161,7 @@ fill_in_offsets_headerline(Dwarf_Debug dbg,
     tu/cu functions oneself (possibly to print the
     .debug_cu_index or .debug_tu_index sections).
     then you will need to call dwarf_get_xu_index_header()
-    and eventually dwarf_xu_header_free().
+    and eventually dwarf_dealloc_xu_header().
 
     The libdwarf-internal data is kept in Dwarf_Debug
     fields de_cu_hashindex_data/de_tu_hashindex_data.
@@ -926,7 +926,7 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
 }
 
 void
-dwarf_xu_header_free(Dwarf_Xu_Index_Header indexptr)
+dwarf_dealloc_xu_header(Dwarf_Xu_Index_Header indexptr)
 {
     if (indexptr) {
         Dwarf_Debug dbg = indexptr->gx_dbg;

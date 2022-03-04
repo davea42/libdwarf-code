@@ -726,21 +726,21 @@ int example_loclistcv5(Dwarf_Attribute someattr,
                             have already been incorporated
                             in opd1,2,3.  */
                     } else {
-                        dwarf_loc_head_c_dealloc(loclist_head);
+                        dwarf_dealloc_loc_head_c(loclist_head);
                         /*Something is wrong. */
                         return opres;
                     }
                 }
             } else {
                 /* Something is wrong. Do something. */
-                dwarf_loc_head_c_dealloc(loclist_head);
+                dwarf_dealloc_loc_head_c(loclist_head);
                 return lres;
             }
         }
     }
     /*  Always call dwarf_loc_head_c_dealloc()
         to free all the memory associated with loclist_head.  */
-    dwarf_loc_head_c_dealloc(loclist_head);
+    dwarf_dealloc_loc_head_c(loclist_head);
     loclist_head = 0;
     return lres;
 }
@@ -796,10 +796,10 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
         &loclist_source, &section_offset, &locdesc_offset,
         error);
     if (res2 == DW_DLV_ERROR) {
-        dwarf_loc_head_c_dealloc(head);
+        dwarf_dealloc_loc_head_c(head);
         return res2;
     } else if (res2 == DW_DLV_NO_ENTRY) {
-        dwarf_loc_head_c_dealloc(head);
+        dwarf_dealloc_loc_head_c(head);
         return res2;
     }
     /*  ASSERT: ulistlen == 1 */
@@ -819,11 +819,11 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
             error);
         /* Do something with the expression operator and operands */
         if (res2 != DW_DLV_OK) {
-            dwarf_loc_head_c_dealloc(head);
+            dwarf_dealloc_loc_head_c(head);
             return res2;
         }
     }
-    dwarf_loc_head_c_dealloc(head);
+    dwarf_dealloc_loc_head_c(head);
     return DW_DLV_OK;
 }
 /*! @endcode */
@@ -866,7 +866,7 @@ int examplea(Dwarf_Attribute someattr,
             &loclist_source_out, &expression_offset,&locdesc_offset,
             error);
         if (lres == DW_DLV_ERROR) {
-            dwarf_loc_head_c_dealloc(loclisthead);
+            dwarf_dealloc_loc_head_c(loclisthead);
             return lres;
         }
         if (lres == DW_DLV_NO_ENTRY) {
@@ -881,7 +881,7 @@ int examplea(Dwarf_Attribute someattr,
             expression_offset+locdesc_offset;
 
     }
-    dwarf_loc_head_c_dealloc(loclisthead);
+    dwarf_dealloc_loc_head_c(loclisthead);
     *silly_total = meaninglesstotal;
     return DW_DLV_OK;
 }
@@ -1832,7 +1832,7 @@ int examplew(Dwarf_Debug dbg,Dwarf_Error *error)
             &length,error);
         /* Example actions. */
         if (res != DW_DLV_OK) {
-            dwarf_gdbindex_free(gindexptr);
+            dwarf_dealloc_gdbindex(gindexptr);
             return res;
         }
         for (i = 0; i < length; ++i) {
@@ -1848,7 +1848,7 @@ int examplew(Dwarf_Debug dbg,Dwarf_Error *error)
         res = dwarf_gdbindex_types_culist_array(gindexptr,
             &typeslength,error);
         if (res != DW_DLV_OK) {
-            dwarf_gdbindex_free(gindexptr);
+            dwarf_dealloc_gdbindex(gindexptr);
             return res;
         }
         for (i = 0; i < typeslength; ++i) {
@@ -1858,12 +1858,12 @@ int examplew(Dwarf_Debug dbg,Dwarf_Error *error)
             res = dwarf_gdbindex_types_culist_entry(gindexptr,
                 i,&cuoffset,&tuoffset,&type_signature,error);
             if (res != DW_DLV_OK) {
-                dwarf_gdbindex_free(gindexptr);
+                dwarf_dealloc_gdbindex(gindexptr);
                 return res;
             }
             /* Do something with cuoffset etc. */
         }
-        dwarf_gdbindex_free(gindexptr);
+        dwarf_dealloc_gdbindex(gindexptr);
     }
     return DW_DLV_OK;
 }
@@ -2004,7 +2004,7 @@ int exampley(Dwarf_Debug dbg, const char *type,
         return res;
     }
     /* Do something with the xuhdr here . */
-    dwarf_xu_header_free(xuhdr);
+    dwarf_dealloc_xu_header(xuhdr);
     return DW_DLV_OK;
 }
 /*! @endcode */

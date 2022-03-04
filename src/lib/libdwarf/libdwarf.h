@@ -4302,11 +4302,14 @@ DW_API int dwarf_loclist_from_expr_c(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned  * dw_listlen,
     Dwarf_Error     * dw_error);
 
-/*! @brief frees all memory allocated for Dwarf_Loc_Head_c
+/*! @brief dealloc (free) all memory allocated for Dwarf_Loc_Head_c
     @param dw_head
-    A head pointer
+    A head pointer.
+
+    The caller should zero the passed-in pointer on return
+    as it is stale at that point.
 */
-DW_API void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c dw_head);
+DW_API void dwarf_dealloc_loc_head_c(Dwarf_Loc_Head_c dw_head);
 
 /*  These interfaces allow reading the .debug_loclists
     section. Independently of DIEs.
@@ -6710,7 +6713,7 @@ DW_API int dwarf_gdbindex_header(Dwarf_Debug dw_dbg,
     Pass in a valid dw_gdbindexptr and
     on return assign zero to dw_gdbindexptr as it is stale.
 */
-DW_API void dwarf_gdbindex_free(Dwarf_Gdbindex dw_gdbindexptr);
+DW_API void dwarf_dealloc_gdbindex(Dwarf_Gdbindex dw_gdbindexptr);
 
 /*! @brief Returns the culist array length
     @param dw_gdbindexptr
@@ -7033,7 +7036,7 @@ DW_API int dwarf_get_xu_index_header(Dwarf_Debug dw_dbg,
     The caller should zero the passed in value
     on return as it is then a stale value.
 */
-DW_API void dwarf_xu_header_free(Dwarf_Xu_Index_Header dw_xuhdr);
+DW_API void dwarf_dealloc_xu_header(Dwarf_Xu_Index_Header dw_xuhdr);
 
 /*! @brief Return basic information about a Dwarf_Xu_Index_Header
     @param dw_xuhdr

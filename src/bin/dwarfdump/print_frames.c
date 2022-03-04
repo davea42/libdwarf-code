@@ -1615,13 +1615,13 @@ print_expression_operations(Dwarf_Debug dbg,
             &locdesc_offset,
             err);
         if (lres == DW_DLV_ERROR) {
-            dwarf_loc_head_c_dealloc(head);
+            dwarf_dealloc_loc_head_c(head);
             glflags.gf_count_major_errors++;
             printf("\nERROR: calling dwarf_get_locdesc_entry_d()"
                 " on LocDesc 0");
             return lres;
         } else if (lres == DW_DLV_NO_ENTRY) {
-            dwarf_loc_head_c_dealloc(head);
+            dwarf_dealloc_loc_head_c(head);
             return lres;
         }
         /*  ASSERT: loclist_source == DW_LKIND_expression  */
@@ -1636,7 +1636,7 @@ print_expression_operations(Dwarf_Debug dbg,
             0, /* no die indent*/
             baseaddr,
             out_string,err);
-        dwarf_loc_head_c_dealloc(head);
+        dwarf_dealloc_loc_head_c(head);
         return lres;
     }
 }

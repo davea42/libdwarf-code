@@ -621,7 +621,7 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
 }
 
 void
-dwarf_gdbindex_free(Dwarf_Gdbindex indexptr)
+dwarf_dealloc_gdbindex(Dwarf_Gdbindex indexptr)
 {
     if (indexptr) {
         Dwarf_Debug dbg = indexptr->gi_dbg;

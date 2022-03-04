@@ -555,20 +555,20 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
 
     res = print_culist_array(dbg,gdbindex,&culist_len,err);
     if (res != DW_DLV_OK) {
-        dwarf_gdbindex_free(gdbindex);
+        dwarf_dealloc_gdbindex(gdbindex);
         return res;
     }
     res = print_types_culist_array(dbg,gdbindex,err);
     if (res != DW_DLV_OK) {
-        dwarf_gdbindex_free(gdbindex);
+        dwarf_dealloc_gdbindex(gdbindex);
         return res;
     }
     res = print_addressarea(dbg,gdbindex,err);
     if (res != DW_DLV_OK) {
-        dwarf_gdbindex_free(gdbindex);
+        dwarf_dealloc_gdbindex(gdbindex);
         return res;
     }
     res = print_symboltable(dbg,gdbindex,culist_len,err);
-    dwarf_gdbindex_free(gdbindex);
+    dwarf_dealloc_gdbindex(gdbindex);
     return res;
 }

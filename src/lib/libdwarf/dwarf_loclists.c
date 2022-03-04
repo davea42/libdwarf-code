@@ -1302,7 +1302,7 @@ _dwarf_free_loclists_limited_head_content(Dwarf_Loc_Head_c head)
     called by user calls to clean up or by
     libdwarf to clean up on error.  */
 void
-dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c head)
+dwarf_dealloc_loc_head_c(Dwarf_Loc_Head_c head)
 {
     Dwarf_Debug dbg =  0;
 
