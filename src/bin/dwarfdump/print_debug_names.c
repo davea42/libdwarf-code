@@ -114,6 +114,43 @@ print_cu_table(Dwarf_Dnames_Head dn,
 }
 
 static int
+print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
+    Dwarf_Error *error)
+{
+    int res = 0;
+    Dwarf_Unsigned bn = 0;
+
+    if (!bucket_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    
+    printf("\n");
+    printf("  Bucket (hash) table entry count: "
+        "%" DW_PR_DUu "\n",bucket_count);
+    printf("    [ ]    nameindex collisioncount\n");
+    for ( ; bn < bucket_count; ++bn) {
+        Dwarf_Unsigned name_index = 0;
+        Dwarf_Unsigned collision_count = 0;
+
+        res = dwarf_dnames_bucket(dn,bn,&name_index,
+            &collision_count,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            break;
+        }
+        printf("    [ %3" DW_PR_DUu "] ",bn);
+        printf("%6" DW_PR_DUu " %6" DW_PR_DUu ,
+            name_index,
+            collision_count);
+        printf("\n");
+    } 
+    printf("\n");
+    return DW_DLV_OK;
+}
+
+static int
 print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset,
     Dwarf_Unsigned new_offset,
@@ -183,6 +220,10 @@ print_dname_record(Dwarf_Dnames_Head dn,
     }
     res = print_cu_table(dn,"tu",local_type_unit_count,
         foreign_type_unit_count,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    res = print_buckets(dn,bucket_count,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }

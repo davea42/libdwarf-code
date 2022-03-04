@@ -492,7 +492,8 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             /*  Ensure that there is no corruption in
                 the padding. */
 #if 0
-            dump_bytes("Padding ck 1 dadebug",(Dwarf_Small *)cp,cpend-cp);
+            dump_bytes("Padding ck 1 dadebug",
+                (Dwarf_Small *)cp,cpend-cp);
 #endif
             for ( ; cp < cpend; ++cp) {
                 if (*cp) {
@@ -705,7 +706,8 @@ dwarf_dnames_header(Dwarf_Debug dbg,
         curptr += usedspace;
         for ( ; curptr < end_section; ++curptr) {
 #if 0
-            dump_bytes("Padding ck 2 dadebug",(Dwarf_Small*)curptr,remaining);
+            dump_bytes("Padding ck 2 dadebug",
+                (Dwarf_Small*)curptr,remaining);
 #endif
             if (*curptr) {
                 /*  One could argue this is a harmless error,
@@ -886,7 +888,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     the name entries for the bucket
     index_of_entry returns the name table entry.
     indexcount returns the number of name table entries
-    (representing bucket collisions) for this bucket. */
+    (representing name collisions) for this bucket. */
 int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      bucket_number,
     Dwarf_Unsigned    * name_index,
@@ -896,6 +898,7 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     Dwarf_Debug dbg = 0;
     Dwarf_Unsigned count = 0; /* equal bucket value */
     Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned start_index = 0;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DEBUG_NAMES_ERROR,
@@ -911,29 +914,38 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     for (i = bucket_number; i < dn->dn_bucket_count; ++i) {
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = dn->dn_buckets +
-            bucket_number * DWARF_32BIT_SIZE;
+            i * DWARF_32BIT_SIZE;
         Dwarf_Small *endptr = dn->dn_buckets+
             dn->dn_bucket_count*DWARF_32BIT_SIZE;
-        Dwarf_Unsigned localbucket = bucket_number;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
             ptr, DWARF_32BIT_SIZE,
             error,endptr);
         if (i == bucket_number) {
-            *name_index = offsetval;
+            if (!offsetval) {
+                *name_index = offsetval;
+                *collisioncount = 0;
+                return DW_DLV_OK;
+            }
+            start_index = offsetval;
+            continue;
         }
-        localbucket = offsetval%dn->dn_bucket_count;
-        if (bucket_number != localbucket) {
-            break;
+        if (!offsetval) {
+            /* empty bucket, find real one */
+            continue;
         }
-        if (!collisioncount) {
-            break;
-        }
-        ++count;
+        count = offsetval - start_index;
+        break;
     }
-    if (collisioncount) {
-        *collisioncount = count;
+    if (i == dn->dn_bucket_count) {
+        /* Last bucket was of interest */
+        count =  dn->dn_name_count - start_index;
+        if (!count) {
+            count = 1;
+        }
     }
+    *collisioncount = count;
+    *name_index = start_index;
     return DW_DLV_OK;
 }
 
