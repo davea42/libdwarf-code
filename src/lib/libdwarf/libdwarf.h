@@ -99,10 +99,10 @@ extern "C" {
 */
 
 /* Semantic Version identity for this libdwarf.h */
-#define DW_LIBDWARF_VERSION "0.3.5"
+#define DW_LIBDWARF_VERSION "0.4.0"
 #define DW_LIBDWARF_VERSION_MAJOR 0
-#define DW_LIBDWARF_VERSION_MINOR 3
-#define DW_LIBDWARF_VERSION_MICRO 5
+#define DW_LIBDWARF_VERSION_MINOR 4
+#define DW_LIBDWARF_VERSION_MICRO 0
 
 #define DW_PATHSOURCE_unspecified 0
 #define DW_PATHSOURCE_basic     1
@@ -6575,9 +6575,8 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
     Dwarf_Error* dw_error);
 /*! @brief A flag for dwarfdump on pubnames, pubtypes etc.
 
-    Sets a flag in the dbg. Always returns DW_DLV_OK
-    and never touches error. The error argument should
-    be deleted. Applies to all the sections of this kind:
+    Sets a flag in the dbg. Always returns DW_DLV_OK.
+    Applies to all the sections of this kind:
     pubnames, pubtypes, funcs, typenames,vars, weaks.
     Ensures empty content (meaning no
     offset/name tuples) for a CU shows up rather than
@@ -6589,14 +6588,11 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
     The Dwarf_Debug of interest.
     @param dw_flag
     Must be the value one.
-    @param dw_error
-    Unused,
     @return
     Returns DW_DLV_OK. Always.
 */
 DW_API int dwarf_return_empty_pubnames(Dwarf_Debug dw_dbg,
-    int          dw_flag,
-    Dwarf_Error* dw_error);
+    int          dw_flag);
 
 /*! @} */
 
