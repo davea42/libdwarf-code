@@ -2188,9 +2188,8 @@ DW_API int dwarf_die_abbrev_children_flag(Dwarf_Die dw_die,
 
     This is used by dwarfdump (when
     dwarfdump is checking for valid DWARF but
-    it depends on the caller to have done a lot
-    of precise setup. Ignore it. It has to change.
-    REPLACEME
+    it depends on the caller to have done
+    precise setup. Ignore it. It has to change.
 */
 DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     Dwarf_Off* dw_offset);
@@ -2210,8 +2209,10 @@ DW_API int dwarf_validate_die_sibling(Dwarf_Die dw_sibling,
     @param dw_error
     The usual error detail return pointer.
     @return
-    Returns DW_DLV_OK etc.
-
+    Never returns DW_DLV_NO_ENTRY.
+    Returns DW_DLV_OK unless there is an error,
+    in which case it returns DW_DLV_ERROR
+    and sets dw_error to the error details.
 */
 DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     Dwarf_Half   dw_attrnum,
