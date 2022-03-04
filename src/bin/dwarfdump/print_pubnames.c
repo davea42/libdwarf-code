@@ -272,7 +272,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
     }
     if (glflags.verbose) {
         /* For best testing! */
-        res = dwarf_return_empty_pubnames(dbg,1,err);
+        res = dwarf_return_empty_pubnames(dbg,1);
         if (res != DW_DLV_OK) {
             simple_err_return_msg_either_action(res,
                 "ERROR: Erroneous "
@@ -315,7 +315,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
         globbuf,count,err);
     esb_destructor(&sanitname);
     dwarf_globals_dealloc(dbg,globbuf,count);
-    dwarf_return_empty_pubnames(dbg,0,err);
+    dwarf_return_empty_pubnames(dbg,0);
     return res;
 }
 

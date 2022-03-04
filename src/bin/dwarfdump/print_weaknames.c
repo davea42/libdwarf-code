@@ -65,7 +65,7 @@ print_weaknames(Dwarf_Debug dbg,Dwarf_Error *err)
     esb_destructor(&truename);
     if (glflags.verbose) {
         /* For best testing! */
-        dwarf_return_empty_pubnames(dbg,1,err);
+        dwarf_return_empty_pubnames(dbg,1);
     }
     wkres = dwarf_get_weaks(dbg, &globbuf, &count, err);
     if (wkres == DW_DLV_ERROR) {
@@ -73,10 +73,8 @@ print_weaknames(Dwarf_Debug dbg,Dwarf_Error *err)
         esb_destructor(&sanitname);
         return wkres;
     } else if (wkres == DW_DLV_NO_ENTRY) {
-        Dwarf_Error berr = 0;
-
         esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,&berr);
+        dwarf_return_empty_pubnames(dbg,0);
         /* no weaknames */
         return wkres;
     } else {
@@ -95,7 +93,7 @@ print_weaknames(Dwarf_Debug dbg,Dwarf_Error *err)
         /*  globbuf should be zero, count 0
             in case of DW_DLV_ERROR. That's ok */
         dwarf_weaks_dealloc(dbg, globbuf, count);
-        dwarf_return_empty_pubnames(dbg,0,err);
+        dwarf_return_empty_pubnames(dbg,0);
         if (wkres == DW_DLV_ERROR) {
             if (!printed) {
                 printf("\n%s\n",esb_get_string(&sanitname));
@@ -104,6 +102,6 @@ print_weaknames(Dwarf_Debug dbg,Dwarf_Error *err)
         }
     }
     esb_destructor(&sanitname);
-    dwarf_return_empty_pubnames(dbg,0,err);
+    dwarf_return_empty_pubnames(dbg,0);
     return DW_DLV_OK;
 }

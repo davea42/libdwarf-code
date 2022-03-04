@@ -67,18 +67,18 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
     esb_destructor(&truename);
     if (glflags.verbose) {
         /* For best testing! */
-        dwarf_return_empty_pubnames(dbg,1,err);
+        dwarf_return_empty_pubnames(dbg,1);
     }
     res = dwarf_get_vars(dbg, &globbuf, &count, err);
     if (res == DW_DLV_ERROR) {
         esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,err);
+        dwarf_return_empty_pubnames(dbg,0);
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
         /* no static vars */
         esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,err);
+        dwarf_return_empty_pubnames(dbg,0);
         return res;
     }
     {
@@ -101,7 +101,7 @@ print_static_vars(Dwarf_Debug dbg,Dwarf_Error *err)
             }
         }
         esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,err);
+        dwarf_return_empty_pubnames(dbg,0);
         dwarf_vars_dealloc(dbg, globbuf, count);
         return pres;
     }

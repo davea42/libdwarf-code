@@ -1004,10 +1004,7 @@ dwarf_CU_dieoffset_given_die(Dwarf_Die die,
     return DW_DLV_OK;
 }
 
-/*  We do not want to screw up error in case
-    it has something important.  So not touching it now. */
-int dwarf_return_empty_pubnames(Dwarf_Debug dbg,
-    int flag, UNUSEDARG Dwarf_Error *err )
+int dwarf_return_empty_pubnames(Dwarf_Debug dbg, int flag)
 {
     if (dbg == NULL) {
         return DW_DLV_OK;

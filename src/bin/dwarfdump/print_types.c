@@ -85,7 +85,7 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type,
     }
     esb_destructor(&truename);
     if (glflags.verbose) {
-        dwarf_return_empty_pubnames(dbg,1,err);
+        dwarf_return_empty_pubnames(dbg,1);
     }
     gtres = get_types(dbg, &globbuf, &count, err);
     if (gtres == DW_DLV_ERROR) {
@@ -95,7 +95,7 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type,
     } else if (gtres == DW_DLV_NO_ENTRY) {
         /* no types */
         esb_destructor(&sanitname);
-        dwarf_return_empty_pubnames(dbg,0,err);
+        dwarf_return_empty_pubnames(dbg,0);
         return gtres;
     } else {
         int wkres = 0;
@@ -115,12 +115,12 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type,
             if (!printed) {
                 printf("\n%s\n",esb_get_string(&sanitname));
             }
-            dwarf_return_empty_pubnames(dbg,0,err);
+            dwarf_return_empty_pubnames(dbg,0);
             esb_destructor(&sanitname);
             return wkres;
         }
     }
     esb_destructor(&sanitname);
-    dwarf_return_empty_pubnames(dbg,0,err);
+    dwarf_return_empty_pubnames(dbg,0);
     return DW_DLV_OK;
 }   /* print_types() */

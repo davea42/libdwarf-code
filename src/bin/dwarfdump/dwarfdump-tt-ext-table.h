@@ -1,5 +1,5 @@
 /* Generated code, do not edit. */
-/* Generated for source version 0.3.4 */
+/* Generated for source version 0.4.0 */
 
 /* BEGIN FILE */
 
