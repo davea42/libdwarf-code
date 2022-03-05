@@ -45,6 +45,11 @@ struct Dwarf_D_Abbrev_s {
 };
 #endif
 
+struct Dwarf_DN_Bucket_s {
+    Dwarf_Unsigned db_nameindex;
+    Dwarf_Unsigned db_collisioncount;
+};
+
 #define DWARF_DNAMES_VERSION5 5
 #define DWARF_DNAMES_MAGIC  0xabcd
 
@@ -70,6 +75,10 @@ struct Dwarf_Dnames_Head_s {
     Dwarf_Unsigned dn_local_type_unit_count;
     Dwarf_Unsigned dn_foreign_type_unit_count;
     Dwarf_Unsigned dn_bucket_count;
+
+    /*  Once set, this is a single array of entries. */
+    struct Dwarf_DN_Bucket_s * dn_bucket_array;
+
     /*  dn_name_count gives the size of
         the dn_string_offsets and dn_entry_offsets arrays,
         and if hashes present, the size of the
