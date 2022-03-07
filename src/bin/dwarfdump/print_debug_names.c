@@ -37,23 +37,22 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "dd_esb_using_functions.h"
 
 static const Dwarf_Sig8 zerosig;
+/*   The table entries here are indexed starting at 1 */
 static int
 print_cu_table(Dwarf_Dnames_Head dn,
     const char *type,
-    Dwarf_Unsigned offsets_count,
-    Dwarf_Unsigned signature_count,
+    Dwarf_Unsigned offset_count,
+    Dwarf_Unsigned sig_count,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned i = 1;
+    Dwarf_Unsigned totalcount = offset_count+sig_count;
     int res = 0;
     Dwarf_Bool formtu = FALSE;
-    Dwarf_Unsigned totalcount = offsets_count+
-        signature_count;
 
     if (type[0] == 't' && type[1] == 'u' &&
         type[2] == 0) {
         formtu = TRUE;
-
     } else if (type[0] == 'c' && type[1] == 'u' &&
         type[2] == 0) {
         formtu = FALSE;
@@ -67,47 +66,45 @@ print_cu_table(Dwarf_Dnames_Head dn,
     }
     if (formtu) {
         printf("  %s List. Entry count: %" DW_PR_DUu
-        " (local tu list %" DW_PR_DUu
-        ",foreign tu list %" DW_PR_DUu
-        ")\n",type,totalcount,offsets_count,signature_count);
+        " (local tu count %" DW_PR_DUu
+        ",foreign tu count %" DW_PR_DUu
+        ")\n",type,totalcount,offset_count,sig_count);
     } else {
         printf("  %s List. Entry count: %" DW_PR_DUu "\n",
             type,totalcount);
     }
-    for ( ; i < totalcount; ++i) {
+    for (i = 1 ; i <= totalcount; ++i) {
         Dwarf_Unsigned offset = 0;
         Dwarf_Sig8     signature;
 
         signature = zerosig;
-        res = dwarf_dnames_cu_table(dn, type,i,
+        res = dwarf_dnames_cu_table(dn,type,i,
             &offset, &signature,error);
+        if (res == DW_DLV_NO_ENTRY) {
+            break;
+        }
         if (res == DW_DLV_ERROR) {
             return res;
         }
-        if (i < offsets_count) {
+        /*  Could equally test for non-zero offset here. */
+        if (i <= offset_count) {
             printf("  [%4" DW_PR_DUu "] ",i);
-            printf("Offset   :  0x%"
+            printf("CU-offset:  0x%"
                 DW_PR_XZEROS DW_PR_DUx "\n",
                 offset);
-        } else if (i < totalcount) {
+            continue;
+        } 
+ 
+        {
             static char sigarea[32];
             struct esb_s sig8str;
 
             esb_constructor_fixed(&sig8str,sigarea,sizeof(sigarea));
             format_sig8_string(&signature,&sig8str);
             printf("  [%4" DW_PR_DUu "] "
-                "(Foreign Type index %4" DW_PR_DUu ") "
-                ,i, totalcount - offsets_count);
+                ,i);
             printf("Signature:  %s\n",esb_get_string(&sig8str));
             esb_destructor(&sig8str);
-        } else {
-            printf("ERROR: Calling print_cu_table type"
-                "%s  has invalid index:"
-                " Index %" DW_PR_DUu
-                " Totalcount %" DW_PR_DUu "\n",
-                type,i,totalcount);
-            glflags.gf_count_major_errors++;
-            return DW_DLV_NO_ENTRY;
         }
     }
     return DW_DLV_OK;
@@ -214,7 +211,8 @@ print_dname_record(Dwarf_Dnames_Head dn,
         printf("Augmentation string     : %s\n",
             sanitized(augstring));
     }
-    res = print_cu_table(dn,"cu",comp_unit_count,0,error);
+    res = print_cu_table(dn,"cu",comp_unit_count,
+        0,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }

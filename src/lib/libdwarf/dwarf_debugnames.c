@@ -31,6 +31,7 @@
 
 #include <stdlib.h> /* calloc() free() */
 #include <stdio.h>
+#include <string.h> /* memcpy */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
@@ -381,7 +382,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
-    if (comp_unit_count > dbg->de_filesize) {
+    if (comp_unit_count > dn->dn_section_size) {
         _dwarf_error_string(dbg,error,
             DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR comp_unit_count too large");
@@ -397,7 +398,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
-    if (local_type_unit_count > dbg->de_filesize) {
+    if (local_type_unit_count >  dn->dn_section_size) {
         _dwarf_error_string(dbg,error,
             DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR local_type_unit_count large");
@@ -414,6 +415,13 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (foreign_type_unit_count >  dn->dn_section_size) {
+        _dwarf_error_string(dbg,error,
+            DW_DLE_DEBUG_NAMES_ERROR,
+            "DW_DLE_DEBUG_NAMES_ERROR: "
+            "foreign_type_unit_count large");
+        return DW_DLV_ERROR;
+    }
     dn->dn_foreign_type_unit_count = foreign_type_unit_count;
     usedspace += SIZEOFT32;
     totaloffset += SIZEOFT32;
@@ -424,7 +432,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
-    if (bucket_count > dbg->de_filesize) {
+    if (bucket_count > dn->dn_section_size) {
         _dwarf_error_string(dbg,error,
             DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR bucketcount too large");
@@ -445,7 +453,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
         return res;
     }
     dn->dn_name_count = name_count;
-    if (name_count > dbg->de_filesize) {
+    if (name_count > dn->dn_section_size) {
         _dwarf_error_string(dbg,error,
             DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR name_count too large");
@@ -462,7 +470,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
-    if (abbrev_table_size > dbg->de_filesize) {
+    if (abbrev_table_size > dn->dn_section_size) {
         _dwarf_error_string(dbg,error,
             DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR abbrev_table_size too large");
@@ -479,7 +487,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
-    if (augmentation_string_size > dbg->de_filesize) {
+    if (augmentation_string_size > dn->dn_section_size) {
         _dwarf_error_string(dbg,error,
             DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR augmentation string too long");
@@ -489,8 +497,6 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     totaloffset += SIZEOFT32;
 
     str_utf8 = (const char *) curptr;
-    curptr+= augmentation_string_size;
-    usedspace += augmentation_string_size;
     totaloffset += augmentation_string_size;
     dn->dn_augmentation_string_size = augmentation_string_size;
     if (curptr >= end_dnames) {
@@ -503,33 +509,52 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     if (augmentation_string_size) {
         /* 11 */
         Dwarf_Unsigned len = augmentation_string_size;
-        char *cp = 0;
-        char *cpend = 0;
-        Dwarf_Bool foundnull = FALSE;
+        const char *cp = 0;
+        const char *cpend = 0;
+        Dwarf_Unsigned finallen = 0;
+        Dwarf_Unsigned lenwithpad = 0;
 
         dn->dn_augmentation_string = calloc(1,
-            augmentation_string_size +1);
+            augmentation_string_size + 1);
+        /* Ensures a final NUL byte */
         _dwarf_safe_strcpy(dn->dn_augmentation_string,
             len +1,str_utf8, len);
         /* This validates a zero length string too. */
-
+        /* in LLVM0700 there is no NUL terminator there:
+            See DWARF5 page 144 and also ISSUE
+            200505.4 */
         cp = dn->dn_augmentation_string;
-        cpend = cp + len+1;
+        cpend = cp + len;
         for ( ; cp<cpend; ++cp) {
             if (!*cp) {
-                foundnull = TRUE;
+                /* finallen++; */
                 break;
             }
+            ++finallen;
         }
-        if (!foundnull) {
-            /*  Impossible  */
-            cp[len] = 0;
-        } else {
+        {
+            unsigned modlen = (finallen)%4;
+            lenwithpad = finallen;
+            if (modlen) {
+                lenwithpad += (4-modlen);
+            }
+#if 0
+printf("dadebug aug string len %u final space %u lenwithpad %u\n",
+(unsigned)len,
+(unsigned)finallen,
+(unsigned)lenwithpad);
+#endif
+        } 
+        cp = str_utf8 + len;
+        curptr += lenwithpad; 
+        usedspace += lenwithpad;
+        cpend = str_utf8 + lenwithpad;
+        {
             /*  Ensure that there is no corruption in
                 the padding. */
 #if 0
             dump_bytes("Padding ck 1 dadebug",
-                (Dwarf_Small *)cp,cpend-cp);
+                (Dwarf_Small *)cp,lenwithpad - len);
 #endif
             for ( ; cp < cpend; ++cp) {
                 if (*cp) {
@@ -736,9 +761,6 @@ dwarf_dnames_header(Dwarf_Debug dbg,
     if (remaining && remaining < 15) {
         /*  No more content in here, just padding. Check for zero
             in padding. */
-#if 0
-        printf("dadebug remaining %lu\n",(unsigned long)remaining);
-#endif
         curptr += usedspace;
         for ( ; curptr < end_section; ++curptr) {
 #if 0
@@ -847,9 +869,13 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
+/*  The "tu" case covers both local type units
+    and foreign type units. 
+    This table is indexed starting at 1.
+*/
 int
 dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
-    const char        * type /* "cu", "tu", or "foreign" */,
+    const char        * type /* "cu", "tu" */,
     Dwarf_Unsigned      index_number,
     Dwarf_Unsigned    * offset,
     Dwarf_Sig8        * sig,
@@ -857,12 +883,11 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
 {
     Dwarf_Debug dbg                = 0;
     Dwarf_Unsigned unit_count      = 0;
+    Dwarf_Unsigned total_count      = 0;
     Dwarf_Unsigned unit_entry_size = 0;
     Dwarf_Small  * unit_ptr        = 0;
-    Dwarf_Unsigned unit_offset     = 0;
-#if 0
-    Dwarf_Bool sigoffset           = FALSE;
-#endif /*0*/
+    Dwarf_Unsigned foreign_count   = 0;
+    Dwarf_Bool     offset_case     = TRUE;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
         _dwarf_error_string(NULL, error,DW_DLE_DEBUG_NAMES_ERROR,
@@ -876,37 +901,62 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         unit_ptr = dn->dn_cu_list;
         unit_entry_size = dn->dn_offset_size;
         unit_count = dn->dn_comp_unit_count;
-        unit_offset = dn->dn_cu_list_offset;
+        total_count = unit_count;
+        offset_case = TRUE;
     } else if (type[0] == 't') {
-        /*  FIXME: not handling foreign type units yet
-            types and foreign-types are logically considered
-            a sort-of single array.  */
-        unit_ptr = dn->dn_local_tu_list;
-        unit_entry_size = dn->dn_offset_size;
-        unit_count = dn->dn_local_type_unit_count +
-            dn->dn_foreign_type_unit_count;
-        unit_offset = dn->dn_local_tu_list_offset;
+        unit_count = dn->dn_local_type_unit_count;
+        foreign_count = dn->dn_foreign_type_unit_count;
+        total_count = unit_count + foreign_count;
+        if (index_number <= dn->dn_local_type_unit_count) {
+            unit_ptr = dn->dn_local_tu_list;
+            unit_entry_size = dn->dn_offset_size;
+            offset_case = TRUE;
+         } else {
+            unit_ptr = dn->dn_foreign_tu_list;
+            unit_entry_size = sizeof(Dwarf_Sig8);
+            offset_case = FALSE;
+         }
     } else {
         _dwarf_error_string(dbg,error,DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR: "
-            "type string is not start with cu tu or foreign "
+            "type string is not start with cu or tu"
             "so invalid call to dwarf_dnames_cu_table()");
         return DW_DLV_ERROR;
     }
-    if (index_number >= unit_count) {
+    if (index_number > total_count) {
         return DW_DLV_NO_ENTRY;
     }
+    if (offset_case) {
+        /* CU or TU ref */
+        Dwarf_Unsigned offsetval = 0;
+        Dwarf_Small *ptr = unit_ptr + 
+            (index_number-1) *unit_entry_size;
+        Dwarf_Small *endptr = dn->dn_indextable_data_end;
+
+        READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
+            ptr, unit_entry_size,
+            error,endptr);
+        if (offset) {
+            *offset = offsetval;
+        }
+        return DW_DLV_OK;
+    }
+    {   Dwarf_Small *ptr =  unit_ptr +
+            (index_number-1 -unit_count) *unit_entry_size;
+        if (sig) {
+            memcpy(sig,ptr,sizeof(*sig));
+        }
+     }
+     return DW_DLV_OK;
+#if 0
     if (offset) {
         *offset = unit_offset + index_number*unit_entry_size;
     }
-
-#if 0
     if (sig && sigoffset) {
         Dwarf_Small *ptr = unit_ptr + index_number *unit_entry_size;
         /*  ASSERT: ptr < dn->dn_indextable_data_end */
         memcpy(sig,ptr,sizeof(*sig));
     } else {}
-#endif /*0*/
     if (sig) {
         /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
@@ -921,6 +971,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         }
     }
     return DW_DLV_OK;
+#endif /*0*/
 }
 
 /*  Each bucket gives the index of the first of
@@ -1007,6 +1058,12 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     struct Dwarf_DN_Bucket_s *cur = 0; 
     int res = 0;
 
+    if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: bad Head argument to "
+            "dwarf_dnames_bucket");
+        return DW_DLV_ERROR;
+    }
     if (bucket_number >= dn->dn_bucket_count) {
         return DW_DLV_NO_ENTRY;
     }
@@ -1266,7 +1323,9 @@ dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
     struct abbrev_pair_s *ap = 0;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: bad Head argument to "
+            "dwarf_dnames_abbrev_form_by_index");
         return DW_DLV_ERROR;
     }
     if (abbrev_entry_index >= dn->dn_abbrev_list_count) {
@@ -1380,7 +1439,9 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
     Dwarf_Small * poolptr = 0;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
-        _dwarf_error(NULL, error,DW_DLE_DBG_NULL);
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: bad Head argument to "
+            "dwarf_dnames_entrypool_values");
         return DW_DLV_ERROR;
     }
     dbg = dn->dn_dbg;
