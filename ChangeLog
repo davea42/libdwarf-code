@@ -1,3 +1,67 @@
+2022-03-09:  David Anderson
+    commit 4180ee7a05973e9e9bfc46dad95e906e57100ee2
+    Merge: 005f218f 02763e21
+
+    Merge pull request #84 from vtorri/master
+
+    Add meson support for examples
+
+2022-03-09:  Vincent Torri
+    commit 02763e2175b027c0e087de8cb4ad269096758762
+
+    fix build on linux
+
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2022-03-09:  Vincent Torri
+    commit ccf167a9d9501057252a2f11403e4896dc0f9210
+
+    Add meson support for examples
+
+            new file:   src/bin/dwarfexample/meson.build
+            modified:   .github/workflows/ci_meson.yml
+            modified:   meson.build
+            modified:   meson_options.txt
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2022-03-06:  David Anderson
+    commit 005f218f2831b9db965e9216a3076adcd039020a
+
+    Improved the completness of .debug_names section
+    handling.
+    There is more to do! Not done yet.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2022-03-04:  David Anderson
+    commit e58783f80e2ef156a077dfbfddd30c2e76ecb06b
+
+    Moved reading a bucket array to
+    _dwarf_initialize_bucket_details()
+    while remembering details, making
+    dwarf_dnames_bucket() much simpler.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+
+2022-03-04:  David Anderson
+    commit 8c6ead8ee86fe63e3ef19429af7514eafa664fa1
+
+    Now prints debug_names 'buckets'.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2022-03-04:  David Anderson
+    commit 2f2033ddc346463f102ba8be439032fea13bb4f0
+
+    Updated with latest from git log
+            modified:   ChangeLog
+
 2022-03-04:  David Anderson
     commit f78b8580cb49573c1a2ca69d623cf00b7b141b23
 
