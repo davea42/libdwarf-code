@@ -26,5 +26,5 @@ jobs:
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
-        meson .. -Ddoc=true
+        meson .. -Ddoc=true -Ddwarfexample=true
         ninja

@@ -15,48 +15,16 @@
         make
         ./findfuncbypc --pc=0x10000 ./findfuncbypc
 */
-#include "config.h"
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
 
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* For open() */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>  /* For open() */
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h>     /* For open() */
-#include <stdlib.h> /* for exit() */
-#ifdef _WIN32
-#include <io.h> /* for close() */
-#elif defined HAVE_UNISTD_H
-#include <unistd.h> /* for close() */
-#endif /* _WIN32 */
-#include <stdio.h>
-#include <errno.h>
-#include <string.h> /* for strchr etc */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* exit() */
+#include <string.h> /* memset() strcmp() strlen() strncmp() */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
-
-#ifndef O_RDONLY
-/*  This is for a Windows environment */
-# define O_RDONLY _O_RDONLY
-#endif
-
-#ifdef _O_BINARY
-/*  This is for a Windows environment */
-#define O_BINARY _O_BINARY
-#else
-# ifndef O_BINARY
-# define O_BINARY 0  /* So it does nothing in Linux/Unix */
-# endif
-#endif /* O_BINARY */
 
 struct srcfilesdata {
     char ** srcfiles;
@@ -102,9 +70,6 @@ struct target_data_s {
 #define NOT_THIS_CU 10
 #define IN_THIS_CU 11
 #define FOUND_SUBPROG 12
-
-#define TRUE 1
-#define FALSE 0
 
 static int look_for_our_target(Dwarf_Debug dbg,
     struct target_data_s *target_data,
