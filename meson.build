@@ -158,6 +158,9 @@ subdir('src/bin/builduritable')
 subdir('src/bin/gennames')
 subdir('src/bin/tag_attr')
 subdir('src/bin/tag_tree')
+if get_option('dwarfexample') == true
+  subdir('src/bin/dwarfexample')
+endif
 subdir('doc')
 subdir('test')
 
@@ -205,6 +208,7 @@ summary({'OS': host_os,
          'dwarfdump': 'always',
          'libdwarfp': libdwarfp_output,
          'dwarfgen': have_libdwarfp ? 'yes' : 'no',
+         'dwarfexample': get_option('dwarfexample') ? 'yes' : 'no',
          'documentation': have_doc,
         }, section: 'Configuration Options Summary:')
 

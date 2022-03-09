@@ -7,10 +7,17 @@
 
     @code
 */
-#include <stdlib.h> /* for exit() */
-#include <stdio.h> /* For debugging. */
+
+#include <config.h>
+
+#include <stddef.h> /* NULL */
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* exit() */
+
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "libdwarf_private.h"
+
 /*
     This demonstates processing DWARF
     from in_memory data.  For simplicity
@@ -37,8 +44,6 @@
     into libdwarf, you just link your code into
     your application and link against libdwarf.
 */
-#define TRUE 1
-#define FALSE 0
 
 /* Some valid DWARF2 data */
 static Dwarf_Small abbrevbytes[] = {

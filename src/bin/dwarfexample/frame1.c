@@ -16,33 +16,28 @@ for anyone to use for any purpose.
     To read .eh_frame call dwarf_get_fde_list_eh()
     below instead of dwarf_get_fde_list() .
 */
-#include "config.h"
 
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
+#include <config.h>
 
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* For open() */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>  /* For open() */
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h>     /* For open() */
-#include <stdlib.h> /* for exit(), C89 malloc */
-#ifdef HAVE_MALLOC_H
-/* Useful include for some Windows compilers. */
-#include <malloc.h>
-#endif /* HAVE_MALLOC_H */
+#include <stddef.h> /* NULL */
+#include <stdio.h>  /* printf() snprintf() */
+#include <stdlib.h> /* exit() free() malloc() */
+#include <string.h> /* strcat() strcmp() strcpy() strncmp() */
+
 #ifdef _WIN32
-#include <io.h> /* close() */
+#include <io.h> /* close() open() */
 #elif defined HAVE_UNISTD_H
 #include <unistd.h> /* close() */
 #endif /* _WIN32 */
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> /* open() O_RDONLY */
+#endif /* HAVE_FCNTL_H */
+
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "libdwarf_private.h"
+
 #ifdef _O_BINARY
 /*  This is for a Windows environment */
 #define O_BINARY _O_BINARY
@@ -51,12 +46,6 @@ for anyone to use for any purpose.
 # define O_BINARY 0  /* So it does nothing in Linux/Unix */
 # endif
 #endif /* O_BINARY */
-#include <string.h>     /* For strcmp* */
-#include <stdio.h>
-#include <errno.h>
-#include "dwarf.h"
-#include "libdwarf.h"
-#include "libdwarf_private.h"
 
 static void read_frame_data(Dwarf_Debug dbg,const char *sec);
 static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,

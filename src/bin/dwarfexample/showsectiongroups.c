@@ -11,18 +11,16 @@
 
     The C source is src/bin/dwarfexample/showsectiongroups.c
 */
-#include "config.h"
-#include <stdio.h>
-#include <string.h> /* for memset */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <stdlib.h> /* for exit(), C89 malloc */
+
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* calloc() exit() free() */
+#include <string.h> /* strcmp() */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 
-#define TRUE 1
-#define FALSE 0
 char trueoutpath[2000];
 
 static int

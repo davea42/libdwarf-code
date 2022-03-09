@@ -96,32 +96,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         make
         ./simplereader simplereader
 */
-#include "config.h"
 
-/* Windows specific header files */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
+#include <config.h>
 
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h> /* For open() */
-#endif /* HAVE_SYS_TYPES_H */
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>  /* For open() */
-#endif /* HAVE_SYS_STAT_H */
-#include <fcntl.h>     /* For open() */
-#include <stdlib.h> /* for exit() */
+#include <stdio.h>  /* fprintf() printf() snprintf() */
+#include <stdlib.h> /* atoi() exit() free() */
+#include <string.h> /* memset() strcmp() strcpy() strdup() strlen() strncmp() */
+
 #ifdef _WIN32
-#include <io.h> /* for close() */
+#include <io.h> /* close() open() */
 #elif defined HAVE_UNISTD_H
-#include <unistd.h> /* for close() */
+#include <unistd.h> /* close() */
 #endif /* _WIN32 */
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> /* open() O_RDONLY */
+#endif /* HAVE_FCNTL_H */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -145,9 +136,6 @@ struct srcfilesdata {
     Dwarf_Signed srcfilescount;
     int srcfilesres;
 };
-
-#define TRUE 1
-#define FALSE 0
 
 static void read_cu_list(Dwarf_Debug dbg);
 static void print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
