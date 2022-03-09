@@ -103,6 +103,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h> /* atoi() exit() free() */
 #include <string.h> /* memset() strcmp() strcpy() strdup() strlen() strncmp() */
 
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
+
 #ifdef _WIN32
 #include <io.h> /* close() open() */
 #elif defined HAVE_UNISTD_H

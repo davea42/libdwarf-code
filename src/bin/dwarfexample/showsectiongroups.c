@@ -24,7 +24,7 @@
 char trueoutpath[2000];
 
 static int
-one_file_show_groups(char  *path_in, 
+one_file_show_groups(char  *path_in,
     char *shortpath,
     int chosengroup)
 {
