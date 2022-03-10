@@ -6091,6 +6091,8 @@ DW_API int dwarf_dnames_cu_table(Dwarf_Dnames_Head dw_dn,
     @param dw_index
     On success returns the index of
     the appropriate name entry.
+    Name entry indexes start at one, a zero
+    index means the bucket is unused.
     @param dw_indexcount
     On success returns the number of
     name entries in the bucket.
@@ -6116,11 +6118,12 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     @param dw_dn
     The table of interest.
     @param dw_name_index
-    Pass in the desired index, start at zero.
+    Pass in the desired index, start at one.
     @param dw_bucket_number
-    On success returns a bucket number.
+    On success returns a bucket number, zero
+    if no buckets present.
     @param dw_hash_value
-    The hash value
+    The hash value, all zeros if no hashes present
     @param dw_offset_to_debug_str
     The offset to the .debug_str section string.
     @param dw_ptrtostr
@@ -6147,6 +6150,8 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     On error dw_error is set to point to the error details.
     @return
     The usual value: DW_DLV_OK etc.
+    If the index passed in is outside the valid range
+    returns DW_DLV_NO_ENTRY.
 */
 DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned      dw_name_index,
