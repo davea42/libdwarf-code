@@ -27,6 +27,7 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 
 #include <config.h>
 
+#include <string.h>
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "libdwarf_private.h"
@@ -35,6 +36,8 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 #include "dd_sanitized.h"
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
+
+#define ATTR_ARRAY_SIZE 60
 
 static const Dwarf_Sig8 zerosig;
 /*   The table entries here are indexed starting at 1 */
@@ -148,6 +151,55 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
 }
 
 static int
+print_names_table(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned name_count,
+    Dwarf_Unsigned bucket_count,
+    Dwarf_Error * error)
+{
+    Dwarf_Unsigned i = 1;
+    int res                  = 0; 
+    Dwarf_Unsigned bucketnum = 0;
+    Dwarf_Unsigned hashval   = 0;
+    Dwarf_Unsigned offset_to_debug_str = 0;
+    char * ptrtostr          = 0;
+    Dwarf_Unsigned offset_in_entrypool = 0;
+    Dwarf_Unsigned abbrev_number = 0;
+    Dwarf_Half abbrev_tag    = 0;
+    Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE; 
+    static Dwarf_Half attr_array[ATTR_ARRAY_SIZE];
+    Dwarf_Unsigned attr_count = 0;
+
+    memset(attr_array,0,sizeof(Dwarf_Half) * ATTR_ARRAY_SIZE);
+    printf("\n");
+    printf("Names table, entry count %" DW_PR_DUu "\n",name_count);
+    for ( ; i <= name_count;++i) {
+        res = dwarf_dnames_name(dn,i,
+            &bucketnum, &hashval,
+            &offset_to_debug_str,&ptrtostr,
+            &offset_in_entrypool, &abbrev_number,
+            &abbrev_tag,
+            array_size, attr_array,
+            &attr_count,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            printf("ERROR: NO ENTRY on name index "
+                "%" DW_PR_DUu " is impossible ",i);
+            glflags.gf_count_major_errors++;
+            return DW_DLV_NO_ENTRY;
+        }
+        printf("  [%4" DW_PR_DUu "] ",i);
+        if (bucket_count) {
+            printf("Bucket#  %" DW_PR_DUu " ",bucketnum);
+            printf("Hash  0x%" DW_PR_XZEROS DW_PR_DUx " ",hashval);
+        }
+        printf("\n");
+    }
+    return DW_DLV_OK;
+}
+
+static int
 print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset,
     Dwarf_Unsigned new_offset,
@@ -225,6 +277,15 @@ print_dname_record(Dwarf_Dnames_Head dn,
     if (res == DW_DLV_ERROR) {
         return res;
     }
+    
+    res = print_names_table(dn,name_count,bucket_count,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+
+    
+
+
     return DW_DLV_OK;
 }
 

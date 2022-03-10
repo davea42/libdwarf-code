@@ -600,9 +600,9 @@ printf("dadebug aug string len %u final space %u lenwithpad %u\n",
     dn->dn_hash_table = curptr;
     dn->dn_hash_table_offset = usedspace;
     if (bucket_count) {
-        curptr +=  sizeof(Dwarf_Sig8) * name_count;
-        usedspace += sizeof(Dwarf_Sig8) * name_count;
-        totaloffset += sizeof(Dwarf_Sig8) * name_count;
+        curptr +=  SIZEOFT32 * name_count;
+        usedspace += SIZEOFT32 * name_count;
+        totaloffset += SIZEOFT32 * name_count;
     }
 
     VALIDATEOFFSET(dn,totaloffset,"hashes array error");
@@ -1079,6 +1079,75 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     *collision_count = cur->db_collisioncount;
     return DW_DLV_OK;
 }
+static int
+get_hash_value_number(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned name_index,
+    Dwarf_Unsigned *hash_value,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned hash_val   = 0;
+    int res                   = 0;
+    Dwarf_Small * hashesentry = 0;
+    Dwarf_Small *end          = 0;
+
+    if (!dn->dn_bucket_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    hashesentry = dn->dn_hash_table + (name_index-1)*DWARF_32BIT_SIZE;
+    end = dn->dn_hash_table + DWARF_32BIT_SIZE*(dn->dn_name_count+1);
+    res = read_uword_val(dn->dn_dbg,
+        &hashesentry,
+        end,
+        DW_DLE_DEBUG_NAMES_OFF_END,
+        &hash_val,
+        0xffffffff, /* hashes fit in 32 bits */
+        error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    *hash_value = hash_val;
+    return DW_DLV_OK;
+}
+
+static int
+get_bucket_number(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned name_index,
+    Dwarf_Unsigned *bucket_num)
+{
+    Dwarf_Unsigned i = 0;
+
+    if (!dn->dn_bucket_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    /*  Binary search would be better FIXME */
+    for( i = 0; i < dn->dn_bucket_count; ++i) {
+        Dwarf_Unsigned bindx = 0;
+        Dwarf_Unsigned ccount = 0;
+        Dwarf_Unsigned lastbindx = 0;
+        struct Dwarf_DN_Bucket_s *cur = dn->dn_bucket_array +i;
+
+        bindx = cur->db_nameindex;
+        ccount = cur->db_collisioncount;
+        lastbindx = ccount + bindx -1;
+        if (name_index > lastbindx) {
+            continue;
+        }
+        if (!bindx ) {  
+             /* empty bucket */
+             continue;
+        }
+        if (bindx == name_index) {
+            *bucket_num = i; 
+            return DW_DLV_OK;
+        }
+        if (name_index <= lastbindx) {
+            *bucket_num = i; 
+            return DW_DLV_OK;
+        }
+    }
+    /*  ? is it an error? */
+    return DW_DLV_NO_ENTRY;
+}
 
 /*  Each Name Table entry, one at a time.
     It is not an error if array_size is zero or
@@ -1089,11 +1158,11 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     sufficient. */
 int
 dwarf_dnames_name(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      name_index UNUSEDARG,
-    Dwarf_Unsigned    * bucket_number UNUSEDARG,
-    Dwarf_Unsigned    * hash_value UNUSEDARG,
+    Dwarf_Unsigned      name_index,
+    Dwarf_Unsigned    * bucket_number,
+    Dwarf_Unsigned    * hash_value,
     Dwarf_Unsigned    * offset_to_debug_str UNUSEDARG,
-    char *            * ptrtostr,
+    char *            * ptrtostr UNUSEDARG,
     Dwarf_Unsigned    * offset_in_entrypool UNUSEDARG,
     Dwarf_Unsigned    *  abbrev_number UNUSEDARG,
     Dwarf_Half        *  abbrev_tag UNUSEDARG,
@@ -1103,6 +1172,7 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
     Dwarf_Error *       error)
 {
     Dwarf_Debug dbg = 0;
+    int res = 0;
     Dwarf_Unsigned entrypooloffset UNUSEDARG = 0 ;
     Dwarf_Unsigned debugstroffset UNUSEDARG = 0 ;
     Dwarf_Unsigned abbrevnumber UNUSEDARG = 0 ;
@@ -1123,6 +1193,19 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
             "finds a NULL Dwarf_Debug in a Dwarf_Dnames_Head");
         return DW_DLV_ERROR;
     }
+    if (!name_index || name_index > dn->dn_name_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    res = get_bucket_number(dn,name_index,bucket_number);
+    if (res == DW_DLV_OK) {
+        res = get_hash_value_number(dn,name_index,hash_value,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+    }
+
+    /*  ADD more here FIXME */
+
 #if 0
     {
         Dwarf_Small *ptr = dn->dn_string_offsets +
@@ -1150,7 +1233,6 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
             *offset_in_entrypool = entrypooloffset;
         }
     }
-#endif /*0*/
     /* Get str ptr from .debug_str */
     {
         Dwarf_Small *secdataptr = 0;
@@ -1173,6 +1255,7 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
             *ptrtostr = (char *)strpointer;
         }
     }
+#endif /*0*/
 
     if (hash_value) {
 /*FIXME */
