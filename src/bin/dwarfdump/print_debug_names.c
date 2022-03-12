@@ -149,6 +149,26 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
     printf("\n");
     return DW_DLV_OK;
 }
+#if 0
+static int
+print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned table_length,
+    Dwarf_Error * error)
+{
+    int res = 0;
+    Dwarf_Unsigned offset = 0;
+    Dwarf_Unsigned next_offset = 0;
+    Dwarf_Unsigned abbrev_code = 0;
+    Dwarf_Unsigned abbrev_tag = 0;
+    Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE;
+    static Dwarf_Half attr_array[ATTR_ARRAY_SIZE];
+    static Dwarf_Half form_array[ATTR_ARRAY_SIZE];
+
+    res = 
+
+FIXME
+}
+#endif
 
 static int
 print_names_table(Dwarf_Dnames_Head dn,
@@ -167,11 +187,18 @@ print_names_table(Dwarf_Dnames_Head dn,
     Dwarf_Half abbrev_tag    = 0;
     Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE; 
     static Dwarf_Half attr_array[ATTR_ARRAY_SIZE];
+    static Dwarf_Half form_array[ATTR_ARRAY_SIZE];
     Dwarf_Unsigned attr_count = 0;
 
     memset(attr_array,0,sizeof(Dwarf_Half) * ATTR_ARRAY_SIZE);
     printf("\n");
     printf("Names table, entry count %" DW_PR_DUu "\n",name_count);
+    printf("      [] ");
+    if (bucket_count) {
+         printf("Bucket Hash");
+    } else {
+    }
+    printf("\n");
     for ( ; i <= name_count;++i) {
         res = dwarf_dnames_name(dn,i,
             &bucketnum, &hashval,
@@ -179,6 +206,7 @@ print_names_table(Dwarf_Dnames_Head dn,
             &offset_in_entrypool, &abbrev_number,
             &abbrev_tag,
             array_size, attr_array,
+            form_array,
             &attr_count,error);
         if (res == DW_DLV_ERROR) {
             return res;
@@ -191,9 +219,13 @@ print_names_table(Dwarf_Dnames_Head dn,
         }
         printf("  [%4" DW_PR_DUu "] ",i);
         if (bucket_count) {
-            printf("Bucket#  %" DW_PR_DUu " ",bucketnum);
-            printf("Hash  0x%" DW_PR_XZEROS DW_PR_DUx " ",hashval);
+            printf("%5" DW_PR_DUu " ",bucketnum);
+            printf("0x%" DW_PR_XZEROS DW_PR_DUx " ",hashval);
         }
+        printf("%6" DW_PR_DUu , offset_to_debug_str);
+        printf(" %s",ptrtostr?sanitized(ptrtostr):"<null>");
+        printf("\n");
+        printf("     pooloff= %6" DW_PR_DUu , offset_in_entrypool);
         printf("\n");
     }
     return DW_DLV_OK;
@@ -263,6 +295,20 @@ print_dname_record(Dwarf_Dnames_Head dn,
         printf("Augmentation string     : %s\n",
             sanitized(augstring));
     }
+#if 0
+FIXME
+    if (glflags.verbose) {
+        Dwarf_Bool done = FALSE;
+        int res = 0;
+        
+        res = print_dnames_abbrevtable(dnhead,
+           abbrev_table_size,
+           error);
+        if (res == DW_DLV_ERROR) {
+           return res;
+        }
+    }
+#endif
     res = print_cu_table(dn,"cu",comp_unit_count,
         0,error);
     if (res == DW_DLV_ERROR) {
@@ -322,6 +368,7 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
         &truename,TRUE);
     printf("\n%s\n",sanitized(esb_get_string(&truename)));
     esb_destructor(&truename);
+
     while (res == DW_DLV_OK) {
         res = print_dname_record(dnhead,offset,new_offset,error);
         if (res != DW_DLV_OK) {

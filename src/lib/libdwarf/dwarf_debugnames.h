@@ -26,24 +26,30 @@
 
 */
 
-/*  Only 5 abbrev DW_IDX defined, we
-    allow three user defined (arbitrarily) */
-#define ABB_PAIRS_MAX 8
+/*  Adjust this number to hope for best space and time efficiency. */
+#define ABB_PAIRS_MAX 10 
 
-struct abbrev_pair_s {
-    unsigned ap_index;
-    unsigned ap_form;
+/*  We form a linked list if more than ABB_PAIRS_MAX
+    needed. In the very last block bp_attr[bp_used_count-1] == 0.
+    Same for bp_form
+*/
+struct Dwarf_D_Pairs_Block_s {
+    struct Dwarf_D_Pairs_Block_s *bp_next;
+    unsigned   bp_used_count; /* used in the arrays here */
+    Dwarf_Half bp_attr[ABB_PAIRS_MAX];
+    Dwarf_Half bp_form[ABB_PAIRS_MAX];
 };
 
-#if 0
+/* The last attr/form entries are zero. */
 struct Dwarf_D_Abbrev_s {
     struct Dwarf_D_Abbrev_s * da_next;
-    unsigned da_abbrev_code;
-    unsigned da_tag;
-    unsigned da_pairs_count;
-    struct abbrev_pair_s da_pairs[ABB_PAIRS_MAX];
+    Dwarf_Unsigned da_abbrev_offset;
+    Dwarf_Unsigned da_abbrev_code;
+    Dwarf_Unsigned da_tag;
+    Dwarf_Unsigned da_pairs_count;
+    /*  The first attr block */
+    struct Dwarf_D_Pairs_Block_s da_pairs_base;
 };
-#endif
 
 struct Dwarf_DN_Bucket_s {
     Dwarf_Unsigned db_nameindex;
@@ -108,8 +114,11 @@ struct Dwarf_Dnames_Head_s {
     Dwarf_Small *  dn_entry_offsets;
     Dwarf_Small *  dn_abbrevs;
     Dwarf_Small *  dn_entry_pool;
-    /* Array of Dwarf_Dnames_Bucket_s sorted by bucket value */
-    struct Dwarf_Dnames_Bucket_s * dn_bucket_sort;
+
+    /*  Array of structs*/
+    struct Dwarf_D_Abbrev_s *dn_abbrev_instances;
+    Dwarf_Unsigned          dn_abbrev_instance_count;
+
     Dwarf_Unsigned b_value;
     Dwarf_Unsigned b_orig_bucket_index;
     Dwarf_Unsigned b_sorted_bucket_index;

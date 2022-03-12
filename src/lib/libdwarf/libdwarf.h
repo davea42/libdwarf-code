@@ -6030,6 +6030,51 @@ DW_API int dwarf_dnames_header(Dwarf_Debug dw_dbg,
 */
 DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
 
+/*! @brief Access to the abbrevs table content
+
+    @param dw_dn
+    A Dwarf_Dnames_Head pointer.
+    @param dw_index
+    The Names table index (starts at one) for.
+    @param dw_abbrev_offset
+    Returns the offset of the abbrev table entry for this names table
+    entry. 
+    @param dw_abbrev_code
+    Returns the abbrev code for the abbrev at offset dw_abbrev_offset.
+    @param dw_array_size
+    The size you allocated in each of the following two arrays.
+    @param dw_attr_array
+    Pass in an array you allocated where the function returns and array of
+    attributes for this dw_abbrev_code.
+    The last attribute code in the array is zero.
+    @param dw_form_array
+    Pass in an array you allocated where the function returns and array of
+    forms for this dw_abbrev_code.
+    The last form code in the array is zero.
+    @param dw_attr_count
+    Returns the actual attribute/form count (including the
+    terminating 0,0 pair.  If the array_size passed in is less
+    than this value the array returned is incomplete.
+    Array entries needed. Might be larger than
+    dw_array_size, meaning not all entries could
+    be returned in your arrays.
+    @return
+    Returns DW_DLV_OK on success.
+    If the offset does not refer to a known
+    part of the abbrev table it returns DW_DLV_NO_ENTRY.
+    Never returns DW_DLV_ERROR.
+*/
+int
+dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned  dw_index,
+    Dwarf_Unsigned *dw_abbrev_offset,
+    Dwarf_Unsigned *dw_abbrev_code,
+    Dwarf_Unsigned *dw_abbrev_tag,
+    Dwarf_Unsigned  dw_array_size,
+    Dwarf_Half     *dw_attr_array,
+    Dwarf_Half     *dw_form_array,
+    Dwarf_Unsigned *dw_attr_count);
+
 /*! @brief Sizes and counts from the debug names table
 
     We do not describe these returned values.
@@ -6139,9 +6184,13 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     Size of array you provide (even number).
     Possibly 20 to 40 suffices for practical purposes.
     @param dw_attr_array
-    Array you provide, for attribute numbers, form numbers.
+    Array you provide, for attribute numbers
     (function will initialize it).
-    As initialized the last pair will be 0,0
+    The final entry in the array will be 0.
+    @param dw_form_array
+    Array you provide, for  form numbers
+    (function will initialize it).
+    The final entry in the array will be 0.
     @param dw_attr_count
     Array entries needed. Might be larger than
     dw_array_size, meaning not all entries could
@@ -6164,6 +6213,7 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half        * dw_abbrev_tag,
     Dwarf_Unsigned      dw_array_size,
     Dwarf_Half        * dw_attr_array,
+    Dwarf_Half        * dw_form_array,
     Dwarf_Unsigned    * dw_attr_count,
     Dwarf_Error *       dw_error);
 /*! @} */
