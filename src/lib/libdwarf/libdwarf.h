@@ -6101,6 +6101,30 @@ DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half     * dw_offset_size,
     Dwarf_Error *    dw_error);
 
+/*! @brief offsets from the debug names table
+
+    We do not describe these returned values, which
+    refer to the .debug_names section.
+    
+    The header offset is a section offset.
+    The rest are offsets from the header.
+
+    See DWARF5 section 6.1.1 "Lookup By Name"
+*/
+DW_API int dwarf_dnames_offsets(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned * dw_header_offset,
+    Dwarf_Unsigned * dw_cu_table_offset,
+    Dwarf_Unsigned * dw_tu_local_offset,
+    Dwarf_Unsigned * dw_foreign_tu_offset,
+    Dwarf_Unsigned * dw_bucket_offset,
+    Dwarf_Unsigned * dw_hashes_offset,
+    Dwarf_Unsigned * dw_stringoffsets_offset,
+    Dwarf_Unsigned * dw_entryoffsets_offset,
+    Dwarf_Unsigned * dw_abbrev_table_offset,
+    Dwarf_Unsigned * dw_entry_pool_offset,
+    Dwarf_Error *    dw_error);
+
+
 /*! @brief each debug names list entry one at a time
     @param dw_dn
     The table of interest.

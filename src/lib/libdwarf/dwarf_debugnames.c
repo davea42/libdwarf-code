@@ -960,6 +960,62 @@ int dwarf_dnames_sizes(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
+/*  Useful for investigating errors in libdwarf or the
+    .debug_names section. */
+int
+dwarf_dnames_offsets(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned * header_offset,
+    Dwarf_Unsigned * cu_table_offset,
+    Dwarf_Unsigned * tu_local_offset,
+    Dwarf_Unsigned * foreign_tu_offset,
+    Dwarf_Unsigned * bucket_offset,
+    Dwarf_Unsigned * hashes_offset,
+    Dwarf_Unsigned * stringoffsets_offset,
+    Dwarf_Unsigned * entryoffsets_offset,
+    Dwarf_Unsigned * abbrev_table_offset,
+    Dwarf_Unsigned * entry_pool_offset,
+    Dwarf_Error *    error)
+{
+    if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
+        _dwarf_error_string(NULL, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: A call to dwarf_dnames_offsets() "
+            "has a NULL Dwarf_Dnames_Head or an improper one.");
+        return DW_DLV_ERROR;
+    }
+    if (header_offset) {
+        *header_offset = dn->dn_section_offset;
+    }
+    if (cu_table_offset) {
+        *cu_table_offset = dn->dn_cu_list_offset;
+    }
+    if (tu_local_offset) {
+        *tu_local_offset = dn->dn_local_tu_list_offset;
+    }
+    if (foreign_tu_offset) {
+        *foreign_tu_offset = dn->dn_foreign_tu_list_offset;
+    }
+    if (bucket_offset) {
+        *bucket_offset = dn->dn_buckets_offset;
+    }
+    if (hashes_offset) {
+        *hashes_offset = dn->dn_hash_table_offset;
+    }
+    if (stringoffsets_offset) {
+        *stringoffsets_offset = dn->dn_string_offsets_offset;
+    }
+    if (entryoffsets_offset) {
+        *entryoffsets_offset = dn->dn_entry_offsets_offset;
+    }
+    if (abbrev_table_offset) {
+        *abbrev_table_offset = dn->dn_abbrevs_offset;
+    }
+    if (entry_pool_offset) {
+        *entry_pool_offset = dn->dn_entry_pool_offset;
+    }
+    return DW_DLV_OK;
+}
+
+
 /*  The "tu" case covers both local type units
     and foreign type units. 
     This table is indexed starting at 1.

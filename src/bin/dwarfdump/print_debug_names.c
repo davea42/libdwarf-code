@@ -149,26 +149,112 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
     printf("\n");
     return DW_DLV_OK;
 }
-#if 0
+
+static void
+P_Entry(const char * leader,Dwarf_Unsigned value)
+{
+    printf("   %13s  0x%" DW_PR_XZEROS DW_PR_DUx 
+         " (%8" DW_PR_DUu 
+         ")\n",
+         leader,value,value);
+}
+static int
+print_dnames_offsets(Dwarf_Dnames_Head dn,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned header_offset = 0;
+    Dwarf_Unsigned cu_table_offset = 0;
+    Dwarf_Unsigned tu_local_offset = 0;
+    Dwarf_Unsigned foreign_tu_offset = 0;
+    Dwarf_Unsigned buckets_offset = 0;
+    Dwarf_Unsigned hashes_offset = 0;
+    Dwarf_Unsigned stringoffsets_offset = 0;
+    Dwarf_Unsigned entryoffsets_offset = 0;
+    Dwarf_Unsigned abbrev_table_offset = 0;
+    Dwarf_Unsigned entry_pool_offset = 0;
+    int res = 0;
+
+    printf("\n");
+    printf("   Table Offsets \n");
+    res = dwarf_dnames_offsets(dn,&header_offset,
+         &cu_table_offset, &tu_local_offset, &foreign_tu_offset,
+         &buckets_offset, &hashes_offset,
+         &stringoffsets_offset,&entryoffsets_offset,
+         &abbrev_table_offset,&entry_pool_offset,error);
+    if (res == DW_DLV_ERROR) {
+         return res;
+    }
+    P_Entry("Header      :",header_offset);
+    P_Entry("CU table    :",cu_table_offset);
+    P_Entry("TU local    :",tu_local_offset);
+    P_Entry("Foreign     :",foreign_tu_offset);
+    P_Entry("Buckets     :",buckets_offset);
+    P_Entry("Hashes      :",hashes_offset);
+    P_Entry("Strings     :",stringoffsets_offset);
+    P_Entry("Entry       :",entryoffsets_offset);
+    P_Entry("Abbrev Table:",abbrev_table_offset);
+    P_Entry("Entry Pool: :",entry_pool_offset);
+    return DW_DLV_OK;
+}
+
 static int
 print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned table_length,
-    Dwarf_Error * error)
+    Dwarf_Unsigned table_length)
 {
     int res = 0;
-    Dwarf_Unsigned offset = 0;
-    Dwarf_Unsigned next_offset = 0;
-    Dwarf_Unsigned abbrev_code = 0;
-    Dwarf_Unsigned abbrev_tag = 0;
-    Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE;
+    Dwarf_Unsigned abbrev_offset     = 0;
+    Dwarf_Unsigned abbrev_code       = 0;
+    Dwarf_Unsigned abbrev_tag        = 0;
+    Dwarf_Unsigned array_size        = ATTR_ARRAY_SIZE;
     static Dwarf_Half attr_array[ATTR_ARRAY_SIZE];
     static Dwarf_Half form_array[ATTR_ARRAY_SIZE];
+    Dwarf_Unsigned actual_attr_count = 0;
+    Dwarf_Unsigned i                 = 0;
 
-    res = 
+    printf("\n");
+    printf("Debug Names abbreviation table: length %"
+        DW_PR_DUu " bytes.\n", table_length);
+    printf("   [] offset   code tag attr/formcount\n");
+    res = DW_DLV_OK;
+    for (  ; res == DW_DLV_OK; ++i) {
+        Dwarf_Unsigned limit = 0;
+        Dwarf_Unsigned k     = 0;
 
-FIXME
+        /*  Never returns DW_DLV_ERROR */
+        res = dwarf_dnames_abbrevtable(dn,i,
+            &abbrev_offset,
+            &abbrev_code, &abbrev_tag,
+            array_size,
+            attr_array,form_array,
+            &actual_attr_count);
+        if (res != DW_DLV_OK) {
+            break;
+        }
+        printf("    [%4" DW_PR_DUu "] ",i);
+        printf("    [0x%" DW_PR_XZEROS DW_PR_DUx "] ",abbrev_offset);
+        printf("    [%5" DW_PR_DUu "] ",abbrev_code);
+        printf("    [0x%04" DW_PR_DUx "] ",abbrev_tag);
+        printf("    [%3" DW_PR_DUu "] ",actual_attr_count);
+        printf("\n");
+        limit = actual_attr_count;
+        if (limit > ATTR_ARRAY_SIZE) {
+            printf("   ERROR: allowed %" DW_PR_DUu " pairs,"
+                " But we have %" DW_PR_DUu "pairs!\n",
+                array_size, actual_attr_count);
+            glflags.gf_count_major_errors++;
+        }
+        printf("     []  attr  form \n");
+        for (k = 0; i < limit; ++k) {
+            Dwarf_Half a = attr_array[k];
+            Dwarf_Half f = form_array[k];
+            printf("      [%4" DW_PR_DUu "] ",k);
+            printf("0x%04x ",a);
+            printf("0x%04x ",f);
+            printf("\n");
+        }
+    }
+    return DW_DLV_OK;
 }
-#endif
 
 static int
 print_names_table(Dwarf_Dnames_Head dn,
@@ -295,20 +381,16 @@ print_dname_record(Dwarf_Dnames_Head dn,
         printf("Augmentation string     : %s\n",
             sanitized(augstring));
     }
-#if 0
-FIXME
-    if (glflags.verbose) {
-        Dwarf_Bool done = FALSE;
-        int res = 0;
-        
-        res = print_dnames_abbrevtable(dnhead,
-           abbrev_table_size,
-           error);
+    if (glflags.verbose > 1) {
+        res = print_dnames_offsets(dn,error);
         if (res == DW_DLV_ERROR) {
-           return res;
+            return res;
         }
     }
-#endif
+    if (glflags.verbose) {
+        print_dnames_abbrevtable(dn,
+           abbrev_table_size);
+    }
     res = print_cu_table(dn,"cu",comp_unit_count,
         0,error);
     if (res == DW_DLV_ERROR) {
