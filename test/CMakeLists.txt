@@ -94,7 +94,7 @@ if (DO_TESTING)
 endif()
 if (DO_TESTING)
     set_source_group(SELFMC_SOURCES "Source Files"
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_macrocheck.c
+      ${CMAKE_SOURCE_DIR}/test/test_macrocheck.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c 
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfmacrocheck ${SELFMC_SOURCES} )
