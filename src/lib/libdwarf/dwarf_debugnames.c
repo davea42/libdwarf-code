@@ -35,6 +35,9 @@
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* uintptr_t */
+#endif /* HAVE_STDINT_H */
 
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -67,7 +70,8 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 /*  freedabs attempts to do some cleanup in the face
     of an error. */
 static void
-freedabs(struct Dwarf_D_Abbrev_s *dab,Dwarf_Bool onlytop)
+freedabs(struct Dwarf_D_Abbrev_s *dab,Dwarf_Bool onlytop,
+    Dwarf_Bool dabitself)
 {
     struct Dwarf_D_Abbrev_s *tmp = 0;
 
@@ -82,7 +86,9 @@ freedabs(struct Dwarf_D_Abbrev_s *dab,Dwarf_Bool onlytop)
         }
         tmp = dab->da_next;
         dab->da_next = 0;
-        free(dab);
+        if (dabitself) {
+            free(dab);
+        }
     }
 }
 /*  Encapsulates DECODE_LEB128_UWORD_LEN_CK
@@ -141,7 +147,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned code = 0;
     Dwarf_Unsigned tag = 0;
     int foundabend = FALSE;
-    unsigned abcount = 0;
+    Dwarf_Unsigned abcount = 0;
     struct Dwarf_D_Abbrev_s *firstdab = 0;
     struct Dwarf_D_Abbrev_s *lastdab = 0;
     struct Dwarf_D_Abbrev_s *curdab = 0;
@@ -157,10 +163,9 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
         int res = 0;
 
         inroffset = abcur - abdata;
-        inner = abcur;
         res = read_uword_ab(&abcur,&code,dbg,error,tabend);
         if (res != DW_DLV_OK) {
-            freedabs(firstdab,FALSE);
+            freedabs(firstdab,FALSE,TRUE);
             return res;
         }
         if (code == 0) {
@@ -170,36 +175,35 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
 
         res = read_uword_ab(&abcur,&tag,dbg,error,tabend);
         if (res != DW_DLV_OK) {
-            freedabs(firstdab,FALSE);
+            freedabs(firstdab,FALSE,TRUE);
             return res;
         }
+        inner = abcur;
         curdab = (struct Dwarf_D_Abbrev_s *)calloc(1,
             sizeof(struct Dwarf_D_Abbrev_s));
         if (!curdab) {
-            freedabs(firstdab,FALSE);
+            freedabs(firstdab,FALSE,TRUE);
             firstdab = 0;
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
-  
         curdab->da_abbrev_offset = inroffset;
         curdab->da_abbrev_code = code;
         curdab->da_tag = tag;
         pairscur = &curdab->da_pairs_base;
-        
         abcount++;
         for (;;) {
             res = read_uword_ab(&inner,&attr,dbg,error,tabend);
             if (res != DW_DLV_OK) {
                 free(curdab);
-                freedabs(firstdab,FALSE);
+                freedabs(firstdab,FALSE,TRUE);
                 firstdab = 0;
                 return res;
             }
             res = read_uword_ab(&inner,&form,dbg,error,tabend);
             if (res != DW_DLV_OK) {
                 free(curdab);
-                freedabs(firstdab,FALSE);
+                freedabs(firstdab,FALSE,TRUE);
                 firstdab = 0;
                 return res;
             }
@@ -208,7 +212,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
                     (struct Dwarf_D_Pairs_Block_s*)
                     calloc(1,sizeof(struct Dwarf_D_Pairs_Block_s));
                 if (!freshblock) {
-                    freedabs(firstdab,FALSE);
+                    freedabs(firstdab,FALSE,TRUE);
                     firstdab = 0;
                     _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                     return DW_DLV_ERROR;
@@ -217,7 +221,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
                 pairscur = freshblock;
                 
             }
-            pairscur->bp_attr[pairscur->bp_used_count] =  attr;
+            pairscur->bp_idxattr[pairscur->bp_used_count] =  attr;
             pairscur->bp_form[pairscur->bp_used_count] =  form;
             pairscur->bp_used_count++;
             pairscount++;
@@ -228,20 +232,23 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
             }
         }
         curdab->da_pairs_count = pairscount;
-        abcur = inner +1;
+        abcur = inner;
         if (!firstdab) {
             firstdab = curdab;
             lastdab  = curdab;
         } else {
             /* Add new on the end, last */
             lastdab->da_next = curdab;
+            lastdab = curdab;
         }
     }
     if (!foundabend) {
-        freedabs(firstdab,FALSE);
-        _dwarf_error(dbg, error,
-            DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION);
-        return DW_DLV_OK;
+        freedabs(firstdab,FALSE,TRUE);
+        _dwarf_error_string(dbg, error,
+            DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION,
+            "DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION: Never found"
+            "abbrev final NUL byte");
+        return DW_DLV_ERROR;
     }
     if ( abcur < tabend) {
         unsigned padcount = 0;
@@ -249,25 +256,36 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
         for(; abcur < tabend; ++abcur) {
              ++padcount;
              if (*abcur) {
-                  printf("dadebug NON NULL ABBREV PAD  padcount %u at \n",padcount);
-                  printf("dadebug ptr 0x%lx\n",(unsigned long)abcur);
+                  dwarfstring  m;
+
+                  dwarfstring_constructor(&m);
+                  dwarfstring_append_printf_u(&m,
+                      "WARNING NON NULL debug_names "
+                      "abbreviation pad. " 
+                      "padcount %u at ",padcount);
+                  dwarfstring_append_printf_u(&m,
+                      ".debug_names sec_offset 0x%lx",
+                      (uintptr_t)(abcur - dn->dn_section_data));
+                  dwarf_insert_harmless_error(dbg,
+                      dwarfstring_string(&m));
+                  dwarfstring_destructor(&m);
              }
         }
     }
     {
-        unsigned ct = 0;
+        Dwarf_Unsigned ct = 0;
         struct Dwarf_D_Abbrev_s *tmpa = 0;
 
         dn->dn_abbrev_instances = (struct Dwarf_D_Abbrev_s *)calloc(
             abcount,sizeof(struct Dwarf_D_Abbrev_s));
         if (!dn->dn_abbrev_instances) {
-            freedabs(firstdab,FALSE);
+            freedabs(firstdab,FALSE,TRUE);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
         dn->dn_abbrev_instance_count = abcount;
         tmpa = firstdab;
-        for (ct = 0; tmpa && ct < abcount; ++ct) {
+        for (ct = 0; ct < abcount; ++ct) {
             struct Dwarf_D_Abbrev_s *tmpb =tmpa->da_next;
             /*  da_next no longer means anything */
             dn->dn_abbrev_instances[ct] = *tmpa;
@@ -278,7 +296,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
             are not freed, we do not do a deep copy
             of the extra attr/form pairs (if any) in turning
             the list into an array. */
-        freedabs(firstdab,TRUE);
+        freedabs(firstdab,TRUE,TRUE);
         tmpa = 0;
         firstdab = 0;
         lastdab = 0;
@@ -645,9 +663,9 @@ printf("dadebug aug string len %u final space %u lenwithpad %u\n",
 
     dn->dn_foreign_tu_list = curptr;
     dn->dn_foreign_tu_list_offset = usedspace;
-    curptr += dn->dn_offset_size * foreign_type_unit_count;
-    usedspace += dn->dn_offset_size * foreign_type_unit_count;
-    totaloffset += dn->dn_offset_size * foreign_type_unit_count;
+    curptr += sizeof(Dwarf_Sig8)     * foreign_type_unit_count;
+    usedspace += sizeof(Dwarf_Sig8)  * foreign_type_unit_count;
+    totaloffset += sizeof(Dwarf_Sig8)* foreign_type_unit_count;
     VALIDATEOFFSET(dn,totaloffset,"foreign_type__unit array error");
 
     dn->dn_buckets_offset = usedspace;
@@ -699,7 +717,6 @@ printf("dadebug aug string len %u final space %u lenwithpad %u\n",
             "the room available.");
         return DW_DLV_ERROR;
     }
-    /* Do not count the initial length field here! */
 
     entry_pool_size = dn->dn_next_set_offset - totaloffset;
     dn->dn_entry_pool_size = entry_pool_size;
@@ -861,7 +878,7 @@ _dwarf_internal_dwarf_dealloc_dnames(Dwarf_Dnames_Head dn)
     free(dn->dn_bucket_array);
     dn->dn_bucket_array = 0;
     for(  ; i < dn->dn_abbrev_instance_count; ++i) {    
-         freedabs(dn->dn_abbrev_instances+i, FALSE);
+         freedabs(dn->dn_abbrev_instances+i,FALSE,FALSE);
     }
     free(dn->dn_abbrev_instances);
     dn->dn_abbrev_instances = 0;
@@ -1303,7 +1320,7 @@ dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned *abbrev_code,
     Dwarf_Unsigned *abbrev_tag,
     Dwarf_Unsigned array_size,
-    Dwarf_Half     * attr_array,
+    Dwarf_Half     * idxattr_array,
     Dwarf_Half     * form_array,
     Dwarf_Unsigned * attr_count)
 {
@@ -1335,7 +1352,7 @@ dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dn,
              localcount = 0;
              pb = pb->bp_next;
          }
-         attr_array[abnumber] = pb->bp_attr[localcount];
+         idxattr_array[abnumber] = pb->bp_idxattr[localcount];
          form_array[abnumber] = pb->bp_form[localcount];
          ++localcount;
     }
@@ -1378,20 +1395,20 @@ static int
 _dwarf_find_abbrev_for_code(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned code,
     struct Dwarf_D_Abbrev_s **abbrevdata,
-    Dwarf_Error *error)
+    Dwarf_Error *error UNUSEDARG)
 {
     Dwarf_Unsigned i = 0;
     struct Dwarf_D_Abbrev_s *ap =0;
-    Dwarf_Debug dbg = 0;
 
     ap = dn->dn_abbrev_instances;
-    for (i = 0; i < dn->dn_abbrev_instance_count; ++i) {
+    for (i = 0; i < dn->dn_abbrev_instance_count; ++i,++ap) {
         if (ap->da_abbrev_code == code) {
             *abbrevdata = ap;
             return DW_DLV_OK;
         }
     }
     {
+        Dwarf_Debug dbg = 0;
         dwarfstring m;
 
         dbg = dn->dn_dbg;
@@ -1414,7 +1431,7 @@ _dwarf_find_abbrev_for_code(Dwarf_Dnames_Head dn,
 static int
 _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
     struct Dwarf_D_Abbrev_s *abbrevdata,
-    Dwarf_Half *attr_array,
+    Dwarf_Half *idxattr_array,
     Dwarf_Half *form_array,
     Dwarf_Unsigned array_size,
     Dwarf_Error *error)
@@ -1431,7 +1448,7 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
     pb = &abbrevdata->da_pairs_base;
     for(; i < limit && pb; ++i) {
         if (locali < pb->bp_used_count) {
-            attr_array[i] = pb->bp_attr[locali];
+            idxattr_array[i] = pb->bp_idxattr[locali];
             form_array[i] = pb->bp_form[locali];
             continue;
         }
@@ -1482,13 +1499,13 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned    * hash_value,
     Dwarf_Unsigned    * offset_to_debug_str,
     char *            * ptrtostr ,
-    Dwarf_Unsigned    * offset_in_entrypool UNUSEDARG,
-    Dwarf_Unsigned    *  abbrev_code UNUSEDARG,
-    Dwarf_Half        *  abbrev_tag UNUSEDARG,
-    Dwarf_Unsigned       array_size,
-    Dwarf_Half        *  attr_array,
-    Dwarf_Half        *  form_array,
-    Dwarf_Unsigned    *  attr_count,
+    Dwarf_Unsigned    * offset_in_entrypool,
+    Dwarf_Unsigned    * abbrev_code,
+    Dwarf_Half        * abbrev_tag,
+    Dwarf_Unsigned      array_size,
+    Dwarf_Half        * idxattr_array,
+    Dwarf_Half        * form_array,
+    Dwarf_Unsigned    * attr_count,
     Dwarf_Error *       error)
 {
     Dwarf_Debug dbg                     = 0;
@@ -1585,7 +1602,6 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
     if (res != DW_DLV_OK) {
         return res;
     }
- printf("dadebug have Read abbrev code %lu\n",(unsigned long)code);   
     res = _dwarf_find_abbrev_for_code(dn,code,&abbrevdata,error);
     if (res == DW_DLV_ERROR) {
         return res;
@@ -1605,7 +1621,7 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         if (attr_count) {
             *attr_count = abbrevdata->da_pairs_count;
         }
-        res = _dwarf_fill_in_attr_form(dn,abbrevdata,attr_array,
+        res = _dwarf_fill_in_attr_form(dn,abbrevdata,idxattr_array,
             form_array, array_size,error);
         if (res == DW_DLV_ERROR) {
             return res;

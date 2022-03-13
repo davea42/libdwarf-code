@@ -6043,16 +6043,18 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
     Returns the abbrev code for the abbrev at offset dw_abbrev_offset.
     @param dw_array_size
     The size you allocated in each of the following two arrays.
-    @param dw_attr_array
-    Pass in an array you allocated where the function returns and array of
-    attributes for this dw_abbrev_code.
+    @param dw_idxattr_array
+    Pass in an array you allocated where the function
+    returns and array of
+    index attributes for this dw_abbrev_code.
     The last attribute code in the array is zero.
     @param dw_form_array
-    Pass in an array you allocated where the function returns and array of
-    forms for this dw_abbrev_code.
+    Pass in an array you allocated where the
+    function returns and array of
+    forms for this dw_abbrev_code (paralled to dw_idxattr_array).
     The last form code in the array is zero.
-    @param dw_attr_count
-    Returns the actual attribute/form count (including the
+    @param dw_idxattr_count
+    Returns the actual idxattribute/form count (including the
     terminating 0,0 pair.  If the array_size passed in is less
     than this value the array returned is incomplete.
     Array entries needed. Might be larger than
@@ -6071,9 +6073,9 @@ dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned *dw_abbrev_code,
     Dwarf_Unsigned *dw_abbrev_tag,
     Dwarf_Unsigned  dw_array_size,
-    Dwarf_Half     *dw_attr_array,
+    Dwarf_Half     *dw_idxattr_array,
     Dwarf_Half     *dw_form_array,
-    Dwarf_Unsigned *dw_attr_count);
+    Dwarf_Unsigned *dw_idxattr_count);
 
 /*! @brief Sizes and counts from the debug names table
 
@@ -6207,15 +6209,15 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     @param dw_array_size
     Size of array you provide (even number).
     Possibly 20 to 40 suffices for practical purposes.
-    @param dw_attr_array
-    Array you provide, for attribute numbers
+    @param dw_idxattr_array
+    Array you provide, for idx attribute numbers
     (function will initialize it).
     The final entry in the array will be 0.
     @param dw_form_array
     Array you provide, for  form numbers
     (function will initialize it).
     The final entry in the array will be 0.
-    @param dw_attr_count
+    @param dw_idxattr_count
     Array entries needed. Might be larger than
     dw_array_size, meaning not all entries could
     be returned in your array.
@@ -6236,9 +6238,9 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned    * dw_abbrev_number,
     Dwarf_Half        * dw_abbrev_tag,
     Dwarf_Unsigned      dw_array_size,
-    Dwarf_Half        * dw_attr_array,
+    Dwarf_Half        * dw_idxattr_array,
     Dwarf_Half        * dw_form_array,
-    Dwarf_Unsigned    * dw_attr_count,
+    Dwarf_Unsigned    * dw_idxattr_count,
     Dwarf_Error *       dw_error);
 /*! @} */
 

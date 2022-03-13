@@ -30,13 +30,13 @@
 #define ABB_PAIRS_MAX 10 
 
 /*  We form a linked list if more than ABB_PAIRS_MAX
-    needed. In the very last block bp_attr[bp_used_count-1] == 0.
+    needed. In the very last block bp_idxattr[bp_used_count-1] == 0.
     Same for bp_form
 */
 struct Dwarf_D_Pairs_Block_s {
     struct Dwarf_D_Pairs_Block_s *bp_next;
     unsigned   bp_used_count; /* used in the arrays here */
-    Dwarf_Half bp_attr[ABB_PAIRS_MAX];
+    Dwarf_Half bp_idxattr[ABB_PAIRS_MAX];
     Dwarf_Half bp_form[ABB_PAIRS_MAX];
 };
 
