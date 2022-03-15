@@ -1,5 +1,4 @@
 
-set(SELFTEST "-DSELFTEST")
 if (DO_TESTING)
     set_source_group(TESTSTRING "Source Files"
         ${CMAKE_SOURCE_DIR}/test/test_dwarfstring.c
@@ -92,19 +91,20 @@ if (DO_TESTING)
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
     add_test(NAME selfhelpertree COMMAND selfhelpertree)
 endif()
+
 if (DO_TESTING)
     set_source_group(SELFMC_SOURCES "Source Files"
       ${CMAKE_SOURCE_DIR}/test/test_macrocheck.c
-      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c 
+      ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfmacrocheck ${SELFMC_SOURCES} )
-    target_compile_options(selfmacrocheck PRIVATE ${SELFTEST} )
+    target_compile_options(selfmacrocheck PRIVATE "-DTESTING" )
     target_compile_options(selfmacrocheck PRIVATE ${DW_FWALL})
-    target_compile_options(selfmacrocheck PRIVATE 
+    target_compile_options(selfmacrocheck PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf"
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarfp")
-    target_compile_options(selfmacrocheck PRIVATE 
+    target_compile_options(selfmacrocheck PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
     add_test(NAME selfmacrocheck COMMAND selfmacrocheck)
 endif()
@@ -121,7 +121,6 @@ if (DO_TESTING)
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
     target_compile_options(selftestesb PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
-    target_compile_options(selftestesb PRIVATE ${SELFTEST} )
     target_compile_options(selftestesb PRIVATE ${DW_FWALL})
     add_test(NAME selftestesb COMMAND selftestesb)
 endif()
@@ -130,8 +129,6 @@ if (DO_TESTING)
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_section_bitmaps.c
         ${CMAKE_SOURCE_DIR}/test/section_bitmaps_test.c )
     add_executable(selfsectionbitmaps ${SECTIONBITMAPS_SOURCES})
-    target_compile_options(selfsectionbitmaps PRIVATE
-        ${SELFTEST} )
     target_compile_options(selfsectionbitmaps PRIVATE ${DW_FWALL})
     target_compile_options(selfsectionbitmaps PRIVATE
         "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")

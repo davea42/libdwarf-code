@@ -90,10 +90,10 @@ static struct Macrocheck_Map_Entry_s * macrocheck_map_insert(
 static void macrocheck_map_destroy(void *map);
 static Dwarf_Unsigned macro_count_recs(void **base);
 
-#ifdef SELFTEST
+#ifdef TESTING
 int failcount = 0;
 struct glflags_s glflags;
-#endif /* SELFTEST */
+#endif /* TESTING */
 
 static struct Macrocheck_Map_Entry_s *
 macrocheck_map_create_entry(Dwarf_Unsigned offset,
@@ -345,7 +345,7 @@ qsort_compare(const void *lin, const void *rin)
 static void
 warnprimeandsecond(struct Macrocheck_Map_Entry_s *r)
 {
-#ifdef SELFTEST
+#ifdef TESTING
         ++failcount;
 #endif
     glflags.gf_count_major_errors++;
@@ -396,7 +396,7 @@ print_macrocheck_statistics(const char *name,void **tsbase,
     mac_as_array = (struct Macrocheck_Map_Entry_s **)calloc(count,
         sizeof(struct Macrocheck_Map_Entry_s *));
     if (!mac_as_array) {
-#ifdef SELFTEST
+#ifdef TESTING
         ++failcount;
 #endif
         glflags.gf_count_major_errors++;
@@ -432,7 +432,7 @@ print_macrocheck_statistics(const char *name,void **tsbase,
             highest = end;
         }
         if (r->mp_refcount_primary > 1) {
-#ifdef SELFTEST
+#ifdef TESTING
             ++failcount;
 #endif
             glflags.gf_count_major_errors++;
@@ -473,7 +473,7 @@ print_macrocheck_statistics(const char *name,void **tsbase,
             internalgap += (r->mp_key - lastend);
         } else if (r->mp_key < lastend) {
             /* crazy overlap */
-#ifdef SELFTEST
+#ifdef TESTING
             ++failcount;
 #endif
             glflags.gf_count_major_errors++;
@@ -502,7 +502,7 @@ print_macrocheck_statistics(const char *name,void **tsbase,
     wholegap = mac_as_array[0]->mp_key + internalgap;
     if (lastend > section_size) {
         /* Something seriously wrong */
-#ifdef SELFTEST
+#ifdef TESTING
         ++failcount;
 #endif
         printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
