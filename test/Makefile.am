@@ -111,8 +111,7 @@ test_helpertree_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_macrocheck_SOURCES = \
-    $(top_srcdir)/src/bin/dwarfdump/dd_macrocheck.c \
+test_macrocheck_SOURCES = test_macrocheck.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_macrocheck_CFLAGS = $(DWARF_CFLAGS_WARN)

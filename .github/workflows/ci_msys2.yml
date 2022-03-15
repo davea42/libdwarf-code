@@ -29,3 +29,4 @@ jobs:
         mkdir builddir && cd builddir
         meson .. -Ddoc=true -Ddwarfexample=true
         ninja
+        ninja test

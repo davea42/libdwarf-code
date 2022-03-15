@@ -36,6 +36,11 @@ tests = [
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
+   'test_macrocheck.c',
+   '../src/bin/dwarfdump/dd_esb.c',
+   '../src/bin/dwarfdump/dd_tsearchbal.c'
+  ],
+  [
    'section_bitmaps_test.c',
    '../src/bin/dwarfdump/dd_section_bitmaps.c'
   ],
@@ -78,7 +83,7 @@ foreach test_src : tests
   test_name = test_src[0].split('.')[0]
   test(test_name,
     executable(test_name, test_src,
-      c_args : [ dev_cflags, libdwarf_args, '-DTESTING', '-DLIBDWARF_BUILD' ],
+      c_args : [ dev_cflags, libdwarf_args, '-DTESTING', '-DSELFTEST', '-DLIBDWARF_BUILD' ],
       include_directories : [ config_dir, incdir ],
       install : false
     )
