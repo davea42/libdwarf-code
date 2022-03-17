@@ -80,6 +80,7 @@ test_linkedtopath_SOURCES = test_linkedtopath.c \
    $(top_srcdir)/src/lib/libdwarf/dwarf_error.h
 test_linkedtopath_CFLAGS =  $(DWARF_CFLAGS_WARN) -DTESTING
 test_linkedtopath_CPPFLAGS = -DTESTING \
+-DLIBDWARF_BUILD \
 -I$(top_srcdir) \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
@@ -115,7 +116,7 @@ test_macrocheck_SOURCES = test_macrocheck.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_macrocheck_CFLAGS = $(DWARF_CFLAGS_WARN)
-test_macrocheck_CPPFLAGS =  -DSELFTEST \
+test_macrocheck_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
@@ -141,6 +142,7 @@ test_dwarflebtest_SOURCES = dwarf_leb_test.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_leb.c
 test_dwarflebtest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_dwarflebtest_CPPFLAGS = -DTESTING \
+-DLIBDWARF_BUILD \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
@@ -157,6 +159,7 @@ test_getnametest_SOURCES = getnametest.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_names.c
 test_getnametest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_getnametest_CPPFLAGS = -DTESTING \
+-DLIBDWARF_BUILD \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 

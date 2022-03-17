@@ -55,8 +55,8 @@
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,
     the NUL is accounted for in init_esb_string
     and in later tests against esb_allocated_size. */
-#ifdef SELFTEST
-#define INITIAL_ALLOC 1  /* SELFTEST */
+#ifdef TESTING
+#define INITIAL_ALLOC 1  /* TESTING */
 #define MALLOC_COUNT 1
 #else
 /*  There is nothing magic about this size.
