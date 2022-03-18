@@ -1,4 +1,27 @@
 2022-03-18:  David Anderson
+    commit aa13c9cc626392ab48af68d3ea5ebfb2e53adc6b
+
+    Fix a memory leak in the new code.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+    Correct doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+    A slight alteration of the 'generate a fake .debug_names'
+    code here, but it is not sufficient.
+    We have correct compiler-generated debug_names on hand
+    now so this fake is no longer needed.
+            modified:   src/lib/libdwarfp/dwarf_pro_dnames.c
+
+2022-03-18:  David Anderson
+    commit df751d240966531f1db04e51752dbc3ec4504505
+
+    Brought up to date with gitlog
+            modified:   ChangeLog
+    Changed date to today.
+            modified:   doc/libdwarf.dox
+    Regenerated today.
+            modified:   doc/libdwarf.pdf
+
+2022-03-18:  David Anderson
     commit 34672538aa862c6067998486b17f2968dfb6cf56
     Merge: 732cd872 a755934e
 
