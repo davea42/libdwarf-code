@@ -1,3 +1,177 @@
+2022-03-18:  David Anderson
+    commit 34672538aa862c6067998486b17f2968dfb6cf56
+    Merge: 732cd872 a755934e
+
+    Merge branch 'dnames'
+    Bringing .debug_names access
+    and printing to a somewhat useful state.
+
+2022-03-18:  David Anderson
+    commit a755934ec18cca07f41c800a544179a7ff36522c
+
+    Adding defgroup  title words to a few where it was omitted
+            modified:   doc/checkexamples.c
+
+    Adding to the debug_names 0.4.0 changes
+            modified:   doc/libdwarf.dox
+
+    Correcting doxy for the dnames changes.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-16:  David Anderson
+    commit 732cd8725375bdd9f04eab946e782b696308fb97
+    Merge: 29602bba 70eefe93
+
+    Merge pull request #88 from vtorri/vtorri_selftest
+
+    Rename SELFTEST with TESTING. Also fix compilation of tests with the
+
+2022-03-15:  Vincent Torri
+    commit 70eefe938666f00fe4934ef015c2bd6911ecb534
+
+    Rename SELFTEST with TESTING. Also fix compilation of tests with the
+    autotools on Windows
+
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+
+2022-03-14:  David Anderson
+    commit 29602bba225bfc204e6e0b4d0d5ce024f6ff24df
+    Merge: 941297f6 1fbfe0aa
+
+    Merge pull request #87 from vtorri/vtorri_test_macrocheck
+
+    meson test: add macrocheck test
+
+2022-03-13:  David Anderson
+    commit dad2e036ec793e64c149a9905def9da15efe913f
+
+    Now prints more of .debug_names content.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+
+    Fixed debug names interfaces and renamed attr_array
+    to idxattr_array to emphasize these are
+    index-attributes, not attributes.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-13:  Vincent Torri
+    commit 1fbfe0aa64b529809d21c0e437757088576354da
+
+    launch test in meson CI
+
+2022-03-13:  Vincent Torri
+    commit e5059232d720cad0ed337a6513979e1dd783276a
+
+    fix autotools macrocheck test
+
+2022-03-13:  Vincent Torri
+    commit aeea0d27613f9d879afa61f110df93ce099bc479
+
+    meson test: add macrocheck test
+
+            new file:   test/test_macrocheck.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   test/meson.build
+
+2022-03-12:  David Anderson
+    commit 7ce0d16e8473ea12b15bbf4c5c2724c8b37d6935
+
+    DO NOT USE THIS COMMIT.
+    Code is present for nearly the entire section,
+    but bugs exist.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-12:  David Anderson
+    commit e629f12d3bf52395e08f2ccf8e18ce87572aced2
+
+    DO NOT USE THIS COMMIT. A work in progress.
+    Most of the reader implemented and compiles.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-12:  David Anderson
+    commit 941297f6e2ef3e09cce8f5fe07fbbe3c1ce144d9
+    Merge: 6b2d283c 690ac582
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+    Adding to README.md and modifying workflow c-cpp.yml.
+
+2022-03-12:  David Anderson
+    commit 690ac582e6899fb64013d29ff3a85b4b0fd41c0e
+    Merge: 6e2ee048 5d25f579
+
+    Merge pull request #86 from vtorri/vtorri_badge
+
+    Add msys2 CI badge in README.md
+
+2022-03-12:  Vincent Torri
+    commit 5d25f579a2d808d00ab913856da7cc1f3c0b587d
+
+    Add msys2 CI badge in README.md
+
+            modified:   .github/workflows/c-cpp.yml
+            modified:   README.md
+
+2022-03-11:  David Anderson
+    commit 6b2d283ccaf162c8dfe2c2588beda4576f442947
+    Merge: 789cecbe 6e2ee048
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    A new workflows yml.
+
+2022-03-11:  David Anderson
+    commit 6e2ee04895932aaa462ab8a4e6a022d1595f4cb1
+    Merge: 97436475 5a112e80
+
+    Merge pull request #85 from vtorri/master
+
+    Add msys2 CI
+
+2022-03-11:  Vincent Torri
+    commit 5a112e8098531cffb039a5ff2e50ca1241faca14
+
+    Add msys2 CI
+
+            new file:   .github/workflows/ci_msys2.yml
+
+2022-03-10:  David Anderson
+    commit 789cecbe636c62c28c5e0ecfb75e5284cbf71e4d
+
+    DO NOT USE THIS COMMIT.
+    It adds new debug_names output, but is quite incomplete
+    and...maybe ugly so far.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+2022-03-10:  David Anderson
+    commit 0985e103e0dc409437cc12b5581a3b58f59bb772
+
+    Correcting some doxygen comments on reading .debug_names functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-10:  David Anderson
+    commit 99aa290646facdd2ad77fc69590c83f4ea593d00
+
+    Small fixes to formatting in the introduction
+    and in the list of changes.
+            modified:   doc/libdwarf.dox
+
+2022-03-09:  David Anderson
+    commit 97436475c0a9dd688f094111b56b09af24972e9c
+
+    Brings ChangeLog up to date with git log
+            modified:   ChangeLog
+
 2022-03-09:  David Anderson
     commit 4180ee7a05973e9e9bfc46dad95e906e57100ee2
     Merge: 005f218f 02763e21
