@@ -738,6 +738,12 @@
     in libdwarf-20210528 but the change was a mistake.
     Now reverted to the previous version.
 
+    The .debug_names section interfaces have changed.
+    Added dwarf_dnames_offsets() to provide details
+    of facts useful in problems reading the section.
+    dwarf_dnames_name() now does work and the interface
+    was changed to make it easier to use.
+
     <b>Changes 0.3.3 to 0.3.4</b>
 
     Replaced the groff -mm based libdwarf.pdf
