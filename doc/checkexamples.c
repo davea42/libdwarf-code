@@ -654,7 +654,7 @@ int example_discr_list(Dwarf_Debug dbg,
 }
 /*! @endcode */
 
-/*! @defgroup example_loclistcv5
+/*! @defgroup example_loclistcv5 Example access to DWARF5 locationlist
     @brief Get access to DWARF5 loclist entries given Attribute
 
     @code
@@ -742,7 +742,7 @@ int example_loclistcv5(Dwarf_Attribute someattr,
 }
 /*! @endcode */
 
-/*! @defgroup example_locexprc
+/*! @defgroup example_locexprc Example reading a location expression
     @brief Getting the details of a location expression
 
     @code
@@ -821,7 +821,7 @@ int example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
 }
 /*! @endcode */
 
-/*! @defgroup examplea 
+/*! @defgroup examplea  Example of dwarf_get_loclist_c
     @brief Example using dwarf_get_loclist_c
 
     @code
@@ -1537,7 +1537,7 @@ int exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval,
 }
 /*! @endcode */
 
-/*! @defgroup examples
+/*! @defgroup examples Example of dwarf_expand_frame_instructions
     @brief  Example using dwarf_expand_frame_instructions
 
     @code
@@ -2088,7 +2088,7 @@ int exampleza(Dwarf_Xu_Index_Header xuhdr,
 }
 /*! @endcode */
 
-/*! @defgroup examplezb
+/*! @defgroup examplezb Example getting tag,attribute,etc names
     @brief Example getting tag,attribute,etc names as strings.
 
     @code

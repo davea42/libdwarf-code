@@ -4219,8 +4219,6 @@ DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c dw_loclist_head,
 
 /*! @brief Get the raw values from a single location operation
 
-    Some of the following (DW_raw?) appear completely
-    pointless - a mistake.
 
     @param dw_locdesc
     Pass in a valid Dwarf_Locdesc_c.
@@ -4235,12 +4233,6 @@ DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c dw_loclist_head,
     On success returns the value of the operand or zero.
     @param dw_operand3
     On success returns the value of the operand or zero.
-    @param dw_rawop1
-    Identical to dw_operand1
-    @param dw_rawop2
-    Identical to dw_operand2
-    @param dw_rawop3
-    Identical to dw_operand3
     @param dw_offset_for_branch
     On success returns
     The byte offset of the operator within the
@@ -6032,6 +6024,9 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
 
 /*! @brief Access to the abbrevs table content
 
+    Of interest mainly to debugging issues with compilers
+    or debuggers.
+
     @param dw_dn
     A Dwarf_Dnames_Head pointer.
     @param dw_index
@@ -6041,12 +6036,14 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
     entry. 
     @param dw_abbrev_code
     Returns the abbrev code for the abbrev at offset dw_abbrev_offset.
+    @param dw_abbrev_tag
+    Returns the tag for the abbrev at offset dw_abbrev_offset.
     @param dw_array_size
     The size you allocated in each of the following two arrays.
     @param dw_idxattr_array
     Pass in an array you allocated where the function
     returns and array of
-    index attributes for this dw_abbrev_code.
+    index attributes (DW_IDX) for this dw_abbrev_code.
     The last attribute code in the array is zero.
     @param dw_form_array
     Pass in an array you allocated where the
