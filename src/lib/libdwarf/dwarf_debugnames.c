@@ -276,7 +276,8 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
         Dwarf_Unsigned ct = 0;
         struct Dwarf_D_Abbrev_s *tmpa = 0;
 
-        dn->dn_abbrev_instances = (struct Dwarf_D_Abbrev_s *)calloc(
+        dn->dn_abbrev_instances =
+            (struct Dwarf_D_Abbrev_s *)calloc(
             abcount,sizeof(struct Dwarf_D_Abbrev_s));
         if (!dn->dn_abbrev_instances) {
             freedabs(firstdab,FALSE,TRUE);
@@ -296,7 +297,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
             are not freed, we do not do a deep copy
             of the extra attr/form pairs (if any) in turning
             the list into an array. */
-        freedabs(firstdab,TRUE,TRUE);
+        freedabs(firstdab,FALSE,TRUE);
         tmpa = 0;
         firstdab = 0;
         lastdab = 0;
@@ -616,12 +617,6 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             if (modlen) {
                 lenwithpad += (4-modlen);
             }
-#if 0
-printf("dadebug aug string len %u final space %u lenwithpad %u\n",
-(unsigned)len,
-(unsigned)finallen,
-(unsigned)lenwithpad);
-#endif
         } 
         cp = str_utf8 + len;
         curptr += lenwithpad; 
@@ -630,10 +625,6 @@ printf("dadebug aug string len %u final space %u lenwithpad %u\n",
         {
             /*  Ensure that there is no corruption in
                 the padding. */
-#if 0
-            dump_bytes("Padding ck 1 dadebug",
-                (Dwarf_Small *)cp,lenwithpad - len);
-#endif
             for ( ; cp < cpend; ++cp) {
                 if (*cp) {
                     _dwarf_error_string(dbg, error,
@@ -842,10 +833,6 @@ dwarf_dnames_header(Dwarf_Debug dbg,
             in padding. */
         curptr += usedspace;
         for ( ; curptr < end_section; ++curptr) {
-#if 0
-            dump_bytes("Padding ck 2 dadebug",
-                (Dwarf_Small*)curptr,remaining);
-#endif
             if (*curptr) {
                 /*  One could argue this is a harmless error,
                     but for now assume it is real corruption. */

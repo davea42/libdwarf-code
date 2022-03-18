@@ -49,7 +49,7 @@
 
 static struct Dwarf_P_Dnames_Head_s staticdnames =
 {
-/* fake unit length*/57,
+/* fake unit length*/58,
 /* version */5,
 /*offset size*/4,
 /*offset*/0,
@@ -58,18 +58,19 @@ static struct Dwarf_P_Dnames_Head_s staticdnames =
 /* foreigntu ct */0,
 /* bucket ct */0,
 /* name ct */1,
-/* abbrev_table_size*/6,
+/* abbrev_table_size*/7,
 /* augstringsize*/0,
-/* augstring*/ 0
+/* augstring*/0
 };
 
 /* total length encoded: 6 bytes. */
-unsigned char abbrv[6] =
+unsigned char abbrv[7] =
 {/* abbrev code*/ 2,
 /* DW_TAG_subprogram */ 0x2e,
 /* DW_IDX_compile_unit*/1,
 /* DW_FORM_udata */7,
-/* end abbrev */ 0,0};
+/* end abbrev */ 0,0,
+/* end abbrev block */0};
 
 unsigned char entry[3] =
 { /* abbrev code */2,
@@ -161,6 +162,7 @@ dwarf_force_dnames(Dwarf_P_Debug dbg,
         SIZEOFT32);
     data += SIZEOFT32;
     /* 6 */
+
     WRITE_UNALIGNED(dbg, (void *)data,
         (const void *)&dh->dh_foreign_type_unit_count,
         sizeof(dh->dh_foreign_type_unit_count),

@@ -6063,8 +6063,7 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
     part of the abbrev table it returns DW_DLV_NO_ENTRY.
     Never returns DW_DLV_ERROR.
 */
-int
-dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dw_dn,
+DW_API int dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned  dw_index,
     Dwarf_Unsigned *dw_abbrev_offset,
     Dwarf_Unsigned *dw_abbrev_code,
