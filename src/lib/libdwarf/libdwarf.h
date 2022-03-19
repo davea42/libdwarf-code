@@ -6126,19 +6126,23 @@ DW_API int dwarf_dnames_offsets(Dwarf_Dnames_Head dw_dn,
 
 
 /*! @brief Each debug names list entry one at a time
+
+    The DWARF5 standard reserves index 0, so
+    index numbers start at 1.
+
     @param dw_dn
     The table of interest.
     @param dw_type
     Pass in the type, "cu" or "tu"
     @param dw_index_number
-    For "cu" index range is 0 through K-1
-    For "tu" index range is 0 through T+F-1
+    For "cu" index range is 1 through K
+    For "tu" index range is 1 through T+F
     @param dw_offset
     Section offset of the target CU
     Zero if it cannot be determined.
     @param dw_sig
     the Dwarf_Sig8 is filled in with a signature
-    if the TU index is T through T+F-1
+    if the TU index is T+1 through T+F
     @param dw_error
     On error dw_error is set to point to the error details.
     @return
