@@ -1908,7 +1908,8 @@ DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
     @{
 */
 
-/*! @brief
+/*! @brief Returns the abbrev section offset of a DIE's abbrevs.
+
     So we can associate a DIE's abbreviations with the contents
     the abbreviations section.
     Useful for detailed printing and analysis of
@@ -2963,7 +2964,7 @@ DW_API int dwarf_uncompress_integer_block_a(Dwarf_Debug dw_dbg,
     Dwarf_Signed  ** dw_value_array,
     Dwarf_Error    * dw_error);
 
-/*! @brief dealloc what dwarf_uncompress_integer_block_a allocated
+/*! @brief Dealloc what dwarf_uncompress_integer_block_a allocated
     @param dw_dbg
     The Dwarf_Debug of interest
     @param dw_value_array
@@ -3205,7 +3206,7 @@ DW_API int dwarf_srclines_two_level_from_linecontext(
 */
 DW_API void dwarf_srclines_dealloc_b(Dwarf_Line_Context dw_context);
 
-/*! @brief Srclines table offset
+/*! @brief Returns srclines table offset
 
     The offset is in the relevant .debug_line or .debug_line.dwo
     section (and in a split dwarf package file includes
@@ -3243,7 +3244,7 @@ DW_API int dwarf_srclines_comp_dir(Dwarf_Line_Context dw_context,
     const char ** dw_compilation_directory,
     Dwarf_Error * dw_error);
 
-/*! @brief subprog count: Part of the two-level line table extension.
+/*! @brief Subprog count: Part of the two-level line table extension.
 
     A non-standard table.
     The actual meaning of subprog count left undefined here.
@@ -3694,7 +3695,8 @@ DW_API int dwarf_line_subprog(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_lineno*/,
     Dwarf_Error *    /*error*/);
 
-/*! @brief
+/*! @brief Access to detailed line table header issues.
+
     Lets the caller get detailed messages
     about some compiler errors we detect.
     Calls back, the caller should do something
@@ -3831,7 +3833,7 @@ DW_API int dwarf_get_ranges_b(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_bytecount,
     Dwarf_Error *    dw_error);
 
-/*! @brief dealloc the array dw_rangesbuf
+/*! @brief Dealloc the array dw_rangesbuf
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -3892,7 +3894,7 @@ DW_API int dwarf_rnglists_get_rle_head(Dwarf_Attribute dw_attr,
     Dwarf_Unsigned *      dw_global_offset_of_rle_set,
     Dwarf_Error    *      dw_error);
 
-/*! @brief access rnglist entry details.
+/*! @brief Access rnglist entry details.
 
     @see example_rnglist_for_attribute
 
@@ -4292,7 +4294,7 @@ DW_API int dwarf_loclist_from_expr_c(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned  * dw_listlen,
     Dwarf_Error     * dw_error);
 
-/*! @brief dealloc (free) all memory allocated for Dwarf_Loc_Head_c
+/*! @brief Dealloc (free) all memory allocated for Dwarf_Loc_Head_c
     @param dw_head
     A head pointer.
 
@@ -4761,7 +4763,7 @@ DW_API int dwarf_get_macro_import(
     @{
 
 */
-/*! @brief returns a pointer to the value part of a macro
+/*! @brief Returns a pointer to the value part of a macro
 
     This function Works for all versions, DWARF2-DWARF5
 
@@ -6099,7 +6101,7 @@ DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half     * dw_offset_size,
     Dwarf_Error *    dw_error);
 
-/*! @brief offsets from the debug names table
+/*! @brief Offsets from the debug names table
 
     We do not describe these returned values, which
     refer to the .debug_names section.
@@ -6123,7 +6125,7 @@ DW_API int dwarf_dnames_offsets(Dwarf_Dnames_Head dw_dn,
     Dwarf_Error *    dw_error);
 
 
-/*! @brief each debug names list entry one at a time
+/*! @brief Each debug names list entry one at a time
     @param dw_dn
     The table of interest.
     @param dw_type
@@ -6149,7 +6151,7 @@ DW_API int dwarf_dnames_cu_table(Dwarf_Dnames_Head dw_dn,
     Dwarf_Sig8        * dw_sig,
     Dwarf_Error       * dw_error);
 
-/*! @brief access to bucket contents.
+/*! @brief Access to bucket contents.
     @param dw_dn
     The Dwarf_Dnames_Head of interest.
     @param dw_bucket_number
@@ -6176,7 +6178,7 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned    * dw_indexcount,
     Dwarf_Error *       dw_error);
 
-/*! @brief retrieve a name table entry
+/*! @brief Retrieve a name table entry
 
     For now, ignore this function as it
     does almost none of that the description
@@ -6378,7 +6380,7 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
     @{
 */
 
-/*! @brief  global name space operations, .debug_pubnames access
+/*! @brief  Global name space operations, .debug_pubnames access
 
     This section is defined in DWARF2, DWARF3, and DWARF4.
 
@@ -6415,7 +6417,7 @@ DW_API void dwarf_globals_dealloc(Dwarf_Debug dw_dbg,
     Dwarf_Global* dw_globals,
     Dwarf_Signed  dw_number_of_globals);
 
-/*! @brief return the name of a global data item
+/*! @brief Return the name of a global data item
 
     @param dw_global
     The Dwarf_Debug of interest.
@@ -6431,7 +6433,7 @@ DW_API int dwarf_globname(Dwarf_Global dw_global,
     char      ** dw_returned_name,
     Dwarf_Error* dw_error);
 
-/*! @brief return the DIE offset of a global data item
+/*! @brief Return the DIE offset of a global data item
 
     @param dw_global
     The Dwarf_Debug of interest.
@@ -6447,7 +6449,7 @@ DW_API int dwarf_global_die_offset(Dwarf_Global dw_global,
     Dwarf_Off   * dw_return_offset,
     Dwarf_Error * dw_error);
 
-/*! @brief return the CU header data of a global data item
+/*! @brief Return the CU header data of a global data item
 
     @param dw_global
     The Dwarf_Debug of interest.
@@ -6463,7 +6465,7 @@ DW_API int dwarf_global_cu_offset(Dwarf_Global dw_global,
     Dwarf_Off*       dw_return_offset,
     Dwarf_Error*     dw_error);
 
-/*! @brief return the name and offsets of a global entry.
+/*! @brief Return the name and offsets of a global entry.
 
     @param dw_global
     The Dwarf_Debug of interest.
@@ -6786,7 +6788,7 @@ DW_API int dwarf_gdbindex_header(Dwarf_Debug dw_dbg,
     const char    ** dw_section_name,
     Dwarf_Error    * dw_error);
 
-/*! @brief free (dealloc) all allocated Dwarf_Gdbindex memory
+/*! @brief Free (dealloc) all allocated Dwarf_Gdbindex memory
     It should  named dwarf_dealloc_gdbindex
 
     @param dw_gdbindexptr
@@ -7387,7 +7389,7 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
     const char * dw_pathname,
     Dwarf_Error* dw_error);
 
-/*! @brief  crc32 used for debuglink crc calculation.
+/*! @brief  Crc32 used for debuglink crc calculation.
 
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns
@@ -7771,7 +7773,7 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
     
     @{
 */
-/*! @brief get the real name a DIE section.
+/*! @brief Get the real name a DIE section.
 
     @b dw_is_info
 
@@ -7795,7 +7797,7 @@ DW_API int dwarf_get_die_section_name(Dwarf_Debug dw_dbg,
     const char ** dw_sec_name,
     Dwarf_Error * dw_error);
 
-/*! @brief get the real name of a DIE section.
+/*! @brief Get the real name of a DIE section.
    
     The same as @b dwarf_get_die_section_name
     except we have a DIE so do not need @b dw_is_info
@@ -7805,13 +7807,13 @@ DW_API int dwarf_get_die_section_name_b(Dwarf_Die dw_die,
     const char ** dw_sec_name,
     Dwarf_Error * dw_error);
 
-/*! @brief get the real name of a .debug_macro section.
+/*! @brief Get the real name of a .debug_macro section.
 */
 DW_API int dwarf_get_macro_section_name(Dwarf_Debug dw_dbg,
     const char ** dw_sec_name_out,
     Dwarf_Error * dw_err);
 
-/*! @brief get the real name of a section.
+/*! @brief Get the real name of a section.
 
      If the object has section groups only the
      sections in the group in dw_dbg will be
@@ -8000,7 +8002,7 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
 */
 DW_API int dwarf_get_section_count(Dwarf_Debug dw_dbg);
 
-/*! @brief get section sizes for many sections.
+/*! @brief Get section sizes for many sections.
 
     The list of sections is incomplete and the argument list
     is ... too long ... making this an unusual function
