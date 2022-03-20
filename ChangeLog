@@ -1,3 +1,54 @@
+2022-03-20:  David Anderson
+    commit 3cc3cc3b8cfa9602e44efd111bb944cfa5ef76e0
+
+    Now Dwarf_Debug_s has an initial field of a
+    number, which is set to a hex value as
+    the Dwarf_Debug is being constructed. On
+    deallocation the value is reset to zero.
+    In addition, random Dwarf_Debug pointers
+    are checked to ensure the special value is present,
+    and if not present an error is thrown.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_macro.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_stringsection.c
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2022-03-20:  David Anderson
+    commit c6f8fb36e665b6bda1496d24eb253cb68a1624bd
+
+    Latest version.
+            modified:   doc/libdwarf.pdf
+
+2022-03-19:  David Anderson
+    commit 3c05b3a5f2397acff1bda4f1f952af31134898e2
+
+    Fixing doxygen comments.
+            modified:   libdwarf.h
+
+2022-03-19:  David Anderson
+    commit f4687afedc5389f71b88ce0e8e3427cc8260333b
+
+    Updated date
+            modified:   doc/libdwarf.dox
+    Now all the @brief doxygen commands begin with
+    a capital letter (for consistency)
+    except for the few where the actual function name is the
+    sole content (dwarf_get_FORM_name() etc)
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-18:  David Anderson
+    commit ecc3c6446e2965daaa5eeff6dc4315fbea526a77
+
+    Updated with latest
+            modified:   ChangeLog
+
 2022-03-18:  David Anderson
     commit aa13c9cc626392ab48af68d3ea5ebfb2e53adc6b
 
