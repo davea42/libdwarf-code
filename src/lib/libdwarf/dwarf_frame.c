@@ -57,12 +57,18 @@
     do {                                               \
         if ((fde) == NULL) {                           \
             _dwarf_error(NULL, error, DW_DLE_FDE_NULL);\
-        return DW_DLV_ERROR;                         \
+        return DW_DLV_ERROR;                           \
     }                                                  \
     (dbg)= (fde)->fd_dbg;                              \
     if ((dbg) == NULL) {                               \
+        _dwarf_error_string(NULL, error, DW_DLE_FDE_DBG_NULL,\
+            "DW_DLE_FDE_DBG_NULL: An fde contains a stale "\
+            "Dwarf_Debug ");                           \
+        return DW_DLV_ERROR;                           \
+    }                                                  \
+    if ((dbg)->de_magic != DBG_IS_VALID) {             \
         _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);\
-        return DW_DLV_ERROR;                         \
+        return DW_DLV_ERROR;                           \
     } } while (0)
 
 #define MIN(a,b)  (((a) < (b))? (a):(b))
@@ -1642,7 +1648,7 @@ int
 dwarf_get_cie_of_fde(Dwarf_Fde fde,
     Dwarf_Cie * cie_returned, Dwarf_Error * error)
 {
-    if (fde == NULL) {
+    if (!fde) {
         _dwarf_error(NULL, error, DW_DLE_FDE_NULL);
         return DW_DLV_ERROR;
     }
@@ -1685,7 +1691,14 @@ dwarf_get_fde_list_eh(Dwarf_Debug dbg,
     Dwarf_Signed * fde_element_count,
     Dwarf_Error * error)
 {
-    int res = _dwarf_load_section(dbg,
+    int res = 0;
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: Either null or it contains"
+            "a stale Dwarf_Debug pointer");
+        return DW_DLV_ERROR;
+    }
+    res = _dwarf_load_section(dbg,
         &dbg->de_debug_frame_eh_gnu,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -1718,7 +1731,16 @@ dwarf_get_fde_list(Dwarf_Debug dbg,
     Dwarf_Signed * fde_element_count,
     Dwarf_Error * error)
 {
-    int res = _dwarf_load_section(dbg, &dbg->de_debug_frame,error);
+    int res = 0;
+
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: dwarf_get_fde_list: "
+            "Either null Dwarf_Debug or it is"
+            "a stale Dwarf_Debug pointer");
+        return DW_DLV_ERROR;
+    }
+    res = _dwarf_load_section(dbg, &dbg->de_debug_frame,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -1766,8 +1788,11 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     struct cie_fde_prefix_s prefix;
     struct cie_fde_prefix_s prefix_c;
 
-    if (die == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DIE_NULL);
+     if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: in dwarf_get_fde_for_die(): "
+            "Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
 
@@ -1903,6 +1928,12 @@ dwarf_get_fde_range(Dwarf_Fde fde,
         _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);
         return DW_DLV_ERROR;
     }
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_FDE_DBG_NULL,
+            "DW_DLE_FDE_DBG_NULL: Either null or it contains"
+            "a stale Dwarf_Debug pointer");
+        return DW_DLV_ERROR;
+    }
     /*  We have always already done the section load here,
         so no need to load the section. We did the section
         load in order to create the
@@ -1937,10 +1968,13 @@ dwarf_get_fde_exception_info(Dwarf_Fde fde,
     Dwarf_Debug dbg;
 
     dbg = fde->fd_dbg;
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_FDE_DBG_NULL,
+            "DW_DLE_FDE_DBG_NULL: Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
+
     *offset_into_exception_tables =
         fde->fd_offset_into_exception_tables;
     return DW_DLV_OK;
@@ -1966,13 +2000,15 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
 {
     Dwarf_Debug dbg = 0;
 
-    if (cie == NULL) {
+    if (!cie) {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
         return DW_DLV_ERROR;
     }
     dbg = cie->ci_dbg;
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_CIE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_CIE_DBG_NULL,
+            "DW_DLE_CIE_DBG_NULL: Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
     if (ptr_to_version != NULL)
@@ -2368,8 +2404,10 @@ dwarf_get_fde_instr_bytes(Dwarf_Fde inFde,
         return DW_DLV_ERROR;
     }
     dbg = inFde->fd_dbg;
-    if (!dbg) {
-        _dwarf_error(dbg, error, DW_DLE_FDE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_FDE_DBG_NULL,
+            "DW_DLE_FDE_DBG_NULL: Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
     instrs = inFde->fd_fde_instr_start;

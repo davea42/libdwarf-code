@@ -86,29 +86,38 @@ generate_form_error(Dwarf_Debug dbg,
     is all in one place.
     Never returns DW_DLV_NO_ENTRY  */
 static int
-get_attr_dbg(Dwarf_Debug *dbg,
-    Dwarf_CU_Context * cu_context,
+get_attr_dbg(Dwarf_Debug *dbg_out,
+    Dwarf_CU_Context * cu_context_out,
     Dwarf_Attribute attr,
     Dwarf_Error *error)
 {
-    Dwarf_CU_Context cup;
-    if (attr == NULL) {
+    Dwarf_CU_Context cup = 0;
+    Dwarf_Debug dbg = 0;
+
+    if (!attr) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
         return DW_DLV_ERROR;
     }
-
     cup = attr->ar_cu_context;
-    if (cup == NULL) {
+    if (!cup) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
         return DW_DLV_ERROR;
     }
-
-    if (cup->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
+    dbg = cup->cc_dbg;
+    if (!dbg  || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
+             "DW_DLE_ATTR_DBG_NULL: Stale or null Dwarf_Debug"
+             "in a Dwarf_CU_Context" );
         return DW_DLV_ERROR;
     }
-    *cu_context = cup;
-    *dbg = cup->cc_dbg;
+    if(dbg != attr->ar_dbg) {
+        _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
+             "DW_DLE_ATTR_DBG_NULL: an attribute and its "
+             "cu_context do not have the same Dwarf_Debug" );
+        return DW_DLV_ERROR;
+    }
+    *cu_context_out = cup;
+    *dbg_out        = dbg; 
     return DW_DLV_OK;
 
 }
@@ -1075,13 +1084,17 @@ dwarf_formdata16(Dwarf_Attribute attr,
     Dwarf_Unsigned section_length = 0;
     Dwarf_Small *section_start = 0;
 
-    if (attr == NULL) {
+    if (!attr) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
         return DW_DLV_ERROR;
     }
-    if (returned_val == NULL) {
+    if (!returned_val ) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
         return DW_DLV_ERROR;
+    }
+    res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
     attrform = attr->ar_attribute_form;
     if (attrform != DW_FORM_data16) {
@@ -1090,10 +1103,6 @@ dwarf_formdata16(Dwarf_Attribute attr,
             "DW_DLE_ATTR_FORM_BAD",
             "dwarf_formdata16");
         return DW_DLV_ERROR;
-    }
-    res  = get_attr_dbg(&dbg,&cu_context,attr,error);
-    if (res != DW_DLV_OK) {
-        return res;
     }
     section_start = _dwarf_calculate_info_section_start_ptr(
         cu_context,&section_length);
@@ -1186,20 +1195,26 @@ dwarf_formflag(Dwarf_Attribute attr,
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Debug dbg = 0;
 
-    if (attr == NULL) {
+    if (!attr) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
         return DW_DLV_ERROR;
     }
-
     cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
+    if (!cu_context) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
         return DW_DLV_ERROR;
     }
     dbg = cu_context->cc_dbg;
-
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
+            "DW_DLE_ATTR_DBG_NULL: dwarf_formflag() attribute"
+            " passed in has NULL or stale Dwarf_Debug pointer");
+        return DW_DLV_ERROR;
+    }
+    if(dbg != attr->ar_dbg) {
+        _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
+             "DW_DLE_ATTR_DBG_NULL: an attribute and its "
+             "cu_context do not have the same Dwarf_Debug" );
         return DW_DLV_ERROR;
     }
     if (attr->ar_attribute_form == DW_FORM_flag_present) {
@@ -1585,7 +1600,7 @@ dwarf_formblock(Dwarf_Attribute attr,
     }
     out_block = (Dwarf_Block *)
         _dwarf_get_alloc(dbg, DW_DLA_BLOCK, 1);
-    if (out_block == NULL) {
+    if (!out_block) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -2022,10 +2037,6 @@ dwarf_formexprloc(Dwarf_Attribute attr,
     int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
-    }
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return DW_DLV_ERROR;
     }
     if (attr->ar_attribute_form == DW_FORM_exprloc ) {
         Dwarf_Die die = 0;

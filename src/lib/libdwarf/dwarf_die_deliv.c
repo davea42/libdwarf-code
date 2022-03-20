@@ -1596,8 +1596,11 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
 
     /* ***** BEGIN CODE ***** */
 
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: calling dwarf_next_cuheader_d() "
+            "Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
     if (is_info) {
@@ -1829,6 +1832,14 @@ dwarf_die_from_hash_signature(Dwarf_Debug dbg,
     Dwarf_Bool is_type_unit = FALSE;
     int sres = 0;
 
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: calling dwarf_die_from_hash_signature()"
+            "Either null or it contains"
+            "a stale Dwarf_Debug pointer");
+        return DW_DLV_ERROR;
+    }
+
     sres = _dwarf_load_debug_info(dbg,error);
     if (sres == DW_DLV_ERROR) {
         return sres;
@@ -1985,12 +1996,11 @@ dwarf_validate_die_sibling(Dwarf_Die sibling,Dwarf_Off *offset)
     Dwarf_Debug dbg = 0;
     Dwarf_Error *error = 0;
     Dwarf_Debug_InfoTypes dis = 0;
+
     CHECK_DIE(sibling, DW_DLV_ERROR);
     dbg = sibling->di_cu_context->cc_dbg;
-
     dis = sibling->di_is_info?
         &dbg->de_info_reading: &dbg->de_types_reading;
-
     *offset = 0;
     if (dis->de_last_die && dis->de_last_di_ptr) {
         if (sibling->di_debug_ptr == dis->de_last_di_ptr) {

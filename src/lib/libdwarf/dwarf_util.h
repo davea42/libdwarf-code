@@ -155,8 +155,9 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
 
 /*  Any error  found here represents a bug that cannot
     be dealloc-d as the caller will not know there was no dbg */
-#define CHECK_DIE(die, error_ret_value)                          \
+#define CHECK_DIE(die, error_ret_value)       \
     do {                                      \
+        Dwarf_Debug ckdi_dbg = 0;             \
         if (!(die)) {                         \
             _dwarf_error(NULL, error, DW_DLE_DIE_NULL);\
             return(error_ret_value);          \
@@ -166,12 +167,15 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
                 DW_DLE_DIE_NO_CU_CONTEXT);    \
             return(error_ret_value);          \
         }                                     \
-        if ((die)->di_cu_context->cc_dbg == NULL) { \
-            _dwarf_error_string(NULL, error,  \
-                DW_DLE_DBG_NULL, "DW_DLW_DBG_NULL: " \
-                " dbg in cu_context NULL");   \
-            return(error_ret_value);          \
-        }                                     \
+        ckdi_dbg = (die)->di_cu_context->cc_dbg;              \
+        if (!ckdi_dbg || ckdi_dbg->de_magic != DBG_IS_VALID) {\
+            _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL, \
+                "DW_DLE_DBG_NULL: "                           \
+                "accesing a cu context, Dwarf_Debug "         \
+                "either null or it contains"                  \
+                "a stale Dwarf_Debug pointer");               \
+            return DW_DLV_ERROR;                              \
+        }                                                     \
     } while (0)
 
 /*

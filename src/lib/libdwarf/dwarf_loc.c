@@ -332,7 +332,9 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
         with a non-NULL dbg.
     */
     if (!attr) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
+        _dwarf_error_string(NULL, error, DW_DLE_ATTR_NULL,
+             "DW_DLE_ATTR_NULL: the attribute passed to "
+             "dwarf_get_loclist_c() is a NULL poitner");
         return DW_DLV_ERROR;
     }
     if (attr->ar_cu_context == NULL) {
@@ -342,8 +344,11 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
     *cucontext_ret = attr->ar_cu_context;
 
     dbg = attr->ar_cu_context->cc_dbg;
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
+            "DW_DLE_ATTR_DBG_NULL The Attribute passed to "
+            "dwarf_get_loclist_c() "
+            "points to an invalid Dwarf_Debug");
         return DW_DLV_ERROR;
     }
     *dbg_ret = dbg;
@@ -1605,6 +1610,16 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             "dwarf_get_loclist_c()");
         return DW_DLV_ERROR;
     }
+    dbg = attr->ar_dbg;
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL"
+            "NULL Dwarf_Debug, improper Dwarf_Attribute "
+            "argument passed to "
+            "dwarf_get_loclist_c()");
+        return DW_DLV_ERROR;
+    }
+
     /* ***** BEGIN CODE ***** */
     setup_res = _dwarf_setup_loc(attr, &dbg,&cucontext, &form, error);
     if (setup_res != DW_DLV_OK) {
@@ -1749,10 +1764,10 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Small version_stamp = dwarf_version;
     int res = 0;
 
-    if (!dbg) {
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(dbg, error,DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL"
-            "NULL Dwarf_Debug "
+            "NULL or bad Dwarf_Debug "
             "argument passed to "
             "dwarf_loclist_from_expr_c()");
         return DW_DLV_ERROR;

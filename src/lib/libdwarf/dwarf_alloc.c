@@ -639,6 +639,9 @@ dwarf_dealloc_die( Dwarf_Die die)
         return;
     }
     dbg = context->cc_dbg;
+    if (!dbg ||dbg->de_magic != DBG_IS_VALID) {
+        return;
+    }
     dwarf_dealloc(dbg,die,DW_DLA_DIE);
 }
 
@@ -868,10 +871,11 @@ _dwarf_get_debug(void)
 
     dbg = (Dwarf_Debug) malloc(sizeof(struct Dwarf_Debug_s));
     if (dbg == NULL) {
-        return (NULL);
+        return NULL;
     }
     memset(dbg, 0, sizeof(struct Dwarf_Debug_s));
     /* Set up for a dwarf_tsearch hash table */
+    dbg->de_magic = DBG_IS_VALID;
 
     /* Leaving initialization on so we can track
         DW_DLA_STRING even when global_de_alloc_tree_on
@@ -880,7 +884,7 @@ _dwarf_get_debug(void)
         dwarf_initialize_search_hash(&dbg->de_alloc_tree,
             simple_value_hashfunc,0);
     }
-    return (dbg);
+    return dbg;
 }
 
 /*  In the 'rela' relocation case  or in case
@@ -935,6 +939,9 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     unsigned g = 0;
 
     if (dbg == NULL) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (dbg->de_magic != DBG_IS_VALID) {
         return DW_DLV_NO_ENTRY;
     }
     /*  To do complete validation that we have no surprising

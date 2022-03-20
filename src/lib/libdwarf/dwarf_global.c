@@ -119,7 +119,17 @@ dwarf_get_globals(Dwarf_Debug dbg,
     Dwarf_Global ** globals,
     Dwarf_Signed * return_count, Dwarf_Error * error)
 {
-    int res = _dwarf_load_section(dbg, &dbg->de_debug_pubnames,error);
+    int res = 0; 
+
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "calling dwarf_get_globals "
+            "Dwarf_Debug either null or it is"
+            "a stale Dwarf_Debug pointer");
+        return DW_DLV_ERROR;
+    }
+    res = _dwarf_load_section(dbg, &dbg->de_debug_pubnames,error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -156,7 +166,8 @@ dwarf_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
 }
 
 void
-_dwarf_internal_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
+_dwarf_internal_globals_dealloc(Dwarf_Debug dbg,
+    Dwarf_Global * dwgl,
     Dwarf_Signed count)
 {
     Dwarf_Signed i = 0;
@@ -302,8 +313,12 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     /* Temporary counter. */
     Dwarf_Unsigned i = 0;
 
-    if (!dbg) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "calling for pubnames-like data Dwarf_Debug "
+            "either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
     /* We will eventually need the .debug_info data. Load it now. */
@@ -745,7 +760,6 @@ dwarf_global_cu_offset(Dwarf_Global global,
         return DW_DLV_ERROR;
     }
     *cu_header_offset = con->pu_offset_of_cu_header;
-
     return DW_DLV_OK;
 }
 
@@ -797,7 +811,6 @@ dwarf_global_name_offsets(Dwarf_Global global,
     }
 
     con = global->gl_context;
-
     if (con == NULL) {
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_CONTEXT_NULL);
         return DW_DLV_ERROR;
@@ -814,8 +827,10 @@ dwarf_global_name_offsets(Dwarf_Global global,
         with 2 million pubnames entries. */
 #define MIN_CU_HDR_SIZE 10
     dbg = con->pu_dbg;
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
     /* Cannot refer to debug_types */
@@ -912,8 +927,12 @@ dwarf_get_globals_header(Dwarf_Global global,
         return DW_DLV_ERROR;
     }
     dbg = con->pu_dbg;
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "calling dwarf_get_globals_header() "
+            "either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
     if (pub_section_hdr_offset) {
@@ -965,13 +984,22 @@ dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug dbg,
     Dwarf_Off in_cu_header_offset,
     Dwarf_Bool is_info,
     Dwarf_Off * out_cu_die_offset,
-    Dwarf_Error * err)
+    Dwarf_Error * error)
 {
     Dwarf_Off headerlen = 0;
     int cres = 0;
 
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: "
+            "calling dwarf_get_cu_die_offset_given"
+            "cu_header_offset_b Dwarf_Debug is"
+            "either null or it is"
+            "a stale Dwarf_Debug pointer");
+        return DW_DLV_ERROR;
+    }
     cres = _dwarf_length_of_cu_header(dbg,
-        in_cu_header_offset,is_info, &headerlen,err);
+        in_cu_header_offset,is_info, &headerlen,error);
     if (cres != DW_DLV_OK) {
         return cres;
     }

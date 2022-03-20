@@ -220,10 +220,11 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
     unsigned long count = 0;
     unsigned long max_count = (unsigned long) maximum_count;
-
     _dwarf_reset_index_macro_stack(&msdata);
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL: Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         free_macro_stack(dbg,&msdata);
         return DW_DLV_ERROR;
     }

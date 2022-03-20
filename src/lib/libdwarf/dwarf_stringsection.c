@@ -55,11 +55,13 @@ dwarf_get_str(Dwarf_Debug dbg,
     void *begin = 0;
     void *end = 0;
 
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
+            "DW_DLE_DBG_NULL:calling dwarf_get_str()" 
+            "Either null or it contains"
+            "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
-
     if (offset == dbg->de_debug_str.dss_size) {
         /*  Normal (if we've iterated thru the set of strings using
             dwarf_get_str and are at the end). */

@@ -493,6 +493,9 @@ struct Dwarf_dbg_sect_s {
 #define DWARF_MAX_DEBUG_SECTIONS 50
 #define DWARFSTRING_ALLOC_SIZE   200
 
+/*  A 'magic number' to validate a Dwarf_Debug pointer is live.*/
+#define DBG_IS_VALID 0xebfdebfd
+
 /*  All the Dwarf_Debug tied-file info in one place.  */
 struct Dwarf_Tied_Data_s {
     /*  Used to access executable from .dwo or .dwp object.
@@ -546,6 +549,7 @@ struct Dwarf_Group_Data_s {
 };
 
 struct Dwarf_Debug_s {
+    Dwarf_Unsigned de_magic;
     /*  All file access methods and support data
         are hidden in this structure.
         We get a pointer, callers control the lifetime of the
