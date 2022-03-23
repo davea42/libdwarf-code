@@ -1834,7 +1834,6 @@ DW_API int dwarf_die_from_hash_signature(Dwarf_Debug dw_dbg,
     been seen at all, or the target offset is one
     libdwarf has seen before.
 
-
     @param dw_dbg
     The applicable Dwarf_Debug
     @param dw_offset
@@ -4221,7 +4220,6 @@ DW_API int dwarf_get_locdesc_entry_d(Dwarf_Loc_Head_c dw_loclist_head,
 
 /*! @brief Get the raw values from a single location operation
 
-
     @param dw_locdesc
     Pass in a valid Dwarf_Locdesc_c.
     @param dw_index
@@ -4781,7 +4779,7 @@ DW_API char* dwarf_find_macro_value_start(char * dw_macro_string);
 /*! @brief Getting .debug_macinfo macro details.
 
     @link examplep2 An example calling this function @endlink
-    
+
     @see examplep2
 
     @param dw_dbg
@@ -6035,7 +6033,7 @@ DW_API void dwarf_dealloc_dnames(Dwarf_Dnames_Head dw_dn);
     The Names table index (starts at one) for.
     @param dw_abbrev_offset
     Returns the offset of the abbrev table entry for this names table
-    entry. 
+    entry.
     @param dw_abbrev_code
     Returns the abbrev code for the abbrev at offset dw_abbrev_offset.
     @param dw_abbrev_tag
@@ -6105,7 +6103,7 @@ DW_API int dwarf_dnames_sizes(Dwarf_Dnames_Head dw_dn,
 
     We do not describe these returned values, which
     refer to the .debug_names section.
-    
+
     The header offset is a section offset.
     The rest are offsets from the header.
 
@@ -6123,7 +6121,6 @@ DW_API int dwarf_dnames_offsets(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned * dw_abbrev_table_offset,
     Dwarf_Unsigned * dw_entry_pool_offset,
     Dwarf_Error *    dw_error);
-
 
 /*! @brief Each debug names list entry one at a time
 
@@ -6187,7 +6184,7 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     For now, ignore this function as it
     does almost none of that the description
     promises. Most arguments are ignored.
-    
+
     @param dw_dn
     The table of interest.
     @param dw_name_index
@@ -7144,8 +7141,7 @@ DW_API int dwarf_get_xu_index_section_type(
     const char ** dw_sectionname,
     Dwarf_Error * dw_error);
 
-/*! @brief Get a Hash Entry 
-
+/*! @brief Get a Hash Entry
 
     @see examplez/x
 
@@ -7165,8 +7161,8 @@ DW_API int dwarf_get_xu_index_section_type(
     The usual pointer to return error details.
     @return
     Returns DW_DLV_OK etc.
-    
-*/  
+
+*/
 DW_API int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header dw_xuhdr,
     Dwarf_Unsigned   dw_index,
     Dwarf_Sig8     * dw_hash_value,
@@ -7222,7 +7218,7 @@ DW_API int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header dw_xuhdr,
     The usual pointer to return error details.
     @return
     Returns DW_DLV_OK etc.
-*/  
+*/
 DW_API int dwarf_get_xu_section_offset(
     Dwarf_Xu_Index_Header dw_xuhdr,
     Dwarf_Unsigned  dw_row_index,
@@ -7234,7 +7230,7 @@ DW_API int dwarf_get_xu_section_offset(
 /*! @brief Get debugfission data for a Dwarf_Die
 
     For any Dwarf_Die in a compilation unit, return
-    the debug fission table data through dw_percu_out.   
+    the debug fission table data through dw_percu_out.
     Usually applications
     will pass in the CU die.
     Calling code should zero all of the
@@ -7255,7 +7251,6 @@ DW_API int dwarf_get_xu_section_offset(
 DW_API int dwarf_get_debugfission_for_die(Dwarf_Die dw_die,
     Dwarf_Debug_Fission_Per_CU * dw_percu_out,
     Dwarf_Error                * dw_error);
-
 
 /*! @brief  Given a hash signature find per-cu Fission data
 
@@ -7315,10 +7310,10 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
 
     Caller frees space returned by debuglink_fullpath_returned.
 
-    @param dw_dbg 
+    @param dw_dbg
     The Dwarf_Debug of interest.
-    @param dw_debuglink_path_returned 
-    On success returns a pointer to 
+    @param dw_debuglink_path_returned
+    On success returns a pointer to
     a path in the debuglink section. Do not free!
     @param dw_crc_returned
     On success returns a pointer to a 4 byte area
@@ -7329,7 +7324,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     a correct path to a file with DWARF sections. Free this string
     when no longer of interest.
     @param dw_debuglink_path_length_returned
-    On success returns the strlen() of 
+    On success returns the strlen() of
     dw_debuglink_fullpath_returned .
 
     @param dw_buildid_type_returned
@@ -7371,14 +7366,14 @@ DW_API int dwarf_gnu_debuglink(Dwarf_Debug dw_dbg,
     unsigned int   * dw_paths_length_returned,
     Dwarf_Error*     dw_error);
 
-/*! @brief Adding debuglink global paths  
+/*! @brief Adding debuglink global paths
 
     Only really inside dwarfexample/dwdebuglink.c
     so we can show all that is going on.
     The following has the explanation for how debuglink
     and global paths interact.
     @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
-    
+
     @param dw_dbg
     Pass in the Dwarf_Debug of interest.
     @param dw_pathname
@@ -7397,7 +7392,7 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
 
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns
-    DW_DLV_OK that is filled in. 
+    DW_DLV_OK that is filled in.
 
     @param dw_dbg
     Pass in an open dw_dbg.  When you attempted
@@ -7421,7 +7416,7 @@ DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
 /*! @brief  Public interface to the real crc calculation
 
     It is unlikely this is useful.
-    
+
     @param dw_buf
     Pass in a pointer to some bytes on which the
     crc calculation as done in debuglink is to be done.
@@ -7434,7 +7429,7 @@ DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
     with the calculated crc.
 */
 DW_API unsigned int dwarf_basic_crc32(const unsigned char * dw_buf,
-    unsigned long dw_len, 
+    unsigned long dw_len,
     unsigned int  dw_init);
 /*! @} */
 
@@ -7552,7 +7547,7 @@ DW_API void dwarf_insert_harmless_error(Dwarf_Debug dw_dbg,
     The strings are in static storage and must not be freed.
 
     If DW_DLV_NO_ENTRY is returned the @b dw_val_in is not known and
-    @b *s_out is not set. This is unusual. 
+    @b *s_out is not set. This is unusual.
 
     DW_DLV_ERROR is never returned.
 
@@ -7608,7 +7603,7 @@ DW_API int dwarf_get_DS_name(unsigned int dw_val_in,
 */
 DW_API int dwarf_get_DSC_name(unsigned int dw_val_in,
     const char ** dw_s_out);
-/*! @brief dwarf_get_GNUIKIND_name - libdwarf invention 
+/*! @brief dwarf_get_GNUIKIND_name - libdwarf invention
 
     So we can report things GNU extensions sensibly.
 */
@@ -7616,7 +7611,7 @@ DW_API int dwarf_get_GNUIKIND_name(unsigned int dw_val_in,
     const char ** dw_s_out);
 /*! @brief dwarf_get_EH_name
 
-    So we can report this GNU extension sensibly. 
+    So we can report this GNU extension sensibly.
 */
 DW_API int dwarf_get_EH_name(unsigned int dw_val_in,
     const char ** dw_s_out);
@@ -7629,7 +7624,7 @@ DW_API int dwarf_get_END_name(unsigned int dw_val_in,
 DW_API int dwarf_get_FORM_name(unsigned int dw_val_in,
     const char ** dw_s_out);
 /*! @brief This is a set of register names
-  
+
     The set of register names is unlikely
     to match your register set, but perhaps
     this is better than no name.
@@ -7700,13 +7695,13 @@ DW_API int dwarf_get_LNE_name(unsigned int dw_val_in,
 DW_API int dwarf_get_LNS_name(unsigned int dw_val_in,
     const char ** dw_s_out);
 /*! @brief dwarf_get_MACINFO_name
-    
+
     Used in DWARF2-DWARF4
 */
 DW_API int dwarf_get_MACINFO_name(unsigned int dw_val_in,
     const char ** dw_s_out);
 /*! @brief dwarf_get_MACRO_name
-    
+
     Used in DWARF5
 */
 DW_API int dwarf_get_MACRO_name(unsigned int dw_val_in,
@@ -7751,7 +7746,7 @@ DW_API int dwarf_get_VIS_name(unsigned int dw_val_in,
     It seemed essential to invent it for libdwarf
     to report correctly.
 
-    See DWARF5 Table 2.3, Classes of Attribute Value page 23. 
+    See DWARF5 Table 2.3, Classes of Attribute Value page 23.
     Earlier DWARF versions have a similar table.
 */
 DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
@@ -7774,16 +7769,16 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
     the MacOS reader translates).
 
     The simple calls will not be documented in full detail here.
-    
+
     @{
 */
 /*! @brief Get the real name a DIE section.
 
     @b dw_is_info
 
-    @param dw_dbg 
+    @param dw_dbg
     The Dwarf_Debug of interest
-    @param dw_is_info 
+    @param dw_is_info
     We do not pass in a DIE, so we have to
     pass in TRUE for for .debug_info, or if
     DWARF4 .debug_types pass in FALSE.
@@ -7802,7 +7797,7 @@ DW_API int dwarf_get_die_section_name(Dwarf_Debug dw_dbg,
     Dwarf_Error * dw_error);
 
 /*! @brief Get the real name of a DIE section.
-   
+
     The same as @b dwarf_get_die_section_name
     except we have a DIE so do not need @b dw_is_info
     as a argument.
@@ -7856,7 +7851,7 @@ DW_API int dwarf_get_macro_section_name(Dwarf_Debug dw_dbg,
      @return
      The usual DW_DLV_OK etc.
      If the section is not relevant to this Dwarf_Debug
-     or is not in the object file at all, returns 
+     or is not in the object file at all, returns
      DW_DLV_NO_ENTRY
 */
 DW_API int dwarf_get_real_section_name(Dwarf_Debug dw_dbg,
@@ -7934,7 +7929,7 @@ DW_API int dwarf_get_line_section_name(Dwarf_Debug dw_dbg,
     Dwarf_Error * dw_error);
 
 /*! @brief Get  the line table section name
-    
+
     @param dw_die
     Pass in a Dwarf_Die pointer.
     @param dw_section_name_out
@@ -7950,8 +7945,8 @@ DW_API int dwarf_get_line_section_name_from_die(Dwarf_Die dw_die,
     const char ** dw_section_name_out,
     Dwarf_Error * dw_error);
 
-/*! @brief Given a section name, get its size and address 
-    
+/*! @brief Given a section name, get its size and address
+
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_section_name
@@ -8054,7 +8049,7 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
 
     @{
 */
-/*! @brief Get Section Groups data counts   
+/*! @brief Get Section Groups data counts
 
     Allows callers to find out what groups (dwo or COMDAT)
     are in the object and how much to allocate so one can get the
@@ -8066,7 +8061,7 @@ DW_API int dwarf_get_section_max_offsets_d(Dwarf_Debug dw_dbg,
     GROUP sections this becomes important.
 
     @link dwsec_sectiongroup Section Groups Overview @endlink
- 
+
     @param dw_dbg
     Pass in the Dwarf_Debug of interest.
     @param dw_section_count_out

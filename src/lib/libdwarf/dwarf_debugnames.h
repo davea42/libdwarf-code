@@ -27,7 +27,7 @@
 */
 
 /*  Adjust this number to hope for best space and time efficiency. */
-#define ABB_PAIRS_MAX 10 
+#define ABB_PAIRS_MAX 10
 
 /*  We form a linked list if more than ABB_PAIRS_MAX
     needed. In the very last block bp_idxattr[bp_used_count-1] == 0.
