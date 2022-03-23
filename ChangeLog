@@ -1,3 +1,47 @@
+2022-03-23:  David Anderson
+    commit e3012302ca3d7c9918c0e7efa320e7e043d89a1b
+
+    Fix trailing whitespace.
+    Fix indents.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-03-23:  David Anderson
+    commit 1ad7978552817d2450d2cc9a260f012145b99163
+
+    Remove trailing whitespace.
+    Fix indent errors.
+    Fix style errors like if(  and for(
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_loc.c
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_stringsection.c
+
+2022-03-23:  David Anderson
+    commit 1de2a7cff5a84ba8452df86b58f30eb22f3e21fb
+
+    Removed trailing whitespace.
+            modified:   dwarf_debugnames.h
+            modified:   libdwarf.h
+
+2022-03-23:  David Anderson
+    commit 751355259ffc19e145be68be66e0270898520345
+
+    CoverityScan noticed memory leaks of Dwarf_Error in case
+    of extremely unusual DW_DLV_ERROR cases.
+    Wny these were only noticed now...surprising...these
+    are old mistakes.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfgen/createirepformfrombinary.cc
+
+2022-03-20:  David Anderson
+    commit 664598681c7812d78edc8bc540fb848b252bebda
+
+    Updated with latest in git log.
+            modified:   ChangeLog
+
 2022-03-20:  David Anderson
     commit 3cc3cc3b8cfa9602e44efd111bb944cfa5ef76e0
 
