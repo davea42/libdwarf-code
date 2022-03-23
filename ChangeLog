@@ -1,4 +1,24 @@
 2022-03-23:  David Anderson
+    commit 5343316a89928a1bee491f069bd3a80a4efca685
+
+    Fixing issues Coverity Scan found. Leak
+    in 'impossible' circumstances and one was dead code.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfgen/createirepformfrombinary.cc
+
+2022-03-23:  David Anderson
+    commit 6b07b04ba4f7ff71d5502aa73cb2d6793fe250d0
+
+    Fixed indents of a group of doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-23:  David Anderson
+    commit 98c332b5b8d934cfeba9042adcdf267bd0fca9c1
+
+    Updated with latest changes.
+            modified:   ChangeLog
+
+2022-03-23:  David Anderson
     commit e3012302ca3d7c9918c0e7efa320e7e043d89a1b
 
     Fix trailing whitespace.
