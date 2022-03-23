@@ -273,14 +273,14 @@ IRFormConstant::IRFormConstant(IRFormInterface * interface)
         Dwarf_Debug dbg = interface->dbg_;
         dwarf_dealloc_error(dbg,error);
         error = 0;
-        ress = DW_DLV_NO_ENTRY; 
+        ress = DW_DLV_NO_ENTRY;
     }
     int resu = dwarf_formudata(interface->attr_, &uval,&error);
     if (resu == DW_DLV_ERROR) {
         Dwarf_Debug dbg = interface->dbg_;
         dwarf_dealloc_error(dbg,error);
         error = 0;
-        resu = DW_DLV_NO_ENTRY; 
+        resu = DW_DLV_NO_ENTRY;
     }
     if (resu == DW_DLV_OK ) {
         if (ress == DW_DLV_OK) {
@@ -382,6 +382,7 @@ get_section_offset(IRFormInterface * interface)
         if (resu == DW_DLV_ERROR){
             Dwarf_Debug dbg = interface->dbg_;
             dwarf_dealloc_error(dbg,error);
+            error = 0;
             resu = DW_DLV_NO_ENTRY;
         }
         ress = dwarf_formsdata(interface->attr_, &sval,&error);
@@ -391,6 +392,7 @@ get_section_offset(IRFormInterface * interface)
             if (ress == DW_DLV_ERROR) {
                 Dwarf_Debug dbg = interface->dbg_;
                 dwarf_dealloc_error(dbg,error);
+                error = 0;
                 ress = DW_DLV_NO_ENTRY;
             }
             cerr << "Unable to read constant offset value. "
@@ -398,10 +400,6 @@ get_section_offset(IRFormInterface * interface)
                 << endl;
             exit(1);
         }
-    }
-    if (resu == DW_DLV_ERROR) {
-        Dwarf_Debug dbg = interface->dbg_;
-        dwarf_dealloc_error(dbg,error);
     }
     return uval;
 }

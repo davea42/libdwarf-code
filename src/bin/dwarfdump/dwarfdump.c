@@ -1633,6 +1633,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
                 if (stricmp(lcun, p)) {
                     /* skip this cu. */
                     dwarf_dealloc_attribute(attrib);
+                    attrib = 0;
                     *should_skip = TRUE;
                     return DW_DLV_OK;
                 }
@@ -1640,6 +1641,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
                 if (strcmp(lcun, p)) {
                     /* skip this cu. */
                     dwarf_dealloc_attribute(attrib);
+                    attrib = 0;
                     *should_skip = TRUE;
                     return DW_DLV_OK;
                 }
@@ -1650,6 +1652,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
                 int dwarf_names_print_on_error = 1;
 
                 dwarf_dealloc_attribute(attrib);
+                attrib = 0;
                 esb_constructor(&m);
                 esb_append(&m,"In determining if we should "
                     "skip this CU dwarf_formstring "
@@ -1667,6 +1670,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
             } else {
                 /* DW_DLV_NO_ENTRY on the string itself */
                 dwarf_dealloc_attribute(attrib);
+                attrib = 0;
                 *should_skip = FALSE;
                 return sres;
             }
@@ -1678,12 +1682,13 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
             " attempting to determine if this CU should"
             " be skipped.",
             fres, skperr);
-        DROP_ERROR_INSTANCE(dbg,dares,skperr);
+        DROP_ERROR_INSTANCE(dbg,fres,skperr);
         fres = DW_DLV_NO_ENTRY;
     } else  {
         /* DW_DLV_NO_ENTRY, nothing to print */
     }
     dwarf_dealloc_attribute(attrib);
+    attrib = 0;
     *should_skip = FALSE;
     return fres;
 }
