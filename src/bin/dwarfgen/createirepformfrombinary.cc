@@ -269,7 +269,19 @@ IRFormConstant::IRFormConstant(IRFormInterface * interface)
     Dwarf_Unsigned uval = 0;
     Dwarf_Signed sval = 0;
     int ress = dwarf_formsdata(interface->attr_, &sval,&error);
+    if (ress == DW_DLV_ERROR) {
+        Dwarf_Debug dbg = interface->dbg_;
+        dwarf_dealloc_error(dbg,error);
+        error = 0;
+        ress = DW_DLV_NO_ENTRY; 
+    }
     int resu = dwarf_formudata(interface->attr_, &uval,&error);
+    if (resu == DW_DLV_ERROR) {
+        Dwarf_Debug dbg = interface->dbg_;
+        dwarf_dealloc_error(dbg,error);
+        error = 0;
+        resu = DW_DLV_NO_ENTRY; 
+    }
     if (resu == DW_DLV_OK ) {
         if (ress == DW_DLV_OK) {
             if (finalform == DW_FORM_sdata) {
@@ -355,6 +367,7 @@ get_section_offset(IRFormInterface * interface)
     Dwarf_Error error = 0;
     Dwarf_Off sectionoffset = 0;
     int resu = 0;
+    int ress = 0;
 
     // The following allows more sorts of value than
     // we really want to allow here, but that is
@@ -366,15 +379,29 @@ get_section_offset(IRFormInterface * interface)
     }
     resu = dwarf_formudata(interface->attr_, &uval,&error);
     if (resu != DW_DLV_OK ) {
-        int ress = dwarf_formsdata(interface->attr_, &sval,&error);
+        if (resu == DW_DLV_ERROR){
+            Dwarf_Debug dbg = interface->dbg_;
+            dwarf_dealloc_error(dbg,error);
+            resu = DW_DLV_NO_ENTRY;
+        }
+        ress = dwarf_formsdata(interface->attr_, &sval,&error);
         if (ress == DW_DLV_OK) {
             uval = static_cast<Dwarf_Unsigned>(sval);
         } else {
+            if (ress == DW_DLV_ERROR) {
+                Dwarf_Debug dbg = interface->dbg_;
+                dwarf_dealloc_error(dbg,error);
+                ress = DW_DLV_NO_ENTRY;
+            }
             cerr << "Unable to read constant offset value. "
                 "Impossible error.\n"
                 << endl;
             exit(1);
         }
+    }
+    if (resu == DW_DLV_ERROR) {
+        Dwarf_Debug dbg = interface->dbg_;
+        dwarf_dealloc_error(dbg,error);
     }
     return uval;
 }
