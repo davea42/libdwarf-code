@@ -96,8 +96,8 @@ print_cu_table(Dwarf_Dnames_Head dn,
                 DW_PR_XZEROS DW_PR_DUx "\n",
                 offset);
             continue;
-        } 
- 
+        }
+
         {
             static char sigarea[32];
             struct esb_s sig8str;
@@ -123,7 +123,7 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
     if (!bucket_count) {
         return DW_DLV_NO_ENTRY;
     }
-    
+
     printf("\n");
     printf("  Bucket (hash) table entry count: "
         "%" DW_PR_DUu "\n",bucket_count);
@@ -145,7 +145,7 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
             name_index,
             collision_count);
         printf("\n");
-    } 
+    }
     printf("\n");
     return DW_DLV_OK;
 }
@@ -153,10 +153,10 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
 static void
 P_Entry(const char * leader,Dwarf_Unsigned value)
 {
-    printf("   %13s  0x%" DW_PR_XZEROS DW_PR_DUx 
-         " (%8" DW_PR_DUu 
-         ")\n",
-         leader,value,value);
+    printf("   %13s  0x%" DW_PR_XZEROS DW_PR_DUx
+        " (%8" DW_PR_DUu
+        ")\n",
+        leader,value,value);
 }
 static int
 print_dnames_offsets(Dwarf_Dnames_Head dn,
@@ -177,12 +177,12 @@ print_dnames_offsets(Dwarf_Dnames_Head dn,
     printf("\n");
     printf("   Table Offsets \n");
     res = dwarf_dnames_offsets(dn,&header_offset,
-         &cu_table_offset, &tu_local_offset, &foreign_tu_offset,
-         &buckets_offset, &hashes_offset,
-         &stringoffsets_offset,&entryoffsets_offset,
-         &abbrev_table_offset,&entry_pool_offset,error);
+        &cu_table_offset, &tu_local_offset, &foreign_tu_offset,
+        &buckets_offset, &hashes_offset,
+        &stringoffsets_offset,&entryoffsets_offset,
+        &abbrev_table_offset,&entry_pool_offset,error);
     if (res == DW_DLV_ERROR) {
-         return res;
+        return res;
     }
     P_Entry("Header        :",header_offset);
     P_Entry("CU table      :",cu_table_offset);
@@ -271,7 +271,7 @@ print_names_table(Dwarf_Dnames_Head dn,
     Dwarf_Error * error)
 {
     Dwarf_Unsigned i = 1;
-    int res                  = 0; 
+    int res                  = 0;
     Dwarf_Unsigned bucketnum = 0;
     Dwarf_Unsigned hashval   = 0;
     Dwarf_Unsigned offset_to_debug_str = 0;
@@ -279,7 +279,7 @@ print_names_table(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset_in_entrypool = 0;
     Dwarf_Unsigned abbrev_number = 0;
     Dwarf_Half abbrev_tag    = 0;
-    Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE; 
+    Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE;
     static Dwarf_Half idxattr_array[ATTR_ARRAY_SIZE];
     static Dwarf_Half form_array[ATTR_ARRAY_SIZE];
     Dwarf_Unsigned attr_count = 0;
@@ -289,7 +289,7 @@ print_names_table(Dwarf_Dnames_Head dn,
     printf("Names table, entry count %" DW_PR_DUu "\n",name_count);
     printf("      [] ");
     if (bucket_count) {
-         printf("Bucket Hash");
+        printf("Bucket Hash");
     } else {
     }
     printf("\n");
@@ -314,7 +314,7 @@ print_names_table(Dwarf_Dnames_Head dn,
 #if 0
             continue ??
 #endif
-            
+
         }
         printf("  [%4" DW_PR_DUu "] ",i);
         if (bucket_count) {
@@ -324,7 +324,7 @@ print_names_table(Dwarf_Dnames_Head dn,
         printf("0x%06" DW_PR_DUx , offset_to_debug_str);
         printf(" %s",ptrtostr?sanitized(ptrtostr):"<null>");
         printf("\n");
-        printf("     entrypooloff= 0x%06" DW_PR_DUx , 
+        printf("     entrypooloff= 0x%06" DW_PR_DUx ,
             offset_in_entrypool);
         printf("\n");
     }
@@ -403,7 +403,7 @@ print_dname_record(Dwarf_Dnames_Head dn,
     }
     if (glflags.verbose) {
         print_dnames_abbrevtable(dn,
-           abbrev_table_size);
+            abbrev_table_size);
     }
     res = print_cu_table(dn,"cu",comp_unit_count,
         0,error);
@@ -419,14 +419,11 @@ print_dname_record(Dwarf_Dnames_Head dn,
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    
+
     res = print_names_table(dn,name_count,bucket_count,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
-
-    
-
 
     return DW_DLV_OK;
 }
