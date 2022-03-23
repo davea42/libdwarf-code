@@ -7814,45 +7814,45 @@ DW_API int dwarf_get_macro_section_name(Dwarf_Debug dw_dbg,
 
 /*! @brief Get the real name of a section.
 
-     If the object has section groups only the
-     sections in the group in dw_dbg will be
-     found.
+    If the object has section groups only the
+    sections in the group in dw_dbg will be
+    found.
 
-     Whether .zdebug or ZLIB or SHF_COMPRESSED
-     is the marker there is just one uncompress
-     algorithm (zlib) for all three cases.
+    Whether .zdebug or ZLIB or SHF_COMPRESSED
+    is the marker there is just one uncompress
+    algorithm (zlib) for all three cases.
 
-     @param dw_dbg
-     The Dwarf_Debug of interest.
-     @param dw_std_section_name
-     Pass in a standard section name, such as
-     .debug_info or .debug_info.dwo .
-     @param dw_actual_sec_name_out
-     On success returns the actual section name
-     from the object file.
-     @param dw_marked_zcompressed
-     On success returns TRUE if the original section name
-     ends in .zdebug
-     @param dw_marked_zlib_compressed
-     On success returns TRUE if the section has the ZLIB
-     string at the front of the section.
-     @param dw_marked_shf_compressed
-     On success returns TRUE if the section flag
-     (Elf SHF_COMPRESSED) is marked as compressed.
-     @param dw_compressed_length
-     On success if the section was compressed
-     it returns the original section length
-     in the object file.
-     @param dw_uncompressed_length
-     On success if the section was compressed this
-     returns the uncompressed length of the object section.
-     @param dw_error
-     On error returns the error usual details.
-     @return
-     The usual DW_DLV_OK etc.
-     If the section is not relevant to this Dwarf_Debug
-     or is not in the object file at all, returns
-     DW_DLV_NO_ENTRY
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_std_section_name
+    Pass in a standard section name, such as
+    .debug_info or .debug_info.dwo .
+    @param dw_actual_sec_name_out
+    On success returns the actual section name
+    from the object file.
+    @param dw_marked_zcompressed
+    On success returns TRUE if the original section name
+    ends in .zdebug
+    @param dw_marked_zlib_compressed
+    On success returns TRUE if the section has the ZLIB
+    string at the front of the section.
+    @param dw_marked_shf_compressed
+    On success returns TRUE if the section flag
+    (Elf SHF_COMPRESSED) is marked as compressed.
+    @param dw_compressed_length
+    On success if the section was compressed
+    it returns the original section length
+    in the object file.
+    @param dw_uncompressed_length
+    On success if the section was compressed this
+    returns the uncompressed length of the object section.
+    @param dw_error
+    On error returns the error usual details.
+    @return
+    The usual DW_DLV_OK etc.
+    If the section is not relevant to this Dwarf_Debug
+    or is not in the object file at all, returns
+    DW_DLV_NO_ENTRY
 */
 DW_API int dwarf_get_real_section_name(Dwarf_Debug dw_dbg,
     const char     * dw_std_section_name,
