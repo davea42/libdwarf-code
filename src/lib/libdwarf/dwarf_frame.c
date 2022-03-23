@@ -1788,19 +1788,17 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     struct cie_fde_prefix_s prefix;
     struct cie_fde_prefix_s prefix_c;
 
-     if (!dbg || dbg->de_magic != DBG_IS_VALID) {
+    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
             "DW_DLE_DBG_NULL: in dwarf_get_fde_for_die(): "
             "Either null or it contains"
             "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
-
     resattr = dwarf_attr(die, DW_AT_MIPS_fde, &attr, error);
     if (resattr != DW_DLV_OK) {
         return resattr;
     }
-
     /* why is this formsdata? FIX */
     sdatares = dwarf_formsdata(attr, &signdval, error);
     if (sdatares != DW_DLV_OK) {

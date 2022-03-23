@@ -350,7 +350,7 @@ static int
 in_name_list(char * name)
 {
     int i = 0;
-   
+
     if (!name) {
         return FALSE;
     }
@@ -366,7 +366,7 @@ in_name_list(char * name)
 }
 
 static int
-is_irrelevant_section(char * name, 
+is_irrelevant_section(char * name,
     Dwarf_Unsigned virtsz)
 {
     int res = FALSE;
@@ -585,23 +585,23 @@ dwarf_pe_load_dwarf_section_headers(
                 later, as Virtualsize. */
             Dwarf_Unsigned limit = 100*pep->pe_filesize;
             if (limit < pep->pe_filesize) {
-                /* An overflow. Bad. */ 
+                /* An overflow. Bad. */
                 *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
                 return DW_DLV_ERROR;
             }
-            if (sec_outp->VirtualSize > 
+            if (sec_outp->VirtualSize >
                 ((Dwarf_Unsigned)200*
                 (Dwarf_Unsigned)1000*
                 (Dwarf_Unsigned)1000)) {
-                /* Likely totally unreasonable. 
-                   the hard limit written this way
-                   simply for clarity. 
-                   Hard to know what to set it to. */ 
+                /*  Likely totally unreasonable.
+                    the hard limit written this way
+                    simply for clarity.
+                    Hard to know what to set it to. */
                 *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
                 return DW_DLV_ERROR;
             }
             if (sec_outp->VirtualSize > limit) {
-                /* Likely totally unreasonable. Bad. */ 
+                /* Likely totally unreasonable. Bad. */
                 *errcode = DW_DLE_PE_SECTION_SIZE_ERROR;
                 return DW_DLV_ERROR;
             }

@@ -76,7 +76,8 @@ freedabs(struct Dwarf_D_Abbrev_s *dab,Dwarf_Bool onlytop,
     struct Dwarf_D_Abbrev_s *tmp = 0;
 
     for (; dab && !onlytop; dab = tmp) {
-        struct Dwarf_D_Pairs_Block_s* pbk = dab->da_pairs_base.bp_next;
+        struct Dwarf_D_Pairs_Block_s* pbk =
+            dab->da_pairs_base.bp_next;
         while (pbk) {
             struct Dwarf_D_Pairs_Block_s* pbk2 = pbk->bp_next;
 
@@ -93,7 +94,7 @@ freedabs(struct Dwarf_D_Abbrev_s *dab,Dwarf_Bool onlytop,
 }
 /*  Encapsulates DECODE_LEB128_UWORD_LEN_CK
     so the caller can free resources
-    in case of problems. 
+    in case of problems.
     This updates *lp to point to next byte
 */
 static int
@@ -219,16 +220,16 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
                 }
                 pairscur->bp_next = freshblock;
                 pairscur = freshblock;
-                
+
             }
             pairscur->bp_idxattr[pairscur->bp_used_count] =  attr;
             pairscur->bp_form[pairscur->bp_used_count] =  form;
             pairscur->bp_used_count++;
             pairscount++;
             if (!attr && !form) {
-               /*  We put the terminator into the pairs list. 
-                   done for this pair set */
-               break;  
+                /*  We put the terminator into the pairs list.
+                    done for this pair set */
+                break;
             }
         }
         curdab->da_pairs_count = pairscount;
@@ -253,23 +254,23 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     if ( abcur < tabend) {
         unsigned padcount = 0;
 
-        for(; abcur < tabend; ++abcur) {
-             ++padcount;
-             if (*abcur) {
-                  dwarfstring  m;
+        for (; abcur < tabend; ++abcur) {
+            ++padcount;
+            if (*abcur) {
+                dwarfstring  m;
 
-                  dwarfstring_constructor(&m);
-                  dwarfstring_append_printf_u(&m,
-                      "WARNING NON NULL debug_names "
-                      "abbreviation pad. " 
-                      "padcount %u at ",padcount);
-                  dwarfstring_append_printf_u(&m,
-                      ".debug_names sec_offset 0x%lx",
-                      (uintptr_t)(abcur - dn->dn_section_data));
-                  dwarf_insert_harmless_error(dbg,
-                      dwarfstring_string(&m));
-                  dwarfstring_destructor(&m);
-             }
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "WARNING NON NULL debug_names "
+                    "abbreviation pad. "
+                    "padcount %u at ",padcount);
+                dwarfstring_append_printf_u(&m,
+                    ".debug_names sec_offset 0x%lx",
+                    (uintptr_t)(abcur - dn->dn_section_data));
+                dwarf_insert_harmless_error(dbg,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+            }
         }
     }
     {
@@ -617,9 +618,9 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             if (modlen) {
                 lenwithpad += (4-modlen);
             }
-        } 
+        }
         cp = str_utf8 + len;
-        curptr += lenwithpad; 
+        curptr += lenwithpad;
         usedspace += lenwithpad;
         cpend = str_utf8 + lenwithpad;
         {
@@ -864,8 +865,8 @@ _dwarf_internal_dwarf_dealloc_dnames(Dwarf_Dnames_Head dn)
     dn->dn_augmentation_string = 0;
     free(dn->dn_bucket_array);
     dn->dn_bucket_array = 0;
-    for(  ; i < dn->dn_abbrev_instance_count; ++i) {    
-         freedabs(dn->dn_abbrev_instances+i,FALSE,FALSE);
+    for ( ; i < dn->dn_abbrev_instance_count; ++i) {
+        freedabs(dn->dn_abbrev_instances+i,FALSE,FALSE);
     }
     free(dn->dn_abbrev_instances);
     dn->dn_abbrev_instances = 0;
@@ -1019,9 +1020,8 @@ dwarf_dnames_offsets(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
-
 /*  The "tu" case covers both local type units
-    and foreign type units. 
+    and foreign type units.
     This table is indexed starting at 1.
 */
 int
@@ -1062,11 +1062,11 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
             unit_ptr = dn->dn_local_tu_list;
             unit_entry_size = dn->dn_offset_size;
             offset_case = TRUE;
-         } else {
+        } else {
             unit_ptr = dn->dn_foreign_tu_list;
             unit_entry_size = sizeof(Dwarf_Sig8);
             offset_case = FALSE;
-         }
+        }
     } else {
         _dwarf_error_string(dbg,error,DW_DLE_DEBUG_NAMES_ERROR,
             "DW_DLE_DEBUG_NAMES_ERROR: "
@@ -1080,7 +1080,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     if (offset_case) {
         /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
-        Dwarf_Small *ptr = unit_ptr + 
+        Dwarf_Small *ptr = unit_ptr +
             (index_number-1) *unit_entry_size;
         Dwarf_Small *endptr = dn->dn_indextable_data_end;
 
@@ -1092,13 +1092,14 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         }
         return DW_DLV_OK;
     }
-    {   Dwarf_Small *ptr =  unit_ptr +
+    {
+        Dwarf_Small *ptr =  unit_ptr +
             (index_number-1 -unit_count) *unit_entry_size;
         if (sig) {
             memcpy(sig,ptr,sizeof(*sig));
         }
-     }
-     return DW_DLV_OK;
+    }
+    return DW_DLV_OK;
 #if 0
     if (offset) {
         *offset = unit_offset + index_number*unit_entry_size;
@@ -1177,7 +1178,7 @@ _dwarf_initialize_bucket_details(Dwarf_Dnames_Head dn,
             continue;
         }
         for (j = i+1; j < dn->dn_bucket_count; ++j) {
-            struct Dwarf_DN_Bucket_s *partial = 
+            struct Dwarf_DN_Bucket_s *partial =
                 dn->dn_bucket_array+j;
 
             if (partial->db_nameindex) {
@@ -1195,7 +1196,7 @@ _dwarf_initialize_bucket_details(Dwarf_Dnames_Head dn,
                 curbucket->db_collisioncount = 1;
             }
             break;
-        } 
+        }
     }
     return DW_DLV_OK;
 }
@@ -1206,7 +1207,7 @@ int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned    * collision_count,
     Dwarf_Error *       error)
 {
-    struct Dwarf_DN_Bucket_s *cur = 0; 
+    struct Dwarf_DN_Bucket_s *cur = 0;
     int res = 0;
 
     if (!dn || dn->dn_magic != DWARF_DNAMES_MAGIC) {
@@ -1271,7 +1272,7 @@ get_bucket_number(Dwarf_Dnames_Head dn,
         return DW_DLV_NO_ENTRY;
     }
     /*  Binary search would be better FIXME */
-    for( i = 0; i < dn->dn_bucket_count; ++i) {
+    for (i = 0; i < dn->dn_bucket_count; ++i) {
         Dwarf_Unsigned bindx = 0;
         Dwarf_Unsigned ccount = 0;
         Dwarf_Unsigned lastbindx = 0;
@@ -1283,16 +1284,16 @@ get_bucket_number(Dwarf_Dnames_Head dn,
         if (name_index > lastbindx) {
             continue;
         }
-        if (!bindx ) {  
-             /* empty bucket */
-             continue;
+        if (!bindx ) {
+            /* empty bucket */
+            continue;
         }
         if (bindx == name_index) {
-            *bucket_num = i; 
+            *bucket_num = i;
             return DW_DLV_OK;
         }
         if (name_index <= lastbindx) {
-            *bucket_num = i; 
+            *bucket_num = i;
             return DW_DLV_OK;
         }
     }
@@ -1322,7 +1323,7 @@ dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     }
     ab = dn->dn_abbrev_instances + index;
     if (abbrev_offset) {
-         *abbrev_offset = ab->da_abbrev_offset;
+        *abbrev_offset = ab->da_abbrev_offset;
     }
     *abbrev_code = ab->da_abbrev_code;
     *abbrev_tag  = ab->da_tag;
@@ -1334,14 +1335,14 @@ dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     pb = &ab->da_pairs_base;
     abnumber = 0;
     localcount = 0;
-    for(  ; abnumber < abmax; ++abnumber) {
-         if (localcount >= ABB_PAIRS_MAX) {
-             localcount = 0;
-             pb = pb->bp_next;
-         }
-         idxattr_array[abnumber] = pb->bp_idxattr[localcount];
-         form_array[abnumber] = pb->bp_form[localcount];
-         ++localcount;
+    for ( ; abnumber < abmax; ++abnumber) {
+        if (localcount >= ABB_PAIRS_MAX) {
+            localcount = 0;
+            pb = pb->bp_next;
+        }
+        idxattr_array[abnumber] = pb->bp_idxattr[localcount];
+        form_array[abnumber] = pb->bp_form[localcount];
+        ++localcount;
     }
     return DW_DLV_OK;
 }
@@ -1360,11 +1361,11 @@ _dwarf_read_abbrev_code_from_pool(Dwarf_Dnames_Head dn,
     epool = dn->dn_entry_pool;
     end = epool + dn->dn_entry_pool_size;
     if (entrypooloffset >= dn->dn_entry_pool_size) {
-         _dwarf_error_string(dbg,error,DW_DLE_DEBUG_NAMES_ERROR,
-                "DW_DLE_DEBUG_NAMES_ERROR: "
-                "The entry pool offset from the names table "
-                " is out of bounds.");
-         return DW_DLV_ERROR;
+        _dwarf_error_string(dbg,error,DW_DLE_DEBUG_NAMES_ERROR,
+            "DW_DLE_DEBUG_NAMES_ERROR: "
+            "The entry pool offset from the names table "
+            " is out of bounds.");
+        return DW_DLV_ERROR;
     }
     epool += entrypooloffset;
     dbg = dn->dn_dbg;
@@ -1402,7 +1403,7 @@ _dwarf_find_abbrev_for_code(Dwarf_Dnames_Head dn,
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_DEBUG_NAMES_ERROR: "
-            "The abbrev code %u",code); 
+            "The abbrev code %u",code);
         dwarfstring_append_printf_u(&m,
             "(0x%x) ",code);
         dwarfstring_append(&m,
@@ -1433,7 +1434,7 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
         limit = array_size;
     }
     pb = &abbrevdata->da_pairs_base;
-    for(; i < limit && pb; ++i) {
+    for ( ; i < limit && pb; ++i) {
         if (locali < pb->bp_used_count) {
             idxattr_array[i] = pb->bp_idxattr[locali];
             form_array[i] = pb->bp_form[locali];
@@ -1443,7 +1444,6 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
         locali = 0;
     }
     if (i < limit && !pb) {
-    {
         dwarfstring m;
 
         dbg= dn->dn_dbg;
@@ -1456,8 +1456,7 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
             abbrevdata->da_pairs_count);
         dwarfstring_append_printf_u(&m,
             ", and limit of of %u",
-             limit);
-
+            limit);
         dwarfstring_append(&m,
             " something is very wrong. "
             "a pairs pointer is null");
@@ -1465,12 +1464,9 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
     }
-
-    }
     return DW_DLV_OK;
 
 }
-
 
 /*  Each Name Table entry, one at a time.
     It is not an error if array_size is zero or
@@ -1597,12 +1593,11 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         return res;
     }
 
-
     if (abbrev_code) {
-       *abbrev_code =  code;
+        *abbrev_code =  code;
     }
     if (code && abbrev_tag) {
-       *abbrev_tag =  abbrevdata->da_tag;
+        *abbrev_tag =  abbrevdata->da_tag;
     }
     if (code) {
         if (attr_count) {

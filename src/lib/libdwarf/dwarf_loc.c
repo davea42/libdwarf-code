@@ -333,8 +333,8 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
     */
     if (!attr) {
         _dwarf_error_string(NULL, error, DW_DLE_ATTR_NULL,
-             "DW_DLE_ATTR_NULL: the attribute passed to "
-             "dwarf_get_loclist_c() is a NULL poitner");
+            "DW_DLE_ATTR_NULL: the attribute passed to "
+            "dwarf_get_loclist_c() is a NULL pointer");
         return DW_DLV_ERROR;
     }
     if (attr->ar_cu_context == NULL) {

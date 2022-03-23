@@ -57,7 +57,7 @@ dwarf_get_str(Dwarf_Debug dbg,
 
     if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL:calling dwarf_get_str()" 
+            "DW_DLE_DBG_NULL:calling dwarf_get_str()"
             "Either null or it contains"
             "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;

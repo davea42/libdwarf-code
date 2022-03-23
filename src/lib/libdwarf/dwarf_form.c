@@ -106,18 +106,18 @@ get_attr_dbg(Dwarf_Debug *dbg_out,
     dbg = cup->cc_dbg;
     if (!dbg  || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
-             "DW_DLE_ATTR_DBG_NULL: Stale or null Dwarf_Debug"
-             "in a Dwarf_CU_Context" );
+            "DW_DLE_ATTR_DBG_NULL: Stale or null Dwarf_Debug"
+            "in a Dwarf_CU_Context" );
         return DW_DLV_ERROR;
     }
-    if(dbg != attr->ar_dbg) {
+    if (dbg != attr->ar_dbg) {
         _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
-             "DW_DLE_ATTR_DBG_NULL: an attribute and its "
-             "cu_context do not have the same Dwarf_Debug" );
+            "DW_DLE_ATTR_DBG_NULL: an attribute and its "
+            "cu_context do not have the same Dwarf_Debug" );
         return DW_DLV_ERROR;
     }
     *cu_context_out = cup;
-    *dbg_out        = dbg; 
+    *dbg_out        = dbg;
     return DW_DLV_OK;
 
 }
@@ -1211,10 +1211,10 @@ dwarf_formflag(Dwarf_Attribute attr,
             " passed in has NULL or stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
-    if(dbg != attr->ar_dbg) {
+    if (dbg != attr->ar_dbg) {
         _dwarf_error_string(NULL, error, DW_DLE_ATTR_DBG_NULL,
-             "DW_DLE_ATTR_DBG_NULL: an attribute and its "
-             "cu_context do not have the same Dwarf_Debug" );
+            "DW_DLE_ATTR_DBG_NULL: an attribute and its "
+            "cu_context do not have the same Dwarf_Debug" );
         return DW_DLV_ERROR;
     }
     if (attr->ar_attribute_form == DW_FORM_flag_present) {

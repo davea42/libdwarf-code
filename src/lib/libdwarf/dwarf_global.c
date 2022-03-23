@@ -119,7 +119,7 @@ dwarf_get_globals(Dwarf_Debug dbg,
     Dwarf_Global ** globals,
     Dwarf_Signed * return_count, Dwarf_Error * error)
 {
-    int res = 0; 
+    int res = 0;
 
     if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
