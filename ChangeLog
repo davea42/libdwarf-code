@@ -1,3 +1,30 @@
+2022-03-25:  David Anderson
+    commit 3a080e2172a618260e2e68ac0b9b470ba09a82af
+
+    -    @date 2022-03-19 v0.4.0
+    +    @date 2022-03-23 v0.4.0
+    so the corrections can be differentiated
+    from the 03-19 version.
+            modified:   doc/libdwarf.dox
+
+2022-03-25:  David Anderson
+    commit 8c05e9f66b7ef6ddfe6c79d5c280a7e3b89efd28
+
+    In case an include directory index is out of range,
+    now emits a text beginning with /ERROR<
+    so such is easy to locate and suppresses
+    adding DW_AT_comp_dir to the expanded name.
+
+    See regressiontests/moqigod/buffer-overflow-example-2022
+    for the fuzzed object containing the error.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2022-03-23:  David Anderson
+    commit 161e7f2da5a7a94c34ccf815344f834d3e9b63c6
+
+    Up to date with git changes.
+            modified:   ChangeLog
+
 2022-03-23:  David Anderson
     commit 5343316a89928a1bee491f069bd3a80a4efca685
 
