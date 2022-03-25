@@ -14,6 +14,8 @@
     now emits a text beginning with /ERROR<
     so such is easy to locate and suppresses
     adding DW_AT_comp_dir to the expanded name.
+    See github issue
+    Heap buffer overflow when parsing ELF files #90
 
     See regressiontests/moqigod/buffer-overflow-example-2022
     for the fuzzed object containing the error.
