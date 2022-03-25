@@ -171,7 +171,6 @@ create_fullest_file_path(Dwarf_Debug dbg,
     dwarfstring nxt;
     unsigned linetab_version = line_context->lc_version_number;
 
-    dirno = fe->fi_dir_index;
     file_name = (char *) fe->fi_file_name;
     if (!file_name) {
         _dwarf_error(dbg, error, DW_DLE_NO_FILE_NAME);
@@ -228,41 +227,75 @@ create_fullest_file_path(Dwarf_Debug dbg,
                 (char *)line_context->lc_compilation_directory;
             dwarfstring_append(&compdir,comp_dir_name);
         }
+        need_dir = FALSE;
+        dirno = fe->fi_dir_index;
+        include_dir_offset = 0;
+        if (linetab_version == DW_LINE_VERSION5) {
+            /* DWARF5 */
+            need_dir = TRUE;
+            include_dir_offset = 0;
+        } else { 
+            /* EXPERIMENTAL_LINE_TABLES_VERSION or 2,3, or 4 */
+            if (dirno) {
+                need_dir = TRUE;
+                include_dir_offset = 1;
+            } /* else, no dirno, need_dir = FALSE
+                 Take directory from DW_AT_name */
+        }
 
         if (dirno > line_context->lc_include_directories_count) {
+            /*  This is quite corrupted. */
             dwarfstring_destructor(&targ);
             dwarfstring_destructor(&incdir);
             dwarfstring_destructor(&compdir);
             dwarfstring_destructor(&filename);
-            _dwarf_error(dbg, error, DW_DLE_INCL_DIR_NUM_BAD);
+            dwarfstring_append_printf_u(&incdir,
+				"DW_DLE_INCL_DIR_NUM_BAD: "
+                "corrupt include directory index %u"
+                    " unusable,", dirno);
+            dwarfstring_append_printf_u(&incdir,
+                    " only %u directories present.",
+                    line_context->lc_include_directories_count);
+            _dwarf_error_string(dbg, error, DW_DLE_INCL_DIR_NUM_BAD,
+                 dwarfstring_string(&incdir));
+            dwarfstring_destructor(&incdir);
             return DW_DLV_ERROR;
         }
+        if (need_dir ) {
+            if ((dirno - include_dir_offset) >=
+                line_context->lc_include_directories_count) {
 
-        if (linetab_version == DW_LINE_VERSION5) {
-            include_dir_offset = 0;
-            need_dir = TRUE;
-        } else if (dirno > 0 && fe->fi_dir_index > 0) {
-            include_dir_offset = 1;
-            need_dir = TRUE;
-        } else { /* ok, fall through. */ }
-        if (need_dir) {
-            char *inc_dir_name =
-                (char *)line_context->lc_include_directories[
-                fe->fi_dir_index - include_dir_offset];
-            if (!inc_dir_name) {
-                /*  This should never ever happen except in case
-                    of a corrupted object file. */
-                inc_dir_name = "<erroneous NULL include dir pointer>";
+                /* Corrupted data. We try to continue. */
+                dwarfstring_append_printf_u(&incdir,
+                    "/ERROR<corrupt include directory index %u"
+                    " unusable,",
+                    dirno);
+                dwarfstring_append_printf_u(&incdir,
+                    " only %u directories present>",
+                    line_context->lc_include_directories_count);
+            } else {
+                char *inc_dir_name =
+                    (char *)line_context->lc_include_directories[
+                    dirno - include_dir_offset];
+                if (!inc_dir_name) {
+                    /*  This should never ever happen except in case
+                        of a corrupted object file. */
+                    inc_dir_name = 
+                        "/ERROR<erroneous NULL include dir pointer>";
+                }
+                dwarfstring_append(&incdir,inc_dir_name);
             }
-            dwarfstring_append(&incdir,inc_dir_name);
         }
         dwarfstring_append(&filename,file_name);
         if (dwarfstring_strlen(&incdir) > 0 &&
             _dwarf_file_name_is_full_path(
-                (Dwarf_Small*)dwarfstring_string(&incdir))) {
+            (Dwarf_Small*)dwarfstring_string(&incdir))) {
+
+            /* incdir is full path,Ignore DW_AT_comp_dir */
             _dwarf_pathjoinl(&targ,&incdir);
             _dwarf_pathjoinl(&targ,&filename);
         } else {
+            /* Join all three strings, ignoring empty ones. */
             if (dwarfstring_strlen(&compdir) > 0) {
                 _dwarf_pathjoinl(&targ,&compdir);
             }
