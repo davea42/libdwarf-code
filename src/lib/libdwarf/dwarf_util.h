@@ -46,7 +46,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             _dwarf_error_string((dbg), (errptr),            \
                 DW_DLE_LEB_IMPROPER,                        \
                 "DW_DLE_LEB_IMPROPER: skipping leb128"      \
-                " runs past allowed area");                 \
+                " runs past allowed area.a");                 \
             return DW_DLV_ERROR;                            \
         }                                                   \
         (ptr) += lu_leblen;                                 \
@@ -61,7 +61,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             _dwarf_error_string((dbg), (errptr),            \
                 DW_DLE_LEB_IMPROPER,                        \
                 "DW_DLE_LEB_IMPROPER: skipping leb128 w/len" \
-                " runs past allowed area");                 \
+                " runs past allowed area.b");                 \
             return DW_DLV_ERROR;                            \
         }                                                   \
         (ptr) += lu_leblen;                                 \
@@ -79,7 +79,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             _dwarf_error_string((dbg), (errptr),            \
                 DW_DLE_LEB_IMPROPER,                        \
                 "DW_DLE_LEB_IMPROPER: decode uleb"          \
-                " runs past allowed area");                 \
+                " runs past allowed area.c");                 \
             return DW_DLV_ERROR;                            \
         }                                                   \
         (value) = lu_local;                                 \
@@ -98,7 +98,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             _dwarf_error_string((dbg), (errptr),      \
                 DW_DLE_LEB_IMPROPER,                  \
                 "DW_DLE_LEB_IMPROPER: decode uleb w/len" \
-                " runs past allowed area");           \
+                " runs past allowed area.d");           \
             return DW_DLV_ERROR;                      \
         }                                             \
         (value) = lu_local;                           \
@@ -126,7 +126,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             _dwarf_error_string((dbg), (errptr),      \
                 DW_DLE_LEB_IMPROPER,                  \
                 "DW_DLE_LEB_IMPROPER: decode sleb"    \
-                " runs past allowed area");           \
+                " runs past allowed area.e");           \
             return DW_DLV_ERROR;                      \
         }                                             \
         (value) = local;                              \
@@ -145,7 +145,7 @@ _dwarf_create_area_len_error(Dwarf_Debug dbg, Dwarf_Error *error,
             _dwarf_error_string((dbg), (errptr),      \
                 DW_DLE_LEB_IMPROPER,                  \
                 "DW_DLE_LEB_IMPROPER: decode sleb w/len " \
-                " runs past allowed area");           \
+                " runs past allowed area.f");           \
             return DW_DLV_ERROR;                      \
         }                                             \
         (leblen) = lu_leblen;                         \

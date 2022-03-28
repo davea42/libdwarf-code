@@ -578,6 +578,8 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
 
     str_utf8 = (const char *) curptr;
     totaloffset += augmentation_string_size;
+    usedspace += augmentation_string_size;
+    curptr += augmentation_string_size;
     dn->dn_augmentation_string_size = augmentation_string_size;
     if (curptr >= end_dnames) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
@@ -587,12 +589,13 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     dn->dn_version = version;
     dn->dn_abbrev_table_size = abbrev_table_size;
     if (augmentation_string_size) {
-        /* 11 */
+        /*  11. len: The string size includes zero or
+            more NUL bytes to be a multiple of
+            four bytes long. */
         Dwarf_Unsigned len = augmentation_string_size;
         const char *cp = 0;
         const char *cpend = 0;
         Dwarf_Unsigned finallen = 0;
-        Dwarf_Unsigned lenwithpad = 0;
 
         dn->dn_augmentation_string = calloc(1,
             augmentation_string_size + 1);
@@ -605,25 +608,30 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             200505.4 */
         cp = dn->dn_augmentation_string;
         cpend = cp + len;
+        /* It's null terminated now, so find the true length */
         for ( ; cp<cpend; ++cp) {
             if (!*cp) {
-                /* finallen++; */
                 break;
             }
             ++finallen;
         }
-        {
-            unsigned modlen = (finallen)%4;
-            lenwithpad = finallen;
-            if (modlen) {
-                lenwithpad += (4-modlen);
-            }
+        if (len%4) {
+             dwarfstring m;
+             
+             dwarfstring_constructor(&m);
+             dwarfstring_append_printf_u(&m,
+                 "DW_DLE_DEBUG_NAMES_PAD_NON_ZERO: "
+                 "The augmentation_string_size "
+                 " is %u, not a multiple of four",len);
+             _dwarf_error_string(dbg, error,
+                 DW_DLE_DEBUG_NAMES_PAD_NON_ZERO,
+                 dwarfstring_string(&m));
+             dwarfstring_destructor(&m);
+             return DW_DLV_ERROR;
         }
-        cp = str_utf8 + len;
-        curptr += lenwithpad;
-        usedspace += lenwithpad;
-        cpend = str_utf8 + lenwithpad;
-        {
+        if (finallen != len) {
+            cp = str_utf8 + finallen;
+            cpend = str_utf8+len;
             /*  Ensure that there is no corruption in
                 the padding. */
             for ( ; cp < cpend; ++cp) {
