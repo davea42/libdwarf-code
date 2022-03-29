@@ -8,6 +8,17 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
 
 Updated 24 February 2022
 For release libdwarf-0.4.0
+## REQUIREMENTS from a libdwarf<name>.tar.xz
+   Mentioning some that might not be automatically
+   in your base OS release. Restricting attention
+   to just building libdwarf and dwarfdump. 
+   Ubuntu: 
+   sudo apt install pkgconf zlib1g zlib1g-dev
+   optional add: cmake meson 
+
+   FreeBSD:
+   pkg install bash python3 gmake binutils pkgconf lzlib
+   optional add: cmake meson libbfd
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
