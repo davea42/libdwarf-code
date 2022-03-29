@@ -360,10 +360,10 @@ fi
 if [ $havemeson = "y" ]
 then
   echo "TEST: Now meson from source dir $blibsrc/ in build dir $imesonbld"
-  meson $wd -Dtest=on
+  meson $wd  --prefix=$imesonbld-dist
   if [ $haveninja = "y" ]
   then
-    ninja -j8
+    ninja -j8 install
     chkres $? " FAIL C13 ninja -j8"
     ninja test
     chkres $? " FAIL C13 ninja test"
