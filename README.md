@@ -7,7 +7,7 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
 # This is libdwarf README.md
 
 Updated 24 February 2022
-For release libdwarf-0.3.4
+For release libdwarf-0.4.0
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
@@ -22,9 +22,9 @@ recommended practice.
     rm -rf /tmp/build
     mkdir /tmp/build
     cd /tmp
-    tar xf <path to>/libdwarf-0.3.4.tar.xz
+    tar xf <path to>/libdwarf-0.4.0.tar.xz
     cd  /tmp/build
-    /tmp/libdwarf-0.3.4/configure
+    /tmp/libdwarf-0.4.0/configure
     make
     make check
 
@@ -34,7 +34,7 @@ README.cmake has details on the available cmake options.
 
 Just like configure, except instead of configure do:
 
-    cmake  /tmp/libdwarf-0.3.4
+    cmake  /tmp/libdwarf-0.4.0
     make
     ctest -R self
 
@@ -44,7 +44,7 @@ This will be revised, but this should work
 
 For the simplest example:
 
-    meson /tmp/libdwarf-0.3.4
+    meson /tmp/libdwarf-0.4.0
     ninja -j8
 
 For a faster build with install and sanity tests:
@@ -52,8 +52,7 @@ For a faster build with install and sanity tests:
     prefx=/tmp/installtargetmeson
     export CFLAGS="-g -pipe"
     export CXXFLAGS="-g -pipe"
-    meson /tmp/libdwarf-0.3.4  \
-      -Dtest=on \
+    meson /tmp/libdwarf-0.4.0  \
       --prefix=$prefx \
       --default-library shared
     ninja -j8 install

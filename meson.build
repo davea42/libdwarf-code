@@ -91,6 +91,7 @@ header_checks = [
   'inttypes.h',
   'malloc.h',
   'stdint.h',
+  'sys/stat.h',
 ]
 
 if sys_windows == false
