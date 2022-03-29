@@ -98,9 +98,9 @@ chkval(
                 "%s 0x%p exp optarg %s 0x%p\n",
                 ct,testid,testline,
                 roptarg?roptarg:"",
-                roptarg,
+                (void*)roptarg,
                 xoptarg?xoptarg:"",
-                xoptarg);
+                (void*)xoptarg);
         }
     }
     if (roptind != xoptind) {
@@ -239,7 +239,7 @@ test2(void)
     if (argv1[dwoptind]) {
         printf("FAIL test2 on non-dash arg dwoptind %d "
             "got 0x%p exp NULL\n",
-            dwoptind,argv1[dwoptind]);
+            dwoptind,(void *)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test 2\n");
@@ -490,7 +490,7 @@ test5(void)
     if (argv1[dwoptind]) {
         printf("FAIL test5 there is a non-dash arg dwoptind "
             "%d got 0x%p\n",
-            dwoptind,argv1[dwoptind]);
+            dwoptind,(void *)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test5\n");
@@ -520,7 +520,7 @@ test6(void)
     if (argv1[dwoptind]) {
         printf("FAIL test6 there is a non-dash arg dwoptind "
             "%d got 0x%p\n",
-            dwoptind,argv1[dwoptind]);
+            dwoptind,(void*)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test6\n");
@@ -550,7 +550,7 @@ test7(void)
     if (argv1[dwoptind]) {
         printf("FAIL test7 there is a non-dash arg dwoptind "
             "%d got 0x%p\n",
-            dwoptind,argv1[dwoptind]);
+            dwoptind,(void*)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test7\n");
@@ -580,7 +580,7 @@ test8(void)
     if (argv1[dwoptind]) {
         printf("FAIL test8 there is a non-dash arg "
             "dwoptind %d got 0x%p\n",
-            dwoptind,argv1[dwoptind]);
+            dwoptind,(void*)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test8\n");
