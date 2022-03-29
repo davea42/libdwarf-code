@@ -83,7 +83,7 @@
 #include <vector>
 #include <string.h> /* for strchr etc */
 #ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>  /* For open() */
+#include <sys/stat.h>  /* For open() S_IRUSR etc */
 #endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> //open
 #include "general.h"

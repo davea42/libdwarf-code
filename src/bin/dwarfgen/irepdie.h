@@ -314,6 +314,32 @@ public:
             }
         }
     }
+    Dwarf_Unsigned get_cu_header_length() {
+        return cu_header_length_;};
+    Dwarf_Unsigned get_abbrev_offset() {
+        return abbrev_offset_;};
+    Dwarf_Unsigned get_next_cu_header_offset() {
+        return next_cu_header_offset_;};
+    Dwarf_Unsigned get_version_stamp() {
+        return version_stamp_;};
+    Dwarf_Unsigned get_address_size() {
+        return address_size_;};
+    Dwarf_Unsigned get_length_size() {
+        return length_size_;};
+    Dwarf_Unsigned get_extension_size() {
+        return extension_size_;};
+    bool get_has_macrodata() {
+        return has_macrodata_;};
+    Dwarf_Unsigned get_macrodata_offset() {
+        return macrodata_offset_;};
+    bool get_has_linedata() {
+        return has_linedata_;};
+    Dwarf_Unsigned get_linedata_offset() {
+        return linedata_offset_;};
+    Dwarf_Unsigned get_cudie_offset() {
+        return cudie_offset_;};
+    bool get_dwarf32bit() {
+        return dwarf32bit_;};
 
 private:
     Dwarf_Unsigned cu_header_length_;

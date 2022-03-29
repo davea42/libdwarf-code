@@ -39,13 +39,19 @@ public:
         offset_(offset),
         type_(type),lineno_(lineno),lineindex_(lineindex),
         macro_(macro) {};
+    Dwarf_Off get_cudieoffset() {return cuDieOffset_;};
+    Dwarf_Off get_offset()    {return offset_;};
+    Dwarf_Off get_type()      {return type_;};
+    Dwarf_Off get_lineno()    {return lineno_;};
+    Dwarf_Off get_lineindex() {return lineindex_;};
+    std::string& get_macro()  {return macro_; } 
 private:
-    Dwarf_Off cuDieOffset_;
-    Dwarf_Off offset_;
-    Dwarf_Small type_;
+    Dwarf_Off    cuDieOffset_;
+    Dwarf_Off    offset_;
+    Dwarf_Small  type_;
     Dwarf_Signed lineno_;
     Dwarf_Signed lineindex_;
-    std::string macro_;
+    std::string  macro_;
 };
 class IRMacro {
 public:

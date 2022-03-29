@@ -69,6 +69,19 @@ public:
         *len = initial_instructions_.size();
         *bytes = reinterpret_cast<void *>(&initial_instructions_[0]);
         };
+    Dwarf_Unsigned get_cie_byte_length() {return cie_byte_length_;}
+    Dwarf_Unsigned get_version() {return version_;}
+    std::string& get_augmentation() {return augmentation_;}
+    Dwarf_Unsigned get_code_aligmnent_factor() {
+        return code_alignment_factor_;}
+    Dwarf_Unsigned get_data_aligmnent_factor() {
+        return data_alignment_factor_;}
+    Dwarf_Half     get_return_address_register_rule() {
+        return return_address_register_rule_;}
+    std::vector<Dwarf_Small>& get_initial_instructions() {
+        return initial_instructions_;}
+    std::vector<unsigned int>& get_fde_index() {
+        return fde_index_;}
 
 private:
     //  Byte length  0 if not known yet.
@@ -81,7 +94,7 @@ private:
     std::vector<Dwarf_Small> initial_instructions_;
     // fde_index is the array of indexes into fdedata_
     // that are fdes used by this cie.
-    std::vector<unsigned>  fde_index_;
+    std::vector<unsigned int>  fde_index_;
 };
 class IRFde {
 public:
@@ -123,6 +136,10 @@ public:
         };
     void fde_instrs () {
         };
+    Dwarf_Off get_fde_offset() {
+        return fde_offset_;}
+    Dwarf_Off get_cie_offset() {
+        return cie_offset_;}
 
 private:
     Dwarf_Addr low_pc_;

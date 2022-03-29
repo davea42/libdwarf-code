@@ -65,6 +65,7 @@ public:
     bool getendsequence() { return end_sequence_; };
     Dwarf_Unsigned getlineno() { return lineno_; };
     Dwarf_Unsigned getlinecol() { return linecol_; };
+    Dwarf_Unsigned getsrcfileno() { return srcfileno_; };
     bool getisstmt() { return is_stmt_; };
     bool getisblock() { return basic_block_; };
     bool getepiloguebegin() { return epilogue_begin_; };
