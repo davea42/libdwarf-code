@@ -40,4 +40,5 @@ attrform_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 EXTRA_DIST= \
 attr_formclass.list \
-attr_formclass_ext.list 
+attr_formclass_ext.list \
+meson.build

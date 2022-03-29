@@ -35,6 +35,7 @@ tagattr_CFLAGS = $(DWARF_CFLAGS_WARN)
 tagattr_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 EXTRA_DIST = \
+meson.build \
 tag_attr.list \
 tag_attr_ext.list
 

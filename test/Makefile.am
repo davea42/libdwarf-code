@@ -35,8 +35,6 @@ clean-local:
 	rm -f junk.*
 	rm -f dwarfdump.conf
 
-EXTRA_DIST =
-
 TESTS =  test_dwarfstring test_extra_flag_strings \
   test_linkedtopath test_dwgetopt \
   test_makenametest test_helpertree test_macrocheck \
@@ -238,6 +236,7 @@ debuglinktest-a.sh \
 debuglinktest-b.sh \
 jitreaderdiff.sh \
 jitreader.base \
+meson.build \
 section_bitmaps_test.c \
 test_dwarfstring.c \
 test_errmsglist.c \

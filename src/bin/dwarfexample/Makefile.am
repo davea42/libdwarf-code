@@ -64,6 +64,7 @@ ChangeLog2018 \
 ChangeLog2019 \
 ChangeLog2020 \
 CMakeLists.txt \
+meson.build \
 simplecrc.c \
 NEWS \
 $(dwarfexample_DATA)

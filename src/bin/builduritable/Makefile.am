@@ -16,3 +16,6 @@ rebuild: builduritable
 noinst_PROGRAMS = builduritable
 builduritable_SOURCES = uritablebuild.c
 builduritable_CFLAGS = $(DWARF_CFLAGS_WARN)
+
+EXTRA_DIST = \
+meson.build

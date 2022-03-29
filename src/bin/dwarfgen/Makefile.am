@@ -41,6 +41,7 @@ EXTRA_DIST = \
 COPYING \
 ChangeLog \
 CMakeLists.txt \
+meson.build \
 NEWS \
 README \
 $(dwarfgen_DATA) \
@@ -54,4 +55,5 @@ ChangeLog2017 \
 ChangeLog2018 \
 ChangeLog2019 \
 ChangeLog2020 \
-dwarf-generator.txt 
+dwarf-generator.txt \
+meson.build

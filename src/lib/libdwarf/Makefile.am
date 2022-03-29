@@ -153,6 +153,7 @@ CODINGSTYLE \
 dw-linetableheader.txt \
 CMakeLists.txt \
 cmake/libdwarf-config.cmake \
+meson.build \
 NEWS \
 README \
 CODINGSTYLE

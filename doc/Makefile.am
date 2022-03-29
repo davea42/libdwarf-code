@@ -52,4 +52,5 @@ dwarfgen.1  \
 libdwarf.pdf \
 libdwarfp.mm \
 libdwarfp.pdf \
+meson.build \
 pdfbld.sh

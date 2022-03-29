@@ -131,6 +131,7 @@ ChangeLog2018 \
 ChangeLog2019 \
 ChangeLog2020 \
 CMakeLists.txt \
+meson.build \
 NEWS \
 README \
 CODINGSTYLE \

@@ -20,4 +20,6 @@ gennames_CPPFLAGS = \
   -I$(top_builddir)/src/lib/libdwarf
 gennames_CFLAGS = $(DWARF_CFLAGS_WARN)
 
+EXTRA_DIST = \
+meson.build
 

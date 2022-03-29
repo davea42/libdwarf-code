@@ -41,5 +41,6 @@ tagtree_CFLAGS = $(DWARF_CFLAGS_WARN)
 tagtree_LDADD = $(top_builddir)/src/lib/libdwarf/libdwarf.la
 
 EXTRA_DIST = \
+meson.build \
 tag_tree.list \
 tag_tree_ext.list
