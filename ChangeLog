@@ -1,3 +1,94 @@
+2022-03-29:  David Anderson
+    commit 88c12410f68668b56c41921bab5cd8dc7a0674ec
+
+    Mentioning requirements now.
+            modified:   README
+            modified:   README.md
+
+2022-03-29:  David Anderson
+    commit 8fb921a4a3314b6a6b87dcb6b1e7e03d6d20fdc9
+
+    Ensure that meson.build and meson_options.txt
+    get put into distributions.
+            modified:   Makefile.am
+            modified:   doc/Makefile.am
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/buildopstab/Makefile.am
+            modified:   src/bin/builduritable/Makefile.am
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfexample/Makefile.am
+            modified:   src/bin/dwarfgen/Makefile.am
+            modified:   src/bin/gennames/Makefile.am
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarfp/Makefile.am
+            modified:   test/Makefile.am
+
+2022-03-29:  David Anderson
+    commit d02f1521e3bdf81447f3cc4948582b5aa2eaf08e
+
+    Freebsd clang  requires that %p printf actual
+    argment(s) cast char* or other pointers to void*
+    to avoid a warning/error. Sensible to do
+    for all compilers.
+            modified:   test/getopttest.c
+
+2022-03-29:  David Anderson
+    commit 7cbda41e827e349b12caab8d50aaf5ab0b6aecaa
+
+    Removed invalid -Dtest=on and added install command
+    from the meson building test.
+            modified:   scripts/buildandreleasetest.sh
+
+2022-03-29:  David Anderson
+    commit 4b2588c84bfa12dfcbbaec224617880d16e1cd85
+
+    Now references 0.4.0 in examples
+            modified:   README.md
+
+    Added sys/stat.h to header checks so
+    building dwarfgen is possible.
+            modified:   meson.build
+
+2022-03-29:  David Anderson
+    commit eead5dcbc14d717aeb7c1be37dacc2a3307585e9
+
+    Modified a comment.
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+    These now ensure private fields are referenceable
+    to ensure we get no error/warnings from
+    compilers checking for inaccessible fields.
+            modified:   src/bin/dwarfgen/irepdie.h
+            modified:   src/bin/dwarfgen/irepframe.h
+            modified:   src/bin/dwarfgen/irepline.h
+            modified:   src/bin/dwarfgen/irepmacro.h
+
+2022-03-28:  David Anderson
+    commit 9995267e2a9728e961581827b4852d42e05aede0
+
+    Now properly handles the .debug_names header augmentation string.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+    Now some error strings that were identical are sligtly different
+    so one can tell exactly where the error occured.
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2022-03-25:  David Anderson
+    commit 7b29e7fd954ab3a69cbd132f841467c9a6e8e3f5
+
+    Updated to mention github Issue #90
+            modified:   ChangeLog
+
+2022-03-25:  David Anderson
+    commit 8c76113079db823e0517122628c2f0f993a418ca
+
+    Now with the dwarf_line.c fix for
+    Heap buffer overflow when parsing ELF files #90
+    in ChangeLog.
+            modified:   ChangeLog
+    Regenerated pdf
+            modified:   doc/libdwarf.pdf
+
 2022-03-25:  David Anderson
     commit 3a080e2172a618260e2e68ac0b9b470ba09a82af
 
