@@ -6,7 +6,7 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
 
 # This is libdwarf README.md
 
-Updated 24 February 2022
+Updated 30 March 2022
 For release libdwarf-0.4.0
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
    Mentioning some that might not be automatically
