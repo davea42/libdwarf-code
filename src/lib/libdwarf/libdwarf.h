@@ -51,26 +51,26 @@
 #endif /* DW_API */
 
 #if defined(_WIN32) || defined(__CYGWIN__)
-#ifdef LIBDWARF_BUILD
-#define DW_API __declspec(dllexport)
-#else
-#define DW_API __declspec(dllimport)
-#endif /* LIBDWARF_BUILD */
+# ifdef LIBDWARF_BUILD
+#  define DW_API __declspec(dllexport)
+# else /* !LIBDWARF_BUILD */
+#  define DW_API __declspec(dllimport)
+# endif /* LIBDWARF_BUILD */
 #elif (defined(__SUNPRO_C)  || defined(__SUNPRO_CC))
-#if defined(PIC) || defined(__PIC__)
-#define DW_API __global
-#else
-#define DW_API
-#endif /* PIC */
+# if defined(PIC) || defined(__PIC__)
+#  define DW_API __global
+# else /* !PIC __PIC__ */
+#  define DW_API
+# endif /* PIC */
 #elif (defined(__GNUC__) && __GNUC__ >= 4) || \
     defined(__INTEL_COMPILER)
-#if defined(PIC) || defined(__PIC__)
-#define DW_API __attribute__ ((visibility("default")))
-#else
-#define DW_API
-#endif /* PIC */
-#else
-#define DW_API
+# if defined(PIC) || defined(__PIC__)
+#  define DW_API __attribute__ ((visibility("default")))
+# else /* !PIC __PIC__ */
+#  define DW_API
+# endif /* PIC */
+#else /* !LIBDWARF_BUILD !SUPRO !GNUC */
+# define DW_API
 #endif /* _WIN32 || __CYGWIN__ */
 
 #ifdef __cplusplus

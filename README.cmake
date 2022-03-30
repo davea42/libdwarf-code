@@ -1,5 +1,5 @@
 Created 26 April 2019 
-Updated 29 January 2022
+Updated 30 March 2022
 
 Now we are using a new source structure and using semantic
 versioning for tar.xz names (earlier we used tar.gz).
@@ -39,11 +39,6 @@ default build next:
         -DDO_TESTING=OFF\
         /path/to/code
     make
-
-
-The options after -DDO_TESTING should not normally be
-used, they are for testing old features and not relevant to
-modern usage.
 
 The short form, doing the same as the default:
     cmake /path/to/code

@@ -86,6 +86,7 @@ config_dir = [include_directories('.')]
 
 # configuration
 
+# sys/stat.h is for dwarfgen.
 header_checks = [
   'fcntl.h',
   'inttypes.h',
