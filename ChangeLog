@@ -1,3 +1,39 @@
+2022-04-01:  David Anderson
+    commit bf5ef885b48d54371f33194f363821b9b3c0c424
+
+    Updated date.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+    Fixed typo in doxygen comment. Versions supported are 2,3,4,5 (3 was left out
+    in one place).
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-30:  David Anderson
+    commit 2f8cef7397727e2ab54fb2a36486a7faae3e4410
+
+    Removed a couple of obsolete lines.
+            modified:   README.cmake
+    Added a comment line to motivate the check for sys/stat.h
+            modified:   meson.build
+    The leading ifdef nest now has a tiny bit
+    of indentation so it is easier to understand.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-03-30:  David Anderson
+    commit 5ca9322094b76f52d0fe084cd56a5ef392f402f5
+
+    Updating the date here to today.
+            modified:   README
+            modified:   README.md
+
+2022-03-29:  David Anderson
+    commit 78e155c5c77fc8559833ff69ae34ad9112c0f833
+
+    Bringing up to date
+            modified:   ChangeLog
+
 2022-03-29:  David Anderson
     commit 88c12410f68668b56c41921bab5cd8dc7a0674ec
 
