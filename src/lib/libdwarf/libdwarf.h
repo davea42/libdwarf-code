@@ -1731,7 +1731,7 @@ DW_API int dwarf_siblingof_b(Dwarf_Debug dw_dbg,
     @param dw_die
     Some open Dwarf_Die.
     @param dw_version
-    Returns the DWARF version: 2,4,5, or 5
+    Returns the DWARF version: 2,3,4, or 5
     @param dw_is_info
     Returns non-zero if the CU is .debug_info.
     Returns zero if the CU is .debug_types (DWARF4).

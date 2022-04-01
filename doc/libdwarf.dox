@@ -3,9 +3,9 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-03-23 v0.4.0
+    @date 2022-03-31 v0.4.0
  
-    @section draft THIS IS A DRAFT
+    @section draft This is a draft. 
 
     SUGGESTIONS FOR IMPROVEMENT ARE WELCOME.
 
@@ -19,7 +19,6 @@
 
     Anything else you find misleading or confusing?
     Thanks in advance for any suggestions.
-
  
     @section dwsec_intro Introduction
 
