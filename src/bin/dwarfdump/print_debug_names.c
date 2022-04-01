@@ -264,6 +264,46 @@ print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
+static int 
+print_attr_array(
+    char *prefix,
+    Dwarf_Unsigned attr_count,
+    Dwarf_Unsigned array_size,
+    Dwarf_Half *   idxattr_array,
+    Dwarf_Half *   form_array)
+{
+    Dwarf_Unsigned k = 0;
+    Dwarf_Unsigned count = attr_count;
+    if (!attr_count) {
+        printf("%sNo idxattr/form content available\n",
+            prefix);
+        return DW_DLV_NO_ENTRY;
+    }
+    if (array_size < attr_count) {
+        printf("%sArray size %" DW_PR_DUu 
+            " but count is %" DW_PR_DUu
+            " so some entries not available\n",
+            prefix,array_size,attr_count);
+        count = array_size;
+    }
+    printf("%s[] idxnum formnum    names\n", prefix);
+    for ( ; k < count; ++k) {
+        const char *idname = 0;
+        const char *formname = 0;
+        Dwarf_Half a = idxattr_array[k];
+        Dwarf_Half f = form_array[k];
+        printf("%s[%3" DW_PR_DUu "]", prefix,k);
+        printf(" 0x%04u 0x%04u", a,f);
+
+        dwarf_get_IDX_name(a,&idname);
+        printf(" %15s",idname);
+        dwarf_get_FORM_name(f,&formname);
+        printf("%15s",formname);
+        printf("\n");
+    }
+    return DW_DLV_OK;
+}
+
 static int
 print_names_table(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned name_count,
@@ -292,7 +332,7 @@ print_names_table(Dwarf_Dnames_Head dn,
         printf("Bucket Hash");
     } else {
     }
-    printf("\n");
+    printf("      StrOffset Name\n");
     for ( ; i <= name_count;++i) {
         res = dwarf_dnames_name(dn,i,
             &bucketnum, &hashval,
@@ -311,10 +351,7 @@ print_names_table(Dwarf_Dnames_Head dn,
                 "%" DW_PR_DUu " is impossible ",i);
             glflags.gf_count_major_errors++;
             printf("\n");
-#if 0
-            continue ??
-#endif
-
+            continue;
         }
         printf("  [%4" DW_PR_DUu "] ",i);
         if (bucket_count) {
@@ -324,9 +361,20 @@ print_names_table(Dwarf_Dnames_Head dn,
         printf("0x%06" DW_PR_DUx , offset_to_debug_str);
         printf(" %s",ptrtostr?sanitized(ptrtostr):"<null>");
         printf("\n");
-        printf("     entrypooloff= 0x%06" DW_PR_DUx ,
+        printf("     entrypool= 0x%06" DW_PR_DUx ,
             offset_in_entrypool);
+        printf(" abbrev#= %4" DW_PR_DUu,
+            abbrev_number);
+        printf(" tag= 0x%4x",
+            abbrev_tag);
+        printf(" attrcount= %4" DW_PR_DUu,
+            attr_count);
+        printf(" arraysz= %4" DW_PR_DUu,
+            array_size);
         printf("\n");
+        print_attr_array("        ",
+            attr_count,array_size,
+            idxattr_array, form_array);
     }
     return DW_DLV_OK;
 }
