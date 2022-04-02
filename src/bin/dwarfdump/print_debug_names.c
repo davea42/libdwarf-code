@@ -39,10 +39,21 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 
 #define ATTR_ARRAY_SIZE 60
 
+static void
+printindent(unsigned int l)
+{
+    unsigned int i = 0;
+    for ( ; i < l; ++i) {
+        printf(" ");
+    }
+}
+
+
+
 static const Dwarf_Sig8 zerosig;
 /*   The table entries here are indexed starting at 1 */
 static int
-print_cu_table(Dwarf_Dnames_Head dn,
+print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
     const char *type,
     Dwarf_Unsigned offset_count,
     Dwarf_Unsigned sig_count,
@@ -68,12 +79,14 @@ print_cu_table(Dwarf_Dnames_Head dn,
         return DW_DLV_NO_ENTRY;
     }
     if (formtu) {
-        printf("  %s List. Entry count: %" DW_PR_DUu
+        printindent(indent); 
+        printf("%s List. Entry count: %" DW_PR_DUu
         " (local tu count %" DW_PR_DUu
         ",foreign tu count %" DW_PR_DUu
         ")\n",type,totalcount,offset_count,sig_count);
     } else {
-        printf("  %s List. Entry count: %" DW_PR_DUu "\n",
+        printindent(indent); 
+        printf("%s List. Entry count: %" DW_PR_DUu "\n",
             type,totalcount);
     }
     for (i = 1 ; i <= totalcount; ++i) {
@@ -91,7 +104,8 @@ print_cu_table(Dwarf_Dnames_Head dn,
         }
         /*  Could equally test for non-zero offset here. */
         if (i <= offset_count) {
-            printf("  [%4" DW_PR_DUu "] ",i);
+            printindent(indent); 
+            printf("[%4" DW_PR_DUu "] ",i);
             printf("CU-offset:  0x%"
                 DW_PR_XZEROS DW_PR_DUx "\n",
                 offset);
@@ -104,8 +118,8 @@ print_cu_table(Dwarf_Dnames_Head dn,
 
             esb_constructor_fixed(&sig8str,sigarea,sizeof(sigarea));
             format_sig8_string(&signature,&sig8str);
-            printf("  [%4" DW_PR_DUu "] "
-                ,i);
+            printindent(indent);
+            printf("[%4" DW_PR_DUu "] " ,i);
             printf("Signature:  %s\n",esb_get_string(&sig8str));
             esb_destructor(&sig8str);
         }
@@ -114,7 +128,7 @@ print_cu_table(Dwarf_Dnames_Head dn,
 }
 
 static int
-print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
+print_buckets(unsigned int indent,Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
     Dwarf_Error *error)
 {
     int res = 0;
@@ -125,9 +139,11 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
     }
 
     printf("\n");
-    printf("  Bucket (hash) table entry count: "
+    printindent(indent);
+    printf("Bucket (hash) table entry count: "
         "%" DW_PR_DUu "\n",bucket_count);
-    printf("    [ ]    nameindex collisioncount\n");
+    printindent(indent);
+    printf("[ ]    nameindex collisioncount\n");
     for ( ; bn < bucket_count; ++bn) {
         Dwarf_Unsigned name_index = 0;
         Dwarf_Unsigned collision_count = 0;
@@ -140,7 +156,8 @@ print_buckets(Dwarf_Dnames_Head dn,Dwarf_Unsigned bucket_count,
         if (res == DW_DLV_NO_ENTRY) {
             break;
         }
-        printf("    [ %3" DW_PR_DUu "] ",bn);
+        printindent(indent);
+        printf("[ %3" DW_PR_DUu "] ",bn);
         printf("%6" DW_PR_DUu " %6" DW_PR_DUu ,
             name_index,
             collision_count);
@@ -159,7 +176,7 @@ P_Entry(const char * leader,Dwarf_Unsigned value)
         leader,value,value);
 }
 static int
-print_dnames_offsets(Dwarf_Dnames_Head dn,
+print_dnames_offsets(unsigned int indent,Dwarf_Dnames_Head dn,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned header_offset = 0;
@@ -175,7 +192,8 @@ print_dnames_offsets(Dwarf_Dnames_Head dn,
     int res = 0;
 
     printf("\n");
-    printf("   Table Offsets \n");
+    printindent(indent);
+    printf("Table Offsets \n");
     res = dwarf_dnames_offsets(dn,&header_offset,
         &cu_table_offset, &tu_local_offset, &foreign_tu_offset,
         &buckets_offset, &hashes_offset,
@@ -198,7 +216,7 @@ print_dnames_offsets(Dwarf_Dnames_Head dn,
 }
 
 static int
-print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
+print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
     Dwarf_Unsigned table_length)
 {
     int res = 0;
@@ -212,9 +230,11 @@ print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned i                 = 0;
 
     printf("\n");
+    printindent(indent);
     printf("Debug Names abbreviation table: length %"
         DW_PR_DUu " bytes.\n", table_length);
-    printf("   [] offset   code tag idxattr/form count\n");
+    printindent(indent);
+    printf("[] offset   code tag idxattr/form count\n");
     res = DW_DLV_OK;
     for (  ; res == DW_DLV_OK; ++i) {
         Dwarf_Unsigned limit = 0;
@@ -230,7 +250,8 @@ print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
         if (res == DW_DLV_NO_ENTRY) {
             break;
         }
-        printf("    [%4" DW_PR_DUu "] ",i);
+        printindent(indent);
+        printf("[%4" DW_PR_DUu "] ",i);
         printf("     0x%" DW_PR_XZEROS DW_PR_DUx " ",abbrev_offset);
         printf("     0x%05" DW_PR_DUx " ",abbrev_code);
         printf("     0x%04" DW_PR_DUx " ",abbrev_tag);
@@ -243,12 +264,15 @@ print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
                 array_size, actual_attr_count);
             glflags.gf_count_major_errors++;
         }
-        printf("      []     idxattr  form \n");
+        printindent(indent);
+        printf("[]     idxattr  form \n");
         for (k = 0; k < limit; ++k) {
             const char *idname = "<unknownidx>";
             const char *formname = "<unknownform>";
             Dwarf_Half a = idxattr_array[k];
             Dwarf_Half f = form_array[k];
+
+            printindent(indent);
             printf("      [%4" DW_PR_DUu "] ",k);
             printf("0x%04x ",a);
             printf("0x%04x ",f);
@@ -265,8 +289,7 @@ print_dnames_abbrevtable(Dwarf_Dnames_Head dn,
 }
 
 static int 
-print_attr_array(
-    char *prefix,
+print_attr_array(unsigned int indent,
     Dwarf_Unsigned attr_count,
     Dwarf_Unsigned array_size,
     Dwarf_Half *   idxattr_array,
@@ -275,24 +298,28 @@ print_attr_array(
     Dwarf_Unsigned k = 0;
     Dwarf_Unsigned count = attr_count;
     if (!attr_count) {
-        printf("%sNo idxattr/form content available\n",
-            prefix);
+        printindent(indent);
+        printf("No idxattr/form content available\n");
         return DW_DLV_NO_ENTRY;
     }
     if (array_size < attr_count) {
-        printf("%sArray size %" DW_PR_DUu 
+        printindent(indent);
+        printf("Array size %" DW_PR_DUu 
             " but count is %" DW_PR_DUu
             " so some entries not available\n",
-            prefix,array_size,attr_count);
+            array_size,attr_count);
         count = array_size;
     }
-    printf("%s[] idxnum formnum    names\n", prefix);
+    printindent(indent);
+    printf("[]    idxnum formnum    idxname            formname\n");
     for ( ; k < count; ++k) {
         const char *idname = 0;
         const char *formname = 0;
         Dwarf_Half a = idxattr_array[k];
         Dwarf_Half f = form_array[k];
-        printf("%s[%3" DW_PR_DUu "]", prefix,k);
+
+        printindent(indent);
+        printf("[%3" DW_PR_DUu "]", k);
         printf(" 0x%04u 0x%04u", a,f);
 
         dwarf_get_IDX_name(a,&idname);
@@ -304,8 +331,117 @@ print_attr_array(
     return DW_DLV_OK;
 }
 
+#define MAXPAIRS 7 /* The standard defines 5.*/
+static Dwarf_Half     idx_array[MAXPAIRS];
+static Dwarf_Half     form_array[MAXPAIRS];
+static Dwarf_Unsigned offsets_array[MAXPAIRS];
+static Dwarf_Sig8     signatures_array[MAXPAIRS];
+
 static int
-print_names_table(Dwarf_Dnames_Head dn,
+print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
+    Dwarf_Unsigned name_index ,
+    Dwarf_Unsigned offset_in_entrypool ,
+    Dwarf_Error * error)
+{
+    int res = 0;
+    Dwarf_Unsigned abbrev_code = 0;
+    Dwarf_Half     tag         = 0;
+    Dwarf_Unsigned value_count = 0;
+    Dwarf_Unsigned index_of_abbrev = 0;
+    Dwarf_Unsigned offset_of_initial_value = 0;
+    Dwarf_Unsigned offset_next_entry_pool = 0;
+    const char    *idname = 0;
+    Dwarf_Unsigned i = 0;
+
+
+printf("dadebug print_name_values name index %lu line %d\n",
+(unsigned long)name_index, __LINE__);
+    res = dwarf_dnames_entrypool(dn,offset_in_entrypool,
+        &abbrev_code,&tag,&value_count,&index_of_abbrev,
+        &offset_of_initial_value,
+        error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    printindent(indent);
+    printf(
+        "nameindex %6" DW_PR_DUu 
+        " tag 0x%04x" 
+        " abbrevcode %4" DW_PR_DUu 
+        " abbrevindex %4" DW_PR_DUu 
+        " valuecount %4" DW_PR_DUu 
+        " valuesoffset 0x%04" DW_PR_DUx 
+        "\n",
+        name_index,tag,abbrev_code,index_of_abbrev,value_count,
+        offset_of_initial_value); 
+    if (value_count > MAXPAIRS) {
+        printf("ERROR: The number of values in an entrypool entry is"
+            " %" DW_PR_DUu 
+            " but  the max allowed is %d",value_count,MAXPAIRS);
+        glflags.gf_count_major_errors++;
+        return DW_DLV_OK;
+    }
+    res = dwarf_dnames_entrypool_values(dn,
+        index_of_abbrev,
+        offset_of_initial_value,
+        value_count,
+        idx_array,
+        form_array,
+        offsets_array,
+        signatures_array,
+        &offset_next_entry_pool,
+        error);
+    if (res != DW_DLV_OK) {
+printf("dadebug BAD dwarf_dnames_entrypool_values %d %d\n",res,__LINE__);
+        return res;
+    }
+    indent += 2;
+    printindent(indent);
+    printf("Entrypool Values, count %" DW_PR_DUu "\n",value_count);
+    printindent(indent);
+    printf("[ ]  idxattr    idxname   value\n");
+    for (i = 0; i < value_count; ++i) {
+        Dwarf_Half idx = idx_array[i];
+
+        printindent(indent);
+        printf("[%" DW_PR_DUu "] ",i); 
+                
+        dwarf_get_IDX_name(idx,&idname);
+        printf("%2u %15s ",idx,idname);
+        switch(idx) {
+        case DW_IDX_compile_unit:
+			printf(" CUindex= %" DW_PR_DUu ,offsets_array[i]);
+            break;
+        case DW_IDX_type_unit:
+			printf(" typeunitindex= %" DW_PR_DUu ,offsets_array[i]);
+            break;
+        case DW_IDX_die_offset:
+			printf(" DIEoffset= %" DW_PR_DUu ,offsets_array[i]);
+            break;
+        case DW_IDX_parent:
+			printf(" indexofparent= %" DW_PR_DUu ,offsets_array[i]);
+            break;
+        case DW_IDX_type_hash: {
+             struct esb_s m;
+
+             esb_constructor(&m);
+             format_sig8_string((Dwarf_Sig8*)&signatures_array[i],
+                 &m);
+             printf(" typehash= %s",esb_get_string(&m));
+             esb_destructor(&m);
+             break;
+        }
+        default: {
+             printf("ERROR: idxattr %u is unknown!",idx);
+             glflags.gf_count_major_errors++;
+        }
+        }
+    }
+    return DW_DLV_OK;
+}
+
+static int
+print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
     Dwarf_Unsigned name_count,
     Dwarf_Unsigned bucket_count,
     Dwarf_Error * error)
@@ -320,40 +456,43 @@ print_names_table(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned abbrev_number = 0;
     Dwarf_Half abbrev_tag    = 0;
     Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE;
-    static Dwarf_Half idxattr_array[ATTR_ARRAY_SIZE];
-    static Dwarf_Half form_array[ATTR_ARRAY_SIZE];
+    static Dwarf_Half nt_idxattr_array[ATTR_ARRAY_SIZE];
+    static Dwarf_Half nt_form_array[ATTR_ARRAY_SIZE];
     Dwarf_Unsigned attr_count = 0;
 
-    memset(idxattr_array,0,sizeof(Dwarf_Half) * ATTR_ARRAY_SIZE);
+    memset(nt_idxattr_array,0,sizeof(Dwarf_Half) * ATTR_ARRAY_SIZE);
     printf("\n");
+    printindent(indent);
     printf("Names table, entry count %" DW_PR_DUu "\n",name_count);
-    printf("      [] ");
+    printindent(indent);
+    printf("[] ");
     if (bucket_count) {
-        printf("Bucket Hash");
+        printf("    Bucket Hash");
     } else {
     }
     printf("      StrOffset Name\n");
     for ( ; i <= name_count;++i) {
+        printindent(indent);
         res = dwarf_dnames_name(dn,i,
             &bucketnum, &hashval,
             &offset_to_debug_str,&ptrtostr,
             &offset_in_entrypool, &abbrev_number,
             &abbrev_tag,
-            array_size, idxattr_array,
-            form_array,
+            array_size, nt_idxattr_array,
+            nt_form_array,
             &attr_count,error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-            printf("  [%4" DW_PR_DUu "] ",i);
+            printf("[%4" DW_PR_DUu "] ",i);
             printf("ERROR: NO ENTRY on name index "
                 "%" DW_PR_DUu " is impossible ",i);
             glflags.gf_count_major_errors++;
             printf("\n");
             continue;
         }
-        printf("  [%4" DW_PR_DUu "] ",i);
+        printf("[%4" DW_PR_DUu "] ",i);
         if (bucket_count) {
             printf("%5" DW_PR_DUu " ",bucketnum);
             printf("0x%" DW_PR_XZEROS DW_PR_DUx " ",hashval);
@@ -361,20 +500,28 @@ print_names_table(Dwarf_Dnames_Head dn,
         printf("0x%06" DW_PR_DUx , offset_to_debug_str);
         printf(" %s",ptrtostr?sanitized(ptrtostr):"<null>");
         printf("\n");
+        printindent(indent);
         printf("     entrypool= 0x%06" DW_PR_DUx ,
             offset_in_entrypool);
         printf(" abbrev#= %4" DW_PR_DUu,
             abbrev_number);
-        printf(" tag= 0x%4x",
+        printf(" tag= 0x%04x",
             abbrev_tag);
         printf(" attrcount= %4" DW_PR_DUu,
             attr_count);
         printf(" arraysz= %4" DW_PR_DUu,
             array_size);
         printf("\n");
-        print_attr_array("        ",
-            attr_count,array_size,
-            idxattr_array, form_array);
+        if (glflags.verbose) {
+            print_attr_array(indent+2,
+                attr_count,array_size,
+                nt_idxattr_array, nt_form_array);
+        }
+        res = print_name_values(indent+2,dn,i,offset_in_entrypool,
+            error); 
+        if (res != DW_DLV_OK) {
+            return res;
+        }
     }
     return DW_DLV_OK;
 }
@@ -398,6 +545,7 @@ print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Half table_version = 0;
     Dwarf_Half offset_size = 0;
     char * augstring = 0;
+    unsigned int indent = 0;
 
     res = dwarf_dnames_sizes(dn,&comp_unit_count,
         &local_type_unit_count,&foreign_type_unit_count,
@@ -443,32 +591,32 @@ print_dname_record(Dwarf_Dnames_Head dn,
         printf("Augmentation string     : %s\n",
             sanitized(augstring));
     }
-    if (glflags.verbose > 1) {
-        res = print_dnames_offsets(dn,error);
+    if (glflags.verbose) {
+        res = print_dnames_offsets(indent+2,dn,error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
     }
-    if (glflags.verbose) {
-        print_dnames_abbrevtable(dn,
+    if (glflags.verbose >1) {
+        print_dnames_abbrevtable(indent+2,dn,
             abbrev_table_size);
     }
-    res = print_cu_table(dn,"cu",comp_unit_count,
+    res = print_cu_table(indent+2,dn,"cu",comp_unit_count,
         0,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    res = print_cu_table(dn,"tu",local_type_unit_count,
+    res = print_cu_table(indent+2,dn,"tu",local_type_unit_count,
         foreign_type_unit_count,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    res = print_buckets(dn,bucket_count,error);
+    res = print_buckets(indent+2,dn,bucket_count,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
-
-    res = print_names_table(dn,name_count,bucket_count,error);
+    res = print_names_table(indent+2,dn,name_count,
+        bucket_count,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }

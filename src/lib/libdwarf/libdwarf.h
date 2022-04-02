@@ -6241,6 +6241,62 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half        * dw_form_array,
     Dwarf_Unsigned    * dw_idxattr_count,
     Dwarf_Error *       dw_error);
+
+/*! @brief Find an abbrev set by abbrev code
+   
+    FIXME
+*/
+DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Half   dw_abbrev_code,
+    Dwarf_Half * dw_tag,
+   
+    /*  The number of this code/tag as an array index. */
+    Dwarf_Unsigned * dw_index_of_abbrev,
+   
+    /*  The number of attr/form pairs, counting the 
+        trailing 0,0 pair. */
+    Dwarf_Unsigned * dw_number_of_attr_form_entries) ;
+
+/*! @brief Returns a specific idxattribute form pair.
+
+    FIXME
+*/
+DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned   dw_abbrev_entry_index,
+    Dwarf_Unsigned   dw_abbrev_form_index,
+    Dwarf_Unsigned * dw_idx_attr,
+    Dwarf_Unsigned * dw_form,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Returns a the set of values from an entrypool entry
+
+    FIXME
+*/
+DW_API int dwarf_dnames_entrypool(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned   dw_offset_in_entrypool,
+    Dwarf_Unsigned * dw_abbrev_code,
+    Dwarf_Half     * dw_tag,
+    Dwarf_Unsigned * dw_value_count,
+    Dwarf_Unsigned * dw_index_of_abbrev,
+    Dwarf_Unsigned * dw_offset_of_initial_value,
+    Dwarf_Error    * dw_error);
+
+/*! @brief Returns the value set from this entry
+
+    FIXME
+*/
+DW_API int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dw_dn,
+    Dwarf_Unsigned  dw_index_of_abbrev,
+    Dwarf_Unsigned  dw_offset_in_entrypool_of_values,
+    Dwarf_Unsigned  dw_arrays_length,
+    Dwarf_Half     *dw_array_dw_idx_number,
+    Dwarf_Half     *dw_array_form,
+    Dwarf_Unsigned *dw_array_of_offsets,
+    Dwarf_Sig8     *dw_array_of_signatures,
+    Dwarf_Unsigned *dw_offset_of_next_entrypool,
+    Dwarf_Error    *dw_error);
+
+
 /*! @} */
 
 /*! @defgroup aranges Fast Access-Access to a CU given a code address
