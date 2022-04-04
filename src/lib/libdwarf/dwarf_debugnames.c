@@ -220,7 +220,6 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
                 }
                 pairscur->bp_next = freshblock;
                 pairscur = freshblock;
-
             }
             pairscur->bp_idxattr[pairscur->bp_used_count] =  attr;
             pairscur->bp_form[pairscur->bp_used_count] =  form;
@@ -616,18 +615,18 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             ++finallen;
         }
         if (len%4) {
-             dwarfstring m;
-             
-             dwarfstring_constructor(&m);
-             dwarfstring_append_printf_u(&m,
-                 "DW_DLE_DEBUG_NAMES_PAD_NON_ZERO: "
-                 "The augmentation_string_size "
-                 " is %u, not a multiple of four",len);
-             _dwarf_error_string(dbg, error,
-                 DW_DLE_DEBUG_NAMES_PAD_NON_ZERO,
-                 dwarfstring_string(&m));
-             dwarfstring_destructor(&m);
-             return DW_DLV_ERROR;
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_DEBUG_NAMES_PAD_NON_ZERO: "
+                "The augmentation_string_size "
+                " is %u, not a multiple of four",len);
+            _dwarf_error_string(dbg, error,
+                DW_DLE_DEBUG_NAMES_PAD_NON_ZERO,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
         }
         if (finallen != len) {
             cp = str_utf8 + finallen;
@@ -1418,7 +1417,7 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
         limit = array_size;
     }
     pb = &abbrevdata->da_pairs_base;
-    for ( ; i < limit && pb; ++i) {
+    for ( ; i < limit && pb; ++i,locali++) {
         if (locali < pb->bp_used_count) {
             idxattr_array[i] = pb->bp_idxattr[locali];
             form_array[i] = pb->bp_form[locali];
@@ -1732,7 +1731,8 @@ dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dn,
 /*  This, combined with dwarf_dnames_entrypool_values(),
     lets one examine as much or as little of an entrypool
     as one wants to by alternately calling these two
-    functions. */
+    functions.
+*/
 
 int dwarf_dnames_entrypool(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned  offset_in_entrypool,
@@ -1844,7 +1844,7 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
     unsigned n = 0;
     int res = 0;
     Dwarf_Unsigned abcount = 0;
-    Dwarf_Unsigned pooloffset = 
+    Dwarf_Unsigned pooloffset =
         offset_in_entrypool_of_values;
     Dwarf_Small * endpool = 0;
     Dwarf_Small * poolptr = 0;
@@ -1879,17 +1879,17 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-                "DW_DLE_DEBUG_NAMES_OFF_END: "
-                "The size of the pair of arrays "
-                "passed to dwarf_dnames_entrypool_values "
-                "is %u", 
-                array_sizes);
+            "DW_DLE_DEBUG_NAMES_OFF_END: "
+            "The size of the pair of arrays "
+            "passed to dwarf_dnames_entrypool_values "
+            "is %u",
+            array_sizes);
         dwarfstring_append_printf_u(&m,
-                " but the entry requires %u entries.",
-                abcount);
+            " but the entry requires %u entries.",
+            abcount);
         _dwarf_error_string(dbg,error,
-                DW_DLE_DEBUG_NAMES_OFF_END,
-                dwarfstring_string(&m));
+            DW_DLE_DEBUG_NAMES_OFF_END,
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
@@ -1909,7 +1909,7 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    for (n = 0; n < abcount ; ++n) {
+    for (n = 0; n < (abcount-1) ; ++n) {
         struct Dwarf_D_Pairs_Block_s *abp = 0;
         Dwarf_Half idxtype =  0;
         Dwarf_Half form = 0;
@@ -1917,8 +1917,12 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
         abp = &abbrev->da_pairs_base+n;
         idxtype = abp->bp_idxattr[n];
         form = abp->bp_form[n];
+        if (!idxtype &&!form) {
+            break;
+        }
         array_dw_idx_number[n] = idxtype;
         array_form[n] = form;
+
         if (form == DW_FORM_data8 && idxtype == DW_IDX_type_hash) {
             if ((poolptr + sizeof(Dwarf_Sig8)) > endpool){
                 _dwarf_error(dbg,error,
@@ -1945,22 +1949,24 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
             Dwarf_Unsigned val = 0;
             res =isformrefval(dbg,form,poolptr,
                 endpool,&val,&bytesread,error);
-            if (res != DW_DLV_OK) {
+            if (res == DW_DLV_ERROR) {
                 return res;
             }
-            poolptr += bytesread;
-            if (poolptr > endpool) {
-                _dwarf_error_string(dbg,error,
-                    DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET,
-                    "DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET:"
-                    " a DW_FORM_ref* would read past end"
-                    " of the entrypool");
-                return DW_DLV_ERROR;
+            if (res == DW_DLV_OK) {
+                poolptr += bytesread;
+                if (poolptr > endpool) {
+                    _dwarf_error_string(dbg,error,
+                        DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET,
+                        "DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET:"
+                        " a DW_FORM_ref* would read past end"
+                        " of the entrypool");
+                    return DW_DLV_ERROR;
+                }
+                poolptr += bytesread;
+                pooloffset += bytesread;
+                array_of_offsets[n] = val;
+                continue;
             }
-            poolptr += bytesread;
-            pooloffset += bytesread;
-            array_of_offsets[n] = val;
-            continue;
         }
         /*  There is some mistake/omission in our code here or in
             the data. */
