@@ -234,13 +234,13 @@ create_fullest_file_path(Dwarf_Debug dbg,
             /* DWARF5 */
             need_dir = TRUE;
             include_dir_offset = 0;
-        } else { 
+        } else {
             /* EXPERIMENTAL_LINE_TABLES_VERSION or 2,3, or 4 */
             if (dirno) {
                 need_dir = TRUE;
                 include_dir_offset = 1;
-            } /* else, no dirno, need_dir = FALSE
-                 Take directory from DW_AT_name */
+            }/* else, no dirno, need_dir = FALSE
+                Take directory from DW_AT_name */
         }
 
         if (dirno > line_context->lc_include_directories_count) {
@@ -250,14 +250,14 @@ create_fullest_file_path(Dwarf_Debug dbg,
             dwarfstring_destructor(&compdir);
             dwarfstring_destructor(&filename);
             dwarfstring_append_printf_u(&incdir,
-				"DW_DLE_INCL_DIR_NUM_BAD: "
+                "DW_DLE_INCL_DIR_NUM_BAD: "
                 "corrupt include directory index %u"
-                    " unusable,", dirno);
+                " unusable,", dirno);
             dwarfstring_append_printf_u(&incdir,
-                    " only %u directories present.",
-                    line_context->lc_include_directories_count);
+                " only %u directories present.",
+                line_context->lc_include_directories_count);
             _dwarf_error_string(dbg, error, DW_DLE_INCL_DIR_NUM_BAD,
-                 dwarfstring_string(&incdir));
+                dwarfstring_string(&incdir));
             dwarfstring_destructor(&incdir);
             return DW_DLV_ERROR;
         }
@@ -280,7 +280,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
                 if (!inc_dir_name) {
                     /*  This should never ever happen except in case
                         of a corrupted object file. */
-                    inc_dir_name = 
+                    inc_dir_name =
                         "/ERROR<erroneous NULL include dir pointer>";
                 }
                 dwarfstring_append(&incdir,inc_dir_name);
