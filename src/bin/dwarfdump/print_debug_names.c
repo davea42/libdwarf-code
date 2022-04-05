@@ -39,6 +39,19 @@ Copyright 2017-2018 David Anderson. All rights reserved.
 
 #define ATTR_ARRAY_SIZE 60
 
+#if 0
+static void
+dump_table(const char *msg,unsigned long count,
+    Dwarf_Half *idx, Dwarf_Half *form)
+{
+    unsigned long i = 0;
+    printf("dadebug abbrev %s, count %lu\n",msg,count);
+    for ( ; i < count;    ++i) {
+        printf("[%lu] %x %x\n",i,idx[i],form[i]);
+    }
+}
+#endif
+
 static void
 printindent(unsigned int l)
 {
@@ -382,11 +395,14 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
         " tag 0x%04x"
         " abbrevcode %4" DW_PR_DUu
         " abbrevindex %4" DW_PR_DUu
-        " valuecount %4" DW_PR_DUu
+        "\n",
+        name_index,tag,abbrev_code,index_of_abbrev);
+    printindent(indent);
+    printf(
+        "valuecount %4" DW_PR_DUu
         " valuesoffset 0x%04" DW_PR_DUx
         "\n",
-        name_index,tag,abbrev_code,index_of_abbrev,value_count,
-        offset_of_initial_value);
+        value_count, offset_of_initial_value);
     if (value_count > MAXPAIRS) {
         printf("ERROR: The number of values in an entrypool entry is"
             " %" DW_PR_DUu
@@ -407,6 +423,7 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
     if (res != DW_DLV_OK) {
         return res;
     }
+
     indent += 2;
     printindent(indent);
     printf("Entrypool Values, count %" DW_PR_DUu "\n",value_count);
@@ -418,15 +435,17 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
         printindent(indent);
         printf("[%" DW_PR_DUu "] ",i);
 
-        if (i == (value_count-1)) {
-            if (idx == 0) {
-                printf(" 0 (end of list)\n");
-                continue;
-            } else {
-                printf(" ERROR: idx=0x%x"
-                    " improper end of list\n",idx);
-                glflags.gf_count_major_errors++;
-                continue;
+        if (!idx) {
+            if (i == (value_count-1)) {
+                if (idx == 0) {
+                    printf(" 0 (end of list)\n");
+                    continue;
+                } else {
+                    printf(" ERROR: idx=0x%x"
+                        " improper end of list\n",idx);
+                    glflags.gf_count_major_errors++;
+                    continue;
+                }
             }
         }
         dwarf_get_IDX_name(idx,&idname);

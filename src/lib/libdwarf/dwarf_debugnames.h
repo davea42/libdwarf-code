@@ -29,26 +29,15 @@
 /*  Adjust this number to hope for best space and time efficiency. */
 #define ABB_PAIRS_MAX 10
 
-/*  We form a linked list if more than ABB_PAIRS_MAX
-    needed. In the very last block bp_idxattr[bp_used_count-1] == 0.
-    Same for bp_form
-*/
-struct Dwarf_D_Pairs_Block_s {
-    struct Dwarf_D_Pairs_Block_s *bp_next;
-    unsigned   bp_used_count; /* used in the arrays here */
-    Dwarf_Half bp_idxattr[ABB_PAIRS_MAX];
-    Dwarf_Half bp_form[ABB_PAIRS_MAX];
-};
-
-/* The last attr/form entries are zero. */
+/* The unused attr/form entries are zero. */
 struct Dwarf_D_Abbrev_s {
     struct Dwarf_D_Abbrev_s * da_next;
     Dwarf_Unsigned da_abbrev_offset;
     Dwarf_Unsigned da_abbrev_code;
     Dwarf_Unsigned da_tag;
-    Dwarf_Unsigned da_pairs_count;
-    /*  The first attr block */
-    struct Dwarf_D_Pairs_Block_s da_pairs_base;
+    Dwarf_Unsigned da_pairs_count; 
+    Dwarf_Half     da_idxattr[ABB_PAIRS_MAX];
+    Dwarf_Half     da_form[ABB_PAIRS_MAX];
 };
 
 struct Dwarf_DN_Bucket_s {
