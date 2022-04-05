@@ -1295,7 +1295,7 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
             data, DWARF_HALF_SIZE,
             error,section_end);
         *return_uval = ret_value;
-        *bytes_read = 2;
+        *bytes_read = DWARF_HALF_SIZE;
         return DW_DLV_OK;
         }
 
