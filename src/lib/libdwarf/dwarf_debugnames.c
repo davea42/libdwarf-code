@@ -132,6 +132,21 @@ read_uword_ab(Dwarf_Small **lp,
     return DW_DLV_OK;
 }
 
+static void
+free_temp_abbrevs( struct Dwarf_D_Abbrev_s * firstab)
+{
+    struct Dwarf_D_Abbrev_s *curab = firstab;
+
+    while (curab) {
+        struct Dwarf_D_Abbrev_s *nxtab = 0;
+
+        nxtab = curab->da_next;
+        curab->da_next = 0;
+        free(curab);
+        curab = nxtab;
+    }
+}
+
 static int
 fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     Dwarf_Error * error)
@@ -144,9 +159,9 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned tag = 0;
     int foundabend = FALSE;
     Dwarf_Unsigned abcount = 0;
-    struct Dwarf_D_Abbrev_s *firstdab = 0;
-    struct Dwarf_D_Abbrev_s *lastdab = 0;
     struct Dwarf_D_Abbrev_s *curdab = 0;
+    struct Dwarf_D_Abbrev_s *firstdab = 0;
+    struct Dwarf_D_Abbrev_s **lastabp = &firstdab;
     Dwarf_Debug dbg = dn->dn_dbg;
 
     for (abcur = abdata; abcur < tabend; ) {
@@ -159,6 +174,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
         inroffset = abcur - abdata;
         res = read_uword_ab(&abcur,&code,dbg,error,tabend);
         if (res != DW_DLV_OK) {
+            free_temp_abbrevs(firstdab);
             return res;
         }
         if (code == 0) {
@@ -168,12 +184,14 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
 
         res = read_uword_ab(&abcur,&tag,dbg,error,tabend);
         if (res != DW_DLV_OK) {
+            free_temp_abbrevs(firstdab);
             return res;
         }
         inner = abcur;
         curdab = (struct Dwarf_D_Abbrev_s *)calloc(1,
             sizeof(struct Dwarf_D_Abbrev_s));
         if (!curdab) {
+            free_temp_abbrevs(firstdab);
             firstdab = 0;
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
@@ -185,18 +203,22 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
         for (;;) {
             res = read_uword_ab(&inner,&attr,dbg,error,tabend);
             if (res != DW_DLV_OK) {
-                free(curdab);
+                free_temp_abbrevs(curdab);
+                free_temp_abbrevs(firstdab);
                 firstdab = 0;
                 return res;
             }
             res = read_uword_ab(&inner,&form,dbg,error,tabend);
             if (res != DW_DLV_OK) {
-                free(curdab);
+                free_temp_abbrevs(curdab);
+                free_temp_abbrevs(firstdab);
                 firstdab = 0;
                 return res;
             }
             if ( curdab->da_pairs_count == 
                 ABB_PAIRS_MAX) {
+                free_temp_abbrevs(curdab);
+                free_temp_abbrevs(firstdab);
                 _dwarf_error_string(dbg,error, 
                     DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION,
                     "DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION: "
@@ -214,17 +236,13 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
             }
         }
 
+        /* Building singly linked list.  without if stmt. */
         abcur = inner;
-        if (!firstdab) {
-            firstdab = curdab;
-            lastdab  = curdab;
-        } else {
-            /* Add new on the end, last */
-            lastdab->da_next = curdab;
-            lastdab = curdab;
-        }
+        *lastabp = curdab;
+        lastabp = &curdab->da_next;
     }
     if (!foundabend) {
+        free_temp_abbrevs(firstdab);
         _dwarf_error_string(dbg, error,
             DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION,
             "DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION: Never found"
@@ -261,6 +279,7 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
             (struct Dwarf_D_Abbrev_s *)calloc(
             abcount,sizeof(struct Dwarf_D_Abbrev_s));
         if (!dn->dn_abbrev_instances) {
+            free_temp_abbrevs(firstdab);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
@@ -271,12 +290,13 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
             /*  da_next no longer means anything */
             dn->dn_abbrev_instances[ct] = *tmpa;
             dn->dn_abbrev_instances[ct].da_next = 0;
+            free(tmpa);
             tmpa = tmpb;
         }
         tmpa = 0;
         firstdab = 0;
-        lastdab = 0;
-        /*  Now the list has turned into an array. We can ignore
+        /*  Now the list has turned into an
+            array. We can ignore
             the list aspect. */
     }
     return DW_DLV_OK;

@@ -5978,9 +5978,6 @@ DW_API int dwarf_get_debug_sup(Dwarf_Debug dw_dbg,
     The section is new in DWARF5  supersedes .debug_pubnames and
     .debug_pubtypes in DWARF2, DWARF3, and DWARF4.
 
-    The code is incomplete . We have no examples
-    produced by a compiler as yet.
-
     The existing functions provide a detailed reporting
     of the content and structure of the table, they
     are not intended to be used to search the table.
