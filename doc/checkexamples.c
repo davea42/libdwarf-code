@@ -2360,3 +2360,19 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 /*! @endcode */
+
+/*! @defgroup example_debug_names Example accessing .debug_names
+    @brief example_debug_names Showing access to .debug_names
+
+    This is accessing DWARF5 .debug_names, a section
+    intended to provide fast access to DIEs.
+
+    TO BE COMPLETED
+    @code
+*/
+int example_debug_names(Dwarf_Debug_Names dn,
+    Dwarf_Error *error)
+{
+}
+
+/*! @endcode */
