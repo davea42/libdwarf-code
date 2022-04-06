@@ -6,7 +6,7 @@ Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://
 
 # This is libdwarf README.md
 
-Updated 30 March 2022
+Updated 6 April 2022
 For release libdwarf-0.4.0
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
    Mentioning some that might not be automatically
@@ -51,7 +51,11 @@ Just like configure, except instead of configure do:
 
 ### meson build
 
-This will be revised, but this should work
+meson 0.45.1  on Ubuntu 18.04 fails.
+meson 0.55.2  on Ubunto 20.04 works.
+meson 0.60.3  on Freebsd 12.2 and Freebsd13.0 works.
+
+This text be revised, but should work.
 
 For the simplest example:
 
