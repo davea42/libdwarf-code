@@ -6243,8 +6243,29 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     Dwarf_Error *       dw_error);
 
 /*! @brief Find an abbrev set by abbrev code
-   
-    FIXME
+
+    Useful for a quick look at what an abbrev record contains.
+ 
+    @param dw_dn
+    Pass in the debug names table of interest.
+    @param dw_abbrev_code
+    Pass in the abbrev code of interest. These
+    are not array indexes, they are compiler assigned
+    numbers, often not in any meaningful sequence.
+    @param dw_tag
+    If non-null and the call succeeds, the DW_TAG value
+    applying to this abbreviation is returned.
+    @param dw_index_of_abbrev,
+    If non-null and the call succeeds, the index number
+    assigned by libdwarf to this abbrev set is returned.
+    The numbers are sequential, 0,1, etc.
+    @param dw_number_of_attr_form_entries;
+    If non-null and the call succeeds, number of 
+    attribute-form pairs in this abbrev is returned.
+    The count includes the terminationg 0,0 pair.
+    @return 
+    Returns either DW_DLV_OK or, if the abbrev code is
+    not found returns DW_DLV_NO_ENTRY.
 */
 DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half   dw_abbrev_code,
@@ -6259,7 +6280,29 @@ DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
 
 /*! @brief Returns a specific idxattribute form pair.
 
-    FIXME
+    You will find calling @see dwarf_dnames_abbrev_by_code
+    useful to get the ranges you need here.
+
+    @param dw_dn
+    Pass in the debug names table of interest.
+    @param dw_abbrev_entry_index
+    Pass in the index number for an abbreviation record.
+    Numbers start at 0.
+    @param dw_abbrev_form_index
+    Pass in an index to an attr/form array. Indexes
+    start with 0.
+    @param dw_idx_attr
+    On success returns the DW_IDX value in the idxattr-form pair.
+    @param dw_idx_form
+    On success returns the DW_FORM value in the idxattr-form pair.
+    @param dw_error
+    On error returns the usual error details.
+    @return
+    DW_DLV_OK is returned if the specified entry exists.
+    DW_DLV_NO_ENTRY is returned if the specified indexes
+    do not designate an entry (an index out of range). 
+    DW_DLV_ERROR is returned in case of an internal error
+    or corrupt section content.
 */
 DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned   dw_abbrev_entry_index,
@@ -6270,7 +6313,44 @@ DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
 
 /*! @brief Returns a the set of values from an entrypool entry
 
-    FIXME
+    Returns the basic data about an entrypool record
+    and enables correct calling of 
+    dwarf_dnames_entrypool_values
+    (see below).  The two-stage approach makes it
+    simple for callers to prepare for the number of
+    values that will be returned by 
+    dwarf_dnames_entrypool_values()
+
+    @param dw_dn
+    Pass in the debug names table of interest.
+    @param dw_offset_in_entrypool
+    The record offset (in the entry pool table) 
+    of the first record of IDX attributes. Starts at zero.
+    @param dw_abbrev_code
+    On success returns the abbrev code of the idx attributes
+    for the pool entry.
+    @param dw_tag
+    On success returns the TAG of the DIE referred to
+    by this entrypool entry.
+    @param dw_value_count
+    On success returns the number of distinct
+    values imply by this entry. 
+    @param dw_index_of_abbrev
+    On success returns the index of the abbrev index/form
+    pairs in the abbreviation table.
+    @param dw_offset_of_initial_value
+    On success returns the entry pool offset of the
+    sequence of bytes containing values, such as
+    a CU index or a DIE offset.
+    @dw_error
+    The usual error detail record
+    @return
+    DW_DLV_OK is returned if the specified name
+    entry exists.
+    DW_DLV_NO_ENTRY is returned if the specified offset
+    is outside the size of the table.
+    DW_DLV_ERROR is returned in case of an internal error
+    or corrupt section content.
 */
 DW_API int dwarf_dnames_entrypool(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned   dw_offset_in_entrypool,
@@ -6281,9 +6361,64 @@ DW_API int dwarf_dnames_entrypool(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned * dw_offset_of_initial_value,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns the value set from this entry
+/*! @brief Returns the value set defined by this entry
 
-    FIXME
+    Call here after calling  dwarf_dnames_entrypool
+    to provide data to call this function correctly.
+
+    This retrieves the index attribute values
+    that identify a names table name.
+
+    The caller allocates a set of arrays and the function fills
+    them in.  If dw_array_idx_number[n]
+    is DW_IDX_type_hash then dw_array_of_signatures[n]
+    contains the hash. For other IDX values
+    dw_array_of_offsets[n] contains the value being returned.
+
+    @param dw_dn
+    Pass in the debug names table of interest.
+    @param dw_index_of_abbrev
+    Pass in the abbreviation index.
+    @param dw_offset_in_entrypool_of_values
+    Pass in the offset of the values returned
+    by dw_offset_of_initial_value above.
+    @param dw_arrays_length
+    Pass in the array length of each of the following
+    four fields. The dw_value_count returned above
+    is what you need to use.
+    @param dw_array_idx_number
+    Create an array of Dwarf_Half values, dw_arrays_length
+    long, and pass a pointer to the first entry here.
+    @param dw_array_form
+    Create an array of Dwarf_Half values, dw_arrays_length
+    long, and pass a pointer to the first entry here.
+    @param dw_array_of_offsets
+    Create an array of Dwarf_Unsigned values, dw_arrays_length
+    long, and pass a pointer to the first entry here.
+    @param dw_array_of_signatures
+    Create an array of Dwarf_Sig8 structs, dw_arrays_length
+    long, and pass a pointer to the first entry here.
+    @param dw_offset_of_next_entrypool
+    On success returns the offset of the next entrypool.
+    A value here is usable in the next call to 
+    dwarf_dnames_entrypool.
+    @param dw_single_cu
+    On success, if it is a single-cu name table there is
+    likely no DW_IDX_compile_unit. So we return TRUE
+    via this flag in such a case.
+    @param dw_cu_offset
+    On success, for a single-cu name table with no
+    DW_IDX_compile_unit this is set
+    to the CU offset from that single CU-table entry.
+    @dw_error
+    The usual error detail record
+    @return
+    DW_DLV_OK is returned if the specified name
+    entry exists.
+    DW_DLV_NO_ENTRY is returned if the specified offset
+    is outside the size of the table.
+    DW_DLV_ERROR is returned in case of an internal error
+    or corrupt section content.
 */
 DW_API int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned  dw_index_of_abbrev,
@@ -6293,6 +6428,8 @@ DW_API int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half     *dw_array_form,
     Dwarf_Unsigned *dw_array_of_offsets,
     Dwarf_Sig8     *dw_array_of_signatures,
+    Dwarf_Bool     *dw_single_cu,
+    Dwarf_Unsigned *dw_cu_offset,
     Dwarf_Unsigned *dw_offset_of_next_entrypool,
     Dwarf_Error    *dw_error);
 

@@ -649,6 +649,22 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     totaloffset += SIZEOFT32 * bucket_count;
     VALIDATEOFFSET(dn,totaloffset," bucket array error");
 
+    if (comp_unit_count == 1) {
+        Dwarf_Small *ptrx     = dn->dn_cu_list;
+        Dwarf_Small *endptr   = dn->dn_foreign_tu_list;
+        Dwarf_Unsigned unit_entry_size = dn->dn_offset_size;
+        Dwarf_Unsigned offsetval = 0;
+
+        READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
+            ptrx,unit_entry_size,
+            error,endptr);
+        dn->dn_single_cu = TRUE;
+        dn->dn_single_cu_offset = offsetval;
+#if 0
+FIXME
+#endif
+    }   
+
     dn->dn_hash_table = curptr;
     dn->dn_hash_table_offset = usedspace;
     if (bucket_count) {
@@ -1024,6 +1040,9 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
             "calling dwarf_dnames_cu_table()");
         return DW_DLV_ERROR;
     }
+    if (index_number > total_count) {
+        return DW_DLV_NO_ENTRY;
+    }
     dbg = dn->dn_dbg;
     if (type[0] == 'c') {
         unit_ptr = dn->dn_cu_list;
@@ -1051,24 +1070,36 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
             "so invalid call to dwarf_dnames_cu_table()");
         return DW_DLV_ERROR;
     }
-    if (index_number > total_count) {
-        return DW_DLV_NO_ENTRY;
-    }
     if (offset_case) {
         /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = unit_ptr +
             (index_number-1) *unit_entry_size;
         Dwarf_Small *endptr = dn->dn_indextable_data_end;
-
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
             ptr, unit_entry_size,
             error,endptr);
         if (offset) {
-            *offset = offsetval;
+             *offset = offsetval;
         }
         return DW_DLV_OK;
     }
+
+
+#if 0
+FIXME
+    if (offset_case && dn->dn_single_cu) {
+        Dwarf_Unsigned offsetval = 0;
+        Dwarf_Small *ptr = dn->dn_cu_list;
+        Dwarf_Small *endptr = dn->dn_foreign_tu_list;
+        Dwarf_Unsigned unit_entry_size = dn->dn_offset_size;
+
+        READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
+            ptr, unit_entry_size,
+            error,endptr);
+        dn->dn_single_cu_offset = offsetval;
+    }
+#endif
     {
         Dwarf_Small *ptr =  unit_ptr +
             (index_number-1 -unit_count) *unit_entry_size;
@@ -1777,13 +1808,18 @@ isformrefval(Dwarf_Debug dbg,Dwarf_Half form,
     (as formats changever time).
     */
 int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
-    Dwarf_Unsigned      index_of_abbrev,
-    Dwarf_Unsigned      offset_in_entrypool_of_values,
-    Dwarf_Unsigned      array_sizes,
-    Dwarf_Half     *    array_dw_idx_number,
-    Dwarf_Half     *    array_form,
-    Dwarf_Unsigned *    array_of_offsets,
-    Dwarf_Sig8     *    array_of_signatures,
+    Dwarf_Unsigned   index_of_abbrev,
+    Dwarf_Unsigned   offset_in_entrypool_of_values,
+    Dwarf_Unsigned   array_sizes,
+    Dwarf_Half     * array_dw_idx_number,
+    Dwarf_Half     * array_form,
+    Dwarf_Unsigned * array_of_offsets,
+    Dwarf_Sig8     * array_of_signatures,
+    Dwarf_Bool     * single_cu,
+    Dwarf_Unsigned * single_cu_offset,
+#if 0
+  FIXME 
+#endif
 
     /*  offset of the next entrypool entry. */
     Dwarf_Unsigned *    offset_of_next_entrypool,
@@ -1938,6 +1974,15 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
         dwarfstring_destructor(&m);
         }
         return DW_DLV_ERROR;
+    }
+    if ( dn->dn_single_cu) {
+#if 0
+FIXME
+#endif
+        if (single_cu && single_cu_offset) {
+            *single_cu = dn->dn_single_cu;
+            *single_cu_offset = dn->dn_single_cu_offset;
+        }
     }
     *offset_of_next_entrypool = pooloffset;
     return DW_DLV_OK;

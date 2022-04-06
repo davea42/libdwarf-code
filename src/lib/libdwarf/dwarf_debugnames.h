@@ -108,6 +108,11 @@ struct Dwarf_Dnames_Head_s {
     struct Dwarf_D_Abbrev_s *dn_abbrev_instances;
     Dwarf_Unsigned          dn_abbrev_instance_count;
 
+    /*  If this is a single-CU entry the next two are set
+        for later return. */
+    Dwarf_Bool     dn_single_cu;
+    Dwarf_Unsigned dn_single_cu_offset;
+
     Dwarf_Unsigned b_value;
     Dwarf_Unsigned b_orig_bucket_index;
     Dwarf_Unsigned b_sorted_bucket_index;

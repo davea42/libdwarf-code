@@ -291,7 +291,7 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
             printf("0x%04x ",f);
             if (a || f) {
                 dwarf_get_IDX_name(a,&idname);
-                printf("%15s",idname);
+                printf("%-19s",idname);
                 dwarf_get_FORM_name(f,&formname);
                 printf("%15s",formname);
                 if (! (a && f)){
@@ -352,7 +352,7 @@ print_attr_array(unsigned int indent,
             }
         }
         dwarf_get_IDX_name(a,&idname);
-        printf(" %15s",idname);
+        printf(" %-19s",idname);
         dwarf_get_FORM_name(f,&formname);
         printf("%15s",formname);
         printf("\n");
@@ -378,11 +378,14 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
     Dwarf_Unsigned value_count = 0;
     Dwarf_Unsigned index_of_abbrev = 0;
     Dwarf_Unsigned offset_of_initial_value = 0;
+    Dwarf_Bool     single_cu_case = 0;
+    Dwarf_Unsigned single_cu_offset = 0;
     Dwarf_Unsigned offset_next_entry_pool = 0;
     const char    *idname = 0;
     Dwarf_Unsigned i = 0;
 
-    res = dwarf_dnames_entrypool(dn,offset_in_entrypool,
+    res = dwarf_dnames_entrypool(dn,
+        offset_in_entrypool,
         &abbrev_code,&tag,&value_count,&index_of_abbrev,
         &offset_of_initial_value,
         error);
@@ -418,6 +421,7 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
         form_array,
         offsets_array,
         signatures_array,
+        &single_cu_case,&single_cu_offset,
         &offset_next_entry_pool,
         error);
     if (res != DW_DLV_OK) {
@@ -427,6 +431,12 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
     indent += 2;
     printindent(indent);
     printf("Entrypool Values, count %" DW_PR_DUu "\n",value_count);
+    if (single_cu_case) {
+        printindent(indent);
+        printf("Single CU case, CUoffset defaults to: 0x%"
+            DW_PR_XZEROS DW_PR_DUx "\n",
+            single_cu_offset);
+    }
     printindent(indent);
     printf("[ ]  idxattr    idxname   value\n");
     for (i = 0; i < value_count; ++i) {
@@ -449,7 +459,7 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
             }
         }
         dwarf_get_IDX_name(idx,&idname);
-        printf("%2u %15s ",idx,idname);
+        printf("%2u %-19s ",idx,idname);
         switch(idx) {
         case DW_IDX_compile_unit:
             printf(" CUindex= %" DW_PR_DUu ,offsets_array[i]);
@@ -508,7 +518,7 @@ print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
     memset(nt_form_array,0,sizeof(Dwarf_Half) * ATTR_ARRAY_SIZE);
     printf("\n");
     printindent(indent);
-    printf("Names table, entry count %" DW_PR_DUu "\n",name_count);
+    printf("Names Table, entry count %" DW_PR_DUu "\n",name_count);
     printindent(indent);
     printf("[] ");
     if (bucket_count) {
@@ -593,7 +603,8 @@ print_dname_record(Dwarf_Dnames_Head dn,
     unsigned int indent = 0;
 
     res = dwarf_dnames_sizes(dn,&comp_unit_count,
-        &local_type_unit_count,&foreign_type_unit_count,
+        &local_type_unit_count,
+        &foreign_type_unit_count,
         &bucket_count,
         &name_count,&abbrev_table_size,
         &entry_pool_size,&augmentation_string_size,
@@ -665,7 +676,6 @@ print_dname_record(Dwarf_Dnames_Head dn,
     if (res == DW_DLV_ERROR) {
         return res;
     }
-
     return DW_DLV_OK;
 }
 
