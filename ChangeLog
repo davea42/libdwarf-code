@@ -1,3 +1,127 @@
+2022-04-07:  David Anderson
+    commit 318cb65159534b78905f4425b5dddc2d776b338d
+
+    Updated the date to today.
+            modified:   doc/libdwarf.dox
+
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+    Corrected typos in doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-04-07:  David Anderson
+    commit 40712108a19262aecbf920aaaff5497f9106354c
+
+    Removed 4 lines of dead code noticed by CoverityScan.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-04-06:  David Anderson
+    commit 3e75142a5d8938466e00a942c41a04f69510915d
+
+    Refining the formatting of the printf output.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+    A comment noting that specialized access functions
+    are missing, but full access to the section is provided.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-04-06:  David Anderson
+    commit 0965889ac137fae87255b7440854be1a90f02436
+
+    Noting that old versions of meson don't work
+    with libdwarf.
+            modified:   README
+            modified:   README.md
+
+2022-04-06:  David Anderson
+    commit 2922a020b7aa3014c3a72a85f4e7d90a529db5f4
+
+    The start of a .debug_names example. Incomplete.
+            modified:   doc/checkexamples.c
+
+    Now with current date as libdwarf.h doxygen
+    has .debug_names access functions.
+            modified:   doc/libdwarf.dox
+
+2022-04-05:  David Anderson
+    commit e8f7ce231679bb632761731ff4fdeff14813d6df
+
+    Now working properly and with doxygen.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-04-05:  David Anderson
+    commit 0f9e5e29a0be4e2e7e67384298c7278818a43cd1
+
+    We can now print the .debug_pubnames details.
+    Formatting will surely change somewhat.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+    Now we read all the fields in .debug_pubnames.
+    For tailored access some additional functions may
+    be desirable.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+
+2022-04-05:  David Anderson
+    commit fd4ddb637cfd30eb0d83e673387073499beff248
+
+    Uses DWARF_HALF_SIZE instead of the constant 2
+    for clarity of intent.
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2022-04-04:  David Anderson
+    commit 990a9ef4e03e3a1e4ccb10b76d19a11a7de10e0b
+
+    We can now read and print all the data in .debug_names.
+
+    Some functions aimed at easier use for some specific
+    purposes will surely be needed soon.
+
+    The new functions for .debug_names not yet documented.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+    Some of the formatting will surely need some changes,
+    for best readability.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-04-04:  David Anderson
+    commit 770138eb6290cbc5049854c7c20322bfcd0e516f
+
+    Fix indents and trailing whitespace.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2022-04-02:  David Anderson
+    commit 2b92f489fe6adcc601b0c9cd6232c8e0595c52a7
+
+    DO NOT USE THIS COMMIT: progress toward .debug_names,
+    but not yet working.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-04-01:  David Anderson
+    commit e16b3ae1e6f7f0c5c2fa58f5e594d95fc9ca826e
+
+    Now prints more of .debug_names content.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-04-01:  David Anderson
+    commit aa2ac7df24b84aed427b69aee36d39df5559379b
+
+    Removed a bit of capitalization, updated date.
+            modified:   doc/libdwarf.dox
+
+2022-04-01:  David Anderson
+    commit 3553916447e27ce835c73c5dbc29b5f395267012
+
+    Updated per recent changes.
+            modified:   ChangeLog
+
 2022-04-01:  David Anderson
     commit bf5ef885b48d54371f33194f363821b9b3c0c424
 
