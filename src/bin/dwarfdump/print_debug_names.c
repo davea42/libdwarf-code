@@ -384,9 +384,9 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
     Dwarf_Bool     single_cu_case = 0;
     Dwarf_Unsigned single_cu_offset = 0;
     Dwarf_Unsigned offset_next_entry_pool = 0;
-    const char    *idname = 0;
+    const char    *idname = "<DW_IDX-unknown>";
     Dwarf_Unsigned i = 0;
-    const char *tagname = "<TAGunknown";
+    const char    *tagname = "<TAGunknown";
 
     res = dwarf_dnames_entrypool(dn,
         offset_in_entrypool,
@@ -457,15 +457,8 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
 
         if (!idx) {
             if (i == (value_count-1)) {
-                if (idx == 0) {
-                    printf(" 0 (end of list)\n");
-                    continue;
-                } else {
-                    printf(" ERROR: idx=0x%x"
-                        " improper end of list\n",idx);
-                    glflags.gf_count_major_errors++;
-                    continue;
-                }
+                printf(" 0 (end of list)\n");
+                continue;
             }
         }
         dwarf_get_IDX_name(idx,&idname);
