@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-04-06 v0.4.0
+    @date 2022-04-07 v0.4.0
  
     @section draft This is a draft. 
 
@@ -63,11 +63,11 @@
     Libdwarf can safely open multiple Dwarf_Debug
     pointers simultaneously but all such Dwarf_Debug
     pointers must be opened within the same thread.
-    And all libdwarf calls must be made from within
+    And all @e libdwarf calls must be made from within
     that single (same) thread.
  
-    @section dwsec_error Error Handling in libdwarf
-    Essentially every libdwarf call could involve dealing
+    @section dwsec_error Error Handling in @e libdwarf
+    Essentially every @e libdwarf call could involve dealing
     with an error (possibly data corruption in
     the object file).  Here we explain the two main
     approaches the library provides (though we think
@@ -178,7 +178,7 @@
     } 
     @endcode
     because it returns.  The DW_DLV_ERROR code
-    is returned from libdwarf and your code
+    is returned from @e libdwarf and your code
     can do what it likes with the error situation.
     
 
@@ -293,7 +293,7 @@
     But usually the wasted space, if any, is small.
 
     Compiler writers or others may be interested in looking
-    at these sections independently so libdwarf provides
+    at these sections independently so @e libdwarf provides
     functions
     that allow reading the sections without reference
     to what references them.  
@@ -312,7 +312,7 @@
     But if there is some random data somewhere
     outside of referenced areas the reader function
     may fail, returning DW_DLV_ERROR. 
-    Such an error is neither a compiler bug nor a libdwarf bug.
+    Such an error is neither a compiler bug nor a @e libdwarf bug.
 
     @section frameregs Special Frame Registers
 
@@ -441,7 +441,7 @@
     For a simple example of this
     @see jitreader
 
-    But the libdwarf feature can be used in a wide variety of ways.
+    But the @e libdwarf feature can be used in a wide variety of ways.
 
     For example, the DWARF data could be kept
     in simple files of bytes on the internet.
@@ -460,14 +460,14 @@
     a small handful of functions and supply
     function pointers and code implementing the
     functions.  These are part of your application
-    or library, not part of libdwarf.
+    or library, not part of @e libdwarf.
 
     You set up a little bit of data with that code 
     (all described below)
     and then you have essentially written the
     dwarf_init_path equivalent and you can access
     compilation units, line tables etc and
-    the standard libdwarf function calls simply work.
+    the standard @e libdwarf function calls simply work.
 
     Data you need to create involves these types.
     What follows describes how to fill them in
@@ -522,7 +522,7 @@
     @b Dwarf_Obj_Access_Section_a:
     Your implementation of a @b om_get_section_info
     must simply fill in a few fields (leaving most zero)
-    for libdwarf. The fields here are standard Elf,
+    for @e libdwarf. The fields here are standard Elf,
     but for most you can just use the value zero.
     We assume here you will not be doing relocations
     at runtime.
@@ -542,7 +542,7 @@
     @b as_offset: Just fill in zero.
  
     @b as_size: Fill in the size, in bytes,
-    of the section you are telling libdwarf about.
+    of the section you are telling @e libdwarf about.
 
     @b as_link: Just fill in zero.
 
@@ -554,7 +554,7 @@
 
     @b Dwarf_Obj_Access_Methods_a_s:
     The functions we need to access object data
-    from libdwarf are declared here.
+    from @e libdwarf are declared here.
 
     In these function pointer declarations
     'void *obj' is intended to be a pointer (the object field in
@@ -564,7 +564,7 @@
     it possible to handle multiple object formats
     and multiple libraries.
     It's not required that one handles multiple such
-    in a single libdwarf
+    in a single @e libdwarf
     archive/shared-library (but not ruled out either).
     See  dwarf_elf_object_access_internals_t and dwarf_elf_access.c
     for an example.
@@ -608,7 +608,7 @@
     #define DW_GROUPNUMBER_DWO  2
     @endcode
 
-    The DW_GROUPNUMBER_  are used in libdwarf functions
+    The DW_GROUPNUMBER_  are used in @e libdwarf functions
     dwarf_init_path(), dwarf_init_path_dl() and
     dwarf_init_b().  In all those cases unless
     you know there is any complexity in your object file,
@@ -626,31 +626,31 @@
     @see dwarf_sec_group_map
 
     If an object file has multiple groups
-    libdwarf will not reveal contents of the other
+    @e libdwarf will not reveal contents of the other
     groups.
     One must pass in another groupnumber
     to dwarf_init_path, meaning init
-    a new Dwarf_Debug,  to get libdwarf to
+    a new Dwarf_Debug,  to get @e libdwarf to
     access that group.
 
     When opening a Dwarf_Debug the following applies:
  
-    If DW_GROUPNUMBER_ANY is passed in libdwarf will
+    If DW_GROUPNUMBER_ANY is passed in @e libdwarf will
     choose either of DW_GROUPNUMBER_BASE(1) or
     DW_GROUPNUMBER_DWO (2) depending on the object
     content. If both groups one and two are in the
-    object libdwarf will chose DW_GROUPNUMBER_BASE.
+    object @e libdwarf will chose DW_GROUPNUMBER_BASE.
 
-    If DW_GROUPNUMBER_BASE is passed in libdwarf
+    If DW_GROUPNUMBER_BASE is passed in @e libdwarf
     will choose it if non-split DWARF is in the object, else
     the init call will return DW_DLV_NO_ENTRY.
 
-    If DW_GROUPNUMBER_DWO is passed in libdwarf
+    If DW_GROUPNUMBER_DWO is passed in @e libdwarf
     will choose it if .dwo sections are in the object, else
     the init will call return DW_DLV_NO_ENTRY.
 
     If a groupnumber greater than two is passed in
-    libdwarf simply accepts it, whether any sections
+    @e libdwarf simply accepts it, whether any sections
     corresponding to that groupnumber exist or not.
 
     For information on groups  "dwarfdump -i"
@@ -669,7 +669,7 @@
     (but none in an executable or shared object).
     Each such COMDAT group will have a small set of
     sections in it and each section in such a group
-    will be assigned the same group number by libdwarf.
+    will be assigned the same group number by @e libdwarf.
 
     Sections that are in a .dwp .dwo object file
     are assigned to DW_GROUPNUMBER_DWO,
@@ -699,7 +699,7 @@
     (but none in an executable or shared object).
     Each such COMDAT group will have a small set of
     sections in it and each section in such a group
-    will be assigned the same group number by libdwarf.
+    will be assigned the same group number by @e libdwarf.
 
     Sections that are in a .dwp .dwo object file
     are assigned to DW_GROUPNUMBER_DWO,
@@ -714,7 +714,7 @@
 
     Popular compilers and tools are using such sections. There
     is no detailed documentation that we can find (so far)
-    on how the COMDAT section groups are used, so libdwarf is
+    on how the COMDAT section groups are used, so @e libdwarf is
     based on observations of what compilers generate.
 
     @section dwsec_changes Recent Changes
@@ -752,7 +752,7 @@
     Added support for the meson build system.
 
     Updated an include in libdwarfp source files.
-    Improved doxygen documentation of libdwarf.
+    Improved doxygen documentation of @e libdwarf.
     Now 'make check -j8' and the like works correctly.
     Fixed a bug where reading a PE (Windows)
     object could fail for certain section

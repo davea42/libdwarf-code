@@ -5978,9 +5978,10 @@ DW_API int dwarf_get_debug_sup(Dwarf_Debug dw_dbg,
     The section is new in DWARF5  supersedes .debug_pubnames and
     .debug_pubtypes in DWARF2, DWARF3, and DWARF4.
 
-    The existing functions provide a detailed reporting
-    of the content and structure of the table, they
-    are not intended to be used to search the table.
+    The functions provide a detailed reporting
+    of the content and structure of the table (so one
+    can build one's own search table) but they
+    are not particularly helpful for searching.
 
     A new function (more than one?) would be needed for convenient
     searching.
@@ -6252,27 +6253,23 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     @param dw_tag
     If non-null and the call succeeds, the DW_TAG value
     applying to this abbreviation is returned.
-    @param dw_index_of_abbrev,
+    @param dw_index_of_abbrev
     If non-null and the call succeeds, the index number
     assigned by libdwarf to this abbrev set is returned.
     The numbers are sequential, 0,1, etc.
-    @param dw_number_of_attr_form_entries;
+    The trailing 0,0 pair is counted.
+    @param dw_number_of_attr_form_entries
     If non-null and the call succeeds, number of 
     attribute-form pairs in this abbrev is returned.
     The count includes the terminationg 0,0 pair.
     @return 
     Returns either DW_DLV_OK or, if the abbrev code is
-    not found returns DW_DLV_NO_ENTRY.
+    not found, returns DW_DLV_NO_ENTRY.
 */
 DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
     Dwarf_Half   dw_abbrev_code,
     Dwarf_Half * dw_tag,
-   
-    /*  The number of this code/tag as an array index. */
     Dwarf_Unsigned * dw_index_of_abbrev,
-   
-    /*  The number of attr/form pairs, counting the 
-        trailing 0,0 pair. */
     Dwarf_Unsigned * dw_number_of_attr_form_entries) ;
 
 /*! @brief Returns a specific idxattribute form pair.
@@ -6290,7 +6287,7 @@ DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
     start with 0.
     @param dw_idx_attr
     On success returns the DW_IDX value in the idxattr-form pair.
-    @param dw_idx_form
+    @param dw_form
     On success returns the DW_FORM value in the idxattr-form pair.
     @param dw_error
     On error returns the usual error details.
@@ -6339,7 +6336,7 @@ DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
     On success returns the entry pool offset of the
     sequence of bytes containing values, such as
     a CU index or a DIE offset.
-    @dw_error
+    @param dw_error
     The usual error detail record
     @return
     DW_DLV_OK is returned if the specified name
@@ -6407,7 +6404,7 @@ DW_API int dwarf_dnames_entrypool(Dwarf_Dnames_Head dw_dn,
     On success, for a single-cu name table with no
     DW_IDX_compile_unit this is set
     to the CU offset from that single CU-table entry.
-    @dw_error
+    @param dw_error
     The usual error detail record
     @return
     DW_DLV_OK is returned if the specified name
@@ -6421,7 +6418,7 @@ DW_API int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned  dw_index_of_abbrev,
     Dwarf_Unsigned  dw_offset_in_entrypool_of_values,
     Dwarf_Unsigned  dw_arrays_length,
-    Dwarf_Half     *dw_array_dw_idx_number,
+    Dwarf_Half     *dw_array_idx_number,
     Dwarf_Half     *dw_array_form,
     Dwarf_Unsigned *dw_array_of_offsets,
     Dwarf_Sig8     *dw_array_of_signatures,
