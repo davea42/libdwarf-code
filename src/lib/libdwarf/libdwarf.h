@@ -3456,7 +3456,7 @@ DW_API int dwarf_srclines_version(Dwarf_Line_Context dw_line_context,
 
 /*! @brief Read Line beginstatement register
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3475,7 +3475,7 @@ DW_API int dwarf_linebeginstatement(Dwarf_Line dw_line,
 
 /*! @brief Read Line endsequence register flag
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3494,7 +3494,7 @@ DW_API int dwarf_lineendsequence(Dwarf_Line dw_line,
 
 /*! @brief Read Line line register
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3512,7 +3512,7 @@ DW_API int dwarf_lineno(Dwarf_Line dw_line,
 
 /*! @brief Read Line file register
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3547,7 +3547,7 @@ DW_API int dwarf_line_is_addr_set(Dwarf_Line dw_line,
 
 /*! @brief Returns the address of the Dwarf_Line
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3565,7 +3565,7 @@ DW_API int dwarf_lineaddr(Dwarf_Line dw_line,
 
 /*! @brief Returns a column number through the pointer
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3583,7 +3583,7 @@ DW_API int dwarf_lineoff_b(Dwarf_Line dw_line,
 
 /*! @brief Return the file name applicable to the Dwarf_Line
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3604,7 +3604,7 @@ DW_API int dwarf_linesrc(Dwarf_Line dw_line,
 
 /*! @brief Returns the basic_block line register.
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -3624,7 +3624,7 @@ DW_API int dwarf_lineblock(Dwarf_Line dw_line,
     will want all or none of them.  */
 /*! @brief Returns various line table registers in one call
 
-    @link dwsec_linetableregisters Link to Line Table Registers @endlink
+    @link dwsec_linetabreg Link to Line Table Registers @endlink
 
     @param dw_line
     The Dwarf_Line of interest.
@@ -5514,7 +5514,7 @@ DW_API Dwarf_Half dwarf_set_frame_undefined_value(
 /*! @defgroup abbrev Abbreviations .debug_abbrev Section Details
     Allows reading .debug_abbrev independently of CUs or DIEs.
 
-    @link  dwsec_independentsections About Reading Independently. @endlink
+    @link  dwsec_independentsec About Reading Independently. @endlink
     @{
 */
 /*! @brief Reading Abbreviation Data
@@ -5662,7 +5662,7 @@ DW_API int dwarf_get_abbrev_entry_b(Dwarf_Abbrev dw_abbrev,
 */
 /*! @brief Reading From a String Section
 
-    @link dwsec_independentsections Reading The String Section @endlink
+    @link dwsec_independentsec Reading The String Section @endlink
 
     @param dw_dbg
     The Dwarf_Debug whose .debug_str section we want to access.
@@ -5694,7 +5694,7 @@ DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
     Most library users will never call these,
     as references to this is handled by the code
     accessing some Dwarf_Attribute.
-    @link dwsec_independentsections Reading The Str_Offsets @endlink
+    @link dwsec_independentsec Reading The Str_Offsets @endlink
     @{
 */
 /*  Allows applications to print the .debug_str_offsets
@@ -5890,7 +5890,7 @@ DW_API char* dwarf_errmsg_by_number(Dwarf_Unsigned dw_errornum);
 DW_API void  dwarf_error_creation(Dwarf_Debug dw_dbg ,
     Dwarf_Error * dw_error, char * dw_errmsg);
 
-/*! @brief Free (dealloc) an Dwarf_Error somethimg created.
+/*! @brief Free (dealloc) an Dwarf_Error something created.
     @param dw_dbg
     The relevant Dwarf_Debug pointer.
     @param dw_error
@@ -6243,7 +6243,7 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
 /*! @brief Find an abbrev set by abbrev code
 
     Useful for a quick look at what an abbrev record contains.
- 
+
     @param dw_dn
     Pass in the debug names table of interest.
     @param dw_abbrev_code
@@ -6259,10 +6259,10 @@ DW_API int dwarf_dnames_name(Dwarf_Dnames_Head dw_dn,
     The numbers are sequential, 0,1, etc.
     The trailing 0,0 pair is counted.
     @param dw_number_of_attr_form_entries
-    If non-null and the call succeeds, number of 
+    If non-null and the call succeeds, the number of
     attribute-form pairs in this abbrev is returned.
-    The count includes the terminationg 0,0 pair.
-    @return 
+    The count includes the terminating 0,0 pair.
+    @return
     Returns either DW_DLV_OK or, if the abbrev code is
     not found, returns DW_DLV_NO_ENTRY.
 */
@@ -6294,7 +6294,7 @@ DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
     @return
     DW_DLV_OK is returned if the specified entry exists.
     DW_DLV_NO_ENTRY is returned if the specified indexes
-    do not designate an entry (an index out of range). 
+    do not designate an entry (an index out of range).
     DW_DLV_ERROR is returned in case of an internal error
     or corrupt section content.
 */
@@ -6308,17 +6308,17 @@ DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
 /*! @brief Returns a the set of values from an entrypool entry
 
     Returns the basic data about an entrypool record
-    and enables correct calling of 
+    and enables correct calling of
     dwarf_dnames_entrypool_values
     (see below).  The two-stage approach makes it
     simple for callers to prepare for the number of
-    values that will be returned by 
+    values that will be returned by
     dwarf_dnames_entrypool_values()
 
     @param dw_dn
     Pass in the debug names table of interest.
     @param dw_offset_in_entrypool
-    The record offset (in the entry pool table) 
+    The record offset (in the entry pool table)
     of the first record of IDX attributes. Starts at zero.
     @param dw_abbrev_code
     On success returns the abbrev code of the idx attributes
@@ -6328,7 +6328,7 @@ DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
     by this entrypool entry.
     @param dw_value_count
     On success returns the number of distinct
-    values imply by this entry. 
+    values imply by this entry.
     @param dw_index_of_abbrev
     On success returns the index of the abbrev index/form
     pairs in the abbreviation table.
@@ -6394,7 +6394,7 @@ DW_API int dwarf_dnames_entrypool(Dwarf_Dnames_Head dw_dn,
     long, and pass a pointer to the first entry here.
     @param dw_offset_of_next_entrypool
     On success returns the offset of the next entrypool.
-    A value here is usable in the next call to 
+    A value here is usable in the next call to
     dwarf_dnames_entrypool.
     @param dw_single_cu
     On success, if it is a single-cu name table there is
@@ -6426,7 +6426,6 @@ DW_API int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned *dw_cu_offset,
     Dwarf_Unsigned *dw_offset_of_next_entrypool,
     Dwarf_Error    *dw_error);
-
 
 /*! @} */
 
@@ -7583,7 +7582,7 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
 
     @param dw_dbg
     Pass in an open dw_dbg.  When you attempted
-    to open it, and it succeded then pass the
+    to open it, and it succeeded then pass the
     it via the Dwarf_Debug
     The function reads the file into memory
     and performs a crc calculation.

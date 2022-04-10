@@ -243,7 +243,7 @@
     That's all there is to it.
  
 
-    @section dwsec_linetableregisters Line Table Registers
+    @section dwsec_linetabreg Line Table Registers
 
     Line Table Registers
 
@@ -273,7 +273,7 @@
     discriminator
     @endcode
 
-    @section dwsec_independentsections Reading Special Sections Independently
+    @section dwsec_independentsec Reading Special Sections Independently
 
     Reading a particular set of special sections
 
