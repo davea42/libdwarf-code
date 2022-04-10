@@ -35,7 +35,7 @@ struct Dwarf_D_Abbrev_s {
     Dwarf_Unsigned da_abbrev_offset;
     Dwarf_Unsigned da_abbrev_code;
     Dwarf_Unsigned da_tag;
-    Dwarf_Unsigned da_pairs_count; 
+    Dwarf_Unsigned da_pairs_count;
     Dwarf_Half     da_idxattr[ABB_PAIRS_MAX];
     Dwarf_Half     da_form[ABB_PAIRS_MAX];
 };

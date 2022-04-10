@@ -68,16 +68,16 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 #endif /*0*/
 #if 0
 static void
-dump_abbrev_record(const char *msg, 
+dump_abbrev_record(const char *msg,
     Dwarf_Unsigned abcode,
     struct Dwarf_D_Abbrev_s *abb,
     int line)
 {
     unsigned long i = 0;
- 
+
     printf("%s: code %lu abpairs %lu line %d \n",
-         msg,(unsigned long)abcode,
-         (unsigned long)abb->da_pairs_count,line);
+        msg,(unsigned long)abcode,
+        (unsigned long)abb->da_pairs_count,line);
     for (i=0; i < abb->da_pairs_count ; ++i) {
         printf("  [%lu] 0x%02lx 0x%02lx\n",
             i,
@@ -215,11 +215,11 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
                 firstdab = 0;
                 return res;
             }
-            if ( curdab->da_pairs_count == 
+            if ( curdab->da_pairs_count ==
                 ABB_PAIRS_MAX) {
                 free_temp_abbrevs(curdab);
                 free_temp_abbrevs(firstdab);
-                _dwarf_error_string(dbg,error, 
+                _dwarf_error_string(dbg,error,
                     DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION,
                     "DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION: "
                     "Impossible: too many idxattr/form pairs"
@@ -680,11 +680,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
             error,endptr);
         dn->dn_single_cu = TRUE;
         dn->dn_single_cu_offset = offsetval;
-#if 0
-FIXME
-#endif
-    }   
-
+    }
     dn->dn_hash_table = curptr;
     dn->dn_hash_table_offset = usedspace;
     if (bucket_count) {
@@ -692,7 +688,6 @@ FIXME
         usedspace += SIZEOFT32 * name_count;
         totaloffset += SIZEOFT32 * name_count;
     }
-
     VALIDATEOFFSET(dn,totaloffset,"hashes array error");
 
     dn->dn_string_offsets = curptr;
@@ -1100,26 +1095,10 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
             ptr, unit_entry_size,
             error,endptr);
         if (offset) {
-             *offset = offsetval;
+            *offset = offsetval;
         }
         return DW_DLV_OK;
     }
-
-
-#if 0
-FIXME
-    if (offset_case && dn->dn_single_cu) {
-        Dwarf_Unsigned offsetval = 0;
-        Dwarf_Small *ptr = dn->dn_cu_list;
-        Dwarf_Small *endptr = dn->dn_foreign_tu_list;
-        Dwarf_Unsigned unit_entry_size = dn->dn_offset_size;
-
-        READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, unit_entry_size,
-            error,endptr);
-        dn->dn_single_cu_offset = offsetval;
-    }
-#endif
     {
         Dwarf_Small *ptr =  unit_ptr +
             (index_number-1 -unit_count) *unit_entry_size;
@@ -1825,7 +1804,7 @@ isformrefval(Dwarf_Debug dbg,Dwarf_Half form,
     While an array of structs would be easier for the caller
     to allocate than parallel arrays, public structs have
     turned out to be difficult to work with as interfaces
-    (as formats changever time).
+    (as formats change over time).
     */
 int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned   index_of_abbrev,
@@ -1837,10 +1816,6 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
     Dwarf_Sig8     * array_of_signatures,
     Dwarf_Bool     * single_cu,
     Dwarf_Unsigned * single_cu_offset,
-#if 0
-  FIXME 
-#endif
-
     /*  offset of the next entrypool entry. */
     Dwarf_Unsigned *    offset_of_next_entrypool,
     Dwarf_Error *       error)
@@ -1996,9 +1971,6 @@ int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dn,
         return DW_DLV_ERROR;
     }
     if ( dn->dn_single_cu) {
-#if 0
-FIXME
-#endif
         if (single_cu && single_cu_offset) {
             *single_cu = dn->dn_single_cu;
             *single_cu_offset = dn->dn_single_cu_offset;
