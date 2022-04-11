@@ -1,6 +1,7 @@
 [![Github Build status](https://github.com/davea42/libdwarf-code/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflow%3A%22GitHub+CI%22)
 [![Github Build status](https://github.com/davea42/libdwarf-code/actions/workflows/ci_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflow%3A%22GitHub+CI%22)
 [![Github Build status](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflow%3A%22GitHub+CI%22)
+[![cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/cmake2.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/cmake2.yml)
 [![Travis Build
 Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
 
