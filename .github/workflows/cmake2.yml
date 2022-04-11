@@ -22,7 +22,6 @@ jobs:
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
-        cmake ../CMakeLists.txt -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON
+        cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
         make
-    - name: Test runctest
-      run: ctest -R self
+        ctest -R self
