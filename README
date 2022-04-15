@@ -1,33 +1,33 @@
-[![Github Build status](https://github.com/davea42/libdwarf-code/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflow%3A%22GitHub+CI%22)
-[![Github Build status](https://github.com/davea42/libdwarf-code/actions/workflows/ci_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflow%3A%22GitHub+CI%22)
-[![Github Build status](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflow%3A%22GitHub+CI%22)
-[![cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/cmake2.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/cmake2.yml)
-[![Travis Build
-Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
+[![autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml)
+[![meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflows/ci_meson.yml)
+[![msys2 CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2.yml)
+[![linux_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml)
+[![Travis Build Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
 
 # This is libdwarf README.md
 
-Updated 10 April 2022
+Updated 15 April 2022
 
 For release libdwarf-0.4.0 
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
-   Mentioning some that might not be automatically
-   in your base OS release. Restricting attention
-   here to just building libdwarf and dwarfdump. 
 
-   If the objects you work with do not have
-   compressed-elf-section content zlib/libz
-   are not required for building/using 
-   libdwarf/dwarfdump.
+Mentioning some that might not be automatically
+in your base OS release. Restricting attention
+here to just building libdwarf and dwarfdump. 
 
-   Ubuntu: 
-   sudo apt install pkgconf zlib1g zlib1g-dev
-   optional add: cmake meson 
+If the objects you work with do not have
+compressed-elf-section content zlib/libz
+are not required for building/using 
+libdwarf/dwarfdump.
 
-   FreeBSD:
-   pkg install bash python3 gmake binutils pkgconf lzlib
-   optional add: cmake meson
+    Ubuntu: 
+    sudo apt install pkgconf zlib1g zlib1g-dev
+    optional add: cmake meson 
+
+    FreeBSD:
+    pkg install bash python3 gmake binutils pkgconf lzlib
+    optional add: cmake meson
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
@@ -60,11 +60,10 @@ Just like configure, except instead of configure do:
 
 ### meson build
 
-meson 0.45.1  on Ubuntu 18.04 fails.
-meson 0.55.2  on Ubunto 20.04 works.
-meson 0.60.3  on Freebsd 12.2 and Freebsd13.0 works.
+    meson 0.45.1  on Ubuntu 18.04 fails.
+    meson 0.55.2  on Ubunto 20.04 works.
+    meson 0.60.3  on Freebsd 12.2 and Freebsd 13.0 works.
 
-This text be revised, but should work.
 
 For the simplest example:
 
@@ -150,45 +149,15 @@ a build and then
 
 # INCOMPATIBILITIES. Changes to interfaces
 
-Comparing libdwarf-0.3.1 to libdwarf-20210528
-(the final non-semantic-version release)
-there are significant changes. 
+Comparing libdwarf-0.4.0 to libdwarf-0.3.4
+A few  dealloc() functions changed name to have
+a consistent pattern for all such.
+Access to the DWARF5 .debug_names section
+is now fully implemented. 
 
-Many functions that only supported
-DWARF before DWARF5 have been dropped
-in favor of functions that support all
-DWARF versions through DWARF5.
-The later versions add a 
-`_a_` (or `_b_` or `_c_` or `_d_`)
-to the end of the function name.
-In most cases the libdwarf-0.3.1 interface
-was already available in libdwarf-20210528 
-along with older interfaces that only
-worked with earlier DWARF.
-
-## Specific functions whose argument lists changed
-Some arguments were removed from
-
-    dwarf_init_b()
-    dwarf_init_path()
-    dwarf_init_path_dl()
-    dwarf_object_init_b()
-    dwarf_finish()
- 
-the arguments were unused and/or unnecessary.
-
-The argument list to 
-
-    dwarf_bitoffset()
-
-changed to allow use with DWARF2 through DWARF5.
-
-The functions allowing access to DW_OP_*
-frame operators was rather useless 
-in libdwarf-20210528 and the
-libdwarf-0.3.1 functions allowing
-one to interpret frame instructions in detail
-(relatively easily) are a big improvment.
+See the Recent Changes section in
+libdwarf.pdf (in the release)
+for more details.
 
 ## Reading DWARF from memory 
 
