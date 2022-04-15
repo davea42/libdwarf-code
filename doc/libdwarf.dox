@@ -3,11 +3,9 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-04-07 v0.4.0
+    @date 2022-04-15 v0.4.0
  
-    @section draft This is a draft. 
-
-    Suggestions for improvement are welcome.
+    @section draft Suggestions for improvement are welcome.
 
     Your thoughts on the document?
 
@@ -15,7 +13,6 @@
     meaningful to you?
 
     B) Are the titles on the Modules page  meaningful to you?
-    meaningful to you?
 
     Anything else you find misleading or confusing?
     Thanks in advance for any suggestions.
@@ -66,7 +63,7 @@
     And all @e libdwarf calls must be made from within
     that single (same) thread.
  
-    @section dwsec_error Error Handling in @e libdwarf
+    @section dwsec_error Error Handling in libdwarf
     Essentially every @e libdwarf call could involve dealing
     with an error (possibly data corruption in
     the object file).  Here we explain the two main
@@ -74,7 +71,9 @@
     only one of them is truly appropriate except
     in toy programs).
 
-    A) The suggested approach is to  define a Dwarf_Error
+    <strong>A)The suggested approach</strong> is to 
+    define a Dwarf_Error.
+
     @code
     Dwarf_Error error = 0;
     @endcode
@@ -100,10 +99,9 @@
     Some functions cannot possibly return some of these
     three values. As defined later for each function.
 
-    With this approach the 
+    <strong>B) An alternative (not recommended)</strong> approach is
+    to pass NULL to the error argument.
 
-    B) An alternative (not recommended) approach is
-    to simply pass NULL to the error argument.
     @code
     int res = dwarf_tag(die,DW_TAG_compile_unit,NULL);
     @endcode
@@ -274,8 +272,6 @@
     @endcode
 
     @section dwsec_independentsec Reading Special Sections Independently
-
-    Reading a particular set of special sections
 
     DWARF defines (in each version of DWARF)
     sections which have a somewhat special
@@ -569,7 +565,8 @@
     See  dwarf_elf_object_access_internals_t and dwarf_elf_access.c
     for an example.
 
-    Usually the struct is statically defined
+    Usually the struct @b Dwarf_Obj_Access_Methods_a_s is
+    statically defined
     and the function pointers are set at
     compile time.
 
@@ -579,7 +576,7 @@
 
     @section dwsec_sectiongroup Section Groups. Debug Fission. COMDAT groups
 
-    A simple executable or shared object is unlikely
+    A typical executable or shared object is unlikely
     to have any section groups, and in that case
     what follows is irrelevant and unimportant.
 
@@ -679,9 +676,11 @@
     group are assigned DW_GROUPNUMBER_BASE.
 
     At least one compiler relies on relocations
-    to identify COMDAT groups, but do not document
-    this publically so we ignore such.
-
+    to identify COMDAT groups, but the
+    compiler authors do not publicly document
+    how this works so we ignore such (these COMDAT
+    groups will result in libdwarf returning
+    DW_DLV_ERROR).
 
     For information on groups  "dwarfdump -i"
     on an object file will show all section group
@@ -707,10 +706,6 @@
     Sections not part of a .dwp package file
     or a.dwo section, or a COMDAT
     group are assigned DW_GROUPNUMBER_BASE.
-
-    At least one compiler relies on relocations
-    to identify COMDAT groups, but do not document
-    this publically so we ignore such.
 
     Popular compilers and tools are using such sections. There
     is no detailed documentation that we can find (so far)
