@@ -156,10 +156,13 @@ Access to the DWARF5 .debug_names section
 is now fully implemented. 
 
 See the <strong>Recent Changes</strong> section in
-libdwarf.pdf (in the release) or
-https://www.prevanders.net/libdwarfdoc/index.html
-(notice the table of contents at the right edge)
-for more details.
+libdwarf.pdf (in the release).
+
+[dwhtml]: https://www.prevanders.net/libdwarfdoc/index.html
+
+Or see [the latest online html version] [dwhtml] for the details..
+
+Notice the table of contents at the right edge of the html page.
 
 ## Reading DWARF from memory 
 
