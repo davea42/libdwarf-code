@@ -155,8 +155,10 @@ a consistent pattern for all such.
 Access to the DWARF5 .debug_names section
 is now fully implemented. 
 
-See the Recent Changes section in
-libdwarf.pdf (in the release)
+See the <strong>Recent Changes</strong> section in
+libdwarf.pdf (in the release) or
+https://www.prevanders.net/libdwarfdoc/index.html
+(notice the table of contents at the right edge)
 for more details.
 
 ## Reading DWARF from memory 
