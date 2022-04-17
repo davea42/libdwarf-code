@@ -21,7 +21,10 @@ jobs:
         brew install autoconf automake libtool
     - name: autoreconf
       run: autoreconf --warnings=all  -vif
+    - name: config
+      run: ./configure --enable-dwarfexample --enable-wall
     - name: make
       run:  |
         make
+        make check
         make check
