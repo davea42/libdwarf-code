@@ -19,8 +19,6 @@ jobs:
       run:  |
         which autoreconf make cc
         which autoconf
-        which automake
-        which libtool
         echo $PATH
         sudo apt-get install libtool automake
     - name: build
