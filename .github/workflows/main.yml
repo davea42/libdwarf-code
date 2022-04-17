@@ -12,10 +12,11 @@ jobs:
 
     runs-on: macos-latest
 
+# command line tools and autotools needed. How?
     steps:
     - uses: actions/checkout@v2
-    - name: configure
-      run: ./configure
+    - name: tools
+      run: which cc make autoreconf
     - name: make
       run: make
     - name: make check
