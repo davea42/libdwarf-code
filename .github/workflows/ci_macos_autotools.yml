@@ -1,0 +1,28 @@
+name: macos_autotools CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+# command line tools and autotools needed. How?
+    steps:
+    - uses: actions/checkout@v2
+    - name: tools
+      run:  |
+        which autoreconf make cc
+        which autoconf
+        echo $PATH
+    - name: build
+      run: |
+        /usr/local/bin/autoreconf --warnings=all  -vif
+        make
+        make check
+        make distcheck
