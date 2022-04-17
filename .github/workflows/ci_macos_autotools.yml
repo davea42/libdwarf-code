@@ -20,6 +20,7 @@ jobs:
         which autoreconf make cc
         which autoconf
         echo $PATH
+        sudo apt install autotools libtool automake
     - name: build
       run: |
         /usr/local/bin/autoreconf --warnings=all  -vif
