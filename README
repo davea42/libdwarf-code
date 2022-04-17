@@ -8,9 +8,9 @@
 The 'no status' reports above are a temporary issue with github,
 they are actually passing.
 
-# This is libdwarf README.md
+# This is libdwarf README[.md]
 
-Updated 15 April 2022
+Updated 17 April 2022
 
 For release libdwarf-0.4.0 
 
@@ -85,7 +85,7 @@ For a faster build with install and sanity tests:
     ninja -j8 install
     ninja test
 
-## BUILDING from a git clone of the source tree with configure
+## BUILDING on linux from a git clone of the source tree with configure
 
 This is not recommended as it requires you have
 GNU autotools and pkg-config installed.
@@ -98,14 +98,20 @@ For example, on Ubuntu 20.04
 ```
 
 Using the source/build directories from above as examples,
-do:
+do :
 
+    # Standard Linux Build
     cd /path/to/code
     sh autogen.sh
     cd /tmp/build
     /path/to/code/configure
     make
     make check
+
+## BUILDING on MacOS from a git clone of the source tree with configure
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew install autoconf automake libtool
+    # Then use the  Standard Linux Build lines just above.
 
 ## BUILDING from a git clone of the source tree with cmake
 
