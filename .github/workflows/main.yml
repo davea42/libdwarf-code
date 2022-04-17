@@ -15,8 +15,8 @@ jobs:
 # command line tools and autotools needed. How?
     steps:
     - uses: actions/checkout@v2
-    - name: tools
-      run: which cc make autoreconf
+    - name: autoreconf
+      run: /usr/local/bin/autoreconf -vif
     - name: make
       run: make
     - name: make check
