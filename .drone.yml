@@ -1,0 +1,25 @@
+kind: pipeline
+type: docker
+name: ci-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: dependencies
+  image: gcc
+  commands:
+  - apt-get -qq update
+  - apt -y install build-essential meson ninja-build python3-pip python3-setuptools doxygen
+- name: build
+  image: gcc
+  commands:
+  - meson builddir -Ddoc=true -Ddwarfexample=true
+  - ninja -C builddir
+- name: build-zlib
+  image: gcc
+  commands:
+  - apt -y install libz-dev
+  - meson builddir_zlib -Ddoc=true -Ddwarfexample=true
+  - ninja -C builddir_zlib
