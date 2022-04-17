@@ -176,7 +176,7 @@ AC_ARG_VAR([DWARF_LIBS], [extra linker flags when linking dwarfdump])
 
 ### MacOS does not have malloc.h
 AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
-### for uintptr_t
+### for uintptr_t and open and open argument defines
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h fcntl.h])
 
 AS_IF(
