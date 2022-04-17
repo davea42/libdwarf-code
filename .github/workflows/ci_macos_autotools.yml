@@ -1,0 +1,30 @@
+name: macos_autotools CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+# command line tools and autotools needed. How?
+    steps:
+    - uses: actions/checkout@v2
+    - name: tools
+      run:  |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        brew install autoconf automake libtool
+    - name: autoreconf
+      run: autoreconf --warnings=all  -vif
+    - name: config
+      run: ./configure --enable-dwarfexample --enable-wall
+    - name: make
+      run:  |
+        make
+        make check
+        make check
