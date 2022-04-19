@@ -1,5 +1,5 @@
 [![autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml)
-[![meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflows/ci_meson.yml)
+[![linux_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflows/ci_linux_meson.yml)
 [![msys2 CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2.yml)
 [![linux_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml)
 [![Travis Build Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)

@@ -1,4 +1,4 @@
-name: msys2 CI
+name: msys2_meson CI
 
 on:
   push:

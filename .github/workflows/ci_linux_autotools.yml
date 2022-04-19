@@ -1,4 +1,4 @@
-name: autotools CI
+name: linux_autotools CI
 
 on:
   push:
