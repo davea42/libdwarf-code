@@ -5,12 +5,9 @@
 [![Travis Build Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
 [![macos_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml)
 
-The 'no status' reports above are a temporary issue with github,
-they are actually passing.
-
 # This is libdwarf README[.md]
 
-Updated 17 April 2022
+Updated 19 April 2022
 
 For release libdwarf-0.4.0 
 
