@@ -1,13 +1,19 @@
-[![autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml)
-[![meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflows/ci_meson.yml)
-[![msys2 CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml)
+[![linux_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml)
+
+[![linux_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflows/ci_linux_meson.yml)
+
+[![msys2_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml)
+
 [![linux_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml)
-[![Travis Build Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
+
 [![macos_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml)
+
+[![Travis Build Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
+
 
 # This is libdwarf README[.md]
 
-Updated 19 April 2022
+Updated 20 April 2022
 
 For release libdwarf-0.4.0 
 
