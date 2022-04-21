@@ -30,11 +30,6 @@ then
    echo "$dd FAILED"
    exit $r
 fi
-if [ x$win = "xy" ]
-then
-  echo "drop two lines"
-  droptwoifwin $tx $tx2
-fi
 echo "if update required, mv $tx $b"
 fixlasttime $tx $tx2
 which dos2unix

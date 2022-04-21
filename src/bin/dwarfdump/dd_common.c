@@ -42,6 +42,8 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_common.h"
+#include "dd_checkutil.h"
+#include "dd_glflags.h"
 #include "dd_defined_types.h"
 #include "dd_sanitized.h"
 
@@ -49,52 +51,26 @@ Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 /*  The Linux/Unix version does not want a version string to print
     unless -V is on the command line. */
 void
-print_version_details(const char * name UNUSEDARG,
-    int alwaysprint
-#ifdef _WIN32
-                    UNUSEDARG /* we don't use this arg with Windows */
-#endif
-        )
+print_version_details(const char * name)
 {
-#ifdef _WIN32
-#ifdef _DEBUG
-    char *acType = "Debug";
-#else
-    char *acType = "Release";
-#endif /* _DEBUG */
-#ifdef _WIN64
-    char *bits = "64";
-#else
-    char *bits = "32";
-#endif /* _WIN64 */
-    printf("%s [%s %s %s Win%s (%s)]\n",
-        sanitized(name),__DATE__,__TIME__,acType,bits,
-        PACKAGE_VERSION);
-#else  /* !_WIN32 */
-    if (alwaysprint) {
-#ifdef BUILD_NONLIB_SOURCE
-        /*  Used by scripts/buildstandardsource.sh */
-        printf("%s\n",PACKAGE_VERSION);
-#else
+    if (glflags.gf_show_args_flag) {
         const char *pv = dwarf_package_version();
-        printf("%s Package Version \"%s\"\n",PACKAGE_VERSION,
-            pv);
-#endif
+        printf("%s [%s %s (libdwarf %s dwarfdump %s)]\n",
+            sanitized(name),__DATE__,__TIME__,pv,PACKAGE_VERSION);
     }
-#endif /* _WIN32 */
 }
 
 void
-print_args(int argc UNUSEDARG, char *argv[] UNUSEDARG)
+print_args(int argc , char *argv[] )
 {
-#ifdef _WIN32
-    int index = 1;
-    printf("Arguments: ");
-    for (index = 1; index < argc; ++index) {
-        printf("%s ",sanitized(argv[index]));
+    if (glflags.gf_show_args_flag) {
+        int index = 1;
+        printf("Arguments: ");
+        for (index = 1; index < argc; ++index) {
+            printf("%s ",sanitized(argv[index]));
+        }
+        printf("\n");
     }
-    printf("\n");
-#endif /* _WIN32 */
 }
 
 /*  Going to stdout as of April 2018.

@@ -30,7 +30,7 @@
 #define COMMON_INCLUDED_H
 
 void print_args(int argc, char *argv[]);
-void print_version_details(const char *name, int alwaysprint);
+void print_version_details(const char *name);
 void print_usage_message(const char *program_name, const char **text);
 
 #endif /* COMMON_INCLUDED_H */

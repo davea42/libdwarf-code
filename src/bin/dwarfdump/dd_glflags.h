@@ -263,6 +263,7 @@ struct glflags_s {
 
     char **  gf_global_debuglink_paths;
     unsigned gf_global_debuglink_count;
+    Dwarf_Bool gf_show_args_flag;
 
     /*  Base address has a special meaning in DWARF4,5
         relative to address ranges. */

@@ -352,8 +352,8 @@ main(int argc, char *argv[])
     dup2(fileno(stdout),fileno(stderr));
 #endif /* _WIN32 */
 
-    print_version_details(argv[0],FALSE);
     file_name = process_args(argc, argv);
+    print_version_details(argv[0]);
     print_args(argc,argv);
 
     /*  Redirect stdout and stderr to an specific file */
@@ -367,7 +367,7 @@ main(int argc, char *argv[])
         }
         dup2(fileno(stdout),fileno(stderr));
         /* Record version and arguments in the output file */
-        print_version_details(argv[0],FALSE);
+        print_version_details(argv[0]);
         print_args(argc,argv);
     }
 

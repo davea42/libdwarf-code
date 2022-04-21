@@ -430,6 +430,7 @@ static void arg_trace(void);
 static void arg_verbose(void);
 static void arg_version(void);
 static void arg_show_dwarfdump_conf(void);
+static void arg_show_args(void);
 
 static void arg_c_multiple_selection(void);
 static void arg_E_multiple_selection(void);
@@ -668,6 +669,8 @@ static const char *usage_long_text[] = {
 "-vv  --verbose-more  Show even more information.",
 "-V   --version       Print version information.",
 "     --show-dwarfdump-conf Show what dwarfdump.conf is being used",
+"     --show-args    Show the  current date, time, library version,",
+"                    dwarfdump version, and command arguments",
 "",
 };
 
@@ -819,6 +822,7 @@ OPT_VERBOSE,                  /* -v  --verbose               */
 OPT_VERBOSE_MORE,             /* -vv --verbose-more          */
 OPT_VERSION,                  /* -V  --version               */
 OPT_SHOW_DWARFDUMP_CONF,      /*   --show-dwarfdump-conf     */
+OPT_SHOW_ARGS,                /*   --show-args               */
 
 /* Trace                                                     */
 OPT_TRACE,                    /* -# --trace=<num>            */
@@ -996,6 +1000,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"verbose-more",  dwno_argument, 0, OPT_VERBOSE_MORE },
 {"version",       dwno_argument, 0, OPT_VERSION      },
 {"show-dwarfdump-conf",dwno_argument, 0, OPT_SHOW_DWARFDUMP_CONF },
+{"show-args",     dwno_argument, 0, OPT_SHOW_ARGS },
 
 /* Trace. */
 {"trace", dwrequired_argument, 0, OPT_TRACE},
@@ -2201,12 +2206,21 @@ void arg_show_dwarfdump_conf(void)
 {
     glflags.gf_show_dwarfdump_conf++;
 }
+/*  Option '--show-args' 
+    which causes dwarfdump to print the current
+    version of the program, date, and time of the run,
+    and to show the command line arguments. */
+void arg_show_args(void)
+{
+    glflags.gf_show_args_flag = TRUE;
+}
 
 /*  Option '-V' */
 void arg_version(void)
 {
     /* Display dwarfdump compilation date and time */
-    print_version_details(glflags.program_fullname,TRUE);
+    arg_show_args();
+    print_version_details(glflags.program_fullname);
     exit(OKAY);
 }
 
@@ -2676,6 +2690,8 @@ set_command_options(int argc, char *argv[])
         case OPT_VERSION:       arg_version();       break;
         case OPT_SHOW_DWARFDUMP_CONF:
             arg_show_dwarfdump_conf();break;
+        case OPT_SHOW_ARGS:
+            arg_show_args();break;
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
 
@@ -2710,6 +2726,7 @@ static const char *simplestdargs[] ={
 "-vvvvvv",
 "--verbose",
 "--show-dwarfdump-conf",
+"--show-args",
 "--verbose-more",
 "--suppress-de-alloc-tree",
 0

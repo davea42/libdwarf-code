@@ -34,32 +34,13 @@ then
 fi
 }
 
-# So let dwarfdump emit more then trim.
 # In addition the zero date for file time in line tables
 # prints differently for different time zones.
-# Delete what follows 'last time 0x0'
-if [ x$win = "xy" ]
-then
-  textlim=702
-else
-  textlim=700
-fi
+textlim=700
 cp "$top_srcdir/src/bin/dwarfdump/dwarfdump.conf" .
 dd=$top_blddir/src/bin/dwarfdump/dwarfdump
-# Remove the leading two lines for windows
-# as windows dwarfdump emits two leading lines
-# as compared to non-windows dwarfdump
-droptwoifwin() {
-i=$1
-t=$2
-l=`wc -l < $i`
-if [ $l -gt 2 ]
-then
-  l=`expr $l - 2`
-  tail -$l <$i >$t
-  mv $t $i
-fi
-}
+
+# Delete what follows 'last time 0x0'
 fixlasttime() {
   i=$1
   t=$2

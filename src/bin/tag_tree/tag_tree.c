@@ -229,7 +229,7 @@ main(int argc, char **argv)
     const char *aname = 0;
     unsigned int index = 0;
 
-    print_version_details(argv[0],FALSE);
+    print_version_details(argv[0]);
     print_args(argc,argv);
     process_args(argc,argv);
 

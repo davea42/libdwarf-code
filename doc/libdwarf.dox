@@ -715,6 +715,11 @@
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+    <b>Changes 0.4.0 to 0.4.1</b>
+    dwarfdump adds an option to print its
+    arguments and version (--show-args).
+    Without that new option the version and arguments are not
+    shown.
 
     <b>Changes 0.3.4 to 0.4.0</b>
 

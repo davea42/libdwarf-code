@@ -188,7 +188,7 @@ main(int argc, char **argv)
     FILE * fileInp = 0;
     FILE * fileOut = 0;
 
-    print_version_details(argv[0],FALSE);
+    print_version_details(argv[0]);
     print_args(argc,argv);
     process_args(argc,argv);
 
