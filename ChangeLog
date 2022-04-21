@@ -1,3 +1,320 @@
+2022-04-21:  David Anderson
+    commit 6e7c0b6edd7c2fadc93115b4102dfb67018277dc
+
+    The dwarfdump new argument mentioned.
+            modified:   doc/libdwarf.dox
+
+    Simplified the handling of version and arguments
+    reporting, making it on-demand and more complete.
+            modified:   src/bin/dwarfdump/dd_common.c
+            modified:   src/bin/dwarfdump/dd_common.h
+
+    An internal argument was changed and an option
+    added. These implement that.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+
+    The tests now reflect the simplified version data
+    which simplifies all these shell scripts.
+            modified:   test/dwarfdumpLinux.sh
+            modified:   test/dwarfdumpMacos.sh
+            modified:   test/dwarfdumpPE.sh
+            modified:   test/dwarfdumpsetup.sh
+
+2022-04-21:  David Anderson
+    commit 0c42286d00949e13efd2acd88aa573042462cde7
+
+    Version is now 0.4.1 and we rebuilt various
+    tables (make rebuild).
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-04-21:  David Anderson
+    commit a54b5ae29ff26e367c442e86c6cb62b5fd0fcbfd
+
+    Corrected badges.
+            modified:   README
+            modified:   README.md
+
+2022-04-20:  David Anderson
+    commit 53801ddc8ba16661a373aa69d9ae2b324c0037c3
+
+    Now the workflows and travis CI setup correctly
+    with tbe improved names.
+            modified:   README
+            modified:   README.md
+
+2022-04-19:  David Anderson
+    commit 34c49734e5246d8f5dae0a05b49d2cdb0bb0da9f
+
+    Renaming workflows for consistency.
+            modified:   README
+            modified:   README.md
+
+2022-04-19:  David Anderson
+    commit cc03ab56be4a75e12aa319d70ab7fa301f1daa05
+
+            modified:   ci_linux_autotools.yml
+            renamed:    ci_msys2.yml -> ci_msys2_meson.yml
+            modified:   ../../README.md
+
+2022-04-19:  David Anderson
+    commit 8c896f50a5a496e2c7a2a6af1776c58564e3edb4
+
+    Renaming for consistency
+            renamed:    ci_meson.yml -> ci_linux_meson.yml
+
+2022-04-19:  David Anderson
+    commit c4bd8fd5815492e744f1143db8eed8a5b6231c12
+
+    workflows/   This is the old name. Not current.
+            deleted:    cmake2.yml
+
+2022-04-19:  David Anderson
+    commit 722b978dc57855992042ff403c7c252f95d5e569
+
+    Badges now working ok.
+            modified:   README
+            modified:   README.md
+
+2022-04-17:  David Anderson
+    commit c634c42cd74cdcb88a3a9824137b6661202c32e6
+
+    Added MacOS build
+            modified:   README
+            modified:   README.md
+
+2022-04-17:  David Anderson
+    commit b971f06a46b200ebd85d55dfca01e762dcd1294f
+    Merge: eaaa747e 80d78092
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    New action, picking up.
+
+2022-04-17:  David Anderson
+    commit eaaa747ed536e47fe559eb4d261ded419fee3e7e
+
+    Now with macos badge, though github has
+    not finished rebuilding its index so it shows 'no status'
+            modified:   README
+            modified:   README.md
+    Comment changed (on one line).
+            modified:   configure.ac
+
+2022-04-17:  David Anderson
+    commit 80d780926928927ac4fa1830d394766da39d53ac
+    Merge: 907b04b6 6b8fcee7
+
+    Merge pull request #97 from davea42/davea42-patch-1
+
+    Create ci_macos_autotools.yml
+
+2022-04-17:  David Anderson
+    commit 6b8fcee752701f522755c109006003a0a73c4285
+
+    Update ci_macos_autotools.yml
+
+2022-04-17:  David Anderson
+    commit ce2656ff00b90363643d4065017cae7a97f05247
+
+    Update ci_macos_autotools.yml
+
+    removed useless lines.
+
+2022-04-17:  David Anderson
+    commit 5b8da558de50925ba3d87a2e7c882a77de94e221
+
+    Create ci_macos_autotools.yml
+
+2022-04-15:  David Anderson
+    commit 907b04b64fec6e8c44e4568fa237f4699a856f06
+
+    Adding a note about 'no status'
+            modified:   README
+            modified:   README.md
+
+2022-04-15:  David Anderson
+    commit 57fc6de6af2f887b64356e58417de97e98090d50
+
+    Now a link to access the on-line html documentation.
+            modified:   README
+            modified:   README.md
+    Regenerated, but not anything new.
+            modified:   doc/libdwarf.pdf
+
+2022-04-15:  David Anderson
+    commit 2515f81184af677a07548fd0f2ed3cc891a981fc
+
+    Fixed small typographical errors,
+    slightly clarifies some points,
+    and removes a small duplicate paragraph.
+    Date set to 15 April 2022
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2022-04-15:  David Anderson
+    commit da931ad30da9d9db7ab56b2a3b09c6584cc82dbb
+
+    Now references an on-line html version of the libdwarf
+    documentation.
+            modified:   README
+            modified:   README.md
+
+2022-04-15:  David Anderson
+    commit c615da8d70386d516b385ea5b6f2b403cf49c586
+
+    Refined the look.
+    Some badges are in trouble, unclear why (at this time).
+            modified:   README
+            modified:   README.md
+
+2022-04-15:  David Anderson
+    commit 8166ff2c7245edcb23635e80db61472ce5db04c8
+
+            renamed:    c-cpp.yml -> ci_linux_autotools.yml
+
+2022-04-14:  David Anderson
+    commit a895356448c7c31647f8acffafa63567c85a175d
+    Merge: 5b6906df e0e1237e
+
+    Merge pull request #92 from davea42/davea42-patch-1
+
+    Create ci_linux_cmake.yml
+
+2022-04-14:  David Anderson
+    commit e0e1237e4db05d908506e3c6301a44caaeb78dc0
+
+    Create ci_linux_cmake.yml
+
+    Runs cmake on Ubuntu
+
+2022-04-14:  David Anderson
+    commit 5b6906df26e914de525c0622aa558ea4f4c1bc77
+
+    Adding workflow_dispatch: for testing
+            modified:   c-cpp.yml
+
+2022-04-14:  David Anderson
+    commit 9b93e4d50f52ec37d60ee67503e2148561b186a0
+
+    allow manual workflow despatch agaiin.
+            modified:   cmake2.yml
+
+2022-04-12:  David Anderson
+    commit a1ef351230da45761b5f467ca0adced92caf2ddc
+
+    Removed manual run of github action.
+            modified:   .github/workflows/cmake2.yml
+
+2022-04-11:  David Anderson
+    commit 6993512b8c1ebb1a52b91def4557d67eba79cfa4
+
+    Revised cmake command
+            modified:   cmake2.yml
+
+2022-04-11:  David Anderson
+    commit 52a6b7ac900964584d37ae59e088c4bca3ebf0f2
+
+    So we run the cmake tests and build examples
+            modified:   .github/workflows/cmake2.yml
+
+2022-04-11:  David Anderson
+    commit 5df0d7743a2961d0044b88a22ff373fafd6ebcfe
+
+    Added workflow_dispatch:
+            modified:   cmake2.yml
+
+2022-04-11:  David Anderson
+    commit 6559f8aa7020294f229a54d9f4548a9ea5c8aa0e
+
+    Added cmake build status (workflow)
+            modified:   README
+            modified:   README.md
+
+2022-04-11:  David Anderson
+    commit cd36480c6823d3c0d38e5de8cb3ae03e1705269f
+
+    Create cmake2.yml
+
+2022-04-11:  David Anderson
+    commit 581f010e85caa474cc057f08b71051e883629c4b
+
+    Going to try again.
+            deleted:    .github/workflows/cmake.yml
+
+2022-04-11:  David Anderson
+    commit ba69b87c00e04875a60bc17ddb14354fc3b57c04
+
+    cmake CI
+
+2022-04-11:  David Anderson
+    commit 9576e7dbfbb28a09bef3dcf8b5a1d431c5eb202d
+
+    Create cmake.yml
+
+    Basic cmake use.
+
+2022-04-10:  David Anderson
+    commit cd31e8673ad444c01f371146663e2ad59421abda
+
+    Tiny tweaks to the wording and formatting
+    (avoiding some run-on sentences).
+            modified:   README
+            modified:   README.md
+
+2022-04-10:  David Anderson
+    commit 7606d343de02b5220e213d8c5dc15ff096463593
+
+    Regenerated to pick up two word spellings
+    correctd in libdwarf.h doxygen comments.
+            modified:   doc/libdwarf.pdf
+
+2022-04-10:  David Anderson
+    commit 3226a600b9d3cb81255694bcff582171d060bdc0
+
+    There is no change in logic here.
+
+    Corrected indents and removed trailing whitespace.
+    Removed a couple if #if 0 #endif blocks where
+    were leftovers, useless.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+    Removed trailing whitespace
+            modified:   src/lib/libdwarf/dwarf_debugnames.h
+
+2022-04-10:  David Anderson
+    commit 98cda425a07f95050476879509def543e96c93ae
+
+    Shortened a couple of link id strings (these identifiers
+    are for doxygen, not seen in doxygen output).
+            modified:   doc/libdwarf.dox
+    And in addtion to using the new link identifier
+    fixed a couple of words in doxygen comments
+    that were misspelled.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-04-07:  David Anderson
+    commit e58053b842822bc1a23eefbfd151bee3dcdfac31
+
+    Updated with latest tiny changes to doc and internals.
+            modified:   ChangeLog
+
 2022-04-07:  David Anderson
     commit 318cb65159534b78905f4425b5dddc2d776b338d
 
