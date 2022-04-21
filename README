@@ -1,6 +1,6 @@
 [![linux_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml)
 
-[![linux_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions?query=workflows/ci_linux_meson.yml)
+[![linux_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml)
 
 [![msys2_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml)
 
