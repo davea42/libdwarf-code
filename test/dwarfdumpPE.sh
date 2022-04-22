@@ -41,8 +41,9 @@ then
   chkres $? "FAILdwarfdumpPE.sh mv %tx2 $tx"
 fi
 diff $b $tx > $tx.diff 
+echo "report file lengths"
+wc -l $b  $tx
 r=$?
-chkres $r "FAILdwarfdumpPE.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
   echo "Showing diff $b $tx"
@@ -50,6 +51,7 @@ then
   echo "To update , mv $tx $b"
   exit $r
 fi
+chkres $r "FAILdwarfdumpPE.sh diff of $b $tx"
 rm -f dwarfdump.conf
 rm -f $tx
 rm -f $tx.diff
