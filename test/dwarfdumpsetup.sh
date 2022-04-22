@@ -14,16 +14,20 @@
 #
 top_blddir=`pwd`/..
 
-if [ x$DWTOPSRCDIR = "x" ]
+if [ $# -gt 0 ]
 then
-  # Running in the source tree
-  top_srcdir=$top_blddir
+  top_srcdir="$1"
 else
-  # Running outside the source tree (the normal case)
-  top_srcdir=$DWTOPSRCDIR
+  if [ x$DWTOPSRCDIR = "x" ]
+  then
+    # Running in the source tree
+      top_srcdir=$top_blddir
+  else
+    # Running outside the source tree (the normal case)
+    top_srcdir=$DWTOPSRCDIR
+  fi
 fi
 srcdir=$top_srcdir/test
-
 echo "TOP topsrc $top_srcdir topbld $top_blddir localsrc $srcdir"
 chkres() {
 r=$1

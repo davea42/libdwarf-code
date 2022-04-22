@@ -232,26 +232,21 @@ if (DO_TESTING)
        COMMAND ${CMAKE_COMMAND} -E
        copy ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf
           $(CMAKE_BINARY_DIR)/test/dwarfdump.conf )
-    set(peobj "${CMAKE_SOURCE_DIR}/test/testobjLE32PE.exe") 
-    set(pebase "${CMAKE_SOURCE_DIR}/test//testobjLE32PE.base") 
-    set(execpedd "${CMAKE_BINARY_DIR}/src/bin/dwarfdump/dwarfdump")
-    add_test(NAME selfdwarfdumppe COMMAND sh -c "${execpedd} -vvv -a ${peobj} |  head -700 | sed 's/last time 0x.*/last time 0x0/' >junk.testoutpe ; diff ${pebase} junk.testoutpe" )
-endif()
-
-
-
-if (DO_TESTING) 
-    set(elfobj "${CMAKE_SOURCE_DIR}/test/testuriLE64ELf.obj") 
-    set(elfbase "${CMAKE_SOURCE_DIR}/test/testuriLE64ELf.base")
-    set(execelfdd "${CMAKE_BINARY_DIR}/src/bin/dwarfdump/dwarfdump")
-    add_test(NAME selfdwarfdumpelf COMMAND sh -c "${execelfdd} -vvv -a ${elfobj} | head -700 > junk.testoutelf ; diff ${elfbase} junk.testoutelf" )
+    set(pebasedir "${CMAKE_SOURCE_DIR}")
+    set(peshdir "${CMAKE_SOURCE_DIR}/test")
+    add_test(NAME selfdwarfdumppe COMMAND sh -c "${peshdir}/dwarfdumpPE.sh ${pebasedir}")
 endif()
 
 if (DO_TESTING) 
-    set(elfobj "${CMAKE_SOURCE_DIR}/test/test-mach-o-32.dSYM") 
-    set(elfbase "${CMAKE_SOURCE_DIR}/test/test-mach-o-32.base")
-    set(execelfdd "${CMAKE_BINARY_DIR}/src/bin/dwarfdump/dwarfdump")
-    add_test(NAME selfdwarfdumpmacho COMMAND sh -c "${execelfdd} -vvv -a ${elfobj} | head -700 > junk.testoutelf ; diff ${elfbase} junk.testoutelf" )
+    set(elfbasedir "${CMAKE_SOURCE_DIR}")
+    set(elfshdir "${CMAKE_SOURCE_DIR}/test")
+    add_test(NAME selfdwarfdumpelf COMMAND sh -c "${elfshdir}/dwarfdumpLinux.sh ${elfbasedir}")
+endif()
+
+if (DO_TESTING) 
+    set(macbasedir "${CMAKE_SOURCE_DIR}")
+    set(macshdir "${CMAKE_SOURCE_DIR}/test")
+    add_test(NAME selfdwarfdumpmacho COMMAND sh -c "${macshdir}/dwarfdumpMacos.sh ${macbasedir}" )
 endif()
 
 if (DO_TESTING AND BUILD_DWARFEXAMPLE) 

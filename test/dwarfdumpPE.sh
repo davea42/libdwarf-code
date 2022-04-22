@@ -3,16 +3,28 @@
 # This script is hereby placed in the Public Domain
 # for anyone to use in any way for any purpose.
 #
+# configure passes in DWTOPSRCDIR via env var
+# cmake passes in DWTOPSRCDIR via argument
+# meson passes in DWTOPSRCDIR via argument
 # For running out of source tree DWTOPSRCDIR must
 # be set on entry.
 #
-if [ x$DWTOPSRCDIR = "x" ]
+if [ $# -gt 0  ]
 then
-  t=$top_blddir
+  t="$1"
 else
-  t=$DWTOPSRCDIR
+  if [ x$DWTOPSRCDIR = "x" ]
+  then
+    # Building in tree
+    t=$top_blddir
+  else
+    #  Setting find the source base.
+    # Building out of tree, using env var
+    t=$DWTOPSRCDIR
+  fi
 fi
-. $t/test/dwarfdumpsetup.sh
+# Using the source base.
+. $t/test/dwarfdumpsetup.sh $t
 
 f=$top_srcdir/test/testobjLE32PE.exe
 b=$top_srcdir/test/testobjLE32PE.base

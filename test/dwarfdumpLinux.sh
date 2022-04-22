@@ -3,18 +3,25 @@
 # This script is hereby placed in the Public Domain
 # for anyone to use in any way for any purpose.
 #
-# For running out of source tree DWTOPSRCDIR must
-# be set on entry.
+# To call this:
+# Either set arg1 to the top source dir
+# or set env var DWTOPSRCDIR to the top source dir.
 echo $top_srcdir $top_blddir $DWTOPSRCDIR
-if [ x$DWTOPSRCDIR = "x" ]
+
+if [ $# -gt 0  ]
 then
-  # Running from the source tree
-  t=$top_blddir
+  t="$1"
 else
-  # Running outside of source tree (the usual case)
-  t=$DWTOPSRCDIR
+  if [ x$DWTOPSRCDIR = "x" ]
+  then
+    # Running from the source tree
+    t=$top_blddir
+  else
+    # Running outside of source tree (the usual case)
+    t=$DWTOPSRCDIR
+  fi
 fi
-. $t/test/dwarfdumpsetup.sh
+. $t/test/dwarfdumpsetup.sh $t
 
 f=$top_srcdir/test/testuriLE64ELf.obj
 b=$top_srcdir/test/testuriLE64ELf.base

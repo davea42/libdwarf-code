@@ -3,16 +3,21 @@
 # This script is hereby placed in the Public Domain
 # for anyone to use in any way for any purpose.
 #
-# For running out of source tree DWTOPSRCDIR must
-# be set on entry.
+# to call this either pass top srcdir as arg1
+# or set env var DWTOPSRCDIR to that directory.
 #
-if [ x$DWTOPSRCDIR = "x" ]
+if [ $# -gt 0 ]
 then
-  t=$top_blddir
+  t="$1"
 else
-  t=$DWTOPSRCDIR
+  if [ x$DWTOPSRCDIR = "x" ]
+  then
+    t=$top_blddir
+  else
+    t=$DWTOPSRCDIR
+  fi
 fi
-. $t/test/dwarfdumpsetup.sh
+. $t/test/dwarfdumpsetup.sh $t
 
 f=$top_srcdir/test/test-mach-o-32.dSYM
 b=$top_srcdir/test/test-mach-o-32.base
