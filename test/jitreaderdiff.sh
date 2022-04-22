@@ -1,11 +1,8 @@
 #!/bin/sh
 #
-if [ x$DWTOPSRCDIR = "x" ]
-then
-  t=$top_blddir
-else
-  t=$DWTOPSRCDIR
-fi
+# Makefile.am   set env var DWTOPSRCDIR, no args
+# CMakeLIsts.txt pass in 2 args  1.top source dir 
+#    no env vars.
 
 chkres() {
 r=$1 
@@ -15,19 +12,18 @@ then
   echo "FAIL $m.  Exit status for the test $r"
 fi 
 }
+
 echo "Argument count: $#"
-if [ $# -eq 2 ]
+blddir=`pwd`
+top_blddir=`dirname $blddir`
+if [ $# -gt 0  ]
 then
   DWTOPSRCDIR="$1"
-  blddir="$2"
-  top_blddir=$blddir
-else
-  # DWTOPSRCDIR an env var.
-  blddir=`pwd`
-  top_blddir=`dirname $blddir`
 fi
+
 if [ x$DWTOPSRCDIR = "x" ]
 then
+  # Assume runing tests in source
   top_srcdir=$top_blddir
   echo "top_srcdir from top_blddir $top_srcdir"
 else

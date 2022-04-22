@@ -172,7 +172,7 @@ endif()
 
 if (DO_TESTING AND BUILD_DWARFEXAMPLE)
     set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/jitreader")
-    add_test(NAME selfjitreader COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/jitreaderdiff.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}")
+    add_test(NAME selfjitreader COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/jitreaderdiff.sh ${CMAKE_SOURCE_DIR}")
 endif()
 
 if (DO_TESTING) 
