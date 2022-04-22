@@ -173,7 +173,7 @@ libdwarf.pdf (in the release).
 
 [dwhtml]: https://www.prevanders.net/libdwarfdoc/index.html
 
-Or see [the latest online html version] [dwhtml] for the details..
+Or see [the latest online html version][dwhtml] for the details..
 
 Notice the table of contents at the right edge of the html page.
 
