@@ -103,9 +103,6 @@ case "$host_os" in
    ;;
 esac
 
-AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
-
-
 ### Checks for programs
 
 AM_PROG_AR
@@ -175,7 +172,7 @@ AC_ARG_VAR([DWARF_LIBS], [extra linker flags when linking dwarfdump])
 ### Checks for header files
 
 ### MacOS does not have malloc.h
-AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
+AC_CHECK_HEADERS([unistd.h sys/types.h malloc.h])
 ### for uintptr_t and open and open argument defines
 AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h fcntl.h])
 
