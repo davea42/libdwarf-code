@@ -57,6 +57,11 @@ jr=$top_blddir/src/bin/dwarfexample/jitreader
 
 $jr > $tx
 r=$?
+if [ $r -ne 0 ]
+then
+   echo "failing jitreader run."
+   cat $tx
+fi
 chkres $r "$jr printing output to $tx base $b "
 if [ $r -ne 0 ]
 then
