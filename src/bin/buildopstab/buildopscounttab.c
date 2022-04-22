@@ -12,11 +12,6 @@ For use by anyone for any purpose.
    has all the named DW_OP in dwarf.h present.
    Build and run with
    make rebuild
-   or directly with the 'code' directory :
-   ./buildopstab -f $HOME/code
-   or
-   DWTOPSRCDIR=$HOME/code ./buildopstab
-
 */
 
 #include <config.h>
