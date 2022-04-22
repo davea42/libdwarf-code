@@ -27,6 +27,6 @@ jobs:
     - name: Build libdwarf
       run: |
         mkdir builddir && cd builddir
-        cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON -DBUILD_SHARED:BOOL=TRUE -DBUILD_NON_SHARED:BOOL=FALSE -G "Unix Makefiles" ../CMakeLists.txt
+        cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON -DBUILD_SHARED:BOOL=TRUE -DBUILD_NON_SHARED:BOOL=FALSE -DDWARF_WITH_LIBELF:BOOL=FALSE -G "Unix Makefiles" ../CMakeLists.txt
         make
         ctest -R self
