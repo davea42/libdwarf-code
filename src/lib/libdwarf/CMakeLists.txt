@@ -81,7 +81,7 @@ foreach(i RANGE ${targetCount})
             ${DW_FWALL})
 	msvc_posix(${target})
 
-	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES})
+	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES} ${DW_FZLIB})
 	
 	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarf)
 
