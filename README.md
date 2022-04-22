@@ -2,9 +2,11 @@
 
 [![linux_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml)
 
+[![linux_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml)
+
 [![msys2_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml)
 
-[![linux_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml)
+[![msys2_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_cmake.yml)
 
 [![macos_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml)
 
