@@ -29,16 +29,12 @@
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>
-#include <stddef.h>
-#ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
-#endif /* HAVE_STDINT_H */
-#include "dwarf.h"
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <string.h> /* memset() */
+
 #include "libdwarfp.h"
-#include "libdwarf_private.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 #include "dwarf_string.h"

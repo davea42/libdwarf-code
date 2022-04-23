@@ -25,21 +25,20 @@
 
 */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h> /* for strchr etc */
-#include <stdlib.h> /* for exit() */
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h>
+#include <stdint.h> /* uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "dwarf.h"
+
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dd_globals.h"
 #include "dwarf_tsearch.h"
 #include "dd_helpertree.h"
 
-#define TRUE 1
-#define FALSE 0
 /*  WARNING: the tree walk functions will, if presented **tree
     when *tree is wanted, simply find nothing. No error,
     just bad results. So when a walk produces nothing

@@ -38,14 +38,15 @@ Portions Copyright(C) David Anderson 2016. All Rights reserved.
    any normal case.
 */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h> /* for strchr etc */
-#include <stdlib.h> /* for exit() */
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* exit() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h>
+#include <stdint.h> /* uintptr_t */
 #endif /* HAVE_STDINT_H */
-#include "dwarf.h"
+
 #include "libdwarf.h"
 #include "dwarf_tsearch.h"
 #include "dd_makename.h"

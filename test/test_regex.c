@@ -1,5 +1,7 @@
 /*   This test code is hereby placed in the public domain. */
-#include <stdio.h>
+
+#include <stdio.h> /* printf() */
+
 #include "dd_regex.h"
 
 #define DW_DLV_NO_ENTRY -1

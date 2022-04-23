@@ -31,11 +31,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
 #include <config.h>
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "dwarf.h"
+#include <stddef.h> /* size_t */
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* exit() free() */
+#include <string.h> /* memset() strcmp() strlen() */
+
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dwarf_base_types.h"

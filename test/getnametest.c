@@ -1,9 +1,13 @@
 /*  Copyright (c) 2021 David Anderson
     This test code is hereby placed in the public domain
     for anyone to use in any way.  */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h> /* for exit() */
+
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <string.h> /* strcmp() */
+#include <stdlib.h> /* exit() */
+
 #include "dwarf.h"
 #include "libdwarf.h"
 

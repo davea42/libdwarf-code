@@ -27,20 +27,13 @@
 
 */
 
-#include "config.h"
-#include <stdio.h>
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#ifdef HAVE_STRING_H
-#include <string.h>  /* strcpy() strlen() */
-#endif
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#include "libdwarf_private.h"
-#include "dwarf.h"
+#include <config.h>
+
+#include <stddef.h> /* size_t */
+#include <stdio.h>  /* printf() */
+
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
@@ -931,9 +924,7 @@ testatmaxlimit(void)
         ++errcnt;
     }
 
-
-
-    return errcnt; 
+    return errcnt;
 }
 
 int main(void)
