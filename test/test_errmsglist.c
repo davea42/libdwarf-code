@@ -30,19 +30,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  Usage:  ./test_errmsg_list.c
     where an env var gives path to source tree */
 
-#include "config.h"
-#include <stdio.h>
-#include <stdlib.h>  /* For exit(), strtoul() declaration etc. */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <string.h>  /* strcpy() strlen() */
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#include "libdwarf_private.h"
-#include "dwarf.h"
+#include <config.h>
+
+#include <stddef.h> /* size_t */
+#include <stdio.h>  /* FILE fclose() fgets() fopen() printf() */
+#include <stdlib.h> /* atol() exit() getenv() */
+#include <string.h> /* strcmp() strlen() strncmp() */
+
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_safe_strcpy.h"
 #include "dwarf_opaque.h"

@@ -27,29 +27,23 @@
 
 */
 
-#include "config.h"
-#include <stdlib.h> /* for free(). */
-#include <stdio.h> /* For debugging. */
+#include <config.h>
+
+#include <stddef.h> /* size_t */
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* exit() */
+#include <string.h> /* memcpy() memset() */
+
 #ifdef HAVE_STDINT_H
-#include <stdint.h> /* For uintptr_t */
+#include <stdint.h> /* uintptr_t */
 #endif /* HAVE_STDINT_H */
-#if defined(_WIN32) && defined(HAVE_STDAFX_H)
-#include "stdafx.h"
-#endif /* HAVE_STDAFX_H */
-#include <string.h>  /* strcpy() strlen() */
-#include <stddef.h>
-#include "libdwarf_private.h"
-#include "dwarf.h"
+
 #include "libdwarf.h"
+#include "libdwarf_private.h"
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_tsearch.h"
 #include "dwarf_tied_decls.h"
-
-#define TRUE  1
-#define FALSE 0
-#define TRUE  1
-#define FALSE 0
 
 struct test_data_s {
     const char action;

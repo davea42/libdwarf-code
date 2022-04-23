@@ -24,10 +24,11 @@
   Boston MA 02110-1301, USA.
 
 */
-#include "config.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "dwarf.h"
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <stdlib.h> /* exit() */
+
 #include "libdwarf.h"
 #include "dd_globals.h"
 /*  section_bitmaps.h and .c actually involved  bits,

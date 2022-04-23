@@ -4,12 +4,11 @@
   This trivial test program is hereby placed in the public domain.
 */
 
-#include "config.h"
-#include <stdio.h>
-#include <string.h>  /* strcpy() strlen() */
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
-#endif
+#include <config.h>
+
+#include <stdio.h>  /* printf() */
+#include <string.h> /* memset() strcmp() */
+
 #include "dwarf_safe_strcpy.h"
 
 static int
