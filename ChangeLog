@@ -1,3 +1,190 @@
+2022-04-23:  David Anderson
+    commit a7ca2b59ae7c6af7d64293c8ce7277f4d393ba81
+
+    Fixed typo in debuglink-a test.
+            modified:   CMakeLists.txt
+
+2022-04-23:  David Anderson
+    commit 8205f892722665531b78d0036f8a16b03e63747b
+
+    Now reflects the simplified execution of debuglinktest*.sh
+            modified:   CMakeLists.txt
+    Now the imput, either an argument or
+    DWTOPSRCDIR env var may be used to set the source directory.
+    Whichever is convenient for the build system involved.
+            modified:   debuglinktest-b.sh
+
+2022-04-23:  David Anderson
+    commit 83d11ca14ca759d813279cb01d016816d46ab099
+
+    Either pass in source dir base as the argument
+    or set env var DWTOPSRCDIR to that same directory path
+            modified:   debuglinktest-a.sh
+
+2022-04-23:  David Anderson
+    commit 6cab7aee24ad3f88c036fb1ead5f9ff9ebcaa715
+    Merge: d41a75b3 1add733c
+
+    Merge pull request #105 from vtorri/vtorri_tests_headers
+
+    tests: reorganize headers merging now
+
+2022-04-23:  Vincent Torri
+    commit 1add733ce12f161eda20d2353943e1c97138043a
+
+    tests: reorganize headers
+
+            modified:   test/dwarf_leb_test.c
+            modified:   test/dwarf_tied_test.c
+            modified:   test/getnametest.c
+            modified:   test/helpertree_test.c
+            modified:   test/makename_test.c
+            modified:   test/section_bitmaps_test.c
+            modified:   test/test_canonical.c
+            modified:   test/test_dwarfstring.c
+            modified:   test/test_errmsglist.c
+            modified:   test/test_extra_flag_strings.c
+            modified:   test/test_linkedtopath.c
+            modified:   test/test_regex.c
+            modified:   test/test_safe_strcpy.c
+            modified:   test/testesb.c
+
+2022-04-22:  David Anderson
+    commit d41a75b358fb73a44d0936fd8846b37184a537ce
+
+    Simplfied and clarified the run oof the dwarfdump
+    check scripts.
+    To run each,
+    a) be in the test build directory
+    b) set the only argument to these script to be the source direcory
+       base OR set env var DWTOPSRCDIR to the source directory base.
+       Doing both is not useful, the argument will override the env var.
+
+            modified:   test/CMakeLists.txt
+            modified:   test/dwarfdumpLinux.sh
+            modified:   test/dwarfdumpMacos.sh
+            modified:   test/dwarfdumpPE.sh
+            modified:   test/dwarfdumpsetup.sh
+
+2022-04-22:  David Anderson
+    commit 5afc4081af707e4f4619c2437944d2983a9d3054
+
+    Removed unused jitreader.sh argument
+            modified:   CMakeLists.txt
+
+    Removed unused code that once referenced
+    the second argument.
+    Explained how this is run in a couple lines of comments.
+            modified:   jitreaderdiff.sh
+
+2022-04-22:  David Anderson
+    commit fd6bb67a2d7b8e0644123ca0c0463cd664f37f12
+
+    In case of error, useful info was
+    left out due to a line being in the
+    wrong place. Fixed.
+            modified:   dwarfdumpPE.sh
+
+2022-04-22:  David Anderson
+    commit 7f9f252c83f199db80214217dc29c80f0e8e765f
+
+    In case it fails early report
+    more output in the log.
+            modified:   jitreaderdiff.sh
+
+2022-04-22:  David Anderson
+    commit 2c2c680bf416730a8bcdf2911ac21444076f0489
+    Merge: bbd879a4 8cd841d8
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    meson etc.
+
+2022-04-22:  David Anderson
+    commit bbd879a4f341ecb23dabbac16d9cb040e9385b10
+
+    Removed comments mentioning DWTOPSRCDIR,
+    the comment is now useless. DWTOPSRCDIR not used.
+            modified:   buildopscounttab.c
+
+2022-04-22:  David Anderson
+    commit 8cd841d835a6cd94f3d5d8ce76db5400cb295b45
+    Merge: 94a5cd45 10a87d36
+
+    Merge pull request #103 from vtorri/master
+
+    Add msys2 cmake badge. merging.
+
+2022-04-22:  David Anderson
+    commit 94a5cd457b21d1f13906a269a52811845bb7de23
+
+    Removed HAVE_WIN32, we do not use that.
+    Removed check for regex.h as we use
+    our own regex, not a system regex.
+            modified:   configure.ac
+
+2022-04-22:  Vincent Torri
+    commit 10a87d36f28906887b5a72c1c8af4f0a91679a7d
+
+    Add msys2 cmake badge
+    reorder badges by OS
+
+            modified:   README.md
+
+2022-04-22:  David Anderson
+    commit 715a3ea663fd3c20ed18d1c23b325472bd26ec4b
+    Merge: 9cbb1cd2 0fb7534b
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Merging workflow update
+
+2022-04-22:  David Anderson
+    commit 0fb7534b49fc37b89a9d69a96c77515416553f22
+    Merge: 195abb91 cd61226a
+
+    Merge pull request #102 from vtorri/vtorri_ci_cmake
+
+    CI: add msys2 cmake workflow
+
+2022-04-22:  David Anderson
+    commit 9cbb1cd2b564d5a31153c6b38cb224ccc6ecf398
+
+    Correcting the markdown link to the online html.
+    Was not showing as a link, just
+    as text.
+            modified:   README
+            modified:   README.md
+
+2022-04-22:  Vincent Torri
+    commit cd61226ad5ceba0257fe33f6bccdd205684b6705
+
+    tests: fix compilation on some of them on Windows
+
+2022-04-22:  Vincent Torri
+    commit 39b1f632cb1ecdb49ac94b60ef11f061b50b7b4e
+
+    link against zlib if available
+
+2022-04-22:  Vincent Torri
+    commit b9dd78e8110eb021217512cd8880bddcfc814dfd
+
+    on Windows, no compilation for libelf
+
+2022-04-22:  Vincent Torri
+    commit f94d32a34ce1a249da8c91aafe7d2ca9018dfa5d
+
+    on Windows, no static lib should be compiled
+
+2022-04-22:  Vincent Torri
+    commit 4d2472d84dd69dcff0e3ffc676ddc3925781a89c
+
+    CI: add msys2 cmake workflow
+
+2022-04-21:  David Anderson
+    commit 195abb918699b528492f9d62b4b97cff2754b94f
+
+    Bringing it up to date with git log latest.
+            modified:   ChangeLog
+
 2022-04-21:  David Anderson
     commit 6e7c0b6edd7c2fadc93115b4102dfb67018277dc
 
