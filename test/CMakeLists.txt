@@ -250,13 +250,15 @@ if (DO_TESTING)
 endif()
 
 if (DO_TESTING AND BUILD_DWARFEXAMPLE) 
-    set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/dwbuglink")
-    add_test(NAME selfdebuglinka COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/debuglinktest-a.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}")
+    set(dlbasedir "${CMAKE_SOURCE_DIR}")
+    set(dlshdir  "${CMAKE_SOURCE_DIR}/test")
+    add_test(NAME selfdebuglinka COMMAND sh -c "${dlshdir/debuglinktest-a.sh ${} ${dlbasedir}")
 endif()
 
 if (DO_TESTING AND BUILD_DWARFEXAMPLE) 
-    set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/dwbuglink")
-    add_test(NAME selfdebuglinkb COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/debuglinktest-b.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}")
+    set(dlbasedir "${CMAKE_SOURCE_DIR}")
+    set(dlshdir  "${CMAKE_SOURCE_DIR}/test")
+    add_test(NAME selfdebuglinkb COMMAND sh -c "${dlshdir}/debuglinktest-b.sh ${dlbasedir}")
 endif()
 
 

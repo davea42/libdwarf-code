@@ -3,10 +3,10 @@
 # Intended to be run only on local machine.
 # Run only after config.h created in a configure
 # in the source directory
-# Assumes we run the script in the test directory.
-# srcdir is from the environment and is, here, the 
-# place of the top director itself (may be a relative
-# path).
+#
+# Assumes we run the script in the test directory of the build.
+# Either pass in the top source dir as an argument
+# or set env var DWTOPSRCDIR to the source directory.
 
 chkres() {
 r=$1
@@ -17,25 +17,24 @@ then
   exit 1
 fi
 }
+
 echo "Argument count: $#"
-if [ $# -eq 2 ]
+if [ $# -gt 0 ]
 then
-  DWTOPSRCDIR="$1"
-  blddir="$2"
-  top_blddir=$blddir
+  top_srcdir="$1"
 else
-  # DWTOPSRCDIR an env var.
-  blddir=`pwd`
-  top_blddir=`dirname $blddir`
+  if [ x$DWTOPSRCDIR = "x" ]
+  then
+    top_srcdir=$top_blddir
+    echo "top_srcdir from top_blddir $top_srcdir"
+  else
+    top_srcdir=$DWTOPSRCDIR
+    echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
+  fi
 fi
-if [ x$DWTOPSRCDIR = "x" ]
-then
-  top_srcdir=$top_blddir
-  echo "top_srcdir from top_blddir $top_srcdir"
-else
-  top_srcdir=$DWTOPSRCDIR
-  echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
-fi
+blddir=`pwd`
+top_blddir="$blddir/.."
+
 if [ "x$top_srcdir" = "x.." ]
 then
   # This case hopefully eliminates relative path to test dir. 
@@ -64,7 +63,7 @@ fi
 }
 
 echo "debuglinktest-b.sh test2"
-o=junk.debuglink2
+o=junk.dlinkb
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
 echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
@@ -89,5 +88,4 @@ then
    echo "To update debuglinktest-b.sh  baseline: mv $testbin/${o}b $testsrc/debuglink2.base"
    exit $r
 fi
-
 exit 0
