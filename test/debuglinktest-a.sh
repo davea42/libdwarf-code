@@ -3,10 +3,9 @@
 # Intended to be run only on local machine.
 # Run only after config.h created in a configure
 # in the source directory
-# Assumes env vars DWTOPSRCDIR set to the path to source.
-# Assumes we run the script in the test directory.
-# place of the top director itself (may be a relative
-# path).
+#
+# Either pass in the top source dir as an argument
+# or set env var DWTOPSRCDIR to the source directory.
 
 chkres() {
 r=$1
@@ -19,26 +18,25 @@ fi
 }
 
 echo "Argument count: $#"
-if [ $# -eq 2 ]
+if [ $# -gt 0 ]
 then
-  DWTOPSRCDIR="$1"
-  blddir="$2"
-  top_blddir=$blddir
+  top_srcdir="$1"
 else
-  # DWTOPSRCDIR an env var.
-  blddir=`pwd`
-  top_blddir=`dirname $blddir`
+  if [ x$DWTOPSRCDIR = "x" ]
+  then
+    top_srcdir=$top_blddir
+    echo "top_srcdir from top_blddir $top_srcdir"
+  else
+    top_srcdir=$DWTOPSRCDIR
+    echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
+  fi
 fi
-if [ x$DWTOPSRCDIR = "x" ]
-then
-  top_srcdir=$top_blddir
-  echo "top_srcdir from top_blddir $top_srcdir"
-else
-  top_srcdir=$DWTOPSRCDIR
-  echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
-fi
+blddir=`pwd`
+top_blddir="$blddir/.."
+
 if [ "x$top_srcdir" = "x.." ]
 then
+  # Should never happen if run by make or equivalent
   # This case hopefully eliminates relative path to test dir. 
   top_srcdir=$top_blddir
 fi
@@ -61,7 +59,7 @@ then
   echo "SKIP debuglinktest-a.sh , cannot work on bigendian build "
 else
   echo "debuglinktest-a.sh "
-  o=junk.debuglink1
+  o=junk.dlinka
   p="--add-debuglink-path=/exam/ple"
   p2="--add-debuglink-path=/tmp/phony"
   echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
@@ -78,10 +76,16 @@ else
   # where one's source/build directories are.
   echo $localsrc | sed "s:[.]:\[.\]:g" >$testbin/${o}sed1
   sedv1=`head -n 1 $testbin/${o}sed1`
+  # Transform source dir name from literal to ..src.. so
+  # test diff not dependent on local file path. 
   sed "s:$sedv1:..src..:" <$testbin/$o  >$testbin/${o}a
   echo $blddir | sed "s:[.]:\[.\]:g" >$testbin/${o}sed2
   sedv2=`head -n 1 $testbin/${o}sed2`
+  # Transform build dir name from literal to ..bld.. so
+  # test diff not dependent on local file path. 
   sed "s:$sedv2:..bld..:" <$testbin/${o}a  >$testbin/${o}b
+  ls -l   $testsrc/debuglink.base $testbin/${o}b 
+  echo " now diff "$testsrc/debuglink.base $testbin/${o}b
   diff $testsrc/debuglink.base  $testbin/${o}b
   r=$?
   chkres $r "running debuglinktest-a.sh test1 diff against baseline"
