@@ -8,6 +8,7 @@
 ### This documents its content and how
 ### it was created.
 
+AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = newuritable
 rebuild: builduritable

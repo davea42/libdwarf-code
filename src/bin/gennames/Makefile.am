@@ -3,6 +3,8 @@
 
 # This also creates dwarf_names.h which one should check against
 # libdwarf.h (which has these and much else).
+
+AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = dwarf_names.h dwarf_names.c
 rebuild: gennames 
