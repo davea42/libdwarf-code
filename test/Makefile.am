@@ -33,10 +33,11 @@ MAINTAINERCLEANFILES = Makefile.in \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
 
 
-check-local:
-	$(PYTHON) dwarfdumptest.py Elf   $(top_srcdir) $(top_builddir)
-	$(PYTHON) dwarfdumptest.py Macos $(top_srcdir) $(top_builddir)
-	$(PYTHON) dwarfdumptest.py PE    $(top_srcdir) $(top_builddir)
+check-local: $(top_srcdir)/test/dwarfdumptest.py
+	echo "Running check-local:"
+	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Elf conf   "$(top_srcdir)" "$(top_builddir)"
+	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Macos conf "$(top_srcdir)" "$(top_builddir)"
+	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py PE conf    "$(top_srcdir)" "$(top_builddir)"
 
 clean-local:
 	rm -f junk.*
