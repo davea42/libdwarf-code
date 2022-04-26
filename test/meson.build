@@ -89,3 +89,26 @@ foreach test_src : tests
     )
   )
 endforeach
+
+
+shscripttests = [
+  'dwarfdumpLinux.sh',
+]
+
+#py3_exe = import('python').find_installation()
+#git_exe = find_program('git', required: false)
+#pkgconfig_mod = import('pkgconfig')
+
+projectbase = meson.source_root()
+buildbase = meson.current_source_dir()
+
+foreach testscr : shscripttests
+  test_name = testscr.split('.')[0]
+  testscrname = join_paths(projectbase,'test',testscr)
+  add_test_setup(test_name,
+    exe_wrapper: [ testscrname , projectbase, 'ninja'],
+    gdb : false,
+    is_default : true,
+  )
+endforeach
+

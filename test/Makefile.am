@@ -9,7 +9,6 @@
 ### with no hint as to what the problem really is..
 
 AUTOMAKE_OPTIONS=subdir-objects
-
 MAINTAINERCLEANFILES = Makefile.in \
   dwarfdump.conf \
   test_objectaccess.log test_objectaccess.trs \
@@ -32,6 +31,12 @@ MAINTAINERCLEANFILES = Makefile.in \
   junk.debuglink1 junk.debuglink1a \
   junk.debuglink1b junk.debuglink1sed1 junk.debuglink1sed2 \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
+
+
+check-local:
+	$(PYTHON) dwarfdumptest.py Elf   $(top_srcdir) $(top_builddir)
+	$(PYTHON) dwarfdumptest.py Macos $(top_srcdir) $(top_builddir)
+	$(PYTHON) dwarfdumptest.py PE    $(top_srcdir) $(top_builddir)
 
 clean-local:
 	rm -f junk.*
@@ -200,8 +205,8 @@ test_regex_CPPFLAGS = \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-
-TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh
+    
+###TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh
 
 if HAVE_DWARFEXAMPLE
 TESTS += debuglinktest-a.sh debuglinktest-b.sh

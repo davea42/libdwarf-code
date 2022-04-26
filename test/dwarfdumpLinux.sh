@@ -6,11 +6,27 @@
 # To call this:
 # Either set arg1 to the top source dir
 # or set env var DWTOPSRCDIR to the top source dir.
-echo $top_srcdir $top_blddir $DWTOPSRCDIR
+echo "dwarfdumpLinux.sh start. values before starting up."
+echo "topsrcdir $top_srcdir"
+echo "topblddir $top_blddir"
+echo "DWTOPSRCDIR $DWTOPSRCDIR"
+ninja=n
 
 if [ $# -gt 0  ]
 then
   t="$1"
+  if [ $# -gt 1  ]
+  then
+    y="$2"
+    if [ "$y" = "ninja" ]
+    then
+       # Needed for meson as test run is not in test/ itself
+       minja=y
+       top_blddir=`pwd`
+       echo "ninja: reset top blddir to $top_blddir"
+    fi
+    # else ignore  $2
+  fi
 else
   if [ x$DWTOPSRCDIR = "x" ]
   then
@@ -21,8 +37,10 @@ else
     t=$DWTOPSRCDIR
   fi
 fi
-. $t/test/dwarfdumpsetup.sh $t
-
+# Do some setup
+. $t/test/dwarfdumpsetup.sh $t $y
+echo "Now top_srcdir  $top_srcdir"
+echo "Now top_blddir  $top_blddir"
 f=$top_srcdir/test/testuriLE64ELf.obj
 b=$top_srcdir/test/testuriLE64ELf.base
 testbin=$top_blddir/test
@@ -40,6 +58,7 @@ then
   exit $r
 fi
 echo "if update required, mv $tx $b"
+# Result winds up in $tx, and $tx2 was just a temp file.
 fixlasttime $tx $tx2
 which dos2unix
 if [ $? -eq 0 ]
@@ -48,15 +67,14 @@ then
 fi
 diff $b $tx > $tx.diff
 r=$?
-chkres $r "FAIL dwarfdumpLinux.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
   echo "Showing diff $b $tx"
   diff $b $tx
   echo "To update , mv  $tx $b"
-  exit $r
 fi
+chkres $r "FAIL dwarfdumpLinux.sh diff of $b $tx"
 rm -f dwarfdump.conf
-rm -f $tx
-rm -f $tx.diff
+#rm -f $tx
+#rm -f $tx.diff
 exit 0

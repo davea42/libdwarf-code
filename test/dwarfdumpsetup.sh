@@ -12,11 +12,24 @@
 # as in this case we are running the script outside
 # of the source tree.
 #
+# This works for cmake,configure, not meson
 top_blddir=`pwd`/..
 
 if [ $# -gt 0 ]
 then
   top_srcdir="$1"
+  if [ $# -gt 1 ]
+  then
+    x="$2"
+    if [ "$x" = "ninja" ]
+    then
+      #  For meson only. build run in base build, not test/
+      top_blddir=`pwd`
+      echo "For ninja set top blddir $top_blddir"
+    else
+      ignore, we leav top_blddir as above.
+    fi
+  fi
 else
   if [ x$DWTOPSRCDIR = "x" ]
   then
@@ -48,6 +61,7 @@ dd=$top_blddir/src/bin/dwarfdump/dwarfdump
 fixlasttime() {
   i=$1
   t=$2
+  echo "Fix Last Time to 0, mv $t $i"
   sed 's/last time 0x.*/last time 0x0/' <$i >$t
   mv $t $i
 }
