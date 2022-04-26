@@ -1,6 +1,7 @@
 ###Copyright (C) 2021 David Anderson <davea42 at linuxmail dot org>
 ###This code is public domain and can be freely used or copied.
 
+AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 rebuild: tagtree
 	cp $(top_srcdir)/src/bin/tag_tree/tag_tree.list tmp-t2.c

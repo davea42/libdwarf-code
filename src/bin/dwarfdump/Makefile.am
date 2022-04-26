@@ -2,6 +2,7 @@
 ###This code is public domain and can be freely used or copied.
 MAINTAINERCLEANFILES = Makefile.in
 
+AUTOMAKE_OPTIONS=subdir-objects
 bin_PROGRAMS = dwarfdump
 
 dwarfdump_SOURCES = \

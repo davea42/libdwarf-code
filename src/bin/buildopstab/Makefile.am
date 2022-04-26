@@ -1,6 +1,7 @@
 ###Copyright (C) 2021 David Anderson <davea42 at linuxmail dot org>
 ###This code is public domain and can be freely used or copied.
 
+AUTOMAKE_OPTIONS=subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES = dd_opscounttab.c
 rebuild: buildopstab
