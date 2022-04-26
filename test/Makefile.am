@@ -8,6 +8,8 @@
 ###/bin/bash: ../../../libtool: No such file or directory
 ### with no hint as to what the problem really is..
 
+AUTOMAKE_OPTIONS=subdir-objects
+
 MAINTAINERCLEANFILES = Makefile.in \
   dwarfdump.conf \
   test_objectaccess.log test_objectaccess.trs \
