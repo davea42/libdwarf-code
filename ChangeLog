@@ -1,3 +1,46 @@
+2022-04-26:  David Anderson
+    commit b56e12edf0eb1d7764381cef1a8017d167c48a0b
+
+    Adding AUTOMAKE_OPTIONS=subdir-objects
+    so mow all .am files have it.
+    Fixes warnings from autoreconf/autogen.sh
+    with no other apparent effect.
+            modified:   test/Makefile.am
+
+2022-04-25:  David Anderson
+    commit fbbe14b4e0da35e611a274b3f1ce17a15803a388
+
+    Adding
+    AUTOMAKE_OPTIONS=subdir-objects
+
+    to these removed a bunch of warnings at autoreconf time.
+    test/ will get it committed to, soon.
+            modified:   Makefile.am
+            modified:   doc/Makefile.am
+            modified:   src/bin/attr_form/Makefile.am
+            modified:   src/bin/buildopstab/Makefile.am
+            modified:   src/bin/builduritable/Makefile.am
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfexample/Makefile.am
+            modified:   src/bin/dwarfgen/Makefile.am
+            modified:   src/bin/gennames/Makefile.am
+            modified:   src/bin/tag_attr/Makefile.am
+            modified:   src/bin/tag_tree/Makefile.am
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarfp/Makefile.am
+
+2022-04-25:  David Anderson
+    commit 630fb3d558b5edf906fd7c2ff95191e4fe92c90c
+
+    A working comparator useful for Elf PE Macos object tests
+            new file:   dwarfdumptest.py
+
+2022-04-23:  David Anderson
+    commit 5544b90a041b80c839cdabf61949804ec5dc25c9
+
+    Latest changes listed.
+            modified:   ChangeLog
+
 2022-04-23:  David Anderson
     commit a7ca2b59ae7c6af7d64293c8ce7277f4d393ba81
 
