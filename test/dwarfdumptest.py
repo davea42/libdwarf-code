@@ -112,7 +112,7 @@ def copytobuild(srcfile, targetfile):
     try:
         w = open(targetfile, "w")
     except:
-        print("Unable to output conf ", srcfile, " giving up")
+        print("Unable to output conf ", targetfile, " giving up")
         sys.exit(1)
     # print("dadebug write conf file, linecount",len(y))
     w.writelines(y)
