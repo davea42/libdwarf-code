@@ -17,9 +17,9 @@ import difflib
 gmaxlines = 700
 
 testbase = [
-    ["Elf", "testuriLE64ELf.base", "testuriLE64ELf.obj", "junk.LE64ELf.new"],
-    ["Macos", "test-mach-o-32.base", "test-mach-o-32.dSYM", "junk.mach-o.new"],
-    ["PE", "testobjLE32PE.base", "testobjLE32PE.exe", "junk.PE.new"],
+    ["Elf",  "testuriLE64ELf.base", "testuriLE64ELf.obj",  "junk.LE64ELf.new"],
+    ["Macos","test-mach-o-32.base", "test-mach-o-32.dSYM", "junk.mach-o.new"],
+    ["PE",   "testobjLE32PE.base",  "testobjLE32PE.exe",   "junk.PE.new"],
 ]
 
 
@@ -31,10 +31,10 @@ class ddfiles:
         self.ddopts = ""
 
     def ddprint(self):
-        print("Test baseline  :", self.testbase)
-        print("Test object    :", self.testobj)
-        print("Test output    :", self.newtest)
-        print("Test dd options:", self.ddopts)
+        print("Test baseline           :", self.testbase)
+        print("Test object             :", self.testobj)
+        print("Test output             :", self.newtest)
+        print("Test dd options         :", self.ddopts)
 
 
 class tdata:
@@ -46,11 +46,11 @@ class tdata:
         self.cwd = False
 
     def tprint(self):
-        print("testdata: objtype        =", self.objtype)
-        print("testdata: build system   =", self.buildsystem)
-        print("testdata: source base dir=", self.srcbase)
-        print("testdata: build base dir =", self.bldbase)
-        print("testdata: working dir    =", self.cwd)
+        print("Testdata objtype        :", self.objtype)
+        print("Testdata build system   :", self.buildsystem)
+        print("Testdata source base dir:", self.srcbase)
+        print("Testdata build base dir :", self.bldbase)
+        print("Testdata  working dir   :", self.cwd)
 
 
 def setupfilesinvolved(td, dd):
@@ -197,7 +197,10 @@ if __name__ == "__main__":
     if used:
         tempfilepath = os.path.join(td.bldbase, "test", dd.newtest)
         # For meson will need "test" too
-        tempfilepath = os.path.join(td.cwd, dd.newtest)
+        if td.buildsystem == 'meson':
+            tempfilepath = os.path.join(td.cwd,"test",dd.newtest)
+        else:
+            tempfilepath = os.path.join(td.cwd, dd.newtest)
         print("Line Count Base=", len(basetext),\
             " Line Count Test=", len(txtout))
         for s in diffs:
