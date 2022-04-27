@@ -411,28 +411,37 @@ local_safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
     _dwarf_safe_strcpy(targ,targlen,src,srclen); 
 }
 
-/*   ./test_errmsg_list.c -f /path.../libdwarf.h */
+/*   
+    ./test_errmsg_list -f /path.../libdwarf.h
+    ./test_errmsg_list -t $top_srcdir
+
+*/
 int
 main(int argc, char **argv)
 {
-    unsigned i = 0;
-    char *path = 0;
-    char *errpath = 0;
-    unsigned len = 0;
-    const char *libpath="/src/lib/libdwarf/libdwarf.h";
-    const char *srchdr="/src/lib/libdwarf/dwarf_errmsg_list.h";
-    pathbuf[0] = 0;
+    unsigned     i       = 0;
+    char        *path    = 0;
+    char        *errpath = 0;
+    unsigned     len     = 0;
+    const char  *libpath="/src/lib/libdwarf/libdwarf.h";
+    const char  *srchdr="/src/lib/libdwarf/dwarf_errmsg_list.h";
+    int argn = 0;
 
+    pathbuf[0] = 0;
     if (argc > 1) {
-        if (argc != 3) {
-            printf("Expected -f <filename> of base code path\n");
-            exit(1);
+        for( argn = 1; argn < argc; ++argn){
+            if (!strcmp(argv[1],"-f")) {
+                argn += 1;
+                if (argn >= argc) {
+                    printf("test_errmsglist: -f missing file path");
+                    exit(1);
+                }
+                path=argv[argn];
+            } else {
+                printf("Expected -f \n");
+                exit(1);
+            }
         }
-        if (strcmp(argv[1],"-f")) {
-            printf("Expected -f\n");
-            exit(1);
-        }
-        path=argv[2];
     } else {
         /* env var should be set with base path of code */
         path = getenv("DWTOPSRCDIR");

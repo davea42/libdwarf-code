@@ -33,11 +33,6 @@ MAINTAINERCLEANFILES = Makefile.in \
   junk.debuglink2 junk.debuglink2a junk.debuglink2b
 
 
-check-local: $(top_srcdir)/test/dwarfdumptest.py
-	echo "Running check-local:"
-	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Elf conf   "$(top_srcdir)" "$(top_builddir)"
-	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Macos conf "$(top_srcdir)" "$(top_builddir)"
-	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py PE conf    "$(top_srcdir)" "$(top_builddir)"
 
 clean-local:
 	rm -f junk.*
@@ -206,13 +201,18 @@ test_regex_CPPFLAGS = \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
+###TESTS += "./test_errmsg_list -f $(top_srcdir)"
     
-###TESTS +=  dwarfdumpPE.sh dwarfdumpLinux.sh  dwarfdumpMacos.sh
-
 if HAVE_DWARFEXAMPLE
 TESTS += debuglinktest-a.sh debuglinktest-b.sh
 TESTS += jitreaderdiff.sh
 endif
+
+check-local: $(top_srcdir)/test/dwarfdumptest.py
+	echo "Running check-local:"
+	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Elf conf   "$(top_srcdir)" "$(top_builddir)"
+	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Macos conf "$(top_srcdir)" "$(top_builddir)"
+	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py PE conf    "$(top_srcdir)" "$(top_builddir)"
 
 ### no dwarfgen tests available.
 
@@ -239,7 +239,6 @@ helpertree_test.c \
 makename_test.c \
 README.testcases \
 dwarfdumpsetup.sh \
-dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh \
 debuglinktest-a.sh \
 debuglinktest-b.sh \
 jitreaderdiff.sh \
