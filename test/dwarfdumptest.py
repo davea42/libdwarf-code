@@ -95,13 +95,6 @@ def writetextout(text, filepath):
 
 
 def copytobuild(srcfile, targetfile):
-    # present = True
-    # try:
-    #    f = open(targetfile,"r")
-    # except:
-    #    present= False
-    # if present:
-    #    f.close()
     try:
         f = open(srcfile, "r")
     except:
@@ -171,12 +164,14 @@ if __name__ == "__main__":
     dd = ddfiles()
     setupfilesinvolved(td, dd)
     dd.ddprint()
-    print("Prepare a dwarfdump.conf in local directory")
-    confsrcpath = os.path.join(td.srcbase, "src/bin/dwarfdump/dwarfdump.conf")
+    confsrcpath = os.path.join(td.srcbase, \
+        "src/bin/dwarfdump/dwarfdump.conf")
     conftargpath = os.path.join(td.bldbase, "test", "dwarfdump.conf")
+    print("Copy to local directory",confsrcpath,"to",conftargpath)
     copytobuild(confsrcpath, conftargpath)
 
-    dwarfdumppath = os.path.join(td.bldbase, "src/bin/dwarfdump/dwarfdump")
+    dwarfdumppath = os.path.join(td.bldbase, \
+        "src/bin/dwarfdump/dwarfdump")
     objpath = os.path.join(td.srcbase, "test", dd.testobj)
     baseline_path = os.path.join(td.srcbase, "test", dd.testbase)
     testout_path = os.path.join(td.bldbase, "test", dd.newtest)
