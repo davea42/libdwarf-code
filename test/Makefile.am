@@ -201,18 +201,12 @@ test_regex_CPPFLAGS = \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-###TESTS += "./test_errmsg_list -f $(top_srcdir)"
+TESTS += dwarfdumpLinux.sh  dwarfdumpPE.sh dwarfdumpMacos.sh 
     
 if HAVE_DWARFEXAMPLE
 TESTS += debuglinktest-a.sh debuglinktest-b.sh
 TESTS += jitreaderdiff.sh
 endif
-
-check-local: $(top_srcdir)/test/dwarfdumptest.py
-	echo "Running check-local:"
-	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Elf conf   "$(top_srcdir)" "$(top_builddir)"
-	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py Macos conf "$(top_srcdir)" "$(top_builddir)"
-	$(PYTHON) $(top_srcdir)/test/dwarfdumptest.py PE conf    "$(top_srcdir)" "$(top_builddir)"
 
 ### no dwarfgen tests available.
 
@@ -238,7 +232,8 @@ getopttest.c \
 helpertree_test.c \
 makename_test.c \
 README.testcases \
-dwarfdumpsetup.sh \
+dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh  dwarfdumpsetup.sh \
+dwarfdumptest.py \
 debuglinktest-a.sh \
 debuglinktest-b.sh \
 jitreaderdiff.sh \
