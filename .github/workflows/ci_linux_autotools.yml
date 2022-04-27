@@ -18,9 +18,9 @@ jobs:
       run: autoreconf -vif
     - name: configure
       run: ./configure
-    - name: make
+    - name: make -j
       run: make
-    - name: make check
+    - name: make -j check
       run: make check
     - name: make distcheck
       run: make distcheck
