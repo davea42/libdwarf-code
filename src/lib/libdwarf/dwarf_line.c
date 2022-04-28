@@ -31,6 +31,7 @@
 
 #include <config.h>
 
+#include <stdint.h> /* uintptr_t */
 #include <stdlib.h> /* free() malloc() realloc() */
 #include <string.h> /* memset() strlen() */
 
@@ -762,7 +763,12 @@ _dwarf_internal_srclines(Dwarf_Die die,
             dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
             return resf;
         }
-        line_ptr += fission_offset;
+
+        /* fission_offset may be 0, and adding 0 to a null pointer
+           is undefined behavior with some compilers. */
+        uintptr_t line_ptr_as_uint = (uintptr_t)line_ptr;
+        line_ptr_as_uint += fission_offset;
+        line_ptr = (Dwarf_Small *)line_ptr_as_uint;
         if (line_ptr > section_end) {
             _dwarf_error(dbg, error, DW_DLE_FISSION_ADDITION_ERROR);
             return DW_DLV_ERROR;
