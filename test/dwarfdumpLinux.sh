@@ -75,6 +75,6 @@ then
 fi
 chkres $r "FAIL dwarfdumpLinux.sh diff of $b $tx"
 rm -f dwarfdump.conf
-#rm -f $tx
-#rm -f $tx.diff
+rm -f $tx
+rm -f $tx.diff
 exit 0
