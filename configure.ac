@@ -112,7 +112,7 @@ AM_PROG_AR
 
 ### We don't use dist-xz *.xz output from make dist,
 ### so don't mention it.
-AM_INIT_AUTOMAKE([1.6 dist-xz])
+AM_INIT_AUTOMAKE([1.6 dist-xz subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AS_IF(
