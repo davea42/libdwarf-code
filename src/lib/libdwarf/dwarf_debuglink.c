@@ -691,10 +691,16 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
     ASNAR(dbg->de_copy_word,namesize, bu->bu_ownernamesize);
     ASNAR(dbg->de_copy_word,descrsize,bu->bu_buildidsize);
     ASNAR(dbg->de_copy_word,type,     bu->bu_type);
+#if 0
+    /*  This test is no longer appropriate, other lengths
+        that 20 may exist.  --Wl,--build-id= can have
+        at least one of 'fast', 'md5', 'sha1', 'uuid' or
+        possibly others so we should not check the length. */
     if (descrsize != 20) {
         _dwarf_error(dbg,error,DW_DLE_CORRUPT_NOTE_GNU_DEBUGID);
         return DW_DLV_ERROR;
     }
+#endif
     res = _dwarf_check_string_valid(dbg,
         (Dwarf_Small *)&bu->bu_owner[0],
         (Dwarf_Small *)&bu->bu_owner[0],
