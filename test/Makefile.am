@@ -13,13 +13,13 @@ MAINTAINERCLEANFILES = Makefile.in \
   dwarfdump.conf \
   test_objectaccess.log test_objectaccess.trs \
   getnametest.log getnametest.trs \
-  runtestdd.sh.log	      test_linkedtopath.log \
+  test_linkedtopath.log \
   test_dwarfstring.log	      test_macrocheck.log \
   test_dwgetopt.log	      test_makenametest.log \
   test_extra_flag_strings.log test_sectionbitmaps.log \
   test_testesb.log \
   test_helpertree.log  \
-  runtestdd.sh.trs	      test_linkedtopath.trs \
+  test_linkedtopath.trs \
   test_dwarfstring.trs	      test_macrocheck.trs \
   test_dwgetopt.trs	      test_makenametest.trs \
   test_extra_flag_strings.trs  test_sectionbitmaps.trs \
