@@ -204,8 +204,10 @@ test_regex_CPPFLAGS = \
 TESTS += dwarfdumpLinux.sh  dwarfdumpPE.sh dwarfdumpMacos.sh 
     
 ### debuglink tests are difficult to support in Windows/mingw
-if HAVE_DEBUGLINK
-TESTS += debuglinktest-a.sh debuglinktest-b.sh
+if HAVE_DEBUGLINK 
+if HAVE_DWARFEXAMPLE
+  TESTS += debuglinktest-a.sh debuglinktest-b.sh
+endif
 endif
 if HAVE_DWARFEXAMPLE
 TESTS += jitreaderdiff.sh

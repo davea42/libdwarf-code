@@ -17,14 +17,12 @@ jobs:
     - name: dos2unix
       run:  sudo apt-get install dos2unix
     - name: autoreconf
-      run: autoreconf -vif
+      run:  autoreconf -vif
     - name: configure
-      run: ./configure
+      run:  ./configure --enable-dwarfexample
     - name: make -j
-      run: make
+      run:  make
     - name: make -j check
-      run: | 
-        make check
-        cat test/test-suite.log
+      run:  make check
     - name: make distcheck
-      run: make distcheck
+      run:  make distcheck
