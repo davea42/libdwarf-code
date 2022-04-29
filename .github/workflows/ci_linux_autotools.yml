@@ -23,6 +23,8 @@ jobs:
     - name: make -j
       run: make
     - name: make -j check
-      run: make check
+      run: | 
+        make check
+        cat test/test-suite.log
     - name: make distcheck
       run: make distcheck
