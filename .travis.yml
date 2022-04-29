@@ -15,11 +15,10 @@ arch:
 
 install:
   - sudo apt-get -qq update
-  - sudo apt install build-essential zlib1g-dev
+  - sudo apt install build-essential zlib1g-dev dos2unix
 
 before_script:
   - autoreconf -vif
-
 
 script: 
   - ./configure --enable-wall --enable-dwarfexample && make && make check
