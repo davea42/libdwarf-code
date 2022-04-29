@@ -105,6 +105,8 @@ case "$host_os" in
       have_win32="yes"
    ;;
 esac
+### supress debuglink tests if windows.
+AM_CONDITIONAL([HAVE_DEBUGLINK], [test "x${have_win32}" = "xno"])
 
 ### Checks for programs
 

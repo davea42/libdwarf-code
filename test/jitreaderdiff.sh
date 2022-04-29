@@ -65,6 +65,7 @@ then
   exit $r
 fi
 echo "if update required, mv $tx $b"
+dos2unix $tx
 diff $b $tx > $tx.diff
 r=$?
 chkres $r "FAIL jitreader.sh diff of $b $tx"

@@ -477,6 +477,18 @@ main(int argc, char **argv)
             continue;
         }
         filenamein = arg;
+        if (filenamein[0] != '/' && filenamein[1]  == ':') { 
+            /* For regression testing we alter a Windows drive name */
+            unsigned char c = filenamein[0];
+            switch(c) {
+            /* The most likely cases. */
+            case 'C': c = 'c'; break;
+            case 'D': c = 'd'; break;
+            default: ; /* do nothing */
+            }
+            filenamein[0] = '/';
+            filenamein[1] = c;
+        }
         one_file_debuglink(filenamein,gl_pathnames,gl_pathcount,
             no_follow_debuglink);
         printf("=======done with %s\n",filenamein);

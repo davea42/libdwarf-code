@@ -71,6 +71,27 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #endif /* _WIN32 */
 
 static int
+is_full_path(char *path,int joinchar)
+{
+    unsigned char c = path[0];
+    unsigned char c1 = 0;
+    if (c == joinchar) {
+        return TRUE;
+    }
+    c1 = path[1];
+    if (c1 == ':') {
+        /*  Windows full path, we assume
+            We just assume nobody would be silly enough
+            to name a linux/posix directory "C:aa"
+            or the like. */
+        return TRUE;
+    }
+    /*  No kind of full path name */
+    return FALSE;
+}
+
+
+static int
 _dwarf_extract_buildid(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pbuildid,
     unsigned        *type_returned,
@@ -176,15 +197,15 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
         return DW_DLV_OK;
     }
     targ = dwarfstring_string(target);
-    if (targ[targlen-1] != joinchar) {
-        if (*inputs != joinchar) {
+    if (!is_full_path(targ+targlen-1,joinchar)) {
+        if (!is_full_path(inputs,joinchar)) {
             dwarfstring_append(target,joinstr);
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs);
         }
     } else {
-        if (*inputs != joinchar) {
+        if (!is_full_path(inputs,joinchar)) {
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs+1);
@@ -195,7 +216,8 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
 #endif /* _WIN32 */
     return DW_DLV_OK;
 }
-/*  ASSERT: the last character in s is not a /  */
+/*  Find the length of the prefix before the final part of the path.
+    ASSERT: the last character in s is not a /  */
 static size_t
 mydirlen(char *s)
 {
@@ -393,7 +415,7 @@ _dwarf_construct_linkedto_path(
         dwarfstring_append_length(&joind.js_tmp2,
             depath,dirnamelen);
     }
-    if (depath[0] != joinchar) {
+    if (!is_full_path(depath,joinchar)) {
         /*  Meaning a/b or b, not /a/b or /b ,
             so we apply cwd */
         char  buffer[2000];

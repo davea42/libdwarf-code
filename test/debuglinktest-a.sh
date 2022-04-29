@@ -75,17 +75,26 @@ else
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
   echo $localsrc | sed "s:[.]:\[.\]:g" >$testbin/${o}sed1
+  echo "testbin/${o}sed1 = $testbin/${o}sed1"
   sedv1=`head -n 1 $testbin/${o}sed1`
   # Transform source dir name from literal to ..src.. so
   # test diff not dependent on local file path. 
   sed "s:$sedv1:..src..:" <$testbin/$o  >$testbin/${o}a
+  cat $testbin/${o}a
+  echo " source path now changed to ..src.."
+  echo "testbin/${o}a  = $testbin/${o}a"
   echo $blddir | sed "s:[.]:\[.\]:g" >$testbin/${o}sed2
+  echo "testbin/${o}sed2  = $testbin/${o}sed2"
   sedv2=`head -n 1 $testbin/${o}sed2`
   # Transform build dir name from literal to ..bld.. so
   # test diff not dependent on local file path. 
   sed "s:$sedv2:..bld..:" <$testbin/${o}a  >$testbin/${o}b
+  echo "bin path now changed to ..bld.. "
+  echo "testbin/${o}b  = $testbin/${o}b"
+  cat $testbin/${o}b
   ls -l   $testsrc/debuglink.base $testbin/${o}b 
   echo " now diff "$testsrc/debuglink.base $testbin/${o}b
+  dos2unix $testbin/${o}b
   diff $testsrc/debuglink.base  $testbin/${o}b
   r=$?
   chkres $r "running debuglinktest-a.sh test1 diff against baseline"
