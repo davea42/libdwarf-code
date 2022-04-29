@@ -15,7 +15,7 @@ arch:
 
 install:
   - sudo apt-get -qq update
-  - sudo apt install build-essential zlib1g-dev dos2unix
+  - sudo apt-get install build-essential zlib1g-dev dos2unix
 
 before_script:
   - autoreconf -vif
