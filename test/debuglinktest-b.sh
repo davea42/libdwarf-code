@@ -80,7 +80,8 @@ fi
 # where one's source/build directories are.
 sed "s:$localsrc:..src..:" <$testbin/$o  >$testbin/${o}a
 sed "s:$blddir:..bld..:" <$testbin/${o}a  >$testbin/${o}b
-dos2unix $testbin/${o}b
+${localsrc}/dos2unix.py $testbin/${o}b
+chkres $? "FAIL debuglinktest-b.sh dos2unix.py"
 diff $testsrc/debuglink2.base  $testbin/${o}b
 r=$?
 chkres $r "running debuglinktest-b.sh  diff against baseline"

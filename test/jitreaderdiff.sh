@@ -47,6 +47,7 @@ echo "TOP topbld  : $top_blddir"
 echo "TOP localsrc: $localsrc"
 
 b=$top_srcdir/test/jitreader.base
+localsrc=$top_srcdir/test
 testbin=$top_blddir/test
 tx=$testbin/junk.jitreader.new
 jr=$top_blddir/src/bin/dwarfexample/jitreader
@@ -65,14 +66,14 @@ then
   exit $r
 fi
 echo "if update required, mv $tx $b"
-dos2unix $tx
-diff $b $tx > $tx.diff
-r=$?
-chkres $r "FAIL jitreader.sh diff of $b $tx"
+${localsrc}/dos2unix.py $tx
+chkres $? "FAIL jitreaderdiff.sh dos2unix.py"
+${localsrc}/dwdiff.py $b $tx
+#diff $b $tx > $tx.diff
+#chkres $r "FAIL jitreader.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
-  echo "Showing diff $b $tx"
-  diff $b $tx
+  echo "Diff above."
   echo "To update , mv  $tx $b"
   exit $r
 fi

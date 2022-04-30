@@ -43,6 +43,7 @@ echo "Now top_srcdir  $top_srcdir"
 echo "Now top_blddir  $top_blddir"
 f=$top_srcdir/test/testuriLE64ELf.obj
 b=$top_srcdir/test/testuriLE64ELf.base
+localsrc=$top_srcdir/test
 testbin=$top_blddir/test
 tx=$testbin/junk.testuriLE64ELf.base
 tx2=$testbin/junk2.testuriLE64ELf.base
@@ -60,11 +61,8 @@ fi
 echo "if update required, mv $tx $b"
 # Result winds up in $tx, and $tx2 was just a temp file.
 fixlasttime $tx $tx2
-which dos2unix
-if [ $? -eq 0 ]
-then
-  dos2unix $tx
-fi
+${localsrc}/dos2unix.py $tx
+chkres $? "FAIL dwarfdumplinux.sh dos2unix.py"
 diff $b $tx > $tx.diff
 r=$?
 if [ $r -ne 0 ]

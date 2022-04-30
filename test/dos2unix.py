@@ -11,7 +11,7 @@ def writetextout(text, filepath):
         sys.exit(1)
     for s in txtout:
         # Even on windows writes in Linux text format
-        print(s.rstrip("\n"), file=f, end="\n")
+        print(s.rstrip("\r\n"), file=f, end="\n")
     f.close()
 
 

@@ -43,15 +43,11 @@ then
    exit $r
 fi
 echo "if update required, mv $tx $b"
+# input and result are $tx, $tx2 is a temp file.
 fixlasttime $tx $tx2
-which dos2unix
-if [ $? -eq 0 ]
-then
-  dos2unix -n $tx $tx2
-  chkres $? "FAILdwarfdumpPE.sh dos2unix"
-  mv $tx2 $tx
-  chkres $? "FAILdwarfdumpPE.sh mv %tx2 $tx"
-fi
+# $tx updated if line ends are Windows
+${localsrc}/dos2unix.py $tx
+chkres $? "FAILdwarfdumpPE.sh dos2unix.py"
 diff $b $tx > $tx.diff 
 echo "report file lengths"
 wc -l $b  $tx

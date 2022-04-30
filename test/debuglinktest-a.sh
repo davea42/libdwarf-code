@@ -94,7 +94,8 @@ else
   cat $testbin/${o}b
   ls -l   $testsrc/debuglink.base $testbin/${o}b 
   echo " now diff "$testsrc/debuglink.base $testbin/${o}b
-  dos2unix $testbin/${o}b
+  ${localsrc}/dos2unix.py $testbin/${o}b
+  chkres $? "FAIL debuglinktest-a.sh dos2unix.py"
   diff $testsrc/debuglink.base  $testbin/${o}b
   r=$?
   chkres $r "running debuglinktest-a.sh test1 diff against baseline"

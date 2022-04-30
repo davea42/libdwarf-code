@@ -21,6 +21,7 @@ fi
 
 f=$top_srcdir/test/test-mach-o-32.dSYM
 b=$top_srcdir/test/test-mach-o-32.base
+localsrc=$top_srcdir/test
 testbin=$top_blddir/test
 tx=$testbin/junk.test-mach-o-32.base
 tx2=$testbin/junk2.test-mach-o-32.base
@@ -36,12 +37,10 @@ then
   exit $r
 fi
 echo "if update required, mv $tx $b"
+# tx2 is a temp file, tx is the input and the output.
 fixlasttime $tx $tx2
-which dos2unix
-if [ $? -eq 0 ]
-then
-  dos2unix $tx
-fi
+${localsrc}/dos2unix.py $tx
+chkres $? "FAIL dwarfdumpMacos.sh dos2unix.py"
 diff $b $tx > $tx.diff
 r=$?
 chkres $r "FAIL test/dwarfdumpMacos.sh diff of $b $tx"

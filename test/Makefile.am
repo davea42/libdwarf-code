@@ -256,23 +256,25 @@ buildingdummy.sh \
 CMakeLists.txt \
 debuglink2.base \
 debuglink.base \
+debuglinktest-a.sh \
+debuglinktest-b.sh \
+dos2unix.py \
 dummyexecutable \
-dummysourceignore \
 dummyexecutable.debug \
+dummysourceignore \
+dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh  dwarfdumpsetup.sh \
+dwarfdumptest.py \
 dwarf_leb_test.c \
 dwarf_tied_test.c \
+dwdiff.py \
 getnametest.c \
 getopttest.c \
 helpertree_test.c \
-makename_test.c \
-README.testcases \
-dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh  dwarfdumpsetup.sh \
-dwarfdumptest.py \
-debuglinktest-a.sh \
-debuglinktest-b.sh \
-jitreaderdiff.sh \
 jitreader.base \
+jitreaderdiff.sh \
+makename_test.c \
 meson.build \
+README.testcases \
 section_bitmaps_test.c \
 test_dwarfstring.c \
 test_errmsglist.c \
@@ -286,3 +288,4 @@ testobjLE32PE.exe \
 testobjLE32PE.test.c \
 testuriLE64ELf.base \
 testuriLE64ELf.obj
+
