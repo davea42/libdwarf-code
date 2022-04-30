@@ -26,10 +26,10 @@ jobs:
         update: true
         install: base-devel git autoconf automake libtool mingw-W64-x86_64-toolchain mingw-w64-x86_64-zlib
     - name: Configure
-        run: autoreconf -vif && ./configure --disable-static --enable-shared --host=x86_64-pc-mingw32
+        run: autoreconf -vif && ./configure --disable-static --enable-shared
     - name: Build
       run: make -j
     - name: Check
       run: make -j check
     -name: Distcheck
-      run: make -j distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared --host=x86_64-pc-mingw32"
+      run: make -j distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
