@@ -18,8 +18,10 @@ install:
   - sudo apt-get install build-essential zlib1g-dev dos2unix
 
 before_script:
+  - make distclean
   - autoreconf -vif
 
 script: 
   - ./configure --enable-wall --enable-dwarfexample && make && make check
+  - ls src/bin/dwarfdump/.deps/
   - cat test/test-suite.log
