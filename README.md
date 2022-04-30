@@ -31,7 +31,7 @@ are not required for building/using
 libdwarf/dwarfdump.
 
     Ubuntu: 
-    sudo apt install pkgconf zlib1g zlib1g-dev dos2unix
+    sudo apt install pkgconf zlib1g zlib1g-dev
     optional add: cmake meson 
 
     FreeBSD:
