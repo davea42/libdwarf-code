@@ -21,6 +21,6 @@ before_script:
   - autoreconf -vif
 
 script: 
-  - ./configure --disable-dependency-checking --enable-wall --enable-dwarfexample && make && make check
+  - ./configure --disable-dependency-tracking --enable-wall --enable-dwarfexample && make && make check
   - ls src/bin/dwarfdump/.deps/
   - cat test/test-suite.log
