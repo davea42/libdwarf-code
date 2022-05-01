@@ -15,7 +15,7 @@
 
 # This is libdwarf README[.md]
 
-Updated 30 April 2022
+Updated 01 May 2022
 
 For release libdwarf-0.4.1 
 
@@ -48,6 +48,11 @@ recommended practice.
 
 ### GNU configure build
 
+Note: if you get a build failure that mentions
+something about test/ and missing .Po object files
+add --disable-dependency-tracking to the configure
+command.
+    
     rm -rf /tmp/build
     mkdir /tmp/build
     cd /tmp
@@ -102,6 +107,11 @@ For example, on Ubuntu 20.04
     sudo apt-get install autoconf libtool pkg-config
 ```
 
+Note: if you get a build failure that mentions
+something about test/ and missing .Po object files
+add --disable-dependency-tracking to the configure
+command.
+
 Using the source/build directories from above as examples,
 do :
 
@@ -134,6 +144,15 @@ By default configure compiles and uses libdwarf.a.
 With `--enable-shared` appended to the configure step,
 both libdwarf.a and libdwarf.so
 are built and the runtimes built will reference libdwarf.so.
+
+If you get a build failure that mentions
+something about test/ and missing .Po object files
+add --disable-dependency-tracking to the configure
+command. With that option do not assume you can
+alter source files and have make rebuild all
+necessary.
+See:
+https://www.gnu.org/savannah-checkouts/gnu/automake/history/automake-history.html#Dependency-Tracking-Evolution
 
 With `--enable-shared --disable-static`
 appended to the configure step,
