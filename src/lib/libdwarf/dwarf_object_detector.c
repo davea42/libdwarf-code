@@ -605,12 +605,13 @@ match_buildid(
         if (!blockmatch(crc_debug,crc_base,4)) {
             return FALSE;
         }
-    }
-    if (buildid_length_base != buildid_length_debug) {
-        return FALSE;
+        return TRUE;
     }
     if (!blockmatch(buildid_base,buildid_debug,
         buildid_length_base)) {
+        return FALSE;
+    }
+    if (buildid_length_base != buildid_length_debug) {
         return FALSE;
     }
     return TRUE;
@@ -642,6 +643,9 @@ _dwarf_debuglink_finder_newpath(
     Dwarf_Bool didmatch = FALSE;
     int res = 0;
 
+#if 0
+printf("dadebug finder_newpath call dwarf_init_path %s 0,0 line %d \n",path,__LINE__);
+#endif
     res = dwarf_init_path(path,
         0,0,
         DW_GROUPNUMBER_ANY,
@@ -656,6 +660,9 @@ _dwarf_debuglink_finder_newpath(
         /* should never happen */
         return DW_DLV_NO_ENTRY;
     }
+#if 0
+printf("dadebug _dwarf_debuglink_finder_newpath calls dwarf_gnu_debuglink line %d\n",__LINE__);
+#endif
     res = dwarf_gnu_debuglink(dbg,
         &debuglinkpath,
         &crc, &debuglinkfullpath, &debuglinkfullpath_strlen,
@@ -675,12 +682,19 @@ _dwarf_debuglink_finder_newpath(
         dbg = 0;
         return DW_DLV_NO_ENTRY;
     }
+#if 1
+printf("dadebug debuglink DW_DLV_OK, so why do crc even if present? line %d\n",__LINE__);
+#endif
     free(paths);
     paths = 0;
 
     memset(&lcrc[0],0,sizeof(lcrc));
     if (crc_in && !crc) {
         int res1 = 0;
+
+#if 1
+printf("dadebug _dwarf_debuglink_finder_newpath CALC CRC %d %s\n",__LINE__,__FILE__);
+#endif
         res1 = dwarf_crc32(dbg,lcrc,&error);
         if (res1 == DW_DLV_ERROR) {
             paths = 0;
@@ -749,6 +763,10 @@ _dwarf_debuglink_finder_internal(
     unsigned       paths_count = 0;
     unsigned       i = 0;
 
+#if 0
+printf("dadebug debuglink_finder_internal path_in %s line %d\n",
+path_in,__LINE__);
+#endif
     path = path_in;
     /*  This path will work.
         Already know the file is there. */
@@ -781,6 +799,9 @@ _dwarf_debuglink_finder_internal(
             return res;
         }
     }
+#if 0
+printf("dadebug _dwarf_debuglink_finder_internal calls dwarf_gnu_debuglink\n");
+#endif
     res = dwarf_gnu_debuglink(dbg,
         &debuglinkpath,
         &crc, &debuglinkfullpath, &debuglinkfullpath_strlen,
@@ -794,8 +815,11 @@ _dwarf_debuglink_finder_internal(
         return DW_DLV_NO_ENTRY;
     }
     if (res == DW_DLV_NO_ENTRY) {
-        /*  There is no debuglink section */
+        /*  There is no debuglink buildid   section? */
         dwarf_finish(dbg);
+#if 0
+printf("dadebug no debuglink section line %d\n",__LINE__); 
+#endif
         return DW_DLV_NO_ENTRY;
     }
     for (i =0; i < paths_count; ++i) {
@@ -805,23 +829,39 @@ _dwarf_debuglink_finder_internal(
         /*  First, open the file to determine if it exists.
             If not, loop again */
 
+#if 0
+printf("dadebug try open path [%d] %s\n",(int)i,pa); 
+#endif
         pfd = open(pa,O_RDONLY|O_BINARY);
         if (pfd  < 0) {
+#if 0
+printf("dadebug  path not found [%d] %s\n",(int)i,pa); 
+#endif
             /*  This is the usual path. */
             continue;
         }
         close(pfd);
+#if 1
+printf("dadebug  path found [%d] %s line %d %s\n",(int)i,pa,__LINE__,__FILE__); 
+printf("dadebug  call finder_newpath [%d] %s line %d %s\n",(int)i,pa,__LINE__,__FILE__); 
+#endif
         /* ASSERT: never returns DW_DLV_ERROR */
         res = _dwarf_debuglink_finder_newpath(
             pa,crc,buildid_length, buildid,
             m,fd_out);
         if (res == DW_DLV_OK) {
+#if 0
+printf("dadebug path matches [%d] %s line %d\n",(int)i,pa,__LINE__); 
+#endif
             free(debuglinkfullpath);
             free(paths);
             paths = 0;
             dwarf_finish(dbg);
             return DW_DLV_OK;
         }
+#if 0
+printf("dadebug path not match, continue [%d] %s line %d\n",(int)i,pa,__LINE__); 
+#endif
         *errcode = 0;
         continue;
     }

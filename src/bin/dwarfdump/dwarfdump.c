@@ -395,7 +395,7 @@ main(int argc, char *argv[])
     temp_path_buf[0] = 0;
     /*  This data scan is to find Elf objects and
         unknown objects early.  If the user
-        asks for libelf with certain options
+        asks for certain options
         that will rule out handling GNU_debuglink
         on that object.  This does not concern itself
         with dSYM or debuglink at all. */
@@ -435,6 +435,9 @@ main(int argc, char *argv[])
 
         temp_path_buf[0] = 0;
         tied_file_name = esb_get_string(glflags.config_file_tiedpath);
+#if 0
+printf("dadebug tied file dd %d\n",__LINE__);
+#endif
         /*  A genuine tiedpath cannot be dsym or debuglink. */
         res = dwarf_object_detector_path_b (tied_file_name,
             0,0,
@@ -839,9 +842,15 @@ process_one_file(
         unsigned tblen = temp_path_buf_len;
         title = "dwarf_init_path_dl fails.";
         if (glflags.gf_no_follow_debuglink) {
+#if 0
+printf("dadebug no follow debuglink! line %d %s\n",__LINE__,__FILE__);
+#endif
             tb = 0;
             tblen = 0;
         }
+#if 0
+printf("dadebug tied file dd dl %d %s\n",__LINE__,__FILE__);
+#endif
         dres = dwarf_init_path_dl(file_name,
             tb,tblen,
             glflags.group_number,
@@ -852,6 +861,9 @@ process_one_file(
             &onef_err);
     }
     if (dres == DW_DLV_NO_ENTRY) {
+#if 0
+printf("dadebug tied file dd dl %d %s\n",__LINE__,__FILE__);
+#endif
         if (glflags.group_number > 0) {
             printf("No DWARF information present in %s "
                 "for section group %d \n",
@@ -862,6 +874,9 @@ process_one_file(
         return dres;
     }
     if (dres == DW_DLV_ERROR) {
+#if 0
+printf("dadebug tied file dd dl %d\n",__LINE__);
+#endif
         /* Prints error, cleans up Dwarf_Error data. */
         print_error_and_continue(dbg,
             title,dres,onef_err);
@@ -869,13 +884,22 @@ process_one_file(
         return DW_DLV_NO_ENTRY;
     }
     if (path_source == DW_PATHSOURCE_dsym) {
+#if 0
+printf("dadebug tied file dd dl %d\n",__LINE__);
+#endif
         printf("Filename by dSYM is %s\n",
             sanitized(temp_path_buf));
     } else if (path_source == DW_PATHSOURCE_debuglink) {
+#if 0
+printf("dadebug tied file dd dl %d\n",__LINE__);
+#endif
         printf("Filename by debuglink is %s\n",
             sanitized(temp_path_buf));
         glflags.gf_gnu_debuglink_flag = TRUE;
     } else { /* Nothing to print yet. */ }
+#if 0
+printf("dadebug tied file dd dl %d\n",__LINE__);
+#endif
     if (tied_file_name && strlen(tied_file_name)) {
         {
             /*  The tied file we define as group 1, BASE.

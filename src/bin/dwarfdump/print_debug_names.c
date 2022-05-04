@@ -45,7 +45,9 @@ dump_table(const char *msg,unsigned long count,
     Dwarf_Half *idx, Dwarf_Half *form)
 {
     unsigned long i = 0;
+#if 0
     printf("dadebug abbrev %s, count %lu\n",msg,count);
+#endif
     for ( ; i < count;    ++i) {
         printf("[%lu] %x %x\n",i,idx[i],form[i]);
     }

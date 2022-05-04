@@ -90,17 +90,17 @@ print_debuglink(const char *prefix,
     unsigned char *crcx = 0;
     unsigned char *end = 0;
 
-    printf("%s Section            : %s\n",prefix,dlname);
-    printf("%s Debuglink name     : %s\n",prefix,debuglinkpath);
+    printf("%s Section             : %s\n",prefix,dlname);
+    printf("%s Debuglink name      : %s\n",prefix,debuglinkpath);
     crcx = crc;
     end = crcx + 4;
-    printf("%s crc              0X: ",prefix);
+    printf("%s compiler-created crc: 0X  ",prefix);
     for (; crcx < end; crcx++) {
         printf("%02x ", *crcx);
     }
     printf("\n");
     if (debuglinkfullpath_strlen) {
-        printf("%s Debuglink target   : %s\n",
+        printf("%s Debuglink target    : %s\n",
             prefix,debuglinkfullpath);
     }
 }
@@ -112,12 +112,12 @@ print_buildid(const char *prefix,
     unsigned int   buildid_length,
     unsigned char  *buildid)
 {
-    printf("%s Section            : %s\n",prefix,buildidname);
-    printf("%s Build-id  type     : %u\n",prefix, buildid_type);
-    printf("%s Build-id  ownername: %s\n",prefix,
+    printf("%s Section             : %s\n",prefix,buildidname);
+    printf("%s Build-id  type      : %u\n",prefix, buildid_type);
+    printf("%s Build-id  ownername : %s\n",prefix,
         buildidownername);
-    printf("%s Build-id  length   : %u\n",prefix,buildid_length);
-    printf("%s Build-id           : ",prefix);
+    printf("%s Build-id  length    : %u\n",prefix,buildid_length);
+    printf("%s Build-id            : ",prefix);
     {
         const unsigned char *cur = 0;
         const unsigned char *end = 0;
@@ -158,8 +158,12 @@ print_ftype_message(const char * prefix,
 }
 
 /*  The debug version we expect not to have debuglink,
-    checking here if buildid matches.
-    Never returns DW_DLV_ERROR. */
+    checking here if buildid crc and id length match.
+    Never returns DW_DLV_ERROR. 
+    debuglink records have a crc.
+    build ID records have a byte string 
+    This matches either.
+*/
 static int
 match_buildid(const char *prefix,
     unsigned char *crc_base,
@@ -179,6 +183,8 @@ match_buildid(const char *prefix,
             printf("%s===crc does not match\n",prefix);
             return DW_DLV_NO_ENTRY;
         }
+        /* Matching crc, applicable to debuglink */
+        return DW_DLV_OK;
     } else {
     }
     if (buildid_length_base != buildid_length_debug) {
@@ -335,8 +341,6 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         res = match_buildid(prefix,
             /* This is the executable */
             crc_in,buildid_len_in,buildid_in,
-            /* pass in dbg so we can calculate the missing crc */
-            /* following is the target, ie, debug */
             crc,buildid_length,buildid);
         if (res == DW_DLV_OK) {
             printf("%s===executable and debug buildid match\n",
@@ -379,10 +383,8 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         if (!realobj) {
             continue;
         }
-        /*  Now see if the debug has buildid matching
-            the executable. */
         if (is_outer && !no_follow_debuglink) {
-            /*  read the executable, now look to the
+            /*  read the executable and look to the
                 debug (ie pa) to see if it matches.
                 Do not pass in globals paths*/
             res = one_file_debuglink_internal(
