@@ -633,10 +633,15 @@ static const char *usage_long_text[] = {
 "-------------------------------------------------------------------",
 " --no-follow-debuglink       Do not follow GNU debuglink, ",
 "                             just use the file directly so,",
-"                             debuglink  global paths are ignored.",
+"                             debuglink  global paths ",
+"                             and debugid links are ignored.",
 " --add-debuglink_path=<text> Add the path to the list of",
 "                             global paths debuglink searches",
-
+" --suppress-debuglink-crc    Tell libdwarf to avoid calculating",
+"                             crc values, saving some runtime at",
+"                             startup and removing a ",
+"                             safety check but allowing debuglink",
+"                             and debugid paths to be used.",
 "-------------------------------------------------------------------",
 "Search text in attributes",
 "-------------------------------------------------------------------",
@@ -801,7 +806,8 @@ OPT_RELOC_RANGES,             /* -oR  --reloc-ranges      */
 
 /* debuglink options */
 OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
-OPT_ADD_DEBUGLINK_PATH,       /* --add-debuglink-path=<text> */
+OPT_ADD_DEBUGLINK_PATH,      /* --add-debuglink-path=<text> */
+OPT_SUPPRESS_DEBUGLINK_CRC,  /* --suppress-debuglink-crc */
 
 /* Search text in attributes                        */
 OPT_SEARCH_ANY,       /* -S any=<text>   --search-any=<text>  */
@@ -975,6 +981,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 /*  GNU debuglink options */
 {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
 {"add-debuglink-path", dwrequired_argument, 0,OPT_ADD_DEBUGLINK_PATH},
+{"suppress-debuglink-crc", dwno_argument, 0,OPT_SUPPRESS_DEBUGLINK_CRC},
 
 /* Search text in attributes. */
 {"search-any",            dwrequired_argument, 0,OPT_SEARCH_ANY  },
@@ -1997,6 +2004,12 @@ void arg_no_follow_debuglink(void)
     glflags.gf_no_follow_debuglink = TRUE;
 }
 
+/*  Option --suppress-debuglink-crc */
+void arg_suppress_debuglink_crc(void)
+{
+    dwarf_suppress_debuglink_crc(1);
+}
+
 static int
 insert_debuglink_path(char *p)
 {
@@ -2664,6 +2677,8 @@ set_command_options(int argc, char *argv[])
         /* debuglink attributes */
         case OPT_NO_FOLLOW_DEBUGLINK: arg_no_follow_debuglink();break;
         case OPT_ADD_DEBUGLINK_PATH: arg_add_debuglink_path();  break;
+        case OPT_SUPPRESS_DEBUGLINK_CRC: 
+            arg_suppress_debuglink_crc(); break;
 
         /* Search text in attributes. */
         case OPT_SEARCH_ANY:            arg_search_any();
@@ -2729,6 +2744,8 @@ static const char *simplestdargs[] ={
 "--show-args",
 "--verbose-more",
 "--suppress-de-alloc-tree",
+"--suppress-debuglink-crc",
+"--no-follow-debuglink",
 0
 };
 
