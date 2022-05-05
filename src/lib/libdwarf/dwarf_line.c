@@ -767,8 +767,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
             return resf;
         }
 
-        /* fission_offset may be 0, and adding 0 to a null pointer
-           is undefined behavior with some compilers. */
+        /*  fission_offset may be 0, and adding 0 to a null pointer
+            is undefined behavior with some compilers. */
         line_ptr_as_uint += fission_offset;
         line_ptr = (Dwarf_Small *)line_ptr_as_uint;
         if (line_ptr > section_end) {
