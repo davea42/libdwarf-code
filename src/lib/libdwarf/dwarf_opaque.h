@@ -1077,6 +1077,7 @@ int _dwarf_skip_leb128(char * /*leb*/,
 unsigned int  _dwarf_crc32(unsigned int init,
     const unsigned char * buf,
     size_t len);
+int _dwarf_get_suppress_debuglink_crc(void);
 
 struct  Dwarf_Abbrev_Common_s;
 void _dwarf_fill_in_abcom_from_context(Dwarf_CU_Context cu_context,

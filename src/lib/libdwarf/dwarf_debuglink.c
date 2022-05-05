@@ -90,7 +90,6 @@ is_full_path(char *path,int joinchar)
     return FALSE;
 }
 
-
 static int
 _dwarf_extract_buildid(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pbuildid,
@@ -264,7 +263,6 @@ dwarfstring_list_add_new(struct dwarfstring_list_s * base_entry,
     int *errcode)
 {
     struct dwarfstring_list_s *next = 0;
-printf("dadebug add new list entry %s line %d\n",dwarfstring_string(input),__LINE__);
     if (prev) {
         next = ( struct dwarfstring_list_s *)
         malloc(sizeof(struct dwarfstring_list_s));
@@ -423,7 +421,6 @@ _dwarf_do_debuglink_setup(char *link_string_in,
             &joind->js_tmp3,&joind->js_linkstring);
         if (! duplicatedpath(&joind->js_originalfullpath,
             &joind->js_tmp2)) {
-printf("dadebug local location add line %d \n",__LINE__);
             res = dwarfstring_list_add_new(
                 base_dwlist,
                 *last_entry,&joind->js_tmp2,
@@ -433,9 +430,7 @@ printf("dadebug local location add line %d \n",__LINE__);
             }
             *last_entry = now_last;
         } else {
-printf("dadebug duplicated path line %d \n",__LINE__);
         }
-printf("dadebug now look in global locations line %d %s\n",__LINE__,__FILE__);
         /*  Now look in the global locations. */
         for (global_prefix_number = 0;
             global_prefix_number < length_global_prefixes_in;
@@ -452,7 +447,6 @@ printf("dadebug now look in global locations line %d %s\n",__LINE__,__FILE__);
                 &joind->js_linkstring);
             if (!duplicatedpath(&joind->js_originalfullpath,
                 &joind->js_tmp3)) {
-printf("dadebug global locations add line %d \n",__LINE__);
                 res = dwarfstring_list_add_new(
                     base_dwlist,
                     *last_entry,&joind->js_tmp3,
@@ -462,14 +456,13 @@ printf("dadebug global locations add line %d \n",__LINE__);
                 }
                 *last_entry = now_last;
             } else {
-printf("dadebug duplicated path line %d \n",__LINE__);
             }
         }
     }
     return DW_DLV_OK;
 }
 static int
-_dwarf_do_buildid_setup(unsigned buildid_length, 
+_dwarf_do_buildid_setup(unsigned buildid_length,
     char ** global_prefixes_in,
     unsigned length_global_prefixes_in,
     struct dwarfstring_list_s **last_entry,
@@ -503,7 +496,7 @@ _dwarf_do_buildid_setup(unsigned buildid_length,
             return res;
         }
         *last_entry = now_last;
-    } 
+    }
 }
 
 /*  New September 2019.  Access to the GNU section named
@@ -558,8 +551,8 @@ _dwarf_construct_linkedto_path(
         buffer[0] = 0;
         wdret = getcwd(buffer,buflen);
         if (!wdret) {
-            printf("getcwd() issue. Do nothing. "
-                " line  %d %s\n",__LINE__,__FILE__);
+            /* printf("getcwd() issue. Do nothing. "
+                " line  %d %s\n",__LINE__,__FILE__); */
             dwarfstring_list_destructor(&base_dwlist);
             destruct_js(&joind);
             *errcode = DW_DLE_ALLOC_FAIL;
@@ -593,7 +586,6 @@ _dwarf_construct_linkedto_path(
     _dwarf_pathjoinl(&joind.js_originalfullpath,
         &joind.js_basenamesimple);
 
-        
     /*  The debug link method of finding debug files. */
     res = _dwarf_do_debuglink_setup(link_string_in,
         link_string_fullpath_out,
@@ -611,7 +603,7 @@ _dwarf_construct_linkedto_path(
         buildid_length, buildid);
     /*  The GNU buildid method of finding debug files.
         No crc calculation required ever. */
-    res = _dwarf_do_buildid_setup(buildid_length, 
+    res = _dwarf_do_buildid_setup(buildid_length,
         global_prefixes_in,
         length_global_prefixes_in,
         &last_entry,
@@ -623,7 +615,7 @@ _dwarf_construct_linkedto_path(
         return res;
     }
 
-    /*  The debug link method of finding debug files. 
+    /*  The debug link method of finding debug files.
         A crc calculation is required for full
         checking.  Which can be slow if an object file is large.  */
     res = _dwarf_do_debuglink_setup(link_string_in,
@@ -843,66 +835,27 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     struct Dwarf_Section_s * pdebuglink = 0;
     struct Dwarf_Section_s * pbuildid = 0;
 
-#if 1
-printf("dadebug gnu_debuglink entry dbg path %s line %d\n",
-dbg->de_path,__LINE__);
-#endif
     if (dbg->de_gnu_debuglink.dss_size) {
-#if 1
-printf("dadebug pdebuglink sec exists line %d\n",__LINE__);
-#endif
         pdebuglink = &dbg->de_gnu_debuglink;
         res = _dwarf_load_section(dbg, pdebuglink,error);
         if (res == DW_DLV_ERROR) {
-#if 0
-printf("dadebug return at line %d\n",__LINE__);
-#endif
             return res;
         }
-#if 0
-printf("dadebug res  %d at line %d\n",res,__LINE__);
-#endif
     }
     if (dbg->de_note_gnu_buildid.dss_size) {
-#if 1
-printf("dadebug pbuildid sec exists line %d %s\n",__LINE__,__FILE__);
-#endif
         pbuildid = &dbg->de_note_gnu_buildid;
         res = _dwarf_load_section(dbg, pbuildid,error);
         if (res == DW_DLV_ERROR) {
-#if 0
-printf("dadebug return at line %d\n",__LINE__);
-#endif
             return res;
         }
-#if 0
-printf("dadebug res  %d at line %d\n",res,__LINE__);
-#endif
     }
 
-#if 0
-printf("dadebug pdebuglink 0x%lx pbuildid 0x%lx\n",
-(unsigned long)pdebuglink,
-(unsigned long)pbuildid);
-#endif
     if (!pdebuglink && !pbuildid) {
-        *debuglink_fullpath_returned = 
-                strdup(dbg->de_path);
-#if 0
-printf("dadebug debuglink_fullpath %s\n",*debuglink_fullpath_returned);
-#endif
-        *debuglink_fullpath_length_returned =
-                strlen(dbg->de_path);
-#if 0
-printf("dadebug return line %d\n",__LINE__);
-#endif
+        *debuglink_fullpath_returned = strdup(dbg->de_path);
+        *debuglink_fullpath_length_returned = strlen(dbg->de_path);
         return DW_DLV_OK;
     }
 
-
-#if 1
-printf("dadebug now pbuildid at line %d\n",__LINE__);
-#endif
     if (pbuildid) {
         /* buildid does not involve calculating a crc at any point */
         int buildidres = 0;
@@ -914,18 +867,9 @@ printf("dadebug now pbuildid at line %d\n",__LINE__);
             buildid_length_returned,
             error);
         if (buildidres == DW_DLV_ERROR) {
-#if 0
-printf("dadebug return at line %d\n",__LINE__);
-#endif
             return buildidres;
         }
     }
-#if 0
-printf("dadebug at line %d\n",__LINE__);
-#endif
-#if 1
-printf("dadebug now pbuildid at line %d\n",__LINE__);
-#endif
     if (pdebuglink) {
         int linkres = 0;
 
@@ -938,9 +882,6 @@ printf("dadebug now pbuildid at line %d\n",__LINE__);
             return linkres;
         }
     }
-#if 0
-printf("dadebug at line %d\n",__LINE__);
-#endif
     dwarfstring_constructor(&debuglink_fullpath);
     pathname = (char *)dbg->de_path;
     if (pathname && paths_returned) {
@@ -960,17 +901,9 @@ printf("dadebug at line %d\n",__LINE__);
             dwarfstring_destructor(&debuglink_fullpath);
             return res;
         }
-#if 1
-printf("dadebug constructed linkedto res %d name %s line %d \n",
-res,dwarfstring_string(&debuglink_fullpath),__LINE__);
-printf("dadebug paths_count_returned %u line %d\n",(unsigned int)*paths_count_returned,__LINE__);
-#endif
         if (dwarfstring_strlen(&debuglink_fullpath)) {
             *debuglink_fullpath_returned =
                 strdup(dwarfstring_string(&debuglink_fullpath));
-#if 0
-printf("dadebug debuglink_fullpath %s\n",*debuglink_fullpath_returned);
-#endif
             *debuglink_fullpath_length_returned =
                 dwarfstring_strlen(&debuglink_fullpath);
         }
