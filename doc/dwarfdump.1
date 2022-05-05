@@ -288,6 +288,19 @@ Print  the .gdb_index, .debug_cu_index,
 Print .gnu_debuglink and .note.gnu.build-id sections
 
 .TP
+.BR \--suppress-debuglink-crc
+Tell libdwarf to avoid calculating debuglink crc values, 
+saving some runtime at startup and removing a
+useful check. However, finding alternate debuglink
+or buildid files remains enabled.
+
+.TP
+.BR \--no-follow-debuglink
+Tells dwarfdump and libdwarf not to pay any attention
+to .gnu.debuglink
+or .gnu.note.buildid sections.
+
+.TP
 .BR \--print-frame\ (\-f)
 Print the .debug_frame section.
 .TP
