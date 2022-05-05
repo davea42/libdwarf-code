@@ -6854,6 +6854,8 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
     offset/name tuples) for a CU shows up rather than
     being suppressed.
 
+
+
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
     @param dw_dbg
@@ -7462,7 +7464,7 @@ DW_API int dwarf_get_debugfission_for_key(Dwarf_Debug dw_dbg,
     Dwarf_Error                * dw_error);
 
 /*  END debugfission dwp .debug_cu_index
-    and .debug_tu_index operations. */
+    and .debug_tu_indexmeaningfumeaningfu operations. */
 
 /*! @} */
 
@@ -7551,6 +7553,41 @@ DW_API int dwarf_gnu_debuglink(Dwarf_Debug dw_dbg,
     char         *** dw_paths_returned,
     unsigned int   * dw_paths_length_returned,
     Dwarf_Error*     dw_error);
+
+/*! @brief Suppressing  crc calculations
+
+
+    The .gnu_debuglink  section contains a compilation-system
+    created crc (4 byte) value. If dwarf_init_path[_dl]()
+    is called such a section can result in the reader/consumer
+    calculating the crc value of a different object file.
+    Which on a large object file could seem slow.
+    See https://en.wikipedia.org/wiki/Cyclic_redundancy_check
+
+    When one is confident that any debug_link file found
+    is the appropriate one one can call dwarf_suppress_debuglink_crc
+    with a non-zero argument and any dwarf_init_path[_dl] call
+    will skip debuglink crc calculations and just assume
+    the crc would match whenever it applies.
+    This is  a global flag, applies to all Dwarf_Debug opened
+    after the call in the program execution.
+
+    Does not apply to the .note.gnu.buildid section as
+    that section never implies the reader/consumer needs
+    to do a crc calculation.
+
+    @param
+    Defaults to 0.
+    Pass in 1 to suppress future calculation of crc values
+    to verify a debuglink target is correct. So use  
+    only when you know this is safe.
+    Pass in 0 to ensure future dwarf_init_path_dl calls
+    compute debuglink CRC values as required.
+    @return
+    Returns the previous value of the global flag.
+*/
+DW_API int dwarf_suppress_debuglink_crc(int dw_suppress);
+
 
 /*! @brief Adding debuglink global paths
 
