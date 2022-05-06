@@ -391,7 +391,7 @@ _dwarf_do_debuglink_setup(char *link_string_in,
     {
         /* First try dir of executable */
         struct dwarfstring_list_s *now_last = 0;
-        unsigned                   global_prefix_number = 0;
+        unsigned  global_prefix_number = 0;
 
         dwarfstring_append(&joind->js_linkstring,
             link_string_in);
@@ -533,7 +533,6 @@ _dwarf_construct_linkedto_path(
     size_t dirnamelen = 0;
     struct dwarfstring_list_s base_dwlist;
     struct dwarfstring_list_s *last_entry = 0;
-    unsigned global_prefix_number = 0;
 
     dwarfstring_list_constructor(&base_dwlist);
     construct_js(&joind);

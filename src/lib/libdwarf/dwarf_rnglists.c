@@ -344,6 +344,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
             newcontext,&nextoffset,error);
         if (res == DW_DLV_ERROR) {
             free(newcontext);
+            newcontext =  0;
             free_rnglists_chain(dbg,head_chain);
             return res;
         }
@@ -354,8 +355,9 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
             _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
                 "DW_DLE_ALLOC_FAIL: allocating Rnglists_Context"
                 " chain entry");
-            free_rnglists_chain(dbg,head_chain);
             free(newcontext);
+            newcontext =  0;
+            free_rnglists_chain(dbg,head_chain);
             return DW_DLV_ERROR;
         }
         curr_chain->ch_item = newcontext;
@@ -363,6 +365,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
         (*plast) = curr_chain;
         plast = &(curr_chain->ch_next);
         offset = nextoffset;
+        newcontext = 0;
     }
     fullarray= (Dwarf_Rnglists_Context *)malloc(
         chainlength *sizeof(Dwarf_Rnglists_Context /*pointer*/));
