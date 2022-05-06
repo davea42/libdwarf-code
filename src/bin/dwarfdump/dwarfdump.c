@@ -830,7 +830,8 @@ process_one_file(
     /*  If using a tied file group number should be
         2 DW_GROUPNUMBER_DWO
         but in a dwp or separate-split-dwarf object then
-        0 will find the .dwo data automatically. */
+        0 DW_GROUPNUMBER_ANY will find the .dwo data
+        automatically. */
     {
         /*  This will go for the real main file, whether
             an underlying dSYM or via debuglink or

@@ -263,6 +263,7 @@ dwarfstring_list_add_new(struct dwarfstring_list_s * base_entry,
     int *errcode)
 {
     struct dwarfstring_list_s *next = 0;
+
     if (prev) {
         next = ( struct dwarfstring_list_s *)
         malloc(sizeof(struct dwarfstring_list_s));
@@ -497,6 +498,7 @@ _dwarf_do_buildid_setup(unsigned buildid_length,
         }
         *last_entry = now_last;
     }
+    return DW_DLV_OK;
 }
 
 /*  New September 2019.  Access to the GNU section named
@@ -585,19 +587,6 @@ _dwarf_construct_linkedto_path(
         dwarfstring_string(&joind.js_dirname));
     _dwarf_pathjoinl(&joind.js_originalfullpath,
         &joind.js_basenamesimple);
-
-    /*  The debug link method of finding debug files. */
-    res = _dwarf_do_debuglink_setup(link_string_in,
-        link_string_fullpath_out,
-        global_prefixes_in,
-        length_global_prefixes_in,
-        &last_entry,
-        &joind,&base_dwlist,errcode);
-    if (res == DW_DLV_ERROR) {
-        dwarfstring_list_destructor(&base_dwlist);
-        destruct_js(&joind);
-        return res;
-    }
 
     build_buildid_filename(&joind.js_buildid_filename,
         buildid_length, buildid);
