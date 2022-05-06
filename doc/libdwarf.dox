@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-04-15 v0.4.1
+    @date 2022-05-05 v0.4.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -716,10 +716,23 @@
 
     We list these with newest first.
     <b>Changes 0.4.0 to 0.4.1</b>
-    dwarfdump adds an option to print its
-    arguments and version (--show-args).
+    libdwarf adds dwarf_suppress_debuglink_crc() so that
+    library callers can suppress crc calculations.
+    (useful to save the time of crc when building and testing
+    the same thing(s) over and over; it just loses a little
+    checking.)
+
+    dwarfdump adds --show-args, an option to print its
+    arguments and version.
     Without that new option the version and arguments are not
-    shown.
+    shown. The output of -v (--version) is a little more complete.
+
+    dwarfdump adds --suppress-debuglink-crc, an option to avoid
+    crc calculations when rebuilding and rerunning tests
+    depending on GNU .note.gnu.buildid or .gnu_debuglink
+    sections. The help text and the dwarfdump.1 man page
+    are more specific documenting --suppress-debuglink-crc
+    and --no-follow-debuglink
 
     <b>Changes 0.3.4 to 0.4.0</b>
 
