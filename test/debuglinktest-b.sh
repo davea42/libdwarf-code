@@ -84,10 +84,7 @@ ${localsrc}/dos2unix.py $testbin/${o}b
 chkres $? "FAIL debuglinktest-b.sh dos2unix.py"
 diff $testsrc/debuglink2.base  $testbin/${o}b
 r=$?
+echo "To update debuglinktest-b.sh  baseline:"
+echo " mv $testbin/${o}b $testsrc/debuglink2.base"
 chkres $r "running debuglinktest-b.sh  diff against baseline"
-if [ $r -ne 0 ]
-then
-   echo "To update debuglinktest-b.sh  baseline: mv $testbin/${o}b $testsrc/debuglink2.base"
-   exit $r
-fi
 exit 0

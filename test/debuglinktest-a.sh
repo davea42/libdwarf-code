@@ -66,11 +66,6 @@ else
   $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
   r=$?
   chkres $r "debuglinktest-a.sh running dwdebuglink test1"
-  if [ $r -ne 0 ]
-  then
-    echo "Error debuglinktest-a.sh"
-    exit $r
-  fi
   # we strip out the actual localsrc and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
@@ -98,12 +93,8 @@ else
   chkres $? "FAIL debuglinktest-a.sh dos2unix.py"
   diff $testsrc/debuglink.base  $testbin/${o}b
   r=$?
+  echo "To update debuglinktest-a.sh baseline:"
+  echo "mv $testbin/${o}b $testsrc/debuglink.base"
   chkres $r "running debuglinktest-a.sh test1 diff against baseline"
-  if [ $r -ne 0 ]
-  then
-     echo "To update debuglinktest-a.sh baseline:"
-     echo "mv $testbin/${o}b $testsrc/debuglink.base"
-     exit $r
-  fi
 fi
 exit 0

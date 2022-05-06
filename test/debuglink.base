@@ -1,15 +1,15 @@
 ===Exec-path        : ..src../dummyexecutable
  global path        : /exam/ple
  global path        : /tmp/phony
- Section            : .gnu_debuglink
- Debuglink name     : dummyexecutable.debug
- crc              0X: c8 ba b4 1c 
- Debuglink target   : ..src../dummyexecutable.debug
- Section            : .note.gnu.buildid
- Build-id  type     : 3
- Build-id  ownername: GNU
- Build-id  length   : 20
- Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
+ Section             : .gnu_debuglink
+ Debuglink name      : dummyexecutable.debug
+ compiler-created crc: 0X  c8 ba b4 1c 
+ Debuglink target    : ..src../dummyexecutable.debug
+ Section             : .note.gnu.buildid
+ Build-id  type      : 3
+ Build-id  ownername : GNU
+ Build-id  length    : 20
+ Build-id            : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
     [ 0] Path [ 0] /usr/lib/debug/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
     [ 0] file above does not match/exist.
     [ 1] Path [ 1] /exam/ple/.build-id/b4/76b92a967c17c27567b1d7ffc2c7771fe2bf7c.debug
@@ -19,11 +19,11 @@
     [ 3] Path [ 3] ..src../dummyexecutable.debug
     [ 3] file above is an Elf object
     [ 3]===Referred-path    : ..src../dummyexecutable.debug
-    [ 3] Section            : .note.gnu.buildid
-    [ 3] Build-id  type     : 3
-    [ 3] Build-id  ownername: GNU
-    [ 3] Build-id  length   : 20
-    [ 3] Build-id           : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
+    [ 3] Section             : .note.gnu.buildid
+    [ 3] Build-id  type      : 3
+    [ 3] Build-id  ownername : GNU
+    [ 3] Build-id  length    : 20
+    [ 3] Build-id            : b476b92a967c17c27567b1d7ffc2c7771fe2bf7c
     [ 3]===executable and debug buildid match
     [ 4] Path [ 4] ..src../.debug/dummyexecutable.debug
     [ 4] file above does not match/exist.

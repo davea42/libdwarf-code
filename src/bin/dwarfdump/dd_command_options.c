@@ -313,6 +313,7 @@ static void arg_check_self_refs(void);
 static void arg_check_show(void);
 static void arg_check_silent(void);
 static void arg_check_summary(void);
+static void arg_suppress_debuglink_crc(void);
 static void arg_check_tag_attr(void);
 static void arg_check_tag_tag(void);
 static void arg_check_type(void);
