@@ -88,6 +88,7 @@ The third way is on MacOS: the debug DWARF
 is in a separate object (dwarfdump/libdwarf
 automatically find it if it is present,
 \--no-follow-debuglink suppresses this finding).
+See also \--suppress-debuglink-crc.
 .PP
 In many cases one can get additional detail
 by specifying \-v (sometimes \-v \-v gets
@@ -298,7 +299,8 @@ or buildid files remains enabled.
 .BR \--no-follow-debuglink
 Tells dwarfdump and libdwarf not to pay any attention
 to .gnu.debuglink
-or .gnu.note.buildid sections.
+or .gnu.note.buildid 
+or Macos dSYM  references.
 
 .TP
 .BR \--print-frame\ (\-f)
