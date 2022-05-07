@@ -30,6 +30,8 @@ jobs:
     - name: Build
       run: make -j
     - name: Check
-      run: make -j check
+      run: |
+          make -j check 
+          cat test/test_dwarfdumpMacos.sh.log
     - name: Distcheck
       run: make -j distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
