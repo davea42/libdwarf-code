@@ -67,4 +67,5 @@ fi
 rm -f dwarfdump.conf
 rm -f $tx
 rm -f $tx.diff
+echo "PASS test/dwarfdumpMacos.sh"
 exit 0
