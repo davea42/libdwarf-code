@@ -6,14 +6,28 @@
 # to call this either pass top srcdir as arg1
 # or set env var DWTOPSRCDIR to that directory.
 #
-if [ $# -gt 0 ]
+if [ $# -gt 0  ]
 then
   t="$1"
+  if [ $# -gt 1  ]
+  then
+    y="$2"
+    if [ "$y" = "ninja" ]
+    then
+       # Needed for meson as test run is not in test/ itself
+       minja=y
+       top_blddir=`pwd`
+       echo "ninja: reset top blddir to $top_blddir"
+    fi
+    # else ignore  $2
+  fi
 else
   if [ x$DWTOPSRCDIR = "x" ]
   then
+    # Running from the source tree
     t=$top_blddir
   else
+    # Running outside of source tree (the usual case)
     t=$DWTOPSRCDIR
   fi
 fi
@@ -31,6 +45,8 @@ echo "Run: $dd -a -vvv  $f | head -n $textlim"
 $dd -a -vvv $f | head -n $textlim > $tx
 r=$?
 chkres $r "FAIL test/dwarfdumpMacos.sh $dd $f to $tx base $b "
+echo "report file lengths"
+wc -l $b  $tx
 if [ $r -ne 0 ]
 then
   echo "$dd FAILED"
@@ -40,15 +56,12 @@ fi
 echo "if update required, mv $tx $b"
 # tx2 is a temp file, tx is the input and the output.
 fixlasttime $tx $tx2
-${localsrc}/dos2unix.py $tx
-chkres $? "FAIL dwarfdumpMacos.sh dos2unix.py"
-diff $b $tx > $tx.diff
+${localsrc}/dwdiff.py $b $tx
 r=$?
 chkres $r "FAIL test/dwarfdumpMacos.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
-  echo "Showing diff $b $tx"
-  diff $b $tx
+  echo "FAIL  dwdiff $b $tx"
   echo "to update , mv $tx $b"
   #exit $r 
   exit 0

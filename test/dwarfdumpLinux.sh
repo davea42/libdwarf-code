@@ -61,15 +61,16 @@ fi
 echo "if update required, mv $tx $b"
 # Result winds up in $tx, and $tx2 was just a temp file.
 fixlasttime $tx $tx2
-${localsrc}/dos2unix.py $tx
-chkres $? "FAIL dwarfdumplinux.sh dos2unix.py"
-diff $b $tx > $tx.diff
+${localsrc}/dwdiff.py $b $tx
 r=$?
+chkres $r "FAIL dwarfdumpLinux.sh dwdiff.py"
+echo "report file lengths"
+wc -l $b  $tx
 if [ $r -ne 0 ]
 then
-  echo "Showing diff $b $tx"
-  diff $b $tx
+  echo "FAIL diff $b $tx"
   echo "To update , mv  $tx $b"
+  exit 0
 fi
 chkres $r "FAIL dwarfdumpLinux.sh diff of $b $tx"
 rm -f dwarfdump.conf

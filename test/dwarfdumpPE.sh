@@ -12,14 +12,25 @@
 if [ $# -gt 0  ]
 then
   t="$1"
+  if [ $# -gt 1  ]
+  then
+    y="$2"
+    if [ "$y" = "ninja" ]
+    then
+       # Needed for meson as test run is not in test/ itself
+       minja=y
+       top_blddir=`pwd`
+       echo "ninja: reset top blddir to $top_blddir"
+    fi
+    # else ignore  $2
+  fi
 else
   if [ x$DWTOPSRCDIR = "x" ]
   then
-    # Building in tree
+    # Running from the source tree
     t=$top_blddir
   else
-    #  Setting find the source base.
-    # Building out of tree, using env var
+    # Running outside of source tree (the usual case)
     t=$DWTOPSRCDIR
   fi
 fi
@@ -29,6 +40,7 @@ fi
 f=$top_srcdir/test/testobjLE32PE.exe
 b=$top_srcdir/test/testobjLE32PE.base
 testbin=$top_blddir/test
+localsrc=$top_srcdir/test
 tx=$testbin/junk.testobjLE32PE.base
 tx2=$testbin/junk2.testobjLE32PE.base
 rm -f $tx
@@ -46,20 +58,17 @@ echo "if update required, mv $tx $b"
 # input and result are $tx, $tx2 is a temp file.
 fixlasttime $tx $tx2
 # $tx updated if line ends are Windows
-${localsrc}/dos2unix.py $tx
-chkres $? "FAILdwarfdumpPE.sh dos2unix.py"
-diff $b $tx > $tx.diff 
+${localsrc}/dwdiff.py $b $tx
+r=$?
+chkres $r "FAIL dwarfdumpPE.sh dwdiff.py"
 echo "report file lengths"
 wc -l $b  $tx
-r=$?
 if [ $r -ne 0 ]
 then
-  echo "Showing diff $b $tx"
-  diff $b $tx
+  echo "FAIL  dwdiff $b $tx"
   echo "To update , mv $tx $b"
   exit $r
 fi
-chkres $r "FAILdwarfdumpPE.sh diff of $b $tx"
 rm -f dwarfdump.conf
 rm -f $tx
 rm -f $tx.diff

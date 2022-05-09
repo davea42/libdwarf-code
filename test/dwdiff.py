@@ -27,10 +27,9 @@ def readin(srcfile):
 if __name__ == "__main__":
     origfile = False
     newfile = False
-    if len(sys.argv) > 3:
-        buildsis = sys.argv[1]
-        origfile = sys.argv[2]
-        newfile  = sys.argv[3]
+    if len(sys.argv) > 2:
+        origfile = sys.argv[1]
+        newfile  = sys.argv[2]
     else:
         print("dwdiff.py args required: bldtype baseline newfile")
         exit(1)
@@ -50,5 +49,4 @@ if __name__ == "__main__":
         for s in diffs:
             print(s)
         sys.exit(1)
-
-  
+    sys.exit(0)
