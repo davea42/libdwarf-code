@@ -28,10 +28,8 @@ jobs:
     - name: Configure
       run: autoreconf -vif && ./configure --disable-static --enable-shared
     - name: Build
-      run: make -j
+      run:  make
     - name: Check
-      run: |
-          make -j check 
-          cat test/test_dwarfdumpMacos.sh.log
+      run:  make check && cat test/dwarfdumpMacos.sh.log 
     - name: Distcheck
-      run: make -j distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
+      run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --enable-shared"
