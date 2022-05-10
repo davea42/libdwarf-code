@@ -81,15 +81,15 @@ incdir = include_directories(
 
 foreach test_src : tests
   test_name = test_src[0].split('.')[0]
+  pathname = join_paths('test',test_name)
   test(test_name,
-    executable(test_name, test_src,
+    executable(pathname, test_src,
       c_args : [ dev_cflags, libdwarf_args, '-DTESTING', '-DLIBDWARF_BUILD' ],
       include_directories : [ config_dir, incdir ],
       install : false
     )
   )
 endforeach
-
 
 pyscripttests = [
   ['Elf'],
@@ -99,7 +99,6 @@ pyscripttests = [
 
 #git_exe = find_program('git', required: false)
 #pkgconfig_mod = import('pkgconfig')
-
 projectbase = meson.source_root()
 
 py3_exe = import('python').find_installation()

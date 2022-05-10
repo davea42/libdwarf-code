@@ -167,12 +167,15 @@ if __name__ == "__main__":
     confsrcpath = os.path.join(td.srcbase, \
         "src/bin/dwarfdump/dwarfdump.conf")
     conftargpath = os.path.join(td.bldbase, "test", "dwarfdump.conf")
-    print("Copy to local directory",confsrcpath,"to",conftargpath)
-    copytobuild(confsrcpath, conftargpath)
+    testconf = os.path.exists(conftargpath)
+    if not testconf:
+        print("Copy to local directory",confsrcpath,"to",conftargpath)
+        copytobuild(confsrcpath, conftargpath)
     if td.buildsystem == 'meson':
         mesonloc = os.path.join(td.bldbase,"dwarfdump.conf")
-        print("Copy to local directory",confsrcpath,"to",mesonloc)
-        copytobuild(confsrcpath, mesonloc)
+        if not os.path.exists(mesonloc):
+            print("Copy to local directory",confsrcpath,"to",mesonloc)
+            copytobuild(confsrcpath, mesonloc)
     dwarfdumppath = os.path.join(td.bldbase, \
         "src/bin/dwarfdump/dwarfdump")
     objpath = os.path.join(td.srcbase, "test", dd.testobj)
