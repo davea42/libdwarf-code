@@ -68,7 +68,7 @@ if zlib_deps.found() == true
   config_h.set10('HAVE_ZLIB_H', true)
 endif
 
-libdwarf_lib = library('libdwarf', libdwarf_src,
+libdwarf_lib = library('dwarf', libdwarf_src,
   c_args : [ dev_cflags, libdwarf_args, '-DLIBDWARF_BUILD' ],
   dependencies : zlib_deps,
   gnu_symbol_visibility: 'hidden',

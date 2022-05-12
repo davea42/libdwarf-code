@@ -79,11 +79,12 @@ incdir = include_directories(
   '../src/bin/dwarfdump'
 )
 
+#  pathname = join_paths('test',test_name)
+#    executable(pathname, test_src,
 foreach test_src : tests
   test_name = test_src[0].split('.')[0]
-  pathname = join_paths('test',test_name)
   test(test_name,
-    executable(pathname, test_src,
+    executable(test_name, test_src,
       c_args : [ dev_cflags, libdwarf_args, '-DTESTING', '-DLIBDWARF_BUILD' ],
       include_directories : [ config_dir, incdir ],
       install : false
