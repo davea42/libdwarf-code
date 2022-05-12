@@ -231,7 +231,7 @@ if (DO_TESTING)
     add_custom_target (copyconf ALL
        COMMAND ${CMAKE_COMMAND} -E
        copy ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf
-          $(CMAKE_BINARY_DIR)/test/dwarfdump.conf )
+          ${CMAKE_BINARY_DIR}/test/dwarfdump.conf )
     set(pebasedir "${CMAKE_SOURCE_DIR}")
     set(peshdir   "${CMAKE_SOURCE_DIR}/test")
     set(pebindir  "${CMAKE_BINARY_DIR}")
