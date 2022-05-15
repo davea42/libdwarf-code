@@ -17,7 +17,7 @@
 
 # This is libdwarf README[.md]
 
-Updated 01 May 2022
+Updated 15 May 2022
 
 For release libdwarf-0.4.1 
 
@@ -68,32 +68,40 @@ command.
 
 README.cmake has details on the available cmake options.
 
-Just like configure, except instead of configure do:
+We suggest that you will find meson a more satisfactory
+tool in msys2. 
 
-    cmake  /tmp/libdwarf-0.4.0
-    make
-    ctest -R self
+    cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DCMAKE_BUILD_TYPE=Release /tmp/libdwarf-0.4.1
+    ninja 
+    ninja install 
+    See README.cmake for additional details.
 
 ### meson build
 
     meson 0.45.1  on Ubuntu 18.04 fails.
-    meson 0.55.2  on Ubunto 20.04 works.
+    meson 0.55.2  on Ubuntu 20.04 works.
     meson 0.60.3  on Freebsd 12.2 and Freebsd 13.0 works.
 
+See README.cmake for the mingw64 msys2 packages to install
+and the command(s) to do that in msys2.
 
-For the simplest example:
+The meson ninja install not only installs libdwarf-0.dll
+and dwarfdump.exe it updates the executables in
+the build tree linking to that dll so all such
+executables in the build tree work too.
 
-    meson /tmp/libdwarf-0.4.0
-    ninja -j8
+For example:
 
-For a faster build with install and sanity tests:
+    meson /tmp/libdwarf-0.4.1
+    ninja -j8 
+    ninja install
+    ninja test
 
-    prefx=/tmp/installtargetmeson
+For a faster build with install and full sanity tests:
+
     export CFLAGS="-g -pipe"
     export CXXFLAGS="-g -pipe"
-    meson /tmp/libdwarf-0.4.0  \
-      --prefix=$prefx \
-      --default-library shared
+    meson /tmp/libdwarf-0.4.1 -Ddwarfexample=true 
     ninja -j8 install
     ninja test
 
@@ -184,6 +192,11 @@ a build and then
     make distcheck
 
 # INCOMPATIBILITIES. Changes to interfaces
+
+Comparing libdwarf-0.4.1 to libdwarf-0.4.0
+Added a new function dwarf_suppress_debuglink_crc()
+which speeds up gnu debuglink (only use it if
+you are sure the debuglink name-check alone is sufficent).
 
 Comparing libdwarf-0.4.0 to libdwarf-0.3.4
 A few  dealloc() functions changed name to have
