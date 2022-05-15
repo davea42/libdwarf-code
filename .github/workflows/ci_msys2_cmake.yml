@@ -27,5 +27,5 @@ jobs:
       run: |
         mkdir builddir && cd builddir
         cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DBUILD_DWARFEXAMPLE=ON -DBUILD_SHARED:BOOL=TRUE -DBUILD_NON_SHARED:BOOL=FALSE -DDWARF_WITH_LIBELF:BOOL=FALSE  ../CMakeLists.txt
-        ninja -j
+        ninja 
         ninja install
