@@ -78,8 +78,11 @@ fi
 # we strip out the actual localsrc and blddir for the obvious
 # reason: We want the baseline data to be meaningful no matter
 # where one's source/build directories are.
-sed "s:$localsrc:..src..:" <$testbin/$o  >$testbin/${o}a
-sed "s:$blddir:..bld..:" <$testbin/${o}a  >$testbin/${o}b
+# use @ instead of / or \ or : to avoid tripping over
+# normal path characters in Linux/Macos/Windows
+
+sed -e "s@$localsrc@..src..@" <$testbin/$o  >$testbin/${o}a
+sed -e "s@$blddir@..bld..@" <$testbin/${o}a  >$testbin/${o}b
 ${localsrc}/dos2unix.py $testbin/${o}b
 chkres $? "FAIL debuglinktest-b.sh dos2unix.py"
 diff $testsrc/debuglink2.base  $testbin/${o}b
