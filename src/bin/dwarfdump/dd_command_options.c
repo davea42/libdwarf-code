@@ -2052,11 +2052,11 @@ insert_debuglink_path(char *p)
 /*  Option --add-debuglink-path=<text> */
 void arg_add_debuglink_path(void)
 {
-    int res = 0;
     if (strncmp(dwoptarg,"add-debuglink-path=",21) == 0) {
         dwoptarg = &dwoptarg[21];
         if (strlen(dwoptarg)) {
-            /*  dosomething debuglink  FIXME */
+            int res = 0;
+
             res = insert_debuglink_path(dwoptarg);
             if (res == DW_DLV_OK) {
                 return;
@@ -2442,7 +2442,9 @@ static void arg_debuglink_path_invalid(void)
 {
     fprintf(stderr,
         "--add-debuglink-path=<text>\n");
-    fprintf(stderr, "is allowed, not  %s\n",dwoptarg);
+    /*  Add quotes around string so any invisible chars
+        kind of show up */
+    fprintf(stderr, "is allowed, not  \"%s\"\n",dwoptarg);
     arg_usage_error = TRUE;
 
 }
