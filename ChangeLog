@@ -1,3 +1,644 @@
+2022-05-17:  David Anderson
+    commit 3c60185eb0c11a86d350004dde9f409c94b9094b
+
+    The sed commands unfortunately used : as a separator, which
+    conflicts with Windows paths.  So now we use @ as
+    the sed expression separator.
+            modified:   test/debuglinktest-a.sh
+            modified:   test/debuglinktest-b.sh
+
+2022-05-17:  David Anderson
+    commit a98f554548811be7d7ceb63496974e24bf40c98c
+
+    Added "" around an error situation with --add-debuglink_path
+    so any space-like characters will be (kind of) revealed.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2022-05-17:  David Anderson
+    commit 26a87e4d742b60564b3e40154f74f810ed8ae3a6
+
+    Clean up a small indent mistake. Has no effect on results.
+            modified:   CMakeLists.txt
+
+2022-05-17:  David Anderson
+    commit 743b1f88bd7383ccee667ca72937f9cf7dee56e6
+
+    Removes -Ddoc as that presently does nothing.
+    Call meson with both build and source directories
+    mentioned ( . and .. ) to avoid relying on meson to
+    figure out either one.
+            modified:   .github/workflows/ci_linux_meson.yml
+            modified:   .github/workflows/ci_msys2_meson.yml
+
+2022-05-15:  David Anderson
+    commit 69d30e988c52661f7d8a1148a8574d8323da6f40
+
+    Now these match up with what actually works.
+            modified:   README
+            modified:   README.cmake
+            modified:   README.md
+
+2022-05-15:  David Anderson
+    commit 6baad78d26ab48248b1eedabda0a486ebe638c37
+
+    Plain -j rejected. For now, leaving off -j.
+            modified:   .github/workflows/ci_msys2_cmake.yml
+
+2022-05-15:  David Anderson
+    commit 972388e868d5c9a28dac75d2c24cbbb2cf84559a
+
+    avoids trying to run tests, now uses ninja not make,
+    though that is not an important aspect.
+            modified:   .github/workflows/ci_msys2_cmake.yml
+
+2022-05-13:  David Anderson
+    commit 1a8fa7c6f561f0b96d216685238ceb943a5994c4
+
+    Now adds ninja install step which results
+    inconecting executables to the libdwarf dll.
+            modified:   .github/workflows/ci_msys2_meson.yml
+
+2022-05-12:  David Anderson
+    commit f164841a2edd20d32437c3e33192d491e69d574f
+
+    Corrected a () pair to a {} pair, about line 228
+            modified:   test/CMakeLists.txt
+
+2022-05-12:  David Anderson
+    commit 7538384df89f38bb25df14cb5e3c5a1c3b96ac84
+
+    Corrected the name to follow meson requirements.
+            modified:   src/lib/libdwarf/meson.build
+
+    Removed an unnecessary andin appropriate
+    join_paths() in the tests (added when there
+    were other issues causing confusion).
+            modified:   test/meson.build
+
+2022-05-09:  David Anderson
+    commit e5f3720dba59100cc4bf0bb32baf3d73bfcd95aa
+
+    For now only run on a pull request or manual
+    start of a test.
+            modified:   .github/workflows/ci_linux_autotools.yml
+            modified:   .github/workflows/ci_linux_cmake.yml
+            modified:   .github/workflows/ci_linux_meson.yml
+            modified:   .github/workflows/ci_macos_autotools.yml
+            modified:   .github/workflows/ci_msys2_autotools.yml
+            modified:   .github/workflows/ci_msys2_cmake.yml
+            modified:   .github/workflows/ci_msys2_meson.yml
+    Now only copy dwarfdump.conf it it has not yet been copied.
+            modified:   test/dwarfdumptest.py
+
+    Trying to get msys2 to function properly with meson.
+            modified:   test/meson.build
+
+2022-05-09:  David Anderson
+    commit a284f065cd3ab50d96624357cb3db660d2f4ff27
+
+    Removed debug output.
+            modified:   .github/workflows/ci_msys2_autotools.yml
+    Now mentions msys2 autotools badge.
+            modified:   README
+            modified:   README.md
+
+2022-05-09:  David Anderson
+    commit 43db5311cdce00275c16477e3ceb2fbde1feaeab
+
+    Removing the 'cat' debug command, things working better.
+            modified:   test/dwarfdumpMacos.sh
+
+2022-05-09:  David Anderson
+    commit 909674b14a56674050e91afee91746dae392dda2
+
+    Removing the temporary exit 0 with proper exit 1 for a fail.
+            modified:   dwarfdumpMacos.sh
+
+2022-05-09:  David Anderson
+    commit a53f099f0431bbb62ba0b37fc35c99e63efe6713
+
+    Now we let dwdiff.py deal with the diff so
+    we do not need any dos2unix at all.
+            modified:   dwarfdumpLinux.sh
+            modified:   dwarfdumpMacos.sh
+            modified:   dwarfdumpPE.sh
+
+    The initial planned argument was not needed, so dropped it.
+            modified:   dwdiff.py
+
+2022-05-09:  David Anderson
+    commit e4515648a2f0faa4d3d2f7a3e3213cf12f224be3
+
+    Changing to a special setup to find out why msys2 autotools
+    fails one text.
+            modified:   .github/workflows/ci_msys2_autotools.yml
+            modified:   test/dwarfdumpMacos.sh
+
+2022-05-07:  David Anderson
+    commit 6b132c7c71fc512f5837ecebd7191e507b77949b
+
+    Added --output-on-failure to ctest use.
+            modified:   .github/workflows/ci_msys2_cmake.yml
+
+2022-05-07:  David Anderson
+    commit 99a0fd9bcdf2d1f6a57a8a6ef45f4dd4160291c2
+
+    Making part look a bit nicer, more regular.
+            modified:   test/CMakeLists.txt
+
+2022-05-07:  David Anderson
+    commit 120c7decf20508b38e0364dcaaac64fe25eb253c
+
+    Tweaking to get details on failure.
+            modified:   .github/workflows/ci_msys2_autotools.yml
+
+2022-05-06:  David Anderson
+    commit 4331d42a7f3732f3e3554bdde03ee333b1365cd7
+
+    Omitted a declaration.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    The baseline is updated because the debuglink output
+    format changed just slightly for a more
+    consistent appearance.
+            modified:   test/debuglink.base
+            modified:   test/debuglink2.base
+            modified:   test/debuglinktest-a.sh
+            modified:   test/debuglinktest-b.sh
+
+2022-05-06:  David Anderson
+    commit b8de88bace78f5a41dee61c5ae32776a378925d2
+
+    Compiler caught declaration of no-loner-used variable.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Added clarifying zero of a pointer after free.
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2022-05-06:  David Anderson
+    commit 91a59fdff538d77122328a00e0eacbd743142952
+
+    Clarified a comment about section groups.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    dwarfstring_list_add_new() had lost its final return
+    DW_DLV_OK, (mistake noted by clang) and now
+    it is restored.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+2022-05-06:  David Anderson
+    commit 0d19957b9f127bc27e9007248e16e95af9066e57
+
+    Improved the description of of --suppress-debuglink-crc
+    and --no-follow-debuglink
+            modified:   doc/dwarfdump.1
+
+2022-05-06:  David Anderson
+    commit db25b22842cc8687d43e149143e5533f577a3e77
+
+    Added the new dwarf_suppress_debuglink_crc() to the
+    Recent Changes section.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2022-05-05:  David Anderson
+    commit ecb2acd171f22551b5b75480d38c03ef965e63a4
+
+    Now discusses  the new option --suppress-debuglink-crc
+    and adds words to the older option --no-follow-debuglink
+    to make the distinction clear.
+            modified:   doc/dwarfdump.1
+
+    removed debug printf in these two.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-05-05:  David Anderson
+    commit be0fa88d5bb0d39eb9d70986156dfa04a9e2f5dc
+
+    Removed many debug printf statements.
+    Corrected a bug where debuglink without debug_id
+    would suppress debuglink access.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Added dwarf_suppress_debuglink_crc() (which is public)
+    and _dwarf_get_suppress_debuglink_crc() (which is for
+    library internal use only).
+    Supporting the dwarfdump --suppress-debuglink-crc option now.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+    Added _dwarf_get_suppress_debuglink_crc() declaration.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2022-05-05:  David Anderson
+    commit 4eee9355193f30cbc6e1e3262142e1ad23d40e16
+
+    Fixed an indent in a comment.
+            modified:   dwarf_line.c
+
+2022-05-05:  David Anderson
+    commit b1021e46fd72448d4bc1dfbd72d52eac9755f292
+
+    Adding option --suppress-debuglink-crc so users have
+    the option of avoiding a crc calculation when gnu debuglink
+    is in the object file.  Useful for someone building
+    and testing a given executable and its .debug
+    multiple times.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2022-05-05:  David Anderson
+    commit 152318a73c43831d102a247ba6e520ecf95b9681
+
+    Adding new public function dwarf_suppress_debuglink_crc
+    allowing callers to avoid having libdwarf do a crc
+    calculation and just assume if one was done that it would match.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-05-04:  David Anderson
+    commit f936ea937a396ded8f8d29d7e4853dab6a27ef78
+
+    DO NOTUSE THIS COMMIT
+    Changes in place to improve GNU debuglink and debug ID
+    section handling. Not complete.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+2022-05-02:  David Anderson
+    commit f3a1ab8b71bdbf8b979982638efce41ac3a7dc6a
+
+    Revised from previous failing version.
+            new file:   .github/workflows/ci_msys2_autotools.yml
+
+2022-05-02:  David Anderson
+    commit 9931479609353ca728ca584e4ea69017c2263820
+
+    These seem to be broken, so removing:
+
+    .github/workflows/
+            deleted:    ci_msys2.yml
+            deleted:    ci_msys2_autotools.yml
+
+2022-05-01:  David Anderson
+    commit b40b84ad094f2374689d0c344d6073cd1343099a
+
+    Adding use of --disable-dependency-tracking
+    to deal with build failures (only  affects
+    some people).
+            modified:   README
+            modified:   README.md
+
+2022-04-30:  David Anderson
+    commit 1458862877d1b8d90534fa7818c398b79d46bcad
+
+    Fixed typo just introduced.
+            modified:   .travis.yml
+
+2022-04-30:  David Anderson
+    commit 2971fd319d7f5a6f898d9fa71629436f89d7ed9a
+
+    added --disable-dependency-checking
+    to see if that lets the build work.
+            modified:   .travis.yml
+
+2022-04-30:  David Anderson
+    commit bb591b6b55a74f43ba29c2f69f20e457fcfb59cd
+
+    Removed mention of dos2unix, we no longer really need
+    that standard install program.
+            modified:   README
+            modified:   README.md
+
+2022-04-30:  David Anderson
+    commit a422fef0790868d020e0236dc969253c722cba54
+
+    Removing bogus options I added earlier.
+            modified:   .github/workflows/ci_msys2_autotools.yml
+
+2022-04-30:  David Anderson
+    commit 2e80e291988234e74e8d1d5a21b2c1f06248defb
+
+    Sorted the content of EXTRA DIFF.
+            modified:   test/Makefile.am
+
+    Now these use simple python scripts
+    for diff and dos2unix.
+            modified:   test/debuglinktest-a.sh
+            modified:   test/debuglinktest-b.sh
+            modified:   test/dos2unix.py
+            modified:   test/dwarfdumpLinux.sh
+            modified:   test/dwarfdumpMacos.sh
+            modified:   test/dwarfdumpPE.sh
+            modified:   test/jitreaderdiff.sh
+
+2022-04-30:  David Anderson
+    commit 5ed2fb728d5e29b5548dd584c33a010b019543ae
+
+    Now 0.4.1
+            modified:   README
+            modified:   README.md
+
+    Simple python instead of messy scripting with
+    traditional commands to take care of dos/linux
+    line end differences .
+            new file:   test/dos2unix.py
+            new file:   test/dwdiff.py
+
+2022-04-30:  David Anderson
+    commit a4ac89e738db35659df213ab856d5a74363869da
+
+    The contents resorted by test name for consistency
+    and easier checking. Nothing was found that was
+    actually wrong.
+            modified:   test/Makefile.am
+
+2022-04-29:  David Anderson
+    commit 94735fbb5f6195f9e5e02385dcc7c502be4918b8
+
+    Still not working. Delete bad line.
+            modified:   .travis.yml
+
+2022-04-29:  David Anderson
+    commit 64b10ff8f4b465c8d09cbcdabee3f8080b76dc55
+
+    Another try with travis.
+            modified:   .travis.yml
+
+2022-04-29:  David Anderson
+    commit 074776afd21fa5fd51b8d7016664c8c5d983e12c
+
+    Now using apt-get, not apt.
+            modified:   .travis.yml
+
+2022-04-29:  David Anderson
+    commit caab423142f6f29214f8fe5d1aed136724bf4241
+
+    Added install of dos2unix for certain make check instances.
+            modified:   .travis.yml
+
+2022-04-29:  David Anderson
+    commit 387908c4fb97cb5ff66d8db30b0ba4c7258b8431
+
+    Now adds dwarfexample to run all the checks.
+            modified:   .github/workflows/ci_linux_autotools.yml
+
+    Corrected a bug in TESTS setup.
+            modified:   test/Makefile.am
+
+2022-04-29:  David Anderson
+    commit bfbdcac78a7805b31bf988b1b5edf902f3761796
+
+    Added cat to see the test log.
+            modified:   ci_linux_autotools.yml
+
+2022-04-29:  David Anderson
+    commit e4a7a265237ffad6bcd51d2ca8a4360a2e0d4380
+
+    Uses apt-get, not plain apt now.
+            modified:   ci_linux_autotools.yml
+
+2022-04-29:  David Anderson
+    commit 959e16658757e08b3e352bc6c13e7d742700d50a
+
+    Ensuring dos2unix present
+            modified:   .github/workflows/ci_linux_autotools.yml
+    Ensuring dos2unix mentioned
+            modified:   README
+            modified:   README.md
+
+2022-04-29:  David Anderson
+    commit 6af6e566ae71b585659484e7be7cbab83dd770fb
+
+    These are all to make msys2 pass.
+    In that case, for now, we suppress the debuglink
+    tests in make check
+    Add new HAVE_DEBUGLINK so we can turn off the pair
+    of debuglink tests in test/Makefile.am
+            modified:   configure.ac
+            modified:   test/Makefile.am
+
+    These changes work toward having the debug link case work
+    under msys2, but these are not quite sufficient.
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   test/debuglinktest-a.sh
+            modified:   test/debuglinktest-b.sh
+
+    Minor change to run dos2unix for the msys2 case.
+            modified:   test/jitreaderdiff.sh
+
+2022-04-28:  David Anderson
+    commit d654f00c0beeced4bf09a838c03097e967a28b89
+
+    Changed the other --host to be -pc- too.
+            modified:   .github/workflows/ci_msys2_autotools.yml
+
+2022-04-28:  David Anderson
+    commit 1dadd8683a9a0a99e5eac5499249c0fded87d0ce
+
+    Adding subdir-objects to the AM_INIT_AUTOMAKE command.
+            modified:   configure.ac
+
+2022-04-28:  David Anderson
+    commit 1654620960462ea94d4514453a4b95360030cf25
+
+    Trying a different --host option.
+            modified:   ../../../.github/workflows/ci_msys2_autotools.yml
+
+2022-04-28:  David Anderson
+    commit 9446099f47770566afec1fbbb57d4ae92c8ed1b7
+    Merge: 832b3c23 92bb569e
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    msys2 workflow.
+
+2022-04-28:  David Anderson
+    commit 92bb569e9529dd5a9d8c63ec03cfd40648a06826
+    Merge: 57235d51 4242179e
+
+    Merge pull request #111 from vtorri/vtorri_ci_msys2_all
+
+    CI msys2: check all the build systems
+
+2022-04-28:  David Anderson
+    commit 832b3c236d2f787589c7f0a7d147044300a4f301
+    Merge: 210cd279 57235d51
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Merge fix of undefined behavior
+
+2022-04-28:  David Anderson
+    commit 57235d51e60d3755405d9e85fe71491a69b3956a
+    Merge: b0a4f74b 986d5a7e
+
+    Merge pull request #114 from klucke/master
+
+    Fix undefined behavior found when compiled with UBSAN in clang.
+
+2022-04-28:  David Anderson
+    commit 210cd2796e12c6581e91e4c91387abe8169a0e4c
+
+    Deleted references from MAINTAINERCLEANFILES
+    of a couple of files that have not been created
+    here for a long time.
+            modified:   test/Makefile.am
+
+2022-04-28:  David Anderson
+    commit 2f9b5c534bc4d0e7de8bff4fbe878df81c99a916
+
+    Restoring rm -f of test files used during execution of the test.
+            modified:   test/dwarfdumpLinux.sh
+
+2022-04-28:  Kyle Lucke
+    commit 986d5a7e090b08604b57bebff102dc783829c346
+
+    Fix undefined behavior found when compiled with UBSAN in clang.
+
+    This patch resolves the following undefined behavior error:
+    "runtime error: applying zero offset to null pointer" seen when
+    calling dwarf_srclines_b when compiled with clang's UBSAN libraries.
+
+2022-04-28:  Kyle Lucke
+    commit 27ff3a28dd900575e15395a8f101b0a2eaa3bc69
+
+    Fix undefined behavior found when compiled with UBSAN in clang.
+
+    This patch resolves the following undefined behavior error:
+    "runtime error: applying zero offset to null pointer" seen when
+    calling dwarf_srclines_b when compiled with clang's UBSAN libraries.
+
+2022-04-28:  David Anderson
+    commit b0a4f74bc1fe940a6a4d7bbb6d6a1513df9485e9
+
+    A check for a specific length of debug_id was unwarranted
+    and has been removed. Various lengths are possible.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+2022-04-28:  Vincent Torri
+    commit 4242179e6463d28df3e9511ed7da163548b3621b
+
+    CI msys2: check allthe build systems
+    Also build for 32 and 64 bits
+
+2022-04-27:  David Anderson
+    commit 7054e6f56210e5edbe9924dbe2490e682e4c4789
+
+    Added -j for make and make check.
+    Use all possible cpu cores to speed up
+    build and check..
+            modified:   .github/workflows/ci_linux_autotools.yml
+
+2022-04-27:  David Anderson
+    commit 957278adca179a39db02245e0148b2b5c0d4d16b
+    Merge: e961abff 2fb4fd12
+
+    Merge pull request #109 from vtorri/vtorri_ci_msys2_autotools_shared
+
+    CI msys2 autotools: pass 64 bits host and enable shared.
+
+2022-04-27:  David Anderson
+    commit e961abffb153e4e17225c76a0f16853763c4dc84
+
+    For meson, also copy to build base dir.
+            modified:   test/dwarfdumptest.py
+
+2022-04-27:  David Anderson
+    commit 00ac19cd5f344837752c2d5126cbea5659c66470
+
+    Remove duplicated 'make check'
+            modified:   .github/workflows/ci_macos_autotools.yml
+    Modified a message text about dwarfdump.conf to aid debugging.
+            modified:   test/dwarfdumptest.py
+
+2022-04-27:  David Anderson
+    commit 991f1d53b392921fd97ca8b6ea3e9cbad4e26658
+
+    Enable interactive run of workflows
+            modified:   .github/workflows/ci_linux_meson.yml
+            modified:   .github/workflows/ci_msys2_autotools.yml
+            modified:   .github/workflows/ci_msys2_cmake.yml
+            modified:   .github/workflows/ci_msys2_meson.yml
+
+    Now back to a usable autotools.
+            modified:   configure.ac
+            modified:   test/Makefile.am
+
+2022-04-27:  Vincent Torri
+    commit 2fb4fd1288407eb54e6350af460674c3f103cf76
+
+    CI msys2 autotools: pass 64 bits host and enable shared. Allow distcheck
+    to use these options too
+
+            modified:   .github/workflows/ci_msys2_autotools.yml
+
+2022-04-26:  David Anderson
+    commit cfdc512e89096478357e7f10ca46b0bf4e72a134
+    Merge: ed57bfa7 0e47bfae
+
+    Merge pull request #107 from vtorri/vtorri_ci_msys2_autotools
+
+    CI: add autotools CI on MSYS2
+
+2022-04-26:  David Anderson
+    commit ed57bfa7198a1d6b151e653670750d918cb97185
+
+    Minor tweaks.
+            modified:   Makefile.am
+    Slightly modified. No real change.
+            modified:   test_errmsglist.c
+
+2022-04-27:  Vincent Torri
+    commit 0e47bfae69426afa86f02a0e52a20deb0a4bbf88
+    Merge: aec0280d fd4efe9d
+
+    Merge remote-tracking branch 'upstream/master' into vtorri_ci_msys2_autotools
+
+2022-04-26:  David Anderson
+    commit fd4efe9d947c2e0e443fbcc00f82bf49a94011d2
+
+    Made the data output look nicer.
+    Adjusted the test output location for meson.
+            modified:   test/dwarfdumptest.py
+
+    Now runs the dwarfdump sanity tests using test/dwarfdumptest.py
+            modified:   test/meson.build
+
+2022-04-26:  David Anderson
+    commit c02712b63b52b28ea79a824eca9ffb58d8d56b46
+
+    Converted dwarfdump quick test driver to be python.
+            modified:   test/CMakeLists.txt
+    Corrected the file name in one print statement (an error case).
+            modified:   test/dwarfdumptest.py
+
+2022-04-26:  David Anderson
+    commit cdad435e3f933cdc9b59d1735cae8595232e46df
+
+    Now using check-local to test dwarfdump sanity.
+            modified:   test/Makefile.am
+    This does the actual sanity check. Returns 0
+    as exit code on success, else returns non-zero as exit code.
+            modified:   test/dwarfdumptest.py
+
+2022-04-26:  David Anderson
+    commit e767827197fa0e7d12dbcb68f37c1df432adf8b3
+
+    Working toward improving make check.
+            modified:   configure.ac
+            modified:   test/Makefile.am
+            modified:   test/dwarfdumpLinux.sh
+            modified:   test/dwarfdumpsetup.sh
+            modified:   test/meson.build
+
+2022-04-26:  David Anderson
+    commit b8f3f6a92bec238cb93e7782ff585f4484e968b2
+
+    Bringing it up to date.
+            modified:   ChangeLog
+
 2022-04-26:  David Anderson
     commit b56e12edf0eb1d7764381cef1a8017d167c48a0b
 
