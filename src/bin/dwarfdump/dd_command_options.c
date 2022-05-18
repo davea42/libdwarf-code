@@ -982,7 +982,8 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 /*  GNU debuglink options */
 {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
 {"add-debuglink-path", dwrequired_argument, 0,OPT_ADD_DEBUGLINK_PATH},
-{"suppress-debuglink-crc", dwno_argument, 0,OPT_SUPPRESS_DEBUGLINK_CRC},
+{"suppress-debuglink-crc", dwno_argument, 0,
+    OPT_SUPPRESS_DEBUGLINK_CRC},
 
 /* Search text in attributes. */
 {"search-any",            dwrequired_argument, 0,OPT_SEARCH_ANY  },
@@ -2220,7 +2221,7 @@ void arg_show_dwarfdump_conf(void)
 {
     glflags.gf_show_dwarfdump_conf++;
 }
-/*  Option '--show-args' 
+/*  Option '--show-args'
     which causes dwarfdump to print the current
     version of the program, date, and time of the run,
     and to show the command line arguments. */
@@ -2680,7 +2681,7 @@ set_command_options(int argc, char *argv[])
         /* debuglink attributes */
         case OPT_NO_FOLLOW_DEBUGLINK: arg_no_follow_debuglink();break;
         case OPT_ADD_DEBUGLINK_PATH: arg_add_debuglink_path();  break;
-        case OPT_SUPPRESS_DEBUGLINK_CRC: 
+        case OPT_SUPPRESS_DEBUGLINK_CRC:
             arg_suppress_debuglink_crc(); break;
 
         /* Search text in attributes. */
