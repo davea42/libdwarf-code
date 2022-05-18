@@ -47,7 +47,7 @@ one_file_show_groups(char  *path_in,
         0,0, &dbg, &error);
     if (res == DW_DLV_ERROR) {
         printf("Error from libdwarf opening \"%s\":  %s\n",
-             shortpath, dwarf_errmsg(error));
+            shortpath, dwarf_errmsg(error));
         dwarf_dealloc_error(dbg,error);
         error = 0;
         return res;
@@ -72,7 +72,7 @@ one_file_show_groups(char  *path_in,
     }
     if (res == DW_DLV_NO_ENTRY) {
         printf("Impossible. libdwarf claims no groups from %s\n",
-             shortpath);
+            shortpath);
         dwarf_finish(dbg);
         return res;
     }
@@ -117,7 +117,7 @@ one_file_show_groups(char  *path_in,
     }
     res = dwarf_sec_group_map(dbg,map_entry_count,
         group_numbers_array,
-        sec_numbers_array, sec_names_array,&error);  
+        sec_numbers_array, sec_names_array,&error);
     if (res == DW_DLV_ERROR) {
         free(sec_names_array);
         free(sec_numbers_array);
@@ -135,7 +135,7 @@ one_file_show_groups(char  *path_in,
         free(sec_numbers_array);
         free(group_numbers_array);
         printf("Impossible. libdwarf claims details from %s\n",
-             shortpath);
+            shortpath);
         dwarf_finish(dbg);
         return res;
     }
@@ -146,7 +146,7 @@ one_file_show_groups(char  *path_in,
             (unsigned long)group_numbers_array[i],
             (unsigned long)sec_numbers_array[i],
             sec_names_array[i]);
-    } 
+    }
     free(sec_names_array);
     free(sec_numbers_array);
     free(group_numbers_array);
@@ -155,7 +155,7 @@ one_file_show_groups(char  *path_in,
 }
 
 /*  Does not return */
-static void 
+static void
 usage(void)
 {
     printf("Usage: showsectiongroups [-group <n>] "
@@ -174,22 +174,22 @@ trimpathprefix(char *out,unsigned int outlen, char *in)
     char *cpi  = in;
     char *suffix = 0;
     unsigned int lencopied = 0;
-    for(  ; *cpi ; ++cpi) {
+    for ( ; *cpi ; ++cpi) {
         if (*cpi == '/') {
             suffix= cpi+1;
         }
     }
-    if (suffix) { 
+    if (suffix) {
         cpi = suffix;
     }
     lencopied = 0;
-    for(  ; lencopied < outlen; ++cpo,++cpi)
+    for ( ; lencopied < outlen; ++cpo,++cpi)
     {
-         *cpo = *cpi;
-         if (! *cpi) {
-             return;
-         }
-         ++lencopied;
+        *cpo = *cpi;
+        if (! *cpi) {
+            return;
+        }
+        ++lencopied;
     }
     printf("FAIL copy file name: not terminated \n");
     exit(1);
@@ -211,7 +211,7 @@ main(int argc, char **argv)
         char *arg = argv[i];
         if (!strcmp(arg,"-group")) {
             i++;
-            if(i >= argc) {
+            if (i >= argc) {
                 usage();
             }
             arg = argv[i];
@@ -221,13 +221,13 @@ main(int argc, char **argv)
                 in real code. */
             continue;
         }
-        trimpathprefix(reportingpath,sizeof(reportingpath),arg); 
+        trimpathprefix(reportingpath,sizeof(reportingpath),arg);
         res = one_file_show_groups(arg,
             reportingpath,chosengroup);
         printf("=======done with %s, status %s\n",reportingpath,
-           (res == DW_DLV_OK)?"DW_DLV_OK":
-           (res == DW_DLV_ERROR)?"DW_DLV_ERROR":
-           "DW_DLV_NO_ENTRY");
+            (res == DW_DLV_OK)?"DW_DLV_OK":
+            (res == DW_DLV_ERROR)?"DW_DLV_ERROR":
+            "DW_DLV_NO_ENTRY");
         printf("\n");
     }
     return 0;

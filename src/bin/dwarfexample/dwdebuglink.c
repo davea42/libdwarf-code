@@ -159,9 +159,9 @@ print_ftype_message(const char * prefix,
 
 /*  The debug version we expect not to have debuglink,
     checking here if buildid crc and id length match.
-    Never returns DW_DLV_ERROR. 
+    Never returns DW_DLV_ERROR.
     debuglink records have a crc.
-    build ID records have a byte string 
+    build ID records have a byte string
     This matches either.
 */
 static int
@@ -479,7 +479,7 @@ main(int argc, char **argv)
             continue;
         }
         filenamein = arg;
-        if (filenamein[0] != '/' && filenamein[1]  == ':') { 
+        if (filenamein[0] != '/' && filenamein[1]  == ':') {
             /* For regression testing we alter a Windows drive name */
             unsigned char c = filenamein[0];
             switch(c) {

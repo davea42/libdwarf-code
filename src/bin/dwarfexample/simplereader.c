@@ -101,7 +101,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdio.h>  /* fprintf() printf() snprintf() */
 #include <stdlib.h> /* atoi() exit() free() */
-#include <string.h> /* memset() strcmp() strcpy() strdup() strlen() strncmp() */
+#include <string.h> /* memset() strcmp() strcpy() strdup()
+    strlen() strncmp() */
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* uintptr_t */
