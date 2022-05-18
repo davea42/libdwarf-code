@@ -1,3 +1,29 @@
+2022-05-18:  David Anderson
+    commit 79ec4257064bcb7012f234dae0139556345e54de
+
+    Removed trailing whitespace.
+            modified:   dwdebuglink.c
+
+    Adjusted incorrect indents.
+            modified:   showsectiongroups.c
+
+    A comment made a line too long.
+    Split into two lines.
+            modified:   simplereader.c
+
+2022-05-18:  David Anderson
+    commit 3eb71332c0bad63ff42e38450e52847ff8267752
+
+    Removed trailing whitespace from two lines.
+    Split one too-long line into two lines.
+            modified:   dd_command_options.c
+
+2022-05-17:  David Anderson
+    commit a56b9146ead9a1d3308075ffad287fc56ccc9b85
+
+    Bringing it up to date with git log
+            modified:   ChangeLog
+
 2022-05-17:  David Anderson
     commit 3c60185eb0c11a86d350004dde9f409c94b9094b
 
