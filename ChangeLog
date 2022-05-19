@@ -1,3 +1,28 @@
+2022-05-19:  David Anderson
+    commit 60fcd08634420f7ac6eabe37794fc499c00bb147
+
+    Factored out _dwarf_setup_base_address so we easily handle
+    the case of a compiler using DW_AT_entry_pc ( first
+    defined in DWARF3) as base address
+    when there is no DW_AT_low_pc at the compilation-unit DIE.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2022-05-19:  David Anderson
+    commit e6d468ae0ba05e610bf4f8969d30700fc2998327
+
+    Added comments about cc_low_pc and DW_AT_entry_pc
+    and an Apple compiler.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+    Removed a blank line where there were two such in a row.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-05-18:  David Anderson
+    commit 60c755d6c78c7c505c33d51a3bb536a15cc65386
+
+    bringing changelog up to the minute.
+            modified:   ChangeLog
+
 2022-05-18:  David Anderson
     commit 79ec4257064bcb7012f234dae0139556345e54de
 
