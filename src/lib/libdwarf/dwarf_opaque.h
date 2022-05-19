@@ -235,7 +235,17 @@ struct Dwarf_CU_Context_s {
         cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool     cc_cu_die_offset_present;
 
-    /* if present, is base address of CU */
+    /*  If present, is base address of CU.  In DWARF2
+        nothing says what attribute is the base address.
+        DW_AT_producer 4.2.1 (Based on Apple Inc. build 5658)
+        (LLVM build 2336.1.00) uses DW_AT_entry_pc as the
+        base address.  DW_AT_entry_pc first appears
+        in DWARF3.
+        We allow  DW_AT_entry_pc as an extension,
+        as a 'low_pc' if there is DW_AT_entry_pc with
+        no DW_AT_low_pc. 19 May 2022.
+        In DWARF3, DWARF4 DW_AT_low_pc is specifically
+        mentioned as the base address.  */
     Dwarf_Unsigned cc_low_pc;
     /*  from DW_AT_addr_base in CU DIE, offset to .debug_addr table */
     Dwarf_Unsigned cc_addr_base;  /* Zero in .dwo */

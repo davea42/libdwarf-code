@@ -6854,8 +6854,6 @@ DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
     offset/name tuples) for a CU shows up rather than
     being suppressed.
 
-
-
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
     @param dw_dbg
@@ -7556,7 +7554,6 @@ DW_API int dwarf_gnu_debuglink(Dwarf_Debug dw_dbg,
 
 /*! @brief Suppressing  crc calculations
 
-
     The .gnu_debuglink  section contains a compilation-system
     created crc (4 byte) value. If dwarf_init_path[_dl]()
     is called such a section can result in the reader/consumer
@@ -7579,7 +7576,7 @@ DW_API int dwarf_gnu_debuglink(Dwarf_Debug dw_dbg,
     @param
     Defaults to 0.
     Pass in 1 to suppress future calculation of crc values
-    to verify a debuglink target is correct. So use  
+    to verify a debuglink target is correct. So use
     only when you know this is safe.
     Pass in 0 to ensure future dwarf_init_path_dl calls
     compute debuglink CRC values as required.
@@ -7587,7 +7584,6 @@ DW_API int dwarf_gnu_debuglink(Dwarf_Debug dw_dbg,
     Returns the previous value of the global flag.
 */
 DW_API int dwarf_suppress_debuglink_crc(int dw_suppress);
-
 
 /*! @brief Adding debuglink global paths
 
