@@ -979,6 +979,55 @@ local_attrlist_dealloc(Dwarf_Debug dbg,
     dwarf_dealloc(dbg,alist,DW_DLA_LIST);
 }
 
+static int
+_dwarf_setup_base_address(Dwarf_Debug dbg,
+    const char *attrname,
+    Dwarf_Attribute attr,
+    int at_addr_base_attrnum,
+    Dwarf_CU_Context cucon,
+    Dwarf_Error *error)
+{
+    int lres = 0;
+    Dwarf_Half form = 0;
+
+    /*  If the form is indexed, we better have
+        seen DW_AT_addr_base.! */
+    lres = dwarf_whatform(attr,&form,error);
+    if (lres != DW_DLV_OK) {
+        return lres;
+    }
+    if (dwarf_addr_form_is_indexed(form)) {
+        if (at_addr_base_attrnum < 0) {
+            dwarfstring m;
+
+            dwarfstring_constructor(&m);
+            dwarfstring_append(&m,
+                "DW_DLE_ATTR_NO_CU_CONTEXT: The ");
+            dwarfstring_append(&m,(char *)attrname);
+            dwarfstring_append(&m," CU_DIE uses "
+                "an indexed attribute yet "
+                "DW_AT_addr_base is not in the CU DIE.");
+            _dwarf_error_string(dbg,error,
+                DW_DLE_ATTR_NO_CU_CONTEXT,
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
+            return DW_DLV_ERROR;
+        }
+    }
+    lres = dwarf_formaddr(attr,
+        &cucon->cc_low_pc,error);
+    if (lres == DW_DLV_OK) {
+        /*  Pretending low_pc (ie cu base address for loclists)
+            if it was DW_AT_entry_pc with no DW_AT_low_pc
+            Allowing DW_AT_entry_pc */
+        cucon->cc_low_pc_present = TRUE;
+    } else {
+        /* Something is badly wrong. */
+        return lres;
+    }
+    return lres;
+}
+
 /*
     For a DWP/DWO the base fields
     of a CU are inherited from the skeleton.
@@ -998,6 +1047,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
     int               alres = 0;
     Dwarf_Signed      i = 0;
     Dwarf_Signed low_pc_attrnum = -1;
+    Dwarf_Signed entry_pc_attrnum = -1;
     Dwarf_Signed at_addr_base_attrnum = -1;
 
     cu_context = cudie->di_cu_context;
@@ -1106,6 +1156,18 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
             */
             case DW_AT_low_pc: {
                 low_pc_attrnum = i;
+                break;
+            }
+            /*  DW_AT_producer 4.2.1 (Based on Apple Inc. build 5658)
+                (LLVM build 2336.1.00) uses DW_AT_entry_pc as the
+                base address (DW_AT_entry_pc
+                first appears in DWARF3).
+                So we allow that as an extension,
+                as a 'low_pc' if there is DW_AT_entry_pc with
+                no DW_AT_low_pc. 19 May 2022.
+            */
+            case DW_AT_entry_pc: {
+                entry_pc_attrnum = i;
                 break;
             }
 
@@ -1226,43 +1288,36 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
         }
     }
     if (low_pc_attrnum >= 0 ){
-        int lres = 0;
+        int battr = 0;
+
+        /* Prefer DW_AT_low_pc */
         Dwarf_Attribute attr = alist[low_pc_attrnum];
-        Dwarf_Half form = 0;
-
-        /* If the form is indexed, we better have
-            seen DW_AT_addr_base.! */
-        lres = dwarf_whatform(attr,&form,error);
-        if (lres != DW_DLV_OK) {
+        battr = _dwarf_setup_base_address(dbg,"DW_AT_low_pc",
+            attr,at_addr_base_attrnum, cucon,error);
+        if (battr != DW_DLV_OK) {
             local_attrlist_dealloc(dbg,atcount,alist);
-            return lres;
+            /* Something is badly wrong */
+            return battr;
         }
-        if (dwarf_addr_form_is_indexed(form)) {
-            if (at_addr_base_attrnum < 0) {
-                dwarfstring m;
+    } else if (entry_pc_attrnum >= 0) {
+        int battr = 0;
 
-                dwarfstring_constructor(&m);
-                dwarfstring_append(&m,
-                    "DW_DLE_ATTR_NO_CU_CONTEXT: "
-                    "The DW_AT_low_pc  CU_DIE uses "
-                    "an indexed attribute yet "
-                    "DW_AT_addr_base is not in the CU DIE.");
-                _dwarf_error_string(dbg,error,
-                    DW_DLE_ATTR_NO_CU_CONTEXT,
-                    dwarfstring_string(&m));
-                dwarfstring_destructor(&m);
-                local_attrlist_dealloc(dbg,atcount,alist);
-                return DW_DLV_ERROR;
-            }
-        }
-        lres = dwarf_formaddr(attr,
-            &cucon->cc_low_pc,error);
-        if (lres == DW_DLV_OK) {
-            cucon->cc_low_pc_present = TRUE;
-        } else {
-            /* Something is badly wrong. */
+        /*  Pretending that DW_AT_entry_pc with no
+            DW_AT_low_pc is a valid base address for
+            loccation lists.
+            DW_AT_producer 4.2.1 (Based on Apple Inc. build 5658)
+            (LLVM build 2336.1.00) uses DW_AT_entry_pc as the
+            base address (DW_AT_entry_pc first appears in DWARF3).
+            So we allow that as an extension,
+            as a 'low_pc' if there is DW_AT_entry_pc with
+            no DW_AT_low_pc. 19 May 2022. */
+        Dwarf_Attribute attr = alist[entry_pc_attrnum];
+        battr = _dwarf_setup_base_address(dbg,"DW_AT_entry_pc",
+            attr,at_addr_base_attrnum, cucon,error);
+        if (battr != DW_DLV_OK) {
             local_attrlist_dealloc(dbg,atcount,alist);
-            return lres;
+            /* Something is badly wrong */
+            return battr;
         }
     }
     local_attrlist_dealloc(dbg,atcount,alist);
