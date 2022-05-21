@@ -1419,6 +1419,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     the error details.
     @return DW_DLV_OK etc.
 
+    @link dwsec_separatedebug  Details on separate DWARF object access @endlink
     @see dwarf_init_path_dl dwarf_init_b
     @see exampleinit
 */
@@ -1480,6 +1481,7 @@ DW_API int dwarf_init_path(const char * dw_path,
     the error details.
     @return DW_DLV_OK etc.
 
+    @link dwsec_separatedebug  Details on separate DWARF object access @endlink
     @see exampleinit_dl
     */
 DW_API int dwarf_init_path_dl(const char * dw_path,
@@ -7586,6 +7588,8 @@ DW_API int dwarf_gnu_debuglink(Dwarf_Debug dw_dbg,
     compute debuglink CRC values as required.
     @return
     Returns the previous value of the global flag.
+
+    @link dwsec_separatedebug  Details on separate DWARF object access @endlinke
 */
 DW_API int dwarf_suppress_debuglink_crc(int dw_suppress);
 

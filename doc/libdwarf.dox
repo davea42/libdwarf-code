@@ -725,7 +725,7 @@
     One is Macos dSYM.  It's a convention of placing
     the DWARF-containing object in a subdirectory tree.
 
-    The other is GNU debuglink and debug_id. These
+    The other is GNU debuglink and GNU debug_id. These
     are two distinct ways to provide names of alternative
     DWARF-containing objects elsewhere in a file system.
 
@@ -836,6 +836,9 @@
     the library may be required to compute a 32bit
     crc (Cyclic Redundancy Check) on the file
     found via GNU debuglink.
+
+    @see https://en.wikipedia.org/wiki/Cyclic_redundancy_check
+
     For people doing repeated builds of objects using
     such the crc check is a waste of time as they
     know the crc comparison will pass.
@@ -843,21 +846,31 @@
     For such situations a special interface function
     lets the 
     dwarf_init_path() or dwarf_init_path_dl()
-    caller suppress the crc check.
-    It is best used as follows (the same pattern
-    applies to dwarf_init_path_dl() ):
+    caller suppress the crc check without having
+    any effect on anything else in @e libdwarf.
+
+    It might be used as follows (the same pattern
+    applies to dwarf_init_path_dl() ) for any program
+    that might do multiple
+    dwarf_init_path() or dwarf_init_path_dl()
+    calls in a single program execution.
 
     @code
+    int res      = 0;
+    int crc_check= 0;
 
-    int crc_check=0;
     crc_check = dwarf_suppress_debuglink_crc(1);
     res = dwarf_init_path(..usual arguments);
+    /*  Reset the crc flag to previous value. */
     dwarf_suppress_debuglink_crc(crc_check);
+    /*  Now check res in the usual way. */
     @endcode
     
     This pattern ensures the crc check is suppressed for this
     single dwarf_init_path() or dwarf_init_path_dl()
-    call.
+    call while leaving the setting unchanged for further
+    dwarf_init_path() or dwarf_init_path_dl()
+    calls in the running program.
 
     @section dwsec_changes Recent Changes
 
