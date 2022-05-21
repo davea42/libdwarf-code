@@ -1,3 +1,42 @@
+2022-05-21:  David Anderson
+    commit 268f398ca3b16d77b963a4310621375d20ed7a7a
+
+    To get the leading - to dwarfdump options to show up
+    in Recent Changes changed -v to \-v etc.
+            modified:   doc/libdwarf.dox
+    regenerated.
+            modified:   doc/libdwarf.pdf
+
+2022-05-21:  David Anderson
+    commit 24d2cdec480c300b8c7416d08cde0dd99aaa27ee
+
+    Improved the documentation of dwarf_suppress_debuglink_crc.
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2022-05-21:  David Anderson
+    commit a653b2a8954ff1b42622aafc3cc16a950cfdd555
+
+    Dated 21 May 2022 for version 0.4.1
+    Now with a section detailing
+    access to GNU debuglink and debug-id,
+    and Macos dSYM separate-debug objects.
+            modified:   doc/libdwarf.dox
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+    Minor clarifications in  doxygen comments to dwarf_init_path().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-05-19:  David Anderson
+    commit 117a02907ec18f36f51abf2a0c83bdc8ef3c6386
+
+    Latest git log data included.
+            modified:   ChangeLog
+
 2022-05-19:  David Anderson
     commit 60fcd08634420f7ac6eabe37794fc499c00bb147
 
