@@ -1390,9 +1390,9 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
     occur, nor will the GNU_debuglink processing occur.
     In case GNU debuglink data was followed or MacOS
     dSYM applies the true_path_out
-    will not match path.
-    So consider the value put in true_path_out the
-    actual file name.
+    will not match path and the initial byte will be
+    non-null.
+    The value put in true_path_out is the actual file name.
     @param dw_true_path_bufferlen
     Pass in the length in bytes of the buffer.
     @param dw_groupnumber
@@ -1465,6 +1465,10 @@ DW_API int dwarf_init_path(const char * dw_path,
     @param dw_dl_path_array
     debuglink processing allows a user-specified set of file paths
     and this argument allows one to specify these.
+    Pass in a pointer to  array of pointers to strings
+    which you, the caller, have filled in. The strings
+    should be alternate paths (see the GNU debuglink 
+    documentation.)  
     @param dw_dl_path_array_size
     Specify the size of the dw_dl_path_array.
     @param dw_dl_path_source

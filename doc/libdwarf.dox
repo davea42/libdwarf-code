@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-05-05 v0.4.1
+    @date 2022-05-21 v0.4.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -39,7 +39,8 @@
     DWARF committee was formed around 1991. "Unix International" was
     disbanded in the 1990s and no longer exists.
  
-    The DWARF committee published DWARF2 July 27, 1993.
+    The DWARF committee published DWARF2 July 27, 1993, 
+    DWARF3 in 2005, DWARF4 in 2010, and DWARF5 in 2017.
  
     In the mid 1990s this document and the library it describes
     (which
@@ -52,7 +53,9 @@
     FreeStandards.org. In 2007 FreeStandards.org merged with The Linux
     Foundation. The DWARF committee dropped its affiliation with
     FreeStandards.org in 2007 and established the dwarfstd.org
-    website. See "http://www.dwarfstd.org" for current information on
+    website. 
+
+    @see http://www.dwarfstd.org for current information on
     standardization activities and a copy of the standard.
 
     @section dwsec_threadsafety Thread Safety
@@ -71,14 +74,14 @@
     only one of them is truly appropriate except
     in toy programs).
 
-    <strong>A)The suggested approach</strong> is to 
+    <strong>A) The suggested approach</strong> is to 
     define a Dwarf_Error.
 
     @code
     Dwarf_Error error = 0;
     @endcode
     Then, in every call where there is a Dwarf_Error argument
-    pass its address
+    pass its address. For example:
     @code
     int res = dwarf_tag(die,DW_TAG_compile_unit,&error);
     @endcode
@@ -144,7 +147,8 @@
     Dwarf_Handler function you write.
 
     If you wish to provide a dw_errhand, define a function
-    (this first example is not a good choice)
+    (this first example is not a good choice as it 
+    terminates the application!).
     @code
     void bad_dw_errhandler(Dwarf_Error error,Dwarf_Ptr ptr)
     {
@@ -712,15 +716,167 @@
     on how the COMDAT section groups are used, so @e libdwarf is
     based on observations of what compilers generate.
 
+    @section dwsec_separatedebug  Details on separate DWARF object access
+
+    There are, at present, two distinct approaches in use
+    to put DWARF information into separate objects to
+    significantly shrink the size of the executable.
+
+    One is Macos dSYM.  It's a convention of placing
+    the DWARF-containing object in a subdirectory tree.
+
+    The other is GNU debuglink and debug_id. These
+    are two distinct ways to provide names of alternative
+    DWARF-containing objects elsewhere in a file system.
+
+    If one initializes a Dwarf_Debug object with
+    dwarf_init_path()  or dwarf_init_path_dl()
+    appropriately @e libdwarf will automatically open the
+    alternate object and report on the DWARF there.
+
+    @see https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+
+    @e libdwarf provides means to automatically read
+    the alternate object (in place of the one named
+    in the init call) or to suppress that and read
+    the named object file.
+
+    @code
+    int dwarf_init_path(const char * dw_path,
+    char *            dw_true_path_out_buffer,
+    unsigned int      dw_true_path_bufferlen,
+    unsigned int      dw_groupnumber,
+    Dwarf_Handler     dw_errhand,
+    Dwarf_Ptr         dw_errarg,
+    Dwarf_Debug*      dw_dbg,
+    Dwarf_Error*      dw_error);
+
+    int dwarf_init_path_dl(const char *dw_path,
+    char            * true_path_out_buffer,
+    unsigned        true_path_bufferlen,
+    unsigned        groupnumber,
+    Dwarf_Handler   errhand,
+    Dwarf_Ptr       errarg,
+    Dwarf_Debug     * ret_dbg,
+    char            ** dl_path_array,
+    unsigned int    dl_path_count,
+    unsigned char   * path_source,
+    Dwarf_Error     * error);
+    @endcode
+
+    Case 1:
+
+    If dw_true_path_out_buffer or
+    dw_true_path_bufferlen are passed in as zero
+    then the library will not look for an alternative
+    object.
+
+    Case 2:
+
+    If dw_true_path_out_buffer passes a pointer to
+    space you provide and dw_true_path_bufferlen passes in
+    the length, in bytes, of the  buffer, @e libdwarf will
+    look for alternate DWARF-containing objects.
+    We advise that the caller zero all the
+    bytes in dw_true_path_out_buffer before calling.
+
+    If the alternate object name (with its
+    null-terminator) is too long to fit
+    in the buffer the call will return DW_DLV_ERROR
+    with dw_error providing error code 
+    DW_DLE_PATH_SIZE_TOO_SMALL.
+
+    If the alternate object name fits in the buffer
+    @e libdwarf will open and use that alternate file
+    in the returned Dwarf_Dbg.
+
+    It's up to callers to notice that 
+    dw_true_path_out_buffer now contains a string
+    and callers will probably wish to do something
+    with the string.
+
+    If the initial byte of dw_true_path_out_buffer
+    is a non-null when the call returns
+    then an alternative object was found and opened.
+
+    The second function, dwarf_init_path_dl(),
+    is the same as dwarf_init_path() except 
+    the _dl version has three additional arguments,
+    as follows:
+
+    Pass in NULL or dw_dl_path_array, an array of pointers
+    to strings with alternate GNU debuglink paths you
+    want searched. For most people, passing in NULL
+    suffices.
+    
+    Pass in dw_dl_path_array_size, the number of elements
+    in dw_dl_path_array.
+    
+    Pass in dw_dl_path_source as NULL or a pointer to char.
+    If non-null @e libdwarf will set it to one of three values:
+
+    DW_PATHSOURCE_basic which means the original input
+    dw_path is the one opened in dw_dbg.
+
+    DW_PATHSOURCE_dsym which means a Macos dSYM object
+    was found and is the one opened in dw_dbg.
+    dw_true_path_out_buffer contains the dSYM
+    object path.
+    
+    DW_PATHSOURCE_debuglink which means a GNU debuglink
+    or GNU debug-id
+    path was found and names the one opened in dw_dbg.
+    dw_true_path_out_buffer contains the
+    object path.
+
+    GNU Debuglink-specific issue:
+
+    If GNU debuglink is present and considered by
+    dwarf_init_path() or dwarf_init_path_dl()
+    the library may be required to compute a 32bit
+    crc (Cyclic Redundancy Check) on the file
+    found via GNU debuglink.
+    For people doing repeated builds of objects using
+    such the crc check is a waste of time as they
+    know the crc comparison will pass.
+
+    For such situations a special interface function
+    lets the 
+    dwarf_init_path() or dwarf_init_path_dl()
+    caller suppress the crc check.
+    It is best used as follows (the same pattern
+    applies to dwarf_init_path_dl() ):
+
+    @code
+
+    int crc_check=0;
+    crc_check = dwarf_suppress_debuglink_crc(1);
+    res = dwarf_init_path(..usual arguments);
+    dwarf_suppress_debuglink_crc(crc_check);
+    @endcode
+    
+    This pattern ensures the crc check is suppressed for this
+    single dwarf_init_path() or dwarf_init_path_dl()
+    call.
+
     @section dwsec_changes Recent Changes
 
     We list these with newest first.
+
     <b>Changes 0.4.0 to 0.4.1</b>
-    libdwarf adds dwarf_suppress_debuglink_crc() so that
+
+    @e libdwarf accepts DW_AT_entry_pc in a compilation unit
+    DIE as a base address for location lists (though it will
+    prefer DW_AT_low_pc if present, per DWARF3).  A particular
+    compiler emits DW_AT_entry_pc in a DWARF2 object,
+    requiring this change.
+
+    @e libdwarf adds dwarf_suppress_debuglink_crc() so that
     library callers can suppress crc calculations.
     (useful to save the time of crc when building and testing
     the same thing(s) over and over; it just loses a little
-    checking.)
+    checking.) Additionally, @e libdwarf now properly handles
+    objects with only GNU debug-id or only GNU debuglink.
 
     dwarfdump adds --show-args, an option to print its
     arguments and version.
