@@ -891,17 +891,17 @@
     checking.) Additionally, @e libdwarf now properly handles
     objects with only GNU debug-id or only GNU debuglink.
 
-    dwarfdump adds --show-args, an option to print its
+    dwarfdump adds \--show-args, an option to print its
     arguments and version.
     Without that new option the version and arguments are not
-    shown. The output of -v (--version) is a little more complete.
+    shown. The output of \-v (\--version) is a little more complete.
 
-    dwarfdump adds --suppress-debuglink-crc, an option to avoid
+    dwarfdump adds \--suppress-debuglink-crc, an option to avoid
     crc calculations when rebuilding and rerunning tests
     depending on GNU .note.gnu.buildid or .gnu_debuglink
     sections. The help text and the dwarfdump.1 man page
-    are more specific documenting --suppress-debuglink-crc
-    and --no-follow-debuglink
+    are more specific documenting \--suppress-debuglink-crc
+    and \--no-follow-debuglink
 
     <b>Changes 0.3.4 to 0.4.0</b>
 
