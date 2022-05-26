@@ -1,4 +1,17 @@
 2022-05-21:  David Anderson
+    commit 2c04dab0fac09c4b0d58b8ab4c1cd1aa54e3cf1d
+
+    CoverityScan found a leak under a specific
+    error condition.  Fixed.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2022-05-21:  David Anderson
+    commit c6fbcc6d904f370e6b760f4e88362f5f5cf58c09
+
+    Now with latest git log data.
+            modified:   ChangeLog
+
+2022-05-21:  David Anderson
     commit 268f398ca3b16d77b963a4310621375d20ed7a7a
 
     To get the leading - to dwarfdump options to show up
