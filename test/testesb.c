@@ -223,6 +223,8 @@ int main(int argc, char *argv[])
         validate_esb(16,&e,23,24,"abcde fghij klmno pqrst",__LINE__);
         esb_destructor(&d);
         esb_destructor(&e);
+        /*  esb_get_copy returns malloc-d bytes. Must free. */
+        free(result);
     }
     {
         struct esb_s d5;
