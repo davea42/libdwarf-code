@@ -14,7 +14,7 @@ description: A carefully corrupted .debug_pubnames section
   resulting in Denial Of Service.
 datefixed: 2022-05-29
 references: regressiontests/sleicasper/bufferoverflow
-gitfixid: 
+gitfixid: 8151575a6ace77d005ca5bb5d71c1bfdba3f7069
 tarrelease:
 endrec: DW202205-001
 
