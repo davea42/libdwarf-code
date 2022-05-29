@@ -31,7 +31,6 @@
 #include <config.h>
 
 #include <string.h> /* strlen() */
-
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
@@ -82,6 +81,33 @@ _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,
     return;
 }
 #endif /* __sgi */
+
+#if 0
+/*  Debugging only. Requires start. can calulate one of len, end */
+static void
+debug_print_range(const char *msg,
+    int lineno,
+    void *start, signed long len,
+    void *end)
+{
+
+    char *st = (char *)start;
+    char *en = (char *)end;
+    signed long le = len;
+
+    if (len) {
+        if (en) {
+            le = (long)(en-st);
+        } else {
+            en= start+len;
+        }
+    } else if (en) {
+        le = (long)(en-st);
+    }
+    printf("RANGEdebug %s  st=0x%lx le=%ld en=0x%lx line %d\n",
+        msg,(unsigned long)st,le,(unsigned long)en,lineno);
+}
+#endif
 
 static void
 dealloc_globals_chain(Dwarf_Debug dbg,
@@ -287,9 +313,9 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     Dwarf_Off pubnames_section_offset = 0;
     Dwarf_Small *section_end_ptr = section_data_ptr +section_length;
 
-    /*  Points to the context for the current set of global names, and
-        contains information to identify the compilation-unit that the
-        set refers to. */
+    /*  Points to the context for the current set of global names,
+        and contains information to identify the compilation-unit
+        that the set refers to. */
     Dwarf_Global_Context pubnames_context = 0;
     Dwarf_Bool           pubnames_context_on_list = FALSE;
 
@@ -300,6 +326,10 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     Dwarf_Off die_offset_in_cu = 0;
 
     Dwarf_Unsigned global_count = 0;
+
+    /*  The count is just to improve the error message
+        a few lines above. */
+    Dwarf_Unsigned context_count = 0;
 
     /*  Used to chain the Dwarf_Global_s structs for
         creating contiguous list of pointers to the structs. */
@@ -384,6 +414,41 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             }
             return mres;
         }
+        {
+            Dwarf_Small * localend =pubnames_like_ptr + length;
+
+            if ((length > section_length) ||
+                (localend > section_end_ptr)){
+                /*  The length field  is corrupted */
+                dwarfstring m;
+
+                dwarfstring_constructor(&m);
+                dwarfstring_append_printf_u(&m,
+                    "DW_DLE_PUBNAMES_LENGTH_BAD (or similar) "
+                    "A DWARF length field in cu context %u ",
+                    context_count);
+                dwarfstring_append_printf_s(&m,"of section %s ",
+                    (char *)secname);
+                dwarfstring_append_printf_u(&m,"of "
+                    "%u bytes ",length);
+                dwarfstring_append_printf_u(&m,
+                    "runs off the end of "
+                    "the %u bytes of the real section",
+                    section_length);
+                _dwarf_error_string(dbg, error,length_err_num,
+                    dwarfstring_string(&m));
+                dwarfstring_destructor(&m);
+                dealloc_globals_chain(dbg,head_chain);
+                if (!pubnames_context_on_list) {
+                    dwarf_dealloc(dbg,pubnames_context,
+                        context_DLA_code);
+                }
+                return DW_DLV_ERROR;
+            }
+        }
+        /*  The count is just to improve the error message
+            a few lines above. */
+        ++context_count;
         pubnames_context->pu_alloc_type = context_DLA_code;
         pubnames_context->pu_length_size = local_length_size;
         pubnames_context->pu_length = length;
@@ -393,8 +458,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_ptr_past_end_cu = pubnames_like_ptr + length;
         pubnames_context->pu_pub_entries_end_ptr =
             pubnames_ptr_past_end_cu;
-
-        if ((pubnames_like_ptr + (DWARF_HALF_SIZE) ) >
+        if ((pubnames_like_ptr + (DWARF_HALF_SIZE) ) >=
             /* A minimum size needed */
             section_end_ptr) {
             pubnames_error_length(dbg,error,
@@ -554,6 +618,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         while (die_offset_in_cu) {
             int res = 0;
             unsigned char *glname = 0;
+            Dwarf_Unsigned nstrlen = 0;
 
             /*  non-zero die_offset_in_cu already read, so
                 pubnames_like_ptr points to a string.  */
@@ -570,8 +635,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 return res;
             }
             glname = (unsigned char *)pubnames_like_ptr;
-            pubnames_like_ptr = pubnames_like_ptr +
-                strlen((char *) pubnames_like_ptr) + 1;
+            nstrlen = strlen((char *)pubnames_like_ptr);
+            pubnames_like_ptr += nstrlen + 1;
             /*  Already read offset and verified string, glname
                 now points to the string. */
             res = _dwarf_make_global_add_to_chain(dbg,
