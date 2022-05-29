@@ -1,4 +1,23 @@
 
+id: DW202205-001
+cve:
+fuzzer: 
+datereported: 2022-05-26
+reportedby: sleicasper
+vulnerability: buffer overflow in dwarf_globals.c
+product: libdwarf
+description: A carefully corrupted .debug_pubnames section
+  would cause libdwarf to read outside of a buffer containing
+  the section contents.
+  That could cause a segmentation violation or other
+  major error, terminating the calling application and
+  resulting in Denial Of Service.
+datefixed: 2022-05-29
+references: regressiontests/sleicasper/bufferoverflow
+gitfixid: 
+tarrelease:
+endrec: DW202205-001
+
 id: DW202111-016
 cve:
 fuzzer: oss-fuzz-41240
