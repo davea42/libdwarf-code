@@ -1,3 +1,39 @@
+2022-05-29:  David Anderson
+    commit 9e5d19905744676e41eeabb1f3f2f1253a9bea95
+
+    Now DW202205-001 has the commit id of the fix.
+            modified:   bugxml/data.txt
+
+2022-05-29:  David Anderson
+    commit 8151575a6ace77d005ca5bb5d71c1bfdba3f7069
+
+    Fixes vulnerability DW202205-001
+    Reports error instead of crashing the when reading
+    a specially crafted (corrupted) .debug_pubnames
+    or .debug_pubtypes section.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+2022-05-29:  David Anderson
+    commit 8e202226e604864b792ade45de8595c8944c0269
+
+    First version of DW202205-001.
+    bugxml/
+            modified:   data.txt
+
+2022-05-28:  David Anderson
+    commit 88df39e5278b4ed2385fdb22fa83f0e5e3c141c9
+
+    The make check test source failed to free
+    a malloc'd string so would get a -fsanitize warning.
+    Fixed.
+            modified:   test/testesb.c
+
+2022-05-25:  David Anderson
+    commit b5472a8797f939a2f1673bf1b459836f514139b5
+
+    Latest log data
+            modified:   ChangeLog
+
 2022-05-21:  David Anderson
     commit 2c04dab0fac09c4b0d58b8ab4c1cd1aa54e3cf1d
 
