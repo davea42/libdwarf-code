@@ -1,3 +1,22 @@
+2022-05-30:  David Anderson
+    commit 1084a3be38a5e0ecec8b00498efabd9f2723e92d
+
+    Updated error message related to DW202205-001
+    and fixed odd logic and it changed
+    -v --print-pubnames output! Which has been
+    incorrct in one field for many years.
+    The field is very not important it's really to help
+    understand the byte layout of .debug_pub[names,types].
+    So, old bug corrected and new error message made
+    much more understandable.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+2022-05-29:  David Anderson
+    commit 9683c08424f21b4188ec1461cb08ce4d2077ce70
+
+    Updated with latest git log data.
+            modified:   ChangeLog
+
 2022-05-29:  David Anderson
     commit 9e5d19905744676e41eeabb1f3f2f1253a9bea95
 
