@@ -3,7 +3,7 @@ id: DW202205-001
 cve:
 fuzzer: 
 datereported: 2022-05-26
-reportedby: sleicasper
+reportedby: Casper Sun
 vulnerability: buffer overflow in dwarf_globals.c
 product: libdwarf
 description: A carefully corrupted .debug_pubnames section
