@@ -66,11 +66,7 @@ then
   exit $r
 fi
 echo "if update required, mv $tx $b"
-${localsrc}/dos2unix.py $tx
-chkres $? "FAIL jitreaderdiff.sh dos2unix.py"
 ${localsrc}/dwdiff.py $b $tx
-#diff $b $tx > $tx.diff
-#chkres $r "FAIL jitreader.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
   echo "Diff above."
