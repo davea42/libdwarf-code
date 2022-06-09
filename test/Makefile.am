@@ -287,5 +287,6 @@ testobjLE32PE.base \
 testobjLE32PE.exe \
 testobjLE32PE.test.c \
 testuriLE64ELf.base \
-testuriLE64ELf.obj
+testuriLE64ELf.obj \
+transformpath.py
 

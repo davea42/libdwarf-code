@@ -82,8 +82,7 @@ is_full_path(char *path,int joinchar)
     if (c1 == ':') {
         /*  Windows full path, we assume
             We just assume nobody would be silly enough
-            to name a linux/posix directory "C:aa"
-            or the like. */
+            to name a linux/posix directory starting with "C:" */
         return TRUE;
     }
     /*  No kind of full path name */

@@ -69,34 +69,11 @@ else
   # we strip out the actual localsrc and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
-  echo $localsrc | sed -e "s@[.]@\[.\]@g" >$testbin/${o}sed1
-  echo "testbin/${o}sed1 = $testbin/${o}sed1"
-  sedv1=`head -n 1 $testbin/${o}sed1`
-  # Transform source dir name from literal to ..src.. so
-  # test diff not dependent on local file path. 
-  # use @ instead of / or \ or : to avoid tripping over
-  # normal path characters in Linux/Macos/Windows
-  sed -e "s@$sedv1@..src..@" <$testbin/$o  >$testbin/${o}a
-  cat $testbin/${o}a
-  echo " source path now changed to ..src.."
-  echo "testbin/${o}a  = $testbin/${o}a"
-  echo $blddir | sed -e "s@[.]@\[.\]@g" >$testbin/${o}sed2
-  echo "testbin/${o}sed2  = $testbin/${o}sed2"
-  sedv2=`head -n 1 $testbin/${o}sed2`
-  # Transform build dir name from literal to ..bld.. so
-  # test diff not dependent on local file path. 
-  sed -e "s@$sedv2@..bld..@" <$testbin/${o}a  >$testbin/${o}b
-  echo "bin path now changed to ..bld.. "
-  echo "testbin/${o}b  = $testbin/${o}b"
-  cat $testbin/${o}b
-  ls -l   $testsrc/debuglink.base $testbin/${o}b 
-  echo " now diff "$testsrc/debuglink.base $testbin/${o}b
-  ${localsrc}/dos2unix.py $testbin/${o}b
-  chkres $? "FAIL debuglinktest-a.sh dos2unix.py"
-  diff $testsrc/debuglink.base  $testbin/${o}b
+  ${localsrc}/transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c
+  ${localsrc}/dwdiff.py $testsrc/debuglink.base $testbin/${o}c
   r=$?
   echo "To update debuglinktest-a.sh baseline:"
-  echo "mv $testbin/${o}b $testsrc/debuglink.base"
+  echo "mv $testbin/${o}c $testsrc/debuglink.base"
   chkres $r "running debuglinktest-a.sh test1 diff against baseline"
 fi
 exit 0

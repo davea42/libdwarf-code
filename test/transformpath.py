@@ -21,10 +21,10 @@ def readin(srcfile):
     try:
         f = open(srcfile, "r")
     except:
-        print("Unable to open input conf ", srcfile, " giving up")
+        print("Unable to open input file ", srcfile, " giving up")
         sys.exit(1)
     y = f.readlines()
-    out = [] 
+    out = []
     for l in y:
         x=l.rstrip()
         out += [x]
@@ -62,6 +62,6 @@ if __name__ == "__main__":
             "localsrcpath localbinpath  inputpath outpath")
         exit(1)
     ilines = readin(infile)
-    outlines = transform(ilines,localsrcpath,localbinpath) 
+    outlines = transform(ilines,localsrcpath,localbinpath)
     writeout(outlines,outfile)
     sys.exit(0)
