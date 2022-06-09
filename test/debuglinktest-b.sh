@@ -33,7 +33,12 @@ else
   fi
 fi
 blddir=`pwd`
-top_blddir="$blddir/.."
+bname=`basename $blddir`
+top_blddir="$blddir"
+if [ x$bname = "xtest" ]
+then
+  top_blddir="$blddir/.."
+fi
 
 if [ "x$top_srcdir" = "x.." ]
 then

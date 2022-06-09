@@ -15,7 +15,12 @@ fi
 
 echo "Argument count: $#"
 blddir=`pwd`
-top_blddir=`dirname $blddir`
+bname=`basename $blddir`
+top_blddir="$blddir"
+if [ x$bname = "xtest" ]
+then
+  top_blddir="$blddir/.."
+fi
 if [ $# -gt 0  ]
 then
   DWTOPSRCDIR="$1"

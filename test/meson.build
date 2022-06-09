@@ -111,3 +111,18 @@ foreach testscr : pyscripttests
   test(pytest_name,py3_exe, args: [pyexec_name, pytest_name,'meson', projectbase, buildbase])
 endforeach
 
+shscripttests =  [
+['debuglinktest-a.sh'],
+['debuglinktest-b.sh'],
+['jitreaderdiff.sh'],
+]
+
+sh_exe = find_program('sh',required:true)
+foreach shscr : shscripttests
+  test_name = shscr[0]
+  message(test_name)
+  shexec_name = join_paths(projectbase,'test',test_name)
+  test(test_name,sh_exe,args: [shexec_name, projectbase ])
+endforeach
+
+

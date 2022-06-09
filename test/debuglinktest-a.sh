@@ -32,7 +32,12 @@ else
   fi
 fi
 blddir=`pwd`
-top_blddir="$blddir/.."
+bname=`basename $blddir`
+top_blddir="$blddir"
+if [ x$bname = "xtest" ]
+then
+  top_blddir="$blddir/.."
+fi
 
 if [ "x$top_srcdir" = "x.." ]
 then
@@ -45,7 +50,7 @@ bldloc=$top_blddir/src/bin/dwarfexample
 #localsrc is the source dir with baseline data
 localsrc=$top_srcdir/test
 
-testbin=$top_blddir/test
+testbin=$top_blddir
 testsrc=$top_srcdir/test
 # So we know the build. Because of debuglink.
 echo "DWARF_BIGENDIAN=$DWARF_BIGENDIAN"
