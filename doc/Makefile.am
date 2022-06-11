@@ -32,16 +32,16 @@ doxygen:
 	$(dox_verbose)$(DOXYGEN)
 
 install-data-local:
-	$(MKDIR_P) $(docdir)
-	cp -r html $(docdir)
-	cp -r latex $(docdir)
+	$(MKDIR_P) $(DESTDIR)$(docdir)
+	cp -r html $(DESTDIR)$(docdir)
+	cp -r latex $(DESTDIR)$(docdir)
 endif
 
 clean-local:
 	rm -rf html latex
 
 uninstall-local:
-	rm -rf $(docdir)/html $(docdir)/latex
+	rm -rf $(DESTDIR)$(docdir)/html $(DESTDIR)$(docdir)/latex
 
 EXTRA_DIST = \
 Doxyfile \
