@@ -111,11 +111,14 @@ foreach testscr : pyscripttests
   test(pytest_name,py3_exe, args: [pyexec_name, pytest_name,'meson', projectbase, buildbase])
 endforeach
 
-shscripttests =  [
-['debuglinktest-a.sh'],
-['debuglinktest-b.sh'],
-['jitreaderdiff.sh'],
-]
+shscripttests =  []
+if get_option('dwarfexample') == true
+  shscripttests =  [
+  ['debuglinktest-a.sh'],
+  ['debuglinktest-b.sh'],
+  ['jitreaderdiff.sh'],
+  ]
+endif
 
 sh_exe = find_program('sh',required:true)
 foreach shscr : shscripttests
