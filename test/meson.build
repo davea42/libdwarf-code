@@ -92,6 +92,23 @@ foreach test_src : tests
   )
 endforeach
 
+argstests = [
+  [
+   'test_errmsglist.c',
+   '../src/lib/libdwarf/dwarf_safe_strcpy.c',
+  ]
+]
+
+projectbase = meson.source_root()
+foreach atest_src : argstests
+  atest_name = atest_src[0].split('.')[0]
+  atexec = executable(atest_name, atest_src,
+    c_args : [ dev_cflags, libdwarf_args, '-DTESTING' ],
+    include_directories : [ config_dir, incdir ],
+    install : false)
+  test(atest_name,atexec, args: ['-f',projectbase])
+endforeach
+
 pyscripttests = [
   ['Elf'],
   ['PE',],
@@ -100,7 +117,6 @@ pyscripttests = [
 
 #git_exe = find_program('git', required: false)
 #pkgconfig_mod = import('pkgconfig')
-projectbase = meson.source_root()
 
 py3_exe = import('python').find_installation()
 foreach testscr : pyscripttests
