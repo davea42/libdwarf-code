@@ -1,3 +1,122 @@
+2022-06-15:  David Anderson
+    commit 8b37fd87346fd225a6f2822f07b2a89cc453b910
+
+    Now referencing DW202206-001 vulnerability
+            modified:   bugxml/data.txt
+            modified:   doc/libdwarf.dox
+
+2022-06-15:  David Anderson
+    commit 7ef09e1fc9ba07653dd078edb2408631c7969162
+
+    Fixes old bug(which could result in Denial of Service)
+    due to a missing check before reading the 8 bytes of a DW_FORM_ref_sig8.
+    DW202206-001
+            modified:   src/lib/libdwarf/dwarf_form.c
+
+2022-06-12:  David Anderson
+    commit bc068ac4049261bcd5cc6293aa2c90dc58fbcf8d
+
+    Now properly runs the test_errmsglist test case.
+    So now all the 'make check' cases pass for configure,cmake,and meson
+    builds.
+            modified:   test/meson.build
+
+2022-06-12:  David Anderson
+    commit 5a0719397f08efe872978966a7e3fc85238cb5dd
+
+    For running tests, test the dwarfexample
+    executables only if the build requested dwarfexample.
+            modified:   test/meson.build
+
+2022-06-11:  David Anderson
+    commit 4da94f40b2e271e0220429cf656484590227ab07
+
+    Added a note about the fixed vulnerability,
+    see Recent Changes.
+            modified:   doc/libdwarf.dox
+    New date. Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2022-06-11:  David Anderson
+    commit 8a2e978e1a4d6bbd2b1383f6da0ce18cba67f692
+    Merge: 585b3052 a313d485
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    Adding DESTDIR  to doc/Makefile.am
+
+2022-06-11:  David Anderson
+    commit a313d4854f22d0a1cfa2a529341b9665b311e5c8
+    Merge: b48330ff 934c0da5
+
+    Merge pull request #117 from heirecka/respect-destdir-with-doc
+
+    Respect DESTDIR when installing docs
+
+2022-06-11:  Heiko Becker
+    commit 934c0da583a60757f4e37a1a60f690645629066d
+
+    Respect DESTDIR when installing docs
+
+2022-06-09:  David Anderson
+    commit 585b3052f38a8f681cfc9ed5250f7642c18c09e7
+
+    Now gets top_blddir correct for all flavors.
+            modified:   debuglinktest-a.sh
+            modified:   debuglinktest-b.sh
+            modified:   jitreaderdiff.sh
+
+    Now refers to correct name jitreaderdiff.sh
+            modified:   meson.build
+
+2022-06-09:  David Anderson
+    commit b48330ff424b23ac2524c5804a7069ad624e0765
+
+    Removed 14 lines of code that was intended to help testing
+    on windows, but which actually just made it impossible.
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+
+    Corrected a comment related to Windows paths
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Added transformpath.py to the files to be distributed.
+            modified:   test/Makefile.am
+
+    Removed 24 lines and replaced with a single execution
+    of a simple python helper program the test works
+    on msys2 and Linux..
+            modified:   test/debuglinktest-a.sh
+
+    A pair of lines had trailing whitespace. Fixed.
+            modified:   test/transformpath.py
+
+2022-06-09:  David Anderson
+    commit cf21af79a07ed5343acca677c83466f295a1695a
+
+    Named an @section that was missing a name.
+            modified:   doc/libdwarf.dox
+    New code helping in tests.
+            new file:   test/transformpath.py
+
+2022-06-04:  David Anderson
+    commit 72e701141b015e2822c8782cb1a0378f6a09bfaf
+
+    Removed obsolete lines.
+            modified:   test/jitreaderdiff.sh
+
+2022-05-31:  David Anderson
+    commit 7da828b6e52638a5769c610c7b7d9da6c0b58cda
+
+    As requested by the bug submitter, I updated
+    the name field from a github id to an actual name.
+            modified:   data.txt
+
+2022-05-30:  David Anderson
+    commit 01c464bea73d7884714830bdd0f0ff2b5144c350
+
+    Now with the error message update and
+    fix of very old -v bug.
+            modified:   ChangeLog
+
 2022-05-30:  David Anderson
     commit 1084a3be38a5e0ecec8b00498efabd9f2723e92d
 
