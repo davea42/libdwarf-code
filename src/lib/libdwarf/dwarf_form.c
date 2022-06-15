@@ -605,7 +605,6 @@ find_sig8_target_as_global_offset(Dwarf_Attribute attr,
     Dwarf_Bool targ_is_info = 0;
     Dwarf_Off  localoff = 0;
     int res = 0;
-
     targ_is_info = attr->ar_cu_context->cc_is_info;
     memcpy(sig8,attr->ar_debug_ptr,sizeof(*sig8));
     res = dwarf_find_die_given_sig8(attr->ar_dbg,
@@ -837,6 +836,13 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
         Dwarf_Bool t_is_info = TRUE;
         Dwarf_Unsigned t_offset = 0;
 
+        if ((attr->ar_debug_ptr + sizeof(Dwarf_Sig8)) > section_end) {
+            _dwarf_error_string(dbg, error,
+                DW_DLE_REF_SIG8_NOT_HANDLED,
+                "DW_DLE_REF_SIG8_NOT_HANDLED: "
+                " Dwarf_Sig8 content runs off the end of its section");
+            return DW_DLV_ERROR;
+        }
         memcpy(&sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
         res = find_sig8_target_as_global_offset(attr,
             &sig8,&t_is_info,&t_offset,error);
