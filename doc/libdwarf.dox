@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-06-11 v0.4.1
+    @date 2022-06-15 v0.4.1
  
     @section draft Suggestions for improvement are welcome.
 
@@ -879,6 +879,10 @@
     We list these with newest first.
 
     <b>Changes 0.4.0 to 0.4.1</b>
+    Reading a carefully corrupted DIE with form DW_FORM_ref_sig8
+    could result in reading memory outside any section, possibly
+    leading to a segmentation violation or other crash. Fixed.
+    @see https://www.prevanders.net/dwarfbug.xml  DW202206-001
 
     Reading a carefully corrupted .debug_pubnames/.debug_pubtypes
     could lead to reading memory outside the section being

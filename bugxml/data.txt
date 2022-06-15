@@ -1,4 +1,25 @@
 
+id: DW202206-001
+cve:
+fuzzer: 
+datereported: 2022-06-15
+reportedby: Casper Sun
+vulnerability: buffer overflow in dwarf_form.c
+product: libdwarf
+description: A carefully corrupted .debug_info section
+  would cause libdwarf to read outside of a buffer containing
+  a Dwarf_Sig8 symbolic reference.
+  That could cause a segmentation violation or other
+  major error, terminating the calling application and
+  resulting in Denial Of Service.
+  This failure to check for buffer overflow has been present
+  since DWARF4 when DW_FORM_ref_sig8 was added to libdwarf.
+datefixed: 2022-06-15
+references: regressiontests/sleicasper2/buffer-overflow-dwarf-form
+gitfixid: 7ef09e1fc9ba07653dd078edb2408631c7969162
+tarrelease:
+endrec: DW202206-001
+
 id: DW202205-001
 cve:
 fuzzer: 
@@ -12,6 +33,7 @@ description: A carefully corrupted .debug_pubnames section
   That could cause a segmentation violation or other
   major error, terminating the calling application and
   resulting in Denial Of Service.
+  The bug has been present for many years.
 datefixed: 2022-05-29
 references: regressiontests/sleicasper/bufferoverflow
 gitfixid: 8151575a6ace77d005ca5bb5d71c1bfdba3f7069
