@@ -102,13 +102,15 @@ printusage(void)
     printf("Usage example: "
         "./findfuncbypc --pc=0x10000 ./findfuncbypc\n");
     printf(" options list:\n");
+    printf(" --help or -h prints this usage message and stops.\n");
     printf(" --pc=(hex or decimal pc address)\n");
     printf(" --printdetails  \n");
     printf("   prints some details of the discovery process\n");
     printf(" --allinstances\n");
     printf("   reports but does does not stop processing\n");
     printf("   on finding pc address\n");
-    printf(" --help or -h prints this usage message an stops.\n");
+    printf(" The argument following valid -- arguments must\n");
+    printf("   be a valid object file path\n");
 }
 
 static void target_data_destructor( struct target_data_s *td);
@@ -155,7 +157,7 @@ main(int argc, char **argv)
 
     real_path[0] = 0;
     memset(&target_data,0, sizeof(target_data));
-    for (i = 1; i < (argc-1) ; ++i) {
+    for (i = 1; i < argc ; ++i) {
         if (startswithextractnum(argv[i],"--pc=",
             &target_pc)) {
             /* done */
@@ -171,15 +173,16 @@ main(int argc, char **argv)
             printusage();
             exit(0);
         } else {
-            printf("Unknown argument \"%s\", give up \n",argv[i]);
-            exit(1);
+            /*  Assume next arg is a pathname.*/
+            break;
         }
     }
-    if (i >= (argc-1)) {
+    if (i > (argc-1)) {
         printusage();
         exit(1);
     }
     filepath = argv[i];
+    /*  Ignoring any later arguments on the command line */
     res = dwarf_init_path(filepath,
         real_path,
         PATH_LEN,
@@ -1197,7 +1200,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
                 td->td_cu_highpc = highpcr;
                 td->td_cu_haslowhighpc = TRUE;
                 done = TRUE;
-                res = IN_THIS_CU;
+                finalres = IN_THIS_CU;
                 break;
             case DW_RANGES_ADDRESS_SELECTION:
                 baseaddr = cur->dwr_addr2;
