@@ -1,3 +1,16 @@
+2022-06-16:  David Anderson
+    commit ca014c42a87e6dd0ea63d899e32865b636a0115e
+
+    Corrections to the example. Was not handling DW_AT_ranges
+    properly.
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+
+2022-06-15:  David Anderson
+    commit ca31d34a3e7db69f7101ea41b16076d8ae9d6ce5
+
+    Now with lastest fix: DW202206-001 from git log.
+            modified:   ChangeLog
+
 2022-06-15:  David Anderson
     commit 8b37fd87346fd225a6f2822f07b2a89cc453b910
 
