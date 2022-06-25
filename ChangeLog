@@ -1,3 +1,40 @@
+2022-06-25:  David Anderson
+    commit df602748801f45b1b20f2b87b68e4fbd7e4b5d28
+
+    Preparation for 0.4.2 changes list (when there are some).
+            modified:   doc/libdwarf.dox
+
+2022-06-25:  David Anderson
+    commit 83d51778a824b6d1f6fbfcdf79ea8852185175ce
+
+    These are the places with the version number.
+    All now are 0.4.2 as 0.4.1 has been released.
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-06-25:  David Anderson
+    commit 92fe20d176ca41cc6b4d16e40d6d3bfd13c4b7b9
+
+    Now tarrelease mentions the full .xz file name for the latest new
+    vulnerabilities
+            modified:   bugxml/data.txt
+
+2022-06-25:  David Anderson
+    commit b5e3e736ed94d2c104adccadf3476b180b5dcd99
+
+    Adding release as 0.4.1 for the two 2022 vulnerabilities.
+            modified:   bugxml/data.txt
+
+2022-06-16:  David Anderson
+    commit 9416aa9452c37b3ac252e709c39b46705916b97e
+
+    Now updated with latest git log entries.
+            modified:   ChangeLog
+
 2022-06-16:  David Anderson
     commit ca014c42a87e6dd0ea63d899e32865b636a0115e
 
