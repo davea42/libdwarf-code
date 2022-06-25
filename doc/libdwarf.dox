@@ -878,6 +878,9 @@
 
     We list these with newest first.
 
+    <b>Changes 0.4.1 to 0.4.2</b>
+    No changes yet.
+
     <b>Changes 0.4.0 to 0.4.1</b>
     Reading a carefully corrupted DIE with form DW_FORM_ref_sig8
     could result in reading memory outside any section, possibly
