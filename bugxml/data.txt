@@ -17,7 +17,7 @@ description: A carefully corrupted .debug_info section
 datefixed: 2022-06-15
 references: regressiontests/sleicasper2/buffer-overflow-dwarf-form
 gitfixid: 7ef09e1fc9ba07653dd078edb2408631c7969162
-tarrelease: v0.4.1
+tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202206-001
 
 id: DW202205-001
@@ -37,7 +37,7 @@ description: A carefully corrupted .debug_pubnames section
 datefixed: 2022-05-29
 references: regressiontests/sleicasper/bufferoverflow
 gitfixid: 8151575a6ace77d005ca5bb5d71c1bfdba3f7069
-tarrelease: v0.4.1
+tarrelease: libdwarf-0.4.1.tar.xz
 endrec: DW202205-001
 
 id: DW202111-016
