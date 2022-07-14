@@ -349,6 +349,9 @@ update_entry(Dwarf_Debug dbg,
     } else if (machine == EM_X86_64 && type == R_X86_64_NONE) {
         /*  There is nothing to do. */
         return DW_DLV_OK;
+    } else if (machine == EM_AARCH64 && type == R_AARCH64_NONE) {
+        /*  There is nothing to do. */
+        return DW_DLV_OK;
     } else {
         *error = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
         return DW_DLV_ERROR;

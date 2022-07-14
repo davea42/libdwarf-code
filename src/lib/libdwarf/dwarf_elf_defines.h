@@ -1023,6 +1023,9 @@ extern "C" {
 #ifndef R_390_TLS_LDO64
 #define R_390_TLS_LDO64                        53
 #endif /* R_390_TLS_LDO64 */
+#ifndef R_AARCH64_NONE
+#define R_AARCH64_NONE                        0
+#endif /* R_AARCH64_NONE */
 #ifndef R_AARCH64_ABS32
 #define R_AARCH64_ABS32                        258
 #endif /* R_AARCH64_ABS32 */
