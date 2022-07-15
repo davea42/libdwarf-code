@@ -840,7 +840,8 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
             _dwarf_error_string(dbg, error,
                 DW_DLE_REF_SIG8_NOT_HANDLED,
                 "DW_DLE_REF_SIG8_NOT_HANDLED: "
-                " Dwarf_Sig8 content runs off the end of its section");
+                " Dwarf_Sig8 content runs off the end of "
+                "its section");
             return DW_DLV_ERROR;
         }
         memcpy(&sig8,attr->ar_debug_ptr,sizeof(Dwarf_Sig8));
