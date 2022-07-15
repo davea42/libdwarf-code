@@ -1,3 +1,17 @@
+2022-07-14:  David Anderson
+    commit e85fbe398ec44ec322b5996e4db70ed66d131d73
+
+    Added R_AARCH64_NONE (means no relocation  to do)
+            modified:   src/lib/libdwarf/dwarf_elf_defines.h
+    Now handles R_AARCH64_NONE
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2022-06-25:  David Anderson
+    commit 5f721888872503179a43db68ce2263742279a6d8
+
+    Now with git log data about 0.4.2.
+            modified:   ChangeLog
+
 2022-06-25:  David Anderson
     commit df602748801f45b1b20f2b87b68e4fbd7e4b5d28
 
