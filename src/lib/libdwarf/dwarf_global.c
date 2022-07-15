@@ -299,23 +299,23 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
 static void
 _dwarf_get_DLE_name(int errnum,dwarfstring *out)
 {
-      char        * basemsg = 0;
-      char        * curp = 0;
-      unsigned long count = 0;
+    char        * basemsg = 0;
+    char        * curp = 0;
+    unsigned long count = 0;
 
-      basemsg = dwarf_errmsg_by_number(errnum);
-      curp = basemsg;
-      while (*curp) {
-          if (*curp == ' ') {
-              break;
-          }
-          if (*curp == '(') {
-              break;
-          }
-          ++count;
-          ++curp;
-      }
-      dwarfstring_append_length(out,basemsg,count);
+    basemsg = dwarf_errmsg_by_number(errnum);
+    curp = basemsg;
+    while (*curp) {
+        if (*curp == ' ') {
+            break;
+        }
+        if (*curp == '(') {
+            break;
+        }
+        ++count;
+        ++curp;
+    }
+    dwarfstring_append_length(out,basemsg,count);
 }
 
 static void
@@ -480,11 +480,11 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             if ((length > section_length) ||
                 (localend > section_end_ptr)){
                 _dwarf_global_cu_len_error_msg(dbg,
-                     length_err_num,
-                     secname, section_length,
-                     context_count,
-                     pubnames_like_offset,
-                     length, error); 
+                    length_err_num,
+                    secname, section_length,
+                    context_count,
+                    pubnames_like_offset,
+                    length, error);
                 dealloc_globals_chain(dbg,head_chain);
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
