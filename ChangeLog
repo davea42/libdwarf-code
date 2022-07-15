@@ -1,3 +1,30 @@
+2022-07-15:  David Anderson
+    commit 78005a95d916c84b92f0ca58f75ded3a2e3f91d8
+
+    Implemented a better, faster, universal way to deal
+    with R_<machine>_NONE relocation records.
+    Should have done it this way years ago.
+            modified:   lib/libdwarf/dwarf_elfread.c
+
+2022-07-15:  David Anderson
+    commit def530e467d6f15bdd87bc96a368a96c4b3f7ac3
+
+    Several lines had indentation errors.
+    Fixed.
+            modified:   lib/libdwarf/dwarf_global.c
+
+2022-07-15:  David Anderson
+    commit aefc12ea2baf55f68c2025874a61728d30864266
+
+    Shortened one line past the libdwarf line length limit.
+            modified:   dwarf_form.c
+
+2022-07-15:  David Anderson
+    commit b90af706cd68fe41b824b15824a3bda44d640818
+
+    So we have latest git log data here.
+            modified:   ChangeLog
+
 2022-07-14:  David Anderson
     commit e85fbe398ec44ec322b5996e4db70ed66d131d73
 
