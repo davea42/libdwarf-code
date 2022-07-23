@@ -16,7 +16,7 @@ description: A carefully corrupted string
   resulting in Denial Of Service.
 datefixed: 2022-07-23
 references: regressiontests/ossfuzz47150/clusterfuzz-testcase-minimized-fuzz_init_path-6727387238236160.fuzz
-gitfixid: 
+gitfixid:  24dff940cc4c71a9c3cb5475aee231b19163a12c
 tarrelease: 
 endrec: DW202207-001
 
