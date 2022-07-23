@@ -1,3 +1,42 @@
+2022-07-23:  David Anderson
+    commit e0fee334ee4822b8619d3c5781ea63ad085c9f07
+
+    Entered git fix id for DW202207-001
+            modified:   bugxml/data.txt
+
+2022-07-23:  David Anderson
+    commit c632d387e43a36cdecf72e0595521c6f92766349
+
+    Bug entry for DW202207-001
+            modified:   bugxml/data.txt
+
+2022-07-23:  David Anderson
+    commit 24dff940cc4c71a9c3cb5475aee231b19163a12c
+
+    Fix for DW202207-001
+    Corrupted string in .gnu.debuglink could cause
+    a segmentation violation, resulting in DenialOfService.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+2022-07-23:  David Anderson
+    commit 436ea0d3fd7bef82679be01af8ce69e3f84e1c62
+
+    auto updates 'make rebuild' to name rel 0.4.2 in comments
+    in generated source.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2022-07-15:  David Anderson
+    commit d68c167e90dd03758e8a548d612d38a608dfd5b5
+
+    Latest git log entry now in ChangeLog
+            modified:   ChangeLog
+
 2022-07-15:  David Anderson
     commit 78005a95d916c84b92f0ca58f75ded3a2e3f91d8
 
