@@ -38,8 +38,8 @@ extern "C" {
 
 /*  The pointer arguments are required to be non-null.
     If outlen is zero nothing will be written to out. */
-void _dwarf_safe_strcpy(char *out, unsigned long outlen,
-    const char *in, unsigned long inlen);
+void _dwarf_safe_strcpy(char *out, size_t outlen,
+    const char *in, size_t inlen);
 
 #ifdef __cplusplus
 }

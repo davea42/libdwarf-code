@@ -31,7 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <config.h>
-
+#include <stddef.h> /* NULL size_t */
 #include "dwarf_safe_strcpy.h"
 
 /*  An strcpy/strncpy which ensures NUL terminated string
@@ -65,16 +65,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     in a uri-style. So it only prints true ASCII characters
     in the printable range.
 
+    PRECONDITION:
     The pointer arguments are required to be non-null.
 */
 void
 _dwarf_safe_strcpy(char *out,
-    unsigned long outlen,
+    size_t outlen,
     const char *in_s,
-    unsigned long inlen)
+    size_t inlen)
 {
-    unsigned long full_inlen = inlen+1;
-    char *cpo = 0;
+    size_t      full_inlen = inlen+1;
+    char       *cpo = 0;
     const char *cpi= 0;
     const char *cpiend = 0;
 
@@ -86,7 +87,7 @@ _dwarf_safe_strcpy(char *out,
         cpi= in_s;
         cpiend = in_s +(outlen-1);
     } else {
-        /*  Iff outlen is very large
+        /*  If outlen is very large
             strncpy is very wasteful. */
         cpo = out;
         cpi= in_s;

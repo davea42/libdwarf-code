@@ -36,8 +36,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-void dd_safe_strcpy(char *out, unsigned long outlen,
-    const char *in, unsigned long inlen);
+void dd_safe_strcpy(char *out, size_t outlen,
+    const char *in, size_t inlen);
 
 #ifdef __cplusplus
 }
