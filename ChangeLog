@@ -1,3 +1,23 @@
+2022-08-05:  David Anderson
+    commit a91754a04be281d0d354edea2d61b3f21b973324
+
+    Changed unsigned long to size_t
+    as a recent Windows compiler warns about a
+    conversion to long from a wider type.
+    One applauds the compiler writer's advances in
+    making code safer, but it does make for a bit of
+    source adjustment from time to time.
+            modified:   src/bin/dwarfdump/dd_safe_strcpy.c
+            modified:   src/bin/dwarfdump/dd_safe_strcpy.h
+            modified:   src/lib/libdwarf/dwarf_safe_strcpy.c
+            modified:   src/lib/libdwarf/dwarf_safe_strcpy.h
+
+2022-07-23:  David Anderson
+    commit 72e7670a4a1301a24f388e86fabd57e7d78905ab
+
+    Updated with last from git log
+            modified:   ChangeLog
+
 2022-07-23:  David Anderson
     commit e0fee334ee4822b8619d3c5781ea63ad085c9f07
 
