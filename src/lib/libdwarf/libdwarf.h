@@ -1468,8 +1468,8 @@ DW_API int dwarf_init_path(const char * dw_path,
     and this argument allows one to specify these.
     Pass in a pointer to  array of pointers to strings
     which you, the caller, have filled in. The strings
-    should be alternate paths (see the GNU debuglink 
-    documentation.)  
+    should be alternate paths (see the GNU debuglink
+    documentation.)
     @param dw_dl_path_array_size
     Specify the size of the dw_dl_path_array.
     @param dw_dl_path_source
