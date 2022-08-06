@@ -102,7 +102,7 @@ check_errnum_mismatches(unsigned i)
 static int
 splmatches(char *base, unsigned baselen,char *test)
 {
-    if (baselen != strlen(test) ) {
+    if (baselen != (unsigned)strlen(test) ) {
         return FALSE;
     }
     for ( ; *test; ++test,++base) {
@@ -133,13 +133,13 @@ check_dle_list(const char *path)
         exit(1);
     }
     for ( ;;++linenum) {
-        char *line = 0;
-        unsigned linelen = 0;
-        char *  curdefname = 0;
-        char *  pastname = 0;
+        char   *line = 0;
+        size_t  linelen = 0;
+        char   *curdefname = 0;
+        char   *pastname = 0;
         unsigned curdefname_len = 0;
-        char *numstart = 0;
-        char * endptr = 0;
+        char   *numstart = 0;
+        char   *endptr = 0;
         unsigned long v = 0;
 
         line = fgets(buffer,MAXDEFINELINE,fin);
@@ -281,8 +281,8 @@ quoted_length(char * line, unsigned *quotedlen)
 static void
 read_next_line(FILE *fin,unsigned linenum,unsigned int *quotedlen)
 {
-    char *line = 0;
-    unsigned long linelen = 0;
+    char        *line = 0;
+    size_t       linelen = 0;
     unsigned int qlen2 = 0;
 
     line = fgets(buffer2,MAXDEFINELINE,fin);
@@ -326,7 +326,7 @@ check_msg_lengths(const char *path)
     }
     for ( ;!loop_done;++linenum) {
         char *line = 0;
-        unsigned linelen = 0;
+        size_t   linelen = 0;
         unsigned quotedlen = 0;
         unsigned quotedlen2 = 0;
 
@@ -422,7 +422,7 @@ main(int argc, char **argv)
     unsigned     i       = 0;
     char        *path    = 0;
     char        *errpath = 0;
-    unsigned     len     = 0;
+    size_t       len     = 0;
     const char  *libpath="/src/lib/libdwarf/libdwarf.h";
     const char  *srchdr="/src/lib/libdwarf/dwarf_errmsg_list.h";
     int argn = 0;

@@ -135,10 +135,10 @@ static int
 get_number_value(char *v_in,long int *v_out)
 {
     long int v= 0;
-    size_t len = strlen(v_in);
+    size_t lenszt = strlen(v_in);
     char *endptr = 0;
 
-    if (len < 1) {
+    if (lenszt < 1) {
         return DW_DLV_ERROR;
     }
     v = strtol(v_in,&endptr,10);
@@ -168,9 +168,9 @@ remove_quotes_pair(const char *text)
     static char double_quote = '\"';
     char quote = 0;
     const char *p = text;
-    int textlen = strlen(text);
+    size_t textlenszt = strlen(text);
 
-    if (textlen < 2) {
+    if (textlenszt < 2) {
         return p;
     }
 
@@ -186,14 +186,14 @@ remove_quotes_pair(const char *text)
         }
     }
     {
-        if (p[textlen - 1] == quote) {
-            char *altered = calloc(1,textlen+1);
+        if (p[textlenszt - 1] == quote) {
+            char *altered = calloc(1,textlenszt+1);
             const char *str2 = 0;
 
             /*  Here we delete the leading and trailing quote chars.
-                Start at p-1. String is to be orig textlen - 2
+                Start at p-1. String is to be orig textlenszt - 2
                 bytes long */
-            dd_safe_strcpy(altered,textlen+1,p+1,textlen-2);
+            dd_safe_strcpy(altered,textlenszt+1,p+1,textlenszt-2);
             str2 =  makename(altered);
             free(altered);
             return str2;
@@ -220,13 +220,13 @@ special_program_name(char *n)
     char * mp = "/dwarfdump.O";
     char * revstr = "/dwarfdump";
     char *cp = n;
-    size_t mslen = strlen(mp);
+    size_t mslenszt = strlen(mp);
 
     for ( ; *cp; ++cp) {
         if (*cp == *mp) {
-            if (!strncmp(cp,mp,mslen)){
+            if (!strncmp(cp,mp,mslenszt)){
                 esb_append(glflags.newprogname,revstr);
-                cp += mslen-1;
+                cp += mslenszt-1;
             } else {
                 esb_appendn(glflags.newprogname,cp,1);
             }

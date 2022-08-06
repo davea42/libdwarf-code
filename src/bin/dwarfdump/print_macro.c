@@ -1445,9 +1445,9 @@ macdef_tree_create_entry(char *key,
     const char * string)
 {
     char *keyspace = 0;
-    unsigned klen = strlen(key) +1;
-    unsigned slen = strlen(string) +1;
-    unsigned finallen = sizeof(macdef_entry) + klen + slen;
+    size_t klen = strlen(key) +1;
+    size_t slen = strlen(string) +1;
+    size_t finallen = sizeof(macdef_entry) + klen + slen;
     macdef_entry *me =
         (macdef_entry*)calloc(1,finallen);
     if (!me) {

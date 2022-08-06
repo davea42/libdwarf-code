@@ -100,7 +100,7 @@ dwoptnamematches(
 
     const char *eq = 0;
     unsigned namelen = 0;
-    unsigned arglen = 0;
+    size_t arglenszt = 0;
     int d = 0;
 
     for (eq = iplace; *eq; ++eq) {
@@ -113,7 +113,7 @@ dwoptnamematches(
             return FALSE;
         }
         eq++;
-        arglen = strlen(eq);
+        arglenszt = strlen(eq);
         break;
     }
     if (namelen) {
@@ -125,7 +125,7 @@ dwoptnamematches(
             *argerr = TRUE;
             return TRUE;
         }
-        if (arglen) {
+        if (arglenszt) {
             /*  Discarding const, avoiding warning.
                 Data is in user space, so this is ok. */
             dwoptarg = (char *)eq;

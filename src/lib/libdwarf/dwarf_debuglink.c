@@ -182,28 +182,28 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
 {
     char *inputs = dwarfstring_string(input);
     char *targ = dwarfstring_string(target);
-    size_t targlen = 0;
+    size_t targlenszt = 0;
 #if defined (_WIN32)
     dwarfstring winput;
 
     dwarfstring_constructor_static(&winput,winbuf,sizeof(winbuf));
     transformtoposix(&winput,inputs);
-    targlen = dwarfstring_strlen(target);
+    targlenszt = dwarfstring_strlen(target);
     inputs = dwarfstring_string(&winput);
-    if (!targlen) {
+    if (!targlenszt) {
         dwarfstring_append(target,inputs);
         return DW_DLV_OK;
     }
 #else /* !_Windows */
-    targlen = dwarfstring_strlen(target);
+    targlenszt = dwarfstring_strlen(target);
 #endif /* _WIN32 */
 
-    if (!targlen) {
+    if (!targlenszt) {
         dwarfstring_append(target,inputs);
         return DW_DLV_OK;
     }
     targ = dwarfstring_string(target);
-    if (!is_full_path(targ+targlen-1,joinchar)) {
+    if (!is_full_path(targ+targlenszt-1,joinchar)) {
         if (!is_full_path(inputs,joinchar)) {
             dwarfstring_append(target,joinstr);
             dwarfstring_append(target,inputs);
@@ -636,7 +636,7 @@ _dwarf_construct_linkedto_path(
 
         unsigned long count = 0;
         unsigned long pointerarraysize = 0;
-        unsigned long sumstringlengths = 0;
+        size_t        sumstringlengths = 0;
         unsigned long totalareasize = 0;
         unsigned long setptrindex = 0;
         unsigned long setstrindex = 0;
@@ -667,7 +667,7 @@ _dwarf_construct_linkedto_path(
                 setptrindex*sizeof(void *));
             char *sptr = (char*)resultfullstring + setstrindex;
             char *msg = dwarfstring_string(&cur->dl_string);
-            unsigned long slen = dwarfstring_strlen(&cur->dl_string);
+            size_t slen = dwarfstring_strlen(&cur->dl_string);
 
             _dwarf_safe_strcpy(sptr,totalareasize - setstrindex,
                 msg,slen);
@@ -691,7 +691,7 @@ _dwarf_extract_debuglink(Dwarf_Debug dbg,
 {
     Dwarf_Small *ptr = 0;
     Dwarf_Small *endptr = 0;
-    unsigned namelen = 0;
+    size_t   namelenszt = 0;
     unsigned m = 0;
     unsigned incr = 0;
     Dwarf_Small *crcptr = 0;
@@ -711,12 +711,12 @@ _dwarf_extract_debuglink(Dwarf_Debug dbg,
     if ( res != DW_DLV_OK) {
         return res;
     }
-    namelen = (unsigned)strlen((const char*)ptr);
-    m = (namelen+1) %4;
+    namelenszt = strlen((const char*)ptr);
+    m = (namelenszt+1) %4;
     if (m) {
         incr = 4 - m;
     }
-    crcptr = (unsigned char *)ptr +namelen +1 +incr;
+    crcptr = (unsigned char *)ptr +namelenszt +1 +incr;
     if ((crcptr +4) != (unsigned char*)endptr) {
         _dwarf_error(dbg,error,DW_DLE_CORRUPT_GNU_DEBUGLINK);
         return DW_DLV_ERROR;
@@ -847,7 +847,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
 
     if (!pdebuglink && !pbuildid) {
         *debuglink_fullpath_returned = strdup(dbg->de_path);
-        *debuglink_fullpath_length_returned = strlen(dbg->de_path);
+        *debuglink_fullpath_length_returned = (unsigned)strlen(dbg->de_path);
         return DW_DLV_OK;
     }
 
@@ -900,7 +900,7 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
             *debuglink_fullpath_returned =
                 strdup(dwarfstring_string(&debuglink_fullpath));
             *debuglink_fullpath_length_returned =
-                dwarfstring_strlen(&debuglink_fullpath);
+                (unsigned)dwarfstring_strlen(&debuglink_fullpath);
         }
     } else if (paths_count_returned) {
         *paths_count_returned = 0;

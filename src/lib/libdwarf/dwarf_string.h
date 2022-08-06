@@ -48,8 +48,8 @@ extern "C" {
 
 struct dwarfstring_s {
     char *        s_data;
-    unsigned long s_size;
-    unsigned long s_avail;
+    size_t        s_size;
+    size_t        s_avail;
     unsigned char s_malloc;
 };
 
@@ -59,10 +59,10 @@ typedef struct dwarfstring_s dwarfstring;
 
 int dwarfstring_constructor(struct dwarfstring_s *g);
 int dwarfstring_constructor_fixed(struct dwarfstring_s *g,
-    unsigned long len);
+    size_t len);
 int dwarfstring_constructor_static(struct dwarfstring_s *g,
     char * space,
-    unsigned long len);
+    size_t len);
 void dwarfstring_destructor(struct dwarfstring_s *g);
 int dwarfstring_reset(struct dwarfstring_s *g);
 
@@ -71,7 +71,7 @@ int dwarfstring_append(struct dwarfstring_s *g,char *str);
 /*  When one wants the first 'len' characters of str
     appended. NUL termination is provided by dwarfstrings. */
 int dwarfstring_append_length(struct dwarfstring_s *g,
-    char *str,unsigned long len);
+    char *str,size_t len);
 
 int dwarfstring_append_printf_s(dwarfstring *data,
     char *format,char *s);
@@ -81,7 +81,7 @@ int dwarfstring_append_printf_u(dwarfstring *data,
     char *format,dwarfstring_u);
 
 char * dwarfstring_string(struct dwarfstring_s *g);
-unsigned long dwarfstring_strlen(struct dwarfstring_s *g);
+size_t dwarfstring_strlen(struct dwarfstring_s *g);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

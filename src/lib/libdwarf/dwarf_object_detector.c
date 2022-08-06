@@ -551,7 +551,7 @@ dwarf_object_detector_path_dSYM(
 
     if (have_outpath) {
         /*   Looking for MacOS dSYM */
-        if ((2*plen + dsprefixlen +2) >= outpath_len) {
+        if ((2*plen + dsprefixlen +2) >= (size_t)outpath_len) {
             *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
@@ -877,7 +877,7 @@ dwarf_object_detector_path_b(
         /*  On return from the following call  we could well
             close the fd above and open a new one. */
         int debuglink_fd = -1;
-        unsigned long dllen = 0;
+        size_t dllenszt = 0;
         char *cp = 0;
         dwarfstring m;
 
@@ -904,8 +904,8 @@ dwarf_object_detector_path_b(
             if (debuglink_fd != -1) {
                 close(debuglink_fd);
             }
-            dllen = dwarfstring_strlen(&m)+1;
-            if (dllen >= outpath_len) {
+            dllenszt = dwarfstring_strlen(&m)+1;
+            if (dllenszt >= (size_t)outpath_len) {
                 close(debuglink_fd);
                 *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
                 return DW_DLV_ERROR;

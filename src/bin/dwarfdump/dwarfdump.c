@@ -36,7 +36,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #include <config.h>
 
-#include <stddef.h> /* NULL */
+#include <stddef.h> /* NULL size_t */
 #include <stdio.h>  /* stdout stderr fprintf() printf() sprintf() */
 #include <stdlib.h> /* exit() free() malloc() qsort() realloc() */
 #include <string.h> /* memset() strcmp() stricmp()
@@ -291,17 +291,17 @@ void _dwarf_alloc_tree_counts(Dwarf_Unsigned *allocount,
 int
 main(int argc, char *argv[])
 {
-    const char * file_name = 0;
-    unsigned         ftype = 0;
-    unsigned         endian = 0;
-    unsigned         offsetsize = 0;
-    Dwarf_Unsigned   filesize = 0;
-    int      errcode = 0;
-    char *temp_path_buf = 0;
-    unsigned temp_path_buf_len = 0;
-    int res = 0;
+    const char     *file_name = 0;
+    unsigned        ftype = 0;
+    unsigned        endian = 0;
+    unsigned        offsetsize = 0;
+    Dwarf_Unsigned  filesize = 0;
+    int             errcode = 0;
+    char           *temp_path_buf = 0;
+    size_t          temp_path_buf_len = 0;
+    int             res = 0;
     /* path_source will be DW_PATHSOURCE_basic  */
-    unsigned char path_source = DW_PATHSOURCE_unspecified;
+    unsigned char   path_source = DW_PATHSOURCE_unspecified;
 
 #ifdef _WIN32
     /*  Open the null device used during formatting printing */

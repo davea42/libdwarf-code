@@ -75,8 +75,8 @@ static FILE *null_device_handle = 0;
 #endif /* _WIN32 */
 
 #ifdef MALLOC_COUNT
-unsigned long malloc_count = 0;
-unsigned long malloc_size = 0;
+size_t malloc_count = 0;
+size_t malloc_size = 0;
 #endif
 
 /*  m must be a string, like  "ESBERR..."  for this to work */
@@ -264,11 +264,11 @@ esb_appendn(struct esb_s *data,
 void
 esb_append(struct esb_s *data, const char * in_string)
 {
-    size_t len = 0;
+    size_t lenszt = 0;
     if (in_string) {
-        len = strlen(in_string);
-        if (len) {
-            esb_appendn_internal(data, in_string, len);
+        lenszt = strlen(in_string);
+        if (lenszt) {
+            esb_appendn_internal(data, in_string, lenszt);
         }
     }
 }
@@ -397,7 +397,7 @@ void
 esb_append_printf_s(struct esb_s *data,
     const char *format,const char *s)
 {
-    size_t stringlen = strlen(s);
+    size_t stringlenszt = strlen(s);
     size_t next = 0;
     long val = 0;
     char *endptr = 0;
@@ -444,32 +444,32 @@ esb_append_printf_s(struct esb_s *data,
         return;
     }
     next++;
-    if (fixedlen && (fixedlen <= stringlen)) {
+    if (fixedlen && (fixedlen <= stringlenszt)) {
         leftjustify = 0;
     }
     if (leftjustify) {
-        esb_appendn_internal(data,s,stringlen);
+        esb_appendn_internal(data,s,stringlenszt);
         if (fixedlen) {
-            size_t trailingspaces = fixedlen - stringlen;
+            size_t trailingspaces = fixedlen - stringlenszt;
 
             esb_appendn_internal_spaces(data,trailingspaces);
         }
     } else {
-        if (fixedlen && (fixedlen < stringlen)) {
-            /*  This lets us have fixedlen < stringlen by
+        if (fixedlen && (fixedlen < stringlenszt)) {
+            /*  This lets us have fixedlen < stringlenszt by
                 taking all the chars from s ignoring
                 the fixedlen*/
-            esb_appendn_internal(data,s,stringlen);
+            esb_appendn_internal(data,s,stringlenszt);
         } else {
             if (fixedlen) {
-                size_t leadingspaces = fixedlen - stringlen;
+                size_t leadingspaces = fixedlen - stringlenszt;
                 size_t k = 0;
 
                 for ( ; k < leadingspaces; ++k) {
                     esb_appendn_internal(data," ",1);
                 }
             }
-            esb_appendn_internal(data,s,stringlen);
+            esb_appendn_internal(data,s,stringlenszt);
         }
     }
     if (!format[next]) {

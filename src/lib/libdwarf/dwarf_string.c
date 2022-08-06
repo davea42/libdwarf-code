@@ -56,14 +56,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DWSERR(m) dwarfstring_append_length(data,(m),sizeof(m)-1)
 
 static unsigned long minimumnewlen = 30;
-/*
-struct dwarfstring_s {
-   char *        s_data;
-   unsigned long s_size;
-   unsigned long s_avail;
-   unsigned char s_malloc;
-};
-*/
 
 int
 dwarfstring_constructor(struct dwarfstring_s *g)
@@ -76,12 +68,11 @@ dwarfstring_constructor(struct dwarfstring_s *g)
 }
 
 static int
-dwarfstring_resize_to(struct dwarfstring_s *g,unsigned long newlen)
+dwarfstring_resize_to(struct dwarfstring_s *g,size_t newlen)
 {
-    char *b = 0;
-    unsigned long lastpos =
-        g->s_size - g->s_avail;
-    unsigned long malloclen = newlen+1;
+    char *b          = 0;
+    size_t lastpos   = g->s_size - g->s_avail;
+    size_t malloclen = newlen+1;
 
     if (malloclen < minimumnewlen) {
         malloclen = minimumnewlen;
@@ -112,14 +103,14 @@ dwarfstring_reset(struct dwarfstring_s *g)
         /* In initial condition, nothing to do. */
         return TRUE;
     }
-    g->s_avail = g->s_size;
+    g->s_avail   = g->s_size;
     g->s_data[0] = 0;
     return TRUE;
 }
 
 int
 dwarfstring_constructor_fixed(struct dwarfstring_s *g,
-    unsigned long len)
+    size_t len)
 {
     int r = FALSE;
 
@@ -137,13 +128,13 @@ dwarfstring_constructor_fixed(struct dwarfstring_s *g,
 int
 dwarfstring_constructor_static(struct dwarfstring_s *g,
     char * space,
-    unsigned long len)
+    size_t len)
 {
     dwarfstring_constructor(g);
-    g->s_data = space;
+    g->s_data =    space;
     g->s_data[0] = 0;
-    g->s_size = len;
-    g->s_avail = len;
+    g->s_size =    len;
+    g->s_avail =   len;
     g->s_malloc = FALSE;
     return TRUE;
 }
@@ -153,7 +144,7 @@ dwarfstring_destructor(struct dwarfstring_s *g)
 {
     if (g->s_malloc) {
         free(g->s_data);
-        g->s_data = 0;
+        g->s_data   = 0;
         g->s_malloc = 0;
     }
     dwarfstring_constructor(g);
@@ -165,16 +156,16 @@ dwarfstring_destructor(struct dwarfstring_s *g)
 */
 int
 dwarfstring_append_length(struct dwarfstring_s *g,char *str,
-    unsigned long slen)
+    size_t slen)
 {
-    unsigned long lastpos = g->s_size - g->s_avail;
-    int r = 0;
+    size_t lastpos = g->s_size - g->s_avail;
+    int r          = 0;
 
     if (!str  || slen ==0) {
         return TRUE;
     }
     if (slen >= g->s_avail) {
-        unsigned long newlen = 0;
+        size_t newlen = 0;
 
         newlen = g->s_size + slen+2;
         r = dwarfstring_resize_to(g,newlen);
@@ -192,13 +183,13 @@ dwarfstring_append_length(struct dwarfstring_s *g,char *str,
 int
 dwarfstring_append(struct dwarfstring_s *g,char *str)
 {
-    unsigned long dlen = 0;
+    size_t dlenszt = 0;
 
     if (!str) {
         return TRUE;
     }
-    dlen = strlen(str);
-    return dwarfstring_append_length(g,str,dlen);
+    dlenszt = strlen(str);
+    return dwarfstring_append_length(g,str,dlenszt);
 }
 
 char *
@@ -207,7 +198,7 @@ dwarfstring_string(struct dwarfstring_s *g)
     return g->s_data;
 }
 
-unsigned long
+size_t
 dwarfstring_strlen(struct dwarfstring_s *g)
 {
     return g->s_size - g->s_avail;
@@ -256,7 +247,7 @@ _dwarfstring_append_zeros(dwarfstring *data, size_t l)
 int dwarfstring_append_printf_s(dwarfstring *data,
     char *format,char *s)
 {
-    size_t stringlen = 0;
+    size_t stringlenszt = 0;
     size_t next = 0;
     long val = 0;
     char *endptr = 0;
@@ -273,7 +264,7 @@ int dwarfstring_append_printf_s(dwarfstring *data,
             "dwarfstring_append_printf_s>");
         return FALSE;
     }
-    stringlen = strlen(s);
+    stringlenszt = strlen(s);
     if (!format) {
         DWSERR("<DWARFSTRINGERR: null format pointer to "
             "dwarfstring_append_printf_s>");
@@ -322,36 +313,36 @@ int dwarfstring_append_printf_s(dwarfstring *data,
     }
     next++;
 
-    if (fixedlen && (stringlen >= fixedlen)) {
-        /*  Ignore  leftjustify (if any) and the stringlen
+    if (fixedlen && (stringlenszt >= fixedlen)) {
+        /*  Ignore  leftjustify (if any) and the stringlenszt
             as the actual string overrides those. */
         leftjustify = 0;
     }
     if (leftjustify) {
 
-        dwarfstring_append_length(data,s,stringlen);
+        dwarfstring_append_length(data,s,stringlenszt);
         /*  Ignore return value */
         if (fixedlen) {
-            size_t trailingspaces = fixedlen - stringlen;
+            size_t trailingspaces = fixedlen - stringlenszt;
 
             _dwarfstring_append_spaces(data,trailingspaces);
         }
     } else {
-        if (fixedlen && fixedlen < stringlen) {
-            /*  This lets us have fixedlen < stringlen by
+        if (fixedlen && fixedlen < stringlenszt) {
+            /*  This lets us have fixedlen < stringlenszt by
                 taking all the chars from s*/
-            dwarfstring_append_length(data,s,stringlen);
+            dwarfstring_append_length(data,s,stringlenszt);
             /*  Ignore return value, just keep going */
         } else {
             if (fixedlen) {
-                size_t leadingspaces = fixedlen - stringlen;
+                size_t leadingspaces = fixedlen - stringlenszt;
                 size_t k = 0;
 
                 for ( ; k < leadingspaces; ++k) {
                     dwarfstring_append_length(data," ",1);
                 }
             }
-            res = dwarfstring_append_length(data,s,stringlen);
+            res = dwarfstring_append_length(data,s,stringlenszt);
             if (res == FALSE) {
                 return res;
             }
@@ -635,11 +626,11 @@ int dwarfstring_append_printf_i(dwarfstring *data,
 /*  Counts hex chars. divide by two to get bytes from input
     integer. */
 static unsigned
-trimleadingzeros(char *ptr,unsigned digits,unsigned keepcount)
+trimleadingzeros(char *ptr,size_t digits,unsigned keepcount)
 {
     char *cp = ptr;
-    unsigned leadzeroscount = 0;
-    unsigned trimoff = 0;
+    size_t leadzeroscount = 0;
+    size_t trimoff = 0;
 
     for (; *cp; ++cp) {
         if (*cp == '0') {

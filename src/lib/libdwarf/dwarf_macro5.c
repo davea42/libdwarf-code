@@ -219,7 +219,7 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
             }
             v = strlen((char *) mdata) + 1;
             totallen += v;
-            mdata += v;
+            mdata    += v;
             }
             break;
         case DW_FORM_block:
@@ -706,8 +706,8 @@ static const char *
 construct_from_dir_and_name(const char *dir,
     const char *name)
 {
-    int truelen = 0;
-    char *final = 0;
+    size_t truelen = 0;
+    char  *final   = 0;
 
     /* Allow for NUL char and added /  */
     truelen = strlen(dir) + strlen(name) + 1 +1;
