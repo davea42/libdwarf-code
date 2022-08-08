@@ -17,9 +17,9 @@
 
 # This is libdwarf README[.md]
 
-Updated 15 May 2022
+Updated 7 August 2022
 
-For release libdwarf-0.4.1 
+For release libdwarf-0.4.2 
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
@@ -192,6 +192,9 @@ a build and then
     make distcheck
 
 # INCOMPATIBILITIES. Changes to interfaces
+
+Comparing libdwarf-0.4.2 to libdwarf-0.4.1
+No incompatibilities. 0.4.2 not released.
 
 Comparing libdwarf-0.4.1 to libdwarf-0.4.0
 Added a new function dwarf_suppress_debuglink_crc()

@@ -1,3 +1,39 @@
+2022-08-06:  David Anderson
+    commit ce46d6f989f94ae944509e638b44fadf96c7d099
+
+    Another set of changes to address new compiler warnings
+    where size_t bigger than long. Expect more.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_getopt.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_string.c
+            modified:   src/lib/libdwarf/dwarf_string.h
+            modified:   test/test_errmsglist.c
+
+    if (want_deleted)
+    changed to
+    if (intent == want_delete)
+    Detected by recent Windows VS compiler.
+    The compiler warning here exposed a real bug.
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+
+2022-08-06:  David Anderson
+    commit 4f4e57e758ffb35fed6547e381b6aa70d2b32810
+
+    Removed trailing whitespace from two lines (in comments).
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-08-05:  David Anderson
+    commit 7e71a28851927ac5a98e3f5bbdb3bb6f31868854
+
+    Latest from git log added.
+            modified:   ChangeLog
+
 2022-08-05:  David Anderson
     commit a91754a04be281d0d354edea2d61b3f21b973324
 
