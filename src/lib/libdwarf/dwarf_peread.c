@@ -811,8 +811,14 @@ dwarf_load_pe_sections(
             *errcode = DW_DLE_FILE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
+        /*  size+1 to ensure there is a terminating null character
+            in memory so CoverityScan knows there is always a
+            final null.  CoverityScan is not aware
+            there may be multiple strings in the table.
+            If there is a compiler bug the final string
+            might be missing its intended null terminator! */
         pep->pe_string_table =
-            (char *)malloc((size_t)pep->pe_string_table_size);
+            (char *)calloc(1,(size_t)pep->pe_string_table_size+1);
         if (!pep->pe_string_table) {
             *errcode = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
@@ -827,6 +833,8 @@ dwarf_load_pe_sections(
             pep->pe_string_table = 0;
             return res;
         }
+        /*  Should pass coverity now. */
+        pep->pe_string_table[pep->pe_string_table_size] = 0;
     }
     res = dwarf_pe_load_dwarf_section_headers(pep,errcode);
     return res;
