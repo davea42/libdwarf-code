@@ -348,7 +348,7 @@ havedup(int j, char **out)
 int main(int argc, char**argv)
 {
     struct ops_table_s *op = 0;
-    const char *headpath = "/src/lib/libdwarf/dwarf.h";
+    const char *tailpath = "/src/lib/libdwarf/dwarf.h";
     char  *path  = 0;
     int inindex  = 0;
     int outindex = 0;
@@ -374,16 +374,33 @@ int main(int argc, char**argv)
         path = getenv("DWTOPSRCDIR");
         if (!path) {
             printf("Expected environment variable "
-                " DWTOPSRCDIR with path of "
+                "DWTOPSRCDIR with path of "
                 "base directory (usually called 'code')\n");
             exit(1);
         }
     }
     len = strlen(path);
+    if (len >= sizeof(pathbuf)) {
+        printf(" buildopstab Input path greater length "
+            "than makes any sense:"
+            " Giving up\n");
+        exit(1);
+        
+    }
     safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
-    safe_strcpy(pathbuf+len,(char *)headpath,
-        sizeof(pathbuf) -len -1,
-        (unsigned)strlen(headpath));
+    {
+        size_t remaining =  sizeof(pathbuf) -len -1;
+        size_t tailpathlen = strlen(tailpath);
+        if (tailpathlen >= remaining) {
+            printf(" buildopstab Input tailpath greater "
+                "length fits in buf: "
+                "Giving up\n");
+            exit(1);
+        }
+        /* Notice tailpath has a leading /  */
+        safe_strcpy(pathbuf+len,(char *)tailpath,
+            remaining,tailpathlen);
+    }
     input_name = pathbuf;
 
     check_if_optabsource_complete(input_name);
