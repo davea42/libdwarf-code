@@ -123,7 +123,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             This is local length, which begins just
             after the length field itself. */
         Dwarf_Unsigned area_length = 0;
-        Dwarf_Small remainder = 0;
+        Dwarf_Unsigned remainder = 0;
         Dwarf_Unsigned range_entry_size = 0;
         int local_length_size;
         int local_extension_size = 0;
@@ -255,8 +255,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         range_entry_size = 2*address_size + segment_size;
         /*  Round arange_ptr offset to next multiple of
             address_size. */
-        remainder = (Dwarf_Unsigned) (arange_ptr - header_ptr) %
-            (range_entry_size);
+        remainder = (Dwarf_Unsigned) ((arange_ptr - header_ptr) %
+            (range_entry_size));
         if (remainder != 0) {
             arange_ptr = arange_ptr + (2 * address_size) - remainder;
         }

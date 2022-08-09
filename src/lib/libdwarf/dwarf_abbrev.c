@@ -304,7 +304,7 @@ dwarf_get_abbrev_tag(Dwarf_Abbrev abbrev,
         return DW_DLV_ERROR;
     }
 
-    *returned_tag = abbrev->dab_tag;
+    *returned_tag = (Dwarf_Half)abbrev->dab_tag;
     return DW_DLV_OK;
 }
 

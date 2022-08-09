@@ -131,7 +131,7 @@ static signed char global_de_alloc_tree_on = 1;
 int dwarf_set_de_alloc_flag(int v)
 {
     int ov = global_de_alloc_tree_on;
-    global_de_alloc_tree_on = v;
+    global_de_alloc_tree_on = (char)v;
     return ov;
 }
 
@@ -163,6 +163,10 @@ struct reserve_size_s {
 /* Here is how we use the extra prefix area. */
 struct reserve_data_s {
     void *rd_dbg;
+    /*  rd_length can only record correctly for short
+        allocations, but that's not a problem im practice
+        as the value is only for debugging and to
+        ensure this struct length is correct. */
     unsigned short rd_length;
     unsigned short rd_type;
 };
@@ -528,8 +532,10 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         memset(alloc_mem, 0, size);
         /* We are not actually using rd_dbg, we are using rd_type. */
         r->rd_dbg = dbg;
-        r->rd_type = alloc_type;
-        r->rd_length = size;
+        r->rd_type = (unsigned short)alloc_type;
+        /*  The following is wrong for large records, but
+            it's not important, so let it be truncated.*/
+        r->rd_length = (unsigned short)size;
         if (alloc_instance_basics[type].specialconstructor) {
             int res = alloc_instance_basics[type].
                 specialconstructor(dbg, ret_mem);
@@ -807,7 +813,9 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /* Was normal alloc, use normal dealloc. */
         /* DW_DLA_ERROR has a specialdestructor */
     }
-    type = alloc_type;
+    /*  alloc types are a defined library-private
+        set of integers. Less than 256 of them. */
+    type = (unsigned int)alloc_type;
 #if DEBUG
     if (dbg != r->rd_dbg) {
         printf("DEALLOC  dbg != rd_dbg"
@@ -853,7 +861,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
             In any case, we simply don't worry about it.
             Not Supposed To Happen. */
     }
-    r->rd_dbg  = (void *)0xfeadbeef;
+    r->rd_dbg  = (void *)(uintptr_t)0xfeadbeef;
     r->rd_length = 0;
     r->rd_type = 0;
     free(malloc_addr);
@@ -1052,7 +1060,7 @@ _dwarf_special_no_dbg_error_malloc(void)
     memset(mem, 0, len);
     base = (struct reserve_data_s *)mem;
     base->rd_dbg = 0;
-    base->rd_length = sizeof(struct Dwarf_Error_s);
+    base->rd_length = (unsigned short)sizeof(struct Dwarf_Error_s);
     base->rd_type = DW_DLA_ERROR;
     e = (Dwarf_Error)(mem+DW_RESERVE);
     e->er_static_alloc = DE_MALLOC;

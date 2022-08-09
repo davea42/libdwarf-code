@@ -326,7 +326,9 @@ test3(Dwarf_Debug dbg)
     char * linkstring = "de";
     dwarfstring result;
     char ** global_prefix = 0;
+#if 0
     unsigned char crc[4];
+#endif
     unsigned buildid_length = 20;
     char **paths_returned = 0;
     unsigned paths_returned_count = 0;
@@ -336,10 +338,12 @@ test3(Dwarf_Debug dbg)
     dwarfstring linkstring_fullpath;
     unsigned i = 0;
 
+#if 0
     crc[0] = 0x12;
     crc[1] = 0x34;
     crc[2] = 0x56;
     crc[3] = 0xab;
+#endif
     res = dwarf_add_debuglink_global_path(dbg,
         "/usr/lib/debug",&error);
     printf("Adding global path /usr/lib/debug\n");
@@ -374,7 +378,9 @@ test3(Dwarf_Debug dbg)
         executablepath,
         linkstring,
         &linkstring_fullpath,
+#if 0
         crc,
+#endif
         buildid,
         buildid_length,
         &paths_returned,&paths_returned_count,
@@ -399,7 +405,9 @@ test3(Dwarf_Debug dbg)
         dbg->de_gnu_global_path_count,
         executablepath,linkstring,
         &linkstring_fullpath,
+#if  0
         crc,
+#endif
         buildid,
         buildid_length,
         &paths_returned,&paths_returned_count,
@@ -424,7 +432,9 @@ test3(Dwarf_Debug dbg)
         dbg->de_gnu_global_path_count,
         executablepath,linkstring,
         &linkstring_fullpath,
+#if 0
         crc,
+#endif
         buildid,
         buildid_length,
         &paths_returned,&paths_returned_count,

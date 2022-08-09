@@ -43,7 +43,10 @@ int _dwarf_construct_linkedto_path(
     char          *pathname_in,
     char          *link_string_in, /* from debug link */
     dwarfstring   *link_string_fullpath,
+#if 0
     unsigned char *crc_in, /* from debug_link, 4 bytes */
+#endif
+
     unsigned char *buildid, /* from gnu buildid */
     unsigned       buildid_length, /* from gnu buildid */
     char        ***paths_out,

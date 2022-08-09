@@ -527,7 +527,9 @@ _dwarf_construct_linkedto_path(
     char          *pathname_in,
     char          *link_string_in, /* from debug link */
     dwarfstring   *link_string_fullpath_out,
+#if 0
     UNUSEDARG unsigned char *crc_in, /* from debug_link, 4 bytes */
+#endif
     unsigned char *buildid, /* from gnu buildid */
     unsigned       buildid_length, /* from gnu buildid */
     char        ***paths_out,
@@ -632,14 +634,13 @@ _dwarf_construct_linkedto_path(
         base_dwlist to the new area. */
     {
         struct dwarfstring_list_s *cur = 0;
-        char **resultfullstring = 0;
-
+        char        **resultfullstring = 0;
         unsigned long count = 0;
-        unsigned long pointerarraysize = 0;
+        size_t        pointerarraysize = 0;
         size_t        sumstringlengths = 0;
-        unsigned long totalareasize = 0;
-        unsigned long setptrindex = 0;
-        unsigned long setstrindex = 0;
+        size_t        totalareasize = 0;
+        size_t        setptrindex = 0;
+        size_t        setstrindex = 0;
 
         cur = &base_dwlist;
         for ( ; cur ; cur = cur->dl_next) {
@@ -794,9 +795,9 @@ _dwarf_extract_buildid(Dwarf_Debug dbg,
         _dwarf_error(dbg,error, DW_DLE_CORRUPT_GNU_DEBUGID_SIZE);
         return DW_DLV_ERROR;
     }
-    *type_returned = type;
+    *type_returned = (unsigned)type;
     *owner_name_returned = &bu->bu_owner[0];
-    *build_id_length_returned = descrsize;
+    *build_id_length_returned = (unsigned)descrsize;
     *build_id_returned = (unsigned char *)ptr +
         sizeof(struct buildid_s)-1 + namesize;
     return DW_DLV_OK;
@@ -886,7 +887,9 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
             pathname,
             *debuglink_path_returned,
             &debuglink_fullpath,
+#if 0
             *crc_returned,
+#endif
             *buildid_returned,
             *buildid_length_returned,
             paths_returned,
@@ -936,7 +939,7 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
     }
     if (glpath_count_in) {
         memcpy(glpaths, dbg->de_gnu_global_paths,
-            sizeof(char *)*glpath_count_in);
+            sizeof(const char *)*glpath_count_in);
     }
     path1 = strdup(pathname);
     if (!path1) {
@@ -944,9 +947,9 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
         _dwarf_error(dbg,error,DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
-    free((char *)dbg->de_gnu_global_paths);
+    free(dbg->de_gnu_global_paths);
     glpaths[glpath_count_in] = path1;
-    dbg->de_gnu_global_paths = (const char **)glpaths;
+    dbg->de_gnu_global_paths = glpaths;
     dbg->de_gnu_global_path_count = glpath_count_out;
     return DW_DLV_OK;
 }
