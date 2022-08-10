@@ -81,6 +81,9 @@ foreach cf: dev_cflags_try
 endforeach
 
 libdwarf_args = [ '-D__USE_MINGW_ANSI_STDIO=0' ]
+if cc.get_id() == 'msvc'
+  libdwarf_args += [ '-D_CRT_NONSTDC_NO_WARNINGS' ]
+endif
 
 config_dir = [include_directories('.')]
 
