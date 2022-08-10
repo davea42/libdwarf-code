@@ -255,8 +255,8 @@ _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
 static int
 section_name_ends_with_dwo(const char *name)
 {
-    int lenstr = 0;
-    int dotpos = 0;
+    size_t lenstr = 0;
+    size_t dotpos = 0;
     if (!name) {
         return FALSE;
     }
@@ -301,7 +301,6 @@ static int
 _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
     Dwarf_Small *data,
     Dwarf_Bool is_info,
-    UNUSEDARG unsigned group_number,
     unsigned offset_size, /* 4 or 8 */
     Dwarf_CU_Context cu_context,
     /* end_data used for sanity checking */
@@ -311,7 +310,7 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
 {
     Dwarf_Small *  data_start = data;
     Dwarf_Small *  dataptr = data;
-    int            unit_type = 0;
+    Dwarf_Ubyte    unit_type = 0;
     Dwarf_Ubyte    addrsize =  0;
     Dwarf_Unsigned abbrev_offset = 0;
     Dwarf_Half version = 0;
@@ -377,8 +376,8 @@ _dwarf_read_cu_version_and_abbrev_offset(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     cu_context->cc_version_stamp = version;
-    cu_context->cc_unit_type = unit_type;
-    cu_context->cc_address_size = addrsize;
+    cu_context->cc_unit_type     = unit_type;
+    cu_context->cc_address_size  = addrsize;
     cu_context->cc_abbrev_offset = abbrev_offset;
     if (!addrsize) {
         _dwarf_error(dbg,error,DW_DLE_ADDRESS_SIZE_ZERO);
@@ -417,9 +416,11 @@ read_info_area_length_and_check(Dwarf_Debug dbg,
     Dwarf_Unsigned *max_cu_global_offset_out,
     Dwarf_Error *error)
 {
-    Dwarf_Byte_Ptr  cu_ptr = 0;
-    int local_length_size = 0;
-    int local_extension_size = 0;
+    Dwarf_Byte_Ptr cu_ptr = 0;
+    /*  The following two will be either 0,4, or 8. */
+    Dwarf_Unsigned local_length_size = 0;
+    Dwarf_Unsigned local_extension_size = 0;
+
     Dwarf_Unsigned max_cu_global_offset = 0;
     Dwarf_Unsigned length = 0;
 
@@ -432,8 +433,10 @@ read_info_area_length_and_check(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
 
-    cu_context->cc_length_size = local_length_size;
-    cu_context->cc_extension_size = local_extension_size;
+    /* ASSERT: The following is either  4 or 8. */
+    cu_context->cc_length_size =    (Dwarf_Small)local_length_size;
+    /* ASSERT: The following is either  0 or 4. */
+    cu_context->cc_extension_size = (Dwarf_Small)local_extension_size;
     cu_context->cc_length = length;
 
     /*  This is a bare minimum, not the real max offset.
@@ -682,8 +685,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Debug_InfoTypes dis = 0;
     struct Dwarf_Section_s * secdp = 0;
     Dwarf_Unsigned   section_size = 0;
-    int              unit_type = 0;
-    int              version = 0;
+    Dwarf_Half       unit_type = 0;
+    Dwarf_Unsigned   version = 0;
     Dwarf_Small *    dataptr = 0;
     int              res = 0;
     if (is_info) {
@@ -749,7 +752,6 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     res  = _dwarf_read_cu_version_and_abbrev_offset(dbg,
         cu_ptr,
         is_info,
-        dbg->de_groupnumber,
         local_length_size,
         cu_context,
         section_end_ptr,
@@ -896,7 +898,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 static int
 reloc_incomplete(int res,Dwarf_Error err)
 {
-    int e = 0;
+    Dwarf_Unsigned e = 0;
 
     if (res == DW_DLV_OK) {
         return FALSE;
@@ -981,11 +983,11 @@ local_attrlist_dealloc(Dwarf_Debug dbg,
 
 static int
 _dwarf_setup_base_address(Dwarf_Debug dbg,
-    const char *attrname,
-    Dwarf_Attribute attr,
-    int at_addr_base_attrnum,
+    const char      *attrname,
+    Dwarf_Attribute  attr,
+    Dwarf_Signed     at_addr_base_attrnum,
     Dwarf_CU_Context cucon,
-    Dwarf_Error *error)
+    Dwarf_Error     *error)
 {
     int lres = 0;
     Dwarf_Half form = 0;
@@ -2678,7 +2680,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
         return DW_DLV_ERROR;
     }
-    abbrev_code = (Dwarf_Unsigned) utmp;
+    abbrev_code = utmp;
     if (abbrev_code == 0) {
         /* Zero means a null DIE */
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
@@ -3047,7 +3049,7 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
 {
     unsigned i = 0;
     char tbuf[100];
-    unsigned std_sec_name_len = strlen(std_section_name);
+    size_t std_sec_name_len = strlen(std_section_name);
 
     tbuf[0] = 0;
     /*  std_section_name never has the .dwo on the end,

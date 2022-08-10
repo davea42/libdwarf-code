@@ -77,11 +77,12 @@ struct Dwarf_Loclists_Context_s;
 typedef struct Dwarf_Loclists_Context_s *Dwarf_Loclists_Context;
 
 struct Dwarf_Die_s {
-    Dwarf_Byte_Ptr di_debug_ptr;
+    Dwarf_Byte_Ptr    di_debug_ptr;
     Dwarf_Abbrev_List di_abbrev_list;
-    Dwarf_CU_Context di_cu_context;
-    int  di_abbrev_code;
-
+    Dwarf_CU_Context  di_cu_context;
+    /*   Abbrev codes are expected to be smallish numbers,
+         but the Standard does not require smallish numbers. */
+    Dwarf_Unsigned    di_abbrev_code;
     /* TRUE if part of debug_info. FALSE if part of .debug_types. */
     Dwarf_Bool di_is_info;
 };
