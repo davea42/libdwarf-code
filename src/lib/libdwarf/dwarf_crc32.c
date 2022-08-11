@@ -68,15 +68,19 @@ int
 dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     Dwarf_Error *error)
 {
-    off_t size_left = 0;
-    off_t fsize = 0;
-    off_t lsval = 0;
-    ssize_t readlen = 1000;
+    /*  off_t is signed,    defined by POSIX */
+    /*  ssize_t is signed,  defined in POSIX */
+    /*  size_t is unsigned, defined in C89. */
+    off_t   size_left = 0;
+    off_t   fsize = 0;
+    off_t   lsval = 0;
+    /*  Named with u to remind the reader that this is 
+        an unsigned value. */
+    size_t         readlenu = 1000;
     unsigned char *readbuf = 0;
-    ssize_t readval = 0;
-    unsigned int tcrc = 0;
-    unsigned int init = 0;
-    int fd = -1;
+    unsigned int   tcrc = 0;
+    unsigned int   init = 0;
+    int            fd = -1;
 
     if (!dbg) {
         _dwarf_error_string(dbg,error,DW_DLE_DBG_NULL,
@@ -95,7 +99,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     }
     fd = dbg->de_fd;
     if (dbg->de_filesize) {
-        fsize = size_left = dbg->de_filesize;
+        fsize = size_left = (off_t)dbg->de_filesize;
     } else {
         fsize = size_left = lseek(fd,0L,SEEK_END);
         if (fsize   == (off_t)-1) {
@@ -117,7 +121,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
             "to start fails");
         return DW_DLV_ERROR;
     }
-    readbuf = (unsigned char *)malloc(readlen);
+    readbuf = (unsigned char *)malloc(readlenu);
     if (!readbuf) {
         _dwarf_error_string(dbg,error,DW_DLE_ALLOC_FAIL,
             "DW_DLE_ALLOC_FAIL: dwarf_crc32 read buffer"
@@ -125,19 +129,21 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
         return DW_DLV_ERROR;
     }
     while (size_left > 0) {
-        if (size_left < readlen) {
-            readlen = size_left;
+        ssize_t readreturnv = 0;
+
+        if (size_left < (off_t)readlenu) {
+            readlenu = (size_t)size_left;
         }
-        readval = read(fd,readbuf,readlen);
-        if (readval != (ssize_t)readlen) {
+        readreturnv = read(fd,readbuf,readlenu);
+        if (readreturnv != (ssize_t)readlenu) {
             _dwarf_error_string(dbg,error,DW_DLE_READ_ERROR,
                 "DW_DLE_READ_ERROR: dwarf_crc32 read fails ");
             free(readbuf);
             return DW_DLV_ERROR;
         }
-        tcrc = _dwarf_crc32(init,readbuf,readlen);
+        tcrc = _dwarf_crc32(init,readbuf,readlenu);
         init = tcrc;
-        size_left -= readlen;
+        size_left -= (off_t)readlenu;
     }
     /*  endianness issues?  */
     free(readbuf);

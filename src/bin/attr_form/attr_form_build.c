@@ -136,7 +136,7 @@ process_args(int argc, char *argv[])
 
     if (usage_error || 1 == dwoptind || dwoptind != argc) {
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -153,7 +153,7 @@ check_for_dup_attr(unsigned attr)
     if (kres != DW_DLV_OK) {
         printf("FAIL malloc in check_for_dup_attr line %d\n",
             __LINE__);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 #if 0
     ret = dwarf_tfind(e,&attr_check_dups,
@@ -161,7 +161,7 @@ check_for_dup_attr(unsigned attr)
     if (ret) {
         printf("FAIL as attribute 0x%x is duplicated\n",
             attr);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 #endif
     ret = dwarf_tsearch(e,&attr_check_dups,
@@ -169,14 +169,14 @@ check_for_dup_attr(unsigned attr)
     if (!ret) {
         printf("FAIL malloc in check_for_dup_attr line %d\n",
             __LINE__);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     re = *(Three_Key_Entry **)ret;
     if (re != e) {
         printf("FAIL as attribute 0x%x is duplicated\n",
             attr);
         /* If we did not exit we would free e here */
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 int
@@ -195,7 +195,7 @@ main(int argc, char **argv)
     if (!input_name ) {
         fprintf(stderr,"Input name required, not supplied.\n");
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     fileInp = fopen(input_name,"r");
     if (!fileInp) {
@@ -203,13 +203,13 @@ main(int argc, char **argv)
             " could not open '%s'\n",
             input_name);
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
 
     if (!output_name ) {
         fprintf(stderr,"Output name required, not supplied.\n");
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     fileOut = fopen(output_name,"a");
     if (!fileOut) {
@@ -217,14 +217,14 @@ main(int argc, char **argv)
             " could not open: '%s'\n",
             output_name);
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     if ((standard_flag && extended_flag) ||
         (!standard_flag && !extended_flag)) {
         fprintf(stderr,"Invalid table type\n");
         fprintf(stderr,"Choose -e  or -s .\n");
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
 
     input_eof = read_value(&num,fileInp);       /* 0xffffffff */
@@ -281,14 +281,14 @@ main(int argc, char **argv)
             if (res != DW_DLV_OK) {
                 printf("Unknown attribute number of 0x%x,"
                     " Giving up\n",num);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             fprintf(fileOut,"/*%s ",name);
             res = dwarf_get_FORM_CLASS_name(num,&name);
             if (res != DW_DLV_OK) {
                 printf("Unknown form class number of 0x%x,"
                     " Giving up\n",num);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             fprintf(fileOut,"%s ",name);
             fprintf(fileOut,"%s*/\n",

@@ -76,7 +76,6 @@ static int _dwarf_siblingof_internal(Dwarf_Debug dbg,
     the final DWARF5).
 */
 
-void abort(void);
 static struct Dwarf_Sig8_s dwarfsig8zero;
 
 #if 0

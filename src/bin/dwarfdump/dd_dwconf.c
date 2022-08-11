@@ -672,7 +672,7 @@ add_to_reg_table(struct dwconf_s *conf,
         if (!newregs) {
             printf("dwarfdump: unable to malloc table %lu bytes. "
                 " %s line %lu\n", newtabsize, fname, lineno);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         /* Zero out the new entries. */
         memset((char *) newregs + (oldtabsize), 0,
@@ -1293,7 +1293,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             printf("dwarfdump internal error,"
                 " impossible line type %d  %s %lu \n",
                 (int) comtype, fname, lineno);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     ++errcount;

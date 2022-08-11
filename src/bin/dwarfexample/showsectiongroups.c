@@ -161,7 +161,7 @@ usage(void)
     printf("Usage: showsectiongroups [-group <n>] "
         "<objectfile> ...\n");
     printf("Usage: group defaults to zero (DW_GROUPNUMBER ANY)\n");
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 /*  This trimming of the file path makes libdwarf regression
@@ -192,7 +192,7 @@ trimpathprefix(char *out,unsigned int outlen, char *in)
         ++lencopied;
     }
     printf("FAIL copy file name: not terminated \n");
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 int

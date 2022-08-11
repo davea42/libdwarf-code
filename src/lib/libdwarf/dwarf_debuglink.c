@@ -926,12 +926,12 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
 {
     unsigned    glpath_count_in = 0;
     unsigned    glpath_count_out = 0;
-    const char **glpaths = 0;
-    const char * path1 = 0;
+    char      **glpaths = 0;
+    char       *path1 = 0;
 
     glpath_count_in = dbg->de_gnu_global_path_count;
     glpath_count_out = glpath_count_in+1;
-    glpaths = (const char **)malloc(sizeof(char *)*
+    glpaths = (char **)malloc(sizeof(char *)*
         glpath_count_out);
     if (!glpaths) {
         _dwarf_error(dbg,error,DW_DLE_ALLOC_FAIL);
@@ -939,7 +939,7 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
     }
     if (glpath_count_in) {
         memcpy(glpaths, dbg->de_gnu_global_paths,
-            sizeof(const char *)*glpath_count_in);
+            sizeof(char *)*glpath_count_in);
     }
     path1 = strdup(pathname);
     if (!path1) {
@@ -949,7 +949,7 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
     }
     free(dbg->de_gnu_global_paths);
     glpaths[glpath_count_in] = path1;
-    dbg->de_gnu_global_paths = glpaths;
+    dbg->de_gnu_global_paths = (const char **)glpaths;
     dbg->de_gnu_global_path_count = glpath_count_out;
     return DW_DLV_OK;
 }

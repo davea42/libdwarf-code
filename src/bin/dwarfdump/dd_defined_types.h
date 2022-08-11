@@ -34,9 +34,6 @@
 #ifndef TRUE
 #define TRUE 1
 #endif
-#ifndef FAILED
-#define FAILED 1
-#endif
 
 #define OKAY 0
 

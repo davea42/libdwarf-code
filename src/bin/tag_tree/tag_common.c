@@ -61,7 +61,7 @@ bad_line_input(char *format,...)
         Single Unix Specification. */
     va_end(ap);
     fprintf(stderr,"\n");
-    exit(FAILED);
+    exit(EXIT_FAILURE);
 }
 
 void
@@ -182,7 +182,7 @@ read_value(unsigned int *outval,FILE*file)
                 fprintf(stderr,
                     "attr_form: Error reading table, %d lines read\n",
                     linecount);
-                exit(FAILED);
+                exit(EXIT_FAILURE);
             }
 
             if (feof(file)) {
@@ -193,7 +193,7 @@ read_value(unsigned int *outval,FILE*file)
             fprintf(stderr, "attr_form: "
                 "Impossible error reading table, "
                 "%d lines read\n", linecount);
-            exit(FAILED);
+            exit(EXIT_FAILURE);
         }
 
         bBlankLine = is_skippable_line(line_in);

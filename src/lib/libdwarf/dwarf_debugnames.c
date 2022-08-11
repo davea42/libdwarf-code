@@ -151,25 +151,25 @@ static int
 fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
     Dwarf_Error * error)
 {
-    Dwarf_Small *abdata = dn->dn_abbrevs;
     Dwarf_Unsigned ablen =  dn->dn_abbrev_table_size;
-    Dwarf_Small *tabend = abdata+ablen;
-    Dwarf_Small *abcur = 0;
+    Dwarf_Small   *abdata = dn->dn_abbrevs;
+    Dwarf_Small   *tabend = abdata + ablen;
+    Dwarf_Small   *abcur = 0;
     Dwarf_Unsigned code = 0;
     Dwarf_Unsigned tag = 0;
-    int foundabend = FALSE;
+    int            foundabend = FALSE;
     Dwarf_Unsigned abcount = 0;
-    struct Dwarf_D_Abbrev_s *curdab = 0;
-    struct Dwarf_D_Abbrev_s *firstdab = 0;
+    struct Dwarf_D_Abbrev_s  *curdab = 0;
+    struct Dwarf_D_Abbrev_s  *firstdab = 0;
     struct Dwarf_D_Abbrev_s **lastabp = &firstdab;
-    Dwarf_Debug dbg = dn->dn_dbg;
+    Dwarf_Debug    dbg = dn->dn_dbg;
 
     for (abcur = abdata; abcur < tabend; ) {
         Dwarf_Unsigned attr = 0;
         Dwarf_Unsigned form = 0;
-        Dwarf_Small *inner = 0;
+        Dwarf_Small   *inner = 0;
         Dwarf_Unsigned inroffset = 0;
-        int res = 0;
+        int            res = 0;
 
         inroffset = abcur - abdata;
         res = read_uword_ab(&abcur,&code,dbg,error,tabend);
@@ -1040,9 +1040,9 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     Dwarf_Sig8        * sig,
     Dwarf_Error       * error)
 {
-    Dwarf_Debug dbg                = 0;
+    Dwarf_Debug    dbg             = 0;
     Dwarf_Unsigned unit_count      = 0;
-    Dwarf_Unsigned total_count      = 0;
+    Dwarf_Unsigned total_count     = 0;
     Dwarf_Unsigned unit_entry_size = 0;
     Dwarf_Small  * unit_ptr        = 0;
     Dwarf_Unsigned foreign_count   = 0;
@@ -1091,6 +1091,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         Dwarf_Small *ptr = unit_ptr +
             (index_number-1) *unit_entry_size;
         Dwarf_Small *endptr = dn->dn_indextable_data_end;
+
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
             ptr, unit_entry_size,
             error,endptr);
@@ -1562,7 +1563,7 @@ dwarf_dnames_name(Dwarf_Dnames_Head dn,
         *abbrev_code =  code;
     }
     if (code && abbrev_tag) {
-        *abbrev_tag =  abbrevdata->da_tag;
+        *abbrev_tag =  (Dwarf_Half)abbrevdata->da_tag;
     }
     if (code) {
         if (attr_count) {
@@ -1640,7 +1641,7 @@ _dwarf_internal_abbrev_by_code(Dwarf_Dnames_Head dn,
     for (n = 0; n < dn->dn_abbrev_instance_count; ++n,++abbrev) {
         if (abbrev_code == abbrev->da_abbrev_code) {
             if (tag) {
-                *tag = abbrev->da_tag;
+                *tag = (Dwarf_Half)abbrev->da_tag;
             }
             if (index_of_abbrev) {
                 *index_of_abbrev = n;

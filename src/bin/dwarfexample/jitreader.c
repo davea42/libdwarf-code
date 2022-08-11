@@ -363,7 +363,7 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
         if (res == DW_DLV_ERROR) {
             printf("Error is: %s\n",dwarf_errmsg(*error));
         }
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("CU header length..........0x%lx\n",
         (unsigned long)cu_header_length);
@@ -392,7 +392,7 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
         if (res == DW_DLV_ERROR) {
             printf("Error is: %s\n",dwarf_errmsg(*error));
         }
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     return DW_DLV_OK;
@@ -419,17 +419,17 @@ int main(void)
             printf("FAIL Cannot dwarf_object_init_b(). \n");
             printf("msg: %s\n",dwarf_errmsg(error));
         }
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     res = print_object_info(dbg,&error);
     if (res != DW_DLV_OK) {
         printf("FAIL printing, res %d line %d\n",res,__LINE__);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     dwarf_object_finish(dbg);
     if (fail) {
         printf("FAIL objectaccess.c\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return 0;
 }

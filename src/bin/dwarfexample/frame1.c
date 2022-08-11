@@ -118,11 +118,11 @@ main(int argc, char **argv)
         fd = open(filepath,O_RDONLY|O_BINARY);
         if (fd < 0) {
             printf("Unable to open %s, giving up.\n",filepath);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     } else {
         printf("Too many args, giving up. \n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     res = dwarf_init_b(fd,DW_GROUPNUMBER_ANY,
         errhand,errarg, &dbg,&error);
@@ -132,7 +132,7 @@ main(int argc, char **argv)
         if (res == DW_DLV_ERROR) {
             printf("Error code %s\n",dwarf_errmsg(error));
         }
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     /*  Do this setting after init before any real operations.
         These return the old values, but here we do not
@@ -193,7 +193,7 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
     }
     if ( res == DW_DLV_ERROR) {
         printf("Error reading frame data ");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf( "%" DW_PR_DSd " cies present. "
         "%" DW_PR_DSd " fdes present. \n",
@@ -201,7 +201,7 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
     /*if (fdenum >= fde_element_count) {
         printf("Want fde %d but only %" DW_PR_DSd " present\n",fdenum,
             fde_element_count);
-        exit(1);
+        exit(EXIT_FAILURE);
     }*/
 
     for (fdenum = 0; fdenum < fde_element_count; ++fdenum) {
@@ -211,7 +211,7 @@ read_frame_data(Dwarf_Debug dbg,const char *sect)
         if (res != DW_DLV_OK) {
             printf("Error accessing cie of fdenum %" DW_PR_DSd
                 " to get its cie\n",fdenum);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         printf("Print cie of fde %" DW_PR_DSd  "\n",fdenum);
         print_cie_instrs(cie,&error);
@@ -250,7 +250,7 @@ print_cie_instrs(Dwarf_Cie cie,Dwarf_Error *error)
         &instrp,&instr_len,&offset_size,error);
     if (res != DW_DLV_OK) {
         printf("Unable to get cie info!\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -340,7 +340,7 @@ print_fde_col(Dwarf_Signed k,
     default:
         printf("Internal error in libdwarf, value type %d\n",
             value_type);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf(" more=%d",has_more_rows);
     printf(" next=0x%" DW_PR_DUx,subsequent_pc);
@@ -399,7 +399,7 @@ print_fde_selected_regs( Dwarf_Fde fde)
         printf("FAIL: dwarf_get_fde_range err %" DW_PR_DUu
             " line %d\n",
             dwarf_errno(oneferr),__LINE__);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (fres == DW_DLV_NO_ENTRY) {
         printf("No fde range data available\n");
@@ -408,7 +408,7 @@ print_fde_selected_regs( Dwarf_Fde fde)
     res = dwarf_get_cie_of_fde(fde,&cie,&error);
     if (res != DW_DLV_OK) {
         printf("Error getting cie from fde\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     high_addr = low_pc + func_length;
@@ -443,7 +443,7 @@ print_fde_selected_regs( Dwarf_Fde fde)
             if (fires == DW_DLV_ERROR) {
                 printf("FAIL: reading reg err %" DW_PR_DUu " line %d",
                     dwarf_errno(oneferr),__LINE__);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             if (fires == DW_DLV_NO_ENTRY) {
                 continue;
@@ -654,7 +654,7 @@ print_fde_instrs(Dwarf_Debug dbg,
         &fde_byte_length,&cie_offset,&cie_index,&fde_offset,error);
     if (res != DW_DLV_OK) {
         printf("Problem getting fde range \n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     arbitrary_addr = lowpc + (func_length/2);
@@ -674,7 +674,7 @@ print_fde_instrs(Dwarf_Debug dbg,
         sizeof(struct Dwarf_Regtable_Entry3_s)* oldrulecount);
     if (!tab3.rt3_rules) {
         printf("Unable to malloc for %d rules\n",oldrulecount);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     res = dwarf_get_fde_info_for_all_regs3(fde,arbitrary_addr ,
@@ -684,19 +684,19 @@ print_fde_instrs(Dwarf_Debug dbg,
 
     if (res != DW_DLV_OK) {
         printf("dwarf_get_fde_info_for_all_regs3 failed!\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     print_regtable(&tab3);
 
     res = dwarf_get_fde_instr_bytes(fde,&outinstrs,&instrslen,error);
     if (res != DW_DLV_OK) {
         printf("dwarf_get_fde_instr_bytes failed!\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     res = dwarf_get_cie_of_fde(fde,&cie,error);
     if (res != DW_DLV_OK) {
         printf("Error getting cie from fde\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     {
@@ -709,7 +709,7 @@ print_fde_instrs(Dwarf_Debug dbg,
             error);
         if (res != DW_DLV_OK) {
             printf("dwarf_expand_frame_instructions failed!\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         printf("Frame op count: %" DW_PR_DUu "\n",frame_instr_count);
         print_frame_instrs(dbg,frame_instr_head,

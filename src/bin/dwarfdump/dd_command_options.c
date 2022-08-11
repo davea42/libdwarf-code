@@ -2844,7 +2844,7 @@ process_args(int argc, char *argv[])
         printf("%s option error.\n",glflags.program_name);
         printf("To see the options list: %s -h\n",
             glflags.program_name);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     if (dwoptind < (argc - 1)) {
         printf("Multiple apparent object file names "
@@ -2852,14 +2852,14 @@ process_args(int argc, char *argv[])
         printf("Only a single object name is allowed\n");
         printf("To see the options list: %s -h\n",
             glflags.program_name);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     if (dwoptind > (argc - 1)) {
         printf("No object file name provided to %s\n",
             glflags.program_name);
         printf("To see the options list: %s -h\n",
             glflags.program_name);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     /*  FIXME: it seems silly to be printing section names
         where the section does not exist in the object file.

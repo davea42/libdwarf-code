@@ -307,7 +307,7 @@ main(int argc, char *argv[])
     /*  Open the null device used during formatting printing */
     if (!esb_open_null_device()) {
         fprintf(stderr,"dwarfdump: Unable to open null device.\n");
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
 #endif /* _WIN32 */
 
@@ -363,7 +363,7 @@ main(int argc, char *argv[])
                 "dwarfdump: Unable to redirect output to '%s'\n",
                 glflags.output_file);
             global_destructors();
-            exit(FAILED);
+            exit(EXIT_FAILURE);
         }
         dup2(fileno(stdout),fileno(stderr));
         /* Record version and arguments in the output file */
@@ -390,7 +390,7 @@ main(int argc, char *argv[])
             "for possible path string %s.\n",
             glflags.program_name,(unsigned long)temp_path_buf_len,
             file_name);
-        return (FAILED);
+        return EXIT_FAILURE;
     }
     temp_path_buf[0] = 0;
     /*  This data scan is to find Elf objects and
@@ -409,7 +409,7 @@ main(int argc, char *argv[])
             glflags.program_name, sanitized(file_name));
         global_destructors();
         free(temp_path_buf);
-        return (FAILED);
+        return EXIT_FAILURE;
     }
     esb_append(&global_file_name,file_name);
     temp_path_buf[0] = 0;
@@ -421,7 +421,7 @@ main(int argc, char *argv[])
             esb_get_string(&global_file_name));
         global_destructors();
         free(temp_path_buf);
-        return (FAILED);
+        return EXIT_FAILURE;
     }
 
     if (esb_string_len(glflags.config_file_tiedpath) > 0) {
@@ -455,7 +455,7 @@ main(int argc, char *argv[])
             }
             global_destructors();
             free(temp_path_buf);
-            return (FAILED);
+            return EXIT_FAILURE;
         }
         if (ftype != tftype || endian != tendian ||
             offsetsize != toffsetsize) {
@@ -467,7 +467,7 @@ main(int argc, char *argv[])
                 esb_get_string(&global_file_name));
             free(temp_path_buf);
             global_destructors();
-            return (FAILED);
+            return EXIT_FAILURE;
         }
         esb_append(&global_tied_file_name,tied_file_name);
         global_tiedfd = open_a_file(esb_get_string(
@@ -479,7 +479,7 @@ main(int argc, char *argv[])
                 sanitized(esb_get_string(&global_tied_file_name)));
             global_destructors();
             free(temp_path_buf);
-            return (FAILED);
+            return EXIT_FAILURE;
         }
     }
     /* ======= end FINDING NAMES AND OPENING FDs ===== */
@@ -1532,7 +1532,7 @@ print_error(Dwarf_Debug dbg,
     global_destructors();
     flag_data_post_cleanup();
     destroy_attr_form_trees();
-    exit(FAILED);
+    exit(EXIT_FAILURE);
 }
 /* ARGSUSED */
 void

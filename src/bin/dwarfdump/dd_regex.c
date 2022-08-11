@@ -710,7 +710,7 @@ nfadump(CHAR *ap)
             break;
         default:
             printf("bad nfa. opcode %o\n", ap[-1]);
-            exit(1);
+            exit(EXIT_FAILURE);
             break;
         }
 }

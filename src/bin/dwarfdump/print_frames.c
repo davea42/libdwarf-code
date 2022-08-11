@@ -2095,7 +2095,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     default:
         printf("Internal error in libdwarf, value type %d\n",
             value_type);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return;
 }

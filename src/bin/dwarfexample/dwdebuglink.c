@@ -285,7 +285,7 @@ one_file_debuglink_internal(int is_outer,const char *prefix,
         if (res != DW_DLV_OK){
             printf("Failed add global path. result %d line %d\n",
                 res,__LINE__);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         printf("%s global path        : %s\n",prefix,lpath);
     }
@@ -422,7 +422,7 @@ static void add_a_path(char *path)
 
     if (!path) {
         printf("Null debuglink path error\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     newslen = strlen(path);
     if (!newslen){
@@ -433,7 +433,7 @@ static void add_a_path(char *path)
     newpathnames = (char **)malloc(sizeof(char *) *count);
     if (!newpathnames) {
         printf("Out of malloc space? giving up.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     for (i = 0; i < gl_pathcount; ++i) {
         newpathnames[i] = gl_pathnames[i];
@@ -441,7 +441,7 @@ static void add_a_path(char *path)
     newpathnames[i] = strdup(path);
     if (!newpathnames[i]) {
         printf("Out of malloc space? giving up.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     free(gl_pathnames);
     gl_pathcount = count;

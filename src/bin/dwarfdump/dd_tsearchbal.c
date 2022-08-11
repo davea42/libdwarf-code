@@ -173,7 +173,7 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,
         printf("%s Likely internal erroneous link loop, "
             "got to depth %d.\n",
             prefix,level);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (!t) {
         return 0;
@@ -511,12 +511,12 @@ tsearch_inner( const void *key, struct ts_entry* head,
                 fprintf(stderr,"Impossible balanced "
                     "tree situation!\n");
                 /* Impossible. Cannot be here. */
-                exit(1);
+                exit(EXIT_FAILURE);
             }
         } else {
             fprintf(stderr,"Impossible balanced tree situation!!\n");
             /* Impossible. Cannot be here. */
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
 

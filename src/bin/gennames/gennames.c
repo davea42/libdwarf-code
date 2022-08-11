@@ -78,8 +78,6 @@
 
 */
 
-#define FAILED 1
-
 static void OpenAllFiles(void);
 static void WriteFileTrailers(void);
 static void CloseAllFiles(void);
@@ -196,7 +194,7 @@ process_args(int argc, char *argv[])
 
     if (usage_error || 1 == dwoptind || dwoptind != argc) {
         print_usage_message(usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -264,7 +262,7 @@ open_path(const char *base, const char *file, const char *direction)
 
     if (netlen >= BUFSIZ) {
         printf("Error opening '%s/%s', name too long\n",base,file);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     _dwarf_safe_strcpy(path_name,BUFSIZ,
         base,baselen-1);
@@ -275,7 +273,7 @@ open_path(const char *base, const char *file, const char *direction)
     f = fopen(path_name,direction);
     if (!f) {
         printf("Error opening '%s'\n",path_name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return f;
 }
@@ -396,14 +394,14 @@ SaveNameDeclaration(char *prefix_id)
     if (curnameentry >= MAX_NAMES) {
         printf("FAIL gennames. Exceeded limit of declarations %d "
             "when given %s\n",curnameentry,prefix_id);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     length = strlen(prefix_id);
     if (length >= MAX_NAME_LEN) {
         printf("FAIL gennames. Exceeded limit of declaration "
             "name length at %ul "
             "when given %s\n",curnameentry,prefix_id);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     strcpy(nameentries[curnameentry].ne_name,prefix_id);
     ++curnameentry;
@@ -517,7 +515,7 @@ ParseDefinitionsAndWriteOutput(void)
             /*  Is error. errno must be set. */
             fprintf(stderr,"Error reading dwarf.h!. Errno %d\n",
                 errno);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (is_skippable_line(line_in)) {
             continue;
@@ -548,7 +546,7 @@ ParseDefinitionsAndWriteOutput(void)
         if (array_count >= ARRAY_SIZE) {
             printf("Too many entries for current "
                 "group_array size of %d",ARRAY_SIZE);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (!second_underscore) {
             printf("Line has no underscore %s\n",line_in);
@@ -567,7 +565,7 @@ ParseDefinitionsAndWriteOutput(void)
             if (strlen(second_underscore) >= MAX_NAME_LEN) {
                 printf("Too long a name %s for max len %d\n",
                     second_underscore,MAX_NAME_LEN);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             _dwarf_safe_strcpy(group_array[array_count].name,
                 MAX_NAME_LEN,second_underscore,

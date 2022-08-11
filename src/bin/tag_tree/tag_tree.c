@@ -123,7 +123,7 @@ process_args(int argc, char *argv[])
 
     if (usage_error || 1 == dwoptind || dwoptind != argc) {
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
 }
 /*  New naming routine May 2016.
@@ -163,13 +163,13 @@ check_unused_combo(unsigned toprow,unsigned topcol)
         printf("Providing for %u rows but used 0-%u\n",
             toprow,maxrowused);
         printf("Giving up\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if ((topcol-1) != maxcolused) {
         printf("Providing for %u cols but used 0-%u\n",
             topcol,maxcolused);
         printf("Giving up\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -184,27 +184,27 @@ validate_row_col(const char *position,
         printf("error generating row in tag-attr array, %s "
             "current row: %u  size of static array decl: %u\n",
             position,crow, TAG_TABLE_ROW_MAXIMUM);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     if (crow >= maxrow) {
         printf("error generating row in tree tag array, %s "
             "current row: %u  max allowed: %u\n",
             position,crow,maxrow-1);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (ccol >= TAG_TABLE_COLUMN_MAXIMUM) {
         printf("error generating column in tag-attr array, %s "
             "current col: %u  size of static array decl: %u\n",
             position,ccol, TAG_TABLE_COLUMN_MAXIMUM);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     if (ccol >= maxcol) {
         printf("error generating column in tree tag array, %s "
             "current row: %u  max allowed: %u\n",
             position,ccol,maxcol-1);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (crow > maxrowused) {
         maxrowused = crow;
@@ -236,7 +236,7 @@ main(int argc, char **argv)
     if (!input_name ) {
         fprintf(stderr,"Input name required, not supplied.\n");
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     fileInp = fopen(input_name,"r");
     if (!fileInp) {
@@ -244,13 +244,13 @@ main(int argc, char **argv)
             " could not open '%s'\n",
             input_name);
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
 
     if (!output_name ) {
         fprintf(stderr,"Output name required, not supplied.\n");
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     fileOut = fopen(output_name,"w");
     if (!fileOut) {
@@ -258,14 +258,14 @@ main(int argc, char **argv)
             " could not open: '%s'\n",
             output_name);
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     if ((standard_flag && extended_flag) ||
         (!standard_flag && !extended_flag)) {
         fprintf(stderr,"Invalid table type\n");
         fprintf(stderr,"Choose -e  or -s .\n");
         print_usage_message(argv[0],usage);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     if (standard_flag) {
         table_rows = STD_TAG_TABLE_ROWS;

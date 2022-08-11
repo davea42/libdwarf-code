@@ -48,24 +48,24 @@ simple_test(const char *fname)
             (unsigned long)fsize);
         if (fsize   == (off_t)-1) {
         printf("Fail 22\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     if (fsize <= (off_t)500) {
         /*  Not a real object file.
             A random length check. */
         printf("Fail 21\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     lsval  = lseek(fd,0L,SEEK_SET);
     if (lsval < 0) {
         printf("Fail 1\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     readbuf = (unsigned char *)malloc(readlen);
     if (!readbuf) {
         printf("Fail 2\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     while (size_left > 0) {
         if (size_left < readlen) {
@@ -74,7 +74,7 @@ simple_test(const char *fname)
         readval = read(fd,readbuf,readlen);
         if (readval != (ssize_t)readlen) {
             printf("Fail 3\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         size_left -= readlen;
         tcrc = dwarf_basic_crc32(readbuf,readlen,init);

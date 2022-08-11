@@ -215,7 +215,7 @@ static unsigned  char_to_uns4bit(unsigned char c)
         v =  c - 'A' + 10;
     } else {
         printf("Garbage hex char in %c 0x%x\n",c,c);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return v;
 }
@@ -233,7 +233,7 @@ xfrm_to_sig8(const char *cuhash_in, Dwarf_Sig8 *hash_out)
     if (hashin_len > fixed_size) {
         printf("FAIL: argument hash too long, len %u val:\"%s\"\n",
             hashin_len, cuhash_in);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (hashin_len  < fixed_size) {
         unsigned add_zeros = fixed_size - hashin_len;
@@ -298,7 +298,7 @@ startswithextractstring(const char *arg,const char *lookfor,
     if (dupstrused >= DUPSTRARRAYSIZE) {
         printf("FAIL: increase the value DUPSTRARRAYSIZE"
             " for test purposes\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return TRUE;
 }
@@ -311,7 +311,7 @@ format_sig8_string(Dwarf_Sig8*data, char* str_buf,unsigned
     char *cp = str_buf;
     if (buf_size <  19) {
         printf("FAIL: internal coding error in test.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     strcpy(cp,"0x");
     cp += 2;
@@ -443,13 +443,13 @@ main(int argc, char **argv)
             /* done */
         } else {
             printf("Unknown argument \"%s\", give up \n",argv[i]);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     if (i >= argc) {
         printf("simplereader not given file to open\n");
         printf("simplereader exits\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     filepath = argv[i];
     if (dumpallnames) {
@@ -458,13 +458,13 @@ main(int argc, char **argv)
                 "(%s) "
                 "as the file to read is not allowed. giving up.\n",
                 filepath);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         dumpallnamesfile = fopen(dumpallnamespath,"w");
         if (!dumpallnamesfile) {
             printf("Cannot open %s. Giving up.\n",
                 dumpallnamespath);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     if (passnullerror) {
@@ -489,7 +489,7 @@ main(int argc, char **argv)
         my_init_fd = open(filepath,O_RDONLY|O_BINARY);
         if (my_init_fd == -1) {
             printf("Giving up, cannot open %s\n",filepath);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         res = dwarf_init_b(my_init_fd,
             DW_GROUPNUMBER_ANY,
@@ -504,7 +504,7 @@ main(int argc, char **argv)
         printf("Giving up, cannot do DWARF processing %s\n",
             filepath?filepath:"");
         cleanupstr();
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     if (cuhash) {
@@ -655,7 +655,7 @@ read_cu_list(Dwarf_Debug dbg)
             char *em = errp?dwarf_errmsg(error):
                 "An error next cu her";
             printf("Error in dwarf_next_cu_header: %s\n",em);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_NO_ENTRY) {
             /* Done. */
@@ -669,12 +669,12 @@ read_cu_list(Dwarf_Debug dbg)
         if (res == DW_DLV_ERROR) {
             char *em = errp?dwarf_errmsg(error):"An error";
             printf("Error in dwarf_siblingof_b on CU die: %s\n",em);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_NO_ENTRY) {
             /* Impossible case. */
             printf("no entry! in dwarf_siblingof on CU die \n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         get_die_and_siblings(dbg,cu_die,is_info,0,&sf);
         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
@@ -705,7 +705,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         res = dwarf_child(cur_die,&child,errp);
         if (res == DW_DLV_ERROR) {
             printf("Error in dwarf_child , level %d \n",in_level);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_OK) {
             get_die_and_siblings(dbg,child,is_info,
@@ -720,7 +720,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
             char *em = errp?dwarf_errmsg(error):"Error siblingof_b";
             printf("Error in dwarf_siblingof_b , level %d :%s \n",
                 in_level,em);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_NO_ENTRY) {
             /* Done at this level. */
@@ -812,7 +812,7 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
             if (!passnullerror) {
                 dwarf_dealloc_error(dbg,error);
                 error = 0;
-                exit(1);
+                exit(EXIT_FAILURE);
             }
         }
         return;
@@ -1009,13 +1009,13 @@ print_name_strings_attr(Dwarf_Debug dbg, Dwarf_Die die,
     res = dwarf_whatattr(attr,&attrnum,&error);
     if (res != DW_DLV_OK) {
         printf("Unable to get attr number");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     res = dwarf_whatform(attr,&finalform,&error);
     if (res != DW_DLV_OK) {
         printf("Unable to get attr form");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     cl = dwarf_get_form_class(cu_version_stamp,
@@ -1073,7 +1073,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     res = dwarf_diename(print_me,&name,errp);
     if (res == DW_DLV_ERROR) {
         printf("Error in dwarf_diename , level %d \n",level);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (res == DW_DLV_NO_ENTRY) {
         name = "<no DW_AT_name attr>";
@@ -1081,12 +1081,12 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     res = dwarf_tag(print_me,&tag,errp);
     if (res != DW_DLV_OK) {
         printf("Error in dwarf_tag , level %d \n",level);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     res = dwarf_get_TAG_name(tag,&tagname);
     if (res != DW_DLV_OK) {
         printf("Error in dwarf_get_TAG_name , level %d \n",level);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (dumpallnames) {
         printnamestrings(dbg,print_me);
@@ -1098,7 +1098,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
         res = dwarf_whatform(attr,&formnum,errp);
         if (res != DW_DLV_OK) {
             printf("Error in dwarf_whatform , level %d \n",level);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         formname = "form-name-unavailable";
         res = dwarf_get_FORM_name(formnum,&formname);
@@ -1165,13 +1165,13 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
                 printf("FAIL: Error in "
                     "dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             if (res == DW_DLV_NO_ENTRY) {
                 printf("FAIL: no-entry in "
                     "dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             print_die_data_i(dbg,print_me,level,sf);
             print_debug_fission_header(&percu);

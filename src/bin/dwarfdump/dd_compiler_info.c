@@ -208,7 +208,7 @@ add_cu_name_compiler_target(char *name)
     if (current_compiler < 1) {
         fprintf(stderr,"Current  compiler set to %d, cannot add "
             "Compilation unit name.  Giving up.",current_compiler);
-        exit(FAILED);
+        exit(EXIT_FAILURE);
     }
     pCompiler = &compilers_detected[current_compiler];
     cu_last = pCompiler->cu_last;

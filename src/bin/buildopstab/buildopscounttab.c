@@ -149,7 +149,7 @@ safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
         printf("Target name does not fit in buffer.\n"
             "In buildopstabcount.c increase buffer size "
             " from %u \n",(unsigned int)sizeof(buffer));
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     strcpy(targ,src);
 }
@@ -164,7 +164,7 @@ validate_name(char *name,unsigned long v,unsigned int linenum)
     int count = 0;
     if (v >= OPS_USED_SIZE) {
         printf("FAIL! Opcode 0x%lx too large. Impossible\n", v);
-        exit(1);
+        exit(EXIT_FAILURE);
 
     }
     ops_used_table[v]++;
@@ -173,14 +173,14 @@ validate_name(char *name,unsigned long v,unsigned int linenum)
     if (res != DW_DLV_OK) {
         printf("Fail dwarf.h line %u value %lu as no OP name! %s\n",
             linenum,v,name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if ( count > 1) {
         fprintf(stderr,"Op 0x%lx used %d times. %s and now %s\n",
             v,count,s, name);
         if (dups_used >= OPS_USED_DUPS) {
             printf("Too many dups, increase table size\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         dups[dups_used].dt_val = v;
         safe_strcpy(dups[dups_used].dt_name1,name,
@@ -192,7 +192,7 @@ validate_name(char *name,unsigned long v,unsigned int linenum)
         printf("Fail dwarf.h line %u value %lu as  OP "
             "name mismatch! %s\n",
             linenum,v,name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -230,7 +230,7 @@ validate_op_listed(char *curdefname,unsigned long v,
     printf("Failed to find %s val 0x%lu at dwarf.h "
         "line %u in optabsource\n",
         curdefname,v, linenum);
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 static void
@@ -245,7 +245,7 @@ check_if_optabsource_complete(char *path)
     fin = fopen(path,"r");
     if (!fin) {
         printf("Unable to open dwarf.h to read %s\n",path);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     for ( ;!loop_done;++linenum) {
         char *line = 0;
@@ -266,7 +266,7 @@ check_if_optabsource_complete(char *path)
         --linelen;
         if (linelen >= (unsigned)(MAXDEFINELINE-1)) {
             printf("define line %u is too long!\n",linenum);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (strncmp(line,oldop,oldoplen)) {
             /* Not ours. */
@@ -280,7 +280,7 @@ check_if_optabsource_complete(char *path)
                 /* At end of line. Missing value. */
                 printf("define line %u of %s: has no number value!\n",
                     linenum,path);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             if (*pastname == ' ') {
                 /* Ok. Now look for value. */
@@ -305,27 +305,27 @@ check_if_optabsource_complete(char *path)
             printf("define line %u: DW_OP number value "
                 "unreasonable. %lu\n",
                 linenum,v);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (v == 0 && endptr == numstart) {
             printf("define line %u of %s: number value missing.\n",
                 linenum,path);
             printf("Leaving a space as in #define A B 3"
                 " in dwarf.h.in will cause this.\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (*endptr != ' ' && *endptr != 0) {
             unsigned char e = *endptr;
             printf("define line %u: number value terminates oddly "
                 "char: %u 0x%x line %s\n",
                 linenum,e,e,line);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (!v) {
             printf("define line %u: DW_OP number value "
                 "zero unreasonable.\n",
                 linenum);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         validate_op_listed(curdefname,v,linenum);
     }
@@ -362,11 +362,11 @@ int main(int argc, char**argv)
     if (argc > 1) {
         if (argc != 3) {
             printf("Expected -f <filename> of base code path\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (strcmp(argv[1],"-f")) {
             printf("Expected -f\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         path=argv[2];
     } else {
@@ -376,7 +376,7 @@ int main(int argc, char**argv)
             printf("Expected environment variable "
                 "DWTOPSRCDIR with path of "
                 "base directory (usually called 'code')\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     len = strlen(path);
@@ -384,7 +384,7 @@ int main(int argc, char**argv)
         printf(" buildopstab Input path greater length "
             "than makes any sense:"
             " Giving up\n");
-        exit(1);
+        exit(EXIT_FAILURE);
         
     }
     safe_strcpy(pathbuf,path,sizeof(pathbuf),len);
@@ -395,7 +395,7 @@ int main(int argc, char**argv)
             printf(" buildopstab Input tailpath greater "
                 "length fits in buf: "
                 "Giving up\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         /* Notice tailpath has a leading /  */
         safe_strcpy(pathbuf+len,(char *)tailpath,
@@ -423,7 +423,7 @@ int main(int argc, char**argv)
             printf("FAILED buildopscounttab on OP,out of sequence"
                 " f=0x%x lastop=0x%x\n",
                 (unsigned)f,(unsigned)lastop);
-            return 1; /* effectively exit(1) */
+            exit(EXIT_FAILURE);
         }
         if (f == lastop) {
             /*  A duplicate, ignore here. */
@@ -443,7 +443,7 @@ int main(int argc, char**argv)
             if (res != DW_DLV_OK) {
                 printf("FAILED buildopscounttab on OP 0x%x\n",
                     f);
-                return 1; /* effectively exit(1) */
+                exit(EXIT_FAILURE);
             }
             lastop = f;
 
@@ -464,7 +464,7 @@ int main(int argc, char**argv)
                 if (res != DW_DLV_OK) {
                     printf("FAILED buildopscounttab on OP 0x%x\n",
                         f);
-                    return 1; /* effectively exit(1); */
+                    exit(EXIT_FAILURE);
                 }
                 printf("{/* %-26s 0x%2x*/ %d, %d}",opn,j,c,sc);
                 printf(",\n");
@@ -478,7 +478,7 @@ int main(int argc, char**argv)
                         printf("\n");
                         fprintf(stderr," FAIL an entry "
                             " in a list has dup. Fix table");
-                        exit(1);
+                        exit(EXIT_FAILURE);
                     }
                 }
                 ++outindex;
