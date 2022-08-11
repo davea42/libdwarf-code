@@ -501,7 +501,7 @@ test6(void)
     return 0;
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
     test1();
     test2();
@@ -510,10 +510,7 @@ int main(int argc, char *argv[])
     test5();
     test6();
     if (errcount) {
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     exit(0);
-
-    (void)argc;
-    (void)argv;
 }

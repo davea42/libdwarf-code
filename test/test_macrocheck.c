@@ -108,7 +108,7 @@ main(void)
     }
     if (failcount > 0) {
         printf("FAIL macrocheck selftest\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS macrocheck selftest\n");
     return 0;

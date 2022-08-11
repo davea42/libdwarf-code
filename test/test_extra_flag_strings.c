@@ -257,7 +257,7 @@ test3(Dwarf_P_Debug dbg)
 
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 
     struct Dwarf_P_Debug_s sdbg;
@@ -277,7 +277,4 @@ int main(int argc, char *argv[])
         return 1;
     }
     return 0;
-
-    (void)argc;
-    (void)argv;
 }

@@ -114,7 +114,7 @@ makeentry(Dwarf_Unsigned instance, unsigned ct)
         _dwarf_tied_make_entry(&s8,context);
     if (!entry) {
         printf("Out of memory in test! %u\n",ct);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return entry;
 }
@@ -132,7 +132,7 @@ insone(void**tree,Dwarf_Unsigned instance, unsigned ct)
         printf("FAIL ENOMEM in search on rec %u adr  0x%lu,"
             " error in insone\n",
             ct,(unsigned long)instance);
-        exit(1);
+        exit(EXIT_FAILURE);
     } else {
         struct Dwarf_Tied_Entry_s *re = 0;
         re = *(struct Dwarf_Tied_Entry_s **)retval;
@@ -142,7 +142,7 @@ insone(void**tree,Dwarf_Unsigned instance, unsigned ct)
                 " preexisting, error\n",
                 ct,(unsigned long)instance);
             _dwarf_tied_destroy_free_node(entry);
-            exit(1);
+            exit(EXIT_FAILURE);
         } else {
             /* inserted new entry, make sure present. */
             struct Dwarf_Tied_Entry_s * entry2 = 0;
@@ -155,7 +155,7 @@ insone(void**tree,Dwarf_Unsigned instance, unsigned ct)
                     "failed to add as desired,"
                     " error\n",
                     ct,(unsigned long)instance);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
         }
     }
@@ -182,7 +182,7 @@ delone(void**tree,Dwarf_Unsigned instance, unsigned ct)
         printf("delone could not find rec %u ! error! addr"
             " 0x%lx\n",
             ct,(unsigned long)instance);
-        exit(1) ;
+        exit(EXIT_FAILURE) ;
     }
     return 0;
 
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
         } else  {
             printf("FAIL testtied on action %u, "
                 "not a or d\n",action);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     printf("PASS tsearch works for Dwarf_Tied_Entry_s.\n");

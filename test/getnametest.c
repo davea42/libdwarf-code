@@ -55,7 +55,7 @@ check_result(int actres, int expres,
     return errcount;
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
     int res = 0;
     int errcount = 0;
@@ -189,10 +189,7 @@ int main(int argc, char *argv[])
         __LINE__);
     if (errcount) {
         printf("FAIL getnametest.c\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return 0;
-
-    (void)argc;
-    (void)argv;
 }

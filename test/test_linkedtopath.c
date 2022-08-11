@@ -351,7 +351,7 @@ test3(Dwarf_Debug dbg)
         ++errcount;
         printf("Adding debuglink global path failed line %d %s\n",
             __LINE__,__FILE__);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     res = dwarf_add_debuglink_global_path(dbg,
         "/fake/lib/debug",&error);
@@ -360,7 +360,7 @@ test3(Dwarf_Debug dbg)
         ++errcount;
         printf("Adding debuglink global path failed line %d %s\n",
             __LINE__,__FILE__);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     /*  The test will not be repeatable in general
@@ -458,7 +458,7 @@ test3(Dwarf_Debug dbg)
     dwarfstring_destructor(&linkstring_fullpath);
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
     Dwarf_Debug dbg = 0;
     struct Dwarf_Debug_s db;
@@ -474,7 +474,4 @@ int main(int argc, char *argv[])
         return 1;
     }
     return 0;
-
-    (void)argc;
-    (void)argv;
 }

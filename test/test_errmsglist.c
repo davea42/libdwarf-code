@@ -130,7 +130,7 @@ check_dle_list(const char *path)
     fin = fopen(path, "r");
     if (!fin) {
         printf("Unable to open define list to read %s\n",path);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     for ( ;;++linenum) {
         char   *line = 0;
@@ -152,7 +152,7 @@ check_dle_list(const char *path)
         --linelen;
         if (linelen >= (unsigned)(MAXDEFINELINE-1)) {
             printf("define line %u is too long!\n",linenum);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (strncmp(line,"#define DW_DLE_",15)) {
             /* Skip the non- DW_DLE_ lines */
@@ -165,14 +165,14 @@ check_dle_list(const char *path)
                 printf("define line %u has  stuff after "
                     "DW_DLE_LO_USER!\n",
                     linenum);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             pastname = curdefname +curdefname_len;
             if (!*pastname) {
                 /* At end of line. Missing value. */
                 printf("define line %u of %s: has no number value!\n",
                     linenum,path);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             if (*pastname == ' ') {
                 /* Ok. Now look for value. */
@@ -188,26 +188,26 @@ check_dle_list(const char *path)
         if (v > DW_DLE_LO_USER) {
             printf("define line %u: number value unreasonable. %lu\n",
                 linenum,v);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (v == 0 && endptr == numstart) {
             printf("define line %u of %s: number value missing.\n",
                 linenum,path);
             printf("Leaving a space as in #define A B 3"
                 " in libdwarf.h.in will cause this.\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (*endptr != ' ' && *endptr != 0) {
             unsigned char e = *endptr;
             printf("define line %u: number value terminates oddly "
                 "char: %u 0x%x line %s\n",
                 linenum,e,e,line);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (splmatches(curdefname,curdefname_len,"DW_DLE_LAST")) {
             if (foundlast) {
                 printf("duplicated DW_DLE_LAST! line %u\n",linenum);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             foundlast = 1;
             if (v != prevdefval) {
@@ -219,12 +219,12 @@ check_dle_list(const char *path)
             if (!foundlast) {
                 printf("error:expected DW_DLE_LO_USER after LAST! "
                     "line %u\n", linenum);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             if (foundlouser) {
                 printf("Error:duplicated DW_DLE_LO_USER! line %u\n",
                     linenum);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
             foundlouser = 1;
             continue;
@@ -233,7 +233,7 @@ check_dle_list(const char *path)
                 if (v != prevdefval+1) {
                     printf("Invalid: Missing value! %lu vs %lu\n",
                         prevdefval,v);
-                    exit(1);
+                    exit(EXIT_FAILURE);
                 }
             }
             prevdefval = v;
@@ -288,14 +288,14 @@ read_next_line(FILE *fin,unsigned linenum,unsigned int *quotedlen)
     line = fgets(buffer2,MAXDEFINELINE,fin);
     if (!line) {
         printf("inner end file line %u is too long!\n",linenum);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     linelen = strlen(line);
     line[linelen-1] = 0;
     --linelen;
     if (linelen >= (unsigned long)(MAXDEFINELINE-1)) {
         printf("inner line %u is too long!\n",linenum);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     quoted_length(line,&qlen2);
     *quotedlen = qlen2;
@@ -322,7 +322,7 @@ check_msg_lengths(const char *path)
     fin = fopen(path, "r");
     if (!fin) {
         printf("Unable to open define list to read %s\n",path);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     for ( ;!loop_done;++linenum) {
         char *line = 0;
@@ -339,7 +339,7 @@ check_msg_lengths(const char *path)
         --linelen;
         if (linelen >= (unsigned)(MAXDEFINELINE-1)) {
             printf("define line %u is too long!\n",linenum);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if (!strncmp(line,msglenid,strlen(msglenid))) {
             const char  *cp = line+strlen(msglenid);
@@ -360,7 +360,7 @@ check_msg_lengths(const char *path)
             if (line[linelen-2] != '}') {
                 printf("Unexpected Format at comma "
                     "line %u\n",linenum);
-                exit(1);
+                exit(EXIT_FAILURE);
             }
         } else if (line[linelen-1] ==  '}') {
             /* Final line */
@@ -368,7 +368,7 @@ check_msg_lengths(const char *path)
             loop_done = TRUE;
         } else {
             printf("Unexpected Format at end of line %u\n",linenum);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if ((quotedlen +quotedlen2) > longest_string_length) {
             longest_string_length = quotedlen +quotedlen2;
@@ -391,7 +391,7 @@ check_msg_lengths(const char *path)
             printf("_dwarf_errmsgs size %lu but "
                 "expected size is %lu!.  Error",
                 arysize,expsize);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     fclose(fin);
@@ -406,7 +406,7 @@ local_safe_strcpy(char *targ,char *src,unsigned targlen, unsigned srclen)
         printf("Target name does not fit in buffer.\n"
             "In test_errmsg_list.c increase buffer size "
             " from %u \n",(unsigned int)sizeof(pathbuf));
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     _dwarf_safe_strcpy(targ,targlen,src,srclen); 
 }
@@ -434,12 +434,12 @@ main(int argc, char **argv)
                 argn += 1;
                 if (argn >= argc) {
                     printf("test_errmsglist: -f missing file path");
-                    exit(1);
+                    exit(EXIT_FAILURE);
                 }
                 path=argv[argn];
             } else {
                 printf("Expected -f \n");
-                exit(1);
+                exit(EXIT_FAILURE);
             }
         }
     } else {
@@ -449,7 +449,7 @@ main(int argc, char **argv)
             printf("Expected environment variable "
                 " DWTOPSRCDIR with path of "
                 "base directory (usually called 'code')\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     len = strlen(path);
@@ -468,7 +468,7 @@ main(int argc, char **argv)
     for ( i = 0; i <= DW_DLE_LAST; ++i) {
         if (check_errnum_mismatches(i)) {
             printf("mismatch value %d is: %s\n",i,_dwarf_errmsgs[i]);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     }
     check_msg_lengths(errpath);

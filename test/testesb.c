@@ -64,14 +64,14 @@ validate_esb(int instance,
     }
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 #ifdef _WIN32
     /* Open the null device used during formatting printing */
     if (!esb_open_null_device())
     {
         fprintf(stderr, "esb: Unable to open null device.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 #endif /* _WIN32 */
     {   /*  First lets establish standard sprintf on
@@ -399,11 +399,8 @@ int main(int argc, char *argv[])
 #endif /* _WIN32 */
     if (failcount) {
         printf("FAIL esb test\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS esb test\n");
     exit(0);
-
-    (void)argc;
-    (void)argv;
 }

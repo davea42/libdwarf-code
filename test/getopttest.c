@@ -114,7 +114,7 @@ chkval(
         printcheckargs(ct,rchar,xchar,roptarg,xoptarg,
             roptind,xoptind,testid,testline);
         printf("FAIL getopttest %s line %d\n",testid,testline);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -143,7 +143,7 @@ static void chkval_long(
     }
     if (err > 0) {
         printf("FAIL getopttest %s line %d\n",testid,testline);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -195,7 +195,7 @@ test3(void)
         printf("FAIL test3 on non-dash dwoptind %d arg got "
             "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt test 3\n");
     return 0;
@@ -233,14 +233,14 @@ test2(void)
         break;
     default:
         printf("FAIL test2 unexpected ct %d\n",ct);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (argv1[dwoptind]) {
         printf("FAIL test2 on non-dash arg dwoptind %d "
             "got 0x%p exp NULL\n",
             dwoptind,(void *)argv1[dwoptind]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt test 2\n");
     return 0;
@@ -300,14 +300,14 @@ ltest1(void)
 
     default:
         printf("FAIL ltest1 unexpected ct %d in ltest1\n",ct);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL ltest1 on non-dash arg dwoptind %d got "
             "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt ltest1\n");
     return 0;
@@ -365,14 +365,14 @@ ltest2(void)
 
     default:
         printf("FAIL ltest1 unexpected ct %d in ltest2\n",ct);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL ltest2 on non-dash arg dwoptind %d got "
             "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt ltest2\n");
     return 0;
@@ -430,14 +430,14 @@ test1(void)
         break;
     default:
         printf("FAIL test1 unexpected ct %d in test1\n",ct);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL test1 on non-dash arg dwoptind %d got "
             "%s exp %s\n",
             dwoptind,argv1[dwoptind],"progtoread");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt test1\n");
     return 0;
@@ -484,14 +484,14 @@ test5(void)
     default:
         printf("FAIL test5 unexpected ct %d in test1 char "
             "0x%x %c\n",ct,c,c);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (argv1[dwoptind]) {
         printf("FAIL test5 there is a non-dash arg dwoptind "
             "%d got 0x%p\n",
             dwoptind,(void *)argv1[dwoptind]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt test5\n");
     return 0;
@@ -514,14 +514,14 @@ test6(void)
     default:
         printf("FAIL test5 unexpected ct %d in test1 char "
             "0x%x %c\n",ct,c,c);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (argv1[dwoptind]) {
         printf("FAIL test6 there is a non-dash arg dwoptind "
             "%d got 0x%p\n",
             dwoptind,(void*)argv1[dwoptind]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt test6\n");
     return 0;
@@ -544,14 +544,14 @@ test7(void)
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",
             ct,c,c);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (argv1[dwoptind]) {
         printf("FAIL test7 there is a non-dash arg dwoptind "
             "%d got 0x%p\n",
             dwoptind,(void*)argv1[dwoptind]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt test7\n");
     return 0;
@@ -574,14 +574,14 @@ test8(void)
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",
             ct,c,c);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     }
     if (argv1[dwoptind]) {
         printf("FAIL test8 there is a non-dash arg "
             "dwoptind %d got 0x%p\n",
             dwoptind,(void*)argv1[dwoptind]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopt test8\n");
     return 0;
@@ -726,7 +726,7 @@ int main(int argc, const char **argv)
         int num = 0;
         if (strcmp(argv[1],"-c")) {
             printf("FAIL: invalid arg list\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         num = atoi(argv[2]);
         printf("Run one test, number %d\n",num);
@@ -760,17 +760,17 @@ int main(int argc, const char **argv)
             break;
         default:
             printf("FAIL: invalid test number %d\n",num);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         if ( failct) {
             printf("FAIL getopttest\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         printf("PASS getopttest\n");
-        exit(0);
+        exit(EXIT_SUCCESS);
     } else if (argc != 1) {
         printf("FAIL: invalid arg list\n");
-            exit(1);
+            exit(EXIT_FAILURE);
     }
     failct += ltest1();
     dwgetoptresetfortestingonly();
@@ -795,7 +795,7 @@ int main(int argc, const char **argv)
     failct += test10();
     if ( failct) {
         printf("FAIL getopttest\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     printf("PASS getopttest\n");
     return 0;
