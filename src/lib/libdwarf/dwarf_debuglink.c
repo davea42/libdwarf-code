@@ -848,7 +848,8 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
 
     if (!pdebuglink && !pbuildid) {
         *debuglink_fullpath_returned = strdup(dbg->de_path);
-        *debuglink_fullpath_length_returned = (unsigned)strlen(dbg->de_path);
+        *debuglink_fullpath_length_returned =
+            (unsigned)strlen(dbg->de_path);
         return DW_DLV_OK;
     }
 

@@ -74,7 +74,7 @@ dwarf_crc32 (Dwarf_Debug dbg,unsigned char *crcbuf,
     off_t   size_left = 0;
     off_t   fsize = 0;
     off_t   lsval = 0;
-    /*  Named with u to remind the reader that this is 
+    /*  Named with u to remind the reader that this is
         an unsigned value. */
     size_t         readlenu = 1000;
     unsigned char *readbuf = 0;

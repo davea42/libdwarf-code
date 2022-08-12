@@ -595,7 +595,7 @@ finish_cu_context_via_cudie_inner(
     } else  if (resdwo == DW_DLV_NO_ENTRY) {
         /* no cudie. Empty CU. */
         return DW_DLV_OK;
-    } 
+    }
     /* no cudie. DW_DLV_ERROR.*/
     return resdwo;
 }
