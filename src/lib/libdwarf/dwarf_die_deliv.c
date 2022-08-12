@@ -550,58 +550,54 @@ finish_cu_context_via_cudie_inner(
     Dwarf_CU_Context cu_context,
     Dwarf_Error *error)
 {
-    {
-        /*  DW4: Look for DW_AT_dwo_id and
-            DW_AT_low_pc and more.
-            if there is one pick up the hash
-            DW5: hash in skeleton CU die
-            Also pick up cc_str_offset_base and
-            any other base values. */
-        Dwarf_Die cudie = 0;
-        int resdwo = 0;
+    /*  DW4: Look for DW_AT_dwo_id and
+        DW_AT_low_pc and more.
+        if there is one pick up the hash
+        DW5: hash in skeleton CU die
+        Also pick up cc_str_offset_base and
+        any other base values. */
+    Dwarf_Die cudie = 0;
+    int resdwo = 0;
 
-        /*  Must call the internal siblingof so
-            we do not depend on the dbg...de_cu_context
-            used by and for dwarf_cu_header_* calls. */
-        resdwo = _dwarf_siblingof_internal(dbg,NULL,
+    /*  Must call the internal siblingof so
+        we do not depend on the dbg...de_cu_context
+        used by and for dwarf_cu_header_* calls. */
+    resdwo = _dwarf_siblingof_internal(dbg,NULL,
+        cu_context,
+        cu_context->cc_is_info,
+        &cudie, error);
+    if (resdwo == DW_DLV_OK) {
+        Dwarf_Half cutag = 0;
+        int resdwob = 0;
+        resdwob = find_cu_die_base_fields(dbg,
             cu_context,
-            cu_context->cc_is_info,
-            &cudie, error);
-        if (resdwo == DW_DLV_OK) {
-            Dwarf_Half cutag = 0;
-            int resdwob = 0;
-            resdwob = find_cu_die_base_fields(dbg,
-                cu_context,
-                cudie,
-                error);
-            if (resdwob == DW_DLV_NO_ENTRY) {
-                /* The CU die has no children */
-                dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-                cudie = 0;
-                cu_context->cc_cu_die_has_children = FALSE;
-                return DW_DLV_OK;
-            }
-            if (resdwob == DW_DLV_ERROR) {
-                /*  Not applicable or an error */
-                dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-                cudie = 0;
-                return resdwob;
-            }
-            resdwob = dwarf_tag(cudie,&cutag,error);
-            if (resdwob == DW_DLV_OK) {
-                cu_context->cc_cu_die_tag = cutag;
-            }
+            cudie,
+            error);
+        if (resdwob == DW_DLV_NO_ENTRY) {
+            /* The CU die has no children */
             dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-            return resdwob;
-        } else  if (resdwo == DW_DLV_NO_ENTRY) {
-            /* no cudie. Empty CU. */
+            cudie = 0;
+            cu_context->cc_cu_die_has_children = FALSE;
             return DW_DLV_OK;
-        } else {
-            /* no cudie. Error.*/
-            return resdwo;
         }
-    }
-    return DW_DLV_OK;
+        if (resdwob == DW_DLV_ERROR) {
+            /*  Not applicable or an error */
+            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+            cudie = 0;
+            return resdwob;
+        }
+        resdwob = dwarf_tag(cudie,&cutag,error);
+        if (resdwob == DW_DLV_OK) {
+            cu_context->cc_cu_die_tag = cutag;
+        }
+        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+        return resdwob;
+    } else  if (resdwo == DW_DLV_NO_ENTRY) {
+        /* no cudie. Empty CU. */
+        return DW_DLV_OK;
+    } 
+    /* no cudie. DW_DLV_ERROR.*/
+    return resdwo;
 }
 
 static void
