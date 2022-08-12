@@ -1,3 +1,160 @@
+2022-08-12:  David Anderson
+    commit ba778304169ddae8d66fd09e4b6d22a68c1341ba
+
+    Removed an assign in a test. Clearer code.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+    Remove trailing blank.
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    Split a line, it was above the library codingstyle limit.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+2022-08-12:  David Anderson
+    commit 2d12f0c05a01f5b27969290ecdbd5555f43a62ce
+
+    Changes to eliminate VS warnings.
+
+    Float constants 0.0 -> 0.0f (etc).
+            modified:   dd_attr_form.c
+
+    Four calloc calls were not followed
+    by a NULL return check.  Now they are checked.
+            modified:   dd_checkutil.c
+
+    hasprefix->has_cu_producer_prefix for clarity
+    with removal of an argument.
+            modified:   dd_compiler_info.c
+
+2022-08-12:  David Anderson
+    commit 37d97e9b344059f881f0e5c778c0597b16b42753
+
+    -                while ((c = *lp) && isinset(ap+1,c))
+    +                for (c = *lp ; c && isinset(ap+1,c); c = *lp)
+    The old way gets a warning with VS compiler. Good catch.
+            modified:   src/bin/dwarfdump/dd_regex.c
+
+    Again VS C: A previous refactoring left an extra
+    level of {} in the code and created dead code.
+    Removed the extra {} and the dead code.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2022-08-11:  David Anderson
+    commit 98093f7abf71dfaf91b9b2c61edd0ac82c8d952e
+
+    A few cases of main having  unused argc/argv
+    variables existed with a (void)argv; (void)argv;
+    following the main return to avoid an unused argument warning.
+    Now these use main(void) and those argv/argc mentions
+    have been removed.
+
+    exit(1) signifying failure is now exit(EXIT_FAILURE)
+            modified:   test/dwarf_tied_test.c
+            modified:   test/getnametest.c
+            modified:   test/getopttest.c
+            modified:   test/makename_test.c
+            modified:   test/section_bitmaps_test.c
+            modified:   test/test_dwarfstring.c
+            modified:   test/test_errmsglist.c
+            modified:   test/test_extra_flag_strings.c
+            modified:   test/test_linkedtopath.c
+            modified:   test/test_macrocheck.c
+            modified:   test/testesb.c
+            modified:   test/testobjLE32PE.test.c
+
+2022-08-11:  David Anderson
+    commit 3fceae2002734ebc50bf6a905ff5c613f90bbd34
+
+    All uses of exit(1) and exit(FAILED) are now
+    exit(EXIT_FAILURE) [a C89 built-in macro value]
+
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/buildopstab/buildopscounttab.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_defined_types.h
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_regex.c
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/dwarfexample/simplecrc.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/bin/gennames/gennames.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_common.c
+            modified:   src/bin/tag_tree/tag_tree.c
+
+    Uses of off_t, ssize_t, and size_t clarified
+    with comments and variable renaming.
+        modified: src/lib/libdwarf/dwarf_crc32.c
+
+    Fixed uses of const.
+        modified: src/lib/libdwarf/dwarf_debuglink.c
+
+    Added casts to clarify intent, and
+    to avoid compiler warnings.
+        modified: src/lib/libdwarf/dwarf_debugnames.c
+
+    Removed a debugging abort() declaration.
+        modified: src/lib/libdwarf/dwarf_die_deliv.c
+
+2022-08-10:  vtorri
+    commit d8cff124e44b1a2332b25eede30914928fbc9f8a
+
+    Remove useless warnings about "non standard function names" from the (#127)
+
+    Microsoft compiler
+
+            modified:   meson.build
+
+    Co-authored-by: Vincent Torri <vtorri@outlook.fr>
+
+2022-08-10:  vtorri
+    commit 9ad1c567fcbabdd0ce18b27341a564f8c3ef0800
+
+    define off_t only for microsoft compiler (#126)
+
+    Co-authored-by: Vincent Torri <vtorri@outlook.fr>
+
+2022-08-09:  David Anderson
+    commit c4490ffdb50fd3cab852a723170bbf1bc0c1a0ab
+
+    Hopefully now avoids MS VS warnings. We'll see.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    Removed unused arg from an internal-only function.
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2022-08-09:  David Anderson
+    commit 33f89fe7fbf4dd6e6f6e09fefc03a785fbedf364
+
+    Changes
+    VS does not define ssize_t nor off_t
+    so we add #ifdef and some typedefs under _WIN32 here.
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+    Changes to allow use of MS VS compiler and avoid
+    its warnings. If narrowing data one must use a cast.
+            modified:   src/lib/libdwarf/dwarf_abbrev.c
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_arange.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.h
+            modified:   test/test_linkedtopath.c
+
+2022-08-08:  David Anderson
+    commit 969f46d90ae3bea6adfbd707665c4890cfaa0b16
+
+    Latest from gitlog
+            modified:   ChangeLog
+
 2022-08-08:  David Anderson
     commit 6309d9bab6e1383d593abae3ef340c92f876d707
 
