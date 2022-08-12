@@ -72,6 +72,9 @@ AllocateBucketGroup(int kind)
 {
     Bucket_Group *pBucketGroup = (Bucket_Group *)calloc(1,
         sizeof(Bucket_Group));
+    if (!pBucketGroup) {
+        return NULL;
+    }
     pBucketGroup->kind = kind;
     return pBucketGroup;
 }
@@ -213,6 +216,9 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     if (!pBucketGroup->pHead) {
         /* Allocate first bucket */
         pBucket = (Bucket *)calloc(1,sizeof(Bucket));
+        if (!pBucket) {
+            return;
+        }
         pBucketGroup->pHead = pBucket;
         pBucketGroup->pTail = pBucket;
         pBucket->nEntries = 1;
@@ -229,6 +235,9 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
         } else {
             /* Allocate new bucket */
             pBucket = (Bucket *)calloc(1,sizeof(Bucket));
+            if (!pBucket) {
+                return;
+            }
             pBucketGroup->pTail->pNext = pBucket;
             pBucketGroup->pTail = pBucket;
             pBucket->nEntries = 1;
@@ -523,16 +532,18 @@ ProcessBucketGroup(Bucket_Group *pBucketGroup,
     void (*pFunction)(Bucket_Group *pBucketGroup,
         Bucket_Data *pBucketData))
 {
-    int nIndex = 0;
-    int nStart = 0;
-    Bucket *pBucket = 0;
+    int          nIndex = 0;
+    int          nStart = 0;
+    Bucket      *pBucket = 0;
     Bucket_Data *pBucketData = 0;
     Bucket_Data *pLower = 0;
     Bucket_Data *pUpper = 0;
-    Dwarf_Bool bFound = FALSE;
+    Dwarf_Bool   bFound = FALSE;
 
     /* Sanity checks */
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        return;
+    }
 
     /* No sentinels present; do nothing */
     if (!pBucketGroup->pFirst || !pBucketGroup->pLast) {

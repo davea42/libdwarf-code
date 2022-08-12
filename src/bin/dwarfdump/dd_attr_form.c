@@ -43,7 +43,6 @@
 #include "dd_attr_form.h"
 #include "dwarfdump-af-table.h"
 
-const Three_Key_Entry threekeyzero;
 #if 0
 static void
 print_3key_record(int num,Three_Key_Entry *e)
@@ -436,18 +435,18 @@ qsortcountattr(const void * e1in, const void * e2in)
 void
 print_attr_form_usage(int pd_dwarf_names_print_on_error)
 {
-    Three_Key_Entry * tk_l = 0;
-    Dwarf_Unsigned i =0;
-    float total = 0;
-    unsigned curform = 0;
-    Dwarf_Unsigned formtotal = 0;
-    unsigned curattr = 0;
-    Dwarf_Unsigned attrtotal = 0;
-    Dwarf_Unsigned j = 0;
-    float pct = 0;
-    Dwarf_Bool startnoted = FALSE;
-    const char *localformat= 0;
-    Dwarf_Unsigned localsum = 0;
+    Three_Key_Entry  *tk_l  = 0;
+    Dwarf_Unsigned    i     = 0;
+    unsigned          curform = 0;
+    Dwarf_Unsigned    formtotal = 0;
+    unsigned          curattr = 0;
+    Dwarf_Unsigned    attrtotal = 0;
+    Dwarf_Unsigned    j     = 0;
+    float             total = 0.0f;
+    float             pct   = 0.0f;
+    Dwarf_Bool        startnoted = FALSE;
+    const char *      localformat=  NULL;
+    Dwarf_Unsigned    localsum = 0;
 
     recordmax = three_key_entry_count(threekey_attr_form_base);
     if (!recordmax) {
@@ -501,7 +500,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
             /* Skip table building data */
             continue;
         }
-        pct = ( (float)tke->count / total)*100.0;
+        pct = ( (float)tke->count / total)*100.0f;
         printf(localformat,
             (unsigned)i,
             get_AT_name(tke->key1,pd_dwarf_names_print_on_error),
@@ -510,7 +509,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         localsum += tke->count;
     }
     printf(localformat, (unsigned)(recordmax),
-        "Sum found:","",localsum,100.0);
+        "Sum found:","",localsum,100.0f);
 
     qsort(tk_l,recordmax,sizeof(Three_Key_Entry),
         qsortformclass);
@@ -537,7 +536,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
             continue;
         }
         if (curform != tke->key2) {
-            pct = ( (float)formtotal / total)*100.0;
+            pct = ( (float)formtotal / total)*100.0f;
             printf(localformat,
                 (unsigned)j,
                 get_FORM_CLASS_name(curform,
@@ -552,7 +551,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         formtotal += tke->count;
     }
     if (formtotal) {
-        pct = ( (float)formtotal / total)*100.0;
+        pct = ( (float)formtotal / total)*100.0f;
         printf(localformat,
             (unsigned)j,
             get_FORM_CLASS_name(curform,
@@ -561,7 +560,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         localsum += formtotal;
     }
     printf(localformat, (unsigned)(j+1),
-        "Sum found:",localsum,100.0);
+        "Sum found:",localsum,100.0f);
 
     /* Re-using the following two */
     curform = 0;
@@ -588,7 +587,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
             continue;
         }
         if (curform != tke->key3) {
-            pct = ( (float)formtotal / total)*100.0;
+            pct = ( (float)formtotal / total)*100.0f;
             printf(localformat,
                 (unsigned)j,
                 get_FORM_name(curform,
@@ -603,7 +602,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         formtotal += tke->count;
     }
     if (formtotal) {
-        pct = ( (float)formtotal / total)*100.0;
+        pct = ( (float)formtotal / total)*100.0f;
         printf(localformat,
             (unsigned)j,
             get_FORM_name(curform,
@@ -612,7 +611,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         localsum += formtotal;
     }
     printf(localformat, (unsigned)(j+1),
-        "Sum found:",localsum,100.0);
+        "Sum found:",localsum,100.0f);
 
     j = 0;
     curattr = 0;
@@ -636,7 +635,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
             continue;
         }
         if (curattr != tke->key1) {
-            pct = ( (float)attrtotal / total)*100.0;
+            pct = ( (float)attrtotal / total)*100.0f;
             printf(localformat,
                 (unsigned)j,
                 get_AT_name(curattr,
@@ -651,7 +650,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         formtotal += tke->count;
     }
     if (attrtotal) {
-        pct = ( (float)attrtotal / total)*100.0;
+        pct = ( (float)attrtotal / total)*100.0f;
         printf(localformat,
             (unsigned)j,
             get_AT_name(curattr,pd_dwarf_names_print_on_error),
@@ -659,7 +658,7 @@ print_attr_form_usage(int pd_dwarf_names_print_on_error)
         localsum += attrtotal;
     }
     printf(localformat, (unsigned)(j+1),
-        "Sum found:",localsum,100.0);
+        "Sum found:",localsum,100.0f);
     free(tk_l);
     tkarray = 0;
 }
