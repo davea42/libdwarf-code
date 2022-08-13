@@ -144,8 +144,8 @@ destruct_js(struct joins_s * js)
     dwarfstring_destructor(&js->js_buildid_filename);
 }
 
-static char joinchar = '/';
-static char* joinstr = "/";
+static char  joinchar = '/';
+static char* joinstr  = "/";
 #if defined (_WIN32)
 static char joincharw = '\\';
 /*  Large enough it is unlikely dwarfstring will ever
@@ -168,9 +168,6 @@ transformtoposix(dwarfstring * out, char *in)
 
 #endif /* _WIN32 */
 
-/*  ASSERT: the target chars already have the transformtoposix()
-    done.
-*/
 int
 _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
 {

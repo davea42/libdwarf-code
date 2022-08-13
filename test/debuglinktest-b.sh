@@ -67,6 +67,7 @@ then
 fi
 }
 
+
 echo "debuglinktest-b.sh test2"
 o=junk.dlinkb
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
@@ -75,22 +76,8 @@ echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
 $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
 r=$?
 chkres $r "running dwdebuglink test2"
-if [ $r -ne 0 ]
-then
-  echo "Error debuglinktest-a.sh"
-  exit $r
-fi
-# we strip out the actual localsrc and blddir for the obvious
-# reason: We want the baseline data to be meaningful no matter
-# where one's source/build directories are.
-# use @ instead of / or \ or : to avoid tripping over
-# normal path characters in Linux/Macos/Windows
-
-sed -e "s@$localsrc@..src..@" <$testbin/$o  >$testbin/${o}a
-sed -e "s@$blddir@..bld..@" <$testbin/${o}a  >$testbin/${o}b
-${localsrc}/dos2unix.py $testbin/${o}b
-chkres $? "FAIL debuglinktest-b.sh dos2unix.py"
-diff $testsrc/debuglink2.base  $testbin/${o}b
+${localsrc}/transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c
+${localsrc}/dwdiff.py $testsrc/debuglink2.base $testbin/${o}c
 r=$?
 echo "To update debuglinktest-b.sh  baseline:"
 echo " mv $testbin/${o}b $testsrc/debuglink2.base"
