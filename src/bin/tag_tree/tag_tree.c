@@ -122,7 +122,7 @@ process_args(int argc, char *argv[])
     }
 
     if (usage_error || 1 == dwoptind || dwoptind != argc) {
-        print_usage_message(argv[0],usage);
+        print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
 }
@@ -235,7 +235,7 @@ main(int argc, char **argv)
 
     if (!input_name ) {
         fprintf(stderr,"Input name required, not supplied.\n");
-        print_usage_message(argv[0],usage);
+        print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
     fileInp = fopen(input_name,"r");
@@ -243,13 +243,13 @@ main(int argc, char **argv)
         fprintf(stderr,"Invalid input filename,"
             " could not open '%s'\n",
             input_name);
-        print_usage_message(argv[0],usage);
+        print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
 
     if (!output_name ) {
         fprintf(stderr,"Output name required, not supplied.\n");
-        print_usage_message(argv[0],usage);
+        print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
     fileOut = fopen(output_name,"w");
@@ -257,14 +257,14 @@ main(int argc, char **argv)
         fprintf(stderr,"Invalid output filename,"
             " could not open: '%s'\n",
             output_name);
-        print_usage_message(argv[0],usage);
+        print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
     if ((standard_flag && extended_flag) ||
         (!standard_flag && !extended_flag)) {
         fprintf(stderr,"Invalid table type\n");
         fprintf(stderr,"Choose -e  or -s .\n");
-        print_usage_message(argv[0],usage);
+        print_usage_message(usage);
         exit(EXIT_FAILURE);
     }
     if (standard_flag) {

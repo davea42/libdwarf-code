@@ -58,12 +58,6 @@
 
 #define MINBUFLEN 1000
 
-#if _WIN32
-#define NULL_DEVICE_NAME "NUL"
-#else
-#define NULL_DEVICE_NAME "/dev/null"
-#endif /* _WIN32 */
-
 #define MORE_BYTES      0x80
 #define DATA_MASK       0x7f
 #define DIGIT_WIDTH     7

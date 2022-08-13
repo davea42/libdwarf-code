@@ -64,12 +64,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
 #define MINBUFLEN 1000
 
-#if _WIN32
-#define NULL_DEVICE_NAME "NUL"
-#else
-#define NULL_DEVICE_NAME "/dev/null"
-#endif /* _WIN32 */
-
 static int
 is_full_path(char *path,int joinchar)
 {

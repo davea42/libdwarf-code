@@ -74,10 +74,10 @@ print_args(int argc , char *argv[] )
 }
 
 /*  Going to stdout as of April 2018.
-    dwarfdump only calls if requested by user.  */
+    dwarfdump only calls if requested by user.
+    At one time this also printed glflags.program_name  */
 void
 print_usage_message(
-    const char *program_name_in UNUSEDARG,
     const char **text)
 {
     unsigned i = 0;

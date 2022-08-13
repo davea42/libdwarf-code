@@ -1055,7 +1055,7 @@ void arg_trace(void)
     }
     /* Display dwarfdump debug options. */
     if (dump_options) {
-        print_usage_message(glflags.program_name,usage_debug_text);
+        print_usage_message(usage_debug_text);
         exit(OKAY);
     }
 }
@@ -1353,7 +1353,7 @@ void arg_h_multiple_selection(void)
 /*  Option '-h' */
 void arg_help(void)
 {
-    print_usage_message(glflags.program_name,usage_long_text);
+    print_usage_message(usage_long_text);
     exit(OKAY);
 }
 
