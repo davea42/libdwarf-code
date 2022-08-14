@@ -64,11 +64,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
 #define MINBUFLEN 1000
 
+static char  joinchar = '/';
+static char* joinstr  = "/";
+static char joincharw = '\\';
+/*  Large enough it is unlikely dwarfstring will ever
+    do a malloc here, Windows paths usually < 256 characters. */
+#if defined (_WIN32)
+static char winbuf[256];
+#endif /* _WIN32 */
+
 static int
-is_full_path(char *path,int joinchar)
+is_full_path(char *path)
 {
     unsigned char c = path[0];
     unsigned char c1 = 0;
+    int okdriveletter = FALSE;
+
     if (!c) {
         /* empty string. */
         return FALSE;
@@ -76,6 +87,15 @@ is_full_path(char *path,int joinchar)
     if (c == joinchar) {
         return TRUE;
     }
+    if (c >= 'c' && c >= 'z') {
+        okdriveletter = TRUE;
+    } else  if (c >= 'C' && c >= 'C') {
+        okdriveletter = TRUE;
+    }
+    if (!okdriveletter) {
+        return FALSE;
+    }
+
     c1 = path[1];
     if (!c1) {
         /* No second character */
@@ -144,20 +164,14 @@ destruct_js(struct joins_s * js)
     dwarfstring_destructor(&js->js_buildid_filename);
 }
 
-static char  joinchar = '/';
-static char* joinstr  = "/";
-#if defined (_WIN32)
-static char joincharw = '\\';
-/*  Large enough it is unlikely dwarfstring will ever
-    do a malloc here, Windows paths usually < 256 characters. */
-static char winbuf[256];
 
 static void
-transformtoposix(dwarfstring * out, char *in)
+transform_toposix(dwarfstring * out, char *in)
 {
     char *cp = in;
+    int c = 0;
 
-    for ( ; *cp  ; ++cp) {
+    for (c = *cp ; c  ; ++cp,c = *cp) {
         if ( *cp == joincharw ) {
             dwarfstring_append_length(out,joinstr,1);
         } else {
@@ -166,7 +180,50 @@ transformtoposix(dwarfstring * out, char *in)
     }
 }
 
-#endif /* _WIN32 */
+/*  We change c: or C: to /c  for example */
+static void
+transform_leading_windowsletter(dwarfstring *out,
+    char *in)
+{
+    char *cp      = in;
+    int   c       = 0;
+    int   isupper = FALSE;
+    int   islower = FALSE;
+
+    c = *cp++;
+    /* Unsure if a, b are normal Windows drive letters. */
+    if (c && (c >= 'C') && (c <= 'Z')) {
+        isupper = TRUE;
+    }
+    if (c && (c >= 'c') && (c <= 'z')) {
+        islower = TRUE;
+    }
+    if (isupper || islower) {
+        int c2 = 0;
+
+        /* ++ here to move past the colon in the input */
+        c2 = *cp++;
+        if (c2 && (c2 == ':')) {
+            /* Example: Turn uppercase C to c */
+            char newstr[4];
+            int newletter = c;
+
+            if (isupper) {
+                int distance = 'a' - 'A';
+                newletter = c + distance;
+            }
+            newstr[0] = '/';
+            newstr[1] = newletter;
+            newstr[2] = 0;
+            dwarfstring_append(out,newstr);
+        } else {
+            cp = in;
+        }
+    } else {
+        cp = in;
+    }
+    transform_toposix(out,cp);
+}
 
 int
 _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
@@ -178,7 +235,7 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
     dwarfstring winput;
 
     dwarfstring_constructor_static(&winput,winbuf,sizeof(winbuf));
-    transformtoposix(&winput,inputs);
+    transform_toposix(&winput,inputs);
     targlenszt = dwarfstring_strlen(target);
     inputs = dwarfstring_string(&winput);
     if (!targlenszt) {
@@ -194,15 +251,15 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
         return DW_DLV_OK;
     }
     targ = dwarfstring_string(target);
-    if (!is_full_path(targ+targlenszt-1,joinchar)) {
-        if (!is_full_path(inputs,joinchar)) {
+    if (!is_full_path(targ+targlenszt-1)) {
+        if (!is_full_path(inputs)) {
             dwarfstring_append(target,joinstr);
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs);
         }
     } else {
-        if (!is_full_path(inputs,joinchar)) {
+        if (!is_full_path(inputs)) {
             dwarfstring_append(target,inputs);
         } else {
             dwarfstring_append(target,inputs+1);
@@ -460,6 +517,7 @@ _dwarf_do_debuglink_setup(char *link_string_in,
     }
     return DW_DLV_OK;
 }
+
 static int
 _dwarf_do_buildid_setup(unsigned buildid_length,
     char ** global_prefixes_in,
@@ -510,6 +568,27 @@ _dwarf_do_buildid_setup(unsigned buildid_length,
     called at libdwarf object init time.
     So there is always the default
     global path present.
+    From the above web page:
+        For the “debug link” method, GDB looks up the named
+        file in the directory of the executable file, then
+        in a subdirectory of that directory named .debug, and
+        finally under each one of the global debug directories,
+        in a subdirectory whose name is identical to the leading
+        directories of the executable’s absolute file name. (On
+        MS-Windows/MS-DOS, the drive letter of the executable’s
+        leading directories is converted to a one-letter
+        subdirectory, i.e. d:/usr/bin/ is converted to /d/usr/bin/,
+        because Windows filesystems disallow colons in file names.)
+
+        For the “build ID” method, GDB looks in the .build-id
+        subdirectory of each one of the global debug directories
+        for a file named nn/nnnnnnnn.debug, where nn are the
+        first 2 hex characters of the build ID bit string, and
+        nnnnnnnn are the rest of the bit string. (Real build ID
+        strings are 32 or more hex characters, not 10.) GDB can
+        automatically query debuginfod servers using build IDs
+        in order to download separate debug files that cannot be
+        found locally.
 */
 int
 _dwarf_construct_linkedto_path(
@@ -518,9 +597,6 @@ _dwarf_construct_linkedto_path(
     char          *pathname_in,
     char          *link_string_in, /* from debug link */
     dwarfstring   *link_string_fullpath_out,
-#if 0
-    UNUSEDARG unsigned char *crc_in, /* from debug_link, 4 bytes */
-#endif
     unsigned char *buildid, /* from gnu buildid */
     unsigned       buildid_length, /* from gnu buildid */
     char        ***paths_out,
@@ -542,7 +618,7 @@ _dwarf_construct_linkedto_path(
         dwarfstring_append_length(&joind.js_tmp2,
             depath,dirnamelen);
     }
-    if (!is_full_path(depath,joinchar)) {
+    if (!is_full_path(depath)) {
         /*  Meaning a/b or b, not /a/b or /b ,
             so we apply cwd */
         char  buffer[2000];
@@ -560,13 +636,19 @@ _dwarf_construct_linkedto_path(
             return DW_DLV_ERROR;
         }
         dwarfstring_append(&joind.js_cwd,buffer);
+#if 0
         dwarfstring_append(&joind.js_dirname,buffer);
         _dwarf_pathjoinl(&joind.js_dirname,&joind.js_tmp2);
         buffer[0] = 0;
     }  else {/* else leave js_cwd empty */
         dwarfstring_append(&joind.js_dirname,
             dwarfstring_string(&joind.js_tmp2));
+#endif
     }
+    /* Applies to the leading chars in the named file */
+    transform_leading_windowsletter(&joind.js_dirname,
+        dwarfstring_string(&joind.js_tmp2));
+    dwarfstring_reset(&joind.js_tmp2);
 
     /* Creating a real basename. No slashes. */
     dwarfstring_append(&joind.js_basenamesimple,
@@ -574,8 +656,6 @@ _dwarf_construct_linkedto_path(
     dwarfstring_append(&joind.js_basesimpledebug,
         dwarfstring_string(&joind.js_basenamesimple));
     dwarfstring_append(&joind.js_basesimpledebug,".debug");
-
-    dwarfstring_reset(&joind.js_tmp2);
 
     /*  Now js_dirname / js_basenamesimple
         are reflecting a full path  */
@@ -873,15 +953,13 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     dwarfstring_constructor(&debuglink_fullpath);
     pathname = (char *)dbg->de_path;
     if (pathname && paths_returned) {
+        /*  Caller wants paths created and returned. */
         res =  _dwarf_construct_linkedto_path(
             (char **)dbg->de_gnu_global_paths,
             dbg->de_gnu_global_path_count,
             pathname,
             *debuglink_path_returned,
             &debuglink_fullpath,
-#if 0
-            *crc_returned,
-#endif
             *buildid_returned,
             *buildid_length_returned,
             paths_returned,

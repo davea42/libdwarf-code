@@ -34,12 +34,26 @@ def readin(srcfile):
 #  for Windows msys2, the default prefix of msys2 /
 globalroot = 'C:/msys64'
 
+#   This to hide unwanted d: c: from Windows
+#   result of getcwd
+#   so the regression test works.
+def sourcepathrep(srcpath,l1):
+    if l1.find(srcpath) != -1:
+        l2 = l1.replace(srcpath,"..src..")
+        modsource = "c:"+ srcpath
+        if l1.find(modsource) != -1:
+            l2=l1.replace(modsource,"..src..")
+        else:
+            modsource = "d:"+srcpath
+            if l1.find(modsource) != -1:
+                l2=l1.replace(modsource,"..src..")
+        return l2
+    return l1
+
 def transform(ilines,srcpath,binpath):
     out = []
     for n,l1 in enumerate(ilines):
-        l2 = l1
-        if l1.find(srcpath) != -1:
-            l2 = l1.replace(srcpath,"..src..")
+        l2 = sourcepathrep(srcpath,l1)
         l3 = l2
         if l2.find(binpath) != -1:
             l3 = l2.replace(binpath,"..bld..")
