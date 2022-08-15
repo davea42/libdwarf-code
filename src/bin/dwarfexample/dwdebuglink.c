@@ -461,6 +461,36 @@ static void free_paths(void)
     gl_pathnames = 0;
 }
 
+static char *
+basename(char *filepath)
+{
+    unsigned long lastindex = 0;
+    char         *cp = filepath;
+    unsigned long count = 0;
+    char         *basename = 0;
+    int           found   = FALSE;
+    int           c = 0;
+
+    for ( ; *cp ; ++cp,++count) {
+        c = *cp;
+        if (c == '/') {
+            lastindex = count;
+            found = TRUE;
+        }
+    }
+    if (!found) {
+        /*  No directory in the name */
+        return filepath;
+    }
+    basename = filepath +lastindex+1;
+    c = *basename;
+    if (!c) {
+        /* Something is very wrong here */
+        return filepath;
+    }
+    return basename;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -481,7 +511,7 @@ main(int argc, char **argv)
         filenamein = arg;
         one_file_debuglink(filenamein,gl_pathnames,gl_pathcount,
             no_follow_debuglink);
-        printf("=======done with %s\n",filenamein);
+        printf("=======done with %s\n",basename(filenamein));
     }
     free_paths();
 }
