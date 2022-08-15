@@ -118,6 +118,7 @@ pyscripttests = [
 #git_exe = find_program('git', required: false)
 #pkgconfig_mod = import('pkgconfig')
 
+
 py3_exe = import('python').find_installation()
 foreach testscr : pyscripttests
   pytest_name = testscr[0]
@@ -129,11 +130,17 @@ endforeach
 
 shscripttests =  []
 if get_option('dwarfexample') == true
-  shscripttests =  [
-  ['debuglinktest-a.sh'],
-  ['debuglinktest-b.sh'],
-  ['jitreaderdiff.sh'],
+  if host_os == 'windows'
+    shscripttests =  [
+    ['jitreaderdiff.sh'],
+    ]
+  else
+    shscripttests =  [
+    ['debuglinktest-a.sh'],
+    ['debuglinktest-b.sh'],
+    ['jitreaderdiff.sh'],
   ]
+  endif
 endif
 
 sh_exe = find_program('sh',required:true)

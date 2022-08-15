@@ -227,38 +227,42 @@ if (DO_TESTING)
     add_test(NAME selfregex COMMAND selfregex)
 endif()
 
-if (DO_TESTING) 
+if (DO_TESTING AND NOT WIN32) 
     add_custom_target (copyconf ALL
        COMMAND ${CMAKE_COMMAND} -E
        copy ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf
           ${CMAKE_BINARY_DIR}/test/dwarfdump.conf )
+    add_custom_target (copyconf2 ALL
+       COMMAND ${CMAKE_COMMAND} -E
+       copy ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dwarfdump.conf
+          ${CMAKE_BINARY_DIR}/dwarfdump.conf )
     set(pebasedir "${CMAKE_SOURCE_DIR}")
     set(peshdir   "${CMAKE_SOURCE_DIR}/test")
     set(pebindir  "${CMAKE_BINARY_DIR}")
-    add_test(NAME selfdwarfdumppe COMMAND ${peshdir}/dwarfdumptest.py PE cmake ${pebasedir} ${pebindir})
+    add_test(NAME selfdwarfdumppe COMMAND python3 ${peshdir}/dwarfdumptest.py PE cmake ${pebasedir} ${pebindir})
 endif()
 
-if (DO_TESTING) 
+if (DO_TESTING AND NOT WIN32) 
     set(elfbasedir "${CMAKE_SOURCE_DIR}")
     set(elfshdir   "${CMAKE_SOURCE_DIR}/test")
     set(elfbindir  "${CMAKE_BINARY_DIR}")
-    add_test(NAME selfdwarfdumpelf COMMAND ${elfshdir}/dwarfdumptest.py Elf cmake ${elfbasedir} ${elfbindir})
+    add_test(NAME selfdwarfdumpelf COMMAND python3 ${elfshdir}/dwarfdumptest.py Elf cmake ${elfbasedir} ${elfbindir})
 endif()
 
-if (DO_TESTING) 
+if (DO_TESTING AND NOT WIN32) 
     set(macbasedir "${CMAKE_SOURCE_DIR}")
     set(macshdir   "${CMAKE_SOURCE_DIR}/test")
     set(macbindir  "${CMAKE_BINARY_DIR}")
-    add_test(NAME selfdwarfdumpmacho COMMAND ${macshdir}/dwarfdumptest.py Macos cmake ${macbasedir} ${macbindir})
+    add_test(NAME selfdwarfdumpmacho COMMAND python3 ${macshdir}/dwarfdumptest.py Macos cmake ${macbasedir} ${macbindir})
 endif()
 
-if (DO_TESTING AND BUILD_DWARFEXAMPLE) 
+if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32) 
     set(dlbasedir "${CMAKE_SOURCE_DIR}")
     set(dlshdir   "${CMAKE_SOURCE_DIR}/test")
     add_test(NAME selfdebuglinka COMMAND sh -c "${dlshdir}/debuglinktest-a.sh ${dlbasedir}")
 endif()
 
-if (DO_TESTING AND BUILD_DWARFEXAMPLE) 
+if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32) 
     set(dlbasedir "${CMAKE_SOURCE_DIR}")
     set(dlshdir   "${CMAKE_SOURCE_DIR}/test")
     add_test(NAME selfdebuglinkb COMMAND sh -c "${dlshdir}/debuglinktest-b.sh ${dlbasedir}")
