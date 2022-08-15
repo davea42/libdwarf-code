@@ -80,6 +80,6 @@ ${localsrc}/transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c
 ${localsrc}/dwdiff.py $testsrc/debuglink2.base $testbin/${o}c
 r=$?
 echo "To update debuglinktest-b.sh  baseline:"
-echo " mv $testbin/${o}b $testsrc/debuglink2.base"
+echo " mv $testbin/${o}c $testsrc/debuglink2.base"
 chkres $r "running debuglinktest-b.sh  diff against baseline"
 exit 0
