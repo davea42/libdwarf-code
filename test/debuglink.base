@@ -3,7 +3,7 @@
  global path        : /tmp/phony
  Section             : .gnu_debuglink
  Debuglink name      : dummyexecutable.debug
- compiler-created crc: 0X  c8 ba b4 1c 
+ compiler-created crc: 0X  c8 ba b4 1c
  Debuglink target    : ..src../dummyexecutable.debug
  Section             : .note.gnu.buildid
  Build-id  type      : 3
@@ -33,4 +33,4 @@
     [ 6] file above does not match/exist.
     [ 7] Path [ 7] /tmp/phony..src../dummyexecutable.debug
     [ 7] file above does not match/exist.
-=======done with ..src../dummyexecutable
+=======done with dummyexecutable
