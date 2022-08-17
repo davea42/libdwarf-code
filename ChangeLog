@@ -1,3 +1,149 @@
+2022-08-17:  David Anderson
+    commit b24e37ca21eb6a4cf67d3ced0e489f478471eda5
+
+    Adding
+    ninja test
+    to the workflow.
+            modified:   .github/workflows/ci_msys2_cmake.yml
+
+2022-08-17:  David Anderson
+    commit 0cc469fe57ac75b606cd4760f0c33c99b0d9fdf9
+
+    Cleaned up scripting errors testing for $?
+            modified:   test/jitreaderdiff.sh
+
+2022-08-17:  David Anderson
+    commit 3f53ac3a96ebade40744f8226f53e55579e54662
+
+    In the cmake case do not attempt
+    the jitreader nor the dwarfdump tests.
+    So far those do not work on WIN32.
+    The autotools and meson buils run
+    those just fine.
+            modified:   test/CMakeLists.txt
+
+2022-08-16:  David Anderson
+    commit 8d8b6738e72f77a4c1b90e4b35e8fc043b3bc94d
+
+    At a crucial point $? was not saved to r
+    so the dwdiff.py result value was not tested
+    correctly. Fixed.
+            modified:   test/jitreaderdiff.sh
+
+2022-08-16:  David Anderson
+    commit f1c8667fd5bed0c5dfd5e224da5544c7fa0cfb52
+
+    Unused arguments deleted from a couple static
+    functions. No API change.
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+
+2022-08-15:  David Anderson
+    commit 938175b113897ede284120521f953d9476651ff9
+
+    The dwarfdumpPE,Macos,Elf test set
+    did not work with cmake as msys2 was
+    not able to use the introductory #line
+    to derive the script program to run
+    the python.  So now we name python3
+    and Linux and msys2 work for these tests.
+            modified:   test/CMakeLists.txt
+
+    Added a little bit of testing host_os to drop
+    'debuglinktest-a.sh' and 'debuglinktest-b.sh'
+    from ninja test as getting the Windows output
+    to match Unix/Linux baseline files to
+    match Windows environmengs is ...not working.
+            modified:   test/meson.build
+
+2022-08-15:  David Anderson
+    commit 00c79fc290777061042d72d52099539c264b1011
+
+    This is for regression testing to attempt to
+    make Windows paths look like Unix paths
+    so we can have a single baseline for all
+    OS's.
+    Note that it's not *really* working right yet
+    so  for Windows the two actual tests (debuglink)
+    are not run.
+    The msys2 vs Windows paths combined with what
+    dwdebuglink does with paths makes sort of a mess...
+            modified:   test/transformpath.py
+
+2022-08-15:  David Anderson
+    commit bc9f1f04c543382b1e11446a1df0774e6ad70f0b
+
+    Changed temp file names for consistency
+    in file naming.  And to correct the -a
+    'mv' command to update the baseline, which
+    has been wrong for some time...
+            modified:   test/debuglinktest-a.sh
+            modified:   test/debuglinktest-b.sh
+
+2022-08-15:  David Anderson
+    commit 8a4675eb41be8056f9d977069cf68118d1da6e12
+
+    These are the new test baselines for debuglink.
+    Just the "=====done with"
+    line changed.
+            modified:   test/debuglink.base
+            modified:   test/debuglink2.base
+
+2022-08-15:  David Anderson
+    commit 7ad43120effcf43d2d524d20a85e2685eff9b306
+
+    To ease comparisons against a baseline
+    the "=======done with"
+    output line just lists the file basename.
+    No directories shown.
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+
+2022-08-14:  David Anderson
+    commit 8cdf8f0fd1d02e3781d76989642971d9e391812a
+
+    Changes to let the basic checks (make check,
+    ninja test) work properly on Windows (there
+    is no change to the linux debuglink output)..
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   test/transformpath.py
+
+2022-08-13:  David Anderson
+    commit 456736367be280efd5f910448c127687ae7cbe59
+
+    delete obsolete comment.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Now uses the new python code for
+    helping allow identity to baselines checking
+    just like test/debuglinktest-a.sh does.
+    Was an oversight this was not done earlier.
+            modified:   test/debuglinktest-b.sh
+
+2022-08-13:  David Anderson
+    commit bd14b6128ca5ce2b63e465950291d2de28b6a3a9
+
+    Eliminated unused arg from print_usage_message()
+    Changed int to Dwarf_Signed so pointer
+    subtraction is handled correctly.
+
+            modified:   bin/attr_form/attr_form_build.c
+            modified:   bin/dwarfdump/dd_checkutil.c
+            modified:   bin/dwarfdump/dd_command_options.c
+            modified:   bin/dwarfdump/dd_common.c
+            modified:   bin/dwarfdump/dd_common.h
+            modified:   bin/tag_attr/tag_attr.c
+            modified:   bin/tag_tree/tag_tree.c
+
+    Removed NULL_DEVICE_NAME define as it is not used
+    here.
+            modified:   lib/libdwarf/dwarf_debuglink.c
+            modified:   lib/libdwarf/dwarf_util.c
+
+2022-08-12:  David Anderson
+    commit ee6f657efcb025f4333654ca351d9fa500d685d0
+
+    Now up to date with git log text.
+            modified:   ChangeLog
+
 2022-08-12:  David Anderson
     commit ba778304169ddae8d66fd09e4b6d22a68c1341ba
 
