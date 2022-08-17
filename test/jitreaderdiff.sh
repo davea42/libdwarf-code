@@ -33,18 +33,19 @@ if [ x$DWTOPSRCDIR = "x" ]
 then
   # Assume runing tests in source
   top_srcdir=$top_blddir
-  echo "top_srcdir from top_blddir $top_srcdir"
-  $DWTOPSRCDIR=$top_blddir
+  echo "set DWTOPSRCDIR from top_blddir: $top_blddir"
+  DWTOPSRCDIR=$top_blddir
   export DWTOPSRCDIR
 else
   top_srcdir=$DWTOPSRCDIR
-  echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
+  echo "set top_srcdir from DWTOPSRCDIR: $top_srcdir"
 fi
 if [ "x$top_srcdir" = "x.." ]
 then
   # This case hopefully eliminates relative path to test dir.
   top_srcdir=$top_blddir
-  $DWTOPSRCDIR=$top_blddir
+  DWTOPSRCDIR=$top_blddir
+  echo "set DWTOPSRCDIR from top_blddir: $top_blddir"
   export DWTOPSRCDIR
 fi
 
@@ -67,25 +68,21 @@ jr=$top_blddir/src/bin/dwarfexample/jitreader
 
 rm -f $tx
 echo "Running: $jr with env var DWTOPSRCDIR: $DWTOPSRCDIR"
+$jr
 $jr > $tx
 r=$?
-if [ $r -ne 0 ]
-then
-   echo "failing jitreader run."
-   cat $tx
-fi
 chkres $r "$jr printing output to $tx base $b "
 if [ $r -ne 0 ]
 then
-  echo " failed"
-  exit $r
+   cat $tx
+   exit $r
 fi
-echo "if update required, mv $tx $b"
-${localsrc}/dwdiff.py $b $tx
+echo "Running: python3 ${localsrc}/dwdiff.py $b $tx" 
+python3 ${localsrc}/dwdiff.py $b $tx
 r=$?
 if [ $r -ne 0 ]
 then
-  echo "Diff above."
+  echo "Failed diff above."
   echo "To update , mv  $tx $b"
   exit $r
 fi
