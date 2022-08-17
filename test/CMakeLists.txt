@@ -170,7 +170,7 @@ if (DO_TESTING)
     add_test(NAME selftestnames COMMAND selftestnames)
 endif()
 
-if (DO_TESTING AND BUILD_DWARFEXAMPLE)
+if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32)
     set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/jitreader")
     add_test(NAME selfjitreader COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/jitreaderdiff.sh ${CMAKE_SOURCE_DIR}")
 endif()
@@ -267,5 +267,3 @@ if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32)
     set(dlshdir   "${CMAKE_SOURCE_DIR}/test")
     add_test(NAME selfdebuglinkb COMMAND sh -c "${dlshdir}/debuglinktest-b.sh ${dlbasedir}")
 endif()
-
-
