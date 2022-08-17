@@ -17,9 +17,15 @@
 
 # This is libdwarf README[.md]
 
-Updated 7 August 2022
+Updated 17 August 2022
 
-For release libdwarf-0.4.2 
+For libdwarf-0.4.2 
+Versions before 0.4.2 had problems
+in the test suite so
+make check or ninja test might fail
+on some tests (sorry).
+
+
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
@@ -34,11 +40,11 @@ libdwarf/dwarfdump.
 
     Ubuntu: 
     sudo apt install pkgconf zlib1g zlib1g-dev
-    optional add: cmake meson 
+    optional add: cmake meson ninja 
 
     FreeBSD:
     pkg install bash python3 gmake binutils pkgconf lzlib
-    optional add: cmake meson
+    optional add: cmake meson ninja
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
@@ -48,7 +54,7 @@ These examples show doing a build in a directory
 different than the source as that is generally
 recommended practice. 
 
-### GNU configure build
+### GNU configure/autotools build
 
 Note: if you get a build failure that mentions
 something about test/ and missing .Po object files
@@ -58,9 +64,9 @@ command.
     rm -rf /tmp/build
     mkdir /tmp/build
     cd /tmp
-    tar xf <path to>/libdwarf-0.4.0.tar.xz
+    tar xf <path to>/libdwarf-0.4.2.tar.xz
     cd  /tmp/build
-    /tmp/libdwarf-0.4.0/configure
+    /tmp/libdwarf-0.4.2/configure
     make
     make check
 
@@ -70,11 +76,6 @@ README.cmake has details on the available cmake options.
 
 We suggest that you will find meson a more satisfactory
 tool in msys2. 
-
-    cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/c/msys64/usr -DCMAKE_BUILD_TYPE=Release /tmp/libdwarf-0.4.1
-    ninja 
-    ninja install 
-    See README.cmake for additional details.
 
 ### meson build
 
@@ -92,20 +93,23 @@ executables in the build tree work too.
 
 For example:
 
-    meson /tmp/libdwarf-0.4.1
-    ninja -j8 
+    meson /tmp/libdwarf-0.4.2
+    ninja
     ninja install
     ninja test
 
-For a faster build with install and full sanity tests:
+For a faster build, adding additional checks:
 
     export CFLAGS="-g -pipe"
     export CXXFLAGS="-g -pipe"
-    meson /tmp/libdwarf-0.4.1 -Ddwarfexample=true 
-    ninja -j8 install
+    meson /tmp/libdwarf-0.4.2 -Ddwarfexample=true 
+    ninja -j8
+    ninja install
     ninja test
 
-## BUILDING on linux from a git clone of the source tree with configure
+## BUILDING on linux from a git clone with configure/autotools
+
+Ignore this section if using meson (or cmake).
 
 This is not recommended as it requires you have
 GNU autotools and pkg-config installed.
@@ -133,22 +137,29 @@ do :
     make
     make check
 
-## BUILDING on MacOS from a git clone of the source tree with configure
+## BUILDING on MacOS from a git clone configure
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     brew install autoconf automake libtool
-    # Then use the  Standard Linux Build lines just above.
+    # Then use the  Standard Linux Build lines above.
 
-## BUILDING from a git clone of the source tree with cmake
+### Options to meson on Linux/Unix 
 
-It's always recommended to do cmake builds in a clean directory.
-See also README.cmake
-Instead of configure do:
+For the basic options list , do:
+    meson configure /path/to/code
 
-    cmake  /path/to/code
-    make
-    ctest -R self
+To set options and show the result:
+
+    # Here  just setting one option.
+    meson setup  -Ddwarfexample=true  .  /home/davea/dwarf/code 
+    meson configure .
+
+The configure output is very wide (just letting you know).
 
 ### Options to configure on Linux/Unix 
+
+For the full options list , do:
+
+    /path/to/code/configure --help
 
 By default configure compiles and uses libdwarf.a.
 With `--enable-shared` appended to the configure step,
@@ -179,12 +190,19 @@ Sanity checking:
  gcc has some checks that can be done at runtime.
  -fsanitize=undefined is turned on by --enable-sanitize
 
+### Options to meson on Windows
+
+All libdwarf builds are automatically shared object (dll)
+builds. No static library libdwarf.a for installation
+is supported.
+
+
 ### Options to configure on Windows
 
 All libdwarf builds are automatically shared object (dll)
-builds. No static libdwarf.a is supported.
+builds. No static libdwarf.a can be installed.
 
-### Distributing
+### Distributing via configure/autotools
 
 When ready to create a new source distribution do
 a build and then

@@ -1,5 +1,5 @@
-Created 26 April 2019 
-Updated 14 May 2022
+Created 26 April 2019
+Updated 17 August 2022
 
 Now we are using a new source structure and using semantic
 versioning for tar.xz names (earlier we used tar.gz).
@@ -7,10 +7,15 @@ The assumption is that you usually download an appropriate
 libdwarf-0.4.1.tar.gz (or a later one)
 You may find README or README.md useful to read.
 
-===========================
-See below for msys2 mingw cmake.
+Consider switching entirely to meson for your build.
+
+There are two parts of this file:
+CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
+and
+USING MSYS2 (WINDOWS) CMAKE.
 
 ============================
+CMAKE on Unix/linux/MacOS/FreeBSD/OpenBSD
 For cmake, ignore the autogen.sh
 script in the base source directory.
 By default the build builds just libdwarf and dwarfdump.
@@ -20,40 +25,38 @@ directory named 'code' inside the directory '/path/to/' Always
 arrange to issue the cmake command in an empty directory.
 For example:
 
+    # build the fast way
     mkdir /tmp/cmbld
     cd /tmp/cmbld
-    cmake /path/to/code
-    make
+    cmake -G Ninja -DDO_TESTING:BOOL=TRUE /path/to/code
+    ninja
+    ninja test
 
-The above will build libdwarf (a static library, a libdwarf.a)
-and dwarfdump (linking to that static library).  If there is
+    # much slower build
+    mkdir /tmp/cmbld
+    cd /tmp/cmbld
+    cmake -DDO_TESTING:BOOL=TRUE  /path/to/code
+    make
+    ctest -R self
+
+
+The above will build libdwarf.dll or libdwarf-0.dll 
+and dwarfdump (linking to that dll).  If there is
 no libelf.h present during cmake/build then dwarfdump won't
 read archives or honor requests to print elf headers.
 
-To show all the available cmake options we'll show the
-default build next:
+To show all the available cmake options for 'code':
 
-    cmake -DDWARF_WITH_LIBELF=ON \
-        -DBUILD_NON_SHARED=ON \
-        -DBUILD_SHARED=OFF \
-        -DBUILD_DWARFGEN=OFF \
-        -DBUILD_DWARFEXAMPLE=OFF \
-        -DWALL=OFF \
-        -DDO_TESTING=OFF\
-        /path/to/code
-    make
-
-The short form, doing the same as the default:
-    cmake /path/to/code
-    make
+    cmake -L /path/to/code
 
 For this case any attempt to compile dwarfgen will be
 overridden: dwarfgen requires libelf.
 
 For dwarfexample:
 
-    cmake -DBUILD_DWARFEXAMPLE=ON /path/to/code
+    cmake -G Ni  -DBUILD_DWARFEXAMPLE=ON /path/to/code
     make
+    
 
 If libelf is missing -DBUILD_DWARFGEN=ON will not be honored
 as dwarfgen will not build without libelf.
@@ -81,10 +84,11 @@ instead of plain
 cmake make install and make dist do not yet work properly.
 Use configure for those.
 
+END of cmake on Linux/Unix/Macos/Freebsd/Openbsd
 ===========================
-USING MINGW (WINDOWS) CMAKE.
+USING MSYS2 (WINDOWS) CMAKE.
 
-to use mingw64 one must install the right packages
+to use msys2 under mingw64 one must install the right packages
 (speaking here of mingw for Windows, not plain Windows)
 
 Do not use the -DWALL option to cmake, that trips
@@ -108,12 +112,15 @@ these if you wish to build 32bit windows applications.
 
 cmake will generate ninja makefiles by default,
 add -G "Unix Makefiles" to the cmake command line
-to generate makefiles for gnu make.
+to generate makefiles for gnu make, but
+we suggest you use "-G Ninja" for speed
+and clarity..
 
 
 Use
--DBUILD_SHARED=ON
--DBUILD_STATIC=OFF
+-DBUILD_SHARED:BOOL=TRUE  \
+-DBUILD_NON_SHARED:BOOL=FALSE
+
 on the cmake command
 to be consistent with normal Windows use.
 
@@ -192,7 +199,8 @@ set a prefix for cmake of, for example,
 as the bin is something in your $PATH in msys2.
 copy src/bin/dwarfdump/dwarfdump.conf to ~
 do 
-  make install
+
+  ninja install
   # Run with
   # copy src/bin/dwarfdump/dwarfdump.conf to ~
   # then
@@ -200,6 +208,8 @@ do
   # which will give a short message  about
   # No object file provided. In which case 
   # dwarfdump is usable.
+END USING MSYS2 (WINDOWS) CMAKE.
+===========================
   
 
 
