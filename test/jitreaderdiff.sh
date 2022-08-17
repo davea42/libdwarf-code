@@ -19,11 +19,14 @@ bname=`basename $blddir`
 top_blddir="$blddir"
 if [ x$bname = "xtest" ]
 then
+  # Running in-source-tree.
   top_blddir="$blddir/.."
 fi
 if [ $# -gt 0  ]
 then
   DWTOPSRCDIR="$1"
+  echo  "DWTOPSRCDIR from arg $1"
+  export DWTOPSRCDIR
 fi
 
 if [ x$DWTOPSRCDIR = "x" ]
@@ -31,6 +34,8 @@ then
   # Assume runing tests in source
   top_srcdir=$top_blddir
   echo "top_srcdir from top_blddir $top_srcdir"
+  $DWTOPSRCDIR=$top_blddir
+  export DWTOPSRCDIR
 else
   top_srcdir=$DWTOPSRCDIR
   echo "top_srcdir from DWTOPSRCDIR $top_srcdir"
@@ -39,7 +44,10 @@ if [ "x$top_srcdir" = "x.." ]
 then
   # This case hopefully eliminates relative path to test dir.
   top_srcdir=$top_blddir
+  $DWTOPSRCDIR=$top_blddir
+  export DWTOPSRCDIR
 fi
+
 # bldloc is the executable directories.
 bldloc=$top_blddir/src/bin/dwarfexample
 #localsrc is the source dir with baseline data
@@ -57,6 +65,8 @@ testbin=$top_blddir/test
 tx=$testbin/junk.jitreader.new
 jr=$top_blddir/src/bin/dwarfexample/jitreader
 
+rm -f $tx
+echo "Running: $jr with env var DWTOPSRCDIR: $DWTOPSRCDIR"
 $jr > $tx
 r=$?
 if [ $r -ne 0 ]
@@ -72,6 +82,7 @@ then
 fi
 echo "if update required, mv $tx $b"
 ${localsrc}/dwdiff.py $b $tx
+r=$?
 if [ $r -ne 0 ]
 then
   echo "Diff above."
@@ -79,5 +90,4 @@ then
   exit $r
 fi
 rm -f $tx
-rm -f $tx.diff
 exit 0
