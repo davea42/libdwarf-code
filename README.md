@@ -75,7 +75,7 @@ command.
 README.cmake has details on the available cmake options.
 
 We suggest that you will find meson a more satisfactory
-tool in msys2. 
+tool.
 
 ### meson build
 
@@ -144,18 +144,18 @@ do :
 
 ### Options to meson on Linux/Unix 
 
-For the basic options list , do:
+For the basic configuration options list , do:
     meson configure /path/to/code
 
-To set options and show the result:
+To set options and show the resulting actual options:
 
     # Here  just setting one option.
     meson setup  -Ddwarfexample=true  .  /home/davea/dwarf/code 
     meson configure .
 
-The configure output is very wide (just letting you know).
+The meson configure output is very wide (just letting you know).
 
-### Options to configure on Linux/Unix 
+### Options to configure/autotools on Linux/Unix 
 
 For the full options list , do:
 
@@ -196,11 +196,14 @@ All libdwarf builds are automatically shared object (dll)
 builds. No static library libdwarf.a for installation
 is supported.
 
+Has the same meson setup reporting as on Linux (above).
 
 ### Options to configure on Windows
 
 All libdwarf builds are automatically shared object (dll)
 builds. No static libdwarf.a can be installed.
+
+Has the same meson setup reporting as on Linux (above).
 
 ### Distributing via configure/autotools
 
@@ -229,8 +232,10 @@ See the <strong>Recent Changes</strong> section in
 libdwarf.pdf (in the release).
 
 [dwhtml]: https://www.prevanders.net/libdwarfdoc/index.html
+[dwpdf]: https://www.prevanders.net/libdwarf.pdf
 
-Or see [the latest online html version][dwhtml] for the details..
+Or see the latest online html version [dwhtml] for the details..
+Or see (via download) the latest pdf html version [dwpdf].
 
 Notice the table of contents at the right edge of the html page.
 
@@ -261,5 +266,8 @@ with no file system involved
 see
 
     src/bin/dwarfexample/jitreader.c
+
+and see the html [dwhtml].
+Or download the 1MB pdf with
 
 David Anderson.

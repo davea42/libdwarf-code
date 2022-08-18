@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-06-15 v0.4.2
+    @date 2022-08-17 v0.4.2
  
     @section draft Suggestions for improvement are welcome.
 
@@ -15,7 +15,11 @@
     B) Are the titles on the Modules page  meaningful to you?
 
     Anything else you find misleading or confusing?
+    Send suggetions to ( libdwarf-list (at) prevanders with
+    final characters .org } Sorry about the simple obfuscation
+    to keep bots away.
     Thanks in advance for any suggestions.
+
  
     @section dwsec_intro Introduction
 
@@ -160,7 +164,7 @@
     } 
     @endcode
     and pass bad_dw_errhandler (as a function pointer,
-    no parentheses 
+    no parentheses. 
     The Dwarf_Ptr argument is the value you passed in as dw_errarg,
     and can be anything.
     By doing an exit() you guarantee that your application
@@ -234,13 +238,23 @@
     and return res. If a small and unimportant
     program print something and exit.
 
-    If you want to discard the error report then
+    If you want to discard the error report from the
+    dwarf_siblingof() call then possibly do
     @code
         dwarf_dealloc_error(dbg,*error);
         *error = 0;
         return DW_DLV_OK;
-        /* or DW_DLV_NO_ENTRY */
     @endcode
+
+    Except in a special case involving function
+    dwarf_set_de_alloc_flag()
+    (which is not usually called,
+    any dwarf_dealloc() that is
+    needed will happen automatically when you call dwarf_finish() ).
+    Very long running library access programs
+    using relevant appropriate dwarf_dealloc calls should
+    consider calling dwarf_set_de_alloc_flag()
+    to avoid memory bloat.
 
     That's all there is to it.
  
