@@ -3,7 +3,7 @@
 # for anyone to used for any purpose.
 #
 # Run in test dir as:
-# dwarfdumptest.py filetype buildsys sourcedirbase builddirbase
+# test_dwarfdump.py filetype buildsys sourcedirbase builddirbase
 # where filetype is Elf, PE, or Macos
 # where buildsys is conf, cmake, or meson
 
@@ -63,7 +63,7 @@ def setupfilesinvolved(td, dd):
         dd.newtest = t[3]
         dd.ddopts = ["-a", "-vvv"]
         return
-    print(" FAIL dwarfdumptest.py to setup files for type ", ftype)
+    print(" FAIL test_dwarfdump.py to setup files for type ", ftype)
     sys.exit(1)
 
 
@@ -151,7 +151,7 @@ def rundwarfdump(td, dd, dwarfdumppath, objpath, lmaxlines):
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
-        print("FAIL dwarfdumptest.py arg count wrong")
+        print("FAIL test_dwarfdump.py arg count wrong")
         sys.exit(1)
     td = tdata()
     td.objtype = sys.argv[1]
@@ -206,7 +206,7 @@ if __name__ == "__main__":
             " Line Count Test=", len(txtout))
         for s in diffs:
             print(s)
-        print("FAIL dwarfdumptest.py on", td.objtype, " test object")
+        print("FAIL test_dwarfdump.py on", td.objtype, " test object")
         print("If update to baseline desired then:")
         print("mv", tempfilepath, baseline_path)
         sys.exit(1)

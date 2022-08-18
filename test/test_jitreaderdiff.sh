@@ -77,8 +77,8 @@ then
    cat $tx
    exit $r
 fi
-echo "Running: python3 ${localsrc}/dwdiff.py $b $tx" 
-python3 ${localsrc}/dwdiff.py $b $tx
+echo "Running: python3 ${localsrc}/test_dwdiff.py $b $tx" 
+python3 ${localsrc}/test_dwdiff.py $b $tx
 r=$?
 if [ $r -ne 0 ]
 then

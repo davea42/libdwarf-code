@@ -96,7 +96,7 @@ test_canonical_CPPFLAGS = \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_dwarflebtest_SOURCES = dwarf_leb_test.c \
+test_dwarflebtest_SOURCES = test_dwarf_leb.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_leb.c
 test_dwarflebtest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_dwarflebtest_CPPFLAGS = -DTESTING \
@@ -113,7 +113,7 @@ test_dwarfstring_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_dwgetopt_SOURCES = getopttest.c \
+test_dwgetopt_SOURCES = test_getopt.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_getopt.h \
     $(top_srcdir)/src/bin/dwarfdump/dd_getopt.c
 test_dwgetopt_CFLAGS = $(DWARF_CFLAGS_WARN)
@@ -139,7 +139,7 @@ test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/lib/libdwarfp \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_getnametest_SOURCES = getnametest.c \
+test_getnametest_SOURCES = test_getname.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_names.c
 test_getnametest_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_getnametest_CPPFLAGS = -DTESTING \
@@ -147,7 +147,7 @@ test_getnametest_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_helpertree_SOURCES = helpertree_test.c \
+test_helpertree_SOURCES = test_helpertree.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_helpertree.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_helpertree_CFLAGS = $(DWARF_CFLAGS_WARN)
@@ -180,7 +180,7 @@ test_macrocheck_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_makenametest_SOURCES = makename_test.c \
+test_makenametest_SOURCES = test_makename.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_makename.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
@@ -206,7 +206,7 @@ test_safestrcpy_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_sectionbitmaps_SOURCES = section_bitmaps_test.c \
+test_sectionbitmaps_SOURCES = test_section_bitmaps.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_section_bitmaps.c
 test_sectionbitmaps_CFLAGS = $(DWARF_CFLAGS_WARN)
 test_sectionbitmaps_CPPFLAGS =  -DTESTING \
@@ -214,7 +214,7 @@ test_sectionbitmaps_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_testesb_SOURCES = testesb.c \
+test_testesb_SOURCES = test_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
 test_testesb_CFLAGS = $(DWARF_CFLAGS_WARN)
@@ -223,7 +223,7 @@ test_testesb_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_tied_SOURCES = dwarf_tied_test.c \
+test_tied_SOURCES = test_dwarf_tied.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_tied.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c
 test_tied_CFLAGS = $(DWARF_CFLAGS_WARN)
@@ -234,12 +234,12 @@ test_tied_CPPFLAGS = -DTESTING \
 ### debuglink tests are difficult to support in Windows/mingw
 if HAVE_DEBUGLINK 
 if HAVE_DWARFEXAMPLE
-  TESTS += debuglinktest-a.sh debuglinktest-b.sh
+  TESTS += test_debuglink-a.sh test_debuglink-b.sh
 endif
 endif
-TESTS += dwarfdumpLinux.sh  dwarfdumpPE.sh dwarfdumpMacos.sh 
+TESTS += test_dwarfdumpLinux.sh  test_dwarfdumpPE.sh test_dwarfdumpMacos.sh 
 if HAVE_DWARFEXAMPLE
-TESTS += jitreaderdiff.sh
+TESTS += test_jitreaderdiff.sh
 endif
 
 ### no dwarfgen tests available.
@@ -256,29 +256,29 @@ buildingdummy.sh \
 CMakeLists.txt \
 debuglink2.base \
 debuglink.base \
-debuglinktest-a.sh \
-debuglinktest-b.sh \
-dos2unix.py \
+test_debuglink-a.sh \
+test_debuglink-b.sh \
 dummyexecutable \
 dummyexecutable.debug \
 dummysourceignore \
-dwarfdumpLinux.sh  dwarfdumpMacos.sh  dwarfdumpPE.sh  dwarfdumpsetup.sh \
-dwarfdumptest.py \
-dwarf_leb_test.c \
-dwarf_tied_test.c \
-dwdiff.py \
-getnametest.c \
-getopttest.c \
-helpertree_test.c \
+test_dwarfdumpLinux.sh  test_dwarfdumpMacos.sh \
+test_dwarfdumpPE.sh  test_dwarfdumpsetup.sh \
+test_dwarfdump.py \
+test_dwarf_leb.c \
+test_dwarf_tied.c \
+test_dwdiff.py \
+test_getname.c \
+test_getopt.c \
+test_helpertree.c \
 jitreader.base \
-jitreaderdiff.sh \
-makename_test.c \
+test_jitreaderdiff.sh \
+test_makename.c \
 meson.build \
 README.testcases \
-section_bitmaps_test.c \
+test_section_bitmaps.c \
 test_dwarfstring.c \
 test_errmsglist.c \
-testesb.c \
+test_esb.c \
 test_extra_flag_strings.c \
 test_linkedtopath.c \
 test-mach-o-32.base \
@@ -288,5 +288,5 @@ testobjLE32PE.exe \
 testobjLE32PE.test.c \
 testuriLE64ELf.base \
 testuriLE64ELf.obj \
-transformpath.py
+test_transformpath.py
 

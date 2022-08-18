@@ -48,7 +48,7 @@ endif()
 
 if (DO_TESTING)
     set_source_group(GETOPTEST_SOURCES "Source Files"
-      ${CMAKE_SOURCE_DIR}/test/getopttest.c
+      ${CMAKE_SOURCE_DIR}/test/test_getopt.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.h
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_getopt.c)
     add_executable(selfgetopttest ${GETOPTEST_SOURCES})
@@ -62,7 +62,7 @@ endif()
 
 if (DO_TESTING)
     set_source_group(MAKENAME_SOURCES "Source Files"
-      ${CMAKE_SOURCE_DIR}/test/makename_test.c
+      ${CMAKE_SOURCE_DIR}/test/test_makename.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_makename.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
@@ -78,7 +78,7 @@ if (DO_TESTING)
 endif()
 if (DO_TESTING)
     set_source_group(HELPERTREE_SOURCES "Source Files"
-      ${CMAKE_SOURCE_DIR}/test/helpertree_test.c
+      ${CMAKE_SOURCE_DIR}/test/test_helpertree.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_helpertree.c
       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selfhelpertree ${HELPERTREE_SOURCES})
@@ -111,7 +111,7 @@ endif()
 
 if (DO_TESTING)
     set_source_group(TESTESB_SOURCES "Source Files"
-       ${CMAKE_SOURCE_DIR}/test/testesb.c
+       ${CMAKE_SOURCE_DIR}/test/test_esb.c
        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_tsearchbal.c)
     add_executable(selftestesb ${TESTESB_SOURCES})
@@ -127,7 +127,7 @@ endif()
 if (DO_TESTING)
     set_source_group(SECTIONBITMAPS_SOURCES "Source Files"
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_section_bitmaps.c
-        ${CMAKE_SOURCE_DIR}/test/section_bitmaps_test.c )
+        ${CMAKE_SOURCE_DIR}/test/test_section_bitmaps.c )
     add_executable(selfsectionbitmaps ${SECTIONBITMAPS_SOURCES})
     target_compile_options(selfsectionbitmaps PRIVATE ${DW_FWALL})
     target_compile_options(selfsectionbitmaps PRIVATE
@@ -139,7 +139,7 @@ endif()
 
 if (DO_TESTING)
     set_source_group(TESTLEB "Source Files" 
-        ${CMAKE_SOURCE_DIR}/test/dwarf_leb_test.c 
+        ${CMAKE_SOURCE_DIR}/test/test_dwarf_leb.c 
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_leb.c )
     add_executable(selfleb ${TESTLEB})
     target_compile_options(selfleb PRIVATE 
@@ -150,7 +150,7 @@ endif()
 
 if (DO_TESTING)
     set_source_group(TESTTIED "Source Files" 
-        ${CMAKE_SOURCE_DIR}/test/dwarf_tied_test.c 
+        ${CMAKE_SOURCE_DIR}/test/test_dwarf_tied.c 
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_tied.c 
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_tsearchhash.c )
     add_executable(selftied ${TESTTIED})
@@ -161,7 +161,7 @@ if (DO_TESTING)
 endif()
 if (DO_TESTING) 
     set_source_group(TESTNAMES "Source Files"
-        ${CMAKE_SOURCE_DIR}/test/getnametest.c
+        ${CMAKE_SOURCE_DIR}/test/test_getname.c
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_names.c)
     add_executable(selftestnames ${TESTNAMES})
     target_compile_options(selftestnames PRIVATE
@@ -172,7 +172,7 @@ endif()
 
 if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32)
     set(execdl "${CMAKE_BINARY_DIR}/src/bin/dwarfexample/jitreader")
-    add_test(NAME selfjitreader COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/jitreaderdiff.sh ${CMAKE_SOURCE_DIR}")
+    add_test(NAME selfjitreader COMMAND sh -c "${CMAKE_SOURCE_DIR}/test/test_jitreaderdiff.sh ${CMAKE_SOURCE_DIR}")
 endif()
 
 if (DO_TESTING) 
@@ -239,31 +239,31 @@ if (DO_TESTING AND NOT WIN32)
     set(pebasedir "${CMAKE_SOURCE_DIR}")
     set(peshdir   "${CMAKE_SOURCE_DIR}/test")
     set(pebindir  "${CMAKE_BINARY_DIR}")
-    add_test(NAME selfdwarfdumppe COMMAND python3 ${peshdir}/dwarfdumptest.py PE cmake ${pebasedir} ${pebindir})
+    add_test(NAME selfdwarfdumppe COMMAND python3 ${peshdir}/test_dwarfdump.py PE cmake ${pebasedir} ${pebindir})
 endif()
 
 if (DO_TESTING AND NOT WIN32) 
     set(elfbasedir "${CMAKE_SOURCE_DIR}")
     set(elfshdir   "${CMAKE_SOURCE_DIR}/test")
     set(elfbindir  "${CMAKE_BINARY_DIR}")
-    add_test(NAME selfdwarfdumpelf COMMAND python3 ${elfshdir}/dwarfdumptest.py Elf cmake ${elfbasedir} ${elfbindir})
+    add_test(NAME selfdwarfdumpelf COMMAND python3 ${elfshdir}/test_dwarfdump.py Elf cmake ${elfbasedir} ${elfbindir})
 endif()
 
 if (DO_TESTING AND NOT WIN32) 
     set(macbasedir "${CMAKE_SOURCE_DIR}")
     set(macshdir   "${CMAKE_SOURCE_DIR}/test")
     set(macbindir  "${CMAKE_BINARY_DIR}")
-    add_test(NAME selfdwarfdumpmacho COMMAND python3 ${macshdir}/dwarfdumptest.py Macos cmake ${macbasedir} ${macbindir})
+    add_test(NAME selfdwarfdumpmacho COMMAND python3 ${macshdir}/test_dwarfdump.py Macos cmake ${macbasedir} ${macbindir})
 endif()
 
 if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32) 
     set(dlbasedir "${CMAKE_SOURCE_DIR}")
     set(dlshdir   "${CMAKE_SOURCE_DIR}/test")
-    add_test(NAME selfdebuglinka COMMAND sh -c "${dlshdir}/debuglinktest-a.sh ${dlbasedir}")
+    add_test(NAME selfdebuglinka COMMAND sh -c "${dlshdir}/test_debuglink-a.sh ${dlbasedir}")
 endif()
 
 if (DO_TESTING AND BUILD_DWARFEXAMPLE AND NOT WIN32) 
     set(dlbasedir "${CMAKE_SOURCE_DIR}")
     set(dlshdir   "${CMAKE_SOURCE_DIR}/test")
-    add_test(NAME selfdebuglinkb COMMAND sh -c "${dlshdir}/debuglinktest-b.sh ${dlbasedir}")
+    add_test(NAME selfdebuglinkb COMMAND sh -c "${dlshdir}/test_debuglink-b.sh ${dlbasedir}")
 endif()

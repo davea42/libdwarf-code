@@ -35,7 +35,7 @@ else
   fi
 fi
 # Using the source base.
-. $t/test/dwarfdumpsetup.sh $t
+. $t/test/test_dwarfdumpsetup.sh $t
 
 f=$top_srcdir/test/testobjLE32PE.exe
 b=$top_srcdir/test/testobjLE32PE.base
@@ -44,11 +44,11 @@ localsrc=$top_srcdir/test
 tx=$testbin/junk.testobjLE32PE.base
 tx2=$testbin/junk2.testobjLE32PE.base
 rm -f $tx
-echo "start  dwarfdumpPE.sh sanity check on pe $f"
+echo "start  test_dwarfdumpPE.sh sanity check on pe $f"
 echo "Run: $dd -vvv -a  $f | head -n $textlim"
 $dd -vvv -a $f | head -n $textlim > $tx
 r=$?
-chkres $r "dwarfdumpPE.sh dwarfdump $f output to $tx xbase $b"
+chkres $r "test_dwarfdumpPE.sh dwarfdump $f output to $tx xbase $b"
 if [ $r -ne 0 ]
 then
    echo "$dd FAILED"
@@ -58,14 +58,14 @@ echo "if update required, mv $tx $b"
 # input and result are $tx, $tx2 is a temp file.
 fixlasttime $tx $tx2
 # $tx updated if line ends are Windows
-${localsrc}/dwdiff.py $b $tx
+${localsrc}/test_dwdiff.py $b $tx
 r=$?
-chkres $r "FAIL dwarfdumpPE.sh dwdiff.py"
+chkres $r "FAIL test_dwarfdumpPE.sh test_dwdiff.py"
 echo "report file lengths"
 wc -l $b  $tx
 if [ $r -ne 0 ]
 then
-  echo "FAIL  dwdiff $b $tx"
+  echo "FAIL  test_dwdiff $b $tx"
   echo "To update , mv $tx $b"
   exit $r
 fi

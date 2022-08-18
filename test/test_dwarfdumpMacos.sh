@@ -31,7 +31,7 @@ else
     t=$DWTOPSRCDIR
   fi
 fi
-. $t/test/dwarfdumpsetup.sh $t
+. $t/test/test_dwarfdumpsetup.sh $t
 
 f=$top_srcdir/test/test-mach-o-32.dSYM
 b=$top_srcdir/test/test-mach-o-32.base
@@ -44,7 +44,7 @@ echo "start dwarfdumpMacos.sh dwarfdump sanity check on $f"
 echo "Run: $dd -a -vvv  $f | head -n $textlim"
 $dd -a -vvv $f | head -n $textlim > $tx
 r=$?
-chkres $r "FAIL test/dwarfdumpMacos.sh $dd $f to $tx base $b "
+chkres $r "FAIL test_dwarfdumpMacos.sh $dd $f to $tx base $b "
 echo "report file lengths"
 wc -l $b  $tx
 if [ $r -ne 0 ]
@@ -55,17 +55,17 @@ fi
 echo "if update required, mv $tx $b"
 # tx2 is a temp file, tx is the input and the output.
 fixlasttime $tx $tx2
-${localsrc}/dwdiff.py $b $tx
+${localsrc}/test_dwdiff.py $b $tx
 r=$?
-chkres $r "FAIL test/dwarfdumpMacos.sh diff of $b $tx"
+chkres $r "FAIL test_dwarfdumpMacos.sh diff of $b $tx"
 if [ $r -ne 0 ]
 then
-  echo "FAIL  dwdiff $b $tx"
+  echo "FAIL  test_dwdiff $b $tx"
   echo "to update , mv $tx $b"
   exit $r 
 fi
 rm -f dwarfdump.conf
 rm -f $tx
 rm -f $tx.diff
-echo "PASS test/dwarfdumpMacos.sh"
+echo "PASS test_dwarfdumpMacos.sh"
 exit 0

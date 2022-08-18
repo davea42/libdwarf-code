@@ -61,24 +61,24 @@ echo "TOP localsrc: $localsrc"
 
 if [ x"$DWARF_BIGENDIAN" = "xyes" ]
 then
-  echo "SKIP debuglinktest-a.sh , cannot work on bigendian build "
+  echo "SKIP test_debuglink-a.sh , cannot work on bigendian build "
 else
-  echo "debuglinktest-a.sh "
+  echo "test_debuglink-a.sh "
   o=junk.dlinka
   p="--add-debuglink-path=/exam/ple"
   p2="--add-debuglink-path=/tmp/phony"
   echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
   $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
   r=$?
-  chkres $r "debuglinktest-a.sh running dwdebuglink test1"
+  chkres $r "test_debuglink-a.sh running dwdebuglink test1"
   # we strip out the actual localsrc and blddir for the obvious
   # reason: We want the baseline data to be meaningful no matter
   # where one's source/build directories are.
-  ${localsrc}/transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}a
-  ${localsrc}/dwdiff.py $testsrc/debuglink.base $testbin/${o}a
+  ${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}a
+  ${localsrc}/test_dwdiff.py $testsrc/debuglink.base $testbin/${o}a
   r=$?
-  echo "To update debuglinktest-a.sh baseline:"
+  echo "To update test_debuglink-a.sh baseline:"
   echo "mv $testbin/${o}a $testsrc/debuglink.base"
-  chkres $r "running debuglinktest-a.sh test1 diff against baseline"
+  chkres $r "running test_debuglink-a.sh test1 diff against baseline"
 fi
 exit 0

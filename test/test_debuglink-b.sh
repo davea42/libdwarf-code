@@ -67,8 +67,7 @@ then
 fi
 }
 
-
-echo "debuglinktest-b.sh test2"
+echo "test_debuglink-b.sh test2"
 o=junk.dlinkb
 p=" --no-follow-debuglink --add-debuglink-path=/exam/ple"
 p2="--add-debuglink-path=/tmp/phony"
@@ -76,10 +75,10 @@ echo "Run: $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable "
 $bldloc/dwdebuglink $p $p2 $testsrc/dummyexecutable > $testbin/$o
 r=$?
 chkres $r "running dwdebuglink test2"
-${localsrc}/transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c
-${localsrc}/dwdiff.py $testsrc/debuglink2.base $testbin/${o}c
+${localsrc}/test_transformpath.py $localsrc $blddir $testbin/$o $testbin/${o}c
+${localsrc}/test_dwdiff.py $testsrc/debuglink2.base $testbin/${o}c
 r=$?
-echo "To update debuglinktest-b.sh  baseline:"
+echo "To update test_debuglink-b.sh  baseline:"
 echo " mv $testbin/${o}c $testsrc/debuglink2.base"
-chkres $r "running debuglinktest-b.sh  diff against baseline"
+chkres $r "running test_debuglink-b.sh  diff against baseline"
 exit 0

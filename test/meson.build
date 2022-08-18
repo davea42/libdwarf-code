@@ -16,22 +16,22 @@ tests = [
    '../src/lib/libdwarf/dwarf_debuglink.c',
   ],
   [
-   'getopttest.c',
+   'test_getopt.c',
    '../src/bin/dwarfdump/dd_getopt.c'
   ],
   [
-   'makename_test.c',
+   'test_makename.c',
    '../src/bin/dwarfdump/dd_esb.c',
    '../src/bin/dwarfdump/dd_makename.c',
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
-   'helpertree_test.c',
+   'test_helpertree.c',
    '../src/bin/dwarfdump/dd_helpertree.c',
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
-   'testesb.c',
+   'test_esb.c',
    '../src/bin/dwarfdump/dd_esb.c',
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
@@ -41,20 +41,20 @@ tests = [
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
-   'section_bitmaps_test.c',
+   'test_section_bitmaps.c',
    '../src/bin/dwarfdump/dd_section_bitmaps.c'
   ],
   [
-   'dwarf_leb_test.c',
+   'test_dwarf_leb.c',
    '../src/lib/libdwarf/dwarf_leb.c'
   ],
   [
-   'dwarf_tied_test.c',
+   'test_dwarf_tied.c',
    '../src/lib/libdwarf/dwarf_tied.c',
    '../src/lib/libdwarf/dwarf_tsearchhash.c'
   ],
   [
-   'getnametest.c',
+   'test_getname.c',
    '../src/lib/libdwarf/dwarf_names.c'
   ],
   [
@@ -124,7 +124,7 @@ foreach testscr : pyscripttests
   pytest_name = testscr[0]
   message(pytest_name)
   buildbase = meson.build_root()
-  pyexec_name = join_paths(projectbase,'test','dwarfdumptest.py')
+  pyexec_name = join_paths(projectbase,'test','test_dwarfdump.py')
   test(pytest_name,py3_exe, args: [pyexec_name, pytest_name,'meson', projectbase, buildbase])
 endforeach
 
@@ -132,13 +132,13 @@ shscripttests =  []
 if get_option('dwarfexample') == true
   if host_os == 'windows'
     shscripttests =  [
-    ['jitreaderdiff.sh'],
+    ['test_jitreaderdiff.sh'],
     ]
   else
     shscripttests =  [
-    ['debuglinktest-a.sh'],
-    ['debuglinktest-b.sh'],
-    ['jitreaderdiff.sh'],
+    ['test_debuglink-a.sh'],
+    ['test_debuglink-b.sh'],
+    ['test_jitreaderdiff.sh'],
   ]
   endif
 endif
