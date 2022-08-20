@@ -1,3 +1,88 @@
+2022-08-20:  David Anderson
+    commit 703a75efddaf310867093e61e171b306e77897db
+
+    src/lib/libdwarf/dwarf_debuglink.c:
+       coverity defect 276811 comparison same on both sides
+       coverity defect 276810 Explicit null dereference.
+       This code changed very recently and these bugs
+       were intoduced. Now fixed.
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Just added a small comment.
+            modified:   src/lib/libdwarf/dwarf_string.c
+
+2022-08-18:  David Anderson
+    commit 15c54f288f2b09bb2c6af6df0ec0860d833596d4
+
+    Revising these to correctly reference the renamed
+    test source files.
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+            modified:   test/test_debuglink-a.sh
+            modified:   test/test_debuglink-b.sh
+            modified:   test/test_dwarfdump.py
+            modified:   test/test_dwarfdumpLinux.sh
+            modified:   test/test_dwarfdumpMacos.sh
+            modified:   test/test_dwarfdumpPE.sh
+            modified:   test/test_jitreaderdiff.sh
+
+2022-08-18:  David Anderson
+    commit 14838a29c57348704c87ab2ab58cd54a421c96d2
+
+    No longer needed.
+            deleted:    test/dos2unix.py
+
+    Renaming all source files (.c .py .sh) to start with
+    test_ for consistency.
+            renamed:    test/debuglinktest-a.sh -> test/test_debuglink-a.sh
+            renamed:    test/debuglinktest-b.sh -> test/test_debuglink-b.sh
+            renamed:    test/dwarf_leb_test.c -> test/test_dwarf_leb.c
+            renamed:    test/dwarf_tied_test.c -> test/test_dwarf_tied.c
+            renamed:    test/dwarfdumptest.py -> test/test_dwarfdump.py
+            renamed:    test/dwarfdumpLinux.sh -> test/test_dwarfdumpLinux.sh
+            renamed:    test/dwarfdumpMacos.sh -> test/test_dwarfdumpMacos.sh
+            renamed:    test/dwarfdumpPE.sh -> test/test_dwarfdumpPE.sh
+            renamed:    test/dwarfdumpsetup.sh -> test/test_dwarfdumpsetup.sh
+            renamed:    test/dwdiff.py -> test/test_dwdiff.py
+            renamed:    test/testesb.c -> test/test_esb.c
+            renamed:    test/getnametest.c -> test/test_getname.c
+            renamed:    test/getopttest.c -> test/test_getopt.c
+            renamed:    test/helpertree_test.c -> test/test_helpertree.c
+            renamed:    test/jitreaderdiff.sh -> test/test_jitreaderdiff.sh
+            renamed:    test/makename_test.c -> test/test_makename.c
+            renamed:    test/section_bitmaps_test.c -> test/test_section_bitmaps.c
+            renamed:    test/transformpath.py -> test/test_transformpath.py
+
+2022-08-17:  David Anderson
+    commit 289e94ea5ae3c0ec083d4c3aa3cb6df1b9b6bf44
+
+    Updating meson and configure/autotools
+    build information and mentioning
+    README.cmake is where cmake build
+    information resides.
+            modified:   README.md
+
+    Some details memory use added and
+    the document date updated.
+    No API change.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2022-08-17:  David Anderson
+    commit f327372bc5da90e3f2650c93a626db1dc1dd4f69
+
+    Updating to match what we know works.
+            modified:   README
+            modified:   README.cmake
+            modified:   README.md
+
+2022-08-17:  David Anderson
+    commit a2326e43aaaf499bab7632b910ada2dd5962ebae
+
+    Latest from git log
+            modified:   ../../ChangeLog
+
 2022-08-17:  David Anderson
     commit b24e37ca21eb6a4cf67d3ced0e489f478471eda5
 
