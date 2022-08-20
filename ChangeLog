@@ -4,8 +4,8 @@
     src/lib/libdwarf/dwarf_debuglink.c:
        coverity defect 276811 comparison same on both sides
        coverity defect 276810 Explicit null dereference.
-       This code changed very recently and these bugs
-       were intoduced. Now fixed.
+       This code changed August 14 and these bugs
+       were introduced. Now fixed.
             modified:   src/lib/libdwarf/dwarf_debuglink.c
 
     Just added a small comment.
