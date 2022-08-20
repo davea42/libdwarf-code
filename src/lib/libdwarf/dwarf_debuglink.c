@@ -87,9 +87,9 @@ is_full_path(char *path)
     if (c == joinchar) {
         return TRUE;
     }
-    if (c >= 'c' && c >= 'z') {
+    if (c >= 'c' && c <= 'z') {
         okdriveletter = TRUE;
-    } else  if (c >= 'C' && c >= 'C') {
+    } else  if (c >= 'C' && c <= 'Z') {
         okdriveletter = TRUE;
     }
     if (!okdriveletter) {
@@ -165,8 +165,12 @@ destruct_js(struct joins_s * js)
 }
 
 
+/*  Altering Windows \ to posix /  
+    which is sort of useful in mingw64 msys2. 
+    Simply assuming no one would use \ in
+    a file/directory name in posix. */
 static void
-transform_toposix(dwarfstring * out, char *in)
+transform_to_posix_slash(dwarfstring * out, char *in)
 {
     char *cp = in;
     int c = 0;
@@ -190,12 +194,15 @@ transform_leading_windowsletter(dwarfstring *out,
     int   isupper = FALSE;
     int   islower = FALSE;
 
+    if (!cp) {
+        /* Nothing to do here. */
+        return;
+    }
     c = *cp++;
     /* Unsure if a, b are normal Windows drive letters. */
     if (c && (c >= 'C') && (c <= 'Z')) {
         isupper = TRUE;
-    }
-    if (c && (c >= 'c') && (c <= 'z')) {
+    } else if (c && (c >= 'c') && (c <= 'z')) {
         islower = TRUE;
     }
     if (isupper || islower) {
@@ -222,7 +229,7 @@ transform_leading_windowsletter(dwarfstring *out,
     } else {
         cp = in;
     }
-    transform_toposix(out,cp);
+    transform_to_posix_slash(out,cp);
 }
 
 int
@@ -232,10 +239,14 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
     char *targ = dwarfstring_string(target);
     size_t targlenszt = 0;
 #if defined (_WIN32)
+    /*  Assuming we are in mingw msys2 or equivalent.  
+        If we are reading a Windows object file but
+        running non-Windows this won't happen
+        but debuglink won't be useful anyway. */
     dwarfstring winput;
 
     dwarfstring_constructor_static(&winput,winbuf,sizeof(winbuf));
-    transform_toposix(&winput,inputs);
+    transform_to_posix_slash(&winput,inputs);
     targlenszt = dwarfstring_strlen(target);
     inputs = dwarfstring_string(&winput);
     if (!targlenszt) {
@@ -603,22 +614,22 @@ _dwarf_construct_linkedto_path(
     unsigned      *paths_out_length,
     int *errcode)
 {
-    char * depath = pathname_in;
-    int res = 0;
-    struct joins_s joind;
-    size_t dirnamelen = 0;
-    struct dwarfstring_list_s base_dwlist;
+    char * pathname = pathname_in;
+    int               res = 0;
+    struct joins_s    joind;
+    size_t            dirnamelen = 0;
+    struct dwarfstring_list_s  base_dwlist;
     struct dwarfstring_list_s *last_entry = 0;
 
     dwarfstring_list_constructor(&base_dwlist);
     construct_js(&joind);
-    dirnamelen = mydirlen(depath);
+    dirnamelen = mydirlen(pathname);
     if (dirnamelen) {
         /*  Original dirname, before cwd (if needed) */
         dwarfstring_append_length(&joind.js_tmp2,
-            depath,dirnamelen);
+            pathname,dirnamelen);
     }
-    if (!is_full_path(depath)) {
+    if (!is_full_path(pathname)) {
         /*  Meaning a/b or b, not /a/b or /b ,
             so we apply cwd */
         char  buffer[2000];
@@ -636,23 +647,17 @@ _dwarf_construct_linkedto_path(
             return DW_DLV_ERROR;
         }
         dwarfstring_append(&joind.js_cwd,buffer);
-#if 0
-        dwarfstring_append(&joind.js_dirname,buffer);
-        _dwarf_pathjoinl(&joind.js_dirname,&joind.js_tmp2);
-        buffer[0] = 0;
-    }  else {/* else leave js_cwd empty */
-        dwarfstring_append(&joind.js_dirname,
-            dwarfstring_string(&joind.js_tmp2));
-#endif
     }
     /* Applies to the leading chars in the named file */
-    transform_leading_windowsletter(&joind.js_dirname,
-        dwarfstring_string(&joind.js_tmp2));
+    if (dwarfstring_strlen(&joind.js_tmp2) > 0) {
+        transform_leading_windowsletter(&joind.js_dirname,
+            dwarfstring_string(&joind.js_tmp2));
+    }
     dwarfstring_reset(&joind.js_tmp2);
 
     /* Creating a real basename. No slashes. */
     dwarfstring_append(&joind.js_basenamesimple,
-        depath+dirnamelen);
+        pathname+dirnamelen);
     dwarfstring_append(&joind.js_basesimpledebug,
         dwarfstring_string(&joind.js_basenamesimple));
     dwarfstring_append(&joind.js_basesimpledebug,".debug");

@@ -147,6 +147,9 @@ dwarfstring_destructor(struct dwarfstring_s *g)
         g->s_data   = 0;
         g->s_malloc = 0;
     }
+    /*  The constructor sets all the fields, most to zero.
+        s_data is set to point to static string ""
+        s_malloc set to FALSE. */
     dwarfstring_constructor(g);
 }
 
