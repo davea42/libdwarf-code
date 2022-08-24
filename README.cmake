@@ -110,20 +110,21 @@ necessary if using cmake or meson to build.
 There are also i686 versions of some of
 these if you wish to build 32bit windows applications.
 
-cmake will generate ninja makefiles by default,
-add -G "Unix Makefiles" to the cmake command line
-to generate makefiles for gnu make, but
-we suggest you use "-G Ninja" for speed
-and clarity..
+cmake will generate ninja makefiles by default, add
+'-G "Unix Makefiles"' to the cmake command line to
+generate makefiles for gnu make, but we suggest you
+use "-G Ninja" for speed and clarity..
 
 
 Use
 -DBUILD_SHARED:BOOL=TRUE  \
 -DBUILD_NON_SHARED:BOOL=FALSE
-
 on the cmake command
 to be consistent with normal Windows use.
 
+Install msys2 and mingw64.
+
+Install the following with "pacman -S"
 mingw-w64-x86_64-binutils
 mingw-w64-x86_64-brotli
 mingw-w64-x86_64-bzip2

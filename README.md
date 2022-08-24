@@ -17,7 +17,7 @@
 
 # This is libdwarf README[.md]
 
-Updated 17 August 2022
+Updated 24 August 2022 (notes about msys2 on Windows)
 
 For libdwarf-0.4.2 
 Versions before 0.4.2 had problems
@@ -85,6 +85,8 @@ tool.
 
 See README.cmake for the mingw64 msys2 packages to install
 and the command(s) to do that in msys2.
+The tools listed there are also for msys2 meson and
+autotools/configure.
 
 The meson ninja install not only installs libdwarf-0.dll
 and dwarfdump.exe it updates the executables in
