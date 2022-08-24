@@ -1,5 +1,5 @@
 Created 26 April 2019
-Updated 17 August 2022
+Updated 24 August 2022
 
 Now we are using a new source structure and using semantic
 versioning for tar.xz names (earlier we used tar.gz).
@@ -89,15 +89,17 @@ END of cmake on Linux/Unix/Macos/Freebsd/Openbsd
 USING MSYS2 (WINDOWS) CMAKE.
 
 to use msys2 under mingw64 one must install the right packages
-(speaking here of mingw for Windows, not plain Windows)
+(speaking here of mingw64 msys2 for Windows, not plain Windows)
+
 
 Do not use the -DWALL option to cmake, that trips
 a minor warning in gcc (treated as an error).
 
-At present we do not know how to get the linkages
-from the build-tree executables to the libdwarf dll
-so make check has several failures.
 We suggest you use meson for  msys2 builds.
+
+Except where cmake is mentioned specifically
+the following applies to autotools(configure)
+and meson use as well
 
 After following the instructions for the msys2
 and minw64 install, ensure the following useful
@@ -105,8 +107,6 @@ items are
 installed with packman -S> Use  pacman -Q
 with no options to see what is installed.
 
-The cmake and meson items below are only 
-necessary if using cmake or meson to build.
 There are also i686 versions of some of
 these if you wish to build 32bit windows applications.
 
@@ -122,9 +122,7 @@ Use
 on the cmake command
 to be consistent with normal Windows use.
 
-Install msys2 and mingw64.
 
-Install the following with "pacman -S"
 mingw-w64-x86_64-binutils
 mingw-w64-x86_64-brotli
 mingw-w64-x86_64-bzip2
@@ -195,12 +193,15 @@ mingw-w64-x86_64-zlib
 mingw-w64-x86_64-zstd
 
 To get a usable set of executables
-set a prefix for cmake of, for example,
--DCMAKE_INSTALL_PREFIX=/c/msys64/usr
-as the bin is something in your $PATH in msys2.
+set a prefix (for cmake,
+-DCMAKE_INSTALL_PREFIX=/c/msys64/usr),
+presuming  the bin directory
+is something in your $PATH in msys2.
+Set an appropriate prefix whichever
+build tool you use.
+
 copy src/bin/dwarfdump/dwarfdump.conf to ~
 do 
-
   ninja install
   # Run with
   # copy src/bin/dwarfdump/dwarfdump.conf to ~
