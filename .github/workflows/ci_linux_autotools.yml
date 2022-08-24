@@ -12,8 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: dos2unix
-      run:  sudo apt-get install dos2unix
     - name: autoreconf
       run:  autoreconf -vif
     - name: configure
