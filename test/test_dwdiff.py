@@ -46,7 +46,12 @@ if __name__ == "__main__":
         used = True
         break
     if used:
-        print("Line Count Base=", len(olines), " Line Count Test=", len(nlines))
+        print(
+            "Line Count Base=",
+            len(olines),
+            " Line Count Test=",
+            len(nlines),
+        )
         for s in diffs:
             print(s)
         sys.exit(1)

@@ -17,8 +17,18 @@ import difflib
 gmaxlines = 700
 
 testbase = [
-    ["Elf", "testuriLE64ELf.base", "testuriLE64ELf.obj", "junk.LE64ELf.new"],
-    ["Macos", "test-mach-o-32.base", "test-mach-o-32.dSYM", "junk.mach-o.new"],
+    [
+        "Elf",
+        "testuriLE64ELf.base",
+        "testuriLE64ELf.obj",
+        "junk.LE64ELf.new",
+    ],
+    [
+        "Macos",
+        "test-mach-o-32.base",
+        "test-mach-o-32.dSYM",
+        "junk.mach-o.new",
+    ],
     ["PE", "testobjLE32PE.base", "testobjLE32PE.exe", "junk.PE.new"],
 ]
 
@@ -86,7 +96,11 @@ def writetextout(text, filepath):
     try:
         f = open(filepath, "w")
     except:
-        print("Unable to write dwarfdump putput ", filepath, " giving up")
+        print(
+            "Unable to write dwarfdump putput ",
+            filepath,
+            " giving up",
+        )
         sys.exit(1)
     for s in txtout:
         # Even on windows writes in Linux text format
@@ -133,7 +147,9 @@ def rundwarfdump(td, dd, dwarfdumppath, objpath, lmaxlines):
     out = []
     print("Run:", dwarfdumppath, dd.ddopts[0], dd.ddopts[1], objpath)
     p1 = Popen(
-        [dwarfdumppath, dd.ddopts[0], dd.ddopts[1], objpath], stdout=PIPE, stderr=PIPE
+        [dwarfdumppath, dd.ddopts[0], dd.ddopts[1], objpath],
+        stdout=PIPE,
+        stderr=PIPE,
     )
     bx = p1.stdout.read()
     # bx is a byte array
@@ -164,18 +180,26 @@ if __name__ == "__main__":
     dd = ddfiles()
     setupfilesinvolved(td, dd)
     dd.ddprint()
-    confsrcpath = os.path.join(td.srcbase, "src/bin/dwarfdump/dwarfdump.conf")
+    confsrcpath = os.path.join(
+        td.srcbase, "src/bin/dwarfdump/dwarfdump.conf"
+    )
     conftargpath = os.path.join(td.bldbase, "test", "dwarfdump.conf")
     testconf = os.path.exists(conftargpath)
     if not testconf:
-        print("Copy to local directory", confsrcpath, "to", conftargpath)
+        print(
+            "Copy to local directory", confsrcpath, "to", conftargpath
+        )
         copytobuild(confsrcpath, conftargpath)
     if td.buildsystem == "meson":
         mesonloc = os.path.join(td.bldbase, "dwarfdump.conf")
         if not os.path.exists(mesonloc):
-            print("Copy to local directory", confsrcpath, "to", mesonloc)
+            print(
+                "Copy to local directory", confsrcpath, "to", mesonloc
+            )
             copytobuild(confsrcpath, mesonloc)
-    dwarfdumppath = os.path.join(td.bldbase, "src/bin/dwarfdump/dwarfdump")
+    dwarfdumppath = os.path.join(
+        td.bldbase, "src/bin/dwarfdump/dwarfdump"
+    )
     objpath = os.path.join(td.srcbase, "test", dd.testobj)
     baseline_path = os.path.join(td.srcbase, "test", dd.testbase)
     testout_path = os.path.join(td.bldbase, "test", dd.newtest)
@@ -200,7 +224,12 @@ if __name__ == "__main__":
             tempfilepath = os.path.join(td.cwd, "test", dd.newtest)
         else:
             tempfilepath = os.path.join(td.cwd, dd.newtest)
-        print("Line Count Base=", len(basetext), " Line Count Test=", len(txtout))
+        print(
+            "Line Count Base=",
+            len(basetext),
+            " Line Count Test=",
+            len(txtout),
+        )
         for s in diffs:
             print(s)
         print("FAIL test_dwarfdump.py on", td.objtype, " test object")
