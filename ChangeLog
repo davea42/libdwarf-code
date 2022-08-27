@@ -1,3 +1,77 @@
+2022-08-27:  David Anderson
+    commit 04eefdd4c72d19ee04ccfe066c07e07d04f38bec
+
+    Corrected DW202208-01 text and
+    added gitfixid.
+            modified:   bugxml/data.txt
+
+2022-08-27:  David Anderson
+    commit 428235e3d132fb62faf7732735fdbb034d6264b4
+
+    Fixes DW202208-001. Fuzzed object
+    gets double free in libdwarf.
+            modified:   dwarf_frame.c
+
+2022-08-27:  David Anderson
+    commit 60303eb80ecc7747bf29776d545e2a5c5a76f6f8
+
+    A new vulnerability: DW202208-001
+            modified:   data.txt
+
+2022-08-24:  David Anderson
+    commit 271cc04a1bdd1f47d641ab9219fb138aa02839ff
+
+    Reformatted again. This time with black -l 70
+            modified:   test_dwarfdump.py
+            modified:   test_dwdiff.py
+
+2022-08-24:  David Anderson
+    commit aeb828a7530a5bad627d05f644f5f897bfa6bc49
+
+    Reformatted with black
+            modified:   test/test_dwarfdump.py
+            modified:   test/test_dwdiff.py
+            modified:   test/test_transformpath.py
+
+2022-08-24:  David Anderson
+    commit 545c05da89a44ad2dbf359569d9e65b76c082a01
+
+    More minor tweaks about msys2 to clarify
+    that most of the msys2 information here
+    applies to configure/autotools and meson,
+    not just cmake.
+            modified:   README.cmake
+
+2022-08-24:  David Anderson
+    commit 0de39deee9bb049e9bbd613007e03275624a0471
+
+    Removed the mention of dos2unix because that is no longer
+    used anywhere on any OS.
+            modified:   .github/workflows/ci_linux_autotools.yml
+
+2022-08-24:  David Anderson
+    commit 7c16dc8632200c7ab0e213bfa443b700267c9751
+
+    Corrected and amplified notes about
+    building on Windows under mingw64 msys2
+
+            modified:   README
+            modified:   README.cmake
+            modified:   README.md
+
+2022-08-20:  David Anderson
+    commit f641291015fc44d35ad2510ec9dc34ada2620d3f
+
+    Added a small detail here about
+    the dwarf_debuglink.c latest change.
+            modified:   ChangeLog
+
+2022-08-20:  David Anderson
+    commit dea658c0e7c12fcabc64c1fdd95b2d530dfecd16
+
+    Updated from git log
+            modified:   ChangeLog
+
 2022-08-20:  David Anderson
     commit 703a75efddaf310867093e61e171b306e77897db
 
