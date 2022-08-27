@@ -1,4 +1,29 @@
 
+
+
+id: DW202208-001
+cve:
+fuzzer: unspecified
+datereported: 2022-08-27
+reportedby: Han Zheng
+vulnerability: Double free in dwarfdump
+product: dwarfdump
+description: A carefully corrupted object file
+  would cause dwarfdump -vv -a 
+  to do a double free in handling an error condition.
+  That could cause a segmentation violation or other
+  major error, terminating the calling application and
+  resulting in Denial Of Service.
+datefixed: 
+references: regressiontests/hanzheng/fuzzedobject
+gitfixid: 
+tarrelease:
+endrec: DW202208-001
+
+
+
+
+
 id: DW202207-001
 cve:
 fuzzer: ossfuzz
