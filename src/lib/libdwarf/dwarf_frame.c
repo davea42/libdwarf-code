@@ -1491,6 +1491,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             instr_count++;
             (*ilistlastptr) = dfi;
             ilistlastptr = &dfi->fi_next;
+            /* dfi itself is stale, the pointer is on the list */
+            dfi = 0;
         }
     } /*  end for-loop on ops */
 
