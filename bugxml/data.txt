@@ -6,17 +6,19 @@ cve:
 fuzzer: unspecified
 datereported: 2022-08-27
 reportedby: Han Zheng
-vulnerability: Double free in dwarfdump
-product: dwarfdump
+vulnerability: Double free on corrupted frame data.
+product: libdwarf
 description: A carefully corrupted object file
-  would cause dwarfdump -vv -a 
-  to do a double free in handling an error condition.
+  would cause libdwarf to do a double free in
+  handling an error condition in
+  dwarf_expand_frame_instructions().
+  (in libdwarf/dwarf_frame.c)
   That could cause a segmentation violation or other
   major error, terminating the calling application and
   resulting in Denial Of Service.
-datefixed: 
+datefixed: 2022-08-27
 references: regressiontests/hanzheng/fuzzedobject
-gitfixid: 
+gitfixid: 428235e3d132fb62faf7732735fdbb034d6264b4
 tarrelease:
 endrec: DW202208-001
 
