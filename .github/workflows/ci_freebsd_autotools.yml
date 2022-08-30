@@ -20,6 +20,7 @@ jobs:
         copyback: false
         prepare: pkg install -y autoconf automake libtool pkgconf python3 bash gmake binutils pkgconf lzlib 
         run: |
+          whereis bash
           ./autogen.sh
           ./configure
           make
