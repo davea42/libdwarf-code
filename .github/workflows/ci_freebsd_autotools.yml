@@ -15,12 +15,12 @@ jobs:
     - name: FreeBSD VM
       uses: vmactions/freebsd-vm@v0
       with:
-      usesh: true
-      sync:  rsync
-      copyback: false
-      prepare: pkg install -y autoconf automake libtool pkgconf python3 bash gmake binutils pkgconf lzlib 
-      run: |
-        ./autogen.sh
-        ./configure
-        make
-        make check
+        usesh: true
+        sync:  rsync
+        copyback: false
+        prepare: pkg install -y autoconf automake libtool pkgconf python3 bash gmake binutils pkgconf lzlib 
+        run: |
+          ./autogen.sh
+          ./configure
+          make
+          make check
