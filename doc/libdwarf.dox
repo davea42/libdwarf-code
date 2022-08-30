@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-08-17 v0.4.2
+    @date 2022-08-29 v0.4.2
  
     @section draft Suggestions for improvement are welcome.
 
@@ -893,8 +893,21 @@
     We list these with newest first.
 
     <b>Changes 0.4.1 to 0.4.2</b>
+    No API changes. No API additions.
     Corrected a bug in dwarf_tsearchhash.c where a delete request
     was accidentally assumed in all hash tree searches.
+    It was invsible to libdwarf uses.
+    Vulerabilities DW202207-001 and DW202208-001 were fixed so
+    error conditions when reading fuzzed object files can
+    no longer crash libdwarf (the crash was possible before,
+    not certain).
+
+    It's now possible to run the build sanity tests
+    in all three build mechanisms (configure,cmake,meson)
+    on both linux and mingw msys2 (windows).
+    libdwarf README, README.md, and README.cmake
+    document how to do builds for each supported platform
+    and build mechanism.
 
     <b>Changes 0.4.0 to 0.4.1</b>
     Reading a carefully corrupted DIE with form DW_FORM_ref_sig8

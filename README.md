@@ -40,11 +40,14 @@ libdwarf/dwarfdump.
 
     Ubuntu: 
     sudo apt install pkgconf zlib1g zlib1g-dev
-    optional add: cmake meson ninja 
+    optional add: cmake meson ninja doxygen 
 
     FreeBSD:
     pkg install bash python3 gmake binutils pkgconf lzlib
-    optional add: cmake meson ninja
+    optional add: cmake meson ninja doxygen
+
+    Ensure that all the needed programs are in $PATH,
+    including python3.  
 
 ## BUILDING from a libdwarf<name>.tar.xz
 
