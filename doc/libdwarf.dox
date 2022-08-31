@@ -15,7 +15,7 @@
     B) Are the titles on the Modules page  meaningful to you?
 
     Anything else you find misleading or confusing?
-    Send suggetions to ( libdwarf-list (at) prevanders with
+    Send suggestions to ( libdwarf-list (at) prevanders with
     final characters .org } Sorry about the simple obfuscation
     to keep bots away.
     Thanks in advance for any suggestions.
@@ -843,7 +843,7 @@
     dw_true_path_out_buffer contains the
     object path.
 
-    @section dwsec_dbglink Suppressing CRC calulation for debuglink
+    @section dwsec_dbglink Suppressing CRC calculation for debuglink
 
     GNU Debuglink-specific issue:
 
@@ -896,11 +896,11 @@
     No API changes. No API additions.
     Corrected a bug in dwarf_tsearchhash.c where a delete request
     was accidentally assumed in all hash tree searches.
-    It was invsible to libdwarf uses.
-    Vulerabilities DW202207-001 and DW202208-001 were fixed so
+    It was inivsible to libdwarf uses.
+    Vulnerabilities DW202207-001 and DW202208-001 were fixed so
     error conditions when reading fuzzed object files can
-    no longer crash libdwarf (the crash was possible before,
-    not certain).
+    no longer crash libdwarf (the crash was possible but
+    not certain before the fixes).
 
     It's now possible to run the build sanity tests
     in all three build mechanisms (configure,cmake,meson)
