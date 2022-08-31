@@ -12,12 +12,14 @@
 
 [![macos_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml)
 
+[![freebsd_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_freebsd_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_freebsd_autotools.yml)
+
 [![Travis Build Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
 
 
 # This is libdwarf README[.md]
 
-Updated 24 August 2022 (notes about msys2 on Windows)
+Updated 28 August 2022 (notes about msys2 on Windows)
 
 For libdwarf-0.4.2 
 Versions before 0.4.2 had problems
