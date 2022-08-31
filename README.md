@@ -272,6 +272,5 @@ see
     src/bin/dwarfexample/jitreader.c
 
 and see the html [dwhtml].
-Or download the 1MB pdf with
 
 David Anderson.
