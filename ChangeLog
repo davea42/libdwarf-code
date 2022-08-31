@@ -1,3 +1,96 @@
+2022-08-31:  David Anderson
+    commit ea38f1e3517be59437fdc30ca694bb7dd94f0985
+
+    Making the documentation references
+    in the last couple lines look better
+    in markdown output while still working
+    ok for github README.md output.
+            modified:   README
+            modified:   README.md
+
+2022-08-31:  David Anderson
+    commit b9363a2eaf6844696e200cd1da14acfd68045f0b
+
+    spell found a small number of typos. Fixed.
+            modified:   doc/libdwarf.dox
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2022-08-30:  David Anderson
+    commit 9495f685a97d91207d221f0f9e6f90d794727ee7
+
+    Removed incomplete line.
+            modified:   README
+            modified:   README.md
+
+2022-08-30:  David Anderson
+    commit b87a261170b0ce5dbc059ab1e8c7268e52873bf6
+
+    Wording correction, one line.
+            modified:   README
+            modified:   README.md
+
+2022-08-30:  David Anderson
+    commit 54abd870387e0c4cba33dcbdaec53797ff5ecde2
+
+    Now with freebsd badge
+            modified:   README
+            modified:   README.md
+
+2022-08-30:  David Anderson
+    commit 2b2801fd1c445c99f689bf29e15213351e987814
+
+    added sh to run autogen.sh as it is not marked executable
+            modified:   .github/workflows/ci_freebsd_autotools.yml
+
+2022-08-30:  David Anderson
+    commit b3afda251be61e6f6243f68f2c55531eeb8c3909
+
+    Another try
+            modified:   ci_freebsd_autotools.yml
+
+2022-08-30:  David Anderson
+    commit b66467c507f9e36d4f513946167e1e124b6994a6
+
+    Update ci_freebsd_autotools.yml
+
+    Hopefully useful change.
+
+2022-08-30:  David Anderson
+    commit 1173f024fe4005d700aca6ec7812e6793d089089
+
+    Fixing indentation
+            modified:   ci_freebsd_autotools.yml
+
+2022-08-30:  David Anderson
+    commit 0179979290700347979b86a66c7b1f3ecab1c1d8
+
+    Trying freebsd
+            new file:   ci_freebsd_autotools.yml
+
+2022-08-30:  David Anderson
+    commit d9b03d3e55052a5d665a4fff12867d3124a4b0e0
+
+    Minor tweaks to wording.
+            modified:   README
+            modified:   README.md
+
+    Small additions to the changes in 0.4.2 wording
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2022-08-30:  David Anderson
+    commit 320d34bf7552f7ddff7991d7dd5cd626ed50e917
+
+    The latest standard GNU autotools INSTALL script.
+            modified:   INSTALL
+
+2022-08-27:  David Anderson
+    commit 350b7689a5f6d2b371ce24e17be70c8e7e8a7723
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2022-08-27:  David Anderson
     commit 04eefdd4c72d19ee04ccfe066c07e07d04f38bec
 
