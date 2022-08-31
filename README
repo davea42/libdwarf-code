@@ -21,13 +21,10 @@
 
 Updated 28 August 2022 (notes about msys2 on Windows)
 
-For libdwarf-0.4.2 
 Versions before 0.4.2 had problems
 in the test suite so
 make check or ninja test might fail
 on some tests (sorry).
-
-
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
