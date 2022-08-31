@@ -271,6 +271,8 @@ see
 
     src/bin/dwarfexample/jitreader.c
 
-and see the html [dwhtml].
+and see the html [dwhtml] (www.prevanders.net/libdwarfdoc/index.html).
+
+The latest pdf is [dwpdf] (www.prevanders.net/libdwarf.pdf) 
 
 David Anderson.
