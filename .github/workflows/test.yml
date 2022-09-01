@@ -52,6 +52,5 @@ jobs:
         mkdir builddir && cd builddir
         meson . .. -Ddwarfexample=true
         ninja
-        ninja test
-~                          
+        ninja test                       
 
