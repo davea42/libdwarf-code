@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  linux_autotools
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: autoreconf
+      run:  autoreconf -vif
+    - name: configure
+      run:  ./configure --enable-dwarfexample
+    - name: make -j
+      run:  make
+    - name: make -j check
+      run:  make check
+    - name: make distcheck
+      run:  make distcheck
+  linux_cmake:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install cmake
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential cmake
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        cmake -DDO_TESTING=ON -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        make
+        ctest -R self
+  linux_meson:
+    runs-on: ubuntu-latest
+    steps:  
+    - uses: actions/checkout@v2
+    - name: Install meson / ninja
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+        pip3 install --upgrade pip
+        pip3 install meson --user
+    - name: Install doxygen
+      run: | 
+        sudo apt install doxygen
+    - name: Build libdwarf
+      run: |
+        mkdir builddir && cd builddir
+        meson . .. -Ddwarfexample=true
+        ninja
+        ninja test
+~                          
+
