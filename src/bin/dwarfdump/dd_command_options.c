@@ -677,6 +677,11 @@ static const char *usage_long_text[] = {
 "     --show-dwarfdump-conf Show what dwarfdump.conf is being used",
 "     --show-args    Show the  current date, time, library version,",
 "                    dwarfdump version, and command arguments",
+"     --suppress-de-alloc-tree Turns off the libdwarf-cleanup of",
+"                    libdwarf-allocated memory on calling",
+"                    dwarf_finish(). Used to test that",
+"                    dwarfdump does dealloc everywhere",
+"                    it should for minimum memory use.",
 "",
 };
 
