@@ -73,6 +73,42 @@ jobs:
           make
           make check
 
+  freebsd_cmake:
+    runs-on: macos-12
+    name: FreeBSD
+    steps:
+    - uses: actions/checkout@v2
+    - name: FreeBSD VM
+      uses: vmactions/freebsd-vm@v0
+      with:
+        usesh: true
+        sync:  rsync
+        copyback: false
+        prepare: pkg install -y python3 bash cmake ninja libtool pkgconf python3 bash gmake binutils lzlib
+        run: |
+          mkdir builddir && cd builddir
+          cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+          ninja 
+          ninja test
+
+  freebsd_meson:
+    runs-on: macos-12
+    name: FreeBSD
+    steps:
+    - uses: actions/checkout@v2
+    - name: FreeBSD VM
+      uses: vmactions/freebsd-vm@v0
+      with:
+        usesh: true
+        sync:  rsync
+        copyback: false
+        prepare: pkg install -y python3 bash meson ninja pkgconf python3 bash gmake binutils lzlib
+        run: |
+          mkdir build && cd build
+          meson . ..  -Ddwarfexample=true
+          make
+          make check
+
   macos_autotools:
     runs-on: macos-latest
     steps:
