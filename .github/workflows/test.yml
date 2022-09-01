@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  linux_autotools
+  linux_autotools:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
