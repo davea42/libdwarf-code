@@ -1,3 +1,22 @@
+2022-09-01:  David Anderson
+    commit 2bdc1b8630cc8b66d298a2ee7bffd7d869ae65ae
+
+    Adding -suppress-de-alloc-tree to the dwarfdump
+    -h output.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+2022-09-01:  David Anderson
+    commit 0b1abc536477eb2566f5dc7fbf4596b124194385
+
+    A new workflow, soon to run all tests.
+            new file:   .github/workflows/test.yml
+
+2022-08-31:  David Anderson
+    commit 83d20678854741cce0feaf1b19389e6e35ec97ad
+
+    Latest frmo gitlog.
+            modified:   ChangeLog
+
 2022-08-31:  David Anderson
     commit ea38f1e3517be59437fdc30ca694bb7dd94f0985
 
