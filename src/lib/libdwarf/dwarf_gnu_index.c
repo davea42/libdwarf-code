@@ -168,7 +168,6 @@ scan_block_entries(Dwarf_Debug  dbg,
     Dwarf_Unsigned seclen = 0;
     Dwarf_Unsigned count = 0;
     Dwarf_Unsigned filesize = 0;
-    Dwarf_Unsigned blockoffset = 0;
     int errnum          = 0;
     const char * errstr = 0;
     const char * secname = 0;
@@ -214,8 +213,6 @@ scan_block_entries(Dwarf_Debug  dbg,
         ++count;
         curptr +=  length -offsetsize - extensize;
         curptr += 4;
-        blockoffset += length;
-        blockoffset +=4;
     }
     /* NOTREACHED */
     *count_out = count;
@@ -340,11 +337,6 @@ fill_in_blocks(Dwarf_Gnu_Index_Head head,
 {
     Dwarf_Unsigned i = 0;
     Dwarf_Unsigned dataoffset = 0;
-#if 0
-    Dwarf_Unsigned blockindex = 0;
-    Dwarf_Unsigned blockoffset = 0;
-    Dwarf_Unsigned listoffset = 0;
-#endif /*0*/
     Dwarf_Small    * endptr = 0;
     Dwarf_Small    * curptr = 0;
     Dwarf_Small    * baseptr = 0;
