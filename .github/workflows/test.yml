@@ -106,8 +106,8 @@ jobs:
         run: |
           mkdir build && cd build
           meson . ..  -Ddwarfexample=true
-          make
-          make check
+          ninja
+          ninja check
 
   macos_autotools:
     runs-on: macos-latest
