@@ -125,6 +125,35 @@ jobs:
       run:  |
         make
         make check
+  macos_cmake:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: tools
+      run:  |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        brew install cmake ninja
+    - name:
+      run:  |
+        mkdir builddir && cd builddir
+        cmake -G ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        ninja
+        ninja test
+
+  macos_meson:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: tools
+      run:  |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        brew install ninja meson
+    - name: 
+      run:  |
+        mkdir builddir && cd builddir
+        meson . .. -Ddwarfexample=true
+        ninja
+        ninja test
 
   msys2_autotools:
     runs-on: windows-latest
