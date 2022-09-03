@@ -94,8 +94,8 @@ static const char *usage[] = {
     "    -i input-table-path",
     "    -o output-table-path",
     "    -s (Generate standard attr-formclass table)",
-    "    -e (Generate extended attr-formclass table "
-        "(common extensions))",
+    "    -e (Generate extended attr-formclass table ",
+    "       common extensions))",
     ""
 };
 
