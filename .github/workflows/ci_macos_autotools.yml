@@ -1,26 +1,21 @@
 name: macos_autotools CI
 
 on:
-  pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 jobs:
   build:
 
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: tools
       run:  |
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew install autoconf automake libtool
-    - name: autoreconf
-      run: autoreconf --warnings=all  -vif
-    - name: config
-      run: ./configure --enable-dwarfexample --enable-wall
-    - name: make
+        brew install cmake ninja 
+    - name: 
       run:  |
-        make
-        make check
+        mkdir builddir && cd builddir
+        cmake -G ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        ninja
+        ninja test
