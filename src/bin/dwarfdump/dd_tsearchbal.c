@@ -78,13 +78,17 @@ struct ts_entry;
 void dwarf_check_balance(struct ts_entry *head,int finalprefix);
 #endif
 
-/* head is a special link. rlink points to root node.
-   head-> llink is a tree depth value. Using  a pointer.
-   root = head->rlink.
-   The keypointer and balance fields of the head node
-   are not used.
-   Might be sensible to use the head
-   balance field as a tree depth instead of using llink.
+/*  HEAD is a special record. rlink points to root node.
+    As of September 2022, the following is true: The keypointer
+    and balance and llink fields of the HEAD node are not used.
+    The treedepth field is not used except in HEAD.
+
+    In earlier versions, llink was used as an integer
+    representing treedepth in HEAD and a pointer elsewhere.
+    This lead to certain casts and pointer subtractions in
+    setting tree depth that a recent compiler identified
+    as having undefined reault in C. Knuth had no compiiler
+    concerns because his algorithms are not in C!
 */
 
 struct ts_entry {
@@ -92,13 +96,19 @@ struct ts_entry {
         user record contains the user's key itself
         and perhaps more. We will request free,
         so const void * is not quite right.  */
-    void *keyptr;
+    void       *keyptr;
+    /*  treedepth is only set in the HEAD node,
+        and in this implementation head->llink is
+        always zero. */
+    size_t      treedepth;
+    /*  balance only used in the tree proper, not in HEAD */
     int         balance; /* Knuth 6.2.3 algorithm A */
     struct ts_entry * llink;
     struct ts_entry * rlink;
 };
 
-static void printlevel(int level)
+static void
+printlevel(int level)
 {
     int len = 0;
     int targetlen = 4 + level;
@@ -203,7 +213,7 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,
         return l+1;
     }
     if (l > r) {
-        if (  (l-r) != 1) {
+        if ((l-r) != 1) {
             printf("%s depth mismatch at 0x%" DW_PR_DUx
                 "  l %d r %d.\n",
                 prefix,
@@ -222,7 +232,7 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,
         return l+1;
     }
     if (r != l) {
-        if (  (r-l) != 1) {
+        if ((r-l) != 1) {
             printf("%s depth mismatch at 0x%" DW_PR_DUx
                 " r %d l %d.\n",
                 prefix,
@@ -271,7 +281,7 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
         return;
     }
     root = head->rlink;
-    headdepth = head->llink - (struct ts_entry *)0;
+    headdepth = head->treedepth;
     if (!root) {
         printf("%s check balance null tree ptr\n",prefix);
         return;
@@ -309,7 +319,7 @@ dwarf_tdump(const void*headp_in,
         printf("dumptree null tree ptr : %s\n",msg);
         return;
     }
-    headdepth = head->llink - (struct ts_entry *)0;
+    headdepth = head->treedepth;
     printf("dumptree head ptr : 0x%08" DW_PR_DUx
         " tree-depth %d: %s\n",
         (Dwarf_Unsigned)(uintptr_t)head,
@@ -352,6 +362,7 @@ allocate_ts_entry(const void *key)
         being const void * in is not quite right. */
     e->keyptr = (void *)key;
     e->balance = 0;
+    e->treedepth = 0;
     e->llink = 0;
     e->rlink = 0;
     return e;
@@ -374,7 +385,7 @@ tsearch_insert_k(const void *key,int kc,
 
 /* Knuth step T5. */
 static struct ts_entry *
-tsearch_inner_do_insert(const void *key,
+tsearch_do_insert(const void *key,
     int kc,
     int * inserted,
     struct ts_entry* p)
@@ -397,9 +408,7 @@ tsearch_inner_do_insert(const void *key,
 static struct ts_entry *
 tsearch_inner( const void *key, struct ts_entry* head,
     int (*compar)(const void *, const void *),
-    int*inserted,
-    struct ts_entry **nullme UNUSEDARG,
-    int * comparres UNUSEDARG)
+    int*inserted)
 {
     /* t points to parent of p */
     struct ts_entry *t = head;
@@ -420,7 +429,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
             q = getlink(p,kc);
             if (!q) {
                 /* Does step A5. */
-                q = tsearch_inner_do_insert(key,kc,inserted,p);
+                q = tsearch_do_insert(key,kc,inserted,p);
                 if (!q) {
                     /*  Out of memory. */
                     return q;
@@ -429,6 +438,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
             }
             if (q->balance) {
                 t = p;
+                /* t is no longer a pointer to HEAD */ 
                 s = q;
             }
             p = q;
@@ -471,8 +481,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
         if (! s->balance) {
             /* Tree has grown higher. */
             s->balance = a;
-            /* Counting in pointers, not integers. Ugh. */
-            head->llink  = head->llink + 1;
+            head->treedepth++;
             return q;
         }
         if (s->balance == -a) {
@@ -522,8 +531,10 @@ tsearch_inner( const void *key, struct ts_entry* head,
 
     /* A10: */
     if (s == t->rlink) {
+        /* ASSERT: t may or may not be HEAD  */
         t->rlink = p;
     } else {
+        /* ASSERT: t is not HEAD  */
         t->llink = p;
     }
 #ifdef DW_CHECK_CONSISTENCY
@@ -540,10 +551,6 @@ dwarf_tsearch(const void *key, void **headin,
     struct ts_entry *head = 0;
     struct ts_entry *r = 0;
     int inserted = 0;
-    /* kcomparv should be ignored */
-    int kcomparv = 0;
-    /* nullme won't be set. */
-    struct ts_entry *nullme = 0;
 
     if (!headp) {
         return NULL;
@@ -566,7 +573,7 @@ dwarf_tsearch(const void *key, void **headin,
         *headin = head;
         return (void *)(&(root->keyptr));
     }
-    r = tsearch_inner(key,head,compar,&inserted,&nullme,&kcomparv);
+    r = tsearch_inner(key,head,compar,&inserted);
     if (!r) {
         return NULL;
     }
@@ -623,11 +630,9 @@ struct pkrecord {
 static unsigned
 rearrange_tree_so_p_llink_null( struct pkrecord * pkarray,
     unsigned k,
-    struct ts_entry *head UNUSEDARG,
     struct ts_entry *r,
     struct ts_entry *p,
-    int pak UNUSEDARG,
-    struct ts_entry *pp UNUSEDARG,
+    struct ts_entry *pp,
     int ppak)
 {
     struct ts_entry *s = 0;
@@ -707,11 +712,11 @@ tdelete_inner(const void *key,
     struct ts_entry *p        = 0;
     struct ts_entry *pp       = 0;
     struct pkrecord * pkarray = 0;
-    size_t depth              = head->llink - (struct ts_entry *)0;
+    size_t depth              = head->treedepth;
     unsigned k                = 0;
 
     /*  Allocate extra, head is on the stack we create
-        here  and the depth might increase.  */
+        here and the depth might increase.  */
     depth = depth + 4;
     pkarray = calloc(sizeof(struct pkrecord),depth);
     if (!pkarray) {
@@ -742,11 +747,9 @@ tdelete_inner(const void *key,
     {
         struct ts_entry *t  = 0;
         struct ts_entry *r  = 0;
-        int pak = 0;
         int ppak = 0;
 
         p = pkarray[k].pk;
-        pak = pkarray[k].ak;
         pp = pkarray[k-1].pk;
         ppak = pkarray[k-1].ak;
 
@@ -801,8 +804,7 @@ tdelete_inner(const void *key,
             and pkarray so the balance step can work.
             step D2 is insufficient so not done.  */
         k = rearrange_tree_so_p_llink_null(pkarray,k,
-            head,r,
-            p,pak,pp,ppak);
+            r,p,pp,ppak);
         goto balance;
     }
     /*  Now use pkarray decide if rebalancing
@@ -818,7 +820,7 @@ tdelete_inner(const void *key,
         int bk = 0;
         if (k2 == 0) {
             /* decreased in height */
-            head->llink--;
+            head->treedepth--;
             goto cleanup;
         }
         pk = pkarray[k2].pk;
