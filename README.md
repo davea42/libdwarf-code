@@ -1,25 +1,11 @@
-[![linux_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_autotools.yml)
-
-[![linux_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_meson.yml)
-
-[![linux_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_linux_cmake.yml)
-
-[![msys2_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_autotools.yml)
-
-[![msys2_meson CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_meson.yml)
-
-[![msys2_cmake CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_cmake.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_msys2_cmake.yml)
-
-[![macos_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_macos_autotools.yml)
-
-[![freebsd_autotools CI](https://github.com/davea42/libdwarf-code/actions/workflows/ci_freebsd_autotools.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/ci_freebsd_autotools.yml)
-
-[![Travis Build Status](https://travis-ci.com/davea42/libdwarf-code.svg?branch=master)](https://travis-ci.com/github/davea42/libdwarf-code)
-
-
 # This is libdwarf README[.md]
 
-Updated 28 August 2022 (notes about msys2 on Windows)
+Updated 3 September 2022
+
+ci tests builds on Linux, Freebsd, msys2, and MacOS
+using configure,cmake, and meson.
+
+[![ci](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml)
 
 Versions before 0.4.2 had problems
 in the test suite so
