@@ -16,6 +16,6 @@ jobs:
     - name: 
       run:  |
         mkdir builddir && cd builddir
-        cmake -G ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        cmake -G Ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
         ninja
         ninja test
