@@ -2,7 +2,7 @@
 
 Updated 3 September 2022
 
-ci tests builds on Linux, Freebsd, msys2, and MacOS
+ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
 
 [![ci](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml)
