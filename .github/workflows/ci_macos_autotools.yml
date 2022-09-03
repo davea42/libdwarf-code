@@ -4,18 +4,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-
+  macos_meson:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
     - name: tools
       run:  |
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew install cmake ninja 
+        brew install ninja meson
     - name: 
       run:  |
         mkdir builddir && cd builddir
-        cmake -G ninja -DBUILD_DWARFEXAMPLE=ON ../CMakeLists.txt
+        meson . .. -Ddwarfexample=true
         ninja
         ninja test
