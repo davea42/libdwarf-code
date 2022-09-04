@@ -1,0 +1,511 @@
+git diff set for text
+diff --git a/src/bin/dwarfdump/dd_command_options.c b/src/bin/dwarfdump/dd_command_options.c
+index 03bbded4..4477960f 100644
+--- a/src/bin/dwarfdump/dd_command_options.c
++++ b/src/bin/dwarfdump/dd_command_options.c
+@@ -52,6 +52,7 @@
+ #include "dd_compiler_info.h"
+ #include "dd_regex.h"
+ #include "dd_safe_strcpy.h"
++#include "libdwarf_private.h"
+ 
+ static const char *remove_quotes_pair(const char *text);
+ static char *special_program_name(char *n);
+@@ -2083,6 +2084,13 @@ void arg_search_any(void)
+     glflags.gf_search_is_on = TRUE;
+     glflags.search_any_text = makename(dwoptarg);
+     tempstr = remove_quotes_pair(glflags.search_any_text);
++    if (!tempstr){
++        fprintf(stderr,
++            "regcomp: unable to compile "
++            " search expression %s, out of memory\n",
++            glflags.search_any_text);
++        return;
++    }
+     glflags.search_any_text = do_uri_translation(tempstr,ctx);
+     if (strlen(glflags.search_any_text) <= 0) {
+         arg_search_invalid();
+@@ -2107,6 +2115,13 @@ void arg_search_match(void)
+     glflags.gf_search_is_on = TRUE;
+     glflags.search_match_text = makename(dwoptarg);
+     tempstr = remove_quotes_pair(glflags.search_match_text);
++    if (!tempstr){
++        fprintf(stderr,
++            "regcomp: unable to compile "
++            " search expression match=%s, out of memory\n",
++            glflags.search_match_text);
++        return;
++    }
+     glflags.search_match_text = do_uri_translation(tempstr,ctx);
+     if (strlen(glflags.search_match_text) <= 0) {
+         arg_search_invalid();
+@@ -2133,6 +2148,13 @@ void arg_search_regex(void)
+     glflags.gf_search_is_on = TRUE;
+     glflags.search_regex_text = makename(dwoptarg);
+     tempstr = remove_quotes_pair(glflags.search_regex_text);
++    if (!tempstr){
++        fprintf(stderr,
++            "regcomp: unable to compile "
++            " search regular expression %s, out of memory\n",
++            glflags.search_regex_text);
++        return;
++    }
+     glflags.search_regex_text = do_uri_translation(tempstr,ctx);
+     if (strlen(glflags.search_regex_text) > 0) {
+         res = dd_re_comp(glflags.search_regex_text);
+@@ -2849,6 +2871,7 @@ process_args(int argc, char *argv[])
+         printf("%s option error.\n",glflags.program_name);
+         printf("To see the options list: %s -h\n",
+             glflags.program_name);
++        makename_destructor();
+         exit(EXIT_FAILURE);
+     }
+     if (dwoptind < (argc - 1)) {
+@@ -2857,6 +2880,7 @@ process_args(int argc, char *argv[])
+         printf("Only a single object name is allowed\n");
+         printf("To see the options list: %s -h\n",
+             glflags.program_name);
++        makename_destructor();
+         exit(EXIT_FAILURE);
+     }
+     if (dwoptind > (argc - 1)) {
+@@ -2864,6 +2888,7 @@ process_args(int argc, char *argv[])
+             glflags.program_name);
+         printf("To see the options list: %s -h\n",
+             glflags.program_name);
++        makename_destructor();
+         exit(EXIT_FAILURE);
+     }
+     /*  FIXME: it seems silly to be printing section names
+diff --git a/src/bin/dwarfdump/dd_dwconf.c b/src/bin/dwarfdump/dd_dwconf.c
+index 9d2ece03..dadbfa49 100644
+--- a/src/bin/dwarfdump/dd_dwconf.c
++++ b/src/bin/dwarfdump/dd_dwconf.c
+@@ -55,6 +55,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
+ #include "dd_sanitized.h"
+ #include "dd_esb.h"
+ #include "dd_safe_strcpy.h"
++#include "libdwarf_private.h"
+ 
+ /* The nesting level is arbitrary,  2 should suffice.
+    But at least this prevents an infinite loop.
+@@ -381,6 +382,11 @@ find_a_file(const char *named_file,
+                     continue;
+                 }
+                 lname = makename(buf);
++                if (!lname) {
++                    printf("Dwarfdump out of memory, "
++                        "Unable to find a default conf directory\n");
++                    return 0;
++                }
+             }
+         }
+         if (glflags.gf_show_dwarfdump_conf) {
+@@ -543,9 +549,19 @@ get_token(char *cp, struct token_s *outtok)
+ {
+     char *lcp = skipwhite(cp);
+     unsigned tlen = find_token_len(lcp);
++    static int outofmem = FALSE;
+ 
+     outtok->tk_len = tlen;
+     if (tlen > 0) {
++        char *src = build_string(tlen, lcp);
++        if (!src) {
++             if (!outofmem) {
++                 printf("Dwarfdump out of memory reading "
++                     "dwarfdump.conf and will likely not work.\n");
++             }
++             outofmem = TRUE;
++             return "";
++        }
+         outtok->tk_data = build_string(tlen, lcp);
+     } else {
+         outtok->tk_data = "";
+diff --git a/src/bin/dwarfdump/dd_makename.c b/src/bin/dwarfdump/dd_makename.c
+index 3785b655..77cd6a4e 100644
+--- a/src/bin/dwarfdump/dd_makename.c
++++ b/src/bin/dwarfdump/dd_makename.c
+@@ -40,6 +40,7 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
+ 
+ #include <config.h>
+ 
++#include <stdio.h>
+ #include <stdlib.h> /* free() */
+ #include <string.h> /* strcmp() strdup() */
+ 
+@@ -49,6 +50,7 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
+ #include "dd_globals.h"
+ #include "dd_tsearchbal.h"
+ #include "dd_makename.h"
++#include "libdwarf_private.h"
+ 
+ static void * makename_data;
+ #define VALTYPE char *
+@@ -66,6 +68,7 @@ static void
+ value_node_free(void *valp)
+ {
+     VALTYPE v = (VALTYPE)valp;
++    /*printf("dadebug makename destroy %s\n",v);*/
+     free(v);
+ }
+ 
+@@ -106,9 +109,10 @@ makename(const char *s)
+     }
+     retval = dwarf_tsearch(newstr,&makename_data, value_compare_func);
+     if (!retval) {
+-        /*  Out of memory, lets just use the string we dup'd and
+-            let it leak. Things will surely fail anyway. */
+-        return newstr;
++        /*  Out of memory, */
++        /*  return newstr; */
++        free(newstr);
++        return NULL;
+     }
+     re = *(VALTYPE *)retval;
+     return re;
+diff --git a/src/bin/dwarfdump/dd_naming.c b/src/bin/dwarfdump/dd_naming.c
+index 8ef03164..c09100fd 100644
+--- a/src/bin/dwarfdump/dd_naming.c
++++ b/src/bin/dwarfdump/dd_naming.c
+@@ -36,6 +36,7 @@ Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
+ #include "dd_makename.h"
+ #include "dd_naming.h"
+ #include "dd_esb.h"
++#include "libdwarf_private.h"
+ 
+ #ifndef TRIVIAL_NAMING
+ static const char *
+@@ -98,6 +99,11 @@ ellipname(int   res,
+ #endif
+ 
+         n = makename(esb_get_string(&eb));
++        if (!n) {
++            printf("Out of memory extracting ellipsis name\n");
++            esb_destructor(&eb);
++            return "";
++        }
+         esb_destructor(&eb);
+         return n;
+     }
+diff --git a/src/bin/dwarfdump/dwarfdump.c b/src/bin/dwarfdump/dwarfdump.c
+index db42e926..27fe2f64 100644
+--- a/src/bin/dwarfdump/dwarfdump.c
++++ b/src/bin/dwarfdump/dwarfdump.c
+@@ -2271,6 +2271,10 @@ add_to_unique_errors_table(char * error_text)
+ 
+     /* Create a copy of the incoming text */
+     filtered_text = makename(error_text);
++    if (!filtered_text) {
++        /* Lets not do anything. */
++        return TRUE;
++    }
+     len = strlen(filtered_text);
+ 
+     /*  Remove from the error_text, any hexadecimal
+diff --git a/src/lib/libdwarf/dwarf_alloc.c b/src/lib/libdwarf/dwarf_alloc.c
+index 73fcd003..35bc37a8 100644
+--- a/src/lib/libdwarf/dwarf_alloc.c
++++ b/src/lib/libdwarf/dwarf_alloc.c
+@@ -79,8 +79,8 @@
+ #include "dwarf_string.h"
+ #include "dwarf_str_offsets.h"
+ 
+-/* if DEBUG is defined a lot of stdout is generated here. */
+-#undef DEBUG
++/* if DEBUG_ALLOC is defined a lot of stdout is generated here. */
++#define DEBUG_ALLOC 1 
+ /*  Some allocations are simple some not. These reduce
+     the issue of determining which sort of thing to a simple
+     test. See ia_multiply_count
+@@ -143,9 +143,10 @@ _dwarf_error_destructor(void *m)
+     if (! erm) {
+         return;
+     }
+-#if DEBUG
++#if DEBUG_ALLOC
+     printf("libdwarfdetector DEALLOC Now destruct error "
+         "string %s\n",dwarfstring_string(erm));
++    fflush(stdout);
+ #endif
+     dwarfstring_destructor(erm);
+     free(erm);
+@@ -486,21 +487,23 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
+     short action = 0;
+ 
+     if (dbg == NULL) {
+-#if DEBUG
++#if DEBUG_ALLOC
+         printf("libdwarfdetector ALLOC dbg null  "
+             "ret NULL type 0x%x size %lu line %d %s\n",
+             (unsigned)alloc_type,(unsigned long)size,
+             __LINE__,__FILE__);
++        fflush(stdout);
+ #endif
+         return NULL;
+     }
+     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
+         /* internal error */
+-#if DEBUG
++#if DEBUG_ALLOC
+         printf("libdwarfdetector ALLOC type bad ret null  "
+             "ret NULL type 0x%x size %lu line %d %s\n",
+             (unsigned)alloc_type,(unsigned long)size,
+             __LINE__,__FILE__);
++        fflush(stdout);
+ #endif
+         return NULL;
+     }
+@@ -543,10 +546,11 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
+                 /*  We leak what we allocated in
+                     _dwarf_find_memory when
+                     constructor fails. */
+-#if DEBUG
++#if DEBUG_ALLOC
+     printf("libdwarfdetector ALLOC constructor fails ret NULL "
+         "type 0x%x size %lu line %d %s\n",
+         (unsigned)alloc_type,(unsigned long)size,__LINE__,__FILE__);
++    fflush(stdout);
+ #endif
+                 return NULL;
+             }
+@@ -568,11 +572,12 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
+                     pretend all is well. */
+             }
+         }
+-#if DEBUG
+-    printf("libdwarfdetector ALLOC ret 0x%lx type 0x%x "
+-        "size %lu line %d %s\n",
++#if DEBUG_ALLOC
++        printf("libdwarfdetector ALLOC ret 0x%lx type 0x%x "
++            "size %lu line %d %s\n",
+         (unsigned long)ret_mem,(unsigned)alloc_type,
+         (unsigned long)size,__LINE__,__FILE__);
++        fflush(stdout);
+ #endif
+         return (ret_mem);
+     }
+@@ -628,7 +633,7 @@ dwarf_dealloc_die( Dwarf_Die die)
+     Dwarf_CU_Context context = 0;
+ 
+     if (!die) {
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf("DEALLOC die does nothing, die NULL line %d %s\n",
+             __LINE__,__FILE__);
+         fflush(stdout);
+@@ -637,7 +642,7 @@ dwarf_dealloc_die( Dwarf_Die die)
+     }
+     context = die->di_cu_context;
+     if (!context) {
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf("DEALLOC die does nothing, context NULL line %d %s\n",
+             __LINE__,__FILE__);
+         fflush(stdout);
+@@ -657,7 +662,7 @@ dwarf_dealloc_attribute(Dwarf_Attribute attr)
+     Dwarf_Debug dbg = 0;
+ 
+     if (!attr) {
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf("DEALLOC does nothing, attr is NULL line %d %s\n",
+             __LINE__,__FILE__);
+         fflush(stdout);
+@@ -703,21 +708,32 @@ dwarf_dealloc(Dwarf_Debug dbg,
+     struct reserve_data_s * r = 0;
+ 
+     if (!space) {
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf("DEALLOC does nothing, space NULL line %d %s\n",
+             __LINE__,__FILE__);
+         fflush(stdout);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
+         return;
+     }
+     if (!dbg) {
+         /*  App error, or an app that failed in a
+             dwarf_init*() or dwarf_elf_init*() call. */
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf( "DEALLOC dbg NULL line %d %s\n",
+             __LINE__,__FILE__);
+         fflush(stdout);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
++        return;
++    }
++    if(space == (Dwarf_Ptr)&_dwarf_failsafe_error) {
++#ifdef DEBUG_ALLOC
++        printf("DEALLOC failsafe requested at 0x%lx. "
++            "ignore. line %d %s\n",
++            (unsigned long)space,
++            __LINE__,__FILE__);
++        fflush(stdout);
++        return;
++#endif /* DEBUG_ALLOC*/
+     }
+     if (dbg && dbg->de_alloc_tree) {
+         /*  If it's a string in debug_info etc doing
+@@ -730,11 +746,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
+                 no need of a specialdestructor().
+                 Mostly a historical mistake here.
+                 Corrected in libdwarf March 14,2020. */
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+             printf( "DEALLOC string in section, no dealloc "
+                 "line %d %s\n", __LINE__,__FILE__);
+             fflush(stdout);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
+             return;
+         }
+     }
+@@ -752,7 +768,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
+     r =(struct reserve_data_s *)malloc_addr;
+     if (dbg && dbg != r->rd_dbg) {
+         /*  Mixed up or originally a no_dbg alloc */
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf("DEALLOC find was NULL  dbg 0x%lx "
+             "rd_dbg 0x%lx space 0x%lx line %d %s\n",
+             (unsigned long)dbg,
+@@ -760,11 +776,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
+             (unsigned long)space,
+             __LINE__,__FILE__);
+         fflush(stdout);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
+     }
+     if (dbg && alloc_type != r->rd_type) {
+         /*  Something is mixed up. */
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf("DEALLOC does nothing, type 0x%lx rd_type 0x%lx"
+             " space 0x%lx line %d %s\n",
+             (unsigned long)alloc_type,
+@@ -772,7 +788,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
+             (unsigned long)space,
+             __LINE__,__FILE__);
+         fflush(stdout);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
+         return;
+     }
+     if (alloc_type == DW_DLA_ERROR) {
+@@ -789,21 +805,21 @@ dwarf_dealloc(Dwarf_Debug dbg,
+             _dwarf_failsafe_error.er_errval =
+                 DW_DLE_FAILSAFE_ERRVAL;
+             _dwarf_error_destructor(ep);
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+             printf("DEALLOC does nothing, DE_STATIC line %d %s\n",
+                 __LINE__,__FILE__);
+             fflush(stdout);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
+             return;
+         }
+         if (ep->er_static_alloc == DE_MALLOC) {
+             /*  This is special, we had no arena
+                 but have a full special area as normal. */
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+             printf("DEALLOC does free, DE_MALLOC line %d %s\n",
+                 __LINE__,__FILE__);
+             fflush(stdout);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
+ #if 0
+             _dwarf_error_destructor(ep);
+             free(space);
+@@ -816,7 +832,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
+     /*  alloc types are a defined library-private
+         set of integers. Less than 256 of them. */
+     type = (unsigned int)alloc_type;
+-#if DEBUG
++#if DEBUG_ALLOC
+     if (dbg != r->rd_dbg) {
+         printf("DEALLOC  dbg != rd_dbg"
+             " going ahead line %d %s\n",
+@@ -824,7 +840,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
+         fflush(stdout);
+     }
+ #endif
+-#if DEBUG
++#if DEBUG_ALLOC
+     printf("libdwarfdetector DEALLOC ret 0x%lx type 0x%x "
+         "size %lu line %d %s\n",
+         (unsigned long)space,(unsigned)type,
+@@ -832,11 +848,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
+ #endif
+     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
+         /* internal or user app error */
+-#ifdef DEBUG
++#ifdef DEBUG_ALLOC
+         printf("DEALLOC does nothing, type too big %lu line %d %s\n",
+             (unsigned long)type,
+             __LINE__,__FILE__);
+-#endif /* DEBUG*/
++#endif /* DEBUG_ALLOC*/
+         return;
+     }
+     if (alloc_instance_basics[type].specialdestructor) {
+diff --git a/src/lib/libdwarf/dwarf_harmless.c b/src/lib/libdwarf/dwarf_harmless.c
+index 3ff4aa81..033a6a54 100644
+--- a/src/lib/libdwarf/dwarf_harmless.c
++++ b/src/lib/libdwarf/dwarf_harmless.c
+@@ -190,12 +190,14 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
+ /*  Only callable from within libdwarf (as a practical matter)
+ */
+ void
+-_dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
++_dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,
++    unsigned size)
+ {
+     unsigned i = 0;
+     memset(dhp,0,sizeof(*dhp));
+     dhp->dh_maxcount = size +1;
+-    dhp->dh_errors = (char **)malloc(sizeof(char *)*dhp->dh_maxcount);
++    dhp->dh_errors = (char **)calloc(sizeof(char *),
++        dhp->dh_maxcount);
+     if (!dhp->dh_errors) {
+         dhp->dh_maxcount = 0;
+         return;
+@@ -203,17 +205,18 @@ _dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
+ 
+     for (i = 0; i < dhp->dh_maxcount; ++i) {
+         char *newstr =
+-            (char *)malloc(DW_HARMLESS_ERROR_MSG_STRING_SIZE);
+-        dhp->dh_errors[i] = newstr;
++            (char *)calloc(1,
++            DW_HARMLESS_ERROR_MSG_STRING_SIZE);
++#if 0
+         if (!newstr) {
+             dhp->dh_maxcount = 0;
+             /* Let it leak, the leak is a constrained amount. */
++            free(dhp->dh_errors);
+             dhp->dh_errors = 0;
+             return;
+         }
+-        /*  We make the string content well-defined by an initial
+-            NUL byte, but this is not really necessary. */
+-        newstr[0] = 0;
++#endif
++        dhp->dh_errors[i] = newstr;
+     }
+ }
+ 
+diff --git a/src/lib/libdwarf/dwarf_init_finish.c b/src/lib/libdwarf/dwarf_init_finish.c
+index e6c4a416..a944ac4b 100644
+--- a/src/lib/libdwarf/dwarf_init_finish.c
++++ b/src/lib/libdwarf/dwarf_init_finish.c
+@@ -1649,7 +1649,7 @@ int
+ dwarf_object_finish(Dwarf_Debug dbg)
+ {
+     int res = 0;
+-
++    _dwarf_harmless_cleanout(&dbg->de_harmless_errors);
+     res = _dwarf_free_all_of_one_debug(dbg);
+     return res;
