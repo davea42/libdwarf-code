@@ -164,9 +164,8 @@ destruct_js(struct joins_s * js)
     dwarfstring_destructor(&js->js_buildid_filename);
 }
 
-
-/*  Altering Windows \ to posix /  
-    which is sort of useful in mingw64 msys2. 
+/*  Altering Windows \ to posix /
+    which is sort of useful in mingw64 msys2.
     Simply assuming no one would use \ in
     a file/directory name in posix. */
 static void
@@ -239,7 +238,7 @@ _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input)
     char *targ = dwarfstring_string(target);
     size_t targlenszt = 0;
 #if defined (_WIN32)
-    /*  Assuming we are in mingw msys2 or equivalent.  
+    /*  Assuming we are in mingw msys2 or equivalent.
         If we are reading a Windows object file but
         running non-Windows this won't happen
         but debuglink won't be useful anyway. */

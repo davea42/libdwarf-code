@@ -2083,6 +2083,13 @@ void arg_search_any(void)
     glflags.gf_search_is_on = TRUE;
     glflags.search_any_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_any_text);
+    if (!tempstr){
+        fprintf(stderr,
+            "regcomp: unable to compile "
+            " search expression %s, out of memory\n",
+            glflags.search_any_text);
+        return;
+    }
     glflags.search_any_text = do_uri_translation(tempstr,ctx);
     if (strlen(glflags.search_any_text) <= 0) {
         arg_search_invalid();
@@ -2107,6 +2114,13 @@ void arg_search_match(void)
     glflags.gf_search_is_on = TRUE;
     glflags.search_match_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_match_text);
+    if (!tempstr){
+        fprintf(stderr,
+            "regcomp: unable to compile "
+            " search expression match=%s, out of memory\n",
+            glflags.search_match_text);
+        return;
+    }
     glflags.search_match_text = do_uri_translation(tempstr,ctx);
     if (strlen(glflags.search_match_text) <= 0) {
         arg_search_invalid();
@@ -2133,6 +2147,13 @@ void arg_search_regex(void)
     glflags.gf_search_is_on = TRUE;
     glflags.search_regex_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_regex_text);
+    if (!tempstr){
+        fprintf(stderr,
+            "regcomp: unable to compile "
+            " search regular expression %s, out of memory\n",
+            glflags.search_regex_text);
+        return;
+    }
     glflags.search_regex_text = do_uri_translation(tempstr,ctx);
     if (strlen(glflags.search_regex_text) > 0) {
         res = dd_re_comp(glflags.search_regex_text);
@@ -2849,6 +2870,7 @@ process_args(int argc, char *argv[])
         printf("%s option error.\n",glflags.program_name);
         printf("To see the options list: %s -h\n",
             glflags.program_name);
+        makename_destructor();
         exit(EXIT_FAILURE);
     }
     if (dwoptind < (argc - 1)) {
@@ -2857,6 +2879,7 @@ process_args(int argc, char *argv[])
         printf("Only a single object name is allowed\n");
         printf("To see the options list: %s -h\n",
             glflags.program_name);
+        makename_destructor();
         exit(EXIT_FAILURE);
     }
     if (dwoptind > (argc - 1)) {
@@ -2864,6 +2887,7 @@ process_args(int argc, char *argv[])
             glflags.program_name);
         printf("To see the options list: %s -h\n",
             glflags.program_name);
+        makename_destructor();
         exit(EXIT_FAILURE);
     }
     /*  FIXME: it seems silly to be printing section names

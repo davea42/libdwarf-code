@@ -106,9 +106,9 @@ makename(const char *s)
     }
     retval = dwarf_tsearch(newstr,&makename_data, value_compare_func);
     if (!retval) {
-        /*  Out of memory, lets just use the string we dup'd and
-            let it leak. Things will surely fail anyway. */
-        return newstr;
+        /*  Out of memory, */
+        free(newstr);
+        return NULL;
     }
     re = *(VALTYPE *)retval;
     return re;

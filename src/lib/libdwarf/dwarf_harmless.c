@@ -195,7 +195,8 @@ _dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
     unsigned i = 0;
     memset(dhp,0,sizeof(*dhp));
     dhp->dh_maxcount = size +1;
-    dhp->dh_errors = (char **)malloc(sizeof(char *)*dhp->dh_maxcount);
+    dhp->dh_errors = (char **)calloc(sizeof(char *),
+        dhp->dh_maxcount);
     if (!dhp->dh_errors) {
         dhp->dh_maxcount = 0;
         return;
@@ -203,17 +204,22 @@ _dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
 
     for (i = 0; i < dhp->dh_maxcount; ++i) {
         char *newstr =
-            (char *)malloc(DW_HARMLESS_ERROR_MSG_STRING_SIZE);
+            (char *)calloc(1,
+            DW_HARMLESS_ERROR_MSG_STRING_SIZE);
         dhp->dh_errors[i] = newstr;
+#if 0
+        /*  BAD IDEA. just use the NULL pointer,
+            so we avoid problems later with
+            freeing.  */
         if (!newstr) {
             dhp->dh_maxcount = 0;
             /* Let it leak, the leak is a constrained amount. */
+            free(dhp->dh_errors);
             dhp->dh_errors = 0;
             return;
         }
-        /*  We make the string content well-defined by an initial
-            NUL byte, but this is not really necessary. */
-        newstr[0] = 0;
+#endif /* 0 */
+        dhp->dh_errors[i] = newstr;
     }
 }
 

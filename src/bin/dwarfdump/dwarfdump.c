@@ -2271,6 +2271,10 @@ add_to_unique_errors_table(char * error_text)
 
     /* Create a copy of the incoming text */
     filtered_text = makename(error_text);
+    if (!filtered_text) {
+        /* Lets not do anything. */
+        return TRUE;
+    }
     len = strlen(filtered_text);
 
     /*  Remove from the error_text, any hexadecimal

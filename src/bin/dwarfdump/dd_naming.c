@@ -96,8 +96,12 @@ ellipname(int   res,
                 "Continuing. \n",ty,val_in,val_in );
         }
 #endif
-
         n = makename(esb_get_string(&eb));
+        if (!n) {
+            printf("Out of memory extracting ellipsis name\n");
+            esb_destructor(&eb);
+            return "";
+        }
         esb_destructor(&eb);
         return n;
     }
