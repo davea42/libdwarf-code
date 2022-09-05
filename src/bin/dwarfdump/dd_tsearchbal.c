@@ -438,7 +438,7 @@ tsearch_inner( const void *key, struct ts_entry* head,
             }
             if (q->balance) {
                 t = p;
-                /* t is no longer a pointer to HEAD */ 
+                /* t is no longer a pointer to HEAD */
                 s = q;
             }
             p = q;

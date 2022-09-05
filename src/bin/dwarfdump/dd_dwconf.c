@@ -549,12 +549,12 @@ get_token(char *cp, struct token_s *outtok)
     if (tlen > 0) {
         char *src = build_string(tlen, lcp);
         if (!src) {
-             if (!outofmem) {
-                 printf("Dwarfdump out of memory reading "
-                     "dwarfdump.conf and will likely not work.\n");
-             }
-             outofmem = TRUE;
-             return "";
+            if (!outofmem) {
+                printf("Dwarfdump out of memory reading "
+                    "dwarfdump.conf and will likely not work.\n");
+            }
+            outofmem = TRUE;
+            return "";
         }
         outtok->tk_data = build_string(tlen, lcp);
     } else {

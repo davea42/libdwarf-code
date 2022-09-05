@@ -49,8 +49,8 @@
 #include <stdarg.h> /* va_end() va_start() */
 #include <stdlib.h> /* exit() free() malloc() realloc() */
 #include <string.h> /* memcpy() memset() strlen() */
-
 #include "dd_esb.h"
+#include "libdwarf_private.h" /* For malloc/calloc debug */
 
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,
     the NUL is accounted for in init_esb_string

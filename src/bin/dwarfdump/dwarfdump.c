@@ -1505,8 +1505,9 @@ print_error_maybe_continue(Dwarf_Debug dbg UNUSEDARG,
     } else if (dwarf_ret_val == DW_DLV_OK) {
         printf("%s:  %s \n", glflags.program_name, msg);
     } else {
-        printf("%s InternalError:  %s:  code %d\n",
+        printf("%s ERROR InternalError:  %s:  code %d\n",
             glflags.program_name, msg, dwarf_ret_val);
+        ++realmajorerr;
     }
     /* Display compile unit name */
     PRINT_CU_INFO();

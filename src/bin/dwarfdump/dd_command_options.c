@@ -52,6 +52,7 @@
 #include "dd_compiler_info.h"
 #include "dd_regex.h"
 #include "dd_safe_strcpy.h"
+#include "libdwarf_private.h" /* For malloc/calloc debug */
 
 static const char *remove_quotes_pair(const char *text);
 static char *special_program_name(char *n);

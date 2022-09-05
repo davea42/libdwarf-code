@@ -96,6 +96,13 @@ dwarf_error_creation(Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
 }
 
+/*  In rare cases (bad object files) an error is created
+    via malloc with no dbg to attach it to.
+    We record a few of those and dealloc and flush
+    on any dwarf_finish()
+    We do not expect this except on corrupt objects. */
+
+
 void
 _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval)
@@ -106,11 +113,11 @@ void
 _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval,char *msg)
 {
-    Dwarf_Error errptr;
+    Dwarf_Error errptr = 0;
 
     /*  Allow NULL dbg on entry, since sometimes that
         can happen and we want to report the upper-level
-        error, not this one. */
+        error, not the null dbg error. */
     if (error) {
         /*  If dbg is NULL, use the alternate error struct. However,
             this will overwrite the earlier error. */
@@ -132,33 +139,35 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
                 errptr = &_dwarf_failsafe_error;
                 errptr->er_static_alloc = DE_STATIC;
 #ifdef DEBUG
-                printf("libdwarfdetector no dbg, "
+                printf("libdwarf no dbg, fullystatic, "
                     "using DE_STATIC alloc, addr"
                     " 0x%lx line %d %s\n",
                     (unsigned long)errptr,
                     __LINE__,__FILE__);
 #endif /* DEBUG */
-
             } else {
                 errptr->er_static_alloc = DE_MALLOC;
+                
 #ifdef DEBUG
-                printf("libdwarfdetector no dbg, "
+                printf("libdwarf no dbg,leaks, "
                     "static DE_MALLOC alloc, addr"
                     " 0x%lx line %d %s\n",
                     (unsigned long)errptr,
                     __LINE__,__FILE__);
 #endif /* DEBUG */
+                _dwarf_add_to_static_err_list(errptr);
             }
         }
+
         errptr->er_errval = errval;
-        if (msg) {
+        if (msg && errptr->er_static_alloc != DE_STATIC) {
             dwarfstring *em = 0;
 
 #ifdef DEBUG
-            printf("libdwarfdetector ALLOC creating error string"
+            printf("libdwarf ALLOC creating error string"
                 " %s errval %ld errptr 0x%lx \n",
                 msg,(long)errval,(unsigned long)errptr);
-#endif
+#endif /* DEBUG */
             em = (dwarfstring *)calloc(1,sizeof(dwarfstring));
             if (em) {
                 dwarfstring_constructor(em);

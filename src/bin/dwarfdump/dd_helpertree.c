@@ -35,6 +35,7 @@
 #include "dd_globals.h"
 #include "dd_tsearchbal.h"
 #include "dd_helpertree.h"
+#include "libdwarf_private.h" /* For malloc/calloc debug */
 
 #define TRUE 1
 #define FALSE 0

@@ -172,6 +172,53 @@ struct reserve_data_s {
 };
 #define DW_RESERVE sizeof(struct reserve_size_s)
 
+
+/*  In rare cases (bad object files) an error is created
+    via malloc with no dbg to attach it to.
+    We record a few of those and dealloc and flush
+    on any dwarf_finish()
+    We do not expect this except on corrupt objects. 
+
+    Be careful here.  This only applies to failed
+    attempted object-reads that failed due to malloc
+    or due to seriously corrupt object content.
+*/
+
+#define STATIC_ALLOWED 5
+unsigned static_used = 0;
+static Dwarf_Error staticerrlist[STATIC_ALLOWED];
+
+void
+_dwarf_flush_static_error_list(void)
+{
+    unsigned i = 0;
+    for ( ; i <static_used; ++i) {
+        Dwarf_Error e = staticerrlist[i];
+        if (!e) {
+             continue;
+        }
+        if (e->er_static_alloc == DE_MALLOC) {
+            /* e is the returned address, not
+                the base. Free by the base.  */
+            void *mallocaddr = (char*)e - DW_RESERVE;
+
+            _dwarf_error_destructor(e);
+            free(mallocaddr);
+        }
+        staticerrlist[i] = 0;
+    }
+    static_used = 0;
+}
+
+void
+_dwarf_add_to_static_err_list(Dwarf_Error err)
+{
+    if (static_used < STATIC_ALLOWED) {
+        staticerrlist[static_used] = err;
+        ++static_used;
+    }
+}
+
 static const
 struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0  none */

@@ -1652,6 +1652,10 @@ dwarf_object_finish(Dwarf_Debug dbg)
 
     _dwarf_harmless_cleanout(&dbg->de_harmless_errors);
     res = _dwarf_free_all_of_one_debug(dbg);
+    /*  see dwarf_error.h dwarf_error.c  Relevant
+        to trying and failing to open/read corrupt
+        object files.  */
+    _dwarf_flush_static_error_list();
     return res;
 }
 
