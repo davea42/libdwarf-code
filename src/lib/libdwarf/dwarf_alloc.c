@@ -146,7 +146,7 @@ _dwarf_error_destructor(void *m)
 #if DEBUG_ALLOC
     printf("libdwarfdetector DEALLOC Now destruct error "
         "string %s\n",dwarfstring_string(erm));
-#endif
+#endif /* DEBUG_ALLOC */
     dwarfstring_destructor(erm);
     free(erm);
     er->er_msg = 0;
@@ -539,7 +539,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             (unsigned)alloc_type,(unsigned long)size,
             __LINE__,__FILE__);
         fflush(stdout);
-#endif
+#endif /* DEBUG_ALLOC */
         return NULL;
     }
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
@@ -550,7 +550,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             (unsigned)alloc_type,(unsigned long)size,
             __LINE__,__FILE__);
         fflush(stdout);
-#endif
+#endif /* DEBUG_ALLOC */
         return NULL;
     }
     basesize = alloc_instance_basics[alloc_type].ia_struct_size;
@@ -597,7 +597,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         "type 0x%x size %lu line %d %s\n",
         (unsigned)alloc_type,(unsigned long)size,__LINE__,__FILE__);
     fflush(stdout);
-#endif
+#endif /* DEBUG_ALLOC */
                 return NULL;
             }
         }
@@ -624,7 +624,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             (unsigned long)ret_mem,(unsigned)alloc_type,
             (unsigned long)size,__LINE__,__FILE__);
         fflush(stdout);
-#endif
+#endif /* DEBUG_ALLOC */
         return (ret_mem);
     }
 }
@@ -683,7 +683,7 @@ dwarf_dealloc_die( Dwarf_Die die)
         printf("DEALLOC die does nothing, die NULL line %d %s\n",
             __LINE__,__FILE__);
         fflush(stdout);
-#endif
+#endif /* DEBUG_ALLOC */
         return;
     }
     context = die->di_cu_context;
@@ -692,7 +692,7 @@ dwarf_dealloc_die( Dwarf_Die die)
         printf("DEALLOC die does nothing, context NULL line %d %s\n",
             __LINE__,__FILE__);
         fflush(stdout);
-#endif
+#endif /* DEBUG_ALLOC */
         return;
     }
     dbg = context->cc_dbg;
@@ -712,7 +712,7 @@ dwarf_dealloc_attribute(Dwarf_Attribute attr)
         printf("DEALLOC does nothing, attr is NULL line %d %s\n",
             __LINE__,__FILE__);
         fflush(stdout);
-#endif
+#endif /* DEBUG_ALLOC */
         return;
     }
     dbg = attr->ar_dbg;
@@ -866,11 +866,6 @@ dwarf_dealloc(Dwarf_Debug dbg,
                 __LINE__,__FILE__);
             fflush(stdout);
 #endif /* DEBUG_ALLOC*/
-#if 0
-            _dwarf_error_destructor(ep);
-            free(space);
-            return;
-#endif /*0*/
         }
         /* Was normal alloc, use normal dealloc. */
         /* DW_DLA_ERROR has a specialdestructor */
@@ -885,13 +880,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
             __LINE__,__FILE__);
         fflush(stdout);
     }
-#endif
-#if DEBUG_ALLOC
     printf("libdwarfdetector DEALLOC ret 0x%lx type 0x%x "
         "size %lu line %d %s\n",
         (unsigned long)space,(unsigned)type,
         (unsigned long)r->rd_length,__LINE__,__FILE__);
-#endif
+#endif /* DEBUG_ALLOC*/
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* internal or user app error */
 #ifdef DEBUG_ALLOC
