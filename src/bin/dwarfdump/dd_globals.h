@@ -224,6 +224,7 @@ extern int print_macinfo_by_offset(Dwarf_Debug dbg,
     Dwarf_Die cudie,Dwarf_Unsigned offset,Dwarf_Error *);
 
 void ranges_esb_string_destructor(void);
+void global_destructors(void);
 void destruct_abbrev_array(void);
 
 int get_proc_name_by_die(Dwarf_Debug dbg,

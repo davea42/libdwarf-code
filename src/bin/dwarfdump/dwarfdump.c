@@ -148,7 +148,7 @@ close_a_file(int f)
     }
 }
 
-static void
+void
 global_destructors(void)
 {
     makename_destructor();
@@ -157,6 +157,7 @@ global_destructors(void)
     esb_destructor(&esb_short_cu_name);
     esb_destructor(&dwarf_error_line);
     esb_destructor(glflags.newprogname);
+    esb_destructor(glflags.config_file_path);
     esb_destructor(&global_file_name);
     esb_destructor(&global_tied_file_name);
     free_all_dwconf(glflags.config_file_data);
@@ -390,6 +391,7 @@ main(int argc, char *argv[])
             "for possible path string %s.\n",
             glflags.program_name,(unsigned long)temp_path_buf_len,
             file_name);
+        global_destructors();
         exit(EXIT_FAILURE);
     }
     temp_path_buf[0] = 0;

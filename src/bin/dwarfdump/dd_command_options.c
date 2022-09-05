@@ -2816,6 +2816,7 @@ lacking_normal_args (int argct,char **args)
 const char *
 process_args(int argc, char *argv[])
 {
+    /* the call sets up glflags.newprogname, returns its string */
     glflags.program_name = special_program_name(argv[0]);
     glflags.program_fullname = argv[0];
 
@@ -2872,6 +2873,7 @@ process_args(int argc, char *argv[])
         printf("To see the options list: %s -h\n",
             glflags.program_name);
         makename_destructor();
+        global_destructors();
         exit(EXIT_FAILURE);
     }
     if (dwoptind < (argc - 1)) {
@@ -2881,6 +2883,7 @@ process_args(int argc, char *argv[])
         printf("To see the options list: %s -h\n",
             glflags.program_name);
         makename_destructor();
+        global_destructors();
         exit(EXIT_FAILURE);
     }
     if (dwoptind > (argc - 1)) {
@@ -2889,6 +2892,7 @@ process_args(int argc, char *argv[])
         printf("To see the options list: %s -h\n",
             glflags.program_name);
         makename_destructor();
+        global_destructors();
         exit(EXIT_FAILURE);
     }
     /*  FIXME: it seems silly to be printing section names
