@@ -390,7 +390,7 @@ main(int argc, char *argv[])
             "for possible path string %s.\n",
             glflags.program_name,(unsigned long)temp_path_buf_len,
             file_name);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
     temp_path_buf[0] = 0;
     /*  This data scan is to find Elf objects and
@@ -409,7 +409,7 @@ main(int argc, char *argv[])
             glflags.program_name, sanitized(file_name));
         global_destructors();
         free(temp_path_buf);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
     esb_append(&global_file_name,file_name);
     temp_path_buf[0] = 0;
@@ -421,7 +421,7 @@ main(int argc, char *argv[])
             esb_get_string(&global_file_name));
         global_destructors();
         free(temp_path_buf);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
     if (esb_string_len(glflags.config_file_tiedpath) > 0) {
@@ -455,7 +455,7 @@ main(int argc, char *argv[])
             }
             global_destructors();
             free(temp_path_buf);
-            return EXIT_FAILURE;
+            exit(EXIT_FAILURE);
         }
         if (ftype != tftype || endian != tendian ||
             offsetsize != toffsetsize) {
@@ -467,7 +467,7 @@ main(int argc, char *argv[])
                 esb_get_string(&global_file_name));
             free(temp_path_buf);
             global_destructors();
-            return EXIT_FAILURE;
+            exit(EXIT_FAILURE);
         }
         esb_append(&global_tied_file_name,tied_file_name);
         global_tiedfd = open_a_file(esb_get_string(
@@ -479,7 +479,7 @@ main(int argc, char *argv[])
                 sanitized(esb_get_string(&global_tied_file_name)));
             global_destructors();
             free(temp_path_buf);
-            return EXIT_FAILURE;
+            exit(EXIT_FAILURE);
         }
     }
     /* ======= end FINDING NAMES AND OPENING FDs ===== */
@@ -529,7 +529,7 @@ main(int argc, char *argv[])
         no internal errors and we should return an OKAY condition,
         regardless if the file being processed has
         minor errors. */
-    return OKAY;
+    exit(0);
 }
 
 void
