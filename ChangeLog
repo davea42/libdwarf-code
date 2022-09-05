@@ -1,3 +1,243 @@
+2022-09-05:  David Anderson
+    commit 6f96e446567b2fe943365b7168b53a4b3b26ab7c
+
+    DEBUG renamed as DEBUG_ALLOC
+    (DEBUG_ALLOC should not normally be defined)
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2022-09-05:  David Anderson
+    commit 15211129be3e7ce4c434bb0eca7e5b6336f4ee68
+
+    Added include libdwarf_private.h as an aid
+    to testing behaviour when malloc space exhausted
+    (Faking exhaustion via a tiny amount of code NOT in
+    the source tree).
+            modified:   src/bin/dwarfdump/dd_addrmap.c
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_helpertree.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Added a fixed=size static array (with 5 entries) so in
+    the very rare case of
+    an error not attributable to a Dwarf_Debug
+    it is recorded and can be freed later.
+    Caused by memory exhaustion (alloc fail)
+    or by an object file with a very serious corruption
+    making it impossible to open in libdwarf.
+    See _dwarf_flush_static_error_list()
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+    Adding the static_err list function declarations (two of them)
+            modified:   src/lib/libdwarf/dwarf_alloc.h
+
+    Initializing a local pointer to 0. Fixing DEBUG
+    messages that had copy-paste errors.
+            modified:   src/lib/libdwarf/dwarf_error.c
+
+    Added call to _dwarf_flush_static_error_list()
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2022-09-04:  David Anderson
+    commit ff1e8be91ba2ca13a50ee999c012691cdd8b0910
+
+    Small changes to ensure that if memory runs out
+    (even if 'runs out' for the first malloc/calloc call
+    and remains unavailable
+    dwarfdump does something reasonable, reports
+    an error, and just stops. With no leakage.
+
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_dwconf.c
+            modified:   src/bin/dwarfdump/dd_makename.c
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+            modified:   src/lib/libdwarf/dwarf_harmless.c
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+
+2022-09-04:  David Anderson
+    commit 99ddb681f6d67484e42ba7d13a338b544b27a346
+
+    The changes for malloc checking.
+            new file:   dif20220904-malloc
+    The differences that need to to to master
+            new file:   dif20220904-malloc-for-master
+
+2022-09-03:  David Anderson
+    commit acd5ca8f2a46b8a9833b98f9c53c1f254e114408
+
+    All these and more folded into test.yml
+            deleted:    ci_freebsd_autotools.yml
+            deleted:    ci_linux_autotools.yml
+            deleted:    ci_linux_cmake.yml
+            deleted:    ci_linux_meson.yml
+            deleted:    ci_macos_autotools.yml
+            deleted:    ci_msys2_autotools.yml
+            deleted:    ci_msys2_cmake.yml
+            deleted:    ci_msys2_meson.yml
+
+2022-09-03:  David Anderson
+    commit bab18372d4add9498f3063daa683f4aef366311e
+
+    cmake -G needs Ninja (capital letter) not ninja
+            modified:   test.yml
+
+2022-09-03:  David Anderson
+    commit 30c570b1d9a7fb3036027915650f2896b2645278
+
+    Adding final macos build
+            modified:   test.yml
+
+2022-09-03:  David Anderson
+    commit f0d6e0510874f52e501d6f5e247a7699d339f346
+    Merge: cd70ec3f 14738b59
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+    Minor conflict github and local on a test macos yml.
+    Resolved.
+
+2022-09-03:  David Anderson
+    commit cd70ec3f8045e7afca2256710088d9e12b024976
+
+    Now tests meson macos
+            modified:   ci_macos_autotools.yml
+
+2022-09-03:  David Anderson
+    commit 14738b59d202288d27b2e3abf099cbc575730174
+
+    Update ci_macos_autotools.yml
+
+    Fixed typo
+
+2022-09-03:  David Anderson
+    commit 27bad56e45c9cf4b19ffc4fb36ef355bc28b8d40
+
+    Now tests cmake mac build
+            modified:   ci_macos_autotools.yml
+
+2022-09-03:  David Anderson
+    commit 035037285bce33443066cb268dcb277fff05f19f
+
+    Changed the badge wording slightly.
+            modified:   README
+            modified:   README.md
+
+2022-09-03:  David Anderson
+    commit 38d3e07382ebb2e43b36eb66a6cbe90afceb291d
+
+    Now just one badge representing builds
+    on 4 platforms and configure/cmake/meson
+    on each platform.
+            modified:   README
+            modified:   README.md
+
+2022-09-03:  David Anderson
+    commit 02b03b7da78d1789023d4bc134199297d150c7ce
+
+    Clang discovered a mistake in a usage message
+    set of strings. It did not affect correctness,
+    but it did provoke a clang 13.0.0 warning
+    so the build stopped.
+            modified:   src/bin/attr_form/attr_form_build.c
+
+2022-09-03:  David Anderson
+    commit b0784a81000fe592fafd97c77f82971ddb036e44
+
+    To avoid warnings from a new compiler
+    (warnings seen now for the first time) we remove
+    some C with undefined meaning such as
+
+    headdepth = head->llink - (struct ts_entry *)0;
+
+    See ISO C 1990 section 6.3.6.
+
+    We add a specific field to count the balanced tree depth instead
+    of using strange pointer arithmetic on llink.
+    No need for pointer arithmetic at all.
+    There is a better way to do this using a HEAD
+    separate struct and a pointer-to an rlink field
+    as that would reduce struct size here,
+    but we are postponing that for now.
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+
+2022-09-01:  David Anderson
+    commit f7015bda84749ef4f9b4746bbb3834087adba8cd
+
+    Another set-but-not-used variable. Deleted now.
+            modified:   dwarf_machoread.c
+
+2022-09-01:  David Anderson
+    commit 0dadb043b5a3553ff0b2daa08391bda8ab2bb66e
+
+    ninja check ->  ninja test
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit 5783429f4556d166273d3b965d1fbb6c56a296b8
+
+    Local variable blockoffset was set and incremented
+    but never used. Clang warned. Removed now.
+            modified:   src/lib/libdwarf/dwarf_gnu_index.c
+
+2022-09-01:  David Anderson
+    commit f205172c01d5fdc1060e377f7c80b271e86cecac
+
+    Fixed freebsd meson typos
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit 36ac11b71e8d27402bee1ca435b5b8e1d6012757
+
+    Added freebsd cmake and meson tests
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit 23bbdf69fb2238705ddbcf4f09b4aee90d2f3239
+
+    Accidental dup of 2 tests. Fixed.
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit 449394e1c3cf6a1f40d56358807ec7d831ed56bd
+
+    Adding autotools of freebsd amd macos
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit 203f9cd662635f286a6d0ed443a007426a5a16af
+
+    Adding freebsd and macos (so far autotools only)
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit 8d374c9fd35c472c528df534282a7557d2fb4b29
+
+    Added all msys2 tests
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit 47b69a860b6c13a7f50d0ef33a9fdf6229aa2752
+
+    Update test.yml
+
+    deleted accident ~ as last line
+
+2022-09-01:  David Anderson
+    commit 22446d1247ad5dcc0a51f7be605293e829492297
+
+    Omitted a required colon. Fixed.
+            modified:   test.yml
+
+2022-09-01:  David Anderson
+    commit a5f9b6c048683419cbe4dd25eadd816e08801272
+
+    Now up to date with commit log
+            modified:   ChangeLog
+
 2022-09-01:  David Anderson
     commit 2bdc1b8630cc8b66d298a2ee7bffd7d869ae65ae
 
