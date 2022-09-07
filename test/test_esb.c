@@ -38,6 +38,9 @@ Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
 
 #include "libdwarf_private.h"
 #include "dd_esb.h"
+#include "dd_minimal.h"
+
+void dd_minimal_count_global_error(void) {}
 
 static int failcount = 0;
 

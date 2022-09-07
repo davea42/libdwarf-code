@@ -51,6 +51,9 @@ Portions Copyright(C) David Anderson 2016. All Rights reserved.
 #include "dwarf_tsearch.h"
 #include "dd_makename.h"
 #include "dd_globals.h"
+#include "dd_minimal.h"
+
+void dd_minimal_count_global_error(void) {}
 
 #if defined(__WIN32) &&  (!defined(__GNUC__) && !defined(__clang__))
 #pragma warning(disable:4996)    /* Warning when migrated to VS2010 */

@@ -8,8 +8,10 @@
 
 #include <stdio.h>  /* printf() */
 #include <string.h>  /* strcmp() */
-
 #include "dd_canonical_append.h"
+#include "dd_minimal.h"
+
+void dd_minimal_count_global_error(void) {}
 
 #define CANBUF 25
 static struct canap_s {
