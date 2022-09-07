@@ -21,6 +21,7 @@ dd_common.h \
 dd_compiler_info.c \
 dd_compiler_info.h \
 dd_defined_types.h \
+dd_minimal.h \
 dd_regex.c \
 dd_regex.h \
 dd_safe_strcpy.h \

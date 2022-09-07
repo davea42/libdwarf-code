@@ -32,6 +32,7 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
 set_source_group(HEADERS "Header Files" 
   dd_addrmap.h dd_attr_form.h dd_checkutil.h dd_common.h dd_regex.h
   dd_safe_strcpy.h dd_dwconf.h
+  dd_minimal.h
   dd_command_options.h dd_compiler_info.h
   dd_opscounttab.h 
   print_debug_gnu.h
