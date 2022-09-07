@@ -77,6 +77,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 #include "dd_command_options.h"
 #include "dd_compiler_info.h"
 #include "dd_safe_strcpy.h"
+#include "dd_minimal.h"
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -156,8 +157,7 @@ global_destructors(void)
     esb_destructor(&esb_long_cu_name);
     esb_destructor(&esb_short_cu_name);
     esb_destructor(&dwarf_error_line);
-    esb_destructor(glflags.newprogname);
-    esb_destructor(glflags.config_file_path);
+    reset_global_flags();
     esb_destructor(&global_file_name);
     esb_destructor(&global_tied_file_name);
     free_all_dwconf(glflags.config_file_data);
@@ -2404,3 +2404,9 @@ report_caller_error_drop_error(int dwdlv,
     glflags.gf_count_major_errors++;
 
 }
+void 
+dd_minimal_count_global_error(void)
+{
+    glflags.gf_count_major_errors++;
+}
+

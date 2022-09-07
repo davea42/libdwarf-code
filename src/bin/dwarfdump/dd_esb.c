@@ -32,9 +32,8 @@
     in small pieces.
 
     We really do allow only C strings here. NUL bytes
-    in a string result in adding only up to the NUL (and
-    in the case of certain interfaces here a warning
-    to stderr).
+    in a string result in adding only up to the NUL.
+    Errors get an ERROR line printed.
 
     The functions assume that
     pointer arguments of all kinds are not NULL.
@@ -51,6 +50,7 @@
 #include <string.h> /* memcpy() memset() strlen() */
 #include "dd_esb.h"
 #include "libdwarf_private.h" /* For malloc/calloc debug */
+#include "dd_minimal.h" /* For dwarfdump error count */
 
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,
     the NUL is accounted for in init_esb_string
@@ -107,14 +107,16 @@ void esb_close_null_device(void)
 }
 
 /*  min_len is overall space wanted for initial alloc.
-    ASSERT: esb_allocated_size == 0 */
-static void
+    ASSERT: esb_allocated_size == 0 
+    Return FALSE if unable to init. Else return TRUE */
+static int
 init_esb_string(struct esb_s *data, size_t min_len)
 {
     char* d;
+    static int notederror = FALSE;
 
     if (data->esb_allocated_size > 0) {
-        return;
+        return TRUE;
     }
     /*  Only esb_constructor applied so far.
         Now Allow for string space. */
@@ -123,37 +125,52 @@ init_esb_string(struct esb_s *data, size_t min_len)
     } else {
         min_len++ ; /* Allow for NUL at end */
     }
-    d = malloc(min_len);
+    d = (char *)malloc(min_len);
 #ifdef MALLOC_COUNT
     ++malloc_count;
     malloc_size += min_len;
 #endif
-    if (!d) {
-        fprintf(stderr,
-            "dwarfdump is out of memory allocating %lu bytes\n",
-            (unsigned long) min_len);
-        exit(5);
-    }
-    data->esb_string = d;
-    data->esb_allocated_size = min_len;
-    data->esb_string[0] = 0;
     data->esb_used_bytes = 0;
+    if (!d) {
+        if (!notederror) {
+            printf("ERROR: dwarfdump is out of memory"
+                " allocating"
+                " %lu esb string bytes.  Unable to set up esb_string"
+                "strings will be incomplete.\n",
+                (unsigned long) min_len);
+            notederror = TRUE;
+            dd_minimal_count_global_error();
+        }
+        data->esb_allocated_size = 0;
+        data->esb_string = 0;
+        return FALSE;
+    } 
+    data->esb_string = d;
+    data->esb_string[0] = 0;
+    data->esb_allocated_size = min_len;
+    return TRUE;
 }
 
 /*  Make more room. Leaving  contents unchanged, effectively.
     The NUL byte at end has room and this preserves that room.
+    Return TRUE if allocated, else return FALSE
 */
-static void
+static int
 esb_allocate_more(struct esb_s *data, size_t len)
 {
     size_t new_size = 0;
     char* newd = 0;
+    int ires = FALSE;
+    int notederror = FALSE;
 
     if (data->esb_rigid) {
-        return;
+        return TRUE;
     }
     if (data->esb_allocated_size == 0) {
-        init_esb_string(data, alloc_size);
+        ires = init_esb_string(data, alloc_size);
+        if (ires == FALSE) {
+            return FALSE;
+        }
     }
     new_size = data->esb_allocated_size + len;
     if (new_size < alloc_size) {
@@ -167,6 +184,8 @@ esb_allocate_more(struct esb_s *data, size_t len)
 #endif
         if (newd) {
             memcpy(newd,data->esb_string,data->esb_used_bytes+1);
+        } else {
+            return FALSE;
         }
     } else {
         newd = realloc(data->esb_string, new_size);
@@ -176,15 +195,23 @@ esb_allocate_more(struct esb_s *data, size_t len)
 #endif
     }
     if (!newd) {
-        fprintf(stderr, "dwarfdump is out of memory allocating "
-            "%lu bytes\n", (unsigned long) new_size);
-        exit(5);
+        if ( !notederror) {
+            printf("ERROR: dwarfdump is out of memory "
+                "allocating "
+                "%lu esb string bytes, "
+                "strings will print incorrectly\n",
+                (unsigned long)new_size);
+            notederror=TRUE;
+            dd_minimal_count_global_error();
+        }
+        return FALSE;
     }
     /*  If the area was reallocated by realloc() the earlier
         space was free()d by realloc(). */
     data->esb_string = newd;
     data->esb_allocated_size = new_size;
     data->esb_fixed = 0;
+    return TRUE;
 }
 
 /*  Ensure that the total buffer length is large enough that
@@ -199,7 +226,10 @@ esb_force_allocation(struct esb_s *data, size_t minlen)
         return;
     }
     if (data->esb_allocated_size == 0) {
-        init_esb_string(data, alloc_size);
+        int ires = init_esb_string(data, alloc_size);
+        if (ires == FALSE) {
+            return;
+        }
     }
     target_len = data->esb_used_bytes + minlen;
     if (data->esb_allocated_size < target_len) {
@@ -220,8 +250,11 @@ esb_appendn_internal(struct esb_s *data,
 
     if (data->esb_allocated_size == 0) {
         size_t maxlen = (len >= alloc_size)? len:alloc_size;
+        int ires = init_esb_string(data, maxlen);
 
-        init_esb_string(data, maxlen);
+        if (ires == FALSE) {
+            return;
+        }
     }
     /*  ASSERT: data->esb_allocated_size > data->esb_used_bytes  */
     remaining = data->esb_allocated_size - data->esb_used_bytes - 1;
@@ -230,7 +263,11 @@ esb_appendn_internal(struct esb_s *data,
             len = remaining;
         } else {
             size_t alloc_amt = needed - remaining;
-            esb_allocate_more(data,alloc_amt);
+            int ires = esb_allocate_more(data,alloc_amt);
+
+            if (ires == FALSE) {
+                 return;
+            }
         }
     }
     if (len ==  0) {
@@ -279,7 +316,12 @@ char*
 esb_get_string(struct esb_s *data)
 {
     if (data->esb_allocated_size == 0) {
-        init_esb_string(data, alloc_size);
+        int ires = init_esb_string(data, alloc_size);
+        if (ires == FALSE) {
+            return "<ERROR ESBERROR out of memory >";
+            dd_minimal_count_global_error();
+
+        }
     }
     return data->esb_string;
 }
@@ -290,7 +332,10 @@ void
 esb_empty_string(struct esb_s *data)
 {
     if (data->esb_allocated_size == 0) {
-        init_esb_string(data, alloc_size);
+        int ires = init_esb_string(data, alloc_size);
+        if (ires == FALSE) {
+            return;
+        }
     }
     data->esb_used_bytes = 0;
     data->esb_string[0] = 0;
@@ -915,7 +960,10 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     va_end(ap);
 
     if (data->esb_allocated_size == 0) {
-        init_esb_string(data, alloc_size);
+        int ires = init_esb_string(data, alloc_size);
+        if (ires == FALSE) {
+            return;
+        }
     }
     remaining = data->esb_allocated_size - data->esb_used_bytes - 1;
     if (remaining < len) {
@@ -923,7 +971,10 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
             /* No room, give up. */
             return;
         } else {
-            esb_allocate_more(data, len);
+            int ires = esb_allocate_more(data, len);
+            if (ires == FALSE) {
+                return;
+            }
         }
     }
     va_start(ap,in_string);
@@ -940,11 +991,11 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     if (len2 >  len) {
         /*  We are in big trouble, this should be impossible.
             We have trashed something in memory. */
-        fprintf(stderr,
-            "dwarfdump esb internal error, vsprintf botch "
-            " %lu  < %lu \n",
+        printf("ERROR dwarfdump esb internal error, "
+            "vsprintf botch "
+            " %lu  < %lu. Some strings will be incorrect. \n",
             (unsigned long) len2, (unsigned long) len);
-        exit(5);
+        dd_minimal_count_global_error();
     }
     return;
 }
