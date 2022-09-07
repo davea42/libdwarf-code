@@ -41,6 +41,10 @@ Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
 #include "dd_tag_common.h"
 #include "dd_getopt.h"
 #include "dd_safe_strcpy.h"
+#include "dd_minimal.h"
+
+void dd_minimal_count_global_error(void) {}
+
 
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
 

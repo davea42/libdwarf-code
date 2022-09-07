@@ -43,7 +43,9 @@ Portions Copyright 2009-2017 David Anderson. All rights reserved.
 #include "dd_tag_common.h"
 #include "dd_getopt.h"
 #include "dd_safe_strcpy.h"
+#include "dd_minimal.h"
 
+void dd_minimal_count_global_error(void) {}
 unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM]
     [TAG_TABLE_COLUMN_MAXIMUM];
 
