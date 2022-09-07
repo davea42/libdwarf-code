@@ -114,5 +114,6 @@ typedef long off_t;
                 sizeof(dest) - (length));                         \
         }                                                         \
     } while (0)
-#endif
+#endif /* LITTLE ENDIAN */
+
 #endif /* LIBDWARF_PRIVATE_H */
