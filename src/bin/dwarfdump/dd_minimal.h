@@ -29,8 +29,14 @@
 */
 
 /*  This lets dd_esb.c comminicate a note to dwarfdump
-    that there was a major error. So the major error
-    dwarfdump prints is correct.
+    that there was a major error without
+    having to know all about glflags etc.
+    esb.c actually prints the error message(s),
+    though it avoids printing multiple instances
+    of any given message.
+
+    This ensures the major error
+    count dwarfdump prints is correct.
 */
 
 #ifndef URI_H
