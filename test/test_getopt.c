@@ -20,7 +20,9 @@
 #include <string.h> /* for strchr etc */
 #include <stdlib.h> /* for exit() */
 #include "dd_getopt.h" /* for dwgetopt in dwarfdump */
+#include "dd_minimal.h"
 char *argv1[20];
+
 
 /* fake as we are not counting errors for dwarfdump. */
 void dd_minimal_count_global_error(void) {}
