@@ -175,19 +175,48 @@ struct reserve_data_s {
 
 /*  In rare cases (bad object files) an error is created
     via malloc with no dbg to attach it to.
-    We record a few of those and dealloc and flush
-    on any dwarf_finish()
     We do not expect this except on corrupt objects. 
 
-    Be careful here.  This only applies to failed
-    attempted object-reads that failed due to malloc
-    or due to seriously corrupt object content.
+    In all cases the user is *supposed* to dealloc
+    the returned Dwarf_Error, and if it is in case
+    of a NULL Dwarf_Debug the code were will find it
+    in this special array and free and zero it.
+    Hence no leak.
 */
 
-#define STATIC_ALLOWED 5
-unsigned static_used = 0;
+#define STATIC_ALLOWED 10 /* arbitrary, must be > 2, see below*/
+static unsigned static_used = 0;
 static Dwarf_Error staticerrlist[STATIC_ALLOWED];
 
+/*  Clean this out if found */
+static void
+dw_empty_errlist_item(Dwarf_Error e_in)
+{
+    unsigned i = 0;
+    if (!e_in) {
+        return;
+    }
+    for ( ; i <static_used; ++i) {
+        Dwarf_Error e = staticerrlist[i];
+        if (e != e_in) {
+             continue;
+        }
+        if (e->er_static_alloc == DE_MALLOC) {
+            /* e is the returned address, not
+                the base. Free by the base.  */
+            void *mallocaddr = (char*)e - DW_RESERVE;
+
+            _dwarf_error_destructor(e);
+            free(mallocaddr);
+        }
+        staticerrlist[i] = 0;
+    }
+}
+
+#if 0
+/*  Dangerous, since a Dwarf_Error returned to
+    a dwarf_init_call (in case of a badly corrupted object)
+    might be pointing into the list! */
 void
 _dwarf_flush_static_error_list(void)
 {
@@ -209,10 +238,27 @@ _dwarf_flush_static_error_list(void)
     }
     static_used = 0;
 }
+#endif
 
+/*  If the userr calls dwarf_dealloc on an error
+    out of a dwarf_init*() call, this will find
+    it in the static err list. Here dbg is NULL 
+    so not mentioned.  */
 void
 _dwarf_add_to_static_err_list(Dwarf_Error err)
 {
+    unsigned i = 0;
+    if (!err) {
+        return;
+    }
+    for ( ; i <static_used; ++i) {
+        Dwarf_Error e = staticerrlist[i];
+        if (e) {
+             continue;
+        }
+        staticerrlist[i] = err;
+        return;
+    }
     if (static_used < STATIC_ALLOWED) {
         staticerrlist[static_used] = err;
         ++static_used;
@@ -763,7 +809,10 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
     if (!dbg) {
         /*  App error, or an app that failed in a
-            dwarf_init*() or dwarf_elf_init*() call. */
+            dwarf_init*() or dwarf_elf_init*() call. 
+
+        */
+        dw_empty_errlist_item(space);
 #ifdef DEBUG_ALLOC
         printf( "DEALLOC dbg NULL line %d %s\n",
             __LINE__,__FILE__);
