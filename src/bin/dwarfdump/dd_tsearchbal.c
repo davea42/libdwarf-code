@@ -517,13 +517,14 @@ tsearch_inner( const void *key, struct ts_entry* head,
                 }
                 p->balance = 0;
             } else {
-                fprintf(stderr,"Impossible balanced "
+                fprintf(stderr," ERROR Impossible balanced "
                     "tree situation!\n");
                 /* Impossible. Cannot be here. */
                 exit(EXIT_FAILURE);
             }
         } else {
-            fprintf(stderr,"Impossible balanced tree situation!!\n");
+            fprintf(stderr,"ERROR Impossible balanced "
+                "tree situation!!\n");
             /* Impossible. Cannot be here. */
             exit(EXIT_FAILURE);
         }

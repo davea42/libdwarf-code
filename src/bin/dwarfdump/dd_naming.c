@@ -83,8 +83,10 @@ ellipname(int   res,
         if (printonerr && glflags.gf_check_dwarf_constants &&
             checking_this_compiler()) {
             if (glflags.gf_check_verbose_mode) {
-                printf("%s of %d (0x%x) is unknown to dwarfdump. "
+                printf("ERROR %s of %d (0x%x) is unknown "
+                    "to dwarfdump. "
                     "Continuing. \n",ty,val_in,val_in );
+                glflags.gf_count_major_errors++;
             }
             DWARF_ERROR_COUNT(dwarf_constants_result,1);
             DWARF_CHECK_ERROR_PRINT_CU();
@@ -92,8 +94,9 @@ ellipname(int   res,
 #else
         /* This is for the tree-generation, not dwarfdump itself. */
         if (printonerr) {
-            fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
+            printf("ERROR %s of %d (0x%x) is unknown to dwarfdump. "
                 "Continuing. \n",ty,val_in,val_in );
+            glflags.gf_count_major_errors++;
         }
 #endif
         n = makename(esb_get_string(&eb));

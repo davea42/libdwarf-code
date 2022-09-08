@@ -334,9 +334,11 @@ hexdig(char c)
         return ochar;
     }
     /* We have an input botch here. */
-    fprintf(stderr,"Translating from uri: "
+    printf("ERROR Translating from uri: "
         "A supposed hexadecimal input character is "
         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
+    glflags.gf_count_major_errors++;
+ 
     return ochar;
 }
 
@@ -357,18 +359,20 @@ hexpairtochar(const char *cp, char*myochar)
             ochar = tohex(c,c2);
             olen = 2;
         } else {
-            fprintf(stderr,"Translating from uri: "
+            printf("ERROR Translating from uri: "
                 "A supposed hexadecimal input character pair "
                 "runs off the end of the input after 1 hex digit.\n");
+            glflags.gf_count_major_errors++;
             /* botched input. */
             ochar = c;
             olen = 1;
         }
     } else {
         /* botched input. */
-        fprintf(stderr,"Translating from uri: "
+        printf("ERROR Translating from uri: "
             "A supposed hexadecimal input character pair "
             "runs off the end of the input.\n");
+        glflags.gf_count_major_errors++;
         ochar = '%';
         olen = 0;
     }

@@ -306,7 +306,7 @@ main(int argc, char *argv[])
 #ifdef _WIN32
     /*  Open the null device used during formatting printing */
     if (!esb_open_null_device()) {
-        fprintf(stderr,"dwarfdump: Unable to open null device.\n");
+        printf("ERROR dwarfdump: Unable to open null device.\n");
         exit(EXIT_FAILURE);
     }
 #endif /* _WIN32 */
@@ -349,23 +349,21 @@ main(int argc, char *argv[])
         couple of seconds, it was taking few hours. */
     /*  setbuf(stdout,NULL); */
     /*  Redirect stderr to stdout. */
-    dup2(fileno(stdout),fileno(stderr));
+    /*  No more redirect needed. We only use stdout */
 #endif /* _WIN32 */
 
     file_name = process_args(argc, argv);
     print_version_details(argv[0]);
     print_args(argc,argv);
 
-    /*  Redirect stdout and stderr to an specific file */
+    /*  Redirect stdout  to an specific file */
     if (glflags.output_file) {
         if (NULL == freopen(glflags.output_file,"w",stdout)) {
-            fprintf(stderr,
-                "dwarfdump: Unable to redirect output to '%s'\n",
+            printf("ERROR dwarfdump: Unable to redirect output to '%s'\n",
                 glflags.output_file);
             global_destructors();
             exit(EXIT_FAILURE);
         }
-        dup2(fileno(stdout),fileno(stderr));
         /* Record version and arguments in the output file */
         print_version_details(argv[0]);
         print_args(argc,argv);
@@ -386,7 +384,7 @@ main(int argc, char *argv[])
     temp_path_buf_len = strlen(file_name)*3 + 200 + 2;
     temp_path_buf = malloc(temp_path_buf_len);
     if (!temp_path_buf) {
-        fprintf(stderr, "%s ERROR:  Unable to malloc %lu bytes "
+        printf("%s ERROR:  Unable to malloc %lu bytes "
             "for possible path string %s.\n",
             glflags.program_name,(unsigned long)temp_path_buf_len,
             file_name);
@@ -406,7 +404,7 @@ main(int argc, char *argv[])
         &ftype,&endian,&offsetsize,&filesize,
         &path_source,&errcode);
     if (res != DW_DLV_OK) {
-        fprintf(stderr, "%s ERROR:  Can't open %s\n",
+        printf("%s ERROR:  Can't open %s\n",
             glflags.program_name, sanitized(file_name));
         global_destructors();
         free(temp_path_buf);
@@ -417,7 +415,7 @@ main(int argc, char *argv[])
     global_basefd = open_a_file(esb_get_string(
         &global_file_name));
     if (global_basefd == -1) {
-        fprintf(stderr, "%s ERROR:  can't open.. %s\n",
+        printf("%s ERROR:  can't open.. %s\n",
             glflags.program_name,
             esb_get_string(&global_file_name));
         global_destructors();
@@ -445,22 +443,23 @@ main(int argc, char *argv[])
         if (res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR) {
                 char *errmsg = dwarf_errmsg_by_number(errcode);
-                fprintf(stderr, "%s ERROR:  can't open tied file"
+                printf("%s ERROR:  can't open tied file"
                     ".. %s: %s\n",
                     glflags.program_name, sanitized(tied_file_name),
                     errmsg);
             } else {
-                fprintf(stderr,
+                printf(
                     "%s ERROR: tied file not an object file '%s'.\n",
                     glflags.program_name, sanitized(tied_file_name));
             }
+            glflags.gf_count_major_errors++;
             global_destructors();
             free(temp_path_buf);
             exit(EXIT_FAILURE);
         }
         if (ftype != tftype || endian != tendian ||
             offsetsize != toffsetsize) {
-            fprintf(stderr, "%s ERROR:  tied file \'%s\' and "
+            printf("%s ERROR:  tied file \'%s\' and "
                 "main file \'%s\' not "
                 "the same kind of object!\n",
                 glflags.program_name,
@@ -468,17 +467,19 @@ main(int argc, char *argv[])
                 esb_get_string(&global_file_name));
             free(temp_path_buf);
             global_destructors();
+            glflags.gf_count_major_errors++;
             exit(EXIT_FAILURE);
         }
         esb_append(&global_tied_file_name,tied_file_name);
         global_tiedfd = open_a_file(esb_get_string(
             &global_tied_file_name));
         if (global_tiedfd == -1) {
-            fprintf(stderr, "%s ERROR:  can't open tied file"
+            printf("%s ERROR:  can't open tied file"
                 "... %s\n",
                 glflags.program_name,
                 sanitized(esb_get_string(&global_tied_file_name)));
             global_destructors();
+            glflags.gf_count_major_errors++;
             free(temp_path_buf);
             exit(EXIT_FAILURE);
         }
@@ -489,10 +490,11 @@ main(int argc, char *argv[])
     if ((ftype == DW_FTYPE_ELF && (glflags.gf_reloc_flag ||
         glflags.gf_header_flag)) ||
         ftype == DW_FTYPE_ARCHIVE) {
-        fprintf(stderr, "Can't process %s: archives and "
+        printf("ERROR Can't process %s: archives and "
             "printing elf headers not supported in this dwarfdump "
             "--disable-libelf build.\n",
             file_name);
+        glflags.gf_count_major_errors++;
     } else if (ftype == DW_FTYPE_ELF ||
         ftype ==  DW_FTYPE_MACH_O  ||
         ftype == DW_FTYPE_PE  ) {
@@ -508,8 +510,9 @@ main(int argc, char *argv[])
             glflags.config_file_data);
         flag_data_post_cleanup();
     } else {
-        fprintf(stderr, "Can't process %s: unhandled format\n",
+        printf("ERROR Can't process %s: unhandled format\n",
             file_name);
+        glflags.gf_count_major_errors++;
     }
     free(temp_path_buf);
     temp_path_buf = 0;
@@ -583,7 +586,6 @@ print_search_results(void)
         }
     }
     fflush(stdout);
-    fflush(stderr);
     printf("\nSearch type      : '%s'\n",search_type);
     printf("Pattern searched : '%s'\n",search_text);
     printf("Occurrences Found: %d\n",glflags.search_occurrences);

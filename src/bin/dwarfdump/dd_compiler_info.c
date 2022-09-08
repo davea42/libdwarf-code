@@ -206,7 +206,7 @@ add_cu_name_compiler_target(char *name)
     Compiler *pCompiler = 0;
 
     if (current_compiler < 1) {
-        fprintf(stderr,"Current  compiler set to %d, cannot add "
+        printf("ERROR Current  compiler set to %d, cannot add "
             "Compilation unit name.  Giving up.",current_compiler);
         exit(EXIT_FAILURE);
     }
@@ -215,9 +215,10 @@ add_cu_name_compiler_target(char *name)
     /* Record current cu name */
     nc = (a_name_chain *)malloc(sizeof(a_name_chain));
     if (!nc) {
-        fprintf(stderr,"Out of memory "
+        printf("ERROR Out of memory "
             "allocating compiler target %s "
             "(not saved)\n",name);
+        glflags.gf_count_major_errors++;
         return;
     }
     nc->item = makename(name);

@@ -39,8 +39,8 @@
     count dwarfdump prints is correct.
 */
 
-#ifndef URI_H
-#define URI_H
+#ifndef DD_MINIMAL_H
+#define DD_MINIMAL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,4 +51,4 @@ void dd_minimal_count_global_error(void);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* URI_H */
+#endif /* DD_MINIMAL_H */

@@ -261,8 +261,10 @@ uri_data_destructor(void)
     esb_destructor(&uri_esb_data);
 }
 /*  The strings whose pointers are returned here
-    from makename are never destructed, but
-    that is ok since there are only about 10 created at most.  */
+    from makename are destructed at dwarf_finish.
+    makename() never returns NULL, so
+    do_uri_translation() never does so either.
+*/
 const char *
 do_uri_translation(const char *s,const char *context)
 {
@@ -1128,9 +1130,10 @@ void arg_format_producer(void)
     /*  Assume a compiler version to check,
         most likely a substring of a compiler name.  */
     if (!record_producer(dwoptarg)) {
-        fprintf(stderr, "Compiler table max %d exceeded, "
+        printf("ERROR: Compiler table max %d exceeded, "
             "limiting the tracked compilers to %d\n",
             COMPILER_TABLE_MAX,COMPILER_TABLE_MAX);
+        glflags.gf_count_major_errors++;
     }
 }
 
@@ -2033,20 +2036,22 @@ insert_debuglink_path(char *p)
 
     newarray = (char **)malloc(newcount * sizeof(char *));
     if (!newarray) {
-        fprintf(stderr,"ERROR Unable to malloc space for"
+        printf("ERROR Unable to malloc space for"
             " debuglink paths. "
             " malloc %u pointers failed.\n",newcount);
-        fprintf(stderr,"Global debuglink path ignored: %s\n",
+        printf("Global debuglink path ignored: %s\n",
             sanitized(p));
+        glflags.gf_count_major_errors++;
         return DW_DLV_ERROR;
     }
     pstr = strdup(p);
     if (!pstr) {
-        fprintf(stderr,"ERROR Unable to malloc space"
+        printf("ERROR Unable to malloc space"
             " for debuglink path: "
             "count stays at %u\n",curcount);
-        fprintf(stderr,"Global debuglink path ignored: %s\n",
+        printf("Global debuglink path ignored: %s\n",
             sanitized(p));
+        glflags.gf_count_major_errors++;
         free(newarray);
         return DW_DLV_ERROR;
     }
@@ -2089,10 +2094,10 @@ void arg_search_any(void)
     glflags.search_any_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_any_text);
     if (!tempstr){
-        fprintf(stderr,
-            "regcomp: unable to compile "
+        printf("ERROR regcomp: unable to compile "
             " search expression %s, out of memory\n",
             glflags.search_any_text);
+        glflags.gf_count_major_errors++;
         return;
     }
     glflags.search_any_text = do_uri_translation(tempstr,ctx);
@@ -2120,10 +2125,10 @@ void arg_search_match(void)
     glflags.search_match_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_match_text);
     if (!tempstr){
-        fprintf(stderr,
-            "regcomp: unable to compile "
+        printf("regcomp: unable to compile "
             " search expression match=%s, out of memory\n",
             glflags.search_match_text);
+        glflags.gf_count_major_errors++;
         return;
     }
     glflags.search_match_text = do_uri_translation(tempstr,ctx);
@@ -2153,21 +2158,22 @@ void arg_search_regex(void)
     glflags.search_regex_text = makename(dwoptarg);
     tempstr = remove_quotes_pair(glflags.search_regex_text);
     if (!tempstr){
-        fprintf(stderr,
-            "regcomp: unable to compile "
+        printf("regcomp: unable to compile "
             " search regular expression %s, out of memory\n",
             glflags.search_regex_text);
+        glflags.gf_count_major_errors++;
         return;
     }
     glflags.search_regex_text = do_uri_translation(tempstr,ctx);
-    if (strlen(glflags.search_regex_text) > 0) {
+    if (glflags.search_regex_text &&
+        strlen(glflags.search_regex_text) > 0) {
         res = dd_re_comp(glflags.search_regex_text);
 
         if (res != DW_DLV_OK) {
-            fprintf(stderr,
-                "regcomp: unable to compile "
+            printf("regcomp: unable to compile "
                 " search regular expression %s\n",
                 glflags.search_regex_text);
+            glflags.gf_count_major_errors++;
         }
     } else {
         arg_search_invalid();
@@ -2233,6 +2239,8 @@ void arg_format_file(void)
     const char *tstr = 0;
     glflags.gf_cu_name_flag = TRUE;
     tstr = do_uri_translation(dwoptarg,ctx);
+    if (!tstr) {
+    }
     esb_append(glflags.cu_name,tstr);
 }
 
@@ -2467,45 +2475,47 @@ static void arg_print_types(void)
 /*  Option not supported */
 static void arg_not_supported(void)
 {
-    fprintf(stderr, "-%c is no longer supported:ignored\n",
+    printf("ERROR Option -%c is no longer supported:ignored\n",
         arg_option);
+    glflags.gf_count_major_errors++;
 }
 
 /* Error message for --add-debuglink-path=path  */
 static void arg_debuglink_path_invalid(void)
 {
-    fprintf(stderr,
-        "--add-debuglink-path=<text>\n");
+    printf("--add-debuglink-path=<text>\n");
     /*  Add quotes around string so any invisible chars
         kind of show up */
-    fprintf(stderr, "is allowed, not  \"%s\"\n",dwoptarg);
+    printf("is allowed, not  \"%s\"\n",dwoptarg);
+    glflags.gf_count_major_errors++;
     arg_usage_error = TRUE;
 
 }
 /*  Error message for invalid '-S' option. */
 static void arg_search_invalid(void)
 {
-    fprintf(stderr,
-        "-S any=<text> or -S match=<text> or"
+    printf("-S any=<text> or -S match=<text> or"
         " -S regex=<text>\n");
-    fprintf(stderr, "is allowed, not -S %s\n",dwoptarg);
+    printf("is allowed, not -S %s\n",dwoptarg);
     arg_usage_error = TRUE;
+    glflags.gf_count_major_errors++;
 }
 
 /*  Error message for invalid '-x' option. */
 static void arg_x_invalid(void)
 {
-    fprintf(stderr, "-x name=<path-to-conf> \n");
-    fprintf(stderr, " and  \n");
-    fprintf(stderr, "-x abi=<abi-in-conf> \n");
-    fprintf(stderr, " and  \n");
-    fprintf(stderr, "-x tied=<tied-file-path> \n");
-    fprintf(stderr, " and  \n");
-    fprintf(stderr, "-x line5={std,s2l,orig,orig2l} \n");
-    fprintf(stderr, " and  \n");
-    fprintf(stderr, "-x nosanitizestrings \n");
-    fprintf(stderr, "are legal, not -x %s\n", dwoptarg);
+    printf("-x name=<path-to-conf> \n");
+    printf(" and  \n");
+    printf("-x abi=<abi-in-conf> \n");
+    printf(" and  \n");
+    printf("-x tied=<tied-file-path> \n");
+    printf(" and  \n");
+    printf("-x line5={std,s2l,orig,orig2l} \n");
+    printf(" and  \n");
+    printf("-x nosanitizestrings \n");
+    printf("are legal, not -x %s\n", dwoptarg);
     arg_usage_error = TRUE;
+    glflags.gf_count_major_errors++;
 }
 
 /*  Process the command line arguments and set the

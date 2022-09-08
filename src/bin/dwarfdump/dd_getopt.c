@@ -52,8 +52,9 @@
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
-#include <stdio.h>  /* fprintf() */
+#include <stdio.h>  /* printf() */
 #include <string.h> /* strlen() strchr() strcmp() strncmp() */
+#include "dd_minimal.h" /* dd_minimal_count_global_error */
 
 #include "dd_getopt.h"
 
@@ -204,11 +205,12 @@ int dwgetopt_long(int nargc, char *const nargv[],
 
         if (!dwlopt->name) {
             dwoptind++;
-            (void)fprintf(stderr,
+            (void)printf("ERROR "
                 "%s: invalid long option '--%s'\n",
                 nargv[0]?nargv[0]:"",
                 place);
             /* Leave longindex unchanged. */
+            dd_minimal_count_global_error();
             place = EMSG;
             return (BADCH);
         }
@@ -242,17 +244,19 @@ int dwgetopt_long(int nargc, char *const nargv[],
                     match GNU getopt_long behavior
                     of taking next argv as the arg value.
                     and thus making getopt_long succeed. */
-                (void)fprintf(stderr,
+                (void)printf("ERROR "
                     "%s: missing required long option "
                     "argument '--%s'\n",
                     nargv[0]?nargv[0]:"",
                     place);
+                dd_minimal_count_global_error();
             } else {
                 /* has arg but should not */
-                (void)fprintf(stderr,
+                (void)printf("ERROR "
                     "%s: option '--%s' does not allow an argument\n",
                     nargv[0]?nargv[0]:"",
                     dwlopt->name);
+                dd_minimal_count_global_error();
             }
             dwoptind++;
             place = EMSG;
@@ -324,10 +328,11 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
             ++dwoptind;
         }
         if (dwopterr && *ostr != ':') {
-            (void)fprintf(stderr,
+            (void)printf("ERROR "
                 "%s: invalid option -- '%c'\n",
                 nargv[0]?nargv[0]:"",
                 dwoptopt);
+            dd_minimal_count_global_error();
         }
         return (BADCH);
     }
@@ -362,10 +367,11 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
                     return (BADARG);
                 }
                 if (dwopterr) {
-                    (void)fprintf(stderr,
+                    (void)printf("ERROR "
                         "%s: option requires an argument. -- '%c'\n",
                         nargv[0]?nargv[0]:"",
                         dwoptopt);
+                    dd_minimal_count_global_error();
                 }
                 return (BADCH);
             }

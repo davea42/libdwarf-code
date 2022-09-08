@@ -40,6 +40,7 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
 
 #include <config.h>
 
+#include <stdio.h> /* free() */
 #include <stdlib.h> /* free() */
 #include <string.h> /* strcmp() strdup() */
 
@@ -49,6 +50,7 @@ Portions Copyright(C) David Anderson 2016-2019. All Rights reserved.
 #include "dd_globals.h"
 #include "dd_tsearchbal.h"
 #include "dd_makename.h"
+#include "dd_minimal.h"
 
 static void * makename_data;
 #define VALTYPE char *
@@ -84,6 +86,8 @@ makename_destructor(void)
     The basic problem is void* is a terrible way to
     pass in a pointer. But it's how tsearch was defined
     long ago.
+
+    This function can return NULL if memory is exhausted.
 */
 
 char *
@@ -92,11 +96,23 @@ makename(const char *s)
     char *newstr = 0;
     VALTYPE re = 0;
     void *retval = 0;
+    static int mnfailed = FALSE;
 
     if (!s) {
         return "";
     }
     newstr = (char *)strdup(s);
+    if (!newstr) {
+        if (!mnfailed) {
+            printf("ERROR: Out of memory to record a string"
+                "dwarfdump will not work correctly."
+                " Future errors of this type are not shown.\n");
+            dd_minimal_count_global_error();
+            mnfailed = TRUE;
+        }
+        
+        return "";
+    }
     retval = dwarf_tfind(newstr,&makename_data, value_compare_func);
     if (retval) {
         /* We found our string, it existed already. */
@@ -106,9 +122,17 @@ makename(const char *s)
     }
     retval = dwarf_tsearch(newstr,&makename_data, value_compare_func);
     if (!retval) {
+        if (!mnfailed) {
+            printf("ERROR: Out of memory to record a string"
+                " in a search table. "
+                "dwarfdump will not work correctly."
+                " Future errors of this type are not shown.\n");
+            dd_minimal_count_global_error();
+            mnfailed = TRUE;
+        }
         /*  Out of memory, */
         free(newstr);
-        return NULL;
+        return "";
     }
     re = *(VALTYPE *)retval;
     return re;
