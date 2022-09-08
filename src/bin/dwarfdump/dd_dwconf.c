@@ -345,14 +345,13 @@ find_a_file(const char *named_file,
                 "dwarfdump.conf",14);
             lname = szPath;
 
+            if (!lname || !strlen(lname)) {
+                lname="<Impossible file name string>";
+            }
             if (glflags.gf_show_dwarfdump_conf) {
-                if (!lname || !strlen(lname)) {
-                    lname="<Impossible name  string>";
-                }
                 printf("dwarfdump looking for"
                     " configuration as: \"%s\"\n", lname);
             }
-
             fin = fopen(lname, type);
             if (fin) {
                 *name_used = lname;
