@@ -1440,7 +1440,7 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     Invariant: cc_debug_offset in strictly
         ascending order in the list.
 */
-static void
+static int
 insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
     Dwarf_CU_Context icu_context)
 {
@@ -1459,14 +1459,17 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
         /*  First cu encountered. */
         dis->de_cu_context_list = icu_context;
         dis->de_cu_context_list_end = icu_context;
-        return;
+        return DW_DLV_OK;
+    }
+    if (!dis->de_cu_context_list_end) {
+        return DW_DLV_ERROR;
     }
     eoffset = dis->de_cu_context_list_end->cc_debug_offset;
     if (eoffset < ioffset) {
         /* Normal case, add at end. */
         dis->de_cu_context_list_end->cc_next = icu_context;
         dis->de_cu_context_list_end = icu_context;
-        return;
+        return DW_DLV_OK;
     }
     hoffset = dis->de_cu_context_list->cc_debug_offset;
     if (hoffset > ioffset) {
@@ -1475,7 +1478,7 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
         dis->de_cu_context_list = icu_context;
         dis->de_cu_context_list->cc_next = next;
         /*  No need to touch de_cu_context_list_end */
-        return;
+        return DW_DLV_OK;
     }
     cur = dis->de_cu_context_list;
     past = 0;
@@ -1493,13 +1496,13 @@ insert_into_cu_context_list(Dwarf_Debug_InfoTypes dis,
                 ASSERT: past non-null  */
             past->cc_next = icu_context;
             icu_context->cc_next = cur;
-            return;
+            return DW_DLV_OK;
         }
         past = cur;
     }
     /*  Impossible, for end, coffset (ie, eoffset) > ioffset  */
     /* NOTREACHED */
-    return;
+    return DW_DLV_ERROR;
 }
 
 Dwarf_Unsigned
@@ -1526,6 +1529,7 @@ _dwarf_create_a_new_cu_context_record_on_list(
 {
     int res = 0;
     Dwarf_CU_Context cu_context = 0;
+    int icres = 0;
 
     if ((new_cu_offset +
         _dwarf_length_of_cu_header_simple(dbg,is_info)) >=
@@ -1551,7 +1555,14 @@ _dwarf_create_a_new_cu_context_record_on_list(
         return res;
     }
     /*  Add the new cu_context to a list of contexts */
-    insert_into_cu_context_list(dis,cu_context);
+    icres = insert_into_cu_context_list(dis,cu_context);
+    if (icres == DW_DLV_ERROR) {
+        local_dealloc_cu_context(dbg,cu_context);
+        _dwarf_error_string(dbg,error,DW_DLE_DIE_NO_CU_CONTEXT,
+           "DW_DLE_DIE_NO_CU_CONTEXT"
+           "Impossible error inserting into internal context list");
+        return icres;
+    }
     *context_out = cu_context;
     return DW_DLV_OK;
 }
