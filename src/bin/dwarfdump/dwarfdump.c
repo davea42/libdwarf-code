@@ -157,14 +157,13 @@ global_destructors(void)
     esb_destructor(&esb_long_cu_name);
     esb_destructor(&esb_short_cu_name);
     esb_destructor(&dwarf_error_line);
+    /*  Global flags initialization and esb-buffers destruction. */
     reset_global_flags();
     esb_destructor(&global_file_name);
     esb_destructor(&global_tied_file_name);
     free_all_dwconf(glflags.config_file_data);
     sanitized_string_destructor();
     ranges_esb_string_destructor();
-    /*  Global flags initialization and esb-buffers destruction. */
-    reset_global_flags();
     close_a_file(global_basefd);
     close_a_file(global_tiedfd);
 #ifdef _WIN32
