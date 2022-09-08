@@ -22,6 +22,9 @@
 #include "dd_getopt.h" /* for dwgetopt in dwarfdump */
 char *argv1[20];
 
+/* fake as we are not counting errors for dwarfdump. */
+void dd_minimal_count_global_error(void) {}
+
 /*  Use for testing dwgetopt only.
     Not a standard function. */
 static void
