@@ -318,9 +318,8 @@ esb_get_string(struct esb_s *data)
     if (data->esb_allocated_size == 0) {
         int ires = init_esb_string(data, alloc_size);
         if (ires == FALSE) {
-            return "<ERROR ESBERROR out of memory >";
             dd_minimal_count_global_error();
-
+            return "<ERROR ESBERROR out of memory >";
         }
     }
     return data->esb_string;
