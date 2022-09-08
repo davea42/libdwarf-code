@@ -806,6 +806,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
         }
         dwarf_globals_dealloc(dbg, globs, cnt);
     } else if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,error);
         cerr << "dwarf_get_globals failed" << endl;
         exit(1);
     }
@@ -826,9 +827,15 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
                 dwarf_dealloc(dbg,name,DW_DLA_STRING);
                 pubtypes.push_back(p);
             }
+            if (res == DW_DLV_ERROR) {
+                dwarf_dealloc_error(dbg,error);
+                cerr << "dwarf_get_pubtypes failed" << endl;
+                exit(1);
+            }
         }
         dwarf_types_dealloc(dbg, types, cnt);
     } else if (res == DW_DLV_ERROR) {
+        dwarf_dealloc_error(dbg,error);
         cerr << "dwarf_get_globals failed" << endl;
         exit(1);
     }
