@@ -1062,6 +1062,8 @@ void arg_trace(void)
     /* Display dwarfdump debug options. */
     if (dump_options) {
         print_usage_message(usage_debug_text);
+        makename_destructor();
+        global_destructors();
         exit(OKAY);
     }
 }
@@ -1360,6 +1362,8 @@ void arg_h_multiple_selection(void)
 void arg_help(void)
 {
     print_usage_message(usage_long_text);
+    makename_destructor();
+    global_destructors();
     exit(OKAY);
 }
 
@@ -2263,6 +2267,8 @@ void arg_version(void)
     /* Display dwarfdump compilation date and time */
     arg_show_args();
     print_version_details(glflags.program_fullname);
+    makename_destructor();
+    global_destructors();
     exit(OKAY);
 }
 
