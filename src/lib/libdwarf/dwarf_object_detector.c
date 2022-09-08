@@ -903,10 +903,10 @@ dwarf_object_detector_path_b(
         } else {
             if (debuglink_fd != -1) {
                 close(debuglink_fd);
+                debuglink_fd = -1;
             }
             dllenszt = dwarfstring_strlen(&m)+1;
             if (dllenszt >= (size_t)outpath_len) {
-                close(debuglink_fd);
                 *errcode = DW_DLE_DEBUGLINK_PATH_SHORT;
                 return DW_DLV_ERROR;
             }
