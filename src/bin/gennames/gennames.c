@@ -44,6 +44,10 @@
 #include "libdwarf_private.h"
 #include "dd_getopt.h"
 #include "dwarf_safe_strcpy.h"
+#include "dd_minimal.h"
+
+/* works around ref to this via dd_getopt */
+void dd_minimal_count_global_error() {}
 
 /*  gennames.c
     Prints routines to return constant name for the associated value
