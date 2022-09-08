@@ -41,7 +41,7 @@
 #include "dd_attr_form.h"
 #include "dd_safe_strcpy.h"
 #include "dd_minimal.h"
-
+/* works around ref to this via dd_getopt */
 void dd_minimal_count_global_error(void) {}
 
 Dwarf_Bool ellipsis = FALSE; /* So we can use dwarf_names.c */
