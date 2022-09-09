@@ -193,6 +193,7 @@ main(int argc, char **argv)
             filepath,
             dwarf_errno(error),
             dwarf_errmsg(error));
+        dwarf_dealloc_error(dbg,error);
         exit(EXIT_FAILURE);
     }
     if (res == DW_DLV_NO_ENTRY) {

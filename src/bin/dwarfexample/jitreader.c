@@ -419,6 +419,7 @@ int main(void)
             printf("FAIL Cannot dwarf_object_init_b(). \n");
             printf("msg: %s\n",dwarf_errmsg(error));
         }
+        dwarf_dealloc_error(dbg,error);
         exit(EXIT_FAILURE);
     }
     res = print_object_info(dbg,&error);

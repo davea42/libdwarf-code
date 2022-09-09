@@ -1437,6 +1437,10 @@ DW_API int dwarf_init_path(const char * dw_path,
     Sets the true-path with DWARF if there is
     appropriate debuglink data available.
 
+    In case DW_DLV_ERROR returned be sure to
+    call dwarf_dealloc_error even though
+    the returned Dwarf_Debug is NULL.
+
     @param dw_path
     Pass in the path to the object file to open.
     @param dw_true_path_out_buffer
@@ -1500,6 +1504,10 @@ DW_API int dwarf_init_path_dl(const char * dw_path,
     This version allows specifying any number of debuglink
     global paths to search on for debuglink targets.
 
+    In case DW_DLV_ERROR returned be sure to 
+    call dwarf_dealloc_error even though
+    the returned Dwarf_Debug is NULL.
+
     @param dw_fd
     An open Unix/Linux/etc fd on the object file.
     @param dw_groupnumber
@@ -1549,6 +1557,10 @@ DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
 
 /*! @brief Used to access DWARF information in memory
     or in an object format unknown to libdwarf.
+
+    In case DW_DLV_ERROR returned be sure to 
+    call dwarf_dealloc_error even though
+    the returned Dwarf_Debug is NULL.
 
     @see jitreader
 

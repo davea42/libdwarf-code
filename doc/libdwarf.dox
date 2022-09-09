@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-08-29 v0.4.2
+    @date 2022-09-09 v0.4.2
  
     @section draft Suggestions for improvement are welcome.
 
@@ -901,11 +901,13 @@
     error conditions when reading fuzzed object files can
     no longer crash libdwarf (the crash was possible but
     not certain before the fixes).
+    In this release we believe neither libdwarf nor dwarfdump
+    leak memory even when there are malloc failures.
 
     It's now possible to run the build sanity tests
     in all three build mechanisms (configure,cmake,meson)
-    on both linux and mingw msys2 (windows).
-    libdwarf README, README.md, and README.cmake
+    on both linux, MacOS, FreeBSD, and mingw msys2 (windows).
+    libdwarf README.md (or README) and README.cmake
     document how to do builds for each supported platform
     and build mechanism.
 

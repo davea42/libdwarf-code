@@ -501,6 +501,10 @@ main(int argc, char **argv)
             DW_GROUPNUMBER_ANY,errhand,errarg,&dbg, errp);
     }
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,error);
+            error = 0;
+        }
         printf("Giving up, cannot do DWARF processing %s\n",
             filepath?filepath:"");
         cleanupstr();

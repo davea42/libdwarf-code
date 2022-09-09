@@ -48,7 +48,8 @@ void exampleinit(const char *path, unsigned groupnumber)
         tpathlen,groupnumber,errhand,
         errarg,&dbg, &error);
     if (res == DW_DLV_ERROR) {
-        /* Valid call even though dbg is null! */
+        /*  Necessary call even though dbg is null!
+            This avoids a memory leak.  */
         dwarf_dealloc_error(dbg,error);
         return;
     }
@@ -108,6 +109,9 @@ int exampleinit_dl(const char *path, unsigned groupnumber,
         &path_source,
         error);
     if (res == DW_DLV_ERROR) {
+        /*  Necessary call even though dbg is null!
+            This avoids a memory leak.  */
+        dwarf_dealloc_error(dbg,error);
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {

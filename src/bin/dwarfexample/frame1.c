@@ -132,6 +132,7 @@ main(int argc, char **argv)
         if (res == DW_DLV_ERROR) {
             printf("Error code %s\n",dwarf_errmsg(error));
         }
+        dwarf_dealloc_error(dbg,error);
         exit(EXIT_FAILURE);
     }
     /*  Do this setting after init before any real operations.
