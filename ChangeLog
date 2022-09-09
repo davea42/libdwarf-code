@@ -1,3 +1,304 @@
+dadebug commitline 0
+dadebug commit id  commit 8c219b670b2d1622bbb26608aed345ecae2cce3a
+dadebug commitline 17
+2022-09-09:  David Anderson
+    commit 8c219b670b2d1622bbb26608aed345ecae2cce3a
+
+    Documenting and ensuring that when DW_DLV_ERROR
+    is returned from a dwarf_init* or dwarf_object_init
+    call the examples and documentation call
+    dwarf_dealloc_error().
+            modified:   doc/checkexamples.c
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/frame1.c
+            modified:   src/bin/dwarfexample/jitreader.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/lib/libdwarf/libdwarf.h
+
+dadebug commit id  commit 1bcef65cd6c17566b871365f4561013509c4ec79
+dadebug commitline 25
+2022-09-09:  David Anderson
+    commit 1bcef65cd6c17566b871365f4561013509c4ec79
+
+    Minor leak on an error case fixed (dwarfgen
+    exits just after the error detected).
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+
+dadebug commit id  commit 6d699b501ac67054afaf064da492a67fcd01f113
+dadebug commitline 32
+2022-09-08:  David Anderson
+    commit 6d699b501ac67054afaf064da492a67fcd01f113
+
+    Added include of dd_minimal.h
+            modified:   test/test_getopt.c
+
+dadebug commit id  commit c826e7e3b2174f16e113a654c5c9b4f251b33b91
+dadebug commitline 57
+2022-09-08:  David Anderson
+    commit c826e7e3b2174f16e113a654c5c9b4f251b33b91
+
+    Changed stderr output to stdout.
+    Added ERROR in each. added to dwarfdump
+    count of major errors.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+            modified:   src/bin/dwarfdump/dd_getopt.c
+
+    On malloc fail added ERROR output, with a sttic flag
+    so each such appears only once.
+            modified:   src/bin/dwarfdump/dd_makename.c
+
+    Fixed the idempotency names to DD_MINIMAL_H
+            modified:   src/bin/dwarfdump/dd_minimal.h
+
+    Added ERROR  in message string
+    and added to count of major errors.
+            modified:   src/bin/dwarfdump/dd_naming.c
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+dadebug commit id  commit 248944aacb09ce4704fecec31e09c7870568ec39
+dadebug commitline 67
+2022-09-08:  David Anderson
+    commit 248944aacb09ce4704fecec31e09c7870568ec39
+
+    Added def of dd_minimal_count_global_error()
+    so we can ignore that function. It is
+    for counting global errors in dwarfdump so
+    we provied a do-nothing replacement here.
+            modified:   src/bin/gennames/gennames.c
+
+dadebug commit id  commit 677bb1ac37dc86785d57cb54c470a2c14944dca8
+dadebug commitline 76
+2022-09-08:  David Anderson
+    commit 677bb1ac37dc86785d57cb54c470a2c14944dca8
+
+    Added definition of dd_minimal_count_global_error(void)
+    so we can ignore that function here, dwarfdump is
+    not involved.
+            modified:   test/test_getopt.c
+
+dadebug commit id  commit 66442f5be7bdc62f0ebbb224f09c1ceb2106d67d
+dadebug commitline 83
+2022-09-08:  David Anderson
+    commit 66442f5be7bdc62f0ebbb224f09c1ceb2106d67d
+
+    Added a single line comment on the intent of a function.
+            modified:   src/bin/attr_form/attr_form_build.c
+
+dadebug commit id  commit 4a9c16d842ecb215c3b454182f1ee0338a7d2850
+dadebug commitline 91
+2022-09-08:  David Anderson
+    commit 4a9c16d842ecb215c3b454182f1ee0338a7d2850
+
+    Removed duplicated call of a function resetting
+    global flags.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+dadebug commit id  commit a8bf66e29e0360259db779385c0c742eeda92653
+dadebug commitline 99
+2022-09-08:  David Anderson
+    commit a8bf66e29e0360259db779385c0c742eeda92653
+
+    Modified Windows only code to avoid passing
+    NULL to open()
+        modified:   src/bin/dwarfdump/dd_dwconf.c
+
+dadebug commit id  commit fc865bc2a1524774cf5f5586cd96f6436785e00d
+dadebug commitline 108
+2022-09-08:  David Anderson
+    commit fc865bc2a1524774cf5f5586cd96f6436785e00d
+
+    When we create an ERROR string here
+    ensure it gets counted in the dwarfdump
+    ERROR count.
+            modified:   src/bin/dwarfdump/dd_esb.c
+
+dadebug commit id  commit 23728d30dfd28cc46314f3b65fb2b34f45ad26df
+dadebug commitline 116
+2022-09-08:  David Anderson
+    commit 23728d30dfd28cc46314f3b65fb2b34f45ad26df
+
+    Coverity Scan defect 238524Notes a resource leak at exit().
+    Added a _dwarf_dealloc_error() call.
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+
+dadebug commit id  commit 3d3496588f2fdbbd94d78a01593dd925699df234
+dadebug commitline 129
+2022-09-08:  David Anderson
+    commit 3d3496588f2fdbbd94d78a01593dd925699df234
+
+    Coverity Scan 277697 thinks a deref of de_cu_context_list_end
+    (value NULL)
+    is possible. Though it is not possible I add a NULL
+    check.Add a check for null in insert_into_cu_context_list.
+    And return an error if null.
+    Also,add a return int to flag to the (library-internal) caller
+    if there was an error.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+dadebug commit id  commit 4eb102e3ac8b89f236fc666ac189cadc3f2b5148
+dadebug commitline 136
+2022-09-08:  David Anderson
+    commit 4eb102e3ac8b89f236fc666ac189cadc3f2b5148
+
+    Remove a recent ill-advised line of code.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+dadebug commit id  commit d77a5bc41c92b1bdad920f00db91a09ef7b03dad
+dadebug commitline 143
+2022-09-08:  David Anderson
+    commit d77a5bc41c92b1bdad920f00db91a09ef7b03dad
+
+    Remove an ill advised recent line of code.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+dadebug commit id  commit 220975cb9c9d09265412f6bf042a24211c51b1d9
+dadebug commitline 151
+2022-09-08:  David Anderson
+    commit 220975cb9c9d09265412f6bf042a24211c51b1d9
+
+    CoverityScan defects 277696 277695 note a duplicate close of local
+    int debuglink_fd and a call to close with argument -1.
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+
+dadebug commit id  commit f5d5ac617f49858746683356960dbf55d9eee2ae
+dadebug commitline 160
+2022-09-07:  David Anderson
+    commit f5d5ac617f49858746683356960dbf55d9eee2ae
+
+    Now properly handles Dwarf_Error which was not
+    in any Dwarf_Debug. Fixing a leak provoked
+    by corrupt object file.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+dadebug commit id  commit ce24576552791fdae7ed7109aa08621016062e43
+dadebug commitline 167
+2022-09-07:  David Anderson
+    commit ce24576552791fdae7ed7109aa08621016062e43
+
+    At each exit() ensure basic destructors called.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+dadebug commit id  commit 908a4389d22bf3a81a24d077d9bae77c3bcfa882
+dadebug commitline 180
+2022-09-07:  David Anderson
+    commit 908a4389d22bf3a81a24d077d9bae77c3bcfa882
+
+    Revisions to avoid exit() while ensuring an ERROR
+    is printed and counted as an error in dwarfdump's
+    final counts.
+            modified:   src/bin/dwarfdump/dd_esb.c
+    Now records the dd_esb.c errors in the count
+    and calls reset_global_flags() so that
+    there are no leaks from flags when cleaning up.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+dadebug commit id  commit 0b847231e3719ff3ba037589f8fc73382c028f14
+dadebug commitline 190
+2022-09-07:  David Anderson
+    commit 0b847231e3719ff3ba037589f8fc73382c028f14
+
+    Adding dd_minimal.h to the headers lists.
+    (meson figures that out for itself, nothing
+    to change in meson.build)
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+
+dadebug commit id  commit 42c281c5d9661351b76a98be0b1c8b919b81fd9c
+dadebug commitline 198
+2022-09-07:  David Anderson
+    commit 42c281c5d9661351b76a98be0b1c8b919b81fd9c
+
+    Amplified the comment explaining why this
+    new header exists.
+            modified:   src/bin/dwarfdump/dd_minimal.h
+
+dadebug commit id  commit 289edb30d4e4181939075a953783c85b24e2efc3
+dadebug commitline 210
+2022-09-07:  David Anderson
+    commit 289edb30d4e4181939075a953783c85b24e2efc3
+
+    Added the same
+      include "dd_minimal.h"
+      void dd_minimal_count_global_error(void) {}
+    here as we use dd_esb.c here and do not need the global count.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+
+dadebug commit id  commit 02c8fbaf1ddd00c63cae483932ed898c919062db
+dadebug commitline 226
+2022-09-07:  David Anderson
+    commit 02c8fbaf1ddd00c63cae483932ed898c919062db
+
+    Added
+    include "dd_minimal.h"
+    void dd_minimal_count_global_error(void) {}
+
+    as dd_esb.c requires that function to exist
+    and the function has no meaning in these files.
+
+            modified:   test/test_canonical.c
+            modified:   test/test_esb.c
+            modified:   test/test_macrocheck.c
+            modified:   test/test_makename.c
+
+dadebug commit id  commit 7e53e2733795d5c648e03e59700cd5a1f968af08
+dadebug commitline 237
+2022-09-07:  David Anderson
+    commit 7e53e2733795d5c648e03e59700cd5a1f968af08
+
+    Function declared here
+    used by dd_esb.c to notify dwarfdump.c that
+    an error message was printed by dd_esb.c
+            new file:   src/bin/dwarfdump/dd_minimal.h
+    Added comment following a #endif
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+dadebug commit id  commit d73830f81b879b2a07eaea9572d00118b24fe85a
+dadebug commitline 251
+2022-09-05:  David Anderson
+    commit d73830f81b879b2a07eaea9572d00118b24fe85a
+
+    Declare global_destructors() so dd_command_options
+    can call it on exit().
+            modified:   src/bin/dwarfdump/dd_globals.h
+
+    Now every exit() first calls global_destructors() to
+    free up data related to glflags fields.
+    Avoids a leak.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+dadebug commit id  commit 90eee21528c6a38488756528d9dbba16aea666e0
+dadebug commitline 266
+2022-09-05:  David Anderson
+    commit 90eee21528c6a38488756528d9dbba16aea666e0
+
+    Use exit() from main() instead of return.
+    Easier to track when one does ot know which exit()
+    was inoked.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Ensure that at least _dwarf_flush_static_error_list()
+    gets called on dwarf_finish(), even if the Dwarf_Debug
+    passed in is NULL.  In case of a badly corrupted object
+    this lets us avoid a 'possible leak' as valgrind calls it.
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+
+dadebug commit id  commit 58d5b1b829fd667136eeb7bcf64cfaa6d4258ce2
+dadebug commitline 273
+2022-09-05:  David Anderson
+    commit 58d5b1b829fd667136eeb7bcf64cfaa6d4258ce2
+
+    Brought up to date with git log.
+            modified:   ChangeLog
+
+dadebug matches
 2022-09-05:  David Anderson
     commit 6f96e446567b2fe943365b7168b53a4b3b26ab7c
 
