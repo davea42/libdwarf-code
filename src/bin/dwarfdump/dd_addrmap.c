@@ -58,6 +58,7 @@ addr_map_create_entry(Dwarf_Unsigned k,char *name)
     }
     mp->mp_key = k;
     if (name) {
+        /* Might be zero if malloc fails. Ok. */
         mp->mp_name = (char *)strdup(name);
     } else {
         mp->mp_name = 0;
