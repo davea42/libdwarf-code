@@ -1385,6 +1385,12 @@ _dwarf_what_section_are_we(Dwarf_Debug dbg,
     FINDSEC(&dbg->de_debug_frame_eh_gnu,
         our_pointer, section_name_out,
         sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_gnu_debuglink,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_note_gnu_buildid,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
     return DW_DLV_NO_ENTRY;
 }
 
