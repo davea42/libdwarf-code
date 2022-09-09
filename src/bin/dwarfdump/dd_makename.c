@@ -101,6 +101,12 @@ makename(const char *s)
     if (!s) {
         return "";
     }
+    retval = dwarf_tfind(s,&makename_data, value_compare_func);
+    if (retval) {
+        /* We found our string, it existed already. */
+        re = *(VALTYPE *)retval;
+        return re;
+    }
     newstr = (char *)strdup(s);
     if (!newstr) {
         if (!mnfailed) {
@@ -110,15 +116,7 @@ makename(const char *s)
             dd_minimal_count_global_error();
             mnfailed = TRUE;
         }
-        
         return "";
-    }
-    retval = dwarf_tfind(newstr,&makename_data, value_compare_func);
-    if (retval) {
-        /* We found our string, it existed already. */
-        re = *(VALTYPE *)retval;
-        free(newstr);
-        return re;
     }
     retval = dwarf_tsearch(newstr,&makename_data, value_compare_func);
     if (!retval) {
