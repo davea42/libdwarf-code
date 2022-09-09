@@ -219,13 +219,27 @@ add_def_undef(unsigned opnum,
     macdef_entry *meb = 0;
     char * keystr = 0;
     int isdef = FALSE;
+    int allocerror = FALSE;
 
     if (!strcmp(esb_get_string(mtext),nonameavail)) {
         /*  we have no string, just the fake we provide.
             hard to check much in this case. */
         return;
     }
+    /*  Have to strdup here as find_set_keyend 
+        modifies what it is passed. */
     keystr = strdup((const char *)macro_string);
+    if (!keystr) {
+        if (!allocerror) {
+            glflags.gf_count_major_errors++;
+            printf("ERROR: Macro define/undef "
+                "macro op string strdup() fails, "
+                "Out of memory. Some dwarfdump"
+                "reporting will be incorrect.\n");
+            allocerror = TRUE;
+        }
+        return;
+    }
     key_length = find_set_keyend(keystr);
     if (!key_length) {
         if (!didprintdwarf) {
