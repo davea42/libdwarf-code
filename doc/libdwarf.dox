@@ -903,6 +903,10 @@
     not certain before the fixes).
     In this release we believe neither libdwarf nor dwarfdump
     leak memory even when there are malloc failures.
+    Any GNU debuglink or build-id section contents 
+    were not being properly freed 
+    (if malloced, meaning a compressed section)
+    until 9 September 2022.
 
     It's now possible to run the build sanity tests
     in all three build mechanisms (configure,cmake,meson)
