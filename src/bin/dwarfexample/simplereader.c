@@ -502,7 +502,9 @@ main(int argc, char **argv)
     }
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
-            dwarf_dealloc_error(dbg,error);
+            if(!passnullerror) {
+                dwarf_dealloc_error(dbg,error);
+            }
             error = 0;
         }
         printf("Giving up, cannot do DWARF processing %s\n",
