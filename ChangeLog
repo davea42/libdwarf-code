@@ -1,6 +1,85 @@
-dadebug commitline 0
-dadebug commit id  commit 8c219b670b2d1622bbb26608aed345ecae2cce3a
-dadebug commitline 17
+2022-09-09:  David Anderson
+    commit a8b18ce826134d005cedfbf90ac13a72d351419f
+    Merge: 14bfea01 dadc41b3
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+2022-09-09:  David Anderson
+    commit 14bfea01cb5f190c5bb06e11160217f026fc0586
+
+    Recent change to fix leak had a mistake caught by Coverity Scan.
+    Fixed.
+            modified:   src/bin/dwarfexample/simplereader.c
+
+2022-09-09:  David Anderson
+    commit 472a9a00fb816ee06c18b7788ca32658520dfb62
+
+    Minor text about new fix to libdwarf.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2022-09-09:  David Anderson
+    commit 5611a8748a63fa279071a5f89ef51d6248886556
+
+    the fix moments ago to dwarf_alloc.c was
+    the fix to ossfuzz issue 51183
+
+    If strdup fails, write an error message.
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2022-09-09:  David Anderson
+    commit dadc41b3757fd705ae283c3070220e21c497ae4a
+
+    If strdup fails, write an error message.
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2022-09-09:  David Anderson
+    commit 651aac848a452cfb06826f7533b89f829a7c1cb0
+
+    If tfind succeeds no need to strdup.
+    And if strdup fails preceding tsearch, write an error message.
+            modified:   src/bin/dwarfdump/dd_makename.c
+
+2022-09-09:  David Anderson
+    commit bbbf57693319c6898c5a700744ed67d65d5864ed
+
+    Added a comment: ok if strdup returns 0 in this one spot.
+            modified:   src/bin/dwarfdump/dd_addrmap.c
+
+2022-09-09:  David Anderson
+    commit eb538f6e8bb4f557b2dba89d21e8b4f8a1855c1d
+
+    Added
+    +    FINDSEC(&dbg->de_gnu_debuglink,
+    +        our_pointer, section_name_out,
+    +        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    +    FINDSEC(&dbg->de_note_gnu_buildid,
+    +        our_pointer, section_name_out,
+    +        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    which should have been there before.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2022-09-09:  David Anderson
+    commit fcc44f961a1e94903abcd4301250050aa6ddbc46
+
+    Added:
+    +    malloc_section_free(&dbg->de_gnu_debuglink);
+    +    malloc_section_free(&dbg->de_note_gnu_buildid);
+    which are absolutely required!
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2022-09-09:  David Anderson
+    commit 1e3dcb3e656468fab80a51b6a08f69cfc3b08505
+
+    Final for 0.4.2, one thinks.
+            modified:   doc/libdwarf.pdf
+
+2022-09-09:  David Anderson
+    commit 809ddcfb589b1f8f9a0283a66d3f259aa700aa97
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2022-09-09:  David Anderson
     commit 8c219b670b2d1622bbb26608aed345ecae2cce3a
 
@@ -17,8 +96,6 @@ dadebug commitline 17
             modified:   src/bin/dwarfexample/simplereader.c
             modified:   src/lib/libdwarf/libdwarf.h
 
-dadebug commit id  commit 1bcef65cd6c17566b871365f4561013509c4ec79
-dadebug commitline 25
 2022-09-09:  David Anderson
     commit 1bcef65cd6c17566b871365f4561013509c4ec79
 
@@ -26,16 +103,12 @@ dadebug commitline 25
     exits just after the error detected).
             modified:   src/bin/dwarfgen/createirepfrombinary.cc
 
-dadebug commit id  commit 6d699b501ac67054afaf064da492a67fcd01f113
-dadebug commitline 32
 2022-09-08:  David Anderson
     commit 6d699b501ac67054afaf064da492a67fcd01f113
 
     Added include of dd_minimal.h
             modified:   test/test_getopt.c
 
-dadebug commit id  commit c826e7e3b2174f16e113a654c5c9b4f251b33b91
-dadebug commitline 57
 2022-09-08:  David Anderson
     commit c826e7e3b2174f16e113a654c5c9b4f251b33b91
 
@@ -60,8 +133,6 @@ dadebug commitline 57
             modified:   src/bin/dwarfdump/dd_uri.c
             modified:   src/bin/dwarfdump/dwarfdump.c
 
-dadebug commit id  commit 248944aacb09ce4704fecec31e09c7870568ec39
-dadebug commitline 67
 2022-09-08:  David Anderson
     commit 248944aacb09ce4704fecec31e09c7870568ec39
 
@@ -71,8 +142,6 @@ dadebug commitline 67
     we provied a do-nothing replacement here.
             modified:   src/bin/gennames/gennames.c
 
-dadebug commit id  commit 677bb1ac37dc86785d57cb54c470a2c14944dca8
-dadebug commitline 76
 2022-09-08:  David Anderson
     commit 677bb1ac37dc86785d57cb54c470a2c14944dca8
 
@@ -81,16 +150,12 @@ dadebug commitline 76
     not involved.
             modified:   test/test_getopt.c
 
-dadebug commit id  commit 66442f5be7bdc62f0ebbb224f09c1ceb2106d67d
-dadebug commitline 83
 2022-09-08:  David Anderson
     commit 66442f5be7bdc62f0ebbb224f09c1ceb2106d67d
 
     Added a single line comment on the intent of a function.
             modified:   src/bin/attr_form/attr_form_build.c
 
-dadebug commit id  commit 4a9c16d842ecb215c3b454182f1ee0338a7d2850
-dadebug commitline 91
 2022-09-08:  David Anderson
     commit 4a9c16d842ecb215c3b454182f1ee0338a7d2850
 
@@ -98,8 +163,6 @@ dadebug commitline 91
     global flags.
             modified:   src/bin/dwarfdump/dwarfdump.c
 
-dadebug commit id  commit a8bf66e29e0360259db779385c0c742eeda92653
-dadebug commitline 99
 2022-09-08:  David Anderson
     commit a8bf66e29e0360259db779385c0c742eeda92653
 
@@ -107,8 +170,6 @@ dadebug commitline 99
     NULL to open()
         modified:   src/bin/dwarfdump/dd_dwconf.c
 
-dadebug commit id  commit fc865bc2a1524774cf5f5586cd96f6436785e00d
-dadebug commitline 108
 2022-09-08:  David Anderson
     commit fc865bc2a1524774cf5f5586cd96f6436785e00d
 
@@ -117,8 +178,6 @@ dadebug commitline 108
     ERROR count.
             modified:   src/bin/dwarfdump/dd_esb.c
 
-dadebug commit id  commit 23728d30dfd28cc46314f3b65fb2b34f45ad26df
-dadebug commitline 116
 2022-09-08:  David Anderson
     commit 23728d30dfd28cc46314f3b65fb2b34f45ad26df
 
@@ -126,8 +185,6 @@ dadebug commitline 116
     Added a _dwarf_dealloc_error() call.
             modified:   src/bin/dwarfgen/createirepfrombinary.cc
 
-dadebug commit id  commit 3d3496588f2fdbbd94d78a01593dd925699df234
-dadebug commitline 129
 2022-09-08:  David Anderson
     commit 3d3496588f2fdbbd94d78a01593dd925699df234
 
@@ -140,24 +197,18 @@ dadebug commitline 129
     if there was an error.
             modified:   src/lib/libdwarf/dwarf_die_deliv.c
 
-dadebug commit id  commit 4eb102e3ac8b89f236fc666ac189cadc3f2b5148
-dadebug commitline 136
 2022-09-08:  David Anderson
     commit 4eb102e3ac8b89f236fc666ac189cadc3f2b5148
 
     Remove a recent ill-advised line of code.
             modified:   src/lib/libdwarf/dwarf_generic_init.c
 
-dadebug commit id  commit d77a5bc41c92b1bdad920f00db91a09ef7b03dad
-dadebug commitline 143
 2022-09-08:  David Anderson
     commit d77a5bc41c92b1bdad920f00db91a09ef7b03dad
 
     Remove an ill advised recent line of code.
             modified:   src/lib/libdwarf/dwarf_init_finish.c
 
-dadebug commit id  commit 220975cb9c9d09265412f6bf042a24211c51b1d9
-dadebug commitline 151
 2022-09-08:  David Anderson
     commit 220975cb9c9d09265412f6bf042a24211c51b1d9
 
@@ -165,8 +216,6 @@ dadebug commitline 151
     int debuglink_fd and a call to close with argument -1.
             modified:   src/lib/libdwarf/dwarf_object_detector.c
 
-dadebug commit id  commit f5d5ac617f49858746683356960dbf55d9eee2ae
-dadebug commitline 160
 2022-09-07:  David Anderson
     commit f5d5ac617f49858746683356960dbf55d9eee2ae
 
@@ -175,16 +224,12 @@ dadebug commitline 160
     by corrupt object file.
             modified:   src/lib/libdwarf/dwarf_alloc.c
 
-dadebug commit id  commit ce24576552791fdae7ed7109aa08621016062e43
-dadebug commitline 167
 2022-09-07:  David Anderson
     commit ce24576552791fdae7ed7109aa08621016062e43
 
     At each exit() ensure basic destructors called.
             modified:   src/bin/dwarfdump/dd_command_options.c
 
-dadebug commit id  commit 908a4389d22bf3a81a24d077d9bae77c3bcfa882
-dadebug commitline 180
 2022-09-07:  David Anderson
     commit 908a4389d22bf3a81a24d077d9bae77c3bcfa882
 
@@ -197,8 +242,6 @@ dadebug commitline 180
     there are no leaks from flags when cleaning up.
             modified:   src/bin/dwarfdump/dwarfdump.c
 
-dadebug commit id  commit 0b847231e3719ff3ba037589f8fc73382c028f14
-dadebug commitline 190
 2022-09-07:  David Anderson
     commit 0b847231e3719ff3ba037589f8fc73382c028f14
 
@@ -208,8 +251,6 @@ dadebug commitline 190
             modified:   src/bin/dwarfdump/CMakeLists.txt
             modified:   src/bin/dwarfdump/Makefile.am
 
-dadebug commit id  commit 42c281c5d9661351b76a98be0b1c8b919b81fd9c
-dadebug commitline 198
 2022-09-07:  David Anderson
     commit 42c281c5d9661351b76a98be0b1c8b919b81fd9c
 
@@ -217,8 +258,6 @@ dadebug commitline 198
     new header exists.
             modified:   src/bin/dwarfdump/dd_minimal.h
 
-dadebug commit id  commit 289edb30d4e4181939075a953783c85b24e2efc3
-dadebug commitline 210
 2022-09-07:  David Anderson
     commit 289edb30d4e4181939075a953783c85b24e2efc3
 
@@ -230,8 +269,6 @@ dadebug commitline 210
             modified:   src/bin/tag_attr/tag_attr.c
             modified:   src/bin/tag_tree/tag_tree.c
 
-dadebug commit id  commit 02c8fbaf1ddd00c63cae483932ed898c919062db
-dadebug commitline 226
 2022-09-07:  David Anderson
     commit 02c8fbaf1ddd00c63cae483932ed898c919062db
 
@@ -247,8 +284,6 @@ dadebug commitline 226
             modified:   test/test_macrocheck.c
             modified:   test/test_makename.c
 
-dadebug commit id  commit 7e53e2733795d5c648e03e59700cd5a1f968af08
-dadebug commitline 237
 2022-09-07:  David Anderson
     commit 7e53e2733795d5c648e03e59700cd5a1f968af08
 
@@ -259,8 +294,6 @@ dadebug commitline 237
     Added comment following a #endif
             modified:   src/lib/libdwarf/libdwarf_private.h
 
-dadebug commit id  commit d73830f81b879b2a07eaea9572d00118b24fe85a
-dadebug commitline 251
 2022-09-05:  David Anderson
     commit d73830f81b879b2a07eaea9572d00118b24fe85a
 
@@ -274,8 +307,6 @@ dadebug commitline 251
             modified:   src/bin/dwarfdump/dd_command_options.c
             modified:   src/bin/dwarfdump/dwarfdump.c
 
-dadebug commit id  commit 90eee21528c6a38488756528d9dbba16aea666e0
-dadebug commitline 266
 2022-09-05:  David Anderson
     commit 90eee21528c6a38488756528d9dbba16aea666e0
 
@@ -290,16 +321,12 @@ dadebug commitline 266
     this lets us avoid a 'possible leak' as valgrind calls it.
             modified:   src/lib/libdwarf/dwarf_generic_init.c
 
-dadebug commit id  commit 58d5b1b829fd667136eeb7bcf64cfaa6d4258ce2
-dadebug commitline 273
 2022-09-05:  David Anderson
     commit 58d5b1b829fd667136eeb7bcf64cfaa6d4258ce2
 
     Brought up to date with git log.
             modified:   ChangeLog
 
-dadebug matches
-2022-09-05:  David Anderson
     commit 6f96e446567b2fe943365b7168b53a4b3b26ab7c
 
     DEBUG renamed as DEBUG_ALLOC
