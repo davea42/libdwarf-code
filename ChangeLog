@@ -1,3 +1,20 @@
+2022-09-11:  David Anderson
+    commit 73b5193322832def08aa88447825def649fb52e8
+
+    The printf here do not mention the executable name now.
+    We don't need the name of dwarfdump anyway,
+    and this keeps the baselines simple, not having to
+    realize dwarfdump.O is the same ( in the sense
+    of comparing baseline text) as dwarfdump.
+    See libdwarf-regressiontests for the tests involved.
+            modified:   src/bin/dwarfdump/dd_getopt.c
+
+2022-09-09:  David Anderson
+    commit b22dc679c8a46e4bb39cee7b5d558a09b60023ec
+
+    Now up to date with gitlog again.
+            modified:   ChangeLog
+
 2022-09-09:  David Anderson
     commit a8b18ce826134d005cedfbf90ac13a72d351419f
     Merge: 14bfea01 dadc41b3
