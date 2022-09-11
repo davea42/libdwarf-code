@@ -205,10 +205,8 @@ int dwgetopt_long(int nargc, char *const nargv[],
 
         if (!dwlopt->name) {
             dwoptind++;
-            (void)printf("ERROR "
-                "%s: invalid long option '--%s'\n",
-                nargv[0]?nargv[0]:"",
-                place);
+            (void)printf("ERROR:"
+                " invalid long option '--%s'\n", place);
             /* Leave longindex unchanged. */
             dd_minimal_count_global_error();
             place = EMSG;
@@ -244,17 +242,14 @@ int dwgetopt_long(int nargc, char *const nargv[],
                     match GNU getopt_long behavior
                     of taking next argv as the arg value.
                     and thus making getopt_long succeed. */
-                (void)printf("ERROR "
-                    "%s: missing required long option "
-                    "argument '--%s'\n",
-                    nargv[0]?nargv[0]:"",
-                    place);
+                (void)printf("ERROR:"
+                    " missing required long option "
+                    "argument '--%s'\n", place);
                 dd_minimal_count_global_error();
             } else {
                 /* has arg but should not */
-                (void)printf("ERROR "
-                    "%s: option '--%s' does not allow an argument\n",
-                    nargv[0]?nargv[0]:"",
+                (void)printf("ERROR:"
+                    " option '--%s' does not allow an argument\n",
                     dwlopt->name);
                 dd_minimal_count_global_error();
             }
@@ -328,10 +323,8 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
             ++dwoptind;
         }
         if (dwopterr && *ostr != ':') {
-            (void)printf("ERROR "
-                "%s: invalid option -- '%c'\n",
-                nargv[0]?nargv[0]:"",
-                dwoptopt);
+            (void)printf("ERROR:"
+                " invalid option -- '%c'\n", dwoptopt);
             dd_minimal_count_global_error();
         }
         return (BADCH);
@@ -367,9 +360,8 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
                     return (BADARG);
                 }
                 if (dwopterr) {
-                    (void)printf("ERROR "
-                        "%s: option requires an argument. -- '%c'\n",
-                        nargv[0]?nargv[0]:"",
+                    (void)printf("ERROR:"
+                        " option requires an argument. -- '%c'\n",
                         dwoptopt);
                     dd_minimal_count_global_error();
                 }
