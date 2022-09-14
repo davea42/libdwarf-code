@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-09-09 v0.4.2
+    @date 2022-09-09 v0.4.3
  
     @section draft Suggestions for improvement are welcome.
 
@@ -892,7 +892,10 @@
 
     We list these with newest first.
 
+    <b>Changes 0.4.2 to 0.4.3</b>
+
     <b>Changes 0.4.1 to 0.4.2</b>
+    0.4.2 released 2022-09-13.
     No API changes. No API additions.
     Corrected a bug in dwarf_tsearchhash.c where a delete request
     was accidentally assumed in all hash tree searches.
