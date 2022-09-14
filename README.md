@@ -7,10 +7,13 @@ using configure,cmake, and meson.
 
 [![ci](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml)
 
+Version 0.4.2 released 13 September 2022
 Versions before 0.4.2 had problems
 in the test suite so
 make check or ninja test might fail
 on some tests (sorry).
+
+Version 0.4.3 is not released. 
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
@@ -19,12 +22,14 @@ in your base OS release. Restricting attention
 here to just building libdwarf and dwarfdump. 
 
 If the objects you work with do not have
-compressed-elf-section content zlib/libz
+section content compressed
+with zlib(libz) or libzstd such
 are not required for building/using 
 libdwarf/dwarfdump.
 
     Ubuntu: 
-    sudo apt install pkgconf zlib1g zlib1g-dev
+    sudo apt install pkgconf zlib1g zlib1g-dev libzstd1
+    # libzstd1 is new in 0.4.3
     optional add: cmake meson ninja doxygen 
 
     FreeBSD:
