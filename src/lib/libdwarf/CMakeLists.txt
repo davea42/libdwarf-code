@@ -68,6 +68,9 @@ list(APPEND DWARF_LIBS ${LIBELF_LIBRARIES})
 if (DW_FZLIB)
     list(APPEND DWARF_LIBS z)
 endif()
+if (DW_FZSTD)
+    list(APPEND DWARF_LIBS zstd)
+endif()
 foreach(i RANGE ${targetCount})
 	list(GET DWARF_TARGETS ${i} target)
 	list(GET DWARF_TYPES ${i} type)
@@ -81,7 +84,7 @@ foreach(i RANGE ${targetCount})
             ${DW_FWALL})
 	msvc_posix(${target})
 
-	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES} ${DW_FZLIB})
+	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES} ${DW_FZLIB} ${DW_FZSTD} ) 
 	
 	set_target_properties(${target} PROPERTIES OUTPUT_NAME dwarf)
 

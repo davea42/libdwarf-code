@@ -1,5 +1,5 @@
 project('libdwarf', ['c','cpp'],
-  version: '0.4.2',
+  version: '0.4.3',
   default_options : ['buildtype=debugoptimized', 'warning_level=3', 'werror=true'],
   meson_version : '>=0.53'
 )
@@ -185,6 +185,7 @@ pkgconf.set('pkgincludedir', '${prefix}/@0@'.format(get_option('includedir')) + 
 pkgconf.set('VMAJ', v_maj)
 pkgconf.set('PACKAGE_VERSION', meson.project_version())
 pkgconf.set('requirements_libdwarf_pc', 'zlib')
+pkgconf.set('requirements_libdwarf_pc', 'zstd')
 pkgconf.set('requirements_libdwarf_libs', '')
 
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
@@ -199,6 +200,7 @@ configure_file(
 # output
 
 libdwarf_output = 'always (zlib: ' + (zlib_deps.found() ? 'yes' : 'no') + ')'
+libdwarf_output = 'always (zstd: ' + (zstd_deps.found() ? 'yes' : 'no') + ')'
 
 libdwarfp_output = (have_libdwarfp ? 'yes' : 'no')
 if have_libdwarfp

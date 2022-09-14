@@ -4,7 +4,7 @@
 dnl defines the version name of  the libdwarf.so
 m4_define([v_maj], [0])
 m4_define([v_min], [4])
-m4_define([v_mic], [2])
+m4_define([v_mic], [3])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 m4_define([v_rel], [])
@@ -166,6 +166,16 @@ PKG_CHECK_MODULES([ZLIB], [zlib],
      have_zlib="no"
      have_pc_zlib="no"
     ])
+PKG_CHECK_MODULES([ZSTD], [zstd],
+    [
+     have_zstd="yes"
+     have_pc_zstd="yes"
+     requirements_libdwarf_pc="${requirements_libdwarf_pc} zstd"
+    ],
+    [
+     have_zstd="no"
+     have_pc_zstd="no"
+    ])
 
 AC_SUBST([requirements_libdwarf_pc])
 
@@ -186,6 +196,11 @@ AS_IF(
     [AC_CHECK_HEADERS([zlib.h],
         [have_zlib="yes"],
         [have_zlib="no"])])
+AS_IF(
+    [test "x${have_zstd}" = "xno"],
+    [AC_CHECK_HEADERS([zstd.h],
+        [have_zstd="yes"],
+        [have_zstd="no"])])
 
 ### for use in casts to uint to avoid 32bit warnings.
 ### Also needed by C++ cstdint
@@ -358,16 +373,30 @@ LIBS=${LIBS_save}
 
 requirements_libdwarf_libs=
 AS_IF(
+    echo "dadebug zlib ${have_pc_zlib} ${have_zlib}"
     [test "x${have_pc_zlib}" = "xno"  -a "x${have_zlib}" = "xyes"],
     [AC_SEARCH_LIBS(
         [uncompress], [z],
         [
          ZLIB_LIBS="-lz"
          requirements_libdwarf_libs="-lz"
+         echo "dadebug req set lz"
         ],
         [have_zlib="no"])
     ])
-AC_SUBST([requirements_libdwarf_libs])
+AS_IF(
+    echo "dadebug zstd ${have_pc_zstd} ${have_zstd}"
+    [test "x${have_pc_zstd}" = "xno"  -a "x${have_zstd}" = "xyes"],
+    [AC_SEARCH_LIBS(
+        [ZSTD_decompress], [zstd],
+        [
+         ZSTD_LIBS="-lzstd"
+         echo "dadebug req set zstd"
+         requirements_libdwarf_libs="${requirements_libdwarf_libs} -lzstd"
+        ],
+        [have_zstd="no"])
+    ])
+
 
 AS_IF(
     [test "x${have_zlib}" = "xyes"],
@@ -375,6 +404,14 @@ AS_IF(
      AC_DEFINE([HAVE_ZLIB], [1], [Set to 1 if zlib decompression is available.])
      AC_DEFINE([HAVE_ZLIB_H], [1], [Set to 1 if zlib.h header file is available.])
     ])
+
+AS_IF(
+    [test "x${have_zstd}" = "xyes"],
+    [
+     AC_DEFINE([HAVE_ZSTD], [1], [Set to 1 if zstd decompression is available.])
+     AC_DEFINE([HAVE_ZSTD_H], [1], [Set to 1 if zstd.h header file is available.])
+    ])
+AC_SUBST([requirements_libdwarf_libs])
 
 ### Checks for system services
 
@@ -429,6 +466,7 @@ echo "  CFLAGS...............: $CFLAGS ${c_compiler_flags}"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LIBS.................: $LIBS"
 echo "  ZLIB_LIBS............: $ZLIB_LIBS"
+echo "  ZSTD_LIBS............: $ZSTD_LIBS"
 echo "  DWARF_CFLAGS.........: $DWARF_CFLAGS"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
 echo "  DWARFGEN_LIBS........: $DWARFGEN_LIBS"

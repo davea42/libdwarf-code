@@ -118,9 +118,9 @@ libdwarf_private.h
 
 libdwarf_la_CPPFLAGS = -DLIBDWARF_BUILD
 
-libdwarf_la_CFLAGS = @ZLIB_CFLAGS@ $(DWARF_CFLAGS_WARN)
+libdwarf_la_CFLAGS = @ZLIB_CFLAGS@ @ZSTD_CFLAGS@ $(DWARF_CFLAGS_WARN)
 
-libdwarf_la_LIBADD = @DWARF_LIBS@ @ZLIB_LIBS@
+libdwarf_la_LIBADD = @DWARF_LIBS@ @ZLIB_LIBS@ @ZSTD_LIBS@
 
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
