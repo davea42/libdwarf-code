@@ -60,6 +60,12 @@ typedef struct dwarfstring_s dwarfstring;
 int dwarfstring_constructor(struct dwarfstring_s *g);
 int dwarfstring_constructor_fixed(struct dwarfstring_s *g,
     size_t len);
+
+/*  When you have an output of a limited length string
+    and can allocate a local array to hold it, 
+    dwarfstring_constructor_static() is good since no malloc
+    is used unless the final string length exceeds the buffer
+    length. */
 int dwarfstring_constructor_static(struct dwarfstring_s *g,
     char * space,
     size_t len);
