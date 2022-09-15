@@ -284,7 +284,7 @@ if (HAVE_ZLIB)
   set(DW_FZLIB "z")
 endif()
 
-set(CMAKE_REQUIRED_LIBRARIES zstd)
+set(CMAKE_REQUIRED_LIBRARIES zstd )
 check_c_source_compiles( [=[
   #include "zstd.h"
   int main()
