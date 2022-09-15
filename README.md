@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 3 September 2022
+Updated 15 September 2022 additions for 0.4.3
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -29,11 +29,21 @@ libdwarf/dwarfdump.
 
     Ubuntu: 
     sudo apt install pkgconf zlib1g zlib1g-dev libzstd1
-    # libzstd1 is new in 0.4.3
+    # Use of libzstd1 is new in 0.4.3
+    # zlib1g zlib1g-dev libzstd1 are all optional but
+    # are required to read any DWARF data in compressed
+    # sections.
     optional add: cmake meson ninja doxygen 
 
     FreeBSD:
-    pkg install bash python3 gmake binutils pkgconf lzlib
+    pkg install bash python3 gmake binutils pkgconf lzlib zstd 
+    # libzstd is likely in /usr/local/lib and zstd.h
+    # in /usr/local/include and the compiler will not look there
+    # by default. All will still build fine without it and
+    # without lzib too, though compressed DWARF sections
+    # may not be readable.
+    # lzlib zstd all optional, but needed to read compressed
+    # DWARF sections. 
     optional add: cmake meson ninja doxygen
 
     Ensure that all the needed programs are in $PATH,
