@@ -1752,13 +1752,21 @@ do_decompress(Dwarf_Debug dbg,
         case ELFCOMPRESS_ZSTD:
              zstdcompress = TRUE;
              break;
-        default:
+        default: {
+            char buf[100];
+            dwarfstring m;
+
+            dwarfstring_constructor_static(&m,buf,sizeof(buf));
+            dwarfstring_append_printf_u(&m,
+                "DW_DLE_ZDEBUG_INPUT_FORMAT_ODD"
+                " The SHF_COMPRESSED type field is 0x%x, neither"
+                " zlib (1) or zstd(2). Corrupt dwarf.", type); 
             _dwarf_error_string(dbg, error,
                 DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
-                "DW_DLE_ZDEBUG_INPUT_FORMAT_ODD"
-                " The SHF_COMPRESSED flag is neither"
-                " zlib (1) or zstd(2). Corrupt dwarf."); 
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
+        }
         }
         uncompressed_len = size;
         section->dss_uncompressed_length = uncompressed_len;
