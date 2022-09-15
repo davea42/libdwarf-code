@@ -448,6 +448,7 @@ echo "  shared library.......: ${enable_shared}"
 echo "  static library.......: ${enable_static}"
 echo
 echo "  zlib support.........: ${have_zlib}"
+echo "  zstd support.........: ${have_zstd}"
 echo "  sanitize support.....: ${enable_sanitize}"
 echo "  documentation........: ${enable_doc}"
 echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
