@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-09-09 v0.4.3
+    @date 2022-09-16 v0.4.3
  
     @section draft Suggestions for improvement are welcome.
 
@@ -17,7 +17,9 @@
     Anything else you find misleading or confusing?
     Send suggestions to ( libdwarf-list (at) prevanders with
     final characters .org } Sorry about the simple obfuscation
-    to keep bots away.
+    to keep bots away. It's actually a simple email address,
+    not a list.
+    
     Thanks in advance for any suggestions.
 
  

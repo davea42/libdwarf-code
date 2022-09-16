@@ -1649,7 +1649,7 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Access to each CU sequentially.
     @{
 */
-/*! @brief Returns information on the next CU header.
+/*! @brief Return information on the next CU header.
 
     The library keeps track of where it is in the object file
     and it knows where to find 'next'.
@@ -1713,7 +1713,7 @@ DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
     Dwarf_Half    * dw_header_cu_type,
     Dwarf_Error*    dw_error);
 
-/*! @brief Retrieve the first DIE or the next sibling.
+/*! @brief Return the first DIE or the next sibling DIE.
 
     @param dw_dbg
     The Dwarf_Debug one is operating on.
@@ -1741,7 +1741,7 @@ DW_API int dwarf_siblingof_b(Dwarf_Debug dw_dbg,
     Dwarf_Die*       dw_return_siblingdie,
     Dwarf_Error*     dw_error);
 
-/*! @brief Some CU-relative facts.
+/*! @brief Return some CU-relative facts.
 
     Any Dwarf_Die will work.
     The values returned through the pointers
@@ -1792,7 +1792,7 @@ DW_API int dwarf_cu_header_basics(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_total_byte_length,
     Dwarf_Error    * dw_error);
 
-/*! @brief Get the child DIE, if any.
+/*! @brief Return the child DIE, if any.
     The child may be the first of a list of
     sibling DIEs.
 
@@ -1815,13 +1815,13 @@ DW_API int dwarf_child(Dwarf_Die dw_die,
     Dwarf_Die*    dw_return_childdie,
     Dwarf_Error*  dw_error);
 
-/*! @brief  Deallocate (free) a DIE.
+/*! @brief Deallocate (free) a DIE.
     @param dw_die
     Frees (deallocs) memory associated with this Dwarf_Die.
 */
 DW_API void dwarf_dealloc_die( Dwarf_Die dw_die);
 
-/*! @brief Given a has signature, retrieve the applicable CU die
+/*! @brief Return a CU DIE given a has signature
 
     @param dw_dbg
     @param dw_hash_sig
@@ -1844,7 +1844,7 @@ DW_API int dwarf_die_from_hash_signature(Dwarf_Debug dw_dbg,
     Dwarf_Die*    dw_returned_CU_die,
     Dwarf_Error*  dw_error);
 
-/*! @brief Finding die given global (not CU-relative) offset.
+/*! @brief Return DIE given global (not CU-relative) offset.
 
     This works whether or not the target section
     has had  dwarf_next_cu_header_d() applied,
@@ -1880,11 +1880,10 @@ DW_API int dwarf_offdie_b(Dwarf_Debug dw_dbg,
     Dwarf_Die*       dw_return_die,
     Dwarf_Error*     dw_error);
 
-/*! @brief Retrieves a DIE from a DW_UT_split_type
-    or DW_UT_type CU.
+/*! @brief Return a DIE given a Dwarf_Sig8 hash.
 
-returns DIE and
-    is_info flag if it finds the referenced
+    Returns DIE and is_info flag if it finds the hash
+    signature of a DIE.  Often  will be the CU DIE of
     DW_UT_split_type or DW_UT_type CU.
 
     @param dw_dbg
@@ -1908,9 +1907,10 @@ DW_API int dwarf_find_die_given_sig8(Dwarf_Debug dw_dbg,
     Dwarf_Bool * dw_is_info,
     Dwarf_Error* dw_error);
 
-/*! @brief Returns the is_info flag.
+/*! @brief Return the is_info flag.
 
-    So client software knows if a DIE is in debug_info or debug_types.
+    So client software knows if a DIE is in debug_info or 
+    (DWARF4-only) debug_types.
     @param dw_die
     The DIE being queried.
     @return
@@ -1925,7 +1925,7 @@ DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
     @{
 */
 
-/*! @brief Returns the abbrev section offset of a DIE's abbrevs.
+/*! @brief Return the abbrev section offset of a DIE's abbrevs.
 
     So we can associate a DIE's abbreviations with the contents
     the abbreviations section.
@@ -1952,7 +1952,7 @@ DW_API int dwarf_die_abbrev_global_offset(Dwarf_Die dw_die,
     Dwarf_Unsigned  * dw_abbrev_count,
     Dwarf_Error*      dw_error);
 
-/*! @brief  Get TAG value of DIE.
+/*! @brief Get TAG value of DIE.
     @param dw_die
     The DIE of interest
     @param dw_return_tag
@@ -1966,7 +1966,7 @@ DW_API int dwarf_tag(Dwarf_Die dw_die,
     Dwarf_Half*      dw_return_tag,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns the global section offset of the DIE.
+/*! @brief Return the global section offset of the DIE.
 
     @param dw_die
     The DIE of interest
@@ -2012,7 +2012,7 @@ DW_API int dwarf_debug_addr_index_to_addr(Dwarf_Die dw_die,
 */
 DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int dw_form);
 
-/*! @brief Returns the CU DIE offset given any DIE
+/*! @brief Return the CU DIE offset given any DIE
 
     Returns
     the global debug_info section offset of the CU die
@@ -2023,7 +2023,7 @@ DW_API Dwarf_Bool dwarf_addr_form_is_indexed(int dw_form);
     @see example7
 
     @param dw_die
-    The die being queried.
+    The DIE being queried.
     @param dw_return_offset
     Returns the section offset of the CU DIE for dw_die.
     @param dw_error
@@ -2035,9 +2035,9 @@ DW_API int dwarf_CU_dieoffset_given_die(Dwarf_Die dw_die,
     Dwarf_Off*       dw_return_offset,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns the CU DIE section offset given CU header offset
+/*! @brief Return the CU DIE section offset given CU header offset
 
-    Returns the CU die global offset if one knows the
+    Returns the CU DIE global offset if one knows the
     CU header global offset.
     @see dwarf_CU_dieoffset_given_die
 
@@ -2079,7 +2079,7 @@ DW_API int dwarf_die_CU_offset(Dwarf_Die dw_die,
     Dwarf_Off*       dw_return_offset,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns the offset length of the entire CU of a DIE.
+/*! @brief Return the offset length of the entire CU of a DIE.
     @param dw_die
     The DIE being queried.
     @param dw_return_CU_header_offset
@@ -2186,7 +2186,7 @@ DW_API int dwarf_diename(Dwarf_Die dw_die,
 */
 DW_API int dwarf_die_abbrev_code(Dwarf_Die dw_die);
 
-/*! @brief Returns TRUE if the DIE has children
+/*! @brief Return TRUE if the DIE has children
 
     @param dw_die
     A DIE.
@@ -2237,7 +2237,7 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     Dwarf_Bool * dw_returned_bool,
     Dwarf_Error* dw_error);
 
-/*! @brief Returns an array of DIE children offsets
+/*! @brief Return an array of DIE children offsets
 
     Given a DIE offset and dw_is_info,
     returns an array of DIE offsets of the children
@@ -2329,7 +2329,7 @@ DW_API int dwarf_get_version_of_die(Dwarf_Die dw_die,
     Dwarf_Half * dw_version,
     Dwarf_Half * dw_offset_size);
 
-/*! @brief Returns the DW_AT_low_pc  value
+/*! @brief Return the DW_AT_low_pc value
 
     @param dw_die
     The DIE of interest.
@@ -2352,7 +2352,7 @@ DW_API int dwarf_lowpc(Dwarf_Die dw_die,
     This is therefore a required interface for DWARF4
     style DW_AT_highpc.  */
 
-/*! @brief Returns the DW_AT_hipc  address value
+/*! @brief Return the DW_AT_hipc  address value
 
     Calculating the high pc involves several elements
     which we don't describe here. See the DWARF5 standard.
@@ -2376,7 +2376,7 @@ DW_API int dwarf_highpc_b(Dwarf_Die dw_die,
     enum Dwarf_Form_Class * dw_return_class,
     Dwarf_Error *           dw_error);
 
-/*! @brief Returns the offset from the DW_AT_type attribute
+/*! @brief Return the offset from the DW_AT_type attribute
 
     The offset returned is is a global offset of a type DIE.
     If this CU is DWARF4 the offset would be in
@@ -2395,7 +2395,7 @@ DW_API int dwarf_dietype_offset(Dwarf_Die dw_die,
     Dwarf_Off   * dw_return_offset,
     Dwarf_Error * dw_error);
 
-/*! @brief Returns the value of the attribute  DW_AT_byte_size
+/*! @brief Return the value of the attribute  DW_AT_byte_size
 
     @param dw_die
     The DIE of interest.
@@ -2410,7 +2410,7 @@ DW_API int dwarf_bytesize(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_size,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns the value of the attribute  DW_AT_bitsize
+/*! @brief Return the value of the attribute  DW_AT_bitsize
 
     @param dw_die
     The DIE of interest.
@@ -2425,7 +2425,7 @@ DW_API int dwarf_bitsize(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_size,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns the bit offset attribute of a DIE
+/*! @brief Return the bit offset attribute of a DIE
 
     If the attribute is DW_AT_data_bit_offset
     (DWARF4, DWARF5) the returned bit offset
@@ -2449,7 +2449,7 @@ DW_API int dwarf_bitoffset(Dwarf_Die dw_die,
     Dwarf_Half     * dw_attrnum,
     Dwarf_Unsigned * dw_returned_offset,
     Dwarf_Error*     dw_error);
-/*! @brief Returns the value of the DW_AT_language attribute.
+/*! @brief Return the value of the DW_AT_language attribute.
 
     The DIE should be a CU DIE.
     @param dw_die
@@ -2466,7 +2466,7 @@ DW_API int dwarf_srclang(Dwarf_Die dw_die,
     Dwarf_Unsigned * dw_returned_lang,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns the value of the DW_AT_ordering attribute.
+/*! @brief Return the value of the DW_AT_ordering attribute.
 
     @param dw_die
     The DIE of interest.
@@ -2536,7 +2536,7 @@ DW_API int dwarf_hasform(Dwarf_Attribute dw_attr,
     Dwarf_Bool * dw_returned_bool,
     Dwarf_Error* dw_error);
 
-/*! @brief Returns the form of the Dwarf_Attribute
+/*! @brief Return the form of the Dwarf_Attribute
 
     @param dw_attr
     The Dwarf_Attribute of interest.
@@ -2558,7 +2558,7 @@ DW_API int dwarf_whatform(Dwarf_Attribute dw_attr,
     Dwarf_Half * dw_returned_final_form,
     Dwarf_Error* dw_error);
 
-/*! @brief Returns the initial form of the Dwarf_Attribute
+/*! @brief Return the initial form of the Dwarf_Attribute
     @param dw_attr
     The Dwarf_Attribute of interest.
     @param dw_returned_initial_form
@@ -2578,7 +2578,7 @@ DW_API int dwarf_whatform_direct(Dwarf_Attribute dw_attr,
     Dwarf_Half * dw_returned_initial_form,
     Dwarf_Error* dw_error);
 
-/*! @brief Returns the attribute number of the Dwarf_Attribute
+/*! @brief Return the attribute number of the Dwarf_Attribute
     @param dw_attr
     The Dwarf_Attribute of interest.
     @param dw_returned_attrnum
@@ -2631,7 +2631,7 @@ DW_API int dwarf_formref(Dwarf_Attribute dw_attr,
     The target section of the returned offset can be in
     various sections depending on the FORM.
     Only a DW_FORM_ref_sig8 can change the returned offset of
-    a .debug_info die via a lookup into .debug_types
+    a .debug_info DIE via a lookup into .debug_types
     by changing dw_offset_is_info to FALSE (DWARF4).
 
     The caller must determine the target section from
@@ -2842,7 +2842,7 @@ DW_API int dwarf_formdata16(Dwarf_Attribute dw_attr,
     Dwarf_Form_Data16 * dw_returned_val,
     Dwarf_Error*        dw_error);
 
-/*! @brief Returns an allocated filled-in Form_Block
+/*! @brief Return an allocated filled-in Form_Block
 
     It is an error if the DW_FORM in the attribute is not a
     block form. DW_FORM_block2 is an example of a block form.
@@ -2864,7 +2864,7 @@ DW_API int dwarf_formblock(Dwarf_Attribute dw_attr,
     Dwarf_Block ** dw_returned_block,
     Dwarf_Error*   dw_error);
 
-/*! @brief Returns a pointer to a string.
+/*! @brief Return a pointer to a string.
 
     @param dw_attr
     The Dwarf_Attribute of interest.
@@ -2880,7 +2880,7 @@ DW_API int dwarf_formstring(Dwarf_Attribute dw_attr,
     char   **        dw_returned_string,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns a string index
+/*! @brief Return a string index
     @param dw_attr
     The Dwarf_Attribute of interest.
     @param dw_return_index
@@ -2899,7 +2899,7 @@ DW_API int dwarf_get_debug_str_index(Dwarf_Attribute dw_attr,
     Dwarf_Unsigned * dw_return_index,
     Dwarf_Error *    dw_error);
 
-/*! @brief Returns a pointer-to and length-of a block of data.
+/*! @brief Return a pointer-to and length-of a block of data.
 
     @param dw_attr
     The Dwarf_Attribute of interest.
@@ -2922,7 +2922,7 @@ DW_API int dwarf_formexprloc(Dwarf_Attribute dw_attr,
     Dwarf_Ptr      * dw_block_ptr,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns the FORM_CLASS applicable.
+/*! @brief Return the FORM_CLASS applicable.
     Four pieces of information are necessary
     to get the correct FORM_CLASS.
 
@@ -2947,7 +2947,7 @@ DW_API enum Dwarf_Form_Class dwarf_get_form_class(
     Dwarf_Half dw_offset_size,
     Dwarf_Half dw_form);
 
-/*! @brief Returns the offset of an attribute in its section
+/*! @brief Return the offset of an attribute in its section
 
     @param dw_die
     The DIE of interest.
@@ -3022,7 +3022,7 @@ DW_API int dwarf_convert_to_global_offset(Dwarf_Attribute dw_attr,
 */
 DW_API void dwarf_dealloc_attribute(Dwarf_Attribute dw_attr);
 
-/*! @brief Returns an array of discriminant values.
+/*! @brief Return an array of discriminant values.
 
     This applies if a DW_TAG_variant has one of the
     DW_FORM_block forms.
@@ -3113,7 +3113,7 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
     @param dw_srcfiles
     On success allocates an array of pointers to strings
     and for each such, computes the fullest path possible
-    given the CU die data for each file name listed
+    given the CU DIE data for each file name listed
     in the line table header.
     @param dw_filecount
     On success returns the number of entries
@@ -3188,7 +3188,7 @@ DW_API int dwarf_srclines_from_linecontext(
     Dwarf_Signed * dw_linecount,
     Dwarf_Error  * dw_error);
 
-/*! @brief  Returns line table counts and data
+/*! @brief Returns line table counts and data
 
     Works for DWARF2,3,4,5 and for experimental
     two-level line tables. A single level table will
@@ -3223,7 +3223,7 @@ DW_API int dwarf_srclines_two_level_from_linecontext(
 */
 DW_API void dwarf_srclines_dealloc_b(Dwarf_Line_Context dw_context);
 
-/*! @brief Returns srclines table offset
+/*! @brief Return the srclines table offset
 
     The offset is in the relevant .debug_line or .debug_line.dwo
     section (and in a split dwarf package file includes
@@ -3305,7 +3305,7 @@ DW_API int dwarf_srclines_subprog_data(Dwarf_Line_Context dw_context,
     Dwarf_Unsigned * dw_decl_line,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns values easing indexing line table file numbers.
+/*! @brief Return values easing indexing line table file numbers.
     Count is the real count of files array entries.
     Since DWARF 2,3,4 are zero origin indexes and
     DWARF5 and later are one origin, this function
@@ -3336,7 +3336,7 @@ DW_API int dwarf_srclines_files_indexes(
     Dwarf_Signed * dw_endindex,
     Dwarf_Error  * dw_error);
 
-/*! @brief  Access data for each line table file.
+/*! @brief Access data for each line table file.
 
     Has the md5ptr field so cases where DW_LNCT_MD5
     is present can return pointer to the MD5 value.
@@ -3398,7 +3398,7 @@ DW_API int dwarf_srclines_files_data_b(
     Dwarf_Form_Data16 ** dw_md5ptr,
     Dwarf_Error        * dw_error);
 
-/*! @brief Returns the number of include directories in the Line Table
+/*! @brief Return the number of include directories in the Line Table
 
     @param dw_line_context
     The line context of interest.
@@ -3417,7 +3417,7 @@ DW_API int dwarf_srclines_include_dir_count(
     Dwarf_Signed * dw_count,
     Dwarf_Error  * dw_error);
 
-/*! @brief Returns the include directories in the Line Table
+/*! @brief Return the include directories in the Line Table
 
     @param dw_line_context
     The line context of interest.
@@ -3445,7 +3445,7 @@ DW_API int dwarf_srclines_include_dir_data(
     const char **   dw_name,
     Dwarf_Error   * dw_error);
 
-/*! @brief  The DWARF version number of this compile-unit
+/*! @brief The DWARF version number of this compile-unit
     The .debug_lines[.dwo] t
     actual tables:0 (header with no lines),
     1 (standard table), or 2 (experimental).
@@ -3563,7 +3563,7 @@ DW_API int dwarf_line_is_addr_set(Dwarf_Line dw_line,
     Dwarf_Bool  * dw_is_addr_set,
     Dwarf_Error * dw_error);
 
-/*! @brief Returns the address of the Dwarf_Line
+/*! @brief Return the address of the Dwarf_Line
 
     @link dwsec_linetabreg Link to Line Table Registers @endlink
 
@@ -3581,7 +3581,7 @@ DW_API int dwarf_lineaddr(Dwarf_Line dw_line,
     Dwarf_Addr *     dw_returned_addr,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns a column number through the pointer
+/*! @brief Return a column number through the pointer
 
     @link dwsec_linetabreg Link to Line Table Registers @endlink
 
@@ -3620,7 +3620,7 @@ DW_API int dwarf_linesrc(Dwarf_Line dw_line,
     char      ** dw_returned_name,
     Dwarf_Error* dw_error);
 
-/*! @brief Returns the basic_block line register.
+/*! @brief Return the basic_block line register.
 
     @link dwsec_linetabreg Link to Line Table Registers @endlink
 
@@ -3640,7 +3640,7 @@ DW_API int dwarf_lineblock(Dwarf_Line dw_line,
 
 /*  We gather these into one call as it's likely one
     will want all or none of them.  */
-/*! @brief Returns various line table registers in one call
+/*! @brief Return various line table registers in one call
 
     @link dwsec_linetabreg Link to Line Table Registers @endlink
 
@@ -3690,7 +3690,7 @@ DW_API int dwarf_linecontext(Dwarf_Line dw_line,
     Dwarf_Unsigned * dw_returned_context,
     Dwarf_Error*     dw_error);
 
-/*! @brief  Two-level line tables get subprogam number
+/*! @brief Two-level line tables get subprogam number
     Experimental two level line tables. Not explained here.
     When reading from a logicals table, dwarf_line_subprogno()
     returns the index in the subprograms table of the inlined
@@ -4403,7 +4403,7 @@ DW_API int dwarf_get_loclist_offset_index_value(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_global_offset_value_out,
     Dwarf_Error    * dw_error);
 
-/*! @brief  Return basic data about a loclists head
+/*! @brief Return basic data about a loclists head
 
     Used by dwarfdump to print basic data from the
     data generated to look at a specific loclist
@@ -4439,7 +4439,7 @@ DW_API int dwarf_get_loclist_head_basics(Dwarf_Loc_Head_c dw_head,
     Dwarf_Unsigned * dw_offset_this_lle_area,
     Dwarf_Error    * dw_error);
 
-/*! @brief  Return basic data about a loclists context
+/*! @brief Return basic data about a loclists context
 
     Some of the same values as from
     dwarf_get_loclist_head_basics
@@ -4461,7 +4461,7 @@ DW_API int dwarf_get_loclist_context_basics(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_offset_past_last_locentry,
     Dwarf_Error    * dw_error);
 
-/*! @brief  Return basic data about a loclists context entry
+/*! @brief Return basic data about a loclists context entry
 
     Useful to print raw loclist data.
 */
@@ -4779,7 +4779,7 @@ DW_API int dwarf_get_macro_import(
     @{
 
 */
-/*! @brief Returns a pointer to the value part of a macro
+/*! @brief Return a pointer to the value part of a macro
 
     This function Works for all versions, DWARF2-DWARF5
 
@@ -4909,7 +4909,7 @@ DW_API void dwarf_dealloc_fde_cie_list(Dwarf_Debug dw_dbg,
     Dwarf_Fde *  dw_fde_data,
     Dwarf_Signed dw_fde_element_count);
 
-/*! @brief Returns the FDE data for a single FDE
+/*! @brief Return the FDE data for a single FDE
 
     @param dw_fde
     The FDE of interest.
@@ -5015,7 +5015,7 @@ DW_API int dwarf_get_cie_info_b(Dwarf_Cie dw_cie,
     Dwarf_Half*      dw_offset_size,
     Dwarf_Error*     dw_error);
 
-/*! @brief Returns CIE index given CIE
+/*! @brief Return CIE index given CIE
 
     @param dw_cie
     Pass in the CIE of interest.
@@ -5031,7 +5031,7 @@ DW_API int dwarf_get_cie_index(Dwarf_Cie dw_cie,
     Dwarf_Signed* dw_index,
     Dwarf_Error * dw_error);
 
-/*! @brief Returns length and pointer to access frame instructions.
+/*! @brief Return length and pointer to access frame instructions.
 
     @see dwarf_expand_frame_instructions
     @see examples
@@ -5084,7 +5084,7 @@ DW_API int dwarf_get_fde_info_for_all_regs3(Dwarf_Fde dw_fde,
     Dwarf_Error*     dw_error);
 
 /*  See discussion of dw_value_type, libdwarf.h. */
-/*! @brief Returns details about a particular pc and register.
+/*! @brief Return details about a particular pc and register.
 
     It is inefficient to iterate across all table_columns (registers)
     using this function.
@@ -5303,7 +5303,7 @@ DW_API int dwarf_expand_frame_instructions(Dwarf_Cie dw_cie,
     Dwarf_Error     * dw_error);
 
 /*!
-    @brief Returns information about a single instruction
+    @brief Return information about a single instruction
     Fields_description means a sequence of up to three
     letters including u,s,r,c,d,b, terminated by NUL byte.
     It is a string but we test individual bytes instead
@@ -5423,7 +5423,7 @@ DW_API int dwarf_get_frame_instruction_a(
 DW_API void dwarf_dealloc_frame_instr_head(Dwarf_Frame_Instr_Head
     dw_head);
 
-/*! @brief  Use to print fde and cie offsets from debugging info.
+/*! @brief Return FDE and CIE offsets from debugging info.
 
     @param dw_dbg
     The Dwarf_Debug of interest
@@ -5445,7 +5445,7 @@ DW_API int dwarf_fde_section_offset(Dwarf_Debug dw_dbg,
     Dwarf_Off   * dw_cie_off,
     Dwarf_Error * dw_error);
 
-/*! @brief  Use to print cie offsets from debugging info.
+/*! @brief Use to print CIE offsets from debugging info.
 
     @param dw_dbg
     The Dwarf_Debug of interest
@@ -5731,7 +5731,7 @@ DW_API int dwarf_get_str(Dwarf_Debug dw_dbg,
     DW_DLV_ERROR  if such garbage exists.
 */
 
-/*! @brief  Allocates a access to a .debug_str_ofrfsets table
+/*! @brief Creates access to a .debug_str_offsets table
 
     @see examplestrngoffsets
 
@@ -5751,7 +5751,7 @@ DW_API int dwarf_open_str_offsets_table_access(Dwarf_Debug dw_dbg,
     Dwarf_Str_Offsets_Table * dw_table_data,
     Dwarf_Error             * dw_error);
 
-/*! @brief  Close str_offsets access, free table_data.
+/*! @brief Close str_offsets access, free table_data.
 
     @see examplestrngoffsets
 
@@ -5966,7 +5966,7 @@ DW_API void dwarf_dealloc(Dwarf_Debug dw_dbg,
 /*! @defgroup debugsup Access to Section .debug_sup
     @{
 */
-/*! @brief Returns basic .debug_sup section header data
+/*! @brief Return basic .debug_sup section header data
 
     This returns basic data from the header
     of a .debug_sup section.
@@ -6029,7 +6029,7 @@ DW_API int dwarf_dnames_header(Dwarf_Debug dw_dbg,
     Dwarf_Off         * dw_offset_of_next_table,
     Dwarf_Error *       dw_error);
 
-/*! @brief  Frees all the malloc data associated with dw_dn
+/*! @brief Frees all the malloc data associated with dw_dn
     @param dw_dn
     A Dwarf_Dnames_Head pointer.
     Callers should zero the pointer passed in
@@ -6290,7 +6290,7 @@ DW_API int dwarf_dnames_abbrev_by_code(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned * dw_index_of_abbrev,
     Dwarf_Unsigned * dw_number_of_attr_form_entries) ;
 
-/*! @brief Returns a specific idxattribute form pair.
+/*! @brief Return a specific idxattribute form pair.
 
     You will find calling @see dwarf_dnames_abbrev_by_code
     useful to get the ranges you need here.
@@ -6323,7 +6323,7 @@ DW_API int dwarf_dnames_abbrev_form_by_index(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned * dw_form,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns a the set of values from an entrypool entry
+/*! @brief Return a the set of values from an entrypool entry
 
     Returns the basic data about an entrypool record
     and enables correct calling of
@@ -6373,7 +6373,7 @@ DW_API int dwarf_dnames_entrypool(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned * dw_offset_of_initial_value,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns the value set defined by this entry
+/*! @brief Return the value set defined by this entry
 
     Call here after calling  dwarf_dnames_entrypool
     to provide data to call this function correctly.
@@ -6585,7 +6585,7 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
     @{
 */
 
-/*! @brief  Global name space operations, .debug_pubnames access
+/*! @brief Global name space operations, .debug_pubnames access
 
     This section is defined in DWARF2, DWARF3, and DWARF4.
 
@@ -6694,7 +6694,7 @@ DW_API int dwarf_global_name_offsets(Dwarf_Global dw_global,
     Dwarf_Off*       dw_cu_offset,
     Dwarf_Error*     dw_error);
 
-/*! @brief  For more complete globals printing.
+/*! @brief For more complete globals printing.
     For each CU represented in .debug_pubnames, etc,
     there is a .debug_pubnames header.  For any given
     Dwarf_Global this returns the content of the applicable
@@ -6708,7 +6708,7 @@ DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
     Dwarf_Unsigned * dw_info_length,
     Dwarf_Error    * dw_error);
 
-/*! @brief  Access to DWARF3, DWARF4 .debug_pubtypes section.
+/*! @brief Access to DWARF3, DWARF4 .debug_pubtypes section.
 
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
@@ -6738,7 +6738,7 @@ DW_API int dwarf_pubtype_name_offsets(Dwarf_Type dw_type,
     Dwarf_Off  * dw_cu_offset,
     Dwarf_Error* dw_error);
 
-/*! @brief  Access to SGI/IRIX .debug_funcs section.
+/*! @brief Access to SGI/IRIX .debug_funcs section.
     Static function names and offsets.
 
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
@@ -6768,7 +6768,7 @@ DW_API int dwarf_func_name_offsets(Dwarf_Func dw_func,
     Dwarf_Off  * dw_cu_offset,
     Dwarf_Error* dw_error);
 
-/*! @brief  Access to SGI/IRIX .debug_types section.
+/*! @brief Access to SGI/IRIX .debug_types section.
     Static types names and offsets.
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
@@ -6800,7 +6800,7 @@ DW_API int dwarf_type_name_offsets(Dwarf_Type dw_type,
     Dwarf_Off  * dw_cu_offset,
     Dwarf_Error* dw_error);
 
-/*! @brief  Access to SGI/IRIC .debug_vars section.
+/*! @brief Access to SGI/IRIC .debug_vars section.
     File-scope static variable names
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
@@ -6829,7 +6829,7 @@ DW_API int dwarf_var_name_offsets(Dwarf_Var dw_var,
     Dwarf_Off  * dw_cu_offset,
     Dwarf_Error* dw_error);
 
-/*! @brief  Access to SGI/IRIC .debug_weaks section.
+/*! @brief Access to SGI/IRIC .debug_weaks section.
 
     Lists weak symbols. Weak symbols are an
     Elf Object Format feature.
@@ -7002,7 +7002,7 @@ DW_API int dwarf_gdbindex_header(Dwarf_Debug dw_dbg,
 */
 DW_API void dwarf_dealloc_gdbindex(Dwarf_Gdbindex dw_gdbindexptr);
 
-/*! @brief Returns the culist array length
+/*! @brief Return the culist array length
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_list_length
@@ -7039,7 +7039,7 @@ DW_API int dwarf_gdbindex_culist_entry(
     Dwarf_Unsigned * dw_cu_length,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns the types culist array length
+/*! @brief Return the types culist array length
     @param dw_gdbindexptr
     Pass in the Dwarf_Gdbindex pointer of interest.
     @param dw_types_list_length
@@ -7456,7 +7456,7 @@ DW_API int dwarf_get_debugfission_for_die(Dwarf_Die dw_die,
     Dwarf_Debug_Fission_Per_CU * dw_percu_out,
     Dwarf_Error                * dw_error);
 
-/*! @brief  Given a hash signature find per-cu Fission data
+/*! @brief Given a hash signature find per-cu Fission data
 
     @param dw_dbg
     Pass in the Dwarf_Debug of interest.
@@ -7627,7 +7627,7 @@ DW_API int dwarf_add_debuglink_global_path(Dwarf_Debug dw_dbg,
     const char * dw_pathname,
     Dwarf_Error* dw_error);
 
-/*! @brief  Crc32 used for debuglink crc calculation.
+/*! @brief Crc32 used for debuglink crc calculation.
 
     Caller passes pointer to array of 4 unsigned char
     provided by the caller and if this returns
@@ -7652,7 +7652,7 @@ DW_API int dwarf_crc32(Dwarf_Debug dw_dbg,
     unsigned char * dw_crcbuf,
     Dwarf_Error   * dw_error);
 
-/*! @brief  Public interface to the real crc calculation
+/*! @brief Public interface to the real crc calculation
 
     It is unlikely this is useful.
 
@@ -7681,7 +7681,7 @@ DW_API unsigned int dwarf_basic_crc32(const unsigned char * dw_buf,
     anything to stop early.
     @{
 */
-/*! @brief  Default size of the libdwarf-internal circular list */
+/*! @brief Default size of the libdwarf-internal circular list */
 #define DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE 4
 
 /*! @brief Get the harmless error count and content
@@ -8236,7 +8236,7 @@ DW_API int dwarf_get_section_info_by_index(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned*  dw_section_size,
     Dwarf_Error*     dw_error);
 
-/*! @brief  Get section count (of object file sections).
+/*! @brief Get section count (of object file sections).
 */
 DW_API int dwarf_get_section_count(Dwarf_Debug dw_dbg);
 
@@ -8330,7 +8330,7 @@ DW_API int dwarf_sec_group_sizes(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_map_entry_count_out,
     Dwarf_Error    * dw_error);
 
-/*! @brief Returns a map between group numbers and section numbers
+/*! @brief Return a map between group numbers and section numbers
 
     This map shows all the groups in the object file
     and shows which object sections go with which group.
@@ -8396,7 +8396,7 @@ DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
 /*! @defgroup miscellaneous Miscellaneous Functions
     @{
 */
-/*! @brief Returns the version string in the library.
+/*! @brief Return the version string in the library.
 
     An example: "0.3.0" which is a Semantic Version identifier.
     Before September 2021 the version string was
@@ -8409,7 +8409,7 @@ DW_API int dwarf_decode_signed_leb128(char * /*leb*/,
 */
 DW_API const char * dwarf_package_version(void);
 
-/*! @brief  Turn off libdwarf checks of strings.
+/*! @brief Turn off libdwarf checks of strings.
 
     Zero is  the default and means do all
     string length validity checks.
