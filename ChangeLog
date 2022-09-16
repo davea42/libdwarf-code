@@ -1,3 +1,95 @@
+2022-09-16:  David Anderson
+    commit ca28cdbfdcb0ed4403971a3f1394e2f80c148f70
+
+    Minor clarification of email address.
+            modified:   doc/libdwarf.dox
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+    Made the @brief more consistent, Return not Returns.
+    Other small clarifications. Spelling DIE,
+    not die, when referring to the generic Debugging
+    Information Entry. Similarly cie and fde when
+    referring to a generic idea of such.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-09-15:  David Anderson
+    commit e14073e6fc7da9c1ad603fb2cad680d76752c28d
+
+    Just adding a space in one command.
+            modified:   CMakeLists.txt
+
+2022-09-15:  David Anderson
+    commit ac82452f202b94b71bf45f3a383cf1115271fc79
+
+    Added 0.4.3 note
+            modified:   README
+            modified:   README.md
+
+2022-09-15:  David Anderson
+    commit 9c59817790d9cff5bd493fb2c7c6b2c24a285588
+
+    Now reports if zstd is available
+    (in which case it will be necessary to link in that library)
+            modified:   configure.ac
+
+2022-09-15:  David Anderson
+    commit 9106a52e7ac4e04c1f693a2a73d6380ea9a02cfe
+
+    In case of an error with the 'type' in an SHF_COMPESSED
+    compress data struct, the report mentions the
+    value in the corrupted field.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2022-09-14:  David Anderson
+    commit e829c387e8316006a487d155553a126e206222a6
+
+    Added commentary explaining why dwarfstring_constructor_static()
+    is a good thing to use, sometimes.
+            modified:   dwarf_string.h
+
+2022-09-13:  David Anderson
+    commit a1e70ed83ea80d7de968e127b239cf9710d2a824
+
+    Changes mentioning 0.4.2 and libzstd (0.4.3)
+            modified:   README
+            modified:   README.md
+
+2022-09-13:  David Anderson
+    commit 75ca4be54ace1c02c9534dbffcdc76b73be559e2
+
+    Now supports libz and/or libzstd
+    if these are available.
+            modified:   src/lib/libdwarf/dwarf_init_finish.c
+
+2022-09-13:  David Anderson
+    commit 3a678f22449dbb58f3ef5c701e988945190600e6
+
+    Version now 0.4.3. No Changes from 0.4.2
+    other than allowing/handling libzstd for
+    object section compression.
+            modified:   doc/libdwarf.dox
+
+2022-09-13:  David Anderson
+    commit 407d1006dceccccf926bc49a77d26ceffdb23856
+
+    Set release to 0.4.3 for a future release.
+    Now checks for and builds with libzstd
+    in addtion to libz.
+
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   meson.build
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/lib/libdwarf/CMakeLists.txt
+            modified:   src/lib/libdwarf/Makefile.am
+            modified:   src/lib/libdwarf/meson.build
+
+2022-09-11:  David Anderson
+    commit 1bc320995f3ca58c6e49d76f89a443048480863b
+
+    Now up to date with git log.
+            modified:   ChangeLog
+
 2022-09-11:  David Anderson
     commit 73b5193322832def08aa88447825def649fb52e8
 
