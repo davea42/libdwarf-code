@@ -1697,25 +1697,24 @@ do_decompress(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,
     Dwarf_Error * error)
 {
-    Bytef *basesrc = (Bytef *)section->dss_data;
-    Bytef *src = (Bytef *)basesrc;
-    uLong srclen = section->dss_size;
+    Dwarf_Small *basesrc = section->dss_data;
+    Dwarf_Small *src = basesrc;
+    Dwarf_Small *dest = 0;
+    Dwarf_Unsigned destlen = 0;
+    Dwarf_Unsigned srclen = section->dss_size;
     Dwarf_Unsigned flags = section->dss_flags;
     Dwarf_Small *endsection = 0;
-    int res = 0;
     int zstdcompress = FALSE;
-    Bytef *dest = 0;
-    uLongf destlen = 0;
     Dwarf_Unsigned uncompressed_len = 0;
 
-    endsection = basesrc + srclen;
-    if ((src + 12) >endsection) {
+    endsection = basesrc + section->dss_size;
+    if ((basesrc + 12) > endsection) {
         _dwarf_error_string(dbg, error,DW_DLE_ZLIB_SECTION_SHORT,
             "DW_DLE_ZLIB_SECTION_SHORT" 
             "Section too short to be either zlib or zstd related"); 
         return DW_DLV_ERROR;
     }
-    section->dss_compressed_length = section->dss_size;
+    section->dss_compressed_length = srclen;
     if (!strncmp("ZLIB",(const char *)src,4)) {
         unsigned i = 0;
         unsigned l = 8;
@@ -1773,7 +1772,6 @@ do_decompress(Dwarf_Debug dbg,
         src    += structsize;
         srclen -= structsize;
         section->dss_shf_compressed = TRUE;
-
     } else {
         _dwarf_error_string(dbg, error,
             DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
@@ -1828,7 +1826,7 @@ do_decompress(Dwarf_Debug dbg,
 #else /* !HAVE_ZLIB */
     if (!zstdcompress) {
         _dwarf_error_string(dbg, error,
-            DW_DLE_ZDEBUG_REQUIRES_ZLIB
+            DW_DLE_ZDEBUG_REQUIRES_ZLIB,
             "DW_DLE_ZDEBUG_REQUIRES_ZLIB: "
             " zlib is missing, cannot decomreess a zlib section");
         return DW_DLV_ERROR;
@@ -1909,7 +1907,10 @@ do_decompress(Dwarf_Debug dbg,
     /*  uncompress is a zlib function. */
 #ifdef HAVE_ZLIB
     if (!zstdcompress) {
-        res = uncompress(dest,&destlen,src,srclen);
+        int res = 0;
+        uLongf dlen = destlen;
+
+        res = uncompress(dest,&dlen,src,srclen);
         if (res == Z_BUF_ERROR) {
             free(dest);
             DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_BUF_ERROR, DW_DLV_ERROR);
@@ -1944,8 +1945,8 @@ do_decompress(Dwarf_Debug dbg,
     section->dss_data_was_malloc = TRUE;
     section->dss_did_decompress = TRUE;
     return DW_DLV_OK;
-#endif /* HAVE_ZLIB || HAVE_ZSTD */
 }
+#endif /* HAVE_ZLIB || HAVE_ZSTD */
 
 /*  Load the ELF section with the specified index and set its
     dss_data pointer to the memory where it was loaded.  */
@@ -2013,10 +2014,19 @@ _dwarf_load_section(Dwarf_Debug dbg,
             DWARF_DBG_ERROR(dbg, DW_DLE_COMPRESSED_EMPTY_SECTION,
                 DW_DLV_ERROR);
         }
+#if defined(HAVE_ZLIB) || defined(HAVE_ZSTD)
         res = do_decompress(dbg,section,error);
         if (res != DW_DLV_OK) {
             return res;
         }
+#else
+        _dwarf_error_string(dbg, error,
+            DW_DLE_ZDEBUG_REQUIRES_ZLIB,
+            "DW_DLE_ZDEBUG_REQUIRES_ZLIB: "
+            " zlib and zstd are missing, cannot" 
+            " decompress section.");
+        return DW_DLV_ERROR;
+#endif
         section->dss_did_decompress = TRUE;
     }
     if (_dwarf_apply_relocs == 0) {
