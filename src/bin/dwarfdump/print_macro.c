@@ -226,7 +226,7 @@ add_def_undef(unsigned opnum,
             hard to check much in this case. */
         return;
     }
-    /*  Have to strdup here as find_set_keyend 
+    /*  Have to strdup here as find_set_keyend
         modifies what it is passed. */
     keystr = strdup((const char *)macro_string);
     if (!keystr) {

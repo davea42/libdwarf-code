@@ -338,7 +338,7 @@ hexdig(char c)
         "A supposed hexadecimal input character is "
         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
     glflags.gf_count_major_errors++;
- 
+
     return ochar;
 }
 

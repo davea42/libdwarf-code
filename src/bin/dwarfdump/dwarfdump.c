@@ -2405,9 +2405,8 @@ report_caller_error_drop_error(int dwdlv,
     glflags.gf_count_major_errors++;
 
 }
-void 
+void
 dd_minimal_count_global_error(void)
 {
     glflags.gf_count_major_errors++;
 }
-

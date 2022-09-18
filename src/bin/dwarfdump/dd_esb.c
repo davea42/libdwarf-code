@@ -107,7 +107,7 @@ void esb_close_null_device(void)
 }
 
 /*  min_len is overall space wanted for initial alloc.
-    ASSERT: esb_allocated_size == 0 
+    ASSERT: esb_allocated_size == 0
     Return FALSE if unable to init. Else return TRUE */
 static int
 init_esb_string(struct esb_s *data, size_t min_len)
@@ -144,7 +144,7 @@ init_esb_string(struct esb_s *data, size_t min_len)
         data->esb_allocated_size = 0;
         data->esb_string = 0;
         return FALSE;
-    } 
+    }
     data->esb_string = d;
     data->esb_string[0] = 0;
     data->esb_allocated_size = min_len;
@@ -266,7 +266,7 @@ esb_appendn_internal(struct esb_s *data,
             int ires = esb_allocate_more(data,alloc_amt);
 
             if (ires == FALSE) {
-                 return;
+                return;
             }
         }
     }
