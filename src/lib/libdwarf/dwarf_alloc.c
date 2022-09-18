@@ -172,10 +172,9 @@ struct reserve_data_s {
 };
 #define DW_RESERVE sizeof(struct reserve_size_s)
 
-
 /*  In rare cases (bad object files) an error is created
     via malloc with no dbg to attach it to.
-    We do not expect this except on corrupt objects. 
+    We do not expect this except on corrupt objects.
 
     In all cases the user is *supposed* to dealloc
     the returned Dwarf_Error, and if it is in case
@@ -199,7 +198,7 @@ dw_empty_errlist_item(Dwarf_Error e_in)
     for ( ; i <static_used; ++i) {
         Dwarf_Error e = staticerrlist[i];
         if (e != e_in) {
-             continue;
+            continue;
         }
         if (e->er_static_alloc == DE_MALLOC) {
             /* e is the returned address, not
@@ -224,7 +223,7 @@ _dwarf_flush_static_error_list(void)
     for ( ; i <static_used; ++i) {
         Dwarf_Error e = staticerrlist[i];
         if (!e) {
-             continue;
+            continue;
         }
         if (e->er_static_alloc == DE_MALLOC) {
             /* e is the returned address, not
@@ -242,7 +241,7 @@ _dwarf_flush_static_error_list(void)
 
 /*  If the userr calls dwarf_dealloc on an error
     out of a dwarf_init*() call, this will find
-    it in the static err list. Here dbg is NULL 
+    it in the static err list. Here dbg is NULL
     so not mentioned.  */
 void
 _dwarf_add_to_static_err_list(Dwarf_Error err)
@@ -254,7 +253,7 @@ _dwarf_add_to_static_err_list(Dwarf_Error err)
     for ( ; i <static_used; ++i) {
         Dwarf_Error e = staticerrlist[i];
         if (e) {
-             continue;
+            continue;
         }
         staticerrlist[i] = err;
         return;
@@ -809,7 +808,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
     if (!dbg) {
         /*  App error, or an app that failed in a
-            dwarf_init*() or dwarf_elf_init*() call. 
+            dwarf_init*() or dwarf_elf_init*() call.
 
         */
         dw_empty_errlist_item(space);

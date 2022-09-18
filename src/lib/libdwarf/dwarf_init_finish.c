@@ -1710,8 +1710,8 @@ do_decompress(Dwarf_Debug dbg,
     endsection = basesrc + section->dss_size;
     if ((basesrc + 12) > endsection) {
         _dwarf_error_string(dbg, error,DW_DLE_ZLIB_SECTION_SHORT,
-            "DW_DLE_ZLIB_SECTION_SHORT" 
-            "Section too short to be either zlib or zstd related"); 
+            "DW_DLE_ZLIB_SECTION_SHORT"
+            "Section too short to be either zlib or zstd related");
         return DW_DLV_ERROR;
     }
     section->dss_compressed_length = srclen;
@@ -1747,10 +1747,10 @@ do_decompress(Dwarf_Debug dbg,
             error,endsection);
         switch(type) {
         case ELFCOMPRESS_ZLIB:
-             break;
+            break;
         case ELFCOMPRESS_ZSTD:
-             zstdcompress = TRUE;
-             break;
+            zstdcompress = TRUE;
+            break;
         default: {
             char buf[100];
             dwarfstring m;
@@ -1759,7 +1759,7 @@ do_decompress(Dwarf_Debug dbg,
             dwarfstring_append_printf_u(&m,
                 "DW_DLE_ZDEBUG_INPUT_FORMAT_ODD"
                 " The SHF_COMPRESSED type field is 0x%x, neither"
-                " zlib (1) or zstd(2). Corrupt dwarf.", type); 
+                " zlib (1) or zstd(2). Corrupt dwarf.", type);
             _dwarf_error_string(dbg, error,
                 DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
                 dwarfstring_string(&m));
@@ -2023,7 +2023,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
         _dwarf_error_string(dbg, error,
             DW_DLE_ZDEBUG_REQUIRES_ZLIB,
             "DW_DLE_ZDEBUG_REQUIRES_ZLIB: "
-            " zlib and zstd are missing, cannot" 
+            " zlib and zstd are missing, cannot"
             " decompress section.");
         return DW_DLV_ERROR;
 #endif

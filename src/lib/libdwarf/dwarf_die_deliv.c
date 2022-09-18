@@ -1559,8 +1559,8 @@ _dwarf_create_a_new_cu_context_record_on_list(
     if (icres == DW_DLV_ERROR) {
         local_dealloc_cu_context(dbg,cu_context);
         _dwarf_error_string(dbg,error,DW_DLE_DIE_NO_CU_CONTEXT,
-           "DW_DLE_DIE_NO_CU_CONTEXT"
-           "Impossible error inserting into internal context list");
+            "DW_DLE_DIE_NO_CU_CONTEXT"
+            "Impossible error inserting into internal context list");
         return icres;
     }
     *context_out = cu_context;

@@ -102,7 +102,6 @@ dwarf_error_creation(Dwarf_Debug dbg,
     on any dwarf_finish()
     We do not expect this except on corrupt objects. */
 
-
 void
 _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval)
@@ -147,7 +146,7 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
 #endif /* DEBUG */
             } else {
                 errptr->er_static_alloc = DE_MALLOC;
-                
+
 #ifdef DEBUG
                 printf("libdwarf no dbg,leaks, "
                     "static DE_MALLOC alloc, addr"
