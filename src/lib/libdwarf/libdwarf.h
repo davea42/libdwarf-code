@@ -221,7 +221,7 @@ typedef unsigned char      Dwarf_Small;  /* 1 byte unsigned value */
 typedef void*        Dwarf_Ptr;          /* host machine pointer */
 /*! @}   endgroup basicdatatypes */
 
-/*! @defgroup enums Enumerators
+/*! @defgroup enums Enumerators with various purposes
     @{
     @enum Dwarf_Ranges_Entry_Type
     The dwr_addr1/addr2 data is either an offset (DW_RANGES_ENTRY)
@@ -293,7 +293,7 @@ enum Dwarf_Form_Class {
 };
 /*! @}   endgroupenums*/
 
-/*! @defgroup allstructs Defined and Opaque Structs Group
+/*! @defgroup allstructs Defined and Opaque Structs
     @{
 
     @typedef Dwarf_Form_Data16
@@ -755,7 +755,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
 /*! @} endgroup allstructs */
 
-/*! @defgroup framedefines Default frame #define values
+/*! @defgroup framedefines Default stack frame #defines
     @{
 */
 /*  Special values for offset_into_exception_table field
@@ -800,7 +800,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_EXPR_VAL_EXPRESSION 3
 /*! @} */
 
-/*! @defgroup dwdla  DW_DLA #define values
+/*! @defgroup dwdla DW_DLA alloc/dealloc typename&number
 
     These identify the various allocate/dealloc
     types.  The allocation happens within libdwarf,
@@ -857,7 +857,7 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLA_STR_OFFSETS     0x40
 /*! @} */
 
-/*! @defgroup dwdle  DW_DLE #define Error Numbers
+/*! @defgroup dwdle DW_DLE Dwarf_Error numbers
 
     These identify the various error codes that have been
     used.  Not all of them are still use.
@@ -1645,7 +1645,7 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Dwarf_Error * dw_error);
 /*! @}
 */
-/*! @defgroup compilationunit CU Data-Compilation Unit (CU) Access
+/*! @defgroup compilationunit Compilation Unit (CU) Access
     Access to each CU sequentially.
     @{
 */
@@ -1920,7 +1920,7 @@ DW_API int dwarf_find_die_given_sig8(Dwarf_Debug dw_dbg,
 DW_API Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die dw_die);
 /*! @} */
 
-/*! @defgroup dieentry CU Data-Debugging Information Entry Access
+/*! @defgroup dieentry Debugging Information Entry (DIE) content
     This is the main interface to attributes of a DIE.
     @{
 */
@@ -2483,7 +2483,7 @@ DW_API int dwarf_arrayorder(Dwarf_Die dw_die,
     Dwarf_Error*     dw_error);
 
 /*! @} */
-/*! @defgroup attrform CU Data-Attribute and Attribute-Form Details
+/*! @defgroup attrform DIE Attribute and Attribute-Form Details
     Access to the details of DIEs
     @{
 */
@@ -3101,7 +3101,7 @@ DW_API int dwarf_discr_entry_s(Dwarf_Dsc_Head dw_dsc,
 
 /*! @} */
 
-/*! @defgroup linetable CU Data-Line Table For a CU
+/*! @defgroup linetable Line Table For a CU
     Access to all the line table details.
     @{
 */
@@ -3789,9 +3789,10 @@ DW_API struct  Dwarf_Printf_Callback_Info_s
     struct Dwarf_Printf_Callback_Info_s * dw_callbackinfo);
 
 /*! @} */
-/*! @defgroup ranges CU Data-Ranges data DW_AT_ranges
+/*! @defgroup ranges Ranges: code addresses in DWARF3-4
     In DWARF3 and DWARF4 the DW_AT_ranges attribute
-    provides an offset into the .debug_ranges section.
+    provides an offset into the .debug_ranges section,
+    which contains code address ranges.
 
     @see Dwarf_Ranges
 
@@ -3864,9 +3865,11 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
     Dwarf_Signed   dw_rangecount);
 /*! @} */
 
-/*! @defgroup rnglists CU Data Rnglists .debug_rnglists DWARF5
+/*! @defgroup rnglists Rnglists: code addresses in DWARF5
 
-    Used in DWARF5.
+    Used in DWARF5 to define valid address ranges for
+    code.
+    
     DW_FORM_rnglistx
     DW_AT_ranges with DW_FORM_sec_offset
     @{
@@ -4115,7 +4118,7 @@ DW_API int dwarf_get_rnglist_rle(Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_entry_operand2,
     Dwarf_Error    * dw_error);
 /*! @} */
-/*! @defgroup locations CU Data- Data Locations DWARF2-DWARF5
+/*! @defgroup locations Locations of data: DWARF2-DWARF5
     @{
 */
 /*! @brief Location Lists and Expressions
@@ -4479,7 +4482,9 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
     Dwarf_Error    * dw_error);
 /*! @} */
 
-/*! @defgroup macro CU Data-Macro .debug_macro DWARF5 data access
+/*! @defgroup macro Macro Access: DWARF5
+
+    Reading the .debug_macro section.
 
     @see examplep5 An example reading .debug_macro
     @{
@@ -4765,7 +4770,7 @@ DW_API int dwarf_get_macro_import(
     Dwarf_Error    * dw_error);
 /*! @} */
 
-/*! @defgroup macinfo CU Data-Macinfo DWARF2-4 data access
+/*! @defgroup macinfo Macro Access: DWARF2-4 
 
     Reading the .debug_macinfo section.
 
@@ -4828,7 +4833,13 @@ DW_API int dwarf_get_macro_details(Dwarf_Debug dw_dbg,
 
 /*! @} */
 
-/*! @defgroup frame Frame .debug_frame and .eh_frame Access
+/*! @defgroup frame Stack Frame Access
+
+    Use to access DWARF2-5 .debug_frame and GNU .eh_frame
+    sections. Does not evaluate frame instructions, but
+    provides detailed data so it is possible do that
+    yourself.
+
     @{
 */
 
@@ -5529,8 +5540,13 @@ DW_API Dwarf_Half dwarf_set_frame_undefined_value(
     Dwarf_Half  dw_value);
 /*! @} */
 
-/*! @defgroup abbrev Abbreviations .debug_abbrev Section Details
-    Allows reading .debug_abbrev independently of CUs or DIEs.
+/*! @defgroup abbrev Abbreviations Section Details
+
+    Allows reading section .debug_abbrev independently of
+    CUs or DIEs. Normally not done (libdwarf uses it
+    as necessary to access DWARF DIEs and DWARF attributes)
+    unless one is interested in
+    the content of the section.
 
     @link  dwsec_independentsec About Reading Independently. @endlink
     @{
@@ -5990,7 +6006,7 @@ DW_API int dwarf_get_debug_sup(Dwarf_Debug dw_dbg,
     Dwarf_Error    * dw_error);
 /*! @} */
 
-/*! @defgroup debugnames Fast Access-Access to .debug_names DWARF5
+/*! @defgroup debugnames Fast Access to .debug_names DWARF5
     @{
 
     The section is new in DWARF5  supersedes .debug_pubnames and
@@ -6447,7 +6463,7 @@ DW_API int dwarf_dnames_entrypool_values(Dwarf_Dnames_Head dw_dn,
 
 /*! @} */
 
-/*! @defgroup aranges Fast Access-Access to a CU given a code address
+/*! @defgroup aranges Fast Access to a CU given a code address
     @{
 */
 /*! @brief Get access to CUs given code addresses
@@ -6567,7 +6583,7 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
     Dwarf_Error   *  dw_error );
 /*! @} */
 
-/*! @defgroup pubnames Fast Access-Access to .debug_pubnames and more.
+/*! @defgroup pubnames Fast Access to .debug_pubnames and more.
 
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
@@ -6886,7 +6902,7 @@ DW_API int dwarf_return_empty_pubnames(Dwarf_Debug dw_dbg,
 
 /*! @} */
 
-/*! @defgroup gnupubnames Fast Access-Access GNU .debug_gnu_pubnames
+/*! @defgroup gnupubnames Fast Access to GNU .debug_gnu_pubnames
     @{
 */
 /*  BEGIN: .debug_gnu_pubnames .debug_gnu_typenames access,
@@ -6923,7 +6939,7 @@ DW_API int dwarf_get_gnu_index_block_entry(
 
 /*! @} */
 
-/*! @defgroup gdbindex Fast Access-Gdb Index
+/*! @defgroup gdbindex Fast Access to Gdb Index
 
     Section .gdb_index
 
@@ -7267,7 +7283,7 @@ DW_API int dwarf_gdbindex_string_by_offset(
     Dwarf_Error   *  dw_error);
 /*! @} */
 
-/*! @defgroup splitdwarf Fast Access-Split Dwarf (Debug Fission)
+/*! @defgroup splitdwarf Fast Access to Split Dwarf (Debug Fission)
     @{
 */
 /*! @brief Access a .debug_cu_index or dw_tu_index  section
