@@ -177,12 +177,16 @@ add --disable-dependency-tracking to the configure
 command. With that option do not assume you can
 alter source files and have make rebuild all
 necessary.
+
 See:
 https://www.gnu.org/savannah-checkouts/gnu/automake/history/automake-history.html#Dependency-Tracking-Evolution
 
-With `--enable-shared --disable-static`
-appended to the configure step,
- libdwarf.so is built and used; libdwarf.a is not built.
+With 
+
+    --enable-shared --disable-static
+
+appended to the configure command
+libdwarf.so is built and used but libdwarf.a is not built.
 
 Other options of possible interest:
 
@@ -192,10 +196,11 @@ Other options of possible interest:
     configure -h     shows the options available.  
 
 Sanity checking:
- gcc has some checks that can be done at runtime.
- -fsanitize=undefined is turned on by --enable-sanitize
 
-### Options to meson on Windows
+gcc has some checks that can be done at runtime.
+-fsanitize=undefined is turned on by --enable-sanitize
+
+### Options to meson on Windows (Msys2)
 
 All libdwarf builds are automatically shared object (dll)
 builds. No static library libdwarf.a for installation
@@ -203,7 +208,7 @@ is supported.
 
 Has the same meson setup reporting as on Linux (above).
 
-### Options to configure on Windows
+### Options to configure on Windows (Msys2)
 
 All libdwarf builds are automatically shared object (dll)
 builds. No static libdwarf.a can be installed.
