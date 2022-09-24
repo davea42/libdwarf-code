@@ -224,8 +224,12 @@ a build and then
 
 # INCOMPATIBILITIES. Changes to interfaces
 
+Comparing lihbdwarf-0.4.3 to libdwarf-0.4.2
+Not released: 0.4.3
+
+
 Comparing libdwarf-0.4.2 to libdwarf-0.4.1
-No incompatibilities. 0.4.2 not released.
+No incompatibilities.
 
 Comparing libdwarf-0.4.1 to libdwarf-0.4.0
 Added a new function dwarf_suppress_debuglink_crc()
