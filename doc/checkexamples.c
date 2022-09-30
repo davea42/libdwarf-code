@@ -1903,7 +1903,7 @@ int examplewgdbindex(Dwarf_Gdbindex gdbindex,
 }
 /*! @endcode */
 
-/*! @defgroup examplex Example geting gdbindex symbol table
+/*! @defgroup examplex Example getting gdbindex symbol table
     @brief Example accessing gdbindex symbol table data
 
     @code
@@ -1971,7 +1971,7 @@ int examplex(Dwarf_Gdbindex gdbindex,Dwarf_Error*error)
     return DW_DLV_OK;
 }
 /*! @endcode */
-/*! @defgroup exampley Example geting cu and tu Debug Fission data
+/*! @defgroup exampley Example getting cu and tu Debug Fission data
     @brief Example using dwarf_get_xu_index_header
 
     @code
@@ -2006,7 +2006,7 @@ int exampley(Dwarf_Debug dbg, const char *type,
 }
 /*! @endcode */
 
-/*! @defgroup examplez Example geting Debug Fission hash slots
+/*! @defgroup examplez Example getting Debug Fission hash slots
     @brief Example using dwarf_get_xu_hash_entry()
 
     @code
@@ -2044,7 +2044,7 @@ int examplez( Dwarf_Xu_Index_Header xuhdr,
 }
 /*! @endcode */
 
-/*! @defgroup exampleza Example geting Debug Fission data
+/*! @defgroup exampleza Example getting Debug Fission data
     @brief Example getting cu/tu name, offset
 
     @code
