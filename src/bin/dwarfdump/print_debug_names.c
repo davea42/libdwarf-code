@@ -61,7 +61,8 @@ printindent(unsigned int l)
 }
 
 static const Dwarf_Sig8 zerosig;
-/*   The table entries here are indexed starting at 1 */
+/*   The table entries here are indexed starting at 0 
+     Whereas names table area indexed starting at 1.  */
 static int
 print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
     const char *type,
@@ -69,7 +70,7 @@ print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
     Dwarf_Unsigned sig_count,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned i = 1;
+    Dwarf_Unsigned i = 0;
     Dwarf_Unsigned totalcount = offset_count+sig_count;
     int res = 0;
     Dwarf_Bool formtu = FALSE;
@@ -99,7 +100,7 @@ print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
         printf("%s List. Entry count: %" DW_PR_DUu "\n",
             type,totalcount);
     }
-    for (i = 1 ; i <= totalcount; ++i) {
+    for (i = 0 ; i < totalcount; ++i) {
         Dwarf_Unsigned offset = 0;
         Dwarf_Sig8     signature;
 
@@ -362,7 +363,7 @@ print_attr_array(unsigned int indent,
     return DW_DLV_OK;
 }
 
-#define MAXPAIRS 7 /* The standard defines 5.*/
+#define MAXPAIRS 8 /* The standard defines 5.*/
 static Dwarf_Half     idx_array[MAXPAIRS];
 static Dwarf_Half     form_array[MAXPAIRS];
 static Dwarf_Unsigned offsets_array[MAXPAIRS];

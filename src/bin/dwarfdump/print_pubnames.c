@@ -256,20 +256,12 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
     Dwarf_Signed count = 0;
     /* Offset to previous CU */
     int res = 0;
-    Dwarf_Addr elf_max_address = 0;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
     struct esb_s truename;
     char sanbuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s sanitname;
 
     glflags.current_section_id = DEBUG_PUBNAMES;
-    res = get_address_size_and_max(dbg,0,&elf_max_address,err);
-    if (res != DW_DLV_OK) {
-        simple_err_return_msg_either_action(res,
-            "print_pubnames call to get address size and max address"
-            " fails.");
-        return res;
-    }
     if (glflags.verbose) {
         /* For best testing! */
         res = dwarf_return_empty_pubnames(dbg,1);
