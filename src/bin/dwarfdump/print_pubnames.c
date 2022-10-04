@@ -173,8 +173,9 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     if (glflags.gf_display_offsets) {
         /* Print 'name' at the end for better layout */
         if (!globi) { 
-            printf(" %s data.  %" DW_PR_DSd " entries.\n",
-                line_title,globcount);  
+            printf(" %s data.  %" DW_PR_DSd " %s\n",
+                line_title,globcount,
+                globcount==1?"entry":"entries");  
 #if 0
             printf("  DIE        DIE      CU DIE       CU DIE\n");
             printf("  in sect    in CU    in sect      in sect\n");   
@@ -334,7 +335,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
             /*  unsanitname ok as is, nothing to print
                 but the name of the real section.  */
         } else {
-            esb_append(&unsanitname," and/or ");
+            esb_append(&unsanitname," and ");
             esb_append(&unsanitname,esb_get_string(&unsanitname2));
         }
     }
