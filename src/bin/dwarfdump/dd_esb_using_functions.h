@@ -69,7 +69,7 @@ int dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     struct esb_s *string_out,
     Dwarf_Error *err);
 
-void get_true_section_name(Dwarf_Debug dbg,
+int get_true_section_name(Dwarf_Debug dbg,
     const char *standard_name,
     struct esb_s *name_out,
     Dwarf_Bool add_compr);

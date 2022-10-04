@@ -35,7 +35,7 @@
 #include "dd_esb.h"
 #include "dd_esb_using_functions.h"
 
-void get_true_section_name(Dwarf_Debug dbg,
+int get_true_section_name(Dwarf_Debug dbg,
     const char *standard_name,
     struct esb_s *name_out,
     Dwarf_Bool add_compr)
@@ -87,11 +87,11 @@ void get_true_section_name(Dwarf_Debug dbg,
                 esb_append(name_out, floatbuf);
             }
         }
-        return;
+        return DW_DLV_OK;
     }
     if (cres == DW_DLV_NO_ENTRY) {
         esb_append(name_out,stdname);
-        return;
+        return cres;
     }
     /* DW_DLV_ERROR */
     esb_append(name_out,stdname);
@@ -99,5 +99,5 @@ void get_true_section_name(Dwarf_Debug dbg,
     dwarf_dealloc(dbg,tnameerr,DW_DLA_ERROR);
     tnameerr = 0;
     esb_append(name_out," (Error accessing section name)");
-    return;
+    return DW_DLV_OK;
 }
