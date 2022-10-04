@@ -65,6 +65,7 @@ dwarf_get_types(Dwarf_Debug dbg,
         dbg->de_debug_typenames.dss_size,
         (Dwarf_Global **) types,  /* type punning, Dwarf_Type is
             never a completed type */
+        0,0,
         ret_type_count,
         error,
         DW_DLA_TYPENAME_CONTEXT,

@@ -63,6 +63,7 @@ dwarf_get_vars(Dwarf_Debug dbg,
         dbg->de_debug_varnames.dss_size,
         (Dwarf_Global **) vars, /* Type punning for sections
             with identical format. */
+        0,0,
         ret_var_count,
         error,
         DW_DLA_VAR_CONTEXT,

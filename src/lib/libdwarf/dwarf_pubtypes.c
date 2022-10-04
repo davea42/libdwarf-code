@@ -66,6 +66,7 @@ dwarf_get_pubtypes(Dwarf_Debug dbg,
         dbg->de_debug_pubtypes.dss_size,
         (Dwarf_Global **) types, /* Type punning for sections
             with identical format. */
+        0,0,
         ret_type_count, error,
         DW_DLA_PUBTYPES_CONTEXT,
         DW_DLA_GLOBAL, /* We don't have DW_DLA_PUBTYPES,

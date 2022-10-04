@@ -66,7 +66,7 @@ dwarf_get_funcs(Dwarf_Debug dbg,
 
         /* Type punning for sections with identical format. */
         (Dwarf_Global **) funcs,
-
+        0,0,
         ret_func_count,
         error,
         DW_DLA_FUNC_CONTEXT,

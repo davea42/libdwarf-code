@@ -6108,6 +6108,13 @@ DW_API int dwarf_dnames_abbrevtable(Dwarf_Dnames_Head dw_dn,
 /*! @brief Sizes and counts from the debug names table
 
     We do not describe these returned values.
+    Other than for dw_dn and dw_error
+    passing pointers you do not care about as NULL
+    is fine. Of course no value can be
+    returned through those passed as NULL.
+
+    Any program referencing a names table will
+    need at least a few of these values.
 
     See DWARF5 section 6.1.1 "Lookup By Name"
     particularly the graph page 139.
@@ -6154,24 +6161,23 @@ DW_API int dwarf_dnames_offsets(Dwarf_Dnames_Head dw_dn,
     Dwarf_Unsigned * dw_entry_pool_offset,
     Dwarf_Error *    dw_error);
 
-/*! @brief Each debug names list entry one at a time
+/*! @brief Each debug names cu list entry one at a time
 
-    The DWARF5 standard reserves index 0, so
-    index numbers start at 1.
+    Indexes to the cu/tu/ tables start at 0.
 
     @param dw_dn
     The table of interest.
     @param dw_type
     Pass in the type, "cu" or "tu"
     @param dw_index_number
-    For "cu" index range is 1 through K
-    For "tu" index range is 1 through T+F
+    For "cu" index range is 0 through K-1
+    For "tu" index range is 0 through T+F-1
     @param dw_offset
     Section offset of the target CU
     Zero if it cannot be determined.
     @param dw_sig
     the Dwarf_Sig8 is filled in with a signature
-    if the TU index is T+1 through T+F
+    if the TU index is T through T+F-1
     @param dw_error
     On error dw_error is set to point to the error details.
     @return
@@ -6213,9 +6219,8 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
 
 /*! @brief Retrieve a name table entry
 
-    For now, ignore this function as it
-    does almost none of that the description
-    promises. Most arguments are ignored.
+    Retrieve the name and other data
+    from a single name table entry.
 
     @param dw_dn
     The table of interest.
@@ -6234,14 +6239,16 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     @param dw_offset_in_entrypool
     Returns the offset in the entrypool
     @param dw_abbrev_number
-    Returned from entrypool
+    Returned from entrypool.
     @param dw_abbrev_tag
-    Returned from entrypool abbrev data
+    Returned from entrypool abbrev data.
     @param dw_array_size
-    Size of array you provide (even number).
-    Possibly 20 to 40 suffices for practical purposes.
+    Size of array you provide 
+    to hold DW_IDX index attribute and
+    form numbers.
+    Possibly 10 suffices for practical purposes.
     @param dw_idxattr_array
-    Array you provide, for idx attribute numbers
+    Array space you provide, for idx attribute numbers
     (function will initialize it).
     The final entry in the array will be 0.
     @param dw_form_array
@@ -6603,7 +6610,12 @@ DW_API int dwarf_get_arange_info_b(Dwarf_Arange dw_arange,
 
 /*! @brief Global name space operations, .debug_pubnames access
 
-    This section is defined in DWARF2, DWARF3, and DWARF4.
+    Section .debug_pubnames is defined in DWARF2, DWARF3,
+    and DWARF4.
+    Section .debug_names is defined in DWARF5.
+
+    The code here, as of 0.4.3, September 3 2022,
+    returns data from either section.
 
     @see examplef
 
@@ -6624,6 +6636,7 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
     Dwarf_Global** dw_globals,
     Dwarf_Signed * dw_number_of_globals,
     Dwarf_Error  * dw_error);
+
 
 /*! @brief Dealloc the Dwarf_Globals data
 

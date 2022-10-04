@@ -895,6 +895,12 @@
     We list these with newest first.
 
     <b>Changes 0.4.2 to 0.4.3</b>
+    This document corrects CU and TU indexes
+    in the .debug_names (fast access) section to be zero-based.
+
+    dwarf_get_globals() now returns a list of global variables and
+    functions whether defined in
+    the .debug_names  or .debug_names section or both.
 
     <b>Changes 0.4.1 to 0.4.2</b>
     0.4.2 released 2022-09-13.

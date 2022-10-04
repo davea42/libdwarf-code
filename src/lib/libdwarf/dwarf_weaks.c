@@ -65,6 +65,7 @@ dwarf_get_weaks(Dwarf_Debug dbg,
         dbg->de_debug_weaknames.dss_size,
         (Dwarf_Global **) weaks, /* Type punning for sections
             with identical format. */
+        0,0,
         ret_weak_count,
         error,
         DW_DLA_WEAK_CONTEXT,

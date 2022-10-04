@@ -1030,7 +1030,7 @@ dwarf_dnames_offsets(Dwarf_Dnames_Head dn,
 
 /*  The "tu" case covers both local type units
     and foreign type units.
-    This table is indexed starting at 1.
+    This table is indexed starting at 0.
 */
 int
 dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
@@ -1055,7 +1055,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
             "calling dwarf_dnames_cu_table()");
         return DW_DLV_ERROR;
     }
-    if (index_number > total_count) {
+    if (index_number >= total_count) {
         return DW_DLV_NO_ENTRY;
     }
     dbg = dn->dn_dbg;
@@ -1089,7 +1089,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         /* CU or TU ref */
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = unit_ptr +
-            (index_number-1) *unit_entry_size;
+            (index_number) *unit_entry_size;
         Dwarf_Small *endptr = dn->dn_indextable_data_end;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
@@ -1102,7 +1102,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
     }
     {
         Dwarf_Small *ptr =  unit_ptr +
-            (index_number-1 -unit_count) *unit_entry_size;
+            (index_number -unit_count) *unit_entry_size;
         if (sig) {
             memcpy(sig,ptr,sizeof(*sig));
         }
@@ -1185,7 +1185,8 @@ _dwarf_initialize_bucket_details(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
-int dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
+int 
+dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      bucket_number,
     Dwarf_Unsigned    * name_index,
     Dwarf_Unsigned    * collision_count,
@@ -1253,6 +1254,9 @@ get_bucket_number(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned i = 0;
 
     if (!dn->dn_bucket_count) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (!dn->dn_bucket_array) {
         return DW_DLV_NO_ENTRY;
     }
     /*  Binary search would be better FIXME */
@@ -1440,7 +1444,8 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
     know now much of array filled in and
     if the array you provided is
     large enough. Possibly 40 is
-    sufficient. */
+    sufficient. 
+    name indexes start at 1.  */
 int
 dwarf_dnames_name(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      name_index,
