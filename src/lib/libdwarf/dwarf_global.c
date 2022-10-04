@@ -1506,3 +1506,12 @@ int dwarf_return_empty_pubnames(Dwarf_Debug dbg, int flag)
     dbg->de_return_empty_pubnames = (unsigned char)flag;
     return DW_DLV_OK;
 }
+
+Dwarf_Half
+dwarf_global_tag_number(Dwarf_Global dw_global)
+{
+    if(!dw_global) {
+        return 0;
+    }
+    return dw_global->gl_tag;
+}

@@ -6654,7 +6654,7 @@ DW_API void dwarf_globals_dealloc(Dwarf_Debug dw_dbg,
 /*! @brief Return the name of a global data item
 
     @param dw_global
-    The Dwarf_Debug of interest.
+    The Dwarf_Global of interest.
     @param dw_returned_name
     On success a pointer to the name (a null-terminated
     string) is returned.
@@ -6670,7 +6670,7 @@ DW_API int dwarf_globname(Dwarf_Global dw_global,
 /*! @brief Return the DIE offset of a global data item
 
     @param dw_global
-    The Dwarf_Debug of interest.
+    The Dwarf_Global of interest.
     @param dw_return_offset
     On success a the section-global DIE offset of a
     data item is returned.
@@ -6686,7 +6686,7 @@ DW_API int dwarf_global_die_offset(Dwarf_Global dw_global,
 /*! @brief Return the CU header data of a global data item
 
     @param dw_global
-    The Dwarf_Debug of interest.
+    The Dwarf_Global of interest.
     @param dw_return_offset
     On success a the section-global offset of
     a CU header is returned.
@@ -6702,7 +6702,7 @@ DW_API int dwarf_global_cu_offset(Dwarf_Global dw_global,
 /*! @brief Return the name and offsets of a global entry.
 
     @param dw_global
-    The Dwarf_Debug of interest.
+    The Dwarf_Global of interest.
     @param dw_returned_name
     On success a pointer to the name (a null-terminated
     string) is returned.
@@ -6722,6 +6722,22 @@ DW_API int dwarf_global_name_offsets(Dwarf_Global dw_global,
     Dwarf_Off*       dw_die_offset,
     Dwarf_Off*       dw_cu_offset,
     Dwarf_Error*     dw_error);
+
+/*! @brief Return the DW_TAG number of a global entry.
+
+    @param dw_global
+    The Dwarf_Global of interest.
+    @return
+    If the Dwarf_Global refers to a global from
+    the .debug_names section the return value is the
+    DW_TAG for the DIE in the global entry, for
+    example DW_TAG_subprogram.. 
+    In case of error or if the section for this global
+    was .debug_pubnames zero is returned.
+
+
+*/
+DW_API Dwarf_Half dwarf_global_tag_number(Dwarf_Global dw_global);
 
 /*! @brief For more complete globals printing.
     For each CU represented in .debug_pubnames, etc,
