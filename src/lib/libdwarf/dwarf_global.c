@@ -334,6 +334,10 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                  Dwarf_Half idx = idxattr_array[aindex];
                 
                  switch(idx) {
+                 case DW_IDX_type_unit:
+                 case DW_IDX_parent:
+                 case DW_IDX_type_hash:
+                     break;
                  case DW_IDX_compile_unit:
                      cu_header_global_offset =  offset_array[aindex];
                      have_cu_header_offset = TRUE;
@@ -343,6 +347,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                      have_die_local_offset = TRUE;
                      break;
                  default:
+                     /*  Non-standard DW_IDX. */
                      break;
                  }
             }

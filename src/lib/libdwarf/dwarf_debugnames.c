@@ -1055,9 +1055,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
             "calling dwarf_dnames_cu_table()");
         return DW_DLV_ERROR;
     }
-    if (index_number >= total_count) {
-        return DW_DLV_NO_ENTRY;
-    }
+
     dbg = dn->dn_dbg;
     if (type[0] == 'c') {
         unit_ptr = dn->dn_cu_list;
@@ -1069,7 +1067,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         unit_count = dn->dn_local_type_unit_count;
         foreign_count = dn->dn_foreign_type_unit_count;
         total_count = unit_count + foreign_count;
-        if (index_number <= dn->dn_local_type_unit_count) {
+        if (index_number < dn->dn_local_type_unit_count) {
             unit_ptr = dn->dn_local_tu_list;
             unit_entry_size = dn->dn_offset_size;
             offset_case = TRUE;
@@ -1084,6 +1082,9 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
             "type string is not start with cu or tu"
             "so invalid call to dwarf_dnames_cu_table()");
         return DW_DLV_ERROR;
+    }
+    if (index_number >= total_count) {
+        return DW_DLV_NO_ENTRY;
     }
     if (offset_case) {
         /* CU or TU ref */

@@ -90,6 +90,7 @@ print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
         return DW_DLV_NO_ENTRY;
     }
     if (formtu) {
+        printf("\n");
         printindent(indent);
         printf("%s List. Entry count: %" DW_PR_DUu
         " (local tu count %" DW_PR_DUu
