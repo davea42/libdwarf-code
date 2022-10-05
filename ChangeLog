@@ -1,3 +1,162 @@
+2022-10-04:  David Anderson
+    commit 3a74c246dc43d19d050c842e7486b3ec907b4c55
+
+    Minor tweaks to the presentation of
+    pubnames-style records.
+    For single entry, print '1 entry'
+    otherwise print the number and 'entries'
+    src/bin/dwarfdump/
+            modified:   print_pubnames.c
+
+2022-10-04:  David Anderson
+    commit c8531de88ae5f65d0d13141bd011b57c062d4ba7
+
+    Altered declaration of get_true_section_name()
+            modified:   dd_esb_using_functions.h
+
+    Now get_true_section_name returns DW_DLV_OK or
+    DW_DLV_NO_ENTRY so we can determine for sure
+    if a section mentioned is present in the object.
+            modified:   dd_true_section_name.c
+
+    Major revision of the format from .debug_pubnames
+    etc sections and now Dwarf_Globals
+    shows .debug_names. The section print names
+    the either or both of .debug_names or .debug_pubnames
+    when appropriate.
+            modified:   print_pubnames.c
+
+2022-10-04:  David Anderson
+    commit b9342523ffff0e227ab86972e2b6f6b2e341edf2
+
+    Add dwarf_global_tag_number() when reading
+    .debug_names.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+    Fix some of the Dwarf_Global dw_global arg doxygen.
+    Add dwarf_global_tag_number() and its doxygen.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-10-03:  David Anderson
+    commit e9f478c15d6916eff239faac0bc5941640464241
+
+    Correcting words about .debug_names section CU indexing.
+    Now dwarf_get_globals() gets global offsets for
+    .debug_pubnames and .debug_names (or both if both
+    in an object file).
+            modified:   doc/libdwarf.dox
+
+    Moved an include up to satisfy ordering constraint
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Corrected dwarf_dnames_cu_table() to use zero-base
+    indexing.
+    If bucket_array not filled in just return  DW_DLV_NO_ENTRY.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+    dwarf_get_globals()
+    Now acesses .debug_pubnames first and then
+    dwarf_names to get its list of global data/func
+    names.
+    Some refactoring to avoid duplicate coding.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+    New data recorded given the two sections
+    that can contribute to dwarf_get_globals.
+            modified:   src/lib/libdwarf/dwarf_global.h
+
+    Adding two zero args in the call to the library-internal
+    function that gets all the data in this format.
+            modified:   src/lib/libdwarf/dwarf_funcs.c
+            modified:   src/lib/libdwarf/dwarf_pubtypes.c
+            modified:   src/lib/libdwarf/dwarf_types.c
+            modified:   src/lib/libdwarf/dwarf_vars.c
+            modified:   src/lib/libdwarf/dwarf_weaks.c
+
+    Fixed documentation on .debug_names CU indexing
+    (is zero based, not 1 base). Documented
+    dwarf_get_globals gets more than it used to.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-10-03:  David Anderson
+    commit 7c39204f588f5839f9519c6b5fb55d489fa95f10
+
+    Corrected cu table indexing to start at 0.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+    Removed 7 lines of code not actually used or needed here.
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+2022-09-30:  David Anderson
+    commit f146f5f6c63bc247ec4ccb07c0ed060ae734c2dc
+
+    In doxygen comments fixed:  geting -> getting
+            modified:   doc/checkexamples.c
+
+2022-09-24:  David Anderson
+    commit 3681c26ac60c84adb6da8a1ac8d6173368c792ee
+
+    Minor change. Now mentions 0.4.3 (not released)
+            modified:   README
+            modified:   README.md
+
+2022-09-24:  David Anderson
+    commit 0144a8a50fe9df2f8c11bbe2448cc0297b42d6b3
+
+    Minor wording changes.
+            modified:   README
+            modified:   README.md
+
+2022-09-19:  David Anderson
+    commit c9e6fa7824ff296da95162bac5133321b829c24c
+
+    Updated date
+            modified:   doc/libdwarf.dox
+
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+    Modified the module names that appear in
+    documentation. To clarify the purpose of each
+    group of functions/types.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-09-18:  David Anderson
+    commit 041a71a6a73af5b50b62b7bb480cc9b65adc5b91
+
+    Fixed indents and removed trailing whitespace.
+            modified:   src/bin/dwarfdump/dd_esb.c
+            modified:   src/bin/dwarfdump/dd_uri.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2022-09-18:  David Anderson
+    commit c400b0342295b3fa0b7fbd5c21b85aebd58cc668
+
+    Fixed indents and removed trailing whitespace.
+    src/lib/libdwarf:
+            modified:   dwarf_alloc.c
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_error.c
+            modified:   dwarf_init_finish.c
+
+2022-09-17:  David Anderson
+    commit ae227a6da772227ff5a7b1de2caf10e42e9dcb1d
+
+    Fixing mistakes in the new zstd compression.
+    Would only compile if zlib present before this fix.
+    now compiles with either or both
+    or neither of zlib and zstd.
+    Have no example objects using zstd to test
+    against -- at this time.
+            modified:   dwarf_init_finish.c
+
+2022-09-16:  David Anderson
+    commit 1492145fb41f35031afdddc3e205077b84578a75
+
+    Now up to date with git log
+            modified:   ChangeLog
+
 2022-09-16:  David Anderson
     commit ca28cdbfdcb0ed4403971a3f1394e2f80c148f70
 
