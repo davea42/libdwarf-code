@@ -146,27 +146,22 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     /* Get die at offset cu_die_off to check its existence. */
     {
         Dwarf_Die cu_die = NULL;
+        Dwarf_Error localerr = 0;
         cudres = dwarf_offdie_b(dbg, cu_die_off,is_info,
-            &cu_die, err);
+            &cu_die, &localerr);
         if (cudres != DW_DLV_OK) {
-            struct esb_s details;
-
-            dwarf_dealloc(dbg, die, DW_DLA_DIE);
-            esb_constructor(&details);
-            esb_append(&details,line_title);
-            esb_append(&details," dwarf_offdie: "
-                "cu die offset  does not reference valid CU DIE.  ");
-            esb_append_printf_u(&details,"0x%"  DW_PR_DUx,
+            printf("ERROR: dwarf_offdie_b called "
+                " CU die offset 0x%" DW_PR_DUx
+                " does not reference a valid CU DIE\n",
                 cu_die_off);
-            esb_append(&details,".");
-            /* does not return */
-            print_error_and_continue(dbg,
-                esb_get_string(&details), cudres, *err);
-            esb_destructor(&details);
-            return cudres;
+            if (cudres == DW_DLV_ERROR) {
+                dwarf_dealloc_error(dbg,localerr);
+                localerr = 0;
+            }
+            glflags.gf_count_major_errors++;
         } else {
             /* It exists, all is well. */
-            dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+            dwarf_dealloc_die(cu_die);
         }
     }
     /* Display offsets */
@@ -355,7 +350,6 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
             "dwarf_get_globals failed in print_pubnames().");
         esb_destructor(&sanitname);
         return res;
-        /* fall through to end*/
     }
     if (res == DW_DLV_NO_ENTRY) {
         esb_destructor(&sanitname);

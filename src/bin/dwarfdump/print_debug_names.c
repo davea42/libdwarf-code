@@ -65,10 +65,12 @@ static const Dwarf_Sig8 zerosig;
      Whereas names table area indexed starting at 1.  */
 static int
 print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
-    const char *type,
-    Dwarf_Unsigned offset_count,
-    Dwarf_Unsigned sig_count,
-    Dwarf_Error *error)
+    const char     *type,
+    Dwarf_Unsigned  offset_count,
+    Dwarf_Unsigned  sig_count,
+    Dwarf_Bool     *has_single_cu_offset,
+    Dwarf_Unsigned *single_cu_offset,
+    Dwarf_Error    *error)
 {
     Dwarf_Unsigned i = 0;
     Dwarf_Unsigned totalcount = offset_count+sig_count;
@@ -82,7 +84,7 @@ print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
         type[2] == 0) {
         formtu = FALSE;
     } else {
-        printf("ERROR: Calling print_cu_table with type"
+        printf("\nERROR: Calling print_cu_table with type"
             "%s is invalid. Must be tu or cu ."
             "Not printing this cu table set\n",
             type);
@@ -114,8 +116,13 @@ print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
         if (res == DW_DLV_ERROR) {
             return res;
         }
+        if (i == 0 && !formtu) {
+            *single_cu_offset = offset;
+            *has_single_cu_offset = TRUE;
+        }
         /*  Could equally test for non-zero offset here. */
-        if (i <= offset_count) {
+        if (i < offset_count) {
+            
             printindent(indent);
             printf("[%4" DW_PR_DUu "] ",i);
             printf("CU-offset:  0x%"
@@ -276,7 +283,7 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
         printf("\n");
         limit = actual_attr_count;
         if (limit > ATTR_ARRAY_SIZE) {
-            printf("   ERROR: allowed %" DW_PR_DUu " pairs,"
+            printf("   \nERROR: allowed %" DW_PR_DUu " pairs,"
                 " But we have %" DW_PR_DUu "pairs!\n",
                 array_size, actual_attr_count);
             glflags.gf_count_major_errors++;
@@ -299,7 +306,7 @@ print_dnames_abbrevtable(unsigned int indent,Dwarf_Dnames_Head dn,
                 dwarf_get_FORM_name(f,&formname);
                 printf("%15s",formname);
                 if (! (a && f)){
-                    printf("ERROR: improper idx/form pair!");
+                    printf("\nERROR: improper idx/form pair!\n");
                     glflags.gf_count_major_errors++;
                 }
             } else {
@@ -346,7 +353,7 @@ print_attr_array(unsigned int indent,
         printf(" 0x%04u 0x%04u", a,f);
         if (k == (count-1)) {
             if (a || f) {
-                printf(" ERROR: last entry should be 0,0"
+                printf("\nERROR: last entry should be 0,0"
                     "not 0x%x a 0x%xf \n",a,f);
                 glflags.gf_count_major_errors++;
                 break;
@@ -364,6 +371,43 @@ print_attr_array(unsigned int indent,
     return DW_DLV_OK;
 }
 
+/*  Check die offset for correctness. 
+    Only dealing with local cu/tu (not foreighn tu)*/
+static void
+check_die_pub_offset( Dwarf_Debug dbg,
+    Dwarf_Bool        cu_hd_offset,
+    Dwarf_Unsigned    local_die_offset)
+{
+    Dwarf_Error error = 0;
+    int sres = 0;
+    Dwarf_Bool is_info = TRUE;
+    Dwarf_Die itemdie = 0;
+    Dwarf_Unsigned global_offset = local_die_offset+
+        cu_hd_offset;
+    Dwarf_Unsigned cuhdr_offset = 0;
+
+    sres = dwarf_offdie_b(dbg,global_offset,
+        is_info,&itemdie,&error);
+    if (sres != DW_DLV_OK) {
+        printf("ERROR No global DIE at cuhdroff="
+            "0x%" DW_PR_DUx 
+         " + culocaldieoffset="
+            "0x%" DW_PR_DUx 
+         " = "
+            "0x%" DW_PR_DUx "\n\n",
+            cuhdr_offset,local_die_offset,
+            global_offset);
+        if (sres == DW_DLV_ERROR) {
+            dwarf_dealloc_error(dbg,error);
+        }
+        glflags.gf_count_major_errors++;
+        error = 0;
+    }  else {
+        dwarf_dealloc_die(itemdie);
+    }
+}
+
+
 #define MAXPAIRS 8 /* The standard defines 5.*/
 static Dwarf_Half     idx_array[MAXPAIRS];
 static Dwarf_Half     form_array[MAXPAIRS];
@@ -371,9 +415,13 @@ static Dwarf_Unsigned offsets_array[MAXPAIRS];
 static Dwarf_Sig8     signatures_array[MAXPAIRS];
 
 static int
-print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
+print_name_values(unsigned int indent, Dwarf_Debug dbg,
+    Dwarf_Dnames_Head dn ,
     Dwarf_Unsigned name_index ,
     Dwarf_Unsigned offset_in_entrypool ,
+    Dwarf_Unsigned local_type_unit_count,
+    Dwarf_Bool     single_cu_case,
+    Dwarf_Unsigned single_cu_offset,
     Dwarf_Error * error)
 {
     int res = 0;
@@ -382,12 +430,15 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
     Dwarf_Unsigned value_count = 0;
     Dwarf_Unsigned index_of_abbrev = 0;
     Dwarf_Unsigned offset_of_initial_value = 0;
-    Dwarf_Bool     single_cu_case = 0;
-    Dwarf_Unsigned single_cu_offset = 0;
     Dwarf_Unsigned offset_next_entry_pool = 0;
     const char    *idname = "<DW_IDX-unknown>";
     Dwarf_Unsigned i = 0;
     const char    *tagname = "<TAGunknown";
+    Dwarf_Unsigned cu_table_index = 0;
+    Dwarf_Unsigned tu_table_index = 0;
+    Dwarf_Unsigned local_die_offset = 0;
+    Dwarf_Bool has_cu_table_index = FALSE;
+    Dwarf_Bool has_tu_table_index = FALSE;
 
     res = dwarf_dnames_entrypool(dn,
         offset_in_entrypool,
@@ -409,18 +460,18 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
         index_of_abbrev);
     printindent(indent);
     printf(
-        "Tag 0x%04x %-16s\n",
+        "Tag 0x%04x     %-16s\n",
         tag,tagname);
     printindent(indent);
     printf(
-        "Valuecount %4" DW_PR_DUu
-        " valuesoffset 0x%04" DW_PR_DUx
+        "Valuecount %5" DW_PR_DUu
+        "  valuesoffset 0x%04" DW_PR_DUx
         "\n",
         value_count, offset_of_initial_value);
     if (value_count > MAXPAIRS) {
-        printf("ERROR: The number of values in an entrypool entry is"
+        printf("\nERROR: The number of values in an entrypool entry is"
             " %" DW_PR_DUu
-            " but  the max allowed is %d",value_count,MAXPAIRS);
+            " but  the max allowed is %d\n",value_count,MAXPAIRS);
         glflags.gf_count_major_errors++;
         return DW_DLV_OK;
     }
@@ -441,10 +492,10 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
 
     indent += 2;
     printindent(indent);
-    printf("Entrypool Values, count %" DW_PR_DUu "\n",value_count);
+    printf("Entrypool Values. Entry count:%" DW_PR_DUu ".\n",value_count);
     if (single_cu_case) {
         printindent(indent);
-        printf("Single CU case, CUoffset defaults to: 0x%"
+        printf("Single CU case. CUoffset defaults to: 0x%"
             DW_PR_XZEROS DW_PR_DUx "\n",
             single_cu_offset);
     }
@@ -466,14 +517,25 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
         printf("     %2u %-19s ",idx,idname);
         switch(idx) {
         case DW_IDX_compile_unit:
+            /*  compile units special-case a single CU, and
+                this instance eliminates that special case here. */
             printf(" CUindex= %" DW_PR_DUu ,offsets_array[i]);
+            cu_table_index = offsets_array[i];
+            has_cu_table_index = TRUE;
+            single_cu_case = FALSE;
             break;
-        case DW_IDX_type_unit:
+        case DW_IDX_type_unit: {
+            /*  type units do not special-case a single CU */
             printf(" typeunitindex= %" DW_PR_DUu ,offsets_array[i]);
+            has_tu_table_index = TRUE;
+            tu_table_index = offsets_array[i];
+            }
             break;
-        case DW_IDX_die_offset:
-            printf(" DIEoffset= 0x%" DW_PR_XZEROS DW_PR_DUu ,
+        case DW_IDX_die_offset: {
+            printf(" DIElocaloff= 0x%" DW_PR_XZEROS DW_PR_DUu ,
                 offsets_array[i]);
+            local_die_offset = offsets_array[i];
+            }
             break;
         case DW_IDX_parent:
             printf(" indexofparent= %" DW_PR_DUu ,offsets_array[i]);
@@ -489,19 +551,70 @@ print_name_values(unsigned int indent,Dwarf_Dnames_Head dn ,
             break;
         }
         default: {
-            printf("ERROR: idxattr %u is unknown!",idx);
+            printf("\nERROR: idxattr %u is unknown!\n",idx);
             glflags.gf_count_major_errors++;
         }
         }
         printf("\n");
     }
+
+    {   /* Checking DIE offset . Messier than it should be. */
+        int cres = 0;
+        Dwarf_Error chkerror = 0;
+        Dwarf_Unsigned cu_hd_offset = 0;
+        Dwarf_Sig8     sig8;
+        if (!single_cu_case) {
+             /* tu or multiple CUs */
+             if (has_cu_table_index) {
+                 cres = dwarf_dnames_cu_table(dn,"cu",
+                     cu_table_index,&cu_hd_offset,&sig8,&chkerror);
+                 if (cres != DW_DLV_OK) {
+                     printf("\nERROR: Cannot get "
+                         "dwarf_dnames_cu_table on cu \n");
+                     glflags.gf_count_major_errors++;
+                     if (res == DW_DLV_ERROR) {
+                         dwarf_dealloc_error(dbg,chkerror);
+                     }
+                     return DW_DLV_OK;
+                 }
+             } else {
+                 if (has_tu_table_index &&
+                     (tu_table_index < local_type_unit_count)) {
+                     cres = dwarf_dnames_cu_table(dn,"tu",
+                         tu_table_index,&cu_hd_offset,
+                         &sig8,&chkerror);
+                     if (cres != DW_DLV_OK) {
+                         printf("\nERROR: Cannot get "
+                            "dwarf_dnames_cu_table on tu \n");
+                         glflags.gf_count_major_errors++;
+                         if (res == DW_DLV_ERROR) {
+                            dwarf_dealloc_error(dbg,chkerror);
+                         }
+                         return DW_DLV_OK;
+                     }
+                 } else {
+                     return DW_DLV_OK;
+                 }
+             }
+        } else {
+            /*  Single unit case means CU */
+            cu_hd_offset = single_cu_offset;
+        }
+        check_die_pub_offset(dbg,
+            cu_hd_offset, local_die_offset);
+    }
     return DW_DLV_OK;
 }
 
 static int
-print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
+print_names_table(unsigned int indent,
+    Dwarf_Debug dbg,
+    Dwarf_Dnames_Head dn,
     Dwarf_Unsigned name_count,
     Dwarf_Unsigned bucket_count,
+    Dwarf_Unsigned local_type_unit_count,
+    Dwarf_Bool     has_single_cu_offset,
+    Dwarf_Unsigned single_cu_offset,
     Dwarf_Error * error)
 {
     Dwarf_Unsigned i = 1;
@@ -511,7 +624,7 @@ print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset_to_debug_str = 0;
     char * ptrtostr          = 0;
     Dwarf_Unsigned offset_in_entrypool = 0;
-    Dwarf_Unsigned abbrev_number = 0;
+    Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Half abbrev_tag    = 0;
     Dwarf_Unsigned array_size = ATTR_ARRAY_SIZE;
     static Dwarf_Half nt_idxattr_array[ATTR_ARRAY_SIZE];
@@ -536,7 +649,7 @@ print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
         res = dwarf_dnames_name(dn,i,
             &bucketnum, &hashval,
             &offset_to_debug_str,&ptrtostr,
-            &offset_in_entrypool, &abbrev_number,
+            &offset_in_entrypool, &abbrev_code,
             &abbrev_tag,
             array_size, nt_idxattr_array,
             nt_form_array,
@@ -546,8 +659,8 @@ print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
         }
         if (res == DW_DLV_NO_ENTRY) {
             printf("[%4" DW_PR_DUu "] ",i);
-            printf("ERROR: NO ENTRY on name index "
-                "%" DW_PR_DUu " is impossible ",i);
+            printf("\nERROR: NO ENTRY on name index "
+                "%" DW_PR_DUu " is impossible \n",i);
             glflags.gf_count_major_errors++;
             printf("\n");
             continue;
@@ -562,16 +675,16 @@ print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
         printf("\n");
         printindent(indent+4);
         dwarf_get_TAG_name(abbrev_tag,&tagname);
-        printf("entrypool= 0x%06" DW_PR_DUx ,
+        printf("Entrypool= 0x%06" DW_PR_DUx ,
             offset_in_entrypool);
-        printf(" abbrev#= %4" DW_PR_DUu,
-            abbrev_number);
+        printf(" abbrevcode=%4" DW_PR_DUu,
+            abbrev_code);
         printf(" attrcount= %4" DW_PR_DUu,
             attr_count);
         printf(" arraysz= %4" DW_PR_DUu "\n",
             array_size);
         printindent(indent+4);
-        printf("tag= 0x%04x %-16s",
+        printf("Tag= 0x%04x      %-16s",
             abbrev_tag,tagname);
         printf("\n");
         if (glflags.verbose) {
@@ -579,7 +692,11 @@ print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
                 attr_count,array_size,
                 nt_idxattr_array, nt_form_array);
         }
-        res = print_name_values(indent+6,dn,i,offset_in_entrypool,
+        res = print_name_values(indent+6,dbg,
+            dn,i,offset_in_entrypool,
+            local_type_unit_count,
+            has_single_cu_offset,
+            single_cu_offset,
             error);
         if (res != DW_DLV_OK) {
             return res;
@@ -589,7 +706,8 @@ print_names_table(unsigned int indent,Dwarf_Dnames_Head dn,
 }
 
 static int
-print_dname_record(Dwarf_Dnames_Head dn,
+print_dname_record(Dwarf_Debug dbg,
+    Dwarf_Dnames_Head dn,
     Dwarf_Unsigned offset,
     Dwarf_Unsigned new_offset,
     Dwarf_Error *error)
@@ -608,6 +726,10 @@ print_dname_record(Dwarf_Dnames_Head dn,
     Dwarf_Half offset_size = 0;
     char * augstring = 0;
     unsigned int indent = 0;
+    Dwarf_Bool     has_single_cu_offset;
+    Dwarf_Bool     has_single_tu_offset;
+    Dwarf_Unsigned single_cu_offset = 0; 
+    Dwarf_Unsigned single_tu_offset = 0; 
 
     res = dwarf_dnames_sizes(dn,&comp_unit_count,
         &local_type_unit_count,
@@ -665,12 +787,15 @@ print_dname_record(Dwarf_Dnames_Head dn,
             abbrev_table_size);
     }
     res = print_cu_table(indent+2,dn,"cu",comp_unit_count,
-        0,error);
+        0,&has_single_cu_offset,&single_cu_offset,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
+    /*  There is no single offset default for TU indexes,
+        only CU tables that have such a default. */
     res = print_cu_table(indent+2,dn,"tu",local_type_unit_count,
-        foreign_type_unit_count,error);
+        foreign_type_unit_count,
+        &has_single_tu_offset,&single_tu_offset,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
@@ -678,8 +803,11 @@ print_dname_record(Dwarf_Dnames_Head dn,
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    res = print_names_table(indent+2,dn,name_count,
-        bucket_count,error);
+    res = print_names_table(indent+2,dbg,dn,name_count,
+        bucket_count,
+        local_type_unit_count,
+        has_single_cu_offset,
+        single_cu_offset,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
@@ -698,8 +826,8 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     char buf[DWARF_SECNAME_BUFFER_SIZE];
 
     if (!dbg) {
-        printf("ERROR: Cannot print .debug_names, "
-            "no Dwarf_Debug passed in");
+        printf("\nERROR: Cannot print .debug_names, "
+            "no Dwarf_Debug passed in\n");
         return DW_DLV_NO_ENTRY;
     }
     glflags.current_section_id = DEBUG_NAMES;
@@ -721,7 +849,7 @@ print_debug_names(Dwarf_Debug dbg,Dwarf_Error *error)
     esb_destructor(&truename);
 
     while (res == DW_DLV_OK) {
-        res = print_dname_record(dnhead,offset,new_offset,error);
+        res = print_dname_record(dbg,dnhead,offset,new_offset,error);
         if (res != DW_DLV_OK) {
             dwarf_dealloc_dnames(dnhead);
             dnhead = 0;
