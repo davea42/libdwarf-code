@@ -239,7 +239,10 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
             Dwarf_Unsigned single_cu_hdr_offset = 0;
             Dwarf_Unsigned die_local_offset = 0;
             Dwarf_Unsigned cu_header_global_offset = 0;
+            Dwarf_Unsigned cu_header_index = 0;
             Dwarf_Bool have_die_local_offset = FALSE;
+            Dwarf_Bool have_cu_header_index = FALSE;
+            Dwarf_Bool have_cu_header_global_offset = 0;
             Dwarf_Bool have_cu_header_offset = FALSE;
 
             memset(idxattr_array,0,sizeof(Dwarf_Half)*IDX_ARRAY_SIZE);
@@ -339,8 +342,8 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                  case DW_IDX_type_hash:
                      break;
                  case DW_IDX_compile_unit:
-                     cu_header_global_offset =  offset_array[aindex];
-                     have_cu_header_offset = TRUE;
+                     cu_header_index =  offset_array[aindex];
+                     have_cu_header_index = TRUE;
                      break;
                  case DW_IDX_die_offset:
                      die_local_offset = offset_array[aindex];
@@ -351,19 +354,41 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                      break;
                  }
             }
-            if (!have_cu_header_offset) {
+            if (!have_cu_header_index) {
                 if (single_cu) {
-                    have_cu_header_offset = TRUE;
+                    have_cu_header_global_offset = TRUE;
                     cu_header_global_offset = single_cu_hdr_offset;
                 } else {
-                    /* Ignore this entry */
+                    /* Ignore this entry, not global? */
                     continue;
                 }
             }
-            if (!(have_cu_header_offset &&  have_die_local_offset)) {
+          
+            if (!have_die_local_offset) {
                  /* Ignore this entry */
                  continue;
             }
+            if (!have_cu_header_offset) {
+                 int ores = 0;
+                 Dwarf_Unsigned offset = 0;
+                 Dwarf_Sig8     signature;
+                 Dwarf_Error    cuterr = 0;
+                
+
+                 ores = dwarf_dnames_cu_table(dn_head,
+                     "cu", cu_header_index,
+                     &offset,&signature,&cuterr);
+                 if (ores != DW_DLV_OK) {
+                 }  else {
+                     cu_header_global_offset = offset;
+                     have_cu_header_global_offset = TRUE;
+                 }
+            }
+            if (!have_cu_header_global_offset) {
+                 /* Ignore this entry */
+                 continue;
+            }
+
             if (!pubnames_context ||
                 (pubnames_context->pu_offset_of_cu_header !=
                 cu_header_global_offset)) {
@@ -380,6 +405,8 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                 pubnames_context->pu_dbg = dbg;
                 pubnames_context->pu_alloc_type = context_DLA_code;
                 pubnames_context->pu_is_debug_names = TRUE;
+                pubnames_context->pu_offset_of_cu_header = 
+                    cu_header_global_offset;
                 /*  For .debug_names we don't need to
                     set the rest of the fields.
                     All the translations from disk
@@ -1259,7 +1286,7 @@ build_off_end_msg(Dwarf_Unsigned offval,
 
   The string pointer returned thru ret_name is not
   dwarf_get_alloc()ed, so no dwarf_dealloc()
-  DW_DLA_STRING should be applied to it.
+  DW_D_STRING should be applied to it.
 
 */
 int
@@ -1308,7 +1335,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
         dwarfstring m;
 
         dwarfstring_constructor(&m);
-        build_off_end_msg(cuhdr_off,cuhdr_off+MIN_CU_HDR_SIZE,
+        build_off_end_msg(cuhdr_off,cuhdr_off,
             dbg->de_debug_info.dss_size,&m);
         _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
             dwarfstring_string(&m));
@@ -1349,7 +1376,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             dwarfstring m;
 
             dwarfstring_constructor(&m);
-            build_off_end_msg(cuhdr_off,cuhdr_off+10,
+            build_off_end_msg(cuhdr_off,cuhdr_off,
                 dbg->de_debug_info.dss_size,&m);
             _dwarf_error_string(dbg, error, DW_DLE_OFFSET_BAD,
                 dwarfstring_string(&m));

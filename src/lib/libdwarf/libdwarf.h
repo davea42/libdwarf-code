@@ -6165,6 +6165,12 @@ DW_API int dwarf_dnames_offsets(Dwarf_Dnames_Head dw_dn,
 
     Indexes to the cu/tu/ tables start at 0.
 
+    Some values in dw_offset are actually offsets,
+    such as for DW_IDX_die_offset. DW_IDX_compile_unit
+    and DW_IDX_type_unit are indexes into
+    the table specified by dw_type and are returned
+    through dw_offset field;
+
     @param dw_dn
     The table of interest.
     @param dw_type
@@ -6173,8 +6179,8 @@ DW_API int dwarf_dnames_offsets(Dwarf_Dnames_Head dw_dn,
     For "cu" index range is 0 through K-1
     For "tu" index range is 0 through T+F-1
     @param dw_offset
-    Section offset of the target CU
     Zero if it cannot be determined.
+    (check the return value!).
     @param dw_sig
     the Dwarf_Sig8 is filled in with a signature
     if the TU index is T through T+F-1
