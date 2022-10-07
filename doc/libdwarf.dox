@@ -901,7 +901,7 @@
     did not follow the DWARF5 documentation.
 
     dwarf_get_globals() now returns a list of Dwarf_Global 
-    names DIE offsets whether such are defined in
+    names and DIE offsets whether such are defined in
     the .debug_names  or .debug_pubnames section or both.
     Previously it only read .debug_pubnames.
 
