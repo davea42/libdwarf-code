@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 15 September 2022 additions for 0.4.3
+Updated 7 October 2022 additions for 0.5.0
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -13,7 +13,7 @@ in the test suite so
 make check or ninja test might fail
 on some tests (sorry).
 
-Version 0.4.3 is not released. 
+Version 0.5.0 is not released. 
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 

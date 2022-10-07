@@ -6737,19 +6737,20 @@ DW_API int dwarf_global_name_offsets(Dwarf_Global dw_global,
     If the Dwarf_Global refers to a global from
     the .debug_names section the return value is the
     DW_TAG for the DIE in the global entry, for
-    example DW_TAG_subprogram.. 
+    example DW_TAG_subprogram. 
     In case of error or if the section for this global
     was .debug_pubnames zero is returned.
-
-
 */
 DW_API Dwarf_Half dwarf_global_tag_number(Dwarf_Global dw_global);
 
 /*! @brief For more complete globals printing.
+
     For each CU represented in .debug_pubnames, etc,
     there is a .debug_pubnames header.  For any given
     Dwarf_Global this returns the content of the applicable
-    header. */
+    header.   This does not include header information
+    from any .debug_names headers.
+*/
 DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
     Dwarf_Off      * dw_offset_pub_header,
     Dwarf_Unsigned * dw_length_size,

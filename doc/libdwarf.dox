@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-09-19 v0.4.3
+    @date 2022-10-06 v0.5.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -894,13 +894,20 @@
 
     We list these with newest first.
 
-    <b>Changes 0.4.2 to 0.4.3</b>
-    This document corrects CU and TU indexes
+    <b>Changes 0.4.2 to 0.5.0</b>
+    Corrects CU and TU indexes
     in the .debug_names (fast access) section to be zero-based.
+    The code for that section was previously unusable as it
+    did not follow the DWARF5 documentation.
 
-    dwarf_get_globals() now returns a list of global variables and
-    functions whether defined in
-    the .debug_names  or .debug_names section or both.
+    dwarf_get_globals() now returns a list of Dwarf_Global 
+    names DIE offsets whether such are defined in
+    the .debug_names  or .debug_pubnames section or both.
+    Previously it only read .debug_pubnames.
+
+    A new function, dwarf_global_tag_number(), returns
+    the DW_TAG of any Dwarf_Global that was derived
+    from the .debug_names section. 
 
     <b>Changes 0.4.1 to 0.4.2</b>
     0.4.2 released 2022-09-13.
