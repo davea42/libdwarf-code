@@ -1,3 +1,68 @@
+2022-10-07:  David Anderson
+    commit f0c944a68a9ec0dfa562adf324417d1517e5bbad
+
+    Refinement of the Changes text.
+            modified:   doc/libdwarf.dox
+
+2022-10-07:  David Anderson
+    commit e58f3f6d51329860b11b6af3418a107aee73356a
+
+    Updated version from 0.4.3 (never released) to 0.5.0 (not released)
+            modified:   CMakeLists.txt
+            modified:   README
+            modified:   README.md
+            modified:   configure.ac
+            modified:   doc/libdwarf.pdf
+            modified:   meson.build
+
+    Improvments in doxygen comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   doc/libdwarf.dox
+
+2022-10-06:  David Anderson
+    commit fc081e4d2e89466bd0be103dc9ef5b8b6ff470b3
+
+    Now when printing  the DW_IDX operations
+    it checks that the calculated DIE global offset
+    is a real entry in .debug_info.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+    When doing local check for a working dwarf_offdie_b
+    based on a global DIE offset from dwarf_dnames... prints
+    to report an error but
+    is silent about the check on success.
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+2022-10-06:  David Anderson
+    commit 4a7855d5257f3d99ba702dd89df65366c52b22ae
+
+    Correcting the code reading .debug_names
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+    Improving description of dwarf_dnames_cu_table()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-10-05:  David Anderson
+    commit cd1c1b303a677454328d40aa4250742e0771f36a
+
+    For readability add a newline befor the "tu" list.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+    Move a test to *after* one of its values is computed.
+    So we can print a cu list or tu list from the section.
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+
+    Add in the other standard DW_IDX types (though
+    for _dwarf_internal_get_debug_names_globals()
+    we will not use their values, if present.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+2022-10-04:  David Anderson
+    commit 064cc87652bccaf8732b62f392e518f1ee8277be
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2022-10-04:  David Anderson
     commit 3a74c246dc43d19d050c842e7486b3ec907b4c55
 
