@@ -928,7 +928,7 @@
 
     It's now possible to run the build sanity tests
     in all three build mechanisms (configure,cmake,meson)
-    on both linux, MacOS, FreeBSD, and mingw msys2 (windows).
+    on linux, MacOS, FreeBSD, and mingw msys2 (windows).
     libdwarf README.md (or README) and README.cmake
     document how to do builds for each supported platform
     and build mechanism.
