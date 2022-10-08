@@ -49,6 +49,12 @@ dwarf_get_vars(Dwarf_Debug dbg,
     Dwarf_Var ** vars,
     Dwarf_Signed * ret_var_count, Dwarf_Error * error)
 {
+    Dwarf_Chain head_chain = 0;
+    /*  plast chain is not a chain entry. It points
+        to the next place to record a new chain
+        poointer. */
+    Dwarf_Chain *plast_chain = &head_chain;
+
     int res = _dwarf_load_section(dbg, &dbg->de_debug_varnames,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -63,7 +69,8 @@ dwarf_get_vars(Dwarf_Debug dbg,
         dbg->de_debug_varnames.dss_size,
         (Dwarf_Global **) vars, /* Type punning for sections
             with identical format. */
-        0,0,
+        &head_chain,
+        &plast_chain,
         ret_var_count,
         error,
         DW_DLA_VAR_CONTEXT,

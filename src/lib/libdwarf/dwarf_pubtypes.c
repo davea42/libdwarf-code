@@ -52,6 +52,12 @@ dwarf_get_pubtypes(Dwarf_Debug dbg,
     Dwarf_Type ** types,
     Dwarf_Signed * ret_type_count, Dwarf_Error * error)
 {
+    Dwarf_Chain head_chain = 0;
+    /*  plast chain is not a chain entry. It points
+        to the next place to record a new chain
+        poointer. */
+    Dwarf_Chain *plast_chain = &head_chain ;
+
     int res = _dwarf_load_section(dbg, &dbg->de_debug_pubtypes,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -66,7 +72,8 @@ dwarf_get_pubtypes(Dwarf_Debug dbg,
         dbg->de_debug_pubtypes.dss_size,
         (Dwarf_Global **) types, /* Type punning for sections
             with identical format. */
-        0,0,
+        &head_chain,
+        &plast_chain,
         ret_type_count, error,
         DW_DLA_PUBTYPES_CONTEXT,
         DW_DLA_GLOBAL, /* We don't have DW_DLA_PUBTYPES,

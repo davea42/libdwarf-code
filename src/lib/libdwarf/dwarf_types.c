@@ -50,6 +50,12 @@ dwarf_get_types(Dwarf_Debug dbg,
     Dwarf_Signed * ret_type_count,
     Dwarf_Error * error)
 {
+    Dwarf_Chain head_chain = 0;
+    /*  plast chain is not a chain entry. It points
+        to the next place to record a new chain
+        poointer. */
+    Dwarf_Chain *plast_chain = &head_chain ;
+
     int res = _dwarf_load_section(dbg, &dbg->de_debug_typenames,
         error);
     if (res != DW_DLV_OK) {
@@ -65,7 +71,8 @@ dwarf_get_types(Dwarf_Debug dbg,
         dbg->de_debug_typenames.dss_size,
         (Dwarf_Global **) types,  /* type punning, Dwarf_Type is
             never a completed type */
-        0,0,
+        &head_chain,
+        &plast_chain,
         ret_type_count,
         error,
         DW_DLA_TYPENAME_CONTEXT,

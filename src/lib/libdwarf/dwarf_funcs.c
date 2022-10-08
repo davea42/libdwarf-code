@@ -50,6 +50,12 @@ dwarf_get_funcs(Dwarf_Debug dbg,
     Dwarf_Func ** funcs,
     Dwarf_Signed * ret_func_count, Dwarf_Error * error)
 {
+    Dwarf_Chain head_chain = 0;
+    /*  plast chain is not a chain entry. It points
+        to the next place to record a new chain
+        poointer. */
+    Dwarf_Chain *plast_chain = &head_chain ;
+
     int res = _dwarf_load_section(dbg, &dbg->de_debug_funcnames,
         error);
     if (res != DW_DLV_OK) {
@@ -63,10 +69,10 @@ dwarf_get_funcs(Dwarf_Debug dbg,
         ".debug_funcnames",
         dbg->de_debug_funcnames.dss_data,
         dbg->de_debug_funcnames.dss_size,
-
         /* Type punning for sections with identical format. */
         (Dwarf_Global **) funcs,
-        0,0,
+        &head_chain,
+        &plast_chain,
         ret_func_count,
         error,
         DW_DLA_FUNC_CONTEXT,

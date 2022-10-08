@@ -160,17 +160,18 @@ dealloc_globals_chain(Dwarf_Debug dbg,
 }
 
 /*  There are only 6 DW_IDX values defined in DWARF5
-    so 7 would suffice, but lets allow for future DW_IDX too. */
-#define  IDX_ARRAY_SIZE 12
+    so 7 would suffice, but lets allow for future DW_IDX too. 
 
+    On returning DW_DLV_ERROR the caller will free the
+    chain, we do not need to here.  */
+#define  IDX_ARRAY_SIZE 12
 static int
 _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
-    Dwarf_Chain *head_chain,
-    Dwarf_Chain **plast_chain,
+    Dwarf_Chain  **pplast_chain,
     Dwarf_Signed  *total_count,
-    Dwarf_Error *error,
-    int context_DLA_code,
-    int global_DLA_code)
+    Dwarf_Error   *error,
+    int            context_DLA_code,
+    int            global_DLA_code)
 {
     int                  res = 0;
     Dwarf_Off            cur_offset = 0;
@@ -327,7 +328,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                 _dwarf_error_string(dbg,error,
                     DW_DLE_DEBUG_NAMES_ERROR,
                     "DW_DLE_DEBUG_NAMES_ERROR: "
-                    "a .debug_names entry entrypool values "
+                    "a .debug_names entry entrypool value "
                     " improperly empty. "
                     "Unreasonable. "
                     "Corrupt data.");
@@ -396,9 +397,10 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                 pubnames_context = (Dwarf_Global_Context)
                     _dwarf_get_alloc(dbg, context_DLA_code, 1);
                 if (!pubnames_context) {
-                    dealloc_globals_chain(dbg,*head_chain);
-                    *head_chain = 0;
-                    _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+                    dwarf_dealloc_dnames(dn_head);
+                    _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+                        "DW_DLE_ALLOC_FAIL: allocating "
+                        "Dwarf_Global_Context");
                     return DW_DLV_ERROR;
                 }   
                 /*  Dwarf_Global_Context initialization. */
@@ -421,7 +423,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                 total_count,
                 &pubnames_context_on_list,
                 global_DLA_code,
-                plast_chain,
+                pplast_chain,
                 abbrev_tag,
                 error);
             if (res == DW_DLV_ERROR) {
@@ -429,8 +431,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
                 }
-                dealloc_globals_chain(dbg,*head_chain);
-                *head_chain = 0;
+                dwarf_dealloc_dnames(dn_head);
                 return res;
             }
         }
@@ -449,6 +450,9 @@ dwarf_get_globals(Dwarf_Debug dbg,
 {
     int res = 0;
     Dwarf_Chain head_chain = 0;
+    /*  plast chain is not a chain entry. It points
+        to the next place to record a new chain
+        poointer. */
     Dwarf_Chain *plast_chain = &head_chain ;
     Dwarf_Bool have_dnames  = FALSE;
     Dwarf_Bool have_pubnames  = FALSE;
@@ -495,7 +499,6 @@ dwarf_get_globals(Dwarf_Debug dbg,
     }
     if (have_dnames) {
         res = _dwarf_internal_get_debug_names_globals(dbg,
-            &head_chain,
             &plast_chain,
             return_count,
             error,
@@ -503,6 +506,7 @@ dwarf_get_globals(Dwarf_Debug dbg,
             DW_DLA_GLOBAL);
         if (res == DW_DLV_ERROR) {
             dealloc_globals_chain(dbg,head_chain);
+            head_chain = 0;
             return res;
         }
     }
@@ -610,7 +614,8 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
     global = (Dwarf_Global)
         _dwarf_get_alloc(dbg, global_DLA_code, 1);
     if (!global) {
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL: Allocating Dwarf_Global");
         return DW_DLV_ERROR;
     }
     (*global_count)++;
@@ -625,7 +630,9 @@ _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
         (Dwarf_Chain) _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
     if (!curr_chain) {
         dwarf_dealloc(dbg,global,pubnames_context->pu_alloc_type);
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL: allocating a Dwarf_Chain"
+            " internal structure.");
         return DW_DLV_ERROR;
     }
     /* Put current global on singly_linked list. */
@@ -691,15 +698,21 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
 }
 
-/* Sweeps the complete  section.  */
+/*  Sweeps the complete  section.  
+    On error it frees the head_chain,
+    and the caller never sees the head_chain data.
+    On success, if the out*chain data exists
+    it updates the caller head_chain through
+    the pointers.
+*/
 int
 _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     const char *secname,
     Dwarf_Small * section_data_ptr,
     Dwarf_Unsigned section_length,
     Dwarf_Global ** globals,
-    Dwarf_Chain  *  out_head_chain,
-    Dwarf_Chain  **  out_plast_chain,
+    Dwarf_Chain  *  out_phead_chain,
+    Dwarf_Chain  **  out_pplast_chain,
     Dwarf_Signed * return_count,
     Dwarf_Error * error,
     int context_DLA_code,
@@ -724,18 +737,11 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     /*  Offset from the start of compilation-unit for the current
         global. */
     Dwarf_Off die_offset_in_cu = 0;
-
     Dwarf_Signed global_count = 0;
 
     /*  The count is just to improve the error message
         a few lines above. */
     Dwarf_Unsigned context_count = 0;
-
-    /*  Used to chain the Dwarf_Global_s structs for
-        creating contiguous list of pointers to the structs. */
-    Dwarf_Chain head_chain = 0;
-    Dwarf_Chain *plast_chain = &head_chain;
-
 
     if (!dbg || dbg->de_magic != DBG_IS_VALID) {
         _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
@@ -780,8 +786,11 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_context = (Dwarf_Global_Context)
             _dwarf_get_alloc(dbg, context_DLA_code, 1);
         if (!pubnames_context) {
-            dealloc_globals_chain(dbg,head_chain);
-            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
+            _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+                "DW_DLE_ALLOC_FAIL: Allocating a"
+                " Dwarf_Global_Context for a pubnames entry.");
             return DW_DLV_ERROR;
         }
         /*  ========pubnames_context not recorded anywhere yet. */
@@ -795,7 +804,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 DWARF_32BIT_SIZE + DWARF_HALF_SIZE + DWARF_32BIT_SIZE,
                 secname,
                 "header-record");
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -806,7 +816,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             &local_extension_size,section_length,section_end_ptr,
             error);
         if (mres != DW_DLV_OK) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -823,7 +834,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                     context_count,
                     pubnames_like_offset,
                     length, error);
-                dealloc_globals_chain(dbg,head_chain);
+                dealloc_globals_chain(dbg,*out_phead_chain);
+                *out_phead_chain = 0;
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
@@ -852,7 +864,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             pubnames_error_length(dbg,error,
                 DWARF_HALF_SIZE,
                 secname,"version-number");
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -862,7 +875,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             &version,pubnames_like_ptr,DWARF_HALF_SIZE,
             section_end_ptr,error);
         if (mres != DW_DLV_OK) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -873,7 +887,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_like_offset += DWARF_HALF_SIZE;
         /* ASSERT: DW_PUBNAMES_VERSION2 == DW_PUBTYPES_VERSION2 */
         if (version != DW_PUBNAMES_VERSION2) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -888,7 +903,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 3*pubnames_context->pu_length_size,
                 secname,
                 "header/DIE offsets");
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -900,7 +916,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             pubnames_context->pu_length_size,
             section_end_ptr,error);
         if (mres != DW_DLV_OK) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -919,7 +936,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             pubnames_context->pu_length_size,
             section_end_ptr,error);
         if (mres != DW_DLV_OK) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -929,7 +947,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_like_offset += pubnames_context->pu_length_size;
 
         if (pubnames_like_ptr > (section_data_ptr + section_length)) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -946,7 +965,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             pubnames_context->pu_length_size,
             pubnames_context->pu_pub_entries_end_ptr,error);
         if (mres != DW_DLV_OK) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -957,7 +977,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         FIX_UP_OFFSET_IRIX_BUG(dbg,
             die_offset_in_cu, "offset of die in cu");
         if (pubnames_like_ptr > (section_data_ptr + section_length)) {
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
@@ -988,11 +1009,12 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                     &global_count,
                     &pubnames_context_on_list,
                     global_DLA_code,
-                    &plast_chain,
+                    out_pplast_chain,
                     0,
                     error);
                 if (res != DW_DLV_OK) {
-                    dealloc_globals_chain(dbg,head_chain);
+                    dealloc_globals_chain(dbg,*out_phead_chain);
+                    *out_phead_chain = 0;
                     if (!pubnames_context_on_list) {
                         dwarf_dealloc(dbg,pubnames_context,
                             context_DLA_code);
@@ -1022,7 +1044,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 pubnames_context->pu_pub_entries_end_ptr,
                 DW_DLE_STRING_OFF_END_PUBNAMES_LIKE,error);
             if (res != DW_DLV_OK) {
-                dealloc_globals_chain(dbg,head_chain);
+                dealloc_globals_chain(dbg,*out_phead_chain);
+                *out_phead_chain = 0;
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
@@ -1042,11 +1065,12 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 &global_count,
                 &pubnames_context_on_list,
                 global_DLA_code,
-                &plast_chain,
+                out_pplast_chain,
                 0,
                 error);
             if (res != DW_DLV_OK) {
-                dealloc_globals_chain(dbg,head_chain);
+                dealloc_globals_chain(dbg,*out_phead_chain);
+                *out_phead_chain = 0;
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
@@ -1062,7 +1086,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                     2*pubnames_context->pu_length_size,
                     secname,
                     "global record offset");
-                dealloc_globals_chain(dbg,head_chain);
+                dealloc_globals_chain(dbg,*out_phead_chain);
+                *out_phead_chain = 0;
                 if (!pubnames_context_on_list) {
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
@@ -1081,7 +1106,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
                 }
-                dealloc_globals_chain(dbg,head_chain);
+                dealloc_globals_chain(dbg,*out_phead_chain);
+                *out_phead_chain = 0;
                 return mres;
             }
             /*  die_offset_in_cu may now be zero, meaing
@@ -1096,7 +1122,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                     dwarf_dealloc(dbg,pubnames_context,
                         context_DLA_code);
                 }
-                dealloc_globals_chain(dbg,head_chain);
+                dealloc_globals_chain(dbg,*out_phead_chain);
+                *out_phead_chain = 0;
                 _dwarf_error(dbg, error, length_err_num);
                 return DW_DLV_ERROR;
             }
@@ -1110,7 +1137,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             if (!pubnames_context_on_list) {
                 dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
             }
-            dealloc_globals_chain(dbg,head_chain);
+            dealloc_globals_chain(dbg,*out_phead_chain);
+            *out_phead_chain = 0;
             return DW_DLV_ERROR;
         }
 #if 1
@@ -1131,22 +1159,18 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
 #endif
         pubnames_like_ptr = pubnames_ptr_past_end_cu;
     } while (pubnames_like_ptr < section_end_ptr);
-
-    if (out_head_chain) {
-        /* Do not finish up yet */
-        *out_head_chain = head_chain;
-        *out_plast_chain = plast_chain;
-        *return_count = global_count;
+    *return_count = global_count;
+    if (!globals) {
         return DW_DLV_OK;
     }
-
     {
-    int cres = 0;
-    *return_count = global_count;
-    /*  Cannot return DW_DLV_NO_ENTRY */
-    cres = _dwarf_chain_to_array(dbg,head_chain,
-        global_count, globals, error);
-    return cres;
+        int cbres = 0;
+        /*  Cannot return DW_DLV_NO_ENTRY */
+        cbres = _dwarf_chain_to_array(dbg,*out_phead_chain,
+            global_count, globals, error);
+        /* head_chain no longer points to anything */
+        *out_phead_chain = 0;
+        return cbres;
     }
 }
 
@@ -1166,7 +1190,8 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
             (Dwarf_Unsigned)global_count);
     if (ret_globals == NULL) {
         dealloc_globals_chain(dbg,head_chain);
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+             "DW_DLE_ALLOC_FAIL: Allocating a Dwarf_Global");
         return DW_DLV_ERROR;
     }
 
@@ -1188,6 +1213,7 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
         }
     }
+    head_chain = 0; /* Unneccesary, but showing intent. */
     *globals = ret_globals;
     return DW_DLV_OK;
 }
