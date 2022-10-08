@@ -572,7 +572,7 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
                      printf("\nERROR: Cannot get "
                          "dwarf_dnames_cu_table on cu \n");
                      glflags.gf_count_major_errors++;
-                     if (res == DW_DLV_ERROR) {
+                     if (cres == DW_DLV_ERROR) {
                          dwarf_dealloc_error(dbg,chkerror);
                      }
                      return DW_DLV_OK;
