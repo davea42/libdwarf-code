@@ -1,3 +1,41 @@
+2022-10-08:  David Anderson
+    commit ec415e3e1c8ac798de28ba5c99b85a377fb3d7f6
+
+    Now all these use the slighly modified library-internal
+    function for reading pubnnames-like section.s
+            modified:   src/lib/libdwarf/dwarf_funcs.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_pubtypes.c
+            modified:   src/lib/libdwarf/dwarf_types.c
+            modified:   src/lib/libdwarf/dwarf_vars.c
+            modified:   src/lib/libdwarf/dwarf_weaks.c
+
+2022-10-08:  David Anderson
+    commit 9c79fbb70e6728441a0913451487b43bd08d5105
+
+    Another instance of the res/cres typo fixed.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-10-08:  David Anderson
+    commit c20b1ddf3dd2694086a1981ec7dbeb8ffbab7229
+
+    Fixed a typo in the introduction.
+            modified:   doc/libdwarf.dox
+
+2022-10-08:  David Anderson
+    commit ac2e6b9313a2c9798a686896fc3cc105e53bbc94
+
+    One test of a result int tested the wrong result int,
+    one from a different call..
+    res->cres
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-10-07:  David Anderson
+    commit 8ccf3e0f65a4b819a363f56639cbc14877388bac
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2022-10-07:  David Anderson
     commit f0c944a68a9ec0dfa562adf324417d1517e5bbad
 
