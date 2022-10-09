@@ -111,8 +111,9 @@ int exampleinit_dl(const char *path, unsigned groupnumber,
     if (res == DW_DLV_ERROR) {
         /*  Necessary call even though dbg is null!
             This avoids a memory leak.  */
-        dwarf_dealloc_error(dbg,error);
-        return res;
+        dwarf_dealloc_error(dbg,*error);
+        *error = 0;
+        return DW_DLV_NO_ENTRY;
     }
     if (res == DW_DLV_NO_ENTRY) {
         return res;
@@ -1104,6 +1105,13 @@ int examplee(Dwarf_Debug dbg,Dwarf_Die somedie,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplef Example of dwarf_get_globals use
+
+    For 0.4.2 and earlier this returned .debug_pubnames
+    content.
+    As of version 0.5.0 (October 2022) this  returns
+    .debug_pubnames  (if it exists) and .debug_names
+    (if it exists) data.
+
     @code
 */
 int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
@@ -1132,6 +1140,11 @@ int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampleg Example of dwarf_get_pubtypes use
+
+    This section (.debug_pubtypes) was in DWARF4,
+    it could appear as an extension
+    in other DWARF versions..
+
     @code
 */
 int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
@@ -1154,6 +1167,10 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup exampleh Example of dwarf_get_weaks use
+
+    This section is an SGI/MIPS extension, not created
+    by modern compilers.
+    
     @code
 */
 int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
@@ -1176,6 +1193,10 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 /*! @endcode */
 
 /*! @defgroup examplej Example of dwarf_get_funcs use
+
+    This section is an SGI/MIPS extension, not created
+    by modern compilers.
+    
     @code
 */
 int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
@@ -1198,6 +1219,10 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 /*! @endcode */
 
 /*! @defgroup examplel Example of dwarf_get_types use
+
+    This section is an SGI/MIPS extension, not created
+    by modern compilers.
+
     @code
 */
 int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
@@ -1219,6 +1244,13 @@ int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 }
 /*! @endcode */
 
+/*! @defgroup examplen Example of dwarf_get_vars use
+
+    This section is an SGI/MIPS extension, not created
+    by modern compilers.
+    
+    @code
+*/
 int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
@@ -1237,10 +1269,232 @@ int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
     return DW_DLV_OK;
 }
 
-void exampledebugnames()
+/*! @defgroup exampledebugnames Example accessing .debug_names
+    @brief exampledebugnames Showing access to .debug_names
+
+    This is accessing DWARF5 .debug_names, a section
+    intended to provide fast access to DIEs.
+
+    It bears a strong resemblance to what libdwarf does
+    in dwarf_global.c.
+
+    Making this a single (long) function here, though that is
+    not how libdwarf or dwarfdump are written.
+
+    That is just one possible sort of access. There are many,
+    and we would love to hear suggestions for specific
+    new API functions in the library.
+
+    There is a wealth of information in .debug_names
+    and the following is all taken care of for you
+    by dwarf_get_globals().
+
+    FIXME
+
+    @code
+*/
+#define MAXPAIRS 8 /* The standard defines 5.*/
+int exampledebugnames(Dwarf_Debug dbg,
+    Dwarf_Unsigned *dnentrycount,
+    Dwarf_Error *error)
 {
-    /* FIXME need extended example of debugnames use. */
+    int res = DW_DLV_OK;
+    Dwarf_Unsigned offset = 0;
+    Dwarf_Dnames_Head dn  = 0;
+    Dwarf_Unsigned new_offset = 0;
+
+    for (   ;res == DW_DLV_OK; offset = new_offset) {
+        Dwarf_Unsigned comp_unit_count = 0;
+        Dwarf_Unsigned local_type_unit_count = 0;
+        Dwarf_Unsigned foreign_type_unit_count = 0;
+        Dwarf_Unsigned bucket_count = 0;
+        Dwarf_Unsigned name_count = 0;
+        Dwarf_Unsigned abbrev_table_size = 0;
+        Dwarf_Unsigned entry_pool_size = 0;
+        Dwarf_Unsigned augmentation_string_size = 0;
+        char          *aug_string = 0;
+        Dwarf_Unsigned section_size = 0;
+        Dwarf_Half     table_version = 0;
+        Dwarf_Half     offset_size = 0;
+        Dwarf_Unsigned i = 0;
+
+        res = dwarf_dnames_header(dbg,offset,&dn,
+            &new_offset,error);
+        if (res == DW_DLV_ERROR) {
+            /*  Something wrong. */
+            return res;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            /*  Done. Normal end of the .debug_names section. */
+            break;
+        }
+        *dnentrycount += 1;
+        
+        res = dwarf_dnames_sizes(dn,&comp_unit_count,
+            &local_type_unit_count,
+            &foreign_type_unit_count,
+            &bucket_count,
+            &name_count,&abbrev_table_size,
+            &entry_pool_size,&augmentation_string_size,
+            &aug_string,
+            &section_size,&table_version,
+            &offset_size,
+            error);
+        if (res != DW_DLV_OK) {
+            /*  Something wrong. */
+            return res;
+        }
+        /*  name indexes start with one */
+        for(i = 1 ; i <= name_count; ++i) {
+            Dwarf_Unsigned j = 0;
+            /* dnames_name data */
+            Dwarf_Unsigned bucketnum = 0;
+            Dwarf_Unsigned hashvalunsign = 0;
+            Dwarf_Unsigned offset_to_debug_str = 0;
+            char          *ptrtostr          = 0;
+            Dwarf_Unsigned offset_in_entrypool = 0;
+            Dwarf_Unsigned abbrev_code = 0;
+            Dwarf_Half     abbrev_tag    = 0;
+            Dwarf_Half     nt_idxattr_array[MAXPAIRS];
+            Dwarf_Half     nt_form_array[MAXPAIRS];
+            Dwarf_Unsigned attr_count = 0;
+
+            /* dnames_entrypool data */
+            Dwarf_Half     tag         = 0;
+            Dwarf_Bool     single_cu_case = 0;
+            Dwarf_Unsigned single_cu_offset = 0;
+            Dwarf_Unsigned value_count = 0;
+            Dwarf_Unsigned index_of_abbrev = 0;
+            Dwarf_Unsigned offset_of_initial_value = 0;
+            Dwarf_Unsigned offset_next_entry_pool = 0;
+            Dwarf_Half     idx_array[MAXPAIRS];
+            Dwarf_Half     form_array[MAXPAIRS];
+            Dwarf_Unsigned offsets_array[MAXPAIRS];
+            Dwarf_Sig8     signatures_array[MAXPAIRS];
+
+            Dwarf_Unsigned cu_table_index = 0;
+            Dwarf_Unsigned tu_table_index = 0;
+            Dwarf_Unsigned local_die_offset = 0;
+            Dwarf_Unsigned parent_index = 0;
+            Dwarf_Sig8     parenthash;
+
+
+            /*  This gets us the entry pool offset we need.
+                we provide idxattr and nt_form arrays (need
+                not be initialized) and on return
+                attr_count of those arrays are filled in.
+                if attr_count < array_size then array_size
+                is too small and things will not go well! 
+                See the count of DW_IDX entries in dwarf.h
+                and make the arrays (say) 2 or more larger
+                ensuring against future new DW_IDX index
+                attributes..
+
+                ptrtostring is the name in the Names Table. */
+            res = dwarf_dnames_name(dn,i,
+                &bucketnum, &hashvalunsign,
+                &offset_to_debug_str,&ptrtostr,
+                &offset_in_entrypool, &abbrev_code,
+                &abbrev_tag,
+                MAXPAIRS,
+                nt_idxattr_array, nt_form_array,
+                &attr_count,error);
+            if (res == DW_DLV_NO_ENTRY) {
+                /* past end. Normal. */
+                break;
+            }
+            if (res == DW_DLV_ERROR) {
+                dwarf_dealloc_dnames(dn);
+                return res;
+            }
+
+            /* Check attr_count < MAXPAIRS ! */
+            /*  Now check the value of TAG to ensure it 
+                is something of interest as data or function.
+                Plausible choices: */
+            switch (abbrev_tag) {
+            case DW_TAG_subprogram:
+            case DW_TAG_variable:
+            case DW_TAG_label:
+            case DW_TAG_member:
+            case DW_TAG_common_block:
+            case DW_TAG_enumerator:
+            case DW_TAG_namelist:
+            case DW_TAG_module:
+               break;
+            default:
+               /*  Not data or variable DIE involved. 
+                   Loop on the next i */
+               continue;
+            }
+
+            /*  We need the number of values for this name
+                from this call. tag will match abbrev_tag.  */
+            res = dwarf_dnames_entrypool(dn,
+                offset_in_entrypool,
+                &abbrev_code,&tag,&value_count,&index_of_abbrev,
+                &offset_of_initial_value,
+                error);
+            if (res != DW_DLV_OK) {
+                dwarf_dealloc_dnames(dn);
+                return res;
+            }
+
+            /*  This gets us an actual array of values
+                as the library combines abbreviations,
+                IDX attributes and values. We use
+                the idx_array and form_array data
+                created above. */
+                
+            res = dwarf_dnames_entrypool_values(dn,
+                index_of_abbrev,
+                offset_of_initial_value,
+                value_count,
+                idx_array,
+                form_array,
+                offsets_array,
+                signatures_array,
+                &single_cu_case,&single_cu_offset,
+                &offset_next_entry_pool,
+                error);
+            if (res != DW_DLV_OK) {
+                dwarf_dealloc_dnames(dn);
+                return res;
+            }
+            for(j = 0; j < value_count; ++j) {
+                Dwarf_Half idx = idx_array[j];
+
+                switch(idx) {
+                case DW_IDX_compile_unit:
+                    cu_table_index = offsets_array[j];
+                    break;
+                case DW_IDX_die_offset:
+                    local_die_offset = offsets_array[j];
+                    break;
+                /* The following are not meaninful when
+                    reading globals. */
+                case DW_IDX_type_unit:
+                    tu_table_index = offsets_array[j];
+                    break;
+                case DW_IDX_parent:
+                    parent_index = offsets_array[j];
+                    break;
+                case DW_IDX_type_hash:
+                    parenthash = signatures_array[j];
+                    break;
+                default:
+                    /* Not handled DW_IDX_GNU... */
+                    break;
+                }
+            }
+            /*  Now do something with the data aggregated */
+             
+        }
+        dwarf_dealloc_dnames(dn);
+    }
+    return DW_DLV_OK;
 }
+
 
 /*! @defgroup examplep5 An example reading .debug_macro
 
@@ -2365,18 +2619,3 @@ int example_rnglist_for_attribute(Dwarf_Attribute attr,
 }
 /*! @endcode */
 
-/*! @defgroup example_debug_names Example accessing .debug_names
-    @brief example_debug_names Showing access to .debug_names
-
-    This is accessing DWARF5 .debug_names, a section
-    intended to provide fast access to DIEs.
-
-    TO BE COMPLETED
-    @code
-*/
-int example_debug_names(Dwarf_Debug_Names dn,
-    Dwarf_Error *error)
-{
-}
-
-/*! @endcode */
