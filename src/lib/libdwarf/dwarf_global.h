@@ -49,8 +49,8 @@ struct Dwarf_Global_Context_s {
     unsigned pu_alloc_type; /* DW_DLA something */
     Dwarf_Debug pu_dbg;
 
-    /* The following set with the DW_TAG of the DIE
-       involved.  Left 0 with .debug_pubnames. */
+    /*  The following set with the DW_TAG of the DIE
+        involved.  Left 0 with .debug_pubnames. */
     Dwarf_Bool  pu_is_debug_names;
 
     /*  For DWARF5 .debug_names the following
@@ -97,7 +97,6 @@ struct Dwarf_Global_s {
     Dwarf_Half gl_alloc_type; /* DW_DLA something */
     Dwarf_Half gl_tag; /*  .debug_names only. Else 0. */
 };
-
 
 /*  In all but pubnames, head_chain and globals
     should be passed in as NULL.

@@ -359,7 +359,8 @@ main(int argc, char *argv[])
     /*  Redirect stdout  to an specific file */
     if (glflags.output_file) {
         if (NULL == freopen(glflags.output_file,"w",stdout)) {
-            printf("ERROR dwarfdump: Unable to redirect output to '%s'\n",
+            printf("ERROR dwarfdump: Unable to redirect "
+                "output to '%s'\n",
                 glflags.output_file);
             global_destructors();
             exit(EXIT_FAILURE);

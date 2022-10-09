@@ -1186,7 +1186,7 @@ _dwarf_initialize_bucket_details(Dwarf_Dnames_Head dn,
     return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_dnames_bucket(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned      bucket_number,
     Dwarf_Unsigned    * name_index,
@@ -1445,7 +1445,7 @@ _dwarf_fill_in_attr_form(Dwarf_Dnames_Head dn,
     know now much of array filled in and
     if the array you provided is
     large enough. Possibly 40 is
-    sufficient. 
+    sufficient.
     name indexes start at 1.  */
 int
 dwarf_dnames_name(Dwarf_Dnames_Head dn,

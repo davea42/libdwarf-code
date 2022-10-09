@@ -167,17 +167,17 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     /* Display offsets */
     if (glflags.gf_display_offsets) {
         /* Print 'name' at the end for better layout */
-        if (!globi) { 
+        if (!globi) {
             printf(" %s data.  %" DW_PR_DSd " %s\n",
                 line_title,globcount,
-                globcount==1?"entry":"entries");  
+                globcount==1?"entry":"entries");
 #if 0
             printf("  DIE        DIE      CU DIE       CU DIE\n");
-            printf("  in sect    in CU    in sect      in sect\n");   
+            printf("  in sect    in CU    in sect      in sect\n");
 #endif
 
             printf("  CUhdr      DIE        CU DIE     DIE\n");
-            printf("  in sect    in CU      in sect    in sect\n");   
+            printf("  in sect    in CU      in sect    in sect\n");
         }
         printf(" 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -186,11 +186,11 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             global_cuh_offset,
             cu_local_die_offset,
             cu_die_off,global_die_off);
-       if (dietag) {
+        if (dietag) {
             const char * tagname = "";
             dwarf_get_TAG_name(dietag,&tagname);
-            printf(" %-18s",tagname); 
-       }
+            printf(" %-18s",tagname);
+        }
 #if 0
         printf("%s die-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx
             ", cu-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx ","
@@ -325,7 +325,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
             esb_empty_string(&unsanitname);
             esb_append(&unsanitname,esb_get_string(&unsanitname2));
         }
-    } else { 
+    } else {
         if (trueres2 == DW_DLV_NO_ENTRY) {
             /*  unsanitname ok as is, nothing to print
                 but the name of the real section.  */
@@ -340,7 +340,6 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
         so we make a safe copy. */
     esb_append(&sanitname,sanitized(esb_get_string(&unsanitname)));
     esb_destructor(&unsanitname);
-    
 
     if (glflags.gf_do_print_dwarf && count > 0) {
         printf("\n%s\n",esb_get_string(&sanitname));
@@ -544,7 +543,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 esb_destructor(&producername);
             }
 
-            dres = dwarf_offdie_b(dbg, global_die_off, 
+            dres = dwarf_offdie_b(dbg, global_die_off,
                 is_info, &die, err);
             if (dres != DW_DLV_OK) {
                 struct esb_s msge;
@@ -598,13 +597,13 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
             (glflags.gf_record_dwarf_error &&
             glflags.gf_check_verbose_mode)) {
             int res = 0;
-            Dwarf_Half dietag = 
+            Dwarf_Half dietag =
                 dwarf_global_tag_number(globbuf[i]);
 
             res  = print_pubname_style_entry(dbg,
                 i,count,
                 linetitle,
-                name, 
+                name,
                 dietag,
                 global_die_off, cu_die_off,
                 global_cuh_off,

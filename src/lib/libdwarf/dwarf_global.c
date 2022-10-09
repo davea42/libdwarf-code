@@ -126,8 +126,6 @@ static int _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
     Dwarf_Half           tag,
     Dwarf_Error         *error);
 
-
-
 static void
 dealloc_globals_chain(Dwarf_Debug dbg,
     Dwarf_Chain head_chain)
@@ -160,7 +158,7 @@ dealloc_globals_chain(Dwarf_Debug dbg,
 }
 
 /*  There are only 6 DW_IDX values defined in DWARF5
-    so 7 would suffice, but lets allow for future DW_IDX too. 
+    so 7 would suffice, but lets allow for future DW_IDX too.
 
     On returning DW_DLV_ERROR the caller will free the
     chain, we do not need to here.  */
@@ -276,9 +274,9 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
             case DW_TAG_enumerator:
             case DW_TAG_namelist:
             case DW_TAG_module:
-               break;
+                break;
             default:
-               continue;
+                continue;
             }
             if (attr_count >= IDX_ARRAY_SIZE) {
                 dwarf_dealloc_dnames(dn_head);
@@ -290,7 +288,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                     "Corrupt data.");
                 return DW_DLV_ERROR;
             }
-            
+
             res = dwarf_dnames_entrypool(dn_head,
                 offset_in_entrypool,&epool_abbrev_code,
                 &epool_abbrev_tag,&epool_value_count,
@@ -335,25 +333,25 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                 return DW_DLV_ERROR;
             }
             for (aindex = 0; aindex < epool_value_count; aindex++) {
-                 Dwarf_Half idx = idxattr_array[aindex];
-                
-                 switch(idx) {
-                 case DW_IDX_type_unit:
-                 case DW_IDX_parent:
-                 case DW_IDX_type_hash:
-                     break;
-                 case DW_IDX_compile_unit:
-                     cu_header_index =  offset_array[aindex];
-                     have_cu_header_index = TRUE;
-                     break;
-                 case DW_IDX_die_offset:
-                     die_local_offset = offset_array[aindex];
-                     have_die_local_offset = TRUE;
-                     break;
-                 default:
-                     /*  Non-standard DW_IDX. */
-                     break;
-                 }
+                Dwarf_Half idx = idxattr_array[aindex];
+
+                switch(idx) {
+                case DW_IDX_type_unit:
+                case DW_IDX_parent:
+                case DW_IDX_type_hash:
+                    break;
+                case DW_IDX_compile_unit:
+                    cu_header_index =  offset_array[aindex];
+                    have_cu_header_index = TRUE;
+                    break;
+                case DW_IDX_die_offset:
+                    die_local_offset = offset_array[aindex];
+                    have_die_local_offset = TRUE;
+                    break;
+                default:
+                    /*  Non-standard DW_IDX. */
+                    break;
+                }
             }
             if (!have_cu_header_index) {
                 if (single_cu) {
@@ -364,30 +362,29 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                     continue;
                 }
             }
-          
+
             if (!have_die_local_offset) {
-                 /* Ignore this entry */
-                 continue;
+                /* Ignore this entry */
+                continue;
             }
             if (!have_cu_header_offset) {
-                 int ores = 0;
-                 Dwarf_Unsigned offset = 0;
-                 Dwarf_Sig8     signature;
-                 Dwarf_Error    cuterr = 0;
-                
+                int ores = 0;
+                Dwarf_Unsigned offset = 0;
+                Dwarf_Sig8     signature;
+                Dwarf_Error    cuterr = 0;
 
-                 ores = dwarf_dnames_cu_table(dn_head,
-                     "cu", cu_header_index,
-                     &offset,&signature,&cuterr);
-                 if (ores != DW_DLV_OK) {
-                 }  else {
-                     cu_header_global_offset = offset;
-                     have_cu_header_global_offset = TRUE;
-                 }
+                ores = dwarf_dnames_cu_table(dn_head,
+                    "cu", cu_header_index,
+                    &offset,&signature,&cuterr);
+                if (ores != DW_DLV_OK) {
+                }  else {
+                    cu_header_global_offset = offset;
+                    have_cu_header_global_offset = TRUE;
+                }
             }
             if (!have_cu_header_global_offset) {
-                 /* Ignore this entry */
-                 continue;
+                /* Ignore this entry */
+                continue;
             }
 
             if (!pubnames_context ||
@@ -402,12 +399,12 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
                         "DW_DLE_ALLOC_FAIL: allocating "
                         "Dwarf_Global_Context");
                     return DW_DLV_ERROR;
-                }   
+                }
                 /*  Dwarf_Global_Context initialization. */
                 pubnames_context->pu_dbg = dbg;
                 pubnames_context->pu_alloc_type = context_DLA_code;
                 pubnames_context->pu_is_debug_names = TRUE;
-                pubnames_context->pu_offset_of_cu_header = 
+                pubnames_context->pu_offset_of_cu_header =
                     cu_header_global_offset;
                 /*  For .debug_names we don't need to
                     set the rest of the fields.
@@ -510,7 +507,7 @@ dwarf_get_globals(Dwarf_Debug dbg,
             return res;
         }
     }
-    
+
     /*  Cannot return DW_DLV_NO_ENTRY */
     res = _dwarf_chain_to_array(dbg,head_chain,
         *return_count, ret_globals, error);
@@ -698,7 +695,7 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
 }
 
-/*  Sweeps the complete  section.  
+/*  Sweeps the complete  section.
     On error it frees the head_chain,
     and the caller never sees the head_chain data.
     On success, if the out*chain data exists
@@ -1186,12 +1183,12 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
     /*  Now turn list into a block */
     /*  Points to contiguous block of Dwarf_Global. */
     ret_globals = (Dwarf_Global *)
-        _dwarf_get_alloc(dbg, DW_DLA_LIST, 
+        _dwarf_get_alloc(dbg, DW_DLA_LIST,
             (Dwarf_Unsigned)global_count);
     if (ret_globals == NULL) {
         dealloc_globals_chain(dbg,head_chain);
         _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
-             "DW_DLE_ALLOC_FAIL: Allocating a Dwarf_Global");
+            "DW_DLE_ALLOC_FAIL: Allocating a Dwarf_Global");
         return DW_DLV_ERROR;
     }
 
@@ -1199,7 +1196,7 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
         and deallocate the chain.  This ignores the various
         headers, since they are not involved. */
     {
-        
+
         Dwarf_Signed i = 0;
         Dwarf_Chain curr_chain = 0;
         curr_chain = head_chain;
@@ -1568,7 +1565,7 @@ int dwarf_return_empty_pubnames(Dwarf_Debug dbg, int flag)
 Dwarf_Half
 dwarf_global_tag_number(Dwarf_Global dw_global)
 {
-    if(!dw_global) {
+    if (!dw_global) {
         return 0;
     }
     return dw_global->gl_tag;

@@ -1504,7 +1504,7 @@ DW_API int dwarf_init_path_dl(const char * dw_path,
     This version allows specifying any number of debuglink
     global paths to search on for debuglink targets.
 
-    In case DW_DLV_ERROR returned be sure to 
+    In case DW_DLV_ERROR returned be sure to
     call dwarf_dealloc_error even though
     the returned Dwarf_Debug is NULL.
 
@@ -1558,7 +1558,7 @@ DW_API int dwarf_finish(Dwarf_Debug dw_dbg);
 /*! @brief Used to access DWARF information in memory
     or in an object format unknown to libdwarf.
 
-    In case DW_DLV_ERROR returned be sure to 
+    In case DW_DLV_ERROR returned be sure to
     call dwarf_dealloc_error even though
     the returned Dwarf_Debug is NULL.
 
@@ -1909,7 +1909,7 @@ DW_API int dwarf_find_die_given_sig8(Dwarf_Debug dw_dbg,
 
 /*! @brief Return the is_info flag.
 
-    So client software knows if a DIE is in debug_info or 
+    So client software knows if a DIE is in debug_info or
     (DWARF4-only) debug_types.
     @param dw_die
     The DIE being queried.
@@ -3869,7 +3869,7 @@ DW_API void dwarf_dealloc_ranges(Dwarf_Debug dw_dbg,
 
     Used in DWARF5 to define valid address ranges for
     code.
-    
+
     DW_FORM_rnglistx
     DW_AT_ranges with DW_FORM_sec_offset
     @{
@@ -4770,7 +4770,7 @@ DW_API int dwarf_get_macro_import(
     Dwarf_Error    * dw_error);
 /*! @} */
 
-/*! @defgroup macinfo Macro Access: DWARF2-4 
+/*! @defgroup macinfo Macro Access: DWARF2-4
 
     Reading the .debug_macinfo section.
 
@@ -6249,7 +6249,7 @@ DW_API int dwarf_dnames_bucket(Dwarf_Dnames_Head dw_dn,
     @param dw_abbrev_tag
     Returned from entrypool abbrev data.
     @param dw_array_size
-    Size of array you provide 
+    Size of array you provide
     to hold DW_IDX index attribute and
     form numbers.
     Possibly 10 suffices for practical purposes.
@@ -6643,7 +6643,6 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
     Dwarf_Signed * dw_number_of_globals,
     Dwarf_Error  * dw_error);
 
-
 /*! @brief Dealloc the Dwarf_Globals data
 
     @param dw_dbg
@@ -6737,7 +6736,7 @@ DW_API int dwarf_global_name_offsets(Dwarf_Global dw_global,
     If the Dwarf_Global refers to a global from
     the .debug_names section the return value is the
     DW_TAG for the DIE in the global entry, for
-    example DW_TAG_subprogram. 
+    example DW_TAG_subprogram.
     In case of error or if the section for this global
     was .debug_pubnames zero is returned.
 */

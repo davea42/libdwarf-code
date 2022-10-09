@@ -61,8 +61,8 @@ printindent(unsigned int l)
 }
 
 static const Dwarf_Sig8 zerosig;
-/*   The table entries here are indexed starting at 0 
-     Whereas names table area indexed starting at 1.  */
+/*  The table entries here are indexed starting at 0
+    Whereas names table area indexed starting at 1.  */
 static int
 print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
     const char     *type,
@@ -122,7 +122,7 @@ print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
         }
         /*  Could equally test for non-zero offset here. */
         if (i < offset_count) {
-            
+
             printindent(indent);
             printf("[%4" DW_PR_DUu "] ",i);
             printf("CU-offset:  0x%"
@@ -371,7 +371,7 @@ print_attr_array(unsigned int indent,
     return DW_DLV_OK;
 }
 
-/*  Check die offset for correctness. 
+/*  Check die offset for correctness.
     Only dealing with local cu/tu (not foreighn tu)*/
 static void
 check_die_pub_offset( Dwarf_Debug dbg,
@@ -390,10 +390,10 @@ check_die_pub_offset( Dwarf_Debug dbg,
         is_info,&itemdie,&error);
     if (sres != DW_DLV_OK) {
         printf("ERROR No global DIE at cuhdroff="
-            "0x%" DW_PR_DUx 
-         " + culocaldieoffset="
-            "0x%" DW_PR_DUx 
-         " = "
+            "0x%" DW_PR_DUx
+            " + culocaldieoffset="
+            "0x%" DW_PR_DUx
+            " = "
             "0x%" DW_PR_DUx "\n\n",
             cuhdr_offset,local_die_offset,
             global_offset);
@@ -406,7 +406,6 @@ check_die_pub_offset( Dwarf_Debug dbg,
         dwarf_dealloc_die(itemdie);
     }
 }
-
 
 #define MAXPAIRS 8 /* The standard defines 5.*/
 static Dwarf_Half     idx_array[MAXPAIRS];
@@ -469,8 +468,8 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
         "\n",
         value_count, offset_of_initial_value);
     if (value_count > MAXPAIRS) {
-        printf("\nERROR: The number of values in an entrypool entry is"
-            " %" DW_PR_DUu
+        printf("\nERROR: The number of values in an entrypool"
+            " entry is %" DW_PR_DUu
             " but  the max allowed is %d\n",value_count,MAXPAIRS);
         glflags.gf_count_major_errors++;
         return DW_DLV_OK;
@@ -492,7 +491,8 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
 
     indent += 2;
     printindent(indent);
-    printf("Entrypool Values. Entry count:%" DW_PR_DUu ".\n",value_count);
+    printf("Entrypool Values. Entry count:%" DW_PR_DUu ".\n",
+        value_count);
     if (single_cu_case) {
         printindent(indent);
         printf("Single CU case. CUoffset defaults to: 0x%"
@@ -564,38 +564,38 @@ print_name_values(unsigned int indent, Dwarf_Debug dbg,
         Dwarf_Unsigned cu_hd_offset = 0;
         Dwarf_Sig8     sig8;
         if (!single_cu_case) {
-             /* tu or multiple CUs */
-             if (has_cu_table_index) {
-                 cres = dwarf_dnames_cu_table(dn,"cu",
-                     cu_table_index,&cu_hd_offset,&sig8,&chkerror);
-                 if (cres != DW_DLV_OK) {
-                     printf("\nERROR: Cannot get "
-                         "dwarf_dnames_cu_table on cu \n");
-                     glflags.gf_count_major_errors++;
-                     if (cres == DW_DLV_ERROR) {
-                         dwarf_dealloc_error(dbg,chkerror);
-                     }
-                     return DW_DLV_OK;
-                 }
-             } else {
-                 if (has_tu_table_index &&
-                     (tu_table_index < local_type_unit_count)) {
-                     cres = dwarf_dnames_cu_table(dn,"tu",
-                         tu_table_index,&cu_hd_offset,
-                         &sig8,&chkerror);
-                     if (cres != DW_DLV_OK) {
-                         printf("\nERROR: Cannot get "
+            /* tu or multiple CUs */
+            if (has_cu_table_index) {
+                cres = dwarf_dnames_cu_table(dn,"cu",
+                    cu_table_index,&cu_hd_offset,&sig8,&chkerror);
+                if (cres != DW_DLV_OK) {
+                    printf("\nERROR: Cannot get "
+                        "dwarf_dnames_cu_table on cu \n");
+                    glflags.gf_count_major_errors++;
+                    if (cres == DW_DLV_ERROR) {
+                        dwarf_dealloc_error(dbg,chkerror);
+                    }
+                    return DW_DLV_OK;
+                }
+            } else {
+                if (has_tu_table_index &&
+                    (tu_table_index < local_type_unit_count)) {
+                    cres = dwarf_dnames_cu_table(dn,"tu",
+                        tu_table_index,&cu_hd_offset,
+                        &sig8,&chkerror);
+                    if (cres != DW_DLV_OK) {
+                        printf("\nERROR: Cannot get "
                             "dwarf_dnames_cu_table on tu \n");
-                         glflags.gf_count_major_errors++;
-                         if (cres == DW_DLV_ERROR) {
+                        glflags.gf_count_major_errors++;
+                        if (cres == DW_DLV_ERROR) {
                             dwarf_dealloc_error(dbg,chkerror);
-                         }
-                         return DW_DLV_OK;
-                     }
-                 } else {
-                     return DW_DLV_OK;
-                 }
-             }
+                        }
+                        return DW_DLV_OK;
+                    }
+                } else {
+                    return DW_DLV_OK;
+                }
+            }
         } else {
             /*  Single unit case means CU */
             cu_hd_offset = single_cu_offset;
@@ -728,8 +728,8 @@ print_dname_record(Dwarf_Debug dbg,
     unsigned int indent = 0;
     Dwarf_Bool     has_single_cu_offset;
     Dwarf_Bool     has_single_tu_offset;
-    Dwarf_Unsigned single_cu_offset = 0; 
-    Dwarf_Unsigned single_tu_offset = 0; 
+    Dwarf_Unsigned single_cu_offset = 0;
+    Dwarf_Unsigned single_tu_offset = 0;
 
     res = dwarf_dnames_sizes(dn,&comp_unit_count,
         &local_type_unit_count,

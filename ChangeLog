@@ -1,4 +1,45 @@
 2022-10-08:  David Anderson
+    commit ad68dc9ded311765383bbc4d4ed51c9bf5eabe3a
+
+    Something very odd happened a few minutes ago.
+    Compiler complained, fixed, and now it complains
+    so changed back to what it was.
+            modified:   print_debug_names.c
+
+2022-10-08:  David Anderson
+    commit 1fc0940905024c1959af60a406c73538a9b73898
+    Merge: a57daf22 f6f99de5
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+2022-10-08:  David Anderson
+    commit a57daf229124d6c251fdb6263737453b434253f0
+
+    Fixed bug in error call. *error needed.
+            modified:   src/bin/dwarfdump/print_debug_names.c
+
+2022-10-08:  David Anderson
+    commit 98262df16271e7fd2e6869f73eaf2453b4014288
+
+    Added example with raw reading of .debug_names.
+    A small hint of how one could do things oneself.
+            modified:   doc/checkexamples.c
+
+2022-10-08:  David Anderson
+    commit c9173e03edb6c50a82549ab19bc0014201b8ed39
+
+    updated to git log.
+    Latest small changes now pass Coverity Scan with 0 defects.
+            modified:   ChangeLog
+
+2022-10-08:  David Anderson
+    commit f6f99de5ed971424acdaad1b75e89770da798313
+
+    updated to git log.
+    Latest small changes now pass Coverity Scan with 0 defects.
+            modified:   ChangeLog
+
+2022-10-08:  David Anderson
     commit ec415e3e1c8ac798de28ba5c99b85a377fb3d7f6
 
     Now all these use the slighly modified library-internal
