@@ -109,7 +109,7 @@ print_cu_table(unsigned int indent,Dwarf_Dnames_Head dn,
 
         signature = zerosig;
         res = dwarf_dnames_cu_table(dn,type,i,
-            &offset, &signature,error);
+            &offset, &signature,*error);
         if (res == DW_DLV_NO_ENTRY) {
             break;
         }
