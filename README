@@ -224,22 +224,28 @@ a build and then
 
 # INCOMPATIBILITIES. Changes to interfaces
 
-Comparing lihbdwarf-0.4.3 to libdwarf-0.4.2
-Not released: 0.4.3
+### Comparing libdwarf-0.5.0 to libdwarf-0.4.2
+Not released.
+dwarf\_get\_globals() is compatible but it now
+returns data from .debug\_names in addition
+to .debug\_pubnames (either or both
+could be in an object file).
+New function dwarf\_global\_tag\_number()
+makes the data from .debug\_names a bit
+more useful (if a library user wants it).
 
-
-Comparing libdwarf-0.4.2 to libdwarf-0.4.1
+### Comparing libdwarf-0.4.2 to libdwarf-0.4.1
 No incompatibilities.
 
-Comparing libdwarf-0.4.1 to libdwarf-0.4.0
-Added a new function dwarf_suppress_debuglink_crc()
+### Comparing libdwarf-0.4.1 to libdwarf-0.4.0
+Added a new function dwarf\_suppress\_debuglink\_crc()
 which speeds up gnu debuglink (only use it if
-you are sure the debuglink name-check alone is sufficent).
+you are sure the debuglink name-check alone is sufficient).
 
-Comparing libdwarf-0.4.0 to libdwarf-0.3.4
+### Comparing libdwarf-0.4.0 to libdwarf-0.3.4
 A few  dealloc() functions changed name to have
 a consistent pattern for all such.
-Access to the DWARF5 .debug_names section
+Access to the DWARF5 .debug\_names section
 is now fully implemented. 
 
 See the <strong>Recent Changes</strong> section in
