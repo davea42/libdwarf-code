@@ -1,3 +1,31 @@
+2022-10-09:  David Anderson
+    commit 52ab751da109d4f188dc4258bb8bb5b23d7ccd91
+
+    Mentions the 0.5.0 changes.
+    Arranges that _ (underbar) in non-code
+    blocks shows up as underbar.
+            modified:   README
+            modified:   README.md
+
+2022-10-09:  David Anderson
+    commit 9b1863596623ecb416c4e84c5b845547b75c9bac
+
+    Bringing up to date with previous changes.
+            modified:   ChangeLog
+
+    Fixing bad indents and removing trailing whitespace
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_debug_names.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_global.h
+            modified:   src/lib/libdwarf/dwarf_string.h
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Removing three blank lines at the end of the file.
+            modified:   src/lib/libdwarf/dwarf_alloc.h
+
 2022-10-08:  David Anderson
     commit ad68dc9ded311765383bbc4d4ed51c9bf5eabe3a
 
