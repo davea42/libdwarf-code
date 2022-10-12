@@ -84,9 +84,9 @@ print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
 }
 
 static void
-record_line_error(const char *where, Dwarf_Error line_err)
+print_common_line_error(const char *where, Dwarf_Error line_err)
 {
-    if (glflags.gf_check_lines && checking_this_compiler()) {
+    if (checking_this_compiler()) {
         struct esb_s  tmp_buff;
         char buftmp[ESB_FIXED_ALLOC_SIZE];
 
@@ -264,7 +264,7 @@ process_line_table(Dwarf_Debug dbg,
             if (sres == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_linesrc()";
-                record_line_error(where,aterr);
+                print_common_line_error(where,aterr);
                 found_line_error = TRUE;
                 DROP_ERROR_INSTANCE(dbg,sres,aterr);
             }
@@ -276,7 +276,7 @@ process_line_table(Dwarf_Debug dbg,
         if (ares == DW_DLV_ERROR) {
             /* Do not terminate processing */
             where = "dwarf_lineaddr()";
-            record_line_error(where,*lt_err);
+            print_common_line_error(where,*lt_err);
             found_line_error = TRUE;
             pc = 0;
             DROP_ERROR_INSTANCE(dbg,ares,*lt_err);
@@ -290,7 +290,7 @@ process_line_table(Dwarf_Debug dbg,
             if (lires == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_linelogical()";
-                record_line_error(where,*lt_err);
+                print_common_line_error(where,*lt_err);
                 found_line_error = TRUE;
                 DROP_ERROR_INSTANCE(dbg,lires,*lt_err);
             }
@@ -303,7 +303,7 @@ process_line_table(Dwarf_Debug dbg,
             if (lires == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_lineno()";
-                record_line_error(where,*lt_err);
+                print_common_line_error(where,*lt_err);
                 found_line_error = TRUE;
                 DROP_ERROR_INSTANCE(dbg,lires,*lt_err);
             }
@@ -314,7 +314,7 @@ process_line_table(Dwarf_Debug dbg,
             if (cores == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_lineoff()";
-                record_line_error(where,*lt_err);
+                print_common_line_error(where,*lt_err);
                 found_line_error = TRUE;
                 DROP_ERROR_INSTANCE(dbg,cores,*lt_err);
             }
@@ -327,13 +327,20 @@ process_line_table(Dwarf_Debug dbg,
 
         /*  Process any possible error condition, though
             we won't be at the first such error. */
-        if (glflags.gf_check_decl_file && checking_this_compiler()) {
+        if ((glflags.gf_check_decl_file ||
+            glflags.gf_check_lines) && 
+            checking_this_compiler()) {
             DWARF_CHECK_COUNT(decl_file_result,1);
-            if (found_line_error) {
+            if (found_line_error) { 
+                /* DWARF_CHECK already issued. */
+#if 0
                 DWARF_CHECK_ERROR2(decl_file_result,where,
-                    dwarf_errmsg(*lt_err));
+                    dwarf_errmsg(lt_err);
+#endif
+                    
             } else if (glflags.gf_do_check_dwarf) {
-                /*  Check the address lies with a valid [lowPC:highPC]
+                /*  Check the address lies with a 
+                    valid [lowPC:highPC]
                     in the .text section*/
                 if (IsValidInBucketGroup(glflags.pRangesInfo,pc)) {
                     /* Valid values; do nothing */
@@ -964,6 +971,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             *err = 0;
         }
         if (line_errs > 0) {
+            /* does glflags.check_error++; */
+            /* sets glflags.gf_record_dwarf_error = TRUE; */
             DWARF_CHECK_ERROR_PRINT_CU();
             DWARF_ERROR_COUNT(lines_result,line_errs);
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
@@ -1002,7 +1011,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     }
     if (lres == DW_DLV_ERROR) {
         /* Do not terminate processing */
-        if (glflags.gf_check_decl_file) {
+        if (glflags.gf_check_decl_file ||
+            glflags.gf_check_lines) {
             DWARF_CHECK_COUNT(decl_file_result,1);
             DWARF_CHECK_ERROR2(decl_file_result,"dwarf_srclines",
                 dwarf_errmsg(*err));

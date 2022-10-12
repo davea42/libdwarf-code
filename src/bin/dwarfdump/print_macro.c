@@ -1343,6 +1343,8 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         DWARF_CHECK_COUNT(lines_result,1);
         dwarf_check_lineheader(cu_die,&line_errs);
         if (line_errs > 0) {
+            /* does glflags.check_error++; */
+            /* sets glflags.gf_record_dwarf_error = TRUE; */
             DWARF_CHECK_ERROR_PRINT_CU();
             DWARF_ERROR_COUNT(lines_result,line_errs);
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));

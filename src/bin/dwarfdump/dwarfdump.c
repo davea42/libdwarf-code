@@ -2142,7 +2142,8 @@ tag_specific_globals_setup(Dwarf_Debug dbg,
 
 /*  Print CU basic information but
     use the local DIE for the offsets. */
-void PRINT_CU_INFO(void)
+void 
+PRINT_CU_INFO(void)
 {
     Dwarf_Unsigned loff = glflags.DIE_offset;
     Dwarf_Unsigned goff = glflags.DIE_overall_offset;
@@ -2193,7 +2194,8 @@ void PRINT_CU_INFO(void)
     printf("\n");
 }
 
-void DWARF_CHECK_ERROR_PRINT_CU()
+void 
+DWARF_CHECK_ERROR_PRINT_CU(void)
 {
     if (glflags.gf_check_verbose_mode) {
         if (glflags.gf_print_unique_errors) {
@@ -2388,6 +2390,8 @@ DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
         if (glflags.gf_check_verbose_mode) {
             print_dwarf_check_error(str1, str2,strexpl);
         }
+        /* does glflags.check_error++; */
+        /* sets glflags.gf_record_dwarf_error = TRUE; */
         DWARF_CHECK_ERROR_PRINT_CU();
     }
 }
