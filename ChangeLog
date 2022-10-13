@@ -1,3 +1,60 @@
+2022-10-13:  David Anderson
+    commit a6a8be137502b750f63b57eee89aba4e0e1bf9ce
+
+    Updated by 'make rebuild'. version 0.5.0
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2022-10-13:  David Anderson
+    commit f2b12b4b7ad5e5183145577756491bdfd43bfec4
+
+    Removed mention of three dates
+    things changed in
+    dwarfdump use. Those dates
+    were a year (and more) in the past and no longer
+    important.
+            modified:   dwarfdump.1
+
+2022-10-12:  David Anderson
+    commit 272b1a14ced493c56fa0ee154982dfbc139f613d
+
+    Changed the appearance of PRINT_CU_INFO
+    and DWARF_CHECK_ERROR_PRINT_CU function definitions
+    to match general practice in the overall project.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    renamed record_line_error() to
+    print_common_line_error() to match what it actually
+    does.
+    Removed (via #if 0) a couple lines
+    doing a bogus DWARF_CHECK_ERROR2()
+    This removes a strange
+    incomplete/useless error message in case of
+    a damaged .debug_line line table.
+            modified:   src/bin/dwarfdump/print_lines.c
+
+    Added comments reminding the reader what
+    DWARF_CHECK_ERROR_PRINT_CU() does as a side effect.
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2022-10-12:  David Anderson
+    commit 62e34e9f9f8d5701c42a7fedfe2f74203cb0f532
+
+    Change the default line table file number back
+    to 1 for dwarf5, per the std.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2022-10-09:  David Anderson
+    commit 602111edf64e1c92e7784da695188a508517e0d4
+
+    Up to date with git log
+            modified:   ChangeLog
+
 2022-10-09:  David Anderson
     commit 52ab751da109d4f188dc4258bb8bb5b23d7ccd91
 
