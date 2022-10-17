@@ -328,18 +328,18 @@ process_line_table(Dwarf_Debug dbg,
         /*  Process any possible error condition, though
             we won't be at the first such error. */
         if ((glflags.gf_check_decl_file ||
-            glflags.gf_check_lines) && 
+            glflags.gf_check_lines) &&
             checking_this_compiler()) {
             DWARF_CHECK_COUNT(decl_file_result,1);
-            if (found_line_error) { 
+            if (found_line_error) {
                 /* DWARF_CHECK already issued. */
 #if 0
                 DWARF_CHECK_ERROR2(decl_file_result,where,
                     dwarf_errmsg(lt_err);
 #endif
-                    
+
             } else if (glflags.gf_do_check_dwarf) {
-                /*  Check the address lies with a 
+                /*  Check the address lies with a
                     valid [lowPC:highPC]
                     in the .text section*/
                 if (IsValidInBucketGroup(glflags.pRangesInfo,pc)) {

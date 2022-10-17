@@ -2142,7 +2142,7 @@ tag_specific_globals_setup(Dwarf_Debug dbg,
 
 /*  Print CU basic information but
     use the local DIE for the offsets. */
-void 
+void
 PRINT_CU_INFO(void)
 {
     Dwarf_Unsigned loff = glflags.DIE_offset;
@@ -2194,7 +2194,7 @@ PRINT_CU_INFO(void)
     printf("\n");
 }
 
-void 
+void
 DWARF_CHECK_ERROR_PRINT_CU(void)
 {
     if (glflags.gf_check_verbose_mode) {
