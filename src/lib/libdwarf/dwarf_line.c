@@ -80,15 +80,15 @@ _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
 {
     *regs = _dwarf_line_table_regs_default_values;
     if (lineversion == DW_LINE_VERSION5) {
-            /* DWARF5 Section 2.14 says default 0 for line table
+        /*  DWARF5 Section 2.14 says default 0 for line table
             file numbering..
-            DWARF5 Table 6.4 says the line table file 
+            DWARF5 Table 6.4 says the line table file
             register defaults to 1 (as did DWARF2,3,4).
 
             gcc 11.2.0 uses line register
             default 1, while correctly numbering files from 0.
             it sets file 0 and file 2 to the file of the CU
-            and file 1 applies to an included file 
+            and file 1 applies to an included file
             so things work when the first line table
             entries needed come from an included file
             (such as a static inline function definition).
