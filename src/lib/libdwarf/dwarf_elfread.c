@@ -264,6 +264,8 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
     MATCH_REL_SEC(section_index,dbg->de_debug_macinfo,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_pubnames,
         relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_names,
+        relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_ranges,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_frame,
         relocatablesec);
