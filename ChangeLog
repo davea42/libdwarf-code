@@ -1,3 +1,31 @@
+2022-10-17:  David Anderson
+    commit 37e6ba9559a743ebf88e9fdb94b12455d1019094
+
+    Fixed an indent mistake.
+            modified:   src/lib/libdwarf/dwarf_line.c
+
+2022-10-17:  David Anderson
+    commit 129d6fa0b5cb935b3915aa88b0867c4e2bab3530
+
+    Remove trailing whitespace.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_lines.c
+
+2022-10-17:  David Anderson
+    commit 06c9b536ff50199dc798f7d1faa34cffb632baf8
+
+    In a relocatable object .debug_names needs
+    to be relocated, otherwise we get
+    an error from reading with libdwarf.
+    Now it is relocated when appropriate.
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+
+2022-10-13:  David Anderson
+    commit 43a23049a6a7392c46e4339a9e1ee7b6a73bb32b
+
+    With latest git log information.
+            modified:   ChangeLog
+
 2022-10-13:  David Anderson
     commit a6a8be137502b750f63b57eee89aba4e0e1bf9ce
 
