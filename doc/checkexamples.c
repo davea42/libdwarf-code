@@ -382,12 +382,19 @@ void example5(Dwarf_Die in_die)
 /*! @endcode */
 
 /*! @defgroup examplecuhdr Example walking CUs
+
     @brief Accessing all CUs looking for specific items.
 
-    Loops through as many CUs as needed by
+    Loops through as many CUs as needed, stops
+    and returns once a CU provides the desired data.
 
     Assumes certain functions you write to remember
-    the aspect of CUs that mater to you.
+    the aspect of CUs that matter to you so once found
+    in a cu my_needed_data_exists() or some other
+    function of yours can identify the correct record.
+    (Possibly a DIE global offset. Remember to note
+    if each DIE has is_info TRUE or FALSE so libdwarf
+    can find the DIE properly.)
 
     We assume that on a serious error we will give up
     (for simplicity here).
@@ -396,7 +403,7 @@ void example5(Dwarf_Die in_die)
     know what to retrieve (when we return DW_DLV_OK
     from examplecuhdr() and that myrecords points
     to a record with all the data needed by
-    my_needed_data_existsm() and
+    my_needed_data_exists() and
     recorded by myrecord_data_for_die().
 
     @code
@@ -518,6 +525,7 @@ int examplecuhdr(Dwarf_Debug dbg,
 /*! @endcode */
 
 /*! @defgroup example6 Example dwarf_offdie_b call
+
     @brief Accessing a DIE by its offset
 
     @code
