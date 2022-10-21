@@ -48,6 +48,7 @@ Doxyfile \
 mips_extensions.mm \
 mips_extensions.pdf \
 checkexamples.c \
+libdwarf.dox \
 dwarfdump.1 \
 dwarfgen.1  \
 libdwarf.pdf \

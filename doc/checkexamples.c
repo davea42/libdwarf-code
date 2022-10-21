@@ -1,9 +1,11 @@
 /*! @file checkexamples.c
     @page checkexamples.c
-    checkexamples.c contains what user code should be,
-    hence the code typed here is PUBLIC DOMAIN.
+    checkexamples.c contains what user code should be.
+    Hence the code typed in checkexamples.c is PUBLIC DOMAIN
+    and may be copied, used, and altered without any
+    restrictions.
 
-    It need not be compiled routinely nor
+    checkexamples.c need not be compiled routinely nor
     should it ever be executed.
 
     To verify syntatic correctness compile with

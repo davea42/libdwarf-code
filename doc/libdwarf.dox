@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-10-06 v0.5.0
+    @date 2022-10-21 v0.5.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -80,8 +80,8 @@
     only one of them is truly appropriate except
     in toy programs).
 
-    <strong>A) The suggested approach</strong> is to 
-    define a Dwarf_Error.
+    <strong>A) The recommmended approach</strong> is to 
+    define a Dwarf_Error and initialize it to 0.
 
     @code
     Dwarf_Error error = 0;
@@ -259,7 +259,40 @@
     to avoid memory bloat.
 
     That's all there is to it.
+
+    @section dwsec_cuplan Extracting Data Per Compilation Unit
+
+    The library is designed to run a single pass
+    through the set of 
+    Compilation Units (CUs), via a sequence of calls
+    to dwarf_next_cu_header_d() and within a CU
+    initiate a DIE scan using dwarf_siblingof_b(). 
+    There is currently no provision for a second pass.
+
+    The general plan:
+
+    @code
+        create your local data structure(s) 
  
+        A. Check your local data structures to see if 
+           you have what you need
+        B. If sufficient data present act on it,
+           ensuring your data structures are kept for
+           further use.
+        C. Otherwise Read a CU, recording relevant data
+           in your structures and loop back to A.
+    @endcode
+
+    For an example
+    @see examplecuhdr 
+    Write your code
+    to record relevant (to you) information from each
+    CU as you go so your
+    code has no need for a second pass through
+    the CUs.
+    This is much much faster than
+    allowing multiple passes would be.
+    
 
     @section dwsec_linetabreg Line Table Registers
 
@@ -908,6 +941,9 @@
     A new function, dwarf_global_tag_number(), returns
     the DW_TAG of any Dwarf_Global that was derived
     from the .debug_names section. 
+
+    Added doc/libdwarf.dox to the distribution
+    (left out by accident earlier).
 
     <b>Changes 0.4.1 to 0.4.2</b>
     0.4.2 released 2022-09-13.
