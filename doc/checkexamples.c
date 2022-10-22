@@ -396,6 +396,11 @@ void example5(Dwarf_Die in_die)
     if each DIE has is_info TRUE or FALSE so libdwarf
     can find the DIE properly.)
 
+    Depending on your goals in examining the DIE tree
+    it may be helpful to maintain a DIE stack
+    of active DIEs, pushing and popping as you
+    make your way throught the DIE levels.
+
     We assume that on a serious error we will give up
     (for simplicity here).
 
@@ -430,6 +435,9 @@ record_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
     for (;;) {
         Dwarf_Die sib_die = 0;
 
+        /*  Depending on your goals, the in_level,
+            and the DW_TAG of cur_die, you may want
+            to skip the dwarf_child call. */
         res = dwarf_child(cur_die,&child,error);
         if (res == DW_DLV_ERROR) {
             printf("Error in dwarf_child , level %d \n",in_level);
