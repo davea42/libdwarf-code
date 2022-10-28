@@ -1,3 +1,88 @@
+2022-10-28:  David Anderson
+    commit 6baaf8d4c3db5cef06bac769fa438ca607d87372
+
+    Using the new table. The table is similar to a
+    ctype table. Created by src/bin/builduritable/uritablebuild.c
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+
+    Now with some added timing code (not normally used).
+            modified:   test/test_sanitized.c
+
+2022-10-28:  David Anderson
+    commit a39399135953102ff961cbc990870d3e5799e7eb
+
+    Now also builds the character table for
+    dd_sanitized in addition to a ctype table.
+    The tables generated are not automatically used,
+    though things could be rearranged to make that happen.
+    For now hand insertion in case of changes is the
+    approach.
+            modified:   src/bin/builduritable/uritablebuild.c
+
+    Now with the character table and more efficient
+    processing using that table.
+            modified:   src/bin/dwarfdump/dd_sanitized.c
+
+    Now all run the test_sanitized tests.
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+
+    New testcase for sanitized()
+            new file:   test/test_sanitized.c
+
+2022-10-22:  David Anderson
+    commit 88170f967499be09a88a29b8dc6a36c1ec7422b6
+
+    Added comments to examplecuhdr() mentioning
+    that the full descent of the DIE tree is not
+    always necessary, depending on the goals
+    of the calling program.
+            modified:   doc/checkexamples.c
+
+2022-10-21:  David Anderson
+    commit 38912ce851efad99515f01427612829835f60485
+
+    Added some documentation on the new example
+    Example walking CUs
+
+            modified:   doc/checkexamples.c
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2022-10-21:  David Anderson
+    commit be103a959c1633d49aa3e7c3a801ce85035919e3
+
+    Noe ensures libdwarf.dox in the distribution.
+            modified:   doc/Makefile.am
+
+    Added new example on reading through DIEs
+    searching for ... something ... and allowing
+    a stop after every CU ..
+            modified:   doc/checkexamples.c
+
+    Added references to the new example.
+            modified:   doc/libdwarf.dox
+
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+    Fixed doxygen commends on groups of functions.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-10-21:  David Anderson
+    commit 63129695a2c96253828950a69e0454ac539feb40
+
+    Added new example and fixed some indents
+    and trailing whitespace.
+            modified:   doc/checkexamples.c
+
+2022-10-17:  David Anderson
+    commit 0f4e1e9d67915f4f69c171b3f76584904bc9cfbc
+
+    Brings ChangeLog up to date with git log.
+            modified:   ChangeLog
+
 2022-10-17:  David Anderson
     commit 37e6ba9559a743ebf88e9fdb94b12455d1019094
 
