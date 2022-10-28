@@ -81,6 +81,19 @@ const char *s5 = "yy\tcd";
 const unsigned char s6[] = {'a',0x1,0x2,0xf4,'\n',0};
 const char *s7 = "ab\r\n";
 
+/*  We add in non-printable to test timing for that case */
+const char *s8 = 
+"aaaa bbbb cccc dddd eeee ffff gggg"
+"aaaa bbbb cccc dddd eeee ffff gggg"
+"aaaa bbbb cccc dddd eeee ffff gggg\v"
+"aaaa bbbb cccc dddd eeee ffff gggg"
+"aaaa bbbb cccc dddd eeee ffff gggg"
+"aaaa bbbb cccc dddd eeee ffff gggg"
+"aaaa bbbb cccc dddd eeee ffff gggg\f"
+"aaaa bbbb cccc dddd eeee ffff gggg"
+"aaaa bbbb cccc dddd eeee ffff gggg"
+"aaaa bbbb cccc dddd eeee ffff gggg";
+
 
 int main(void)
 {
@@ -131,11 +144,17 @@ int main(void)
          validate_san(__LINE__,
             exp,out,exp);
     }
-
-
-
-
-
+#ifdef TIMING
+    {
+         int i = 0;
+         for ( ; i < 5000000; ++i ) {
+             out = sanitized((const char *)s8); 
+             if (i == 2) {
+                 printf("%s\n",out);
+             }
+         }
+    }
+#endif /* TIMING */
     sanitized_string_destructor();
     if (failcount) {
         printf("FAIL sanitized() test\n");

@@ -100,8 +100,12 @@ and for readers and prevents ambiguity.
 Since we do not handle utf-8 properly nor detect it
 we turn all non-ASCII to %xx below.
 */
-
-static struct esb_s localesb = {0,0,0,0,0};
+#define SANBUF_SIZE 400
+/*  Allocates as esb_constructor_fixed() would,
+    so below SANBUF_SIZE bytes no malloc needed. */
+static char sanbuf[SANBUF_SIZE];
+static struct esb_s localesb = {sanbuf,
+    SANBUF_SIZE,0,1,0};
 
 /* dwarfdump-sanitize table */
 char dwarfdump_sanitize_table[256] = { 
@@ -204,29 +208,6 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
         }
         esb_appendn(mesb, "%",1);
         esb_append_printf_u(mesb, "%02x",c & 0xff);
-#if 0
-        if (t == 1) {
-            char *start = cp;
-            unsigned int si = 1;
-
-            ++cp;
-            c = *cp & 0xff ;
-            t = dwarfdump_sanitize_table[c];
-            for(++cp; c && t == 1; 
-                ++cp,
-                c= *cp & 0xff,
-                t = dwarfdump_sanitize_table[c]) { 
-                ++si;
-            }
-            esb_appendn(mesb,start,si);
-        }
-        if (c) {
-            esb_append(mesb, "%");
-            esb_append_printf_u(mesb, "%02x",c & 0xff);
-        } else {
-            break;
-        }
-#endif
     }
 }
 
