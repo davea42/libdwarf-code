@@ -36,6 +36,12 @@ tests = [
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
+   'test_sanitized.c',
+   '../src/bin/dwarfdump/dd_esb.c',
+   '../src/bin/dwarfdump/dd_sanitized.c'
+  ],
+
+  [
    'test_macrocheck.c',
    '../src/bin/dwarfdump/dd_esb.c',
    '../src/bin/dwarfdump/dd_tsearchbal.c'

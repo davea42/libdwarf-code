@@ -44,6 +44,8 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_safestrcpy.trs \
   test_sectionbitmaps.log \
   test_sectionbitmaps.trs \
+  test_sanitized.log \
+  test_sanitized.trs \
   test_testesb.log \
   test_testesb.trs 
 
@@ -66,6 +68,7 @@ TESTS = test_canonical  \
   test_safestrcpy \
   test_sectionbitmaps \
   test_testesb \
+  test_sanitized \
   test_tied
 
 check_PROGRAMS = test_canonical \
@@ -83,6 +86,7 @@ check_PROGRAMS = test_canonical \
   test_safestrcpy \
   test_sectionbitmaps \
   test_testesb \
+  test_sanitized \
   test_tied
 
 test_canonical_SOURCES = test_canonical.c \
@@ -223,6 +227,15 @@ test_testesb_CPPFLAGS = -DTESTING \
 -I$(top_srcdir)/src/bin/dwarfdump \
 -I$(top_srcdir)/src/lib/libdwarf
 
+test_sanitized_SOURCES = test_sanitized.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
+    $(top_srcdir)/src/bin/dwarfdump/dd_sanitized.c
+test_sanitized_CFLAGS = $(DWARF_CFLAGS_WARN)
+test_sanitized_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) \
+-I$(top_srcdir)/src/bin/dwarfdump \
+-I$(top_srcdir)/src/lib/libdwarf
+
 test_tied_SOURCES = test_dwarf_tied.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_tied.c \
     $(top_srcdir)/src/lib/libdwarf/dwarf_tsearchhash.c
@@ -279,6 +292,7 @@ test_section_bitmaps.c \
 test_dwarfstring.c \
 test_errmsglist.c \
 test_esb.c \
+test_sanitized.c \
 test_extra_flag_strings.c \
 test_linkedtopath.c \
 test-mach-o-32.base \

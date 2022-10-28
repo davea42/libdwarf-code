@@ -103,9 +103,92 @@ we turn all non-ASCII to %xx below.
 
 static struct esb_s localesb = {0,0,0,0,0};
 
+/* dwarfdump-sanitize table */
+char dwarfdump_sanitize_table[256] = { 
+0 /*0*/,3 /*0x1*/,3 /*0x2*/,3 /*0x3*/,
+3 /*0x4*/,3 /*0x5*/,3 /*0x6*/,3 /*0x7*/,
+3 /*0x8*/,1 /*0x9*/,1 /*0xa*/,3 /*0xb*/,
+3 /*0xc*/,
+#ifdef _WIN32
+1 /*0x0d*/,
+#else
+3 /*0x0d*/,
+#endif
+3 /*0xe*/,3 /*0xf*/,
+3 /*0x10*/,3 /*0x11*/,3 /*0x12*/,3 /*0x13*/,
+3 /*0x14*/,3 /*0x15*/,3 /*0x16*/,3 /*0x17*/,
+3 /*0x18*/,3 /*0x19*/,3 /*0x1a*/,3 /*0x1b*/,
+3 /*0x1c*/,3 /*0x1d*/,3 /*0x1e*/,3 /*0x1f*/,
+1 /*   */,1 /* ! */,1 /* " */,1 /* # */,
+1 /* $ */,3 /* % */,1 /* & */,1 /* ' */,
+1 /* ( */,1 /* ) */,1 /* * */,1 /* + */,
+1 /* , */,1 /* - */,1 /* . */,1 /* / */,
+1 /* 0 */,1 /* 1 */,1 /* 2 */,1 /* 3 */,
+1 /* 4 */,1 /* 5 */,1 /* 6 */,1 /* 7 */,
+1 /* 8 */,1 /* 9 */,1 /* : */,1 /* ; */,
+1 /* < */,1 /* = */,1 /* > */,1 /* ? */,
+1 /* @ */,1 /* A */,1 /* B */,1 /* C */,
+1 /* D */,1 /* E */,1 /* F */,1 /* G */,
+1 /* H */,1 /* I */,1 /* J */,1 /* K */,
+1 /* L */,1 /* M */,1 /* N */,1 /* O */,
+1 /* P */,1 /* Q */,1 /* R */,1 /* S */,
+1 /* T */,1 /* U */,1 /* V */,1 /* W */,
+1 /* X */,1 /* Y */,1 /* Z */,1 /* [ */,
+1 /* \ */,1 /* ] */,1 /* ^ */,1 /* _ */,
+1 /* ` */,1 /* a */,1 /* b */,1 /* c */,
+1 /* d */,1 /* e */,1 /* f */,1 /* g */,
+1 /* h */,1 /* i */,1 /* j */,1 /* k */,
+1 /* l */,1 /* m */,1 /* n */,1 /* o */,
+1 /* p */,1 /* q */,1 /* r */,1 /* s */,
+1 /* t */,1 /* u */,1 /* v */,1 /* w */,
+1 /* x */,1 /* y */,1 /* z */,1 /* { */,
+1 /* | */,1 /* } */,1 /* ~ */,3 /*0x7f*/,
+3 /*0x80*/,3 /*0x81*/,3 /*0x82*/,3 /*0x83*/,
+3 /*0x84*/,3 /*0x85*/,3 /*0x86*/,3 /*0x87*/,
+3 /*0x88*/,3 /*0x89*/,3 /*0x8a*/,3 /*0x8b*/,
+3 /*0x8c*/,3 /*0x8d*/,3 /*0x8e*/,3 /*0x8f*/,
+3 /*0x90*/,3 /*0x91*/,3 /*0x92*/,3 /*0x93*/,
+3 /*0x94*/,3 /*0x95*/,3 /*0x96*/,3 /*0x97*/,
+3 /*0x98*/,3 /*0x99*/,3 /*0x9a*/,3 /*0x9b*/,
+3 /*0x9c*/,3 /*0x9d*/,3 /*0x9e*/,3 /*0x9f*/,
+3 /*0xa0*/,3 /*0xa1*/,3 /*0xa2*/,3 /*0xa3*/,
+3 /*0xa4*/,3 /*0xa5*/,3 /*0xa6*/,3 /*0xa7*/,
+3 /*0xa8*/,3 /*0xa9*/,3 /*0xaa*/,3 /*0xab*/,
+3 /*0xac*/,3 /*0xad*/,3 /*0xae*/,3 /*0xaf*/,
+3 /*0xb0*/,3 /*0xb1*/,3 /*0xb2*/,3 /*0xb3*/,
+3 /*0xb4*/,3 /*0xb5*/,3 /*0xb6*/,3 /*0xb7*/,
+3 /*0xb8*/,3 /*0xb9*/,3 /*0xba*/,3 /*0xbb*/,
+3 /*0xbc*/,3 /*0xbd*/,3 /*0xbe*/,3 /*0xbf*/,
+3 /*0xc0*/,3 /*0xc1*/,3 /*0xc2*/,3 /*0xc3*/,
+3 /*0xc4*/,3 /*0xc5*/,3 /*0xc6*/,3 /*0xc7*/,
+3 /*0xc8*/,3 /*0xc9*/,3 /*0xca*/,3 /*0xcb*/,
+3 /*0xcc*/,3 /*0xcd*/,3 /*0xce*/,3 /*0xcf*/,
+3 /*0xd0*/,3 /*0xd1*/,3 /*0xd2*/,3 /*0xd3*/,
+3 /*0xd4*/,3 /*0xd5*/,3 /*0xd6*/,3 /*0xd7*/,
+3 /*0xd8*/,3 /*0xd9*/,3 /*0xda*/,3 /*0xdb*/,
+3 /*0xdc*/,3 /*0xdd*/,3 /*0xde*/,3 /*0xdf*/,
+3 /*0xe0*/,3 /*0xe1*/,3 /*0xe2*/,3 /*0xe3*/,
+3 /*0xe4*/,3 /*0xe5*/,3 /*0xe6*/,3 /*0xe7*/,
+3 /*0xe8*/,3 /*0xe9*/,3 /*0xea*/,3 /*0xeb*/,
+3 /*0xec*/,3 /*0xed*/,3 /*0xee*/,3 /*0xef*/,
+3 /*0xf0*/,3 /*0xf1*/,3 /*0xf2*/,3 /*0xf3*/,
+3 /*0xf4*/,3 /*0xf5*/,3 /*0xf6*/,3 /*0xf7*/,
+3 /*0xf8*/,3 /*0xf9*/,3 /*0xfa*/,3 /*0xfb*/,
+3 /*0xfc*/,3 /*0xfd*/,3 /*0xfe*/,3 /*0xff*/,};
+
+
+
 /*  do_sanity_insert() and no_questionable_chars()
     absolutely must have the same idea of
-    questionable characters.  Be Careful.  */
+    questionable characters.  Be Careful.  
+    Until 0.5.0 the two did NOT agree on
+    handling of newline or tab or carriage return
+    which was... a bug. 
+    no_questionable_chars() said those three ok
+    so do_sanity_insert was never called, making
+    an inconsistency vs this code as it was
+    before 0.5.0.
+    */
 static void
 do_sanity_insert( const char *s,struct esb_s *mesb)
 {
@@ -113,33 +196,37 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
 
     for ( ; *cp; cp++) {
         unsigned c = *cp & 0xff ;
+        int t = dwarfdump_sanitize_table[c];
 
-        if (c == '%') {
-            /* %xx for this too. Simple and unambiguous */
-            esb_append(mesb, "%");
-            esb_append_printf_u(mesb, "%02x",c & 0xff);
-            continue;
+        if (t == 1) {
+             esb_appendn(mesb,cp,1);
+             continue;
         }
-        if (c >= 0x20 && c <=0x7e) {
-            /* Usual case, ASCII printable characters. */
-            esb_appendn(mesb,cp,1);
-            continue;
-        }
-#ifdef _WIN32
-        if (c == 0x0D) {
-            esb_appendn(mesb,cp,1);
-            continue;
-        }
-#endif /* _WIN32 */
-        if (c < 0x20) {
-            esb_append(mesb, "%");
-            esb_append_printf_u(mesb, "%02x",c & 0xff);
-            continue;
-        }
-        /* ASSERT:  (c >= 0x7f)  */
-        /* ISO-8859 or UTF-8. Not handled well yet. */
-        esb_append(mesb, "%");
+        esb_appendn(mesb, "%",1);
         esb_append_printf_u(mesb, "%02x",c & 0xff);
+#if 0
+        if (t == 1) {
+            char *start = cp;
+            unsigned int si = 1;
+
+            ++cp;
+            c = *cp & 0xff ;
+            t = dwarfdump_sanitize_table[c];
+            for(++cp; c && t == 1; 
+                ++cp,
+                c= *cp & 0xff,
+                t = dwarfdump_sanitize_table[c]) { 
+                ++si;
+            }
+            esb_appendn(mesb,start,si);
+        }
+        if (c) {
+            esb_append(mesb, "%");
+            esb_append_printf_u(mesb, "%02x",c & 0xff);
+        } else {
+            break;
+        }
+#endif
     }
 }
 
@@ -155,31 +242,12 @@ no_questionable_chars(const char *s) {
 
     for ( ; *cp; cp++) {
         unsigned c = *cp & 0xff ;
-        if (c == '%') {
-            /* Always sanitize a % ASCII char. */
-            return FALSE;
-        }
-        if (c >= 0x20 && c <=0x7e) {
-            /* Usual case, ASCII printable characters */
+        int t = dwarfdump_sanitize_table[c];
+
+        if (t == 1) {
             continue;
         }
-#ifdef _WIN32
-        if (c == 0x0D) {
-            continue;
-        }
-#endif /* _WIN32 */
-        if (c == 0x0A || c == 0x09 ) {
-            continue;
-        }
-        if (c < 0x20) {
-            return FALSE;
-        }
-        if (c >= 0x7f) {
-            /*  This notices iso-8859 and UTF-8
-                data as we don't deal with them
-                properly in dwarfdump. */
-            return FALSE;
-        }
+        return FALSE;
     }
     return TRUE;
 }

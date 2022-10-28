@@ -125,6 +125,23 @@ if (DO_TESTING)
     add_test(NAME selftestesb COMMAND selftestesb)
 endif()
 if (DO_TESTING)
+    set_source_group(TESTSANITIZED_SOURCES "Source Files"
+       ${CMAKE_SOURCE_DIR}/test/test_sanitized.c
+       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_esb.c
+       ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_sanitized.c)
+    add_executable(selftestsanitized ${TESTESB_SOURCES})
+    target_compile_options(selftestsanitized PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
+    target_compile_options(selftestsanitized PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
+    target_compile_options(selftestsanitized PRIVATE
+        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
+    target_compile_options(selftestsanitized PRIVATE ${DW_FWALL})
+    add_test(NAME selftestsanitized COMMAND selftestesb)
+endif()
+
+
+if (DO_TESTING)
     set_source_group(SECTIONBITMAPS_SOURCES "Source Files"
         ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_section_bitmaps.c
         ${CMAKE_SOURCE_DIR}/test/test_section_bitmaps.c )

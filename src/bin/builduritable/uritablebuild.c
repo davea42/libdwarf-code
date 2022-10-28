@@ -45,7 +45,7 @@
 
 */
 static void
-print_entry(int c)
+print_ctype_entry(int c)
 {
     char v[2];
     v[0] = c;
@@ -68,7 +68,7 @@ print_entry(int c)
         printf("1, /* \'%s\' 0x%02x */\n",v,c);
         return;
     }
-    if (isspace(c) ) {
+    if (isspace(c)) {
         /* Other white space translated. */
         printf("0, /* whitespace 0x%02x */\n",c);
         return;
@@ -124,16 +124,79 @@ print_entry(int c)
     printf("1, /* 0x%02x */\n",c);
 }
 
+
+/*  This mirrors what dwarfdump has long done via code
+    in do_sanity_insert() in dd_sanitized.c.
+    We are dropping special treatment of \r here
+    as sometimes a pass through (with _WIN32)
+    as that was a bug in sanity_insert() given
+    we never passed through \t or \n characters.
+    The table output here makes dd_sanitized simpler and
+    faster.
+
+    The code in dd_sanitized.c was inconsistent on
+    treatment of newline carriage-return and tab, but
+    now we are consistent. */
+static void
+print_sanitize_entry(int c_in)
+{
+    unsigned char c =  c_in & 0xff;
+    
+    if (!c_in) {
+        printf("0 /*%u*/,",c);
+        return;
+    }
+    if (!(c_in % 4)) {
+        printf("\n");
+    }
+    if (c == '%') {
+        printf("3 /* %c */,",c);
+        return;
+    }
+    if (c >= 0x20 && c <=0x7e) {
+        printf("1 /* %c */,",c);
+        return;
+    }
+    if (c == 0x0D) {
+        printf("\n#ifdef _WIN32\n");
+        printf("1 /*0x0d*/,\n");
+        printf("#else\n");
+        printf("3 /*0x0d*/,\n");
+        printf("#endif\n");
+        return;
+    }
+    if (c == 0x0A || c == 0x09 ) {
+        printf("1 /*0x%x*/,",c);
+        return;
+    }
+    if (c < 0x20) {
+        printf("3 /*0x%x*/,",c);
+        return;
+    }
+    /*  This notices iso-8859 and UTF-8
+        data as we don't deal with them
+        properly in dwarfdump or allow in uri output. */
+    printf("3 /*0x%x*/,",c);
+    return;
+}
+
 int
 main(void)
 {
     int i = 0;
-    printf("/* dwarfdump_ctype table */\n");
+    printf("/* dwarfdump-ctype table */\n");
     printf("char dwarfdump_ctype_table[256] = { \n");
     for ( i = 0 ; i <= 255; ++i) {
-        print_entry(i);
+        print_ctype_entry(i);
     }
     printf("};\n");
 
+    printf("\n");
+    printf("/* dwarfdump-sanitize table */\n");
+    printf("char dwarfdump_sanitize_table[256] = { \n");
+    for ( i = 0 ; i <= 255; ++i) {
+        print_sanitize_entry(i);
+    }
+    printf("};\n");
     return 0;
 }
