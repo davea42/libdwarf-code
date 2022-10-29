@@ -90,12 +90,34 @@ _dwarf_skip_leb128(char * leb128,
     if (leb128 >=endptr) {
         return DW_DLV_ERROR;
     }
+
+    byte = *leb128;
+    if ((byte & 0x80) == 0) {
+        *leb128_length = 1;
+        return DW_DLV_OK;
+    } else {
+        unsigned       byte2  = 0;
+        if ((leb128+1) >=endptr) {
+            return DW_DLV_ERROR;
+        }
+        byte2 = *(leb128 + 1);
+        if ((byte2 & 0x80) == 0) {
+            *leb128_length = 2;
+            return DW_DLV_OK;
+        }
+        /*  Gets messy to hand-inline more byte checking. 
+            One or two byte leb is very frequent. */
+    }
+
+    ++byte_length;
+    ++leb128;
+    /*  Validity of leb128+1 checked above */
     for (;;byte_length++,leb128++) {
-        byte = *leb128;
         if (leb128 >= endptr) {
             /*  Off end of available space. */
             return DW_DLV_ERROR;
         }
+        byte = *leb128;
         if (byte & 0x80) {
             if (byte_length >=  BYTESLEBMAX)  {
                 /*  Too long. Not sane length. */
