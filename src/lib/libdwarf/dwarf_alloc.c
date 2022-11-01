@@ -977,7 +977,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     since one does not exist.
 */
 Dwarf_Debug
-_dwarf_get_debug(void)
+_dwarf_get_debug(Dwarf_Unsigned filesize)
 {
     Dwarf_Debug dbg;
 
@@ -989,12 +989,10 @@ _dwarf_get_debug(void)
     /* Set up for a dwarf_tsearch hash table */
     dbg->de_magic = DBG_IS_VALID;
 
-    /* Leaving initialization on so we can track
-        DW_DLA_STRING even when global_de_alloc_tree_on
-        is zero. */
     if (global_de_alloc_tree_on) {
+        Dwarf_Unsigned size_est = filesize/40;
         dwarf_initialize_search_hash(&dbg->de_alloc_tree,
-            simple_value_hashfunc,0);
+            simple_value_hashfunc,size_est);
     }
     return dbg;
 }

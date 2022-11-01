@@ -1546,6 +1546,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
 {
     Dwarf_Debug dbg = 0;
     int setup_result = DW_DLV_OK;
+    Dwarf_Unsigned filesize = 0;
 
     if (!ret_dbg) {
         DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,
@@ -1554,9 +1555,12 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
     /*  Non-null *ret_dbg will cause problems dealing with
         DW_DLV_ERROR */
     *ret_dbg = 0;
+    filesize = obj->ai_methods->om_get_filesize(obj->ai_object);
     /*  Initializes  Dwarf_Debug struct and returns
-        a pointer to that empty record. */
-    dbg = _dwarf_get_debug();
+        a pointer to that empty record.
+        Filesize is to set up a sensible default hash tree
+        size. */
+    dbg = _dwarf_get_debug(filesize);
     if (!dbg) {
         DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
     }
@@ -1569,8 +1573,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface_a* obj,
     dbg->de_frame_undefined_value_number  = DW_FRAME_UNDEFINED_VAL;
 
     dbg->de_obj_file = obj;
-    dbg->de_filesize = obj->ai_methods->
-        om_get_filesize(obj->ai_object);
+    dbg->de_filesize = filesize;
     dbg->de_groupnumber = groupnumber;
     setup_result = _dwarf_setup(dbg, error);
     if (setup_result == DW_DLV_OK) {

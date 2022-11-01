@@ -78,12 +78,16 @@ static unsigned long primes[] =
 {
 #if 0 /* for testing only */
 5,11, 17,23, 31, 47, 53,
-#endif /*0*/
 79,
+#endif /*0*/
 1009,
+#if 0
 5591,
+#endif
 10007,
+#if 0
 21839,
+#endif
 41413,
 99907,
 199967,
@@ -202,6 +206,10 @@ dwarf_initialize_search_hash( void **treeptr,
         }
         entry_index = k;
     }
+#if 0
+printf("dadebug initial alloc size estimate %lu\n",size_estimate);
+printf("dadebug initial alloc prime to use %lu\n",prime_to_use);
+#endif
     base->tablesize_ = prime_to_use;
     base->allowed_fill_ = calculate_allowed_fill(allowed_fill_percent,
         prime_to_use);
@@ -373,6 +381,9 @@ resize_table(struct hs_base *head,
         unsigned long ix = 0;
         unsigned long tsize = head->tablesize_;
         struct ts_entry *p = &head->hashtab_[0];
+#if 0
+printf("dadebug Resize %lu to %lu\n",tsize,prime_to_use);
+#endif
         for ( ; ix < tsize; ix++,p++) {
             int inserted = 0;
             struct ts_entry*n = 0;
