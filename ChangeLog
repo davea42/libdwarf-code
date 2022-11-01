@@ -1,3 +1,55 @@
+2022-11-01:  David Anderson
+    commit aaad3fab651a0a174f620e5cfbe93147c94a18da
+
+    Trim trailing spaces and fix
+    an indent mistake.
+            modified:   dd_sanitized.c
+
+2022-11-01:  David Anderson
+    commit ceb31db1421d48f8c85ade94cf5247f124d38b82
+
+    These changes reduce time spend in reallocation
+    of a larger hash search table.
+
+    In setting up Dwarf_Debug set the hash search
+    initial size to a number more likely to
+    be useful than 0.  Starting at zero results
+    in excessive table rebuilds on expansion.
+    Using a new argument to _dwarf_get_debug() to
+    do that.
+            modified:   dwarf_alloc.c
+
+    New arg to _dwarf_get_debug function prototype.
+            modified:   dwarf_alloc.h
+
+    Now passes file size to _dwarf_get_debug()
+            modified:   dwarf_init_finish.c
+
+    Eliminate some of the intermediate expansions,
+    so bigger expansions done less often.
+            modified:   dwarf_tsearchhash.c
+
+2022-11-01:  David Anderson
+    commit 350a19cde227d150bfe4895bfad20496f0b35d49
+
+    Remove trailing whitespace.
+            modified:   dwarf_leb.c
+            modified:   libdwarf.h
+
+2022-10-29:  David Anderson
+    commit c2a35a312da09ce2af1bdaaaf0504d9cb1107aae
+
+    Hand unrolled first 2 bytes in _dwarf_skip_128()
+    to match dwarf_decode_leb128().
+    Saves time as shown by callgrind (not a lot).
+            modified:   dwarf_leb.c
+
+2022-10-28:  David Anderson
+    commit 1bd9c4797304ac50c4bfaf15d69f82eaceb1e195
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2022-10-28:  David Anderson
     commit 6baaf8d4c3db5cef06bac769fa438ca607d87372
 
