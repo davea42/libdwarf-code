@@ -108,7 +108,7 @@ static struct esb_s localesb = {sanbuf,
     SANBUF_SIZE,0,1,0};
 
 /* dwarfdump-sanitize table */
-char dwarfdump_sanitize_table[256] = { 
+char dwarfdump_sanitize_table[256] = {
 0 /*0*/,3 /*0x1*/,3 /*0x2*/,3 /*0x3*/,
 3 /*0x4*/,3 /*0x5*/,3 /*0x6*/,3 /*0x7*/,
 3 /*0x8*/,1 /*0x9*/,1 /*0xa*/,3 /*0xb*/,
@@ -180,14 +180,12 @@ char dwarfdump_sanitize_table[256] = {
 3 /*0xf8*/,3 /*0xf9*/,3 /*0xfa*/,3 /*0xfb*/,
 3 /*0xfc*/,3 /*0xfd*/,3 /*0xfe*/,3 /*0xff*/,};
 
-
-
 /*  do_sanity_insert() and no_questionable_chars()
     absolutely must have the same idea of
-    questionable characters.  Be Careful.  
+    questionable characters.  Be Careful.
     Until 0.5.0 the two did NOT agree on
     handling of newline or tab or carriage return
-    which was... a bug. 
+    which was... a bug.
     no_questionable_chars() said those three ok
     so do_sanity_insert was never called, making
     an inconsistency vs this code as it was
@@ -203,8 +201,8 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
         int t = dwarfdump_sanitize_table[c];
 
         if (t == 1) {
-             esb_appendn(mesb,cp,1);
-             continue;
+            esb_appendn(mesb,cp,1);
+            continue;
         }
         esb_appendn(mesb, "%",1);
         esb_append_printf_u(mesb, "%02x",c & 0xff);
