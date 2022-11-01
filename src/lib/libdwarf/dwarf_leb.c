@@ -105,7 +105,7 @@ _dwarf_skip_leb128(char * leb128,
             *leb128_length = 2;
             return DW_DLV_OK;
         }
-        /*  Gets messy to hand-inline more byte checking. 
+        /*  Gets messy to hand-inline more byte checking.
             One or two byte leb is very frequent. */
     }
 

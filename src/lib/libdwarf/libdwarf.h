@@ -1701,7 +1701,7 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
     Returns DW_DLV_OK on success.
     Returns DW_DLV_NO_ENTRY if all CUs have been read.
 
-    @see examplecuhdr 
+    @see examplecuhdr
 
 */
 DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
@@ -4789,7 +4789,6 @@ DW_API int dwarf_get_macro_import(
 
     For an example see
     @see examplep2 An example reading .debug_macinfo
-
 
 */
 /*! @brief Return a pointer to the value part of a macro
