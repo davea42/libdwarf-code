@@ -1086,6 +1086,19 @@ process_one_file(
             DROP_ERROR_INSTANCE(dbg,res,err);
         }
     }
+    if (glflags.gf_debug_addr_flag) {
+        Dwarf_Error err = 0;
+        int res = 0;
+
+        reset_overall_CU_error_data();
+        res = print_debug_addr(dbg,&err);
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "printing the .debug_addr section"
+                " had a problem.",res,err);
+            DROP_ERROR_INSTANCE(dbg,res,err);
+        }
+    }
     if (glflags.gf_abbrev_flag) {
         Dwarf_Error err = 0;
         int res = 0;

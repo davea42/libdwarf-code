@@ -60,6 +60,7 @@
 #include "dwarf_global.h"
 #include "dwarf_arange.h"
 #include "dwarf_abbrev.h"
+#include "dwarf_debugaddr.h"
 #include "dwarf_die_deliv.h"
 #include "dwarf_frame.h"
 #include "dwarf_loc.h"
@@ -491,6 +492,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 
     /* 0x40 64 DW_DLA_STR_OFFSETS */
     {sizeof(struct Dwarf_Str_Offsets_Table_s),MULTIPLY_NO, 0,0},
+
+    /* 0x41 65 DW_DLA_DEBUG_ADDR */
+    {sizeof(struct Dwarf_Debug_Addr_Table_s),MULTIPLY_NO, 0,0},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.

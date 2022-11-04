@@ -239,9 +239,12 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             size in bytes of a segment descriptor on the target
             system. */
         segment_size = *(Dwarf_Small *) arange_ptr;
-        if (segment_size > sizeof(Dwarf_Addr)) {
+        if (segment_size != 0) {
             free_aranges_chain(dbg,head_chain);
-            _dwarf_error(dbg, error, DW_DLE_SEGMENT_SIZE_BAD);
+            _dwarf_error_string(dbg, error, 
+                DW_DLE_SEGMENT_SIZE_BAD,
+                "DW_DLE_SEGMENT_SIZE_BAD: "
+                "segment selector size non-zero is not supported");
             return DW_DLV_ERROR;
         }
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);

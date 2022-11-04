@@ -540,6 +540,11 @@ typedef struct Dwarf_Debug_s*      Dwarf_Debug;
     Used to reference a DWARF Debugging Information Entry.
 */
 typedef struct Dwarf_Die_s*        Dwarf_Die;
+ 
+/*! @typedef Dwarf_Debug_Addr_Table
+    Used to reference a table in section .debug_addr
+*/
+typedef struct Dwarf_Debug_Addr_Table_s* Dwarf_Debug_Addr_Table;
 
 /*! @typedef Dwarf_Line
     Used to reference a line reference from the .debug_line
@@ -855,6 +860,8 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 
 /* struct Dwarf_Str_Offsets_Table_s */
 #define DW_DLA_STR_OFFSETS     0x40
+/* struct Dwarf_Debug_Addr_Table_s */
+#define DW_DLA_DEBUG_ADDR      0x41
 /*! @} */
 
 /*! @defgroup dwdle DW_DLE Dwarf_Error numbers
@@ -1362,9 +1369,10 @@ typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
 #define DW_DLE_RELOCATION_SECTION_SIZE_ERROR   489
 #define DW_DLE_SYMBOL_SECTION_SIZE_ERROR       490
 #define DW_DLE_PE_SECTION_SIZE_ERROR           491
+#define DW_DLE_DEBUG_ADDR_ERROR                492
 
 /*! @note DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        491
+#define DW_DLE_LAST        492
 #define DW_DLE_LO_USER     0x10000
 /*! @} */
 
@@ -4488,6 +4496,121 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
     Dwarf_Unsigned * dw_expr_ops_offset,
     Dwarf_Small   ** dw_expr_opsdata,
     Dwarf_Error    * dw_error);
+/*! @} */
+
+/*! @defgroup debugaddr .debug_addr access:  DWARF5
+    @{
+    Reading just the .debug_addr section.
+*/
+
+
+/*! @brief Return a .debug_addr table
+
+    Allocates and returns a pointer to a
+    Dwarf_Debug_Addr_Table as well as the contents
+    of the record.
+
+    Other than dw_debug and dw_error and dw_table_header
+    a NULL passed in as a pointer
+    argument means the return value
+    will not be set through the pointer, so a caller
+    can  pass NULL for return values of no 
+    immediate interest.
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_section_offset
+    Pass in the section offset of a table header.
+    Start with zero.
+    If the passed-in offset is past the last byte
+    of the table the function returns DW_DLV_NO_ENTRY.
+    @param dw_table_header
+    On success
+    Returns a pointer to a Dwarf_Debug_Addr_Table
+    for use with dwarf_get_attr_by_index().
+    @param dw_length
+    On success
+    Returns the length in bytes of this
+    contribution to .debug_addr from the table header,
+    including the table length field and the array
+    of addresses.
+    @param dw_version
+    On success returns the version number, which
+    should be 5.
+    @param dw_address_size
+    On success returns the address size of the address
+    entries in this table.
+    @param dw_at_addr_base
+    On success returns the value that will appear
+    in some DW_AT_addr_base attribute.
+    @param dw_entry_count
+    On success returns the number of table entries
+    in this table instance. 
+    @param dw_next_table_offset
+    On success returns the offset of the next table
+    in the section. Use the offset returned in the
+    next call to this function.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If the dw_section_offset passed in is out of range
+    it returns DW_DLV_NO_ENTRY.
+    If it returns DW_DLV_ERROR  only dw_error is
+    set, none of the other
+    return values are set through the pointers.
+*/
+
+DW_API int dwarf_debug_addr_table(Dwarf_Debug dw_dbg,
+    Dwarf_Unsigned    dw_section_offset,
+    Dwarf_Debug_Addr_Table *dw_table_header,
+    Dwarf_Unsigned   *dw_length,
+    Dwarf_Half       *dw_version,
+    Dwarf_Small      *dw_address_size,
+    Dwarf_Unsigned   *dw_dw_at_addr_base,
+    Dwarf_Unsigned   *dw_entry_count,
+    Dwarf_Unsigned   *dw_next_table_offset,
+    Dwarf_Error      *dw_error);
+
+/*! @brief Return .debug_addr address given table index
+
+
+    @param dw_table_header
+    Pass in a Dwarf_Debug_Addr_Table pointer.
+    @param dw_table_header
+    Pass in a Dwarf_Debug_Addr_Table index to an address.
+    If out of the valid range 0 through
+    dw_entry_count-1  the function returns
+    DW_DLV_NO_ENTRY.
+    @param dw_address
+    Returns an address in the program through
+    the pointer.
+    @param dw_error
+    The usual error detail return pointer.
+    @return
+    Returns DW_DLV_OK etc.
+    If the dw_section_offset passed in is out of range
+    it returns DW_DLV_NO_ENTRY.
+    If it returns DW_DLV_ERROR  only dw_error is
+    set, dw_address and dw_segment are not
+    set through the pointers.
+*/
+
+DW_API int dwarf_debug_addr_by_index(Dwarf_Debug_Addr_Table dw_dat,
+    Dwarf_Unsigned    dw_entry_index,
+    Dwarf_Unsigned   *dw_address,
+    Dwarf_Error      *dw_error);
+
+/*! @brief dealloc (free) a Dwarf_Attr_Table record. 
+
+    @param dw_table_header
+    Pass in a valid Dwarf_Debug_Addr_Table pointer.
+    Does nothing if the dw_dat field is NULL.
+    
+*/
+DW_API void dwarf_dealloc_debug_addr_table(
+    Dwarf_Debug_Addr_Table dw_dat);
+
 /*! @} */
 
 /*! @defgroup macro Macro Access: DWARF5

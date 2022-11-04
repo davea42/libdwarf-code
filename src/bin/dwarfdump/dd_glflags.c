@@ -88,6 +88,7 @@ init_global_flags(void)
     glflags.gf_frame_flag = FALSE;      /* .debug_frame section. */
     glflags.gf_eh_frame_flag = FALSE;   /* GNU .eh_frame section. */
     glflags.gf_pubnames_flag = FALSE;
+    glflags.gf_debug_addr_flag = FALSE;
 
     /* DWARF2,3,4. Old macro section*/
     glflags.gf_macinfo_flag = FALSE;

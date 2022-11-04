@@ -136,6 +136,7 @@ struct glflags_s {
     Dwarf_Bool gf_macinfo_flag; /* DWARF2,3,4. Old macro section*/
     Dwarf_Bool gf_macro_flag; /* DWARF5 */
     Dwarf_Bool gf_pubnames_flag;
+    Dwarf_Bool gf_debug_addr_flag;
     Dwarf_Bool gf_ranges_flag; /* .debug_ranges section. */
     Dwarf_Bool gf_reloc_flag;  /* Elf relocations, not DWARF. */
     Dwarf_Bool gf_static_func_flag;/* SGI only */

@@ -38,7 +38,7 @@ void _dwarf_error_destructor(void *);
 /*  ALLOC_AREA_INDEX_TABLE_MAX is the size of the
     struct ial_s index_into_allocated array in dwarf_alloc.c
 */
-#define ALLOC_AREA_INDEX_TABLE_MAX 65
+#define ALLOC_AREA_INDEX_TABLE_MAX 66
 
 void _dwarf_add_to_static_err_list(Dwarf_Error err);
 void _dwarf_flush_static_error_list(void);

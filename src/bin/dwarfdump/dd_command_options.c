@@ -128,6 +128,7 @@ do_all(void)
         and dwarf_pubtypes. */
     glflags.gf_weakname_flag = TRUE; /* SGI only*/
     glflags.gf_gnu_debuglink_flag = FALSE;
+    glflags.gf_debug_addr_flag = FALSE;
     glflags.gf_debug_names_flag = TRUE;
     glflags.gf_debug_sup_flag = TRUE;
 }
@@ -378,6 +379,7 @@ static void arg_print_all(void);
 static void arg_print_abbrev(void);
 static void arg_print_aranges(void);
 static void arg_print_debug_frame(void);
+static void arg_print_debug_addr(void);
 static void arg_print_debug_names(void);
 static void arg_print_gnu_debuglink(void);
 static void arg_print_debug_gnu(void);
@@ -487,6 +489,7 @@ static const char *usage_long_text[] = {
 "                         .note.gnu.build-id",
 "     --print-gnu-debuglink Print .gnu_debuglink,",
 "                         .note.gnu.build-id sections",
+"     --print-debug-addr  Print .debug_addr section",
 "     --print-debug-gnu   Print .debug_gnu_pubtypes and",
 "                         .debug_gnu_pubnames sections",
 "     --print-debug-names Print .debug_names section",
@@ -778,6 +781,7 @@ OPT_PRINT_ABBREV,             /* -b   --print-abbrev      */
 OPT_PRINT_ALL,                /* -a   --print-all         */
 OPT_PRINT_ARANGES,            /* -r   --print-aranges     */
 OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-names */
+OPT_PRINT_DEBUG_ADDR,         /*      --print-debug-addr */
 OPT_PRINT_GNU_DEBUGLINK,      /*      --print-gnu-debuglink  */
 OPT_PRINT_DEBUG_GNU,          /*      --print-debug-gnu   */
 OPT_PRINT_DEBUG_SUP,          /*      --print-debug-sup   */
@@ -951,6 +955,7 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-abbrev",      dwno_argument, 0, OPT_PRINT_ABBREV     },
 {"print-all",         dwno_argument, 0, OPT_PRINT_ALL        },
 {"print-aranges",     dwno_argument, 0, OPT_PRINT_ARANGES    },
+{"print-debug-addr",  dwno_argument, 0, OPT_PRINT_DEBUG_ADDR},
 {"print-debug-names", dwno_argument, 0, OPT_PRINT_DEBUG_NAMES},
 {"print-gnu-debuglink", dwno_argument,0,OPT_PRINT_GNU_DEBUGLINK},
 {"print-debug-gnu",   dwno_argument, 0, OPT_PRINT_DEBUG_GNU  },
@@ -1027,6 +1032,11 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 };
 
 /*  Handlers for the command line options. */
+/*  Option '--print-debug-addr' */
+void arg_print_debug_addr(void)
+{
+    glflags.gf_debug_addr_flag = TRUE;
+}
 
 /*  Option '--print-debug-names' */
 void arg_print_debug_names(void)
@@ -2685,6 +2695,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_ALL:         arg_print_all();         break;
         case OPT_PRINT_ARANGES:     arg_print_aranges();     break;
         case OPT_PRINT_DEBUG_NAMES: arg_print_debug_names(); break;
+        case OPT_PRINT_DEBUG_ADDR:  arg_print_debug_addr();  break;
         case OPT_PRINT_GNU_DEBUGLINK: arg_print_gnu_debuglink();
             break;
         case OPT_PRINT_DEBUG_GNU:   arg_print_debug_gnu(); break;
