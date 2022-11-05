@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-10-21 v0.5.0
+    @date 2022-11-05 v0.5.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -941,6 +941,13 @@
     A new function, dwarf_global_tag_number(), returns
     the DW_TAG of any Dwarf_Global that was derived
     from the .debug_names section. 
+
+    Three new functions enable printing of the .debug_addr
+    table.  dwarf_debug_addr_table(), dwarf_debug_addr_by_index(),
+    and dwarf_dealloc_debug_addr_table(). Actual use of the
+    table(s) in .debug_addr is handled for you when
+    an attribute invoking such is encountered (see
+    DW_FORM_addrx, DW_FORM_addrx1 etc).
 
     Added doc/libdwarf.dox to the distribution
     (left out by accident earlier).
