@@ -56,8 +56,8 @@ print_sec_name(Dwarf_Debug dbg)
 }
 
 static void
-print_table_header(Dwarf_Unsigned cur_secoff,
-    Dwarf_Unsigned tabnum,
+print_table_header(Dwarf_Unsigned tabnum,
+    Dwarf_Unsigned cur_secoff,
     Dwarf_Unsigned length,
     Dwarf_Half     version,
     Dwarf_Small    address_size,
