@@ -279,23 +279,12 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 Also surprising since the segment_sel_size
                 was always there
                 in the table header! */
-            /*  We want to test cu_version here but
-                currently with no way to do that.
-                So we just hope no one using
+            /*  We want to test cu_version here
+                and segment_sel_size, but
+                currently with no way segment_sel_size
+                can be other than zero.
+                We just hope no one using
                 segment_selectors, really. FIXME */
-            if (segment_sel_size) {
-                /*  Only applies if cu_version >= 4. */
-                res = _dwarf_read_unaligned_ck_wrapper(dbg,
-                    &segment_selector,
-                    arange_ptr,segment_sel_size,
-                    end_this_arange,error);
-                if (res != DW_DLV_OK) {
-                    free_aranges_chain(dbg,head_chain);
-                    return res;
-                }
-                arange_ptr += address_size;
-            }
-
             res = _dwarf_read_unaligned_ck_wrapper(dbg,&range_address,
                 arange_ptr,address_size,end_this_arange,error);
             if (res != DW_DLV_OK) {
