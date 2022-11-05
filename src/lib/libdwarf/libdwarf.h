@@ -4523,6 +4523,10 @@ DW_API int dwarf_get_loclist_lle( Dwarf_Debug dw_dbg,
     can  pass NULL for return values of no
     immediate interest.
 
+    It is only intended to enable printing of the
+    simple .debug_addr section (by dwarfdump).
+    Not at all clear it is of any other use.
+
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_section_offset
