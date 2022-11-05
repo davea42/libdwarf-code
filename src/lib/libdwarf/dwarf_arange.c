@@ -31,6 +31,7 @@
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
+#include <stdio.h> /* debug printf */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -99,7 +100,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     /*  Size in bytes of addresses in target. */
     Dwarf_Small address_size = 0;
     /*  Size in bytes of segment offsets in target. */
-    Dwarf_Small segment_size = 0;
+    Dwarf_Small segment_sel_size = 0;
     /*  Count of total number of aranges. */
     Dwarf_Signed arange_count = 0;
     Dwarf_Arange arange = 0;
@@ -235,16 +236,19 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
 
-        /*  Even DWARF2 had a segment_size field here, meaning
-            size in bytes of a segment descriptor on the target
-            system. */
-        segment_size = *(Dwarf_Small *) arange_ptr;
-        if (segment_size != 0) {
+        /*  Even DWARF2 had a segment_sel_size field here,
+            meaning
+            size in bytes of a segment selector/descriptor
+            on the target system.
+            In reality it is unlikely any non-zero
+            value will work sensibly for the user.  */
+        segment_sel_size = *(Dwarf_Small *) arange_ptr;
+        if (segment_sel_size > 0) {
             free_aranges_chain(dbg,head_chain);
-            _dwarf_error_string(dbg, error, 
+            _dwarf_error_string(dbg, error,
                 DW_DLE_SEGMENT_SIZE_BAD,
                 "DW_DLE_SEGMENT_SIZE_BAD: "
-                "segment selector size non-zero is not supported");
+                "segment selector size > 0 is not supported");
             return DW_DLV_ERROR;
         }
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
@@ -255,7 +259,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
             return DW_DLV_ERROR;
         }
-        range_entry_size = 2*address_size + segment_size;
+        range_entry_size = 2*address_size + segment_sel_size;
         /*  Round arange_ptr offset to next multiple of
             address_size. */
         remainder = (Dwarf_Unsigned) ((arange_ptr - header_ptr) %
@@ -272,18 +276,19 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 read is a segment selector (new in DWARF4).
                 The version number DID NOT CHANGE from 2, which
                 is quite surprising.
-                Also surprising since the segment_size
+                Also surprising since the segment_sel_size
                 was always there
                 in the table header! */
             /*  We want to test cu_version here but
                 currently with no way to do that.
                 So we just hope no one using
                 segment_selectors, really. FIXME */
-            if (segment_size) {
+            if (segment_sel_size) {
                 /*  Only applies if cu_version >= 4. */
                 res = _dwarf_read_unaligned_ck_wrapper(dbg,
                     &segment_selector,
-                    arange_ptr,segment_size,end_this_arange,error);
+                    arange_ptr,segment_sel_size,
+                    end_this_arange,error);
                 if (res != DW_DLV_OK) {
                     free_aranges_chain(dbg,head_chain);
                     return res;
@@ -322,7 +327,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 }
 
                 arange->ar_segment_selector = segment_selector;
-                arange->ar_segment_selector_size = segment_size;
+                arange->ar_segment_selector_size =
+                    segment_sel_size;
                 arange->ar_address = range_address;
                 arange->ar_length = range_length;
                 arange->ar_info_offset = info_offset;
@@ -683,7 +689,11 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
     the cu_die_offset is meaningful.
 
     New for DWARF4, entries may have segment information.
-    *segment is only meaningful if *segment_entry_size is non-zero. */
+    *segment is only meaningful
+    if *segment_entry_size is non-zero.
+    But segment_selectors are not fully defined so
+    a non-zero segment_entry_size is not actually
+    usable. */
 int
 dwarf_get_arange_info_b(Dwarf_Arange arange,
     Dwarf_Unsigned*  segment,
