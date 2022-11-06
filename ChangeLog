@@ -1,3 +1,126 @@
+2022-11-05:  David Anderson
+    commit 2f3fc038a2428055930a9a22d06c50ce7e0aefef
+
+    Expanded doxygen comment on a .debug_addr
+    table access function. Not a function
+    with general utility, and it says so.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-11-05:  David Anderson
+    commit c4d15634ae3ec411c9c923f317d074f30c167f9d
+
+    Deleted dead code related to
+    the segmented-address size field. Noticed by Coverity Scan.
+            modified:   src/lib/libdwarf/dwarf_arange.c
+
+2022-11-05:  David Anderson
+    commit 4dc385ca4355067a7926a5d4e1606401221fe292
+
+    An argument swap caused incorrect association
+    with descriptive text.  The swap noticed
+    by Coverity Scan.
+            modified:   src/bin/dwarfdump/print_debug_addr.c
+
+2022-11-05:  David Anderson
+    commit d8bc15a60d35d2b6d221c7e3605e7a4e62da445b
+
+    New functions for reading .debug_addr
+    independently now documented in Changes.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2022-11-05:  David Anderson
+    commit 7ca0abec646f48d4b97e76e17009aa37c6deab8f
+
+    Implements the print_debug_addr() function
+    and prints the .debug_addr section content (if any)
+    without reference to any other section.
+            new file:   src/bin/dwarfdump/print_debug_addr.c
+
+2022-11-05:  David Anderson
+    commit 1ad6ae32b0b6252d6b6a0f93ba9e72678b649734
+
+    The functions implementing reading
+    of section .debug_addr section on its own
+    without reference to any other section.
+            new file:   dwarf_debugaddr.c
+            new file:   dwarf_debugaddr.h
+
+2022-11-05:  David Anderson
+    commit 29d5f1aadcfaa05cb4e409b3dc0c0dc8d67fe300
+
+    If a non-zero segment_size selector is
+    found issue an error (such are not
+    supported).
+            modified:   dwarf_arange.c
+
+    Expanded doxygen comments on the debug_addr table
+    function.
+            modified:   libdwarf.h
+
+2022-11-04:  David Anderson
+    commit c0a7f18cba9a6f528f24d55f157186b02fe0c64e
+
+    All this enables reading .debug_addr as a separate
+    section and printing it.
+    Added print_debug_addr.c to the source list.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+
+    Added print_debug_addr.c to the source list.
+            modified:   src/bin/dwarfdump/Makefile.am
+
+    Added a flag: gf_debug_addr_flag and
+    the function and table entries to support --print-debug-addr.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+            modified:   src/bin/dwarfdump/dd_glflags.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+
+    Added extern int print_debug_addr() to print the section.
+            modified:   src/bin/dwarfdump/dd_globals.h
+
+    Added code calling print_debug_addr().
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Added print_debug_addr.c to the source list.
+            modified:   src/bin/dwarfdump/meson.build
+
+    Added dwarf_debugaddr.c and dwarf_debug_addr.h
+    t their respective lists.
+            modified:   src/lib/libdwarf/CMakeLists.txt
+
+    Added dwarf_debugaddr.c and dwarf_debug_addr.h
+    t the file list.
+            modified:   src/lib/libdwarf/Makefile.am
+
+    Added new DW_DLA_DEBUG_ADDR type support.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+    Increased  ALLOC_AREA_INDEX_TABLE_MAX to 66 due to new type.
+            modified:   src/lib/libdwarf/dwarf_alloc.h
+
+    Since we never really supported segments, if a non-zero
+    segment size input we get an error.
+            modified:   src/lib/libdwarf/dwarf_arange.c
+
+    Added DW_DLE_DEBUG_ADDR_ERROR for good error reporting
+    in dwarf_debugaddr.c
+            modified:   src/lib/libdwarf/dwarf_errmsg_list.h
+
+    Added DW_DLE_DEBUG_ADDR_ERROR
+    Added dwarf_debug_addr_table() and
+    dwarf_debug_addr_by_index() and
+    dwarf_dealloc_debug_addr_table()
+    to support reading .debug_addr on its own.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Added dwarf_debugaddr.c to the source list.
+            modified:   src/lib/libdwarf/meson.build
+
+2022-11-01:  David Anderson
+    commit c2c9879644454a5d15a252bf469adb6db1fe4dcb
+
+    Update from git log
+            modified:   ChangeLog
+
 2022-11-01:  David Anderson
     commit aaad3fab651a0a174f620e5cfbe93147c94a18da
 
