@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 7 October 2022 additions for 0.5.0
+Updated 6 November 2022
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
@@ -9,8 +9,7 @@ using configure,cmake, and meson.
 
 Version 0.4.2 released 13 September 2022
 Versions before 0.4.2 had problems
-in the test suite so
-make check or ninja test might fail
+in the test suite so make check or ninja test might fail
 on some tests (sorry).
 
 Version 0.5.0 is not released. 
@@ -23,8 +22,9 @@ here to just building libdwarf and dwarfdump.
 
 If the objects you work with do not have
 section content compressed
-with zlib(libz) or libzstd such
-are not required for building/using 
+with zlib(libz) or libzstd
+neither those libraries nor their header files
+are required for building/using 
 libdwarf/dwarfdump.
 
     Ubuntu: 
@@ -91,12 +91,12 @@ and the command(s) to do that in msys2.
 The tools listed there are also for msys2 meson and
 autotools/configure.
 
-The meson ninja install not only installs libdwarf-0.dll
+The msys2 meson ninja install not only installs libdwarf-0.dll
 and dwarfdump.exe it updates the executables in
 the build tree linking to that dll so all such
 executables in the build tree work too.
 
-For example:
+For example (all build environments):
 
     meson /tmp/libdwarf-0.4.2
     ninja
