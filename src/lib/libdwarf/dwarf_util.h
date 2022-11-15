@@ -371,7 +371,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Error *error);
 
 struct Dwarf_Hash_Table_Entry_s;
-/* 
+/*
    This single struct is the base for the 'hash' table.
 
    The intent is that once the total_abbrev_count across

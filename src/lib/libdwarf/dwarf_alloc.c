@@ -996,8 +996,8 @@ _dwarf_get_debug(Dwarf_Unsigned filesize)
     if (global_de_alloc_tree_on) {
         Dwarf_Unsigned size_est = filesize/30;
 #ifdef TESTINGHASHTAB
-       printf("dadebug src filesize %lu hashtab init %lu\n",
-           (unsigned long)filesize,(unsigned long)size_est);
+    printf("dadebug src filesize %lu hashtab init %lu\n",
+        (unsigned long)filesize,(unsigned long)size_est);
 #endif
         dwarf_initialize_search_hash(&dbg->de_alloc_tree,
             simple_value_hashfunc,size_est);
