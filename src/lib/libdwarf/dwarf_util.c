@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2021 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2022 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
   Portions Copyright 2020 Google All rights reserved.
 
@@ -34,6 +34,7 @@
 #include <stddef.h> /* NULL size_t */
 #include <stdlib.h> /* free() */
 #include <string.h> /* memset() strlen() */
+#include <stdio.h> /*  for debugging */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -540,16 +541,30 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         when implementing form handling of a new FORM.
         Disaster results from using a bogus value,
         so generate error. */
-    _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
+    {
+        dwarfstring m;
+        dwarfstring_constructor(&m);
+
+        dwarfstring_append_printf_u(&m,
+            "DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE: "
+            "DW_FORM 0x%x"
+            " is not being handled!",
+            form);
+
+        _dwarf_error_string(dbg,error,
+            DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+    }
     return DW_DLV_ERROR;
 }
 
-/*  We allow an arbitrary number of HT_MULTIPLE entries
-    before resizing.  It seems up to 20 or 30
-    would work nearly as well.
-    We could have a different resize multiple than 'resize now'
-    test multiple, but for now we don't do that.  */
-#define HT_MULTIPLE 8
+/*  Table size is always a power of two so
+    we can use "val2 = val1 & (size-1)"
+    instead of a slower 'hash' function.  */
+#define HT_DEFAULT_TABLE_SIZE 128
+#define HT_MULTIPLE 2
+#define HT_MOD_OP &
 
 /*  Copy the old entries, updating each to be in
     a new list.  Don't delete anything. Leave the
@@ -563,13 +578,15 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
     Dwarf_Hash_Table_Entry entry_out = htout->tb_entries;
     unsigned entry_out_count = htout->tb_table_entry_count;
     unsigned k = 0;
+
     for (; k < entry_in_count; ++k,++entry_in) {
         Dwarf_Abbrev_List listent = entry_in->at_head;
         Dwarf_Abbrev_List nextlistent = 0;
 
         for (; listent ; listent = nextlistent) {
             unsigned newtmp = listent->abl_code;
-            unsigned newhash = newtmp%entry_out_count;
+            unsigned newhash = newtmp HT_MOD_OP 
+                (entry_out_count -1);
             Dwarf_Hash_Table_Entry e;
             nextlistent = listent->abl_next;
             e = entry_out+newhash;
@@ -626,35 +643,6 @@ _dwarf_format_TAG_err_msg(Dwarf_Debug dbg,
     dwarfstring_destructor(&v);
     return DW_DLV_ERROR;
 }
-#if 0
-static void
-print_abcom(const char *msg,
-    struct Dwarf_Abbrev_Common_s *abcom)
-{
-    printf("print Dwarf_Abbrev_Common: %s\n",
-        msg);
-    printf("dbg %lx\n",
-        (unsigned long)abcom->ac_dbg);
-    printf("hashtable base %lx\n",
-        (unsigned long)abcom->ac_hashtable_base);
-    printf("highest known code %lu\n",
-        (unsigned long)abcom->ac_highest_known_code);
-    printf("last abbrev ptr %lx\n",
-        (unsigned long)abcom->ac_last_abbrev_ptr);
-    printf("last abbrev endptr %lx\n",
-        (unsigned long)abcom->ac_last_abbrev_endptr);
-    printf("abbrev offset %lx\n",
-        (unsigned long)abcom->ac_abbrev_offset);
-    printf("abbrev ptr %lx\n",
-        (unsigned long)abcom->ac_abbrev_ptr);
-    printf("abbrev section_start %lx\n",
-        (unsigned long)abcom->ac_abbrev_section_start);
-    printf("abbrev end abbrev ptr %lx\n",
-        (unsigned long)abcom->ac_end_abbrev_ptr);
-    printf("ptr to dwp_offsets %lx\n",
-        (unsigned long)abcom->ac_dwp_offsets);
-}
-#endif /*0*/
 
 /*  This function returns a pointer to a Dwarf_Abbrev_List_s
     struct for the abbrev with the given code.  It puts the
@@ -689,36 +677,43 @@ print_abcom(const char *msg,
 
     Returns DW_DLV_ERROR on error.  */
 int
-_dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
+_dwarf_get_abbrev_for_code(Dwarf_CU_Context context,
     Dwarf_Unsigned code,
     Dwarf_Abbrev_List *list_out,
     Dwarf_Unsigned    *highest_known_code,
     Dwarf_Error *error)
 {
-    Dwarf_Debug dbg = abcom->ac_dbg;
-    Dwarf_Hash_Table hash_table_base  = abcom->ac_hashtable_base;
+    Dwarf_Debug dbg = context->cc_dbg;
+    Dwarf_Hash_Table hash_table_base  =
+        context->cc_abbrev_hash_table;
     Dwarf_Hash_Table_Entry entry_base = 0;
     Dwarf_Hash_Table_Entry entry_cur  = 0;
     Dwarf_Unsigned hash_num           = 0;
     Dwarf_Unsigned abbrev_code        = 0;
     Dwarf_Unsigned abbrev_tag         = 0;
-    Dwarf_Abbrev_List hash_abbrev_entry     = 0;
-    Dwarf_Abbrev_List inner_list_entry      = 0;
+    Dwarf_Abbrev_List      hash_abbrev_entry     = 0;
+    Dwarf_Abbrev_List      inner_list_entry      = 0;
     Dwarf_Hash_Table_Entry inner_hash_entry = 0;
-    Dwarf_Byte_Ptr abbrev_ptr         = 0;
-    Dwarf_Byte_Ptr end_abbrev_ptr     = 0;
+    Dwarf_Byte_Ptr         abbrev_ptr     = 0;
+    Dwarf_Byte_Ptr         end_abbrev_ptr = 0;
+    Dwarf_Small           *abbrev_section_start =
+        dbg->de_debug_abbrev.dss_data;
     unsigned hashable_val             = 0;
 
     if (!hash_table_base->tb_entries) {
-        hash_table_base->tb_table_entry_count =  HT_MULTIPLE;
+        hash_table_base->tb_table_entry_count =  
+            HT_DEFAULT_TABLE_SIZE;
         hash_table_base->tb_total_abbrev_count= 0;
+#ifdef TESTINGHASHTAB 
+printf("dadebug initial size %u\n",HT_DEFAULT_TABLE_SIZE);
+#endif
         hash_table_base->tb_entries =
             (struct  Dwarf_Hash_Table_Entry_s *)_dwarf_get_alloc(dbg,
             DW_DLA_HASH_TABLE_ENTRY,
             hash_table_base->tb_table_entry_count);
         if (!hash_table_base->tb_entries) {
             *highest_known_code =
-                abcom->ac_highest_known_code;
+                context->cc_highest_known_code;
             return DW_DLV_NO_ENTRY;
         }
     } else if (hash_table_base->tb_total_abbrev_count >
@@ -726,9 +721,18 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
         struct Dwarf_Hash_Table_s newht;
 
         memset(&newht,0,sizeof(newht));
-        /* Effectively multiplies by >= HT_MULTIPLE */
+        /* This grows  the has table, likely too much.
+            Since abbrev codes are usually assigned
+            from 1 and increasing by one the hash usually
+            results in no hash collisions whatever,
+            so searching the list of collisions
+            is normally very quick. */
         newht.tb_table_entry_count =
-            hash_table_base->tb_total_abbrev_count;
+            hash_table_base->tb_table_entry_count * HT_MULTIPLE;
+#ifdef TESTINGHASHTAB 
+printf("dadebug Resize size to %lu\n",
+(unsigned long)newht.tb_table_entry_count);
+#endif
         newht.tb_total_abbrev_count = 0;
         newht.tb_entries =
             (struct  Dwarf_Hash_Table_Entry_s *)
@@ -736,7 +740,7 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
             newht.tb_table_entry_count);
         if (!newht.tb_entries) {
             *highest_known_code =
-                abcom->ac_highest_known_code;
+                context->cc_highest_known_code;
             return DW_DLV_NO_ENTRY;
         }
         /*  Copy the existing entries to the new table,
@@ -751,12 +755,15 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
             the new, newly valid, contents. */
         *hash_table_base = newht;
     } /* Else is ok as is, add entry */
-    if (code > abcom->ac_highest_known_code) {
-        abcom->ac_highest_known_code = code;
+    if (code > context->cc_highest_known_code) {
+        context->cc_highest_known_code = code;
     }
     hashable_val = code;
-    hash_num = hashable_val %
-        hash_table_base->tb_table_entry_count;
+    hash_num = hashable_val HT_MOD_OP
+        (hash_table_base->tb_table_entry_count-1);
+    if (hash_num > hash_table_base->tb_highest_used_entry) {
+        hash_table_base->tb_highest_used_entry = hash_num;
+    }
     entry_base = hash_table_base->tb_entries;
     entry_cur  = entry_base + hash_num;
 
@@ -768,20 +775,25 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
         /*  This returns a pointer to an abbrev
             list entry, not the list itself. */
         *highest_known_code =
-            abcom->ac_highest_known_code;
+            context->cc_highest_known_code;
+        hash_abbrev_entry->abl_reference_count++;
         *list_out = hash_abbrev_entry;
         return DW_DLV_OK;
     }
 
-    if (abcom->ac_last_abbrev_ptr) {
-        abbrev_ptr = abcom->ac_last_abbrev_ptr;
-        end_abbrev_ptr = abcom->ac_last_abbrev_endptr;
+    if (context->cc_last_abbrev_ptr) {
+        abbrev_ptr = context->cc_last_abbrev_ptr;
+        end_abbrev_ptr = context->cc_last_abbrev_endptr;
     } else {
         /*  This is ok because cc_abbrev_offset includes DWP
-            offset if appropriate. */
-        abbrev_ptr = abcom->ac_abbrev_ptr;
+            offset if appropriate.
+        */
+        end_abbrev_ptr = dbg->de_debug_abbrev.dss_data
+            + dbg->de_debug_abbrev.dss_size;
+        abbrev_ptr = dbg->de_debug_abbrev.dss_data
+            + context->cc_abbrev_offset;
 
-        if (abcom->ac_dwp_offsets->pcu_type)  {
+        if (context->cc_dwp_offsets.pcu_type)  {
             /*  In a DWP the abbrevs
                 for this context are known quite precisely. */
             Dwarf_Unsigned size = 0;
@@ -789,12 +801,12 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
             /*  Ignore the offset returned.
                 Already in cc_abbrev_offset. */
             _dwarf_get_dwp_extra_offset(
-                abcom->ac_dwp_offsets,
+                &context->cc_dwp_offsets,
                 DW_SECT_ABBREV,&size);
             /*  ASSERT: size != 0 */
             end_abbrev_ptr = abbrev_ptr + size;
         } else {
-            end_abbrev_ptr = abcom->ac_end_abbrev_ptr;
+            end_abbrev_ptr = end_abbrev_ptr;
         }
     }
 
@@ -815,17 +827,18 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
         is 0. */
     if (*abbrev_ptr == 0) {
         *highest_known_code =
-            abcom->ac_highest_known_code;
+            context->cc_highest_known_code;
         return DW_DLV_NO_ENTRY;
     }
     do {
         unsigned new_hashable_val = 0;
         Dwarf_Off  abb_goff = 0;
         Dwarf_Unsigned atcount = 0;
+        Dwarf_Unsigned impl_const_count = 0;
         Dwarf_Byte_Ptr abbrev_ptr2 = 0;
         int res = 0;
 
-        abb_goff = abbrev_ptr - abcom->ac_abbrev_section_start;
+        abb_goff = abbrev_ptr - abbrev_section_start;
         DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_code,
             dbg,error,end_abbrev_ptr);
         DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_tag,
@@ -848,11 +861,14 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
         }
 
         new_hashable_val = abbrev_code;
-        if (abbrev_code > abcom->ac_highest_known_code) {
-            abcom->ac_highest_known_code = abbrev_code;
+        if (abbrev_code > context->cc_highest_known_code) {
+            context->cc_highest_known_code = abbrev_code;
         }
-        hash_num = new_hashable_val %
-            hash_table_base->tb_table_entry_count;
+        hash_num = new_hashable_val HT_MOD_OP
+            (hash_table_base->tb_table_entry_count-1);
+        if (hash_num > hash_table_base->tb_highest_used_entry) {
+            hash_table_base->tb_highest_used_entry = hash_num;
+        }
         inner_hash_entry = entry_base + hash_num;
         /* Move_entry_to_new_hash */
         inner_list_entry->abl_next = inner_hash_entry->at_head;
@@ -872,22 +888,26 @@ _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
             ignoring the content except
             to find the end of the content. */
         res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
-            end_abbrev_ptr,&atcount,&abbrev_ptr2,error);
+            end_abbrev_ptr,&atcount,&impl_const_count,
+            &abbrev_ptr2,error);
         if (res != DW_DLV_OK) {
             *highest_known_code =
-                abcom->ac_highest_known_code;
+                context->cc_highest_known_code;
             return res;
         }
+        inner_list_entry->abl_implicit_const_count =
+            impl_const_count;
         abbrev_ptr = abbrev_ptr2;
-        inner_list_entry->abl_count = atcount;
+        inner_list_entry->abl_abbrev_count = atcount;
     } while ((abbrev_ptr < end_abbrev_ptr) &&
         *abbrev_ptr != 0 && abbrev_code != code);
 
-    *highest_known_code = abcom->ac_highest_known_code;
-    abcom->ac_last_abbrev_ptr = abbrev_ptr;
-    abcom->ac_last_abbrev_endptr = end_abbrev_ptr;
+    *highest_known_code = context->cc_highest_known_code;
+    context->cc_last_abbrev_ptr = abbrev_ptr;
+    context->cc_last_abbrev_endptr = end_abbrev_ptr;
     if (abbrev_code == code) {
         *list_out = inner_list_entry;
+        inner_list_entry->abl_reference_count++;
         return DW_DLV_OK;
     }
     /*  We cannot find an abbrev_code  matching code.
@@ -1145,9 +1165,13 @@ void
 _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
     Dwarf_Hash_Table hash_table)
 {
+#ifdef TESTINGHASHTAB 
+    Dwarf_Unsigned max_refs = 0;
+#endif
     /*  A Hash Table is an array with tb_table_entry_count struct
         Dwarf_Hash_Table_s entries in the array. */
     unsigned hashnum = 0;
+
     if (!hash_table) {
         /*  Not fully set up yet. There is nothing to do. */
         return;
@@ -1156,20 +1180,41 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
         /*  Not fully set up yet. There is nothing to do. */
         return;
     }
-    for (; hashnum < hash_table->tb_table_entry_count; ++hashnum) {
+    
+    for (hashnum=0; hashnum < hash_table->tb_highest_used_entry; ++hashnum) {
         struct Dwarf_Abbrev_List_s *abbrev = 0;
         struct Dwarf_Abbrev_List_s *nextabbrev = 0;
         struct  Dwarf_Hash_Table_Entry_s *tb =
             &hash_table->tb_entries[hashnum];
+        unsigned listcount = 0;
 
         abbrev = tb->at_head;
         for (; abbrev; abbrev = nextabbrev) {
+#ifdef TESTINGHASHTAB 
+            if (abbrev->abl_reference_count > max_refs) {
+                max_refs = abbrev->abl_reference_count;
+            }
+#endif
+            free(abbrev->abl_attr);
+            abbrev->abl_attr = 0;
+            free(abbrev->abl_form);
+            abbrev->abl_form = 0;
+            free(abbrev->abl_implicit_const);
+            abbrev->abl_implicit_const = 0;
             nextabbrev = abbrev->abl_next;
             abbrev->abl_next = 0;
             dwarf_dealloc(dbg, abbrev, DW_DLA_ABBREV_LIST);
+            ++listcount;
         }
+#ifdef TESTINGHASHTAB 
+printf("dadebug hashnum %u listcount %u\n",hashnum,listcount);
+#endif
         tb->at_head = 0;
     }
+#ifdef TESTINGHASHTAB 
+printf("dadebug max ref count of any abbrev %lu, \n",
+(unsigned long)max_refs);
+#endif
     /* Frees all the entries at once: an array. */
     dwarf_dealloc(dbg,hash_table->tb_entries,DW_DLA_HASH_TABLE_ENTRY);
     hash_table->tb_entries = 0;

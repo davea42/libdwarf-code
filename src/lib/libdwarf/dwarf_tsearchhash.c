@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2021, David Anderson
+/* Copyright (c) 2013-2022, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -80,14 +80,11 @@ static unsigned long primes[] =
 5,11, 17,23, 31, 47, 53,
 79,
 #endif /*0*/
+521,
 1009,
-#if 0
 5591,
-#endif
 10007,
-#if 0
 21839,
-#endif
 41413,
 99907,
 199967,
@@ -206,7 +203,7 @@ dwarf_initialize_search_hash( void **treeptr,
         }
         entry_index = k;
     }
-#if 0
+#ifdef TESTINGHASHTAB
 printf("dadebug initial alloc size estimate %lu\n",size_estimate);
 printf("dadebug initial alloc prime to use %lu\n",prime_to_use);
 #endif
@@ -381,7 +378,7 @@ resize_table(struct hs_base *head,
         unsigned long ix = 0;
         unsigned long tsize = head->tablesize_;
         struct ts_entry *p = &head->hashtab_[0];
-#if 0
+#ifdef TESTINGHASHTAB
 printf("dadebug Resize %lu to %lu\n",tsize,prime_to_use);
 #endif
         for ( ; ix < tsize; ix++,p++) {
@@ -657,6 +654,11 @@ dwarf_tdestroy_inner(struct hs_base*h,
     unsigned long ix = 0;
     unsigned long tsize = h->tablesize_;
     struct ts_entry *p = &h->hashtab_[0];
+#ifdef TESTINGHASHTAB
+    printf("dadebug destroyhashtable blocks      %lu\n",tsize);
+    printf("dadebug destroyhashtable recordcount %lu\n",
+        h->record_count_);
+#endif
     for ( ; ix < tsize; ix++,p++) {
         struct ts_entry*n = 0;
         struct ts_entry*prev = 0;

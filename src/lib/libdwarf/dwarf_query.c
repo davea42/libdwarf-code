@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2022 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
   Portions Copyright 2020 Google All rights reserved.
 
@@ -358,8 +358,6 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Unsigned attr = 0;
     Dwarf_Unsigned attr_form = 0;
     Dwarf_Unsigned i = 0;
-    Dwarf_Byte_Ptr abbrev_ptr = 0;
-    Dwarf_Byte_Ptr abbrev_end = 0;
     Dwarf_Abbrev_List abbrev_list = 0;
     Dwarf_Attribute head_attr = NULL;
     Dwarf_Attribute curr_attr = NULL;
@@ -368,18 +366,16 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Byte_Ptr die_info_end = 0;
     int lres = 0;
+    int bres = 0;
     Dwarf_CU_Context context = 0;
     Dwarf_Unsigned highest_code = 0;
-    struct Dwarf_Abbrev_Common_s abcom;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     context = die->di_cu_context;
     dbg = context->cc_dbg;
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
-
-    _dwarf_fill_in_abcom_from_context(context,&abcom);
-    lres = _dwarf_get_abbrev_for_code(&abcom,
+    lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
         &abbrev_list,
         &highest_code,error);
@@ -405,10 +401,6 @@ dwarf_attrlist(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_context_from_abcom(&abcom,context);
-
-    abbrev_ptr = abbrev_list->abl_abbrev_ptr;
-    abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
 
     info_ptr = die->di_debug_ptr;
     {
@@ -436,84 +428,108 @@ dwarf_attrlist(Dwarf_Die die,
         info_ptr += len;
     }
 
-    do {
+    if (!abbrev_list->abl_attr) {
+        Dwarf_Byte_Ptr abbrev_ptr = abbrev_list->abl_abbrev_ptr;
+        Dwarf_Byte_Ptr abbrev_end =
+            _dwarf_calculate_abbrev_section_end_ptr(context);
+        /* FIXME */
+        bres = _dwarf_fill_in_attr_form_abtable(context,
+            abbrev_ptr, abbrev_end, abbrev_list,
+            error);
+        if (bres != DW_DLV_OK) {
+            empty_local_attrlist(dbg,head_attr);
+            return bres;
+        }
+    }
+    /*  ASSERT  list->abl_addr and list->abl_form
+        are non-null and if  list->abl_implicit_const_count > 0
+        list->abl_implicit_const is non-null. */
+
+    for ( i = 0; i <abbrev_list->abl_abbrev_count; ++i) {
         Dwarf_Signed implicit_const = 0;
         Dwarf_Attribute new_attr = 0;
-        int res = 0;
+        Dwarf_Half newattr_form = 0;
+        int ires = 0;
 
-        /*  The DECODE have to be wrapped in functions to
-            catch errors before return. */
-        res = _dwarf_leb128_uword_wrapper(dbg,
-            &abbrev_ptr,abbrev_end,&attr,error);
-        if (res == DW_DLV_ERROR) {
-            empty_local_attrlist(dbg,head_attr);
-            return res;
+        attr =  abbrev_list->abl_attr[i];
+        attr_form =  abbrev_list->abl_form[i];
+        if (attr_form == DW_FORM_implicit_const) {
+            implicit_const = abbrev_list->abl_implicit_const[i];
         }
         if (attr > DW_AT_hi_user) {
             empty_local_attrlist(dbg,head_attr);
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
         }
-        res = _dwarf_leb128_uword_wrapper(dbg,
-            &abbrev_ptr,abbrev_end,&attr_form,error);
-        if (res == DW_DLV_ERROR) {
-            empty_local_attrlist(dbg,head_attr);
-            return res;
-        }
         if (!_dwarf_valid_form_we_know(attr_form,attr)) {
             empty_local_attrlist(dbg,head_attr);
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return DW_DLV_ERROR;
         }
-        if (attr_form == DW_FORM_implicit_const) {
-            /* The value is here, not in a DIE. */
-            res = _dwarf_leb128_sword_wrapper(dbg,&abbrev_ptr,
-                abbrev_end, &implicit_const, error);
-            if (res == DW_DLV_ERROR) {
+        newattr_form = attr_form;
+        if (attr_form == DW_FORM_indirect) {
+            Dwarf_Unsigned utmp6 = 0;
+
+            if (_dwarf_reference_outside_section(die,
+                (Dwarf_Small*) info_ptr,
+                ((Dwarf_Small*) info_ptr )+1)) {
+                dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
                 empty_local_attrlist(dbg,head_attr);
-                return res;
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_ATTR_OUTSIDE_SECTION,
+                    "DW_DLE_ATTR_OUTSIDE_SECTION: "
+                    " Reading Attriutes: "
+                    "For DW_FORM_indirect there is"
+                    " no room for the form. Corrupt Dwarf");
+                return DW_DLV_ERROR;
             }
-            /*DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
-                dbg,error,abbrev_end); */
+            ires = _dwarf_leb128_uword_wrapper(dbg,
+                &info_ptr,die_info_end,&utmp6,error);
+            if (ires != DW_DLV_OK) {
+                dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
+                empty_local_attrlist(dbg,head_attr);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_ATTR_OUTSIDE_SECTION,
+                    "DW_DLE_ATTR_OUTSIDE_SECTION: "
+                    "Reading target of a DW_FORM_indirect "
+                    "from an abbreviation failed. Corrupt Dwarf");
+                return DW_DLV_ERROR;
+            }
+            attr_form = (Dwarf_Half) utmp6;
+            if (attr_form == DW_FORM_implicit_const) {
+                dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
+                empty_local_attrlist(dbg,head_attr);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_ATTR_OUTSIDE_SECTION,
+                    "DW_DLE_ATTR_OUTSIDE_SECTION: "
+                    " Reading Attriutes: an indirect form "
+                    "leads to a DW_FORM_implicit_const "
+                    "which is not handled. Corrupt Dwarf");
+                return DW_DLV_ERROR;
+            }
+            if (!_dwarf_valid_form_we_know(attr_form,attr)) {
+                empty_local_attrlist(dbg,head_attr);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_UNKNOWN_FORM,"DW_DLE_UNKNOWN_FORM "
+                    " is actually an indirect_form from"
+                    " .debug_info.");
+            }
+            newattr_form = attr_form;
         }
 
-        if (!_dwarf_valid_form_we_know(attr_form,attr)) {
-            empty_local_attrlist(dbg,head_attr);
-            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
-            return DW_DLV_ERROR;
-        }
         if (attr != 0) {
             new_attr = (Dwarf_Attribute)
                 _dwarf_get_alloc(dbg, DW_DLA_ATTR, 1);
-            if (new_attr == NULL) {
+            if (!new_attr) {
                 empty_local_attrlist(dbg,head_attr);
-                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+                _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+                    "DW_DLE_ALLOC_FAIL: attempting to allocate"
+                    " a Dwarf_Attribute record");
                 return DW_DLV_ERROR;
             }
             new_attr->ar_attribute = attr;
             new_attr->ar_attribute_form_direct = attr_form;
-            new_attr->ar_attribute_form = attr_form;
-            if (attr_form == DW_FORM_indirect) {
-                Dwarf_Unsigned utmp6 = 0;
-
-                if (_dwarf_reference_outside_section(die,
-                    (Dwarf_Small*) info_ptr,
-                    ((Dwarf_Small*) info_ptr )+1)) {
-                    dwarf_dealloc(dbg,new_attr,DW_DLA_ATTR);
-                    empty_local_attrlist(dbg,head_attr);
-                    _dwarf_error_string(dbg, error,
-                        DW_DLE_ATTR_OUTSIDE_SECTION,
-                        "DW_DLE_ATTR_OUTSIDE_SECTION: "
-                        " Reading Attriutes: "
-                        "For DW_FORM_indirect there is"
-                        " no room for the form. Corrupt Dwarf");
-                    return DW_DLV_ERROR;
-                }
-                res = _dwarf_leb128_uword_wrapper(dbg,
-                    &info_ptr,die_info_end,&utmp6,error);
-                attr_form = (Dwarf_Half) utmp6;
-                new_attr->ar_attribute_form = attr_form;
-            }
+            new_attr->ar_attribute_form = newattr_form;
             /*  Here the final address must be *inside* the
                 section, as we will read from there, and read
                 at least one byte, we think.
@@ -569,7 +585,7 @@ dwarf_attrlist(Dwarf_Die die,
             }
             attr_count++;
         }
-    } while (attr || attr_form);
+    }
     if (!attr_count) {
         *attrbuf = NULL;
         *attrcnt = 0;
@@ -609,24 +625,22 @@ dwarf_attrlist(Dwarf_Die die,
 */
 static int
 _dwarf_get_value_ptr(Dwarf_Die die,
-    Dwarf_Half attr,
-    Dwarf_Half * attr_form,
-    Dwarf_Byte_Ptr * ptr_to_value,
-    Dwarf_Signed *implicit_const_out,
-    Dwarf_Error *error)
+    Dwarf_Half      attrnum_in,
+    Dwarf_Half     *attr_form,
+    Dwarf_Byte_Ptr *ptr_to_value,
+    Dwarf_Signed   *implicit_const_out,
+    Dwarf_Error    *error)
 {
     Dwarf_Byte_Ptr abbrev_ptr = 0;
     Dwarf_Byte_Ptr abbrev_end = 0;
     Dwarf_Abbrev_List abbrev_list;
-    Dwarf_Half curr_attr = 0;
-    Dwarf_Half curr_attr_form = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_CU_Context context = die->di_cu_context;
     Dwarf_Byte_Ptr die_info_end = 0;
-    Dwarf_Debug dbg = 0;
-    int lres = 0;
+    Dwarf_Debug    dbg = 0;
+    int            lres = 0;
+    Dwarf_Unsigned i = 0;
     Dwarf_Unsigned highest_code = 0;
-    struct Dwarf_Abbrev_Common_s abcom;
 
     if (!context) {
         _dwarf_error(NULL,error,DW_DLE_DIE_NO_CU_CONTEXT);
@@ -636,8 +650,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     die_info_end =
         _dwarf_calculate_info_section_end_ptr(context);
 
-    _dwarf_fill_in_abcom_from_context(context,&abcom);
-    lres = _dwarf_get_abbrev_for_code(&abcom,
+    lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
         &abbrev_list,&highest_code,error);
     if (lres == DW_DLV_ERROR) {
@@ -662,11 +675,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    _dwarf_fill_in_context_from_abcom(&abcom,context);
-
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
-
     info_ptr = die->di_debug_ptr;
     /* This ensures and checks die_info_end >= info_ptr */
     {
@@ -693,29 +703,26 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         }
         info_ptr += len;
     }
-    do {
-        Dwarf_Unsigned formtmp3 = 0;
-        Dwarf_Unsigned atmp3 = 0;
+    if (!abbrev_list->abl_attr) {
+        int bres = 0;
+        /* FIXME */
+        bres = _dwarf_fill_in_attr_form_abtable(context,
+            abbrev_ptr, abbrev_end, abbrev_list,
+            error);
+        if (bres != DW_DLV_OK) {
+            return bres;
+        }
+    }
+
+    for (i = 0; i < abbrev_list->abl_abbrev_count; ++i) {
+        Dwarf_Unsigned curr_attr_form = 0;
+        Dwarf_Unsigned curr_attr = 0;
         Dwarf_Unsigned value_size=0;
         Dwarf_Signed implicit_const = 0;
         int res = 0;
 
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, atmp3,dbg,
-            error,abbrev_end);
-        if (atmp3 > DW_AT_hi_user) {
-            _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
-            return DW_DLV_ERROR;
-        }
-        curr_attr = (Dwarf_Half) atmp3;
-
-        DECODE_LEB128_UWORD_CK(abbrev_ptr,formtmp3,
-            dbg,error,abbrev_end);
-        if (!_dwarf_valid_form_we_know(formtmp3,curr_attr)) {
-            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
-            return DW_DLV_ERROR;
-        }
-
-        curr_attr_form = (Dwarf_Half) formtmp3;
+        curr_attr = abbrev_list->abl_attr[i];
+        curr_attr_form = abbrev_list->abl_form[i];
         if (curr_attr_form == DW_FORM_indirect) {
             Dwarf_Unsigned utmp6;
 
@@ -724,12 +731,18 @@ _dwarf_get_value_ptr(Dwarf_Die die,
                 error,die_info_end);
             curr_attr_form = (Dwarf_Half) utmp6;
         }
-        if (curr_attr_form == DW_FORM_implicit_const) {
-            /* The value is here, not in a DIE. */
-            DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
-                dbg,error,abbrev_end);
+        if (curr_attr_form == DW_FORM_indirect) {
+            _dwarf_error_string(dbg,error,DW_DLE_ATTR_FORM_BAD,
+                "DW_DLE_ATTR_FORM_BAD: "
+                "A DW_FORM_indirect in an abbreviation "
+                " indirects to another "
+                "DW_FORM_indirect, which is inappropriate.");
+            return DW_DLV_ERROR;
         }
-        if (curr_attr == attr) {
+        if (curr_attr_form == DW_FORM_implicit_const) {
+            implicit_const = abbrev_list->abl_implicit_const[i];
+        }
+        if (curr_attr == attrnum_in) {
             *attr_form = curr_attr_form;
             if (implicit_const_out) {
                 *implicit_const_out = implicit_const;
@@ -765,7 +778,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             }
         }
         info_ptr+= value_size;
-    } while (curr_attr != 0 || curr_attr_form != 0);
+    }
     return DW_DLV_NO_ENTRY;
 }
 
@@ -839,11 +852,37 @@ dwarf_attr(Dwarf_Die die,
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Debug dbg = 0;
     int res = 0;
+    int lres = 0;
     Dwarf_Signed implicit_const = 0;
+    Dwarf_Abbrev_List abbrev_list = 0;
+    Dwarf_Unsigned highest_code = 0;
+    Dwarf_CU_Context context = 0;
+
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
 
     CHECK_DIE(die, DW_DLV_ERROR);
-    dbg = die->di_cu_context->cc_dbg;
+    lres = _dwarf_get_abbrev_for_code(die->di_cu_context,
+        die->di_abbrev_list->abl_code,
+        &abbrev_list,
+        &highest_code,error);
+    if (lres == DW_DLV_ERROR) {
+        return lres;
+    }
+    if (!abbrev_list->abl_attr) {
+        Dwarf_Byte_Ptr abbrev_ptr = abbrev_list->abl_abbrev_ptr;
+        Dwarf_Byte_Ptr abbrev_end =
+            _dwarf_calculate_abbrev_section_end_ptr(context);
+        int bres = 0;
 
+        bres = _dwarf_fill_in_attr_form_abtable(
+            die->di_cu_context,
+            abbrev_ptr, abbrev_end, abbrev_list,
+            error);
+        if (bres != DW_DLV_OK) {
+            return bres;
+        }
+    }
     res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,
         &implicit_const,error);
     if (res == DW_DLV_ERROR) {
@@ -1017,9 +1056,9 @@ dwarf_debug_addr_index_to_addr(Dwarf_Die die,
 int
 _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     Dwarf_CU_Context context,
-    Dwarf_Small *info_ptr,
-    Dwarf_Addr *return_addr,
-    Dwarf_Error *error)
+    Dwarf_Small     *info_ptr,
+    Dwarf_Addr      *return_addr,
+    Dwarf_Error     *error)
 {
     int res2 = 0;
     Dwarf_Unsigned index_to_addr = 0;
@@ -1894,11 +1933,11 @@ _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context,
 Dwarf_Byte_Ptr
 _dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context)
 {
-    Dwarf_Debug dbg = 0;
+    Dwarf_Debug    dbg = 0;
     Dwarf_Byte_Ptr info_end = 0;
     Dwarf_Byte_Ptr info_start = 0;
-    Dwarf_Off off2 = 0;
-    Dwarf_Small *dataptr = 0;
+    Dwarf_Off      off2 = 0;
+    Dwarf_Small   *dataptr = 0;
 
     dbg = context->cc_dbg;
     dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:
