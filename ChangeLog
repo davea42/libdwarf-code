@@ -1,3 +1,84 @@
+2022-11-15:  David Anderson
+    commit 5b88db3565334b4b3dc2c619196a3307e8011155
+
+    Remove trailing whitespace,
+    fix indents.
+            modified:   dwarf_alloc.c
+            modified:   dwarf_util.c
+            modified:   dwarf_util.h
+
+2022-11-15:  David Anderson
+    commit 8291eec777c9abd22eb5d1dd6ca82ac3888dfdf1
+
+    All is implementing faster abbrev reading.
+    Removing old abbrev struct, function, calls.
+    Mostly now reading abbrev section content
+    just once on any given abbrev.
+            modified:   dwarf_die_deliv.c
+            modified:   dwarf_query.c
+
+    ifdef TESTINGHASHTAB lets us (on request)
+    see the overview of some hashing tables.
+            modified:   dwarf_tsearchhash.c
+
+    New treatment of the hash/modulus
+    table for abbrev lookups. Faster and
+    easier to understand.
+            modified:   dwarf_util.c
+
+2022-11-15:  David Anderson
+    commit e3d14ee95296d4892fd33c2d2c704c27039d954f
+
+    New fields for improved abbrev reading.
+    Nothing here is visible to library users.
+            modified:   dwarf_die_deliv.h
+
+2022-11-15:  David Anderson
+    commit eb2e2fe15e35462ecd20da5bffa6b622efae1db3
+
+    Small internal changes allowing
+    improved abbrev reading.
+            modified:   dwarf_abbrev.c
+
+    Adding ifdef conditional code only used during
+    evaluation of hash tables.
+            modified:   dwarf_alloc.c
+
+2022-11-15:  David Anderson
+    commit aa84dfec82ee21585ee93158d8ad477b843ff0c2
+
+    Header/struct changes to support
+    more efficient abbrev reading.
+            modified:   dwarf_abbrev.h
+            modified:   dwarf_opaque.h
+            modified:   dwarf_util.h
+
+2022-11-15:  David Anderson
+    commit 8d0d91428be882d0ec4c9013bbd31ace0069916d
+
+    All to build this new source file and
+    function for reading .debug_abbrev
+    much more efficiently overall:
+    Avoiding many thousands of
+    calls to unpack abbrev uleb values.
+            modified:   CMakeLists.txt
+            modified:   Makefile.am
+            new file:   dwarf_fill_in_attr_form.c
+            modified:   meson.build
+
+2022-11-06:  David Anderson
+    commit d727e8551dc98e7fafc65b6cb2e71ffc0400f956
+
+    Minor wording changes.
+            modified:   README
+            modified:   README.md
+
+2022-11-05:  David Anderson
+    commit 9359f7fd22bc7fb185c2dd47a4aef790a6c9f3ad
+
+    Updated with latest git log.
+            modified:   ChangeLog
+
 2022-11-05:  David Anderson
     commit 2f3fc038a2428055930a9a22d06c50ce7e0aefef
 
