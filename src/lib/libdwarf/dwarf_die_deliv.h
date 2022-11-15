@@ -31,14 +31,20 @@ Portions Copyright (C) 2008-2011  David Anderson. All Rights Reserved.
 /*
     This struct holds information about an abbreviation.
     It is put in the hash table for abbreviations for
-    a compile-unit.
-
-    It's dealloced by dwarf_finish().
+    a compile-unit. Typically the list contains
+    exactly one item (except with somewhat
+    pathological abbrev codes, and that likely
+    never happens).
+    It is dealloced by dwarf_finish().
 */
 struct Dwarf_Abbrev_List_s {
     Dwarf_Unsigned abl_code;
-    Dwarf_Half abl_tag;
-    Dwarf_Half abl_has_child;
+    Dwarf_Half     abl_tag;
+    Dwarf_Half     abl_has_child;
+    /*  This reference count is just for
+        analysis, does not affect size
+        or correctness. */
+    Dwarf_Unsigned abl_reference_count;
     /* Section global offset of this abbrev entry. */
     Dwarf_Off      abl_goffset;
 
@@ -49,8 +55,24 @@ struct Dwarf_Abbrev_List_s {
     /*  Points to start of attribute/form pairs in
         the .debug_abbrev section for the abbrev. */
     Dwarf_Byte_Ptr abl_abbrev_ptr;
-
     /*  The number of at/form[/implicitvalue] pairs
         in this abbrev. */
-    Dwarf_Unsigned abl_count;
+    Dwarf_Unsigned abl_abbrev_count;
+    Dwarf_Unsigned abl_implicit_const_count;
+
+    /*  For indirect can only be completed at a real
+        point in the program, not just on the
+        .debug_abbrev content, and we want to know
+        of it at the first encounter. */
+    Dwarf_Bool     abl_has_form_indirect;
+    /*  The following are the decoded attribte and
+        FORM pairs, abl_abbrev_count of them. */
+    Dwarf_Half    *abl_attr;
+    Dwarf_Half    *abl_form;
+    /*  If there are any DW_FORM_implicit_const
+        in *abl_form array the following is
+        an array of abl_abbrev_count slots
+        for an implicit const value. */
+    Dwarf_Signed  *abl_implicit_const;
+
 };
