@@ -371,21 +371,27 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Error *error);
 
 struct Dwarf_Hash_Table_Entry_s;
-/* This single struct is the base for the hash table.
+/* 
+   This single struct is the base for the 'hash' table.
+
    The intent is that once the total_abbrev_count across
-   all the entries is greater than  10*current_table_entry_count
    one should build a new Dwarf_Hash_Table_Base_s, rehash
    all the existing entries, and delete the old table and entries.
-   (10 is a heuristic, nothing magic about it, but once the
-   count gets to 30 or 40 times current_table_entry_count
-   things really slow down a lot. One (500MB) application had
-   127000 abbreviations in one compilation unit)
+   One (500MB) application had
+   127000 abbreviations in one compilation unit but
+   that is clearly an outlier, so this goes for
+   good performance for more normal compilation units.
    The incoming 'code' is an abbrev number and those simply
    increase linearly so the hashing is perfect always.
+   As a result we have
+   tb_highest_used_entry to tell us the highest
+   hash value seen, shorting some operations, like
+   dealloc.
 */
 struct Dwarf_Hash_Table_s {
     unsigned long       tb_table_entry_count;
     unsigned long       tb_total_abbrev_count;
+    unsigned long       tb_highest_used_entry;
     /* Each table entry is a list of abbreviations. */
     struct  Dwarf_Hash_Table_Entry_s *tb_entries;
 };
@@ -398,11 +404,9 @@ struct Dwarf_Hash_Table_Entry_s {
     Dwarf_Abbrev_List at_head;
 };
 
-/*  So one function can read both debug_names abbrevs
-    and debug_abbrev abbrevs. Makes common function
-    possible.
-    23 July 2021  */
+/* Perhaps not actually useful. */
 struct Dwarf_Abbrev_Common_s {
+    /*  From cu_context */
     Dwarf_Debug  ac_dbg;
     Dwarf_Hash_Table  ac_hashtable_base;
     Dwarf_Unsigned    ac_highest_known_code;
@@ -412,16 +416,30 @@ struct Dwarf_Abbrev_Common_s {
     Dwarf_Unsigned    ac_abbrev_offset;
     /*  pointer to the start of abbrevs (section or table) */
     Dwarf_Byte_Ptr    ac_abbrev_ptr;
-    /*  pointer to the start of abbrevs section. For global offset
-        in debug_info/types. */
-    Dwarf_Byte_Ptr    ac_abbrev_section_start;
-    /*  pointer to end of abbrevs (section or table) */
-    Dwarf_Byte_Ptr    ac_end_abbrev_ptr;
     /* The following NULL if this is debug_names abbrevs */
     struct Dwarf_Debug_Fission_Per_CU_s *ac_dwp_offsets;
+
+    /* The Following Apply to a single abbrev. */
+    /* ac_implicit_const_count Usually zero */
+    Dwarf_Unsigned    ac_implict_const_count;
+
+    Dwarf_Unsigned    ac_abbrev_count;
+    /*  Array of ac_abbrev_count attr/form pairs. */
+    Dwarf_Half       *ac_attr;
+    Dwarf_Small      *ac_form;
+    /*  Array of ac_abbrev_count implicit const values
+        iff ac_implicit_const_count > 0 */
+    Dwarf_Signed     *ac_implicit_const;
+
+    /* For single abbrev */
+    Dwarf_Byte_Ptr    ac_abbrev_section_start;
+
+    /*  pointer to end of abbrevs (section to start,
+        then table when known) */
+    Dwarf_Byte_Ptr    ac_end_abbrev_ptr;
 };
 
-int _dwarf_get_abbrev_for_code(struct Dwarf_Abbrev_Common_s *abcom,
+int _dwarf_get_abbrev_for_code(struct Dwarf_CU_Context_s *abcom,
     Dwarf_Unsigned code,
     Dwarf_Abbrev_List *list_out,
     Dwarf_Unsigned * highest_known_code,

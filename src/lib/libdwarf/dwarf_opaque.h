@@ -1081,6 +1081,12 @@ int _dwarf_extract_data16(Dwarf_Debug dbg,
     Dwarf_Form_Data16  * returned_val,
     Dwarf_Error *error);
 
+int _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
+    Dwarf_Byte_Ptr abbrev_ptr,
+    Dwarf_Byte_Ptr abbrev_end,
+    Dwarf_Abbrev_List abbrev_list,
+    Dwarf_Error *error);
+
 int _dwarf_skip_leb128(char * /*leb*/,
     Dwarf_Unsigned * /*leblen*/,
     char           * /*endptr*/);
@@ -1089,11 +1095,5 @@ unsigned int  _dwarf_crc32(unsigned int init,
     const unsigned char * buf,
     size_t len);
 int _dwarf_get_suppress_debuglink_crc(void);
-
-struct  Dwarf_Abbrev_Common_s;
-void _dwarf_fill_in_abcom_from_context(Dwarf_CU_Context cu_context,
-    struct Dwarf_Abbrev_Common_s *abcom);
-void _dwarf_fill_in_context_from_abcom(struct Dwarf_Abbrev_Common_s *
-    abcom, Dwarf_CU_Context cucontext);
 
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig, int lineno);
