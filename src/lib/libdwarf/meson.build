@@ -17,6 +17,7 @@ libdwarf_src = [
   'dwarf_elfread.c',
   'dwarf_elf_rel_detector.c',
   'dwarf_error.c',
+  'dwarf_fill_in_attr_form.c',
   'dwarf_find_sigref.c',
   'dwarf_fission_to_cu.c',
   'dwarf_form.c',
