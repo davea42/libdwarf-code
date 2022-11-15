@@ -45,38 +45,20 @@
 #include "dwarf_util.h"
 #include "dwarf_string.h"
 
-/*  This is used to print a .debug_abbrev section without
-    knowing about the DIEs that use the abbrevs.
-
-    dwarf_get_abbrev() and,
-    in dwarf_util.c,  _dwarf_get_abbrev_for_code()
-
-    When we have a simple .o
-    there is at least a hope of iterating through
-    the abbrevs meaningfully without knowing
-    a CU context.
-
-    This often fails or gets incorrect info
-    because there is no guarantee the .debug_abbrev
-    section is free of garbage bytes.
-
-    In an object with multiple CU/TUs the
-    output is difficult/impossible to usefully interpret.
-
-    In a dwp (Package File)  it is really impossible
-    to associate abbrevs with a CU.
-
-*/
-
+/*  For abbrevs we first count the entries.
+    Actually recording the attr/form/implicit const
+    values happens later. */
 int
 _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr abbrev_ptr,
     Dwarf_Byte_Ptr abbrev_section_end,
     Dwarf_Unsigned *abbrev_count_out,
+    Dwarf_Unsigned *abbrev_implicit_const_count_out,
     Dwarf_Byte_Ptr *abbrev_ptr_out,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned abbrev_count = 0;
+    Dwarf_Unsigned abbrev_implicit_const_count = 0;
     Dwarf_Unsigned attr_name = 0;
     Dwarf_Unsigned attr_form = 0;
 
@@ -135,6 +117,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         if (attr_form ==  DW_FORM_implicit_const) {
             /*  The value is here, not in a DIE.  We do
                 nothing with it, but must read past it. */
+            abbrev_implicit_const_count++;
             SKIP_LEB128_CK(abbrev_ptr,
                 dbg,error,abbrev_section_end);
         }
@@ -143,9 +126,31 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         (attr_name != 0 || attr_form != 0));
     /* We counted one too high,we included the 0,0 */
     *abbrev_count_out = abbrev_count-1;
+    *abbrev_implicit_const_count_out = abbrev_implicit_const_count;
     *abbrev_ptr_out = abbrev_ptr;
     return DW_DLV_OK;
 }
+
+/*  dwarf_get_abbrev() is used to print
+    a .debug_abbrev section without
+    knowing about the DIEs that use the abbrevs.
+
+    When we have a simple .o
+    there is at least a hope of iterating through
+    the abbrevs meaningfully without knowing
+    a CU context.
+
+    This often fails or gets incorrect info
+    because there is no guarantee the .debug_abbrev
+    section is free of garbage bytes.
+
+    In an object with multiple CU/TUs the
+    output is difficult/impossible to usefully interpret.
+
+    In a dwp (Package File)  it is really impossible
+    to associate abbrevs with a CU.
+
+*/
 
 int
 dwarf_get_abbrev(Dwarf_Debug dbg,
@@ -160,6 +165,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Abbrev ret_abbrev = 0;
     Dwarf_Unsigned labbr_count = 0;
     Dwarf_Unsigned utmp     = 0;
+    Dwarf_Unsigned abbrev_implicit_const_count_out = 0;
     int res = 0;
 
     if (!dbg || dbg->de_magic != DBG_IS_VALID) {
@@ -253,7 +259,9 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_next_ptr = abbrev_ptr;
     ret_abbrev->dab_next_index = 0;
     res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
-        abbrev_section_end,&labbr_count,&abbrev_ptr_out,error);
+        abbrev_section_end,&labbr_count,
+        &abbrev_implicit_const_count_out,
+        &abbrev_ptr_out,error);
     if (res == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
         return res;
@@ -263,6 +271,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     /* Global section offset. */
     ret_abbrev->dab_goffset = offset;
     ret_abbrev->dab_count = labbr_count;
+    ret_abbrev->dab_implicit_count = abbrev_implicit_const_count_out;
     if (abbrev_ptr > abbrev_section_end) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
         _dwarf_error_string(dbg, error,
