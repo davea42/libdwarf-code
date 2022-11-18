@@ -50,7 +50,7 @@ struct Dwarf_Abbrev_List_s {
 
     /*  Singly linked synonym list in case of duplicate
         hash. */
-    struct Dwarf_Abbrev_List_s *abl_next;
+    Dwarf_Abbrev_List abl_next;
 
     /*  Points to start of attribute/form pairs in
         the .debug_abbrev section for the abbrev. */

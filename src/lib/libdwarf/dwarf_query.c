@@ -354,21 +354,21 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Attribute ** attrbuf,
     Dwarf_Signed * attrcnt, Dwarf_Error * error)
 {
-    Dwarf_Unsigned attr_count = 0;
-    Dwarf_Unsigned attr = 0;
-    Dwarf_Unsigned attr_form = 0;
-    Dwarf_Unsigned i = 0;
+    Dwarf_Unsigned    attr_count = 0;
+    Dwarf_Unsigned    attr = 0;
+    Dwarf_Unsigned    attr_form = 0;
+    Dwarf_Unsigned    i = 0;
     Dwarf_Abbrev_List abbrev_list = 0;
-    Dwarf_Attribute head_attr = NULL;
-    Dwarf_Attribute curr_attr = NULL;
-    Dwarf_Attribute *attr_ptr = 0;
-    Dwarf_Debug dbg = 0;
-    Dwarf_Byte_Ptr info_ptr = 0;
-    Dwarf_Byte_Ptr die_info_end = 0;
+    Dwarf_Attribute   head_attr = NULL;
+    Dwarf_Attribute   curr_attr = NULL;
+    Dwarf_Attribute  *last_attr = &head_attr;
+    Dwarf_Debug       dbg = 0;
+    Dwarf_Byte_Ptr    info_ptr = 0;
+    Dwarf_Byte_Ptr    die_info_end = 0;
     int lres = 0;
     int bres = 0;
-    Dwarf_CU_Context context = 0;
-    Dwarf_Unsigned highest_code = 0;
+    Dwarf_CU_Context  context = 0;
+    Dwarf_Unsigned    highest_code = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     context = die->di_cu_context;
@@ -453,13 +453,13 @@ dwarf_attrlist(Dwarf_Die die,
 
         attr =  abbrev_list->abl_attr[i];
         attr_form =  abbrev_list->abl_form[i];
-        if (attr_form == DW_FORM_implicit_const) {
-            implicit_const = abbrev_list->abl_implicit_const[i];
-        }
         if (attr > DW_AT_hi_user) {
             empty_local_attrlist(dbg,head_attr);
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
+        }
+        if (attr_form == DW_FORM_implicit_const) {
+            implicit_const = abbrev_list->abl_implicit_const[i];
         }
         if (!_dwarf_valid_form_we_know(attr_form,attr)) {
             empty_local_attrlist(dbg,head_attr);
@@ -517,7 +517,7 @@ dwarf_attrlist(Dwarf_Die die,
             newattr_form = attr_form;
         }
 
-        if (attr != 0) {
+        if (attr) {
             new_attr = (Dwarf_Attribute)
                 _dwarf_get_alloc(dbg, DW_DLA_ATTR, 1);
             if (!new_attr) {
@@ -577,12 +577,8 @@ dwarf_attrlist(Dwarf_Die die,
                 }
                 info_ptr += sov;
             }
-            if (head_attr == NULL)
-                head_attr = curr_attr = new_attr;
-            else {
-                curr_attr->ar_next = new_attr;
-                curr_attr = new_attr;
-            }
+            *last_attr = new_attr;
+            last_attr = &new_attr->ar_next;
             attr_count++;
         }
     }
@@ -591,20 +587,24 @@ dwarf_attrlist(Dwarf_Die die,
         *attrcnt = 0;
         return DW_DLV_NO_ENTRY;
     }
-    attr_ptr = (Dwarf_Attribute *)
-        _dwarf_get_alloc(dbg, DW_DLA_LIST, attr_count);
-    if (attr_ptr == NULL) {
-        empty_local_attrlist(dbg,head_attr);
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return DW_DLV_ERROR;
+    {
+        Dwarf_Attribute *attr_ptr = 0;
+
+        attr_ptr = (Dwarf_Attribute *)
+            _dwarf_get_alloc(dbg, DW_DLA_LIST, attr_count);
+        if (attr_ptr == NULL) {
+            empty_local_attrlist(dbg,head_attr);
+            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
+        }
+        curr_attr = head_attr;
+        for (i = 0; i < attr_count; i++) {
+            *(attr_ptr + i) = curr_attr;
+            curr_attr = curr_attr->ar_next;
+        }
+        *attrbuf = attr_ptr;
+        *attrcnt = attr_count;
     }
-    curr_attr = head_attr;
-    for (i = 0; i < attr_count; i++) {
-        *(attr_ptr + i) = curr_attr;
-        curr_attr = curr_attr->ar_next;
-    }
-    *attrbuf = attr_ptr;
-    *attrcnt = attr_count;
     return DW_DLV_OK;
 }
 
@@ -1006,8 +1006,7 @@ _dwarf_look_in_local_and_tied_by_index(
         context, index, return_addr, error);
     if (res2 != DW_DLV_OK) {
         if (res2 == DW_DLV_ERROR &&
-            error &&
-            dwarf_errno(*error) ==
+            error && dwarf_errno(*error) ==
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
             && dbg->de_tied_data.td_tied_object) {
             int res3 = 0;

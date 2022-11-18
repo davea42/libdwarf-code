@@ -42,9 +42,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_alloc.h"
+#include "dwarf_die_deliv.h"
+#include "dwarf_abbrev.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
-#include "dwarf_die_deliv.h"
 #include "dwarf_string.h"
 
 /*

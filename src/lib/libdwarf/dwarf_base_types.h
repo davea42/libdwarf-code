@@ -116,19 +116,17 @@ Portions Copyright (C) 2008-2012  David Anderson. All Rights Reserved.
     Only used with malloc_check.c and that is basically obsolete. */
 #define MAX_DW_DLA  0x3a
 
-typedef signed char Dwarf_Sbyte;
+typedef signed char   Dwarf_Sbyte;
 typedef unsigned char Dwarf_Ubyte;
-typedef signed short Dwarf_Shalf;
-typedef Dwarf_Small *Dwarf_Byte_Ptr;
+typedef signed short  Dwarf_Shalf;
+typedef Dwarf_Small  *Dwarf_Byte_Ptr;
 
-#define DWARF_HALF_SIZE 2
+#define DWARF_HALF_SIZE  2
 #define DWARF_32BIT_SIZE 4
 #define DWARF_64BIT_SIZE 8
 
 typedef struct Dwarf_Abbrev_List_s *Dwarf_Abbrev_List;
-typedef struct Dwarf_File_Entry_s *Dwarf_File_Entry;
-typedef struct Dwarf_CU_Context_s *Dwarf_CU_Context;
-typedef struct Dwarf_Hash_Table_s *Dwarf_Hash_Table;
-typedef struct Dwarf_Hash_Table_Entry_s *Dwarf_Hash_Table_Entry;
-
-typedef struct Dwarf_Alloc_Hdr_s *Dwarf_Alloc_Hdr;
+typedef struct Dwarf_File_Entry_s  *Dwarf_File_Entry;
+typedef struct Dwarf_CU_Context_s  *Dwarf_CU_Context;
+typedef struct Dwarf_Hash_Table_s  *Dwarf_Hash_Table;
+typedef struct Dwarf_Alloc_Hdr_s   *Dwarf_Alloc_Hdr;

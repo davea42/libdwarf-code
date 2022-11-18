@@ -370,9 +370,9 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Small *section_end_ptr,
     Dwarf_Error *error);
 
-struct Dwarf_Hash_Table_Entry_s;
 /*
-   This single struct is the base for the 'hash' table.
+   Dwarf_Hash_Table_s is the base for the 'hash' table.
+   The table occurs exactly once per CU.
 
    The intent is that once the total_abbrev_count across
    one should build a new Dwarf_Hash_Table_Base_s, rehash
@@ -392,16 +392,12 @@ struct Dwarf_Hash_Table_s {
     unsigned long       tb_table_entry_count;
     unsigned long       tb_total_abbrev_count;
     unsigned long       tb_highest_used_entry;
-    /* Each table entry is a list of abbreviations. */
-    struct  Dwarf_Hash_Table_Entry_s *tb_entries;
-};
-
-/*
-    This struct is used to build a hash table for the
-    abbreviation codes for a compile-unit.
-*/
-struct Dwarf_Hash_Table_Entry_s {
-    Dwarf_Abbrev_List at_head;
+    /*  Each table entry is a pointer to
+        a list of abbrev-codes and their details.
+        Each Dwarf_Abbrev_List pointer  in the array here,
+        and in each singly-linked  list starting
+        there points to the entries for one abbrev code. */
+    Dwarf_Abbrev_List  *tb_entries;
 };
 
 /* Perhaps not actually useful. */
@@ -464,8 +460,9 @@ Dwarf_Unsigned _dwarf_length_of_cu_header_simple(Dwarf_Debug,
 
 int  _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error *error);
 int  _dwarf_load_debug_types(Dwarf_Debug dbg, Dwarf_Error *error);
-void _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
-    struct Dwarf_Hash_Table_s* hash_table);
+void _dwarf_free_abbrev_hash_table_contents(
+    struct Dwarf_Hash_Table_s* hash_table,
+    Dwarf_Bool keep_abbrev_content);
 int _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die);
 int _dwarf_reference_outside_section(Dwarf_Die die,
     Dwarf_Small * startaddr,

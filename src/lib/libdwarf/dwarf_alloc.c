@@ -213,33 +213,6 @@ dw_empty_errlist_item(Dwarf_Error e_in)
     }
 }
 
-#if 0
-/*  Dangerous, since a Dwarf_Error returned to
-    a dwarf_init_call (in case of a badly corrupted object)
-    might be pointing into the list! */
-void
-_dwarf_flush_static_error_list(void)
-{
-    unsigned i = 0;
-    for ( ; i <static_used; ++i) {
-        Dwarf_Error e = staticerrlist[i];
-        if (!e) {
-            continue;
-        }
-        if (e->er_static_alloc == DE_MALLOC) {
-            /* e is the returned address, not
-                the base. Free by the base.  */
-            void *mallocaddr = (char*)e - DW_RESERVE;
-
-            _dwarf_error_destructor(e);
-            free(mallocaddr);
-        }
-        staticerrlist[i] = 0;
-    }
-    static_used = 0;
-}
-#endif
-
 /*  If the userr calls dwarf_dealloc on an error
     out of a dwarf_init*() call, this will find
     it in the static err list. Here dbg is NULL
@@ -323,7 +296,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x11 17 DW_DLA_ARANGE */
     {sizeof(struct Dwarf_Arange_s),MULTIPLY_NO,  0, 0},
 
-    /* 0x12 18 DW_DLA_ABBREV */
+    /* 0x12 18 DW_DLA_ABBREV Used by dwarf_get_abbrev() */
     {sizeof(struct Dwarf_Abbrev_s),MULTIPLY_NO,  0, 0},
 
     /* 0x13 19 DW_DLA_FRAME_INSTR_HEAD */
@@ -364,8 +337,11 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /*  The following DW_DLA data types
         are known only inside libdwarf.  */
 
-    /* 0x1e DW_DLA_ABBREV_LIST */
-    { sizeof(struct Dwarf_Abbrev_List_s),MULTIPLY_NO, 0, 0},
+    /* 0x1e DW_DLA_ABBREV_LIST No longer alloc'd,
+        just plain calloc instead.
+        Found in each CU_Context  These
+        form a singly-linked list. */
+    { sizeof(struct Dwarf_Abbrev_List_s),MULTIPLY_NO, 0,0},
 
     /* 0x1f DW_DLA_CHAIN */
     {sizeof(struct Dwarf_Chain_s),MULTIPLY_NO, 0, 0},
@@ -392,8 +368,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x25 DW_DLA_LOC_CHAIN */
     {sizeof(struct Dwarf_Loc_Chain_s),MULTIPLY_NO,  0, 0},
 
-    /* 0x26 0x26 DW_DLA_HASH_TABLE */
-    {sizeof(struct Dwarf_Hash_Table_s),MULTIPLY_NO, 0, 0},
+    /*  0x26 0x26 DW_DLA_HASH_TABLE No longer used
+        as dealloc or dwarf_get_alloc */
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /*  The following really use Global struct: used to be
     unique struct per type, but now merged (11/99).  The
@@ -417,8 +394,8 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x2b 43 DW_DLA_PUBTYPES_CONTEXT DWARF3 */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 0x2c 44 DW_DLA_HASH_TABLE_ENTRY */
-    {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 },
+    /* 0x2c 44 DW_DLA_HASH_TABLE_ENTRY. No longer used. */
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
     /* 0x2d - 0x34 reserved */
     {sizeof(int),MULTIPLY_NO,  0, 0},
@@ -1029,13 +1006,15 @@ freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
         Dwarf_Hash_Table hash_table = 0;
 
         hash_table = context->cc_abbrev_hash_table;
-        _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
+
+        _dwarf_free_abbrev_hash_table_contents(hash_table,
+            FALSE);
         hash_table->tb_entries = 0;
         nextcontext = context->cc_next;
         context->cc_next = 0;
         /*  See also  local_dealloc_cu_context() in
             dwarf_die_deliv.c */
-        dwarf_dealloc(dbg, hash_table, DW_DLA_HASH_TABLE);
+        free(hash_table);
         context->cc_abbrev_hash_table = 0;
         dwarf_dealloc(dbg, context, DW_DLA_CU_CONTEXT);
     }

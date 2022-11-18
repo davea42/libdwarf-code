@@ -32,6 +32,7 @@
 #include <stdio.h> /* debugging */
 
 #include <string.h> /* memcmp() memcpy() memset() strcmp() strlen() */
+#include <stdlib.h> /* calloc() free() */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -612,9 +613,10 @@ local_dealloc_cu_context(Dwarf_Debug dbg,
     }
     hash_table = context->cc_abbrev_hash_table;
     if (hash_table) {
-        _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
+        _dwarf_free_abbrev_hash_table_contents(hash_table,
+            FALSE);
         hash_table->tb_entries = 0;
-        dwarf_dealloc(dbg,hash_table, DW_DLA_HASH_TABLE);
+        free(hash_table);
         context->cc_abbrev_hash_table = 0;
     }
     dwarf_dealloc(dbg, context, DW_DLA_CU_CONTEXT);
@@ -875,13 +877,13 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         }
     }
     cu_context->cc_abbrev_hash_table =
-        (Dwarf_Hash_Table) _dwarf_get_alloc(dbg,DW_DLA_HASH_TABLE, 1);
-    if (cu_context->cc_abbrev_hash_table == NULL) {
+        (Dwarf_Hash_Table) calloc(1,
+        sizeof(struct Dwarf_Hash_Table_s));
+    if (!cu_context->cc_abbrev_hash_table) {
         local_dealloc_cu_context(dbg,cu_context);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
-
     cu_context->cc_debug_offset = offset;
 
     /*  This is recording an overall section value for later
@@ -1770,6 +1772,8 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     if ((new_offset +
         _dwarf_length_of_cu_header_simple(dbg,is_info)) >=
         section_size) {
+        /*  We must reset as we will not create a proper
+            de_cu_context here, see comment just above. */
         dis->de_cu_context = NULL;
         return DW_DLV_NO_ENTRY;
     }
@@ -2623,20 +2627,20 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     dieres = _dwarf_leb128_uword_wrapper(dbg,
         &die_info_ptr,die_info_end,&utmp,error);
     if (dieres == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        dwarf_dealloc_die(ret_die);
         return dieres;
     }
     if (die_info_ptr > die_info_end) {
         /*  We managed to go past the end of the CU!.
             Something is badly wrong. */
-        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        dwarf_dealloc_die(ret_die);
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
         return DW_DLV_ERROR;
     }
     abbrev_code = utmp;
     if (abbrev_code == 0) {
         /* Zero means a null DIE */
-        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        dwarf_dealloc_die(ret_die);
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
@@ -2645,12 +2649,12 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         &ret_die->di_abbrev_list,
         &highest_code,error);
     if (lres == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        dwarf_dealloc_die(ret_die);
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
         dwarfstring m;
-        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        dwarf_dealloc_die(ret_die);
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_DIE_ABBREV_LIST_NULL: "
@@ -2680,12 +2684,13 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
             ret_die->di_abbrev_list,
             error);
         if (bres != DW_DLV_OK) {
+            dwarf_dealloc_die(ret_die);
             return bres;
         }
     }
 
     if (die == NULL && !is_cu_tag(ret_die->di_abbrev_list->abl_tag)) {
-        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        dwarf_dealloc_die(ret_die);
         _dwarf_error(dbg, error, DW_DLE_FIRST_DIE_NOT_CU);
         return DW_DLV_ERROR;
     }
@@ -2838,6 +2843,7 @@ dwarf_child(Dwarf_Die die,
             ret_die->di_abbrev_list,
             error);
         if (bres != DW_DLV_OK) {
+            dwarf_dealloc_die(ret_die);
             return bres;
         }
     }
@@ -2991,6 +2997,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             die->di_abbrev_list,
             error);
         if (bres != DW_DLV_OK) {
+            dwarf_dealloc_die(die);
             return bres;
         }
     }
