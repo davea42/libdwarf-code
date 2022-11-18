@@ -288,8 +288,20 @@ print_attr(Dwarf_Attribute atr,
     return DW_DLV_OK;
 }
 
+static void
+dealloc_rest_of_list(Dwarf_Debug dbg,
+    Dwarf_Attribute *attrbuf,
+    Dwarf_Signed attrcount,
+    Dwarf_Signed i)
+{
+    for ( ; i < attrcount; ++i) {
+        dwarf_dealloc_attribute(attrbuf[i]);
+    }
+    dwarf_dealloc(dbg,attrbuf,DW_DLA_LIST);
+}
+
 static int
-print_one_die(Dwarf_Die in_die,int level,
+print_one_die(Dwarf_Debug dbg,Dwarf_Die in_die,int level,
     Dwarf_Error *error)
 {
     Dwarf_Attribute *attrbuf = 0;
@@ -317,10 +329,12 @@ print_one_die(Dwarf_Die in_die,int level,
     for (i = 0; i <attrcount;++i) {
         res  =print_attr(attrbuf[i],i,error);
         if (res != DW_DLV_OK) {
+            dealloc_rest_of_list(dbg,attrbuf, attrcount,i);
             printf("dwarf_attr print failed! res %d\n",res);
             return res;
         }
     }
+    dwarf_dealloc(dbg,attrbuf,DW_DLA_LIST);
     return DW_DLV_OK;
 }
 
@@ -386,7 +400,7 @@ print_object_info(Dwarf_Debug dbg,Dwarf_Error *error)
             return res;
         }
     }
-    res = print_one_die(cu_die,level,error);
+    res = print_one_die(dbg,cu_die,level,error);
     if (res != DW_DLV_OK) {
         printf("print_one_die failed! %d\n",res);
         if (res == DW_DLV_ERROR) {

@@ -78,7 +78,7 @@ static int examine_die_data(Dwarf_Debug dbg,
     int is_info,Dwarf_Die die,
     int level, struct target_data_s *td, Dwarf_Error *errp);
 static int check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
-    int level, struct target_data_s *td,Dwarf_Error *errp);
+    struct target_data_s *td,Dwarf_Error *errp);
 static int get_die_and_siblings(Dwarf_Debug dbg,
     Dwarf_Die in_die,
     int is_info, int in_level,int cu_number,
@@ -201,6 +201,11 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     res = look_for_our_target(dbg,&target_data,&error);
+    if (res == FOUND_SUBPROG) {
+        /* OK */
+    } else if (res != DW_DLV_OK) {
+        printf("look for target failed!\n");
+    }
     target_data_destructor(&target_data);
     res = dwarf_finish(dbg);
     if (res != DW_DLV_OK) {
@@ -589,11 +594,11 @@ look_for_our_target(Dwarf_Debug dbg,
             char *em = dwarf_errmsg(*errp);
             printf("Error in dwarf_next_cu_header: %s\n",em);
             target_data_destructor(td);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_NO_ENTRY) {
             /* Done. */
-            target_data_destructor(td);
             return DW_DLV_NO_ENTRY;
         }
         cu_version_stamp = version_stamp;
@@ -605,12 +610,14 @@ look_for_our_target(Dwarf_Debug dbg,
             char *em = dwarf_errmsg(*errp);
             printf("Error in dwarf_siblingof_b on CU die: %s\n",em);
             target_data_destructor(td);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_NO_ENTRY) {
             /* Impossible case. */
             printf("no entry! in dwarf_siblingof on CU die \n");
             target_data_destructor(td);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
 
@@ -621,7 +628,6 @@ look_for_our_target(Dwarf_Debug dbg,
             read_line_data(dbg,td,errp);
             print_target_info(dbg,td);
             if (td->td_reportallfound) {
-                target_data_destructor(td);
                 return res;
             }
             reset_target_data(dbg,td);
@@ -630,6 +636,7 @@ look_for_our_target(Dwarf_Debug dbg,
             char *em = dwarf_errmsg(*errp);
             printf("Impossible return code in reading DIEs: %s\n",em);
             target_data_destructor(td);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
         else if (res == NOT_THIS_CU) {
@@ -639,6 +646,7 @@ look_for_our_target(Dwarf_Debug dbg,
             char *em = dwarf_errmsg(*errp);
             printf("Error in reading DIEs: %s\n",em);
             target_data_destructor(td);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
         else if (res == DW_DLV_NO_ENTRY) {
@@ -668,6 +676,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
     res = examine_die_data(dbg,is_info,in_die,in_level,td,errp);
     if (res == DW_DLV_ERROR) {
         printf("Error in die access , level %d \n",in_level);
+        dwarf_finish(dbg);
         exit(EXIT_FAILURE);
     }
     if (res == DW_DLV_NO_ENTRY) {
@@ -691,6 +700,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         res = dwarf_child(cur_die,&child,errp);
         if (res == DW_DLV_ERROR) {
             printf("Error in dwarf_child , level %d \n",in_level);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_OK) {
@@ -729,6 +739,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
             char *em = dwarf_errmsg(*errp);
             printf("Error in dwarf_siblingof_b , level %d :%s \n",
                 in_level,em);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
         if (res == DW_DLV_NO_ENTRY) {
@@ -807,11 +818,28 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
 }
 #endif
 
+/*  Used when have only processed *some* list items
+    and dealloc'd.  This finishes up. 
+    Not really essential as dwarf_finish() would
+    do it anyway, but Coverity Scan does not
+    understand that dwarf_finish() cleans up.
+    So this usefully avoids a coverity scan
+    defect report.  */
+static void
+dealloc_rest_of_list(Dwarf_Debug dbg,
+    Dwarf_Attribute *attrbuf,
+    Dwarf_Signed attrcount,
+    Dwarf_Signed i)
+{
+    for ( ; i < attrcount; ++i) {
+        dwarf_dealloc_attribute(attrbuf[i]);
+    }
+    dwarf_dealloc(dbg,attrbuf,DW_DLA_LIST);
+}
+
 static int
-getlowhighpc(Dwarf_Debug dbg UNUSEDARG,
-    struct target_data_s *td UNUSEDARG,
+getlowhighpc(
     Dwarf_Die die,
-    int level UNUSEDARG,
     int  *have_pc_range,
     Dwarf_Addr *lowpc_out,
     Dwarf_Addr *highpc_out,
@@ -842,9 +870,7 @@ getlowhighpc(Dwarf_Debug dbg UNUSEDARG,
 
 static int
 check_subprog_ranges_for_match(Dwarf_Debug dbg,
-    int is_info UNUSEDARG,
     Dwarf_Die die,
-    int level UNUSEDARG,
     struct target_data_s *td,
     int  *have_pc_range,
     Dwarf_Addr *lowpc_out,
@@ -899,6 +925,7 @@ check_subprog_ranges_for_match(Dwarf_Debug dbg,
         default:
             printf("Impossible debug_ranges content!"
                 " enum val %d \n",(int)cur->dwr_type);
+            dwarf_finish(dbg);
             exit(EXIT_FAILURE);
         }
     }
@@ -945,7 +972,6 @@ static int
 check_subprog_details(Dwarf_Debug dbg,
     int is_info,
     Dwarf_Die die,
-    int level UNUSEDARG,
     struct target_data_s *td,
     int  *have_pc_range_out,
     Dwarf_Addr *lowpc_out,
@@ -958,8 +984,8 @@ check_subprog_details(Dwarf_Debug dbg,
     int finalres = 0;
     int have_pc_range = FALSE;
 
-    res = getlowhighpc(dbg,td,die,level,
-        &have_pc_range,&lowpc,&highpc,errp);
+    res = getlowhighpc(die, &have_pc_range,
+        &lowpc,&highpc,errp);
     if (res == DW_DLV_OK) {
         if (have_pc_range) {
             int res2 = DW_DLV_OK;
@@ -1011,6 +1037,7 @@ check_subprog_details(Dwarf_Debug dbg,
                     printf("dwarf_whatattr returns bad errcode %d\n",
                         res);
                 }
+                dealloc_rest_of_list(dbg,atlist,atcount,i);
                 return res;
             }
             if (atr == DW_AT_ranges) {
@@ -1024,14 +1051,13 @@ check_subprog_details(Dwarf_Debug dbg,
                 res2 = dwarf_global_formref(attrib,
                     &ret_offset,errp);
                 if (res2 != DW_DLV_OK) {
+                    dealloc_rest_of_list(dbg,atlist,atcount,i);
                     return res2;
                 }
                 td->td_ranges_offset = ret_offset +
                     td->td_cu_ranges_base;
                 res4 = check_subprog_ranges_for_match(dbg,
-                    is_info,
                     die,
-                    level,
                     td,
                     &has_low_hi,
                     &low,
@@ -1058,6 +1084,7 @@ check_subprog_details(Dwarf_Debug dbg,
 
                 res5 = dwarf_formudata(attrib,&file_index,errp);
                 if (res5 != DW_DLV_OK) {
+                    dealloc_rest_of_list(dbg,atlist,atcount,i);
                     return res5;
                 }
                 td->td_subprog_fileindex = file_index;
@@ -1071,7 +1098,6 @@ check_subprog_details(Dwarf_Debug dbg,
 
 static int
 check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
-    int level,
     struct target_data_s *td,Dwarf_Error *errp)
 {
     int res = 0;
@@ -1082,8 +1108,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Off real_ranges_offset = 0;
     int rdone = FALSE;
 
-    res = getlowhighpc(dbg,td,die,
-        level,
+    res = getlowhighpc(die,
         &have_pc_range,
         &lowpc,&highpc,errp);
     if (res == DW_DLV_OK) {
@@ -1118,6 +1143,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
 
             resb = dwarf_whatattr(attrib,&atr,errp);
             if (resb != DW_DLV_OK) {
+                dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
                 /* Something is very wrong here.*/
                 printf("dwarf_whatattr returns bad errcode %d, "
                     "serious error somewhere.\n",
@@ -1142,6 +1168,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
 
                 resb = dwarf_global_formref(attrib,&rbase,errp);
                 if (resb != DW_DLV_OK) {
+                    dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
                     return resb;
                 }
                 td->td_cu_ranges_base = rbase;
@@ -1151,6 +1178,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
 
                 resb = dwarf_global_formref(attrib,&rbase,errp);
                 if (resb != DW_DLV_OK) {
+                    dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
                     return resb;
                 }
                 real_ranges_offset = rbase;
@@ -1209,6 +1237,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
             case DW_RANGES_END:
                 break;
             default:
+                dwarf_finish(dbg);
                 printf("Impossible debug_ranges content!"
                     " enum val %d \n",(int)cur->dwr_type);
                 exit(EXIT_FAILURE);
@@ -1233,6 +1262,7 @@ examine_die_data(Dwarf_Debug dbg,
     res = dwarf_tag(die,&tag,errp);
     if (res != DW_DLV_OK) {
         printf("Error in dwarf_tag , level %d \n",level);
+        dwarf_finish(dbg);
         exit(EXIT_FAILURE);
     }
     if ( tag == DW_TAG_subprogram ||
@@ -1241,7 +1271,7 @@ examine_die_data(Dwarf_Debug dbg,
         Dwarf_Addr lowpc = 0;
         Dwarf_Addr highpc = 0;
 
-        res = check_subprog_details(dbg,is_info,die,level,td,
+        res = check_subprog_details(dbg,is_info,die,td,
             &have_pc_range,
             &lowpc,
             &highpc,
@@ -1277,7 +1307,7 @@ examine_die_data(Dwarf_Debug dbg,
                 at level 0. */
             return NOT_THIS_CU;
         }
-        res = check_comp_dir(dbg,die,level,td,errp);
+        res = check_comp_dir(dbg,die,td,errp);
         return res;
     }
     /*  Keep looking */
