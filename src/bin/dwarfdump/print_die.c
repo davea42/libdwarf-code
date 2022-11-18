@@ -1418,9 +1418,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     mres = print_macinfo_for_cu(dbg,cu_die2,
                         pod_err);
                     if (mres == DW_DLV_ERROR) {
-                        if (cu_die2) {
-                            dwarf_dealloc_die(cu_die2);
-                        }
                         if (srcfiles) {
                             dealloc_all_srcfiles(dbg,srcfiles,
                                 srcfiles_cnt);
@@ -1430,9 +1427,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                         return mres;
                     }
                 }
-                if (cu_die2) {
-                    dwarf_dealloc_die(cu_die2);
-                }
+                dwarf_dealloc_die(cu_die2);
                 cu_die2 = 0;
                 if (srcfiles) {
                     dealloc_all_srcfiles(dbg,srcfiles,srcfiles_cnt);
@@ -3328,6 +3323,7 @@ traverse_one_die(Dwarf_Debug dbg,
                     return ares;
                 }
             } else {
+                dealloc_local_atlist(dbg,atlist,atcnt);
                 print_error_and_continue(dbg,
                     "dwarf_whatattr entry missing in "
                     " traverse die",

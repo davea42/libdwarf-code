@@ -377,6 +377,7 @@ get_proc_name_by_die(Dwarf_Debug dbg,
             simple_err_only_return_action(ares,
                 esb_get_string(&m));
             esb_destructor(&m);
+            dealloc_local_atlist(dbg,atlist,atcnt);
             return DW_DLV_ERROR;
         } else if (ares == DW_DLV_OK) {
             Dwarf_Error aterr = 0;
