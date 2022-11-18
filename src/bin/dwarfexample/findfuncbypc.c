@@ -1076,6 +1076,7 @@ check_subprog_details(Dwarf_Debug dbg,
                     finalres = FOUND_SUBPROG;
                     continue;
                 }
+                dealloc_rest_of_list(dbg,atlist,atcount,i);
                 /* ASSERT: res4 == DW_DLV_ERROR; */
                 return res4;
             } else if (atr == DW_AT_decl_file ) {

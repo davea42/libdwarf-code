@@ -792,6 +792,7 @@ printf("dadebug initial size %u\n",HT_DEFAULT_TABLE_SIZE);
             calloc(newht->tb_table_entry_count,
                 sizeof(Dwarf_Abbrev_List));
         if (!newht->tb_entries) {
+            free(newht);
             *highest_known_code =
                 context->cc_highest_known_code;
             return DW_DLV_NO_ENTRY;
