@@ -928,6 +928,11 @@
     We list these with newest first.
 
     <b>Changes 0.4.2 to 0.5.0</b>
+    The handling of the .debug_abbrev data in libdwarf is now
+    more cpu-efficient (measurably faster) so access
+    to DIEs and attribute lists is faster.
+    The changes are library-internal so are not visible in the API.
+
     Corrects CU and TU indexes
     in the .debug_names (fast access) section to be zero-based.
     The code for that section was previously unusable as it
