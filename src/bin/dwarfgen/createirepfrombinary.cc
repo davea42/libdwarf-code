@@ -397,6 +397,7 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
 
         res = dwarf_whatattr(attr,&attrnum,&error);
         if (res != DW_DLV_OK) {
+            dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
             cout << "ERROR FAIL: unable to get attrnum from attr!"
                 <<endl;
             return;
