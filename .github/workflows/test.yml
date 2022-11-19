@@ -65,9 +65,8 @@ jobs:
         usesh: true
         sync:  rsync
         copyback: false
-        prepare: pkg install -y autoconf automake libtool pkgconf python3 bash gmake binutils lzlib
+        prepare: pkg install -y python3 bash autoconf automake libtool pkgconf gmake binutils lzlib
         run: |
-          whereis bash
           sh ./autogen.sh
           ./configure
           make
