@@ -147,6 +147,7 @@ jobs:
     - name: tools
       run:  |
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        rm -f '/user/local/bin/2to3-3.11'
         brew install ninja meson
     - name: 
       run:  |
