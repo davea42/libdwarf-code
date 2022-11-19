@@ -859,8 +859,6 @@ printf("dadebug initial size %u\n",HT_DEFAULT_TABLE_SIZE);
                 DW_SECT_ABBREV,&size);
             /*  ASSERT: size != 0 */
             end_abbrev_ptr = abbrev_ptr + size;
-        } else {
-            end_abbrev_ptr = end_abbrev_ptr;
         }
     }
 
