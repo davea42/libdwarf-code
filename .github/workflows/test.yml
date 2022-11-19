@@ -151,7 +151,6 @@ jobs:
         sudo chown -R $USER /usr/local/opt
         sudo chown -R $USER /usr/local/bin
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew link --overwrite python@3.11
         brew install meson ninja
     - name: 
       run:  |
