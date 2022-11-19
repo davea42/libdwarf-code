@@ -145,7 +145,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: tools
       run:  |
-        sudo mkdir /usr/local/Frameworks
+        sudo mkdir -p /usr/local/Frameworks
         sudo chown $USER /usr/local/Frameworks
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         brew install ninja meson
