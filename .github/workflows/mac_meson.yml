@@ -1,0 +1,23 @@
+name: ci_mac_meson
+
+on:
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  macos_meson:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: tools
+      run:  |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        brew install meson ninja
+    - name: 
+      run:  |
+        mkdir builddir && cd builddir
+        meson . .. -Ddwarfexample=true
+        ninja
+        ninja test
+

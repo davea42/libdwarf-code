@@ -139,26 +139,6 @@ jobs:
         ninja
         ninja test
 
-  macos_meson:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: tools
-      run:  |
-        sudo mkdir -p /usr/local/Frameworks
-        sudo chown -R $USER /usr/local/Frameworks
-        sudo chown -R $USER /usr/local/share
-        sudo chown -R $USER /usr/local/opt
-        sudo chown -R $USER /usr/local/bin
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        brew install meson ninja
-    - name: 
-      run:  |
-        mkdir builddir && cd builddir
-        meson . .. -Ddwarfexample=true
-        ninja
-        ninja test
-
   msys2_autotools:
     runs-on: windows-latest
     defaults:
