@@ -13,6 +13,7 @@ jobs:
     - name: tools
       run:  |
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        brew install --overwrite python@3.11
         brew install meson ninja
     - name: 
       run:  |
