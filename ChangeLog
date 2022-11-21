@@ -1,3 +1,195 @@
+2022-11-20:  David Anderson
+    commit 6d7ee5d0ee447004733c6e5b0a6d7d1417e65535
+
+    Reintroducing working macos-meson
+            modified:   test.yml
+
+2022-11-20:  David Anderson
+    commit e6f59cddf3f8e19597686d72704e405ebba23c01
+
+    Added commentary about the breakage fix
+            modified:   mac_meson.yml
+
+2022-11-20:  David Anderson
+    commit ffe12688a4b7ddd860feedf580068fef4b99091c
+
+    A suggested fix from brew folks.
+    They say this is due to github installing non-Homebrew
+    software in the Homebrew install directory.
+    They also suggest trying
+    find /usr/local/bin -lname '*/Library/Frameworks/Python.framework/*' -delete
+            modified:   mac_meson.yml
+
+2022-11-19:  David Anderson
+    commit c1145ccc9dbc0f8054211b4d89bc0ffa7b6736ee
+
+    For testing this case
+            new file:   mac_meson.yml
+    Removed the unusable mac_meson case
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit 4257d78972e888d6bbdb462c1ce6ea7d6009797a
+
+    Not working. deleted one bogus line.
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit 0b0144ccf569b89b74192476d44daaaebc7d4033
+
+    Still no joy.  brew install meson fails.
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit 6deb22cc1ba5d4ce45e7b2cedb069cb1451ccd15
+
+    More changes for macos, see
+    https://stackoverflow.com/questions/26647412/homebrew-could-not-symlink-usr-local-bin-is-not-writable
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit 7684181e391a1fe3fa684f7dca83bbac188836e6
+
+    Slight mod of macos meson workflow.
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit d769f9e79cb3a9e36360ed7ae09320df43f23930
+
+    Updating macos-meson per
+    https://github.com/Homebrew/homebrew-core/issues/30652
+    to try to get the brew command to work.
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit 5bc19a75665aa2c3e159a24065137d8347a0d9f6
+
+    Assigning a variable to itself got a warning and
+    fail from freebsd compiler.
+    Removed the poinless assign.
+            modified:   dwarf_util.c
+
+2022-11-19:  David Anderson
+    commit a87544c075732b04624dc3f0cd86ea65ce8405c3
+
+    freebsd vm: altered install list
+    for autotools to be in same package
+    order as the working freebsdvms.
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit 18240f9b724f438b52d8742827b2f1d9bc058f64
+
+    Moved one line, macos-meson
+            modified:   test.yml
+
+2022-11-19:  David Anderson
+    commit 7ba82fbf6c238839504fb15e74cd048bc2ed1ba9
+
+    Strange  macos autotools failure. Attempting fix.
+            modified:   test.yml
+
+2022-11-18:  David Anderson
+    commit 5f00152b9592bae10f2f031b1327e5cdd1d66178
+
+    Small addition to the Changes for 0.5.0 (about
+    performance improvement).
+            modified:   doc/libdwarf.dox
+
+    These two each had one spot where on error
+    there could be a small memory leakage
+    detected by CoverityScan. Fixed.
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+2022-11-18:  David Anderson
+    commit bcf912a6cbbe1bda3e6675f1f3c1f1293358bf75
+
+    Removing dead code.
+    Removing  DW_DLA_ABBREV_LIST (it is not used now).
+    Removing DW_DLA_HASH_TABLE, it is not used now.
+    Removing DW_DLA_HASH_TABLE_ENTRY, it is not used now.
+    None of these three were ever usable by library
+    callers, they were internal-use-only.
+    Free the orphaned hash table on allocatiing
+    a new bigger one.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+    Deleted typedef struct Dwarf_Hash_Table_Entry_s *Dwarf_Hash_Table_Entras the (internal-use-only) struct is no longer used.
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+
+    Now using calloc(to allocate a Dwarf_Hash_Table.
+    And free() to eliminate it.
+    Using dwarf_dealloc_die() instead of the original
+    harder-to-use dwarf_dealloc().
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+    Simplified declartion of abl_next struct field.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.h
+
+    Added #includes to reflect the changes today.
+            modified:   src/lib/libdwarf/dwarf_fill_in_attr_form.c
+
+    Added the new acess to DW_FORM_implicit_const value.
+    Changed the singly-linked-list creation
+    to the modern form (faster form).
+    Moved the dwarf_attribute() list creation down
+    to where it is really needed.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    New debug printf routines (bracketed with #if 0/endif)
+    Substantial revision of the Dwarf_Hash_Table implementation
+    for faster and reliable use.
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+    Removed truct Dwarf_Hash_Table_Entry_s as no longer used.
+    updated _dwarf_free_abbrev_hash_table_contents()
+    argument list to accommodate the changes today.
+            modified:   src/lib/libdwarf/dwarf_util.h
+
+2022-11-18:  David Anderson
+    commit 1b3428ba5a40023bcf0af635f153ae2089c14df8
+
+    Added words about the 0.5.0 performance
+    improvement.
+            modified:   doc/libdwarf.dox
+
+2022-11-18:  David Anderson
+    commit 7f615829757dcbe8a26a879c99098394fed0da49
+
+    Add dealloc calls appropriately so
+    latest coverity scan
+    does not see defects.
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+
+2022-11-18:  David Anderson
+    commit f99e7f276229b5f21005c1ae08be34abbe1337c4
+
+    Add cleanup calls in case of error
+    to avoid coverity scan defect warnings.
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/jitreader.c
+
+2022-11-18:  David Anderson
+    commit cd3bcbc08821d23b66f3b38543fab61bf69d5a69
+
+    Add a dwarf_dealloc of a list, was missing
+    in an error case.
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+
+2022-11-15:  David Anderson
+    commit 5aa8060e3b34f77ac87f96676b175837cc02a755
+
+    Now doxygen 1.9. Minor text changes.
+            modified:   doc/libdwarf.pdf
+
+2022-11-15:  David Anderson
+    commit 416d6106b71d42d6492b0e60b7d8d43b010dacb7
+
+    Up to date with git log.
+            modified:   ChangeLog
+
 2022-11-15:  David Anderson
     commit 5b88db3565334b4b3dc2c619196a3307e8011155
 
