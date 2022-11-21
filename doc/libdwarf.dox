@@ -3,7 +3,7 @@
     @tableofcontents{HTML:3,LaTeX:3}
     @author David Anderson
     @copyright  This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-    @date 2022-11-18 v0.5.0
+    @date 2022-11-22 v0.5.0
  
     @section draft Suggestions for improvement are welcome.
 
@@ -928,13 +928,14 @@
     We list these with newest first.
 
     <b>Changes 0.4.2 to 0.5.0</b>
+    v0.5.0 released 2022-11-22 
     The handling of the .debug_abbrev data in libdwarf is now
     more cpu-efficient (measurably faster) so access
     to DIEs and attribute lists is faster.
     The changes are library-internal so are not visible in the API.
 
-    Corrects CU and TU indexes
-    in the .debug_names (fast access) section to be zero-based.
+    Corrects CU and TU indexes in the .debug_names 
+    (fast access) section to be zero-based.
     The code for that section was previously unusable as it
     did not follow the DWARF5 documentation.
 
