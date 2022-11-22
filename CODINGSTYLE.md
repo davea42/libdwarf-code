@@ -339,7 +339,9 @@ Many places in libdwarf build singly-linked lists.
 And do it without a check for NULL. Stephen Macguire, in
 Writing Solid Code (Microsoft Press, 1993) explains
 how and why one should do this on page 126.
-We assume it's well known.
+We assume it's well known. The same book's
+"Candy Machine Interfaces" chapter lead to the design
+of the return values used in the library.
 
 ### Macro Tests Commented
 
