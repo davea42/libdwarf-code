@@ -24,11 +24,8 @@ examples that you should imitate. The few negative examples
 are clearly marked with a comment of /* Yuck! */. Please
 don't submit code for libdwarf that looks like any of these.
 
-Also see the src/lib/libdwarf/CODINGSTYLE document.
-
 Section list:
 
-    Indentation
     Tab characters
     Braces
     Whitespace
@@ -36,26 +33,25 @@ Section list:
     Managing nested blocks
     Test or Loop with Side Effect
     Switch statements
+    Singly Linked Lists
     Macro Tests Commented
     Lookup Tables
     Memory allocation
+    Naming, namespace 
     Checking For Overflow
     Dwarfdump Flags Data
     Never use strcpy strcat strncpy
     Static data and functions
     Tools that help
 
-
-## #Indentation
+###Indentation
 Each new level is indented 4 more spaces than the previous level,
-and an if is followed by a space and a left-paren:
+and an if is followed by a space and a left-parenthesis:
 
     if (condition) {
         do_something();
     }
-Done solely with space characters.  The simple project on
-sourceforge.net, dicheck-da, detects all instances of tabs,
-improper indentation and line-ending whitespace.
+Done solely with space characters. 
 
 Similarly, for is to have a single space after the r followed by 
 a left parenthesis.
@@ -131,24 +127,26 @@ with blank lines:
     };
 
 Having both CamelCase in names and _ in the names
+used by the library
 is perhaps unusual, but it's been that way
-in the libdwarf source a very long time,
+in the libdwarf source since the library was
+first written.
 so we sitck with it in most cases.
 
 Never use a space before a function-call left parenthesis
 or a macro-call left parenthesis. 
 
 Don't eliminate newlines just because things would still fit
-on one line. This breaks the expected visual structure of
-the code making it much harder to read and understand:
-
-    ();	/* Yuck! */
+on one line if it breaks the expected visual structure of
+the code making it harder to read and understand:
 
 Eliminate trailing whitespace on any line. Also, avoid putting
 initial or final blank lines into any file, and never use
 multiple blank lines instead of a single blank line.
+The trimtrailing program in the libdwarf-dicheck
+project will fix such issues.
 
-Use dicheck (see above) to find trailing whitespace
+Use dicheck tools below to find trailing whitespace
 and indentation inconsistencies.
 
 You might find the git-stripspace utility helpful which
@@ -169,28 +167,24 @@ function definitions  in libdwarf should always take the following form:
         return DW_DLV_OK;
     }
 
-And in dwarfdump, etc, the code tends to follow this form
-too (but far from always).
+In dwarfdump, the code tends to follow this form
+too (but not always).
 
 Function prototypes inside libdwarf headers 
 (as opposed to .c files)
 usually have the return type
 (and associated specifiers and qualifiers) the same
 line as the function name. If the line gets long
-addtional lines are appropriate.
-
-Function prototypes inside libdwarf.h always comment
-out argument names (but not types) to preserve the caller's
-macro namespace.  Because it is a public header, unlike
-all the other headers in libdwarf/dwarfdump  etc.
+additional lines are appropriate.
 
 In .c files the function name starts a line as shown above.
 
 Notice, above, how a too-long argument line gets folded
 with standard indentation(4).
 
-Break up long lines (> ~72 characters) and use whitespace to
-align things nicely. For example the arguments in a long list
+Break up long lines (> 70 characters) and use whitespace to
+align things nicely indenting by
+four spaces. For example the arguments in a long list
 to a function call should all (but the first) be aligned with
 each other:
 
@@ -204,7 +198,7 @@ the parameter types and names so that the names are aligned:
 
     void
     align_parameter_names_in_prototypes(const char *char_star_arg,
-        int	 int_arg,
+        int	     int_arg,
         double	*double_star_arg,
         double	 double_arg);
 
@@ -226,8 +220,8 @@ field in the code (with grep).
         int ns_x; /* usually avoid comment here this is Yuck!
             and this is even worse as continuation.  Yuck! */
 
-        /*  Comment here about y with blank line above
-            and belows to make it clear which line 
+        /*  Comment here about ns_y with blank line above
+            and below to make it clear which line 
             referred to. */  
         unsigned ns_y;
 
@@ -275,6 +269,11 @@ a pattern of handling exceptional cases early and returning:
 	
     return DW_DLV_OK;
 
+In otherwords, refactor deeply nested code.
+There are places in the library and dwarfdump
+where appropriate refactoring has not yet been
+done.
+
 The return statement is often the best thing to use in a
 pattern like this. If it's not available due to additional
 nesting above which require some cleanup after the current
@@ -301,6 +300,9 @@ is more transparent (in some sense) and
 makes it easier to stop( in debugger) or
 add a printf in case this is a point where
 things might be going wrong somehow.
+
+Note the space between if and the left
+parenthesis.
 
 Also see "Managing nested blocks" just above.
 
@@ -330,6 +332,14 @@ where all known values do a return on each case:
 and there the last entry is default: break;
 followed outside the switch by the return for
 the error case.
+
+### Singly Linked Lists
+
+Many places in libdwarf build singly-linked lists.
+And do it without a check for NULL. Stephen Macguire, in
+Writing Solid Code (Microsoft Press, 1993) explains
+how and why one should do this on page 126.
+We assume it's well known.
 
 ### Macro Tests Commented
 
@@ -364,14 +374,6 @@ designs)  non-standard tsearch functions, but we've ignored
 those to keep to the official Single Unix Specification
 standard interfaces.
 
-### Libdwarf Namespace
-
-In libdwarf we are careful to name things visible to callers
-(and in libdwarf.h) starting with with dwarf (for public stuff)
-or \_dwarf (for functions in the library not intended for
-public use.  Structs begin with Dwarf.  Macros begin with DW
-(dwarf.h is full of those!).
-
 ### Memory allocation
 
 In general, be wary of performing any arithmetic operations
@@ -385,6 +387,44 @@ The \_dwarf\_alloc() code keeps a record of what is allocated
 so a careless user can simply call dwarf\_finish() at the end
 and all the allocated data will be freed that was not already
 freed via  user calls to dwarf\_dealloc().
+
+### Naming, namespace 
+Avoid conflicting with other libraries
+or with user code.  Anything publicly visible
+in headers or in the library (.a or .so or .dll)
+must have only certain prefixes to names
+visible in dwarf.h or libdwarf.h or
+a library a user links in (.a or .so or .dll).
+Prefixes are:
+
+    DW_  (this is from the DWARF Standard and dwarf.h)
+    Dwarf_  (for types)
+    dwarf_  (for functions)
+    _dwarf_ (for non-static functions in the library but not
+        for user code to call, so far this has worked
+        acceptably). For a .so or .dll current builds
+        (meaning September 2021 and later)
+        ensure such names are invisible to callers.
+    dw_ For public function argument names.
+
+dwarf.h and libdwarf.h functions must have all arguments named
+with a leading dw\_ so that doxygen has names to work with
+and to make the function prototypes more readable. 
+Ensure new functions or changes are reflected in
+the libdwarf.h doxygen comments.
+
+Function names should be all lower-case and should
+use underbar(s) for readability.
+
+Function-local variables should be lower-case with
+underbars for readability.   It's ok for a small loop
+with counters to use single letter names like i or k or m.
+
+structure members should have a struct-specific
+2-character prefix to the name (followed by
+an underbar). This convention makes it much
+easier to grep for uses of members.
+
 
 ### Checking For Overflow
 
@@ -403,7 +443,7 @@ or data-item usable range.
 
 There are many libdwarf-internal functions to read data from
 an object, and all of them require an end-pointer argument
-so the code can easly check for corrupt object-file or DWARF
+so the code can easily check for corrupt object-file or DWARF
 values without duplicating the error-code-setting.
 
 ### Dwarfdump Flags Data
@@ -434,13 +474,12 @@ Any  data or function not referenced outside the
 defining source file should be declared 'static'.
 
 In the libdwarf library itself static data is
-not appropriate in general.
-Because multiple Dwarf_Debug
+not appropriate except for data which is also
+const.
+Multiple Dwarf_Debug
 may be open at the same time in a single
-program (dwarfdump or user code).
-
-Function names should be all lower case with underbars
-with the goal that statements and comments 'read well'.
+program (dwarfdump or user code) so static data
+will eventually be a bug.
 
 ### Tools that help
 
