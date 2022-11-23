@@ -61,10 +61,8 @@ int dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     Dwarf_Die die,
     int die_indent_level,
     Dwarf_Locdesc_c  locs, /* 2015 interface */
-    Dwarf_Unsigned llent, /* Which locdesc is this */
     Dwarf_Unsigned entrycount, /* count of DW_OP operators */
     Dwarf_Small    lkind,
-    int no_ending_newlines,
     Dwarf_Addr baseaddr,
     struct esb_s *string_out,
     Dwarf_Error *err);

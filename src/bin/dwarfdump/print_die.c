@@ -60,7 +60,6 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_safe_strcpy.h"
 
 #define VSFBUFSZ 200
-#define IMPLICIT_VALUE_PRINT_MAX 12
 #define DIE_STACK_SIZE 800
 /*  OpBranchHead_s gives us nice type-checking
     in calls. */
@@ -146,7 +145,7 @@ static int print_location_list(Dwarf_Debug dbg,
     Dwarf_Attribute attr,
     Dwarf_Bool checking,
     int die_indent_level,
-    int no_ending_newline,
+    int no_end_newline,
     struct esb_s *details,Dwarf_Error *);
 
 static int formxdata_print_value(Dwarf_Debug dbg,
@@ -5328,10 +5327,8 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     Dwarf_Die       die,
     int             die_indent_level,
     Dwarf_Locdesc_c locdesc,  /* for 2015 interface. */
-    Dwarf_Unsigned llent UNUSEDARG, /* Which desc we have . */
     Dwarf_Unsigned  entrycount,
     Dwarf_Small     lkind,
-    int   no_ending_newlines UNUSEDARG,
     Dwarf_Addr      baseaddr,
     struct esb_s   *string_out,
     Dwarf_Error    *err)
@@ -5430,6 +5427,32 @@ op_has_no_operands(Dwarf_Small op)
     return (_dwarf_opscounttab[op].oc_opcount == 0);
 }
 
+/*  Sometimes a DW_OP_implicit_const value
+    is actually a string from gcc.
+    A crude heuristic.
+    We are looking for ascii here hoping
+    it is somewhat useful..
+    It will be sanitized before being
+    printed.
+*/
+static Dwarf_Bool
+looks_like_string(unsigned int length,const unsigned char *bp)
+{
+    const unsigned char *end = 0;
+    if (bp[length-1]) {
+        return FALSE;
+    }
+    end = bp+length-1;
+    for ( ; bp < end; ++bp) {
+        /*  A crude test */
+        unsigned char c = *bp;
+        if ( c < 0x08 || c > 0x7e) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 static void
 show_contents(struct esb_s *string_out,
     unsigned int length,const unsigned char * bp)
@@ -5446,6 +5469,25 @@ show_contents(struct esb_s *string_out,
         esb_append_printf_u(string_out,"%02x", *bp);
     }
 }
+static void
+emit_op_indentation(struct esb_s *string_out,
+    int die_indent_level,
+    int index)
+{
+    if (!glflags.dense && !glflags.gf_expr_ops_joined) {
+        int indentprespaces = 0;
+        int indentpostspaces = 0;
+
+        indentprespaces = standard_indent();
+        indentpostspaces = 6;
+        esb_append(string_out,"\n");
+        append_indent_prefix(string_out,indentprespaces,
+            die_indent_level,indentpostspaces);
+    } else if (index > 0) {
+        esb_append(string_out, " ");
+    }
+}
+
 
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
@@ -5474,14 +5516,10 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Bool showblockoffsets = FALSE;
     struct OpBranchEntry_s *echecking = 0;
 
+    emit_op_indentation(string_out,die_indent_level,index);
     if (!glflags.dense && !glflags.gf_expr_ops_joined) {
         indentprespaces = standard_indent();
         indentpostspaces = 6;
-        esb_append(string_out,"\n");
-        append_indent_prefix(string_out,indentprespaces,
-            die_indent_level,indentpostspaces);
-    } else if (index > 0) {
-        esb_append(string_out, " ");
     }
     {
         /* DWARF 2,3,4 and DWARF5 style */
@@ -5643,14 +5681,11 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             break;
         case DW_OP_implicit_value:
             {
-                unsigned int print_len = 0;
+                unsigned long print_len = 0;
                 bracket_hex(" ",opd1,"",string_out);
                 /*  The other operand is a block of opd1 bytes. */
                 /*  FIXME */
                 print_len = opd1;
-                if (print_len > IMPLICIT_VALUE_PRINT_MAX) {
-                    print_len = IMPLICIT_VALUE_PRINT_MAX;
-                }
                 {
                     const unsigned char *bp = 0;
                     /*  This is a really ugly cast, a way
@@ -5658,6 +5693,12 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                         this libdwarf context. */
                     bp = (const unsigned char *)(uintptr_t) opd2;
                     show_contents(string_out,print_len,bp);
+                    if (looks_like_string(print_len,bp)) {
+                        emit_op_indentation(string_out,
+                            die_indent_level,index);
+                        esb_append_printf_s(string_out,
+                            "contents='%s'",(const char *)bp);
+                    } 
                 }
             }
             break;
@@ -5722,6 +5763,12 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                     "DW_OP_entry_value ");
             } else {
                 show_contents(string_out,length,bp);
+                if (looks_like_string(length,bp)) {
+                        emit_op_indentation(string_out,
+                            die_indent_level,index);
+                        esb_append_printf_s(string_out,
+                            "contents='%s'",(const char *)bp);
+                }
             }
             }
             break;
@@ -5745,6 +5792,12 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                     "ERROR: Null databyte pointer DW_OP_const_type ");
             } else {
                 show_contents(string_out,length,bp);
+                if (looks_like_string(length,bp)) {
+                        emit_op_indentation(string_out,
+                            die_indent_level,index);
+                        esb_append_printf_s(string_out,
+                            "contents='%s'",(const char *)bp);
+                }
             }
             check_die_expr_op_basic_data(dbg,die,op_name,
                 indentprespaces,die_indent_level,indentpostspaces,
@@ -6126,7 +6179,6 @@ print_location_list(Dwarf_Debug dbg,
             the new value of DW_LKIND_loclists
             for DWARF5.  See libdwarf.h */
         Dwarf_Small loclist_source = 0;
-        int no_ending_newline = FALSE;
 
         {
             lres = dwarf_get_locdesc_entry_d(loclist_head,
@@ -6201,10 +6253,7 @@ print_location_list(Dwarf_Debug dbg,
                 }
             }
             esb_append_printf_i(details, "\n   [%2d]",llent);
-        } else {
-            no_ending_newline = TRUE;
         }
-
         /*  When dwarf_debug_addr_index_to_addr() fails
             it is probably
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION 257
@@ -6283,10 +6332,8 @@ print_location_list(Dwarf_Debug dbg,
             /*  Either llbuf or locentry non-zero.
                 Not both. */
             locentry,
-            llent, /* Which loc desc this is */
             ulocentry_count, /* How many ops in this loc desc */
             loclist_source,
-            no_ending_newline,
             base_address,
             details,llerr);
         if (lres == DW_DLV_ERROR) {
