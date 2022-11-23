@@ -7,12 +7,7 @@ using configure,cmake, and meson.
 
 [![ci](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml/badge.svg)](https://github.com/davea42/libdwarf-code/actions/workflows/test.yml)
 
-Version 0.4.2 released 13 September 2022
-Versions before 0.4.2 had problems
-in the test suite so make check or ninja test might fail
-on some tests (sorry).
-
-Version 0.5.0 is not released. 
+Version 0.5.0 Released 11 November 2022.
 
 ## REQUIREMENTS from a libdwarf<name>.tar.xz
 
