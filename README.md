@@ -1,6 +1,6 @@
 # This is libdwarf README[.md]
 
-Updated 6 November 2022
+Updated 23 November 2022
 
 ci runs builds on Linux, Freebsd, msys2, and MacOS
 using configure,cmake, and meson.
