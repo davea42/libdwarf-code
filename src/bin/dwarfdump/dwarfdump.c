@@ -1139,17 +1139,9 @@ process_one_file(
         }
     }
     if (glflags.gf_ranges_flag) {
-        int res = 0;
-        Dwarf_Error err = 0;
-
         reset_overall_CU_error_data();
-        res = print_ranges(dbg,&err);
-        if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "printing the ranges section"
-                " had a problem.",res,err);
-            DROP_ERROR_INSTANCE(dbg,res,err);
-        }
+        print_ranges(dbg);
+        /* Never returns DW_DLV_ERROR */
     }
     if (glflags.gf_print_raw_loclists) {
         int res = 0;

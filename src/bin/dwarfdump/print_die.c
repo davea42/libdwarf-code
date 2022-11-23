@@ -2015,7 +2015,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     */
     if (glflags.gf_check_abbreviations &&
         checking_this_compiler()) {
-        validate_abbrev_code(dbg,abbrev_code);
+        validate_abbrev_code(abbrev_code);
     }
     if (!ignore_die_stack &&
         die_stack[die_indent_level].already_printed_) {

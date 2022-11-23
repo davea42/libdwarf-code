@@ -825,8 +825,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
     This just checks and reports errors.
     */
 void
-validate_abbrev_code(Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Unsigned abbrev_code)
+validate_abbrev_code(Dwarf_Unsigned abbrev_code)
 {
     char buf[128];
 

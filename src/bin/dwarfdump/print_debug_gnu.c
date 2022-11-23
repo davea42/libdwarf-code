@@ -55,9 +55,6 @@ char *ikind_types[8] = {
 
 static int
 print_block_entries(
-    Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Bool for_pubnames UNUSEDARG,
-    struct esb_s * secname UNUSEDARG,
     Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned blocknum,
     Dwarf_Unsigned entrycount,
@@ -259,7 +256,6 @@ print_selected_attributes(Dwarf_Debug dbg,
 static int
 print_die_basics(Dwarf_Debug dbg,
     Dwarf_Die die,
-    Dwarf_Unsigned cudie_goff UNUSEDARG,
     Dwarf_Error *error)
 {
     int res = 0;
@@ -347,8 +343,6 @@ print_die_basics(Dwarf_Debug dbg,
 
 static int
 print_all_blocks(Dwarf_Debug dbg,
-    Dwarf_Bool           for_pubnames,
-    struct esb_s        *secname,
     Dwarf_Gnu_Index_Head head,
     Dwarf_Unsigned       block_count,
     Dwarf_Error         *error)
@@ -431,14 +425,12 @@ print_all_blocks(Dwarf_Debug dbg,
                 glflags.gf_count_major_errors++;
             } else {
                 /* Always returns DW_DLV_OK */
-                print_die_basics(dbg, die,
-                    offset_into_debug_info, error);
+                print_die_basics(dbg, die, error);
                 printf("\n");
                 dwarf_dealloc_die(die);
             }
         }
-        res = print_block_entries(dbg,for_pubnames,
-            secname,head,i,entrycount,error);
+        res = print_block_entries(head,i,entrycount,error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -500,8 +492,7 @@ print_debug_gnu(Dwarf_Debug dbg,
             " blocks of names\n",
             sanitized(esb_get_string(&truename)),
             block_count);
-        res = print_all_blocks(dbg,for_pubnames,
-            &truename, head,block_count,error);
+        res = print_all_blocks(dbg,head,block_count,error);
         if (res == DW_DLV_ERROR) {
             glflags.gf_count_major_errors++;
             printf("ERROR: problem reading %s. %s\n",

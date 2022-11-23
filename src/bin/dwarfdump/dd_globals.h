@@ -129,7 +129,7 @@ extern int print_frames (Dwarf_Debug dbg,int want_eh,
     Dwarf_Die * cu_die_for_current_frame,
     void **, void **,Dwarf_Error *);
 extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
-extern int print_ranges (Dwarf_Debug dbg,Dwarf_Error *err);
+extern int print_ranges(Dwarf_Debug dbg);
 extern int print_raw_all_rnglists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_raw_all_loclists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
@@ -187,8 +187,7 @@ int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
 extern void get_abbrev_array_info(Dwarf_Debug dbg,
     Dwarf_Unsigned offset);
 /* Validate an abbreviation */
-extern void validate_abbrev_code(Dwarf_Debug dbg,
-    Dwarf_Unsigned abbrev_code);
+extern void validate_abbrev_code(Dwarf_Unsigned abbrev_code);
 
 extern int print_one_die(
     Dwarf_Debug dbg,

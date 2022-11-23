@@ -56,8 +56,7 @@ ranges_esb_string_destructor(void)
     in DWARF3 and DWARF4.
 */
 extern int
-print_ranges(Dwarf_Debug dbg,
-    Dwarf_Error *err UNUSEDARG)
+print_ranges(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned off = 0;
     int group_number = 0;
@@ -136,7 +135,6 @@ print_ranges(Dwarf_Debug dbg,
 */
 static int
 check_ranges_list(Dwarf_Debug dbg,
-    Dwarf_Off die_off UNUSEDARG,
     Dwarf_Die cu_die,
     Dwarf_Unsigned original_off,
     Dwarf_Unsigned finaloff,
@@ -388,8 +386,8 @@ check_range_array_info(Dwarf_Debug dbg,
                 &finaloffset,
                 &rangeset,&rangecount,&bytecount,err);
             if (res == DW_DLV_OK) {
-                res = check_ranges_list(dbg,die_off,
-                    cu_die,original_off,finaloffset,
+                res = check_ranges_list(dbg,cu_die,
+                    original_off,finaloffset,
                     rangeset,rangecount,bytecount,err);
                 if (res != DW_DLV_OK) {
                     dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);

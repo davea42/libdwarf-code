@@ -118,14 +118,11 @@ print_opsbytes(Dwarf_Unsigned expr_ops_blocklen,
 
 /*  Print single raw lle */
 static int
-print_single_lle(Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Unsigned contextnum UNUSEDARG,
-    Dwarf_Unsigned lineoffset,
+print_single_lle(Dwarf_Unsigned lineoffset,
     Dwarf_Unsigned code,
     Dwarf_Unsigned v1,
     Dwarf_Unsigned v2,
     Dwarf_Unsigned expr_ops_blocklen,
-    Dwarf_Unsigned expr_ops_offset UNUSEDARG,
     Dwarf_Small    *expr_ops,
     Dwarf_Unsigned entrylen)
 {
@@ -249,8 +246,8 @@ print_entire_loclist(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        print_single_lle(dbg,contextnumber,curoffset,
-            code,v1,v2,expr_ops_blocksize,expr_ops_offset,
+        print_single_lle(curoffset,
+            code,v1,v2,expr_ops_blocksize,
             expr_ops_data,entrylen);
         curoffset += entrylen;
         if (curoffset > endoffset) {

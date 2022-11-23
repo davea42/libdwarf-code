@@ -129,7 +129,7 @@ static struct  glfsetting_s {
     off.  */
 #if 0
 static void
-turn_off_subsidiary_flags(Dwarf_Debug dbg UNUSEDARG)
+turn_off_subsidiary_flags(void)
 {
     Dwarf_Unsigned i = 0;
 
@@ -209,7 +209,7 @@ update_section_flags_per_groups(
         return;
     }
 #if 0
-    turn_off_subsidiary_flags(dbg);
+    turn_off_subsidiary_flags();
 #endif
     freeall_groups_tables();
 }

@@ -101,9 +101,7 @@ print_offset_entry_table(Dwarf_Debug dbg,
 
 /* For printing the raw rangelist data from .debug_rnglists */
 static int
-print_single_rle(Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Unsigned contextnum UNUSEDARG,
-    Dwarf_Unsigned lineoffset,
+print_single_rle(Dwarf_Unsigned lineoffset,
     Dwarf_Unsigned code,
     Dwarf_Unsigned v1,
     Dwarf_Unsigned v2,
@@ -226,7 +224,7 @@ print_entire_rangeslist(Dwarf_Debug dbg,
             printf("     Offset      entryname            "
                 "val1       val2       entrylen\n");
         }
-        print_single_rle(dbg,contextnumber,curoffset,
+        print_single_rle(curoffset,
             code,v1,v2,entrylen);
         curoffset += entrylen;
         if (curoffset > endoffset) {
