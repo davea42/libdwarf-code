@@ -220,7 +220,6 @@ a build and then
 # INCOMPATIBILITIES. Changes to interfaces
 
 ### Comparing libdwarf-0.5.0 to libdwarf-0.4.2
-Not released.
 dwarf\_get\_globals() is compatible but it now
 returns data from .debug\_names in addition
 to .debug\_pubnames (either or both
