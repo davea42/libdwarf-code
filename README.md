@@ -227,6 +227,11 @@ could be in an object file).
 New function dwarf\_global\_tag\_number()
 makes the data from .debug\_names a bit
 more useful (if a library user wants it).
+Three new functions were added to enable
+printing of the .debug_addr section
+independent of other sections
+and the new dwarfdump option --print-debug-addr
+prints that section.
 
 ### Comparing libdwarf-0.4.2 to libdwarf-0.4.1
 No incompatibilities.
