@@ -1,3 +1,210 @@
+2022-11-24:  David Anderson
+    commit 34696154a06ab99790e77369630bea7ef01082f9
+
+    Regenerated with new version
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2022-11-24:  David Anderson
+    commit f0a9b27f0d55891275aa7d5a8f07cbe3def3952d
+
+    Version now 0.5.1
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-11-23:  David Anderson
+    commit f4772a99c2c5839cd6ee1268e4697e9f28eb97b5
+
+    Removed arguments with ARGSUNUSED which
+    cascades to other warning/error and
+    unused local variables.
+            modified:   dd_globals.h
+            modified:   dwarfdump.c
+            modified:   print_abbrevs.c
+            modified:   print_aranges.c
+            modified:   print_die.c
+            modified:   print_frames.c
+            modified:   print_gdbindex.c
+            modified:   print_hipc_lopc_attr.c
+            modified:   print_lines.c
+            modified:   print_llex_codes.c
+            modified:   print_loclists_codes.c
+            modified:   print_macro.c
+            modified:   print_origloclist_codes.c
+            modified:   print_pubnames.c
+            modified:   print_ranges.c
+
+2022-11-23:  David Anderson
+    commit 89dae20cee9fb8b1fe82a73b438f6ea148d377a8
+
+    Remove superfluous UNUSEDARG instances/arguments.
+            modified:   dd_macrocheck.c
+            modified:   dd_macrocheck.h
+            modified:   dwarfdump.c
+            modified:   print_abbrevs.c
+            modified:   print_die.c
+
+2022-11-23:  David Anderson
+    commit 269e820ed6714294067092129c776e28c234abff
+
+    Removed UNUSEDARG in several places, simplifying
+    arument lists as appropriate.
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/dd_macrocheck.h
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_macro.c
+
+2022-11-23:  David Anderson
+    commit df79b41d9cdb68e32095408e021cfcf6bffd7dc1
+
+    Corrected a typo.
+            modified:   README
+            modified:   README.md
+
+2022-11-23:  David Anderson
+    commit deba882a47651d9d5b35c5e4902a3c479082c43a
+
+    Removes arguments declared as
+    UNUSEDARG.
+            modified:   dd_globals.h
+            modified:   dwarfdump.c
+            modified:   print_abbrevs.c
+            modified:   print_debug_gnu.c
+            modified:   print_die.c
+            modified:   print_loclists.c
+            modified:   print_ranges.c
+            modified:   print_rnglists.c
+            modified:   print_section_groups.c
+
+2022-11-23:  David Anderson
+    commit cc11773830e8f1e6b84946c8ef2b37bcebbc6686
+
+    Deleted unused arguments from
+    dwarfdump_print_expression_operations()
+    function prototype
+            modified:   dd_esb_using_functions.h
+
+    Deleted unused arguments from
+    dwarfdump_print_expression_operations()
+            modified:   print_frames.c
+
+    Also added code to print DW_OP_implicit_value
+    values as strings when they are
+    clearly formatted as nullterminated
+    ASCII strings.
+    Also removed an arbitrary limit on the bytes
+    shown for W_OP_implicit_value.
+            modified:   print_die.c
+
+2022-11-23:  David Anderson
+    commit c92165ff6abb3d835c81047b28f7975aadb3c3c5
+
+    Added a few words about 0.5.0
+    and --print-debug-addr
+            modified:   README
+            modified:   README.md
+
+2022-11-23:  David Anderson
+    commit 6e52f0e231760e21f7986b548b453f8e18206726
+
+    To make it clear these test objects
+    are not to be executed the .text section
+    of each now set to all zero bits.
+    This has no effect on libdwarf or dwarfdump,
+    which ignore .text.
+            modified:   test/testobjLE32PE.exe
+            modified:   test/testuriLE64ELf.obj
+
+2022-11-23:  David Anderson
+    commit 4b66348e1086f5648ff8be2af1b7f14095625d90
+
+    Fixed another typo
+            modified:   README
+            modified:   README.md
+
+2022-11-23:  David Anderson
+    commit 3cd45751291d25caf3e775390996dff356acf4b9
+
+    Corrected modification date
+            modified:   README
+            modified:   README.md
+
+2022-11-23:  David Anderson
+    commit 394a2d9aadeef62b0f06d6941640caf419436334
+
+    Noting 0.5.0 is released.
+            modified:   README
+            modified:   README.md
+
+2022-11-23:  David Anderson
+    commit aea4a46a0db0f0298290294eab70dfa89ffe92ba
+
+    Showing 0.5.0 release date
+            modified:   README
+            modified:   README.md
+
+2022-11-23:  David Anderson
+    commit dc4133c09d402e67921409be24ad03e1bdec8ee8
+
+            new file:   CONTRIBUTING.md
+
+2022-11-22:  David Anderson
+    commit 1d610ddee444560fe0060d2424f6166c78418bd3
+
+    Added more on Maguire book.
+            modified:   CODINGSTYLE.md
+
+2022-11-22:  David Anderson
+    commit 2038d1669ccad622fef6ebfa4b57b403e8feb870
+
+    This is the only style document.
+            renamed:    codingstyle.md -> CODINGSTYLE.md
+
+    This is now an empty placeholder. See the above
+    file.
+            modified:   src/lib/libdwarf/CODINGSTYLE
+
+2022-11-21:  David Anderson
+    commit a627852aa31eff33482198c12b1d060b328b1ee1
+
+    Disabling run on push, run on time
+            modified:   scorecards.yml
+
+2022-11-21:  David Anderson
+    commit 8408965682c778185584f5e32fe2173c53354e53
+    Merge: 9ef7bb2a 13280d74
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+    work flow security code scan
+
+2022-11-21:  David Anderson
+    commit 13280d74c7b7f1bd2ddbb50fb01a5afa8d9e05cc
+
+    Create scorecards.yml
+
+2022-11-21:  David Anderson
+    commit 9ef7bb2a0f2aa6472a57369526f4b3a80c7cd4d4
+
+    Release date 0.5.0 22 Nov 2022
+            modified:   doc/libdwarf.dox
+    Regenerated
+            modified:   doc/libdwarf.pdf
+
+2022-11-21:  David Anderson
+    commit 06933217ef2f950de0e3a3340afe2e95fd16f8a9
+
+    now up to date with git log.
+            modified:   ChangeLog
+
 2022-11-20:  David Anderson
     commit 6d7ee5d0ee447004733c6e5b0a6d7d1417e65535
 
