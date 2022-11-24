@@ -225,7 +225,7 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
     /*  Depending on the form and the attribute,
         process the form. */
     if (rv == DW_DLV_ERROR) {
-        print_error_and_continue(dbg, "in print_attribute "
+        print_error_and_continue("in print_attribute "
             "dwarf_whatform cannot"
             " Find attr form",
             rv, *err);
@@ -265,12 +265,12 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
                 err,show_form_here);
             if (ares != DW_DLV_OK) {
                 if (ares == DW_DLV_NO_ENTRY) {
-                    print_error_and_continue(dbg,
+                    print_error_and_continue(
                         "dd_get_integer_and_name"
                         " No Entry for DW_AT_high_pc/DW_AT_low_pc",
                         ares, *err);
                 } else {
-                    print_error_and_continue(dbg,
+                    print_error_and_continue(
                         "dd_get_integer_and_name"
                         " Failed for DW_AT_high_pc/DW_AT_low_pc",
                         ares, *err);

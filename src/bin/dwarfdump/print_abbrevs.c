@@ -197,14 +197,14 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
     tres = dwarf_get_abbrev_tag(ab, &tag, error);
     if (tres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "Error reading abbreviation Tag", tres, *error);
         return tres;
     }
     tres = dwarf_get_abbrev_code(ab, &abbrev_code, error);
     if (tres != DW_DLV_OK) {
         dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "Error reading abbreviation code",
             tres, *error);
         return tres;
@@ -245,7 +245,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
         error);
     if (acres == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "Error reading abbreviation children flag",
             acres, *error);
         return acres;
@@ -311,7 +311,7 @@ print_one_abbrev_for_cu(Dwarf_Debug dbg,
         if (aeres == DW_DLV_ERROR) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
             free(entryarray);
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "Error reading abbreviation entry",
                 aeres, *error);
             return aeres;
@@ -746,7 +746,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                 &length, &abbrev_entry_count, &aberr);
             if (abres == DW_DLV_ERROR) {
                 destruct_abbrev_array();
-                print_error_and_continue(dbg,
+                print_error_and_continue(
                     "Error reading abbreviations", abres, aberr);
                 dwarf_dealloc(dbg,aberr,DW_DLA_ERROR);
                 bMore = FALSE;

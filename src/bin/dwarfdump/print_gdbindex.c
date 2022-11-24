@@ -111,8 +111,7 @@ print_culist_array(Dwarf_Debug dbg UNUSEDARG,
 }
 
 static int
-print_types_culist_array(Dwarf_Debug dbg,
-    Dwarf_Gdbindex  gdbindex,
+print_types_culist_array(Dwarf_Gdbindex  gdbindex,
     Dwarf_Error * cular_err)
 {
     Dwarf_Unsigned list_len = 0;
@@ -122,7 +121,7 @@ print_types_culist_array(Dwarf_Debug dbg,
     res = dwarf_gdbindex_types_culist_array(gdbindex,
         &list_len,cular_err);
     if (res != DW_DLV_OK) {
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "dwarf_gdbindex_types_culist_array call failed",
             res,*cular_err);
         return res;
@@ -171,8 +170,7 @@ print_types_culist_array(Dwarf_Debug dbg,
 }
 
 static int
-print_addressarea(Dwarf_Debug dbg,
-    Dwarf_Gdbindex  gdbindex,
+print_addressarea(Dwarf_Gdbindex  gdbindex,
     Dwarf_Error * addra_err)
 {
     Dwarf_Unsigned list_len = 0;
@@ -180,7 +178,7 @@ print_addressarea(Dwarf_Debug dbg,
     int res = dwarf_gdbindex_addressarea(gdbindex,
         &list_len,addra_err);
     if (res != DW_DLV_OK) {
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "dwarf_gdbindex_addressarea failed",res,*addra_err);
         return res;
     }
@@ -268,8 +266,7 @@ get_cu_index_string(struct esb_s *out,
 }
 
 static int
-print_symtab_entry(Dwarf_Debug dbg,
-    Dwarf_Gdbindex gdbindex,
+print_symtab_entry(Dwarf_Gdbindex gdbindex,
     Dwarf_Unsigned index,
     Dwarf_Unsigned symnameoffset,
     Dwarf_Unsigned cuvecoffset,
@@ -346,7 +343,7 @@ print_symtab_entry(Dwarf_Debug dbg,
             gdbindex,cuvecoffset,ii,
             &attributes,sym_err);
         if (res != DW_DLV_OK) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "dwarf_gdbindex_cuvector_inner_attributes failed",
                 res,*sym_err);
             return res;
@@ -422,8 +419,7 @@ print_symtab_entry(Dwarf_Debug dbg,
 }
 
 static int
-print_symboltable(Dwarf_Debug dbg,
-    Dwarf_Gdbindex  gdbindex,
+print_symboltable(Dwarf_Gdbindex  gdbindex,
     Dwarf_Unsigned culist_len,
     Dwarf_Error * symt_err)
 {
@@ -473,7 +469,7 @@ print_symboltable(Dwarf_Debug dbg,
             esb_destructor(&msg);
             return res;
         }
-        res = print_symtab_entry(dbg,gdbindex,i,
+        res = print_symtab_entry(gdbindex,i,
             symnameoffset,cuvecoffset,
             culist_len,symt_err);
         if (res != DW_DLV_OK) {
@@ -558,17 +554,17 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
         dwarf_dealloc_gdbindex(gdbindex);
         return res;
     }
-    res = print_types_culist_array(dbg,gdbindex,err);
+    res = print_types_culist_array(gdbindex,err);
     if (res != DW_DLV_OK) {
         dwarf_dealloc_gdbindex(gdbindex);
         return res;
     }
-    res = print_addressarea(dbg,gdbindex,err);
+    res = print_addressarea(gdbindex,err);
     if (res != DW_DLV_OK) {
         dwarf_dealloc_gdbindex(gdbindex);
         return res;
     }
-    res = print_symboltable(dbg,gdbindex,culist_len,err);
+    res = print_symboltable(gdbindex,culist_len,err);
     dwarf_dealloc_gdbindex(gdbindex);
     return res;
 }

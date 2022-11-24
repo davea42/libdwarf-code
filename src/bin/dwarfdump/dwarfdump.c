@@ -868,7 +868,7 @@ process_one_file(
     }
     if (dres == DW_DLV_ERROR) {
         /* Prints error, cleans up Dwarf_Error data. */
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             title,dres,onef_err);
         DROP_ERROR_INSTANCE(dbg,dres,onef_err);
         return DW_DLV_NO_ENTRY;
@@ -980,7 +980,7 @@ process_one_file(
 
         res = print_section_groups_data(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing section groups had a problem.",
                 res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1004,7 +1004,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_infos(dbg,TRUE,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing .debug_info had a problem.",
                 res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1012,7 +1012,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_infos(dbg,FALSE,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing .debug_types had a problem.",
                 res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1053,20 +1053,20 @@ process_one_file(
             then "cu" and "tu" will not be. And vice versa.  */
         res = print_gdb_index(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the gdb index section had a problem "
                 ,res,err);
         }
         res = print_debugfission_index(dbg,"cu",&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the debugfission cu section "
                 "had a problem "
                 ,res,err);
         }
         res = print_debugfission_index(dbg,"tu",&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the debugfission tu section "
                 "had a problem "
                 ,res,err);
@@ -1079,7 +1079,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_pubnames(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing pubnames data had a problem ",res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
         }
@@ -1091,7 +1091,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_debug_addr(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the .debug_addr section"
                 " had a problem.",res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1104,7 +1104,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_abbrevs(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the .debug_abbrev section"
                 " had a problem.",res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1117,7 +1117,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_strings(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the .debug_str section"
                 " had a problem.",res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1130,7 +1130,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_aranges(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the aranges section"
                 " had a problem.",res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1148,7 +1148,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_raw_all_loclists(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the raw .debug_loclists section"
                 " had a problem.",res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1161,7 +1161,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res = print_raw_all_rnglists(dbg,&err);
         if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing the raw .debug_rnglists section"
                 " had a problem.",res,err);
             DROP_ERROR_INSTANCE(dbg,res,err);
@@ -1187,7 +1187,7 @@ process_one_file(
                 &lowpcSet,
                 &err);
             if (sres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
+                print_error_and_continue(
                     "printing standard frame data had a problem.",
                     sres,err);
                 DROP_ERROR_INSTANCE(dbg,sres,err);
@@ -1202,7 +1202,7 @@ process_one_file(
                 &lowpcSet,
                 &err);
             if (sres == DW_DLV_ERROR) {
-                print_error_and_continue(dbg,
+                print_error_and_continue(
                     "printing eh frame data had a problem.",sres,
                     err);
                 DROP_ERROR_INSTANCE(dbg,sres,err);
@@ -1221,7 +1221,7 @@ process_one_file(
         reset_overall_CU_error_data();
         sres = print_static_funcs(dbg,&err);
         if (sres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing SGI static funcs had a problem.",sres,err);
             DROP_ERROR_INSTANCE(dbg,sres,err);
         }
@@ -1233,7 +1233,7 @@ process_one_file(
         reset_overall_CU_error_data();
         sres = print_static_vars(dbg,&err);
         if (sres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing SGI static vars had a problem.",sres,err);
             DROP_ERROR_INSTANCE(dbg,sres,err);
         }
@@ -1249,14 +1249,14 @@ process_one_file(
         reset_overall_CU_error_data();
         tres = print_types(dbg, DWARF_PUBTYPES,&err);
         if (tres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing pubtypes had a problem.",tres,err);
             DROP_ERROR_INSTANCE(dbg,tres,err);
         }
         reset_overall_CU_error_data();
         tres = print_types(dbg, SGI_TYPENAME,&err);
         if (tres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing SGI typenames had a problem.",tres,err);
             DROP_ERROR_INSTANCE(dbg,tres,err);
         }
@@ -1268,7 +1268,7 @@ process_one_file(
         reset_overall_CU_error_data();
         res3 = print_weaknames(dbg, &err);
         if (res3 == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "printing weaknames had a problem.",res3,err);
             DROP_ERROR_INSTANCE(dbg,res3,err);
         }
@@ -1283,7 +1283,7 @@ process_one_file(
         reset_overall_CU_error_data();
         nres = print_debug_names(dbg,&err);
         if (nres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "print .debug_names section failed", nres, err);
             DROP_ERROR_INSTANCE(dbg,nres,err);
         }
@@ -1318,7 +1318,7 @@ process_one_file(
 
         ares = print_attributes_encoding(dbg,&aerr);
         if (ares == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "print attributes encoding failed", ares, aerr);
             DROP_ERROR_INSTANCE(dbg,ares,aerr);
         }
@@ -1331,7 +1331,7 @@ process_one_file(
 
         tres = print_tag_attributes_usage();
         if (tres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "print tag attributes usage failed", tres, err);
             DROP_ERROR_INSTANCE(dbg,tres,err);
         }
@@ -1344,7 +1344,7 @@ process_one_file(
 
         lres = print_str_offsets_section(dbg,&err);
         if (lres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "print .debug_str_offsets failed", lres, err);
             DROP_ERROR_INSTANCE(dbg,lres,err);
         }
@@ -1358,7 +1358,7 @@ process_one_file(
 
         lresdl = print_gnu_debuglink(dbg,&err);
         if (lresdl == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "print gnu_debuglink data failed", lresdl, err);
             DROP_ERROR_INSTANCE(dbg,lresdl,err);
             err = 0;
@@ -1370,7 +1370,7 @@ process_one_file(
 
         lres = print_debug_gnu(dbg,&err);
         if (lres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "print .debug_gnu* section failed", lres, err);
             DROP_ERROR_INSTANCE(dbg,lres,err);
             err = 0;
@@ -1382,7 +1382,7 @@ process_one_file(
 
         lres = print_debug_sup(dbg,&err);
         if (lres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "print .debug_sup* section failed", lres, err);
             DROP_ERROR_INSTANCE(dbg,lres,err);
         }
@@ -1409,7 +1409,7 @@ process_one_file(
     if (dbgtied) {
         dres = dwarf_finish(dbgtied);
         if (dres != DW_DLV_OK) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "dwarf_finish failed on tied dbg", dres, onef_err);
             DROP_ERROR_INSTANCE(dbg,dres,onef_err);
         }
@@ -1418,7 +1418,7 @@ process_one_file(
     groups_restore_subsidiary_flags();
     dres = dwarf_finish(dbg);
     if (dres != DW_DLV_OK) {
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "dwarf_finish failed", dres, onef_err);
         DROP_ERROR_INSTANCE(dbg,dres,onef_err);
         dbg = 0;
@@ -1481,8 +1481,7 @@ simple_err_only_return_action(int res,const char *msg)
 
 /* ARGSUSED */
 static void
-print_error_maybe_continue(Dwarf_Debug dbg UNUSEDARG,
-    const char * msg,
+print_error_maybe_continue( const char * msg,
     int dwarf_ret_val,
     Dwarf_Error lerr,
     Dwarf_Bool do_continue)
@@ -1527,7 +1526,7 @@ print_error(Dwarf_Debug dbg,
     int dwarf_ret_val,
     Dwarf_Error lerr)
 {
-    print_error_maybe_continue(dbg,msg,dwarf_ret_val,lerr,FALSE);
+    print_error_maybe_continue(msg,dwarf_ret_val,lerr,FALSE);
     glflags.gf_count_major_errors++;
     if (dwarf_ret_val == DW_DLV_ERROR) {
         /*  If dbg was never initialized
@@ -1544,14 +1543,12 @@ print_error(Dwarf_Debug dbg,
 }
 /* ARGSUSED */
 void
-print_error_and_continue(Dwarf_Debug dbg,
-    const char * msg,
+print_error_and_continue(const char * msg,
     int dwarf_ret_val,
     Dwarf_Error lerr)
 {
     glflags.gf_count_major_errors++;
-    print_error_maybe_continue(dbg,
-        msg,dwarf_ret_val,lerr,TRUE);
+    print_error_maybe_continue(msg,dwarf_ret_val,lerr,TRUE);
 }
 /*  ==============END of dwarfdump error print functions. */
 
@@ -1603,7 +1600,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
 
     tres = dwarf_tag(cu_die, &tag, &skperr);
     if (tres != DW_DLV_OK) {
-        print_error_and_continue(dbg, "ERROR: "
+        print_error_and_continue("ERROR: "
         "Cannot get the TAG of the cu_die to check "
         " if we should skip this CU or not.",
             tres, skperr);
@@ -1613,7 +1610,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
     }
     dares = dwarf_attr(cu_die, DW_AT_name, &attrib, &skperr);
     if (dares != DW_DLV_OK) {
-        print_error_and_continue(dbg, "should skip this cu? "
+        print_error_and_continue("should skip this cu? "
             " cu die has no DW_AT_name attribute!",
             dares, skperr);
         *should_skip = FALSE;
@@ -1670,7 +1667,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
                     dwarf_names_print_on_error));
                 esb_append(&m,".");
 
-                print_error_and_continue(dbg,
+                print_error_and_continue(
                     esb_get_string(&m),
                     sres, skperr);
                 *should_skip = FALSE;
@@ -1686,7 +1683,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Bool*should_skip,
         }
     } else if (fres == DW_DLV_ERROR) {
         /*  DW_DLV_ERROR */
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "dwarf_whatform failed on a CU_die when"
             " attempting to determine if this CU should"
             " be skipped.",
@@ -1716,7 +1713,7 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
     ares = dwarf_attr(cu_die, DW_AT_name, &name_attr, lerr);
     if (ares == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "dwarf_attr fails on DW_AT_name on the CU die",
             ares, *lerr);
         return ares;

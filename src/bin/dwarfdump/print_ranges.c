@@ -116,7 +116,7 @@ print_ranges(Dwarf_Debug dbg)
             esb_append_printf_u(&m,"ERROR: at offset 0x%lx in ",off);
             esb_append_printf_s(&m,"section %s. Stopping ranges"
                 " output.",sanitized(esb_get_string(&truename)));
-            print_error_and_continue(dbg,esb_get_string(&m),
+            print_error_and_continue(esb_get_string(&m),
                 rres,pr_err);
             dwarf_dealloc(dbg,pr_err,DW_DLA_ERROR);
             pr_err = 0;

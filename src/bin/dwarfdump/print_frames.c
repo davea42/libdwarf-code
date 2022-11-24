@@ -618,7 +618,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                 "a frame. "
                 "dwarf_siblingof failed"
                 " trying to get the name. ");
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 esb_get_string(&m), chres,*err);
             esb_destructor(&m);
             DROP_ERROR_INSTANCE(dbg,chres,*err);

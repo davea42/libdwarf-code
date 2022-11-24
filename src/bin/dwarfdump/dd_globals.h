@@ -112,8 +112,8 @@ extern int simple_err_return_msg_either_action(int res,
     const char *msg);
 extern int simple_err_return_action(int res,const char *msg);
 extern int simple_err_only_return_action(int res,const char *msg);
-extern void print_error_and_continue (Dwarf_Debug dbg,
-    const char * msg,int res, Dwarf_Error err);
+extern void print_error_and_continue (const char * msg,
+    int res, Dwarf_Error err);
 extern void print_error (Dwarf_Debug dbg, const char * msg,
     int res, Dwarf_Error err);
 
@@ -291,8 +291,7 @@ int dd_get_integer_and_name(Dwarf_Debug dbg,
     Dwarf_Error * err,
     int show_form);
 
-int print_original_loclist_linecodes(Dwarf_Debug dbg,
-    Dwarf_Bool    checking,
+int print_original_loclist_linecodes(Dwarf_Bool    checking,
     const char *  tagname,
     const char *  attrname,
     unsigned int  llent,
@@ -306,8 +305,7 @@ int print_original_loclist_linecodes(Dwarf_Debug dbg,
     Dwarf_Unsigned locdesc_offset,
     struct esb_s * ebsp,
     Dwarf_Bool   * bError);
-int print_llex_linecodes(Dwarf_Debug dbg,
-    Dwarf_Bool    checking,
+int print_llex_linecodes(Dwarf_Bool    checking,
     const char *  tagname,
     const char *  attrname,
     unsigned int  llent,
@@ -321,8 +319,7 @@ int print_llex_linecodes(Dwarf_Debug dbg,
     Dwarf_Unsigned locdesc_offset,
     struct esb_s * ebsp,
     Dwarf_Bool   * bError);
-int print_debug_loclists_linecodes(Dwarf_Debug dbg,
-    Dwarf_Bool    checking,
+int print_debug_loclists_linecodes(Dwarf_Bool    checking,
     const char *  tagname,
     const char *  attrname,
     unsigned int  llent,

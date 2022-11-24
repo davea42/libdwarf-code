@@ -122,7 +122,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         esb_append_printf_u(&details,"at offset 0x%"
             DW_PR_DUx, global_die_off);
         esb_append(&details,".");
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             esb_get_string(&details), dres, *err);
         esb_destructor(&details);
         return dres;
@@ -135,7 +135,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         esb_constructor(&details);
         esb_append(&details,line_title);
         esb_append(&details," cannot get CU die offset");
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             esb_get_string(&details), dres, *err);
         esb_destructor(&details);
         die_CU_off = 0;

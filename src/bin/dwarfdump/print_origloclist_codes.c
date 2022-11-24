@@ -48,8 +48,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 /* Prints locentry descriptions for DW_LKIND_loclist */
 
 int
-print_original_loclist_linecodes(Dwarf_Debug dbg,
-    Dwarf_Bool    checking,
+print_original_loclist_linecodes(Dwarf_Bool    checking,
     const char *  tagname,
     const char *  attrname,
     unsigned int  llent,
@@ -129,8 +128,7 @@ print_original_loclist_linecodes(Dwarf_Debug dbg,
             "ERROR: Unexpected LLE code 0x%x"
             " in original loclist (synthesized code error)",
             lle_value);
-        print_error_and_continue(dbg,
-            esb_get_string(&unexp),
+        print_error_and_continue(esb_get_string(&unexp),
             DW_DLV_OK, 0);
         esb_destructor(&unexp);
         }

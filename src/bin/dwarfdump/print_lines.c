@@ -951,8 +951,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
         if (lresv == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "Failed to print CU lines", lresv, *err);
+            print_error_and_continue("Failed to print CU lines",
+                lresv, *err);
         }
         return lresv;
     }
@@ -964,7 +964,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         lres2 = dwarf_check_lineheader_b(cu_die,&line_errs,
             err);
         if (lres2 == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "dwarf_check_lineheader_b found a serious error",
                 lres2, *err);
             dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
@@ -1019,8 +1019,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             /* Clear error condition */
             glflags.gf_record_dwarf_error = FALSE;
         } else {
-            print_error_and_continue(dbg,
-                "dwarf_srclines", lres, *err);
+            print_error_and_continue("dwarf_srclines",
+                lres, *err);
         }
         DROP_ERROR_INSTANCE(dbg,lres,*err);
         return DW_DLV_OK;

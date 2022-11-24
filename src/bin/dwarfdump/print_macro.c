@@ -597,7 +597,7 @@ print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
 }
 
 static void
-derive_error_message(Dwarf_Debug dbg, unsigned k,
+derive_error_message(unsigned k,
     Dwarf_Half macro_operator,
     Dwarf_Unsigned number_of_ops,
     int  res,Dwarf_Error *err,
@@ -622,8 +622,7 @@ derive_error_message(Dwarf_Debug dbg, unsigned k,
         " operand %u ",k);
     esb_append_printf_u(&m,
         " of %u operands",number_of_ops);
-    print_error_and_continue(dbg,
-        esb_get_string(&m),
+    print_error_and_continue(esb_get_string(&m),
         res,*err);
     esb_destructor(&m);
 }
@@ -677,8 +676,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 " for operand %u ",k);
             esb_append_printf_u(&m,
                 " of %u operands",number_of_ops);
-            print_error_and_continue(dbg,
-                esb_get_string(&m),
+            print_error_and_continue(esb_get_string(&m),
                 lres,*err);
             esb_destructor(&m);
             esb_destructor(&mtext);
@@ -760,7 +758,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                derive_error_message(dbg,k,macro_operator,
+                derive_error_message(k,macro_operator,
                     number_of_ops,
                     lres,err,"dwarf_get_macro_defundef");
                 esb_destructor(&mtext);
@@ -791,7 +789,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                derive_error_message(dbg,k,macro_operator,
+                derive_error_message(k,macro_operator,
                     number_of_ops,
                     lres,err,"dwarf_get_macro_defundef");
                 esb_destructor(&mtext);
@@ -825,7 +823,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                derive_error_message(dbg,k,macro_operator,
+                derive_error_message(k,macro_operator,
                     number_of_ops,
                     lres,err,"dwarf_get_macro_defundef");
                 esb_destructor(&mtext);
@@ -868,7 +866,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 err);
             if (lres != DW_DLV_OK) {
-                derive_error_message(dbg,k,macro_operator,
+                derive_error_message(k,macro_operator,
                     number_of_ops,
                     lres,err,"dwarf_get_macro_defundef");
                 esb_destructor(&mtext);
@@ -898,7 +896,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 need to worry about getting the file name
                 here. */
             if (lres != DW_DLV_OK) {
-                derive_error_message(dbg,k,macro_operator,
+                derive_error_message(k,macro_operator,
                     number_of_ops,
                     lres,err,"dwarf_get_macro_startend_file");
                 esb_destructor(&mtext);
@@ -926,7 +924,7 @@ print_macro_ops(Dwarf_Debug dbg,
             lres = dwarf_get_macro_import(mcontext,
                 k,&offset,err);
             if (lres != DW_DLV_OK) {
-                derive_error_message(dbg,k,macro_operator,
+                derive_error_message(k,macro_operator,
                     number_of_ops,
                     lres,err,"dwarf_get_macro_import");
                 esb_destructor(&mtext);
@@ -976,8 +974,7 @@ print_macro_ops(Dwarf_Debug dbg,
                         " at offset 0x%x "
                         "for the import CU failed. ",
                         offset);
-                    print_error_and_continue(dbg,
-                        esb_get_string(&m),
+                    print_error_and_continue(esb_get_string(&m),
                         mres,*err);
                     DROP_ERROR_INSTANCE(dbg,mres,*err);
                     esb_destructor(&m);
@@ -989,7 +986,7 @@ print_macro_ops(Dwarf_Debug dbg,
             lres = dwarf_get_macro_import(mcontext,
                 k,&offset,err);
             if (lres != DW_DLV_OK) {
-                derive_error_message(dbg,k,macro_operator,
+                derive_error_message(k,macro_operator,
                     number_of_ops,
                     lres,err,"dwarf_get_macro_import");
                 esb_destructor(&mtext);
@@ -1065,8 +1062,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         return lres;
     }
     if (lres == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Unable to dwarf_get_macro_context()"
+        print_error_and_continue("Unable to dwarf_get_macro_context()"
             " for the DWARF 5 style macro",
             lres,*err);
         return lres;
@@ -1124,8 +1120,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         if (tres != DW_DLV_OK) {
             /*  Something broken here. */
             dwarf_dealloc_macro_context(macro_context);
-            print_error_and_continue(dbg,
-                "Unable to get CU DIE tag "
+            print_error_and_continue("Unable to get CU DIE tag "
                 "though we could see it earlier. "
                 "Something broken.",
                 tres,*err);
@@ -1183,7 +1178,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
         }
         if (lres == DW_DLV_ERROR) {
             dwarf_dealloc_macro_context(macro_context);
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "ERROR: dwarf_macro_context_head failed",
                 lres,*err);
             return lres;
@@ -1249,8 +1244,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
                         esb_append_printf_u(&m,
                             "  of %u indexes. ",
                             opcode_count);
-                        print_error_and_continue(dbg,
-                            esb_get_string(&m),
+                        print_error_and_continue(esb_get_string(&m),
                             lres,*err);
                         esb_destructor(&m);
                         return lres;
@@ -1267,8 +1261,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
                         esb_append_printf_u(&m,
                             "  of %u indexes. ",
                             opcode_count);
-                        print_error_and_continue(dbg,
-                            esb_get_string(&m),
+                        print_error_and_continue(esb_get_string(&m),
                             lres,*err);
                         esb_destructor(&m);
                         return lres;
@@ -1329,8 +1322,7 @@ print_macros_5style_this_cu_inner(Dwarf_Debug dbg, Dwarf_Die cu_die,
                     "ERROR: print_macro_ops() failed"
                     " returns NO_ENTRY  ");
             }
-            print_error_and_continue(dbg,
-                esb_get_string(&m),
+            print_error_and_continue(esb_get_string(&m),
                 lres,*err);
             esb_destructor(&m);
             return lres;

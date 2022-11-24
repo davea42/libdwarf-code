@@ -46,8 +46,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
     DWARF5 DW_LKIND_loclists */
 
 int
-print_debug_loclists_linecodes(Dwarf_Debug dbg,
-    Dwarf_Bool checking,
+print_debug_loclists_linecodes(Dwarf_Bool checking,
     const char *  tagname,
     const char *attrname,
     unsigned int  llent,
@@ -257,7 +256,7 @@ print_debug_loclists_linecodes(Dwarf_Debug dbg,
         esb_append_printf_u(&unexp,
             "ERROR: Unexpected LLE code 0x%x",
             lle_value);
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             esb_get_string(&unexp),
             DW_DLV_OK, 0);
         esb_destructor(&unexp);

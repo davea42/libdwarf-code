@@ -69,7 +69,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 glflags.DIE_overall_offset;
             glflags.DIE_CU_offset = glflags.DIE_offset;
             if (dres != DW_DLV_OK) {
-                print_error_and_continue(dbg,
+                print_error_and_continue(
                     "ERROR: reading dwarf_die_offsets", dres, *err);
                 return dres;
             }
@@ -99,14 +99,14 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 }
             } else {
                 /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
-                print_error_and_continue(dbg,
+                print_error_and_continue(
                     "ERROR from arange checking offsets "
                     "dwarf_die_offsets... fails",
                     dres, *err);
             }
         } else {
             /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
-            print_error_and_continue(dbg,
+            print_error_and_continue(
                 "ERROR from arange checking "
                 "dwarf_get_cu_die_offset_given... fails",
                 dres, *err);
@@ -114,7 +114,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         }
     } else {
         /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "ERROR: from arange checking "
             "dwarf_get_arange_cu_header_offset fails",
                 dres, *err);
@@ -136,7 +136,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         }
     } else {
         /* DW_DLV_ERROR or DW_DLV_NO_ENTRY */
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "ERROR: from arange checking "
             "dwarf_get_cu_die_offset fails",
             dres,*err);
@@ -191,7 +191,7 @@ print_aranges(Dwarf_Debug dbg,Dwarf_Error *ga_err)
         esb_destructor(&truename);
     }
     if (ares == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
+        print_error_and_continue(
             "Unable to load the .debug_aranges section.",
             ares,*ga_err);
         return ares;

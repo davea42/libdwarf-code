@@ -45,7 +45,7 @@ Portions Copyright 2007-2020 David Anderson. All rights reserved.
 /* Prints locentry descriptions for DW_LKIND_GNU_exp_list */
 
 int
-print_llex_linecodes( Dwarf_Debug dbg,
+print_llex_linecodes(
     Dwarf_Bool    checking,
     const char *  tagname,
     const char *  attrname,
@@ -212,8 +212,7 @@ print_llex_linecodes( Dwarf_Debug dbg,
         esb_append_printf_u(&unexp,
             "ERROR: Unexpected LLEX code 0x%x",
             lle_value);
-        print_error_and_continue(dbg,
-            esb_get_string(&unexp),
+        print_error_and_continue(esb_get_string(&unexp),
             DW_DLV_OK, 0);
         esb_destructor(&unexp);
         *bError = TRUE;
