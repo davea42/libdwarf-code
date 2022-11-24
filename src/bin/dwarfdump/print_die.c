@@ -112,7 +112,6 @@ static int handle_rnglists(Dwarf_Attribute attrib,
     Dwarf_Error *err);
 static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die die,
-    Dwarf_Small lkind,
     int die_indent_level,
     Dwarf_Locdesc_c exprc,
     int index,
@@ -3840,8 +3839,7 @@ Dwarf_Half tag,Dwarf_Half attr)
 
 static void
 remark_wrong_string_format(Dwarf_Half attr,
-    Dwarf_Half theform,
-    enum Dwarf_Form_Class fc UNUSEDARG)
+    Dwarf_Half theform)
 {
     char buf[VSFBUFSZ+1];
     struct esb_s m;
@@ -4483,7 +4481,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             return ml;
         }
         if (fc != DW_FORM_CLASS_STRING) {
-            remark_wrong_string_format(attr,theform,fc);
+            remark_wrong_string_format(attr,theform);
             esb_destructor(&valname);
             esb_destructor(&esb_extra);
             esb_destructor(&linkagenamestr);
@@ -4524,7 +4522,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         struct esb_s templatenamestr;
 
         if (fc != DW_FORM_CLASS_STRING) {
-            remark_wrong_string_format(attr,theform,fc);
+            remark_wrong_string_format(attr,theform);
             esb_destructor(&valname);
             esb_destructor(&esb_extra);
             return DW_DLV_NO_ENTRY;
@@ -4664,7 +4662,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         int pres = 0;
 
         if (fc != DW_FORM_CLASS_STRING) {
-            remark_wrong_string_format(attr,theform,fc);
+            remark_wrong_string_format(attr,theform);
             esb_destructor(&valname);
             esb_destructor(&esb_extra);
             return DW_DLV_NO_ENTRY;
@@ -5301,7 +5299,6 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     int             die_indent_level,
     Dwarf_Locdesc_c locdesc,  /* for 2015 interface. */
     Dwarf_Unsigned  entrycount,
-    Dwarf_Small     lkind,
     Dwarf_Addr      baseaddr,
     struct esb_s   *string_out,
     Dwarf_Error    *err)
@@ -5336,7 +5333,6 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
         int stackchange = 0;
 
         res = _dwarf_print_one_expr_op(dbg,die,
-            lkind,
             die_indent_level,locdesc,i,
             has_skip_or_branch,
             &op_branch_checking,
@@ -5461,11 +5457,9 @@ emit_op_indentation(struct esb_s *string_out,
     }
 }
 
-
 int
 _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Die   die,
-    Dwarf_Small lkind UNUSEDARG,
     int         die_indent_level,
     Dwarf_Locdesc_c exprc,
     int         index,
@@ -5671,7 +5665,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                             die_indent_level,index);
                         esb_append_printf_s(string_out,
                             "contents='%s'",(const char *)bp);
-                    } 
+                    }
                 }
             }
             break;
@@ -5737,10 +5731,10 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             } else {
                 show_contents(string_out,length,bp);
                 if (looks_like_string(length,bp)) {
-                        emit_op_indentation(string_out,
-                            die_indent_level,index);
-                        esb_append_printf_s(string_out,
-                            "contents='%s'",(const char *)bp);
+                    emit_op_indentation(string_out,
+                        die_indent_level,index);
+                    esb_append_printf_s(string_out,
+                        "contents='%s'",(const char *)bp);
                 }
             }
             }
@@ -5766,10 +5760,10 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             } else {
                 show_contents(string_out,length,bp);
                 if (looks_like_string(length,bp)) {
-                        emit_op_indentation(string_out,
-                            die_indent_level,index);
-                        esb_append_printf_s(string_out,
-                            "contents='%s'",(const char *)bp);
+                    emit_op_indentation(string_out,
+                        die_indent_level,index);
+                    esb_append_printf_s(string_out,
+                        "contents='%s'",(const char *)bp);
                 }
             }
             check_die_expr_op_basic_data(dbg,die,op_name,
@@ -6303,7 +6297,6 @@ print_location_list(Dwarf_Debug dbg,
                 Not both. */
             locentry,
             ulocentry_count, /* How many ops in this loc desc */
-            loclist_source,
             base_address,
             details,llerr);
         if (lres == DW_DLV_ERROR) {
@@ -6381,8 +6374,7 @@ formx_unsigned_and_signed_if_neg(Dwarf_Unsigned tempud,
     So we only need to a messy lookup once per type-die offset  */
 static int
 check_for_type_unsigned(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    struct esb_s *esbp UNUSEDARG)
+    Dwarf_Die die)
 {
     Dwarf_Bool is_info = 0;
     struct Helpertree_Base_s * helperbase = 0;
@@ -6409,20 +6401,16 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     }
     res = dwarf_dieoffset(die,&diegoffset,&error);
     if (res == DW_DLV_ERROR) {
-        /* esb_append(esbp,"<helper dieoffset FAIL >"); */
         dwarf_dealloc_error(dbg,error);
         return 0;
     } else if (res == DW_DLV_NO_ENTRY) {
         /* We don't know sign. */
-        /*esb_append(esbp,"<helper dieoffset NO ENTRY>"); */
         return 0;
     }
     /*  This might be wrong. See the typedieoffset check below,
         which is correct... */
     e = helpertree_find(diegoffset,helperbase);
     if (e) {
-        /*bracket_hex("<helper FOUND offset ",diegoffset,">",esbp);
-        bracket_hex("<helper FOUND val ",e->hm_val,">",esbp); */
         return e->hm_val;
     }
 
@@ -6431,31 +6419,22 @@ check_for_type_unsigned(Dwarf_Debug dbg,
 
     res = dwarf_attr(die, DW_AT_type, &attr,&error);
     if (res == DW_DLV_ERROR) {
-        /*bracket_hex("<helper dwarf_attr FAIL ",
-            diegoffset,">",esbp); */
         dwarf_dealloc_error(dbg,error);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
     }
     if (res == DW_DLV_NO_ENTRY) {
         /* We don't know sign. */
-        /*bracket_hex( "<helper dwarf_attr no entry ",
-            diegoffset,">",esbp); */
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
     }
     res = dwarf_global_formref(attr, &typedieoffset,&error);
     if (res == DW_DLV_ERROR) {
-        /*bracket_hex( "<helper global_formreff FAIL" ,
-            diegoffset,">",esbp); */
         dwarf_dealloc_attribute(attr);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
     }
     if (res == DW_DLV_NO_ENTRY) {
-        /*esb_append(esbp,"helper NO ENTRY  FAIL ");
-        bracket_hex( "<helper global_formreff NO ENTRY" ,
-            diegoffset,">",esbp); */
         dwarf_dealloc_attribute(attr);
         helpertree_add_entry(diegoffset, 0,helperbase);
         return 0;
@@ -6464,31 +6443,22 @@ check_for_type_unsigned(Dwarf_Debug dbg,
     attr = 0;
     e = helpertree_find(typedieoffset,helperbase);
     if (e) {
-        /*bracket_hex("<helper FOUND typedieoffset ",
-            typedieoffset,">",esbp);
-        bracket_hex("<helper FOUND val ",e->hm_val,">",esbp); */
         return e->hm_val;
     }
 
     res = dwarf_offdie_b(dbg,typedieoffset,is_info, &typedie,&error);
     if (res == DW_DLV_ERROR) {
-        /*bracket_hex( "<helper dwarf_offdie_b  FAIL ",
-            diegoffset,">",esbp); */
         dwarf_dealloc_error(dbg,error);
         helpertree_add_entry(diegoffset, 0,helperbase);
         helpertree_add_entry(typedieoffset, 0,helperbase);
         return 0;
     } else if (res == DW_DLV_NO_ENTRY) {
-        /*bracket_hex( "<helper dwarf_offdie_b  NO ENTRY ",
-            diegoffset,">",esbp); */
         helpertree_add_entry(diegoffset, 0,helperbase);
         helpertree_add_entry(typedieoffset, 0,helperbase);
         return 0;
     }
     res = dwarf_attr(typedie, DW_AT_encoding, &encodingattr,&error);
     if (res == DW_DLV_ERROR) {
-        /*bracket_hex( "<helper dwarf_attr typedie  FAIL",
-            diegoffset,">",esbp); */
         dwarf_dealloc_error(dbg,error);
         dwarf_dealloc_die(typedie);
         helpertree_add_entry(diegoffset, 0,helperbase);
@@ -6496,8 +6466,6 @@ check_for_type_unsigned(Dwarf_Debug dbg,
         return 0;
     }
     if (res == DW_DLV_NO_ENTRY) {
-        /*bracket_hex( "<helper dwarf_attr typedie  NO ENTRY",
-            diegoffset,">",esbp);*/
         dwarf_dealloc_die(typedie);
         helpertree_add_entry(diegoffset, 0,helperbase);
         helpertree_add_entry(typedieoffset, 0,helperbase);
@@ -6513,8 +6481,6 @@ check_for_type_unsigned(Dwarf_Debug dbg,
 
     if (res != DW_DLV_OK) {
         DROP_ERROR_INSTANCE(dbg,res,error);
-        /*bracket_hex( "<helper small encoding FAIL",
-            diegoffset,">",esbp);*/
         /* dealloc attr *first* then die */
         dwarf_dealloc_attribute(encodingattr);
         dwarf_dealloc_die(typedie);
@@ -6531,8 +6497,6 @@ check_for_type_unsigned(Dwarf_Debug dbg,
                 retval = 1;
         }
     }
-    /*bracket_hex( "<helper ENTERED die",diegoffset,">",esbp);
-    bracket_hex( "<helper ENTERED typedie",typedieoffset,">",esbp);*/
     helpertree_add_entry(diegoffset,retval,helperbase);
     helpertree_add_entry(typedieoffset, retval,helperbase);
     /* dealloc attr *first* then die */
@@ -6595,7 +6559,7 @@ formxdata_print_value(Dwarf_Debug dbg,
                 int helpertree_unsigned = 0;
 
                 helpertree_unsigned =
-                    check_for_type_unsigned(dbg,die,esbp);
+                    check_for_type_unsigned(dbg,die);
                 if (!die || !helpertree_unsigned) {
                     /* Signedness unclear. */
                     formx_unsigned_and_signed_if_neg(tempud,tempsd,

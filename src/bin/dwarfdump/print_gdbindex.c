@@ -54,8 +54,7 @@ dw_dlv_string(int res)
 }
 
 static int
-print_culist_array(Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Gdbindex  gdbindex,
+print_culist_array(Dwarf_Gdbindex  gdbindex,
     Dwarf_Unsigned *cu_list_len,
     Dwarf_Error * err)
 {
@@ -549,7 +548,7 @@ print_gdb_index(Dwarf_Debug dbg,Dwarf_Error *err)
         "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
         section_size);
 
-    res = print_culist_array(dbg,gdbindex,&culist_len,err);
+    res = print_culist_array(gdbindex,&culist_len,err);
     if (res != DW_DLV_OK) {
         dwarf_dealloc_gdbindex(gdbindex);
         return res;

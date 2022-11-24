@@ -593,7 +593,8 @@ print_search_results(void)
     fflush(stdout);
 }
 
-/* This is for dwarf_print_lines() */
+/*  This is for dwarf_print_lines(), we are not using
+    the userdata because dwarfdump does not need it. */
 static void
 printf_callback_for_libdwarf(void *userdata UNUSEDARG,
     const char *data)

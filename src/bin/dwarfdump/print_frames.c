@@ -1631,7 +1631,6 @@ print_expression_operations(Dwarf_Debug dbg,
             die_indent_level,
             locentry,
             ulocentry_count,
-            DW_LKIND_expression /* loclist_source */,
             baseaddr,
             out_string,err);
         dwarf_dealloc_loc_head_c(head);

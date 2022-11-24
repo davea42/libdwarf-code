@@ -644,8 +644,7 @@ process_line_table(Dwarf_Debug dbg,
 
 /* Here we test the interfaces into Dwarf_Line_Context. */
 static int
-print_line_context_record(Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Line_Context line_context,
+print_line_context_record(Dwarf_Line_Context line_context,
     Dwarf_Error *err)
 {
     int vres = 0;
@@ -1030,8 +1029,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         /* lres DW_DLV_OK */
         if (glflags.gf_do_print_dwarf) {
             if (line_context && glflags.verbose) {
-                lres = print_line_context_record(dbg,
-                    line_context,err);
+                lres = print_line_context_record(line_context,err);
                 if (lres != DW_DLV_OK){
                     /*  Should we issue message
                         about this call? */
@@ -1131,7 +1129,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             }
             if (line_context) {
                 if (glflags.verbose > 2) {
-                    ores = print_line_context_record(dbg,
+                    ores = print_line_context_record(
                         line_context,err);
                     if (ores != DW_DLV_OK) {
                         simple_err_return_msg_either_action(
