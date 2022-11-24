@@ -266,7 +266,7 @@ one should use
 
     dwarf_object_init_b()
     ...call libdwarf functions...
-    dwarf_finish()
+    dwarf_object_finish()
 
 and create source to provide
 functions and data for the three struct
