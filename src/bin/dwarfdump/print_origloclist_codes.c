@@ -61,7 +61,7 @@ print_original_loclist_linecodes(Dwarf_Bool    checking,
     Dwarf_Addr    hipc,
     Dwarf_Unsigned locdesc_offset,
     struct esb_s * esbp,
-    Dwarf_Bool   * bError UNUSEDARG)
+    Dwarf_Bool   * bError)
 {
     switch(lle_value) {
     case DW_LLE_base_address:

@@ -261,7 +261,7 @@ void record_tag_usage(int tag);
 void reset_usage_rate_tag_trees(void);
 
 int  print_section_groups_data(Dwarf_Debug dbg,Dwarf_Error *);
-void update_section_flags_per_groups(Dwarf_Debug dbg);
+void update_section_flags_per_groups(void);
 void groups_restore_subsidiary_flags(void);
 
 int legal_tag_attr_combination(Dwarf_Half tag,
@@ -346,7 +346,6 @@ void loc_error_check(
 int print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Half tag,
     Dwarf_Die die,
-    int die_indent_level,
     Dwarf_Unsigned dieprint_cu_goffset,
     char ** srcfiles,
     Dwarf_Signed cnt,

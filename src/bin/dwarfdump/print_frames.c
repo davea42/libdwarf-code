@@ -191,7 +191,6 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
 
             esb_constructor(&namestr);
             ares = get_attr_value(dbg, tag, cu_die,
-                /* die_indent_level */ 0,
                 cu_die_goff,attrib, srcfiles, srccnt,
                 &namestr, local_show_form_used,local_verbose,
                 &loadcuerr);

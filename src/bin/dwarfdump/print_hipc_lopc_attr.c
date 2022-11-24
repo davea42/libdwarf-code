@@ -201,7 +201,6 @@ int
 print_hipc_lopc_attribute(Dwarf_Debug dbg,
     Dwarf_Half tag,
     Dwarf_Die die,
-    int die_indent_level,
     Dwarf_Unsigned dieprint_cu_goffset,
     char ** srcfiles,
     Dwarf_Signed cnt,
@@ -281,7 +280,6 @@ print_hipc_lopc_attribute(Dwarf_Debug dbg,
         }
     }
     rv = get_attr_value(dbg, tag, die,
-        die_indent_level,
         dieprint_cu_goffset,
         attrib, srcfiles, cnt,
         &highpcstr,glflags.show_form_used,

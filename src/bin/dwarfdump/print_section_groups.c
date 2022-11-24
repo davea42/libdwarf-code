@@ -191,8 +191,7 @@ groups_restore_subsidiary_flags(void)
     changed.
     */
 void
-update_section_flags_per_groups(
-    Dwarf_Debug dbg UNUSEDARG)
+update_section_flags_per_groups(void)
 {
     if (!sec_names) {
         /*  The tables are absent. Internal logic

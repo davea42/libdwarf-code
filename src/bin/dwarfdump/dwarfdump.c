@@ -989,7 +989,7 @@ process_one_file(
             of the gf_flags here so we don't print
             section names of things we do not
             want to print. */
-        update_section_flags_per_groups(dbg);
+        update_section_flags_per_groups();
     }
     reset_overall_CU_error_data();
     if (glflags.gf_info_flag || glflags.gf_line_flag ||
@@ -1729,7 +1729,7 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
         esb_empty_string(&esb_long_cu_name);
         ares = get_attr_value(dbg, DW_TAG_compile_unit,
-            cu_die, /* die_indent */ 0, dieprint_cu_offset,
+            cu_die, dieprint_cu_offset,
             name_attr, NULL, 0, &esb_long_cu_name,
             0 /*show_form_used*/,0 /* verbose */,lerr);
         if (ares != DW_DLV_OK)  {
@@ -1797,7 +1797,7 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     }
     /*  DW_DLV_OK */
     ares = get_attr_value(dbg, DW_TAG_compile_unit,
-        cu_die,/* die_indent*/ 0, dieprint_cu_offset,
+        cu_die, dieprint_cu_offset,
         producer_attr, NULL, 0, producernameout,
         0 /*show_form_used*/,0 /* verbose */,err);
     dwarf_dealloc_attribute(producer_attr);

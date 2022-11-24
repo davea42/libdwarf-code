@@ -3063,7 +3063,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             return DW_DLV_ERROR;
         }
         res = get_attr_value(dbg, tag, die,
-            die_indent_level,
             dieprint_cu_goffset,
             attrib, srcfiles, srcfcnt,
             &specificationstr,glflags.show_form_used,
@@ -3251,7 +3250,6 @@ traverse_one_die(Dwarf_Debug dbg,
 
         esb_constructor(&bucketgroupstr);
         res = get_attr_value(dbg, tag, die,
-            die_indent_level,
             dieprint_cu_goffset,
             attrib, srcfiles,
             cnt, &bucketgroupstr,
@@ -4277,7 +4275,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         /*  For block forms, this will show block len and bytes
             and if showing form, then form shown */
         res = get_attr_value(dbg, tag, die,
-            die_indent_level,
             dieprint_cu_goffset,
             attrib, srcfiles, srcfiles_cnt, &valname,
             showform,
@@ -4386,7 +4383,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 break;
             default:
                 rv = get_attr_value(dbg, tag, die,
-                    die_indent_level,
                     dieprint_cu_goffset,
                     attrib, srcfiles, srcfiles_cnt,
                     &upperboundstr,
@@ -4414,7 +4410,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         {
             int rv  = 0;
             rv = print_hipc_lopc_attribute(dbg, tag, die,
-                die_indent_level,
                 dieprint_cu_goffset,
                 srcfiles, srcfiles_cnt,
                 attrib,
@@ -4435,7 +4430,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             int rv;
 
             rv = get_attr_value(dbg, tag,die,
-                die_indent_level,
                 dieprint_cu_goffset,attrib,
                 srcfiles, srcfiles_cnt,
                 &valname,
@@ -4475,7 +4469,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor_fixed(&linkagenamestr,linknamebuf,
             sizeof(linknamebuf));
         ml = get_attr_value(dbg, tag, die,
-            die_indent_level,
             dieprint_cu_goffset, attrib, srcfiles,
             srcfiles_cnt, &linkagenamestr, glflags.show_form_used,
             glflags.verbose,err);
@@ -4510,7 +4503,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             get_attr_value(dbg, tag, die,
-                die_indent_level,
                 dieprint_cu_goffset,attrib,
                 srcfiles, srcfiles_cnt,
                 &lesb, local_show_form,local_verbose,err);
@@ -4540,7 +4532,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor_fixed(&templatenamestr,atnamebuf,
             sizeof(atnamebuf));
         tres = get_attr_value(dbg, tag, die,
-            die_indent_level,
             dieprint_cu_goffset,attrib, srcfiles, srcfiles_cnt,
             &templatenamestr, glflags.show_form_used,
             glflags.verbose,err);
@@ -4565,7 +4556,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             tres = get_attr_value(dbg, tag, die,
-                die_indent_level,
                 dieprint_cu_goffset,attrib,
                 srcfiles, srcfiles_cnt,
                 &lesb, local_show_form,local_verbose,err);
@@ -4614,7 +4604,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             vres = get_attr_value(dbg, tag, die,
-                die_indent_level,
                 dieprint_cu_goffset,attrib,
                 srcfiles, srcfiles_cnt,
                 &lesb, local_show_form,local_verbose,err);
@@ -4645,7 +4634,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&lesb);
             sres = get_attr_value(dbg, tag, die,
-                die_indent_level,
                 dieprint_cu_goffset,attrib,
                 srcfiles, srcfiles_cnt,
                 &lesb, local_show_form_used,local_verbose,
@@ -4683,7 +4671,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
         esb_constructor(&lesb);
         pres = get_attr_value(dbg, tag, die,
-            die_indent_level,
             dieprint_cu_goffset,attrib, srcfiles, srcfiles_cnt,
             &lesb, glflags.show_form_used,glflags.verbose,
             err);
@@ -4712,7 +4699,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor(&local_e);
             pres = get_attr_value(dbg, tag, die,
-                die_indent_level,
                 dieprint_cu_goffset,attrib,
                 srcfiles, srcfiles_cnt,
                 &local_e, show_form_local,local_verbose,err);
@@ -4753,7 +4739,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_constructor_fixed(&lesb,typebuf,
             sizeof(typebuf));
         tres = get_attr_value(dbg, tag, die,
-            die_indent_level,
             dieprint_cu_goffset,attrib, srcfiles,
             srcfiles_cnt, &lesb,
             glflags.show_form_used,glflags.verbose,err);
@@ -5079,7 +5064,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             esb_constructor_fixed(&lesb,ebuf,sizeof(ebuf));
             dres = get_attr_value(dbg, tag,die,
-                die_indent_level,
                 dieprint_cu_goffset,attrib,
                 srcfiles, srcfiles_cnt, &lesb,
                 glflags.show_form_used,glflags.verbose,err);
@@ -7258,7 +7242,6 @@ check_sensible_addr_for_form(Dwarf_Debug dbg,
 int
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Die die,
-    int die_indent_level UNUSEDARG,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Attribute attrib,
     char **srcfiles, Dwarf_Signed srcfiles_cnt,

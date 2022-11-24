@@ -47,11 +47,10 @@ int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
 
 int get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Die die,
-    int die_indent_level,
     Dwarf_Off die_cu_offset,
     Dwarf_Attribute attrib,
-    char **srcfiles,
-    Dwarf_Signed cnt, struct esb_s *esbp,
+    char **srcfiles, Dwarf_Signed srcfiles_count,
+    struct esb_s *esbp,
     int show_form,int local_verbose,
     Dwarf_Error *err);
 

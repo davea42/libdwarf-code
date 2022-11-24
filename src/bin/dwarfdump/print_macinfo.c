@@ -58,8 +58,7 @@ struct macro_counts_s {
 static int
 print_one_macro_entry_detail(long i,
     char *type,
-    struct Dwarf_Macro_Details_s *mdp,
-    Dwarf_Error *err UNUSEDARG)
+    struct Dwarf_Macro_Details_s *mdp)
 {
     /* "DW_MACINFO_*: section-offset file-index [line] string\n" */
     if (glflags.gf_do_print_dwarf) {
@@ -90,8 +89,7 @@ print_one_macro_entry(long i,
     struct Dwarf_Macro_Details_s *mdp,
     struct macro_counts_s *counts,
     char ** srcfiles,
-    Dwarf_Signed srcf_count,
-    Dwarf_Error *error UNUSEDARG)
+    Dwarf_Signed srcf_count)
 {
     int res = 0;
 
@@ -99,7 +97,7 @@ print_one_macro_entry(long i,
     case 0:
         counts->mc_code_zero++;
         res = print_one_macro_entry_detail(i,
-            "DW_MACINFO_type-code-0", mdp,error);
+            "DW_MACINFO_type-code-0", mdp);
         break;
 
     case DW_MACINFO_start_file: {
@@ -118,32 +116,32 @@ print_one_macro_entry(long i,
             }
         }
         res = print_one_macro_entry_detail(i,
-            "DW_MACINFO_start_file", mdp,error);
+            "DW_MACINFO_start_file", mdp);
         break;
     }
 
     case DW_MACINFO_end_file:
         counts->mc_end_file++;
         res = print_one_macro_entry_detail(i,
-            "DW_MACINFO_end_file  ", mdp,error);
+            "DW_MACINFO_end_file  ", mdp);
         break;
 
     case DW_MACINFO_vendor_ext:
         counts->mc_extension++;
         res = print_one_macro_entry_detail(i,
-            "DW_MACINFO_vendor_ext", mdp,error);
+            "DW_MACINFO_vendor_ext", mdp);
         break;
 
     case DW_MACINFO_define:
         counts->mc_define++;
         res = print_one_macro_entry_detail(i,
-            "DW_MACINFO_define    ", mdp,error);
+            "DW_MACINFO_define    ", mdp);
         break;
 
     case DW_MACINFO_undef:
         counts->mc_undef++;
         res = print_one_macro_entry_detail(i,
-            "DW_MACINFO_undef     ", mdp,error);
+            "DW_MACINFO_undef     ", mdp);
         break;
 
     default:
@@ -155,7 +153,7 @@ print_one_macro_entry(long i,
             esb_append_printf_u(&typeb,
                 "DW_MACINFO_0x%x, of unknown type", mdp->dmd_type);
             print_one_macro_entry_detail(i,
-                esb_get_string(&typeb), mdp,error);
+                esb_get_string(&typeb), mdp);
             esb_destructor(&typeb);
         }
         res = DW_DLV_OK;
@@ -249,7 +247,7 @@ print_macinfo_by_offset(Dwarf_Debug dbg,
     for (i = 0; i < count; i++) {
         struct Dwarf_Macro_Details_s *mdp = &maclist[i];
         print_one_macro_entry(i, mdp, &counts,
-            srcfiles,srcf_count,error);
+            srcfiles,srcf_count);
     }
 
     if (counts.mc_start_file == 0) {
