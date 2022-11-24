@@ -196,14 +196,6 @@ macrocheck_map_destroy(void *map)
 }
 
 void
-add_macro_import_sup(void **base UNUSEDARG,
-    Dwarf_Unsigned offset UNUSEDARG)
-{
-    /* FIXME */
-    return;
-}
-
-void
 add_macro_import(void **base,
     Dwarf_Bool is_primary,
     Dwarf_Unsigned offset,

@@ -107,7 +107,6 @@ void add_macro_import(void **base,Dwarf_Bool is_primary,
     Dwarf_Unsigned offset,
     Dwarf_Unsigned linenum,
     unsigned mafile_file_number);
-void add_macro_import_sup(void **base,Dwarf_Unsigned offset);
 void add_macro_area_len(void **base, Dwarf_Unsigned offset,
     Dwarf_Unsigned len);
 

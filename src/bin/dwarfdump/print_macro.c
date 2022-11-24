@@ -996,7 +996,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 return lres;
             }
 #if 0
-            add_macro_import_sup(&macro_check_tree,offset);
+            add_macro_import_sup();
                 /* The supplementary object file is not available,
                 So we cannot check the import references
                 or know the size. As of December 2020 */

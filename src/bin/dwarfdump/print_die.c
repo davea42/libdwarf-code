@@ -2642,9 +2642,9 @@ do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
 /*  Always returns DW_DLV_OK.
     Expected attr is DW_AT_decl_file or DW_AT_call_file */
 static int
-turn_file_num_to_string(Dwarf_Debug dbg UNUSEDARG,
+turn_file_num_to_string(Dwarf_Debug dbg,
     Dwarf_Die die,
-    Dwarf_Attribute attrib UNUSEDARG,
+    Dwarf_Attribute attrib,
     Dwarf_Half theform,
     Dwarf_Half dwversion,
     Dwarf_Unsigned filenum,/* decl_file number */
@@ -2757,7 +2757,7 @@ turn_file_num_to_string(Dwarf_Debug dbg UNUSEDARG,
 }
 
 static void
-append_useful_die_name(Dwarf_Debug dbg UNUSEDARG,
+append_useful_die_name(Dwarf_Debug dbg,
     Dwarf_Die die,
     char **srcfiles,
     Dwarf_Signed srcfiles_cnt,
@@ -2814,7 +2814,8 @@ append_useful_die_name(Dwarf_Debug dbg UNUSEDARG,
     dwarf_dealloc_attribute(lattr);
     lattr = 0;
     turn_file_num_to_string(dbg,die,
-        nattr, nattr_form,
+        nattr,
+        nattr_form,
         version,filenum, srcfiles,srcfiles_cnt,
         outstr,
         err);
@@ -7819,7 +7820,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     if (attr == DW_AT_decl_file ||
                         attr == DW_AT_call_file) {
                         turn_file_num_to_string(dbg,die,
-                            attrib,theform,
+                            attrib,
+                            theform,
                             dwversion,tempud,
                             srcfiles, srcfiles_cnt,esbp,err);
                         /*  Validate integrity of file indices
