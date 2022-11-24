@@ -1028,8 +1028,7 @@ process_one_file(
                     &macro_check_tree,
                     /* DWARF5 */ TRUE,
                     glflags.section_high_offsets_global->
-                        debug_macro_size,
-                    &err);
+                        debug_macro_size);
             }
         }
         if (glflags.gf_check_macros) {
@@ -1039,8 +1038,7 @@ process_one_file(
                     &macinfo_check_tree,
                     /* DWARF5 */ FALSE,
                     glflags.section_high_offsets_global->
-                        debug_macinfo_size,
-                    &err);
+                        debug_macinfo_size);
             }
         }
         clear_macrocheck_statistics(&macro_check_tree);

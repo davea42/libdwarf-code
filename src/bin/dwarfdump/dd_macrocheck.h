@@ -116,7 +116,7 @@ void mark_macro_offset_printed(void **base, Dwarf_Unsigned offset);
 
 int print_macrocheck_statistics(const char *name,void **basep,
     int isdwarf5,
-    Dwarf_Unsigned section_size,Dwarf_Error *err);
+    Dwarf_Unsigned section_size);
 void clear_macrocheck_statistics(void **basep);
 
 macfile_entry * macfile_from_array_index( unsigned index);

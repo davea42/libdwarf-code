@@ -91,7 +91,6 @@ static int traverse_attribute(Dwarf_Debug dbg,
     Dwarf_Off dieprint_cu_goffset,
     Dwarf_Bool is_info,
     Dwarf_Half attr, Dwarf_Attribute attr_in,
-    Dwarf_Bool print_else_name_match,
     char **srcfiles, Dwarf_Signed srcfiles_cnt,
     int die_indent_level,
     Dwarf_Error * err);
@@ -695,9 +694,7 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
 }
 
 static void
-print_cu_hdr_cudie(Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Die cudie UNUSEDARG,
-    Dwarf_Unsigned overall_offset,
+print_cu_hdr_cudie(Dwarf_Unsigned overall_offset,
     Dwarf_Unsigned offset )
 {
     struct Dwarf_Debug_Fission_Per_CU_s fission_data;
@@ -2067,7 +2064,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             die_stack[die_indent_level].already_printed_ = TRUE;
         }
         if (die_indent_level == 0) {
-            print_cu_hdr_cudie(dbg,die, overall_offset, offset);
+            print_cu_hdr_cudie(overall_offset, offset);
         } else if (local_symbols_already_began == FALSE &&
             die_indent_level == 1 && !glflags.dense) {
 
@@ -3003,7 +3000,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Bool is_info,
     Dwarf_Half attr,
     Dwarf_Attribute attr_in,
-    Dwarf_Bool print_else_name_match UNUSEDARG,
     char **srcfiles, Dwarf_Signed srcfcnt,
     int die_indent_level,
     Dwarf_Error *err)
@@ -3219,7 +3215,6 @@ traverse_one_die(Dwarf_Debug dbg,
     Dwarf_Off overall_offset = 0;
     Dwarf_Signed atcnt = 0;
     int res = 0;
-    Dwarf_Bool print_else_name_match = FALSE;
 
     res = dwarf_tag(die, &tag, err);
     if (res != DW_DLV_OK) {
@@ -3316,7 +3311,7 @@ traverse_one_die(Dwarf_Debug dbg,
                     is_info,
                     attr,
                     atlist[i],
-                    print_else_name_match, srcfiles, cnt,
+                    srcfiles, cnt,
                     die_indent_level,err);
                 if (ares == DW_DLV_ERROR) {
                     dealloc_local_atlist(dbg,atlist,atcnt);

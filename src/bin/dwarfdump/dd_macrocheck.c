@@ -362,8 +362,7 @@ warnprimeandsecond(struct Macrocheck_Map_Entry_s *r)
 int
 print_macrocheck_statistics(const char *name,void **tsbase,
     int isdwarf5,
-    Dwarf_Unsigned section_size,
-    Dwarf_Error * err UNUSEDARG)
+    Dwarf_Unsigned section_size)
 {
     Dwarf_Unsigned count = 0;
     Dwarf_Unsigned lowest = -1ll;

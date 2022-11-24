@@ -578,10 +578,7 @@ destruct_abbrev_array(void)
 */
 static Dwarf_Unsigned
 check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
-    Dwarf_Unsigned last_abbrev_code,
-    Dwarf_Unsigned l_abbrev_array_size UNUSEDARG,
-    Dwarf_Unsigned ev_entry_count UNUSEDARG,
-    Dwarf_Unsigned total_abbrevs_counted UNUSEDARG)
+    Dwarf_Unsigned last_abbrev_code)
 {
     char buf[128];
 
@@ -770,9 +767,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                 /* Valid abbreviation code. We hope. */
                 Dwarf_Unsigned abhigh = check_abbrev_num_sequence(
                     abbrev_code,
-                    last_abbrev_code,
-                    abbrev_array_size,abbrev_entry_count,
-                    CU_abbrev_count);
+                    last_abbrev_code);
                 if (abhigh >= abbrev_array_size) {
                     /*  It is a new high, but is not outrageous. */
                     while (abbrev_code >= abbrev_array_size) {
