@@ -142,19 +142,6 @@ endif()
 
 
 if (DO_TESTING)
-    set_source_group(SECTIONBITMAPS_SOURCES "Source Files"
-        ${CMAKE_SOURCE_DIR}/src/bin/dwarfdump/dd_section_bitmaps.c
-        ${CMAKE_SOURCE_DIR}/test/test_section_bitmaps.c )
-    add_executable(selfsectionbitmaps ${SECTIONBITMAPS_SOURCES})
-    target_compile_options(selfsectionbitmaps PRIVATE ${DW_FWALL})
-    target_compile_options(selfsectionbitmaps PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/lib/libdwarf")
-    target_compile_options(selfsectionbitmaps PRIVATE
-        "-I${CMAKE_SOURCE_DIR}/src/bin/dwarfdump")
-    add_test(NAME selfsectionbitmaps COMMAND selfsectionbitmaps)
-endif()
-
-if (DO_TESTING)
     set_source_group(TESTLEB "Source Files" 
         ${CMAKE_SOURCE_DIR}/test/test_dwarf_leb.c 
         ${CMAKE_SOURCE_DIR}/src/lib/libdwarf/dwarf_leb.c )

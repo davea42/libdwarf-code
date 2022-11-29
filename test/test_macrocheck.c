@@ -36,7 +36,6 @@ main(void)
     void * base = 0;
     Dwarf_Unsigned count = 0;
     int basefailcount = 0;
-    Dwarf_Error err = 0;
     int isdwarf5=FALSE;
 
     /* Test 1 */
@@ -46,7 +45,7 @@ main(void)
         printf("FAIL: expect count 1, got %" DW_PR_DUu "\n",count);
         ++failcount;
     }
-    print_macrocheck_statistics("test1",&base,isdwarf5,2000,&err);
+    print_macrocheck_statistics("test1",&base,isdwarf5,2000);
 
     /* Test two */
     add_macro_area_len(&base,200,100);
@@ -57,7 +56,7 @@ main(void)
         printf("FAIL: expect count 2, got %" DW_PR_DUu "\n",count);
         ++failcount;
     }
-    print_macrocheck_statistics("test 2",&base,isdwarf5,2000,&err);
+    print_macrocheck_statistics("test 2",&base,isdwarf5,2000);
     clear_macrocheck_statistics(&base);
 
     /* Test three */
@@ -78,7 +77,7 @@ main(void)
     }
     printf("\n  Expect an ERROR about overlap with "
         "the end of section\n");
-    print_macrocheck_statistics("test 3",&base,isdwarf5,2000,&err);
+    print_macrocheck_statistics("test 3",&base,isdwarf5,2000);
     clear_macrocheck_statistics(&base);
     if ((basefailcount+1) != failcount) {
         printf("FAIL: Found no error in test 3 checking!\n");
@@ -102,7 +101,7 @@ main(void)
         "  primaries"
         " and a secondary\n");
     printf( "  and Expect an ERROR about crazy overlap 60\n\n");
-    print_macrocheck_statistics("test 4",&base,isdwarf5,2000,&err);
+    print_macrocheck_statistics("test 4",&base,isdwarf5,2000);
     clear_macrocheck_statistics(&base);
     if ((basefailcount + 3) != failcount) {
         printf("FAIL: Found wrong errors in test 4 checking!\n");

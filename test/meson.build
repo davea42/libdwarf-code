@@ -47,10 +47,6 @@ tests = [
    '../src/bin/dwarfdump/dd_tsearchbal.c'
   ],
   [
-   'test_section_bitmaps.c',
-   '../src/bin/dwarfdump/dd_section_bitmaps.c'
-  ],
-  [
    'test_dwarf_leb.c',
    '../src/lib/libdwarf/dwarf_leb.c'
   ],

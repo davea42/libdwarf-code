@@ -42,8 +42,6 @@ MAINTAINERCLEANFILES = Makefile.in\
   test_objectaccess.trs \
   test_safestrcpy.log \
   test_safestrcpy.trs \
-  test_sectionbitmaps.log \
-  test_sectionbitmaps.trs \
   test_sanitized.log \
   test_sanitized.trs \
   test_testesb.log \
