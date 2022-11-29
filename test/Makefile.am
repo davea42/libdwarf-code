@@ -64,7 +64,6 @@ TESTS = test_canonical  \
   test_makenametest \
   test_regex \
   test_safestrcpy \
-  test_sectionbitmaps \
   test_testesb \
   test_sanitized \
   test_tied
@@ -82,7 +81,6 @@ check_PROGRAMS = test_canonical \
   test_makenametest \
   test_regex \
   test_safestrcpy \
-  test_sectionbitmaps \
   test_testesb \
   test_sanitized \
   test_tied
@@ -208,14 +206,6 @@ test_safestrcpy_CPPFLAGS = \
 -I$(top_srcdir) -I$(top_builddir) \
 -I$(top_srcdir)/src/lib/libdwarf
 
-test_sectionbitmaps_SOURCES = test_section_bitmaps.c \
-    $(top_srcdir)/src/bin/dwarfdump/dd_section_bitmaps.c
-test_sectionbitmaps_CFLAGS = $(DWARF_CFLAGS_WARN)
-test_sectionbitmaps_CPPFLAGS =  -DTESTING \
--I$(top_srcdir) -I$(top_builddir) \
--I$(top_srcdir)/src/bin/dwarfdump \
--I$(top_srcdir)/src/lib/libdwarf
-
 test_testesb_SOURCES = test_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_esb.c \
     $(top_srcdir)/src/bin/dwarfdump/dd_tsearchbal.c
@@ -286,7 +276,6 @@ test_jitreaderdiff.sh \
 test_makename.c \
 meson.build \
 README.testcases \
-test_section_bitmaps.c \
 test_dwarfstring.c \
 test_errmsglist.c \
 test_esb.c \
