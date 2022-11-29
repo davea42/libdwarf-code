@@ -26,7 +26,7 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
     print_static_vars.c print_strings.c 
     print_tag_attributes_usage.c print_types.c 
     print_weaknames.c  
-    dd_sanitized.c dd_section_bitmaps.c dd_strstrnocase.c 
+    dd_sanitized.c dd_strstrnocase.c 
     dd_true_section_name.c dd_uri.c dd_getopt.c dd_makename.c 
     dd_naming.c dd_esb.c dd_tsearchbal.c)
 	
@@ -47,7 +47,7 @@ set_source_group(HEADERS "Header Files"
   dd_macrocheck.h dd_defined_types.h
   dd_sanitized.h
   dd_naming.h dd_makename.h dd_tsearchbal.h print_frames.h 
-  dd_section_bitmaps.h dd_uri.h
+  dd_uri.h
   ../../lib/libdwarf/libdwarf_private.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files"

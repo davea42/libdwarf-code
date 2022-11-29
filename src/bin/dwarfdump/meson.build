@@ -51,7 +51,6 @@ dwarfdump_src = [
   'print_types.c',
   'print_weaknames.c',
   'dd_sanitized.c',
-  'dd_section_bitmaps.c',
   'dd_strstrnocase.c',
   'dd_true_section_name.c',
   'dd_uri.c',

@@ -47,7 +47,6 @@
 #include "dd_esb.h"                /* For flexible string buffer. */
 #include "dd_sanitized.h"
 #include "dd_tag_common.h"
-#include "dd_section_bitmaps.h"
 #include "dd_command_options.h"
 #include "dd_compiler_info.h"
 #include "dd_regex.h"
@@ -1217,14 +1216,12 @@ void arg_elf(void)
 {
     /* Display header and all sections info */
     glflags.gf_header_flag = TRUE;
-    set_all_sections_on();
 }
 
 /*  Option '-Ea' */
 void arg_elf_abbrev(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_ABBREV);
 }
 
 /*  Option '-Ed' */
@@ -1232,46 +1229,36 @@ void arg_elf_default(void)
 {
     /* case 'd', use the default section set */
     glflags.gf_header_flag = TRUE;
-    set_all_section_defaults();
 }
 
 /*  Option '-Ef' */
 void arg_elf_frames(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_FRAME);
 }
 
 /*  Option '-Eh' */
 void arg_elf_header(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_HEADER);
 }
 
 /*  Option '-Ei' */
 void arg_elf_info(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_INFO);
-    enable_section_map_entry(DW_HDR_DEBUG_TYPES);
 }
 
 /*  Option '-EI' */
 void arg_elf_fission(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_GDB_INDEX);
-    enable_section_map_entry(DW_HDR_DEBUG_CU_INDEX);
-    enable_section_map_entry(DW_HDR_DEBUG_TU_INDEX);
-    enable_section_map_entry(DW_HDR_DEBUG_NAMES);
 }
 
 /*  Option '-El' */
 void arg_elf_line(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_LINE);
 }
 
 /*  Option '-Em' */
@@ -1279,57 +1266,48 @@ void arg_elf_macinfo(void)
 {
     /*  For both old macinfo and dwarf5 macro */
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_MACINFO);
 }
 
 /*  Option '-Eo' */
 void arg_elf_loc(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_LOC);
 }
 
 /*  Option '-Ep' */
 void arg_elf_pubnames(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_PUBNAMES);
 }
 
 /*  Option '-Er' */
 void arg_elf_aranges(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_ARANGES);
 }
 
 /*  Option '-ER' */
 void arg_elf_ranges(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_RANGES);
-    enable_section_map_entry(DW_HDR_DEBUG_RNGLISTS);
 }
 
 /*  Option '-Es' */
 void arg_elf_strings(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_STR);
 }
 
 /*  Option '-Et' */
 void arg_elf_pubtypes(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_DEBUG_PUBTYPES);
 }
 
 /*  Option '-Ex' */
 void arg_elf_text(void)
 {
     glflags.gf_header_flag = TRUE;
-    enable_section_map_entry(DW_HDR_TEXT);
 }
 
 /*  Option '-f' */
@@ -1858,7 +1836,6 @@ void arg_o_multiple_selection(void)
 void arg_reloc(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    set_all_reloc_sections_on();
 }
 
 /*  Option '-oa' */
@@ -1867,59 +1844,48 @@ void arg_reloc_abbrev(void)
     /*  Case a has no effect, no relocations can point out
         of the abbrev section. */
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_ABBREV);
 }
 
 /*  Option '-of' */
 void arg_reloc_frames(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_FRAME);
 }
 
 /*  Option '-oi' */
 void arg_reloc_info(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_INFO);
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_TYPES);
 }
 
 /*  Option '-ol' */
 void arg_reloc_line(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_LINE);
 }
 
 /*  Option '-oo' */
 void arg_reloc_loc(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_LOC);
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_LOCLISTS);
 }
 
 /*  Option '-op' */
 void arg_reloc_pubnames(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_PUBNAMES);
 }
 
 /*  Option '-or' */
 void arg_reloc_aranges(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_ARANGES);
 }
 
 /*  Option '-oR' */
 void arg_reloc_ranges(void)
 {
     glflags.gf_reloc_flag = TRUE;
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_RANGES);
-    enable_reloc_map_entry(DW_SECTION_REL_DEBUG_RNGLISTS);
 }
 
 /*  Option '-O' */
