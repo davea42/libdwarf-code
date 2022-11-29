@@ -327,23 +327,6 @@ static void arg_check_usage(void);
 static void arg_check_usage_extended(void);
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-static void arg_elf(void);
-static void arg_elf_abbrev(void);
-static void arg_elf_aranges(void);
-static void arg_elf_default(void);
-static void arg_elf_fission(void);
-static void arg_elf_frames(void);
-static void arg_elf_header(void);
-static void arg_elf_info(void);
-static void arg_elf_line(void);
-static void arg_elf_loc(void);
-static void arg_elf_macinfo(void);
-static void arg_elf_pubnames(void);
-static void arg_elf_pubtypes(void);
-static void arg_elf_ranges(void);
-static void arg_elf_strings(void);
-static void arg_elf_text(void);
-
 static void arg_file_abi(void);
 static void arg_file_line5(void);
 static void arg_file_name(void);
@@ -438,7 +421,6 @@ static void arg_show_dwarfdump_conf(void);
 static void arg_show_args(void);
 
 static void arg_c_multiple_selection(void);
-static void arg_E_multiple_selection(void);
 static void arg_h_multiple_selection(void);
 static void arg_l_multiple_selection(void);
 static void arg_k_multiple_selection(void);
@@ -724,23 +706,6 @@ OPT_CHECK_USAGE,              /* -ku  --check-usage         */
 OPT_CHECK_USAGE_EXTENDED,     /* -kuf --check-usage-extended*/
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-/* Print ELF sections header                         */
-OPT_ELF,                      /* -E   --elf          */
-OPT_ELF_ABBREV,               /* -Ea  --elf-abbrev   */
-OPT_ELF_ARANGES,              /* -Er  --elf-aranges  */
-OPT_ELF_DEFAULT,              /* -Ed  --elf-default  */
-OPT_ELF_FISSION,              /* -EI  --elf-fission  */
-OPT_ELF_FRAMES,               /* -Ef  --elf-frames   */
-OPT_ELF_HEADER,               /* -Eh  --elf-header   */
-OPT_ELF_INFO,                 /* -Ei  --elf-info     */
-OPT_ELF_LINE,                 /* -El  --elf-line     */
-OPT_ELF_LOC,                  /* -Eo  --elf-loc      */
-OPT_ELF_MACINFO,              /* -Em  --elf-macinfo  */
-OPT_ELF_PUBNAMES,             /* -Ep  --elf-pubnames */
-OPT_ELF_PUBTYPES,             /* -Et  --elf-pubtypes */
-OPT_ELF_RANGES,               /* -ER  --elf-ranges   */
-OPT_ELF_STRINGS,              /* -Es  --elf-strings  */
-OPT_ELF_TEXT,                 /* -Ex  --elf-text    */
 /* File Specifications    */
 OPT_FILE_ABI,          /* -x abi=<abi>    --file-abi=<abi>     */
 OPT_FILE_LINE5,        /* -x line5=<val>  --file-line5=<val>   */
@@ -804,17 +769,6 @@ OPT_PRINT_STRINGS,            /* -s   --print-strings     */
 OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets */
 OPT_PRINT_TYPE,               /* -y   --print-type        */
 OPT_PRINT_WEAKNAME,           /* -w   --print-weakname    */
-
-/* Print Relocations Info                                 */
-OPT_RELOC,                    /* -o   --reloc             */
-OPT_RELOC_ABBREV,             /* -oa  --reloc-abbrev      */
-OPT_RELOC_ARANGES,            /* -or  --reloc-aranges     */
-OPT_RELOC_FRAMES,             /* -of  --reloc-frames      */
-OPT_RELOC_INFO,               /* -oi  --reloc-info        */
-OPT_RELOC_LINE,               /* -ol  --reloc-line        */
-OPT_RELOC_LOC,                /* -oo  --reloc-loc         */
-OPT_RELOC_PUBNAMES,           /* -op  --reloc-pubnames    */
-OPT_RELOC_RANGES,             /* -oR  --reloc-ranges      */
 
 /* debuglink options */
 OPT_NO_FOLLOW_DEBUGLINK,     /* --no-follow-debuglink */
@@ -882,24 +836,6 @@ static struct dwoption longopts[] =  {
 {"check-usage",          dwno_argument, 0, OPT_CHECK_USAGE         },
 {"check-usage-extended", dwno_argument, 0, OPT_CHECK_USAGE_EXTENDED},
 #endif /* HAVE_USAGE_TAG_ATTR */
-
-/* Print ELF sections header. */
-{"elf",          dwno_argument, 0, OPT_ELF         },
-{"elf-abbrev",   dwno_argument, 0, OPT_ELF_ABBREV  },
-{"elf-aranges",  dwno_argument, 0, OPT_ELF_ARANGES },
-{"elf-default",  dwno_argument, 0, OPT_ELF_DEFAULT },
-{"elf-fission",  dwno_argument, 0, OPT_ELF_FISSION },
-{"elf-frames",   dwno_argument, 0, OPT_ELF_FRAMES  },
-{"elf-header",   dwno_argument, 0, OPT_ELF_HEADER  },
-{"elf-info",     dwno_argument, 0, OPT_ELF_INFO    },
-{"elf-line",     dwno_argument, 0, OPT_ELF_LINE    },
-{"elf-loc",      dwno_argument, 0, OPT_ELF_LOC     },
-{"elf-macinfo",  dwno_argument, 0, OPT_ELF_MACINFO },
-{"elf-pubnames", dwno_argument, 0, OPT_ELF_PUBNAMES},
-{"elf-pubtypes", dwno_argument, 0, OPT_ELF_PUBTYPES},
-{"elf-ranges",   dwno_argument, 0, OPT_ELF_RANGES  },
-{"elf-strings",  dwno_argument, 0, OPT_ELF_STRINGS },
-{"elf-text",     dwno_argument, 0, OPT_ELF_TEXT    },
 
 /* File Specifications. */
 {"file-abi",    dwrequired_argument, 0, OPT_FILE_ABI   },
@@ -979,17 +915,6 @@ OPT_FORMAT_SUPPRESS_OFFSETS },
 {"print-str-offsets", dwno_argument, 0, OPT_PRINT_STR_OFFSETS},
 {"print-type",        dwno_argument, 0, OPT_PRINT_TYPE       },
 {"print-weakname",    dwno_argument, 0, OPT_PRINT_WEAKNAME   },
-
-/* Print Relocations Info. */
-{"reloc",          dwno_argument, 0, OPT_RELOC         },
-{"reloc-abbrev",   dwno_argument, 0, OPT_RELOC_ABBREV  },
-{"reloc-aranges",  dwno_argument, 0, OPT_RELOC_ARANGES },
-{"reloc-frames",   dwno_argument, 0, OPT_RELOC_FRAMES  },
-{"reloc-info",     dwno_argument, 0, OPT_RELOC_INFO    },
-{"reloc-line",     dwno_argument, 0, OPT_RELOC_LINE    },
-{"reloc-loc",      dwno_argument, 0, OPT_RELOC_LOC     },
-{"reloc-pubnames", dwno_argument, 0, OPT_RELOC_PUBNAMES},
-{"reloc-ranges",   dwno_argument, 0, OPT_RELOC_RANGES  },
 
 /*  GNU debuglink options */
 {"no-follow-debuglink", dwno_argument, 0,OPT_NO_FOLLOW_DEBUGLINK},
@@ -1180,134 +1105,6 @@ void arg_format_ellipsis(void)
 {
     suppress_check_dwarf();
     glflags.ellipsis = TRUE;
-}
-
-/*  Option '-E[...]' */
-void arg_E_multiple_selection(void)
-{
-    /* Object Header information (but maybe really print) */
-    /* Selected printing of section info */
-    if (dwoptarg) {
-        switch (dwoptarg[0]) {
-        case 'a': arg_elf_abbrev();      break;
-        case 'd': arg_elf_default();     break;
-        case 'f': arg_elf_frames();      break;
-        case 'h': arg_elf_header();      break;
-        case 'i': arg_elf_info();        break;
-        case 'I': arg_elf_fission();     break;
-        case 'l': arg_elf_line();        break;
-        case 'm': arg_elf_macinfo();     break;
-        case 'o': arg_elf_loc();         break;
-        case 'p': arg_elf_pubnames();    break;
-        case 'r': arg_elf_aranges();     break;
-        case 'R': arg_elf_ranges();      break;
-        case 's': arg_elf_strings();     break;
-        case 't': arg_elf_pubtypes();    break;
-        case 'x': arg_elf_text();        break;
-        default: arg_usage_error = TRUE; break;
-        }
-    } else {
-        arg_elf();
-    }
-}
-
-/*  Option '-E' */
-void arg_elf(void)
-{
-    /* Display header and all sections info */
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Ea' */
-void arg_elf_abbrev(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Ed' */
-void arg_elf_default(void)
-{
-    /* case 'd', use the default section set */
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Ef' */
-void arg_elf_frames(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Eh' */
-void arg_elf_header(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Ei' */
-void arg_elf_info(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-EI' */
-void arg_elf_fission(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-El' */
-void arg_elf_line(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Em' */
-void arg_elf_macinfo(void)
-{
-    /*  For both old macinfo and dwarf5 macro */
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Eo' */
-void arg_elf_loc(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Ep' */
-void arg_elf_pubnames(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Er' */
-void arg_elf_aranges(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-ER' */
-void arg_elf_ranges(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Es' */
-void arg_elf_strings(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Et' */
-void arg_elf_pubtypes(void)
-{
-    glflags.gf_header_flag = TRUE;
-}
-
-/*  Option '-Ex' */
-void arg_elf_text(void)
-{
-    glflags.gf_header_flag = TRUE;
 }
 
 /*  Option '-f' */
@@ -2517,7 +2314,6 @@ set_command_options(int argc, char *argv[])
         case 'd': arg_format_dense();            break;
         case 'D': arg_format_suppress_offsets(); break;
         case 'e': arg_format_ellipsis();         break;
-        case 'E': arg_E_multiple_selection();    break;
         case 'f': arg_print_debug_frame();       break;
         case 'F': arg_print_gnu_frame();         break;
         case 'g': arg_format_loc();              break;
@@ -2589,24 +2385,6 @@ set_command_options(int argc, char *argv[])
         case OPT_CHECK_USAGE_EXTENDED: arg_check_usage_extended();
             break;
 #endif /* HAVE_USAGE_TAG_ATTR */
-
-        /* Print ELF sections header. */
-        case OPT_ELF:           arg_elf();          break;
-        case OPT_ELF_ABBREV:    arg_elf_abbrev();   break;
-        case OPT_ELF_ARANGES:   arg_elf_aranges();  break;
-        case OPT_ELF_DEFAULT:   arg_elf_default();  break;
-        case OPT_ELF_FISSION:   arg_elf_fission();  break;
-        case OPT_ELF_FRAMES:    arg_elf_frames();   break;
-        case OPT_ELF_HEADER:    arg_elf_header();   break;
-        case OPT_ELF_INFO:      arg_elf_info();     break;
-        case OPT_ELF_LINE:      arg_elf_line();     break;
-        case OPT_ELF_LOC:       arg_elf_loc();      break;
-        case OPT_ELF_MACINFO:   arg_elf_macinfo();  break;
-        case OPT_ELF_PUBNAMES:  arg_elf_pubnames(); break;
-        case OPT_ELF_PUBTYPES:  arg_elf_pubtypes(); break;
-        case OPT_ELF_RANGES:    arg_elf_ranges();   break;
-        case OPT_ELF_STRINGS:   arg_elf_strings();  break;
-        case OPT_ELF_TEXT:      arg_elf_text();     break;
 
         /* File Specifications. */
         case OPT_FILE_ABI:    arg_file_abi();    break;
@@ -2686,17 +2464,6 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_STR_OFFSETS: arg_print_str_offsets(); break;
         case OPT_PRINT_TYPE:        arg_print_types();       break;
         case OPT_PRINT_WEAKNAME:    arg_print_weaknames();   break;
-
-        /* Print Relocations Info (only with libelf). */
-        case OPT_RELOC:          arg_reloc();          break;
-        case OPT_RELOC_ABBREV:   arg_reloc_abbrev();   break;
-        case OPT_RELOC_ARANGES:  arg_reloc_aranges();  break;
-        case OPT_RELOC_FRAMES:   arg_reloc_frames();   break;
-        case OPT_RELOC_INFO:     arg_reloc_info();     break;
-        case OPT_RELOC_LINE:     arg_reloc_line();     break;
-        case OPT_RELOC_LOC:      arg_reloc_loc();      break;
-        case OPT_RELOC_PUBNAMES: arg_reloc_pubnames(); break;
-        case OPT_RELOC_RANGES:   arg_reloc_ranges();   break;
 
         /* debuglink attributes */
         case OPT_NO_FOLLOW_DEBUGLINK: arg_no_follow_debuglink();break;
