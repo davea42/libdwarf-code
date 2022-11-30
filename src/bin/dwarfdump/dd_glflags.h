@@ -103,7 +103,7 @@ struct section_high_offsets_s {
 };
 
 /* Options to enable debug tracing. */
-#define MAX_TRACE_LEVEL 10
+#define MAX_TRACE_LEVEL 3
 
 struct glflags_s {
 
@@ -395,26 +395,15 @@ void reset_overall_CU_error_data(void);
 Dwarf_Bool cu_data_is_set(void);
 
 /*  Shortcuts for additional trace options */
-#define DUMP_OPTIONS                0   /* Dump options. */
-#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
+#define DUMP_OPTIONS        0   /* Dump options and stop. */
+#define DUMP_RANGES_INFO    1   /* Dump RangesInfo Table. */
+#define DUMP_LINKONCE_INFO  2   /* Dump Linkonce Table. */
+#define DUMP_VISITED_INFO   3   /* Dump Visited Info. */
 
-/* Dump Location (.debug_loc) Info. */
-#define DUMP_LOCATION_SECTION_INFO  2
-
-/* Dump Ranges (.debug_ranges) Info. */
-#define DUMP_RANGES_SECTION_INFO    3
-
-#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
-#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
-
-#define dump_options                glflags.nTrace[DUMP_OPTIONS]
-#define dump_ranges_info            glflags.nTrace[DUMP_RANGES_INFO]
-#define dump_location_section_info \
-    glflags.nTrace[DUMP_LOCATION_SECTION_INFO]
-#define dump_ranges_section_info   \
-    glflags.nTrace[DUMP_RANGES_SECTION_INFO]
-#define dump_linkonce_info          glflags.nTrace[DUMP_LINKONCE_INFO]
-#define dump_visited_info           glflags.nTrace[DUMP_VISITED_INFO]
+#define dump_options        glflags.nTrace[DUMP_OPTIONS]
+#define dump_ranges_info    glflags.nTrace[DUMP_RANGES_INFO]
+#define dump_linkonce_info  glflags.nTrace[DUMP_LINKONCE_INFO]
+#define dump_visited_info   glflags.nTrace[DUMP_VISITED_INFO]
 
 /*  Section IDs. See also libdwarfp/pro_opaque.h DEBUG_INFO etc
     as we arbitrarily use the same numbering here.

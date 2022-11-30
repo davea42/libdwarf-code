@@ -445,12 +445,11 @@ static int arg_option = 0;
 
 static const char *usage_debug_text[] = {
 "Usage: DwarfDump <debug_options>",
-"options:\t-0\tprint this information",
-"\t\t-1\tDump RangesInfo Table",
-"\t\t-2\tDump Location (.debug_loc) Info",
-"\t\t-3\tDump Ranges (.debug_ranges) Info",
-"\t\t-4\tDump Linkonce Table",
-"\t\t-5\tDump Visited Info",
+"  These only useful with -ka (and related checking options)",
+"  --trace=0 print this message and stop ",
+"  --trace=1 Dump RangesInfo Table",
+"  --trace=2 Dump Linkonce Table (linkonce section)",
+"  --trace=3 Dump Visited Info",
 ""
 };
 
@@ -997,6 +996,7 @@ void arg_trace(void)
     }
     /* Display dwarfdump debug options. */
     if (dump_options) {
+        /*  --trace=0 to dwarfdump gets us here. */
         print_usage_message(usage_debug_text);
         makename_destructor();
         global_destructors();

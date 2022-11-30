@@ -59,8 +59,8 @@ typedef struct {
 
 #define BUCKET_SIZE 2040
 typedef struct bucket {
-    int nEntries;
-    Bucket_Data Entries[BUCKET_SIZE];
+    int            nEntries;
+    Bucket_Data    Entries[BUCKET_SIZE];
     struct bucket *pNext;
 }   Bucket;
 
@@ -89,19 +89,14 @@ void AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
 
 Dwarf_Bool DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key);
-
 Dwarf_Bool FindAddressInBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr address);
 Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key);
 Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key);
-Bucket_Data *FindNameInBucketGroup(Bucket_Group *pBucketGroup,
-    char *name);
-
 Dwarf_Bool IsValidInBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr pc);
-
 void ResetLimitsBucketSet(Bucket_Group *pBucketGroup);
 void SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr lower,Dwarf_Addr upper);

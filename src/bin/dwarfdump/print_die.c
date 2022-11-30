@@ -5841,7 +5841,7 @@ loc_error_check(
         IsValidInBucketGroup(glflags.pRangesInfo,hipcfinal)) {
         /* Valid values; do nothing */
     } else {
-        /*  At this point may be we are dealing with
+        /*  At this point may be dealing with
             a linkonce symbol */
         if (IsValidInLinkonce(glflags.pLinkonceInfo,
             glflags.PU_name,

@@ -26,9 +26,27 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 
 */
 /*
+    These simple list-processing functions are in support
+    of checking DWARF for compiler-errors of various sorts.
 
-   These simple list-processing functions are in support
-   of checking DWARF for compiler-errors of various sorts.
+    These functions apply to 
+    pRangesInfo  
+        enabling checking for sanity of code addresses.
+        Using .test .init .fini as one source of valid
+        code ranges. And adding ranges from CUs etc.
+
+    pVisitedInfo
+        Checks that (within a CU) there are no loops
+        of function references in the DWARF itself.
+        Checking that we are not in an infinite loop
+        following DIE references.
+
+    pLinkOnce.
+        We have no test cases for pLinkOnce as of 2022,
+        gcc has linkonce sections such as
+        ".gnu.linkonce.wa." but we do not have any
+        to test with.
+    2022.
 
 */
 
@@ -36,7 +54,6 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 
 #include <stdio.h>  /* printf() */
 #include <stdlib.h> /* calloc() free() */
-#include <assert.h> /* assert() */
 #include <string.h> /* strcmp() */
 
 /* Windows specific header files */
@@ -52,6 +69,7 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 #include "libdwarf.h"
 #include "libdwarf_private.h"
 #include "dd_globals.h"
+#include "dd_glflags.h"
 #include "dd_esb.h"
 
 /* Guessing a sensible length for max section name.  */
@@ -66,6 +84,30 @@ static void PrintBucketData(Bucket_Group *pBucketGroup,
 static void ProcessBucketGroup(Bucket_Group *pBucketGroup,
     void (*pFunction)(Bucket_Group *pBucketGroup,
         Bucket_Data *pBucketData));
+
+static const char *
+kindstring(int kind)
+{
+    const char *name = 0;
+ 
+    switch (kind) {
+    case DUMP_RANGES_INFO:
+        name = "DUMP_RANGES_INFO";
+        break;
+    case DUMP_LINKONCE_INFO:
+        name = "DUMP_LINKONCE_INFO";
+        break;
+    case DUMP_VISITED_INFO:
+        name = "DUMP_VISITED_INFO";
+        break;
+    default:
+        name = 0;
+        printf("ERROR BucketGroup unknown kind of %d. Ignored\n",
+            kind);
+        glflags.gf_count_major_errors++;
+    }
+    return name;
+}
 
 Bucket_Group *
 AllocateBucketGroup(int kind)
@@ -85,7 +127,11 @@ ReleaseBucketGroup(Bucket_Group *pBucketGroup)
     Bucket *pBucket = 0;
     Bucket *pNext = 0;
 
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR ReleaseBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
     for (pBucket = pBucketGroup->pHead; pBucket; pBucket = pNext ) {
         pNext = pBucket->pNext;
         free(pBucket);
@@ -100,7 +146,11 @@ ResetBucketGroup(Bucket_Group *pBucketGroup)
 {
     Bucket *pBucket = 0;
 
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR ResetBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
     for (pBucket = pBucketGroup->pHead; pBucket;
         pBucket = pBucket->pNext) {
         pBucket->nEntries = 0;
@@ -113,21 +163,35 @@ void
 ResetSentinelBucketGroup(Bucket_Group *pBucketGroup)
 {
     /* Sanity checks */
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR ResetSentinelBucketGroup passed NULL."
+            " Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
     pBucketGroup->pFirst = NULL;
     pBucketGroup->pLast = NULL;
 }
 
-void PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull)
+void
+PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull)
 {
     if (pBucketGroup) {
         if (bFull) {
             DumpFullBucketGroup(pBucketGroup);
         } else {
+            const char *kindstr =0;
+            kindstr = kindstring(pBucketGroup->kind);
+            if (!kindstr) {
+                return;
+            }
             if (pBucketGroup->pFirst && pBucketGroup->pLast) {
-                printf("\nBegin Traversing, First = 0x%08" DW_PR_DUx
-                    ", Last = 0x%08" DW_PR_DUx "\n",
-                pBucketGroup->pFirst->key,pBucketGroup->pLast->key);
+                printf("\nBegin Traversing %s, "
+                    "First = 0x%" DW_PR_XZEROS DW_PR_DUx 
+                    ", Last = 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                    kindstr,
+                    pBucketGroup->pFirst->key,
+                    pBucketGroup->pLast->key);
                 ProcessBucketGroup(pBucketGroup,PrintBucketData);
             } else { /* Nothing to print */ }
         }
@@ -138,16 +202,33 @@ static void
 PrintBucketData(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
 {
     Dwarf_Signed nCount = 0;
-    assert(pBucketGroup);
-    assert(pBucketData);
+    const char * kindstr = 0;
 
+    if (!pBucketGroup) {
+        printf("ERROR PrintBucketData passed NULL."
+            " Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    if (!pBucketData) {
+        printf("ERROR PrintBucketData Bucket Data passed NULL."
+            " Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    
+    kindstr = kindstring(pBucketGroup->kind);
+    if (!kindstr) {
+        return;
+    }
     nCount = FindDataIndexInBucket(pBucketGroup,pBucketData);
-    printf("[%06" DW_PR_DSd
+    printf("Bucket Data %s [%06" DW_PR_DSd
         "] Key = 0x%08" DW_PR_DUx
         ", Base = 0x%08" DW_PR_DUx
         ", Low = 0x%08" DW_PR_DUx
         ", High = 0x%08" DW_PR_DUx
         ", Flag = %d, Name = '%s'\n",
+        kindstr,
         ++nCount,
         pBucketData->key,
         pBucketData->base,
@@ -165,10 +246,20 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     int nCount = 0;
     Bucket *pBucket = 0;
     Bucket_Data *pBucketData = 0;
+    const char *kindstr = 0;
 
-    assert(pBucketGroup);
-    printf("\nBucket Group at 0x%" DW_PR_DUx
+    if (!pBucketGroup) {
+        printf("ERROR BucketGroup passed in NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
+    kindstr = kindstring(pBucketGroup->kind);
+    if (!kindstr) {
+        return;
+    }
+    printf("\nBucket Group %s at 0x%" DW_PR_DUx
         " [lower 0x%" DW_PR_DUx " upper 0x%" DW_PR_DUx "]\n",
+        kindstr,
         (Dwarf_Unsigned)(uintptr_t)pBucketGroup,
         (Dwarf_Unsigned)pBucketGroup->lower,
         (Dwarf_Unsigned)pBucketGroup->upper);
@@ -215,7 +306,12 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     data.low = low;
     data.high = high;
 
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR AddEntryIntoBucketGroup passed NULL."
+           " Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
     if (!pBucketGroup->pHead) {
         /* Allocate first bucket */
         pBucket = (Bucket *)calloc(1,sizeof(Bucket));
@@ -231,7 +327,7 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     pBucket = pBucketGroup->pTail;
 
     /*  Check if we have a previous allocated set of
-        buckets (have been cleared */
+        buckets (that have been cleared) */
     if (pBucket->nEntries) {
         if (pBucket->nEntries < BUCKET_SIZE) {
             pBucket->Entries[pBucket->nEntries++] = data;
@@ -271,8 +367,12 @@ DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
     Bucket *pBucket = 0;
     Bucket_Data *pBucketData = 0;
 
-    /* Sanity checks */
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR DeleteKeyInBucketGroup passed NULL. "
+           "Ignored\n");
+        glflags.gf_count_major_errors++;
+        return FALSE;
+    }
 
     /* For now do a linear search */
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
@@ -300,9 +400,10 @@ DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 }
 
 /*  Search to see if the address is in the range between
-    low and high addresses in some Bucked Data record.
-    This matches == if high is exact match (which usually means
-    one-past-true-high).  */
+    low and high addresses in some Bucket Data record.
+    Checks if 'address' is inside some bucket entry.
+    This matches == if high is exact match
+    (which usually means one-past-true-high).  */
 Dwarf_Bool
 FindAddressInBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr address)
@@ -311,7 +412,12 @@ FindAddressInBucketGroup(Bucket_Group *pBucketGroup,
     Bucket *pBucket = 0;
     Bucket_Data *pBucketData = 0;
 
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR FindAdressinBucketGroup passed NULL. "
+            "Ignored\n");
+        glflags.gf_count_major_errors++;
+        return FALSE;
+    }
     /* For now do a linear search */
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
@@ -337,7 +443,11 @@ Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,
     Bucket *pBucket = 0;
     Bucket_Data *pBucketData = 0;
 
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR FindDataInBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return 0;
+    }
 
     for (pBucket = pBucketGroup->pHead; pBucket;
         pBucket = pBucket->pNext) {
@@ -380,8 +490,17 @@ FindDataIndexInBucket(Bucket_Group *pBucketGroup,
     Bucket_Data *pUpper = 0;
 
     /* Sanity checks */
-    assert(pBucketGroup);
-    assert(pBucketData);
+    if (!pBucketGroup) {
+        printf("ERROR FindDataIndexInBucket passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return 0;
+    }
+    if (!pBucketData) {
+        printf("ERROR FindDatgaIndexInBucket passed NULL pBucketData."
+            " Ignored\n");
+        glflags.gf_count_major_errors++;
+        return 0;
+    }
 
     /* Use sentinels if any. */
     if (pBucketGroup->pFirst && pBucketGroup->pLast &&
@@ -435,7 +554,11 @@ Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,
     Bucket_Data *pBucketData = 0;
 
     /* Sanity checks */
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR FindKeyInBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return 0;
+    }
 
     /* For now do a linear search */
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
@@ -451,15 +574,20 @@ Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,
 }
 
 /*  Search an entry (Bucket Data) in the Bucket Set by name.
-    Used to find link-once section names. */
-Bucket_Data *
+    Used to find link-once section names,
+    so the bucket group passed in is pLinkOnce. */
+static Bucket_Data *
 FindNameInBucketGroup(Bucket_Group *pBucketGroup,char *name)
 {
     int nIndex = 0;
     Bucket *pBucket = 0;
     Bucket_Data *pBucketData = 0;
 
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR FindnameInBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return 0;
+    }
     /* For now do a linear search. */
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
@@ -477,6 +605,8 @@ FindNameInBucketGroup(Bucket_Group *pBucketGroup,char *name)
     check if it is in  the lower -> upper range of a bucket.
     It checks <= and >= so the lower end
     and  one-past on the upper end matches.
+
+    Used with pRangesInfo
 */
 Dwarf_Bool
 IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
@@ -485,7 +615,11 @@ IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
     Bucket_Data *pBucketData = 0;
     int nIndex = 0;
 
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR IsValidInBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return FALSE;
+    }
     /* Check the address is within the allowed limits */
     if (address >= pBucketGroup->lower &&
         address <= pBucketGroup->upper) {
@@ -509,7 +643,11 @@ IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 void
 ResetLimitsBucketSet(Bucket_Group *pBucketGroup)
 {
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR ResetLimitsBucketSet passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
     pBucketGroup->lower = 0;
     pBucketGroup->upper = 0;
 }
@@ -523,7 +661,11 @@ void
 SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr lower,Dwarf_Addr upper)
 {
-    assert(pBucketGroup);
+    if (!pBucketGroup) {
+        printf("ERROR SetLimitsBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
+        return;
+    }
     if (lower < upper) {
         pBucketGroup->lower = lower;
         pBucketGroup->upper = upper;
@@ -544,8 +686,9 @@ ProcessBucketGroup(Bucket_Group *pBucketGroup,
     Bucket_Data *pUpper = 0;
     Dwarf_Bool   bFound = FALSE;
 
-    /* Sanity checks */
     if (!pBucketGroup) {
+        printf("ERROR ProcessBucketGroup passed NULL. Ignored\n");
+        glflags.gf_count_major_errors++;
         return;
     }
 

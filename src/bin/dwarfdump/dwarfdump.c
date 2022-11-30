@@ -99,7 +99,7 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 /*  The type of Bucket. */
 #define KIND_RANGES_INFO       1
-#define KIND_SECTIONS_INFO     2
+#define KIND_LINKONCE_INFO     2 
 #define KIND_VISITED_INFO      3
 
 /* Build section information */
@@ -235,7 +235,7 @@ flag_data_pre_allocation(void)
         glflags.gf_check_self_references) {
         glflags.pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
         glflags.pLinkonceInfo =
-            AllocateBucketGroup(KIND_SECTIONS_INFO);
+            AllocateBucketGroup(KIND_LINKONCE_INFO);
         glflags.pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
     }
     /* Create the unique error table */
@@ -763,6 +763,7 @@ calculate_likely_limits_of_code(Dwarf_Debug dbg,
         Dwarf_Unsigned csize = 0;
         int res = 0;
         Dwarf_Error err = 0;
+        /* Just looks for .text and .init and  .fini for ranges. */
         const char *name = likely_ns[ct];
 
         ln = likely_names + lnindex;
@@ -943,7 +944,11 @@ process_one_file(
             dres, onef_err);
     }
 
-    /* Get .text and .debug_ranges info if in check mode */
+    /*  Get .text and .debug_ranges info if in check mode.
+        Depending on the section count and layout
+        it is possible this
+        will not get all the sections it wants to:
+        See calculate_likely_limits_of_code().  */
     if (glflags.gf_do_check_dwarf) {
         Dwarf_Addr lower = 0;
         Dwarf_Addr upper = 0;
@@ -963,6 +968,7 @@ process_one_file(
             and the expanded range here turns out
             not to actually help.   */
         if (res == DW_DLV_OK && glflags.pRangesInfo) {
+            /*  Recording high/low for .test .init .fini */
             SetLimitsBucketGroup(glflags.pRangesInfo,lower,upper);
             AddEntryIntoBucketGroup(glflags.pRangesInfo,
                 1,
@@ -971,8 +977,10 @@ process_one_file(
                 ".text",
                 TRUE);
         }
-        /*  Build section information
-            linkonce is an SNR thing, we*/
+        /*  Build section information for linkonce.
+            linkonce is related to, for example,
+            gcc .gnu.linkonce.?? sections we have no reason to think
+            this really works, we have no test cases as of 2022. */
         build_linkonce_info(dbg);
     }
     if (glflags.gf_section_groups_flag) {
@@ -1433,18 +1441,6 @@ process_one_file(
     helpertree_clear_statistics(&helpertree_offsets_base_types);
     return 0;
 }
-
-/* Generic constants for debugging */
-#define DUMP_RANGES_INFO           1 /* Dump RangesInfo Table. */
-
-/* Dump Location (.debug_loc) Info. */
-#define DUMP_LOCATION_SECTION_INFO 2
-
-/* Dump Ranges (.debug_ranges) Info. */
-#define DUMP_RANGES_SECTION_INFO   3
-
-#define DUMP_LINKONCE_INFO         4 /* Dump Linkonce Table. */
-#define DUMP_VISITED_INFO          5 /* Dump Visited Info. */
 
 /*  ==============START of dwarfdump error print functions. */
 int
@@ -2071,6 +2067,7 @@ build_linkonce_info(Dwarf_Debug dbg)
         }
     }
     if (dump_linkonce_info) {
+        /*  Unlikely this is ever useful...at present. */
         PrintBucketGroup(glflags.pLinkonceInfo,TRUE);
     }
 }
