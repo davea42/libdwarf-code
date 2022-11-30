@@ -1,3 +1,64 @@
+2022-11-29:  David Anderson
+    commit fbed0246a8eb66c6c32ad350cd220e2795911ba6
+
+    dwarfdump:
+    Removed  code supporting
+    options beginning with -E and -o.
+    These have not been supported or mentioned
+    since version 0.1.0.
+    That is, we are removing dead code, about
+    250 lines of it..
+            modified:   dd_command_options.c
+
+2022-11-28:  David Anderson
+    commit fb8d037a3c04817da871fe9097c492f1772d02c7
+
+    dwarfdump:
+    All the section_bitmaps stuff was used when we used libelf.
+    So references to the .c and .h are removed.
+            modified:   CMakeLists.txt
+            modified:   Makefile.am
+            modified:   dd_command_options.c
+            modified:   meson.build
+
+    These files and their data and function have been useless for a while.
+
+            deleted:    dd_section_bitmaps.c
+            deleted:    dd_section_bitmaps.h
+
+2022-11-24:  David Anderson
+    commit 0c4f405857f21851c08c2e6bdd114aefd6d91466
+
+    This eliminates the last of the UNUSEDARG that
+    were not required.
+    The few remaining instances are necessary.
+            modified:   src/bin/dwarfdump/dd_esb_using_functions.h
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_gdbindex.c
+            modified:   src/bin/dwarfdump/print_lines.c
+
+2022-11-24:  David Anderson
+    commit 5d78e46847e31571af57a7a1023772b6c2f3609a
+
+    Removed arguments that were UNUSEDARG
+            modified:   dd_esb_using_functions.h
+            modified:   dd_globals.h
+            modified:   dwarfdump.c
+            modified:   print_die.c
+            modified:   print_frames.c
+            modified:   print_hipc_lopc_attr.c
+            modified:   print_macinfo.c
+            modified:   print_origloclist_codes.c
+            modified:   print_section_groups.c
+
+2022-11-24:  David Anderson
+    commit 4377014eaeee79560b0afa1b5e39efd77fc58e46
+
+    with latest from git log
+            modified:   ChangeLog
+
 2022-11-24:  David Anderson
     commit 34696154a06ab99790e77369630bea7ef01082f9
 
