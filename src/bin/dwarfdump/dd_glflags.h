@@ -395,15 +395,15 @@ void reset_overall_CU_error_data(void);
 Dwarf_Bool cu_data_is_set(void);
 
 /*  Shortcuts for additional trace options */
-#define DUMP_OPTIONS        0   /* Dump options and stop. */
-#define DUMP_RANGES_INFO    1   /* Dump RangesInfo Table. */
-#define DUMP_LINKONCE_INFO  2   /* Dump Linkonce Table. */
-#define DUMP_VISITED_INFO   3   /* Dump Visited Info. */
+#define KIND_OPTIONS        0   /* Dump options and stop. */
+#define KIND_RANGES_INFO    1   /* Dump RangesInfo Table. */
+#define KIND_LINKONCE_INFO  2   /* Dump Linkonce Table. */
+#define KIND_VISITED_INFO   3   /* Dump Visited Info. */
 
-#define dump_options        glflags.nTrace[DUMP_OPTIONS]
-#define dump_ranges_info    glflags.nTrace[DUMP_RANGES_INFO]
-#define dump_linkonce_info  glflags.nTrace[DUMP_LINKONCE_INFO]
-#define dump_visited_info   glflags.nTrace[DUMP_VISITED_INFO]
+#define dump_options        glflags.nTrace[KIND_OPTIONS]
+#define dump_ranges_info    glflags.nTrace[KIND_RANGES_INFO]
+#define dump_linkonce_info  glflags.nTrace[KIND_LINKONCE_INFO]
+#define dump_visited_info   glflags.nTrace[KIND_VISITED_INFO]
 
 /*  Section IDs. See also libdwarfp/pro_opaque.h DEBUG_INFO etc
     as we arbitrarily use the same numbering here.

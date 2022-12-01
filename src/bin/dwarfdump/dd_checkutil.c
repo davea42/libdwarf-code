@@ -91,14 +91,14 @@ kindstring(int kind)
     const char *name = 0;
  
     switch (kind) {
-    case DUMP_RANGES_INFO:
-        name = "DUMP_RANGES_INFO";
+    case KIND_RANGES_INFO:
+        name = "_RANGES_INFO";
         break;
-    case DUMP_LINKONCE_INFO:
-        name = "DUMP_LINKONCE_INFO";
+    case KIND_LINKONCE_INFO:
+        name = "KIND_LINKONCE_INFO";
         break;
-    case DUMP_VISITED_INFO:
-        name = "DUMP_VISITED_INFO";
+    case KIND_VISITED_INFO:
+        name = "KIND_VISITED_INFO";
         break;
     default:
         name = 0;

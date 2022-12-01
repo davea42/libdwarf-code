@@ -97,11 +97,6 @@ Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 #define LOCAL_PTR_ARY_COUNT 50
 
-/*  The type of Bucket. */
-#define KIND_RANGES_INFO       1
-#define KIND_LINKONCE_INFO     2 
-#define KIND_VISITED_INFO      3
-
 /* Build section information */
 void build_linkonce_info(Dwarf_Debug dbg);
 
