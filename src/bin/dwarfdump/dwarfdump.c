@@ -2065,7 +2065,7 @@ build_linkonce_info(Dwarf_Debug dbg)
     }
     if (dump_linkonce_info) {
         /*  Unlikely this is ever useful...at present. */
-        PrintBucketGroup(glflags.pLinkonceInfo,TRUE);
+        PrintBucketGroup(glflags.pLinkonceInfo);
     }
 }
 

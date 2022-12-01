@@ -1287,7 +1287,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 }
                 /* Dump Ranges Information */
                 if (dump_ranges_info) {
-                    PrintBucketGroup(glflags.pRangesInfo,TRUE);
+                    PrintBucketGroup(glflags.pRangesInfo);
                 }
 
                 /* Check the range array if in checl mode */
@@ -1574,19 +1574,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     /* Process specific TAGs. */
                     tag_specific_globals_setup(dbg,tag_child,
                         die_stack_indent_level);
-#if 0
-                    {
-                        ctagname = get_TAG_name(tag_child,
-                            pd_dwarf_names_print_on_error);
-                        ptagname = get_TAG_name(tag_parent,
-                            pd_dwarf_names_print_on_error);
-                        DWARF_CHECK_ERROR3(tag_tree_result,
-                            ptagname,
-                            ctagname,
-                            "Tag-tree relation is "
-                            "not standard..");
-                    }
-#endif
                     if (legal_tag_tree_combination(
                         tag_parent, tag_child)) {
                         /* OK */

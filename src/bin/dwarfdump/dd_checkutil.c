@@ -77,14 +77,6 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 
 /* Private function */
 static void DumpFullBucketGroup(Bucket_Group *pBucketGroup);
-static Dwarf_Signed FindDataIndexInBucket(Bucket_Group *pBucketGroup,
-    Bucket_Data *pBucketData);
-static void PrintBucketData(Bucket_Group *pBucketGroup,
-    Bucket_Data *pBucketData);
-static void ProcessBucketGroup(Bucket_Group *pBucketGroup,
-    void (*pFunction)(Bucket_Group *pBucketGroup,
-        Bucket_Data *pBucketData));
-
 static unsigned long bucketgroupnext  = 0;
 static unsigned long bucketnext  = 0;
 
@@ -178,68 +170,11 @@ ResetSentinelBucketGroup(Bucket_Group *pBucketGroup)
 }
 
 void
-PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull)
+PrintBucketGroup(Bucket_Group *pBucketGroup)
 {
     if (pBucketGroup) {
-        if (bFull) {
-            DumpFullBucketGroup(pBucketGroup);
-        } else {
-            const char *kindstr =0;
-            kindstr = kindstring(pBucketGroup->kind);
-            if (!kindstr) {
-                return;
-            }
-            if (pBucketGroup->pFirst && pBucketGroup->pLast) {
-                printf("\nBegin Traversing %s, "
-                    "First = 0x%" DW_PR_XZEROS DW_PR_DUx 
-                    ", Last = 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-                    kindstr,
-                    pBucketGroup->pFirst->key,
-                    pBucketGroup->pLast->key);
-                ProcessBucketGroup(pBucketGroup,PrintBucketData);
-            } else { /* Nothing to print */ }
-        }
+        DumpFullBucketGroup(pBucketGroup);
     }
-}
-
-static void
-PrintBucketData(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
-{
-    Dwarf_Signed nCount = 0;
-    const char * kindstr = 0;
-
-    if (!pBucketGroup) {
-        printf("ERROR PrintBucketData passed NULL."
-            " Ignored\n");
-        glflags.gf_count_major_errors++;
-        return;
-    }
-    if (!pBucketData) {
-        printf("ERROR PrintBucketData Bucket Data passed NULL."
-            " Ignored\n");
-        glflags.gf_count_major_errors++;
-        return;
-    }
-    
-    kindstr = kindstring(pBucketGroup->kind);
-    if (!kindstr) {
-        return;
-    }
-    nCount = FindDataIndexInBucket(pBucketGroup,pBucketData);
-    printf("Bucket Data %s [%06" DW_PR_DSd
-        "] Key = 0x%08" DW_PR_DUx
-        ", Base = 0x%08" DW_PR_DUx
-        ", Low = 0x%08" DW_PR_DUx
-        ", High = 0x%08" DW_PR_DUx
-        ", Flag = %d, Name = '%s'\n",
-        kindstr,
-        ++nCount,
-        pBucketData->key,
-        pBucketData->base,
-        pBucketData->low,
-        pBucketData->high,
-        pBucketData->bFlag,
-        pBucketData->name);
 }
 
 static void
@@ -485,70 +420,6 @@ Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,
     return (Bucket_Data *)NULL;
 }
 
-/*  Find the Bucket that contains a given Bucket Data
-    and return its index or -1 if none such. */
-static Dwarf_Signed
-FindDataIndexInBucket(Bucket_Group *pBucketGroup,
-    Bucket_Data *pBucketData)
-{
-    Bucket *pBucket = 0;
-    Bucket_Data *pLower = 0;
-    Bucket_Data *pUpper = 0;
-
-    /* Sanity checks */
-    if (!pBucketGroup) {
-        printf("ERROR FindDataIndexInBucket passed NULL. Ignored\n");
-        glflags.gf_count_major_errors++;
-        return 0;
-    }
-    if (!pBucketData) {
-        printf("ERROR FindDatgaIndexInBucket passed NULL pBucketData."
-            " Ignored\n");
-        glflags.gf_count_major_errors++;
-        return 0;
-    }
-
-    /* Use sentinels if any. */
-    if (pBucketGroup->pFirst && pBucketGroup->pLast &&
-        pBucketData >= pBucketGroup->pFirst &&
-        pBucketData <= pBucketGroup->pLast) {
-
-        /* Find bucket that contains the first sentinel */
-        for (pBucket = pBucketGroup->pHead;
-            pBucket && pBucket->nEntries;
-            pBucket = pBucket->pNext) {
-
-            pLower = &pBucket->Entries[0];
-            pUpper = &pBucket->Entries[pBucket->nEntries - 1];
-
-            /* Check if the first sentinel is in this bucket. */
-            if (pBucketGroup->pFirst >= pLower &&
-                pBucketGroup->pFirst <= pUpper) {
-                /* We have found the bucket, return the index. */
-                return (Dwarf_Signed)
-                    (pBucketData - pBucketGroup->pFirst);
-            }
-        }
-    } else {
-        /* Find bucket that contains the entry */
-        for (pBucket = pBucketGroup->pHead;
-            pBucket && pBucket->nEntries;
-            pBucket = pBucket->pNext) {
-
-            pLower = &pBucket->Entries[0];
-            pUpper = &pBucket->Entries[pBucket->nEntries - 1];
-
-            /* Check if the first sentinel is in this bucket */
-            if (pBucketData >= pLower && pBucketData <= pUpper) {
-                /* We have found the bucket, return the index */
-                return (Dwarf_Signed)(pBucketData - pLower);
-            }
-        }
-    }
-    /* Invalid data; just return index indicating not-found */
-    return (Dwarf_Signed)-1;
-}
-
 /*  Search an entry (Bucket Data) in the Bucket Group.
     The key is an offset, a DIE offset
     within Visited info. */
@@ -675,76 +546,6 @@ SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
     if (lower < upper) {
         pBucketGroup->lower = lower;
         pBucketGroup->upper = upper;
-    }
-}
-
-/* Traverse Bucket Set and execute a supplied function */
-static void
-ProcessBucketGroup(Bucket_Group *pBucketGroup,
-    void (*pFunction)(Bucket_Group *pBucketGroup,
-        Bucket_Data *pBucketData))
-{
-    Dwarf_Signed nIndex = 0;
-    Dwarf_Signed nStart = 0;
-    Bucket      *pBucket = 0;
-    Bucket_Data *pBucketData = 0;
-    Bucket_Data *pLower = 0;
-    Bucket_Data *pUpper = 0;
-    Dwarf_Bool   bFound = FALSE;
-
-    if (!pBucketGroup) {
-        printf("ERROR ProcessBucketGroup passed NULL. Ignored\n");
-        glflags.gf_count_major_errors++;
-        return;
-    }
-
-    /* No sentinels present; do nothing */
-    if (!pBucketGroup->pFirst || !pBucketGroup->pLast) {
-        return;
-    }
-
-    /* Find bucket that contains the first sentinel */
-    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
-        pBucket = pBucket->pNext) {
-
-        pLower = &pBucket->Entries[0];
-        pUpper = &pBucket->Entries[pBucket->nEntries - 1];
-
-        /* Check if the first sentinel is in this bucket */
-        if (pBucketGroup->pFirst >= pLower &&
-            pBucketGroup->pFirst <= pUpper) {
-            /* Low sentinel is in this bucket */
-            bFound = TRUE;
-            break;
-        }
-    }
-
-    /* Invalid sentinel; do nothing */
-    if (!bFound) {
-        return;
-    }
-
-    /*  Calculate index for first sentinel
-        ASSERT: nStart >= 0 */
-    nStart = pBucketGroup->pFirst - pLower;
-    if (nStart < 0) {
-        return; /* Impossible. */
-    }
-
-    /* Start traversing from found bucket */
-    for (; pBucket && pBucket->nEntries; pBucket = pBucket->pNext) {
-        for (nIndex = nStart; nIndex < pBucket->nEntries; ++nIndex) {
-            pBucketData = &pBucket->Entries[nIndex];
-            if (pBucketData > pBucketGroup->pLast) {
-                return;
-            }
-            /* Call the user supplied function */
-            if (pFunction) {
-                pFunction(pBucketGroup,pBucketData);
-            }
-        }
-        /* For next bucket start with first entry */
-        nStart = 0;
     }
 }
 

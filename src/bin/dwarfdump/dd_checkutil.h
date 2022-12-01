@@ -83,7 +83,7 @@ void ReleaseBucketGroup(Bucket_Group *pBucketGroup);
 void ResetBucketGroup(Bucket_Group *pBucketGroup);
 void ResetSentinelBucketGroup(Bucket_Group *pBucketGroup);
 
-void PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull);
+void PrintBucketGroup(Bucket_Group *pBucketGroup);
 
 void AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key,Dwarf_Addr base,Dwarf_Addr low,Dwarf_Addr high,

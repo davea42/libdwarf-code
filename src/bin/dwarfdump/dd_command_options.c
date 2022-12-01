@@ -386,16 +386,6 @@ static void arg_print_strings(void);
 static void arg_print_types(void);
 static void arg_print_weaknames(void);
 
-static void arg_reloc(void);
-static void arg_reloc_abbrev(void);
-static void arg_reloc_aranges(void);
-static void arg_reloc_frames(void);
-static void arg_reloc_info(void);
-static void arg_reloc_line(void);
-static void arg_reloc_loc(void);
-static void arg_reloc_pubnames(void);
-static void arg_reloc_ranges(void);
-
 static void arg_no_follow_debuglink(void);
 static void arg_add_debuglink_path(void);
 static void arg_debuglink_path_invalid(void);
@@ -428,7 +418,6 @@ static void arg_kx_multiple_selection(void);
 #ifdef HAVE_USAGE_TAG_ATTR
 static void arg_ku_multiple_selection(void);
 #endif /* HAVE_USAGE_TAG_ATTR */
-static void arg_o_multiple_selection(void);
 static void arg_O_multiple_selection(void);
 static void arg_S_multiple_selection(void);
 static void arg_t_multiple_selection(void);
@@ -1609,82 +1598,6 @@ void arg_print_raw_loclists(void)
     suppress_check_dwarf();
 }
 
-/*  Option '-o[...]' */
-void arg_o_multiple_selection(void)
-{
-    if (dwoptarg) {
-        switch (dwoptarg[0]) {
-        case 'a': arg_reloc_abbrev();    break;
-        case 'i': arg_reloc_info();      break;
-        case 'l': arg_reloc_line();      break;
-        case 'p': arg_reloc_pubnames();  break;
-        case 'r': arg_reloc_aranges();   break;
-        case 'f': arg_reloc_frames();    break;
-        case 'o': arg_reloc_loc();       break;
-        case 'R': arg_reloc_ranges();    break;
-        default: arg_usage_error = TRUE; break;
-        }
-    } else {
-        arg_reloc();
-    }
-}
-
-/*  Option '-o' */
-void arg_reloc(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-oa' */
-void arg_reloc_abbrev(void)
-{
-    /*  Case a has no effect, no relocations can point out
-        of the abbrev section. */
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-of' */
-void arg_reloc_frames(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-oi' */
-void arg_reloc_info(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-ol' */
-void arg_reloc_line(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-oo' */
-void arg_reloc_loc(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-op' */
-void arg_reloc_pubnames(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-or' */
-void arg_reloc_aranges(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
-/*  Option '-oR' */
-void arg_reloc_ranges(void)
-{
-    glflags.gf_reloc_flag = TRUE;
-}
-
 /*  Option '-O' */
 void arg_O_multiple_selection(void)
 {
@@ -2328,7 +2241,6 @@ set_command_options(int argc, char *argv[])
         case 'M': arg_format_attr_name();        break;
         case 'n': arg_format_suppress_lookup();  break;
         case 'N': arg_print_ranges();            break;
-        case 'o': arg_o_multiple_selection();    break;
         case 'O': arg_O_multiple_selection();    break;
         case 'p': arg_print_pubnames();          break;
         case 'P': arg_print_producers();         break;
