@@ -51,6 +51,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     balance factor of the pointed-to subtrees (-1,0, or 1).
     And we always know if we are adding or deleting a node.
 
+    Since dwarfdump does not use the tdump facility
+    of tsearchbal.c, we never define  BUILD_TDUMP
 */
 
 #ifdef _WIN32
@@ -107,6 +109,7 @@ struct ts_entry {
     struct ts_entry * rlink;
 };
 
+#ifdef BUILD_TDUMP
 static void
 printlevel(int level)
 {
@@ -166,6 +169,7 @@ tdump_inner(struct ts_entry *t,
         descr);
     tdump_inner(t->llink,keyprint,"left ",level+1);
 }
+#endif /* BUILD_TDUMP */
 #ifdef DW_CHECK_CONSISTENCY
 /*  Checking that a tree (or sub tree) is in balance.
     Only meaningful for balanced trees.
@@ -306,6 +310,8 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
 }
 #endif
 
+
+#ifdef BUILD_TDUMP
 /*  Dumping the tree to stdout. */
 void
 dwarf_tdump(const void*headp_in,
@@ -332,6 +338,7 @@ dwarf_tdump(const void*headp_in,
     }
     tdump_inner(root,keyprint,"top",0);
 }
+#endif /* BUILD_TDUMP */
 static void
 setlink(struct ts_entry*t,int a,struct ts_entry *x)
 {

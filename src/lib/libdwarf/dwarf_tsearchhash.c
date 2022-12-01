@@ -54,6 +54,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     The 'preorder' etc labels mean nothing in a hash, so everything
     is called a leaf.
 
+    Since libdwarf never calls dwarf_tdump we
+    never define BUILD_TDUMP
+
 */
 
 #include <config.h>
@@ -229,6 +232,7 @@ printf("dadebug initial alloc prime to use %lu\n",prime_to_use);
     return base;
 }
 
+#ifdef BUILD_TDUMP
 /*  We don't really care whether hashpos or chainpos
     are 32 or 64 bits. 32 suffices. */
 static void print_entry(struct ts_entry *t,const char *descr,
@@ -319,6 +323,7 @@ dwarf_tdump(const void*headp_in,
     }
     dumptree_inner(head,keyprint,msg,1);
 }
+#endif /* BUILD_TDUMP */
 
 static struct ts_entry *
 allocate_ts_entry(const void *key)
