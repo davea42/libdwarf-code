@@ -945,8 +945,7 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
     Dwarf_Half * header_cu_type,
     Dwarf_Error * error)
 {
-    /* Faking has_signature to do nothing. */
-    Dwarf_Bool* has_signature = 0;
+    Dwarf_Bool has_signature = FALSE;
     int res = 0;
 
     res = _dwarf_next_cu_header_internal(dbg,
@@ -958,7 +957,7 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
         offset_size,
         extension_size,
         signature,
-        has_signature,
+        &has_signature,
         typeoffset,
         next_cu_offset,
         header_cu_type,

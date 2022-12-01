@@ -1148,6 +1148,8 @@ process_one_file(
     if (glflags.gf_print_raw_loclists) {
         int res = 0;
         Dwarf_Error err = 0;
+        /*  This for DWARF5 loclists.
+            No raw printing of .debug_loc available. */
 
         reset_overall_CU_error_data();
         res = print_raw_all_loclists(dbg,&err);
