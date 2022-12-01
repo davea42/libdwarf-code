@@ -85,6 +85,9 @@ static void ProcessBucketGroup(Bucket_Group *pBucketGroup,
     void (*pFunction)(Bucket_Group *pBucketGroup,
         Bucket_Data *pBucketData));
 
+static unsigned long bucketgroupnext  = 0;
+static unsigned long bucketnext  = 0;
+
 static const char *
 kindstring(int kind)
 {
@@ -92,7 +95,7 @@ kindstring(int kind)
  
     switch (kind) {
     case KIND_RANGES_INFO:
-        name = "_RANGES_INFO";
+        name = "KIND_RANGES_INFO";
         break;
     case KIND_LINKONCE_INFO:
         name = "KIND_LINKONCE_INFO";
@@ -117,6 +120,7 @@ AllocateBucketGroup(int kind)
     if (!pBucketGroup) {
         return NULL;
     }
+    pBucketGroup->bg_number = bucketgroupnext++;
     pBucketGroup->kind = kind;
     return pBucketGroup;
 }
@@ -257,19 +261,19 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     if (!kindstr) {
         return;
     }
-    printf("\nBucket Group %s at 0x%" DW_PR_DUx
+    printf("\nBucket Group %s index %lu"
         " [lower 0x%" DW_PR_DUx " upper 0x%" DW_PR_DUx "]\n",
         kindstr,
-        (Dwarf_Unsigned)(uintptr_t)pBucketGroup,
+        pBucketGroup->bg_number,
         (Dwarf_Unsigned)pBucketGroup->lower,
         (Dwarf_Unsigned)pBucketGroup->upper);
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
 
-        printf("LowPC & HighPC records for bucket %d, at 0x%08"
-            DW_PR_DUx "\n",
+        printf("LowPC & HighPC records for bucket %d, at index %lu"
+            "\n",
             nBucketNo++,
-            (Dwarf_Unsigned)(uintptr_t)pBucket);
+            pBucket->b_number);
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
             printf("[%06d] Key = 0x%08" DW_PR_DUx
@@ -318,6 +322,7 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
         if (!pBucket) {
             return;
         }
+        pBucket->b_number = bucketnext++;
         pBucketGroup->pHead = pBucket;
         pBucketGroup->pTail = pBucket;
         pBucket->nEntries = 1;
@@ -339,6 +344,7 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
             }
             pBucketGroup->pTail->pNext = pBucket;
             pBucketGroup->pTail = pBucket;
+            pBucket->b_number = bucketnext++;
             pBucket->nEntries = 1;
             pBucket->Entries[0] = data;
         }

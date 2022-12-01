@@ -60,6 +60,7 @@ typedef struct {
 #define BUCKET_SIZE 2040
 typedef struct bucket {
     int            nEntries;
+    unsigned long  b_number;
     Bucket_Data    Entries[BUCKET_SIZE];
     struct bucket *pNext;
 }   Bucket;
@@ -68,6 +69,7 @@ typedef struct bucket {
 */
 typedef struct {
     int kind;             /* Kind of bucket */
+    unsigned long bg_number;
     Dwarf_Addr lower;     /* Lower value for data */
     Dwarf_Addr upper;     /* Upper value for data */
     Bucket_Data *pFirst;  /* First sentinel */
