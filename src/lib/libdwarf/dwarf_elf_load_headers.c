@@ -175,7 +175,6 @@ dwarf_construct_elf_access_path(const char *path,
     *mp = mymp;
     return res;
 }
-#endif /*0*/
 
 /* Here path is not essential. Pass in with "" if unknown. */
 int
@@ -259,6 +258,7 @@ dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t* ep,
     free(ep);
     return DW_DLV_OK;
 }
+#endif /*0*/
 
 static int
 generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
