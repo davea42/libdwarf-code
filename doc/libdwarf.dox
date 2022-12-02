@@ -927,6 +927,12 @@
 
     We list these with newest first.
 
+    <b>Changes 0.5.0 to 0.5.1</b>
+    A memory leak from dwarf_load_loclists() and
+    dwarf_loc_rnglists() is fixed and the 
+    libdwarf-regressiontests error that hid the
+    leak has also been fixed.
+
     <b>Changes 0.4.2 to 0.5.0</b>
     v0.5.0 released 2022-11-22 
     The handling of the .debug_abbrev data in libdwarf is now

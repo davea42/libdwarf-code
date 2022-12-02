@@ -1060,7 +1060,6 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     }
     freecontextlist(dbg,&dbg->de_info_reading);
     freecontextlist(dbg,&dbg->de_types_reading);
-
     /* Housecleaning done. Now really free all the space. */
     malloc_section_free(&dbg->de_debug_info);
     malloc_section_free(&dbg->de_debug_types);

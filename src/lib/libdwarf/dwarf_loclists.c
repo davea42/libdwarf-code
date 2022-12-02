@@ -481,7 +481,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
     }
-    /*  ASSERT: the chain is entirely dealloc'd
+    /*  ASSERT: the chain is entirely alloc'd
         and the array of pointers points to
         individually malloc'd Dwarf_Loclists_Context_s */
     *cxt = fullarray;
@@ -499,7 +499,8 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     With DW_DLV_OK it returns the number of
     loclists headers in the section through
     loclists_count. */
-int dwarf_load_loclists(Dwarf_Debug dbg,
+int 
+dwarf_load_loclists(Dwarf_Debug dbg,
     Dwarf_Unsigned *loclists_count,
     Dwarf_Error *error)
 {
@@ -519,6 +520,7 @@ int dwarf_load_loclists(Dwarf_Debug dbg,
         if (loclists_count) {
             *loclists_count = dbg->de_loclists_context_count;
         }
+        return DW_DLV_OK;
     }
     if (!dbg->de_debug_loclists.dss_size) {
         /* nothing there. */
@@ -555,12 +557,13 @@ _dwarf_dealloc_loclists_context(Dwarf_Debug dbg)
         return;
     }
     loccon = dbg->de_loclists_context;
-    for ( ; i < dbg->de_loclists_context_count; ++i,++loccon) {
-        Dwarf_Loclists_Context con = *loccon;
+    for ( ; i < dbg->de_loclists_context_count; ++i) {
+        Dwarf_Loclists_Context con = loccon[i];
         con->lc_offsets_array = 0;
         con->lc_offset_entry_count = 0;
         con->lc_magic = 0;
         free(con);
+        loccon[i] = 0;
     }
     free(dbg->de_loclists_context);
     dbg->de_loclists_context = 0;

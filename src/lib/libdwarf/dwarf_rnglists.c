@@ -387,7 +387,7 @@ internal_load_rnglists_contexts(Dwarf_Debug dbg,
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
     }
-    /*  ASSERT: the chain is entirely dealloc'd
+    /*  ASSERT: the chain is entirely alloc'd
         and the array of pointers points to
         individually malloc'd Dwarf_Rnglists_Context_s */
     *cxt = fullarray;
@@ -426,6 +426,7 @@ int dwarf_load_rnglists(
         if (rnglists_count) {
             *rnglists_count = dbg->de_rnglists_context_count;
         }
+        return DW_DLV_OK;
     }
     if (!dbg->de_debug_rnglists.dss_size) {
         /* nothing there. */
@@ -465,12 +466,13 @@ _dwarf_dealloc_rnglists_context(Dwarf_Debug dbg)
         return;
     }
     rngcon = dbg->de_rnglists_context;
-    for ( ; i < dbg->de_rnglists_context_count; ++i,++rngcon) {
-        Dwarf_Rnglists_Context con = *rngcon;
+    for ( ; i < dbg->de_rnglists_context_count; ++i) {
+        Dwarf_Rnglists_Context con = rngcon[i];
         con->rc_offsets_array = 0;
         con->rc_magic = 0;
         con->rc_offset_entry_count = 0;
         free(con);
+        rngcon[i] = 0;
     }
     free(dbg->de_rnglists_context);
     dbg->de_rnglists_context = 0;
