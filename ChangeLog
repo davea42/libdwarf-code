@@ -1,3 +1,172 @@
+2022-12-02:  David Anderson
+    commit 20915dba4e49be38109820e7e9b6ff2001b8ba7e
+
+    Fixed to say CODINGSTYLE.md
+    and adding CONTRIBUTIONS.md
+            modified:   Makefile.am
+
+    updates the dealloc comments for
+    dwarf_load_loclists() and dwarf_load_rnglists().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-02:  David Anderson
+    commit da32f0e282fb1129ef10332245c4f0ffb832837c
+
+    Mention fix to libdwarf dwarf_load_rnglists and
+    dwarf_load_loclists.
+            modified:   doc/libdwarf.dox
+    Removing a blank line of no value.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+    Correcting a memory leak in dwarf_load_rnglists and
+    dwarf_load_loclists.
+    These are functions which are designed for
+    dwarfdump to use, it is unlikely any other code
+    calls them.
+            modified:   src/lib/libdwarf/dwarf_loclists.c
+            modified:   src/lib/libdwarf/dwarf_rnglists.c
+
+2022-12-01:  David Anderson
+    commit 1913eabdeefaf3d62182a327bfafae3574d4be32
+
+    Now 'if 0' functions not used anywhere.
+    Not public functions (though one is named
+    like a public function!)
+            modified:   dwarf_elf_load_headers.c
+
+2022-12-01:  David Anderson
+    commit 1f462173f1c905954733c5228d80b1fe64124a5f
+
+    Removed unused and unusable code.
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+    Removed pointless argument from PrintBucketGroup().
+            modified:   src/bin/dwarfdump/dd_checkutil.h
+    Removed lots of code relating to unusable options:
+    -o (was used for printing Elf relocation records)
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Removing unneeded arg from PrintBucketGroup() call.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+    Removing unneeded arg from PrintBucketGroup() call.
+    Removed very old #if 0 set of lines.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Removed code once used to process archives.
+    We do not process those now.
+            modified:   src/bin/dwarfdump/print_tag_attributes_usage.c
+
+2022-12-01:  David Anderson
+    commit 43bef7874680fabe426f3fcd101e5d7d9e162394
+
+    Added a comment.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Altered argument in one place so called function
+    will return a value. More complete coverage.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2022-12-01:  David Anderson
+    commit eca433525439234fbc7a5d37e12476532d4478cf
+
+    ifdef BUILD_TDUMP on all the functions
+    related to dumping trees as neither dwarfdump nor
+    libdwarf call the dwarf_tdump functions.
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+
+2022-12-01:  David Anderson
+    commit 07e16fa515f779dc17a83fcd7d15eb5778ae5ef1
+
+    These files & functions implement some
+    checking.  Verifying addresses in .debug_info
+    or .debug_line are at least in bounds
+    of some code section.
+    The dwarfdump options --trace=1 --trace=3
+    show the table info for debugging this
+    aspect of checking in dwarfdump.
+    The printed tables no longer print
+    pointers as values, but contain an index
+    value (assigned unique
+    to each struct) so regression tests can pass.
+    The pointer value was never very useful anyway.
+            modified:   dd_checkutil.c
+            modified:   dd_checkutil.h
+
+2022-11-30:  David Anderson
+    commit ec18b95e687907999ec8fb5b0f2ceba2a40ce632
+
+    Renamed DUMP_VISITED_INFO to KIND_VISITED_INFO
+    DUMP_RANGES_INFO
+    DUMP_LINKONCE_INFO
+    similarly renamed.
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_glflags.h
+
+    Removed def of KIND_VISITED_INFO etc since
+    dd_glflags.h has such names spelled right.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+2022-11-30:  David Anderson
+    commit a1dcff70b2216ea137b74e7c18a811ad529d786d
+
+    Documented what this does, and removed assert()
+    and improved the printf output so one knows
+    what the data is about (the KIND shows one of
+    DUMP_RANGES_INFO DUMP_LINKONCE_INFO or
+    DUMP_VISITED_INFO ).
+    Removed unused DUMP_LOCATION_SECTION_INFO DUMP_RANGES_SECTION_INFO.
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+
+    Added a kind field to struct bucket for improved reporting.
+            modified:   src/bin/dwarfdump/dd_checkutil.h
+
+    Improved and clarified the usage_debug_text
+    That applies with --trace=0 (which prints the text
+    and stops).
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    deleted unused DUMP_LOCATION_SECTION_INFO DUMP_RANGES_SECTION_INFO
+            modified:   src/bin/dwarfdump/dd_glflags.h
+
+    References KIND_RANGES_INFO, KIND_LINKONCE_INFO ,
+    KIND_VISITED_INFO  which are identical to
+    DUMP_RANGES_INFO, DUMP_LINKONCE_INFO,DUMP_VISITED_INFO.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Fixed a comment about Linkonce
+            modified:   src/bin/dwarfdump/print_die.c
+
+2022-11-30:  David Anderson
+    commit e8bc2c519c123dd5335027ee0ad7be8f55d62492
+
+    Up to date with git log
+            modified:   ChangeLog
+
+2022-11-29:  David Anderson
+    commit 360db21d9c637095bd86b7772d2475c4eff882ab
+
+    Missed a few test_section_bitmaps lines.
+    Now they are all gone.
+    Not needed since what they tested is no longer
+    in dwarfdump.
+            modified:   test/Makefile.am
+
+2022-11-29:  David Anderson
+    commit ac85e66759a7ccb063062859fe128046b461c4c5
+
+    We no longer test section_bitmaps because
+    those no longer exist in dwarfdump.
+    They applied to dwarfdump options starting
+    with -E and -o and those no longer exist.
+            modified:   test/CMakeLists.txt
+            modified:   test/Makefile.am
+            modified:   test/meson.build
+            deleted:    test/test_section_bitmaps.c
+
+    Adjust the calls  to print_macrocheck_statistics
+    to match the elimination of an unused error argument.
+            modified:   test/test_macrocheck.c
+
 2022-11-29:  David Anderson
     commit fbed0246a8eb66c6c32ad350cd220e2795911ba6
 
