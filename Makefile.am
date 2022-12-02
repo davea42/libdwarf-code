@@ -82,7 +82,8 @@ ChangeLog2019 \
 ChangeLog2020 \
 cmake \
 CMakeLists.txt \
-codingstyle.md \
+CODINGSTYLE.md \
+CONTRIBUTING.md \
 cmake/config.h.cmake \
 README \
 README.md \

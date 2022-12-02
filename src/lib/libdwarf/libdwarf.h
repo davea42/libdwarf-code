@@ -4009,7 +4009,7 @@ DW_API void dwarf_dealloc_rnglists_head(Dwarf_Rnglists_Head dw_head);
     Doing it more than once is never necessary
     or harmful. There is no deallocation call
     made visible, deallocation happens
-    when dwarf_finish is called.
+    when dwarf_finish() is called.
 
     @param dw_dbg
     @param dw_rnglists_count
@@ -4370,6 +4370,11 @@ DW_API void dwarf_dealloc_loc_head_c(Dwarf_Loc_Head_c dw_head);
     loading is already done. A duplicate loading
     attempt returns DW_DLV_OK immediately, returning
     dw_loclists_count filled in and does nothing else.
+
+    Doing it more than once is never necessary
+    or harmful. There is no deallocation call
+    made visible, deallocation happens
+    when dwarf_finish() is called.
 
     @param dw_dbg
     The applicable Dwarf_Debug.
