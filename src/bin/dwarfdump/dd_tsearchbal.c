@@ -310,7 +310,6 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
 }
 #endif
 
-
 #ifdef BUILD_TDUMP
 /*  Dumping the tree to stdout. */
 void
