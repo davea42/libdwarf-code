@@ -1355,7 +1355,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
-    /*  Cannot refer to debug_types, see p141 of 
+    /*  Cannot refer to debug_types, see p141 of
         DWARF4 Standard */
     if (dbg->de_debug_info.dss_size &&
         ((cuhdr_off + MIN_CU_HDR_SIZE) >=
@@ -1403,7 +1403,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             therefore must not be used. 10 is a meaningless heuristic,
             but no CU header is that small so it is safe. */
         /* Globals cannot refer to debug_types */
-        if ((cuhdr_off + MIN_CU_HDR_SIZE) 
+        if ((cuhdr_off + MIN_CU_HDR_SIZE)
             >= dbg->de_debug_info.dss_size) {
             dwarfstring m;
 

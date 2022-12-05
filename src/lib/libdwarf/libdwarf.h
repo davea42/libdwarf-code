@@ -6098,7 +6098,7 @@ DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
     @see dwarf_funcs_dealloc @see dwarf_globals_dealloc
     @see dwarf_gnu_index_dealloc @see dwarf_loc_head_c_dealloc
     @see dwarf_pubtypes_dealloc @see dwarf_srclines_dealloc_b
-    @see dwarf_types_dealloc @see dwarf_vars_dealloc 
+    @see dwarf_types_dealloc @see dwarf_vars_dealloc
     @see dwarf_weaks_dealloc @see dwarf_funcs_dealloc
 
 */
@@ -7095,12 +7095,12 @@ DW_API int dwarf_return_empty_pubnames(Dwarf_Debug dw_dbg,
     debugger to access DWARF information.
 
     Not part of standard DWARF.
-    
+
 */
 /*! @brief Access to .debug_gnu_pubnames or .debug_gnu_pubtypes
-    
-    Call this to get access. 
-    
+
+    Call this to get access.
+
     @param dw_dbg
     Pass in the Dwarf_Debug of interest.
     @param dw_which_section
@@ -7128,7 +7128,7 @@ DW_API int dwarf_get_gnu_index_head(Dwarf_Debug dw_dbg,
     Call this to deallocate all memory used by dw_head.
 
     @param dw_head
-    Pass in the Dwarf_Gnu_Index_head whose data is to be deallocated. 
+    Pass in the Dwarf_Gnu_Index_head whose data is to be deallocated.
 */
 DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head dw_head);
 /*! @brief Access a particular block.
@@ -7153,9 +7153,9 @@ DW_API void dwarf_gnu_index_dealloc(Dwarf_Gnu_Index_Head dw_head);
     this particlular block number.
     @param dw_error
     On error dw_error is set to point to the error details.
-    @return 
+    @return
     Returns DW_DLV_OK, DW_DLV_NO_ENTRY (if the section does
-    not exist or is empty), or, in case of  
+    not exist or is empty), or, in case of
     an error reading the section, DW_DLV_ERROR.
 */
 
@@ -7187,7 +7187,7 @@ DW_API int dwarf_get_gnu_index_block(Dwarf_Gnu_Index_Head dw_head,
     On success set to the size in bytes, in .debug_info, of
     the area this block refersto.
     @param dw_flagbyte
-    On success set to the entry flag byte content. 
+    On success set to the entry flag byte content.
     @param dw_staticorglobal
     On success set to the entry static/global letter.
     @param dw_typeofentry
