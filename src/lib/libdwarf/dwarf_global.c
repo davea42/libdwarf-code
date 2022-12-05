@@ -439,64 +439,124 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
 }
 #undef IDX_ARRAY_SIZE
 
-int
-dwarf_get_globals(Dwarf_Debug dbg,
-    Dwarf_Global ** ret_globals,
-    Dwarf_Signed * return_count,
-    Dwarf_Error * error)
-{
-    int res = 0;
-    Dwarf_Chain head_chain = 0;
-    /*  plast chain is not a chain entry. It points
-        to the next place to record a new chain
-        poointer. */
-    Dwarf_Chain *plast_chain = &head_chain ;
-    Dwarf_Bool have_dnames  = FALSE;
-    Dwarf_Bool have_pubnames  = FALSE;
 
-    if (!dbg || dbg->de_magic != DBG_IS_VALID) {
-        _dwarf_error_string(NULL, error, DW_DLE_DBG_NULL,
-            "DW_DLE_DBG_NULL: "
-            "calling dwarf_get_globals "
-            "Dwarf_Debug either null or it is"
-            "a stale Dwarf_Debug pointer");
+const static int err3[]=
+{
+DW_DLE_PUBNAMES_LENGTH_BAD,
+DW_DLE_DEBUG_PUBTYPES_LENGTH_BAD,
+DW_DLE_DEBUG_FUNCNAMES_LENGTH_BAD,
+DW_DLE_DEBUG_TYPENAMES_LENGTH_BAD,
+DW_DLE_DEBUG_VARNAMES_LENGTH_BAD,
+DW_DLE_DEBUG_WEAKNAMES_LENGTH_BAD
+};
+const static int err4[]=
+{
+DW_DLE_PUBNAMES_VERSION_ERROR,
+DW_DLE_DEBUG_PUBTYPES_VERSION_ERROR,
+DW_DLE_DEBUG_FUNCNAMES_VERSION_ERROR,
+DW_DLE_DEBUG_TYPENAMES_VERSION_ERROR),
+DW_DLE_DEBUG_VARNAMES_VERSION_ERROR,
+DW_DLE_DEBUG_WEAKNAMES_VERSION_ERROR
+};
+const static const char * secna[] =
+{
+".debug_pubnames",
+".debug_pubtypes",
+".debug_funcnames",
+".debug_typenames",
+".debug_varnames",
+".debug_weaknames",
+};
+
+/*  New in 0.6.0, unifies all the access routines
+    for the sections like .debug_pubtypes.
+*/
+dwarf_globals_by_type(Dwarf_Debug dbg,
+    int             requested_section,
+    Dwarf_Globals **contents,
+    Dwarf_Signed   *ret_count,
+    Dwarf_Error    *error)
+{
+    struct Dwarf_Section_s *section = 0;
+    const char *usual_secname = 0;
+    Dwarf_Chain head_chain = 0;
+    Dwarf_Chain *plast_chain = &head_chain;
+    Dwarf_Bool have_base_sec = FALSE;
+    Dwarf_Bool have_second_sec = FALSE;
+
+    switch(requested_section){
+    case  DW_GL_GLOBALS:
+        section = &dbg->de_debug_pubnames;
+        break;
+    case  DW_GL_PUBTYPES:
+        section = &dbg->de_debug_pubtypes;
+        break;
+    /*  The Following are IRIX only. */
+    case  DW_GL_FUNCS:
+        section = &dbg->de_debug_funcs;
+        break;
+    case  DW_GL_TYPES:
+        section = &dbg->de_debug_types;
+        break;
+    case  DW_GL_VARS:
+        section = &dbg->de_debug_vars;
+        break;
+    case  DW_GL_WEAKS:
+        section = &dbg->de_debug_weaks;
+        break;
+    default: {
+        dwarfstring m;
+        char buf[50];
+
+        dwarfstring_constructor_fixed(&m,buf,sizeof(buf));
+        dwarfstring_append_printf_u(&m,
+            "ERROR DW_DLE_GLOBAL_NULL: Passed in Dwarf_Global "
+            "requested section "
+            "%u which is unknown to dwarf_globals_by_type().",
+            requested section);
+        _dwarf_error_string(dbg, error, DW_DLE_GLOBAL_NULL,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-    res = _dwarf_load_section(dbg, &dbg->de_debug_pubnames,error);
-    if (res == DW_DLV_ERROR) {
-        return res;
-    } else if (dbg->de_debug_pubnames.dss_size) {
-        have_pubnames = TRUE;
-    }
-    res = _dwarf_load_section(dbg, &dbg->de_debug_names,error);
-    if (res == DW_DLV_ERROR) {
-        return res;
-    } else if (dbg->de_debug_names.dss_size) {
-        have_dnames = TRUE;
+
     }
 
-    if (have_pubnames) {
-        /* Unclear if we must generalize this at some point. */
+    int res = _dwarf_load_section(dbg, section, error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if (section->dss_size) {
+        have_base_sec = TRUE;
+    }
+
+    if (have_base_sec) {
         res = _dwarf_internal_get_pubnames_like_data(dbg,
-            ".debug_pubnames",
-            dbg->de_debug_pubnames.dss_data,
-            dbg->de_debug_pubnames.dss_size,
-            0,
+            secna[requested_section],
+            section->dss_data,
+            section->dss_size,
+            contents,
             &head_chain,
             &plast_chain,
-            return_count,
+            ret_count,
             error,
-            DW_DLA_GLOBAL_CONTEXT,
-            DW_DLA_GLOBAL,
-            DW_DLE_PUBNAMES_LENGTH_BAD,
-            DW_DLE_PUBNAMES_VERSION_ERROR);
+            err3[requested_section],
+            err4[requested_section]);
         if (res == DW_DLV_ERROR) {
             dealloc_globals_chain(dbg,head_chain);
             return res;
         }
     }
-    if (have_dnames) {
-        res = _dwarf_internal_get_debug_names_globals(dbg,
+    if (0 == requested_section) {
+        res = _dwarf_load_section(dbg, &dbg->de_debug_names,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        } else if (dbg->de_debug_names.dss_size) {
+            have_second_sec = TRUE;
+        }
+    }
+    if (have_second_sec) {
+         res = _dwarf_internal_get_debug_names_globals(dbg,
             &plast_chain,
             return_count,
             error,
@@ -508,17 +568,46 @@ dwarf_get_globals(Dwarf_Debug dbg,
             return res;
         }
     }
-
-    /*  Cannot return DW_DLV_NO_ENTRY */
     res = _dwarf_chain_to_array(dbg,head_chain,
-        *return_count, ret_globals, error);
+        *return_count, content, error);
     if (res == DW_DLV_ERROR) {
         /*  head chain maybe zero. Is ok. */
         dealloc_globals_chain(dbg,head_chain);
         return res;
     }
+    /*  Must not return DW_DLV_NO_ENTRY. Count
+        is set zero in caller so no need for NO_ENTRY. */
     return DW_DLV_OK;
 }
+
+int
+dwarf_get_globals(Dwarf_Debug dbg,
+    Dwarf_Global ** ret_globals,
+    Dwarf_Signed * return_count,
+    Dwarf_Error * error)
+{
+    int res = 0;
+    res = dwarf_globals_by_type(dbg,
+        DW_GL_GLOBALS,ret_globals,error);
+    return res;
+}
+/* This now returns Dwarf_Global for types so
+   all the dwarf_global data retrieval calls work.
+   This is just a shorthand.
+
+   Before 0.6.0 this would return Dwarf_Type.
+*/
+int
+dwarf_get_pubtypes(Dwarf_Debug dbg,
+    Dwarf_Global ** types,
+    Dwarf_Signed * ret_type_count, Dwarf_Error * error)
+{
+    int res = 0;
+    res = dwarf_globals_by_type(dbg,
+        DW_GL_PUBTYPES,ret_globals,error);
+    return res;
+}
+
 
 /* Deallocating fully requires deallocating the list
    and all entries.  But some internal data is

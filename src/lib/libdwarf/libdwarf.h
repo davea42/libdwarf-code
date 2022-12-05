@@ -6095,11 +6095,9 @@ DW_API void dwarf_dealloc_error(Dwarf_Debug dw_dbg,
     @see dwarf_dealloc_macro_context @see dwarf_dealloc_ranges
     @see dwarf_dealloc_rnglists_head
     @see dwarf_dealloc_uncompressed_block
-    @see dwarf_funcs_dealloc @see dwarf_globals_dealloc
+    @see dwarf_globals_dealloc
     @see dwarf_gnu_index_dealloc @see dwarf_loc_head_c_dealloc
-    @see dwarf_pubtypes_dealloc @see dwarf_srclines_dealloc_b
-    @see dwarf_types_dealloc @see dwarf_vars_dealloc
-    @see dwarf_weaks_dealloc @see dwarf_funcs_dealloc
+    @see dwarf_srclines_dealloc_b
 
 */
 /*! @brief The generic dealloc (free) function.
@@ -6791,6 +6789,45 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
     Dwarf_Signed * dw_number_of_globals,
     Dwarf_Error  * dw_error);
 
+#define DW_GL_GLOBALS  0 /* .debug_pubnames  and .debug_names */
+#define DW_GL_PUBTYPES 1 /* .debug_pubtypes */
+/* the following are IRIX ONLY */
+#define DW_GL_FUNCS    2 /* .debug_funcnames */
+#define DW_GL_TYPES    3 /* .debug_typenames */
+#define DW_GL_VARS     4 /* .debug_varnames */
+#define DW_GL_WEAKS    5 /* .debug_weaknames */
+
+/*! @brief Allocate Any Fast Access DWARF2-DWARF4
+
+    This interface new in 0.6.0. Simplfies access
+    by replace dwarf_get_pubtypes, dwarf_get_funcs,
+    dwarf_get_types, dwarfget_vars, and dwarf_get_weaks
+    with a single set of types.
+
+    @param dw_dbg
+    The Dwarf_Debug of interest.
+    @param dw_requested_section
+    Pass in one of the values DW_GL_GLOBALS through
+    DW_GL_WEAKS to select the section to extract
+    data from.
+    @param dw_contents
+    On success returns an array of pointers to opaque
+    structs.
+    @param dw_count
+    On success returns the number of entries in the array.
+    @param dw_error
+    On error dw_error is set to point to the error details.
+    @return
+    The usual value: DW_DLV_OK etc.
+    Returns DW_DLV_NO_ENTRY if the section is not present.
+
+*/
+DW_API int dwarf_globals_by_type(Dwarf_Debug dw_dbg,
+    int             dw_requested_section,
+    Dwarf_Globals **dw_contents,
+    Dwarf_Signed   *dw_count,
+    Dwarf_Error    *dw_error);
+
 /*! @brief Dealloc the Dwarf_Globals data
 
     @param dw_dbg
@@ -6800,6 +6837,9 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
     @param dw_number_of_globals
     The number of entries in the array.
 */
+
+
+
 DW_API void dwarf_globals_dealloc(Dwarf_Debug dw_dbg,
     Dwarf_Global* dw_globals,
     Dwarf_Signed  dw_number_of_globals);
@@ -6917,153 +6957,10 @@ DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
 */
 
 DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
-    Dwarf_Type  ** dw_types,
+    Dwarf_Global  ** dw_types,
     Dwarf_Signed * dw_number_of_types,
     Dwarf_Error  * dw_error);
-DW_API void dwarf_pubtypes_dealloc(Dwarf_Debug dw_dbg,
-    Dwarf_Type   * dw_pubtypes,
-    Dwarf_Signed   dw_number_of_pubtypes);
 
-DW_API int dwarf_pubtypename(Dwarf_Type dw_type,
-    char      ** dw_returned_name,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_pubtype_type_die_offset(Dwarf_Type dw_type,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_pubtype_cu_offset(Dwarf_Type dw_type,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_pubtype_name_offsets(Dwarf_Type dw_type,
-    char      ** dw_returned_name,
-    Dwarf_Off  * dw_die_offset,
-    Dwarf_Off  * dw_cu_offset,
-    Dwarf_Error* dw_error);
-
-/*! @brief Access to SGI/IRIX .debug_funcs section.
-    Static function names and offsets.
-
-    @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
-
-    @see examplej
-*/
-DW_API int dwarf_get_funcs(Dwarf_Debug dw_dbg,
-    Dwarf_Func  ** dw_funcs,
-    Dwarf_Signed * dw_number_of_funcs,
-    Dwarf_Error*   dw_error);
-DW_API void dwarf_funcs_dealloc(Dwarf_Debug dw_dbg,
-    Dwarf_Func  * dw_funcs,
-    Dwarf_Signed  dw_number_of_funcs);
-
-DW_API int dwarf_funcname(Dwarf_Func dw_func,
-    char      ** dw_returned_name,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_func_die_offset(Dwarf_Func dw_func,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_func_cu_offset(Dwarf_Func dw_func,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_func_name_offsets(Dwarf_Func dw_func,
-    char      ** dw_returned_name,
-    Dwarf_Off  * dw_die_offset,
-    Dwarf_Off  * dw_cu_offset,
-    Dwarf_Error* dw_error);
-
-/*! @brief Access to SGI/IRIX .debug_types section.
-    Static types names and offsets.
-    @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
-
-    @see examplel
-*/
-DW_API int dwarf_get_types(Dwarf_Debug dw_dbg,
-    Dwarf_Type  ** dw_types,
-    Dwarf_Signed * dw_number_of_types,
-    Dwarf_Error  * dw_error);
-DW_API void dwarf_types_dealloc(Dwarf_Debug dw_dbg,
-    Dwarf_Type   * dw_types,
-    Dwarf_Signed   dw_number_of_types);
-
-/*  The fourth gives all the values that the next
-    three combined do.
-*/
-DW_API int dwarf_typename(Dwarf_Type dw_type,
-    char      ** dw_returned_name,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_type_die_offset(Dwarf_Type dw_type,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_type_cu_offset(Dwarf_Type dw_type,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_type_name_offsets(Dwarf_Type dw_type,
-    char      ** dw_returned_name,
-    Dwarf_Off  * dw_die_offset,
-    Dwarf_Off  * dw_cu_offset,
-    Dwarf_Error* dw_error);
-
-/*! @brief Access to SGI/IRIC .debug_vars section.
-    File-scope static variable names
-    @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
-
-    @see examplen
-*/
-DW_API int dwarf_get_vars(Dwarf_Debug dw_dbg,
-    Dwarf_Var  ** dw_vars,
-    Dwarf_Signed* dw_number_of_vars,
-    Dwarf_Error * dw_error);
-DW_API void dwarf_vars_dealloc(Dwarf_Debug dw_dbg,
-    Dwarf_Var   * dw_vars,
-    Dwarf_Signed  dw_number_of_vars);
-
-DW_API int dwarf_varname(Dwarf_Var dw_var,
-    char      ** dw_returned_name,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_var_die_offset(Dwarf_Var dw_var,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_var_cu_offset(Dwarf_Var dw_var,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_var_name_offsets(Dwarf_Var dw_var,
-    char      ** dw_returned_name,
-    Dwarf_Off  * dw_die_offset,
-    Dwarf_Off  * dw_cu_offset,
-    Dwarf_Error* dw_error);
-
-/*! @brief Access to SGI/IRIC .debug_weaks section.
-
-    Lists weak symbols. Weak symbols are an
-    Elf Object Format feature.
-
-    @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
-
-    @see exampleh
-
-    @see https://en.wikipedia.org/wiki/Weak_symbol
-
-*/
-DW_API int dwarf_get_weaks(Dwarf_Debug dw_dbg,
-    Dwarf_Weak  ** dw_weaks,
-    Dwarf_Signed * dw_number_of_weaks,
-    Dwarf_Error  * dw_error);
-DW_API void dwarf_weaks_dealloc(Dwarf_Debug dw_dbg,
-    Dwarf_Weak   * dw_weaks,
-    Dwarf_Signed   dw_number_of_weaks);
-
-DW_API int dwarf_weakname(Dwarf_Weak dw_weak,
-    char      ** dw_returned_name,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_weak_die_offset(Dwarf_Weak dw_weak,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* error);
-DW_API int dwarf_weak_cu_offset(Dwarf_Weak dw_weak,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Error* dw_error);
-DW_API int dwarf_weak_name_offsets(Dwarf_Weak dw_weak,
-    char      ** dw_returned_name,
-    Dwarf_Off  * dw_die_offset,
-    Dwarf_Off  * dw_cu_offset,
-    Dwarf_Error* dw_error);
 /*! @brief A flag for dwarfdump on pubnames, pubtypes etc.
 
     Sets a flag in the dbg. Always returns DW_DLV_OK.

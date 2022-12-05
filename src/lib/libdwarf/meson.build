@@ -24,7 +24,6 @@ libdwarf_src = [
   'dwarf_form_class_names.c',
   'dwarf_frame.c',
   'dwarf_frame2.c',
-  'dwarf_funcs.c',
   'dwarf_gdbindex.c',
   'dwarf_generic_init.c',
   'dwarf_global.c',
@@ -46,7 +45,6 @@ libdwarf_src = [
   'dwarf_object_read_common.c',
   'dwarf_peread.c',
   'dwarf_print_lines.c',
-  'dwarf_pubtypes.c',
   'dwarf_query.c',
   'dwarf_safe_strcpy.c',
   'dwarf_ranges.c',
@@ -56,10 +54,7 @@ libdwarf_src = [
   'dwarf_stringsection.c',
   'dwarf_tied.c',
   'dwarf_tsearchhash.c',
-  'dwarf_types.c',
   'dwarf_util.c',
-  'dwarf_vars.c',
-  'dwarf_weaks.c',
   'dwarf_xu_index.c',
 ]
 
