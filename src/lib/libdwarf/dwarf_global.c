@@ -476,6 +476,7 @@ dwarf_get_globals(Dwarf_Debug dbg,
     }
 
     if (have_pubnames) {
+        /* Unclear if we must generalize this at some point. */
         res = _dwarf_internal_get_pubnames_like_data(dbg,
             ".debug_pubnames",
             dbg->de_debug_pubnames.dss_data,
@@ -1305,11 +1306,14 @@ build_off_end_msg(Dwarf_Unsigned offval,
   Give back the pubnames entry (or any other like section)
   name, symbol DIE offset, and the cu-DIE offset.
 
-  Various errors are possible.
+  This provides all the information that
+  dwarf_globname(), dwarf_global_die_offset()
+  and dwarf_global_cu_offset() do, but do it
+  in one call.
 
   The string pointer returned thru ret_name is not
   dwarf_get_alloc()ed, so no dwarf_dealloc()
-  DW_D_STRING should be applied to it.
+  DW_DLA_STRING should be applied to it.
 
 */
 int
@@ -1351,7 +1355,8 @@ dwarf_global_name_offsets(Dwarf_Global global,
             "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
     }
-    /* Cannot refer to debug_types */
+    /*  Cannot refer to debug_types, see p141 of 
+        DWARF4 Standard */
     if (dbg->de_debug_info.dss_size &&
         ((cuhdr_off + MIN_CU_HDR_SIZE) >=
         dbg->de_debug_info.dss_size)) {
@@ -1365,7 +1370,6 @@ dwarf_global_name_offsets(Dwarf_Global global,
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-#undef MIN_CU_HDR_SIZE
     /*  If global->gl_named_die_offset_within_cu
         is zero then this is a fake global for
         a pubnames CU with no pubnames. The offset is from the
@@ -1379,6 +1383,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             *die_offset = 0;
         }
     }
+#undef MIN_CU_HDR_SIZE
     *ret_name = (char *) global->gl_name;
     if (cu_die_offset) {
         /* Globals cannot refer to debug_types */
@@ -1389,13 +1394,17 @@ dwarf_global_name_offsets(Dwarf_Global global,
         if (res != DW_DLV_OK) {
             return res;
         }
+        /* We already checked to make sure enough room
+            with MIN_CU_HDR_SIZE */
+#if 0
         /*  The offset had better not be too close to the end.
             If it is,
             _dwarf_length_of_cu_header() will step off the end and
             therefore must not be used. 10 is a meaningless heuristic,
             but no CU header is that small so it is safe. */
         /* Globals cannot refer to debug_types */
-        if ((cuhdr_off + 10) >= dbg->de_debug_info.dss_size) {
+        if ((cuhdr_off + MIN_CU_HDR_SIZE) 
+            >= dbg->de_debug_info.dss_size) {
             dwarfstring m;
 
             dwarfstring_constructor(&m);
@@ -1406,6 +1415,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
+#endif /* 0 */
         cres = _dwarf_length_of_cu_header(dbg, cuhdr_off,true,
             &headerlen,error);
         if (cres != DW_DLV_OK) {
@@ -1418,7 +1428,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
 
 /*  New February 2019 from better dwarfdump printing
     of debug_pubnames and pubtypes.
-    For ao the Dwarf_Global records in one pubnames
+    For all the Dwarf_Global records in one pubnames
     CU group exactly the same data will be returned.
 
 */
