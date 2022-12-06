@@ -6797,6 +6797,23 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
 #define DW_GL_VARS     4 /* .debug_varnames */
 #define DW_GL_WEAKS    5 /* .debug_weaknames */
 
+/*  These defines make post-0.5.0 building easier by hiding
+    the name change.  We do nothing special for
+    the SGI/IRIX/MIPS non-standard
+    sections as no known compiler generates
+    them since the 1990's. */
+#define Dwarf_Type                 Dwarf_Global
+#define dwarf_pubtype_name         dwarf_globname 
+#define dwarf_pubtype_die_offset   dwarf_global_die_offset
+#define dwarf_pubtype_cu_offset    dwarf_global_cu_offset
+#define dwarf_pubtype_name_offsets dwarf_global_name_offsets
+#define dwarf_pubtypes_dealloc     dwarf_globals_dealloc
+
+DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
+    Dwarf_Global** dw_pubtypes,
+    Dwarf_Signed * dw_number_of_pubtypes,
+    Dwarf_Error  * dw_error);
+
 /*! @brief Allocate Any Fast Access DWARF2-DWARF4
 
     This interface new in 0.6.0. Simplfies access
@@ -6824,27 +6841,25 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
 */
 DW_API int dwarf_globals_by_type(Dwarf_Debug dw_dbg,
     int             dw_requested_section,
-    Dwarf_Globals **dw_contents,
+    Dwarf_Global  **dw_contents,
     Dwarf_Signed   *dw_count,
     Dwarf_Error    *dw_error);
 
-/*! @brief Dealloc the Dwarf_Globals data
+/*! @brief Dealloc the Dwarf_Global  data
 
     @param dw_dbg
     The Dwarf_Debug of interest.
-    @param dw_globals
-    The globals array data to dealloc (free).
-    @param dw_number_of_globals
+    @param dw_global_like 
+    The array of globals/types/etc data to dealloc (free).
+    @param dw_count
     The number of entries in the array.
 */
 
-
-
 DW_API void dwarf_globals_dealloc(Dwarf_Debug dw_dbg,
-    Dwarf_Global* dw_globals,
-    Dwarf_Signed  dw_number_of_globals);
+    Dwarf_Global* dw_global_like,
+    Dwarf_Signed  dw_count);
 
-/*! @brief Return the name of a global data item
+/*! @brief Return the name of a global-like data item
 
     @param dw_global
     The Dwarf_Global of interest.
@@ -6928,7 +6943,7 @@ DW_API int dwarf_global_name_offsets(Dwarf_Global dw_global,
     DW_TAG for the DIE in the global entry, for
     example DW_TAG_subprogram.
     In case of error or if the section for this global
-    was .debug_pubnames zero is returned.
+    was not .debug_names zero is returned.
 */
 DW_API Dwarf_Half dwarf_global_tag_number(Dwarf_Global dw_global);
 
@@ -6941,6 +6956,7 @@ DW_API Dwarf_Half dwarf_global_tag_number(Dwarf_Global dw_global);
     from any .debug_names headers.
 */
 DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
+    int            * dw_category, /* DW_GL_GLOBAL for example */
     Dwarf_Off      * dw_offset_pub_header,
     Dwarf_Unsigned * dw_length_size,
     Dwarf_Unsigned * dw_length_pub,
@@ -6948,18 +6964,6 @@ DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
     Dwarf_Unsigned * dw_header_info_offset,
     Dwarf_Unsigned * dw_info_length,
     Dwarf_Error    * dw_error);
-
-/*! @brief Access to DWARF3, DWARF4 .debug_pubtypes section.
-
-    @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
-
-    @see exampleg
-*/
-
-DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
-    Dwarf_Global  ** dw_types,
-    Dwarf_Signed * dw_number_of_types,
-    Dwarf_Error  * dw_error);
 
 /*! @brief A flag for dwarfdump on pubnames, pubtypes etc.
 

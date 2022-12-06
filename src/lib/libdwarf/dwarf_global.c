@@ -110,22 +110,6 @@ debug_print_range(const char *msg,
 }
 #endif /* 0 */
 
-static int _dwarf_chain_to_array(Dwarf_Debug dbg,
-    Dwarf_Chain head_chain,
-    Dwarf_Signed global_count,
-    Dwarf_Global **globals,
-    Dwarf_Error *error);
-static int _dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
-    Dwarf_Global_Context pubnames_context,
-    Dwarf_Off            die_offset_in_cu,
-    unsigned char       *glname,
-    Dwarf_Signed        *global_count,
-    Dwarf_Bool          *pubnames_context_on_list,
-    Dwarf_Unsigned       global_DLA_code,
-    Dwarf_Chain        **plast_chain,
-    Dwarf_Half           tag,
-    Dwarf_Error         *error);
-
 static void
 dealloc_globals_chain(Dwarf_Debug dbg,
     Dwarf_Chain head_chain)
@@ -156,6 +140,117 @@ dealloc_globals_chain(Dwarf_Debug dbg,
         dwarf_dealloc(dbg, prev, chaintype);
     }
 }
+
+/*  INVARIANTS:
+    1) on error does not leak Dwarf_Global
+    2) glname is not malloc space. Never free.
+*/
+static int
+_dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
+    Dwarf_Global_Context pubnames_context,
+    Dwarf_Off            die_offset_in_cu,
+    unsigned char       *glname,
+    Dwarf_Signed        *global_count,
+    Dwarf_Bool          *pubnames_context_on_list,
+    Dwarf_Unsigned       global_DLA_code,
+    Dwarf_Chain        **plast_chain,
+    Dwarf_Half           tag,
+    Dwarf_Error         *error)
+{
+    Dwarf_Chain  curr_chain = 0;
+    Dwarf_Global global = 0;
+
+    global = (Dwarf_Global)
+        _dwarf_get_alloc(dbg, global_DLA_code, 1);
+    if (!global) {
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL: Allocating Dwarf_Global");
+        return DW_DLV_ERROR;
+    }
+    (*global_count)++;
+    /*  Recording the same context in another Dwarf_Global */
+    global->gl_context = pubnames_context;
+    global->gl_alloc_type = global_DLA_code;
+    global->gl_named_die_offset_within_cu = die_offset_in_cu;
+    global->gl_name = glname; 
+    global->gl_tag = tag;
+    /* Finish off current entry chain */
+    curr_chain =
+        (Dwarf_Chain) _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
+    if (!curr_chain) {
+        dwarf_dealloc(dbg,global,pubnames_context->pu_alloc_type);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL: allocating a Dwarf_Chain"
+            " internal structure.");
+        return DW_DLV_ERROR;
+    }
+    /* Put current global on singly_linked list. */
+    curr_chain->ch_item = (Dwarf_Global) global;
+    curr_chain->ch_itemtype = global_DLA_code;
+    **plast_chain = curr_chain;
+    *plast_chain = &(curr_chain->ch_next);
+    *pubnames_context_on_list = TRUE;
+    return DW_DLV_OK;
+}
+
+
+static int
+_dwarf_chain_to_array(Dwarf_Debug dbg,
+    Dwarf_Chain head_chain,
+    Dwarf_Signed global_count,
+    Dwarf_Global **globals,
+    Dwarf_Error *error)
+{
+    Dwarf_Global *ret_globals = 0;
+
+    /*  Now turn list into a block */
+    /*  Points to contiguous block of Dwarf_Global. */
+    ret_globals = (Dwarf_Global *)
+        _dwarf_get_alloc(dbg, DW_DLA_LIST,
+            (Dwarf_Unsigned)global_count);
+    if (ret_globals == NULL) {
+        dealloc_globals_chain(dbg,head_chain);
+        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
+            "DW_DLE_ALLOC_FAIL: Allocating a Dwarf_Global");
+        return DW_DLV_ERROR;
+    }
+
+    /*  Store pointers to Dwarf_Global_s structs in contiguous block,
+        and deallocate the chain.  This ignores the various
+        headers, since they are not involved. */
+    {
+
+        Dwarf_Signed i = 0;
+        Dwarf_Chain curr_chain = 0;
+        curr_chain = head_chain;
+        for ( ; i < global_count; i++) {
+            Dwarf_Chain prev = 0;
+
+            *(ret_globals + i) = curr_chain->ch_item;
+            prev = curr_chain;
+            curr_chain = curr_chain->ch_next;
+            prev->ch_item = 0; /* Not actually necessary. */
+            dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
+        }
+    }
+    head_chain = 0; /* Unneccesary, but showing intent. */
+    *globals = ret_globals;
+    return DW_DLV_OK;
+}
+
+static int
+_dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
+    int         category, /* DW_GL_GLOBAL or ... */
+    const char *secname,
+    Dwarf_Small * section_data_ptr,
+    Dwarf_Unsigned section_length,
+    Dwarf_Global ** globals,
+    Dwarf_Chain  *  out_phead_chain,
+    Dwarf_Chain  **  out_pplast_chain,
+    Dwarf_Signed * return_count,
+    Dwarf_Error * error,
+    int length_err_num,
+    int version_err_num);
 
 /*  There are only 6 DW_IDX values defined in DWARF5
     so 7 would suffice, but lets allow for future DW_IDX too.
@@ -440,7 +535,7 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
 #undef IDX_ARRAY_SIZE
 
 
-const static int err3[]=
+static const int err3[]=
 {
 DW_DLE_PUBNAMES_LENGTH_BAD,
 DW_DLE_DEBUG_PUBTYPES_LENGTH_BAD,
@@ -449,16 +544,16 @@ DW_DLE_DEBUG_TYPENAMES_LENGTH_BAD,
 DW_DLE_DEBUG_VARNAMES_LENGTH_BAD,
 DW_DLE_DEBUG_WEAKNAMES_LENGTH_BAD
 };
-const static int err4[]=
+static const int err4[]=
 {
 DW_DLE_PUBNAMES_VERSION_ERROR,
 DW_DLE_DEBUG_PUBTYPES_VERSION_ERROR,
 DW_DLE_DEBUG_FUNCNAMES_VERSION_ERROR,
-DW_DLE_DEBUG_TYPENAMES_VERSION_ERROR),
+DW_DLE_DEBUG_TYPENAMES_VERSION_ERROR,
 DW_DLE_DEBUG_VARNAMES_VERSION_ERROR,
 DW_DLE_DEBUG_WEAKNAMES_VERSION_ERROR
 };
-const static const char * secna[] =
+static const char * secna[] =
 {
 ".debug_pubnames",
 ".debug_pubtypes",
@@ -471,18 +566,19 @@ const static const char * secna[] =
 /*  New in 0.6.0, unifies all the access routines
     for the sections like .debug_pubtypes.
 */
+int
 dwarf_globals_by_type(Dwarf_Debug dbg,
-    int             requested_section,
-    Dwarf_Globals **contents,
-    Dwarf_Signed   *ret_count,
-    Dwarf_Error    *error)
+    int            requested_section,
+    Dwarf_Global **contents,
+    Dwarf_Signed  *ret_count,
+    Dwarf_Error   *error)
 {
     struct Dwarf_Section_s *section = 0;
-    const char *usual_secname = 0;
-    Dwarf_Chain head_chain = 0;
+    Dwarf_Chain  head_chain = 0;
     Dwarf_Chain *plast_chain = &head_chain;
-    Dwarf_Bool have_base_sec = FALSE;
-    Dwarf_Bool have_second_sec = FALSE;
+    Dwarf_Bool   have_base_sec = FALSE;
+    Dwarf_Bool   have_second_sec = FALSE;
+    int          res = 0;
 
     switch(requested_section){
     case  DW_GL_GLOBALS:
@@ -493,36 +589,34 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
         break;
     /*  The Following are IRIX only. */
     case  DW_GL_FUNCS:
-        section = &dbg->de_debug_funcs;
+        section = &dbg->de_debug_funcnames;
         break;
     case  DW_GL_TYPES:
-        section = &dbg->de_debug_types;
+        section = &dbg->de_debug_typenames;
         break;
     case  DW_GL_VARS:
-        section = &dbg->de_debug_vars;
+        section = &dbg->de_debug_varnames;
         break;
     case  DW_GL_WEAKS:
-        section = &dbg->de_debug_weaks;
+        section = &dbg->de_debug_weaknames;
         break;
     default: {
         dwarfstring m;
         char buf[50];
 
-        dwarfstring_constructor_fixed(&m,buf,sizeof(buf));
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
         dwarfstring_append_printf_u(&m,
             "ERROR DW_DLE_GLOBAL_NULL: Passed in Dwarf_Global "
             "requested section "
             "%u which is unknown to dwarf_globals_by_type().",
-            requested section);
+            requested_section);
         _dwarf_error_string(dbg, error, DW_DLE_GLOBAL_NULL,
             dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }
-
     }
-
-    int res = _dwarf_load_section(dbg, section, error);
+    res = _dwarf_load_section(dbg, section, error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
@@ -531,7 +625,8 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
     }
 
     if (have_base_sec) {
-        res = _dwarf_internal_get_pubnames_like_data(dbg,
+        res = _dwarf_internal_get_pubnames_like(dbg,
+            requested_section,
             secna[requested_section],
             section->dss_data,
             section->dss_size,
@@ -558,7 +653,7 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
     if (have_second_sec) {
          res = _dwarf_internal_get_debug_names_globals(dbg,
             &plast_chain,
-            return_count,
+            ret_count,
             error,
             DW_DLA_GLOBAL_CONTEXT,
             DW_DLA_GLOBAL);
@@ -569,7 +664,7 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
         }
     }
     res = _dwarf_chain_to_array(dbg,head_chain,
-        *return_count, content, error);
+        *ret_count, contents, error);
     if (res == DW_DLV_ERROR) {
         /*  head chain maybe zero. Is ok. */
         dealloc_globals_chain(dbg,head_chain);
@@ -582,13 +677,13 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
 
 int
 dwarf_get_globals(Dwarf_Debug dbg,
-    Dwarf_Global ** ret_globals,
-    Dwarf_Signed * return_count,
-    Dwarf_Error * error)
+    Dwarf_Global **ret_globals,
+    Dwarf_Signed  *return_count,
+    Dwarf_Error   *error)
 {
     int res = 0;
     res = dwarf_globals_by_type(dbg,
-        DW_GL_GLOBALS,ret_globals,error);
+        DW_GL_GLOBALS,ret_globals,return_count,error);
     return res;
 }
 /* This now returns Dwarf_Global for types so
@@ -599,12 +694,13 @@ dwarf_get_globals(Dwarf_Debug dbg,
 */
 int
 dwarf_get_pubtypes(Dwarf_Debug dbg,
-    Dwarf_Global ** types,
-    Dwarf_Signed * ret_type_count, Dwarf_Error * error)
+    Dwarf_Global **types,
+    Dwarf_Signed  *return_count,
+    Dwarf_Error   *error)
 {
     int res = 0;
     res = dwarf_globals_by_type(dbg,
-        DW_GL_PUBTYPES,ret_globals,error);
+        DW_GL_PUBTYPES,types,return_count,error);
     return res;
 }
 
@@ -679,58 +775,6 @@ pubnames_error_length(Dwarf_Debug dbg,
     dwarfstring_destructor(&m);
 }
 
-/*  INVARIANTS:
-    1) on error does not leak Dwarf_Global
-    2) glname is not malloc space. Never free.
-*/
-static int
-_dwarf_make_global_add_to_chain(Dwarf_Debug dbg,
-    Dwarf_Global_Context pubnames_context,
-    Dwarf_Off            die_offset_in_cu,
-    unsigned char       *glname,
-    Dwarf_Signed        *global_count,
-    Dwarf_Bool          *pubnames_context_on_list,
-    Dwarf_Unsigned       global_DLA_code,
-    Dwarf_Chain        **plast_chain,
-    Dwarf_Half           tag,
-    Dwarf_Error         *error)
-{
-    Dwarf_Chain  curr_chain = 0;
-    Dwarf_Global global = 0;
-
-    global = (Dwarf_Global)
-        _dwarf_get_alloc(dbg, global_DLA_code, 1);
-    if (!global) {
-        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
-            "DW_DLE_ALLOC_FAIL: Allocating Dwarf_Global");
-        return DW_DLV_ERROR;
-    }
-    (*global_count)++;
-    /*  Recording the same context in another Dwarf_Global */
-    global->gl_context = pubnames_context;
-    global->gl_alloc_type = global_DLA_code;
-    global->gl_named_die_offset_within_cu = die_offset_in_cu;
-    global->gl_name = glname;
-    global->gl_tag = tag;
-    /* Finish off current entry chain */
-    curr_chain =
-        (Dwarf_Chain) _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
-    if (!curr_chain) {
-        dwarf_dealloc(dbg,global,pubnames_context->pu_alloc_type);
-        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
-            "DW_DLE_ALLOC_FAIL: allocating a Dwarf_Chain"
-            " internal structure.");
-        return DW_DLV_ERROR;
-    }
-    /* Put current global on singly_linked list. */
-    curr_chain->ch_item = (Dwarf_Global) global;
-    curr_chain->ch_itemtype = global_DLA_code;
-    **plast_chain = curr_chain;
-    *plast_chain = &(curr_chain->ch_next);
-    *pubnames_context_on_list = TRUE;
-    return DW_DLV_OK;
-}
-
 static void
 _dwarf_get_DLE_name(int errnum,dwarfstring *out)
 {
@@ -792,8 +836,9 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
     it updates the caller head_chain through
     the pointers.
 */
-int
-_dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
+static int
+_dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
+    int         category, /* DW_GL_GLOBAL or ... */
     const char *secname,
     Dwarf_Small * section_data_ptr,
     Dwarf_Unsigned section_length,
@@ -802,8 +847,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     Dwarf_Chain  **  out_pplast_chain,
     Dwarf_Signed * return_count,
     Dwarf_Error * error,
-    int context_DLA_code,
-    int global_DLA_code,
     int length_err_num,
     int version_err_num)
 {
@@ -818,6 +861,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         that the set refers to. */
     Dwarf_Global_Context pubnames_context = 0;
     Dwarf_Bool           pubnames_context_on_list = FALSE;
+    Dwarf_Unsigned       context_DLA_code = DW_DLA_GLOBAL_CONTEXT;
+    Dwarf_Unsigned       global_DLA_code = DW_DLA_GLOBAL;
 
     Dwarf_Unsigned version = 0;
 
@@ -894,7 +939,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             dealloc_globals_chain(dbg,*out_phead_chain);
             *out_phead_chain = 0;
             if (!pubnames_context_on_list) {
-                dwarf_dealloc(dbg,pubnames_context,context_DLA_code);
+                dwarf_dealloc(dbg,pubnames_context,
+                    context_DLA_code);
             }
             return DW_DLV_ERROR;
         }
@@ -936,6 +982,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             a few lines above. */
         ++context_count;
         /*  Dwarf_Global_Context initialization. */
+        pubnames_context->pu_global_category  = category;
         pubnames_context->pu_alloc_type = context_DLA_code;
         pubnames_context->pu_length_size = local_length_size;
         pubnames_context->pu_length = length;
@@ -1261,50 +1308,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
     }
 }
 
-static int
-_dwarf_chain_to_array(Dwarf_Debug dbg,
-    Dwarf_Chain head_chain,
-    Dwarf_Signed global_count,
-    Dwarf_Global **globals,
-    Dwarf_Error *error)
-{
-    Dwarf_Global *ret_globals = 0;
-
-    /*  Now turn list into a block */
-    /*  Points to contiguous block of Dwarf_Global. */
-    ret_globals = (Dwarf_Global *)
-        _dwarf_get_alloc(dbg, DW_DLA_LIST,
-            (Dwarf_Unsigned)global_count);
-    if (ret_globals == NULL) {
-        dealloc_globals_chain(dbg,head_chain);
-        _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
-            "DW_DLE_ALLOC_FAIL: Allocating a Dwarf_Global");
-        return DW_DLV_ERROR;
-    }
-
-    /*  Store pointers to Dwarf_Global_s structs in contiguous block,
-        and deallocate the chain.  This ignores the various
-        headers, since they are not involved. */
-    {
-
-        Dwarf_Signed i = 0;
-        Dwarf_Chain curr_chain = 0;
-        curr_chain = head_chain;
-        for ( ; i < global_count; i++) {
-            Dwarf_Chain prev = 0;
-
-            *(ret_globals + i) = curr_chain->ch_item;
-            prev = curr_chain;
-            curr_chain = curr_chain->ch_next;
-            prev->ch_item = 0; /* Not actually necessary. */
-            dwarf_dealloc(dbg, prev, DW_DLA_CHAIN);
-        }
-    }
-    head_chain = 0; /* Unneccesary, but showing intent. */
-    *globals = ret_globals;
-    return DW_DLV_OK;
-}
-
 /*  Given a pubnames entry (or other like section entry)
     return thru the ret_name pointer
     a pointer to the string which is the entry name.  */
@@ -1475,7 +1478,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
 #undef MIN_CU_HDR_SIZE
     *ret_name = (char *) global->gl_name;
     if (cu_die_offset) {
-        /* Globals cannot refer to debug_types */
+        /* Global cannot refer to debug_types */
         int cres = 0;
         Dwarf_Unsigned headerlen = 0;
         int res = _dwarf_load_debug_info(dbg, error);
@@ -1491,7 +1494,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
             _dwarf_length_of_cu_header() will step off the end and
             therefore must not be used. 10 is a meaningless heuristic,
             but no CU header is that small so it is safe. */
-        /* Globals cannot refer to debug_types */
+        /* Global cannot refer to debug_types */
         if ((cuhdr_off + MIN_CU_HDR_SIZE)
             >= dbg->de_debug_info.dss_size) {
             dwarfstring m;
@@ -1523,6 +1526,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
 */
 int
 dwarf_get_globals_header(Dwarf_Global global,
+    int            *category,/* DW_GL_GLOBAL for example*/
     Dwarf_Off      *pub_section_hdr_offset,
     Dwarf_Unsigned *pub_offset_size,
     Dwarf_Unsigned *pub_cu_length,
@@ -1551,6 +1555,9 @@ dwarf_get_globals_header(Dwarf_Global global,
             "either null or it contains"
             "a stale Dwarf_Debug pointer");
         return DW_DLV_ERROR;
+    }
+    if (category) {
+        *category = con->pu_global_category;
     }
     if (pub_section_hdr_offset) {
         *pub_section_hdr_offset = con->pu_pub_offset;
