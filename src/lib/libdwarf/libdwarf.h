@@ -6797,18 +6797,8 @@ DW_API int dwarf_get_globals(Dwarf_Debug dw_dbg,
 #define DW_GL_VARS     4 /* .debug_varnames */
 #define DW_GL_WEAKS    5 /* .debug_weaknames */
 
-/*  These defines make post-0.5.0 building easier by hiding
-    the name change.  We do nothing special for
-    the SGI/IRIX/MIPS non-standard
-    sections as no known compiler generates
-    them since the 1990's. */
-#define Dwarf_Type                 Dwarf_Global
-#define dwarf_pubtype_name         dwarf_globname 
-#define dwarf_pubtype_die_offset   dwarf_global_die_offset
-#define dwarf_pubtype_cu_offset    dwarf_global_cu_offset
-#define dwarf_pubtype_name_offsets dwarf_global_name_offsets
-#define dwarf_pubtypes_dealloc     dwarf_globals_dealloc
-
+/*  Same function name as 0.5.0 and earlier, but
+    the data type changes to Dwarf_Global */
 DW_API int dwarf_get_pubtypes(Dwarf_Debug dw_dbg,
     Dwarf_Global** dw_pubtypes,
     Dwarf_Signed * dw_number_of_pubtypes,

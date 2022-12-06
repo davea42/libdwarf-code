@@ -208,7 +208,7 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
     ret_globals = (Dwarf_Global *)
         _dwarf_get_alloc(dbg, DW_DLA_LIST,
             (Dwarf_Unsigned)global_count);
-    if (ret_globals == NULL) {
+    if (!ret_globals) {
         dealloc_globals_chain(dbg,head_chain);
         _dwarf_error_string(dbg, error, DW_DLE_ALLOC_FAIL,
             "DW_DLE_ALLOC_FAIL: Allocating a Dwarf_Global");
@@ -219,9 +219,9 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
         and deallocate the chain.  This ignores the various
         headers, since they are not involved. */
     {
-
         Dwarf_Signed i = 0;
         Dwarf_Chain curr_chain = 0;
+
         curr_chain = head_chain;
         for ( ; i < global_count; i++) {
             Dwarf_Chain prev = 0;
@@ -244,7 +244,6 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
     const char *secname,
     Dwarf_Small * section_data_ptr,
     Dwarf_Unsigned section_length,
-    Dwarf_Global ** globals,
     Dwarf_Chain  *  out_phead_chain,
     Dwarf_Chain  **  out_pplast_chain,
     Dwarf_Signed * return_count,
@@ -630,7 +629,6 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
             secna[requested_section],
             section->dss_data,
             section->dss_size,
-            contents,
             &head_chain,
             &plast_chain,
             ret_count,
@@ -842,7 +840,6 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
     const char *secname,
     Dwarf_Small * section_data_ptr,
     Dwarf_Unsigned section_length,
-    Dwarf_Global ** globals,
     Dwarf_Chain  *  out_phead_chain,
     Dwarf_Chain  **  out_pplast_chain,
     Dwarf_Signed * return_count,
@@ -1294,6 +1291,8 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
         pubnames_like_ptr = pubnames_ptr_past_end_cu;
     } while (pubnames_like_ptr < section_end_ptr);
     *return_count = global_count;
+    return DW_DLV_OK;
+#if 0
     if (!globals) {
         return DW_DLV_OK;
     }
@@ -1306,6 +1305,7 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
         *out_phead_chain = 0;
         return cbres;
     }
+#endif
 }
 
 /*  Given a pubnames entry (or other like section entry)
