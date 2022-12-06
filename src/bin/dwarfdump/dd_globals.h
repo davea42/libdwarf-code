@@ -132,7 +132,8 @@ extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern int print_ranges(Dwarf_Debug dbg);
 extern int print_raw_all_rnglists(Dwarf_Debug dbg, Dwarf_Error *err);
 extern int print_raw_all_loclists(Dwarf_Debug dbg, Dwarf_Error *err);
-extern int print_pubnames (Dwarf_Debug dbg,Dwarf_Error *);
+extern int print_pubnames_style(Dwarf_Debug dbg,
+    int category,Dwarf_Error *);
 extern int print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info,
     Dwarf_Error *);
 extern int print_abbrevs (Dwarf_Debug dbg,Dwarf_Error *);
@@ -153,13 +154,6 @@ int print_all_abbrevs_for_cu(Dwarf_Debug dbg,
     Dwarf_Unsigned *length_out,
     Dwarf_Unsigned *abbrev_num_out,
     Dwarf_Error    *error);
-
-int print_all_pubnames_style_records(Dwarf_Debug dbg,
-    const char * linetitle,
-    const char * section_true_name,
-    Dwarf_Global *globbuf,
-    Dwarf_Signed count,
-    Dwarf_Error *err);
 
 /*  Space used to record range information */
 extern void allocate_range_array_info(void);

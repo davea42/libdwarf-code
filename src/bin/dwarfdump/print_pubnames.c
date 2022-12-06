@@ -42,6 +42,14 @@ Portions Copyright 2008-2020 David Anderson. All rights reserved.
 #include "print_sections.h"
 #include "dd_sanitized.h"
 
+static int
+print_all_pubnames_style_records(Dwarf_Debug dbg,
+    const char *linetitle,
+    const char * section_true_name,
+    Dwarf_Global *globbuf,
+    Dwarf_Signed count,
+    Dwarf_Error *err);
+
 /*  This unifies the code for some error checks to
     avoid code duplication.
 */
@@ -274,24 +282,61 @@ print_globals_header(
         info_length);
 }
 
-/* Get all the data in .debug_pubnames */
+static const int secid[] = { 
+DEBUG_PUBNAMES,
+DEBUG_PUBTYPES,
+DEBUG_FUNCNAMES,
+DEBUG_TYPENAMES,
+DEBUG_VARNAMES,
+DEBUG_WEAKNAMES
+};
+static const char *typename[] = {
+"global pubnames",
+"pubtypes",
+"funcname",
+"typename",
+"varname",
+"weakname",
+};
+static const char *stdsecname[] = {
+".debug_pubnames"
+".debug_pubtypes"
+".debug_funcnames"
+".debug_typenames"
+".debug_varnames"
+".debug_weaknames"
+};
+/* Get all the data in any .debug_pubnames style section.
+*/
 int
-print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
+print_pubnames_style(Dwarf_Debug dbg,
+    int category, 
+    Dwarf_Error *err)
 {
     Dwarf_Global *globbuf = NULL;
     Dwarf_Signed count = 0;
     /* Offset to previous CU */
-    int res = 0;
-    char tempsanbuf[ESB_FIXED_ALLOC_SIZE];
+    char         tempsanbuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s unsanitname;
-    char tempsanbuf2[ESB_FIXED_ALLOC_SIZE];
+    char         tempsanbuf2[ESB_FIXED_ALLOC_SIZE];
     struct esb_s unsanitname2;
-    char sanbuf[ESB_FIXED_ALLOC_SIZE];
+    char         sanbuf[ESB_FIXED_ALLOC_SIZE];
     struct esb_s sanitname;
-    int trueres = 0;
-    int trueres2 = 0;
+    int          res = 0;
+    int          trueres = 0;
+    int          trueres2 = 0;
+    const char  *tname = 0;
+    const char  *stdsection = 0;
 
-    glflags.current_section_id = DEBUG_PUBNAMES;
+
+    if (category > DW_GL_WEAKS) {
+        printf("ERROR: passing category to print_pubnames "
+            "that is unusable and ignored: %d\n",category);
+        return DW_DLV_OK;
+    }
+    glflags.current_section_id = secid[category];
+    tname = typename[category];
+    stdsection = stdsecname[category];
     if (glflags.verbose) {
         /* For best testing! */
         res = dwarf_return_empty_pubnames(dbg,1);
@@ -304,19 +349,22 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
             return res;
         }
     }
-    /*  Globals picks up global entries from .debug_pubnames
-        and .debug_names as of 0.4.3 October 2022 */
-    res = dwarf_get_globals(dbg, &globbuf, &count, err);
+    /*  Globals picks up global entries from the
+        selected section as of 0.6.0 December 2022 */
+    res = dwarf_globals_by_type(dbg,category, &globbuf, &count, err);
 
     esb_constructor_fixed(&unsanitname,tempsanbuf,
         sizeof(tempsanbuf));
     esb_constructor_fixed(&unsanitname2,tempsanbuf2,
         sizeof(tempsanbuf2));
     esb_constructor_fixed(&sanitname,sanbuf,sizeof(sanbuf));
-    trueres = get_true_section_name(dbg,".debug_pubnames",
+    trueres = get_true_section_name(dbg,stdsection,
         &unsanitname,TRUE);
-    trueres2= get_true_section_name(dbg,".debug_names",
-        &unsanitname2,TRUE);
+    trueres2 =  DW_DLV_NO_ENTRY;
+    if (category == DW_GL_GLOBALS) {
+        trueres2= get_true_section_name(dbg,".debug_names",
+            &unsanitname2,TRUE);
+    }
     if (trueres == DW_DLV_NO_ENTRY) {
         if (trueres2 == DW_DLV_NO_ENTRY) {
             /*  unsanitname ok as is, nothing to print
@@ -345,9 +393,18 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
         printf("\n%s\n",esb_get_string(&sanitname));
     }
     if (res == DW_DLV_ERROR) {
-        simple_err_return_msg_either_action(res,"ERROR: "
-            "dwarf_get_globals failed in print_pubnames().");
+        struct esb_s m;
+
+        esb_constructor(&m);
+        esb_append_printf_i(&m,"ERROR: "
+            "dwarf_get_globals failed in pubnames style "
+            "category %d ",category);
+        esb_append_printf_s(&m,"name %s",tname); 
+        esb_append_printf_s(&m," section %s",stdsection); 
+        simple_err_return_msg_either_action(res,
+            esb_get_string(&m));
         esb_destructor(&sanitname);
+        esb_destructor(&m);
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
@@ -355,7 +412,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
         return res;
     }
     res = print_all_pubnames_style_records(dbg,
-        "global",
+        tname,
         esb_get_string(&sanitname),
         globbuf,count,err);
     esb_destructor(&sanitname);
@@ -364,7 +421,7 @@ print_pubnames(Dwarf_Debug dbg,Dwarf_Error *err)
     return res;
 }
 
-int
+static int
 print_all_pubnames_style_records(Dwarf_Debug dbg,
     const char *linetitle,
     const char * section_true_name,
@@ -432,7 +489,10 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 Dwarf_Unsigned pub_version = 0;
                 Dwarf_Off info_header_offset = 0;
                 Dwarf_Unsigned info_length = 0;
+                int            header_category = 0;
+
                 nres = dwarf_get_globals_header(globbuf[i],
+                    &header_category,
                     &pub_section_hdr_offset,
                     &pub_offset_size,
                     &pub_length,&pub_version,
