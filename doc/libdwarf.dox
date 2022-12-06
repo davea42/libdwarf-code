@@ -927,11 +927,35 @@
 
     We list these with newest first.
 
-    <b>Changes 0.5.0 to 0.5.1</b>
+    <b>Changes 0.5.0 to 0.6.0</b>
     A memory leak from dwarf_load_loclists() and
     dwarf_load_rnglists() is fixed and the 
     libdwarf-regressiontests error that hid the
     leak has also been fixed.
+
+    A compatibility change affects callers of dwarf_get_pubtypes().
+    If an application reads .debug_pubtypes there
+    is a compatibility break. Such applications must be
+    recompiled with latest libdwarf
+    and can only use the latest libdwarf.
+    
+    For any application NOT calling dwarf_get_pubtypes()
+    there is no compatibility issue of any kind.
+
+    The changes are: the data type Dwarf_Type disappears as do
+    dwarf_pubtypename() dwarf_pubtype_die_offset(),
+    dwarf_pubthpe_cu_offset(), dwarf_pubtype_name_offsets()
+    and dwarf_pubtypes_dealloc(). Instead the type is Dwarf_Global,
+    the same type used for dwarf_get_globals().
+    The existing read/dealloc functions for Dwarf_Global
+    apply to pubtypes data too.
+
+    No one should be referring to the 1990's SGI/IRIX sections
+    .debug_weaknames, .debug_funcnames, .debug_varnames,
+    or .debug_typenames as they are not emitted by any
+    compiler except from SGI/IRIX/MIPS in that period.
+    There is (revised) support in libdwarf to read these
+    sections, but we will not mention details here.
 
     <b>Changes 0.4.2 to 0.5.0</b>
     v0.5.0 released 2022-11-22 
