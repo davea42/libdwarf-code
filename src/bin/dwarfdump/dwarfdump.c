@@ -1473,7 +1473,10 @@ simple_err_only_return_action(int res,const char *msg)
     return res;
 }
 
-/* ARGSUSED */
+/*   Does not increment glflags.gf_count_major_errors
+    unless a return code is not one of the three
+    standard values.
+*/
 static void
 print_error_maybe_continue( const char * msg,
     int dwarf_ret_val,

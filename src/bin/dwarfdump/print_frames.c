@@ -613,7 +613,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             load_CU_error_data(dbg,*cu_die_for_print_frames);
             esb_constructor(&m);
             esb_append(&m,
-                "\nERROR: Looking for function name for "
+                "Looking for function name for "
                 "a frame. "
                 "dwarf_siblingof failed"
                 " trying to get the name. ");
@@ -725,6 +725,7 @@ get_fde_proc_name_by_address(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 "/procedure name. Section %s. Err is %s\n",
                 sanitized(frame_section_name),
                 dwarf_errmsg(*err));
+                glflags.gf_count_major_errors++;
             glflags.gf_all_cus_seen_search_by_address = 1;
             DROP_ERROR_INSTANCE(dbg,cures,*err);
             return DW_DLV_NO_ENTRY;
@@ -1272,12 +1273,12 @@ print_one_fde(Dwarf_Debug dbg,
             return offres;
         }
         if (offres == DW_DLV_NO_ENTRY) {
+            glflags.gf_count_major_errors++;
             printf("\nERROR:  Impossible, no fde offset or "
                 " cie offset for "
                 "fde index "
                 "%" DW_PR_DUu "?\n",
                 fde_index);
-            glflags.gf_count_major_errors++;
             return offres;
         }
         {

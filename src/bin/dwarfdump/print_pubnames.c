@@ -291,19 +291,19 @@ DEBUG_VARNAMES,
 DEBUG_WEAKNAMES
 };
 static const char *typename[] = {
-"global pubnames",
-"pubtypes",
-"funcname",
-"typename",
-"varname",
+"global",
+"pubtype",
+"static-func",
+"type",
+"static-var",
 "weakname",
 };
 static const char *stdsecname[] = {
-".debug_pubnames"
-".debug_pubtypes"
-".debug_funcnames"
-".debug_typenames"
-".debug_varnames"
+".debug_pubnames",
+".debug_pubtypes",
+".debug_funcnames",
+".debug_typenames",
+".debug_varnames",
 ".debug_weaknames"
 };
 /* Get all the data in any .debug_pubnames style section.
@@ -351,8 +351,6 @@ print_pubnames_style(Dwarf_Debug dbg,
     }
     /*  Globals picks up global entries from the
         selected section as of 0.6.0 December 2022 */
-    res = dwarf_globals_by_type(dbg,category, &globbuf, &count, err);
-
     esb_constructor_fixed(&unsanitname,tempsanbuf,
         sizeof(tempsanbuf));
     esb_constructor_fixed(&unsanitname2,tempsanbuf2,
@@ -389,18 +387,32 @@ print_pubnames_style(Dwarf_Debug dbg,
     esb_append(&sanitname,sanitized(esb_get_string(&unsanitname)));
     esb_destructor(&unsanitname);
 
-    if (glflags.gf_do_print_dwarf && count > 0) {
+    res = dwarf_globals_by_type(dbg,category, &globbuf, &count, err);
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    if (res == DW_DLV_OK && !count) {
+        return res;
+    }
+    if (glflags.gf_do_print_dwarf) {
         printf("\n%s\n",esb_get_string(&sanitname));
     }
+    if (res == DW_DLV_ERROR) {
+        esb_destructor(&sanitname);
+        return res;
+    } 
+    res = print_all_pubnames_style_records(dbg,
+        tname,
+        esb_get_string(&sanitname),
+        globbuf,count,err);
     if (res == DW_DLV_ERROR) {
         struct esb_s m;
 
         esb_constructor(&m);
-        esb_append_printf_i(&m,"ERROR: "
-            "dwarf_get_globals failed in pubnames style "
-            "category %d ",category);
-        esb_append_printf_s(&m,"name %s",tname); 
-        esb_append_printf_s(&m," section %s",stdsection); 
+        esb_append(&m,"ERROR: "
+            "failed reading pubnames style section ");
+        esb_append_printf_s(&m,"%s ",stdsection); 
+        esb_append_printf_s(&m,"type %s ",tname); 
         simple_err_return_msg_either_action(res,
             esb_get_string(&m));
         esb_destructor(&sanitname);
@@ -411,10 +423,6 @@ print_pubnames_style(Dwarf_Debug dbg,
         esb_destructor(&sanitname);
         return res;
     }
-    res = print_all_pubnames_style_records(dbg,
-        tname,
-        esb_get_string(&sanitname),
-        globbuf,count,err);
     esb_destructor(&sanitname);
     dwarf_globals_dealloc(dbg,globbuf,count);
     dwarf_return_empty_pubnames(dbg,0);
