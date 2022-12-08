@@ -203,6 +203,10 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
 {
     Dwarf_Global *ret_globals = 0;
 
+    if (!head_chain ) {
+        /* ASSERT: global_count == 0 */
+        return DW_DLV_NO_ENTRY;
+    }
     /*  Now turn list into a block */
     /*  Points to contiguous block of Dwarf_Global. */
     ret_globals = (Dwarf_Global *)
@@ -579,6 +583,11 @@ dwarf_globals_by_type(Dwarf_Debug dbg,
     Dwarf_Bool   have_second_sec = FALSE;
     int          res = 0;
 
+    /*  Zero caller's fields in case caller
+        failed to do so. Bad input here causes
+        segfault!  */
+    *contents = 0;
+    *ret_count = 0;
     switch(requested_section){
     case  DW_GL_GLOBALS:
         section = &dbg->de_debug_pubnames;
@@ -1087,7 +1096,6 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
 
-        /* ====begin pubname  */
         /*  Read initial offset (of DIE within CU) of a pubname, final
             entry is not a pair, just a zero offset. */
         mres = _dwarf_read_unaligned_ck_wrapper(dbg,
