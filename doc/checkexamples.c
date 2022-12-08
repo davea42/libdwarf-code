@@ -1304,23 +1304,26 @@ int examplef(Dwarf_Debug dbg,Dwarf_Error *error)
 int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
-    Dwarf_Type *types = 0;
+    Dwarf_Global *types = 0;
     Dwarf_Signed i = 0;
     int res = 0;
 
-    res = dwarf_get_pubtypes(dbg, &types,&count, error);
+    res = dwarf_globals_by_type(dbg,DW_GL_PUBTYPES,
+        &types,&count,error);
+    /*  Alternatively the 0.5.0 and earlier call:
+        res=dwarf_get_pubtypes(dbg, &types,&count, error); */
     if (res != DW_DLV_OK) {
         return res;
     }
     for (i = 0; i < count; ++i) {
         /* use types[i] */
     }
-    dwarf_types_dealloc(dbg, types, count);
+    dwarf_globals_dealloc(dbg, types, count);
     return DW_DLV_OK;
 }
 /*! @endcode */
 
-/*! @defgroup exampleh Example of dwarf_get_weaks use
+/*! @defgroup exampleh Example of access to .debug_weaknames
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1329,24 +1332,25 @@ int exampleg(Dwarf_Debug dbg, Dwarf_Error *error)
 */
 int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 {
-    Dwarf_Signed count = 0;
-    Dwarf_Weak *weaks = 0;
-    Dwarf_Signed i = 0;
-    int res = 0;
+    Dwarf_Signed  count = 0;
+    Dwarf_Global *weaks = 0;
+    Dwarf_Signed  i = 0;
+    int           res = 0;
 
-    res = dwarf_get_weaks(dbg, &weaks, &count, error);
+    res = dwarf_globals_by_type(dbg,DW_GL_WEAKS,
+        &weaks,&count,error); 
     if (res != DW_DLV_OK) {
         return res;
     }
     for (i = 0; i < count; ++i) {
         /* use weaks[i] */
     }
-    dwarf_weaks_dealloc(dbg, weaks, count);
+    dwarf_globals_dealloc(dbg, weaks, count);
     return DW_DLV_OK;
 }
 /*! @endcode */
 
-/*! @defgroup examplej Example of dwarf_get_funcs use
+/*! @defgroup examplej Example of .debug_funcnames access.
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1356,23 +1360,24 @@ int exampleh(Dwarf_Debug dbg,Dwarf_Error *error)
 int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 {
     Dwarf_Signed count = 0;
-    Dwarf_Func *funcs = 0;
+    Dwarf_Global *funcs = 0;
     Dwarf_Signed i = 0;
     int fres = 0;
 
-    fres = dwarf_get_funcs(dbg, &funcs, &count, error);
+    fres = dwarf_globals_by_type(dbg,DW_GL_FUNCS,
+            &funcs,&count,error);
     if (fres != DW_DLV_OK) {
         return fres;
     }
     for (i = 0; i < count; ++i) {
         /* use funcs[i] */
     }
-    dwarf_funcs_dealloc(dbg, funcs, count);
+    dwarf_globals_dealloc(dbg, funcs, count);
     return DW_DLV_OK;
 }
 /*! @endcode */
 
-/*! @defgroup examplel Example of dwarf_get_types use
+/*! @defgroup examplel Example of getting .debug_types data
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1382,23 +1387,24 @@ int examplej(Dwarf_Debug dbg, Dwarf_Error*error)
 int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
-    Dwarf_Type *types = 0;
+    Dwarf_Global *types = 0;
     Dwarf_Signed i = 0;
     int res = 0;
 
-    res = dwarf_get_types(dbg, &types,&count, error);
+    res = dwarf_globals_by_type(dbg,DW_GL_TYPES,
+            &types,&count,error);
     if (res != DW_DLV_OK) {
         return res;
     }
     for (i = 0; i < count; ++i) {
         /* use types[i] */
     }
-    dwarf_types_dealloc(dbg, types, count);
+    dwarf_globals_dealloc(dbg, types, count);
     return DW_DLV_OK;
 }
 /*! @endcode */
 
-/*! @defgroup examplen Example of dwarf_get_vars use
+/*! @defgroup examplen Example of .debug_varnames access
 
     This section is an SGI/MIPS extension, not created
     by modern compilers.
@@ -1408,18 +1414,19 @@ int examplel(Dwarf_Debug dbg, Dwarf_Error *error)
 int examplen(Dwarf_Debug dbg,Dwarf_Error *error)
 {
     Dwarf_Signed count = 0;
-    Dwarf_Var *vars = 0;
+    Dwarf_Global *vars = 0;
     Dwarf_Signed i = 0;
     int res = 0;
 
-    res = dwarf_get_vars(dbg, &vars,&count,error);
+    res = dwarf_globals_by_type(dbg,DW_GL_VARS,
+            &vars,&count,error);
     if (res != DW_DLV_OK) {
         return res;
     }
     for (i = 0; i < count; ++i) {
         /* use vars[i] */
     }
-    dwarf_vars_dealloc(dbg, vars, count);
+    dwarf_globals_dealloc(dbg, vars, count);
     return DW_DLV_OK;
 }
 

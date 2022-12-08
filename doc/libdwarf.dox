@@ -936,17 +936,22 @@
     A compatibility change affects callers of dwarf_get_pubtypes().
     If an application reads .debug_pubtypes there
     is a compatibility break. Such applications must be
-    recompiled with latest libdwarf
+    recompiled with latest libdwarf, change Dwarf_Type
+    declarations to use Dwarf_Global,
     and can only use the latest libdwarf.
+    We are correcting a 1993 library design mistake that
+    created extra work and documentation for library users
+    and inflated the libdwarf API and documentation for
+    no good reason.
     
     For any application NOT calling dwarf_get_pubtypes()
     there is no compatibility issue of any kind.
 
     The changes are: the data type Dwarf_Type disappears as do
     dwarf_pubtypename() dwarf_pubtype_die_offset(),
-    dwarf_pubthpe_cu_offset(), dwarf_pubtype_name_offsets()
+    dwarf_pubtype_cu_offset(), dwarf_pubtype_name_offsets()
     and dwarf_pubtypes_dealloc(). Instead the type is Dwarf_Global,
-    the same type used for dwarf_get_globals().
+    the type and functions used for dwarf_get_globals().
     The existing read/dealloc functions for Dwarf_Global
     apply to pubtypes data too.
 
