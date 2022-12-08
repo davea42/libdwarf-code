@@ -242,18 +242,31 @@ _dwarf_chain_to_array(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-static int
-_dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
-    int         category, /* DW_GL_GLOBAL or ... */
+static void
+pubnames_error_length(Dwarf_Debug dbg,
+    Dwarf_Error *error,
+    Dwarf_Unsigned spaceneeded,
     const char *secname,
-    Dwarf_Small * section_data_ptr,
-    Dwarf_Unsigned section_length,
-    Dwarf_Chain  *  out_phead_chain,
-    Dwarf_Chain  **  out_pplast_chain,
-    Dwarf_Signed * return_count,
-    Dwarf_Error * error,
-    int length_err_num,
-    int version_err_num);
+    const char *specificloc)
+{
+    dwarfstring m;
+
+    dwarfstring_constructor(&m);
+    dwarfstring_append(&m,"DW_DLE_PUBNAMES_LENGTH_BAD: "
+        " In section ");
+    dwarfstring_append(&m,(char *)secname);
+    dwarfstring_append_printf_u(&m,
+        " %u bytes of space needed "
+        "but the section is out of space ",
+        spaceneeded);
+    dwarfstring_append(&m, "reading ");
+    dwarfstring_append(&m, (char *)specificloc);
+    dwarfstring_append(&m, ".");
+    _dwarf_error_string(dbg,error,DW_DLE_PUBNAMES_LENGTH_BAD,
+        dwarfstring_string(&m));
+    dwarfstring_destructor(&m);
+}
+
 
 /*  There are only 6 DW_IDX values defined in DWARF5
     so 7 would suffice, but lets allow for future DW_IDX too.
@@ -536,252 +549,6 @@ _dwarf_internal_get_debug_names_globals(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 #undef IDX_ARRAY_SIZE
-
-
-static const int err3[]=
-{
-DW_DLE_PUBNAMES_LENGTH_BAD,
-DW_DLE_DEBUG_PUBTYPES_LENGTH_BAD,
-DW_DLE_DEBUG_FUNCNAMES_LENGTH_BAD,
-DW_DLE_DEBUG_TYPENAMES_LENGTH_BAD,
-DW_DLE_DEBUG_VARNAMES_LENGTH_BAD,
-DW_DLE_DEBUG_WEAKNAMES_LENGTH_BAD
-};
-static const int err4[]=
-{
-DW_DLE_PUBNAMES_VERSION_ERROR,
-DW_DLE_DEBUG_PUBTYPES_VERSION_ERROR,
-DW_DLE_DEBUG_FUNCNAMES_VERSION_ERROR,
-DW_DLE_DEBUG_TYPENAMES_VERSION_ERROR,
-DW_DLE_DEBUG_VARNAMES_VERSION_ERROR,
-DW_DLE_DEBUG_WEAKNAMES_VERSION_ERROR
-};
-static const char * secna[] =
-{
-".debug_pubnames",
-".debug_pubtypes",
-".debug_funcnames",
-".debug_typenames",
-".debug_varnames",
-".debug_weaknames",
-};
-
-/*  New in 0.6.0, unifies all the access routines
-    for the sections like .debug_pubtypes.
-*/
-int
-dwarf_globals_by_type(Dwarf_Debug dbg,
-    int            requested_section,
-    Dwarf_Global **contents,
-    Dwarf_Signed  *ret_count,
-    Dwarf_Error   *error)
-{
-    struct Dwarf_Section_s *section = 0;
-    Dwarf_Chain  head_chain = 0;
-    Dwarf_Chain *plast_chain = &head_chain;
-    Dwarf_Bool   have_base_sec = FALSE;
-    Dwarf_Bool   have_second_sec = FALSE;
-    int          res = 0;
-
-    /*  Zero caller's fields in case caller
-        failed to do so. Bad input here causes
-        segfault!  */
-    *contents = 0;
-    *ret_count = 0;
-    switch(requested_section){
-    case  DW_GL_GLOBALS:
-        section = &dbg->de_debug_pubnames;
-        break;
-    case  DW_GL_PUBTYPES:
-        section = &dbg->de_debug_pubtypes;
-        break;
-    /*  The Following are IRIX only. */
-    case  DW_GL_FUNCS:
-        section = &dbg->de_debug_funcnames;
-        break;
-    case  DW_GL_TYPES:
-        section = &dbg->de_debug_typenames;
-        break;
-    case  DW_GL_VARS:
-        section = &dbg->de_debug_varnames;
-        break;
-    case  DW_GL_WEAKS:
-        section = &dbg->de_debug_weaknames;
-        break;
-    default: {
-        dwarfstring m;
-        char buf[50];
-
-        dwarfstring_constructor_static(&m,buf,sizeof(buf));
-        dwarfstring_append_printf_u(&m,
-            "ERROR DW_DLE_GLOBAL_NULL: Passed in Dwarf_Global "
-            "requested section "
-            "%u which is unknown to dwarf_globals_by_type().",
-            requested_section);
-        _dwarf_error_string(dbg, error, DW_DLE_GLOBAL_NULL,
-            dwarfstring_string(&m));
-        dwarfstring_destructor(&m);
-        return DW_DLV_ERROR;
-    }
-    }
-    res = _dwarf_load_section(dbg, section, error);
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
-    if (section->dss_size) {
-        have_base_sec = TRUE;
-    }
-
-    if (have_base_sec) {
-        res = _dwarf_internal_get_pubnames_like(dbg,
-            requested_section,
-            secna[requested_section],
-            section->dss_data,
-            section->dss_size,
-            &head_chain,
-            &plast_chain,
-            ret_count,
-            error,
-            err3[requested_section],
-            err4[requested_section]);
-        if (res == DW_DLV_ERROR) {
-            dealloc_globals_chain(dbg,head_chain);
-            return res;
-        }
-    }
-    if (0 == requested_section) {
-        res = _dwarf_load_section(dbg, &dbg->de_debug_names,error);
-        if (res == DW_DLV_ERROR) {
-            return res;
-        } else if (dbg->de_debug_names.dss_size) {
-            have_second_sec = TRUE;
-        }
-    }
-    if (have_second_sec) {
-         res = _dwarf_internal_get_debug_names_globals(dbg,
-            &plast_chain,
-            ret_count,
-            error,
-            DW_DLA_GLOBAL_CONTEXT,
-            DW_DLA_GLOBAL);
-        if (res == DW_DLV_ERROR) {
-            dealloc_globals_chain(dbg,head_chain);
-            head_chain = 0;
-            return res;
-        }
-    }
-    res = _dwarf_chain_to_array(dbg,head_chain,
-        *ret_count, contents, error);
-    if (res == DW_DLV_ERROR) {
-        /*  head chain maybe zero. Is ok. */
-        dealloc_globals_chain(dbg,head_chain);
-        return res;
-    }
-    /*  Must not return DW_DLV_NO_ENTRY. Count
-        is set zero in caller so no need for NO_ENTRY. */
-    return DW_DLV_OK;
-}
-
-int
-dwarf_get_globals(Dwarf_Debug dbg,
-    Dwarf_Global **ret_globals,
-    Dwarf_Signed  *return_count,
-    Dwarf_Error   *error)
-{
-    int res = 0;
-    res = dwarf_globals_by_type(dbg,
-        DW_GL_GLOBALS,ret_globals,return_count,error);
-    return res;
-}
-/* This now returns Dwarf_Global for types so
-   all the dwarf_global data retrieval calls work.
-   This is just a shorthand.
-
-   Before 0.6.0 this would return Dwarf_Type.
-*/
-int
-dwarf_get_pubtypes(Dwarf_Debug dbg,
-    Dwarf_Global **types,
-    Dwarf_Signed  *return_count,
-    Dwarf_Error   *error)
-{
-    int res = 0;
-    res = dwarf_globals_by_type(dbg,
-        DW_GL_PUBTYPES,types,return_count,error);
-    return res;
-}
-
-
-/* Deallocating fully requires deallocating the list
-   and all entries.  But some internal data is
-   not exposed, so we need a function with internal knowledge.
-*/
-void
-dwarf_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
-    Dwarf_Signed count)
-{
-    _dwarf_internal_globals_dealloc(dbg, dwgl, count);
-    return;
-}
-
-void
-_dwarf_internal_globals_dealloc(Dwarf_Debug dbg,
-    Dwarf_Global * dwgl,
-    Dwarf_Signed count)
-{
-    Dwarf_Signed i = 0;
-    struct Dwarf_Global_Context_s *glcp = 0;
-    struct Dwarf_Global_Context_s *lastglcp = 0;
-
-    if (!dwgl) {
-        return;
-    }
-    for (i = 0; i < count; i++) {
-        Dwarf_Global dgd = dwgl[i];
-
-        if (!dgd) {
-            continue;
-        }
-        /*  Avoids duplicate frees of repeated
-            use of contexts (while assuming that
-            all uses of a particular gl_context
-            will appear next to each other. */
-        glcp = dgd->gl_context;
-        if (glcp && lastglcp != glcp) {
-            lastglcp = glcp;
-            dwarf_dealloc(dbg, glcp, glcp->pu_alloc_type);
-        }
-        dwarf_dealloc(dbg, dgd, dgd->gl_alloc_type);
-    }
-    dwarf_dealloc(dbg, dwgl, DW_DLA_LIST);
-    return;
-}
-
-static void
-pubnames_error_length(Dwarf_Debug dbg,
-    Dwarf_Error *error,
-    Dwarf_Unsigned spaceneeded,
-    const char *secname,
-    const char *specificloc)
-{
-    dwarfstring m;
-
-    dwarfstring_constructor(&m);
-    dwarfstring_append(&m,"DW_DLE_PUBNAMES_LENGTH_BAD: "
-        " In section ");
-    dwarfstring_append(&m,(char *)secname);
-    dwarfstring_append_printf_u(&m,
-        " %u bytes of space needed "
-        "but the section is out of space ",
-        spaceneeded);
-    dwarfstring_append(&m, "reading ");
-    dwarfstring_append(&m, (char *)specificloc);
-    dwarfstring_append(&m, ".");
-    _dwarf_error_string(dbg,error,DW_DLE_PUBNAMES_LENGTH_BAD,
-        dwarfstring_string(&m));
-    dwarfstring_destructor(&m);
-}
-
 static void
 _dwarf_get_DLE_name(int errnum,dwarfstring *out)
 {
@@ -812,7 +579,7 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
     int   cu_number,
     Dwarf_Unsigned length_section_offset,
     Dwarf_Unsigned length_field,
-    Dwarf_Error *error)
+    Dwarf_Error *error) 
 {
     dwarfstring m;
     Dwarf_Unsigned remaining = 0;
@@ -829,12 +596,14 @@ _dwarf_global_cu_len_error_msg(Dwarf_Debug dbg,
         "offset %u ",length_section_offset);
     dwarfstring_append_printf_u(&m,"has value %u ",
         length_field);
-    dwarfstring_append_printf_u(&m,"though just %u bytes "
+    dwarfstring_append_printf_u(&m,"though just %u bytes " 
         "remain in the section. Corrupt DWARF",remaining);
     _dwarf_error_string(dbg, error,errornumber,
         dwarfstring_string(&m));
     dwarfstring_destructor(&m);
 }
+
+
 
 /*  Sweeps the complete  section.
     On error it frees the head_chain,
@@ -1315,6 +1084,226 @@ _dwarf_internal_get_pubnames_like(Dwarf_Debug dbg,
     }
 #endif
 }
+
+static const int err3[]=
+{
+DW_DLE_PUBNAMES_LENGTH_BAD,
+DW_DLE_DEBUG_PUBTYPES_LENGTH_BAD,
+DW_DLE_DEBUG_FUNCNAMES_LENGTH_BAD,
+DW_DLE_DEBUG_TYPENAMES_LENGTH_BAD,
+DW_DLE_DEBUG_VARNAMES_LENGTH_BAD,
+DW_DLE_DEBUG_WEAKNAMES_LENGTH_BAD
+};
+static const int err4[]=
+{
+DW_DLE_PUBNAMES_VERSION_ERROR,
+DW_DLE_DEBUG_PUBTYPES_VERSION_ERROR,
+DW_DLE_DEBUG_FUNCNAMES_VERSION_ERROR,
+DW_DLE_DEBUG_TYPENAMES_VERSION_ERROR,
+DW_DLE_DEBUG_VARNAMES_VERSION_ERROR,
+DW_DLE_DEBUG_WEAKNAMES_VERSION_ERROR
+};
+static const char * secna[] =
+{
+".debug_pubnames",
+".debug_pubtypes",
+".debug_funcnames",
+".debug_typenames",
+".debug_varnames",
+".debug_weaknames",
+};
+
+/*  New in 0.6.0, unifies all the access routines
+    for the sections like .debug_pubtypes.
+*/
+int
+dwarf_globals_by_type(Dwarf_Debug dbg,
+    int            requested_section,
+    Dwarf_Global **contents,
+    Dwarf_Signed  *ret_count,
+    Dwarf_Error   *error)
+{
+    struct Dwarf_Section_s *section = 0;
+    Dwarf_Chain  head_chain = 0;
+    Dwarf_Chain *plast_chain = &head_chain;
+    Dwarf_Bool   have_base_sec = FALSE;
+    Dwarf_Bool   have_second_sec = FALSE;
+    int          res = 0;
+
+    /*  Zero caller's fields in case caller
+        failed to do so. Bad input here causes
+        segfault!  */
+    *contents = 0;
+    *ret_count = 0;
+    switch(requested_section){
+    case  DW_GL_GLOBALS:
+        section = &dbg->de_debug_pubnames;
+        break;
+    case  DW_GL_PUBTYPES:
+        section = &dbg->de_debug_pubtypes;
+        break;
+    /*  The Following are IRIX only. */
+    case  DW_GL_FUNCS:
+        section = &dbg->de_debug_funcnames;
+        break;
+    case  DW_GL_TYPES:
+        section = &dbg->de_debug_typenames;
+        break;
+    case  DW_GL_VARS:
+        section = &dbg->de_debug_varnames;
+        break;
+    case  DW_GL_WEAKS:
+        section = &dbg->de_debug_weaknames;
+        break;
+    default: {
+        dwarfstring m;
+        char buf[50];
+
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
+        dwarfstring_append_printf_u(&m,
+            "ERROR DW_DLE_GLOBAL_NULL: Passed in Dwarf_Global "
+            "requested section "
+            "%u which is unknown to dwarf_globals_by_type().",
+            requested_section);
+        _dwarf_error_string(dbg, error, DW_DLE_GLOBAL_NULL,
+            dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+    }
+    }
+    res = _dwarf_load_section(dbg, section, error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    if (section->dss_size) {
+        have_base_sec = TRUE;
+    }
+
+    if (have_base_sec) {
+        res = _dwarf_internal_get_pubnames_like(dbg,
+            requested_section,
+            secna[requested_section],
+            section->dss_data,
+            section->dss_size,
+            &head_chain,
+            &plast_chain,
+            ret_count,
+            error,
+            err3[requested_section],
+            err4[requested_section]);
+        if (res == DW_DLV_ERROR) {
+            dealloc_globals_chain(dbg,head_chain);
+            return res;
+        }
+    }
+    if (0 == requested_section) {
+        res = _dwarf_load_section(dbg, &dbg->de_debug_names,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        } else if (dbg->de_debug_names.dss_size) {
+            have_second_sec = TRUE;
+        }
+    }
+    if (have_second_sec) {
+         res = _dwarf_internal_get_debug_names_globals(dbg,
+            &plast_chain,
+            ret_count,
+            error,
+            DW_DLA_GLOBAL_CONTEXT,
+            DW_DLA_GLOBAL);
+        if (res == DW_DLV_ERROR) {
+            dealloc_globals_chain(dbg,head_chain);
+            head_chain = 0;
+            return res;
+        }
+    }
+    res = _dwarf_chain_to_array(dbg,head_chain,
+        *ret_count, contents, error);
+    if (res == DW_DLV_ERROR) {
+        /*  head chain maybe zero. Is ok. */
+        dealloc_globals_chain(dbg,head_chain);
+        return res;
+    }
+    /*  Must not return DW_DLV_NO_ENTRY. Count
+        is set zero in caller so no need for NO_ENTRY. */
+    return DW_DLV_OK;
+}
+
+int
+dwarf_get_globals(Dwarf_Debug dbg,
+    Dwarf_Global **ret_globals,
+    Dwarf_Signed  *return_count,
+    Dwarf_Error   *error)
+{
+    int res = 0;
+    res = dwarf_globals_by_type(dbg,
+        DW_GL_GLOBALS,ret_globals,return_count,error);
+    return res;
+}
+/* This now returns Dwarf_Global for types so
+   all the dwarf_global data retrieval calls work.
+   This is just a shorthand.
+
+   Before 0.6.0 this would return Dwarf_Type.
+*/
+int
+dwarf_get_pubtypes(Dwarf_Debug dbg,
+    Dwarf_Global **types,
+    Dwarf_Signed  *return_count,
+    Dwarf_Error   *error)
+{
+    int res = 0;
+    res = dwarf_globals_by_type(dbg,
+        DW_GL_PUBTYPES,types,return_count,error);
+    return res;
+}
+
+
+/* Deallocating fully requires deallocating the list
+   and all entries.  But some internal data is
+   not exposed, so we need a function with internal knowledge.
+*/
+void
+dwarf_globals_dealloc(Dwarf_Debug dbg, Dwarf_Global * dwgl,
+    Dwarf_Signed count)
+{
+    _dwarf_internal_globals_dealloc(dbg, dwgl, count);
+    return;
+}
+
+void
+_dwarf_internal_globals_dealloc(Dwarf_Debug dbg,
+    Dwarf_Global * dwgl,
+    Dwarf_Signed count)
+{
+    Dwarf_Signed i = 0;
+    struct Dwarf_Global_Context_s *glcp = 0;
+    struct Dwarf_Global_Context_s *lastglcp = 0;
+
+    if (!dwgl) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        Dwarf_Global dgd = dwgl[i];
+
+        if (!dgd) {
+            continue;
+        }
+        /*  Avoids duplicate frees of repeated
+            use of contexts (while assuming that
+            all uses of a particular gl_context
+            will appear next to each other. */
+        glcp = dgd->gl_context;
+        if (glcp && lastglcp != glcp) {
+            lastglcp = glcp;
+            dwarf_dealloc(dbg, glcp, glcp->pu_alloc_type);
+        }
+        dwarf_dealloc(dbg, dgd, dgd->gl_alloc_type);
+    }
+    dwarf_dealloc(dbg, dwgl, DW_DLA_LIST);
+    return;
+}
+
 
 /*  Given a pubnames entry (or other like section entry)
     return thru the ret_name pointer

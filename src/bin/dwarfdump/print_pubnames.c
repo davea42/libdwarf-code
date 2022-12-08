@@ -282,7 +282,7 @@ print_globals_header(
         info_length);
 }
 
-static const int secid[] = { 
+static const int secid[] = {
 DEBUG_PUBNAMES,
 DEBUG_PUBTYPES,
 DEBUG_FUNCNAMES,
@@ -310,7 +310,7 @@ static const char *stdsecname[] = {
 */
 int
 print_pubnames_style(Dwarf_Debug dbg,
-    int category, 
+    int category,
     Dwarf_Error *err)
 {
     Dwarf_Global *globbuf = NULL;
@@ -327,7 +327,6 @@ print_pubnames_style(Dwarf_Debug dbg,
     int          trueres2 = 0;
     const char  *tname = 0;
     const char  *stdsection = 0;
-
 
     if (category > DW_GL_WEAKS) {
         printf("ERROR: passing category to print_pubnames "
@@ -392,6 +391,7 @@ print_pubnames_style(Dwarf_Debug dbg,
         return res;
     }
     if (res == DW_DLV_OK && !count) {
+        dwarf_globals_dealloc(dbg,globbuf,count);
         return res;
     }
     if (glflags.gf_do_print_dwarf) {
@@ -400,7 +400,7 @@ print_pubnames_style(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         esb_destructor(&sanitname);
         return res;
-    } 
+    }
     res = print_all_pubnames_style_records(dbg,
         tname,
         esb_get_string(&sanitname),
@@ -408,11 +408,12 @@ print_pubnames_style(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         struct esb_s m;
 
+        dwarf_globals_dealloc(dbg,globbuf,count);
         esb_constructor(&m);
         esb_append(&m,"ERROR: "
             "failed reading pubnames style section ");
-        esb_append_printf_s(&m,"%s ",stdsection); 
-        esb_append_printf_s(&m,"type %s ",tname); 
+        esb_append_printf_s(&m,"%s ",stdsection);
+        esb_append_printf_s(&m,"type %s ",tname);
         simple_err_return_msg_either_action(res,
             esb_get_string(&m));
         esb_destructor(&sanitname);
@@ -420,6 +421,7 @@ print_pubnames_style(Dwarf_Debug dbg,
         return res;
     }
     if (res == DW_DLV_NO_ENTRY) {
+        dwarf_globals_dealloc(dbg,globbuf,count);
         esb_destructor(&sanitname);
         return res;
     }

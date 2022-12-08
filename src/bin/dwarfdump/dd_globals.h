@@ -117,7 +117,6 @@ extern void print_error_and_continue (const char * msg,
 extern void print_error (Dwarf_Debug dbg, const char * msg,
     int res, Dwarf_Error err);
 
-
 extern int print_line_numbers_this_cu (Dwarf_Debug dbg,
     Dwarf_Die in_die,
     char **srcfiles,
