@@ -121,7 +121,7 @@ pyscripttests = [
 #pkgconfig_mod = import('pkgconfig')
 
 
-py3_exe = import('python').find_installation()
+py3_exe = import('python').find_installation(required:false)
 if py3_exe.found()
   foreach testscr : pyscripttests
     pytest_name = testscr[0]
@@ -147,7 +147,7 @@ if get_option('dwarfexample') == true
   endif
 endif
 
-sh_exe = find_program('sh',required:true)
+sh_exe = find_program('sh',required:false)
 if sh_exe.found()
   foreach shscr : shscripttests
     test_name = shscr[0]
