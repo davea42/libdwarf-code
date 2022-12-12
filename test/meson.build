@@ -156,5 +156,3 @@ if sh_exe.found()
     test(test_name,sh_exe,args: [shexec_name, projectbase ])
   endforeach
 endif
-
-
