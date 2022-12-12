@@ -145,12 +145,12 @@ if get_option('dwarfexample') == true
   endif
 endif
 
-sh_exe = find_program('sh',required:true)
-foreach shscr : shscripttests
-  test_name = shscr[0]
-  message(test_name)
-  shexec_name = join_paths(projectbase,'test',test_name)
-  test(test_name,sh_exe,args: [shexec_name, projectbase ])
-endforeach
-
-
+sh_exe = find_program('sh',required:false)
+if sh_exe.found()
+  foreach shscr : shscripttests
+    test_name = shscr[0]
+    message(test_name)
+    shexec_name = join_paths(projectbase,'test',test_name)
+    test(test_name,sh_exe,args: [shexec_name, projectbase ])
+  endforeach
+endif

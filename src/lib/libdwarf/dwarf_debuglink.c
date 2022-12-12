@@ -189,7 +189,7 @@ transform_leading_windowsletter(dwarfstring *out,
     char *in)
 {
     char *cp      = in;
-    int   c       = 0;
+    char  c       = 0;
     int   isupper = FALSE;
     int   islower = FALSE;
 
@@ -212,10 +212,10 @@ transform_leading_windowsletter(dwarfstring *out,
         if (c2 && (c2 == ':')) {
             /* Example: Turn uppercase C to c */
             char newstr[4];
-            int newletter = c;
+            char newletter = c;
 
             if (isupper) {
-                int distance = 'a' - 'A';
+                char distance = 'a' - 'A';
                 newletter = c + distance;
             }
             newstr[0] = '/';
