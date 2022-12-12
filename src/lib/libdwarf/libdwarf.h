@@ -6944,6 +6944,8 @@ DW_API Dwarf_Half dwarf_global_tag_number(Dwarf_Global dw_global);
     Dwarf_Global this returns the content of the applicable
     header.   This does not include header information
     from any .debug_names headers.
+
+    The function declaration changed at version 0.6.0.
 */
 DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
     int            * dw_category, /* DW_GL_GLOBAL for example */
@@ -6961,8 +6963,12 @@ DW_API int dwarf_get_globals_header(Dwarf_Global dw_global,
     Applies to all the sections of this kind:
     pubnames, pubtypes, funcs, typenames,vars, weaks.
     Ensures empty content (meaning no
-    offset/name tuples) for a CU shows up rather than
+    offset/name tuples, but with a header)
+    for a CU shows up rather than
     being suppressed.
+
+    Primarily useful if one wants to note any pointless
+    header data in the section.
 
     @link dwsec_pubnames Pubnames and Pubtypes overview @endlink
 
