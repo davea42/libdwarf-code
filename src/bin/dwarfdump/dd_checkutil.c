@@ -29,8 +29,8 @@ Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
     These simple list-processing functions are in support
     of checking DWARF for compiler-errors of various sorts.
 
-    These functions apply to 
-    pRangesInfo  
+    These functions apply to
+    pRangesInfo
         enabling checking for sanity of code addresses.
         Using .test .init .fini as one source of valid
         code ranges. And adding ranges from CUs etc.
@@ -84,7 +84,7 @@ static const char *
 kindstring(int kind)
 {
     const char *name = 0;
- 
+
     switch (kind) {
     case KIND_RANGES_INFO:
         name = "KIND_RANGES_INFO";
@@ -247,7 +247,7 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
 
     if (!pBucketGroup) {
         printf("ERROR AddEntryIntoBucketGroup passed NULL."
-           " Ignored\n");
+            " Ignored\n");
         glflags.gf_count_major_errors++;
         return;
     }
@@ -310,7 +310,7 @@ DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 
     if (!pBucketGroup) {
         printf("ERROR DeleteKeyInBucketGroup passed NULL. "
-           "Ignored\n");
+            "Ignored\n");
         glflags.gf_count_major_errors++;
         return FALSE;
     }

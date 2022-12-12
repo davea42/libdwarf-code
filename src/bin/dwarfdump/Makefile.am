@@ -81,13 +81,9 @@ print_rnglists.c \
 print_section_groups.c \
 print_sections.c \
 print_sections.h \
-print_static_funcs.c \
-print_static_vars.c \
 print_str_offsets.c \
 print_strings.c \
 print_tag_attributes_usage.c \
-print_types.c \
-print_weaknames.c \
 dd_sanitized.c \
 dd_sanitized.h \
 dd_strstrnocase.c \

@@ -782,15 +782,17 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
 {
     Dwarf_Error   error;
     Dwarf_Global *globs = 0;
-    Dwarf_Type   *types = 0;
-    Dwarf_Signed  cnt = 0;
+    Dwarf_Global *types = 0;
+    Dwarf_Signed  gcnt = 0;
+    Dwarf_Signed  tcnt = 0;
     int res = 0;
     IRPubsData  &pubdata = irep.pubnamedata();
 
-    res = dwarf_get_globals(dbg, &globs,&cnt, &error);
+    res = dwarf_globals_by_type(dbg, 
+        DW_GL_GLOBALS,&globs,&gcnt, &error);
     if (res == DW_DLV_OK) {
         std::list<IRPub> &pubnames = pubdata.getPubnames();
-        for (Dwarf_Signed i = 0; i < cnt; ++i) {
+        for (Dwarf_Signed i = 0; i < gcnt; ++i) {
             Dwarf_Global g = globs[i];
             char *name = 0;
             // dieoff and cuoff may be in .debug_info
@@ -806,27 +808,29 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
             } else if (res == DW_DLV_ERROR) {
                 cerr << "dwarf_global_name_offsets failed" << endl;
                 dwarf_dealloc_error(dbg,error);
-                dwarf_globals_dealloc(dbg, globs, cnt);
+                dwarf_globals_dealloc(dbg, globs, gcnt);
                 exit(1);
             } /* Ignoring DW_DLV_NO_ENTRY */
         }
-        dwarf_globals_dealloc(dbg, globs, cnt);
+        dwarf_globals_dealloc(dbg, globs, gcnt);
+        globs = 0;
     } else if (res == DW_DLV_ERROR) {
         dwarf_dealloc_error(dbg,error);
         cerr << "dwarf_get_globals failed" << endl;
         exit(1);
     }
-    res = dwarf_get_pubtypes(dbg, &types,&cnt, &error);
+    res = dwarf_globals_by_type(dbg,DW_GL_PUBTYPES,
+        &types,&tcnt, &error);
     if (res == DW_DLV_OK) {
         std::list<IRPub> &pubtypes = pubdata.getPubtypes();
-        for (Dwarf_Signed i = 0; i < cnt; ++i) {
-            Dwarf_Type g = types[i];
+        for (Dwarf_Signed i = 0; i < tcnt; ++i) {
+            Dwarf_Global g = types[i];
             char *name = 0;
             // dieoff and cuoff may be in .debug_info
             // or .debug_types
             Dwarf_Off dieoff = 0;
             Dwarf_Off cuoff = 0;
-            res = dwarf_pubtype_name_offsets(g,&name,
+            res = dwarf_global_name_offsets(g,&name,
                 &dieoff,&cuoff,&error);
             if ( res == DW_DLV_OK) {
                 IRPub p(name,dieoff,cuoff);
@@ -838,7 +842,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
                 exit(1);
             } /* Ignoring DW_DLV_NO_ENTRY */
         }
-        dwarf_types_dealloc(dbg, types, cnt);
+        dwarf_globals_dealloc(dbg, types, tcnt);
     } else if (res == DW_DLV_ERROR) {
         dwarf_dealloc_error(dbg,error);
         cerr << "dwarf_get_globals failed" << endl;

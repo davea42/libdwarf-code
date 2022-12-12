@@ -49,8 +49,6 @@ dwarf_form_class_names.c \
 dwarf_frame.c \
 dwarf_frame.h \
 dwarf_frame2.c \
-dwarf_funcs.c \
-dwarf_funcs.h \
 dwarf_gdbindex.c \
 dwarf_gdbindex.h \
 dwarf_generic_init.c \
@@ -89,7 +87,6 @@ dwarf_pe_descr.h \
 dwarf_peread.c \
 dwarf_peread.h \
 dwarf_print_lines.c \
-dwarf_pubtypes.c \
 dwarf_query.c \
 dwarf_safe_strcpy.c \
 dwarf_safe_strcpy.h \
@@ -106,14 +103,8 @@ dwarf_tied.c \
 dwarf_tied_decls.h \
 dwarf_tsearchhash.c \
 dwarf_tsearch.h \
-dwarf_types.c \
-dwarf_types.h \
 dwarf_util.c \
 dwarf_util.h \
-dwarf_vars.c \
-dwarf_vars.h \
-dwarf_weaks.c \
-dwarf_weaks.h \
 dwarf_xu_index.c \
 dwarf_xu_index.h \
 libdwarf.h \

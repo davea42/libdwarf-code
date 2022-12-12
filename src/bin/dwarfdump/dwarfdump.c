@@ -1081,7 +1081,7 @@ process_one_file(
         Dwarf_Error err = 0;
 
         reset_overall_CU_error_data();
-        res = print_pubnames(dbg,&err);
+        res = print_pubnames_style(dbg,DW_GL_GLOBALS,&err);
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(
                 "printing pubnames data had a problem ",res,err);
@@ -1225,7 +1225,7 @@ process_one_file(
         Dwarf_Error err = 0;
 
         reset_overall_CU_error_data();
-        sres = print_static_funcs(dbg,&err);
+        sres = print_pubnames_style(dbg,DW_GL_FUNCS,&err);
         if (sres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "printing SGI static funcs had a problem.",sres,err);
@@ -1237,7 +1237,7 @@ process_one_file(
         Dwarf_Error err = 0;
 
         reset_overall_CU_error_data();
-        sres = print_static_vars(dbg,&err);
+        sres = print_pubnames_style(dbg,DW_GL_VARS,&err);
         if (sres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "printing SGI static vars had a problem.",sres,err);
@@ -1253,14 +1253,14 @@ process_one_file(
         int tres = 0;
 
         reset_overall_CU_error_data();
-        tres = print_types(dbg, DWARF_PUBTYPES,&err);
+        tres = print_pubnames_style(dbg,DW_GL_PUBTYPES,&err);
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "printing pubtypes had a problem.",tres,err);
             DROP_ERROR_INSTANCE(dbg,tres,err);
         }
         reset_overall_CU_error_data();
-        tres = print_types(dbg, SGI_TYPENAME,&err);
+        tres = print_pubnames_style(dbg,DW_GL_TYPES,&err);
         if (tres == DW_DLV_ERROR) {
             print_error_and_continue(
                 "printing SGI typenames had a problem.",tres,err);
@@ -1272,7 +1272,7 @@ process_one_file(
         int res3 = 0;
 
         reset_overall_CU_error_data();
-        res3 = print_weaknames(dbg, &err);
+        res3 = print_pubnames_style(dbg,DW_GL_WEAKS,&err);
         if (res3 == DW_DLV_ERROR) {
             print_error_and_continue(
                 "printing weaknames had a problem.",res3,err);
@@ -1473,7 +1473,10 @@ simple_err_only_return_action(int res,const char *msg)
     return res;
 }
 
-/* ARGSUSED */
+/*   Does not increment glflags.gf_count_major_errors
+    unless a return code is not one of the three
+    standard values.
+*/
 static void
 print_error_maybe_continue( const char * msg,
     int dwarf_ret_val,

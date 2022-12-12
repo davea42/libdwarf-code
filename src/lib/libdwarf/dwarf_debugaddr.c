@@ -131,7 +131,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     offset_one_past_end = dw_section_offset + tab.da_length;
     end_data = section_start + offset_one_past_end;
     tab.da_end_table = end_data;
-    READ_UNALIGNED_CK(dbg,version,Dwarf_Unsigned,data,
+    READ_UNALIGNED_CK(dbg,version,Dwarf_Half,data,
         SIZEOFT16,error,end_data);
     if (version != DW_CU_VERSION5) {
         dwarfstring m;
@@ -149,7 +149,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     tab.da_version = version;
     data += SIZEOFT16;
     curlocaloffset += SIZEOFT16;
-    READ_UNALIGNED_CK(dbg,address_size,Dwarf_Unsigned,data,
+    READ_UNALIGNED_CK(dbg,address_size,Dwarf_Small,data,
         1,error,end_data);
     if (address_size != 4 && address_size != 8 &&
         address_size != 2) {
@@ -168,7 +168,7 @@ dwarf_debug_addr_table(Dwarf_Debug dbg,
     data++;
     curlocaloffset++;
 
-    READ_UNALIGNED_CK(dbg,segment_selector_size,unsigned,data,
+    READ_UNALIGNED_CK(dbg,segment_selector_size,Dwarf_Small,data,
         1,error,end_data);
     if (segment_selector_size != 0) {
         dwarfstring m;

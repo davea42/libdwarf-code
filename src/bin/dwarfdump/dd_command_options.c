@@ -434,11 +434,13 @@ static int arg_option = 0;
 
 static const char *usage_debug_text[] = {
 "Usage: DwarfDump <debug_options>",
-"  These only useful with -ka (and related checking options)",
+"  These only useful with related checking options (-ka suffices)",
 "  --trace=0 print this message and stop ",
-"  --trace=1 Dump RangesInfo Table",
+"  --trace=1 Dump RangesInfo Table requires",
+"    add -kl(--check-loc) and -km (--check-ranges)",
 "  --trace=2 Dump Linkonce Table (linkonce section)",
-"  --trace=3 Dump Visited Info",
+"    add -kl(--check-lo) and -km (--check-ranges)",
+"  --trace=3 Dump Visited Info, add -kS (--check-self-refs)",
 ""
 };
 
@@ -1350,7 +1352,7 @@ void arg_check_summary(void)
     glflags.gf_print_summary_all = TRUE;
 }
 
-/*  Option '-kl' */
+/*  Option '-kl' --check-loc */
 void arg_check_loc(void)
 {
     /* Locations list */
@@ -1418,7 +1420,7 @@ void arg_check_silent(void)
     glflags.gf_check_verbose_mode = FALSE;
 }
 
-/*  Option '-kS' */
+/*  Option '-kS' --check-self-refs */
 void arg_check_self_refs(void)
 {
     /*  self references in:

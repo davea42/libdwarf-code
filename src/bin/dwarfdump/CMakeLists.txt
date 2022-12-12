@@ -22,10 +22,9 @@ set_source_group(SOURCES "Source Files" dd_addrmap.c
     print_pubnames.c print_ranges.c 
     print_rnglists.c
     print_str_offsets.c
-    print_sections.c  print_section_groups.c print_static_funcs.c
-    print_static_vars.c print_strings.c 
-    print_tag_attributes_usage.c print_types.c 
-    print_weaknames.c  
+    print_sections.c  print_section_groups.c 
+    print_strings.c 
+    print_tag_attributes_usage.c 
     dd_sanitized.c dd_strstrnocase.c 
     dd_true_section_name.c dd_uri.c dd_getopt.c dd_makename.c 
     dd_naming.c dd_esb.c dd_tsearchbal.c)

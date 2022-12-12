@@ -184,8 +184,8 @@ check_ranges_list(Dwarf_Debug dbg,
                 IsValidInBucketGroup(glflags.pRangesInfo,hipc)) {
                 /* Valid values; do nothing */
             } else {
-                /*  At this point may be we
-                    are dealing with a
+                /*  At this point may be
+                    dealing with a
                     linkonce symbol */
                 if (IsValidInLinkonce(glflags.pLinkonceInfo,
                     glflags.PU_name,lopc,hipc)) {

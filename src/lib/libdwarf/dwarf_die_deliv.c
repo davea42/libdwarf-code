@@ -1842,10 +1842,12 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                 tieddbg, 0,
                 error);
         }
-        if (tres == DW_DLV_ERROR) {
+        if (tres == DW_DLV_ERROR && error) {
             /*  We'll assume any errors will be
                 discovered later. Lets get our CU_context
-                finished.  */
+                finished.  
+                if error NULL it's a caller issue
+                and there is nothing we can do here */
             dwarf_dealloc_error(dbg,*error);
             *error = 0;
         }

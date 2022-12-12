@@ -64,10 +64,6 @@
 #include "dwarf_die_deliv.h"
 #include "dwarf_frame.h"
 #include "dwarf_loc.h"
-#include "dwarf_funcs.h"
-#include "dwarf_types.h"
-#include "dwarf_vars.h"
-#include "dwarf_weaks.h"
 #include "dwarf_harmless.h"
 #include "dwarf_tsearch.h"
 #include "dwarf_gdbindex.h"
@@ -204,8 +200,14 @@ dw_empty_errlist_item(Dwarf_Error e_in)
         if (e->er_static_alloc == DE_MALLOC) {
             /* e is the returned address, not
                 the base. Free by the base.  */
-            void *mallocaddr = (char*)e - DW_RESERVE;
+            void *mallocaddr = 0;
 
+            if ( (uintptr_t)e > DW_RESERVE) { 
+                mallocaddr = (char*)e - DW_RESERVE;
+            } else {
+                /*  Impossible */
+                continue;
+            }   
             _dwarf_error_destructor(e);
             free(mallocaddr);
         }
@@ -491,11 +493,20 @@ simple_value_hashfunc(const void *keyp)
 static void
 tdestroy_free_node(void *nodep)
 {
-    char * m = (char *)nodep;
-    char * malloc_addr = m - DW_RESERVE;
-    struct reserve_data_s * reserve =
-        (struct reserve_data_s *)malloc_addr;
-    unsigned type = reserve->rd_type;
+    char                  *m = 0;
+    char                  *malloc_addr =  0;
+    struct reserve_data_s *reserve =  0;
+    unsigned int           type = 0;
+
+    m = (char *)nodep;
+    if ((uintptr_t)m > DW_RESERVE) { 
+        malloc_addr = m - DW_RESERVE;
+    } else {
+        /* impossible */
+        return; 
+    }
+    reserve = (struct reserve_data_s *)malloc_addr;
+    type = reserve->rd_type;
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* Internal error, corrupted data. */
         return;
@@ -553,8 +564,8 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     Dwarf_Small alloc_type, Dwarf_Unsigned count)
 {
     char * alloc_mem = 0;
-    Dwarf_Signed basesize = 0;
-    Dwarf_Signed size = 0;
+    Dwarf_Unsigned basesize = 0;
+    Dwarf_Unsigned size = 0;
     unsigned int type = alloc_type;
     short action = 0;
 
@@ -839,7 +850,12 @@ dwarf_dealloc(Dwarf_Debug dbg,
         If not DW_DLA_STRING
         no correctly written caller could coredump
         here.  */
-    malloc_addr = (char *)space - DW_RESERVE;
+    if ((uintptr_t)space > DW_RESERVE) {
+        malloc_addr = (char *)space - DW_RESERVE;
+    } else {
+        /* Impossible */
+        return;
+    }
     r =(struct reserve_data_s *)malloc_addr;
     if (dbg && dbg != r->rd_dbg) {
         /*  Mixed up or originally a no_dbg alloc */
@@ -971,10 +987,13 @@ _dwarf_get_debug(Dwarf_Unsigned filesize)
     dbg->de_magic = DBG_IS_VALID;
 
     if (global_de_alloc_tree_on) {
-        Dwarf_Unsigned size_est = filesize/30;
+        /*  The type of the dwarf_initialize_search_hash
+            initial-size argument */
+        unsigned long size_est = (unsigned long)(filesize/30);
+
 #ifdef TESTINGHASHTAB
-    printf("dadebug src filesize %lu hashtab init %lu\n",
-        (unsigned long)filesize,(unsigned long)size_est);
+        printf("debugging: src filesize %lu hashtab init %lu\n",
+            (unsigned long)filesize,size_est);
 #endif
         dwarf_initialize_search_hash(&dbg->de_alloc_tree,
             simple_value_hashfunc,size_est);
@@ -1140,10 +1159,12 @@ struct Dwarf_Error_s *
 _dwarf_special_no_dbg_error_malloc(void)
 {
     Dwarf_Error e = 0;
-    Dwarf_Unsigned len = sizeof(struct Dwarf_Error_s) + DW_RESERVE;
+    Dwarf_Unsigned len =  0;
     struct reserve_data_s *base = 0;
-    char *mem = (char *)malloc(len);
+    char *mem = 0;
 
+    len = sizeof(struct Dwarf_Error_s) + DW_RESERVE;
+    mem = (char *)malloc((size_t)len);
     if (!mem) {
         return 0;
     }

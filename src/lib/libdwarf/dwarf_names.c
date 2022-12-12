@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated for source version 0.5.1 */
+/* Generated for source version 0.6.0 */
 
 /* BEGIN FILE */
 

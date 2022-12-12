@@ -121,7 +121,7 @@ static void dump_hash_table(char *msg,
 {
     static char buf[200];
     unsigned long i = 0;
-    printf("dadebug hash tab: %s ptr %p line %d\n",
+    printf("debugging: hash tab: %s ptr %p line %d\n",
         msg,(void *)tab,line);
     printf("  entryct: %lu  abbrevct: %lu highestused: %lu\n",
         tab->tb_table_entry_count,
@@ -750,7 +750,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context context,
             HT_DEFAULT_TABLE_SIZE;
         hash_table_base->tb_total_abbrev_count= 0;
 #ifdef TESTINGHASHTAB
-printf("dadebug initial size %u\n",HT_DEFAULT_TABLE_SIZE);
+printf("debugging: initial size %u\n",HT_DEFAULT_TABLE_SIZE);
 #endif
         hash_table_base->tb_entries =
             (Dwarf_Abbrev_List *)
@@ -783,7 +783,7 @@ printf("dadebug initial size %u\n",HT_DEFAULT_TABLE_SIZE);
         newht->tb_table_entry_count =
             hash_table_base->tb_table_entry_count * HT_MULTIPLE;
 #ifdef TESTINGHASHTAB
-        printf("dadebug Resize size to %lu\n",
+        printf("debugging: Resize size to %lu\n",
             (unsigned long)newht->tb_table_entry_count);
 #endif
         newht->tb_total_abbrev_count = 0;
@@ -1261,12 +1261,12 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Hash_Table hash_table,
                 ++listcount;
             }
 #ifdef TESTINGHASHTAB
-printf("dadebug hashnum %lu listcount %u\n",hashnum,listcount);
+printf("debugging: hashnum %lu listcount %u\n",hashnum,listcount);
 #endif
         }
     }
 #ifdef TESTINGHASHTAB
-printf("dadebug max ref count of any abbrev %lu, \n",
+printf("debugging: max ref count of any abbrev %lu, \n",
 (unsigned long)max_refs);
 #endif
     /* Frees all the pointers at once: an array. */

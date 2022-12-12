@@ -1,3 +1,252 @@
+2022-12-12:  David Anderson
+    commit 37bb274fb9724e7e81db2a66a9266ff21cad60e8
+
+    Now setting address_size: to improve test
+    coverage in dwarfdump and libdwrf.
+    modified:   src/bin/dwarfdump/dwarfdump.conf
+
+    Now using the correct type in the macro
+    READ_UNLIGNED_CK to avoid compiler warnings.
+            modified:   src/lib/libdwarf/dwarf_debugaddr.c
+
+2022-12-12:  David Anderson
+    commit 3d06c94f016edfe0e987f43d1e3344e41bafa9bc
+
+    Now with the correct datatype in an argument
+    to initialize the hash table default size
+    to a useful value.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+
+2022-12-08:  David Anderson
+    commit 4961fee9343c816e058c9da1f6789d9d90e39dc2
+
+    Coverity Scan noted a bug: assigning *error when
+    error could be NULL. Fixed.
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+
+2022-12-08:  David Anderson
+    commit cb3ffd809659ce7eabe45474c01372c8e2b27f1f
+
+    make rebuild
+    regenerated these source files with version 0.6.0
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/bin/dwarfdump/dwarfdump-af-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-ta-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-ext-table.h
+            modified:   src/bin/dwarfdump/dwarfdump-tt-table.h
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2022-12-08:  David Anderson
+    commit f721e4014795541ea5a68e1dc21d1d22e64038ce
+
+    Used tools/updatesemanticversion.py 0.6.0
+    to update all the places the version appears
+    in the source
+
+            modified:   CMakeLists.txt
+            modified:   configure.ac
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarfp.mm
+            modified:   meson.build
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-08:  David Anderson
+    commit 027e169211bcf71384bd9a0f04466551934ecc4a
+
+    Fixing trailing whitespace.
+            modified:   src/bin/dwarfdump/dd_globals.h
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+    Fixing trailing whitespace and adding the dwarf_globals_dealloc()
+    where I forgot to insert it.
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+2022-12-08:  David Anderson
+    commit 99ab17c5a9edad3f32cc786acd8d3fe02ace3391
+
+    Now using the new interfaces.
+            modified:   doc/checkexamples.c
+
+    Now describes the changed API applicable
+    to calling dwarf_get_pubtypes() (and therefore
+    using Dwarf_Type).
+            modified:   doc/libdwarf.dox
+
+2022-12-08:  David Anderson
+    commit 78814d95c2494b9b063fa5a8960890d89a9c1765
+
+    We now allow for missing python3 and sh
+    for Windows Visual Studio users.
+            modified:   test/meson.build
+
+2022-12-07:  David Anderson
+    commit e817d984ec486ff17e1e9f0544ae542ebb038e56
+
+    debugging message (normally ifdef out)
+    now say debugging: instead of the meaningless dadebug.
+            modified:   src/lib/libdwarf/dwarf_alloc.c
+            modified:   src/lib/libdwarf/dwarf_tsearchhash.c
+            modified:   src/lib/libdwarf/dwarf_util.c
+
+    Zero the pointer and counter whose address
+    the caller provided to ensure no segfaults
+    due to caller being a bit careless.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+2022-12-07:  David Anderson
+    commit 7d369fc0eed520d01be2973b187561cfa940be25
+
+    Fixed a comment on print_error_maybe_continue.
+            modified:   src/bin/dwarfdump/dwarfdump.c
+
+    Fixed an error message and ensured an ERROR output
+    is counted as that.
+            modified:   src/bin/dwarfdump/print_frames.c
+
+    Corrected the typenames and stdsecname arrays
+    to have the correct contents.
+    Made the behavior on error a bit easier to
+    understand when looking at printed output.
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+2022-12-07:  David Anderson
+    commit c896c08aefcc0c1f1cc9b3be34cffaf7f6d907ef
+
+    Alterations for reading .debug_pubtypes were
+    incorrect. Now fixed.
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+
+2022-12-07:  David Anderson
+    commit 22fdb8cf229177edaab6c9bca583eaa54c8e838d
+
+    When sh or python3 cannot be found to run
+    scripts in the tests those tests are simple
+    not attempted.   make test failure
+    was a problem for a Windows
+    Visual Studio user.
+            modified:   test/meson.build
+
+2022-12-06:  David Anderson
+    commit 5744cb9cd44299d1415eb7a07d6bc55a659baffe
+
+    No longer need 4 source files in dwarfdump.
+            modified:   src/bin/dwarfdump/CMakeLists.txt
+            modified:   src/bin/dwarfdump/Makefile.am
+            modified:   src/bin/dwarfdump/meson.build
+
+    Function no longer needed here.
+            modified:   src/bin/dwarfdump/dd_globals.h
+
+    Now uses the new pubnames-style functions,
+    and only needs one sourcefile to do all..
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_pubnames.c
+
+    Now correct for pubtypes reading.
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+
+2022-12-06:  David Anderson
+    commit 278fe12b7caf4a88acb627db7cc2a6c5f4a216d3
+
+    Corrected new bug leading to crash.
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+    Removed unwanted defines.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-06:  David Anderson
+    commit 3199b6a42e1902b16b5edf24f3732d9ae078665f
+
+    First try at compatibility statement.
+            modified:   doc/libdwarf.dox
+
+    These files no longer needed.
+            deleted:    src/bin/dwarfdump/print_static_funcs.c
+            deleted:    src/bin/dwarfdump/print_static_vars.c
+            deleted:    src/bin/dwarfdump/print_types.c
+            deleted:    src/bin/dwarfdump/print_weaknames.c
+
+2022-12-06:  David Anderson
+    commit 1433bca543788d027bed1359fb79aaca6f15a1fd
+
+    A working version of the new pubtypes etc interfaces.
+            modified:   src/lib/libdwarf/dwarf_global.c
+            modified:   src/lib/libdwarf/dwarf_global.h
+    With #defines simplifying use of debug_pubtypes
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-05:  David Anderson
+    commit dfde62d0ab951970d2121e6348fb02862c03d914
+
+    New simpler 0.6.0 source for
+    access to pubnames-like DWARF
+    sections.
+            modified:   CMakeLists.txt
+            modified:   Makefile.am
+            modified:   dwarf_alloc.c
+            deleted:    dwarf_funcs.c
+            deleted:    dwarf_funcs.h
+            modified:   dwarf_global.c
+            deleted:    dwarf_pubtypes.c
+            deleted:    dwarf_types.c
+            deleted:    dwarf_types.h
+            deleted:    dwarf_vars.c
+            deleted:    dwarf_vars.h
+            deleted:    dwarf_weaks.c
+            deleted:    dwarf_weaks.h
+            modified:   libdwarf.h
+            modified:   meson.build
+
+2022-12-05:  David Anderson
+    commit e020568521917d1641174b465003311e47f3c8a1
+
+    whitespace corrections, indent corrections.
+            modified:   src/bin/dwarfdump/dd_checkutil.c
+            modified:   src/bin/dwarfdump/dd_tsearchbal.c
+
+2022-12-05:  David Anderson
+    commit 5321e211d4dd426bb49e04ba731c3ab97c155aba
+
+    Removing trailing whitespace.
+            modified:   dwarf_global.c
+            modified:   dwarf_loclists.c
+            modified:   libdwarf.h
+
+2022-12-05:  David Anderson
+    commit e86a2fc3b31806e5c34f5d841cabfc73f562b39d
+
+    Improved the reporting from --trace=0
+    Added comments where only short options mentioned
+    to show also the long option.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Minor comment clarification.
+            modified:   src/bin/dwarfdump/print_ranges.c
+
+    Comment clarifications.
+    Some accidental duplicate checking
+    (not a recent mistake)
+    is now enclosed in #if 0 #endif
+            modified:   src/lib/libdwarf/dwarf_global.c
+
+    Completed a set of doxygen @see mentions
+    close to dwarf_dealloc_error.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-05:  David Anderson
+    commit 4093a0f2bc70889f3b37b60e3e8179f5214fe011
+
+    Fixed a typo in the most recent Changes item.
+            modified:   doc/libdwarf.dox
+            modified:   doc/libdwarf.pdf
+
+2022-12-02:  David Anderson
+    commit b51b0efb18ffcfadfae615f9e6dc0b243d7967a1
+
+    Updated from git log
+            modified:   ChangeLog
+
 2022-12-02:  David Anderson
     commit 20915dba4e49be38109820e7e9b6ff2001b8ba7e
 

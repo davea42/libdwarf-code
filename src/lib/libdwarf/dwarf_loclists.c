@@ -499,7 +499,7 @@ internal_load_loclists_contexts(Dwarf_Debug dbg,
     With DW_DLV_OK it returns the number of
     loclists headers in the section through
     loclists_count. */
-int 
+int
 dwarf_load_loclists(Dwarf_Debug dbg,
     Dwarf_Unsigned *loclists_count,
     Dwarf_Error *error)
