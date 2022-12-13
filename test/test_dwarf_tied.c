@@ -80,21 +80,35 @@ struct test_data_s {
 /* We don't test this here, referenced from dwarf_tied.c. */
 int
 _dwarf_next_cu_header_internal(
-    Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Bool is_info UNUSEDARG,
-    Dwarf_Unsigned * cu_header_length UNUSEDARG,
-    Dwarf_Half * version_stamp UNUSEDARG,
-    Dwarf_Unsigned * abbrev_offset UNUSEDARG,
-    Dwarf_Half * address_size UNUSEDARG,
-    Dwarf_Half * offset_size UNUSEDARG,
-    Dwarf_Half * extension_size UNUSEDARG,
-    Dwarf_Sig8 * signature UNUSEDARG,
-    Dwarf_Bool * has_signature UNUSEDARG,
-    Dwarf_Unsigned *typeoffset UNUSEDARG,
-    Dwarf_Unsigned * next_cu_offset UNUSEDARG,
-    Dwarf_Half     * header_cu_type UNUSEDARG,
-    Dwarf_Error * error UNUSEDARG)
+    Dwarf_Debug dbg,
+    Dwarf_Bool is_info,
+    Dwarf_Unsigned * cu_header_length,
+    Dwarf_Half * version_stamp,
+    Dwarf_Unsigned * abbrev_offset,
+    Dwarf_Half * address_size,
+    Dwarf_Half * offset_size,
+    Dwarf_Half * extension_size,
+    Dwarf_Sig8 * signature,
+    Dwarf_Bool * has_signature,
+    Dwarf_Unsigned *typeoffset,
+    Dwarf_Unsigned * next_cu_offset,
+    Dwarf_Half     * header_cu_type,
+    Dwarf_Error * error)
 {
+    (void)dbg;
+    (void)is_info;
+    (void)cu_header_length;
+    (void)version_stamp;
+    (void)abbrev_offset;
+    (void)address_size;
+    (void)offset_size;
+    (void)extension_size;
+    (void)signature;
+    (void)has_signature;
+    (void)typeoffset;
+    (void)next_cu_offset;
+    (void)header_cu_type;;
+    (void)error;;
     return DW_DLV_NO_ENTRY;
 }
 

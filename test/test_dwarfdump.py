@@ -20,7 +20,7 @@ testbase = [
     [
         "Elf",
         "testuriLE64ELf.base",
-        "testuriLE64ELf.obj",
+        "testuriLE64ELf.testme",
         "junk.LE64ELf.new",
     ],
     [

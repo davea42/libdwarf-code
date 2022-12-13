@@ -47,11 +47,13 @@ static int failcount = 0;
 static void
 validate_esb(int instance,
     struct esb_s* d,
-    size_t explen UNUSEDARG,
-    size_t expalloc UNUSEDARG,
+    size_t explen,
+    size_t expalloc,
     const char *expout,
     int line )
 {
+    (void) explen;
+    (void) expalloc;
     if (esb_string_len(d) != explen) {
         ++failcount;
         printf("  FAIL instance %d  esb_string_len()"

@@ -50,21 +50,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 static int errcount = 0;
 
 /* dummy func we do not need real one */
-int _dwarf_load_section(Dwarf_Debug dbg UNUSEDARG,
-    struct Dwarf_Section_s * section UNUSEDARG,
-    Dwarf_Error * error UNUSEDARG)
+int _dwarf_load_section(Dwarf_Debug dbg,
+    struct Dwarf_Section_s * section,
+    Dwarf_Error * error)
 {
+    (void)dbg;
+    (void)section;
+    (void)error;
     return DW_DLV_OK;
 }
 
 /* A horrible fake version for these tests */
 void
-_dwarf_error(Dwarf_Debug dbg UNUSEDARG,
+_dwarf_error(Dwarf_Debug dbg,
     Dwarf_Error * error,
     Dwarf_Signed errval)
 {
     static struct Dwarf_Error_s stuff;
 
+    (void)dbg;
     stuff.er_errval = errval;
     *error = &stuff;
 }

@@ -18,8 +18,15 @@ testobjLE32PE.exe
 testuriLE64ELf is a compilation of dwarfdump/uri.c and is
 a plain .o, a relocatable (renamed .obj to avoid a reader
 confusing this with build-time .o objects).
+The testuriLE64ELf.nocompile is the c used to compile
+the obj, but we cannot name it .c as doing so
+will let the test framework *rebuild* the .obj
+if the .obj is older than the source,
+and that is a disaster, it results in failure.
+So we prevent it rebuilding.
 
 testuriLE64ELf.base
+testuriLE64ELf.nocompile
 testuriLE64ELf.obj
 
 test-mach-o-32 is a little-endian compilation to an executable
