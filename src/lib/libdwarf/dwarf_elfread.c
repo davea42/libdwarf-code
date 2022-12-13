@@ -173,11 +173,12 @@ static Dwarf_Unsigned elf_get_nolibelf_section_count (void *obj)
 static int elf_get_nolibelf_section_info(void *obj,
     Dwarf_Half section_index,
     Dwarf_Obj_Access_Section_a *return_section,
-    int *error UNUSEDARG)
+    int *error)
 {
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
 
+    (void)error;
     if (section_index < elf->f_loc_shdr.g_count) {
         struct generic_shdr *sp = 0;
 

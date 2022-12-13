@@ -51,6 +51,8 @@
 #endif /* DWARF_WITH_LIBELF */
 
 #include "dwarf.h"
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
@@ -201,8 +203,9 @@ dwarf_producer_init(Dwarf_Unsigned flags,
 int
 dwarf_pro_set_default_string_form(Dwarf_P_Debug dbg,
     int form,
-    UNUSEDARG Dwarf_Error * error)
+    Dwarf_Error * error)
 {
+    (void)error;
     if (form != DW_FORM_string &&
         form != DW_FORM_strp) {
         _dwarf_p_error(dbg, error, DW_DLE_BAD_STRING_FORM);
@@ -214,10 +217,12 @@ dwarf_pro_set_default_string_form(Dwarf_P_Debug dbg,
 
 static int
 set_reloc_numbers(Dwarf_P_Debug dbg,
-    UNUSEDARG Dwarf_Unsigned flags,
+    Dwarf_Unsigned flags,
     const char *abiname)
 {
     struct isa_relocs_s *isap = 0;
+
+    (void)flags;
     if (!abiname) {
         return DW_DLV_NO_ENTRY;
     }

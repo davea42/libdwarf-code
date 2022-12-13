@@ -533,8 +533,8 @@ int
 dwarf_object_detector_path_dSYM(
     const char  *path,
     char *outpath, unsigned long outpath_len,
-    UNUSEDARG char ** gl_pathnames,
-    UNUSEDARG unsigned gl_pathcount,
+    char ** gl_pathnames,
+    unsigned gl_pathcount,
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
@@ -549,6 +549,8 @@ dwarf_object_detector_path_dSYM(
     int res = 0;
     int have_outpath = outpath && outpath_len;
 
+    (void)gl_pathnames;
+    (void)gl_pathcount;
     if (have_outpath) {
         /*   Looking for MacOS dSYM */
         if ((2*plen + dsprefixlen +2) >= (size_t)outpath_len) {

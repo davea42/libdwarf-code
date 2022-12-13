@@ -732,7 +732,7 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         }
 #if 0
         /* REFERENCED *//* Not used in this instance */
-        Dwarf_Unsigned exception_table_addr UNUSEDARG = 0;
+        Dwarf_Unsigned exception_table_addr = 0;
         /* this is per egcs-1.1.2 as on RH 6.0 */
         READ_UNALIGNED_CK(dbg, exception_table_addr,
             Dwarf_Unsigned, frame_ptr, local_length_size,
@@ -1762,13 +1762,14 @@ _dwarf_read_encoded_ptr(Dwarf_Debug dbg,
     as augmentations are implementation specific.  */
 /* ARGSUSED */
 enum Dwarf_augmentation_type
-_dwarf_get_augmentation_type(Dwarf_Debug dbg UNUSEDARG,
+_dwarf_get_augmentation_type(Dwarf_Debug dbg,
     Dwarf_Small * augmentation_string,
     int is_gcc_eh_frame)
 {
     enum Dwarf_augmentation_type t = aug_unknown;
     char *ag_string = (char *) augmentation_string;
 
+    (void)dbg;
     if (!ag_string[0]) {
         /*  Empty string. We'll just guess that we know
             what this means:

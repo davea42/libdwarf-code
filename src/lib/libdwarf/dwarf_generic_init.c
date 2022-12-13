@@ -494,8 +494,9 @@ dwarf_set_tied_dbg(Dwarf_Debug dbg,
 /*  New September 2015. */
 int
 dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
-    UNUSEDARG Dwarf_Error*error)
+    Dwarf_Error*error)
 {
+    (void)error;
     *tieddbg_out = dbg->de_tied_data.td_tied_object;
     return DW_DLV_OK;
 }

@@ -27,6 +27,8 @@
   Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWARF_PRO_OPAQUE_H
+#define DWARF_PRO_OPAQUE_H
 #include "libdwarf_private.h"
 
 #define TRUE                    1
@@ -42,9 +44,11 @@
 #define DW_CIE_ID          ~(0x0)
 #define DW_CIE_VERSION     1
 
+#if 0
 typedef signed char Dwarf_Sbyte;
 typedef unsigned char Dwarf_Ubyte;
 typedef signed short Dwarf_Shalf;
+#endif
 
 /*
     On any change that makes libdwarf producer
@@ -612,3 +616,4 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
 int _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
     const char *extra,
     int *err);
+#endif /*DWARF_PRO_OPAQUE_H */

@@ -136,7 +136,6 @@ struct Dwarf_Frame_Instr_Head_s {
     Dwarf_Frame_Instr *fh_array;
     Dwarf_Unsigned     fh_array_count;
 };
-typedef struct Dwarf_Frame_Instr_Head_s * Dwarf_Frame_Instr_Head;
 
 /*
     This struct denotes the rule for a register in a row of

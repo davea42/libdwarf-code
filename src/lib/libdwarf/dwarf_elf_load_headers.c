@@ -222,12 +222,13 @@ dwarf_construct_elf_access(int fd,
     the caller to avoid use of the pointer. */
 int
 dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t* ep,
-    int *errcode UNUSEDARG)
+    int *errcode)
 {
     struct generic_shdr *shp = 0;
     Dwarf_Unsigned shcount = 0;
     Dwarf_Unsigned i = 0;
 
+    (void)errcode;
     free(ep->f_ehdr);
     shp = ep->f_shdr;
     shcount = ep->f_loc_shdr.g_count;
@@ -262,8 +263,7 @@ dwarf_destruct_elf_access(dwarf_elf_object_access_internals_t* ep,
 
 static int
 generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
-    struct generic_ehdr *ehdr, dw_elf32_ehdr *e,
-    int *errcode UNUSEDARG)
+    struct generic_ehdr *ehdr, dw_elf32_ehdr *e)
 {
     int i = 0;
 
@@ -295,8 +295,7 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
 
 static int
 generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
-    struct generic_ehdr *ehdr, dw_elf64_ehdr *e,
-    int *errcode UNUSEDARG)
+    struct generic_ehdr *ehdr, dw_elf64_ehdr *e)
 {
     int i = 0;
 
@@ -1547,7 +1546,7 @@ elf_load_elf_header32(
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    res  = generic_ehdr_from_32(ep,ehdr,&ehdr32,errcode);
+    res  = generic_ehdr_from_32(ep,ehdr,&ehdr32);
     return res;
 }
 static int
@@ -1569,19 +1568,15 @@ elf_load_elf_header64(
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
-    res  = generic_ehdr_from_64(ep,ehdr,&ehdr64,errcode);
+    res  = generic_ehdr_from_64(ep,ehdr,&ehdr64);
     return res;
 }
 
 static int
-validate_struct_sizes(
-#ifdef HAVE_ELF_H
-    int*errcode
-#else
-    int*errcode UNUSEDARG
-#endif
-    )
+validate_struct_sizes(int*errcode)
 {
+
+    (void)errcode;
 #ifdef HAVE_ELF_H
     /*  This is a sanity check when we have an elf.h
         to check against. */

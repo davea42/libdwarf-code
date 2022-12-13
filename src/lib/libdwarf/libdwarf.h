@@ -648,12 +648,6 @@ struct Dwarf_Macro_Details_s {
     Dwarf_Signed dmd_fileindex;/* the source file index */
     char *       dmd_macro;  /* macro name string */
 };
-/*! @typedef Dwarf_Rnglists_Head
-    Used for access to a set of DWARF5 debug_rnglists
-    entries.
-*/
-typedef struct Dwarf_Rnglists_Head_s * Dwarf_Rnglists_Head;
-
 typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
 typedef struct Dwarf_Debug_Fission_Per_CU_s
     Dwarf_Debug_Fission_Per_CU;

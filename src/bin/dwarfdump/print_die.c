@@ -120,7 +120,6 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     int *stackchange,
     Dwarf_Signed *branchdistance,
     int *zerostackdepth,
-    Dwarf_Addr baseaddr,
     struct esb_s *string_out,
     Dwarf_Error *err);
 
@@ -5286,7 +5285,6 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
     int             die_indent_level,
     Dwarf_Locdesc_c locdesc,  /* for 2015 interface. */
     Dwarf_Unsigned  entrycount,
-    Dwarf_Addr      baseaddr,
     struct esb_s   *string_out,
     Dwarf_Error    *err)
 {
@@ -5326,7 +5324,7 @@ dwarfdump_print_expression_operations(Dwarf_Debug dbg,
             &stackchange,
             &branchdistance,
             &zerostackdepth,
-            baseaddr,string_out,err);
+            string_out,err);
         if (res == DW_DLV_ERROR) {
             dealloc_skip_branch_array(&op_branch_checking);
             return res;
@@ -5455,7 +5453,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     int   *stackchange,
     Dwarf_Signed *branchdistance,
     int   * zerostackdepth,
-    Dwarf_Addr baseaddr UNUSEDARG,
     struct esb_s *string_out,
     Dwarf_Error *err)
 {
@@ -6284,7 +6281,6 @@ print_location_list(Dwarf_Debug dbg,
                 Not both. */
             locentry,
             ulocentry_count, /* How many ops in this loc desc */
-            base_address,
             details,llerr);
         if (lres == DW_DLV_ERROR) {
             dwarf_dealloc_loc_head_c(loclist_head);

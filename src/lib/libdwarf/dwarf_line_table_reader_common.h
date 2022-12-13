@@ -1149,7 +1149,7 @@ static int
 read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Small *line_ptr,
     Dwarf_Small *line_ptr_end,
-    UNUSEDARG Dwarf_Small *orig_line_ptr,
+    Dwarf_Small *orig_line_ptr,
     Dwarf_Small *section_start,
     Dwarf_Line_Context line_context,
     Dwarf_Half address_size,
@@ -1158,7 +1158,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Bool is_single_table,
     Dwarf_Bool is_actuals_table,
     Dwarf_Error *error,
-    UNUSEDARG int *err_count_out)
+    int *err_count_out)
 {
     Dwarf_Unsigned i = 0;
     Dwarf_File_Entry cur_file_entry = 0;
@@ -1201,6 +1201,8 @@ read_line_table_program(Dwarf_Debug dbg,
     /*  Mark a line record as being DW_LNS_set_address */
     Dwarf_Bool is_addr_set = false;
 
+    (void)orig_line_ptr;
+    (void)err_count_out;
     /*  Initialize the one state machine variable that depends on the
         prefix.  */
     _dwarf_set_line_table_regs_default_values(&regs,
@@ -1254,8 +1256,9 @@ read_line_table_program(Dwarf_Debug dbg,
                     understand.
                     arbitrary choice of unsigned read.
                     signed read would work as well.    */
-                UNUSEDARG Dwarf_Unsigned utmp2 = 0;
+                Dwarf_Unsigned utmp2 = 0;
 
+                (void) utmp2;
                 ocres =  read_uword_de( &line_ptr,&utmp2,
                     dbg,error,line_ptr_end);
                 if (ocres == DW_DLV_ERROR) {

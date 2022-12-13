@@ -115,8 +115,9 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Signed dsc = 0;
             Dwarf_Signed low = 0;
             Dwarf_Signed high = 0;
-            Dwarf_Unsigned leblen UNUSEDARG = 0;
+            Dwarf_Unsigned leblen = 0;
 
+            (void)leblen;
             if (ary && (larraycount >= iarraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
                 return DW_DLV_ERROR;
@@ -231,15 +232,17 @@ int dwarf_discr_list(Dwarf_Debug dbg,
     entry. Callers must know which is the appropriate
     one of the following two interfaces, though both
     will work. */
-int dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
+int 
+dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
     Dwarf_Unsigned   entrynum,
     Dwarf_Half     * out_type,
     Dwarf_Unsigned * out_discr_low,
     Dwarf_Unsigned * out_discr_high,
-    Dwarf_Error    * error UNUSEDARG)
+    Dwarf_Error    * error)
 {
     struct Dwarf_Dsc_Entry_s *dse = 0;
 
+    (void)error;
     if (entrynum >= dsh->dsh_count) {
         return DW_DLV_NO_ENTRY;
     }
@@ -273,15 +276,17 @@ int dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
 
 /*  NEW September 2016. Allows easy access to DW_AT_discr_list
     entry. */
-int dwarf_discr_entry_s(Dwarf_Dsc_Head  dsh,
+int 
+dwarf_discr_entry_s(Dwarf_Dsc_Head  dsh,
     Dwarf_Unsigned   entrynum,
     Dwarf_Half     * out_type,
     Dwarf_Signed   * out_discr_low,
     Dwarf_Signed   * out_discr_high,
-    Dwarf_Error    * error UNUSEDARG)
+    Dwarf_Error    * error)
 {
     struct Dwarf_Dsc_Entry_s *dse = 0;
 
+    (void)error;
     if (entrynum >= dsh->dsh_count) {
         return DW_DLV_NO_ENTRY;
     }

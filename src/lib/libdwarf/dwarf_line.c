@@ -75,9 +75,10 @@ static struct Dwarf_Line_Registers_s
 
 void
 _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
-    UNUSEDARG unsigned lineversion,
+    unsigned lineversion,
     Dwarf_Bool is_stmt)
 {
+    (void)lineversion;
     *regs = _dwarf_line_table_regs_default_values;
     if (lineversion == DW_LINE_VERSION5) {
         /*  DWARF5 Section 2.14 says default 0 for line table

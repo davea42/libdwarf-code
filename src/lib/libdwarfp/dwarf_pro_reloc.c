@@ -30,6 +30,8 @@
 #include <config.h>
 
 #include "dwarf.h"
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
@@ -189,8 +191,9 @@ dwarf_get_relocation_info_count(Dwarf_P_Debug dbg,
     Dwarf_Unsigned *
     count_of_relocation_sections,
     int *drd_buffer_version,
-    UNUSEDARG Dwarf_Error * error)
+    Dwarf_Error * error)
 {
+    (void)error;
     if (dbg->de_flags & DW_DLC_SYMBOLIC_RELOCATIONS) {
         int i = 0;
         unsigned int count = 0;

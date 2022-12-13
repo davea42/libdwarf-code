@@ -35,8 +35,10 @@
 #include <string.h> /* strcmp() */
 
 #include "dwarf.h"
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
 #include "dwarf_string.h"
-#include "libdwarfp.h" /* includes libdwarf.h */
+#include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
 
@@ -47,13 +49,14 @@
 
 /*  err will be used...shortly */
 static int
-translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
+translatetosigned(char *s,Dwarf_Signed *v, int *err)
 {
     unsigned char *cp = (unsigned char *)s;
     unsigned char *digits = (unsigned char *)s;
     int signmult = 1;
     Dwarf_Signed l = 0;
 
+    (void)err;
     if (*cp == '0' &&
         (*(cp+1) == 'x'|| (*(cp+1) == 'X'))) {
         digits += 2;

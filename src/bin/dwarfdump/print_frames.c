@@ -1569,7 +1569,6 @@ print_expression_operations(Dwarf_Debug dbg,
 {
     Dwarf_Unsigned ulistlen = 0;
     int res2 = 0;
-    Dwarf_Addr baseaddr = 0; /* Really unknown */
     /* See PRINTING_DIES macro in print_die.c */
 
     {
@@ -1632,7 +1631,6 @@ print_expression_operations(Dwarf_Debug dbg,
             die_indent_level,
             locentry,
             ulocentry_count,
-            baseaddr,
             out_string,err);
         dwarf_dealloc_loc_head_c(head);
         return lres;

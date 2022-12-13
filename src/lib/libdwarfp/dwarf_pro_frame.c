@@ -34,6 +34,8 @@
 #include <string.h> /* memcpy() strcpy() strlen() */
 
 #include "dwarf.h"
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
@@ -130,10 +132,11 @@ dwarf_add_frame_fde_c(Dwarf_P_Debug dbg,
     Dwarf_Unsigned symidx_of_end,
     Dwarf_Addr offset_from_end_sym,
     Dwarf_Unsigned *index_to_fde,
-    UNUSEDARG Dwarf_Error * error)
+    Dwarf_Error * error)
 {
     Dwarf_P_Fde curfde;
 
+    (void)error;
     fde->fde_die = die;
     fde->fde_cie = (long) cie;
     fde->fde_initloc = virt_addr;
@@ -192,10 +195,11 @@ dwarf_add_frame_info_c(Dwarf_P_Debug dbg,
     Dwarf_Signed offset_into_exception_tables,
     Dwarf_Unsigned exception_table_symbol,
     Dwarf_Unsigned *fde_index_out,
-    UNUSEDARG Dwarf_Error * error)
+    Dwarf_Error * error)
 {
-    Dwarf_P_Fde curfde;
+    Dwarf_P_Fde curfde = 0;
 
+    (void)error;
     fde->fde_die = die;
     fde->fde_cie = (long) cie;
     fde->fde_initloc = virt_addr;

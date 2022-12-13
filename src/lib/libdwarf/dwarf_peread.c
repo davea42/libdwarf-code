@@ -230,11 +230,12 @@ static int
 pe_get_section_info (void *obj,
     Dwarf_Half section_index,
     Dwarf_Obj_Access_Section_a *return_section,
-    int *error UNUSEDARG)
+    int *error)
 {
     dwarf_pe_object_access_internals_t *pep =
         (dwarf_pe_object_access_internals_t*)(obj);
 
+    (void)error;
     if (section_index < pep->pe_section_count) {
         struct dwarf_pe_generic_image_section_header *sp = 0;
         sp = pep->pe_sectionptr + section_index;

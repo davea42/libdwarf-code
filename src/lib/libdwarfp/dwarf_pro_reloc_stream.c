@@ -45,6 +45,8 @@
 #endif /* HAVE_ELF_H */
 
 #include "dwarf.h"
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
@@ -62,12 +64,12 @@
     Return DW_DLV_OK otherwise */
 /*ARGSUSED*/ int
 _dwarf_pro_reloc_name_stream64(
-    UNUSEDARG Dwarf_P_Debug dbg,
-    UNUSEDARG int base_sec_index,
-    UNUSEDARG Dwarf_Unsigned offset,      /* r_offset of reloc */
-    UNUSEDARG Dwarf_Unsigned symidx,
-    UNUSEDARG enum Dwarf_Rel_Type type,
-    UNUSEDARG int reltarget_length)
+    Dwarf_P_Debug dbg,
+    int base_sec_index,
+    Dwarf_Unsigned offset,      /* r_offset of reloc */
+    Dwarf_Unsigned symidx,
+    enum Dwarf_Rel_Type type,
+    int reltarget_length)
 {
 #if HAVE_ELF64_GETEHDR
     REL64 *elf64_reloc = 0;
@@ -101,6 +103,12 @@ _dwarf_pro_reloc_name_stream64(
     Set_REL64_info(*elf64_reloc, symidx, rel_type);
     return DW_DLV_OK;
 #else /* !HAVE_ELF64_GETEHDR */
+    (void)dbg;
+    (void)base_sec_index;;
+    (void)offset;
+    (void)end_symidx;
+    (void)type;
+    (void)reltarget_length;
     return DW_DLV_ERROR;
 #endif /* #if HAVE_ELF64_GETEHDR */
 }
@@ -151,14 +159,21 @@ _dwarf_pro_reloc_name_stream32(Dwarf_P_Debug dbg, int base_sec_index,
     Never can really do anything: lengths cannot
     be represented as end-start in a stream.  */
 /*ARGSUSED*/ int
-_dwarf_pro_reloc_length_stream(UNUSEDARG Dwarf_P_Debug dbg,
-    UNUSEDARG int base_sec_index,
-    UNUSEDARG Dwarf_Unsigned offset,    /* r_offset of reloc */
-    UNUSEDARG Dwarf_Unsigned start_symidx,
-    UNUSEDARG Dwarf_Unsigned end_symidx,
-    UNUSEDARG enum Dwarf_Rel_Type type,
-    UNUSEDARG int reltarget_length)
+_dwarf_pro_reloc_length_stream(Dwarf_P_Debug dbg,
+    int base_sec_index,
+    Dwarf_Unsigned offset,    /* r_offset of reloc */
+    Dwarf_Unsigned start_symidx,
+    Dwarf_Unsigned end_symidx,
+    enum Dwarf_Rel_Type type,
+    int reltarget_length)
 {
+    (void)dbg;
+    (void)base_sec_index;;
+    (void)offset;
+    (void)start_symidx;
+    (void)end_symidx;
+    (void)type;
+    (void)reltarget_length;
     /* get a slot, fill in the slot entry */
     return DW_DLV_OK;
 }

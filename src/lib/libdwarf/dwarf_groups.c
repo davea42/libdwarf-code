@@ -159,12 +159,13 @@ int
 _dwarf_section_get_target_group_from_map(Dwarf_Debug dbg,
     unsigned   obj_section_index,
     unsigned * groupnumber_out,
-    UNUSEDARG Dwarf_Error    * error)
+    Dwarf_Error    * error)
 {
     struct Dwarf_Group_Map_Entry_s entry;
     struct Dwarf_Group_Map_Entry_s *entry2;
     struct Dwarf_Group_Data_s *grp = &dbg->de_groupnumbers;
 
+    (void)error;
     if (!grp->gd_map) {
         return DW_DLV_NO_ENTRY;
     }
@@ -190,10 +191,11 @@ int dwarf_sec_group_sizes(Dwarf_Debug dbg,
     Dwarf_Unsigned * group_count_out,
     Dwarf_Unsigned * selected_group_out,
     Dwarf_Unsigned * map_entry_count_out,
-    UNUSEDARG Dwarf_Error    * error)
+    Dwarf_Error    * error)
 {
     struct Dwarf_Group_Data_s *grp = &dbg->de_groupnumbers;
 
+    (void)error;
     *section_count_out   = grp->gd_number_of_sections;
     *group_count_out     = grp->gd_number_of_groups;
     *selected_group_out  = dbg->de_groupnumber;
@@ -211,10 +213,11 @@ static struct temp_map_struc_s {
 static void
 grp_walk_map(const void *nodep,
     const DW_VISIT which,
-    UNUSEDARG const int depth)
+    const int depth)
 {
     struct Dwarf_Group_Map_Entry_s *re = 0;
 
+    (void)depth;
     re = *(struct Dwarf_Group_Map_Entry_s **)nodep;
     if (which == dwarf_postorder || which == dwarf_endorder) {
         return;
@@ -344,10 +347,11 @@ const char *lookfor_name = 0;
 static void
 grp_walk_for_name(const void *nodep,
     const DW_VISIT which,
-    UNUSEDARG const int depth)
+    const int depth)
 {
     struct Dwarf_Group_Map_Entry_s *re = 0;
-
+ 
+    (void)depth;
     re = *(struct Dwarf_Group_Map_Entry_s **)nodep;
     if (which == dwarf_postorder || which == dwarf_endorder) {
         return;

@@ -130,10 +130,11 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
     Dwarf_Debug localdbg = dbg;
     Dwarf_Error localerror = 0;
     Dwarf_Half die_version = 3; /* default for dwarf_get_ranges() */
-    Dwarf_Half offset_size UNUSEDARG = 4;
+    Dwarf_Half offset_size= 4;
     Dwarf_CU_Context cucontext = 0;
     Dwarf_Bool rangeslocal = TRUE;
 
+    (void)offset_size;
     if (!dbg) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return DW_DLV_ERROR;
@@ -348,7 +349,8 @@ int dwarf_get_ranges_b(Dwarf_Debug dbg,
 
 void
 dwarf_dealloc_ranges(Dwarf_Debug dbg, Dwarf_Ranges * rangesbuf,
-    Dwarf_Signed rangecount UNUSEDARG)
+    Dwarf_Signed rangecount)
 {
+    (void)rangecount;
     dwarf_dealloc(dbg,rangesbuf, DW_DLA_RANGES);
 }

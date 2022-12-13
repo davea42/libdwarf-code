@@ -231,11 +231,11 @@ public:
         Dwarf_Half addr_size,
         Dwarf_Half length_size,
         Dwarf_Half extension_size,
-        Dwarf_Unsigned next_cu_header UNUSEDARG):
+        Dwarf_Unsigned next_cu_header):
 
         cu_header_length_(len),
         abbrev_offset_(abbrev_offset),
-        next_cu_header_offset_(addr_size),
+        next_cu_header_offset_(next_cu_header),
         version_stamp_(version),
         address_size_(addr_size),
         length_size_(length_size),

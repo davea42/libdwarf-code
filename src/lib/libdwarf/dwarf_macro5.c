@@ -587,7 +587,6 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         ress = _dwarf_extract_string_offset_via_str_offsets(dbg,
             mdata_copy,
             endptr,
-            DW_AT_macros, /*arbitrary, unused by called routine. */
             form1,
             macro_context->mc_cu_context,
             &offsettostr,
@@ -998,7 +997,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
             variable should be ignored. */
         Dwarf_Unsigned formcount = 0;
 #if 0   /* No need to actually read, just update pointer*/
-        UNUSEDARG Dwarf_Small opcode_number = 0;
+        Dwarf_Small opcode_number = 0;
         READ_UNALIGNED_CK(dbg,opcode_number,Dwarf_Small,
             macro_data,sizeof(Dwarf_Small),error,endptr);
 #endif /*0*/
@@ -1592,10 +1591,11 @@ dwarf_get_macro_context_by_offset(Dwarf_Die cu_die,
 
 int dwarf_get_macro_section_name(Dwarf_Debug dbg,
     const char **sec_name_out,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error)
 {
     struct Dwarf_Section_s *sec = 0;
 
+    (void)error;
     sec = &dbg->de_debug_macro;
     if (sec->dss_size == 0) {
         /* We don't have such a  section at all. */

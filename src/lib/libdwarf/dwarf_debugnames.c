@@ -1362,7 +1362,7 @@ static int
 _dwarf_find_abbrev_for_code(Dwarf_Dnames_Head dn,
     Dwarf_Unsigned code,
     struct Dwarf_D_Abbrev_s **abbrevdata,
-    Dwarf_Error *error UNUSEDARG)
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned i = 0;
     struct Dwarf_D_Abbrev_s *ap =0;

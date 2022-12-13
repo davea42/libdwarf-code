@@ -265,9 +265,10 @@ target_data_destructor( struct target_data_s *td)
 }
 
 static void
-print_target_info( Dwarf_Debug dbg UNUSEDARG,
+print_target_info( Dwarf_Debug dbg,
     struct target_data_s *td)
 {
+    (void)dbg;
     printf("FOUND function \"%s\", requested pc 0x%" DW_PR_DUx
         "\n",
         td->td_subprog_name?td->td_subprog_name:"<unknown>",
@@ -295,7 +296,7 @@ print_target_info( Dwarf_Debug dbg UNUSEDARG,
 }
 
 static int
-read_line_data(Dwarf_Debug dbg UNUSEDARG,
+read_line_data(Dwarf_Debug dbg,
     struct target_data_s *td,
     Dwarf_Error *errp)
 {
@@ -309,6 +310,7 @@ read_line_data(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Signed file_count  = 0;
     Dwarf_Unsigned dirindex  = 0;
 
+    (void)dbg;
     res = dwarf_srclines_b(td->td_cu_die,&line_version,
         &table_type,&line_context,errp);
     if (res != DW_DLV_OK) {

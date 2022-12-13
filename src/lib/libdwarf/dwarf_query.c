@@ -1234,11 +1234,13 @@ _dwarf_merge_all_base_attrs_of_cu_die(Dwarf_Debug dbg,
 }
 
 int
-_dwarf_get_string_base_attr_value(Dwarf_Debug dbg UNUSEDARG,
+_dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned *sbase_out,
-    Dwarf_Error *error UNUSEDARG)
+    Dwarf_Error *error)
 {
+    (void)dbg;
+    (void)error;
     if (context->cc_str_offsets_base_present) {
         *sbase_out = context->cc_str_offsets_base;
         return DW_DLV_OK;

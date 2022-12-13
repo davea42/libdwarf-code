@@ -514,4 +514,5 @@ main(int argc, char **argv)
         printf("=======done with %s\n",basename(filenamein));
     }
     free_paths();
+    return 0;
 }

@@ -286,8 +286,9 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
 int
 dwarf_gdbindex_culist_array(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned       * list_length,
-    Dwarf_Error * error UNUSEDARG)
+    Dwarf_Error * error)
 {
+    (void)error;
     *list_length = gdbindexptr->gi_culisthdr.dg_count;
     return DW_DLV_OK;
 }
@@ -328,8 +329,9 @@ dwarf_gdbindex_culist_entry(Dwarf_Gdbindex gdbindexptr,
 int
 dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned       * list_length,
-    Dwarf_Error  * error UNUSEDARG)
+    Dwarf_Error  * error)
 {
+    (void)error;
     *list_length = gdbindexptr->gi_typesculisthdr.dg_count;
     return DW_DLV_OK;
 }
@@ -376,8 +378,9 @@ dwarf_gdbindex_types_culist_entry(Dwarf_Gdbindex gdbindexptr,
 int
 dwarf_gdbindex_addressarea(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned            * list_length,
-    Dwarf_Error     * error UNUSEDARG)
+    Dwarf_Error     * error)
 {
+    (void)error;
     *list_length = gdbindexptr->gi_addressareahdr.dg_count;
     return DW_DLV_OK;
 }
@@ -424,8 +427,9 @@ dwarf_gdbindex_addressarea_entry(
 int
 dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned            * list_length,
-    Dwarf_Error     * error UNUSEDARG)
+    Dwarf_Error     * error)
 {
+    (void)error;
     *list_length = gdbindexptr->gi_symboltablehdr.dg_count;
     return DW_DLV_OK;
 }

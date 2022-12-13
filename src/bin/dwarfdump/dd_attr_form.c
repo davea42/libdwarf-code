@@ -114,10 +114,12 @@ std_compare_3key_entry(const void *l_in, const void *r_in)
 
 static Dwarf_Unsigned counting_global;
 static void
-count_3key_entry(const void * vptr UNUSEDARG,
+count_3key_entry(const void * vptr,
     DW_VISIT x,
-    int level UNUSEDARG)
+    int level)
 {
+    (void)vptr;
+    (void)level;
     if (x == dwarf_preorder || x == dwarf_leaf) {
         ++counting_global;
     }
@@ -287,7 +289,6 @@ check_attr_formclass_combination(Dwarf_Debug dbg,
 
 void
 record_attr_form_use(
-#ifndef SKIP_AF_CHECK
     Dwarf_Debug dbg,
     Dwarf_Half tag,
     Dwarf_Half attr,
@@ -295,21 +296,17 @@ record_attr_form_use(
     Dwarf_Half form,
     int pd_dwarf_names_print_on_error,
     int die_stack_indent_level)
-#else
-    Dwarf_Debug dbg UNUSEDARG,
-    Dwarf_Half tag UNUSEDARG,
-    Dwarf_Half attr,
-    Dwarf_Half fclass,
-    Dwarf_Half form,
-    int pd_dwarf_names_print_on_error UNUSEDARG,
-    int die_stack_indent_level UNUSEDARG)
-#endif /* SKIP_AF_CHECK */
 {
     Three_Key_Entry *e =  0;
     Three_Key_Entry *re =  0;
     void *ret =  0;
     Dwarf_Small std_or_exten = 0;
     int res = 0;
+
+    (void)dbg;
+    (void)tag;
+    (void)pd_dwarf_names_print_on_error;
+    (void)die_stack_indent_level;
 
     if (attr >= DW_AT_lo_user) {
         std_or_exten = AF_EXTEN;
@@ -356,8 +353,9 @@ static Three_Key_Entry * tkarray = 0;
 static void
 extract_3key_entry(const void * vptr,
     DW_VISIT x,
-    int level UNUSEDARG)
+    int level)
 {
+    (void)level;
     if (x == dwarf_preorder || x == dwarf_leaf) {
         Three_Key_Entry *m = *(Three_Key_Entry **)vptr;
         if (recordcount >= recordmax) {

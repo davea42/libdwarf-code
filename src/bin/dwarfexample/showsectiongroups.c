@@ -39,6 +39,7 @@ one_file_show_groups(char  *path_in,
     Dwarf_Unsigned * group_numbers_array = 0;
     Dwarf_Unsigned * sec_numbers_array = 0;
     const char    ** sec_names_array = 0;
+    Dwarf_Unsigned   i = 0;
 
     path =  path_in;
     res = dwarf_init_path(path,
@@ -140,7 +141,7 @@ one_file_show_groups(char  *path_in,
         return res;
     }
     printf("  [index] group   section \n");
-    for (Dwarf_Unsigned i = 0; i < map_entry_count;++i) {
+    for (i = 0; i < map_entry_count;++i) {
         printf("  [%5lu]  %4lu  %4lu %s\n",
             (unsigned long)i,
             (unsigned long)group_numbers_array[i],

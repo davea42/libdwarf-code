@@ -23,12 +23,6 @@
 #define DW_PR_DSd "lld"
 #endif /* DW_PR defines */
 
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 #ifdef _MSC_VER /* Macro to select VS compiler */
 #include <windows.h>
 typedef SSIZE_T ssize_t;

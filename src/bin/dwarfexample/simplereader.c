@@ -374,9 +374,11 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
     test how well that action works.   */
 static void
 simple_error_handler(Dwarf_Error error,
-    Dwarf_Ptr errarg UNUSEDARG)
+    Dwarf_Ptr errarg)
 {
     Dwarf_Unsigned earg =  (Dwarf_Unsigned)(uintptr_t)errarg;
+
+    (void)errarg;
     printf("\nlibdwarf error detected: 0x%" DW_PR_DUx " %s\n",
         dwarf_errno(error),dwarf_errmsg(error));
     printf("libdwarf errarg. %" DW_PR_DUu "\n", earg);

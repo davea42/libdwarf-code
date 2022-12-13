@@ -52,7 +52,6 @@ struct Dwarf_Loc_Chain_s {
     are filled in at startup at the same time .debug_info
     is opened.  Nothing of this struct is exposed to
     libdwarf callers */
-typedef struct Dwarf_Loclists_Context_s *Dwarf_Loclists_Context;
 struct Dwarf_Loclists_Context_s {
     Dwarf_Debug    lc_dbg;
     Dwarf_Unsigned lc_index; /* An index  assigned by

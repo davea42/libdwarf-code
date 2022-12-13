@@ -36,6 +36,8 @@
 #include <string.h> /* memcpy() strcmp() strcpy() strlen() */
 
 #include "dwarf.h"
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
 #include "libdwarfp.h"
 #include "dwarf_pro_incl.h"
 #include "dwarf_pro_opaque.h"
@@ -1218,7 +1220,7 @@ static int
 calculate_size_of_line_header4(Dwarf_P_Debug dbg,
     struct Dwarf_P_Line_Inits_s *inits,
     unsigned *prolog_size_out,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error)
 {
     Dwarf_P_F_Entry curdir = 0;
     Dwarf_P_F_Entry curentry = 0;
@@ -1226,6 +1228,7 @@ calculate_size_of_line_header4(Dwarf_P_Debug dbg,
     int offset_size = dbg->de_dwarf_offset_size;
     int extension_size = dbg->de_64bit_extension ? 4 : 0;
 
+    (void)error;
     prolog_size += OFFSET_PLUS_EXTENSION_SIZE +
         sizeof_uhalf(dbg) +  /* version # */
         offset_size       +  /* header length */
@@ -2426,11 +2429,12 @@ dwarf_get_string_attributes_count(Dwarf_P_Debug dbg,
     Dwarf_Unsigned *
     count_of_sa_sections,
     int *drd_buffer_version,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error)
 {
     int i = 0;
     unsigned int count = 0;
 
+    (void)error;
     for (i = 0; i < NUM_DEBUG_SECTIONS; ++i) {
         if (dbg->de_sect_string_attr[i].sect_sa_n_used > 0) {
             ++count;
@@ -2447,11 +2451,12 @@ dwarf_get_string_attributes_info(Dwarf_P_Debug dbg,
     Dwarf_Signed *elf_section_index,
     Dwarf_Unsigned *sect_sa_buffer_count,
     Dwarf_P_String_Attr *sect_sa_buffer,
-    UNUSEDARG Dwarf_Error *error)
+    Dwarf_Error *error)
 {
     int i = 0;
     int next = dbg->de_sect_sa_next_to_return;
 
+    (void)error;
     for (i = next; i < NUM_DEBUG_SECTIONS; ++i) {
         Dwarf_P_Per_Sect_String_Attrs sect_sa =
             &dbg->de_sect_string_attr[i];
@@ -3555,7 +3560,7 @@ _dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
 */
 int
 dwarf_get_section_bytes_a(Dwarf_P_Debug dbg,
-    UNUSEDARG Dwarf_Signed dwarf_section,
+    Dwarf_Signed dwarf_section,
     Dwarf_Signed   * section_idx,
     Dwarf_Unsigned * length,
     Dwarf_Ptr      * section_bytes,
@@ -3563,6 +3568,7 @@ dwarf_get_section_bytes_a(Dwarf_P_Debug dbg,
 {
     Dwarf_Ptr buf = 0;
 
+    (void)dwarf_section;
     if (dbg->de_version_magic_number != PRO_VERSION_MAGIC) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_ERROR);
     }

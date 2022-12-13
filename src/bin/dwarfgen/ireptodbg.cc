@@ -152,14 +152,19 @@ createskipbranchblock(
 
 static void
 addSkipBranchOps(Dwarf_P_Debug dbg,
-    IRepresentation & Irep UNUSEDARG,
-    Dwarf_P_Die ourdie UNUSEDARG,
+    IRepresentation & Irep,
+    Dwarf_P_Die ourdie,
     IRDie &inDie,
-    IRDie &inParent UNUSEDARG,
+    IRDie &inParent,
     list<IRAttr>& attrs,
-    unsigned level UNUSEDARG)
+    unsigned level)
 {
     static int done  = false;
+
+    (void)Irep;
+    (void)ourdie;
+    (void)inParent;
+    (void)level;
     if (!cmdoptions.addskipbranch) {
         // No transformation of this sort requested.
         return;
@@ -212,13 +217,18 @@ addSkipBranchOps(Dwarf_P_Debug dbg,
 // The attrs ref passed in is (sometimes) used to generate
 // a new attrs list for the caller.
 static void
-specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
-    IRepresentation & Irep UNUSEDARG,
-    Dwarf_P_Die ourdie UNUSEDARG,
+specialAttrTransformations(Dwarf_P_Debug dbg,
+    IRepresentation & Irep,
+    Dwarf_P_Die ourdie,
     IRDie &inDie,
     list<IRAttr>& attrs,
-    unsigned level UNUSEDARG)
+    unsigned level)
 {
+    (void)dbg;
+    (void)Irep;
+    (void)ourdie;
+    (void)level;
+    
     if (!cmdoptions.transformHighpcToConst) {
         // No transformation of this sort requested.
         return;
@@ -318,9 +328,9 @@ specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
 
 /* Create a data16 data item out of nothing... */
 static void
-addData16DataItem(Dwarf_P_Debug dbg UNUSEDARG,
-    IRepresentation & Irep UNUSEDARG,
-    Dwarf_P_Die ourdie UNUSEDARG,
+addData16DataItem(Dwarf_P_Debug dbg,
+    IRepresentation & Irep,
+    Dwarf_P_Die ourdie,
     IRDie &inDie,
     IRDie &inParent,
     list<IRAttr>& attrs,
@@ -328,6 +338,9 @@ addData16DataItem(Dwarf_P_Debug dbg UNUSEDARG,
 {
     static bool alreadydone = false;
 
+    (void)dbg;
+    (void)Irep;
+    (void)ourdie;
     if (alreadydone) {
         return;
     }
@@ -413,13 +426,17 @@ const char *testnames[3] = {
 
 static void
 addSUNfuncoffsets(Dwarf_P_Debug dbg ,
-    IRepresentation & Irep UNUSEDARG,
-    Dwarf_P_Die ourdie UNUSEDARG ,
+    IRepresentation & Irep,
+    Dwarf_P_Die ourdie,
     IRDie &inDie,
-    IRDie &inParent UNUSEDARG,
+    IRDie &inParent,
     list<IRAttr>& attrs,
-    unsigned level UNUSEDARG)
+    unsigned level)
 {
+    (void)Irep;
+    (void)ourdie;
+    (void)inParent;
+    (void)level;
     if (!cmdoptions.addSUNfuncoffsets) {
         // No transformation of this sort requested.
         return;
@@ -471,9 +488,9 @@ addSUNfuncoffsets(Dwarf_P_Debug dbg ,
 }
 
 static void
-addImplicitConstItem(Dwarf_P_Debug dbg UNUSEDARG,
-    IRepresentation & Irep UNUSEDARG,
-    Dwarf_P_Die ourdie UNUSEDARG,
+addImplicitConstItem(Dwarf_P_Debug dbg,
+    IRepresentation & Irep,
+    Dwarf_P_Die ourdie,
     IRDie &inDie,
     IRDie &inParent,
     list<IRAttr>& attrs,
@@ -481,6 +498,9 @@ addImplicitConstItem(Dwarf_P_Debug dbg UNUSEDARG,
 {
     static int alreadydone = 0;
 
+    (void)dbg;
+    (void)Irep;
+    (void)ourdie;
     if (alreadydone > 2) {
         // The limit here MUST be below the size of
         // testvals[] and testnames[] above.
@@ -623,16 +643,18 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
 
 static void
 HandleLineData(Dwarf_P_Debug dbg,
-    IRepresentation & Irep UNUSEDARG,
+    IRepresentation & Irep,
     IRCUdata&cu)
 {
     Dwarf_Error lerror = 0;
     // We refer to files by fileno, this builds an index.
     pathToUnsignedType pathmap;
-
+    
     IRCULineData& ld = cu.getCULines();
     std::vector<IRCULine> & cu_lines = ld.get_cu_lines();
     //std::vector<IRCUSrcfile> &cu_srcfiles  = ld.get_cu_srcfiles();
+
+    (void)Irep;
     if (cu_lines.empty()) {
         // No lines data to emit, do nothing.
         return;
@@ -745,13 +767,14 @@ HandleLineData(Dwarf_P_Debug dbg,
 static void
 emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep,
     IRCUdata&cu,
-    int cu_of_input_we_output UNUSEDARG)
+    int cu_of_input_we_output)
 {
     // We descend the the tree, creating DIEs and linking
     // them in as we return back up the tree of recursing
     // on IRDie children.
     Dwarf_Error lerror;
 
+    (void)cu_of_input_we_output;
     IRDie & basedie =  cu.baseDie();
     Dwarf_P_Die cudie = HandleOneDieAndChildren(dbg,Irep,
         cu,basedie,basedie,0);
@@ -793,10 +816,13 @@ transform_debug_info(Dwarf_P_Debug dbg,
     }
 }
 static void
-transform_debug_names(Dwarf_P_Debug dbg UNUSEDARG,
-    IRepresentation & irep UNUSEDARG,
-    int cu_of_input_we_output UNUSEDARG)
+transform_debug_names(Dwarf_P_Debug dbg,
+    IRepresentation & irep,
+    int cu_of_input_we_output)
 {
+    (void)dbg;
+    (void)irep;
+    (void)cu_of_input_we_output;;
 #if 0
     int cu_number = 0;
     std::list<IRCUdata> &culist = irep.infodata().getCUData();
@@ -812,7 +838,7 @@ transform_debug_names(Dwarf_P_Debug dbg UNUSEDARG,
 static void
 transform_cie_fde(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
-    int cu_of_input_we_output UNUSEDARG)
+    int cu_of_input_we_output)
 {
     Dwarf_Error err = 0;
     std::vector<IRCie> &cie_vec =
@@ -820,6 +846,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
     std::vector<IRFde> &fde_vec =
         Irep.framedata().get_fde_vec();
 
+    (void)cu_of_input_we_output;
     Dwarf_Unsigned cievecsize = cie_vec.size();
     if (!cievecsize) {
         // If debug_frame missing try for eh_frame.
@@ -1008,10 +1035,12 @@ transform_cie_fde(Dwarf_P_Debug dbg,
 static void
 transform_macro_info(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
-    int cu_of_input_we_output UNUSEDARG)
+    int cu_of_input_we_output)
 {
     IRMacro &macrodata = Irep.macrodata();
     std::vector<IRMacroRecord> &macrov = macrodata.getMacroVec();
+
+    (void)cu_of_input_we_output;
     for (size_t m = 0; m < macrov.size() ; m++ ) {
         // FIXME: we need to coordinate with generated
         // CUs .
@@ -1064,7 +1093,7 @@ Dwarf_P_Die findTargetDieByOffset(IRDie& indie,
 static void
 transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
-    int cu_of_input_we_output UNUSEDARG,
+    int cu_of_input_we_output,
     IRCUdata&cu)
 {
     // First, get the target CU. */
@@ -1073,6 +1102,7 @@ transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
     IRPubsData& pubs = Irep.pubnamedata();
     std::list<IRPub> &nameslist = pubs.getPubnames();
 
+    (void)cu_of_input_we_output;
     if (!nameslist.empty()) {
         for ( list<IRPub>::iterator it = nameslist.begin();
         it != nameslist.end();

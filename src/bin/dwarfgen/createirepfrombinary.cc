@@ -343,11 +343,13 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     irattr.setFormData(formFactory(dbg,attr,cudata,irattr));
 }
 static void
-get_basic_die_data(Dwarf_Debug dbg UNUSEDARG,
+get_basic_die_data(Dwarf_Debug dbg,
     Dwarf_Die indie,IRDie &irdie)
 {
     Dwarf_Half tagval = 0;
     Dwarf_Error error = 0;
+
+    (void)dbg;
     int res = dwarf_tag(indie,&tagval,&error);
     if (res != DW_DLV_OK) {
         errprint(error);
@@ -374,7 +376,7 @@ get_basic_die_data(Dwarf_Debug dbg UNUSEDARG,
 static void
 get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     IRCUdata &cudata,
-    IRepresentation &irep UNUSEDARG,
+    IRepresentation &irep,
     Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
@@ -383,6 +385,8 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     std::list<IRAttr> &attrlist = irdie.getAttributes();
     int res = dwarf_attrlist(in_die, &atlist,&atcnt,&error);
     std::map<unsigned,unsigned> attrmap;
+
+    (void)irep;
     if (res == DW_DLV_NO_ENTRY) {
         return;
     }
@@ -476,14 +480,17 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
 }
 
 static void
-get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
+get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     IRCUdata &ircudata,
-    IRepresentation &irep UNUSEDARG,
+    IRepresentation &irep,
     Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
     char **srcfiles = 0;
     Dwarf_Signed srccount = 0;
+
+    (void)irdie;
+    (void)irep;
     IRCULineData&culinesdata =  ircudata.getCULines();
     int res = dwarf_srcfiles(in_die,&srcfiles, &srccount,&error);
     if (res == DW_DLV_ERROR) {

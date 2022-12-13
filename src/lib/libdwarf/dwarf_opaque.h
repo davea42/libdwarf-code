@@ -841,7 +841,6 @@ _dwarf_read_str_offsets_header(Dwarf_Debug dbg,
 int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Small *data_ptr,
     Dwarf_Small *end_data_ptr,
-    Dwarf_Half   attrnum,
     Dwarf_Half   attrform,
     Dwarf_CU_Context cu_context,
     Dwarf_Unsigned *str_sect_offset_out,
@@ -933,7 +932,7 @@ int _dwarf_dwo_groupnumber_given_name(
 int _dwarf_section_get_target_group_from_map(Dwarf_Debug dbg,
     unsigned   obj_section_index,
     unsigned * groupnumber_out,
-    UNUSEDARG Dwarf_Error    * error);
+    Dwarf_Error    * error);
 
 int _dwarf_insert_in_group_map(Dwarf_Debug dbg,
     unsigned groupnum,

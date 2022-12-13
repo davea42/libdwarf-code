@@ -219,8 +219,10 @@ public:
     };
     IRFormConstant(Dwarf_Half finalform,
         Dwarf_Half initialform,
-        enum Dwarf_Form_Class formclass UNUSEDARG,
+        enum Dwarf_Form_Class formclass,
         Dwarf_Form_Data16 & data16) {
+
+        (void)formclass;
         finalform_ = finalform;
         initialform_ = initialform;
         formclass_ = DW_FORM_CLASS_CONSTANT;
@@ -277,7 +279,8 @@ private:
     Dwarf_Form_Data16 data16_;
 
     void setValues16(Dwarf_Form_Data16 *v,
-        enum Signedness s UNUSEDARG) {
+        enum Signedness s) {
+        (void)s;
         uval_ = 0;
         sval_ = 0;
         data16_ = *v;

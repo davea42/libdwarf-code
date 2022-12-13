@@ -88,7 +88,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     IRCUdata  &cu,
     Dwarf_P_Die outdie,
-    IRDie & irdie UNUSEDARG,
+    IRDie & irdie,
     IRAttr &irattr)
 {
     int attrnum = irattr.getAttrNum();
@@ -97,6 +97,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     IRForm *form_a = irattr.getFormData();
     int res = 0;
 
+    (void)irdie;
     switch(formclass) {
     case DW_FORM_CLASS_UNKNOWN:
         cerr << "ERROR AddAttrToDie: Impossible "

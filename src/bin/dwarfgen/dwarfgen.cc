@@ -460,7 +460,7 @@ static int CallbackFunc(
     Dwarf_Unsigned      info,
     Dwarf_Unsigned*     sect_name_symbol_index,
     void *              user_data,
-    int*                error UNUSEDARG)
+    int*                error)
 {
     // Create an elf section.
     // If the data is relocations, we suppress the generation
@@ -473,6 +473,8 @@ static int CallbackFunc(
     // .shstrtab and
     // in the elf symtab .symtab and its strings .strtab.
     unsigned elfclass = 0;
+
+    (void)error;
     if (user_data) {
         elfclass = *(unsigned *)user_data;
     } else {
@@ -1212,9 +1214,10 @@ dump_bytes(const char *msg,void *val,int len)
 /* Lets not assume that the quantities are aligned. */
 static void
 bitreplace(char *buf, Dwarf_Unsigned newval,
-    size_t newvalsize UNUSEDARG,
+    size_t newvalsize,
     int length)
 {
+    (void)newvalsize;
     if (length == 4) {
         Dwarf_Unsigned my4 = newval;
         Dwarf_Unsigned oldval = 0;
@@ -1236,13 +1239,14 @@ bitreplace(char *buf, Dwarf_Unsigned newval,
 
 // This remembers nothing, so is dreadfully slow.
 static char *
-findelfbuf(Elf *elf_f UNUSEDARG ,Elf_Scn *scn,
+findelfbuf(Elf *elf_f, Elf_Scn *scn,
     Dwarf_Unsigned offset,
     unsigned length)
 {
     Elf_Data * edbase = 0;
     Elf_Data * ed = elf_getdata(scn,edbase);
     unsigned bct = 0;
+    (void)elf_f;
     for (;ed; ed = elf_getdata(scn,ed)) {
         bct++;
         if (offset >= LOFFTODWUNS(ed->d_off + ed->d_size) ) {
