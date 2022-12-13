@@ -2,699 +2,699 @@
 .debug_info
 
 CU_HEADER:
-  cu_header_length = 0x0000133e 4926
-  version_stamp    = 0x0004     4
+  cu_header_length = 0x00000e80 3712
+  version_stamp    = 0x0005     5
   abbrev_offset    = 0x00000000 0
   address_size     = 0x08       8
   offset_size      = 0x04       4
   cu_type          = 0x01       DW_UT_compile
 
 COMPILE_UNIT<header overall offset = 0x00000000>:
-< 0><0x0000000b>  DW_TAG_compile_unit <abbrev 1>
-  dwarf_srcfiles() returned strings. Count = 16.
-  [ 0] /home/davea/dwarf/code/dwarfdump/uri.c
-  [ 1] /usr/include/x86_64-linux-gnu/bits/stdio2.h
-  [ 2] /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h
-  [ 3] /usr/include/x86_64-linux-gnu/bits/types.h
-  [ 4] /usr/include/x86_64-linux-gnu/bits/libio.h
-  [ 5] /usr/include/x86_64-linux-gnu/bits/types/FILE.h
-  [ 6] /usr/include/stdio.h
-  [ 7] /usr/include/x86_64-linux-gnu/bits/sys_errlist.h
-  [ 8] /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-  [ 9] /usr/include/regex.h
-  [10] /home/davea/dwarf/code/dwarfdump/checkutil.h
-  [11] /home/davea/dwarf/code/dwarfdump/defined_types.h
-  [12] /home/davea/dwarf/code/dwarfdump/glflags.h
-  [13] /home/davea/dwarf/code/dwarfdump/esb.h
-  [14] /home/davea/dwarf/code/dwarfdump/globals.h
-  [15] /tmp/dwbld/dwarfdump/<built-in>
-                    DW_AT_producer              GNU C11 7.4.0 -mtune=generic -march=x86-64 -g -O2 -fstack-protector-strong
-                    DW_AT_language              DW_LANG_C99
-                    DW_AT_name                  /home/davea/dwarf/code/dwarfdump/uri.c
-                    DW_AT_comp_dir              /tmp/dwbld/dwarfdump
+< 0><0x0000000c>  DW_TAG_compile_unit <abbrev 22>
+  dwarf_srcfiles() returned strings. Count = 8.
+  [0] /home/davea/dwarf/code/test/testuriLE64ELf.c
+  [1] /home/davea/dwarf/code/test/testuriLE64ELf.c
+  [2] /home/davea/dwarf/code/test/../src/lib/libdwarf/libdwarf.h
+  [3] /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+  [4] /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+  [5] /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_esb.h
+  [6] /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h
+  [7] /usr/include/stdio.h
+                    DW_AT_producer              GNU C17 11.3.0 -mtune=generic -march=x86-64 -gdwarf-5 -fasynchronous-unwind-tables -fstack-protector-strong -fstack-clash-protection -fcf-protection
+                    DW_AT_language              DW_LANG_C11
+                    DW_AT_name                  testuriLE64ELf.c
+                    DW_AT_comp_dir              /home/davea/dwarf/code/test
                     DW_AT_low_pc                0x00000000
-                    DW_AT_high_pc               <offset-from-lowpc> 618 <highpc: 0x0000026a>
+                    DW_AT_high_pc               <offset-from-lowpc> 913 <highpc: 0x00000391>
                     DW_AT_stmt_list             0x00000000
 
 LOCAL_SYMBOLS:
-< 1><0x0000002d>    DW_TAG_typedef <abbrev 2>
-                      DW_AT_name                  size_t
-                      DW_AT_decl_file             0x00000003 /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h
-                      DW_AT_decl_line             0x000000d8
-                      DW_AT_type                  <0x00000038>
-< 1><0x00000038>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_encoding              DW_ATE_unsigned
-                      DW_AT_name                  long unsigned int
-< 1><0x0000003f>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000001
-                      DW_AT_encoding              DW_ATE_unsigned_char
-                      DW_AT_name                  unsigned char
-< 1><0x00000046>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000002
-                      DW_AT_encoding              DW_ATE_unsigned
-                      DW_AT_name                  short unsigned int
-< 1><0x0000004d>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000004
-                      DW_AT_encoding              DW_ATE_unsigned
-                      DW_AT_name                  unsigned int
-< 1><0x00000054>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000001
-                      DW_AT_encoding              DW_ATE_signed_char
-                      DW_AT_name                  signed char
-< 1><0x0000005b>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000002
-                      DW_AT_encoding              DW_ATE_signed
-                      DW_AT_name                  short int
-< 1><0x00000062>    DW_TAG_base_type <abbrev 4>
-                      DW_AT_byte_size             0x00000004
-                      DW_AT_encoding              DW_ATE_signed
-                      DW_AT_name                  int
-< 1><0x00000069>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_encoding              DW_ATE_signed
-                      DW_AT_name                  long int
-< 1><0x00000070>    DW_TAG_typedef <abbrev 2>
-                      DW_AT_name                  __off_t
-                      DW_AT_decl_file             0x00000004 /usr/include/x86_64-linux-gnu/bits/types.h
-                      DW_AT_decl_line             0x0000008c
-                      DW_AT_type                  <0x00000069>
-< 1><0x0000007b>    DW_TAG_typedef <abbrev 2>
-                      DW_AT_name                  __off64_t
-                      DW_AT_decl_file             0x00000004 /usr/include/x86_64-linux-gnu/bits/types.h
-                      DW_AT_decl_line             0x0000008d
-                      DW_AT_type                  <0x00000069>
-< 1><0x00000086>    DW_TAG_pointer_type <abbrev 5>
-                      DW_AT_byte_size             0x00000008
-< 1><0x00000088>    DW_TAG_pointer_type <abbrev 6>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x0000008e>
-< 1><0x0000008e>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000001
-                      DW_AT_encoding              DW_ATE_signed_char
-                      DW_AT_name                  char
-< 1><0x00000095>    DW_TAG_const_type <abbrev 7>
-                      DW_AT_type                  <0x0000008e>
-< 1><0x0000009a>    DW_TAG_structure_type <abbrev 8>
-                      DW_AT_name                  _IO_FILE
-                      DW_AT_byte_size             0x000000d8
-                      DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                      DW_AT_decl_line             0x000000f5
-                      DW_AT_sibling               <0x0000021a>
-< 2><0x000000a6>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _flags
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000f6
-                        DW_AT_type                  <0x00000062>
-                        DW_AT_data_member_location  0
-< 2><0x000000b2>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _IO_read_ptr
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000fb
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  8
-< 2><0x000000be>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _IO_read_end
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000fc
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  16
-< 2><0x000000ca>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _IO_read_base
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000fd
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  24
-< 2><0x000000d6>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _IO_write_base
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000fe
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  32
-< 2><0x000000e2>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _IO_write_ptr
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000ff
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  40
-< 2><0x000000ee>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _IO_write_end
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000100
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  48
-< 2><0x000000fb>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _IO_buf_base
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000101
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  56
-< 2><0x00000108>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _IO_buf_end
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000102
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  64
-< 2><0x00000115>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _IO_save_base
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000104
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  72
-< 2><0x00000122>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _IO_backup_base
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000105
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  80
-< 2><0x0000012f>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _IO_save_end
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000106
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  88
-< 2><0x0000013c>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _markers
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000108
-                        DW_AT_type                  <0x0000025d>
-                        DW_AT_data_member_location  96
-< 2><0x00000149>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _chain
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x0000010a
-                        DW_AT_type                  <0x00000263>
-                        DW_AT_data_member_location  104
-< 2><0x00000156>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _fileno
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x0000010c
-                        DW_AT_type                  <0x00000062>
-                        DW_AT_data_member_location  112
-< 2><0x00000163>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _flags2
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000110
-                        DW_AT_type                  <0x00000062>
-                        DW_AT_data_member_location  116
-< 2><0x00000170>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _old_offset
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000112
-                        DW_AT_type                  <0x00000070>
-                        DW_AT_data_member_location  120
-< 2><0x0000017d>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _cur_column
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000116
-                        DW_AT_type                  <0x00000046>
-                        DW_AT_data_member_location  128 (-128)
-< 2><0x0000018a>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _vtable_offset
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000117
-                        DW_AT_type                  <0x00000054>
-                        DW_AT_data_member_location  130 (-126)
-< 2><0x00000197>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _shortbuf
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000118
-                        DW_AT_type                  <0x00000269>
-                        DW_AT_data_member_location  131 (-125)
-< 2><0x000001a4>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _lock
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x0000011c
-                        DW_AT_type                  <0x00000279>
-                        DW_AT_data_member_location  136 (-120)
-< 2><0x000001b1>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _offset
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000125
-                        DW_AT_type                  <0x0000007b>
-                        DW_AT_data_member_location  144 (-112)
-< 2><0x000001be>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __pad1
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x0000012d
-                        DW_AT_type                  <0x00000086>
-                        DW_AT_data_member_location  152 (-104)
-< 2><0x000001cb>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __pad2
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x0000012e
-                        DW_AT_type                  <0x00000086>
-                        DW_AT_data_member_location  160 (-96)
-< 2><0x000001d8>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __pad3
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x0000012f
-                        DW_AT_type                  <0x00000086>
-                        DW_AT_data_member_location  168 (-88)
-< 2><0x000001e5>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __pad4
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000130
-                        DW_AT_type                  <0x00000086>
-                        DW_AT_data_member_location  176 (-80)
-< 2><0x000001f2>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __pad5
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000132
-                        DW_AT_type                  <0x0000002d>
-                        DW_AT_data_member_location  184 (-72)
-< 2><0x000001ff>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _mode
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000133
-                        DW_AT_type                  <0x00000062>
-                        DW_AT_data_member_location  192 (-64)
-< 2><0x0000020c>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  _unused2
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x00000135
-                        DW_AT_type                  <0x0000027f>
-                        DW_AT_data_member_location  196 (-60)
-< 1><0x0000021a>    DW_TAG_typedef <abbrev 2>
-                      DW_AT_name                  FILE
-                      DW_AT_decl_file             0x00000006 /usr/include/x86_64-linux-gnu/bits/types/FILE.h
-                      DW_AT_decl_line             0x00000007
-                      DW_AT_type                  <0x0000009a>
-< 1><0x00000225>    DW_TAG_typedef <abbrev 11>
-                      DW_AT_name                  _IO_lock_t
-                      DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                      DW_AT_decl_line             0x0000009a
-< 1><0x0000022c>    DW_TAG_structure_type <abbrev 8>
-                      DW_AT_name                  _IO_marker
-                      DW_AT_byte_size             0x00000018
-                      DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                      DW_AT_decl_line             0x000000a0
-                      DW_AT_sibling               <0x0000025d>
-< 2><0x00000238>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _next
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000a1
-                        DW_AT_type                  <0x0000025d>
-                        DW_AT_data_member_location  0
-< 2><0x00000244>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _sbuf
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000a2
-                        DW_AT_type                  <0x00000263>
-                        DW_AT_data_member_location  8
-< 2><0x00000250>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  _pos
-                        DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                        DW_AT_decl_line             0x000000a6
-                        DW_AT_type                  <0x00000062>
-                        DW_AT_data_member_location  16
-< 1><0x0000025d>    DW_TAG_pointer_type <abbrev 6>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x0000022c>
-< 1><0x00000263>    DW_TAG_pointer_type <abbrev 6>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x0000009a>
-< 1><0x00000269>    DW_TAG_array_type <abbrev 12>
-                      DW_AT_type                  <0x0000008e>
-                      DW_AT_sibling               <0x00000279>
-< 2><0x00000272>      DW_TAG_subrange_type <abbrev 13>
-                        DW_AT_type                  <0x00000038>
-                        DW_AT_upper_bound           0
-< 1><0x00000279>    DW_TAG_pointer_type <abbrev 6>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x00000225>
-< 1><0x0000027f>    DW_TAG_array_type <abbrev 12>
-                      DW_AT_type                  <0x0000008e>
-                      DW_AT_sibling               <0x0000028f>
-< 2><0x00000288>      DW_TAG_subrange_type <abbrev 13>
-                        DW_AT_type                  <0x00000038>
-                        DW_AT_upper_bound           19
-< 1><0x0000028f>    DW_TAG_structure_type <abbrev 14>
-                      DW_AT_name                  _IO_FILE_plus
-                      DW_AT_declaration           yes(1)
-< 1><0x00000294>    DW_TAG_variable <abbrev 15>
-                      DW_AT_name                  _IO_2_1_stdin_
-                      DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                      DW_AT_decl_line             0x0000013f
-                      DW_AT_type                  <0x0000028f>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000002a0>    DW_TAG_variable <abbrev 15>
-                      DW_AT_name                  _IO_2_1_stdout_
-                      DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                      DW_AT_decl_line             0x00000140
-                      DW_AT_type                  <0x0000028f>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000002ac>    DW_TAG_variable <abbrev 15>
-                      DW_AT_name                  _IO_2_1_stderr_
-                      DW_AT_decl_file             0x00000005 /usr/include/x86_64-linux-gnu/bits/libio.h
-                      DW_AT_decl_line             0x00000141
-                      DW_AT_type                  <0x0000028f>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000002b8>    DW_TAG_pointer_type <abbrev 6>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x00000095>
-< 1><0x000002be>    DW_TAG_const_type <abbrev 7>
-                      DW_AT_type                  <0x000002b8>
-< 1><0x000002c3>    DW_TAG_restrict_type <abbrev 16>
-                      DW_AT_type                  <0x000002b8>
-< 1><0x000002c8>    DW_TAG_variable <abbrev 17>
-                      DW_AT_name                  stdin
-                      DW_AT_decl_file             0x00000007 /usr/include/stdio.h
-                      DW_AT_decl_line             0x00000087
-                      DW_AT_type                  <0x00000263>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000002d3>    DW_TAG_variable <abbrev 17>
-                      DW_AT_name                  stdout
-                      DW_AT_decl_file             0x00000007 /usr/include/stdio.h
-                      DW_AT_decl_line             0x00000088
-                      DW_AT_type                  <0x00000263>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000002de>    DW_TAG_variable <abbrev 17>
-                      DW_AT_name                  stderr
-                      DW_AT_decl_file             0x00000007 /usr/include/stdio.h
-                      DW_AT_decl_line             0x00000089
-                      DW_AT_type                  <0x00000263>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000002e9>    DW_TAG_variable <abbrev 17>
-                      DW_AT_name                  sys_nerr
-                      DW_AT_decl_file             0x00000008 /usr/include/x86_64-linux-gnu/bits/sys_errlist.h
-                      DW_AT_decl_line             0x0000001a
-                      DW_AT_type                  <0x00000062>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000002f4>    DW_TAG_array_type <abbrev 12>
-                      DW_AT_type                  <0x000002be>
-                      DW_AT_sibling               <0x000002ff>
-< 2><0x000002fd>      DW_TAG_subrange_type <abbrev 18>
-< 1><0x000002ff>    DW_TAG_const_type <abbrev 7>
-                      DW_AT_type                  <0x000002f4>
-< 1><0x00000304>    DW_TAG_variable <abbrev 17>
-                      DW_AT_name                  sys_errlist
-                      DW_AT_decl_file             0x00000008 /usr/include/x86_64-linux-gnu/bits/sys_errlist.h
-                      DW_AT_decl_line             0x0000001b
-                      DW_AT_type                  <0x000002ff>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x0000030f>    DW_TAG_base_type <abbrev 3>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_encoding              DW_ATE_signed
-                      DW_AT_name                  long long int
-< 1><0x00000316>    DW_TAG_base_type <abbrev 3>
+< 1><0x0000002e>    DW_TAG_typedef <abbrev 6>
+                      DW_AT_name                  Dwarf_Unsigned
+                      DW_AT_decl_file             0x00000002 /home/davea/dwarf/code/test/../src/lib/libdwarf/libdwarf.h
+                      DW_AT_decl_line             0x000000d1
+                      DW_AT_decl_column           0x0000001c
+                      DW_AT_type                  <0x0000003a>
+< 1><0x0000003a>    DW_TAG_base_type <abbrev 4>
                       DW_AT_byte_size             0x00000008
                       DW_AT_encoding              DW_ATE_unsigned
                       DW_AT_name                  long long unsigned int
-< 1><0x0000031d>    DW_TAG_typedef <abbrev 2>
-                      DW_AT_name                  Dwarf_Unsigned
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x0000004a
-                      DW_AT_type                  <0x00000316>
-< 1><0x00000328>    DW_TAG_typedef <abbrev 2>
+< 1><0x00000041>    DW_TAG_base_type <abbrev 4>
+                      DW_AT_byte_size             0x00000008
+                      DW_AT_encoding              DW_ATE_signed
+                      DW_AT_name                  long long int
+< 1><0x00000048>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  Dwarf_Off
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x0000004c
-                      DW_AT_type                  <0x00000316>
-< 1><0x00000333>    DW_TAG_typedef <abbrev 2>
+                      DW_AT_decl_file             0x00000002 /home/davea/dwarf/code/test/../src/lib/libdwarf/libdwarf.h
+                      DW_AT_decl_line             0x000000d3
+                      DW_AT_decl_column           0x0000001c
+                      DW_AT_type                  <0x0000003a>
+< 1><0x00000054>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  Dwarf_Addr
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x0000004d
-                      DW_AT_type                  <0x00000316>
-< 1><0x0000033e>    DW_TAG_typedef <abbrev 2>
+                      DW_AT_decl_file             0x00000002 /home/davea/dwarf/code/test/../src/lib/libdwarf/libdwarf.h
+                      DW_AT_decl_line             0x000000d4
+                      DW_AT_decl_column           0x0000001c
+                      DW_AT_type                  <0x0000003a>
+< 1><0x00000060>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  Dwarf_Bool
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x0000004e
-                      DW_AT_type                  <0x00000062>
-< 1><0x00000349>    DW_TAG_typedef <abbrev 19>
-                      DW_AT_name                  Dwarf_Die
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x00000218
-                      DW_AT_type                  <0x00000355>
-< 1><0x00000355>    DW_TAG_pointer_type <abbrev 6>
-                      DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x0000035b>
-< 1><0x0000035b>    DW_TAG_structure_type <abbrev 14>
-                      DW_AT_name                  Dwarf_Die_s
-                      DW_AT_declaration           yes(1)
-< 1><0x00000360>    DW_TAG_structure_type <abbrev 20>
+                      DW_AT_decl_file             0x00000002 /home/davea/dwarf/code/test/../src/lib/libdwarf/libdwarf.h
+                      DW_AT_decl_line             0x000000d7
+                      DW_AT_decl_column           0x0000001c
+                      DW_AT_type                  <0x0000006c>
+< 1><0x0000006c>    DW_TAG_base_type <abbrev 23>
                       DW_AT_byte_size             0x00000004
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x00001391
-                      DW_AT_sibling               <0x00000377>
-< 2><0x00000369>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  check_verbose_mode
-                        DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                        DW_AT_decl_line             0x00001392
-                        DW_AT_type                  <0x0000033e>
-                        DW_AT_data_member_location  0
-< 1><0x00000377>    DW_TAG_typedef <abbrev 19>
-                      DW_AT_name                  Dwarf_Cmdline_Options
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x00001393
-                      DW_AT_type                  <0x00000360>
-< 1><0x00000383>    DW_TAG_variable <abbrev 15>
-                      DW_AT_name                  dwarf_cmdline_options
-                      DW_AT_decl_file             0x00000009 /tmp/dwbld/dwarfdump/../libdwarf/libdwarf.h
-                      DW_AT_decl_line             0x00001394
-                      DW_AT_type                  <0x00000377>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x0000038f>    DW_TAG_typedef <abbrev 2>
-                      DW_AT_name                  reg_syntax_t
-                      DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                      DW_AT_decl_line             0x0000002a
-                      DW_AT_type                  <0x00000038>
-< 1><0x0000039a>    DW_TAG_variable <abbrev 17>
-                      DW_AT_name                  re_syntax_options
-                      DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                      DW_AT_decl_line             0x000000b5
-                      DW_AT_type                  <0x0000038f>
-                      DW_AT_external              yes(1)
-                      DW_AT_declaration           yes(1)
-< 1><0x000003a5>    DW_TAG_structure_type <abbrev 21>
-                      DW_AT_name                  re_pattern_buffer
-                      DW_AT_byte_size             0x00000040
-                      DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                      DW_AT_decl_line             0x00000165
-                      DW_AT_sibling               <0x0000047e>
-< 2><0x000003b2>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __buffer
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x0000016a
-                        DW_AT_type                  <0x0000047e>
-                        DW_AT_data_member_location  0
-< 2><0x000003bf>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __allocated
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x0000016d
-                        DW_AT_type                  <0x00000038>
-                        DW_AT_data_member_location  8
-< 2><0x000003cc>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __used
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x00000170
-                        DW_AT_type                  <0x00000038>
-                        DW_AT_data_member_location  16
-< 2><0x000003d9>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __syntax
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x00000173
-                        DW_AT_type                  <0x0000038f>
-                        DW_AT_data_member_location  24
-< 2><0x000003e6>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __fastmap
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x00000178
-                        DW_AT_type                  <0x00000088>
-                        DW_AT_data_member_location  32
-< 2><0x000003f3>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  __translate
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x0000017e
-                        DW_AT_type                  <0x0000047e>
-                        DW_AT_data_member_location  40
-< 2><0x00000400>      DW_TAG_member <abbrev 10>
-                        DW_AT_name                  re_nsub
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x00000181
-                        DW_AT_type                  <0x0000002d>
-                        DW_AT_data_member_location  48
-< 2><0x0000040d>      DW_TAG_member <abbrev 22>
-                        DW_AT_name                  __can_be_null
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x00000187
-                        DW_AT_type                  <0x0000004d>
-                        DW_AT_byte_size             0x00000004
-                        DW_AT_bit_size              0x00000001
-                        DW_AT_bit_offset            0x0000001f
-                        DW_AT_data_member_location  56
-< 2><0x0000041d>      DW_TAG_member <abbrev 22>
-                        DW_AT_name                  __regs_allocated
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x00000192
-                        DW_AT_type                  <0x0000004d>
-                        DW_AT_byte_size             0x00000004
-                        DW_AT_bit_size              0x00000002
-                        DW_AT_bit_offset            0x0000001d
-                        DW_AT_data_member_location  56
-< 2><0x0000042d>      DW_TAG_member <abbrev 22>
-                        DW_AT_name                  __fastmap_accurate
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x00000196
-                        DW_AT_type                  <0x0000004d>
-                        DW_AT_byte_size             0x00000004
-                        DW_AT_bit_size              0x00000001
-                        DW_AT_bit_offset            0x0000001c
-                        DW_AT_data_member_location  56
-< 2><0x0000043d>      DW_TAG_member <abbrev 22>
-                        DW_AT_name                  __no_sub
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x0000019a
-                        DW_AT_type                  <0x0000004d>
-                        DW_AT_byte_size             0x00000004
-                        DW_AT_bit_size              0x00000001
-                        DW_AT_bit_offset            0x0000001b
-                        DW_AT_data_member_location  56
-< 2><0x0000044d>      DW_TAG_member <abbrev 22>
-                        DW_AT_name                  __not_bol
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x0000019e
-                        DW_AT_type                  <0x0000004d>
-                        DW_AT_byte_size             0x00000004
-                        DW_AT_bit_size              0x00000001
-                        DW_AT_bit_offset            0x0000001a
-                        DW_AT_data_member_location  56
-< 2><0x0000045d>      DW_TAG_member <abbrev 22>
-                        DW_AT_name                  __not_eol
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x000001a1
-                        DW_AT_type                  <0x0000004d>
-                        DW_AT_byte_size             0x00000004
-                        DW_AT_bit_size              0x00000001
-                        DW_AT_bit_offset            0x00000019
-                        DW_AT_data_member_location  56
-< 2><0x0000046d>      DW_TAG_member <abbrev 22>
-                        DW_AT_name                  __newline_anchor
-                        DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                        DW_AT_decl_line             0x000001a4
-                        DW_AT_type                  <0x0000004d>
-                        DW_AT_byte_size             0x00000004
-                        DW_AT_bit_size              0x00000001
-                        DW_AT_bit_offset            0x00000018
-                        DW_AT_data_member_location  56
-< 1><0x0000047e>    DW_TAG_pointer_type <abbrev 6>
+                      DW_AT_encoding              DW_ATE_signed
+                      DW_AT_name                  int
+< 1><0x00000073>    DW_TAG_base_type <abbrev 4>
+                      DW_AT_byte_size             0x00000002
+                      DW_AT_encoding              DW_ATE_unsigned
+                      DW_AT_name                  short unsigned int
+< 1><0x0000007a>    DW_TAG_base_type <abbrev 4>
+                      DW_AT_byte_size             0x00000001
+                      DW_AT_encoding              DW_ATE_unsigned_char
+                      DW_AT_name                  unsigned char
+< 1><0x00000081>    DW_TAG_base_type <abbrev 4>
+                      DW_AT_byte_size             0x00000004
+                      DW_AT_encoding              DW_ATE_unsigned
+                      DW_AT_name                  unsigned int
+< 1><0x00000088>    DW_TAG_base_type <abbrev 4>
                       DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x0000003f>
-< 1><0x00000484>    DW_TAG_typedef <abbrev 19>
-                      DW_AT_name                  regex_t
-                      DW_AT_decl_file             0x0000000a /usr/include/regex.h
-                      DW_AT_decl_line             0x000001a7
-                      DW_AT_type                  <0x000003a5>
-< 1><0x00000490>    DW_TAG_structure_type <abbrev 23>
+                      DW_AT_encoding              DW_ATE_unsigned
+                      DW_AT_name                  long unsigned int
+< 1><0x0000008f>    DW_TAG_base_type <abbrev 4>
+                      DW_AT_byte_size             0x00000001
+                      DW_AT_encoding              DW_ATE_signed_char
+                      DW_AT_name                  char
+< 1><0x00000096>    DW_TAG_const_type <abbrev 24>
+                      DW_AT_type                  <0x0000008f>
+< 1><0x0000009b>    DW_TAG_pointer_type <abbrev 5>
+                      DW_AT_byte_size             0x00000008
+                      DW_AT_type                  <0x00000096>
+< 1><0x000000a0>    DW_TAG_pointer_type <abbrev 5>
+                      DW_AT_byte_size             0x00000008
+                      DW_AT_type                  <0x0000008f>
+< 1><0x000000a5>    DW_TAG_structure_type <abbrev 17>
                       DW_AT_byte_size             0x00000030
-                      DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                      DW_AT_decl_line             0x00000026
-                      DW_AT_sibling               <0x000004e1>
-< 2><0x00000498>      DW_TAG_member <abbrev 9>
+                      DW_AT_decl_file             0x00000003
+                      DW_AT_decl_line             0x00000029
+                      DW_AT_decl_column           0x00000009
+                      DW_AT_sibling               <0x000000f7>
+< 2><0x000000ac>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  bFlag
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x00000027
-                        DW_AT_type                  <0x0000033e>
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000002a
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
                         DW_AT_data_member_location  0
-< 2><0x000004a4>      DW_TAG_member <abbrev 9>
+< 2><0x000000b9>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  name
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x00000028
-                        DW_AT_type                  <0x000002b8>
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000002b
+                        DW_AT_decl_column           0x00000011
+                        DW_AT_type                  <0x0000009b>
                         DW_AT_data_member_location  8
-< 2><0x000004b0>      DW_TAG_member <abbrev 24>
+< 2><0x000000c6>      DW_TAG_member <abbrev 18>
                         DW_AT_name                  key
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x00000029
-                        DW_AT_type                  <0x00000333>
-                        DW_AT_data_member_location  16
-< 2><0x000004bc>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  base
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
+                        DW_AT_decl_file             0x00000003
                         DW_AT_decl_line             0x0000002c
-                        DW_AT_type                  <0x00000333>
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000054>
+                        DW_AT_data_member_location  16
+< 2><0x000000d1>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  base
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000002f
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000054>
                         DW_AT_data_member_location  24
-< 2><0x000004c8>      DW_TAG_member <abbrev 24>
+< 2><0x000000de>      DW_TAG_member <abbrev 18>
                         DW_AT_name                  low
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x0000002d
-                        DW_AT_type                  <0x00000333>
+                        DW_AT_decl_file             0x00000003
+                        DW_AT_decl_line             0x00000030
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000054>
                         DW_AT_data_member_location  32
-< 2><0x000004d4>      DW_TAG_member <abbrev 9>
+< 2><0x000000e9>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  high
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x0000002e
-                        DW_AT_type                  <0x00000333>
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x00000031
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000054>
                         DW_AT_data_member_location  40
-< 1><0x000004e1>    DW_TAG_typedef <abbrev 2>
+< 1><0x000000f7>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  Bucket_Data
-                      DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                      DW_AT_decl_line             0x0000002f
-                      DW_AT_type                  <0x00000490>
-< 1><0x000004ec>    DW_TAG_structure_type <abbrev 25>
+                      DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                      DW_AT_decl_line             0x00000032
+                      DW_AT_decl_column           0x00000003
+                      DW_AT_type                  <0x000000a5>
+< 1><0x00000103>    DW_TAG_structure_type <abbrev 25>
                       DW_AT_name                  bucket
-                      DW_AT_byte_size             0x00017e90
-                      DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                      DW_AT_decl_line             0x0000003a
-                      DW_AT_sibling               <0x00000523>
-< 2><0x000004fb>      DW_TAG_member <abbrev 9>
+                      DW_AT_byte_size             0x00017e98
+                      DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                      DW_AT_decl_line             0x0000003d
+                      DW_AT_decl_column           0x00000010
+                      DW_AT_sibling               <0x0000014b>
+< 2><0x00000113>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  nEntries
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x0000003b
-                        DW_AT_type                  <0x00000062>
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000003e
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000006c>
                         DW_AT_data_member_location  0
-< 2><0x00000507>      DW_TAG_member <abbrev 9>
+< 2><0x00000120>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  b_number
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000003f
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x00000088>
+                        DW_AT_data_member_location  8
+< 2><0x0000012d>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  Entries
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x0000003c
-                        DW_AT_type                  <0x00000523>
-                        DW_AT_data_member_location  8
-< 2><0x00000513>      DW_TAG_member <abbrev 26>
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x00000040
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000014b>
+                        DW_AT_data_member_location  16
+< 2><0x0000013a>      DW_TAG_member <abbrev 26>
                         DW_AT_name                  pNext
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x0000003d
-                        DW_AT_type                  <0x00000534>
-                        DW_AT_data_member_location  97928
-< 1><0x00000523>    DW_TAG_array_type <abbrev 12>
-                      DW_AT_type                  <0x000004e1>
-                      DW_AT_sibling               <0x00000534>
-< 2><0x0000052c>      DW_TAG_subrange_type <abbrev 27>
-                        DW_AT_type                  <0x00000038>
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x00000041
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000015c>
+                        DW_AT_data_member_location  97936
+< 1><0x0000014b>    DW_TAG_array_type <abbrev 10>
+                      DW_AT_type                  <0x000000f7>
+                      DW_AT_sibling               <0x0000015c>
+< 2><0x00000154>      DW_TAG_subrange_type <abbrev 19>
+                        DW_AT_type                  <0x00000088>
                         DW_AT_upper_bound           2039
-< 1><0x00000534>    DW_TAG_pointer_type <abbrev 6>
+< 1><0x0000015c>    DW_TAG_pointer_type <abbrev 5>
                       DW_AT_byte_size             0x00000008
-                      DW_AT_type                  <0x000004ec>
-< 1><0x0000053a>    DW_TAG_typedef <abbrev 2>
+                      DW_AT_type                  <0x00000103>
+< 1><0x00000161>    DW_TAG_typedef <abbrev 6>
                       DW_AT_name                  Bucket
-                      DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                      DW_AT_decl_line             0x0000003e
-                      DW_AT_type                  <0x000004ec>
-< 1><0x00000545>    DW_TAG_structure_type <abbrev 23>
-                      DW_AT_byte_size             0x00000038
-                      DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
+                      DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
                       DW_AT_decl_line             0x00000042
-                      DW_AT_sibling               <0x000005a2>
-< 2><0x0000054d>      DW_TAG_member <abbrev 9>
+                      DW_AT_decl_column           0x00000005
+                      DW_AT_type                  <0x00000103>
+< 1><0x0000016d>    DW_TAG_structure_type <abbrev 17>
+                      DW_AT_byte_size             0x00000040
+                      DW_AT_decl_file             0x00000003
+                      DW_AT_decl_line             0x00000046
+                      DW_AT_decl_column           0x00000009
+                      DW_AT_sibling               <0x000001dd>
+< 2><0x00000174>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  kind
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x00000043
-                        DW_AT_type                  <0x00000062>
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x00000047
+                        DW_AT_decl_column           0x00000009
+                        DW_AT_type                  <0x0000006c>
                         DW_AT_data_member_location  0
-< 2><0x00000559>      DW_TAG_member <abbrev 9>
-                        DW_AT_name                  lower
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
-                        DW_AT_decl_line             0x00000044
-                        DW_AT_type                  <0x00000333>
+< 2><0x00000181>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  bg_number
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x00000048
+                        DW_AT_decl_column           0x00000013
+                        DW_AT_type                  <0x00000088>
                         DW_AT_data_member_location  8
-< 2><0x00000565>      DW_TAG_member <abbrev 9>
+< 2><0x0000018e>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  lower
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x00000049
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000054>
+                        DW_AT_data_member_location  16
+< 2><0x0000019b>      DW_TAG_member <abbrev 1>
                         DW_AT_name                  upper
-                        DW_AT_decl_file             0x0000000b /home/davea/dwarf/code/dwarfdump/checkutil.h
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000004a
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000054>
+                        DW_AT_data_member_location  24
+< 2><0x000001a8>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  pFirst
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000004b
+                        DW_AT_decl_column           0x00000012
+                        DW_AT_type                  <0x000001dd>
+                        DW_AT_data_member_location  32
+< 2><0x000001b5>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  pLast
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000004c
+                        DW_AT_decl_column           0x00000012
+                        DW_AT_type                  <0x000001dd>
+                        DW_AT_data_member_location  40
+< 2><0x000001c2>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  pHead
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000004d
+                        DW_AT_decl_column           0x0000000d
+                        DW_AT_type                  <0x000001e2>
+                        DW_AT_data_member_location  48
+< 2><0x000001cf>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  pTail
+                        DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                        DW_AT_decl_line             0x0000004e
+                        DW_AT_decl_column           0x0000000d
+                        DW_AT_type                  <0x000001e2>
+                        DW_AT_data_member_location  56
+< 1><0x000001dd>    DW_TAG_pointer_type <abbrev 5>
+                      DW_AT_byte_size             0x00000008
+                      DW_AT_type                  <0x000000f7>
+< 1><0x000001e2>    DW_TAG_pointer_type <abbrev 5>
+                      DW_AT_byte_size             0x00000008
+                      DW_AT_type                  <0x00000161>
+< 1><0x000001e7>    DW_TAG_typedef <abbrev 6>
+                      DW_AT_name                  Bucket_Group
+                      DW_AT_decl_file             0x00000003 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_checkutil.h
+                      DW_AT_decl_line             0x0000004f
+                      DW_AT_decl_column           0x00000003
+                      DW_AT_type                  <0x0000016d>
+< 1><0x000001f3>    DW_TAG_enumeration_type <abbrev 27>
+                      DW_AT_name                  line_flag_type_e
+                      DW_AT_encoding              DW_ATE_unsigned
+                      DW_AT_byte_size             0x00000004
+                      DW_AT_type                  <0x00000081>
+                      DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                      DW_AT_decl_line             0x00000025
+                      DW_AT_decl_column           0x00000006
+                      DW_AT_sibling               <0x0000021e>
+< 2><0x00000205>      DW_TAG_enumerator <abbrev 13>
+                        DW_AT_name                  singledw5
+                        DW_AT_const_value           0
+< 2><0x0000020b>      DW_TAG_enumerator <abbrev 28>
+                        DW_AT_name                  s2l
+                        DW_AT_const_value           1
+< 2><0x00000211>      DW_TAG_enumerator <abbrev 13>
+                        DW_AT_name                  orig
+                        DW_AT_const_value           2
+< 2><0x00000217>      DW_TAG_enumerator <abbrev 13>
+                        DW_AT_name                  orig2l
+                        DW_AT_const_value           3
+< 1><0x0000021e>    DW_TAG_structure_type <abbrev 20>
+                      DW_AT_name                  section_high_offsets_s
+                      DW_AT_byte_size             0x000000a0
+                      DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                      DW_AT_decl_line             0x00000052
+                      DW_AT_decl_column           0x00000008
+                      DW_AT_sibling               <0x0000032f>
+< 2><0x0000022a>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_info_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000053
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  0
+< 2><0x00000237>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_abbrev_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000054
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  8
+< 2><0x00000244>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_line_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000055
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  16
+< 2><0x00000251>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_loc_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000056
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  24
+< 2><0x0000025e>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_aranges_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000057
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  32
+< 2><0x0000026b>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_macinfo_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000058
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  40
+< 2><0x00000278>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_pubnames_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000059
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  48
+< 2><0x00000285>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_str_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000005a
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  56
+< 2><0x00000292>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_frame_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000005b
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  64
+< 2><0x0000029f>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_ranges_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000005c
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  72
+< 2><0x000002ac>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_pubtypes_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000005d
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  80
+< 2><0x000002b9>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_types_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000005e
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  88
+< 2><0x000002c6>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_macro_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000005f
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  96
+< 2><0x000002d3>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_str_offsets_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000060
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  104
+< 2><0x000002e0>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_sup_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000061
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  112
+< 2><0x000002ed>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_cu_index_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000062
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  120
+< 2><0x000002fa>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_tu_index_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000063
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  128 (-128)
+< 2><0x00000307>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_names_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000064
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  136 (-120)
+< 2><0x00000314>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_loclists_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000065
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  144 (-112)
+< 2><0x00000321>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  debug_rnglists_size
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000066
+                        DW_AT_decl_column           0x00000014
+                        DW_AT_type                  <0x0000002e>
+                        DW_AT_data_member_location  152 (-104)
+< 1><0x0000032f>    DW_TAG_structure_type <abbrev 29>
+                      DW_AT_name                  glflags_s
+                      DW_AT_byte_size             0x000008e0
+                      DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                      DW_AT_decl_line             0x0000006c
+                      DW_AT_decl_column           0x00000008
+                      DW_AT_sibling               <0x00000b0a>
+< 2><0x0000033d>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_use_old_dwarf_loclist
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000076
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  0
+< 2><0x0000034a>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_line_flag_selection
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000077
+                        DW_AT_decl_column           0x0000001b
+                        DW_AT_type                  <0x000001f3>
+                        DW_AT_data_member_location  4
+< 2><0x00000357>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_abbrev_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000079
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  8
+< 2><0x00000364>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_aranges_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000007a
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  12
+< 2><0x00000371>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_debug_names_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000007b
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  16
+< 2><0x0000037e>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_eh_frame_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000007c
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  20
+< 2><0x0000038b>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_frame_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000007d
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  24
+< 2><0x00000398>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_gdbindex_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000007e
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  28
+< 2><0x000003a5>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_gnu_debuglink_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000007f
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  32
+< 2><0x000003b2>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_debug_gnu_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000080
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  36
+< 2><0x000003bf>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_debug_sup_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000081
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  40
+< 2><0x000003cc>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_info_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000082
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  44
+< 2><0x000003d9>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_line_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000083
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  48
+< 2><0x000003e6>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_no_follow_debuglink
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000084
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  52
+< 2><0x000003f3>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_line_print_pc
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000085
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  56
+< 2><0x00000400>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_line_skeleton_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000086
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  60
+< 2><0x0000040d>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_loc_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000087
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  64
+< 2><0x0000041a>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_macinfo_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000088
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  68
+< 2><0x00000427>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_macro_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000089
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  72
+< 2><0x00000434>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_pubnames_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000008a
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  76
+< 2><0x00000441>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_debug_addr_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000008b
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  80
+< 2><0x0000044e>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_ranges_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000008c
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  84
+< 2><0x0000045b>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_reloc_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000008d
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  88
+< 2><0x00000468>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_static_func_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000008e
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  92
+< 2><0x00000475>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_static_var_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000008f
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  96
+< 2><0x00000482>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_string_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000090
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  100
+< 2><0x0000048f>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_pubtypes_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000091
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  104
+< 2><0x0000049c>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_types_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000092
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  108
+< 2><0x000004a9>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_weakname_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000093
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  112
+< 2><0x000004b6>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_header_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000095
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  116
+< 2><0x000004c3>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_section_groups_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000096
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  120
+< 2><0x000004d0>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_producer_children_flag
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x00000099
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  124
+< 2><0x000004dd>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_check_abbrev_code
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000009b
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  128 (-128)
+< 2><0x000004ea>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_check_pubname_attr
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000009c
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  132 (-124)
+< 2><0x000004f7>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_check_reloc_offset
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000009d
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  136 (-120)
+< 2><0x00000504>      DW_TAG_member <abbrev 1>
+                        DW_AT_name                  gf_check_tag_attr
+                        DW_AT_decl_file             0x00000004 /home/davea/dwarf/code/test/../src/bin/dwarfdump/dd_glflags.h
+                        DW_AT_decl_line             0x0000009e
+                        DW_AT_decl_column           0x00000010
+                        DW_AT_type                  <0x00000060>
+                        DW_AT_data_member_location  140 (-116)

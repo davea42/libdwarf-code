@@ -41,7 +41,7 @@ fi
 . $t/test/test_dwarfdumpsetup.sh $t $y
 echo "Now top_srcdir  $top_srcdir"
 echo "Now top_blddir  $top_blddir"
-f=$top_srcdir/test/testuriLE64ELf.obj
+f=$top_srcdir/test/testuriLE64ELf.testme
 b=$top_srcdir/test/testuriLE64ELf.base
 localsrc=$top_srcdir/test
 testbin=$top_blddir/test
