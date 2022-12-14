@@ -226,8 +226,8 @@ fill_in_abbrevs_table(Dwarf_Dnames_Head dn,
                     "corrupt abbrevs");
                 return DW_DLV_ERROR;
             }
-            curdab->da_idxattr[curdab->da_pairs_count] =  attr;
-            curdab->da_form[curdab->da_pairs_count] =  form;
+            curdab->da_idxattr[curdab->da_pairs_count] =  (Dwarf_Half)attr;
+            curdab->da_form[curdab->da_pairs_count] = (Dwarf_Half)form;
             curdab->da_pairs_count++;
             if (!attr && !form) {
                 /*  We put the terminator into the pairs list.
@@ -394,7 +394,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
     area_max_offset = area_length + initial_length;
     usedspace = initial_length;
     totaloffset += initial_length;
-    dn->dn_offset_size = offset_size;
+    dn->dn_offset_size = (Dwarf_Half)offset_size;
     /* Two stage length test so overflow is caught. */
     if (area_length > remaining_space) {
         _dwarf_error_string(dbg, error,
