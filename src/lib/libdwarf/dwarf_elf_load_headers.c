@@ -283,7 +283,7 @@ generic_ehdr_from_32(dwarf_elf_object_access_internals_t *ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shentsize,e->e_shentsize);
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
-    ep->f_machine = ehdr->ge_machine;
+    ep->f_machine = (unsigned int)ehdr->ge_machine;
     ep->f_ehdr = ehdr;
     ep->f_loc_ehdr.g_name = "Elf File Header";
     ep->f_loc_ehdr.g_offset = 0;
@@ -315,7 +315,7 @@ generic_ehdr_from_64(dwarf_elf_object_access_internals_t* ep,
     ASNAR(ep->f_copy_word,ehdr->ge_shentsize,e->e_shentsize);
     ASNAR(ep->f_copy_word,ehdr->ge_shnum,e->e_shnum);
     ASNAR(ep->f_copy_word,ehdr->ge_shstrndx,e->e_shstrndx);
-    ep->f_machine = ehdr->ge_machine;
+    ep->f_machine = (unsigned int)ehdr->ge_machine;
     ep->f_ehdr = ehdr;
     ep->f_loc_ehdr.g_name = "Elf File Header";
     ep->f_loc_ehdr.g_offset = 0;
@@ -736,7 +736,7 @@ dwarf_generic_elf_load_symbols64(
 static int
 dwarf_generic_elf_load_symbols(
     dwarf_elf_object_access_internals_t *ep,
-    int secnum,
+    Dwarf_Unsigned secnum,
     struct generic_shdr *psh,
     struct generic_symentry **gsym_out,
     Dwarf_Unsigned *count_out,int *errcode)
@@ -1384,7 +1384,7 @@ this_rel_is_a_section_dwarf_related(
     unsigned *oksecnum_out,
     int *errcode)
 {
-    unsigned oksecnum = 0;
+    Dwarf_Unsigned oksecnum = 0;
     struct generic_shdr *gstarg = 0;
 
     if (gshdr->gh_type != SHT_RELA &&
@@ -1670,8 +1670,8 @@ validate_links(
 static int
 string_endswith(const char *n,const char *q)
 {
-    unsigned long len = strlen(n);
-    unsigned long qlen = strlen(q);
+    size_t len = strlen(n);
+    size_t qlen = strlen(q);
     const char *startpt = 0;
 
     if ( len < qlen) {

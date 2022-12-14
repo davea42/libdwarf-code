@@ -167,7 +167,7 @@ typedef struct elf_filedata_s {
     char           f_ident[8];
     char *         f_path; /* non-null if known. Must be freed */
     int            f_fd;
-    int            f_machine; /* EM_* */
+    unsigned       f_machine; /* EM_* */
     int            f_destruct_close_fd;
     int            f_is_64bit;
     unsigned       f_endian;
