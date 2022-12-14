@@ -676,7 +676,7 @@ read_a_name_table_header(Dwarf_Dnames_Head dn,
         Dwarf_Unsigned offsetval = 0;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptrx,unit_entry_size,
+            ptrx,(unsigned long) unit_entry_size,
             error,endptr);
         dn->dn_single_cu = TRUE;
         dn->dn_single_cu_offset = offsetval;
@@ -1094,7 +1094,7 @@ dwarf_dnames_cu_table(Dwarf_Dnames_Head dn,
         Dwarf_Small *endptr = dn->dn_indextable_data_end;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, unit_entry_size,
+            ptr, (unsigned long)unit_entry_size,
             error,endptr);
         if (offset) {
             *offset = offsetval;
