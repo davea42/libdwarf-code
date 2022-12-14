@@ -104,7 +104,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
 
                 /*  type reads the same as uleb and leb because
                     it is only zero or one. */
-                arye->dsc_type = dsc;
+                arye->dsc_type = (Dwarf_Half)dsc;
                 arye->dsc_low_u = low;
                 arye->dsc_high_u = high;
             }
@@ -139,7 +139,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
 
                 /*  type reads the same as uleb and leb because
                     it is only zero or one. */
-                arye->dsc_type = (Dwarf_Unsigned)dsc;
+                arye->dsc_type = (Dwarf_Half)dsc;
                 arye->dsc_low_s = low;
                 arye->dsc_high_s = high;
             }

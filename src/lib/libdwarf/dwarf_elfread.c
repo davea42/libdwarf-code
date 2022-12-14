@@ -139,7 +139,7 @@ static Dwarf_Small elf_get_nolibelf_byte_order (void *obj)
 {
     dwarf_elf_object_access_internals_t *elf =
         (dwarf_elf_object_access_internals_t*)(obj);
-    return elf->f_endian;
+    return (Dwarf_Small)elf->f_endian;
 }
 
 static Dwarf_Small elf_get_nolibelf_length_size (void *obj)
@@ -323,8 +323,8 @@ update_entry(Dwarf_Debug dbg,
     unsigned int sym_idx = 0;
     Dwarf_Unsigned offset = 0;
     Dwarf_Signed addend = 0;
-    Dwarf_Unsigned reloc_size = 0;
-    Dwarf_Half machine  = obj->f_machine;
+    Dwarf_Half reloc_size = 0;
+    Dwarf_Half machine  = (Dwarf_Half)obj->f_machine;
     struct generic_symentry *symp = 0;
     int is_rela = rela->gr_is_rela;
 
@@ -379,7 +379,7 @@ update_entry(Dwarf_Debug dbg,
 
         if (!is_rela) {
             READ_UNALIGNED_SAFE(dbg,presentval,
-                targ,reloc_size);
+                targ,(unsigned long)reloc_size);
         }
         /*  There is no addend in .rel.
             Normally presentval is correct
@@ -388,7 +388,7 @@ update_entry(Dwarf_Debug dbg,
             presentval zero and st_value set. */
         outval = presentval + symp->gs_value + addend;
         WRITE_UNALIGNED_LOCAL(dbg,targ,
-            &outval,sizeof(outval),reloc_size);
+            &outval,sizeof(outval),(unsigned long)reloc_size);
     }
     return DW_DLV_OK;
 }
@@ -459,7 +459,7 @@ elf_relocations_nolibelf(void* obj_in,
     int res = DW_DLV_ERROR;
     dwarf_elf_object_access_internals_t*obj = 0;
     struct Dwarf_Section_s * relocatablesec = 0;
-    unsigned section_with_reloc_records = 0;
+    Dwarf_Half section_with_reloc_records = 0;
 
     if (section_index == 0) {
         return DW_DLV_NO_ENTRY;
@@ -505,7 +505,8 @@ elf_relocations_nolibelf(void* obj_in,
     /* We have all the data we need in memory. */
     /*  Now we apply the relocs in section_with_reloc_records to the
         target, relocablesec */
-    res = apply_rela_entries(dbg,section_with_reloc_records,
+    res = apply_rela_entries(dbg,
+        section_with_reloc_records,
         obj, relocatablesec,error);
     return res;
 }
@@ -639,8 +640,8 @@ _dwarf_elf_object_access_internals_init(
     intfc->f_ident[1]    = '1';
     intfc->f_fd          = fd;
     intfc->f_is_64bit    = ((offsetsize==64)?TRUE:FALSE);
-    intfc->f_offsetsize  = offsetsize;
-    intfc->f_pointersize = offsetsize;
+    intfc->f_offsetsize  = (Dwarf_Small)offsetsize;
+    intfc->f_pointersize = (Dwarf_Small)offsetsize;
     intfc->f_filesize    = filesize;
     intfc->f_ftype       = ftype;
     intfc->f_destruct_close_fd = FALSE;

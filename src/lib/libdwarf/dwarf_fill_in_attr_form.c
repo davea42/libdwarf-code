@@ -130,7 +130,7 @@ _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        abbrev_list->abl_attr[i] = attr;
+        abbrev_list->abl_attr[i] = (Dwarf_Half)attr;
         if (attr > DW_AT_hi_user) {
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
@@ -170,8 +170,8 @@ _dwarf_fill_in_attr_form_abtable(Dwarf_CU_Context context,
             dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
-        abbrev_list->abl_attr[i] = attr;
-        abbrev_list->abl_form[i] = attr_form;
+        abbrev_list->abl_attr[i] = (Dwarf_Half)attr;
+        abbrev_list->abl_form[i] = (Dwarf_Half)attr_form;
         if (attr_form == DW_FORM_implicit_const) {
             res = _dwarf_leb128_sword_wrapper(dbg,
                 &abbrev_ptr,abbrev_end,&implicit_const,error);
