@@ -1,3 +1,221 @@
+2022-12-17:  David Anderson
+    commit 17ed6be737a6b9082be1f7014d68c9494e509898
+
+    Changing function defs that did not follow codingstyle.
+    Now
+    int
+    xxx(yyy...)
+    per library standard.
+            modified:   dwarf_frame.c
+            modified:   dwarf_line.c
+
+    Correcting doxygen comment typos.
+            modified:   libdwarf.h
+
+2022-12-14:  David Anderson
+    commit 33fa9c10e06829754432547c15ad5a91a28eb119
+
+    I think this will fix two more warnings.
+            modified:   dwarf_debugnames.c
+
+2022-12-14:  David Anderson
+    commit 144fc3396c06dc0a9f487468e6b127fe9ba2fc60
+
+    Adjusting a type and casting to avoid
+    compiler warnings about some type conversions.
+            modified:   dwarf_dsc.c
+            modified:   dwarf_elfread.c
+            modified:   dwarf_fill_in_attr_form.c
+
+2022-12-14:  David Anderson
+    commit 087b5e44360609f53951a30d0f6700346607977d
+
+    Fixing type and adding casts to avoid warnings from a compiler.
+            modified:   dwarf_elf_load_headers.c
+            modified:   dwarf_elfread.h
+
+2022-12-14:  David Anderson
+    commit b2865d4b2be65e2d512088f015ada43ea82a0f6a
+
+    Fixing three issues of the output-type
+    of READ_UNALIGNED macro
+            modified:   dwarf_debugnames.c
+
+2022-12-13:  David Anderson
+    commit f24c5387c6aac43d1fbb6f0199ff5f0ea7ce51e7
+
+    removing all instandes of UNUSEDARG
+    and using (void)name; in the function body instead
+    so compilers that do not have the gcc unusedarg
+    feature can compile things without warnings.
+            modified:   src/bin/attr_form/attr_form_build.c
+            modified:   src/bin/dwarfdump/dd_attr_form.c
+            modified:   src/bin/dwarfdump/dd_esb_using_functions.h
+            modified:   src/bin/dwarfdump/dd_macrocheck.c
+            modified:   src/bin/dwarfdump/dwarfdump.c
+            modified:   src/bin/dwarfdump/print_die.c
+            modified:   src/bin/dwarfdump/print_frames.c
+            modified:   src/bin/dwarfdump/print_macro.c
+            modified:   src/bin/dwarfexample/dwdebuglink.c
+            modified:   src/bin/dwarfexample/findfuncbypc.c
+            modified:   src/bin/dwarfexample/showsectiongroups.c
+            modified:   src/bin/dwarfexample/simplereader.c
+            modified:   src/bin/dwarfgen/createirepfrombinary.cc
+            modified:   src/bin/dwarfgen/dwarfgen.cc
+            modified:   src/bin/dwarfgen/irepattrtodbg.cc
+            modified:   src/bin/dwarfgen/irepdie.h
+            modified:   src/bin/dwarfgen/irepform.h
+            modified:   src/bin/dwarfgen/ireptodbg.cc
+            modified:   src/bin/tag_attr/tag_attr.c
+            modified:   src/bin/tag_tree/tag_tree.c
+            modified:   src/lib/libdwarf/dwarf_base_types.h
+            modified:   src/lib/libdwarf/dwarf_debugnames.c
+            modified:   src/lib/libdwarf/dwarf_dsc.c
+            modified:   src/lib/libdwarf/dwarf_elf_load_headers.c
+            modified:   src/lib/libdwarf/dwarf_elfread.c
+            modified:   src/lib/libdwarf/dwarf_form.c
+            modified:   src/lib/libdwarf/dwarf_frame.h
+            modified:   src/lib/libdwarf/dwarf_frame2.c
+            modified:   src/lib/libdwarf/dwarf_gdbindex.c
+            modified:   src/lib/libdwarf/dwarf_generic_init.c
+            modified:   src/lib/libdwarf/dwarf_groups.c
+            modified:   src/lib/libdwarf/dwarf_line.c
+            modified:   src/lib/libdwarf/dwarf_line_table_reader_common.h
+            modified:   src/lib/libdwarf/dwarf_loc.h
+            modified:   src/lib/libdwarf/dwarf_machoread.c
+            modified:   src/lib/libdwarf/dwarf_macro5.c
+            modified:   src/lib/libdwarf/dwarf_object_detector.c
+            modified:   src/lib/libdwarf/dwarf_opaque.h
+            modified:   src/lib/libdwarf/dwarf_peread.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+            modified:   src/lib/libdwarf/dwarf_ranges.c
+            modified:   src/lib/libdwarf/dwarf_xu_index.c
+            modified:   src/lib/libdwarf/libdwarf.h
+            modified:   src/lib/libdwarf/libdwarf_private.h
+
+    Here, in addition, we remove a nested-include
+    of libdwarf.h and make all includes single-level.
+            modified:   src/lib/libdwarfp/dwarf_pro_alloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_arange.c
+            modified:   src/lib/libdwarfp/dwarf_pro_debug_sup.c
+            modified:   src/lib/libdwarfp/dwarf_pro_die.c
+            modified:   src/lib/libdwarfp/dwarf_pro_dnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_error.c
+            modified:   src/lib/libdwarfp/dwarf_pro_expr.c
+            modified:   src/lib/libdwarfp/dwarf_pro_finish.c
+            modified:   src/lib/libdwarfp/dwarf_pro_frame.c
+            modified:   src/lib/libdwarfp/dwarf_pro_funcs.c
+            modified:   src/lib/libdwarfp/dwarf_pro_init.c
+            modified:   src/lib/libdwarfp/dwarf_pro_log_extra_flag_strings.c
+            modified:   src/lib/libdwarfp/dwarf_pro_macinfo.c
+            modified:   src/lib/libdwarfp/dwarf_pro_opaque.h
+            modified:   src/lib/libdwarfp/dwarf_pro_pubnames.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_stream.c
+            modified:   src/lib/libdwarfp/dwarf_pro_reloc_symbolic.c
+            modified:   src/lib/libdwarfp/dwarf_pro_section.c
+            modified:   src/lib/libdwarfp/dwarf_pro_types.c
+            modified:   src/lib/libdwarfp/dwarf_pro_vars.c
+            modified:   src/lib/libdwarfp/dwarf_pro_weaks.c
+            modified:   src/lib/libdwarfp/libdwarfp.h
+
+2022-12-13:  David Anderson
+    commit 38a55205d492c11178c7ed31c29c74bee6577d2b
+
+    To make this test pass with the renaming.
+            modified:   test/Makefile.am
+            modified:   test/README.testcases
+            modified:   test/test_dwarfdumpLinux.sh
+            modified:   test/testuriLE64ELf.base
+            renamed:    test/testuriLE64ELf.sourcecode -> test/testuriLE64ELfsource.c
+
+2022-12-13:  David Anderson
+    commit 80930c4de0ac12124a80337f300d4ed5640a045a
+
+    Another attemt to prevent test/ testcase being rebuilt.
+            renamed:    testuriLE64ELf.c -> testuriLE64ELf.sourcecode
+
+2022-12-13:  David Anderson
+    commit 88434de76e9966e6ec43d08a0767cfcaf4e3ac44
+
+    removing UNUSEDARG in favor of (void)name; sort of thing.
+
+            modified:   Makefile.am
+            modified:   README.testcases
+            modified:   test_dwarf_tied.c
+            modified:   test_dwarfdump.py
+            modified:   test_esb.c
+            modified:   test_extra_flag_strings.c
+            modified:   test_linkedtopath.c
+
+    Changed the name to deter (I hope) the compiler from recompiling
+    when running tests. This object must not be recreated.
+            renamed:    testuriLE64ELf.obj -> testuriLE64ELf.testme
+
+2022-12-12:  David Anderson
+    commit 7affdd2b7b20a620be28c3de3f9582978568d626
+
+    Ensure testuriLE64ELf.c shows up in a release,
+            modified:   test/Makefile.am
+
+2022-12-12:  David Anderson
+    commit 98a8840b2b292d91c427a596a2f5b6d85a8eab08
+
+    Source to build testuriLE64ELf.obj.
+    The correct cc command is a comment
+    in this file.
+            new file:   testuriLE64ELf.c
+
+    The generated object, to be read, not
+    executed.
+            modified:   testuriLE64ELf.obj
+
+2022-12-12:  David Anderson
+    commit 839a134ea6d8e4e77a96702b5533c4a6f7e5d399
+
+    Improving doxygen wording
+            modified:   doc/libdwarf.dox
+            modified:   src/lib/libdwarf/libdwarf.h
+
+    Regenerated.
+            modified:   doc/libdwarf.pdf
+
+2022-12-12:  vtorri
+    commit 4520c3ce53e7ffb9b9466d69bc50135678d1df92
+
+     fix some warnings with Visual Studio (#142)
+
+    * fix some warnings with Visual Studio
+
+    Remove some stupid warnings with Visual Studio about deprecated signatures
+            modified:   meson.build
+
+    Fix some types with Visual Studio
+            modified:   src/lib/libdwarf/dwarf_crc32.c
+            modified:   src/lib/libdwarf/dwarf_debuglink.c
+
+    Run some tests only if sh shell is found (mainly with msys2 on Windows)
+            modified:   test/meson.build
+
+    * fix typo
+
+    Co-authored-by: Vincent Torri <vtorri@outlook.fr>
+    Co-authored-by: David Anderson <dandelot@linuxmail.org>
+
+2022-12-12:  David Anderson
+    commit 662eefb2d1888aeac0420c95625a6064f4be37a8
+    Merge: 693baa16 10b2231a
+
+    Merge branch 'master' of https://github.com/davea42/libdwarf-code
+
+    Due to a workflow update, not code.
+
+2022-12-12:  David Anderson
+    commit 693baa1668960511701ce23429e80e438e41adc1
+
+    Update to get latest git log data
+            modified:   ChangeLog
+
 2022-12-12:  David Anderson
     commit 37bb274fb9724e7e81db2a66a9266ff21cad60e8
 
