@@ -1005,10 +1005,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         int offres = 0;
 
         signature = zerosig;
-        /*  glflags.DIE_overall_offset: in case
+        /*  glflags.DIE_section_offset: in case
             dwarf_next_cu_header_d fails due
             to corrupt dwarf. */
-        glflags.DIE_overall_offset = dieprint_cu_goffset;
+        glflags.DIE_section_offset = dieprint_cu_goffset;
         memset(&fission_data,0,sizeof(fission_data));
         nres = dwarf_next_cu_header_d(dbg,
             is_info,
@@ -1061,12 +1061,12 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         /*  Get the CU offset  (when we can)
             for easy error reporting. Ignore errors. */
         offres = dwarf_die_offsets(cu_die,
-            &glflags.DIE_overall_offset,
+            &glflags.DIE_section_offset,
             &glflags.DIE_offset,pod_err);
         DROP_ERROR_INSTANCE(dbg,offres,*pod_err);
-        glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+        glflags.DIE_CU_overall_offset = glflags.DIE_section_offset;
         glflags.DIE_CU_offset = glflags.DIE_offset;
-        dieprint_cu_goffset = glflags.DIE_overall_offset;
+        dieprint_cu_goffset = glflags.DIE_section_offset;
 
         if (glflags.gf_cu_name_flag) {
             Dwarf_Bool should_skip = FALSE;
@@ -1251,13 +1251,13 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
 
                     /* Get the CU offset for easy error reporting */
                     podres2 = dwarf_die_offsets(cu_die2,
-                        &glflags.DIE_overall_offset,
+                        &glflags.DIE_section_offset,
                         &glflags.DIE_offset,&lperr);
                     DROP_ERROR_INSTANCE(dbg,podres2,lperr);
                     glflags.DIE_CU_overall_offset =
-                        glflags.DIE_overall_offset;
+                        glflags.DIE_section_offset;
                     glflags.DIE_CU_offset = glflags.DIE_offset;
-                    dieprint_cu_goffset = glflags.DIE_overall_offset;
+                    dieprint_cu_goffset = glflags.DIE_section_offset;
                     pres = print_die_and_children(dbg, cu_die2,
                         dieprint_cu_goffset,is_info,
                             srcfiles, srcfiles_cnt,pod_err);
@@ -1508,7 +1508,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
         /* Get the CU offset for easy error reporting */
         offres = dwarf_die_offsets(in_die,
-            &glflags.DIE_overall_offset,
+            &glflags.DIE_section_offset,
             &glflags.DIE_offset,err);
         DROP_ERROR_INSTANCE(dbg,offres,*err);
         SET_DIE_STACK_ENTRY(die_stack_indent_level,in_die,
@@ -2191,7 +2191,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
 
     /*  Get the offset for easy error reporting:
         This is not the CU die.  */
-    atres = dwarf_die_offsets(die,&glflags.DIE_overall_offset,
+    atres = dwarf_die_offsets(die,&glflags.DIE_section_offset,
         &glflags.DIE_offset,err);
     if (atres == DW_DLV_ERROR) {
         print_error_and_continue(

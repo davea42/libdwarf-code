@@ -139,12 +139,12 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
     }
 
     /* The offsets will be zero if it fails. Let it pass. */
-    atres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+    atres = dwarf_die_offsets(cu_die,&glflags.DIE_section_offset,
         &glflags.DIE_offset,&loadcuerr);
-    cu_die_goff = glflags.DIE_overall_offset;
+    cu_die_goff = glflags.DIE_section_offset;
     DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
 
-    glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+    glflags.DIE_CU_overall_offset = glflags.DIE_section_offset;
     glflags.DIE_CU_offset = glflags.DIE_offset;
     for (i = 0; i < atcnt; i++) {
         Dwarf_Half attr = 0;

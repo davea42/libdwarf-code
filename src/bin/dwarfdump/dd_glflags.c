@@ -240,7 +240,7 @@ init_global_flags(void)
     glflags.PU_high_address = 0;       /* PU High address */
 
     glflags.DIE_offset = 0;         /* DIE offset in compile unit */
-    glflags.DIE_overall_offset = 0; /* DIE offset in .debug_info */
+    glflags.DIE_section_offset = 0; /* DIE offset in .debug_info */
 
     /*  These globals  enable better error reporting. */
 
@@ -389,7 +389,7 @@ reset_overall_CU_error_data(void)
     dd_safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
         default_cu_producer,strlen(default_cu_producer));
     glflags.DIE_offset = 0;
-    glflags.DIE_overall_offset = 0;
+    glflags.DIE_section_offset = 0;
     glflags.DIE_CU_offset = 0;
     glflags.DIE_CU_overall_offset = 0;
     glflags.CU_base_address = 0;
@@ -404,7 +404,7 @@ cu_data_is_set(void)
         strcmp(glflags.CU_producer,default_cu_producer)) {
         return 1;
     }
-    if (glflags.DIE_offset || glflags.DIE_overall_offset) {
+    if (glflags.DIE_offset || glflags.DIE_section_offset) {
         return 1;
     }
     if (glflags.CU_base_address || glflags.CU_low_address ||

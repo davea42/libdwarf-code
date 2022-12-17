@@ -288,7 +288,7 @@ struct glflags_s {
     Dwarf_Addr PU_high_address;    /* PU High address */
 
     Dwarf_Off  DIE_offset;         /* DIE offset in compile unit */
-    Dwarf_Off  DIE_overall_offset; /* DIE offset in .debug_info */
+    Dwarf_Off  DIE_section_offset; /* DIE offset in .debug_info */
 
     /*  These globals enable better error reporting. */
     Dwarf_Off  DIE_CU_offset;      /* CU DIE offset in compile unit */

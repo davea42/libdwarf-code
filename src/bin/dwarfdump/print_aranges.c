@@ -63,10 +63,10 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         /* Get the CU offset for easy error reporting */
         if (first_cu || cu_die_offset != cu_die_offset_prev) {
             dres = dwarf_die_offsets(cu_die,&glflags.
-                DIE_overall_offset,
+                DIE_section_offset,
                 &glflags.DIE_offset,err);
             glflags.DIE_CU_overall_offset =
-                glflags.DIE_overall_offset;
+                glflags.DIE_section_offset;
             glflags.DIE_CU_offset = glflags.DIE_offset;
             if (dres != DW_DLV_OK) {
                 print_error_and_continue(
@@ -81,11 +81,11 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             int res2=0;
 
             res2 = dwarf_die_offsets(cu_die,
-                &glflags.DIE_overall_offset,
+                &glflags.DIE_section_offset,
                 &glflags.DIE_offset,err);
             if (res2 == DW_DLV_OK) {
                 glflags.DIE_CU_overall_offset =
-                    glflags.DIE_overall_offset;
+                    glflags.DIE_section_offset;
                 glflags.DIE_CU_offset = glflags.DIE_offset;
                 DWARF_CHECK_COUNT(aranges_result,1);
                 if (cu_die_offset != cudieoff2) {

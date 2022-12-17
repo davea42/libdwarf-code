@@ -1,4 +1,5 @@
 /*
+ffs
 Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
 Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
 Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
@@ -204,7 +205,7 @@ check_ranges_list(Dwarf_Debug dbg,
                     if (glflags.gf_check_verbose_mode && do_print) {
                         /*  Update DIEs offset just for printing */
                         int dioff_res = dwarf_die_offsets(cu_die,
-                            &glflags.DIE_overall_offset,
+                            &glflags.DIE_section_offset,
                             &glflags.DIE_offset,err);
                         if (dioff_res != DW_DLV_OK) {
                             simple_err_return_msg_either_action(
@@ -354,7 +355,7 @@ check_range_array_info(Dwarf_Debug dbg,
 
         /*  In case of errors, the correct DIE offset should be
             displayed. At this point we are at the end of the PU */
-        Dwarf_Off DIE_overall_offset_bak = glflags.DIE_overall_offset;
+        Dwarf_Off DIE_section_offset_bak = glflags.DIE_section_offset;
 
         for (index = 0; index < range_array_count; ++index) {
             Dwarf_Ranges *rangeset = 0;
@@ -401,7 +402,7 @@ check_range_array_info(Dwarf_Debug dbg,
         reset_range_array_info();
 
         /*  Point back to the end of the PU */
-        glflags.DIE_overall_offset = DIE_overall_offset_bak;
+        glflags.DIE_section_offset = DIE_section_offset_bak;
     }
     return DW_DLV_OK;
 }

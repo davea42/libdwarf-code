@@ -2145,7 +2145,7 @@ void
 PRINT_CU_INFO(void)
 {
     Dwarf_Unsigned loff = glflags.DIE_offset;
-    Dwarf_Unsigned goff = glflags.DIE_overall_offset;
+    Dwarf_Unsigned goff = glflags.DIE_section_offset;
     char lbuf[50];
     char hbuf[50];
 
