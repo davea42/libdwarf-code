@@ -1660,7 +1660,8 @@ dwarf_get_cie_of_fde(Dwarf_Fde fde,
 
 }
 
-int dwarf_get_cie_index(
+int
+dwarf_get_cie_index(
     Dwarf_Cie cie,
     Dwarf_Signed* indx,
     Dwarf_Error* error )
@@ -2917,7 +2918,8 @@ dwarf_set_frame_undefined_value(Dwarf_Debug dbg, Dwarf_Half value)
 
 /*  Does something only if value passed in is greater than 0 and
     a size than we can handle (in number of bytes).  */
-Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug dbg,
+Dwarf_Small 
+dwarf_set_default_address_size(Dwarf_Debug dbg,
     Dwarf_Small value  )
 {
     Dwarf_Small orig = dbg->de_pointer_size;

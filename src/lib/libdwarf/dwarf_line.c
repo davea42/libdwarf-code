@@ -1182,7 +1182,8 @@ dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
     will be NULL.
     For DWARF5 the line table header has the compilation
     directory.  */
-int dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
+int
+dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
     const char **  compilation_directory,
     Dwarf_Error  *  error)
 {
@@ -1655,7 +1656,8 @@ dwarf_lineblock(Dwarf_Line line,
 
 /*  We gather these into one call as it's likely one
     will want all or none of them.  */
-int dwarf_prologue_end_etc(Dwarf_Line  line,
+int
+dwarf_prologue_end_etc(Dwarf_Line  line,
     Dwarf_Bool  *    prologue_end,
     Dwarf_Bool  *    epilogue_begin,
     Dwarf_Unsigned * isa,

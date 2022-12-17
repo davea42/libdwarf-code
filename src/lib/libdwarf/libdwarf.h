@@ -2249,20 +2249,22 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     Given a DIE offset and dw_is_info,
     returns an array of DIE offsets of the children
     of DIE.
+
     @param dw_dbg
     The Dwarf_Debug of interest.
     @param dw_offset
     A DIE offset.
     @param dw_is_info
     If TRUE says to use the offset in .debug_info.
-    Else .debug_types.
+    Else use the offset in .debug_types.
     @param dw_offbuf
-    A pointer to an array of offsets is returned
+    A pointer to an array of children
+    DIE global offsets is returned
     through the pointer.
     @param dw_offcount
-    The number of elements in offbuf.
+    The number of elements in dw_offbuf.
     IF the DIE has no children it could
-    be zero, in which case offbuf
+    be zero, in which case dw_offbuf
     and dw_offcount are not touched.
     @param dw_error
     The usual error detail return pointer.
@@ -2270,7 +2272,11 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     Returns DW_DLV_OK etc.
     DW_DLV_NO_ENTRY means there are no children of the DIE,
     hence no list of child offsets.
-
+  
+    On successful return, use
+    dwarf_dealloc(dbg, dw_offbuf, DW_DLA_LIST);
+    to dealloc the allocated space.
+    
     @see exampleoffset_list
 */
 DW_API int dwarf_offset_list(Dwarf_Debug dw_dbg,
