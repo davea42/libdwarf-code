@@ -133,6 +133,7 @@ init_global_flags(void)
     glflags.gf_check_di_gaps = FALSE;
     glflags.gf_check_forward_decl = FALSE;
     glflags.gf_check_self_references = FALSE;
+    glflags.gf_check_functions = FALSE;
 
     /* Attributes encoding */
     glflags.gf_check_attr_encoding = FALSE;

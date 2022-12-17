@@ -76,6 +76,7 @@ typedef enum /* Dwarf_Check_Categories */ {
     duplicated_attributes_result,
     total_check_result,
     attr_formclass_result,
+    check_functions_result,
     LAST_CATEGORY  /* Must be last */
 } Dwarf_Check_Categories;
 
@@ -174,6 +175,8 @@ struct glflags_s {
     Dwarf_Bool gf_generic_1200_regs;
     Dwarf_Bool gf_suppress_check_extensions_tables;
     Dwarf_Bool gf_check_duplicated_attributes;
+    Dwarf_Bool gf_check_functions;
+
     /* lots of checks make no sense on a dwp debugfission object. */
     Dwarf_Bool gf_suppress_checking_on_dwp;
 

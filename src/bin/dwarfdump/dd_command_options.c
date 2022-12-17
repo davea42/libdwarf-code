@@ -326,6 +326,7 @@ static void arg_check_unique(void);
 static void arg_check_usage(void);
 static void arg_check_usage_extended(void);
 #endif /* HAVE_USAGE_TAG_ATTR */
+static void arg_check_functions(void);
 
 static void arg_file_abi(void);
 static void arg_file_line5(void);
@@ -537,6 +538,8 @@ static const char *usage_long_text[] = {
 "-ku  --check-usage          Print tag-tree & tag-attr usage",
 "                            (basic format)",
 "-kuf --check-usage-extended Modifies -ku to add summary detail.",
+"     --check-functions      Adds calls of libdwarf functions not ",
+"                            otherwise called (for code coverage).",
 #endif /* HAVE_USAGE_TAG_ATTR */
 " ",
 "-------------------------------------------------------------------",
@@ -694,6 +697,7 @@ OPT_CHECK_UNIQUE,             /* -kG  --check-unique        */
 #ifdef HAVE_USAGE_TAG_ATTR
 OPT_CHECK_USAGE,              /* -ku  --check-usage         */
 OPT_CHECK_USAGE_EXTENDED,     /* -kuf --check-usage-extended*/
+OPT_CHECK_FUNCTIONS,          /*  --check-functions*/
 #endif /* HAVE_USAGE_TAG_ATTR */
 
 /* File Specifications    */
@@ -825,6 +829,7 @@ static struct dwoption longopts[] =  {
 #ifdef HAVE_USAGE_TAG_ATTR
 {"check-usage",          dwno_argument, 0, OPT_CHECK_USAGE         },
 {"check-usage-extended", dwno_argument, 0, OPT_CHECK_USAGE_EXTENDED},
+{"check-functions-extended", dwno_argument, 0, OPT_CHECK_FUNCTIONS},
 #endif /* HAVE_USAGE_TAG_ATTR */
 
 /* File Specifications. */
@@ -1241,6 +1246,7 @@ void arg_check_all(void)
     glflags.gf_check_attr_encoding = TRUE;
     glflags.gf_print_usage_tag_attr = TRUE;
     glflags.gf_check_duplicated_attributes = TRUE;
+    glflags.gf_check_functions = TRUE;
 }
 
 /*  Option '-kb' --check-abbrev */
@@ -1530,6 +1536,13 @@ void arg_check_type(void)
     glflags.gf_pubtypes_flag = TRUE;
     glflags.gf_check_ranges = TRUE;
     glflags.gf_check_aranges = TRUE;
+}
+
+/*  Option '--check-functions' */
+void arg_check_functions(void)
+{
+    suppress_print_dwarf();
+    glflags.gf_check_functions = TRUE;
 }
 
 /*  Option '-l[...]' */
@@ -2299,6 +2312,7 @@ set_command_options(int argc, char *argv[])
         case OPT_CHECK_USAGE_EXTENDED: arg_check_usage_extended();
             break;
 #endif /* HAVE_USAGE_TAG_ATTR */
+        case OPT_CHECK_FUNCTIONS:      arg_check_functions(); break;
 
         /* File Specifications. */
         case OPT_FILE_ABI:    arg_file_abi();    break;

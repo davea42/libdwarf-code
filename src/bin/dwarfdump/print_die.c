@@ -60,7 +60,7 @@ Portions Copyright 2007-2021 David Anderson. All rights reserved.
 #include "dd_safe_strcpy.h"
 
 #define VSFBUFSZ 200
-#define DIE_STACK_SIZE 800
+#define DIE_STACK_SIZE 800  /* A hard limit. */
 /*  OpBranchHead_s gives us nice type-checking
     in calls. */
 struct OpBranchEntry_s {
@@ -158,21 +158,9 @@ static void formx_data16(Dwarf_Form_Data16 * u, struct esb_s *esbp,
 
 static void formx_signed(Dwarf_Signed s, struct esb_s *esbp);
 
-static int pd_dwarf_names_print_on_error = 1;
-
-static int die_stack_indent_level = 0;
+static int        pd_dwarf_names_print_on_error = 1;
+static int        die_stack_indent_level = 0;
 static Dwarf_Bool local_symbols_already_began = FALSE;
-
-/*  See tag_specific_globals_setup() and
-    glflags.need_PU_valid_code as those
-    oversee resetting of this. It is
-    set when a compilation-unit DIE or
-    a subprogram DIE is seen and that DIE
-    setting is kept till the next such is seen.
-    glflags.in_valid_code;
-    Used to be a static variable.
-*/
-
 static const Dwarf_Sig8 zerosig;
 
 #if 0
@@ -1495,7 +1483,13 @@ print_die_stack(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* recursively follow the die tree */
+/*  Recursively follow the die tree.
+    For in_die and its siblings we loop here.
+    For children of in_die and
+    its siblings we recurse on this function.
+    We use a DIE_STACK to keep track of where
+    we are in the current loop and in the recursion.
+*/
 static int
 print_die_and_children_internal(Dwarf_Debug dbg,
     Dwarf_Die in_die_in,
@@ -1797,6 +1791,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 dwarf_dealloc_die(child);
                 return DW_DLV_ERROR;
             }
+            /*  Use DIE_STACK to process children
+                of the current DIE. Push current DIE to stack.
+                Recursing would take too much stack space. */
             die_stack_indent_level++;
             SET_DIE_STACK_ENTRY(die_stack_indent_level,0,
                 dieprint_cu_goffset);
@@ -1805,6 +1802,9 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 is_info, srcfiles, cnt,err);
             EMPTY_DIE_STACK_ENTRY(die_stack_indent_level);
             dwarf_dealloc_die(child);
+            /*  Unwind DIE_STACK one level to get
+                back to our sibling list to process the
+                next sibling at our level. */
             die_stack_indent_level--;
             if (pdacres == DW_DLV_ERROR) {
                 if (in_die != in_die_in) {
@@ -1837,10 +1837,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             }
             return cdres;
         }
-        /*  print_die_and_children(dbg,sibling,srcfiles,cnt);
-            We loop around to actually print this, rather than
-            recursing. Recursing is horribly wasteful of stack
-            space. */
         /*  If we have a sibling, verify that its offset
             is next to the last processed DIE;
             An incorrect sibling chain is a nasty bug.  */
