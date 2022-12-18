@@ -626,7 +626,7 @@ int example8(Dwarf_Debug dbg, Dwarf_Die somedie, Dwarf_Error *error)
     @param dbg
     the Dwarf_Debug of interest
     @param dieoffset
-    The section offset of an open Dwarf_Die
+    The section offset of a Dwarf_Die
     @param is_info
     Pass in TRUE if the dieoffset is for the
     .debug_info section, else pass in FALSE meaning

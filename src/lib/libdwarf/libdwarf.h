@@ -2246,8 +2246,8 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
 
 /*! @brief Return an array of DIE children offsets
 
-    Given a DIE offset and dw_is_info,
-    returns an array of DIE offsets of the children
+    Given a DIE section offset and dw_is_info,
+    returns an array of DIE section offsets of the children
     of DIE.
 
     @param dw_dbg

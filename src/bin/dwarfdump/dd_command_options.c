@@ -829,7 +829,7 @@ static struct dwoption longopts[] =  {
 #ifdef HAVE_USAGE_TAG_ATTR
 {"check-usage",          dwno_argument, 0, OPT_CHECK_USAGE         },
 {"check-usage-extended", dwno_argument, 0, OPT_CHECK_USAGE_EXTENDED},
-{"check-functions-extended", dwno_argument, 0, OPT_CHECK_FUNCTIONS},
+{"check-functions",      dwno_argument, 0, OPT_CHECK_FUNCTIONS},
 #endif /* HAVE_USAGE_TAG_ATTR */
 
 /* File Specifications. */
