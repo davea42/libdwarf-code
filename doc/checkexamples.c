@@ -1539,6 +1539,11 @@ int exampledebugnames(Dwarf_Debug dbg,
             Dwarf_Unsigned parent_index = 0;
             Dwarf_Sig8     parenthash;
 
+            (void)parent_index;     /* avoids warning */
+            (void)local_die_offset; /* avoids warning */
+            (void)tu_table_index;   /* avoids warning */
+            (void)cu_table_index;   /* avoids warning */
+
             memset(&parenthash,0,sizeof(parenthash));
             /*  This gets us the entry pool offset we need.
                 we provide idxattr and nt_form arrays (need
@@ -2457,6 +2462,44 @@ int examplez( Dwarf_Xu_Index_Header xuhdr,
     return DW_DLV_OK;
 }
 /*! @endcode */
+
+/*! @defgroup examplehighpc Example getting high pc from a DIE.
+    @brief Example get high-pc from a DIE
+
+    @code
+*/
+int examplehighpc(Dwarf_Die die,
+    Dwarf_Addr *highpc,
+    Dwarf_Error *error)
+{
+    int        res = 0;
+    Dwarf_Addr localhighpc = 0;
+    Dwarf_Half form = 0;
+    enum Dwarf_Form_Class formclass = DW_FORM_CLASS_UNKNOWN;
+
+    res = dwarf_highpc_b(die,&localhighpc,
+         &form,&formclass, error);
+    if (res != DW_DLV_OK) {
+         return res;
+    }
+    if (form != DW_FORM_addr &&
+        !dwarf_addr_form_is_indexed(form)) {
+        Dwarf_Addr low_pc = 0;
+
+        /*  The localhighpc is an offset from
+            DW_AT_low_pc. */
+        res = dwarf_lowpc(die,&low_pc,error);
+        if (res != DW_DLV_OK) {
+            return res; 
+        } else  {
+            localhighpc += low_pc;
+        }
+    }
+    *highpc = localhighpc;
+    return DW_DLV_OK;
+}
+/*! @endcode */
+
 
 /*! @defgroup exampleza Example getting Debug Fission data
     @brief Example getting cu/tu name, offset
