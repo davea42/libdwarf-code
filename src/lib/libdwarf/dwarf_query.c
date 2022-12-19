@@ -1255,7 +1255,6 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     */
 
 /*  This works for all versions of DWARF.
-    This is the preferred interface, cease using dwarf_highpc.
     The consumer has to check the return_form or
     return_class to decide if the value returned
     through return_value is an address or an address-offset.
