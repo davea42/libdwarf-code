@@ -936,11 +936,11 @@ dump_offset_list(Dwarf_Off *array,
 
 static void
 dd_setup_die_check_functions(Dwarf_Debug dbg,
-     Dwarf_Die in_die_in,
-     Dwarf_Bool is_info,     
+     Dwarf_Die       in_die_in,
+     Dwarf_Bool      is_info,     
      Dwarf_Off     **offset_array,
      Dwarf_Unsigned *offset_count,
-     Dwarf_Error *err)
+     Dwarf_Error    *err)
 {
     Dwarf_Off section_offset = 0;
     Dwarf_Off local_offset = 0;
@@ -968,6 +968,36 @@ dd_setup_die_check_functions(Dwarf_Debug dbg,
                 "Unable to get dwarf_offset_list offsets");
             if (res == DW_DLV_ERROR) {
                 DROP_ERROR_INSTANCE(dbg,res,*err);
+            }
+        } else if (*offset_count > 0) {
+            Dwarf_Unsigned i = 0;
+            Dwarf_Unsigned count = *offset_count;
+            Dwarf_Off     *off_array = *offset_array;
+            Dwarf_Off      lastoffset = section_offset;
+
+            for( ; i < count; ++i) {
+                Dwarf_Off off = off_array[i];
+
+                if (off <= lastoffset) {
+                    struct esb_s m;
+                    char buf[100];
+
+                    esb_constructor_fixed(&m,buf,sizeof(buf));
+                    esb_append_printf_u(&m,
+                        "dwarf_offset_list offset [%u]", i);
+                    esb_append_printf_u(&m,
+                        " 0x%" DW_PR_XZEROS DW_PR_DUx,
+                        off);
+                    esb_append_printf_u(&m, 
+                        "is below the previous of 0x%"
+                        DW_PR_XZEROS DW_PR_DUx,
+                        lastoffset);
+                    DWARF_CHECK_ERROR(check_functions_result,
+                        esb_get_string(&m));
+                    esb_destructor(&m);
+                    /* Skip further checks in this list */
+                    break;
+                }
             }
         }
     }
@@ -1647,11 +1677,22 @@ check_sibling_off(Dwarf_Unsigned loop_iteration,
         DWARF_CHECK_ERROR(check_functions_result,
             "The offset count from dwarf_offset_list"
             " is smaller than the actual sibling count");
-    } else if ((glflags.DIE_section_offset !=
-        sibling_off_array[loop_iteration])) {
+    } else {
+        Dwarf_Unsigned i = 0;
+        Dwarf_Off      off = 0;
+     
+        /*  The following could use binary search as
+            the array is strictly assending values. */
+        for ( ; i < sibling_off_count; ++i) {
+            off = sibling_off_array[i];
+            if (glflags.DIE_section_offset == off) {
+                /* Good. Found */
+                return;
+            }
+        }
         DWARF_CHECK_ERROR(check_functions_result,
-            "The offset from dwarf_offset_list"
-            " is different than the actual"
+            "An offset from dwarf_offset_list"
+            " is different than an actual"
             " sibling offset");
     }
 }
@@ -2087,6 +2128,91 @@ print_srcfiles( char **srcfiles,Dwarf_Signed srcfcnt)
         printf(" %s\n",sanitized(srcfiles[i]));
     }
 }
+
+static int
+check_duplicated_attributes(Dwarf_Debug dbg,
+    Dwarf_Signed     i,
+    Dwarf_Half       attr,
+    Dwarf_Attribute *atlist,
+    Dwarf_Signed     atcnt,
+    Dwarf_Error     *err)
+{
+    if (glflags.gf_check_duplicated_attributes) {
+        Dwarf_Half   attr_next = 0;
+        Dwarf_Signed j = 0;
+
+        DWARF_CHECK_COUNT(duplicated_attributes_result,1);
+        for (j = i + 1; j < atcnt; ++j) {
+            int ares = 0;
+
+            ares = dwarf_whatattr(atlist[j],
+                &attr_next,err);
+            if (ares == DW_DLV_OK) {
+                if (attr == attr_next) {
+                    DWARF_CHECK_ERROR2(
+                        duplicated_attributes_result,
+                        "Duplicated attribute ",
+                        get_AT_name(attr,
+                        pd_dwarf_names_print_on_error));
+                }
+            } else {
+                struct esb_s m;
+                esb_constructor(&m);
+                esb_append_printf_i(&m,
+                    "ERROR: dwarf_whatattr entry missing "
+                    " when checking for duplicated "
+                    "attributes"
+                    " reading attribute ",j);
+                print_error_and_continue(esb_get_string(&m),
+                    ares, *err);
+                esb_destructor(&m);
+                dealloc_local_atlist(dbg,atlist,atcnt);
+                return ares;
+            }
+        }
+    }
+    return DW_DLV_OK;
+}
+static void
+dd_check_attrlist_sensible(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Attribute *attrlist, Dwarf_Signed atcnt)
+{
+    Dwarf_Signed i = 0;
+    Dwarf_Error error = 0;
+    static int check_limiter;
+
+    if (!glflags.gf_check_functions) {
+        return;
+    }
+    if (check_limiter > 1000) {
+        return;
+    }
+    ++check_limiter;
+
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    for (i=0; i < atcnt; ++i) {
+        int res = 0;
+        Dwarf_Off current_off = 0;
+ 
+        res = dwarf_attr_offset(die,attrlist[i],
+             &current_off,&error);
+        if (res == DW_DLV_ERROR) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "attr offsets unavailable");
+            DROP_ERROR_INSTANCE(dbg,res,error);
+            return;
+        }
+        if (res == DW_DLV_NO_ENTRY) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "attr offsets no_entry (impossible)");
+            DROP_ERROR_INSTANCE(dbg,res,error);
+             /* impossible */
+        }
+        /*  Currently unsure how to check more than this. */
+    }
+}
+
 /*  If print_else_name_match is FALSE,
     check for attribute  matches with -S
     inr print_attribute, and if found,
@@ -2112,7 +2238,6 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Error *err)
 {
     Dwarf_Signed i = 0;
-    Dwarf_Signed j = 0;
     Dwarf_Off offset = 0;
     Dwarf_Off overall_offset = 0;
     const char * tagname = 0;
@@ -2348,46 +2473,22 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         return atres;
     }
 
+    dd_check_attrlist_sensible(dbg,die,atlist,atcnt);
     for (i = 0; i < atcnt; i++) {
-        Dwarf_Half attr;
-        int ares;
+        int        ares = 0;
+        Dwarf_Half attrnum = 0; 
 
-        ares = dwarf_whatattr(atlist[i], &attr, err);
+        ares = dwarf_whatattr(atlist[i], &attrnum, err);
         if (ares == DW_DLV_OK) {
             /*  Check duplicated attributes; use brute force
                 as the number of attributes is quite small;
                 the problem was detected with the
                 LLVM toolchain, generating more than 12
                 repeated attributes */
-            if (glflags.gf_check_duplicated_attributes) {
-                Dwarf_Half attr_next;
-                DWARF_CHECK_COUNT(duplicated_attributes_result,1);
-                for (j = i + 1; j < atcnt; ++j) {
-                    ares = dwarf_whatattr(atlist[j],
-                        &attr_next,err);
-                    if (ares == DW_DLV_OK) {
-                        if (attr == attr_next) {
-                            DWARF_CHECK_ERROR2(
-                                duplicated_attributes_result,
-                                "Duplicated attribute ",
-                                get_AT_name(attr,
-                                pd_dwarf_names_print_on_error));
-                        }
-                    } else {
-                        struct esb_s m;
-                        esb_constructor(&m);
-                        esb_append_printf_i(&m,
-                            "ERROR: dwarf_whatattr entry missing "
-                            " when checking for duplicated "
-                            "attributes"
-                            " reading attribute ",j);
-                        print_error_and_continue(esb_get_string(&m),
-                            ares, *err);
-                        esb_destructor(&m);
-                        dealloc_local_atlist(dbg,atlist,atcnt);
-                        return ares;
-                    }
-                }
+            ares = check_duplicated_attributes(dbg,i,
+                attrnum,atlist,atcnt, err);
+            if (ares != DW_DLV_OK) {
+                return ares;
             }
 
             /* Print using indentation */
@@ -2402,7 +2503,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
 
                 aresb = print_attribute(dbg, die,
                     dieprint_cu_goffset,
-                    attr,
+                    attrnum,
                     atlist[i],
                     print_else_name_match, die_indent_level,
                     srcfiles, srcfcnt,

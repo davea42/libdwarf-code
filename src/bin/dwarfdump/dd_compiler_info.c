@@ -187,6 +187,10 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("duplicated_attributes",
             pCompiler, duplicated_attributes_result);
     }
+    if (glflags.gf_check_functions) {
+        PRINT_CHECK_RESULT("function_coverage",
+            pCompiler, check_functions_result);
+    }
 
     PRINT_CHECK_RESULT("** Summarize **",pCompiler,
         total_check_result);

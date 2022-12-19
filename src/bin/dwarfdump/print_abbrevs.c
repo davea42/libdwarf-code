@@ -829,11 +829,20 @@ validate_abbrev_code(Dwarf_Unsigned abbrev_code)
     if (abbrev_code && abbrev_code >= abbrev_array_size) {
         struct esb_s ar;
         esb_constructor_fixed(&ar,buf,sizeof(buf));
-        esb_append_printf_u(&ar,
-            "Abbrev code %" DW_PR_DUu, abbrev_code);
-        esb_append_printf_u(&ar,
-            " outside valid range of [0-%" DW_PR_DUu "]",
-            abbrev_array_size);
+        if (!abbrev_array_size) {
+            esb_append_printf_u(&ar,
+                "Abbrev code %" DW_PR_DUu, abbrev_code);
+            esb_append(&ar,
+                " is invalid given the abbrev-code array size"
+                " for the CU is zero)");
+        } else {
+            esb_append_printf_u(&ar,
+                "Abbrev code %" DW_PR_DUu, abbrev_code);
+            esb_append_printf_u(&ar,
+                " outside valid range of [1-%" DW_PR_DUu ")"
+                " for a CU",
+                abbrev_array_size);
+        }
         DWARF_CHECK_ERROR2(abbreviations_result,
             esb_get_string(&ar),
             "Invalid abbreviation code.");
