@@ -1708,17 +1708,17 @@ DW_API int dwarf_get_tied_dbg(Dwarf_Debug dw_dbg,
 */
 DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
     Dwarf_Bool      dw_is_info,
-    Dwarf_Unsigned* dw_cu_header_length,
-    Dwarf_Half*     dw_version_stamp,
-    Dwarf_Off*      dw_abbrev_offset,
-    Dwarf_Half*     dw_address_size,
-    Dwarf_Half*     dw_length_size,
-    Dwarf_Half*     dw_extension_size,
-    Dwarf_Sig8*     dw_type_signature,
-    Dwarf_Unsigned* dw_typeoffset,
-    Dwarf_Unsigned* dw_next_cu_header_offset,
-    Dwarf_Half    * dw_header_cu_type,
-    Dwarf_Error*    dw_error);
+    Dwarf_Unsigned *dw_cu_header_length,
+    Dwarf_Half     *dw_version_stamp,
+    Dwarf_Off      *dw_abbrev_offset,
+    Dwarf_Half     *dw_address_size,
+    Dwarf_Half     *dw_length_size,
+    Dwarf_Half     *dw_extension_size,
+    Dwarf_Sig8     *dw_type_signature,
+    Dwarf_Unsigned *dw_typeoffset,
+    Dwarf_Unsigned *dw_next_cu_header_offset,
+    Dwarf_Half     *dw_header_cu_type,
+    Dwarf_Error    *dw_error);
 
 /*! @brief Return the first DIE or the next sibling DIE.
 
@@ -1743,10 +1743,10 @@ DW_API int dwarf_next_cu_header_d(Dwarf_Debug dw_dbg,
     @see dwarf_get_die_infotypes
 */
 DW_API int dwarf_siblingof_b(Dwarf_Debug dw_dbg,
-    Dwarf_Die        dw_die,
-    Dwarf_Bool       dw_is_info,
-    Dwarf_Die*       dw_return_siblingdie,
-    Dwarf_Error*     dw_error);
+    Dwarf_Die    dw_die,
+    Dwarf_Bool   dw_is_info,
+    Dwarf_Die   *dw_return_siblingdie,
+    Dwarf_Error *dw_error);
 
 /*! @brief Return some CU-relative facts.
 
@@ -1788,16 +1788,16 @@ DW_API int dwarf_siblingof_b(Dwarf_Debug dw_dbg,
 */
 
 DW_API int dwarf_cu_header_basics(Dwarf_Die dw_die,
-    Dwarf_Half     * dw_version,
-    Dwarf_Bool     * dw_is_info,
-    Dwarf_Bool     * dw_is_dwo,
-    Dwarf_Half     * dw_offset_size,
-    Dwarf_Half     * dw_address_size,
-    Dwarf_Half     * dw_extension_size,
-    Dwarf_Sig8    ** dw_signature,
-    Dwarf_Off      * dw_offset_of_length,
-    Dwarf_Unsigned * dw_total_byte_length,
-    Dwarf_Error    * dw_error);
+    Dwarf_Half     *dw_version,
+    Dwarf_Bool     *dw_is_info,
+    Dwarf_Bool     *dw_is_dwo,
+    Dwarf_Half     *dw_offset_size,
+    Dwarf_Half     *dw_address_size,
+    Dwarf_Half     *dw_extension_size,
+    Dwarf_Sig8    **dw_signature,
+    Dwarf_Off      *dw_offset_of_length,
+    Dwarf_Unsigned *dw_total_byte_length,
+    Dwarf_Error    *dw_error);
 
 /*! @brief Return the child DIE, if any.
     The child may be the first of a list of
@@ -1909,10 +1909,10 @@ DW_API int dwarf_offdie_b(Dwarf_Debug dw_dbg,
     Returns DW_DLV_OK etc.
 */
 DW_API int dwarf_find_die_given_sig8(Dwarf_Debug dw_dbg,
-    Dwarf_Sig8 * dw_ref,
-    Dwarf_Die  * dw_die_out,
-    Dwarf_Bool * dw_is_info,
-    Dwarf_Error* dw_error);
+    Dwarf_Sig8  *dw_ref,
+    Dwarf_Die   *dw_die_out,
+    Dwarf_Bool  *dw_is_info,
+    Dwarf_Error *dw_error);
 
 /*! @brief Return the is_info flag.
 
@@ -2247,8 +2247,8 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
 /*! @brief Return an array of DIE children offsets
 
     Given a DIE section offset and dw_is_info,
-    returns an array of DIE section offsets of the children
-    of DIE.
+    returns an array of DIE global [section]
+    offsets of the children of DIE.
 
     @param dw_dbg
     The Dwarf_Debug of interest.
@@ -2259,11 +2259,11 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     Else use the offset in .debug_types.
     @param dw_offbuf
     A pointer to an array of children
-    DIE global offsets is returned
+    DIE global [section] offsets is returned
     through the pointer.
     @param dw_offcount
     The number of elements in dw_offbuf.
-    IF the DIE has no children it could
+    If the DIE has no children it could
     be zero, in which case dw_offbuf
     and dw_offcount are not touched.
     @param dw_error
@@ -2365,19 +2365,32 @@ DW_API int dwarf_lowpc(Dwarf_Die dw_die,
     This is therefore a required interface for DWARF4
     style DW_AT_highpc.  */
 
-/*! @brief Return the DW_AT_hipc  address value
+/*! @brief Return the DW_AT_hipc address value
 
-    Calculating the high pc involves several elements
-    which we don't describe here. See the DWARF5 standard.
     This is accessing the DW_AT_high_pc attribute.
+    Calculating the high pc involves elements
+    which we don't describe here, but which
+    are shown in the example. See the DWARF5 standard.
+
+    @see examplehighpc 
+
     @param dw_die
     The DIE of interest.
     @param dw_return_addr
     On success returns the  high-pc address for this DIE.
+    If the high-pc is a not DW_FORM_addr
+    and is a non-indexed constant form
+    one must add the value of the DW_AT_low_pc to this
+    to get the true high-pc value as the value returned
+    is an unsigned offset of the associated low-pc value.
     @param dw_return_form
     On success returns the actual FORM for this attribute.
+    Needed for certain cases to calculate the true
+    dw_return_addr;
     @param dw_return_class
     On success returns the FORM CLASS for this attribute.
+    Needed for certain cases to calculate the true
+    dw_return_addr;
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -2391,9 +2404,12 @@ DW_API int dwarf_highpc_b(Dwarf_Die dw_die,
 
 /*! @brief Return the offset from the DW_AT_type attribute
 
-    The offset returned is is a global offset of a type DIE.
-    If this CU is DWARF4 the offset would be in
-    .debug_types, otherwise it is in .debug_info.
+    The offset returned is is a global offset from
+    the DW_AT_type of the DIE passed in.
+    If this CU is DWARF4 the offset could be in
+    .debug_types, otherwise it is in .debug_info
+    Check the section of the DIE to know which
+    it is, dwarf_cu_header_basics() will return that.
 
     @param dw_die
     The DIE of interest.
@@ -2636,8 +2652,8 @@ DW_API int dwarf_whatattr(Dwarf_Attribute dw_attr,
 */
 DW_API int dwarf_formref(Dwarf_Attribute dw_attr,
     Dwarf_Off*   dw_return_offset,
-    Dwarf_Bool * dw_is_info,
-    Dwarf_Error* dw_error);
+    Dwarf_Bool  *dw_is_info,
+    Dwarf_Error *dw_error);
 
 /*! @brief Return the section-relative offset of a Dwarf_Attribute
 
@@ -2672,9 +2688,9 @@ DW_API int dwarf_formref(Dwarf_Attribute dw_attr,
     Never returns DW_DLV_NO_ENTRY;
 */
 DW_API int dwarf_global_formref_b(Dwarf_Attribute dw_attr,
-    Dwarf_Off  * dw_return_offset,
-    Dwarf_Bool * dw_offset_is_info,
-    Dwarf_Error* dw_error);
+    Dwarf_Off   *dw_return_offset,
+    Dwarf_Bool  *dw_offset_is_info,
+    Dwarf_Error *dw_error);
 
 /*! @brief Same as dwarf_global_formref_b except...
 
@@ -8217,9 +8233,9 @@ DW_API int dwarf_get_FORM_CLASS_name(enum Dwarf_Form_Class dw_fc,
     DW_DLV_OK etc.
 */
 DW_API int dwarf_get_die_section_name(Dwarf_Debug dw_dbg,
-    Dwarf_Bool    dw_is_info,
-    const char ** dw_sec_name,
-    Dwarf_Error * dw_error);
+    Dwarf_Bool   dw_is_info,
+    const char **dw_sec_name,
+    Dwarf_Error *dw_error);
 
 /*! @brief Get the real name of a DIE section.
 
