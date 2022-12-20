@@ -1,3 +1,157 @@
+2022-12-20:  David Anderson
+    commit 04f3722747e3991fced621cef60fd91654ef2e2d
+
+    Now allows DW_LANG codes including the latest.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Updated DW_LANG codes with known items, the
+    with a bit of help.
+            modified:   src/lib/libdwarf/dwarf.h
+
+    make rebuild
+    regenerated these with the new DW_LAN codes.
+            modified:   src/bin/dwarfdump/dwarf_names.c
+            modified:   src/lib/libdwarf/dwarf_names.c
+
+2022-12-20:  David Anderson
+    commit a7d3d5eb322d462729df089415ca761df729f054
+
+    Implemented the changed API of dwarf_dietype_offset()
+            modified:   src/lib/libdwarf/dwarf_die_deliv.c
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+    Update doxygen on dwarf_dietype_offset()
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-20:  David Anderson
+    commit 7d146dcf5c4c3e51b992b97a81145276f11f85a5
+
+    Now (with -ka or --check-functions) checks 8 more libdwarf
+    functions for correct operation.
+            modified:   src/bin/dwarfdump/print_die.c
+
+2022-12-20:  David Anderson
+    commit c95e8ea6bcf391f8e6f034dc848399fbef424731
+
+    dwarf_dietype_offset() now has an incompatible change.
+    Before the change it could not work properly
+    if .debug_info referred
+    to .debug_types via a DW_FORM_ref_sig8 (DWARF4).
+            modified:   doc/libdwarf.dox
+
+2022-12-20:  David Anderson
+    commit 649b0716f1a336b09efcd06deb43c363435c7742
+
+    Checking additional functions for
+    correct operation.
+            modified:   print_abbrevs.c
+            modified:   print_die.c
+
+2022-12-19:  David Anderson
+    commit 137985198b36899b5ff703acf9359d81967017ae
+
+    Ensure the check_function_result summary numbers
+    print out when the summary counts are requested.
+            modified:   src/bin/dwarfdump/dd_compiler_info.c
+
+    Improved the wording of a failed  check on
+    abbreviations.
+            modified:   src/bin/dwarfdump/print_abbrevs.c
+
+    Added full check of the values returned by
+    dwarf_offset_list()
+    Refactored blocks of checking-code into
+    new static functions to make the important
+    code easier to read.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Refactored into static functions some checking
+    code to make the printing code easier to follow.
+            modified:   src/bin/dwarfdump/print_hipc_lopc_attr.c
+
+2022-12-19:  David Anderson
+    commit fbbd626cd21b2fcbbbe150b40deaaa7a1778b9d0
+
+    Deleted an obsolete comment line.
+            modified:   src/lib/libdwarf/dwarf_query.c
+
+2022-12-19:  David Anderson
+    commit e11da35379e23b7c7a989da4eb0b196e34986451
+
+    Updating presentation of a few function interfaces
+    (no change in content) and improved some doxygen
+    comments.
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-19:  David Anderson
+    commit 28c33ca700c82d6086e759fcd52312b569ed3119
+
+    Added a new example for dwarf_hithpc_b and added
+    (void)parent_index; (etc) to avoid a compiler
+    warning.
+            modified:   doc/checkexamples.c
+
+2022-12-18:  David Anderson
+    commit c3d319584df050ea46c35dd97ca84871d2c239ad
+
+    Corrected a doxygen comment.
+            modified:   doc/checkexamples.c
+
+    corrected --check-functions option to enable
+    checks of previously unchecked libdwarf calls.
+            modified:   src/bin/dwarfdump/dd_command_options.c
+
+    Implemented checks of the dwarf_offset_list() function.
+    Refactored the print_die_and_children_internal
+    function: checking code is pushed to
+    nearby static functions so the overall logic is clearer.
+            modified:   src/bin/dwarfdump/print_die.c
+
+    Clarified documentation of dwarf_offset_list().
+            modified:   src/lib/libdwarf/libdwarf.h
+
+2022-12-17:  David Anderson
+    commit f335fada3a1ed97dc4df9d5593d25a9af88a19c1
+
+    Renamed glflags  DIE_global_offset to
+    DIE_section_offset to be specific
+    about its meaning.
+            modified:   dd_glflags.c
+            modified:   dd_glflags.h
+            modified:   dwarfdump.c
+            modified:   print_aranges.c
+            modified:   print_die.c
+            modified:   print_frames.c
+            modified:   print_ranges.c
+
+2022-12-17:  David Anderson
+    commit 3f0c2b6cf67462b71daa9401220b196d29425851
+
+    Making a new --check-functions option
+    and a place to record such.
+    No meaningful implementation yet.
+            modified:   dd_command_options.c
+            modified:   dd_glflags.c
+            modified:   dd_glflags.h
+
+    Comment changes.
+            modified:   print_die.c
+
+2022-12-17:  David Anderson
+    commit 3668a15c80a00f6914a623c64a69f947b49419bf
+
+    Removed some duplicated paragraphs about
+    section groups.
+    Reformatted a number of paragraphs
+    for the convenience of the editor.
+            modified:   libdwarf.dox
+
+2022-12-17:  David Anderson
+    commit 94b4892b8adbab9316af03301b629d08acf30d8b
+
+    Bringing up to date with git log.
+            modified:   ChangeLog
+
 2022-12-17:  David Anderson
     commit 17ed6be737a6b9082be1f7014d68c9494e509898
 
