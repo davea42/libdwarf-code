@@ -2213,6 +2213,135 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
     }
 }
 
+static void
+dd_check_if_legal_offset( Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Off offset)
+{
+    (void)dbg;
+    (void)die;
+    (void)offset;
+#if 0    
+    Dwarf_Error lerror = 0;
+  
+FIXME
+#endif
+}
+
+static void
+check_functions_simple_fail(const char *name,Dwarf_Error error)
+{
+    struct esb_s m;
+    char ebuf[60];
+
+    esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
+    esb_append_printf_s(&m,"fail %s ",name);
+    esb_append(&m,
+        dwarf_errmsg(error));
+    DWARF_CHECK_ERROR(check_functions_result,
+        esb_get_string(&m));
+    esb_destructor(&m);
+}
+
+
+static void
+dd_check_die_functions( Dwarf_Debug dbg,
+    Dwarf_Die die)
+{
+    Dwarf_Error error = 0;
+    Dwarf_Off off = 0;
+    Dwarf_Half attrnum = 0;
+    Dwarf_Unsigned unsign = 0;
+    int       res = 0;
+
+    if(!glflags.gf_check_functions) {
+        return;
+    }
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    res = dwarf_dietype_offset(die,&off,&error);
+    if (res == DW_DLV_OK) {
+        dd_check_if_legal_offset(dbg,die,off);
+    } else if (res == DW_DLV_ERROR) {
+        int err = dwarf_errno(error);
+        if (err == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
+        } else {
+            struct esb_s m;
+            char ebuf[60];
+
+            esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
+            esb_append_printf_s(&m,
+                "dwarf_dietype_offset error %s"
+                " Not a CU die or not a local reference",
+                dwarf_errmsg(error));
+            DWARF_CHECK_ERROR(check_functions_result,
+                esb_get_string(&m));
+            esb_destructor(&m);
+        }
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } /* else DW_DLV_NO_ENTRY, we assume ok */
+    off = 0;
+    res = dwarf_bytesize(die,&unsign,&error);
+    if (res == DW_DLV_OK) {
+        /* Ok */
+    } else if (res == DW_DLV_ERROR) {
+        check_functions_simple_fail("dwarf_srclang",error);
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } /* else DW_DLV_NO_ENTRY, we assume ok */
+    unsign = 0;
+    res = dwarf_bitsize(die,&unsign,&error);
+    if (res == DW_DLV_OK) {
+        /* Ok */
+    } else if (res == DW_DLV_ERROR) {
+        check_functions_simple_fail("dwarf_bitsize",error);
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } /* else DW_DLV_NO_ENTRY, we assume ok */
+    unsign = 0;
+    res = dwarf_bitoffset(die,&attrnum,&unsign,&error);
+    if (res == DW_DLV_OK) {
+        /* ok */
+    } else if (res == DW_DLV_ERROR) {
+        check_functions_simple_fail("dwarf_bitoffset",error);
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } /* else DW_DLV_NO_ENTRY, we assume ok */
+    attrnum = 0;
+    unsign = 0;
+    res = dwarf_srclang(die,&unsign,&error);
+    if (res == DW_DLV_OK) {
+        if ((unsign >=1) && (unsign <= DW_LANG_BLISS)) {
+            /* standard */
+        } else if ((unsign > 0x8000) && (unsign < 0x8766)) {
+            /* extension */
+        } else {
+            struct esb_s m;
+            char ebuf[60];
+    
+            esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
+            esb_append_printf_u(&m,
+                "dwarf_srclang fail" 
+                "as the source language 0x%x"
+                " returned is unknown",unsign);
+            DWARF_CHECK_ERROR(check_functions_result,
+                esb_get_string(&m));
+            esb_destructor(&m);
+        }
+    } else if (res == DW_DLV_ERROR) {
+        check_functions_simple_fail("dwarf_srclang",error);
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } /* else DW_DLV_NO_ENTRY, we assume ok */
+    unsign = 0;
+    res = dwarf_arrayorder(die,&unsign,&error);
+    if (res == DW_DLV_OK) {
+        if (unsign != DW_ORD_col_major &&
+            unsign != DW_ORD_row_major) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "array ordering value not valid DW_ORD_");
+        }
+    } else if (res == DW_DLV_ERROR) {
+        check_functions_simple_fail("dwarf_arrayorder",error);
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    } /* else DW_DLV_NO_ENTRY, we assume ok */
+}
+
 /*  If print_else_name_match is FALSE,
     check for attribute  matches with -S
     inr print_attribute, and if found,
@@ -2473,6 +2602,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         return atres;
     }
 
+    dd_check_die_functions(dbg,die);
     dd_check_attrlist_sensible(dbg,die,atlist,atcnt);
     for (i = 0; i < atcnt; i++) {
         int        ares = 0;

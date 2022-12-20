@@ -834,7 +834,7 @@ validate_abbrev_code(Dwarf_Unsigned abbrev_code)
                 "Abbrev code %" DW_PR_DUu, abbrev_code);
             esb_append(&ar,
                 " is invalid given the abbrev-code array size"
-                " for the CU is zero)");
+                " for the CU is zero");
         } else {
             esb_append_printf_u(&ar,
                 "Abbrev code %" DW_PR_DUu, abbrev_code);
