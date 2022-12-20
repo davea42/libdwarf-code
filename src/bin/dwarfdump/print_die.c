@@ -2343,11 +2343,19 @@ dd_check_die_functions( Dwarf_Debug dbg,
     unsign = 0;
     res = dwarf_srclang(die,&unsign,&error);
     if (res == DW_DLV_OK) {
-        if ((unsign >=1) && (unsign <= DW_LANG_BLISS)) {
+        if ((unsign >=1) && (unsign <= DW_LANG_Ada2012)) {
             /* standard */
-        } else if ((unsign > 0x8000) && (unsign < 0x8766)) {
-            /* extension */
-        } else {
+        } else  {
+            switch(unsign) {
+            case DW_LANG_Mips_Assembler: 
+            case DW_LANG_GOOGLE_RenderScript:
+            case DW_LANG_Upc:
+            case DW_LANG_ALTIUM_Assembler:
+            case DW_LANG_BORLAND_Delphi:
+            case DW_LANG_SUN_Assembler:
+                 break;
+            default: {
+
             struct esb_s m;
             char ebuf[60];
     
@@ -2359,6 +2367,8 @@ dd_check_die_functions( Dwarf_Debug dbg,
             DWARF_CHECK_ERROR(check_functions_result,
                 esb_get_string(&m));
             esb_destructor(&m);
+            }
+            }
         }
     } else if (res == DW_DLV_ERROR) {
         check_functions_simple_fail("dwarf_srclang",error);

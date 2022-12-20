@@ -2778,16 +2778,44 @@ dwarf_get_LANG_name (unsigned int val,
     case DW_LANG_BLISS:
         *s_out = "DW_LANG_BLISS";
         return DW_DLV_OK;
+    case DW_LANG_Kotlin:
+        *s_out = "DW_LANG_Kotlin";
+        return DW_DLV_OK;
+    case DW_LANG_Zig:
+        *s_out = "DW_LANG_Zig";
+        return DW_DLV_OK;
+    case DW_LANG_Crystal:
+        *s_out = "DW_LANG_Crystal";
+        return DW_DLV_OK;
+    case DW_LANG_C_plus_plus_17:
+        *s_out = "DW_LANG_C_plus_plus_17";
+        return DW_DLV_OK;
+    case DW_LANG_C_plus_plus_20:
+        *s_out = "DW_LANG_C_plus_plus_20";
+        return DW_DLV_OK;
+    case DW_LANG_C17:
+        *s_out = "DW_LANG_C17";
+        return DW_DLV_OK;
+    case DW_LANG_Fortran18:
+        *s_out = "DW_LANG_Fortran18";
+        return DW_DLV_OK;
+    case DW_LANG_Ada2005:
+        *s_out = "DW_LANG_Ada2005";
+        return DW_DLV_OK;
+    case DW_LANG_Ada2012:
+        *s_out = "DW_LANG_Ada2012";
+        return DW_DLV_OK;
     case DW_LANG_lo_user:
         *s_out = "DW_LANG_lo_user";
         return DW_DLV_OK;
     case DW_LANG_Mips_Assembler:
         *s_out = "DW_LANG_Mips_Assembler";
         return DW_DLV_OK;
-    /*  Skipping alternate spelling of value
-        0x8001. DW_LANG_GOOGLE_RenderScript */
     case DW_LANG_Upc:
         *s_out = "DW_LANG_Upc";
+        return DW_DLV_OK;
+    case DW_LANG_GOOGLE_RenderScript:
+        *s_out = "DW_LANG_GOOGLE_RenderScript";
         return DW_DLV_OK;
     case DW_LANG_SUN_Assembler:
         *s_out = "DW_LANG_SUN_Assembler";

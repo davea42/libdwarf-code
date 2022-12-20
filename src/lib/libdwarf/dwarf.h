@@ -1163,11 +1163,21 @@ most-likely-useful name. */
 #define DW_LANG_Fortran08               0x0023 /* DWARF5 */
 #define DW_LANG_RenderScript            0x0024 /* DWARF5 */
 #define DW_LANG_BLISS                   0x0025 /* DWARF5 */
+#define DW_LANG_Kotlin                  0x0026 /* DWARF6 */
+#define DW_LANG_Zig                     0x0027 /* DWARF6 */
+#define DW_LANG_Crystal                 0x0028 /* DWARF6 */
+#define DW_LANG_C_plus_plus_17          0x002a /* DWARF6 */
+#define DW_LANG_C_plus_plus_20          0x002b /* DWARF6 */
+#define DW_LANG_C17                     0x002c /* DWARF6 */
+#define DW_LANG_Fortran18               0x002d /* DWARF6 */
+#define DW_LANG_Ada2005                 0x002e /* DWARF6 */
+#define DW_LANG_Ada2012                 0x002f /* DWARF6 */
+
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
 #define DW_LANG_Upc                     0x8765 /* UPC, use
                                         DW_LANG_UPC instead. */
-#define DW_LANG_GOOGLE_RenderScript     0x8001
+#define DW_LANG_GOOGLE_RenderScript     0x8e57
 /* ALTIUM extension */
 #define DW_LANG_ALTIUM_Assembler        0x9101  /* ALTIUM */
 #define DW_LANG_BORLAND_Delphi          0xb000
