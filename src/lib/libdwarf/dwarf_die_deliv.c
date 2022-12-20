@@ -2858,6 +2858,7 @@ dwarf_child(Dwarf_Die die,
     dwarf_dealloc(dbg,*new_die,DW_DLE_DIE);
     The old form only works with debug_info.
     The new _b form works with debug_info or debug_types.
+
     */
 int
 dwarf_offdie_b(Dwarf_Debug dbg,

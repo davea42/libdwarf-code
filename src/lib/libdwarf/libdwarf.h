@@ -2411,10 +2411,17 @@ DW_API int dwarf_highpc_b(Dwarf_Die dw_die,
     Check the section of the DIE to know which
     it is, dwarf_cu_header_basics() will return that.
 
+    Added pointer argument to return the section
+    the offset applies to. December 2022.
+
     @param dw_die
     The DIE of interest.
     @param dw_return_offset
     If successful, returns the offset through the pointer.
+    @param dw_is_info
+    If successful, set to TRUE if the dw_return_offset
+    is in .debug_info and FALSE if the dw_return_offset
+    is in .debug_types.
     @param dw_error
     The usual error detail return pointer.
     @return
@@ -2422,6 +2429,7 @@ DW_API int dwarf_highpc_b(Dwarf_Die dw_die,
 */
 DW_API int dwarf_dietype_offset(Dwarf_Die dw_die,
     Dwarf_Off   * dw_return_offset,
+    Dwarf_Bool  * dw_is_info,
     Dwarf_Error * dw_error);
 
 /*! @brief Return the value of the attribute  DW_AT_byte_size

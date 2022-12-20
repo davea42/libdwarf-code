@@ -32,6 +32,7 @@
 #include <config.h>
 
 #include <stddef.h> /* NULL size_t */
+#include <stdio.h> /* debugging printf */
 
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -1140,23 +1141,38 @@ dwarf_lowpc(Dwarf_Die die,
 /*  If 'die' contains the DW_AT_type attribute, it returns
     the (global) offset referenced by the attribute through
     the return_off pointer.
+    Returns through return_is_info which section applies.
     In case of DW_DLV_NO_ENTRY or DW_DLV_ERROR it sets offset zero. */
 int
 dwarf_dietype_offset(Dwarf_Die die,
-    Dwarf_Off *return_off, Dwarf_Error *error)
+    Dwarf_Off *return_off, 
+    Dwarf_Bool *return_is_info,
+    Dwarf_Error *error)
 {
     int res = 0;
     Dwarf_Off offset = 0;
     Dwarf_Attribute attr = 0;
+    Dwarf_Bool is_info = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
+    /* Lets see where the input die is */
+    is_info =  dwarf_get_die_infotypes_flag(die);
     res = dwarf_attr(die,DW_AT_type,&attr,error);
     if (res == DW_DLV_OK) {
+        if (attr->ar_attribute_form_direct == DW_FORM_ref_sig8){
+            is_info = FALSE;
+        }
         res = dwarf_global_formref(attr,&offset,error);
         dwarf_dealloc(die->di_cu_context->cc_dbg,attr,
             DW_DLA_ATTR);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc_attribute(attr);
+        }
+        if (res == DW_DLV_OK) {
+            *return_off = offset;
+            *return_is_info = is_info;
+        }
     }
-    *return_off = offset;
     return res;
 }
 
