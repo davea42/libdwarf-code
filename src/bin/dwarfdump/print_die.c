@@ -2215,17 +2215,51 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
 
 static void
 dd_check_if_legal_offset( Dwarf_Debug dbg,
-    Dwarf_Die die,
-    Dwarf_Off offset)
+    Dwarf_Off offset,
+    Dwarf_Bool is_info)
 {
-    (void)dbg;
-    (void)die;
-    (void)offset;
-#if 0    
-    Dwarf_Error lerror = 0;
-  
-FIXME
+    int res = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Die dietwo = 0;
+
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    res = dwarf_offdie_b(dbg,offset,is_info,&dietwo,&error);
+    if (res == DW_DLV_OK) {
+        dwarf_dealloc_die(dietwo);
+        return; /* ok */
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        struct esb_s m;
+        char ebuf[100];
+
+        esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
+        esb_append_printf_u(&m,
+            "dwarf_dietype_offset  ok but "
+            "dwarf_offdie_b given offset 0x%"
+            DW_PR_DUx
+            "  got DW_DLV_NO_ENTRY.",
+            offset);
+        DWARF_CHECK_ERROR(check_functions_result,
+            esb_get_string(&m));
+        esb_destructor(&m);
+    } else { /* DW_DLV_ERROR */
+        struct esb_s m;
+        char ebuf[100];
+
+        esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
+        esb_append_printf_u(&m,
+            "dwarf_dietype_offset gave bad offset 0x%"
+            DW_PR_DUx
+            " so not a local reference DW_DLV_ERROR",
+            offset);
+#if 0
+            dwarf_errmsg(error));
 #endif
+        DWARF_CHECK_ERROR(check_functions_result,
+            esb_get_string(&m));
+        esb_destructor(&m);
+        DROP_ERROR_INSTANCE(dbg,res,error);
+    }
 }
 
 static void
@@ -2253,17 +2287,19 @@ dd_check_die_functions( Dwarf_Debug dbg,
     Dwarf_Half attrnum = 0;
     Dwarf_Unsigned unsign = 0;
     int       res = 0;
+    Dwarf_Bool is_info = FALSE;
 
     if(!glflags.gf_check_functions) {
         return;
     }
     DWARF_CHECK_COUNT(check_functions_result,1);
-    res = dwarf_dietype_offset(die,&off,&error);
+    res = dwarf_dietype_offset(die,&off,&is_info,&error);
     if (res == DW_DLV_OK) {
-        dd_check_if_legal_offset(dbg,die,off);
+        dd_check_if_legal_offset(dbg,off,is_info);
     } else if (res == DW_DLV_ERROR) {
         int err = dwarf_errno(error);
         if (err == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
+             /* OK */
         } else {
             struct esb_s m;
             char ebuf[60];
@@ -2317,9 +2353,9 @@ dd_check_die_functions( Dwarf_Debug dbg,
     
             esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
             esb_append_printf_u(&m,
-                "dwarf_srclang fail" 
-                "as the source language 0x%x"
-                " returned is unknown",unsign);
+                "dwarf_srclang fail " 
+                "as the source language 0x%x "
+                "returned is unknown",unsign);
             DWARF_CHECK_ERROR(check_functions_result,
                 esb_get_string(&m));
             esb_destructor(&m);
