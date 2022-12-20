@@ -913,6 +913,21 @@
     has also been fixed.
 
     A <b>compatibility</b> change affects callers of
+    dwarf_dietype_offset(), which on success returns
+    the offset of the target of the DW_AT_type attribute
+    (if such exists in the Dwarf_Die).  Added a pointer
+    argument so the function can return a FALSE argument
+    indicating the offset refers to DWARF4 .debug_types
+    section, rather than the .debug_info section.
+    If anyone was using this function it would fail
+    badly (while pretending success)
+    with a DWARF4 DW_FORM_ref_sig8 on a DW_AT_type
+    attribute from the Dwarf_Die argument.  One will likely
+    encounter DWARF4 content so a single correct function
+    seemed necessary. New regression tests will ensure
+    this will continue to work.
+
+    A <b>compatibility</b> change affects callers of
     dwarf_get_pubtypes().  If an application reads
     .debug_pubtypes there is a <b>compatibility
     break</b>. Such applications must be recompiled
@@ -926,7 +941,7 @@
 
     For any application <b>not</b> calling
     dwarf_get_pubtypes() there is no compatibility
-    issue of any kind.
+    issue.
 
     The changes are: the data type Dwarf_Type
     disappears as do dwarf_pubtypename()
