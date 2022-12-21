@@ -188,7 +188,7 @@ dwarf_get_debug_sup(Dwarf_Debug dbg,
     }
     checksum_ptr = data;
     if (version_out) {
-        *version_out = version;
+        *version_out = (Dwarf_Half)version;
     }
     if (is_supp) {
         *is_supplementary_out = is_supp;

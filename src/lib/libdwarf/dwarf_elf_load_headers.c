@@ -1403,7 +1403,7 @@ this_rel_is_a_section_dwarf_related(
         *oksecnum_out = 0; /* no reloc needed. */
         return DW_DLV_OK;
     }
-    *oksecnum_out = oksecnum;
+    *oksecnum_out = (unsigned)oksecnum;
     return DW_DLV_OK;
 }
 /*  Secnum here is the secnum of rela. Not
@@ -1527,6 +1527,11 @@ _dwarf_elf_load_sect_namestring(
     return DW_DLV_OK;
 }
 
+/*  The C standard ensures these are all appropriate
+    zero bits. */
+static const dw_elf32_ehdr eh32_zero;
+static const dw_elf64_ehdr eh64_zero;
+
 static int
 elf_load_elf_header32(
     dwarf_elf_object_access_internals_t *ep,int *errcode)
@@ -1535,6 +1540,7 @@ elf_load_elf_header32(
     dw_elf32_ehdr ehdr32;
     struct generic_ehdr *ehdr = 0;
 
+    ehdr32 = eh32_zero; 
     res = RRMOA(ep->f_fd,&ehdr32,0,sizeof(ehdr32),
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {
@@ -1557,6 +1563,7 @@ elf_load_elf_header64(
     dw_elf64_ehdr ehdr64;
     struct generic_ehdr *ehdr = 0;
 
+    ehdr64 = eh64_zero; 
     res = RRMOA(ep->f_fd,&ehdr64,0,sizeof(ehdr64),
         ep->f_filesize,errcode);
     if (res != DW_DLV_OK) {
