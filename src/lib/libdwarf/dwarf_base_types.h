@@ -133,4 +133,4 @@ typedef struct Dwarf_File_Entry_s  *Dwarf_File_Entry;
 typedef struct Dwarf_CU_Context_s  *Dwarf_CU_Context;
 typedef struct Dwarf_Hash_Table_s  *Dwarf_Hash_Table;
 typedef struct Dwarf_Alloc_Hdr_s   *Dwarf_Alloc_Hdr;
-#endif  /* DWARF_BASE_TYPES_H */
+#endif /* DWARF_BASE_TYPES_H */

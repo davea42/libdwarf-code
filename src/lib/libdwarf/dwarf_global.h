@@ -50,7 +50,7 @@ struct Dwarf_Global_Context_s {
     Dwarf_Debug pu_dbg;
 
     /*  One of DW_GL_GLOBAL,DW_GL_PUBTYPES,etc */
-    int      pu_global_category; 
+    int      pu_global_category;
 
     /*  The following set with the DW_TAG of the DIE
         involved.  Left 0 with .debug_pubnames. */

@@ -2272,11 +2272,11 @@ DW_API int dwarf_hasattr(Dwarf_Die dw_die,
     Returns DW_DLV_OK etc.
     DW_DLV_NO_ENTRY means there are no children of the DIE,
     hence no list of child offsets.
-  
+
     On successful return, use
     dwarf_dealloc(dbg, dw_offbuf, DW_DLA_LIST);
     to dealloc the allocated space.
-    
+
     @see exampleoffset_list
 */
 DW_API int dwarf_offset_list(Dwarf_Debug dw_dbg,
@@ -2372,7 +2372,7 @@ DW_API int dwarf_lowpc(Dwarf_Die dw_die,
     which we don't describe here, but which
     are shown in the example. See the DWARF5 standard.
 
-    @see examplehighpc 
+    @see examplehighpc
 
     @param dw_die
     The DIE of interest.
@@ -6863,7 +6863,7 @@ DW_API int dwarf_globals_by_type(Dwarf_Debug dw_dbg,
 
     @param dw_dbg
     The Dwarf_Debug of interest.
-    @param dw_global_like 
+    @param dw_global_like
     The array of globals/types/etc data to dealloc (free).
     @param dw_count
     The number of entries in the array.
