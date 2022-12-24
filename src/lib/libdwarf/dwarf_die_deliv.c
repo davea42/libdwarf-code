@@ -594,7 +594,8 @@ finish_cu_context_via_cudie_inner(
         }
         dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
         return resdwob;
-    } else  if (resdwo == DW_DLV_NO_ENTRY) {
+    } 
+    if (resdwo == DW_DLV_NO_ENTRY) {
         /* no cudie. Empty CU. */
         return DW_DLV_OK;
     }
@@ -2655,8 +2656,11 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
     }
     if (lres == DW_DLV_NO_ENTRY) {
         dwarfstring m;
+        char buf[130];
+
+        buf[0] = 0;
+        dwarfstring_constructor_static(&m,buf,sizeof(buf));
         dwarf_dealloc_die(ret_die);
-        dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
             "DW_DLE_DIE_ABBREV_LIST_NULL: "
             "There is no abbrev present for code %u"
