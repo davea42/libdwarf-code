@@ -221,7 +221,6 @@ create_fullest_file_path(Dwarf_Debug dbg,
         int need_dir = FALSE;
         unsigned include_dir_offset = 1;
         static char compdirbuf[300];
-        static char incdirbuf[300];
         static char filenamebuf[300];
         dwarfstring compdir;
         dwarfstring incdir;
@@ -231,8 +230,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
             targbuf,sizeof(targbuf));
         dwarfstring_constructor_static(&compdir,
             compdirbuf,sizeof(compdirbuf));
-        dwarfstring_constructor_static(&incdir,
-            incdirbuf,sizeof(incdirbuf));
+        dwarfstring_constructor_fixed(&incdir,300);
         dwarfstring_constructor_static(&filename,
             filenamebuf,sizeof(filenamebuf));
         if (line_context->lc_compilation_directory) {
@@ -259,9 +257,9 @@ create_fullest_file_path(Dwarf_Debug dbg,
         if (dirno > line_context->lc_include_directories_count) {
             /*  This is quite corrupted. */
             dwarfstring_destructor(&targ);
-            dwarfstring_destructor(&incdir);
             dwarfstring_destructor(&compdir);
             dwarfstring_destructor(&filename);
+            dwarfstring_reset(&incdir);
             dwarfstring_append_printf_u(&incdir,
                 "DW_DLE_INCL_DIR_NUM_BAD: "
                 "corrupt include directory index %u"
@@ -345,11 +343,13 @@ static void
 report_bogus_stmt_list_form(Dwarf_Debug dbg,
     Dwarf_Half attrform, Dwarf_Error *error)
 {
-    dwarfstring m;
-    dwarfstring f;
+    dwarfstring m; /* OK constructor_fixed  */
+    dwarfstring f; /* Ok constructor_static */
+    char buf[32];
     const char *formname = 0;
 
-    dwarfstring_constructor(&f);
+    buf[0] = 0;
+    dwarfstring_constructor_static(&f,buf,sizeof(buf));
     dwarf_get_FORM_name(attrform,&formname);
     if (!formname) {
         dwarfstring_append_printf_u(&f,"Invalid Form Code "
@@ -357,7 +357,7 @@ report_bogus_stmt_list_form(Dwarf_Debug dbg,
     } else {
         dwarfstring_append(&f,(char *)formname);
     }
-    dwarfstring_constructor(&m);
+    dwarfstring_constructor_fixed(&m,200);
     dwarfstring_append_printf_s(&m,
         "DW_DLE_LINE_OFFSET_WRONG_FORM: form %s "
         "instead of an allowed section offset form.",
@@ -1581,9 +1581,9 @@ dwarf_filename(Dwarf_Line_Context context,
         return res;
     }
     if (fileno >= endindex) {
-        dwarfstring m;
+        dwarfstring m; /* ok constructor_fixed */
 
-        dwarfstring_constructor(&m);
+        dwarfstring_constructor_fixed(&m, 200);
         dwarfstring_append_printf_i(&m,
             "DW_DLE_NO_FILE_NAME: the file number is %d ",
             fileno);
@@ -1923,10 +1923,10 @@ _dwarf_report_bad_lnct( Dwarf_Debug dbg,
     const char  *dlename,
     Dwarf_Error *err)
 {
-    dwarfstring m;
-    dwarfstring f2;
+    dwarfstring m;  /* constructor_static ok */
+    dwarfstring f2; /* constructor_static ok */
     const char *typename = 0;
-    char tnbuf[40];
+    char tnbuf[48];
     char mnbuf[100];
 
     dwarfstring_constructor_static(&f2,tnbuf,sizeof(tnbuf));
@@ -1957,9 +1957,9 @@ report_ltype_form_issue(Dwarf_Debug dbg,
     const char *splmsg,
     Dwarf_Error *error)
 {
-    dwarfstring m;
-    dwarfstring f2;
-    dwarfstring f;
+    dwarfstring m;  /* constructor_fixed ok */
+    dwarfstring f2; /* construcot_static ok */
+    dwarfstring f;  /* construcot_static ok */
     const char *formname = 0;
     const char *typename = 0;
     char fnbuf[32];
