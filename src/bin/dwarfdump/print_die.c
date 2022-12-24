@@ -961,6 +961,7 @@ dd_setup_die_check_functions(Dwarf_Debug dbg,
     } else {
         /*  This is the real intent. To check that
             this works. */
+        res = DW_DLV_OK;
         res = dwarf_offset_list(dbg,section_offset,is_info,
             offset_array,offset_count,err);
         if (res == DW_DLV_ERROR) {
@@ -969,7 +970,7 @@ dd_setup_die_check_functions(Dwarf_Debug dbg,
             if (res == DW_DLV_ERROR) {
                 DROP_ERROR_INSTANCE(dbg,res,*err);
             }
-        } else if (*offset_count > 0) {
+        } else if (res == DW_DLV_OK) {
             Dwarf_Unsigned i = 0;
             Dwarf_Unsigned count = *offset_count;
             Dwarf_Off     *off_array = *offset_array;
@@ -1014,7 +1015,7 @@ print_die_and_children(Dwarf_Debug dbg,
     Dwarf_Error *err)
 {
     int             res = 0;
-    Dwarf_Off      *offset_array = 0;
+    Dwarf_Off     *offset_array = 0;
     Dwarf_Unsigned offset_count = 0;
 
 #if 0
@@ -1089,7 +1090,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             if (!is_info) {
                 /*  No .debug_types. Do not print
                     .debug_types name */
-                return DW_DLV_NO_ENTRY;
+                return res;
             }
         }
     }
@@ -1970,7 +1971,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             SET_DIE_STACK_ENTRY(die_stack_indent_level,0,
                 dieprint_cu_goffset);
             {
-                Dwarf_Off      *inner_offset_array = 0;
+                Dwarf_Off     *inner_offset_array = 0;
                 Dwarf_Unsigned inner_offset_count = 0;
 
                 dd_setup_die_check_functions(dbg,in_die,is_info,
@@ -2230,31 +2231,37 @@ dd_check_if_legal_offset( Dwarf_Debug dbg,
     }
     if (res == DW_DLV_NO_ENTRY) {
         struct esb_s m;
-        char ebuf[100];
+        char ebuf[120];
 
+        ebuf[0] = 0;
         esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
         esb_append_printf_u(&m,
-            "dwarf_dietype_offset  ok but "
-            "dwarf_offdie_b given offset 0x%"
-            DW_PR_DUx
-            "  got DW_DLV_NO_ENTRY.",
-            offset);
+            "dwarf_offdie_b  ok but "
+            "given offset 0x%"
+            DW_PR_DUx ,offset);
+        esb_append_printf_u(&m,
+            " and is_info %u"
+            " got DW_DLV_NO_ENTRY.",
+            (Dwarf_Small)is_info);
         DWARF_CHECK_ERROR(check_functions_result,
             esb_get_string(&m));
         esb_destructor(&m);
-    } else { /* DW_DLV_ERROR */
+        return;
+    } 
+    {
         struct esb_s m;
-        char ebuf[100];
+        char ebuf[200];
 
         esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
         esb_append_printf_u(&m,
-            "dwarf_dietype_offset gave bad offset 0x%"
-            DW_PR_DUx
-            " so not a local reference DW_DLV_ERROR",
-            offset);
-#if 0
+            "dwarf_offdie_b given offset 0x%"
+            DW_PR_DUx, offset);
+        esb_append_printf_u(&m,
+            "and is_info %u"
+            " is not a local reference.",
+            (Dwarf_Small)is_info);
+        esb_append_printf_s(&m," Underlying error: %s",
             dwarf_errmsg(error));
-#endif
         DWARF_CHECK_ERROR(check_functions_result,
             esb_get_string(&m));
         esb_destructor(&m);
@@ -2282,12 +2289,12 @@ static void
 dd_check_die_functions( Dwarf_Debug dbg,
     Dwarf_Die die)
 {
-    Dwarf_Error error = 0;
-    Dwarf_Off off = 0;
-    Dwarf_Half attrnum = 0;
+    Dwarf_Error    error = 0;
+    Dwarf_Off      off = 0;
+    Dwarf_Half     attrnum = 0;
     Dwarf_Unsigned unsign = 0;
-    int       res = 0;
-    Dwarf_Bool is_info = FALSE;
+    int            res = 0;
+    Dwarf_Bool     is_info = FALSE;
 
     if(!glflags.gf_check_functions) {
         return;
@@ -2316,11 +2323,12 @@ dd_check_die_functions( Dwarf_Debug dbg,
         DROP_ERROR_INSTANCE(dbg,res,error);
     } /* else DW_DLV_NO_ENTRY, we assume ok */
     off = 0;
+
     res = dwarf_bytesize(die,&unsign,&error);
     if (res == DW_DLV_OK) {
         /* Ok */
     } else if (res == DW_DLV_ERROR) {
-        check_functions_simple_fail("dwarf_srclang",error);
+        check_functions_simple_fail("dwarf_bytesize",error);
         DROP_ERROR_INSTANCE(dbg,res,error);
     } /* else DW_DLV_NO_ENTRY, we assume ok */
     unsign = 0;
@@ -2328,10 +2336,11 @@ dd_check_die_functions( Dwarf_Debug dbg,
     if (res == DW_DLV_OK) {
         /* Ok */
     } else if (res == DW_DLV_ERROR) {
-        check_functions_simple_fail("dwarf_bitsize",error);
+        check_functions_simple_fail("dwarf_srclang",error);
         DROP_ERROR_INSTANCE(dbg,res,error);
     } /* else DW_DLV_NO_ENTRY, we assume ok */
     unsign = 0;
+
     res = dwarf_bitoffset(die,&attrnum,&unsign,&error);
     if (res == DW_DLV_OK) {
         /* ok */
@@ -2341,6 +2350,7 @@ dd_check_die_functions( Dwarf_Debug dbg,
     } /* else DW_DLV_NO_ENTRY, we assume ok */
     attrnum = 0;
     unsign = 0;
+
     res = dwarf_srclang(die,&unsign,&error);
     if (res == DW_DLV_OK) {
         if ((unsign >=1) && (unsign <= DW_LANG_Ada2012)) {
@@ -2375,6 +2385,7 @@ dd_check_die_functions( Dwarf_Debug dbg,
         DROP_ERROR_INSTANCE(dbg,res,error);
     } /* else DW_DLV_NO_ENTRY, we assume ok */
     unsign = 0;
+
     res = dwarf_arrayorder(die,&unsign,&error);
     if (res == DW_DLV_OK) {
         if (unsign != DW_ORD_col_major &&
@@ -6446,7 +6457,8 @@ print_location_list(Dwarf_Debug dbg,
     lres = dwarf_get_version_of_die(die,&version,
         &offset_size);
     if (lres != DW_DLV_OK) {
-        /* is DW_DLV_ERROR (see libdwarf query.c) */
+        /*  Is DW_DLV_ERROR (see libdwarf query.c),
+            there is no error argument. */
         simple_err_only_return_action(lres,
             "\nERROR: die or context bad calling "
             "dwarf_get_version_of_die in print_location_list."
