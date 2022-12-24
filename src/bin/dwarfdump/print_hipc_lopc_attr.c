@@ -239,7 +239,7 @@ checking_valid_code(Dwarf_Half tag,
             glflags.gf_check_ranges ||
             glflags.gf_check_locations) {
             AddEntryIntoBucketGroup(glflags.pRangesInfo,0,
-                        lowaddr, lowaddr,highaddr,NULL,FALSE);
+                lowaddr, lowaddr,highaddr,NULL,FALSE);
         }
     }
 }
@@ -269,7 +269,6 @@ dd_check_file_etc(Dwarf_Unsigned max_address,
             glflags.seen_PU_high_address = TRUE;
             glflags.PU_high_address = lohipc->hifinal;
         }
-    
         /* We have now both low_pc and high_pc values */
         if (lohipc->havefinal_flag && lohipc->sawlo_flag) {
             /*  We need to decide if this PU is
@@ -291,17 +290,17 @@ dd_check_file_etc(Dwarf_Unsigned max_address,
 
             res = dwarf_lowpc(die,&low_pc,&loclerr);
             if (res != DW_DLV_OK) {
-                 DROP_ERROR_INSTANCE(dbg,res,loclerr);
-                 DWARF_CHECK_ERROR(check_functions_result,
-                     "dwarf_lowpc failed but should not have !");
+                DROP_ERROR_INSTANCE(dbg,res,loclerr);
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "dwarf_lowpc failed but should not have !");
             } else  {
-               had_low_flag = TRUE;
-               if ( low_pc != lohipc->lopc) {
-                   DWARF_CHECK_ERROR(check_functions_result,
-                     " dwarf_lowpc return did not match "
-                     "The expected dwarfdump value!");
-               }
-            }    
+                had_low_flag = TRUE;
+                if ( low_pc != lohipc->lopc) {
+                    DWARF_CHECK_ERROR(check_functions_result,
+                        " dwarf_lowpc return did not match "
+                        "The expected dwarfdump value!");
+                }
+            }
         }
         if (lohipc->sawhi_flag == LOHIPC_SAWOFFSET &&
             lohipc->havefinal_flag &&
@@ -313,34 +312,33 @@ dd_check_file_etc(Dwarf_Unsigned max_address,
             Dwarf_Error loclerr = 0;
 
             res = dwarf_highpc_b(die,&highpc,
-                 &form,&formclass, &loclerr);
+                &form,&formclass, &loclerr);
             if (res != DW_DLV_OK) {
-                 DROP_ERROR_INSTANCE(dbg,res,loclerr);
-                 DWARF_CHECK_ERROR(check_functions_result,
-                     " dwarf_highpc_b failed but should not have !");
+                DROP_ERROR_INSTANCE(dbg,res,loclerr);
+                DWARF_CHECK_ERROR(check_functions_result,
+                    " dwarf_highpc_b failed but should not have !");
             } else  {
-               if (form != DW_FORM_addr &&
-                   !dwarf_addr_form_is_indexed(form)) {
-                   highpc += low_pc;
-               }
+                if (form != DW_FORM_addr &&
+                    !dwarf_addr_form_is_indexed(form)) {
+                    highpc += low_pc;
+                }
+                if ( highpc != lohipc->hifinal) {
+                    struct esb_s m;
+                    char mbuf[100];
 
-               if ( highpc != lohipc->hifinal) {
-                   struct esb_s m;
-                   char mbuf[100];
-
-                   esb_constructor_fixed(&m,mbuf,sizeof(mbuf));
-                   esb_append_printf_u(&m,
-                     " dwarf_highpc_b return 0x%"
-                     DW_PR_XZEROS DW_PR_DUx
-                     " did not match", highpc);
-                   esb_append_printf_u(&m,
-                     " the expected dwarfdump value 0x%"
-                     DW_PR_XZEROS DW_PR_DUx " ",
-                     lohipc->hifinal);
-                   DWARF_CHECK_ERROR(check_functions_result,
-                     esb_get_string(&m));
-                   esb_destructor(&m);
-               }
+                    esb_constructor_fixed(&m,mbuf,sizeof(mbuf));
+                    esb_append_printf_u(&m,
+                        " dwarf_highpc_b return 0x%"
+                        DW_PR_XZEROS DW_PR_DUx
+                        " did not match", highpc);
+                    esb_append_printf_u(&m,
+                        " the expected dwarfdump value 0x%"
+                        DW_PR_XZEROS DW_PR_DUx " ",
+                        lohipc->hifinal);
+                    DWARF_CHECK_ERROR(check_functions_result,
+                        esb_get_string(&m));
+                    esb_destructor(&m);
+                }
             }
         }
     }

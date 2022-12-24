@@ -920,7 +920,7 @@ print_macinfo_for_cu(
 }
 
 #if 0
-static void 
+static void
 dump_offset_list(Dwarf_Off *array,
     Dwarf_Unsigned count,
     int line)
@@ -928,19 +928,19 @@ dump_offset_list(Dwarf_Off *array,
     Dwarf_Unsigned i =0;
     printf("From line %d: count %lu\n",line,(unsigned long)count);
     for ( ; i < count; ++i) {
-         printf("%3lu: 0x%08lx\n",(unsigned long)i,(unsigned long)array[i]);
+        printf("%3lu: 0x%08lx\n",(unsigned long)i,
+            (unsigned long)array[i]);
     }
 }
 #endif
-   
 
 static void
 dd_setup_die_check_functions(Dwarf_Debug dbg,
-     Dwarf_Die       in_die_in,
-     Dwarf_Bool      is_info,     
-     Dwarf_Off     **offset_array,
-     Dwarf_Unsigned *offset_count,
-     Dwarf_Error    *err)
+    Dwarf_Die       in_die_in,
+    Dwarf_Bool      is_info,
+    Dwarf_Off     **offset_array,
+    Dwarf_Unsigned *offset_count,
+    Dwarf_Error    *err)
 {
     Dwarf_Off section_offset = 0;
     Dwarf_Off local_offset = 0;
@@ -948,16 +948,16 @@ dd_setup_die_check_functions(Dwarf_Debug dbg,
 
     if (!(glflags.gf_check_functions && checking_this_compiler())) {
         return;
-    }  
+    }
     DWARF_CHECK_COUNT(check_functions_result,1);
     res = dwarf_die_offsets(in_die_in,&section_offset,
-         &local_offset,err);
+        &local_offset,err);
     if (res != DW_DLV_OK) {
-         DWARF_CHECK_ERROR(check_functions_result,
+        DWARF_CHECK_ERROR(check_functions_result,
             "Unable to get die offsets");
-         if (res == DW_DLV_ERROR) {
-             DROP_ERROR_INSTANCE(dbg,res,*err);
-         }
+        if (res == DW_DLV_ERROR) {
+            DROP_ERROR_INSTANCE(dbg,res,*err);
+        }
     } else {
         /*  This is the real intent. To check that
             this works. */
@@ -976,7 +976,7 @@ dd_setup_die_check_functions(Dwarf_Debug dbg,
             Dwarf_Off     *off_array = *offset_array;
             Dwarf_Off      lastoffset = section_offset;
 
-            for( ; i < count; ++i) {
+            for ( ; i < count; ++i) {
                 Dwarf_Off off = off_array[i];
 
                 if (off <= lastoffset) {
@@ -989,7 +989,7 @@ dd_setup_die_check_functions(Dwarf_Debug dbg,
                     esb_append_printf_u(&m,
                         " 0x%" DW_PR_XZEROS DW_PR_DUx,
                         off);
-                    esb_append_printf_u(&m, 
+                    esb_append_printf_u(&m,
                         "is below the previous of 0x%"
                         DW_PR_XZEROS DW_PR_DUx,
                         lastoffset);
@@ -1584,12 +1584,10 @@ print_die_stack(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 static int
 dd_check_tag_tree(Dwarf_Debug dbg,
-   Dwarf_Die in_die,
-
-   Dwarf_Error *err)
+    Dwarf_Die in_die,
+    Dwarf_Error *err)
 {
     if ( glflags.gf_check_tag_tree ||
         glflags.gf_print_usage_tag_attr) {
@@ -1620,7 +1618,7 @@ dd_check_tag_tree(Dwarf_Debug dbg,
                     "DW_TAG_type_unit");
             }
             return DW_DLV_OK;
-        } 
+        }
         {
             Dwarf_Half tag_parent = 0;
             Dwarf_Half tag_child = 0;
@@ -1666,11 +1664,11 @@ dd_check_tag_tree(Dwarf_Debug dbg,
 }
 
 static void
-check_sibling_off(Dwarf_Unsigned loop_iteration, 
+check_sibling_off(Dwarf_Unsigned loop_iteration,
     Dwarf_Off     *sibling_off_array,
     Dwarf_Unsigned sibling_off_count)
 {
-    if (!sibling_off_count) { 
+    if (!sibling_off_count) {
         return;
     }
     DWARF_CHECK_COUNT(check_functions_result,1);
@@ -1681,7 +1679,7 @@ check_sibling_off(Dwarf_Unsigned loop_iteration,
     } else {
         Dwarf_Unsigned i = 0;
         Dwarf_Off      off = 0;
-     
+
         /*  The following could use binary search as
             the array is strictly assending values. */
         for ( ; i < sibling_off_count; ++i) {
@@ -1702,7 +1700,7 @@ static void
 check_sibling_offset_list_count(Dwarf_Unsigned loop_iteration,
     Dwarf_Unsigned sibling_off_count)
 {
-    if (!sibling_off_count) { 
+    if (!sibling_off_count) {
         return;
     }
     if ((loop_iteration+1) != sibling_off_count) {
@@ -1725,7 +1723,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
     Dwarf_Die        in_die_in,
     Dwarf_Off        dieprint_cu_goffset,
     Dwarf_Bool       is_info,
-    char           **srcfiles, 
+    char           **srcfiles,
     Dwarf_Signed     srcfilescount,
     Dwarf_Off       *sibling_off_array,
     Dwarf_Unsigned   sibling_off_count,
@@ -1741,7 +1739,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
     for (;;++loop_iteration) {
         int offres = 0;
         int res = 0;
-        
 
         /* Get the CU offset for easy error reporting */
         offres = dwarf_die_offsets(in_die,
@@ -2195,9 +2192,9 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
     for (i=0; i < atcnt; ++i) {
         int res = 0;
         Dwarf_Off current_off = 0;
- 
+
         res = dwarf_attr_offset(die,attrlist[i],
-             &current_off,&error);
+            &current_off,&error);
         if (res == DW_DLV_ERROR) {
             DWARF_CHECK_ERROR(check_functions_result,
                 "attr offsets unavailable");
@@ -2208,7 +2205,7 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
             DWARF_CHECK_ERROR(check_functions_result,
                 "attr offsets no_entry (impossible)");
             DROP_ERROR_INSTANCE(dbg,res,error);
-             /* impossible */
+            /* impossible */
         }
         /*  Currently unsure how to check more than this. */
     }
@@ -2247,7 +2244,7 @@ dd_check_if_legal_offset( Dwarf_Debug dbg,
             esb_get_string(&m));
         esb_destructor(&m);
         return;
-    } 
+    }
     {
         struct esb_s m;
         char ebuf[200];
@@ -2284,7 +2281,6 @@ check_functions_simple_fail(const char *name,Dwarf_Error error)
     esb_destructor(&m);
 }
 
-
 static void
 dd_check_die_functions( Dwarf_Debug dbg,
     Dwarf_Die die)
@@ -2296,7 +2292,7 @@ dd_check_die_functions( Dwarf_Debug dbg,
     int            res = 0;
     Dwarf_Bool     is_info = FALSE;
 
-    if(!glflags.gf_check_functions) {
+    if (!glflags.gf_check_functions) {
         return;
     }
     DWARF_CHECK_COUNT(check_functions_result,1);
@@ -2306,7 +2302,7 @@ dd_check_die_functions( Dwarf_Debug dbg,
     } else if (res == DW_DLV_ERROR) {
         int err = dwarf_errno(error);
         if (err == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
-             /* OK */
+            /* OK */
         } else {
             struct esb_s m;
             char ebuf[60];
@@ -2357,21 +2353,21 @@ dd_check_die_functions( Dwarf_Debug dbg,
             /* standard */
         } else  {
             switch(unsign) {
-            case DW_LANG_Mips_Assembler: 
+            case DW_LANG_Mips_Assembler:
             case DW_LANG_GOOGLE_RenderScript:
             case DW_LANG_Upc:
             case DW_LANG_ALTIUM_Assembler:
             case DW_LANG_BORLAND_Delphi:
             case DW_LANG_SUN_Assembler:
-                 break;
+                break;
             default: {
 
             struct esb_s m;
             char ebuf[60];
-    
+
             esb_constructor_fixed(&m,ebuf,sizeof(ebuf));
             esb_append_printf_u(&m,
-                "dwarf_srclang fail " 
+                "dwarf_srclang fail "
                 "as the source language 0x%x "
                 "returned is unknown",unsign);
             DWARF_CHECK_ERROR(check_functions_result,
@@ -2633,7 +2629,6 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         srcfcnt  && PRINTING_DIES) {
         print_srcfiles(srcfiles,srcfcnt);
     }
-
     atres = dwarf_attrlist(die, &atlist, &atcnt, err);
     if (atres == DW_DLV_ERROR) {
         print_error_and_continue(
@@ -2663,7 +2658,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     dd_check_attrlist_sensible(dbg,die,atlist,atcnt);
     for (i = 0; i < atcnt; i++) {
         int        ares = 0;
-        Dwarf_Half attrnum = 0; 
+        Dwarf_Half attrnum = 0;
 
         ares = dwarf_whatattr(atlist[i], &attrnum, err);
         if (ares == DW_DLV_OK) {
