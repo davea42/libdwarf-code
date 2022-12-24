@@ -219,6 +219,18 @@ dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
     return DW_DLV_OK;
 }
 
+static void
+free_dwarf_offsets_chain(Dwarf_Debug dbg, Dwarf_Chain_2 head_chain)
+{
+    Dwarf_Chain_2 cur = head_chain; 
+    Dwarf_Chain_2 next = 0; 
+
+    for ( ; cur ; cur = next ) {
+        next = cur->ch_next;
+        dwarf_dealloc(dbg, cur, DW_DLA_CHAIN_2);
+    }
+}
+
 /* Returns the children offsets for the given offset */
 int
 dwarf_offset_list(Dwarf_Debug dbg,
@@ -230,15 +242,10 @@ dwarf_offset_list(Dwarf_Debug dbg,
     Dwarf_Die child = 0;
     Dwarf_Die sib_die = 0;
     Dwarf_Die cur_die = 0;
+    int       res = 0;
     Dwarf_Unsigned off_count = 0;
-    int res = 0;
-
-    /* Temporary counter. */
     Dwarf_Unsigned i = 0;
-
-    /* Points to contiguous block of Dwarf_Off's to be returned. */
-    Dwarf_Off *ret_offsets = 0;
-
+    Dwarf_Off    *ret_offsets = 0;
     Dwarf_Chain_2 curr_chain = 0;
     Dwarf_Chain_2 head_chain = 0;
     Dwarf_Chain_2 *plast = &head_chain;
@@ -246,13 +253,11 @@ dwarf_offset_list(Dwarf_Debug dbg,
     *offbuf = NULL;
     *offcnt = 0;
 
-    /* Get DIE for offset */
     res = dwarf_offdie_b(dbg,offset,is_info,&die,error);
     if (DW_DLV_OK != res) {
         return res;
     }
 
-    /* Get first child for die */
     res = dwarf_child(die,&child,error);
     if (DW_DLV_ERROR == res || DW_DLV_NO_ENTRY == res) {
         return res;
@@ -265,16 +270,11 @@ dwarf_offset_list(Dwarf_Debug dbg,
             int dres = 0;
             Dwarf_Off cur_off = 0;
 
-            /* Get Global offset for current die */
             dres = dwarf_dieoffset(cur_die,&cur_off,error);
             if (dres == DW_DLV_OK) {
                 /* Normal. use cur_off. */
             } else if (dres == DW_DLV_ERROR) {
-                /* Should be impossible unless... */
-                /* avoid leak. */
-                /*  Just leave cur_off as zero. */
-                /* dwarf_dealloc(dbg,*error,DW_DLA_ERROR); */
-                /* *error = NULL; */
+                free_dwarf_offsets_chain(dbg,head_chain);
                 dwarf_dealloc_die(cur_die);
                 return DW_DLV_ERROR;
             } else { /* DW_DLV_NO_ENTRY */
@@ -284,6 +284,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
             curr_chain = (Dwarf_Chain_2)_dwarf_get_alloc(
                 dbg,DW_DLA_CHAIN_2,1);
             if (curr_chain == NULL) {
+                free_dwarf_offsets_chain(dbg,head_chain);
                 dwarf_dealloc_die(cur_die);
                 _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                 return DW_DLV_ERROR;
@@ -295,14 +296,14 @@ dwarf_offset_list(Dwarf_Debug dbg,
             (*plast) = curr_chain;
             plast = &(curr_chain->ch_next);
         }
-
-        /* Process any siblings entries if any */
+        /* Move to next sibling next sibling */
         sib_die = 0;
         res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,error);
         if (cur_die != die) {
             dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
         }
         if (DW_DLV_ERROR == res) {
+            free_dwarf_offsets_chain(dbg,head_chain);
             return res;
         }
         if (DW_DLV_NO_ENTRY == res) {
@@ -315,8 +316,9 @@ dwarf_offset_list(Dwarf_Debug dbg,
 
     /* Points to contiguous block of Dwarf_Off's. */
     ret_offsets = (Dwarf_Off *) _dwarf_get_alloc(dbg,
-        DW_DLA_ADDR, off_count);
+        DW_DLA_LIST, off_count);
     if (ret_offsets == NULL) {
+        free_dwarf_offsets_chain(dbg,head_chain);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
@@ -327,7 +329,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
     for (i = 0; i < off_count; i++) {
         Dwarf_Chain_2 prev =0;
 
-        *(ret_offsets + i) = curr_chain->ch_item;
+        ret_offsets[i] = curr_chain->ch_item;
         prev = curr_chain;
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, prev, DW_DLA_CHAIN_2);
@@ -1163,15 +1165,11 @@ dwarf_dietype_offset(Dwarf_Die die,
             is_info = FALSE;
         }
         res = dwarf_global_formref(attr,&offset,error);
-        dwarf_dealloc(die->di_cu_context->cc_dbg,attr,
-            DW_DLA_ATTR);
-        if (res == DW_DLV_ERROR) {
-            dwarf_dealloc_attribute(attr);
-        }
         if (res == DW_DLV_OK) {
             *return_off = offset;
             *return_is_info = is_info;
         }
+        dwarf_dealloc_attribute(attr);
     }
     return res;
 }
