@@ -63,7 +63,7 @@ generate_form_error(Dwarf_Debug dbg,
     const char *errname,
     const char *funcname)
 {
-    dwarfstring m;
+    dwarfstring m; /* constructor_static ok */
     char mbuf[DWARFSTRING_ALLOC_SIZE];
     const char * defaultname = "<unknown form>";
 
@@ -173,16 +173,16 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
     Dwarf_Error      * error)
 {
     Dwarf_Unsigned output_length_in_units = 0;
-    Dwarf_Signed * output_block = 0;
-    unsigned i = 0;
-    char * ptr = 0;
-    int remain = 0;
-    Dwarf_Signed * array = 0;
+    Dwarf_Signed  *output_block = 0;
+    unsigned       i = 0;
+    char          *ptr = 0;
+    Dwarf_Signed   remain = 0;
+    Dwarf_Signed  *array = 0;
     Dwarf_Byte_Ptr endptr = (Dwarf_Byte_Ptr)input_block+
         input_length_in_bytes;
 
     output_length_in_units = 0;
-    remain = input_length_in_bytes;
+    remain = (Dwarf_Signed)input_length_in_bytes;
     ptr = input_block;
     while (remain > 0) {
         Dwarf_Unsigned len = 0;
@@ -196,7 +196,7 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         ptr += len;
-        remain -= len;
+        remain -= (Dwarf_Signed)len;
         output_length_in_units++;
     }
     if (remain != 0) {
@@ -228,7 +228,7 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         ptr += len;
-        remain -= len;
+        remain -= (Dwarf_Signed)len;
         array[i] = num;
     }
 
@@ -604,7 +604,9 @@ find_sig8_target_as_global_offset(Dwarf_Attribute attr,
     Dwarf_Die  targdie = 0;
     Dwarf_Bool targ_is_info = 0;
     Dwarf_Off  localoff = 0;
-    int res = 0;
+    int        res = 0;
+    int        resb = 0;
+
     targ_is_info = attr->ar_cu_context->cc_is_info;
     memcpy(sig8,attr->ar_debug_ptr,sizeof(*sig8));
     res = dwarf_find_die_given_sig8(attr->ar_dbg,
@@ -612,10 +614,10 @@ find_sig8_target_as_global_offset(Dwarf_Attribute attr,
     if (res != DW_DLV_OK) {
         return res;
     }
-    res = dwarf_die_offsets(targdie,targoffset,&localoff,error);
-    if (res != DW_DLV_OK) {
+    resb = dwarf_die_offsets(targdie,targoffset,&localoff,error);
+    if (resb != DW_DLV_OK) {
         dwarf_dealloc_die(targdie);
-        return res;
+        return resb;
     }
     *is_info = targdie->di_cu_context->cc_is_info;
     dwarf_dealloc_die(targdie);
@@ -848,10 +850,27 @@ dwarf_global_formref_b(Dwarf_Attribute attr,
         res = find_sig8_target_as_global_offset(attr,
             &sig8,&t_is_info,&t_offset,error);
         if (res == DW_DLV_ERROR) {
+            dwarfstring m;
+            dwarfstring k;
+
+            /*  Lets construct an easily usable error number.
+                Avoiding resizing strings and avoiding
+                using the stack for strings possibly
+                a few hundred bytes long */ 
+            dwarfstring_constructor_fixed(&m,400);
+            dwarfstring_constructor_fixed(&k,200);
+            dwarfstring_append(&k,dwarf_errmsg(*error));
+            dwarfstring_append(&m,
+                "DW_DLE_REF_SIG8_NOT_HANDLED: "
+                " problem finding target. ");
+            dwarf_dealloc_error(dbg,*error);
+            *error = 0;
+            dwarfstring_append(&m,dwarfstring_string(&k));
+            dwarfstring_destructor(&k);
             _dwarf_error_string(dbg, error,
                 DW_DLE_REF_SIG8_NOT_HANDLED,
-                "DW_DLE_REF_SIG8_NOT_HANDLED: "
-                " problem finding target");
+                dwarfstring_string(&m));
+            dwarfstring_destructor(&m);
             return DW_DLV_ERROR;
         }
         if (res == DW_DLV_NO_ENTRY) {
