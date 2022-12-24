@@ -60,7 +60,7 @@ struct Dwarf_Gdbindex_array_instance_s {
     /* the in_object struct size. */
     Dwarf_Unsigned dg_entry_length;
     /* The size of a single field in the in-object struct */
-    int            dg_fieldlen;
+    unsigned       dg_fieldlen;
     /* The address_area type is a bit irregular. */
     enum gdbindex_type_e dg_type;
 };

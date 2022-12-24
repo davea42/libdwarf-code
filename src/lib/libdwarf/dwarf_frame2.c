@@ -968,8 +968,10 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     new_cie->ci_cie_version_number = version;
     new_cie->ci_initial_table = NULL;
     new_cie->ci_length = (Dwarf_Unsigned) prefix->cf_length;
-    new_cie->ci_length_size = prefix->cf_local_length_size;
-    new_cie->ci_extension_size = prefix->cf_local_extension_size;
+    new_cie->ci_length_size = 
+        (Dwarf_Small)prefix->cf_local_length_size;
+    new_cie->ci_extension_size = 
+       (Dwarf_Small)prefix->cf_local_extension_size;
     new_cie->ci_augmentation = (char *) augmentation;
 
     new_cie->ci_data_alignment_factor =
@@ -1026,13 +1028,13 @@ _dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 int
 _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     struct cie_fde_prefix_s *prefix,
-    Dwarf_Small * section_pointer,
-    Dwarf_Small * frame_ptr,
-    Dwarf_Small * section_ptr_end,
-    int use_gnu_cie_calc,
-    Dwarf_Cie cie_ptr_in,
-    Dwarf_Fde * fde_ptr_out,
-    Dwarf_Error * error)
+    Dwarf_Small *section_pointer,
+    Dwarf_Small *frame_ptr,
+    Dwarf_Small *section_ptr_end,
+    int          use_gnu_cie_calc,
+    Dwarf_Cie    cie_ptr_in,
+    Dwarf_Fde   *fde_ptr_out,
+    Dwarf_Error *error)
 {
     Dwarf_Fde new_fde = 0;
     Dwarf_Cie cieptr = 0;
@@ -1220,9 +1222,11 @@ _dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     }
 
     new_fde->fd_length = prefix->cf_length;
-    new_fde->fd_length_size = prefix->cf_local_length_size;
-    new_fde->fd_extension_size = prefix->cf_local_extension_size;
-    new_fde->fd_is_eh = use_gnu_cie_calc;
+    new_fde->fd_length_size = 
+        (Dwarf_Small)prefix->cf_local_length_size;
+    new_fde->fd_extension_size = 
+        (Dwarf_Small)prefix->cf_local_extension_size;
+    new_fde->fd_is_eh = (Dwarf_Small)use_gnu_cie_calc;
     new_fde->fd_cie_offset = cie_base_offset;
     if (cieptr) {
         new_fde->fd_cie_index = cieptr->ci_index;
@@ -1842,7 +1846,7 @@ _dwarf_get_gcc_eh_augmentation(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     char *suffix = 0;
-    unsigned long augdata_size = 0;
+    Dwarf_Unsigned augdata_size = 0;
 
     if (augtype == aug_gcc_eh_z) {
         /* Has leading 'z'. */

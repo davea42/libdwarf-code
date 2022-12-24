@@ -844,7 +844,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             localregtab[reg_noA].ru_is_offset = 0;
             localregtab[reg_noA].ru_value_type = DW_EXPR_OFFSET;
-            localregtab[reg_noA].ru_register = reg_noB;
+            localregtab[reg_noA].ru_register = 
+                (Dwarf_Half)reg_noB;
             localregtab[reg_noA].ru_offset = 0;
             if (make_instr) {
                 dfi->fi_fields = "rr";
@@ -919,7 +920,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             cfa_reg.ru_is_offset = 1;
             cfa_reg.ru_value_type = DW_EXPR_OFFSET;
-            cfa_reg.ru_register = reg_no;
+            cfa_reg.ru_register = (Dwarf_Half)reg_no;
             cfa_reg.ru_offset = nonfactoredoffset;
             if (make_instr) {
                 dfi->fi_fields = "ru";
@@ -943,7 +944,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             reg_no = (reg_num_type) lreg;
             ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-            cfa_reg.ru_register = reg_no;
+            cfa_reg.ru_register = (Dwarf_Half)reg_no;
             /*  Do NOT set ru_offset_or_block_len or
                 ru_is_off here.
                 See dwarf2/3 spec.  */
@@ -1162,7 +1163,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             }
             cfa_reg.ru_is_offset = 1;
             cfa_reg.ru_value_type = DW_EXPR_OFFSET;
-            cfa_reg.ru_register = reg_no;
+            cfa_reg.ru_register = (Dwarf_Half)reg_no;
             cfa_reg.ru_offset =
                 signed_factored_N_value * data_alignment_factor;
 
@@ -1639,7 +1640,7 @@ _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
     }
     DECODE_LEB128_UWORD_LEN_CK(frame_ptr,uvalue,leb128_length,
         dbg,error,section_end);
-    *size = leb128_length;
+    *size = (unsigned long)leb128_length;
     *return_address_register = uvalue;
     return DW_DLV_OK;
 }
@@ -1755,9 +1756,10 @@ dwarf_get_fde_list(Dwarf_Debug dbg,
         dbg->de_debug_frame.dss_data,
         dbg->de_debug_frame.dss_index,
         dbg->de_debug_frame.dss_size,
-        DW_CIE_ID,
+        (Dwarf_Unsigned)DW_CIE_ID,
         /* use_gnu_cie_calc= */ 0,
         error);
+
     return res;
 }
 
@@ -2013,7 +2015,8 @@ dwarf_get_cie_info_b(Dwarf_Cie cie,
         return DW_DLV_ERROR;
     }
     if (ptr_to_version != NULL)
-        *ptr_to_version = cie->ci_cie_version_number;
+        *ptr_to_version = 
+            (Dwarf_Small)cie->ci_cie_version_number;
     if (augmenter != NULL)
         *augmenter = cie->ci_augmentation;
     if (code_alignment_factor != NULL)
@@ -2189,7 +2192,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
 
     out_rule = &reg_table->rt3_rules[0];
     rule = &fde_table.fr_reg[0];
-    for (i = 0; i < output_table_real_data_size;
+    for (i = 0; i < (Dwarf_Signed)output_table_real_data_size;
         i++, ++out_rule, ++rule) {
         out_rule->dw_offset_relevant = rule->ru_is_offset;
         out_rule->dw_args_size = rule->ru_args_size;
@@ -2198,7 +2201,8 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
         out_rule->dw_offset= rule->ru_offset;
         out_rule->dw_block = rule->ru_block;
     }
-    dwarf_init_reg_rules_dw3(&reg_table->rt3_rules[0],i,
+    dwarf_init_reg_rules_dw3(&reg_table->rt3_rules[0],
+        (unsigned)i,
         reg_table->rt3_reg_table_size,
         dbg->de_frame_undefined_value_number);
     reg_table->rt3_cfa_rule.dw_offset_relevant =
@@ -3028,7 +3032,7 @@ dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
     for (; i < last; ++i,++r) {
         r->ru_is_offset = 0;
         r->ru_value_type = DW_EXPR_OFFSET;
-        r->ru_register = initial_value;
+        r->ru_register = (Dwarf_Half)initial_value;
         r->ru_offset = 0;
         r->ru_args_size = 0;
         r->ru_block.bl_data = 0;
@@ -3044,7 +3048,7 @@ dwarf_init_reg_rules_dw3(struct Dwarf_Regtable_Entry3_s *base,
     for (; i < last; ++i,++r) {
         r->dw_offset_relevant = 0;
         r->dw_value_type = DW_EXPR_OFFSET;
-        r->dw_regnum = initial_value;
+        r->dw_regnum = (Dwarf_Half)initial_value;
         r->dw_offset = 0;
         r->dw_args_size = 0;
         r->dw_block.bl_data = 0;

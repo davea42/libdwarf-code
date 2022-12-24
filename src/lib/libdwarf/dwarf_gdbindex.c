@@ -116,7 +116,7 @@ set_base(Dwarf_Debug dbg,
         hdr->dg_base = start;
         hdr->dg_count = count;
         hdr->dg_entry_length = entrylen;
-        hdr->dg_fieldlen = fieldlen;
+        hdr->dg_fieldlen = (unsigned)fieldlen;
     } else {
         /* address area. */
         /* 64bit, 64bit, offset. Then 32bit pad. */
@@ -478,7 +478,8 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindex,
     Dwarf_Small *end = gdbindex->gi_section_data +
         gdbindex->gi_section_length;
     Dwarf_Unsigned val = 0;
-    unsigned fieldlen =  gdbindex->gi_cuvectorhdr.dg_entry_length;
+    Dwarf_Unsigned fieldlen =
+        gdbindex->gi_cuvectorhdr.dg_entry_length;
 
     base += cuvector_offset;
     if ((base + fieldlen) >= end) {
@@ -507,7 +508,8 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Small *end = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     Dwarf_Unsigned val = 0;
-    unsigned fieldlen = gdbindexptr->gi_cuvectorhdr.dg_entry_length;
+    Dwarf_Unsigned fieldlen = 
+        gdbindexptr->gi_cuvectorhdr.dg_entry_length;
 
     base += cuvector_offset;
     if ((base+fieldlen) >= end) {
