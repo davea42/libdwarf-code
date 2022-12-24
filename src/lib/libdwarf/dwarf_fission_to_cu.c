@@ -48,6 +48,7 @@
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
     as the caller ensured that. */
+const struct Dwarf_Loclists_Context_s localcontxt_zero;
 static int
 load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
@@ -69,6 +70,7 @@ load_xu_loclists_into_cucontext(Dwarf_Debug dbg,
             "load_xu_loclists_into_cucontext() is NULL");
         return DW_DLV_ERROR;
     }
+    localcontxt = localcontxt_zero;
     size = fsd->pcu_size[fsd_index];
     soff_hdroffset = fsd->pcu_offset[fsd_index];
     soff_size = dbg->de_debug_loclists.dss_size;
@@ -166,9 +168,8 @@ load_xu_str_offsets_into_cucontext(Dwarf_Debug dbg,
             header_length;
         cu_context->cc_str_offsets_header_length = header_length;
         cu_context->cc_str_offsets_offset_size = offset_size;
-        return DW_DLV_OK;
     }
-    return DW_DLV_NO_ENTRY;
+    return DW_DLV_OK;
 }
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
@@ -215,6 +216,7 @@ load_xu_debug_macro_into_cucontext(Dwarf_Debug dbg,
 
 /*  ASSERT: dbg,cu_context, and fsd are non-NULL
     as the caller ensured that. */
+const struct Dwarf_Rnglists_Context_s builddata_zero;
 static int
 load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
@@ -230,6 +232,7 @@ load_xu_rnglists_into_cucontext(Dwarf_Debug dbg,
     Dwarf_Unsigned nextoffset = 0;
     int res = 0;
 
+    builddata = builddata_zero;
     res = _dwarf_load_section(dbg, &dbg->de_debug_rnglists,
         error);
     if (res != DW_DLV_OK) {
@@ -281,6 +284,7 @@ static const char *keylist[2] = {
 
     Called by dwarf_die_deliv.c
 */
+const struct Dwarf_Debug_Fission_Per_CU_s fission_data_zero;
 int
 _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
@@ -293,6 +297,7 @@ _dwarf_find_all_offsets_via_fission(Dwarf_Debug dbg,
     int fdres = 0;
     int res = 0;
 
+    fission_data = fission_data_zero;
     fsd = &fission_data;
     for (si = 0; si < smax ; ++si) {
         int sec_index = 0;
