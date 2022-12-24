@@ -53,6 +53,7 @@
 /*  for dwarfstring_constructor_static, saving lots of malloc
     and free but beware: make sure each routine using
     this DOES NOT call another routine using it.
+    And do not use it in Dwarf_Error related calls.
     would be safer to have a buffer per function, but
     currently not necessary. */
 static char locallinebuf[200];
