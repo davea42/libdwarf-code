@@ -330,8 +330,9 @@ dwarf_init_path_dl(const char *path,
         close(fd);
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE,
             DW_DLV_ERROR);
+        /* Macro returns, cannot reach this line. */
     }
-    return DW_DLV_NO_ENTRY;
+    /* Cannot reach this line */
 }
 
 /*  New March 2017, this provides for reading
@@ -411,7 +412,7 @@ dwarf_init_b(int fd,
     default: break;
     }
     DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
-    return res;
+    /* Macro above returns. cannot reach here. */
 }
 
 /*
