@@ -385,8 +385,28 @@ print_pubnames_style(Dwarf_Debug dbg,
         so we make a safe copy. */
     esb_append(&sanitname,sanitized(esb_get_string(&unsanitname)));
     esb_destructor(&unsanitname);
-
-    res = dwarf_globals_by_type(dbg,category, &globbuf, &count, err);
+    if (glflags.gf_check_functions) {
+        DWARF_CHECK_COUNT(check_functions_result,1);
+        /*  For coverage of these two API functions,
+            call directly. */
+        switch(category) {
+        case DW_GL_GLOBALS:
+            res = dwarf_get_globals(dbg,
+                &globbuf, &count, err);
+            break;
+        case DW_GL_PUBTYPES:
+            res = dwarf_get_pubtypes(dbg,
+                &globbuf, &count, err);
+            break;
+        default:
+            res = dwarf_globals_by_type(dbg,category, 
+                &globbuf, &count, err);
+            break;
+        }
+    } else {
+        res = dwarf_globals_by_type(dbg,category, 
+             &globbuf, &count, err);
+    }
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
@@ -431,6 +451,179 @@ print_pubnames_style(Dwarf_Debug dbg,
     return res;
 }
 
+static void
+dd_check_globals_data(Dwarf_Debug dbg,
+    Dwarf_Global glob,
+    int       nres,
+    char     *name,
+    Dwarf_Off global_die_off) 
+{
+    char       *check_name = 0;
+    Dwarf_Off   cfglobal_die_offset = 0;
+    Dwarf_Error cferr = 0;
+    int         rescf = 0;
+
+    if (!glflags.gf_check_functions) {
+        return;
+    }
+    DWARF_CHECK_COUNT(check_functions_result,1);
+    rescf = dwarf_globname(glob, &check_name,&cferr);
+    if (rescf == nres) {
+        if (nres == DW_DLV_OK) {
+            if(strcmp(name,check_name)) {
+                /* FAIL */
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "Name mistmatch with dwarf_globname");
+            }
+        }
+    } else {
+        DWARF_CHECK_ERROR(check_functions_result,
+            "DW_DLV mismatch with dwarf_globname");
+    }
+    if (cferr) {
+        DROP_ERROR_INSTANCE(dbg,rescf,cferr);
+    }    
+    rescf = dwarf_global_die_offset(glob,
+        &cfglobal_die_offset,&cferr);
+    if (rescf == nres) {
+        if (nres == DW_DLV_OK) {
+            if(global_die_off != cfglobal_die_offset) {
+                /* FAIL */
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "Die offset mistmatch with "
+                    "dwarf_global_die_offset");
+            }
+        }
+    } else {
+        DWARF_CHECK_ERROR(check_functions_result,
+            "DW_DLV mismatch with "
+                "dwarf_global_die_offset");
+    }
+    if (cferr) {
+        DROP_ERROR_INSTANCE(dbg,rescf,cferr);
+    }
+}
+
+static void
+dd_check_pubname_attr(Dwarf_Debug dbg,
+    const char *section_true_name,
+    Dwarf_Signed i,
+    Dwarf_Bool is_info,
+    char      *name,
+    Dwarf_Off  global_die_off,
+    Dwarf_Off  cu_die_off,
+    Dwarf_Off *prev_cu_die_off)
+{
+    Dwarf_Bool  has_attr = 0;
+    int         dres = 0;
+    int         ares = 0;
+    Dwarf_Die   die = 0;
+    Dwarf_Error err = 0;
+
+    if (!glflags.gf_check_pubname_attr) {
+         return;
+    }
+    /*  We are processing a new set of pubnames
+        for a different CU; get the producer ID,
+        at 'cu_off' to see if we need to skip
+        these pubnames */
+    if (cu_die_off != *prev_cu_die_off) {
+        char         proname[100];
+        struct esb_s producername;
+        Dwarf_Die    lcudie = 0;
+
+        /* Record offset for previous CU */
+        *prev_cu_die_off = cu_die_off;
+        dres = dwarf_offdie_b(dbg, cu_die_off,
+            is_info, &lcudie, &err);
+        if (dres != DW_DLV_OK) {
+            struct esb_s msge;
+
+            esb_constructor(&msge);
+            esb_append(&msge,
+                "ERROR Accessing dwarf_offdie ");
+            esb_append_printf_i(&msge,
+                " f1df0or index %d in ",i);
+            esb_append(&msge,section_true_name);
+            esb_append(&msge,".");
+            simple_err_return_msg_either_action(dres,
+                        esb_get_string(&msge));
+            esb_destructor(&msge);
+            DROP_ERROR_INSTANCE(dbg,dres,err);
+            return;
+        }
+        /*  Get producer name for this CU
+            and update compiler list */
+        esb_constructor_fixed(&producername,proname,
+            sizeof(proname));
+        dres = get_producer_name(dbg,lcudie,cu_die_off,
+            &producername,&err);
+        dwarf_dealloc(dbg,lcudie,DW_DLA_DIE);
+        if (dres == DW_DLV_ERROR) {
+            DROP_ERROR_INSTANCE(dbg,dres,err);
+            return;
+        }
+        update_compiler_target(
+            esb_get_string(&producername));
+        glflags.DIE_CU_overall_offset = cu_die_off;
+        esb_destructor(&producername);
+    }
+
+    dres = dwarf_offdie_b(dbg, global_die_off,
+        is_info, &die, &err);
+    if (dres != DW_DLV_OK) {
+        struct esb_s msge;
+
+        esb_constructor(&msge);
+        esb_append(&msge,"ERROR Accessing dwarf_offdie ");
+        esb_append_printf_i(&msge," for index %d in ",i);
+        esb_append(&msge,section_true_name);
+        esb_append(&msge,". ");
+        if (dres == DW_DLV_ERROR) {
+            esb_append(&msge,dwarf_errmsg(err));
+        } else {
+            esb_append(&msge,"offdie returned DW_DLV_NO_ENTRY");
+        }
+        simple_err_return_msg_either_action(dres,
+            esb_get_string(&msge));
+        esb_destructor(&msge);
+        DROP_ERROR_INSTANCE(dbg,dres,err);
+        return;
+    }
+    ares =
+        dwarf_hasattr(die, DW_AT_external,
+        &has_attr, &err);
+    if (ares == DW_DLV_ERROR) {
+        struct esb_s msgd;
+
+        esb_constructor(&msgd);
+        esb_append(&msgd,"ERROR: hasattr on DW_AT_external"
+            " from ");
+        esb_append(&msgd,section_true_name);
+        esb_append(&msgd," fails.");
+        dwarf_dealloc(dbg, die, DW_DLA_DIE);
+        /* print_error does not return */
+        simple_err_return_msg_either_action(ares,
+            esb_get_string(&msgd));
+        esb_destructor(&msgd);
+        DROP_ERROR_INSTANCE(dbg,dres,err);
+        return;
+    }
+    /*  DW_DLV_NO_ENTRY is odd. Check that if checking. */
+    /*  Check for specific compiler */
+    if (checking_this_compiler()) {
+        DWARF_CHECK_COUNT(pubname_attr_result,1);
+        if (ares == DW_DLV_OK && has_attr) {
+            /* Should the value of flag be examined? */
+        } else {
+            DWARF_CHECK_ERROR2(pubname_attr_result,name,
+                "DIE pubname refers to does not have "
+                "DW_AT_external");
+        }
+    }
+    dwarf_dealloc(dbg, die, DW_DLA_DIE);
+}
+
 static int
 print_all_pubnames_style_records(Dwarf_Debug dbg,
     const char *linetitle,
@@ -443,8 +636,9 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
     Dwarf_Unsigned lastcudieoff = 0;
     Dwarf_Addr elf_max_address = 0;
     Dwarf_Signed i = 0;
-    int ares = 0;
-    Dwarf_Bool is_info = TRUE;
+    int          ares = 0;
+    Dwarf_Bool   is_info = TRUE;
+    Dwarf_Off    prev_cu_die_off = elf_max_address;
 
     ares = get_address_size_and_max(dbg,0,&elf_max_address,err);
     if (ares != DW_DLV_OK) {
@@ -460,17 +654,20 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
         int cures3 = 0;
         Dwarf_Off global_die_off = 0;
         Dwarf_Off cu_die_off = 0;
-        Dwarf_Off prev_cu_off = elf_max_address;
         Dwarf_Off global_cuh_off = 0;
         char *name = 0;
+        Dwarf_Global  thisglobal = 0;
 
         /*  Turns the cu-local die_off in globbuf
             entry into a global die_off.  The cu_off
             returned is the offset of the CU DIE,
             not the CU header. */
-        nres = dwarf_global_name_offsets(globbuf[i],
+        thisglobal = globbuf[i];
+        nres = dwarf_global_name_offsets(thisglobal,
             &name, &global_die_off, &cu_die_off,
             err);
+        dd_check_globals_data(dbg,thisglobal,nres,
+            name,global_die_off);
         if (nres != DW_DLV_OK) {
             struct esb_s m;
 
@@ -501,7 +698,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 Dwarf_Unsigned info_length = 0;
                 int            header_category = 0;
 
-                nres = dwarf_get_globals_header(globbuf[i],
+                nres = dwarf_get_globals_header(thisglobal,
                     &header_category,
                     &pub_section_hdr_offset,
                     &pub_offset_size,
@@ -547,7 +744,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
             dwarf_global_name_offsets already did that
             addition properly so this call is just so
             we can print the CU header offset. */
-        cures3 = dwarf_global_cu_offset(globbuf[i],
+        cures3 = dwarf_global_cu_offset(thisglobal,
             &global_cuh_off, err);
         if (cures3 != DW_DLV_OK) {
             struct esb_s msge;
@@ -563,112 +760,17 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
             return cures3;
         }
 
-        if (glflags.gf_check_pubname_attr) {
-            Dwarf_Bool has_attr = 0;
-            int dres = 0;
-            Dwarf_Die die = 0;
-
-            /*  We are processing a new set of pubnames
-                for a different CU; get the producer ID,
-                at 'cu_off' to see if we need to skip
-                these pubnames */
-            if (cu_die_off != prev_cu_off) {
-                char proname[100];
-                struct esb_s producername;
-                Dwarf_Die lcudie = 0;
-
-                /* Record offset for previous CU */
-                prev_cu_off = cu_die_off;
-                dres = dwarf_offdie_b(dbg, cu_die_off,
-                    is_info, &lcudie, err);
-                if (dres != DW_DLV_OK) {
-                    struct esb_s msge;
-
-                    esb_constructor(&msge);
-                    esb_append(&msge,
-                        "ERROR Accessing dwarf_offdie ");
-                    esb_append_printf_i(&msge,
-                        " for index %d in ",i);
-                    esb_append(&msge,section_true_name);
-                    esb_append(&msge,".");
-                    simple_err_return_msg_either_action(dres,
-                        esb_get_string(&msge));
-                    esb_destructor(&msge);
-                    return dres;
-                }
-                /*  Get producer name for this CU
-                    and update compiler list */
-                esb_constructor_fixed(&producername,proname,
-                    sizeof(proname));
-                dres = get_producer_name(dbg,lcudie,cu_die_off,
-                    &producername,err);
-                dwarf_dealloc(dbg,lcudie,DW_DLA_DIE);
-                if (dres == DW_DLV_ERROR) {
-                    esb_destructor(&producername);
-                    return dres;
-                }
-                update_compiler_target(
-                    esb_get_string(&producername));
-                glflags.DIE_CU_overall_offset = cu_die_off;
-                esb_destructor(&producername);
-            }
-
-            dres = dwarf_offdie_b(dbg, global_die_off,
-                is_info, &die, err);
-            if (dres != DW_DLV_OK) {
-                struct esb_s msge;
-
-                esb_constructor(&msge);
-                esb_append(&msge,"ERROR Accessing dwarf_offdie ");
-                esb_append_printf_i(&msge," for index %d in ",i);
-                esb_append(&msge,section_true_name);
-                esb_append_printf_u(&msge," with die offset 0x%x ",
-                    global_die_off);
-                esb_append(&msge,".");
-                simple_err_return_msg_either_action(dres,
-                    esb_get_string(&msge));
-                esb_destructor(&msge);
-                return dres;
-            }
-            ares =
-                dwarf_hasattr(die, DW_AT_external,
-                &has_attr, err);
-            if (ares == DW_DLV_ERROR) {
-                struct esb_s msgd;
-
-                esb_constructor(&msgd);
-                esb_append(&msgd,"ERROR: hasattr on DW_AT_external"
-                    " from ");
-                esb_append(&msgd,section_true_name);
-                esb_append(&msgd," fails.");
-                dwarf_dealloc(dbg, die, DW_DLA_DIE);
-                /* print_error does not return */
-                simple_err_return_msg_either_action(ares,
-                    esb_get_string(&msgd));
-                esb_destructor(&msgd);
-                return ares;
-            }
-            /*  DW_DLV_NO_ENTRY is odd. Check that if checking. */
-            /*  Check for specific compiler */
-            if (checking_this_compiler()) {
-                DWARF_CHECK_COUNT(pubname_attr_result,1);
-                if (ares == DW_DLV_OK && has_attr) {
-                    /* Should the value of flag be examined? */
-                } else {
-                    DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                        "pubname does not have DW_AT_external");
-                }
-            }
-            dwarf_dealloc(dbg, die, DW_DLA_DIE);
-        }
-
+        dd_check_pubname_attr(dbg,
+            section_true_name,i,
+            is_info,name,global_die_off,
+            cu_die_off, &prev_cu_die_off);
         /* Now print name, after the test */
         if (glflags.gf_do_print_dwarf ||
             (glflags.gf_record_dwarf_error &&
             glflags.gf_check_verbose_mode)) {
             int res = 0;
             Dwarf_Half dietag =
-                dwarf_global_tag_number(globbuf[i]);
+                dwarf_global_tag_number(thisglobal);
 
             res  = print_pubname_style_entry(dbg,
                 i,count,

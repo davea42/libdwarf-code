@@ -461,6 +461,7 @@ dwarf_get_aranges(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+#if 0
 /*
     This function returns DW_DLV_OK if it succeeds
     and DW_DLV_ERR or DW_DLV_OK otherwise.
@@ -556,6 +557,7 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     *addrs = arange_addrs;
     return DW_DLV_OK;
 }
+#endif /* 0 */
 
 /*
     This function takes a pointer to a block

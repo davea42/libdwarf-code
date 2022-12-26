@@ -122,6 +122,8 @@ get_attr_dbg(Dwarf_Debug *dbg_out,
 
 }
 
+/*  This checks the final-form (after any DW_FORM_indirect
+    converted to final form). */
 int
 dwarf_hasform(Dwarf_Attribute attr,
     Dwarf_Half form,
@@ -140,6 +142,8 @@ dwarf_hasform(Dwarf_Attribute attr,
 
 /* Not often called, we do not worry about efficiency here.
    The dwarf_whatform() call does the sanity checks for us.
+   The form returned is the original form, which could
+   be DW_FORM_indirect.
 */
 int
 dwarf_whatform_direct(Dwarf_Attribute attr,
@@ -260,7 +264,9 @@ dwarf_dealloc_uncompressed_block(Dwarf_Debug dbg, void * space)
     dwarf_dealloc(dbg, space, DW_DLA_STRING);
 }
 
-/*  Never returns DW_DLV_NO_ENTRY */
+/*  Never returns DW_DLV_NO_ENTRY 
+    Returns the final form after any DW_FORM_indirect
+    resolved to final form. */
 int
 dwarf_whatform(Dwarf_Attribute attr,
     Dwarf_Half * return_form, Dwarf_Error * error)

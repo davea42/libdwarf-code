@@ -91,10 +91,12 @@ struct Dwarf_Attribute_s {
     Dwarf_Half ar_attribute;             /* Attribute Value. */
     Dwarf_Half ar_attribute_form;        /* Attribute Form. */
     Dwarf_Half ar_attribute_form_direct;
-        /*  Identical to ar_attribute_form except that if
+        /*  *form_direct Identical to ar_attribute_form
+            except that if
             the original form uleb was DW_FORM_indirect,
             ar_attribute_form_direct contains DW_FORM_indirect
             but ar_attribute_form contains the true form. */
+
     Dwarf_CU_Context ar_cu_context;
         /*  The following points to either debug_info or debug_types
             depending on if context is cc_is_info  or not. */

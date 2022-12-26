@@ -373,7 +373,47 @@ main(int argc, char *argv[])
         wcmd.check_verbose_mode = glflags.gf_check_verbose_mode;
         dwarf_record_cmdline_options(wcmd);
     }
+    if (glflags.gf_check_functions) {
+        static const Dwarf_Signed stab[] = {0,1,-1,100,-100,-10000000,10000000};
+        int i = 0;
+        int len = sizeof(stab)/sizeof(stab[0]);
+        char vbuf[100];
 
+        vbuf[0] = 0;
+        DWARF_CHECK_COUNT(check_functions_result,1);
+        for (i = 0; i < len; ++i) {
+            Dwarf_Signed basevalue = 0;
+            Dwarf_Signed decodedvalue = 0;
+            Dwarf_Unsigned silen = 0;
+            int leblen = 0;
+              
+            basevalue = stab[i];
+            memset(vbuf,0,sizeof(vbuf));
+            res = dwarf_encode_signed_leb128(basevalue,
+                &leblen,
+                vbuf,(int)sizeof(vbuf));
+            if (res == DW_DLV_ERROR) {
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "Got error encoding Encoding Dwarf_Signed");
+                break;
+            }
+            res = dwarf_decode_signed_leb128(
+                vbuf,&silen, &decodedvalue,
+                vbuf + sizeof(vbuf));
+            if (res == DW_DLV_ERROR) {
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "Got error encoding Decoding Dwarf_Signed");
+                break;
+            }
+            if ( decodedvalue != basevalue) {
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "Decode Dwarf_signed does not match"
+                    "starting value");
+                break;
+            }
+
+        }
+    }
     /* ======= BEGIN FINDING NAMES AND OPENING FDs ===== */
     /*  The 200+2 etc is more than suffices for the expansion that a
         MacOS dsym or a GNU debuglink might need, we hope. */

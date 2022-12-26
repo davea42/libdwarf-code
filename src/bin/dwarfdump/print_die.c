@@ -2192,6 +2192,8 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
     for (i=0; i < atcnt; ++i) {
         int res = 0;
         Dwarf_Off current_off = 0;
+        Dwarf_Half form = 0;
+        Dwarf_Bool present = FALSE;
 
         res = dwarf_attr_offset(die,attrlist[i],
             &current_off,&error);
@@ -2206,6 +2208,69 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
                 "attr offsets no_entry (impossible)");
             DROP_ERROR_INSTANCE(dbg,res,error);
             /* impossible */
+            continue;
+        }
+
+        res = dwarf_whatform(attrlist[i], &form,&error);
+        if (res == DW_DLV_ERROR) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_whatform fails");
+            DROP_ERROR_INSTANCE(dbg,res,error);
+            return;
+        } if (res == DW_DLV_NO_ENTRY) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_whatform gets NO_ENTRY");
+            DROP_ERROR_INSTANCE(dbg,res,error);
+            /* impossible */
+            continue;
+        }
+        res = dwarf_hasform(attrlist[i],form,&present,&error);
+        if (res == DW_DLV_ERROR) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_hasform fails");
+            DROP_ERROR_INSTANCE(dbg,res,error);
+            return;
+        } else if (res == DW_DLV_NO_ENTRY) {
+            DWARF_CHECK_ERROR(check_functions_result,
+                "dwarf_hasform gets NO_ENTRY");
+            DROP_ERROR_INSTANCE(dbg,res,error);
+            /* impossible */
+            continue;
+        } else if (!present) {
+            struct esb_s m;
+            char buf[40];
+   
+            esb_constructor_fixed(&m,buf,sizeof(buf));
+            esb_append_printf_u(&m,
+                "dwarf_hasform shows not present"
+                " on form 0x%" DW_PR_DUx,
+                (Dwarf_Unsigned)form);
+            esb_append_printf_i(&m,
+                "on attribute number %d.",
+                i);
+       
+            DWARF_CHECK_ERROR(check_functions_result,
+                esb_get_string(&m));
+            DROP_ERROR_INSTANCE(dbg,res,error);
+            esb_destructor(&m);
+        }
+        if (form == DW_FORM_data16) {
+            Dwarf_Form_Data16  data16;
+    
+            memset(&data16,0,sizeof(data16));
+            dwarf_formdata16(attrlist[i],&data16,&error);
+            if (res == DW_DLV_ERROR) {
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "dwarf_formdata16 fails");
+                DROP_ERROR_INSTANCE(dbg,res,error);
+                return;
+            } else if (res == DW_DLV_NO_ENTRY) {
+                DWARF_CHECK_ERROR(check_functions_result,
+                    "dwarf_formdata16 gets NO_ENTRY");
+                DROP_ERROR_INSTANCE(dbg,res,error);
+                /* impossible */
+            } 
+            /* Unclear how to check the value */
         }
         /*  Currently unsure how to check more than this. */
     }
