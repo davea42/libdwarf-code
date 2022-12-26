@@ -374,7 +374,8 @@ main(int argc, char *argv[])
         dwarf_record_cmdline_options(wcmd);
     }
     if (glflags.gf_check_functions) {
-        static const Dwarf_Signed stab[] = {0,1,-1,100,-100,-10000000,10000000};
+        static const Dwarf_Signed stab[] =
+            {0,1,-1,100,-100,-10000000,10000000};
         int i = 0;
         int len = sizeof(stab)/sizeof(stab[0]);
         char vbuf[100];
@@ -386,7 +387,7 @@ main(int argc, char *argv[])
             Dwarf_Signed decodedvalue = 0;
             Dwarf_Unsigned silen = 0;
             int leblen = 0;
-              
+
             basevalue = stab[i];
             memset(vbuf,0,sizeof(vbuf));
             res = dwarf_encode_signed_leb128(basevalue,
@@ -411,7 +412,6 @@ main(int argc, char *argv[])
                     "starting value");
                 break;
             }
-
         }
     }
     /* ======= BEGIN FINDING NAMES AND OPENING FDs ===== */

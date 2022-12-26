@@ -399,13 +399,13 @@ print_pubnames_style(Dwarf_Debug dbg,
                 &globbuf, &count, err);
             break;
         default:
-            res = dwarf_globals_by_type(dbg,category, 
+            res = dwarf_globals_by_type(dbg,category,
                 &globbuf, &count, err);
             break;
         }
     } else {
-        res = dwarf_globals_by_type(dbg,category, 
-             &globbuf, &count, err);
+        res = dwarf_globals_by_type(dbg,category,
+            &globbuf, &count, err);
     }
     if (res == DW_DLV_NO_ENTRY) {
         return res;
@@ -456,7 +456,7 @@ dd_check_globals_data(Dwarf_Debug dbg,
     Dwarf_Global glob,
     int       nres,
     char     *name,
-    Dwarf_Off global_die_off) 
+    Dwarf_Off global_die_off)
 {
     char       *check_name = 0;
     Dwarf_Off   cfglobal_die_offset = 0;
@@ -470,7 +470,7 @@ dd_check_globals_data(Dwarf_Debug dbg,
     rescf = dwarf_globname(glob, &check_name,&cferr);
     if (rescf == nres) {
         if (nres == DW_DLV_OK) {
-            if(strcmp(name,check_name)) {
+            if (strcmp(name,check_name)) {
                 /* FAIL */
                 DWARF_CHECK_ERROR(check_functions_result,
                     "Name mistmatch with dwarf_globname");
@@ -482,12 +482,12 @@ dd_check_globals_data(Dwarf_Debug dbg,
     }
     if (cferr) {
         DROP_ERROR_INSTANCE(dbg,rescf,cferr);
-    }    
+    }
     rescf = dwarf_global_die_offset(glob,
         &cfglobal_die_offset,&cferr);
     if (rescf == nres) {
         if (nres == DW_DLV_OK) {
-            if(global_die_off != cfglobal_die_offset) {
+            if (global_die_off != cfglobal_die_offset) {
                 /* FAIL */
                 DWARF_CHECK_ERROR(check_functions_result,
                     "Die offset mistmatch with "
@@ -521,7 +521,7 @@ dd_check_pubname_attr(Dwarf_Debug dbg,
     Dwarf_Error err = 0;
 
     if (!glflags.gf_check_pubname_attr) {
-         return;
+        return;
     }
     /*  We are processing a new set of pubnames
         for a different CU; get the producer ID,
@@ -547,7 +547,7 @@ dd_check_pubname_attr(Dwarf_Debug dbg,
             esb_append(&msge,section_true_name);
             esb_append(&msge,".");
             simple_err_return_msg_either_action(dres,
-                        esb_get_string(&msge));
+                esb_get_string(&msge));
             esb_destructor(&msge);
             DROP_ERROR_INSTANCE(dbg,dres,err);
             return;

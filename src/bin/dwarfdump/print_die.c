@@ -2239,7 +2239,7 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
         } else if (!present) {
             struct esb_s m;
             char buf[40];
-   
+
             esb_constructor_fixed(&m,buf,sizeof(buf));
             esb_append_printf_u(&m,
                 "dwarf_hasform shows not present"
@@ -2248,7 +2248,7 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
             esb_append_printf_i(&m,
                 "on attribute number %d.",
                 i);
-       
+
             DWARF_CHECK_ERROR(check_functions_result,
                 esb_get_string(&m));
             DROP_ERROR_INSTANCE(dbg,res,error);
@@ -2256,7 +2256,7 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
         }
         if (form == DW_FORM_data16) {
             Dwarf_Form_Data16  data16;
-    
+
             memset(&data16,0,sizeof(data16));
             dwarf_formdata16(attrlist[i],&data16,&error);
             if (res == DW_DLV_ERROR) {
@@ -2269,7 +2269,7 @@ dd_check_attrlist_sensible(Dwarf_Debug dbg,
                     "dwarf_formdata16 gets NO_ENTRY");
                 DROP_ERROR_INSTANCE(dbg,res,error);
                 /* impossible */
-            } 
+            }
             /* Unclear how to check the value */
         }
         /*  Currently unsure how to check more than this. */
